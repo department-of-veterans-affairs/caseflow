@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import Checkbox from '../../../../../components/Checkbox';
 import RadioField from '../../../../../components/RadioField';
 import PropTypes from 'prop-types';
@@ -7,6 +8,7 @@ import ApiUtil from '../../../../../util/ApiUtil';
 import { prepareAppealForStore } from '../../../../utils';
 import LoadingContainer from '../../../../../components/LoadingContainer';
 import { LOGO_COLORS } from '../../../../../constants/AppConstants';
+import { setRelatedTaskAppeals } from '../../../correspondenceReducer/correspondenceActions';
 
 const mailTasksLeft = [
   'Change of address',
@@ -29,10 +31,12 @@ const existingAppealAnswer = [
 
 export const AddTasksAppealsView = (props) => {
   const [appeals, setAppeals] = useState([]);
-  const [selectedAppeals, setSelectedAppeals] = useState([]);
+  const taskRelatedAppeals = useSelector(state => state.intakeCorrespondence.relatedTaskAppeals);
   const [loading, setLoading] = useState(false);
   const [relatedToExistingAppeal, setRelatedToExistingAppeal] = useState(false);
   const [existingAppealRadio, setExistingAppealRadio] = useState('2');
+
+  const dispatch = useDispatch();
 
   const selectYes = () => {
     if (existingAppealRadio === '2') {
@@ -45,19 +49,18 @@ export const AddTasksAppealsView = (props) => {
     if (existingAppealRadio === '1') {
       setExistingAppealRadio('2');
       setRelatedToExistingAppeal(false);
-      setSelectedAppeals([]);
     }
   };
 
   const checkboxOnChange = useCallback((id, isChecked) => {
     if (isChecked) {
-      setSelectedAppeals([...selectedAppeals, id]);
+      dispatch(setRelatedTaskAppeals([...taskRelatedAppeals, id]));
     } else {
-      const selected = selectedAppeals.filter((checkboxId) => checkboxId !== id);
+      const selected = taskRelatedAppeals.filter((checkboxId) => checkboxId !== id);
 
-      setSelectedAppeals(selected);
+      dispatch(setRelatedTaskAppeals(selected));
     }
-  }, [selectedAppeals]);
+  }, [taskRelatedAppeals]);
 
   useEffect(() => {
     // Only fetch if user indicates appeals data is needed
@@ -84,7 +87,7 @@ export const AddTasksAppealsView = (props) => {
             const appealArr = [];
 
             for (const appealGuid in appealsForStore.appeals) {
-              if (appealsForStore.appeals.hasOwnProperty(appealGuid)) {
+              if (Object.prototype.hasOwnProperty.call(appealsForStore.appeals, appealGuid)) {
                 appealArr.push(appealsForStore.appeals[appealGuid]);
               }
             }
@@ -99,11 +102,11 @@ export const AddTasksAppealsView = (props) => {
   useEffect(() => {
     // If user has selected appeals, enable continue
     if (relatedToExistingAppeal) {
-      props.onContinueStatusChange(selectedAppeals.length);
+      props.onContinueStatusChange(taskRelatedAppeals.length);
     } else {
       props.onContinueStatusChange(true);
     }
-  }, [relatedToExistingAppeal, selectedAppeals]);
+  }, [relatedToExistingAppeal, taskRelatedAppeals]);
 
   return (
     <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>

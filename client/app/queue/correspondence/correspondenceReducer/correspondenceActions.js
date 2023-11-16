@@ -43,3 +43,13 @@ export const clearCheckboxState = () =>
       type: ACTIONS.CLEAR_CHECKBOX_STATE,
     });
   };
+
+export const setRelatedTaskAppeals = (appeals) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_RELATED_TASK_APPEALS,
+      payload: {
+        appeals
+      }
+    });
+  };
