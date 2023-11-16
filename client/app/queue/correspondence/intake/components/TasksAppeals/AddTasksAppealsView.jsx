@@ -22,7 +22,7 @@ export const AddTasksAppealsView = (props) => {
     const currentTask = [...props.unrelatedTasks];
     const randNum = Math.floor(Math.random() * 1000000);
 
-    currentTask.push({ Object: randNum, Task: '', Text: '', SelectedTaskType: -1 });
+    currentTask.push({ Object: randNum, Task: '', Text: '', SelectedTaskType: -1, SelectedTaskName: '' });
     props.setUnrelatedTasks(currentTask);
     props.disableContinue(false);
   };
@@ -58,10 +58,13 @@ export const AddTasksAppealsView = (props) => {
     props.disableContinue(continueEnabled);
   };
 
-  const handleChangeTaskTypeandText = (newType, newText, index) => {
+  const handleChangeTaskTypeandText = (selectedOption, newText, index) => {
+    const newType = selectedOption.value;
+    const newLabel = selectedOption.label;
     const currentTask = [...props.unrelatedTasks];
 
     currentTask[index].SelectedTaskType = newType;
+    currentTask[index].SelectedTaskName = newLabel;
     props.setUnrelatedTasks(currentTask);
     setInstructionText(newText);
     currentTask[index].Task = newType;
@@ -142,7 +145,8 @@ export const AddTasksAppealsView = (props) => {
                 <TaskNotRelatedToAppeal
                   key={currentTask.Object}
                   removeTask={() => removeTaskAtIndex(i)}
-                  handleChangeTaskType={(newType, newText) => handleChangeTaskTypeandText(newType, newText, i)}
+                  handleChangeTaskType={(selectedOption, newText) =>
+                    handleChangeTaskTypeandText(selectedOption, newText, i)}
                   taskType={currentTask.SelectedTaskType}
                   taskText={currentTask.Text}
                 />
