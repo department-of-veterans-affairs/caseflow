@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe CaseflowStuckRecord, :postgres do
+  before(:all) do
+    system("bundle exec rails r -e test db/scripts/external/create_vbms_ext_claim_table.rb")
+  end
+
   describe "#end_product_establishment" do
     let!(:end_product_establishment) do
       create(:end_product_establishment, :canceled_hlr_with_cleared_vbms_ext_claim)
