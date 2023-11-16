@@ -34,6 +34,10 @@ class HearingRequestDistributionQuery
     base_relation.most_recent_hearings.tied_to_distribution_judge(judge)
   end
 
+  def self.ineligible_judges_id_cache
+    Rails.cache.fetch("case_distribution_ineligible_judges").pluck(:id).reject(&:blank?)
+  end
+
   def only_genpop_appeals
     no_hearings_or_no_held_hearings = with_no_hearings.or(with_no_held_hearings)
 
@@ -95,7 +99,7 @@ class HearingRequestDistributionQuery
     def tied_to_distribution_judge(judge)
       joins(with_assigned_distribution_task_sql)
         .where(hearings: { disposition: "held", judge_id: judge.id })
-        .where("judge_id IN (?)", ineligible_judges_id_cache)
+        .where("judge_id not IN (?)", ineligible_judges_id_cache)
         .where("distribution_task.assigned_at > ?", Constants::DISTRIBUTION["hearing_case_affinity_days"].days.ago)
     end
 
@@ -110,6 +114,7 @@ class HearingRequestDistributionQuery
     # when that distinction became irrelevant because cases become genpop after 30 days anyway.
     def not_tied_to_any_judge
       where(hearings: { disposition: "held", judge_id: nil })
+      .where("judge_id IN (?)", ineligible_judges_id_cache)
     end
 
     def with_no_hearings
