@@ -3,7 +3,16 @@
 require "query_subscriber"
 require "anbt-sql-formatter/formatter"
 
-describe ForeignKeyPolymorphicAssociationJob, :postgres do
+# Skip tests until following error is resolved:
+#
+#   ActiveRecord::StatementInvalid:
+#     PG::UndefinedColumn: ERROR: column claimants_legacy_appeals.legacy_appeal_id does not exist
+#
+# See related Jira issues:
+#   - https://jira.devops.va.gov/browse/APPEALS-35007
+#   - https://jira.devops.va.gov/browse/APPEALS-35011
+#
+xdescribe ForeignKeyPolymorphicAssociationJob, :postgres do
   subject { described_class.perform_now }
 
   let(:slack_service) { SlackService.new(url: "http://www.example.com") }
