@@ -48,11 +48,11 @@ class CaseDetailsLink extends React.PureComponent {
           target="_blank"
           disabled={disabled}
           onClick={this.onClick}>
-          {`${this.getLinkText()} `}
-          <ExternalLinkIcon
-            color={COLORS.PRIMARY}
-            size={ICON_SIZES.SMALL}
-          />
+          <strong>{this.getLinkText()}</strong>
+          <span className="cf-pdf-external-link-icon">
+            &nbsp;
+            <ExternalLinkIcon color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
+          </span>
         </Link> :
         <Link
           href={`/queue/appeals/${appeal.externalId}`}

@@ -92,7 +92,6 @@ export const AddTasksAppealsView = (props) => {
   },
   );
 
-
   return (
     <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
       <h1 style={{ marginBottom: '10px' }}>Review Tasks & Appeals</h1>

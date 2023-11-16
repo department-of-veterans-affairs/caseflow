@@ -15,8 +15,6 @@ import { DateString } from '../util/DateUtil';
 import { statusLabel, labelForLocation, renderAppealType, mostRecentHeldHearingForAppeal } from './utils';
 import COPY from '../../COPY';
 import Pagination from 'app/components/Pagination/Pagination';
-import EasyPagination from 'app/components/Pagination/EasyPagination';
-
 
 class CaseListTable extends React.PureComponent {
 
@@ -37,7 +35,9 @@ class CaseListTable extends React.PureComponent {
             return (
               <Checkbox
                 name={`appeal-${appeal.id}`}
-                defaultValue={false}
+                id={`appeal-${appeal.id}`}
+                defaultValue={this.props.checkboxes.includes(`appeal-${appeal.id}`)}
+                onChange={(checked) => this.onChangeCheckbox(`appeal-${appeal.id}`, checked)}
                 hideLabel
               />
             );
