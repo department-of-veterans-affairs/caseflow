@@ -26,7 +26,7 @@ export const Personnel = ({ control, field, name }) => {
   ));
 
   return (
-    <div>
+    <div className="personnel">
       <Controller
         control={control}
         defaultValue={field.options.personnel ?? ''}
