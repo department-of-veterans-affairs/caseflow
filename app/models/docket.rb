@@ -8,10 +8,6 @@ class Docket
     fail Caseflow::Error::MustImplementInSubclass
   end
 
-  def self.ineligible_judges_id_cache
-    Rails.cache.fetch("case_distribution_ineligible_judges").pluck(:id).reject(&:blank?)
-  end
-
   # :reek:LongParameterList
   def appeals(priority: nil, genpop: nil, ready: nil, judge: nil)
     fail "'ready for distribution' value cannot be false" if ready == false
