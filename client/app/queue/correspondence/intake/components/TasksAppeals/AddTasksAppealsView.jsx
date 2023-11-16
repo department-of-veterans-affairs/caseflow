@@ -72,7 +72,7 @@ export const AddTasksAppealsView = (props) => {
             const appealArr = [];
 
             for (const appealGuid in appealsForStore.appeals) {
-              if (appealsForStore.appeals.hasOwnProperty(appealGuid)) {
+              if (Object.hasOwn(appealsForStore.appeals, appealGuid)) {
                 appealArr.push(appealsForStore.appeals[appealGuid]);
               }
             }
@@ -83,7 +83,6 @@ export const AddTasksAppealsView = (props) => {
       }
       );
   }, [relatedToExistingAppeal]);
-
 
   return (
     <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
