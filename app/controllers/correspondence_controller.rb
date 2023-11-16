@@ -28,8 +28,15 @@ class CorrespondenceController < ApplicationController
   end
 
   def show
-    @correspondence = Correspondence.find(params[:id])
-    render json: { correspondence: @correspondence, package_document_type: @correspondence.package_document_type, correspondence_documents: @correspondence.correspondence_documents }
+    @correspondence = Correspondence.find_by(uuid: params[:id])
+    corres_docs = @correspondence.correspondence_documents
+    render json: {
+      correspondence: @correspondence,
+      package_document_type: @correspondence.package_document_type,
+      correspondence_documents: corres_docs.map do |doc|
+        WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
+      end
+    }
   end
 
   private
@@ -69,5 +76,4 @@ class CorrespondenceController < ApplicationController
       packageDocumentType: correspondence.correspondence_type_id
     }
   end
-
 end

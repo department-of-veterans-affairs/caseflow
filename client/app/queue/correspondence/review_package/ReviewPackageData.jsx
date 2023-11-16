@@ -121,7 +121,7 @@ const CmpDocuments = (props) => {
               <tr>
                 <td style={{ background: selectedId === index ? '#0071bc' : 'white',
                   color: selectedId === index ? 'white' : '#0071bc' }}
-                onClick={() => setCurrentDocument(index)}> {document?.document_type}
+                onClick={() => setCurrentDocument(index)}> {document?.document_title}
                 </td>
                 <td className="cf-txt-c">
                   <Button linkStyling >
