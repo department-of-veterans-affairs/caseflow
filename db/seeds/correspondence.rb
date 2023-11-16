@@ -56,7 +56,7 @@ module Seeds
         CorrespondenceDocument.create!(
           document_file_number: veteran.file_number,
           uuid: SecureRandom.uuid,
-          vbms_document_id: "1250",
+          vbms_document_type_id: "1250",
           correspondence: corres
         )
         @cmp_packet_number += 1
@@ -81,7 +81,7 @@ module Seeds
         CorrespondenceDocument.create!(
           document_file_number: veteran.file_number,
           uuid: SecureRandom.uuid,
-          vbms_document_id: "1250",
+          vbms_document_type_id: "1250",
           correspondence: corres
         )
         @cmp_packet_number += 1
@@ -106,7 +106,7 @@ module Seeds
         CorrespondenceDocument.create!(
           document_file_number: veteran.file_number,
           uuid: SecureRandom.uuid,
-          vbms_document_id: "1250",
+          vbms_document_type_id: "1250",
           correspondence: corres
         )
         @cmp_packet_number += 1
@@ -131,7 +131,7 @@ module Seeds
         CorrespondenceDocument.create!(
           document_file_number: veteran.file_number,
           uuid: SecureRandom.uuid,
-          vbms_document_id: "1250",
+          vbms_document_type_id: "1250",
           correspondence: corres
         )
         @cmp_packet_number += 1
