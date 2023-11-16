@@ -78,12 +78,16 @@ const textareaWidth = css({
 
 export const ReviewForm = (props) => {
   const handleFileNumber = (value) => {
-    const updatedReviewDetails = {
-      ...props.editableData,
-      veteran_file_number: value,
-    };
+    const isNumeric = value === '' || (/^[0-9]+$/).test(value);
 
-    props.setEditableData(updatedReviewDetails);
+    if (isNumeric) {
+      const updatedReviewDetails = {
+        ...props.editableData,
+        veteran_file_number: value,
+      };
+
+      props.setEditableData(updatedReviewDetails);
+    }
   };
 
   const handleChangeNotes = (value) => {

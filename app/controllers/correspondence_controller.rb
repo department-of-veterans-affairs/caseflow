@@ -38,11 +38,9 @@ class CorrespondenceController < ApplicationController
   end
 
   def update
-    if valid_file_number?(params[:veteran][:file_number]) &&
-       veteran_by_correspondence.update(veteran_params) &&
-       @correspondence.update(
-         correspondence_params.merge(updated_by_id: RequestStore.store[:current_user].id)
-       )
+    if veteran_by_correspondence.update(veteran_params) && @correspondence.update(
+      correspondence_params.merge(updated_by_id: RequestStore.store[:current_user].id)
+    )
       render json: { status: :ok }
     else
       render json: { error: "Failed to update records" }, status: :unprocessable_entity
@@ -64,10 +62,6 @@ class CorrespondenceController < ApplicationController
       correspondence_type_id: @correspondence.correspondence_type_id,
       correspondence_types: CorrespondenceType.all
     }
-  end
-
-  def valid_file_number?(file_number)
-    file_number =~ /^[0-9]{8,9}$/
   end
 
   def correspondence_params
