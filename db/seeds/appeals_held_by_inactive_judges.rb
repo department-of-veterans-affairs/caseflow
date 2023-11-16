@@ -149,24 +149,15 @@ module Seeds
         # Use a hearings user so the factories don't try to create one (and sometimes fail)
         active_judge = User.find_by_css_id("BVAAABSHIRE")
 
-        nonadmin_user = create(:user)
-        admin_and_nonadmin_user = create(:user)
-
-        judge_team_org = create(
-          :judge_team
+        nonadmin_user = create(
+          :user,
+          :with_judge_team
         )
-
-        inactive_judge_team_org = create(
-          :judge_team,
-          status: "inactive"
+        admin_and_nonadmin_user = create(
+          :user,
+          :with_judge_team,
+          :with_inactive_judge_team
         )
-
-        # nonadmin on single judge team
-        judge_team_org.add_user(nonadmin_user)
-
-        # nonadmin on single judge team and admin on inactive judge team
-        inactive_judge_team_org.add_user(admin_and_nonadmin_user)
-        judge_team_org.add_user(admin_and_nonadmin_user)
       
         offsets.each do |offset|
           create_ama_appeals_dispatch_ready_less_than_60_days(active_judge)
