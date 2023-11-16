@@ -25,8 +25,8 @@ class VaDotGovAddressValidator
     # Address was in the Philippines, and assigned to RO58.
     philippines_exception: :defaulted_to_philippines_RO58,
 
-    # Foreign addresses need to be handled by an admin.
-    created_foreign_veteran_admin_action: :created_foreign_veteran_admin_action,
+    # Address was foreign (not Philippines), and assigned to RO11.
+    foreign_veteran_exception: :defaulted_to_pittsburgh_RO11,
 
     # An admin needs to manually handle addresses that can't be verified.
     created_verify_address_admin_action: :created_verify_address_admin_action
@@ -59,7 +59,7 @@ class VaDotGovAddressValidator
   end
 
   def state_code
-    map_country_code_to_state
+    map_state_code_to_state_with_ro
   end
 
   def closest_regional_office
@@ -69,8 +69,6 @@ class VaDotGovAddressValidator
       # as a valid RO for any veteran living in Texas.
       return "RO62" if closest_regional_office_facility_id_is_san_antonio?
       return "RO49" if closest_regional_office_facility_id_is_el_paso?
-      return "RO58" if appellant_lives_in_phillipines?
-      return "RO11" if !appellant_lives_in_usa?
 
       RegionalOffice
         .cities

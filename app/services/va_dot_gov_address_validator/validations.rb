@@ -4,19 +4,16 @@ module VaDotGovAddressValidator::Validations
   private
 
   # :nocov:
-  def map_country_code_to_state
-    case valid_address[:country_code]
+  def map_state_code_to_state_with_ro
+    case valid_address[:state_code]
     # Guam, American Samoa, Marshall Islands, Micronesia, Northern Mariana Islands, Palau
-    when "GQ", "AQ", "RM", "FM", "CQ", "PS"
+    when "GU", "AS", "MH", "FM", "MP", "PW"
       "HI"
-    # Philippine Islands
-    when "PH", "RP", "PI"
-      "PI"
-    # Puerto Rico, Vieques, U.S. Virgin Islands
-    when "VI", "VQ", "PR"
+    # U.S. Virgin Islands
+    when "VI"
       "PR"
-    when "US", "USA"
-      valid_address.dig(:state_code)
+    else
+      valid_address[:state_code]
     end
   end
   # :nocov:
@@ -81,15 +78,5 @@ module VaDotGovAddressValidator::Validations
 
   def veteran_lives_in_texas?
     state_code == "TX"
-  end
-
-  def appellant_lives_in_usa?
-    return true if address.country.nil?
-
-    %w[USA US].include? address.country unless address.country.nil?
-  end
-
-  def appellant_lives_in_phillipines?
-    %w[PH RP PI].include? address.country
   end
 end
