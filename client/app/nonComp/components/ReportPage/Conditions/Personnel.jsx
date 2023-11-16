@@ -5,12 +5,13 @@ import { useSelector } from 'react-redux';
 import { object, array } from 'yup';
 import { get } from 'lodash';
 
+import { MISSING_PERSONNEL } from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 
 export const personnelSchema = object({
   personnel: array().of(object()).
-    min(1, 'Please select at least one team member').
-    typeError('Please select at least one team member')
+    min(1, MISSING_PERSONNEL).
+    typeError(MISSING_PERSONNEL)
 });
 
 export const Personnel = ({ control, field, name }) => {
