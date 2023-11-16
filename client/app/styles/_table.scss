@@ -32,6 +32,10 @@
   th {
     width: 100%;
     font-weight: bold;
+
+    &:first-child {
+      padding-left: 1.5%;
+    }
   }
   tr, th, td {
     position: relative;
@@ -44,10 +48,6 @@
       left: 1%;
       border-bottom: 1px solid $color-gray-lighter;
     }
-  }
-
-  th:first-child {
-    padding-left: 1.5%;
   }
 
   td:first-child {
