@@ -5,7 +5,8 @@ export const initialState = {
   correspondences: [],
   radioValue: '2',
   toggledCheckboxes: [],
-  relatedTaskAppeals: []
+  relatedTaskAppeals: [],
+  unrelatedTasks: []
 };
 
 export const intakeCorrespondenceReducer = (state = initialState, action = {}) => {
@@ -57,6 +58,13 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     return update(state, {
       relatedTaskAppeals: {
         $set: [...action.payload.appeals]
+      }
+    });
+
+  case ACTIONS.SET_UNRELATED_TASKS:
+    return update(state, {
+      unrelatedTasks: {
+        $set: [...action.payload.tasks]
       }
     });
 

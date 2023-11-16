@@ -26,7 +26,8 @@ export const updateRadioValue = (value) =>
       type: ACTIONS.UPDATE_RADIO_VALUE,
       payload: value
     });
-};
+  };
+
 export const saveCheckboxState = (id, isChecked) =>
   (dispatch) => {
     dispatch({
@@ -50,6 +51,16 @@ export const setRelatedTaskAppeals = (appeals) =>
       type: ACTIONS.SET_RELATED_TASK_APPEALS,
       payload: {
         appeals
+      }
+    });
+  };
+
+export const setUnrelatedTasks = (tasks) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_UNRELATED_TASKS,
+      payload: {
+        tasks
       }
     });
   };
