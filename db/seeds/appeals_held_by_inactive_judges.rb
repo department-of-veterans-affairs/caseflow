@@ -151,21 +151,31 @@ module Seeds
         active_judge = User.find_by_css_id("BVAAABSHIRE")
         inactive_judge = User.find_by_css_id("BVADSLADER")
 
+        nonadmin_user = create(:user)
+        admin_and_nonadmin_user = create(:user)
+
         judge_team_org = create(
           :judge_team
         )
 
-        # nonadmin on single judge team
-        nonadmin = create(
-          :organizations_user,
-          organization: judge_team_org
+        inactive_judge_team_org = create(
+          :judge_team,
+          status: "inactive"
         )
+
+        # nonadmin on single judge team
+        judge_team_org.add_user(nonadmin_user)
+
+        # nonadmin on single judge team and admin on inactive judge team
+        inactive_judge_team_org.add_user(admin_and_nonadmin_user)
+        judge_team_org.add_user(admin_and_nonadmin_user)
       
         offsets.each do |offset|
           create_ama_appeals_dispatch_ready_less_than_60_days(active_judge)
           create_ama_appeals_dispatch_ready_more_than_60_days(active_judge)
-          create_ama_appeals_dispatch_ready_less_than_60_days_with_inactive_judge(inactive_judge)
-          create_ama_appeals_dispatch_ready_less_than_60_days_with_nonadmin(nonadmin)
+          create_ama_appeals_dispatch_ready_less_than_60_days(inactive_judge)
+          create_ama_appeals_dispatch_ready_less_than_60_days(nonadmin_user)
+          create_ama_appeals_dispatch_ready_less_than_60_days(admin_and_nonadmin_user)
         end
       end
   
@@ -208,7 +218,7 @@ module Seeds
         )
       end
 
-      # AC2: ready to distribute for less than 60 days
+      # AC2,4,5,6: ready to distribute for less than 60 days
       def create_ama_appeals_dispatch_ready_less_than_60_days(judge)
         Timecop.travel(1.days.ago)
           appeal = create(:appeal,
@@ -223,30 +233,6 @@ module Seeds
       # AC3: ready to distribute for more than 60 days
       def create_ama_appeals_dispatch_ready_more_than_60_days(judge)
         Timecop.travel(61.days.ago)
-          appeal = create(:appeal,
-                          :with_post_intake_tasks,
-                          :held_hearing_and_ready_to_distribute,
-                          :hearing_docket,
-                          tied_judge: judge,
-                          veteran: create_veteran)
-        Timecop.return
-      end
-
-      # AC4: ready to distribute for less than 60 days with inactive judge
-      def create_ama_appeals_dispatch_ready_less_than_60_days_with_inactive_judge(judge)
-        Timecop.travel(1.days.ago)
-          appeal = create(:appeal,
-                          :with_post_intake_tasks,
-                          :held_hearing_and_ready_to_distribute,
-                          :hearing_docket,
-                          tied_judge: judge,
-                          veteran: create_veteran)
-        Timecop.return
-      end
-
-      # AC5: ready to distribute for less than 60 days with nonadmin on single judge team
-      def create_ama_appeals_dispatch_ready_less_than_60_days_with_nonadmin(judge)
-        Timecop.travel(1.days.ago)
           appeal = create(:appeal,
                           :with_post_intake_tasks,
                           :held_hearing_and_ready_to_distribute,
