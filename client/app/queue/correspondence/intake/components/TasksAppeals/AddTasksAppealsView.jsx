@@ -17,7 +17,6 @@ const mailTasksRight = [
 ];
 
 export const AddTasksAppealsView = (props) => {
-  const [, ] = useState([]);
 
   const clickAddTask = () => {
     props.setAddTasksVisible(true);
@@ -143,7 +142,7 @@ export const AddTasksAppealsView = (props) => {
               { props.unrelatedTasks && props.unrelatedTasks.map((currentTask, i) => (
                 <TaskNotRelatedToAppeal
                   key={currentTask.Object}
-                  taskId={currentTask.Object}
+                  taskId={currentTask.Ob}
                   removeTask={() => removeTaskAtIndex(i)}
                   handleChangeTaskType={(newType, newText) => handleChangeTaskTypeandText(newType, newText, i)}
                   taskType={currentTask.SelectedTaskType}

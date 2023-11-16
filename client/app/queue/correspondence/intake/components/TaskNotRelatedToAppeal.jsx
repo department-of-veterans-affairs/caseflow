@@ -3,8 +3,6 @@ import TextareaField from '../../../../components/TextareaField';
 import ReactSelectDropdown from '../../../../components/ReactSelectDropdown';
 import PropTypes from 'prop-types';
 import Button from '../../../../components/Button';
-import Modal from '../../../../components/Modal';
-import Checkbox from '../../../../components/Checkbox';
 import CheckboxModal from './CheckboxModal';
 
 const TaskNotRelatedToAppeal = (props) => {
@@ -22,25 +20,25 @@ const TaskNotRelatedToAppeal = (props) => {
   ];
 
   const debugData = ['Address updated in VACOLS',
-  'Decision sent to Senator or Congressman mm/dd/yy',
-  'Interest noted in telephone call of mm/dd/yy',
-  'Interest noted in evidence file regarding current appeal',
-  'Email - responded via email on mm/dd/yy',
-  'Email - written response req; confirmed receipt via email to Congress office on mm/dd/yy',
-  'Possible motion pursuant to BVA decision dated mm/dd/yy',
-  'Motion pursuant to BVA decision dated mm/dd/yy',
-  'Statement in support of appeal by appellant',
-  'Statement in support of appeal by rep',
-  'Medical evidence X-Rays submitted or referred by',
-  'Medical evidence clinical reports submitted or referred by',
-  'Medical evidence examination reports submitted or referred by',
-  'Medical evidence progress notes submitted or referred by',
-  "Medical evidence physician's medical statement submitted or referred by",
-  'C&P exam report',
-  'Consent form (specify)',
-  'Withdrawal of issues',
-  'Response to BVA solicitation letter dated mm/dd/yy',
-  'VAF 9 (specify)'];
+    'Decision sent to Senator or Congressman mm/dd/yy',
+    'Interest noted in telephone call of mm/dd/yy',
+    'Interest noted in evidence file regarding current appeal',
+    'Email - responded via email on mm/dd/yy',
+    'Email - written response req; confirmed receipt via email to Congress office on mm/dd/yy',
+    'Possible motion pursuant to BVA decision dated mm/dd/yy',
+    'Motion pursuant to BVA decision dated mm/dd/yy',
+    'Statement in support of appeal by appellant',
+    'Statement in support of appeal by rep',
+    'Medical evidence X-Rays submitted or referred by',
+    'Medical evidence clinical reports submitted or referred by',
+    'Medical evidence examination reports submitted or referred by',
+    'Medical evidence progress notes submitted or referred by',
+    "Medical evidence physician's medical statement submitted or referred by",
+    'C&P exam report',
+    'Consent form (specify)',
+    'Withdrawal of issues',
+    'Response to BVA solicitation letter dated mm/dd/yy',
+    'VAF 9 (specify)'];
 
   const [instructionText, setInstructionText] = useState('');
   const [index] = useState(-1);
@@ -55,33 +53,27 @@ const TaskNotRelatedToAppeal = (props) => {
     setModalVisible(!modalVisible);
   };
 
-  const debugBuddy = (autoTextValues) => {
-     let autoTextOutput = '';
-    if(autoTextValues.length > 0) {
-      autoTextValues.forEach(id => {
-        console.log("Added " + id)
-        autoTextOutput += debugData[id] + "\n"
+  const handleAddAutoText = (autoTextValues) => {
+    let autoTextOutput = '';
+
+    if (autoTextValues.length > 0) {
+      autoTextValues.forEach((id) => {
+        autoTextOutput += `${debugData[id] }\n`;
       });
     }
     handleChangeInstructionText(autoTextOutput);
     handleModalToggle();
 
-  }
-
-
-
-
-
+  };
 
   return (
     <div key={props.key} style={{ display: 'block', marginRight: '2rem' }}>
 
       {modalVisible && <CheckboxModal
-        data={debugData}
+        checkboxData={debugData}
         toggleModal={handleModalToggle}
         closeHandler={handleModalToggle}
         addHandler={null}
-        debug={debugBuddy}
       />}
 
       <div className="gray-border"

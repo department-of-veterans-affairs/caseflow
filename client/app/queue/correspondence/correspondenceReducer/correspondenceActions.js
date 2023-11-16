@@ -26,7 +26,7 @@ export const updateRadioValue = (value) =>
       type: ACTIONS.UPDATE_RADIO_VALUE,
       payload: value
     });
-};
+  };
 export const saveCheckboxState = (id, isChecked) =>
   (dispatch) => {
     dispatch({

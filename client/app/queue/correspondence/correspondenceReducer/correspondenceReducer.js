@@ -55,8 +55,6 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     });
 
   case ACTIONS.SET_UNRELATED_TASKS:
-    console.log('The action.payload is: ' + action.payload.tasks);
-
     return update(state, {
       unrelatedTasks: {
         $set: [...action.payload.tasks]
