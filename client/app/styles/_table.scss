@@ -29,6 +29,7 @@
   table {
     width: 100%;
   }
+
   th {
     width: 100%;
     font-weight: bold;
@@ -37,10 +38,14 @@
       padding-left: 1.5%;
     }
   }
-  tr, th, td {
+
+  tr,
+  th,
+  td {
     position: relative;
     border: none;
-    &:after {
+
+    &::after {
       content: '';
       position: absolute;
       bottom: 0;
