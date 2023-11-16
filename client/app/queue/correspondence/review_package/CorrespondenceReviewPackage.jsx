@@ -37,8 +37,6 @@ export const CorrespondenceReviewPackage = (props) => {
       <AppSegment filledBackground>
         <ReviewPackageCaseTitle />
         <ReviewPackageCmpInfo {...props} />
-        <p> Documento 1 <OpenModalLink documentName = "030" /> </p>
-        <p> Documento 2 <OpenModalLink documentName = "0779" /> </p>
         <p> Documento 3 <OpenModalLink documentName = "VA 24-0296 Direct Deposit Enrollment" /> </p>
       </AppSegment>
       <div className="cf-app-segment">
