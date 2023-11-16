@@ -21,17 +21,18 @@ const formattedIssueTypeCodes = Object.entries(ISSUE_TYPES).map((issueType) => {
 
 export const IssueType = ({ control, field, name }) => {
   const { errors } = useFormContext();
+  const nameIssueTypeCodes = `${name}.options.issueTypeCodes`;
 
   return (
     <div className="issue-type-container">
       <Controller
         control={control}
-        name={`${name}.options.issueTypeCodes`}
+        name={nameIssueTypeCodes}
         defaultValue={field.options.issueTypeCodes ?? []}
         render={({ onChange, ref, ...rest }) => (
           <SearchableDropdown
             {...rest}
-            errorMessage={get(errors, `${name}.options.issueTypeCodes`)?.message}
+            errorMessage={get(errors, nameIssueTypeCodes)?.message}
             inputRef={ref}
             label="Issue Type"
             multi
