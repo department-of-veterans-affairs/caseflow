@@ -100,7 +100,7 @@ const CmpDocuments = (props) => {
 
   const [selectedId, setSelectedId] = useState(0);
 
-  const paginationText = `Viewing 1-${totalCount} out of ${totalCount} total`;
+  const paginationText = `Viewing 1-${totalCount} out of ${totalCount} total documents`;
 
   const setCurrentDocument = (index) => {
     setSelectedId(index);
