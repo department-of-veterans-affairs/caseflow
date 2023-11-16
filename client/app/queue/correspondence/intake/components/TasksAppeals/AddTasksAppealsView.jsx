@@ -71,9 +71,9 @@ export const AddTasksAppealsView = (props) => {
 
             const appealArr = [];
 
-            for (const appeal in appealsForStore.appeals) {
-              if (Object.hasOwn(appealsForStore.appeals, appeal)) {
-                appealArr.push(appealsForStore.appeals[appeal]);
+            for (const appealUuid in appealsForStore.appeals) {
+              if (Object.hasOwn(appealsForStore.appeals, appealUuid)) {
+                appealArr.push(appealsForStore.appeals[appealUuid]);
               }
             }
 
@@ -83,14 +83,6 @@ export const AddTasksAppealsView = (props) => {
       }
       );
   }, [relatedToExistingAppeal]);
-
-  const selections = existingAppealAnswer.map(({ displayText, value }) => {
-    return ({
-      displayText,
-      current: (value === existingAppealRadio)
-    });
-  },
-  );
 
   return (
     <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
@@ -131,7 +123,7 @@ export const AddTasksAppealsView = (props) => {
           name=""
           value= {existingAppealRadio}
           options={existingAppealAnswer}
-          onChange={existingAppealRadio === '2' ? selectYes : selectNo }
+          onChange={existingAppealRadio === '2' ? selectYes : selectNo}
         />
         {existingAppealRadio === '1' && loading &&
           <LoadingContainer color={LOGO_COLORS.QUEUE.ACCENT}>
@@ -141,12 +133,7 @@ export const AddTasksAppealsView = (props) => {
         }
         {existingAppealRadio === '1' && !loading &&
           <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
-            <CaseListTable
-              appeals={appeals}
-              showCheckboxes
-              paginate
-              linkOpensInNewTab
-            />
+            <CaseListTable appeals={appeals} showCheckboxes />
           </div>
         }
       </div>
