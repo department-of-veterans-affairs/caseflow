@@ -4,6 +4,9 @@ import Button from '../../../../components/Button';
 import PropTypes from 'prop-types';
 import AddCorrespondenceView from './AddCorrespondence/AddCorrespondenceView';
 import { AddTasksAppealsView } from './TasksAppeals/AddTasksAppealsView';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { setUnrelatedTasks } from '../../correspondenceReducer/correspondenceActions';
 
 const progressBarSections = [
   {
@@ -23,6 +26,7 @@ const progressBarSections = [
 export const CorrespondenceIntake = (props) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isContinueEnabled, setContinueEnabled] = useState(true);
+  const [addTasksVisible, setAddTasksVisible] = useState(false);
 
   const handleContinueStatusChange = (isEnabled) => {
     setContinueEnabled(isEnabled);
@@ -38,9 +42,14 @@ export const CorrespondenceIntake = (props) => {
     }
   };
 
+  const handleContinueAfterBack = () => {
+    setContinueEnabled(true);
+  };
+
   const prevStep = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
+      handleContinueAfterBack();
     }
   };
 
@@ -63,7 +72,14 @@ export const CorrespondenceIntake = (props) => {
       />
     }
     {currentStep === 2 &&
-      <AddTasksAppealsView correspondenceUuid={props.correspondence_uuid} />
+      <AddTasksAppealsView
+        addTasksVisible={addTasksVisible}
+        setAddTasksVisible={setAddTasksVisible}
+        disableContinue={handleContinueStatusChange}
+        unrelatedTasks={props.unrelatedTasks}
+        setUnrelatedTasks={props.setUnrelatedTasks}
+        correspondenceUuid={props.correspondence_uuid}
+      />
     }
     <div>
       <a href="/queue/correspondence">
@@ -102,7 +118,23 @@ export const CorrespondenceIntake = (props) => {
 };
 
 CorrespondenceIntake.propTypes = {
-  correspondence_uuid: PropTypes.string
+  correspondence_uuid: PropTypes.string,
+  unrelatedTasks: PropTypes.arrayOf(Object),
+  setUnrelatedTasks: PropTypes.func
 };
 
-export default CorrespondenceIntake;
+const mapStateToProps = (state) => ({
+  correspondences: state.intakeCorrespondence.correspondences,
+  unrelatedTasks: state.intakeCorrespondence.unrelatedTasks
+});
+
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    setUnrelatedTasks
+  }, dispatch)
+);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CorrespondenceIntake);

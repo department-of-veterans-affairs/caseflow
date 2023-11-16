@@ -60,3 +60,13 @@ export const clearAppealCheckboxState = () =>
       type: ACTIONS.CLEAR_APPEAL_CHECKBOX_STATE,
     });
   };
+
+export const setUnrelatedTasks = (tasks) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_UNRELATED_TASKS,
+      payload: {
+        tasks
+      }
+    });
+  };
