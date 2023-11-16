@@ -5,6 +5,10 @@ require "./app/jobs/batch_processes/batch_process_rescue_job.rb"
 describe BatchProcessRescueJob, type: :job do
   include ActiveJob::TestHelper
 
+  before(:all) do
+    system("bundle exec rails r -e test db/scripts/external/create_vbms_ext_claim_table.rb")
+  end
+
   before do
     Timecop.freeze(Time.utc(2022, 1, 1, 12, 0, 0))
     allow(SlackService).to receive(:new).with(url: anything).and_return(slack_service)
