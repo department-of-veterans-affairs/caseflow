@@ -2,7 +2,7 @@
 
 class ExternalApi::VADotGovService::AddressValidationResponse < ExternalApi::VADotGovService::Response
   def error
-    message_error || response_error
+    message_error || response_error || foreign_address_error
   end
 
   def data
@@ -17,6 +17,19 @@ class ExternalApi::VADotGovService::AddressValidationResponse < ExternalApi::VAD
   # the response contains valid geographic coordiantes sufficient to complete geomatching
   def message_error
     messages&.find { |message| message.error.present? && coordinates_invalid? }&.error
+  end
+
+  def foreign_address_error
+    if coordinates_invalid? && address_type == "International"
+      Caseflow::Error::VaDotGovForeignVeteranError.new(
+        code: 500,
+        message: "Appellant address is not in US territories."
+      )
+    end
+  end
+
+  def address_type
+    body[:addressMetaData][:addressType]
   end
 
   def messages
