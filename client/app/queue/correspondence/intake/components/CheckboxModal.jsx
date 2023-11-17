@@ -49,7 +49,7 @@ const CheckboxModal = (props) => {
           name: 'Add',
           onClick: () => props.handleAccept(toggledCheckBoxes),
           disabled: toggledCheckBoxes.length === 0,
-        }
+        },
       ]}>
       <div style={{
         display: 'flex',

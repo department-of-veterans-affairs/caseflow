@@ -85,11 +85,6 @@ const TaskNotRelatedToAppeal = (props) => {
     handleModalToggle();
   };
 
-  const handleClearAutotext = () => {
-    updateTaskContent('');
-    handleModalToggle();
-  }
-
   return (
     <div key={task.id} style={{ display: 'block', marginRight: '2rem' }}>
       {modalVisible && <CheckboxModal
@@ -97,7 +92,6 @@ const TaskNotRelatedToAppeal = (props) => {
         toggleModal={handleModalToggle}
         closeHandler={handleModalToggle}
         handleAccept={handleAutotext}
-        handleClear={handleClearAutotext}
       />}
       <div className="gray-border"
         style={
