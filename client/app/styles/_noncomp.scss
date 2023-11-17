@@ -216,6 +216,10 @@ $validation-error-color: #cd2026;
         .cf-select__value-container--is-multi.cf-select__value-container--has-value {
           padding: 12px 8px 0;
         }
+
+        .usa-input-error .cf-select {
+          max-width: 466px;
+        }
       }
     }
 
