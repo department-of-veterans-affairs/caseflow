@@ -7,7 +7,7 @@ import COPY from 'app/../COPY';
 import Button from 'app/components/Button';
 
 const cmpDocumentStyling = css({
-  marginTop: '5%'
+  marginTop: '2%'
 });
 
 const correspondenceStyling = css({
