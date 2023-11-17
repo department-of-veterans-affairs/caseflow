@@ -20,6 +20,6 @@ FactoryBot.define do
     uuid { SecureRandom.uuid }
     document_type { 1250 }
     pages { 30 }
-    vbms_document_id { "1250" }
+    vbms_document_type_id { 1250 }
   end
 end
