@@ -18,6 +18,14 @@ const clearingDivStyling = css({
   clear: 'both'
 });
 
+// This should probably use existing css styles instead of this
+// Probably cf-app-segment but it's not setup to work that way
+const grayBorder = css({
+  border: `1px solid ${COLORS.GREY_LIGHT}`,
+  background: COLORS.WHITE,
+  padding: '40px'
+});
+
 const generateFakeData = () => {
   const eventTypes = [
     'Added Decision Date',
@@ -89,16 +97,23 @@ const ClaimHistoryGenerator = (props) => {
 
   return <>
     <Link to={`/${businessLineUrl}/tasks/${task.id}`}> &lt; Back to Decision Review </Link>
-    <h1>{task.claimant.name}</h1>
-    <div {...clearingDivStyling} />
-    <QueueTable
-      columns={changeHistoryColumns}
-      rowObjects={events}
-      // rowObjects={fakeJsonData}
-      getKeyForRow={(_rowNumber, event) => event.id}
-      defaultSort={{ sortColIdx: 0 }}
-      enablePagination
-    />
+    {/* <div {...grayBorder} className="cf-app-segment"> */}
+    <div>
+      <section className="cf-app-segment cf-app-segment--alt">
+        <div>
+          <h1>{task.claimant.name}</h1>
+          <div {...clearingDivStyling} />
+          <QueueTable
+            columns={changeHistoryColumns}
+            rowObjects={events}
+            // rowObjects={fakeJsonData}
+            getKeyForRow={(_rowNumber, event) => event.id}
+            defaultSort={{ sortColIdx: 0 }}
+            enablePagination
+          />
+        </div>
+      </section>
+    </div>
   </>;
 };
 

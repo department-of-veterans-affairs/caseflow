@@ -12,6 +12,7 @@ import { longFormNameFromKey } from '../util';
 import { completeTask, taskUpdateDefaultPage } from '../actions/task';
 import { ErrorAlert } from '../components/Alerts';
 import NonCompLayout from '../components/NonCompLayout';
+import Link from '../../components/Link';
 
 class TaskPageUnconnected extends React.PureComponent {
   handleSave = (data) => {
@@ -56,6 +57,10 @@ class TaskPageUnconnected extends React.PureComponent {
         {errorAlert}
         <h1>{businessLine}</h1>
         <button onClick={() => (window.location.href = `/decision_reviews/${this.props.businessLineUrl}/tasks/${task.id}/show-history`)}> View history </button>
+        <Link to={`/${this.props.businessLineUrl}/tasks/${task.id}/show-history`} button="primary" >
+          {/* <Link to="show-history" button="matte" > */}
+          View history
+        </Link>
         <div className="cf-review-details cf-gray-box">
           <div className="usa-grid-full">
             <div className="usa-width-one-half">
