@@ -234,8 +234,9 @@ module Seeds
           #   number_of_claimants: 1
           # )
           # create_hlr_with_no_decision_date('veteran_claimant', 'Other', false)
-          # create_withdrawn_hlr('veteran_claimant','Other')
-          create_hlr_with_updated_assigned_at('veteran_claimant','Other')
+          # create_hlr_completed('veteran_claimant','Other')
+          # create_hlr_with_updated_assigned_at('veteran_claimant','Other')
+          create_hlr_with_update_user('veteran_claimant','Other')
       #   end
       # end
     end
@@ -296,5 +297,50 @@ module Seeds
       task.save!
     end
 
+    def create_hlr_completed(*args)
+      claimant_type, issue_type = args
+      hlr = create(
+        :higher_level_review,
+        :with_specific_issue_type,
+        :processed,
+        add_decision_date: add_decision_date||=false,
+        decision_date: rand(1.year.ago..1.day.ago),
+
+        benefit_type: 'vha',
+        claimant_type: claimant_type.to_sym,
+        issue_type: issue_type,
+        number_of_claimants: 1
+      )
+      hlr.create_business_line_tasks!
+
+      task = Task.find_by(appeal: hlr)
+      # css_id = "CSS_ID#{generate :css_id}"
+      task.status = "completed"
+      task.completed_by = User.find_by(css_id: 'ACBAUERVVHAH')
+      task.save!
+    end
+
+    def create_hlr_with_update_user(*args)
+      claimant_type, issue_type = args
+      hlr = create(
+        :higher_level_review,
+        # :with_vha_issue,
+        # :with_update_users,
+        :with_disposition,
+        # add_decision_date: add_decision_date||=false,
+        # decision_date: rand(1.year.ago..1.day.ago),
+        # benefit_type: 'vha',
+        claimant_type: claimant_type.to_sym,
+        issue_type: issue_type,
+        # number_of_claimants: 1
+        benefit_type: 'vha'
+      )
+      hlr.create_business_line_tasks!
+      task = Task.find_by(appeal: hlr)
+      # css_id = "CSS_ID#{generate :css_id}"
+      task.status = "completed"
+      task.completed_by = User.find_by(css_id: 'ACBAUERVVHAH')
+      task.save!
+    end
   end
 end

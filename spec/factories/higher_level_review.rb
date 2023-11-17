@@ -163,8 +163,7 @@ FactoryBot.define do
                     benefit_type: hlr.benefit_type,
                     nonrating_issue_category: evaluator.issue_type,
                     nonrating_issue_description: "#{hlr.business_line.name} Seeded issue",
-                    decision_review: hlr
-                    )
+                    decision_review: hlr)
 
         if evaluator.veteran
           hlr.veteran_file_number = evaluator.veteran.file_number
@@ -197,6 +196,28 @@ FactoryBot.define do
       after(:create) do |hlr|
         hlr.submit_for_processing!
         hlr.create_business_line_tasks!
+      end
+    end
+
+    trait :with_update_users do
+      after(:create) do |hlr|
+        vha = VhaBusinessLine.singleton
+        create(:request_issues_update, user: vha.users.sample, review: hlr)
+      end
+    end
+
+    trait :with_disposition do
+      after(:create) do |hlr|
+        # %w[allowed remanded denied
+        #    vacated dismissed_death
+        #    dismissed_matter_of_law withdrawn
+        #    stayed].each do |disposition|
+        create(:decision_issue,
+               benefit_type: "vha",
+               decision_review: hlr,
+               disposition: "allowed",
+               caseflow_decision_date: Time.zone.now)
+        # end
       end
     end
   end
