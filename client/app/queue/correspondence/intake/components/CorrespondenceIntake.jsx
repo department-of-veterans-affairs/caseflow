@@ -39,6 +39,7 @@ export const CorrespondenceIntake = (props) => {
   const nextStep = () => {
     if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
+      window.scrollTo(0, 0);
     }
   };
 
@@ -50,6 +51,7 @@ export const CorrespondenceIntake = (props) => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
       handleContinueAfterBack();
+      window.scrollTo(0, 0);
     }
   };
 

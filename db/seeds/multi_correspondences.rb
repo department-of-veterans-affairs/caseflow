@@ -18,6 +18,9 @@ module Seeds
       veteran = create(
                   :veteran,
                   params)
+      32.times do
+        create(:appeal, veteran_file_number: veteran.file_number)
+      end
       20.times do
         create_default_correspondence(veteran)
       end
@@ -30,6 +33,9 @@ module Seeds
       veteran = create(
                   :veteran,
                   params)
+      13.times do
+        create(:appeal, veteran_file_number: veteran.file_number)
+      end
       30.times do
         create_default_correspondence(veteran)
       end
@@ -42,6 +48,9 @@ module Seeds
       veteran = create(
                   :veteran,
                   params)
+      7.times do
+        create(:appeal, veteran_file_number: veteran.file_number)
+      end
       100.times do
         create_default_correspondence(veteran)
       end

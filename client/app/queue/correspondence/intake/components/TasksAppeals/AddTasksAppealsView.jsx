@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
 import Checkbox from '../../../../../components/Checkbox';
 import Button from '../../../../../components/Button';
 import TaskNotRelatedToAppeal from '../TaskNotRelatedToAppeal';
@@ -9,6 +10,10 @@ import ApiUtil from '../../../../../util/ApiUtil';
 import { prepareAppealForStore } from '../../../../utils';
 import LoadingContainer from '../../../../../components/LoadingContainer';
 import { LOGO_COLORS } from '../../../../../constants/AppConstants';
+import {
+  setFetchedAppeals,
+  clearAppealCheckboxState
+} from 'app/queue/correspondence/correspondenceReducer/correspondenceActions';
 
 const mailTasksLeft = [
   'Change of address',
@@ -30,10 +35,12 @@ const existingAppealAnswer = [
 ];
 
 export const AddTasksAppealsView = (props) => {
-  const [appeals, setAppeals] = useState([]);
+  const selectedAppeals = useSelector((state) => state.intakeCorrespondence.selectedAppeals);
+  const appeals = useSelector((state) => state.intakeCorrespondence.fetchedAppeals);
   const [loading, setLoading] = useState(false);
   const [relatedToExistingAppeal, setRelatedToExistingAppeal] = useState(false);
-  const [existingAppealRadio, setExistingAppealRadio] = useState('2');
+  const [existingAppealRadio, setExistingAppealRadio] = useState(selectedAppeals.length > 0 ? '1' : '2');
+  const dispatch = useDispatch();
 
   const selectYes = () => {
     if (existingAppealRadio === '2') {
@@ -46,6 +53,7 @@ export const AddTasksAppealsView = (props) => {
     if (existingAppealRadio === '1') {
       setExistingAppealRadio('2');
       setRelatedToExistingAppeal(false);
+      dispatch(clearAppealCheckboxState());
     }
   };
 
@@ -131,13 +139,13 @@ export const AddTasksAppealsView = (props) => {
 
             const appealArr = [];
 
-            for (const appealGuid in appealsForStore.appeals) {
-              if (Object.hasOwn(appealsForStore.appeals, appealGuid)) {
-                appealArr.push(appealsForStore.appeals[appealGuid]);
+            for (const appealUuid in appealsForStore.appeals) {
+              if (Object.hasOwn(appealsForStore.appeals, appealUuid)) {
+                appealArr.push(appealsForStore.appeals[appealUuid]);
               }
             }
 
-            setAppeals(appealArr);
+            dispatch(setFetchedAppeals(appealArr));
             setLoading(false);
           });
       }
@@ -234,8 +242,9 @@ export const AddTasksAppealsView = (props) => {
             </div>
           </div>
         </div>}
-
-        <br></br>
+        <br />
+        <br />
+        <br />
         <h2>Tasks related to an existing Appeal</h2>
         <p>Is this correspondence related to an existing appeal?</p>
         <RadioField
@@ -251,8 +260,33 @@ export const AddTasksAppealsView = (props) => {
           </LoadingContainer>
         }
         {existingAppealRadio === '1' && !loading &&
-          <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
-            <CaseListTable appeals={appeals} showCheckboxes />
+          <div className="gray-border"
+            style={{ padding: '0rem 0rem', display: 'flex', flexWrap: 'wrap', flexDirection: 'column' }}>
+            <div style={{ width: '100%', height: 'auto', backgroundColor: 'white', paddingBottom: '3rem' }}>
+              <div style={{ backgroundColor: '#f1f1f1', width: '100%', height: '50px', paddingTop: '1.5rem' }}>
+                <b style={{
+                  verticalAlign: 'center',
+                  paddingLeft: '2.5rem',
+                  paddingTop: '1.5rem',
+                  border: '0',
+                  paddingBottom: '1.5rem',
+                  paddingRigfht: '5.5rem'
+                }}>Existing Appeals</b>
+              </div>
+              <ul style={{ paddingLeft: '4.2rem' }}>
+                Please select prior appeal(s) to link to this correspondence
+              </ul>
+              <ul>
+                <div style={{ padding: '1rem' }}>
+                  <CaseListTable
+                    appeals={appeals}
+                    showCheckboxes
+                    paginate
+                    linkOpensInNewTab
+                  />
+                </div>
+              </ul>
+            </div>
           </div>
         }
       </div>
