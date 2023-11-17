@@ -27,13 +27,13 @@ export const correspondenceData = {
   veteran_id: 1928,
 };
 
-const packageDocumentTypeData = {
+export const packageDocumentTypeData = {
   id: 15,
   active: true,
   name: '10182',
 };
 
-const correspondenceDocumentsData = [
+export const correspondenceDocumentsData = [
   {
     correspondence_id: 1,
     document_file_number: veteranInfo.veteran.file_number,
