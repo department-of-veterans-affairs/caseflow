@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Checkbox from '../../../../../components/Checkbox';
 import Button from '../../../../../components/Button';
 import TaskNotRelatedToAppeal from '../TaskNotRelatedToAppeal';
@@ -32,10 +32,11 @@ const existingAppealAnswer = [
 ];
 
 export const AddTasksAppealsView = (props) => {
+  const selectedAppeals = useSelector((state) => state.intakeSelectedAppeals.selectedAppeals);
   const [appeals, setAppeals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [relatedToExistingAppeal, setRelatedToExistingAppeal] = useState(false);
-  const [existingAppealRadio, setExistingAppealRadio] = useState('2');
+  const [existingAppealRadio, setExistingAppealRadio] = useState(selectedAppeals.length > 0 ? '1' : '2');
   const dispatch = useDispatch();
 
   const selectYes = () => {
