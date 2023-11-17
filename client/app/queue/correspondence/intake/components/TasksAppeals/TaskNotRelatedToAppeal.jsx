@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import TextareaField from '../../../../components/TextareaField';
-import ReactSelectDropdown from '../../../../components/ReactSelectDropdown';
+import TextareaField from '../../../../../components/TextareaField';
+import ReactSelectDropdown from '../../../../../components/ReactSelectDropdown';
 import PropTypes from 'prop-types';
-import Button from '../../../../components/Button';
+import Button from '../../../../../components/Button';
 
 const TaskNotRelatedToAppeal = (props) => {
 

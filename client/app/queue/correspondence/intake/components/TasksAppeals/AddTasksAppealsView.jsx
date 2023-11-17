@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import Checkbox from '../../../../../components/Checkbox';
-import RadioField from '../../../../../components/RadioField';
 import AddAppealRelatedTaskView from './AddAppealRelatedTaskView';
 
 const mailTasksLeft = [
@@ -17,43 +15,13 @@ const mailTasksRight = [
   'Associated with Claims Folder'
 ];
 
-const RELATED_NO = 0;
-const RELATED_YES = 1;
-
-const existingAppealAnswer = [
-  { displayText: 'Yes',
-    value: RELATED_YES },
-  { displayText: 'No',
-    value: RELATED_NO }
-];
-
 export const AddTasksAppealsView = (props) => {
-  const taskRelatedAppeals = useSelector((state) => state.intakeCorrespondence.relatedTaskAppeals);
-  const [relatedToExistingAppeal, setRelatedToExistingAppeal] = useState(false);
-  const [existingAppealRadio, setExistingAppealRadio] = useState(RELATED_NO);
-
-  const selectYes = () => {
-    if (existingAppealRadio === RELATED_NO) {
-      setExistingAppealRadio(RELATED_YES);
-      setRelatedToExistingAppeal(true);
-    }
-  };
-
-  const selectNo = () => {
-    if (existingAppealRadio === RELATED_YES) {
-      setExistingAppealRadio(RELATED_NO);
-      setRelatedToExistingAppeal(false);
-    }
-  };
+  const [relatedTasksCanContinue, setRelatedTasksCanContinue] = useState(true);
+  const [unrelatedTasksCanContinue, setUnrelatedTasksCanContinue] = useState(true);
 
   useEffect(() => {
-    // If user has selected appeals, enable continue
-    if (relatedToExistingAppeal) {
-      props.onContinueStatusChange(taskRelatedAppeals.length);
-    } else {
-      props.onContinueStatusChange(true);
-    }
-  }, [relatedToExistingAppeal, taskRelatedAppeals]);
+    props.onContinueStatusChange(relatedTasksCanContinue && unrelatedTasksCanContinue);
+  }, [relatedTasksCanContinue, unrelatedTasksCanContinue]);
 
   return (
     <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
@@ -101,17 +69,10 @@ export const AddTasksAppealsView = (props) => {
         <div style={{ marginTop: '5rem' }}>
           <h2>Tasks related to an existing Appeal</h2>
           <p>Is this correspondence related to an existing appeal?</p>
-          <RadioField
-            name=""
-            value= {existingAppealRadio}
-            options={existingAppealAnswer}
-            onChange={existingAppealRadio === RELATED_NO ? selectYes : selectNo}
+          <AddAppealRelatedTaskView
+            correspondenceUuid={props.correspondenceUuid}
+            setRelatedTasksCanContinue={setRelatedTasksCanContinue}
           />
-          {existingAppealRadio === RELATED_YES &&
-            <AddAppealRelatedTaskView
-              correspondenceUuid={props.correspondenceUuid}
-            />
-          }
         </div>
       </div>
     </div>
