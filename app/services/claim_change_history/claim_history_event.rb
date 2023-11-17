@@ -91,8 +91,9 @@ class ClaimHistoryEvent
         # Quite a bit faster but less safe. Should probably be fine since it's coming from the database
         # rubocop:disable Security/YAMLLoad
         versions[1..-2].split(",").map { |yaml| YAML.load(yaml.gsub(/^"|"$/, "")) }
-        # rubocop:enable Security/YAMLLoad
         # versions[1..-2].split(",").map { |yaml| YAML.safe_load(yaml.gsub(/^"|"$/, ""), [Time]) }
+        # rubocop:enable Security/YAMLLoad
+
       end
     end
 
@@ -229,8 +230,6 @@ class ClaimHistoryEvent
     def date_strings_within_seconds?(first_date, second_date, time_in_seconds)
       return false unless first_date && second_date
 
-      # ((first_date.to_datetime - second_date.to_datetime).abs * 24 * 60 * 60).to_f < time_in_seconds
-      # ((first_date.to_datetime - second_date.to_datetime).abs * 24 * 60 * 60).to_f < time_in_seconds
       date_difference = DateTime.iso8601(first_date.tr(" ", "T")) - DateTime.iso8601(second_date.tr(" ", "T"))
 
       (date_difference.abs * 24 * 60 * 60).to_f < time_in_seconds
@@ -345,11 +344,6 @@ class ClaimHistoryEvent
 
   def set_attributes_from_change_history_data(new_event_type, change_data)
     @event_type = new_event_type
-
-    # Pulled from the person model
-    # @claimant_name = FullName.new(change_data["first_name"], "", change_data["last_name"]).formatted(:readable_short)
-    # @claimant_name = [change_data["first_name"], change_data["last_name"]].join(" ").titleize
-    # @claimant_name = abbreviated_user_name(change_data)
     @claimant_name = [change_data["first_name"], " ", change_data["last_name"]].join
     @event_date = change_data["event_date"]
     parse_event_attributes(change_data)
@@ -410,8 +404,7 @@ class ClaimHistoryEvent
 
   def abbreviated_user_name(name_string)
     first_name, last_name = name_string.split(" ")
-    faster_name_abbreviation(first_name, last_name)
-    # FullName.new(first_name, "", last_name).formatted(:readable_fi_last_formatted)
+    name_abbreviation(first_name, last_name)
   end
 
   def issue_information
@@ -446,15 +439,13 @@ class ClaimHistoryEvent
 
   def format_date_string(date)
     if date.class == String
-      # Time.zone.parse(date).strftime("%-m/%-d/%Y")
-      # DateTime.iso8601(date).strftime("%-m/%-d/%Y")
       DateTime.iso8601(date.tr(" ", "T")).strftime("%-m/%-d/%Y")
     elsif date.present?
       date.strftime("%-m/%-d/%Y")
     end
   end
 
-  def faster_name_abbreviation(first_name, last_name)
+  def name_abbreviation(first_name, last_name)
     [first_name[0].capitalize, ". ", last_name].join
   end
 end
