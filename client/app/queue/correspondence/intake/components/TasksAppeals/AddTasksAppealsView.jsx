@@ -17,28 +17,31 @@ const mailTasksRight = [
   'Associated with Claims Folder'
 ];
 
+const RELATED_NO = 0;
+const RELATED_YES = 1;
+
 const existingAppealAnswer = [
   { displayText: 'Yes',
-    value: '1' },
+    value: RELATED_YES },
   { displayText: 'No',
-    value: '2' }
+    value: RELATED_NO }
 ];
 
 export const AddTasksAppealsView = (props) => {
   const taskRelatedAppeals = useSelector((state) => state.intakeCorrespondence.relatedTaskAppeals);
   const [relatedToExistingAppeal, setRelatedToExistingAppeal] = useState(false);
-  const [existingAppealRadio, setExistingAppealRadio] = useState('2');
+  const [existingAppealRadio, setExistingAppealRadio] = useState(RELATED_NO);
 
   const selectYes = () => {
-    if (existingAppealRadio === '2') {
-      setExistingAppealRadio('1');
+    if (existingAppealRadio === RELATED_NO) {
+      setExistingAppealRadio(RELATED_YES);
       setRelatedToExistingAppeal(true);
     }
   };
 
   const selectNo = () => {
-    if (existingAppealRadio === '1') {
-      setExistingAppealRadio('2');
+    if (existingAppealRadio === RELATED_YES) {
+      setExistingAppealRadio(RELATED_NO);
       setRelatedToExistingAppeal(false);
     }
   };
@@ -85,27 +88,31 @@ export const AddTasksAppealsView = (props) => {
           </div>
         </div>
 
-        <h2 style={{ margin: '3rem auto 1rem auto' }}>Tasks not related to an Appeal</h2>
-        <p style={{ marginTop: '0rem', marginBottom: '2rem' }}>
-          Add new tasks related to this correspondence or to an appeal not yet created in Caseflow.
-        </p>
         <div>
-          <p>Placeholder</p>
+          <h2 style={{ margin: '3rem auto 1rem auto' }}>Tasks not related to an Appeal</h2>
+          <p style={{ marginTop: '0rem', marginBottom: '2rem' }}>
+            Add new tasks related to this correspondence or to an appeal not yet created in Caseflow.
+          </p>
+          <div>
+            <p>Placeholder</p>
+          </div>
         </div>
 
-        <h2>Tasks related to an existing Appeal</h2>
-        <p>Is this correspondence related to an existing appeal?</p>
-        <RadioField
-          name=""
-          value= {existingAppealRadio}
-          options={existingAppealAnswer}
-          onChange={existingAppealRadio === '2' ? selectYes : selectNo}
-        />
-        {existingAppealRadio === '1' &&
-          <AddAppealRelatedTaskView
-            correspondenceUuid={props.correspondenceUuid}
+        <div style={{ marginTop: '5rem' }}>
+          <h2>Tasks related to an existing Appeal</h2>
+          <p>Is this correspondence related to an existing appeal?</p>
+          <RadioField
+            name=""
+            value= {existingAppealRadio}
+            options={existingAppealAnswer}
+            onChange={existingAppealRadio === RELATED_NO ? selectYes : selectNo}
           />
-        }
+          {existingAppealRadio === RELATED_YES &&
+            <AddAppealRelatedTaskView
+              correspondenceUuid={props.correspondenceUuid}
+            />
+          }
+        </div>
       </div>
     </div>
   );
