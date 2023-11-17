@@ -31,8 +31,20 @@ class CorrespondenceController < ApplicationController
     render json: { veteran_id: veteran_by_correspondence&.id, file_number: veteran_by_correspondence&.file_number }
   end
 
+  def package_documents
+    packages = PackageDocumentType.all
+    render json: { package_document_types: packages }
+  end
+
   def show
     render json: { correspondence: correspondence, package_document_type: correspondence&.package_document_type }
+  end
+
+  def update_cmp
+    @correspondence = Correspondence.find_by(uuid: params[:correspondence_uuid])
+    @correspondence.update(va_date_of_receipt: params["VADORDate"].in_time_zone,
+                           package_document_type_id: params["packageDocument"]["value"].to_i)
+    render json: { status: 200, correspondence: @correspondence }
   end
 
   private
@@ -82,5 +94,4 @@ class CorrespondenceController < ApplicationController
       packageDocumentType: correspondence.correspondence_type_id
     }
   end
-
 end

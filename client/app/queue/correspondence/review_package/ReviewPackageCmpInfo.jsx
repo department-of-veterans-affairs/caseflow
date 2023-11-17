@@ -6,6 +6,7 @@ import React from 'react';
 import COPY from 'app/../COPY';
 import ApiUtil from 'app/util/ApiUtil';
 import { TitleDetailsSubheader } from 'app/components/TitleDetailsSubheader';
+import EditModal from '../modals/editModal';
 
 const listItemStyling = css({
   display: 'inline-block',
@@ -78,7 +79,11 @@ const CmpInfoScaffolding = (props) => {
 
   return (
     <div>
-      <h2> {COPY.CORRESPONDENCE_REVIEW_CMP_INFO_TITLE} </h2>
+      <div style={{ display: 'inline-flex' }}>
+        <h2 style={{ marginRight: '20px' }}> {COPY.CORRESPONDENCE_REVIEW_CMP_INFO_TITLE}</h2>
+        <EditModal />
+      </div>
+
       <TitleDetailsSubheader id="caseTitleDetailsSubheader">
         <TitleDetailsSubheaderSection title="Portal Entry Date">
           {customDate}
