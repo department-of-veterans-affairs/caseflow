@@ -272,8 +272,7 @@ AddTasksAppealsView.propTypes = {
   setUnrelatedTasks: PropTypes.func,
   correspondenceUuid: PropTypes.string.isRequired,
   mailTasks: PropTypes.objectOf(PropTypes.bool),
-  saveMailTaskState: PropTypes.func,
-  clearMailTaskState: PropTypes.func
+  saveMailTaskState: PropTypes.func
 };
 
 export default AddTasksAppealsView;
