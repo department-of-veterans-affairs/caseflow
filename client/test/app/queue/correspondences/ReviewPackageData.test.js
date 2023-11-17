@@ -9,7 +9,7 @@ const renderReviewPackageData = () => {
 };
 
 describe('ReviewPackageData', () => {
-  it('renders ReviewPackageData component', async () => {
+  it('renders ReviewPackageData component', () => {
     renderReviewPackageData();
     expect(screen.getByText('Portal Entry Date')).toBeInTheDocument();
     expect(screen.getByText('Source Type')).toBeInTheDocument();

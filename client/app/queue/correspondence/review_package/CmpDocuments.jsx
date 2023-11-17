@@ -64,3 +64,5 @@ export const CmpDocuments = (props) => {
 CmpDocuments.propTypes = {
   documents: PropTypes.array,
 };
+
+export default CmpDocuments;
