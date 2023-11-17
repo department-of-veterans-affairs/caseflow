@@ -2,7 +2,7 @@ import React from 'react';
 import { axe } from 'jest-axe';
 
 import userEvent from '@testing-library/user-event';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import ReportPage from 'app/nonComp/pages/ReportPage';
 import selectEvent from 'react-select-event';
@@ -14,6 +14,11 @@ describe('ReportPage', () => {
     return render(
       <ReportPage />
     );
+  };
+
+  const clickOnReportType = async () => {
+    setup();
+    await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
   };
 
   it('passes a11y testing', async () => {
@@ -45,8 +50,9 @@ describe('ReportPage', () => {
   });
 
   describe('conditions section', () => {
+    beforeEach(clickOnReportType);
+
     it('adds a condition variable when you click add condition', async () => {
-      setup();
 
       const addConditionButton = screen.getByText('Add Condition');
 
@@ -57,8 +63,6 @@ describe('ReportPage', () => {
     });
 
     it('removes condition variables when clicking the remove condition link', async () => {
-      setup();
-
       const addConditionButton = screen.getByText('Add Condition');
 
       await userEvent.click(addConditionButton);
@@ -73,8 +77,6 @@ describe('ReportPage', () => {
     });
 
     it('only allows up to 5 variables before disabling the add condition button', async () => {
-      setup();
-
       const addConditionButton = screen.getByText('Add Condition');
 
       for (let count = 0; count < 5; count++) {
@@ -85,8 +87,6 @@ describe('ReportPage', () => {
     });
 
     it('disables the dropdown once an option is chosen', async () => {
-      setup();
-
       const addConditionButton = screen.getByText('Add Condition');
 
       await userEvent.click(addConditionButton);
@@ -101,8 +101,6 @@ describe('ReportPage', () => {
     });
 
     it('does not allow repeat variables', async () => {
-      setup();
-
       const addConditionButton = screen.getByText('Add Condition');
 
       for (let count = 0; count < 2; count++) {
@@ -122,8 +120,6 @@ describe('ReportPage', () => {
     });
 
     it('does not allow personnel and facility to be selected at the same time', async () => {
-      setup();
-
       const addConditionButton = screen.getByText('Add Condition');
 
       for (let count = 0; count < 2; count++) {
@@ -139,6 +135,41 @@ describe('ReportPage', () => {
 
       await selectEvent.openMenu(selects[1]);
       expect(screen.queryByText('Facility')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Decision Review Type Section', () => {
+    beforeEach(clickOnReportType);
+
+    const navigateToDecisionReviewType = async () => {
+      const addConditionButton = screen.getByText('Add Condition');
+
+      await userEvent.click(addConditionButton);
+      const select = screen.getByText('Select a variable');
+
+      await selectEvent.select(select, ['Decision Review Type']);
+    };
+
+    it('shows the correct checkbox fields', async () => {
+      setup();
+      await navigateToDecisionReviewType();
+
+      expect(screen.getByText('Higher-Level Reviews')).toBeInTheDocument();
+      expect(screen.getByText('Supplemental Claims')).toBeInTheDocument();
+    });
+
+    it('clicking the checkbox should toggle the checked status', async () => {
+      setup();
+      await navigateToDecisionReviewType();
+
+      const checkbox = screen.getByLabelText('Higher-Level Reviews');
+
+      await userEvent.click(checkbox);
+      expect(checkbox.checked).toEqual(true);
+
+      await userEvent.click(checkbox);
+      expect(checkbox.checked).toEqual(false);
+
     });
   });
 
@@ -193,8 +224,72 @@ describe('ReportPage', () => {
 
       REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS.map((option) => {
         expect(screen.getAllByText(option.label)).toBeTruthy();
-      })
+      });
+    });
+  });
+
+  describe('Timing Specification Section', () => {
+    beforeEach(clickOnReportType);
+
+    it('should have Timing Specifications as header', () => {
+      const h2 = screen.getByText(/Timing specifications/);
+
+      expect(h2).toBeInTheDocument();
+    });
+
+    it('should have a dropdown name Range', () => {
+      const dropdownName = screen.getByText(/Range/);
+
+      expect(dropdownName).toBeInTheDocument();
+    });
+
+    it('adds a datetime field with name Date when you select After Or Before option', async () => {
+      const dropdownName = screen.getByLabelText(/Range/);
+
+      await selectEvent.select(dropdownName, ['After']);
+
+      expect(screen.getAllByText('After').length).toBe(1);
+      expect(screen.queryByText('Date')).toBeInTheDocument();
+    });
+
+    it('adds a datetime field with name Date when you select Before option', async () => {
+      const dropdownName = screen.getByLabelText(/Range/);
+
+      await selectEvent.select(dropdownName, ['Before']);
+
+      expect(screen.getAllByText('Before').length).toBe(1);
+      expect(screen.queryByText('Date')).toBeInTheDocument();
+    });
+
+    it('adds two datetime field, From and To when you select Between option', async () => {
+      const dropdownName = screen.getByLabelText(/Range/);
+
+      await selectEvent.select(dropdownName, ['Between']);
+
+      expect(screen.getAllByText('Between').length).toBe(1);
+
+      expect(screen.getAllByText(/From/).length).toBe(1);
+      expect(screen.getAllByText(/To/).length).toBe(1);
+
+    });
+
+    it('should not display any date time input if options Last 7 days, Last 30 days, Last 365 days', async () => {
+      ['Last 30 Days', 'Last 7 Days', 'Last 365 Days'].forEach(async (option) => {
+
+        const dropdownName = screen.getByLabelText(/Range/);
+
+        await selectEvent.select(dropdownName, [option]);
+
+        await waitFor(() => {
+          expect(screen.getAllByText([option]).length).toBe(1);
+        });
+
+        await waitFor(() => {
+          expect(screen.queryByText('Date')).not.toBeInTheDocument();
+          expect(screen.queryByText('From')).not.toBeInTheDocument();
+          expect(screen.queryByText('To')).not.toBeInTheDocument();
+        });
+      });
     });
   });
 });
-

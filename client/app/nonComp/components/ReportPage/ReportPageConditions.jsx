@@ -3,11 +3,37 @@ import { useFormContext, useFieldArray } from 'react-hook-form';
 import { ConditionContainer } from './ConditionContainer';
 import Button from 'app/components/Button';
 
+import * as yup from 'yup';
+import { daysWaitingSchema } from './Conditions/DaysWaiting';
+import { decisionReviewTypeSchema } from './Conditions/DecisionReviewType';
+import * as ERRORS from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
+
+const conditionOptionSchemas = {
+  daysWaiting: daysWaitingSchema,
+  decisionReviewType: decisionReviewTypeSchema,
+  facility: yup.object(),
+  issueDisposition: yup.object(),
+  issueType: yup.object(),
+  personnel: yup.object()
+};
+
+export const conditionsSchema = yup.array().of(
+  yup.lazy((value) => {
+    return yup.object(
+      { condition: yup.string().typeError(ERRORS.MISSING_CONDITION).
+        oneOf(['daysWaiting', 'decisionReviewType', 'facility', 'issueDisposition', 'issueType', 'personnel']).
+        required(),
+      options: conditionOptionSchemas[value.condition]
+      });
+  })
+);
+
 export const ReportPageConditions = () => {
   const { control, watch } = useFormContext();
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'conditions',
+    defaultValues: [{ condition: '', options: {} }]
   });
 
   const watchFieldArray = watch('conditions');
@@ -20,14 +46,15 @@ export const ReportPageConditions = () => {
 
   return (
     <div>
-      <hr />
-      <h2>Conditions</h2>
+      <hr style={{ margin: '50px 0' }} />
+      {/* Update margin depending on the presence of controlledField elements */}
+      <h2 style={controlledFields.length ? { margin: '0' } : null}>Conditions</h2>
       {controlledFields.map((field, index) => {
-        return <ConditionContainer key={field.id} {... { control, index, remove }} />;
+        return <ConditionContainer key={field.id} {... { control, index, remove, field }} />;
       })}
       <Button
         disabled={watchFieldArray.length >= 5}
-        onClick={() => append({ condition: '' })}>
+        onClick={() => append({ condition: '', options: {} })}>
       Add Condition</Button>
     </div>
   );

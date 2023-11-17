@@ -89,8 +89,8 @@ class ClaimHistoryService
 
   def matches_filter(new_events)
     # Days Waiting, Task ID, Task Status, and Claim Type are all filtered entirely by the business line DB query
-    # The Issue types, dispositions, personnel, and facilities filters are partially filtered by DB query then further
-    # filtered below in this service class after the event has been created
+    # The events, Issue types, dispositions, personnel, and facilities filters are partially filtered by DB query
+    # and then further filtered below in this service class after the event has been created
 
     # Ensure that we always treat this as an array of events for processing
     filtered_events = new_events.is_a?(Array) ? new_events : [new_events]

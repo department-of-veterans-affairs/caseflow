@@ -1,3 +1,5 @@
+$validation-error-color: #cd2026;
+
 .cf-gray-box {
   background-color: $color-gray-lightest;
   border: 1px solid $color-gray-lighter;
@@ -156,16 +158,76 @@
   .report-page-variable-condition {
     width: 100%;
     display: flex;
+    align-items: center;
+
+    .report-page-middle-content {
+      align-self: center;
+      text-align: center;
+      width: 20%;
+    }
 
     .report-page-variable-select {
-      width: 50%;
+      width: 40%;
+      margin-right: 1%;
     }
 
     .report-page-variable-content {
       display: flex;
-      justify-content: right;
       align-items: center;
-      width: 50%;
+      justify-content: flex-end;
+      width: 40%;
+
+      .decisionReviewCheckboxContainer {
+        display: flex;
+        text-wrap: nowrap;
+
+        // Do some media query magic to make the checkboxes look nice for different screen sizes
+        @media screen and (max-width: 1439px) {
+          align-self: flex-end;
+          flex-wrap: wrap;
+          gap: 8px;
+
+        }
+
+        @media screen and (min-width: 1440px) {
+          gap: 16px;
+        }
+
+        // Override Checkbox component margin
+        label {
+          margin: 0;
+        }
+      }
+
+      .decisionReviewTypeContainer {
+        display: flex;
+        gap: 8px;
+        flex-direction: column;
+        padding: 16px;
+      }
+
+      .decisionReviewTypeContainerError {
+        border-left: solid $validation-error-color 4px;
+      }
+    }
+
+    .report-page-variable-content-wider {
+      align-items: center;
+      display: flex;
+      justify-content: flex-end;
+      width: 60%;
+
+      .days-waiting {
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        grid-gap: 5%;
+
+        .usa-input-error {
+          position: sticky;
+        }
+      }
     }
   }
 

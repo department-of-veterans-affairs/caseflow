@@ -298,11 +298,12 @@ class BusinessLine < Organization
         case operator
         when ">", "<", "="
           <<-SQL
-            AND (CURRENT_TIMESTAMP::date - tasks.assigned_at::date) #{operator} '#{number_of_days.to_i}'
+            AND (CURRENT_TIMESTAMP::date - tasks.assigned_at::date)::integer #{operator} '#{number_of_days.to_i}'
           SQL
         when "between"
           end_days = query_params[:days_waiting][:end_days]
           <<-SQL
+            AND (CURRENT_TIMESTAMP::date - tasks.assigned_at::date)::integer BETWEEN '#{number_of_days.to_i}' AND '#{end_days.to_i}'
             AND (CURRENT_TIMESTAMP::date - tasks.assigned_at::date)::integer BETWEEN '#{number_of_days.to_i}' AND '#{end_days.to_i}'
           SQL
         end
