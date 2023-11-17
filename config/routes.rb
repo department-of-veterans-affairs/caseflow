@@ -90,7 +90,12 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :histogram, only: :create
     end
+    namespace :v2 do
+      resources :logs, only: :create
+    end
+    get 'dashboard' => 'dashboard#show'
   end
+
 
   namespace :dispatch do
     get "/", to: redirect("/dispatch/establish-claim")
@@ -295,6 +300,7 @@ Rails.application.routes.draw do
     get '/correspondence/:correspondence_uuid/review_package', to: 'correspondence#review_package'
     put '/correspondence/:correspondence_uuid/update_cmp', to: 'correspondence#update_cmp'
     get '/correspondence/packages', to: 'correspondence#package_documents'
+    get '/correspondence/:correspondence_uuid/veteran', to: 'correspondence#veteran'
     get '/correspondence/:id', to: 'correspondence#show'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:appealId/notifications', to: 'queue#index'
