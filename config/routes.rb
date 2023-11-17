@@ -302,6 +302,7 @@ Rails.application.routes.draw do
     get '/correspondence/packages', to: 'correspondence#package_documents'
     get '/correspondence/:correspondence_uuid/veteran', to: 'correspondence#veteran'
     get '/correspondence/:id', to: 'correspondence#show'
+    patch '/correspondence/:id', to: 'correspondence#update'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:appealId/notifications', to: 'queue#index'
     get '/appeals/:appeal_id/cavc_dashboard', to: 'cavc_dashboard#index'
