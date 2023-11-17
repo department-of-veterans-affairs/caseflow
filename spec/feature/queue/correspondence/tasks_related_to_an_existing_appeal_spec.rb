@@ -22,13 +22,6 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
 
   context "Yes - related existing Appeals" do
     describe "the continue button" do
-      xit "continue button is inactive if no checkboxes are checked" do
-        visit_intake_form_step_2_with_appeals
-
-        existing_appeal_radio_options[:yes].click
-
-        expect(page.has_button?("Continue")).to be(false)
-      end
 
       it "continue button is active if a checkbox is checked" do
         visit_intake_form_step_2_with_appeals
