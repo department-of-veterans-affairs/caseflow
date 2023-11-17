@@ -5,6 +5,8 @@
     userRole: (current_user.vacols_roles.first || "").capitalize,
     userCssId: current_user.css_id,
     organizations: current_user.selectable_organizations.map {|o| o.slice(:name, :url)},
+    caseSearchHomePage: case_search_home_page,
+    dropdownUrls: dropdown_urls,
     featureToggles: {
       correspondence_queue: FeatureToggle.enabled?(:correspondence_queue, user: current_user)
     }

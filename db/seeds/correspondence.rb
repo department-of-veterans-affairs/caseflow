@@ -81,10 +81,10 @@ module Seeds
         CorrespondenceDocument.find_or_create_by(
           document_file_number: veteran.file_number,
           uuid: SecureRandom.uuid,
-          correspondence_id: corres.id,
+          vbms_document_type_id: 1250,
           document_type: 1250,
           pages: 30,
-          vbms_document_id: "1"
+          correspondence_id: corres.id
         )
         @cmp_packet_number += 1
       end
@@ -108,10 +108,10 @@ module Seeds
         CorrespondenceDocument.find_or_create_by(
           document_file_number: veteran.file_number,
           uuid: SecureRandom.uuid,
-          correspondence_id: corres.id,
+          vbms_document_type_id: 1250,
           document_type: 1250,
           pages: 30,
-          vbms_document_id: "1"
+          correspondence_id: corres.id
         )
         @cmp_packet_number += 1
       end
@@ -135,10 +135,10 @@ module Seeds
         CorrespondenceDocument.find_or_create_by(
           document_file_number: veteran.file_number,
           uuid: SecureRandom.uuid,
-          correspondence_id: corres.id,
+          vbms_document_type_id: 1250,
           document_type: 1250,
           pages: 30,
-          vbms_document_id: "1"
+          correspondence_id: corres.id
         )
         @cmp_packet_number += 1
       end
@@ -151,7 +151,7 @@ module Seeds
         correspondence_id: corres.id,
         document_type: 1250,
         pages: 30,
-        vbms_document_id: "1"
+        vbms_document_type_id: 1250
       )
       CorrespondenceDocument.find_or_create_by(
         document_file_number: veteran.file_number,
@@ -159,7 +159,7 @@ module Seeds
         correspondence_id: corres.id,
         document_type: 719,
         pages: 20,
-        vbms_document_id: "1"
+        vbms_document_type_id: 719
       )
       CorrespondenceDocument.find_or_create_by(
         document_file_number: veteran.file_number,
@@ -167,7 +167,7 @@ module Seeds
         correspondence_id: corres.id,
         document_type: 672,
         pages: 10,
-        vbms_document_id: "1"
+        vbms_document_type_id: 672
       )
       CorrespondenceDocument.find_or_create_by(
         document_file_number: veteran.file_number,
@@ -175,7 +175,7 @@ module Seeds
         correspondence_id: corres.id,
         document_type: 18,
         pages: 5,
-        vbms_document_id: "1"
+        vbms_document_type_id: 18
       )
     end
     # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
