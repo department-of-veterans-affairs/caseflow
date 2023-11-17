@@ -45,7 +45,8 @@ class HearingRequestDistributionQuery
     if @use_by_docket_date
       return [
         with_held_hearings,
-        no_hearings_or_no_held_hearings
+        no_hearings_or_no_held_hearings,
+        tied_to_ineligible_judge
       ].flatten.uniq
     end
 
@@ -99,9 +100,14 @@ class HearingRequestDistributionQuery
     def tied_to_distribution_judge(judge)
       joins(with_assigned_distribution_task_sql)
         .where(hearings: { disposition: "held", judge_id: judge.id })
-        .where("distribution_task.assigned_at > ?", Constants::DISTRIBUTION["hearing_case_affinity_days"].days.ago)
         .or(where(hearings: { disposition: "held", judge_id: ineligible_judges_id_cache }
           .where("1 = ?", FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ? 1 : 0)))
+        .where("distribution_task.assigned_at > ?", Constants::DISTRIBUTION["hearing_case_affinity_days"].days.ago)
+    end
+
+    def tied_to_ineligible_judge
+      where(hearings: { disposition: "held", judge_id: ineligible_judges_id_cache }
+          .where("1 = ?", FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ? 1 : 0))
     end
 
     # If an appeal has exceeded the affinity, it should be returned to genpop.
