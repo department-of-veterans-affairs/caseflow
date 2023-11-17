@@ -260,13 +260,33 @@ export const AddTasksAppealsView = (props) => {
           </LoadingContainer>
         }
         {existingAppealRadio === '1' && !loading &&
-          <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
-            <CaseListTable
-              appeals={appeals}
-              showCheckboxes
-              paginate
-              linkOpensInNewTab
-            />
+          <div className="gray-border"
+            style={{ padding: '0rem 0rem', display: 'flex', flexWrap: 'wrap', flexDirection: 'column' }}>
+            <div style={{ width: '100%', height: 'auto', backgroundColor: 'white', paddingBottom: '3rem' }}>
+              <div style={{ backgroundColor: '#f1f1f1', width: '100%', height: '50px', paddingTop: '1.5rem' }}>
+                <b style={{
+                  verticalAlign: 'center',
+                  paddingLeft: '2.5rem',
+                  paddingTop: '1.5rem',
+                  border: '0',
+                  paddingBottom: '1.5rem',
+                  paddingRigfht: '5.5rem'
+                }}>Existing Appeals</b>
+              </div>
+              <ul style={{ paddingLeft: '4.2rem' }}>
+                Please select prior appeal(s) to link to this correspondence
+              </ul>
+              <ul>
+                <div style={{ padding: '1rem' }}>
+                  <CaseListTable
+                    appeals={appeals}
+                    showCheckboxes
+                    paginate
+                    linkOpensInNewTab
+                  />
+                </div>
+              </ul>
+            </div>
           </div>
         }
       </div>
