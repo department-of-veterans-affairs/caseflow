@@ -75,8 +75,7 @@ FactoryBot.define do
 
     trait :with_inactive_judge_team do
       after(:create) do |judge|
-        JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
-        JudgeTeam.inactivate!
+        (JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)).inactive!
       end
     end
 
