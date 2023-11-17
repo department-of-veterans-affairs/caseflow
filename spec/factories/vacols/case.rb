@@ -45,7 +45,7 @@ FactoryBot.define do
 
       after(:create) do |vacols_case, evaluator|
         if evaluator.user
-          existing_staff =  VACOLS::Staff.find_by_sdomainid(evaluator.user.sdomainid)
+          existing_staff = VACOLS::Staff.find_by_sdomainid(evaluator.user.css_id)
           staff = (existing_staff || create(:staff, user: evaluator.user))
           slogid = staff.slogid
           sattyid = staff.sattyid
@@ -66,7 +66,7 @@ FactoryBot.define do
         # If user=judge and dereceive=nil, then reassigned_to_judge_date=nil, resulting in a JudgeLegacyAssignTask.
         # If user=judge and dereceive!=nil, then this results in a JudgeLegacyDecisionReviewTask.
         # Otherwise AttorneyLegacyTask will result.
-        dereceive = if evaluator.user&.svlj&.include?("J")
+        dereceive = if evaluator.user&.vacols_roles&.include?("judge")
                       evaluator.as_judge_assign_task ? nil : Time.zone.today
                     end
 
