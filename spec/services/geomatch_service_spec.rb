@@ -78,8 +78,10 @@ describe GeomatchService do
       end
 
       let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
-      let(:non_us_address) { Address.new(country: "MX", country_name: "Mexico", city: "Mexico City") }
-      let(:philippines_address) { Address.new(country: "PI", country_name: "Philippines", city: "Manila") }
+
+      let(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
+      let(:valid_address_response) { ExternalApi::VADotGovService::AddressValidationResponse.new(mock_response) }
+      let(:response_body) { valid_address_response.body }
 
       it "geomatches for the travel board appeal" do
         subject
@@ -92,8 +94,10 @@ describe GeomatchService do
 
       context "foreign appeal" do
         before do
-          allow_any_instance_of(ExternalApi::VADotGovService::AddressValidationResponse)
-            .to receive(:address).and_return(non_us_address)
+          allow_any_instance_of(VaDotGovAddressValidator).to receive(:valid_address_response)
+            .and_return(valid_address_response)
+          allow(valid_address_response).to receive(:coordinates_invalid?).and_return(true)
+          allow(response_body).to receive(:dig).with(:addressMetaData, :addressType).and_return("International")
         end
 
         it "geomatches for a foreign appeal" do
@@ -108,9 +112,11 @@ describe GeomatchService do
 
       context "phillipines appeal" do
         before do
-          allow_any_instance_of(ExternalApi::VADotGovService::AddressValidationResponse)
-            .to receive(:address).and_return(philippines_address)
-          allow_any_instance_of(Address).to receive(:country).and_return(philippines_address.country_name)
+          allow_any_instance_of(VaDotGovAddressValidator).to receive(:valid_address_response)
+            .and_return(valid_address_response)
+          allow(valid_address_response).to receive(:coordinates_invalid?).and_return(true)
+          allow(response_body).to receive(:dig).with(:addressMetaData, :addressType).and_return("International")
+          allow_any_instance_of(Address).to receive(:country).and_return("Philippines")
         end
 
         it "geomatches for a phillipines appeal" do
