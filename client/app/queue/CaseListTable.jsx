@@ -9,6 +9,7 @@ import DocketTypeBadge from '../components/DocketTypeBadge';
 import Table from '../components/Table';
 import BadgeArea from 'app/components/badges/BadgeArea';
 import { clearCaseListSearch } from './CaseList/CaseListActions';
+import { Checkbox } from '../components/Checkbox';
 
 import { DateString } from '../util/DateUtil';
 import { statusLabel, labelForLocation, renderAppealType, mostRecentHeldHearingForAppeal } from './utils';
@@ -20,7 +21,26 @@ class CaseListTable extends React.PureComponent {
   getKeyForRow = (rowNumber, object) => object.id;
 
   getColumns = () => {
-    const columns = [
+    const columns = [];
+
+    if (this.props.showCheckboxes) {
+      columns.push(
+        {
+          header: '',
+          valueFunction: (appeal) => {
+            return (
+              <Checkbox
+                name={`appeal-${appeal.id}`}
+                defaultValue={false}
+                hideLabel
+              />
+            );
+          }
+        }
+      );
+    }
+
+    columns.push(
       {
         header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
         valueFunction: (appeal) => {
@@ -56,7 +76,7 @@ class CaseListTable extends React.PureComponent {
         header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
         valueFunction: (appeal) => labelForLocation(appeal, this.props.userCssId)
       }
-    ];
+    );
 
     const anyAppealsHaveFnod = Boolean(
       find(this.props.appeals, (appeal) => appeal.veteranAppellantDeceased)
@@ -105,10 +125,15 @@ class CaseListTable extends React.PureComponent {
 
 CaseListTable.propTypes = {
   appeals: PropTypes.arrayOf(PropTypes.object).isRequired,
+  showCheckboxes: PropTypes.bool,
   styling: PropTypes.object,
   clearCaseListSearch: PropTypes.func,
   userRole: PropTypes.string,
   userCssId: PropTypes.string
+};
+
+CaseListTable.defaultProps = {
+  showCheckboxes: false
 };
 
 const mapStateToProps = (state) => ({

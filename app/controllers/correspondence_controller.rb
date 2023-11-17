@@ -28,10 +28,14 @@ class CorrespondenceController < ApplicationController
     render "correspondence/review_package"
   end
 
+  def veteran
+    render json: { veteran_id: veteran_by_correspondence&.id, file_number: veteran_by_correspondence&.file_number }
+  end
+
   def show
     response_json = {
-      correspondence: @correspondence,
-      package_document_type: @correspondence.package_document_type,
+      correspondence: correspondence,
+      package_document_type: correspondence&.package_document_type,
       general_information: general_information
     }
     render({ json: response_json }, status: :ok)
@@ -78,14 +82,20 @@ class CorrespondenceController < ApplicationController
     end
   end
 
-  def correspondence_load
-    @correspondence ||= correspondence_by_uuid
-    vet = veteran_by_correspondence
-    @all_correspondence = Correspondence.where(veteran_id: vet.id).where.not(uuid: params[:correspondence_uuid])
+  def correspondence
+    return @correspondence if @correspondence.present?
+
+    if params[:id].present?
+      @correspondence = Correspondence.find(params[:id])
+    elsif params[:correspondence_uuid].present?
+      @correspondence = Correspondence.find_by(uuid: params[:correspondence_uuid])
+    end
+
+    @correspondence
   end
 
-  def correspondence_by_uuid
-    Correspondence.find_by(uuid: params[:correspondence_uuid])
+  def correspondence_load
+    Correspondence.where(veteran_id: veteran_by_correspondence.id).where.not(uuid: params[:correspondence_uuid])
   end
 
   def veteran_by_correspondence
