@@ -61,7 +61,12 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
         $set: [...action.payload.tasks]
       }
     });
-
+  case ACTIONS.SET_FETCHED_APPEALS:
+    return update(state, {
+      fetchedAppeals: {
+        $set: [...action.payload.appeals]
+      }
+    });
   case ACTIONS.SAVE_APPEAL_CHECKBOX_STATE:
     if (action.payload.isChecked) {
       return update(state, {

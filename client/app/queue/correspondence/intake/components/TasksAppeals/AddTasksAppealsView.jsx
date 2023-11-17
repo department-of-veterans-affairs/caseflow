@@ -10,7 +10,10 @@ import ApiUtil from '../../../../../util/ApiUtil';
 import { prepareAppealForStore } from '../../../../utils';
 import LoadingContainer from '../../../../../components/LoadingContainer';
 import { LOGO_COLORS } from '../../../../../constants/AppConstants';
-import { clearAppealCheckboxState } from 'app/queue/correspondence/correspondenceReducer/correspondenceActions';
+import {
+  setFetchedAppeals,
+  clearAppealCheckboxState
+} from 'app/queue/correspondence/correspondenceReducer/correspondenceActions';
 
 const mailTasksLeft = [
   'Change of address',
@@ -33,7 +36,7 @@ const existingAppealAnswer = [
 
 export const AddTasksAppealsView = (props) => {
   const selectedAppeals = useSelector((state) => state.intakeCorrespondence.selectedAppeals);
-  const [appeals, setAppeals] = useState([]);
+  const appeals = useSelector((state) => state.intakeCorrespondence.fetchedAppeals);
   const [loading, setLoading] = useState(false);
   const [relatedToExistingAppeal, setRelatedToExistingAppeal] = useState(false);
   const [existingAppealRadio, setExistingAppealRadio] = useState(selectedAppeals.length > 0 ? '1' : '2');
@@ -142,7 +145,7 @@ export const AddTasksAppealsView = (props) => {
               }
             }
 
-            setAppeals(appealArr);
+            dispatch(setFetchedAppeals(appealArr));
             setLoading(false);
           });
       }

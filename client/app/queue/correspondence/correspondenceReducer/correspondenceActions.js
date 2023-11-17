@@ -70,3 +70,13 @@ export const setUnrelatedTasks = (tasks) =>
       }
     });
   };
+
+export const setFetchedAppeals = (appeals) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_FETCHED_APPEALS,
+      payload: {
+        appeals
+      }
+    });
+  };
