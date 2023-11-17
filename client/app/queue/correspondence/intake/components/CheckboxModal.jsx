@@ -27,15 +27,16 @@ const CheckboxModal = (props) => {
 
   const checkboxSizeStyling = css({
     transform: 'scale(1.3)',
-    translate: '10%',
+    translate: '11%',
   });
 
-  const testTyle = {backgroundColor: 'red'}
+  // const testTyle = {backgroundColor: 'red'}
 
+  // console.log(props);
   return (
     <Modal
       title="Add autotext"
-      customStyles={{ style: { scrollbarWidth: 'none', width: '40%' } }}
+      customStyles={{ style: {width: '40%', minWidth: '500px' } }}
       closeHandler={props.closeHandler}
       buttons={[
         {
@@ -46,14 +47,14 @@ const CheckboxModal = (props) => {
         },
         {
           id: '#add-autotext-button',
-          classNames: ['usa-button', 'usa-button-primary'],
+          classNames: ['usa-button', 'usa-button-primary', 'cf-margin-left-2rem'],
           name: 'Add',
-          onClick: () => props.handleAdd(toggledCheckBoxes),
-          disabled: false
+          onClick: () => props.handleAccept(toggledCheckBoxes),
+          disabled: false,
         },
         {
           id: '#Delete-Comment-button',
-          classNames: ['usa-button', 'usa-button-secondary', 'usa-grid-full', testTyle],
+          classNames: ['usa-button', 'usa-button-secondary', 'usa-grid-full'],
           name: 'Clear all',
           onClick: () => handleClear(),
           disabled: false
@@ -65,7 +66,7 @@ const CheckboxModal = (props) => {
         overflowY: 'scroll',
         maxHeight: '500px',
         paddingLeft: '5%',
-        marginLeft: '2%',
+        marginLeft: '1%',
         paddingRight: '5%',
         width: '100%',
         overflowX: 'hidden' }}>
@@ -84,7 +85,7 @@ const CheckboxModal = (props) => {
 
 CheckboxModal.propTypes = {
   // the method which the modal executes when the ok button is pressed.
-  handleAdd: PropTypes.func,
+  handleAccept: PropTypes.func,
 
   // responsible for closing the modal. Occurs on both the close button and the X in the top right.
   closeHandler: PropTypes.func,

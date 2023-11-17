@@ -19,7 +19,7 @@ const TaskNotRelatedToAppeal = (props) => {
     { value: 8, label: 'Status inquiry' }
   ];
 
-  const debugData = ['Address updated in VACOLS',
+  const autotextOptions = ['Address updated in VACOLS',
     'Decision sent to Senator or Congressman mm/dd/yy',
     'Interest noted in telephone call of mm/dd/yy',
     'Interest noted in evidence file regarding current appeal',
@@ -53,27 +53,26 @@ const TaskNotRelatedToAppeal = (props) => {
     setModalVisible(!modalVisible);
   };
 
-  const handleAddAutoText = (autoTextValues) => {
+  const handleAutotext = (autoTextValues) => {
     let autoTextOutput = '';
 
     if (autoTextValues.length > 0) {
       autoTextValues.forEach((id) => {
-        autoTextOutput += `${debugData[id] }\n`;
+        autoTextOutput += `${autotextOptions[id] }\n`;
       });
     }
     handleChangeInstructionText(autoTextOutput);
     handleModalToggle();
-
   };
 
   return (
     <div key={props.key} style={{ display: 'block', marginRight: '2rem' }}>
 
       {modalVisible && <CheckboxModal
-        checkboxData={debugData}
+        checkboxData={autotextOptions}
         toggleModal={handleModalToggle}
         closeHandler={handleModalToggle}
-        addHandler={null}
+        handleAccept={handleAutotext}
       />}
 
       <div className="gray-border"
