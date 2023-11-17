@@ -182,6 +182,10 @@ $validation-error-color: #cd2026;
       align-items: center;
       justify-content: flex-end;
       width: 40%;
+
+      .issue-type-container {
+        width: 100%;
+      }
     }
 
     .report-page-variable-content-wider {
