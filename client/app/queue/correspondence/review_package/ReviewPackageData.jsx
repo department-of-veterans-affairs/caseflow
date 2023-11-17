@@ -2,11 +2,9 @@
 
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React from 'react';
 import COPY from 'app/../COPY';
-import ApiUtil from 'app/util/ApiUtil';
 import { TitleDetailsSubheader } from 'app/components/TitleDetailsSubheader';
-import Button from 'app/components/Button';
 import EditModal from '../modals/editModal';
 
 const listItemStyling = css({
@@ -30,19 +28,6 @@ const listItemStyling = css({
   '& > div': { minHeight: '22px' }
 });
 
-const cmpDocumentStyling = css({
-  marginTop: '5%'
-});
-
-const correspondenceStyling = css({
-  border: '1px solid #dee2e6'
-});
-
-const paginationStyle = css({
-  marginTop: '2%',
-  marginLeft: '1.5%'
-});
-
 export const TitleDetailsSubheaderSection = ({ title, children }) => (
   <div {...listItemStyling}>
     <p>{title}</p>
@@ -53,85 +38,16 @@ export const TitleDetailsSubheaderSection = ({ title, children }) => (
 );
 
 class ReviewPackageData extends React.PureComponent {
-  constructor (props) {
-    super(props);
-    this.state = {
-      correspondence: null,
-      package_document_type: null,
-      correspondence_documents: null,
-      totalDocuments: 0,
-      currentDocument: 0
-    };
-  }
-
-  componentDidMount () {
-    const correspondence = this.props;
-
-    ApiUtil.get(`/queue/correspondence/${correspondence.correspondenceId}`).then((response) => {
-      this.setState({
-        correspondence: response.body.correspondence,
-        package_document_type: response.body.package_document_type,
-        correspondence_documents: response.body.correspondence_documents,
-        totalDocuments: response.body.correspondence_documents.length,
-      });
-    });
-  }
-
   render = () => {
     return (
       <div>
         <CmpInfoScaffolding
-          correspondence={this.state?.correspondence}
-          packageDocumentType = {this.state?.package_document_type} />
-        <CmpDocuments
-          correspondence_documents = {this.state?.correspondence_documents}
-          totalCount = {this.state?.totalDocuments} />
+          correspondence={this.props.correspondence}
+          packageDocumentType = {this.props.packageDocumentType} />
       </div>
     );
   };
 }
-
-const CmpDocuments = (props) => {
-  const { correspondence_documents, totalCount } = props;
-
-  const [selectedId, setSelectedId] = useState(0);
-
-  const paginationText = `Viewing 1-${totalCount} out of ${totalCount} total documents`;
-
-  const setCurrentDocument = (index) => {
-    setSelectedId(index);
-  };
-
-  return (
-    <div {...cmpDocumentStyling} >
-      <h2> {COPY.DOCUMENT_PREVIEW} </h2>
-      <div {...correspondenceStyling}>
-        <div {...paginationStyle}> {paginationText} </div>
-        <table className="correspondence-document-table">
-          <tr>
-            <th > Document Type </th>
-            <th className="cf-txt-c"> Action </th>
-          </tr>
-          { correspondence_documents?.map((document, index) => {
-            return (
-              <tr>
-                <td style={{ background: selectedId === index ? '#0071bc' : 'white',
-                  color: selectedId === index ? 'white' : '#0071bc' }}
-                onClick={() => setCurrentDocument(index)}> {document?.document_title}
-                </td>
-                <td className="cf-txt-c">
-                  <Button linkStyling >
-                    <span>Edit</span>
-                  </Button>
-                </td>
-              </tr>
-            );
-          })}
-        </table>
-      </div>
-    </div>
-  );
-};
 
 const CmpInfoScaffolding = (props) => {
   const packageDocumentType = props.packageDocumentType;
@@ -182,18 +98,14 @@ CmpInfoScaffolding.propTypes = {
   correspondence: PropTypes.object
 };
 
-CmpDocuments.propTypes = {
-  correspondence_documents: PropTypes.array,
-  totalCount: PropTypes.number
-};
-
 TitleDetailsSubheaderSection.propTypes = {
   children: PropTypes.node,
   title: PropTypes.string.isRequired
 };
 
 ReviewPackageData.propTypes = {
-  correspondenceId: PropTypes.string
+  correspondence: PropTypes.object,
+  packageDocumentType: PropTypes.object
 };
 
 export default ReviewPackageData;
