@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ModuleLength
+
 module ByDocketDateDistribution
   extend ActiveSupport::Concern
   include CaseDistribution
@@ -49,6 +51,7 @@ module ByDocketDateDistribution
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def ama_statistics
     priority_counts = { count: priority_count }
     nonpriority_counts = { count: nonpriority_count }
@@ -85,6 +88,7 @@ module ByDocketDateDistribution
       settings: settings
     }
   end
+  # rubocop:enable Metrics/MethodLength
 
   def distributed_cases_tied_to_ineligible_judges
     @appeals.filter_map do |appeal|
@@ -134,3 +138,4 @@ module ByDocketDateDistribution
       .transform_values(&:count)
   end
 end
+# rubocop:enable Metrics/ModuleLength
