@@ -4,7 +4,8 @@ import { ACTIONS } from './correspondenceConstants';
 export const initialState = {
   correspondences: [],
   radioValue: '2',
-  toggledCheckboxes: []
+  toggledCheckboxes: [],
+  unrelatedTasks: []
 };
 
 export const intakeCorrespondenceReducer = (state = initialState, action = {}) => {
@@ -49,6 +50,13 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     return update(state, {
       toggledCheckboxes: {
         $set: []
+      }
+    });
+
+  case ACTIONS.SET_UNRELATED_TASKS:
+    return update(state, {
+      unrelatedTasks: {
+        $set: [...action.payload.tasks]
       }
     });
 
