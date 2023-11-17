@@ -3,10 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
-import { ICON_SIZES, COLORS } from 'app/constants/AppConstants'
-
-
-
+import { ICON_SIZES, COLORS } from 'app/constants/AppConstants';
 import { onReceiveAmaTasks } from './QueueActions';
 import COPY from '../../COPY';
 import { subHeadTextStyle } from './constants';
