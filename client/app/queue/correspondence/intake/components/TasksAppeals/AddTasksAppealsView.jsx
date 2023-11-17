@@ -32,7 +32,7 @@ const existingAppealAnswer = [
 ];
 
 export const AddTasksAppealsView = (props) => {
-  const selectedAppeals = useSelector((state) => state.intakeSelectedAppeals.selectedAppeals);
+  const selectedAppeals = useSelector((state) => state.intakeCorrespondence.selectedAppeals);
   const [appeals, setAppeals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [relatedToExistingAppeal, setRelatedToExistingAppeal] = useState(false);

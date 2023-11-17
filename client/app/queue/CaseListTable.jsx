@@ -190,7 +190,7 @@ CaseListTable.defaultProps = {
 const mapStateToProps = (state) => ({
   userCssId: state.ui.userCssId,
   userRole: state.ui.userRole,
-  selectedAppeals: state.intakeSelectedAppeals.selectedAppeals
+  selectedAppeals: state.intakeCorrespondence.selectedAppeals
 });
 
 const mapDispatchToProps = (dispatch) =>
