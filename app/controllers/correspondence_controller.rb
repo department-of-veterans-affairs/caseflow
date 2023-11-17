@@ -82,18 +82,6 @@ class CorrespondenceController < ApplicationController
     end
   end
 
-  def correspondence
-    return @correspondence if @correspondence.present?
-
-    if params[:id].present?
-      @correspondence = Correspondence.find(params[:id])
-    elsif params[:correspondence_uuid].present?
-      @correspondence = Correspondence.find_by(uuid: params[:correspondence_uuid])
-    end
-
-    @correspondence
-  end
-
   def correspondence_load
     Correspondence.where(veteran_id: veteran_by_correspondence.id).where.not(uuid: params[:correspondence_uuid])
   end
