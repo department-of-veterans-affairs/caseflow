@@ -160,6 +160,8 @@ export const AddTasksAppealsView = (props) => {
                   key={index}
                   name={name}
                   label={name}
+                  defaultValue={props.mailTasks[name] || false}
+                  onChange={(isChecked) => props.saveMailTaskState(name, isChecked)}
                 />
               );
             })}
@@ -171,6 +173,8 @@ export const AddTasksAppealsView = (props) => {
                   key={index}
                   name={name}
                   label={name}
+                  defaultValue={props.mailTasks[name] || false}
+                  onChange={(isChecked) => props.saveMailTaskState(name, isChecked)}
                 />
               );
             })}
@@ -266,7 +270,10 @@ AddTasksAppealsView.propTypes = {
   disableContinue: PropTypes.func,
   unrelatedTasks: PropTypes.arrayOf(Object),
   setUnrelatedTasks: PropTypes.func,
-  correspondenceUuid: PropTypes.string.isRequired
+  correspondenceUuid: PropTypes.string.isRequired,
+  mailTasks: PropTypes.objectOf(PropTypes.bool),
+  saveMailTaskState: PropTypes.func,
+  clearMailTaskState: PropTypes.func
 };
 
 export default AddTasksAppealsView;

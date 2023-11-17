@@ -53,3 +53,14 @@ export const setUnrelatedTasks = (tasks) =>
       }
     });
   };
+
+export const saveMailTaskState = (name, isChecked) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SAVE_MAIL_TASK_STATE,
+      payload: {
+        name,
+        isChecked
+      }
+    });
+  };
