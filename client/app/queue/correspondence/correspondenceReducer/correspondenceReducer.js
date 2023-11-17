@@ -9,6 +9,7 @@ export const initialState = {
 
 };
 
+
 export const intakeCorrespondenceReducer = (state = initialState, action = {}) => {
   switch (action.type) {
   case ACTIONS.LOAD_CORRESPONDENCES:

@@ -45,8 +45,7 @@ export const clearCheckboxState = () =>
   };
 
 export const setUnrelatedTasks = (tasks) =>
-  // console.log('The Tasks are: ' + tasks);
-  // binding.pry;
+
   (dispatch) => {
     dispatch({
       type: ACTIONS.SET_UNRELATED_TASKS,
