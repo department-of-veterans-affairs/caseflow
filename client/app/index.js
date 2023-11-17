@@ -54,7 +54,7 @@ import Inbox from 'app/inbox';
 import Explain from 'app/explain';
 import MPISearch from 'app/mpi/MPISearch';
 import Admin from 'app/admin';
-import CaseflowDistributionContent from 'app/caseflowDistribution'
+import CaseflowDistribution from 'app/caseflowDistribution';
 
 const COMPONENTS = {
   // New Version 2.0 Root Component
@@ -89,7 +89,7 @@ const COMPONENTS = {
   Explain,
   MPISearch,
   Admin,
-  CaseflowDistributionContent
+  CaseflowDistribution
 };
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
