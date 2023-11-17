@@ -35,25 +35,27 @@ const CheckboxModal = (props) => {
   // console.log(props);
   return (
     <Modal
+      id="autotextModal"
       title="Add autotext"
       customStyles={{ style: {width: '40%', minWidth: '500px' } }}
       closeHandler={props.closeHandler}
       buttons={[
         {
+          id: 'cancel-button',
           classNames: ['cf-modal-link', 'cf-btn-link'],
           name: 'Cancel',
           onClick: props.closeHandler,
           disabled: false,
         },
         {
-          id: '#add-autotext-button',
+          id: 'add-autotext-button',
           classNames: ['usa-button', 'usa-button-primary', 'cf-margin-left-2rem'],
           name: 'Add',
           onClick: () => props.handleAccept(toggledCheckBoxes),
           disabled: false,
         },
         {
-          id: '#Delete-Comment-button',
+          id: 'clear-checkboxes-button',
           classNames: ['usa-button', 'usa-button-secondary', 'usa-grid-full'],
           name: 'Clear all',
           onClick: () => handleClear(),

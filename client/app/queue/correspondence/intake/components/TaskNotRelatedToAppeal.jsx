@@ -103,6 +103,7 @@ const TaskNotRelatedToAppeal = (props) => {
           />
           <Button
             name="Add"
+            id="addAutotext"
             styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
             classNames={['cf-btn-link', 'cf-left-side']}
             onClick={handleModalToggle}

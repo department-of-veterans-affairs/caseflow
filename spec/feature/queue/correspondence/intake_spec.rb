@@ -123,4 +123,63 @@ RSpec.feature("The Correspondence Intake page") do
       expect(page).to_not have_text("New Tasks")
     end
   end
+
+  context "The user is able to use the autotext feature" do
+    before :each do
+      FeatureToggle.enable!(:correspondence_queue)
+      User.authenticate!(roles: ["Mail Intake"])
+      @correspondence_uuid = "12345"
+      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+      click_on("button-continue")
+      click_on("+ Add tasks")
+    end
+
+    it "The user can open the autotext modal" do
+      find_by_id("addAutotext").click
+      # using clear all button because it's unique to the modal.
+      expect(page).to have_text("Clear all")
+    end
+
+    it "The user can close the modal with the cancel button." do
+      find_by_id("addAutotext").click
+      expect(page).to have_text("Clear all")
+      find_by_id("Add-autotext-button-id-0").click
+      expect(page).to_not have_text("Clear all")
+    end
+
+    it "The user can close the modal with the x button located in the top right." do
+      find_by_id("addAutotext").click
+      expect(page).to have_text("Clear all")
+      find_by_id("Add-autotext-button-id-close").click
+      expect(page).to_not have_text("Clear all")
+    end
+
+    it "The user is able to add autotext" do
+      fill_in "Task Information", with: "debug data for autofill"
+      expect(find_by_id("Task Information").text).to eq "debug data for autofill"
+      find_by_id("addAutotext").click
+      first_checkbox_text = ""
+      within find_by_id("autotextModal") do
+        first_checkbox = all(class: "cf-form-checkbox").first
+        first_checkbox_text = first_checkbox.text
+        first_checkbox.click
+        find_by_id("Add-autotext-button-id-1").click
+      end
+      expect(find_by_id("Task Information").text).to eq first_checkbox_text
+    end
+
+    it "Persists data if the user hits the back button, then returns" do
+      find_by_id("addAutotext").click
+      first_checkbox_text = ""
+      within find_by_id("autotextModal") do
+        first_checkbox = all(class: "cf-form-checkbox").first
+        first_checkbox_text = first_checkbox.text
+        first_checkbox.click
+        find_by_id("Add-autotext-button-id-1").click
+      end
+      click_on("button-back-button")
+      click_on("button-continue")
+      expect(find_by_id("Task Information").text).to eq first_checkbox_text
+    end
+  end
 end
