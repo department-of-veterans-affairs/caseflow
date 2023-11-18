@@ -6,6 +6,13 @@ import Button from '../../../components/Button';
 import ReviewForm from './ReviewForm';
 import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import {
+  setCorrespondence,
+  setCorrespondenceDocuments,
+  setPackageDocumentType
+} from '../correspondenceReducer/reviewPackageActions';
 
 export const CorrespondenceReviewPackage = (props) => {
   const [reviewDetails, setReviewDetails] = useState({
@@ -25,11 +32,15 @@ export const CorrespondenceReviewPackage = (props) => {
 
     try {
       const response = await ApiUtil.get(
-        `/queue/correspondence/${correspondence.correspondenceId}`
+        `/queue/correspondence/${correspondence.correspondence_uuid}`
       );
 
       setApiResponse(response.body.general_information);
       const data = response.body.general_information;
+
+      props.setCorrespondence(response.body.correspondence);
+      props.setPackageDocumentType(response.body.package_document_type);
+      // setCorrespondenceDocuments(response.body.correspondenceDocuments);
 
       setReviewDetails({
         veteran_name: data.veteran_name || {},
@@ -66,7 +77,7 @@ export const CorrespondenceReviewPackage = (props) => {
     }
   }, [editableData, apiResponse]);
 
-  const intakeLink = `/queue/correspondence/${props.correspondenceId}/intake`;
+  const intakeLink = `/queue/correspondence/${props.correspondence_uuid}/intake`;
 
   return (
     <React.Fragment>
@@ -117,7 +128,24 @@ export const CorrespondenceReviewPackage = (props) => {
 };
 
 CorrespondenceReviewPackage.propTypes = {
-  correspondenceId: PropTypes.string
+  correspondence_uuid: PropTypes.string
 };
 
-export default CorrespondenceReviewPackage;
+const mapStateToProps = (state) => ({
+  correspondence: state.reviewPackage.correspondence,
+  correspondenceDocuments: state.reviewPackage.correspondenceDocuments,
+  packageDocumentType: state.reviewPackage.packageDocumentType
+});
+
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    setCorrespondence,
+    setCorrespondenceDocuments,
+    setPackageDocumentType
+  }, dispatch)
+);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CorrespondenceReviewPackage);

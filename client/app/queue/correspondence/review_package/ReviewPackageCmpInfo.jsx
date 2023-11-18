@@ -7,6 +7,8 @@ import COPY from 'app/../COPY';
 import ApiUtil from 'app/util/ApiUtil';
 import { TitleDetailsSubheader } from 'app/components/TitleDetailsSubheader';
 import EditModal from '../modals/editModal';
+import { useSelector } from 'react-redux';
+import moment from 'moment';
 
 const listItemStyling = css({
   display: 'inline-block',
@@ -50,7 +52,7 @@ class ReviewPackageCmpInfo extends React.PureComponent {
   componentDidMount () {
     const correspondence = this.props;
 
-    ApiUtil.get(`/queue/correspondence/${correspondence.correspondenceId}`).then((response) => {
+    ApiUtil.get(`/queue/correspondence/${correspondence.correspondence_uuid}`).then((response) => {
       this.setState({
         correspondence: response.body.correspondence,
         package_document_type: response.body.package_document_type
@@ -69,13 +71,16 @@ class ReviewPackageCmpInfo extends React.PureComponent {
   };
 }
 
-const CmpInfoScaffolding = (props) => {
-  const packageDocumentType = props.packageDocumentType;
-  const correspondence = props.correspondence;
-  const date = new Date(correspondence?.portal_entry_date);
-  const customDate = date && `${date.getMonth().toString().
-    padStart(2, '0')}/${date.getDate().toString().
-      padStart(2, '0')}/${date.getFullYear()}`;
+const CmpInfoScaffolding = () => {
+  const correspondence = useSelector(
+    (state) => state.reviewPackage.correspondence
+  );
+  const packageDocumentType = useSelector(
+    (state) => state.reviewPackage.packageDocumentType
+  );
+
+  const formattedVaDateOfReceipt = moment.utc(correspondence?.va_date_of_receipt).format('MM/DD/YYYY');
+  const formattedPortalEntryDate = moment.utc(correspondence?.portal_entry_date).format('MM/DD/YYYY');
 
   return (
     <div>
@@ -86,7 +91,7 @@ const CmpInfoScaffolding = (props) => {
 
       <TitleDetailsSubheader id="caseTitleDetailsSubheader">
         <TitleDetailsSubheaderSection title="Portal Entry Date">
-          {customDate}
+          {formattedPortalEntryDate}
         </TitleDetailsSubheaderSection>
         <TitleDetailsSubheaderSection title="Source Type">
           {correspondence?.source_type}
@@ -101,7 +106,7 @@ const CmpInfoScaffolding = (props) => {
           {correspondence?.cmp_packet_number}
         </TitleDetailsSubheaderSection>
         <TitleDetailsSubheaderSection title="VA DOR">
-          {customDate}
+          {formattedVaDateOfReceipt}
         </TitleDetailsSubheaderSection>
       </TitleDetailsSubheader>
     </div>
@@ -119,7 +124,7 @@ TitleDetailsSubheaderSection.propTypes = {
 };
 
 ReviewPackageCmpInfo.propTypes = {
-  correspondenceId: PropTypes.string
+  correspondence_uuid: PropTypes.string
 };
 
 export default ReviewPackageCmpInfo;

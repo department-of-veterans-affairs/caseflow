@@ -7,6 +7,9 @@ import { validateDateNotInFuture } from '../../../intake/util/issues';
 import Button from '../../../components/Button';
 import ApiUtil from '../../../util/ApiUtil';
 import _ from 'lodash';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { updateCmpInformation } from '../correspondenceReducer/reviewPackageActions';
 
 class EditModal extends React.Component {
 
@@ -49,7 +52,9 @@ class EditModal extends React.Component {
 
     await ApiUtil.put(`/queue/correspondence/${correspondenceId}/update_cmp`, { data: { packageDocument, VADORDate } }).
       then((response) => {
+        console.log(packageDocument);
         if (response.status === 200) {
+          this.props.updateCmpInformation(packageDocument, VADORDate);
           props.onClickCancel();
         }
       });
@@ -165,4 +170,13 @@ EditModal.propTypes = {
   onCancel: PropTypes.func,
 };
 
-export default EditModal;
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    updateCmpInformation
+  }, dispatch)
+);
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(EditModal);

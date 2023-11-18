@@ -5,7 +5,7 @@ export const initialState = {
   correspondences: [],
   radioValue: '2',
   toggledCheckboxes: [],
-  unrelatedTasks: []
+  unrelatedTasks: [],
 };
 
 export const intakeCorrespondenceReducer = (state = initialState, action = {}) => {
