@@ -2,6 +2,7 @@
 
 class CorrespondenceController < ApplicationController
   before_action :verify_feature_toggle
+  before_action :correspondence, only: [:show, :update]
 
   def intake
     respond_to do |format|
@@ -32,10 +33,48 @@ class CorrespondenceController < ApplicationController
   end
 
   def show
-    render json: { correspondence: correspondence, package_document_type: correspondence&.package_document_type }
+    response_json = {
+      correspondence: correspondence,
+      package_document_type: correspondence&.package_document_type,
+      general_information: general_information
+    }
+    render({ json: response_json }, status: :ok)
+  end
+
+  def update
+    if veteran_by_correspondence.update(veteran_params) && @correspondence.update(
+      correspondence_params.merge(updated_by_id: RequestStore.store[:current_user].id)
+    )
+      render json: { status: :ok }
+    else
+      render json: { error: "Failed to update records" }, status: :unprocessable_entity
+    end
   end
 
   private
+
+  def correspondence
+    @correspondence ||= Correspondence.find_by(uuid: params[:id])
+  end
+
+  def general_information
+    vet = veteran_by_correspondence
+    {
+      notes: @correspondence.notes,
+      file_number: vet.file_number,
+      veteran_name: vet.name,
+      correspondence_type_id: @correspondence.correspondence_type_id,
+      correspondence_types: CorrespondenceType.all
+    }
+  end
+
+  def correspondence_params
+    params.require(:correspondence).permit(:notes, :correspondence_type_id)
+  end
+
+  def veteran_params
+    params.require(:veteran).permit(:file_number)
+  end
 
   def verify_feature_toggle
     if !FeatureToggle.enabled?(:correspondence_queue)
@@ -43,28 +82,12 @@ class CorrespondenceController < ApplicationController
     end
   end
 
-  def correspondence
-    return @correspondence if @correspondence.present?
-
-    if params[:id].present?
-      @correspondence = Correspondence.find(params[:id])
-    elsif params[:correspondence_uuid].present?
-      @correspondence = Correspondence.find_by(uuid: params[:correspondence_uuid])
-    end
-
-    @correspondence
-  end
-
   def correspondence_load
     Correspondence.where(veteran_id: veteran_by_correspondence.id).where.not(uuid: params[:correspondence_uuid])
   end
 
   def veteran_by_correspondence
-    return @veteran_by_correspondence if @veteran_by_correspondence.present?
-
-    @veteran_by_correspondence = Veteran.find(correspondence&.veteran_id)
-
-    @veteran_by_correspondence
+    @veteran_by_correspondence ||= Veteran.find(@correspondence.veteran_id)
   end
 
   def veterans_with_correspondences
@@ -82,5 +105,4 @@ class CorrespondenceController < ApplicationController
       packageDocumentType: correspondence.correspondence_type_id
     }
   end
-
 end
