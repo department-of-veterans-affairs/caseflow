@@ -1,33 +1,53 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import TextareaField from '../../../../../components/TextareaField';
 import ReactSelectDropdown from '../../../../../components/ReactSelectDropdown';
-import PropTypes from 'prop-types';
 import Button from '../../../../../components/Button';
+import PropTypes from 'prop-types';
+import { shallowEqual, useSelector } from 'react-redux';
+
+const dropdownOptions = [
+  { value: 'CAVC Correspondence', label: 'CAVC Correspondence' },
+  { value: 'Congressional interest', label: 'Congressional interest' },
+  { value: 'Death certificate', label: 'Death certificate' },
+  { value: 'FOIA request', label: 'FOIA request' },
+  { value: 'Other motion', label: 'Other motion' },
+  { value: 'Power of attorney-related', label: 'Power of attorney-related' },
+  { value: 'Privacy act request', label: 'Privacy act request' },
+  { value: 'Privacy complaint', label: 'Privacy complaint' },
+  { value: 'Status inquiry', label: 'Status inquiry' }
+];
 
 const TaskNotRelatedToAppeal = (props) => {
+  const task = useSelector((state) => state.intakeCorrespondence.unrelatedTasks.find((uTasks) => {
+    return uTasks.id === props.taskId;
+  }), shallowEqual);
+  const [type, setType] = useState('');
+  const [content, setContent] = useState('');
 
-  const dropdownOptions = [
-    { value: 0, label: 'CAVC Correspondence' },
-    { value: 1, label: 'Congressional interest' },
-    { value: 2, label: 'Death certificate' },
-    { value: 3, label: 'FOIA request' },
-    { value: 4, label: 'Other motion' },
-    { value: 5, label: 'Power of attorney-related' },
-    { value: 6, label: 'Privacy act request' },
-    { value: 7, label: 'Privacy complaint' },
-    { value: 8, label: 'Status inquiry' }
-  ];
+  useEffect(() => {
+    const canContinue = (content !== '') && (type !== '');
 
-  const [instructionText, setInstructionText] = useState('');
-  const [index] = useState(-1);
+    props.setUnrelatedTasksCanContinue(canContinue);
+  }, [content, type]);
 
-  const handleChangeInstructionText = (newText) => {
-    setInstructionText(newText);
-    props.handleChangeTaskType(dropdownOptions[props.taskType], newText, index);
-  };
+  const updateTaskContent = useCallback((newContent) => {
+    const newTask = { id: task.id, type: task.type, content: newContent };
+
+    setContent(newContent);
+
+    props.taskUpdatedCallback(newTask);
+  }, [task, content]);
+
+  const updateTaskType = useCallback((newType) => {
+    const newTask = { id: task.id, type: newType.value, content: task.content };
+
+    setType(newType.value);
+
+    props.taskUpdatedCallback(newTask);
+  }, [task, type]);
 
   return (
-    <div key={props.key} style={{ display: 'block', marginRight: '2rem' }}>
+    <div key={task.id} style={{ display: 'block', marginRight: '2rem' }}>
       <div className="gray-border"
         style={
           { display: 'block', padding: '2rem 2rem', marginLeft: '3rem', marginBottom: '3rem', width: '50rem' }
@@ -40,34 +60,34 @@ const TaskNotRelatedToAppeal = (props) => {
           <div id="reactSelectContainer">
             <ReactSelectDropdown
               options={dropdownOptions}
-              defaultValue={dropdownOptions[props.taskType]}
+              defaultValue={dropdownOptions[task.type]}
               label="Task"
               style={{ width: '50rem' }}
-              onChangeMethod={(selectedOption) =>
-                props.handleChangeTaskType(selectedOption, instructionText, index)}
+              onChangeMethod={(selectedOption) => updateTaskType(selectedOption)}
               className="date-filter-type-dropdown"
             />
           </div>
           <div style={{ padding: '1.5rem' }} />
           <TextareaField
-            name="Task Information"
+            name="content"
             label="Provide context and instruction on this task"
-            defaultText="Is this existing"
-            value={props.taskText}
-            onChange={handleChangeInstructionText}
+            value={task.content}
+            onChange={updateTaskContent}
           />
           <Button
             name="Add"
             styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
-            classNames={['cf-btn-link', 'cf-left-side']} >
+            classNames={['cf-btn-link', 'cf-left-side']}
+          >
             Add autotext
           </Button>
           <Button
             name="Remove"
             styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
-            onClick={props.removeTask}
-            classNames={['cf-btn-link', 'cf-right-side']} >
-            <i className="fa fa-trash-o" aria-hidden="true"></i> Remove task
+            onClick={() => props.removeTask(task.id)}
+            classNames={['cf-btn-link', 'cf-right-side']}
+          >
+            <i className="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Remove task
           </Button>
         </div>
       </div>
@@ -76,12 +96,10 @@ const TaskNotRelatedToAppeal = (props) => {
 };
 
 TaskNotRelatedToAppeal.propTypes = {
-  removeTask: PropTypes.func,
-  index: PropTypes.number,
-  key: PropTypes.object,
-  handleChangeTaskType: PropTypes.func,
-  taskType: PropTypes.number,
-  taskText: PropTypes.string
+  removeTask: PropTypes.func.isRequired,
+  taskId: PropTypes.number.isRequired,
+  taskUpdatedCallback: PropTypes.func.isRequired,
+  setUnrelatedTasksCanContinue: PropTypes.func.isRequired
 };
 
 export default TaskNotRelatedToAppeal;

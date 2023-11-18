@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import Checkbox from '../../../../../components/Checkbox';
 import AddAppealRelatedTaskView from './AddAppealRelatedTaskView';
+import AddUnrelatedTaskView from './AddUnrelatedTaskView';
 
 const mailTasksLeft = [
   'Change of address',
@@ -62,7 +63,7 @@ export const AddTasksAppealsView = (props) => {
             Add new tasks related to this correspondence or to an appeal not yet created in Caseflow.
           </p>
           <div>
-            <p>Placeholder</p>
+            <AddUnrelatedTaskView setUnrelatedTasksCanContinue={setUnrelatedTasksCanContinue} />
           </div>
         </div>
 
