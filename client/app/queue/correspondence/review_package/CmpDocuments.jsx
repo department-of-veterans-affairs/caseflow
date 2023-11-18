@@ -36,23 +36,27 @@ export const CmpDocuments = (props) => {
       <div {...correspondenceStyling}>
         <div {...paginationStyle}> {paginationText} </div>
         <table className="correspondence-document-table">
-          <tr>
-            <th > Document Type </th>
-            <th className="cf-txt-c"> Action </th>
-          </tr>
+          <tbody>
+            <tr>
+              <th > Document Type </th>
+              <th className="cf-txt-c"> Action </th>
+            </tr>
+          </tbody>
           { documents?.map((document, index) => {
             return (
-              <tr>
-                <td style={{ background: selectedId === index ? '#0071bc' : 'white',
-                  color: selectedId === index ? 'white' : '#0071bc' }}
-                onClick={() => setCurrentDocument(index)}> {document?.document_title}
-                </td>
-                <td className="cf-txt-c">
-                  <Button linkStyling >
-                    <span>Edit</span>
-                  </Button>
-                </td>
-              </tr>
+              <tbody key={index}>
+                <tr>
+                  <td style={{ background: selectedId === index ? '#0071bc' : 'white',
+                    color: selectedId === index ? 'white' : '#0071bc' }}
+                  onClick={() => setCurrentDocument(index)}> {document?.document_title}
+                  </td>
+                  <td className="cf-txt-c">
+                    <Button linkStyling >
+                      <span>Edit</span>
+                    </Button>
+                  </td>
+                </tr>
+              </tbody>
             );
           })}
         </table>
