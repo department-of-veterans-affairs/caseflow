@@ -56,9 +56,7 @@ class TaskPageUnconnected extends React.PureComponent {
       <NonCompLayout>
         {errorAlert}
         <h1>{businessLine}</h1>
-        <button onClick={() => (window.location.href = `/decision_reviews/${this.props.businessLineUrl}/tasks/${task.id}/show-history`)}> View history </button>
         <Link to={`/${this.props.businessLineUrl}/tasks/${task.id}/show-history`} button="primary" >
-          {/* <Link to="show-history" button="matte" > */}
           View history
         </Link>
         <div className="cf-review-details cf-gray-box">
