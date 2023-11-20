@@ -80,7 +80,7 @@ describe GeomatchService do
       let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
 
       let(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
-      let(:valid_address_response) { ExternalApi::VADotGovService::AddressValidationResponse.new(mock_response) }
+      let(:valid_address_response) { ExternalApi::VADotGovService::ZipCodeValidationResponse.new(mock_response) }
       let(:response_body) { valid_address_response.body }
 
       it "geomatches for the travel board appeal" do

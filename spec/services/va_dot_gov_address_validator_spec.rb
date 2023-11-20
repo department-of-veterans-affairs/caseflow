@@ -56,7 +56,7 @@ describe VaDotGovAddressValidator do
 
     context "when zip code is invalid" do
       before do
-        allow_any_instance_of(ExternalApi::VADotGovService::AddressValidationResponse)
+        allow_any_instance_of(ExternalApi::VADotGovService::ZipCodeValidationResponse)
           .to receive(:coordinates_invalid?).and_return(true)
       end
 
@@ -67,7 +67,7 @@ describe VaDotGovAddressValidator do
       let(:us_territory_address) { Address.new(country: "US", state: "GU", city: "Yigo", zip: "96929") }
 
       before do
-        allow_any_instance_of(ExternalApi::VADotGovService::AddressValidationResponse)
+        allow_any_instance_of(ExternalApi::VADotGovService::ZipCodeValidationResponse)
           .to receive(:address).and_return(us_territory_address)
       end
 
@@ -80,7 +80,7 @@ describe VaDotGovAddressValidator do
 
     context "when veteran has foreign address" do
       let(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
-      let(:valid_address_response) { ExternalApi::VADotGovService::AddressValidationResponse.new(mock_response) }
+      let(:valid_address_response) { ExternalApi::VADotGovService::ZipCodeValidationResponse.new(mock_response) }
       let(:response_body) { valid_address_response.body }
 
       before do
@@ -114,7 +114,7 @@ describe VaDotGovAddressValidator do
     ].each do |error|
       context "when va_dot_gov_service throws a #{error.class.name} error and zipcode fallback fails" do
         before do
-          allow_any_instance_of(ExternalApi::VADotGovService::AddressValidationResponse).to receive(:error)
+          allow_any_instance_of(ExternalApi::VADotGovService::ZipCodeValidationResponse).to receive(:error)
             .and_return(error)
           allow_any_instance_of(VaDotGovAddressValidator).to receive(:manually_validate_zip_code)
             .and_return(nil)
@@ -145,7 +145,7 @@ describe VaDotGovAddressValidator do
     subject { appeal.va_dot_gov_address_validator.ro_facility_ids_to_geomatch }
 
     before(:each) do
-      valid_address_response = ExternalApi::VADotGovService::AddressValidationResponse.new(mock_response)
+      valid_address_response = ExternalApi::VADotGovService::ZipCodeValidationResponse.new(mock_response)
       allow(valid_address_response).to receive(:data).and_return(valid_address)
       allow(valid_address_response).to receive(:error).and_return(nil)
       allow_any_instance_of(VaDotGovAddressValidator).to receive(:valid_address_response)
@@ -201,7 +201,7 @@ describe VaDotGovAddressValidator do
     end
 
     before do
-      valid_address_response = ExternalApi::VADotGovService::AddressValidationResponse.new(mock_response)
+      valid_address_response = ExternalApi::VADotGovService::ZipCodeValidationResponse.new(mock_response)
       allow(valid_address_response).to receive(:data).and_return(valid_address)
       allow(valid_address_response).to receive(:error).and_return(valid_address_error)
       allow_any_instance_of(VaDotGovAddressValidator).to receive(:valid_address_response)
