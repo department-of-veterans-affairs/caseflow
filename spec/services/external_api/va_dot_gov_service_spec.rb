@@ -19,8 +19,29 @@ describe ExternalApi::VADotGovService do
         )
       )
 
+      body = JSON.parse(result.response.body)
+      message_keys = body["messages"].pluck("key")
+
       expect(result.error).to be_nil
       expect(result.data).to_not be_nil
+      expect(message_keys).to_not include("AddressCouldNotBeFound")
+    end
+  end
+
+  describe "#validate_zip_code" do
+    let(:zip) { "11385" }
+
+    it "returns invalid full address with valid geographic coordinates" do
+      result = VADotGovService.validate_zip_code(zip)
+
+      body = JSON.parse(result.response.body)
+      message_keys = body["messages"].pluck("key")
+
+      expect(result.error).to be_nil
+      expect(result.data).to_not be_nil
+      expect(message_keys).to include("AddressCouldNotBeFound")
+      expect(body["geocode"]["latitude"]).to_not eq(0.0)
+      expect(body["geocode"]["longitude"]).to_not eq(0.0)
     end
   end
 
