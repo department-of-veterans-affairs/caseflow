@@ -12,7 +12,6 @@ import {
   clearAppealCheckboxState
 } from '../../../correspondenceReducer/correspondenceActions';
 import RadioField from '../../../../../components/RadioField';
-// import { saveEditedAppealIssue } from '../../../../QueueActions';
 
 const RELATED_NO = '0';
 const RELATED_YES = '1';
