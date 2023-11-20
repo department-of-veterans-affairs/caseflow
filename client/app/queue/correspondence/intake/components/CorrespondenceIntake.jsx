@@ -81,6 +81,7 @@ export const CorrespondenceIntake = (props) => {
         unrelatedTasks={props.unrelatedTasks}
         setUnrelatedTasks={props.setUnrelatedTasks}
         correspondenceUuid={props.correspondence_uuid}
+        onContinueStatusChange={handleContinueStatusChange}
       />
     }
     <div>
