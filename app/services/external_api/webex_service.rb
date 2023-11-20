@@ -15,9 +15,9 @@ class ExternalApi::WebexService
   def create_conference(conferenced_item)
     body = {
       "jwt": {
-        "sub": conferenced_item.subject_for_conference,
-        "Nbf": conferenced_item.nbf,
-        "Exp": conferenced_item.exp
+        "sub": virtual_hearing.subject_for_conference,
+        "nbf": virtual_hearing.nbf,
+        "exp": virtual_hearing.exp
       },
       "aud": @aud,
       "numHost": 1,
@@ -34,9 +34,9 @@ class ExternalApi::WebexService
   def delete_conference(conferenced_item)
     body = {
       "jwt": {
-        "sub": conferenced_item.subject_for_conference,
-        "Nbf": 0,
-        "Exp": 0
+        "sub": virtual_hearing.subject_for_conference,
+        "nbf": 0,
+        "exp": 0
       },
       "aud": @aud,
       "numHost": 1,
