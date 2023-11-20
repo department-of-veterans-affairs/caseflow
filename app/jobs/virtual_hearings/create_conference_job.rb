@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+
 # This job will create a conference for a hearing
 # that is switched to virtual hearing.
 class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
