@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
 describe Api::V1::VaNotifyController, type: :controller do
-  include ActiveJob::TestHelper
-
-  before { Seeds::NotificationEvents.new.seed! }
-
+  before do
+    Seeds::NotificationEvents.new.seed!
+  end
   let(:api_key) { ApiKey.create!(consumer_name: "API Consumer").key_string }
   let!(:appeal) { create(:appeal) }
   let!(:notification_email) do
@@ -70,10 +69,8 @@ describe Api::V1::VaNotifyController, type: :controller do
     it "updates status of notification" do
       request.headers["Authorization"] = "Bearer #{api_key}"
       post :notifications_update, params: payload_email
-
-      perform_enqueued_jobs { ProcessNotificationStatusUpdatesJob.perform_later }
-
-      expect(notification_email.reload.email_notification_status).to eq("created")
+      notification_email.reload
+      expect(notification_email.email_notification_status).to eq("created")
     end
   end
 
@@ -87,10 +84,8 @@ describe Api::V1::VaNotifyController, type: :controller do
     it "updates status of notification" do
       request.headers["Authorization"] = "Bearer #{api_key}"
       post :notifications_update, params: payload_sms
-
-      perform_enqueued_jobs { ProcessNotificationStatusUpdatesJob.perform_later }
-
-      expect(notification_sms.reload.sms_notification_status).to eq("created")
+      notification_sms.reload
+      expect(notification_sms.sms_notification_status).to eq("created")
     end
   end
 
@@ -133,16 +128,10 @@ describe Api::V1::VaNotifyController, type: :controller do
       }
     end
 
-    it "Update job raises error if UUID is passed in for a non-existant notification" do
-      expect_any_instance_of(ProcessNotificationStatusUpdatesJob).to receive(:log_error) do |_job, error|
-        expect(error.message).to eq("No notification matches UUID #{payload_fake.dig(:id)}")
-      end
-
+    it "updates status of notification" do
       request.headers["Authorization"] = "Bearer #{api_key}"
       post :notifications_update, params: payload_fake
-      expect(response.status).to eq(200)
-
-      perform_enqueued_jobs { ProcessNotificationStatusUpdatesJob.perform_later }
+      expect(response.status).to eq(500)
     end
   end
 end
