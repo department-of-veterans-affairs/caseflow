@@ -23,6 +23,26 @@ FactoryBot.define do
       end
     end
 
+    transient do
+      disposition { nil }
+    end
+
+    transient do
+      decision_date { nil }
+    end
+
+    transient do
+      issue_type { nil }
+    end
+
+    transient do
+      withdraw { false }
+    end
+
+    transient do
+      remove { false}
+    end
+
     after(:build) do |sc, evaluator|
       if evaluator.veteran
         sc.veteran_file_number = evaluator.veteran.file_number
@@ -111,15 +131,43 @@ FactoryBot.define do
     trait :with_request_issue do
       after(:create) do |sc, evaluator|
         create(:request_issue,
-               benefit_type: sc.benefit_type,
-               nonrating_issue_category: Constants::ISSUE_CATEGORIES[sc.benefit_type].sample,
-               nonrating_issue_description: "#{sc.business_line.name} Seeded issue",
-               decision_review: sc,
-               decision_date: 1.month.ago)
+                benefit_type: sc.benefit_type,
+                nonrating_issue_category: Constants::ISSUE_CATEGORIES[sc.benefit_type].sample,
+                nonrating_issue_description: "#{sc.business_line.name} Seeded issue",
+                decision_review: sc,
+                decision_date: 1.month.ago
+                )
 
         if evaluator.veteran
           sc.veteran_file_number = evaluator.veteran.file_number
           sc.save
+        end
+      end
+    end
+
+    trait :with_specific_issue_type do
+      after(:create) do |hlr, evaluator|
+        ri = create(:request_issue,
+                    benefit_type: hlr.benefit_type,
+                    nonrating_issue_category: evaluator.issue_type,
+                    nonrating_issue_description: "#{hlr.business_line.name} Seeded issue",
+                    decision_review: hlr)
+
+        if evaluator.veteran
+          hlr.veteran_file_number = evaluator.veteran.file_number
+          hlr.save
+        end
+
+        if evaluator.decision_date.present?
+          ri.save_decision_date!(evaluator.decision_date)
+        end
+
+        if evaluator.withdraw
+          ri.withdraw!(Time.zone.now)
+        end
+
+        if evaluator.remove
+          ri.remove!
         end
       end
     end
@@ -151,6 +199,17 @@ FactoryBot.define do
       establishment_submitted_at { (HigherLevelReview.processing_retry_interval_hours + 1).hours.ago }
       establishment_last_submitted_at { (HigherLevelReview.processing_retry_interval_hours + 1).hours.ago }
       establishment_processed_at { nil }
+    end
+
+    trait :with_disposition do
+      after(:create) do |sc, evaluator|
+        create(:decision_issue,
+               benefit_type: "vha",
+               request_issues: sc.request_issues,
+               decision_review: sc,
+               disposition: evaluator.disposition,
+               caseflow_decision_date: Time.zone.now)
+      end
     end
   end
 end

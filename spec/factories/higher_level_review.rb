@@ -25,11 +25,11 @@ FactoryBot.define do
     end
 
     transient do
-      add_decision_date { false }
+      withdraw { false }
     end
 
     transient do
-      withdraw { false }
+      remove { false}
     end
 
     transient do
@@ -37,6 +37,10 @@ FactoryBot.define do
         Veteran.find_by(file_number: veteran_file_number) ||
           create(:veteran, file_number: (generate :veteran_file_number))
       end
+    end
+
+    transient do
+      disposition { nil }
     end
 
     after(:build) do |hlr, evaluator|
@@ -170,12 +174,16 @@ FactoryBot.define do
           hlr.save
         end
 
-        if evaluator.add_decision_date
+        if evaluator.decision_date.present?
           ri.save_decision_date!(evaluator.decision_date)
         end
 
         if evaluator.withdraw
           ri.withdraw!(Time.zone.now)
+        end
+
+        if evaluator.remove
+          ri.remove!
         end
       end
     end
@@ -201,23 +209,20 @@ FactoryBot.define do
 
     trait :with_update_users do
       after(:create) do |hlr|
+        hlr.create_business_line_tasks!
         vha = VhaBusinessLine.singleton
         create(:request_issues_update, user: vha.users.sample, review: hlr)
       end
     end
 
     trait :with_disposition do
-      after(:create) do |hlr|
-        # %w[allowed remanded denied
-        #    vacated dismissed_death
-        #    dismissed_matter_of_law withdrawn
-        #    stayed].each do |disposition|
+      after(:create) do |hlr, evaluator|
         create(:decision_issue,
                benefit_type: "vha",
+               request_issues: hlr.request_issues,
                decision_review: hlr,
-               disposition: "allowed",
+               disposition: evaluator.disposition,
                caseflow_decision_date: Time.zone.now)
-        # end
       end
     end
   end
