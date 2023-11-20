@@ -16,8 +16,8 @@ class ExternalApi::WebexService
     body = {
       "jwt": {
         "sub": virtual_hearing.subject_for_conference,
-        "Nbf": virtual_hearing.nbf,
-        "Exp": virtual_hearing.exp
+        "nbf": virtual_hearing.nbf,
+        "exp": virtual_hearing.exp
       },
       "aud": @aud,
       "numGuest": 1,
@@ -35,8 +35,8 @@ class ExternalApi::WebexService
     body = {
       "jwt": {
         "sub": virtual_hearing.subject_for_conference,
-        "Nbf": 0,
-        "Exp": 0
+        "nbf": 0,
+        "exp": 0
       },
       "aud": @aud,
       "numGuest": 1,
