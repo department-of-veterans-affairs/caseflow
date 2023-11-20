@@ -29,7 +29,7 @@ export const Personnel = ({ control, field, name }) => {
   }, [teamMembers]);
 
   return (
-    <div className="personnel">
+    <div className="report-page-multi-select-dropdown">
       <Controller
         control={control}
         defaultValue={field.options.personnel ?? ''}
