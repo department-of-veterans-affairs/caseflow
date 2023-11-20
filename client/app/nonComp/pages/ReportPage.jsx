@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useController, useForm, FormProvider } from 'react-hook-form';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
@@ -20,6 +20,8 @@ import {
   RADIO_EVENT_TYPE_OPTIONS,
   SPECTIFIC_EVENT_OPTIONS
 } from 'constants/REPORT_TYPE_CONSTANTS';
+import { useDispatch } from 'react-redux';
+import { downloadReportCSV } from '../actions/changeHistorySlice';
 
 const buttonInnerContainerStyle = css({
   display: 'flex',
@@ -168,6 +170,20 @@ const ReportPage = ({ history }) => {
 
   const watchReportType = watch('reportType');
   const watchRadioEventAction = watch('radioEventAction');
+  const dispatch = useDispatch();
+  const businessLineUrl = useState((state) => state.nonComp.businessLineUrl);
+
+  const submitForm = (data) => {
+    // eslint-disable-next-line no-console
+    console.log(data);
+
+    // Don't know how acceptable this is for compliance.
+    // Could also do something like a modal that grabs focus while it is generating
+    // window.scrollTo(0, 0);
+
+    // Example csv generation code:
+    dispatch(downloadReportCSV({ organizationUrl: businessLineUrl, filterData: { filters: { report: 'true' } } }));
+  };
 
   return (
     <NonCompLayout
@@ -176,7 +192,7 @@ const ReportPage = ({ history }) => {
           history={history}
           isGenerateButtonDisabled={!formState.isDirty}
           handleClearFilters={() => reset(defaultFormValues)}
-          handleSubmit={handleSubmit}
+          handleSubmit={handleSubmit(submitForm)}
         />
       }
     >
