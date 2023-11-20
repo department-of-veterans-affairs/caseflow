@@ -145,6 +145,201 @@ const visnInProgressActions = [
   }
 ];
 
+const userOptions = [
+  {
+    label: 'Theresa BuildHearingSchedule Warner',
+    value: 10
+  },
+  {
+    label: 'Felicia BuildAndEditHearingSchedule Orange',
+    value: 126
+  },
+  {
+    label: 'Gail Maggio V',
+    value: 2000001601
+  },
+  {
+    label: 'Amb. Cherelle Crist',
+    value: 2000001881
+  },
+  {
+    label: 'LETITIA SCHUSTER',
+    value: 2000014300
+  },
+  {
+    label: 'Manie Bahringer',
+    value: 2000000784
+  },
+  {
+    label: 'Young Metz',
+    value: 2000001481
+  },
+  {
+    label: 'Tena Green DDS',
+    value: 2000001607
+  },
+  {
+    label: 'Horace Paucek',
+    value: 2000001608
+  },
+  {
+    label: 'Angelo Harvey',
+    value: 2000001752
+  },
+  {
+    label: 'Shu Wilkinson II',
+    value: 2000001822
+  },
+  {
+    label: 'Eugene Waelchi JD',
+    value: 2000001944
+  },
+  {
+    label: 'Bernadine Lindgren',
+    value: 2000002011
+  },
+  {
+    label: 'Lenna Roberts',
+    value: 2000002061
+  },
+  {
+    label: 'Dedra Kassulke',
+    value: 2000002114
+  },
+  {
+    label: 'Judy Douglas',
+    value: 2000002117
+  },
+  {
+    label: 'Yuki Green',
+    value: 2000002170
+  },
+  {
+    label: 'Hassan Considine',
+    value: 2000002309
+  },
+  {
+    label: 'Cecilia Feeney',
+    value: 2000002311
+  },
+  {
+    label: 'Shizue Orn',
+    value: 2000002324
+  },
+  {
+    label: 'Marcia Turcotte DDS',
+    value: 2000003937
+  },
+  {
+    label: 'Mrs. Roderick Boyle',
+    value: 2000008710
+  },
+  {
+    label: 'Rep. Trey Leuschke',
+    value: 2000009340
+  },
+  {
+    label: 'Malka Lind MD',
+    value: 2000010066
+  },
+  {
+    label: 'Derrick Abernathy',
+    value: 2000011140
+  },
+  {
+    label: 'Ramon Bode',
+    value: 2000011189
+  },
+  {
+    label: 'Consuelo Rice VM',
+    value: 2000011783
+  },
+  {
+    label: 'Robt Reinger',
+    value: 2000013679
+  },
+  {
+    label: 'Cruz Kulas',
+    value: 2000014113
+  },
+  {
+    label: 'Jeremy Abbott',
+    value: 2000014115
+  },
+  {
+    label: 'Lexie Kunze',
+    value: 2000014117
+  },
+  {
+    label: 'Jenny Kiehn',
+    value: 2000014742
+  },
+  {
+    label: 'Justin Greenholt',
+    value: 2000016249
+  },
+  {
+    label: 'Tiffani Heller',
+    value: 2000016344
+  },
+  {
+    label: 'Cris Kris',
+    value: 2000016552
+  },
+  {
+    label: 'The Hon. Collin Johnston',
+    value: 2000016711
+  },
+  {
+    label: 'Susanna Bahringer DDS',
+    value: 2000020664
+  },
+  {
+    label: 'Rev. Eric Howell',
+    value: 2000021430
+  },
+  {
+    label: 'Anthony Greenfelder',
+    value: 2000021431
+  },
+  {
+    label: 'Sen. Bradley Lehner',
+    value: 2000021462
+  },
+  {
+    label: 'Arden Boyle',
+    value: 2000021472
+  },
+  {
+    label: 'Millard Dach CPA',
+    value: 2000021486
+  },
+  {
+    label: 'Phung Reichert DC',
+    value: 2000021537
+  },
+  {
+    label: 'Harvey Jenkins',
+    value: 2000021577
+  },
+  {
+    label: 'DINO VONRUEDEN',
+    value: 2000003482
+  },
+  {
+    label: 'ISREAL D\'AMORE',
+    value: 2000003782
+  },
+  {
+    label: 'MAMMIE TREUTEL',
+    value: 2000014114
+  },
+  {
+    label: 'Stacy BuildAndEditHearingSchedule Yellow',
+    value: 125
+  }
+];
+
 const vhaDocumentSearchTaskData = {
   7119: {
     uniqueId: '7119',
@@ -2085,200 +2280,7 @@ const hearingPostponementRequestMailTaskData = {
             updated_at: '2023-07-31T15:10:08.277-04:00',
             display_name: 'BVASYELLOW (VACO)'
           },
-          options: [
-            {
-              label: 'Theresa BuildHearingSchedule Warner',
-              value: 10
-            },
-            {
-              label: 'Felicia BuildAndEditHearingSchedule Orange',
-              value: 126
-            },
-            {
-              label: 'Gail Maggio V',
-              value: 2000001601
-            },
-            {
-              label: 'Amb. Cherelle Crist',
-              value: 2000001881
-            },
-            {
-              label: 'LETITIA SCHUSTER',
-              value: 2000014300
-            },
-            {
-              label: 'Manie Bahringer',
-              value: 2000000784
-            },
-            {
-              label: 'Young Metz',
-              value: 2000001481
-            },
-            {
-              label: 'Tena Green DDS',
-              value: 2000001607
-            },
-            {
-              label: 'Horace Paucek',
-              value: 2000001608
-            },
-            {
-              label: 'Angelo Harvey',
-              value: 2000001752
-            },
-            {
-              label: 'Shu Wilkinson II',
-              value: 2000001822
-            },
-            {
-              label: 'Eugene Waelchi JD',
-              value: 2000001944
-            },
-            {
-              label: 'Bernadine Lindgren',
-              value: 2000002011
-            },
-            {
-              label: 'Lenna Roberts',
-              value: 2000002061
-            },
-            {
-              label: 'Dedra Kassulke',
-              value: 2000002114
-            },
-            {
-              label: 'Judy Douglas',
-              value: 2000002117
-            },
-            {
-              label: 'Yuki Green',
-              value: 2000002170
-            },
-            {
-              label: 'Hassan Considine',
-              value: 2000002309
-            },
-            {
-              label: 'Cecilia Feeney',
-              value: 2000002311
-            },
-            {
-              label: 'Shizue Orn',
-              value: 2000002324
-            },
-            {
-              label: 'Marcia Turcotte DDS',
-              value: 2000003937
-            },
-            {
-              label: 'Mrs. Roderick Boyle',
-              value: 2000008710
-            },
-            {
-              label: 'Rep. Trey Leuschke',
-              value: 2000009340
-            },
-            {
-              label: 'Malka Lind MD',
-              value: 2000010066
-            },
-            {
-              label: 'Derrick Abernathy',
-              value: 2000011140
-            },
-            {
-              label: 'Ramon Bode',
-              value: 2000011189
-            },
-            {
-              label: 'Consuelo Rice VM',
-              value: 2000011783
-            },
-            {
-              label: 'Robt Reinger',
-              value: 2000013679
-            },
-            {
-              label: 'Cruz Kulas',
-              value: 2000014113
-            },
-            {
-              label: 'Jeremy Abbott',
-              value: 2000014115
-            },
-            {
-              label: 'Lexie Kunze',
-              value: 2000014117
-            },
-            {
-              label: 'Jenny Kiehn',
-              value: 2000014742
-            },
-            {
-              label: 'Justin Greenholt',
-              value: 2000016249
-            },
-            {
-              label: 'Tiffani Heller',
-              value: 2000016344
-            },
-            {
-              label: 'Cris Kris',
-              value: 2000016552
-            },
-            {
-              label: 'The Hon. Collin Johnston',
-              value: 2000016711
-            },
-            {
-              label: 'Susanna Bahringer DDS',
-              value: 2000020664
-            },
-            {
-              label: 'Rev. Eric Howell',
-              value: 2000021430
-            },
-            {
-              label: 'Anthony Greenfelder',
-              value: 2000021431
-            },
-            {
-              label: 'Sen. Bradley Lehner',
-              value: 2000021462
-            },
-            {
-              label: 'Arden Boyle',
-              value: 2000021472
-            },
-            {
-              label: 'Millard Dach CPA',
-              value: 2000021486
-            },
-            {
-              label: 'Phung Reichert DC',
-              value: 2000021537
-            },
-            {
-              label: 'Harvey Jenkins',
-              value: 2000021577
-            },
-            {
-              label: 'DINO VONRUEDEN',
-              value: 2000003482
-            },
-            {
-              label: 'ISREAL D\'AMORE',
-              value: 2000003782
-            },
-            {
-              label: 'MAMMIE TREUTEL',
-              value: 2000014114
-            },
-            {
-              label: 'Stacy BuildAndEditHearingSchedule Yellow',
-              value: 125
-            }
-          ],
+          options: userOptions,
           type: 'HearingPostponementRequestMailTask'
         }
       },
@@ -2810,200 +2812,7 @@ const hearingWithdrawalRequestMailTaskData = {
             meeting_type: 'pexip',
             display_name: 'BVASYELLOW (VACO)'
           },
-          options: [
-            {
-              label: 'Theresa BuildHearingSchedule Warner',
-              value: 10
-            },
-            {
-              label: 'Felicia BuildAndEditHearingSchedule Orange',
-              value: 126
-            },
-            {
-              label: 'Gail Maggio V',
-              value: 2000001601
-            },
-            {
-              label: 'Amb. Cherelle Crist',
-              value: 2000001881
-            },
-            {
-              label: 'LETITIA SCHUSTER',
-              value: 2000014300
-            },
-            {
-              label: 'Manie Bahringer',
-              value: 2000000784
-            },
-            {
-              label: 'Young Metz',
-              value: 2000001481
-            },
-            {
-              label: 'Tena Green DDS',
-              value: 2000001607
-            },
-            {
-              label: 'Horace Paucek',
-              value: 2000001608
-            },
-            {
-              label: 'Angelo Harvey',
-              value: 2000001752
-            },
-            {
-              label: 'Shu Wilkinson II',
-              value: 2000001822
-            },
-            {
-              label: 'Eugene Waelchi JD',
-              value: 2000001944
-            },
-            {
-              label: 'Bernadine Lindgren',
-              value: 2000002011
-            },
-            {
-              label: 'Lenna Roberts',
-              value: 2000002061
-            },
-            {
-              label: 'Dedra Kassulke',
-              value: 2000002114
-            },
-            {
-              label: 'Judy Douglas',
-              value: 2000002117
-            },
-            {
-              label: 'Yuki Green',
-              value: 2000002170
-            },
-            {
-              label: 'Hassan Considine',
-              value: 2000002309
-            },
-            {
-              label: 'Cecilia Feeney',
-              value: 2000002311
-            },
-            {
-              label: 'Shizue Orn',
-              value: 2000002324
-            },
-            {
-              label: 'Marcia Turcotte DDS',
-              value: 2000003937
-            },
-            {
-              label: 'Mrs. Roderick Boyle',
-              value: 2000008710
-            },
-            {
-              label: 'Rep. Trey Leuschke',
-              value: 2000009340
-            },
-            {
-              label: 'Malka Lind MD',
-              value: 2000010066
-            },
-            {
-              label: 'Derrick Abernathy',
-              value: 2000011140
-            },
-            {
-              label: 'Ramon Bode',
-              value: 2000011189
-            },
-            {
-              label: 'Consuelo Rice VM',
-              value: 2000011783
-            },
-            {
-              label: 'Robt Reinger',
-              value: 2000013679
-            },
-            {
-              label: 'Cruz Kulas',
-              value: 2000014113
-            },
-            {
-              label: 'Jeremy Abbott',
-              value: 2000014115
-            },
-            {
-              label: 'Lexie Kunze',
-              value: 2000014117
-            },
-            {
-              label: 'Jenny Kiehn',
-              value: 2000014742
-            },
-            {
-              label: 'Justin Greenholt',
-              value: 2000016249
-            },
-            {
-              label: 'Tiffani Heller',
-              value: 2000016344
-            },
-            {
-              label: 'Cris Kris',
-              value: 2000016552
-            },
-            {
-              label: 'The Hon. Collin Johnston',
-              value: 2000016711
-            },
-            {
-              label: 'Susanna Bahringer DDS',
-              value: 2000020664
-            },
-            {
-              label: 'Rev. Eric Howell',
-              value: 2000021430
-            },
-            {
-              label: 'Anthony Greenfelder',
-              value: 2000021431
-            },
-            {
-              label: 'Sen. Bradley Lehner',
-              value: 2000021462
-            },
-            {
-              label: 'Arden Boyle',
-              value: 2000021472
-            },
-            {
-              label: 'Millard Dach CPA',
-              value: 2000021486
-            },
-            {
-              label: 'Phung Reichert DC',
-              value: 2000021537
-            },
-            {
-              label: 'Harvey Jenkins',
-              value: 2000021577
-            },
-            {
-              label: 'DINO VONRUEDEN',
-              value: 2000003482
-            },
-            {
-              label: 'ISREAL D\'AMORE',
-              value: 2000003782
-            },
-            {
-              label: 'MAMMIE TREUTEL',
-              value: 2000014114
-            },
-            {
-              label: 'Stacy BuildAndEditHearingSchedule Yellow',
-              value: 125
-            }
-          ],
+          options: userOptions,
           type: 'HearingWithdrawalRequestMailTask'
         }
       },
