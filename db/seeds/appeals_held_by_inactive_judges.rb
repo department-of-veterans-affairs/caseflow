@@ -203,7 +203,7 @@ module Seeds
         create(
           :case_hearing,
           :disposition_held,
-          folder_nr: "",
+          folder_nr: legacy_appeal.vacols_id,
           user: judge
         )
       end
