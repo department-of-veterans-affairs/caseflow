@@ -45,6 +45,7 @@ export const clearCheckboxState = () =>
     });
   };
 
+
 export const saveAppealCheckboxState = (appealIds) =>
   (dispatch) => {
     dispatch({
