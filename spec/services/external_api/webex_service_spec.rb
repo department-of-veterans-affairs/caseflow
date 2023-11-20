@@ -37,8 +37,8 @@ describe ExternalApi::WebexService do
         {
           "jwt": {
             "sub": virtual_hearing.subject_for_conference,
-            "Nbf": virtual_hearing.hearing.scheduled_for.beginning_of_day.to_i,
-            "Exp": virtual_hearing.hearing.scheduled_for.end_of_day.to_i
+            "nbf": virtual_hearing.hearing.scheduled_for.beginning_of_day.to_i,
+            "exp": virtual_hearing.hearing.scheduled_for.end_of_day.to_i
           },
           "aud": aud,
           "numGuest": 1,
@@ -88,8 +88,8 @@ describe ExternalApi::WebexService do
         {
           "jwt": {
             "sub": virtual_hearing.subject_for_conference,
-            "Nbf": 0,
-            "Exp": 0
+            "nbf": 0,
+            "exp": 0
           },
           "aud": aud,
           "numGuest": 1,
