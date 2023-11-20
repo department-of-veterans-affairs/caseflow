@@ -45,22 +45,12 @@ export const clearCheckboxState = () =>
     });
   };
 
-export const saveAppealCheckboxState = (id, isChecked) =>
+export const saveAppealCheckboxState = (appealIds) =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.SAVE_APPEAL_CHECKBOX_STATE,
       payload: {
-        id, isChecked
-      }
-    });
-  };
-
-export const setRelatedTaskAppeals = (appeals) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.SET_RELATED_TASK_APPEALS,
-      payload: {
-        appeals
+        appealIds
       }
     });
   };

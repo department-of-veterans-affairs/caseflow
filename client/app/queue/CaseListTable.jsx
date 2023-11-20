@@ -21,10 +21,6 @@ class CaseListTable extends React.PureComponent {
 
   state = { currentPage: 1 }
 
-  onChangeCheckbox = (appeal, isChecked) => {
-    this.props.saveAppealCheckboxState(appeal, isChecked);
-  }
-
   componentWillUnmount = () => this.props.clearCaseListSearch();
 
   getKeyForRow = (rowNumber, object) => object.id;
@@ -41,10 +37,9 @@ class CaseListTable extends React.PureComponent {
               <Checkbox
                 name={`${appeal.id}`}
                 id={`${appeal.id}`}
-                defaultValue={this.props.selectedAppeals.includes(appeal)}
-                onChange={(checked) => this.onChangeCheckbox(appeal, checked)}
+                defaultValue={this.props.selectedAppeals.includes(appeal.id)}
                 hideLabel
-                onChange={(checked) => this.props.checkboxOnChange(String(appeal.id), checked)}
+                onChange={(checked) => this.props.checkboxOnChange(appeal.id, checked)}
               />
             );
           }

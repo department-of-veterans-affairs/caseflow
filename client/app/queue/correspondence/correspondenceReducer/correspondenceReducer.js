@@ -7,7 +7,6 @@ export const initialState = {
   correspondences: [],
   radioValue: '2',
   toggledCheckboxes: [],
-  relatedTaskAppeals: [],
   unrelatedTasks: []
 };
 
@@ -56,39 +55,27 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
       }
     });
 
-  case ACTIONS.SET_RELATED_TASK_APPEALS:
-    return update(state, {
-      relatedTaskAppeals: {
-        $set: [...action.payload.appeals]
-      }
-    });
-
   case ACTIONS.SET_UNRELATED_TASKS:
     return update(state, {
       unrelatedTasks: {
         $set: [...action.payload.tasks]
       }
     });
+
   case ACTIONS.SET_FETCHED_APPEALS:
     return update(state, {
       fetchedAppeals: {
         $set: [...action.payload.appeals]
       }
     });
-  case ACTIONS.SAVE_APPEAL_CHECKBOX_STATE:
-    if (action.payload.isChecked) {
-      return update(state, {
-        selectedAppeals: {
-          $push: [action.payload.id]
-        }
-      });
-    }
 
+  case ACTIONS.SAVE_APPEAL_CHECKBOX_STATE:
     return update(state, {
       selectedAppeals: {
-        $set: state.selectedAppeals.filter((id) => id !== action.payload.id)
+        $set: [...action.payload.appealIds]
       }
     });
+
   case ACTIONS.CLEAR_APPEAL_CHECKBOX_STATE:
     return update(state, {
       selectedAppeals: {

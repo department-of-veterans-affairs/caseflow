@@ -2,7 +2,7 @@
 
 class CorrespondenceController < ApplicationController
   before_action :verify_feature_toggle
-  before_action :correspondence, only: [:show, :update]
+  before_action :correspondence
 
   def intake
     respond_to do |format|
