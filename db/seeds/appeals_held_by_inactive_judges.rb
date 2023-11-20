@@ -8,6 +8,7 @@ module Seeds
       end
 
       def seed!
+        RequestStore[:current_user] = User.find_by_css_id("CASEFLOW1")
         inactive_judge
         create_legacy_tasks
         create_ama_tasks
