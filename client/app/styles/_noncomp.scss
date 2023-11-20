@@ -1,3 +1,5 @@
+$validation-error-color: #cd2026;
+
 .cf-gray-box {
   background-color: $color-gray-lightest;
   border: 1px solid $color-gray-lighter;
@@ -174,6 +176,39 @@
       align-items: center;
       justify-content: flex-end;
       width: 40%;
+
+      .decisionReviewCheckboxContainer {
+        display: flex;
+        text-wrap: nowrap;
+
+        // Do some media query magic to make the checkboxes look nice for different screen sizes
+        @media screen and (max-width: 1439px) {
+          align-self: flex-end;
+          flex-wrap: wrap;
+          gap: 8px;
+
+        }
+
+        @media screen and (min-width: 1440px) {
+          gap: 16px;
+        }
+
+        // Override Checkbox component margin
+        label {
+          margin: 0;
+        }
+      }
+
+      .decisionReviewTypeContainer {
+        display: flex;
+        gap: 8px;
+        flex-direction: column;
+        padding: 16px;
+      }
+
+      .decisionReviewTypeContainerError {
+        border-left: solid $validation-error-color 4px;
+      }
     }
 
     .report-page-variable-content-wider {
