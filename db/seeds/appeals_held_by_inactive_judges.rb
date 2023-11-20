@@ -114,7 +114,8 @@ module Seeds
 
       # set judge to inactive
       def inactive_judge
-        @inactive_judge ||= User.find_or_create_by(css_id: "BVADSLADER", station_id: 101)
+        (@inactive_judge ||= User.find_or_create_by(css_id: "BVADSLADER", station_id: 101)).update!(status: "inactive")
+        @inactive_judge
       end
 
       # AC1
