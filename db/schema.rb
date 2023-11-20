@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_08_14_133820) do
+ActiveRecord::Schema.define(version: 2023_10_16_132819) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1336,7 +1336,11 @@ ActiveRecord::Schema.define(version: 2023_08_14_133820) do
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
+    t.index ["email_notification_external_id"], name: "index_notifications_on_email_notification_external_id"
+    t.index ["email_notification_status"], name: "index_notifications_on_email_notification_status"
     t.index ["participant_id"], name: "index_participant_id"
+    t.index ["sms_notification_external_id"], name: "index_notifications_on_sms_notification_external_id"
+    t.index ["sms_notification_status"], name: "index_notifications_on_sms_notification_status"
   end
 
   create_table "organizations", force: :cascade do |t|
