@@ -32,11 +32,20 @@ class CorrespondenceController < ApplicationController
     render json: { veteran_id: veteran_by_correspondence&.id, file_number: veteran_by_correspondence&.file_number }
   end
 
+  def package_documents
+    packages = PackageDocumentType.all
+    render json: { package_document_types: packages }
+  end
+
   def show
+    corres_docs = @correspondence.correspondence_documents
     response_json = {
       correspondence: correspondence,
       package_document_type: correspondence&.package_document_type,
-      general_information: general_information
+      general_information: general_information,
+      correspondence_documents: corres_docs.map do |doc|
+        WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
+      end
     }
     render({ json: response_json }, status: :ok)
   end
@@ -49,6 +58,13 @@ class CorrespondenceController < ApplicationController
     else
       render json: { error: "Failed to update records" }, status: :unprocessable_entity
     end
+  end
+
+  def update_cmp
+    @correspondence = Correspondence.find_by(uuid: params[:correspondence_uuid])
+    @correspondence.update(va_date_of_receipt: params["VADORDate"].in_time_zone,
+                           package_document_type_id: params["packageDocument"]["value"].to_i)
+    render json: { status: 200, correspondence: @correspondence }
   end
 
   private
