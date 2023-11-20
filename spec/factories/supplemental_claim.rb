@@ -40,7 +40,7 @@ FactoryBot.define do
     end
 
     transient do
-      remove { false}
+      remove { false }
     end
 
     after(:build) do |sc, evaluator|
@@ -131,12 +131,11 @@ FactoryBot.define do
     trait :with_request_issue do
       after(:create) do |sc, evaluator|
         create(:request_issue,
-                benefit_type: sc.benefit_type,
-                nonrating_issue_category: Constants::ISSUE_CATEGORIES[sc.benefit_type].sample,
-                nonrating_issue_description: "#{sc.business_line.name} Seeded issue",
-                decision_review: sc,
-                decision_date: 1.month.ago
-                )
+               benefit_type: sc.benefit_type,
+               nonrating_issue_category: Constants::ISSUE_CATEGORIES[sc.benefit_type].sample,
+               nonrating_issue_description: "#{sc.business_line.name} Seeded issue",
+               decision_review: sc,
+               decision_date: 1.month.ago)
 
         if evaluator.veteran
           sc.veteran_file_number = evaluator.veteran.file_number
@@ -145,17 +144,18 @@ FactoryBot.define do
       end
     end
 
+    # :reek:DuplicateMethodCall
     trait :with_specific_issue_type do
-      after(:create) do |hlr, evaluator|
+      after(:create) do |sc, evaluator|
         ri = create(:request_issue,
-                    benefit_type: hlr.benefit_type,
+                    benefit_type: sc.benefit_type,
                     nonrating_issue_category: evaluator.issue_type,
-                    nonrating_issue_description: "#{hlr.business_line.name} Seeded issue",
-                    decision_review: hlr)
+                    nonrating_issue_description: "#{sc.business_line.name} Seeded issue",
+                    decision_review: sc)
 
         if evaluator.veteran
-          hlr.veteran_file_number = evaluator.veteran.file_number
-          hlr.save
+          sc.veteran_file_number = evaluator.veteran.file_number
+          sc.save
         end
 
         if evaluator.decision_date.present?

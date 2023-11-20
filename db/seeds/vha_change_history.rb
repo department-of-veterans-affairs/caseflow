@@ -165,6 +165,7 @@ module Seeds
       sc.create_business_line_tasks!
     end
 
+    # :reek:FeatureEnvy
     def create_cancelled_hlr
       hlr = create(
             :higher_level_review,
@@ -183,7 +184,8 @@ module Seeds
       task.save
     end
 
-    def create_cancelled_sc(*args)
+    # :reek:FeatureEnvy
+    def create_cancelled_sc
       sc = create(
             :supplemental_claim,
             :with_specific_issue_type,
@@ -202,6 +204,7 @@ module Seeds
     end
 
     # updates assigned dates after hlr is created
+    # :reek:FeatureEnvy
     def create_hlr_with_updated_assigned_at
       hlr = create(
         :higher_level_review,
@@ -220,6 +223,7 @@ module Seeds
       task.save!
     end
 
+    # :reek:FeatureEnvy
     def create_sc_with_updated_assigned_at
       sc = create(
         :supplemental_claim,
@@ -238,6 +242,7 @@ module Seeds
       task.save!
     end
 
+    # :reek:FeatureEnvy
     def create_hlr_completed
       hlr = create(
         :higher_level_review,
@@ -277,6 +282,7 @@ module Seeds
     end
 
     #adds hlr with random disposition.
+    # :reek:FeatureEnvy
     def create_hlr_with_disposition
         hlr = create(
                     :higher_level_review,
@@ -295,6 +301,7 @@ module Seeds
         task.save!
     end
 
+    # :reek:FeatureEnvy
     def create_sc_with_disposition
       sc = create(
                   :supplemental_claim,

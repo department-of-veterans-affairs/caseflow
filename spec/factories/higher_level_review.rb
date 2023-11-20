@@ -29,7 +29,7 @@ FactoryBot.define do
     end
 
     transient do
-      remove { false}
+      remove { false }
     end
 
     transient do
@@ -161,6 +161,7 @@ FactoryBot.define do
       end
     end
 
+    # :reek:DuplicateMethodCall
     trait :with_specific_issue_type do
       after(:create) do |hlr, evaluator|
         ri = create(:request_issue,
