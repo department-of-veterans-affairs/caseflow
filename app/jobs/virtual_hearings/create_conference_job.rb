@@ -53,6 +53,20 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     Raven.capture_exception(exception, extra: extra)
   end
 
+  # Retry if Webex returns an invalid response.
+  retry_on(Caseflow::Error::WebexApiError, attempts: 10, wait: :exponentially_longer) do |job, exception|
+    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
+
+    kwargs = job.arguments.first
+    extra = {
+      application: job.class.app_name.to_s,
+      hearing_id: kwargs[:hearing_id],
+      hearing_type: kwargs[:hearing_type]
+    }
+
+    Raven.capture_exception(exception, extra: extra)
+  end
+
   # Log the timezone of the job. This is primarily used for debugging context around times
   # that appear in the hearings notification emails.
   before_perform do |job|
@@ -138,12 +152,11 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
         "[#{virtual_hearing.hearing_id}])..."
       )
 
-      pexip_response = create_pexip_conference
+      create_conference_response = create_new_conference
 
-      Rails.logger.info("Pexip response: #{pexip_response.inspect}")
-
-      if pexip_response.error
-        error_display = pexip_error_display(pexip_response)
+      Rails.logger.info("Create Conference Response: #{create_conference_response.inspect}")
+      if create_conference_response.error
+        error_display = error_display(create_conference_response)
 
         Rails.logger.error("CreateConferenceJob failed: #{error_display}")
 
@@ -151,12 +164,19 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
         DataDogService.increment_counter(metric_name: "created_conference.failed", **create_conference_datadog_tags)
 
-        fail pexip_response.error
+        fail create_conference_response.error
       end
 
       DataDogService.increment_counter(metric_name: "created_conference.successful", **create_conference_datadog_tags)
 
-      virtual_hearing.update(conference_id: pexip_response.data[:conference_id])
+      if virtual_hearing.conference_provider == "pexip"
+        virtual_hearing.update(conference_id: create_conference_response.data[:conference_id])
+      else
+        # Manually adds the subject of the body for the Webex IC Request as the conference id(int only)
+        response = "#{virtual_hearing.hearing.hearing.docket_number}#{virtual_hearing.hearing.id}"
+        response = response.delete "-"
+        virtual_hearing.update(conference_id: response.to_i)
+      end
     end
   end
 
@@ -172,16 +192,12 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     end
   end
 
-  def pexip_error_display(response)
+  def error_display(response)
     "(#{response.error.code}) #{response.error.message}"
   end
 
-  def create_pexip_conference
-    client.create_conference(
-      host_pin: virtual_hearing.host_pin,
-      guest_pin: virtual_hearing.guest_pin,
-      name: virtual_hearing.alias
-    )
+  def create_new_conference
+    client(virtual_hearing).create_conference(virtual_hearing)
   end
 
   def should_initialize_alias_and_pins?

@@ -46,6 +46,7 @@ class HearingSerializer
   attribute :contested_claim do |hearing|
     hearing.appeal.contested_claim?
   end
+  attribute :conference_provider
   attribute :current_issue_count
   attribute :disposition
   attribute :disposition_editable

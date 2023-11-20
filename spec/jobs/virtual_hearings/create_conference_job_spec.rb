@@ -97,6 +97,22 @@ describe VirtualHearings::CreateConferenceJob do
       expect(virtual_hearing.guest_pin.to_s.length).to eq(11)
     end
 
+    describe "for webex" do
+      let(:virtual_hearing) do
+        create(:virtual_hearing).tap do |virtual_hearing|
+          virtual_hearing.meeting_type.update(service_name: "webex")
+          virtual_hearing.update(conference_id: 23_110_511)
+        end
+      end
+
+      it "creates a webex conference" do
+        conference_id = "#{virtual_hearing.hearing.docket_number}#{virtual_hearing.hearing.id}"
+        conference_id = conference_id.delete "-"
+        subject.perform_now
+        expect(virtual_hearing.conference_id).to eq(conference_id.to_i)
+      end
+    end
+
     include_examples "confirmation emails are sent"
 
     include_examples "sent email event objects are created"

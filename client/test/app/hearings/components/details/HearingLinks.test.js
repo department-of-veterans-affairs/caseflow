@@ -55,7 +55,7 @@ describe('HearingLinks', () => {
     expect(form).toMatchSnapshot();
     expect(form.find(VirtualHearingLink)).toHaveLength(0);
     expect(
-      form.find('span').filterWhere((node) => node.text() === 'Expired')
+      form.find('span').filterWhere((node) => node.text() === 'N/A')
     ).toHaveLength(2);
   });
 

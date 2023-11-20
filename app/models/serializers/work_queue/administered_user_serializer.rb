@@ -11,4 +11,5 @@ class WorkQueue::AdministeredUserSerializer < WorkQueue::UserSerializer
       params[:organization].dvc&.eql?(object)
     end
   end
+  attribute :conference_provider
 end
