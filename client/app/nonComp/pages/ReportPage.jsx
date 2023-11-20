@@ -37,30 +37,24 @@ const buttonOuterContainerStyling = css({
 
 const specificEventTypeSchema = yup.lazy((value) => {
   // eslint-disable-next-line no-undefined
-  if (value !== undefined) {
-    return yup.object({
-      added_decision_date: yup.boolean(),
-      added_issue: yup.boolean(),
-      added_issue_no_decision_date: yup.boolean(),
-      claim_created: yup.boolean(),
-      claim_closed: yup.boolean(),
-      claim_status_incomplete: yup.boolean(),
-      claim_status_inprogress: yup.boolean(),
-      completed_disposition: yup.boolean(),
-      removed_issue: yup.boolean(),
-      withdrew_issue: yup.boolean(),
-    }).test('at-least-one-true', ERRORS.ATLEAST_ONE_OPTION, (obj) => {
-      const atLeastOneTrue = Object.values(obj).some((val) => val === true);
-
-      if (!atLeastOneTrue) {
-        return false;
-      }
-
-      return true;
-    });
+  if (value === undefined) {
+    return yup.mixed().notRequired();
   }
 
-  return yup.mixed().notRequired();
+  return yup.object({
+    added_decision_date: yup.boolean(),
+    added_issue: yup.boolean(),
+    added_issue_no_decision_date: yup.boolean(),
+    claim_created: yup.boolean(),
+    claim_closed: yup.boolean(),
+    claim_status_incomplete: yup.boolean(),
+    claim_status_inprogress: yup.boolean(),
+    completed_disposition: yup.boolean(),
+    removed_issue: yup.boolean(),
+    withdrew_issue: yup.boolean(),
+  }).test('at-least-one-true', ERRORS.ATLEAST_ONE_OPTION, (obj) => {
+    return Object.values(obj).some((val) => val === true);
+  });
 });
 
 const schema = yup.object().shape({
@@ -68,7 +62,6 @@ const schema = yup.object().shape({
   timing: timingSchema,
   specificEventType: specificEventTypeSchema
 });
-
 
 const ReportPageButtons = ({
   history,
@@ -133,7 +126,7 @@ const RHFCheckboxGroup = ({ options, name, control }) => {
 
   return (
     <fieldset className={fieldClasses} style={{ paddingLeft: '30px' }}>
-      {errorMessage && <div className="usa-input-error-message">{ errorMessage }</div>}
+      {errorMessage ? <div className="usa-input-error-message">{ errorMessage }</div> : null}
       {options.map((option) => (
         <div key={option.id}>
           <Checkbox
