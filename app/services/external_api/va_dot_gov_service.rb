@@ -183,7 +183,7 @@ class ExternalApi::VADotGovService
     def validate_zip_code(address)
       response = send_va_dot_gov_request(zip_code_validation_request(address))
 
-      ExternalApi::VADotGovService::AddressValidationResponse.new(response)
+      ExternalApi::VADotGovService::ZipCodeValidationResponse.new(response)
     end
 
     # Gets full list of facility IDs available from the VA.gov API
