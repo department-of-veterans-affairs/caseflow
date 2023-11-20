@@ -12,38 +12,38 @@ class ExternalApi::WebexService
     @api_endpoint = api_endpoint
   end
 
-  def create_conference(virtual_hearing)
+  def create_conference(conferenced_item)
     body = {
       "jwt": {
-        "sub": virtual_hearing.subject_for_conference,
-        "nbf": virtual_hearing.nbf,
-        "exp": virtual_hearing.exp
+        "sub": conferenced_item.subject_for_conference,
+        "nbf": conferenced_item.nbf,
+        "exp": conferenced_item.exp
       },
       "aud": @aud,
-      "numGuest": 1,
       "numHost": 1,
-      "provideShortUrls": true
+      "provideShortUrls": true,
+      "verticalType": "gen"
     }
 
-    resp = send_webex_request(body: body)
+    resp = send_webex_request(body)
     return if resp.nil?
 
     ExternalApi::WebexService::CreateResponse.new(resp)
   end
 
-  def delete_conference(virtual_hearing)
+  def delete_conference(conferenced_item)
     body = {
       "jwt": {
-        "sub": virtual_hearing.subject_for_conference,
+        "sub": conferenced_item.subject_for_conference,
         "nbf": 0,
         "exp": 0
       },
       "aud": @aud,
-      "numGuest": 1,
       "numHost": 1,
-      "provideShortUrls": true
+      "provideShortUrls": true,
+      "verticalType": "gen"
     }
-    resp = send_webex_request(body: body)
+    resp = send_webex_request(body)
     return if resp.nil?
 
     ExternalApi::WebexService::DeleteResponse.new(resp)
@@ -52,14 +52,14 @@ class ExternalApi::WebexService
   private
 
   # :nocov:
-  def send_webex_request(body: nil)
+  def send_webex_request(body = nil)
     url = "https://#{@host}#{@domain}#{@api_endpoint}"
     request = HTTPI::Request.new(url)
     request.open_timeout = 300
     request.read_timeout = 300
     request.body = body.to_json unless body.nil?
 
-    request.headers["Authorization"] = "Bearer #{@apikey}"
+    request.headers = { "Authorization": "Bearer #{@apikey}", "Content-Type": "application/json" }
 
     MetricsService.record(
       "#{@host} POST request to #{url}",

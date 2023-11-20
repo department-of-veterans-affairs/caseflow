@@ -41,21 +41,21 @@ describe ExternalApi::WebexService do
             "exp": virtual_hearing.hearing.scheduled_for.end_of_day.to_i
           },
           "aud": aud,
-          "numGuest": 1,
           "numHost": 1,
-          "provideShortUrls": true
+          "provideShortUrls": true,
+          "verticalType": "gen"
         }
       end
 
       subject { webex_service.create_conference(virtual_hearing) }
 
       it "calls send_webex_request and passes the correct body" do
-        expect(webex_service).to receive(:send_webex_request).with(body: body)
+        expect(webex_service).to receive(:send_webex_request).with(body)
         subject
       end
 
       it "returns a successful instance of CreateResponse class" do
-        allow(webex_service).to receive(:send_webex_request).with(body: body).and_return(success_create_resp)
+        allow(webex_service).to receive(:send_webex_request).with(body).and_return(success_create_resp)
 
         expect(subject).to be_instance_of(ExternalApi::WebexService::CreateResponse)
         expect(subject.code).to eq(200)
@@ -63,7 +63,7 @@ describe ExternalApi::WebexService do
       end
 
       it "returns error response" do
-        allow(webex_service).to receive(:send_webex_request).with(body: body).and_return(error_create_resp)
+        allow(webex_service).to receive(:send_webex_request).with(body).and_return(error_create_resp)
 
         expect(subject.code).to eq(400)
         expect(subject.success?).to eq(false)
@@ -77,7 +77,7 @@ describe ExternalApi::WebexService do
 
         it "creates a conference" do
           expect(subject.code).to eq(200)
-          expect(subject.resp.body[:baseUrl]).to eq("https://instant-usgov.webex.com/visit/")
+          expect(JSON.parse(subject.resp.body)["baseUrl"]).to eq("https://instant-usgov.webex.com/visit/")
           subject
         end
       end
@@ -92,20 +92,20 @@ describe ExternalApi::WebexService do
             "exp": 0
           },
           "aud": aud,
-          "numGuest": 1,
           "numHost": 1,
-          "provideShortUrls": true
+          "provideShortUrls": true,
+          "verticalType": "gen"
         }
       end
       subject { webex_service.delete_conference(virtual_hearing) }
 
       it "calls send_webex_request and passes correct body" do
-        expect(webex_service).to receive(:send_webex_request).with(body: body)
+        expect(webex_service).to receive(:send_webex_request).with(body)
         subject
       end
 
       it "returns a successful instance of CreateResponse class" do
-        allow(webex_service).to receive(:send_webex_request).with(body: body).and_return(success_create_resp)
+        allow(webex_service).to receive(:send_webex_request).with(body).and_return(success_create_resp)
 
         expect(subject).to be_instance_of(ExternalApi::WebexService::DeleteResponse)
         expect(subject.code).to eq(200)
@@ -113,7 +113,7 @@ describe ExternalApi::WebexService do
       end
 
       it "returns error response" do
-        allow(webex_service).to receive(:send_webex_request).with(body: body).and_return(error_create_resp)
+        allow(webex_service).to receive(:send_webex_request).with(body).and_return(error_create_resp)
 
         expect(subject.code).to eq(400)
         expect(subject.success?).to eq(false)
@@ -127,7 +127,7 @@ describe ExternalApi::WebexService do
 
         it "deletes a conference" do
           expect(subject.code).to eq(200)
-          expect(subject.resp.body[:baseUrl]).to eq("https://instant-usgov.webex.com/visit/")
+          expect(JSON.parse(subject.resp.body)["baseUrl"]).to eq("https://instant-usgov.webex.com/visit/")
           subject
         end
       end

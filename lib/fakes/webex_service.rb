@@ -60,7 +60,7 @@ class Fakes::WebexService
       host: link_info(@num_hosts),
       guest: link_info(@num_guests),
       baseUrl: "https://instant-usgov.webex.com/visit/"
-    }
+    }.to_json
   end
 
   def link_info(num_links = 1)
@@ -86,6 +86,6 @@ class Fakes::WebexService
         description: @error_message
       ],
       trackingId: "ROUTER_#{SecureRandom.uuid}"
-    }
+    }.to_json
   end
 end
