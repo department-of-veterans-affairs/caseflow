@@ -21,6 +21,19 @@ describe('ReportPage', () => {
     await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
   };
 
+  const selectSpecificEventActions = async () => {
+    setup();
+
+    await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
+    expect(screen.getAllByText('Event / Action').length).toBe(1);
+
+    const specificEvents = screen.getAllByText('Specific Events / Actions');
+
+    expect(specificEvents.length).toBe(1);
+
+    fireEvent.click(screen.getByLabelText('Specific Events / Actions'));
+  };
+
   it('passes a11y testing', async () => {
     const { container } = setup();
 
@@ -176,7 +189,7 @@ describe('ReportPage', () => {
   it('should have Generate task Report button and Clear Filter button disabled on initial load', () => {
     setup();
 
-    const generateTaskReport = screen.getByRole('button', { name: /Generate task Report/i });
+    const generateTaskReport = screen.getByRole('button', { name: /Generate task report/i });
 
     expect(generateTaskReport).toHaveClass('usa-button-disabled');
 
@@ -190,7 +203,7 @@ describe('ReportPage', () => {
       setup();
       await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
 
-      const generateTaskReport = screen.getByRole('button', { name: /Generate task Report/i });
+      const generateTaskReport = screen.getByRole('button', { name: /Generate task report/i });
 
       expect(generateTaskReport).not.toHaveClass('usa-button-disabled');
 
@@ -210,6 +223,7 @@ describe('ReportPage', () => {
     });
 
     it('should add 10 checkbox when radio Specific Events/ Actions is clicked', async () => {
+
       setup();
 
       await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
@@ -220,11 +234,37 @@ describe('ReportPage', () => {
       expect(specificEvents.length).toBe(1);
 
       fireEvent.click(screen.getByLabelText('Specific Events / Actions'));
+
       expect(screen.getAllByRole('checkbox').length).toBe(10);
 
       REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS.map((option) => {
         expect(screen.getAllByText(option.label)).toBeTruthy();
       });
+    });
+
+    it('should add a validation error if Generate Task button is clicked without selecting any specific events actions', async () => {
+
+      setup();
+
+      await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
+      expect(screen.getAllByText('Event / Action').length).toBe(1);
+
+      const specificEvents = screen.getAllByText('Specific Events / Actions');
+
+      expect(specificEvents.length).toBe(1);
+
+      fireEvent.click(screen.getByLabelText('Specific Events / Actions'));
+
+      expect(screen.getAllByRole('checkbox').length).toBe(10);
+
+      const generateTaskReport = screen.getByRole('button', { name: /Generate task report/i });
+
+      await userEvent.click(generateTaskReport);
+
+      await waitFor(() => {
+        expect(screen.getAllByText('Please select at least one option').length).toBe(1);
+      });
+
     });
   });
 
