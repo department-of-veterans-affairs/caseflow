@@ -91,7 +91,11 @@ describe GeomatchService do
       end
 
       context "foreign appeal" do
-        before { appeal.instance_variable_set(:@address, non_us_address) }
+        before do
+          allow_any_instance_of(ExternalApi::VADotGovService::AddressValidationResponse)
+            .to receive(:address).and_return(non_us_address)
+        end
+
         it "geomatches for a foreign appeal" do
           subject
 
@@ -103,7 +107,12 @@ describe GeomatchService do
       end
 
       context "phillipines appeal" do
-        before { appeal.instance_variable_set(:@address, philippines_address) }
+        before do
+          allow_any_instance_of(ExternalApi::VADotGovService::AddressValidationResponse)
+            .to receive(:address).and_return(philippines_address)
+          allow_any_instance_of(Address).to receive(:country).and_return(philippines_address.country_name)
+        end
+
         it "geomatches for a phillipines appeal" do
           subject
 
