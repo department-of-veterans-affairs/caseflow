@@ -99,6 +99,7 @@ module Seeds
     end
 
     # Inserts hlr with or with out decision date.
+    # :reek:FeatureEnvy
     def create_hlr_with_decision_date(decision_date = nil)
       hlr = create(
             :higher_level_review,
@@ -117,6 +118,7 @@ module Seeds
         end
     end
 
+    # :reek:FeatureEnvy
     def create_sc_with_decision_date(decision_date = nil)
       sc = create(
             :supplemental_claim,
@@ -262,6 +264,7 @@ module Seeds
       task.save!
     end
 
+    # :reek:FeatureEnvy
     def create_sc_completed
       sc = create(
         :supplemental_claim,
