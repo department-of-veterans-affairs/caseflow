@@ -1,0 +1,2 @@
+class AutoText < ApplicationRecord
+end
