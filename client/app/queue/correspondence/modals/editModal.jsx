@@ -10,23 +10,44 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateCmpInformation } from '../correspondenceReducer/reviewPackageActions';
+import moment from 'moment';
 
 class EditModal extends React.Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
       VADORDate: '',
       packageDocument: '',
       dateError: '',
       showEditModal: false,
-      packageOptions: ''
+      packageOptions: '',
+      defaultVADORDate: '',
+      defaultPackageDocument: ''
     };
   }
 
   componentDidMount() {
     setTimeout(this.getPackages, 0);
+    setTimeout(this.getCorrespondenceData, 0);
+  }
+
+  getCorrespondenceData = async() => {
+    const locationPath = location.pathname.split('/');
+    const correspondenceId = locationPath[3];
+
+    await ApiUtil.get(`/queue/correspondence/${correspondenceId}`).then((response) => {
+
+      const formattedVADORDate = moment.utc(response.body.correspondence?.va_date_of_receipt).format('YYYY-MM-DD');
+      const packageDocumentTypeName = { label: response.body.package_document_type?.name, value: response.body.package_document_type?.id };
+
+      this.setState({
+        VADORDate: formattedVADORDate,
+        packageDocument: packageDocumentTypeName,
+        defaultVADORDate: formattedVADORDate,
+        defaultPackageDocument: packageDocumentTypeName
+      });
+    });
   }
 
   onClickEditCMP = () => {
@@ -36,8 +57,8 @@ class EditModal extends React.Component {
   onClickCancel = () => {
     this.setState({
       showEditModal: false,
-      packageDocument: '',
-      VADORDate: ''
+      packageDocument: this.state.defaultPackageDocument,
+      VADORDate: this.state.defaultVADORDate
     });
   };
 
@@ -56,6 +77,7 @@ class EditModal extends React.Component {
         if (response.status === 200) {
           this.props.updateCmpInformation(packageDocument, VADORDate);
           props.onClickCancel();
+          setTimeout(this.getCorrespondenceData, 0);
         }
       });
   }
@@ -111,8 +133,8 @@ class EditModal extends React.Component {
     }
   };
 
-  getPackages = () => {
-    ApiUtil.get('/queue/correspondence/packages').then((resp) => {
+  getPackages = async() => {
+    await ApiUtil.get('/queue/correspondence/packages').then((resp) => {
       const packageTypeOptions = _.values(ApiUtil.convertToCamelCase(resp.body.package_document_types)).map((packages) => ({
         label: packages.name,
         value: packages.id.toString()
@@ -124,7 +146,6 @@ class EditModal extends React.Component {
   }
 
   render() {
-    // const { onCancel } = this.props;
     const { VADORDate, packageDocument, showEditModal } = this.state;
 
     return (
@@ -167,7 +188,7 @@ class EditModal extends React.Component {
 }
 
 EditModal.propTypes = {
-  onCancel: PropTypes.func,
+  onCancel: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) => (
