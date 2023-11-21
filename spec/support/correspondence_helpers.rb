@@ -18,7 +18,25 @@ module CorrespondenceHelpers
     visit "/queue/correspondence/#{uuid}/intake"
   end
 
+  def visit_intake_form_step_2_with_appeals
+    FeatureToggle.enable!(:correspondence_queue)
+    User.authenticate!(roles: ["Mail Intake"])
+    veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
+    13.times { create(:appeal, veteran_file_number: veteran.file_number) }
+    3.times { create(:correspondence, veteran_id: veteran.id, uuid: SecureRandom.uuid, va_date_of_receipt: Time.local(2023, 1, 1) ) }
+    allow_any_instance_of(CorrespondenceController).to receive(:correspondence_load).and_return(Correspondence.all)
+
+    visit "/queue/correspondence/#{Correspondence.first.uuid}/intake"
+
+    click_button("Continue")
+  end
+
   def associate_with_prior_mail_radio_options
+    radio_options = page.all(".cf-form-radio-option")
+    { yes: radio_options[0], no: radio_options[1] }
+  end
+
+  def existing_appeal_radio_options
     radio_options = page.all(".cf-form-radio-option")
     { yes: radio_options[0], no: radio_options[1] }
   end
