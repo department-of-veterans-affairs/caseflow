@@ -2,7 +2,7 @@
 
 class CorrespondenceController < ApplicationController
   before_action :verify_feature_toggle
-  before_action :correspondence, only: [:show, :update]
+  before_action :correspondence
 
   def intake
     respond_to do |format|
@@ -69,10 +69,6 @@ class CorrespondenceController < ApplicationController
 
   private
 
-  def correspondence
-    @correspondence ||= Correspondence.find_by(uuid: params[:id])
-  end
-
   def general_information
     vet = veteran_by_correspondence
     {
@@ -96,6 +92,18 @@ class CorrespondenceController < ApplicationController
     if !FeatureToggle.enabled?(:correspondence_queue)
       redirect_to "/unauthorized"
     end
+  end
+
+  def correspondence
+    return @correspondence if @correspondence.present?
+
+    if params[:id].present?
+      @correspondence = Correspondence.find(params[:id])
+    elsif params[:correspondence_uuid].present?
+      @correspondence = Correspondence.find_by(uuid: params[:correspondence_uuid])
+    end
+
+    @correspondence
   end
 
   def correspondence_load

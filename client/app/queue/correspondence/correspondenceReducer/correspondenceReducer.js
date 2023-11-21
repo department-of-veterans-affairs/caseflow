@@ -2,6 +2,8 @@ import { update } from '../../../util/ReducerUtil';
 import { ACTIONS } from './correspondenceConstants';
 
 export const initialState = {
+  selectedAppeals: [],
+  fetchedAppeals: [],
   correspondences: [],
   radioValue: '2',
   toggledCheckboxes: [],
@@ -68,6 +70,26 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
       }
     });
 
+  case ACTIONS.SET_FETCHED_APPEALS:
+    return update(state, {
+      fetchedAppeals: {
+        $set: [...action.payload.appeals]
+      }
+    });
+
+  case ACTIONS.SAVE_APPEAL_CHECKBOX_STATE:
+    return update(state, {
+      selectedAppeals: {
+        $set: [...action.payload.appealIds]
+      }
+    });
+
+  case ACTIONS.CLEAR_APPEAL_CHECKBOX_STATE:
+    return update(state, {
+      selectedAppeals: {
+        $set: []
+      }
+    });
   default:
     return state;
   }
