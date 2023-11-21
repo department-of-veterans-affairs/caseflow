@@ -43,7 +43,8 @@ class StuckJobSchedulerJob < CaseflowJob
 
   def execute_stuck_job(stuck_job_class)
     begin
-      stuck_job_class.new.perform
+      stuck_job_instance = stuck_job_class.new
+      stuck_job_instance.perform_later
     rescue StandardError => error
       log_error(error)
     end
