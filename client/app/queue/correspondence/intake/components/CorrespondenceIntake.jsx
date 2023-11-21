@@ -84,6 +84,7 @@ export const CorrespondenceIntake = (props) => {
         correspondenceUuid={props.correspondence_uuid}
         mailTasks={props.mailTasks}
         saveMailTaskState={props.saveMailTaskState}
+        onContinueStatusChange={handleContinueStatusChange}
       />
     }
     {currentStep === 3 &&

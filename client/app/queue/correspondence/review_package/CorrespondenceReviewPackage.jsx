@@ -1,9 +1,10 @@
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import React, { useEffect, useState } from 'react';
-import ReviewPackageCmpInfo from './ReviewPackageCmpInfo';
+import ReviewPackageData from './ReviewPackageData';
 import ReviewPackageCaseTitle from './ReviewPackageCaseTitle';
 import Button from '../../../components/Button';
 import ReviewForm from './ReviewForm';
+import { CmpDocuments } from './CmpDocuments';
 import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
 
@@ -18,6 +19,9 @@ export const CorrespondenceReviewPackage = (props) => {
     default_select_value: ''
   });
   const [apiResponse, setApiResponse] = useState(null);
+  const [correspondenceDocuments, setCorrespondenceDocuments] = useState([]);
+  const [selectedCorrespondence, setSelectedCorrespondence] = useState(null);
+  const [packageDocumentType, setPackageDocumentType] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
 
   const fetchData = async () => {
@@ -30,6 +34,10 @@ export const CorrespondenceReviewPackage = (props) => {
 
       setApiResponse(response.body.general_information);
       const data = response.body.general_information;
+
+      setCorrespondenceDocuments(response.body.correspondence_documents);
+      setSelectedCorrespondence(response.body.correspondence);
+      setPackageDocumentType(response.body.package_document_type);
 
       setReviewDetails({
         veteran_name: data.veteran_name || {},
@@ -72,7 +80,9 @@ export const CorrespondenceReviewPackage = (props) => {
     <React.Fragment>
       <AppSegment filledBackground>
         <ReviewPackageCaseTitle />
-        <ReviewPackageCmpInfo {...props} />
+        <ReviewPackageData
+          correspondence={selectedCorrespondence}
+          packageDocumentType={packageDocumentType} />
         <ReviewForm
           {...{
             reviewDetails,
@@ -85,6 +95,7 @@ export const CorrespondenceReviewPackage = (props) => {
           }}
           {...props}
         />
+        <CmpDocuments documents={correspondenceDocuments} />
       </AppSegment>
       <div className="cf-app-segment">
         <div className="cf-push-left">
