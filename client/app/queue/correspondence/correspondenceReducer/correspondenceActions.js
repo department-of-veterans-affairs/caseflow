@@ -74,3 +74,13 @@ export const setFetchedAppeals = (appeals) =>
       }
     });
   };
+
+export const addNewAppealRelatedTask = (id, appealId, type, content) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.ADD_NEW_APPEAL_RELATED_TASK,
+      payload: {
+        id, appealId, type, content
+      }
+    });
+  };
