@@ -69,6 +69,10 @@ class CorrespondenceController < ApplicationController
 
   private
 
+  def correspondence
+    @correspondence ||= Correspondence.find_by(uuid: params[:correspondence_uuid])
+  end
+
   def general_information
     vet = veteran_by_correspondence
     {
