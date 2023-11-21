@@ -152,5 +152,17 @@ FactoryBot.define do
       establishment_last_submitted_at { (HigherLevelReview.processing_retry_interval_hours + 1).hours.ago }
       establishment_processed_at { nil }
     end
+
+    trait :with_intake do
+      after(:create) do |sc|
+        create(:intake, :completed, detail: sc, veteran_file_number: sc.veteran_file_number)
+      end
+    end
+
+    trait :with_decision do
+      after(:create) do |sc|
+        create(:decision_issue, decision_review: sc, request_issues: sc.request_issues, benefit_type: sc.benefit_type)
+      end
+    end
   end
 end
