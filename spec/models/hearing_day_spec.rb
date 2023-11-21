@@ -596,11 +596,13 @@ describe HearingDay, :all_dbs do
     include_context "Enable both conference services"
 
     let(:expected_date) { "Sep 21, 2023" }
+    let(:id) { 2_000_006_656 }
     let(:expected_date_parsed) { Date.parse(expected_date) }
     let(:hearing_day) do
       build(
         :hearing_day,
-        scheduled_for: expected_date_parsed
+        scheduled_for: expected_date_parsed,
+        id: id
       )
     end
 
