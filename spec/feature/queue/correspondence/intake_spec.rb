@@ -135,7 +135,7 @@ RSpec.feature("The Correspondence Intake page") do
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-1").click
       expect(page).to have_button("button-continue", disabled: true)
-      fill_in("Task Information", with: "Correspondence Text")
+      find_by_id("Task Information").fill_in with: "Correspondence Text"
       expect(page).to have_button("button-continue", disabled: false)
     end
 
@@ -143,7 +143,7 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("+ Add tasks")
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-0").click
-      fill_in("Task Information", with: "Correspondence test text")
+      find_by_id("Task Information").fill_in with: "Correspondence test text"
       click_button("button-back-button")
       click_button("button-continue")
       expect(page).to have_button("button-continue", disabled: false)
