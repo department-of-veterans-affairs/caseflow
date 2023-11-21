@@ -7,7 +7,6 @@ import { prepareAppealForStore } from '../../../../utils';
 import LoadingContainer from '../../../../../components/LoadingContainer';
 import { LOGO_COLORS } from '../../../../../constants/AppConstants';
 import RadioField from '../../../../../components/RadioField';
-import ExistingAppealTasksView from './ExistingAppealTasksView';
 import {
   setTaskRelatedAppealIds,
   setFetchedAppeals

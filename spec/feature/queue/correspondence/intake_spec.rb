@@ -132,8 +132,9 @@ RSpec.feature("The Correspondence Intake page") do
 
     it "Re-enables continue button when all new task has been filled out" do
       click_on("+ Add tasks")
-      find_by_id("reactSelectContainer").click
-      find_by_id("react-select-2-option-1").click
+      page.find(:xpath, '//*[@id="reactSelectContainer"]/div/div').click
+      page.find("#react-select-2-input").fill_in with: "CAVC Correspondence"
+      page.find(".css-e42auv", text: "CAVC Correspondence").click
       expect(page).to have_button("button-continue", disabled: true)
       find_by_id("Task Information").fill_in with: "Correspondence Text"
       expect(page).to have_button("button-continue", disabled: false)
@@ -141,8 +142,9 @@ RSpec.feature("The Correspondence Intake page") do
 
     it "Re populates feilds after going back a step and then continuing forward again" do
       click_on("+ Add tasks")
-      find_by_id("reactSelectContainer").click
-      find_by_id("react-select-2-option-0").click
+      page.find(:xpath, '//*[@id="reactSelectContainer"]/div/div').click
+      page.find("#react-select-2-input").fill_in with: "CAVC Correspondence"
+      page.find(".css-e42auv", text: "CAVC Correspondence").click
       find_by_id("Task Information").fill_in with: "Correspondence test text"
       click_button("button-back-button")
       click_button("button-continue")
