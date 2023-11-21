@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import DailyDocketPrinted from '../../../../../../client/app/hearings/components/dailyDocket/DailyDocketPrinted';
+import Alert from "../../../../../../client/app/components/Alert";
 
 describe('DailyDocketPrinted', () => {
   it('renders judge name when user is not a VSO employee and judge name is present', () => {

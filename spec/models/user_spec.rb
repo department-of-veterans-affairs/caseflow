@@ -66,6 +66,27 @@ describe User, :all_dbs do
     end
   end
 
+  describe "#can_view_vlj?" do
+    let(:roles) { [] }
+    let(:instance) { described_class.new(roles: roles) }
+
+    context 'when roles include "RO ViewHearSched"' do
+      let(:roles) { ["RO ViewHearSched"] }
+
+      it "returns true" do
+        expect(instance.can_view_vlj?).to be true
+      end
+    end
+
+    context 'when roles do not include "RO ViewHearSched"' do
+      let(:roles) { ["OtherRole"] }
+
+      it "returns false" do
+        expect(instance.can_view_vlj?).to be false
+      end
+    end
+  end
+
   describe "judges in VACOLS" do
     context "user is a judge" do
       let(:user) { create(:user, :with_vacols_judge_record) }
