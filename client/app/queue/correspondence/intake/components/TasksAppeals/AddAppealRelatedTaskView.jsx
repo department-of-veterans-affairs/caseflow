@@ -27,7 +27,8 @@ export const AddAppealRelatedTaskView = (props) => {
   const appeals = useSelector((state) => state.intakeCorrespondence.fetchedAppeals);
   const taskRelatedAppealIds = useSelector((state) => state.intakeCorrespondence.taskRelatedAppealIds);
   const [orderedRelatedAppealIds, setOrderedRelatedAppealIds] = useState([]);
-  const [existingAppealRadio, setExistingAppealRadio] = useState(taskRelatedAppealIds.length ? RELATED_YES : RELATED_NO);
+  const [existingAppealRadio, setExistingAppealRadio] =
+    useState(taskRelatedAppealIds.length ? RELATED_YES : RELATED_NO);
   const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
