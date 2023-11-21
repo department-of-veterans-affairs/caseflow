@@ -138,7 +138,7 @@ describe Api::V3::Issues::Ama::VeteransController, :postgres, type: :request do
             context "when a veteran has multiple request issues with multiple decision issues" do
               let_it_be(:vet) { create(:veteran) }
               include_context :multiple_ri_multiple_di
-              let_it_be(:reqeust_issue_no_di) { create(:request_issue, veteran_participant_id: vet.participant_id) }
+              let_it_be(:reqeust_issue_no_di) { create(:request_issue, id: 5000, veteran_participant_id: vet.participant_id) }
               let_it_be(:request_issue_for_vet_count) { RequestIssue.where(veteran_participant_id: vet.participant_id).count }
 
               it_behaves_like :it_should_respond_with_legacy_present, false

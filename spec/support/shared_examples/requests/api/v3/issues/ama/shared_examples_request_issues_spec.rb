@@ -236,7 +236,7 @@ RSpec.shared_examples :it_should_respond_with_multiple_decision_issues_per_reque
       ri["veteran_participant_id"]
     end
     request_issue_without_dis = response_hash["request_issues"].find { |ri| ri["id"] == 5000 }
-
+    
     expect(response).to have_http_status(200)
     expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
     expect(response_hash["legacy_appeals_present"]).to eq legacy_appeals_present
