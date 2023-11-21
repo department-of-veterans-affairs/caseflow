@@ -8,12 +8,6 @@ import { CmpDocuments } from './CmpDocuments';
 import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import {
-  setCorrespondence,
-  setCorrespondenceDocuments,
-  setPackageDocumentType
-} from '../correspondenceReducer/reviewPackageActions';
 
 export const CorrespondenceReviewPackage = (props) => {
   const [reviewDetails, setReviewDetails] = useState({
@@ -38,10 +32,6 @@ export const CorrespondenceReviewPackage = (props) => {
 
       setApiResponse(response.body.general_information);
       const data = response.body.general_information;
-
-      props.setCorrespondence(response.body.correspondence);
-      props.setPackageDocumentType(response.body.package_document_type);
-      props.setCorrespondenceDocuments(response.body.correspondence_documents);
 
       setReviewDetails({
         veteran_name: data.veteran_name || {},
@@ -136,9 +126,6 @@ CorrespondenceReviewPackage.propTypes = {
   correspondence: PropTypes.object,
   correspondenceDocuments: PropTypes.arrayOf(PropTypes.object),
   packageDocumentType: PropTypes.object,
-  setCorrespondence: PropTypes.func,
-  setCorrespondenceDocuments: PropTypes.func,
-  setPackageDocumentType: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
@@ -147,15 +134,7 @@ const mapStateToProps = (state) => ({
   packageDocumentType: state.reviewPackage.packageDocumentType
 });
 
-const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({
-    setCorrespondence,
-    setCorrespondenceDocuments,
-    setPackageDocumentType
-  }, dispatch)
-);
-
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  null,
 )(CorrespondenceReviewPackage);
