@@ -15,7 +15,7 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
   end
 
   describe "GET #show" do
-    before { get :show, params: { id: correspondence.uuid } }
+    before { get :show, params: { correspondence_uuid: correspondence.uuid } }
 
     it "returns a successful response" do
       expect(response).to have_http_status(:ok)
