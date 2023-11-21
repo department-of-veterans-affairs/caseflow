@@ -33,24 +33,28 @@ export const AddTasksAppealsView = (props) => {
         <h2 style={{ margin: '25px auto 15px auto' }}>Mail Tasks</h2>
         <div className="gray-border" style={{ padding: '0rem 2rem' }}>
           <p style={{ marginBottom: '0.5rem' }}>Select any tasks completed by the Mail team for this correspondence.</p>
-          <div style={{ display: 'inline-block', marginRight: '14rem' }}>
+          <div id="mail-tasks-left" style={{ display: 'inline-block', marginRight: '14rem' }}>
             {mailTasksLeft.map((name, index) => {
               return (
                 <Checkbox
                   key={index}
                   name={name}
                   label={name}
+                  defaultValue={props.mailTasks[name] || false}
+                  onChange={(isChecked) => props.saveMailTaskState(name, isChecked)}
                 />
               );
             })}
           </div>
-          <div style={{ display: 'inline-block' }}>
+          <div id="mail-tasks-right" style={{ display: 'inline-block' }}>
             {mailTasksRight.map((name, index) => {
               return (
                 <Checkbox
                   key={index}
                   name={name}
                   label={name}
+                  defaultValue={props.mailTasks[name] || false}
+                  onChange={(isChecked) => props.saveMailTaskState(name, isChecked)}
                 />
               );
             })}
@@ -82,7 +86,9 @@ export const AddTasksAppealsView = (props) => {
 
 AddTasksAppealsView.propTypes = {
   correspondenceUuid: PropTypes.string.isRequired,
-  onContinueStatusChange: PropTypes.func.isRequired
+  onContinueStatusChange: PropTypes.func.isRequired,
+  mailTasks: PropTypes.objectOf(PropTypes.bool),
+  saveMailTaskState: PropTypes.func
 };
 
 export default AddTasksAppealsView;

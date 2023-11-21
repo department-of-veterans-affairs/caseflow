@@ -45,7 +45,6 @@ export const clearCheckboxState = () =>
     });
   };
 
-
 export const saveAppealCheckboxState = (appealIds) =>
   (dispatch) => {
     dispatch({
@@ -79,6 +78,17 @@ export const setFetchedAppeals = (appeals) =>
       type: ACTIONS.SET_FETCHED_APPEALS,
       payload: {
         appeals
+      }
+    });
+  };
+
+export const saveMailTaskState = (name, isChecked) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SAVE_MAIL_TASK_STATE,
+      payload: {
+        name,
+        isChecked
       }
     });
   };
