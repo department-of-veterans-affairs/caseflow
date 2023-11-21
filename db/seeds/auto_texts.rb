@@ -33,8 +33,6 @@ module Seeds
           "Response to BVA solicitation letter dated mm/dd/yy",
           "VAF 9 (specify)"]
 
-          binding.pry
-
           auto_texts_values.each do |text|
         AutoText.find_or_create_by(name: text)
       end
