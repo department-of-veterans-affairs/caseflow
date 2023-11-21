@@ -16,50 +16,68 @@ class EditModal extends React.Component {
 
   constructor(props) {
     super(props);
-
     this.state = {
       VADORDate: '',
-      packageDocument: {},
+      packageDocument: '',
       dateError: '',
       showEditModal: false,
-      packageOptions: ''
+      packageOptions: '',
+      defaultVADORDate: '',
+      defaultPackageDocument: ''
     };
   }
 
   componentDidMount() {
     setTimeout(this.getPackages, 0);
+    setTimeout(this.getCorrespondenceData, 0);
+  }
+
+  getCorrespondenceData = async() => {
+    const locationPath = location.pathname.split('/');
+    const correspondenceId = locationPath[3];
+
+    await ApiUtil.get(`/queue/correspondence/${correspondenceId}`).then((response) => {
+
+      const formattedVADORDate = moment.utc(response.body.correspondence?.va_date_of_receipt).format('YYYY-MM-DD');
+      const packageDocumentTypeName = { label: response.body.package_document_type?.name, value: response.body.package_document_type?.id };
+
+      this.setState({
+        VADORDate: formattedVADORDate,
+        packageDocument: packageDocumentTypeName,
+        defaultVADORDate: formattedVADORDate,
+        defaultPackageDocument: packageDocumentTypeName
+      });
+    });
   }
 
   onClickEditCMP = () => {
-    this.setState({
-      showEditModal: true,
-      packageDocument: {
-        value: this.props.packageDocumentType.value,
-        label: this.props.packageDocumentType.label
-      },
-      VADORDate: moment.utc(this.props.VADORDate).format('YYYY-MM-DD')
-    });
+    this.setState({ showEditModal: true });
   };
 
   onClickCancel = () => {
     this.setState({
       showEditModal: false,
-      packageDocument: this.state.packageDocument,
-      VADORDate: this.state.VADORDate
+      packageDocument: this.state.defaultPackageDocument,
+      VADORDate: this.state.defaultVADORDate
     });
   };
 
   handleCMPSave = async(props) => {
+    const locationPath = location.pathname.split('/');
+    const correspondenceId = locationPath[3];
+
     const {
       VADORDate,
       packageDocument
     } = props.state;
 
-    await ApiUtil.put(`/queue/correspondence/${this.props.correspondence_uuid}/update_cmp`, { data: { packageDocument, VADORDate } }).
+    await ApiUtil.put(`/queue/correspondence/${correspondenceId}/update_cmp`, { data: { packageDocument, VADORDate } }).
       then((response) => {
+        // console.log(packageDocument);
         if (response.status === 200) {
           this.props.updateCmpInformation(packageDocument, VADORDate);
           props.onClickCancel();
+          setTimeout(this.getCorrespondenceData, 0);
         }
       });
   }
@@ -115,22 +133,21 @@ class EditModal extends React.Component {
     }
   };
 
-  getPackages = () => {
-    ApiUtil.get('/queue/correspondence/packages').then((resp) => {
-      /* eslint-disable-next-line max-len */
+  getPackages = async() => {
+    await ApiUtil.get('/queue/correspondence/packages').then((resp) => {
       const packageTypeOptions = _.values(ApiUtil.convertToCamelCase(resp.body.package_document_types)).map((packages) => ({
         label: packages.name,
-        value: packages.id
+        value: packages.id.toString()
       }));
 
-      packageTypeOptions.sort((first, second) => (first.id - second.id));
+      packageTypeOptions.sort((first, second) => (first.label - second.label));
       this.setState({ packageOptions: packageTypeOptions });
     });
   }
 
   render() {
     // const { onCancel } = this.props;
-    const { showEditModal } = this.state;
+    const { VADORDate, packageDocument, showEditModal } = this.state;
 
     return (
       <div>
@@ -140,18 +157,14 @@ class EditModal extends React.Component {
           classNames={['usa-button-primary']}
         />
         {showEditModal && (
-          <Modal
-            buttons={this.getModalButtons()}
-            visible closeHandler={this.onClickCancel}
-            title="Edit CMP information"
-          >
+          <Modal buttons={this.getModalButtons()} visible closeHandler={this.onClickCancel} title="Edit CMP information">
             <div className="add-nonrating-request-issue">
               <div className="decision-date">
                 <DateSelector
                   name="decision-date"
                   label="VA DOR"
                   strongLabel
-                  value={this.state.VADORDate}
+                  value={VADORDate}
                   errorMessage={this.state.dateError}
                   onChange={this.VADORDateOnChange}
                   type="date"
@@ -164,7 +177,7 @@ class EditModal extends React.Component {
                 strongLabel
                 placeholder="Select or enter..."
                 options={this.state.packageOptions}
-                value={this.props.packageDocumentType.value}
+                value={packageDocument}
                 onChange={this.packageDocumentOnChange}
               />
             </div>
@@ -176,21 +189,8 @@ class EditModal extends React.Component {
 }
 
 EditModal.propTypes = {
-  onCancel: PropTypes.func,
-  VADORDate: PropTypes.string,
-  correspondence_uuid: PropTypes.string,
-  packageDocumentType: PropTypes.object,
-  updateCmpInformation: PropTypes.func
+  onCancel: PropTypes.func
 };
-
-const mapStateToProps = (state) => ({
-  correspondence_uuid: state.reviewPackage.correspondence.uuid,
-  VADORDate: state.reviewPackage.correspondence.va_date_of_receipt,
-  packageDocumentType: {
-    value: state.reviewPackage.packageDocumentType?.id,
-    label: state.reviewPackage.packageDocumentType?.name
-  }
-});
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
@@ -199,6 +199,6 @@ const mapDispatchToProps = (dispatch) => (
 );
 
 export default connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
 )(EditModal);
