@@ -607,7 +607,7 @@ describe HearingDay, :all_dbs do
     subject { hearing_day.subject_for_conference }
 
     it "returns the expected meeting conference details" do
-      is_expected.to eq("Guest Link for #{expected_date}")
+      is_expected.to eq("#{hearing_day.id}_#{expected_date}")
     end
 
     context "nbf and exp" do

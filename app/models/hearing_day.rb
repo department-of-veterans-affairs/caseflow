@@ -227,7 +227,7 @@ class HearingDay < CaseflowRecord
   end
 
   def subject_for_conference
-    "Guest Link for #{scheduled_for.strftime('%b %e, %Y')}"
+    "#{id}_#{scheduled_for.strftime('%b %e, %Y')}"
   end
 
   def nbf
