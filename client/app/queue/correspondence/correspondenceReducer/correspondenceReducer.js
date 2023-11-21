@@ -8,7 +8,8 @@ export const initialState = {
   radioValue: '2',
   toggledCheckboxes: [],
   relatedTaskAppeals: [],
-  unrelatedTasks: []
+  unrelatedTasks: [],
+  mailTasks: {}
 };
 
 export const intakeCorrespondenceReducer = (state = initialState, action = {}) => {
@@ -70,6 +71,15 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
       }
     });
 
+  case ACTIONS.SAVE_MAIL_TASK_STATE:
+    return update(state, {
+      mailTasks: {
+        [action.payload.name]: {
+          $set: action.payload.isChecked
+        }
+      }
+    });
+
   case ACTIONS.SET_FETCHED_APPEALS:
     return update(state, {
       fetchedAppeals: {
@@ -90,6 +100,7 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
         $set: []
       }
     });
+
   default:
     return state;
   }

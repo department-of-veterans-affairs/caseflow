@@ -3,10 +3,13 @@ import ProgressBar from 'app/components/ProgressBar';
 import Button from '../../../../components/Button';
 import PropTypes from 'prop-types';
 import AddCorrespondenceView from './AddCorrespondence/AddCorrespondenceView';
+import ConfirmationPage from './CorrespondenceConfirmation/ConfirmationPage';
 import { AddTasksAppealsView } from './TasksAppeals/AddTasksAppealsView';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setUnrelatedTasks } from '../../correspondenceReducer/correspondenceActions';
+import {
+  setUnrelatedTasks,
+  saveMailTaskState } from '../../correspondenceReducer/correspondenceActions';
 
 const progressBarSections = [
   {
@@ -81,8 +84,19 @@ export const CorrespondenceIntake = (props) => {
         unrelatedTasks={props.unrelatedTasks}
         setUnrelatedTasks={props.setUnrelatedTasks}
         correspondenceUuid={props.correspondence_uuid}
+        mailTasks={props.mailTasks}
+        saveMailTaskState={props.saveMailTaskState}
         onContinueStatusChange={handleContinueStatusChange}
       />
+    }
+    {currentStep === 3 &&
+      <div>
+        <ConfirmationPage
+          mailTasks={props.mailTasks}
+          goToStep={setCurrentStep}
+        />
+
+      </div>
     }
     <div>
       <a href="/queue/correspondence">
@@ -123,17 +137,21 @@ export const CorrespondenceIntake = (props) => {
 CorrespondenceIntake.propTypes = {
   correspondence_uuid: PropTypes.string,
   unrelatedTasks: PropTypes.arrayOf(Object),
-  setUnrelatedTasks: PropTypes.func
+  setUnrelatedTasks: PropTypes.func,
+  mailTasks: PropTypes.objectOf(PropTypes.bool),
+  saveMailTaskState: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
   correspondences: state.intakeCorrespondence.correspondences,
-  unrelatedTasks: state.intakeCorrespondence.unrelatedTasks
+  unrelatedTasks: state.intakeCorrespondence.unrelatedTasks,
+  mailTasks: state.intakeCorrespondence.mailTasks
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    setUnrelatedTasks
+    setUnrelatedTasks,
+    saveMailTaskState
   }, dispatch)
 );
 
