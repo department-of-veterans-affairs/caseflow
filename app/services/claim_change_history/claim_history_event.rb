@@ -58,8 +58,8 @@ class ClaimHistoryEvent
       status_events = []
       versions = parse_versions(change_data)
 
-      cancelled_events = handle_hookless_cancelled_status_events(change_data, versions)
-      status_events.push(*cancelled_events)
+      hookless_cancelled_events = handle_hookless_cancelled_status_events(change_data, versions)
+      status_events.push(*hookless_cancelled_events)
 
       if versions.present?
         first_version, *rest_of_versions = versions
@@ -79,7 +79,7 @@ class ClaimHistoryEvent
         rest_of_versions.map do |version|
           status_events.push event_from_version(version, 1, change_data)
         end
-      elsif cancelled_events.empty?
+      elsif hookless_cancelled_events.empty?
         # No versions so make an event with the current status
         # There is a chance that a task has no intake either through data setup or through a remanded SC
         event_date = change_data["intake_completed_at"] || change_data["task_created_at"]
@@ -87,6 +87,8 @@ class ClaimHistoryEvent
                                             change_data.merge("event_date" => event_date,
                                                               "event_user_name" => "System"))
       end
+
+      cleanup_status_event_duplicates!(hookless_cancelled_events, status_events)
 
       status_events
     end
@@ -263,6 +265,16 @@ class ClaimHistoryEvent
         from_change_data(:cancelled, change_data.merge("event_date" => change_data["task_closed_at"],
                                                        "event_user_name" => "System"))
       ]
+    end
+
+    def cleanup_status_event_duplicates!(hookless_events, status_events)
+      # If there were hookless cancelled events do some cleanup since there's potentially an extra in progress event
+      # that is caused by the handle_issues_with_no_decision_date! method in the claim_review.rb model class.
+      # So if there is an incomplete event and hookless cancelled events then it's probably safe the in progress events
+      # unless the state was actually on_hold -> in_progress -> cancelled which will currently not be preserved here
+      if hookless_events.present? && status_events.any? { |event| event.event_type == :incomplete }
+        status_events.delete_if { |event| event && event.event_type == :in_progress }
+      end
     end
   end
 
