@@ -59,7 +59,8 @@ const selectContainerStyles = css({
 
 const ReactSelectDropdown = (props) => {
   return (
-    <div {...selectContainerStyles}>
+    <div id="reactSelectContainer"
+      {...selectContainerStyles}>
 
       <label style={{ marginTop: '5px', marginBottom: '5px', marginLeft: '1px' }}>{props.label}</label>
       <Select
