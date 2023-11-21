@@ -81,7 +81,6 @@ module ByDocketDateDistribution
       priority: priority_counts,
       nonpriority: nonpriority_counts,
       distributed_cases_tied_to_ineligible_judges: {
-        legacy: distributed_cases_tied_to_ineligible_judges,
         ama: ama_distributed_cases_tied_to_ineligible_judges
       },
       algorithm: "by_docket_date",
@@ -89,13 +88,6 @@ module ByDocketDateDistribution
     }
   end
   # rubocop:enable Metrics/MethodLength
-
-  def distributed_cases_tied_to_ineligible_judges
-    @appeals.filter_map do |appeal|
-      appeal[:case_id] if VACOLS::CaseDocket.ineligible_judges_sattyid_cache
-        &.include?(hearing_judge_id(appeal[:case_id]))
-    end
-  end
 
   def ama_distributed_cases_tied_to_ineligible_judges
     @appeals.filter_map do |appeal|
