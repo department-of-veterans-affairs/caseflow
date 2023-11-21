@@ -75,6 +75,17 @@ export const setFetchedAppeals = (appeals) =>
     });
   };
 
+export const saveMailTaskState = (name, isChecked) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SAVE_MAIL_TASK_STATE,
+      payload: {
+        name,
+        isChecked
+      }
+    });
+  };
+
 export const addNewAppealRelatedTask = (id, appealId, type, content) =>
   (dispatch) => {
     dispatch({
