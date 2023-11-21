@@ -23,7 +23,6 @@ SCHEDULED_JOBS = {
     "monthly_metrics" => MonthlyMetricsReportJob,
     "nightly_syncs" => NightlySyncsJob,
     "out_of_service_reminder" => OutOfServiceReminderJob,
-    "populate_end_product_sync_queue" => PopulateEndProductSyncQueueJob,
     "prepare_establish_claim" => PrepareEstablishClaimTasksJob,
     "push_priority_appeals_to_judges" => PushPriorityAppealsToJudgesJob,
     "quarterly_metrics" => QuarterlyMetricsReportJob,
@@ -50,5 +49,6 @@ SCHEDULED_JOBS = {
     "legacy_notification_efolder_sync_job" => LegacyNotificationEfolderSyncJob,
     "change_hearing_request_type_task_cancellation_job" => ChangeHearingRequestTypeTaskCancellationJob,
     "cannot_delete_contention_remediation_job" => CannotDeleteContentionRemediationJob,
-    "contention_not_found_remediation_job" => ContentionNotFoundRemediationJob
+    "contention_not_found_remediation_job" => ContentionNotFoundRemediationJob,
+    "process_notification_status_updates_job" => ProcessNotificationStatusUpdatesJob
 }.freeze

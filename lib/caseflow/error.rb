@@ -110,6 +110,14 @@ module Caseflow::Error
     end
   end
 
+  class InvalidTaskTypeOnTaskCreate < SerializableError
+    def initialize(args)
+      @task_type = args[:task_type]
+      @code = args[:code] || 400
+      @message = args[:message] || "#{@task_type} is not an assignable task type"
+    end
+  end
+
   # :reek:TooManyInstanceVariables
   class MultipleOpenTasksOfSameTypeError < SerializableError
     def initialize(args)
@@ -454,6 +462,7 @@ module Caseflow::Error
   class VANotifyInternalServerError < VANotifyApiError; end
   class VANotifyRateLimitError < VANotifyApiError; end
   class EmptyQueueError < StandardError; end
+  class InvalidNotificationStatusFormat < StandardError; end
 
   # Pacman errors
   class PacmanApiError < StandardError
@@ -464,4 +473,10 @@ module Caseflow::Error
   class PacmanForbiddenError < PacmanApiError; end
   class PacmanNotFoundError < PacmanApiError; end
   class PacmanInternalServerError < PacmanApiError; end
+
+  class SyncLockFailed < StandardError
+    def ignorable?
+      true
+    end
+  end
 end
