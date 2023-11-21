@@ -7,6 +7,7 @@ import { AddTasksAppealsView } from './TasksAppeals/AddTasksAppealsView';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { setUnrelatedTasks } from '../../correspondenceReducer/correspondenceActions';
+import ConfirmTasksNotRelatedToAnAppeal from './Confirm/ConfirmTasksNotRelatedToAnAppeal';
 
 const progressBarSections = [
   {
@@ -83,6 +84,9 @@ export const CorrespondenceIntake = (props) => {
         correspondenceUuid={props.correspondence_uuid}
         onContinueStatusChange={handleContinueStatusChange}
       />
+    }
+    {currentStep === 3 &&
+      <ConfirmTasksNotRelatedToAnAppeal />
     }
     <div>
       <a href="/queue/correspondence">
