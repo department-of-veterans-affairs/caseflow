@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
 import { css } from 'glamor';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';
 import COPY from '../../../COPY';
+
 
 const BatchSize = (props) => {
   const { leverList, leverStore } = props;
@@ -20,7 +22,13 @@ const BatchSize = (props) => {
   });
 
   const [batchSizeLevers, setLever] = useState(filteredLevers);
-  const updateLever = (index) => (event) => {
+  const updateLever = (index, changedItem) => (event) => {
+    const lever = batchSizeLevers.find((lever) => lever.item === changedItem);
+    leverStore.dispatch({
+      type: Constants.UPDATE_LEVER_VALUE,
+      updated_lever: { item:changedItem, value: event }
+    })
+
     const levers = batchSizeLevers.map((lever, i) => {
       if (index === i) {
         let errorResult = !(/^\d{0,3}$/).test(event);
@@ -61,7 +69,7 @@ const BatchSize = (props) => {
               isInteger
               value={lever.value}
               errorMessage={lever.errorMessage}
-              onChange={updateLever(index)}
+              onChange={updateLever(index, lever.item)}
             />
           </div>
         </div>
