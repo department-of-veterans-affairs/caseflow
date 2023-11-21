@@ -245,6 +245,12 @@ feature "Attorney checkout flow", :all_dbs do
       choose("rating-radio_3", allow_label_click: true)
       check("Issue is related to Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
       click_on "Next"
+
+      # vha modal check
+      radio_choices = page.all(".cf-form-radio-option > label")
+      radio_choices[1].click
+      click_on "Add this issue"
+
       click_on "Save"
       click_on "Yes, save"
       visit "/queue/appeals/#{appeal.uuid}"
@@ -271,6 +277,12 @@ feature "Attorney checkout flow", :all_dbs do
       choose("rating-radio_3", allow_label_click: true)
       check("Issue is related to PACT Act", allow_label_click: true, visible: false)
       click_on "Next"
+
+      # vha modal check
+      radio_choices = page.all(".cf-form-radio-option > label")
+      radio_choices[1].click
+      click_on "Add this issue"
+
       click_on "Save"
       click_on "Yes, save"
       visit "/queue/appeals/#{appeal.uuid}"
@@ -298,6 +310,12 @@ feature "Attorney checkout flow", :all_dbs do
       check("Issue is related to Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
       check("Issue is related to PACT Act", allow_label_click: true, visible: false)
       click_on "Next"
+
+      # vha modal check
+      radio_choices = page.all(".cf-form-radio-option > label")
+      radio_choices[1].click
+      click_on "Add this issue"
+
       click_on "Save"
       click_on "Yes, save"
       visit "/queue/appeals/#{appeal.uuid}"
@@ -323,6 +341,12 @@ feature "Attorney checkout flow", :all_dbs do
       click_on "+ Add issue"
       choose("rating-radio_2", allow_label_click: true)
       click_on "Next"
+
+      # vha modal check
+      radio_choices = page.all(".cf-form-radio-option > label")
+      radio_choices[1].click
+      click_on "Add this issue"
+
       find("#issue-action-3").find(:xpath, "option[3]").select_option
       find("label[for='Military Sexual Trauma (MST)']").click
       find("label[for='PACT Act']").click
