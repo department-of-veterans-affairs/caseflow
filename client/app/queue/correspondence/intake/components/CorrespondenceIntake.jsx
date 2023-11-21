@@ -123,7 +123,8 @@ export const CorrespondenceIntake = (props) => {
 CorrespondenceIntake.propTypes = {
   correspondence_uuid: PropTypes.string,
   unrelatedTasks: PropTypes.arrayOf(Object),
-  setUnrelatedTasks: PropTypes.func
+  setUnrelatedTasks: PropTypes.func,
+  mailTasks: PropTypes.objectOf(PropTypes.bool)
 };
 
 const mapStateToProps = (state) => ({
