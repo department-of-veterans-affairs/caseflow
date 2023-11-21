@@ -3,7 +3,7 @@ import { ACTIONS } from './reviewPackageConstants';
 
 export const initialState = {
   correspondence: {},
-  correspondenceDocuments: {},
+  correspondenceDocuments: [],
   packageDocumentType: {}
 };
 

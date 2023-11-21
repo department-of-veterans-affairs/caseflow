@@ -52,7 +52,6 @@ class EditModal extends React.Component {
 
     await ApiUtil.put(`/queue/correspondence/${correspondenceId}/update_cmp`, { data: { packageDocument, VADORDate } }).
       then((response) => {
-        console.log(packageDocument);
         if (response.status === 200) {
           this.props.updateCmpInformation(packageDocument, VADORDate);
           props.onClickCancel();
@@ -113,6 +112,7 @@ class EditModal extends React.Component {
 
   getPackages = () => {
     ApiUtil.get('/queue/correspondence/packages').then((resp) => {
+      /* eslint-disable-next-line max-len */
       const packageTypeOptions = _.values(ApiUtil.convertToCamelCase(resp.body.package_document_types)).map((packages) => ({
         label: packages.name,
         value: packages.id.toString()
@@ -135,7 +135,11 @@ class EditModal extends React.Component {
           classNames={['usa-button-primary']}
         />
         {showEditModal && (
-          <Modal buttons={this.getModalButtons()} visible closeHandler={this.onClickCancel} title="Edit CMP information">
+          <Modal
+            buttons={this.getModalButtons()}
+            visible closeHandler={this.onClickCancel}
+            title="Edit CMP information"
+          >
             <div className="add-nonrating-request-issue">
               <div className="decision-date">
                 <DateSelector
