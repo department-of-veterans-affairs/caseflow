@@ -132,18 +132,18 @@ RSpec.feature("The Correspondence Intake page") do
 
     it "Re-enables continue button when all new task has been filled out" do
       click_on("+ Add tasks")
-      find_by_id("reactSelectContainer").click
+      all('#reactSelectContainer')[0].click
       find_by_id("react-select-2-option-1").click
       expect(page).to have_button("button-continue", disabled: true)
-      find_by_id("Task Information").fill_in with: "Correspondence Text"
+      find_by_id("content").fill_in with: "Correspondence Text"
       expect(page).to have_button("button-continue", disabled: false)
     end
 
     it "Re populates feilds after going back a step and then continuing forward again" do
       click_on("+ Add tasks")
-      find_by_id("reactSelectContainer").click
+      all('#reactSelectContainer')[0].click
       find_by_id("react-select-2-option-0").click
-      find_by_id("Task Information").fill_in with: "Correspondence test text"
+      find_by_id("content").fill_in with: "Correspondence test text"
       click_button("button-back-button")
       click_button("button-continue")
       expect(page).to have_button("button-continue", disabled: false)
