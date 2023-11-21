@@ -45,7 +45,6 @@ export const clearCheckboxState = () =>
     });
   };
 
-
 export const saveAppealCheckboxState = (appealIds) =>
   (dispatch) => {
     dispatch({
@@ -72,6 +71,7 @@ export const setUnrelatedTasks = (tasks) =>
       }
     });
   };
+
 export const setFetchedAppeals = (appeals) =>
   (dispatch) => {
     dispatch({
