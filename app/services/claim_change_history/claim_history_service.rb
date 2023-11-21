@@ -6,6 +6,15 @@ class ClaimHistoryService
               :processed_request_issue_ids, :processed_request_issue_update_ids,
               :processed_decision_issue_ids, :events, :filters
 
+  TIMING_RANGES = [
+    "before",
+    "after",
+    "between",
+    "last 7 days",
+    "last 30 days",
+    "last 365 days"
+  ].freeze
+
   def initialize(business_line = VhaBusinessLine.singleton, filters = {})
     @business_line = business_line
     @filters = parse_filters(filters)
@@ -126,7 +135,7 @@ class ClaimHistoryService
   end
 
   def process_timing_filter(new_events)
-    return new_events if @filters[:timing].blank?
+    return new_events unless @filters[:timing].present? && TIMING_RANGES.include?(@filters[:timing][:range])
 
     # Try to guess the date format from either a string or iso8601 date string object
     start_date, end_date = date_range_for_timing_filter

@@ -53,9 +53,13 @@ class ClaimHistoryEvent
       from_change_data(:claim_creation, change_data.merge(intake_event_hash(change_data)))
     end
 
+    # rubocop:disable Metrics/MethodLength
     def create_status_events(change_data)
       status_events = []
       versions = parse_versions(change_data)
+
+      cancelled_events = handle_hookless_cancelled_status_events(change_data, versions)
+      status_events.push(*cancelled_events)
 
       if versions.present?
         first_version, *rest_of_versions = versions
@@ -75,15 +79,18 @@ class ClaimHistoryEvent
         rest_of_versions.map do |version|
           status_events.push event_from_version(version, 1, change_data)
         end
-      else
+      elsif cancelled_events.empty?
         # No versions so make an event with the current status
-        event_type = task_status_to_event_type(change_data["task_status"])
-        event_hash = { "event_date" => change_data["intake_completed_at"], "event_user_name" => "System" }
-        status_events.push from_change_data(event_type, change_data.merge(event_hash))
+        # There is a chance that a task has no intake either through data setup or through a remanded SC
+        event_date = change_data["intake_completed_at"] || change_data["task_created_at"]
+        status_events.push from_change_data(task_status_to_event_type(change_data["task_status"]),
+                                            change_data.merge("event_date" => event_date,
+                                                              "event_user_name" => "System"))
       end
 
       status_events
     end
+    # rubocop:enable Metrics/MethodLength
 
     def parse_versions(change_data)
       versions = change_data["task_versions"]
@@ -212,8 +219,10 @@ class ClaimHistoryEvent
 
     def intake_event_hash(change_data)
       {
-        "event_date" => change_data["intake_completed_at"],
-        "event_user_name" => change_data["intake_user_name"],
+        # There is a chance that a task has no intake either through data setup or through a remanded SC,
+        # so include a backup event date and user name as System
+        "event_date" => change_data["intake_completed_at"] || change_data["task_created_at"],
+        "event_user_name" => change_data["intake_user_name"] || "System",
         "user_facility" => change_data["intake_user_station_id"],
         "event_user_css_id" => change_data["intake_user_css_id"]
       }
@@ -233,6 +242,27 @@ class ClaimHistoryEvent
       date_difference = DateTime.iso8601(first_date.tr(" ", "T")) - DateTime.iso8601(second_date.tr(" ", "T"))
 
       (date_difference.abs * 24 * 60 * 60).to_f < time_in_seconds
+    end
+
+    def handle_hookless_cancelled_status_events(change_data, versions)
+      # The remove reqest issues circumvents the normal paper trail hooks and results in a weird database state
+      return [] unless versions
+
+      cancelled_task_versions = versions.select { |element| element.is_a?(Hash) && element.empty? }
+
+      return [] if cancelled_task_versions.empty?
+
+      # Mutate the versions array and remove these empty object changes from it
+      versions.reject! { |element| element.is_a?(Hash) && element.empty? }
+
+      [
+        # Assume the state went from assigned -> cancelled
+        from_change_data(:in_progress, change_data.merge("event_date" => change_data["intake_completed_at"] ||
+                                                                          change_data["task_created_at"],
+                                                         "event_user_name" => "System")),
+        from_change_data(:cancelled, change_data.merge("event_date" => change_data["task_closed_at"],
+                                                       "event_user_name" => "System"))
+      ]
     end
   end
 

@@ -382,6 +382,23 @@ describe ClaimHistoryEvent do
           expect(event.event_date).to eq(change_data["intake_completed_at"])
         end
       end
+
+      context "if the task versions are from a hookless papertrail cancelled task" do
+        let(:version_changes) do
+          "{\"--- {}\n\",\"--- {}\n\"}"
+        end
+
+        it "should create an assigned and a cancelled task status event" do
+          events = subject
+          expect(events.count).to eq(2)
+          expect(events[0].event_type).to eq(:in_progress)
+          expect(events[0].event_user_name).to eq("System")
+          expect(events[0].event_date).to eq(change_data["intake_completed_at"])
+          expect(events[1].event_type).to eq(:cancelled)
+          expect(events[1].event_user_name).to eq("System")
+          expect(events[1].event_date).to eq(change_data["task_completed_at"])
+        end
+      end
     end
 
     describe ".create_issue_events" do
