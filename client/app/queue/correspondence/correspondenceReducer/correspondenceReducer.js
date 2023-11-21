@@ -101,6 +101,13 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
       }
     });
 
+  case ACTIONS.REMOVE_NEW_APPEAL_RELATED_TASK:
+    return update(state, {
+      newAppealRelatedTasks: {
+        $set: state.newAppealRelatedTasks.filter((task) => task.id !== action.payload.id)
+      }
+    });
+
   default:
     return state;
   }
