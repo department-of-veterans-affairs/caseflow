@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "test_prof/recipes/rspec/let_it_be"
-require "rails_helper"
 
 # rubocop:disable Layout/LineLength
 describe Api::V3::Issues::Ama::VeteransController, :postgres, type: :request do
@@ -110,7 +109,7 @@ describe Api::V3::Issues::Ama::VeteransController, :postgres, type: :request do
               let_it_be(:vet) { create(:veteran, file_number: "123456789") }
               let_it_be(:vacols_case) { create(:case, bfcorlid: "123456789S") }
               include_context :multiple_ri_multiple_di
-              let_it_be(:reqeust_issue_no_di) { create(:request_issue, veteran_participant_id: vet.participant_id) }
+              let_it_be(:reqeust_issue_no_di) { create(:request_issue, id: 5000, veteran_participant_id: vet.participant_id) }
               let_it_be(:request_issue_for_vet_count) { RequestIssue.where(veteran_participant_id: vet.participant_id).count }
 
               it_behaves_like :it_should_respond_with_legacy_present, true
