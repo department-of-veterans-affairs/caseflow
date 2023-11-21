@@ -21,10 +21,6 @@ const CheckboxModal = (props) => {
     setToggledCheckboxes(checkboxes);
   };
 
-  const handleClear = () => {
-    setToggledCheckboxes([]);
-  };
-
   const checkboxSizeStyling = css({
     transform: 'scale(1.3)',
     translate: '11%',
@@ -52,13 +48,13 @@ const CheckboxModal = (props) => {
           classNames: ['usa-button', 'usa-button-primary', 'cf-margin-left-2rem'],
           name: 'Add',
           onClick: () => props.handleAccept(toggledCheckBoxes),
-          disabled: false,
+          disabled: toggledCheckBoxes.length === 0,
         },
         {
           id: 'clear-checkboxes-button',
           classNames: ['usa-button', 'usa-button-secondary', 'usa-grid-full'],
           name: 'Clear all',
-          onClick: () => handleClear(),
+          onClick: props.handleClear,
           disabled: false
         }
       ]}>
@@ -91,6 +87,9 @@ CheckboxModal.propTypes = {
 
   // responsible for closing the modal. Occurs on both the close button and the X in the top right.
   closeHandler: PropTypes.func,
+
+  // method to be called when the clear button is pressed.
+  handleClear: PropTypes.func,
 
   // the values that will be used as names for the checkboxes.
   checkboxData: PropTypes.arrayOf(string)
