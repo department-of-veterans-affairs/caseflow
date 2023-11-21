@@ -22,6 +22,7 @@ import {
 } from 'constants/REPORT_TYPE_CONSTANTS';
 import { useDispatch } from 'react-redux';
 import { downloadReportCSV } from '../actions/changeHistorySlice';
+import { dig } from 'lodash';
 
 const buttonInnerContainerStyle = css({
   display: 'flex',
@@ -46,7 +47,7 @@ const ReportPageButtons = ({
   handleSubmit }) => {
 
   // eslint-disable-next-line no-console
-  const onSubmit = (data) => console.log(data);
+  // const onSubmit = (data) => console.log(data);
 
   return (
     <div {...buttonOuterContainerStyling}>
@@ -72,7 +73,7 @@ const ReportPageButtons = ({
           classNames={['usa-button']}
           label="generate-report"
           name="generate-report"
-          onClick={handleSubmit(onSubmit)}
+          onClick={handleSubmit}
           disabled={isGenerateButtonDisabled}
         >
           Generate task report
@@ -170,20 +171,108 @@ const ReportPage = ({ history }) => {
 
   const watchReportType = watch('reportType');
   const watchRadioEventAction = watch('radioEventAction');
-  const dispatch = useDispatch();
-  const businessLineUrl = useState((state) => state.nonComp.businessLineUrl);
+  // const dispatch = useDispatch();
+  // const businessLineUrl = useState((state) => state.nonComp.businessLineUrl);
+
+  const inputObject = {
+    timing: {
+      range: 'after',
+      startDate: '2023-11-01T04:00:00.000Z'
+    },
+    conditions: [
+      {
+        options: {
+          comparisonOperator: 'lessThan',
+          valueOne: 5
+        },
+        condition: 'daysWaiting'
+      },
+      {
+        condition: 'decisionReviewType',
+        options: {
+          HigherLevelReview: true,
+          SupplementalClaim: true
+        }
+      }
+    ],
+    reportType: 'event_type_action',
+    radioEventAction: 'specific_events_action',
+    specificEventType: {
+      added_decision_date: true,
+      added_issue: true
+    }
+  };
+
+  const processConditionOptions = (condition, options) => {
+    let formattedOptions;
+
+    switch (condition) {
+    case 'decisionReviewType':
+      console.log('in decision review type case');
+      formattedOptions = Object.keys(options);
+      break;
+    default:
+      formattedOptions = options;
+    }
+
+    return formattedOptions;
+  };
+
+  const parseFilters = (data) => {
+    console.log(data);
+
+    const filters = {};
+
+    // Report Type parsing
+    filters.reportType = data.reportType;
+
+    // Event filter
+    if (data.radioEventAction === 'specific_events_action') {
+      filters.events = Object.keys(data.specificEventType);
+    }
+
+    // Timing filter
+    filters.timing = data.timing;
+
+    // Conditions parsing
+    const transformedConditions = data.conditions.reduce((result, item) => {
+      const { condition, options } = item;
+
+      if (condition && options) {
+        // Parse individual conditions to make them more palatable for the server
+        const newOptions = processConditionOptions(condition, options);
+
+        result[condition] = newOptions;
+      }
+
+      return result;
+    }, {});
+
+    console.log(transformedConditions);
+
+    // Add the conditions into the filters
+    Object.assign(filters, transformedConditions);
+
+    console.log(filters);
+
+    return data;
+  };
 
   const submitForm = (data) => {
     // eslint-disable-next-line no-console
-    console.log(data);
+    // console.log(data);
 
     // Don't know how acceptable this is for compliance.
     // Could also do something like a modal that grabs focus while it is generating
     // window.scrollTo(0, 0);
 
+    // parseFilters(data);
+
     // Example csv generation code:
-    dispatch(downloadReportCSV({ organizationUrl: businessLineUrl, filterData: { filters: { report: 'true' } } }));
+    // dispatch(downloadReportCSV({ organizationUrl: businessLineUrl, filterData: { filters: { report: 'true' } } }));
   };
+
+  parseFilters(inputObject);
 
   return (
     <NonCompLayout
