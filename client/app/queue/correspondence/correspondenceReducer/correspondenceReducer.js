@@ -7,6 +7,7 @@ export const initialState = {
   correspondences: [],
   radioValue: '2',
   toggledCheckboxes: [],
+  mailTasks: {},
   unrelatedTasks: []
 };
 
@@ -66,6 +67,15 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     return update(state, {
       fetchedAppeals: {
         $set: [...action.payload.appeals]
+      }
+    });
+
+  case ACTIONS.SAVE_MAIL_TASK_STATE:
+    return update(state, {
+      mailTasks: {
+        [action.payload.name]: {
+          $set: action.payload.isChecked
+        }
       }
     });
 

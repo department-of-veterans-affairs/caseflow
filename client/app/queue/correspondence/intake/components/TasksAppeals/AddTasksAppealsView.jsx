@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import Checkbox from '../../../../../components/Checkbox';
 import AddAppealRelatedTaskView from './AddAppealRelatedTaskView';
 import AddUnrelatedTaskView from './AddUnrelatedTaskView';
+import { saveMailTaskState } from '../../../correspondenceReducer/correspondenceActions';
 
 const mailTasksLeft = [
   'Change of address',
@@ -17,8 +19,11 @@ const mailTasksRight = [
 ];
 
 export const AddTasksAppealsView = (props) => {
+  const mailTasks = useSelector((state) => state.intakeCorrespondence.mailTasks);
   const [relatedTasksCanContinue, setRelatedTasksCanContinue] = useState(true);
   const [unrelatedTasksCanContinue, setUnrelatedTasksCanContinue] = useState(true);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     props.onContinueStatusChange(relatedTasksCanContinue && unrelatedTasksCanContinue);
@@ -40,8 +45,8 @@ export const AddTasksAppealsView = (props) => {
                   key={index}
                   name={name}
                   label={name}
-                  defaultValue={props.mailTasks[name] || false}
-                  onChange={(isChecked) => props.saveMailTaskState(name, isChecked)}
+                  defaultValue={mailTasks[name] || false}
+                  onChange={(isChecked) => dispatch(saveMailTaskState(name, isChecked))}
                 />
               );
             })}
@@ -53,8 +58,8 @@ export const AddTasksAppealsView = (props) => {
                   key={index}
                   name={name}
                   label={name}
-                  defaultValue={props.mailTasks[name] || false}
-                  onChange={(isChecked) => props.saveMailTaskState(name, isChecked)}
+                  defaultValue={mailTasks[name] || false}
+                  onChange={(isChecked) => dispatch(saveMailTaskState(name, isChecked))}
                 />
               );
             })}
@@ -86,9 +91,7 @@ export const AddTasksAppealsView = (props) => {
 
 AddTasksAppealsView.propTypes = {
   correspondenceUuid: PropTypes.string.isRequired,
-  onContinueStatusChange: PropTypes.func.isRequired,
-  mailTasks: PropTypes.objectOf(PropTypes.bool),
-  saveMailTaskState: PropTypes.func
+  onContinueStatusChange: PropTypes.func.isRequired
 };
 
 export default AddTasksAppealsView;
