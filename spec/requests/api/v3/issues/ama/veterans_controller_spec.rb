@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "test_prof/recipes/rspec/let_it_be"
+require "rails_helper"
 
 # rubocop:disable Layout/LineLength
 describe Api::V3::Issues::Ama::VeteransController, :postgres, type: :request do
