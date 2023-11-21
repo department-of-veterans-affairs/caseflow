@@ -80,12 +80,12 @@ export class DailyDocketPrinted extends React.Component {
     const previousHearings = _.filter(allHearings, isPreviouslyScheduledHearing);
 
     return (
-      <AppSegment extraClassNames={["cf-daily-docket-printed"]}>
+      <AppSegment extraClassNames={['cf-daily-docket-printed']}>
         <div className="cf-app-segment">
           <div className="cf-push-left">
             <h2>
               Daily Docket (
-              {moment(docket.scheduledFor).format("ddd M/DD/YYYY")})
+              {moment(docket.scheduledFor).format('ddd M/DD/YYYY')})
             </h2>
             {docket.notes && (
               <div>
