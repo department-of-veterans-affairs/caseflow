@@ -2,11 +2,14 @@ import { update } from '../../../util/ReducerUtil';
 import { ACTIONS } from './correspondenceConstants';
 
 export const initialState = {
+  selectedAppeals: [],
+  fetchedAppeals: [],
   correspondences: [],
   radioValue: '2',
   toggledCheckboxes: [],
   relatedTaskAppeals: [],
-  unrelatedTasks: []
+  unrelatedTasks: [],
+  mailTasks: {}
 };
 
 export const intakeCorrespondenceReducer = (state = initialState, action = {}) => {
@@ -65,6 +68,36 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     return update(state, {
       unrelatedTasks: {
         $set: [...action.payload.tasks]
+      }
+    });
+
+  case ACTIONS.SAVE_MAIL_TASK_STATE:
+    return update(state, {
+      mailTasks: {
+        [action.payload.name]: {
+          $set: action.payload.isChecked
+        }
+      }
+    });
+
+  case ACTIONS.SET_FETCHED_APPEALS:
+    return update(state, {
+      fetchedAppeals: {
+        $set: [...action.payload.appeals]
+      }
+    });
+
+  case ACTIONS.SAVE_APPEAL_CHECKBOX_STATE:
+    return update(state, {
+      selectedAppeals: {
+        $set: [...action.payload.appealIds]
+      }
+    });
+
+  case ACTIONS.CLEAR_APPEAL_CHECKBOX_STATE:
+    return update(state, {
+      selectedAppeals: {
+        $set: []
       }
     });
 

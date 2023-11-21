@@ -6,7 +6,11 @@ import ApiUtil from '../../../../../util/ApiUtil';
 import { prepareAppealForStore } from '../../../../utils';
 import LoadingContainer from '../../../../../components/LoadingContainer';
 import { LOGO_COLORS } from '../../../../../constants/AppConstants';
-import { setRelatedTaskAppeals } from '../../../correspondenceReducer/correspondenceActions';
+import {
+  saveAppealCheckboxState,
+  setFetchedAppeals,
+  clearAppealCheckboxState
+} from '../../../correspondenceReducer/correspondenceActions';
 import RadioField from '../../../../../components/RadioField';
 
 const RELATED_NO = '0';
@@ -20,10 +24,9 @@ const existingAppealAnswer = [
 ];
 
 export const AddAppealRelatedTaskView = (props) => {
-  const [appeals, setAppeals] = useState([]);
-  const [existingAppealRadio, setExistingAppealRadio] = useState(RELATED_NO);
-  const taskRelatedAppeals = useSelector((state) => state.intakeCorrespondence.relatedTaskAppeals);
-  const [relatedToExistingAppeal, setRelatedToExistingAppeal] = useState(false);
+  const selectedAppeals = useSelector((state) => state.intakeCorrespondence.selectedAppeals);
+  const appeals = useSelector((state) => state.intakeCorrespondence.fetchedAppeals);
+  const [existingAppealRadio, setExistingAppealRadio] = useState(selectedAppeals.length > 0 ? RELATED_YES : RELATED_NO);
   const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
@@ -31,26 +34,28 @@ export const AddAppealRelatedTaskView = (props) => {
   const selectYes = () => {
     if (existingAppealRadio === RELATED_NO) {
       setExistingAppealRadio(RELATED_YES);
-      setRelatedToExistingAppeal(true);
     }
   };
 
   const selectNo = () => {
     if (existingAppealRadio === RELATED_YES) {
       setExistingAppealRadio(RELATED_NO);
-      setRelatedToExistingAppeal(false);
+      dispatch(clearAppealCheckboxState());
     }
   };
 
   const checkboxOnChange = useCallback((id, isChecked) => {
     if (isChecked) {
-      dispatch(setRelatedTaskAppeals([...taskRelatedAppeals, id]));
-    } else {
-      const selected = taskRelatedAppeals.filter((checkboxId) => checkboxId !== id);
+      if (!selectedAppeals.includes(id)) {
+        dispatch(saveAppealCheckboxState([...selectedAppeals, id]));
+      }
 
-      dispatch(setRelatedTaskAppeals(selected));
+    } else {
+      const selected = selectedAppeals.filter((checkboxId) => checkboxId !== id);
+
+      dispatch(saveAppealCheckboxState(selected));
     }
-  }, [taskRelatedAppeals]);
+  }, [selectedAppeals]);
 
   useEffect(() => {
     // Don't refetch (use cache)
@@ -71,13 +76,13 @@ export const AddAppealRelatedTaskView = (props) => {
 
             const appealArr = [];
 
-            for (const appealGuid in appealsForStore.appeals) {
-              if (Object.prototype.hasOwnProperty.call(appealsForStore.appeals, appealGuid)) {
-                appealArr.push(appealsForStore.appeals[appealGuid]);
+            for (const appealUuid in appealsForStore.appeals) {
+              if (Object.prototype.hasOwnProperty.call(appealsForStore.appeals, appealUuid)) {
+                appealArr.push(appealsForStore.appeals[appealUuid]);
               }
             }
 
-            setAppeals(appealArr);
+            dispatch(setFetchedAppeals(appealArr));
             setLoading(false);
           });
       }
@@ -86,12 +91,12 @@ export const AddAppealRelatedTaskView = (props) => {
 
   useEffect(() => {
     // If user has selected appeals, enable continue
-    if (relatedToExistingAppeal) {
-      props.setRelatedTasksCanContinue(taskRelatedAppeals.length);
+    if (existingAppealRadio === RELATED_YES) {
+      props.setRelatedTasksCanContinue(selectedAppeals.length);
     } else {
       props.setRelatedTasksCanContinue(true);
     }
-  }, [relatedToExistingAppeal, taskRelatedAppeals]);
+  }, [existingAppealRadio, selectedAppeals]);
 
   return (
     <div>
@@ -108,12 +113,34 @@ export const AddAppealRelatedTaskView = (props) => {
         </LoadingContainer>
       }
       {existingAppealRadio === RELATED_YES && !loading &&
-        <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
-          <CaseListTable
-            appeals={appeals}
-            showCheckboxes
-            checkboxOnChange={checkboxOnChange}
-          />
+        <div className="gray-border"
+          style={{ padding: '0rem 0rem', display: 'flex', flexWrap: 'wrap', flexDirection: 'column' }}>
+          <div style={{ width: '100%', height: 'auto', backgroundColor: 'white', paddingBottom: '3rem' }}>
+            <div style={{ backgroundColor: '#f1f1f1', width: '100%', height: '50px', paddingTop: '1.5rem' }}>
+              <b style={{
+                verticalAlign: 'center',
+                paddingLeft: '2.5rem',
+                paddingTop: '1.5rem',
+                border: '0',
+                paddingBottom: '1.5rem',
+                paddingRigfht: '5.5rem'
+              }}>Existing Appeals</b>
+            </div>
+            <ul style={{ paddingLeft: '4.2rem' }}>
+              Please select prior appeal(s) to link to this correspondence
+            </ul>
+            <ul>
+              <div style={{ padding: '1rem' }}>
+                <CaseListTable
+                  appeals={appeals}
+                  showCheckboxes
+                  paginate
+                  linkOpensInNewTab
+                  checkboxOnChange={checkboxOnChange}
+                />
+              </div>
+            </ul>
+          </div>
         </div>
       }
     </div>
