@@ -1,66 +1,57 @@
 import React from 'react';
-import Table from 'app/components/Table';
-import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { useSelector } from 'react-redux';
-import { TitleDetailsSubheader } from 'app/components/TitleDetailsSubheader';
+import { ICON_SIZES, COLORS } from 'app/constants/AppConstants';
+import { PencilIcon } from 'app/components/icons/PencilIcon';
+import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import Button from 'app/components/Button';
 import { css } from 'glamor';
-import { COLORS } from 'app/constants/AppConstants';
-import TitleDetailsSubheaderSection from 'app/queue/correspondence/review_package/ReviewPackageData';
 
+const styling = { backgroundColor: COLORS.GREY_BACKGROUND };
 
 const ConfirmTasksNotRelatedToAnAppeal = () => {
   const tasks = useSelector((state) => state.intakeCorrespondence.unrelatedTasks);
 
+  const handleClickEdit = () => {
+    console.log(1);
+  };
+
   const rowObjects = tasks.map((task) => {
     return (
       <tr>
-        <td>
+        <td style={{ backgroundColor: COLORS.GREY_BACKGROUND, borderTop: '1px solid #dee2e6', width: '20%' }}>
           {task.type}
         </td>
-        <td>
+        <td style={{ backgroundColor: COLORS.GREY_BACKGROUND, borderTop: '1px solid #dee2e6' }}>
           {task.content}
         </td>
       </tr>
     );
   });
 
-  const columns = [
-    {
-      header: 'Tasks',
-      valueName: 'tasks',
-      align: 'left'
-    },
-    {
-      header: 'Task Instructions or Context',
-      valueName: 'taskInstructionsOrContext',
-      align: 'left'
-    }
-  ];
-
-  const styling = css({
-    // backgroundColor: COLORS.GREY_BACKGROUND,
-    border: '0px solid #000000'
-  });
-
   return (
-    <React.Fragment>
-      <div>
-        <table style={{ border: '0px solid #000000' }}>
+    <div>
+      <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+        <h2 style={{ display: 'inline', marginBottom: '2rem' }}>Tasks not related to an Appeal</h2>
+        <a
+          onClick={handleClickEdit}
+          href="#">
+          <span style={{ position: 'absolute' }}><PencilIcon size={25} /></span>
+          <span {...css({ marginLeft: '24px' })}>Edit section</span>
+        </a>
+      </div>
+      <div
+        style={{ background: COLORS.GREY_BACKGROUND, padding: '2rem', marginBottom: '2rem' }}>
+        <table className="usa-table-borderless">
           <thead>
-            <th>Tasks</th>
-            <th>Task Instructions or Context</th>
+            <th style={styling}>Tasks</th>
+            <th style={styling}>Task Instructions or Context</th>
           </thead>
           <tbody>
             {rowObjects}
           </tbody>
         </table>
-        {/* columns={columns}
-        rowObjects={rowObjects}
-        bodyClassName="cf-document-list-body"
-        headerClassName="comments-table-header"
-        slowReRendersAreOk */}
       </div>
-    </React.Fragment>
+    </div>
   );
 };
 
