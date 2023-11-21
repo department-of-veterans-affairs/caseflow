@@ -26,7 +26,6 @@ const existingAppealAnswer = [
 export const AddAppealRelatedTaskView = (props) => {
   const appeals = useSelector((state) => state.intakeCorrespondence.fetchedAppeals);
   const taskRelatedAppealIds = useSelector((state) => state.intakeCorrespondence.taskRelatedAppealIds);
-  const [orderedRelatedAppealIds, setOrderedRelatedAppealIds] = useState([]);
   const [existingAppealRadio, setExistingAppealRadio] =
     useState(taskRelatedAppealIds.length ? RELATED_YES : RELATED_NO);
   const [loading, setLoading] = useState(false);
@@ -43,14 +42,6 @@ export const AddAppealRelatedTaskView = (props) => {
 
       dispatch(setTaskRelatedAppealIds(selected));
     }
-  }, [taskRelatedAppealIds]);
-
-  const appealById = (appealId) => {
-    return appeals.find((el) => el.id === appealId);
-  };
-
-  useEffect(() => {
-    setOrderedRelatedAppealIds(taskRelatedAppealIds.sort());
   }, [taskRelatedAppealIds]);
 
   useEffect(() => {
@@ -143,16 +134,6 @@ export const AddAppealRelatedTaskView = (props) => {
                 />
               </div>
             </ul>
-          </div>
-          <div>
-            {orderedRelatedAppealIds.map((appealId, index) => {
-              return (
-                <ExistingAppealTasksView
-                  key={index}
-                  appeal={appealById(appealId)}
-                />
-              );
-            })}
           </div>
         </div>
       }

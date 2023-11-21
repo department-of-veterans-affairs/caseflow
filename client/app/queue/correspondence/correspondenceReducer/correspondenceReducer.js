@@ -3,7 +3,6 @@ import { ACTIONS } from './correspondenceConstants';
 
 export const initialState = {
   taskRelatedAppealIds: [],
-  newAppealRelatedTasks: [],
   fetchedAppeals: [],
   correspondences: [],
   radioValue: '2',
@@ -74,20 +73,6 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     return update(state, {
       taskRelatedAppealIds: {
         $set: [...action.payload.appealIds]
-      }
-    });
-
-  case ACTIONS.ADD_NEW_APPEAL_RELATED_TASK:
-    return update(state, {
-      newAppealRelatedTasks: {
-        $push: [
-          {
-            id: action.payload.id,
-            appealId: action.payload.appealId,
-            type: action.payload.type,
-            content: action.payload.content
-          }
-        ]
       }
     });
 
