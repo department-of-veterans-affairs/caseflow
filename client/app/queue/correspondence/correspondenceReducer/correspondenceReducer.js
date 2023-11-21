@@ -2,7 +2,7 @@ import { update } from '../../../util/ReducerUtil';
 import { ACTIONS } from './correspondenceConstants';
 
 export const initialState = {
-  selectedAppeals: [],
+  taskRelatedAppealIds: [],
   fetchedAppeals: [],
   correspondences: [],
   radioValue: '2',
@@ -69,19 +69,13 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
       }
     });
 
-  case ACTIONS.SAVE_APPEAL_CHECKBOX_STATE:
+  case ACTIONS.SET_TASK_RELATED_APPEAL_IDS:
     return update(state, {
-      selectedAppeals: {
+      taskRelatedAppealIds: {
         $set: [...action.payload.appealIds]
       }
     });
 
-  case ACTIONS.CLEAR_APPEAL_CHECKBOX_STATE:
-    return update(state, {
-      selectedAppeals: {
-        $set: []
-      }
-    });
   default:
     return state;
   }
