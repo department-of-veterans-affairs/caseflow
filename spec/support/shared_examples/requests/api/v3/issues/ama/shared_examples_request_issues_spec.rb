@@ -235,13 +235,12 @@ RSpec.shared_examples :it_should_respond_with_multiple_decision_issues_per_reque
     request_issues_vet_participant_ids = response_hash["request_issues"].map do |ri|
       ri["veteran_participant_id"]
     end
-    request_issue_without_dis = response_hash["request_issues"].find { |ri| ri["id"] == 5000 }
 
     expect(response).to have_http_status(200)
     expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
     expect(response_hash["legacy_appeals_present"]).to eq legacy_appeals_present
     expect(response_hash["request_issues"].size).to eq request_issue_for_vet_count
-    expect(request_issue_without_dis["decision_issues"].empty?).to eq is_empty
+    expect(response_hash["request_issues"].last["decision_issues"].empty?).to eq is_empty
     expect(request_issues_vet_participant_ids).to eq ([].tap { |me| request_issue_for_vet_count.times { me << vet.participant_id } })
     expect(response_hash["request_issues"].first["decision_issues"].size).to eq 2
   end
