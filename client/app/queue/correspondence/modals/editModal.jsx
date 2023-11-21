@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateCmpInformation } from '../correspondenceReducer/reviewPackageActions';
 import moment from 'moment';
-
+/* eslint-disable camelcase, max-len */
 class EditModal extends React.Component {
 
   constructor(props) {
@@ -73,7 +73,6 @@ class EditModal extends React.Component {
 
     await ApiUtil.put(`/queue/correspondence/${correspondenceId}/update_cmp`, { data: { packageDocument, VADORDate } }).
       then((response) => {
-        // console.log(packageDocument);
         if (response.status === 200) {
           this.props.updateCmpInformation(packageDocument, VADORDate);
           props.onClickCancel();
@@ -189,7 +188,8 @@ class EditModal extends React.Component {
 }
 
 EditModal.propTypes = {
-  onCancel: PropTypes.func
+  onCancel: PropTypes.func,
+  updateCmpInformation: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) => (
