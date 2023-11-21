@@ -28,14 +28,9 @@ class CorrespondenceController < ApplicationController
     render "correspondence/review_package"
   end
 
-  def package_documents
-    packages = PackageDocumentType.all
-    render json: { package_document_types: packages }
-  end
-
   def veteran
     render json: { veteran_id: veteran_by_correspondence&.id, file_number: veteran_by_correspondence&.file_number }
-end
+  end
 
   def package_documents
     packages = PackageDocumentType.all

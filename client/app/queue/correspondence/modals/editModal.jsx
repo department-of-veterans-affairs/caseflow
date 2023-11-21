@@ -10,6 +10,7 @@ import _ from 'lodash';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateCmpInformation } from '../correspondenceReducer/reviewPackageActions';
+import moment from 'moment';
 
 class EditModal extends React.Component {
 
@@ -18,7 +19,7 @@ class EditModal extends React.Component {
 
     this.state = {
       VADORDate: '',
-      packageDocument: '',
+      packageDocument: {},
       dateError: '',
       showEditModal: false,
       packageOptions: ''
@@ -30,27 +31,31 @@ class EditModal extends React.Component {
   }
 
   onClickEditCMP = () => {
-    this.setState({ showEditModal: true });
+    this.setState({
+      showEditModal: true,
+      packageDocument: {
+        value: this.props.packageDocumentType.value,
+        label: this.props.packageDocumentType.label
+      },
+      VADORDate: moment.utc(this.props.VADORDate).format('YYYY-MM-DD')
+    });
   };
 
   onClickCancel = () => {
     this.setState({
       showEditModal: false,
-      packageDocument: '',
-      VADORDate: ''
+      packageDocument: this.state.packageDocument,
+      VADORDate: this.state.VADORDate
     });
   };
 
   handleCMPSave = async(props) => {
-    const locationPath = location.pathname.split('/');
-    const correspondenceId = locationPath[3];
-
     const {
       VADORDate,
       packageDocument
     } = props.state;
 
-    await ApiUtil.put(`/queue/correspondence/${correspondenceId}/update_cmp`, { data: { packageDocument, VADORDate } }).
+    await ApiUtil.put(`/queue/correspondence/${this.props.correspondence_uuid}/update_cmp`, { data: { packageDocument, VADORDate } }).
       then((response) => {
         if (response.status === 200) {
           this.props.updateCmpInformation(packageDocument, VADORDate);
@@ -115,17 +120,17 @@ class EditModal extends React.Component {
       /* eslint-disable-next-line max-len */
       const packageTypeOptions = _.values(ApiUtil.convertToCamelCase(resp.body.package_document_types)).map((packages) => ({
         label: packages.name,
-        value: packages.id.toString()
+        value: packages.id
       }));
 
-      packageTypeOptions.sort((first, second) => (first.label - second.label));
+      packageTypeOptions.sort((first, second) => (first.id - second.id));
       this.setState({ packageOptions: packageTypeOptions });
     });
   }
 
   render() {
     // const { onCancel } = this.props;
-    const { VADORDate, packageDocument, showEditModal } = this.state;
+    const { showEditModal } = this.state;
 
     return (
       <div>
@@ -146,7 +151,7 @@ class EditModal extends React.Component {
                   name="decision-date"
                   label="VA DOR"
                   strongLabel
-                  value={VADORDate}
+                  value={this.state.VADORDate}
                   errorMessage={this.state.dateError}
                   onChange={this.VADORDateOnChange}
                   type="date"
@@ -159,7 +164,7 @@ class EditModal extends React.Component {
                 strongLabel
                 placeholder="Select or enter..."
                 options={this.state.packageOptions}
-                value={packageDocument}
+                value={this.props.packageDocumentType.value}
                 onChange={this.packageDocumentOnChange}
               />
             </div>
@@ -172,7 +177,20 @@ class EditModal extends React.Component {
 
 EditModal.propTypes = {
   onCancel: PropTypes.func,
+  VADORDate: PropTypes.string,
+  correspondence_uuid: PropTypes.string,
+  packageDocumentType: PropTypes.object,
+  updateCmpInformation: PropTypes.func
 };
+
+const mapStateToProps = (state) => ({
+  correspondence_uuid: state.reviewPackage.correspondence.uuid,
+  VADORDate: state.reviewPackage.correspondence.va_date_of_receipt,
+  packageDocumentType: {
+    value: state.reviewPackage.packageDocumentType?.id,
+    label: state.reviewPackage.packageDocumentType?.name
+  }
+});
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
@@ -181,6 +199,6 @@ const mapDispatchToProps = (dispatch) => (
 );
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(EditModal);
