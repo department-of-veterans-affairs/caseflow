@@ -32,17 +32,26 @@ class CorrespondenceController < ApplicationController
     render json: { veteran_id: veteran_by_correspondence&.id, file_number: veteran_by_correspondence&.file_number }
   end
 
+  def package_documents
+    packages = PackageDocumentType.all
+    render json: { package_document_types: packages }
+  end
+
   def show
+    corres_docs = correspondence.correspondence_documents
     response_json = {
       correspondence: correspondence,
       package_document_type: correspondence&.package_document_type,
-      general_information: general_information
+      general_information: general_information,
+      correspondence_documents: corres_docs.map do |doc|
+        WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
+      end
     }
     render({ json: response_json }, status: :ok)
   end
 
   def update
-    if veteran_by_correspondence.update(veteran_params) && @correspondence.update(
+    if veteran_by_correspondence.update(veteran_params) && correspondence.update(
       correspondence_params.merge(updated_by_id: RequestStore.store[:current_user].id)
     )
       render json: { status: :ok }
@@ -51,15 +60,23 @@ class CorrespondenceController < ApplicationController
     end
   end
 
+  def update_cmp
+    correspondence.update(
+      va_date_of_receipt: params["VADORDate"].in_time_zone,
+      package_document_type_id: params["packageDocument"]["value"].to_i,
+    )
+    render json: { status: 200, correspondence: correspondence }
+  end
+
   private
 
   def general_information
     vet = veteran_by_correspondence
     {
-      notes: @correspondence.notes,
+      notes: correspondence.notes,
       file_number: vet.file_number,
       veteran_name: vet.name,
-      correspondence_type_id: @correspondence.correspondence_type_id,
+      correspondence_type_id: correspondence.correspondence_type_id,
       correspondence_types: CorrespondenceType.all
     }
   end
@@ -95,7 +112,7 @@ class CorrespondenceController < ApplicationController
   end
 
   def veteran_by_correspondence
-    @veteran_by_correspondence ||= Veteran.find(@correspondence.veteran_id)
+    @veteran_by_correspondence ||= Veteran.find(correspondence&.veteran_id)
   end
 
   def veterans_with_correspondences
