@@ -13,20 +13,16 @@ class StuckJobSchedulerJob < CaseflowJob
   end
 
   def perform
-    result = RubyProf.profile do
-      begin
-        perform_master_stuck_job
-      rescue StandardError => error
-        log_error(error)
-      end
+    start_time_master = Time.zone.now
+
+    begin
+      perform_master_stuck_job
+    rescue StandardError => error
+      log_error(error)
     end
 
-    if result
-      flat_printer = RubyProf::FlatPrinter.new(result)
-      @logs.push(flat_printer.print)
-    else
-      @logs.push("Profiling result is nil. There might be an issue during profiling.")
-    end
+    end_time_master = Time.zone.now
+    log_timing_info(self.class, start_time_master, end_time_master)
     upload_logs
   end
 
@@ -43,11 +39,23 @@ class StuckJobSchedulerJob < CaseflowJob
 
   def execute_stuck_job(stuck_job_class)
     begin
-      stuck_job_instance = stuck_job_class.new
-      stuck_job_instance.perform_later
+      child_job_name = stuck_job_class.name
+      start_time = Time.zone.now
+
+      stuck_job_class.perform_later
+
+      end_time = Time.zone.now
+      log_timing_info(child_job_name, start_time, end_time)
     rescue StandardError => error
       log_error(error)
     end
+  end
+
+  def log_timing_info(job_name, start_time, end_time)
+    execution_time = end_time - start_time
+    message = "#{job_name} exectued in #{execution_time} seconds."
+    @log.push(message)
+    Rails.logger.info(message)
   end
 
   def upload_logs
