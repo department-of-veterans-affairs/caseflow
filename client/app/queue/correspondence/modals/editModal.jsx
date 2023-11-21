@@ -73,7 +73,7 @@ class EditModal extends React.Component {
 
     await ApiUtil.put(`/queue/correspondence/${correspondenceId}/update_cmp`, { data: { packageDocument, VADORDate } }).
       then((response) => {
-        console.log(packageDocument);
+        // console.log(packageDocument);
         if (response.status === 200) {
           this.props.updateCmpInformation(packageDocument, VADORDate);
           props.onClickCancel();
@@ -146,6 +146,7 @@ class EditModal extends React.Component {
   }
 
   render() {
+    // const { onCancel } = this.props;
     const { VADORDate, packageDocument, showEditModal } = this.state;
 
     return (

@@ -4,7 +4,6 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 import COPY from 'app/../COPY';
-import ApiUtil from 'app/util/ApiUtil';
 import { TitleDetailsSubheader } from 'app/components/TitleDetailsSubheader';
 import EditModal from '../modals/editModal';
 import { useSelector } from 'react-redux';
@@ -40,32 +39,13 @@ export const TitleDetailsSubheaderSection = ({ title, children }) => (
   </div>
 );
 
-class ReviewPackageCmpInfo extends React.PureComponent {
-  constructor (props) {
-    super(props);
-    this.state = {
-      correspondence: null,
-      package_document_type: null
-    };
-  }
-
-  componentDidMount () {
-    const correspondence = this.props;
-
-    ApiUtil.get(`/queue/correspondence/${correspondence.correspondence_uuid}`).then((response) => {
-      this.setState({
-        correspondence: response.body.correspondence,
-        package_document_type: response.body.package_document_type
-      });
-    });
-  }
-
+class ReviewPackageData extends React.PureComponent {
   render = () => {
     return (
       <div>
         <CmpInfoScaffolding
-          correspondence={this.state?.correspondence}
-          packageDocumentType = {this.state?.package_document_type} />
+          correspondence={this.props.correspondence}
+          packageDocumentType = {this.props.packageDocumentType} />
       </div>
     );
   };
@@ -103,7 +83,7 @@ const CmpInfoScaffolding = () => {
           {correspondence?.cmp_packet_number}
         </TitleDetailsSubheaderSection>
         <TitleDetailsSubheaderSection title="CMP Queue Name">
-          {correspondence?.cmp_packet_number}
+          BVA Intake
         </TitleDetailsSubheaderSection>
         <TitleDetailsSubheaderSection title="VA DOR">
           {formattedVaDateOfReceipt}
@@ -123,8 +103,9 @@ TitleDetailsSubheaderSection.propTypes = {
   title: PropTypes.string.isRequired
 };
 
-ReviewPackageCmpInfo.propTypes = {
-  correspondence_uuid: PropTypes.string
+ReviewPackageData.propTypes = {
+  correspondence: PropTypes.object,
+  packageDocumentType: PropTypes.object
 };
 
-export default ReviewPackageCmpInfo;
+export default ReviewPackageData;

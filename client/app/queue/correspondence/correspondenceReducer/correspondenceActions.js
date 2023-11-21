@@ -26,7 +26,8 @@ export const updateRadioValue = (value) =>
       type: ACTIONS.UPDATE_RADIO_VALUE,
       payload: value
     });
-};
+  };
+
 export const saveCheckboxState = (id, isChecked) =>
   (dispatch) => {
     dispatch({
@@ -41,6 +42,16 @@ export const clearCheckboxState = () =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.CLEAR_CHECKBOX_STATE,
+    });
+  };
+
+export const setRelatedTaskAppeals = (appeals) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_RELATED_TASK_APPEALS,
+      payload: {
+        appeals
+      }
     });
   };
 

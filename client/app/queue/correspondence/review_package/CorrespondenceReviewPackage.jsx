@@ -1,18 +1,13 @@
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import React, { useEffect, useState } from 'react';
-import ReviewPackageCmpInfo from './ReviewPackageCmpInfo';
+import ReviewPackageData from './ReviewPackageData';
 import ReviewPackageCaseTitle from './ReviewPackageCaseTitle';
 import Button from '../../../components/Button';
 import ReviewForm from './ReviewForm';
+import { CmpDocuments } from './CmpDocuments';
 import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import {
-  setCorrespondence,
-  setCorrespondenceDocuments,
-  setPackageDocumentType
-} from '../correspondenceReducer/reviewPackageActions';
 
 export const CorrespondenceReviewPackage = (props) => {
   const [reviewDetails, setReviewDetails] = useState({
@@ -37,10 +32,6 @@ export const CorrespondenceReviewPackage = (props) => {
 
       setApiResponse(response.body.general_information);
       const data = response.body.general_information;
-
-      props.setCorrespondence(response.body.correspondence);
-      props.setPackageDocumentType(response.body.package_document_type);
-      // setCorrespondenceDocuments(response.body.correspondenceDocuments);
 
       setReviewDetails({
         veteran_name: data.veteran_name || {},
@@ -83,7 +74,9 @@ export const CorrespondenceReviewPackage = (props) => {
     <React.Fragment>
       <AppSegment filledBackground>
         <ReviewPackageCaseTitle />
-        <ReviewPackageCmpInfo {...props} />
+        <ReviewPackageData
+          correspondence={props.correspondence}
+          packageDocumentType={props.packageDocumentType} />
         <ReviewForm
           {...{
             reviewDetails,
@@ -96,6 +89,7 @@ export const CorrespondenceReviewPackage = (props) => {
           }}
           {...props}
         />
+        <CmpDocuments documents={props.correspondenceDocuments} />
       </AppSegment>
       <div className="cf-app-segment">
         <div className="cf-push-left">
@@ -128,7 +122,10 @@ export const CorrespondenceReviewPackage = (props) => {
 };
 
 CorrespondenceReviewPackage.propTypes = {
-  correspondence_uuid: PropTypes.string
+  correspondence_uuid: PropTypes.string,
+  correspondence: PropTypes.object,
+  correspondenceDocuments: PropTypes.arrayOf(PropTypes.object),
+  packageDocumentType: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({
@@ -137,15 +134,7 @@ const mapStateToProps = (state) => ({
   packageDocumentType: state.reviewPackage.packageDocumentType
 });
 
-const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({
-    setCorrespondence,
-    setCorrespondenceDocuments,
-    setPackageDocumentType
-  }, dispatch)
-);
-
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  null,
 )(CorrespondenceReviewPackage);

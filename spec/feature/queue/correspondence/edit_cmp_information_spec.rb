@@ -2,7 +2,9 @@
 
 RSpec.feature("The Correspondence Review Package page") do
   let(:veteran) { create(:veteran) }
-  let(:correspondence) { create(:correspondence, veteran_id: veteran.id) }
+  let(:package_document_type) {PackageDocumentType.create(id: 15, active: true, created_at: Time.zone.now, name: 10182, updated_at: Time.zone.now)}
+  let(:correspondence) { create(:correspondence, veteran_id: veteran.id, package_document_type_id: package_document_type.id) }
+  let(:correspondence_documents) { create(:correspondence_document, correspondence: correspondence, document_file_number: veteran.file_number) }
   let(:mail_team_user) { create(:user) }
   let(:mail_team_org) { MailTeam.singleton }
 
@@ -21,8 +23,9 @@ RSpec.feature("The Correspondence Review Package page") do
   context "Review package form shell" do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      User.authenticate!(user: mail_team_user)
-      mail_team_org.add_user(mail_team_user)
+      User.authenticate!(roles: ["Mail Intake"])
+      # User.authenticate!(user: mail_team_user)
+      # mail_team_org.add_user(mail_team_user)
       visit "/queue/correspondence/#{correspondence.uuid}/review_package"
     end
 
