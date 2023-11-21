@@ -929,6 +929,12 @@ feature "Intake Add Issues Page", :all_dbs do
       click_intake_add_issue
       find_all("label", text: "Service connection is granted for PTSD at 10 percent, effective 10/11/2022.", minimum: 1).first.click
       safe_click ".add-issue"
+
+      # vha modal check
+      radio_choices = page.all(".cf-form-radio-option > label")
+      radio_choices[1].click
+      click_on "Add this issue"
+
       click_on "Establish appeal"
       appeal_id = Appeal.find_by(veteran_file_number: veteran_vbms_mst_pact.file_number).uuid
       visit "/queue/appeals/#{appeal_id}"
@@ -948,6 +954,12 @@ feature "Intake Add Issues Page", :all_dbs do
       click_intake_add_issue
       find_all("label", text: "Service connection is granted for AOOV at 10 percent, effective 10/11/2022.", minimum: 1).first.click
       safe_click ".add-issue"
+
+      # vha modal check
+      radio_choices = page.all(".cf-form-radio-option > label")
+      radio_choices[1].click
+      click_on "Add this issue"
+
       click_on "Establish appeal"
       appeal_id = Appeal.find_by(veteran_file_number: veteran_vbms_mst_pact.file_number).uuid
       visit "/queue/appeals/#{appeal_id}"
@@ -967,6 +979,12 @@ feature "Intake Add Issues Page", :all_dbs do
       click_intake_add_issue
       find_all("label", text: "Service connection is granted for PTSD, AOOV at 10 percent, effective 10/11/2022.", minimum: 1).first.click
       safe_click ".add-issue"
+
+      # vha modal check
+      radio_choices = page.all(".cf-form-radio-option > label")
+      radio_choices[1].click
+      click_on "Add this issue"
+
       click_on "Establish appeal"
       appeal_id = Appeal.find_by(veteran_file_number: veteran_vbms_mst_pact.file_number).uuid
       visit "/queue/appeals/#{appeal_id}"
