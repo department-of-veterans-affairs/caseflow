@@ -1,5 +1,4 @@
-/* eslint-disable max-lines */
-/* eslint-disable max-len */
+/* eslint-disable max-lines, max-len */
 
 import querystring from 'querystring';
 import React from 'react';
@@ -18,6 +17,7 @@ import {
   setCanEditCavcDashboards,
   setCanViewCavcDashboards,
   setFeatureToggles,
+  setMeetingType,
   setUserId,
   setUserRole,
   setUserCssId,
@@ -70,6 +70,8 @@ import EndHoldModal from './components/EndHoldModal';
 import BulkAssignModal from './components/BulkAssignModal';
 import CompleteHearingPostponementRequestModal
   from './components/hearingMailRequestModals/CompleteHearingPostponementRequestModal';
+import CompleteHearingWithdrawalRequestModal
+  from './components/hearingMailRequestModals/CompleteHearingWithdrawalRequestModal';
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
 import SubmitDecisionView from './SubmitDecisionView';
@@ -113,6 +115,7 @@ class QueueApp extends React.PureComponent {
     this.props.setCanEditAod(this.props.canEditAod);
     this.props.setCanEditNodDate(this.props.userCanViewEditNodDate);
     this.props.setUserIsCobAdmin(this.props.userIsCobAdmin);
+    this.props.setMeetingType(this.props.conferenceProvider);
     this.props.setCanEditCavcRemands(this.props.canEditCavcRemands);
     this.props.setCanEditCavcDashboards(this.props.canEditCavcDashboards);
     this.props.setCanViewCavcDashboards(this.props.canViewCavcDashboards);
@@ -218,6 +221,10 @@ class QueueApp extends React.PureComponent {
       appealId={props.match.params.appealId}
       taskId={props.match.params.taskId}
       checkoutFlow={props.match.params.checkoutFlow}
+      justificationFeatureToggle={this.props.featureToggles.justification_reason}
+      mstFeatureToggle={this.props.featureToggles.mst_identification}
+      pactFeatureToggle={this.props.featureToggles.pact_identification}
+      legacyMstPactFeatureToggle={this.props.featureToggles.legacy_mst_pact_identification}
     />
   );
 
@@ -229,6 +236,8 @@ class QueueApp extends React.PureComponent {
         <SelectSpecialIssuesView
           appealId={appealId}
           taskId={taskId}
+          legacyMstIdentification={this.props.featureToggles.legacy_mst_pact_identification}
+          mstIdentification={this.props.featureToggles.mst_identification}
           prevStep={`/queue/appeals/${appealId}`}
           nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
         />
@@ -243,6 +252,8 @@ class QueueApp extends React.PureComponent {
       <AddEditIssueView
         nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
         prevStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
+        justificationFeatureToggle={this.props.featureToggles.justification_reason}
+        legacyMstPactFeatureToggle={this.props.featureToggles.legacy_mst_pact_identification}
         {...props.match.params}
       />
     );
@@ -585,7 +596,9 @@ class QueueApp extends React.PureComponent {
   };
 
   routedOrganizationUsers = (props) => (
-    <OrganizationUsers {...props.match.params} />
+    <OrganizationUsers {...props.match.params}
+      conferenceSelectionVisibility = {this.props.featureToggles.conference_selection_visibility}
+    />
   );
 
   routedTeamManagement = (props) => <TeamManagement {...props.match.params} />;
@@ -657,6 +670,10 @@ class QueueApp extends React.PureComponent {
 
   routedCompleteHearingPostponementRequest = (props) => (
     <CompleteHearingPostponementRequestModal {...props.match.params} />
+  );
+
+  routedCompleteHearingWithdrawalRequest = (props) => (
+    <CompleteHearingWithdrawalRequestModal {...props.match.params} />
   );
 
   queueName = () =>
@@ -926,7 +943,8 @@ class QueueApp extends React.PureComponent {
               render={this.routedAssignToUser}
             />
             <Route
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.ASSIGN_TO_PRIVACY_TEAM.value
                 }`}
               render={this.routedAssignToSingleTeam}
             />
@@ -1139,7 +1157,8 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               exact
-              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.MARK_COMPLETE.value
+              path={`/queue/appeals/:appealId/tasks/:taskId/${
+                  TASK_ACTIONS.MARK_COMPLETE.value
                 }`}
               title={`${PAGE_TITLES.MARK_TASK_COMPLETE} | Caseflow`}
               render={this.routedCompleteTaskModal}
@@ -1226,6 +1245,12 @@ class QueueApp extends React.PureComponent {
               path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.COMPLETE_AND_POSTPONE.value}`}
               title={`${PAGE_TITLES.COMPLETE_HEARING_POSTPONEMENT_REQUEST} | Caseflow`}
               render={this.routedCompleteHearingPostponementRequest}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.COMPLETE_AND_WITHDRAW.value}`}
+              title={`${PAGE_TITLES.COMPLETE_HEARING_WITHDRAWAL_REQUEST} | Caseflow`}
+              render={this.routedCompleteHearingWithdrawalRequest}
             />
             <PageRoute
               exact
@@ -1447,6 +1472,8 @@ QueueApp.propTypes = {
   canEditCavcDashboards: PropTypes.bool,
   canViewCavcDashboards: PropTypes.bool,
   userIsCobAdmin: PropTypes.bool,
+  conferenceProvider: PropTypes.string,
+  setMeetingType: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
@@ -1459,6 +1486,7 @@ const mapDispatchToProps = (dispatch) =>
       setCanEditAod,
       setCanEditNodDate,
       setUserIsCobAdmin,
+      setMeetingType,
       setCanEditCavcRemands,
       setCanEditCavcDashboards,
       setCanViewCavcDashboards,

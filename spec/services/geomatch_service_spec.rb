@@ -76,16 +76,51 @@ describe GeomatchService do
           bfddec: nil
         )
       end
+
       let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+      let(:non_us_address) { Address.new(country: "MX", country_name: "Mexico", city: "Mexico City") }
+      let(:philippines_address) { Address.new(country: "PI", country_name: "Philippines", city: "Manila") }
 
       it "geomatches for the travel board appeal" do
         subject
 
         legacy_appeal = LegacyAppeal.find_by(vacols_id: vacols_case.bfkey)
-
         expect(legacy_appeal).not_to be_nil
         expect(legacy_appeal.closest_regional_office).not_to be_nil
         expect(legacy_appeal.available_hearing_locations).not_to be_empty
+      end
+
+      context "foreign appeal" do
+        before do
+          allow_any_instance_of(ExternalApi::VADotGovService::AddressValidationResponse)
+            .to receive(:address).and_return(non_us_address)
+        end
+
+        it "geomatches for a foreign appeal" do
+          subject
+
+          legacy_appeal = LegacyAppeal.find_by(vacols_id: vacols_case.bfkey)
+          expect(legacy_appeal).not_to be_nil
+          expect(legacy_appeal.closest_regional_office).to eq("RO11")
+          expect(legacy_appeal.available_hearing_locations).not_to be_empty
+        end
+      end
+
+      context "phillipines appeal" do
+        before do
+          allow_any_instance_of(ExternalApi::VADotGovService::AddressValidationResponse)
+            .to receive(:address).and_return(philippines_address)
+          allow_any_instance_of(Address).to receive(:country).and_return(philippines_address.country_name)
+        end
+
+        it "geomatches for a phillipines appeal" do
+          subject
+
+          legacy_appeal = LegacyAppeal.find_by(vacols_id: vacols_case.bfkey)
+          expect(legacy_appeal).not_to be_nil
+          expect(legacy_appeal.closest_regional_office).to eq("RO58")
+          expect(legacy_appeal.available_hearing_locations).not_to be_empty
+        end
       end
     end
   end
