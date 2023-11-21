@@ -7,6 +7,7 @@ export const initialState = {
   correspondences: [],
   radioValue: '2',
   toggledCheckboxes: [],
+  relatedTaskAppeals: [],
   unrelatedTasks: []
 };
 
@@ -52,6 +53,13 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     return update(state, {
       toggledCheckboxes: {
         $set: []
+      }
+    });
+
+  case ACTIONS.SET_RELATED_TASK_APPEALS:
+    return update(state, {
+      relatedTaskAppeals: {
+        $set: [...action.payload.appeals]
       }
     });
 
