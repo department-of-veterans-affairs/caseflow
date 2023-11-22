@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
+import ApiUtil from '../../util/ApiUtil';
 import Modal from 'app/components/Modal';
 import Button from 'app/components/Button';
 import COPY from '../../../COPY';
@@ -11,24 +12,31 @@ function SaveLeverChanges(leverStore)  {
   leverStore.dispatch({
     type: Constants.SAVE_LEVERS,
   });
-};
+}
 
 function DisplayButtonLeverAlert(alert) {
   console.log("alert", alert)
   //show small banner displaying the alert
-};
+}
+
 function UpdateLeverHistory(leverStore) {
-  // create history row object
-  // append history row object to formatted_history array
-  // save history row object to database
-  // refresh lever div
-};
+  leverStore.dispatch({
+    type: Constants.FORMAT_LEVER_HISTORY,
+  });
+}
+
 function SaveLeversToDB(leverStore) {
-  //load the levers from leverStore.getState().levers into the DB
-};
-function DisableSaveButton() {
-  document.getElementById("SaveLeversButton").disabled = true;
-};
+  const leversData = leverStore.getState().levers;
+
+  ApiUtil.post('/case_distribution_levers/update_levers_and_history', leversData)
+    .then((response) => {
+      console.log('POST request successful', response);
+    })
+    .catch(error => {
+      console.error('Error in POST request:', error);
+    });
+    console.log('After making the POST request');
+}
 
 function leverList(leverStore) {
   const levers = leverStore.getState().levers;
@@ -63,39 +71,44 @@ function leverList(leverStore) {
 }
 
 export function LeverSaveButton({ leverStore }) {
-  const [showModal, setShowModal, levers, setLevers, initialLevers, setInitialLevers, saveButtonEnabled, setSaveButtonEnabled] = useState(false);
-  // const [showModal, levers, initialLevers, saveButtonEnabled] = useState('')
+  const [showModal, setShowModal] = useState(false);
+  const [changesOccurred, setChangesOccurred] = useState(false);
+  const [saveButtonDisabled, setSaveButtonDisabled] = useState(false);
 
   useEffect(() => {
-    console.log({showModal, levers, initialLevers, saveButtonEnabled})
+    // Subscribe to changes in the lever store and update local state
+    const unsubscribe = leverStore.subscribe(() => {
+      const state = leverStore.getState();
+      setChangesOccurred(state.changesOccurred);
+    });
 
-  //
-  }, [showModal, levers, initialLevers, saveButtonEnabled])
+    return () => {
+      // Unsubscribe when the component unmounts
+      unsubscribe();
+    };
+  }, [leverStore]);
 
 
   const handleSaveButton = () => {
-    if (saveButtonEnabled) {
-    SaveLeversToDB(leverStore);
-    //     UpdateInitialLevers(leverStore);
-    //     UpdateLeverHistory(leverStore);
-    //     setShowModal(true);
-    UpdateLeverHistory(leverStore);
-    SaveLeverChanges(leverStore);
-    DisableSaveButton();
-    setShowModal(true);
-    DisplayButtonLeverAlert('');
+    if (changesOccurred) {
+      setShowModal(true);
     }
   };
 
   const handleConfirmButton = () => {
+    SaveLeversToDB(leverStore);
+    UpdateLeverHistory(leverStore);
+    SaveLeverChanges(leverStore);
     setShowModal(false);
+    DisplayButtonLeverAlert('');
+    setSaveButtonDisabled(true);
   }
 
 
 
   return (
     <>
-      <Button id="SaveLeversButton"  onClick={handleSaveButton} disabled={!saveButtonEnabled}>
+      <Button id="SaveLeversButton"  onClick={handleSaveButton} disabled={!changesOccurred || saveButtonDisabled}>
         Save
       </Button>
       {showModal &&

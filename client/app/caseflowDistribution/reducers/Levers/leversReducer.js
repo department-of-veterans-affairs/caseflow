@@ -16,9 +16,12 @@ const leversReducer = (state = initialState, action = {}) => {
         formatted_history: formatLeverHistory(action.history)
       }
     case Constants.UPDATE_LEVER_VALUE:
+      const updatedLevers = updateLevers(state.levers, action.updated_lever);
+      const changesOccurred = JSON.stringify(state.levers) !== JSON.stringify(state.initial_levers)
       return {
         ...state,
-        levers: updateLevers(state.levers, action.updated_lever)
+        levers: updatedLevers,
+        changesOccurred
       }
     case Constants.SAVE_LEVERS:
       return {
