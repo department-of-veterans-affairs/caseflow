@@ -143,7 +143,7 @@ const mapStateToProps = (state) => ({
   correspondences: state.intakeCorrespondence.correspondences,
   unrelatedTasks: state.intakeCorrespondence.unrelatedTasks,
   mailTasks: state.intakeCorrespondence.mailTasks,
-  toggledCorrespondences: state.intakeCorrespondence.toggledCheckboxes
+  toggledCorrespondences: state.intakeCorrespondence.relatedCorrespondences
 });
 
 const mapDispatchToProps = (dispatch) => (

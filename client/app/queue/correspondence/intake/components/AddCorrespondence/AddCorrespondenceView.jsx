@@ -238,7 +238,7 @@ AddCorrespondenceView.propTypes = {
 const mapStateToProps = (state) => ({
   correspondences: state.intakeCorrespondence.correspondences,
   radioValue: state.intakeCorrespondence.radioValue,
-  checkboxes: state.intakeCorrespondence.toggledCheckboxes,
+  checkboxes: state.intakeCorrespondence.relatedCorrespondences,
 });
 
 const mapDispatchToProps = (dispatch) => (
