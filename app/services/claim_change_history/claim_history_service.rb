@@ -102,7 +102,7 @@ class ClaimHistoryService
     # and then further filtered below in this service class after the event has been created
 
     # Ensure that we always treat this as an array of events for processing
-    filtered_events = new_events.is_a?(Array) ? new_events : [new_events]
+    filtered_events = ensure_array(new_events)
     # Go ahead and extract any nil events
     filtered_events = process_event_filter(filtered_events.compact)
     filtered_events = process_issue_type_filter(filtered_events)
@@ -119,19 +119,19 @@ class ClaimHistoryService
   def process_event_filter(new_events)
     return new_events if @filters[:events].blank?
 
-    new_events.select { |event| event && @filters[:events].include?(event.event_type) }
+    new_events.select { |event| event && ensure_array(@filters[:events]).include?(event.event_type) }
   end
 
   def process_issue_type_filter(new_events)
     return new_events if @filters[:issue_types].blank?
 
-    new_events.select { |event| event && @filters[:issue_types].include?(event.issue_type) }
+    new_events.select { |event| event && ensure_array(@filters[:issue_types]).include?(event.issue_type) }
   end
 
   def process_dispositions_filter(new_events)
     return new_events if @filters[:dispositions].blank?
 
-    new_events.select { |event| event && @filters[:dispositions].include?(event.disposition) }
+    new_events.select { |event| event && ensure_array(@filters[:dispositions]).include?(event.disposition) }
   end
 
   def process_timing_filter(new_events)
@@ -181,14 +181,14 @@ class ClaimHistoryService
   def process_personnel_filter(new_events)
     return new_events if @filters[:personnel].blank?
 
-    new_events.select { |event| @filters[:personnel].include?(event.event_user_css_id) }
+    new_events.select { |event| ensure_array(@filters[:personnel]).include?(event.event_user_css_id) }
   end
 
   def process_facility_filter(new_events)
     return new_events if @filters[:facilities].blank?
 
     # Station ids are strings for some reason
-    new_events.select { |event| @filters[:facilities].include?(event.user_facility) }
+    new_events.select { |event| ensure_array(@filters[:facilities]).include?(event.user_facility) }
   end
 
   def process_request_issue_update_events(change_data)
@@ -226,6 +226,10 @@ class ClaimHistoryService
       @processed_decision_issue_ids.add(decision_issue_id)
       save_events(ClaimHistoryEvent.create_completed_disposition_event(change_data))
     end
+  end
+
+  def ensure_array(variable)
+    variable.is_a?(Array) ? variable : [variable]
   end
 
   # Timing method wrapper
