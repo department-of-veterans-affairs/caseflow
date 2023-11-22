@@ -7,9 +7,7 @@ import ConfirmationPage from './CorrespondenceConfirmation/ConfirmationPage';
 import { AddTasksAppealsView } from './TasksAppeals/AddTasksAppealsView';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import {
-  setUnrelatedTasks,
-  saveMailTaskState } from '../../correspondenceReducer/correspondenceActions';
+import { setUnrelatedTasks } from '../../correspondenceReducer/correspondenceActions';
 
 const progressBarSections = [
   {
@@ -84,8 +82,6 @@ export const CorrespondenceIntake = (props) => {
         unrelatedTasks={props.unrelatedTasks}
         setUnrelatedTasks={props.setUnrelatedTasks}
         correspondenceUuid={props.correspondence_uuid}
-        mailTasks={props.mailTasks}
-        saveMailTaskState={props.saveMailTaskState}
         onContinueStatusChange={handleContinueStatusChange}
       />
     }
@@ -138,8 +134,7 @@ CorrespondenceIntake.propTypes = {
   correspondence_uuid: PropTypes.string,
   unrelatedTasks: PropTypes.arrayOf(Object),
   setUnrelatedTasks: PropTypes.func,
-  mailTasks: PropTypes.objectOf(PropTypes.bool),
-  saveMailTaskState: PropTypes.func
+  mailTasks: PropTypes.objectOf(PropTypes.bool)
 };
 
 const mapStateToProps = (state) => ({
@@ -150,8 +145,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    setUnrelatedTasks,
-    saveMailTaskState
+    setUnrelatedTasks
   }, dispatch)
 );
 
