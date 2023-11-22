@@ -31,6 +31,7 @@ export const CorrespondenceIntake = (props) => {
   const [addTasksVisible, setAddTasksVisible] = useState(false);
   const { pathname, hash, key } = useLocation();
   const history = useHistory();
+  // For hash routing - Add element id and which step it lives on here
   const SECTION_MAP = { 'task-not-related-to-an-appeal': 2 };
 
   const handleContinueStatusChange = (isEnabled) => {
