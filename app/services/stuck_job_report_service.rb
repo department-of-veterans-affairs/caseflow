@@ -41,4 +41,22 @@ class StuckJobReportService
     file_name = "#{create_file_name}-logs/#{create_file_name}-log-#{Time.zone.now}"
     S3Service.store_file("#{folder_name}/#{file_name}", content)
   end
+
+  def execution_time(job_name, start_time, end_time)
+    execution_time = end_time - start_time
+    message = "#{job_name} executed in #{execution_time} seconds."
+    logs.push(message)
+  end
+
+  def log_time
+    Time.zone.now
+  end
+
+  def error_count_message(errors_count, job_name)
+    if errors_count > 0
+      logs.push("#{job_name} has #{errors_count} records with errors.")
+    else
+      logs.push("#{job_name} has no records with errors.")
+    end
+  end
 end
