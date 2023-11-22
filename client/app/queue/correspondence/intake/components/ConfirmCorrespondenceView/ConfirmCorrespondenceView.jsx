@@ -46,4 +46,4 @@ export const ConfirmCorrespondenceView = () => {
   );
 };
 
-export default ReviewConfirmCorrespondenceView;
+export default ConfirmCorrespondenceView;
