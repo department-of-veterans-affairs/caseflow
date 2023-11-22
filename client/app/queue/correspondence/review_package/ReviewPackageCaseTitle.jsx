@@ -4,7 +4,6 @@ import React from 'react';
 import COPY from 'app/../COPY';
 import SearchableDropdown from '../../../components/SearchableDropdown';
 
-
 const containingDivStyling = css({
   display: 'block',
   // Offsets the padding from .cf-app-segment--alt to make the bottom border full width.
@@ -45,13 +44,12 @@ const tagStyling = css({
 
 const dropDownDiv = css({
   marginTop: '-10px',
-  maxWidth: '25% !important',
   flexBasis: '0',
   webkitBoxFlex: '1',
   msFlexPositive: '1',
   flexGrow: '1',
   maxWidth: '100%'
-})
+});
 
 class ReviewPackageCaseTitle extends React.PureComponent {
   render = () => {
@@ -70,34 +68,25 @@ const CaseTitleScaffolding = (props) => (
   </div>
 );
 
-const requestPackageActions = () => {
-   [
-      { value: 'Split package', label: 'Split package', id: 1 },
-      { value: 'Merge package', label: 'Merge package', id: 2 },
-      { value: 'Remove package from Caseflow', label: 'Remove package from Caseflow', id: 3 },
-      { value: 'Reassign package', label: 'Reassign package', id: 4 }
-    ]
-}
-
 const defaultSelectedValue = () => {
-  return { label: 'Split package', value: 'Split package' }
-}
+  return { label: 'Split package', value: 'Split package' };
+};
 
 const CaseSubTitleScaffolding = () => (
   <div {...listStyling}>
     <div {...columnStyling}>
       {COPY.CORRESPONDENCE_REVIEW_PACKAGE_SUB_TITLE}
     </div>
-    <div {...dropDownDiv} style = {{maxWidth: '25%'}}>
+    <div {...dropDownDiv} style = {{ maxWidth: '25%' }}>
       <SearchableDropdown
         styling={tagStyling}
         value={defaultSelectedValue}
-        options={ [
-              { value: 'Split package', label: 'Split package', id: 1 },
-              { value: 'Merge package', label: 'Merge package', id: 2 },
-              { value: 'Remove package from Caseflow', label: 'Remove package from Caseflow', id: 3 },
-              { value: 'Reassign package', label: 'Reassign package', id: 4 }
-            ]}
+        options={[
+          { value: 'Split package', label: 'Split package', id: 1 },
+          { value: 'Merge package', label: 'Merge package', id: 2 },
+          { value: 'Remove package from Caseflow', label: 'Remove package from Caseflow', id: 3 },
+          { value: 'Reassign package', label: 'Reassign package', id: 4 }
+        ]}
         placeholder="Request package action"
       />
     </div>
