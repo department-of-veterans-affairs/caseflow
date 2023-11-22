@@ -63,12 +63,11 @@ class SeedDB
     call_and_log_seed_step Seeds::CavcDashboardData
     call_and_log_seed_step Seeds::VbmsExtClaim
     call_and_log_seed_step Seeds::AmaIntake
+    call_and_log_seed_step Seeds::RemandedAmaAppeals
+    call_and_log_seed_step Seeds::RemandedLegacyAppeals
     # Always run this as last one
     call_and_log_seed_step Seeds::StaticTestCaseData
     call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
-    call_and_log_seed_step Seeds::BGSServiceRecordMaker
-    call_and_log_seed_step Seeds::AdditionalRemandedAppeals
-    call_and_log_seed_step Seeds::AdditionalLegacyRemandedAppeals
   end
   # rubocop:enable Metrics/MethodLength
 end
