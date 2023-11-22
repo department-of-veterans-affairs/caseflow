@@ -33,7 +33,7 @@ const ConfirmTasksNotRelatedToAnAppeal = () => {
         </a>
       </div>
       <div
-        style={{ background: COLORS.GREY_BACKGROUND, padding: '2rem', marginBottom: '2rem' }}>
+        style={{ background: COLORS.GREY_BACKGROUND, padding: '2rem', paddingTop: '0.5rem', marginBottom: '2rem' }}>
         <table className="usa-table-borderless">
           <thead>
             <tr>

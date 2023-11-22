@@ -112,11 +112,11 @@ export const CorrespondenceIntake = (props) => {
     }
     {currentStep === 3 &&
       <div>
-        <ConfirmTasksNotRelatedToAnAppeal />
         <ConfirmationPage
           mailTasks={props.mailTasks}
           goToStep={setCurrentStep}
         />
+        <ConfirmTasksNotRelatedToAnAppeal />
 
       </div>
     }
