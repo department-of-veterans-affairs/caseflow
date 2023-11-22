@@ -209,6 +209,19 @@ describe('ReportPage', () => {
       expect(screen.getAllByText('Specific Events / Actions').length).toBe(1);
     });
 
+    it('should list four radio buttons options when Status is selected in ReportType', async () => {
+      setup();
+      await selectEvent.select(screen.getByLabelText('Report Type'), ['Status']);
+
+      expect(screen.getAllByText('Status').length).toBe(1);
+      expect(screen.getAllByRole('radio').length).toBe(4);
+      expect(screen.getAllByText('All Statuses').length).toBe(1);
+      expect(screen.getAllByText('Specific Status').length).toBe(1);
+      expect(screen.getAllByText('Last Action Taken').length).toBe(1);
+      expect(screen.getAllByText('Summary').length).toBe(1);
+
+    });
+
     it('should add 10 checkbox when radio Specific Events/ Actions is clicked', async () => {
       setup();
 
@@ -223,6 +236,24 @@ describe('ReportPage', () => {
       expect(screen.getAllByRole('checkbox').length).toBe(10);
 
       REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS.map((option) => {
+        expect(screen.getAllByText(option.label)).toBeTruthy();
+      });
+    });
+
+    it('should add 3 checkbox when radio Specific Status is clicked', async () => {
+      setup();
+
+      await selectEvent.select(screen.getByLabelText('Report Type'), ['Status']);
+      expect(screen.getAllByText('Status').length).toBe(1);
+
+      const specificEvents = screen.getAllByText('Specific Status');
+
+      expect(specificEvents.length).toBe(1);
+
+      fireEvent.click(screen.getByLabelText('Specific Status'));
+      expect(screen.getAllByRole('checkbox').length).toBe(3);
+
+      REPORT_TYPE_CONSTANTS.SPECIFIC_STATUS_OPTIONS.map((option) => {
         expect(screen.getAllByText(option.label)).toBeTruthy();
       });
     });
