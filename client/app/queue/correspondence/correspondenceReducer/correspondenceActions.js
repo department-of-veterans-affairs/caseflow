@@ -95,3 +95,13 @@ export const addNewAppealRelatedTask = (id, appealId, type, content) =>
       }
     });
   };
+
+export const removeNewAppealRelatedTask = (id) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.REMOVE_NEW_APPEAL_RELATED_TASK,
+      payload: {
+        id
+      }
+    });
+  };
