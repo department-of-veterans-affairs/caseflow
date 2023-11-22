@@ -58,7 +58,7 @@ class ClaimHistoryEvent
       status_events = []
       versions = parse_versions(change_data)
 
-      hookless_cancelled_events = handle_hookless_cancelled_status_events(change_data, versions)
+      hookless_cancelled_events = handle_hookless_cancelled_status_events(versions, change_data)
       status_events.push(*hookless_cancelled_events)
 
       if versions.present?
@@ -88,7 +88,7 @@ class ClaimHistoryEvent
                                                               "event_user_name" => "System"))
       end
 
-      cleanup_status_event_duplicates!(hookless_cancelled_events, status_events)
+      # cleanup_status_event_duplicates!(hookless_cancelled_events, status_events)
 
       status_events
     end
@@ -246,7 +246,7 @@ class ClaimHistoryEvent
       (date_difference.abs * 24 * 60 * 60).to_f < time_in_seconds
     end
 
-    def handle_hookless_cancelled_status_events(change_data, versions)
+    def handle_hookless_cancelled_status_events(versions, change_data)
       # The remove reqest issues circumvents the normal paper trail hooks and results in a weird database state
       return [] unless versions
 
@@ -257,14 +257,26 @@ class ClaimHistoryEvent
       # Mutate the versions array and remove these empty object changes from it
       versions.reject! { |element| element.is_a?(Hash) && element.empty? }
 
-      [
-        # Assume the state went from assigned -> cancelled
-        from_change_data(:in_progress, change_data.merge("event_date" => change_data["intake_completed_at"] ||
-                                                                          change_data["task_created_at"],
-                                                         "event_user_name" => "System")),
-        from_change_data(:cancelled, change_data.merge("event_date" => change_data["task_closed_at"],
-                                                       "event_user_name" => "System"))
-      ]
+      create_hookless_cancelled_events(versions, change_data)
+    end
+
+    def create_hookless_cancelled_events(versions, change_data)
+      if versions.present?
+        [
+          # If there are other versions, then those will be created and used in addition to this cancelled event
+          from_change_data(:cancelled, change_data.merge("event_date" => change_data["task_closed_at"],
+                                                         "event_user_name" => "System"))
+        ]
+      else
+        [
+          # If there are no other versions, assume the state went from assigned -> cancelled
+          from_change_data(:in_progress, change_data.merge("event_date" => change_data["intake_completed_at"] ||
+                                                                            change_data["task_created_at"],
+                                                           "event_user_name" => "System")),
+          from_change_data(:cancelled, change_data.merge("event_date" => change_data["task_closed_at"],
+                                                         "event_user_name" => "System"))
+        ]
+      end
     end
 
     def cleanup_status_event_duplicates!(hookless_events, status_events)
