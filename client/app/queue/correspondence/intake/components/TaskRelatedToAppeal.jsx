@@ -1,9 +1,25 @@
 import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { addNewAppealRelatedTask } from '../../correspondenceReducer/correspondenceActions';
 import Button from '../../../../components/Button';
 import TextareaField from '../../../../components/TextareaField';
 import ReactSelectDropdown from '../../../../components/ReactSelectDropdown';
 
-const TaskRelatedToAppeal = () => {
+const dropdownOptions = [
+  { value: 'CAVC Correspondence', label: 'CAVC Correspondence' },
+  { value: 'Congressional interest', label: 'Congressional interest' },
+  { value: 'Death certificate', label: 'Death certificate' },
+  { value: 'FOIA request', label: 'FOIA request' },
+  { value: 'Other motion', label: 'Other motion' },
+  { value: 'Power of attorney-related', label: 'Power of attorney-related' },
+  { value: 'Privacy act request', label: 'Privacy act request' },
+  { value: 'Privacy complaint', label: 'Privacy complaint' },
+  { value: 'Status inquiry', label: 'Status inquiry' }
+];
+
+const TaskRelatedToAppeal = (props) => {
+  // console.log(taskRelatedAppeals);
+
   return (
     <div key={'KEYVALUE'} style={{ display: 'block', marginRight: '2rem' }}>
       <div className="gray-border"
@@ -17,7 +33,7 @@ const TaskRelatedToAppeal = () => {
         >
           <div id="reactSelectContainer">
             <ReactSelectDropdown
-              options={[]}
+              options={dropdownOptions}
               defaultValue={[]}
               label="Task"
               style={{ width: '50rem' }}
@@ -39,14 +55,14 @@ const TaskRelatedToAppeal = () => {
           >
               Add autotext
           </Button>
-          <Button
+            {(props.deleteVisible && <Button
             name="Remove"
             styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
-            onClick={() => null}
+            onClick={() => props.deleteHandler(props.task)}
             classNames={['cf-btn-link', 'cf-right-side']}
           >
             <i className="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Remove task
-          </Button>
+          </Button>)}
         </div>
       </div>
     </div>

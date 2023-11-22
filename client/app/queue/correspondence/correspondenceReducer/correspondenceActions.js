@@ -96,6 +96,16 @@ export const addNewAppealRelatedTask = (id, appealId, type, content) =>
     });
   };
 
+export const setNewAppealRelatedTasks = (newAppealRelatedTasks) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_NEW_APPEAL_RELATED_TASKS,
+      payload: {
+        newAppealRelatedTasks
+      }
+    });
+  };
+
 export const removeNewAppealRelatedTask = (id) =>
   (dispatch) => {
     dispatch({
