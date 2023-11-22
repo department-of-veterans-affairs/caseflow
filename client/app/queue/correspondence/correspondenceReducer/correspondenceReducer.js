@@ -38,14 +38,14 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     if (action.payload.isChecked) {
       return update(state, {
         toggledCheckboxes: {
-          $push: [action.payload.id]
+          $push: [action.payload.correspondence]
         }
       });
     }
 
     return update(state, {
       toggledCheckboxes: {
-        $set: state.toggledCheckboxes.filter((id) => id !== action.payload.id)
+        $set: state.toggledCheckboxes.filter((corr) => corr.id !== action.payload.correspondence.id)
       }
     });
 
