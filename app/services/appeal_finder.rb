@@ -2,21 +2,23 @@
 
 class AppealFinder
   class << self
-    def find_appeals_with_file_numbers(file_numbers, last_id = 0)
+    def find_appeals_with_file_numbers(file_numbers)
       return [] if file_numbers.empty?
 
       MetricsService.record("VACOLS: Get appeal information for file_numbers #{file_numbers}",
                             service: :queue,
                             name: "VeteranFinderQuery.find_appeals_with_file_numbers") do
-        # limit set to 11 so we can determine if there is more to load
+        appeals = Appeal.established.where(veteran_file_number: file_numbers).to_a
+=begin
         appeals = Appeal.established
-          .where(veteran_file_number: file_numbers).where(Appeal.arel_table[:id].gt(last_id))
-          .includes(:decision_issues, :nod_date_updates,
-                    :appellant_substitution, :hearings,
-                    :request_issues, :work_mode,
-                    :tasks, :available_hearing_locations,
-                    :docket_switch, :remand_supplemental_claims)
-          .order(:id).limit(11).to_a
+          .includes(:cached_appeal_attributes)
+          .where(veteran_file_number: file_numbers, user_id: user.user_id)
+          .select(:docket_type, :stream_docket_number, :appellant_first_name,
+                  :appellant_middle_initial, :appellant_last_name, :status,
+                  :stream_type, :issue_count, :decision_date)
+
+          .to_a
+=end
         begin
           appeals.concat(LegacyAppeal.fetch_appeals_by_file_number(*file_numbers))
         rescue ActiveRecord::RecordNotFound
