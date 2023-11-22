@@ -60,7 +60,7 @@ const TaskNotRelatedToAppeal = (props) => {
           <div id="reactSelectContainer">
             <ReactSelectDropdown
               options={dropdownOptions}
-              defaultValue={dropdownOptions[task.type]}
+              defaultValue={task.label === '' ? null : { value: task.type, label: task.type }}
               label="Task"
               style={{ width: '50rem' }}
               onChangeMethod={(selectedOption) => updateTaskType(selectedOption)}

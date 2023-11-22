@@ -83,7 +83,10 @@ ReactSelectDropdown.propTypes = {
       displayText: PropTypes.string,
     })
   ),
-  defaultValue: PropTypes.string,
+  defaultValue: PropTypes.shape({
+    value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    label: PropTypes.string,
+  }),
   label: PropTypes.string,
   onChangeMethod: PropTypes.func,
   className: PropTypes.string
