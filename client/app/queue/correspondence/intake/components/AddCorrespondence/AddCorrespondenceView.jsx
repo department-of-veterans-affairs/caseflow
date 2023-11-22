@@ -65,6 +65,8 @@ class AddCorrespondenceView extends React.Component {
     const isAnyCheckboxSelected = selectedCheckboxes.length > 0;
 
     this.props.onCheckboxChange(isAnyCheckboxSelected);
+
+    console.log(id)
   }
 
   getKeyForRow = (index, { id }) => {

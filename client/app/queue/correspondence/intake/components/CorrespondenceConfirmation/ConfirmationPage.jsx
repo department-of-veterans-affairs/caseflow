@@ -10,6 +10,21 @@ export const ConfirmationPage = (props) => {
   return (
     <div>
       <h1>Review and Confirm Correspondence </h1>
+
+      <div {...css({ backgroundColor: '#f5f5f5', padding: '20px', marginBottom: '20px' })}>
+
+          <div id="va-dor-header">
+            <span id="va-dor-header-label" className="table-header-label">
+              VA DOR
+            </span>
+          </div>
+          <div id="va-dor-header">
+            <span id="va-dor-header-label" className="table-header-label">
+              VA DOR
+            </span>
+          </div>
+
+    </div>
       <div style={{ display: 'flex' }}>
         <h2 style={{ margin: '1px 0 15px 0',
           display: 'inline-block',
@@ -41,6 +56,7 @@ export const ConfirmationPage = (props) => {
           </div>
         ))}
       </div>
+
     </div>
   );
 };

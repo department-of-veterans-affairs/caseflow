@@ -90,6 +90,8 @@ export const CorrespondenceIntake = (props) => {
         <ConfirmationPage
           mailTasks={props.mailTasks}
           goToStep={setCurrentStep}
+          toggledCorrespondences={props.toggledCorrespondences}
+          selectedCorrespondences={props.correspondences.filter((currentCorrespondence) => props.toggledCorrespondences.indexOf(String(currentCorrespondence.id)) !== -1)}
         />
 
       </div>
@@ -140,7 +142,8 @@ CorrespondenceIntake.propTypes = {
 const mapStateToProps = (state) => ({
   correspondences: state.intakeCorrespondence.correspondences,
   unrelatedTasks: state.intakeCorrespondence.unrelatedTasks,
-  mailTasks: state.intakeCorrespondence.mailTasks
+  mailTasks: state.intakeCorrespondence.mailTasks,
+  toggledCorrespondences: state.intakeCorrespondence.toggledCheckboxes
 });
 
 const mapDispatchToProps = (dispatch) => (
