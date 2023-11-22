@@ -211,5 +211,17 @@ FactoryBot.define do
                caseflow_decision_date: Time.zone.now)
       end
     end
+
+    trait :with_intake do
+      after(:create) do |sc|
+        create(:intake, :completed, detail: sc, veteran_file_number: sc.veteran_file_number)
+      end
+    end
+
+    trait :with_decision do
+      after(:create) do |sc|
+        create(:decision_issue, decision_review: sc, request_issues: sc.request_issues, benefit_type: sc.benefit_type)
+      end
+    end
   end
 end

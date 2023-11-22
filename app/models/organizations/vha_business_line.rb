@@ -17,7 +17,7 @@ class VhaBusinessLine < BusinessLine
     }
   end
 
-  def can_generate_claim_history
+  def can_generate_claim_history?
     true
   end
 end

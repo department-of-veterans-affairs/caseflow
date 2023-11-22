@@ -1,18 +1,31 @@
 import React from 'react';
 import { axe } from 'jest-axe';
+import { Provider } from 'react-redux';
+import thunk from 'redux-thunk';
+import { applyMiddleware, createStore, compose } from 'redux';
 
 import userEvent from '@testing-library/user-event';
-import { fireEvent, getAllByRole, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import ReportPage from 'app/nonComp/pages/ReportPage';
 import selectEvent from 'react-select-event';
+import { getVhaUsers } from 'test/helpers/reportPageHelper';
+import CombinedNonCompReducer from 'app/nonComp/reducers';
 
 import REPORT_TYPE_CONSTANTS from 'constants/REPORT_TYPE_CONSTANTS';
 
 describe('ReportPage', () => {
-  const setup = () => {
+  const setup = (storeValues = {}) => {
+    const store = createStore(
+      CombinedNonCompReducer,
+      storeValues,
+      compose(applyMiddleware(thunk))
+    );
+
     return render(
-      <ReportPage />
+      <Provider store={store}>
+        <ReportPage />
+      </Provider>
     );
   };
 
@@ -21,32 +34,47 @@ describe('ReportPage', () => {
     await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
   };
 
-  it('passes a11y testing', async () => {
-    const { container } = setup();
-
-    const results = await axe(container);
-
-    expect(results).toHaveNoViolations();
+  beforeEach(() => {
+    getVhaUsers();
   });
 
-  it('renders correctly', () => {
-    const { container } = setup();
+  describe('renders correctly', () => {
+    it('passes a11y testing', async () => {
+      const { container } = setup();
 
-    expect(container).toMatchSnapshot();
-  });
+      const results = await axe(container);
 
-  it('brings you to the decision review page when clicking the cancel button', async () => {
-    const history = createMemoryHistory();
+      expect(results).toHaveNoViolations();
+    });
 
-    render(
-      <ReportPage history={history} />
-    );
+    it('renders correctly', () => {
+      const { container } = setup();
 
-    const cancelButton = screen.getByText('Cancel');
+      expect(container).toMatchSnapshot();
+    });
 
-    await userEvent.click(cancelButton);
+    it('brings you to the decision review page when clicking the cancel button', async () => {
+      const history = createMemoryHistory();
+      const storeValues = {};
 
-    expect(history.location.pathname).toBe('/vha');
+      const store = createStore(
+        CombinedNonCompReducer,
+        storeValues,
+        compose(applyMiddleware(thunk))
+      );
+
+      render(
+        <Provider store={store}>
+          <ReportPage history={history} />
+        </Provider>
+      );
+
+      const cancelButton = screen.getByText('Cancel');
+
+      await userEvent.click(cancelButton);
+
+      expect(history.location.pathname).toBe('/vha');
+    });
   });
 
   describe('conditions section', () => {
@@ -138,6 +166,41 @@ describe('ReportPage', () => {
     });
   });
 
+  describe('Decision Review Type Section', () => {
+    beforeEach(clickOnReportType);
+
+    const navigateToDecisionReviewType = async () => {
+      const addConditionButton = screen.getByText('Add Condition');
+
+      await userEvent.click(addConditionButton);
+      const select = screen.getByText('Select a variable');
+
+      await selectEvent.select(select, ['Decision Review Type']);
+    };
+
+    it('shows the correct checkbox fields', async () => {
+      setup();
+      await navigateToDecisionReviewType();
+
+      expect(screen.getByText('Higher-Level Reviews')).toBeInTheDocument();
+      expect(screen.getByText('Supplemental Claims')).toBeInTheDocument();
+    });
+
+    it('clicking the checkbox should toggle the checked status', async () => {
+      setup();
+      await navigateToDecisionReviewType();
+
+      const checkbox = screen.getByLabelText('Higher-Level Reviews');
+
+      await userEvent.click(checkbox);
+      expect(checkbox.checked).toEqual(true);
+
+      await userEvent.click(checkbox);
+      expect(checkbox.checked).toEqual(false);
+
+    });
+  });
+
   it('should have Generate task Report button and Clear Filter button disabled on initial load', () => {
     setup();
 
@@ -187,9 +250,9 @@ describe('ReportPage', () => {
       fireEvent.click(screen.getByLabelText('Specific Events / Actions'));
       expect(screen.getAllByRole('checkbox').length).toBe(10);
 
-      REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS.map((option) => {
-        expect(screen.getAllByText(option.label)).toBeTruthy();
-      });
+      REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS.map(
+        (option) => expect(screen.getAllByText(option.label)).toBeTruthy()
+      );
     });
   });
 
