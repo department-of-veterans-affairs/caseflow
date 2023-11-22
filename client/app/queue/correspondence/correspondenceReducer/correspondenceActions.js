@@ -45,21 +45,13 @@ export const clearCheckboxState = () =>
     });
   };
 
-
-export const saveAppealCheckboxState = (appealIds) =>
+export const setTaskRelatedAppealIds = (appealIds) =>
   (dispatch) => {
     dispatch({
-      type: ACTIONS.SAVE_APPEAL_CHECKBOX_STATE,
+      type: ACTIONS.SET_TASK_RELATED_APPEAL_IDS,
       payload: {
         appealIds
       }
-    });
-  };
-
-export const clearAppealCheckboxState = () =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.CLEAR_APPEAL_CHECKBOX_STATE,
     });
   };
 
@@ -79,6 +71,17 @@ export const setFetchedAppeals = (appeals) =>
       type: ACTIONS.SET_FETCHED_APPEALS,
       payload: {
         appeals
+      }
+    });
+  };
+
+export const saveMailTaskState = (name, isChecked) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SAVE_MAIL_TASK_STATE,
+      payload: {
+        name,
+        isChecked
       }
     });
   };

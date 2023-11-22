@@ -3,6 +3,7 @@ import ProgressBar from 'app/components/ProgressBar';
 import Button from '../../../../components/Button';
 import PropTypes from 'prop-types';
 import AddCorrespondenceView from './AddCorrespondence/AddCorrespondenceView';
+import ConfirmationPage from './CorrespondenceConfirmation/ConfirmationPage';
 import { AddTasksAppealsView } from './TasksAppeals/AddTasksAppealsView';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -84,6 +85,15 @@ export const CorrespondenceIntake = (props) => {
         onContinueStatusChange={handleContinueStatusChange}
       />
     }
+    {currentStep === 3 &&
+      <div>
+        <ConfirmationPage
+          mailTasks={props.mailTasks}
+          goToStep={setCurrentStep}
+        />
+
+      </div>
+    }
     <div>
       <a href="/queue/correspondence">
         <Button
@@ -123,12 +133,14 @@ export const CorrespondenceIntake = (props) => {
 CorrespondenceIntake.propTypes = {
   correspondence_uuid: PropTypes.string,
   unrelatedTasks: PropTypes.arrayOf(Object),
-  setUnrelatedTasks: PropTypes.func
+  setUnrelatedTasks: PropTypes.func,
+  mailTasks: PropTypes.objectOf(PropTypes.bool)
 };
 
 const mapStateToProps = (state) => ({
   correspondences: state.intakeCorrespondence.correspondences,
-  unrelatedTasks: state.intakeCorrespondence.unrelatedTasks
+  unrelatedTasks: state.intakeCorrespondence.unrelatedTasks,
+  mailTasks: state.intakeCorrespondence.mailTasks
 });
 
 const mapDispatchToProps = (dispatch) => (
