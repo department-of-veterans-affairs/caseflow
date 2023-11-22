@@ -145,7 +145,6 @@ class EditModal extends React.Component {
   }
 
   render() {
-    // const { onCancel } = this.props;
     const { VADORDate, packageDocument, showEditModal } = this.state;
 
     return (
