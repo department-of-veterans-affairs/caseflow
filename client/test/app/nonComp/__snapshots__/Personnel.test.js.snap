@@ -371,7 +371,7 @@ exports[`Personnel component renders correctly renders correctly 1`] = `
                   class="report-page-variable-content"
                 >
                   <div
-                    class="personnel"
+                    class="report-page-multi-select-dropdown"
                   >
                     <div
                       class=""
