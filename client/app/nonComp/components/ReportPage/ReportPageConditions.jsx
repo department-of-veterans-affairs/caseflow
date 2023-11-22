@@ -1,6 +1,8 @@
 import React from 'react';
 import { useFormContext, useFieldArray } from 'react-hook-form';
+
 import { ConditionContainer } from './ConditionContainer';
+import { personnelSchema } from './Conditions/Personnel';
 import Button from 'app/components/Button';
 
 import * as yup from 'yup';
@@ -14,7 +16,7 @@ const conditionOptionSchemas = {
   facility: yup.object(),
   issueDisposition: yup.object(),
   issueType: yup.object(),
-  personnel: yup.object()
+  personnel: personnelSchema
 };
 
 export const conditionsSchema = yup.array().of(
