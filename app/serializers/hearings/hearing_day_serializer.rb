@@ -17,7 +17,9 @@ class HearingDaySerializer
     get_judge_last_name(hearing_day, params)
   end
   attribute :lock
-  attribute :notes
+  attribute :notes do |hearing_day|
+    RequestStore[:current_user]&.vso_employee? ? nil : hearing_day.notes
+  end
   attribute :readable_request_type do |hearing_day, params|
     get_readable_request_type(hearing_day, params)
   end
