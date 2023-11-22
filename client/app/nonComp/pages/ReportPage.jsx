@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useController, useForm, FormProvider } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
+
 import Button from 'app/components/Button';
 import NonCompLayout from '../components/NonCompLayout';
 import { conditionsSchema, ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { fetchUsers } from 'app/nonComp/actions/usersSlice';
 
 import RHFControlledDropdownContainer from 'app/nonComp/components/ReportPage/RHFControlledDropdown';
 import { timingSchema, TimingSpecification } from 'app/nonComp/components/ReportPage/TimingSpecification';
@@ -20,7 +23,6 @@ import {
   RADIO_EVENT_TYPE_OPTIONS,
   SPECTIFIC_EVENT_OPTIONS
 } from 'constants/REPORT_TYPE_CONSTANTS';
-import { useDispatch, useSelector } from 'react-redux';
 import { downloadReportCSV } from '../actions/changeHistorySlice';
 
 const buttonInnerContainerStyle = css({
@@ -245,8 +247,7 @@ const ReportPage = ({ history }) => {
   };
 
   const submitForm = (data) => {
-    // eslint-disable-next-line no-console
-    // console.log(data);
+    console.log(data);
 
     // Don't know how acceptable this is for compliance.
     // Could also do something like a modal that grabs focus while it is generating
@@ -260,7 +261,9 @@ const ReportPage = ({ history }) => {
     dispatch(downloadReportCSV({ organizationUrl: businessLineUrl, filterData: { filters: filterData } }));
   };
 
-  // parseFilters(inputObject);
+  useEffect(() => {
+    dispatch(fetchUsers({ queryType: 'organization', queryParams: { query: 'vha' } }));
+  }, []);
 
   return (
     <NonCompLayout
