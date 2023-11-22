@@ -80,10 +80,10 @@ class DecisionReviewsController < ApplicationController
 
         parsed_filters = parse_filter_params(filter_params)
 
-        events_as_csv = create_change_history_csv(parsed_filters)
-        filename = Time.zone.now.strftime("taskreport-%Y%m%d.csv")
+        puts parsed_filters.inspect
 
-        # Time.zone.now.strftime("#{business_line.url}-%Y%m%d.csv")
+        events_as_csv = create_change_history_csv(parsed_filters)
+        filename = Time.zone.now.strftime("taskreport-%Y%m%d_%H%M.csv")
         send_data events_as_csv, filename: filename, type: "text/csv", disposition: "attachment"
       end
     end
@@ -260,9 +260,9 @@ class DecisionReviewsController < ApplicationController
       timing: {},
       statuses: {},
       days_waiting: {},
-      review_type: {},
+      decision_review_type: {},
       issue_type: {},
-      disposition: {},
+      issue_disposition: {},
       personnel: {},
       facility: {}
     )
@@ -282,52 +282,44 @@ class DecisionReviewsController < ApplicationController
   def create_change_history_csv(filter_params)
     base_url = "#{request.base_url}/decision_reviews/#{business_line.url}/tasks/"
     events = ClaimHistoryService.new(business_line, filter_params).build_events
-    puts "my events?????"
-    puts events.inspect
     ChangeHistoryReporter.new(events, base_url, filter_params.to_h).as_csv
   end
 
   def parse_filter_params(filter_params)
-    # Need to fix these values. They don't match the actual DB values
-    # Dispositions
-    # ['Granted', 'Denied', 'DTA Error', 'Dismissed', 'Withdrawn']
-    # Days waiting uses 'lessThan' 'greaterThan' instead of '>', '<', '='
-    # It also uses comparisonOperator and value_one value_two
-    # :days_waiting=>{"comparison_operator"=>"lessThan", "value_one"=>5}
-    disposition_mapping = {
-      "granted" => "Granted",
-      "denied" => "Denied",
-      "dta_error" => "DTA Error",
-      "dismissed" => "Dismissed",
-      "withdrawn" => "Withdrawn"
-    }
-
     {
       events: filter_params[:events]&.values&.map(&:to_sym),
       task_status: filter_params[:task_status]&.values,
       claim_type: filter_params[:decision_review_type]&.values,
       personnel: filter_params[:personnel]&.values,
-      dispositions: filter_params[:issue_disposition]&.values&.map { |disposition| disposition_mapping[disposition] },
+      dispositions: disposition_filter_helper(filter_params),
       issue_types: filter_params[:issue_types]&.values,
       facilities: filter_params[:facilities]&.values,
-      timing: filter_params[:timing].to_h
-      # days_waiting: filter_params[:days_waiting].to_h
-    }
+      timing: filter_params[:timing].to_h,
+      days_waiting: days_waiting_filter_helper(filter_params)
+    }.deep_transform_keys(&:to_sym)
   end
-  # {
-  #   :events => ["added_decision_date", "added_issue"],
-  #   :claim_types => ["HigherLevelReview", "SupplementalClaim"],
-  #   :personnel => ["CAMOADMIN", "CAREGIVERADMIN", "VISNADMIN"],
-  #   :dispositions => ["dta_error", "withdrawn", "granted"],
-  #   :issue_types => nil,
-  #   :facilities => nil,
-  #   :timing => {
-  #     "range" => "after",
-  #     "start_date" => "2023-11-01T04:00:00.000Z"
-  #   },
-  #   :days_waiting => {
-  #     "comparison_operator" => "lessThan",
-  #     "value_one" => 5
-  #   }
-  # }
+
+  def disposition_filter_helper(filter_params)
+    disposition_mapping = {
+      "granted" => "Granted",
+      "Granted" => "Granted",
+      "denied" => "Denied",
+      "Denied" => "Denied",
+      "dta_error" => "DTA Error",
+      "DTA ERROR" => "DTA Error",
+      "dismissed" => "Dismissed",
+      "Dismissed" => "Dismissed",
+      "withdrawn" => "Withdrawn",
+      "Withdrawn" => "Withdrawn"
+    }
+
+    filter_params[:issue_disposition]&.values&.map { |disposition| disposition_mapping[disposition] }
+  end
+
+  def days_waiting_filter_helper(filter_params)
+    days_waiting_hash = filter_params[:days_waiting].to_h
+    key_changes = { "comparison_operator" => :range, "value_one" => :num_days, "value_two" => :end_days }
+
+    days_waiting_hash.transform_keys { |key| key_changes[key] || key }
+  end
 end

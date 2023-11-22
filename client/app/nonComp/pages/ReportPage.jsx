@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useController, useForm, FormProvider } from 'react-hook-form';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
@@ -22,7 +22,6 @@ import {
 } from 'constants/REPORT_TYPE_CONSTANTS';
 import { useDispatch, useSelector } from 'react-redux';
 import { downloadReportCSV } from '../actions/changeHistorySlice';
-import { dig } from 'lodash';
 
 const buttonInnerContainerStyle = css({
   display: 'flex',
@@ -177,7 +176,7 @@ const ReportPage = ({ history }) => {
   const inputObject = {
     timing: {
       range: 'after',
-      startDate: '2023-11-01T04:00:00.000Z'
+      startDate: '2023-10-01T04:00:00.000Z'
     },
     conditions: [
       {
@@ -203,8 +202,8 @@ const ReportPage = ({ history }) => {
               value: 'CAMOADMIN'
             },
             {
-              label: 'Tyler Broyles',
-              value: 'SUPERUSER'
+              label: 'Monte Man',
+              value: 'ACBAUERVVHAH'
             },
             {
               label: 'Alvin CSPAdmin Caregiver',
