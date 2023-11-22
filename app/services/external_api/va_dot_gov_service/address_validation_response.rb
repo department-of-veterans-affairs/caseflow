@@ -13,10 +13,8 @@ class ExternalApi::VADotGovService::AddressValidationResponse < ExternalApi::VAD
 
   private
 
-  # The coordinates_invalid? check prevents the creation of a HearingAdminActionVerifyAddressTask when
-  # the response contains valid geographic coordiantes sufficient to complete geomatching
   def message_error
-    messages&.find { |message| message.error.present? && coordinates_invalid? }&.error
+    messages&.find { |message| message.error.present? }&.error
   end
 
   def messages
@@ -47,13 +45,5 @@ class ExternalApi::VADotGovService::AddressValidationResponse < ExternalApi::VAD
       state_code: address.state,
       zip_code: address.zip
     }
-  end
-
-  # When using only an appellant's zip code to validate an address, an invalid zip code will return
-  # float values of 0.0 for both latitude and longitude
-  def coordinates_invalid?
-    return true if body[:geocode].nil?
-
-    [body[:geocode][:latitude], body[:geocode][:longitude]] == [0.0, 0.0]
   end
 end
