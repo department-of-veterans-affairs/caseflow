@@ -191,6 +191,9 @@ export const ReviewForm = (props) => {
               <div {...veternalNameStyling}>
                 <TextField
                   label="Veteran name"
+                  name="veteran-name-input"
+                  id="veteran-name-input"
+                  aria-label="Veteran name"
                   value={fullName(props.reviewDetails.veteran_name)}
                   readOnly
                 />
