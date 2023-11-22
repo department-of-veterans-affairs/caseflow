@@ -26,7 +26,7 @@ const BatchSize = (props) => {
     const lever = batchSizeLevers.find((lever) => lever.item === changedItem);
     leverStore.dispatch({
       type: Constants.UPDATE_LEVER_VALUE,
-      updated_lever: { item:changedItem, value: event }
+      updated_lever: { item: changedItem, value: event }
     })
 
     const levers = batchSizeLevers.map((lever, i) => {
