@@ -7,7 +7,7 @@ class ScDtaForAppealFixJob < CaseflowJob
     DecisionDocument.where("error ILIKE ?", "%#{ERRORTEXT}%")
   end
 
-  def sc_dta_for_appeal_fix
+  def perform
     stuck_job_report_service = StuckJobReportService.new
     return if records_with_errors.blank?
 
