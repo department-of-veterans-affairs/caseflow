@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ReportPage renders correctly 1`] = `
+exports[`ReportPage renders correctly renders correctly 1`] = `
 <div>
   <div>
     <section
