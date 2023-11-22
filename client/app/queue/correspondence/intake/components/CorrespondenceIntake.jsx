@@ -29,8 +29,9 @@ export const CorrespondenceIntake = (props) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isContinueEnabled, setContinueEnabled] = useState(true);
   const [addTasksVisible, setAddTasksVisible] = useState(false);
-  const location = useLocation();
+  const { pathname, hash, key } = useLocation();
   const history = useHistory();
+  const SECTION_MAP = { 'task-not-related-to-an-appeal': 2 };
 
   const handleContinueStatusChange = (isEnabled) => {
     setContinueEnabled(isEnabled);
@@ -68,11 +69,21 @@ export const CorrespondenceIntake = (props) => {
   );
 
   useEffect(() => {
-    if (location.hash === '#task-not-related-to-an-appeal') {
-      setCurrentStep(2);
-      window.scrollTo(0, 665);
+    if (hash === '') {
+      window.scrollTo(0, 0);
+    } else {
+      setTimeout(() => {
+        const id = hash.replace('#', '');
+
+        setCurrentStep(SECTION_MAP[id]);
+        const element = document.getElementById(id);
+
+        if (element) {
+          element.scrollIntoView();
+        }
+      }, 0);
     }
-  });
+  }, [pathname, hash, key]);
 
   return <div>
     <ProgressBar
