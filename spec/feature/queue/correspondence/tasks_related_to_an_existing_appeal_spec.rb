@@ -27,7 +27,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         visit_intake_form_step_2_with_appeals
 
         existing_appeal_radio_options[:yes].click
-        page.all(".cf-form-checkbox").last.click
+        page.all(".usa-table-borderless .cf-form-checkbox").last.click
 
         expect(page.has_button?("Continue")).to be(true)
       end
