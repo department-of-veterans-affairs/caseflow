@@ -72,13 +72,46 @@ class DecisionReviewsController < ApplicationController
     respond_to do |format|
       format.html { render "index" }
       format.csv do
-        filter_params = change_history_params
+        puts "in my format.csv block"
 
-        fail ActionController::ParameterMissing.new(:report), report_missing_message unless filter_params[:report]
+        puts params.inspect
 
-        events_as_csv = create_change_history_csv(filter_params)
+        puts "past params inspect???"
+        # filter_params = change_history_params
+
+        # TODO: Man I hate param .permit. I swear it's useless
+        filter_params = params.permit!
+
+        # puts JSON.parse(filter_params).inspect
+
+        # puts change_history_params.inspect
+
+        puts filter_params.inspect
+
+        puts "past my permit????"
+
+        unless filter_params[:report_type]
+          fail ActionController::ParameterMissing.new(:report_type), report_type_missing_message
+        end
+
+        puts "my filtered params that should be accepted"
+        puts filter_params.inspect
+
+        parsed_filters = parse_filter_params(filter_params)
+
+        # puts filter_params.to_h.inspect
+
+        puts parsed_filters.inspect
+
+        # formatted_keys = transform_keys(filter_params)
+        # formatted_keys = filter_params.to_h.deep_transform_keys!(&:underscore)
+
+        # puts "my transformed keys????"
+        # puts formatted_keys.inspect
+        events_as_csv = create_change_history_csv(parsed_filters)
         filename = Time.zone.now.strftime("#{business_line.url}-%Y%m%d.csv")
-        send_data events_as_csv, filename: filename, type: "text/csv", disposition: "attachment"
+        puts events_as_csv.inspect
+        send_data events_as_csv, filename: filename, type: "application/csv", disposition: "attachment"
       end
     end
   rescue ActionController::ParameterMissing => error
@@ -219,8 +252,8 @@ class DecisionReviewsController < ApplicationController
     Time.zone.now.strftime("#{business_line.url}-%Y%m%d.csv")
   end
 
-  def report_missing_message
-    "param is missing or the value is empty: report"
+  def report_type_missing_message
+    "param is missing or the value is empty: reportType"
   end
 
   def requires_admin_access_redirect
@@ -247,9 +280,10 @@ class DecisionReviewsController < ApplicationController
     )
   end
 
+  # Param permission is garbage
   def change_history_params
-    params.require(:filters).permit(
-      :report,
+    params.permit(
+      :report_type,
       events: [],
       timing: [],
       statuses: [],
@@ -278,6 +312,52 @@ class DecisionReviewsController < ApplicationController
   def create_change_history_csv(filter_params)
     base_url = "#{request.base_url}/decision_reviews/#{business_line.url}/tasks/"
     events = ClaimHistoryService.new(business_line, filter_params).build_events
+    puts "my events?????"
+    puts events.inspect
     ChangeHistoryReporter.new(events, base_url, filter_params.to_h).as_csv
   end
+
+  def parse_filter_params(filter_params)
+    # Need to fix these values. They don't match the actual DB values
+    # Dispositions
+    # ['Granted', 'Denied', 'DTA Error', 'Dismissed', 'Withdrawn']
+    # Days waiting uses 'lessThan' 'greaterThan' instead of '>', '<', '='
+    # It also uses comparisonOperator and value_one value_two
+    # :days_waiting=>{"comparison_operator"=>"lessThan", "value_one"=>5}
+    disposition_mapping = {
+      "granted" => "Granted",
+      "denied" => "Denied",
+      "dta_error" => "DTA Error",
+      "dismissed" => "Dismissed",
+      "withdrawn" => "Withdrawn"
+    }
+
+    {
+      events: filter_params[:events]&.values&.map(&:to_sym),
+      task_status: filter_params[:task_status]&.values,
+      claim_type: filter_params[:decision_review_type]&.values,
+      personnel: filter_params[:personnel]&.values,
+      dispositions: filter_params[:issue_disposition]&.values&.map { |disposition| disposition_mapping[disposition] },
+      issue_types: filter_params[:issue_types]&.values,
+      facilities: filter_params[:facilities]&.values,
+      timing: filter_params[:timing].to_h
+      # days_waiting: filter_params[:days_waiting].to_h
+    }
+  end
+  # {
+  #   :events => ["added_decision_date", "added_issue"],
+  #   :claim_types => ["HigherLevelReview", "SupplementalClaim"],
+  #   :personnel => ["CAMOADMIN", "CAREGIVERADMIN", "VISNADMIN"],
+  #   :dispositions => ["dta_error", "withdrawn", "granted"],
+  #   :issue_types => nil,
+  #   :facilities => nil,
+  #   :timing => {
+  #     "range" => "after",
+  #     "start_date" => "2023-11-01T04:00:00.000Z"
+  #   },
+  #   :days_waiting => {
+  #     "comparison_operator" => "lessThan",
+  #     "value_one" => 5
+  #   }
+  # }
 end

@@ -20,7 +20,7 @@ import {
   RADIO_EVENT_TYPE_OPTIONS,
   SPECTIFIC_EVENT_OPTIONS
 } from 'constants/REPORT_TYPE_CONSTANTS';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { downloadReportCSV } from '../actions/changeHistorySlice';
 import { dig } from 'lodash';
 
@@ -171,8 +171,8 @@ const ReportPage = ({ history }) => {
 
   const watchReportType = watch('reportType');
   const watchRadioEventAction = watch('radioEventAction');
-  // const dispatch = useDispatch();
-  // const businessLineUrl = useState((state) => state.nonComp.businessLineUrl);
+  const dispatch = useDispatch();
+  const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
 
   const inputObject = {
     timing: {
@@ -193,6 +193,48 @@ const ReportPage = ({ history }) => {
           HigherLevelReview: true,
           SupplementalClaim: true
         }
+      },
+      {
+        condition: 'personnel',
+        options: {
+          personnel: [
+            {
+              label: 'Alex CAMOAdmin Camo',
+              value: 'CAMOADMIN'
+            },
+            {
+              label: 'Tyler Broyles',
+              value: 'SUPERUSER'
+            },
+            {
+              label: 'Alvin CSPAdmin Caregiver',
+              value: 'CAREGIVERADMIN'
+            },
+            {
+              label: 'Betty VISNAdmin Rose',
+              value: 'VISNADMIN'
+            }
+          ]
+        }
+      },
+      {
+        condition: 'issueDisposition',
+        options: {
+          issueDispositions: [
+            {
+              label: 'DTA Error',
+              value: 'dta_error'
+            },
+            {
+              label: 'Withdrawn',
+              value: 'withdrawn'
+            },
+            {
+              label: 'Granted',
+              value: 'granted'
+            }
+          ]
+        }
       }
     ],
     reportType: 'event_type_action',
@@ -208,8 +250,15 @@ const ReportPage = ({ history }) => {
 
     switch (condition) {
     case 'decisionReviewType':
-      console.log('in decision review type case');
+      // console.log('in decision review type case');
       formattedOptions = Object.keys(options);
+      break;
+    // Multi select conditions
+    case 'personnel':
+    case 'facility':
+    case 'issueDisposition':
+    case 'issueType':
+      formattedOptions = Object.values(options)[0].map((item) => item.value);
       break;
     default:
       formattedOptions = options;
@@ -218,8 +267,12 @@ const ReportPage = ({ history }) => {
     return formattedOptions;
   };
 
+  const processConditionKey = (condition) => {
+    return condition;
+  };
+
   const parseFilters = (data) => {
-    console.log(data);
+    // console.log(data);
 
     const filters = {};
 
@@ -239,23 +292,28 @@ const ReportPage = ({ history }) => {
       const { condition, options } = item;
 
       if (condition && options) {
+        // Possibly parse the condition name as well
+        const newConditionName = processConditionKey(condition);
+
         // Parse individual conditions to make them more palatable for the server
         const newOptions = processConditionOptions(condition, options);
 
-        result[condition] = newOptions;
+        result[newConditionName] = newOptions;
       }
 
       return result;
     }, {});
 
-    console.log(transformedConditions);
+    // console.log(transformedConditions);
 
     // Add the conditions into the filters
     Object.assign(filters, transformedConditions);
 
-    console.log(filters);
+    // console.log(filters);
 
-    return data;
+    // return data;
+
+    return filters;
   };
 
   const submitForm = (data) => {
@@ -266,13 +324,17 @@ const ReportPage = ({ history }) => {
     // Could also do something like a modal that grabs focus while it is generating
     // window.scrollTo(0, 0);
 
-    // parseFilters(data);
+    // const filterData = parseFilters(data);
+    const filterData = parseFilters(inputObject);
+
+    console.log(filterData);
 
     // Example csv generation code:
     // dispatch(downloadReportCSV({ organizationUrl: businessLineUrl, filterData: { filters: { report: 'true' } } }));
+    dispatch(downloadReportCSV({ organizationUrl: businessLineUrl, filterData: { filters: filterData } }));
   };
 
-  parseFilters(inputObject);
+  // parseFilters(inputObject);
 
   return (
     <NonCompLayout
