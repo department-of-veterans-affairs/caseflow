@@ -65,10 +65,6 @@ function leverList(leverStore) {
 export function LeverSaveButton({ leverStore }) {
   const [showModal, setShowModal] = useState(false);
   const [changesOccurred, setChangesOccurred] = useState(false);
-  // const [levers, setLevers] = useState(false);
-  // const [initialLevers, setInitialLevers] = useState(false);
-  const [saveButtonEnabled, setSaveButtonEnabled] = useState(false);
-  let buttonEnabled = false
 
   useEffect(() => {
     // Subscribe to changes in the lever store and update local state
@@ -76,7 +72,6 @@ export function LeverSaveButton({ leverStore }) {
     const unsubscribe = leverStore.subscribe(() => {
       const state = leverStore.getState();
       setChangesOccurred(state.changesOccurred);
-      buttonEnabled = state.changesOccurred
       console.log({stateAfter: leverStore.getState()})
     });
 
