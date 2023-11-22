@@ -80,6 +80,7 @@ class DecisionReviewsController < ApplicationController
 
         parsed_filters = parse_filter_params(filter_params)
 
+        puts "-----------------------PARSED FILTERS-----------------------------------"
         puts parsed_filters.inspect
 
         events_as_csv = create_change_history_csv(parsed_filters)
@@ -287,16 +288,34 @@ class DecisionReviewsController < ApplicationController
 
   def parse_filter_params(filter_params)
     {
-      events: filter_params[:events]&.values&.map(&:to_sym),
+      events: events_filter_helper(filter_params),
       task_status: filter_params[:task_status]&.values,
       claim_type: filter_params[:decision_review_type]&.values,
       personnel: filter_params[:personnel]&.values,
       dispositions: disposition_filter_helper(filter_params),
       issue_types: filter_params[:issue_types]&.values,
       facilities: filter_params[:facilities]&.values,
-      timing: filter_params[:timing].to_h,
+      # timing: filter_params[:timing].to_h,
       days_waiting: days_waiting_filter_helper(filter_params)
     }.deep_transform_keys(&:to_sym)
+  end
+
+  def events_filter_helper(filter_params)
+    event_mapping = {
+      "added_decision_date" => :added_decision_date,
+      "added_issue" => :added_issue,
+      "added_issue_no_decision_date" => :added_issue_without_decision_date,
+      "claim_created" => :claim_creation,
+      "claim_closed" => :completed,
+      "claim_status_incomplete" => :incomplete,
+      "claim_status_inprogress" => :in_progress,
+      "completed_disposition" => :completed_disposition,
+      "removed_issue" => :removed_issue,
+      "withdrew_issue" => :withdrew_issue,
+      "claim_cancelled" => :cancelled
+    }
+
+    filter_params[:events]&.values&.map { |event_type| event_mapping[event_type] }
   end
 
   def disposition_filter_helper(filter_params)
@@ -317,8 +336,23 @@ class DecisionReviewsController < ApplicationController
   end
 
   def days_waiting_filter_helper(filter_params)
+    operator_mapping = {
+      "lessThan" => "<",
+      "moreThan" => ">",
+      "equalTo" => "=",
+      "between" => "between"
+    }
+
     days_waiting_hash = filter_params[:days_waiting].to_h
-    key_changes = { "comparison_operator" => :range, "value_one" => :num_days, "value_two" => :end_days }
+
+    # Map the operator into something that SQL can understand
+    operator = days_waiting_hash["comparison_operator"]
+    if operator.present?
+      days_waiting_hash["comparison_operator"] = operator_mapping[operator]
+    end
+
+    # Transform the keys to conform to what the service and query expects
+    key_changes = { "comparison_operator" => :operator, "value_one" => :number_of_days, "value_two" => :end_days }
 
     days_waiting_hash.transform_keys { |key| key_changes[key] || key }
   end

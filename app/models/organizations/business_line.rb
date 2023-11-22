@@ -278,7 +278,7 @@ class BusinessLine < Organization
     def days_waiting_filter
       if query_params[:days_waiting].present?
         number_of_days = query_params[:days_waiting][:number_of_days]
-        operator = query_params[:days_waiting][:range]
+        operator = query_params[:days_waiting][:operator]
         case operator
         when ">", "<", "="
           <<-SQL

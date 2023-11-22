@@ -485,7 +485,7 @@ describe ClaimHistoryService do
 
       context "days waiting filter" do
         context "less than number of days" do
-          let(:filters) { { days_waiting: { number_of_days: 8, range: "<" } } }
+          let(:filters) { { days_waiting: { number_of_days: 8, operator: "<" } } }
 
           it "should only return events for tasks that match the days waiting filter" do
             subject
@@ -494,7 +494,7 @@ describe ClaimHistoryService do
         end
 
         context "greater than number of days" do
-          let(:filters) { { days_waiting: { number_of_days: 15, range: ">" } } }
+          let(:filters) { { days_waiting: { number_of_days: 15, operator: ">" } } }
 
           it "should only return events for tasks that match the days waiting filter" do
             subject
@@ -503,7 +503,7 @@ describe ClaimHistoryService do
         end
 
         context "equal to number of days" do
-          let(:filters) { { days_waiting: { number_of_days: 5, range: "=" } } }
+          let(:filters) { { days_waiting: { number_of_days: 5, operator: "=" } } }
 
           it "should only return events for tasks that match the days waiting filter" do
             subject
@@ -512,7 +512,7 @@ describe ClaimHistoryService do
         end
 
         context "between number of days" do
-          let(:filters) { { days_waiting: { number_of_days: 3, range: "between", end_days: 6 } } }
+          let(:filters) { { days_waiting: { number_of_days: 3, operator: "between", end_days: 6 } } }
 
           it "should only return events for tasks that match the days waiting filter" do
             subject
@@ -521,7 +521,7 @@ describe ClaimHistoryService do
         end
 
         context "with no filter matches" do
-          let(:filters) { { days_waiting: { number_of_days: 60, range: ">", end_days: 6 } } }
+          let(:filters) { { days_waiting: { number_of_days: 60, operator: ">", end_days: 6 } } }
 
           it "should return no events" do
             subject

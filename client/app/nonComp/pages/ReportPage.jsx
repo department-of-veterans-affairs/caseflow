@@ -173,84 +173,12 @@ const ReportPage = ({ history }) => {
   const dispatch = useDispatch();
   const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
 
-  const inputObject = {
-    timing: {
-      range: 'after',
-      startDate: '2023-10-01T04:00:00.000Z'
-    },
-    conditions: [
-      {
-        options: {
-          comparisonOperator: 'lessThan',
-          valueOne: 5
-        },
-        condition: 'daysWaiting'
-      },
-      {
-        condition: 'decisionReviewType',
-        options: {
-          HigherLevelReview: true,
-          SupplementalClaim: true
-        }
-      },
-      {
-        condition: 'personnel',
-        options: {
-          personnel: [
-            {
-              label: 'Alex CAMOAdmin Camo',
-              value: 'CAMOADMIN'
-            },
-            {
-              label: 'Monte Man',
-              value: 'ACBAUERVVHAH'
-            },
-            {
-              label: 'Alvin CSPAdmin Caregiver',
-              value: 'CAREGIVERADMIN'
-            },
-            {
-              label: 'Betty VISNAdmin Rose',
-              value: 'VISNADMIN'
-            }
-          ]
-        }
-      },
-      {
-        condition: 'issueDisposition',
-        options: {
-          issueDispositions: [
-            {
-              label: 'DTA Error',
-              value: 'dta_error'
-            },
-            {
-              label: 'Withdrawn',
-              value: 'withdrawn'
-            },
-            {
-              label: 'Granted',
-              value: 'granted'
-            }
-          ]
-        }
-      }
-    ],
-    reportType: 'event_type_action',
-    radioEventAction: 'specific_events_action',
-    specificEventType: {
-      added_decision_date: true,
-      added_issue: true
-    }
-  };
-
   const processConditionOptions = (condition, options) => {
     let formattedOptions;
 
     switch (condition) {
     case 'decisionReviewType':
-      // console.log('in decision review type case');
-      formattedOptions = Object.keys(options);
+      formattedOptions = Object.keys(options).filter((key) => options[key]);
       break;
     // Multi select conditions
     case 'personnel':
@@ -259,6 +187,7 @@ const ReportPage = ({ history }) => {
     case 'issueType':
       formattedOptions = Object.values(options)[0].map((item) => item.value);
       break;
+    // Else it is probably already an object, so it just pass the existing options
     default:
       formattedOptions = options;
     }
@@ -287,7 +216,7 @@ const ReportPage = ({ history }) => {
     filters.timing = data.timing;
 
     // Conditions parsing
-    const transformedConditions = data.conditions.reduce((result, item) => {
+    const transformedConditions = data?.conditions?.reduce((result, item) => {
       const { condition, options } = item;
 
       if (condition && options) {
@@ -323,13 +252,11 @@ const ReportPage = ({ history }) => {
     // Could also do something like a modal that grabs focus while it is generating
     // window.scrollTo(0, 0);
 
-    // const filterData = parseFilters(data);
-    const filterData = parseFilters(inputObject);
+    const filterData = parseFilters(data);
 
     console.log(filterData);
 
     // Example csv generation code:
-    // dispatch(downloadReportCSV({ organizationUrl: businessLineUrl, filterData: { filters: { report: 'true' } } }));
     dispatch(downloadReportCSV({ organizationUrl: businessLineUrl, filterData: { filters: filterData } }));
   };
 
