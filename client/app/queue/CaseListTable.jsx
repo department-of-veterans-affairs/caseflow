@@ -9,7 +9,6 @@ import DocketTypeBadge from '../components/DocketTypeBadge';
 import Table from '../components/Table';
 import BadgeArea from 'app/components/badges/BadgeArea';
 import { clearCaseListSearch } from './CaseList/CaseListActions';
-import { saveAppealCheckboxState } from 'app/queue/correspondence/correspondenceReducer/correspondenceActions';
 import { Checkbox } from '../components/Checkbox';
 
 import { DateString } from '../util/DateUtil';
@@ -37,7 +36,7 @@ class CaseListTable extends React.PureComponent {
               <Checkbox
                 name={`${appeal.id}`}
                 id={`${appeal.id}`}
-                defaultValue={this.props.selectedAppeals.includes(appeal.id)}
+                defaultValue={this.props.taskRelatedAppealIds.includes(appeal.id)}
                 hideLabel
                 onChange={(checked) => this.props.checkboxOnChange(appeal.id, checked)}
               />
@@ -150,9 +149,6 @@ class CaseListTable extends React.PureComponent {
               />
             }
           />
-          <br />
-          <br />
-          <br />
         </div> :
         <Table
           className="cf-case-list-table"
@@ -167,7 +163,7 @@ class CaseListTable extends React.PureComponent {
 
 CaseListTable.propTypes = {
   appeals: PropTypes.arrayOf(PropTypes.object).isRequired,
-  selectedAppeals: PropTypes.array,
+  taskRelatedAppealIds: PropTypes.array,
   showCheckboxes: PropTypes.bool,
   paginate: PropTypes.bool,
   linkOpensInNewTab: PropTypes.bool,
@@ -175,8 +171,7 @@ CaseListTable.propTypes = {
   styling: PropTypes.object,
   clearCaseListSearch: PropTypes.func,
   userRole: PropTypes.string,
-  userCssId: PropTypes.string,
-  saveAppealCheckboxState: PropTypes.func,
+  userCssId: PropTypes.string
 };
 
 CaseListTable.defaultProps = {
@@ -187,14 +182,13 @@ CaseListTable.defaultProps = {
 const mapStateToProps = (state) => ({
   userCssId: state.ui.userCssId,
   userRole: state.ui.userRole,
-  selectedAppeals: state.intakeCorrespondence.selectedAppeals
+  taskRelatedAppealIds: state.intakeCorrespondence.taskRelatedAppealIds
 });
 
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      clearCaseListSearch,
-      saveAppealCheckboxState,
+      clearCaseListSearch
     },
     dispatch
   );

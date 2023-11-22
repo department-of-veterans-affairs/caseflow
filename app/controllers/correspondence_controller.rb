@@ -38,7 +38,7 @@ class CorrespondenceController < ApplicationController
   end
 
   def show
-    corres_docs = @correspondence.correspondence_documents
+    corres_docs = correspondence.correspondence_documents
     response_json = {
       correspondence: correspondence,
       package_document_type: correspondence&.package_document_type,
@@ -51,7 +51,7 @@ class CorrespondenceController < ApplicationController
   end
 
   def update
-    if veteran_by_correspondence.update(veteran_params) && @correspondence.update(
+    if veteran_by_correspondence.update(veteran_params) && correspondence.update(
       correspondence_params.merge(updated_by_id: RequestStore.store[:current_user].id)
     )
       render json: { status: :ok }
@@ -61,25 +61,22 @@ class CorrespondenceController < ApplicationController
   end
 
   def update_cmp
-    @correspondence = Correspondence.find_by(uuid: params[:correspondence_uuid])
-    @correspondence.update(va_date_of_receipt: params["VADORDate"].in_time_zone,
-                           package_document_type_id: params["packageDocument"]["value"].to_i)
-    render json: { status: 200, correspondence: @correspondence }
+    correspondence.update(
+      va_date_of_receipt: params["VADORDate"].in_time_zone,
+      package_document_type_id: params["packageDocument"]["value"].to_i,
+    )
+    render json: { status: 200, correspondence: correspondence }
   end
 
   private
 
-  def correspondence
-    @correspondence ||= Correspondence.find_by(uuid: params[:correspondence_uuid])
-  end
-
   def general_information
     vet = veteran_by_correspondence
     {
-      notes: @correspondence.notes,
+      notes: correspondence.notes,
       file_number: vet.file_number,
       veteran_name: vet.name,
-      correspondence_type_id: @correspondence.correspondence_type_id,
+      correspondence_type_id: correspondence.correspondence_type_id,
       correspondence_types: CorrespondenceType.all
     }
   end
@@ -115,7 +112,7 @@ class CorrespondenceController < ApplicationController
   end
 
   def veteran_by_correspondence
-    @veteran_by_correspondence ||= Veteran.find(@correspondence.veteran_id)
+    @veteran_by_correspondence ||= Veteran.find(correspondence&.veteran_id)
   end
 
   def veterans_with_correspondences
