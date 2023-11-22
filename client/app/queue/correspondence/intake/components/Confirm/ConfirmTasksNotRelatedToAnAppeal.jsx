@@ -27,9 +27,7 @@ const ConfirmTasksNotRelatedToAnAppeal = () => {
     <div>
       <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
         <h2 style={{ display: 'inline', marginBottom: '2rem' }}>Tasks not related to an Appeal</h2>
-        <a
-          // onClick={handleClickEdit}
-          href="#task-not-related-to-an-appeal">
+        <a href="#task-not-related-to-an-appeal">
           <span style={{ position: 'absolute' }}><PencilIcon size={25} /></span>
           <span {...css({ marginLeft: '24px' })}>Edit section</span>
         </a>

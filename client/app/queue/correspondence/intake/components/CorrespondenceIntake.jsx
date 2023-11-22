@@ -45,7 +45,6 @@ export const CorrespondenceIntake = (props) => {
       setCurrentStep(currentStep + 1);
       window.scrollTo(0, 0);
       history.replace({ hash: '' });
-
     }
   };
 
@@ -71,7 +70,7 @@ export const CorrespondenceIntake = (props) => {
   useEffect(() => {
     if (location.hash === '#task-not-related-to-an-appeal') {
       setCurrentStep(2);
-      window.scrollTo(698, 633);
+      window.scrollTo(0, 665);
     }
   });
 
