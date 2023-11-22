@@ -72,46 +72,19 @@ class DecisionReviewsController < ApplicationController
     respond_to do |format|
       format.html { render "index" }
       format.csv do
-        puts "in my format.csv block"
-
-        puts params.inspect
-
-        puts "past params inspect???"
-        # filter_params = change_history_params
-
-        # TODO: Man I hate param .permit. I swear it's useless
-        filter_params = params.permit!
-
-        # puts JSON.parse(filter_params).inspect
-
-        # puts change_history_params.inspect
-
-        puts filter_params.inspect
-
-        puts "past my permit????"
+        filter_params = change_history_params
 
         unless filter_params[:report_type]
           fail ActionController::ParameterMissing.new(:report_type), report_type_missing_message
         end
 
-        puts "my filtered params that should be accepted"
-        puts filter_params.inspect
-
         parsed_filters = parse_filter_params(filter_params)
 
-        # puts filter_params.to_h.inspect
-
-        puts parsed_filters.inspect
-
-        # formatted_keys = transform_keys(filter_params)
-        # formatted_keys = filter_params.to_h.deep_transform_keys!(&:underscore)
-
-        # puts "my transformed keys????"
-        # puts formatted_keys.inspect
         events_as_csv = create_change_history_csv(parsed_filters)
-        filename = Time.zone.now.strftime("#{business_line.url}-%Y%m%d.csv")
-        puts events_as_csv.inspect
-        send_data events_as_csv, filename: filename, type: "application/csv", disposition: "attachment"
+        filename = Time.zone.now.strftime("taskreport-%Y%m%d.csv")
+
+        # Time.zone.now.strftime("#{business_line.url}-%Y%m%d.csv")
+        send_data events_as_csv, filename: filename, type: "text/csv", disposition: "attachment"
       end
     end
   rescue ActionController::ParameterMissing => error
@@ -280,21 +253,18 @@ class DecisionReviewsController < ApplicationController
     )
   end
 
-  # Param permission is garbage
   def change_history_params
     params.permit(
       :report_type,
-      events: [],
-      timing: [],
-      statuses: [],
-      conditions: {
-        days_waiting: [],
-        review_type: [],
-        issue_type: [],
-        disposition: [],
-        personnel: [],
-        facility: []
-      }
+      events: {},
+      timing: {},
+      statuses: {},
+      days_waiting: {},
+      review_type: {},
+      issue_type: {},
+      disposition: {},
+      personnel: {},
+      facility: {}
     )
   end
 

@@ -27,14 +27,15 @@ export const downloadReportCSV = createAsyncThunk('changeHistory/downloadReport'
     console.log(JSON.stringify(data));
 
     try {
-      // const getOptions = { query: JSON.stringify(data), headers: { Accept: 'text/csv' }, responseType: 'arraybuffer' };
-      // const response = await ApiUtil.get(`/decision_reviews/${organizationUrl}/report`, getOptions);
+      const postData = ApiUtil.convertToSnakeCase(data);
+      const getOptions = { query: postData.filters, headers: { Accept: 'text/csv' }, responseType: 'arraybuffer' };
+      const response = await ApiUtil.get(`/decision_reviews/${organizationUrl}/report`, getOptions);
 
       // New post attempt instead of get because get is lame
       // const postData = JSON.stringify(ApiUtil.convertToSnakeCase(data));
-      const postData = ApiUtil.convertToSnakeCase(data);
+      // const postData = ApiUtil.convertToSnakeCase(data);
       // const { response } = await ApiUtil.post(`/decision_reviews/${organizationUrl}/report`, { data: postData, headers: { Accept: 'text/csv' } });
-      const response = await ApiUtil.post(`/decision_reviews/${organizationUrl}/report`, { data: postData.filters, headers: { Accept: 'text/csv' }, responseType: 'arraybuffer' });
+      // const response = await ApiUtil.post(`/decision_reviews/${organizationUrl}/report`, { data: postData.filters, headers: { Accept: 'text/csv' }, responseType: 'arraybuffer' });
 
       console.log(response);
       // Create a Blob from the array buffer
