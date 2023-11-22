@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import Checkbox from '../../../../../components/Checkbox';
 import AddAppealRelatedTaskView from './AddAppealRelatedTaskView';
 import AddUnrelatedTaskView from './AddUnrelatedTaskView';
+import { saveMailTaskState } from '../../../correspondenceReducer/correspondenceActions';
 
 const mailTasksLeft = [
   'Change of address',
@@ -17,8 +19,11 @@ const mailTasksRight = [
 ];
 
 export const AddTasksAppealsView = (props) => {
+  const mailTasks = useSelector((state) => state.intakeCorrespondence.mailTasks);
   const [relatedTasksCanContinue, setRelatedTasksCanContinue] = useState(true);
   const [unrelatedTasksCanContinue, setUnrelatedTasksCanContinue] = useState(true);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     props.onContinueStatusChange(relatedTasksCanContinue && unrelatedTasksCanContinue);
@@ -33,24 +38,28 @@ export const AddTasksAppealsView = (props) => {
         <h2 style={{ margin: '25px auto 15px auto' }}>Mail Tasks</h2>
         <div className="gray-border" style={{ padding: '0rem 2rem' }}>
           <p style={{ marginBottom: '0.5rem' }}>Select any tasks completed by the Mail team for this correspondence.</p>
-          <div style={{ display: 'inline-block', marginRight: '14rem' }}>
+          <div id="mail-tasks-left" style={{ display: 'inline-block', marginRight: '14rem' }}>
             {mailTasksLeft.map((name, index) => {
               return (
                 <Checkbox
                   key={index}
                   name={name}
                   label={name}
+                  defaultValue={mailTasks[name] || false}
+                  onChange={(isChecked) => dispatch(saveMailTaskState(name, isChecked))}
                 />
               );
             })}
           </div>
-          <div style={{ display: 'inline-block' }}>
+          <div id="mail-tasks-right" style={{ display: 'inline-block' }}>
             {mailTasksRight.map((name, index) => {
               return (
                 <Checkbox
                   key={index}
                   name={name}
                   label={name}
+                  defaultValue={mailTasks[name] || false}
+                  onChange={(isChecked) => dispatch(saveMailTaskState(name, isChecked))}
                 />
               );
             })}
