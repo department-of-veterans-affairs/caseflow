@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useController, useForm, FormProvider } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
+
 import Button from 'app/components/Button';
 import NonCompLayout from '../components/NonCompLayout';
 import { conditionsSchema, ReportPageConditions } from '../components/ReportPage/ReportPageConditions';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { fetchUsers } from 'app/nonComp/actions/usersSlice';
 
 import RHFControlledDropdownContainer from 'app/nonComp/components/ReportPage/RHFControlledDropdown';
 import { timingSchema, TimingSpecification } from 'app/nonComp/components/ReportPage/TimingSpecification';
@@ -168,6 +171,12 @@ const ReportPage = ({ history }) => {
 
   const watchReportType = watch('reportType');
   const watchRadioEventAction = watch('radioEventAction');
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchUsers({ queryType: 'organization', queryParams: { query: 'vha' } }));
+  }, []);
 
   return (
     <NonCompLayout
