@@ -30,6 +30,8 @@ const TaskNotRelatedToAppeal = (props) => {
     props.setUnrelatedTasksCanContinue(canContinue);
   }, [content, type]);
 
+  const unrelatedTasks = useSelector((state) => state.intakeCorrespondence.unrelatedTasks);
+
   const updateTaskContent = useCallback((newContent) => {
     const newTask = { id: task.id, type: task.type, content: newContent };
 
@@ -101,5 +103,9 @@ TaskNotRelatedToAppeal.propTypes = {
   taskUpdatedCallback: PropTypes.func.isRequired,
   setUnrelatedTasksCanContinue: PropTypes.func.isRequired
 };
+
+const mapStateToProps = (state) => ({
+  unrelatedTasks: state.intakeCorrespondences.unrelatedTasks
+});
 
 export default TaskNotRelatedToAppeal;
