@@ -31,66 +31,69 @@ const compReviewButtonStyling = css({
 
 const secondaryButtonClassNames = ['usa-button-secondary'];
 
-class NonCompReviewsPage extends React.PureComponent {
-  downloadCsv = () => {
-    location.href = `/decision_reviews/${this.props.businessLineUrl}.csv`;
-  }
+const NonCompReviewsPage = ({
+  businessLine,
+  decisionIssuesStatus,
+  businessLineUrl,
+  isBusinessLineAdmin,
+  canGenerateClaimHistory,
+  history }) => {
 
-  render = () => {
-    let successAlert = null;
+  const downloadCsv = () => {
+    location.href = `/decision_reviews/${businessLineUrl}.csv`;
+  };
 
-    if (this.props.decisionIssuesStatus?.update === DECISION_ISSUE_UPDATE_STATUS.SUCCEED) {
-      successAlert = <SuccessAlert successCode="decisionIssueUpdateSucceeded"
-        claimantName={this.props.decisionIssuesStatus.claimantName}
-      />;
-    }
+  const successAlert = decisionIssuesStatus?.update === DECISION_ISSUE_UPDATE_STATUS.SUCCEED ?
+    <SuccessAlert
+      successCode="decisionIssueUpdateSucceeded"
+      claimantName={decisionIssuesStatus.claimantName}
+    /> :
+    null;
 
-    return (
-      <NonCompLayout>
-        { successAlert }
-        <h1>{this.props.businessLine}</h1>
-        <div {...pageStyling} >
-          <div className="usa-width-one-half" {...linkButtonStyling}>
-            <h2>Reviews needing action</h2>
-            <div>Review each issue and select a disposition</div>
-          </div>
-          <div className="cf-txt-r" {...buttonContainerStyling}>
+  return (
+    <NonCompLayout>
+      { successAlert }
+      <h1>{businessLine}</h1>
+      <div {...pageStyling} >
+        <div className="usa-width-one-half" {...linkButtonStyling}>
+          <h2>Reviews needing action</h2>
+          <div>Review each issue and select a disposition</div>
+        </div>
+        <div className="cf-txt-r" {...buttonContainerStyling}>
+          <Button
+            onClick={() => {
+              window.location.href = '/intake';
+            }}
+            styling={compReviewButtonStyling}
+          >
+            + Intake new form
+          </Button>
+          {businessLine &&
             <Button
+              classNames={secondaryButtonClassNames}
+              onClick={downloadCsv}
+              styling={compReviewButtonStyling}>
+              Download completed tasks
+            </Button>
+          }
+          {canGenerateClaimHistory && isBusinessLineAdmin ?
+            <Button
+              classNames={secondaryButtonClassNames}
               onClick={() => {
-                window.location.href = '/intake';
+                history.push(`${businessLineUrl}/report`);
               }}
-              classNames={compReviewButtonStyling}
               styling={compReviewButtonStyling}
             >
-              + Intake new form
-            </Button>
-            {this.props.businessLine &&
-              <Button
-                classNames={secondaryButtonClassNames}
-                onClick={this.downloadCsv}
-                styling={compReviewButtonStyling}>
-                Download completed tasks
-              </Button>
-            }
-            {this.props.canGenerateClaimHistory && this.props.isBusinessLineAdmin ?
-              <Button
-                classNames={secondaryButtonClassNames}
-                onClick={() => {
-                  this.props.history.push(`${this.props.businessLineUrl}/report`);
-                }}
-                styling={compReviewButtonStyling}
-              >
-                Generate task report
-              </Button> :
-              null
-            }
-          </div>
+              Generate task report
+            </Button> :
+            null
+          }
         </div>
-        <NonCompTabs />
-      </NonCompLayout>
-    );
-  }
-}
+      </div>
+      <NonCompTabs />
+    </NonCompLayout>
+  );
+};
 
 NonCompReviewsPage.propTypes = {
   businessLine: PropTypes.string,
