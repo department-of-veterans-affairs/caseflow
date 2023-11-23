@@ -9,6 +9,7 @@ import { LOGO_COLORS } from '../../../../../constants/AppConstants';
 import RadioField from '../../../../../components/RadioField';
 import ExistingAppealTasksView from './ExistingAppealTasksView';
 import {
+  setNewAppealRelatedTasks,
   setTaskRelatedAppealIds,
   setFetchedAppeals
 } from '../../../correspondenceReducer/correspondenceActions';
@@ -37,6 +38,7 @@ export const AddAppealRelatedTaskView = (props) => {
 
   useEffect(() => {
     setNextTaskId((prevId) => prevId + 1);
+    dispatch(setNewAppealRelatedTasks(newTasks));
   }, [newTasks]);
 
   const appealCheckboxOnChange = useCallback((id, isChecked) => {
