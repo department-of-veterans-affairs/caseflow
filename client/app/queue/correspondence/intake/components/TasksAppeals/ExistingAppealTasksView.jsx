@@ -1,45 +1,52 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { useSelector, useDispatch } from 'react-redux';
 import AddTaskView from './AddTaskView';
 import Button from '../../../../../components/Button';
-import {
-  addNewAppealRelatedTask,
-  setNewAppealRelatedTasks
-} from '../../../correspondenceReducer/correspondenceActions';
 
 export const ExistingAppealTasksView = (props) => {
-  const newAppealRelatedTasks = useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks);
-  const [nextTaskId, setNextTaskId] = useState(1);
-
-  const dispatch = useDispatch();
-
   const addExistingAppealTask = () => {
-    dispatch(addNewAppealRelatedTask(nextTaskId, props.appeal.id, '', ''));
+    const newTask = { id: props.nextTaskId, appealId: props.appeal.id, type: '', content: '' };
 
-    setNextTaskId(nextTaskId + 1);
+    props.setNewTasks([...props.newTasks, newTask]);
   };
 
-  const existingAppealTasksCanContinue = useCallback(() => {
-  }, []);
+  const taskUpdatedCallback = (updatedTask) => {
+    const filtered = props.newTasks.filter((task) => task.id !== updatedTask.id);
 
-  const taskUpdatedCallback = useCallback((updatedTask) => {
-    const filtered = newAppealRelatedTasks.filter((task) => task.id !== updatedTask.id);
+    props.setNewTasks([...filtered, updatedTask]);
+  };
 
-    dispatch(setNewAppealRelatedTasks([...filtered, updatedTask]));
-  }, []);
+  const existingAppealTasksCanContinue = () => {
+    return true;
+  };
 
-  const removeTask = useCallback(() => {
-  }, []);
+  const removeTask = () => {
+    return true;
+  };
+
+  const getTasksForAppeal = () => {
+    const filtered = props.newTasks.filter((el) => el.appealId === props.appeal.id);
+
+    return filtered.sort((t1, t2) => {
+      if (t1.id < t2.id) {
+        return -1;
+      }
+      if (t1.id > t2.id) {
+        return 1;
+      }
+
+      return 0;
+    });
+  };
 
   return (
     <div>
       <strong>Tasks: Appeal #{props.appeal.docketNumber}</strong>
       <div style={{display: 'flex', flexWrap: 'wrap'}}>
-        {newAppealRelatedTasks.filter((task) => task.appealId === props.appeal.id).map((task) => {
+        {getTasksForAppeal().map((task) => {
           return (
             <AddTaskView
-              key={task}
+              key={task.id}
               task={task}
               removeTask={removeTask}
               taskUpdatedCallback={taskUpdatedCallback}
@@ -64,7 +71,10 @@ export const ExistingAppealTasksView = (props) => {
 };
 
 ExistingAppealTasksView.propTypes = {
-  appeal: PropTypes.object.isRequired
+  appeal: PropTypes.object.isRequired,
+  newTasks: PropTypes.array.isRequired,
+  setNewTasks: PropTypes.func.isRequired,
+  nextTaskId: PropTypes.number.isRequired
 };
 
 export default ExistingAppealTasksView;

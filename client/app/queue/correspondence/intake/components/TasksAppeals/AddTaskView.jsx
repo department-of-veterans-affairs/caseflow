@@ -42,21 +42,21 @@ const AddTaskView = (props) => {
     props.setTaskTypeCanContinue(canContinue);
   }, [content, type]);
 
-  const updateTaskContent = useCallback((newContent) => {
+  const updateTaskContent = (newContent) => {
     const newTask = { id: task.id, appealId: task.appealId, type: task.type, content: newContent };
 
     setContent(newContent);
 
     props.taskUpdatedCallback(newTask);
-  }, [task, content]);
+  };
 
-  const updateTaskType = useCallback((newType) => {
+  const updateTaskType = (newType) => {
     const newTask = { id: task.id, appealId: task.appealId, type: newType.value, content: task.content };
 
     setType(newType.value);
 
     props.taskUpdatedCallback(newTask);
-  }, [task, type]);
+  };
 
   return (
     <div key={task.id} style={{ display: 'block', marginRight: '2rem' }}>

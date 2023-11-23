@@ -27,11 +27,17 @@ export const AddAppealRelatedTaskView = (props) => {
   const appeals = useSelector((state) => state.intakeCorrespondence.fetchedAppeals);
   const taskRelatedAppealIds = useSelector((state) => state.intakeCorrespondence.taskRelatedAppealIds);
   const [orderedRelatedAppealIds, setOrderedRelatedAppealIds] = useState([]);
+  const [newTasks, setNewTasks] = useState([]);
   const [existingAppealRadio, setExistingAppealRadio] =
     useState(taskRelatedAppealIds.length ? RELATED_YES : RELATED_NO);
   const [loading, setLoading] = useState(false);
+  const [nextTaskId, setNextTaskId] = useState(1);
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    setNextTaskId((prevId) => prevId + 1);
+  }, [newTasks]);
 
   const appealCheckboxOnChange = useCallback((id, isChecked) => {
     if (isChecked) {
@@ -150,6 +156,9 @@ export const AddAppealRelatedTaskView = (props) => {
                 <ExistingAppealTasksView
                   key={index}
                   appeal={appealById(appealId)}
+                  newTasks={newTasks}
+                  setNewTasks={setNewTasks}
+                  nextTaskId={nextTaskId}
                 />
               );
             })}
