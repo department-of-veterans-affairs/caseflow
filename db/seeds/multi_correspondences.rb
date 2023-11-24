@@ -39,6 +39,9 @@ module Seeds
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def create_multi_correspondences
       veteran = create_veteran(first_name: "Adam", last_name: "West")
+      32.times do
+        create(:appeal, veteran_file_number: veteran.file_number)
+      end
       21.times do
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
@@ -64,6 +67,9 @@ module Seeds
       end
 
       veteran = create_veteran(first_name: "Michael", last_name: "Keaton")
+      13.times do
+        create(:appeal, veteran_file_number: veteran.file_number)
+      end
       31.times do
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
@@ -90,6 +96,9 @@ module Seeds
 
 
       veteran = create_veteran(first_name: "Christian", last_name: "Bale")
+      7.times do
+        create(:appeal, veteran_file_number: veteran.file_number)
+      end
       101.times do
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
