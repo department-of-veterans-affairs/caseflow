@@ -79,5 +79,4 @@ class CorrespondenceController < ApplicationController
       packageDocumentType: correspondence.correspondence_type_id
     }
   end
-
 end
