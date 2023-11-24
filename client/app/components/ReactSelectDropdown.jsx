@@ -69,6 +69,7 @@ const ReactSelectDropdown = (props) => {
         onChange={props.onChangeMethod}
         styles={customSelectStyles}
         className={props.className}
+        aria-label="dropdown"
       />
     </div>
 
@@ -77,10 +78,12 @@ const ReactSelectDropdown = (props) => {
 
 ReactSelectDropdown.propTypes = {
   onChange: PropTypes.func,
-  options: PropTypes.shape({
-    value: PropTypes.number,
-    displayText: PropTypes.string,
-  }),
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      displayText: PropTypes.string,
+    })
+  ),
   defaultValue: PropTypes.string,
   label: PropTypes.string,
   onChangeMethod: PropTypes.func,

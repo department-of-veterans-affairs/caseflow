@@ -32,11 +32,16 @@ module Seeds
         file_number: format("%<n>09d", n: @file_number),
         participant_id: format("%<n>09d", n: @participant_id)
       }
-      create(:veteran, params.merge(options))
+      veteran = create(:veteran, params.merge(options))
+      5.times do
+        create(:appeal, veteran_file_number: veteran.file_number)
+      end
+      veteran
     end
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def create_correspondences
+      # correspondences with multiple documents
       10.times do
         veteran = create_veteran
         corres = ::Correspondence.create!(
@@ -53,12 +58,7 @@ module Seeds
           veteran_id: veteran.id,
           prior_correspondence_id: 1
         )
-        CorrespondenceDocument.create!(
-          document_file_number: veteran.file_number,
-          uuid: SecureRandom.uuid,
-          vbms_document_id: "1250",
-          correspondence: corres
-        )
+        create_multiple_docs(corres, veteran)
         @cmp_packet_number += 1
       end
 
@@ -78,11 +78,13 @@ module Seeds
           veteran_id: veteran.id,
           prior_correspondence_id: 1
         )
-        CorrespondenceDocument.create!(
+        CorrespondenceDocument.find_or_create_by(
           document_file_number: veteran.file_number,
           uuid: SecureRandom.uuid,
-          vbms_document_id: "1250",
-          correspondence: corres
+          vbms_document_type_id: 1250,
+          document_type: 1250,
+          pages: 30,
+          correspondence_id: corres.id
         )
         @cmp_packet_number += 1
       end
@@ -103,11 +105,13 @@ module Seeds
           veteran_id: veteran.id,
           prior_correspondence_id: 1
         )
-        CorrespondenceDocument.create!(
+        CorrespondenceDocument.find_or_create_by(
           document_file_number: veteran.file_number,
           uuid: SecureRandom.uuid,
-          vbms_document_id: "1250",
-          correspondence: corres
+          vbms_document_type_id: 1250,
+          document_type: 1250,
+          pages: 30,
+          correspondence_id: corres.id
         )
         @cmp_packet_number += 1
       end
@@ -128,15 +132,52 @@ module Seeds
           veteran_id: veteran.id,
           prior_correspondence_id: 1
         )
-        CorrespondenceDocument.create!(
+        CorrespondenceDocument.find_or_create_by(
           document_file_number: veteran.file_number,
           uuid: SecureRandom.uuid,
-          vbms_document_id: "1250",
-          correspondence: corres
+          vbms_document_type_id: 1250,
+          document_type: 1250,
+          pages: 30,
+          correspondence_id: corres.id
         )
         @cmp_packet_number += 1
       end
-      # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
     end
+
+    def create_multiple_docs(corres, veteran)
+      CorrespondenceDocument.find_or_create_by(
+        document_file_number: veteran.file_number,
+        uuid: SecureRandom.uuid,
+        correspondence_id: corres.id,
+        document_type: 1250,
+        pages: 30,
+        vbms_document_type_id: 1250
+      )
+      CorrespondenceDocument.find_or_create_by(
+        document_file_number: veteran.file_number,
+        uuid: SecureRandom.uuid,
+        correspondence_id: corres.id,
+        document_type: 719,
+        pages: 20,
+        vbms_document_type_id: 719
+      )
+      CorrespondenceDocument.find_or_create_by(
+        document_file_number: veteran.file_number,
+        uuid: SecureRandom.uuid,
+        correspondence_id: corres.id,
+        document_type: 672,
+        pages: 10,
+        vbms_document_type_id: 672
+      )
+      CorrespondenceDocument.find_or_create_by(
+        document_file_number: veteran.file_number,
+        uuid: SecureRandom.uuid,
+        correspondence_id: corres.id,
+        document_type: 18,
+        pages: 5,
+        vbms_document_type_id: 18
+      )
+    end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
   end
 end
