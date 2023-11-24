@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import AddTaskView from './AddTaskView';
 import Button from '../../../../../components/Button';
 
 export const ExistingAppealTasksView = (props) => {
+
   const addExistingAppealTask = () => {
     const newTask = { id: props.nextTaskId, appealId: props.appeal.id, type: '', content: '' };
 
@@ -38,6 +39,10 @@ export const ExistingAppealTasksView = (props) => {
       return 0;
     });
   };
+
+  useEffect(() => {
+    addExistingAppealTask();
+  }, [props.appeal]);
 
   return (
     <div>
