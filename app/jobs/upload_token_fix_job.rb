@@ -20,6 +20,8 @@ class UploadTokenFixJob < CaseflowJob
   end
 
   def process_decision_document(decision_doc)
+    finalize_decision_doc(decision_doc) && return if all_epes_valid?(decision_doc)
+
     appeal = decision_doc.appeal
     bva = fetch_bva_decisions(appeal, decision_doc.decision_date)
 
@@ -48,6 +50,12 @@ class UploadTokenFixJob < CaseflowJob
       log_error(error)
       stuck_job_report_service.append_error(decision_document.class.name, decision_document.id, error)
     end
+  end
+
+  def all_epes_valid?(decision_document)
+    epes = EndProductEstablishment.where(source_type: "DecisionDocument", source_id: decision_document.id)
+    processed_epes = epes.map { |epe| epe.established_at.present? && epe.reference_id.present? }
+    !processed_epes.uniq.include?(false)
   end
 
   def fetch_bva_decisions(appeal, decision_date)

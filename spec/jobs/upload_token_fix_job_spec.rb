@@ -48,7 +48,18 @@ describe UploadTokenFixJob, :postres do
       :end_product_establishment,
       veteran_file_number: file_number,
       source_type: "DecisionDocument",
-      source_id: decision_doc_with_error.id
+      source_id: decision_doc_with_error.id,
+      established_at: Time.zone.now
+    )
+  end
+
+  let!(:epe_2) do
+    create(
+      :end_product_establishment,
+      veteran_file_number: file_number,
+      source_type: "DecisionDocument",
+      source_id: decision_doc_with_error.id,
+      established_at: nil
     )
   end
 
@@ -57,13 +68,25 @@ describe UploadTokenFixJob, :postres do
       :end_product_establishment,
       veteran_file_number: file_number,
       source_type: "DecisionDocument",
-      source_id: legacy_appeal_decision_doc.id
+      source_id: legacy_appeal_decision_doc.id,
+      established_at: nil
     )
   end
 
   subject { described_class.new }
 
   describe "decision_docs_with_errors returns with one or more decision documents" do
+    context "when the decision document's EndProductEstablishments are all valid" do
+      it "clears the error on the decision document" do
+        epe_2.update(established_at: Time.zone.now)
+        legacy_epe.update(established_at: Time.zone.now)
+
+        subject.perform
+        expect(decision_doc_with_error.reload.error).to be_nil
+        expect(legacy_appeal_decision_doc.reload.error).to be_nil
+      end
+    end
+
     context "when a 'BVA Decision' document is found and it is present in VBMS" do
       it "clears the error on the decision document" do
         allow(subject).to receive(:fetch_bva_decisions).and_return([1, 2])
