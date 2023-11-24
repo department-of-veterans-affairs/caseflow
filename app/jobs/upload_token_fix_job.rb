@@ -3,23 +3,28 @@
 class UploadTokenFixJob < CaseflowJob
   ERROR_TEXT = "A problem has been detected with the upload token provided"
 
-  attr_reader :stuck_job_report_service, :vbms
+  attr_reader :stuck_job_report_service
 
   def initialize
-    super
     @stuck_job_report_service = StuckJobReportService.new
+    super
   end
 
   def perform
     RequestStore[:current_user] = User.system_user
     return if decision_docs_with_errors.empty?
 
+    @stuck_job_report_service.append_record_count(decision_docs_with_errors.count, ERROR_TEXT)
+
     decision_docs_with_errors.each do |decision_doc|
       process_decision_document(decision_doc)
     end
+    @stuck_job_report_service.append_record_count(decision_docs_with_errors.count, ERROR_TEXT)
+    @stuck_job_report_service.write_log_report(ERROR_TEXT)
   end
 
   def process_decision_document(decision_doc)
+    @stuck_job_report_service.append_single_record(decision_doc.class.name, decision_doc.id)
     finalize_decision_doc(decision_doc) && return if all_epes_valid?(decision_doc)
 
     appeal = decision_doc.appeal

@@ -76,7 +76,7 @@ describe UploadTokenFixJob, :postres do
   subject { described_class.new }
 
   describe "decision_docs_with_errors returns with one or more decision documents" do
-    context "when the decision document's EndProductEstablishments are all valid" do
+    context "when the decision document's EndProductEstablishments have all established in VBMS" do
       it "clears the error on the decision document" do
         epe_2.update(established_at: Time.zone.now)
         legacy_epe.update(established_at: Time.zone.now)
