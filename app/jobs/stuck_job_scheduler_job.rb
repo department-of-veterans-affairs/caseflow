@@ -3,6 +3,7 @@
 class StuckJobSchedulerJob < CaseflowJob
   # include StuckJobsErrorCounter
   # Sub folder name
+
   REPORT_TEXT = "Stuck Jobs Profiling Logs"
   STUCK_JOBS_ARRAY = [
     ClaimDateDtFixJob,
@@ -13,20 +14,15 @@ class StuckJobSchedulerJob < CaseflowJob
     DtaScCreationFailedFixJob,
     ScDtaForAppealFixJob
     # Add stuck jobs here
-  ]
+  ].freeze
 
   def initialize
-    # @logs = ["\nStuck Job Scheduler Processing Log"]
-    # @folder_name = (Rails.deploy_env == :prod) ? S3_FOLDER_NAME : "#{S3_FOLDER_NAME}-#{Rails.deploy_env}"
     @stuck_job_report_service = StuckJobReportService.new
     super
   end
 
   def perform
-
     parent_job_name = self.class
-
-
     start_time_parent = @stuck_job_report_service.log_time
 
     begin
@@ -47,7 +43,6 @@ class StuckJobSchedulerJob < CaseflowJob
   end
 
   def execute_stuck_job(stuck_job_class)
-
     job_name = stuck_job_class
 
     initial_error_count = StuckJobsErrorCounter.errors_count_for_job(stuck_job_class)
@@ -56,7 +51,6 @@ class StuckJobSchedulerJob < CaseflowJob
 
     start_time = @stuck_job_report_service.log_time
     Rails.logger.info "#{job_name} started."
-
     begin
       stuck_job_class.perform_now
       Rails.logger.info "#{stuck_job_class} executed successfully."
@@ -69,19 +63,7 @@ class StuckJobSchedulerJob < CaseflowJob
     end_time = @stuck_job_report_service.log_time
     @stuck_job_report_service.execution_time(job_name, start_time, end_time)
     @stuck_job_report_service.error_count_message(final_error_count, stuck_job_class)
+    @stuck_job_report_service.append_dividier
     # Continues to next job even if errors occur
-  end
-
-  # def log_timing_info(job_name, start_time, end_time)
-  #   execution_time = end_time - start_time
-  #   message = "#{job_name} executed in #{execution_time} seconds."
-  #   @logs.push(message)
-  #   Rails.logger.info(message)
-  # end
-
-  def upload_logs
-    content = @logs.join("\n")
-    file_name = "stuck-jobs-profiling-logs/sjp-profiling-log-#{Time.zone.now}"
-    S3Service.store_file("#{@folder_name}/#{file_name}", content)
   end
 end
