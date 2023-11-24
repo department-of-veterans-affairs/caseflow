@@ -12,7 +12,7 @@
   // Implement removeTask callback
 */
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React from 'react';
 import TextareaField from '../../../../../components/TextareaField';
 import ReactSelectDropdown from '../../../../../components/ReactSelectDropdown';
 import Button from '../../../../../components/Button';
@@ -31,29 +31,16 @@ const dropdownOptions = [
 ];
 
 const AddTaskView = (props) => {
-  const [type, setType] = useState('');
-  const [content, setContent] = useState('');
-
   const task = props.task;
-
-  useEffect(() => {
-    const canContinue = (content !== '') && (type !== '');
-
-    props.setTaskTypeCanContinue(canContinue);
-  }, [content, type]);
 
   const updateTaskContent = (newContent) => {
     const newTask = { id: task.id, appealId: task.appealId, type: task.type, content: newContent };
-
-    setContent(newContent);
 
     props.taskUpdatedCallback(newTask);
   };
 
   const updateTaskType = (newType) => {
     const newTask = { id: task.id, appealId: task.appealId, type: newType.value, content: task.content };
-
-    setType(newType.value);
 
     props.taskUpdatedCallback(newTask);
   };
@@ -110,8 +97,7 @@ const AddTaskView = (props) => {
 AddTaskView.propTypes = {
   removeTask: PropTypes.func.isRequired,
   task: PropTypes.object.isRequired,
-  taskUpdatedCallback: PropTypes.func.isRequired,
-  setTaskTypeCanContinue: PropTypes.func.isRequired
+  taskUpdatedCallback: PropTypes.func.isRequired
 };
 
 export default AddTaskView;

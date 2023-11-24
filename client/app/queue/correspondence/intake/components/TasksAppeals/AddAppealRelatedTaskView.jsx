@@ -58,7 +58,7 @@ export const AddAppealRelatedTaskView = (props) => {
   };
 
   useEffect(() => {
-    setOrderedRelatedAppealIds(taskRelatedAppealIds.sort());
+    setOrderedRelatedAppealIds(taskRelatedAppealIds.toSorted());
   }, [taskRelatedAppealIds]);
 
   useEffect(() => {
