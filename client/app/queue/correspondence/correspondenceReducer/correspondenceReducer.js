@@ -87,31 +87,10 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
       }
     });
 
-  case ACTIONS.ADD_NEW_APPEAL_RELATED_TASK:
-    return update(state, {
-      newAppealRelatedTasks: {
-        $push: [
-          {
-            id: action.payload.id,
-            appealId: action.payload.appealId,
-            type: action.payload.type,
-            content: action.payload.content
-          }
-        ]
-      }
-    });
-
   case ACTIONS.SET_NEW_APPEAL_RELATED_TASKS:
     return update(state, {
       newAppealRelatedTasks: {
         $set: [...action.payload.newAppealRelatedTasks]
-      }
-    });
-
-  case ACTIONS.REMOVE_NEW_APPEAL_RELATED_TASK:
-    return update(state, {
-      newAppealRelatedTasks: {
-        $set: state.newAppealRelatedTasks.filter((task) => task.id !== action.payload.id)
       }
     });
 
