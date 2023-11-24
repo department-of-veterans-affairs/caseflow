@@ -8,9 +8,9 @@ import { AddTasksAppealsView } from './TasksAppeals/AddTasksAppealsView';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { setUnrelatedTasks } from '../../correspondenceReducer/correspondenceActions';
-import ConfirmTasksNotRelatedToAnAppeal from './Confirm/ConfirmTasksNotRelatedToAnAppeal';
+import ConfirmTasksNotRelatedToAnAppeal from './ConfirmCorrespondence/ConfirmTasksNotRelatedToAnAppeal';
 import { useHistory, useLocation } from 'react-router-dom';
-import { ConfirmCorrespondenceView } from './ConfirmCorrespondenceView/ConfirmCorrespondenceView';
+import { ConfirmCorrespondenceView } from './ConfirmCorrespondence/ConfirmCorrespondenceView';
 
 const progressBarSections = [
   {
@@ -118,7 +118,6 @@ export const CorrespondenceIntake = (props) => {
           goToStep={setCurrentStep}
         />
         <ConfirmTasksNotRelatedToAnAppeal />
-
       </div>
     }
     <div>
