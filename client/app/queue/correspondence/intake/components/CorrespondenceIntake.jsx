@@ -3,7 +3,6 @@ import ProgressBar from 'app/components/ProgressBar';
 import Button from '../../../../components/Button';
 import PropTypes from 'prop-types';
 import AddCorrespondenceView from './AddCorrespondence/AddCorrespondenceView';
-import ConfirmationPage from './CorrespondenceConfirmation/ConfirmationPage';
 import { AddTasksAppealsView } from './TasksAppeals/AddTasksAppealsView';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
