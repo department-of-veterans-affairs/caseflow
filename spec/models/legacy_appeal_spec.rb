@@ -1163,6 +1163,16 @@ describe LegacyAppeal, :all_dbs do
     end
   end
 
+  context "fetch_appeals_by_file_number returns NoMethodError" do
+    before do
+      allow(LegacyAppeal).to receive(:fetch_appeals_by_file_number).and_raise(NoMethodError)
+    end
+
+    it "raises ActiveRecord::RecordNotFound error" do
+      expect { LegacyAppeal.veteran_has_appeals_in_vacols("1234567890") }.to raise_error(NoMethodError)
+    end
+  end
+
   context ".convert_file_number_to_vacols" do
     subject { LegacyAppeal.convert_file_number_to_vacols(file_number) }
 
