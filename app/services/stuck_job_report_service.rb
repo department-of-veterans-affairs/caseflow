@@ -59,4 +59,8 @@ class StuckJobReportService
       logs.push("#{job_name} has no records with errors.")
     end
   end
+
+  def append_dividier
+    logs.push("_________________________________________")
+  end
 end
