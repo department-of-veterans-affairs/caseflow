@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :remand_reason, class: VACOLS::RemandReason do
+  factory :remand_reason, class: "VACOLS::RemandReason" do
     rmdkey { "123456" }
     rmdissseq { "3" }
     rmdval { "AB" }
