@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require 'app/models/idt/idt_token.rb'
+
 
 RSpec.describe Idt::Api::V1::VeteransController, :all_dbs, type: :controller do
   describe "GET /idt/api/v1/veterans" do
