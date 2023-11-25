@@ -5,7 +5,7 @@
 # https://stackoverflow.com/questions/13355549/rails-activerecord-detect-if-a-column-is-an-association-or-not
 ##
 
-class AssocationWrapper
+class AssociationWrapper
   def initialize(klass)
     @associations = klass.reflect_on_all_associations
     @selects = []
