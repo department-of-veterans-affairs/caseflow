@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class AppealsController < ApplicationController
-  include UpdatePOAConcern
+  include ::UpdatePOAConcern
   before_action :react_routed
   before_action :set_application, only: [:document_count, :power_of_attorney, :update_power_of_attorney]
   # Only whitelist endpoints VSOs should have access to.

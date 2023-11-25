@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :travel_board_schedule, class: VACOLS::TravelBoardSchedule do
+  factory :travel_board_schedule, class: "VACOLS::TravelBoardSchedule" do
     sequence(:tbtrip)
 
     tbleg { true }
@@ -12,7 +12,7 @@ FactoryBot.define do
     tbmem1 { create(:staff, sattyid: 201).sattyid }
   end
 
-  factory :july_travel_board_schedule, class: VACOLS::TravelBoardSchedule do
+  factory :july_travel_board_schedule, class: "VACOLS::TravelBoardSchedule" do
     sequence(:tbtrip)
 
     tbleg { true }

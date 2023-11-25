@@ -8,7 +8,7 @@
 # TODO: remove this hook for FACOLS if needed.
 
 FactoryBot.define do
-  factory :representative, class: VACOLS::Representative do
+  factory :representative, class: "VACOLS::Representative" do
     sequence(:repkey)
     reptype { "A" }
   end
