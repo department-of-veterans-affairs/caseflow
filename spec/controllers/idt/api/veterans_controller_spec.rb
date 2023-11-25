@@ -4,8 +4,8 @@ RSpec.describe Idt::Api::V1::VeteransController, :all_dbs, type: :controller do
   describe "GET /idt/api/v1/veterans" do
     let(:user) { create(:user, css_id: "TEST_ID", full_name: "George Michael") }
     let(:token) do
-      key, token = Idt::Token.generate_one_time_key_and_proposed_token
-      Idt::Token.activate_proposed_token(key, user.css_id)
+      key, token = IdtToken.generate_one_time_key_and_proposed_token
+      IdtToken.activate_proposed_token(key, user.css_id)
       token
     end
 

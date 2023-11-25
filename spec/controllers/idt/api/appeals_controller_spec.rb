@@ -4,8 +4,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
   describe "GET /idt/api/v1/appeals", :all_dbs do
     let(:user) { create(:user, css_id: "TEST_ID", full_name: "George Michael") }
     let(:token) do
-      key, token = Idt::Token.generate_one_time_key_and_proposed_token
-      Idt::Token.activate_proposed_token(key, user.css_id)
+      key, token = IdtToken.generate_one_time_key_and_proposed_token
+      IdtToken.activate_proposed_token(key, user.css_id)
       token
     end
 
@@ -580,8 +580,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       allow(controller).to receive(:verify_access).and_return(true)
       BvaDispatch.singleton.add_user(user)
 
-      key, t = Idt::Token.generate_one_time_key_and_proposed_token
-      Idt::Token.activate_proposed_token(key, user.css_id)
+      key, t = IdtToken.generate_one_time_key_and_proposed_token
+      IdtToken.activate_proposed_token(key, user.css_id)
       request.headers["TOKEN"] = t
     end
 
@@ -752,8 +752,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
     end
 
     before do
-      key, t = Idt::Token.generate_one_time_key_and_proposed_token
-      Idt::Token.activate_proposed_token(key, user.css_id)
+      key, t = IdtToken.generate_one_time_key_and_proposed_token
+      IdtToken.activate_proposed_token(key, user.css_id)
       request.headers["TOKEN"] = t
     end
 

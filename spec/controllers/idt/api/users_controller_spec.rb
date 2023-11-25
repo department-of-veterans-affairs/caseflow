@@ -5,8 +5,8 @@ RSpec.describe Idt::Api::V1::UsersController, :all_dbs, type: :controller do
     let(:user) { create(:user, css_id: "TEST_ID") }
 
     let(:token) do
-      key, token = Idt::Token.generate_one_time_key_and_proposed_token
-      Idt::Token.activate_proposed_token(key, user.css_id)
+      key, token = IdtToken.generate_one_time_key_and_proposed_token
+      IdtToken.activate_proposed_token(key, user.css_id)
       token
     end
 
