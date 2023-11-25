@@ -51,7 +51,7 @@ class Dispatch::TasksController < ApplicationController
   end
 
   def task
-    @task ||= Dispatch::Task.find(task_id)
+    @task ||= DispatchTask.find(task_id)
   end
   helper_method :task
 

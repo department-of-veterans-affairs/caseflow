@@ -62,7 +62,7 @@ class UserReporter
     self.class.models_with_user_id ||= [
       AdvanceOnDocketMotion, Annotation, AppealIntake,
       Certification, ClaimReviewIntake, ClaimsFolderSearch,
-      DecisionReviewIntake, Dispatch::Task,
+      DecisionReviewIntake, DispatchTask,
       EndProductEstablishment, EstablishClaim,
       HigherLevelReviewIntake,
       Intake,
