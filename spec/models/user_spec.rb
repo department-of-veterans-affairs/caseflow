@@ -663,8 +663,8 @@ describe User, :all_dbs do
   end
 
   context ".current_task" do
-    class FakeTask < Dispatch::Task; end
-    class AnotherFakeTask < Dispatch::Task; end
+    class FakeTask < DispatchTask; end
+    class AnotherFakeTask < DispatchTask; end
 
     subject { user.current_task(FakeTask) }
 

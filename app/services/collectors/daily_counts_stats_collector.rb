@@ -54,7 +54,7 @@ class Collectors::DailyCountsStatsCollector
       "decision_issue" => DecisionIssue.group(:benefit_type, :disposition).count,
       # => {["fiduciary", "remanded"]=>2, ["pension", "dismissed_matter_of_law"]=>31, ["vha", "Granted"]=>70, ...
 
-      "dispatch" => Dispatch::Task.group(:type, :aasm_state).count
+      "dispatch" => DispatchTask.group(:type, :aasm_state).count
       # => {["EstablishClaim", "started"]=>5, ["EstablishClaim", "unprepared"]=>64, ...
     }
   end

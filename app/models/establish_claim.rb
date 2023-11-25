@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class EstablishClaim < Dispatch::Task
+class EstablishClaim < DispatchTask
   include CachedAttributes
 
   ADMIN_FUNCTION = "Manage Claim Establishment"

@@ -60,7 +60,7 @@ class NightlySyncsJob < CaseflowJob
   end
   # rubocop:enable Metrics/MethodLength
 
-  # check both `Task` and `Dispatch::Task` (which doesn't inherit from `Task`)
+  # check both `Task` and `DispatchTask` (which doesn't inherit from `Task`)
   def any_task?(legacy_appeal)
     legacy_appeal.tasks.none? && legacy_appeal.dispatch_tasks.none?
   end
