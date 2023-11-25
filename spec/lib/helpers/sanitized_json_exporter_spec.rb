@@ -166,7 +166,7 @@ describe "SanitizedJsonExporter/Importer" do
     end
   end
 
-  describe "SjConfiguration uses of AssocationWrapper" do
+  describe "SjConfiguration uses of AssociationWrapper" do
     let(:configuration) { SjConfiguration.new }
     it "causes SjConfiguration instances to return correct results" do
       expect(configuration.transform_methods).to include(:random_pin, :obfuscate_sentence, :similar_date)
