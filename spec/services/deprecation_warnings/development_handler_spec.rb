@@ -39,7 +39,7 @@ module DeprecationWarnings
         end
 
         it "raises DisallowedDeprecationError" do
-          expect { call }.to raise_error(DeprecationWarnings::DisallowedDeprecations::DisallowedDeprecationError)
+          expect { call }.to raise_error(::DisallowedDeprecationError)
         end
       end
     end

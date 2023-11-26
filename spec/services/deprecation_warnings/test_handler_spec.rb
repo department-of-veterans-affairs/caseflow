@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require "#{Rails.root}/app/services/deprecation_warnings/disallowed_deprecations.rb"
+
 
 module DeprecationWarnings
   describe TestHandler do
@@ -30,7 +32,7 @@ module DeprecationWarnings
         end
 
         it "raises DisallowedDeprecationError" do
-          expect { call }.to raise_error(DeprecationWarnings::DisallowedDeprecations::DisallowedDeprecationError)
+          expect { call }.to raise_error(::DisallowedDeprecationError)
         end
       end
     end
