@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'app/models/idt/idt_token.rb'
 
 RSpec.describe Idt::Api::V1::UploadVbmsDocumentController, :all_dbs, type: :controller do
   include ActiveJob::TestHelper
