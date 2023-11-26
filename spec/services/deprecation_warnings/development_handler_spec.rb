@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'app/services/deprecation_warnings/disallowed_deprecations.rb'
 
 module DeprecationWarnings
   describe DevelopmentHandler do
