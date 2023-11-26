@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require 'app/models/hearings/schedule_hearing_task_pager.rb'
+require "#{Rails.root}/app/models/hearings/schedule_hearing_task_pager.rb"
 
 describe ScheduleHearingTaskPager, :all_dbs do
   let(:assignee) { HearingsManagement.singleton }
