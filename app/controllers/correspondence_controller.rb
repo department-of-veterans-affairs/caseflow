@@ -40,7 +40,7 @@ class CorrespondenceController < ApplicationController
   end
 
   def current_correspondence
-    @current_correspondence ||= correspondence_by_uuid
+    @current_correspondence ||= correspondence
   end
 
   def veteran_information

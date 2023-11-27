@@ -7,7 +7,6 @@ import { AddTasksAppealsView } from './TasksAppeals/AddTasksAppealsView';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { setUnrelatedTasks } from '../../correspondenceReducer/correspondenceActions';
-import ConfirmTasksNotRelatedToAnAppeal from './ConfirmCorrespondence/ConfirmTasksNotRelatedToAnAppeal';
 import { useHistory, useLocation } from 'react-router-dom';
 import { ConfirmCorrespondenceView } from './ConfirmCorrespondence/ConfirmCorrespondenceView';
 
@@ -116,7 +115,6 @@ export const CorrespondenceIntake = (props) => {
           mailTasks={props.mailTasks}
           goToStep={setCurrentStep}
         />
-        <ConfirmTasksNotRelatedToAnAppeal />
       </div>
     }
     <div>

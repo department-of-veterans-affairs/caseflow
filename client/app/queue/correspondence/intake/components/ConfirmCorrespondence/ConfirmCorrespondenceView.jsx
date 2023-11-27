@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { PencilIcon } from '../../../../../components/icons/PencilIcon';
 import Button from '../../../../../components/Button';
-import CorrespondenceDetailsTable from './CorrespondenceDetailsTable';
+import CorrespondenceDetailsTable from './CorrespondenceDetailsTable'
+import ConfirmTasksNotRelatedToAnAppeal from './ConfirmTasksNotRelatedToAnAppeal';
 
 export const ConfirmCorrespondenceView = (props) => {
 
@@ -52,6 +53,9 @@ export const ConfirmCorrespondenceView = (props) => {
             </div>
           ))}
         </div>
+      </div>
+      <div>
+        <ConfirmTasksNotRelatedToAnAppeal />
       </div>
     </div>
   );

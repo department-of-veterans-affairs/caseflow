@@ -42,12 +42,12 @@ module Seeds
       32.times do
         create(:appeal, veteran_file_number: veteran.file_number)
       end
-      21.times do
+      21.times do |package_doc_id|
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
           portal_entry_date: Time.zone.now,
           source_type: "Mail",
-          package_document_type_id: 10182,
+          package_document_type_id: package_doc_id,
           correspondence_type_id: 4,
           cmp_queue_id: 1,
           cmp_packet_number: @cmp_packet_number,
@@ -57,11 +57,13 @@ module Seeds
           veteran_id: veteran.id,
           prior_correspondence_id: 1
         )
-        CorrespondenceDocument.create!(
+        CorrespondenceDocument.find_or_create_by(
           document_file_number: veteran.file_number,
           uuid: SecureRandom.uuid,
-          vbms_document_id: "1250",
-          correspondence: corres
+          vbms_document_type_id: 1250,
+          document_type: 1250,
+          pages: 30,
+          correspondence_id: corres.id
         )
         @cmp_packet_number += 1
       end
@@ -70,12 +72,12 @@ module Seeds
       13.times do
         create(:appeal, veteran_file_number: veteran.file_number)
       end
-      31.times do
+      31.times do |package_doc_id|
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
           portal_entry_date: Time.zone.now,
           source_type: "Mail",
-          package_document_type_id: 10182,
+          package_document_type_id: package_doc_id,
           correspondence_type_id: 4,
           cmp_queue_id: 1,
           cmp_packet_number: @cmp_packet_number,
@@ -85,11 +87,13 @@ module Seeds
           veteran_id: veteran.id,
           prior_correspondence_id: 1
         )
-        CorrespondenceDocument.create!(
+        CorrespondenceDocument.find_or_create_by(
           document_file_number: veteran.file_number,
           uuid: SecureRandom.uuid,
-          vbms_document_id: "1250",
-          correspondence: corres
+          vbms_document_type_id: 1250,
+          document_type: 1250,
+          pages: 30,
+          correspondence_id: corres.id
         )
         @cmp_packet_number += 1
       end
@@ -99,12 +103,12 @@ module Seeds
       7.times do
         create(:appeal, veteran_file_number: veteran.file_number)
       end
-      101.times do
+      101.times do |package_doc_id|
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
           portal_entry_date: Time.zone.now,
           source_type: "Mail",
-          package_document_type_id: 10182,
+          package_document_type_id: package_doc_id,
           correspondence_type_id: 4,
           cmp_queue_id: 1,
           cmp_packet_number: @cmp_packet_number,
@@ -114,11 +118,13 @@ module Seeds
           veteran_id: veteran.id,
           prior_correspondence_id: 1
         )
-        CorrespondenceDocument.create!(
+        CorrespondenceDocument.find_or_create_by(
           document_file_number: veteran.file_number,
           uuid: SecureRandom.uuid,
-          vbms_document_id: "1250",
-          correspondence: corres
+          vbms_document_type_id: 1250,
+          document_type: 1250,
+          pages: 30,
+          correspondence_id: corres.id
         )
         @cmp_packet_number += 1
       end
