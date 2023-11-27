@@ -281,9 +281,9 @@ describe('ReportPage', () => {
       fireEvent.click(screen.getByLabelText('Specific Status'));
       expect(screen.getAllByRole('checkbox').length).toBe(3);
 
-      REPORT_TYPE_CONSTANTS.SPECIFIC_STATUS_OPTIONS.map((option) => {
-        expect(screen.getAllByText(option.label)).toBeTruthy();
-      });
+      REPORT_TYPE_CONSTANTS.SPECIFIC_STATUS_OPTIONS.map((option) =>
+        expect(screen.getAllByText(option.label)).toBeTruthy()
+      );
     });
   });
 
