@@ -52,7 +52,7 @@ const specificStatusSchema = yup.lazy((value) => {
     incomplete: yup.boolean(),
     in_progress: yup.boolean(),
     completed: yup.boolean(),
-  }).test('at-least-one-true', ERRORS.ATLEAST_ONE_OPTION, (obj) => {
+  }).test('at-least-one-true', ERRORS.AT_LEAST_ONE_OPTION, (obj) => {
     return Object.values(obj).some((val) => val === true);
   });
 });
