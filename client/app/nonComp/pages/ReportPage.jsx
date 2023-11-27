@@ -13,7 +13,7 @@ import * as yup from 'yup';
 import { fetchUsers } from 'app/nonComp/actions/usersSlice';
 
 import RHFControlledDropdownContainer from 'app/nonComp/components/ReportPage/RHFControlledDropdown';
-import { TimingSpecification } from 'app/nonComp/components/ReportPage/TimingSpecification';
+import { timingSchema, TimingSpecification } from 'app/nonComp/components/ReportPage/TimingSpecification';
 
 import Checkbox from 'app/components/Checkbox';
 import RadioField from 'app/components/RadioField';
@@ -59,6 +59,7 @@ const specificStatusSchema = yup.lazy((value) => {
 
 const schema = yup.object().shape({
   conditions: conditionsSchema,
+  timing: timingSchema,
   specificStatus: specificStatusSchema
 });
 
