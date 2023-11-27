@@ -29,8 +29,55 @@ class CaseflowDistribution extends React.PureComponent {
     const initialState = leversReducer.initialState;
     const appName = 'Caseflow Distribution';
 
-    console.log('this.props:', this.props);
-    const { acd_levers, acd_history } = this.props;
+    const staticLevers = [
+      'maximum_direct_review_proportion',
+      'minimum_legacy_proportion',
+      'nod_adjustment',
+      'bust_backlog',
+    ];
+    const batchLeverList = [
+      'alternative_batch_size',
+      'batch_size_per_attorney',
+      'request_more_cases_minimum'
+    ];
+    const batchSizeLevers = [];
+    const affinityLeverList = [
+      'ama_hearing_case_affinity_days',
+      'ama_hearing_case_aod_affinity_days',
+      'cavc_affinity_days',
+      'cavc_aod_affinity_days',
+      'aoj_affinity_days',
+      'aoj_aod_affinity_days',
+      'aoj_cavc_affinity_days'
+    ];
+    const affinityLevers = [];
+    const docketLeverList = [
+      'ama_hearings',
+      'ama_direct_review',
+      'ama_evidence_submission',
+      'direct_docket_time_goal',
+      'days_before_goal_due_for_distribution',
+    ];
+    const docketLevers = [];
+
+    this.props.acd_levers.forEach((lever) => {
+      if (lever.data_type === 'number' && batchLeverList.includes(lever.item)) {
+        batchSizeLevers.push(lever.item);
+      }
+      if (lever.data_type === 'radio' && affinityLeverList.includes(lever.item)) {
+        affinityLevers.push(lever.item);
+      }
+      if (lever.data_type === 'combination' && docketLeverList.includes(lever.item)) {
+        docketLevers.push(lever.item);
+      }
+    });
+
+    let leversList = {
+      staticLevers,
+      affinityLevers,
+      batchSizeLevers,
+      docketLevers
+    };
 
     return (
       <ReduxBase initialState={initialState} reducer={leversReducer}>
@@ -63,7 +110,7 @@ class CaseflowDistribution extends React.PureComponent {
                       component={() => {
                         return (
                           <CaseflowDistributionApp
-                            acd_levers={this.props.acd_levers}
+                            acd_levers={leversList}
                             acd_history={this.props.acd_history}
                             user_is_an_acd_admin = {this.props.user_is_an_acd_admin}
                             leverStore={leverStore}

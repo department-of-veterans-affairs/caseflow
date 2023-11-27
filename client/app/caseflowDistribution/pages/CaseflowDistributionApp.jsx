@@ -6,10 +6,8 @@ class CaseflowDistributionApp extends React.PureComponent {
   render() {
 
     return (
-      <div className="cf-app-segment cf-app-segment--alt">
+      <div>
         <div> {/* Wrapper*/}
-          <h1>Hello World From CaseflowDistributionContent</h1>
-          { console.log('this.props Caseflow Distribution App:', this.props)}
           <CaseflowDistributionContent
             levers = {this.props.acd_levers}
             saveChanges = {[]}
@@ -27,7 +25,8 @@ class CaseflowDistributionApp extends React.PureComponent {
 CaseflowDistributionApp.propTypes = {
   acd_levers: PropTypes.array,
   acd_history: PropTypes.array,
-  user_is_an_acd_admin: PropTypes.bool
+  user_is_an_acd_admin: PropTypes.bool,
+  leverStore: PropTypes.any
 };
 
 export default CaseflowDistributionApp;
