@@ -1,17 +1,3 @@
-/*
-  ✓ IntakeForm
-    ✓ Step2:AddTasksAppeals
-      AddUnrelatedTasks (AddUnrelatedTaskView)
-        ✓ AddTaskForm   <-- Reusable component (AddTaskView)
-      AddRelatedTasks (AddAppealRelatedTaskView)
-        RelatedAppeal (ExistingAppealTasksView)
-          ✓ AddTaskForm <-- Reusable component (AddTaskView)
-
-  // Get Tasks for this appeal from the store
-  // Implement add task button onclick
-  // Implement removeTask callback
-*/
-
 import React from 'react';
 import TextareaField from '../../../../../components/TextareaField';
 import ReactSelectDropdown from '../../../../../components/ReactSelectDropdown';
@@ -90,7 +76,6 @@ const AddTaskView = (props) => {
               <i className="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Remove task
             </Button>
           }
-
         </div>
       </div>
     </div>

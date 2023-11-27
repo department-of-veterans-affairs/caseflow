@@ -106,7 +106,7 @@ export const AddUnrelatedTaskView = (props) => {
                 task={task}
                 removeTask={removeTask}
                 taskUpdatedCallback={taskUpdatedCallback}
-                setTaskTypeCanContinue={props.setUnrelatedTasksCanContinue}
+                displayRemoveCheck
               />
             ))}
           </div>

@@ -83,18 +83,19 @@ export const ExistingAppealTasksView = (props) => {
             onClick={addTask}
             disabled={false}
             name="addasks"
-            classNames={['cf-left-side']}>
+            className={['cf-left-side']}>
           + Add tasks
           </Button>
         </div>
 
-        <Link
-          name="asdf"
-          target="target"
-          onClick={() => props.unlinkAppeal(props.appeal.id, false)}
-        >
-          <p className="fa fa-unlink">Unlink appeal</p>
-        </Link>
+        <div style={{ cursor: 'pointer' }}>
+          <Link
+            name={`unlink-${props.appeal.id}`}
+            onClick={() => props.unlinkAppeal(props.appeal.id, false)}
+          >
+            <p className="fa fa-unlink"></p>&nbsp;Unlink appeal
+          </Link>
+        </div>
       </div>
     </div>
   );
