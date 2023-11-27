@@ -6,12 +6,11 @@ import ApiUtil from '../../../../../util/ApiUtil';
 import { prepareAppealForStore } from '../../../../utils';
 import LoadingContainer from '../../../../../components/LoadingContainer';
 import { LOGO_COLORS } from '../../../../../constants/AppConstants';
-import {
-  saveAppealCheckboxState,
-  setFetchedAppeals,
-  clearAppealCheckboxState
-} from '../../../correspondenceReducer/correspondenceActions';
 import RadioField from '../../../../../components/RadioField';
+import {
+  setTaskRelatedAppealIds,
+  setFetchedAppeals
+} from '../../../correspondenceReducer/correspondenceActions';
 
 const RELATED_NO = '0';
 const RELATED_YES = '1';
@@ -24,38 +23,25 @@ const existingAppealAnswer = [
 ];
 
 export const AddAppealRelatedTaskView = (props) => {
-  const selectedAppeals = useSelector((state) => state.intakeCorrespondence.selectedAppeals);
   const appeals = useSelector((state) => state.intakeCorrespondence.fetchedAppeals);
-  const [existingAppealRadio, setExistingAppealRadio] = useState(selectedAppeals.length > 0 ? RELATED_YES : RELATED_NO);
+  const taskRelatedAppealIds = useSelector((state) => state.intakeCorrespondence.taskRelatedAppealIds);
+  const [existingAppealRadio, setExistingAppealRadio] =
+    useState(taskRelatedAppealIds.length ? RELATED_YES : RELATED_NO);
   const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
 
-  const selectYes = () => {
-    if (existingAppealRadio === RELATED_NO) {
-      setExistingAppealRadio(RELATED_YES);
-    }
-  };
-
-  const selectNo = () => {
-    if (existingAppealRadio === RELATED_YES) {
-      setExistingAppealRadio(RELATED_NO);
-      dispatch(clearAppealCheckboxState());
-    }
-  };
-
-  const checkboxOnChange = useCallback((id, isChecked) => {
+  const appealCheckboxOnChange = useCallback((id, isChecked) => {
     if (isChecked) {
-      if (!selectedAppeals.includes(id)) {
-        dispatch(saveAppealCheckboxState([...selectedAppeals, id]));
+      if (!taskRelatedAppealIds.includes(id)) {
+        dispatch(setTaskRelatedAppealIds([...taskRelatedAppealIds, id]));
       }
-
     } else {
-      const selected = selectedAppeals.filter((checkboxId) => checkboxId !== id);
+      const selected = taskRelatedAppealIds.filter((checkboxId) => checkboxId !== id);
 
-      dispatch(saveAppealCheckboxState(selected));
+      dispatch(setTaskRelatedAppealIds(selected));
     }
-  }, [selectedAppeals]);
+  }, [taskRelatedAppealIds]);
 
   useEffect(() => {
     // Don't refetch (use cache)
@@ -90,21 +76,28 @@ export const AddAppealRelatedTaskView = (props) => {
   }, []);
 
   useEffect(() => {
+    // Clear the selected appeals when the user toggles the radio button
+    if (existingAppealRadio === RELATED_NO) {
+      dispatch(setTaskRelatedAppealIds([]));
+    }
+  }, [existingAppealRadio]);
+
+  useEffect(() => {
     // If user has selected appeals, enable continue
     if (existingAppealRadio === RELATED_YES) {
-      props.setRelatedTasksCanContinue(selectedAppeals.length);
+      props.setRelatedTasksCanContinue(taskRelatedAppealIds.length);
     } else {
       props.setRelatedTasksCanContinue(true);
     }
-  }, [existingAppealRadio, selectedAppeals]);
+  }, [existingAppealRadio, taskRelatedAppealIds]);
 
   return (
     <div>
       <RadioField
         name=""
-        value= {existingAppealRadio}
+        value={existingAppealRadio}
         options={existingAppealAnswer}
-        onChange={existingAppealRadio === RELATED_NO ? selectYes : selectNo}
+        onChange={(val) => setExistingAppealRadio(val)}
       />
       {existingAppealRadio === RELATED_YES && loading &&
         <LoadingContainer color={LOGO_COLORS.QUEUE.ACCENT}>
@@ -136,7 +129,7 @@ export const AddAppealRelatedTaskView = (props) => {
                   showCheckboxes
                   paginate
                   linkOpensInNewTab
-                  checkboxOnChange={checkboxOnChange}
+                  checkboxOnChange={appealCheckboxOnChange}
                 />
               </div>
             </ul>
