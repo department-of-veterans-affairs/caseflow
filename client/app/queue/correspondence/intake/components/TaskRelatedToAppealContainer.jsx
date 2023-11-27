@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import TaskRelatedToAppeal from './TaskRelatedToAppeal';
 import Button from '../../../../components/Button';
 import { useSelector, useDispatch } from 'react-redux';
-import { addNewAppealRelatedTask, REMOVE_NEW_APPEAL_RELATED_TASK } from '../../correspondenceReducer/correspondenceActions';
+import {
+  addNewAppealRelatedTask,
+  REMOVE_NEW_APPEAL_RELATED_TASK
+} from '../../correspondenceReducer/correspondenceActions';
 
 const TaskRelatedToAppealContainer = (props) => {
   const taskRelatedAppeals = useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks);
@@ -20,7 +24,6 @@ const TaskRelatedToAppealContainer = (props) => {
   };
 
   const handleAdd = () => {
-    console.log('Running handle add');
     // id, appealId, type, content)
     dispatch(addNewAppealRelatedTask(0, props.appealId, 0, 0));
   };
@@ -29,12 +32,12 @@ const TaskRelatedToAppealContainer = (props) => {
     <>
       <div style={{ display: 'flex' }}>
         {taskRelatedAppeals.filter((task) => task.appealId === props.appealId).map((task) =>
-        <TaskRelatedToAppeal
-        key={task}
-          task={task}
-          deleteVisible={taskRelatedAppeals.filter((task) => task.appealId === props.appealId).length > 1}
-          deleteHandler={removeTask}
-          taskRelatedAppeals={taskRelatedAppeals}
+          <TaskRelatedToAppeal
+            key={task}
+            task={task}
+            deleteVisible={taskRelatedAppeals.filter((currTask) => currTask.appealId === props.appealId).length > 1}
+            deleteHandler={removeTask}
+            taskRelatedAppeals={taskRelatedAppeals}
           />)}
       </div>
       <div style={{ padding: '2.5rem 2.5rem' }} >
@@ -48,6 +51,10 @@ const TaskRelatedToAppealContainer = (props) => {
         </Button>
       </div></>);
 
+};
+
+TaskRelatedToAppealContainer.propTypes = {
+  appealId: PropTypes.number
 };
 
 export default TaskRelatedToAppealContainer;

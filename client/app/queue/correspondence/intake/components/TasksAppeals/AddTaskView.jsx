@@ -100,4 +100,8 @@ AddTaskView.propTypes = {
   taskUpdatedCallback: PropTypes.func.isRequired
 };
 
+AddTaskView.defaultProps = {
+  displayRemoveCheck: () => true
+};
+
 export default AddTaskView;

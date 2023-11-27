@@ -1,8 +1,7 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { addNewAppealRelatedTask } from '../../correspondenceReducer/correspondenceActions';
 import Button from '../../../../components/Button';
 import TextareaField from '../../../../components/TextareaField';
+import PropTypes from 'prop-types';
 import ReactSelectDropdown from '../../../../components/ReactSelectDropdown';
 
 const dropdownOptions = [
@@ -18,10 +17,8 @@ const dropdownOptions = [
 ];
 
 const TaskRelatedToAppeal = (props) => {
-  // console.log(taskRelatedAppeals);
-
   return (
-    <div key={'KEYVALUE'} style={{ display: 'block', marginRight: '2rem' }}>
+    <div style={{ display: 'block', marginRight: '2rem' }}>
       <div className="gray-border"
         style={
           { display: 'block', padding: '2rem 2rem', marginLeft: '3rem', marginBottom: '3rem', width: '50rem' }
@@ -55,7 +52,7 @@ const TaskRelatedToAppeal = (props) => {
           >
               Add autotext
           </Button>
-            {(props.deleteVisible && <Button
+          {(props.deleteVisible && <Button
             name="Remove"
             styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
             onClick={() => props.deleteHandler(props.task)}
@@ -67,6 +64,13 @@ const TaskRelatedToAppeal = (props) => {
       </div>
     </div>
   );
+};
+
+TaskRelatedToAppeal.propTypes = {
+  deleteVisible: PropTypes.func.isRequired,
+  deleteHandler: PropTypes.func.isRequired,
+  task: PropTypes.object.isRequired
+
 };
 
 export default TaskRelatedToAppeal;

@@ -161,6 +161,8 @@ export const AddAppealRelatedTaskView = (props) => {
                   newTasks={newTasks}
                   setNewTasks={setNewTasks}
                   nextTaskId={nextTaskId}
+                  setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
+                  unlinkAppeal={(id, isChecked) => appealCheckboxOnChange(id, isChecked)}
                 />
               );
             })}

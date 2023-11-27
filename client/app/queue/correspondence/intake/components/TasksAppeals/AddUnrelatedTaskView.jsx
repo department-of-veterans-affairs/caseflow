@@ -48,7 +48,7 @@ export const AddUnrelatedTaskView = (props) => {
   useEffect(() => {
     let canContinue = true;
 
-    newTasks.forEach(task => {
+    newTasks.forEach((task) => {
       canContinue = canContinue && ((task.content !== '') && (task.type !== ''));
     });
 
