@@ -139,7 +139,7 @@ RSpec.feature("The Correspondence Intake page") do
       expect(page).to have_button("button-continue", disabled: false)
     end
 
-    it "Re populates feilds after going back a step and then continuing forward again" do
+    it "Re populates fields after going back a step and then continuing forward again" do
       click_on("+ Add tasks")
       all('#reactSelectContainer')[0].click
       find_by_id("react-select-2-option-0").click
@@ -152,6 +152,30 @@ RSpec.feature("The Correspondence Intake page") do
     end
   end
 
+  context "Step 3 - Confirm" do
+    describe "Tasks not related to an Appeal section" do
+      it "displays the correct content" do
+        visit_intake_form_step_3_with_tasks_unrelated
+
+        expect(page).to have_content("Tasks not related to an Appeal")
+        expect(page).to have_link("Edit section")
+        within(".usa-table-borderless") do
+          expect(page).to have_content("Tasks")
+          expect(page).to have_content("Task Instructions or Context")
+          expect(page).to have_content("CAVC Correspondence")
+          expect(page).to have_content("Correspondence test text")
+        end
+      end
+
+      it "Edit section link returns user to Tasks not related to an Appeal on Step 2" do
+        visit_intake_form_step_3_with_tasks_unrelated
+        click_link("Edit section")
+        expect(page).to have_content("Review Tasks & Appeals")
+        expect(page.current_url.include?("#task-not-related-to-an-appeal")).to eq(true)
+      end
+    end
+  end
+  
   context "The user is able to use the autotext feature" do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)

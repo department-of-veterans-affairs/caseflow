@@ -70,6 +70,7 @@ const ReactSelectDropdown = (props) => {
         onChange={props.onChangeMethod}
         styles={customSelectStyles}
         className={props.className}
+        aria-label="dropdown"
       />
     </div>
 
