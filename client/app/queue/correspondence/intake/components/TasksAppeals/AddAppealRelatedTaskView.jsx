@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import CaseListTable from '../../../../CaseListTable';
@@ -26,40 +26,49 @@ const existingAppealAnswer = [
 
 export const AddAppealRelatedTaskView = (props) => {
   const appeals = useSelector((state) => state.intakeCorrespondence.fetchedAppeals);
-  const taskRelatedAppealIds = useSelector((state) => state.intakeCorrespondence.taskRelatedAppealIds);
-  const [orderedRelatedAppealIds, setOrderedRelatedAppealIds] = useState([]);
+  const [taskRelatedAppeals, setTaskRelatedAppeals] = useState([]);
   const [newTasks, setNewTasks] = useState([]);
   const [existingAppealRadio, setExistingAppealRadio] =
-    useState(taskRelatedAppealIds.length ? RELATED_YES : RELATED_NO);
+    useState(taskRelatedAppeals.length ? RELATED_YES : RELATED_NO);
   const [loading, setLoading] = useState(false);
   const [nextTaskId, setNextTaskId] = useState(1);
 
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    setNextTaskId((prevId) => prevId + 1);
-    dispatch(setNewAppealRelatedTasks(newTasks));
-  }, [newTasks]);
-
-  const appealCheckboxOnChange = useCallback((id, isChecked) => {
-    if (isChecked) {
-      if (!taskRelatedAppealIds.includes(id)) {
-        dispatch(setTaskRelatedAppealIds([...taskRelatedAppealIds, id]));
-      }
-    } else {
-      const selected = taskRelatedAppealIds.filter((checkboxId) => checkboxId !== id);
-
-      dispatch(setTaskRelatedAppealIds(selected));
-    }
-  }, [taskRelatedAppealIds]);
 
   const appealById = (appealId) => {
     return appeals.find((el) => el.id === appealId);
   };
 
   useEffect(() => {
-    setOrderedRelatedAppealIds(taskRelatedAppealIds.toSorted());
-  }, [taskRelatedAppealIds]);
+    dispatch(setTaskRelatedAppealIds(taskRelatedAppeals));
+  }, [taskRelatedAppeals]);
+
+  useEffect(() => {
+    setNextTaskId((prevId) => prevId + 1);
+    dispatch(setNewAppealRelatedTasks(newTasks));
+  }, [newTasks]);
+
+  const appealCheckboxOnChange = (appealId, isChecked) => {
+    if (isChecked) {
+      if (!taskRelatedAppeals.includes(appealId)) {
+        setTaskRelatedAppeals([...taskRelatedAppeals, appealId]);
+
+        const tasksForAppeal = newTasks.filter((el) => el.appealId === appealId);
+
+        if (!tasksForAppeal.length) {
+          const newTask = { id: nextTaskId, appealId, type: '', content: '' };
+
+          setNewTasks([...newTasks, newTask]);
+        }
+      }
+    } else {
+      const selectedAppeals = taskRelatedAppeals.filter((checkedId) => checkedId !== appealId);
+      const filteredNewTasks = newTasks.filter((task) => task.appealId !== appealId);
+
+      setTaskRelatedAppeals(selectedAppeals);
+      setNewTasks(filteredNewTasks);
+    }
+  };
 
   useEffect(() => {
     // Don't refetch (use cache)
@@ -96,18 +105,28 @@ export const AddAppealRelatedTaskView = (props) => {
   useEffect(() => {
     // Clear the selected appeals when the user toggles the radio button
     if (existingAppealRadio === RELATED_NO) {
-      dispatch(setTaskRelatedAppealIds([]));
+      setTaskRelatedAppeals([]);
     }
   }, [existingAppealRadio]);
 
   useEffect(() => {
     // If user has selected appeals, enable continue
     if (existingAppealRadio === RELATED_YES) {
-      props.setRelatedTasksCanContinue(taskRelatedAppealIds.length);
+      props.setRelatedTasksCanContinue(taskRelatedAppeals.length);
     } else {
       props.setRelatedTasksCanContinue(true);
     }
-  }, [existingAppealRadio, taskRelatedAppealIds]);
+  }, [existingAppealRadio, taskRelatedAppeals]);
+
+  useEffect(() => {
+    let canContinue = true;
+
+    newTasks.forEach((task) => {
+      canContinue = canContinue && ((task.content !== '') && (task.type !== ''));
+    });
+
+    props.setRelatedTasksCanContinue(canContinue);
+  }, [newTasks]);
 
   return (
     <div>
@@ -153,7 +172,7 @@ export const AddAppealRelatedTaskView = (props) => {
             </ul>
           </div>
           <div>
-            {orderedRelatedAppealIds.map((appealId, index) => {
+            {taskRelatedAppeals.toSorted().map((appealId, index) => {
               return (
                 <ExistingAppealTasksView
                   key={index}
@@ -162,7 +181,7 @@ export const AddAppealRelatedTaskView = (props) => {
                   setNewTasks={setNewTasks}
                   nextTaskId={nextTaskId}
                   setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
-                  unlinkAppeal={(id, isChecked) => appealCheckboxOnChange(id, isChecked)}
+                  unlinkAppeal={appealCheckboxOnChange}
                 />
               );
             })}

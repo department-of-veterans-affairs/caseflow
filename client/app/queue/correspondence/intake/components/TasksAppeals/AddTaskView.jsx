@@ -80,14 +80,17 @@ const AddTaskView = (props) => {
           >
             Add autotext
           </Button>
-          <Button
-            name="Remove"
-            styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
-            onClick={() => props.removeTask(task.id)}
-            classNames={['cf-btn-link', 'cf-right-side']}
-          >
-            <i className="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Remove task
-          </Button>
+          {props.displayRemoveCheck &&
+            <Button
+              name="Remove"
+              styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
+              onClick={() => props.removeTask(task.id)}
+              classNames={['cf-btn-link', 'cf-right-side']}
+            >
+              <i className="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Remove task
+            </Button>
+          }
+
         </div>
       </div>
     </div>
@@ -97,11 +100,8 @@ const AddTaskView = (props) => {
 AddTaskView.propTypes = {
   removeTask: PropTypes.func.isRequired,
   task: PropTypes.object.isRequired,
-  taskUpdatedCallback: PropTypes.func.isRequired
-};
-
-AddTaskView.defaultProps = {
-  displayRemoveCheck: () => true
+  taskUpdatedCallback: PropTypes.func.isRequired,
+  displayRemoveCheck: PropTypes.bool.isRequired
 };
 
 export default AddTaskView;

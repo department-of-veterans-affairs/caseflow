@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import AddTaskView from './AddTaskView';
 import Button from '../../../../../components/Button';
@@ -6,47 +6,7 @@ import CaseDetailsLink from '../../../../CaseDetailsLink';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 export const ExistingAppealTasksView = (props) => {
-
-  const addExistingAppealTask = () => {
-    const newTask = { id: props.nextTaskId, appealId: props.appeal.id, type: '', content: '' };
-
-    props.setNewTasks([...props.newTasks, newTask]);
-  };
-
-  const taskUpdatedCallback = (updatedTask) => {
-    const filtered = props.newTasks.filter((task) => task.id !== updatedTask.id);
-
-    props.setNewTasks([...filtered, updatedTask]);
-  };
-
-  const existingAppealTasksCanContinue = () => {
-    return true;
-  };
-
-  const canRemove = () => {
-    if (props.newTasks.filter((task) => task.appealId === props.appeal.id).length > 1) {
-      return true;
-    }
-
-    return false;
-
-  };
-
-  useEffect(() => {
-    let canContinue = true;
-
-    props.newTasks.forEach((task) => {
-      canContinue = canContinue && ((task.content !== '') && (task.type !== ''));
-    });
-
-    props.setRelatedTasksCanContinue(canContinue);
-  }, [props.newTasks]);
-
-  const removeTask = (id) => {
-    const newTasks = props.newTasks.filter((task) => task.id !== id);
-
-    props.setNewTasks(newTasks);
-  };
+  const [displayRemoveCheck, setDisplayRemoveCheck] = useState(false);
 
   const getTasksForAppeal = () => {
     const filtered = props.newTasks.filter((el) => el.appealId === props.appeal.id);
@@ -63,18 +23,31 @@ export const ExistingAppealTasksView = (props) => {
     });
   };
 
-  const unlinkTask = (appealId) => {
-    const newTasks = props.newTasks.filter((task) => task.appealId !== appealId);
+  const addTask = () => {
+    const newTask = { id: props.nextTaskId, appealId: props.appeal.id, type: '', content: '' };
+
+    props.setNewTasks([...props.newTasks, newTask]);
+  };
+
+  const removeTask = (id) => {
+    const newTasks = props.newTasks.filter((task) => task.id !== id);
 
     props.setNewTasks(newTasks);
-    props.unlinkAppeal(appealId, false);
+  };
+
+  const taskUpdatedCallback = (updatedTask) => {
+    const filtered = props.newTasks.filter((task) => task.id !== updatedTask.id);
+
+    props.setNewTasks([...filtered, updatedTask]);
   };
 
   useEffect(() => {
-    if (props.newTasks.filter((task) => task.appealId === props.appeal.id).length === 0) {
-      addExistingAppealTask();
+    if (getTasksForAppeal().length > 1) {
+      setDisplayRemoveCheck(true);
+    } else {
+      setDisplayRemoveCheck(false);
     }
-  }, [props.appeal, props.newTasks]);
+  }, [props.newTasks]);
 
   return (
     <div>
@@ -96,19 +69,18 @@ export const ExistingAppealTasksView = (props) => {
               task={task}
               removeTask={removeTask}
               taskUpdatedCallback={taskUpdatedCallback}
-              setTaskTypeCanContinue={existingAppealTasksCanContinue}
-              displayRemoveCheck={canRemove}
+              displayRemoveCheck={displayRemoveCheck}
               setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
             />
           );
         })}
       </div>
 
-      <div style={{ padding: '2.5rem 2.5rem', display: 'flex', justifyContent: 'space-between' }} >
+      <div style={{ padding: '2.5rem 2.5rem', display: 'flex', justifyContent: 'space-between' }}>
         <div style={{ width: '80%' }}>
           <Button
             type="button"
-            onClick={addExistingAppealTask}
+            onClick={addTask}
             disabled={false}
             name="addasks"
             classNames={['cf-left-side']}>
@@ -119,7 +91,7 @@ export const ExistingAppealTasksView = (props) => {
         <Link
           name="asdf"
           target="target"
-          onClick={() => unlinkTask(props.appeal.id)}
+          onClick={() => props.unlinkAppeal(props.appeal.id, false)}
         >
           <p className="fa fa-unlink">Unlink appeal</p>
         </Link>
@@ -135,7 +107,6 @@ ExistingAppealTasksView.propTypes = {
   nextTaskId: PropTypes.number.isRequired,
   setRelatedTasksCanContinue: PropTypes.func.isRequired,
   unlinkAppeal: PropTypes.func.isRequired
-
 };
 
 export default ExistingAppealTasksView;
