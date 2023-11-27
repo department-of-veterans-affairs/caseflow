@@ -6,6 +6,15 @@ class ClaimHistoryService
               :processed_request_issue_ids, :processed_request_issue_update_ids,
               :processed_decision_issue_ids, :events, :filters
 
+  TIMING_RANGES = [
+    "before",
+    "after",
+    "between",
+    "last 7 days",
+    "last 30 days",
+    "last 365 days"
+  ].freeze
+
   def initialize(business_line = VhaBusinessLine.singleton, filters = {})
     @business_line = business_line
     @filters = parse_filters(filters)
@@ -49,10 +58,6 @@ class ClaimHistoryService
 
   def event_stats
     {
-      parsed_task_ids: @processed_task_ids,
-      parsed_request_issue_ids: @processed_request_issue_ids,
-      parsed_request_issue_update_ids: @processed_request_issue_update_ids,
-      parsed_decision_issue_ids: @processed_decision_issue_ids,
       database_query_time: @database_query_time,
       event_generation_time: @event_generation_time,
       number_of_database_columns: @number_of_database_columns,
@@ -67,7 +72,8 @@ class ClaimHistoryService
   private
 
   def parse_filters(filters)
-    filters.to_h.with_indifferent_access
+    # filters.to_h.with_indifferent_access
+    filters.to_h
   end
 
   def reset_processing_attributes
@@ -92,11 +98,11 @@ class ClaimHistoryService
 
   def matches_filter(new_events)
     # Days Waiting, Task ID, Task Status, and Claim Type are all filtered entirely by the business line DB query
-    # The Issue types, dispositions, personnel, and facilities filters are partially filtered by DB query then further
-    # filtered below in this service class after the event has been created
+    # The events, Issue types, dispositions, personnel, and facilities filters are partially filtered by DB query
+    # and then further filtered below in this service class after the event has been created
 
     # Ensure that we always treat this as an array of events for processing
-    filtered_events = new_events.is_a?(Array) ? new_events : [new_events]
+    filtered_events = ensure_array(new_events)
     # Go ahead and extract any nil events
     filtered_events = process_event_filter(filtered_events.compact)
     filtered_events = process_issue_type_filter(filtered_events)
@@ -113,23 +119,23 @@ class ClaimHistoryService
   def process_event_filter(new_events)
     return new_events if @filters[:events].blank?
 
-    new_events.select { |event| event && @filters[:events].include?(event.event_type) }
+    new_events.select { |event| event && ensure_array(@filters[:events]).include?(event.event_type) }
   end
 
   def process_issue_type_filter(new_events)
     return new_events if @filters[:issue_types].blank?
 
-    new_events.select { |event| event && @filters[:issue_types].include?(event.issue_type) }
+    new_events.select { |event| event && ensure_array(@filters[:issue_types]).include?(event.issue_type) }
   end
 
   def process_dispositions_filter(new_events)
     return new_events if @filters[:dispositions].blank?
 
-    new_events.select { |event| event && @filters[:dispositions].include?(event.disposition) }
+    new_events.select { |event| event && ensure_array(@filters[:dispositions]).include?(event.disposition) }
   end
 
   def process_timing_filter(new_events)
-    return new_events if @filters[:timing].blank?
+    return new_events unless @filters[:timing].present? && TIMING_RANGES.include?(@filters[:timing][:range])
 
     # Try to guess the date format from either a string or iso8601 date string object
     start_date, end_date = date_range_for_timing_filter
@@ -160,7 +166,6 @@ class ClaimHistoryService
   end
 
   # Function to attempt to guess the date from the filter. Works for 11/1/2023 format and iso8601
-  # It's gross because it's using error handling for logic though.
   def parse_date(date)
     if date.is_a?(String)
       begin
@@ -176,14 +181,14 @@ class ClaimHistoryService
   def process_personnel_filter(new_events)
     return new_events if @filters[:personnel].blank?
 
-    new_events.select { |event| @filters[:personnel].include?(event.event_user_css_id) }
+    new_events.select { |event| ensure_array(@filters[:personnel]).include?(event.event_user_css_id) }
   end
 
   def process_facility_filter(new_events)
     return new_events if @filters[:facilities].blank?
 
     # Station ids are strings for some reason
-    new_events.select { |event| @filters[:facilities].include?(event.user_facility) }
+    new_events.select { |event| ensure_array(@filters[:facilities]).include?(event.user_facility) }
   end
 
   def process_request_issue_update_events(change_data)
@@ -221,6 +226,10 @@ class ClaimHistoryService
       @processed_decision_issue_ids.add(decision_issue_id)
       save_events(ClaimHistoryEvent.create_completed_disposition_event(change_data))
     end
+  end
+
+  def ensure_array(variable)
+    variable.is_a?(Array) ? variable : [variable]
   end
 
   # Timing method wrapper

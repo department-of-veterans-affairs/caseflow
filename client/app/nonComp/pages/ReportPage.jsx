@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useController, useForm, FormProvider, useFormContext } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { downloadReportCSV } from 'app/nonComp/actions/changeHistorySlice';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 
@@ -20,6 +21,8 @@ import RadioField from 'app/components/RadioField';
 
 import { get } from 'lodash';
 
+import LoadingMessage from '../../components/LoadingMessage';
+import { LoadingIcon } from '../../components/icons/LoadingIcon';
 import {
   REPORT_TYPE_OPTIONS,
   RADIO_EVENT_TYPE_OPTIONS,
@@ -70,9 +73,14 @@ const ReportPageButtons = ({
   handleSubmit }) => {
 
   // eslint-disable-next-line no-console
-  const onSubmit = (data) => console.log(data);
+  // const onSubmit = (data) => {
+  //   console.log(data);
+
+  //   return data;
+  // };
 
   return (
+
     <div {...buttonOuterContainerStyling}>
       <Button
         classNames={['cf-modal-link', 'cf-btn-link']}
@@ -96,7 +104,7 @@ const ReportPageButtons = ({
           classNames={['usa-button']}
           label="generate-report"
           name="generate-report"
-          onClick={handleSubmit(onSubmit)}
+          onClick={handleSubmit}
           disabled={isGenerateButtonDisabled}
         >
           Generate task report
@@ -209,12 +217,27 @@ const ReportPage = ({ history }) => {
   });
 
   const { reset, watch, formState, control, handleSubmit } = methods;
+  const dispatch = useDispatch();
+  const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
+  const csvGeneration = useSelector((state) => state.changeHistory.status);
+
+  const isCSVGenerating = csvGeneration === 'loading';
+
+  const submitForm = (data) => {
+    // eslint-disable-next-line no-console
+    console.log(data);
+
+    // Don't know how acceptable this is for compliance.
+    // Could also do something like a modal that grabs focus while it is generating
+    window.scrollTo(0, 0);
+
+    // Example csv generation code:
+    dispatch(downloadReportCSV({ organizationUrl: businessLineUrl, filterData: { filters: { report: 'true' } } }));
+  };
 
   const watchReportType = watch('reportType');
   const watchRadioEventAction = watch('radioEventAction');
   const watchRadioStatus = watch('radioStatus');
-
-  const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchUsers({ queryType: 'organization', queryParams: { query: 'vha' } }));
@@ -225,12 +248,13 @@ const ReportPage = ({ history }) => {
       buttons={
         <ReportPageButtons
           history={history}
-          isGenerateButtonDisabled={!formState.isDirty}
+          isGenerateButtonDisabled={!formState.isDirty || isCSVGenerating}
           handleClearFilters={() => reset(defaultFormValues)}
-          handleSubmit={handleSubmit}
+          handleSubmit={handleSubmit(submitForm)}
         />
       }
     >
+      { isCSVGenerating && <LoadingMessage message=<h3>Generating CSV... <LoadingIcon /></h3> />}
       <h1>Generate task report</h1>
       <FormProvider {...methods}>
         <form>

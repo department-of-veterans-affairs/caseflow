@@ -22,12 +22,15 @@ class ClaimHistoryEvent
     :removed_issue,
     :added_decision_date,
     :added_issue,
+    :added_issue_without_decision_date,
     :in_progress,
     :completed,
-    :incomplete
+    :incomplete,
+    :cancelled
   ].freeze
 
   REQUEST_ISSUE_TIME_WINDOW = 15
+  STATUS_EVENT_TIME_WINDOW = 2
 
   class << self
     def from_change_data(event_type, change_data)
@@ -50,23 +53,24 @@ class ClaimHistoryEvent
       from_change_data(:claim_creation, change_data.merge(intake_event_hash(change_data)))
     end
 
-    # This might have to change depending on performance for a lot of records
+    # rubocop:disable Metrics/MethodLength
     def create_status_events(change_data)
       status_events = []
-      task = Task.find(change_data["task_id"])
-      versions = task.versions
+      versions = parse_versions(change_data)
+
+      hookless_cancelled_events = handle_hookless_cancelled_status_events(versions, change_data)
+      status_events.push(*hookless_cancelled_events)
 
       if versions.present?
-        first_version, *rest_of_versions = task.versions
+        first_version, *rest_of_versions = versions
 
         # Assume that if the dates are equal then it should be a assigned -> on_hold status event that is recorded
         # Due to the way intake is processed a task is always created as assigned first
-        first_changeset = first_version.changeset
-        time_difference = (first_changeset["updated_at"][0] - first_changeset["updated_at"][1]).to_f.abs
+        time_difference = (first_version["updated_at"][0] - first_version["updated_at"][1]).to_f.abs
 
         # If the time difference is > than 2 seconds then assume it is a valid status change instead of the
         # Normal intake assigned -> on_hold that will happen for no decision date HLR/SC intakes
-        if time_difference > 2
+        if time_difference > STATUS_EVENT_TIME_WINDOW
           status_events.push event_from_version(first_version, 0, change_data)
         end
 
@@ -75,14 +79,31 @@ class ClaimHistoryEvent
         rest_of_versions.map do |version|
           status_events.push event_from_version(version, 1, change_data)
         end
-      else
+      elsif hookless_cancelled_events.empty?
         # No versions so make an event with the current status
-        event_type = task_status_to_event_type(change_data["task_status"])
-        event_hash = { "event_date" => change_data["intake_completed_at"], "event_user_name" => "System" }
-        status_events.push from_change_data(event_type, change_data.merge(event_hash))
+        # There is a chance that a task has no intake either through data setup or through a remanded SC
+        event_date = change_data["intake_completed_at"] || change_data["task_created_at"]
+        status_events.push from_change_data(task_status_to_event_type(change_data["task_status"]),
+                                            change_data.merge("event_date" => event_date,
+                                                              "event_user_name" => "System"))
       end
 
+      # cleanup_status_event_duplicates!(hookless_cancelled_events, status_events)
+
       status_events
+    end
+    # rubocop:enable Metrics/MethodLength
+
+    def parse_versions(change_data)
+      versions = change_data["task_versions"]
+      if versions
+        # Quite a bit faster but less safe. Should probably be fine since it's coming from the database
+        # rubocop:disable Security/YAMLLoad
+        versions[1..-2].split(",").map { |yaml| YAML.load(yaml.gsub(/^"|"$/, "")) }
+        # versions[1..-2].split(",").map { |yaml| YAML.safe_load(yaml.gsub(/^"|"$/, ""), [Time]) }
+        # rubocop:enable Security/YAMLLoad
+
+      end
     end
 
     def create_issue_events(change_data)
@@ -135,7 +156,7 @@ class ClaimHistoryEvent
     end
 
     def create_add_issue_event(change_data)
-      # Make a guess that it was the same transaction as intake. If not it was a probably added during an issue update
+      # Try to guess if it added during intake. If not, it was a probably added during an issue update
       same_transaction = date_strings_within_seconds?(change_data["intake_completed_at"],
                                                       change_data["request_issue_created_at"],
                                                       REQUEST_ISSUE_TIME_WINDOW)
@@ -145,7 +166,8 @@ class ClaimHistoryEvent
                      update_event_hash(change_data).merge("event_date" => change_data["request_issue_created_at"])
                    end
 
-      from_change_data(:added_issue, change_data.merge(event_hash))
+      event_type = determine_add_issue_event_type(change_data)
+      from_change_data(event_type, change_data.merge(event_hash))
     end
 
     private
@@ -169,12 +191,12 @@ class ClaimHistoryEvent
         "in_progress" => :in_progress,
         "assigned" => :in_progress,
         "on_hold" => :incomplete,
-        "completed" => :completed
+        "completed" => :completed,
+        "cancelled" => :cancelled
       }[task_status]
     end
 
-    def event_from_version(version, index, change_data)
-      changes = version.changeset
+    def event_from_version(changes, index, change_data)
       if changes["status"]
         event_type = task_status_to_event_type(changes["status"][index])
         event_date = changes["updated_at"][index]
@@ -183,10 +205,26 @@ class ClaimHistoryEvent
       end
     end
 
+    def determine_add_issue_event_type(change_data)
+      # If there is no decision_date_added_at time, assume it is old data and that it had a decision date on creation
+      had_decision_date = if change_data["decision_date"] && change_data["decision_date_added_at"]
+                            # Assume if the time window was within 15 seconds of creation it had a decision date
+                            date_strings_within_seconds?(change_data["request_issue_created_at"],
+                                                         change_data["decision_date_added_at"],
+                                                         REQUEST_ISSUE_TIME_WINDOW)
+                          else
+                            true
+                          end
+
+      had_decision_date ? :added_issue : :added_issue_without_decision_date
+    end
+
     def intake_event_hash(change_data)
       {
-        "event_date" => change_data["intake_completed_at"],
-        "event_user_name" => change_data["intake_user_name"],
+        # There is a chance that a task has no intake either through data setup or through a remanded SC,
+        # so include a backup event date and user name as System
+        "event_date" => change_data["intake_completed_at"] || change_data["task_created_at"],
+        "event_user_name" => change_data["intake_user_name"] || "System",
         "user_facility" => change_data["intake_user_station_id"],
         "event_user_css_id" => change_data["intake_user_css_id"]
       }
@@ -203,7 +241,52 @@ class ClaimHistoryEvent
     def date_strings_within_seconds?(first_date, second_date, time_in_seconds)
       return false unless first_date && second_date
 
-      ((first_date.to_datetime - second_date.to_datetime).abs * 24 * 60 * 60).to_f < time_in_seconds
+      date_difference = DateTime.iso8601(first_date.tr(" ", "T")) - DateTime.iso8601(second_date.tr(" ", "T"))
+
+      (date_difference.abs * 24 * 60 * 60).to_f < time_in_seconds
+    end
+
+    def handle_hookless_cancelled_status_events(versions, change_data)
+      # The remove reqest issues circumvents the normal paper trail hooks and results in a weird database state
+      return [] unless versions
+
+      cancelled_task_versions = versions.select { |element| element.is_a?(Hash) && element.empty? }
+
+      return [] if cancelled_task_versions.empty?
+
+      # Mutate the versions array and remove these empty object changes from it
+      versions.reject! { |element| element.is_a?(Hash) && element.empty? }
+
+      create_hookless_cancelled_events(versions, change_data)
+    end
+
+    def create_hookless_cancelled_events(versions, change_data)
+      if versions.present?
+        [
+          # If there are other versions, then those will be created and used in addition to this cancelled event
+          from_change_data(:cancelled, change_data.merge("event_date" => change_data["task_closed_at"],
+                                                         "event_user_name" => "System"))
+        ]
+      else
+        [
+          # If there are no other versions, assume the state went from assigned -> cancelled
+          from_change_data(:in_progress, change_data.merge("event_date" => change_data["intake_completed_at"] ||
+                                                                            change_data["task_created_at"],
+                                                           "event_user_name" => "System")),
+          from_change_data(:cancelled, change_data.merge("event_date" => change_data["task_closed_at"],
+                                                         "event_user_name" => "System"))
+        ]
+      end
+    end
+
+    def cleanup_status_event_duplicates!(hookless_events, status_events)
+      # If there were hookless cancelled events do some cleanup since there's potentially an extra in progress event
+      # that is caused by the handle_issues_with_no_decision_date! method in the claim_review.rb model class.
+      # So if there is an incomplete event and hookless cancelled events then it's probably safe the in progress events
+      # unless the state was actually on_hold -> in_progress -> cancelled which will currently not be preserved here
+      if hookless_events.present? && status_events.any? { |event| event.event_type == :incomplete }
+        status_events.delete_if { |event| event && event.event_type == :in_progress }
+      end
     end
   end
 
@@ -235,7 +318,8 @@ class ClaimHistoryEvent
       "assigned" => "in progress",
       "in_progress" => "in progress",
       "on_hold" => "incomplete",
-      "completed" => "completed"
+      "completed" => "completed",
+      "cancelled" => "cancelled"
     }[task_status]
   end
 
@@ -274,18 +358,32 @@ class ClaimHistoryEvent
       claim_creation: "Claim created",
       completed_disposition: "Completed disposition",
       added_issue: "Added Issue",
+      added_issue_without_decision_date: "Added issue - No decision date",
       withdrew_issue: "Withdrew issue",
       removed_issue: "Removed issue",
-      added_decision_date: "Added decision date"
+      added_decision_date: "Added decision date",
+      cancelled: "Claim closed"
     }[event_type]
   end
 
   def issue_event?
-    [:completed_disposition, :added_issue, :withdrew_issue, :removed_issue, :added_decision_date].include?(event_type)
+    [
+      :completed_disposition,
+      :added_issue,
+      :withdrew_issue,
+      :removed_issue,
+      :added_decision_date,
+      :added_issue_without_decision_date
+    ].include?(event_type)
   end
 
   def event_can_contain_disposition?
-    [:completed_disposition, :added_issue, :added_decision_date].include?(event_type)
+    [
+      :completed_disposition,
+      :added_issue,
+      :added_issue_without_decision_date,
+      :added_decision_date
+    ].include?(event_type)
   end
 
   def disposition_event?
@@ -293,16 +391,14 @@ class ClaimHistoryEvent
   end
 
   def status_event?
-    [:in_progress, :incomplete, :completed, :claim_creation].include?(event_type)
+    [:in_progress, :incomplete, :completed, :claim_creation, :cancelled].include?(event_type)
   end
 
   private
 
   def set_attributes_from_change_history_data(new_event_type, change_data)
     @event_type = new_event_type
-
-    # Pulled from the person model
-    @claimant_name = FullName.new(change_data["first_name"], "", change_data["last_name"]).formatted(:readable_short)
+    @claimant_name = [change_data["first_name"], " ", change_data["last_name"]].join
     @event_date = change_data["event_date"]
     parse_event_attributes(change_data)
     parse_intake_attributes(change_data)
@@ -316,7 +412,7 @@ class ClaimHistoryEvent
     @task_status = change_data["task_status"]
     @claim_type = change_data["appeal_type"]
     @assigned_at = change_data["assigned_at"]
-    @days_waiting = days_waiting_helper(change_data["assigned_at"])
+    @days_waiting = change_data["days_waiting"]
   end
 
   def parse_intake_attributes(change_data)
@@ -360,14 +456,9 @@ class ClaimHistoryEvent
 
   ############ CSV and Serializer Helpers ############
 
-  def days_waiting_helper(date_string)
-    assigned_on = DateTime.parse(date_string)
-    (Time.zone.today - assigned_on).to_i
-  end
-
   def abbreviated_user_name(name_string)
     first_name, last_name = name_string.split(" ")
-    FullName.new(first_name, "", last_name).formatted(:readable_fi_last_formatted)
+    name_abbreviation(first_name, last_name)
   end
 
   def issue_information
@@ -395,15 +486,20 @@ class ClaimHistoryEvent
       in_progress: "Claim can be processed.",
       incomplete: "Claim cannot be processed until decision date is entered.",
       completed: "Claim closed.",
-      claim_creation: "Claim created."
+      claim_creation: "Claim created.",
+      cancelled: "Claim closed."
     }[event_type]
   end
 
   def format_date_string(date)
     if date.class == String
-      Time.zone.parse(date).strftime("%-m/%-d/%Y")
+      DateTime.iso8601(date.tr(" ", "T")).strftime("%-m/%-d/%Y")
     elsif date.present?
       date.strftime("%-m/%-d/%Y")
     end
+  end
+
+  def name_abbreviation(first_name, last_name)
+    [first_name[0].capitalize, ". ", last_name].join
   end
 end

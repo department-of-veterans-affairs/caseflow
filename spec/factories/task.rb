@@ -407,6 +407,11 @@ FactoryBot.define do
         end
         assigned_by { nil }
         assigned_to { VhaBusinessLine.singleton }
+
+        after(:create) do |task|
+          task.status = "completed"
+          task.save
+        end
       end
 
       factory :supplemental_claim_vha_task, class: DecisionReviewTask do
