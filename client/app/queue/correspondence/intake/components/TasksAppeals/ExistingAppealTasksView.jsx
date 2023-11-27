@@ -24,6 +24,7 @@ export const ExistingAppealTasksView = (props) => {
   };
 
   const canRemove = () => {
+    console.log("im running")
     if (props.newTasks.filter((task) => task.appealId === props.appeal.id).length > 1) {
       return true;
     }
