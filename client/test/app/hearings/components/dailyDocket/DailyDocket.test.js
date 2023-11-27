@@ -13,21 +13,25 @@ const createStoreWithReducer = (initialState) => {
   return createStore(reducer, compose(applyMiddleware(thunk)));
 };
 
+const renderDailyDocket = (props) => {
+  const store = createStoreWithReducer({ components: {} });
+
+  return render(
+    <Provider store={store}>
+      <Router>
+        <DailyDocket {...props} />
+      </Router>
+    </Provider>
+  );
+};
+
 it('does render judge name when user is not a nonBoardEmployee', async () => {
   const mockProps = {
     user: { userIsNonBoardEmployee: false },
     dailyDocket: { judgeFirstName: 'Jon', judgeLastName: 'Doe' },
   };
 
-  const store = createStoreWithReducer({ components: {} });
-
-  render(
-    <Provider store={store}>
-      <Router>
-        <DailyDocket {...mockProps} />
-      </Router>
-    </Provider>
-  );
+  renderDailyDocket(mockProps);
   expect(await screen.findByText(/VLJ:/)).toBeInTheDocument();
 });
 
@@ -38,14 +42,6 @@ it('does not render judge name when userVsoEmployee is true and judge first name
       dailyDocket: { judgeFirstName: 'Jon', judgeLastName: 'Doe' },
     };
 
-    const store = createStoreWithReducer({ components: {} });
-
-    render(
-      <Provider store={store}>
-        <Router>
-          <DailyDocket {...mockProps} />
-        </Router>
-      </Provider>
-    );
+    renderDailyDocket(mockProps);
     expect(await screen.queryByText(/VLJ:\s*Jon\s*Doe/)).not.toBeInTheDocument();
   });
