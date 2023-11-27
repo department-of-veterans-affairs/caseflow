@@ -162,11 +162,13 @@ export const AddAppealRelatedTaskView = (props) => {
             <ul>
               <div style={{ padding: '1rem' }}>
                 <CaseListTable
+                  key={taskRelatedAppeals.length}
                   appeals={appeals}
                   showCheckboxes
                   paginate
                   linkOpensInNewTab
                   checkboxOnChange={appealCheckboxOnChange}
+                  taskRelatedAppealIds={taskRelatedAppeals}
                 />
               </div>
             </ul>
