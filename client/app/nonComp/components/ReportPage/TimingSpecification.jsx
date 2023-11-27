@@ -12,22 +12,29 @@ import * as ERRORS from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
 
 import * as yup from 'yup';
 
-export const timingSchema = yup.object({
-  startDate: yup.date().
-    when('range', {
-      is: (range) => ['after', 'before', 'between'].includes(range),
-      then: yup.date().typeError(ERRORS.MISSING_DATE).
-        max(format(add(new Date(), { hours: 1 }), 'MM/dd/yyyy'), ERRORS.DATE_FUTURE),
-      otherwise: (schema) => schema.notRequired()
-    }),
-  endDate: yup.date().
-    when('range', {
-      is: 'between',
-      then: yup.date().typeError(ERRORS.MISSING_DATE).
-        max(format(add(new Date(), { hours: 1 }), 'MM/dd/yyyy'), ERRORS.DATE_FUTURE).
-        min(yup.ref('startDate'), ERRORS.END_DATE_SMALL),
-      otherwise: (schema) => schema.notRequired()
-    })
+export const timingSchema = yup.lazy((value) => {
+  // eslint-disable-next-line no-undefined
+  if (value !== undefined) {
+    return yup.object({
+      startDate: yup.date().
+        when('range', {
+          is: (range) => ['after', 'before', 'between'].includes(range),
+          then: yup.date().typeError(ERRORS.MISSING_DATE).
+            max(format(add(new Date(), { hours: 1 }), 'MM/dd/yyyy'), ERRORS.DATE_FUTURE),
+          otherwise: (schema) => schema.notRequired()
+        }),
+      endDate: yup.date().
+        when('range', {
+          is: 'between',
+          then: yup.date().typeError(ERRORS.MISSING_DATE).
+            max(format(add(new Date(), { hours: 1 }), 'MM/dd/yyyy'), ERRORS.DATE_FUTURE).
+            min(yup.ref('startDate'), ERRORS.END_DATE_SMALL),
+          otherwise: (schema) => schema.notRequired()
+        })
+    });
+  }
+
+  return yup.mixed().notRequired();
 });
 
 export const TimingSpecification = () => {

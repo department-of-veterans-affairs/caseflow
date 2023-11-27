@@ -7,5 +7,6 @@
   "MISSING_DATE": "Please enter a valid date",
   "END_DATE_SMALL": "End date must be greater than the start date",
   "DATE_FUTURE": "Date cannot be in the future",
-  "ATLEAST_ONE_OPTION": "Please select at least one option"
+  "ATLEAST_ONE_OPTION": "Please select at least one option",
+  "MISSING_PERSONNEL": "Please select at least one team member"
 }

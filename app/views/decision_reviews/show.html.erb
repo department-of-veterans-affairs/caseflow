@@ -21,7 +21,8 @@
       loadingPowerOfAttorney: {
         loading: false,
         error: false
-      }
+      },
+      isBusinessLineAdmin: business_line.user_is_admin?(current_user)
     }
   }) %>
 <% end %>
