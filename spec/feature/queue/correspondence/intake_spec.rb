@@ -113,9 +113,9 @@ RSpec.feature("The Correspondence Intake page") do
 
     it "Two 'Other Motion' tasks is the limit for user" do
       click_on("+ Add tasks")
-      expect(page).to have_content("Other Motion")
+      expect(page).to have_content("Other motion")
       click_on("+ Add tasks")
-      expect(page).to have_content("Other Motion")
+      expect(page).to have_content("Other motion")
       expect(page).to have_button("+ Add tasks", disabled: true)
     end
 
