@@ -7,6 +7,7 @@ import TextareaField from '../../../components/TextareaField';
 import Button from '../../../components/Button';
 import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
+import Modal from '../../../components/Modal';
 
 const flexDivStyling = css({
   display: 'flex',
@@ -221,6 +222,26 @@ export const ReviewForm = (props) => {
               />
             </div>
           </div>
+          {props.showModal && (
+            <Modal
+              buttons={[
+                {
+                  classNames: ['cf-modal-link', 'cf-btn-link'],
+                  name: 'Close',
+                  onClick: props.handleModalClose },
+                {
+                  classNames: ['usa-button'],
+                  name: 'Cancel review',
+                  onClick: props.handleReview,
+                }
+              ]}
+              title="Cancel review of mail package"
+              closeHandler={props.handleModalClose}>
+              <span className="usa-input" style={{ marginBottom: '5px' }} tabIndex={0}>
+                All unsaved changes made to this mail package will be lost<br />upon cancellation.
+              </span>
+            </Modal>
+          )}
         </main>
       </AppSegment>
     </React.Fragment>
@@ -246,6 +267,9 @@ ReviewForm.propTypes = {
   setEditableData: PropTypes.func,
   setDisableButton: PropTypes.func,
   fetchData: PropTypes.func,
+  showModal: PropTypes.func,
+  handleModalClose: PropTypes.func,
+  handleReview: PropTypes.func,
 };
 
 export default ReviewForm;

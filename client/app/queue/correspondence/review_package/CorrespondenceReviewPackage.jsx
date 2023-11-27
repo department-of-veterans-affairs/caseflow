@@ -7,6 +7,7 @@ import ReviewForm from './ReviewForm';
 import { CmpDocuments } from './CmpDocuments';
 import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
+import { useHistory } from 'react-router';
 
 export const CorrespondenceReviewPackage = (props) => {
   const [reviewDetails, setReviewDetails] = useState({
@@ -23,40 +24,46 @@ export const CorrespondenceReviewPackage = (props) => {
   const [selectedCorrespondence, setSelectedCorrespondence] = useState(null);
   const [packageDocumentType, setPackageDocumentType] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
+  const history = useHistory();
   const fetchData = async () => {
     const correspondence = props;
 
-    try {
-      const response = await ApiUtil.get(
-        `/queue/correspondence/${correspondence.correspondenceId}`
-      );
+    const response = await ApiUtil.get(
+      `/queue/correspondence/${correspondence.correspondenceId}`
+    );
 
-      setApiResponse(response.body.general_information);
-      const data = response.body.general_information;
+    setApiResponse(response.body.general_information);
+    const data = response.body.general_information;
 
-      setCorrespondenceDocuments(response.body.correspondence_documents);
-      setSelectedCorrespondence(response.body.correspondence);
-      setPackageDocumentType(response.body.package_document_type);
+    setCorrespondenceDocuments(response.body.correspondence_documents);
+    setSelectedCorrespondence(response.body.correspondence);
+    setPackageDocumentType(response.body.package_document_type);
 
-      setReviewDetails({
-        veteran_name: data.veteran_name || {},
-        dropdown_values: data.correspondence_types || [],
-      });
+    setReviewDetails({
+      veteran_name: data.veteran_name || {},
+      dropdown_values: data.correspondence_types || [],
+    });
 
-      setEditableData({
-        notes: data.notes,
-        veteran_file_number: data.file_number,
-        default_select_value: data.correspondence_type_id,
-      });
-    } catch (error) {
-      throw error();
-    }
+    setEditableData({
+      notes: data.notes,
+      veteran_file_number: data.file_number,
+      default_select_value: data.correspondence_type_id,
+    });
   };
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleModalClose = () => {
+    setShowModal(!showModal);
+  };
+
+  const handleReview = () => {
+    history.push('/queue/correspondence');
+  };
 
   const isEditableDataChanged = () => {
     const notesChanged = editableData.notes !== apiResponse.notes;
@@ -91,7 +98,10 @@ export const CorrespondenceReviewPackage = (props) => {
             setEditableData,
             disableButton,
             setDisableButton,
-            fetchData
+            fetchData,
+            showModal,
+            handleModalClose,
+            handleReview
           }}
           {...props}
         />
@@ -99,13 +109,11 @@ export const CorrespondenceReviewPackage = (props) => {
       </AppSegment>
       <div className="cf-app-segment">
         <div className="cf-push-left">
-          <a href="/queue/correspondence">
-            <Button
-              name="Cancel"
-              href="/queue/correspondence"
-              classNames={['cf-btn-link']}
-            />
-          </a>
+          <Button
+            name="Cancel"
+            classNames={['cf-btn-link']}
+            onClick={handleModalClose}
+          />
         </div>
         <div className="cf-push-right">
           <Button
