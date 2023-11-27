@@ -183,22 +183,22 @@
 // ===========================*
 // Alternate Borderless (no bottom border)
 // ===========================*
-.usa-table-alternate-borderless{
-  background-color: lightgrey;
+.usa-table-alternate-borderless {
+  background-color: #f9f9f9;
 
   width: 100%;
 
   th,
   td {
     border: 0;
-    background-color: lightgrey;
-    padding-top:2rem;
-    padding-bottom:0;
+    background-color: #f9f9f9;
+    padding-top: 2rem;
+    padding-bottom: 0;
   }
 
   td {
-      margin: 2px;
-      padding-top:0;
-      padding-bottom:25px;
+    margin: 2px;
+    padding-top: 0;
+    padding-bottom: 25px;
     }
 }
