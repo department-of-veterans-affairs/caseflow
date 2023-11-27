@@ -36,19 +36,6 @@ class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
     @file_number ||= request.headers["X-VA-FILE-NUMBER"].presence
   end
 
-  rescue_from StandardError do |error|
-    Raven.capture_exception(error, extra: raven_extra_context)
-
-    render json: {
-      "errors": [
-        "status": "500",
-        "title": "Unknown error occured",
-        "detail": "Message: There was a server error. "\
-                  "Use the error uuid to submit a support ticket: #{Raven.last_event_id}"
-      ]
-    }, status: :internal_server_error
-  end
-
   rescue_from Caseflow::Error::InvalidFileNumber, BGS::ShareError do |error|
     Raven.capture_exception(error, extra: raven_extra_context)
     Rails.logger.error "Unable to find Veteran, please review the entered params: #{error}"
