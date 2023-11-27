@@ -1,28 +1,137 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+/* eslint-disable react/prop-types */
 
-import CaseflowDistributionContent from './pages/CaseflowDistributionApp';
+import React from 'react';
+import ReduxBase from '../components/ReduxBase';
+import NavigationBar from '../components/NavigationBar';
+import { BrowserRouter } from 'react-router-dom';
+import PageRoute from '../components/PageRoute';
+import AppFrame from '../components/AppFrame';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
+import { LOGO_COLORS } from '../constants/AppConstants';
+import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
+import leversReducer from './reducers/Levers/leversReducer';
+import CaseSearchLink from '../components/CaseSearchLink';
+
+import CaseflowDistributionApp from './pages/CaseflowDistributionApp';
+import { createStore } from 'redux';
 
 class CaseflowDistribution extends React.PureComponent {
-  render() {
-    console.log("this.props:", this.props)
-    const {acd_levers, acd_history} = this.props
-    return (
-      <div>
-        <h1>Hello world from CaseflowDistribution index</h1>
-        <h2>Levers</h2>
-        <div>{JSON.stringify(acd_levers)}</div>
-        <div>{JSON.stringify(acd_history)}</div>
-        <div>{JSON.stringify(acd_history)}</div>
-      </div>
-    )
-  }
-}
 
-CaseflowDistribution.propTypes = {
-  acd_levers: PropTypes.array,
-  acd_history: PropTypes.array,
-  user_is_an_acd_admin: PropTypes.bool
+  render() {
+    const preloadedState = {
+      levers: JSON.parse(JSON.stringify(this.props.acd_levers)),
+      initial_levers: JSON.parse(JSON.stringify(this.props.acd_levers)),
+      formatted_history: JSON.parse(JSON.stringify(this.props.acd_history))
+    };
+
+    const leverStore = createStore(leversReducer, preloadedState);
+    const Router = this.props.router || BrowserRouter;
+    const initialState = leversReducer.initialState;
+    const appName = 'Caseflow Distribution';
+
+    const staticLevers = [
+      'maximum_direct_review_proportion',
+      'minimum_legacy_proportion',
+      'nod_adjustment',
+      'bust_backlog',
+    ];
+    const batchLeverList = [
+      'alternative_batch_size',
+      'batch_size_per_attorney',
+      'request_more_cases_minimum'
+    ];
+    const batchSizeLevers = [];
+    const affinityLeverList = [
+      'ama_hearing_case_affinity_days',
+      'ama_hearing_case_aod_affinity_days',
+      'cavc_affinity_days',
+      'cavc_aod_affinity_days',
+      'aoj_affinity_days',
+      'aoj_aod_affinity_days',
+      'aoj_cavc_affinity_days'
+    ];
+    const affinityLevers = [];
+    const docketLeverList = [
+      'ama_hearings',
+      'ama_direct_review',
+      'ama_evidence_submission',
+      'direct_docket_time_goal',
+      'days_before_goal_due_for_distribution',
+    ];
+    const docketLevers = [];
+
+    this.props.acd_levers.forEach((lever) => {
+      if (lever.data_type === 'number' && batchLeverList.includes(lever.item)) {
+        batchSizeLevers.push(lever.item);
+      }
+      if (lever.data_type === 'radio' && affinityLeverList.includes(lever.item)) {
+        affinityLevers.push(lever.item);
+      }
+      if (lever.data_type === 'combination' && docketLeverList.includes(lever.item)) {
+        docketLevers.push(lever.item);
+      }
+    });
+
+    let leversList = {
+      staticLevers,
+      affinityLevers,
+      batchSizeLevers,
+      docketLevers
+    };
+
+    return (
+      <ReduxBase initialState={initialState} reducer={leversReducer}>
+        <Router {...this.props.routerTestProps}>
+          <div>
+            <NavigationBar
+              wideApp
+              defaultUrl={
+                this.props.caseSearchHomePage || this.props.hasCaseDetailsRole ?
+                  '/search' :
+                  '/queue'
+              }
+              userDisplayName={this.props.userDisplayName}
+              dropdownUrls={this.props.dropdownUrls}
+              applicationUrls={this.props.applicationUrls}
+              logoProps={{
+                overlapColor: LOGO_COLORS.QUEUE.OVERLAP,
+                accentColor: LOGO_COLORS.QUEUE.ACCENT,
+              }}
+              rightNavElement={<CaseSearchLink />}
+              appName="Caseflow Admin"
+            >
+              <AppFrame>
+                <AppSegment filledBackground>
+                  <div>
+                    <PageRoute
+                      exact
+                      path="/acd-controls"
+                      title="CaseflowDistribution | Caseflow"
+                      component={() => {
+                        return (
+                          <CaseflowDistributionApp
+                            acd_levers={leversList}
+                            acd_history={this.props.acd_history}
+                            user_is_an_acd_admin = {this.props.user_is_an_acd_admin}
+                            leverStore={leverStore}
+                          />
+                        );
+                      }}
+                    />
+                  </div>
+                </AppSegment>
+              </AppFrame>
+            </NavigationBar>
+            <Footer
+              appName={appName}
+              feedbackUrl={this.props.feedbackUrl}
+              buildDate={this.props.buildDate}
+            />
+          </div>
+        </Router>
+      </ReduxBase>
+    );
+  }
 }
 
 export default CaseflowDistribution;

@@ -11,7 +11,7 @@ import COPY from '../../../COPY';
 
 const CaseflowDistributionContent = ({ levers, saveChanges, formattedHistory, isAdmin, leverStore }) => {
   return (
-    <div className="cf-app-segment cf-app-segment--alt">
+    <div>
       <h1>{isAdmin ? 'Administration' : 'Non-Admin User'}</h1>
 
       <div> {/* Main Content Wrapper*/}
