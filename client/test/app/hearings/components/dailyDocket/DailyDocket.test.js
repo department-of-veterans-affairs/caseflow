@@ -7,24 +7,18 @@ import { Provider } from 'react-redux';
 import { applyMiddleware, createStore, compose } from 'redux';
 import thunk from 'redux-thunk';
 
-const createReducer = (storeValues) => {
-  return function(state = storeValues) {
-    return state;
-  };
+const createStoreWithReducer = (initialState) => {
+  const reducer = (state = initialState) => state;
+  return createStore(reducer, compose(applyMiddleware(thunk)));
 };
 
-it('does render judge name when user is not a nonBoardEmployee', async () => {
+it("does render judge name when user is not a nonBoardEmployee", async () => {
   const mockProps = {
     user: { userIsNonBoardEmployee: false },
-    dailyDocket: { judgeFirstName: 'Jon', judgeLastName: 'Doe' },
+    dailyDocket: { judgeFirstName: "Jon", judgeLastName: "Doe" },
   };
 
-  const yourReducer = createReducer({
-    components: {
-    },
-  });
-
-  const store = createStore(yourReducer, compose(applyMiddleware(thunk)));
+  const store = createStoreWithReducer({ components: {} });
 
   render(
     <Provider store={store}>
@@ -43,12 +37,7 @@ it('does not render judge name when userVsoEmployee is true and judge first name
       dailyDocket: { judgeFirstName: 'Jon', judgeLastName: 'Doe' },
     };
 
-    const yourReducer = createReducer({
-      components: {
-      },
-    });
-
-    const store = createStore(yourReducer, compose(applyMiddleware(thunk)));
+    const store = createStoreWithReducer({ components: {} });
 
     render(
       <Provider store={store}>
