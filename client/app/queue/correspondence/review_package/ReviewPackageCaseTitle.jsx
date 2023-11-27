@@ -36,12 +36,6 @@ const columnStyling = css({
   maxWidth: '100%'
 });
 
-const tagStyling = css({
-  '& .cf-select__control': {
-    maxWidth: '63rem !important',
-  },
-});
-
 const dropDownDiv = css({
   marginTop: '-10px',
   flexBasis: '0',
@@ -67,10 +61,6 @@ const CaseTitleScaffolding = (props) => (
     <h1 {...headerStyling}>{props.heading}</h1>
   </div>
 );
-
-// const defaultSelectedValue = () => {
-//   return { displayText: 'Split package', value: 'Split package' };
-// };
 
 const CaseSubTitleScaffolding = () => (
   <div {...listStyling}>
