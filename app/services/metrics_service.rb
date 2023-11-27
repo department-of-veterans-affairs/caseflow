@@ -35,7 +35,7 @@ class MetricsService
           uuid: uuid
         }
       }
-      DataDogService.emit_gauge(sent_to_info)
+      CustomMetricsService.emit_gauge(sent_to_info)
 
       sent_to << Metric::LOG_SYSTEMS[:datadog]
     end
@@ -93,7 +93,7 @@ class MetricsService
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   private_class_method def self.increment_datadog_counter(metric_name, service, endpoint_name, app_name)
-    DataDogService.increment_counter(
+    CustomMetricsService.increment_counter(
       metric_group: "service",
       metric_name: metric_name,
       app_name: app_name,

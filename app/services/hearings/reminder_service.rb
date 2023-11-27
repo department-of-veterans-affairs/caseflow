@@ -45,7 +45,7 @@ class Hearings::ReminderService
 
   # Remove this when we enable feature to allow reminder for all hearings
   def send_to_datadog(type)
-    DataDogService.increment_counter(
+    CustomMetricsService.increment_counter(
       app_name: Constants.DATADOG_METRICS.HEARINGS.APP_NAME,
       metric_group: Constants.DATADOG_METRICS.HEARINGS.REMINDER_EMAILS_GROUP_NAME,
       metric_name: "emails.would_be_sent",

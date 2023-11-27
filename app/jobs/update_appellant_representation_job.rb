@@ -81,7 +81,7 @@ class UpdateAppellantRepresentationJob < CaseflowJob
 
   def increment_task_count(task_effect, appeal_id, count = 1)
     count.times do
-      DataDogService.increment_counter(
+      CustomMetricsService.increment_counter(
         app_name: APP_NAME,
         metric_group: METRIC_GROUP_NAME,
         metric_name: "tasks",
