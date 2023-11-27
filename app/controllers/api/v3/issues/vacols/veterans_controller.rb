@@ -2,7 +2,8 @@
 
 # :reek:InstanceVariableAssumption
 class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
-  DEFAULT_UPPER_BOUND_PER_PAGE = ENV["REQUEST_ISSUE_DEFAULT_UPPER_BOUND_PER_PAGE"].to_i # The max amount of Issues that can be paginated on a single page
+  # The max amount of Issues that can be paginated on a single page
+  DEFAULT_UPPER_BOUND_PER_PAGE = ENV["REQUEST_ISSUE_DEFAULT_UPPER_BOUND_PER_PAGE"].to_i
   include ApiV3FeatureToggleConcern
 
   before_action do
@@ -20,7 +21,6 @@ class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
   end
 
   def veteran
-    vet_file_number = file_number
     @veteran ||= find_veteran
   end
 
@@ -55,7 +55,6 @@ class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
 
     render_veteran_not_found
   end
-
 
   def show
     page = ActiveRecord::Base.sanitize_sql(params[:page].to_i) if params[:page]

@@ -9,7 +9,7 @@ class Api::V3::Issues::Vacols::VbmsVacolsDtoBuilder
     @veteran_participant_id = veteran.participant_id&.to_s
     @veteran_file_number = veteran.file_number&.to_s
     @vacols_issue_count = total_vacols_issue_count
-    @offset = per_page || RequestIssue.default_per_page #LegacyIssues will be consistent with AMA RequestIssues
+    @offset = per_page || RequestIssue.default_per_page # LegacyIssues will be consistent with AMA RequestIssues
     @vacols_issues = serialized_vacols_issues
     @total_number_of_pages = (@vacols_issue_count / @offset.to_f).ceil
     @hash_response = build_hash_response
@@ -27,8 +27,8 @@ class Api::V3::Issues::Vacols::VbmsVacolsDtoBuilder
   def serialized_vacols_issues(page = @page, offset = @offset)
     vacols_issues = []
     v_ids = LegacyAppeal.fetch_appeals_by_file_number(@veteran_file_number).map(&:vacols_id)
-    v_ids.each do |i|
-      vacols_issues.push(AppealRepository.issues(i))
+    v_ids.each do |id|
+      vacols_issues.push(AppealRepository.issues(id))
     end
 
     serialized_data = Api::V3::Issues::Vacols::VacolsIssueSerializer.new(
