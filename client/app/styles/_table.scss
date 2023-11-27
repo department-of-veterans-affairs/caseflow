@@ -184,14 +184,14 @@
 // Alternate Borderless (no bottom border)
 // ===========================*
 .usa-table-alternate-borderless {
-  background-color: #f9f9f9;
+  background-color: $color-gray-lightest;
 
   width: 100%;
 
   th,
   td {
     border: 0;
-    background-color: #f9f9f9;
+    background-color: $color-gray-lightest;
     padding-top: 2rem;
     padding-bottom: 0;
   }
