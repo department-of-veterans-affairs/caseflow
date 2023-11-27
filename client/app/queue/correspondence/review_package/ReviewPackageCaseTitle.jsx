@@ -2,7 +2,7 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 import COPY from 'app/../COPY';
-import SearchableDropdown from '../../../components/SearchableDropdown';
+import Dropdown from '../../../components/Dropdown';
 
 const containingDivStyling = css({
   display: 'block',
@@ -68,9 +68,9 @@ const CaseTitleScaffolding = (props) => (
   </div>
 );
 
-const defaultSelectedValue = () => {
-  return { label: 'Split package', value: 'Split package' };
-};
+// const defaultSelectedValue = () => {
+//   return { displayText: 'Split package', value: 'Split package' };
+// };
 
 const CaseSubTitleScaffolding = () => (
   <div {...listStyling}>
@@ -78,16 +78,14 @@ const CaseSubTitleScaffolding = () => (
       {COPY.CORRESPONDENCE_REVIEW_PACKAGE_SUB_TITLE}
     </div>
     <div {...dropDownDiv} style = {{ maxWidth: '25%' }}>
-      <SearchableDropdown
-        styling={tagStyling}
-        value={defaultSelectedValue}
+      <Dropdown
         options={[
-          { value: 'Split package', label: 'Split package', id: 1 },
-          { value: 'Merge package', label: 'Merge package', id: 2 },
-          { value: 'Remove package from Caseflow', label: 'Remove package from Caseflow', id: 3 },
-          { value: 'Reassign package', label: 'Reassign package', id: 4 }
+          { value: 'Split package', displayText: 'Split package' },
+          { value: 'Merge package', displayText: 'Merge package' },
+          { value: 'Remove package from Caseflow', displayText: 'Remove package from Caseflow' },
+          { value: 'Reassign package', displayText: 'Reassign package' }
         ]}
-        placeholder="Request package action"
+        defaultText="Request package action"
       />
     </div>
   </div>
