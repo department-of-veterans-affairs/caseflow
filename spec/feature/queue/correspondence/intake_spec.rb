@@ -136,21 +136,44 @@ RSpec.feature("The Correspondence Intake page") do
       page.find("#react-select-2-input").fill_in with: "CAVC Correspondence"
       page.find(".css-e42auv", text: "CAVC Correspondence").click
       expect(page).to have_button("button-continue", disabled: true)
-      find_by_id("Task Information").fill_in with: "Correspondence Text"
+      find_by_id("content").fill_in with: "Correspondence Text"
       expect(page).to have_button("button-continue", disabled: false)
     end
 
     it "Re populates feilds after going back a step and then continuing forward again" do
       click_on("+ Add tasks")
-      page.find(:xpath, '//*[@id="reactSelectContainer"]/div/div').click
-      page.find("#react-select-2-input").fill_in with: "CAVC Correspondence"
-      page.find(".css-e42auv", text: "CAVC Correspondence").click
-      find_by_id("Task Information").fill_in with: "Correspondence test text"
+      find_by_id("reactSelectContainer").click
+      find_by_id("react-select-2-option-0").click
+      find_by_id("content").fill_in with: "Correspondence test text"
       click_button("button-back-button")
       click_button("button-continue")
       expect(page).to have_button("button-continue", disabled: false)
       expect(page).to have_content("CAVC Correspondence")
       expect(page).to have_content("Correspondence test text")
+    end
+  end
+
+  context "Step 3 - Confirm" do
+    describe "Tasks not related to an Appeal section" do
+      it "displays the correct content" do
+        visit_intake_form_step_3_with_tasks_unrelated
+
+        expect(page).to have_content("Tasks not related to an Appeal")
+        expect(page).to have_link("Edit section")
+        within(".usa-table-borderless") do
+          expect(page).to have_content("Tasks")
+          expect(page).to have_content("Task Instructions or Context")
+          expect(page).to have_content("CAVC Correspondence")
+          expect(page).to have_content("Correspondence test text")
+        end
+      end
+
+      it "Edit section link returns user to Tasks not related to an Appeal on Step 2" do
+        visit_intake_form_step_3_with_tasks_unrelated
+        click_link("Edit section")
+        expect(page).to have_content("Review Tasks & Appeals")
+        expect(page.current_url.include?("#task-not-related-to-an-appeal")).to eq(true)
+      end
     end
   end
 end
