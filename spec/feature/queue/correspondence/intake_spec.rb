@@ -175,7 +175,7 @@ RSpec.feature("The Correspondence Intake page") do
       end
     end
   end
-  
+
   context "The user is able to use the autotext feature" do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
@@ -189,21 +189,30 @@ RSpec.feature("The Correspondence Intake page") do
     it "The user can open the autotext modal" do
       find_by_id("addAutotext").click
       # using clear all button because it's unique to the modal.
-      expect(page).to have_text("Clear all")
+      within find_by_id("autotextModal") do
+        expect(page).to have_text("Cancel")
+      end
+
     end
 
     it "The user can close the modal with the cancel button." do
       find_by_id("addAutotext").click
-      expect(page).to have_text("Clear all")
+      within find_by_id("autotextModal") do
+        expect(page).to have_text("Cancel")
+      end
       find_by_id("Add-autotext-button-id-0").click
-      expect(page).to_not have_text("Clear all")
+      cancel_count = all("#button-Cancel").length
+      expect(cancel_count).to eq 1
     end
 
     it "The user can close the modal with the x button located in the top right." do
       find_by_id("addAutotext").click
-      expect(page).to have_text("Clear all")
+      within find_by_id("autotextModal") do
+        expect(page).to have_text("Cancel")
+      end
       find_by_id("Add-autotext-button-id-close").click
-      expect(page).to_not have_text("Clear all")
+      cancel_count = all("#button-Cancel").length
+      expect(cancel_count).to eq 1
     end
 
     it "The user is able to add autotext" do
