@@ -66,12 +66,11 @@ describe User, :all_dbs do
     end
   end
 
-    context 'when roles do not include "RO ViewHearSched"' do
-      let(:roles) { ["OtherRole"] }
+  context 'when roles do not include "RO ViewHearSched"' do
+    let(:roles) { ["OtherRole"] }
 
-      it "returns false" do
-        expect(instance.can_view_vlj?).to be false
-      end
+    it "returns false" do
+      expect(instance.can_view_vlj?).to be false
     end
   end
 
