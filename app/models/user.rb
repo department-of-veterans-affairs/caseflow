@@ -265,8 +265,8 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     roles.include?("VSO")
   end
 
-  def can_view_vlj?
-    roles.include?("RO ViewHearSched")
+  def non_board_employee?
+    vso_employee? || roles.include?("RO ViewHearSched")
   end
 
   def camo_employee?
