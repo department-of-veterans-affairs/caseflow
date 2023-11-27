@@ -8,8 +8,14 @@ import CorrespondenceReviewPackage
   from '../../../../app/queue/correspondence/review_package/CorrespondenceReviewPackage';
 
 const createSpyGet = () => {
-  return jest.spyOn(ApiUtil, 'get').
-    mockImplementation(() => new Promise((resolve) => resolve({ body: { general_information: {} } })));
+  return jest.spyOn(ApiUtil, 'get').mockImplementation(
+    () =>
+      new Promise((resolve) =>
+        resolve({
+          body: { general_information: {}, correspondence_documents: [] },
+        })
+      )
+  );
 };
 
 const LocationDisplay = () => {

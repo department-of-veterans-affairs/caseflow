@@ -30,31 +30,27 @@ export const CorrespondenceReviewPackage = (props) => {
   const fetchData = async () => {
     const correspondence = props;
 
-    try {
-      const response = await ApiUtil.get(
-        `/queue/correspondence/${correspondence.correspondenceId}`
-      );
+    const response = await ApiUtil.get(
+      `/queue/correspondence/${correspondence.correspondenceId}`
+    );
 
-      setApiResponse(response.body.general_information);
-      const data = response.body.general_information;
+    setApiResponse(response.body.general_information);
+    const data = response.body.general_information;
 
-      setCorrespondenceDocuments(response.body.correspondence_documents);
-      setSelectedCorrespondence(response.body.correspondence);
-      setPackageDocumentType(response.body.package_document_type);
+    setCorrespondenceDocuments(response.body.correspondence_documents);
+    setSelectedCorrespondence(response.body.correspondence);
+    setPackageDocumentType(response.body.package_document_type);
 
-      setReviewDetails({
-        veteran_name: data.veteran_name || {},
-        dropdown_values: data.correspondence_types || [],
-      });
+    setReviewDetails({
+      veteran_name: data.veteran_name || {},
+      dropdown_values: data.correspondence_types || [],
+    });
 
-      setEditableData({
-        notes: data.notes,
-        veteran_file_number: data.file_number,
-        default_select_value: data.correspondence_type_id,
-      });
-    } catch (error) {
-      // throw error()
-    }
+    setEditableData({
+      notes: data.notes,
+      veteran_file_number: data.file_number,
+      default_select_value: data.correspondence_type_id,
+    });
   };
 
   useEffect(() => {
