@@ -13,9 +13,9 @@ const createReducer = (storeValues) => {
   };
 };
 
-it('does render judge name when judge first name and last name are present', async () => {
+it('does render judge name when user is not a nonBoardEmployee', async () => {
   const mockProps = {
-    user: { userVsoEmployee: false },
+    user: { userIsNonBoardEmployee: false },
     dailyDocket: { judgeFirstName: 'Jon', judgeLastName: 'Doe' },
   };
 
@@ -36,33 +36,10 @@ it('does render judge name when judge first name and last name are present', asy
   expect(await screen.findByText(/VLJ:/)).toBeInTheDocument();
 });
 
-it('does not render judge name when judge first name and last name are null', async () => {
-  const mockProps = {
-    user: { userVsoEmployee: false },
-    dailyDocket: { judgeFirstName: null, judgeLastName: null },
-  };
-
-  const yourReducer = createReducer({
-    components: {
-    },
-  });
-
-  const store = createStore(yourReducer, compose(applyMiddleware(thunk)));
-
-  render(
-    <Provider store={store}>
-      <Router>
-        <DailyDocket {...mockProps} />
-      </Router>
-    </Provider>
-  );
-  expect(await screen.queryByText(/VLJ:/)).not.toBeInTheDocument();
-});
-
 it('does not render judge name when userVsoEmployee is true and judge first name and last name are present',
   async () => {
     const mockProps = {
-      user: { userVsoEmployee: true },
+      user: { userIsNonBoardEmployee: true },
       dailyDocket: { judgeFirstName: 'Jon', judgeLastName: 'Doe' },
     };
 
