@@ -269,7 +269,7 @@ export default class DailyDocket extends React.Component {
             />
           </div>
           <div className="cf-push-right" tabIndex={0}>
-            {!user.userVsoEmployee && dailyDocket.judgeFirstName && (
+            {!user.nonBoardEmployee && (
               <React.Fragment>
                 VLJ: {dailyDocket.judgeFirstName} {dailyDocket.judgeLastName}
                 <br />
