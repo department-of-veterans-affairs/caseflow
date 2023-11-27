@@ -269,7 +269,7 @@ export default class DailyDocket extends React.Component {
             />
           </div>
           <div className="cf-push-right" tabIndex={0}>
-            {!user.nonBoardEmployee && (
+            {!user.userIsNonBoardEmployee && (
               <React.Fragment>
                 VLJ: {dailyDocket.judgeFirstName} {dailyDocket.judgeLastName}
                 <br />
@@ -292,7 +292,7 @@ export default class DailyDocket extends React.Component {
           <div className="cf-push-right">
             {user.userHasHearingPrepRole && (
               <Button
-                classNames={['usa-button-secondary']}
+                classNames={["usa-button-secondary"]}
                 onClick={this.navigateToPrintAllPage}
                 disabled={_.isEmpty(docketHearings)}
               >
@@ -317,12 +317,12 @@ export default class DailyDocket extends React.Component {
         />
 
         {!hasDocketHearings && (
-          <div {...css({ marginTop: '75px' })}>
+          <div {...css({ marginTop: "75px" })}>
             <StatusMessage
               title={
-                user.userHasHearingPrepRole ?
-                  COPY.HEARING_SCHEDULE_DOCKET_JUDGE_WITH_NO_HEARINGS :
-                  COPY.HEARING_SCHEDULE_DOCKET_NO_VETERANS
+                user.userHasHearingPrepRole
+                  ? COPY.HEARING_SCHEDULE_DOCKET_JUDGE_WITH_NO_HEARINGS
+                  : COPY.HEARING_SCHEDULE_DOCKET_NO_VETERANS
               }
               type="status"
             />
@@ -330,7 +330,7 @@ export default class DailyDocket extends React.Component {
         )}
 
         {hasPrevHearings && (
-          <div {...css({ marginTop: '75px' })}>
+          <div {...css({ marginTop: "75px" })}>
             <h1>Previously Scheduled</h1>
             <DailyDocketRows
               hidePreviouslyScheduled={false}
