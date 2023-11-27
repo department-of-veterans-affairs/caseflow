@@ -97,7 +97,7 @@ describe VaDotGovAddressValidator do
       end
 
       context "and lives in philippines" do
-        before { allow_any_instance_of(Address).to receive(:country).and_return("Philippines")}
+        before { allow_any_instance_of(Address).to receive(:country).and_return("Philippines") }
 
         it "assigns closest regional office to RO58 in Manila" do
           expect(appeal.closest_regional_office).to be_nil
