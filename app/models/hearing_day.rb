@@ -283,7 +283,7 @@ class HearingDay < CaseflowRecord
   def find_or_create_conference_link!
     conference_link = ConferenceLink.find_by_hearing_day_id(id)
     if conference_link.nil?
-      conference_link = ConferenceLink.create(hearing_day_id: id)
+      conference_link = ConferenceLink.create(hearing_day_id: id, created_by_id: created_by_id)
     end
     conference_link
   end
