@@ -9,13 +9,14 @@ import thunk from 'redux-thunk';
 
 const createStoreWithReducer = (initialState) => {
   const reducer = (state = initialState) => state;
+
   return createStore(reducer, compose(applyMiddleware(thunk)));
 };
 
-it("does render judge name when user is not a nonBoardEmployee", async () => {
+it('does render judge name when user is not a nonBoardEmployee', async () => {
   const mockProps = {
     user: { userIsNonBoardEmployee: false },
-    dailyDocket: { judgeFirstName: "Jon", judgeLastName: "Doe" },
+    dailyDocket: { judgeFirstName: 'Jon', judgeLastName: 'Doe' },
   };
 
   const store = createStoreWithReducer({ components: {} });
