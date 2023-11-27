@@ -32,6 +32,11 @@ const TaskNotRelatedToAppeal = (props) => {
 
   const unrelatedTasks = useSelector((state) => state.intakeCorrespondence.unrelatedTasks);
 
+  const filterTaskOptions = ( ) => {
+    let selectedTaskNames = unrelatedTasks.map((task) => task.type)
+    return dropdownOptions.filter((value) => !selectedTaskNames.includes(value.value));
+  };
+
   const updateTaskContent = useCallback((newContent) => {
     const newTask = { id: task.id, type: task.type, content: newContent };
 
@@ -61,7 +66,7 @@ const TaskNotRelatedToAppeal = (props) => {
         >
           <div id="reactSelectContainer">
             <ReactSelectDropdown
-              options={dropdownOptions}
+              options={filterTaskOptions()}
               defaultValue={dropdownOptions[task.type]}
               label="Task"
               style={{ width: '50rem' }}
@@ -103,9 +108,5 @@ TaskNotRelatedToAppeal.propTypes = {
   taskUpdatedCallback: PropTypes.func.isRequired,
   setUnrelatedTasksCanContinue: PropTypes.func.isRequired
 };
-
-const mapStateToProps = (state) => ({
-  unrelatedTasks: state.intakeCorrespondences.unrelatedTasks
-});
 
 export default TaskNotRelatedToAppeal;
