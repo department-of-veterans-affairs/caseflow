@@ -3,25 +3,29 @@ import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import DailyDocketPrinted from '../../../../../../client/app/hearings/components/dailyDocket/DailyDocketPrinted';
 
+const renderDailyDocketPrinted = (props) => {
+  render(<DailyDocketPrinted {...props} />);
+};
+
 describe('DailyDocketPrinted', () => {
-  it('renders tag VLS when user is not a VSO employee', async () => {
+  it('renders tag VLJ when user is not a VSO employee', async () => {
     const mockProps = {
       user: { userIsNonBoardEmployee: false },
       docket: { judgeFirstName: 'John', judgeLastName: 'Doe' },
     };
 
-    render(<DailyDocketPrinted {...mockProps} />);
-    expect(await screen.queryByText(/VLJ:/)).toBeInTheDocument();
+    renderDailyDocketPrinted(mockProps);
+    expect(await screen.findByText(/VLJ:/)).toBeInTheDocument();
   });
 
-  it('does not render tag VLJ when user is not a VSO employee', () => {
+  it('does not render tag VLJ when user is a VSO employee', () => {
     const mockProps = {
       user: { userIsNonBoardEmployee: true },
       docket: { judgeFirstName: null, judgeLastName: null },
       disablePrompt: false,
     };
 
-    render(<DailyDocketPrinted {...mockProps} />);
+    renderDailyDocketPrinted(mockProps);
     expect(screen.queryByText(/VLJ:/)).not.toBeInTheDocument();
   });
 });
