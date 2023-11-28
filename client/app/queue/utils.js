@@ -541,14 +541,12 @@ export const prepareAppealForStore = (appeals) => {
       externalId: appeal.attributes.external_id,
       docketName: appeal.attributes.docket_name,
       withdrawn: appeal.attributes.withdrawn,
-      removed: appeal.attributes.removed,
       overtime: appeal.attributes.overtime,
       contestedClaim: appeal.attributes.contested_claim,
       veteranAppellantDeceased: appeal.attributes.veteran_appellant_deceased,
       withdrawalDate: formatDateStrUtc(appeal.attributes.withdrawal_date),
       isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
       caseType: appeal.attributes.type,
-      isAdvancedOnDocket: appeal.attributes.aod,
       issueCount: (appeal.attributes.docket_name === 'legacy' ?
         getUndecidedIssues(issues) :
         issues
@@ -568,19 +566,11 @@ export const prepareAppealForStore = (appeals) => {
   const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
     accumulator[appeal.attributes.external_id] = {
       hearings: prepareAppealHearingsForStore(appeal),
-      currentUserTimezone: appeal.attributes.current_user_timezone,
-      issues: prepareAppealIssuesForStore(appeal),
-      appellantIsNotVeteran: appeal.attributes.appellant_is_not_veteran,
       appellantFullName: appeal.attributes.appellant_full_name,
       contestedClaim: appeal.attributes.contested_claim,
       assignedToLocation: appeal.attributes.assigned_to_location,
-      veteranDateOfDeath: appeal.attributes.veteran_death_date,
       veteranParticipantId: appeal.attributes.veteran_participant_id,
-      closestRegionalOffice: appeal.attributes.closest_regional_office,
-      closestRegionalOfficeLabel:
-        appeal.attributes.closest_regional_office_label,
       externalId: appeal.attributes.external_id,
-      efolderLink: appeal.attributes.efolder_link,
       status: appeal.attributes.status,
       decisionDate: appeal.attributes.decision_date,
       caseflowVeteranId: appeal.attributes.caseflow_veteran_id,

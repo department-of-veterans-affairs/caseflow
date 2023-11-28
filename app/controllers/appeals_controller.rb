@@ -214,7 +214,7 @@ class AppealsController < ApplicationController
 
   def json_appeals(appeal)
     if appeal.is_a?(Appeal)
-      WorkQueue::AppealSerializerSearch.new(appeal, params: { user: current_user }).serializable_hash
+      WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
     else
       WorkQueue::LegacyAppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
     end
