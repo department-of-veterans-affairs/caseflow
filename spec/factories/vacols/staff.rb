@@ -20,6 +20,10 @@ FactoryBot.define do
 
     sactive { "A" }
 
+    trait :inactive do
+      sactive { "I" }
+    end
+
     trait :attorney_role do
       sactive { "A" }
     end

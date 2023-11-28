@@ -12,13 +12,14 @@ class CaseDistributionIneligibleJudges
     def ineligible_caseflow_judges
       User.joins("LEFT JOIN organizations_users ON users.id = organizations_users.user_id")
         .joins("LEFT JOIN organizations ON organizations_users.organization_id = organizations.id")
-        .where("users.status != ? OR (users.id IN (#{non_admin_users_of_judge_teams}) OR (organizations_users.admin = '1'
-      AND organizations.type = 'JudgeTeam' AND organizations.status <> 'active') )", "active")
+        .where("users.status != ? OR (users.id IN (?) OR (organizations_users.admin = '1'
+      AND organizations.type = 'JudgeTeam'
+      AND organizations.status <> 'active') )", "active", non_admin_users_of_judge_teams)
         .map { |user| { id: user.id, css_id: user.css_id } }.uniq
     end
 
     def non_admin_users_of_judge_teams
-      JudgeTeam.all.map(&:non_admins).flatten.map(&:id).join(", ")
+      JudgeTeam.all.map(&:non_admins).flatten.map(&:id)
     end
   end
 end
