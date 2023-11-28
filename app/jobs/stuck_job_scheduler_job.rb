@@ -33,7 +33,13 @@ class StuckJobSchedulerJob < CaseflowJob
 
     end_time_parent = @stuck_job_report_service.log_time
     @stuck_job_report_service.execution_time(parent_job_name, start_time_parent, end_time_parent)
-    # @stuck_job_report_service.write_log_report(REPORT_TEXT)
+
+    # Send report logs to Slack
+    msg = @stuck_job_report_service.logs
+    slack_service.send_notification(msg, self.class.to_s)
+
+    # Send report logs to AWS S3
+    @stuck_job_report_service.write_log_report(REPORT_TEXT)
   end
 
   def perform_parent_stuck_job
