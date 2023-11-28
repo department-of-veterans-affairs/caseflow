@@ -33,11 +33,18 @@ export const AddAppealRelatedTaskView = (props) => {
     useState(taskRelatedAppeals.length ? RELATED_YES : RELATED_NO);
   const [loading, setLoading] = useState(false);
   const [nextTaskId, setNextTaskId] = useState(newTasks.length);
+  const [currentAppealPage, setCurrentAppealPage] = useState(1);
+  const [tableUpdateTrigger, setTableUpdateTrigger] = useState(1);
 
   const dispatch = useDispatch();
 
   const appealById = (appealId) => {
     return appeals.find((el) => el.id === appealId);
+  };
+
+  const appealsPageUpdateHandler = (newCurrentPage) => {
+    setCurrentAppealPage(newCurrentPage);
+    setTableUpdateTrigger((prev) => prev + 1);
   };
 
   useEffect(() => {
@@ -68,6 +75,7 @@ export const AddAppealRelatedTaskView = (props) => {
 
       setTaskRelatedAppeals(selectedAppeals);
       setNewTasks(filteredNewTasks);
+      setTableUpdateTrigger((prev) => prev + 1);
     }
   };
 
@@ -164,13 +172,15 @@ export const AddAppealRelatedTaskView = (props) => {
             <ul>
               <div style={{ padding: '1rem' }}>
                 <CaseListTable
-                  key={taskRelatedAppeals.length}
+                  key={tableUpdateTrigger} // Need to use this to force React to re-render checkboxes
                   appeals={appeals}
                   showCheckboxes
                   paginate
                   linkOpensInNewTab
                   checkboxOnChange={appealCheckboxOnChange}
                   taskRelatedAppealIds={taskRelatedAppeals}
+                  currentPage={currentAppealPage}
+                  updatePageHandlerCallback={appealsPageUpdateHandler}
                 />
               </div>
             </ul>
