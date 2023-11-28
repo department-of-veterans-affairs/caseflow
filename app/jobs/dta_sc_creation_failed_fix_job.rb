@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class DtaScCreationFailedFixJob < CaseflowJob
-  ERROR_TEXT = "DTA SC Creation Failed"
+  ERROR_TEXT = "DTA SC creation failed"
 
   # :reek:FeatureEnvy
   def perform

@@ -40,6 +40,7 @@ class StuckJobSchedulerJob < CaseflowJob
 
     # Send report logs to AWS S3
     @stuck_job_report_service.write_log_report(REPORT_TEXT)
+    # binding.pry
   end
 
   def perform_parent_stuck_job
