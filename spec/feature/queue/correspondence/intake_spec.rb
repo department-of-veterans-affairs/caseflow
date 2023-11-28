@@ -122,7 +122,7 @@ RSpec.feature("The Correspondence Intake page") do
       page.find("#react-select-2-input").fill_in with: "Other motion"
       page.find(".css-e42auv", text: "Other motion").click
       expect(page).to have_content("Other motion")
-      expect(page).to have_button("+ Add tasks", disabled: true)
+      expect(page).to have_button("+ Add tasks", disabled: false)
     end
 
     it "Two unrelated tasks have been added" do
