@@ -26,12 +26,12 @@ const existingAppealAnswer = [
 
 export const AddAppealRelatedTaskView = (props) => {
   const appeals = useSelector((state) => state.intakeCorrespondence.fetchedAppeals);
-  const [taskRelatedAppeals, setTaskRelatedAppeals] = useState([]);
-  const [newTasks, setNewTasks] = useState([]);
+  const [taskRelatedAppeals, setTaskRelatedAppeals] = useState(useSelector((state) => state.intakeCorrespondence.taskRelatedAppealIds));
+  const [newTasks, setNewTasks] = useState(useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks));
   const [existingAppealRadio, setExistingAppealRadio] =
     useState(taskRelatedAppeals.length ? RELATED_YES : RELATED_NO);
   const [loading, setLoading] = useState(false);
-  const [nextTaskId, setNextTaskId] = useState(1);
+  const [nextTaskId, setNextTaskId] = useState(newTasks.length);
 
   const dispatch = useDispatch();
 
