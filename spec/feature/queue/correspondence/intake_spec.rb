@@ -188,7 +188,6 @@ RSpec.feature("The Correspondence Intake page") do
 
     it "The user can open the autotext modal" do
       find_by_id("addAutotext").click
-      # using clear all button because it's unique to the modal.
       within find_by_id("autotextModal") do
         expect(page).to have_text("Cancel")
       end
