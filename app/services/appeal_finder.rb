@@ -8,22 +8,21 @@ class AppealFinder
       MetricsService.record("VACOLS: Get appeal information for file_numbers #{file_numbers}",
                             service: :queue,
                             name: "VeteranFinderQuery.find_appeals_with_file_numbers") do
-        appeals = Appeal.established.where(veteran_file_number: file_numbers).to_a
-=begin
-        appeals = Appeal.established
-          .includes(:cached_appeal_attributes)
-          .where(veteran_file_number: file_numbers, user_id: user.user_id)
-          .select(:docket_type, :stream_docket_number, :appellant_first_name,
-                  :appellant_middle_initial, :appellant_last_name, :status,
-                  :stream_type, :issue_count, :decision_date)
-
+        ## appeals = Appeal.established.where(veteran_file_number: file_numbers).to_a
+        ama_appeals = Appeal.established
+          .includes(:docket_switch, :available_hearing_locations, :tasks, :work_mode,
+                    :request_issues, :hearings, :appellant_substitution, :nod_date_updates,
+                    :decision_issues)
+          .where(veteran_file_number: file_numbers)
           .to_a
-=end
         begin
-          appeals.concat(LegacyAppeal.fetch_appeals_by_file_number(*file_numbers))
+          legacy_appeals = LegacyAppeal.fetch_appeals_by_file_number(*file_numbers)
         rescue ActiveRecord::RecordNotFound
           # file number could not be found. don't raise exception and not return, just ignore.
+          legacy_appeals = []
         end
+        appeals = ama_appeals + legacy_appeals
+
         appeals
       end
     end

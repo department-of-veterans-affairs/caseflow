@@ -27,7 +27,7 @@ class AppealsController < ApplicationController
                    ).call
                  else
                    CaseSearchResultsForVeteranFileNumber.new(
-                     file_number_or_ssn: case_search, user: current_user, last_id: params[:last_id]
+                     file_number_or_ssn: case_search, user: current_user
                    ).call
                  end
 
@@ -214,7 +214,7 @@ class AppealsController < ApplicationController
 
   def json_appeals(appeal)
     if appeal.is_a?(Appeal)
-      WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
+      WorkQueue::AppealSerializerSearch.new(appeal, params: { user: current_user }).serializable_hash
     else
       WorkQueue::LegacyAppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
     end
