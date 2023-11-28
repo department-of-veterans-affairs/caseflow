@@ -4,21 +4,29 @@ require Rails.root.join("app", "jobs", "stuck_job_scheduler_job.rb")
 require Rails.root.join("lib", "helpers", "stuck_jobs_error_counter.rb")
 
 describe StuckJobSchedulerJob, :postgres do
-
   let(:stuck_job_report_service) { instance_double("StuckJobReportService") }
 
   subject { described_class.new }
 
   before do
     allow(StuckJobReportService).to receive(:new).and_return(stuck_job_report_service)
-    allow(stuck_job_report_service).to receive(:log_time).and_return(Time.now)
+    allow(stuck_job_report_service).to receive(:log_time).and_return(Time.zone.now)
   end
 
   describe "#perform" do
     it "executes perform_parent_stuck_job" do
+      current_time = Time.zone.now
       expect(subject).to receive(:perform_parent_stuck_job)
-      expect(stuck_job_report_service).to receive(:execution_time)
-      .with(StuckJobSchedulerJob, an_instance_of(Time), an_instance_of(Time))
+
+      expect(stuck_job_report_service).to receive(:execution_time) do |job, start_time, end_time|
+        expect(job).to eq(StuckJobSchedulerJob)
+        expect(start_time).to be_within(1.second).of(current_time)
+        expect(end_time).to be_within(1.second).of(current_time)
+
+        expect(stuck_job_report_service).to receive(:logs)
+        expect(stuck_job_report_service).to receive(:write_log_report)
+      end
+
       subject.perform
     end
   end
@@ -49,11 +57,10 @@ describe StuckJobSchedulerJob, :postgres do
       expect(Rails.logger).to receive(:info).with("#{stuck_job_class} started.")
 
       # Assuming perform_now raises an error
-      allow(stuck_job_class).to receive(:perform_now).and_raise(StandardError, 'SomeError')
+      allow(stuck_job_class).to receive(:perform_now).and_raise(StandardError, "SomeError")
 
       expect(Rails.logger).to receive(:info).with("#{stuck_job_class} failed to run with error: SomeError.")
       subject.execute_stuck_job(stuck_job_class)
-
     end
 
     it "logs error count and execution time" do

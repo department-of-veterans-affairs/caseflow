@@ -42,12 +42,16 @@ class StuckJobReportService
     S3Service.store_file("#{folder_name}/#{file_name}", content)
   end
 
+  # The methods below are used in StuckJobSchedulerJob for automated
+  # stuck job remediations
+
   def execution_time(job_name, start_time, end_time)
     execution_time = end_time - start_time
     message = "#{job_name} executed in #{execution_time} seconds."
     logs.push(message)
   end
 
+  # :reek:UtilityFunction
   def log_time
     Time.zone.now
   end
