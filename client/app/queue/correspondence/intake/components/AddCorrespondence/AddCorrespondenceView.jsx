@@ -8,7 +8,9 @@ import RadioField from '../../../../../components/RadioField';
 import ApiUtil from '../../../../../util/ApiUtil';
 import CorrespondencePaginationWrapper from '../../../CorrespondencePaginationWrapper';
 import {
+  loadCurrentCorrespondence,
   loadCorrespondences,
+  loadVeteranInformation,
   updateRadioValue,
   saveCheckboxState,
   clearCheckboxState
@@ -32,9 +34,14 @@ class AddCorrespondenceView extends React.Component {
   getRowObjects(correspondenceUuid) {
     return ApiUtil.get(`/queue/correspondence/${correspondenceUuid}/intake?json`).then((response) => {
       const returnedObject = response.body;
+      const currentCorrespondence = returnedObject.currentCorrespondence;
       const correspondences = returnedObject.correspondence;
+      const veteranInformation = returnedObject.veteranInformation;
 
+      this.props.loadCurrentCorrespondence(currentCorrespondence);
       this.props.loadCorrespondences(correspondences);
+      this.props.loadVeteranInformation(veteranInformation);
+
     }).
       catch((err) => {
         // allow HTTP errors to fall on the floor via the console.
@@ -222,6 +229,8 @@ AddCorrespondenceView.propTypes = {
   correspondence: PropTypes.arrayOf(PropTypes.object),
   featureToggles: PropTypes.object,
   correspondenceUuid: PropTypes.string,
+  loadVeteranInformation: PropTypes.object,
+  loadCurrentCorrespondence: PropTypes.object,
   loadCorrespondences: PropTypes.func,
   updateRadioValue: PropTypes.func,
   radioValue: PropTypes.string,
@@ -234,6 +243,8 @@ AddCorrespondenceView.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
+  currentCorrespondence: state.intakeCorrespondence.currentCorrespondence,
+  veteranInformation: state.intakeCorrespondence.veteranInformation,
   correspondences: state.intakeCorrespondence.correspondences,
   radioValue: state.intakeCorrespondence.radioValue,
   checkboxes: state.intakeCorrespondence.toggledCheckboxes,
@@ -241,7 +252,9 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
+    loadCurrentCorrespondence,
     loadCorrespondences,
+    loadVeteranInformation,
     updateRadioValue,
     saveCheckboxState,
     clearCheckboxState

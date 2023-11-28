@@ -9,7 +9,9 @@ class CorrespondenceController < ApplicationController
       format.html { return render "correspondence/intake" }
       format.json do
         render json: {
-          correspondence: correspondence_load
+          currentCorrespondence: current_correspondence,
+          correspondence: correspondence_load,
+          veteranInformation: veteran_information
         }
       end
     end
@@ -35,6 +37,14 @@ class CorrespondenceController < ApplicationController
   def package_documents
     packages = PackageDocumentType.all
     render json: { package_document_types: packages }
+  end
+
+  def current_correspondence
+    @current_correspondence ||= correspondence
+  end
+
+  def veteran_information
+    @veteran_information ||= veteran_by_correspondence
   end
 
   def show
