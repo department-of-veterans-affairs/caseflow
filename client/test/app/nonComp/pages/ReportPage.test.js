@@ -38,6 +38,15 @@ describe('ReportPage', () => {
     getVhaUsers();
   });
 
+  const navigateToConditionInput = async (condition) => {
+    const addConditionButton = screen.getByText('Add Condition');
+
+    await userEvent.click(addConditionButton);
+    const select = screen.getByText('Select a variable');
+
+    await selectEvent.select(select, [condition]);
+  };
+
   describe('renders correctly', () => {
     it('passes a11y testing', async () => {
       const { container } = setup();
@@ -169,18 +178,9 @@ describe('ReportPage', () => {
   describe('Decision Review Type Section', () => {
     beforeEach(clickOnReportType);
 
-    const navigateToDecisionReviewType = async () => {
-      const addConditionButton = screen.getByText('Add Condition');
-
-      await userEvent.click(addConditionButton);
-      const select = screen.getByText('Select a variable');
-
-      await selectEvent.select(select, ['Decision Review Type']);
-    };
-
     it('shows the correct checkbox fields', async () => {
       setup();
-      await navigateToDecisionReviewType();
+      await navigateToConditionInput('Decision Review Type');
 
       expect(screen.getByText('Higher-Level Reviews')).toBeInTheDocument();
       expect(screen.getByText('Supplemental Claims')).toBeInTheDocument();
@@ -188,7 +188,7 @@ describe('ReportPage', () => {
 
     it('clicking the checkbox should toggle the checked status', async () => {
       setup();
-      await navigateToDecisionReviewType();
+      await navigateToConditionInput('Decision Review Type');
 
       const checkbox = screen.getByLabelText('Higher-Level Reviews');
 
@@ -198,6 +198,20 @@ describe('ReportPage', () => {
       await userEvent.click(checkbox);
       expect(checkbox.checked).toEqual(false);
 
+    });
+  });
+
+  describe('Facility Section', () => {
+    beforeEach(clickOnReportType);
+
+    it('allows you to select facilities', async () => {
+      setup();
+      await navigateToConditionInput('Facility');
+
+      const dropdown = screen.getByLabelText('Facility Type');
+
+      await selectEvent.select(dropdown, ['Albuquerque']);
+      expect(screen.getByText('Albuquerque')).toBeInTheDocument();
     });
   });
 
