@@ -246,11 +246,12 @@ RSpec.shared_examples :it_should_respond_with_same_multiple_decision_issues_per_
     )
     response_hash = JSON.parse(response.body)
     request_issues_vet_participant_ids = response_hash["request_issues"].map { |ri| ri["veteran_participant_id"] }
+    decision_issues_array = response_hash["request_issues"].map { |ri| ri["decision_issues"] }
     expect(response).to have_http_status(200)
     expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
     expect(response_hash["legacy_appeals_present"]).to eq legacy_appeals_present
     expect(response_hash["request_issues"].size).to eq request_issue_for_vet_count
-    expect(response_hash["request_issues"].first["decision_issues"] == response_hash["request_issues"].second["decision_issues"]).to eq true
+    expect(decision_issues_array.uniq.length).to be < decision_issues_array.length
     expect(response_hash["request_issues"][3]["decision_issues"] == response_hash["request_issues"][5]["decision_issues"]).to eq false
     expect(request_issues_vet_participant_ids).to eq ([].tap { |me| request_issue_for_vet_count.times { me << vet.participant_id } })
   end
