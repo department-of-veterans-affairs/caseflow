@@ -11,7 +11,7 @@ class UploadTokenFixJob < CaseflowJob
   end
 
   def perform
-    RequestStore[:current_user] = User.system_user
+    RequestStore[:current_user] = User&.system_user
     return if decision_docs_with_errors.empty?
 
     @stuck_job_report_service.append_record_count(decision_docs_with_errors.count, ERROR_TEXT)
