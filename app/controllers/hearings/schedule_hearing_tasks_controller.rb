@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require "#{Rails.root}/app/models/hearings/schedule_hearing_task_pager.rb"
+require "#{Rails.root}/app/models/hearings/schedule_hearing_task_pager.rb" #Remove once zeitwerk is enabled
 
 ##
 # Endpoint to return ScheduleHearingTasks for Assign Hearings Table
