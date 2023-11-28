@@ -68,6 +68,10 @@ class CorrespondenceController < ApplicationController
     render json: { status: 200, correspondence: correspondence }
   end
 
+  def document_types_call
+    ExternalApi::ClaimEvidenceService.document_types
+  end
+
   private
 
   def general_information
