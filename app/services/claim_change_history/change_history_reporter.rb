@@ -41,7 +41,7 @@ class ChangeHistoryReporter
       events.each do |event|
         event_columns = event.to_csv_array.flatten
         # Replace the url from the event with the domain url retrieved from the controller request
-        event_columns[2] = "#{tasks_url}#{event.task_id}"
+        event_columns[2] = [tasks_url, event.task_id].join
         csv << event_columns
       end
     end

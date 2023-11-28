@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useController, useForm, FormProvider } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
+import { downloadReportCSV } from 'app/nonComp/actions/changeHistorySlice';
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
 
@@ -17,13 +18,13 @@ import { timingSchema, TimingSpecification } from 'app/nonComp/components/Report
 
 import Checkbox from 'app/components/Checkbox';
 import RadioField from 'app/components/RadioField';
-
+import LoadingMessage from '../../components/LoadingMessage';
+import { LoadingIcon } from '../../components/icons/LoadingIcon';
 import {
   REPORT_TYPE_OPTIONS,
   RADIO_EVENT_TYPE_OPTIONS,
   SPECTIFIC_EVENT_OPTIONS
 } from 'constants/REPORT_TYPE_CONSTANTS';
-import { downloadReportCSV } from '../actions/changeHistorySlice';
 
 const buttonInnerContainerStyle = css({
   display: 'flex',
@@ -46,11 +47,8 @@ const ReportPageButtons = ({
   isGenerateButtonDisabled,
   handleClearFilters,
   handleSubmit }) => {
-
-  // eslint-disable-next-line no-console
-  // const onSubmit = (data) => console.log(data);
-
   return (
+
     <div {...buttonOuterContainerStyling}>
       <Button
         classNames={['cf-modal-link', 'cf-btn-link']}
@@ -169,11 +167,12 @@ const ReportPage = ({ history }) => {
   });
 
   const { reset, watch, formState, control, handleSubmit } = methods;
-
-  const watchReportType = watch('reportType');
-  const watchRadioEventAction = watch('radioEventAction');
   const dispatch = useDispatch();
   const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
+  const csvGeneration = useSelector((state) => state.changeHistory.status);
+  const isCSVGenerating = csvGeneration === 'loading';
+  const watchReportType = watch('reportType');
+  const watchRadioEventAction = watch('radioEventAction');
 
   const processConditionOptions = (condition, options) => {
     let formattedOptions;
@@ -278,12 +277,14 @@ const ReportPage = ({ history }) => {
       buttons={
         <ReportPageButtons
           history={history}
-          isGenerateButtonDisabled={!formState.isDirty}
+          isGenerateButtonDisabled={!formState.isDirty || isCSVGenerating}
           handleClearFilters={() => reset(defaultFormValues)}
           handleSubmit={handleSubmit(submitForm)}
         />
       }
     >
+      {/* TODO: This is ugly fix me please */}
+      { isCSVGenerating && <LoadingMessage message=<h3>Generating CSV... <LoadingIcon /></h3> />}
       <h1>Generate task report</h1>
       <FormProvider {...methods}>
         <form>
