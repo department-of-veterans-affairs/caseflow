@@ -78,17 +78,34 @@ module ByDocketDateDistribution
       priority_target: @push_priority_target || @request_priority_count,
       priority: priority_counts,
       nonpriority: nonpriority_counts,
+      distributed_cases_tied_to_ineligible_judges: {
+        legacy: distributed_cases_tied_to_ineligible_judges
+      },
       algorithm: "by_docket_date",
       settings: settings
     }
+  end
+
+  def distributed_cases_tied_to_ineligible_judges
+    @appeals.filter_map do |appeal|
+      appeal[:case_id] if VACOLS::CaseDocket.ineligible_judges_sattyid_cache
+        &.include?(hearing_judge_id(appeal[:case_id]))
+    end
+  end
+
+  def hearing_judge_id(uuid)
+    Appeal.find_by(uuid: uuid)&.hearings&.select(&:held?)&.max_by(&:scheduled_for)&.judge_id
   end
 
   def num_oldest_priority_appeals_for_judge_by_docket(distribution, num)
     return {} unless num > 0
 
     dockets
-      .flat_map { |sym, docket| docket.age_of_n_oldest_priority_appeals_available_to_judge(
-        distribution.judge, num).map { |age| [age, sym] } }
+      .flat_map do |sym, docket|
+      docket.age_of_n_oldest_priority_appeals_available_to_judge(
+        distribution.judge, num
+      ).map { |age| [age, sym] }
+    end
       .sort_by { |age, _| age }
       .first(num)
       .group_by { |_, sym| sym }
@@ -99,8 +116,11 @@ module ByDocketDateDistribution
     return {} unless num > 0
 
     dockets
-      .flat_map { |sym, docket| docket.age_of_n_oldest_nonpriority_appeals_available_to_judge(
-        distribution.judge, num).map { |age| [age, sym] } }
+      .flat_map do |sym, docket|
+      docket.age_of_n_oldest_nonpriority_appeals_available_to_judge(
+        distribution.judge, num
+      ).map { |age| [age, sym] }
+    end
       .sort_by { |age, _| age }
       .first(num)
       .group_by { |_, sym| sym }
