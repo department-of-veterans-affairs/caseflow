@@ -46,10 +46,21 @@ feature "NonComp Report Page", :postgres do
       expect(page).to have_content("Timing specifications")
 
       add_condition("Days Waiting")
+      fill_in_days_waiting("More than", 10)
 
-      # prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
-      # text = Constants.TASK_ACTIONS.CANCEL_TASK.label
-      # click_dropdown(prompt: prompt, text: text)
+      add_condition("Personnel")
+      fill_in_personnel([user.full_name])
+
+      expect(page).to have_button("Generate task report", disabled: false)
+      click_button "Generate task report"
+
+      # This might happen too fast for capybara
+      expect(page).to have_button("Generate task report", disabled: true)
+      expect(page).to have_content("Generating CSV...")
+
+
+      # Wait for the download somewhere?? and grab it
+
     end
   end
 
@@ -79,9 +90,29 @@ feature "NonComp Report Page", :postgres do
   end
 
   def fill_in_days_waiting(time_range, number_of_days)
-    dropdown = find(".days-waiting").find(".cf-select__control").first
+    # dropdown = find(".days-waiting .cf-select__control").first
+    expect(page).to have_content("Time Range")
+    days_waiting_div = find(".days-waiting")
+    dropdown = days_waiting_div.find(".cf-select__control", match: :first)
     dropdown.click
+
+    expect(days_waiting_div).to have_content(time_range)
+
     click_dropdown_item_by_text(time_range)
-    fill_in
+    fill_in "Number of days", with: number_of_days
+  end
+
+  def fill_in_personnel(user_names)
+    expect(page).to have_content("VHA team members")
+    personnel_div = find(".personnel")
+    dropdown = personnel_div.find(".cf-select__control", match: :first)
+
+    names_array = user_names.is_a?(Array) ? user_names : [user_names]
+
+    names_array.each do |user_name|
+      dropdown.click
+      expect(days_waiting_div).to have_content(user_name)
+      click_dropdown_item_by_text.text(user_name)
+    end
   end
 end
