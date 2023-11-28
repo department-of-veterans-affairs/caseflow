@@ -256,6 +256,7 @@ Rails.application.routes.draw do
   resources :case_distribution_levers, only: [] do
     collection do
       post :update_levers_and_history
+      get :update_levers_and_history
     end
   end
 

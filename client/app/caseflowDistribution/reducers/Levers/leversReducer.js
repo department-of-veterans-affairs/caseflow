@@ -5,7 +5,6 @@ export const initialState = {
   levers: [],
   initial_levers: [],
   formatted_history: {},
-  lever_values: ''
 };
 
 const leversReducer = (state = initialState, action = {}) => {
@@ -61,10 +60,20 @@ export const formatLeverHistory = (lever_history_list) => {
   return formatted_lever_history;
 };
 
-export const updateLevers = (current_levers, updated_lever, lever_values) => {
-  let leverIndex = current_levers.findIndex((lever => lever.item == updated_lever.item));
-  current_levers[leverIndex].value = updated_lever.value;
-  lever_values = current_levers.map(lever => lever.value).join('');
+export const updateLevers = (current_levers, updated_lever) => {
+  const leverIndex = current_levers.findIndex((lever => lever.item == updated_lever.item));
+
+  if (leverIndex !== -1) {
+
+    const updatedLevers = [...current_levers];
+
+    updatedLevers[leverIndex] = {
+      ...updatedLevers[leverIndex],
+      value: updated_lever.value,
+    };
+
+    return updatedLevers
+  }
 
   return current_levers
 };

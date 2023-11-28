@@ -8,12 +8,6 @@ import COPY from '../../../COPY';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 
 
-function SaveLeverChanges(leverStore)  {
-  leverStore.dispatch({
-    type: Constants.SAVE_LEVERS,
-  });
-}
-
 function DisplayButtonLeverAlert(alert) {
   console.log("alert", alert)
   //show small banner displaying the alert
@@ -25,12 +19,20 @@ function UpdateLeverHistory(leverStore) {
   });
 }
 
+function SaveLeverChanges(leverStore)  {
+  leverStore.dispatch({
+    type: Constants.SAVE_LEVERS,
+  });
+}
+
 function SaveLeversToDB(leverStore) {
   const leversData = leverStore.getState().levers;
 
-  ApiUtil.post('/case_distribution_levers/update_levers_and_history', leversData)
+  ApiUtil.post('/case_distribution_levers/update_levers_and_history', { leversData })
     .then((response) => {
       console.log('POST request successful', response);
+      UpdateLeverHistory(leverStore);
+      SaveLeverChanges(leverStore);
     })
     .catch(error => {
       console.error('Error in POST request:', error);
@@ -41,6 +43,9 @@ function SaveLeversToDB(leverStore) {
 function leverList(leverStore) {
   const levers = leverStore.getState().levers;
   const initialLevers = leverStore.getState().initial_levers;
+
+  console.log('Updated Levers:', levers)
+  console.log('Initial Levers:', initialLevers)
 
   return (
     <div>
@@ -76,14 +81,13 @@ export function LeverSaveButton({ leverStore }) {
   const [saveButtonDisabled, setSaveButtonDisabled] = useState(false);
 
   useEffect(() => {
-    // Subscribe to changes in the lever store and update local state
     const unsubscribe = leverStore.subscribe(() => {
       const state = leverStore.getState();
+      console.log('Leverstore State Changed:', state)
       setChangesOccurred(state.changesOccurred);
     });
 
     return () => {
-      // Unsubscribe when the component unmounts
       unsubscribe();
     };
   }, [leverStore]);
@@ -97,8 +101,6 @@ export function LeverSaveButton({ leverStore }) {
 
   const handleConfirmButton = () => {
     SaveLeversToDB(leverStore);
-    UpdateLeverHistory(leverStore);
-    SaveLeverChanges(leverStore);
     setShowModal(false);
     DisplayButtonLeverAlert('');
     setSaveButtonDisabled(true);

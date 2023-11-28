@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
 import { css } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
@@ -19,6 +20,10 @@ const AffinityDays = (props) => {
 
   const handleRadioChange = (option) => {
     setSelectedOption(option);
+    leverStore.dispatch({
+      type: Constants.UPDATE_LEVER_VALUE,
+      updated_lever: { item: option.item, value: option.value }
+    });
   };
 
   const updateLever = (option, index) => (event) => {
@@ -30,18 +35,18 @@ const AffinityDays = (props) => {
 
             if (errorResult) {
               op.errorMessage = 'Please enter a value less than or equal to 999';
+              op.value = null;
             } else {
               op.errorMessage = null;
+              op.value = event;
             }
-            op.value = event;
           }
 
           return op;
         });
 
-        lever.option = opt;
-
-        return lever;
+        console.log('Updated Lever:', { ...lever, options: opt });
+        return { ...lever, options: opt };
       }
 
       return lever;
@@ -50,6 +55,15 @@ const AffinityDays = (props) => {
 
     setLever(levers);
   };
+
+  useEffect(() => {
+    if (selectedOption) {
+      leverStore.dispatch({
+        type: Constants.UPDATE_LEVER_VALUE,
+        updated_lever: { item: selectedOption.item, value: selectedOption.value }
+      });
+    }
+  }, [selectedOption, leverStore]);
 
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
@@ -95,8 +109,9 @@ const AffinityDays = (props) => {
         <div className={styles.leverRight}><strong>Value</strong></div>
       </div>
       {affinityLevers.map((lever, index) => (
-        <div className={cx(styles.activeLever, lever.is_disabled ? styles.leverDisabled : '')}
-          key={`${lever.item}-${index}`}
+        <div
+        key={`${lever.item}-${index}`}
+        className={cx(styles.activeLever, lever.is_disabled ? styles.leverDisabled : '')}
         >
           <div className={styles.leverLeft}>
             <strong>{lever.title}</strong>
@@ -104,7 +119,7 @@ const AffinityDays = (props) => {
           </div>
           <div className={`${styles.leverRight} ${leverNumberDiv}`}>
             {lever.options.map((option) => (
-              <div>
+              <div key={`${lever.item}-${index}-${option.item}`}>
                 <div>
                   <input
                     checked={selectedOption ? option.item === selectedOption.item : option.item === lever.value}
@@ -142,3 +157,5 @@ AffinityDays.propTypes = {
 };
 
 export default AffinityDays;
+
+
