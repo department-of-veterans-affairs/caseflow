@@ -81,7 +81,8 @@ module ByDocketDateDistribution
       priority: priority_counts,
       nonpriority: nonpriority_counts,
       distributed_cases_tied_to_ineligible_judges: {
-        ama: ama_distributed_cases_tied_to_ineligible_judges
+        ama: ama_distributed_cases_tied_to_ineligible_judges,
+        legacy: distributed_cases_tied_to_ineligible_judges
       },
       algorithm: "by_docket_date",
       settings: settings
@@ -92,6 +93,17 @@ module ByDocketDateDistribution
   def ama_distributed_cases_tied_to_ineligible_judges
     @appeals.filter_map do |appeal|
       appeal[:case_id] if HearingRequestDistributionQuery.ineligible_judges_id_cache
+        &.include?(hearing_judge_id(appeal[:case_id]))
+    end
+  end
+
+  def hearing_judge_id(uuid)
+    Appeal.find_by(uuid: uuid)&.hearings&.select(&:held?)&.max_by(&:scheduled_for)&.judge_id
+  end
+
+  def distributed_cases_tied_to_ineligible_judges
+    @appeals.filter_map do |appeal|
+      appeal[:case_id] if VACOLS::CaseDocket.ineligible_judges_sattyid_cache
         &.include?(hearing_judge_id(appeal[:case_id]))
     end
   end
