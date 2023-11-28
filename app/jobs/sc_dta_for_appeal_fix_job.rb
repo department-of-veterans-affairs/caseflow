@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 class ScDtaForAppealFixJob < CaseflowJob
-  ERRORTEXT = "Can't create a SC DTA for appeal"
+  ERROR_TEXT = "Can't create a SC DTA for appeal"
 
   def records_with_errors
-    DecisionDocument.where("error ILIKE ?", "%#{ERRORTEXT}%")
+    DecisionDocument.where("error ILIKE ?", "%#{ERROR_TEXT}%")
   end
 
   def perform
@@ -12,7 +12,7 @@ class ScDtaForAppealFixJob < CaseflowJob
     return if records_with_errors.blank?
 
     # count of records with errors before fix
-    stuck_job_report_service.append_record_count(records_with_errors.count, ERRORTEXT)
+    stuck_job_report_service.append_record_count(records_with_errors.count, ERROR_TEXT)
 
     records_with_errors.each do |decision_doc|
       claimant = decision_doc.appeal.claimant
@@ -29,8 +29,8 @@ class ScDtaForAppealFixJob < CaseflowJob
     end
 
     # record count with errors after fix
-    stuck_job_report_service.append_record_count(records_with_errors.count, ERRORTEXT)
-    stuck_job_report_service.write_log_report(ERRORTEXT)
+    stuck_job_report_service.append_record_count(records_with_errors.count, ERROR_TEXT)
+    stuck_job_report_service.write_log_report(ERROR_TEXT)
   end
 
   # :reek:FeatureEnvy
