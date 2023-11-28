@@ -258,7 +258,8 @@ const ReportPage = ({ history }) => {
 
     // Don't know how acceptable this is for compliance.
     // Could also do something like a modal that grabs focus while it is generating
-    // window.scrollTo(0, 0);
+    // TODO: Make this less bad
+    window.scrollTo(0, 0);
 
     const filterData = parseFilters(data);
 
