@@ -8,15 +8,31 @@ export const initialState = {
   radioValue: '2',
   toggledCheckboxes: [],
   mailTasks: {},
-  unrelatedTasks: []
+  unrelatedTasks: [],
+  currentCorrespondence: [],
+  veteranInformation: []
 };
 
 export const intakeCorrespondenceReducer = (state = initialState, action = {}) => {
   switch (action.type) {
+  case ACTIONS.LOAD_CURRENT_CORRESPONDENCE:
+    return update(state, {
+      currentCorrespondence: {
+        $set: action.payload.currentCorrespondence
+      }
+    });
+
   case ACTIONS.LOAD_CORRESPONDENCES:
     return update(state, {
       correspondences: {
         $set: action.payload.correspondences
+      }
+    });
+
+  case ACTIONS.LOAD_VETERAN_INFORMATION:
+    return update(state, {
+      veteranInformation: {
+        $set: action.payload.veteranInformation
       }
     });
 

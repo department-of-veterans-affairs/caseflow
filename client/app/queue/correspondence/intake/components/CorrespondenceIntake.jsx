@@ -3,13 +3,12 @@ import ProgressBar from 'app/components/ProgressBar';
 import Button from '../../../../components/Button';
 import PropTypes from 'prop-types';
 import AddCorrespondenceView from './AddCorrespondence/AddCorrespondenceView';
-import ConfirmationPage from './CorrespondenceConfirmation/ConfirmationPage';
 import { AddTasksAppealsView } from './TasksAppeals/AddTasksAppealsView';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { setUnrelatedTasks } from '../../correspondenceReducer/correspondenceActions';
-import ConfirmTasksNotRelatedToAnAppeal from './Confirm/ConfirmTasksNotRelatedToAnAppeal';
 import { useHistory, useLocation } from 'react-router-dom';
+import { ConfirmCorrespondenceView } from './ConfirmCorrespondence/ConfirmCorrespondenceView';
 
 const progressBarSections = [
   {
@@ -112,12 +111,10 @@ export const CorrespondenceIntake = (props) => {
     }
     {currentStep === 3 &&
       <div>
-        <ConfirmationPage
+        <ConfirmCorrespondenceView
           mailTasks={props.mailTasks}
           goToStep={setCurrentStep}
         />
-        <ConfirmTasksNotRelatedToAnAppeal />
-
       </div>
     }
     <div>
@@ -158,6 +155,8 @@ export const CorrespondenceIntake = (props) => {
 
 CorrespondenceIntake.propTypes = {
   correspondence_uuid: PropTypes.string,
+  currentCorrespondence: PropTypes.object,
+  veteranInformation: PropTypes.object,
   unrelatedTasks: PropTypes.arrayOf(Object),
   setUnrelatedTasks: PropTypes.func,
   mailTasks: PropTypes.objectOf(PropTypes.bool)
