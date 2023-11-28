@@ -18,7 +18,9 @@ module Seeds
       "BVABDANIEL" => { attorneys: %w[BVABBLOCK BVABCASPER BVABCHAMPLIN] },
       "BVACGISLASON1" => { attorneys: %w[BVACABERNATH BVACABSHIRE BVACBALISTRE] },
       "BVADCREMIN" => { attorneys: %w[BVADABBOTT BVADABERNATH BVADBEAHAN] },
-      "BVAEEMARD" => { attorneys: %w[BVAEBLANDA BVAEBUCKRIDG BVAECUMMERAT] }
+      "BVAEEMARD" => { attorneys: %w[BVAEBLANDA BVAEBUCKRIDG BVAECUMMERAT] },
+      # below teams were added for ineligible judge testing
+      "BVADSLADER" => { attorneys: %w[BVAJLISA BVAEDOBER BVATDECKER] }
     }.freeze
 
     DEVELOPMENT_DVC_TEAMS = {

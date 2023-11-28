@@ -73,6 +73,12 @@ FactoryBot.define do
       end
     end
 
+    trait :with_inactive_judge_team do
+      after(:create) do |judge|
+        (JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)).inactive!
+      end
+    end
+
     trait :with_vacols_attorney_record do
       after(:create) do |user|
         create(:staff, :attorney_role, user: user)

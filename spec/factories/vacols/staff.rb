@@ -38,6 +38,11 @@ FactoryBot.define do
       sactive { "A" }
     end
 
+    trait :inactive_judge do
+      svlj { "J" }
+      sactive { "I" }
+    end
+
     trait :hearing_coordinator do
       sdept { "HRG" }
       sactive { "A" }
