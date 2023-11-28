@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# I hate doing this
 require_relative "../../../app/services/claim_change_history/change_history_reporter.rb"
 
 describe ChangeHistoryReporter do

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# I hate doing this. It seems wrong
 require_relative "../../../app/services/claim_change_history/claim_history_service.rb"
 require_relative "../../../app/services/claim_change_history/claim_history_event.rb"
 
