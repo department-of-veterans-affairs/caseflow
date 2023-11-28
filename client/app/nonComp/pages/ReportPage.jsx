@@ -197,7 +197,7 @@ const ReportPage = ({ history }) => {
     return formattedOptions;
   };
 
-  const processConditionKey = (condition) => {
+  const processConditionKeys = (condition) => {
     return condition;
   };
 
@@ -214,8 +214,16 @@ const ReportPage = ({ history }) => {
       filters.events = Object.keys(data.specificEventType);
     }
 
+    // Status filter
+    if (data.radioStatus === 'specific_status') {
+      filters.statuses = Object.keys(data.specificStatus);
+    }
+
     // Timing filter
     filters.timing = data.timing;
+
+    // Specific Status report type
+    filters.statusReportType = data.radioStatusReportType;
 
     // Conditions parsing
     const transformedConditions = data?.conditions?.reduce((result, item) => {
@@ -223,7 +231,7 @@ const ReportPage = ({ history }) => {
 
       if (condition && options) {
         // Possibly parse the condition name as well
-        const newConditionName = processConditionKey(condition);
+        const newConditionName = processConditionKeys(condition);
 
         // Parse individual conditions to make them more palatable for the server
         const newOptions = processConditionOptions(condition, options);

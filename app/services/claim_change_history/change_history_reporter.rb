@@ -21,7 +21,7 @@ class ChangeHistoryReporter
     Prior\ Decision\ Date
     Disposition
     Disposition\ Description
-    Disposition Date
+    Disposition\ Date
   ].freeze
 
   def initialize(events, tasks_url, event_filters = {})

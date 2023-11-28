@@ -256,9 +256,15 @@ const ApiUtil = {
     for (let key in data) {
       if ({}.hasOwnProperty.call(data, key)) {
         let snakeKey = StringUtil.camelCaseToSnakeCase(key);
+        let value = data[key];
 
-        // assign value to new object
-        result[snakeKey] = this.convertToSnakeCase(data[key]);
+        // Check if the current value is a Date object
+        if (value instanceof Date) {
+          result[snakeKey] = value.toISOString();
+        } else {
+          // Recursively convert non-Date objects
+          result[snakeKey] = this.convertToSnakeCase(value);
+        }
       }
     }
 
@@ -273,10 +279,16 @@ const ApiUtil = {
 
     for (let key in data) {
       if ({}.hasOwnProperty.call(data, key)) {
-        let camelCase = StringUtil.snakeCaseToCamelCase(key);
+        let snakeKey = StringUtil.snakeCaseToCamelCase(key);
+        let value = data[key];
 
-        // assign value to new object
-        result[camelCase] = this.convertToCamelCase(data[key]);
+        // Check if the current value is a Date object
+        if (value instanceof Date) {
+          result[snakeKey] = value.toISOString();
+        } else {
+          // Recursively convert non-Date objects
+          result[snakeKey] = this.convertToCamelCase(value);
+        }
       }
     }
 

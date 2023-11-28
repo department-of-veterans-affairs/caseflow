@@ -78,7 +78,7 @@ class DecisionReviewsController < ApplicationController
           fail ActionController::ParameterMissing.new(:report_type), report_type_missing_message
         end
 
-        parsed_filters = parse_filter_params(filter_params)
+        parsed_filters = parse_change_history_filter_params(filter_params)
 
         puts "-----------------------PARSED FILTERS-----------------------------------"
         puts parsed_filters.inspect
@@ -257,6 +257,7 @@ class DecisionReviewsController < ApplicationController
   def change_history_params
     params.permit(
       :report_type,
+      :status_report_type,
       events: {},
       timing: {},
       statuses: {},
@@ -286,16 +287,18 @@ class DecisionReviewsController < ApplicationController
     ChangeHistoryReporter.new(events, base_url, filter_params.to_h).as_csv
   end
 
-  def parse_filter_params(filter_params)
+  def parse_change_history_filter_params(filter_params)
     {
       events: events_filter_helper(filter_params),
-      task_status: filter_params[:task_status]&.values,
+      task_status: task_status_filter_helper(filter_params),
+      # TODO: Don't know what to do with this right now
+      status_report_type: filter_params[:status_report_type],
       claim_type: filter_params[:decision_review_type]&.values,
       personnel: filter_params[:personnel]&.values,
       dispositions: disposition_filter_helper(filter_params),
       issue_types: filter_params[:issue_types]&.values,
       facilities: filter_params[:facilities]&.values,
-      # timing: filter_params[:timing].to_h,
+      timing: filter_params[:timing].to_h,
       days_waiting: days_waiting_filter_helper(filter_params)
     }.deep_transform_keys(&:to_sym)
   end
@@ -316,6 +319,17 @@ class DecisionReviewsController < ApplicationController
     }
 
     filter_params[:events]&.values&.map { |event_type| event_mapping[event_type] }
+  end
+
+  def task_status_filter_helper(filter_params)
+    status_mapping = {
+      "incomplete" => "on_hold",
+      "in_progress" => %w[assigned in_progress],
+      "completed" => "completed",
+      "cancelled" => "cancelled"
+    }
+
+    filter_params[:statuses]&.values&.map { |task_status| status_mapping[task_status] }&.flatten
   end
 
   def disposition_filter_helper(filter_params)
