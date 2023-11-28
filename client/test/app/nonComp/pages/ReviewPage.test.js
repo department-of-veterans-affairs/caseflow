@@ -6,16 +6,24 @@ import thunk from 'redux-thunk';
 import { axe } from 'jest-axe';
 
 import ReviewPage from 'app/nonComp/pages/ReviewPage';
-import CombinedNonCompReducer from 'app/nonComp/reducers';
+import CombinedNonCompReducer, { mapDataToInitialState } from 'app/nonComp/reducers';
+import ReduxBase from '../../../../app/components/ReduxBase';
+import { vhaTaskFilterDetails, genericTaskFilterDetails } from 'test/data/taskFilterDetails';
 
 const basicVhaProps = {
-  businessLine: 'Veterans Health Administration',
-  businessLineUrl: 'vha',
-  decisionIssuesStatus: {},
-  isBusinessLineAdmin: true,
-  businessLineConfig: {
-    tabs: ['incomplete', 'in_progress', 'completed'],
-    canGenerateClaimHistory: true,
+  serverNonComp: {
+    businessLine: 'Veterans Health Administration',
+    businessLineUrl: 'vha',
+    decisionIssuesStatus: {},
+    isBusinessLineAdmin: true,
+    businessLineConfig: {
+      tabs: ['incomplete', 'in_progress', 'completed'],
+      canGenerateClaimHistory: true,
+    },
+    taskFilterDetails: vhaTaskFilterDetails,
+    featureToggles: {
+      decisionReviewQueueSsnColumn: true
+    }
   }
 };
 
@@ -35,10 +43,12 @@ const renderReviewPage = (storeValues = {}) => {
     compose(applyMiddleware(thunk))
   );
 
+  const initialState = mapDataToInitialState(storeValues);
+
   return render(
-    <Provider store={store} >
+    <ReduxBase initialState={initialState} reducer={CombinedNonCompReducer} >
       <ReviewPage />
-    </Provider>
+    </ReduxBase>
   );
 };
 
