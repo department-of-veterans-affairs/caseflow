@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React from 'react';
 import TextareaField from '../../../../../components/TextareaField';
 import ReactSelectDropdown from '../../../../../components/ReactSelectDropdown';
 import Button from '../../../../../components/Button';
 import PropTypes from 'prop-types';
-import { shallowEqual, useSelector } from 'react-redux';
 
 const dropdownOptions = [
   { value: 'CAVC Correspondence', label: 'CAVC Correspondence' },
@@ -17,34 +16,20 @@ const dropdownOptions = [
   { value: 'Status inquiry', label: 'Status inquiry' }
 ];
 
-const TaskNotRelatedToAppeal = (props) => {
-  const task = useSelector((state) => state.intakeCorrespondence.unrelatedTasks.find((uTasks) => {
-    return uTasks.id === props.taskId;
-  }), shallowEqual);
-  const [type, setType] = useState('');
-  const [content, setContent] = useState('');
+const AddTaskView = (props) => {
+  const task = props.task;
 
-  useEffect(() => {
-    const canContinue = (content !== '') && (type !== '');
-
-    props.setUnrelatedTasksCanContinue(canContinue);
-  }, [content, type]);
-
-  const updateTaskContent = useCallback((newContent) => {
-    const newTask = { id: task.id, type: task.type, content: newContent };
-
-    setContent(newContent);
+  const updateTaskContent = (newContent) => {
+    const newTask = { id: task.id, appealId: task.appealId, type: task.type, content: newContent };
 
     props.taskUpdatedCallback(newTask);
-  }, [task, content]);
+  };
 
-  const updateTaskType = useCallback((newType) => {
-    const newTask = { id: task.id, type: newType.value, content: task.content };
-
-    setType(newType.value);
+  const updateTaskType = (newType) => {
+    const newTask = { id: task.id, appealId: task.appealId, type: newType.value, content: task.content };
 
     props.taskUpdatedCallback(newTask);
-  }, [task, type]);
+  };
 
   return (
     <div key={task.id} style={{ display: 'block', marginRight: '2rem' }}>
@@ -81,25 +66,27 @@ const TaskNotRelatedToAppeal = (props) => {
           >
             Add autotext
           </Button>
-          <Button
-            name="Remove"
-            styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
-            onClick={() => props.removeTask(task.id)}
-            classNames={['cf-btn-link', 'cf-right-side']}
-          >
-            <i className="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Remove task
-          </Button>
+          {props.displayRemoveCheck &&
+            <Button
+              name="Remove"
+              styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
+              onClick={() => props.removeTask(task.id)}
+              classNames={['cf-btn-link', 'cf-right-side']}
+            >
+              <i className="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Remove task
+            </Button>
+          }
         </div>
       </div>
     </div>
   );
 };
 
-TaskNotRelatedToAppeal.propTypes = {
+AddTaskView.propTypes = {
   removeTask: PropTypes.func.isRequired,
-  taskId: PropTypes.number.isRequired,
+  task: PropTypes.object.isRequired,
   taskUpdatedCallback: PropTypes.func.isRequired,
-  setUnrelatedTasksCanContinue: PropTypes.func.isRequired
+  displayRemoveCheck: PropTypes.bool.isRequired
 };
 
-export default TaskNotRelatedToAppeal;
+export default AddTaskView;

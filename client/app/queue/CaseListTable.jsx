@@ -17,7 +17,6 @@ import COPY from '../../COPY';
 import Pagination from 'app/components/Pagination/Pagination';
 
 class CaseListTable extends React.PureComponent {
-
   state = { currentPage: 1 }
 
   componentWillUnmount = () => this.props.clearCaseListSearch();
@@ -181,8 +180,7 @@ CaseListTable.defaultProps = {
 
 const mapStateToProps = (state) => ({
   userCssId: state.ui.userCssId,
-  userRole: state.ui.userRole,
-  taskRelatedAppealIds: state.intakeCorrespondence.taskRelatedAppealIds
+  userRole: state.ui.userRole
 });
 
 const mapDispatchToProps = (dispatch) =>
