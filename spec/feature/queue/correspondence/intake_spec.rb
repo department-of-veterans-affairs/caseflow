@@ -132,7 +132,7 @@ RSpec.feature("The Correspondence Intake page") do
 
     it "Re-enables continue button when all new task has been filled out" do
       click_on("+ Add tasks")
-      all('#reactSelectContainer')[0].click
+      all("#reactSelectContainer")[0].click
       find_by_id("react-select-2-option-1").click
       expect(page).to have_button("button-continue", disabled: true)
       find_by_id("content").fill_in with: "Correspondence Text"
@@ -141,7 +141,7 @@ RSpec.feature("The Correspondence Intake page") do
 
     it "Re populates fields after going back a step and then continuing forward again" do
       click_on("+ Add tasks")
-      all('#reactSelectContainer')[0].click
+      all("#reactSelectContainer")[0].click
       find_by_id("react-select-2-option-0").click
       find_by_id("content").fill_in with: "Correspondence test text"
       click_button("button-back-button")
@@ -192,7 +192,6 @@ RSpec.feature("The Correspondence Intake page") do
       within find_by_id("autotextModal") do
         expect(page).to have_text("Cancel")
       end
-
     end
 
     it "The user can close the modal with the cancel button." do
