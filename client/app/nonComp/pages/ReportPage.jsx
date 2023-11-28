@@ -130,6 +130,7 @@ const RHFCheckboxGroup = ({ options, name, control }) => {
 
   if (errorMessage) {
     fieldClasses += ' usa-input-error';
+    fieldClasses += ' less-error-padding';
   }
 
   return (

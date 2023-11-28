@@ -146,6 +146,11 @@ $validation-error-color: #cd2026;
   }
 }
 
+.less-error-padding {
+  margin-top: 0;
+  right: 0;
+}
+
 .report-page-segment {
   display: flex;
   flex-wrap: wrap;
@@ -186,7 +191,6 @@ $validation-error-color: #cd2026;
           align-self: flex-end;
           flex-wrap: wrap;
           gap: 8px;
-
         }
 
         @media screen and (min-width: 1440px) {
@@ -248,5 +252,3 @@ $validation-error-color: #cd2026;
     text-align: center;
   }
 }
-
-
