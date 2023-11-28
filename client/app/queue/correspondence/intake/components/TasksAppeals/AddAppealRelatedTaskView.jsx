@@ -104,9 +104,10 @@ export const AddAppealRelatedTaskView = (props) => {
   }, []);
 
   useEffect(() => {
-    // Clear the selected appeals when the user toggles the radio button
+    // Clear the selected appeals and any tasks when the user toggles the radio button
     if (existingAppealRadio === RELATED_NO) {
       setTaskRelatedAppeals([]);
+      setNewTasks([]);
     }
   }, [existingAppealRadio]);
 
