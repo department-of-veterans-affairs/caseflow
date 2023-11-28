@@ -39,6 +39,12 @@ FactoryBot.define do
       roles { ["Admin Intake"] }
     end
 
+    trait :vlj do
+      css_id { "BVADSLADER" }
+      full_name { "VLJ" }
+      station_id { "101" }
+    end
+
     trait :inactive do
       status { "inactive" }
     end

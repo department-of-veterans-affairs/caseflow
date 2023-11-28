@@ -112,10 +112,12 @@ module Seeds
         RootTask.find_or_create_by!(appeal: appeal)
       end
 
-      # set judge to inactive
-      def inactive_judge
-        (@inactive_judge ||= User.find_or_create_by(css_id: "BVADSLADER", station_id: 101)).update!(status: "inactive")
-        @inactive_judge
+      def inactive_judge_1
+        @inactive_judge_1 ||= create(:user, :vlj, :inactive)
+      end
+
+      def inactive_judge_2
+        @inactive_judge_2 ||= create(:user, :vlj, :inactive)
       end
 
       # AC1
@@ -163,7 +165,7 @@ module Seeds
         offsets.each do |offset|
           create_ama_appeals_dispatch_ready_less_than_60_days(active_judge)
           create_ama_appeals_dispatch_ready_more_than_60_days(active_judge)
-          create_ama_appeals_dispatch_ready_less_than_60_days(inactive_judge)
+          create_ama_appeals_dispatch_ready_less_than_60_days(offset.even? ? inactive_judge_1 : inactive_judge_2)
           create_ama_appeals_dispatch_ready_less_than_60_days(nonadmin_user)
           create_ama_appeals_dispatch_ready_less_than_60_days(admin_and_nonadmin_user)
         end
@@ -214,6 +216,7 @@ module Seeds
         Timecop.travel(1.days.ago)
           appeal = create(:appeal,
                           :with_post_intake_tasks,
+                          :advanced_on_docket_due_to_age,
                           :held_hearing_and_ready_to_distribute,
                           :hearing_docket,
                           tied_judge: judge,
