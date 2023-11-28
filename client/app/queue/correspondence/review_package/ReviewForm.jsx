@@ -194,6 +194,7 @@ export const ReviewForm = (props) => {
                   label="Veteran name"
                   value={fullName(props.reviewDetails.veteran_name)}
                   readOnly
+                  name="Veteran-name-display"
                 />
               </div>
 

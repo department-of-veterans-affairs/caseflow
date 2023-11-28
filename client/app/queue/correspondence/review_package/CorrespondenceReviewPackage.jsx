@@ -8,6 +8,9 @@ import { CmpDocuments } from './CmpDocuments';
 import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router';
+import { setFileNumberSearch, doFileNumberSearch } from '../../../intake/actions/intake';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 export const CorrespondenceReviewPackage = (props) => {
   const [reviewDetails, setReviewDetails] = useState({
@@ -20,9 +23,6 @@ export const CorrespondenceReviewPackage = (props) => {
     default_select_value: ''
   });
   const [apiResponse, setApiResponse] = useState(null);
-  const [correspondenceDocuments, setCorrespondenceDocuments] = useState([]);
-  const [selectedCorrespondence, setSelectedCorrespondence] = useState(null);
-  const [packageDocumentType, setPackageDocumentType] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
@@ -30,27 +30,27 @@ export const CorrespondenceReviewPackage = (props) => {
   const fetchData = async () => {
     const correspondence = props;
 
-    const response = await ApiUtil.get(
-      `/queue/correspondence/${correspondence.correspondenceId}`
-    );
+    try {
+      const response = await ApiUtil.get(
+        `/queue/correspondence/${correspondence.correspondence_uuid}`
+      );
 
-    setApiResponse(response.body.general_information);
-    const data = response.body.general_information;
+      setApiResponse(response.body.general_information);
+      const data = response.body.general_information;
 
-    setCorrespondenceDocuments(response.body.correspondence_documents);
-    setSelectedCorrespondence(response.body.correspondence);
-    setPackageDocumentType(response.body.package_document_type);
+      setReviewDetails({
+        veteran_name: data.veteran_name || {},
+        dropdown_values: data.correspondence_types || [],
+      });
 
-    setReviewDetails({
-      veteran_name: data.veteran_name || {},
-      dropdown_values: data.correspondence_types || [],
-    });
-
-    setEditableData({
-      notes: data.notes,
-      veteran_file_number: data.file_number,
-      default_select_value: data.correspondence_type_id,
-    });
+      setEditableData({
+        notes: data.notes,
+        veteran_file_number: data.file_number,
+        default_select_value: data.correspondence_type_id,
+      });
+    } catch (error) {
+      throw error();
+    }
   };
 
   useEffect(() => {
@@ -73,6 +73,16 @@ export const CorrespondenceReviewPackage = (props) => {
     return notesChanged || fileNumberChanged || selectValueChanged;
   };
 
+  const intakeAppeal = async () => {
+    props.setFileNumberSearch(editableData.veteran_file_number);
+    try {
+      await props.doFileNumberSearch('appeal', editableData.veteran_file_number, true);
+      window.location.href = '/intake/review_request';
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     if (apiResponse) {
       const hasChanged = isEditableDataChanged();
@@ -81,15 +91,15 @@ export const CorrespondenceReviewPackage = (props) => {
     }
   }, [editableData, apiResponse]);
 
-  const intakeLink = `/queue/correspondence/${props.correspondenceId}/intake`;
+  const intakeLink = `/queue/correspondence/${props.correspondence_uuid}/intake`;
 
   return (
     <React.Fragment>
       <AppSegment filledBackground>
         <ReviewPackageCaseTitle />
         <ReviewPackageData
-          correspondence={selectedCorrespondence}
-          packageDocumentType={packageDocumentType} />
+          correspondence={props.correspondence}
+          packageDocumentType={props.packageDocumentType} />
         <ReviewForm
           {...{
             reviewDetails,
@@ -105,7 +115,7 @@ export const CorrespondenceReviewPackage = (props) => {
           }}
           {...props}
         />
-        <CmpDocuments documents={correspondenceDocuments} />
+        <CmpDocuments documents={props.correspondenceDocuments} />
       </AppSegment>
       <div className="cf-app-segment">
         <div className="cf-push-left">
@@ -120,6 +130,7 @@ export const CorrespondenceReviewPackage = (props) => {
             name="Intake appeal"
             styling={{ style: { marginRight: '2rem' } }}
             classNames={['usa-button-secondary']}
+            onClick={intakeAppeal}
           />
           <a href={intakeLink}>
             {/* hard coded UUID to link to multi_correspondence.rb data */}
@@ -136,7 +147,26 @@ export const CorrespondenceReviewPackage = (props) => {
 };
 
 CorrespondenceReviewPackage.propTypes = {
-  correspondenceId: PropTypes.string
+  correspondence_uuid: PropTypes.string,
+  correspondence: PropTypes.object,
+  correspondenceDocuments: PropTypes.arrayOf(PropTypes.object),
+  packageDocumentType: PropTypes.object,
+  setFileNumberSearch: PropTypes.func,
+  doFileNumberSearch: PropTypes.func
 };
 
-export default CorrespondenceReviewPackage;
+const mapStateToProps = (state) => ({
+  correspondence: state.reviewPackage.correspondence,
+  correspondenceDocuments: state.reviewPackage.correspondenceDocuments,
+  packageDocumentType: state.reviewPackage.packageDocumentType
+});
+
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setFileNumberSearch,
+  doFileNumberSearch
+}, dispatch);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(CorrespondenceReviewPackage);

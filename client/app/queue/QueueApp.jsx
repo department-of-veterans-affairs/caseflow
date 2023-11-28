@@ -36,6 +36,7 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import AppFrame from '../components/AppFrame';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import CaseDetailsLoadingScreen from './CaseDetailsLoadingScreen';
+import ReviewPackageLoadingScreen from './correspondence/review_package/ReviewPackageLoadingScreen';
 import AttorneyTaskListView from './AttorneyTaskListView';
 import ColocatedTaskListView from './ColocatedTaskListView';
 import JudgeDecisionReviewTaskListView from './JudgeDecisionReviewTaskListView';
@@ -614,7 +615,9 @@ class QueueApp extends React.PureComponent {
   );
 
   routedReviewPackage = (props) => (
-    <CorrespondenceReviewPackage {...props.match.params} />
+    <ReviewPackageLoadingScreen {...props.match.params}>
+      <CorrespondenceReviewPackage {...props.match.params} />
+    </ReviewPackageLoadingScreen>
   );
 
   routedStartHoldModal = (props) => <StartHoldModal {...props.match.params} />;
@@ -893,7 +896,7 @@ class QueueApp extends React.PureComponent {
 
             <PageRoute
               exact
-              path="/queue/correspondence/:correspondenceId/review_package"
+              path="/queue/correspondence/:correspondence_uuid/review_package"
               title={`${PAGE_TITLES.REVIEW_PACKAGE}`}
               render={this.routedReviewPackage}
             />
