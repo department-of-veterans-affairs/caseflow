@@ -156,18 +156,18 @@ Note: If you run into errors installing any versions of openssl, see the "Instal
     1. run `rbenv install $(cat .ruby-version)`
     2. run `rbenv rehash`
     3. run `gem install bundler -v $(grep -A 1 "BUNDLED WITH" Gemfile.lock | tail -n 1)`
-    4. run `gem install pg:1.1.4 -- --with-pg-config=/Applications/Postgres.app/Contents/Versions/latest/bin/pg_config`
-    5. Install v8@3.15 by doing the following (these steps assume that vi/vim is the default editor):
+    4. Install v8@3.15 by doing the following (these steps assume that vi/vim is the default editor):
         1. run `HOMEBREW_NO_INSTALL_FROM_API=1 brew edit v8@3.15`
         2. go to line 21 in the editor by typing `:21`
       Note: the line being removed is `disable! date: "2023-06-19", because: "depends on Python 2 to build"`
         3. delete the line by pressing `d` twice
         4. save and quit by typing `:x`
         5. run `HOMEBREW_NO_INSTALL_FROM_API=1 brew install v8@3.15`
-    6. Configure build opts for gem `therubyracer`:
+    5. Configure build opts for gem `therubyracer`:
         1. `bundle config build.libv8 --with-system-v8`
         2. `bundle config build.therubyracer --with-v8-dir=$(brew --prefix v8@3.15)`
-    7. run ```./scripts/dev_env_setup_step2.sh```
+        3. `bundle config build.pg --with-pg-config=/Applications/Postgres.app/Contents/Versions/latest/bin/pg_config`
+    6. run ```./scripts/dev_env_setup_step2.sh```
   If you get a permission error while running gem install or bundle install, something went wrong with your rbenv install which needs to be fixed.
 4. If there are no errors messages, run `bundle install` to ensure all gems are installed
 
