@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import { setFileNumberSearch, doFileNumberSearch } from '../../../intake/actions/intake';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { useHistory } from 'react-router';
 
 export const CorrespondenceReviewPackage = (props) => {
   const [reviewDetails, setReviewDetails] = useState({
@@ -23,7 +24,9 @@ export const CorrespondenceReviewPackage = (props) => {
   });
   const [apiResponse, setApiResponse] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
+  const history = useHistory();
   const fetchData = async () => {
     const correspondence = props;
 
@@ -53,6 +56,14 @@ export const CorrespondenceReviewPackage = (props) => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleModalClose = () => {
+    setShowModal(!showModal);
+  };
+
+  const handleReview = () => {
+    history.push('/queue/correspondence');
+  };
 
   const isEditableDataChanged = () => {
     const notesChanged = editableData.notes !== apiResponse.notes;
@@ -97,7 +108,10 @@ export const CorrespondenceReviewPackage = (props) => {
             setEditableData,
             disableButton,
             setDisableButton,
-            fetchData
+            fetchData,
+            showModal,
+            handleModalClose,
+            handleReview
           }}
           {...props}
         />
@@ -105,13 +119,11 @@ export const CorrespondenceReviewPackage = (props) => {
       </AppSegment>
       <div className="cf-app-segment">
         <div className="cf-push-left">
-          <a href="/queue/correspondence">
-            <Button
-              name="Cancel"
-              href="/queue/correspondence"
-              classNames={['cf-btn-link']}
-            />
-          </a>
+          <Button
+            name="Cancel"
+            classNames={['cf-btn-link']}
+            onClick={handleModalClose}
+          />
         </div>
         <div className="cf-push-right">
           <Button
