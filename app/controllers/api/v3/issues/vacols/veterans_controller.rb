@@ -2,8 +2,12 @@
 
 # :reek:InstanceVariableAssumption
 class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
+<<<<<<< HEAD
   # The max amount of Issues that can be paginated on a single page
   DEFAULT_UPPER_BOUND_PER_PAGE = ENV["REQUEST_ISSUE_DEFAULT_UPPER_BOUND_PER_PAGE"].to_i
+=======
+  DEFAULT_UPPER_BOUND_PER_PAGE = ENV["REQUEST_ISSUE_DEFAULT_UPPER_BOUND_PER_PAGE"].to_i # The max amount of Issues that can be paginated on a single page
+>>>>>>> 16504fe56736da9d4f4a427b758ed31aa2a1c997
   include ApiV3FeatureToggleConcern
 
   before_action do
