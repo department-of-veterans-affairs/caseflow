@@ -53,6 +53,10 @@
     {
       "label": "Completed",
       "id": "completed"
+    },
+    {
+      "label": "Cancelled",
+      "id": "cancelled"
     }
   ],
   "SPECTIFIC_EVENT_OPTIONS": [
