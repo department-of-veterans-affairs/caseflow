@@ -19,6 +19,12 @@ const dropdownOptions = [
 const AddTaskView = (props) => {
   const task = props.task;
 
+  const objectForSelectedTaskType = () => {
+    return dropdownOptions.find((option) => {
+      return option.value === task.type;
+    });
+  };
+
   const updateTaskContent = (newContent) => {
     const newTask = { id: task.id, appealId: task.appealId, type: task.type, content: newContent };
 
@@ -45,7 +51,7 @@ const AddTaskView = (props) => {
           <div id="reactSelectContainer">
             <ReactSelectDropdown
               options={dropdownOptions}
-              defaultValue={dropdownOptions[task.type]}
+              defaultValue={objectForSelectedTaskType()}
               label="Task"
               style={{ width: '50rem' }}
               onChangeMethod={(selectedOption) => updateTaskType(selectedOption)}

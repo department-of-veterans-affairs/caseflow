@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Button from '../../../../../components/Button';
 import AddTaskView from './AddTaskView';
 import { setUnrelatedTasks } from '../../../correspondenceReducer/correspondenceActions';
@@ -8,8 +8,8 @@ import PropTypes from 'prop-types';
 const MAX_NUM_TASKS = 2;
 
 export const AddUnrelatedTaskView = (props) => {
-  const [newTasks, setNewTasks] = useState([]);
-  const [nextTaskId, setNextTaskId] = useState(1);
+  const [newTasks, setNewTasks] = useState(useSelector((state) => state.intakeCorrespondence.unrelatedTasks));
+  const [nextTaskId, setNextTaskId] = useState(newTasks.length);
   const [addTasksVisible, setAddTasksVisible] = useState(false);
 
   const dispatch = useDispatch();
