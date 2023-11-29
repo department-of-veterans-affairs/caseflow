@@ -77,8 +77,8 @@ class WarmBgsCachesJob < CaseflowJob
       decision_review_type: Appeal.name,
       decision_review_id: most_recent_appeal_ids(Appeal.name).first(LIMITS[:PRIORITY])
     )
-    ama_datadog_segment = "warm_poa_bgs_and_cache_ama_priority"
-    warm_poa_and_cache_for_ama_appeals(claimants_for_hearing, ama_start_time, ama_datadog_segment)
+    ama_custom_metrics_segment = "warm_poa_bgs_and_cache_ama_priority"
+    warm_poa_and_cache_for_ama_appeals(claimants_for_hearing, ama_start_time, ama_custom_metrics_segment)
   end
 
   # Warm POA and cache 1000(legacy + ama) appeals with active ScheduleHearingTask that have
@@ -96,8 +96,8 @@ class WarmBgsCachesJob < CaseflowJob
       decision_review_type: Appeal.name,
       decision_review_id: most_recent_appeal_ids(Appeal.name).first(LIMITS[:MOST_RECENT])
     )
-    ama_datadog_segment = "warm_poa_bgs_and_cache_ama_recent"
-    warm_poa_and_cache_for_ama_appeals(claimants_for_hearing, ama_start_time, ama_datadog_segment)
+    ama_custom_metrics_segment = "warm_poa_bgs_and_cache_ama_recent"
+    warm_poa_and_cache_for_ama_appeals(claimants_for_hearing, ama_start_time, ama_custom_metrics_segment)
   end
 
   # Warm POA for claimants that haven't been updated in a while and since we're warming, let's
