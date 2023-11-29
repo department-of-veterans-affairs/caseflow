@@ -6,7 +6,21 @@ class CaseDistributionLeversController < ApplicationController
     @acd_history = CaseDistributionAuditLeverEntry.past_year
     @user_is_an_acd_admin = current_user.admin?
 
-    render "index"
+    if Rails.env.development? || Rails.env.test?
+      render "test"
+    else
+      render "index"
+    end
+  end
+
+  def create_acd_group_org_singleton
+    if params["create_or_destroy"] == "create"
+      CDAControlGroup.singleton
+    else
+      Organization.where(name: "Case Distribution Algorithm Control Group").first.destroy
+    end
+
+    redirect_back(fallback_location: "test")
   end
 
   def update_levers_and_history
@@ -56,6 +70,8 @@ class CaseDistributionLeversController < ApplicationController
   def verify_access
     return true if current_user.admin?
     return true if current_user.can?("View Levers")
+    return true if Rails.env.development?
+    return true if Rails.env.test?
 
     Rails.logger.debug("User with roles #{current_user.roles.join(', ')} "\
       "couldn't access #{request.original_url}")
