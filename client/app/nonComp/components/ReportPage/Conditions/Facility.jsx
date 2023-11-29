@@ -26,7 +26,7 @@ export const Facility = ({ control, field, name }) => {
   const fieldName = `${name}.options.facilityCodes`;
 
   return (
-    <div className="report-page-multi-select-dropdown">
+    <div className="report-page-multi-select-dropdown facility">
       <Controller
         control={control}
         name={fieldName}
