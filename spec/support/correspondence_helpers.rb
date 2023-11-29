@@ -48,7 +48,7 @@ module CorrespondenceHelpers
 
     click_button("Continue")
     click_button("+ Add tasks")
-    find_by_id("reactSelectContainer").click
+    all("#reactSelectContainer")[0].click
     find_by_id("react-select-2-option-0").click
     find_by_id("content", visible: :all).fill_in with: "Correspondence test text"
     click_button("Continue")
