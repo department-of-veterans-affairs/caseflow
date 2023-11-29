@@ -57,6 +57,9 @@ class ClaimHistoryService
 
     @events.sort_by! { |event| [event.task_id, event.event_date] }
 
+    # This currently relies on the events being sorted before hand
+    filter_events_for_last_action_taken!
+
     @events
   end
 
@@ -193,6 +196,19 @@ class ClaimHistoryService
 
     # Station ids are strings for some reason
     new_events.select { |event| ensure_array(@filters[:facilities]).include?(event.user_facility) }
+  end
+
+  def filter_events_for_last_action_taken!
+    return nil unless @filters[:status_report_type].present? && @filters[:status_report_type] == "last_action_taken"
+
+    # This currently assumes that the events will be sorted by task_id and event_date before this
+    # Use slice_when to group events by task_id
+    grouped_events = events.slice_when { |prev, curr| prev.task_id != curr.task_id }
+
+    # Map each group to its last event
+    filtered_events = grouped_events.map(&:last)
+
+    @events = filtered_events
   end
 
   def process_request_issue_update_events(change_data)
