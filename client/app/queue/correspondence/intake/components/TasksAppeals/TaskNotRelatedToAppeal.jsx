@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import TextareaField from '../../../../../components/TextareaField';
+import CheckboxModal from '../CheckboxModal';
 import ReactSelectDropdown from '../../../../../components/ReactSelectDropdown';
 import Button from '../../../../../components/Button';
 import PropTypes from 'prop-types';
@@ -17,12 +18,34 @@ const dropdownOptions = [
   { value: 'Status inquiry', label: 'Status inquiry' }
 ];
 
+const autotextOptions = ['Address updated in VACOLS',
+  'Decision sent to Senator or Congressman mm/dd/yy',
+  'Interest noted in telephone call of mm/dd/yy',
+  'Interest noted in evidence file regarding current appeal',
+  'Email - responded via email on mm/dd/yy',
+  'Email - written response req; confirmed receipt via email to Congress office on mm/dd/yy',
+  'Possible motion pursuant to BVA decision dated mm/dd/yy',
+  'Motion pursuant to BVA decision dated mm/dd/yy',
+  'Statement in support of appeal by appellant',
+  'Statement in support of appeal by rep',
+  'Medical evidence X-Rays submitted or referred by',
+  'Medical evidence clinical reports submitted or referred by',
+  'Medical evidence examination reports submitted or referred by',
+  'Medical evidence progress notes submitted or referred by',
+  "Medical evidence physician's medical statement submitted or referred by",
+  'C&P exam report',
+  'Consent form (specify)',
+  'Withdrawal of issues',
+  'Response to BVA solicitation letter dated mm/dd/yy',
+  'VAF 9 (specify)'];
+
 const TaskNotRelatedToAppeal = (props) => {
   const task = useSelector((state) => state.intakeCorrespondence.unrelatedTasks.find((uTasks) => {
     return uTasks.id === props.taskId;
   }), shallowEqual);
   const [type, setType] = useState('');
   const [content, setContent] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     const canContinue = (content !== '') && (type !== '');
@@ -70,8 +93,30 @@ const TaskNotRelatedToAppeal = (props) => {
     props.taskUpdatedCallback(newTask);
   }, [task, type]);
 
+  const handleModalToggle = () => {
+    setModalVisible(!modalVisible);
+  };
+
+  const handleAutotext = (autoTextValues) => {
+    let autoTextOutput = '';
+
+    if (autoTextValues.length > 0) {
+      autoTextValues.forEach((id) => {
+        autoTextOutput += `${autotextOptions[id] }\n`;
+      });
+    }
+    updateTaskContent(autoTextOutput);
+    handleModalToggle();
+  };
+
   return (
     <div key={task.id} style={{ display: 'block', marginRight: '2rem' }}>
+      {modalVisible && <CheckboxModal
+        checkboxData={autotextOptions}
+        toggleModal={handleModalToggle}
+        closeHandler={handleModalToggle}
+        handleAccept={handleAutotext}
+      />}
       <div className="gray-border"
         style={
           { display: 'block', padding: '2rem 2rem', marginLeft: '3rem', marginBottom: '3rem', width: '50rem' }
@@ -99,9 +144,11 @@ const TaskNotRelatedToAppeal = (props) => {
             onChange={updateTaskContent}
           />
           <Button
+            id="addAutotext"
             name="Add"
             styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
             classNames={['cf-btn-link', 'cf-left-side']}
+            onClick={handleModalToggle}
           >
             Add autotext
           </Button>

@@ -148,17 +148,16 @@ RSpec.feature("The Correspondence Intake page") do
 
     it "Re-enables continue button when all new task has been filled out" do
       click_on("+ Add tasks")
-      page.find(:xpath, '//*[@id="reactSelectContainer"]/div/div').click
-      page.find("#react-select-2-input").fill_in with: "CAVC Correspondence"
-      page.find(".css-e42auv", text: "CAVC Correspondence").click
+      all("#reactSelectContainer")[0].click
+      find_by_id("react-select-2-option-1").click
       expect(page).to have_button("button-continue", disabled: true)
       find_by_id("content").fill_in with: "Correspondence Text"
       expect(page).to have_button("button-continue", disabled: false)
     end
 
-    it "Re populates feilds after going back a step and then continuing forward again" do
+    it "Re populates fields after going back a step and then continuing forward again" do
       click_on("+ Add tasks")
-      find_by_id("reactSelectContainer").click
+      all("#reactSelectContainer")[0].click
       find_by_id("react-select-2-option-0").click
       find_by_id("content").fill_in with: "Correspondence test text"
       click_button("button-back-button")
@@ -190,6 +189,72 @@ RSpec.feature("The Correspondence Intake page") do
         expect(page).to have_content("Review Tasks & Appeals")
         expect(page.current_url.include?("#task-not-related-to-an-appeal")).to eq(true)
       end
+    end
+  end
+
+  context "The user is able to use the autotext feature" do
+    before :each do
+      FeatureToggle.enable!(:correspondence_queue)
+      User.authenticate!(roles: ["Mail Intake"])
+      @correspondence_uuid = "12345"
+      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+      click_on("button-continue")
+      click_on("+ Add tasks")
+    end
+
+    it "The user can open the autotext modal" do
+      find_by_id("addAutotext").click
+      within find_by_id("autotextModal") do
+        expect(page).to have_text("Cancel")
+      end
+    end
+
+    it "The user can close the modal with the cancel button." do
+      find_by_id("addAutotext").click
+      within find_by_id("autotextModal") do
+        expect(page).to have_text("Cancel")
+      end
+      find_by_id("Add-autotext-button-id-0").click
+      cancel_count = all("#button-Cancel").length
+      expect(cancel_count).to eq 1
+    end
+
+    it "The user can close the modal with the x button located in the top right." do
+      find_by_id("addAutotext").click
+      within find_by_id("autotextModal") do
+        expect(page).to have_text("Cancel")
+      end
+      find_by_id("Add-autotext-button-id-close").click
+      cancel_count = all("#button-Cancel").length
+      expect(cancel_count).to eq 1
+    end
+
+    it "The user is able to add autotext" do
+      fill_in "content", with: "debug data for autofill"
+      expect(find_by_id("content").text).to eq "debug data for autofill"
+      find_by_id("addAutotext").click
+      first_checkbox_text = ""
+      within find_by_id("autotextModal") do
+        first_checkbox = all(class: "cf-form-checkbox").first
+        first_checkbox_text = first_checkbox.text
+        first_checkbox.click
+        find_by_id("Add-autotext-button-id-1").click
+      end
+      expect(find_by_id("content").text).to eq first_checkbox_text
+    end
+
+    it "Persists data if the user hits the back button, then returns" do
+      find_by_id("addAutotext").click
+      first_checkbox_text = ""
+      within find_by_id("autotextModal") do
+        first_checkbox = all(class: "cf-form-checkbox").first
+        first_checkbox_text = first_checkbox.text
+        first_checkbox.click
+        find_by_id("Add-autotext-button-id-1").click
+      end
+      click_on("button-back-button")
+      click_on("button-continue")
+      expect(find_by_id("content").text).to eq first_checkbox_text
     end
   end
 end
