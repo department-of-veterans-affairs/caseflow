@@ -8,6 +8,10 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
 
   let(:slack_service) { SlackService.new(url: "http://www.example.com") }
 
+  before(:all) do
+    system("bundle exec rails r -e test db/scripts/external/create_vbms_ext_claim_table.rb")
+  end
+
   before do
     allow(SlackService).to receive(:new).with(url: anything).and_return(slack_service)
     allow(slack_service).to receive(:send_notification) { |_, first_arg| @slack_msg = first_arg }
