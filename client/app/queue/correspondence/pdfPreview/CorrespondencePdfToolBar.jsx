@@ -114,22 +114,6 @@ const CorrespondencePdfToolBar = (props) => {
           ariaLabel="rotate document">
           <RotateIcon />
         </Button> */}
-        <span className="cf-pdf-spaced-buttons">|</span>
-        <Button
-          name="download"
-          classNames={['cf-pdf-button cf-pdf-download-icon']}
-          onClick={openDownloadLink}
-          ariaLabel="download pdf">
-          <DownloadIcon />
-        </Button>
-        {/* <Button
-          name="search"
-          classNames={['cf-pdf-button cf-pdf-search usa-search usa-search-small']}
-          ariaLabel="search text"
-          type="submit"
-          onClick={handleSearchBarToggle}>
-          <SearchIcon />
-        </Button> */}
       </span>
     </div>
   );
