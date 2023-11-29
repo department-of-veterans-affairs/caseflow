@@ -103,10 +103,26 @@ RSpec.feature("The Correspondence Intake page") do
       expect(page).to have_button("+ Add tasks")
     end
 
-    it "Two tasks is the limit for the user" do
+    it "Four tasks is the limit for the user" do
+      click_on("+ Add tasks")
+      click_on("+ Add tasks")
       click_on("+ Add tasks")
       click_on("+ Add tasks")
       expect(page).to have_button("+ Add tasks", disabled: true)
+    end
+
+    it "Two 'Other Motion' tasks is the limit for user" do
+      click_on("+ Add tasks")
+      all("#reactSelectContainer")[0].click
+      page.find("#react-select-2-input").fill_in with: "Other motion"
+      page.find(".css-e42auv", text: "Other motion").click
+      expect(page).to have_content("Other motion")
+      click_on("+ Add tasks")
+      all("#reactSelectContainer")[0].click
+      page.find("#react-select-2-input").fill_in with: "Other motion"
+      page.find(".css-e42auv", text: "Other motion").click
+      expect(page).to have_content("Other motion")
+      expect(page).to have_button("+ Add tasks", disabled: false)
     end
 
     it "Two unrelated tasks have been added" do

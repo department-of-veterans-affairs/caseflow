@@ -30,6 +30,30 @@ const TaskNotRelatedToAppeal = (props) => {
     props.setUnrelatedTasksCanContinue(canContinue);
   }, [content, type]);
 
+  const unrelatedTasks = useSelector((state) => state.intakeCorrespondence.unrelatedTasks);
+
+  // up to 2 other motion tasks can be created in the workflow
+  const filterTaskOptions = () => {
+    let otherMotionCount = 0;
+    const filteredTaskNames = unrelatedTasks.map((unrelatedTask) => {
+      if (unrelatedTask.type === 'Other motion') {
+        // eslint-disable-next-line no-plusplus
+        otherMotionCount++;
+      }
+
+      return unrelatedTask.type;
+    });
+
+    return dropdownOptions.filter((value) => {
+      // only filter 'other motion' if there are 2 other motion tasks already created
+      if (value.value === 'Other motion' && otherMotionCount < 2) {
+        return true;
+      }
+
+      return !filteredTaskNames.includes(value.value);
+    });
+  };
+
   const updateTaskContent = useCallback((newContent) => {
     const newTask = { id: task.id, type: task.type, content: newContent };
 
@@ -59,7 +83,7 @@ const TaskNotRelatedToAppeal = (props) => {
         >
           <div id="reactSelectContainer">
             <ReactSelectDropdown
-              options={dropdownOptions}
+              options={filterTaskOptions()}
               defaultValue={dropdownOptions[task.type]}
               label="Task"
               style={{ width: '50rem' }}
