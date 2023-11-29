@@ -40,7 +40,7 @@ FactoryBot.define do
     end
 
     trait :vlj do
-      css_id { "BVADSLADER" }
+      css_id { "BVASUD#{generate :css_id}" }
       full_name { "VLJ" }
       station_id { "101" }
     end
