@@ -13,6 +13,9 @@ class RequestIssue < CaseflowRecord
   include HasDecisionReviewUpdatedSince
   include SyncLock
 
+  # Pagination for VBMS API
+  paginates_per ENV["REQUEST_ISSUE_PAGINATION_OFFSET"].to_i
+
   # how many days before we give up trying to sync decisions
   REQUIRES_PROCESSING_WINDOW_DAYS = 30
 
