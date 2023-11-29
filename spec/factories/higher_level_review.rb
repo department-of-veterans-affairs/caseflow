@@ -227,7 +227,15 @@ FactoryBot.define do
 
     trait :with_intake do
       after(:create) do |hlr|
-        create(:intake, :completed, detail: hlr, veteran_file_number: hlr.veteran_file_number)
+        css_id = "CSS_ID#{generate :css_id}"
+
+        intake_user = User.find_by(css_id: css_id)
+
+        if intake_user.nil?
+          intake_user = create(:user, css_id: css_id)
+        end
+
+        create(:intake, :completed, detail: hlr, veteran_file_number: hlr.veteran_file_number, user: intake_user)
       end
     end
 

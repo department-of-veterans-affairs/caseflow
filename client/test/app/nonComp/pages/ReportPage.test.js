@@ -38,6 +38,15 @@ describe('ReportPage', () => {
     getVhaUsers();
   });
 
+  const navigateToConditionInput = async (condition) => {
+    const addConditionButton = screen.getByText('Add Condition');
+
+    await userEvent.click(addConditionButton);
+    const select = screen.getByText('Select a variable');
+
+    await selectEvent.select(select, [condition]);
+  };
+
   describe('renders correctly', () => {
     it('passes a11y testing', async () => {
       const { container } = setup();
@@ -169,18 +178,9 @@ describe('ReportPage', () => {
   describe('Decision Review Type Section', () => {
     beforeEach(clickOnReportType);
 
-    const navigateToDecisionReviewType = async () => {
-      const addConditionButton = screen.getByText('Add Condition');
-
-      await userEvent.click(addConditionButton);
-      const select = screen.getByText('Select a variable');
-
-      await selectEvent.select(select, ['Decision Review Type']);
-    };
-
     it('shows the correct checkbox fields', async () => {
       setup();
-      await navigateToDecisionReviewType();
+      await navigateToConditionInput('Decision Review Type');
 
       expect(screen.getByText('Higher-Level Reviews')).toBeInTheDocument();
       expect(screen.getByText('Supplemental Claims')).toBeInTheDocument();
@@ -188,7 +188,7 @@ describe('ReportPage', () => {
 
     it('clicking the checkbox should toggle the checked status', async () => {
       setup();
-      await navigateToDecisionReviewType();
+      await navigateToConditionInput('Decision Review Type');
 
       const checkbox = screen.getByLabelText('Higher-Level Reviews');
 
@@ -198,6 +198,20 @@ describe('ReportPage', () => {
       await userEvent.click(checkbox);
       expect(checkbox.checked).toEqual(false);
 
+    });
+  });
+
+  describe('Facility Section', () => {
+    beforeEach(clickOnReportType);
+
+    it('allows you to select facilities', async () => {
+      setup();
+      await navigateToConditionInput('Facility');
+
+      const dropdown = screen.getByLabelText('Facility Type');
+
+      await selectEvent.select(dropdown, ['Albuquerque']);
+      expect(screen.getByText('Albuquerque')).toBeInTheDocument();
     });
   });
 
@@ -237,6 +251,19 @@ describe('ReportPage', () => {
       expect(screen.getAllByText('Specific Events / Actions').length).toBe(1);
     });
 
+    it('should list four radio buttons options when Status is selected in ReportType', async () => {
+      setup();
+      await selectEvent.select(screen.getByLabelText('Report Type'), ['Status']);
+
+      expect(screen.getAllByText('Status').length).toBe(1);
+      expect(screen.getAllByRole('radio').length).toBe(4);
+      expect(screen.getAllByText('All Statuses').length).toBe(1);
+      expect(screen.getAllByText('Specific Status').length).toBe(1);
+      expect(screen.getAllByText('Last Action Taken').length).toBe(1);
+      expect(screen.getAllByText('Summary').length).toBe(1);
+
+    });
+
     it('should add 10 checkbox when radio Specific Events/ Actions is clicked', async () => {
       setup();
 
@@ -252,6 +279,24 @@ describe('ReportPage', () => {
 
       REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS.map(
         (option) => expect(screen.getAllByText(option.label)).toBeTruthy()
+      );
+    });
+
+    it('should add 3 checkbox when radio Specific Status is clicked', async () => {
+      setup();
+
+      await selectEvent.select(screen.getByLabelText('Report Type'), ['Status']);
+      expect(screen.getAllByText('Status').length).toBe(1);
+
+      const specificEvents = screen.getAllByText('Specific Status');
+
+      expect(specificEvents.length).toBe(1);
+
+      fireEvent.click(screen.getByLabelText('Specific Status'));
+      expect(screen.getAllByRole('checkbox').length).toBe(3);
+
+      REPORT_TYPE_CONSTANTS.SPECIFIC_STATUS_OPTIONS.map((option) =>
+        expect(screen.getAllByText(option.label)).toBeTruthy()
       );
     });
   });
