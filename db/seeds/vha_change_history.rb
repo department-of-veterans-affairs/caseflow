@@ -43,7 +43,7 @@ module Seeds
     end
 
     def create_hlr_seeds_for_change_history
-      5.times do
+      15.times do
         # Adds hlr in in-progress tab with no decision date
         create_hlr_without_decision_date
         # Adds Prior Decision Date in the HLR
@@ -60,7 +60,7 @@ module Seeds
     end
 
     def create_sc_seeds_for_change_history
-      5.times do
+      15.times do
         create_sc_with_disposition
         # create_sc_completed
         create_sc_with_updated_assigned_at
