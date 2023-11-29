@@ -32,6 +32,7 @@ class ChangeHistoryReporter
 
   def event_filter_headers
     @event_filters.to_a.flatten
+    # [@event_filters.to_a.map { |pair| pair.map(&:to_s) }.flatten.join(" ")]
   end
 
   def as_csv

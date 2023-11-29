@@ -285,7 +285,7 @@ const ReportPage = ({ history }) => {
       }
     >
       {/* TODO: This is ugly fix me please */}
-      { isCSVGenerating && <LoadingMessage message=<h3>Generating CSV... <LoadingIcon /></h3> />}
+      { isCSVGenerating && <h3><span><LoadingMessage message="Generating CSV..." /><LoadingIcon /></span></h3>}
       <h1>Generate task report</h1>
       <FormProvider {...methods}>
         <form>

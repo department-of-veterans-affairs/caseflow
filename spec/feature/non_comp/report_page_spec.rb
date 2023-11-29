@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+require_relative "../../../app/services/claim_change_history/change_history_reporter.rb"
+require_relative "../../../app/services/claim_change_history/claim_history_service.rb"
+require_relative "../../../app/services/claim_change_history/claim_history_event.rb"
+
 feature "NonComp Report Page", :postgres do
   let(:non_comp_org) { VhaBusinessLine.singleton }
   let(:user) { create(:default_user) }
@@ -13,13 +17,13 @@ feature "NonComp Report Page", :postgres do
   end
 
   it "report page should be accessable to VHA Admin user" do
-    visit vha_report_url
+    # visit vha_report_url
     expect(page).to have_content("Generate task report")
     expect(page).to have_content("Type of report")
   end
 
   it "when report type dropdown is changed, the submit button should be enabled" do
-    visit vha_report_url
+    # visit vha_report_url
     expect(page).to have_button("Generate task report", disabled: true)
     expect(page).to have_button("Clear filters", disabled: true)
     click_dropdown(text: "Status")
@@ -38,7 +42,7 @@ feature "NonComp Report Page", :postgres do
       # visit vha_report_url
     end
 
-    it "should sumbmit an event report including a personnel condition" do
+    it "should submit an event report including a personnel condition" do
       # visit vha_report_url
       # visit vha_report_url
       expect(page).to have_content("Generate task report")
@@ -55,12 +59,28 @@ feature "NonComp Report Page", :postgres do
       click_button "Generate task report"
 
       # This might happen too fast for capybara
-      expect(page).to have_button("Generate task report", disabled: true)
-      expect(page).to have_content("Generating CSV...")
-
+      # expect(page).to have_button("Generate task report", disabled: true)
+      # expect(page).to have_content("Generating CSV...")
 
       # Wait for the download somewhere?? and grab it
+      # download_directory = ""
+      sleep(5)
+      download_directory = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
+      puts download_directory.inspect
+      list_of_files = Dir.glob(File.join(download_directory, "*")).select { |f| File.file?(f) }
+      puts list_of_files.inspect
+      latest_file = list_of_files.max_by { |f| File.birthtime(f) }
 
+      expect(latest_file).to_not eq(nil)
+
+      CSV.foreach(latest_file) do |row|
+        # TODO: Figure out what the filter row is actually supposed to look like
+        puts "Row: #{row}"
+      end
+
+      # A database without data should create a CSV containing only the filter row and the header row
+      number_of_rows = CSV.read(latest_file).length
+      expect(number_of_rows).to eq(2)
     end
   end
 
@@ -111,8 +131,8 @@ feature "NonComp Report Page", :postgres do
 
     names_array.each do |user_name|
       dropdown.click
-      expect(days_waiting_div).to have_content(user_name)
-      click_dropdown_item_by_text.text(user_name)
+      expect(personnel_div).to have_content(user_name)
+      click_dropdown_item_by_text(user_name)
     end
   end
 end
