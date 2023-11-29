@@ -11,6 +11,7 @@ export const AddUnrelatedTaskView = (props) => {
   const [newTasks, setNewTasks] = useState(useSelector((state) => state.intakeCorrespondence.unrelatedTasks));
   const [nextTaskId, setNextTaskId] = useState(newTasks.length);
   const [addTasksVisible, setAddTasksVisible] = useState(false);
+  const [availableTaskTypeOptions, setavailableTaskTypeOptions] = useState([]);
 
   const dispatch = useDispatch();
 
@@ -61,6 +62,10 @@ export const AddUnrelatedTaskView = (props) => {
     }
   }, [addTasksVisible]);
 
+  useEffect(() => {
+    setavailableTaskTypeOptions(props.filterUnavailableTaskTypeOptions(newTasks));
+  }, [newTasks]);
+
   const getTasks = () => {
     return newTasks.toSorted((t1, t2) => {
       if (t1.id < t2.id) {
@@ -107,6 +112,8 @@ export const AddUnrelatedTaskView = (props) => {
                 removeTask={removeTask}
                 taskUpdatedCallback={taskUpdatedCallback}
                 displayRemoveCheck
+                allTaskTypeOptions={props.allTaskTypeOptions}
+                availableTaskTypeOptions={availableTaskTypeOptions}
               />
             ))}
           </div>
@@ -127,7 +134,9 @@ export const AddUnrelatedTaskView = (props) => {
 };
 
 AddUnrelatedTaskView.propTypes = {
-  setUnrelatedTasksCanContinue: PropTypes.func.isRequired
+  setUnrelatedTasksCanContinue: PropTypes.func.isRequired,
+  filterUnavailableTaskTypeOptions: PropTypes.func.isRequired,
+  allTaskTypeOptions: PropTypes.array.isRequired
 };
 
 export default AddUnrelatedTaskView;

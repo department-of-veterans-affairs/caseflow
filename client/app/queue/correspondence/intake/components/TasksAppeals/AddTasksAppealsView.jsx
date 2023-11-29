@@ -18,12 +18,46 @@ const mailTasksRight = [
   'Associated with Claims Folder'
 ];
 
+const taskTypeOptions = [
+  { value: 'CAVC Correspondence', label: 'CAVC Correspondence' },
+  { value: 'Congressional interest', label: 'Congressional interest' },
+  { value: 'Death certificate', label: 'Death certificate' },
+  { value: 'FOIA request', label: 'FOIA request' },
+  { value: 'Other motion', label: 'Other motion' },
+  { value: 'Power of attorney-related', label: 'Power of attorney-related' },
+  { value: 'Privacy act request', label: 'Privacy act request' },
+  { value: 'Privacy complaint', label: 'Privacy complaint' },
+  { value: 'Status inquiry', label: 'Status inquiry' }
+];
+
 export const AddTasksAppealsView = (props) => {
   const mailTasks = useSelector((state) => state.intakeCorrespondence.mailTasks);
   const [relatedTasksCanContinue, setRelatedTasksCanContinue] = useState(true);
   const [unrelatedTasksCanContinue, setUnrelatedTasksCanContinue] = useState(true);
 
   const dispatch = useDispatch();
+
+  const filterUnavailableTaskTypeOptions = (tasks) => {
+    let otherMotionCount = 0;
+
+    const filteredTaskNames = tasks.map((task) => {
+      if (task.type === 'Other motion') {
+        otherMotionCount += 1;
+      }
+
+      return task.type;
+    });
+
+    return taskTypeOptions.filter((option) => {
+      // Up to 2 other motion tasks can be created in the workflow
+      // so only filter 'other motion' if there are 2 other motion tasks already created
+      if (option.value === 'Other motion' && otherMotionCount < 2) {
+        return true;
+      }
+
+      return !filteredTaskNames.includes(option.value);
+    });
+  };
 
   useEffect(() => {
     props.onContinueStatusChange(relatedTasksCanContinue && unrelatedTasksCanContinue);
@@ -72,7 +106,11 @@ export const AddTasksAppealsView = (props) => {
             Add new tasks related to this correspondence or to an appeal not yet created in Caseflow.
           </p>
           <div>
-            <AddUnrelatedTaskView setUnrelatedTasksCanContinue={setUnrelatedTasksCanContinue} />
+            <AddUnrelatedTaskView
+              setUnrelatedTasksCanContinue={setUnrelatedTasksCanContinue}
+              filterUnavailableTaskTypeOptions={filterUnavailableTaskTypeOptions}
+              allTaskTypeOptions={taskTypeOptions}
+            />
           </div>
         </div>
 
@@ -82,6 +120,8 @@ export const AddTasksAppealsView = (props) => {
           <AddAppealRelatedTaskView
             correspondenceUuid={props.correspondenceUuid}
             setRelatedTasksCanContinue={setRelatedTasksCanContinue}
+            filterUnavailableTaskTypeOptions={filterUnavailableTaskTypeOptions}
+            allTaskTypeOptions={taskTypeOptions}
           />
         </div>
       </div>
