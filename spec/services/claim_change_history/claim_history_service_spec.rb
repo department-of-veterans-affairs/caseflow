@@ -172,6 +172,16 @@ describe ClaimHistoryService do
         expect(add_decision_date_event.issue_description).to eq(extra_hlr_request_issue.nonrating_issue_description)
         expect(add_decision_date_event.event_user_name).to eq(update_user2.full_name)
       end
+
+      it "should sort by task id and event date" do
+        issue = hlr_task.appeal.decision_issues.last
+        issue.update(created_at: Time.zone.now + 3.days)
+        events = subject
+
+        # expect the last event to be the one with the fudged future date
+        expect(events.last.event_date).to eq(issue.created_at.utc.strftime('%F %T.%6N'))
+      end
+
     end
 
     context "with filters" do
