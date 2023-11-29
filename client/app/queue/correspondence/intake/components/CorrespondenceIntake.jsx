@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ProgressBar from 'app/components/ProgressBar';
 import Button from '../../../../components/Button';
 import PropTypes from 'prop-types';
 import AddCorrespondenceView from './AddCorrespondence/AddCorrespondenceView';
-import ConfirmationPage from './CorrespondenceConfirmation/ConfirmationPage';
 import { AddTasksAppealsView } from './TasksAppeals/AddTasksAppealsView';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { setUnrelatedTasks } from '../../correspondenceReducer/correspondenceActions';
+import { useHistory, useLocation } from 'react-router-dom';
+import { ConfirmCorrespondenceView } from './ConfirmCorrespondence/ConfirmCorrespondenceView';
 
 const progressBarSections = [
   {
@@ -28,6 +29,10 @@ export const CorrespondenceIntake = (props) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isContinueEnabled, setContinueEnabled] = useState(true);
   const [addTasksVisible, setAddTasksVisible] = useState(false);
+  const { pathname, hash, key } = useLocation();
+  const history = useHistory();
+  // For hash routing - Add element id and which step it lives on here
+  const SECTION_MAP = { 'task-not-related-to-an-appeal': 2 };
 
   const handleContinueStatusChange = (isEnabled) => {
     setContinueEnabled(isEnabled);
@@ -41,6 +46,7 @@ export const CorrespondenceIntake = (props) => {
     if (currentStep < 3) {
       setCurrentStep(currentStep + 1);
       window.scrollTo(0, 0);
+      history.replace({ hash: '' });
     }
   };
 
@@ -53,6 +59,7 @@ export const CorrespondenceIntake = (props) => {
       setCurrentStep(currentStep - 1);
       handleContinueAfterBack();
       window.scrollTo(0, 0);
+      history.replace({ hash: '' });
     }
   };
 
@@ -61,6 +68,23 @@ export const CorrespondenceIntake = (props) => {
     current: (step === currentStep)
   }),
   );
+
+  useEffect(() => {
+    if (hash === '') {
+      window.scrollTo(0, 0);
+    } else {
+      setTimeout(() => {
+        const id = hash.replace('#', '');
+
+        setCurrentStep(SECTION_MAP[id]);
+        const element = document.getElementById(id);
+
+        if (element) {
+          element.scrollIntoView();
+        }
+      }, 0);
+    }
+  }, [pathname, hash, key]);
 
   return <div>
     <ProgressBar
@@ -87,13 +111,12 @@ export const CorrespondenceIntake = (props) => {
     }
     {currentStep === 3 &&
       <div>
-        <ConfirmationPage
+        <ConfirmCorrespondenceView
           mailTasks={props.mailTasks}
           goToStep={setCurrentStep}
           toggledCorrespondences={props.toggledCorrespondences}
           selectedCorrespondences={props.correspondences.filter((currentCorrespondence) => props.toggledCorrespondences.indexOf(String(currentCorrespondence.id)) !== -1)}
         />
-
       </div>
     }
     <div>
@@ -134,6 +157,8 @@ export const CorrespondenceIntake = (props) => {
 
 CorrespondenceIntake.propTypes = {
   correspondence_uuid: PropTypes.string,
+  currentCorrespondence: PropTypes.object,
+  veteranInformation: PropTypes.object,
   unrelatedTasks: PropTypes.arrayOf(Object),
   setUnrelatedTasks: PropTypes.func,
   mailTasks: PropTypes.objectOf(PropTypes.bool)
