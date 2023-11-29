@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { axe } from 'jest-axe';
+// import { axe } from 'jest-axe';
 
 import ReduxBase from 'app/components/ReduxBase';
 import ReviewPage from 'app/nonComp/pages/ReviewPage';
@@ -66,37 +66,37 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
-// describe('ReviewPage with Non-admin Vha User', () => {
-//   beforeEach(() => {
-//     renderReviewPage(nonAdminVhaProps);
-//   });
+describe('ReviewPage with Non-admin Vha User', () => {
+  beforeEach(() => {
+    renderReviewPage(nonAdminVhaProps);
+  });
 
-//   it('passes a11y testing', async () => {
-//     const { container } = setup();
+  // it('passes a11y testing', async () => {
+  //   const { container } = setup();
 
-//     const results = await axe(container);
+  //   const results = await axe(container);
 
-//     expect(results).toHaveNoViolations();
-//   });
+  //   expect(results).toHaveNoViolations();
+  // });
 
-//   it('renders correctly', () => {
-//     const { container } = setup();
+  // it('renders correctly', () => {
+  //   const { container } = setup();
 
-//     expect(container).toMatchSnapshot();
-//   });
+  //   expect(container).toMatchSnapshot();
+  // });
 
-//   it('renders a button to intake a new form', () => {
-//     expect(screen.getByText('+ Intake new form')).toBeInTheDocument();
-//   });
+  it('renders a button to intake a new form', () => {
+    expect(screen.getByText('+ Intake new form')).toBeInTheDocument();
+  });
 
-//   it('renders a button to download completed tasks', () => {
-//     expect(screen.getByText('Download completed tasks')).toBeInTheDocument();
-//   });
+  it('renders a button to download completed tasks', () => {
+    expect(screen.getByText('Download completed tasks')).toBeInTheDocument();
+  });
 
-//   it('does not render a button to generate task report', () => {
-//     expect(screen.findByText('Generate task report')).not.toBeInTheDocument();
-//   });
-// });
+  it('does not render a button to generate task report', () => {
+    expect(screen.queryByText('Generate task report')).not.toBeInTheDocument();
+  });
+});
 
 describe('ReviewPage with Admin Vha User', () => {
   beforeEach(() => {
