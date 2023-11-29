@@ -6,6 +6,15 @@ import { createMemoryHistory } from 'history';
 import ApiUtil from '../../../../app/util/ApiUtil';
 import CorrespondenceReviewPackage
   from '../../../../app/queue/correspondence/review_package/CorrespondenceReviewPackage';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import rootReducer from 'app/queue/reducers';
+
+jest.mock('redux', () => ({
+  ...jest.requireActual('redux'),
+  bindActionCreators: () => jest.fn().mockImplementation(() => Promise.resolve(true)),
+}));
 
 const createSpyGet = () => {
   return jest.spyOn(ApiUtil, 'get').mockImplementation(
@@ -17,6 +26,8 @@ const createSpyGet = () => {
       )
   );
 };
+
+const store = createStore(rootReducer, applyMiddleware(thunk));
 
 const LocationDisplay = () => {
   const history = useHistory();
@@ -35,9 +46,11 @@ describe('CorrespondenceReviewPackage', () => {
   });
   test('render modal', async () => {
     render(
-      <MemoryRouter>
-        <CorrespondenceReviewPackage {...props} />
-      </MemoryRouter>
+      <Provider store={store}>
+        <MemoryRouter>
+          <CorrespondenceReviewPackage {...props} />
+        </MemoryRouter>
+      </Provider>
     );
 
     expect(screen.queryByText('Cancel review of mail package')).not.toBeInTheDocument();
@@ -55,11 +68,13 @@ describe('CorrespondenceReviewPackage', () => {
   });
   test('renders modal with correct title, buttons, and text', async () => {
     render(
-      <MemoryRouter>
-        <Route >
-          <CorrespondenceReviewPackage {...props} />
-        </Route>
-      </MemoryRouter>
+      <Provider store={store}>
+        <MemoryRouter>
+          <Route >
+            <CorrespondenceReviewPackage {...props} />
+          </Route>
+        </MemoryRouter>
+      </Provider>
     );
 
     expect(screen.queryByText('Cancel review of mail package')).not.toBeInTheDocument();
@@ -79,12 +94,14 @@ describe('CorrespondenceReviewPackage', () => {
     const history = createMemoryHistory({ initialEntries: ['/queue/correspondence'] });
 
     render(
-      <Router history={history}>
-        <Route path="/queue/correspondence">
-          <CorrespondenceReviewPackage {...props} />
-          <LocationDisplay />
-        </Route>
-      </Router>
+      <Provider store={store}>
+        <Router history={history}>
+          <Route path="/queue/correspondence">
+            <CorrespondenceReviewPackage {...props} />
+            <LocationDisplay />
+          </Route>
+        </Router>
+      </Provider>
     );
 
     expect(screen.queryByText('Cancel review of mail package')).not.toBeInTheDocument();

@@ -152,7 +152,7 @@ export const ReviewForm = (props) => {
     };
 
     await ApiUtil.patch(
-      `/queue/correspondence/${correspondence.correspondenceId}`,
+      `/queue/correspondence/${correspondence.correspondence_uuid}`,
       payloadData
     ).then((response) => {
       const { body } = response;
