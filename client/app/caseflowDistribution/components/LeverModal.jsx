@@ -30,22 +30,16 @@ function SaveLeversToDB(leverStore) {
 
   ApiUtil.post('/case_distribution_levers/update_levers_and_history', { leversData })
     .then((response) => {
-      console.log('POST request successful', response);
       UpdateLeverHistory(leverStore);
       SaveLeverChanges(leverStore);
     })
     .catch(error => {
-      console.error('Error in POST request:', error);
     });
-    console.log('After making the POST request');
 }
 
 function leverList(leverStore) {
   const levers = leverStore.getState().levers;
   const initialLevers = leverStore.getState().initial_levers;
-
-  console.log('Updated Levers:', levers)
-  console.log('Initial Levers:', initialLevers)
 
   return (
     <div>
@@ -83,8 +77,13 @@ export function LeverSaveButton({ leverStore }) {
   useEffect(() => {
     const unsubscribe = leverStore.subscribe(() => {
       const state = leverStore.getState();
-      console.log('Leverstore State Changed:', state)
-      setChangesOccurred(state.changesOccurred);
+
+      const leversString = JSON.stringify(state.levers);
+      const initialLeversString = JSON.stringify(state.initial_levers);
+
+      const leverChangesOccurred = leversString !== initialLeversString;
+
+      setChangesOccurred(leverChangesOccurred);
     });
 
     return () => {

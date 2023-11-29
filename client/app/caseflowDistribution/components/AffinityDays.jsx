@@ -36,8 +36,6 @@ const AffinityDays = (props) => {
           return op;
         });
 
-        console.log('Updated Lever:', { ...l, options: updatedOptions });
-
         return { ...l, options: updatedOptions };
 
       }
@@ -61,9 +59,7 @@ const AffinityDays = (props) => {
         }
         return l;
       });
-      console.log('Before update:', affinityLevers)
       setAffinityLevers(updatedLevers);
-      console.log('After update:', updatedLevers)
 
       leverStore.dispatch({
         type: Constants.UPDATE_LEVER_VALUE,
