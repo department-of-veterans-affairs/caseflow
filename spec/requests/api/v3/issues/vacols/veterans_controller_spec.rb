@@ -58,7 +58,7 @@ describe Api::V3::Issues::Vacols::VeteransController, :postgres, type: :request 
           get_vacols_issues(file_number: 87)
           expect(response).to have_http_status(404)
 
-          get_vacols_issues(file_number: 12345678987654321)
+          get_vacols_issues(file_number: 123_456_789_876_543_21)
           expect(response).to have_http_status(404)
 
           get_vacols_issues(file_number: "fakevet")
