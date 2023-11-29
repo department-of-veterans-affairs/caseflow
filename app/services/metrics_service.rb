@@ -38,6 +38,8 @@ class MetricsService
       CustomMetricsService.emit_gauge(sent_to_info)
 
       sent_to << Metric::LOG_SYSTEMS[:datadog]
+      sent_to << Metric::LOG_SYSTEMS[:dynatrace]
+
     end
 
     Rails.logger.info("FINISHED #{description}: #{stopwatch}")
@@ -64,7 +66,7 @@ class MetricsService
     Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
     Raven.capture_exception(error, extra: { type: "request_error", service: service, name: name, app: app })
 
-    increment_datadog_counter("request_error", service, name, app) if service
+    increment_custom_metrics_counter("request_error", service, name, app) if service
 
     metric_params = {
       name: "error",
@@ -88,11 +90,11 @@ class MetricsService
     # This is just to capture the metric.
     raise
   ensure
-    increment_datadog_counter("request_attempt", service, name, app) if service
+    increment_custom_metrics_counter("request_attempt", service, name, app) if service
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-  private_class_method def self.increment_datadog_counter(metric_name, service, endpoint_name, app_name)
+  private_class_method def self.increment_custom_metrics_counter(metric_name, service, endpoint_name, app_name)
     CustomMetricsService.increment_counter(
       metric_group: "service",
       metric_name: metric_name,
@@ -106,7 +108,7 @@ class MetricsService
   # :reek:ControlParameter
   def self.store_record_metric(uuid, params, caller)
     return nil unless FeatureToggle.enabled?(:metrics_monitoring, user: RequestStore[:current_user])
-
+#add check for if caseflow
     name = "caseflow.server.metric.#{params[:name]&.downcase&.gsub(/::/, '.')}"
     params = {
       uuid: uuid,
