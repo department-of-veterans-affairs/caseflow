@@ -5,43 +5,41 @@ import { nonCompReducer, mapDataToInitialState } from '../reducers';
 import { vhaTaskFilterDetails } from '../../../test/data/taskFilterDetails';
 
 const ReduxDecorator = (Story, options) => {
-  // const props = {
-  //   serverNonComp: {
-  //     featureToggles: {
-  //       decisionReviewQueueSsnColumn: options.args.decisionReviewQueueSsnColumn
-  //     },
-  //     businessLine: options.args.businessLine || 'Veterans Health Administration',
-  //     businessLineUrl: options.args.businessLineUrl || 'vha',
-  //     decisionIssuesStatus: {},
-  //     isBusinessLineAdmin: options.args.isBusinessLineAdmin || false,
-  //     businessLineConfig: {
-  //       canGenerateClaimHistory: options.args.canGenerateClaimHistory || false,
-  //     }
-  //   }
-  // };
+  const tabs = (typeValue) => {
+    if (typeValue === 'vha') {
+      return ['incomplete', 'in_progress', 'completed'];
+    }
 
-  const basicVhaProps = {
+    return ['in_progress', 'completed'];
+  };
+
+  const props = {
     serverNonComp: {
       businessLine: 'Veterans Health Administration',
-      businessLineUrl: 'vha',
+      businessLineUrl: options.args.businessLineType || 'vha',
       decisionIssuesStatus: {},
-      isBusinessLineAdmin: true,
+      isBusinessLineAdmin: options.args.isBusinessLineAdmin,
       businessLineConfig: {
-        tabs: ['incomplete', 'in_progress', 'completed'],
-        canGenerateClaimHistory: options.args.canGenerateClaimHistory || false,
+        tabs: tabs(options.args.businessLineType),
+        canGenerateClaimHistory: options.args.canGenerateClaimHistory,
       },
       taskFilterDetails: vhaTaskFilterDetails,
       featureToggles: {
-        decisionReviewQueueSsnColumn: true
+        decisionReviewQueueSsnColumn: options.args.decisionReviewQueueSsnColumn
       }
     }
   };
 
   return (
-    <ReduxBase reducer={nonCompReducer} initialState={mapDataToInitialState(basicVhaProps)}>
+    <ReduxBase reducer={nonCompReducer} initialState={mapDataToInitialState(props)}>
       <Story />
     </ReduxBase>
   );
+};
+
+const defaultArgs = {
+  isBusinessLineAdmin: true,
+  canGenerateClaimHistory: true
 };
 
 export default {
@@ -49,7 +47,17 @@ export default {
   component: ReviewPage,
   decorators: [ReduxDecorator],
   parameters: {},
-  args: {}
+  args: defaultArgs,
+  argTypes: {
+    canGenerateClaimHistory: { control: 'boolean' },
+    isBusinessLineAdmin: { control: 'boolean' },
+    businessLineType: {
+      control: {
+        type: 'select',
+        options: ['vha', 'generic'],
+      },
+    }
+  }
 };
 
 const Template = (args) => {
