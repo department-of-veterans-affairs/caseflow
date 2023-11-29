@@ -66,7 +66,7 @@ export const AddTasksAppealsView = (props) => {
           </div>
         </div>
 
-        <div>
+        <div id="task-not-related-to-an-appeal">
           <h2 style={{ margin: '3rem auto 1rem auto' }}>Tasks not related to an Appeal</h2>
           <p style={{ marginTop: '0rem', marginBottom: '2rem' }}>
             Add new tasks related to this correspondence or to an appeal not yet created in Caseflow.
