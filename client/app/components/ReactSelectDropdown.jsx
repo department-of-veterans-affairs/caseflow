@@ -59,7 +59,8 @@ const selectContainerStyles = css({
 
 const ReactSelectDropdown = (props) => {
   return (
-    <div {...selectContainerStyles}>
+    <div id="reactSelectContainer"
+      {...selectContainerStyles}>
 
       <label style={{ marginTop: '5px', marginBottom: '5px', marginLeft: '1px' }}>{props.label}</label>
       <Select
@@ -69,6 +70,7 @@ const ReactSelectDropdown = (props) => {
         onChange={props.onChangeMethod}
         styles={customSelectStyles}
         className={props.className}
+        aria-label="dropdown"
       />
     </div>
 
