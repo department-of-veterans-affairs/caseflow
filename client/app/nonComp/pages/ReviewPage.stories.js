@@ -25,7 +25,7 @@ const ReduxDecorator = (Story, options) => {
       },
       taskFilterDetails: vhaTaskFilterDetails,
       featureToggles: {
-        decisionReviewQueueSsnColumn: options.args.decisionReviewQueueSsnColumn
+        decisionReviewQueueSsnColumn: true
       }
     }
   };
