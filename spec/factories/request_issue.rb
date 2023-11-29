@@ -117,6 +117,10 @@ FactoryBot.define do
       decision_issues { [] }
     end
 
+    transient do
+      decision_date { 1.day.ago }
+    end
+
     after(:create) do |ri, evaluator|
       if evaluator.decision_issues.present?
         evaluator.decision_issues.each do |di|
@@ -129,8 +133,12 @@ FactoryBot.define do
     end
 
     trait :add_decision_date do
-      after(:create) do |ri|
-        ri.save_decision_date!(1.day.ago)
+      after(:create) do |ri, evaluator|
+        if evaluator.decision_date.present?
+          Timecop.freeze(evaluator.decision_date + rand(1..17).days) do
+            ri.save_decision_date!(evaluator.decision_date)
+          end
+        end
       end
     end
   end

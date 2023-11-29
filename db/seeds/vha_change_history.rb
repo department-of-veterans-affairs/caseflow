@@ -25,6 +25,7 @@ module Seeds
     DISPOSITION_LIST = ["Granted", "Denied", "DTA Error", "Dismissed", "Withdrawn"].freeze
 
     def seed!
+      RequestStore[:current_user] = User.system_user
       create_seeds_for_change_history
     end
 
@@ -44,27 +45,31 @@ module Seeds
     def create_hlr_seeds_for_change_history
       5.times do
         # Adds hlr in in-progress tab with no decision date
-        create_hlr_with_decision_date
+        create_hlr_without_decision_date
         # Adds Prior Decision Date in the HLR
-        create_hlr_with_decision_date(rand(1.year.ago..1.day.ago))
-        # adds Withdrawn status
+        create_hlr_with_decision_date
+        # # adds Withdrawn status
         create_withdrawn_hlr
         create_cancelled_hlr
         create_hlr_with_updated_assigned_at
-        create_hlr_completed
+        # create_hlr_completed
         create_hlr_with_disposition
+        create_hlr_with_unidentified_issue
+        create_hlr_with_unidentified_issue_without_decision_date
       end
     end
 
     def create_sc_seeds_for_change_history
       5.times do
         create_sc_with_disposition
-        create_sc_completed
+        # create_sc_completed
         create_sc_with_updated_assigned_at
         create_cancelled_sc
         create_withdrawn_sc
+        create_sc_without_decision_date
         create_sc_with_decision_date
-        create_sc_with_decision_date(rand(1.year.ago..1.day.ago))
+        create_sc_with_unidentified_issue
+        create_sc_with_unidentified_issue_without_decision_date
       end
     end
 
@@ -86,6 +91,7 @@ module Seeds
       sc = create(:supplemental_claim,
                   :with_specific_issue_type,
                   :requires_processing,
+                  :with_intake,
                   benefit_type: "vha",
                   decision_date: 4.months.ago,
                   claimant_type: claimant_type,
@@ -96,42 +102,70 @@ module Seeds
 
     # Inserts hlr with or with out decision date.
     # :reek:FeatureEnvy
-    def create_hlr_with_decision_date(decision_date = nil)
+    def create_hlr_with_decision_date
+      create(:higher_level_review,
+             :with_intake,
+             :with_specific_issue_type,
+             :processed,
+             :create_business_line,
+             decision_date: rand(1.year.ago..1.day.ago),
+             benefit_type: "vha",
+             claimant_type: CLAIMANT_TYPES.sample,
+             issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
+             number_of_claimants: 1)
+    end
+
+    # :reek:FeatureEnvy
+    def create_hlr_without_decision_date
       hlr = create(:higher_level_review,
+                   :with_intake,
                    :with_specific_issue_type,
                    :processed,
                    :create_business_line,
-                   decision_date: decision_date,
                    benefit_type: "vha",
                    claimant_type: CLAIMANT_TYPES.sample,
                    issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
                    number_of_claimants: 1)
-
-      if decision_date.nil?
-        hlr.establishment_processed_at = Time.zone.now
-        hlr.save
-      end
+      hlr.establishment_processed_at = Time.zone.now
+      hlr.save
     end
 
     # :reek:FeatureEnvy
-    def create_sc_with_decision_date(decision_date = nil)
+    def create_sc_with_decision_date
       sc = create(:supplemental_claim,
+                  :with_intake,
                   :with_specific_issue_type,
                   :processed,
-                  decision_date: decision_date,
+                  decision_date: rand(1.year.ago..1.day.ago),
                   benefit_type: "vha",
                   claimant_type: CLAIMANT_TYPES.sample,
                   issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
                   number_of_claimants: 1)
       sc.create_business_line_tasks!
-      if decision_date.nil?
-        sc.establishment_processed_at = Time.zone.now
-        sc.save
-      end
+
+      sc.establishment_processed_at = Time.zone.now
+      sc.save
+    end
+
+    # :reek:FeatureEnvy
+    def create_sc_without_decision_date
+      sc = create(:supplemental_claim,
+                  :with_intake,
+                  :with_specific_issue_type,
+                  :processed,
+                  benefit_type: "vha",
+                  claimant_type: CLAIMANT_TYPES.sample,
+                  issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
+                  number_of_claimants: 1)
+      sc.create_business_line_tasks!
+
+      sc.establishment_processed_at = Time.zone.now
+      sc.save
     end
 
     def create_withdrawn_hlr
       hlr = create(:higher_level_review,
+                   :with_intake,
                    :with_specific_issue_type,
                    :processed,
                    benefit_type: "vha",
@@ -145,6 +179,7 @@ module Seeds
 
     def create_withdrawn_sc
       sc = create(:supplemental_claim,
+                  :with_intake,
                   :with_specific_issue_type,
                   :processed,
                   benefit_type: "vha",
@@ -159,7 +194,9 @@ module Seeds
     # :reek:FeatureEnvy
     def create_cancelled_hlr
       hlr = create(:higher_level_review,
+                   :with_intake,
                    :with_specific_issue_type,
+                   decision_date: rand(1.year.ago..1.day.ago),
                    benefit_type: "vha",
                    claimant_type: CLAIMANT_TYPES.sample,
                    issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
@@ -169,14 +206,16 @@ module Seeds
       ri.remove!
       task = Task.find_by(appeal: hlr)
       task.status = "cancelled"
-      task.cancelled_by_id = VhaBusinessLine.singleton.users.sample
+      task.cancelled_by_id = VhaBusinessLine.singleton.users.sample.id
       task.save
     end
 
     # :reek:FeatureEnvy
     def create_cancelled_sc
       sc = create(:supplemental_claim,
+                  :with_intake,
                   :with_specific_issue_type,
+                  decision_date: rand(1.year.ago..1.day.ago),
                   benefit_type: "vha",
                   claimant_type: CLAIMANT_TYPES.sample,
                   issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
@@ -186,7 +225,7 @@ module Seeds
       ri.remove!
       task = Task.find_by(appeal: sc)
       task.status = "cancelled"
-      task.cancelled_by_id = VhaBusinessLine.singleton.users.sample
+      task.cancelled_by_id = VhaBusinessLine.singleton.users.sample.id
       task.save
     end
 
@@ -194,6 +233,7 @@ module Seeds
     # :reek:FeatureEnvy
     def create_hlr_with_updated_assigned_at
       hlr = create(:higher_level_review,
+                   :with_intake,
                    :with_specific_issue_type,
                    :processed,
                    decision_date: rand(1.year.ago..1.day.ago),
@@ -211,6 +251,7 @@ module Seeds
     # :reek:FeatureEnvy
     def create_sc_with_updated_assigned_at
       sc = create(:supplemental_claim,
+                  :with_intake,
                   :with_specific_issue_type,
                   :processed,
                   decision_date: rand(1.year.ago..1.day.ago),
@@ -225,48 +266,15 @@ module Seeds
       task.save!
     end
 
-    # :reek:FeatureEnvy
-    def create_hlr_completed
-      hlr = create(:higher_level_review,
-                   :with_specific_issue_type,
-                   decision_date: rand(1.year.ago..1.day.ago),
-                   benefit_type: "vha",
-                   claimant_type: CLAIMANT_TYPES.sample,
-                   issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
-                   number_of_claimants: 1)
-
-      hlr.create_business_line_tasks!
-      task = Task.find_by(appeal: hlr)
-      task.status = "completed"
-      vha = VhaBusinessLine.singleton
-      task.completed_by = User.find_by(css_id: vha.users.sample)
-      task.save!
-    end
-
-    # :reek:FeatureEnvy
-    def create_sc_completed
-      sc = create(:supplemental_claim,
-                  :with_specific_issue_type,
-                  decision_date: rand(1.year.ago..1.day.ago),
-                  benefit_type: "vha",
-                  claimant_type: CLAIMANT_TYPES.sample,
-                  issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
-                  number_of_claimants: 1)
-
-      sc.create_business_line_tasks!
-      task = Task.find_by(appeal: sc)
-      task.status = "completed"
-      vha = VhaBusinessLine.singleton
-      task.completed_by = User.find_by(css_id: vha.users.sample)
-      task.save!
-    end
-
     # adds hlr with random disposition.
     # :reek:FeatureEnvy
     def create_hlr_with_disposition
       hlr = create(:higher_level_review,
+                   :with_intake,
                    :with_specific_issue_type,
                    :with_disposition,
+                   :with_update_users,
+                   decision_date: rand(1.year.ago..1.day.ago),
                    claimant_type: CLAIMANT_TYPES.sample,
                    issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
                    benefit_type: "vha",
@@ -275,25 +283,74 @@ module Seeds
       task = Task.find_by(appeal: hlr)
       task.status = "completed"
       vha = VhaBusinessLine.singleton
-      task.completed_by = User.find_by(css_id: vha.users.sample)
+      task.completed_by_id = vha.users.sample.id
       task.save!
     end
 
     # :reek:FeatureEnvy
     def create_sc_with_disposition
       sc = create(:supplemental_claim,
+                  :with_intake,
                   :with_request_issue,
                   :with_disposition,
+                  :with_update_users,
                   claimant_type: CLAIMANT_TYPES.sample,
-                  disposition: DISPOSITION_LIST.sample,
+                  disposition: DISPOSITION_LIST.reject { |disp| disp == "DTA Error" }.sample,
                   benefit_type: "vha")
       sc.create_business_line_tasks!
 
       task = Task.find_by(appeal: sc)
       task.status = "completed"
       vha = VhaBusinessLine.singleton
-      task.completed_by = User.find_by(css_id: vha.users.sample)
+      task.completed_by_id = vha.users.sample.id
       task.save!
+    end
+
+    def create_hlr_with_unidentified_issue
+      hlr = create(:higher_level_review,
+                   :with_intake,
+                   :unidentified_issue,
+                   :with_update_users,
+                   benefit_type: "vha",
+                   claimant_type: CLAIMANT_TYPES.sample,
+                   decision_date: rand(1.year.ago..1.day.ago))
+
+      hlr.create_business_line_tasks!
+    end
+
+    def create_hlr_with_unidentified_issue_without_decision_date
+      hlr = create(:higher_level_review,
+                   :with_intake,
+                   :unidentified_issue,
+                   :with_update_users,
+                   benefit_type: "vha",
+                   claimant_type: CLAIMANT_TYPES.sample)
+
+      hlr.create_business_line_tasks!
+      hlr.establishment_processed_at = Time.zone.now
+      hlr.save
+    end
+
+    def create_sc_with_unidentified_issue
+      sc = create(:supplemental_claim,
+                  :with_intake,
+                  :unidentified_issue,
+                  benefit_type: "vha",
+                  claimant_type: CLAIMANT_TYPES.sample,
+                  decision_date: rand(1.year.ago..1.day.ago))
+      sc.create_business_line_tasks!
+    end
+
+    def create_sc_with_unidentified_issue_without_decision_date
+      sc = create(:supplemental_claim,
+                  :with_intake,
+                  :unidentified_issue,
+                  benefit_type: "vha",
+                  claimant_type: CLAIMANT_TYPES.sample)
+      sc.create_business_line_tasks!
+
+      sc.establishment_processed_at = Time.zone.now
+      sc.save
     end
   end
 end

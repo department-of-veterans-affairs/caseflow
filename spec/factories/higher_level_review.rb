@@ -165,6 +165,8 @@ FactoryBot.define do
     trait :with_specific_issue_type do
       after(:create) do |hlr, evaluator|
         ri = create(:request_issue,
+                    :add_decision_date,
+                    decision_date: evaluator.decision_date,
                     benefit_type: hlr.benefit_type,
                     nonrating_issue_category: evaluator.issue_type,
                     nonrating_issue_description: "#{hlr.business_line.name} Seeded issue",
@@ -173,10 +175,6 @@ FactoryBot.define do
         if evaluator.veteran
           hlr.veteran_file_number = evaluator.veteran.file_number
           hlr.save
-        end
-
-        if evaluator.decision_date.present?
-          ri.save_decision_date!(evaluator.decision_date)
         end
 
         if evaluator.withdraw
@@ -211,8 +209,8 @@ FactoryBot.define do
     trait :with_update_users do
       after(:create) do |hlr|
         hlr.create_business_line_tasks!
-        vha = VhaBusinessLine.singleton
-        create(:request_issues_update, user: vha.users.sample, review: hlr)
+
+        create(:request_issues_update, :requires_processing, review: hlr)
       end
     end
 
@@ -239,6 +237,17 @@ FactoryBot.define do
                decision_review: hlr,
                request_issues: hlr.request_issues,
                benefit_type: hlr.benefit_type)
+      end
+    end
+
+    trait :unidentified_issue do
+      after(:create) do |hlr, evaluator|
+        create(:request_issue,
+               :unidentified,
+               :add_decision_date,
+               benefit_type: hlr.benefit_type,
+               decision_review: hlr,
+               decision_date: evaluator.decision_date.presence ? evaluator.decision_date : nil)
       end
     end
   end
