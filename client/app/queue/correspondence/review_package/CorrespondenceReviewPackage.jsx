@@ -7,7 +7,9 @@ import ReviewForm from './ReviewForm';
 import { CmpDocuments } from './CmpDocuments';
 import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
+import { setFileNumberSearch, doFileNumberSearch } from '../../../intake/actions/intake';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 export const CorrespondenceReviewPackage = (props) => {
   const [reviewDetails, setReviewDetails] = useState({
@@ -60,6 +62,16 @@ export const CorrespondenceReviewPackage = (props) => {
     return notesChanged || fileNumberChanged || selectValueChanged;
   };
 
+  const intakeAppeal = async () => {
+    props.setFileNumberSearch(editableData.veteran_file_number);
+    try {
+      await props.doFileNumberSearch('appeal', editableData.veteran_file_number, true);
+      window.location.href = '/intake/review_request';
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     if (apiResponse) {
       const hasChanged = isEditableDataChanged();
@@ -106,6 +118,7 @@ export const CorrespondenceReviewPackage = (props) => {
             name="Intake appeal"
             styling={{ style: { marginRight: '2rem' } }}
             classNames={['usa-button-secondary']}
+            onClick={intakeAppeal}
           />
           <a href={intakeLink}>
             {/* hard coded UUID to link to multi_correspondence.rb data */}
@@ -126,6 +139,8 @@ CorrespondenceReviewPackage.propTypes = {
   correspondence: PropTypes.object,
   correspondenceDocuments: PropTypes.arrayOf(PropTypes.object),
   packageDocumentType: PropTypes.object,
+  setFileNumberSearch: PropTypes.func,
+  doFileNumberSearch: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
@@ -134,7 +149,12 @@ const mapStateToProps = (state) => ({
   packageDocumentType: state.reviewPackage.packageDocumentType
 });
 
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setFileNumberSearch,
+  doFileNumberSearch
+}, dispatch);
+
 export default connect(
   mapStateToProps,
-  null,
+  mapDispatchToProps,
 )(CorrespondenceReviewPackage);
