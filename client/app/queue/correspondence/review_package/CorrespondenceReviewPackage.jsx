@@ -29,7 +29,7 @@ export const CorrespondenceReviewPackage = (props) => {
 
     try {
       const response = await ApiUtil.get(
-        `/queue/correspondence/${correspondence.correspondence_uuid}`
+        `/queue/correspondence/${correspondence.correspondenceId}`
       );
 
       setApiResponse(response.body.general_information);
