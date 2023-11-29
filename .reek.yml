@@ -236,8 +236,8 @@ detectors:
       - Fakes::PexipService
       - HearingAdminActionVerifyAddressTask#available_hearing_admin_actions
       - HearingDispositionChangeJob
-      - Helpers::AppealHearingHelper#available_hearing_locations
-      - Helpers::AppealHearingHelper#hearings
+      - AppealHearingHelper#available_hearing_locations
+      - AppealHearingHelper#hearings
       - HearingRenderer
       - JudgeLegacyDecisionReviewTask#review_action
       - LatestRatingDisabilityEvaluation#latest_disability_evaluation
