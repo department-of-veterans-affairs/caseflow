@@ -92,7 +92,7 @@ const ReportPageButtons = ({
       </Button>
       <div {...buttonInnerContainerStyle}>
         <Button
-          classNames={['usa-button']}
+          classNames={['usa-button-secondary']}
           label="clear-filters"
           name="clear-filters"
           onClick={handleClearFilters}
