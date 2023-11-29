@@ -23,7 +23,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     cache_legacy_appeals
     custom_metrics_report_time_segment(segment: "cache_legacy_appeals", start_time: legacy_appeals_start)
 
-    record_success_in_datadog
+    record_success_in_custom_metrics
   rescue StandardError => error
     log_error(@start_time, error)
   end
@@ -121,12 +121,12 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     # * (Too little Postgres data cached) https://app.datadoghq.com/monitors/41421962
     # * (Too little VACOLS data cached) https://app.datadoghq.com/monitors/41234223
     # * (Job has not succeeded in the past day) https://app.datadoghq.com/monitors/41423568
-    record_error_in_datadog
+    record_error_in_custom_metrics
 
     custom_metrics_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   end
 
-  def record_success_in_datadog
+  def record_success_in_custom_metrics
     CustomMetricsService.increment_counter(
       app_name: APP_NAME,
       metric_group: METRIC_GROUP_NAME,
@@ -134,7 +134,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     )
   end
 
-  def record_error_in_datadog
+  def record_error_in_custom_metrics
     CustomMetricsService.increment_counter(
       app_name: APP_NAME,
       metric_group: METRIC_GROUP_NAME,
