@@ -18,6 +18,16 @@ describe('DailyDocketPrinted', () => {
     expect(await screen.findByText(/VLJ:/)).toBeInTheDocument();
   });
 
+  it('renders docket notes when user is a board employee', async () => {
+    const mockProps = {
+      user: { userIsNonBoardEmployee: false },
+      docket: { notes: 'There is a note here' }
+    };
+
+    renderDailyDocketPrinted(mockProps);
+    expect(await screen.findByText(/Notes:/)).toBeInTheDocument();
+  });
+
   it('does not render tag VLJ when user is a VSO employee', () => {
     const mockProps = {
       user: { userIsNonBoardEmployee: true },
@@ -27,5 +37,15 @@ describe('DailyDocketPrinted', () => {
 
     renderDailyDocketPrinted(mockProps);
     expect(screen.queryByText(/VLJ:/)).not.toBeInTheDocument();
+  });
+
+  it('does not render docket notes when user is a nonBoardEmployee', async () => {
+    const mockProps = {
+      user: { userIsNonBoardEmployee: true },
+      docket: { notes: 'There is a note here' },
+    };
+
+    renderDailyDocketPrinted(mockProps);
+    expect(await screen.queryByText(/Note:\s*This\s*is\s*a\s*note/)).not.toBeInTheDocument();
   });
 });
