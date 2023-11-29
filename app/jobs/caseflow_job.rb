@@ -23,7 +23,7 @@ class CaseflowJob < ApplicationJob
     @reported_to_datadog = true
   end
 
-  def datadog_report_time_segment(segment:, start_time:)
+  def custom_metrics_report_time_segment(segment:, start_time:)
     job_duration_seconds = Time.zone.now - start_time
 
     CustomMetricsService.emit_gauge(
