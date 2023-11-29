@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import AddTaskView from './AddTaskView';
+import AddEvidenceSubmissionTaskView from './AddEvidenceSubmissionTaskView';
 import Button from '../../../../../components/Button';
 import CaseDetailsLink from '../../../../CaseDetailsLink';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -62,6 +63,13 @@ export const ExistingAppealTasksView = (props) => {
       </div>
 
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+        {props.appeal.docketName === 'evidence_submission' && (
+          <AddEvidenceSubmissionTaskView
+            docketName={props.appeal.docketName}
+            task={props.newTasks[0]}
+            setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
+          />
+        )}
         {getTasksForAppeal().map((task) => {
           return (
             <AddTaskView
@@ -75,6 +83,20 @@ export const ExistingAppealTasksView = (props) => {
           );
         })}
       </div>
+      {/* <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+        {getTasksForAppeal().map((task) => {
+          return (
+            <AddTaskView
+              key={task.id}
+              task={task}
+              removeTask={removeTask}
+              taskUpdatedCallback={taskUpdatedCallback}
+              displayRemoveCheck={displayRemoveCheck}
+              setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
+            />
+          );
+        })}
+      </div> */}
 
       <div style={{ padding: '2.5rem 2.5rem', display: 'flex', justifyContent: 'space-between' }}>
         <div style={{ width: '80%' }}>

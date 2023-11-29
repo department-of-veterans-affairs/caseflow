@@ -53,13 +53,13 @@ export const AddAppealRelatedTaskView = (props) => {
       if (!taskRelatedAppeals.includes(appealId)) {
         setTaskRelatedAppeals([...taskRelatedAppeals, appealId]);
 
-        const tasksForAppeal = newTasks.filter((el) => el.appealId === appealId);
+        // const tasksForAppeal = newTasks.filter((el) => el.appealId === appealId);
 
-        if (!tasksForAppeal.length) {
-          const newTask = { id: nextTaskId, appealId, type: '', content: '' };
+        // if (!tasksForAppeal.length) {
+        //   const newTask = { id: nextTaskId, appealId, type: '', content: '' };
 
-          setNewTasks([...newTasks, newTask]);
-        }
+        //   setNewTasks([...newTasks, newTask]);
+        // }
       }
     } else {
       const selectedAppeals = taskRelatedAppeals.filter((checkedId) => checkedId !== appealId);

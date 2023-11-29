@@ -58,17 +58,20 @@ const selectContainerStyles = css({
 });
 
 const ReactSelectDropdown = (props) => {
+  const isDisabled = props.disabled || false;
+
   return (
     <div {...selectContainerStyles}>
 
       <label style={{ marginTop: '5px', marginBottom: '5px', marginLeft: '1px' }}>{props.label}</label>
       <Select
-        placeholder="select..."
+        placeholder={props.customPlaceholder || 'select...'}
         options={props.options}
         defaultValue={props.defaultValue}
         onChange={props.onChangeMethod}
         styles={customSelectStyles}
         className={props.className}
+        isDisabled={isDisabled}
         aria-label="dropdown"
       />
     </div>
@@ -87,7 +90,9 @@ ReactSelectDropdown.propTypes = {
   defaultValue: PropTypes.string,
   label: PropTypes.string,
   onChangeMethod: PropTypes.func,
-  className: PropTypes.string
+  className: PropTypes.string,
+  disabled: PropTypes.bool,
+  customPlaceholder: PropTypes.string
 };
 
 export default ReactSelectDropdown;
