@@ -1,34 +1,78 @@
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import React, { useState } from 'react';
-import ReviewPackageCmpInfo from './ReviewPackageCmpInfo';
+import React, { useEffect, useState } from 'react';
+import ReviewPackageData from './ReviewPackageData';
 import ReviewPackageCaseTitle from './ReviewPackageCaseTitle';
 import Button from '../../../components/Button';
-import EditDocumentTypeModal from '../component/EditDocumentTypeModal';
+import ReviewForm from './ReviewForm';
+import { CmpDocuments } from './CmpDocuments';
+import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
 
 export const CorrespondenceReviewPackage = (props) => {
-  const [modalState, setModalState] = useState(false);
-  const [documentName, setDocumentName] = useState('');
+  const [reviewDetails, setReviewDetails] = useState({
+    veteran_name: {},
+    dropdown_values: [],
+  });
+  const [editableData, setEditableData] = useState({
+    notes: '',
+    veteran_file_number: '',
+    default_select_value: ''
+  });
+  const [apiResponse, setApiResponse] = useState(null);
+  const [correspondenceDocuments, setCorrespondenceDocuments] = useState([]);
+  const [selectedCorrespondence, setSelectedCorrespondence] = useState(null);
+  const [packageDocumentType, setPackageDocumentType] = useState(null);
+  const [disableButton, setDisableButton] = useState(false);
 
-  const openModal = () => {
-    setModalState(true);
-  };
-  const closeModal = () => {
-    setModalState(false);
+  const fetchData = async () => {
+    const correspondence = props;
+
+    try {
+      const response = await ApiUtil.get(
+        `/queue/correspondence/${correspondence.correspondence_uuid}`
+      );
+
+      setApiResponse(response.body.general_information);
+      const data = response.body.general_information;
+
+      setCorrespondenceDocuments(response.body.correspondence_documents);
+      setSelectedCorrespondence(response.body.correspondence);
+      setPackageDocumentType(response.body.package_document_type);
+
+      setReviewDetails({
+        veteran_name: data.veteran_name || {},
+        dropdown_values: data.correspondence_types || [],
+      });
+
+      setEditableData({
+        notes: data.notes,
+        veteran_file_number: data.file_number,
+        default_select_value: data.correspondence_type_id,
+      });
+    } catch (error) {
+      throw error();
+    }
   };
 
-  const OpenModalLink = (newValue) => (
-    <Button linkStyling onClick={() => {
-      setDocumentName(newValue);
-      openModal();
-    }} >
-      <span>Edit</span>
-    </Button>
-  );
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-  OpenModalLink.propTypes = {
-    documentName: PropTypes.string
+  const isEditableDataChanged = () => {
+    const notesChanged = editableData.notes !== apiResponse.notes;
+    const fileNumberChanged = editableData.veteran_file_number !== apiResponse.file_number;
+    const selectValueChanged = editableData.default_select_value !== apiResponse.correspondence_type_id;
+
+    return notesChanged || fileNumberChanged || selectValueChanged;
   };
+
+  useEffect(() => {
+    if (apiResponse) {
+      const hasChanged = isEditableDataChanged();
+
+      setDisableButton(hasChanged);
+    }
+  }, [editableData, apiResponse]);
 
   const intakeLink = `/queue/correspondence/${props.correspondenceId}/intake`;
 
@@ -36,8 +80,22 @@ export const CorrespondenceReviewPackage = (props) => {
     <React.Fragment>
       <AppSegment filledBackground>
         <ReviewPackageCaseTitle />
-        <ReviewPackageCmpInfo {...props} />
-        <p> Documento 3 <OpenModalLink documentName = "VA 24-0296 Direct Deposit Enrollment" /> </p>
+        <ReviewPackageData
+          correspondence={selectedCorrespondence}
+          packageDocumentType={packageDocumentType} />
+        <ReviewForm
+          {...{
+            reviewDetails,
+            setReviewDetails,
+            editableData,
+            setEditableData,
+            disableButton,
+            setDisableButton,
+            fetchData
+          }}
+          {...props}
+        />
+        <CmpDocuments documents={correspondenceDocuments} />
       </AppSegment>
       <div className="cf-app-segment">
         <div className="cf-push-left">
@@ -49,9 +107,7 @@ export const CorrespondenceReviewPackage = (props) => {
             />
           </a>
         </div>
-
         <div className="cf-push-right">
-
           <Button
             name="Intake appeal"
             styling={{ style: { marginRight: '2rem' } }}
@@ -67,20 +123,12 @@ export const CorrespondenceReviewPackage = (props) => {
           </a>
         </div>
       </div>
-      {modalState &&
-        <EditDocumentTypeModal
-          modalState={modalState}
-          onCancel={closeModal}
-          document={documentName}
-        />
-      }
     </React.Fragment>
-
   );
 };
 
 CorrespondenceReviewPackage.propTypes = {
-  correspondenceId: PropTypes.string,
+  correspondenceId: PropTypes.string
 };
 
 export default CorrespondenceReviewPackage;

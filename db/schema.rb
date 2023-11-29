@@ -593,6 +593,8 @@ ActiveRecord::Schema.define(version: 2023_11_15_170454) do
     t.bigint "correspondence_id"
     t.datetime "created_at", null: false, comment: "Date and Time of creation."
     t.string "document_file_number", comment: "From CMP documents table"
+    t.integer "document_type", comment: "ID of the doc to lookup VBMS Doc Type"
+    t.integer "pages", comment: "Number of pages in the CMP Document"
     t.datetime "updated_at", null: false, comment: "Date and Time of last update."
     t.uuid "uuid", comment: "Reference to document in AWS S3"
     t.bigint "vbms_document_type_id", comment: "From CMP documents table"
@@ -1393,7 +1395,11 @@ ActiveRecord::Schema.define(version: 2023_11_15_170454) do
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
+    t.index ["email_notification_external_id"], name: "index_notifications_on_email_notification_external_id"
+    t.index ["email_notification_status"], name: "index_notifications_on_email_notification_status"
     t.index ["participant_id"], name: "index_participant_id"
+    t.index ["sms_notification_external_id"], name: "index_notifications_on_sms_notification_external_id"
+    t.index ["sms_notification_status"], name: "index_notifications_on_sms_notification_status"
   end
 
   create_table "organizations", force: :cascade do |t|
