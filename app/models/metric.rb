@@ -4,33 +4,10 @@ class Metric < CaseflowRecord
   belongs_to :user
   delegate :css_id, to: :user
 
-  METRIC_TYPES = { error: "error", log: "log", performance: "performance", info: "info" }.freeze
-  LOG_SYSTEMS = { dynatrace: "dynatrace", datadog: "datadog", rails_console: "rails_console", javascript_console: "javascript_console" }.freeze
-  PRODUCT_TYPES = {
-    queue: "queue",
-    hearings: "hearings",
-    intake: "intake",
-    vha: "vha",
-    efolder: "efolder",
-    reader: "reader",
-    caseflow: "caseflow", # Default product
-    # Added below because MetricService has usages of this as a service
-    vacols: "vacols",
-    bgs: "bgs",
-    gov_delivery: "gov_delivery",
-    mpi: "mpi",
-    pexip: "pexip",
-    va_dot_gov: "va_dot_gov",
-    va_notify: "va_notify",
-    vbms: "vbms"
-  }.freeze
-  APP_NAMES = { caseflow: "caseflow", efolder: "efolder" }.freeze
-  METRIC_GROUPS = { service: "service" }.freeze
-
-  validates :metric_type, inclusion: { in: METRIC_TYPES.values }
+  validates :metric_type, inclusion: { in: Caseflow::MetricValues::METRIC_TYPES.values }
   validates :metric_product, inclusion: { in: PRODUCT_TYPES.values }
   validates :metric_group, inclusion: { in: METRIC_GROUPS.values }
-  validates :app_name, inclusion: { in: APP_NAMES.values }
+  validates :app_name, inclusion: { in: Caseflow::MetricValues::METRIC_TYPES.values }
   validate :sent_to_in_log_systems
 
   def self.create_metric(klass, params, user)
@@ -76,13 +53,13 @@ class Metric < CaseflowRecord
     {
       uuid: params[:uuid],
       user: user || RequestStore.store[:current_user] || User.system_user,
-      metric_name: params[:name] || METRIC_TYPES[:log],
+      metric_name: params[:name] || Caseflow::MetricValues::METRIC_TYPES[:log],
       metric_class: klass&.try(:name) || klass&.class&.name || name,
       metric_group: params[:group] || METRIC_GROUPS[:service],
-      metric_message: params[:message] || METRIC_TYPES[:log],
-      metric_type: params[:type] || METRIC_TYPES[:log],
+      metric_message: params[:message] || Caseflow::MetricValues::METRIC_TYPES[:log],
+      metric_type: params[:type] || Caseflow::MetricValues::METRIC_TYPES[:log],
       metric_product: PRODUCT_TYPES[params[:product].to_sym] || PRODUCT_TYPES[:caseflow],
-      app_name: params[:app_name] || APP_NAMES[:caseflow],
+      app_name: params[:app_name] || Caseflow::MetricValues::METRIC_TYPES[:caseflow],
       metric_attributes: params[:metric_attributes],
       additional_info: params[:additional_info],
       sent_to: Array(params[:sent_to]).flatten,
