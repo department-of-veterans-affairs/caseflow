@@ -109,7 +109,7 @@ describe Api::V3::Issues::Ama::VeteransController, :postgres, type: :request do
               let_it_be(:vet) { create(:veteran, file_number: "123456789") }
               let_it_be(:vacols_case) { create(:case, bfcorlid: "123456789S") }
               include_context :multiple_ri_multiple_di
-              let_it_be(:reqeust_issue_no_di) { create(:request_issue, veteran_participant_id: vet.participant_id) }
+              let_it_be(:reqeust_issue_no_di) { create(:request_issue, id: 5000, veteran_participant_id: vet.participant_id) }
               let_it_be(:request_issue_for_vet_count) { RequestIssue.where(veteran_participant_id: vet.participant_id).count }
 
               it_behaves_like :it_should_respond_with_legacy_present, true
@@ -124,10 +124,11 @@ describe Api::V3::Issues::Ama::VeteransController, :postgres, type: :request do
               let_it_be(:vacols_case) { create(:case, bfcorlid: "123456789S") }
               let_it_be(:decision_issues) { create_list(:decision_issue, 2, participant_id: vet.participant_id) }
               include_context :multiple_di_multiple_ri
+              let_it_be(:reqeust_issue_no_di) { create(:request_issue, id: 5000, veteran_participant_id: vet.participant_id) }
               let_it_be(:request_issue_for_vet_count) { RequestIssue.where(veteran_participant_id: vet.participant_id).count }
 
               it_behaves_like :it_should_respond_with_legacy_present, true
-              it_behaves_like :it_should_respond_with_associated_request_issues, true, false
+              it_behaves_like :it_should_respond_with_associated_request_issues, true, true
               it_behaves_like :it_should_respond_with_same_multiple_decision_issues_per_request_issue, true
 
               include_context :number_of_request_issues_exceeds_paginates_per, true
@@ -138,7 +139,7 @@ describe Api::V3::Issues::Ama::VeteransController, :postgres, type: :request do
             context "when a veteran has multiple request issues with multiple decision issues" do
               let_it_be(:vet) { create(:veteran) }
               include_context :multiple_ri_multiple_di
-              let_it_be(:reqeust_issue_no_di) { create(:request_issue, veteran_participant_id: vet.participant_id) }
+              let_it_be(:reqeust_issue_no_di) { create(:request_issue, id: 5000, veteran_participant_id: vet.participant_id) }
               let_it_be(:request_issue_for_vet_count) { RequestIssue.where(veteran_participant_id: vet.participant_id).count }
 
               it_behaves_like :it_should_respond_with_legacy_present, false
@@ -152,10 +153,11 @@ describe Api::V3::Issues::Ama::VeteransController, :postgres, type: :request do
               let_it_be(:vet) { create(:veteran) }
               let_it_be(:decision_issues) { create_list(:decision_issue, 2, participant_id: vet.participant_id) }
               include_context :multiple_di_multiple_ri
+              let_it_be(:reqeust_issue_no_di) { create(:request_issue, id: 5000, veteran_participant_id: vet.participant_id) }
               let_it_be(:request_issue_for_vet_count) { RequestIssue.where(veteran_participant_id: vet.participant_id).count }
 
               it_behaves_like :it_should_respond_with_legacy_present, false
-              it_behaves_like :it_should_respond_with_associated_request_issues, false, false
+              it_behaves_like :it_should_respond_with_associated_request_issues, false, true
               it_behaves_like :it_should_respond_with_same_multiple_decision_issues_per_request_issue, false
 
               include_context :number_of_request_issues_exceeds_paginates_per, false

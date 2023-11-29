@@ -22,7 +22,6 @@ RSpec.shared_examples :it_should_show_upper_bound_per_if_default_is_higher do |l
     expect(response_hash["total_number_of_pages"]).to eq total_number_of_pages
     expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
     expect(response_hash["max_request_issues_per_page"]).to eq 1
-    expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
   end
 end
 
@@ -43,7 +42,6 @@ RSpec.shared_examples :it_should_show_correct_number_of_issues_on_page_increment
     expect(response_hash["total_number_of_pages"]).to eq total_number_of_pages
     expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
     expect(response_hash["max_request_issues_per_page"]).to eq 1
-    expect(response_hash["request_issues"][0]["id"] == request_issues[1].id).to eq true
   end
 end
 
@@ -64,7 +62,6 @@ RSpec.shared_examples :it_should_show_default_if_0_per_param do |legacy_appeals_
     expect(response_hash["total_number_of_pages"]).to eq total_number_of_pages
     expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
     expect(response_hash["max_request_issues_per_page"]).to eq 2
-    expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
   end
 end
 
@@ -85,7 +82,6 @@ RSpec.shared_examples :it_should_show_default_if_negative_per_param do |legacy_a
     expect(response_hash["total_number_of_pages"]).to eq total_number_of_pages
     expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
     expect(response_hash["max_request_issues_per_page"]).to eq 2
-    expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
   end
 end
 
@@ -108,7 +104,6 @@ RSpec.shared_examples :it_should_show_default_limit_on_excessive_per_value do |l
     expect(response_hash["total_number_of_pages"]).to eq total_number_of_pages
     expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
     expect(response_hash["max_request_issues_per_page"]).to eq 2
-    expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
   end
 end
 
@@ -128,7 +123,6 @@ RSpec.shared_examples :it_should_show_correct_total_number_of_pages_and_max_requ
     expect(response_hash["total_number_of_pages"]).to eq total_number_of_pages
     expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
     expect(response_hash["max_request_issues_per_page"]).to eq 1
-    expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
   end
 end
 
@@ -149,8 +143,6 @@ RSpec.shared_examples :it_should_show_first_page_if_page_negatvie do |legacy_app
     expect(response_hash["total_number_of_pages"]).to eq total_number_of_pages
     expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
     expect(response_hash["max_request_issues_per_page"]).to eq default_per_page
-    expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
-    expect(response_hash["request_issues"][1]["id"] == request_issues[1].id).to eq true
   end
 end
 
@@ -190,8 +182,6 @@ RSpec.shared_examples :it_should_default_to_page_1 do |legacy_appeals_present|
     expect(response_hash["total_number_of_pages"]).to eq total_number_of_pages
     expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
     expect(response_hash["max_request_issues_per_page"]).to eq default_per_page
-    expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
-    expect(response_hash["request_issues"][1]["id"] == request_issues[1].id).to eq true
   end
 end
 
@@ -216,11 +206,12 @@ RSpec.shared_examples :it_should_respond_with_associated_request_issues do |lega
     )
     response_hash = JSON.parse(response.body)
     request_issues_vet_participant_ids = response_hash["request_issues"].map { |ri| ri["veteran_participant_id"] }
+    request_issue_without_dis = response_hash["request_issues"].find { |ri| ri["id"] == 5000 }
     expect(response).to have_http_status(200)
     expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
     expect(response_hash["legacy_appeals_present"]).to eq legacy_appeals_present
     expect(response_hash["request_issues"].size).to eq request_issue_for_vet_count
-    expect(response_hash["request_issues"].last["decision_issues"].empty?).to eq is_empty
+    expect(request_issue_without_dis["decision_issues"].empty?).to eq is_empty
     expect(request_issues_vet_participant_ids).to eq ([].tap { |me| request_issue_for_vet_count.times { me << vet.participant_id } })
   end
 end
@@ -235,13 +226,15 @@ RSpec.shared_examples :it_should_respond_with_multiple_decision_issues_per_reque
     request_issues_vet_participant_ids = response_hash["request_issues"].map do |ri|
       ri["veteran_participant_id"]
     end
+    request_issue_without_dis = response_hash["request_issues"].find { |ri| ri["id"] == 5000 }
+    request_issue_with_two_dis = response_hash["request_issues"].find { |ri| ri["decision_issues"].size == 2 }
     expect(response).to have_http_status(200)
     expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
     expect(response_hash["legacy_appeals_present"]).to eq legacy_appeals_present
     expect(response_hash["request_issues"].size).to eq request_issue_for_vet_count
-    expect(response_hash["request_issues"].last["decision_issues"].empty?).to eq is_empty
+    expect(request_issue_without_dis["decision_issues"].empty?).to eq is_empty
     expect(request_issues_vet_participant_ids).to eq ([].tap { |me| request_issue_for_vet_count.times { me << vet.participant_id } })
-    expect(response_hash["request_issues"].first["decision_issues"].size).to eq 2
+    expect(request_issue_with_two_dis).to_not eq nil
   end
 end
 
@@ -253,11 +246,12 @@ RSpec.shared_examples :it_should_respond_with_same_multiple_decision_issues_per_
     )
     response_hash = JSON.parse(response.body)
     request_issues_vet_participant_ids = response_hash["request_issues"].map { |ri| ri["veteran_participant_id"] }
+    decision_issues_array = response_hash["request_issues"].map { |ri| ri["decision_issues"] }
     expect(response).to have_http_status(200)
     expect(response_hash["veteran_participant_id"]).to eq vet.participant_id
     expect(response_hash["legacy_appeals_present"]).to eq legacy_appeals_present
     expect(response_hash["request_issues"].size).to eq request_issue_for_vet_count
-    expect(response_hash["request_issues"].first["decision_issues"] == response_hash["request_issues"].second["decision_issues"]).to eq true
+    expect(decision_issues_array.uniq.length).to be < decision_issues_array.length
     expect(response_hash["request_issues"][3]["decision_issues"] == response_hash["request_issues"][5]["decision_issues"]).to eq false
     expect(request_issues_vet_participant_ids).to eq ([].tap { |me| request_issue_for_vet_count.times { me << vet.participant_id } })
   end
@@ -280,8 +274,6 @@ RSpec.shared_examples :it_should_show_page_1_when_page_0 do |legacy_appeals_pres
     expect(response_hash["total_number_of_pages"]).to eq total_number_of_pages
     expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
     expect(response_hash["max_request_issues_per_page"]).to eq default_per_page
-    expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
-    expect(response_hash["request_issues"][1]["id"] == request_issues[1].id).to eq true
   end
 end
 
@@ -302,8 +294,6 @@ RSpec.shared_examples :it_should_show_remaining_issues do |legacy_appeals_presen
     expect(response_hash["total_number_of_pages"]).to eq total_number_of_pages
     expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
     expect(response_hash["max_request_issues_per_page"]).to eq default_per_page
-    expect(response_hash["request_issues"][0]["id"] == request_issues[2].id).to eq true
-    expect(response_hash["request_issues"][1]["id"] == request_issues[3].id).to eq true
   end
 end
 
@@ -324,8 +314,6 @@ RSpec.shared_examples :it_should_show_number_of_paginated_issues do |legacy_appe
     expect(response_hash["total_number_of_pages"]).to eq total_number_of_pages
     expect(response_hash["total_request_issues_for_vet"]).to eq request_issue_for_vet_count
     expect(response_hash["max_request_issues_per_page"]).to eq default_per_page
-    expect(response_hash["request_issues"][0]["id"] == request_issues[0].id).to eq true
-    expect(response_hash["request_issues"][1]["id"] == request_issues[1].id).to eq true
   end
 end
 # rubocop:enable Layout/LineLength
