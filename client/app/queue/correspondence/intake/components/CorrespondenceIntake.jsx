@@ -27,7 +27,7 @@ const progressBarSections = [
 
 export const CorrespondenceIntake = (props) => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [isContinueEnabled, setContinueEnabled] = useState(true);
+  const [isContinueEnabled, setContinueEnabled, submitModalVisible, setSubmitModalVisible] = useState(true);
   const [addTasksVisible, setAddTasksVisible] = useState(false);
   const { pathname, hash, key } = useLocation();
   const history = useHistory();
@@ -61,6 +61,10 @@ export const CorrespondenceIntake = (props) => {
       window.scrollTo(0, 0);
       history.replace({ hash: '' });
     }
+  };
+
+  const handleSubmitModal = () => {
+    setSubmitModalVisible(!submitModalVisible);
   };
 
   const sections = progressBarSections.map(({ title, step }) => ({
@@ -136,6 +140,7 @@ export const CorrespondenceIntake = (props) => {
       {currentStep === 3 &&
       <Button
         type="button"
+        onClick={submitModalVisible}
         name="Submit"
         classNames={['cf-right-side']}>
           Submit
