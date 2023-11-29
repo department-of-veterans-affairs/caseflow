@@ -80,6 +80,9 @@ class DecisionReviewsController < ApplicationController
 
         parsed_filters = parse_change_history_filter_params(filter_params)
 
+        puts "-----------------------Filter Params------------------------------------"
+        puts filter_params.inspect
+
         puts "-----------------------PARSED FILTERS-----------------------------------"
         puts parsed_filters.inspect
 
@@ -297,7 +300,7 @@ class DecisionReviewsController < ApplicationController
       personnel: filter_params[:personnel]&.values,
       dispositions: disposition_filter_helper(filter_params),
       issue_types: filter_params[:issue_types]&.values,
-      facilities: filter_params[:facilities]&.values,
+      facilities: filter_params[:facility]&.values,
       timing: filter_params[:timing].to_h,
       days_waiting: days_waiting_filter_helper(filter_params)
     }.deep_transform_keys(&:to_sym)
