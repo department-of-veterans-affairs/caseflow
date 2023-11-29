@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 describe SystemEncounteredUnknownErrorJob, :postgres do
-  let(:system_encountered_unknown_error) { "The system has encountered an unknown error" }
-  let(:file_number) { "123456789" }
+  let!(:system_encountered_unknown_error) { "The system has encountered an unknown error" }
+  let!(:file_number) { "123456789" }
   let!(:appeal) do
     create(
       :appeal,
@@ -13,7 +13,7 @@ describe SystemEncounteredUnknownErrorJob, :postgres do
   subject { described_class.new }
 
   context "when there is no EPE for the decision document" do
-    let!(:decision_doc) do
+    let!(:decision_document) do
       create(
         :decision_document,
         error: system_encountered_unknown_error,
@@ -26,19 +26,20 @@ describe SystemEncounteredUnknownErrorJob, :postgres do
     let!(:epe) do
       create(
         :end_product_establishment,
-        source_id: decision_doc.id,
+        source_id: decision_document.id,
         source_type: "DecisionDocument",
         established_at: nil,
         reference_id: nil
       )
     end
 
-    it "performs upload document to VBMS" do
-      class_double(ExternalApi::VBMSService, upload_document_to_vbms: true).as_stubbed_const
-
+    it "performs upload document to VBMS and clears error" do
       epe.destroy
+      class_double(ExternalApi::VBMSService, upload_document_to_vbms: true).as_stubbed_const
       expect(ExternalApi::VBMSService).to receive(:upload_document_to_vbms).once
       subject.perform
+
+      expect(decision_document.reload.error).to be_nil
     end
   end
 

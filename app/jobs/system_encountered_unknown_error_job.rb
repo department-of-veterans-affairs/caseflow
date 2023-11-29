@@ -21,8 +21,8 @@ class SystemEncounteredUnknownErrorJob < CaseflowJob
       next unless valid_decision_document?(single_decision_document)
 
       process_decision_document(single_decision_document)
+      stuck_job_report_service.append_single_record(single_decision_document.class.name, single_decision_document.id)
     end
-
     stuck_job_report_service.append_record_count(decision_docs_with_errors.count, ERROR_TEXT)
 
     stuck_job_report_service.write_log_report(ERROR_TEXT)
@@ -38,16 +38,21 @@ class SystemEncounteredUnknownErrorJob < CaseflowJob
       dd_epe = decision_document.end_product_establishments
       if dd_epe.empty?
         ExternalApi::VBMSService.upload_document_to_vbms(decision_document.appeal, decision_document)
-      end
-      dd_epe.each do |single_epe|
-        if single_epe.established_at.present? && single_epe.reference_id.present?
-          decision_document.clear_error!
-        end
+        decision_document.clear_error!
+      elsif all_epes_valid?(dd_epe)
+        decision_document.clear_error!
       end
     rescue StandardError => error
       log_error(error)
       stuck_job_report_service.append_error(decision_document.class.name, decision_document.id, error)
     end
+  end
+
+  def all_epes_valid?(epes)
+    valid_epes = epes.map do |single_epe|
+      single_epe.established_at.present? && single_epe.reference_id.present?
+    end
+    !valid_epes.include?(false)
   end
 
   def decision_docs_with_errors
