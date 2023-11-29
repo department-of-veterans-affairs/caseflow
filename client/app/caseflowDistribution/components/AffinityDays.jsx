@@ -17,7 +17,7 @@ const AffinityDays = (props) => {
 
   const [affinityLevers, setAffinityLevers] = useState(filteredLevers);
 
-  const updateLever = (lever, option, index, value) => {
+  const updateLever = (option, index, value) => {
     const updatedLevers = affinityLevers.map((l, i) => {
       if (index === i) {
         const updatedOptions = l.options.map((op) => {
@@ -53,7 +53,7 @@ const AffinityDays = (props) => {
     });
   };
 
-  const handleRadioChange = (lever, option, index) => {
+  const handleRadioChange = (lever, option) => {
     if (lever && option) {
       const updatedLevers = affinityLevers.map((l) => {
         if (l.item === lever.item) {
@@ -61,8 +61,9 @@ const AffinityDays = (props) => {
         }
         return l;
       });
-
+      console.log('Before update:', affinityLevers)
       setAffinityLevers(updatedLevers);
+      console.log('After update:', updatedLevers)
 
       leverStore.dispatch({
         type: Constants.UPDATE_LEVER_VALUE,
@@ -137,7 +138,7 @@ const AffinityDays = (props) => {
                     disabled={lever.is_disabled}
                     id={`${lever.item}-${option.item}`}
                     name={lever.item}
-                    onChange={() => handleRadioChange(option)}
+                    onChange={() => handleRadioChange(lever, option, index)}
                   />
                   <label htmlFor={`${lever.item}-${option.item}`}>
                     {option.text}
