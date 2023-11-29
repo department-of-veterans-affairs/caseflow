@@ -15,55 +15,64 @@ const AffinityDays = (props) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
   });
 
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [affinityLevers, setLever] = useState(filteredLevers);
+  const [affinityLevers, setAffinityLevers] = useState(filteredLevers);
 
-  const handleRadioChange = (option) => {
-    setSelectedOption(option);
-    leverStore.dispatch({
-      type: Constants.UPDATE_LEVER_VALUE,
-      updated_lever: { item: option.item, value: option.value }
-    });
-  };
-
-  const updateLever = (option, index) => (event) => {
-    const levers = affinityLevers.map((lever, i) => {
+  const updateLever = (lever, option, index, value) => {
+    const updatedLevers = affinityLevers.map((l, i) => {
       if (index === i) {
-        const opt = lever.options.map((op) => {
+        const updatedOptions = l.options.map((op) => {
           if (op === option) {
-            let errorResult = !(/^\d{0,3}$/).test(event);
+            let errorResult = !(/^\d{0,3}$/).test(value);
 
             if (errorResult) {
               op.errorMessage = 'Please enter a value less than or equal to 999';
               op.value = null;
             } else {
               op.errorMessage = null;
-              op.value = event;
+              op.value = value;
             }
           }
 
           return op;
         });
 
-        console.log('Updated Lever:', { ...lever, options: opt });
-        return { ...lever, options: opt };
+        console.log('Updated Lever:', { ...l, options: updatedOptions });
+
+        return { ...l, options: updatedOptions };
+
       }
 
-      return lever;
-
+      return l;
     });
 
-    setLever(levers);
+    setAffinityLevers(updatedLevers);
+
+    leverStore.dispatch({
+      type: Constants.UPDATE_LEVER_VALUE,
+      updated_lever: { item: option.item, value: option.value }
+    });
   };
 
-  useEffect(() => {
-    if (selectedOption) {
+  const handleRadioChange = (lever, option, index) => {
+    if (lever && option) {
+      const updatedLevers = affinityLevers.map((l) => {
+        if (l.item === lever.item) {
+          return { ...l, value: option.item };
+        }
+        return l;
+      });
+
+      setAffinityLevers(updatedLevers);
+
       leverStore.dispatch({
         type: Constants.UPDATE_LEVER_VALUE,
-        updated_lever: { item: selectedOption.item, value: selectedOption.value }
+        updated_lever: { item: lever.item, value: option.item }
       });
     }
-  }, [selectedOption, leverStore]);
+  };
+
+
+
 
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
@@ -82,7 +91,7 @@ const AffinityDays = (props) => {
           disabled={lever.is_disabled}
           value={option.value}
           errorMessage={option.errorMessage}
-          onChange={updateLever(option, index)}
+          onChange={(value) => updateLever(lever, option, index, value)}
         />
       );
     }
@@ -93,7 +102,7 @@ const AffinityDays = (props) => {
           label={false}
           disabled={lever.is_disabled}
           value={option.value}
-          onChange={updateLever(option, index)}
+          onChange={(value) => updateLever(lever, option, index, value)}
         />
       );
     }
@@ -122,7 +131,7 @@ const AffinityDays = (props) => {
               <div key={`${lever.item}-${index}-${option.item}`}>
                 <div>
                   <input
-                    checked={selectedOption ? option.item === selectedOption.item : option.item === lever.value}
+                    checked={option.item === lever.value}
                     type="radio"
                     value={option.item}
                     disabled={lever.is_disabled}

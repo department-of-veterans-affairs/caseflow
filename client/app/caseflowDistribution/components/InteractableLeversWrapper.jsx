@@ -7,9 +7,8 @@ import LeverButtonsWrapper from './LeverButtonsWrapper';
 import ExclusionTable from './ExclusionTable';
 
 const InteractableLeverWrapper = ({ levers, leverStore }) => {
-  // const [lever_values] = useState(false)
   useEffect(() => {
-    console.log(leverStore.getState().lever_values)
+    console.log('Wrapper State:', leverStore.getState())
   }, [leverStore]);
 
   return (
