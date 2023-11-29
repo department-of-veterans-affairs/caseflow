@@ -21,7 +21,7 @@ const AddTaskView = (props) => {
 
   const objectForSelectedTaskType = () => {
     return dropdownOptions.find((option) => {
-      return option.value === task.type
+      return option.value === task.type;
     });
   };
 

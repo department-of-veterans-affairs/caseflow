@@ -172,7 +172,8 @@ export const AddAppealRelatedTaskView = (props) => {
             <ul>
               <div style={{ padding: '1rem' }}>
                 <CaseListTable
-                  key={tableUpdateTrigger} // Need to use this to force React to re-render checkboxes
+                  // Need to use this as key to force React to re-render checkboxes
+                  key={tableUpdateTrigger}
                   appeals={appeals}
                   showCheckboxes
                   paginate

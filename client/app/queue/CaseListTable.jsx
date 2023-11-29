@@ -123,9 +123,10 @@ class CaseListTable extends React.PureComponent {
 
     const updatePageHandler = (idx) => {
       const newCurrentPage = idx + 1;
+
       this.setState({ currentPage: newCurrentPage });
 
-      if (this.props.updatePageHandlerCallback !== undefined) {
+      if (typeof this.props.updatePageHandlerCallback !== 'undefined') {
         this.props.updatePageHandlerCallback(newCurrentPage);
       }
     };
