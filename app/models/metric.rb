@@ -24,8 +24,8 @@ class Metric < CaseflowRecord
   end
 
   def sent_to_in_log_systems
-    invalid_systems = sent_to - LOG_SYSTEMS.values
-    msg = "contains invalid log systems. The following are valid log systems #{LOG_SYSTEMS.values}"
+    invalid_systems = sent_to - Caseflow::MetricAttributes::LOG_SYSTEMS.values
+    msg = "contains invalid log systems. The following are valid log systems #{Caseflow::MetricAttributes::LOG_SYSTEMS.values}"
     errors.add(:sent_to, msg) if !invalid_systems.empty?
   end
 
