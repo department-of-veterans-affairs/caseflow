@@ -12,7 +12,7 @@ class MetricsService
     service ||= app
     uuid = SecureRandom.uuid
     metric_name = "request_latency"
-    sent_to = [[Metric::LOG_SYSTEMS[:rails_console]]]
+    sent_to = [[Caseflow::MetricAttributes::LOG_SYSTEMS[:rails_console]]]
     sent_to_info = nil
 
     start = Time.zone.now
@@ -37,8 +37,8 @@ class MetricsService
       }
       CustomMetricsService.emit_gauge(sent_to_info)
 
-      sent_to << Metric::LOG_SYSTEMS[:datadog]
-      sent_to << Metric::LOG_SYSTEMS[:dynatrace]
+      sent_to << Caseflow::MetricAttributes::LOG_SYSTEMS[:datadog]
+      sent_to << Caseflow::MetricAttributes::LOG_SYSTEMS[:dynatrace]
 
     end
 
@@ -47,7 +47,7 @@ class MetricsService
     metric_params = {
       name: metric_name,
       message: description,
-      type: Metric::Caseflow::MetricAttributes::METRIC_TYPES[:performance],
+      type: Caseflow::MetricAttributes::Caseflow::MetricAttributes::METRIC_TYPES[:performance],
       product: service,
       attrs: {
         service: service,
@@ -71,13 +71,13 @@ class MetricsService
     metric_params = {
       name: "error",
       message: error.message,
-      type: Metric::Caseflow::MetricAttributes::METRIC_TYPES[:error],
+      type: Caseflow::MetricAttributes::Caseflow::MetricAttributes::METRIC_TYPES[:error],
       product: "",
       attrs: {
         service: "",
         endpoint: ""
       },
-      sent_to: [[Metric::LOG_SYSTEMS[:rails_console]]],
+      sent_to: [[Caseflow::MetricAttributes::LOG_SYSTEMS[:rails_console]]],
       sent_to_info: "",
       start: "Time not recorded",
       end: "Time not recorded",
