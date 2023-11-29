@@ -791,7 +791,7 @@ DEPENDENCIES
   pdf-forms
   pdfjs_viewer-rails!
   pdfkit
-  pg
+  pg (= 1.5.4)
   pluck_to_hash
   pry (~> 0.13.0)
   pry-byebug (~> 3.9)
