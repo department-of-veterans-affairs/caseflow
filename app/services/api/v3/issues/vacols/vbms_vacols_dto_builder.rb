@@ -3,6 +3,7 @@
 #:reek:TooManyInstanceVariables
 class Api::V3::Issues::Vacols::VbmsVacolsDtoBuilder
   attr_reader :hash_response, :vacols_issue_count
+  DEFAULT_PER_PAGE = RequestIssue.default_per_page
 
   def initialize(veteran, page, per_page)
     @page = page
@@ -16,6 +17,10 @@ class Api::V3::Issues::Vacols::VbmsVacolsDtoBuilder
   end
 
   private
+
+  def determine_per_page(per_page)
+    per_page || DEFAULT_PER_PAGE
+  end
 
   def total_vacols_issue_count
     vacols_veteran_file_number = LegacyAppeal.convert_file_number_to_vacols(@veteran_file_number)
