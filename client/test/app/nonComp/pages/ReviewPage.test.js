@@ -1,16 +1,31 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { Provider } from 'react-redux';
-import { applyMiddleware, createStore, compose } from 'redux';
-import thunk from 'redux-thunk';
 import { axe } from 'jest-axe';
 
+import ReduxBase from 'app/components/ReduxBase';
 import ReviewPage from 'app/nonComp/pages/ReviewPage';
 import CombinedNonCompReducer, { mapDataToInitialState } from 'app/nonComp/reducers';
-import ReduxBase from '../../../../app/components/ReduxBase';
-import { vhaTaskFilterDetails, genericTaskFilterDetails } from 'test/data/taskFilterDetails';
+import { vhaTaskFilterDetails } from 'test/data/taskFilterDetails';
+import ApiUtil from 'app/util/ApiUtil';
 
-const basicVhaProps = {
+const nonAdminVhaProps = {
+  serverNonComp: {
+    businessLine: 'Veterans Health Administration',
+    businessLineUrl: 'vha',
+    decisionIssuesStatus: {},
+    isBusinessLineAdmin: false,
+    businessLineConfig: {
+      tabs: ['incomplete', 'in_progress', 'completed'],
+      canGenerateClaimHistory: false,
+    },
+    taskFilterDetails: vhaTaskFilterDetails,
+    featureToggles: {
+      decisionReviewQueueSsnColumn: true
+    }
+  }
+};
+
+const adminVhaProps = {
   serverNonComp: {
     businessLine: 'Veterans Health Administration',
     businessLineUrl: 'vha',
@@ -27,22 +42,7 @@ const basicVhaProps = {
   }
 };
 
-const createReducer = (storeValues) => {
-  return function (state = storeValues) {
-
-    return state;
-  };
-};
-
 const renderReviewPage = (storeValues = {}) => {
-  // const nonCompReducer = createReducer({ nonComp: props });
-
-  const store = createStore(
-    CombinedNonCompReducer,
-    storeValues,
-    compose(applyMiddleware(thunk))
-  );
-
   const initialState = mapDataToInitialState(storeValues);
 
   return render(
@@ -52,9 +52,55 @@ const renderReviewPage = (storeValues = {}) => {
   );
 };
 
-describe('ReviewPage', () => {
+beforeEach(() => {
+  // Mock ApiUtil get so the tasks will appear in the queues.
+  ApiUtil.get = jest.fn().mockResolvedValue({
+    tasks: { data: [] },
+    tasks_per_page: 15,
+    task_page_count: 3,
+    total_task_count: 44
+  });
+});
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
+
+// describe('ReviewPage with Non-admin Vha User', () => {
+//   beforeEach(() => {
+//     renderReviewPage(nonAdminVhaProps);
+//   });
+
+//   it('passes a11y testing', async () => {
+//     const { container } = setup();
+
+//     const results = await axe(container);
+
+//     expect(results).toHaveNoViolations();
+//   });
+
+//   it('renders correctly', () => {
+//     const { container } = setup();
+
+//     expect(container).toMatchSnapshot();
+//   });
+
+//   it('renders a button to intake a new form', () => {
+//     expect(screen.getByText('+ Intake new form')).toBeInTheDocument();
+//   });
+
+//   it('renders a button to download completed tasks', () => {
+//     expect(screen.getByText('Download completed tasks')).toBeInTheDocument();
+//   });
+
+//   it('does not render a button to generate task report', () => {
+//     expect(screen.findByText('Generate task report')).not.toBeInTheDocument();
+//   });
+// });
+
+describe('ReviewPage with Admin Vha User', () => {
   beforeEach(() => {
-    renderReviewPage(basicVhaProps);
+    renderReviewPage(adminVhaProps);
   });
 
   // it('passes a11y testing', async () => {
@@ -73,5 +119,13 @@ describe('ReviewPage', () => {
 
   it('renders a button to intake a new form', () => {
     expect(screen.getByText('+ Intake new form')).toBeInTheDocument();
+  });
+
+  it('renders a button to download completed tasks', () => {
+    expect(screen.getByText('Download completed tasks')).toBeInTheDocument();
+  });
+
+  it('does not render a button to generate task report', () => {
+    expect(screen.getByText('Generate task report')).toBeInTheDocument();
   });
 });
