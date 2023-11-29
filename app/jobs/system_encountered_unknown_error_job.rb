@@ -33,6 +33,7 @@ class SystemEncounteredUnknownErrorJob < CaseflowJob
       decision_document.uploaded_to_vbms_at.present?
   end
 
+  # :reek:FeatureEnvy
   def process_decision_document(decision_document)
     ActiveRecord::Base.transaction do
       dd_epe = decision_document.end_product_establishments
