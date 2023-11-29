@@ -69,8 +69,8 @@ class WarmBgsCachesJob < CaseflowJob
   def warm_poa_and_cache_for_appeals_for_hearings_priority
     legacy_start_time = Time.zone.now
     legacy_appeals = LegacyAppeal.where(id: priority_appeal_ids(LegacyAppeal.name).first(LIMITS[:PRIORITY]))
-    legacy_datadog_segment = "warm_poa_bgs_and_cache_legacy_priority"
-    warm_poa_and_cache_for_legacy_appeals(legacy_appeals, legacy_start_time, legacy_datadog_segment)
+    legacy_custom_metrics_segment = "warm_poa_bgs_and_cache_legacy_priority"
+    warm_poa_and_cache_for_legacy_appeals(legacy_appeals, legacy_start_time, legacy_custom_metrics_segment)
 
     ama_start_time = Time.zone.now
     claimants_for_hearing = Claimant.where(
@@ -88,8 +88,8 @@ class WarmBgsCachesJob < CaseflowJob
   def warm_poa_and_cache_for_appeals_for_hearings_most_recent
     legacy_start_time = Time.zone.now
     legacy_appeals = LegacyAppeal.where(id: most_recent_appeal_ids(LegacyAppeal.name).first(LIMITS[:MOST_RECENT]))
-    legacy_datadog_segment = "warm_poa_bgs_and_cache_legacy_recent"
-    warm_poa_and_cache_for_legacy_appeals(legacy_appeals, legacy_start_time, legacy_datadog_segment)
+    legacy_custom_metrics_segment = "warm_poa_bgs_and_cache_legacy_recent"
+    warm_poa_and_cache_for_legacy_appeals(legacy_appeals, legacy_start_time, legacy_custom_metrics_segment)
 
     ama_start_time = Time.zone.now
     claimants_for_hearing = Claimant.where(
