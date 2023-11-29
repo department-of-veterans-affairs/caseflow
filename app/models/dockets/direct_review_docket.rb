@@ -10,7 +10,7 @@ class DirectReviewDocket < Docket
       appeal_ids = appeals(priority: false, ready: true)
     else
       appeal_ids = appeals(priority: false, ready: true)
-        .where("target_decision_date <= ?", CaseDistributionLever.find_by_item('days_before_goal_due_for_distribution').try(:value).days.from_now)
+        .where("target_decision_date <= ?", CaseDistributionLever.find_by_item('days_before_goal_due_for_distribution').try(:value).to_i.days.from_now)
     end
     Appeal.where(id: appeal_ids).count
   end
