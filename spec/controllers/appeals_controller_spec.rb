@@ -218,11 +218,8 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
       end
 
       context "when request header contains nonexistent Veteran file number" do
-        it "returns 404 error", skip: "flake" do
-          appeal = create(:appeal, claimants: [build(:claimant, participant_id: "CLAIMANT_WITH_PVA_AS_VSO")])
-          create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number)
-
-          request.headers["HTTP_CASE_SEARCH"] = "123"
+        it "returns 404 error" do
+          request.headers["HTTP_CASE_SEARCH"] = "123456789"
 
           expect_any_instance_of(Fakes::BGSService).to_not receive(:fetch_poas_by_participant_id)
 
@@ -341,6 +338,89 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         expect(response.status).to eq(500)
         expect(response_body["errors"].length).to eq(1)
         expect(response_body["errors"][0]["title"]).to eq(err_msg)
+      end
+    end
+  end
+
+  describe "GET appeals/:appeal_id/document/:series_id" do
+    let(:series_id) { SecureRandom.uuid }
+    let(:document) { create(:document) }
+
+    before do
+      User.authenticate!(roles: ["System Admin"])
+    end
+
+    def allow_vbms_to_return_doc
+      allow(VBMSService)
+        .to receive(:fetch_document_series_for)
+        .with(appeal)
+        .and_return([OpenStruct.new(series_id: "{#{series_id.upcase}}")])
+    end
+
+    def allow_vbms_to_return_empty_array
+      allow(VBMSService)
+        .to receive(:fetch_document_series_for)
+        .with(appeal)
+        .and_return([])
+    end
+
+    shared_examples "document present" do
+      it "returns true in the JSON" do
+        get :document_lookup, params: { appeal_id: appeal.external_id, series_id: series_id }
+        response_body = JSON.parse(response.body)
+        expect(response_body["document_presence"]).to eq(true)
+      end
+    end
+
+    shared_examples "document not present" do
+      it "returns false in the JSON" do
+        get :document_lookup, params: { appeal_id: appeal.external_id, series_id: series_id }
+        response_body = JSON.parse(response.body)
+        expect(response_body["document_presence"]).to eq(false)
+      end
+    end
+
+    context "Appeal" do
+      let(:appeal) { create(:appeal) }
+      context "when document exists in the documents table" do
+        let!(:document) do
+          create(:document,
+                 series_id: "{#{series_id.upcase}}",
+                 file_number: appeal.veteran_file_number)
+        end
+        include_examples "document present"
+      end
+
+      context "when document exists in VBMS" do
+        before { allow_vbms_to_return_doc }
+        include_examples "document present"
+      end
+
+      context "when document does not exist" do
+        before { allow_vbms_to_return_empty_array }
+        include_examples "document not present"
+      end
+    end
+
+    context "LegacyAppeal" do
+      let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "0000000000S")) }
+      context "when document exists in the documents table" do
+        let!(:document) do
+          create(:document,
+                 series_id: "{#{series_id.upcase}}",
+                 file_number: appeal.veteran_file_number)
+        end
+        include_examples "document present"
+      end
+
+      context "when document exists in VBMS" do
+        before { allow_vbms_to_return_doc }
+        include_examples "document present"
+      end
+
+      context "when document does not exist" do
+        before { allow_vbms_to_return_empty_array }
+        include_examples "document not present"
       end
     end
   end

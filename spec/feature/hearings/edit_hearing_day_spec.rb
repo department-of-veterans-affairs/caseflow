@@ -8,7 +8,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
   let(:sample_room) { "1 (1W200A)" }
 
   let!(:current_user) do
-    user = create(:user, css_id: "BVATWARNER", roles: ["Build HearSched"])
+    user = create(:user, css_id: "EDITHEARINGDAY", roles: ["Build HearSched"])
     HearingsManagement.singleton.add_user(user)
     User.authenticate!(user: user)
   end
@@ -39,6 +39,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
 
   def navigate_to_docket(hearings = false)
     visit "hearings/schedule"
+    expect(page).to have_content("Add Hearing Day")
     find_link(hearing_day.scheduled_for.strftime("%a %-m/%d/%Y")).click
 
     if hearings == false
@@ -63,6 +64,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     end
 
     it "can make changes to the VLJ on the docket" do
+      expect(page).to have_content("Select VLJ")
       click_dropdown(name: "vlj", index: 1, wait: 30)
       find("button", text: "Save Changes").click
 
@@ -71,6 +73,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     end
 
     it "can make changes to the Coordinator on the docket" do
+      expect(page).to have_content("Select Hearing Coordinator")
       click_dropdown(name: "coordinator", text: "#{coordinator.snamef} #{coordinator.snamel}")
       find("button", text: "Save Changes").click
 
@@ -80,6 +83,7 @@ RSpec.feature "Edit a Hearing Day", :all_dbs do
     end
 
     it "can make changes to the Notes on the docket" do
+      expect(page).to have_content("Notes")
       find("textarea", id: "Notes").fill_in(with: sample_notes)
       find("button", text: "Save Changes").click
 

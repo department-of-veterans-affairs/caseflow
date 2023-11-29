@@ -259,6 +259,7 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     return update(state, {
       activeOrganization: {
         id: { $set: action.payload.id },
+        type: { $set: action.payload.type },
         name: { $set: action.payload.name },
         isVso: { $set: action.payload.isVso },
         userCanBulkAssign: { $set: action.payload.userCanBulkAssign }

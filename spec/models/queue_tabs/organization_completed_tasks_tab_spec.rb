@@ -40,7 +40,7 @@ describe OrganizationCompletedTasksTab, :postgres do
 
     context "when we want to show the amount of cases completed in the last 7 days" do
       it "has the correct description for each tab" do
-        expect(subject).to eq(COPY::QUEUE_PAGE_COMPLETE_TASKS_DESCRIPTION)
+        expect(subject).to eq(COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION)
       end
     end
   end

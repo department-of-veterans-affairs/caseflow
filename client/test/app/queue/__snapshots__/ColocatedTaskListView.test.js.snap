@@ -110,7 +110,7 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
               aria-label="Appeals"
               class="usa-table-borderless undefined"
               id="case-table-description"
-              role="table"
+              role="grid"
             >
               <thead>
                 <tr
@@ -696,7 +696,8 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     <div
                       data-css-w0yocm=""
@@ -707,7 +708,8 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     <a
                       href="/queue/appeals/fe583ee4-6f58-41a6-b8c5-09bfdc987c75"
@@ -726,14 +728,16 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     Stayed appeal
                   </td>
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     <span>
                       Original
@@ -742,7 +746,8 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     <span
                       aria-describedby="badge-200603-71"
@@ -853,7 +858,8 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     <div
                       class="css-w0yocm"
@@ -870,7 +876,8 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     <a
                       href="/reader/appeal/fe583ee4-6f58-41a6-b8c5-09bfdc987c75/documents?queue_redirect_url=%2F"
@@ -897,7 +904,8 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     <div
                       data-css-w0yocm=""
@@ -908,7 +916,8 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     <a
                       href="/queue/appeals/fe583ee4-6f58-41a6-b8c5-09bfdc987c75"
@@ -927,14 +936,16 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     Stayed appeal
                   </td>
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     <span>
                       Original
@@ -943,7 +954,8 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     <span
                       aria-describedby="badge-200603-72"
@@ -1054,7 +1066,8 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     <div
                       class="css-w0yocm"
@@ -1079,7 +1092,8 @@ exports[`ColocatedTaskListView assigned tab renders correctly 1`] = `
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     <a
                       href="/reader/appeal/fe583ee4-6f58-41a6-b8c5-09bfdc987c75/documents?queue_redirect_url=%2F"
@@ -1249,7 +1263,7 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
               aria-label="Appeals"
               class="usa-table-borderless undefined"
               id="case-table-description"
-              role="table"
+              role="grid"
             >
               <thead>
                 <tr
@@ -1835,7 +1849,8 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     <div
                       data-css-w0yocm=""
@@ -1846,7 +1861,8 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     <a
                       href="/queue/appeals/fe583ee4-6f58-41a6-b8c5-09bfdc987c75"
@@ -1865,14 +1881,16 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     Stayed appeal
                   </td>
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     <span>
                       Original
@@ -1881,7 +1899,8 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     <span
                       aria-describedby="badge-200603-73"
@@ -1992,7 +2011,8 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                   <td
                     class="cf-txt-c"
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     1 of 31
                     <div
@@ -2007,7 +2027,8 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     <a
                       href="/reader/appeal/fe583ee4-6f58-41a6-b8c5-09bfdc987c75/documents?queue_redirect_url=%2F"
@@ -2030,7 +2051,8 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     <div
                       data-css-w0yocm=""
@@ -2041,7 +2063,8 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     <a
                       href="/queue/appeals/fe583ee4-6f58-41a6-b8c5-09bfdc987c75"
@@ -2060,14 +2083,16 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     Stayed appeal
                   </td>
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     <span>
                       Original
@@ -2076,7 +2101,8 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     <span
                       aria-describedby="badge-200603-74"
@@ -2187,7 +2213,8 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                   <td
                     class="cf-txt-c"
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     30
                     <div
@@ -2202,7 +2229,8 @@ exports[`ColocatedTaskListView on hold tab renders correctly 1`] = `
                   <td
                     class=""
                     colspan="1"
-                    role="cell"
+                    role="gridcell"
+                    tabindex="-1"
                   >
                     <a
                       href="/reader/appeal/fe583ee4-6f58-41a6-b8c5-09bfdc987c75/documents?queue_redirect_url=%2F"

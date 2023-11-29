@@ -22,7 +22,7 @@ exports[`NotificationTable matches snapshot 1`] = `
       aria-label="Appeals"
       class="usa-table-borderless undefined"
       id="case-table-description"
-      role="table"
+      role="grid"
     >
       <thead>
         <tr

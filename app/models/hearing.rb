@@ -166,12 +166,14 @@ class Hearing < CaseflowRecord
   end
 
   def claimant_id
-    return nil if appeal.appellant.nil?
+    return nil if appeal.appellant.nil? || appeal.appellant.unrecognized_claimant?
 
     appeal.appellant.person.id
   end
 
   def aod?
+    return false if appeal.appellant.unrecognized_claimant?
+
     advance_on_docket_motion.present?
   end
 

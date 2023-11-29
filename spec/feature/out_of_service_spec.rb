@@ -11,10 +11,13 @@ RSpec.feature "Out of Service", :all_dbs do
       User.unauthenticate!
     end
 
-    scenario "When out of service is disabled, it shows Caseflow Home page",
-             skip: "This test is failing because of a bad feature toggle set somewhere" do
+    scenario "When out of service is disabled, it shows Caseflow Home page", :aggregate_failures do
       visit "/"
-      expect(page).to have_content("Caseflow Help")
+      expect(page).to have_current_path("/")
+      expect(page).to have_content("BVAAABSHIRE (DSUSER)")
+      expect(page).to have_link("Queue")
+      expect(page).to have_content("Search case")
+      expect(page).to have_content("Send feedback")
       expect(page.has_no_content?("Technical Difficulties")).to eq(true)
     end
 

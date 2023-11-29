@@ -98,6 +98,12 @@ module FeatureHelper
     sleep(10_000)
   end
 
+  # reload the case detail page if an load error is detected
+  def reload_case_detail_page(uuid)
+    visit "/queue/appeals/#{uuid}"
+    page.find("a", text: "refresh the page").click if page.has_text?(COPY::CASE_DETAILS_LOADING_FAILURE_TITLE)
+  end
+
   private
 
   def dropdown_click_and_get_options(dropdown)

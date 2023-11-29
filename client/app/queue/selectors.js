@@ -26,6 +26,7 @@ const getAppeals = (state) => state.queue.appeals;
 const getAppealDetails = (state) => state.queue.appealDetails;
 const getUserCssId = (state) => state.ui.targetUser?.cssId || state.ui.userCssId;
 const getActiveOrgId = (state) => state.ui.activeOrganization.id;
+const getActiveOrgType = (state) => state.ui.activeOrganization.type;
 const getAppealId = (state, props) => props.appealId;
 const getTaskUniqueId = (state, props) => props.taskId;
 const getCaseflowVeteranId = (state, props) => props.caseflowVeteranId;
@@ -305,6 +306,14 @@ export const getLegacyTaskTree = createSelector(
         timelineRange.contains(taskCreatedAt) &&
         timelineRange.contains(taskClosedAt);
       })
+);
+
+const vhaOrgTypes = ['VhaCamo', 'VhaCaregiverSupport', 'VhaProgramOffice', 'VhaRegionalOffice'];
+
+// Return a boolean that shows if the current active organization is a VHA org
+export const isActiveOrganizationVHA = createSelector(
+  [getActiveOrgType],
+  (activeOrganizationType) => vhaOrgTypes.includes(activeOrganizationType)
 );
 
 // ***************** Non-memoized selectors *****************

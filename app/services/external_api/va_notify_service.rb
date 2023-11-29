@@ -4,6 +4,8 @@ require "json"
 require "base64"
 require "digest"
 class ExternalApi::VANotifyService
+  include JwtGenerator
+
   BASE_URL = ENV["VA_NOTIFY_API_URL"]
   CLIENT_SECRET = ENV["VA_NOTIFY_API_KEY"]
   SERVICE_ID = ENV["VA_NOTIFY_SERVICE_ID"]
@@ -100,19 +102,6 @@ class ExternalApi::VANotifyService
       signed_token
     end
 
-    # Purpose: Remove any illegal characters and keeps source at proper format
-    #
-    # Params: string
-    #
-    # Return: sanitized string
-    def base64url(source)
-      encoded_source = Base64.encode64(source)
-      encoded_source = encoded_source.sub(/=+$/, "")
-      encoded_source = encoded_source.tr("+", "-")
-      encoded_source = encoded_source.tr("/", "_")
-      encoded_source
-    end
-
     # Purpose: Build an email request object
     #
     # Params: Details from appeal for notification
@@ -189,7 +178,7 @@ class ExternalApi::VANotifyService
     #
     # Return: service_response: JSON from VA Notify or error
     def send_va_notify_request(query: {}, headers: {}, endpoint:, method: :get, body: nil)
-      url = URI.escape(BASE_URL + endpoint)
+      url = URI::DEFAULT_PARSER.escape(BASE_URL + endpoint)
       request = HTTPI::Request.new(url)
       request.query = query
       request.open_timeout = 30

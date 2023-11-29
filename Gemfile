@@ -17,9 +17,9 @@ gem "bgs", git: "https://github.com/department-of-veterans-affairs/ruby-bgs.git"
 gem "bootsnap", require: false
 gem "browser"
 gem "business_time", "~> 0.9.3"
-gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "b9f0f74b85409df2a5f33ec3424f5cabbb5ae97f"
+gem "caseflow", git: "https://github.com/department-of-veterans-affairs/caseflow-commons", ref: "6377b46c2639248574673adc6a708d2568c6958c"
 gem "connect_mpi", git: "https://github.com/department-of-veterans-affairs/connect-mpi.git", ref: "a3a58c64f85b980a8b5ea6347430dd73a99ea74c"
-gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "43654a058d5a1d3f83f9bfdb832a19b4a9adea8b"
+gem "connect_vbms", git: "https://github.com/department-of-veterans-affairs/connect_vbms.git", ref: "9807d9c9f0f3e3494a60b6693dc4f455c1e3e922"
 gem "console_tree_renderer", git: "https://github.com/department-of-veterans-affairs/console-tree-renderer.git", tag: "v0.1.1"
 gem "countries"
 gem "ddtrace"
@@ -38,16 +38,17 @@ gem "moment_timezone-rails"
 gem "multiverse"
 gem "newrelic_rpm"
 gem "nokogiri", ">= 1.11.0.rc4"
-gem "paper_trail", "~> 10"
+gem "paper_trail", "~> 12.0"
 # Used to speed up reporting
 gem "parallel"
 # soft delete gem
 gem "paranoia", "~> 2.2"
 # PDF Tools
 gem "pdf-forms"
+# Used in Caseflow Dispatch
 gem "pdfjs_viewer-rails", git: "https://github.com/senny/pdfjs_viewer-rails.git", ref: "a4249eacbf70175db63b57e9f364d0a9a79e2b43"
-#Used to build out PDF files on the backend
-#https://github.com/pdfkit/pdfkit
+# Used to build out PDF files on the backend
+# https://github.com/pdfkit/pdfkit
 gem "pdfkit"
 gem "pg", platforms: :ruby
 # Application server: Puma
@@ -55,11 +56,12 @@ gem "pg", platforms: :ruby
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
 gem "puma", "5.6.4"
 gem "rack", "~> 2.2.6.2"
-gem "rails", "5.2.4.6"
+gem "rails", "5.2.8.1"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
 gem "react_on_rails", "11.3.0"
+gem "redis-mutex"
 gem "redis-namespace"
 gem "redis-rails", "~> 5.0.2"
 gem "request_store"
@@ -97,7 +99,7 @@ group :test, :development, :demo do
   gem "capybara"
   gem "capybara-screenshot"
   gem "danger", "~> 6.2.2"
-  gem "database_cleaner"
+  gem "database_cleaner-active_record"
   gem "factory_bot_rails", "~> 5.2"
   gem "faker"
   gem "guard-rspec"

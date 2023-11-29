@@ -6,7 +6,7 @@ describe PollDocketedLegacyAppealsJob, type: :job do
 
   describe "polling for docketed appeals" do
     before do
-      Seeds::NotificationEvents.new.seed!
+      Seeds::NotificationEvents.new.seed! unless NotificationEvent.count > 0
     end
 
     let!(:today) { Time.now.utc.iso8601 }

@@ -134,3 +134,22 @@ export const buildDecisionReviewFilterInformation = (taskCounts) => {
     filterOptions: parseDecisionReviewTypeFilterOptions(taskCounts)
   };
 };
+
+/**
+ * Creates a generic list of filter options that will be available in any column that uses it in decision review queues.
+ * @param {Object} filterCounts - An object where the keys are the value that will be filtered,
+ *  Each key has a value of the total count of these filter values
+ * @returns {Array} - Returns an array of objects, one for each filter value and the quantities of that value
+ * (e.g. "Caregiver | Tier Level (15)") and whether or not the filter is enabled (checked).
+ */
+export const parseFilterOptions = (filterCounts) =>
+  Object.entries(filterCounts).map(([filterValue, filterCount]) => {
+    let taskInfo;
+
+    taskInfo = {
+      value: filterValue,
+      displayText: `${filterValue} (${filterCount})`
+    };
+
+    return { ...taskInfo, checked: false };
+  });

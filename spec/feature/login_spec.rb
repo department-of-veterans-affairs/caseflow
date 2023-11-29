@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.feature "Login", :all_dbs do
-  let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
+  let(:appeal) { create(:legacy_appeal, vacols_case: create(:case_with_ssoc)) }
   let(:station_id) { "405" }
   let(:user_email) { "test@example.com" }
   let(:roles) { ["Certify Appeal"] }
@@ -51,6 +51,7 @@ RSpec.feature "Login", :all_dbs do
       end
 
       scenario "user is presented with RO selection page and redirects to initial location" do
+        User.authenticate!(user: user)
         visit "organizations/#{organization.url}"
 
         expect(current_path).to eq("/login")
@@ -65,6 +66,7 @@ RSpec.feature "Login", :all_dbs do
 
     context "User is not in the Org they are trying to view" do
       scenario "user is presented with RO selection page and gets 403 /unauthorized error" do
+        User.authenticate!(user: user)
         visit "organizations/#{organization.url}"
 
         expect(current_path).to eq("/login")
@@ -103,18 +105,16 @@ RSpec.feature "Login", :all_dbs do
 
   # :nocov:
   # https://stackoverflow.com/questions/36472930/session-sometimes-not-persisting-in-capybara-selenium-test
-  scenario "with valid credentials",
-           skip: "This test sometimes fails because sessions do not persist across requests" do
+  scenario "with valid credentials" do
     visit "certifications/new/#{appeal.vacols_id}"
     expect(page).to have_content("Please select the regional office you are logging in from.")
     select_ro_from_dropdown
     click_on "Log in"
-    expect(page).to have_current_path(new_certification_path(vacols_id: appeal.vacols_id))
+    expect(page).to have_current_path("/certifications/#{appeal.vacols_id}/check_documents")
     expect(find("#menu-trigger")).to have_content("ANNE MERICA (RO05)")
   end
 
-  scenario "logging out redirects to home page",
-           skip: "This test sometimes fails because sessions do not persist across requests" do
+  scenario "logging out redirects to home page" do
     visit "certifications/new/#{appeal.vacols_id}"
 
     # vacols login
@@ -123,7 +123,7 @@ RSpec.feature "Login", :all_dbs do
     click_on "Log in"
 
     click_on "ANNE MERICA (RO05)"
-    click_on "Sign out"
+    click_on "Sign Out"
     visit "certifications/new/#{appeal.vacols_id}"
     expect(page).to have_current_path("/login")
   end
@@ -162,12 +162,20 @@ RSpec.feature "Login", :all_dbs do
   end
 
   # :nocov:
-  scenario "Single Sign On is down",
-           skip: "This test sometimes fails because it cannot find the expected text" do
-    Rails.application.config.sso_service_disabled = true
-    visit "certifications/new/#{appeal.vacols_id}"
+  context "Single Sign on is down" do
+    before do
+      Rails.application.config.sso_service_disabled = true
+    end
 
-    expect(page).to have_content("Login Service Unavailable")
+    after do
+      Rails.application.config.sso_service_disabled = false
+    end
+
+    scenario "it displays the error page" do
+      visit "certifications/new/#{appeal.vacols_id}"
+
+      expect(page).to have_content("Something went wrong")
+    end
   end
   # :nocov:
 end

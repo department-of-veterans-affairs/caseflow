@@ -10,8 +10,111 @@ describe Distribution, :all_dbs do
   before do
     Timecop.freeze(Time.zone.now)
   end
-  before { FeatureToggle.enable!(:acd_distribute_by_docket_date) }
-  after { FeatureToggle.disable!(:acd_distribute_by_docket_date) }
+
+  context "validations" do
+    let(:distribution) { described_class.new(params) }
+
+    it "#validate_user_is_judge" do
+      non_judge_user = create(:user)
+      params[:judge] = non_judge_user
+
+      expect(distribution.valid?).to be false
+      expect(distribution.errors.details).to eq(judge: [{ error: :not_judge }])
+    end
+
+    context "#validate_number_of_unassigned_cases" do
+      it "when distribution is not a priority push" do
+        create_list(:ama_judge_assign_task, 10, assigned_to: judge)
+
+        expect(distribution.valid?).to be false
+        expect(distribution.errors.details[:judge].include?(error: :too_many_unassigned_cases)).to be true
+      end
+
+      it "when distribution is a priority push" do
+        create_list(:ama_judge_assign_task, 10, assigned_to: judge)
+        params[:priority_push] = true
+
+        expect(distribution.valid?).to be true
+      end
+    end
+
+    context "#validate_days_waiting_on_unassigned_cases" do
+      it "when distribution is not a priority push" do
+        create(:ama_judge_assign_task, assigned_at: 35.days.ago, assigned_to: judge)
+
+        expect(distribution.valid?).to be false
+        expect(distribution.errors.details[:judge].include?(error: :unassigned_cases_waiting_too_long)).to be true
+      end
+
+      it "when distribution is a priority push" do
+        create(:ama_judge_assign_task, assigned_at: 35.days.ago, assigned_to: judge)
+        params[:priority_push] = true
+
+        expect(distribution.valid?).to be true
+      end
+    end
+
+    context "#validate_judge_has_no_pending_distributions" do
+      let(:second_distribution) { described_class.new(params) }
+
+      before { new_distribution }
+
+      context "when judge has a pending priority push distribution" do
+        let(:priority_push) { true }
+
+        it "judge cannot start another priority push distribution" do
+          expect(second_distribution.valid?).to be false
+          expect(second_distribution.errors.details[:judge].include?(error: :pending_distribution)).to be true
+        end
+
+        it "judge can start a new nonpriority distribution" do
+          params[:priority_push] = false
+          expect(second_distribution.valid?).to be true
+        end
+      end
+
+      context "when judge has a pending nonpriority distribution" do
+        it "judge cannot start another nonpriority distribution" do
+          expect(second_distribution.valid?).to be false
+          expect(second_distribution.errors.details[:judge].include?(error: :pending_distribution)).to be true
+        end
+
+        it "judge can start a new priority push distribution" do
+          params[:priority_push] = true
+          expect(second_distribution.valid?).to be true
+        end
+      end
+
+      context "when distribution with status 'started' exists" do
+        it "judge cannot start another distribution" do
+          expect(second_distribution.valid?).to be false
+          expect(second_distribution.errors.details[:judge].include?(error: :pending_distribution)).to be true
+        end
+      end
+    end
+
+    it "all validations pass" do
+      create_list(:ama_judge_assign_task, 2, assigned_at: 5.days.ago, assigned_to: judge)
+
+      expect(new_distribution.valid?).to be true
+    end
+  end
+
+  context "#batch_size" do
+    it "is set to alternative batch size if judge has no attorneys" do
+      expect(new_distribution.send(:batch_size)).to eq(Constants.DISTRIBUTION.alternative_batch_size)
+    end
+
+    it "is set based on number of attorneys on team" do
+      judge_team = JudgeTeam.create_for_judge(judge)
+      3.times do
+        team_member = create(:user)
+        judge_team.add_user(team_member)
+      end
+
+      expect(new_distribution.send(:batch_size)).to eq(3 * Constants.DISTRIBUTION.batch_size_per_attorney)
+    end
+  end
 
   context "#distributed_cases_count" do
     subject { new_distribution }
@@ -54,6 +157,14 @@ describe Distribution, :all_dbs do
       new_distribution.distribute!
     end
 
+    it "updates status to error if an error is thrown" do
+      allow_any_instance_of(LegacyDocket).to receive(:distribute_appeals).and_raise(StandardError)
+
+      expect { new_distribution.distribute! }.to raise_error(StandardError)
+
+      expect(new_distribution.status).to eq("error")
+    end
+
     context "when status is an invalid value" do
       let(:status) { "invalid!" }
 
@@ -85,6 +196,8 @@ describe Distribution, :all_dbs do
     end
   end
 
+  # The following are specifically testing the priority push code in the AutomaticCaseDistribution module
+  # ByDocketDateDistribution tests are in their own file, by_docket_date_distribution_spec.rb
   context "priority push distributions" do
     let(:priority_push) { true }
 

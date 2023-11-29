@@ -14,7 +14,7 @@ import SelectFormPage, { SelectFormButton } from './pages/selectForm';
 import SearchPage from './pages/search';
 import ReviewPage from './pages/review';
 import FinishPage, { FinishButtons } from './pages/finish';
-import { IntakeAddIssuesPage } from './pages/addIssues';
+import { IntakeAddIssuesPage } from './pages/addIssues/addIssues';
 import CompletedPage, { CompletedNextButton } from './pages/completed';
 import { PAGE_PATHS } from './constants';
 import { toggleCancelModal, submitCancel } from './actions/intake';
@@ -58,6 +58,7 @@ export const IntakeFrame = (props) => {
         rightNavElement={rightNavElements}
         userDisplayName={props.userDisplayName}
         dropdownUrls={props.dropdownUrls}
+        applicationUrls={props.applicationUrls}
         topMessage={topMessage}
         defaultUrl="/"
       >

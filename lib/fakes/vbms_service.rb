@@ -93,11 +93,11 @@ class Fakes::VBMSService
   end
 
   def self.fetch_document_series_for(appeal)
-    Document.where(file_number: appeal.veteran_file_number).map do |document|
+    Document.where(file_number: appeal.veteran_file_number).flat_map do |document|
       (0..document.id % 3).map do |index|
         OpenStruct.new(
           document_id: "#{document.vbms_document_id}#{(index > 0) ? index : ''}",
-          series_id: "TEST_SERIES_#{document.id}",
+          series_id: "{TEST_SERIES_#{document.id}}",
           version: index + 1,
           received_at: document.received_at
         )
@@ -105,14 +105,47 @@ class Fakes::VBMSService
     end
   end
 
+  def self.update_document_in_vbms(appeal, uploadable_document)
+    @appeal = appeal
+    @updated_document = uploadable_document
+
+    {
+      appeal: appeal,
+      updated_document: uploadable_document,
+      prev_version_ref_id: uploadable_document.document_version_reference_id,
+      update_document_response: {
+        :@new_document_version_ref_id => "ref",
+        :@document_series_ref_id => "series"
+      }
+    }
+  end
+
   def self.upload_document_to_vbms(appeal, form8)
     @uploaded_form8 = form8
     @uploaded_form8_appeal = appeal
+
+    {
+      appeal: appeal,
+      form8: form8,
+      upload_document_response: {
+        :@new_document_version_ref_id => "ref",
+        :@document_series_ref_id => "series"
+      }
+    }
   end
 
   def self.upload_document_to_vbms_veteran(file_number, form8)
     @uploaded_form8 = form8
     @veteran_file_number = file_number
+
+    {
+      file_number: file_number,
+      form8: form8,
+      upload_document_response: {
+        :@new_document_version_ref_id => "ref",
+        :@document_series_ref_id => "series"
+      }
+    }
   end
 
   def self.clean_document(_location)

@@ -62,7 +62,8 @@ class Test::UsersController < ApplicationController
         stats: "/stats",
         jobs: "/jobs",
         admin: "/admin",
-        test_veterans: "/test/data"
+        test_veterans: "/test/data",
+        metrics_dashboard: "/metrics/dashboard"
       }
     }
   ].freeze
@@ -177,7 +178,9 @@ class Test::UsersController < ApplicationController
   helper_method :user_session
 
   def veteran_records
-    redirect_to "/unauthorized" if Rails.deploy_env?(:prod) || Rails.deploy_env?(:preprod)
+    redirect_to "/unauthorized" if Rails.deploy_env?(:prod) || \
+                                   Rails.deploy_env?(:prodtest) || \
+                                   Rails.deploy_env?(:preprod)
 
     build_veteran_profile_records
   end

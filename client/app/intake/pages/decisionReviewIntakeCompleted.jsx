@@ -18,8 +18,34 @@ import UnidentifiedIssueAlert from '../components/UnidentifiedIssueAlert';
 const checkIssuesForVhaPredocket = (requestIssues) =>
   requestIssues.some((ri) => ri.benefitType === 'vha' && ri.isPreDocketNeeded === true);
 
-const checkIfPreDocketed = (requestIssues) =>
-  requestIssues.some((ri) => ri.isPreDocketNeeded === true);
+const checkIssuesForEducation = (requestIssues) => {
+  return requestIssues.some((ri) => ri.benefitType === 'education');
+};
+
+const checkIssuesForVhaCaregiver = (requestIssues) => {
+  return requestIssues.some((ri) => ri.category.includes('Caregiver'));
+};
+
+const checkIfPreDocketed = (requestIssues) => {
+  return requestIssues.some((ri) => ri.isPreDocketNeeded === true);
+};
+
+const preDocketTitle = (requestIssues) => {
+  let title = '';
+
+  if (checkIssuesForVhaPredocket(requestIssues)) {
+    let vhaCamoTitle = COPY.VHA_CAMO_PRE_DOCKET_INTAKE_SUCCESS_TITLE;
+    let caregiverTitle = COPY.VHA_CAREGIVER_SUPPORT_PRE_DOCKET_INTAKE_SUCCESS_TITLE;
+
+    title = checkIssuesForVhaCaregiver(requestIssues) ? caregiverTitle : vhaCamoTitle;
+  } else if (checkIssuesForEducation(requestIssues)) {
+    title = COPY.EDUCATION_PRE_DOCKET_INTAKE_SUCCESS_TITLE;
+  } else {
+    title = COPY.PRE_DOCKET_INTAKE_SUCCESS_TITLE;
+  }
+
+  return title;
+};
 
 const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, editIssuesUrl, completedReview }) => {
   const unidentifiedIssues = requestIssues.filter((ri) => ri.isUnidentified);
@@ -55,14 +81,22 @@ const leadMessageList = ({ veteran, formName, requestIssues, asyncJobUrl, editIs
   return leadMessageArr;
 };
 
-const getChecklistItems = (featureToggles, formType, requestIssues, isInformalConferenceRequested) => {
+const getChecklistItems = (formType, requestIssues, isInformalConferenceRequested) => {
   const eligibleRequestIssues = requestIssues.filter((ri) => !ri.ineligibleReason);
 
   if (formType === 'appeal') {
     let statusMessage = 'Appeal created:';
 
     if (checkIssuesForVhaPredocket(requestIssues)) {
-      statusMessage = 'Appeal created and sent to VHA for document assessment.';
+      if (checkIssuesForVhaCaregiver(requestIssues)) {
+        statusMessage = 'Appeal created and sent to VHA Caregiver for document assessment.';
+      } else {
+        statusMessage = 'Appeal created and sent to VHA CAMO for document assessment.';
+      }
+    }
+
+    if (checkIssuesForEducation(requestIssues) && checkIfPreDocketed(requestIssues)) {
+      statusMessage = 'Appeal created and sent to Education Service for document assessment.';
     }
 
     return [<Fragment>
@@ -123,7 +157,6 @@ class VacolsOptInList extends React.PureComponent {
 class DecisionReviewIntakeCompleted extends React.PureComponent {
   render() {
     const {
-      featureToggles,
       veteran,
       formType,
       intakeStatus,
@@ -163,9 +196,7 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       return <SmallLoader message="Creating task..." spinnerColor={LOGO_COLORS.CERTIFICATION.ACCENT} />;
     }
 
-    let title = checkIfPreDocketed(requestIssues) ?
-      'Appeal recorded in pre-docket queue' :
-      'Intake completed';
+    let title = checkIfPreDocketed(requestIssues) ? preDocketTitle(requestIssues) : COPY.INTAKE_SUCCESS_TITLE;
 
     const deceasedVeteranAlert = () => {
       return (
@@ -197,7 +228,6 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
       }
       checklist={
         getChecklistItems(
-          featureToggles,
           formType,
           requestIssues,
           informalConference
@@ -220,7 +250,6 @@ class DecisionReviewIntakeCompleted extends React.PureComponent {
 
 export default connect(
   (state) => ({
-    featureToggles: state.featureToggles,
     veteran: state.intake.veteran,
     formType: state.intake.formType,
     asyncJobUrl: state.intake.asyncJobUrl,

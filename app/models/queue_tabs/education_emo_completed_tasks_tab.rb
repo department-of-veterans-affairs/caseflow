@@ -4,7 +4,7 @@ class EducationEmoCompletedTasksTab < QueueTab
   validate :assignee_is_organization
 
   def label
-    COPY::EDUCATION_ORGANIZATIONAL_QUEUE_PAGE_COMPLETED_TAB_TITLE
+    COPY::ORGANIZATIONAL_QUEUE_COMPLETED_TAB_TITLE
   end
 
   def self.tab_name

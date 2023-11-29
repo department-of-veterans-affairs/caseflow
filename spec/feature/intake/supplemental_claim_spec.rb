@@ -135,6 +135,7 @@ feature "Supplemental Claim Intake", :all_dbs do
     find("#cf-payee-code").send_keys :enter
 
     select_agree_to_withdraw_legacy_issues(false)
+    select_filed_by_va_gov(false)
 
     # DateSelector component has been updated to not allow future dates to be selected at all
     # fill_in "What is the Receipt Date of this form?", with: (Time.zone.today + 1.day).mdY
@@ -153,7 +154,7 @@ feature "Supplemental Claim Intake", :all_dbs do
     expect(find("#different-claimant-option_true", visible: false)).to be_checked
     expect(find_field("Baz Qux, Child", visible: false)).to be_checked
     expect(find("#legacy-opt-in_false", visible: false)).to be_checked
-
+    select_filed_by_va_gov(false)
     click_intake_continue
 
     expect(page).to have_current_path("/intake/add_issues")
@@ -360,7 +361,8 @@ feature "Supplemental Claim Intake", :all_dbs do
     test_veteran,
     is_comp: true,
     legacy_opt_in_approved: false,
-    veteran_is_not_claimant: false
+    veteran_is_not_claimant: false,
+    filed_by_va_gov: false
   )
 
     supplemental_claim = SupplementalClaim.create!(
@@ -368,7 +370,8 @@ feature "Supplemental Claim Intake", :all_dbs do
       receipt_date: receipt_date,
       benefit_type: is_comp ? "compensation" : "education",
       legacy_opt_in_approved: legacy_opt_in_approved,
-      veteran_is_not_claimant: veteran_is_not_claimant
+      veteran_is_not_claimant: veteran_is_not_claimant,
+      filed_by_va_gov: filed_by_va_gov
     )
 
     intake = SupplementalClaimIntake.create!(

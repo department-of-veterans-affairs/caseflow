@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 class ExpiredAsyncJobsChecker < DataIntegrityChecker
-  def slack_channel
-    "#appeals-foxtrot"
-  end
-
   def call
     jobs = AsyncableJobs.new(page_size: -1).jobs.select(&:expired_without_processing?)
     job_reporter = AsyncableJobsReporter.new(jobs: jobs)

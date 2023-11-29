@@ -66,8 +66,8 @@ describe ByDocketDateDistribution, :all_dbs do
         .with(@new_acd, priority: true, style: "push", limit: priority_count_hash[:hearing])
         .and_return(add_object_to_return_array(priority_count_hash[:hearing]))
 
-      # requested_distribution is private so .send is used to directly call it
-      return_array = @new_acd.send :priority_push_distribution, 12
+      # priority_push_distribution is private so .send is used to directly call it
+      @new_acd.send :priority_push_distribution, 12
     end
   end
 
@@ -110,6 +110,7 @@ describe ByDocketDateDistribution, :all_dbs do
   context "#num_oldest_priority_appeals_for_judge_by_docket" do
     it "returns an empty hash if provided num is zero" do
       return_value = @new_acd.send :num_oldest_priority_appeals_for_judge_by_docket, @new_acd, 0
+      expect(return_value).to eq({})
     end
 
     it "calls each docket and sorts the return values if num > 0" do

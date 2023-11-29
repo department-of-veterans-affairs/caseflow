@@ -120,6 +120,7 @@ export const ACTIONS = {
   SET_DOCKET_TYPE: 'SET_DOCKET_TYPE',
   SET_ORIGINAL_HEARING_REQUEST_TYPE: 'SET_ORIGINAL_HEARING_REQUEST_TYPE',
   TOGGLE_CANCEL_MODAL: 'TOGGLE_CANCEL_MODAL',
+  TOGGLE_ADD_DECISION_DATE_MODAL: 'TOGGLE_ADD_DECISION_DATE_MODAL',
   TOGGLE_ADDING_ISSUE: 'TOGGLE_ADDING_ISSUE',
   TOGGLE_ADD_ISSUES_MODAL: 'TOGGLE_ADD_ISSUES_MODAL',
   TOGGLE_NONRATING_REQUEST_ISSUE_MODAL: 'TOGGLE_NONRATING_REQUEST_ISSUE_MODAL',
@@ -141,6 +142,7 @@ export const ACTIONS = {
   CONFIRM_FINISH_INTAKE: 'CONFIRM_FINISH_INTAKE',
   COMPLETE_INTAKE_NOT_CONFIRMED: 'COMPLETE_INTAKE_NOT_CONFIRMED',
   SET_ISSUE_SELECTED: 'SET_ISSUE_SELECTED',
+  ADD_DECISION_DATE: 'ADD_DECISION_DATE',
   ADD_ISSUE: 'ADD_ISSUE',
   REMOVE_ISSUE: 'REMOVE_ISSUE',
   WITHDRAW_ISSUE: 'WITHDRAW_ISSUE',
@@ -202,6 +204,7 @@ export const REVIEW_DATA_FIELDS = {
   supplementalClaim: {
     benefit_type: { key: 'benefitType', required: true },
     receipt_date: { key: 'receiptDate', required: true },
+    filed_by_va_gov: { key: 'filedByVaGov', required: false },
     claimant: { key: 'claimant' },
     unlisted_claimant: { key: 'unlistedClaimant' },
     poa: { key: 'poa' },

@@ -159,113 +159,135 @@ feature "Intake Add Issues Page", :all_dbs do
           expect(page).to have_content(COPY::VHA_PRE_DOCKET_ISSUE_BANNER)
         end
       end
-    end
 
-    context "when adding a contested claim to an appeal" do
-      def add_contested_claim_issue
-        click_intake_add_issue
-        click_intake_no_matching_issues
+      context "when adding a contested claim to an appeal" do
+        def add_contested_claim_issue
+          click_intake_add_issue
+          click_intake_no_matching_issues
 
-        # add the cc issue
-        dropdown_select_string = "Select or enter..."
-        benefit_text = "Insurance"
+          # add the cc issue
+          dropdown_select_string = "Select or enter..."
+          benefit_text = "Insurance"
 
-        # Select the benefit type
-        all(".cf-select__control", text: dropdown_select_string).first.click
-        find("div", class: "cf-select__option", text: benefit_text).click
+          # Select the benefit type
+          all(".cf-select__control", text: dropdown_select_string).first.click
+          find("div", class: "cf-select__option", text: benefit_text).click
 
-        # Select the issue category
-        find(".cf-select__control", text: dropdown_select_string).click
-        find("div", class: "cf-select__option", text: "Contested Death Claim | Intent of Insured").click
+          # Select the issue category
+          find(".cf-select__control", text: dropdown_select_string).click
+          find("div", class: "cf-select__option", text: "Contested Death Claim | Intent of Insured").click
 
-        # fill in date and issue description
-        fill_in "Decision date", with: 1.day.ago.to_date.mdY.to_s
-        fill_in "Issue description", with: "CC Instructions"
+          # fill in date and issue description
+          fill_in "Decision date", with: 1.day.ago.to_date.mdY.to_s
+          fill_in "Issue description", with: "CC Instructions"
 
-        # click buttons
-        click_on "Add this issue"
-        click_on "Establish appeal"
+          # click buttons
+          click_on "Add this issue"
+          click_on "Establish appeal"
+        end
+
+        before do
+          ClerkOfTheBoard.singleton
+          FeatureToggle.enable!(:cc_appeal_workflow)
+          FeatureToggle.enable!(:indicator_for_contested_claims)
+        end
+        after do
+          FeatureToggle.disable!(:cc_appeal_workflow)
+          FeatureToggle.disable!(:indicator_for_contested_claims)
+        end
+
+        scenario "the appeal is evidence submission" do
+          start_appeal(veteran)
+          visit "/intake"
+          click_intake_continue
+          expect(page).to have_current_path("/intake/add_issues")
+
+          # method to process add issues page with cc issue
+          add_contested_claim_issue
+
+          appeal = Appeal.find_by(veteran_file_number: veteran.file_number)
+          appeal.reload
+
+          # expect the SendInitialNotificationLetterHoldingTask to be created and assigned to COB
+          expect(page).to have_content("Intake completed")
+          expect(appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").nil?).to be false
+          expect(
+            appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").parent
+          ).to eql(appeal.tasks.find_by(type: "EvidenceSubmissionWindowTask"))
+          expect(
+            appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_to
+          ).to eql(ClerkOfTheBoard.singleton)
+        end
+
+        scenario "the appeal is direct review" do
+          start_appeal(veteran)
+          visit "/intake"
+          find("label", text: "Direct Review").click
+          click_intake_continue
+          expect(page).to have_current_path("/intake/add_issues")
+
+          # method to process add issues page with cc issue
+          add_contested_claim_issue
+
+          appeal = Appeal.find_by(veteran_file_number: veteran.file_number)
+          appeal.reload
+
+          # expect the SendInitialNotificationLetterHoldingTask to be created and assigned to COB
+          expect(page).to have_content("Intake completed")
+          expect(appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").nil?).to be false
+          expect(
+            appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").parent
+          ).to eql(appeal.tasks.find_by(type: "DistributionTask"))
+          expect(
+            appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_to
+          ).to eql(ClerkOfTheBoard.singleton)
+        end
+
+        scenario "the appeal is a hearing request" do
+          start_appeal(veteran)
+          visit "/intake"
+          find("label", text: "Hearing").click
+          click_intake_continue
+          expect(page).to have_current_path("/intake/add_issues")
+
+          # method to process add issues page with cc issue
+          add_contested_claim_issue
+
+          appeal = Appeal.find_by(veteran_file_number: veteran.file_number)
+          appeal.reload
+
+          # expect the SendInitialNotificationLetterHoldingTask to be created and assigned to COB
+          expect(page).to have_content("Intake completed")
+          expect(appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").nil?).to be false
+          expect(
+            appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").parent
+          ).to eql(appeal.tasks.find_by(type: "ScheduleHearingTask"))
+          expect(
+            appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_to
+          ).to eql(ClerkOfTheBoard.singleton)
+        end
       end
 
-      before do
-        ClerkOfTheBoard.singleton
-        FeatureToggle.enable!(:cc_appeal_workflow)
-        FeatureToggle.enable!(:indicator_for_contested_claims)
-      end
-      after do
-        FeatureToggle.disable!(:cc_appeal_workflow)
-        FeatureToggle.disable!(:indicator_for_contested_claims)
-      end
+      context "when the veteran does not have a POA"
+      before { FeatureToggle.enable!(:hlr_sc_unrecognized_claimants) }
+      after { FeatureToggle.disable!(:hlr_sc_unrecognized_claimants) }
 
-      scenario "the appeal is evidence submission" do
-        start_appeal(veteran)
+      let(:no_poa_veteran) { create(:veteran, participant_id: "NO_POA111111113", file_number: "111111113") }
+
+      scenario "the correct text displays for VHA" do
+        start_claim_review(:higher_level_review, benefit_type: "vha", veteran: no_poa_veteran)
         visit "/intake"
         click_intake_continue
         expect(page).to have_current_path("/intake/add_issues")
-
-        # method to process add issues page with cc issue
-        add_contested_claim_issue
-
-        appeal = Appeal.find_by(veteran_file_number: veteran.file_number)
-        appeal.reload
-
-        # expect the SendInitialNotificationLetterHoldingTask to be created and assigned to COB
-        expect(page).to have_content("Intake completed")
-        expect(appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").nil?).to be false
-        expect(
-          appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").parent
-        ).to eql(appeal.tasks.find_by(type: "EvidenceSubmissionWindowTask"))
-        expect(
-          appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_to
-        ).to eql(ClerkOfTheBoard.singleton)
+        expect(page).to have_content(COPY::VHA_NO_POA)
       end
 
-      scenario "the appeal is direct review" do
-        start_appeal(veteran)
+      scenario "the correct text displays for non-VHA" do
+        start_claim_review(:higher_level_review, veteran: no_poa_veteran)
         visit "/intake"
-        find("label", text: "Direct Review").click
         click_intake_continue
         expect(page).to have_current_path("/intake/add_issues")
-
-        # method to process add issues page with cc issue
-        add_contested_claim_issue
-
-        appeal = Appeal.find_by(veteran_file_number: veteran.file_number)
-        appeal.reload
-
-        # expect the SendInitialNotificationLetterHoldingTask to be created and assigned to COB
-        expect(page).to have_content("Intake completed")
-        expect(appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").nil?).to be false
-        expect(
-          appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").parent
-        ).to eql(appeal.tasks.find_by(type: "DistributionTask"))
-        expect(
-          appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_to
-        ).to eql(ClerkOfTheBoard.singleton)
-      end
-
-      scenario "the appeal is a hearing request" do
-        start_appeal(veteran)
-        visit "/intake"
-        find("label", text: "Hearing").click
-        click_intake_continue
-        expect(page).to have_current_path("/intake/add_issues")
-
-        # method to process add issues page with cc issue
-        add_contested_claim_issue
-
-        appeal = Appeal.find_by(veteran_file_number: veteran.file_number)
-        appeal.reload
-
-        # expect the SendInitialNotificationLetterHoldingTask to be created and assigned to COB
-        expect(page).to have_content("Intake completed")
-        expect(appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").nil?).to be false
-        expect(
-          appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").parent
-        ).to eql(appeal.tasks.find_by(type: "ScheduleHearingTask"))
-        expect(
-          appeal.reload.tasks.find_by(type: "SendInitialNotificationLetterTask").assigned_to
-        ).to eql(ClerkOfTheBoard.singleton)
+        expect(page).to have_content(COPY::ADD_CLAIMANT_CONFIRM_MODAL_NO_POA)
       end
     end
   end
@@ -384,9 +406,6 @@ feature "Intake Add Issues Page", :all_dbs do
   context "show decision date on unidentified issues" do
     let(:decision_date) { 50.days.ago.to_date.mdY }
     let(:untimely_days) { 2.years.ago.to_date.mdY }
-
-    before { FeatureToggle.enable!(:unidentified_issue_decision_date) }
-    after { FeatureToggle.disable!(:unidentified_issue_decision_date) }
 
     scenario "unidentified issue decision date on add issue page" do
       start_higher_level_review(veteran_no_ratings)
@@ -573,7 +592,7 @@ feature "Intake Add Issues Page", :all_dbs do
         expect(page).to have_content("Intake completed")
       end
 
-      scenario "when vacols issue ineligible even with an exemption", skip: true do
+      scenario "when vacols issue ineligible even with an exemption" do
         start_higher_level_review(veteran, legacy_opt_in_approved: true)
         visit "/intake/add_issues"
         click_intake_add_issue
@@ -581,9 +600,7 @@ feature "Intake Add Issues Page", :all_dbs do
 
         # Expect legacy opt in issue modal to show
         expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
-        add_intake_rating_issue("lumbosacral strain")
-
-        # Expect untimely issue modal not to show
+        add_intake_rating_issue("typhoid arthritis")
         expect(page).to_not have_content("Issue 1 is an Untimely Issue")
       end
 
@@ -671,7 +688,7 @@ feature "Intake Add Issues Page", :all_dbs do
         expect(page).to have_content("Intake completed")
       end
 
-      scenario "when vacols issue is ineligible even with an exemption", skip: true do
+      scenario "when vacols issue is ineligible even with an exemption" do
         start_supplemental_claim(veteran, legacy_opt_in_approved: true)
         visit "/intake/add_issues"
         click_intake_add_issue
@@ -679,10 +696,11 @@ feature "Intake Add Issues Page", :all_dbs do
 
         # Expect legacy opt in issue modal to show
         expect(page).to have_content("Does issue 1 match any of these VACOLS issues?")
-        add_intake_rating_issue("lumbosacral strain")
+        add_intake_rating_issue("typhoid arthritis")
 
         # Expect untimely issue modal to not show
         expect(page).to_not have_content("Issue 1 is an Untimely Issue")
+        expect(page).to have_content("PTSD denied is ineligible")
       end
 
       scenario "when vacols issue is eligible on a supplemental claim" do

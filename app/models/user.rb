@@ -54,7 +54,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   # If RO is ambiguous from station_office, use the user-defined RO. Otherwise, use the unambigous RO.
   def regional_office
     upcase = ->(str) { str ? str.upcase : str }
-
     ro_is_ambiguous_from_station_office? ? upcase.call(@regional_office) : station_offices
   end
 
@@ -209,7 +208,11 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def timezone
-    (RegionalOffice::CITIES[regional_office] || {})[:timezone] || "America/Chicago"
+    if vso_employee?
+      RegionalOffice::CITIES.dig(users_regional_office, :timezone)
+    else
+      RegionalOffice::CITIES.dig(regional_office, :timezone) || "America/Chicago"
+    end
   end
 
   # If user has never logged in, we might not have their full name in Caseflow DB.
@@ -267,7 +270,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def vha_employee?
-    member_of_organization?(BusinessLine.find_by(url: "vha"))
+    member_of_organization?(VhaBusinessLine.singleton)
   end
 
   def organization_queue_user?
@@ -642,6 +645,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     end
 
     alias preprod_system_user prod_system_user
+    alias prodtest_system_user prod_system_user
 
     def uat_system_user
       find_or_initialize_by(station_id: "317", css_id: "CASEFLOW1")

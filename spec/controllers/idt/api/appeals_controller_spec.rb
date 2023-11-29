@@ -725,4 +725,87 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
       end
     end
   end
+
+  describe "POST /idt/api/v1/services/address_validation/v1/validate", :postgres do
+    let(:user) { create(:user, roles: ["Mail Intake"]) }
+    let(:params) do
+      {
+        "request_address": {
+          "address_line_1": "string",
+          "address_line_2": "string",
+          "address_line_3": "string",
+          "city": "string",
+          "zip_code_5": "string",
+          "zip_code_4": "string",
+          "international_postal_code": "string",
+          "state_province": {
+            "name": "string",
+            "code": "string"
+          },
+          "request_country": {
+            "country_name": "string",
+            "country_code": "string"
+          },
+          "address_pou": "RESIDENCE/CHOICE"
+        }
+      }
+    end
+
+    before do
+      key, t = Idt::Token.generate_one_time_key_and_proposed_token
+      Idt::Token.activate_proposed_token(key, user.css_id)
+      request.headers["TOKEN"] = t
+    end
+
+    subject { post :validate, params: params }
+
+    context "VADotGovService is responsive" do
+      it "should send back a valid address" do
+        subject
+
+        expect(response.status).to eq(200)
+        expect(
+          JSON.parse(response.body)["address"]["city"]
+        ).to eq(
+          Fakes::VADotGovService.fake_address_data[:address][:city]
+        )
+      end
+    end
+
+    context "VADotGovService status check" do
+      let(:expected_lighthouse_response) do
+        OpenStruct.new(
+          code: expected_status_code,
+          response: OpenStruct.new(
+            raw_body: "{\"json\":\"jsoff\"}"
+          )
+        )
+      end
+
+      before do
+        allow(ExternalApi::VADotGovService).to receive(:validate_address)
+          .and_return(expected_lighthouse_response)
+      end
+
+      context "Lighthouse returns a 404" do
+        let!(:expected_status_code) { 404 }
+
+        it "Caseflow returns a 404 as well" do
+          subject
+
+          expect(response.status).to eq(expected_status_code)
+        end
+      end
+
+      context "Lighthouse returns a 500" do
+        let!(:expected_status_code) { 500 }
+
+        it "Caseflow returns a 500" do
+          subject
+
+          expect(response.status).to eq(500)
+        end
+      end
+    end
+  end
 end

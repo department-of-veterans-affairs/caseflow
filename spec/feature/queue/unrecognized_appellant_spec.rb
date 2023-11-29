@@ -44,8 +44,7 @@ feature "Unrecognized appellants", :postgres do
     before { FeatureToggle.enable!(:edit_unrecognized_appellant) }
     after { FeatureToggle.disable!(:edit_unrecognized_appellant) }
     it "allows for editing of the first name of the unrecognized appellant" do
-      visit "/queue/appeals/#{appeal_with_unrecognized_appellant.uuid}"
-      page.find("a", text: "refresh the page").click if page.has_text?("Unable to load this case")
+      reload_case_detail_page appeal_with_unrecognized_appellant.uuid
       click_on "Edit Information"
 
       expect(page).to have_content("Edit Appellant Information")
@@ -70,7 +69,8 @@ feature "Unrecognized appellants", :postgres do
     end
 
     it "allows for updating the relationship of the unrecognized appellant" do
-      visit "/queue/appeals/#{appeal_with_unrecognized_appellant.uuid}"
+      # visit "/queue/appeals/#{appeal_with_unrecognized_appellant.uuid}"
+      reload_case_detail_page appeal_with_unrecognized_appellant.uuid
       click_on "Edit Information"
 
       expect(page).to have_content("Edit Appellant Information")
@@ -98,8 +98,8 @@ feature "Unrecognized appellants", :postgres do
 
     it "renders error alert when update fails" do
       allow_any_instance_of(UnrecognizedAppellantsController).to receive(:update).and_raise("Internal Server Error")
+      reload_case_detail_page appeal_with_unrecognized_appellant.uuid
 
-      visit "/queue/appeals/#{appeal_with_unrecognized_appellant.uuid}"
       click_on "Edit Information"
 
       expect(page).to have_content("Edit Appellant Information")
@@ -114,12 +114,14 @@ feature "Unrecognized appellants", :postgres do
     after { FeatureToggle.disable!(:edit_unrecognized_appellant) }
 
     it "should not show edit button on case details screen" do
-      visit "/queue/appeals/#{appeal_with_recognized_appellant.uuid}"
+      reload_case_detail_page appeal_with_recognized_appellant.uuid
+
       expect(page).to_not have_content("Edit Information")
     end
 
     it "should not show the listed attorney name dropdown on the edit screen" do
-      visit "/queue/appeals/#{appeal_with_unrecognized_appellant.uuid}"
+      reload_case_detail_page appeal_with_unrecognized_appellant.uuid
+
       click_on "Edit Information"
 
       fill_in("Relationship to the Veteran", with: "Attorney (previously or currently)").send_keys :enter
@@ -148,7 +150,7 @@ feature "Unrecognized appellants", :postgres do
     end
 
     it "should not show the edit information button if there's a POA already" do
-      visit "/queue/appeals/#{appeal_with_recognized_appellant.uuid}"
+      reload_case_detail_page appeal_with_recognized_appellant.uuid
       expect(page).not_to have_content("Edit Information")
     end
 
@@ -160,13 +162,13 @@ feature "Unrecognized appellants", :postgres do
 
       it "should show the update POA button" do
         allow(user).to receive(:vacols_roles).and_return(["colocated"])
-        visit "/queue/appeals/#{appeal_with_no_poa.uuid}"
+        reload_case_detail_page appeal_with_no_poa.uuid
         expect(page).to have_content("Update POA")
       end
 
       it "should successfully allow update, unlisted POA" do
         allow(user).to receive(:vacols_roles).and_return(["colocated"])
-        visit "/queue/appeals/#{appeal_with_no_poa.uuid}"
+        reload_case_detail_page appeal_with_no_poa.uuid
 
         click_on "Update POA"
         expect(page).to have_current_path("/queue/appeals/#{appeal_with_no_poa.uuid}/edit_poa_information")
@@ -206,7 +208,7 @@ feature "Unrecognized appellants", :postgres do
 
       it "should successfully allow update, listed POA" do
         allow(user).to receive(:vacols_roles).and_return(["colocated"])
-        visit "/queue/appeals/#{appeal_with_no_poa.uuid}"
+        reload_case_detail_page appeal_with_no_poa.uuid
 
         click_on "Update POA"
         expect(page).to have_current_path("/queue/appeals/#{appeal_with_no_poa.uuid}/edit_poa_information")

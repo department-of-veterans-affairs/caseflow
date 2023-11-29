@@ -251,7 +251,7 @@ RSpec.feature "Quality Review workflow", :all_dbs do
         click_dropdown(text: Constants.TASK_ACTIONS.PLACE_TIMED_HOLD.label)
         click_dropdown(prompt: COPY::COLOCATED_ACTION_PLACE_HOLD_LENGTH_SELECTOR_LABEL, text: hold_length)
         fill_in("instructions", with: "placing task on hold")
-        click_on(COPY::MODAL_SUBMIT_BUTTON)
+        click_on(COPY::MODAL_PUT_TASK_ON_HOLD_BUTTON)
         expect(page).to have_content(format(COPY::COLOCATED_ACTION_PLACE_HOLD_CONFIRMATION, veteran_name, hold_length))
       end
 

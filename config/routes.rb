@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
@@ -26,6 +27,7 @@ Rails.application.routes.draw do
       resources :appeals, only: :index
       resources :jobs, only: :create
       post 'mpi', to: 'mpi#veteran_updates'
+      post 'va_notify_update', to: 'va_notify#notifications_update'
     end
     namespace :v2 do
       resources :appeals, only: :index
@@ -70,13 +72,16 @@ Rails.application.routes.draw do
         post 'upload_document', to: 'upload_vbms_document#create'
         get 'user', to: 'users#index'
         get 'veterans', to: 'veterans#details'
+        post 'addresses/validate', to: 'appeals#validate'
       end
+
       namespace :v2 do
         get 'appeals', to: 'appeals#details'
         get 'appeals/:appeal_id', to: 'appeals#reader_appeal'
         post 'appeals/:appeal_id/outcode', to: 'appeals#outcode'
         get 'appeals/:appeal_id/documents', to: 'appeals#appeal_documents'
         get 'appeals/:appeal_id/documents/:document_id', to: 'appeals#appeals_single_document'
+        get 'distributions/:distribution_id', to: 'distributions#distribution'
       end
     end
   end
@@ -85,7 +90,12 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :histogram, only: :create
     end
+    namespace :v2 do
+      resources :logs, only: :create
+    end
+    get 'dashboard' => 'dashboard#show'
   end
+
 
   namespace :dispatch do
     get "/", to: redirect("/dispatch/establish-claim")
@@ -153,6 +163,8 @@ Rails.application.routes.draw do
     end
   end
   match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
+
+  get '/appeals/:appeal_id/document/:series_id' => 'appeals#document_lookup'
 
   get '/appeals/:appeals_id/notifications' => 'appeals#fetch_notification_list'
 
@@ -246,6 +258,10 @@ Rails.application.routes.draw do
 
   resources :decision_reviews, param: :business_line_slug, only: [] do
     resources :tasks, controller: :decision_reviews, param: :task_id, only: [:show, :update] do
+      member do
+        get :power_of_attorney
+        patch :update_power_of_attorney
+      end
     end
   end
   match '/decision_reviews/:business_line_slug' => 'decision_reviews#index', via: [:get]
@@ -355,9 +371,6 @@ Rails.application.routes.draw do
   get "logout" => "sessions#destroy"
 
   get 'whats-new' => 'whats_new#show'
-
-  get 'dispatch/stats(/:interval)', to: 'dispatch_stats#show', as: 'dispatch_stats'
-  get 'stats', to: 'stats#show'
 
   match '/intake/:any' => 'intakes#index', via: [:get]
 

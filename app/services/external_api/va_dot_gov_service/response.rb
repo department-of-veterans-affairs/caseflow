@@ -35,17 +35,22 @@ class ExternalApi::VADotGovService::Response
     when 429
       Caseflow::Error::VaDotGovLimitError.new(
         code: code,
-        message: "Mapping service is temporarily unavailable. Please try again later."
+        message: "Service is temporarily unavailable, please try again later."
       )
     when 400
       Caseflow::Error::VaDotGovRequestError.new(
         code: code,
-        message: "An unexpected error occured when attempting to map veteran."
+        message: "An unexpected error occurred."
+      )
+    when 500
+      Caseflow::Error::VaDotGovRequestError.new(
+        code: code,
+        message: "Could not connect to the Lighthouse API, please try again later."
       )
     else
       Caseflow::Error::VaDotGovServerError.new(
         code: code,
-        message: "An unexpected error occured when attempting to map veteran."
+        message: "An unexpected error occurred."
       )
     end
   end

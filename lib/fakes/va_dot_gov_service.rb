@@ -30,7 +30,23 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
 
   def self.fake_address_data
     {
+      "messages": [
+        {
+          "code": "string",
+          "key": "string",
+          "text": "string",
+          "severity": "INFO",
+          "potentiallySelfCorrectingOnRetry": true
+        }
+      ],
       "address": {
+        "addressLine1": "8633 Fordham St.",
+        "addressLine2": "",
+        "addressLine3": "",
+        "city": "Deltona",
+        "zipCode5": "32738",
+        "zipCode4": "2434",
+        "internationalPostalCode": "string",
         "county": {
           "name": "Deltona",
           "countyFipsCode": "32738"
@@ -46,12 +62,6 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
           "iso2Code": "US",
           "iso3Code": "USA"
         },
-        "addressLine1": "8633 Fordham St.",
-        "addressLine2": "",
-        "addressLine3": "",
-        "city": "Deltona",
-        "zipCode5": "32738",
-        "zipCode4": "2434"
       },
       "geocode": {
         "calcDate": "2019-01-03T17:33:57+00:00",
@@ -59,11 +69,15 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
         "latitude": 38.768185,
         "longitude": -77.450033
       },
+      "usCongressionalDistrict": "string",
       "addressMetaData": {
         "confidenceScore": 100.0,
         "addressType": "Domestic",
         "deliveryPointValidation": "CONFIRMED",
         "residentialDeliveryIndicator": "RESIDENTIAL",
+        "nonPostalInputData": [
+          "string"
+        ],
         "validationKey": 113_008_568
       }
     }

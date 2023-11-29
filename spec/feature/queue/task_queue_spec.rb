@@ -825,7 +825,7 @@ feature "Task queue", :all_dbs do
         # On case details page fill in the admin action
         action = Constants.CO_LOCATED_ADMIN_ACTIONS.ihp
         click_dropdown(text: action)
-        fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
+        fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "Please complete this task")
         find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
 
         # Expect to see a success message, the correct number of remaining tasks and have the task in the database
@@ -1069,7 +1069,7 @@ feature "Task queue", :all_dbs do
         # On case details page fill in the admin action
         action = Constants.CO_LOCATED_ADMIN_ACTIONS.ihp
         click_dropdown(text: action)
-        fill_in(COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: "Please complete this task")
+        fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "Please complete this task")
         find("button", text: COPY::ADD_COLOCATED_TASK_SUBMIT_BUTTON_LABEL).click
 
         # Expect to see a success message and the correct number of remaining tasks
@@ -1162,7 +1162,7 @@ feature "Task queue", :all_dbs do
       end
 
       step "submit the end timed hold form" do
-        click_button "Submit"
+        click_button COPY::MODAL_END_HOLD_BUTTON
         expect(page).to have_content "Success!"
         expect(schedule_row).to have_content("DAYS WAITING 0", normalize_ws: true)
       end

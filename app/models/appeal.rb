@@ -9,7 +9,6 @@ require "securerandom"
 
 # rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
-  include AppealConcern
   include BeaamAppealConcern
   include BgsService
   include Taskable
@@ -25,6 +24,7 @@ class Appeal < DecisionReview
   has_many :hearings
   has_many :email_recipients, class_name: "HearingEmailRecipient"
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
+  has_many :vbms_uploaded_documents, as: :appeal
 
   # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents, as: :appeal
@@ -60,16 +60,6 @@ class Appeal < DecisionReview
            :available_hearing_locations,
            :email_address,
            :country, to: :veteran, prefix: true
-
-  delegate :power_of_attorney, to: :claimant
-  delegate :representative_name,
-           :representative_type,
-           :representative_address,
-           :representative_email_address,
-           :poa_last_synced_at,
-           :update_cached_attributes!,
-           :save_with_updated_bgs_record!,
-           to: :power_of_attorney, allow_nil: true
 
   enum stream_type: {
     Constants.AMA_STREAM_TYPES.original.to_sym => Constants.AMA_STREAM_TYPES.original,
@@ -109,6 +99,17 @@ class Appeal < DecisionReview
   }
 
   scope :established, -> { where.not(established_at: nil) }
+
+  scope :non_deceased_appellants, lambda {
+    joins("INNER JOIN veterans ON veterans.file_number = appeals.veteran_file_number")
+      .where("veterans.date_of_death is null OR (veterans.date_of_death is not null
+        AND veteran_is_not_claimant = true)")
+  }
+
+  scope :has_substitute_appellant, lambda {
+    joins("INNER JOIN veterans ON veterans.file_number = appeals.veteran_file_number")
+      .where("veterans.date_of_death is not null AND veteran_is_not_claimant = true")
+  }
 
   UUID_REGEX = /^\h{8}-\h{4}-\h{4}-\h{4}-\h{12}$/.freeze
 
@@ -755,10 +756,6 @@ class Appeal < DecisionReview
     }
 
     issues_report
-  end
-
-  def bgs_power_of_attorney
-    claimant&.is_a?(BgsRelatedClaimant) ? power_of_attorney : nil
   end
 
   # Note: Currently Caseflow only supports one claimant per decision review

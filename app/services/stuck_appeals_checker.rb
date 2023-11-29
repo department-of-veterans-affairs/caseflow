@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 class StuckAppealsChecker < DataIntegrityChecker
-  def slack_channel
-    "#appeals-echo"
-  end
-
   def call
     return if stuck_appeals.count == 0 && appeals_maybe_not_closed.count == 0
 

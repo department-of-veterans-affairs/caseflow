@@ -66,6 +66,10 @@ Capybara.register_driver(:sniffybara_headless) do |app|
   Sniffybara::Driver.current_driver = Sniffybara::Driver.new(app, options)
 end
 
+Capybara::Screenshot.register_filename_prefix_formatter(:rspec) do |example|
+  "screenshot_#{example.description.gsub(/[&\/\\#,+()$~%.`'":*?<>{}]/, '').tr(' ', '_')}"
+end
+
 Capybara::Screenshot.register_driver(:parallel_sniffybara) do |driver, path|
   driver.browser.save_screenshot(path)
 end

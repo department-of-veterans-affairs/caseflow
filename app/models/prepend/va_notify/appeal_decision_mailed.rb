@@ -12,7 +12,7 @@ module AppealDecisionMailed
   # Params: none
   #
   # Response: returns true if successfully processed, returns false if not successfully processed (will not notify)
-  def process!
+  def process!(mail_package = nil)
     super_return_value = super
     if processed?
       AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "decision_mailed")

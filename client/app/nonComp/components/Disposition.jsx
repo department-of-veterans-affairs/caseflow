@@ -8,14 +8,18 @@ import { formatDateStr, formatDateStrUtc } from '../../util/DateUtil';
 import InlineForm from '../../components/InlineForm';
 import DateSelector from '../../components/DateSelector';
 import Button from '../../components/Button';
+import COPY from '../../../COPY';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import TextareaField from '../../components/TextareaField';
+
+import PowerOfAttorneyDecisionReview from './PowerOfAttorneyDecisionReview';
 
 import { DISPOSITION_OPTIONS, DECISION_ISSUE_UPDATE_STATUS } from '../constants';
 import {
   formatDecisionIssuesFromRequestIssues,
   formatRequestIssuesWithDecisionIssues,
-  buildDispositionSubmission } from '../util';
+  buildDispositionSubmission
+} from '../util';
 
 class NonCompDecisionIssue extends React.PureComponent {
   constructor(props) {
@@ -80,7 +84,7 @@ class NonCompDecisionIssue extends React.PureComponent {
           <TextareaField name={`description-issue-${index}`}
             label={`description-issue-${index}`}
             hideLabel
-            value={this.props.decisionDescription}
+            value={this.props.decisionDescription || ''}
             disabled={disabled}
             onChange={this.handleDescriptionChange} />
         </div>
@@ -161,10 +165,11 @@ class NonCompDispositions extends React.PureComponent {
     let decisionDate = this.state.decisionDate;
 
     if (appeal.decisionIssues.length > 0) {
-      decisionDate = formatDateStrUtc(appeal.decisionIssues[0].approxDecisionDate);
+      decisionDate = formatDateStrUtc(appeal.decisionIssues[0].approxDecisionDate, 'YYYY-MM-DD');
     }
 
     let editIssuesLink = null;
+    let displayPOAComponent = this.props.task.business_line === 'vha';
 
     if (!task.closed_at) {
       completeDiv = <React.Fragment>
@@ -183,16 +188,31 @@ class NonCompDispositions extends React.PureComponent {
     }
 
     return <div>
-      <div className="cf-decisions">
-        <div className="usa-grid-full">
-          <div className="usa-width-one-half">
-            <h2>Decision</h2>
-            <div>Review each issue and assign the appropriate dispositions.</div>
-          </div>
-          <div className="usa-width-one-half cf-txt-r">
-            { editIssuesLink }
+      {displayPOAComponent && <div className="cf-decisions">
+        <div className="cf-decision">
+          <hr />
+          <div className="usa-grid-full">
+            <h2>{COPY.CASE_DETAILS_POA_SUBSTITUTE} </h2>
+            <PowerOfAttorneyDecisionReview
+              appealId={task.appeal.uuid}
+            />
           </div>
         </div>
+      </div>}
+      <div className="cf-decisions">
+        <div className="cf-decision">
+          {displayPOAComponent && <hr />}
+          <div className="usa-grid-full">
+            <div className="usa-width-one-half">
+              <h2>Decision</h2>
+              <div>Review each issue and assign the appropriate dispositions.</div>
+            </div>
+            <div className="usa-width-one-half cf-txt-r">
+              {editIssuesLink}
+            </div>
+          </div>
+        </div>
+
         <div className="cf-decision-list">
           {
             this.state.requestIssues.map((issue, index) => {
@@ -211,7 +231,7 @@ class NonCompDispositions extends React.PureComponent {
         <div className="cf-decision-date">
           <InlineForm>
             <DateSelector
-              label="Thank you for completing your decision in Caseflow. Please indicate the decision date."
+              label={COPY.DISPOSITION_DECISION_DATE_LABEL}
               name="decision-date"
               value={decisionDate}
               onChange={this.handleDecisionDate}
@@ -221,7 +241,7 @@ class NonCompDispositions extends React.PureComponent {
           </InlineForm>
         </div>
       </div>
-      { completeDiv }
+      {completeDiv}
       {this.establishmentCredits()}
     </div>;
   }

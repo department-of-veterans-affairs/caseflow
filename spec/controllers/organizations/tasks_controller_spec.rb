@@ -64,8 +64,9 @@ RSpec.describe Organizations::TasksController, :all_dbs, type: :controller do
         get(:index, params: { organization_url: url })
         expect(response.status).to eq(200)
         response_body = JSON.parse(response.body)
+        expected_keys = %w[organization_name type id is_vso queue_config user_can_bulk_assign]
 
-        expect(response_body.keys).to match_array(%w[organization_name id is_vso queue_config user_can_bulk_assign])
+        expect(response_body.keys).to match_array(expected_keys)
       end
     end
 

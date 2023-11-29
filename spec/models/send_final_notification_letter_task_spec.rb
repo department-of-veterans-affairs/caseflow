@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "./send_notification_shared_examples_spec.rb"
+
 describe SendFinalNotificationLetterTask do
   let(:user) { create(:user) }
   let(:cob_team) { ClerkOfTheBoard.singleton }
@@ -12,20 +14,7 @@ describe SendFinalNotificationLetterTask do
     FeatureToggle.enable!(:cc_appeal_workflow)
   end
 
-  describe ".verify_user_can_create" do
-    let(:params) { { appeal: root_task.appeal, parent_id: distribution_task_id, type: task_class.name } }
-    let(:distribution_task_id) { distribution_task.id }
-
-    context "when no distribution_task exists for appeal" do
-      let(:distribution_task_id) { nil }
-
-      it "throws an error" do
-        expect { task_class.create_from_params(params, user) }.to raise_error(ActiveRecord::RecordNotFound)
-      end
-    end
-
-    # test contexts for successfully creating task when an appeal has a CC will go here once other tasks are made
-  end
+  include_examples "verify_user_can_create"
 
   describe ".available_actions" do
     let(:final_notification_letter_task) {
