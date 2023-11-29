@@ -47,7 +47,7 @@ class MetricsService
     metric_params = {
       name: metric_name,
       message: description,
-      type: Metric::Caseflow::MetricValues::METRIC_TYPES[:performance],
+      type: Metric::Caseflow::MetricAttributes::METRIC_TYPES[:performance],
       product: service,
       attrs: {
         service: service,
@@ -71,7 +71,7 @@ class MetricsService
     metric_params = {
       name: "error",
       message: error.message,
-      type: Metric::Caseflow::MetricValues::METRIC_TYPES[:error],
+      type: Metric::Caseflow::MetricAttributes::METRIC_TYPES[:error],
       product: "",
       attrs: {
         service: "",

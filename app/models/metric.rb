@@ -4,10 +4,10 @@ class Metric < CaseflowRecord
   belongs_to :user
   delegate :css_id, to: :user
 
-  validates :metric_type, inclusion: { in: Caseflow::MetricValues::METRIC_TYPES.values }
+  validates :metric_type, inclusion: { in: Caseflow::MetricAttributes::METRIC_TYPES.values }
   validates :metric_product, inclusion: { in: PRODUCT_TYPES.values }
   validates :metric_group, inclusion: { in: METRIC_GROUPS.values }
-  validates :app_name, inclusion: { in: Caseflow::MetricValues::METRIC_TYPES.values }
+  validates :app_name, inclusion: { in: Caseflow::MetricAttributes::METRIC_TYPES.values }
   validate :sent_to_in_log_systems
 
   def self.create_metric(klass, params, user)
@@ -53,13 +53,13 @@ class Metric < CaseflowRecord
     {
       uuid: params[:uuid],
       user: user || RequestStore.store[:current_user] || User.system_user,
-      metric_name: params[:name] || Caseflow::MetricValues::METRIC_TYPES[:log],
+      metric_name: params[:name] || Caseflow::MetricAttributes::METRIC_TYPES[:log],
       metric_class: klass&.try(:name) || klass&.class&.name || name,
       metric_group: params[:group] || METRIC_GROUPS[:service],
-      metric_message: params[:message] || Caseflow::MetricValues::METRIC_TYPES[:log],
-      metric_type: params[:type] || Caseflow::MetricValues::METRIC_TYPES[:log],
+      metric_message: params[:message] || Caseflow::MetricAttributes::METRIC_TYPES[:log],
+      metric_type: params[:type] || Caseflow::MetricAttributes::METRIC_TYPES[:log],
       metric_product: PRODUCT_TYPES[params[:product].to_sym] || PRODUCT_TYPES[:caseflow],
-      app_name: params[:app_name] || Caseflow::MetricValues::METRIC_TYPES[:caseflow],
+      app_name: params[:app_name] || Caseflow::MetricAttributes::METRIC_TYPES[:caseflow],
       metric_attributes: params[:metric_attributes],
       additional_info: params[:additional_info],
       sent_to: Array(params[:sent_to]).flatten,
