@@ -3,7 +3,7 @@
 class Metric < CaseflowRecord
   belongs_to :user
   delegate :css_id, to: :user
-
+# validation may need updating for other metrics.
   validates :metric_type, inclusion: { in: Caseflow::MetricAttributes::METRIC_TYPES.values }
   validates :metric_product, inclusion: { in: Caseflow::MetricAttributes::METRIC_GROUPS.values }
   validates :metric_group, inclusion: { in: Caseflow::MetricAttributes::METRIC_GROUPS.values }
