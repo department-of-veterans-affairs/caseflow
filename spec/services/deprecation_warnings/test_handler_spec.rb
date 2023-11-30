@@ -27,7 +27,7 @@ module DeprecationWarnings
         let(:message) { "disallowed deprecation message" }
 
         before do
-          stub_const("DisallowedDeprecations::DISALLOWED_DEPRECATION_WARNING_REGEXES",
+          stub_const("DeprecationWarnings::DisallowedDeprecations::DISALLOWED_DEPRECATION_WARNING_REGEXES",
                      [Regexp.new(Regexp.escape(message))])
         end
 
