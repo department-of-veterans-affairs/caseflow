@@ -106,22 +106,12 @@ export const saveMailTaskState = (name, isChecked) =>
     });
   };
 
-export const addNewAppealRelatedTask = (id, appealId, type, content) =>
+export const setNewAppealRelatedTasks = (newAppealRelatedTasks) =>
   (dispatch) => {
     dispatch({
-      type: ACTIONS.ADD_NEW_APPEAL_RELATED_TASK,
+      type: ACTIONS.SET_NEW_APPEAL_RELATED_TASKS,
       payload: {
-        id, appealId, type, content
-      }
-    });
-  };
-
-export const removeNewAppealRelatedTask = (id) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.REMOVE_NEW_APPEAL_RELATED_TASK,
-      payload: {
-        id
+        newAppealRelatedTasks
       }
     });
   };
