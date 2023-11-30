@@ -303,7 +303,7 @@ class ClaimHistoryEvent
   def to_csv_array
     [
       veteran_file_number, claimant_name, task_url, readable_task_status,
-      days_waiting, readable_claim_type, user_facility, readable_user_name, readable_event_date,
+      days_waiting, readable_claim_type, readable_facility_name, readable_user_name, readable_event_date,
       readable_event_type, issue_or_status_information, disposition_information
     ]
   end
@@ -348,6 +348,12 @@ class ClaimHistoryEvent
 
   def readable_disposition_date
     format_date_string(disposition_date)
+  end
+
+  def readable_facility_name
+    return "" unless user_facility
+
+    [Constants::BGS_FACILITY_CODES[user_facility], " (", user_facility, ")"].join
   end
 
   def readable_event_type
