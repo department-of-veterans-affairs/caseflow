@@ -142,7 +142,8 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
         './2.0/router',
         './explain/index',
         './mpi/MPISearch',
-        './admin/index'
+        './admin/index',
+        './caseflowDistribution/index'
       ],
       () => renderApp(component)
     );
