@@ -17,28 +17,25 @@ export const CorrespondencePdfFooter = ({
   return (
     <div className="cf-pdf-footer cf-pdf-toolbar">
       <div className="cf-pdf-buttons-center">
-        <span>
-          <span className="page-progress-indicator">
-            {pdfDocProxy.numPages ? (
-              <span>
-                <div style={{ display: 'inline-block' }}>
-                  <NumberField
-                    maxLength={4}
-                    name="page-progress-indicator-input"
-                    label="Page"
-                    onChange={handleSetCurrentPage}
-                    value={currentPage}
-                    required={false}
-                    className={['page-progress-indicator-input']}
-                  />
-                </div>
-                of {pdfDocProxy.numPages}
-              </span>
-            ) : (
-              <em>Loading document...</em>
-            )}
-          </span>
-          |
+        <span className="page-progress-indicator">
+          {pdfDocProxy.numPages ? (
+            <>
+              <div id="pdf-preview-footer-input-field" style={{ display: 'inline-block' }}>
+                <NumberField
+                  maxLength={4}
+                  name="page-progress-indicator-input"
+                  label="Page"
+                  onChange={handleSetCurrentPage}
+                  value={currentPage}
+                  required={false}
+                  className={['page-progress-indicator-input']}
+                />
+              </div>
+              of {pdfDocProxy.numPages}
+            </>
+          ) : (
+            <em>Loading document...</em>
+          )}
         </span>
       </div>
     </div>

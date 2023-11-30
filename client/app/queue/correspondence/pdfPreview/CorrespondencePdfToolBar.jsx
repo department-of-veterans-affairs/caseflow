@@ -19,8 +19,7 @@ const CorrespondencePdfToolBar = (props) => {
     zoomIn,
     zoomOut,
     fitToScreen,
-    handleDocumentRotation,
-    handleSearchBarToggle
+    handleDocumentRotation
   } = props;
 
   // In-Line CSS Styles
@@ -107,13 +106,13 @@ const CorrespondencePdfToolBar = (props) => {
           ariaLabel="fit to screen">
           <FitToScreenIcon />
         </Button>
-        {/* <Button
+        <Button
           name="rotation"
           classNames={['cf-pdf-button cf-pdf-spaced-buttons']}
           onClick={handleDocumentRotation}
           ariaLabel="rotate document">
           <RotateIcon />
-        </Button> */}
+        </Button>
       </span>
     </div>
   );

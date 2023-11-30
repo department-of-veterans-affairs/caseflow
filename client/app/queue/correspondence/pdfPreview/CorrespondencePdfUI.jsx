@@ -11,7 +11,8 @@ import ApiUtil from '../../../util/ApiUtil';
 import { pageIndexOfPageNumber, pageNumberOfPageIndex } from '../../../reader/utils';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH } from '../../../reader/constants';
 import { CorrespondencePdfFooter } from './CorrespondencePdfFooter';
-import uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
+import CorrespondencePdfPage from './CorrespondencePdfPage';
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
@@ -64,10 +65,11 @@ const CorrespondencePdfUI = () => {
   const scrollViewRef = useRef(null);
 
   // useStates (re-renders components on change)
-  const [viewport, setViewPort] = useState({
+  const [viewportState, setViewPortState] = useState({
     height: PDF_PAGE_HEIGHT,
     width: PDF_PAGE_WIDTH
   });
+
   const [scale, setScale] = useState(1);
   const [rotation, setRotation] = useState(0);
   const [searchBarToggle, setSearchBarToggle] = useState(false);
@@ -87,7 +89,9 @@ const CorrespondencePdfUI = () => {
       return Promise.all(promises);
     };
 
+    // TODO: Refactor when CorrespondenceDocument controller is created
     const loadPdf = async () => {
+      // Currently pulls from Reader Document controller at route => document/:document_id/pdf
       const response = await ApiUtil.get(`${doc.content_url}`, {
         cache: true,
         withCredentials: true,
@@ -117,6 +121,10 @@ const CorrespondencePdfUI = () => {
     //   selectedPage.scrollIntoView();
     // }
   }, [currentPage, setCurrentPage]);
+
+  useEffect(() => {
+    console.log(pdfDocProxy);
+  }, [pdfDocProxy]);
 
   // Constants
   const ZOOM_RATE = 0.3;
@@ -156,18 +164,44 @@ const CorrespondencePdfUI = () => {
   };
 
   // Rotations
-  const handleDocumentRotation = (docId) => {
+  const handleDocumentRotation = () => {
     setRotation((prev) => (prev + 90) % 360);
   };
 
   // Footer Pagination
-  const handleSetCurrentPage = (currentPageInput) => {
-    if ((canvasRefs.current.length > 0) && (pdfDocProxy.numPages >= currentPageInput > 0) && Number.isInteger(currentPageInput)) {
-      const selectedPage = document.getElementById(`canvas-${currentPageInput}`);
+  const handleSetCurrentPage = (pageInput) => {
+    console.log(pageInput)
+    if ((canvasRefs.current.length > 0) && (pdfDocProxy.numPages >= pageInput > 0) && Number.isInteger(pageInput)) {
+      const selectedPage = document.getElementById(`canvas-${pageInput}`);
 
       selectedPage.scrollIntoView();
     }
+    setCurrentPage(pageInput);
   };
+
+  // Scrolling
+  const handleScroll = () => {
+    const scrolledHeight = scrollViewRef.current.scrollTop;
+    const pageOffset = Math.floor(scrolledHeight / viewportState.height);
+    console.log(pageOffset);
+    const pageNumber = pageOffset + 1;
+
+    setCurrentPage(pageNumber);
+  };
+
+  const generatePdfPages = useMemo(() => pdfPageProxies?.map((page, index) => {
+    return (
+      <CorrespondencePdfPage
+        key={`pdf-page-key-${index}`}
+        canvasRefs={canvasRefs}
+        page={page}
+        index={index}
+        scale={scale}
+        rotation={rotation}
+        viewportState={viewportState}
+      />
+    );
+  }, [pdfDocProxy]));
 
   if (!pdfDocProxy || !pdfPageProxies) {
     return <div>Loading...</div>;
@@ -181,9 +215,15 @@ const CorrespondencePdfUI = () => {
         zoomIn={zoomIn}
         zoomOut={zoomOut}
         fitToScreen={fitToScreen}
+        handleDocumentRotation={handleDocumentRotation}
       />
       <div>
-        <CorrespondencePdfDocument
+        <div className="cf-pdf-preview-scrollview" ref={scrollViewRef} onScroll={handleScroll}>
+          <div className="cf-pdf-preview-grid" ref={gridRef}>
+            { generatePdfPages }
+          </div>
+        </div>
+        {/* <CorrespondencePdfDocument
           pdfDocProxy={pdfDocProxy}
           pdfPageProxies={pdfPageProxies}
           scale={scale}
@@ -194,11 +234,11 @@ const CorrespondencePdfUI = () => {
           setCurrentPage={setCurrentPage}
           gridRef={gridRef}
           scrollViewRef={scrollViewRef}
-        />
+        /> */}
         <CorrespondencePdfFooter
           currentPage={currentPage}
-          handleSetCurrentPage={handleSetCurrentPage}
           pdfDocProxy={pdfDocProxy}
+          handleSetCurrentPage={handleSetCurrentPage}
         />
       </div>
     </div>

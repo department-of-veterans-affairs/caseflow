@@ -15,6 +15,8 @@
 }
 
 .cf-pdf-preview-scrollview {
+  container-name: pdf-preview-scrollview-container;
+  container-type: size;
   background-color: $color-gray;
   width: 100%;
   height: 850px;
@@ -28,17 +30,40 @@
   min-width: 80px;
 }
 
-// .cf-pdf-preview-grid {
-//   width: fit-content;
-//   display: grid;
-//   place-items: center;
-//   margin: auto;
+.cf-pdf-preview-grid {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  margin: auto;
+  grid-row-gap: 10px;
+  grid-column-gap: 10px;
+}
 
-//   @media (max-width: 1185px) {
+#pdf-preview-footer-input-field div {
+  height: 100%;
+  display: inline-block;
+}
+
+#pdf-preview-footer-input-field {
+  height: 100%;
+  display: inline-block;
+
+  div div div {
+    width:auto;
+  }
+}
+
+// @container pdf-preview-scrollview-container (min-width: 1300px) {
+//   .cf-pdf-preview-grid {
+//     width: fit-content;
+//     height: 100%;
+//     display: grid;
+//     place-items: center;
+//     margin: auto;
+//     grid-row-gap: 20px;
+//     grid-column-gap: 20px;
 //     grid-template-columns: repeat(2, 1fr);
 //     grid-template-rows: repeat(auto-fill, 1fr);
-//     grid-row-gap: 10px;
-//     grid-column-gap: 10px;
 //   }
-
 // }
