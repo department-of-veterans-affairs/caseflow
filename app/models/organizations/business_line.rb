@@ -202,14 +202,20 @@ class BusinessLine < Organization
           intake_users.css_id AS intake_user_css_id, decision_users.css_id AS decision_user_css_id, update_users.css_id AS update_user_css_id,
           request_issues_updates.before_request_issue_ids, request_issues_updates.after_request_issue_ids,
           request_issues_updates.withdrawn_request_issue_ids, request_issues_updates.edited_request_issue_ids,
-          decision_issues.caseflow_decision_date, request_issues.decision_date_added_at, intakes.veteran_file_number,
+          decision_issues.caseflow_decision_date, request_issues.decision_date_added_at,
           tasks.appeal_type, tasks.appeal_id, request_issues.nonrating_issue_category, request_issues.nonrating_issue_description,
           request_issues.decision_date, decision_issues.disposition, tasks.assigned_at, people.first_name, people.last_name,
           request_decision_issues.decision_issue_id, request_issues.closed_at AS request_issue_closed_at,
-          tv.object_changes_array AS task_versions, (CURRENT_TIMESTAMP::date - tasks.assigned_at::date) AS days_waiting
+          tv.object_changes_array AS task_versions, (CURRENT_TIMESTAMP::date - tasks.assigned_at::date) AS days_waiting,
+          COALESCE(intakes.veteran_file_number, higher_level_reviews.veteran_file_number, supplemental_claims.veteran_file_number)
+          AS veteran_file_number
         FROM tasks
         INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
         AND request_issues.decision_review_id = tasks.appeal_id
+        LEFT JOIN higher_level_reviews ON tasks.appeal_type = 'HigherLevelReview'
+        AND tasks.appeal_id = higher_level_reviews.id
+        LEFT JOIN supplemental_claims ON tasks.appeal_type = 'SupplementalClaim'
+        AND tasks.appeal_id = supplemental_claims.id
         LEFT JOIN intakes ON tasks.appeal_type = intakes.detail_type
         AND intakes.detail_id = tasks.appeal_id
         LEFT JOIN request_issues_updates ON request_issues_updates.review_type = tasks.appeal_type
