@@ -39,7 +39,7 @@ const AddTaskView = (props) => {
   };
 
   const updateTaskContent = (newContent) => {
-    const newTask = { id: task.id, type: task.type, content: newContent };
+    const newTask = { id: task.id, appealId: task.appealId, type: task.type, content: newContent };
 
     props.taskUpdatedCallback(newTask);
   };
