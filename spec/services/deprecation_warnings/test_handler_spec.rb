@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require "#{Rails.root}/app/services/deprecation_warnings/disallowed_deprecations.rb"
+
 
 module DeprecationWarnings
   describe TestHandler do

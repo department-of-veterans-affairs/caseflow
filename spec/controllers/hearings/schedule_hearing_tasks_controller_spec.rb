@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require "#{Rails.root}/app/models/hearings/schedule_hearing_task_pager.rb"
+
 
 describe Hearings::ScheduleHearingTasksController, :all_dbs, type: :controller do
   before do

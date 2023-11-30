@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require "#{Rails.root}/app/models/hearings/schedule_hearing_task_pager.rb"
+
 
 ##
 # Endpoint to return ScheduleHearingTasks for Assign Hearings Table
