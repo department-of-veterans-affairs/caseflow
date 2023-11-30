@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
+# rubocop:disable Layout/LineLength
 RSpec.feature("The Correspondence Review Pacakage page") do
   let(:veteran) { create(:veteran) }
-  let(:package_document_type) { PackageDocumentType.create(id: 15, active: true, created_at: Time.zone.now, name: 10_182, updated_at: Time.zone.now) }
-  let(:correspondence) { create(:correspondence, veteran_id: veteran.id, package_document_type_id: package_document_type.id) }
-  let(:correspondence_documents) { create(:correspondence_document, correspondence: correspondence, document_file_number: veteran.file_number) }
-  let(:mail_team_user) { create(:user) }
+  let(:package_document_type) { PackageDocumentType.create(id: 15, active: true, created_at: Time.zone.now, name: "10182", updated_at: Time.zone.now) }
+  let(:correspondence) { create(:correspondence, :with_single_doc, veteran_id: veteran.id, package_document_type_id: package_document_type.id) }
+  let(:mail_team_user) { create(:user, roles: ["Mail Intake"]) }
   let(:mail_team_org) { MailTeam.singleton }
 
   context "Review package feature toggle" do
@@ -53,4 +53,29 @@ RSpec.feature("The Correspondence Review Pacakage page") do
       end
     end
   end
+
+  context "Review package - intake appeal" do
+    let(:non_10182_package_type) { PackageDocumentType.create(id: 1, active: true, name: "0304") }
+    let(:correspondence_2) { create(:correspondence, :with_single_doc, veteran_id: veteran.id, package_document_type_id: non_10182_package_type.id) }
+
+    before do
+      FeatureToggle.enable!(:correspondence_queue)
+      mail_team_org.add_user(mail_team_user)
+      User.authenticate!(user: mail_team_user)
+    end
+
+    it "completes step 1 and 2 then goes to step 3 of intake appeal process" do
+      visit "/queue/correspondence/#{correspondence.uuid}/review_package"
+      click_button "Intake appeal"
+      expect(page).to have_current_path("/intake/review_request")
+      expect(page).to have_text `#{veteran.file_number}`
+      expect(page).to have_text `Review #{veteran.first_name} #{veteran.last_name}'s Decision Review Request: Board Appeal (Notice of Disagreement) - VA Form 10182`
+    end
+
+    it "button does not show if type is not 10182" do
+      visit "/queue/correspondence/#{correspondence_2.uuid}/review_package"
+      expect(page).to_not have_button("Intake appeal")
+    end
+  end
 end
+# rubocop:enable Layout/LineLength

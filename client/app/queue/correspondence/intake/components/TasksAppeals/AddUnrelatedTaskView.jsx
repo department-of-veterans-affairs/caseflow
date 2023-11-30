@@ -5,7 +5,7 @@ import TaskNotRelatedToAppeal from './TaskNotRelatedToAppeal';
 import { setUnrelatedTasks } from '../../../correspondenceReducer/correspondenceActions';
 import PropTypes from 'prop-types';
 
-const MAX_NUM_TASKS = 2;
+const MAX_NUM_TASKS = 4;
 
 export const AddUnrelatedTaskView = (props) => {
   const unrelatedTasks = useSelector((state) => state.intakeCorrespondence.unrelatedTasks);

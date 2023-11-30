@@ -7,7 +7,10 @@ import ReviewForm from './ReviewForm';
 import { CmpDocuments } from './CmpDocuments';
 import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
+import { setFileNumberSearch, doFileNumberSearch } from '../../../intake/actions/intake';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { useHistory } from 'react-router';
 
 export const CorrespondenceReviewPackage = (props) => {
   const [reviewDetails, setReviewDetails] = useState({
@@ -21,7 +24,9 @@ export const CorrespondenceReviewPackage = (props) => {
   });
   const [apiResponse, setApiResponse] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
+  const history = useHistory();
   const fetchData = async () => {
     const correspondence = props;
 
@@ -52,12 +57,30 @@ export const CorrespondenceReviewPackage = (props) => {
     fetchData();
   }, []);
 
+  const handleModalClose = () => {
+    setShowModal(!showModal);
+  };
+
+  const handleReview = () => {
+    history.push('/queue/correspondence');
+  };
+
   const isEditableDataChanged = () => {
     const notesChanged = editableData.notes !== apiResponse.notes;
     const fileNumberChanged = editableData.veteran_file_number !== apiResponse.file_number;
     const selectValueChanged = editableData.default_select_value !== apiResponse.correspondence_type_id;
 
     return notesChanged || fileNumberChanged || selectValueChanged;
+  };
+
+  const intakeAppeal = async () => {
+    props.setFileNumberSearch(editableData.veteran_file_number);
+    try {
+      await props.doFileNumberSearch('appeal', editableData.veteran_file_number, true);
+      window.location.href = '/intake/review_request';
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
@@ -85,7 +108,10 @@ export const CorrespondenceReviewPackage = (props) => {
             setEditableData,
             disableButton,
             setDisableButton,
-            fetchData
+            fetchData,
+            showModal,
+            handleModalClose,
+            handleReview
           }}
           {...props}
         />
@@ -93,13 +119,11 @@ export const CorrespondenceReviewPackage = (props) => {
       </AppSegment>
       <div className="cf-app-segment">
         <div className="cf-push-left">
-          <a href="/queue/correspondence">
-            <Button
-              name="Cancel"
-              href="/queue/correspondence"
-              classNames={['cf-btn-link']}
-            />
-          </a>
+          <Button
+            name="Cancel"
+            classNames={['cf-btn-link']}
+            onClick={handleModalClose}
+          />
         </div>
         <div className="cf-push-right">
           { (props.packageDocumentType.name === '10182') && (
@@ -107,6 +131,7 @@ export const CorrespondenceReviewPackage = (props) => {
               name="Intake appeal"
               styling={{ style: { marginRight: '2rem' } }}
               classNames={['usa-button-secondary']}
+              onClick={intakeAppeal}
             />
           )}
           <a href={intakeLink}>
@@ -128,6 +153,8 @@ CorrespondenceReviewPackage.propTypes = {
   correspondence: PropTypes.object,
   correspondenceDocuments: PropTypes.arrayOf(PropTypes.object),
   packageDocumentType: PropTypes.object,
+  setFileNumberSearch: PropTypes.func,
+  doFileNumberSearch: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
@@ -136,7 +163,12 @@ const mapStateToProps = (state) => ({
   packageDocumentType: state.reviewPackage.packageDocumentType
 });
 
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setFileNumberSearch,
+  doFileNumberSearch
+}, dispatch);
+
 export default connect(
   mapStateToProps,
-  null,
+  mapDispatchToProps,
 )(CorrespondenceReviewPackage);

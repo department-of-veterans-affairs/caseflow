@@ -23,7 +23,8 @@ class EditModal extends React.Component {
       showEditModal: false,
       packageOptions: '',
       defaultVADORDate: '',
-      defaultPackageDocument: ''
+      defaultPackageDocument: '',
+      saveButtonDisabled: true
     };
   }
 
@@ -58,7 +59,8 @@ class EditModal extends React.Component {
     this.setState({
       showEditModal: false,
       packageDocument: this.state.defaultPackageDocument,
-      VADORDate: this.state.defaultVADORDate
+      VADORDate: this.state.defaultVADORDate,
+      saveButtonDisabled: true
     });
   };
 
@@ -92,7 +94,7 @@ class EditModal extends React.Component {
         classNames: ['usa-button', 'add-issue'],
         name: 'Save',
         onClick: this.handleCMPSave.bind(this, this),
-        disabled: this.requiredFieldsMissing() || Boolean(this.state.dateError)
+        disabled: this.state.saveButtonDisabled || this.requiredFieldsMissing() || Boolean(this.state.dateError)
       }
     ];
 
@@ -113,14 +115,16 @@ class EditModal extends React.Component {
 
   packageDocumentOnChange = (value) => {
     this.setState({
-      packageDocument: value
+      packageDocument: value,
+      saveButtonDisabled: false
     });
   };
 
   VADORDateOnChange = (value) => {
     this.setState({
       VADORDate: value,
-      dateError: this.errorOnVADORDate(value)
+      dateError: this.errorOnVADORDate(value),
+      saveButtonDisabled: false
     });
   };
 
