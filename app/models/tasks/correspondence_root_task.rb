@@ -5,12 +5,10 @@ class CorrespondenceRootTask < Task
   private
 
   def verify_org_task_unique
-    binding.pry
-    if appeal.tasks.where(
-      appeal_id: appeal_id
-      # appeal_type: "Correspondence",
-      # type: "correspondence_root_task"
-
+    if Task.where(
+      appeal_id: appeal_id,
+      appeal_type: "Correspondence",
+      type: "correspondence_root_task"
     ).any?
       fail(
         Caseflow::Error::DuplicateOrgTask,

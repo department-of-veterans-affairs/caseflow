@@ -8,7 +8,8 @@ class CorrespondenceRootTaskFactory
     @root_task = CorrespondenceRootTask.find_or_create_by!(appeal_id: correspondence.id,
       assigned_to: Bva.singleton,
       appeal_type: "Correspondence",
-      type: "correspondence_root_task")
+      type: "CorrespondenceRootTask")
+
   end
 
   def create_root_and_sub_tasks!
@@ -24,8 +25,7 @@ class CorrespondenceRootTaskFactory
   end
 
   def review_package_task
-    @review_package_task ||= @correspondence.tasks.open.find_by(type: :ReviewPackageTask) ||
-    ReviewPackageTask.create!(correspondence: @correspondence, parent: @root_task)
+    @review_package_task ||= ReviewPackageTask.where(appeal_id: @correspondence.id, appeal_type: ReviewPackageTask.name).any?
+    ReviewPackageTask.create!(appeal: @correspondence, parent: @root_task, assigned_to: Bva.singleton) unless @review_package_task
   end
-
 end
