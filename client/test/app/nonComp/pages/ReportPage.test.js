@@ -34,8 +34,6 @@ describe('ReportPage', () => {
     await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
   };
 
-  it('passes a11y testing', async () => {
-    const { container } = setup();
   beforeEach(() => {
     getVhaUsers();
   });
@@ -220,7 +218,7 @@ describe('ReportPage', () => {
   it('should have Generate task Report button and Clear Filter button disabled on initial load', () => {
     setup();
 
-    const generateTaskReport = screen.getByRole('button', { name: /Generate task report/i });
+    const generateTaskReport = screen.getByRole('button', { name: /Generate task Report/i });
 
     expect(generateTaskReport).toHaveClass('usa-button-disabled');
 
@@ -234,7 +232,7 @@ describe('ReportPage', () => {
       setup();
       await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
 
-      const generateTaskReport = screen.getByRole('button', { name: /Generate task report/i });
+      const generateTaskReport = screen.getByRole('button', { name: /Generate task Report/i });
 
       expect(generateTaskReport).not.toHaveClass('usa-button-disabled');
 
@@ -267,7 +265,6 @@ describe('ReportPage', () => {
     });
 
     it('should add 10 checkbox when radio Specific Events/ Actions is clicked', async () => {
-
       setup();
 
       await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
@@ -278,29 +275,10 @@ describe('ReportPage', () => {
       expect(specificEvents.length).toBe(1);
 
       fireEvent.click(screen.getByLabelText('Specific Events / Actions'));
-
       expect(screen.getAllByRole('checkbox').length).toBe(10);
 
       REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS.map(
         (option) => expect(screen.getAllByText(option.label)).toBeTruthy()
-      );
-    });
-
-    it('should add 3 checkbox when radio Specific Status is clicked', async () => {
-      setup();
-
-      await selectEvent.select(screen.getByLabelText('Report Type'), ['Status']);
-      expect(screen.getAllByText('Status').length).toBe(1);
-
-      const specificEvents = screen.getAllByText('Specific Status');
-
-      expect(specificEvents.length).toBe(1);
-
-      fireEvent.click(screen.getByLabelText('Specific Status'));
-      expect(screen.getAllByRole('checkbox').length).toBe(3);
-
-      REPORT_TYPE_CONSTANTS.SPECIFIC_STATUS_OPTIONS.map((option) =>
-        expect(screen.getAllByText(option.label)).toBeTruthy()
       );
     });
 
@@ -327,6 +305,24 @@ describe('ReportPage', () => {
         expect(screen.getAllByText('Please select at least one option').length).toBe(1);
       });
 
+    });
+
+    it('should add 3 checkbox when radio Specific Status is clicked', async () => {
+      setup();
+
+      await selectEvent.select(screen.getByLabelText('Report Type'), ['Status']);
+      expect(screen.getAllByText('Status').length).toBe(1);
+
+      const specificEvents = screen.getAllByText('Specific Status');
+
+      expect(specificEvents.length).toBe(1);
+
+      fireEvent.click(screen.getByLabelText('Specific Status'));
+      expect(screen.getAllByRole('checkbox').length).toBe(3);
+
+      REPORT_TYPE_CONSTANTS.SPECIFIC_STATUS_OPTIONS.map((option) =>
+        expect(screen.getAllByText(option.label)).toBeTruthy()
+      );
     });
   });
 
