@@ -16,6 +16,9 @@ class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
   end
 
   def validate_veteran_presence
+    # Temporary logic used to induce a 500 Server Error in UAT
+    fail StandardError if file_number == "00000001"
+
     render_veteran_not_found unless veteran
   end
 
