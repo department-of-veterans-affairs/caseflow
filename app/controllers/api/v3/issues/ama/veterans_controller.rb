@@ -57,7 +57,7 @@ class Api::V3::Issues::Ama::VeteransController < Api::V3::BaseController
   def find_veteran
     begin
       # Temporary logic used to induce a 500 Server Error in UAT
-      fail StandardError if file_number == "000000000"
+      fail StandardError if params["participant_id"] == "000000000"
 
       Veteran.find_by!(participant_id: params[:participant_id])
     rescue ActiveRecord::RecordNotFound
