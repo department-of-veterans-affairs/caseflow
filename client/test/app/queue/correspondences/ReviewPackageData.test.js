@@ -1,15 +1,22 @@
 import React from 'react';
+import * as redux from 'react-redux';
 import { render, screen } from '@testing-library/react';
 import ReviewPackageData from '../../../../app/queue/correspondence/review_package/ReviewPackageData';
 import { correspondenceData, packageDocumentTypeData } from '../../../data/correspondence';
+jest.mock('../../../../app/queue/correspondence/modals/editModal');
 
 const renderReviewPackageData = () => {
-  /* eslint-disable max-len */
-  return render(<ReviewPackageData correspondence={correspondenceData} packageDocumentType={packageDocumentTypeData} />);
+  return render(
+    <ReviewPackageData correspondence={correspondenceData} packageDocumentType={packageDocumentTypeData} />
+  );
 };
 
 describe('ReviewPackageData', () => {
+  const useSelectorMock = jest.spyOn(redux, 'useSelector');
+
   it('renders ReviewPackageData component', () => {
+    useSelectorMock.mockReturnValueOnce(correspondenceData);
+    useSelectorMock.mockReturnValueOnce(packageDocumentTypeData);
     renderReviewPackageData();
     expect(screen.getByText('Portal Entry Date')).toBeInTheDocument();
     expect(screen.getByText('Source Type')).toBeInTheDocument();
