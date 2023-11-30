@@ -6,17 +6,33 @@ export const initialState = {
   fetchedAppeals: [],
   correspondences: [],
   radioValue: '2',
-  toggledCheckboxes: [],
+  relatedCorrespondences: [],
   mailTasks: {},
-  unrelatedTasks: []
+  unrelatedTasks: [],
+  currentCorrespondence: [],
+  veteranInformation: []
 };
 
 export const intakeCorrespondenceReducer = (state = initialState, action = {}) => {
   switch (action.type) {
+  case ACTIONS.LOAD_CURRENT_CORRESPONDENCE:
+    return update(state, {
+      currentCorrespondence: {
+        $set: action.payload.currentCorrespondence
+      }
+    });
+
   case ACTIONS.LOAD_CORRESPONDENCES:
     return update(state, {
       correspondences: {
         $set: action.payload.correspondences
+      }
+    });
+
+  case ACTIONS.LOAD_VETERAN_INFORMATION:
+    return update(state, {
+      veteranInformation: {
+        $set: action.payload.veteranInformation
       }
     });
 
@@ -37,21 +53,21 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
   case ACTIONS.SAVE_CHECKBOX_STATE:
     if (action.payload.isChecked) {
       return update(state, {
-        toggledCheckboxes: {
-          $push: [action.payload.id]
+        relatedCorrespondences: {
+          $push: [action.payload.correspondence]
         }
       });
     }
 
     return update(state, {
-      toggledCheckboxes: {
-        $set: state.toggledCheckboxes.filter((id) => id !== action.payload.id)
+      relatedCorrespondences: {
+        $set: state.relatedCorrespondences.filter((corr) => corr.id !== action.payload.correspondence.id)
       }
     });
 
   case ACTIONS.CLEAR_CHECKBOX_STATE:
     return update(state, {
-      toggledCheckboxes: {
+      relatedCorrespondences: {
         $set: []
       }
     });
