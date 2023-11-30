@@ -19,6 +19,8 @@ pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
  * @param {string} documentPathBase - String path containing appeal Id. Directs to /:appeal_id/documents
  */
 const CorrespondencePdfUI = () => {
+  // TODO: Replace hard-coded data objects to dynamically include actual API request data
+
   // Destructured Props and State
   // const {
   //   documentPathBase,
@@ -77,6 +79,8 @@ const CorrespondencePdfUI = () => {
   // and retrieve the document content via pdfjs library's PdfDocumentProxy object.
   // See https://mozilla.github.io/pdf.js/api/draft/module-pdfjsLib-PDFDocumentProxy.html
   useEffect(() => {
+
+    // Retrieves all pdfPageProxy objects from pdfDocumentProxy
     const getAllPages = async (pdfDocument) => {
       const promises = _.range(0, pdfDocument?.numPages).map((index) => {
         return pdfDocument.getPage(pageNumberOfPageIndex(index));
@@ -110,10 +114,17 @@ const CorrespondencePdfUI = () => {
     };
   }, []);
 
-  // Constants
+
+  // ////////////// //
+  //   Constants    //
+  // ////////////// //
   const ZOOM_RATE = 0.3;
   const MINIMUM_ZOOM = 0.4;
   const MAXIMUM_ZOOM = 5.0;
+
+  // Once the scrollview div containers exceeds 1300px, it will run a css container query to render a 2 column grid
+  const OFFSET_WIDTH = 1300;
+  const isScrollViewAGrid = scrollViewRef?.current?.offsetWidth >= OFFSET_WIDTH;
 
   const ROTATION_INCREMENTS = 90;
   const COMPLETE_ROTATION = 360;
@@ -172,11 +183,38 @@ const CorrespondencePdfUI = () => {
     const scrolledHeight = scrollViewRef.current.scrollTop;
     const pageOffset = Math.floor(scrolledHeight / viewportState.height);
 
+    // Scrollheight - 750px (height set by CSS) represents the maximum scrollable height of the grid container
+    // When we hit the maximum scrollable height, the last page number should be displayed
     if ((scrollViewRef.current.scrollHeight - 750 === scrolledHeight) && (currentPage !== pdfDocProxy.numPages)) {
       setCurrentPage(pdfDocProxy.numPages);
     } else {
       const pageNumber = pageOffset + 1;
 
+      setCurrentPage(pageNumber);
+    }
+  };
+
+  const handleGridScroll = () => {
+    // Amount of Pixels that have been scrolled already from the top
+    const scrolledHeight = scrollViewRef.current.scrollTop;
+    let currentRowNumber = 1;
+    console.log(currentPage)
+    // Scrollheight - 750px (height set by CSS) represents the maximum scrollable height of the grid container
+    // When we hit the maximum scrollable height, the first page number of the last row should be displayed
+    if ((scrollViewRef.current.scrollHeight - 749 === scrolledHeight)) {
+      currentRowNumber = Math.ceil(pdfDocProxy.numPages / 2);
+
+    // Correct for "page 0" base case
+    } else if (scrolledHeight > viewportState.height) {
+      // Calculates the current visible rowNumber starting from 1, which contains two pages
+      currentRowNumber = Math.ceil(scrolledHeight / viewportState.height);
+    }
+
+    // By default, we will display the page number of the first page in each row
+    const pageNumber = (currentRowNumber * 2) - 1;
+
+    // We only set the page number if it is not equal to either pages in the row
+    if ((currentPage !== pageNumber) && (currentPage !== (pageNumber + 1))) {
       setCurrentPage(pageNumber);
     }
   };
@@ -211,7 +249,10 @@ const CorrespondencePdfUI = () => {
         handleDocumentRotation={handleDocumentRotation}
       />
       <div>
-        <div className="cf-pdf-preview-scrollview" ref={scrollViewRef} onScroll={handleScroll}>
+        <div className="cf-pdf-preview-scrollview"
+          ref={scrollViewRef}
+          onScroll={isScrollViewAGrid ? handleGridScroll : handleScroll}
+        >
           <div className="cf-pdf-preview-grid" ref={gridRef}>
             { generatePdfPages }
           </div>

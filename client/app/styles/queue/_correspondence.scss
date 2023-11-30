@@ -12,6 +12,9 @@
 
 .cf-pdf-preview-container {
   width: 100%;
+  max-width: 1800px;
+  text-align: center;
+  margin: 3rem auto;
 }
 
 .cf-pdf-preview-scrollview {
@@ -28,6 +31,7 @@
 .cf-pdf-preview-doc-type-button-container {
   flex: 0 1 auto;
   min-width: 80px;
+  width: 100%;
 }
 
 .cf-pdf-preview-grid {
@@ -48,10 +52,23 @@
 #pdf-preview-footer-input-field {
   height: 100%;
   display: inline-block;
+  width: 50%;
 
-  div div div {
-    width:auto;
+  div .page-progress-indicator-input {
+    .input-container {
+      width: 50%;
+      margin: auto;
+      place-items: center;
+      input {
+        height: 3.5rem;
+        margin-top: 0.7rem;
+      }
+    }
+    label[for="page-progress-indicator-input"] {
+      margin-right: 10px;
+    }
   }
+
 }
 
 @container pdf-preview-scrollview-container (min-width: 1300px) {

@@ -7,8 +7,6 @@ import { ExternalLinkIcon } from '../../../components/icons/ExternalLinkIcon';
 import Button from '../../../components/Button';
 import { RotateIcon } from '../../../components/icons/RotateIcon';
 import { FitToScreenIcon } from '../../../components/icons/FitToScreenIcon';
-import { categoryFieldNameOfCategoryName } from '../../../reader/utils';
-import * as Constants from '../../../reader/constants';
 
 const CorrespondencePdfToolBar = (props) => {
   const {
@@ -56,25 +54,18 @@ const CorrespondencePdfToolBar = (props) => {
 
   return (
     <div className="cf-pdf-preview-header cf-pdf-toolbar">
-      <span {...pdfToolbarStyles.toolbar} {...pdfToolbarStyles.toolbarCenter}>
-        <span className="category-icons-and-doc-type">
-          <span className="cf-pdf-doc-category-icons">
-            <CorrespondenceDocumentCategoryIcons doc={doc} />
-          </span>
-          <span className="cf-pdf-preview-doc-type-button-container">
-            <Link
-              name="newTab"
-              ariaLabel="open document in new tab"
-              target="_blank"
-              button="matte"
-              href={`/reader/appeal${documentPathBase}/${doc.id}`}>
-              <h1 className="cf-pdf-vertically-center cf-non-stylized-header">
-                <span title="Open in new tab">{doc.type}</span>
-                <span className="cf-pdf-external-link-icon"><ExternalLinkIcon /></span>
-              </h1>
-            </Link>
-          </span>
-        </span>
+      <span className="cf-pdf-preview-doc-type-button-container">
+        <Link
+          name="newTab"
+          ariaLabel="open document in new tab"
+          target="_blank"
+          button="matte"
+          href={`/reader/appeal${documentPathBase}/${doc.id}`}>
+          <h1 className="cf-pdf-vertically-center cf-non-stylized-header">
+            <span title="Open in new tab">{doc.type}</span>
+            <span className="cf-pdf-external-link-icon"><ExternalLinkIcon /></span>
+          </h1>
+        </Link>
       </span>
       <span {...pdfToolbarStyles.toolbar} {...pdfToolbarStyles.toolbarRight}>
         <span className="cf-pdf-button-text">Zoom:</span>
@@ -111,48 +102,13 @@ const CorrespondencePdfToolBar = (props) => {
   );
 };
 
-const CorrespondenceDocumentCategoryIcons = ({ doc }) => {
-
-  // Helper function
-  const categoriesOfDocument = (document) =>
-    sortBy(
-      Object.keys(Constants.documentCategories).reduce((list, name) => {
-        if (document[categoryFieldNameOfCategoryName(name)]) {
-          return {
-            ...list,
-            [name]: Constants.documentCategories[name]
-          };
-        }
-
-        return list;
-      }, {}),
-      'renderOrder'
-    );
-
-  const categories = categoriesOfDocument(doc);
-
-  if (!size(categories)) {
-    return null;
-  }
-  const listClassName = 'cf-no-styling-list';
-
-  return (
-    <ul className="cf-document-category-icons" aria-label="document categories">
-      {map(categories, (category) => (
-        <li
-          className={listClassName}
-          key={category.renderOrder}
-          aria-label={category.humanName}
-        >
-          {category.svg}
-        </li>
-      ))}
-    </ul>
-  );
-};
-
-CorrespondenceDocumentCategoryIcons.propTypes = {
-  doc: PropTypes.object.isRequired,
+CorrespondencePdfToolBar.propTypes = {
+  doc: PropTypes.object,
+  documentPathBase: PropTypes.object,
+  zoomIn: PropTypes.func,
+  zoomOut: PropTypes.func,
+  fitToScreen: PropTypes.func,
+  handleDocumentRotation: PropTypes.func,
 };
 
 export default CorrespondencePdfToolBar;
