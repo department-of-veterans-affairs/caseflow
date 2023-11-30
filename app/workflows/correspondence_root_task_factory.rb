@@ -9,6 +9,7 @@ class CorrespondenceRootTaskFactory
       assigned_to: Bva.singleton,
       appeal_type: "Correspondence",
       type: "correspondence_root_task")
+
   end
 
   def create_root_and_sub_tasks!
