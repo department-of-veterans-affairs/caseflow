@@ -270,6 +270,10 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     roles.include?("VSO")
   end
 
+  def non_board_employee?
+    vso_employee? || roles.include?("RO ViewHearSched")
+  end
+
   def camo_employee?
     member_of_organization?(VhaCamo.singleton) && FeatureToggle.enabled?(:vha_predocket_workflow, user: self)
   end
