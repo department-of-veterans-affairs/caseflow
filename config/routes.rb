@@ -252,6 +252,7 @@ Rails.application.routes.draw do
   match '/supplemental_claims/:claim_id/edit/:any' => 'supplemental_claims#edit', via: [:get]
 
   get 'acd-controls', :to => 'case_distribution_levers#acd_lever_index'
+  get 'acd-controls/test', :to => 'case_distribution_levers#acd_lever_index_test'
 
   resources :case_distribution_levers, only: [] do
     collection do
