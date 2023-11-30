@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 class AppealRepository
   class AppealNotValidToClose < StandardError; end
   class AppealNotValidToReopen < StandardError
