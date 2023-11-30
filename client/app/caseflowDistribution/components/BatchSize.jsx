@@ -41,6 +41,8 @@ const BatchSize = (props) => {
     setLever(levers);
   };
 
+  let isMemberUser = !props.isAdmin;
+
   return (
     <div className={styles.leverContent}>
       <div className={styles.leverHead}>
@@ -55,14 +57,21 @@ const BatchSize = (props) => {
             <p>{lever.description}</p>
           </div>
           <div className={`${styles.leverRight} ${leverNumberDiv}`}>
-            <NumberField
-              name={lever.item}
-              label={lever.unit}
-              isInteger
-              value={lever.value}
-              errorMessage={lever.errorMessage}
-              onChange={updateLever(index)}
-            />
+            {isMemberUser ?
+
+              <label className={`${styles.disabledText}`}>
+                {lever.value} {lever.unit}
+              </label> :
+              <NumberField
+                name={lever.item}
+                label={lever.unit}
+                isInteger
+                readOnly={lever.is_disabled}
+                value={lever.value}
+                errorMessage={lever.errorMessage}
+                onChange={updateLever(index)}
+              />
+}
           </div>
         </div>
       ))}
@@ -74,7 +83,8 @@ const BatchSize = (props) => {
 
 BatchSize.propTypes = {
   leverList: PropTypes.arrayOf(PropTypes.string).isRequired,
-  leverStore: PropTypes.any
+  leverStore: PropTypes.any,
+  isAdmin: PropTypes.bool.isRequired,
 };
 
 export default BatchSize;
