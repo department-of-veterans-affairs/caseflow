@@ -1,20 +1,23 @@
 import React from 'react';
 import { useFormContext, useFieldArray } from 'react-hook-form';
+
 import { ConditionContainer } from './ConditionContainer';
+import { personnelSchema } from './Conditions/Personnel';
 import Button from 'app/components/Button';
 
 import * as yup from 'yup';
 import { daysWaitingSchema } from './Conditions/DaysWaiting';
 import { decisionReviewTypeSchema } from './Conditions/DecisionReviewType';
+import { facilitySchema } from './Conditions/Facility';
 import * as ERRORS from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
 
 const conditionOptionSchemas = {
   daysWaiting: daysWaitingSchema,
   decisionReviewType: decisionReviewTypeSchema,
-  facility: yup.object(),
+  facility: facilitySchema,
   issueDisposition: yup.object(),
   issueType: yup.object(),
-  personnel: yup.object()
+  personnel: personnelSchema
 };
 
 export const conditionsSchema = yup.array().of(

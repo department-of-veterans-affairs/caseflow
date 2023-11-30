@@ -1,18 +1,31 @@
 import React from 'react';
 import { axe } from 'jest-axe';
+import { Provider } from 'react-redux';
+import thunk from 'redux-thunk';
+import { applyMiddleware, createStore, compose } from 'redux';
 
 import userEvent from '@testing-library/user-event';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import ReportPage from 'app/nonComp/pages/ReportPage';
 import selectEvent from 'react-select-event';
+import { getVhaUsers } from 'test/helpers/reportPageHelper';
+import CombinedNonCompReducer from 'app/nonComp/reducers';
 
 import REPORT_TYPE_CONSTANTS from 'constants/REPORT_TYPE_CONSTANTS';
 
 describe('ReportPage', () => {
-  const setup = () => {
+  const setup = (storeValues = {}) => {
+    const store = createStore(
+      CombinedNonCompReducer,
+      storeValues,
+      compose(applyMiddleware(thunk))
+    );
+
     return render(
-      <ReportPage />
+      <Provider store={store}>
+        <ReportPage />
+      </Provider>
     );
   };
 
@@ -36,30 +49,56 @@ describe('ReportPage', () => {
 
   it('passes a11y testing', async () => {
     const { container } = setup();
-
-    const results = await axe(container);
-
-    expect(results).toHaveNoViolations();
+  beforeEach(() => {
+    getVhaUsers();
   });
 
-  it('renders correctly', () => {
-    const { container } = setup();
+  const navigateToConditionInput = async (condition) => {
+    const addConditionButton = screen.getByText('Add Condition');
 
-    expect(container).toMatchSnapshot();
-  });
+    await userEvent.click(addConditionButton);
+    const select = screen.getByText('Select a variable');
 
-  it('brings you to the decision review page when clicking the cancel button', async () => {
-    const history = createMemoryHistory();
+    await selectEvent.select(select, [condition]);
+  };
 
-    render(
-      <ReportPage history={history} />
-    );
+  describe('renders correctly', () => {
+    it('passes a11y testing', async () => {
+      const { container } = setup();
 
-    const cancelButton = screen.getByText('Cancel');
+      const results = await axe(container);
 
-    await userEvent.click(cancelButton);
+      expect(results).toHaveNoViolations();
+    });
 
-    expect(history.location.pathname).toBe('/vha');
+    it('renders correctly', () => {
+      const { container } = setup();
+
+      expect(container).toMatchSnapshot();
+    });
+
+    it('brings you to the decision review page when clicking the cancel button', async () => {
+      const history = createMemoryHistory();
+      const storeValues = {};
+
+      const store = createStore(
+        CombinedNonCompReducer,
+        storeValues,
+        compose(applyMiddleware(thunk))
+      );
+
+      render(
+        <Provider store={store}>
+          <ReportPage history={history} />
+        </Provider>
+      );
+
+      const cancelButton = screen.getByText('Cancel');
+
+      await userEvent.click(cancelButton);
+
+      expect(history.location.pathname).toBe('/vha');
+    });
   });
 
   describe('conditions section', () => {
@@ -154,18 +193,9 @@ describe('ReportPage', () => {
   describe('Decision Review Type Section', () => {
     beforeEach(clickOnReportType);
 
-    const navigateToDecisionReviewType = async () => {
-      const addConditionButton = screen.getByText('Add Condition');
-
-      await userEvent.click(addConditionButton);
-      const select = screen.getByText('Select a variable');
-
-      await selectEvent.select(select, ['Decision Review Type']);
-    };
-
     it('shows the correct checkbox fields', async () => {
       setup();
-      await navigateToDecisionReviewType();
+      await navigateToConditionInput('Decision Review Type');
 
       expect(screen.getByText('Higher-Level Reviews')).toBeInTheDocument();
       expect(screen.getByText('Supplemental Claims')).toBeInTheDocument();
@@ -173,7 +203,7 @@ describe('ReportPage', () => {
 
     it('clicking the checkbox should toggle the checked status', async () => {
       setup();
-      await navigateToDecisionReviewType();
+      await navigateToConditionInput('Decision Review Type');
 
       const checkbox = screen.getByLabelText('Higher-Level Reviews');
 
@@ -183,6 +213,20 @@ describe('ReportPage', () => {
       await userEvent.click(checkbox);
       expect(checkbox.checked).toEqual(false);
 
+    });
+  });
+
+  describe('Facility Section', () => {
+    beforeEach(clickOnReportType);
+
+    it('allows you to select facilities', async () => {
+      setup();
+      await navigateToConditionInput('Facility');
+
+      const dropdown = screen.getByLabelText('Facility Type');
+
+      await selectEvent.select(dropdown, ['Albuquerque']);
+      expect(screen.getByText('Albuquerque')).toBeInTheDocument();
     });
   });
 
@@ -222,6 +266,19 @@ describe('ReportPage', () => {
       expect(screen.getAllByText('Specific Events / Actions').length).toBe(1);
     });
 
+    it('should list four radio buttons options when Status is selected in ReportType', async () => {
+      setup();
+      await selectEvent.select(screen.getByLabelText('Report Type'), ['Status']);
+
+      expect(screen.getAllByText('Status').length).toBe(1);
+      expect(screen.getAllByRole('radio').length).toBe(4);
+      expect(screen.getAllByText('All Statuses').length).toBe(1);
+      expect(screen.getAllByText('Specific Status').length).toBe(1);
+      expect(screen.getAllByText('Last Action Taken').length).toBe(1);
+      expect(screen.getAllByText('Summary').length).toBe(1);
+
+    });
+
     it('should add 10 checkbox when radio Specific Events/ Actions is clicked', async () => {
 
       setup();
@@ -237,9 +294,27 @@ describe('ReportPage', () => {
 
       expect(screen.getAllByRole('checkbox').length).toBe(10);
 
-      REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS.map((option) => {
-        expect(screen.getAllByText(option.label)).toBeTruthy();
-      });
+      REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS.map(
+        (option) => expect(screen.getAllByText(option.label)).toBeTruthy()
+      );
+    });
+
+    it('should add 3 checkbox when radio Specific Status is clicked', async () => {
+      setup();
+
+      await selectEvent.select(screen.getByLabelText('Report Type'), ['Status']);
+      expect(screen.getAllByText('Status').length).toBe(1);
+
+      const specificEvents = screen.getAllByText('Specific Status');
+
+      expect(specificEvents.length).toBe(1);
+
+      fireEvent.click(screen.getByLabelText('Specific Status'));
+      expect(screen.getAllByRole('checkbox').length).toBe(3);
+
+      REPORT_TYPE_CONSTANTS.SPECIFIC_STATUS_OPTIONS.map((option) =>
+        expect(screen.getAllByText(option.label)).toBeTruthy()
+      );
     });
 
     it('should add a validation error if Generate Task button is clicked without selecting any specific events actions', async () => {

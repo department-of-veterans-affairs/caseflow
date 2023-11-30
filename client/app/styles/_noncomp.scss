@@ -146,12 +146,18 @@ $validation-error-color: #cd2026;
   }
 }
 
+.less-error-padding {
+  margin-top: 0;
+  right: 0;
+}
+
 .report-page-segment {
   display: flex;
   flex-wrap: wrap;
 
   a {
     align-self: flex-end;
+    cursor: pointer;
     margin-left: auto;
   }
 
@@ -186,7 +192,6 @@ $validation-error-color: #cd2026;
           align-self: flex-end;
           flex-wrap: wrap;
           gap: 8px;
-
         }
 
         @media screen and (min-width: 1440px) {
@@ -208,6 +213,18 @@ $validation-error-color: #cd2026;
 
       .decisionReviewTypeContainerError {
         border-left: solid $validation-error-color 4px;
+      }
+
+      .report-page-multi-select-dropdown {
+        width: 100%;
+
+        .cf-select__value-container--is-multi.cf-select__value-container--has-value {
+          padding: 12px 8px 0;
+        }
+
+        .usa-input-error .cf-select {
+          max-width: 466px;
+        }
       }
     }
 
