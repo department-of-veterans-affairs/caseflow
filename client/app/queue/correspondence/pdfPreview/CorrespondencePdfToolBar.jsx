@@ -104,7 +104,7 @@ const CorrespondencePdfToolBar = (props) => {
 
 CorrespondencePdfToolBar.propTypes = {
   doc: PropTypes.object,
-  documentPathBase: PropTypes.object,
+  documentPathBase: PropTypes.string,
   zoomIn: PropTypes.func,
   zoomOut: PropTypes.func,
   fitToScreen: PropTypes.func,
