@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import CaseListTable from '../../../../CaseListTable';
@@ -7,7 +7,9 @@ import { prepareAppealForStore } from '../../../../utils';
 import LoadingContainer from '../../../../../components/LoadingContainer';
 import { LOGO_COLORS } from '../../../../../constants/AppConstants';
 import RadioField from '../../../../../components/RadioField';
+import ExistingAppealTasksView from './ExistingAppealTasksView';
 import {
+  setNewAppealRelatedTasks,
   setTaskRelatedAppealIds,
   setFetchedAppeals
 } from '../../../correspondenceReducer/correspondenceActions';
@@ -24,24 +26,58 @@ const existingAppealAnswer = [
 
 export const AddAppealRelatedTaskView = (props) => {
   const appeals = useSelector((state) => state.intakeCorrespondence.fetchedAppeals);
-  const taskRelatedAppealIds = useSelector((state) => state.intakeCorrespondence.taskRelatedAppealIds);
+  const [taskRelatedAppeals, setTaskRelatedAppeals] =
+    useState(useSelector((state) => state.intakeCorrespondence.taskRelatedAppealIds));
+  const [newTasks, setNewTasks] = useState(useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks));
   const [existingAppealRadio, setExistingAppealRadio] =
-    useState(taskRelatedAppealIds.length ? RELATED_YES : RELATED_NO);
+    useState(taskRelatedAppeals.length ? RELATED_YES : RELATED_NO);
   const [loading, setLoading] = useState(false);
+  const [nextTaskId, setNextTaskId] = useState(newTasks.length);
+  const [currentAppealPage, setCurrentAppealPage] = useState(1);
+  const [tableUpdateTrigger, setTableUpdateTrigger] = useState(1);
 
   const dispatch = useDispatch();
 
-  const appealCheckboxOnChange = useCallback((id, isChecked) => {
+  const appealById = (appealId) => {
+    return appeals.find((el) => el.id === appealId);
+  };
+
+  const appealsPageUpdateHandler = (newCurrentPage) => {
+    setCurrentAppealPage(newCurrentPage);
+    setTableUpdateTrigger((prev) => prev + 1);
+  };
+
+  useEffect(() => {
+    dispatch(setTaskRelatedAppealIds(taskRelatedAppeals));
+  }, [taskRelatedAppeals]);
+
+  useEffect(() => {
+    setNextTaskId((prevId) => prevId + 1);
+    dispatch(setNewAppealRelatedTasks(newTasks));
+  }, [newTasks]);
+
+  const appealCheckboxOnChange = (appealId, isChecked) => {
     if (isChecked) {
-      if (!taskRelatedAppealIds.includes(id)) {
-        dispatch(setTaskRelatedAppealIds([...taskRelatedAppealIds, id]));
+      if (!taskRelatedAppeals.includes(appealId)) {
+        setTaskRelatedAppeals([...taskRelatedAppeals, appealId]);
+
+        const tasksForAppeal = newTasks.filter((el) => el.appealId === appealId);
+
+        if (!tasksForAppeal.length) {
+          const newTask = { id: nextTaskId, appealId, type: '', content: '' };
+
+          setNewTasks([...newTasks, newTask]);
+        }
       }
     } else {
-      const selected = taskRelatedAppealIds.filter((checkboxId) => checkboxId !== id);
+      const selectedAppeals = taskRelatedAppeals.filter((checkedId) => checkedId !== appealId);
+      const filteredNewTasks = newTasks.filter((task) => task.appealId !== appealId);
 
-      dispatch(setTaskRelatedAppealIds(selected));
+      setTaskRelatedAppeals(selectedAppeals);
+      setNewTasks(filteredNewTasks);
+      setTableUpdateTrigger((prev) => prev + 1);
     }
-  }, [taskRelatedAppealIds]);
+  };
 
   useEffect(() => {
     // Don't refetch (use cache)
@@ -76,20 +112,31 @@ export const AddAppealRelatedTaskView = (props) => {
   }, []);
 
   useEffect(() => {
-    // Clear the selected appeals when the user toggles the radio button
+    // Clear the selected appeals and any tasks when the user toggles the radio button
     if (existingAppealRadio === RELATED_NO) {
-      dispatch(setTaskRelatedAppealIds([]));
+      setTaskRelatedAppeals([]);
+      setNewTasks([]);
     }
   }, [existingAppealRadio]);
 
   useEffect(() => {
     // If user has selected appeals, enable continue
     if (existingAppealRadio === RELATED_YES) {
-      props.setRelatedTasksCanContinue(taskRelatedAppealIds.length);
+      props.setRelatedTasksCanContinue(taskRelatedAppeals.length);
     } else {
       props.setRelatedTasksCanContinue(true);
     }
-  }, [existingAppealRadio, taskRelatedAppealIds]);
+  }, [existingAppealRadio, taskRelatedAppeals]);
+
+  useEffect(() => {
+    let canContinue = true;
+
+    newTasks.forEach((task) => {
+      canContinue = canContinue && ((task.content !== '') && (task.type !== ''));
+    });
+
+    props.setRelatedTasksCanContinue(canContinue);
+  }, [newTasks]);
 
   return (
     <div>
@@ -125,14 +172,36 @@ export const AddAppealRelatedTaskView = (props) => {
             <ul>
               <div style={{ padding: '1rem' }}>
                 <CaseListTable
+                  // Need to use this as key to force React to re-render checkboxes
+                  key={tableUpdateTrigger}
                   appeals={appeals}
                   showCheckboxes
                   paginate
                   linkOpensInNewTab
                   checkboxOnChange={appealCheckboxOnChange}
+                  taskRelatedAppealIds={taskRelatedAppeals}
+                  currentPage={currentAppealPage}
+                  updatePageHandlerCallback={appealsPageUpdateHandler}
                 />
               </div>
             </ul>
+          </div>
+          <div>
+            {taskRelatedAppeals.toSorted().map((appealId, index) => {
+              return (
+                <ExistingAppealTasksView
+                  key={index}
+                  appeal={appealById(appealId)}
+                  newTasks={newTasks}
+                  setNewTasks={setNewTasks}
+                  nextTaskId={nextTaskId}
+                  setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
+                  unlinkAppeal={appealCheckboxOnChange}
+                  allTaskTypeOptions={props.allTaskTypeOptions}
+                  filterUnavailableTaskTypeOptions={props.filterUnavailableTaskTypeOptions}
+                />
+              );
+            })}
           </div>
         </div>
       }
@@ -142,7 +211,9 @@ export const AddAppealRelatedTaskView = (props) => {
 
 AddAppealRelatedTaskView.propTypes = {
   correspondenceUuid: PropTypes.string.isRequired,
-  setRelatedTasksCanContinue: PropTypes.func.isRequired
+  setRelatedTasksCanContinue: PropTypes.func.isRequired,
+  filterUnavailableTaskTypeOptions: PropTypes.func.isRequired,
+  allTaskTypeOptions: PropTypes.array.isRequired
 };
 
 export default AddAppealRelatedTaskView;
