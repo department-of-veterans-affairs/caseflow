@@ -126,6 +126,7 @@ module Seeds
                    claimant_type: CLAIMANT_TYPES.sample,
                    issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
                    number_of_claimants: 1)
+      hlr.create_business_line_tasks!
       hlr.establishment_processed_at = Time.zone.now
       hlr.save
     end
