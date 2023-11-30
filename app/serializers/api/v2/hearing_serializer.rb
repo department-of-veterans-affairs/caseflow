@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::V2::HearingSerializer
+class V2::HearingSerializer
   include FastJsonapi::ObjectSerializer
 
   attribute :address do |hearing|
