@@ -30,7 +30,7 @@ const CorrespondencePdfUI = () => {
   // Hard Coded Temp Data Objects
   const documentPathBase = '/2941741/documents';
   const doc = {
-    id: 13,
+    id: 2,
     category_medical: null,
     category_other: null,
     category_procedural: null,
@@ -44,7 +44,7 @@ const CorrespondencePdfUI = () => {
     updated_at: '2023-11-20T14:58:49.681-05:00',
     upload_date: '2023-11-18',
     vbms_document_id: '110',
-    content_url: '/document/13/pdf',
+    content_url: '/document/2/pdf',
     filename: 'filename-9265746.pdf',
     category_case_summary: true,
     serialized_vacols_date: '',
