@@ -34,6 +34,10 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
     object.decision_review.claimant.participant_id
   end
 
+  attribute :claim_id do |object|
+    object&.end_product_establishment&.reference_id
+  end
+
   attribute :decision_issues do |object|
     object.decision_issues.map do |di|
       {

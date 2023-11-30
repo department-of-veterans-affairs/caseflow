@@ -2,7 +2,8 @@
 
 # :reek:InstanceVariableAssumption
 class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
-  DEFAULT_UPPER_BOUND_PER_PAGE = ENV["REQUEST_ISSUE_DEFAULT_UPPER_BOUND_PER_PAGE"].to_i # The max amount of Issues that can be paginated on a single page
+  # The max amount of Issues that can be paginated on a single page
+  DEFAULT_UPPER_BOUND_PER_PAGE = ENV["REQUEST_ISSUE_DEFAULT_UPPER_BOUND_PER_PAGE"].to_i
   include ApiV3FeatureToggleConcern
 
   before_action do
@@ -34,19 +35,6 @@ class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
 
   def file_number
     @file_number ||= request.headers["X-VA-FILE-NUMBER"].presence
-  end
-
-  rescue_from StandardError do |error|
-    Raven.capture_exception(error, extra: raven_extra_context)
-
-    render json: {
-      "errors": [
-        "status": "500",
-        "title": "Unknown error occured",
-        "detail": "Message: There was a server error. "\
-                  "Use the error uuid to submit a support ticket: #{Raven.last_event_id}"
-      ]
-    }, status: :internal_server_error
   end
 
   rescue_from Caseflow::Error::InvalidFileNumber, BGS::ShareError do |error|
