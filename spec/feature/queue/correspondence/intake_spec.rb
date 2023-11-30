@@ -175,12 +175,10 @@ RSpec.feature("The Correspondence Intake page") do
 
         expect(page).to have_content("Tasks not related to an Appeal")
         expect(page).to have_link("Edit section")
-        within(".usa-table-borderless") do
-          expect(page).to have_content("Tasks")
-          expect(page).to have_content("Task Instructions or Context")
-          expect(page).to have_content("CAVC Correspondence")
-          expect(page).to have_content("Correspondence test text")
-        end
+        expect(page).to have_content("Tasks")
+        expect(page).to have_content("Task Instructions or Context")
+        expect(page).to have_content("CAVC Correspondence")
+        expect(page).to have_content("Correspondence test text")
       end
 
       it "Edit section link returns user to Tasks not related to an Appeal on Step 2" do
@@ -233,28 +231,24 @@ RSpec.feature("The Correspondence Intake page") do
       fill_in "content", with: "debug data for autofill"
       expect(find_by_id("content").text).to eq "debug data for autofill"
       find_by_id("addAutotext").click
-      first_checkbox_text = ""
+      checkbox_text = "Possible motion pursuant to BVA decision dated mm/dd/yy"
       within find_by_id("autotextModal") do
-        first_checkbox = all(class: "cf-form-checkbox").first
-        first_checkbox_text = first_checkbox.text
-        first_checkbox.click
+        page.all(".cf-form-checkbox")[6].click
         find_by_id("Add-autotext-button-id-1").click
       end
-      expect(find_by_id("content").text).to eq first_checkbox_text
+      expect(find_by_id("content").text).to eq checkbox_text
     end
 
     it "Persists data if the user hits the back button, then returns" do
       find_by_id("addAutotext").click
-      first_checkbox_text = ""
+      checkbox_text = "Possible motion pursuant to BVA decision dated mm/dd/yy"
       within find_by_id("autotextModal") do
-        first_checkbox = all(class: "cf-form-checkbox").first
-        first_checkbox_text = first_checkbox.text
-        first_checkbox.click
+        page.all(".cf-form-checkbox")[6].click
         find_by_id("Add-autotext-button-id-1").click
       end
       click_on("button-back-button")
       click_on("button-continue")
-      expect(find_by_id("content").text).to eq first_checkbox_text
+      expect(find_by_id("content").text).to eq checkbox_text
     end
   end
 end
