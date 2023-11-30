@@ -210,17 +210,17 @@ class Hearing < CaseflowRecord
     # then assemble and return a TimeWithZone object cast to the regional
     # office's time zone.
 
-    updated_by_timezone = updated_by&.timezone || Time.zone.name
-    scheduled_time_in_updated_by_timezone = scheduled_time.utc.in_time_zone(updated_by_timezone)
-
+    # updated_by_timezone = updated_by&.timezone || Time.zone.name
+    # scheduled_time_in_updated_by_timezone = scheduled_time.utc.in_time_zone(updated_by_timezone)
+    est_scheduled = scheduled_time.in_time_zone(Time.now.zone)
     Time.use_zone(regional_office_timezone) do
       Time.zone.local(
         hearing_day.scheduled_for.year,
         hearing_day.scheduled_for.month,
         hearing_day.scheduled_for.day,
-        scheduled_time_in_updated_by_timezone.hour,
-        scheduled_time_in_updated_by_timezone.min,
-        scheduled_time_in_updated_by_timezone.sec
+        est_scheduled.hour,
+        est_scheduled.min,
+        est_scheduled.sec
       )
     end
   end
