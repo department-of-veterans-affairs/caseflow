@@ -2,14 +2,16 @@
 
 class CorrespondenceController < ApplicationController
   before_action :verify_feature_toggle
-  before_action :correspondence, only: [:show, :update]
+  before_action :correspondence
 
   def intake
     respond_to do |format|
       format.html { return render "correspondence/intake" }
       format.json do
         render json: {
-          correspondence: correspondence_load
+          currentCorrespondence: current_correspondence,
+          correspondence: correspondence_load,
+          veteranInformation: veteran_information
         }
       end
     end
@@ -37,8 +39,16 @@ class CorrespondenceController < ApplicationController
     render json: { package_document_types: packages }
   end
 
+  def current_correspondence
+    @current_correspondence ||= correspondence
+  end
+
+  def veteran_information
+    @veteran_information ||= veteran_by_correspondence
+  end
+
   def show
-    corres_docs = @correspondence.correspondence_documents
+    corres_docs = correspondence.correspondence_documents
     response_json = {
       correspondence: correspondence,
       package_document_type: correspondence&.package_document_type,
@@ -51,7 +61,7 @@ class CorrespondenceController < ApplicationController
   end
 
   def update
-    if veteran_by_correspondence.update(veteran_params) && @correspondence.update(
+    if veteran_by_correspondence.update(veteran_params) && correspondence.update(
       correspondence_params.merge(updated_by_id: RequestStore.store[:current_user].id)
     )
       render json: { status: :ok }
@@ -61,25 +71,22 @@ class CorrespondenceController < ApplicationController
   end
 
   def update_cmp
-    @correspondence = Correspondence.find_by(uuid: params[:correspondence_uuid])
-    @correspondence.update(va_date_of_receipt: params["VADORDate"].in_time_zone,
-                           package_document_type_id: params["packageDocument"]["value"].to_i)
-    render json: { status: 200, correspondence: @correspondence }
+    correspondence.update(
+      va_date_of_receipt: params["VADORDate"].in_time_zone,
+      package_document_type_id: params["packageDocument"]["value"].to_i,
+    )
+    render json: { status: 200, correspondence: correspondence }
   end
 
   private
 
-  def correspondence
-    @correspondence ||= Correspondence.find_by(uuid: params[:id])
-  end
-
   def general_information
     vet = veteran_by_correspondence
     {
-      notes: @correspondence.notes,
+      notes: correspondence.notes,
       file_number: vet.file_number,
       veteran_name: vet.name,
-      correspondence_type_id: @correspondence.correspondence_type_id,
+      correspondence_type_id: correspondence.correspondence_type_id,
       correspondence_types: CorrespondenceType.all
     }
   end
@@ -98,12 +105,24 @@ class CorrespondenceController < ApplicationController
     end
   end
 
+  def correspondence
+    return @correspondence if @correspondence.present?
+
+    if params[:id].present?
+      @correspondence = Correspondence.find(params[:id])
+    elsif params[:correspondence_uuid].present?
+      @correspondence = Correspondence.find_by(uuid: params[:correspondence_uuid])
+    end
+
+    @correspondence
+  end
+
   def correspondence_load
     Correspondence.where(veteran_id: veteran_by_correspondence.id).where.not(uuid: params[:correspondence_uuid])
   end
 
   def veteran_by_correspondence
-    @veteran_by_correspondence ||= Veteran.find(@correspondence.veteran_id)
+    @veteran_by_correspondence ||= Veteran.find(correspondence&.veteran_id)
   end
 
   def veterans_with_correspondences
