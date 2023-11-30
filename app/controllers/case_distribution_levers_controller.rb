@@ -6,7 +6,7 @@ class CaseDistributionLeversController < ApplicationController
     @acd_history = CaseDistributionAuditLeverEntry.past_year
     @user_is_an_acd_admin = current_user.admin?
 
-    if Rails.env.development? || Rails.env.test?
+    if Rails.env.test?
       render "test"
     else
       render "index"
@@ -70,7 +70,6 @@ class CaseDistributionLeversController < ApplicationController
   def verify_access
     return true if current_user.admin?
     return true if current_user.can?("View Levers")
-    return true if Rails.env.development?
     return true if Rails.env.test?
 
     Rails.logger.debug("User with roles #{current_user.roles.join(', ')} "\
