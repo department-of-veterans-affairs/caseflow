@@ -107,11 +107,11 @@ class BusinessLine < Organization
     def initialize(query_type: :in_progress, parent: business_line, query_params: {})
       @query_type = query_type
       @parent = parent
-      @query_params = query_params
+      @query_params = query_params.dup
 
       # Initialize default sorting
-      query_params[:sort_by] ||= DEFAULT_ORDERING_HASH[query_type][:sort_by]
-      query_params[:sort_order] ||= "desc"
+      @query_params[:sort_by] ||= DEFAULT_ORDERING_HASH[query_type][:sort_by]
+      @query_params[:sort_order] ||= "desc"
     end
 
     def build_query

@@ -254,7 +254,8 @@ const ReportPage = ({ history }) => {
 
     // Event filter
     if (data.radioEventAction === 'specific_events_action') {
-      filters.events = Object.keys(data.specificEventType);
+      // filters.events = Object.keys(data.specificEventType);
+      filters.events = Object.keys(data.specificEventType).filter((key) => data.specificEventType[key] === true);
     }
 
     // Status filter

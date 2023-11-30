@@ -292,9 +292,9 @@ class DecisionReviewsController < ApplicationController
 
   def parse_change_history_filter_params(filter_params)
     {
+      report_type: filter_params[:report_type],
       events: events_filter_helper(filter_params),
       task_status: task_status_filter_helper(filter_params),
-      # TODO: Don't know what to do with this right now
       status_report_type: filter_params[:status_report_type],
       claim_type: filter_params[:decision_review_type]&.values,
       personnel: filter_params[:personnel]&.values,
