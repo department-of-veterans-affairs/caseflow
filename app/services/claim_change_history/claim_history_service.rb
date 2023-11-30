@@ -53,8 +53,7 @@ class ClaimHistoryService
       end
     end
 
-    @events.compact.sort_by! { |event| [event.task_id, event.event_date] }
-    @events
+    @events = @events.compact.sort_by! { |event| [event.task_id, event.event_date] }
   end
 
   def event_stats
