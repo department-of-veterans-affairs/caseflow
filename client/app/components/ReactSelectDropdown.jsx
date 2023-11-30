@@ -85,7 +85,7 @@ ReactSelectDropdown.propTypes = {
       displayText: PropTypes.string,
     })
   ),
-  defaultValue: PropTypes.string,
+  defaultValue: PropTypes.object,
   label: PropTypes.string,
   onChangeMethod: PropTypes.func,
   className: PropTypes.string
