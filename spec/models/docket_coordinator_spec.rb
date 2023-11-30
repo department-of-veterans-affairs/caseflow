@@ -12,6 +12,7 @@ describe DocketCoordinator do
           team.add_user(attorney)
         end
       end
+      #create(:case_distribution_lever, title:'AMA Non-priority Direct Docket Time Goal', item:'direct_docket_time_goal', data_type:'number', value: 365)
 
       allow(Docket)
         .to receive(:nonpriority_decisions_per_year)
@@ -118,15 +119,16 @@ describe DocketCoordinator do
 
     context "lever settings for minimum legacy and maximum direct review proportions" do
       it "do not sum to more than 1" do
-        expect(CaseDistributionLever.find_by_item('minimum_legacy_proportion').try(:value).to_i +
-        CaseDistributionLever.find_by_item('maximum_direct_review_proportion').try(:value).to_i).to be <= 1
+        expect(CaseDistributionLever.find_by_item('minimum_legacy_proportion').try(:value).to_f +
+        CaseDistributionLever.find_by_item('maximum_direct_review_proportion').try(:value).to_f).to be <= 1
       end
     end
 
     context "when there are due direct reviews" do
       it "uses the number of due direct reviews as a proportion of the docket margin net of priority" do
         expect(docket_coordinator.docket_proportions).to include(
-          direct_review: CaseDistributionLever.find_by_item('maximum_direct_review_proportion').try(:value).to_i
+          direct_review: CaseDistributionLever.find_by_item('maximum_direct_review_proportion').try(:value).to_f
+          #direct_review: Constants.DISTRIBUTION.maximum_direct_review_proportion
         )
         expect(docket_coordinator.target_number_of_ama_hearings(2.years)).to eq(30)
       end
@@ -162,7 +164,7 @@ describe DocketCoordinator do
 
         it "caps the percentage at the maximum" do
           expect(docket_coordinator.docket_proportions).to include(
-            direct_review: CaseDistributionLever.find_by_item('maximum_direct_review_proportion').try(:value).to_i
+            direct_review: CaseDistributionLever.find_by_item('maximum_direct_review_proportion').try(:value).to_f
           )
         end
 
@@ -179,7 +181,7 @@ describe DocketCoordinator do
 
         it "ensures a minimum" do
           expect(docket_coordinator.docket_proportions).to include(
-            legacy: CaseDistributionLever.find_by_item('minimum_legacy_proportion').try(:value).to_i
+            legacy: CaseDistributionLever.find_by_item('minimum_legacy_proportion').try(:value).to_f
           )
         end
 

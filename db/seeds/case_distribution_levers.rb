@@ -428,7 +428,7 @@ module Seeds
           item: 'direct_docket_time_goal',
           title: 'AMA Non-priority Direct Review Docket Time Goal',
           data_type: 'number',
-          value: 550,
+          value: 365,
           unit: 'days',
           is_active: false,
           is_disabled: true,
