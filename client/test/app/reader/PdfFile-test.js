@@ -62,7 +62,7 @@ describe('PdfFile', () => {
 
       beforeAll(() => {
         // This component throws an error about halfway through getDocument at destroy
-        // giving it access to both recordAsyncMetrics and storeMetrics
+        // giving it access to both recordAsyncMetrics and storeMetrics.
         wrapper = shallow(
           <PdfFile
             documentId={documents[0].id}
