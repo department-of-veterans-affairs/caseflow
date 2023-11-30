@@ -59,19 +59,21 @@ class AddCorrespondenceView extends React.Component {
     this.props.clearCheckboxState();
   }
 
-  onChangeCheckbox = (id, isChecked) => {
-    this.props.saveCheckboxState(id, isChecked);
+  onChangeCheckbox = (correspondence, isChecked) => {
+    this.props.saveCheckboxState(correspondence, isChecked);
     let selectedCheckboxes = this.props.checkboxes;
 
     if (isChecked) {
-      selectedCheckboxes.push(id);
+      selectedCheckboxes.push(correspondence.id);
     } else {
-      selectedCheckboxes = selectedCheckboxes.filter((checkboxId) => checkboxId !== id);
+      selectedCheckboxes = selectedCheckboxes.filter((checkboxId) => checkboxId !== correspondence.id);
     }
 
     const isAnyCheckboxSelected = selectedCheckboxes.length > 0;
 
     this.props.onCheckboxChange(isAnyCheckboxSelected);
+
+    console.log(id)
   }
 
   getKeyForRow = (index, { id }) => {
@@ -88,8 +90,8 @@ class AddCorrespondenceView extends React.Component {
             name={correspondence.id.toString()}
             id={correspondence.id.toString()}
             hideLabel
-            defaultValue={this.props.checkboxes.includes(String(correspondence.id))}
-            onChange={(checked) => this.onChangeCheckbox(String(correspondence.id), checked)}
+            defaultValue={this.props.checkboxes.includes(correspondence)}
+            onChange={(checked) => this.onChangeCheckbox(correspondence, checked)}
           />
         ),
       },
@@ -247,7 +249,7 @@ const mapStateToProps = (state) => ({
   veteranInformation: state.intakeCorrespondence.veteranInformation,
   correspondences: state.intakeCorrespondence.correspondences,
   radioValue: state.intakeCorrespondence.radioValue,
-  checkboxes: state.intakeCorrespondence.toggledCheckboxes,
+  checkboxes: state.intakeCorrespondence.relatedCorrespondences,
 });
 
 const mapDispatchToProps = (dispatch) => (

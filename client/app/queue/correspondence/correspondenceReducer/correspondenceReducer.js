@@ -6,7 +6,7 @@ export const initialState = {
   fetchedAppeals: [],
   correspondences: [],
   radioValue: '2',
-  toggledCheckboxes: [],
+  relatedCorrespondences: [],
   mailTasks: {},
   unrelatedTasks: [],
   currentCorrespondence: [],
@@ -53,21 +53,21 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
   case ACTIONS.SAVE_CHECKBOX_STATE:
     if (action.payload.isChecked) {
       return update(state, {
-        toggledCheckboxes: {
-          $push: [action.payload.id]
+        relatedCorrespondences: {
+          $push: [action.payload.correspondence]
         }
       });
     }
 
     return update(state, {
-      toggledCheckboxes: {
-        $set: state.toggledCheckboxes.filter((id) => id !== action.payload.id)
+      relatedCorrespondences: {
+        $set: state.relatedCorrespondences.filter((corr) => corr.id !== action.payload.correspondence.id)
       }
     });
 
   case ACTIONS.CLEAR_CHECKBOX_STATE:
     return update(state, {
-      toggledCheckboxes: {
+      relatedCorrespondences: {
         $set: []
       }
     });
