@@ -78,13 +78,7 @@ module Seeds
         rescue ActiveRecord::RecordNotUnique
           retry if (retries += 1) < retry_max
         end
-        sdomain_id = judge.css_id
-        # Create the judge
-        vacols_judge = create(
-          :staff,
-          :inactive_judge,
-          sdomainid: sdomain_id
-        )
+
         # Create the vacols_case
         begin
           retries ||= 0
@@ -126,6 +120,14 @@ module Seeds
         # call to make inactive
         active_judge = User.find_by_css_id("BVAAABSHIRE")
         attorney = User.find_by_css_id("BVASCASPER1")
+
+        sdomain_id = inactive_judge.css_id
+        # Create the inactive judge in vacols
+        vacols_inactive_judge = create(
+          :staff,
+          :inactive_judge,
+          sdomainid: sdomain_id
+        )
         # Set this for papertrail when creating vacols_case
         offsets.each do |offset|
           docket_number = "190000#{offset}"
@@ -137,10 +139,13 @@ module Seeds
           # Assign hearing type to video
           type = "video"
 
+          # Assign judge to be inactive and active
+          judge = offset.even? ? active_judge : vacols_inactive_judge
+
           # AC1: create legacy appeals ready to be distributed that have a hearing held by an inactive judge
-          legacy_appeal = create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, inactive_judge, attorney, veteran)
+          legacy_appeal = create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, judge, attorney, veteran)
           # Create the task tree, need to create each task like this to avoid user creation and index conflicts
-          create_legacy_appeals_decision_ready_for_dispatch(legacy_appeal, inactive_judge, attorney, veteran)
+          create_legacy_appeals_decision_ready_for_dispatch(legacy_appeal, judge, attorney, veteran)
         end
       end
 
