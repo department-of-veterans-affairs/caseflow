@@ -1,0 +1,25 @@
+# frozen_string_literal: true
+
+describe CDAControlGroup do
+  describe ".singleton" do
+    it "is named correctly" do
+      expect(CDAControlGroup.singleton).to have_attributes(name: "Case Distribution Algorithm Control Group")
+    end
+
+    it "will only have one CDAControlGroup no matter how many times it is run" do
+      CDAControlGroup.singleton
+      CDAControlGroup.singleton
+      expect(Organization.where(name: "Case Distribution Algorithm Control Group").count).to eq(1)
+    end
+
+    it "will have the correct url name" do
+      expect(CDAControlGroup.singleton).to have_attributes(url: "cda-control-group")
+    end
+  end
+
+  describe ".users_can_view_levers?" do
+    it "should always be true" do
+      expect(CDAControlGroup.singleton.users_can_view_levers?).to eq(true)
+    end
+  end
+end
