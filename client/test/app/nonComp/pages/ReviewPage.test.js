@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-// import { axe } from 'jest-axe';
+import { axe } from 'jest-axe';
 
 import ReduxBase from 'app/components/ReduxBase';
 import ReviewPage from 'app/nonComp/pages/ReviewPage';
@@ -66,24 +66,42 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
+describe('ReviewPage renders correctly for nonAdmin user', () => {
+  it('passes a11y testing', async () => {
+    const { container } = renderReviewPage(nonAdminVhaProps);
+
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
+  });
+
+  it('renders correctly', () => {
+    const { container } = renderReviewPage(nonAdminVhaProps);
+
+    expect(container).toMatchSnapshot();
+  });
+});
+
+describe('ReviewPage renders correctly for Admin user', () => {
+  it('passes a11y testing', async () => {
+    const { container } = renderReviewPage(adminVhaProps);
+
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
+  });
+
+  it('renders correctly', () => {
+    const { container } = renderReviewPage(adminVhaProps);
+
+    expect(container).toMatchSnapshot();
+  });
+});
+
 describe('ReviewPage with Non-admin Vha User', () => {
   beforeEach(() => {
     renderReviewPage(nonAdminVhaProps);
   });
-
-  // it('passes a11y testing', async () => {
-  //   const { container } = setup();
-
-  //   const results = await axe(container);
-
-  //   expect(results).toHaveNoViolations();
-  // });
-
-  // it('renders correctly', () => {
-  //   const { container } = setup();
-
-  //   expect(container).toMatchSnapshot();
-  // });
 
   it('renders a button to intake a new form', () => {
     expect(screen.getByText('+ Intake new form')).toBeInTheDocument();
@@ -102,20 +120,6 @@ describe('ReviewPage with Admin Vha User', () => {
   beforeEach(() => {
     renderReviewPage(adminVhaProps);
   });
-
-  // it('passes a11y testing', async () => {
-  //   const { container } = setup();
-
-  //   const results = await axe(container);
-
-  //   expect(results).toHaveNoViolations();
-  // });
-
-  // it('renders correctly', () => {
-  //   const { container } = setup();
-
-  //   expect(container).toMatchSnapshot();
-  // });
 
   it('renders a button to intake a new form', () => {
     expect(screen.getByText('+ Intake new form')).toBeInTheDocument();
