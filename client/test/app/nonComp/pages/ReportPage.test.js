@@ -34,19 +34,6 @@ describe('ReportPage', () => {
     await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
   };
 
-  const selectSpecificEventActions = async () => {
-    setup();
-
-    await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
-    expect(screen.getAllByText('Event / Action').length).toBe(1);
-
-    const specificEvents = screen.getAllByText('Specific Events / Actions');
-
-    expect(specificEvents.length).toBe(1);
-
-    fireEvent.click(screen.getByLabelText('Specific Events / Actions'));
-  };
-
   it('passes a11y testing', async () => {
     const { container } = setup();
   beforeEach(() => {
