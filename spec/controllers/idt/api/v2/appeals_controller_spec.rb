@@ -1,5 +1,6 @@
 SingleCov.covered!
 # frozen_string_literal: true
+require "#{Rails.root}/app/models/idt/idt_token.rb"
 
 RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :controller do
   describe "GET appeals" do
