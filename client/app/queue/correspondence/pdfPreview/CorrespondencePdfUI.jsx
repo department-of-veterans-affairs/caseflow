@@ -3,15 +3,12 @@ import PropTypes from 'prop-types';
 import * as pdfjs from 'pdfjs-dist';
 import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.entry';
 import { css } from 'glamor';
-import classNames from 'classnames';
 import _ from 'lodash';
-import CorrespondencePdfDocument from './CorrespondencePdfDocument';
 import CorrespondencePdfToolBar from './CorrespondencePdfToolBar';
 import ApiUtil from '../../../util/ApiUtil';
-import { pageIndexOfPageNumber, pageNumberOfPageIndex } from '../../../reader/utils';
+import { pageNumberOfPageIndex } from '../../../reader/utils';
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH } from '../../../reader/constants';
 import { CorrespondencePdfFooter } from './CorrespondencePdfFooter';
-import { v4 as uuidv4 } from 'uuid';
 import CorrespondencePdfPage from './CorrespondencePdfPage';
 
 pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -72,7 +69,6 @@ const CorrespondencePdfUI = () => {
 
   const [scale, setScale] = useState(1);
   const [rotation, setRotation] = useState(0);
-  const [searchBarToggle, setSearchBarToggle] = useState(false);
   const [pdfDocProxy, setPdfDocProxy] = useState(null);
   const [pdfPageProxies, setPdfPageProxies] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -114,21 +110,10 @@ const CorrespondencePdfUI = () => {
     };
   }, []);
 
-  useEffect(() => {
-    // if ((canvasRefs.current.length > 0) && (currentPage > 0) && Number.isInteger(currentPage)) {
-    //   const selectedPage = document.getElementById(`canvas-${currentPage}`);
-
-    //   selectedPage.scrollIntoView();
-    // }
-  }, [currentPage, setCurrentPage]);
-
-  useEffect(() => {
-    console.log(pdfDocProxy);
-  }, [pdfDocProxy]);
-
   // Constants
   const ZOOM_RATE = 0.3;
-  const MINIMUM_ZOOM = 0.1;
+  const MINIMUM_ZOOM = 0.4;
+  const MAXIMUM_ZOOM = 5.0;
 
   const ROTATION_INCREMENTS = 90;
   const COMPLETE_ROTATION = 360;
@@ -154,7 +139,7 @@ const CorrespondencePdfUI = () => {
   };
 
   const zoomIn = () => {
-    const nextScale = Math.max(MINIMUM_ZOOM, _.round(scale + ZOOM_RATE, 2));
+    const nextScale = Math.min(MAXIMUM_ZOOM, _.round(scale + ZOOM_RATE, 2));
 
     setScale(nextScale);
   };
@@ -165,12 +150,14 @@ const CorrespondencePdfUI = () => {
 
   // Rotations
   const handleDocumentRotation = () => {
-    setRotation((prev) => (prev + 90) % 360);
+    //
+    setRotation((prev) => (prev + ROTATION_INCREMENTS) % COMPLETE_ROTATION);
   };
 
   // Footer Pagination
   const handleSetCurrentPage = (pageInput) => {
-    console.log(pageInput)
+    // PageInput must be a valid integer within the range of the document pages
+    // Check the canvasRefs to ensure that this function is ran after the canvases have been rendered
     if ((canvasRefs.current.length > 0) && (pdfDocProxy.numPages >= pageInput > 0) && Number.isInteger(pageInput)) {
       const selectedPage = document.getElementById(`canvas-${pageInput}`);
 
@@ -181,14 +168,20 @@ const CorrespondencePdfUI = () => {
 
   // Scrolling
   const handleScroll = () => {
+    // Amount of Pixels that have been scrolled already from the top
     const scrolledHeight = scrollViewRef.current.scrollTop;
     const pageOffset = Math.floor(scrolledHeight / viewportState.height);
-    console.log(pageOffset);
-    const pageNumber = pageOffset + 1;
 
-    setCurrentPage(pageNumber);
+    if ((scrollViewRef.current.scrollHeight - 750 === scrolledHeight) && (currentPage !== pdfDocProxy.numPages)) {
+      setCurrentPage(pdfDocProxy.numPages);
+    } else {
+      const pageNumber = pageOffset + 1;
+
+      setCurrentPage(pageNumber);
+    }
   };
 
+  // Memoize components after render to keep canvas references
   const generatePdfPages = useMemo(() => pdfPageProxies?.map((page, index) => {
     return (
       <CorrespondencePdfPage
@@ -201,7 +194,7 @@ const CorrespondencePdfUI = () => {
         viewportState={viewportState}
       />
     );
-  }, [pdfDocProxy]));
+  }, [pdfDocProxy, pdfPageProxies]));
 
   if (!pdfDocProxy || !pdfPageProxies) {
     return <div>Loading...</div>;
@@ -223,18 +216,6 @@ const CorrespondencePdfUI = () => {
             { generatePdfPages }
           </div>
         </div>
-        {/* <CorrespondencePdfDocument
-          pdfDocProxy={pdfDocProxy}
-          pdfPageProxies={pdfPageProxies}
-          scale={scale}
-          viewport={viewport}
-          setViewPort={setViewPort}
-          canvasRefs={canvasRefs}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          gridRef={gridRef}
-          scrollViewRef={scrollViewRef}
-        /> */}
         <CorrespondencePdfFooter
           currentPage={currentPage}
           pdfDocProxy={pdfDocProxy}

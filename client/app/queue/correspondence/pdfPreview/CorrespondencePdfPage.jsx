@@ -20,7 +20,6 @@ const CorrespondencePdfPage = (props) => {
       canvasContext: context,
       viewport,
     };
-    console.log(page)
 
     page.render(renderOptions);
   }, [scale, rotation]);

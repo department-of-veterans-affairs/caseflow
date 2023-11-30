@@ -7,8 +7,6 @@ import { ExternalLinkIcon } from '../../../components/icons/ExternalLinkIcon';
 import Button from '../../../components/Button';
 import { RotateIcon } from '../../../components/icons/RotateIcon';
 import { FitToScreenIcon } from '../../../components/icons/FitToScreenIcon';
-import { DownloadIcon } from '../../../components/icons/DownloadIcon';
-import { SearchIcon } from '../../../components/icons/SearchIcon';
 import { categoryFieldNameOfCategoryName } from '../../../reader/utils';
 import * as Constants from '../../../reader/constants';
 
@@ -54,11 +52,6 @@ const CorrespondencePdfToolBar = (props) => {
         '& .right-button-label': { display: 'none' }
       } }
     })
-  };
-
-  // Downlaod
-  const openDownloadLink = () => {
-    window.open(`${doc.content_url}?type=${doc.type}&download=true`);
   };
 
   return (
