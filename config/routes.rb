@@ -257,6 +257,7 @@ Rails.application.routes.draw do
     collection do
       post :update_levers_and_history
       get :update_levers_and_history
+      post :create_acd_group_org_singleton
     end
   end
 
