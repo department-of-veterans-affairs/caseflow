@@ -711,7 +711,7 @@ describe ClaimHistoryEvent do
           [
             event_instance.veteran_file_number, event_instance.claimant_name, event_instance.task_url,
             event_instance.readable_task_status, event_instance.days_waiting, event_instance.readable_claim_type,
-            event_instance.user_facility, event_instance.readable_user_name,
+            event_instance.readable_facility_name, event_instance.readable_user_name,
             event_instance.readable_event_date, event_instance.readable_event_type,
             event_instance.send(:issue_or_status_information), event_instance.send(:disposition_information)
           ]

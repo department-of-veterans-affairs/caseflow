@@ -39,9 +39,6 @@ feature "NonComp Report Page", :postgres do
 
   context "Form submission" do
     before do
-      # Each one of these creates 4 events right now but should create 5
-      # Claim creation, added_issue, :completed, :completed_disposition
-      # in_progress is missing
       # CSV should be 17 lines
       create(:higher_level_review_vha_task_with_decision)
       create(:higher_level_review_vha_task_with_decision)

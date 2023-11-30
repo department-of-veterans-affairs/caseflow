@@ -84,6 +84,17 @@ describe ClaimHistoryService do
   end
 
   before do
+    # Remove the versions to setup specific versions
+    hlr_task.versions.each(&:delete)
+    hlr_task.save
+    hlr_task.reload
+
+    PaperTrail.request(enabled: false) do
+      hlr_task.assigned!
+    end
+
+    hlr_task.assigned!
+
     # Simulate the task status for a task that went intake -> on_hold -> assigned -> completed
     hlr_task.on_hold!
 
@@ -94,11 +105,6 @@ describe ClaimHistoryService do
     extra_hlr_request_issue.save
 
     hlr_task.assigned!
-
-    # Set the whodunnnit of the completed version status to the decision user
-    version = hlr_task.versions.first
-    version.whodunnit = decision_user.id.to_s
-    version.save
 
     # Setup request issues and decision issues
     decision_issue.request_issues << extra_hlr_request_issue
@@ -111,14 +117,16 @@ describe ClaimHistoryService do
     hlr_task.appeal.save
 
     # Set the time and save it for days waiting filter. Should override assigned!
-    # hlr_task.assigned_at = 5.days.ago
     hlr_task.assigned_at = 5.days.ago - 2.hours
     hlr_task.save
 
-    # Set the task status back to completed without triggering papertrail so the task is in the correct state
-    PaperTrail.request(enabled: false) do
-      hlr_task.completed!
-    end
+    # Set the task status back to completed to finish off the versions
+    hlr_task.completed!
+
+    # Set the whodunnnit of the completed version status to the decision user
+    completed_version = hlr_task.versions.last
+    completed_version.whodunnit = decision_user.id.to_s
+    completed_version.save
   end
 
   describe ".build_events" do
@@ -608,6 +616,27 @@ describe ClaimHistoryService do
             subject
             expect(service_instance.events).to eq([])
           end
+        end
+      end
+
+      context "with last_action_taken filter" do
+        let(:filters) { { status_report_type: "last_action_taken" } }
+
+        before do
+          decision_issue.created_at = Time.zone.now + 1.day
+          decision_issue.save
+
+          sc_task.appeal.intake.completed_at = Time.zone.now + 1.day
+          sc_task.appeal.intake.save
+        end
+
+        it "should only return the last event for each task" do
+          subject
+          expected_event_types = [
+            :completed_disposition,
+            :in_progress
+          ]
+          expect(service_instance.events.map(&:event_type)).to contain_exactly(*expected_event_types)
         end
       end
     end

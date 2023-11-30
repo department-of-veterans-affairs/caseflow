@@ -9,8 +9,8 @@ describe ChangeHistoryReporter do
   let(:column_headers) { ChangeHistoryReporter.const_get(:CHANGE_HISTORY_CSV_COLUMNS) }
   let(:reporter_object) { ChangeHistoryReporter.new(events, tasks_url, filters) }
 
-  describe ".event_filter_headers" do
-    subject { reporter_object.event_filter_headers }
+  describe ".formatted_event_filters" do
+    subject { reporter_object.formatted_event_filters }
 
     it "returns an empty array for no filters" do
       expect(subject).to eq([])
@@ -19,29 +19,28 @@ describe ChangeHistoryReporter do
     context "with filter values" do
       let(:filters) do
         {
-          "report_type" => "event_type_action",
-          "timing" => {
-            "range" => "after",
-            "start_date" => Time.zone.now
-          },
-          "days_waiting" => {
-            "comparison_operator" => "moreThan",
-            "value_one" => "6"
-          },
-          "personnel" => {
-            "0" => "CAREGIVERADMIN",
-            "1" => "VHAPOADMIN",
-            "2" => "THOMAW2VACO"
-          },
-          "decision_review_type" => {
-            "0" => "HigherLevelReview",
-            "1" => "SupplementalClaim"
-          }
+          events: [:completed, :cancelled],
+          task_status: [:testing1, :testing2],
+          status_report_type: nil,
+          claim_type: %w[HigherLevelReview SupplementalClaim],
+          personnel: nil,
+          dispositions: nil,
+          issue_types: nil,
+          facilities: nil,
+          timing: { range: nil },
+          days_waiting: { operator: ">", num_days: 10 }
         }
       end
 
       it "returns a readable array built from the filter values" do
-        expect(subject).to eq(filters.to_a.flatten)
+        expected_formatted_filter = [
+          "events: [completed, cancelled]",
+          "task_status: [testing1, testing2]",
+          "claim_type: [HigherLevelReview, SupplementalClaim]",
+          "timing: {:range=>nil}",
+          "days_waiting: {:operator=>\">\", :num_days=>10}"
+        ]
+        expect(subject).to eq(expected_formatted_filter)
       end
     end
   end

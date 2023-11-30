@@ -88,8 +88,6 @@ class ClaimHistoryEvent
                                                               "event_user_name" => "System"))
       end
 
-      # cleanup_status_event_duplicates!(hookless_cancelled_events, status_events)
-
       status_events
     end
     # rubocop:enable Metrics/MethodLength
@@ -276,16 +274,6 @@ class ClaimHistoryEvent
           from_change_data(:cancelled, change_data.merge("event_date" => change_data["task_closed_at"],
                                                          "event_user_name" => "System"))
         ]
-      end
-    end
-
-    def cleanup_status_event_duplicates!(hookless_events, status_events)
-      # If there were hookless cancelled events do some cleanup since there's potentially an extra in progress event
-      # that is caused by the handle_issues_with_no_decision_date! method in the claim_review.rb model class.
-      # So if there is an incomplete event and hookless cancelled events then it's probably safe the in progress events
-      # unless the state was actually on_hold -> in_progress -> cancelled which will currently not be preserved here
-      if hookless_events.present? && status_events.any? { |event| event.event_type == :incomplete }
-        status_events.delete_if { |event| event && event.event_type == :in_progress }
       end
     end
   end
