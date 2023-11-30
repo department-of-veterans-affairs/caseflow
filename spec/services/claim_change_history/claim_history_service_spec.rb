@@ -179,9 +179,8 @@ describe ClaimHistoryService do
         events = subject
 
         # expect the first event to be the one with the fudged far-in-the-past date
-        expect(events.first.event_date).to eq(issue.created_at.utc.strftime('%F %T.%6N'))
+        expect(events.first.event_date).to eq(issue.created_at.utc.strftime("%F %T.%6N"))
       end
-
     end
 
     context "with filters" do
