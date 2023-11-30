@@ -130,7 +130,7 @@ class EditModal extends React.Component {
 
   errorOnVADORDate = (value) => {
     if (value.length === 10) {
-      const error = validateDateNotInFuture(value) ? null : 'Decision date cannot be in the future.';
+      const error = validateDateNotInFuture(value) ? null : 'Decision date cannot be in the future';
 
       return error;
     }
@@ -165,7 +165,6 @@ class EditModal extends React.Component {
                 <DateSelector
                   name="decision-date"
                   label="VA DOR"
-                  strongLabel
                   value={VADORDate}
                   errorMessage={this.state.dateError}
                   onChange={this.VADORDateOnChange}
@@ -176,7 +175,6 @@ class EditModal extends React.Component {
               <SearchableDropdown
                 name="issue-category"
                 label="Package document type"
-                strongLabel
                 placeholder="Select or enter..."
                 options={this.state.packageOptions}
                 value={packageDocument}
