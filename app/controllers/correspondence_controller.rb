@@ -78,11 +78,16 @@ class CorrespondenceController < ApplicationController
     render json: { status: 200, correspondence: correspondence }
   end
 
-  def document_types_call
-    ExternalApi::ClaimEvidenceService.document_types
+  def vbms_document_types
+    document_types_call
   end
 
   private
+
+  def document_types_call
+    data = ExternalApi::ClaimEvidenceService.document_types
+    data["documentTypes"].map { |document_type| { id: document_type["id"], name: document_type["name"] } }
+  end
 
   def general_information
     vet = veteran_by_correspondence
