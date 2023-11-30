@@ -312,7 +312,7 @@ class DecisionReviewsController < ApplicationController
       "added_issue" => :added_issue,
       "added_issue_no_decision_date" => :added_issue_without_decision_date,
       "claim_created" => :claim_creation,
-      "claim_closed" => :completed,
+      "claim_closed" => [:completed, :cancelled],
       "claim_status_incomplete" => :incomplete,
       "claim_status_inprogress" => :in_progress,
       "completed_disposition" => :completed_disposition,
@@ -321,7 +321,7 @@ class DecisionReviewsController < ApplicationController
       "claim_cancelled" => :cancelled
     }
 
-    filter_params[:events]&.values&.map { |event_type| event_mapping[event_type] }
+    filter_params[:events]&.values&.map { |event_type| event_mapping[event_type] }&.flatten
   end
 
   def task_status_filter_helper(filter_params)
