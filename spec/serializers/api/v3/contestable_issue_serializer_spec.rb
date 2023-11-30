@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Api::V3::ContestableIssueSerializer, :postgres do
+describe V3::ContestableIssueSerializer, :postgres do
   include IntakeHelpers
 
   before do

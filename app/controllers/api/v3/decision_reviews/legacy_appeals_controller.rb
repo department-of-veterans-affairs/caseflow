@@ -80,6 +80,6 @@ class Api::V3::DecisionReviews::LegacyAppealsController < Api::V3::BaseControlle
   end
 
   def serialized_legacy_appeals
-    Api::V3::LegacyAppealSerializer.new(opt_in_eligible_appeals, is_collection: true).serializable_hash
+    V3::LegacyAppealSerializer.new(opt_in_eligible_appeals, is_collection: true).serializable_hash
   end
 end

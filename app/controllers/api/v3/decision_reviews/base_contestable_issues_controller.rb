@@ -20,7 +20,7 @@ module Api
 
         def serialized_contestable_issues
           contestable_issues.map do |issue|
-            Api::V3::ContestableIssueSerializer.new(issue).serializable_hash[:data]
+            V3::ContestableIssueSerializer.new(issue).serializable_hash[:data]
           end
         end
 
