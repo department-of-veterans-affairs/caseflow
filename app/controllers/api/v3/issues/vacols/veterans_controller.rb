@@ -21,7 +21,6 @@ class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
   end
 
   def veteran
-    vet_file_number = file_number
     @veteran ||= find_veteran
   end
 
@@ -43,7 +42,6 @@ class Api::V3::Issues::Vacols::VeteransController < Api::V3::BaseController
 
     render_veteran_not_found
   end
-
 
   def show
     page = ActiveRecord::Base.sanitize_sql(params[:page].to_i) if params[:page]

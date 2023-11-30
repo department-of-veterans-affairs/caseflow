@@ -2990,16 +2990,16 @@ describe LegacyAppeal, :all_dbs do
       context "length greater than 9" do
         let(:veteran_file_number) { "1234567890" }
 
-        it "raises ActiveRecord::RecordNotFound error" do
-          expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+        it "raises Caseflow::Error::InvalidFileNumber error" do
+          expect { subject }.to raise_error(Caseflow::Error::InvalidFileNumber)
         end
       end
 
       context "length less than 3" do
         let(:veteran_file_number) { "12" }
 
-        it "raises ActiveRecord::RecordNotFound error" do
-          expect { subject }.to raise_error(ActiveRecord::RecordNotFound)
+        it "raises Caseflow::Error::InvalidFileNumber error" do
+          expect { subject }.to raise_error(Caseflow::Error::InvalidFileNumber)
         end
       end
     end
