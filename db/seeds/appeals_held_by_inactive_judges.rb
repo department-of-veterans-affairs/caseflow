@@ -158,7 +158,7 @@ module Seeds
           :user,
           :with_inactive_judge_team
         )
-        inactive_judge_team_user = create(:user, :vlj, :with_inactive_judge_team)
+        inactive_judge_team_user = create(:user, :with_inactive_judge_team, full_name: "VLJ")
 
         offsets.each do |offset|
           create_ama_appeals_dispatch_ready_less_than_60_days(active_judge)
@@ -228,6 +228,7 @@ module Seeds
         Timecop.travel(61.days.ago)
           appeal = create(:appeal,
                           :with_post_intake_tasks,
+                          :advanced_on_docket_due_to_motion,
                           :held_hearing_and_ready_to_distribute,
                           :hearing_docket,
                           tied_judge: judge,
