@@ -547,28 +547,136 @@ describe HearingDay, :all_dbs do
     end
   end
 
-  context "hearing day conference link doesnt exist" do
-    before do
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
-      allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
-    end
-
+  context "hearing day in the past, conference link doesnt exist" do
     let(:hearing_day) do
       RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
       create(
         :hearing_day,
         id: 1,
         request_type: HearingDay::REQUEST_TYPES[:central],
-        scheduled_for: Time.zone.local(2019, 5, 15).to_date,
+        scheduled_for: 1.year.ago,
         room: "1"
       )
     end
 
-    subject { hearing_day.conference_link }
+    subject { hearing_day.conference_links }
 
-    it "Does not have a existing conference link so creates a new one" do
-      expect(subject.hearing_day_id).to eq(hearing_day.id)
+    context "The Pexip and Webex services are both enabled" do
+      include_context "Enable both conference services"
+
+      it "Both conference links are created whenever requested" do
+        expect(subject).to eq []
+      end
+    end
+
+    context "The Pexip and Webex services are both disabled" do
+      it "No links are created whenever they are requested" do
+        expect(subject).to eq []
+      end
+    end
+
+    context "Only the Pexip service is disabled" do
+      before { FeatureToggle.enable!(:pexip_conference_service) }
+
+      it "Only the Pexip conference link is generated whenever requested" do
+        expect(subject).to eq []
+      end
+    end
+
+    context "Only the Webex service is disabled" do
+      before { FeatureToggle.enable!(:webex_conference_service) }
+
+      it "Only the Webex conference link is generated whenever requested" do
+        expect(subject).to eq []
+      end
+    end
+  end
+
+  context "#subject_for_conference" do
+    include_context "Enable both conference services"
+
+    let(:assigned_date) { "Sep 21, 2023" }
+    let(:id) { 2_000_006_656 }
+    let(:expected_date_parsed) { Date.parse(assigned_date) }
+    let(:hearing_day) do
+      build(
+        :hearing_day,
+        scheduled_for: expected_date_parsed,
+        id: id
+      )
+    end
+
+    subject { hearing_day.subject_for_conference }
+
+    it "returns the expected meeting conference details" do
+      expected_date = "09 21, 2023"
+      is_expected.to eq("#{hearing_day.id}_#{expected_date}")
+    end
+
+    context "nbf and exp" do
+      subject { hearing_day.nbf }
+
+      it "returns correct nbf" do
+        expect subject == 1_695_254_400
+      end
+
+      before do
+        subject { hearing_day.exp }
+      end
+
+      it "returns correct exp" do
+        expect subject == 1_695_340_799
+      end
+    end
+  end
+
+  context "hearing day in the future, conference link doesnt exist" do
+    let(:hearing_day) do
+      RequestStore[:current_user] = User.create(css_id: "BVASCASPER1", station_id: 101)
+      create(
+        :hearing_day,
+        id: 1,
+        request_type: HearingDay::REQUEST_TYPES[:central],
+        scheduled_for: 1.year.from_now,
+        room: "1"
+      )
+    end
+
+    subject { hearing_day.conference_links }
+
+    context "The Pexip and Webex services are both enabled" do
+      before do
+        FeatureToggle.enable!(:pexip_conference_service)
+        FeatureToggle.enable!(:webex_conference_service)
+      end
+
+      it "Both conference links are created whenever requested" do
+        expect(subject.pluck(:type)).to match_array(
+          [PexipConferenceLink.name, WebexConferenceLink.name]
+        )
+      end
+    end
+
+    context "The Pexip and Webex services are both disabled" do
+      it "No links are created whenever they are requested" do
+        expect(subject).to eq []
+      end
+    end
+
+    context "Only the Pexip service is disabled" do
+      before { FeatureToggle.enable!(:pexip_conference_service) }
+
+      it "Only the Pexip conference link is generated whenever requested" do
+        expect(subject.pluck(:type)).to match_array [PexipConferenceLink.name]
+      end
+    end
+
+    context "Only the Webex service is disabled" do
+      before { FeatureToggle.enable!(:webex_conference_service) }
+
+      it "Only the Webex conference link is generated whenever requested" do
+        expect(subject.pluck(:type)).to match_array [WebexConferenceLink.name]
+      end
     end
   end
 end
