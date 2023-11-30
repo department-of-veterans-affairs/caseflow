@@ -181,7 +181,7 @@ class BusinessLine < Organization
           SELECT
               versions.item_id,
               versions.item_type,
-              ARRAY_AGG(versions.object_changes) AS object_changes_array,
+              ARRAY_AGG(versions.object_changes ORDER BY versions.id) AS object_changes_array,
               MAX(CASE
                   WHEN versions.object_changes LIKE '%closed_at:%' THEN versions.whodunnit
                   ELSE NULL
