@@ -438,8 +438,7 @@ describe BusinessLine do
         "decision_user_name" => decision_user.full_name,
         "decision_user_css_id" => decision_user.css_id,
         "decision_user_station_id" => decision_user.station_id,
-        "first_name" => hlr_task.appeal.claimant.first_name,
-        "last_name" => hlr_task.appeal.claimant.last_name,
+        "claimant_name" => hlr_task.appeal.claimant.name,
         "task_status" => hlr_task.status,
         "request_issue_benefit_type" => "vha",
         "days_waiting" => 10
@@ -458,8 +457,7 @@ describe BusinessLine do
         "decision_user_name" => decision_user.full_name,
         "decision_user_css_id" => decision_user.css_id,
         "decision_user_station_id" => decision_user.station_id,
-        "first_name" => hlr_task.appeal.claimant.first_name,
-        "last_name" => hlr_task.appeal.claimant.last_name,
+        "claimant_name" => hlr_task.appeal.claimant.name,
         "task_status" => hlr_task.status,
         "request_issue_benefit_type" => "vha",
         "days_waiting" => 10
@@ -478,8 +476,7 @@ describe BusinessLine do
         "decision_user_name" => nil,
         "decision_user_css_id" => nil,
         "decision_user_station_id" => nil,
-        "first_name" => hlr_task2.appeal.claimant.first_name,
-        "last_name" => hlr_task2.appeal.claimant.last_name,
+        "claimant_name" => hlr_task2.appeal.claimant.name,
         "task_status" => hlr_task2.status,
         "request_issue_benefit_type" => "vha",
         "days_waiting" => 5
@@ -498,8 +495,7 @@ describe BusinessLine do
         "decision_user_name" => nil,
         "decision_user_css_id" => nil,
         "decision_user_station_id" => nil,
-        "first_name" => hlr_task2.appeal.claimant.first_name,
-        "last_name" => hlr_task2.appeal.claimant.last_name,
+        "claimant_name" => hlr_task2.appeal.claimant.name,
         "task_status" => hlr_task2.status,
         "request_issue_benefit_type" => "vha",
         "days_waiting" => 5
@@ -518,8 +514,7 @@ describe BusinessLine do
         "decision_user_name" => nil,
         "decision_user_css_id" => nil,
         "decision_user_station_id" => nil,
-        "first_name" => sc_task.appeal.claimant.first_name,
-        "last_name" => sc_task.appeal.claimant.last_name,
+        "claimant_name" => sc_task.appeal.claimant.name,
         "task_status" => sc_task.status,
         "request_issue_benefit_type" => "vha",
         "days_waiting" => (Time.zone.today - Date.parse(sc_task.assigned_at.iso8601)).to_i
@@ -557,12 +552,18 @@ describe BusinessLine do
       decision_issue.request_issues << issue
       hlr_task.appeal.decision_issues << decision_issue
       hlr_task.appeal.save
-      hlr_task.completed_by = decision_user
-      hlr_task.assigned_at = 10.days.ago
-      hlr_task.completed!
 
+      # Set the assigned at for days waiting filtering for hlr_task2
       hlr_task2.assigned_at = 5.days.ago
       hlr_task2.save
+
+      # Set up assigned at for days waiting filtering for hlr_task1
+      PaperTrail.request(enabled: false) do
+        # This uses the task versions whodunnit field now instead of completed by
+        # hlr_task.completed_by = decision_user
+        hlr_task.assigned_at = 10.days.ago
+        hlr_task.save
+      end
 
       # Set the whodunnnit of the completed version status to the decision user
       version = hlr_task.versions.first

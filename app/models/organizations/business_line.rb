@@ -207,6 +207,7 @@ class BusinessLine < Organization
           request_issues.decision_date, decision_issues.disposition, tasks.assigned_at,
           request_decision_issues.decision_issue_id, request_issues.closed_at AS request_issue_closed_at,
           tv.object_changes_array AS task_versions, (CURRENT_TIMESTAMP::date - tasks.assigned_at::date) AS days_waiting,
+          COALESCE(intakes.veteran_file_number, higher_level_reviews.veteran_file_number, supplemental_claims.veteran_file_number) AS veteran_file_number,
           COALESCE(
             NULLIF(CONCAT(unrecognized_party_details.name, ' ', unrecognized_party_details.last_name), ' '),
             NULLIF(CONCAT(people.first_name, ' ', people.last_name), ' '),
