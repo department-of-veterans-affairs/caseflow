@@ -276,9 +276,10 @@ class DailyDocketRow extends React.Component {
   conferenceLinkOnClick = () => {
     const { conferenceLinks, hearing } = this.props;
 
-    const linkType = hearing.conferenceProvider === conferenceLinks[0].conferenceProvider ? 0 : 1;
+    const linkType = hearing.conferenceProvider === 'webex' ? 'WebexConferenceLink' : 'PexipConferenceLink';
+    const link = conferenceLinks[0].type === linkType ? 0 : 1;
 
-    window.open(conferenceLinks[linkType].hostLink, 'Recording Session').focus();
+    window.open(conferenceLinks[link].hostLink, 'Recording Session').focus();
 
   }
 
