@@ -392,7 +392,7 @@ class ClaimHistoryEvent
 
   def set_attributes_from_change_history_data(new_event_type, change_data)
     @event_type = new_event_type
-    @claimant_name = [change_data["first_name"], " ", change_data["last_name"]].join
+    @claimant_name = change_data["claimant_name"]
     @event_date = change_data["event_date"]
     parse_event_attributes(change_data)
     parse_intake_attributes(change_data)

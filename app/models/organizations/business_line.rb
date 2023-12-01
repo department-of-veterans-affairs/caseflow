@@ -204,11 +204,14 @@ class BusinessLine < Organization
           request_issues_updates.withdrawn_request_issue_ids, request_issues_updates.edited_request_issue_ids,
           decision_issues.caseflow_decision_date, request_issues.decision_date_added_at,
           tasks.appeal_type, tasks.appeal_id, request_issues.nonrating_issue_category, request_issues.nonrating_issue_description,
-          request_issues.decision_date, decision_issues.disposition, tasks.assigned_at, people.first_name, people.last_name,
+          request_issues.decision_date, decision_issues.disposition, tasks.assigned_at,
           request_decision_issues.decision_issue_id, request_issues.closed_at AS request_issue_closed_at,
           tv.object_changes_array AS task_versions, (CURRENT_TIMESTAMP::date - tasks.assigned_at::date) AS days_waiting,
-          COALESCE(intakes.veteran_file_number, higher_level_reviews.veteran_file_number, supplemental_claims.veteran_file_number)
-          AS veteran_file_number
+          COALESCE(
+            NULLIF(CONCAT(unrecognized_party_details.name, ' ', unrecognized_party_details.last_name), ' '),
+            NULLIF(CONCAT(people.first_name, ' ', people.last_name), ' '),
+            bgs_attorneys.name
+          ) AS claimant_name
         FROM tasks
         INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
         AND request_issues.decision_review_id = tasks.appeal_id
@@ -227,6 +230,9 @@ class BusinessLine < Organization
         AND claimants.decision_review_type = tasks.appeal_type
         LEFT join versions_agg tv ON tv.item_type = 'Task' AND tv.item_id = tasks.id
         LEFT JOIN people ON claimants.participant_id = people.participant_id
+        LEFT JOIN bgs_attorneys ON claimants.participant_id = bgs_attorneys.participant_id
+        LEFT JOIN unrecognized_appellants ON claimants.id = unrecognized_appellants.claimant_id
+        LEFT JOIN unrecognized_party_details ON unrecognized_appellants.unrecognized_party_detail_id = unrecognized_party_details.id
         LEFT JOIN users intake_users ON intakes.user_id = intake_users.id
         LEFT JOIN users update_users ON request_issues_updates.user_id = update_users.id
         LEFT JOIN users decision_users ON decision_users.id = tv.version_closed_by_id::int
