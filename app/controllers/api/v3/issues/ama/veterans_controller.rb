@@ -8,19 +8,6 @@ class Api::V3::Issues::Ama::VeteransController < Api::V3::BaseController
     api_released?(:api_v3_ama_issues)
   end
 
-  rescue_from StandardError do |error|
-    Raven.capture_exception(error, extra: raven_extra_context)
-
-    render json: {
-      "errors": [
-        "status": "500",
-        "title": "Unknown error occured",
-        "detail": "Message: There was a server error. "\
-                  "Use the error uuid to submit a support ticket: #{Raven.last_event_id}"
-      ]
-    }, status: :internal_server_error
-  end
-
   def show
     veteran = find_veteran
     page = init_page

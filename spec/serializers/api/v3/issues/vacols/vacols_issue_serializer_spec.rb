@@ -39,7 +39,8 @@ describe Api::V3::Issues::Vacols::VacolsIssueSerializer, :postgres do
       expect(serialized_vacols_issue[:vacols_id]).to eq issue.id
       expect(serialized_vacols_issue[:vacols_sequence_id]).to eq issue.vacols_sequence_id
       expect(serialized_vacols_issue[:eligible_for_soc_opt_in]).to eq issue.eligible_for_opt_in?
-      expect(serialized_vacols_issue[:eligible_for_soc_opt_in_with_exemption]).to eq issue.eligible_for_opt_in?(covid_flag: true)
+      expect(serialized_vacols_issue[:eligible_for_soc_opt_in_with_exemption])
+        .to eq issue.eligible_for_opt_in?(covid_flag: true)
       expect(serialized_vacols_issue[:description]).to eq issue.friendly_description
       expect(serialized_vacols_issue[:disposition]).to eq issue.disposition
       expect(serialized_vacols_issue[:close_date]).to eq issue.close_date
