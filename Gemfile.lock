@@ -461,7 +461,7 @@ GEM
       cliver (~> 0.3.2)
       safe_shell (>= 1.0.3, < 2.0)
     pdfkit (0.8.7.2)
-    pg (1.5.4)
+    pg (1.1.4)
     pluck_to_hash (1.0.2)
       activerecord (>= 4.0.2)
       activesupport (>= 4.0.2)
@@ -788,7 +788,7 @@ DEPENDENCIES
   pdf-forms
   pdfjs_viewer-rails!
   pdfkit
-  pg (= 1.5.4)
+  pg
   pluck_to_hash
   pry (~> 0.13.0)
   pry-byebug (~> 3.9)
