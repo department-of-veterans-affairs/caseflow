@@ -299,7 +299,6 @@ Rails.application.routes.draw do
     get '/correspondence/:correspondence_uuid/intake', to: 'correspondence#intake'
     get '/correspondence/:correspondence_uuid/review_package', to: 'correspondence#review_package'
     get '/correspondence/edit_document_type_correspondence', to: 'correspondence#get_list_document_type_correspondence'
-    get '/correspondence/:correspondence_uuid', to: 'correspondence#show'
     get '/correspondence/:correspondence_uuid/veteran', to: 'correspondence#veteran'
     put '/correspondence/:correspondence_uuid/update_cmp', to: 'correspondence#update_cmp'
     get '/correspondence/packages', to: 'correspondence#package_documents'

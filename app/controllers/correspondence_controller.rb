@@ -79,10 +79,17 @@ class CorrespondenceController < ApplicationController
   end
 
   def get_list_document_type_correspondence
-    render json: { allDocuments: VbmsDocumentType.all }
+    # data =  vbms_document_types
+    # render json: { data: data};
+    render json: { data: [{ id: 150, name: "L141" }, { id: 152, name: "L143" }] }
   end
 
   private
+
+  def vbms_document_types
+    data = ExternalApi::ClaimEvidenceService.document_types
+    data["documentTypes"].map { |document_type| { id: document_type["id"], name: document_type["name"] } }
+  end
 
   def general_information
     vet = veteran_by_correspondence

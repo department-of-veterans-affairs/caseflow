@@ -32,7 +32,7 @@ export const CmpDocuments = (props) => {
   };
 
   const [modalState, setModalState] = useState(false);
-  const [documentName, setDocumentName] = useState('');
+  const [documentName, setDocumentName] = useState(documents[selectedId].document_title);
   const [saveButton, setsaveButton] = useState('false');
 
   const openModal = () => {
@@ -73,9 +73,11 @@ export const CmpDocuments = (props) => {
           </tbody>
           {modalState &&
             <EditDocumentTypeModal
+              modalState={openModal}
               onCancel={closeModal}
               onSave = {saveButtonValue}
               document={documentName}
+              indexDoc = {selectedId}
             />
           }
           { documents?.map((document, index) => {
