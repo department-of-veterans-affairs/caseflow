@@ -257,6 +257,20 @@ describe('ReportPage', () => {
     });
   });
 
+  describe('Issue Type Section', () => {
+    beforeEach(clickOnReportType);
+
+    it('allows you to select issue types', async () => {
+      setup();
+      await navigateToConditionInput('Issue Type');
+
+      const dropdown = screen.getByLabelText('Issue Type');
+
+      await selectEvent.select(dropdown, ['Clothing Allowance']);
+      expect(screen.getByText('Clothing Allowance')).toBeInTheDocument();
+    });
+  });
+
   it('should have Generate task Report button and Clear Filter button disabled on initial load', () => {
     setup();
 
