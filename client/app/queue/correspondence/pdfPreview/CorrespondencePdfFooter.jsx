@@ -7,7 +7,7 @@ import NumberField from '../../../components/NumberField';
 
 /**
  * Document Footer displays the PDF footer controls
- * @param {Object} props -- Contains details about the current and previous documents
+ * @param {Object} pdfDocProxy - Information about the pdf document
  */
 export const CorrespondencePdfFooter = ({
   currentPage,
@@ -43,18 +43,8 @@ export const CorrespondencePdfFooter = ({
 };
 
 CorrespondencePdfFooter.propTypes = {
-  currentIndex: PropTypes.number,
-  prevDocId: PropTypes.number,
-  nextDocId: PropTypes.number,
-  loadError: PropTypes.string,
-  docsFiltered: PropTypes.bool,
-  filteredDocIds: PropTypes.array,
-  nextDoc: PropTypes.func,
-  prevDoc: PropTypes.func,
-  numPages: PropTypes.number,
-  setPageNumber: PropTypes.func,
-  handleKeyPress: PropTypes.func,
-  pageNumber: PropTypes.number,
+  currentPage: PropTypes.number,
+  handleSetCurrentPage: PropTypes.func,
   pdfDocProxy: PropTypes.object,
 };
 
