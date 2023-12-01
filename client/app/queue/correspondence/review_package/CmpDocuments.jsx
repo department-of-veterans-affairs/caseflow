@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import COPY from 'app/../COPY';
 import Button from 'app/components/Button';
+import EditDocumentTypeModal from '../component/EditDocumentTypeModal';
 
 const cmpDocumentStyling = css({
   marginTop: '2%'
@@ -30,6 +31,34 @@ export const CmpDocuments = (props) => {
     setSelectedId(index);
   };
 
+  const [modalState, setModalState] = useState(false);
+  const [documentName, setDocumentName] = useState('');
+  const [saveButton, setsaveButton] = useState('false');
+
+  const openModal = () => {
+    setModalState(true);
+  };
+  const closeModal = () => {
+    setModalState(false);
+  };
+
+  const saveButtonValue = () => {
+    setsaveButton(false);
+  };
+
+  const OpenModalLink = (newValue) => (
+    <Button linkStyling onClick={() => {
+      setDocumentName(newValue);
+      openModal();
+    }} >
+      <span>Edit</span>
+    </Button>
+  );
+
+  OpenModalLink.propTypes = {
+    documentName: PropTypes.string
+  };
+
   return (
     <div {...cmpDocumentStyling} >
       <h2> {COPY.DOCUMENT_PREVIEW} </h2>
@@ -42,6 +71,13 @@ export const CmpDocuments = (props) => {
               <th className="cf-txt-c"> Action </th>
             </tr>
           </tbody>
+          {modalState &&
+            <EditDocumentTypeModal
+              onCancel={closeModal}
+              onSave = {saveButtonValue}
+              document={documentName}
+            />
+          }
           { documents?.map((document, index) => {
             return (
               <tbody key={index}>
@@ -51,9 +87,7 @@ export const CmpDocuments = (props) => {
                   onClick={() => setCurrentDocument(index)}> {document?.document_title}
                   </td>
                   <td className="cf-txt-c">
-                    <Button linkStyling >
-                      <span>Edit</span>
-                    </Button>
+                    <OpenModalLink documentName = {document?.document_title} />
                   </td>
                 </tr>
               </tbody>

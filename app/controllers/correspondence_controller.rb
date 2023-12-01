@@ -78,8 +78,8 @@ class CorrespondenceController < ApplicationController
     render json: { status: 200, correspondence: correspondence }
   end
 
-  def get_document_correspondence
-    render json: { allDocuments: PackageDocumentType.all }
+  def get_list_document_type_correspondence
+    render json: { allDocuments: VbmsDocumentType.all }
   end
 
   private

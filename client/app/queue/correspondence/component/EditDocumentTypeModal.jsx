@@ -31,10 +31,10 @@ class EditDocumentTypeModal extends React.Component {
   }
 
   getPackages = () => {
-    ApiUtil.get('/queue/correspondence/getTypo').then((resp) => {
+    ApiUtil.get('/queue/correspondence/edit_document_type_correspondence').then((resp) => {
       const documents = resp.body.allDocuments.map((doc) => ({
-        label: doc.name,
-        value: doc.id.toString()
+        label: doc.description,
+        value: doc.doc_type_id.toString()
       }));
 
       this.setState({ packageOptions: documents });
@@ -45,12 +45,11 @@ class EditDocumentTypeModal extends React.Component {
     this.setState({
       packageDocument: value
     });
+
   };
 
   render() {
-    // const [loading] = useState(false);
-    const { modalState, onCancel, document } = this.props;
-    const disable = true;
+    const { onCancel, onSave, document } = this.props;
     const { packageDocument } = this.state;
 
     const submit = async () => {
@@ -61,7 +60,7 @@ class EditDocumentTypeModal extends React.Component {
       <Modal
         title= {sprintf(COPY.TITLE_MODAL_EDIT_DOCUMENT_TYPE_CORRESPONDENCE)}
         closeHandler={onCancel}
-        confirmButton={<Button disabled={disable} onClick={submit}>Save</Button>}
+        confirmButton={<Button disabled={onSave} onClick={submit}>Save</Button>}
         cancelButton={<Button linkStyling disabled={this.loading} onClick={onCancel}>Cancel</Button>}
       >
         <div>
@@ -76,13 +75,13 @@ class EditDocumentTypeModal extends React.Component {
         </div>
         <br />
         <SearchableDropdown
-          name="issue-category"
-          label="Package document type"
+          name = "issue-category"
+          label = {sprintf(COPY.NEW_DOC_EDIT_DOCUMENT_TYPE_CORRESPONDENCE)}
           strongLabel = {false}
-          placeholder="Select or enter..."
-          options={this.state.packageOptions}
-          value={packageDocument}
-          onChange={this.packageDocumentOnChange}
+          placeholder = "Select or enter..."
+          options = {this.state.packageOptions}
+          value = {packageDocument}
+          onChange = {this.packageDocumentOnChange}
         />
 
       </Modal>
@@ -95,6 +94,7 @@ EditDocumentTypeModal.propTypes = {
   modalState: PropTypes.bool,
   onCancel: PropTypes.func,
   document: PropTypes.object,
+  onSave: PropTypes.func,
 };
 
 export default EditDocumentTypeModal;
