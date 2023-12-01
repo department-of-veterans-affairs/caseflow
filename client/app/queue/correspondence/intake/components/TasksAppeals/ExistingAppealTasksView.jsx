@@ -63,7 +63,7 @@ export const ExistingAppealTasksView = (props) => {
       </div>
 
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-        {props.appeal.docketName === 'evidence_submission' && (
+        {props.appeal.evidenceSubmissionWindow && (
           <AddEvidenceSubmissionTaskView
             docketName={props.appeal.docketName}
             task={props.newTasks[0]}

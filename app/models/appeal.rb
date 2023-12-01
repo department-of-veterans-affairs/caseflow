@@ -590,10 +590,6 @@ class Appeal < DecisionReview
     docket_type == Constants.AMA_DOCKETS.hearing
   end
 
-  def evidence_submission_task
-    return self.tasks.find_by(type: 'EvidenceSubmissionWindowTask', status: "assigned") if evidence_submission_docket?
-  end
-
   def evidence_submission_docket?
     docket_type == Constants.AMA_DOCKETS.evidence_submission
   end

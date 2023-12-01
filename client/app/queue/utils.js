@@ -442,6 +442,7 @@ export const prepareAppealForStore = (appeals) => {
         appeal.attributes.readable_original_hearing_request_type,
       vacateType: appeal.attributes.vacate_type,
       cavcRemandsWithDashboard: appeal.attributes.cavc_remands_with_dashboard,
+      evidenceSubmissionWindow: appeal.attributes.evidence_submission_task,
     };
 
     return accumulator;
