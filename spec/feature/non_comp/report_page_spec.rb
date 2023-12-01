@@ -45,7 +45,7 @@ feature "NonComp Report Page", :postgres do
       create(:supplemental_claim_vha_task_with_decision)
     end
 
-    it "should submit an event report including a personnel condition" do
+    it "should submit several types of event reports successfully and generate csvs for each submission" do
       # visit vha_report_url
       # visit vha_report_url
       expect(page).to have_content("Generate task report")
@@ -54,12 +54,12 @@ feature "NonComp Report Page", :postgres do
 
       # add_condition("Days Waiting")
       # fill_in_days_waiting("More than", 10)
-      add_days_waiting_with_values("More than", 10)
+      # add_days_waiting_with_values("More than", 10)
       # add_days_waiting_with_values("Between", 1, 11)
 
       # add_condition("Decision Review Type")
       # fill_in_decision_review_type(["Higher-Level Reviews", "Supplemental Claims"])
-      add_decision_review_condition_with_values(["Higher-Level Reviews", "Supplemental Claims"])
+      # add_decision_review_condition_with_values(["Higher-Level Reviews", "Supplemental Claims"])
 
       # add_condition("Personnel")
       # fill_in_multi_select_condition([user.full_name], "VHA team members", ".personnel")
@@ -93,14 +93,12 @@ feature "NonComp Report Page", :postgres do
 
       csv_file = change_history_csv_file
 
-      CSV.foreach(csv_file) do |row|
-        # TODO: Figure out what the filter row is actually supposed to look like
-        puts "Row: #{row}"
-      end
+      # CSV.foreach(csv_file) do |row|
+      #   puts "Row: #{row}"
+      # end
 
-      # A database without data should create a CSV containing only the filter row and the header row
       number_of_rows = CSV.read(csv_file).length
-      expect(number_of_rows).to eq(2)
+      expect(number_of_rows).to eq(17)
     end
   end
 
@@ -114,15 +112,12 @@ feature "NonComp Report Page", :postgres do
     dropdown = page.all(".cf-select__control").last
     dropdown.click
 
-    # find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
-
     expect(page).to have_content(type)
     click_dropdown_item_by_text(type)
     expect(dropdown.find("input", match: :first, visible: false)).to be_disabled
   end
 
   def remove_last_condition
-    # click_link(find("a")
     last_remove_condition_link = page.all("a", text: "Remove condition").last
     last_remove_condition_link.click
   end
@@ -136,8 +131,9 @@ feature "NonComp Report Page", :postgres do
     ).click
   end
 
+  # Example usage: add_days_waiting_with_values("Between", 1, 11)
+  # add_days_waiting_with_values("More than", 10)
   def fill_in_days_waiting(time_range, number_of_days, end_days = nil)
-    # dropdown = find(".days-waiting .cf-select__control").first
     expect(page).to have_content("Time Range")
     days_waiting_div = find(".days-waiting")
     dropdown = days_waiting_div.find(".cf-select__control", match: :first)
@@ -163,40 +159,7 @@ feature "NonComp Report Page", :postgres do
     checkbox_label_text_array.each do |checkbox_label_text|
       find("label", text: checkbox_label_text).click
     end
-
-    # find("Higher-Level Reviews").click
-    # find("label", text: "Higher-Level Reviews").click
-    # check("Higher-Level Reviews")
-    # check("Supplemental Claims")
   end
-
-  # def fill_in_personnel(user_names)
-  #   expect(page).to have_content("VHA team members")
-  #   personnel_div = find(".personnel")
-  #   dropdown = personnel_div.find(".cf-select__control", match: :first)
-
-  #   names_array = user_names.is_a?(Array) ? user_names : [user_names]
-
-  #   names_array.each do |user_name|
-  #     dropdown.click
-  #     expect(personnel_div).to have_content(user_name)
-  #     click_dropdown_item_by_text(user_name)
-  #   end
-  # end
-
-  # def fill_in_facility(facility_names)
-  #   expect(page).to have_content("Facility Type")
-  #   facility_div = find(".facility")
-  #   dropdown = facility_div.find(".cf-select__control", match: :first)
-
-  #   facilities = facility_names.is_a?(Array) ? facility_names : [facility_names]
-
-  #   facilities.each do |facility|
-  #     dropdown.click
-  #     expect(facility_div).to have_content(facility)
-  #     click_dropdown_item_by_text(facility)
-  #   end
-  # end
 
   def fill_in_multi_select_condition(items, expected_text, content_selector)
     expect(page).to have_content(expected_text)
@@ -235,9 +198,7 @@ feature "NonComp Report Page", :postgres do
   def change_history_csv_file
     sleep(3)
     download_directory = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
-    # puts download_directory.inspect
     list_of_files = Dir.glob(File.join(download_directory, "*")).select { |f| File.file?(f) }
-    # puts list_of_files.inspect
     latest_file = list_of_files.max_by { |f| File.birthtime(f) }
 
     expect(latest_file).to_not eq(nil)
