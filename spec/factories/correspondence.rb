@@ -14,10 +14,19 @@ FactoryBot.define do
     notes { "This is a note from CMP." }
     assigned_by_id { 81 }
     veteran_id { 1 }
+
+    trait :with_single_doc do
+      after(:create) do |correspondence|
+        create(:correspondence_document, correspondence: correspondence)
+      end
+    end
   end
 
   factory :correspondence_document do
     uuid { SecureRandom.uuid }
-    vbms_document_id { "1250" }
+    document_type { 1250 }
+    pages { 30 }
+    vbms_document_type_id { 1250 }
+    association :correspondence
   end
 end

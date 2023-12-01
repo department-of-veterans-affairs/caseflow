@@ -4,8 +4,10 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 import COPY from 'app/../COPY';
-import ApiUtil from 'app/util/ApiUtil';
 import { TitleDetailsSubheader } from 'app/components/TitleDetailsSubheader';
+import EditModal from '../modals/editModal';
+import { useSelector } from 'react-redux';
+import moment from 'moment';
 
 const listItemStyling = css({
   display: 'inline-block',
@@ -37,51 +39,39 @@ export const TitleDetailsSubheaderSection = ({ title, children }) => (
   </div>
 );
 
-class ReviewPackageCmpInfo extends React.PureComponent {
-  constructor (props) {
-    super(props);
-    this.state = {
-      correspondence: null,
-      package_document_type: null
-    };
-  }
-
-  componentDidMount () {
-    const correspondence = this.props;
-
-    ApiUtil.get(`/queue/correspondence/${correspondence.correspondenceId}`).then((response) => {
-      this.setState({
-        correspondence: response.body.correspondence,
-        package_document_type: response.body.package_document_type
-      });
-    });
-  }
-
+class ReviewPackageData extends React.PureComponent {
   render = () => {
     return (
       <div>
         <CmpInfoScaffolding
-          correspondence={this.state?.correspondence}
-          packageDocumentType = {this.state?.package_document_type} />
+          correspondence={this.props.correspondence}
+          packageDocumentType = {this.props.packageDocumentType} />
       </div>
     );
   };
 }
 
-const CmpInfoScaffolding = (props) => {
-  const packageDocumentType = props.packageDocumentType;
-  const correspondence = props.correspondence;
-  const date = new Date(correspondence?.portal_entry_date);
-  const customDate = date && `${date.getMonth().toString().
-    padStart(2, '0')}/${date.getDate().toString().
-      padStart(2, '0')}/${date.getFullYear()}`;
+const CmpInfoScaffolding = () => {
+  const correspondence = useSelector(
+    (state) => state.reviewPackage.correspondence
+  );
+  const packageDocumentType = useSelector(
+    (state) => state.reviewPackage.packageDocumentType
+  );
+
+  const formattedVaDateOfReceipt = moment.utc(correspondence?.va_date_of_receipt).format('MM/DD/YYYY');
+  const formattedPortalEntryDate = moment.utc(correspondence?.portal_entry_date).format('MM/DD/YYYY');
 
   return (
     <div>
-      <h2> {COPY.CORRESPONDENCE_REVIEW_CMP_INFO_TITLE} </h2>
+      <div style={{ display: 'inline-flex' }}>
+        <h2 style={{ marginRight: '20px' }}> {COPY.CORRESPONDENCE_REVIEW_CMP_INFO_TITLE}</h2>
+        <EditModal />
+      </div>
+
       <TitleDetailsSubheader id="caseTitleDetailsSubheader">
-        <TitleDetailsSubheaderSection title="Portal Entry Date">
-          {customDate}
+        <TitleDetailsSubheaderSection title="VA DOR">
+          {formattedVaDateOfReceipt}
         </TitleDetailsSubheaderSection>
         <TitleDetailsSubheaderSection title="Source Type">
           {correspondence?.source_type}
@@ -93,10 +83,10 @@ const CmpInfoScaffolding = (props) => {
           {correspondence?.cmp_packet_number}
         </TitleDetailsSubheaderSection>
         <TitleDetailsSubheaderSection title="CMP Queue Name">
-          {correspondence?.cmp_packet_number}
+          BVA Intake
         </TitleDetailsSubheaderSection>
-        <TitleDetailsSubheaderSection title="VA DOR">
-          {customDate}
+        <TitleDetailsSubheaderSection title="Portal Entry Date">
+          {formattedPortalEntryDate}
         </TitleDetailsSubheaderSection>
       </TitleDetailsSubheader>
     </div>
@@ -113,8 +103,9 @@ TitleDetailsSubheaderSection.propTypes = {
   title: PropTypes.string.isRequired
 };
 
-ReviewPackageCmpInfo.propTypes = {
-  correspondenceId: PropTypes.string
+ReviewPackageData.propTypes = {
+  correspondence: PropTypes.object,
+  packageDocumentType: PropTypes.object
 };
 
-export default ReviewPackageCmpInfo;
+export default ReviewPackageData;

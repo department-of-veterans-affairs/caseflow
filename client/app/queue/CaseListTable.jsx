@@ -14,8 +14,11 @@ import { Checkbox } from '../components/Checkbox';
 import { DateString } from '../util/DateUtil';
 import { statusLabel, labelForLocation, renderAppealType, mostRecentHeldHearingForAppeal } from './utils';
 import COPY from '../../COPY';
+import Pagination from 'app/components/Pagination/Pagination';
 
 class CaseListTable extends React.PureComponent {
+  state = { currentPage: this.props.currentPage }
+
   componentWillUnmount = () => this.props.clearCaseListSearch();
 
   getKeyForRow = (rowNumber, object) => object.id;
@@ -30,9 +33,11 @@ class CaseListTable extends React.PureComponent {
           valueFunction: (appeal) => {
             return (
               <Checkbox
-                name={`appeal-${appeal.id}`}
-                defaultValue={false}
+                name={`${appeal.id}`}
+                id={`${appeal.id}`}
+                defaultValue={this.props.taskRelatedAppealIds.includes(appeal.id)}
                 hideLabel
+                onChange={(checked) => this.props.checkboxOnChange(appeal.id, checked)}
               />
             );
           }
@@ -47,7 +52,12 @@ class CaseListTable extends React.PureComponent {
           return (
             <React.Fragment>
               <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />
-              <CaseDetailsLink appeal={appeal} userRole={this.props.userRole} getLinkText={() => appeal.docketNumber} />
+              <CaseDetailsLink
+                appeal={appeal}
+                userRole={this.props.userRole}
+                getLinkText={() => appeal.docketNumber}
+                linkOpensInNewTab={this.props.linkOpensInNewTab}
+              />
             </React.Fragment>
           );
         }
@@ -111,29 +121,70 @@ class CaseListTable extends React.PureComponent {
       return <p>{COPY.CASE_LIST_TABLE_EMPTY_TEXT}</p>;
     }
 
+    const updatePageHandler = (idx) => {
+      const newCurrentPage = idx + 1;
+
+      this.setState({ currentPage: newCurrentPage });
+
+      if (typeof this.props.updatePageHandlerCallback !== 'undefined') {
+        this.props.updatePageHandlerCallback(newCurrentPage);
+      }
+    };
+    const totalPages = Math.ceil(this.props.appeals.length / 5);
+    const startIndex = (this.state.currentPage * 5) - 5;
+    const endIndex = (this.state.currentPage * 5);
+
     return (
-      <Table
-        className="cf-case-list-table"
-        columns={this.getColumns}
-        rowObjects={this.props.appeals}
-        getKeyForRow={this.getKeyForRow}
-        styling={this.props.styling}
-      />
+      this.props.paginate ?
+        <div>
+          <Pagination
+            pageSize={5}
+            currentPage={this.state.currentPage}
+            currentCases={this.props.appeals.slice(startIndex, endIndex).length}
+            totalPages={totalPages}
+            totalCases={this.props.appeals.length}
+            updatePage={updatePageHandler}
+            table={
+              <Table
+                className="cf-case-list-table"
+                columns={this.getColumns}
+                rowObjects={this.props.appeals.slice(startIndex, endIndex)}
+                getKeyForRow={this.getKeyForRow}
+                styling={this.props.styling}
+              />
+            }
+          />
+        </div> :
+        <Table
+          className="cf-case-list-table"
+          columns={this.getColumns}
+          rowObjects={this.props.appeals}
+          getKeyForRow={this.getKeyForRow}
+          styling={this.props.styling}
+        />
     );
   };
 }
 
 CaseListTable.propTypes = {
   appeals: PropTypes.arrayOf(PropTypes.object).isRequired,
+  taskRelatedAppealIds: PropTypes.array,
   showCheckboxes: PropTypes.bool,
+  paginate: PropTypes.bool,
+  linkOpensInNewTab: PropTypes.bool,
+  checkboxOnChange: PropTypes.func,
   styling: PropTypes.object,
   clearCaseListSearch: PropTypes.func,
   userRole: PropTypes.string,
-  userCssId: PropTypes.string
+  userCssId: PropTypes.string,
+  currentPage: PropTypes.number,
+  updatePageHandlerCallback: PropTypes.func
 };
 
 CaseListTable.defaultProps = {
-  showCheckboxes: false
+  showCheckboxes: false,
+  paginate: false,
+  currentPage: 1
 };
 
 const mapStateToProps = (state) => ({
