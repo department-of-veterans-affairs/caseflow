@@ -5,6 +5,7 @@ FactoryBot.define do
     association(:decision_review, factory: [:appeal, :with_post_intake_tasks])
     benefit_type { "compensation" }
     contested_rating_issue_diagnostic_code { "5008" }
+    decision_date { nil }
 
     factory :request_issue_with_epe do
       end_product_establishment { create(:end_product_establishment, source: decision_review) }
@@ -115,10 +116,6 @@ FactoryBot.define do
 
     transient do
       decision_issues { [] }
-    end
-
-    transient do
-      decision_date { 1.day.ago }
     end
 
     after(:create) do |ri, evaluator|
