@@ -74,11 +74,11 @@
             <tr>
               <td> <%= user.full_name %> </td>
               <td> <%= user.administered_teams.include?(cda_group_organization) %> </td>
-              <td> <%= button_to 'Remove From Organization', create_acd_group_org_singleton_case_distribution_levers_path, method: :post, params:{user: current_user, remove_user: true} %>
+              <td> <%= button_to 'Remove From Organization', remove_user_case_distribution_levers_tests_path, method: :post, params:{user: current_user} %>
                 <% if user.administered_teams.include?(cda_group_organization) %>
-                  <%= button_to 'Remove Admin', create_acd_group_org_singleton_case_distribution_levers_path, method: :post, params:{user: current_user, remove_admin: true} %>
+                  <%= button_to 'Remove Admin', remove_admin_case_distribution_levers_tests_path, method: :post, params:{user: current_user} %>
                 <% else %>
-                  <%= button_to 'Make User Admin', create_acd_group_org_singleton_case_distribution_levers_path, method: :post, params:{user: current_user, make_admin: true} %>
+                  <%= button_to 'Make User Admin', make_admin_case_distribution_levers_tests_path, method: :post, params:{user: current_user} %>
                 <%end%>
               </td>
             </tr>
@@ -87,14 +87,14 @@
       </table>
     <p>&nbsp;</p>
     <span>
-      <%= button_to 'Destroy Organization', create_acd_group_org_singleton_case_distribution_levers_path, method: :post, params:{create_or_destroy: "destroy"} %>
+      <%= button_to 'Destroy Organization', destroy_acd_group_org_case_distribution_levers_tests_path, method: :post %>
       <%unless current_user.member_of_organization?(cda_group_organization) %>
-        <%= button_to 'Add Current User To Organization', create_acd_group_org_singleton_case_distribution_levers_path, method: :post, params:{user: current_user, add_user: true} %>
+        <%= button_to 'Add Current User To Organization', add_user_case_distribution_levers_tests_path, method: :post, params:{user: current_user} %>
       <% end %>
     </span>
 <% else %>
   <h2> Organization Setup </h2>
-    <%= button_to 'Create Organization', create_acd_group_org_singleton_case_distribution_levers_path, method: :post, params:{create_or_destroy: "create"} %>
+    <%= button_to 'Create Organization', create_acd_group_org_singleton_case_distribution_levers_tests_path, method: :post %>
 <% end %>
 
 
