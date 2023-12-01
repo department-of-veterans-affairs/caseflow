@@ -126,7 +126,33 @@
       "label": "Last 365 Days",
       "value": "last_365_days"
     }
-  ]
+  ],
+ "ISSUE_DISPOSITION_LIST": [
+  {
+    "label": "Blank",
+    "value": "blank"
+  },
+  {
+    "label": "Denied",
+    "value": "denied"
+  },
+  {
+    "label": "Dismissed",
+    "value": "dismissed"
+  },
+  {
+    "label": "DTA Error",
+    "value": "dta_error"
+  },
+  {
+    "label": "Granted",
+    "value": "granted"
+  },
+  {
+    "label": "Withdrawn",
+    "value": "withdrawn"
+  }
+]
 }
 
 
