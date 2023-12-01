@@ -1176,6 +1176,13 @@ class LegacyAppeal < CaseflowRecord
     # build Legacy Appeal records for each one if they don't already exist
     def veteran_has_appeals_in_vacols?(veteran_file_number)
       fetch_appeals_by_file_number(veteran_file_number).any?
+    rescue StandardError
+      cases = MetricsService.record("VACOLS: appeals_by_vbms_id",
+                                    service: :vacols,
+                                    name: "appeals_by_vbms_id") do
+        VACOLS::Case.where(bfcorlid: convert_file_number_to_vacols(veteran_file_number))
+      end
+      cases.any?
     end
 
     private

@@ -4,7 +4,7 @@
 class Api::V3::Issues::Vacols::VbmsVacolsDtoBuilder
   attr_reader :hash_response, :vacols_issue_count
 
-  def initialize(veteran, page, per_page = nil)
+  def initialize(veteran, page, per_page)
     @page = page
     @veteran_participant_id = veteran.participant_id&.to_s
     @veteran_file_number = veteran.file_number&.to_s
@@ -27,8 +27,8 @@ class Api::V3::Issues::Vacols::VbmsVacolsDtoBuilder
   def serialized_vacols_issues(page = @page, offset = @offset)
     vacols_issues = []
     v_ids = LegacyAppeal.fetch_appeals_by_file_number(@veteran_file_number).map(&:vacols_id)
-    v_ids.each do |i|
-      vacols_issues.push(AppealRepository.issues(i))
+    v_ids.each do |id|
+      vacols_issues.push(AppealRepository.issues(id))
     end
 
     serialized_data = Api::V3::Issues::Vacols::VacolsIssueSerializer.new(
