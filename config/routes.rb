@@ -174,6 +174,8 @@ Rails.application.routes.draw do
 
   get '/explain/appeals/:appeal_id' => 'explain#show'
 
+  get '/appeals/:appeal_id/active_evidence_submissions' => 'appeals#active_evidence_submissions'
+
   resources :regional_offices, only: [:index]
   get '/regional_offices/:regional_office/hearing_dates', to: "regional_offices#hearing_dates"
 

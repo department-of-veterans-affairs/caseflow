@@ -53,6 +53,15 @@ export const AddAppealRelatedTaskView = (props) => {
       if (!taskRelatedAppeals.includes(appealId)) {
         setTaskRelatedAppeals([...taskRelatedAppeals, appealId]);
 
+        ApiUtil.get(`/appeals/${appealId}/active_evidence_submissions`).
+          then((res) => {
+            console.log('res' + { ...res.body } + JSON.stringify(res.body));
+            return res.body; // Add 'return' here
+          }).
+          catch((error) => {
+            console.error('Error fetching active evidence submissions:', error);
+          });
+
         // const tasksForAppeal = newTasks.filter((el) => el.appealId === appealId);
 
         // if (!tasksForAppeal.length) {
