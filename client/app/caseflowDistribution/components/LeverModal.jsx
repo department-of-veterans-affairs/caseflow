@@ -4,14 +4,31 @@ import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActio
 import ApiUtil from '../../util/ApiUtil';
 import Modal from 'app/components/Modal';
 import Button from 'app/components/Button';
+import Alert from 'app/components/Alert';
 import COPY from '../../../COPY';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 
 
-function DisplayButtonLeverAlert(alert) {
-  console.log("alert", alert)
-  //show small banner displaying the alert
+function DisplayAlertBanner() {
+  const staticSuccessBanner = {
+    title: COPY.CASE_DISTRIBUTION_SUCCESSBANNER_TITLE,
+    message: COPY.CASE_DISTRIBUTION_SUCCESSBANNER_DETAIL,
+    type: 'success',
+    scrollOnAlert: true,
+    fixed: true,
+    styling: {
+      top: 0,
+      left: 0,
+      width: "100%",
+      zIndex: 9999,
+    }
+  };
+
+  return (
+      <Alert {...staticSuccessBanner} />
+  );
 }
+
 
 function UpdateLeverHistory(leverStore) {
   leverStore.dispatch({
@@ -73,6 +90,7 @@ export function LeverSaveButton({ leverStore }) {
   const [showModal, setShowModal] = useState(false);
   const [changesOccurred, setChangesOccurred] = useState(false);
   const [saveButtonDisabled, setSaveButtonDisabled] = useState(false);
+  const [displayAlert, setDisplayAlert] = useState(false);
 
   useEffect(() => {
     const unsubscribe = leverStore.subscribe(() => {
@@ -101,8 +119,8 @@ export function LeverSaveButton({ leverStore }) {
   const handleConfirmButton = () => {
     SaveLeversToDB(leverStore);
     setShowModal(false);
-    DisplayButtonLeverAlert('');
     setSaveButtonDisabled(true);
+    setDisplayAlert(true);
   }
 
 
@@ -125,6 +143,7 @@ export function LeverSaveButton({ leverStore }) {
         {leverList(leverStore)}
       </Modal>
       }
+      {displayAlert && <DisplayAlertBanner />}
     </>
   );
 }
