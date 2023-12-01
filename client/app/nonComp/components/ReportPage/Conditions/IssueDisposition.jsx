@@ -16,7 +16,7 @@ export const IssueDisposition = ({ control, field, name }) => {
   const fieldName = `${name}.options.issueDispositions`;
 
   return (
-    <div className="report-page-multi-select-dropdown">
+    <div className="report-page-multi-select-dropdown issue-dispositions">
       <Controller
         control={control}
         name={fieldName}

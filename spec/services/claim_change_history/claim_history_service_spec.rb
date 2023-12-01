@@ -150,7 +150,7 @@ describe ClaimHistoryService do
         disposition_issue_types = ["Caregiver | Other", "Camp Lejune Family Member"]
         disposition_issue_descriptions = ["VHA - Caregiver ", "Camp Lejune description"]
         disposition_user_names = ["Gaius Baelsar", "Gaius Baelsar"]
-        disposition_values = %w[allowed denied]
+        disposition_values = %w[Granted denied]
         expect(disposition_events.map(&:issue_type)).to contain_exactly(*disposition_issue_types)
         expect(disposition_events.map(&:issue_description)).to contain_exactly(*disposition_issue_descriptions)
         expect(disposition_events.map(&:event_user_name)).to contain_exactly(*disposition_user_names)
@@ -246,7 +246,7 @@ describe ClaimHistoryService do
       end
 
       context "with dispositions filter" do
-        let(:filters) { { dispositions: ["allowed"] } }
+        let(:filters) { { dispositions: ["Granted"] } }
 
         it "should only return events for the tasks that match the dispositions filter" do
           subject
@@ -260,7 +260,7 @@ describe ClaimHistoryService do
         end
 
         context "with no filter matches" do
-          let(:filters) { { dispositions: ["Granted"] } }
+          let(:filters) { { dispositions: ["Dismissed"] } }
 
           it "should return no events" do
             subject

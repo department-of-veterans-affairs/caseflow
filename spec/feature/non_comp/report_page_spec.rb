@@ -84,6 +84,8 @@ feature "NonComp Report Page", :postgres do
       # There are two VACO's in these options
       # fill_in_multi_select_condition([/\A#{Regexp.escape("VACO")}\z/], "Facility Type", ".facility")
 
+      # add_issue_disposition_with_values(["Granted"])
+
       expect(page).to have_button("Generate task report", disabled: false)
       click_button "Generate task report"
 
@@ -150,6 +152,7 @@ feature "NonComp Report Page", :postgres do
     end
   end
 
+  # Example usage: add_decision_review_condition_with_values(["Higher-Level Reviews", "Supplemental Claims"])
   def fill_in_decision_review_type(claim_types)
     expect(page).to have_content("Higher-Level Reviews")
     expect(page).to have_content("Supplemental Claims")
@@ -162,8 +165,8 @@ feature "NonComp Report Page", :postgres do
   end
 
   def fill_in_multi_select_condition(items, expected_text, content_selector)
-    expect(page).to have_content(expected_text)
     content_div = find(content_selector)
+    expect(content_div).to have_content(expected_text)
     dropdown = content_div.find(".cf-select__control", match: :first)
 
     items_array = items.is_a?(Array) ? items : [items]
@@ -175,6 +178,7 @@ feature "NonComp Report Page", :postgres do
     end
   end
 
+  # Example usage: add_facility_condition_with_values(["VACO"])
   def add_facility_condition_with_values(values)
     add_condition("Facility")
     fill_in_multi_select_condition(values, "Facility Type", ".facility")
@@ -195,8 +199,15 @@ feature "NonComp Report Page", :postgres do
     fill_in_days_waiting(time_range, num_days, end_days)
   end
 
+  def add_issue_disposition_with_values(values)
+    add_condition("Issue Disposition")
+    fill_in_multi_select_condition(values, "Issue Disposition", ".issue-dispositions")
+  end
+
   def change_history_csv_file
-    sleep(3)
+    # This time might have to be adjusted
+    sleep(2)
+    # Copied from Capybara setup
     download_directory = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
     list_of_files = Dir.glob(File.join(download_directory, "*")).select { |f| File.file?(f) }
     latest_file = list_of_files.max_by { |f| File.birthtime(f) }

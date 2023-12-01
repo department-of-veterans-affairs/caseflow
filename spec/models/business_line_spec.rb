@@ -434,7 +434,7 @@ describe BusinessLine do
         "intake_user_name" => hlr_task.appeal.intake.user.full_name,
         "intake_user_css_id" => hlr_task.appeal.intake.user.css_id,
         "intake_user_station_id" => hlr_task.appeal.intake.user.station_id,
-        "disposition" => "allowed",
+        "disposition" => "Granted",
         "decision_user_name" => decision_user.full_name,
         "decision_user_css_id" => decision_user.css_id,
         "decision_user_station_id" => decision_user.station_id,
@@ -639,7 +639,7 @@ describe BusinessLine do
 
     context "with dispositions filter" do
       context "with multiple disposition filters" do
-        let(:change_history_filters) { { dispositions: %w[allowed denied] } }
+        let(:change_history_filters) { { dispositions: %w[Granted denied] } }
 
         it "should only return rows for filtered disposition values" do
           expect(subject.entries.count).to eq(2)
