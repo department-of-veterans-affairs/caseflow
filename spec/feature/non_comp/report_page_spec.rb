@@ -46,46 +46,12 @@ feature "NonComp Report Page", :postgres do
     end
 
     it "should submit several types of event reports successfully and generate csvs for each submission" do
-      # visit vha_report_url
-      # visit vha_report_url
       expect(page).to have_content("Generate task report")
+      # Start an event report
       click_dropdown(text: "Event / Action")
       expect(page).to have_content("Timing specifications")
 
-      # add_condition("Days Waiting")
-      # fill_in_days_waiting("More than", 10)
-      # add_days_waiting_with_values("More than", 10)
-      # add_days_waiting_with_values("Between", 1, 11)
-
-      # add_condition("Decision Review Type")
-      # fill_in_decision_review_type(["Higher-Level Reviews", "Supplemental Claims"])
-      # add_decision_review_condition_with_values(["Higher-Level Reviews", "Supplemental Claims"])
-
-      # add_condition("Personnel")
-      # fill_in_multi_select_condition([user.full_name], "VHA team members", ".personnel")
-      # add_personnel_condition_with_values([user.full_name])
-
-      # # Add blank condition and check to see if facilities is still available
-      # add_condition
-
-      # dropdown = page.all(".cf-select__control").last
-      # dropdown.click
-
-      # expect(page).to_not have_content("Facility")
-
-      # remove_last_condition
-
-      # expect(page).to_not have_content("Select a variable")
-
-      # add_condition("Facility")
-      # fill_in_multi_select_condition(["VACO"], "Facility Type", ".facility")
-      # add_facility_condition_with_values(["VACO"])
-
-      # There are two VACO's in these options
-      # fill_in_multi_select_condition([/\A#{Regexp.escape("VACO")}\z/], "Facility Type", ".facility")
-
-      # add_issue_disposition_with_values(["Granted"])
-
+      # Submit a report that should return all rows
       expect(page).to have_button("Generate task report", disabled: false)
       click_button "Generate task report"
 
@@ -93,14 +59,58 @@ feature "NonComp Report Page", :postgres do
       # expect(page).to have_button("Generate task report", disabled: true)
       # expect(page).to have_content("Generating CSV...")
 
+      # Check the csv to make sure it returns the filter row, the column header row, and all 15 event rows
       csv_file = change_history_csv_file
+      number_of_rows = CSV.read(csv_file).length
+      expect(number_of_rows).to eq(17)
 
       # CSV.foreach(csv_file) do |row|
       #   puts "Row: #{row}"
       # end
 
+      # Clear the filters
+      click_button "Clear filters"
+      expect(page).to have_content("Select...")
+      expect(page).to have_button("Generate task report", disabled: true)
+
+      # Select an event report again
+      click_dropdown(text: "Event / Action")
+      expect(page).to have_content("Timing specifications")
+
+      # Add some conditions
+      add_decision_review_condition_with_values(["Higher-Level Reviews"])
+      add_issue_disposition_with_values(["Granted"])
+      add_days_waiting_with_values("More than", 10)
+
+      expect(page).to have_button("Generate task report", disabled: false)
+      click_button "Generate task report"
+
+      csv_file = change_history_csv_file
       number_of_rows = CSV.read(csv_file).length
-      expect(number_of_rows).to eq(17)
+      # TODO: get more specific by checking some actual row content at some point
+      # Verify the filters at least
+      expect(number_of_rows).to eq(6)
+
+      # After submitting the form add one more condition and submit the form again
+      add_personnel_condition_with_values([user.full_name])
+
+      # Add blank condition and check to see if facilities is still available. It should not be
+      add_condition
+      dropdown = page.all(".cf-select__control").last
+      dropdown.click
+      expect(page).to_not have_content("Facility")
+
+      # Remove the blank condition and submit the page again
+      remove_last_condition
+      expect(page).to_not have_content("Select a variable")
+      expect(page).to have_button("Generate task report", disabled: false)
+      click_button "Generate task report"
+
+      csv_file = change_history_csv_file
+      number_of_rows = CSV.read(csv_file).length
+      # TODO: get more specific by checking some actual row content at some point
+      # This personnel filter will not match so it should only be the filters row and the column headers row
+      expect(number_of_rows).to eq(2)
     end
   end
 

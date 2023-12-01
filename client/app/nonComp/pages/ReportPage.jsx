@@ -324,7 +324,8 @@ const ReportPage = ({ history }) => {
         <ReportPageButtons
           history={history}
           isGenerateButtonDisabled={!formState.isDirty || isCSVGenerating}
-          handleClearFilters={() => reset(defaultFormValues)}
+          // TODO: figure out why this was done this way? handleClearFilters={() => reset(defaultFormValues)}
+          handleClearFilters={() => reset()}
           handleSubmit={handleSubmit(submitForm)}
         />
       }
