@@ -10,6 +10,6 @@ class CorrespondenceDocumentController < ApplicationController
   end
 
   def update_params
-    params.permit(:vbms_document_type_id, :id)
+    params.permit(:vbms_document_type_id)
   end
 end
