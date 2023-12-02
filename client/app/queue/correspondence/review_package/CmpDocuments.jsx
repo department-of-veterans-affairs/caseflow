@@ -32,31 +32,12 @@ export const CmpDocuments = (props) => {
   };
 
   const [modalState, setModalState] = useState(false);
-  const [documentName, setDocumentName] = useState(documents[selectedId].document_title);
-  const [saveButton, setsaveButton] = useState('false');
 
   const openModal = () => {
     setModalState(true);
   };
   const closeModal = () => {
     setModalState(false);
-  };
-
-  const saveButtonValue = () => {
-    setsaveButton(false);
-  };
-
-  const OpenModalLink = (newValue) => (
-    <Button linkStyling onClick={() => {
-      setDocumentName(newValue);
-      openModal();
-    }} >
-      <span>Edit</span>
-    </Button>
-  );
-
-  OpenModalLink.propTypes = {
-    documentName: PropTypes.string
   };
 
   return (
@@ -73,11 +54,11 @@ export const CmpDocuments = (props) => {
           </tbody>
           {modalState &&
             <EditDocumentTypeModal
-              modalState={openModal}
+              modalState={modalState}
+              setModalState={setModalState}
               onCancel={closeModal}
-              onSave = {saveButtonValue}
-              document={documentName}
-              indexDoc = {selectedId}
+              document={documents[selectedId]}
+              indexDoc={selectedId}
             />
           }
           { documents?.map((document, index) => {
@@ -89,7 +70,14 @@ export const CmpDocuments = (props) => {
                   onClick={() => setCurrentDocument(index)}> {document?.document_title}
                   </td>
                   <td className="cf-txt-c">
-                    <OpenModalLink documentName = {document?.document_title} />
+                    <Button
+                      linkStyling
+                      onClick={() => {
+                        setCurrentDocument(index);
+                        openModal();
+                      }}>
+                      <span>Edit</span>
+                    </Button>
                   </td>
                 </tr>
               </tbody>

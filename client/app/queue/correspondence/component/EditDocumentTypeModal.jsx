@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import ApiUtil from '../../../util/ApiUtil';
 import { sprintf } from 'sprintf-js';
@@ -8,10 +8,6 @@ import { bindActionCreators } from 'redux';
 import { updateDocumentTypeName } from '../correspondenceReducer/reviewPackageActions';
 
 import COPY from '../../../../COPY';
-// import { onReceiveAmaTasks } from '../../queue/QueueActions';
-// import { showErrorMessage, showSuccessMessage } from '../../uiReducer/uiActions';
-
-// import ApiUtil from '../../util/ApiUtil';
 import Modal from '../../../components/Modal';
 import Button from '../../../components/Button';
 
@@ -21,11 +17,9 @@ class EditDocumentTypeModal extends React.Component {
     super(props);
 
     this.state = {
-      packageDocument: '',
-      dateError: '',
+      packageDocument: {},
       disabledSaveButton: true,
-      packageOptions: '',
-      loading: false
+      packageOptions: {},
     };
   }
 
@@ -37,9 +31,8 @@ class EditDocumentTypeModal extends React.Component {
     ApiUtil.get('/queue/correspondence/edit_document_type_correspondence').then((resp) => {
       const documents = resp.body.data.map((doc) => ({
         label: doc.name,
-        value: doc.id.toString()
+        value: doc.id
       }));
-      // const documents = resp;
 
       this.setState({ packageOptions: documents });
     });
@@ -52,20 +45,35 @@ class EditDocumentTypeModal extends React.Component {
     });
   };
 
+  updateDocumentType = async () => {
+    try {
+      ApiUtil.patch(`/queue/correspondence/${this.props.document.id}/update_document`, {
+        data: {
+          vbms_document_type_id: this.state.packageDocument.value
+        }
+      });
+      this.props.updateDocumentTypeName(this.state.packageDocument, this.props.indexDoc);
+      this.props.setModalState(false);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   render() {
-    const { onCancel, document, modalState } = this.props;
+    const { onCancel, document } = this.props;
     const { packageDocument } = this.state;
 
-    const submit = async (value) => {
-      this.props.updateDocumentTypeName(value, this.props.indexDoc);
+    const submit = () => {
+      this.updateDocumentType();
     };
+    const originalDocumentTitle = document.document_title;
 
     return (
       <Modal
         title= {sprintf(COPY.TITLE_MODAL_EDIT_DOCUMENT_TYPE_CORRESPONDENCE)}
         closeHandler={onCancel}
         confirmButton={<Button disabled={this.state.disabledSaveButton}
-          onClick={submit(this.state.packageDocument)}>Save</Button>}
+          onClick={submit}>Save</Button>}
         cancelButton={<Button linkStyling onClick={onCancel}>Cancel</Button>}
       >
         <div>
@@ -75,8 +83,7 @@ class EditDocumentTypeModal extends React.Component {
           {sprintf(COPY.ORIGINAL_DOC_EDIT_DOCUMENT_TYPE_CORRESPONDENCE)}
         </div>
         <div>
-          {document.documentName}
-
+          {originalDocumentTitle}
         </div>
         <br />
         <SearchableDropdown
@@ -98,7 +105,10 @@ EditDocumentTypeModal.propTypes = {
   modalState: PropTypes.bool,
   onCancel: PropTypes.func,
   document: PropTypes.object,
-  onSaveValue: PropTypes.func
+  onSaveValue: PropTypes.func,
+  updateDocumentTypeName: PropTypes.func,
+  setModalState: PropTypes.func,
+  indexDoc: PropTypes.number
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
