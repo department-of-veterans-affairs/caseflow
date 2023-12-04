@@ -79,13 +79,14 @@ const AffinityDays = (props) => {
   });
 
   const generateFields = (dataType, option, lever, index) => {
+
     if (dataType === 'number') {
       return (
         <NumberField
           name={option.item}
           label={option.unit}
           isInteger
-          disabled={lever.is_disabled}
+          readOnly={lever.is_disabled}
           value={option.value}
           errorMessage={option.errorMessage}
           onChange={(value) => updateLever(lever, option, index, value)}
@@ -97,7 +98,7 @@ const AffinityDays = (props) => {
         <TextField
           name={option.item}
           label={false}
-          disabled={lever.is_disabled}
+          readOnly={lever.is_disabled}
           value={option.value}
           onChange={(value) => updateLever(lever, option, index, value)}
         />
@@ -107,6 +108,26 @@ const AffinityDays = (props) => {
     return null;
   };
 
+  const generateMemberViewLabel = (option, lever) => {
+
+    if (lever.value === option.item) {
+      return (
+        <div>
+          <div>
+            <label className={`${styles.disabledText}`}
+              htmlFor={`${lever.item}-${option.item}`}>
+              {option.text} {option.value} {option.unit}
+            </label>
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  let isMemberUser = !props.isAdmin;
+
   return (
     <div className={styles.leverContent}>
       <div className={styles.leverHead}>
@@ -115,9 +136,9 @@ const AffinityDays = (props) => {
         <div className={styles.leverRight}><strong>Value</strong></div>
       </div>
       {affinityLevers.map((lever, index) => (
-        <div
+        <div className={cx(styles.activeLever, (lever.is_disabled) ? styles.leverDisabled : '',
+          isMemberUser ? styles.disabledText : '')}
         key={`${lever.item}-${index}`}
-        className={cx(styles.activeLever, lever.is_disabled ? styles.leverDisabled : '')}
         >
           <div className={styles.leverLeft}>
             <strong>{lever.title}</strong>
@@ -125,28 +146,31 @@ const AffinityDays = (props) => {
           </div>
           <div className={`${styles.leverRight} ${leverNumberDiv}`}>
             {lever.options.map((option) => (
-              <div key={`${lever.item}-${index}-${option.item}`}>
-                <div>
-                  <input
-                    checked={option.item === lever.value}
-                    type="radio"
-                    value={option.item}
-                    disabled={lever.is_disabled}
-                    id={`${lever.item}-${option.item}`}
-                    name={lever.item}
-                    onChange={() => handleRadioChange(lever, option, index)}
-                  />
-                  <label htmlFor={`${lever.item}-${option.item}`}>
-                    {option.text}
-                  </label>
-                </div>
 
-                <div>
-                  <div className={styles.combinedRadioInput}>
-                    {generateFields(option.data_type, option, lever, index)}
+              (isMemberUser) ?
+                generateMemberViewLabel(option, lever) :
+                <div key={`${lever.item}-${index}-${option.item}`}>
+                  <div>
+                    <input
+                      checked={option.item === lever.value}
+                      type="radio"
+                      value={option.item}
+                      disabled={lever.is_disabled}
+                      id={`${lever.item}-${option.item}`}
+                      name={lever.item}
+                      onChange={() => handleRadioChange(lever, option, index)}
+                    />
+                    <label htmlFor={`${lever.item}-${option.item}`}>
+                      {option.text}
+                    </label>
+                  </div>
+
+                  <div>
+                    <div className={styles.combinedRadioInput}>
+                      {generateFields(option.data_type, option, lever, isMemberUser, index)}
+                    </div>
                   </div>
                 </div>
-              </div>
             ))}
           </div>
         </div>
@@ -159,9 +183,12 @@ const AffinityDays = (props) => {
 
 AffinityDays.propTypes = {
   leverList: PropTypes.arrayOf(PropTypes.string).isRequired,
-  leverStore: PropTypes.any
+  leverStore: PropTypes.any,
+  isAdmin: PropTypes.bool.isRequired,
 };
 
 export default AffinityDays;
+
+
 
 
