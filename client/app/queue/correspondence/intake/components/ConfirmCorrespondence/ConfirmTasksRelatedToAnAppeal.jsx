@@ -17,17 +17,18 @@ const ConfirmTasksRelatedToAnAppeal = () => {
   const rowObjects = taskIds.map((task, index) => {
     return (
       <>
-        <thead style={{}}>
-          <tr className="cf-form--full-width" style={{ height: '100px', display: 'flex', flexDirection: 'column' }}>
+        {/* <tr colSpan="100%" style={{ height: '100px', width:'100%', display: 'flex', flexDirection: 'column' }}> */}
+        <tr colSpan="100%" style={{ height: '100px', width: '100%' }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             <th style={styling}></th>
             Appeal {index + 1} Tasks
             <b>Linked appeal</b>
-            {/* <HearingBadge name="help" number={123} /> */}
             <LinkToAppeal>
               <DocketTypeBadge name="Help" number="1234" />
               <b>{fetchedAppeals.find((appeal) => appeal.id === task).docketNumber}</b></LinkToAppeal>
-          </tr>
-        </thead>
+          </div>
+
+        </tr>
         <tr>
           <td
             style={{ backgroundColor: COLORS.GREY_BACKGROUND,
