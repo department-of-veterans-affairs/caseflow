@@ -12,7 +12,7 @@ import COPY from '../../../COPY';
 const CaseflowDistributionContent = ({ levers, saveChanges, formattedHistory, isAdmin, leverStore }) => {
   return (
     <div>
-      <h1>Administration</h1>
+      <h1>{isAdmin ? 'Administration' : 'Non-Admin User'}</h1>
 
       <div> {/* Main Content Wrapper*/}
         <h2>{COPY.CASE_DISTRIBUTION_TITLE}</h2>
