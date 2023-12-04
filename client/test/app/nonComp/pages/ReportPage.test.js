@@ -215,6 +215,48 @@ describe('ReportPage', () => {
     });
   });
 
+  describe('Issue Disposition Section', () => {
+    beforeEach(clickOnReportType);
+
+    it('allows you to select issue dispositions', async () => {
+      setup();
+      await navigateToConditionInput('Issue Disposition');
+
+      const dropdown = screen.getByLabelText('Issue Disposition');
+
+      await selectEvent.select(dropdown, ['Granted']);
+      expect(screen.getByText('Granted')).toBeInTheDocument();
+    });
+
+    it('allows to select multiple options from dropdown', async () => {
+      setup();
+      await navigateToConditionInput('Issue Disposition');
+
+      const dropdown = screen.getByLabelText('Issue Disposition');
+
+      await selectEvent.select(dropdown, ['Granted', 'Blank']);
+
+      expect(screen.getByText('Granted')).toBeInTheDocument();
+      expect(screen.getByText('Blank')).toBeInTheDocument();
+    });
+
+    it('selects an option from dropdown, then removes it and renders an error', async () => {
+      setup();
+      await navigateToConditionInput('Issue Disposition');
+
+      const dropdown = screen.getByLabelText('Issue Disposition');
+
+      await selectEvent.select(dropdown, ['Granted']);
+      expect(screen.getByText('Granted')).toBeInTheDocument();
+
+      const clearButton = document.querySelector('.cf-select__indicator.cf-select__clear-indicator');
+
+      userEvent.click(clearButton);
+
+      expect(screen.queryByText('Granted')).not.toBeInTheDocument();
+    });
+  });
+
   it('should have Generate task Report button and Clear Filter button disabled on initial load', () => {
     setup();
 
