@@ -1,5 +1,4 @@
 import { css } from 'glamor';
-import { map, size, sortBy } from 'lodash';
 import React from 'react';
 import PropTypes from 'prop-types';
 import Link from '../../../components/Link';
