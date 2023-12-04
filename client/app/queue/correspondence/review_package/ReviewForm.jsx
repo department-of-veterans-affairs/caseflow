@@ -186,6 +186,7 @@ export const ReviewForm = (props) => {
                   value={props.editableData.veteran_file_number}
                   onChange={handleFileNumber}
                   name="veteran-file-number-input"
+                  useAriaLabel
                 />
               </div>
 
@@ -195,6 +196,7 @@ export const ReviewForm = (props) => {
                   value={fullName(props.reviewDetails.veteran_name)}
                   readOnly
                   name="Veteran-name-display"
+                  useAriaLabel
                 />
               </div>
 
