@@ -6,6 +6,7 @@ module Seeds
 
     def initialize
       initial_id_values
+      RequestStore[:current_user] = User.find_by_css_id("BVADWISE")
     end
 
     def seed!
@@ -40,7 +41,14 @@ module Seeds
     def create_multi_correspondences
       veteran = create_veteran(first_name: "Adam", last_name: "West")
       32.times do
-        create(:appeal, veteran_file_number: veteran.file_number)
+        appeal = create(:appeal, veteran_file_number: veteran.file_number)
+
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+        EvidenceSubmissionWindowTask.create!(
+          appeal: appeal,
+          parent: appeal.root_task,
+          assigned_to: MailTeam.singleton
+        )
       end
       21.times do |package_doc_id|
         corres = ::Correspondence.create!(
