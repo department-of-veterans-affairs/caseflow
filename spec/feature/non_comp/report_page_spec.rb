@@ -68,10 +68,19 @@ feature "NonComp Report Page", :postgres do
       #   puts "Row: #{row}"
       # end
 
-      # Clear the filters
-      click_button "Clear filters"
-      expect(page).to have_content("Select...")
-      expect(page).to have_button("Generate task report", disabled: true)
+      # Add in some specific event filters now
+      fill_in_specific_event_filters(["Added issue", "Completed disposition"])
+
+      # Submit a report that should only include rows for those two event types
+      expect(page).to have_button("Generate task report", disabled: false)
+      click_button "Generate task report"
+
+      # Check the csv to make sure it returns the filter row, the column header row, and the 6 event rows
+      csv_file = change_history_csv_file
+      number_of_rows = CSV.read(csv_file).length
+      expect(number_of_rows).to eq(8)
+
+      clear_filters
 
       # Select an event report again
       click_dropdown(text: "Event / Action")
@@ -110,6 +119,70 @@ feature "NonComp Report Page", :postgres do
       number_of_rows = CSV.read(csv_file).length
       # TODO: get more specific by checking some actual row content at some point
       # This personnel filter will not match so it should only be the filters row and the column headers row
+      expect(number_of_rows).to eq(2)
+    end
+
+    it "should submit several types of status reports successfully and generate CSVs for each submission" do
+      expect(page).to have_content("Generate task report")
+      # Start a status report
+      click_dropdown(text: "Status")
+      expect(page).to have_content("Select type of status report")
+
+      # Submit a report that should only the last chronological event for each task
+      expect(page).to have_button("Generate task report", disabled: false)
+      click_button "Generate task report"
+
+      # Check the csv to make sure it returns the filter row, the column header row, and one event row per task (3)
+      csv_file = change_history_csv_file
+      number_of_rows = CSV.read(csv_file).length
+      expect(number_of_rows).to eq(5)
+
+      # Click the status Summary radio button
+      find("label", text: "Summary").click
+      # Submit a report that should include all events
+      expect(page).to have_button("Generate task report", disabled: false)
+      click_button "Generate task report"
+
+      # Check the csv to make sure it returns the filter row, the column header row, all 15 event rows
+      csv_file = change_history_csv_file
+      number_of_rows = CSV.read(csv_file).length
+      expect(number_of_rows).to eq(17)
+
+      # Select a specific status of cancelled
+      fill_in_specific_status_filters(["Cancelled"])
+
+      expect(page).to have_button("Generate task report", disabled: false)
+      click_button "Generate task report"
+
+      # Check the csv to make sure it returns the filter row, the column header row, and 0 event rows
+      csv_file = change_history_csv_file
+      number_of_rows = CSV.read(csv_file).length
+      expect(number_of_rows).to eq(2)
+
+      clear_filters
+
+      click_dropdown(text: "Status")
+      expect(page).to have_content("Select type of status report")
+
+      # Add a condition or two
+      add_days_waiting_with_values("Between", 5, 100)
+      add_decision_review_condition_with_values(["Higher-Level Reviews"])
+      expect(page).to have_button("Generate task report", disabled: false)
+      click_button "Generate task report"
+
+      # Check the csv to make sure it returns the filter row, the column header row, and the last two HLR event rows
+      csv_file = change_history_csv_file
+      number_of_rows = CSV.read(csv_file).length
+      expect(number_of_rows).to eq(4)
+
+      # Add another condition that has no matches
+      add_issue_disposition_with_values(["Denied"])
+      expect(page).to have_button("Generate task report", disabled: false)
+      click_button "Generate task report"
+
+      # Check the csv to make sure it returns the filter row, the column header row, all 0 event rows
+      csv_file = change_history_csv_file
+      number_of_rows = CSV.read(csv_file).length
       expect(number_of_rows).to eq(2)
     end
   end
@@ -166,11 +239,25 @@ feature "NonComp Report Page", :postgres do
   def fill_in_decision_review_type(claim_types)
     expect(page).to have_content("Higher-Level Reviews")
     expect(page).to have_content("Supplemental Claims")
+    check_checkboxes(claim_types)
+  end
 
-    checkbox_label_text_array = claim_types.is_a?(Array) ? claim_types : [claim_types]
+  def fill_in_specific_event_filters(events)
+    find("label", text: "Specific Events / Actions").click
+    check_checkboxes(events)
+  end
+
+  def fill_in_specific_status_filters(statuses)
+    find("label", text: "Specific Status").click
+    check_checkboxes(statuses)
+  end
+
+  def check_checkboxes(labels)
+    checkbox_label_text_array = labels.is_a?(Array) ? labels : [labels]
 
     checkbox_label_text_array.each do |checkbox_label_text|
-      find("label", text: checkbox_label_text).click
+      puts "trying to click: #{checkbox_label_text}"
+      find("label", text: checkbox_label_text, exact_text: true).click
     end
   end
 
@@ -212,6 +299,18 @@ feature "NonComp Report Page", :postgres do
   def add_issue_disposition_with_values(values)
     add_condition("Issue Disposition")
     fill_in_multi_select_condition(values, "Issue Disposition", ".issue-dispositions")
+  end
+
+  def add_issue_type_with_values(values)
+    add_condition("Issue Type")
+    fill_in_multi_select_condition(values, "Issue Type", "issue-types")
+  end
+
+  def clear_filters
+    # Clear the filters
+    click_button "Clear filters"
+    expect(page).to have_content("Select...")
+    expect(page).to have_button("Generate task report", disabled: true)
   end
 
   def change_history_csv_file

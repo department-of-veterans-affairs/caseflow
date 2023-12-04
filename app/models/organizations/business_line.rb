@@ -239,7 +239,7 @@ class BusinessLine < Organization
         LEFT JOIN users intake_users ON intakes.user_id = intake_users.id
         LEFT JOIN users update_users ON request_issues_updates.user_id = update_users.id
         LEFT JOIN users decision_users ON decision_users.id = tv.version_closed_by_id::int
-        LEFT join users decision_users_completed_by on decision_users.id = tasks.completed_by_id
+        LEFT join users decision_users_completed_by ON decision_users_completed_by.id = tasks.completed_by_id
         WHERE tasks.type = 'DecisionReviewTask'
         AND tasks.assigned_to_type = 'Organization'
         AND tasks.assigned_to_id = '#{parent.id.to_i}'
