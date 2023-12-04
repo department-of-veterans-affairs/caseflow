@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import TextareaField from '../../../../../components/TextareaField';
 import ReactSelectDropdown from '../../../../../components/ReactSelectDropdown';
 import Checkbox from '../../../../../components/Checkbox';
-// import Button from '../../../../../components/Button';
 import PropTypes from 'prop-types';
 
 const AddEvidenceSubmissionTaskView = (props) => {
@@ -25,15 +24,26 @@ const AddEvidenceSubmissionTaskView = (props) => {
     if (!isWaiveCheckboxSelected) {
       setWaiveReason('');
     }
-    const canContinue = isWaiveCheckboxSelected || Boolean(waiveReason.trim());
+
+    const canContinue =
+    isWaiveCheckboxSelected &&
+    Boolean(waiveReason.trim());
 
     props.setRelatedTasksCanContinue(canContinue);
   };
 
   const handleReasonChange = (event) => {
     setWaiveReason(event);
-    props.setRelatedTasksCanContinue(Boolean(event.trim()));
   };
+
+  useEffect(() => {
+    // If user has selected appeals, enable continue
+    if (waiveReason !== '' && isWaiveCheckboxSelected) {
+      props.setRelatedTasksCanContinue(true);
+    } else {
+      props.setRelatedTasksCanContinue(false);
+    }
+  }, [waiveReason]);
 
   return (
     <div key={props.docketName} style={{ display: 'block', marginRight: '2rem' }}>
@@ -84,9 +94,9 @@ const AddEvidenceSubmissionTaskView = (props) => {
 };
 
 AddEvidenceSubmissionTaskView.propTypes = {
-  task: PropTypes.object.isRequired,
-  docketName: PropTypes.object.isRequired,
-  setRelatedTasksCanContinue: PropTypes.func.isRequired
+  task: PropTypes.array.isRequired,
+  docketName: PropTypes.string.isRequired,
+  setRelatedTasksCanContinue: PropTypes.func.isRequired,
 };
 
 export default AddEvidenceSubmissionTaskView;
