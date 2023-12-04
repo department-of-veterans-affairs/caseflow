@@ -52,7 +52,7 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
     end
   end
 
-  describe "vbms_document_types" do
+  describe "document_type_correspondence" do
     let(:document_types_response) do
       {
         "documentTypes" => [

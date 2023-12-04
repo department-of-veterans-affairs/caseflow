@@ -78,7 +78,7 @@ class CorrespondenceController < ApplicationController
     render json: { status: 200, correspondence: correspondence }
   end
 
-  def get_list_document_type_correspondence
+  def document_type_correspondence
     data = vbms_document_types
     render json: { data: data }
   end
