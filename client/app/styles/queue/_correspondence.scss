@@ -44,35 +44,36 @@
   grid-column-gap: 10px;
 }
 
-#pdf-preview-footer-input-field div {
-  height: 100%;
-  display: inline-block;
-}
-
 #pdf-preview-footer-input-field {
   height: 100%;
   display: inline-block;
   width: 50%;
 
-  div .page-progress-indicator-input {
-    .input-container {
-      width: 50%;
-      margin: auto;
-      place-items: center;
-      input {
-        color: $color-white;
-        height: 3rem;
-        margin-top: 1rem;
-        text-align: center;
-        background-color: $color-gray;
-        border: 2px $color-white solid;
+  div {
+    height: 100%;
+    display: inline-block;
+
+    .page-progress-indicator-input {
+      .input-container {
+        width: 50%;
+        margin: auto;
+        place-items: center;
+
+        input {
+          color: $color-white;
+          height: 3rem;
+          margin-top: 1rem;
+          text-align: center;
+          background-color: $color-gray;
+          border: 2px $color-white solid;
+        }
+      }
+
+      label {
+        margin-right: 10px;
       }
     }
-    label[for="page-progress-indicator-input"] {
-      margin-right: 10px;
-    }
   }
-
 }
 
 @container pdf-preview-scrollview-container (min-width: 1300px) {
