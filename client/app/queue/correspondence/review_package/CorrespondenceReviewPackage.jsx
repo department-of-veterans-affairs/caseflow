@@ -11,6 +11,7 @@ import { setFileNumberSearch, doFileNumberSearch } from '../../../intake/actions
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { useHistory } from 'react-router';
+import PackageActionModal from '../modals/PackageActionModal';
 
 export const CorrespondenceReviewPackage = (props) => {
   const [reviewDetails, setReviewDetails] = useState({
@@ -25,6 +26,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [apiResponse, setApiResponse] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [packageModal, setPackageModal] = useState(true);
 
   const history = useHistory();
   const fetchData = async () => {
@@ -59,6 +61,10 @@ export const CorrespondenceReviewPackage = (props) => {
 
   const handleModalClose = () => {
     setShowModal(!showModal);
+  };
+
+  const showPackageModal = () => {
+    setPackageModal(!packageModal);
   };
 
   const handleReview = () => {
@@ -100,6 +106,7 @@ export const CorrespondenceReviewPackage = (props) => {
         <ReviewPackageData
           correspondence={props.correspondence}
           packageDocumentType={props.packageDocumentType} />
+        {packageModal && <PackageActionModal showModal={packageModal} />}
         <ReviewForm
           {...{
             reviewDetails,
@@ -140,6 +147,7 @@ export const CorrespondenceReviewPackage = (props) => {
               href={intakeLink}
             />
           </a>
+          <Button name="Test modal" onClick={showPackageModal} />
         </div>
       </div>
     </React.Fragment>

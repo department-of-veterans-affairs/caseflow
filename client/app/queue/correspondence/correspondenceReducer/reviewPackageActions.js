@@ -30,6 +30,16 @@ export const setPackageDocumentType = (packageDocumentType) =>
     });
   };
 
+export const setVeteranInformation = (veteranInfo) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_VETERAN_INFORMATION,
+      payload: {
+        veteranInfo
+      }
+    });
+  };
+
 export const updateCmpInformation = (packageDocumentType, date) =>
   (dispatch) => {
     dispatch({
