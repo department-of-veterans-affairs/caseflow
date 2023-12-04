@@ -35,17 +35,22 @@ class SystemEncounteredUnknownErrorJob < CaseflowJob
 
   # :reek:FeatureEnvy
   def process_decision_document(decision_document)
-    ActiveRecord::Base.transaction do
-      dd_epe = decision_document.end_product_establishments
-      if dd_epe.empty?
+    dd_epe = decision_document.end_product_establishments
+    if dd_epe.empty?
+      begin
         ExternalApi::VBMSService.upload_document_to_vbms(decision_document.appeal, decision_document)
         decision_document.clear_error!
-      elsif all_epes_valid?(dd_epe)
-        decision_document.clear_error!
+      rescue StandardError => error
+        log_error(error)
+        stuck_job_report_service.append_errors(decision_document.class.name, decision_document.id, error)
       end
-    rescue StandardError => error
-      log_error(error)
-      stuck_job_report_service.append_error(decision_document.class.name, decision_document.id, error)
+    elsif all_epes_valid?(dd_epe)
+      begin
+        decision_document.clear_error!
+      rescue StandardError => error
+        log_error(error)
+        stuck_job_report_service.append_errors(decision_document.class.name, decision_document.id, error)
+      end
     end
   end
 
