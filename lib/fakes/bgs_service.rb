@@ -245,6 +245,8 @@ class Fakes::BGSService
   end
 
   # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity
   def fetch_person_info(participant_id)
     veteran = Veteran.find_by(participant_id: participant_id)
     # This is a limited set of test data, more fields are available.
@@ -311,6 +313,8 @@ class Fakes::BGSService
     end
   end
   # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def station_conflict?(vbms_id, _veteran_participant_id)
     (self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
@@ -343,7 +347,7 @@ class Fakes::BGSService
 
     record = (self.class.power_of_attorney_records || {})[file_number]
     record ||= default_vso_power_of_attorney_record if file_number == DEFAULT_VSO_POA_FILE_NUMBER
-    record ||= default_power_of_attorney_record
+    record ||= default_power_of_attorney_record(file_number)
 
     get_claimant_poa_from_bgs_poa(record)
   end
@@ -373,6 +377,8 @@ class Fakes::BGSService
                   org_type_nm: Fakes::BGSServicePOA::POA_NATIONAL_ORGANIZATION,
                   ptcpnt_id: Fakes::BGSServicePOA::PARALYZED_VETERANS_VSO_PARTICIPANT_ID
                 }
+              elsif FeatureToggle.enabled?(:randomize_poa) && BgsAttorney.exists?
+                poa_hash_from_bgs_attorney(random_attorney)
               elsif participant_id.starts_with?("NO_POA")
                 {}
               else
@@ -386,7 +392,8 @@ class Fakes::BGSService
 
         {
           ptcpnt_id: participant_id,
-          file_number: "00001234",
+          # file_number: "00001234",
+          file_number: generate_random_file_number,
           power_of_attorney: vso
         }
       end
@@ -449,6 +456,7 @@ class Fakes::BGSService
   # TODO: add more test cases
   def find_address_by_participant_id(participant_id)
     address = (self.class.address_records || {})[participant_id]
+    address ||= random_address if FeatureToggle.enabled?(:randomize_poa)
     address ||= default_address
 
     get_address_from_bgs_address(address)
@@ -712,36 +720,50 @@ class Fakes::BGSService
   end
 
   def generate_random_file_number
-    Kernel.srand(1)
     value = rand(700_000_000...733_792_224).to_s
 
     # make sure the value is unique for both file number and participant id
     while BgsPowerOfAttorney.find_by(file_number: value).nil? == false &&
-          BgsPowerOfAttorney.find_by(poa_participant_id: value).nil? == false
-
+          BgsPowerOfAttorney.find_by(claimant_participant_id: value).nil? == false
       value = rand(700_000_000...733_792_224).to_s
     end
-    # return the value
+
     value
   end
 
-  def default_power_of_attorney_record
-    # generate random file number and participant id to prevent unique id collisions
-    # with test data
-    file_number = generate_random_file_number
-    poa_participant_id = generate_random_file_number
+  def default_power_of_attorney_record(file_number)
+    # Try to guess the claimant participant id based on the file number otherwise assign it to a random one
+    claimant_participant_id = BgsPowerOfAttorney.find_by(file_number: file_number)&.claimant_participant_id
+    claimant_participant_id ||= generate_random_file_number
+    poa_hash = if FeatureToggle.enabled?(:randomize_poa) && BgsAttorney.exists?
+                 poa_hash_from_bgs_attorney(random_attorney)
+               else
+                 {
+                   legacy_poa_cd: "3QQ",
+                   nm: FakeConstants.BGS_SERVICE.DEFAULT_POA_NAME,
+                   org_type_nm: "POA Attorney",
+                   ptcpnt_id: "600153863"
+                 }
+               end
 
     {
-      file_number: "633792224",
-      power_of_attorney:
-        {
-          legacy_poa_cd: "3QQ",
-          nm: FakeConstants.BGS_SERVICE.DEFAULT_POA_NAME,
-          org_type_nm: "POA Attorney",
-          ptcpnt_id: "600153863"
-        },
-      ptcpnt_id: "600085544"
+      file_number: file_number,
+      power_of_attorney: poa_hash,
+      ptcpnt_id: claimant_participant_id
     }
+  end
+
+  def poa_hash_from_bgs_attorney(bgs_attorney)
+    {
+      legacy_poa_cd: "3QQ",
+      nm: bgs_attorney.name,
+      org_type_nm: bgs_attorney.record_type,
+      ptcpnt_id: bgs_attorney.participant_id
+    }
+  end
+
+  def random_attorney
+    BgsAttorney.find(BgsAttorney.pluck(:id).sample)
   end
 
   def default_vso_power_of_attorney_record
@@ -805,6 +827,34 @@ class Fakes::BGSService
       trsury_addrs_two_txt: "9999 MISSION ST",
       trsury_seq_nbr: "5",
       zip_prefix_nbr: FakeConstants.BGS_SERVICE.DEFAULT_ZIP
+    }
+  end
+
+  def random_address
+    {
+      addrs_one_txt: Faker::Address.street_address,
+      addrs_three_txt: FakeConstants.BGS_SERVICE.DEFAULT_ADDRESS_LINE_3,
+      addrs_two_txt: Faker::Address.secondary_address,
+      city_nm: Faker::Address.city,
+      cntry_nm: "USA",
+      efctv_dt: 15.days.ago.to_formatted_s(:short_date),
+      email_addrs_txt: Faker::Internet.email,
+      jrn_dt: 15.days.ago.to_formatted_s(:short_date),
+      jrn_lctn_id: "283",
+      jrn_obj_id: "SHARE  - PCAN",
+      jrn_status_type_cd: "U",
+      jrn_user_id: "CASEFLOW1",
+      postal_cd: Faker::Address.state_abbr,
+      ptcpnt_addrs_id: "15069061",
+      ptcpnt_addrs_type_nm: "Mailing",
+      ptcpnt_id: "600085544",
+      shared_addrs_ind: "N",
+      trsury_addrs_four_txt: "#{Faker::Address.city} #{Faker::Address.state_abbr}",
+      trsury_addrs_one_txt: "Jamie Fakerton",
+      trsury_addrs_three_txt: Faker::Address.secondary_address,
+      trsury_addrs_two_txt: Faker::Address.street_address,
+      trsury_seq_nbr: "5",
+      zip_prefix_nbr: Faker::Address.zip
     }
   end
   # rubocop:enable Metrics/MethodLength

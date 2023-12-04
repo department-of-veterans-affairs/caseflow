@@ -218,7 +218,8 @@ describe BgsPowerOfAttorney do
     context "POA exists in BGS" do
       it "returns parsed response" do
         expect(subject).to_not be_nil
-        expect(subject[:file_number]).to eq "00001234" # default fakes
+        # expect(subject[:file_number]).to eq "00001234" # default fakes
+        expect(subject[:file_number]).to_not be_nil # file number is randomized now
       end
     end
 
