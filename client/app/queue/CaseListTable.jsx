@@ -17,8 +17,7 @@ import COPY from '../../COPY';
 import Pagination from 'app/components/Pagination/Pagination';
 
 class CaseListTable extends React.PureComponent {
-
-  state = { currentPage: 1 }
+  state = { currentPage: this.props.currentPage }
 
   componentWillUnmount = () => this.props.clearCaseListSearch();
 
@@ -123,7 +122,13 @@ class CaseListTable extends React.PureComponent {
     }
 
     const updatePageHandler = (idx) => {
-      this.setState({ currentPage: idx + 1 });
+      const newCurrentPage = idx + 1;
+
+      this.setState({ currentPage: newCurrentPage });
+
+      if (typeof this.props.updatePageHandlerCallback !== 'undefined') {
+        this.props.updatePageHandlerCallback(newCurrentPage);
+      }
     };
     const totalPages = Math.ceil(this.props.appeals.length / 5);
     const startIndex = (this.state.currentPage * 5) - 5;
@@ -171,18 +176,20 @@ CaseListTable.propTypes = {
   styling: PropTypes.object,
   clearCaseListSearch: PropTypes.func,
   userRole: PropTypes.string,
-  userCssId: PropTypes.string
+  userCssId: PropTypes.string,
+  currentPage: PropTypes.number,
+  updatePageHandlerCallback: PropTypes.func
 };
 
 CaseListTable.defaultProps = {
   showCheckboxes: false,
   paginate: false,
+  currentPage: 1
 };
 
 const mapStateToProps = (state) => ({
   userCssId: state.ui.userCssId,
-  userRole: state.ui.userRole,
-  taskRelatedAppealIds: state.intakeCorrespondence.taskRelatedAppealIds
+  userRole: state.ui.userRole
 });
 
 const mapDispatchToProps = (dispatch) =>

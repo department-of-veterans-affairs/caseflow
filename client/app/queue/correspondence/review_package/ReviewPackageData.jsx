@@ -70,8 +70,8 @@ const CmpInfoScaffolding = () => {
       </div>
 
       <TitleDetailsSubheader id="caseTitleDetailsSubheader">
-        <TitleDetailsSubheaderSection title="Portal Entry Date">
-          {formattedPortalEntryDate}
+        <TitleDetailsSubheaderSection title="VA DOR">
+          {formattedVaDateOfReceipt}
         </TitleDetailsSubheaderSection>
         <TitleDetailsSubheaderSection title="Source Type">
           {correspondence?.source_type}
@@ -85,8 +85,8 @@ const CmpInfoScaffolding = () => {
         <TitleDetailsSubheaderSection title="CMP Queue Name">
           BVA Intake
         </TitleDetailsSubheaderSection>
-        <TitleDetailsSubheaderSection title="VA DOR">
-          {formattedVaDateOfReceipt}
+        <TitleDetailsSubheaderSection title="Portal Entry Date">
+          {formattedPortalEntryDate}
         </TitleDetailsSubheaderSection>
       </TitleDetailsSubheader>
     </div>
