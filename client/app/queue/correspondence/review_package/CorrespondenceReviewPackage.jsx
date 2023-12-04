@@ -11,6 +11,7 @@ import { setFileNumberSearch, doFileNumberSearch } from '../../../intake/actions
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { useHistory } from 'react-router';
+import PackageActionModal from '../modals/PackageActionModal';
 
 export const CorrespondenceReviewPackage = (props) => {
   const [reviewDetails, setReviewDetails] = useState({
@@ -105,6 +106,7 @@ export const CorrespondenceReviewPackage = (props) => {
         <ReviewPackageData
           correspondence={props.correspondence}
           packageDocumentType={props.packageDocumentType} />
+        {packageModal && <PackageActionModal showModal={packageModal} />}
         <ReviewForm
           {...{
             reviewDetails,
@@ -145,6 +147,7 @@ export const CorrespondenceReviewPackage = (props) => {
               href={intakeLink}
             />
           </a>
+          <Button name="Test modal" onClick={showPackageModal} />
         </div>
       </div>
     </React.Fragment>
