@@ -14,7 +14,7 @@ class SystemEncounteredUnknownErrorJob < CaseflowJob
     process_decision_documents
   rescue StandardError => error
     log_error(error)
-    stuck_job_report_service.append_errors(decision_document.class.name, decision_document.id, error)
+    stuck_job_report_service.append_errors(decision_docs_with_errors, error)
   end
 
   def process_decision_documents
