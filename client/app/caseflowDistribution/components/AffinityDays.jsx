@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
 import { css } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
@@ -14,42 +15,61 @@ const AffinityDays = (props) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
   });
 
-  const [selectedOption, setSelectedOption] = useState(null);
-  const [affinityLevers, setLever] = useState(filteredLevers);
+  const [affinityLevers, setAffinityLevers] = useState(filteredLevers);
 
-  const handleRadioChange = (option) => {
-    setSelectedOption(option);
-  };
-
-  const updateLever = (option, index) => (event) => {
-    const levers = affinityLevers.map((lever, i) => {
+  const updateLever = (option, index, value) => {
+    const updatedLevers = affinityLevers.map((l, i) => {
       if (index === i) {
-        const opt = lever.options.map((op) => {
+        const updatedOptions = l.options.map((op) => {
           if (op === option) {
-            let errorResult = !(/^\d{0,3}$/).test(event);
+            let errorResult = !(/^\d{0,3}$/).test(value);
 
             if (errorResult) {
               op.errorMessage = 'Please enter a value less than or equal to 999';
+              op.value = null;
             } else {
               op.errorMessage = null;
+              op.value = value;
             }
-            op.value = event;
           }
 
           return op;
         });
 
-        lever.option = opt;
+        return { ...l, options: updatedOptions };
 
-        return lever;
       }
 
-      return lever;
-
+      return l;
     });
 
-    setLever(levers);
+    setAffinityLevers(updatedLevers);
+
+    leverStore.dispatch({
+      type: Constants.UPDATE_LEVER_VALUE,
+      updated_lever: { item: option.item, value: option.value }
+    });
   };
+
+  const handleRadioChange = (lever, option) => {
+    if (lever && option) {
+      const updatedLevers = affinityLevers.map((l) => {
+        if (l.item === lever.item) {
+          return { ...l, value: option.item };
+        }
+        return l;
+      });
+      setAffinityLevers(updatedLevers);
+
+      leverStore.dispatch({
+        type: Constants.UPDATE_LEVER_VALUE,
+        updated_lever: { item: lever.item, value: option.item }
+      });
+    }
+  };
+
+
+
 
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
@@ -69,7 +89,7 @@ const AffinityDays = (props) => {
           readOnly={lever.is_disabled}
           value={option.value}
           errorMessage={option.errorMessage}
-          onChange={updateLever(option, index)}
+          onChange={(value) => updateLever(lever, option, index, value)}
         />
       );
     }
@@ -80,7 +100,7 @@ const AffinityDays = (props) => {
           label={false}
           readOnly={lever.is_disabled}
           value={option.value}
-          onChange={updateLever(option, index)}
+          onChange={(value) => updateLever(lever, option, index, value)}
         />
       );
     }
@@ -129,16 +149,16 @@ const AffinityDays = (props) => {
 
               (isMemberUser) ?
                 generateMemberViewLabel(option, lever) :
-                <div>
+                <div key={`${lever.item}-${index}-${option.item}`}>
                   <div>
                     <input
-                      checked={selectedOption ? option.item === selectedOption.item : option.item === lever.value}
+                      checked={option.item === lever.value}
                       type="radio"
                       value={option.item}
                       disabled={lever.is_disabled}
                       id={`${lever.item}-${option.item}`}
                       name={lever.item}
-                      onChange={() => handleRadioChange(option)}
+                      onChange={() => handleRadioChange(lever, option, index)}
                     />
                     <label htmlFor={`${lever.item}-${option.item}`}>
                       {option.text}
@@ -168,3 +188,5 @@ AffinityDays.propTypes = {
 };
 
 export default AffinityDays;
+
+

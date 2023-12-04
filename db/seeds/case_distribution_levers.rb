@@ -426,7 +426,7 @@ module Seeds
         },
         {
           item: 'direct_docket_time_goal',
-          title: 'Direct Docket Time Goal',
+          title: 'AMA Non-priority Direct Review Docket Time Goal',
           data_type: 'number',
           value: 550,
           unit: 'days',
@@ -438,7 +438,7 @@ module Seeds
         },
         {
           item: 'days_before_goal_due_for_distribution',
-          title: 'Days Before Goal Due for Distribution',
+          title: 'AMA Non-priority Direct Review Days Before Goal Due for Distribution',
           data_type: 'number',
           value: nil,
           unit: 'days',
