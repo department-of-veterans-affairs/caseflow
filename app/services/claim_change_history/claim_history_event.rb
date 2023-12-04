@@ -106,12 +106,10 @@ class ClaimHistoryEvent
 
     def create_issue_events(change_data)
       issue_events = []
-
-      # before request issue ids does NOT contain withdrawn issues, but after issues does
-      before_request_issue_ids = change_data["before_request_issue_ids"].scan(/\d+/).map(&:to_i)
-      after_request_issue_ids = change_data["after_request_issue_ids"].scan(/\d+/).map(&:to_i)
-      withdrawn_request_issue_ids = change_data["withdrawn_request_issue_ids"].scan(/\d+/).map(&:to_i)
-      edited_request_issue_ids = change_data["edited_request_issue_ids"].scan(/\d+/).map(&:to_i)
+      before_request_issue_ids = (change_data["before_request_issue_ids"] || "").scan(/\d+/).map(&:to_i)
+      after_request_issue_ids = (change_data["after_request_issue_ids"] || "").scan(/\d+/).map(&:to_i)
+      withdrawn_request_issue_ids = (change_data["withdrawn_request_issue_ids"] || "").scan(/\d+/).map(&:to_i)
+      edited_request_issue_ids = (change_data["edited_request_issue_ids"] || "").scan(/\d+/).map(&:to_i)
       removed_request_issue_ids = (before_request_issue_ids - after_request_issue_ids)
       updates_hash = update_event_hash(change_data).merge("event_date" => change_data["request_issue_update_time"])
 
