@@ -146,21 +146,6 @@ const AffinityDays = (props) => {
           </div>
           <div className={`${styles.leverRight} ${leverNumberDiv}`}>
             {lever.options.map((option) => (
-              <div key={`${lever.item}-${index}-${option.item}`}>
-                <div>
-                  <input
-                    checked={option.item === lever.value}
-                    type="radio"
-                    value={option.item}
-                    disabled={lever.is_disabled}
-                    id={`${lever.item}-${option.item}`}
-                    name={lever.item}
-                    onChange={() => handleRadioChange(lever, option, index)}
-                  />
-                  <label htmlFor={`${lever.item}-${option.item}`}>
-                    {option.text}
-                  </label>
-                </div>
 
               (isMemberUser) ?
                 generateMemberViewLabel(option, lever) :
@@ -203,5 +188,3 @@ AffinityDays.propTypes = {
 };
 
 export default AffinityDays;
-
-
