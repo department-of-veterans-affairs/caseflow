@@ -4,7 +4,7 @@ import * as Constants from './leversActionTypes';
 export const initialState = {
   levers: [],
   initial_levers: [],
-  formatted_history: {}
+  formatted_history: {},
 };
 
 const leversReducer = (state = initialState, action = {}) => {
@@ -15,9 +15,12 @@ const leversReducer = (state = initialState, action = {}) => {
         formatted_history: formatLeverHistory(action.history)
       }
     case Constants.UPDATE_LEVER_VALUE:
+      const updatedLevers = updateLevers(state.levers, action.updated_lever);
+      const changesOccurred = JSON.stringify(state.levers) !== JSON.stringify(state.initial_levers)
       return {
         ...state,
-        levers: updateLevers(state.levers, action.updated_lever)
+        levers: updatedLevers,
+        changesOccurred
       }
     case Constants.SAVE_LEVERS:
       return {
@@ -58,8 +61,19 @@ export const formatLeverHistory = (lever_history_list) => {
 };
 
 export const updateLevers = (current_levers, updated_lever) => {
-  let leverIndex = current_levers.findIndex((lever => lever.item == updated_lever.item));
-  current_levers[leverIndex].value = updated_lever.value;
+  const leverIndex = current_levers.findIndex((lever => lever.item == updated_lever.item));
+
+  if (leverIndex !== -1) {
+
+    const updatedLevers = [...current_levers];
+
+    updatedLevers[leverIndex] = {
+      ...updatedLevers[leverIndex],
+      value: updated_lever.value,
+    };
+
+    return updatedLevers
+  }
 
   return current_levers
 };

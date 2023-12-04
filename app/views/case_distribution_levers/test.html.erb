@@ -60,26 +60,41 @@
   <h2> CDA Control Group Organization </h2>
     <h3> Organization Info </h3>
       <%= "Name: " + cda_group_organization.name %>
-      <p>&nbsp;</p>
-      <%= button_to 'Destroy Organization', create_acd_group_org_singleton_case_distribution_levers_path, method: :post, params:{create_or_destroy: "destroy"} %>
+    <h3> Users </h3>
+      <table>
+        <thead>
+          <tr>
+            <td> Name </td>
+            <td> Admin? </td>
+            <td> Actions </td>
+          </tr>
+        </thead>
+        <tbody>
+          <% cda_group_organization.users.each do |user| %>
+            <tr>
+              <td> <%= user.full_name %> </td>
+              <td> <%= user.administered_teams.include?(cda_group_organization) %> </td>
+              <td> <%= button_to 'Remove From Organization', remove_user_case_distribution_levers_tests_path, method: :post, params:{user: current_user} %>
+                <% if user.administered_teams.include?(cda_group_organization) %>
+                  <%= button_to 'Remove Admin', remove_admin_case_distribution_levers_tests_path, method: :post, params:{user: current_user} %>
+                <% else %>
+                  <%= button_to 'Make User Admin', make_admin_case_distribution_levers_tests_path, method: :post, params:{user: current_user} %>
+                <%end%>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <p>&nbsp;</p>
+    <span>
+      <%= button_to 'Destroy Organization', destroy_acd_group_org_case_distribution_levers_tests_path, method: :post %>
+      <%unless current_user.member_of_organization?(cda_group_organization) %>
+        <%= button_to 'Add Current User To Organization', add_user_case_distribution_levers_tests_path, method: :post, params:{user: current_user} %>
+      <% end %>
+    </span>
 <% else %>
   <h2> Organization Setup </h2>
-    <%= button_to 'Create Organization', create_acd_group_org_singleton_case_distribution_levers_path, method: :post, params:{create_or_destroy: "create"} %>
+    <%= button_to 'Create Organization', create_acd_group_org_singleton_case_distribution_levers_tests_path, method: :post %>
 <% end %>
 
 
-
-<%#
-Display an <h2> tag with the text “Organization Setup.”
-Use an erb file for simplicity in the non-production test environment.
-Include any necessary UI elements or buttons to facilitate organization setup testing.
-Test the persistence of changes by leaving the page, closing the browser window, and clearing the cache.
-Verify that the changes made through the UI persist when revisiting the page.
-
-a button that says "create group" if the organization does not exist
-the logic on the backend for the button should call the OrgName.singleton function so that we can more easily create the group in UAT and caseflow demo.
-
-Ensure that the backend logic associated with buttons and functionalities is correctly integrated and functions as expected.
-Document any unique considerations or deviations from standard behavior for non-production testing.
-There was something similar implemented to show the metrics table as a view.
-The changes being in the backend can also be tested by leaving the page, closing the windows, clearing cache, and making sure that the new changes persist. %>
