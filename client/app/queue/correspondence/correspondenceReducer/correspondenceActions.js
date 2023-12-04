@@ -105,3 +105,13 @@ export const saveMailTaskState = (name, isChecked) =>
       }
     });
   };
+
+export const setNewAppealRelatedTasks = (newAppealRelatedTasks) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_NEW_APPEAL_RELATED_TASKS,
+      payload: {
+        newAppealRelatedTasks
+      }
+    });
+  };

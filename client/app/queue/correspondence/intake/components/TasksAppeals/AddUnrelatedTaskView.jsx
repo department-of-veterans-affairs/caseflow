@@ -1,47 +1,83 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '../../../../../components/Button';
-import TaskNotRelatedToAppeal from './TaskNotRelatedToAppeal';
+import AddTaskView from './AddTaskView';
 import { setUnrelatedTasks } from '../../../correspondenceReducer/correspondenceActions';
 import PropTypes from 'prop-types';
 
 const MAX_NUM_TASKS = 4;
 
 export const AddUnrelatedTaskView = (props) => {
-  const unrelatedTasks = useSelector((state) => state.intakeCorrespondence.unrelatedTasks);
-  const [nextTaskId, setNextTaskId] = useState(1);
+  const [newTasks, setNewTasks] = useState(useSelector((state) => state.intakeCorrespondence.unrelatedTasks));
+  const [nextTaskId, setNextTaskId] = useState(newTasks.length);
   const [addTasksVisible, setAddTasksVisible] = useState(false);
+  const [availableTaskTypeOptions, setavailableTaskTypeOptions] = useState([]);
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    setNextTaskId((prevId) => prevId + 1);
+    dispatch(setUnrelatedTasks(newTasks));
+  }, [newTasks]);
 
   const clickAddTask = () => {
     const newTask = { id: nextTaskId, type: '', content: '' };
 
-    setNextTaskId(nextTaskId + 1);
-
-    dispatch(setUnrelatedTasks([...unrelatedTasks, newTask]));
+    setNewTasks([...newTasks, newTask]);
   };
 
-  const removeTask = useCallback((id) => {
-    const filtered = unrelatedTasks.filter((task) => task.id !== id);
+  const removeTask = (id) => {
+    const filtered = newTasks.filter((task) => task.id !== id);
 
-    dispatch(setUnrelatedTasks(filtered));
-  }, [unrelatedTasks]);
+    setNewTasks(filtered);
+  };
 
-  const taskUpdatedCallback = useCallback((updatedTask) => {
-    const filtered = unrelatedTasks.filter((task) => task.id !== updatedTask.id);
+  const taskUpdatedCallback = (updatedTask) => {
+    const filtered = newTasks.filter((task) => task.id !== updatedTask.id);
 
-    dispatch(setUnrelatedTasks([...filtered, updatedTask]));
-  }, [unrelatedTasks]);
+    setNewTasks([...filtered, updatedTask]);
+  };
 
   useEffect(() => {
-    if (unrelatedTasks.length) {
+    if (newTasks.length) {
       setAddTasksVisible(true);
     } else {
       setAddTasksVisible(false);
+    }
+  }, [newTasks]);
+
+  useEffect(() => {
+    let canContinue = true;
+
+    newTasks.forEach((task) => {
+      canContinue = canContinue && ((task.content !== '') && (task.type !== ''));
+    });
+
+    props.setUnrelatedTasksCanContinue(canContinue);
+  }, [newTasks]);
+
+  useEffect(() => {
+    if (!addTasksVisible) {
       props.setUnrelatedTasksCanContinue(true);
     }
-  }, [unrelatedTasks]);
+  }, [addTasksVisible]);
+
+  useEffect(() => {
+    setavailableTaskTypeOptions(props.filterUnavailableTaskTypeOptions(newTasks));
+  }, [newTasks]);
+
+  const getTasks = () => {
+    return newTasks.toSorted((t1, t2) => {
+      if (t1.id < t2.id) {
+        return -1;
+      }
+      if (t1.id > t2.id) {
+        return 1;
+      }
+
+      return 0;
+    });
+  };
 
   return (
     <div>
@@ -69,13 +105,15 @@ export const AddUnrelatedTaskView = (props) => {
           </div>
           <div style={{ width: '100%', height: '3rem' }} />
           <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-            {unrelatedTasks.length && unrelatedTasks.map((currentTask, i) => (
-              <TaskNotRelatedToAppeal
-                key={i}
+            {getTasks().map((task) => (
+              <AddTaskView
+                key={task.id}
+                task={task}
                 removeTask={removeTask}
-                taskId={currentTask.id}
                 taskUpdatedCallback={taskUpdatedCallback}
-                setUnrelatedTasksCanContinue={props.setUnrelatedTasksCanContinue}
+                displayRemoveCheck
+                allTaskTypeOptions={props.allTaskTypeOptions}
+                availableTaskTypeOptions={availableTaskTypeOptions}
               />
             ))}
           </div>
@@ -83,7 +121,7 @@ export const AddUnrelatedTaskView = (props) => {
             <Button
               type="button"
               onClick={clickAddTask}
-              disabled={unrelatedTasks.length === MAX_NUM_TASKS}
+              disabled={newTasks.length === MAX_NUM_TASKS}
               name="addTasks"
               classNames={['cf-left-side']}>
                 + Add tasks
@@ -96,7 +134,9 @@ export const AddUnrelatedTaskView = (props) => {
 };
 
 AddUnrelatedTaskView.propTypes = {
-  setUnrelatedTasksCanContinue: PropTypes.func.isRequired
+  setUnrelatedTasksCanContinue: PropTypes.func.isRequired,
+  filterUnavailableTaskTypeOptions: PropTypes.func.isRequired,
+  allTaskTypeOptions: PropTypes.array.isRequired
 };
 
 export default AddUnrelatedTaskView;
