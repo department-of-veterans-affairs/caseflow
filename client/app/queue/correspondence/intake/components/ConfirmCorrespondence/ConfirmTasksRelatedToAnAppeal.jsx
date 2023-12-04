@@ -18,23 +18,27 @@ const ConfirmTasksRelatedToAnAppeal = () => {
     return (
       <>
         <thead style={{}}>
-          <tr style={{ height: '100px',  display: 'flex', flexDirection: 'column'}}>
+          <tr className="cf-form--full-width" style={{ height: '100px', display: 'flex', flexDirection: 'column' }}>
             <th style={styling}></th>
             Appeal {index + 1} Tasks
             <b>Linked appeal</b>
             {/* <HearingBadge name="help" number={123} /> */}
             <LinkToAppeal>
-
-            <DocketTypeBadge name="Help" number={'1234'} />
+              <DocketTypeBadge name="Help" number="1234" />
               <b>{fetchedAppeals.find((appeal) => appeal.id === task).docketNumber}</b></LinkToAppeal>
           </tr>
         </thead>
         <tr>
           <td
-            style={{ backgroundColor: COLORS.GREY_BACKGROUND, borderTop: 'none', width: '20%' }}>
+            style={{ backgroundColor: COLORS.GREY_BACKGROUND,
+              borderTop: 'none',
+              width: '20%',
+              borderSpacing: '0px' }}>
             <b>Additional Tasks</b>
           </td>
-          <td style={{ backgroundColor: COLORS.GREY_BACKGROUND, borderTop: 'none' }}>
+          <td style={{ backgroundColor: COLORS.GREY_BACKGROUND,
+            borderTop: 'none',
+            borderSpacing: '0px' }}>
             <b>Task Instructions or Context</b>
           </td>
         </tr>
@@ -68,7 +72,9 @@ const ConfirmTasksRelatedToAnAppeal = () => {
           style={{ background: COLORS.GREY_BACKGROUND, padding: '2rem', paddingTop: '0.5rem', marginBottom: '2rem' }}>
           <table className="usa-table-borderless">
 
-            <tbody>
+            {/* <tbody className="usa-input-grid-large"> */}
+            <tbody className="cf-form--full-width">
+
               {rowObjects}
             </tbody>
           </table>
