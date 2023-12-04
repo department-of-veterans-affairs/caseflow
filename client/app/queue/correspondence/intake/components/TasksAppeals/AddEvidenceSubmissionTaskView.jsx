@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import TextareaField from '../../../../../components/TextareaField';
 import ReactSelectDropdown from '../../../../../components/ReactSelectDropdown';
 import Checkbox from '../../../../../components/Checkbox';
+import { setWaivedEvidenceTasks } from '../../../correspondenceReducer/correspondenceActions';
 import PropTypes from 'prop-types';
 
 const AddEvidenceSubmissionTaskView = (props) => {
@@ -16,18 +18,23 @@ const AddEvidenceSubmissionTaskView = (props) => {
   const defaultValue = isEvidenceSubmission ? dropdownOptions[0] : null;
   const [isWaiveCheckboxSelected, setWaiveCheckboxSelected] = useState(false);
   const [waiveReason, setWaiveReason] = useState('');
+  const waivedEvidenceTasks = useSelector((state) => state.intakeCorrespondence.waivedEvidenceTasks);
+
+  const dispatch = useDispatch();
 
   const handleCheckboxChange = () => {
     setWaiveCheckboxSelected(!isWaiveCheckboxSelected);
 
-    // Clear the reason when unchecking the checkbox
     if (!isWaiveCheckboxSelected) {
       setWaiveReason('');
     }
 
-    const canContinue =
-    isWaiveCheckboxSelected &&
-    Boolean(waiveReason.trim());
+    const canContinue = isWaiveCheckboxSelected && Boolean(waiveReason.trim());
+    const newTask = { id: props.task, content: waiveReason, isChecked: !isWaiveCheckboxSelected };
+
+    // Dispatch the action with the updated tasks
+    dispatch(setWaivedEvidenceTasks([...waivedEvidenceTasks, newTask]));
+    // dispatch(setWaivedEvidenceTasks(newTask));
 
     props.setRelatedTasksCanContinue(canContinue);
   };

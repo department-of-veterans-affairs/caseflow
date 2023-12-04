@@ -71,7 +71,7 @@ export const ExistingAppealTasksView = (props) => {
         {props.appeal.evidenceSubmissionWindow && (
           <AddEvidenceSubmissionTaskView
             docketName={props.appeal.docketName}
-            task={props.newTasks[0]}
+            task={props.appeal.evidenceSubmissionWindow.id}
             setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
           />
         )}
