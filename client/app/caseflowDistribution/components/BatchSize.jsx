@@ -77,7 +77,7 @@ const BatchSize = (props) => {
                 readOnly={lever.is_disabled}
                 value={lever.value}
                 errorMessage={lever.errorMessage}
-                onChange={updateLever(index, lever.item)}
+                onChange={updateLever(index, lever.item, lever.item)}
               />
 }
           </div>
