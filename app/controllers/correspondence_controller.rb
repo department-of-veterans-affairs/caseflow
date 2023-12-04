@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class CorrespondenceController < ApplicationController
+  before_action :verify_correspondence_access
   before_action :verify_feature_toggle
   before_action :correspondence
 
@@ -73,12 +74,18 @@ class CorrespondenceController < ApplicationController
   def update_cmp
     correspondence.update(
       va_date_of_receipt: params["VADORDate"].in_time_zone,
-      package_document_type_id: params["packageDocument"]["value"].to_i,
+      package_document_type_id: params["packageDocument"]["value"].to_i
     )
     render json: { status: 200, correspondence: correspondence }
   end
 
   private
+
+  def verify_correspondence_access
+    return true if MailTeamSupervisor.singleton.user_has_access?(current_user) || MailTeam.singleton.user_has_access?(current_user)
+
+    redirect_to "/unauthorized"
+  end
 
   def general_information
     vet = veteran_by_correspondence
