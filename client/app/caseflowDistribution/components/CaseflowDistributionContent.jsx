@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import StaticLeversWrapper from './StaticLeversWrapper';
 import InteractableLeverWrapper from './InteractableLeversWrapper';
 import LeverHistory from './LeverHistory';
@@ -63,7 +63,7 @@ CaseflowDistributionContent.propTypes = {
   saveChanges: PropTypes.func.isRequired,
   formattedHistory: PropTypes.array.isRequired,
   isAdmin: PropTypes.bool.isRequired,
-  leverStore: PropTypes.any.isRequired
+  leverStore: PropTypes.any.isRequired,
 };
 
 export default CaseflowDistributionContent;

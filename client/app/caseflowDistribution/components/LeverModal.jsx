@@ -15,17 +15,20 @@ function DisplayAlertBanner() {
     message: COPY.CASE_DISTRIBUTION_SUCCESSBANNER_DETAIL,
     type: 'success',
     scrollOnAlert: true,
-    fixed: true,
-    styling: {
+    fixed: false,
+  };
+  const divStyle = {
       top: 0,
       left: 0,
       width: "100%",
       zIndex: 9999,
-    }
-  };
+      position: 'absolute'
+  }
 
   return (
+    <div style={divStyle}>
       <Alert {...staticSuccessBanner} />
+    </div>
   );
 }
 
@@ -46,7 +49,7 @@ function SaveLeversToDB(leverStore) {
   const leversData = leverStore.getState().levers;
 
   ApiUtil.post('/case_distribution_levers/update_levers_and_history', { leversData })
-    .then((response) => {
+    .then(() => {
       UpdateLeverHistory(leverStore);
       SaveLeverChanges(leverStore);
     })
@@ -127,7 +130,7 @@ export function LeverSaveButton({ leverStore }) {
 
   return (
     <>
-      <Button id="SaveLeversButton"  onClick={handleSaveButton} disabled={!changesOccurred || saveButtonDisabled}>
+      <Button id="LeversSaveButton"  onClick={handleSaveButton} disabled={!changesOccurred || saveButtonDisabled}>
         Save
       </Button>
       {showModal &&
