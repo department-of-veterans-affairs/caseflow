@@ -79,9 +79,8 @@ class CorrespondenceController < ApplicationController
   end
 
   def get_list_document_type_correspondence
-    # data =  vbms_document_types
-    # render json: { data: data};
-    render json: { data: [{ id: 155, name: "L141" }, { id: 156, name: "L143" }] }
+    data =  vbms_document_types
+    render json: { data: data};
   end
 
   private
