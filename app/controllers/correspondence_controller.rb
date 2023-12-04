@@ -79,18 +79,26 @@ class CorrespondenceController < ApplicationController
   end
 
   def get_list_document_type_correspondence
-    data =  vbms_document_types
-    render json: { data: data};
+    data = vbms_document_types
+    render json: { data: data }
   end
 
   private
 
   def vbms_document_types
-    data = ExternalApi::ClaimEvidenceService.document_types
+    begin
+      data = ExternalApi::ClaimEvidenceService.document_types
+    rescue StandardError => error
+      Rails.logger.error(error.full_message)
+      data ||= demo_data
+    end
     data["documentTypes"].map { |document_type| { id: document_type["id"], name: document_type["name"] } }
   end
 
-  private
+  def demo_data
+    json_file_path = "vbms doc types.json"
+    JSON.parse(File.read(json_file_path))
+  end
 
   def general_information
     vet = veteran_by_correspondence
