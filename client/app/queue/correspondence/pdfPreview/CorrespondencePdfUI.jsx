@@ -82,10 +82,9 @@ const CorrespondencePdfUI = (props) => {
           timeout: true,
           responseType: 'arraybuffer',
         });
-        console.log(response.body)
+
         const loadingTask = pdfjs.getDocument({ data: response.body });
         const pdfDocument = await loadingTask.promise;
-        console.log(pdfDocument)
 
         const pages = await getAllPages(pdfDocument);
 
