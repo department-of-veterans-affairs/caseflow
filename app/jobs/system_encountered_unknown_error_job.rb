@@ -11,10 +11,11 @@ class SystemEncounteredUnknownErrorJob < CaseflowJob
 
   def perform
     begin
-    process_decision_documents
-  rescue StandardError => error
-    log_error(error)
-    stuck_job_report_service.append_errors(decision_docs_with_errors, error)
+      process_decision_documents
+    rescue StandardError => error
+      log_error(error)
+      stuck_job_report_service.append_errors(decision_docs_with_errors, error)
+    end
   end
 
   def process_decision_documents
@@ -33,8 +34,12 @@ class SystemEncounteredUnknownErrorJob < CaseflowJob
   end
 
   def valid_decision_document?(decision_document)
-    decision_document.processed_at.present? &&
-      decision_document.uploaded_to_vbms_at.present?
+    begin
+      decision_document.processed_at.present? && decision_document.uploaded_to_vbms_at.present?
+    rescue StandardError
+      log_error(error)
+      stuck_job_report_service.append_errors(decision_document.class.name, decision_document.id, error)
+    end
   end
 
   # :reek:FeatureEnvy
