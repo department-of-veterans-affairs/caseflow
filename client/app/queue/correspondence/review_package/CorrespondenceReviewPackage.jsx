@@ -27,6 +27,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [disableButton, setDisableButton] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [packageModal, setPackageModal] = useState(true);
+  const [packageActionModal, setPackageActionModal] = useState(null);
 
   const history = useHistory();
   const fetchData = async () => {
@@ -66,6 +67,9 @@ export const CorrespondenceReviewPackage = (props) => {
   const showPackageModal = () => {
     setPackageModal(!packageModal);
   };
+  const handlePackageActionModal = (value) => {
+    setPackageActionModal(value);
+  }
 
   const handleReview = () => {
     history.push('/queue/correspondence');
