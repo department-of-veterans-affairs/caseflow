@@ -73,9 +73,14 @@ class CorrespondenceController < ApplicationController
   def update_cmp
     correspondence.update(
       va_date_of_receipt: params["VADORDate"].in_time_zone,
-      package_document_type_id: params["packageDocument"]["value"].to_i,
+      package_document_type_id: params["packageDocument"]["value"].to_i
     )
     render json: { status: 200, correspondence: correspondence }
+  end
+
+  def vbms_document_types
+    data = ExternalApi::ClaimEvidenceService.document_types
+    data["documentTypes"].map { |document_type| { id: document_type["id"], name: document_type["name"] } }
   end
 
   private
