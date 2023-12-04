@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_10_16_132819) do
+ActiveRecord::Schema.define(version: 2023_11_30_210737) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -220,7 +220,7 @@ ActiveRecord::Schema.define(version: 2023_10_16_132819) do
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
-  create_table "batch_processes", primary_key: "batch_id", id: :uuid, default: -> { "uuid_generate_v4()" }, comment: "The unique id of the created batch", comment: "A generalized table for batching and processing records within caseflow", force: :cascade do |t|
+  create_table "batch_processes", primary_key: "batch_id", id: :uuid, default: -> { "uuid_generate_v4()" }, comment: "A generalized table for batching and processing records within caseflow", force: :cascade do |t|
     t.string "batch_type", null: false, comment: "Indicates what type of record is being batched"
     t.datetime "created_at", null: false, comment: "Date and Time that batch was created."
     t.datetime "ended_at", comment: "The date/time that the batch finsished processing"
@@ -1016,7 +1016,7 @@ ActiveRecord::Schema.define(version: 2023_10_16_132819) do
     t.boolean "prepped", comment: "Determines whether the judge has checked the hearing as prepped"
     t.string "representative_name", comment: "Name of Appellant's representative if applicable"
     t.string "room", comment: "The room at BVA where the hearing will take place; ported from associated HearingDay"
-    t.time "scheduled_time", null: false, comment: "Date and Time when hearing will take place"
+    t.datetime "scheduled_time", comment: "Date and Time when hearing will take place"
     t.text "summary", comment: "Summary of hearing"
     t.boolean "transcript_requested", comment: "Determines whether the veteran/appellant has requested the hearing transcription"
     t.date "transcript_sent_date", comment: "Date of when the hearing transcription was sent to the Veteran/Appellant"
