@@ -14,4 +14,14 @@ class CaseDistributionLever < ApplicationRecord
       updated_lever.save!
     end
   end
+
+  class << self
+   def cavc_affinity_days
+      cavc_affinity_days_lever = find_by_item('cavc_affinity_days')
+      cavc_affinity_days_option = {}
+      cavc_affinity_days_option = cavc_affinity_days_lever.options.detect{|opt|
+      opt["item"] == cavc_affinity_days_lever.value} || {} if cavc_affinity_days_lever
+      cavc_affinity_days_option["value"].to_i
+   end
+  end
 end
