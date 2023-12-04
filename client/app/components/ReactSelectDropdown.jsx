@@ -61,7 +61,8 @@ const ReactSelectDropdown = (props) => {
   const isDisabled = props.disabled || false;
 
   return (
-    <div {...selectContainerStyles}>
+    <div id="reactSelectContainer"
+      {...selectContainerStyles}>
 
       <label style={{ marginTop: '5px', marginBottom: '5px', marginLeft: '1px' }}>{props.label}</label>
       <Select
@@ -87,7 +88,7 @@ ReactSelectDropdown.propTypes = {
       displayText: PropTypes.string,
     })
   ),
-  defaultValue: PropTypes.string,
+  defaultValue: PropTypes.object,
   label: PropTypes.string,
   onChangeMethod: PropTypes.func,
   className: PropTypes.string,

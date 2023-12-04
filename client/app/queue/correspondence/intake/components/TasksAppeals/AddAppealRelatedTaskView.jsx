@@ -26,17 +26,25 @@ const existingAppealAnswer = [
 
 export const AddAppealRelatedTaskView = (props) => {
   const appeals = useSelector((state) => state.intakeCorrespondence.fetchedAppeals);
-  const [taskRelatedAppeals, setTaskRelatedAppeals] = useState([]);
-  const [newTasks, setNewTasks] = useState([]);
+  const [taskRelatedAppeals, setTaskRelatedAppeals] =
+    useState(useSelector((state) => state.intakeCorrespondence.taskRelatedAppealIds));
+  const [newTasks, setNewTasks] = useState(useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks));
   const [existingAppealRadio, setExistingAppealRadio] =
     useState(taskRelatedAppeals.length ? RELATED_YES : RELATED_NO);
   const [loading, setLoading] = useState(false);
-  const [nextTaskId, setNextTaskId] = useState(1);
+  const [nextTaskId, setNextTaskId] = useState(newTasks.length);
+  const [currentAppealPage, setCurrentAppealPage] = useState(1);
+  const [tableUpdateTrigger, setTableUpdateTrigger] = useState(1);
 
   const dispatch = useDispatch();
 
   const appealById = (appealId) => {
     return appeals.find((el) => el.id === appealId);
+  };
+
+  const appealsPageUpdateHandler = (newCurrentPage) => {
+    setCurrentAppealPage(newCurrentPage);
+    setTableUpdateTrigger((prev) => prev + 1);
   };
 
   useEffect(() => {
@@ -67,6 +75,7 @@ export const AddAppealRelatedTaskView = (props) => {
 
       setTaskRelatedAppeals(selectedAppeals);
       setNewTasks(filteredNewTasks);
+      setTableUpdateTrigger((prev) => prev + 1);
     }
   };
 
@@ -103,9 +112,10 @@ export const AddAppealRelatedTaskView = (props) => {
   }, []);
 
   useEffect(() => {
-    // Clear the selected appeals when the user toggles the radio button
+    // Clear the selected appeals and any tasks when the user toggles the radio button
     if (existingAppealRadio === RELATED_NO) {
       setTaskRelatedAppeals([]);
+      setNewTasks([]);
     }
   }, [existingAppealRadio]);
 
@@ -162,13 +172,16 @@ export const AddAppealRelatedTaskView = (props) => {
             <ul>
               <div style={{ padding: '1rem' }}>
                 <CaseListTable
-                  key={taskRelatedAppeals.length}
+                  // Need to use this as key to force React to re-render checkboxes
+                  key={tableUpdateTrigger}
                   appeals={appeals}
                   showCheckboxes
                   paginate
                   linkOpensInNewTab
                   checkboxOnChange={appealCheckboxOnChange}
                   taskRelatedAppealIds={taskRelatedAppeals}
+                  currentPage={currentAppealPage}
+                  updatePageHandlerCallback={appealsPageUpdateHandler}
                 />
               </div>
             </ul>
@@ -184,6 +197,8 @@ export const AddAppealRelatedTaskView = (props) => {
                   nextTaskId={nextTaskId}
                   setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
                   unlinkAppeal={appealCheckboxOnChange}
+                  allTaskTypeOptions={props.allTaskTypeOptions}
+                  filterUnavailableTaskTypeOptions={props.filterUnavailableTaskTypeOptions}
                 />
               );
             })}
@@ -196,7 +211,9 @@ export const AddAppealRelatedTaskView = (props) => {
 
 AddAppealRelatedTaskView.propTypes = {
   correspondenceUuid: PropTypes.string.isRequired,
-  setRelatedTasksCanContinue: PropTypes.func.isRequired
+  setRelatedTasksCanContinue: PropTypes.func.isRequired,
+  filterUnavailableTaskTypeOptions: PropTypes.func.isRequired,
+  allTaskTypeOptions: PropTypes.array.isRequired
 };
 
 export default AddAppealRelatedTaskView;

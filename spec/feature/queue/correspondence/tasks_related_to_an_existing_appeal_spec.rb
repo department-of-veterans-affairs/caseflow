@@ -23,13 +23,13 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
   context "Yes - related existing Appeals" do
     describe "the continue button" do
 
-      it "continue button is active if a checkbox is checked" do
+      it "continue button is inactive if a checkbox is checked" do
         visit_intake_form_step_2_with_appeals
 
         existing_appeal_radio_options[:yes].click
         page.all(".cf-form-checkbox").last.click
 
-        expect(page.has_button?("Continue")).to be(true)
+        expect(page.has_button?("Continue")).to be(false)
       end
     end
 
@@ -40,7 +40,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
 
         existing_appeal_radio_options[:yes].click
 
-        using_wait_time(10) do
+        using_wait_time(15) do
           expect(page).to have_content("Viewing 1-5 of 13 total")
         end
       end

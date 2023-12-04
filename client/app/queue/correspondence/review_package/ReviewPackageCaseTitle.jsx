@@ -2,6 +2,7 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 import COPY from 'app/../COPY';
+import Dropdown from '../../../components/Dropdown';
 
 const containingDivStyling = css({
   display: 'block',
@@ -22,7 +23,26 @@ const headerStyling = css({
 const listStyling = css({
   listStyleType: 'none',
   verticalAlign: 'super',
-  padding: '0 0 4rem 0'
+  padding: '0 0 4rem 0',
+  display: 'flex',
+  flexWrap: 'wrap'
+});
+
+const columnStyling = css({
+  flexBasis: '0',
+  webkitBoxFlex: '1',
+  msFlexPositive: '1',
+  flexGrow: '1',
+  maxWidth: '100%'
+});
+
+const dropDownDiv = css({
+  marginTop: '-10px',
+  flexBasis: '0',
+  webkitBoxFlex: '1',
+  msFlexPositive: '1',
+  flexGrow: '1',
+  maxWidth: '100%'
 });
 
 class ReviewPackageCaseTitle extends React.PureComponent {
@@ -44,7 +64,20 @@ const CaseTitleScaffolding = (props) => (
 
 const CaseSubTitleScaffolding = () => (
   <div {...listStyling}>
-    {COPY.CORRESPONDENCE_REVIEW_PACKAGE_SUB_TITLE}
+    <div {...columnStyling}>
+      {COPY.CORRESPONDENCE_REVIEW_PACKAGE_SUB_TITLE}
+    </div>
+    <div {...dropDownDiv} style = {{ maxWidth: '25%' }}>
+      <Dropdown
+        options={[
+          { value: 'Split package', displayText: 'Split package' },
+          { value: 'Merge package', displayText: 'Merge package' },
+          { value: 'Remove package from Caseflow', displayText: 'Remove package from Caseflow' },
+          { value: 'Reassign package', displayText: 'Reassign package' }
+        ]}
+        defaultText="Request package action"
+      />
+    </div>
   </div>
 );
 

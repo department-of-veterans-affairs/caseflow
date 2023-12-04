@@ -8,6 +8,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 
 export const ExistingAppealTasksView = (props) => {
   const [displayRemoveCheck, setDisplayRemoveCheck] = useState(false);
+  const [availableTaskTypeOptions, setavailableTaskTypeOptions] = useState([]);
 
   const getTasksForAppeal = () => {
     const filtered = props.newTasks.filter((el) => el.appealId === props.appeal.id);
@@ -50,6 +51,10 @@ export const ExistingAppealTasksView = (props) => {
     }
   }, [props.newTasks]);
 
+  useEffect(() => {
+    setavailableTaskTypeOptions(props.filterUnavailableTaskTypeOptions(getTasksForAppeal()));
+  }, [props.newTasks]);
+
   return (
     <div>
       <div style={{ marginLeft: '2%', marginBottom: '2%' }}>
@@ -79,24 +84,12 @@ export const ExistingAppealTasksView = (props) => {
               taskUpdatedCallback={taskUpdatedCallback}
               displayRemoveCheck={displayRemoveCheck}
               setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
+              allTaskTypeOptions={props.allTaskTypeOptions}
+              availableTaskTypeOptions={availableTaskTypeOptions}
             />
           );
         })}
       </div>
-      {/* <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-        {getTasksForAppeal().map((task) => {
-          return (
-            <AddTaskView
-              key={task.id}
-              task={task}
-              removeTask={removeTask}
-              taskUpdatedCallback={taskUpdatedCallback}
-              displayRemoveCheck={displayRemoveCheck}
-              setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
-            />
-          );
-        })}
-      </div> */}
 
       <div style={{ padding: '2.5rem 2.5rem', display: 'flex', justifyContent: 'space-between' }}>
         <div style={{ width: '80%' }}>
@@ -129,7 +122,9 @@ ExistingAppealTasksView.propTypes = {
   setNewTasks: PropTypes.func.isRequired,
   nextTaskId: PropTypes.number.isRequired,
   setRelatedTasksCanContinue: PropTypes.func.isRequired,
-  unlinkAppeal: PropTypes.func.isRequired
+  unlinkAppeal: PropTypes.func.isRequired,
+  allTaskTypeOptions: PropTypes.array.isRequired,
+  filterUnavailableTaskTypeOptions: PropTypes.func.isRequired
 };
 
 export default ExistingAppealTasksView;
