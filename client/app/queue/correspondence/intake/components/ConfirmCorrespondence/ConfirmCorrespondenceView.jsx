@@ -7,29 +7,31 @@ import { useSelector } from 'react-redux';
 import CorrespondenceDetailsTable from './CorrespondenceDetailsTable';
 import ConfirmTasksNotRelatedToAnAppeal from './ConfirmTasksNotRelatedToAnAppeal';
 import Table from '../../../../../components/Table';
+import ConfirmTasksRelatedToAnAppeal from './ConfirmTasksRelatedToAnAppeal';
 
 const bodyStyling = css({
   '& > tr > td': {
-  backgroundColor: '#f5f5f5',
-  borderBottom: 'none',
-  borderColor: '#d6d7d9',
-  paddingTop: '0vh',
-  paddingBottom: '0vh',
-},
+    backgroundColor: '#f5f5f5',
+    borderBottom: 'none',
+    borderColor: '#d6d7d9',
+    paddingTop: '0vh',
+    paddingBottom: '0vh',
+  },
 });
 
 const tableStyling = css({
-marginBottom: '-2vh',
-marginTop: '2vh'
+  marginBottom: '-2vh',
+  marginTop: '2vh'
 });
 const bottonStyling = css({
-paddingRight: '0px'
+  paddingRight: '0px'
 });
 
 export const ConfirmCorrespondenceView = (props) => {
 
   const checkedMailTasks = Object.keys(props.mailTasks).filter((name) => props.mailTasks[name]);
   const relatedCorrespondences = useSelector((state) => state.intakeCorrespondence.relatedCorrespondences);
+  const tasksAssociatedWithAppeal = useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks);
 
   // eslint-disable-next-line max-statements
   const getDocumentColumns = (correspondence) => {
@@ -47,6 +49,7 @@ export const ConfirmCorrespondenceView = (props) => {
         ),
         valueFunction: () => {
           const date = new Date(correspondence.va_date_of_receipt);
+
           return (
             <span className="va-dor-item">
               <p>{date.toLocaleDateString('en-US')}</p>
@@ -74,7 +77,7 @@ export const ConfirmCorrespondenceView = (props) => {
         cellClass: 'package-document-type-column',
         ariaLabel: 'package-document-type-header-label',
         header: (
-          <div  id="package-document-type-header">
+          <div id="package-document-type-header">
             <span id="package-document-type-header-label" className="table-header-label">
               Package Document Type
             </span>
@@ -120,6 +123,7 @@ export const ConfirmCorrespondenceView = (props) => {
       },
     ];
   };
+
   return (
     <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
       <h1 style={{ marginBottom: '10px' }}>Review and Confirm Correspondence</h1>
@@ -132,34 +136,34 @@ export const ConfirmCorrespondenceView = (props) => {
         <CorrespondenceDetailsTable />
       </div>
       <div>
-      <div style={{ display: 'flex' }}>
-            <h2 style={{ margin: '1px 0 15px 0',
-                display: 'inline-block' }}>
+        <div style={{ display: 'flex' }}>
+          <h2 style={{ margin: '1px 0 15px 0',
+            display: 'inline-block' }}>
                 Associated Prior Mail
-            </h2>
-      <div style={{ marginLeft: 'auto' }}>
-              <Button styling={bottonStyling} linkStyling onClick={() => props.goToStep(1)}>
-                <div style={{ marginLeft: 'auto' }}>
-                  <span {...css({ position: 'absolute' })}><PencilIcon /></span>
-                  <span {...css({ marginLeft: '20px' })}>Edit Section</span>
-                </div>
-              </Button>
+          </h2>
+          <div style={{ marginLeft: 'auto' }}>
+            <Button styling={bottonStyling} linkStyling onClick={() => props.goToStep(1)}>
+              <div style={{ marginLeft: 'auto' }}>
+                <span {...css({ position: 'absolute' })}><PencilIcon /></span>
+                <span {...css({ marginLeft: '20px' })}>Edit Section</span>
+              </div>
+            </Button>
           </div>
-      </div>
+        </div>
 
-      <div {...css({ backgroundColor: '#f5f5f5', marginBottom: '20px' })}>
+        <div {...css({ backgroundColor: '#f5f5f5', marginBottom: '20px' })}>
 
-          <div {...css({ backgroundColor: '#f5f5f5', padding: '20px'})}>
-              <Table
-                columns={getDocumentColumns}
-                // columnsToDisplay={15}
-                rowObjects={relatedCorrespondences}
-                bodyStyling= {bodyStyling}
-                styling={tableStyling}
-              />
+          <div {...css({ backgroundColor: '#f5f5f5', padding: '20px' })}>
+            <Table
+              columns={getDocumentColumns}
+              // columnsToDisplay={15}
+              rowObjects={relatedCorrespondences}
+              bodyStyling= {bodyStyling}
+              styling={tableStyling}
+            />
 
           </div>
-    </div>
+        </div>
         <div style={{ display: 'flex' }}>
           <h2 style={{ margin: '1px 0 15px 0',
             display: 'inline-block',
@@ -194,6 +198,8 @@ export const ConfirmCorrespondenceView = (props) => {
       </div>
       <div>
         <ConfirmTasksNotRelatedToAnAppeal />
+        <ConfirmTasksRelatedToAnAppeal />
+
       </div>
     </div>
   );
