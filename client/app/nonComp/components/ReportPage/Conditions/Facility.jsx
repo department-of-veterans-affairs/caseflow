@@ -8,7 +8,7 @@ import BGS_FACILITY_CODES from 'app/../constants/BGS_FACILITY_CODES';
 import * as ERRORS from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
 
 export const facilitySchema = yup.object({
-  facilityCodes: yup.array().min(1, ERRORS.SELECT_ONE_DROPDOWN)
+  facilityCodes: yup.array().min(1, ERRORS.AT_LEAST_ONE_OPTION)
 });
 
 // Convert to array and sort alphabetically by label

@@ -8,7 +8,7 @@ import * as ERRORS from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
 import { ISSUE_DISPOSITION_LIST } from 'constants/REPORT_TYPE_CONSTANTS';
 
 export const issueDispositionSchema = yup.object({
-  issueDispositions: yup.array().min(1, ERRORS.SELECT_ONE_DROPDOWN)
+  issueDispositions: yup.array().min(1, ERRORS.AT_LEAST_ONE_OPTION)
 });
 
 export const IssueDisposition = ({ control, field, name }) => {
