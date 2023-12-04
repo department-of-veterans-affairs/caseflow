@@ -69,8 +69,7 @@ class RequestIssue < CaseflowRecord
   before_save :set_contested_rating_issue_profile_date
   before_save :close_if_ineligible!
 
-  after_create :set_decision_date_added_at, if: :decision_date_exists?
-
+  after_commit :set_decision_date_added_at, on: :create, if: :decision_date_exists?
   # amoeba gem for splitting appeal request issues
   amoeba do
     enable
@@ -1027,6 +1026,7 @@ class RequestIssue < CaseflowRecord
 
   def set_decision_date_added_at
     self.decision_date_added_at = created_at
+    save! if has_changes_to_save?
   end
 end
 # rubocop:enable Metrics/ClassLength

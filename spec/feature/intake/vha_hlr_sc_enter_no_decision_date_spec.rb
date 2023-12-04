@@ -67,8 +67,12 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       expect(page).to have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
 
       expect(page).to have_button("Save", disabled: true)
+      request_issue = RequestIssue.last
 
-      issue_id = RequestIssue.last.id
+      issue_id = request_issue.id
+
+      expect(request_issue.decision_date).to be_nil
+      expect(request_issue.decision_date_added_at).to be_nil
 
       # Click the first issue actions button and select Add a decision date
       within "#issue-#{issue_id}" do
@@ -427,6 +431,9 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       within "#issue-#{issue_id}" do
         expect(page).to have_no_selector("select option", text: "Add decision date")
       end
+
+      expect(hlr.request_issues.last.decision_date).to be_nil
+      expect(hlr.request_issues.last.decision_date_added_at).to be_nil
     end
   end
 end
