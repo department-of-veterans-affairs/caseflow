@@ -110,6 +110,8 @@ module Seeds
         )
 
         # create legacy appeals ready to be distributed that have a hearing held by active_judge
+        docket_number = "190001#{offset}"
+        veteran = create_veteran_for_active_judge
         legacy_appeal = create_vacols_entries(veteran, docket_number, "RO17", active_judge)
 
         ## Hearing held by active judge
