@@ -45,11 +45,11 @@ const dropDownDiv = css({
   maxWidth: '100%'
 });
 
-const ReviewPackageCaseTitle = () => {
+const ReviewPackageCaseTitle = (props) => {
   return (
     <div>
       <CaseTitleScaffolding />
-      <CaseSubTitleScaffolding />
+      <CaseSubTitleScaffolding handlePackageActionModal={props.handlePackageActionModal} />
     </div>
   );
 };
@@ -60,7 +60,7 @@ const CaseTitleScaffolding = () => (
   </div>
 );
 
-const CaseSubTitleScaffolding = () => (
+const CaseSubTitleScaffolding = (props) => (
   <div {...listStyling}>
     <div {...columnStyling}>
       {COPY.CORRESPONDENCE_REVIEW_PACKAGE_SUB_TITLE}
@@ -68,15 +68,24 @@ const CaseSubTitleScaffolding = () => (
     <div {...dropDownDiv} style = {{ maxWidth: '25%' }}>
       <SearchableDropdown
         options={[
-          { value: 'Split package', label: 'Split package' },
-          { value: 'Merge package', label: 'Merge package' },
-          { value: 'Remove package from Caseflow', label: 'Remove package from Caseflow' },
-          { value: 'Reassign package', label: 'Reassign package' }
+          { value: 'splitPackage', label: 'Split package' },
+          { value: 'mergePackage', label: 'Merge package' },
+          { value: 'removePackage', label: 'Remove package from Caseflow' },
+          { value: 'reassignPackage', label: 'Reassign package' }
         ]}
+        onChange={(option) => props.handlePackageActionModal(option.value)}
         placeholder="Request package action"
       />
     </div>
   </div>
 );
+
+ReviewPackageCaseTitle.propTypes = {
+  handlePackageActionModal: PropTypes.func
+};
+
+CaseSubTitleScaffolding.propTypes = {
+  handlePackageActionModal: PropTypes.func
+};
 
 export default ReviewPackageCaseTitle;

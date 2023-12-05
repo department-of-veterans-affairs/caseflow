@@ -1,102 +1,112 @@
-import React, { useSelector } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../../../components/Modal';
 import TextareaField from '../../../components/TextareaField';
 import Table from '../../../components/Table';
 import { connect } from 'react-redux';
+import ApiUtil from '../../../util/ApiUtil';
+import { useHistory } from 'react-router';
 
 const PackageActionModal = (props) => {
+  const {
+    packageActionModal,
+    correspondence,
+    packageDocumentType,
+    veteranInformation,
+    modalInfo,
+    columns,
+    closeHandler,
+  } = props;
+
+  const history = useHistory();
+
+  const [textInputReason, setTextInputReason] = useState('');
+
   const rows = [
     {
-      correspondence: props.correspondence,
-      packageDocumentType: props.packageDocumentType,
-      veteranInformation: props.veteranInformation
-    },
-  ];
-
-  const columns = [
-    {
-      cellClass: 'cm-packet-number-column',
-      header: (
-        <span id="cm-packet-number-label">
-          CM Packet Number
-        </span>
-      ),
-      valueFunction: () => (
-        <span className="cm-packet-number-item">
-          <p>{props.correspondence.cmp_packet_number}</p>
-        </span>
-      )
-    },
-    {
-      cellClass: 'package-document-type-column',
-      header: (
-        <span id="package-document-type-label">
-          Package Document Type
-        </span>
-      ),
-      valueFunction: () => (
-        <span className="cm-packet-number-item">
-          <p>{props.packageDocumentType.name}</p>
-        </span>
-      )
-    },
-    {
-      cellClass: 'veteran-details-column',
-      header: (
-        <span id="veteran-details-label">
-          Veteran Details
-        </span>
-      ),
-      valueFunction: () => (
-        <span className="cm-packet-number-item">
-          <p>
-            {`${props.veteranInformation.veteran_name.first_name} ${props.veteranInformation.veteran_name.last_name}
-            (${props.veteranInformation.file_number})`}
-          </p>
-        </span>
-      )
+      correspondence,
+      packageDocumentType,
+      veteranInformation
     }
   ];
 
+  const disableSubmit = () => {
+    switch (packageActionModal) {
+    case 'removePackage':
+      return textInputReason === '';
+    default:
+      return true;
+    }
+  };
+
+  const submitHandler = async () => {
+    const data = {};
+
+    if (props.packageActionModal === 'removePackage') {
+      data.textInput = textInputReason;
+    }
+
+    ApiUtil.post(`/queue/correspondence/${correspondence.correspondence_uuid}/task`, { data }).then((response) => {
+      console.log(response);
+      // history.push('/queue/correspondence');
+    }
+    );
+  };
+
   return (
     <Modal
-      title="Request package removal"
+      title={modalInfo.title}
       buttons={[
         {
           classNames: ['cf-modal-link', 'cf-btn-link'],
           name: 'Close',
-          // onClick: props.handleCancel
+          onClick: () => closeHandler(null)
         },
         {
           classNames: ['usa-button'],
           name: 'Confirm request',
-          // onClick: props.handleSubmit,
+          disabled: disableSubmit(),
+          onClick: submitHandler,
         }
       ]}
+      closeHandler={() => props.closeHandler(null)}
     >
       <span className="usa-input" style={{ marginBottom: '5px' }}>
-        By confirming, you will send a request for the supervisor to take action on the following package:
+        {modalInfo.description}
       </span>
       <Table
         columns={columns}
         rowObjects={rows}
-        summary="hello"
+        slowReRendersAreOk
+        summary="Request Package Action Modal"
       />
-      <TextareaField label="Provide a reason for removal" />
+      {
+        (packageActionModal === 'removePackage') &&
+        <TextareaField
+          label={modalInfo.label}
+          name={modalInfo.label}
+          aria-label={modalInfo.label}
+          value={textInputReason}
+          onChange={(value) => setTextInputReason(value)}
+        />
+      }
     </Modal>
   );
 };
 
 PackageActionModal.propTypes = {
   correspondence: PropTypes.object,
-  packageDocumentType: PropTypes.object,
-  veteranInformation: PropTypes.object
+  packageDocumentType: PropTypes.string,
+  veteranInformation: PropTypes.object,
+  columns: PropTypes.arrayOf(PropTypes.object),
+  modalInfo: PropTypes.object,
+  packageActionModal: PropTypes.string,
+  closeHandler: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
   correspondence: state.reviewPackage.correspondence,
-  packageDocumentType: state.reviewPackage.packageDocumentType,
+  packageDocumentType: state.reviewPackage.packageDocumentType.name,
   veteranInformation: state.reviewPackage.veteranInformation
 });
 
