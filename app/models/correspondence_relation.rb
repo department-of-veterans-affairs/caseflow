@@ -4,7 +4,7 @@ class CorrespondenceRelation < ApplicationRecord
   belongs_to :correspondence
   belongs_to :related_correspondence, class_name: "Correspondence"
 
-  # Makes the relationship bi-directional - both Correspondences are aware of the relationship with only one join record
+  # Makes the relationship bi-directional - both Correspondences are aware of the relationship
   after_create :create_inverse, unless: :has_inverse?
   after_destroy :destroy_inverses, if: :has_inverse?
 
