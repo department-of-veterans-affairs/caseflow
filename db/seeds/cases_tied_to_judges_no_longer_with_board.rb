@@ -111,7 +111,7 @@ module Seeds
 
         # create legacy appeals ready to be distributed that have a hearing held by active_judge
         legacy_appeal = create_vacols_entries(veteran, docket_number, "RO17", active_judge)
-        
+
         ## Hearing held by active judge
         create(
           :case_hearing,
@@ -136,7 +136,12 @@ module Seeds
       vacols_folder = create(:folder, tinum: docket_number, titrnum: "#{veteran.file_number}S")
       correspondent = create(:correspondent, snamef: veteran.first_name, snamel: veteran.last_name, ssalut: "")
       # Create the judge
-      create(:staff, :inactive_judge, sdomainid: user.css_id)
+
+      if (user.css_id == "BVADSLADER")
+        create(:staff, :inactive_judge, sdomainid: user.css_id)
+      else
+        create(:staff, :judge_role, sdomainid: user.css_id)
+      end
 
       vacols_case = create_video_vacols_case(vacols_folder,
                                              correspondent,
