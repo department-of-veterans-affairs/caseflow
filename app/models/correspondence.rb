@@ -7,6 +7,8 @@ class Correspondence < CaseflowRecord
 
   has_many :correspondence_documents
   has_many :correspondence_intakes
+  has_many :correspondences_appeals
+  has_many :appeals, through: :correspondences_appeals
   belongs_to :correspondence_type
   belongs_to :package_document_type
   belongs_to :prior_correspondence, class_name: "Correspondence", optional: true
