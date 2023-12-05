@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Modal from 'app/components/Modal';
 import {
@@ -8,12 +9,16 @@ import {
 
 export const SubmitCorrespondenceModal = ({ setSubmitCorrespondenceModalVisible }) => {
 
+  const history = useHistory();
+
   const [loading, setLoading] = useState(false);
 
   const onSubmit = () => {
     setLoading(true);
-
-    return onSubmit();
+    // Where data goes to be submitted before redirecting back to correspondence queue
+    setLoading(false);
+    history.push('/queue/correspondence');
+    // return onSubmit();
   };
 
   const onCancel = () => {
@@ -30,9 +35,7 @@ export const SubmitCorrespondenceModal = ({ setSubmitCorrespondenceModalVisible 
       classNames: ['usa-button', 'usa-button-primary'],
       name: 'Confirm',
       loading,
-      onClick: () => onSubmit?.({
-        // Where submitted data goes
-      }),
+      onClick: onSubmit
     },
   ];
 
