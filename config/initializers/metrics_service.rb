@@ -1,3 +1,3 @@
 require 'caseflow'
 
-MetricsService = Caseflow::S3Service
+MetricsService = Caseflow::MetricsService
