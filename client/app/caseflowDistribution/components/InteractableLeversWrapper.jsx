@@ -6,26 +6,23 @@ import AffinityDays from './AffinityDays';
 import LeverButtonsWrapper from './LeverButtonsWrapper';
 import ExclusionTable from './ExclusionTable';
 
-const InteractableLeverWrapper = ({ levers, leverStore }) => {
-  useEffect(() => {
-    console.log('Wrapper State:', leverStore.getState())
-  }, [leverStore]);
+const InteractableLeverWrapper = ({ levers, leverStore, isAdmin }) => {
 
   return (
     <div>
-      <ExclusionTable />
-      <h1 key={leverStore.getState().lever_values}>{leverStore.getState().lever_values}</h1>
-      <BatchSize leverList={levers.batchSizeLevers} leverStore={leverStore} />
-      <AffinityDays leverList={levers.affinityLevers} leverStore={leverStore} />
-      <DocketTimeGoals leverList={levers.docketLevers} leverStore={leverStore} />
-      <LeverButtonsWrapper leverStore={leverStore} />
+      <ExclusionTable isAdmin={isAdmin} />
+      <BatchSize leverList={levers.batchSizeLevers} leverStore={leverStore} isAdmin={isAdmin} />
+      <AffinityDays leverList={levers.affinityLevers} leverStore={leverStore} isAdmin={isAdmin} />
+      <DocketTimeGoals leverList={levers.docketLevers} leverStore={leverStore} isAdmin={isAdmin} />
+      {isAdmin ? <LeverButtonsWrapper leverStore={leverStore} /> : ''}
     </div>
   );
 };
 
 InteractableLeverWrapper.propTypes = {
   levers: PropTypes.array.isRequired,
-  leverStore: PropTypes.any
+  leverStore: PropTypes.any,
+  isAdmin: PropTypes.bool,
 };
 
 export default InteractableLeverWrapper;

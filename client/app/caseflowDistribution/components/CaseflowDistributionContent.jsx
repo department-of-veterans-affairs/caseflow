@@ -12,7 +12,7 @@ import COPY from '../../../COPY';
 const CaseflowDistributionContent = ({ levers, saveChanges, formattedHistory, isAdmin, leverStore }) => {
   return (
     <div>
-      <h1>{isAdmin ? 'Administration' : 'Non-Admin User'}</h1>
+      <h1>Administration</h1>
 
       <div> {/* Main Content Wrapper*/}
         <h2>{COPY.CASE_DISTRIBUTION_TITLE}</h2>
@@ -28,7 +28,7 @@ const CaseflowDistributionContent = ({ levers, saveChanges, formattedHistory, is
             <h2>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_TITLE}</h2>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION}</p>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION_NOTE}</p>
-            <InteractableLeverWrapper levers={levers} leverStore={leverStore} />
+            <InteractableLeverWrapper levers={levers} leverStore={leverStore} isAdmin={isAdmin} />
           </div>
         </div>
 
