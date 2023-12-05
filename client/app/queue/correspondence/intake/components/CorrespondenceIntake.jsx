@@ -9,6 +9,7 @@ import { bindActionCreators } from 'redux';
 import { setUnrelatedTasks } from '../../correspondenceReducer/correspondenceActions';
 import { useHistory, useLocation } from 'react-router-dom';
 import { ConfirmCorrespondenceView } from './ConfirmCorrespondence/ConfirmCorrespondenceView';
+import { SubmitCorrespondenceModal } from './ConfirmCorrespondence/SubmitCorrespondenceModal';
 
 const progressBarSections = [
   {
@@ -29,6 +30,7 @@ export const CorrespondenceIntake = (props) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isContinueEnabled, setContinueEnabled] = useState(true);
   const [addTasksVisible, setAddTasksVisible] = useState(false);
+  const [submitCorrespondenceModalVisible, setSubmitCorrespondenceModalVisible] = useState(false);
   const { pathname, hash, key } = useLocation();
   const history = useHistory();
   // For hash routing - Add element id and which step it lives on here
@@ -138,6 +140,7 @@ export const CorrespondenceIntake = (props) => {
       {currentStep === 3 &&
       <Button
         type="button"
+        onClick={() => setSubmitCorrespondenceModalVisible(true)}
         name="Submit"
         classNames={['cf-right-side']}>
           Submit
@@ -151,6 +154,11 @@ export const CorrespondenceIntake = (props) => {
         classNames={['usa-button-secondary', 'cf-right-side', 'usa-back-button']}>
           Back
       </Button>}
+      {currentStep === 3 && submitCorrespondenceModalVisible &&
+        <SubmitCorrespondenceModal
+          setSubmitCorrespondenceModalVisible={setSubmitCorrespondenceModalVisible}
+        />
+      }
     </div>
   </div>;
 };
