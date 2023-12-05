@@ -64,6 +64,7 @@ export const CorrespondenceReviewPackage = (props) => {
   };
 
   const handlePackageActionModal = (value) => {
+    console.log(value)
     setPackageActionModal(value);
   };
 

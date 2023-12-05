@@ -28,9 +28,12 @@ const PackageActionModal = (props) => {
     }
   ];
 
+  // Disable submit button unless conditional input is met
   const disableSubmit = () => {
     switch (packageActionModal) {
     case 'removePackage':
+      return textInputReason === '';
+    case 'reassignPackage':
       return textInputReason === '';
     default:
       return true;
@@ -40,7 +43,7 @@ const PackageActionModal = (props) => {
   const submitHandler = async () => {
     const data = {};
 
-    if (props.packageActionModal === 'removePackage') {
+    if (packageActionModal === 'removePackage' || packageActionModal === 'reassignPackage') {
       data.textInput = textInputReason;
     }
     console.log(data);
@@ -78,7 +81,7 @@ const PackageActionModal = (props) => {
         summary="Request Package Action Modal"
       />
       {
-        (packageActionModal === 'removePackage') &&
+        (packageActionModal === 'removePackage' || packageActionModal === 'reassignPackage') &&
         <TextareaField
           label={modalInfo.label}
           name={modalInfo.label}

@@ -2,7 +2,10 @@ import React from 'react';
 import {
   PACKAGE_ACTION_MODAL_DESCRIPTION,
   PACKAGE_ACTION_REMOVAL_TITLE,
-  PACKAGE_ACTION_REMOVAL_TEXTAREA_LABEL
+  PACKAGE_ACTION_REMOVAL_TEXTAREA_LABEL,
+  PACKAGE_ACTION_REASSIGN_DESCRIPTION,
+  PACKAGE_ACTION_REASSIGN_TITLE,
+  PACKAGE_ACTION_REASSIGN_TEXTAREA_LABEL
 } from '../../../../COPY';
 
 export const getPackageActionColumns = (dropdownType) => {
@@ -35,7 +38,7 @@ export const getPackageActionColumns = (dropdownType) => {
     },
   ];
 
-  if (dropdownType === 'removePackage') {
+  if (dropdownType === 'removePackage' || dropdownType === 'reassignPackage') {
     baseColumns.push(
       {
         cellClass: 'veteran-details-column',
@@ -67,6 +70,12 @@ export const getModalInformation = (dropdownType) => {
       title: PACKAGE_ACTION_REMOVAL_TITLE,
       description: PACKAGE_ACTION_MODAL_DESCRIPTION,
       label: PACKAGE_ACTION_REMOVAL_TEXTAREA_LABEL
+    };
+  case 'reassignPackage':
+    return {
+      title: PACKAGE_ACTION_REASSIGN_TITLE,
+      description: PACKAGE_ACTION_REASSIGN_DESCRIPTION,
+      label: PACKAGE_ACTION_REASSIGN_TEXTAREA_LABEL
     };
   default:
     return {
