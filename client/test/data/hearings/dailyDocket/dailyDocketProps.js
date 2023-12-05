@@ -42,7 +42,7 @@ export const dailyDocketPropsHearingNotVirtualJudgeUser = {
     regionalOfficeTimezone: 'America/Chicago',
     room: '21',
     scheduledFor: '2022-04-29T08:30:00.000-05:00',
-    scheduledForIsPast: true,
+    scheduledForIsPast: false,
     scheduledTime: '2000-01-01T08:30:00.000-05:00',
     scheduledTimeString: '08:30',
     summary: null,
