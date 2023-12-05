@@ -162,25 +162,32 @@ describe ChangeHearingRequestTypeTask do
       end
 
       it "checks to see if a HearingEmailRecipient currently exists" do
-        subject
         # variables for HearingEmailRecipient :id, :timezone, :email_address, :type, :appeal_id, :appeal_type
-        # create existing appellant and recipient with different information
+        # create existing appellant and recipient with payload information
         existing_her_a = AppellantHearingEmailRecipient.create!(
           appeal: legacy_appeal,
-          timezone: "America/New_York",
-          email_address: "old_email_address@va.gov"
+          timezone: payload[:business_payloads][:values][:email_recipients][:appellant_tz],
+          email_address: payload[:business_payloads][:values][:email_recipients][:appellant_email]
         )
         existing_her_r = RepresentativeHearingEmailRecipient.create!(
           appeal: legacy_appeal,
-          timezone: "America/New_York",
-          email_address: "old_rep_email_address@va.gov"
+          timezone: payload[:business_payloads][:values][:email_recipients][:representative_tz],
+          email_address: payload[:business_payloads][:values][:email_recipients][:representative_email]
         )
+
+        subject
 
         new_her_a = AppellantHearingEmailRecipient.find_by(appeal: legacy_appeal)
         new_her_r = RepresentativeHearingEmailRecipient.find_by(appeal: legacy_appeal)
 
+        # verify that the object references are the same
         expect(new_her_a).to eq(existing_her_a)
         expect(new_her_r).to eq(existing_her_r)
+        # verify that no changes were made to the objects
+        expect(new_her_a.email_address).to eq(existing_her_a.email_address)
+        expect(new_her_r.email_address).to eq(existing_her_r.email_address)
+        expect(new_her_a.timezone).to eq(existing_her_a.timezone)
+        expect(new_her_r.timezone).to eq(existing_her_r.timezone)
       end
 
       it "checks to see if a HearingEmailRecipient currently exists and updates it" do
@@ -247,25 +254,32 @@ describe ChangeHearingRequestTypeTask do
         expect(new_her1_r.timezone).to eq("America/Los_Angeles")
       end
       it "checks to see if a HearingEmailRecipient currently exists" do
-        subject
         # variables for HearingEmailRecipient :id, :timezone, :email_address, :type, :appeal_id, :appeal_type
-        # create existing appellant and recipient with different information
+        # create existing appellant and recipient with payload information
         existing_her_a = AppellantHearingEmailRecipient.create!(
           appeal: appeal,
-          timezone: "America/New_York",
-          email_address: "old_email_address@va.gov"
+          timezone: payload[:business_payloads][:values][:email_recipients][:appellant_tz],
+          email_address: payload[:business_payloads][:values][:email_recipients][:appellant_email]
         )
         existing_her_r = RepresentativeHearingEmailRecipient.create!(
           appeal: appeal,
-          timezone: "America/New_York",
-          email_address: "old_rep_email_address@va.gov"
+          timezone: payload[:business_payloads][:values][:email_recipients][:representative_tz],
+          email_address: payload[:business_payloads][:values][:email_recipients][:representative_email]
         )
+
+        subject
 
         new_her_a = AppellantHearingEmailRecipient.find_by(appeal: appeal)
         new_her_r = RepresentativeHearingEmailRecipient.find_by(appeal: appeal)
 
+        # verify that the object references are the same
         expect(new_her_a).to eq(existing_her_a)
         expect(new_her_r).to eq(existing_her_r)
+        # verify that no changes were made to the objects
+        expect(new_her_a.email_address).to eq(existing_her_a.email_address)
+        expect(new_her_r.email_address).to eq(existing_her_r.email_address)
+        expect(new_her_a.timezone).to eq(existing_her_a.timezone)
+        expect(new_her_r.timezone).to eq(existing_her_r.timezone)
       end
 
       it "checks to see if a HearingEmailRecipient currently exists and updates it" do
