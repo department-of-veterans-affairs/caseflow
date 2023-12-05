@@ -17,20 +17,12 @@ describe BatchProcessRescueJob, type: :job do
     create_list(:end_product_establishment, 2, :active_hlr_with_cleared_vbms_ext_claim)
   end
 
-  let!(:pepsq_records_one) do
-    PopulateEndProductSyncQueueJob.perform_now
-  end
-
   let!(:first_batch_process) do
     PriorityEpSyncBatchProcessJob.perform_now
   end
 
   let!(:end_product_establishments_two) do
     create_list(:end_product_establishment, 2, :active_hlr_with_cleared_vbms_ext_claim)
-  end
-
-  let!(:pepsq_records_two) do
-    PopulateEndProductSyncQueueJob.perform_now
   end
 
   let!(:second_batch_process) do

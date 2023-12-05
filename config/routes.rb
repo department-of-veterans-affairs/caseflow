@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
@@ -157,6 +158,8 @@ Rails.application.routes.draw do
     end
   end
   match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
+
+  get '/appeals/:appeal_id/document/:series_id' => 'appeals#document_lookup'
 
   get '/appeals/:appeals_id/notifications' => 'appeals#fetch_notification_list'
 

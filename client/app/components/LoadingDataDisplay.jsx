@@ -93,9 +93,8 @@ class LoadingDataDisplay extends React.PureComponent {
     this._isMounted = false;
   }
 
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (this.props.createLoadPromise.toString() !== nextProps.createLoadPromise.toString()) {
+  componentDidUpdate(prevProps) {
+    if (this.props.createLoadPromise.toString() !== prevProps.createLoadPromise.toString()) {
       throw new Error("Once LoadingDataDisplay is instantiated, you can't change the createLoadPromise function.");
     }
   }

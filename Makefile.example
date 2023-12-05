@@ -194,6 +194,22 @@ remove-vbms-ext-claim-seeds: ## Drops audit tables, removes all PriorityEndProdu
 
 reseed-vbms-ext-claim: remove-vbms-ext-claim-seeds seed-vbms-ext-claim ## Re-seeds database with records created from seed-vbms-ext-claim
 
+# Add trigger to vbms_ext_claim to populate pepsq table
+add-populate-pepsq-trigger:
+	bundle exec rails r db/scripts/add_pepsq_populate_trigger_to_vbms_ext_claim.rb
+
+# Add trigger to vbms_ext_claim to populate pepsq table
+add-populate-pepsq-trigger-test:
+	bundle exec rails r -e test db/scripts/add_pepsq_populate_trigger_to_vbms_ext_claim.rb
+
+# Remove populate pepsq trigger from vbms_ext_claim table
+drop-populate-pepsq-trigger:
+	bundle exec rails r db/scripts/drop_pepsq_populate_trigger_from_vbms_ext_claim.rb
+
+# Remove populate pepsq trigger from vbms_ext_claim table
+drop-populate-pepsq-trigger-test:
+	bundle exec rails r -e test db/scripts/drop_pepsq_populate_trigger_from_vbms_ext_claim.rb
+
 c:  ## Start rails console
 	bundle exec rails console
 
