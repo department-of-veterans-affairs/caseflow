@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_12_04_195133) do
+ActiveRecord::Schema.define(version: 2023_12_05_171256) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -621,6 +621,15 @@ ActiveRecord::Schema.define(version: 2023_12_04_195133) do
     t.index ["user_id"], name: "index_on_user_id"
   end
 
+  create_table "correspondence_relations", force: :cascade do |t|
+    t.bigint "correspondence_id"
+    t.datetime "created_at", null: false
+    t.bigint "related_correspondence_id"
+    t.datetime "updated_at", null: false
+    t.index ["correspondence_id", "related_correspondence_id"], name: "index_correspondence_relations_on_correspondences", unique: true
+    t.index ["related_correspondence_id", "correspondence_id"], name: "index_correspondence_relations_on_related_correspondences", unique: true
+  end
+
   create_table "correspondence_types", force: :cascade do |t|
     t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
@@ -637,7 +646,6 @@ ActiveRecord::Schema.define(version: 2023_12_04_195133) do
     t.text "notes", comment: "Comes from CMP; can be updated by user"
     t.integer "package_document_type_id", comment: "Represents entire CMP package document type"
     t.datetime "portal_entry_date", comment: "Time when correspondence is created in Caseflow"
-    t.integer "prior_correspondence_id"
     t.string "source_type", comment: "An information identifier we get from CMP"
     t.datetime "updated_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.bigint "updated_by_id", comment: "Foreign key to users table"
@@ -647,7 +655,6 @@ ActiveRecord::Schema.define(version: 2023_12_04_195133) do
     t.index ["assigned_by_id"], name: "index_correspondences_on_assigned_by_id"
     t.index ["cmp_queue_id"], name: "index_correspondences_on_cmp_queue_id"
     t.index ["correspondence_type_id"], name: "index_correspondences_on_correspondence_type_id"
-    t.index ["prior_correspondence_id"], name: "index_on_prior_correspondence_id"
     t.index ["updated_by_id"], name: "index_correspondences_on_updated_by_id"
     t.index ["veteran_id"], name: "index_correspondences_on_veteran_id"
   end
@@ -2249,6 +2256,8 @@ ActiveRecord::Schema.define(version: 2023_12_04_195133) do
   add_foreign_key "correspondence_documents", "correspondences"
   add_foreign_key "correspondence_intakes", "correspondences"
   add_foreign_key "correspondence_intakes", "users"
+  add_foreign_key "correspondence_relations", "correspondences"
+  add_foreign_key "correspondence_relations", "correspondences", column: "related_correspondence_id"
   add_foreign_key "correspondences_appeals", "appeals"
   add_foreign_key "correspondences_appeals", "correspondences"
   add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"

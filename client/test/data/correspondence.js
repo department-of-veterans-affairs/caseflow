@@ -18,7 +18,6 @@ export const correspondenceData = {
   notes: 'Some CMP notes here',
   package_document_type_id: 15,
   portal_entry_date: '2023-11-16 01:44:47.080996',
-  prior_correspondence_id: 1,
   source_type: 'Mail',
   updated_at: '2023-11-16 01:44:47.094786',
   updated_by_id: null,
