@@ -160,27 +160,29 @@ class EditModal extends React.Component {
         />
         {showEditModal && (
           <Modal buttons={this.getModalButtons()} visible closeHandler={this.onClickCancel} title="Edit CMP information">
-            <div className="add-nonrating-request-issue">
-              <div className="decision-date">
+            <div>
+              <div className="va-dor">
                 <DateSelector
-                  name="decision-date"
+                  name="va-dor-input"
                   label="VA DOR"
                   strongLabel
                   value={VADORDate}
                   errorMessage={this.state.dateError}
                   onChange={this.VADORDateOnChange}
                   type="date"
+                  aria-label="date-of-receipt-dropdown"
                 />
               </div>
               <br />
               <SearchableDropdown
-                name="issue-category"
+                name="package-document-type-input"
                 label="Package document type"
                 strongLabel
                 placeholder="Select or enter..."
                 options={this.state.packageOptions}
                 value={packageDocument}
                 onChange={this.packageDocumentOnChange}
+                aria-label="package-document-type-dropdown"
               />
             </div>
           </Modal>

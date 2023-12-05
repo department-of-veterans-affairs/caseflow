@@ -57,7 +57,6 @@ gem "pg", platforms: :ruby
 gem "puma", "5.6.4"
 gem "rack", "~> 2.2.6.2"
 gem "rails", "5.2.8.1"
-gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "e3380fc6e4c2103322043d4be50fe2e8cdce5dae"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
@@ -67,6 +66,7 @@ gem "redis-namespace"
 gem "redis-rails", "~> 5.0.2"
 gem "request_store"
 gem "roo", "~> 2.7"
+gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "e3380fc6e4c2103322043d4be50fe2e8cdce5dae"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
