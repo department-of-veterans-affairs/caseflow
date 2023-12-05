@@ -33,7 +33,7 @@ const CheckboxModal = (props) => {
     <Modal
       id="autotextModal"
       title="Add autotext"
-      customStyles={{ style: { width: '40%', minWidth: '500px' } }}
+      customStyles={{ style: { width: '50%', minWidth: '750px' } }}
       closeHandler={props.closeHandler}
       buttons={[
         {
