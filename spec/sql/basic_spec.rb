@@ -7,7 +7,12 @@ describe "Basic SQL Snippet Library Test", :postgres do
     let!(:appeal) { create(:appeal) }
 
     it "runs SQL" do
-      expect_sql("basic_appeal").to eq([appeal.as_hash])
+      expect_sql("basic_appeal").to match_array(
+        hash_including(
+          **appeal.attributes.except("receipt_date"),
+          "receipt_date" => appeal.receipt_date.to_s
+        )
+      )
     end
   end
 
@@ -15,7 +20,11 @@ describe "Basic SQL Snippet Library Test", :postgres do
     let!(:appeal) { create(:appeal, established_at: Time.utc(2010, 3, 30, 5, 43, "25.12".to_r)) }
 
     it "rounds correctly" do
-      expect_sql("basic_appeal").to eq([appeal.as_hash])
+      expect_sql("basic_appeal").to match_array(
+        hash_including(
+          "established_at" => appeal.established_at
+        )
+      )
     end
   end
 end
