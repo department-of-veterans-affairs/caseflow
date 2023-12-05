@@ -496,6 +496,16 @@ describe ClaimHistoryService do
             expect(service_instance.events).to eq([])
           end
         end
+
+        context "when the range does not match the valid ranges" do
+          let(:filters) { { timing: { range: "None", start_date: (Time.zone.now + 30.days).iso8601 } } }
+
+          it "should return all events" do
+            subject
+            expect(service_instance.events.map(&:event_type)).to contain_exactly(*expected_hlr_event_types,
+                                                                                 *expected_sc_event_types)
+          end
+        end
       end
 
       context "days waiting filter" do

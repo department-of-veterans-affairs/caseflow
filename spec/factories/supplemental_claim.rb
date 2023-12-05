@@ -155,13 +155,21 @@ FactoryBot.define do
 
     trait :with_intake do
       after(:create) do |sc|
-        sc.intake = create(:intake, :completed, veteran_file_number: sc.veteran_file_number)
+        css_id = "CSS_ID#{generate :css_id}"
+
+        intake_user = User.find_by(css_id: css_id)
+
+        if intake_user.nil?
+          intake_user = create(:user, css_id: css_id)
+        end
+
+        create(:intake, :completed, detail: sc, veteran_file_number: sc.veteran_file_number, user: intake_user)
       end
     end
 
     trait :with_decision do
       after(:create) do |sc|
-        sc.decision_issues << create(:decision_issue, request_issues: sc.request_issues, benefit_type: sc.benefit_type)
+        create(:decision_issue, decision_review: sc, request_issues: sc.request_issues, benefit_type: sc.benefit_type)
       end
     end
   end

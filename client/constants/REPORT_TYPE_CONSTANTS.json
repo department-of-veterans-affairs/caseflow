@@ -21,6 +21,40 @@
       "value": "specific_events_action"
     }
   ],
+  "RADIO_STATUS_OPTIONS": [
+    {
+      "displayText": "All Statuses",
+      "value": "all_statuses"
+    },
+    {
+      "displayText": "Specific Status",
+      "value": "specific_status"
+    }
+  ],
+  "RADIO_STATUS_REPORT_TYPE_OPTIONS": [
+    {
+      "displayText": "Last Action Taken",
+      "value": "last_action_taken"
+    },
+    {
+      "displayText": "Summary",
+      "value": "summary"
+    }
+  ],
+  "SPECIFIC_STATUS_OPTIONS": [
+    {
+      "label": "Incomplete",
+      "id": "incomplete"
+    },
+    {
+      "label": "In Progress",
+      "id": "in_progress"
+    },
+    {
+      "label": "Completed",
+      "id": "completed"
+    }
+  ],
   "SPECTIFIC_EVENT_OPTIONS": [
     {
       "label": "Added decision date",
@@ -92,7 +126,33 @@
       "label": "Last 365 Days",
       "value": "last_365_days"
     }
-  ]
+  ],
+ "ISSUE_DISPOSITION_LIST": [
+  {
+    "label": "Blank",
+    "value": "blank"
+  },
+  {
+    "label": "Denied",
+    "value": "denied"
+  },
+  {
+    "label": "Dismissed",
+    "value": "dismissed"
+  },
+  {
+    "label": "DTA Error",
+    "value": "dta_error"
+  },
+  {
+    "label": "Granted",
+    "value": "granted"
+  },
+  {
+    "label": "Withdrawn",
+    "value": "withdrawn"
+  }
+]
 }
 
 

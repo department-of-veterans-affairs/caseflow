@@ -394,37 +394,6 @@ FactoryBot.define do
         end
         assigned_by { nil }
         assigned_to { VhaBusinessLine.singleton }
-      end
-
-      factory :higher_level_review_vha_task_with_decision, class: DecisionReviewTask do
-        appeal do
-          create(:higher_level_review,
-                 :with_vha_issue,
-                 :with_intake,
-                 :with_decision,
-                 benefit_type: "vha",
-                 claimant_type: :veteran_claimant)
-        end
-        assigned_by { nil }
-        assigned_to { VhaBusinessLine.singleton }
-
-        after(:create) do |task|
-          task.status = "completed"
-          task.save
-        end
-      end
-
-      factory :change_history_hlr_task, class: DecisionReviewTask do
-        appeal do
-          create(:higher_level_review,
-                 :with_request_issue,
-                 :with_intake,
-                 :with_decision,
-                 benefit_type: "vha",
-                 claimant_type: :veteran_claimant)
-        end
-        assigned_by { nil }
-        assigned_to { VhaBusinessLine.singleton }
 
         after(:create) do |task|
           task.status = "completed"
@@ -436,6 +405,24 @@ FactoryBot.define do
         appeal do
           create(:supplemental_claim,
                  :with_request_issue,
+                 :with_intake,
+                 :with_decision,
+                 benefit_type: "vha",
+                 claimant_type: :veteran_claimant)
+        end
+        assigned_by { nil }
+        assigned_to { VhaBusinessLine.singleton }
+
+        after(:create) do |task|
+          task.status = "completed"
+          task.save
+        end
+      end
+
+      factory :higher_level_review_vha_task_with_decision, class: DecisionReviewTask do
+        appeal do
+          create(:higher_level_review,
+                 :with_vha_issue,
                  :with_intake,
                  :with_decision,
                  benefit_type: "vha",

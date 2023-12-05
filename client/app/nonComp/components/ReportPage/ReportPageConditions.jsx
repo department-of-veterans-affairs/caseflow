@@ -1,19 +1,24 @@
 import React from 'react';
 import { useFormContext, useFieldArray } from 'react-hook-form';
+
 import { ConditionContainer } from './ConditionContainer';
+import { personnelSchema } from './Conditions/Personnel';
 import Button from 'app/components/Button';
 
 import * as yup from 'yup';
 import { daysWaitingSchema } from './Conditions/DaysWaiting';
+import { decisionReviewTypeSchema } from './Conditions/DecisionReviewType';
+import { facilitySchema } from './Conditions/Facility';
+import { issueDispositionSchema } from './Conditions/IssueDisposition';
 import * as ERRORS from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
 
 const conditionOptionSchemas = {
   daysWaiting: daysWaitingSchema,
-  decisionReviewType: yup.object(),
-  facility: yup.object(),
-  issueDisposition: yup.object(),
+  decisionReviewType: decisionReviewTypeSchema,
+  facility: facilitySchema,
+  issueDisposition: issueDispositionSchema,
   issueType: yup.object(),
-  personnel: yup.object()
+  personnel: personnelSchema
 };
 
 export const conditionsSchema = yup.array().of(
@@ -45,8 +50,9 @@ export const ReportPageConditions = () => {
 
   return (
     <div>
-      <hr style={{ marginTop: '50px', marginBottom: '50px' }} />
-      <h2>Conditions</h2>
+      <hr style={{ margin: '50px 0' }} />
+      {/* Update margin depending on the presence of controlledField elements */}
+      <h2 style={controlledFields.length ? { margin: '0' } : null}>Conditions</h2>
       {controlledFields.map((field, index) => {
         return <ConditionContainer key={field.id} {... { control, index, remove, field }} />;
       })}

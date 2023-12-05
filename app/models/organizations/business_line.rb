@@ -195,8 +195,8 @@ class BusinessLine < Organization
           request_issues_updates.created_at AS request_issue_update_time, decision_issues.description AS decision_description,
           request_issues.benefit_type AS request_issue_benefit_type, request_issues_updates.id AS request_issue_update_id,
           request_issues.id AS actual_request_issue_id, request_issues.created_at AS request_issue_created_at,
-          intakes.completed_at AS intake_completed_at, update_users.full_name AS update_user_name,
-          intake_users.full_name AS intake_user_name, update_users.station_id AS update_user_station_id,
+          intakes.completed_at AS intake_completed_at, update_users.full_name AS update_user_name, tasks.created_at AS task_created_at,
+          intake_users.full_name AS intake_user_name, update_users.station_id AS update_user_station_id, tasks.closed_at AS task_closed_at,
           intake_users.station_id AS intake_user_station_id, decision_users.full_name AS decision_user_name,
           decision_users.station_id AS decision_user_station_id, decision_issues.created_at AS decision_created_at,
           intake_users.css_id AS intake_user_css_id, decision_users.css_id AS decision_user_css_id, update_users.css_id AS update_user_css_id,
@@ -298,11 +298,12 @@ class BusinessLine < Organization
         case operator
         when ">", "<", "="
           <<-SQL
-            AND (CURRENT_TIMESTAMP::date - tasks.assigned_at::date) #{operator} '#{number_of_days.to_i}'
+            AND (CURRENT_TIMESTAMP::date - tasks.assigned_at::date)::integer #{operator} '#{number_of_days.to_i}'
           SQL
         when "between"
           end_days = query_params[:days_waiting][:end_days]
           <<-SQL
+            AND (CURRENT_TIMESTAMP::date - tasks.assigned_at::date)::integer BETWEEN '#{number_of_days.to_i}' AND '#{end_days.to_i}'
             AND (CURRENT_TIMESTAMP::date - tasks.assigned_at::date)::integer BETWEEN '#{number_of_days.to_i}' AND '#{end_days.to_i}'
           SQL
         end
