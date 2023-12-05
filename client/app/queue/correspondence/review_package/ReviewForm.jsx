@@ -186,6 +186,7 @@ export const ReviewForm = (props) => {
                   value={props.editableData.veteran_file_number}
                   onChange={handleFileNumber}
                   name="veteran-file-number-input"
+                  useAriaLabel
                 />
               </div>
 
@@ -195,6 +196,7 @@ export const ReviewForm = (props) => {
                   value={fullName(props.reviewDetails.veteran_name)}
                   readOnly
                   name="Veteran-name-display"
+                  useAriaLabel
                 />
               </div>
 
@@ -257,7 +259,6 @@ ReviewForm.propTypes = {
       last_name: PropTypes.string,
     }),
     dropdown_values: PropTypes.array,
-    default_select_value: PropTypes.string,
   }),
   editableData: PropTypes.shape({
     notes: PropTypes.string,
@@ -268,7 +269,7 @@ ReviewForm.propTypes = {
   setEditableData: PropTypes.func,
   setDisableButton: PropTypes.func,
   fetchData: PropTypes.func,
-  showModal: PropTypes.func,
+  showModal: PropTypes.bool,
   handleModalClose: PropTypes.func,
   handleReview: PropTypes.func,
 };
