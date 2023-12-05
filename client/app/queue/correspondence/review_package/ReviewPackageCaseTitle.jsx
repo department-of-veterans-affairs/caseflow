@@ -76,6 +76,7 @@ const CaseSubTitleScaffolding = () => (
           { value: 'Reassign package', displayText: 'Reassign package' }
         ]}
         defaultText="Request package action"
+        name="package-action-dropdown"
       />
     </div>
   </div>
