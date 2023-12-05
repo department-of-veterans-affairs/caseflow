@@ -170,7 +170,6 @@ class EditModal extends React.Component {
                   errorMessage={this.state.dateError}
                   onChange={this.VADORDateOnChange}
                   type="date"
-                  aria-label="date-of-receipt-dropdown"
                 />
               </div>
               <br />
@@ -182,7 +181,6 @@ class EditModal extends React.Component {
                 options={this.state.packageOptions}
                 value={packageDocument}
                 onChange={this.packageDocumentOnChange}
-                aria-label="package-document-type-dropdown"
               />
             </div>
           </Modal>
