@@ -98,8 +98,8 @@ module Seeds
         # Create the veteran for this legacy appeal
         veteran = create_veteran_for_inactive_cf_user_and_inactive_admin_judge_team
 
-        # AC1: create legacy appeals ready to be distributed that have a hearing held by an inactive judge
-        legacy_appeal = create_vacols_entries(veteran, docket_number, "RO17")
+        # AC1: create legacy appeals ready to be distributed that have a hearing held by inactive_cf_user_and_inactive_admin_judge_team
+        legacy_appeal = create_vacols_entries(veteran, docket_number, "RO17", inactive_cf_user_and_inactive_admin_judge_team)
 
         ## Hearing held by inactive judge
         create(
@@ -107,6 +107,17 @@ module Seeds
           :disposition_held,
           folder_nr: legacy_appeal.vacols_id,
           user: inactive_cf_user_and_inactive_admin_judge_team
+        )
+
+        # create legacy appeals ready to be distributed that have a hearing held by active_judge
+        legacy_appeal = create_vacols_entries(veteran, docket_number, "RO17", active_judge)
+        
+        ## Hearing held by active judge
+        create(
+          :case_hearing,
+          :disposition_held,
+          folder_nr: legacy_appeal.vacols_id,
+          user: active_judge
         )
       end
       Timecop.return
@@ -121,15 +132,15 @@ module Seeds
       )
     end
 
-    def create_vacols_entries(veteran, docket_number, regional_office)
+    def create_vacols_entries(veteran, docket_number, regional_office, user)
       vacols_folder = create(:folder, tinum: docket_number, titrnum: "#{veteran.file_number}S")
       correspondent = create(:correspondent, snamef: veteran.first_name, snamel: veteran.last_name, ssalut: "")
       # Create the judge
-      create(:staff, :inactive_judge, sdomainid: inactive_cf_user_and_inactive_admin_judge_team.css_id)
+      create(:staff, :inactive_judge, sdomainid: user.css_id)
 
       vacols_case = create_video_vacols_case(vacols_folder,
                                              correspondent,
-                                             inactive_cf_user_and_inactive_admin_judge_team)
+                                             user)
 
       # Create the legacy_appeal, this doesn't fail with index problems, so no need to retry
       legacy_appeal = create(
