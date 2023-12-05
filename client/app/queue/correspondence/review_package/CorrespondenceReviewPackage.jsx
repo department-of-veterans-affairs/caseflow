@@ -78,6 +78,7 @@ export const CorrespondenceReviewPackage = (props) => {
     props.setFileNumberSearch(editableData.veteran_file_number);
     try {
       await props.doFileNumberSearch('appeal', editableData.veteran_file_number, true);
+      ApiUtil.patch(`/queue/correspondence/${props.correspondence_uuid}/intake_update`);
       window.location.href = '/intake/review_request';
     } catch (error) {
       console.error(error);
@@ -128,12 +129,14 @@ export const CorrespondenceReviewPackage = (props) => {
           />
         </div>
         <div className="cf-push-right">
-          <Button
-            name="Intake appeal"
-            styling={{ style: { marginRight: '2rem' } }}
-            classNames={['usa-button-secondary']}
-            onClick={intakeAppeal}
-          />
+          { (props.packageDocumentType.name === '10182') && (
+            <Button
+              name="Intake appeal"
+              styling={{ style: { marginRight: '2rem' } }}
+              classNames={['usa-button-secondary']}
+              onClick={intakeAppeal}
+            />
+          )}
           <a href={intakeLink}>
             {/* hard coded UUID to link to multi_correspondence.rb data */}
             <Button

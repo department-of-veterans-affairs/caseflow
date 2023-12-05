@@ -12,9 +12,16 @@ class Correspondence < CaseflowRecord
   belongs_to :prior_correspondence, class_name: "Correspondence", optional: true
   belongs_to :veteran
   # has_many :appeals, through: :correspondence_appeals
-  # has_many :tasks
+  has_many :tasks
   # has_many :correspondence_types
 
   # has_many :correspondence_correspondences
   # has_many :related_correspondences, through: :correspondence_correspondences
+
+  after_create :initialize_correspondence_tasks
+
+  def initialize_correspondence_tasks
+    CorrespondenceRootTaskFactory.new(self).create_root_and_sub_tasks!
+  end
+
 end
