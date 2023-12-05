@@ -12,7 +12,7 @@ const alertStyling = css({
   marginBottom: '20px'
 });
 
-class LastRetrievalAlert extends React.PureComponent {
+export class LastRetrievalAlert extends React.PureComponent {
 
   displaySupportMessage = () => this.props.userHasEfolderRole ? (
     <>Please visit <a href={this.props.efolderExpressUrl} target="_blank" rel="noopener noreferrer">eFolder Express</a> to fetch the latest list of documents or submit a support ticket via <a href="https://yourit.va.gov" target="_blank" rel="noopener noreferrer">YourIT</a> to sync their eFolder with Reader.</>

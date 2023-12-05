@@ -1,11 +1,15 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { LastRetrievalAlert } from '../../../../../../app/2.0/components/reader/DocumentList/LastRetrievalAlert';
-import * as format from '../../../../../../app/2.0/utils/reader/format';
-import { alertMessage, warningMessage } from './constants/LastRetrievalAlert'
+import { LastRetrievalAlert } from '../../../app/reader/LastRetrievalAlert';
+import { alertMessage, warningMessage } from '../constants/LastRetrievalAlert'
+import moment from 'moment';
 
 describe('LastRetrievalAlert', () => {
-  const spy = jest.spyOn(format, 'formatAlertTime')
+  //const spy = jest.spyOn(moment, 'moment');
+  // jest.mock('moment', () => {
+  //   return () => jest.requireActual('moment')('05/11/23 12:40PM -0600');
+  // });
+
 
   const defaultProps = {
     appeal: {
@@ -18,25 +22,26 @@ describe('LastRetrievalAlert', () => {
     <LastRetrievalAlert {...defaultProps} {...props} />
   );
 
-  it('does not render alert or warning message when manifest VBMS has been fetched and now is null', () => {
+  it('does not render alert or warning message when eFolder document has been fetched and now is null', () => {
     const component = renderComponent({manifestVbmsFetchedAt: '05/10/23 10:34am EDT -0400'});
 
     expect(screen.queryByText(alertMessage)).toBeFalsy();
     expect(screen.queryByText(warningMessage)).toBeFalsy();
   });
 
-  it('renders alert message when manifest VBMS has not been fetched', () => {
+  it('renders alert message when eFolder Document has not been fetched', () => {
     const component = renderComponent();
 
-    expect(screen.getByText(alertMessage)).toBeTruthy();
+    expect(screen.getByText(alertMessage, { exact: false })).toBeTruthy();
     expect(screen.queryByText(warningMessage)).toBeFalsy();
   });
 
   it('renders warning message when now is returned', () => {
-    spy.mockReturnValueOnce({now: '05/11/23 12:40PM -0600', vbmsDiff: 15});
+    Date.now = jest.fn().mockReturnValue(new Date('2023-05-11T12:40:00.000Z'));
+
     const component = renderComponent({manifestVbmsFetchedAt: '05/10/23 10:34am EDT -0400'});
 
-    expect(screen.getByText(warningMessage)).toBeTruthy();
+    expect(screen.getByText(warningMessage, { exact: false })).toBeTruthy();
     expect(screen.queryByText(alertMessage)).toBeFalsy();
   });
 });
