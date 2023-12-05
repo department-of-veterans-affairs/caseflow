@@ -28,7 +28,6 @@ export const CorrespondenceReviewPackage = (props) => {
   const [disableButton, setDisableButton] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [packageActionModal, setPackageActionModal] = useState(null);
-  const [packageActionModalInfo, setPackageActionModalInfo] = useState({});
 
   const history = useHistory();
   const fetchData = async () => {
@@ -60,12 +59,6 @@ export const CorrespondenceReviewPackage = (props) => {
   useEffect(() => {
     fetchData();
   }, []);
-
-  useEffect(() => {
-    const modalOptions = getModalInformation(packageActionModal);
-
-    setPackageActionModalInfo(modalOptions);
-  }, [packageActionModal]);
 
   const handleModalClose = () => {
     setShowModal(!showModal);
@@ -118,7 +111,7 @@ export const CorrespondenceReviewPackage = (props) => {
         {packageActionModal &&
           <PackageActionModal
             packageActionModal={packageActionModal}
-            modalInfo={packageActionModalInfo}
+            modalInfo={getModalInformation(packageActionModal)}
             columns={getPackageActionColumns(packageActionModal)}
             closeHandler={handlePackageActionModal}
           />
