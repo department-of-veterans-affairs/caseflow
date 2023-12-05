@@ -399,7 +399,6 @@ const prepareLocationHistoryForStore = (appeal) => {
 };
 
 
-/**
 export const prepareAppealForStore = (appeals) => {
   const appealHash = appeals.reduce((accumulator, appeal) => {
     const {
@@ -525,12 +524,7 @@ export const prepareAppealForStore = (appeals) => {
   };
 };
 
-**/
-
-
-
-
-export const prepareAppealForStore = (appeals) => {
+export const prepareAppealForSearchStore = (appeals) => {
   const appealHash = appeals.reduce((accumulator, appeal) => {
     const {
       attributes: { issues },
@@ -567,6 +561,8 @@ export const prepareAppealForStore = (appeals) => {
     accumulator[appeal.attributes.external_id] = {
       hearings: prepareAppealHearingsForStore(appeal),
       appellantFullName: appeal.attributes.appellant_full_name,
+      currentUserEmail: appeal.attributes.current_user_email,
+      currentUserTimezone: appeal.attributes.current_user_timezone,
       contestedClaim: appeal.attributes.contested_claim,
       assignedToLocation: appeal.attributes.assigned_to_location,
       veteranParticipantId: appeal.attributes.veteran_participant_id,
@@ -585,9 +581,6 @@ export const prepareAppealForStore = (appeals) => {
     appealDetails: appealDetailsHash,
   };
 };
-
-
-
 
 export const prepareClaimReviewForStore = (claimReviews) => {
   const claimReviewHash = claimReviews.reduce((accumulator, claimReview) => {

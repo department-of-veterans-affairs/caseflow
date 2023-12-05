@@ -4,8 +4,14 @@ class WorkQueue::AppealSerializerSearch
   include FastJsonapi::ObjectSerializer
   extend Helpers::AppealHearingHelper
 
+  set_type :appeal
+
   attribute :assigned_attorney
   attribute :assigned_judge
+
+  attribute :current_user_email do |_, params|
+    params[:user]&.email
+  end
 
   attribute :current_user_timezone do |_, params|
     params[:user]&.timezone
@@ -42,22 +48,12 @@ class WorkQueue::AppealSerializerSearch
     associated_hearings + hearings(object, params)
   end
 
+  attribute :assigned_to_location
+
   attribute :appellant_is_not_veteran
 
   attribute :appellant_full_name do |object|
     object.claimant&.name
-  end
-
-  attribute :appellant_first_name do |object|
-    object.claimant&.first_name
-  end
-
-  attribute :appellant_middle_name do |object|
-    object.claimant&.middle_name
-  end
-
-  attribute :appellant_last_name do |object|
-    object.claimant&.last_name
   end
 
   attribute :veteran_death_date
@@ -68,12 +64,16 @@ class WorkQueue::AppealSerializerSearch
     object.veteran ? object.veteran.name.formatted(:readable_full) : "Cannot locate"
   end
 
+  attribute :external_id, &:uuid
+
   attribute :type
   attribute :vacate_type
   attribute :aod, &:advanced_on_docket?
   attribute :docket_name
   attribute :docket_number
+  attribute :docket_range_date
   attribute :decision_date
+  attribute :nod_date, &:receipt_date
   attribute :withdrawal_date
 
   attribute :caseflow_veteran_id do |object|
