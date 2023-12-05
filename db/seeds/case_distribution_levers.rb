@@ -7,26 +7,6 @@ module Seeds
       end
     end
 
-    private
-
-    def create_lever lever
-      CaseDistributionLever.create(
-        item: lever[:item],
-        title: lever[:title],
-        description: lever[:description],
-        data_type: lever[:data_type],
-        value: lever[:value].to_s,
-        unit: lever[:unit],
-        is_active: lever[:is_active] || false,
-        is_disabled: lever[:is_disabled] || false,
-        min_value: lever[:min_value],
-        max_value: lever[:max_value],
-        algorithms_used: lever[:algorithms_used],
-        options: lever[:options],
-        control_group: lever[:control_group]
-      )
-    end
-
     def levers
       [
         {
@@ -473,6 +453,26 @@ module Seeds
           value: 120
         },
       ]
+    end
+
+    private
+
+    def create_lever lever
+      CaseDistributionLever.create(
+        item: lever[:item],
+        title: lever[:title],
+        description: lever[:description],
+        data_type: lever[:data_type],
+        value: lever[:value].to_s,
+        unit: lever[:unit],
+        is_active: lever[:is_active] || false,
+        is_disabled: lever[:is_disabled] || false,
+        min_value: lever[:min_value],
+        max_value: lever[:max_value],
+        algorithms_used: lever[:algorithms_used],
+        options: lever[:options],
+        control_group: lever[:control_group]
+      )
     end
   end
 end
