@@ -18,7 +18,8 @@ const AddEvidenceSubmissionTaskView = (props) => {
   const defaultValue = isEvidenceSubmission ? dropdownOptions[0] : null;
   const [isWaiveCheckboxSelected, setWaiveCheckboxSelected] = useState(false);
   const [waiveReason, setWaiveReason] = useState('');
-  const waivedEvidenceTasks = useSelector((state) => state.intakeCorrespondence.waivedEvidenceTasks);
+  const [waivedEvidenceTasks, setWaivedNewEvidenceTasks] =
+       useState(useSelector((state) => state.intakeCorrespondence.waivedEvidenceTasks));
 
   const dispatch = useDispatch();
 
@@ -33,7 +34,7 @@ const AddEvidenceSubmissionTaskView = (props) => {
     const newTask = { id: props.task, content: waiveReason, isChecked: !isWaiveCheckboxSelected };
 
     // Dispatch the action with the updated tasks
-    dispatch(setWaivedEvidenceTasks([...waivedEvidenceTasks, newTask]));
+    setWaivedNewEvidenceTasks([...waivedEvidenceTasks, newTask]);
     // dispatch(setWaivedEvidenceTasks(newTask));
 
     props.setRelatedTasksCanContinue(canContinue);
@@ -51,6 +52,10 @@ const AddEvidenceSubmissionTaskView = (props) => {
       props.setRelatedTasksCanContinue(false);
     }
   }, [waiveReason]);
+
+  useEffect(() => {
+    dispatch(setWaivedEvidenceTasks(waivedEvidenceTasks));
+  }, [waivedEvidenceTasks]);
 
   return (
     <div key={props.docketName} style={{ display: 'block', marginRight: '2rem' }}>
