@@ -4,8 +4,8 @@ import Modal from '../../../components/Modal';
 import TextareaField from '../../../components/TextareaField';
 import Table from '../../../components/Table';
 import { connect } from 'react-redux';
-import ApiUtil from '../../../util/ApiUtil';
-// import { useHistory } from 'react-router';
+// import ApiUtil from '../../../util/ApiUtil';
+import { getPackageActionColumns, getModalInformation } from '../review_package/utils';
 
 const PackageActionModal = (props) => {
   const {
@@ -13,12 +13,10 @@ const PackageActionModal = (props) => {
     correspondence,
     packageDocumentType,
     veteranInformation,
-    modalInfo,
-    columns,
     closeHandler,
   } = props;
 
-  // const history = useHistory();
+  const modalInfo = getModalInformation(packageActionModal);
 
   const [textInputReason, setTextInputReason] = useState('');
 
@@ -45,12 +43,11 @@ const PackageActionModal = (props) => {
     if (props.packageActionModal === 'removePackage') {
       data.textInput = textInputReason;
     }
-
-    ApiUtil.post(`/queue/correspondence/${correspondence.correspondence_uuid}/task`, { data }).then((response) => {
-      console.log(response);
-      // history.push('/queue/correspondence');
-    }
-    );
+    console.log(data);
+    // ApiUtil.post(`/queue/correspondence/${correspondence.correspondence_uuid}/task`, { data }).then((response) => {
+    //   console.log(response);
+    // }
+    // );
   };
 
   return (
@@ -75,7 +72,7 @@ const PackageActionModal = (props) => {
         {modalInfo.description}
       </span>
       <Table
-        columns={columns}
+        columns={getPackageActionColumns(packageActionModal)}
         rowObjects={rows}
         slowReRendersAreOk
         summary="Request Package Action Modal"
