@@ -83,6 +83,12 @@ class CorrespondenceController < ApplicationController
     data["documentTypes"].map { |document_type| { id: document_type["id"], name: document_type["name"] } }
   end
 
+  def process_intake
+    Task.transaction do
+      render json: {}, status: :created
+    end
+  end
+
   private
 
   def general_information
