@@ -18,39 +18,51 @@ const ConfirmTasksRelatedToAnAppeal = () => {
     return (
       <>
         {/* <tr colSpan="100%" style={{ height: '100px', width:'100%', display: 'flex', flexDirection: 'column' }}> */}
-        <tr colSpan="100%" style={{ height: '100px', width: '100%' }}>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <th style={styling}></th>
+        <tr colSpan="100%" style={{ height: '100px', width: '100%', backgroundColor: COLORS.GREY_BACKGROUND }}>
+          <td style={{borderTop:'none' ,padding: 'none', margin: 'none', backgroundColor: COLORS.GREY_BACKGROUND }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <th style={styling}></th>
             Appeal {index + 1} Tasks
-            <b>Linked appeal</b>
-            <LinkToAppeal>
-              <DocketTypeBadge name="Help" number="1234" />
-              <b>{fetchedAppeals.find((appeal) => appeal.id === task).docketNumber}</b></LinkToAppeal>
-          </div>
-
+              <b>Linked appeal</b>
+              <LinkToAppeal>
+                <DocketTypeBadge name="Help" number="1234" />
+                <b>{fetchedAppeals.find((appeal) => appeal.id === task).docketNumber}</b></LinkToAppeal>
+            </div>
+          </td>
+          <td style={{borderTop:'none'}}>
+            <p>Currently Active Task</p>
+          </td>
+          <td style={{borderTop:'none'}}>
+            <p>Evidence Window Waived?</p>
+          </td>
+          <td style={{borderTop:'none'}}>
+            <p>Assigned To</p>
+          </td>
         </tr>
         <tr>
           <td
             style={{ backgroundColor: COLORS.GREY_BACKGROUND,
               borderTop: 'none',
-              width: '20%',
+              // width: '100%',
               borderSpacing: '0px' }}>
             <b>Additional Tasks</b>
           </td>
-          <td style={{ backgroundColor: COLORS.GREY_BACKGROUND,
-            borderTop: 'none',
-            borderSpacing: '0px' }}>
+          <td
+            colSpan="3"
+            style={{ backgroundColor: COLORS.GREY_BACKGROUND,
+            // width:'200%',
+              borderTop: 'none',
+              borderSpacing: '0px' }}>
             <b>Task Instructions or Context</b>
           </td>
         </tr>
-        {/* {tasks.filter((taskById) => taskById.appealId === task.appealId)} */}
         {tasks.filter((taskById) => taskById.appealId === task).map((taskById) =>
           <tr>
             <td
               style={{ backgroundColor: COLORS.GREY_BACKGROUND, borderTop: '1px solid #dee2e6', width: '20%' }}>
               {taskById.type}
             </td>
-            <td style={{ backgroundColor: COLORS.GREY_BACKGROUND, borderTop: '1px solid #dee2e6' }}>
+            <td colSpan={3} style={{ backgroundColor: COLORS.GREY_BACKGROUND, borderTop: '1px solid #dee2e6' }}>
               {taskById.content}
             </td>
           </tr>)}
