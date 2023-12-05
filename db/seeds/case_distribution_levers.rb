@@ -87,7 +87,7 @@ module Seeds
           value: 15,
           unit: 'cases',
           is_active: true,
-          is_disabled: true,
+          is_disabled: false,
           min_value: 0,
           max_value: 100,
           algorithms_used: ['docket', 'proportion']
@@ -100,7 +100,7 @@ module Seeds
           value: 3,
           unit: 'cases',
           is_active: true,
-          is_disabled: true,
+          is_disabled: false,
           min_value: 0,
           max_value: 100,
           algorithms_used: ['docket', 'proportion']
@@ -147,7 +147,7 @@ module Seeds
             }
           ],
           is_active: true,
-          is_disabled: true,
+          is_disabled: false,
           min_value: 0,
           max_value: 100,
           algorithms_used: ['docket']
@@ -397,7 +397,7 @@ module Seeds
             }
           ],
           is_active: true,
-          is_disabled: true,
+          is_disabled: false,
           min_value: 0,
           max_value: 100,
           algorithms_used: ['docket']
