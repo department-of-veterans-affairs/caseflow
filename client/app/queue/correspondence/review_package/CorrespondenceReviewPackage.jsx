@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { useHistory } from 'react-router';
 import PackageActionModal from '../modals/PackageActionModal';
-import { getPackageActionColumns, getModalInformation } from './utils';
 
 export const CorrespondenceReviewPackage = (props) => {
   const [reviewDetails, setReviewDetails] = useState({
@@ -111,8 +110,6 @@ export const CorrespondenceReviewPackage = (props) => {
         {packageActionModal &&
           <PackageActionModal
             packageActionModal={packageActionModal}
-            modalInfo={getModalInformation(packageActionModal)}
-            columns={getPackageActionColumns(packageActionModal)}
             closeHandler={handlePackageActionModal}
           />
         }
