@@ -5,6 +5,8 @@ import Button from '../../../../../components/Button';
 import CaseDetailsLink from '../../../../CaseDetailsLink';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
+const MAX_NUM_TASKS = 4;
+
 export const ExistingAppealTasksView = (props) => {
   const [displayRemoveCheck, setDisplayRemoveCheck] = useState(false);
   const [availableTaskTypeOptions, setavailableTaskTypeOptions] = useState([]);
@@ -89,7 +91,7 @@ export const ExistingAppealTasksView = (props) => {
           <Button
             type="button"
             onClick={addTask}
-            disabled={false}
+            disabled={props.newTasks.length === MAX_NUM_TASKS}
             name="addasks"
             className={['cf-left-side']}>
           + Add tasks
