@@ -1111,6 +1111,10 @@ describe ClaimReview, :postgres do
 
         expect(claim_review.end_product_establishments.count).to eq(2)
 
+        ratings_end_product_establishment = intake.detail.end_product_establishments.find do |epe|
+          epe.code == "030HLRR"
+        end
+
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
             benefit_type_code: "1",
@@ -1119,9 +1123,9 @@ describe ClaimReview, :postgres do
             claim_type: "Claim",
             station_of_jurisdiction: user.station_id,
             date: claim_review.receipt_date.to_date,
-            end_product_modifier: "030",
+            end_product_modifier: ratings_end_product_establishment.modifier,
             end_product_label: "Higher-Level Review Rating",
-            end_product_code: "030HLRR",
+            end_product_code: ratings_end_product_establishment.code,
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
             claimant_participant_id: veteran_participant_id,
@@ -1149,6 +1153,10 @@ describe ClaimReview, :postgres do
           }
         )
 
+        non_rating_end_product_establishment = intake.detail.end_product_establishments.find do |epe|
+          epe.code == "030HLRNR"
+        end
+
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
             benefit_type_code: "1",
@@ -1157,9 +1165,9 @@ describe ClaimReview, :postgres do
             claim_type: "Claim",
             station_of_jurisdiction: user.station_id,
             date: claim_review.receipt_date.to_date,
-            end_product_modifier: "031", # Important that the modifier increments for the second EP
+            end_product_modifier: non_rating_end_product_establishment.modifier, # Important that the modifier increments for the second EP
             end_product_label: "Higher-Level Review Nonrating",
-            end_product_code: "030HLRNR",
+            end_product_code: non_rating_end_product_establishment.code,
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
             claimant_participant_id: veteran_participant_id,
