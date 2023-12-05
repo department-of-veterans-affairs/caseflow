@@ -114,6 +114,7 @@ export const AddUnrelatedTaskView = (props) => {
                 displayRemoveCheck
                 allTaskTypeOptions={props.allTaskTypeOptions}
                 availableTaskTypeOptions={availableTaskTypeOptions}
+                autoTexts={props.autoTexts}
               />
             ))}
           </div>
@@ -136,7 +137,8 @@ export const AddUnrelatedTaskView = (props) => {
 AddUnrelatedTaskView.propTypes = {
   setUnrelatedTasksCanContinue: PropTypes.func.isRequired,
   filterUnavailableTaskTypeOptions: PropTypes.func.isRequired,
-  allTaskTypeOptions: PropTypes.array.isRequired
+  allTaskTypeOptions: PropTypes.array.isRequired,
+  autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
 export default AddUnrelatedTaskView;

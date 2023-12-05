@@ -19,7 +19,7 @@ const mailTasksRight = [
   'Associated with Claims Folder'
 ];
 
-const relatedTaskTypes = INTAKE_FORM_TASK_TYPES.relatedToAppeal; 
+const relatedTaskTypes = INTAKE_FORM_TASK_TYPES.relatedToAppeal;
 const unrelatedTaskTypes = INTAKE_FORM_TASK_TYPES.unrelatedToAppeal;
 
 export const AddTasksAppealsView = (props) => {
@@ -28,7 +28,7 @@ export const AddTasksAppealsView = (props) => {
   const [unrelatedTasksCanContinue, setUnrelatedTasksCanContinue] = useState(true);
 
   const dispatch = useDispatch();
-  
+
   const filterUnavailableTaskTypeOptions = (tasks, options) => {
     let otherMotionCount = 0;
 
@@ -102,6 +102,7 @@ export const AddTasksAppealsView = (props) => {
               setUnrelatedTasksCanContinue={setUnrelatedTasksCanContinue}
               filterUnavailableTaskTypeOptions={filterUnavailableTaskTypeOptions}
               allTaskTypeOptions={unrelatedTaskTypes}
+              autoTexts={props.autoTexts}
             />
           </div>
         </div>
@@ -114,6 +115,7 @@ export const AddTasksAppealsView = (props) => {
             setRelatedTasksCanContinue={setRelatedTasksCanContinue}
             filterUnavailableTaskTypeOptions={filterUnavailableTaskTypeOptions}
             allTaskTypeOptions={relatedTaskTypes}
+            autoTexts={props.autoTexts}
           />
         </div>
       </div>
@@ -123,7 +125,8 @@ export const AddTasksAppealsView = (props) => {
 
 AddTasksAppealsView.propTypes = {
   correspondenceUuid: PropTypes.string.isRequired,
-  onContinueStatusChange: PropTypes.func.isRequired
+  onContinueStatusChange: PropTypes.func.isRequired,
+  autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
 export default AddTasksAppealsView;

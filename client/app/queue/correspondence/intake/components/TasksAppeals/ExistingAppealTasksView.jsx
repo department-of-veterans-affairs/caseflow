@@ -78,6 +78,7 @@ export const ExistingAppealTasksView = (props) => {
               setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
               allTaskTypeOptions={props.allTaskTypeOptions}
               availableTaskTypeOptions={availableTaskTypeOptions}
+              autoTexts={props.autoTexts}
             />
           );
         })}
@@ -116,7 +117,8 @@ ExistingAppealTasksView.propTypes = {
   setRelatedTasksCanContinue: PropTypes.func.isRequired,
   unlinkAppeal: PropTypes.func.isRequired,
   allTaskTypeOptions: PropTypes.array.isRequired,
-  filterUnavailableTaskTypeOptions: PropTypes.func.isRequired
+  filterUnavailableTaskTypeOptions: PropTypes.func.isRequired,
+  autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
 export default ExistingAppealTasksView;
