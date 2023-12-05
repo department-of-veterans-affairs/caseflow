@@ -397,7 +397,7 @@ module Seeds
             }
           ],
           is_active: true,
-          is_disabled: true,
+          is_disabled: false,
           min_value: 0,
           max_value: 100,
           algorithms_used: ['docket']
@@ -418,8 +418,8 @@ module Seeds
               unit: ''
             }
           ],
-          is_active: true,
-          is_disabled: false,
+          is_active: false,
+          is_disabled: true,
           min_value: 0,
           max_value: 100,
           algorithms_used: ['proportion']
