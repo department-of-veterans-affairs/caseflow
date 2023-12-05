@@ -1,4 +1,5 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
@@ -13,7 +14,7 @@ import { setSelectingJudge } from './uiReducer/uiActions';
 
 import Button from '../components/Button';
 import SearchableDropdown from '../components/SearchableDropdown';
-import COPY from '../../COPY.json';
+import COPY from '../../COPY';
 
 const selectJudgeButtonStyling = (selectedJudge) => css({ paddingLeft: selectedJudge ? '' : 0 });
 
@@ -38,9 +39,9 @@ class JudgeSelectComponent extends React.PureComponent {
     }
   };
 
-  UNSAFE_componentWillReceiveProps = (nextProps) => {
-    if (nextProps.judges !== this.props.judges) {
-      this.setDefaultJudge(nextProps.judges);
+  componentDidUpdate = (prevProps) => {
+    if (prevProps.judges !== this.props.judges) {
+      this.setDefaultJudge(this.props.judges);
     }
   }
 
@@ -137,3 +138,15 @@ export default (connect(
   mapStateToProps,
   mapDispatchToProps
 )(JudgeSelectComponent));
+
+JudgeSelectComponent.propTypes = {
+  judge: PropTypes.string,
+  judges: PropTypes.object,
+  fetchJudges: PropTypes.func,
+  judgeSelector: PropTypes.string,
+  setDecisionOptions: PropTypes.func,
+  selectingJudge: PropTypes.bool,
+  decision: PropTypes.object,
+  highlightFormItems: PropTypes.bool,
+  setSelectingJudge: PropTypes.func
+};

@@ -407,9 +407,6 @@ feature "Intake Add Issues Page", :all_dbs do
     let(:decision_date) { 50.days.ago.to_date.mdY }
     let(:untimely_days) { 2.years.ago.to_date.mdY }
 
-    before { FeatureToggle.enable!(:unidentified_issue_decision_date) }
-    after { FeatureToggle.disable!(:unidentified_issue_decision_date) }
-
     scenario "unidentified issue decision date on add issue page" do
       start_higher_level_review(veteran_no_ratings)
       visit "/intake"

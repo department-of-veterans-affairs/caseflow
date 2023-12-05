@@ -50,6 +50,7 @@ const config = {
       components: path.resolve('app/2.0/components'),
       utils: path.resolve('app/2.0/utils'),
       styles: path.resolve('app/2.0/styles'),
+      common: path.resolve('app/components/common'),
       test: path.resolve('test'),
     },
   },

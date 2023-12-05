@@ -22,7 +22,6 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
   end
 
   let!(:pepsq_records) do
-    PopulateEndProductSyncQueueJob.perform_now
     PriorityEndProductSyncQueue.all
   end
 
@@ -161,9 +160,9 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
         expect(BatchProcess.count).to eq(1)
       end
 
-      it "the batch process includes only 1 of the 2 available PriorityEndProductSyncQueue records" do
-        expect(PriorityEndProductSyncQueue.count).to eq(2)
-        expect(BatchProcess.first.priority_end_product_sync_queue.count).to eq(1)
+      it "the batch process syncs & deletes only 1 of the 2 available PriorityEndProductSyncQueue records" do
+        expect(PriorityEndProductSyncQueue.count).to eq(1)
+        expect(BatchProcess.first.priority_end_product_sync_queue.count).to eq(0)
       end
 
       it "the batch process has a state of 'COMPLETED'" do
@@ -184,6 +183,10 @@ describe PriorityEpSyncBatchProcessJob, type: :job do
 
       it "the batch process has 0 records_failed" do
         expect(BatchProcess.first.records_failed).to eq(0)
+      end
+
+      it "the batch process has 1 records_completed" do
+        expect(BatchProcess.first.records_completed).to eq(1)
       end
 
       it "slack will NOT be notified when job runs successfully" do
