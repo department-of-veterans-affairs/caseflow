@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { useHistory } from 'react-router';
 import PackageActionModal from '../modals/PackageActionModal';
+import { getPackageActionColumns, getModalInformation } from './utils';
 
 export const CorrespondenceReviewPackage = (props) => {
   const [reviewDetails, setReviewDetails] = useState({
@@ -27,6 +28,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [disableButton, setDisableButton] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [packageActionModal, setPackageActionModal] = useState(null);
+  const [packageActionModalInfo, setPackageActionModalInfo] = useState({});
 
   const history = useHistory();
   const fetchData = async () => {
@@ -59,13 +61,19 @@ export const CorrespondenceReviewPackage = (props) => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const modalOptions = getModalInformation(packageActionModal);
+
+    setPackageActionModalInfo(modalOptions);
+  }, [packageActionModal]);
+
   const handleModalClose = () => {
     setShowModal(!showModal);
   };
 
   const handlePackageActionModal = (value) => {
     setPackageActionModal(value);
-  }
+  };
 
   const handleReview = () => {
     history.push('/queue/correspondence');
@@ -102,11 +110,19 @@ export const CorrespondenceReviewPackage = (props) => {
   return (
     <React.Fragment>
       <AppSegment filledBackground>
-        <ReviewPackageCaseTitle />
+        <ReviewPackageCaseTitle handlePackageActionModal={handlePackageActionModal} />
         <ReviewPackageData
           correspondence={props.correspondence}
-          packageDocumentType={props.packageDocumentType} />
-        {packageModal && <PackageActionModal showModal={packageModal} />}
+          packageDocumentType={props.packageDocumentType}
+        />
+        {packageActionModal &&
+          <PackageActionModal
+            packageActionModal={packageActionModal}
+            modalInfo={packageActionModalInfo}
+            columns={getPackageActionColumns(packageActionModal)}
+            closeHandler={handlePackageActionModal}
+          />
+        }
         <ReviewForm
           {...{
             reviewDetails,
@@ -147,7 +163,6 @@ export const CorrespondenceReviewPackage = (props) => {
               href={intakeLink}
             />
           </a>
-          <Button name="Test modal" onClick={showPackageModal} />
         </div>
       </div>
     </React.Fragment>
@@ -159,6 +174,7 @@ CorrespondenceReviewPackage.propTypes = {
   correspondence: PropTypes.object,
   correspondenceDocuments: PropTypes.arrayOf(PropTypes.object),
   packageDocumentType: PropTypes.object,
+  veteranInformation: PropTypes.object,
   setFileNumberSearch: PropTypes.func,
   doFileNumberSearch: PropTypes.func
 };
@@ -166,7 +182,8 @@ CorrespondenceReviewPackage.propTypes = {
 const mapStateToProps = (state) => ({
   correspondence: state.reviewPackage.correspondence,
   correspondenceDocuments: state.reviewPackage.correspondenceDocuments,
-  packageDocumentType: state.reviewPackage.packageDocumentType
+  packageDocumentType: state.reviewPackage.packageDocumentType,
+  veteranInformation: state.reviewPackage.veteranInformation
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
