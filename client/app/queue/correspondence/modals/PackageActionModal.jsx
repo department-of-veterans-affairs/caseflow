@@ -5,7 +5,7 @@ import TextareaField from '../../../components/TextareaField';
 import Table from '../../../components/Table';
 import { connect } from 'react-redux';
 import ApiUtil from '../../../util/ApiUtil';
-import { useHistory } from 'react-router';
+// import { useHistory } from 'react-router';
 
 const PackageActionModal = (props) => {
   const {
@@ -18,7 +18,7 @@ const PackageActionModal = (props) => {
     closeHandler,
   } = props;
 
-  const history = useHistory();
+  // const history = useHistory();
 
   const [textInputReason, setTextInputReason] = useState('');
 

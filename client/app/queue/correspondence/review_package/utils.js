@@ -60,37 +60,15 @@ export const getPackageActionColumns = (dropdownType) => {
   return baseColumns;
 };
 
-export const getPackageActionModalTitle = (dropdownType) => {
-  switch (dropdownType) {
-  case 'removePackage':
-    return PACKAGE_ACTION_REMOVAL_TITLE;
-  default:
-    return '';
-  }
-};
-
-export const getPackageActionModalDescription = (dropdownType) => {
-  switch (dropdownType) {
-  case 'removePackage':
-    return PACKAGE_ACTION_MODAL_DESCRIPTION;
-  default:
-    return '';
-  }
-};
-
-export const getPackageActionModalTextLabel = (dropdownType) => {
-  switch (dropdownType) {
-  case 'removePackage':
-    return PACKAGE_ACTION_REMOVAL_TEXTAREA_LABEL;
-  default:
-    return '';
-  }
-};
-
 export const getModalInformation = (dropdownType) => {
-  return {
-    title: getPackageActionModalTitle(dropdownType),
-    description: getPackageActionModalDescription(dropdownType),
-    label: getPackageActionModalTextLabel(dropdownType)
-  };
+  switch (dropdownType) {
+  case 'removePackage':
+    return {
+      title: PACKAGE_ACTION_REMOVAL_TITLE,
+      description: PACKAGE_ACTION_MODAL_DESCRIPTION,
+      label: PACKAGE_ACTION_REMOVAL_TEXTAREA_LABEL
+    };
+  default:
+    return '';
+  }
 };
