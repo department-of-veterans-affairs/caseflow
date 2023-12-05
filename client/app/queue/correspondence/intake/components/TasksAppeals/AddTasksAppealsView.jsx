@@ -5,6 +5,7 @@ import Checkbox from '../../../../../components/Checkbox';
 import AddAppealRelatedTaskView from './AddAppealRelatedTaskView';
 import AddUnrelatedTaskView from './AddUnrelatedTaskView';
 import { saveMailTaskState } from '../../../correspondenceReducer/correspondenceActions';
+import { INTAKE_FORM_TASK_TYPES } from '../../../../constants';
 
 const mailTasksLeft = [
   'Change of address',
@@ -18,17 +19,8 @@ const mailTasksRight = [
   'Associated with Claims Folder'
 ];
 
-const taskTypeOptions = [
-  { value: 'CAVC Correspondence', label: 'CAVC Correspondence' },
-  { value: 'Congressional interest', label: 'Congressional interest' },
-  { value: 'Death certificate', label: 'Death certificate' },
-  { value: 'FOIA request', label: 'FOIA request' },
-  { value: 'Other motion', label: 'Other motion' },
-  { value: 'Power of attorney-related', label: 'Power of attorney-related' },
-  { value: 'Privacy act request', label: 'Privacy act request' },
-  { value: 'Privacy complaint', label: 'Privacy complaint' },
-  { value: 'Status inquiry', label: 'Status inquiry' }
-];
+const relatedTaskTypes = INTAKE_FORM_TASK_TYPES.relatedToAppeal; 
+const unrelatedTaskTypes = INTAKE_FORM_TASK_TYPES.unrelatedToAppeal;
 
 export const AddTasksAppealsView = (props) => {
   const mailTasks = useSelector((state) => state.intakeCorrespondence.mailTasks);
@@ -36,8 +28,8 @@ export const AddTasksAppealsView = (props) => {
   const [unrelatedTasksCanContinue, setUnrelatedTasksCanContinue] = useState(true);
 
   const dispatch = useDispatch();
-
-  const filterUnavailableTaskTypeOptions = (tasks) => {
+  
+  const filterUnavailableTaskTypeOptions = (tasks, options) => {
     let otherMotionCount = 0;
 
     const filteredTaskNames = tasks.map((task) => {
@@ -48,7 +40,7 @@ export const AddTasksAppealsView = (props) => {
       return task.type;
     });
 
-    return taskTypeOptions.filter((option) => {
+    return options.filter((option) => {
       // Up to 2 other motion tasks can be created in the workflow
       // so only filter 'other motion' if there are 2 other motion tasks already created
       if (option.value === 'Other motion' && otherMotionCount < 2) {
@@ -109,7 +101,7 @@ export const AddTasksAppealsView = (props) => {
             <AddUnrelatedTaskView
               setUnrelatedTasksCanContinue={setUnrelatedTasksCanContinue}
               filterUnavailableTaskTypeOptions={filterUnavailableTaskTypeOptions}
-              allTaskTypeOptions={taskTypeOptions}
+              allTaskTypeOptions={unrelatedTaskTypes}
             />
           </div>
         </div>
@@ -121,7 +113,7 @@ export const AddTasksAppealsView = (props) => {
             correspondenceUuid={props.correspondenceUuid}
             setRelatedTasksCanContinue={setRelatedTasksCanContinue}
             filterUnavailableTaskTypeOptions={filterUnavailableTaskTypeOptions}
-            allTaskTypeOptions={taskTypeOptions}
+            allTaskTypeOptions={relatedTaskTypes}
           />
         </div>
       </div>

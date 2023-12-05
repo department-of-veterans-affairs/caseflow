@@ -51,7 +51,7 @@ export const ExistingAppealTasksView = (props) => {
   }, [props.newTasks]);
 
   useEffect(() => {
-    setavailableTaskTypeOptions(props.filterUnavailableTaskTypeOptions(getTasksForAppeal()));
+    setavailableTaskTypeOptions(props.filterUnavailableTaskTypeOptions(getTasksForAppeal(), props.allTaskTypeOptions));
   }, [props.newTasks]);
 
   return (

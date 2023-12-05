@@ -63,7 +63,7 @@ export const AddUnrelatedTaskView = (props) => {
   }, [addTasksVisible]);
 
   useEffect(() => {
-    setavailableTaskTypeOptions(props.filterUnavailableTaskTypeOptions(newTasks));
+    setavailableTaskTypeOptions(props.filterUnavailableTaskTypeOptions(newTasks, props.allTaskTypeOptions));
   }, [newTasks]);
 
   const getTasks = () => {
