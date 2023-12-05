@@ -81,7 +81,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
   def increment_vacols_update_count(count)
     count.times do
-      CustomMetricsService.increment_counter(
+      MetricsService.increment_counter(
         app_name: APP_NAME,
         metric_group: METRIC_GROUP_NAME,
         metric_name: "vacols_cases_cached"
@@ -91,7 +91,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
   def increment_appeal_count(count, appeal_type)
     count.times do
-      CustomMetricsService.increment_counter(
+      MetricsService.increment_counter(
         app_name: APP_NAME,
         metric_group: METRIC_GROUP_NAME,
         metric_name: "appeals_to_cache",
@@ -127,7 +127,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   def record_success_in_custom_metrics
-    CustomMetricsService.increment_counter(
+    MetricsService.increment_counter(
       app_name: APP_NAME,
       metric_group: METRIC_GROUP_NAME,
       metric_name: "success"
@@ -135,7 +135,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
   end
 
   def record_error_in_custom_metrics
-    CustomMetricsService.increment_counter(
+    MetricsService.increment_counter(
       app_name: APP_NAME,
       metric_group: METRIC_GROUP_NAME,
       metric_name: "error"

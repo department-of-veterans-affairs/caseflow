@@ -15,7 +15,7 @@ class CaseflowJob < ApplicationJob
   end
 
   def custom_metrics_report_runtime(metric_group_name:)
-    CustomMetricsService.record_runtime(
+    MetricsService.record_runtime(
       app_name: "caseflow_job",
       metric_group: metric_group_name,
       start_time: @start_time
@@ -26,7 +26,7 @@ class CaseflowJob < ApplicationJob
   def custom_metrics_report_time_segment(segment:, start_time:)
     job_duration_seconds = Time.zone.now - start_time
 
-    CustomMetricsService.emit_gauge(
+    MetricsService.emit_gauge(
       app_name: "caseflow_job_segment",
       metric_group: segment,
       metric_name: "runtime",

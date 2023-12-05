@@ -50,7 +50,7 @@ module PumaThreadLogger
   end
 
   def emit_custom_metrics_point(type, count)
-    CustomMetricsService.emit_gauge(
+    MetricsService.emit_gauge(
       metric_group: "puma",
       metric_name: "#{type}_threads",
       metric_value: count,

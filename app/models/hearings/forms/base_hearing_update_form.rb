@@ -371,14 +371,14 @@ class BaseHearingUpdateForm
     if virtual_hearing_cancelled?
       virtual_hearing.update!(request_cancelled: true)
       update_email_recipients
-      CustomMetricsService.increment_counter(metric_name: "cancelled_virtual_hearing.successful", **updated_metric_info)
+      MetricsService.increment_counter(metric_name: "cancelled_virtual_hearing.successful", **updated_metric_info)
     elsif !virtual_hearing_created?
       virtual_hearing.establishment.restart!
       update_email_recipients
-      CustomMetricsService.increment_counter(metric_name: "updated_virtual_hearing.successful", **updated_metric_info)
+      MetricsService.increment_counter(metric_name: "updated_virtual_hearing.successful", **updated_metric_info)
     else
       VirtualHearingEstablishment.create!(virtual_hearing: virtual_hearing)
-      CustomMetricsService.increment_counter(metric_name: "created_virtual_hearing.successful", **updated_metric_info)
+      MetricsService.increment_counter(metric_name: "created_virtual_hearing.successful", **updated_metric_info)
     end
   end
 

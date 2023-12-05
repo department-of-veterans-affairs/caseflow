@@ -37,7 +37,7 @@ module CollectDataDogMetrics
   end
 
   def emit_custom_metrics_point(db_name, type, count)
-    CustomMetricsService.emit_gauge(
+    MetricsService.emit_gauge(
       metric_group: "database",
       metric_name: "#{type}_connections",
       metric_value: count,

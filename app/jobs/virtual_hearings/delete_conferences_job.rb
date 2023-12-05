@@ -116,13 +116,13 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
     end
 
     if removed > 0
-      CustomMetricsService.increment_counter(
+      MetricsService.increment_counter(
         metric_name: "deleted_conferences.successful", by: removed, **datadog_metric_info
       )
     end
 
     if failed > 0
-      CustomMetricsService.increment_counter(
+      MetricsService.increment_counter(
         metric_name: "deleted_conferences.failed", by: failed, **datadog_metric_info
       )
     end
