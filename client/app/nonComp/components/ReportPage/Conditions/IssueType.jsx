@@ -4,17 +4,16 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { get } from 'lodash';
 import * as yup from 'yup';
 import SearchableDropdown from 'app/components/SearchableDropdown';
-import ISSUE_TYPES from 'constants/ISSUE_TYPES';
+import ISSUE_CATEGORIES from 'constants/ISSUE_CATEGORIES';
 
 export const issueTypeSchema = yup.object({
   issueTypes: yup.string().required('Please select an option')
 });
 
-// Convert to array and sort alphabetically by label
-const formattedIssueTypeCodes = Object.entries(ISSUE_TYPES).map((issueType) => {
+const formattedIssueTypeCodes = ISSUE_CATEGORIES.vha.map((issue) => {
   return {
-    value: issueType[0],
-    label: issueType[1]
+    value: issue,
+    label: issue
   };
 }).
   sort((stringA, stringB) => stringA.label.localeCompare(stringB.label));
