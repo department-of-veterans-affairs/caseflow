@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class CorrespondenceController < ApplicationController
+  before_action :verify_correspondence_access
   before_action :verify_feature_toggle
   before_action :correspondence
 
@@ -84,6 +85,12 @@ class CorrespondenceController < ApplicationController
   end
 
   private
+
+  def verify_correspondence_access
+    return true if MailTeamSupervisor.singleton.user_has_access?(current_user) || MailTeam.singleton.user_has_access?(current_user)
+
+    redirect_to "/unauthorized"
+  end
 
   def general_information
     vet = veteran_by_correspondence

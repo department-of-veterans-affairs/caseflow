@@ -15,7 +15,11 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
   end
 
   describe "GET #show" do
-    before { get :show, params: { correspondence_uuid: correspondence.uuid } }
+    before do
+      MailTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+      get :show, params: { correspondence_uuid: correspondence.uuid }
+    end
 
     it "returns a successful response" do
       expect(response).to have_http_status(:ok)
@@ -28,6 +32,24 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
       expect(correspondence_data["notes"]).to eq(correspondence.notes)
       expect(general_info["file_number"]).to eq(veteran.file_number)
       expect(general_info["correspondence_type_id"]).to eq(correspondence.correspondence_type_id)
+    end
+  end
+
+  describe "GET #show" do
+    before do
+      get :show, params: { correspondence_uuid: correspondence.uuid }
+    end
+
+    it "returns an unauthorized response" do
+      expect(response.status).to eq 302
+      expect(response.body).to match(/unauthorized/)
+    end
+
+    it "returns a success response when current user is part of MailTeamSupervisor" do
+      MailTeamSupervisor.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+      get :show, params: { correspondence_uuid: correspondence.uuid }
+      expect(response).to have_http_status(:ok)
     end
   end
 
