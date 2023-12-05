@@ -48,12 +48,12 @@ export const updateRadioValue = (value) =>
     });
   };
 
-export const saveCheckboxState = (id, isChecked) =>
+export const saveCheckboxState = (correspondence, isChecked) =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.SAVE_CHECKBOX_STATE,
       payload: {
-        id, isChecked
+        correspondence, isChecked
       }
     });
   };
@@ -102,6 +102,16 @@ export const saveMailTaskState = (name, isChecked) =>
       payload: {
         name,
         isChecked
+      }
+    });
+  };
+
+export const setNewAppealRelatedTasks = (newAppealRelatedTasks) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_NEW_APPEAL_RELATED_TASKS,
+      payload: {
+        newAppealRelatedTasks
       }
     });
   };

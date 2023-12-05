@@ -6,6 +6,8 @@ import React from 'react';
 import COPY from 'app/../COPY';
 import { TitleDetailsSubheader } from 'app/components/TitleDetailsSubheader';
 import EditModal from '../modals/editModal';
+import { useSelector } from 'react-redux';
+import moment from 'moment';
 
 const listItemStyling = css({
   display: 'inline-block',
@@ -49,18 +51,16 @@ class ReviewPackageData extends React.PureComponent {
   };
 }
 
-const CmpInfoScaffolding = (props) => {
-  const packageDocumentType = props.packageDocumentType;
-  const correspondence = props.correspondence;
-  const date = new Date(correspondence?.portal_entry_date);
-  const dateOfReceipt = new Date(correspondence?.va_date_of_receipt);
-  const customDate = date && `${(date.getMonth() + 1).toString().
-    padStart(2, '0')}/${(date.getDate()).toString().
-      padStart(2, '0')}/${date.getFullYear()}`;
+const CmpInfoScaffolding = () => {
+  const correspondence = useSelector(
+    (state) => state.reviewPackage.correspondence
+  );
+  const packageDocumentType = useSelector(
+    (state) => state.reviewPackage.packageDocumentType
+  );
 
-  const dateOfReceiptCustomDate = dateOfReceipt && `${(dateOfReceipt.getMonth() + 1).toString().
-    padStart(2, '0')}/${(dateOfReceipt.getDate()).toString().
-      padStart(2, '0')}/${dateOfReceipt.getFullYear()}`;
+  const formattedVaDateOfReceipt = moment.utc(correspondence?.va_date_of_receipt).format('MM/DD/YYYY');
+  const formattedPortalEntryDate = moment.utc(correspondence?.portal_entry_date).format('MM/DD/YYYY');
 
   return (
     <div>
@@ -70,8 +70,8 @@ const CmpInfoScaffolding = (props) => {
       </div>
 
       <TitleDetailsSubheader id="caseTitleDetailsSubheader">
-        <TitleDetailsSubheaderSection title="Portal Entry Date">
-          {customDate}
+        <TitleDetailsSubheaderSection title="VA DOR">
+          {formattedVaDateOfReceipt}
         </TitleDetailsSubheaderSection>
         <TitleDetailsSubheaderSection title="Source Type">
           {correspondence?.source_type}
@@ -85,8 +85,8 @@ const CmpInfoScaffolding = (props) => {
         <TitleDetailsSubheaderSection title="CMP Queue Name">
           BVA Intake
         </TitleDetailsSubheaderSection>
-        <TitleDetailsSubheaderSection title="VA DOR">
-          {dateOfReceiptCustomDate}
+        <TitleDetailsSubheaderSection title="Portal Entry Date">
+          {formattedPortalEntryDate}
         </TitleDetailsSubheaderSection>
       </TitleDetailsSubheader>
     </div>

@@ -5,7 +5,7 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
   let(:veteran) { create(:veteran) }
   let(:valid_params) { { notes: "Updated notes", correspondence_type_id: 12 } }
   let(:new_file_number) { "50000005" }
-  let(:current_user) { create(:user)}
+  let(:current_user) { create(:user) }
 
   before do
     Fakes::Initializer.load!
@@ -49,6 +49,56 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
       expect(correspondence.reload.notes).to eq("Updated notes")
       expect(correspondence.reload.correspondence_type_id).to eq(12)
       expect(correspondence.reload.updated_by_id).to eq(current_user.id)
+    end
+  end
+
+  describe "vbms_document_types" do
+    let(:document_types_response) do
+      {
+        "documentTypes" => [
+          {
+            "id" => 150,
+            "createDateTime" => "2011-12-09",
+            "modifiedDateTime" => "2023-07-30T21:04:14",
+            "name" => "L141",
+            "description" => "VA Form 21-8056",
+            "isUserUploadable" => true,
+            "is526" => false,
+            "documentCategory" => {
+              "id" => 70,
+              "createDateTime" => "2011-12-09",
+              "modifiedDateTime" => "2014-04-21T11:49:07",
+              "description" => "Correspondence",
+              "subDescription" => "Miscellaneous"
+            }
+          },
+          {
+            "id" => 152,
+            "createDateTime" => "2011-12-09",
+            "modifiedDateTime" => "2023-07-30T21:04:14",
+            "name" => "L143",
+            "description" => "VA Form 21-8358",
+            "isUserUploadable" => true,
+            "is526" => false,
+            "documentCategory" => {
+              "id" => 70,
+              "createDateTime" => "2011-12-09",
+              "modifiedDateTime" => "2014-04-21T11:49:07",
+              "description" => "Correspondence",
+              "subDescription" => "Miscellaneous"
+            }
+          }
+        ]
+      }
+    end
+
+    before do
+      allow(ExternalApi::ClaimEvidenceService).to receive(:document_types).and_return(document_types_response)
+    end
+
+    it "returns an array of hashes with id and name" do
+      result = controller.send(:vbms_document_types)
+      expect(result).to eq([{ id: 150, name: "L141" }, { id: 152, name: "L143" }])
     end
   end
 end
