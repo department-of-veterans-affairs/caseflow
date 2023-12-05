@@ -22,7 +22,7 @@ function DisplayAlertBanner() {
       left: 0,
       width: "100%",
       zIndex: 9999,
-      position: 'absolute'
+      position: 'fixed'
   }
 
   return (
