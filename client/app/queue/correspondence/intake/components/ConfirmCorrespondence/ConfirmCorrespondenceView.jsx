@@ -64,6 +64,5 @@ export const ConfirmCorrespondenceView = (props) => {
 ConfirmCorrespondenceView.propTypes = {
   goToStep: PropTypes.func,
   mailTasks: PropTypes.objectOf(PropTypes.bool)
-
 };
 export default ConfirmCorrespondenceView;

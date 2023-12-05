@@ -9,6 +9,7 @@ import { bindActionCreators } from 'redux';
 import { setUnrelatedTasks } from '../../correspondenceReducer/correspondenceActions';
 import { useHistory, useLocation } from 'react-router-dom';
 import { ConfirmCorrespondenceView } from './ConfirmCorrespondence/ConfirmCorrespondenceView';
+import { SubmitCorrespondenceModal } from './ConfirmCorrespondence/SubmitCorrespondenceModal';
 
 const progressBarSections = [
   {
@@ -27,8 +28,9 @@ const progressBarSections = [
 
 export const CorrespondenceIntake = (props) => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [isContinueEnabled, setContinueEnabled, submitModalVisible, setSubmitModalVisible] = useState(true);
+  const [isContinueEnabled, setContinueEnabled] = useState(true);
   const [addTasksVisible, setAddTasksVisible] = useState(false);
+  const [submitCorrespondenceModalVisible, setSubmitCorrespondenceModalVisible] = useState(false);
   const { pathname, hash, key } = useLocation();
   const history = useHistory();
   // For hash routing - Add element id and which step it lives on here
@@ -61,10 +63,6 @@ export const CorrespondenceIntake = (props) => {
       window.scrollTo(0, 0);
       history.replace({ hash: '' });
     }
-  };
-
-  const handleSubmitModal = () => {
-    setSubmitModalVisible(!submitModalVisible);
   };
 
   const sections = progressBarSections.map(({ title, step }) => ({
@@ -140,7 +138,7 @@ export const CorrespondenceIntake = (props) => {
       {currentStep === 3 &&
       <Button
         type="button"
-        onClick={submitModalVisible}
+        onClick={() => setSubmitCorrespondenceModalVisible(true)}
         name="Submit"
         classNames={['cf-right-side']}>
           Submit
@@ -154,6 +152,11 @@ export const CorrespondenceIntake = (props) => {
         classNames={['usa-button-secondary', 'cf-right-side', 'usa-back-button']}>
           Back
       </Button>}
+      {currentStep === 3 && submitCorrespondenceModalVisible &&
+        <SubmitCorrespondenceModal
+          setSubmitCorrespondenceModalVisible={setSubmitCorrespondenceModalVisible}
+        />
+      }
     </div>
   </div>;
 };

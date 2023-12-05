@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Modal from 'app/components/Modal';
 import {
@@ -6,7 +6,19 @@ import {
   CORRESPONDENCE_INTAKE_FORM_SUBMIT_MODAL_BODY,
 } from 'app/../COPY';
 
-export const SubmitCorrespondenceModal = ({ onCancel, onSubmit, loading }) => {
+export const SubmitCorrespondenceModal = ({ setSubmitCorrespondenceModalVisible }) => {
+
+  const [loading, setLoading] = useState(false);
+
+  const onSubmit = () => {
+    setLoading(true);
+
+    return onSubmit();
+  };
+
+  const onCancel = () => {
+    setSubmitCorrespondenceModalVisible(false);
+  };
 
   const buttons = [
     {
@@ -32,20 +44,15 @@ export const SubmitCorrespondenceModal = ({ onCancel, onSubmit, loading }) => {
       closeHandler={onCancel}
       id="submit-correspondence-intake-modal"
     >
-
-      <div style={{ marginBottom: '24px' }}>
-        <strong>
-          {CORRESPONDENCE_INTAKE_FORM_SUBMIT_MODAL_TITLE}
-        </strong>
-      </div>
-      <p>{CORRESPONDENCE_INTAKE_FORM_SUBMIT_MODAL_BODY}</p>
+      {CORRESPONDENCE_INTAKE_FORM_SUBMIT_MODAL_BODY}
     </Modal>
   );
   /* eslint-enable camelcase */
 };
 
 SubmitCorrespondenceModal.propTypes = {
-  onCancel: PropTypes.func.isRequired,
-  onSubmit: PropTypes.func.isRequired,
-  loading: PropTypes.bool.isRequired
+  onCancel: PropTypes.func,
+  onSubmit: PropTypes.func,
+  loading: PropTypes.bool,
+  setSubmitCorrespondenceModalVisible: PropTypes.func,
 };
