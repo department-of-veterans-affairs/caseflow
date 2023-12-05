@@ -7,6 +7,8 @@ class Correspondence < CaseflowRecord
 
   has_many :correspondence_documents
   has_many :correspondence_intakes
+  has_many :correspondences_appeals
+  has_many :appeals, through: :correspondences_appeals
   has_many :correspondence_relations
   has_many :related_correspondences, through: :correspondence_relations, dependent: :destroy
   belongs_to :correspondence_type
