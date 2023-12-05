@@ -10,6 +10,7 @@ module Seeds
       def seed!
         RequestStore[:current_user] = User.find_by_css_id("CASEFLOW1")
         inactive_judge
+        user_with_only_sattyid
         create_legacy_tasks
         create_ama_tasks
       end
@@ -38,7 +39,8 @@ module Seeds
 
       def create_legacy_tasks
         Timecop.travel(65.days.ago)
-          create_legacy_appeals('RO17', 50)
+          create_legacy_appeals('RO17', 25) #{creates legacy appeals with inactive judge}
+          create_legacy_appeals('RO17', 25, true) #{creates legacy appeals with a sattyid user}
         Timecop.return
       end
 
@@ -46,7 +48,7 @@ module Seeds
         create_ama_appeals(50)
       end
 
-      def create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, judge, attorney, veteran)
+      def create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, judge, attorney, veteran, sattyid = false)
         # We need these retries because the sequence for FactoryBot comes out of
         # sync with what's in the DB. This just essentially updates the FactoryBot
         # sequence to match what's in the DB.
@@ -118,8 +120,13 @@ module Seeds
         @inactive_judge
       end
 
+      def user_with_only_sattyid
+        (@user_with_only_sattyid ||= User.find_or_create_by(css_id: "SATTYIDUSER"))
+        @user_with_only_sattyid
+      end
+
       # AC1
-      def create_legacy_appeals(regional_office, number_of_appeals_to_create)
+      def create_legacy_appeals(regional_office, number_of_appeals_to_create, sattyid = false)
         # The offset should start at 100 to avoid collisions
         offsets = (100..(100 + number_of_appeals_to_create - 1)).to_a
         # Use a hearings user so the factories don't try to create one (and sometimes fail)
@@ -127,6 +134,11 @@ module Seeds
         active_judge = User.find_by_css_id("BVAAABSHIRE")
         attorney = User.find_by_css_id("BVASCASPER1")
         # Set this for papertrail when creating vacols_case
+        inactive_user = if (sattyid)
+                            user_with_only_sattyid
+                        else
+                            inactive_judge
+                        end
         offsets.each do |offset|
           docket_number = "190000#{offset}"
           # Create the veteran for this legacy appeal
@@ -136,11 +148,10 @@ module Seeds
 
           # Assign hearing type to video
           type = "video"
-
           # AC1: create legacy appeals ready to be distributed that have a hearing held by an inactive judge
-          legacy_appeal = create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, inactive_judge, attorney, veteran)
+          legacy_appeal = create_vacols_entries(vacols_titrnum, docket_number, regional_office, type, inactive_user, attorney, veteran, sattyid)
           # Create the task tree, need to create each task like this to avoid user creation and index conflicts
-          create_legacy_appeals_decision_ready_for_dispatch(legacy_appeal, inactive_judge, attorney, veteran)
+          create_legacy_appeals_decision_ready_for_dispatch(legacy_appeal, inactive_user, attorney, veteran)
         end
       end
 
