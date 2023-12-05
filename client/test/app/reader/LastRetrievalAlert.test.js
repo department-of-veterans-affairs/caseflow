@@ -5,12 +5,6 @@ import { alertMessage, warningMessage } from '../constants/LastRetrievalAlert'
 import moment from 'moment';
 
 describe('LastRetrievalAlert', () => {
-  //const spy = jest.spyOn(moment, 'moment');
-  // jest.mock('moment', () => {
-  //   return () => jest.requireActual('moment')('05/11/23 12:40PM -0600');
-  // });
-
-
   const defaultProps = {
     appeal: {
       veteran_full_name: "John Doe"
