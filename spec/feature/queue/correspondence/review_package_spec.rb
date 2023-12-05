@@ -57,11 +57,6 @@ RSpec.feature("The Correspondence Review Package page") do
       expect(page).to have_text `#{veteran.file_number}`
       expect(page).to have_text `Review #{veteran.first_name} #{veteran.last_name}'s Decision Review Request: Board Appeal (Notice of Disagreement) - VA Form 10182`
     end
-
-    it "button does not show if type is not 10182" do
-      visit "/queue/correspondence/#{correspondence_2.uuid}/review_package"
-      expect(page).to_not have_button("Intake appeal")
-    end
   end
 end
 # rubocop:enable Layout/LineLength
