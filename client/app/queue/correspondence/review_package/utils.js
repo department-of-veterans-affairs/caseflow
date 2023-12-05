@@ -69,6 +69,10 @@ export const getModalInformation = (dropdownType) => {
       label: PACKAGE_ACTION_REMOVAL_TEXTAREA_LABEL
     };
   default:
-    return '';
+    return {
+      title: '',
+      description: '',
+      label: ''
+    };
   }
 };
