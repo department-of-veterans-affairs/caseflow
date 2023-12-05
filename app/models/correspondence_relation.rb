@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CorrespondenceRelation < ApplicationRecord
   belongs_to :correspondence
   belongs_to :related_correspondence, class_name: "Correspondence"
