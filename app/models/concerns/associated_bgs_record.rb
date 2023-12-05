@@ -68,7 +68,12 @@ module AssociatedBgsRecord
     fetch_bgs_record
   rescue BGS::ShareError => error
     if error.ignorable?
-      fetch_bgs_record
+      begin
+        fetch_bgs_record
+      rescue BGS::ShareError => transient_error
+        # re-raise if second attempt fails, as repeat transient error suggest bgs may be down
+        raise transient_error
+      end
     else
       raise error # re-raise if we can't try again
     end

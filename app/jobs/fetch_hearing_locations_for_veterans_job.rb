@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class FetchHearingLocationsForVeteransJob < ApplicationJob
+class FetchHearingLocationsForVeteransJob < CaseflowJob
   queue_with_priority :low_priority
   application_attr :hearing_schedule
 
