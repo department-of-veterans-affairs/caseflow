@@ -82,6 +82,8 @@
   "CORRESPONDENCE_REVIEW_PACKAGE_TITLE": "Review Package",
   "CORRESPONDENCE_REVIEW_PACKAGE_SUB_TITLE": "Review the mail package details below. If the document type is a 10182, select the appropriate action needed for the form.",
   "CORRESPONDENCE_REVIEW_CMP_INFO_TITLE": "CMP Information",
+  "CORRESPONDENCE_INTAKE_FORM_SUBMIT_MODAL_TITLE": "Confirm submission",
+  "CORRESPONDENCE_INTAKE_FORM_SUBMIT_MODAL_BODY": "Submitting the correspondence record will upload the mail package to the eFolder.  Make sure that all information is correct before submitting.",
   "DOCUMENT_PREVIEW": "Document Preview",
   "TASK_SNAPSHOT_ABOUT_BOX_TITLE": "About the case",
   "TASK_SNAPSHOT_ABOUT_BOX_HEARING_REQUEST_TYPE_LABEL": "Hearing Type",

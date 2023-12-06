@@ -15,65 +15,48 @@ pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 /**
  * Represents the root layout and component structure for viewing PDF files
- * @param {Object} doc - Document metadata obtained from Document Controller
+ * @param {Object} documents - Document metadata obtained from Document Controller
  * @param {string} documentPathBase - String path containing appeal Id. Directs to /:appeal_id/documents
  */
-const CorrespondencePdfUI = () => {
+const CorrespondencePdfUI = (props) => {
   // TODO: Replace hard-coded data objects to dynamically include actual API request data
 
   // Destructured Props and State
-  // const {
-  //   documentPathBase,
-  //   doc
-  // } = props;
+  const {
+    documents,
+    selectedId
+  } = props;
 
+  const mappedMockDocumentData = documents.map((doc, index) => {
+    return (
+      {
+        id: doc.correspondence_id,
+        type: doc.document_title,
+        content_url: `/queue/correspondence/${index + 1}/pdf`
+      }
+    );
+  });
   // Hard Coded Temp Data Objects
   const documentPathBase = '/2941741/documents';
-  const doc = {
-    id: 13,
-    category_medical: null,
-    category_other: null,
-    category_procedural: null,
-    created_at: '2023-11-16T10:08:41.948-05:00',
-    description: null,
-    file_number: '686623298',
-    previous_document_version_id: null,
-    received_at: '2023-11-17',
-    series_id: '4230620',
-    type: 'Private Medical Treatment Record',
-    updated_at: '2023-11-20T14:58:49.681-05:00',
-    upload_date: '2023-11-18',
-    vbms_document_id: '110',
-    content_url: '/document/13/pdf',
-    filename: 'filename-9265746.pdf',
-    category_case_summary: true,
-    serialized_vacols_date: '',
-    serialized_receipt_date: '11/17/2023',
-    'matching?': false,
-    opened_by_current_user: true,
-    tags: [],
-    receivedAt: '2023-11-17',
-    listComments: false,
-    wasUpdated: false
-  };
 
   // useRefs (persist data through React render cycle)
   // Contains a ref to each canvas DOM element generated after document loads
   const canvasRefs = useRef([]);
   const gridRef = useRef(null);
   const scrollViewRef = useRef(null);
-
-  // useStates (re-renders components on change)
-  const [viewportState, setViewPortState] = useState({
+  const viewportRef = useRef({
     height: PDF_PAGE_HEIGHT,
     width: PDF_PAGE_WIDTH
   });
+
+  // useStates (re-renders components on change)
 
   const [scale, setScale] = useState(1);
   const [rotation, setRotation] = useState(0);
   const [pdfDocProxy, setPdfDocProxy] = useState(null);
   const [pdfPageProxies, setPdfPageProxies] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [loadError, setLoadError] = useState(false);
 
   // Once the component loads, we fetch the document from the Document Controller
   // and retrieve the document content via pdfjs library's PdfDocumentProxy object.
@@ -90,30 +73,32 @@ const CorrespondencePdfUI = () => {
     };
 
     // TODO: Refactor when CorrespondenceDocument controller is created
+    // TODO: Need to add error handling
     const loadPdf = async () => {
-      // Currently pulls from Reader Document controller at route => document/:document_id/pdf
-      const response = await ApiUtil.get(`${doc.content_url}`, {
-        cache: true,
-        withCredentials: true,
-        timeout: true,
-        responseType: 'arraybuffer',
-      });
-      const loadingTask = pdfjs.getDocument({ data: response.body });
-      const pdfDocument = await loadingTask.promise;
+      try {
+        const response = await ApiUtil.get(`${mappedMockDocumentData[selectedId].content_url}`, {
+          cache: true,
+          withCredentials: true,
+          timeout: true,
+          responseType: 'arraybuffer',
+        });
 
-      const pages = await getAllPages(pdfDocument);
+        const loadingTask = pdfjs.getDocument({ data: response.body });
+        const pdfDocument = await loadingTask.promise;
 
-      setPdfDocProxy(pdfDocument);
-      setPdfPageProxies(pages);
+        const pages = await getAllPages(pdfDocument);
+
+        setPdfDocProxy(pdfDocument);
+        setPdfPageProxies(pages);
+        setLoadError(false);
+      } catch (error) {
+        setLoadError(true);
+      }
     };
 
     loadPdf();
 
-    return () => {
-      pdfDocProxy.destroy();
-    };
-  }, []);
-
+  }, [selectedId]);
 
   // ////////////// //
   //   Constants    //
@@ -181,7 +166,7 @@ const CorrespondencePdfUI = () => {
   const handleScroll = () => {
     // Amount of Pixels that have been scrolled already from the top
     const scrolledHeight = scrollViewRef.current.scrollTop;
-    const pageOffset = Math.floor(scrolledHeight / viewportState.height);
+    const pageOffset = Math.floor(scrolledHeight / viewportRef.current.height);
 
     // Scrollheight - 750px (height set by CSS) represents the maximum scrollable height of the grid container
     // When we hit the maximum scrollable height, the last page number should be displayed
@@ -198,16 +183,16 @@ const CorrespondencePdfUI = () => {
     // Amount of Pixels that have been scrolled already from the top
     const scrolledHeight = scrollViewRef.current.scrollTop;
     let currentRowNumber = 1;
-    console.log(currentPage)
+
     // Scrollheight - 750px (height set by CSS) represents the maximum scrollable height of the grid container
     // When we hit the maximum scrollable height, the first page number of the last row should be displayed
     if ((scrollViewRef.current.scrollHeight - 749 === scrolledHeight)) {
       currentRowNumber = Math.ceil(pdfDocProxy.numPages / 2);
 
     // Correct for "page 0" base case
-    } else if (scrolledHeight > viewportState.height) {
+    } else if (scrolledHeight > viewportRef.current.height) {
       // Calculates the current visible rowNumber starting from 1, which contains two pages
-      currentRowNumber = Math.ceil(scrolledHeight / viewportState.height);
+      currentRowNumber = Math.ceil(scrolledHeight / viewportRef.current.height);
     }
 
     // By default, we will display the page number of the first page in each row
@@ -221,15 +206,18 @@ const CorrespondencePdfUI = () => {
 
   // Memoize components after render to keep canvas references
   const generatePdfPages = useMemo(() => pdfPageProxies?.map((page, index) => {
+    // Make generic key to map
+    const key = index + 123;
+
     return (
       <CorrespondencePdfPage
-        key={`pdf-page-key-${index}`}
+        key={`pdf-page-key-${key}`}
         canvasRefs={canvasRefs}
         page={page}
         index={index}
         scale={scale}
         rotation={rotation}
-        viewportState={viewportState}
+        viewportRef={viewportRef}
       />
     );
   }, [pdfDocProxy, pdfPageProxies]));
@@ -238,10 +226,14 @@ const CorrespondencePdfUI = () => {
     return <div>Loading...</div>;
   }
 
+  if (loadError) {
+    return <div>Document could not be loaded, please try again later</div>;
+  }
+
   return (
     <div className="cf-pdf-preview-container" {...pdfWrapper}>
       <CorrespondencePdfToolBar
-        doc={doc}
+        doc={mappedMockDocumentData[selectedId]}
         documentPathBase={documentPathBase}
         zoomIn={zoomIn}
         zoomOut={zoomOut}
@@ -265,6 +257,11 @@ const CorrespondencePdfUI = () => {
       </div>
     </div>
   );
+};
+
+CorrespondencePdfUI.propTypes = {
+  documents: PropTypes.array,
+  selectedId: PropTypes.number
 };
 
 export default CorrespondencePdfUI;

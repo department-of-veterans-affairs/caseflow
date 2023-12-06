@@ -55,7 +55,6 @@ module Seeds
           notes: "Notes from CMP - Multi Correspondence Seed",
           assigned_by_id: 81,
           veteran_id: veteran.id,
-          prior_correspondence_id: 1
         )
         CorrespondenceDocument.find_or_create_by(
           document_file_number: veteran.file_number,
@@ -85,7 +84,6 @@ module Seeds
           notes: "Notes from CMP - Multi Correspondence Seed",
           assigned_by_id: 81,
           veteran_id: veteran.id,
-          prior_correspondence_id: 1
         )
         CorrespondenceDocument.find_or_create_by(
           document_file_number: veteran.file_number,
@@ -116,7 +114,6 @@ module Seeds
           notes: "Notes from CMP - Multi Correspondence Seed",
           assigned_by_id: 81,
           veteran_id: veteran.id,
-          prior_correspondence_id: 1
         )
         CorrespondenceDocument.find_or_create_by(
           document_file_number: veteran.file_number,

@@ -121,6 +121,25 @@ class CorrespondenceController < ApplicationController
     redirect_to "/unauthorized"
   end
 
+  def pdf
+    document = Document.find(params[:pdf_id])
+
+    document_disposition = "inline"
+    if params[:download]
+      document_disposition = "attachment; filename='#{params[:type]}-#{params[:id]}.pdf'"
+    end
+
+    # The line below enables document caching for a month.
+    expires_in 30.days, public: true
+    send_file(
+      document.serve,
+      type: "application/pdf",
+      disposition: document_disposition
+    )
+  end
+
+  private
+
   def general_information
     vet = veteran_by_correspondence
     {

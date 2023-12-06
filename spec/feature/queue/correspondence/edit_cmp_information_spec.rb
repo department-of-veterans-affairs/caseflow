@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Layout/LineLength
 RSpec.feature("The Correspondence Review Package page") do
   let(:veteran) { create(:veteran) }
   let(:package_document_type) { PackageDocumentType.create(id: 15, active: true, created_at: Time.zone.now, name: 10_182, updated_at: Time.zone.now) }
@@ -24,8 +25,6 @@ RSpec.feature("The Correspondence Review Package page") do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
       User.authenticate!(roles: ["Mail Intake"])
-      # User.authenticate!(user: mail_team_user)
-      # mail_team_org.add_user(mail_team_user)
       visit "/queue/correspondence/#{correspondence.uuid}/review_package"
     end
 
@@ -59,3 +58,5 @@ RSpec.feature("The Correspondence Review Package page") do
     end
   end
 end
+
+# rubocop:enable Layout/LineLength
