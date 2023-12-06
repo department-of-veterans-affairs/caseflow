@@ -141,7 +141,6 @@ module Seeds
     end
 
     def create_legacy_appeals_for_inactive_cf_user_and_inactive_admin_judge_team
-        #{INACTIVE JUDGE AND ADMIN OF INACTIVE JUDGE TEAM}
         # Create the veteran for this legacy appeal
         veteran = create_veteran_for_inactive_cf_user_and_inactive_admin_judge_team
 
@@ -158,8 +157,6 @@ module Seeds
     end
 
     def create_legacy_appeals_for_active_cf_user_with_only_sattyid
-      #{---------------------------------------------------------------------------------------------------------------}
-        #{ACTIVE USER WITH ONLY SATTYID}
         # Create the veteran for this legacy appeal
         veteran = create_veteran_for_active_cf_user_with_only_sattyid
 
@@ -176,8 +173,6 @@ module Seeds
     end
 
     def create_legacy_appeals_for_active_judge
-       #{---------------------------------------------------------------------------------------------------------------}
-        #{create legacy appeals ready to be distributed that have a hearing held by active_judge}
         # Create the veteran for this legacy appeal
         veteran = create_veteran_for_active_judge
 
