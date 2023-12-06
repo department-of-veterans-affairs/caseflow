@@ -23,7 +23,7 @@ module CaseReviewConcern
 
   def associate_with_appeal
     # Populate appeal_* column values based on original implementation that uses `task_id`
-    update_attributes(
+    update(
       appeal_id: appeal_through_task_id&.id,
       appeal_type: appeal_through_task_id&.class&.name
     )
