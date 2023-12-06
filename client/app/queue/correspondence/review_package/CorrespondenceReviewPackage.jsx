@@ -89,9 +89,9 @@ export const CorrespondenceReviewPackage = (props) => {
       const hasChanged = isEditableDataChanged();
 
       setDisableButton(hasChanged);
+      setErrorMessage('');
     }
   }, [editableData, apiResponse]);
-
   const intakeLink = `/queue/correspondence/${props.correspondence_uuid}/intake`;
 
   return (

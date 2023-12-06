@@ -170,6 +170,7 @@ export const ReviewForm = (props) => {
       if (body.status === 'ok') {
         props.fetchData();
         props.setDisableButton((current) => !current);
+        props.setErrorMessage('');
       }
     } catch (error) {
       const { body } = error.response;
