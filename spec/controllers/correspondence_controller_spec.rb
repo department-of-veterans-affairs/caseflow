@@ -98,7 +98,7 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
 
     it "returns an array of hashes with id and name" do
       result = controller.send(:vbms_document_types)
-      expect(result).to eq([{ id: 150, name: "L141" }, { id: 152, name: "L143" }])
+      expect(result).to eq([{ id: 150, description: "VA Form 21-8056" }, { id: 152, description: "VA Form 21-8358" }])
     end
   end
 end
