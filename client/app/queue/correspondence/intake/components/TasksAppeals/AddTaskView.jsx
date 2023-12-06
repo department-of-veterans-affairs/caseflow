@@ -132,7 +132,6 @@ AddTaskView.propTypes = {
   task: PropTypes.object.isRequired,
   taskUpdatedCallback: PropTypes.func.isRequired,
   displayRemoveCheck: PropTypes.bool.isRequired,
-  filteredTaskOptions: PropTypes.array.isRequired,
   allTaskTypeOptions: PropTypes.array.isRequired,
   availableTaskTypeOptions: PropTypes.array.isRequired
 };

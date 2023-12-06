@@ -1,64 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
 import TextareaField from '../../../../../components/TextareaField';
 import ReactSelectDropdown from '../../../../../components/ReactSelectDropdown';
 import Checkbox from '../../../../../components/Checkbox';
-import { setWaivedEvidenceTasks } from '../../../correspondenceReducer/correspondenceActions';
 import PropTypes from 'prop-types';
+import { css } from 'glamor';
 
 const AddEvidenceSubmissionTaskView = (props) => {
+  const task = props.task;
 
-  // Determine if the appeal is an "evidence submission"
-  const isEvidenceSubmission = props.docketName === 'evidence_submission';
+  const handleIsWaivedChange = (newIsWaved) => {
+    const newTask = { id: task.id, isWaived: newIsWaved, waiveReason: task.waiveReason };
+
+    // Parent will add/remove task from list based on isWaived
+    props.taskUpdatedCallback(newTask);
+  };
+
+  const handleReasonChange = (newReason) => {
+    const newTask = { id: task.id, isWaived: task.isWaived, waiveReason: newReason };
+
+    props.taskUpdatedCallback(newTask);
+  };
 
   const dropdownOptions = [
-    { value: 'evidence_submission', label: 'Evidence Window Submission Task', isDisabled: isEvidenceSubmission },
+    { value: 'evidence_submission', label: 'Evidence Window Submission Task', isDisabled: true },
   ];
 
-  const defaultValue = isEvidenceSubmission ? dropdownOptions[0] : null;
-  const [isWaiveCheckboxSelected, setWaiveCheckboxSelected] = useState(false);
-  const [waiveReason, setWaiveReason] = useState('');
-  const [waivedEvidenceTasks, setWaivedNewEvidenceTasks] =
-       useState(useSelector((state) => state.intakeCorrespondence.waivedEvidenceTasks));
-
-  const dispatch = useDispatch();
-
-  const handleCheckboxChange = () => {
-    setWaiveCheckboxSelected(!isWaiveCheckboxSelected);
-
-    if (!isWaiveCheckboxSelected) {
-      setWaiveReason('');
-    }
-
-    const canContinue = isWaiveCheckboxSelected && Boolean(waiveReason.trim());
-    const newTask = { id: props.task, content: waiveReason, isChecked: !isWaiveCheckboxSelected };
-
-    // Dispatch the action with the updated tasks
-    setWaivedNewEvidenceTasks([...waivedEvidenceTasks, newTask]);
-    // dispatch(setWaivedEvidenceTasks(newTask));
-
-    props.setRelatedTasksCanContinue(canContinue);
-  };
-
-  const handleReasonChange = (event) => {
-    setWaiveReason(event);
-  };
-
-  useEffect(() => {
-    // If user has selected appeals, enable continue
-    if (waiveReason !== '' && isWaiveCheckboxSelected) {
-      props.setRelatedTasksCanContinue(true);
-    } else {
-      props.setRelatedTasksCanContinue(false);
-    }
-  }, [waiveReason]);
-
-  useEffect(() => {
-    dispatch(setWaivedEvidenceTasks(waivedEvidenceTasks));
-  }, [waivedEvidenceTasks]);
-
   return (
-    <div key={props.docketName} style={{ display: 'block', marginRight: '2rem' }}>
+    <div key={task.id} style={{ display: 'block', marginRight: '2rem' }}>
       <div
         className="gray-border"
         style={{
@@ -75,28 +43,33 @@ const AddEvidenceSubmissionTaskView = (props) => {
           }}
         >
           <div id="reactSelectContainer">
-            {/* Pass the options to the ReactSelectDropdown */}
-            <ReactSelectDropdown options={dropdownOptions}
+            <ReactSelectDropdown
+              options={dropdownOptions}
               label="Task"
-              defaultValue={defaultValue}
-              disabled={isEvidenceSubmission} />
+              defaultValue={dropdownOptions[0]}
+              disabled
+            />
           </div>
           <div style={{ padding: '1.5rem' }} />
           <TextareaField
             name="content"
             label="Provide context and instruction on this task"
-            disabled={isEvidenceSubmission}
+            disabled
+            textAreaStyling={css({ cursor: 'not-allowed' })}
           />
           <Checkbox
-            name="waive"
-            defaultValue={isWaiveCheckboxSelected}
+            name={`${task.id}`}
+            id={`${task.id}`}
+            defaultValue={task.isWaived}
             label="Waive Evidence Window"
-            onChange={handleCheckboxChange} />
-          {isWaiveCheckboxSelected && (
+            onChange={(checked) => handleIsWaivedChange(checked)}
+          />
+          {task.isWaived && (
             <TextareaField
               name="waiveReason"
               label="Provide a reason for the waiver"
               onChange={handleReasonChange}
+              value={task.waiveReason}
             />
           )}
         </div>
@@ -106,9 +79,8 @@ const AddEvidenceSubmissionTaskView = (props) => {
 };
 
 AddEvidenceSubmissionTaskView.propTypes = {
-  task: PropTypes.array.isRequired,
-  docketName: PropTypes.string.isRequired,
-  setRelatedTasksCanContinue: PropTypes.func.isRequired,
+  task: PropTypes.object.isRequired,
+  taskUpdatedCallback: PropTypes.func.isRequired
 };
 
 export default AddEvidenceSubmissionTaskView;

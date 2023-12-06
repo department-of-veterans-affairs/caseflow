@@ -9,9 +9,10 @@ import { LOGO_COLORS } from '../../../../../constants/AppConstants';
 import RadioField from '../../../../../components/RadioField';
 import ExistingAppealTasksView from './ExistingAppealTasksView';
 import {
+  setFetchedAppeals,
   setNewAppealRelatedTasks,
   setTaskRelatedAppealIds,
-  setFetchedAppeals
+  setWaivedEvidenceTasks
 } from '../../../correspondenceReducer/correspondenceActions';
 
 const RELATED_NO = '0';
@@ -29,6 +30,8 @@ export const AddAppealRelatedTaskView = (props) => {
   const [taskRelatedAppeals, setTaskRelatedAppeals] =
     useState(useSelector((state) => state.intakeCorrespondence.taskRelatedAppealIds));
   const [newTasks, setNewTasks] = useState(useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks));
+  const [waivedTasks, setWaivedTasks] =
+    useState(useSelector((state) => state.intakeCorrespondence.waivedEvidenceTasks));
   const [existingAppealRadio, setExistingAppealRadio] =
     useState(taskRelatedAppeals.length ? RELATED_YES : RELATED_NO);
   const [loading, setLoading] = useState(false);
@@ -55,6 +58,10 @@ export const AddAppealRelatedTaskView = (props) => {
     setNextTaskId((prevId) => prevId + 1);
     dispatch(setNewAppealRelatedTasks(newTasks));
   }, [newTasks]);
+
+  useEffect(() => {
+    dispatch(setWaivedEvidenceTasks(waivedTasks));
+  }, [waivedTasks]);
 
   const appealCheckboxOnChange = (appealId, isChecked) => {
     if (isChecked) {
@@ -135,6 +142,10 @@ export const AddAppealRelatedTaskView = (props) => {
       canContinue = canContinue && ((task.content !== '') && (task.type !== ''));
     });
 
+    waivedTasks.forEach((task) => {
+      canContinue = canContinue && (task.waiveReason !== '');
+    });
+
     props.setRelatedTasksCanContinue(canContinue);
   }, [newTasks]);
 
@@ -194,6 +205,8 @@ export const AddAppealRelatedTaskView = (props) => {
                   appeal={appealById(appealId)}
                   newTasks={newTasks}
                   setNewTasks={setNewTasks}
+                  waivedTasks={waivedTasks}
+                  setWaivedTasks={setWaivedTasks}
                   nextTaskId={nextTaskId}
                   setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
                   unlinkAppeal={appealCheckboxOnChange}
