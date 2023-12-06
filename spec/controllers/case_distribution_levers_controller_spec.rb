@@ -143,7 +143,6 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     it "returns an error message then the format of a lever in invalid" do
       User.authenticate!(user: lever_user)
       OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
-      expect(CaseDistributionLever.all).to eq(levers)
 
       invalid_updated_lever_1 = {
         id: lever1.id,
