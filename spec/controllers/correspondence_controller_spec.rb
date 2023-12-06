@@ -60,6 +60,30 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
     end
   end
 
+  describe "POST #process_intake sad path" do
+    before do
+      MailTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+      correspondence.update(veteran: veteran)
+    end
+
+    it "Rolls back db changes if there is an error" do
+      post :process_intake, params: {
+        correspondence_uuid: correspondence.uuid,
+        related_correspondence_uuids: (related_correspondence_uuids + [3])
+      }
+      expect(correspondence.related_correspondences.empty?).to be(true)
+    end
+
+    it "gives a 400 status if there is an error" do
+      post :process_intake, params: {
+        correspondence_uuid: correspondence.uuid,
+        related_correspondence_uuids: (related_correspondence_uuids + [3])
+      }
+      expect(response.status).to eq(400)
+    end
+  end
+
   describe "PATCH #update" do
     before do
       MailTeam.singleton.add_user(current_user)
