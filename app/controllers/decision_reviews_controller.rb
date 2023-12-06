@@ -56,7 +56,7 @@ class DecisionReviewsController < ApplicationController
 
   def update
     if task
-      if task.complete_with_payload!(decision_issue_params, decision_date)
+      if task.complete_with_payload!(decision_issue_params, decision_date, current_user)
         business_line.tasks.reload
         render json: { task_filter_details: task_filter_details }, status: :ok
       else
