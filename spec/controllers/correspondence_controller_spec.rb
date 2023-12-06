@@ -31,6 +31,20 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
     end
   end
 
+  describe "POST #process_intake" do
+    before do
+      MailTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+      correspondence.update(veteran: veteran)
+      post :process_intake, params: {
+        correspondence_uuid: correspondence.uuid
+      }
+    end
+    it "responds with created status" do
+      expect(response).to have_http_status(:created)
+    end
+  end
+
   describe "PATCH #update" do
     let(:veteran) { create(:veteran, file_number: new_file_number) }
     before do

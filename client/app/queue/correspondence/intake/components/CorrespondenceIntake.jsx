@@ -109,6 +109,7 @@ export const CorrespondenceIntake = (props) => {
         setUnrelatedTasks={props.setUnrelatedTasks}
         correspondenceUuid={props.correspondence_uuid}
         onContinueStatusChange={handleContinueStatusChange}
+        autoTexts={props.autoTexts}
       />
     }
     {currentStep === 3 &&
@@ -169,7 +170,8 @@ CorrespondenceIntake.propTypes = {
   veteranInformation: PropTypes.object,
   unrelatedTasks: PropTypes.arrayOf(Object),
   setUnrelatedTasks: PropTypes.func,
-  mailTasks: PropTypes.objectOf(PropTypes.bool)
+  mailTasks: PropTypes.objectOf(PropTypes.bool),
+  autoTexts: PropTypes.arrayOf(PropTypes.string)
 };
 
 const mapStateToProps = (state) => ({

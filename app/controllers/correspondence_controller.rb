@@ -3,6 +3,7 @@
 class CorrespondenceController < ApplicationController
   before_action :verify_feature_toggle
   before_action :correspondence
+  before_action :auto_texts
 
   def intake
     respond_to do |format|
@@ -87,6 +88,12 @@ class CorrespondenceController < ApplicationController
     data["documentTypes"].map { |document_type| { id: document_type["id"], name: document_type["name"] } }
   end
 
+  def process_intake
+    Task.transaction do
+      render json: {}, status: :created
+    end
+  end
+
   private
 
   def general_information
@@ -148,5 +155,9 @@ class CorrespondenceController < ApplicationController
       correspondenceUuid: correspondence.uuid,
       packageDocumentType: correspondence.correspondence_type_id
     }
+  end
+
+  def auto_texts
+    @auto_texts ||= AutoText.all.pluck(:name)
   end
 end
