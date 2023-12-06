@@ -100,13 +100,14 @@ class ClaimReview < DecisionReview
 
   def handle_issues_with_no_decision_date!
     # Guard clause to only perform this update for VHA claim reviews for now
-    return nil if benefit_type != "vha"
+    return nil unless benefit_type == "vha"
+
+    review_task = tasks.find { |task| task.is_a?(DecisionReviewTask) }
+    return unless review_task
 
     if request_issues_without_decision_dates?
-      review_task = tasks.find { |task| task.is_a?(DecisionReviewTask) }
       review_task&.on_hold! unless review_task&.closed? || review_task&.cancelled?
     elsif !request_issues_without_decision_dates?
-      review_task = tasks.find { |task| task.is_a?(DecisionReviewTask) }
       review_task&.assigned! unless review_task&.closed? || review_task&.cancelled?
     end
   end
