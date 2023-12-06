@@ -98,8 +98,6 @@ class CorrespondenceController < ApplicationController
     render json: { data: data }
   end
 
-  private
-
   def vbms_document_types
     begin
       data = ExternalApi::ClaimEvidenceService.document_types
