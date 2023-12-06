@@ -133,12 +133,12 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
         expect(AppealState.all.count).to eq(1)
       end
 
-      it "the #{"vso_ihp_pending"} column will be set to TRUE" do
+      it "the vso_ihp_pending column will be set to TRUE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_pending.id).vso_ihp_pending).to eq(true)
       end
 
-      it "the #{"vso_ihp_complete"} column will be set to FALSE" do
+      it "the vso_ihp_complete column will be set to FALSE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_pending.id).vso_ihp_complete).to eq(false)
       end
@@ -152,12 +152,12 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
         expect(AppealState.all.count).to eq(1)
       end
 
-      it "the #{"vso_ihp_pending"} column will be set to FALSE" do
+      it "the vso_ihp_pending column will be set to FALSE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_completed.id).vso_ihp_pending).to eq(false)
       end
 
-      it "the #{"vso_ihp_complete"} column will be set to TRUE" do
+      it "the vso_ihp_complete column will be set to TRUE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_completed.id).vso_ihp_complete).to eq(true)
       end
@@ -176,12 +176,12 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
         expect(AppealState.all.count).to eq(1)
       end
 
-      it "the #{"vso_ihp_pending"} column will be set to TRUE" do
+      it "the vso_ihp_pending column will be set to TRUE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_colocated_pending.id).vso_ihp_pending).to eq(true)
       end
 
-      it "the #{"vso_ihp_complete"} column will be set to FALSE" do
+      it "the vso_ihp_complete column will be set to FALSE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_colocated_pending.id).vso_ihp_complete).to eq(false)
       end
@@ -200,12 +200,12 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
         expect(AppealState.all.count).to eq(1)
       end
 
-      it "the #{"vso_ihp_pending"} column will be set to FALSE" do
+      it "the vso_ihp_pending column will be set to FALSE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_colocated_completed.id).vso_ihp_pending).to eq(false)
       end
 
-      it "the #{"vso_ihp_complete"} column will be set to TRUE" do
+      it "the vso_ihp_complete column will be set to TRUE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_colocated_completed.id).vso_ihp_complete).to eq(true)
       end
@@ -219,12 +219,12 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
         expect(AppealState.all.count).to eq(1)
       end
 
-      it "the #{"vso_ihp_pending"} column will be set to FALSE" do
+      it "the vso_ihp_pending column will be set to FALSE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_ama_appeal.id).vso_ihp_pending).to eq(false)
       end
 
-      it "the #{"vso_ihp_complete"} column will be set to FALSE" do
+      it "the vso_ihp_complete column will be set to FALSE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_ama_appeal.id).vso_ihp_complete).to eq(false)
       end
@@ -427,7 +427,7 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
     let!(:error_hearing) { create(:hearing, :scheduled_in_error) }
     let(:error_appeal) { error_hearing.appeal }
     let(:appeal) { scheduled_hearing.appeal }
-    let(:second_hearing) { create(:hearing, appeal: error_appeal)}
+    let(:second_hearing) { create(:hearing, appeal: error_appeal) }
     let(:empty_appeal) { create(:appeal) }
     context "When the last hearing has a disposition of postponed" do
       it "returns the correct hash with a boolean value of true" do

@@ -61,7 +61,7 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
           "fipsCode": "US",
           "iso2Code": "US",
           "iso3Code": "USA"
-        },
+        }
       },
       "geocode": {
         "calcDate": "2019-01-03T17:33:57+00:00",

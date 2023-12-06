@@ -147,9 +147,9 @@ namespace :add_admins do
       created_by: RequestStore[:current_user],
       source_appeal: appeal,
       substitution_date: 5.days.ago.to_date,
-      claimant_type: 'VeteranClaimant',
-      substitute_participant_id: 500001891,
-      poa_participant_id: 600153863
+      claimant_type: "VeteranClaimant",
+      substitute_participant_id: 500_001_891,
+      poa_participant_id: 600_153_863
     )
     appeal.appellant_substitution = as
 

@@ -3,8 +3,7 @@
 module WarRoom
   # Purpose: to find and sync EPs in Caseflow with VBMS
   class ReportLoadEndProductSync
-
-    require 'csv'
+    require "csv"
     S3_BUCKET_NAME = "ep-priority-sync"
 
     # Currently, out of sync EPs are tracked in OAR report loads that are sent over and then
@@ -76,7 +75,6 @@ module WarRoom
       conn.close
     end
 
-
     private
 
     ######################################################################
@@ -106,8 +104,7 @@ module WarRoom
         conn.raw_connection.exec_params("UPDATE ep_establishment_workaround SET synced_status = $1,
                             last_synced_at = $2, sync_duration = $3, prev_sync_status = $4 where reference_id = $5
                             AND report_load = $6", [original_ep.synced_status, Time.zone.now, elapsed_time.to_i,
-                            sync_before, ep_ref, rep_load])
-
+                                                    sync_before, ep_ref, rep_load])
       rescue StandardError => error
         end_time = Time.now.to_f
         elapsed_time = (end_time - start_time) * 1000
@@ -115,11 +112,10 @@ module WarRoom
         conn.raw_connection.exec_params("UPDATE ep_establishment_workaround SET synced_error = $1,
                             synced_status = $2, last_synced_at = $3, sync_duration = $4, prev_sync_status = $5
                             where reference_id = $6 AND report_load = $7", [error.message,
-                            original_ep&.synced_status ? original_ep.synced_status : nil, Time.zone.now, elapsed_time.to_i,
-                            sync_before, ep_ref, rep_load])
+                                                                            original_ep&.synced_status ? original_ep.synced_status : nil, Time.zone.now, elapsed_time.to_i,
+                                                                            sync_before, ep_ref, rep_load])
       end
     end
-
 
     ####################################################################
     #
@@ -130,7 +126,7 @@ module WarRoom
     # Grab txt file of previously errored EP reference ids from s3 and return as an array
     def get_error_ids
       error_txt = S3Service.fetch_content(S3_BUCKET_NAME + "/error_ids.txt")
-      error_txt.gsub("\r","").split("\n").map{ |obj| obj[1...-1] }
+      error_txt.delete("\r").split("\n").map { |obj| obj[1...-1] }
     end
 
     # Method to log errors to S3 error_ids txt file in real time in case of
@@ -140,13 +136,13 @@ module WarRoom
     def realtime_log_error_to_s3(reference_id)
       error_txt = S3Service.fetch_content(S3_BUCKET_NAME + "/error_ids.txt")
       error_txt << "\r\n"
-      error_txt << '"' + "#{reference_id}"+ '"'
+      error_txt << '"' + reference_id.to_s + '"'
       S3Service.store_file(S3_BUCKET_NAME + "/error_ids.txt", error_txt)
     end
 
     # Grab cleared EPs that are out of sync
     def get_cleared_eps(batch_limit, error_ids, conn)
-      error_ids = error_ids.map { |s| "'#{s}'" }.join(', ')
+      error_ids = error_ids.map { |s| "'#{s}'" }.join(", ")
 
       raw_sql = <<~SQL
         SELECT
@@ -176,7 +172,7 @@ module WarRoom
 
     # Grab cancelled EPs that are out of sync
     def get_cancelled_eps(batch_limit, error_ids, conn)
-      error_ids = error_ids.map { |s| "'#{s}'" }.join(', ')
+      error_ids = error_ids.map { |s| "'#{s}'" }.join(", ")
 
       raw_sql = <<~SQL
         SELECT
@@ -206,7 +202,7 @@ module WarRoom
 
     # Method to priority sync with VBMS
     # Also adds data to log files
-    def call_priority_sync(ep_ref, conn)
+    def call_priority_sync(ep_ref, _conn)
       begin
         epe = EndProductEstablishment.find_by(reference_id: ep_ref)
         sync_status_before = epe.synced_status
@@ -249,13 +245,13 @@ module WarRoom
           error
         ]
         input_data.each do |data|
-            csv << [
-              data.reference_id,
-              data.last_synced_at,
-              data.synced_status,
-              data.prev_synced_status,
-              data.error
-            ].flatten
+          csv << [
+            data.reference_id,
+            data.last_synced_at,
+            data.synced_status,
+            data.prev_synced_status,
+            data.error
+          ].flatten
         end
       end
     end

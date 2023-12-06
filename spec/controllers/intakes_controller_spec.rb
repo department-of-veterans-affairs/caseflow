@@ -242,7 +242,7 @@ RSpec.describe IntakesController, :postgres do
             "country": "USA",
             "state": "CA",
             "zip": "94103"
-            },
+          },
           "name": "JOHN SMITH",
           "participant_id": "123"
         }

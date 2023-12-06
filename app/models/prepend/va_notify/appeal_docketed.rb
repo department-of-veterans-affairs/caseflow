@@ -32,7 +32,7 @@ module AppealDocketed
     distribution_task = tasks.of_type(:DistributionTask).first
     if distribution_task
       MetricsService.record("Sending Appeal docketed notification to VA Notify "\
-        "for #{self.class} ID #{self.id}",
+        "for #{self.class} ID #{id}",
                             service: nil,
                             name: "AppellantNotification.notify_appellant") do
         AppellantNotification.notify_appellant(self, @@template_name)

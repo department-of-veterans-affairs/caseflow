@@ -58,9 +58,9 @@ class AsyncableJobsController < ApplicationController
       else
         job.perform_now
       end
-    rescue Exception => e
+    rescue Exception => error
       verb = allowed_params[:run_async] ? "Scheduling" : "Manual run"
-      Rails.logger.error "#{verb} of #{allowed_params[:job_type]} failed : #{e.message}"
+      Rails.logger.error "#{verb} of #{allowed_params[:job_type]} failed : #{error.message}"
       success = false
     end
 

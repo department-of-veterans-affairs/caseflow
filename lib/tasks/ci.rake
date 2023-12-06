@@ -47,7 +47,7 @@ namespace :ci do
   end
 
   desc "Verify code coverage on Github Actions "
-  task :gha_verify_code_coverage  do
+  task :gha_verify_code_coverage do
     require "simplecov"
 
     # Using the same dir as :gha_verify_code_coverage

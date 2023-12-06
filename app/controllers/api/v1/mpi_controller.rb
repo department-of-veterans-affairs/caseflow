@@ -21,9 +21,9 @@ class Api::V1::MpiController < Api::ApplicationController
     end
     mpi_update.update!(update_type: result, completed_at: Time.zone.now, info: response_info_column)
     status = if result == :no_veteran || result == :missing_deceased_info
-      :bad_request
-    else
-      :ok
+               :bad_request
+             else
+               :ok
     end
     render json: { result: result }, status: status
   rescue StandardError => error

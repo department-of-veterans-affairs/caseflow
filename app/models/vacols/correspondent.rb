@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class VACOLS::Correspondent < VACOLS::Record
-  require 'csv'
+  require "csv"
   self.table_name = "corres"
   self.primary_key = "stafkey"
 
@@ -67,7 +67,7 @@ class VACOLS::Correspondent < VACOLS::Record
         APPELLANT_FIRST_NAME
         APPELLANT_MIDDLE_NAME
         APPELLANT_DATE_OF_BIRTH
-        APPELLANT_SSN	APPELLANT_GENDER
+        APPELLANT_SSN APPELLANT_GENDER
         APPELLANT_ADDRESS
         APPELLANT_PHONE
         APPELLANT_EMAIL
