@@ -84,12 +84,24 @@ class CorrespondenceController < ApplicationController
   end
 
   def process_intake
+    create_correspondence_relations
     Task.transaction do
       render json: {}, status: :created
     end
   end
 
   private
+
+  def create_correspondence_relations
+    CorrespondenceRelation.transaction do
+      params[:related_correspondence_uuids].each do |uuid|
+        CorrespondenceRelation.create(
+          correspondence_id: Correspondence.find_by(uuid: params[:correspondence_uuid]).id,
+          related_correspondence_id: Correspondence.find_by(uuid: uuid).id
+        )
+      end
+    end
+  end
 
   def general_information
     vet = veteran_by_correspondence

@@ -2,6 +2,9 @@
 
 RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
   let(:correspondence) { create(:correspondence) }
+  let (:related_correspondence_uuids) do
+    (1..3).map { create(:correspondence) }.pluck(:uuid)
+  end
   let(:veteran) { create(:veteran) }
   let(:valid_params) { { notes: "Updated notes", correspondence_type_id: 12 } }
   let(:new_file_number) { "50000005" }
@@ -37,11 +40,23 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
       User.authenticate!(user: current_user)
       correspondence.update(veteran: veteran)
       post :process_intake, params: {
-        correspondence_uuid: correspondence.uuid
+        correspondence_uuid: correspondence.uuid,
+        related_correspondence_uuids: related_correspondence_uuids
       }
     end
     it "responds with created status" do
       expect(response).to have_http_status(:created)
+    end
+
+    it "relates the correspondence to related correpondences" do
+      rcs = related_correspondence_uuids.map do |uuid|
+        Correspondence.find_by(uuid: uuid)
+      end
+      expect(correspondence.related_correspondences).to eq(rcs)
+
+      rcs.each do |corr|
+        expect(corr.related_correspondences).to eq([correspondence])
+      end
     end
   end
 
