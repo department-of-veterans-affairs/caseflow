@@ -285,11 +285,8 @@ describe('ReportPage', () => {
 
       const generateTaskReport = screen.getByRole('button', { name: 'Generate task report' });
 
-      // console.log(generateTaskReport);
-
       expect(generateTaskReport).not.toHaveClass('usa-button-disabled');
 
-      // await generateTaskReport.click();
       // Wait for the validation text to appear before making assertions
       await fireEvent.click(generateTaskReport);
       await waitFor(() => {
@@ -297,10 +294,6 @@ describe('ReportPage', () => {
 
         expect(validationText).toBeInTheDocument();
       });
-
-      // const validationText = screen.getByText('Please select at least one option');
-
-      // expect(validationText).toBeInTheDocument();
     });
 
   });
