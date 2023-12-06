@@ -4,6 +4,7 @@ import { useFormContext } from 'react-hook-form';
 import Checkbox from 'app/components/Checkbox';
 import * as yup from 'yup';
 import { get } from 'lodash';
+import { AT_LEAST_ONE_OPTION } from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
 
 const CHECKBOX_OPTIONS = [
   {
@@ -19,7 +20,7 @@ const CHECKBOX_OPTIONS = [
 export const decisionReviewTypeSchema = yup.object({
   HigherLevelReview: yup.boolean(),
   SupplementalClaim: yup.boolean(),
-}).test('at-least-one-true', 'Please select at least one option', (obj) => {
+}).test('at-least-one-true', AT_LEAST_ONE_OPTION, (obj) => {
   const atLeastOneTrue = Object.values(obj).some((value) => value === true);
 
   if (!atLeastOneTrue) {
