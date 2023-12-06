@@ -2347,15 +2347,10 @@ describe RequestIssue, :all_dbs do
   context "when appeal is created with decision date" do
     let(:appeal) { create(:appeal) }
     let(:request_issue) { create(:request_issue, decision_date: 4.days.ago, decision_review: appeal) }
-    let(:current_time) { Time.zone.now }
     subject { request_issue }
 
-    before do
-      Timecop.freeze(Time.utc(2023, 4, 26, 12, 0, 0))
-    end
-
     it "should have add decision_date_added_at" do
-      expect(subject.decision_date_added_at).to eq(current_time)
+      expect(subject.decision_date_added_at).to eq(subject.created_at)
     end
   end
 end
