@@ -257,7 +257,7 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
         >
           <strong>
             Pexip
-             Conference
+             hearing
           </strong>
         </div>
         <HearingLinks
@@ -1278,7 +1278,7 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
         >
           <strong>
             Pexip
-             Conference
+             hearing
           </strong>
         </div>
         <HearingLinks
@@ -2309,7 +2309,7 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
         >
           <strong>
             Webex
-             Conference
+             hearing
           </strong>
         </div>
         <HearingLinks
@@ -3330,7 +3330,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
         >
           <strong>
             Pexip
-             Conference
+             hearing
           </strong>
         </div>
         <HearingLinks
@@ -4343,7 +4343,7 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
         >
           <strong>
             Pexip
-             Conference
+             hearing
           </strong>
         </div>
         <HearingLinks
