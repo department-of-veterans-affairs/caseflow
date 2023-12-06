@@ -104,10 +104,10 @@ class ClaimReview < DecisionReview
 
     if request_issues_without_decision_dates?
       review_task = tasks.find { |task| task.is_a?(DecisionReviewTask) }
-      review_task&.on_hold!
+      review_task&.on_hold! unless review_task&.closed? || review_task&.cancelled?
     elsif !request_issues_without_decision_dates?
       review_task = tasks.find { |task| task.is_a?(DecisionReviewTask) }
-      review_task&.assigned!
+      review_task&.assigned! unless review_task&.closed? || review_task&.cancelled?
     end
   end
 
