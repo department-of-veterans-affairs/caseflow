@@ -26,7 +26,7 @@ module Seeds
     def initialize_inactive_cf_user_and_inactive_admin_judge_team_file_number_and_participant_id
       @inactive_cf_user_and_inactive_admin_judge_team_file_number ||= 300_000_000
       @inactive_cf_user_and_inactive_admin_judge_team_participant_id ||= 400_000_000
-      # n is (@file_number + 1) because @file_number is incremented before using it in factories in calling methods
+
       while find_veteran(@inactive_cf_user_and_inactive_admin_judge_team_file_number)
         @inactive_cf_user_and_inactive_admin_judge_team_file_number += 2000
         @inactive_cf_user_and_inactive_admin_judge_team_participant_id += 2000
@@ -36,7 +36,7 @@ module Seeds
     def initialize_active_cf_user_and_non_admin_judge_team_file_number_and_participant_id
       @active_cf_user_and_non_admin_judge_team_file_number ||= 301_000_000
       @active_cf_user_and_non_admin_judge_team_participant_id ||= 500_000_000
-      # n is (@file_number + 1) because @file_number is incremented before using it in factories in calling methods
+
       while find_veteran(@active_cf_user_and_non_admin_judge_team_file_number)
         @active_cf_user_and_non_admin_judge_team_file_number += 2000
         @active_cf_user_and_non_admin_judge_team_participant_id += 2000
@@ -46,7 +46,7 @@ module Seeds
     def initialize_active_cf_user_and_inactive_judge_team_file_number_and_participant_id
       @active_cf_user_and_inactive_judge_team_file_number ||= 302_000_000
       @active_cf_user_and_inactive_judge_team_participant_id ||= 700_000_000
-      # n is (@file_number + 1) because @file_number is incremented before using it in factories in calling methods
+
       while find_veteran(@active_cf_user_and_inactive_judge_team_file_number)
         @active_cf_user_and_inactive_judge_team_file_number += 2000
         @active_cf_user_and_inactive_judge_team_participant_id += 2000
@@ -56,7 +56,7 @@ module Seeds
     def initialize_active_judge_file_number_and_participant_id
       @file_number ||= 303_000_200
       @participant_id ||= 800_000_000
-      # n is (@file_number + 1) because @file_number is incremented before using it in factories in calling methods
+
       while find_veteran(@file_number)
         @file_number += 2000
         @participant_id += 2000
@@ -71,35 +71,59 @@ module Seeds
       create(:veteran, params.merge(options))
     end
 
-    def active_judge
-      @active_judge ||= User.find_by(css_id: "BVAAABSHIRE")
+    def create_active_judge(css_id, full_name)
+      create(:user, :judge, :with_vacols_judge_record, css_id: css_id, full_name: full_name)
     end
 
     def inactive_cf_user_and_inactive_admin_judge_team
       @inactive_cf_user_and_inactive_admin_judge_team ||= begin
-        User.find_or_create_by(css_id: "BVADSLADER", station_id: 101).tap do |judge|
-          judge.update!(status: "inactive", full_name: "BVADSLADER")
+        create(:user, :judge, :with_vacols_judge_record, css_id: "BVADSLADER", full_name: "BVADSLADER").tap do |judge|
+          judge.update_status!("inactive")
         end
       end
     end
 
+    # Active Caseflow User who is not the admin of any JudgeTeam.
     def active_cf_user_and_non_admin_judge_team
-      @active_cf_user_and_non_admin_judge_team ||= create(:user, :with_non_admin_judge_team, :judge_role)
+      @active_cf_user_and_non_admin_judge_team ||= begin
+        create_non_admin_judge_team_user.organizations_users.non_admin.first.user.tap do |user|
+          user.update(full_name: "BVADSSTEVE", css_id: "BVADSSTEVE")
+          create(:staff, :judge_role, sdomainid: user.css_id)
+        end
+      end
     end
 
+    def create_non_admin_judge_team_user
+      create(:judge_team, :has_judge_team_lead_as_admin, :incorrectly_has_nonadmin_judge_team_lead,
+             url: "org_queue_bva#{Random.hex}")
+    end
+
+    # Active Caseflow User who is the admin of an Inactive JudgeTeam and a non-admin of another JudgeTeam
     def active_cf_user_and_inactive_judge_team
-      @active_cf_user_and_inactive_judge_team ||= create(:user, :with_inactive_judge_team, :judge_role)
+      @active_cf_user_and_inactive_judge_team ||=
+        create(:user, :judge, :with_vacols_judge_record, css_id: "BVADSBOB", full_name: "BVADSBOB").tap do |user|
+          JudgeTeam.for_judge(user).inactive!
+          another_judge_team = create(:judge_team, url: "org_queue_#{Random.hex}")
+          another_judge_team.add_user(user)
+        end
+    end
+
+    def active_judge_one
+      @active_judge_one ||= create_active_judge("BVADSJOHN", "BVADSJOHN")
+    end
+
+    def active_judge_two
+      @active_judge_two ||= create_active_judge("BVADSRICK", "BVADSRICK")
     end
 
     def create_legacy_appeals
       Timecop.travel(65.days.ago)
-      APPEALS_LIMIT.times.each do |offset|
-        docket_number = "190000#{offset}"
+      APPEALS_LIMIT.times.each do |_offset|
         # Create the veteran for this legacy appeal
         veteran = create_veteran_for_inactive_cf_user_and_inactive_admin_judge_team
 
         # AC1: create legacy appeals ready to be distributed that have a hearing held by an inactive judge
-        legacy_appeal = create_vacols_entries(veteran, docket_number, "RO17")
+        legacy_appeal = create_vacols_entries(veteran, "RO17")
 
         ## Hearing held by inactive judge
         create(
@@ -121,13 +145,11 @@ module Seeds
       )
     end
 
-    def create_vacols_entries(veteran, docket_number, regional_office)
-      vacols_folder = create(:folder, tinum: docket_number, titrnum: "#{veteran.file_number}S")
-      correspondent = create(:correspondent, snamef: veteran.first_name, snamel: veteran.last_name, ssalut: "")
-      # Create the judge
-      create(:staff, :inactive_judge, sdomainid: inactive_cf_user_and_inactive_admin_judge_team.css_id)
-
-      vacols_case = create_video_vacols_case(vacols_folder,
+    def create_vacols_entries(veteran, regional_office)
+      correspondent = create(:correspondent,
+                             snamef: veteran.first_name, snamel: veteran.last_name,
+                             ssalut: "", ssn: veteran.file_number)
+      vacols_case = create_video_vacols_case(veteran,
                                              correspondent,
                                              inactive_cf_user_and_inactive_admin_judge_team)
 
@@ -145,7 +167,7 @@ module Seeds
     end
 
     # Creates the video hearing request
-    def create_video_vacols_case(vacols_folder, correspondent, judge)
+    def create_video_vacols_case(veteran, correspondent, judge)
       create(
         :case,
         :assigned,
@@ -153,17 +175,13 @@ module Seeds
         :type_original,
         user: judge,
         correspondent: correspondent,
-        bfcorlid: vacols_folder.titrnum,
-        folder: vacols_folder,
+        bfcorlid: "#{veteran.file_number}S",
         case_issues: create_list(:case_issue, 3, :compensation)
       )
     end
 
     # AC 2-6
     def create_ama_appeals
-      create(:staff, :judge_role, sdomainid: active_cf_user_and_non_admin_judge_team.css_id)
-      create(:staff, :judge_role, sdomainid: active_cf_user_and_inactive_judge_team.css_id)
-
       APPEALS_LIMIT.times.each do |_offset|
         create_ama_appeals_for_active_judge
         create_ama_appeals_for_inactive_cf_user_and_inactive_admin_judge_team
@@ -178,11 +196,15 @@ module Seeds
     end
 
     def create_ama_appeals_for_active_judge
-      veteran = create_veteran_for_active_judge
-      create_ama_appeals_ready_to_distribute_less_than_60_days(active_judge, veteran)
+      create_ama_appeals_ready_to_distribute_less_than_60_days(
+        active_judge_one,
+        create_veteran_for_active_judge
+      )
 
-      veteran = create_veteran_for_active_judge
-      create_ama_appeals_ready_to_distribute_more_than_60_days(active_judge, veteran)
+      create_ama_appeals_ready_to_distribute_more_than_60_days(
+        active_judge_two,
+        create_veteran_for_active_judge
+      )
     end
 
     def create_veteran_for_active_judge
@@ -221,7 +243,7 @@ module Seeds
 
     # AC2,4,5,6: ready to distribute for less than 60 days
     def create_ama_appeals_ready_to_distribute_less_than_60_days(judge, veteran)
-      Timecop.travel(1.day.ago)
+      Timecop.travel(45.days.ago)
       create(:appeal,
              :advanced_on_docket_due_to_motion,
              :with_post_intake_tasks,
@@ -237,6 +259,7 @@ module Seeds
     def create_ama_appeals_ready_to_distribute_more_than_60_days(judge, veteran)
       Timecop.travel(61.days.ago)
       create(:appeal,
+             :advanced_on_docket_due_to_motion,
              :with_post_intake_tasks,
              :held_hearing_and_ready_to_distribute,
              :hearing_docket,

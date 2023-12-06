@@ -47,10 +47,6 @@ FactoryBot.define do
       roles { ["VSO"] }
     end
 
-    trait :judge_role do
-      roles { ["judge"] }
-    end
-
     trait :judge do
       with_judge_team
       roles { ["Hearing Prep"] }
@@ -74,19 +70,6 @@ FactoryBot.define do
     trait :with_judge_team do
       after(:create) do |judge|
         JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
-      end
-    end
-
-    trait :with_inactive_judge_team do
-      after(:create) do |judge|
-        (JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)).inactive!
-      end
-    end
-
-    trait :with_non_admin_judge_team do
-      after(:create) do |judge|
-        organization = JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)
-        OrganizationsUser.existing_record(judge, organization).update(admin: false)
       end
     end
 
