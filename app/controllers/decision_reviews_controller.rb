@@ -105,6 +105,18 @@ class DecisionReviewsController < ApplicationController
     end
   end
 
+  def show_all_history
+    puts "--------------in show_all_history with task id: #{task_id} -----------------"
+    respond_to do |format|
+      format.html { render "index" }
+      format.json do
+        # Warning could be slow
+        events = ClaimHistoryService.new(business_line).build_events
+        render json: serialized_events(events)
+      end
+    end
+  end
+
   def business_line_slug
     allowed_params[:business_line_slug] || allowed_params[:decision_review_business_line_slug]
   end

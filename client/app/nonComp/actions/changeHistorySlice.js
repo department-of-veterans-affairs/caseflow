@@ -60,18 +60,18 @@ export const downloadReportCSV = createAsyncThunk('changeHistory/downloadReport'
 
 export const fetchClaimEvents = createAsyncThunk('changeHistory/fetchClaimEvents',
   async ({ taskID, businessLineUrl }, thunkApi) => {
-  // Prepare data if neccessary. Although that could be reducer logic for filters if we end up using redux for it.
-    // const data = prepareFilters(filterData);
-
     try {
-      // const getOptions = { query: data, headers: { Accept: 'text/csv' }, responseType: 'arraybuffer' };
-      // const response = await ApiUtil.get(`/decision_reviews/${organizationUrl}/report`, getOptions);
+      let url = '';
 
-      console.log('attempting to create a response');
-      console.log(`/decision_reviews/${businessLineUrl}/${taskID}/show-history`);
-      const response = await ApiUtil.get(`/decision_reviews/${businessLineUrl}/tasks/${taskID}/show-history`);
+      if (taskID === 'all') {
+        url = `/decision_reviews/${businessLineUrl}/show-all-history`;
+      } else {
+        url = `/decision_reviews/${businessLineUrl}/tasks/${taskID}/show-history`;
+      }
+      // console.log(url);
+      const response = await ApiUtil.get(url);
 
-      console.log(response);
+      // console.log(response);
 
       const events = response.body.data;
 
@@ -79,9 +79,9 @@ export const fetchClaimEvents = createAsyncThunk('changeHistory/fetchClaimEvents
 
       const preparedData = events.map(({ attributes, ...rest }) => ({ ...attributes, ...rest }));
 
-      console.log(events);
+      // console.log(events);
 
-      console.log(preparedData);
+      // console.log(preparedData);
 
       // return thunkApi.fulfillWithValue('success', { analytics: true });
 

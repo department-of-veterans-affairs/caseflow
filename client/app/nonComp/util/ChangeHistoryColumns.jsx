@@ -36,12 +36,14 @@ const DetailsList = ({ event }) => {
       return obj;
     }, {});
 
-  console.log(detailsObject);
+  // console.log(detailsObject);
 
   // This currently relies on the object.entries remaining in the same order which is not ideal
   // Could probably map into the object based on a keys array instead
 
   // Object.entries(event.details).slice(0, 3).
+  // console.log(event);
+
   return (
     <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
       {Object.entries(detailsObject).
@@ -50,25 +52,25 @@ const DetailsList = ({ event }) => {
             <strong>{capitalize(startCase(key))}:</strong> {formatValue(key, value)}
           </li>
         ))}
-      {event.eventType === 'Withdrew Issue' && (
+      {event.readableEventType === 'Withdrew issue' && (
         <li key="withdrawnDate" style={listStyle}>
-          <strong>Withdrawl request date:</strong> {moment(event.details.withdrawlRequestDate).utc().
+          <strong>Withdrawl request date:</strong> {moment(event.withdrawlRequestDate).utc().
             format('MM/DD/YY')}
         </li>
       )}
-      {event.eventType === 'Removed Issue' && (
+      {event.readableEventType === 'Removed issue' && (
         <li key="removedDate" style={listStyle}>
-          <strong>Removed request date:</strong> {moment(event.details.withdrawlRequestDate).utc().
+          <strong>Removed request date:</strong> {moment(event.eventDate).utc().
             format('MM/DD/YY')}
         </li>
       )}
-      {event.eventType === 'Completed Disposition' && (
+      {event.readableEventType === 'Completed disposition' && (
         <>
           <li key="disposition" style={listStyle}>
-            <strong>Disposition:</strong> {event.details.disposition}
+            <strong>Disposition:</strong> {event.disposition}
           </li>
           <li key="decisionDescription" style={listStyle}>
-            <strong>Decision description:</strong> {event.details.decisionDescription}
+            <strong>Decision description:</strong> {event.decisionDescription}
           </li>
         </>
       )}
@@ -79,16 +81,24 @@ const DetailsList = ({ event }) => {
 DetailsList.propTypes = {
   event: PropTypes.shape({
     details: PropTypes.shape({
-      decisionDescription: PropTypes.any,
-      disposition: PropTypes.any,
-      withdrawlRequestDate: PropTypes.any
+      benefitType: PropTypes.string,
+      issueType: PropTypes.string,
+      decisionDescription: PropTypes.string,
+      disposition: PropTypes.string,
     }),
+    disposition: PropTypes.string,
+    decisionDescription: PropTypes.string,
     eventType: PropTypes.string,
+    eventDate: PropTypes.any,
+    readableEventType: PropTypes.string,
+    withdrawlRequestDate: PropTypes.any
   })
 };
 
 const renderEventDetails = (event) => {
   let renderBlock = null;
+
+  // console.log(event);
 
   switch (event.eventType) {
   case 'added_decision_date':
@@ -101,6 +111,7 @@ const renderEventDetails = (event) => {
     break;
 
   case 'claim_creation':
+    // console.log('in claim_createion?');
     renderBlock = 'Claim created.';
     break;
 
@@ -108,7 +119,7 @@ const renderEventDetails = (event) => {
     renderBlock = <>
       <span>Claim closed.</span>
       <br />
-      <span><strong>Claim decision date:</strong> {moment(event.details.decisionDate).utc().
+      <span><strong>Claim decision date:</strong> {moment(event.dispositionDate).utc().
         format('MM/DD/YY')}</span>
     </>;
     break;
@@ -131,16 +142,11 @@ const renderEventDetails = (event) => {
     break;
   }
 
+  // console.log('last thing before death?');
+
   return renderBlock;
 
 };
-
-// const formatUserName = (userName) => {
-//   const splitNames = userName.split(' ');
-//   const last = splitNames.pop();
-
-//   return [splitNames.map((remainingName) => `${remainingName[0] }.`), last].join(' ');
-// };
 
 export const userColumn = (events) => {
   return {
@@ -151,7 +157,11 @@ export const userColumn = (events) => {
     valueName: 'user',
     columnName: 'eventUser',
     tableData: events,
-    valueFunction: (event) => event.eventUserName,
+    valueFunction: (event) => {
+      // console.log(event);
+
+      return event.eventUserName;
+    },
     getSortValue: (event) => event.eventUserName
   };
 };
@@ -160,8 +170,12 @@ export const dateTimeColumn = () => {
   return {
     header: 'Date and Time',
     name: 'dateTime',
-    valueFunction: (event) => moment(event.eventDate).utc().
-      format('MM/DD/YY, HH:mm'),
+    valueFunction: (event) => {
+      // console.log(event);
+
+      return moment(event.eventDate).utc().
+        format('MM/DD/YY, HH:mm');
+    },
     // Might need to do date stuff to sort as well?
     getSortValue: (event) => event.eventDate
   };
@@ -188,7 +202,23 @@ export const detailsColumn = () => {
     header: 'Details',
     name: 'details',
     valueFunction: (event) => {
-      return renderEventDetails(event);
+      const stuff = renderEventDetails(event);
+
+      // console.log(stuff);
+
+      return stuff;
+    }
+  };
+};
+
+export const taskIdColumn = () => {
+  return {
+    header: 'Task ID',
+    name: 'taskID',
+    valueFunction: (event) => {
+      // console.log(event);
+
+      return <a href={`/decision_reviews/${event.benefitType}/tasks/${event.taskID}`}>{event.taskID}</a>;
     }
   };
 };

@@ -265,6 +265,7 @@ Rails.application.routes.draw do
       get "show-history", to: "decision_reviews#show_history", on: :member, as: :show_history
     end
     get "report", to: "decision_reviews#generate_report", on: :member, as: :report, format: false
+    get "show-all-history", to: "decision_reviews#show_all_history", on: :member
     get "/(*all)", to: "decision_reviews#index"
   end
 

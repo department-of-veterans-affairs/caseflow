@@ -84,6 +84,18 @@ class NonCompReviewsPage extends React.PureComponent {
               </Button> :
               null
             }
+            {this.props.canGenerateClaimHistory && this.props.isBusinessLineAdmin && (
+              <Button
+                classNames={secondaryButtonClassNames}
+                onClick={() => {
+                  this.props.history.push(`${this.props.businessLineUrl}/show-all-history`);
+                }}
+                styling={compReviewButtonStyling}
+              >
+                Show All History
+              </Button>
+            )
+            }
           </div>
         </div>
         <NonCompTabs />

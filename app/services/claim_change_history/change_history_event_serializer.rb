@@ -15,6 +15,7 @@ class ChangeHistoryEventSerializer
   attribute :issueDescription, &:issue_description
   attribute :decisionDate, &:decision_date
   attribute :disposition, &:disposition
+  attribute :dispositionDate, &:disposition_date
   attribute :decisionDescription, &:decision_description
   attribute :withdrawlRequestDate, &:withdrawal_request_date
 end
