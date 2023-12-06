@@ -93,7 +93,7 @@ RSpec.feature("The Correspondence Intake page") do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
       User.authenticate!(roles: ["Mail Intake"])
-      @correspondence_uuid = SecureRandom.uuid
+      @correspondence_uuid = "0c77d6d2-c19f-4dbb-8e79-919a4090ed33"
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
       click_on("button-continue")
     end
