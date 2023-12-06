@@ -1,5 +1,5 @@
 class CaseDistributionLeversController < ApplicationController
-  before_action :verify_access, except: [:acd_lever_index_test, :create_acd_group_org_singleton]
+  before_action :verify_access
 
   def acd_lever_index
     @acd_levers = CaseDistributionLever.all
@@ -13,10 +13,12 @@ class CaseDistributionLeversController < ApplicationController
   def update_levers_and_history
     cda_group_organization = Organization.where(name: "Case Distribution Algorithm Control Group").first
     if cda_group_organization && cda_group_organization.user_is_admin?(current_user)
-      errors = update_acd_levers(JSON.parse(params["current_levers"]))
+      current_levers_list = params["current_levers"].is_a?(Array) ? params["current_levers"].to_json : params["current_levers"]
+      errors = update_acd_levers(JSON.parse(current_levers_list))
 
       if errors.empty?
-        errors = add_audit_lever_entries(JSON.parse(params["audit_lever_entries"]))
+        audit_lever_entries_list = params["audit_lever_entries"].is_a?(Array) ? params["audit_lever_entries"].to_json : params["audit_lever_entries"]
+        errors = add_audit_lever_entries(JSON.parse(audit_lever_entries_list))
       end
 
       if errors.empty?
@@ -56,8 +58,7 @@ class CaseDistributionLeversController < ApplicationController
 
   private
   def verify_access
-    return true if current_user.admin?
-    return true if current_user&.organizations&.any?(&:users_can_view_levers?)
+    return true if current_user&.organizations && current_user&.organizations&.any?(&:users_can_view_levers?)
 
     Rails.logger.debug("User with roles #{current_user.roles.join(', ')} "\
       "couldn't access #{request.original_url}")

@@ -70,3 +70,15 @@ Primary.story = {
   name: 'Case Distribution for Admin'
 };
 
+export const MemberView = () =>
+  <CaseflowDistributionContent
+    levers = {leversList}
+    saveChanges = {[]}
+    formattedHistory={formattedHistory}
+    leverStore={leverStore}
+    isAdmin={false}
+  />;
+
+MemberView.story = {
+  name: 'Case Distribution for Member'
+};
