@@ -8,10 +8,6 @@ import COPY from '../../../COPY';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 
 
-function DisplayButtonLeverAlert(alert) {
-  console.log("alert", alert)
-  //show small banner displaying the alert
-}
 
 function UpdateLeverHistory(leverStore) {
   leverStore.dispatch({
@@ -22,6 +18,7 @@ function UpdateLeverHistory(leverStore) {
 function SaveLeverChanges(leverStore)  {
   leverStore.dispatch({
     type: Constants.SAVE_LEVERS,
+    saveChangesActivated: true,
   });
 }
 
@@ -109,7 +106,6 @@ export function LeverSaveButton({ leverStore }) {
   const handleConfirmButton = () => {
     SaveLeversToDB(leverStore);
     setShowModal(false);
-    DisplayButtonLeverAlert('');
     setSaveButtonDisabled(true);
   }
 
@@ -117,7 +113,7 @@ export function LeverSaveButton({ leverStore }) {
 
   return (
     <>
-      <Button id="SaveLeversButton"  onClick={handleSaveButton} disabled={!changesOccurred || saveButtonDisabled}>
+      <Button id="LeversSaveButton"  onClick={handleSaveButton} disabled={!changesOccurred || saveButtonDisabled}>
         Save
       </Button>
       {showModal &&

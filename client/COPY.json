@@ -1416,5 +1416,7 @@
   "CASE_DISTRIBUTION_DISTRIBUTION_2" : " days sets the number of calendar days prior to the Docket Time Goal for the docket type when appeals become eligible for distribution.",
   "CASE_DISTRIBUTION_DOCKET_TIME_NOTE": "Please note, if turned on, non-priority appeals of that docket type will not be distributed until eligible, which may disrupt strict docket-date-order distribution across dockets.",
   "CASE_DISTRIBUTION_MODAL_TITLE": "Confirm Case Distribution Algorithm Changes",
-  "CASE_DISTRIBUTION_MODAL_DESCRIPTION": "Please confirm the following changes to the Case Distribution algorithm below. Once saved, these changes will apply to the next scheduled case distribution event."
+  "CASE_DISTRIBUTION_MODAL_DESCRIPTION": "Please confirm the following changes to the Case Distribution algorithm below. Once saved, these changes will apply to the next scheduled case distribution event.",
+  "CASE_DISTRIBUTION_SUCCESSBANNER_TITLE": "You have successfully updated the Case Distribution Algorithm",
+  "CASE_DISTRIBUTION_SUCCESSBANNER_DETAIL": "Your changes will apply to the next scheduled Case Distribution event."
 }

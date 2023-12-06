@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import StaticLeversWrapper from './StaticLeversWrapper';
 import InteractableLeverWrapper from './InteractableLeversWrapper';
 import LeverHistory from './LeverHistory';
+import LeverAlertBanner from './LeverAlertBanner';
 import PropTypes from 'prop-types';
 import {
   sectionSegmentStyling,
@@ -10,8 +11,32 @@ import {
 import COPY from '../../../COPY';
 
 const CaseflowDistributionContent = ({ levers, saveChanges, formattedHistory, isAdmin, leverStore }) => {
+  const [displayAlert, setDisplayAlert] = useState(false);
+
+  useEffect(() => {
+
+    const unsubscribe = leverStore.subscribe(() => {
+      const state = leverStore.getState();
+
+      if (state.saveChangesActivated) {
+        setDisplayAlert(true);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [leverStore]);
+
   return (
     <div>
+      {displayAlert && (
+        <LeverAlertBanner
+        title={COPY.CASE_DISTRIBUTION_SUCCESSBANNER_TITLE}
+        message={COPY.CASE_DISTRIBUTION_SUCCESSBANNER_DETAIL}
+        type='success'
+        />
+      )}
       <h1>Administration</h1>
 
       <div> {/* Main Content Wrapper*/}
@@ -63,7 +88,7 @@ CaseflowDistributionContent.propTypes = {
   saveChanges: PropTypes.func.isRequired,
   formattedHistory: PropTypes.array.isRequired,
   isAdmin: PropTypes.bool.isRequired,
-  leverStore: PropTypes.any.isRequired
+  leverStore: PropTypes.any.isRequired,
 };
 
 export default CaseflowDistributionContent;

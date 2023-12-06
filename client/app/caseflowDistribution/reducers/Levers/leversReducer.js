@@ -2,6 +2,7 @@ import * as Constants from './leversActionTypes';
  import { update } from 'app/util/ReducerUtil';
 
 export const initialState = {
+  saveChangesActivated: false,
   levers: [],
   initial_levers: [],
   formatted_history: {},
@@ -25,6 +26,8 @@ const leversReducer = (state = initialState, action = {}) => {
     case Constants.SAVE_LEVERS:
       return {
         ...state
+      ,
+      saveChangesActivated: action.saveChangesActivated
       }
     case Constants.REVERT_LEVERS:
       return {
