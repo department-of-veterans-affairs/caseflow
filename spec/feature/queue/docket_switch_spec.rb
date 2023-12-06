@@ -585,7 +585,7 @@ RSpec.feature "Docket Switch", :all_dbs do
         expect(visible_options.length).to eq Constants::CO_LOCATED_ADMIN_ACTIONS.length
       end
 
-      fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: admin_action_instructions
+      fill_in COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: admin_action_instructions
       expect(page).to have_button("Continue", disabled: false)
       click_button(text: "Continue")
 

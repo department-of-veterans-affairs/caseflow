@@ -1015,3 +1015,7 @@ export const getPreviousTaskInstructions = (parentTask, tasks) => {
 
   return { reviewNotes, previousInstructions };
 };
+
+export const replaceSpecialCharacters = (string_replace) => {
+  return string_replace.replace(/[^\w\s]/gi, '_')
+};

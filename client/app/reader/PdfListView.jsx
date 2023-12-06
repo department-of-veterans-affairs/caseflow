@@ -19,6 +19,17 @@ import { shouldFetchAppeal } from '../reader/utils';
 import { DOCUMENTS_OR_COMMENTS_ENUM } from './DocumentList/actionTypes';
 
 export class PdfListView extends React.Component {
+  setClearAllFiltersCallbacks = (callbacks) => {
+    this.setState({ clearAllFiltersCallbacks: [...this.state.clearAllFiltersCallbacks, ...callbacks] });
+  };
+
+  constructor() {
+    super();
+    this.state = {
+      clearAllFiltersCallbacks: []
+    };
+  }
+
   componentDidMount() {
     if (shouldFetchAppeal(this.props.appeal, this.props.match.params.vacolsId)) {
       // if the appeal is fetched through case selected appeals, re-use that existing appeal
@@ -56,6 +67,8 @@ export class PdfListView extends React.Component {
         sortBy={this.props.sortBy}
         docFilterCriteria={this.props.docFilterCriteria}
         showPdf={this.props.showPdf}
+        setClearAllFiltersCallbacks={this.setClearAllFiltersCallbacks}
+        featureToggles={this.props.featureToggles}
       />;
     }
 
@@ -75,6 +88,7 @@ export class PdfListView extends React.Component {
           <DocumentListHeader
             documents={this.props.documents}
             noDocuments={noDocuments}
+            clearAllFiltersCallbacks={this.state.clearAllFiltersCallbacks}
           />
           {tableView}
         </div>
@@ -111,8 +125,19 @@ PdfListView.propTypes = {
   appeal: PropTypes.object,
   efolderExpressUrl: PropTypes.string,
   userHasEfolderRole: PropTypes.bool,
+  readerSearchImprovements: PropTypes.bool,
+  featureToggles: PropTypes.object,
+  match: PropTypes.object,
+  caseSelectedAppeal: PropTypes.object,
+  onReceiveAppealDetails: PropTypes.func,
+  fetchAppealDetails: PropTypes.func,
+  docFilterCriteria: PropTypes.object,
+  viewingDocumentsOrComments: PropTypes.string,
+  documentPathBase: PropTypes.string,
+  showPdf: PropTypes.func,
+  queueRedirectUrl: PropTypes.string,
+  queueTaskType: PropTypes.node
 };
-
 
 export default connect(
   mapStateToProps, mapDispatchToProps

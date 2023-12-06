@@ -3,6 +3,8 @@
 require "database_cleaner"
 
 # because db/seeds is not in the autoload path, we must load them explicitly here
+# base.rb needs to be loaded first because the other seeds inherit from it
+require Rails.root.join("db/seeds/base.rb").to_s
 Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
 
 class SeedDB
@@ -62,6 +64,8 @@ class SeedDB
     # Always run this as last one
     call_and_log_seed_step Seeds::StaticTestCaseData
     call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
+    call_and_log_seed_step Seeds::AdditionalRemandedAppeals
+    call_and_log_seed_step Seeds::AdditionalLegacyRemandedAppeals
   end
 end
 

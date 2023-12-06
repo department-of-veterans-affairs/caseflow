@@ -259,6 +259,11 @@ export const ScheduleVeteran = ({
           },
           ...(prevHearingDisposition === HEARING_DISPOSITION_TYPES.scheduled_in_error && {
             hearing_notes: scheduledHearing?.notes
+          }),
+          ...('rulingDate' in scheduledHearing && {
+            date_of_ruling: scheduledHearing?.rulingDate.value,
+            instructions: scheduledHearing?.instructions,
+            granted: scheduledHearing?.granted
           })
         }
       }

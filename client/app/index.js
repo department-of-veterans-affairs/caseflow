@@ -13,6 +13,9 @@ import { render } from 'react-dom';
 import { forOwn } from 'lodash';
 import { BrowserRouter, Switch } from 'react-router-dom';
 
+// Internal Dependencies
+import { storeMetrics } from './util/Metrics';
+
 // Redux Store Dependencies
 import ReduxBase from 'app/components/ReduxBase';
 import rootReducer from 'store/root';
@@ -54,6 +57,7 @@ import Inbox from 'app/inbox';
 import Explain from 'app/explain';
 import MPISearch from 'app/mpi/MPISearch';
 import Admin from 'app/admin';
+import uuid from 'uuid';
 
 const COMPONENTS = {
   // New Version 2.0 Root Component
@@ -91,6 +95,37 @@ const COMPONENTS = {
 };
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
+  window.onerror = (event, source, lineno, colno, error) => {
+    if (props.featureToggles?.metricsBrowserError) {
+      const id = uuid.v4();
+      const data = {
+        event,
+        source,
+        lineno,
+        colno,
+        error
+      };
+      const t0 = performance.now();
+      const start = Date.now();
+      const t1 = performance.now();
+      const end = Date.now();
+      const duration = t1 - t0;
+
+      storeMetrics(
+        id,
+        data,
+        { message: event,
+          type: 'error',
+          product: 'caseflow',
+          start,
+          end,
+          duration }
+      );
+    }
+
+    return true;
+  };
+
   /* eslint-disable */
   const wrapComponent = (Component) => (
     <ErrorBoundary>

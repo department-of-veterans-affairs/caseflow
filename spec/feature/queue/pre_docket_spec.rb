@@ -401,10 +401,10 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           find(".cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
           find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.VHA_ASSIGN_TO_PROGRAM_OFFICE.label).click
           expect(page).to have_content(COPY::VHA_ASSIGN_TO_PROGRAM_OFFICE_MODAL_TITLE)
-          expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
+          expect(page).to have_content(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL)
           find(".cf-select__control", text: COPY::VHA_PROGRAM_OFFICE_SELECTOR_PLACEHOLDER).click
           find("div", class: "cf-select__option", text: program_office.name).click
-          fill_in(COPY::PRE_DOCKET_MODAL_BODY, with: po_instructions)
+          fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: po_instructions)
           find("button", class: "usa-button", text: COPY::MODAL_ASSIGN_BUTTON).click
 
           expect(page).to have_current_path("/organizations/#{camo.url}?tab=camo_assigned&#{default_query_params}")
@@ -906,7 +906,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           text: Constants.TASK_ACTIONS.EMO_ASSIGN_TO_RPO.label
         ).click
         expect(page).to have_content(COPY::EMO_ASSIGN_TO_RPO_MODAL_TITLE)
-        expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
+        expect(page).to have_content(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL)
         find(".cf-select__control", text: COPY::EDUCATION_RPO_SELECTOR_PLACEHOLDER).click
 
         find("div", class: "cf-select__option", text: education_rpo.name).click
@@ -1047,7 +1047,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         find(class: "cf-select__control", text: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL).click
         find("div", class: "cf-select__option", text: Constants.TASK_ACTIONS.EMO_RETURN_TO_BOARD_INTAKE.label).click
         expect(page).to have_content(COPY::EMO_RETURN_TO_BOARD_INTAKE_MODAL_TITLE)
-        expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
+        expect(page).to have_content(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL)
       end
 
       step "If no text is entered into the modal's textarea it prevents submission" do
@@ -1122,7 +1122,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         ).click
 
         expect(page).to have_content(COPY::EDUCATION_RPO_RETURN_TO_EMO_MODAL_TITLE)
-        expect(page).to have_content(COPY::PRE_DOCKET_MODAL_BODY)
+        expect(page).to have_content(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL)
 
         submit_button = find("button", text: COPY::MODAL_RETURN_BUTTON)
         expect(submit_button[:disabled]).to eq "true"

@@ -107,7 +107,13 @@ class AssignHearingDispositionTask < Task
       fail HearingDispositionNotPostponed
     end
 
-    schedule_later
+    multi_transaction do
+      created_tasks = schedule_later
+
+      cancel_redundant_hearing_postponement_req_tasks
+
+      created_tasks
+    end
   end
 
   def no_show!
@@ -240,10 +246,14 @@ class AssignHearingDispositionTask < Task
       end
 
       clean_up_virtual_hearing
-      reschedule_or_schedule_later(
+      created_tasks = reschedule_or_schedule_later(
         instructions: instructions,
         after_disposition_update: payload_values[:after_disposition_update]
       )
+
+      cancel_redundant_hearing_postponement_req_tasks
+
+      created_tasks
     end
   end
 

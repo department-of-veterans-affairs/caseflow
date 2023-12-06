@@ -41,6 +41,8 @@ end
 Dir[Rails.root.join("spec/support/**/*.rb")].sort.each { |f| require f }
 
 # because db/seeds is not in the autoload path, we must load them explicitly here
+# base.rb needs to be loaded first because the other seeds inherit from it
+require Rails.root.join("db/seeds/base.rb").to_s
 Dir[Rails.root.join("db/seeds/**/*.rb")].sort.each { |f| require f }
 
 # The TZ variable controls the timezone of the browser in capybara tests, so we always define it.

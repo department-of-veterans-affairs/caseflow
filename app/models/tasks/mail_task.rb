@@ -10,6 +10,8 @@
 #   - withdrawing an appeal
 #   - switching dockets
 #   - add post-decision motions
+#   - postponing a hearing
+#   - withdrawing a hearing
 # Adding a mail task to an appeal is done by mail team members and will create a task assigned to the mail team. It
 # will also automatically create a child task assigned to the team the task should be routed to.
 
@@ -18,15 +20,21 @@ class MailTask < Task
   def verify_org_task_unique; end
   prepend PrivacyActPending
 
+  # This constant is more efficient than iterating through all mail tasks
+  # and filtering out almost all of them since only HPR and HWR are approved for now
+  LEGACY_MAIL_TASKS = [
+    { label: "Hearing postponement request", value: "HearingPostponementRequestMailTask" }
+  ].freeze
+
   class << self
     def blocking?
       # Some open mail tasks should block distribution of an appeal to judges.
-      # Define this method in subclasses for blocking task types.
+      # Define this method in descendants for blocking task types.
       false
     end
 
-    def subclass_routing_options(user: nil, appeal: nil)
-      filtered = MailTask.subclasses.select { |sc| sc.allow_creation?(user: user, appeal: appeal) }
+    def descendant_routing_options(user: nil, appeal: nil)
+      filtered = MailTask.descendants.select { |sc| sc.allow_creation?(user: user, appeal: appeal) }
       sorted = filtered.sort_by(&:label).map { |subclass| { value: subclass.name, label: subclass.label } }
       sorted
     end

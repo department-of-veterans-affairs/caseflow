@@ -81,6 +81,7 @@ module WarRoom
     # The status of the InformalHearingPresentationTask must be
     #   * assigned
     #   * on_hold
+    #   * cancelled
     # If the status is anything else we bail.
     def ihp_task
       return @ihp_task unless @ihp_task.nil?
@@ -94,14 +95,10 @@ module WarRoom
         fail Interrupt
       end
 
-      # TODO: Need to determine the branch for cancelled status'
-      # If the status is cancelled does the InformalHearingPresentationTask reopen after docketing the appeal?
       possible_ihp_task = ihp_tasks[0]
-      if possible_ihp_task.status.include?([Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.on_hold])
+      if [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.on_hold, Constants.TASK_STATUSES.cancelled]
+          .include?(possible_ihp_task.status)
         @ihp_task = possible_ihp_task
-      elsif possible_ihp_task.status.include?([Constants.TASK_STATUSES.cancelled])
-        puts("InformalHearingPresentationTask has a status of cancelled. This is not supported for automated remediation yet. Aborting...")
-        fail Interrupt
       else
         puts("InformalHearingPresentationTask is not in the correct status for remediation. Aborting...")
         fail Interrupt

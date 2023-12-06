@@ -18,5 +18,10 @@
   },
   "dueProcess": {
     "due_process_deficiency" : "Other due process deficiency"
+  },
+  "other": {
+    "inextricably_intertwined" : "Inextricably intertwined",
+    "error" : "Error satisfying regulatory or statutory duty",
+    "other" : "Other"
   }
 }

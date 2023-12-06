@@ -11,7 +11,7 @@ import { Redirect } from 'react-router-dom';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import AddDecisionDateModal from 'app/intake/components/AddDecisionDateModal/AddDecisionDateModal';
-import RemoveIssueModal from '../../components/RemoveIssueModal';
+import RemoveIssueModal from '../../components/RemoveIssueModal/RemoveIssueModal';
 import CorrectionTypeModal from '../../components/CorrectionTypeModal';
 import AddIssueManager from '../../components/AddIssueManager';
 
