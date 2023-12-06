@@ -1,4 +1,3 @@
-// @import url("app/assets/stylesheets/notification_report_pdf_template.css");
 
 .leverContainer {
   width: 100%;
@@ -221,56 +220,108 @@
   background-position: 2rem 2rem;
   background-repeat: no-repeat;
   background-size: 5.2rem;
-  padding-bottom: 1.4rem;
-  padding-left: 3rem;
-  padding-right: 2rem;
-  padding-top: 2rem;
+  padding-left: .75rem;
+  padding-top: 1em;
+  padding-bottom: 0.02rem;
   position: relative;
-  margin-top: 1.5em; /* Adjust as needed */
+  margin-top: 1.5em;
+  margin: auto;
+  align-items: center;
+  text-align: left;
+
+  h3 {
+    font-size: 24px;
+    margin-bottom: .1rem;
+    padding-left: 3em;
+  }
+
+  p {
+    font-size: 17px;
+    margin-top: .1rem;
+    padding-left: 4.25em;
+  }
+
+  &::before {
+    background-color: #8b8b8b;
+    content: '';
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 1rem;
+  }
+
+  &-icon {
+    display: flex;
+    align-items: center;
+    padding-right: 1rem;
+  }
+
+  &-body {
+    display: table-cell;
+    vertical-align: top;
+  }
+
+  &-heading {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  &-text {
+    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+    margin-bottom: 0;
+    margin-top: 0;
+
+    &:only-child {
+      margin-bottom: 1rem;
+      padding-top: 0.5rem;
+    }
+  }
+
+  &-success {
+    background-color: #e7f4e4;
+    background-image: url("~uswds/src/img/alerts/success.png");
+    background-image: url("~uswds/src/img/alerts/success.svg");
+
+    &::before {
+      background-color: #2e8540;
+    }
+
+    & .leverAlertBanner-body {
+      padding-left: 5rem;
+    }
+  }
+
+  &-error {
+    background-color: #f9dede;
+    background-image: url("~uswds/src/img/alerts/error.png");
+    background-image: url("~uswds/src/img/alerts/error.svg");
+
+    &::before {
+      background-color: #e31c3d;
+    }
+
+    & .leverAlertBanner-body {
+      padding-left: 5rem;
+    }
+  }
+
+  &-no_icon {
+    background-image: none;
+  }
+
+  &-paragraph {
+    width: 66ch;
+  }
 }
-
-.leverAlertBanner::before {
-  background-color: #8b8b8b;
-  content: '';
-  height: 100%;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 1rem;
-}
-
-.leverAlertBanner-icon {
-  display: table-cell;
-  padding-right: 1rem;
-}
-
-.leverAlertBanner-body {
-  display: table-cell;
-  vertical-align: top;
-}
-
-.leverAlertBanner-heading {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-.leverAlertBanner-text {
-  font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
-  margin-bottom: 0;
-  margin-top: 0;
-}
-
-.leverAlertBanner-text:only-child {
-  margin-bottom: 1rem;
-  padding-top: 0.5rem; }
-
 
 .leverAlertBanner a {
   color: #205493;
-}
 
-.leverAlertBanner a:focus, .leverAlertBanner a:hover {
-  color: #112e51;
+  &:focus,
+  &:hover {
+    color: #112e51;
+  }
 }
 
 .leverAlertBanner ul {
@@ -278,38 +329,3 @@
   margin-top: 1rem;
   padding-left: 1rem;
 }
-
-.leverAlertBanner-heading {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
-.leverAlertBanner-text {
-  font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
-  margin-bottom: 0;
-  margin-top: 0;
-}
-
-.leverAlertBanner-success {
-  background-color: #e7f4e4;
-  background-image: url("~uswds/src/img/alerts/success.png");
-  background-image: url("~uswds/src/img/alerts/success.svg"); }
-  .leverAlertBanner-success::before {
-    background-color: #2e8540; }
-  .leverAlertBanner-success .leverAlertBanner-body {
-    padding-left: 5rem; }
-
-.leverAlertBanner-error {
-  background-color: #f9dede;
-  background-image: url("~uswds/src/img/alerts/error.png");
-  background-image: url("~uswds/src/img/alerts/error.svg"); }
-  .leverAlertBanner-error::before {
-    background-color: #e31c3d; }
-  .leverAlertBanner-error .leverAlertBanner-body {
-    padding-left: 5rem; }
-
-.leverAlertBanner-no_icon {
-  background-image: none; }
-
-.leverAlertBanner-paragraph {
-  width: 66ch; }
