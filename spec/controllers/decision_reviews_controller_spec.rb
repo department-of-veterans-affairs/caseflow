@@ -747,6 +747,14 @@ describe DecisionReviewsController, :postgres, type: :controller do
         expect(response.headers["Content-Disposition"]).to match(/^attachment; filename=\"vha-20180101.csv\"/)
       end
 
+      it "calls MetricsService to record metrics" do
+        expect(MetricsService).to receive(:store_record_metric)
+        get :generate_report, format: :csv,
+                              params: { business_line_slug: non_comp_org.url, filters: generate_report_filters }
+
+        expect(response.status).to eq 200
+      end
+
       context "missing filter parameters" do
         it "raises a param is missing error when filters are missing" do
           get :generate_report, format: :csv, params: { business_line_slug: non_comp_org.url }
