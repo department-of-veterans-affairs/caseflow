@@ -78,6 +78,7 @@ class CorrespondenceController < ApplicationController
     render json: { status: 200, correspondence: correspondence }
   end
 
+  # :reek:UtilityFunction
   def vbms_document_types
     data = ExternalApi::ClaimEvidenceService.document_types
     data["documentTypes"].map { |document_type| { id: document_type["id"], name: document_type["name"] } }
