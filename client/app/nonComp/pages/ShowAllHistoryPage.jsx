@@ -9,7 +9,7 @@ import { dateTimeColumn,
   userColumn,
   activityColumn,
   detailsColumn,
-  taskIdColumn } from 'app/nonComp/util/ChangeHistoryColumns';
+  taskIdColumn, claimantNameColumn } from 'app/nonComp/util/ChangeHistoryColumns';
 import { fetchClaimEvents } from '../actions/changeHistorySlice';
 import SearchBar from '../../components/SearchBar';
 
@@ -32,12 +32,13 @@ const ClaimHistoryGenerator = (props) => {
   }, []);
 
   const changeHistoryColumns = [
-    taskIdColumn(), dateTimeColumn(), userColumn(events), activityColumn(events), detailsColumn()
+    claimantNameColumn(), taskIdColumn(), dateTimeColumn(), userColumn(events), activityColumn(events), detailsColumn()
   ];
 
   // Filtering logic based on the search term (applies only if searchTerm exists)
   const filteredEvents = searchTerm ?
     events.filter((event) =>
+      event.claimantName?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
       event.issueType?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
       event.readableEventType?.toLowerCase()?.includes(searchTerm.toLowerCase())
     ) :

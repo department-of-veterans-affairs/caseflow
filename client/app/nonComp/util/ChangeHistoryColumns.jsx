@@ -36,14 +36,6 @@ const DetailsList = ({ event }) => {
       return obj;
     }, {});
 
-  // console.log(detailsObject);
-
-  // This currently relies on the object.entries remaining in the same order which is not ideal
-  // Could probably map into the object based on a keys array instead
-
-  // Object.entries(event.details).slice(0, 3).
-  // console.log(event);
-
   return (
     <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
       {Object.entries(detailsObject).
@@ -220,5 +212,14 @@ export const taskIdColumn = () => {
 
       return <a href={`/decision_reviews/${event.benefitType}/tasks/${event.taskID}`}>{event.taskID}</a>;
     }
+  };
+};
+
+export const claimantNameColumn = () => {
+  return {
+    header: 'Claimant',
+    name: 'claimant',
+    valueFunction: (event) => event.claimantName,
+    getSortValue: (event) => event.claimantName
   };
 };

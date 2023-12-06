@@ -9,6 +9,7 @@ class ChangeHistoryEventSerializer
   attribute :eventType, &:event_type
   attribute :readableEventType, &:readable_event_type
   attribute :eventUserName, &:readable_user_name
+  attribute :claimantName, &:claimant_name
   attribute :eventDate, &:event_date
   attribute :benefitType, &:benefit_type
   attribute :issueType, &:issue_type
