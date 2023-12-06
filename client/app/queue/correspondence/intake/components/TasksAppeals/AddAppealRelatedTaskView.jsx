@@ -199,6 +199,7 @@ export const AddAppealRelatedTaskView = (props) => {
                   unlinkAppeal={appealCheckboxOnChange}
                   allTaskTypeOptions={props.allTaskTypeOptions}
                   filterUnavailableTaskTypeOptions={props.filterUnavailableTaskTypeOptions}
+                  autoTexts={props.autoTexts}
                 />
               );
             })}
@@ -213,7 +214,8 @@ AddAppealRelatedTaskView.propTypes = {
   correspondenceUuid: PropTypes.string.isRequired,
   setRelatedTasksCanContinue: PropTypes.func.isRequired,
   filterUnavailableTaskTypeOptions: PropTypes.func.isRequired,
-  allTaskTypeOptions: PropTypes.array.isRequired
+  allTaskTypeOptions: PropTypes.array.isRequired,
+  autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
 export default AddAppealRelatedTaskView;

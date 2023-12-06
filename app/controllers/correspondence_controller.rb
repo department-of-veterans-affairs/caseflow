@@ -3,6 +3,7 @@
 class CorrespondenceController < ApplicationController
   before_action :verify_feature_toggle
   before_action :correspondence
+  before_action :auto_texts
 
   def intake
     respond_to do |format|
@@ -150,5 +151,9 @@ class CorrespondenceController < ApplicationController
       correspondenceUuid: correspondence.uuid,
       packageDocumentType: correspondence.correspondence_type_id
     }
+  end
+
+  def auto_texts
+    @auto_texts ||= AutoText.all.pluck(:name)
   end
 end
