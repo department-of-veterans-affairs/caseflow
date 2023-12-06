@@ -9,13 +9,14 @@ import * as yup from 'yup';
 import { daysWaitingSchema } from './Conditions/DaysWaiting';
 import { decisionReviewTypeSchema } from './Conditions/DecisionReviewType';
 import { facilitySchema } from './Conditions/Facility';
+import { issueDispositionSchema } from './Conditions/IssueDisposition';
 import * as ERRORS from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
 
 const conditionOptionSchemas = {
   daysWaiting: daysWaitingSchema,
   decisionReviewType: decisionReviewTypeSchema,
   facility: facilitySchema,
-  issueDisposition: yup.object(),
+  issueDisposition: issueDispositionSchema,
   issueType: yup.object(),
   personnel: personnelSchema
 };

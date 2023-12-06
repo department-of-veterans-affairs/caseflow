@@ -215,6 +215,48 @@ describe('ReportPage', () => {
     });
   });
 
+  describe('Issue Disposition Section', () => {
+    beforeEach(clickOnReportType);
+
+    it('allows you to select issue dispositions', async () => {
+      setup();
+      await navigateToConditionInput('Issue Disposition');
+
+      const dropdown = screen.getByLabelText('Issue Disposition');
+
+      await selectEvent.select(dropdown, ['Granted']);
+      expect(screen.getByText('Granted')).toBeInTheDocument();
+    });
+
+    it('allows to select multiple options from dropdown', async () => {
+      setup();
+      await navigateToConditionInput('Issue Disposition');
+
+      const dropdown = screen.getByLabelText('Issue Disposition');
+
+      await selectEvent.select(dropdown, ['Granted', 'Blank']);
+
+      expect(screen.getByText('Granted')).toBeInTheDocument();
+      expect(screen.getByText('Blank')).toBeInTheDocument();
+    });
+
+    it('selects an option from dropdown, then removes it and renders an error', async () => {
+      setup();
+      await navigateToConditionInput('Issue Disposition');
+
+      const dropdown = screen.getByLabelText('Issue Disposition');
+
+      await selectEvent.select(dropdown, ['Granted']);
+      expect(screen.getByText('Granted')).toBeInTheDocument();
+
+      const clearButton = document.querySelector('.cf-select__indicator.cf-select__clear-indicator');
+
+      userEvent.click(clearButton);
+
+      expect(screen.queryByText('Granted')).not.toBeInTheDocument();
+    });
+  });
+
   it('should have Generate task Report button and Clear Filter button disabled on initial load', () => {
     setup();
 
@@ -280,6 +322,31 @@ describe('ReportPage', () => {
       REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS.map(
         (option) => expect(screen.getAllByText(option.label)).toBeTruthy()
       );
+    });
+
+    it('should add a validation error if Generate Task button is clicked without selecting any specific events actions', async () => {
+
+      setup();
+
+      await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
+      expect(screen.getAllByText('Event / Action').length).toBe(1);
+
+      const specificEvents = screen.getAllByText('Specific Events / Actions');
+
+      expect(specificEvents.length).toBe(1);
+
+      fireEvent.click(screen.getByLabelText('Specific Events / Actions'));
+
+      expect(screen.getAllByRole('checkbox').length).toBe(10);
+
+      const generateTaskReport = screen.getByRole('button', { name: /Generate task report/i });
+
+      await userEvent.click(generateTaskReport);
+
+      await waitFor(() => {
+        expect(screen.getAllByText('Please select at least one option').length).toBe(1);
+      });
+
     });
 
     it('should add 3 checkbox when radio Specific Status is clicked', async () => {
