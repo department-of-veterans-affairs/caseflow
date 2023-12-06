@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import StaticLeversWrapper from './StaticLeversWrapper';
 import InteractableLeverWrapper from './InteractableLeversWrapper';
 import LeverHistory from './LeverHistory';
+import LeverAlertBanner from './LeverAlertBanner';
 import PropTypes from 'prop-types';
 import {
   sectionSegmentStyling,
@@ -12,6 +13,11 @@ import COPY from '../../../COPY';
 const CaseflowDistributionContent = ({ levers, saveChanges, formattedHistory, isAdmin, leverStore }) => {
   return (
     <div>
+    <LeverAlertBanner
+      title={COPY.CASE_DISTRIBUTION_SUCCESSBANNER_TITLE}
+      message={COPY.CASE_DISTRIBUTION_SUCCESSBANNER_DETAIL}
+      type='success'
+      />
       <h1>Administration</h1>
 
       <div> {/* Main Content Wrapper*/}

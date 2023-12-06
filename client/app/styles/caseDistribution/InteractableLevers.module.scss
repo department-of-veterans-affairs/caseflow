@@ -239,6 +239,32 @@
   width: 1rem;
 }
 
+.leverAlertBanner-icon {
+  display: table-cell;
+  padding-right: 1rem;
+}
+
+.leverAlertBanner-body {
+  display: table-cell;
+  vertical-align: top;
+}
+
+.leverAlertBanner-heading {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.leverAlertBanner-text {
+  font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.leverAlertBanner-text:only-child {
+  margin-bottom: 1rem;
+  padding-top: 0.5rem; }
+
+
 .leverAlertBanner a {
   color: #205493;
 }
@@ -266,16 +292,24 @@
 
 .leverAlertBanner-success {
   background-color: #e7f4e4;
-}
-
-.leverAlertBanner-warning {
-  background-color: #fff1d2;
-}
+  background-image: url("~uswds/src/img/alerts/success.png");
+  background-image: url("~uswds/src/img/alerts/success.svg"); }
+  .leverAlertBanner-success::before {
+    background-color: #2e8540; }
+  .leverAlertBanner-success .leverAlertBanner-body {
+    padding-left: 5rem; }
 
 .leverAlertBanner-error {
   background-color: #f9dede;
-}
+  background-image: url("~uswds/src/img/alerts/error.png");
+  background-image: url("~uswds/src/img/alerts/error.svg"); }
+  .leverAlertBanner-error::before {
+    background-color: #e31c3d; }
+  .leverAlertBanner-error .leverAlertBanner-body {
+    padding-left: 5rem; }
 
-.leverAlertBanner-info {
-  background-color: #e1f3f8;
-}
+.leverAlertBanner-no_icon {
+  background-image: none; }
+
+.leverAlertBanner-paragraph {
+  width: 66ch; }
