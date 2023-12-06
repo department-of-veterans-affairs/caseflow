@@ -33,23 +33,14 @@ function SaveLeversToDB(leverStore) {
     audit_lever_entries: [],
   }
 
-  console.log('Request Data:', { leversData, postData });
-
   ApiUtil.post('/case_distribution_levers/update_levers_and_history', { data: postData })
     .then(() => {
-      UpdateLeverHistory(leverStore);
+      // UpdateLeverHistory(leverStore);
       SaveLeverChanges(leverStore);
     })
     .catch((error) => {
       if(error.response) {
-        console.error('Error Response:', error.reponse)
-        console.error('Response error:', error.response.data);
-        console.error('Status code:', error.response.data);
-        console.error('Headers', error.response.data);
-      } else if (error.request) {
-        console.error('Request error:', error.request);
-      } else {
-        console.error('Error:', error.message);
+        console.error('Error:', error);
       }
     });
 }
