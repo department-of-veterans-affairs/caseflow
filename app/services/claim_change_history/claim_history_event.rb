@@ -208,6 +208,8 @@ class ClaimHistoryEvent
                             date_strings_within_seconds?(change_data["request_issue_created_at"],
                                                          change_data["decision_date_added_at"],
                                                          REQUEST_ISSUE_TIME_WINDOW)
+                          elsif change_data["decision_date"].blank?
+                            false
                           else
                             true
                           end
