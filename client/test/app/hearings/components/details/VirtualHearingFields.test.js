@@ -106,7 +106,7 @@ describe('VirtualHearingFields', () => {
     );
 
     // Assertions
-    expect(virtualHearingForm.text().includes('Webex Conference')).toBeTruthy();
+    expect(virtualHearingForm.text().includes('Webex hearing')).toBeTruthy();
 
     expect(virtualHearingForm).toMatchSnapshot();
   });
@@ -135,7 +135,7 @@ describe('VirtualHearingFields', () => {
     );
 
     // Assertions
-    expect(virtualHearingForm.text().includes('Pexip Conference')).toBeTruthy();
+    expect(virtualHearingForm.text().includes('Pexip hearing')).toBeTruthy();
 
     expect(virtualHearingForm).toMatchSnapshot();
   });
@@ -164,7 +164,7 @@ describe('VirtualHearingFields', () => {
     );
 
     // Assertions
-    expect(virtualHearingForm.text().includes('Pexip Conference')).toBeTruthy();
+    expect(virtualHearingForm.text().includes('Pexip hearing')).toBeTruthy();
 
     expect(virtualHearingForm).toMatchSnapshot();
   });
