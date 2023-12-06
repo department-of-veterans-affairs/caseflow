@@ -51,15 +51,27 @@ class ExplainController < ApplicationController
   end
 
   def explain_as_text
-    [
-      "show_pii = #{show_pii_query_param}",
-      task_tree_as_text,
-      intake_as_text,
-      hearing_as_text,
-      JSON.pretty_generate(event_table_data),
-      JSON.pretty_generate(timeline_data),
-      JSON.pretty_generate(network_graph_data)
-    ].join("\n\n")
+    if @appeal.type != "Correspondence"
+      [
+        "show_pii = #{show_pii_query_param}",
+        task_tree_as_text,
+        intake_as_text,
+        hearing_as_text,
+        JSON.pretty_generate(event_table_data),
+        JSON.pretty_generate(timeline_data),
+        JSON.pretty_generate(network_graph_data)
+      ].join("\n\n")
+    else
+      [
+        # "show_pii = #{show_pii_query_param}",
+        # task_tree_as_text,
+        # intake_as_text,
+        # hearing_as_text,
+        JSON.pretty_generate(event_table_data),
+        JSON.pretty_generate(timeline_data),
+        JSON.pretty_generate(network_graph_data)
+      ].join("\n\n")
+    end
   end
 
   def available_fields
@@ -68,20 +80,34 @@ class ExplainController < ApplicationController
 
   # :reek:FeatureEnvy
   def tasks_versions
-    appeal.tasks.order(:id).select { |task| task.versions.any? }.map do |task|
-      {
-        task_id: task.id,
-        task_type: task.type,
-        summary: JSON.pretty_generate(task.version_summary)
-      }
+    if @appeal.type != "Correspondence"
+      appeal.tasks.order(:id).select { |task| task.versions.any? }.map do |task|
+        {
+          task_id: task.id,
+          task_type: task.type,
+          summary: JSON.pretty_generate(task.version_summary)
+        }
+      end
+    else
+      Task.where(appeal_id: appeal.id, appeal_type:'Correspondence').order(id: :asc) {|task| task.versions.any?}.map do |task|
+        {
+          task_id: task.id,
+          task_type: task.type,
+          summary: JSON.pretty_generate(task.version_summary)
+        }
+      end
     end
   end
 
   def task_tree_as_text
-    [
-      appeal.tree(*treee_fields),
-      legacy_task_tree_as_text
-    ].compact.join("\n\n")
+    if @appeal.type != "Correspondence"
+      [
+        appeal.tree(*treee_fields),
+        legacy_task_tree_as_text
+      ].compact.join("\n\n")
+    else
+      [].compact.join("\n\n")
+    end
   end
 
   DEFAULT_TREEE_FIELDS = [:id, :status, :ASGN_BY, :ASGN_TO, :CRE_DATE, :ASGN_DATE, :UPD_DATE, :CLO_DATE].freeze
@@ -148,7 +174,9 @@ class ExplainController < ApplicationController
   end
 
   def fetch_appeal
-    if appeal_id.start_with?("ama-")
+    if params[:correspondence_uuid].present? and params[:any] == "review_package"
+      Correspondence.find_by_uuid(appeal_id)
+    elsif appeal_id.start_with?("ama-")
       record_id = appeal_id.delete_prefix("ama-")
       Appeal.find_by_id(record_id)
     elsif appeal_id.start_with?("legacy-")
@@ -162,7 +190,11 @@ class ExplainController < ApplicationController
   end
 
   def appeal_id
-    params[:appeal_id]
+    if params[:correspondence_uuid].present? and params[:any] == "review_package"
+      params[:correspondence_uuid]
+    else
+      params[:appeal_id]
+    end
   end
 
   def show_pii_query_param

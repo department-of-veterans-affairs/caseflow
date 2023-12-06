@@ -24,4 +24,12 @@ class Correspondence < CaseflowRecord
     CorrespondenceRootTaskFactory.new(self).create_root_and_sub_tasks!
   end
 
+  def status
+    @status ||= BVACorrespondenceStatus.new(correspondence: self)
+  end
+
+  def type
+    "Correspondence"
+  end
+
 end

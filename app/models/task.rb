@@ -743,6 +743,7 @@ class Task < CaseflowRecord
   # :reek:FeatureEnvy
   def version_summary
     versions.map do |version|
+      binding.pry
       {
         who: [User.find_by_id(version.whodunnit)].compact
           .map { |user| "#{user.css_id} (#{user.id}, #{user.full_name})" }.first,
