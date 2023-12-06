@@ -105,20 +105,15 @@ class ClaimReview < DecisionReview
     review_task = tasks.find { |task| task.is_a?(DecisionReviewTask) }
     return unless review_task
 
-    if request_issues_without_decision_dates?
-      handle_no_decision_date(review_task, :on_hold)
-    elsif !request_issues_without_decision_dates?
-      handle_no_decision_date(review_task, :assigned)
-    end
+    handle_no_decision_date(review_task)
   end
 
-  def handle_no_decision_date(review_task, action)
+  def handle_no_decision_date(review_task)
     return if review_task.closed? || review_task.cancelled?
 
-    case action
-    when :on_hold
+    if request_issues_without_decision_dates?
       review_task.on_hold!
-    when :assigned
+    else
       review_task.assigned!
     end
   end
