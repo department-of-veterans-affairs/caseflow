@@ -127,16 +127,23 @@ module Seeds
     end
 
     def active_cf_user_with_only_sattyid
-      @active_cf_user_with_only_sattyid ||= User.find_or_create_by(css_id: "BVAABERNIER")
+      @active_cf_user_with_only_sattyid ||= create(:user, :with_vacols_record, css_id: "SATTYIDUSER", full_name: "SATTYIDUSER")
     end
 
     def create_legacy_appeals
       Timecop.travel(65.days.ago)
       APPEALS_LIMIT.times.each do |offset|
+        create_legacy_appeals_for_inactive_cf_user_and_inactive_admin_judge_team
+        create_legacy_appeals_for_active_cf_user_with_only_sattyid
+        create_legacy_appeals_for_active_judge
+      end
+      Timecop.return
+    end
+
+    def create_legacy_appeals_for_inactive_cf_user_and_inactive_admin_judge_team
         #{INACTIVE JUDGE AND ADMIN OF INACTIVE JUDGE TEAM}
-        docket_number1 = "190000#{offset}"
         # Create the veteran for this legacy appeal
-        veteran1 = create_veteran_for_inactive_cf_user_and_inactive_admin_judge_team
+        veteran = create_veteran_for_inactive_cf_user_and_inactive_admin_judge_team
 
         # AC1: create legacy appeals ready to be distributed that have a hearing held by an inactive judge
         legacy_appeal = create_vacols_entries(veteran, "RO17", inactive_cf_user_and_inactive_admin_judge_team)
@@ -145,44 +152,44 @@ module Seeds
         create(
           :case_hearing,
           :disposition_held,
-          folder_nr: legacy_appeal1.vacols_id,
+          folder_nr: legacy_appeal.vacols_id,
           user: inactive_cf_user_and_inactive_admin_judge_team
         )
+    end
 
-        #{---------------------------------------------------------------------------------------------------------------}
+    def create_legacy_appeals_for_active_cf_user_with_only_sattyid
+      #{---------------------------------------------------------------------------------------------------------------}
         #{ACTIVE USER WITH ONLY SATTYID}
-        docket_number2 = "190001#{offset}"
         # Create the veteran for this legacy appeal
-        veteran2 = create_veteran_for_active_cf_user_with_only_sattyid
+        veteran = create_veteran_for_active_cf_user_with_only_sattyid
 
         #create legacy appeals ready to be distributed that have a hearing held by an active user with only sattyid
-        legacy_appeal2 = create_vacols_entries(veteran2, docket_number2, "RO17", active_cf_user_with_only_sattyid)
+        legacy_appeal = create_vacols_entries(veteran, "RO17", active_cf_user_with_only_sattyid)
 
         ## Hearing held by active user with only sattyid
         create(
           :case_hearing,
           :disposition_held,
-          folder_nr: legacy_appeal2.vacols_id,
+          folder_nr: legacy_appeal.vacols_id,
           user: active_cf_user_with_only_sattyid
         )
+    end
 
-         #{---------------------------------------------------------------------------------------------------------------}
+    def create_legacy_appeals_for_active_judge
+       #{---------------------------------------------------------------------------------------------------------------}
         #{create legacy appeals ready to be distributed that have a hearing held by active_judge}
-        docket_number3 = "190002#{offset}"
         # Create the veteran for this legacy appeal
-        veteran3 = create_veteran_for_active_judge
+        veteran = create_veteran_for_active_judge
 
-        legacy_appeal3 = create_vacols_entries(veteran3, docket_number3, "RO17", active_judge)
+        legacy_appeal = create_vacols_entries(veteran, "RO17", active_judge_one)
 
         ## Hearing held by active judge
         create(
           :case_hearing,
           :disposition_held,
-          folder_nr: legacy_appeal3.vacols_id,
-          user: active_judge
+          folder_nr: legacy_appeal.vacols_id,
+          user: active_judge_one
         )
-      end
-      Timecop.return
     end
 
     def create_veteran_for_inactive_cf_user_and_inactive_admin_judge_team
