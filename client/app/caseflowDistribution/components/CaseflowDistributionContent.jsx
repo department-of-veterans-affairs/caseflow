@@ -18,7 +18,7 @@ const CaseflowDistributionContent = ({ levers, saveChanges, formattedHistory, is
     const unsubscribe = leverStore.subscribe(() => {
       const state = leverStore.getState();
 
-      if (state.levers.saveChangesActivated) {
+      if (state.saveChangesActivated) {
         setDisplayAlert(true);
       }
     });

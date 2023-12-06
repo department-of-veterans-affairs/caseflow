@@ -78,7 +78,6 @@ export function LeverSaveButton({ leverStore }) {
   const [showModal, setShowModal] = useState(false);
   const [changesOccurred, setChangesOccurred] = useState(false);
   const [saveButtonDisabled, setSaveButtonDisabled] = useState(false);
-  const [displayAlert, setDisplayAlert] = useState(false);
 
   useEffect(() => {
     const unsubscribe = leverStore.subscribe(() => {
@@ -108,7 +107,6 @@ export function LeverSaveButton({ leverStore }) {
     SaveLeversToDB(leverStore);
     setShowModal(false);
     setSaveButtonDisabled(true);
-    setDisplayAlert(true);
   }
 
 
@@ -131,7 +129,6 @@ export function LeverSaveButton({ leverStore }) {
         {leverList(leverStore)}
       </Modal>
       }
-      {displayAlert && <DisplayAlertBanner />}
     </>
   );
 }
