@@ -25,6 +25,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [apiResponse, setApiResponse] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const history = useHistory();
   const fetchData = async () => {
@@ -111,7 +112,9 @@ export const CorrespondenceReviewPackage = (props) => {
             fetchData,
             showModal,
             handleModalClose,
-            handleReview
+            handleReview,
+            errorMessage,
+            setErrorMessage
           }}
           {...props}
         />
@@ -131,6 +134,7 @@ export const CorrespondenceReviewPackage = (props) => {
             styling={{ style: { marginRight: '2rem' } }}
             classNames={['usa-button-secondary']}
             onClick={intakeAppeal}
+            disabled={disableButton}
           />
           <a href={intakeLink}>
             {/* hard coded UUID to link to multi_correspondence.rb data */}
@@ -138,6 +142,7 @@ export const CorrespondenceReviewPackage = (props) => {
               name="Create record"
               classNames={['usa-button-primary']}
               href={intakeLink}
+              disabled={disableButton}
             />
           </a>
         </div>

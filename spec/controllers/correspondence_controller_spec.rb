@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
-  let(:correspondence) { create(:correspondence) }
   let(:veteran) { create(:veteran) }
+  let(:correspondence) { create(:correspondence, veteran: veteran) }
   let(:valid_params) { { notes: "Updated notes", correspondence_type_id: 12 } }
   let(:new_file_number) { "50000005" }
   let(:current_user) { create(:user) }
@@ -32,6 +32,7 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
   end
 
   describe "PATCH #update" do
+    let(:veteran) { create(:veteran, file_number: new_file_number) }
     before do
       MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
