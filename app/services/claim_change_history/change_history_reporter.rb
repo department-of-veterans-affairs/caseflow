@@ -30,9 +30,8 @@ class ChangeHistoryReporter
     @tasks_url = tasks_url
   end
 
+  # :reek:FeatureEnvy
   def formatted_event_filters
-    # @event_filters.to_a.flatten
-    # [@event_filters.to_a.map { |pair| pair.map(&:to_s) }.flatten.join(" ")]
     event_filters.reject { |_, value| value.nil? }.map do |key, value|
       value_str = value.is_a?(Array) ? "[#{value.join(', ')}]" : value.to_s
       "#{key}: #{value_str}"
