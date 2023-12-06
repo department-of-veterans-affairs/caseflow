@@ -32,7 +32,7 @@ const CorrespondencePdfUI = (props) => {
       {
         id: doc.correspondence_id,
         type: doc.document_title,
-        content_url: `/document/${index + 1}/pdf`
+        content_url: `/queue/correspondence/${index + 1}/pdf`
       }
     );
   });
