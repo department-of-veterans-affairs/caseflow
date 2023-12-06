@@ -7,25 +7,25 @@ class ChangeHistoryFilterParser
     @filter_params = filter_params
   end
 
-  def parse_filters(filter_params)
+  def parse_filters
     {
       report_type: filter_params[:report_type],
-      events: events_filter_helper(filter_params),
-      task_status: task_status_filter_helper(filter_params),
+      events: events_filter_helper,
+      task_status: task_status_filter_helper,
       status_report_type: filter_params[:status_report_type],
       claim_type: filter_params[:decision_review_type]&.values,
       personnel: filter_params[:personnel]&.values,
-      dispositions: disposition_filter_helper(filter_params),
+      dispositions: disposition_filter_helper,
       issue_types: filter_params[:issue_type]&.values,
       facilities: filter_params[:facility]&.values,
       timing: filter_params[:timing].to_h,
-      days_waiting: days_waiting_filter_helper(filter_params)
+      days_waiting: days_waiting_filter_helper
     }.deep_transform_keys(&:to_sym)
   end
 
   private
 
-  def events_filter_helper(filter_params)
+  def events_filter_helper
     event_mapping = {
       "added_decision_date" => :added_decision_date,
       "added_issue" => :added_issue,
@@ -43,7 +43,7 @@ class ChangeHistoryFilterParser
     filter_params[:events]&.values&.map { |event_type| event_mapping[event_type] }&.flatten
   end
 
-  def task_status_filter_helper(filter_params)
+  def task_status_filter_helper
     status_mapping = {
       "incomplete" => "on_hold",
       "in_progress" => %w[assigned in_progress],
@@ -54,7 +54,7 @@ class ChangeHistoryFilterParser
     filter_params[:statuses]&.values&.map { |task_status| status_mapping[task_status] }&.flatten
   end
 
-  def disposition_filter_helper(filter_params)
+  def disposition_filter_helper
     disposition_mapping = {
       "granted" => "Granted",
       "Granted" => "Granted",
@@ -71,7 +71,7 @@ class ChangeHistoryFilterParser
     filter_params[:issue_disposition]&.values&.map { |disposition| disposition_mapping[disposition] }
   end
 
-  def days_waiting_filter_helper(filter_params)
+  def days_waiting_filter_helper
     operator_mapping = {
       "lessThan" => "<",
       "moreThan" => ">",
