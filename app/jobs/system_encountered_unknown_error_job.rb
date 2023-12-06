@@ -9,15 +9,15 @@ class SystemEncounteredUnknownErrorJob < CaseflowJob
     @stuck_job_report_service = StuckJobReportService.new
   end
 
-  def upload_document_to_vbms(decision_document)
-    ExternalApi::VBMSService.upload_document_to_vbms(decision_document.appeal, decision_document)
-  end
-
   def perform
     process_decision_documents
   rescue StandardError => error
     log_error(error)
     raise error
+  end
+
+  def upload_document_to_vbms(decision_document)
+    ExternalApi::VBMSService.upload_document_to_vbms(decision_document.appeal, decision_document)
   end
 
   def valid_decision_document?(decision_document)
@@ -45,8 +45,10 @@ class SystemEncounteredUnknownErrorJob < CaseflowJob
     dd_epe = decision_document.end_product_establishments
 
     if dd_epe.empty?
-      upload_document_to_vbms(decision_document)
-      decision_document.clear_error!
+      ActiveRecord::Base.transaction do
+        upload_document_to_vbms(decision_document)
+        decision_document.clear_error!
+      end
     elsif all_epes_valid?(dd_epe)
       decision_document.clear_error!
     end
