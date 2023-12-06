@@ -28,12 +28,20 @@ function SaveLeverChanges(leverStore)  {
 function SaveLeversToDB(leverStore) {
   const leversData = leverStore.getState().levers;
 
-  ApiUtil.post('/case_distribution_levers/update_levers_and_history', { leversData })
-    .then((response) => {
-      UpdateLeverHistory(leverStore);
+  const postData = {
+    current_levers: leversData,
+    audit_lever_entries: [],
+  }
+
+  ApiUtil.post('/case_distribution_levers/update_levers_and_history', { data: postData })
+    .then(() => {
+      // UpdateLeverHistory(leverStore);
       SaveLeverChanges(leverStore);
     })
-    .catch(error => {
+    .catch((error) => {
+      if(error.response) {
+        console.error('Error:', error);
+      }
     });
 }
 
