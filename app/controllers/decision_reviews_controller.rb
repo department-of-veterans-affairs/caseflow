@@ -299,7 +299,7 @@ class DecisionReviewsController < ApplicationController
       claim_type: filter_params[:decision_review_type]&.values,
       personnel: filter_params[:personnel]&.values,
       dispositions: disposition_filter_helper(filter_params),
-      issue_types: filter_params[:issue_types]&.values,
+      issue_types: filter_params[:issue_type]&.values,
       facilities: filter_params[:facility]&.values,
       timing: filter_params[:timing].to_h,
       days_waiting: days_waiting_filter_helper(filter_params)
