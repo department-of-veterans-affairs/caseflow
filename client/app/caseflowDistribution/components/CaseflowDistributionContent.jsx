@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import StaticLeversWrapper from './StaticLeversWrapper';
 import InteractableLeverWrapper from './InteractableLeversWrapper';
 import LeverHistory from './LeverHistory';
@@ -11,13 +11,32 @@ import {
 import COPY from '../../../COPY';
 
 const CaseflowDistributionContent = ({ levers, saveChanges, formattedHistory, isAdmin, leverStore }) => {
+  const [displayAlert, setDisplayAlert] = useState(false);
+
+  useEffect(() => {
+
+    const unsubscribe = leverStore.subscribe(() => {
+      const state = leverStore.getState();
+
+      if (state.levers.saveChangesActivated) {
+        setDisplayAlert(true);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [leverStore]);
+
   return (
     <div>
-    <LeverAlertBanner
-      title={COPY.CASE_DISTRIBUTION_SUCCESSBANNER_TITLE}
-      message={COPY.CASE_DISTRIBUTION_SUCCESSBANNER_DETAIL}
-      type='success'
-      />
+      {displayAlert && (
+        <LeverAlertBanner
+        title={COPY.CASE_DISTRIBUTION_SUCCESSBANNER_TITLE}
+        message={COPY.CASE_DISTRIBUTION_SUCCESSBANNER_DETAIL}
+        type='success'
+        />
+      )}
       <h1>Administration</h1>
 
       <div> {/* Main Content Wrapper*/}

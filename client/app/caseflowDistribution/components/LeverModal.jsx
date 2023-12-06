@@ -4,35 +4,9 @@ import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActio
 import ApiUtil from '../../util/ApiUtil';
 import Modal from 'app/components/Modal';
 import Button from 'app/components/Button';
-import Alert from 'app/components/Alert';
 import COPY from '../../../COPY';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 
-
-function DisplayAlertBanner() {
-  const staticSuccessBanner = {
-    title: COPY.CASE_DISTRIBUTION_SUCCESSBANNER_TITLE,
-    message: COPY.CASE_DISTRIBUTION_SUCCESSBANNER_DETAIL,
-    type: 'success',
-    scrollOnAlert: true,
-    fixed: false,
-  };
-  const divStyle = {
-      top: 0,
-      left: 0,
-      width: "100%",
-      zIndex: 9999,
-      position: 'absolute',
-      margin: 0,
-      padding: 0,
-  }
-
-  return (
-    <div style={divStyle}>
-      <Alert {...staticSuccessBanner} />
-    </div>
-  );
-}
 
 
 function UpdateLeverHistory(leverStore) {
@@ -44,6 +18,7 @@ function UpdateLeverHistory(leverStore) {
 function SaveLeverChanges(leverStore)  {
   leverStore.dispatch({
     type: Constants.SAVE_LEVERS,
+    saveChangesActivated: true,
   });
 }
 
