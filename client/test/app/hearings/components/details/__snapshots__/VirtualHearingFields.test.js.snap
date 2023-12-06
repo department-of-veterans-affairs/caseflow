@@ -3330,7 +3330,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
         >
           <strong>
             Pexip
-             Conference
+             hearing
           </strong>
         </div>
         <HearingLinks
@@ -4343,7 +4343,7 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
         >
           <strong>
             Pexip
-             Conference
+             hearing
           </strong>
         </div>
         <HearingLinks
