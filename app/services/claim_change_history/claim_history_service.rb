@@ -17,40 +17,28 @@ class ClaimHistoryService
 
   def initialize(business_line = VhaBusinessLine.singleton, filters = {})
     @business_line = business_line
-    @filters = parse_filters(filters)
+    @filters = filters.to_h
     @processed_task_ids = Set.new
     @processed_request_issue_update_ids = Set.new
     @processed_decision_issue_ids = Set.new
     @processed_request_issue_ids = Set.new
     @events = []
-
-    # Some attributes for processing stats
-    @number_of_database_rows = 0
-    @number_of_database_columns = 0
-    @database_query_time = 0
-    @event_generation_time = 0
   end
 
   def build_events
-    all_data = []
-
     # Reset the instance attributes from the last time build_events was ran
     reset_processing_attributes
 
-    @database_query_time = measure_execution_time do
-      all_data = business_line.change_history_rows(@filters)
-    end
+    all_data = business_line.change_history_rows(@filters)
 
     @number_of_database_columns = all_data.nfields
     @number_of_database_rows = all_data.count
 
-    @event_generation_time = measure_execution_time do
-      all_data.entries.map do |change_data|
-        process_request_issue_update_events(change_data)
-        process_request_issue_events(change_data)
-        process_task_events(change_data)
-        process_decision_issue_events(change_data)
-      end
+    all_data.entries.map do |change_data|
+      process_request_issue_update_events(change_data)
+      process_request_issue_events(change_data)
+      process_task_events(change_data)
+      process_decision_issue_events(change_data)
     end
 
     # Compact and sort in place to reduce garbage collection
@@ -78,21 +66,12 @@ class ClaimHistoryService
 
   private
 
-  def parse_filters(filters)
-    # filters.to_h.with_indifferent_access
-    filters.to_h
-  end
-
   def reset_processing_attributes
     @processed_task_ids.clear
     @processed_request_issue_update_ids.clear
     @processed_decision_issue_ids.clear
     @processed_request_issue_ids.clear
     @events.clear
-    @number_of_database_rows = 0
-    @number_of_database_columns = 0
-    @database_query_time = 0
-    @event_generation_time = 0
   end
 
   def save_events(new_events)
@@ -250,13 +229,5 @@ class ClaimHistoryService
 
   def ensure_array(variable)
     variable.is_a?(Array) ? variable : [variable]
-  end
-
-  # Timing method wrapper
-  def measure_execution_time
-    start_time = Time.zone.now
-    yield
-    end_time = Time.zone.now
-    end_time - start_time
   end
 end
