@@ -31,9 +31,6 @@ class ClaimHistoryService
 
     all_data = business_line.change_history_rows(@filters)
 
-    @number_of_database_columns = all_data.nfields
-    @number_of_database_rows = all_data.count
-
     all_data.entries.map do |change_data|
       process_request_issue_update_events(change_data)
       process_request_issue_events(change_data)
@@ -49,15 +46,6 @@ class ClaimHistoryService
     filter_events_for_last_action_taken!
 
     @events
-  end
-
-  def event_stats
-    {
-      database_query_time: @database_query_time,
-      event_generation_time: @event_generation_time,
-      number_of_database_columns: @number_of_database_columns,
-      number_of_database_rows: @number_of_database_rows
-    }
   end
 
   def filters=(value)

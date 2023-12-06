@@ -71,6 +71,7 @@ class ChangeHistoryFilterParser
     filter_params[:issue_disposition]&.values&.map { |disposition| disposition_mapping[disposition] }
   end
 
+  # :reek:FeatureEnvy
   def days_waiting_filter_helper
     operator_mapping = {
       "lessThan" => "<",
