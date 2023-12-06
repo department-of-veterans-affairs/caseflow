@@ -541,6 +541,7 @@ export const prepareAppealForSearchStore = (appeals) => {
       withdrawalDate: formatDateStrUtc(appeal.attributes.withdrawal_date),
       isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
       caseType: appeal.attributes.type,
+      isAdvancedOnDocket: appeal.attributes.aod,
       issueCount: (appeal.attributes.docket_name === 'legacy' ?
         getUndecidedIssues(issues) :
         issues

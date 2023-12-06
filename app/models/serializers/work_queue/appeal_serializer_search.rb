@@ -9,6 +9,17 @@ class WorkQueue::AppealSerializerSearch
   attribute :assigned_attorney
   attribute :assigned_judge
 
+  attribute :appellant_hearing_email_recipient do |object|
+    object.email_recipients.find_by(type: "AppellantHearingEmailRecipient")
+  end
+  attribute :representative_hearing_email_recipient do |object|
+    object.email_recipients.find_by(type: "RepresentativeHearingEmailRecipient")
+  end
+
+  attribute :appellant_email_address do |object|
+    object.appellant ? object.appellant.email_address : "Cannot Find Appellant"
+  end
+
   attribute :current_user_email do |_, params|
     params[:user]&.email
   end
@@ -48,12 +59,39 @@ class WorkQueue::AppealSerializerSearch
     associated_hearings + hearings(object, params)
   end
 
+  attribute :withdrawn, &:withdrawn?
+
+  attribute :removed, &:removed?
+
+  attribute :overtime, &:overtime?
+
+  attribute :veteran_appellant_deceased, &:veteran_appellant_deceased?
+
   attribute :assigned_to_location
+
+  attribute :distributed_to_a_judge, &:distributed_to_a_judge?
 
   attribute :appellant_is_not_veteran
 
   attribute :appellant_full_name do |object|
     object.claimant&.name
+  end
+
+  attribute :appellant_relationship, &:appellant_relationship
+
+  attribute :has_poa do |appeal|
+    appeal.claimant&.power_of_attorney
+  end
+
+  attribute :cavc_remand do |object|
+    if object.cavc_remand
+      WorkQueue::CavcRemandSerializer.new(object.cavc_remand).serializable_hash[:data][:attributes]
+    end
+  end
+
+  attribute :show_post_cavc_stream_msg do |object|
+    cavc_remand = CavcRemand.find_by(source_appeal_id: object.id)
+    cavc_remand.present? && cavc_remand.cavc_remands_appellant_substitution.present?
   end
 
   attribute :veteran_death_date
@@ -78,5 +116,19 @@ class WorkQueue::AppealSerializerSearch
 
   attribute :caseflow_veteran_id do |object|
     object.veteran ? object.veteran.id : nil
+  end
+
+  attribute :document_id do |object|
+    object.latest_attorney_case_review&.document_id
+  end
+
+  attribute :attorney_case_review_id do |object|
+    object.latest_attorney_case_review&.id
+  end
+
+  attribute :docket_switch do |object|
+    if object.docket_switch
+      WorkQueue::DocketSwitchSerializer.new(object.docket_switch).serializable_hash[:data][:attributes]
+    end
   end
 end
