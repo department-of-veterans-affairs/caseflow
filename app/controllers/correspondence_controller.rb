@@ -98,6 +98,7 @@ class CorrespondenceController < ApplicationController
     render json: { data: data }
   end
 
+  # :reek:UtilityFunction
   def vbms_document_types
     begin
       data = ExternalApi::ClaimEvidenceService.document_types
