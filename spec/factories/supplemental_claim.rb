@@ -23,6 +23,26 @@ FactoryBot.define do
       end
     end
 
+    transient do
+      disposition { nil }
+    end
+
+    transient do
+      decision_date { nil }
+    end
+
+    transient do
+      issue_type { nil }
+    end
+
+    transient do
+      withdraw { false }
+    end
+
+    transient do
+      remove { false }
+    end
+
     after(:build) do |sc, evaluator|
       if evaluator.veteran
         sc.veteran_file_number = evaluator.veteran.file_number
@@ -124,6 +144,32 @@ FactoryBot.define do
       end
     end
 
+    # :reek:DuplicateMethodCall
+    trait :with_specific_issue_type do
+      after(:create) do |sc, evaluator|
+        ri = create(:request_issue,
+                    :add_decision_date,
+                    decision_date: evaluator.decision_date,
+                    benefit_type: sc.benefit_type,
+                    nonrating_issue_category: evaluator.issue_type,
+                    nonrating_issue_description: "#{sc.business_line.name} Seeded issue",
+                    decision_review: sc)
+
+        if evaluator.veteran
+          sc.veteran_file_number = evaluator.veteran.file_number
+          sc.save
+        end
+
+        if evaluator.withdraw
+          ri.withdraw!(Time.zone.now)
+        end
+
+        if evaluator.remove
+          ri.remove!
+        end
+      end
+    end
+
     trait :with_vha_issue do
       benefit_type { "vha" }
       after(:create) do |supplemental_claim, evaluator|
@@ -153,6 +199,17 @@ FactoryBot.define do
       establishment_processed_at { nil }
     end
 
+    trait :with_disposition do
+      after(:create) do |sc, evaluator|
+        create(:decision_issue,
+               benefit_type: "vha",
+               request_issues: sc.request_issues,
+               decision_review: sc,
+               disposition: evaluator.disposition,
+               caseflow_decision_date: Time.zone.now)
+      end
+    end
+
     trait :with_intake do
       after(:create) do |sc|
         css_id = "CSS_ID#{generate :css_id}"
@@ -176,6 +233,25 @@ FactoryBot.define do
           benefit_type: sc.benefit_type,
           disposition: "Granted"
         )
+      end
+    end
+
+    trait :unidentified_issue do
+      after(:create) do |hlr|
+        create(:request_issue,
+               :unidentified,
+               :add_decision_date,
+               benefit_type: hlr.benefit_type,
+               decision_review: hlr,
+               decision_date: rand(1.year.ago..1.day.ago))
+      end
+    end
+
+    trait :with_update_users do
+      after(:create) do |sc|
+        sc.create_business_line_tasks!
+
+        create(:request_issues_update, :requires_processing, review: sc)
       end
     end
   end

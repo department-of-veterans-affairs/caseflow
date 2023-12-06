@@ -53,8 +53,8 @@ class ClaimHistoryService
       end
     end
 
+    # Compact and sort in place to reduce garbage collection
     @events.compact!
-
     @events.sort_by! { |event| [event.task_id, event.event_date] }
 
     # This currently relies on the events being sorted before hand
