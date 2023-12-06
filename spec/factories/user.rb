@@ -41,7 +41,6 @@ FactoryBot.define do
 
     factory :lever_user do
       css_id { "LEVERUSER" }
-      roles { ["View Levers"] }
     end
 
     trait :inactive do
