@@ -11,8 +11,8 @@ const DetailsList = ({ event }) => {
 
   const formatValue = (key, value) => {
     if (key === 'decisionDate') {
-      return moment(value).utc().
-        format('MM/DD/YY');
+      return value ? moment(value).utc().
+        format('MM/DD/YY') : 'No decision date';
     }
 
     if (key === 'benefitType') {
@@ -108,10 +108,11 @@ const renderEventDetails = (event) => {
     break;
 
   case 'completed':
+    console.log(event);
     renderBlock = <>
       <span>Claim closed.</span>
       <br />
-      <span><strong>Claim decision date:</strong> {moment(event.dispositionDate).utc().
+      <span><strong>Claim decision date:</strong> {moment(event.decisionDate).utc().
         format('MM/DD/YY')}</span>
     </>;
     break;

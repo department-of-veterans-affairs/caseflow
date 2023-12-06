@@ -421,10 +421,12 @@ class ClaimHistoryEvent
   end
 
   def parse_issue_attributes(change_data)
+    # Need this for the UI? Even though it might not be accurate since there can be more than one issue on a claim
+    @decision_date = change_data["decision_date"]
     if issue_event?
       @issue_type = change_data["nonrating_issue_category"]
       @issue_description = change_data["nonrating_issue_description"]
-      @decision_date = change_data["decision_date"]
+      # @decision_date = change_data["decision_date"]
       @withdrawal_request_date = change_data["request_issue_closed_at"]
     end
     @benefit_type = change_data["request_issue_benefit_type"]
