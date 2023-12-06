@@ -5,7 +5,7 @@ import { sortBy, compact } from 'lodash';
 
 // Local Dependencies
 import { formatNameShort } from 'app/util/FormatUtil';
-import { documentCategories, CACHE_TIMEOUT_HOURS, CATEGORIES } from '../../store/constants/reader';
+import { documentCategories, CACHE_TIMEOUT_HOURS, CATEGORIES } from 'store/constants/reader';
 
 /**
  * Helper Method to add `category_` to the name of the category
@@ -126,22 +126,26 @@ export const formatAppealType = ({ claim }) => {
 /**
  * Helper Method to format the times for the Last Retrieval Alert
  * @param {string} manifestVbmsFetchedAt -- The last time the VBMS Manifest was fetched
+ * @param {string} manifestVvaFetchedAt -- The last time the VVA Manifest was fetched
  */
-export const formatAlertTime = (manifestVbmsFetchedAt) => {
+export const formatAlertTime = (manifestVbmsFetchedAt, manifestVvaFetchedAt) => {
   // Create the formatted times
   const formattedTimes = {
     staleCacheTime: moment().subtract(CACHE_TIMEOUT_HOURS, 'h'),
-    vbmsTimestamp: moment(manifestVbmsFetchedAt, 'MM/DD/YY HH:mma Z')
+    vbmsTimestamp: moment(manifestVbmsFetchedAt, 'MM/DD/YY HH:mma Z'),
+    vvaTimestamp: moment(manifestVvaFetchedAt, 'MM/DD/YY HH:mma Z'),
   };
 
   // Calculate whether the cache is stale
-  const stale = formattedTimes.vbmsTimestamp.isBefore(formattedTimes.staleCacheTime);
+  const stale = formattedTimes.vbmsTimestamp.isBefore(formattedTimes.staleCacheTime) ||
+    formattedTimes.vvaTimestamp.isBefore(formattedTimes.staleCacheTime);
 
-  // Check that document manifests have been received from VBMS
+  // Check that document manifests have been received from VVA and VBMS
   if (stale) {
     // Calculate the time
     formattedTimes.now = moment();
     formattedTimes.vbmsDiff = formattedTimes.now.diff(formattedTimes.vbmsTimestamp, 'hours');
+    formattedTimes.vvaDiff = formattedTimes.now.diff(formattedTimes.vvaTimestamp, 'hours');
   }
 
   // Return all of the Formatted Times
