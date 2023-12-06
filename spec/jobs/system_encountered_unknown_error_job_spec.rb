@@ -62,7 +62,6 @@ describe SystemEncounteredUnknownErrorJob, :postgres do
 
     it "performs upload document to VBMS and clears error" do
       epe.destroy
-      class_double(ExternalApi::VBMSService, upload_document_to_vbms: true).as_stubbed_const
       expect(ExternalApi::VBMSService).to receive(:upload_document_to_vbms)
 
       subject.perform
