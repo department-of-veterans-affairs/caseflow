@@ -17,10 +17,30 @@ FactoryBot.define do
     end
 
     transient do
+      issue_type { nil }
+    end
+
+    transient do
+      decision_date { nil }
+    end
+
+    transient do
+      withdraw { false }
+    end
+
+    transient do
+      remove { false }
+    end
+
+    transient do
       veteran do
         Veteran.find_by(file_number: veteran_file_number) ||
           create(:veteran, file_number: (generate :veteran_file_number))
       end
+    end
+
+    transient do
+      disposition { nil }
     end
 
     after(:build) do |hlr, evaluator|
@@ -141,6 +161,32 @@ FactoryBot.define do
       end
     end
 
+    # :reek:DuplicateMethodCall
+    trait :with_specific_issue_type do
+      after(:create) do |hlr, evaluator|
+        ri = create(:request_issue,
+                    :add_decision_date,
+                    decision_date: evaluator.decision_date,
+                    benefit_type: hlr.benefit_type,
+                    nonrating_issue_category: evaluator.issue_type,
+                    nonrating_issue_description: "#{hlr.business_line.name} Seeded issue",
+                    decision_review: hlr)
+
+        if evaluator.veteran
+          hlr.veteran_file_number = evaluator.veteran.file_number
+          hlr.save
+        end
+
+        if evaluator.withdraw
+          ri.withdraw!(Time.zone.now)
+        end
+
+        if evaluator.remove
+          ri.remove!
+        end
+      end
+    end
+
     trait :processed do
       establishment_submitted_at { Time.zone.now }
       establishment_last_submitted_at { Time.zone.now }
@@ -157,6 +203,25 @@ FactoryBot.define do
       after(:create) do |hlr|
         hlr.submit_for_processing!
         hlr.create_business_line_tasks!
+      end
+    end
+
+    trait :with_update_users do
+      after(:create) do |hlr|
+        hlr.create_business_line_tasks!
+
+        create(:request_issues_update, :requires_processing, review: hlr)
+      end
+    end
+
+    trait :with_disposition do
+      after(:create) do |hlr, evaluator|
+        create(:decision_issue,
+               benefit_type: "vha",
+               request_issues: hlr.request_issues,
+               decision_review: hlr,
+               disposition: evaluator.disposition,
+               caseflow_decision_date: Time.zone.now)
       end
     end
 
@@ -180,6 +245,17 @@ FactoryBot.define do
                decision_review: hlr,
                request_issues: hlr.request_issues,
                benefit_type: hlr.benefit_type)
+      end
+    end
+
+    trait :unidentified_issue do
+      after(:create) do |hlr, evaluator|
+        create(:request_issue,
+               :unidentified,
+               :add_decision_date,
+               benefit_type: hlr.benefit_type,
+               decision_review: hlr,
+               decision_date: evaluator.decision_date.presence ? evaluator.decision_date : nil)
       end
     end
   end

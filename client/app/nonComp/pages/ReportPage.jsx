@@ -31,7 +31,6 @@ import {
   SPECIFIC_STATUS_OPTIONS,
   SPECTIFIC_EVENT_OPTIONS
 } from 'constants/REPORT_TYPE_CONSTANTS';
-
 import * as ERRORS from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
 
 const buttonInnerContainerStyle = css({
@@ -43,6 +42,28 @@ const buttonOuterContainerStyling = css({
   display: 'flex',
   justifyContent: 'space-between',
   marginTop: '4rem',
+});
+
+const specificEventTypeSchema = yup.lazy((value) => {
+  // eslint-disable-next-line no-undefined
+  if (value === undefined) {
+    return yup.mixed().notRequired();
+  }
+
+  return yup.object({
+    added_decision_date: yup.boolean(),
+    added_issue: yup.boolean(),
+    added_issue_no_decision_date: yup.boolean(),
+    claim_created: yup.boolean(),
+    claim_closed: yup.boolean(),
+    claim_status_incomplete: yup.boolean(),
+    claim_status_inprogress: yup.boolean(),
+    completed_disposition: yup.boolean(),
+    removed_issue: yup.boolean(),
+    withdrew_issue: yup.boolean(),
+  }).test('at-least-one-true', ERRORS.AT_LEAST_ONE_OPTION, (obj) => {
+    return Object.values(obj).some((val) => val === true);
+  });
 });
 
 const specificStatusSchema = yup.lazy((value) => {
@@ -63,6 +84,7 @@ const specificStatusSchema = yup.lazy((value) => {
 const schema = yup.object().shape({
   conditions: conditionsSchema,
   timing: timingSchema,
+  specificEventType: specificEventTypeSchema,
   specificStatus: specificStatusSchema
 });
 
@@ -330,7 +352,8 @@ ReportPage.propTypes = {
 RHFCheckboxGroup.propTypes = {
   options: PropTypes.array,
   control: PropTypes.object,
-  name: PropTypes.string
+  name: PropTypes.string,
+  errorMessage: PropTypes.string
 };
 
 RHFRadioButton.propTypes = {

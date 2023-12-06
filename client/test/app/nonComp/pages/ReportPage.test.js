@@ -324,6 +324,31 @@ describe('ReportPage', () => {
       );
     });
 
+    it('should add a validation error if Generate Task button is clicked without selecting any specific events actions', async () => {
+
+      setup();
+
+      await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
+      expect(screen.getAllByText('Event / Action').length).toBe(1);
+
+      const specificEvents = screen.getAllByText('Specific Events / Actions');
+
+      expect(specificEvents.length).toBe(1);
+
+      fireEvent.click(screen.getByLabelText('Specific Events / Actions'));
+
+      expect(screen.getAllByRole('checkbox').length).toBe(10);
+
+      const generateTaskReport = screen.getByRole('button', { name: /Generate task report/i });
+
+      await userEvent.click(generateTaskReport);
+
+      await waitFor(() => {
+        expect(screen.getAllByText('Please select at least one option').length).toBe(1);
+      });
+
+    });
+
     it('should add 3 checkbox when radio Specific Status is clicked', async () => {
       setup();
 

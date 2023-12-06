@@ -128,5 +128,15 @@ FactoryBot.define do
         ri.save
       end
     end
+
+    trait :add_decision_date do
+      after(:create) do |ri, evaluator|
+        if evaluator.decision_date.present?
+          Timecop.freeze(evaluator.decision_date + rand(1..17).days) do
+            ri.save_decision_date!(evaluator.decision_date)
+          end
+        end
+      end
+    end
   end
 end
