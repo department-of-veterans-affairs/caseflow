@@ -76,7 +76,8 @@ class NonCompReviewsPage extends React.PureComponent {
               <Button
                 classNames={secondaryButtonClassNames}
                 onClick={() => {
-                  this.props.history.push(`${this.props.businessLineUrl}/report`);
+                  window.location.href = `${this.props.businessLineUrl}/report`;
+                  // this.props.history.push(`${this.props.businessLineUrl}/report`, {});
                 }}
                 styling={compReviewButtonStyling}
               >
