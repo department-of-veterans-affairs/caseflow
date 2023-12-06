@@ -1,5 +1,5 @@
 class CaseDistributionLeversController < ApplicationController
-  before_action :verify_access, except: [:acd_lever_index_test, :create_acd_group_org_singleton]
+  before_action :verify_access
 
   def acd_lever_index
     @acd_levers = CaseDistributionLever.all
@@ -56,8 +56,7 @@ class CaseDistributionLeversController < ApplicationController
 
   private
   def verify_access
-    return true if current_user.admin?
-    return true if current_user&.organizations&.any?(&:users_can_view_levers?)
+    return true if current_user&.organizations && current_user&.organizations&.any?(&:users_can_view_levers?)
 
     Rails.logger.debug("User with roles #{current_user.roles.join(', ')} "\
       "couldn't access #{request.original_url}")
