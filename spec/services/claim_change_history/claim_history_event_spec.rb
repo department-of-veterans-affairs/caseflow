@@ -11,10 +11,10 @@ describe ClaimHistoryEvent do
       "assigned_at" => "2023-10-19 22:47:16.222148",
       "assigned_to_id" => 200_000_022_2,
       "assigned_to_type" => "Organization",
-      "decision_date" => "2023-05-31",
+      "decision_date" => change_data_decision_date,
       "nonrating_issue_category" => "Clothing Allowance",
       "nonrating_issue_description" => "Clothing allowance no decision date",
-      "decision_date_added_at" => "2023-10-19 22:47:16.233187",
+      "decision_date_added_at" => change_data_decision_date_added_at,
       "veteran_file_number" => "000100022",
       "after_request_issue_ids" => "{4008,4006,4007}",
       "before_request_issue_ids" => "{4008,4006}",
@@ -57,6 +57,8 @@ describe ClaimHistoryEvent do
   let(:change_data_claim_type) { "HigherLevelReview" }
   let(:change_data_event_user_name) { nil }
   let(:change_data_event_date) { nil }
+  let(:change_data_decision_date) { "2023-05-31" }
+  let(:change_data_decision_date_added_at) { "2023-10-19 22:48:25.281657" }
   let(:version_changes) { nil }
   let(:event_attribute_data) do
     {
@@ -65,7 +67,7 @@ describe ClaimHistoryEvent do
       claim_type: "HigherLevelReview",
       claimant_name: "Bob Smithboehm",
       days_waiting: 25,
-      decision_date: "2023-05-31",
+      decision_date: change_data_decision_date,
       decision_description: "granting clothing allowance",
       disposition: "Granted",
       disposition_date: "2023-10-19",
@@ -557,7 +559,17 @@ describe ClaimHistoryEvent do
         let(:event_type) { :added_issue_without_decision_date }
 
         # The base change_data was added during an update so no data updates are neccesary
-        it "should create an added issue event with intake event data" do
+        it "should create an added issue without decision date event with update event data" do
+          expect_attributes(subject, event_attribute_data.merge(update_event_data))
+        end
+      end
+
+      context "if the request issue never had a decision date" do
+        let(:event_type) { :added_issue_without_decision_date }
+        let(:change_data_decision_date) { nil }
+        let(:change_data_decision_date_added_at) { nil }
+
+        it "should create an added issue without decision date event with update event data" do
           expect_attributes(subject, event_attribute_data.merge(update_event_data))
         end
       end
