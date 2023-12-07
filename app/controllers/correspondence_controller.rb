@@ -54,6 +54,7 @@ class CorrespondenceController < ApplicationController
       correspondence: correspondence,
       package_document_type: correspondence&.package_document_type,
       general_information: general_information,
+      current_user: current_user,
       correspondence_documents: corres_docs.map do |doc|
         WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
       end
