@@ -4,7 +4,11 @@ FactoryBot.define do
   factory :staff, class: VACOLS::Staff do
     transient do
       user { nil }
-      sequence(:generated_sattyid)
+
+      generated_sattyid do
+        FactoryBot.sequence_by_name(:sattyid).next while VACOLS::Staff.find_by(sattyid: generate(:sattyid))
+        generate(:sattyid)
+      end
     end
 
     sequence(:stafkey) do |n|
