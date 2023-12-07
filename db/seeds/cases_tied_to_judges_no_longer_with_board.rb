@@ -90,7 +90,8 @@ module Seeds
         judge = find_or_create_active_judge("ACTIVEJUDGETEAM", "Judge WithJudgeTeam Active")
         judge_team = JudgeTeam.for_judge(judge)
 
-        user = create(:user, :with_vacols_attorney_record, css_id: "ACTIVEATTY", "Attorney OnJudgeTeam Active")
+        user = create(:user, :with_vacols_attorney_record,
+                      css_id: "ACTIVEATTY", full_name: "Attorney OnJudgeTeam Active")
         judge_team.add_user(user)
 
         user
@@ -116,31 +117,48 @@ module Seeds
     end
 
     def active_judge_hearing_affinity_45_days
-      @active_judge_hearing_affinity_45_days ||= find_or_create_active_judge("JUDGEHEARING1", "Judge Hearings45Days Affinity")
+      @active_judge_hearing_affinity_45_days ||=
+        find_or_create_active_judge("JUDGEHEARING1", "Judge Hearings45Days Affinity")
     end
 
     def active_judge_hearing_affinity_65_days
-      @active_judge_hearing_affinity_65_days ||= find_or_create_active_judge("JUDGEHEARING2", "Judge Hearings65Days Affinity")
+      @active_judge_hearing_affinity_65_days ||=
+        find_or_create_active_judge("JUDGEHEARING2", "Judge Hearings65Days Affinity")
     end
 
     def create_legacy_appeals
       Timecop.travel(65.days.ago)
       APPEALS_LIMIT.times.each do
-        # Create the veteran for this legacy appeal
-        veteran = create_veteran_for_inactive_cf_user_and_inactive_admin_judge_team
-
-        # AC1: create legacy appeals ready to be distributed that have a hearing held by an inactive judge
-        legacy_appeal = create_vacols_entries(veteran, "RO17")
-
-        ## Hearing held by inactive judge
-        create(
-          :case_hearing,
-          :disposition_held,
-          folder_nr: legacy_appeal.vacols_id,
-          user: inactive_cf_user_and_inactive_admin_judge_team
-        )
+        create_vacols_case_tied_to_inactive_judge
       end
       Timecop.return
+    end
+
+    def create_vacols_case_tied_to_inactive_judge
+      # Create the veteran for this legacy appeal
+      veteran = create_veteran_for_inactive_cf_user_and_inactive_admin_judge_team
+
+      regional_office = "RO17"
+
+      # AC1: create legacy appeals ready to be distributed that have a hearing held by an inactive judge
+      correspondent = create(:correspondent,
+                             snamef: veteran.first_name, snamel: veteran.last_name,
+                             ssalut: "", ssn: veteran.file_number)
+
+      vacols_case = create_video_vacols_case(veteran,
+                                             correspondent,
+                                             inactive_cf_user_and_inactive_admin_judge_team)
+
+      legacy_appeal = create(
+        :legacy_appeal,
+        :with_root_task,
+        vacols_case: vacols_case,
+        closest_regional_office: regional_office
+      )
+
+      create(:available_hearing_locations, regional_office, appeal: legacy_appeal)
+
+      vacols_case
     end
 
     def create_veteran_for_inactive_cf_user_and_inactive_admin_judge_team
@@ -152,35 +170,15 @@ module Seeds
       )
     end
 
-    def create_vacols_entries(veteran, regional_office)
-      correspondent = create(:correspondent,
-                             snamef: veteran.first_name, snamel: veteran.last_name,
-                             ssalut: "", ssn: veteran.file_number)
-      vacols_case = create_video_vacols_case(veteran,
-                                             correspondent,
-                                             inactive_cf_user_and_inactive_admin_judge_team)
-
-      # Create the legacy_appeal, this doesn't fail with index problems, so no need to retry
-      legacy_appeal = create(
-        :legacy_appeal,
-        :with_root_task,
-        vacols_case: vacols_case,
-        closest_regional_office: regional_office
-      )
-      create(:available_hearing_locations, regional_office, appeal: legacy_appeal)
-
-      # Return the legacy_appeal
-      legacy_appeal
-    end
-
     # Creates the video hearing request
     def create_video_vacols_case(veteran, correspondent, judge)
       create(
         :case,
-        :assigned,
+        :tied_to_judge,
         :video_hearing_requested,
         :type_original,
-        user: judge,
+        :ready_for_distribution,
+        tied_judge: judge,
         correspondent: correspondent,
         bfcorlid: "#{veteran.file_number}S",
         case_issues: create_list(:case_issue, 3, :compensation)
@@ -189,7 +187,7 @@ module Seeds
 
     # AC 2-6
     def create_ama_appeals
-      APPEALS_LIMIT.times.each
+      APPEALS_LIMIT.times.each do
         create_ama_appeals_for_active_judge
         create_ama_appeals_for_inactive_cf_user_and_inactive_admin_judge_team
         create_ama_appeals_for_active_cf_user_and_non_admin_judge_team
