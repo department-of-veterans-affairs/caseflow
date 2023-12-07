@@ -4,7 +4,7 @@ import Modal from '../../../components/Modal';
 import TextareaField from '../../../components/TextareaField';
 import Table from '../../../components/Table';
 import { connect } from 'react-redux';
-// import ApiUtil from '../../../util/ApiUtil';
+import ApiUtil from '../../../util/ApiUtil';
 import { getPackageActionColumns, getModalInformation } from '../review_package/utils';
 
 const PackageActionModal = (props) => {
@@ -41,16 +41,19 @@ const PackageActionModal = (props) => {
   };
 
   const submitHandler = async () => {
-    const data = {};
+    const data = {
+      correspondence_id: correspondence.id,
+      type: packageActionModal
+    };
 
     if (packageActionModal === 'removePackage' || packageActionModal === 'reassignPackage') {
-      data.textInput = textInputReason;
+      data.instructions = textInputReason;
     }
     console.log(data);
-    // ApiUtil.post(`/queue/correspondence/${correspondence.correspondence_uuid}/task`, { data }).then((response) => {
-    //   console.log(response);
-    // }
-    // );
+    ApiUtil.post(`/queue/correspondence/${correspondence.correspondence_uuid}/task`, { data }).then((response) => {
+      console.log(response);
+    }
+    );
   };
 
   return (
