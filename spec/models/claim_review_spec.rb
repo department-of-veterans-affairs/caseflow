@@ -1111,11 +1111,6 @@ describe ClaimReview, :postgres do
 
         expect(claim_review.end_product_establishments.count).to eq(2)
 
-        ratings_end_product_establishment = EndProductEstablishment.find_by(
-          source: claim_review,
-          code: "030HLRR"
-        )
-
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
             benefit_type_code: "1",
@@ -1124,9 +1119,9 @@ describe ClaimReview, :postgres do
             claim_type: "Claim",
             station_of_jurisdiction: user.station_id,
             date: claim_review.receipt_date.to_date,
-            end_product_modifier: ratings_end_product_establishment.end_product.modifier,
+            end_product_modifier: "030",
             end_product_label: "Higher-Level Review Rating",
-            end_product_code: ratings_end_product_establishment.code,
+            end_product_code: "030HLRR",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
             claimant_participant_id: veteran_participant_id,
@@ -1140,7 +1135,7 @@ describe ClaimReview, :postgres do
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
-          claim_id: ratings_end_product_establishment.reference_id,
+          claim_id: claim_review.end_product_establishments.find_by(code: "030HLRR").reference_id,
           contentions: array_including(description: "decision text",
                                        contention_type: Constants.CONTENTION_TYPES.higher_level_review),
           user: user,
@@ -1148,15 +1143,10 @@ describe ClaimReview, :postgres do
         )
 
         expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
-          claim_id: ratings_end_product_establishment.reference_id,
+          claim_id: claim_review.end_product_establishments.find_by(code: "030HLRR").reference_id,
           rating_issue_contention_map: {
             "reference-id" => rating_request_issue.reload.contention_reference_id
           }
-        )
-
-        nonratings_end_product_establishment = EndProductEstablishment.find_by(
-          source: claim_review,
-          code: "030HLRNR"
         )
 
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
@@ -1167,9 +1157,9 @@ describe ClaimReview, :postgres do
             claim_type: "Claim",
             station_of_jurisdiction: user.station_id,
             date: claim_review.receipt_date.to_date,
-            end_product_modifier: nonratings_end_product_establishment.end_product.modifier,
+            end_product_modifier: "031", # Important that the modifier increments for the second EP
             end_product_label: "Higher-Level Review Nonrating",
-            end_product_code: nonratings_end_product_establishment.code,
+            end_product_code: "030HLRNR",
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
             claimant_participant_id: veteran_participant_id,
@@ -1183,7 +1173,7 @@ describe ClaimReview, :postgres do
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: veteran_file_number,
-          claim_id: nonratings_end_product_establishment.reference_id,
+          claim_id: claim_review.end_product_establishments.find_by(code: "030HLRNR").reference_id,
           contentions: array_including(description: "surgery - Issue text",
                                        contention_type: Constants.CONTENTION_TYPES.higher_level_review),
           user: user,
@@ -1194,8 +1184,6 @@ describe ClaimReview, :postgres do
         expect(claim_review.end_product_establishments.last).to be_committed
         expect(rating_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
         expect(non_rating_request_issue.rating_issue_associated_at).to be_nil
-        # verify that the EP modifier is incremented on the second establishment
-        expect(claim_review.end_product_establishments.map(&:modifier)).to contain_exactly("030", "031")
       end
     end
   end

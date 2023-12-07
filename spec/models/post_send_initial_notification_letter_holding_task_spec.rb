@@ -134,7 +134,7 @@ describe PostSendInitialNotificationLetterHoldingTask do
         expect(post_task.reload.status).to_not eq("cancelled")
         expect(post_task.reload.status).to_not eq("completed")
 
-        expect(((Time.zone.now - post_task.created_at).to_f / 1.day).round).to eq(100)
+        expect((Time.zone.now - post_task.created_at).to_i / 1.day).to eq(100)
       end
     end
 

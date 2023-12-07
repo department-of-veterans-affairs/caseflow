@@ -47,7 +47,7 @@ describe AppealConcern do
         address_line_1: Faker::Address.street_address,
         city: Faker::Address.city,
         country: country,
-        zip: nil
+        zip: Faker::Number.number(digits: 4).to_s
       )
     end
     let(:model) { TestAppellantAddressClass.new(appellant_address: address_obj) }

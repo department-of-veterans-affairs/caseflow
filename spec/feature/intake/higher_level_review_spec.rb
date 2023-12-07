@@ -253,16 +253,6 @@ feature "Higher-Level Review", :all_dbs do
     expect(page).to have_content("Contention: Active Duty Adjustments - Description for Active Duty Adjustments")
     expect(page).to have_content("Informal Conference Tracked Item")
 
-    ratings_end_product_establishment = EndProductEstablishment.find_by(
-      source: intake.detail,
-      code: "030HLRR"
-    )
-
-    expect(ratings_end_product_establishment).to have_attributes(
-      claimant_participant_id: "5382910292",
-      payee_code: "10"
-    )
-
     # ratings end product
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
       hash_including(
@@ -273,7 +263,7 @@ feature "Higher-Level Review", :all_dbs do
           claim_type: "Claim",
           station_of_jurisdiction: current_user.station_id,
           date: higher_level_review.receipt_date.to_date,
-          end_product_modifier: ratings_end_product_establishment.end_product.modifier,
+          end_product_modifier: "033",
           end_product_label: "Higher-Level Review Rating",
           end_product_code: "030HLRR",
           gulf_war_registry: false,
@@ -285,12 +275,12 @@ feature "Higher-Level Review", :all_dbs do
       )
     )
 
-    nonratings_end_product_establishment = EndProductEstablishment.find_by(
+    ratings_end_product_establishment = EndProductEstablishment.find_by(
       source: intake.detail,
-      code: "030HLRNR"
+      code: "030HLRR"
     )
 
-    expect(nonratings_end_product_establishment).to have_attributes(
+    expect(ratings_end_product_establishment).to have_attributes(
       claimant_participant_id: "5382910292",
       payee_code: "10"
     )
@@ -304,7 +294,7 @@ feature "Higher-Level Review", :all_dbs do
         claim_type: "Claim",
         station_of_jurisdiction: current_user.station_id,
         date: higher_level_review.receipt_date.to_date,
-        end_product_modifier: nonratings_end_product_establishment.end_product.modifier,
+        end_product_modifier: "032",
         end_product_label: "Higher-Level Review Nonrating",
         end_product_code: "030HLRNR",
         gulf_war_registry: false,
@@ -312,6 +302,16 @@ feature "Higher-Level Review", :all_dbs do
       ),
       veteran_hash: intake.veteran.to_vbms_hash,
       user: current_user
+    )
+
+    nonratings_end_product_establishment = EndProductEstablishment.find_by(
+      source: intake.detail,
+      code: "030HLRNR"
+    )
+
+    expect(nonratings_end_product_establishment).to have_attributes(
+      claimant_participant_id: "5382910292",
+      payee_code: "10"
     )
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
