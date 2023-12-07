@@ -4,7 +4,6 @@ class CorrespondenceRootTask < Task
   private
 
   def verify_org_task_unique
-    binding.pry
     if Task.where(
       appeal_id: appeal_id,
       appeal_type: appeal_type,
