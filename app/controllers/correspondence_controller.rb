@@ -88,7 +88,7 @@ class CorrespondenceController < ApplicationController
       begin
         create_correspondence_relations
       rescue ActiveRecord::RecordInvalid
-        render json: { error: "Failed to update records" }, status: 400
+        render json: { error: "Failed to update records" }, status: :bad_request
         raise ActiveRecord::Rollback
       else
         render json: {}, status: :created
@@ -102,7 +102,8 @@ class CorrespondenceController < ApplicationController
     params[:related_correspondence_uuids]&.map do |uuid|
       CorrespondenceRelation.create!(
         correspondence_id: Correspondence.find_by(uuid: params[:correspondence_uuid])&.id,
-        related_correspondence_id: Correspondence.find_by(uuid: uuid)&.id)
+        related_correspondence_id: Correspondence.find_by(uuid: uuid)&.id
+      )
     end
   end
 
