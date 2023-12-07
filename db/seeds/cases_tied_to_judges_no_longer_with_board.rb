@@ -80,6 +80,7 @@ module Seeds
       @inactive_cf_user_and_inactive_admin_judge_team ||= begin
         judge = find_or_create_active_judge("INACTIVECFJUDGE", "Judge InactiveInCF User")
         judge.update_status!("inactive") if judge.active?
+        VACOLS::Staff.find_by_sdomainid(judge.css_id).update!(sactive: "I")
         judge
       end
     end
@@ -251,9 +252,9 @@ module Seeds
       Timecop.travel(45.days.ago)
       create(:appeal,
              :advanced_on_docket_due_to_motion,
+             :hearing_docket,
              :with_post_intake_tasks,
              :held_hearing_and_ready_to_distribute,
-             :hearing_docket,
              tied_judge: judge,
              veteran: veteran,
              receipt_date: 2.years.ago)
@@ -265,9 +266,9 @@ module Seeds
       Timecop.travel(65.days.ago)
       create(:appeal,
              :advanced_on_docket_due_to_motion,
+             :hearing_docket,
              :with_post_intake_tasks,
              :held_hearing_and_ready_to_distribute,
-             :hearing_docket,
              tied_judge: judge,
              veteran: veteran,
              receipt_date: 2.years.ago)
