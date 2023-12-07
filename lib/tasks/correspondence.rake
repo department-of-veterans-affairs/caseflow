@@ -2,7 +2,7 @@
 
 namespace :correspondence do
   desc "setup data for intake correspondence (autotext and correspondence type)in UAT/PROD"
-  task :setup_intake_tables, [] => :environment do |_|
+  task :setup_correspondence_data, [] => :environment do |_|
     STDOUT.puts("Creating data for Auto Text Tables")
     # creates intiial values for auto text table
     auto_texts_values = [
