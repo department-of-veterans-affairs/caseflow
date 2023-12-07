@@ -63,4 +63,25 @@ module CorrespondenceHelpers
     radio_options = page.all(".cf-form-radio-option")
     { yes: radio_options[0], no: radio_options[1] }
   end
+
+  def active_evidence_submissions_tasks
+    FeatureToggle.enable!(:correspondence_queue)
+    User.authenticate!(roles: ["Mail Intake"])
+    veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
+    create(:correspondence, veteran_id: veteran.id, uuid: SecureRandom.uuid, va_date_of_receipt: Time.local(2023, 1, 1))
+    2.times do
+      appeal = create(:appeal, veteran_file_number: veteran.file_number)
+
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+        EvidenceSubmissionWindowTask.create!(
+          appeal: appeal,
+          parent: appeal.root_task,
+          assigned_to: MailTeam.singleton
+        )
+    end
+    visit "/queue/correspondence/#{Correspondence.first.uuid}/intake"
+    click_button("Continue")
+  end
+
+
 end

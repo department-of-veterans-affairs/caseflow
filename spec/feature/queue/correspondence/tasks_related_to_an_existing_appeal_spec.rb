@@ -124,6 +124,30 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
 
         expect(page.all(".cf-form-checkbox").last.checked?).to be(false)
       end
+
+      it "table should display active evidence submission window tasks and waie the checkbox" do
+        active_evidence_submissions_tasks
+
+        existing_appeal_radio_options[:yes].click
+
+        using_wait_time(10) do
+          page.all(".checkbox-wrapper-1").find(".cf-form-checkbox").first.click
+        end
+        expect(page).to have_selector('#react-select-2-input[disabled]')
+        expect(page).to have_text("Evidence Window Submission Task")
+        expect(page).to have_text('Provide context and instruction on this task')
+        field = find_field('content', disabled: true)
+        expect(field.tag_name).to eq('textarea')
+        checkbox_label = 'Waive Evidence Window'
+        checkbox = find('label', text: checkbox_label)
+        find('label', text: checkbox_label).click
+        find_by_id("waiveReason").fill_in with: "test waive note"
+        all("#reactSelectContainer").last.click
+        find_by_id("react-select-3-option-0").click
+        find('#content:not([disabled])', visible: :all).fill_in(with: 'Correspondence test text')
+        expect(page).to have_button("button-continue", disabled: false)
+        click_button("button-continue")
+      end
     end
   end
 end
