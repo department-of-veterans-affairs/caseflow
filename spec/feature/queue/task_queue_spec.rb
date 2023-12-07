@@ -971,6 +971,8 @@ feature "Task queue", :all_dbs do
       before do
         # force objects above to reload to ensure the visit doesn't fail to load them
         judge_task.reload
+        FeatureToggle.enable!(:mst_identification)
+        FeatureToggle.enable!(:pact_identification)
 
         # Add a user to the Colocated team so the task assignment will suceed.
         Colocated.singleton.add_user(create(:user))
