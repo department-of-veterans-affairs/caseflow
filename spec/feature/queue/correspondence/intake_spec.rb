@@ -191,6 +191,12 @@ RSpec.feature("The Correspondence Intake page") do
   end
 
   context "The user is able to use the autotext feature" do
+    before do
+      require Rails.root.join("db/seeds/base.rb").to_s
+      Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
+      Seeds::AutoTexts.new.seed!
+    end
+
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
       User.authenticate!(roles: ["Mail Intake"])
