@@ -191,22 +191,6 @@ class DecisionReview < CaseflowRecord
     end
   end
 
-  def handle_issues_with_no_decision_date!
-    # Guard clause to only perform this update for VHA claim reviews for now
-    return nil unless benefit_type == "vha"
-
-    review_task = tasks.find { |task| task.is_a?(DecisionReviewTask) }
-    return unless review_task
-
-    return if review_task.closed? || review_task.cancelled?
-
-    if request_issues_without_decision_dates?
-      review_task.on_hold!
-    else
-      review_task.assigned!
-    end
-  end
-
   # Currently AMA only supports one claimant per decision review
   def claimant
     claimants.order(:id).last
