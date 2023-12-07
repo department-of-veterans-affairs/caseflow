@@ -14,12 +14,7 @@ class Correspondence < CaseflowRecord
   belongs_to :correspondence_type
   belongs_to :package_document_type
   belongs_to :veteran
-  # has_many :appeals, through: :correspondence_appeals
   has_many :tasks
-  # has_many :correspondence_types
-
-  # has_many :correspondence_correspondences
-  # has_many :related_correspondences, through: :correspondence_correspondences
 
   after_create :initialize_correspondence_tasks
 
