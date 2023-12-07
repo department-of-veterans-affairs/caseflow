@@ -75,7 +75,7 @@ FactoryBot.define do
 
     trait :with_vacols_record do
       after(:create) do |user|
-        create(:staff, slogid: user.css_id, user: user)
+        create(:staff, :has_sattyid, slogid: user.css_id, user: user)
       end
     end
 

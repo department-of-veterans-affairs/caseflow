@@ -102,7 +102,7 @@ module Seeds
 
     def find_or_create_active_judge_with_only_sattyid(css_id, full_name)
        User.find_by_css_id(css_id) ||
-        create(:user, :judge, :with_vacols_record, css_id: css_id, full_name: full_name)
+        create(:user, :with_vacols_record, css_id: css_id, full_name: full_name)
     end
 
     def inactive_cf_user_and_inactive_admin_judge_team
@@ -163,7 +163,7 @@ module Seeds
     end
 
     def active_vacols_user_with_only_sattyid
-      @active_vacols_user_with_only_sattyid ||= find_or_create_active_judge_with_only_sattyid("SATTYIDUSER", full_name: "User WithOnly Sattyid")
+      @active_vacols_user_with_only_sattyid ||= find_or_create_active_judge_with_only_sattyid("SATTYIDUSER3", full_name: "User WithOnly Sattyid")
     end
 
     def create_legacy_appeals

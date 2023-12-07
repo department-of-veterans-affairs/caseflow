@@ -92,6 +92,10 @@ FactoryBot.define do
       slogid { "55" }
     end
 
+    trait :has_sattyid do
+      sattyid { generated_sattyid }
+    end
+
     after(:build) do |staff, evaluator|
       if evaluator.user&.full_name
         staff.snamef = evaluator.user.full_name.split(" ").first
