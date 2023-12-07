@@ -39,11 +39,11 @@ module BelongsToPolymorphicHearingConcern
   class_methods do
     # Since we can't pass an argument to a concern, call this method instead
     def belongs_to_polymorphic_hearing(associated_class_symbol)
-      # Define polymorphic association before calling AssocationWrapper
+      # Define polymorphic association before calling AssociationWrapper
       belongs_to associated_class_symbol, polymorphic: true
 
       associated_class = associated_class_symbol.to_s.classify.constantize
-      association = AssocationWrapper.new(self).belongs_to.polymorphic.associated_with_type(associated_class)
+      association = AssociationWrapper.new(self).belongs_to.polymorphic.associated_with_type(associated_class)
         .select_associations.first
 
       type_column = association.foreign_type
