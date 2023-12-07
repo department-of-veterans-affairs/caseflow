@@ -1,32 +1,26 @@
 # frozen_string_literal: true
 
 RSpec.describe Correspondence, type: :model do
-  describe "Relationships" do
-    it { Correspondence.reflect_on_association(:prior_correspondence).macro.should eq(:belongs_to) }
+  it "exists" do
+    c = Correspondence.create!
+    expect(c).to be_a(Correspondence)
   end
 
-  describe "associations" do
-    it "belongs to prior correspondence" do
-      association = Correspondence.reflect_on_association(:prior_correspondence)
-      expect(association.macro).to eq(:belongs_to)
-      expect(association.options[:optional]).to be_truthy
-    end
+  it "can be bi-directionally related to other correspondences" do
+    c_1 = Correspondence.create!
+    c_2 = Correspondence.create!
 
-    it "can add and save associated records" do
-      correspondence = FactoryBot.create(:correspondence)
-      associated_correspondence = FactoryBot.create(:correspondence)
+    expect(c_1.related_correspondences).to eq([])
+    expect(c_2.related_correspondences).to eq([])
 
-      # Add the associated correspondence
-      correspondence.prior_correspondence = associated_correspondence
+    cr = CorrespondenceRelation.create!(correspondence_id: c_1.id, related_correspondence_id: c_2.id)
 
-      # Save the correspondence
-      correspondence.save
+    expect(c_1.reload.related_correspondences).to eq([c_2])
+    expect(c_2.reload.related_correspondences).to eq([c_1])
 
-      # Retrieve the correspondence from the database
-      saved_correspondence = Correspondence.find(correspondence.id)
+    cr.destroy
 
-      # Assert that the associated correspondence is saved
-      expect(saved_correspondence.prior_correspondence).to eq(associated_correspondence)
-    end
+    expect(c_1.reload.related_correspondences).to eq([])
+    expect(c_2.reload.related_correspondences).to eq([])
   end
 end

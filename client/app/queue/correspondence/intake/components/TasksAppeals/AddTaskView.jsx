@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import TextareaField from '../../../../../components/TextareaField';
 import CheckboxModal from '../CheckboxModal';
-import ReactSelectDropdown from '../../../../../components/ReactSelectDropdown';
 import Button from '../../../../../components/Button';
 import Select from 'react-select';
 import { css } from 'glamor';
@@ -124,7 +123,7 @@ const AddTaskView = (props) => {
 
     if (autoTextValues.length > 0) {
       autoTextValues.forEach((id) => {
-        autoTextOutput += `${autotextOptions[id] }\n`;
+        autoTextOutput += `${props.autoTexts[id] }\n`;
       });
     }
     updateTaskContent(autoTextOutput);
@@ -135,7 +134,7 @@ const AddTaskView = (props) => {
     <div key={task.id} style={{ display: 'block', marginRight: '2rem' }}>
       {modalVisible &&
         <CheckboxModal
-          checkboxData={autotextOptions}
+          checkboxData={props.autoTexts}
           toggleModal={handleModalToggle}
           closeHandler={handleModalToggle}
           handleAccept={handleAutotext}
@@ -215,7 +214,8 @@ AddTaskView.propTypes = {
   defaultValue: PropTypes.object,
   label: PropTypes.string,
   onChangeMethod: PropTypes.func,
-  className: PropTypes.string
+  className: PropTypes.string,
+  autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
 export default AddTaskView;
