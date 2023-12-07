@@ -533,5 +533,9 @@
   "COMPLETE_AND_POSTPONE": {
     "label": "Mark as complete",
     "value": "modal/complete_and_postpone"
+  },
+  "CORRESPONDENCE_REMOVE_PACKAGE": {
+    "label": "Request to remove package",
+    "value": "temp"
   }
 }
