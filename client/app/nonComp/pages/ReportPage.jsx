@@ -232,7 +232,7 @@ const ReportPage = ({ history }) => {
   const { reset, watch, formState, control, handleSubmit } = methods;
   const dispatch = useDispatch();
   const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
-  const csvGeneration = useSelector((state) => state.changeHistory.status);
+  const csvGeneration = useSelector((state) => state.changeHistory.downloadReportCSV.status);
   const isCSVGenerating = csvGeneration === 'loading';
   const watchReportType = watch('reportType');
   const watchRadioEventAction = watch('radioEventAction');
