@@ -47,14 +47,18 @@ export const getPackageActionColumns = (dropdownType) => {
             Veteran Details
           </span>
         ),
-        valueFunction: (row) => (
-          <span className="veteran-info-value">
-            <p>
-              {`${row.veteranInformation.veteran_name.first_name} ${row.veteranInformation.veteran_name.last_name}
-              (${row.veteranInformation.file_number})`}
-            </p>
-          </span>
-        )
+        valueFunction: (row) => {
+          const firstName = row.veteranInformation.veteran_name.first_name;
+          const lastName = row.veteranInformation.veteran_name.last_name;
+          const fileNumber = row.veteranInformation.file_number;
+
+          return (
+            <span className="veteran-info-value">
+              <p>
+                {`${firstName} ${lastName}\n(${fileNumber})`}
+              </p>
+            </span>
+          )}
       }
     );
   }

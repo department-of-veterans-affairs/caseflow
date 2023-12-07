@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CorrespondenceRootTask < Task
   before_create :verify_org_task_unique
 
