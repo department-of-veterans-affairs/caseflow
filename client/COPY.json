@@ -1,7 +1,6 @@
 {
   "CASE_SEARCH_HOME_PAGE_HEADING": "Veteran Case Search",
   "CASE_SEARCH_INPUT_PLACEHOLDER": "Enter a file number, SSN, or AMA docket number",
-  "CASE_SEARCH_LOAD_MORE_TEXT": "Load More Cases",
   "CASE_SEARCH_INPUT_INSTRUCTION": "Please enter a valid claims file number, SSN, or AMA docket number (with hyphen) to search for all available cases.",
   "CASE_SEARCH_ERROR_EMPTY_SEARCH_TERM": "Cannot search for no text",
   "CASE_SEARCH_ERROR_INVALID_ID_HEADING": "Invalid search parameter “%s”",
