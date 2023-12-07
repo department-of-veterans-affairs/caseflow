@@ -6,6 +6,7 @@ import Table from '../../../components/Table';
 import { connect } from 'react-redux';
 // import ApiUtil from '../../../util/ApiUtil';
 import { getPackageActionColumns, getModalInformation } from '../review_package/utils';
+import { useHistory } from 'react-router';
 
 const PackageActionModal = (props) => {
   const {
@@ -17,6 +18,7 @@ const PackageActionModal = (props) => {
   } = props;
 
   const modalInfo = getModalInformation(packageActionModal);
+  const history = useHistory();
 
   const [textInputReason, setTextInputReason] = useState('');
 
@@ -41,16 +43,23 @@ const PackageActionModal = (props) => {
   };
 
   const submitHandler = async () => {
-    const data = {};
+    const data = {
+      correspondence_id: correspondence.id,
+      type: packageActionModal,
+      instructions: []
+    };
 
     if (packageActionModal === 'removePackage' || packageActionModal === 'reassignPackage') {
-      data.textInput = textInputReason;
+      data.instructions.push(textInputReason);
     }
     console.log(data);
-    // ApiUtil.post(`/queue/correspondence/${correspondence.correspondence_uuid}/task`, { data }).then((response) => {
-    //   console.log(response);
-    // }
-    // );
+    ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/task`, { data }).then((response) => {
+      props.closeHandler(null);
+      if (response.ok) {
+        history.push('/queue/correspondence');
+      }
+    }
+    );
   };
 
   return (
