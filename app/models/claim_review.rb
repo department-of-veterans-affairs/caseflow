@@ -98,22 +98,6 @@ class ClaimReview < DecisionReview
     business_line.add_user(RequestStore.store[:current_user])
   end
 
-  def handle_issues_with_no_decision_date!
-    # Guard clause to only perform this update for VHA claim reviews for now
-    return nil unless benefit_type == "vha"
-
-    review_task = tasks.find { |task| task.is_a?(DecisionReviewTask) }
-    return unless review_task
-
-    return if review_task.closed? || review_task.cancelled?
-
-    if request_issues_without_decision_dates?
-      review_task.on_hold!
-    else
-      review_task.assigned!
-    end
-  end
-
   def request_issues_without_decision_dates?
     request_issues.active.any? { |issue| issue.decision_date.blank? }
   end
