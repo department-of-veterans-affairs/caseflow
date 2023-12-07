@@ -105,10 +105,6 @@ class ClaimReview < DecisionReview
     review_task = tasks.find { |task| task.is_a?(DecisionReviewTask) }
     return unless review_task
 
-    handle_no_decision_date(review_task)
-  end
-
-  def handle_no_decision_date(review_task)
     return if review_task.closed? || review_task.cancelled?
 
     if request_issues_without_decision_dates?
