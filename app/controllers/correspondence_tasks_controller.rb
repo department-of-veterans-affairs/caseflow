@@ -16,6 +16,7 @@ class CorrespondenceTasksController < TasksController
       type: task.name
     }
     ReviewPackageTask.create_from_params(task_params, current_user)
+    review_package_task.update!(assigned_to: RequestStore[:current_user])
     render json: { status: :ok }
   end
 
