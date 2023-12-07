@@ -1026,7 +1026,7 @@ class RequestIssue < CaseflowRecord
 
   def set_decision_date_added_at
     self.decision_date_added_at = created_at
-    save! if has_changes_to_save?
+    save!
   end
 end
 # rubocop:enable Metrics/ClassLength
