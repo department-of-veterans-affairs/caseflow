@@ -6,6 +6,7 @@ class ChangeHistoryEventSerializer
 
   set_id { SecureRandom.uuid }
   attribute :taskID, &:task_id
+  attribute :claimType, &:readable_claim_type
   attribute :eventType, &:event_type
   attribute :readableEventType, &:readable_event_type
   attribute :eventUserName, &:readable_user_name

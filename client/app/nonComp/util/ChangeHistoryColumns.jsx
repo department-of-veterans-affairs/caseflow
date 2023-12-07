@@ -224,3 +224,17 @@ export const claimantNameColumn = () => {
     getSortValue: (event) => event.claimantName
   };
 };
+
+export const claimTypeColumn = (events) => {
+  return {
+    header: 'Claim Type',
+    name: 'claimType',
+    enableFilter: true,
+    label: 'Filter by Claim Type',
+    valueName: 'claimType',
+    columnName: 'claimType',
+    anyFiltersAreSet: true,
+    tableData: events,
+    valueFunction: (event) => event.claimType,
+  };
+};

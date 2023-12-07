@@ -9,9 +9,10 @@ import { dateTimeColumn,
   userColumn,
   activityColumn,
   detailsColumn,
-  taskIdColumn, claimantNameColumn } from 'app/nonComp/util/ChangeHistoryColumns';
+  taskIdColumn, claimantNameColumn, claimTypeColumn } from 'app/nonComp/util/ChangeHistoryColumns';
 import { fetchClaimEvents } from '../actions/changeHistorySlice';
 import SearchBar from '../../components/SearchBar';
+import LoadingScreen from '../../components/LoadingScreen';
 
 const clearingDivStyling = css({
   borderBottom: `1px solid ${COLORS.GREY_LIGHT}`,
@@ -26,13 +27,26 @@ const ClaimHistoryGenerator = (props) => {
   const dispatch = useDispatch();
 
   const events = useSelector((state) => state.changeHistory.events);
+  const eventsRequest = useSelector((state) => state.changeHistory.fetchClaimEvents.status);
+
+  const isLoading = eventsRequest === 'loading';
+
+  // console.log(eventsRequest);
+  // console.log(isLoading);
 
   useEffect(() => {
     dispatch(fetchClaimEvents({ taskID: 'all', businessLineUrl }));
   }, []);
 
+  // Should maybe use filteredEvents in here so the filters update with the searched data?
   const changeHistoryColumns = [
-    claimantNameColumn(), taskIdColumn(), dateTimeColumn(), userColumn(events), activityColumn(events), detailsColumn()
+    claimantNameColumn(),
+    taskIdColumn(),
+    claimTypeColumn(events),
+    dateTimeColumn(),
+    userColumn(events),
+    activityColumn(events),
+    detailsColumn()
   ];
 
   // Filtering logic based on the search term (applies only if searchTerm exists)
@@ -57,7 +71,7 @@ const ClaimHistoryGenerator = (props) => {
   };
 
   return <>
-    <Link to={`/decision_reviews/${businessLineUrl}`}> &lt; Back to Decision Review </Link>
+    <Link to={`/${businessLineUrl}`}> &lt; Back to Decision Review </Link>
     <div>
       <section className="cf-app-segment cf-app-segment--alt">
         <div>
@@ -75,13 +89,17 @@ const ClaimHistoryGenerator = (props) => {
               value={searchTerm}
             />
           </div>
-          <QueueTable
-            columns={changeHistoryColumns}
-            rowObjects={filteredEvents}
-            getKeyForRow={(_rowNumber, event) => event.id}
-            defaultSort={{ sortColIdx: 0 }}
-            enablePagination
-          />
+          {isLoading ? (
+            <LoadingScreen />
+          ) :
+            <QueueTable
+              columns={changeHistoryColumns}
+              rowObjects={filteredEvents}
+              getKeyForRow={(_rowNumber, event) => event.id}
+              defaultSort={{ sortColIdx: 0 }}
+              enablePagination
+            />
+          }
         </div>
       </section>
     </div>
