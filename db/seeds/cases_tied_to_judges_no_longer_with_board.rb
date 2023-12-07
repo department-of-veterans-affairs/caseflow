@@ -190,7 +190,7 @@ module Seeds
 
       vacols_case = create_video_vacols_case(veteran,
                                              correspondent,
-                                             user)
+                                             inactive_cf_user_and_inactive_admin_judge_team)
 
       legacy_appeal = create(
         :legacy_appeal,
