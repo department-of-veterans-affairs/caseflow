@@ -80,4 +80,40 @@ namespace :correspondence do
       STDOUT.puts("Improper input...")
     end
   end
+
+  desc "creates 10 appeals for a vetean: 5 with evidence submission tasks and 5 without"
+  task :create_test_appeals, [] => :environment do |_|
+    RequestStore[:current_user] = User.system_user
+
+    STDOUT.puts("This script will create 5 evidence appeals and 5 direct review appeals for a veteran.")
+    STDOUT.puts("Enter the veteran's file number")
+    veteran_file_number = STDIN.gets.chomp
+
+    if veteran_file_number.to_i.is_a? Integer
+      veteran = Veteran.find_by(file_number: veteran_file_number.to_i)
+      # evidence appeals
+      5.times do
+        appeal = Appeal.create!(
+          veteran_file_number: veteran.file_number,
+          receipt_date: Time.zone.now,
+          established_at: Time.zone.now,
+          docket_type: Constants.AMA_DOCKETS.evidence_submission
+        )
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+      end
+
+      # direct review appeals.
+      5.times do
+        appeal = Appeal.create!(
+          veteran_file_number: veteran.file_number,
+          receipt_date: Time.zone.now,
+          established_at: Time.zone.now,
+          docket_type: Constants.AMA_DOCKETS.direct_review
+        )
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+      end
+    else
+      STDOUT.puts("Improper input...")
+    end
+  end
 end
