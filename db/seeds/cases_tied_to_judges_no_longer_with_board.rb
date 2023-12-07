@@ -12,7 +12,6 @@ module Seeds
     end
 
     def seed!
-      RequestStore[:current_user] = User.find_by_css_id("CASEFLOW1")
       create_legacy_appeals
       create_ama_appeals
     end
@@ -92,7 +91,8 @@ module Seeds
         judge = find_or_create_active_judge("ACTIVEJUDGETEAM", "Judge WithJudgeTeam Active")
         judge_team = JudgeTeam.for_judge(judge)
 
-        user = create(:user, :with_vacols_attorney_record,
+        user = User.find_by_css_id("ACTIVEATTY") ||
+               create(:user, :with_vacols_attorney_record,
                       css_id: "ACTIVEATTY", full_name: "Attorney OnJudgeTeam Active")
         judge_team.add_user(user)
 
@@ -106,7 +106,7 @@ module Seeds
         user = create(:user,
                       :judge,
                       :with_vacols_acting_judge_record,
-                      css_id: "ATTYWITHJUDGETEAM",
+                      css_id: "ATTYWITHTEAM",
                       full_name: "Attorney WithInactiveJudgeTeam Affinity")
 
         JudgeTeam.for_judge(user).inactive!
@@ -208,6 +208,7 @@ module Seeds
         create_veteran_for_active_judge
       )
 
+      # For regression testing
       create_ama_appeals_ready_to_distribute_65_days(
         active_judge_hearing_affinity_65_days,
         create_veteran_for_active_judge
@@ -256,6 +257,8 @@ module Seeds
              :hearing_docket,
              :with_post_intake_tasks,
              :held_hearing_and_ready_to_distribute,
+             :with_request_issues,
+             issue_count: 1,
              tied_judge: judge,
              veteran: veteran,
              receipt_date: 2.years.ago)
@@ -270,6 +273,8 @@ module Seeds
              :hearing_docket,
              :with_post_intake_tasks,
              :held_hearing_and_ready_to_distribute,
+             :with_request_issues,
+             issue_count: 1,
              tied_judge: judge,
              veteran: veteran,
              receipt_date: 2.years.ago)
