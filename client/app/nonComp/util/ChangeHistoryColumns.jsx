@@ -108,7 +108,7 @@ const renderEventDetails = (event) => {
     break;
 
   case 'completed':
-    console.log(event);
+    // console.log(event);
     renderBlock = <>
       <span>Claim closed.</span>
       <br />

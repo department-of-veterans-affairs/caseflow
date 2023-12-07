@@ -40,7 +40,8 @@ const ClaimHistoryGenerator = (props) => {
     events.filter((event) =>
       event.claimantName?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
       event.issueType?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
-      event.readableEventType?.toLowerCase()?.includes(searchTerm.toLowerCase())
+      event.readableEventType?.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+      event.eventUserName?.toLowerCase()?.includes(searchTerm.toLowerCase())
     ) :
     events;
 
