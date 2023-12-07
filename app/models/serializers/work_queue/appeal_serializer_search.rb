@@ -77,6 +77,12 @@ class WorkQueue::AppealSerializerSearch
     object.claimant&.name
   end
 
+  attribute :appellant_address do |object|
+    object.claimant&.address
+  end
+
+  attribute :appellant_tz, &:appellant_tz
+
   attribute :appellant_relationship, &:appellant_relationship
 
   attribute :has_poa do |appeal|

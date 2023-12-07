@@ -18,7 +18,6 @@ import {
 } from '../constants/AppConstants';
 import CaseListSearch from './CaseListSearch';
 import CaseListTable from './CaseListTable';
-import CaseListLoadMore from './CaseListLoadMore';
 import OtherReviewsTable from './OtherReviewsTable';
 import { fullWidth } from './constants';
 
@@ -106,7 +105,6 @@ class CaseListView extends React.PureComponent {
 
         <h3 className="cf-push-left" {...fullWidth}>{COPY.CASE_LIST_TABLE_TITLE}</h3>
         <CaseListTable appeals={this.props.appeals} />
-        <CaseListLoadMore appeals={this.props.appeals} />
         <h3 className="cf-push-left" {...fullWidth}>{COPY.OTHER_REVIEWS_TABLE_TITLE}</h3>
         <OtherReviewsTable reviews={this.props.claimReviews} />
       </div>
