@@ -21,7 +21,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [editableData, setEditableData] = useState({
     notes: '',
     veteran_file_number: '',
-    default_select_value: ''
+    default_select_value: null
   });
   const [apiResponse, setApiResponse] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
