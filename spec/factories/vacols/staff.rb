@@ -12,14 +12,14 @@ FactoryBot.define do
     end
 
     sequence(:stafkey) do |n|
-      if user
+      if user && user.css_id.size <= 16
         user.css_id
       else
         n
       end
     end
     sequence(:slogid) do |n|
-      if user
+      if user && user.css_id.size <= 16
         user.css_id
       else
         "ID#{n}"

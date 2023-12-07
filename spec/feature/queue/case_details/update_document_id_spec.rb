@@ -41,7 +41,7 @@ feature "Updating Document ID", :all_dbs do
   context "Legacy VHA case review" do
     it "only allows assigner and assignee to edit document ID and validates ID format" do
       judge = create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge")
-      create(:staff, :judge_role, sdomainid: judge.css_id)
+      create(:staff, :judge_role, user: judge)
       attorney = create_legacy_case_review
       appeal = LegacyAppeal.last
 
@@ -83,7 +83,7 @@ feature "Updating Document ID", :all_dbs do
 
   def create_ama_case_review
     judge = create(:user, station_id: User::BOARD_STATION_ID, full_name: "Aaron Judge")
-    create(:staff, :judge_role, sdomainid: judge.css_id)
+    create(:staff, :judge_role, user: judge)
     appeal = create(:appeal)
     attorney = create(:user)
     root_task = create(:root_task, appeal: appeal, assigned_to: attorney)
