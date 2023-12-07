@@ -48,6 +48,10 @@ export const getUndecidedIssues = (issues) =>
   });
 
 export const mostRecentHeldHearingForAppeal = (appeal) => {
+  if (appeal.hearings === undefined) {
+    return null;
+  }
+
   const hearings = appeal.hearings.
     filter((hearing) => hearing.disposition === HEARING_DISPOSITION_TYPES.held).
     sort((h1, h2) => (h1.date < h2.date ? 1 : -1));

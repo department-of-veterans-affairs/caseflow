@@ -293,6 +293,15 @@ Rails.application.routes.draw do
 
   scope path: '/queue' do
     get '/', to: 'queue#index'
+    get '/correspondence', to: 'correspondence#correspondence_cases'
+    get '/correspondence/:correspondence_uuid/intake', to: 'correspondence#intake'
+    get '/correspondence/:correspondence_uuid/review_package', to: 'correspondence#review_package'
+    get '/correspondence/:correspondence_uuid/veteran', to: 'correspondence#veteran'
+    put '/correspondence/:correspondence_uuid/update_cmp', to: 'correspondence#update_cmp'
+    get '/correspondence/packages', to: 'correspondence#package_documents'
+    get '/correspondence/:correspondence_uuid', to: 'correspondence#show'
+    patch '/correspondence/:correspondence_uuid', to: 'correspondence#update'
+    post '/correspondence/:correspondence_uuid', to: 'correspondence#process_intake'
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:appealId/notifications', to: 'queue#index'
     get '/appeals/:appeal_id/cavc_dashboard', to: 'cavc_dashboard#index'

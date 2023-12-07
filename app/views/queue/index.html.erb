@@ -50,6 +50,7 @@
       das_case_timeliness: FeatureToggle.enabled?(:das_case_timeliness, user: current_user),
       das_case_timeline: FeatureToggle.enabled?(:das_case_timeline, user: current_user),
       split_appeal_workflow: FeatureToggle.enabled?(:split_appeal_workflow, user: current_user),
+      correspondence_queue: FeatureToggle.enabled?(:correspondence_queue, user: current_user),
       cavc_remand_granted_substitute_appellant: FeatureToggle.enabled?(:cavc_remand_granted_substitute_appellant, user: current_user),
       cavc_dashboard_workflow: FeatureToggle.enabled?(:cavc_dashboard_workflow, user: current_user),
       mst_identification: FeatureToggle.enabled?(:mst_identification, user: current_user),
@@ -59,7 +60,8 @@
       cc_appeal_workflow: FeatureToggle.enabled?(:cc_appeal_workflow, user: current_user),
       metricsBrowserError: FeatureToggle.enabled?(:metrics_browser_error, user: current_user),
       cc_vacatur_visibility: FeatureToggle.enabled?(:cc_vacatur_visibility, user: current_user),
-      additional_remand_reasons: FeatureToggle.enabled?(:additional_remand_reasons, user: current_user)
+      additional_remand_reasons: FeatureToggle.enabled?(:additional_remand_reasons, user: current_user),
+      correspondence_queue: FeatureToggle.enabled?(:correspondence_queue, user: current_user)
     }
   }) %>
 <% end %>

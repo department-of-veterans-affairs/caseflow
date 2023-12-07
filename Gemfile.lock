@@ -66,6 +66,18 @@ GIT
       savon (~> 2.12)
 
 GIT
+  remote: https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git
+  revision: e3380fc6e4c2103322043d4be50fe2e8cdce5dae
+  ref: e3380fc6e4c2103322043d4be50fe2e8cdce5dae
+  specs:
+    ruby_claim_evidence_api (0.0.1)
+      activesupport
+      base64
+      faraday
+      httpi
+      railties
+
+GIT
   remote: https://github.com/department-of-veterans-affairs/sniffybara.git
   revision: 351560b5789ca638ba7c9b093c2bb1a9a6fda4b3
   specs:
@@ -153,6 +165,7 @@ GEM
       aws-sdk-core (= 2.10.112)
     aws-sigv4 (1.0.2)
     backport (1.2.0)
+    base64 (0.2.0)
     benchmark-ips (2.7.2)
     bootsnap (1.7.5)
       msgpack (~> 1.0)
@@ -815,6 +828,7 @@ DEPENDENCIES
   ruby-debug-ide
   ruby-oci8 (~> 2.2)
   ruby-prof (~> 1.4)
+  ruby_claim_evidence_api!
   sass-rails (~> 5.0)
   scss_lint
   sentry-raven
