@@ -75,7 +75,8 @@ const CaseSubTitleScaffolding = (props) => (
         ]}
         onChange={(option) => props.handlePackageActionModal(option.value)}
         placeholder="Request package action"
-        defaultText="Request package action"
+        label="Request package action dropdown"
+        hideLabel
       />
     </div>
   </div>
