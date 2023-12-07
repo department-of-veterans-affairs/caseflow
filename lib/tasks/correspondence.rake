@@ -64,6 +64,8 @@ namespace :correspondence do
 
   desc "create correspondence data in UAT given a veteran file number"
   task :create_correspondence_data, [] => :environment do |_|
+    RequestStore[:current_user] = User.system_user
+
     STDOUT.puts("This script will create 20 new correspondence and
       correspondence_document for a veteran based off their file number")
     STDOUT.puts("Enter the veteran's file number")
