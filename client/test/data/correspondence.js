@@ -1,11 +1,13 @@
-export const veteranInfo = {
-  veteran: {
-    id: 1928,
-    full_name: 'Bob Vetner',
-    gender: 'M',
-    date_of_birth: '01/10/1935',
-    file_number: '998877665',
+export const veteranInformation = {
+  id: 1928,
+  notes: 'This is a note from CMP',
+  veteran_name: {
+    first_name: 'Bob',
+    middle_name: '',
+    last_name: 'Vetner',
   },
+  file_number: '998877665',
+  correspondence_type_id: 8
 };
 
 export const correspondenceData = {
@@ -35,7 +37,7 @@ export const packageDocumentTypeData = {
 export const correspondenceDocumentsData = [
   {
     correspondence_id: 1,
-    document_file_number: veteranInfo.veteran.file_number,
+    document_file_number: veteranInformation.file_number,
     pages: 30,
     vbms_document_id: '1',
     uuid: null,
@@ -44,7 +46,7 @@ export const correspondenceDocumentsData = [
   },
   {
     correspondence_id: 1,
-    document_file_number: veteranInfo.veteran.file_number,
+    document_file_number: veteranInformation.file_number,
     pages: 20,
     vbms_document_id: '1',
     uuid: null,
@@ -57,6 +59,7 @@ export const reviewPackageDataResponse = {
   body: {
     correspondence: correspondenceData,
     package_document_type: packageDocumentTypeData,
-    correspondence_documents: correspondenceDocumentsData
+    correspondence_documents: correspondenceDocumentsData,
+    general_information: veteranInformation
   }
 };
