@@ -86,7 +86,7 @@ describe VaDotGovAddressValidator do
       before do
         allow_any_instance_of(VaDotGovAddressValidator).to receive(:valid_address_response)
           .and_return(valid_zip_response)
-        allow(valid_address_response).to receive(:coordinates_invalid?).and_return(true)
+        allow(valid_zip_response).to receive(:coordinates_invalid?).and_return(true)
         allow(response_body).to receive(:dig).with(:addressMetaData, :addressType).and_return("International")
       end
 
