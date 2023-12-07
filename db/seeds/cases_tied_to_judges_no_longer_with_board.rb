@@ -24,8 +24,8 @@ module Seeds
     end
 
     def initialize_inactive_cf_user_and_inactive_admin_judge_team_file_number_and_participant_id
-      @inactive_cf_user_and_inactive_admin_judge_team_file_number ||= 300_000_000
-      @inactive_cf_user_and_inactive_admin_judge_team_participant_id ||= 400_000_000
+      @inactive_cf_user_and_inactive_admin_judge_team_file_number ||= 700_000_000
+      @inactive_cf_user_and_inactive_admin_judge_team_participant_id ||= 710_000_000
 
       while find_veteran(@inactive_cf_user_and_inactive_admin_judge_team_file_number)
         @inactive_cf_user_and_inactive_admin_judge_team_file_number += 2000
@@ -34,8 +34,8 @@ module Seeds
     end
 
     def initialize_active_cf_user_and_non_admin_judge_team_file_number_and_participant_id
-      @active_cf_user_and_non_admin_judge_team_file_number ||= 301_000_000
-      @active_cf_user_and_non_admin_judge_team_participant_id ||= 500_000_000
+      @active_cf_user_and_non_admin_judge_team_file_number ||= 701_000_000
+      @active_cf_user_and_non_admin_judge_team_participant_id ||= 711_000_000
 
       while find_veteran(@active_cf_user_and_non_admin_judge_team_file_number)
         @active_cf_user_and_non_admin_judge_team_file_number += 2000
@@ -44,8 +44,8 @@ module Seeds
     end
 
     def initialize_active_cf_user_and_inactive_judge_team_file_number_and_participant_id
-      @active_cf_user_and_inactive_judge_team_file_number ||= 302_000_000
-      @active_cf_user_and_inactive_judge_team_participant_id ||= 700_000_000
+      @active_cf_user_and_inactive_judge_team_file_number ||= 702_000_000
+      @active_cf_user_and_inactive_judge_team_participant_id ||= 712_000_000
 
       while find_veteran(@active_cf_user_and_inactive_judge_team_file_number)
         @active_cf_user_and_inactive_judge_team_file_number += 2000
@@ -54,8 +54,8 @@ module Seeds
     end
 
     def initialize_active_judge_file_number_and_participant_id
-      @file_number ||= 303_000_200
-      @participant_id ||= 800_000_000
+      @file_number ||= 703_000_200
+      @participant_id ||= 713_000_000
 
       while find_veteran(@file_number)
         @file_number += 2000
@@ -125,7 +125,7 @@ module Seeds
 
     def create_legacy_appeals
       Timecop.travel(65.days.ago)
-      APPEALS_LIMIT.times.each do |_offset|
+      APPEALS_LIMIT.times.each do
         # Create the veteran for this legacy appeal
         veteran = create_veteran_for_inactive_cf_user_and_inactive_admin_judge_team
 
@@ -189,7 +189,7 @@ module Seeds
 
     # AC 2-6
     def create_ama_appeals
-      APPEALS_LIMIT.times.each do |_offset|
+      APPEALS_LIMIT.times.each
         create_ama_appeals_for_active_judge
         create_ama_appeals_for_inactive_cf_user_and_inactive_admin_judge_team
         create_ama_appeals_for_active_cf_user_and_non_admin_judge_team
