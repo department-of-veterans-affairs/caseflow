@@ -16,19 +16,13 @@ const initialState = {
   },
 };
 
-// Move this to utils or something
-const prepareFilters = (filterData) => {
-  return filterData;
-};
-
 export const downloadReportCSV = createAsyncThunk('changeHistory/downloadReport',
   async ({ organizationUrl, filterData }, thunkApi) => {
-  // Prepare data if neccessary. Although that could be reducer logic for filters if we end up using redux for it.
-    const data = prepareFilters(filterData);
-
     try {
-      const getOptions = { query: data, headers: { Accept: 'text/csv' }, responseType: 'arraybuffer' };
+      const postData = ApiUtil.convertToSnakeCase(filterData);
+      const getOptions = { query: postData.filters, headers: { Accept: 'text/csv' }, responseType: 'arraybuffer' };
       const response = await ApiUtil.get(`/decision_reviews/${organizationUrl}/report`, getOptions);
+
       // Create a Blob from the array buffer
       const blob = new Blob([response.body], { type: 'text/csv' });
 

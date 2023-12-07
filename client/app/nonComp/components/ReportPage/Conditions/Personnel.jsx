@@ -16,7 +16,8 @@ export const personnelSchema = object({
 
 export const Personnel = ({ control, field, name }) => {
   const { setValue, errors } = useFormContext();
-  const teamMembers = useSelector((state) => (state.orgUsers.users));
+  const teamMembers = useSelector((state) => state.orgUsers.users);
+  const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
   const namePersonnel = `${name}.options.personnel`;
 
   const dropdownOptions = useMemo(() => {
@@ -29,7 +30,7 @@ export const Personnel = ({ control, field, name }) => {
   }, [teamMembers]);
 
   return (
-    <div className="report-page-multi-select-dropdown">
+    <div className="report-page-multi-select-dropdown personnel">
       <Controller
         control={control}
         defaultValue={field.options.personnel ?? ''}
@@ -38,7 +39,7 @@ export const Personnel = ({ control, field, name }) => {
           return (
             <SearchableDropdown
               {...rest}
-              label="VHA team members"
+              label={`${businessLineUrl.toUpperCase()} team members`}
               options={dropdownOptions}
               inputRef={ref}
               multi

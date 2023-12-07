@@ -30,13 +30,17 @@ class ChangeHistoryReporter
     @tasks_url = tasks_url
   end
 
-  def event_filter_headers
-    @event_filters.to_a.flatten
+  # :reek:FeatureEnvy
+  def formatted_event_filters
+    event_filters.reject { |_, value| value.nil? }.map do |key, value|
+      value_str = value.is_a?(Array) ? "[#{value.join(', ')}]" : value.to_s
+      "#{key}: #{value_str}"
+    end
   end
 
   def as_csv
     CSV.generate do |csv|
-      csv << event_filter_headers
+      csv << formatted_event_filters
       csv << CHANGE_HISTORY_CSV_COLUMNS
       events.each do |event|
         event_columns = event.to_csv_array.flatten

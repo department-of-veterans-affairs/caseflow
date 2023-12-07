@@ -88,8 +88,6 @@ class ClaimHistoryEvent
                                                               "event_user_name" => "System"))
       end
 
-      # cleanup_status_event_duplicates!(hookless_cancelled_events, status_events)
-
       status_events
     end
     # rubocop:enable Metrics/MethodLength
@@ -108,12 +106,10 @@ class ClaimHistoryEvent
 
     def create_issue_events(change_data)
       issue_events = []
-
-      # before request issue ids does NOT contain withdrawn issues, but after issues does
-      before_request_issue_ids = change_data["before_request_issue_ids"].scan(/\d+/).map(&:to_i)
-      after_request_issue_ids = change_data["after_request_issue_ids"].scan(/\d+/).map(&:to_i)
-      withdrawn_request_issue_ids = change_data["withdrawn_request_issue_ids"].scan(/\d+/).map(&:to_i)
-      edited_request_issue_ids = change_data["edited_request_issue_ids"].scan(/\d+/).map(&:to_i)
+      before_request_issue_ids = (change_data["before_request_issue_ids"] || "").scan(/\d+/).map(&:to_i)
+      after_request_issue_ids = (change_data["after_request_issue_ids"] || "").scan(/\d+/).map(&:to_i)
+      withdrawn_request_issue_ids = (change_data["withdrawn_request_issue_ids"] || "").scan(/\d+/).map(&:to_i)
+      edited_request_issue_ids = (change_data["edited_request_issue_ids"] || "").scan(/\d+/).map(&:to_i)
       removed_request_issue_ids = (before_request_issue_ids - after_request_issue_ids)
       updates_hash = update_event_hash(change_data).merge("event_date" => change_data["request_issue_update_time"])
 
@@ -212,6 +208,8 @@ class ClaimHistoryEvent
                             date_strings_within_seconds?(change_data["request_issue_created_at"],
                                                          change_data["decision_date_added_at"],
                                                          REQUEST_ISSUE_TIME_WINDOW)
+                          elsif change_data["decision_date"].blank?
+                            false
                           else
                             true
                           end
@@ -278,16 +276,6 @@ class ClaimHistoryEvent
         ]
       end
     end
-
-    def cleanup_status_event_duplicates!(hookless_events, status_events)
-      # If there were hookless cancelled events do some cleanup since there's potentially an extra in progress event
-      # that is caused by the handle_issues_with_no_decision_date! method in the claim_review.rb model class.
-      # So if there is an incomplete event and hookless cancelled events then it's probably safe the in progress events
-      # unless the state was actually on_hold -> in_progress -> cancelled which will currently not be preserved here
-      if hookless_events.present? && status_events.any? { |event| event.event_type == :incomplete }
-        status_events.delete_if { |event| event && event.event_type == :in_progress }
-      end
-    end
   end
 
   ############### End of Class methods ##################
@@ -303,7 +291,7 @@ class ClaimHistoryEvent
   def to_csv_array
     [
       veteran_file_number, claimant_name, task_url, readable_task_status,
-      days_waiting, readable_claim_type, user_facility, readable_user_name, readable_event_date,
+      days_waiting, readable_claim_type, readable_facility_name, readable_user_name, readable_event_date,
       readable_event_type, issue_or_status_information, disposition_information
     ]
   end
@@ -348,6 +336,12 @@ class ClaimHistoryEvent
 
   def readable_disposition_date
     format_date_string(disposition_date)
+  end
+
+  def readable_facility_name
+    return "" unless user_facility
+
+    [Constants::BGS_FACILITY_CODES[user_facility], " (", user_facility, ")"].join
   end
 
   def readable_event_type
@@ -398,7 +392,7 @@ class ClaimHistoryEvent
 
   def set_attributes_from_change_history_data(new_event_type, change_data)
     @event_type = new_event_type
-    @claimant_name = [change_data["first_name"], " ", change_data["last_name"]].join
+    @claimant_name = change_data["claimant_name"]
     @event_date = change_data["event_date"]
     parse_event_attributes(change_data)
     parse_intake_attributes(change_data)

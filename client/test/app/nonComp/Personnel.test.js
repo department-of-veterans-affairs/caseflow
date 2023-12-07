@@ -4,14 +4,14 @@ import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import { applyMiddleware, createStore, compose } from 'redux';
 import userEvent from '@testing-library/user-event';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import selectEvent from 'react-select-event';
 
 import ReportPage from 'app/nonComp/pages/ReportPage';
 import { getVhaUsers } from 'test/helpers/reportPageHelper';
 import CombinedNonCompReducer from 'app/nonComp/reducers';
 
-const setup = (storeValues = {}) => {
+const setup = (storeValues = { nonComp: { businessLineUrl: 'vha' } }) => {
   const store = createStore(
     CombinedNonCompReducer,
     storeValues,
@@ -101,6 +101,18 @@ describe('Personnel', () => {
       userEvent.click(clearBtn);
 
       expect(screen.queryByText(teamMember1)).not.toBeInTheDocument();
+
+      const generateTaskReport = screen.getByRole('button', { name: 'Generate task report' });
+
+      expect(generateTaskReport).not.toHaveClass('usa-button-disabled');
+
+      // Wait for the validation text to appear before making assertions
+      await fireEvent.click(generateTaskReport);
+      await waitFor(() => {
+        const validationText = screen.getByText('Please select at least one team member');
+
+        expect(validationText).toBeInTheDocument();
+      });
     });
   });
 });

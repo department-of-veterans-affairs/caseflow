@@ -91,14 +91,6 @@ const ReportPageButtons = ({
   isGenerateButtonDisabled,
   handleClearFilters,
   handleSubmit }) => {
-
-  // eslint-disable-next-line no-console
-  // const onSubmit = (data) => {
-  //   console.log(data);
-
-  //   return data;
-  // };
-
   return (
 
     <div {...buttonOuterContainerStyling}>
@@ -241,24 +233,106 @@ const ReportPage = ({ history }) => {
   const dispatch = useDispatch();
   const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
   const csvGeneration = useSelector((state) => state.changeHistory.status);
-
   const isCSVGenerating = csvGeneration === 'loading';
+  const watchReportType = watch('reportType');
+  const watchRadioEventAction = watch('radioEventAction');
+  const watchRadioStatus = watch('radioStatus');
+
+  const processConditionOptions = (condition, options) => {
+    let formattedOptions;
+
+    switch (condition) {
+    case 'decisionReviewType':
+      formattedOptions = Object.keys(options).filter((key) => options[key]);
+      break;
+    // Multi select conditions
+    case 'personnel':
+    case 'facility':
+    case 'issueDisposition':
+    case 'issueType':
+      formattedOptions = Object.values(options)[0].map((item) => item.value);
+      break;
+    // Else it is probably already an object, so it just pass the existing options
+    default:
+      formattedOptions = options;
+    }
+
+    return formattedOptions;
+  };
+
+  const processConditionKeys = (condition) => {
+    return condition;
+  };
+
+  const parseFilters = (data) => {
+    // console.log(data);
+
+    const filters = {};
+
+    // Report Type parsing
+    filters.reportType = data.reportType;
+
+    // Event filter
+    if (data.radioEventAction === 'specific_events_action') {
+      // filters.events = Object.keys(data.specificEventType);
+      filters.events = Object.keys(data.specificEventType).filter((key) => data.specificEventType[key] === true);
+    }
+
+    // Status filter
+    if (data.radioStatus === 'specific_status') {
+      filters.statuses = Object.keys(data.specificStatus);
+    }
+
+    // Timing filter
+    filters.timing = data.timing;
+
+    // Specific Status report type
+    filters.statusReportType = data.radioStatusReportType;
+
+    // Conditions parsing
+    const transformedConditions = data?.conditions?.reduce((result, item) => {
+      const { condition, options } = item;
+
+      if (condition && options) {
+        // Possibly parse the condition name as well
+        const newConditionName = processConditionKeys(condition);
+
+        // Parse individual conditions to make them more palatable for the server
+        const newOptions = processConditionOptions(condition, options);
+
+        result[newConditionName] = newOptions;
+      }
+
+      return result;
+    }, {});
+
+    // console.log(transformedConditions);
+
+    // Add the conditions into the filters
+    Object.assign(filters, transformedConditions);
+
+    // console.log(filters);
+
+    // return data;
+
+    return filters;
+  };
 
   const submitForm = (data) => {
-    // eslint-disable-next-line no-console
     console.log(data);
 
     // Don't know how acceptable this is for compliance.
     // Could also do something like a modal that grabs focus while it is generating
+    // TODO: Make this less bad
     window.scrollTo(0, 0);
 
-    // Example csv generation code:
-    dispatch(downloadReportCSV({ organizationUrl: businessLineUrl, filterData: { filters: { report: 'true' } } }));
-  };
+    const filterData = parseFilters(data);
 
-  const watchReportType = watch('reportType');
-  const watchRadioEventAction = watch('radioEventAction');
-  const watchRadioStatus = watch('radioStatus');
+    console.log(filterData);
+
+    // Example csv generation code:
+    dispatch(downloadReportCSV({ organizationUrl: businessLineUrl, filterData: { filters: filterData } }));
+  };
 
   useEffect(() => {
     dispatch(fetchUsers({ queryType: 'organization', queryParams: { query: 'vha' } }));
@@ -270,12 +344,14 @@ const ReportPage = ({ history }) => {
         <ReportPageButtons
           history={history}
           isGenerateButtonDisabled={!formState.isDirty || isCSVGenerating}
-          handleClearFilters={() => reset(defaultFormValues)}
+          // TODO: figure out why this was done this way? handleClearFilters={() => reset(defaultFormValues)}
+          handleClearFilters={() => reset()}
           handleSubmit={handleSubmit(submitForm)}
         />
       }
     >
-      { isCSVGenerating && <LoadingMessage message=<h3>Generating CSV... <LoadingIcon /></h3> />}
+      {/* TODO: This is ugly fix me please */}
+      { isCSVGenerating && <h3><span><LoadingMessage message="Generating CSV..." /><LoadingIcon /></span></h3>}
       <h1>Generate task report</h1>
       <FormProvider {...methods}>
         <form>

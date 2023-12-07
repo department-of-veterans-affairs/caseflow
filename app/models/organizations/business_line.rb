@@ -107,11 +107,11 @@ class BusinessLine < Organization
     def initialize(query_type: :in_progress, parent: business_line, query_params: {})
       @query_type = query_type
       @parent = parent
-      @query_params = query_params
+      @query_params = query_params.dup
 
       # Initialize default sorting
-      query_params[:sort_by] ||= DEFAULT_ORDERING_HASH[query_type][:sort_by]
-      query_params[:sort_order] ||= "desc"
+      @query_params[:sort_by] ||= DEFAULT_ORDERING_HASH[query_type][:sort_by]
+      @query_params[:sort_order] ||= "desc"
     end
 
     def build_query
@@ -181,7 +181,7 @@ class BusinessLine < Organization
           SELECT
               versions.item_id,
               versions.item_type,
-              ARRAY_AGG(versions.object_changes) AS object_changes_array,
+              ARRAY_AGG(versions.object_changes ORDER BY versions.id) AS object_changes_array,
               MAX(CASE
                   WHEN versions.object_changes LIKE '%closed_at:%' THEN versions.whodunnit
                   ELSE NULL
@@ -197,19 +197,31 @@ class BusinessLine < Organization
           request_issues.id AS actual_request_issue_id, request_issues.created_at AS request_issue_created_at,
           intakes.completed_at AS intake_completed_at, update_users.full_name AS update_user_name, tasks.created_at AS task_created_at,
           intake_users.full_name AS intake_user_name, update_users.station_id AS update_user_station_id, tasks.closed_at AS task_closed_at,
-          intake_users.station_id AS intake_user_station_id, decision_users.full_name AS decision_user_name,
-          decision_users.station_id AS decision_user_station_id, decision_issues.created_at AS decision_created_at,
-          intake_users.css_id AS intake_user_css_id, decision_users.css_id AS decision_user_css_id, update_users.css_id AS update_user_css_id,
+          intake_users.station_id AS intake_user_station_id, decision_issues.created_at AS decision_created_at,
+          COALESCE(decision_users.station_id, decision_users_completed_by.station_id) AS decision_user_station_id,
+          COALESCE(decision_users.full_name, decision_users_completed_by.full_name) AS decision_user_name,
+          COALESCE(decision_users.css_id, decision_users_completed_by.css_id) AS decision_user_css_id,
+          intake_users.css_id AS intake_user_css_id, update_users.css_id AS update_user_css_id,
           request_issues_updates.before_request_issue_ids, request_issues_updates.after_request_issue_ids,
           request_issues_updates.withdrawn_request_issue_ids, request_issues_updates.edited_request_issue_ids,
-          decision_issues.caseflow_decision_date, request_issues.decision_date_added_at, intakes.veteran_file_number,
+          decision_issues.caseflow_decision_date, request_issues.decision_date_added_at,
           tasks.appeal_type, tasks.appeal_id, request_issues.nonrating_issue_category, request_issues.nonrating_issue_description,
-          request_issues.decision_date, decision_issues.disposition, tasks.assigned_at, people.first_name, people.last_name,
+          request_issues.decision_date, decision_issues.disposition, tasks.assigned_at,
           request_decision_issues.decision_issue_id, request_issues.closed_at AS request_issue_closed_at,
-          tv.object_changes_array AS task_versions, (CURRENT_TIMESTAMP::date - tasks.assigned_at::date) AS days_waiting
+          tv.object_changes_array AS task_versions, (CURRENT_TIMESTAMP::date - tasks.assigned_at::date) AS days_waiting,
+          COALESCE(intakes.veteran_file_number, higher_level_reviews.veteran_file_number, supplemental_claims.veteran_file_number) AS veteran_file_number,
+          COALESCE(
+            NULLIF(CONCAT(unrecognized_party_details.name, ' ', unrecognized_party_details.last_name), ' '),
+            NULLIF(CONCAT(people.first_name, ' ', people.last_name), ' '),
+            bgs_attorneys.name
+          ) AS claimant_name
         FROM tasks
         INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
         AND request_issues.decision_review_id = tasks.appeal_id
+        LEFT JOIN higher_level_reviews ON tasks.appeal_type = 'HigherLevelReview'
+        AND tasks.appeal_id = higher_level_reviews.id
+        LEFT JOIN supplemental_claims ON tasks.appeal_type = 'SupplementalClaim'
+        AND tasks.appeal_id = supplemental_claims.id
         LEFT JOIN intakes ON tasks.appeal_type = intakes.detail_type
         AND intakes.detail_id = tasks.appeal_id
         LEFT JOIN request_issues_updates ON request_issues_updates.review_type = tasks.appeal_type
@@ -221,9 +233,13 @@ class BusinessLine < Organization
         AND claimants.decision_review_type = tasks.appeal_type
         LEFT join versions_agg tv ON tv.item_type = 'Task' AND tv.item_id = tasks.id
         LEFT JOIN people ON claimants.participant_id = people.participant_id
+        LEFT JOIN bgs_attorneys ON claimants.participant_id = bgs_attorneys.participant_id
+        LEFT JOIN unrecognized_appellants ON claimants.id = unrecognized_appellants.claimant_id
+        LEFT JOIN unrecognized_party_details ON unrecognized_appellants.unrecognized_party_detail_id = unrecognized_party_details.id
         LEFT JOIN users intake_users ON intakes.user_id = intake_users.id
         LEFT JOIN users update_users ON request_issues_updates.user_id = update_users.id
         LEFT JOIN users decision_users ON decision_users.id = tv.version_closed_by_id::int
+        LEFT join users decision_users_completed_by ON decision_users_completed_by.id = tasks.completed_by_id
         WHERE tasks.type = 'DecisionReviewTask'
         AND tasks.assigned_to_type = 'Organization'
         AND tasks.assigned_to_id = '#{parent.id.to_i}'
@@ -294,7 +310,7 @@ class BusinessLine < Organization
     def days_waiting_filter
       if query_params[:days_waiting].present?
         number_of_days = query_params[:days_waiting][:number_of_days]
-        operator = query_params[:days_waiting][:range]
+        operator = query_params[:days_waiting][:operator]
         case operator
         when ">", "<", "="
           <<-SQL
