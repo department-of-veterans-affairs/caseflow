@@ -101,7 +101,7 @@ RSpec.feature "Send Initial Notification Letter Tasks", :all_dbs do
 
       # check the screen output and model status
       appeal_initial_letter_task = root_task.appeal.tasks.find_by(type: "SendInitialNotificationLetterTask")
-      expect(page).to have_content(`#{appeal_initial_letter_task.type} cancelled`)
+      expect(page).to have_content("#{appeal_initial_letter_task.type} cancelled")
       expect(appeal_initial_letter_task.status).to eq("cancelled")
     end
   end
