@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 namespace :correspondence do
-  desc "setup data for intake correspondence in UAT/PROD"
+  desc "setup data for intake correspondence (autotext and correspondence type)in UAT/PROD"
   task :setup_intake_tables, [] => :environment do |_|
     STDOUT.puts("Creating data for Auto Text Tables")
     # creates intiial values for auto text table
@@ -30,6 +30,37 @@ namespace :correspondence do
 
     auto_texts_values.each do |text|
       AutoText.find_or_create_by(name: text)
+    end
+
+    correspondence_types_list = [
+      "Abeyance",
+      "Attorney Inquiry",
+      "CAVC Correspondence",
+      "Change of address",
+      "Congressional interest",
+      "CUE related",
+      "Death certificate",
+      "Evidence or argument",
+      "Extension request",
+      "FOIA request",
+      "Hearing Postponement Request",
+      "Hearing related",
+      "Hearing Withdrawal Request",
+      "Advance on docket",
+      "Motion for reconsideration",
+      "Motion to vacate",
+      "Other motions",
+      "Power of attorney related",
+      "Privacy Act complaints",
+      "Privacy Act request",
+      "Returned as undeliverable mail",
+      "Status Inquiry",
+      "Thurber",
+      "Withdrawal of appeal"
+    ]
+
+    correspondence_types_list.each do |type|
+      CorrespondenceType.find_or_create_by(name: type)
     end
   end
 
