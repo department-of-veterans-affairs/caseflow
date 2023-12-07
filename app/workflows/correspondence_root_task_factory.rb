@@ -10,11 +10,13 @@ class CorrespondenceRootTaskFactory
       appeal_type: "Correspondence",
       type: "CorrespondenceRootTask")
 
+    @root_task.update(status: "on_hold")
+
   end
 
   def create_root_and_sub_tasks!
     ActiveRecord::Base.transaction do
-      create_subtasks! if FeatureToggle.enabled?(:correspondence_queue)
+      create_subtasks!
     end
   end
 
@@ -25,7 +27,17 @@ class CorrespondenceRootTaskFactory
   end
 
   def review_package_task
-    @review_package_task ||= ReviewPackageTask.where(appeal_id: @correspondence.id, appeal_type: ReviewPackageTask.name).any?
-    ReviewPackageTask.create!(appeal: @correspondence, parent: @root_task, assigned_to: Bva.singleton) unless @review_package_task
+    # @review_package_task ||= ReviewPackageTask.where(appeal_id: @correspondence.id, appeal_type: ReviewPackageTask.name).any?
+    # ReviewPackageTask.create!(appeal: @correspondence, parent: @root_task, assigned_to: Bva.singleton) unless @review_package_task
+    rpt ||= ReviewPackageTask.where(appeal_id: @correspondence.id, appeal_type: ReviewPackageTask.name)
+    if rpt.blank?
+      ReviewPackageTask.create!(
+        appeal_id: @correspondence.id,
+        parent_id: @root_task.id,
+        assigned_to: MailTeam.singleton,
+        appeal_type: Correspondence.name,
+        type: ReviewPackageTask.name
+      )
+    end
   end
 end
