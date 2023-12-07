@@ -2,11 +2,8 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import LastRetrievalAlert from '../../../app/reader/LastRetrievalAlert';
 import { alertMessage, warningMessage } from '../constants/LastRetrievalAlert'
-import moment from 'moment';
 import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
-import rootReducer from '../../../app/reader/reducers';
-import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import documentListReducer from '../../../app/reader/DocumentList/DocumentListReducer'
 
