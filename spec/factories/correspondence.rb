@@ -10,7 +10,6 @@ FactoryBot.define do
     cmp_queue_id { 1 }
     cmp_packet_number { rand(1_000_000_000..9_999_999_999) }
     va_date_of_receipt { Time.zone.yesterday }
-    prior_correspondence_id { 1 }
     notes { "This is a note from CMP." }
     assigned_by_id { 81 }
     veteran_id { 1 }

@@ -40,7 +40,7 @@ describe('ReviewForm', () => {
 
     props.setEditableData = mockFunction;
     render(<ReviewForm {...props} />);
-    const inputNode = screen.getByRole('textbox', { name: 'Veteran file number' });
+    const inputNode = screen.getByRole('textbox', { name: 'veteran-file-number-input' });
 
     fireEvent.change(inputNode, { target: { value: '12345678' } });
     expect(mockFunction).toHaveBeenCalledTimes(1);
