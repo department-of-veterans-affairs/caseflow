@@ -4,12 +4,23 @@ FactoryBot.define do
   factory :staff, class: VACOLS::Staff do
     transient do
       user { nil }
-      sequence(:generated_slogid) { |n| "ID#{n}" }
+      sequence(:generated_sattyid)
     end
 
-    sequence(:sattyid)
-    sequence(:stafkey)
-    slogid { generated_slogid }
+    sequence(:stafkey) do |n|
+      if user
+        user.css_id
+      else
+        n
+      end
+    end
+    sequence(:slogid) do |n|
+      if user
+        user.css_id
+      else
+        "ID#{n}"
+      end
+    end
     sequence(:sdomainid) do |n|
       if user
         user.css_id
@@ -26,21 +37,25 @@ FactoryBot.define do
 
     trait :attorney_role do
       sactive { "A" }
+      sattyid { generated_sattyid }
     end
 
     trait :hearing_judge do
       stitle { "D#{Random.rand(1..5)}" }
       svlj { "A" }
+      sattyid { generated_sattyid }
     end
 
     trait :judge_role do
       svlj { "J" }
       sactive { "A" }
+      sattyid { generated_sattyid }
     end
 
     trait :inactive_judge do
       svlj { "J" }
       sactive { "I" }
+      sattyid { generated_sattyid }
     end
 
     trait :hearing_coordinator do
@@ -54,6 +69,7 @@ FactoryBot.define do
     trait :attorney_judge_role do
       svlj { "A" }
       sactive { "A" }
+      sattyid { generated_sattyid }
     end
 
     trait :colocated_role do

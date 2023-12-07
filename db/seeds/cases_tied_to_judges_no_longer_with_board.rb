@@ -71,49 +71,56 @@ module Seeds
       create(:veteran, params.merge(options))
     end
 
-    def create_active_judge(css_id, full_name)
-      create(:user, :judge, :with_vacols_judge_record, css_id: css_id, full_name: full_name)
+    def find_or_create_active_judge(css_id, full_name)
+      User.find_by_css_id(css_id) ||
+        create(:user, :judge, :with_vacols_judge_record, css_id: css_id, full_name: full_name)
     end
 
     def inactive_cf_user_and_inactive_admin_judge_team
       @inactive_cf_user_and_inactive_admin_judge_team ||= begin
-        create(:user, :judge, :with_vacols_judge_record, css_id: "BVADSLADER", full_name: "BVADSLADER").tap do |judge|
-          judge.update_status!("inactive")
-        end
+        judge = find_or_create_active_judge("INACTIVECFJUDGE", "Judge InactiveInCF User")
+        judge.update_status!("inactive") if judge.active?
+        judge
       end
     end
 
     # Active Caseflow User who is not the admin of any JudgeTeam.
     def active_cf_user_and_non_admin_judge_team
       @active_cf_user_and_non_admin_judge_team ||= begin
-        create_non_admin_judge_team_user.organizations_users.non_admin.first.user.tap do |user|
-          user.update(full_name: "BVADSSTEVE", css_id: "BVADSSTEVE")
-          create(:staff, :judge_role, sdomainid: user.css_id)
-        end
-      end
-    end
+        judge = find_or_create_active_judge("ACTIVEJUDGETEAM", "Judge WithJudgeTeam Active")
+        judge_team = JudgeTeam.for_judge(judge)
 
-    def create_non_admin_judge_team_user
-      create(:judge_team, :has_judge_team_lead_as_admin, :incorrectly_has_nonadmin_judge_team_lead,
-             url: "org_queue_bva#{Random.hex}")
+        user = create(:user, :with_vacols_attorney_record, css_id: "ACTIVEATTY", "Attorney OnJudgeTeam Active")
+        judge_team.add_user(user)
+
+        user
+      end
     end
 
     # Active Caseflow User who is the admin of an Inactive JudgeTeam and a non-admin of another JudgeTeam
     def active_cf_user_and_inactive_judge_team
-      @active_cf_user_and_inactive_judge_team ||=
-        create(:user, :judge, :with_vacols_judge_record, css_id: "BVADSBOB", full_name: "BVADSBOB").tap do |user|
-          JudgeTeam.for_judge(user).inactive!
-          another_judge_team = create(:judge_team, url: "org_queue_#{Random.hex}")
-          another_judge_team.add_user(user)
-        end
+      @active_cf_user_and_inactive_judge_team ||= begin
+        user = create(:user,
+                      :judge,
+                      :with_vacols_acting_judge_record,
+                      css_id: "ATTYWITHJUDGETEAM",
+                      full_name: "Attorney WithInactiveJudgeTeam Affinity")
+
+        JudgeTeam.for_judge(user).inactive!
+        another_judge = find_or_create_active_judge("ACTIVEJUDGETEAM", "Judge WithJudgeTeam Active")
+        another_judge_team = JudgeTeam.for_judge(another_judge)
+        another_judge_team.add_user(user)
+
+        user
+      end
     end
 
-    def active_judge_one
-      @active_judge_one ||= create_active_judge("BVADSJOHN", "BVADSJOHN")
+    def active_judge_hearing_affinity_45_days
+      @active_judge_hearing_affinity_45_days ||= find_or_create_active_judge("JUDGEHEARING1", "Judge Hearings45Days Affinity")
     end
 
-    def active_judge_two
-      @active_judge_two ||= create_active_judge("BVADSRICK", "BVADSRICK")
+    def active_judge_hearing_affinity_65_days
+      @active_judge_hearing_affinity_65_days ||= find_or_create_active_judge("JUDGEHEARING2", "Judge Hearings65Days Affinity")
     end
 
     def create_legacy_appeals
@@ -192,17 +199,17 @@ module Seeds
 
     def create_ama_appeals_for_inactive_cf_user_and_inactive_admin_judge_team
       veteran = create_veteran_for_inactive_cf_user_and_inactive_admin_judge_team
-      create_ama_appeals_ready_to_distribute_less_than_60_days(inactive_cf_user_and_inactive_admin_judge_team, veteran)
+      create_ama_appeals_ready_to_distribute_45_days(inactive_cf_user_and_inactive_admin_judge_team, veteran)
     end
 
     def create_ama_appeals_for_active_judge
-      create_ama_appeals_ready_to_distribute_less_than_60_days(
-        active_judge_one,
+      create_ama_appeals_ready_to_distribute_45_days(
+        active_judge_hearing_affinity_45_days,
         create_veteran_for_active_judge
       )
 
-      create_ama_appeals_ready_to_distribute_more_than_60_days(
-        active_judge_two,
+      create_ama_appeals_ready_to_distribute_65_days(
+        active_judge_hearing_affinity_65_days,
         create_veteran_for_active_judge
       )
     end
@@ -215,7 +222,7 @@ module Seeds
 
     def create_ama_appeals_for_active_cf_user_and_non_admin_judge_team
       veteran = create_veteran_for_active_cf_user_and_non_admin_judge_team
-      create_ama_appeals_ready_to_distribute_less_than_60_days(active_cf_user_and_non_admin_judge_team, veteran)
+      create_ama_appeals_ready_to_distribute_45_days(active_cf_user_and_non_admin_judge_team, veteran)
     end
 
     def create_veteran_for_active_cf_user_and_non_admin_judge_team
@@ -229,7 +236,7 @@ module Seeds
 
     def create_ama_appeals_for_active_cf_user_and_inactive_judge_team
       veteran = create_veteran_for_active_cf_user_and_inactive_judge_team
-      create_ama_appeals_ready_to_distribute_less_than_60_days(active_cf_user_and_inactive_judge_team, veteran)
+      create_ama_appeals_ready_to_distribute_45_days(active_cf_user_and_inactive_judge_team, veteran)
     end
 
     def create_veteran_for_active_cf_user_and_inactive_judge_team
@@ -242,7 +249,7 @@ module Seeds
     end
 
     # AC2,4,5,6: ready to distribute for less than 60 days
-    def create_ama_appeals_ready_to_distribute_less_than_60_days(judge, veteran)
+    def create_ama_appeals_ready_to_distribute_45_days(judge, veteran)
       Timecop.travel(45.days.ago)
       create(:appeal,
              :advanced_on_docket_due_to_motion,
@@ -256,8 +263,8 @@ module Seeds
     end
 
     # AC3: ready to distribute for more than 60 days
-    def create_ama_appeals_ready_to_distribute_more_than_60_days(judge, veteran)
-      Timecop.travel(61.days.ago)
+    def create_ama_appeals_ready_to_distribute_65_days(judge, veteran)
+      Timecop.travel(65.days.ago)
       create(:appeal,
              :advanced_on_docket_due_to_motion,
              :with_post_intake_tasks,
