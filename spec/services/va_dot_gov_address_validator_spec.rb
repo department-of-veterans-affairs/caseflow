@@ -80,12 +80,12 @@ describe VaDotGovAddressValidator do
 
     context "when veteran has foreign address" do
       let(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
-      let(:valid_address_response) { ExternalApi::VADotGovService::ZipCodeValidationResponse.new(mock_response) }
+      let(:valid_zip_response) { ExternalApi::VADotGovService::ZipCodeValidationResponse.new(mock_response) }
       let(:response_body) { valid_address_response.body }
 
       before do
         allow_any_instance_of(VaDotGovAddressValidator).to receive(:valid_address_response)
-          .and_return(valid_address_response)
+          .and_return(valid_zip_response)
         allow(valid_address_response).to receive(:coordinates_invalid?).and_return(true)
         allow(response_body).to receive(:dig).with(:addressMetaData, :addressType).and_return("International")
       end
