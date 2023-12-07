@@ -3,6 +3,7 @@
 require_relative "../../../app/services/claim_change_history/change_history_reporter.rb"
 require_relative "../../../app/services/claim_change_history/claim_history_service.rb"
 require_relative "../../../app/services/claim_change_history/claim_history_event.rb"
+require_relative "../../../app/services/claim_change_history/change_history_filter_parser.rb"
 
 feature "NonComp Report Page", :postgres do
   let(:non_comp_org) { VhaBusinessLine.singleton }

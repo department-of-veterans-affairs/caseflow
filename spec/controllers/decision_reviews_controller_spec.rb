@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
-# This is needed for the generate_report action for a csv format since the testing environment does not eager load files
+# This is needed for the generate_report action since the testing environment does not eager load service files
 require Rails.root.join("app", "services", "claim_change_history", "change_history_reporter.rb")
 require Rails.root.join("app", "services", "claim_change_history", "claim_history_service.rb")
+require Rails.root.join("app", "services", "claim_change_history", "change_history_filter_parser.rb")
+require Rails.root.join("app", "services", "claim_change_history", "claim_history_event.rb")
 
 describe DecisionReviewsController, :postgres, type: :controller do
   before do
