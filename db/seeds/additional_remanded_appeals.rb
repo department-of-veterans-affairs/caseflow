@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Seeds
-  class RemandedAmaAppeals < Base
+  class AdditionalRemandedAppeals < Base
     def initialize
       initial_id_values
     end
@@ -61,6 +61,7 @@ module Seeds
       @attorney3 ||= User.find_by_css_id("BVARDUBUQUE")
     end
 
+    #New Remand Reasons not implemented yet - need actual IDs, not just text output
     def decision_reason_remand_list
       [
         "no_notice_sent",
@@ -73,10 +74,6 @@ module Seeds
         "other_government_records",
         "medical_examinations",
         "medical_opinions",
-        "no_medical_examination",
-        "inadequate_medical_examination",
-        "no_medical_opinion",
-        "inadequate_opinion",
         "advisory_medical_opinion",
         "inextricably_intertwined",
         "error",
@@ -334,7 +331,7 @@ module Seeds
     #Evidence Submission
     def create_ama_appeals_ready_to_dispatch_remanded_es(attorney)
       Timecop.travel(35.days.ago)
-       (0..17).each do |num|
+       (0..13).each do |num|
           appeal = create(:appeal,
                           :evidence_submission_docket,
                           :at_judge_review,
@@ -350,7 +347,7 @@ module Seeds
     #Hearing
     def create_ama_appeals_ready_to_dispatch_remanded_hr(attorney)
       Timecop.travel(95.days.ago)
-       (0..17).each do |num|
+       (0..13).each do |num|
           appeal = create(:appeal,
                           :hearing_docket,
                           :at_judge_review,
@@ -366,7 +363,7 @@ module Seeds
     #Direct Review
     def create_ama_appeals_ready_to_dispatch_remanded_dr(attorney)
       Timecop.travel(65.days.ago)
-        (0..17).each do |num|
+        (0..13).each do |num|
           appeal = create(:appeal,
                           :direct_review_docket,
                           :at_judge_review,
@@ -384,7 +381,7 @@ module Seeds
     #Evidence Submission
     def create_ama_appeals_ready_to_dispatch_remanded_multiple_es(attorney)
       Timecop.travel(40.days.ago)
-        (0..17).each do |num|
+        (0..13).each do |num|
           appeal = create(:appeal,
                           :evidence_submission_docket,
                           :at_judge_review,
@@ -400,7 +397,7 @@ module Seeds
     #Hearing
     def create_ama_appeals_ready_to_dispatch_remanded_multiple_hr(attorney)
       Timecop.travel(100.days.ago)
-        (0..17).each do |num|
+        (0..13).each do |num|
           appeal = create(:appeal,
                           :hearing_docket,
                           :at_judge_review,
@@ -416,7 +413,7 @@ module Seeds
     #Direct Review
     def create_ama_appeals_ready_to_dispatch_remanded_multiple_dr(attorney)
       Timecop.travel(70.days.ago)
-        (0..17).each do |num|
+        (0..13).each do |num|
           appeal = create(:appeal,
                           :direct_review_docket,
                           :at_judge_review,

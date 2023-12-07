@@ -260,10 +260,6 @@ class IssueRemandReasonsOptions extends React.PureComponent {
     delete LEGACY_REMAND_REASONS[sectionName][index];
   };
 
-  filterSelectableAmaRemandReasons = (sectionName, index) => {
-    delete REMAND_REASONS[sectionName][index];
-  };
-
   getCheckboxGroup = () => {
     const { appeal } = this.props;
     const checkboxGroupProps = {
@@ -312,16 +308,6 @@ class IssueRemandReasonsOptions extends React.PureComponent {
       );
     }
 
-    if (this.props.featureToggles.additional_remand_reasons) {
-      this.filterSelectableAmaRemandReasons('medicalExam', 0);
-      this.filterSelectableAmaRemandReasons('medicalExam', 1);
-    } else {
-      this.filterSelectableAmaRemandReasons('medicalExam', 2);
-      this.filterSelectableAmaRemandReasons('medicalExam', 3);
-      this.filterSelectableAmaRemandReasons('medicalExam', 4);
-      this.filterSelectableAmaRemandReasons('medicalExam', 5);
-    }
-
     return (
       <div {...flexContainer}>
         <div {...flexColumn}>
@@ -340,9 +326,7 @@ class IssueRemandReasonsOptions extends React.PureComponent {
         </div>
         <div {...flexColumn}>
           <CheckboxGroup
-            label={this.props.featureToggles.additional_remand_reasons ?
-              <h3>Medical examination and opinion</h3> :
-              <h3>Medical examination</h3>}
+            label={<h3>Medical examination and opinion</h3>}
             name="medical-exam"
             options={REMAND_REASONS.medicalExam}
             {...checkboxGroupProps}

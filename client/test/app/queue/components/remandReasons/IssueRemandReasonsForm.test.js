@@ -45,13 +45,13 @@ describe('IssueRemandReasonsForm', () => {
       );
 
       userEvent.click(
-        screen.getByRole('checkbox', { name: /issue-1-no_medical_opinion/ })
+        screen.getByRole('checkbox', { name: /issue-1-medical_opinions/ })
       );
 
       expect(onChange).toHaveBeenCalledTimes(1);
       expect(onChange).toHaveBeenLastCalledWith([
         {
-          code: 'no_medical_opinion',
+          code: 'medical_opinions',
           checked: true,
           post_aoj: null,
         },
@@ -64,7 +64,7 @@ describe('IssueRemandReasonsForm', () => {
       expect(onChange).toHaveBeenCalledTimes(2);
       expect(onChange).toHaveBeenLastCalledWith([
         {
-          code: 'no_medical_opinion',
+          code: 'medical_opinions',
           checked: true,
           post_aoj: 'false',
         },
