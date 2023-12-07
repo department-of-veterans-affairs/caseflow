@@ -9,7 +9,7 @@ import {
   anchorJumpLinkStyling } from 'app/queue/StickyNavContentArea';
 import COPY from '../../../COPY';
 
-const CaseflowDistributionContent = ({ levers, saveChanges, formattedHistory, isAdmin, leverStore }) => {
+const CaseflowDistributionContent = ({ levers, saveChanges, formattedHistory, isAdmin, leverStore, sectionTitles }) => {
   return (
     <div>
       <h1>Administration</h1>
@@ -28,7 +28,7 @@ const CaseflowDistributionContent = ({ levers, saveChanges, formattedHistory, is
             <h2>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_TITLE}</h2>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION}</p>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION_NOTE}</p>
-            <InteractableLeverWrapper levers={levers} leverStore={leverStore} isAdmin={isAdmin} />
+            <InteractableLeverWrapper levers={levers} leverStore={leverStore} isAdmin={isAdmin} sectionTitles={sectionTitles} />
           </div>
         </div>
 
@@ -63,7 +63,8 @@ CaseflowDistributionContent.propTypes = {
   saveChanges: PropTypes.func.isRequired,
   formattedHistory: PropTypes.array.isRequired,
   isAdmin: PropTypes.bool.isRequired,
-  leverStore: PropTypes.any.isRequired
+  leverStore: PropTypes.any.isRequired,
+  sectionTitles: PropTypes.array.isRequired
 };
 
 export default CaseflowDistributionContent;
