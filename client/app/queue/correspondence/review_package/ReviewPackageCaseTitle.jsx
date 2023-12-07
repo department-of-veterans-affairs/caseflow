@@ -77,7 +77,7 @@ const CaseSubTitleScaffolding = (props) => (
         placeholder="Request package action"
         label="Request package action dropdown"
         hideLabel
-        name="package-action-dropdown"
+        name=""
       />
     </div>
   </div>
