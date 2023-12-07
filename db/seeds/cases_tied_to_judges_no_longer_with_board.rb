@@ -166,10 +166,6 @@ module Seeds
       @active_cf_user_with_only_sattyid ||= find_or_create_active_judge_with_only_sattyid("USERSATTYID", full_name: "User WithOnly Sattyid")
     end
 
-    def active_cf_user_with_only_sattyid
-      @active_cf_user_with_only_sattyid ||= create(:user, :with_vacols_record, css_id: "SATTYIDUSER", full_name: "SATTYIDUSER")
-    end
-
     def create_legacy_appeals
       Timecop.travel(65.days.ago)
       APPEALS_LIMIT.times.each do
