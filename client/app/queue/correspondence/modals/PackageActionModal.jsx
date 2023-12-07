@@ -5,7 +5,6 @@ import TextareaField from '../../../components/TextareaField';
 import Table from '../../../components/Table';
 import { connect } from 'react-redux';
 import ApiUtil from '../../../util/ApiUtil';
-import ApiUtil from '../../../util/ApiUtil';
 import { getPackageActionColumns, getModalInformation } from '../review_package/utils';
 import { useHistory } from 'react-router';
 
