@@ -38,9 +38,9 @@ class HearingDaySerializer
   attribute :begins_at
   attribute :updated_by_id
   attribute :updated_at
-  attribute :conference_link do |hearing_day, params|
-    if params[:include_conference_link].present? && params[:include_conference_link][:include_conference_link]
-      serialize_conference_link(hearing_day.conference_link)
+  attribute :conference_links do |hearing_day, params|
+    if params[:include_conference_links].present? && params[:include_conference_links][:include_conference_links]
+      serialize_conference_links(hearing_day.conference_links)
     end
   end
 
@@ -93,15 +93,17 @@ class HearingDaySerializer
         filled_slots_count_for_days: filled_slots_count_for_days,
         judge_names: judge_names
       }
-    ).serializable_hash[:data].map { |hearing_day| hearing_day[:attributes] }
+    ).serializable_hash[:data]
+      .pluck(:attributes)
   end
 
-  def self.serialize_conference_link(conference_link)
-    if !conference_link.nil?
-      ::ConferenceLinkSerializer.new(
-        conference_link,
-        collection: false
-      ).serializable_hash[:data][:attributes]
-    end
+  def self.serialize_conference_links(conference_links)
+    return [] if conference_links.empty?
+
+    ::ConferenceLinkSerializer.new(
+      conference_links,
+      collection: true
+    ).serializable_hash[:data]
+      .pluck(:attributes)
   end
 end

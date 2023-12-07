@@ -1067,4 +1067,20 @@ describe User, :all_dbs do
       end
     end
   end
+
+  describe "#conference_provider" do
+    let!(:user) { create(:user, css_id: "HEARINGS_USER") }
+
+    subject { user.conference_provider }
+
+    it "User's initial conference provider is Pexip" do
+      is_expected.to eq "pexip"
+    end
+
+    it "User's conference provider can be swapped" do
+      OrganizationsUser.update_user_conference_provider(user, "webex")
+
+      is_expected.to eq "webex"
+    end
+  end
 end
