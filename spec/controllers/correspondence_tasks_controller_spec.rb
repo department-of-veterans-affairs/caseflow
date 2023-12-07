@@ -28,6 +28,7 @@ RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
       parent = ReviewPackageTask.find_by(appeal_id: correspondence.id, type: ReviewPackageTask.name)
       expect(remove_package_task.appeal).to eq(correspondence)
       expect(remove_package_task.parent_id).to eq(parent.id)
+      expect(remove_package_task.instructions).to eq(["please remove task, thanks"])
       expect(remove_package_task.status).to eq(Constants.TASK_STATUSES.assigned)
       expect(parent.status).to eq(Constants.TASK_STATUSES.on_hold)
     end
