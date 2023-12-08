@@ -3,6 +3,7 @@
 class CorrespondenceController < ApplicationController
   before_action :verify_feature_toggle
   before_action :correspondence
+  before_action :auto_texts
 
   def intake
     respond_to do |format|
@@ -100,8 +101,30 @@ class CorrespondenceController < ApplicationController
       disposition: document_disposition
     )
   end
+  
+  def process_intake
+    ActiveRecord::Base.transaction do
+      begin
+        create_correspondence_relations
+      rescue ActiveRecord::RecordInvalid
+        render json: { error: "Failed to update records" }, status: :bad_request
+        raise ActiveRecord::Rollback
+      else
+        render json: {}, status: :created
+      end
+    end
+  end
 
   private
+
+  def create_correspondence_relations
+    params[:related_correspondence_uuids]&.map do |uuid|
+      CorrespondenceRelation.create!(
+        correspondence_id: Correspondence.find_by(uuid: params[:correspondence_uuid])&.id,
+        related_correspondence_id: Correspondence.find_by(uuid: uuid)&.id
+      )
+    end
+  end
 
   def general_information
     vet = veteran_by_correspondence
@@ -162,5 +185,9 @@ class CorrespondenceController < ApplicationController
       correspondenceUuid: correspondence.uuid,
       packageDocumentType: correspondence.correspondence_type_id
     }
+  end
+
+  def auto_texts
+    @auto_texts ||= AutoText.all.pluck(:name)
   end
 end
