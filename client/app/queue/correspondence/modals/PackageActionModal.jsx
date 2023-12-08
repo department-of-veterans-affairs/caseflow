@@ -52,7 +52,7 @@ const PackageActionModal = (props) => {
     if (packageActionModal === 'removePackage' || packageActionModal === 'reassignPackage') {
       data.instructions.push(textInputReason);
     }
-    console.log(data);
+
     ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/task`, { data }).then((response) => {
       props.closeHandler(null);
       if (response.ok) {
