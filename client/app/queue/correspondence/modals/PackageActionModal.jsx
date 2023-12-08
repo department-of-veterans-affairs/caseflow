@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import ApiUtil from '../../../util/ApiUtil';
 import { getPackageActionColumns, getModalInformation } from '../review_package/utils';
 import { useHistory } from 'react-router';
+import RadioField from '../../../components/RadioField';
 
 const PackageActionModal = (props) => {
   const {
@@ -21,6 +22,7 @@ const PackageActionModal = (props) => {
   const history = useHistory();
 
   const [textInputReason, setTextInputReason] = useState('');
+  const [radioValue, setRadioValue] = useState('');
 
   const rows = [
     {
@@ -30,16 +32,35 @@ const PackageActionModal = (props) => {
     }
   ];
 
+  const RadioOptions = [
+    { displayText: 'Package contains documents related to more than one person.',
+      value: 'Package contains documents related to more than one person.' },
+    { displayText: 'Package contains documents that must be processed by multiple business lines.',
+      value: 'Package contains documents that must be processed by multiple business lines.' },
+    { displayText: 'Other',
+      value: 'Other' }
+  ];
+
   // Disable submit button unless conditional input is met
   const disableSubmit = () => {
-    switch (packageActionModal) {
-    case 'removePackage':
-      return textInputReason === '';
-    case 'reassignPackage':
-      return textInputReason === '';
-    default:
-      return true;
+    if (radioValue === '' || radioValue === 'Other') {
+      switch (packageActionModal) {
+      case 'removePackage':
+        return textInputReason === '';
+      case 'reassignPackage':
+        return textInputReason === '';
+      case 'splitPackage':
+        return textInputReason === '';
+      default:
+        return true;
+      }
     }
+
+    return false;
+  };
+
+  const onChange = (event) => {
+    setRadioValue(event);
   };
 
   const submitHandler = async () => {
@@ -49,10 +70,18 @@ const PackageActionModal = (props) => {
       instructions: []
     };
 
-    if (packageActionModal === 'removePackage' || packageActionModal === 'reassignPackage') {
-      data.instructions.push(textInputReason);
+    if (radioValue && radioValue !== 'Other') {
+      data.instructions.push(radioValue);
     }
 
+    if (
+      (packageActionModal === 'removePackage' ||
+        packageActionModal === 'reassignPackage' ||
+        packageActionModal === 'splitPackage') &&
+      textInputReason !== ''
+    ) {
+      data.instructions.push(textInputReason);
+    }
     ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/task`, { data }).then((response) => {
       props.closeHandler(null);
       if (response.ok) {
@@ -92,8 +121,14 @@ const PackageActionModal = (props) => {
         slowReRendersAreOk
         summary="Request Package Action Modal"
       />
-      {
-        (packageActionModal === 'removePackage' || packageActionModal === 'reassignPackage') &&
+      {(packageActionModal === 'splitPackage') && <RadioField
+        name="Select a reason for sliting the package"
+        options={RadioOptions}
+        onChange={onChange}
+      />}
+      {(packageActionModal === 'removePackage' ||
+        packageActionModal === 'reassignPackage' ||
+        radioValue === 'Other') && (
         <TextareaField
           label={modalInfo.label}
           name={modalInfo.label}
@@ -101,7 +136,7 @@ const PackageActionModal = (props) => {
           value={textInputReason}
           onChange={(value) => setTextInputReason(value)}
         />
-      }
+      )}
     </Modal>
   );
 };
