@@ -12,14 +12,16 @@ describe CaseDistributionIneligibleJudges, :postgres do
 
       it "returns ineligible vacols judges" do
         result = described_class.ineligible_vacols_judges
-        eligible_vacols_judges = [active_judge_staff.sdomainid, attorney_judge_staff.sdomainid]
 
-
-        #expect(result.size).to eq(2)
         expect(result).to contain_exactly(
-          {:sattyid=>"4", :sdomainid=>"BVA4", :svlj=>"J"},
-          {:sattyid=>"9999", :sdomainid=>"BVA5", :svlj=>nil}
+          { sattyid: inactive_judge_staff.sattyid,
+            sdomainid: inactive_judge_staff.sdomainid,
+            svlj: inactive_judge_staff.svlj },
+          { sattyid: non_judge_with_sattyid.sattyid,
+            sdomainid: non_judge_with_sattyid.sdomainid,
+            svlj: non_judge_with_sattyid.svlj }
         )
+        expect(result.size).to eq(2)
       end
     end
   end
@@ -41,7 +43,7 @@ describe CaseDistributionIneligibleJudges, :postgres do
     context "when caseflow users are tied to judge team organizations" do
       let!(:active_judge_user) { create(:user, :judge) }
       let!(:inactive_judge_user) { create(:user, :judge) }
-      before { inactive_judge_user.organizations.last.update(status: 'inactive') }
+      before { inactive_judge_user.organizations.last.update(status: "inactive") }
 
       it "returns ineligible judge team users but not eligible judge team users" do
         result = described_class.ineligible_caseflow_judges
