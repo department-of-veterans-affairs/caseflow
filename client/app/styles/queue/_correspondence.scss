@@ -17,6 +17,7 @@
   margin: 3rem auto;
 }
 
+// scss-lint:disable PropertySpelling
 .cf-pdf-preview-scrollview {
   container-name: pdf-preview-scrollview-container;
   container-type: size;
@@ -34,6 +35,7 @@
   width: 100%;
 }
 
+// scss-lint:disable PropertySpelling
 .cf-pdf-preview-grid {
   width: fit-content;
   height: 100%;
@@ -44,6 +46,8 @@
   grid-column-gap: 10px;
 }
 
+// scss-lint:disable PropertySpelling
+// scss-lint:disable IdSelector
 #pdf-preview-footer-input-field {
   height: 100%;
   display: inline-block;
@@ -76,6 +80,7 @@
   }
 }
 
+// scss-lint:disable PropertySpelling
 @container pdf-preview-scrollview-container (min-width: 1300px) {
   .cf-pdf-preview-grid {
     width: fit-content;
