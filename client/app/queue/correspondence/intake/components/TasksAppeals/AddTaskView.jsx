@@ -5,29 +5,6 @@ import ReactSelectDropdown from '../../../../../components/ReactSelectDropdown';
 import Button from '../../../../../components/Button';
 import PropTypes from 'prop-types';
 
-const autotextOptions = [
-  'Address updated in VACOLS',
-  'Decision sent to Senator or Congressman mm/dd/yy',
-  'Interest noted in telephone call of mm/dd/yy',
-  'Interest noted in evidence file regarding current appeal',
-  'Email - responded via email on mm/dd/yy',
-  'Email - written response req; confirmed receipt via email to Congress office on mm/dd/yy',
-  'Possible motion pursuant to BVA decision dated mm/dd/yy',
-  'Motion pursuant to BVA decision dated mm/dd/yy',
-  'Statement in support of appeal by appellant',
-  'Statement in support of appeal by rep',
-  'Medical evidence X-Rays submitted or referred by',
-  'Medical evidence clinical reports submitted or referred by',
-  'Medical evidence examination reports submitted or referred by',
-  'Medical evidence progress notes submitted or referred by',
-  'Medical evidence physician\'s medical statement submitted or referred by',
-  'C&P exam report',
-  'Consent form (specify)',
-  'Withdrawal of issues',
-  'Response to BVA solicitation letter dated mm/dd/yy',
-  'VAF 9 (specify)'
-];
-
 const AddTaskView = (props) => {
   const task = props.task;
   const [modalVisible, setModalVisible] = useState(false);
@@ -59,7 +36,7 @@ const AddTaskView = (props) => {
 
     if (autoTextValues.length > 0) {
       autoTextValues.forEach((id) => {
-        autoTextOutput += `${autotextOptions[id] }\n`;
+        autoTextOutput += `${props.autoTexts[id] }\n`;
       });
     }
     updateTaskContent(autoTextOutput);
@@ -70,7 +47,7 @@ const AddTaskView = (props) => {
     <div key={task.id} style={{ display: 'block', marginRight: '2rem' }}>
       {modalVisible &&
         <CheckboxModal
-          checkboxData={autotextOptions}
+          checkboxData={props.autoTexts}
           toggleModal={handleModalToggle}
           closeHandler={handleModalToggle}
           handleAccept={handleAutotext}
@@ -134,7 +111,8 @@ AddTaskView.propTypes = {
   displayRemoveCheck: PropTypes.bool.isRequired,
   filteredTaskOptions: PropTypes.array.isRequired,
   allTaskTypeOptions: PropTypes.array.isRequired,
-  availableTaskTypeOptions: PropTypes.array.isRequired
+  availableTaskTypeOptions: PropTypes.array.isRequired,
+  autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
 export default AddTaskView;
