@@ -10,20 +10,20 @@ import Table from '../../../../../components/Table';
 
 const bodyStyling = css({
   '& > tr > td': {
-  backgroundColor: '#f5f5f5',
-  borderBottom: 'none',
-  borderColor: '#d6d7d9',
-  paddingTop: '0vh',
-  paddingBottom: '0vh',
-},
+    backgroundColor: '#f5f5f5',
+    borderBottom: 'none',
+    borderColor: '#d6d7d9',
+    paddingTop: '0vh',
+    paddingBottom: '0vh',
+  },
 });
 
 const tableStyling = css({
-marginBottom: '-2vh',
-marginTop: '2vh'
+  marginBottom: '-2vh',
+  marginTop: '2vh'
 });
 const bottonStyling = css({
-paddingRight: '0px'
+  paddingRight: '0px'
 });
 
 export const ConfirmCorrespondenceView = (props) => {
@@ -47,6 +47,7 @@ export const ConfirmCorrespondenceView = (props) => {
         ),
         valueFunction: () => {
           const date = new Date(correspondence.va_date_of_receipt);
+
           return (
             <span className="va-dor-item">
               <p>{date.toLocaleDateString('en-US')}</p>
@@ -74,7 +75,7 @@ export const ConfirmCorrespondenceView = (props) => {
         cellClass: 'package-document-type-column',
         ariaLabel: 'package-document-type-header-label',
         header: (
-          <div  id="package-document-type-header">
+          <div id="package-document-type-header">
             <span id="package-document-type-header-label" className="table-header-label">
               Package Document Type
             </span>
@@ -120,6 +121,7 @@ export const ConfirmCorrespondenceView = (props) => {
       },
     ];
   };
+
   return (
     <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
       <h1 style={{ marginBottom: '10px' }}>Review and Confirm Correspondence</h1>
@@ -132,38 +134,42 @@ export const ConfirmCorrespondenceView = (props) => {
         <CorrespondenceDetailsTable />
       </div>
       <div>
-      <div style={{ display: 'flex' }}>
-            <h2 style={{ margin: '1px 0 15px 0',
-                display: 'inline-block' }}>
-                Associated Prior Mail
-            </h2>
-      <div style={{ marginLeft: 'auto' }}>
-              <Button styling={bottonStyling} linkStyling onClick={() => props.goToStep(1)}>
-                <div style={{ marginLeft: 'auto' }}>
-                  <span {...css({ position: 'absolute' })}><PencilIcon /></span>
-                  <span {...css({ marginLeft: '20px' })}>Edit Section</span>
-                </div>
-              </Button>
-          </div>
-      </div>
-
-      <div {...css({ backgroundColor: '#f5f5f5', marginBottom: '20px' })}>
-
-          <div {...css({ backgroundColor: '#f5f5f5', padding: '20px'})}>
-              <Table
-                columns={getDocumentColumns}
-                // columnsToDisplay={15}
-                rowObjects={relatedCorrespondences}
-                bodyStyling= {bodyStyling}
-                styling={tableStyling}
-              />
-
-          </div>
-    </div>
         <div style={{ display: 'flex' }}>
-          <h2 style={{ margin: '1px 0 15px 0',
+          <h2 style={{
+            margin: '1px 0 15px 0',
+            display: 'inline-block'
+          }}>
+            Associated Prior Mail
+          </h2>
+          <div style={{ marginLeft: 'auto' }}>
+            <Button styling={bottonStyling} linkStyling onClick={() => props.goToStep(1)}>
+              <div style={{ marginLeft: 'auto' }}>
+                <span {...css({ position: 'absolute' })}><PencilIcon /></span>
+                <span {...css({ marginLeft: '20px' })}>Edit Section</span>
+              </div>
+            </Button>
+          </div>
+        </div>
+
+        <div {...css({ backgroundColor: '#f5f5f5', marginBottom: '20px' })}>
+
+          <div {...css({ backgroundColor: '#f5f5f5', padding: '20px' })}>
+            <Table
+              columns={getDocumentColumns}
+              // columnsToDisplay={15}
+              rowObjects={relatedCorrespondences}
+              bodyStyling={bodyStyling}
+              styling={tableStyling}
+            />
+
+          </div>
+        </div>
+        <div style={{ display: 'flex' }}>
+          <h2 style={{
+            margin: '1px 0 15px 0',
             display: 'inline-block',
-            marginLeft: '0px' }}>Completed Mail Tasks</h2>
+            marginLeft: '0px'
+          }}>Completed Mail Tasks</h2>
           <div style={{ marginLeft: 'auto' }}>
             <Button styling={bottonStyling} linkStyling onClick={() => props.goToStep(2)}>
               <span {...css({ position: 'absolute' })}><PencilIcon /></span>
@@ -172,10 +178,12 @@ export const ConfirmCorrespondenceView = (props) => {
           </div>
         </div>
         <div {...css({ backgroundColor: '#f5f5f5', padding: '20px', marginBottom: '20px' })}>
-          <div {...css({ borderBottom: '1px solid #d6d7d9',
+          <div {...css({
+            borderBottom: '1px solid #d6d7d9',
             padding: '10px 0px',
             marginBottom: '20px',
-            fontWeight: 'bold' })}>
+            fontWeight: 'bold'
+          })}>
             Completed Mail Tasks
           </div>
           {checkedMailTasks.map((name, index, array) => (
@@ -193,10 +201,12 @@ export const ConfirmCorrespondenceView = (props) => {
         </div>
       </div>
       <div>
-      <div style={{ display: 'flex' }}>
-          <h2 style={{ margin: '1px 0 15px 0',
+        <div style={{ display: 'flex' }}>
+          <h2 style={{
+            margin: '1px 0 15px 0',
             display: 'inline-block',
-            marginLeft: '0px' }}>Tasks not related to an Appeal</h2>
+            marginLeft: '0px'
+          }}>Tasks not related to an Appeal</h2>
           <div style={{ marginLeft: 'auto' }}>
             <Button styling={bottonStyling} linkStyling onClick={() => props.goToStep(2)}>
               <span {...css({ position: 'absolute' })}><PencilIcon /></span>
@@ -204,7 +214,7 @@ export const ConfirmCorrespondenceView = (props) => {
             </Button>
           </div>
         </div>
-        <ConfirmTasksNotRelatedToAnAppeal/>
+        <ConfirmTasksNotRelatedToAnAppeal />
       </div>
     </div>
   );

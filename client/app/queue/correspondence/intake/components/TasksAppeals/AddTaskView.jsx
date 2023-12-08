@@ -36,7 +36,6 @@ const customSelectStyless = {
     minHeight: '140px',
     borderRadius: 50
 
-
   }),
   singleValue: (styles) => {
     return {
@@ -53,9 +52,9 @@ const customSelectStyless = {
   option: (styles, { isFocused }) => ({
     color: 'black',
     fontSize: '25px',
-    paddingTop:'10px',
-    paddingBottom:'10px',
-    paddingLeft:'20px',
+    paddingTop: '10px',
+    paddingBottom: '10px',
+    paddingLeft: '20px',
     backgroundColor: isFocused ? 'white' : 'null',
     ':hover': {
       ...styles[':hover'],
@@ -127,19 +126,19 @@ const AddTaskView = (props) => {
           }
         >
 
-<div id="reactSelectContainer"
-      {...selectContainerStyless}>
+          <div id="reactSelectContainer"
+            {...selectContainerStyless}>
 
-      <label style={{ marginTop: '5px', marginBottom: '5px', marginLeft: '1px' }}>Task</label>
-      <Select
-        placeholder="Select..."
-        options={props.availableTaskTypeOptions}
-        defaultValue={objectForSelectedTaskType()}
-        onChange={(selectedOption) => updateTaskType(selectedOption)}
-        styles={customSelectStyless}
-        className="add-task-dropdown-style"
-        aria-label="dropdown"
-      />
+            <label style={{ marginTop: '5px', marginBottom: '5px', marginLeft: '1px' }}>Task</label>
+            <Select
+              placeholder="Select..."
+              options={props.availableTaskTypeOptions}
+              defaultValue={objectForSelectedTaskType()}
+              onChange={(selectedOption) => updateTaskType(selectedOption)}
+              styles={customSelectStyless}
+              className="add-task-dropdown-style"
+              aria-label="dropdown"
+            />
           </div>
           <div style={{ padding: '1.5rem' }} />
           <TextareaField
