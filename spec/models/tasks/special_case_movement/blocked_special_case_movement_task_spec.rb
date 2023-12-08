@@ -8,7 +8,7 @@ describe BlockedSpecialCaseMovementTask do
       let(:cm_user) { create(:user) }
       let(:cancellation_instructions) { "Cancelling task" }
       let(:assign_instructions) { "Assigning task" }
-      let(:instructions) { [cancellation_instructions, assign_instructions] }
+      let(:instructions) { [assign_instructions, cancellation_instructions] }
 
       subject do
         BlockedSpecialCaseMovementTask.create!(appeal: appeal,
@@ -29,7 +29,7 @@ describe BlockedSpecialCaseMovementTask do
           expect { subject }.not_to raise_error
           open_tasks.each do |task|
             expect(task.reload.status).to eq(Constants.TASK_STATUSES.cancelled)
-            expect(task.reload.instructions).to eq([cancellation_instructions])
+            expect(task.reload.instructions).to eq(["**Reason:**\n" + cancellation_instructions])
           end
         end
       end

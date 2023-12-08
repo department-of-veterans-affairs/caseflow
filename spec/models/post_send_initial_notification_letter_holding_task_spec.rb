@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "./send_notification_shared_examples_spec.rb"
+require_relative "./send_notification_shared_examples_spec"
 
 describe PostSendInitialNotificationLetterHoldingTask do
   let(:user) { create(:user) }

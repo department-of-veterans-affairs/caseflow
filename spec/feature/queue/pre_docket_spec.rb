@@ -295,7 +295,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           instructions_textarea = find("textarea", id: "taskInstructions")
           instructions_textarea.send_keys("Please review this appeal, CAREGIVER.")
 
-          find("button", text: COPY::MODAL_RETURN_BUTTON).click
+          find("button", text: COPY::MODAL_ASSIGN_BUTTON).click
 
           expect(page).to have_current_path("/organizations/#{bva_intake.url}?tab=pending&#{default_bva_query_params}")
 
@@ -408,7 +408,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           find("button", class: "usa-button", text: COPY::MODAL_ASSIGN_BUTTON).click
 
           expect(page).to have_current_path("/organizations/#{camo.url}?tab=camo_assigned&#{default_query_params}")
-          expect(page).to have_content("Task assigned to #{program_office.name}")
+          expect(page).to have_content("You have successfully reassigned this task to #{program_office.name}")
 
           expect(AssessDocumentationTask.last).to have_attributes(
             type: "AssessDocumentationTask",
@@ -474,7 +474,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           expect(page).to have_current_path(
             "/organizations/#{program_office.url}?tab=po_assigned&#{default_query_params}"
           )
-          expect(page).to have_content("Task assigned to #{dropdown_visn_text}")
+          expect(page).to have_content("You have successfully reassigned this task to #{dropdown_visn_text}")
           expect(page).to have_content(format(COPY::ORGANIZATIONAL_QUEUE_ON_HOLD_TAB_TITLE, 1))
         end
 
@@ -718,7 +718,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
           instructions_textarea = find("textarea", id: "taskInstructions")
           instructions_textarea.send_keys("Please review this appeal, CAMO.")
 
-          find("button", text: COPY::MODAL_RETURN_BUTTON).click
+          find("button", text: COPY::MODAL_ASSIGN_BUTTON).click
 
           expect(page).to have_current_path("/organizations/#{bva_intake.url}?tab=pending&#{default_bva_query_params}")
 
@@ -914,7 +914,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
         expect(page).to have_current_path("/organizations/#{emo.url}"\
           "?tab=education_emo_unassigned&#{default_query_params}")
-        expect(page).to have_content("Task assigned to #{education_rpo.name}")
+        expect(page).to have_content("You have successfully reassigned this task to #{education_rpo.name}")
 
         expect(EducationDocumentSearchTask.last).to have_attributes(
           type: "EducationDocumentSearchTask",
@@ -1085,7 +1085,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         instructions_textarea = find("textarea", id: "taskInstructions")
         instructions_textarea.send_keys("The intake details have been corrected. Please review this appeal.")
 
-        find("button", class: "usa-button", text: COPY::MODAL_RETURN_BUTTON).click
+        find("button", class: "usa-button", text: COPY::MODAL_ASSIGN_BUTTON).click
       end
 
       step "Switch to an EMO user and make sure the active
@@ -1248,7 +1248,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
       instructions_textarea = find("textarea", id: "taskInstructions")
       instructions_textarea.send_keys("Please review this appeal, EMO.")
 
-      find("button", text: COPY::MODAL_RETURN_BUTTON).click
+      find("button", text: COPY::MODAL_ASSIGN_BUTTON).click
 
       expect(page).to have_current_path("/organizations/#{bva_intake.url}?tab=pending&#{default_bva_query_params}")
 

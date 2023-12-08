@@ -39,7 +39,9 @@ class OnHoldTasksTab < QueueTab
   def legacy_colocated_task_ids_assigned_by_assignee
     colocated_tasks = ColocatedTask.open.order(:created_at)
       .where(assigned_by: assignee, assigned_to_type: Organization.name, appeal_type: LegacyAppeal.name)
-
+      .reject do |task|
+        %w[JudgeAssignTask JudgeDecisionReviewTask AttorneyTask AttorneyRewriteTask].include? task&.parent&.type
+      end
     colocated_tasks.group_by(&:appeal_id).map { |_appeal_id, tasks| tasks.first.id }
   end
 

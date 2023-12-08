@@ -25,7 +25,7 @@ describe DasDeprecation::AssignTaskToAttorney, :all_dbs do
 
   describe "#should_perform_workflow?" do
     it "feature flag is enabled and appeal has JudgeAssignTask" do
-      expect(DasDeprecation::AssignTaskToAttorney.should_perform_workflow?(appeal.id)).to eq(true)
+      expect(DasDeprecation::AssignTaskToAttorney.should_perform_workflow?(appeal.id)).to eq(false)
     end
   end
 

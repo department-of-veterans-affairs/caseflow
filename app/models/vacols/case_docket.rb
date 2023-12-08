@@ -458,7 +458,7 @@ class VACOLS::CaseDocket < VACOLS::Record
         return appeals if appeals.empty?
 
         vacols_ids = appeals.map { |appeal| appeal["bfkey"] }
-        location = if FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
+        location = if !FeatureToggle.enabled?(:legacy_das_deprecation, user: RequestStore.store[:current_user])
                      LegacyAppeal::LOCATION_CODES[:caseflow]
                    else
                      judge.vacols_uniq_id

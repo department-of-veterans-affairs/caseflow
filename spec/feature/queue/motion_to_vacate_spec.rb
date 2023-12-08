@@ -84,6 +84,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       # When mail team creates VacateMotionMailTask, it gets assigned to the lit support organization
       User.authenticate!(user: mail_user)
       visit "/queue/appeals/#{appeal.uuid}"
+      refresh
       find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
       find(".cf-select__control", text: COPY::MAIL_TASK_DROPDOWN_TYPE_SELECTOR_LABEL).click
       find("div", class: "cf-select__option", text: COPY::VACATE_MOTION_MAIL_TASK_LABEL).click
@@ -99,8 +100,8 @@ RSpec.feature "Motion to vacate", :all_dbs do
       find("div", class: "cf-select__option", text: "Assign to person").click
       find(".cf-modal .cf-select__control").click
       find("div", class: "cf-select__option", text: "Motions attorney").click
-      click_button(text: "Submit")
-      expect(page).to have_content("Task assigned to Motions attorney")
+      click_button(text: "Assign")
+      expect(page).to have_content("You have successfully reassigned this task to Motions attorney")
       motions_attorney_task = VacateMotionMailTask.find_by(assigned_to: motions_attorney)
       expect(motions_attorney_task).to_not be_nil
 
@@ -901,7 +902,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
           expect(vacate_stream.decision_issues.size).to eq(6)
 
-          remanded = vacate_stream.decision_issues.select { |di| di.remanded? }
+          remanded = vacate_stream.decision_issues.select(&:remanded?)
           remanded1 = remanded.find { |di| di.description.eql? "remanded test" }
           remanded2 = remanded.find { |di| di.description.eql? "remanded test 2" }
 
@@ -1030,7 +1031,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
           "sent to #{judge.full_name} for review."
         )
 
-        judge_task = vacate_stream.tasks.find_by(type: 'JudgeDecisionReviewTask');
+        judge_task = vacate_stream.tasks.find_by(type: "JudgeDecisionReviewTask")
 
         expect(vacate_stream.decision_issues.size).to eq(3)
         expect(vacate_stream.tasks.size).to eq(4)

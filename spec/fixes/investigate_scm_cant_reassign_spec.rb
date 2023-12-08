@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require "helpers/sanitized_json_configuration.rb"
-require "helpers/sanitized_json_importer.rb"
+require "helpers/sanitized_json_configuration"
+require "helpers/sanitized_json_importer"
 
 feature "CaseMovementTeam task actions" do
   let(:attorney_user) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Talam") }
@@ -32,12 +32,14 @@ feature "CaseMovementTeam task actions" do
       click_dropdown(prompt: "Select a user", text: "Other")
 
       # Clicking on "Other" and starting to type "TALAM" shows the attorney.
-      click_dropdown(prompt: "Select a user", text: attorney_user.full_name)
+      within all(".cf-select")[2] do
+        click_dropdown(prompt: "Select", text: attorney_user.full_name)
+      end
       fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "\nSCM user reassigning to different attorney")
 
       # Clicking Submit button shows an "Error assigning tasks" error banner in the modal
       # (and an error message in the DevTools console).
-      click_on "Submit"
+      click_on "Assign"
       expect(page).to have_content("Error assigning tasks")
     end
   end

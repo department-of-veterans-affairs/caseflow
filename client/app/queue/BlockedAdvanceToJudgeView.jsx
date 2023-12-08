@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import * as React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -11,7 +12,7 @@ import COPY from '../../COPY';
 import { onReceiveAmaTasks } from './QueueActions';
 import { requestSave, resetSuccessMessages, highlightInvalidFormItems } from './uiReducer/uiActions';
 import { taskActionData } from './utils';
-import { taskById, appealWithDetailSelector } from './selectors';
+import { taskById, appealWithDetailSelector, allHearingTasksForAppeal, getAllHiringChildren } from './selectors';
 
 import QueueFlowPage from './components/QueueFlowPage';
 import SearchableDropdown from '../components/SearchableDropdown';
@@ -51,7 +52,9 @@ class BlockedAdvanceToJudgeView extends React.Component {
       instructions: '',
       selectedAssignee: null,
       selectedReason: null,
-      showModal: false
+      showModal: false,
+      disableButton: true,
+      modalDisableButton: true
     };
   }
 
@@ -81,6 +84,27 @@ class BlockedAdvanceToJudgeView extends React.Component {
     return assignee;
   };
 
+  setOnChangeValue = (stateValue, value) => {
+    this.setState({ [stateValue]: value }, function () {
+      if ((this.state.selectedReason !== null && this.state.cancellationInstructions.trim().length > 0)) {
+        this.setState({ disableButton: false });
+      }
+      if ((this.state.cancellationInstructions.trim().length === 0 && this.state.selectedReason !== null)) {
+        this.setState({ disableButton: true });
+      }
+    });
+  }
+
+  setModalOnChangeValue = (stateValue, value) => {
+    this.setState({ [stateValue]: value }, function () {
+      if (this.state.selectedAssignee !== null && this.state.instructions.trim().length > 0) {
+        this.setState({ modalDisableButton: false });
+      } else {
+        this.setState({ modalDisableButton: true });
+      }
+    });
+  };
+
   submit = () => {
     if (!this.validateModal()) {
       this.props.highlightInvalidFormItems(true);
@@ -88,36 +112,90 @@ class BlockedAdvanceToJudgeView extends React.Component {
       return;
     }
 
-    const { appeal, task } = this.props;
+    const { appeal, task, allHearingTasks } = this.props;
+    const actionData = taskActionData(this.props);
+    const taskType = actionData.type || 'Task';
 
-    const payload = {
-      data: {
-        tasks: [
-          {
-            type: this.actionData().type,
-            external_id: appeal.externalId,
-            parent_id: task.taskId,
-            assigned_to_id: this.state.selectedAssignee,
-            assigned_to_type: 'User',
-            instructions: [
-              `${this.state.selectedReason}: ${this.state.cancellationInstructions}`,
-              this.state.instructions
-            ]
-          }
-        ]
-      }
+    const hearingTaskId = allHearingTasks[0].id;
+
+    let payload = {};
+
+    if (task.appealType === 'LegacyAppeal' && taskType === 'BlockedSpecialCaseMovementTask' &&
+    task.type === 'AttorneyLegacyTask') {
+      payload = {
+        data: {
+          tasks: [
+            {
+              type: this.actionData().type,
+              external_id: appeal.externalId,
+              legacy_task_type: task.type,
+              appeal_type: task.appealType,
+              parent_id: hearingTaskId,
+              assigned_to_id: this.state.selectedAssignee,
+              assigned_to_type: 'User',
+              instructions: [
+                this.state.instructions,
+                `${this.state.selectedReason.trim()}: ${this.state.cancellationInstructions}`
+
+              ]
+            }
+          ]
+        }
+      };
+    } else {
+      payload = {
+        data: {
+          tasks: [
+            {
+              type: this.actionData().type,
+              external_id: appeal.externalId,
+              parent_id: task.appealType === 'LegacyAppeal' ? hearingTaskId : task.taskId,
+              assigned_to_id: this.state.selectedAssignee,
+              assigned_to_type: 'User',
+              instructions: [
+                this.state.instructions,
+                `${this.state.selectedReason.trim()}: ${this.state.cancellationInstructions}`
+
+              ]
+            }
+          ]
+        }
+      };
+    }
+
+    const assignedByListItem = () => {
+      const assignor = appeal.veteranFullName || null;
+
+      return assignor;
     };
 
-    const successMessage = {
-      title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssigneeLabel()),
-      detail: this.actionData().message_detail
-    };
+    let successMessage = '';
+
+    if (appeal.isLegacyAppeal) {
+      successMessage = {
+        title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE_MOVE_LEGACY_APPEALS_VLJ,
+          assignedByListItem(), this.getAssigneeLabel()),
+        detail: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE_MOVE_LEGACY_APPEALS_VLJ_MESSAGE_DETAIL)
+      };
+      localStorage.setItem('SCMLegacyMsg', JSON.stringify(successMessage));
+    } else {
+      successMessage = {
+        title: sprintf(COPY.ASSIGN_TASK_SUCCESS_MESSAGE, this.getAssigneeLabel()),
+        detail: this.actionData().message_detail
+      };
+    }
 
     return this.props.
       requestSave('/tasks', payload, successMessage).
       then((resp) => {
         this.props.history.replace(`/queue/appeals/${appeal.externalId}`);
-        this.props.onReceiveAmaTasks(resp.body.tasks.data);
+        if (resp.body !== null) {
+          if (appeal.isLegacyAppeal) {
+            window.location.reload();
+          } else {
+            this.props.onReceiveAmaTasks(resp.body.tasks.data);
+          }
+        }
       }).
       catch((err) => {
         this.setState({
@@ -169,20 +247,20 @@ class BlockedAdvanceToJudgeView extends React.Component {
         title={COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_TITLE}
         buttons={[{
           classNames: ['usa-button', 'cf-btn-link'],
-          name: 'Close',
+          name: 'Cancel',
           onClick: () => this.setState({ showModal: false })
         }, {
-          classNames: ['usa-button-secondary', 'usa-button-hover', 'usa-button-warning'],
+          classNames: ['usa-button-hover', 'usa-button-warning'],
           name: COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_SUBMIT,
+          disabled: this.state.modalDisableButton,
           onClick: this.submit
         }]}
         closeHandler={() => this.setState({ showModal: false })}
-        icon="warning"
       >
         {this.modalAlert()}
         <div {...bottomBorderStyling}>
-          <strong>Please Note:</strong> {COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_SUBTITLE}<br />
-          <strong>Cancellation of task(s) are final.</strong>
+          <strong>Please Note:</strong> {COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_SUBTITLE} &nbsp;
+          <strong>{COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_LABEL}</strong>
         </div>
         <h3>{COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_JUDGE_HEADER}</h3>
         <SearchableDropdown
@@ -191,15 +269,15 @@ class BlockedAdvanceToJudgeView extends React.Component {
           hideLabel
           errorMessage={this.props.highlightFormItems && !this.validAssignee() ? COPY.FORM_ERROR_FIELD_REQUIRED : null}
           value={this.state.selectedAssignee}
-          onChange={(option) => this.setState({ selectedAssignee: option ? option.value : null })}
+          onChange={(option) => this.setModalOnChangeValue('selectedAssignee', option ? option.value : null)}
           options={options}
         />
-        <h3>{sprintf(COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_INSTRUCTIONS_HEADER, selectedJudgeName)}</h3>
+        <h3 className="blocked-advanced-h3">{sprintf(COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_MODAL_INSTRUCTIONS_HEADER, selectedJudgeName)}</h3>
         <TextareaField
           required
           errorMessage={highlightFormItems && !this.validInstructions() ? 'Judge instructions field is required' : null}
           id="judgeInstructions"
-          onChange={(value) => this.setState({ instructions: value })}
+          onChange={(value) => this.setModalOnChangeValue('instructions', value)}
           value={this.state.instructions}
         />
       </Modal>
@@ -207,9 +285,8 @@ class BlockedAdvanceToJudgeView extends React.Component {
   }
 
   render = () => {
-    const { highlightFormItems, appeal } = this.props;
-
-    const blockingTasks = this.actionData().blocking_tasks;
+    const { highlightFormItems, appeal, currentChildren } = this.props;
+    const blockingTasks = appeal.isLegacyAppeal ? currentChildren : this.actionData().blocking_tasks;
 
     return <React.Fragment>
       {this.warningModal()}
@@ -218,6 +295,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
         validateForm={this.validatePage}
         appealId={appeal.externalId}
         hideCancelButton
+        disableNext={this.state.disableButton}
       >
         <h1>{sprintf(COPY.BLOCKED_SPECIAL_CASE_MOVEMENT_PAGE_TITLE, appeal.veteranFullName)}</h1>
         <div className="cf-sg-subsection" {...caseInfoStyling} {...bottomBorderStyling}>
@@ -236,7 +314,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
           })}
           id="advancementReason"
           value={this.state.selectedReason}
-          onChange={(value) => this.setState({ selectedReason: value })}
+          onChange={(value) => this.setOnChangeValue('selectedReason', value)}
           vertical={false}
         />
         <TextareaField
@@ -245,7 +323,7 @@ class BlockedAdvanceToJudgeView extends React.Component {
             highlightFormItems && !this.validCancellationInstructions() ? 'Instructions field is required' : null
           }
           id="cancellationInstructions"
-          onChange={(value) => this.setState({ cancellationInstructions: value })}
+          onChange={(value) => this.setOnChangeValue('cancellationInstructions', value)}
           value={this.state.cancellationInstructions}
         />
       </QueueFlowPage>
@@ -259,6 +337,7 @@ BlockedAdvanceToJudgeView.propTypes = {
     id: PropTypes.string,
     veteranFullName: PropTypes.string,
     veteranFileNumber: PropTypes.string,
+    isLegacyAppeal: PropTypes.bool
   }),
   highlightInvalidFormItems: PropTypes.func,
   highlightFormItems: PropTypes.bool,
@@ -266,17 +345,26 @@ BlockedAdvanceToJudgeView.propTypes = {
   onReceiveAmaTasks: PropTypes.func,
   requestSave: PropTypes.func,
   resetSuccessMessages: PropTypes.func,
+  currentChildren: PropTypes.array,
+  allHearingTasks: PropTypes.array,
   task: PropTypes.shape({
     instructions: PropTypes.string,
-    taskId: PropTypes.string
+    taskId: PropTypes.string,
+    assignedBy: PropTypes.string,
+    appealType: PropTypes.string,
+    type: PropTypes.string,
   })
 };
 
 const mapStateToProps = (state, ownProps) => {
+  const appeal = appealWithDetailSelector(state, ownProps);
+
   return {
     highlightFormItems: state.ui.highlightFormItems,
     task: taskById(state, { taskId: ownProps.taskId }),
-    appeal: appealWithDetailSelector(state, ownProps)
+    allHearingTasks: allHearingTasksForAppeal(state, { appealId: appeal?.externalId }),
+    appeal: appealWithDetailSelector(state, ownProps),
+    currentChildren: getAllHiringChildren(state, ownProps)
   };
 };
 

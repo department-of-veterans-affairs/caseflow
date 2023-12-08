@@ -44,9 +44,9 @@ RSpec.feature "MailTasks", :postgres do
         text = Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label
         click_dropdown(prompt: prompt, text: text)
         fill_in("taskInstructions", with: "instructions")
-        click_button("Submit")
+        click_button("Assign")
 
-        expect(page).to have_content(format(COPY::ASSIGN_TASK_SUCCESS_MESSAGE, user.full_name))
+        expect(page).to have_content(format(COPY::REASSIGN_TASK_SUCCESS_MESSAGE, user.full_name))
         expect(page.current_path).to eq("/queue")
 
         new_tasks = aod_team_task.children
@@ -223,7 +223,7 @@ RSpec.feature "MailTasks", :postgres do
     end
 
     context "changing task type" do
-      it "submit button starts out disabled" do
+      it "assign button starts out disabled" do
         visit("queue/appeals/#{appeal.uuid}")
         within("tr", text: "TASK", match: :first) do
           click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
@@ -268,7 +268,7 @@ RSpec.feature "MailTasks", :postgres do
     end
 
     context "assigning to new team" do
-      it "submit button starts out disabled" do
+      it "assign button starts out disabled" do
         visit("queue/appeals/#{appeal.uuid}")
         within("tr", text: "TASK", match: :first) do
           click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
@@ -276,7 +276,7 @@ RSpec.feature "MailTasks", :postgres do
                          match: :first)
         end
         modal = find(".cf-modal-body")
-        expect(modal).to have_button("Submit", disabled: true)
+        expect(modal).to have_button("Assign", disabled: true)
       end
 
       it "assigns to new team" do
@@ -290,7 +290,7 @@ RSpec.feature "MailTasks", :postgres do
         find(".cf-select__control", text: "Select a team", match: :first).click
         find(".cf-select__option", text: "BVA Intake").click
         fill_in("taskInstructions", with: "instructions")
-        click_button("Submit")
+        click_button("Assign")
         new_task = appeal.tasks.last
         visit(page)
         most_recent_task = find("tr", text: "TASK", match: :first)
@@ -300,7 +300,7 @@ RSpec.feature "MailTasks", :postgres do
     end
 
     context "assigning to person" do
-      it "submit button starts out disabled" do
+      it "assign button starts out disabled" do
         visit("queue/appeals/#{appeal.uuid}")
         within("tr", text: "TASK", match: :first) do
           click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
@@ -308,7 +308,7 @@ RSpec.feature "MailTasks", :postgres do
                          match: :first)
         end
         modal = find(".cf-modal-body")
-        expect(modal).to have_button("Submit", disabled: true)
+        expect(modal).to have_button("Assign", disabled: true)
       end
 
       it "assigns to person" do
@@ -324,7 +324,7 @@ RSpec.feature "MailTasks", :postgres do
         find(".cf-select__control", text: User.current_user.full_name).click
         find(".cf-select__option", text: new_user.full_name).click
         fill_in("taskInstructions", with: "instructions")
-        click_button("Submit")
+        click_button("Assign")
         new_task = appeal.tasks.last
         visit(page)
         most_recent_task = find("tr", text: "TASK", match: :first)

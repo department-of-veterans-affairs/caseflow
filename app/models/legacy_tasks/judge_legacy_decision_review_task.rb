@@ -12,7 +12,9 @@ class JudgeLegacyDecisionReviewTask < JudgeLegacyTask
 
     [
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-      review_action
+      review_action,
+      Constants.TASK_ACTIONS.JUDGE_LEGACY_RETURN_TO_ATTORNEY.to_h,
+      Constants.TASK_ACTIONS.REASSIGN_TO_LEGACY_JUDGE.to_h
     ]
   end
 

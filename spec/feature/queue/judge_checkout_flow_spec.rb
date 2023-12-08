@@ -58,7 +58,7 @@ RSpec.feature "Judge checkout flow", :all_dbs do
       # Change JudgeDecisionReviewTask status so that "Ready for Dispatch" action is available
       jdr_task.update(status: :assigned)
       appeal.request_issues.update_all(closed_at: nil)
-      visit "queue/appeals/#{appeal.uuid}"
+      visit "queue/appeals/#{appeal.external_id}"
       # Below is needed so that the frontend will load the actions dropdown before the jdr task's status changes
       expect(page).to have_content("Actions", wait: 10)
 

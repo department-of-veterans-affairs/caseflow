@@ -26,7 +26,6 @@ class Generators::Vacols::CaseIssue
 
     def create(attrs = [{}])
       attrs = attrs.map { |issue| case_issue_attrs.merge(issue) }
-
       VACOLS::CaseIssue.create(attrs)
     end
   end
