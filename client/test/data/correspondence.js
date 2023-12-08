@@ -37,7 +37,7 @@ export const correspondenceDocumentsData = [
     correspondence_id: 1,
     document_file_number: veteranInfo.veteran.file_number,
     pages: 30,
-    vbms_document_id: '1',
+    vbms_document_type_id: 1,
     uuid: null,
     document_type: 1250,
     document_title: 'VA Form 10182 Notice of Disagreement'
@@ -46,7 +46,7 @@ export const correspondenceDocumentsData = [
     correspondence_id: 1,
     document_file_number: veteranInfo.veteran.file_number,
     pages: 20,
-    vbms_document_id: '1',
+    vbms_document_type_id: 1,
     uuid: null,
     document_type: 719,
     document_title: 'Exam Request'
