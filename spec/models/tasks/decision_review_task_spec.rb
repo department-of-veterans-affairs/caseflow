@@ -5,6 +5,8 @@ describe DecisionReviewTask, :postgres do
 
   let(:benefit_type) { "education" }
 
+  let(:user) { create(:default_user) }
+
   describe "#label" do
     subject { create(:higher_level_review_task) }
 
@@ -60,7 +62,7 @@ describe DecisionReviewTask, :postgres do
       ]
     end
     let(:task) { create(:higher_level_review_task, trait, appeal: hlr) }
-    subject { task.complete_with_payload!(decision_issue_params, decision_date) }
+    subject { task.complete_with_payload!(decision_issue_params, decision_date, user) }
 
     context "assigned task" do
       it "can be completed" do
