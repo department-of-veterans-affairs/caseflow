@@ -94,6 +94,7 @@ class CorrespondenceController < ApplicationController
       else
         render json: {}, status: :created
       end
+    end
   end
 
   private
