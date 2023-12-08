@@ -135,11 +135,9 @@ export const ConfirmCorrespondenceView = (props) => {
       </div>
       <div>
         <div style={{ display: 'flex' }}>
-          <h2 style={{
-            margin: '1px 0 15px 0',
-            display: 'inline-block'
-          }}>
-            Associated Prior Mail
+          <h2 style={{ margin: '1px 0 15px 0',
+            display: 'inline-block' }}>
+                Associated Prior Mail
           </h2>
           <div style={{ marginLeft: 'auto' }}>
             <Button styling={bottonStyling} linkStyling onClick={() => props.goToStep(1)}>
@@ -158,7 +156,7 @@ export const ConfirmCorrespondenceView = (props) => {
               columns={getDocumentColumns}
               // columnsToDisplay={15}
               rowObjects={relatedCorrespondences}
-              bodyStyling={bodyStyling}
+              bodyStyling= {bodyStyling}
               styling={tableStyling}
             />
 
