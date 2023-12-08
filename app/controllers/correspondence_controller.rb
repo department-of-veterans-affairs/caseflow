@@ -105,7 +105,7 @@ class CorrespondenceController < ApplicationController
       disposition: document_disposition
     )
   end
-  
+
   def process_intake
     ActiveRecord::Base.transaction do
       begin
