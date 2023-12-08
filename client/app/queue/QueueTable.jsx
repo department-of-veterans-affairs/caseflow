@@ -266,7 +266,7 @@ export default class QueueTable extends React.PureComponent {
     super(props);
 
     const validatedPaginationOptions = this.validatedPaginationOptions();
-
+    this._isMounted = true; // eslint-disable-line no-underscore-dangle
     this.state = this.initialState(validatedPaginationOptions);
 
     this.updateAddressBar();
@@ -352,7 +352,6 @@ export default class QueueTable extends React.PureComponent {
     if (this.props.rowObjects.length) {
       this.setState({ cachedResponses: { ...this.state.cachedResponses, [this.requestUrl()]: firstResponse } });
     }
-    this._isMounted = true;
   };
 
   componentDidUpdate = (previousProps, previousState) => {
@@ -368,11 +367,10 @@ export default class QueueTable extends React.PureComponent {
       // because the number of pages could have changed as data is filtered out.
       this.updateCurrentPage(0);
     }
-    this._isMounted = true;
   }
 
   componentWillUnmount = () => {
-    this._isMounted = false;
+    this._isMounted = false; // eslint-disable-line no-underscore-dangle
   }
 
   getFilters = (filterParams) => {
@@ -507,7 +505,7 @@ export default class QueueTable extends React.PureComponent {
   };
 
   updateAddressBar = () => {
-    if (!this._isMounted) {
+    if (!this._isMounted) { // eslint-disable-line no-underscore-dangle
       return;
     }
 
