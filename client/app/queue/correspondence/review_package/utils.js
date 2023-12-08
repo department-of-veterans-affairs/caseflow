@@ -6,7 +6,7 @@ import {
   PACKAGE_ACTION_REASSIGN_DESCRIPTION,
   PACKAGE_ACTION_REASSIGN_TITLE,
   PACKAGE_ACTION_REASSIGN_TEXTAREA_LABEL,
-  PACKAGE_ACTION_SLIT_TITLE
+  PACKAGE_ACTION_SPLIT_TITLE
 } from '../../../../COPY';
 
 export const getPackageActionColumns = (dropdownType) => {
@@ -59,7 +59,8 @@ export const getPackageActionColumns = (dropdownType) => {
                 {`${firstName} ${lastName}\n(${fileNumber})`}
               </p>
             </span>
-          )}
+          );
+        }
       }
     );
   }
@@ -69,7 +70,6 @@ export const getPackageActionColumns = (dropdownType) => {
 };
 
 export const getModalInformation = (dropdownType) => {
-  console.log(dropdownType,"dropdown type");
   switch (dropdownType) {
   case 'removePackage':
     return {
@@ -85,7 +85,7 @@ export const getModalInformation = (dropdownType) => {
     };
   case 'splitPackage':
     return {
-      title: PACKAGE_ACTION_SLIT_TITLE,
+      title: PACKAGE_ACTION_SPLIT_TITLE,
       description: PACKAGE_ACTION_MODAL_DESCRIPTION,
     };
   default:

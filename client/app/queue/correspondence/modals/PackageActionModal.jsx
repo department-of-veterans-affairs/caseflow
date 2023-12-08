@@ -43,20 +43,18 @@ const PackageActionModal = (props) => {
 
   // Disable submit button unless conditional input is met
   const disableSubmit = () => {
-    if (radioValue === '' || radioValue === 'Other') {
-      switch (packageActionModal) {
-      case 'removePackage':
-        return textInputReason === '';
-      case 'reassignPackage':
-        return textInputReason === '';
-      case 'splitPackage':
-        return textInputReason === '';
-      default:
-        return true;
-      }
-    }
+    switch (packageActionModal) {
+    case 'removePackage':
+    case 'reassignPackage':
+      return textInputReason === '';
+    case 'splitPackage': {
+      const isRadioDisabled = radioValue === '' || radioValue === 'Other';
 
-    return false;
+      return isRadioDisabled ? textInputReason === '' : false;
+    }
+    default:
+      return true;
+    }
   };
 
   const onChange = (event) => {
@@ -122,7 +120,7 @@ const PackageActionModal = (props) => {
         summary="Request Package Action Modal"
       />
       {(packageActionModal === 'splitPackage') && <RadioField
-        name="Select a reason for sliting the package"
+        name="Select a reason for splitting this package"
         options={RadioOptions}
         onChange={onChange}
       />}
