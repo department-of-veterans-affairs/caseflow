@@ -10,16 +10,24 @@ import {
   anchorJumpLinkStyling } from 'app/queue/StickyNavContentArea';
 import COPY from '../../../COPY';
 
-const CaseflowDistributionContent = ({ levers, saveChanges, formattedHistory, isAdmin, leverStore }) => {
+const CaseflowDistributionContent = ({
+  levers,
+  formattedHistory,
+  isAdmin,
+  leverStore
+}) => {
   const [displayAlert, setDisplayAlert] = useState(false);
 
   useEffect(() => {
-
     const unsubscribe = leverStore.subscribe(() => {
       const state = leverStore.getState();
 
       if (state.saveChangesActivated) {
         setDisplayAlert(true);
+
+        setTimeout(() => {
+          setDisplayAlert(false);
+        }, 10000);
       }
     });
 
