@@ -302,6 +302,7 @@ Rails.application.routes.draw do
     put '/correspondence/:correspondence_uuid/update_cmp', to: 'correspondence#update_cmp'
     get '/correspondence/packages', to: 'correspondence#package_documents'
     get '/correspondence/:correspondence_uuid', to: 'correspondence#show'
+    get '/correspondence/:pdf_id/pdf', to: 'correspondence#pdf'
     patch '/correspondence/:correspondence_uuid', to: 'correspondence#update'
     post '/correspondence/:correspondence_uuid', to: 'correspondence#process_intake'
     get '/appeals/:vacols_id', to: 'queue#index'
