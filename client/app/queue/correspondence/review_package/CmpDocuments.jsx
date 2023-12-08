@@ -21,9 +21,7 @@ const paginationStyle = css({
 });
 
 export const CmpDocuments = (props) => {
-  const { documents } = props;
-
-  const [selectedId, setSelectedId] = useState(0);
+  const { documents, selectedId, setSelectedId } = props;
 
   const paginationText = `Viewing 1-${documents.length} out of ${documents.length} total documents`;
 
@@ -91,6 +89,8 @@ export const CmpDocuments = (props) => {
 
 CmpDocuments.propTypes = {
   documents: PropTypes.array,
+  setSelectedId: PropTypes.func,
+  selectedId: PropTypes.number
 };
 
 export default CmpDocuments;

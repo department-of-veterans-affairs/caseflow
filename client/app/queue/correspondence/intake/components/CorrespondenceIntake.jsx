@@ -9,6 +9,7 @@ import { bindActionCreators } from 'redux';
 import { setUnrelatedTasks } from '../../correspondenceReducer/correspondenceActions';
 import { useHistory, useLocation } from 'react-router-dom';
 import { ConfirmCorrespondenceView } from './ConfirmCorrespondence/ConfirmCorrespondenceView';
+import { SubmitCorrespondenceModal } from './ConfirmCorrespondence/SubmitCorrespondenceModal';
 
 const progressBarSections = [
   {
@@ -29,6 +30,7 @@ export const CorrespondenceIntake = (props) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isContinueEnabled, setContinueEnabled] = useState(true);
   const [addTasksVisible, setAddTasksVisible] = useState(false);
+  const [submitCorrespondenceModalVisible, setSubmitCorrespondenceModalVisible] = useState(false);
   const { pathname, hash, key } = useLocation();
   const history = useHistory();
   // For hash routing - Add element id and which step it lives on here
@@ -107,6 +109,7 @@ export const CorrespondenceIntake = (props) => {
         setUnrelatedTasks={props.setUnrelatedTasks}
         correspondenceUuid={props.correspondence_uuid}
         onContinueStatusChange={handleContinueStatusChange}
+        autoTexts={props.autoTexts}
       />
     }
     {currentStep === 3 &&
@@ -138,6 +141,7 @@ export const CorrespondenceIntake = (props) => {
       {currentStep === 3 &&
       <Button
         type="button"
+        onClick={() => setSubmitCorrespondenceModalVisible(true)}
         name="Submit"
         classNames={['cf-right-side']}>
           Submit
@@ -151,6 +155,11 @@ export const CorrespondenceIntake = (props) => {
         classNames={['usa-button-secondary', 'cf-right-side', 'usa-back-button']}>
           Back
       </Button>}
+      {currentStep === 3 && submitCorrespondenceModalVisible &&
+        <SubmitCorrespondenceModal
+          setSubmitCorrespondenceModalVisible={setSubmitCorrespondenceModalVisible}
+        />
+      }
     </div>
   </div>;
 };
@@ -161,7 +170,8 @@ CorrespondenceIntake.propTypes = {
   veteranInformation: PropTypes.object,
   unrelatedTasks: PropTypes.arrayOf(Object),
   setUnrelatedTasks: PropTypes.func,
-  mailTasks: PropTypes.objectOf(PropTypes.bool)
+  mailTasks: PropTypes.objectOf(PropTypes.bool),
+  autoTexts: PropTypes.arrayOf(PropTypes.string)
 };
 
 const mapStateToProps = (state) => ({

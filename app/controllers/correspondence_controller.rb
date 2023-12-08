@@ -3,6 +3,7 @@
 class CorrespondenceController < ApplicationController
   before_action :verify_feature_toggle
   before_action :correspondence
+  before_action :auto_texts
 
   def intake
     respond_to do |format|
@@ -83,6 +84,42 @@ class CorrespondenceController < ApplicationController
     render json: { data: data }
   end
 
+  # :reek:UtilityFunction
+  def vbms_document_types
+    data = ExternalApi::ClaimEvidenceService.document_types
+    data["documentTypes"].map { |document_type| { id: document_type["id"], name: document_type["name"] } }
+  end
+
+  def pdf
+    document = Document.find(params[:pdf_id])
+
+    document_disposition = "inline"
+    if params[:download]
+      document_disposition = "attachment; filename='#{params[:type]}-#{params[:id]}.pdf'"
+    end
+
+    # The line below enables document caching for a month.
+    expires_in 30.days, public: true
+    send_file(
+      document.serve,
+      type: "application/pdf",
+      disposition: document_disposition
+    )
+  end
+
+  def process_intake
+    ActiveRecord::Base.transaction do
+      begin
+        create_correspondence_relations
+      rescue ActiveRecord::RecordInvalid
+        render json: { error: "Failed to update records" }, status: :bad_request
+        raise ActiveRecord::Rollback
+      else
+        render json: {}, status: :created
+      end
+    end
+  end
+
   private
 
   def vbms_document_types
@@ -98,6 +135,15 @@ class CorrespondenceController < ApplicationController
   def demo_data
     json_file_path = "vbms doc types.json"
     JSON.parse(File.read(json_file_path))
+  end
+
+  def create_correspondence_relations
+    params[:related_correspondence_uuids]&.map do |uuid|
+      CorrespondenceRelation.create!(
+        correspondence_id: Correspondence.find_by(uuid: params[:correspondence_uuid])&.id,
+        related_correspondence_id: Correspondence.find_by(uuid: uuid)&.id
+      )
+    end
   end
 
   def general_information
@@ -159,5 +205,9 @@ class CorrespondenceController < ApplicationController
       correspondenceUuid: correspondence.uuid,
       packageDocumentType: correspondence.correspondence_type_id
     }
+  end
+
+  def auto_texts
+    @auto_texts ||= AutoText.all.pluck(:name)
   end
 end

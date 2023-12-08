@@ -670,7 +670,7 @@ class QueueApp extends React.PureComponent {
   );
 
   routedCorrespondenceIntake = (props) => (
-    <CorrespondenceIntake {...props.match.params} />
+    <CorrespondenceIntake autoTexts={this.props.autoTexts} {...props.match.params} />
   );
 
   routedCorrespondenceCase = () => (
@@ -1490,7 +1490,8 @@ QueueApp.propTypes = {
   canEditCavcDashboards: PropTypes.bool,
   canViewCavcDashboards: PropTypes.bool,
   userIsCobAdmin: PropTypes.bool,
-  correspondence: PropTypes.object
+  correspondence: PropTypes.object,
+  autoTexts: PropTypes.array
 };
 
 const mapStateToProps = (state) => ({
