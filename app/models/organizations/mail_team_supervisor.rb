@@ -6,4 +6,3 @@ class MailTeamSupervisor < Organization
       MailTeamSupervisor.create(name: "Mail Team Supervisor", url: "mail-team-supervisor")
   end
 end
-
