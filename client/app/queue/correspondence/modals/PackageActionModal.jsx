@@ -63,7 +63,11 @@ const PackageActionModal = (props) => {
       return true;
     }
 
-    return false;
+      return isRadioDisabled ? textInputReason === '' : false;
+    }
+    default:
+      return true;
+    }
   };
 
   const onChange = (event) => {
