@@ -4,7 +4,7 @@ class CaseDistributionIneligibleJudges
   class << self
     def ineligible_vacols_judges
       VACOLS::Staff.where("(STAFF.SVLJ IS NOT NULL OR STAFF.SATTYID IS NOT NULL) AND ((STAFF.SACTIVE = 'I') OR
-     (STAFF.SVLJ <> 'A' AND STAFF.SVLJ <> 'J'))").map do |staff|
+     (STAFF.SVLJ IS NULL OR STAFF.SVLJ NOT IN ('A', 'J')))").map do |staff|
         { sattyid: staff.sattyid, sdomainid: staff.sdomainid, svlj: staff.svlj }
       end
     end

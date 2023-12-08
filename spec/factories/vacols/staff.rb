@@ -12,14 +12,16 @@ FactoryBot.define do
     end
 
     sequence(:stafkey) do |n|
-      if user
+      #  STAFKEY has maximum size of 16
+      if user && user.css_id.size <= 16
         user.css_id
       else
         n
       end
     end
     sequence(:slogid) do |n|
-      if user
+      # Some tests use this for DECASS.DEMDUSR which has max size of 12
+      if user && user.css_id.size <= 12
         user.css_id
       else
         "ID#{n}"
@@ -41,6 +43,11 @@ FactoryBot.define do
 
     trait :attorney_role do
       sactive { "A" }
+      sattyid { generated_sattyid }
+    end
+
+    # I'm not sure if this reflects real data but it's required for SCM users to see legacy tasks in tests
+    trait :scm_role do
       sattyid { generated_sattyid }
     end
 
