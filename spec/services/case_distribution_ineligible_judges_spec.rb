@@ -16,10 +16,10 @@ describe CaseDistributionIneligibleJudges, :postgres do
 
 
         #expect(result.size).to eq(2)
-        expect(result).to contain_exactly([
+        expect(result).to contain_exactly(
           {:sattyid=>"4", :sdomainid=>"BVA4", :svlj=>"J"},
           {:sattyid=>"9999", :sdomainid=>"BVA5", :svlj=>nil}
-        ])
+        )
       end
     end
   end
