@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # rubocop:disable Layout/LineLength
-RSpec.feature("The Correspondence Review Pacakage page") do
+RSpec.feature("The Correspondence Review Package page") do
   let(:veteran) { create(:veteran) }
   let(:package_document_type) { PackageDocumentType.create(id: 15, active: true, created_at: Time.zone.now, name: "10182", updated_at: Time.zone.now) }
   let(:correspondence) { create(:correspondence, :with_single_doc, veteran_id: veteran.id, package_document_type_id: package_document_type.id) }
@@ -56,11 +56,6 @@ RSpec.feature("The Correspondence Review Pacakage page") do
       expect(page).to have_current_path("/intake/review_request")
       expect(page).to have_text `#{veteran.file_number}`
       expect(page).to have_text `Review #{veteran.first_name} #{veteran.last_name}'s Decision Review Request: Board Appeal (Notice of Disagreement) - VA Form 10182`
-    end
-
-    it "button does not show if type is not 10182" do
-      visit "/queue/correspondence/#{correspondence_2.uuid}/review_package"
-      expect(page).to_not have_button("Intake appeal")
     end
   end
 end

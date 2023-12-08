@@ -11,6 +11,7 @@ import { COLORS as COMMON_COLORS } from '@department-of-veterans-affairs/caseflo
 import COPY from '../../COPY';
 import VACOLS_COLUMN_MAX_LENGTHS from '../../constants/VACOLS_COLUMN_MAX_LENGTHS';
 import LEGACY_APPEAL_TYPES_BY_ID from '../../constants/LEGACY_APPEAL_TYPES_BY_ID';
+import QUEUE_INTAKE_FORM_TASK_TYPES from '../../constants/QUEUE_INTAKE_FORM_TASK_TYPES';
 
 export const COLORS = {
   QUEUE_LOGO_PRIMARY: '#11598D',
@@ -163,6 +164,8 @@ export const LEGACY_APPEAL_TYPES = _.fromPairs(_.zip(
   _.invokeMap(_.keys(LEGACY_APPEAL_TYPES_BY_ID), 'toUpperCase'),
   _.values(LEGACY_APPEAL_TYPES_BY_ID)
 ));
+
+export const INTAKE_FORM_TASK_TYPES = QUEUE_INTAKE_FORM_TASK_TYPES;
 
 export const ISSUE_DESCRIPTION_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.ISSUES.ISSDESC;
 export const ATTORNEY_COMMENTS_MAX_LENGTH = VACOLS_COLUMN_MAX_LENGTHS.DECASS.DEATCOM;
