@@ -4,6 +4,7 @@ class CorrespondenceTasksController < TasksController
   def create_package_action_task
     review_package_task = ReviewPackageTask.find_by(appeal_id: params[:correspondence_id], type: ReviewPackageTask.name)
 
+
     task = task_to_create
     task_params = {
       parent_id: review_package_task.id,
@@ -28,6 +29,8 @@ class CorrespondenceTasksController < TasksController
       RemovePackageTask
     when "splitPackage"
       SplitPackageTask
+    when "reassignPackage"
+      ReassignPackageTask
     else
       fail NotImplementedError "Type not implemented"
     end

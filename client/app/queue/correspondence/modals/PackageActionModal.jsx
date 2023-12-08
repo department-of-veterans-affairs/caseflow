@@ -80,6 +80,7 @@ const PackageActionModal = (props) => {
     ) {
       data.instructions.push(textInputReason);
     }
+
     ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/task`, { data }).then((response) => {
       props.closeHandler(null);
       if (response.ok) {

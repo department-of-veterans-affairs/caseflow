@@ -57,4 +57,28 @@ describe('PackageActionModal rendering', () => {
     expect(screen.getByRole('button', { name: 'Confirm request' })).not.toBeDisabled();
 
   });
+
+  it('renders the reassign package action modal', () => {
+    const firstName = veteranInformation.veteran_name.first_name.toString();
+    const lastName = veteranInformation.veteran_name.last_name.toString();
+    const fileNumber = veteranInformation.file_number.toString();
+
+    renderPackageActionModal('reassignPackage');
+
+    expect(screen.getByText('Request package assignment')).toBeInTheDocument();
+    expect(screen.getByText('Veteran Details')).toBeInTheDocument();
+    expect(screen.getByText('Provide a reason for reassignment')).toBeInTheDocument();
+    expect(screen.getByText(correspondenceData.cmp_packet_number.toString())).toBeInTheDocument();
+    expect(screen.getByText(packageDocumentTypeData.name)).toBeInTheDocument();
+    // hacky way to match multi line dynamic text
+    expect(screen.getByText(`${firstName} ${lastName}`, { exact: false })).toBeInTheDocument();
+    expect(screen.getByText(`${fileNumber}`, { exact: false })).toBeInTheDocument();
+
+    expect(screen.getByRole('button', { name: 'Confirm request' })).toBeDisabled();
+    const textbox = screen.getByRole('textbox', { name: 'Provide a reason for reassignment' });
+
+    userEvent.type(textbox, 'very good reason haha');
+    expect(screen.getByRole('button', { name: 'Confirm request' })).not.toBeDisabled();
+
+  });
 });
