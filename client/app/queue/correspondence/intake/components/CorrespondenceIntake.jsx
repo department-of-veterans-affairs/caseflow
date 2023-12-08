@@ -118,7 +118,8 @@ export const CorrespondenceIntake = (props) => {
           mailTasks={props.mailTasks}
           goToStep={setCurrentStep}
           toggledCorrespondences={props.toggledCorrespondences}
-          selectedCorrespondences={props.correspondences.filter((currentCorrespondence) => props.toggledCorrespondences.indexOf(String(currentCorrespondence.id)) !== -1)}
+          selectedCorrespondences={props.correspondences.filter((currentCorrespondence) =>
+            props.toggledCorrespondences.indexOf(String(currentCorrespondence.id)) !== -1)}
         />
       </div>
     }
@@ -171,6 +172,8 @@ CorrespondenceIntake.propTypes = {
   unrelatedTasks: PropTypes.arrayOf(Object),
   setUnrelatedTasks: PropTypes.func,
   mailTasks: PropTypes.objectOf(PropTypes.bool),
+  toggledCorrespondences: PropTypes.arrayOf(Object),
+  correspondences: PropTypes.arrayOf(Object),
   autoTexts: PropTypes.arrayOf(PropTypes.string)
 };
 
