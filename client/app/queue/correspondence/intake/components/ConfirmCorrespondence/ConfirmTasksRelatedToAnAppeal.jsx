@@ -7,9 +7,14 @@ import LinkToAppeal from '../../../../../hearings/components/assignHearings/Link
 import HearingBadge from '../../../../../components/badges/HearingBadge/HearingBadge';
 import DocketTypeBadge from '../../../../../components/DocketTypeBadge';
 import { ExternalLinkIcon } from '../../../../../components/icons/ExternalLinkIcon';
+import BadgeArea from '../../../../../components/badges/BadgeArea';
 // import Badge from '../../../../../components/badges/Badge';
 
 const styling = { backgroundColor: COLORS.GREY_BACKGROUND, border: 'none' };
+
+const borderlessTd = {
+  borderTop: 'none', borderBottom: 'none', backgroundColor: COLORS.GREY_BACKGROUND
+}
 
 const ConfirmTasksRelatedToAnAppeal = () => {
   const tasks = useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks);
@@ -19,28 +24,28 @@ const ConfirmTasksRelatedToAnAppeal = () => {
     return (
       <>
         {/* <tr colSpan="100%" style={{ height: '100px', width:'100%', display: 'flex', flexDirection: 'column' }}> */}
-        <tr colSpan="100%" style={{ height: '100px', width: '100%', backgroundColor: COLORS.GREY_BACKGROUND }}>
+        <tr colSpan="100%" style={{ backgroundColor: COLORS.GREY_BACKGROUND }}>
           <td style={{ borderTop: 'none', padding: 'none', margin: 'none', borderBottom: 'none', backgroundColor: COLORS.GREY_BACKGROUND }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <th style={styling}></th>
               <h3>Appeal {index + 1} Tasks</h3>
               <b style={{ marginBottom: '5px' }}>Linked appeal</b>
               <div style={{ width: 'fit-content', padding: '3px', backgroundColor: 'white', border: `1px solid ${COLORS.COLOR_COOL_BLUE_LIGHTER}` }}>
-                <LinkToAppeal>
-                  <DocketTypeBadge name="Help" number="1234" />
+                <LinkToAppeal appealExternalId={fetchedAppeals.find((appeal) => appeal.id === task).externalId}>
+                  <DocketTypeBadge name={(fetchedAppeals.find((appeal) => appeal.id === task).docketName)} number="1234" />
                   <b>{fetchedAppeals.find((appeal) => appeal.id === task).docketNumber}</b>
                   <ExternalLinkIcon size={15} className="cf-pdf-external-link-icon" color={COLORS.FOCUS_OUTLINE} />
                 </LinkToAppeal>
               </div>
             </div>
           </td>
-          <td style={{ borderTop: 'none', borderBottom: 'none', backgroundColor: COLORS.GREY_BACKGROUND }}>
+          <td style={borderlessTd}>
             <p>Currently Active Task</p>
           </td>
-          <td style={{ borderTop: 'none', borderBottom: 'none', backgroundColor: COLORS.GREY_BACKGROUND }}>
+          <td style={borderlessTd}>
             <p>Evidence Window Waived?</p>
           </td>
-          <td style={{ borderTop: 'none', borderBottom: 'none', backgroundColor: COLORS.GREY_BACKGROUND }}>
+          <td style={borderlessTd}>
             <p>Assigned To</p>
           </td>
         </tr>
