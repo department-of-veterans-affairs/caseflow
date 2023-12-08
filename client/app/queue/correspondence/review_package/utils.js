@@ -98,6 +98,7 @@ export const getPackageActionColumns = (dropdownType) => {
 };
 
 export const getModalInformation = (dropdownType) => {
+  console.log(dropdownType,"dropdown type");
   switch (dropdownType) {
   case 'mergePackage':
     return {

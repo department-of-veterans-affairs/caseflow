@@ -62,6 +62,12 @@ const PackageActionModal = (props) => {
     default:
       return true;
     }
+
+    return false;
+  };
+
+  const onChange = (event) => {
+    setRadioValue(event);
   };
 
   const onChange = (event) => {
