@@ -26,6 +26,8 @@ class CorrespondenceTasksController < TasksController
     case params[:type]
     when "removePackage"
       RemovePackageTask
+    when "splitPackage"
+      SplitPackageTask
     else
       fail NotImplementedError "Type not implemented"
     end

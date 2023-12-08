@@ -5,7 +5,8 @@ import {
   PACKAGE_ACTION_REMOVAL_TEXTAREA_LABEL,
   PACKAGE_ACTION_REASSIGN_DESCRIPTION,
   PACKAGE_ACTION_REASSIGN_TITLE,
-  PACKAGE_ACTION_REASSIGN_TEXTAREA_LABEL
+  PACKAGE_ACTION_REASSIGN_TEXTAREA_LABEL,
+  PACKAGE_ACTION_SLIT_TITLE
 } from '../../../../COPY';
 
 export const getPackageActionColumns = (dropdownType) => {
@@ -38,7 +39,7 @@ export const getPackageActionColumns = (dropdownType) => {
     },
   ];
 
-  if (dropdownType === 'removePackage' || dropdownType === 'reassignPackage') {
+  if (dropdownType === 'removePackage' || dropdownType === 'reassignPackage' || dropdownType === 'splitPackage') {
     baseColumns.push(
       {
         cellClass: 'veteran-details-column',
@@ -68,6 +69,7 @@ export const getPackageActionColumns = (dropdownType) => {
 };
 
 export const getModalInformation = (dropdownType) => {
+  console.log(dropdownType,"dropdown type");
   switch (dropdownType) {
   case 'removePackage':
     return {
@@ -80,6 +82,11 @@ export const getModalInformation = (dropdownType) => {
       title: PACKAGE_ACTION_REASSIGN_TITLE,
       description: PACKAGE_ACTION_REASSIGN_DESCRIPTION,
       label: PACKAGE_ACTION_REASSIGN_TEXTAREA_LABEL
+    };
+  case 'splitPackage':
+    return {
+      title: PACKAGE_ACTION_SLIT_TITLE,
+      description: PACKAGE_ACTION_MODAL_DESCRIPTION,
     };
   default:
     return {
