@@ -19,8 +19,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
  * @param {string} documentPathBase - String path containing appeal Id. Directs to /:appeal_id/documents
  */
 const CorrespondencePdfUI = (props) => {
-  // TODO: Replace hard-coded data objects to dynamically include actual API request data
-
+  // Note: Replace hard-coded data objects to dynamically include actual API request data
   // Destructured Props and State
   const {
     documents,
@@ -72,8 +71,8 @@ const CorrespondencePdfUI = (props) => {
       return Promise.all(promises);
     };
 
-    // TODO: Refactor when CorrespondenceDocument controller is created
-    // TODO: Need to add error handling
+    // Note: Refactor when CorrespondenceDocument controller is created
+    // Note: Need to add error handling
     const loadPdf = async () => {
       try {
         const response = await ApiUtil.get(`${mappedMockDocumentData[selectedId].content_url}`, {
