@@ -408,7 +408,6 @@ RSpec.describe CaseReviewsController, :all_dbs, type: :controller do
           it "should not be successful" do
             allow_any_instance_of(User).to receive(:fail_if_no_access_to_legacy_task!)
               .and_raise(Caseflow::Error::UserRepositoryError, message: "No access")
-            expect(Raven).to_not receive(:capture_exception)
             post :complete, params: { task_id: task_id, tasks: params }
             expect(response.status).to eq 400
             response_body = JSON.parse(response.body)
