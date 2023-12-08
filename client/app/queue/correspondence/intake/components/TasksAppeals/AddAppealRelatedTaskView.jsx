@@ -79,10 +79,12 @@ export const AddAppealRelatedTaskView = (props) => {
     } else {
       const selectedAppeals = taskRelatedAppeals.filter((checkedId) => checkedId !== appealId);
       const filteredNewTasks = newTasks.filter((task) => task.appealId !== appealId);
+      const waivedEvidenceTasks = filteredNewTasks.filter((taskEvidence) => taskEvidence.isWaived);
 
       setTaskRelatedAppeals(selectedAppeals);
       setNewTasks(filteredNewTasks);
       setTableUpdateTrigger((prev) => prev + 1);
+      setWaivedTasks(waivedEvidenceTasks);
     }
   };
 
@@ -123,6 +125,7 @@ export const AddAppealRelatedTaskView = (props) => {
     if (existingAppealRadio === RELATED_NO) {
       setTaskRelatedAppeals([]);
       setNewTasks([]);
+      setWaivedTasks([]);
     }
   }, [existingAppealRadio]);
 
@@ -143,11 +146,11 @@ export const AddAppealRelatedTaskView = (props) => {
     });
 
     waivedTasks.forEach((task) => {
-      canContinue = canContinue && (task.waiveReason !== '');
+      canContinue = canContinue && (task.isWaived ? (task.waiveReason !== '') : true);
     });
 
     props.setRelatedTasksCanContinue(canContinue);
-  }, [newTasks]);
+  }, [newTasks, waivedTasks]);
 
   return (
     <div>
