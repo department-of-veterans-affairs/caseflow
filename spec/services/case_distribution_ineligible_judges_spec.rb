@@ -3,25 +3,25 @@
 describe CaseDistributionIneligibleJudges, :postgres do
   describe ".ineligible_vacols_judges" do
     context "when inactive staff exists" do
-      let!(:inactive_staff) { create(:staff, :inactive) }
-      let!(:active_staff) { create(:staff) }
-      let!(:staff_1) { create(:staff, sattyid: nil) }
-      let!(:staff_2) { create(:staff, sattyid: nil, svlj: nil) }
-      let!(:inactive_staff_user) { create(:staff, svlj: "V") }
-      let!(:judge_staff) { create(:staff, :judge_role) }
+      let!(:active_non_judge_staff) { create(:staff) }
+      let!(:inactive_non_judge_staff) { create(:staff, :inactive) }
+      let!(:active_judge_staff) { create(:staff, :judge_role) }
+      let!(:inactive_judge_staff) { create(:staff, :judge_role, :inactive) }
+      let!(:non_judge_with_sattyid) { create(:staff, sattyid: 9999) }
       let!(:attorney_judge_staff) { create(:staff, :attorney_judge_role) }
 
       it "returns ineligible vacols judges" do
         result = described_class.ineligible_vacols_judges
-        eligible_vacols_judges = [staff_1.sdomainid, staff_2.sdomainid, active_staff.sdomainid,
-          judge_staff.sdomainid, attorney_judge_staff.sdomainid]
 
+        expect(result).to contain_exactly(
+          { sattyid: inactive_judge_staff.sattyid,
+            sdomainid: inactive_judge_staff.sdomainid,
+            svlj: inactive_judge_staff.svlj },
+          { sattyid: non_judge_with_sattyid.sattyid,
+            sdomainid: non_judge_with_sattyid.sdomainid,
+            svlj: non_judge_with_sattyid.svlj }
+        )
         expect(result.size).to eq(2)
-        expect(result.first[:sdomainid]).to eq(inactive_staff.sdomainid)
-        expect(result.first[:sattyid]).to eq(inactive_staff.sattyid)
-        expect(result.last[:sdomainid]).to eq(inactive_staff_user.sdomainid)
-        expect(result.last[:sattyid]).to eq(inactive_staff_user.sattyid)
-        expect(eligible_vacols_judges).not_to include(result.first[:sdomainid])
       end
     end
   end
@@ -43,7 +43,7 @@ describe CaseDistributionIneligibleJudges, :postgres do
     context "when caseflow users are tied to judge team organizations" do
       let!(:active_judge_user) { create(:user, :judge) }
       let!(:inactive_judge_user) { create(:user, :judge) }
-      before { inactive_judge_user.organizations.last.update(status: 'inactive') }
+      before { inactive_judge_user.organizations.last.update(status: "inactive") }
 
       it "returns ineligible judge team users but not eligible judge team users" do
         result = described_class.ineligible_caseflow_judges
