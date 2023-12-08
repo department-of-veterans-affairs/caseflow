@@ -14,6 +14,7 @@ module Seeds
     end
 
     def seed!
+      RequestStore[:current_user] = User.system_user
       create_legacy_appeals
       create_ama_appeals
     end
