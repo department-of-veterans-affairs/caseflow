@@ -266,7 +266,9 @@ export default class QueueTable extends React.PureComponent {
     super(props);
 
     const validatedPaginationOptions = this.validatedPaginationOptions();
+
     this._isMounted = true; // eslint-disable-line no-underscore-dangle
+
     this.state = this.initialState(validatedPaginationOptions);
 
     this.updateAddressBar();
