@@ -75,6 +75,7 @@ class AddCorrespondenceView extends React.Component {
     const isAnyCheckboxSelected = selectedCheckboxes.length > 0;
 
     this.props.onCheckboxChange(isAnyCheckboxSelected);
+
   }
 
   getKeyForRow = (index, { id }) => {
@@ -91,7 +92,7 @@ class AddCorrespondenceView extends React.Component {
             name={correspondence.id.toString()}
             id={correspondence.id.toString()}
             hideLabel
-            defaultValue={this.props.checkboxes.some(el => el.id === correspondence.id)}
+            defaultValue={() => this.props.checkboxes.some(el => el.id === correspondence.id)}
             onChange={(checked) => this.onChangeCheckbox(correspondence, checked)}
           />
         ),

@@ -20,6 +20,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
  */
 const CorrespondencePdfUI = (props) => {
   // Note: Replace hard-coded data objects to dynamically include actual API request data
+
   // Destructured Props and State
   const {
     documents,
