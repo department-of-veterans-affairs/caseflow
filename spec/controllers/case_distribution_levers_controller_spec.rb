@@ -51,6 +51,10 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
   let!(:levers) {[lever1, lever2]}
   let!(:lever_history) {[audit_lever_entry1, audit_lever_entry2]}
 
+  before do
+    CDAControlGroup.singleton.add_user(lever_user)
+  end
+
   describe "GET acd_lever_index", :type => :request do
     it "redirects the user to the unauthorized page if they are not authorized" do
       User.authenticate!(user: create(:user))
@@ -80,7 +84,8 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     end
 
     it "renders a page with the correct levers, lever history, and user admin status when user is an admin" do
-      User.authenticate!(roles: ["System Admin"])
+      User.authenticate!(user: lever_user)
+      OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
       get "/acd-controls"
 
       request_levers = @controller.view_assigns["acd_levers"]
@@ -109,7 +114,8 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     end
 
     it "updates all provided levers" do
-      User.authenticate!(roles: ["System Admin"])
+      User.authenticate!(user: lever_user)
+      OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
 
       expect(CaseDistributionLever.all).to eq(levers)
       updated_lever_1 = {
@@ -137,7 +143,8 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     end
 
     it "returns an error message then the format of a lever in invalid" do
-      User.authenticate!(roles: ["System Admin"])
+      User.authenticate!(user: lever_user)
+      OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
       expect(CaseDistributionLever.all).to eq(levers)
 
       invalid_updated_lever_1 = {
@@ -165,7 +172,8 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     end
 
     it "creates records for the provided audit lever entries in the database" do
-      admin_user = User.authenticate!(roles: ["System Admin"])
+      User.authenticate!(user: lever_user)
+      OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
       created_at_date = Time.now
       audit_lever_entry3 = {
         case_distribution_lever_id: lever1.id,
@@ -197,7 +205,8 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     end
 
     it "returns an error message when the format of the audit lever entry is invalid" do
-      admin_user = User.authenticate!(roles: ["System Admin"])
+      User.authenticate!(user: lever_user)
+      OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
       created_at_date = Time.now
       audit_lever_entry3 = {
         case_distribution_lever_id: lever1.id,
