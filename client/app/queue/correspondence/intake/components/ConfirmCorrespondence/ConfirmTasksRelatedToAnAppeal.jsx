@@ -23,16 +23,15 @@ const ConfirmTasksRelatedToAnAppeal = () => {
   const rowObjects = taskIds.map((task, index) => {
     return (
       <>
-        {/* <tr colSpan="100%" style={{ height: '100px', width:'100%', display: 'flex', flexDirection: 'column' }}> */}
         <tr colSpan="100%" style={{ backgroundColor: COLORS.GREY_BACKGROUND }}>
           <td style={{ borderTop: 'none', padding: 'none', margin: 'none', borderBottom: 'none', backgroundColor: COLORS.GREY_BACKGROUND }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <th style={styling}></th>
               <h3>Appeal {index + 1} Tasks</h3>
-              <b style={{ marginBottom: '5px' }}>Linked appeal</b>
+              <b style={{ marginBottom: '7px' }}>Linked appeal</b>
               <div style={{ width: 'fit-content', padding: '3px', backgroundColor: 'white', border: `1px solid ${COLORS.COLOR_COOL_BLUE_LIGHTER}` }}>
+              <DocketTypeBadge name={(fetchedAppeals.find((appeal) => appeal.id === task).docketName)} />
                 <LinkToAppeal appealExternalId={fetchedAppeals.find((appeal) => appeal.id === task).externalId}>
-                  <DocketTypeBadge name={(fetchedAppeals.find((appeal) => appeal.id === task).docketName)} number="1234" />
                   <b>{fetchedAppeals.find((appeal) => appeal.id === task).docketNumber}</b>
                   <ExternalLinkIcon size={15} className="cf-pdf-external-link-icon" color={COLORS.FOCUS_OUTLINE} />
                 </LinkToAppeal>
@@ -86,7 +85,7 @@ const ConfirmTasksRelatedToAnAppeal = () => {
       <div>
         <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
           <h2 style={{ display: 'inline', marginBottom: '2rem' }}>Tasks not related to an Appeal</h2>
-          <a href="#task-not-related-to-an-appeal">
+          <a href="#task-related-to-an-appeal">
             <span style={{ position: 'absolute' }}><PencilIcon size={25} /></span>
             <span {...css({ marginLeft: '24px' })}>Edit section</span>
           </a>
@@ -94,7 +93,6 @@ const ConfirmTasksRelatedToAnAppeal = () => {
         <div
           style={{ background: COLORS.GREY_BACKGROUND, padding: '2rem', paddingTop: '0.5rem', marginBottom: '2rem' }}>
           <table className="usa-table-borderless">
-
             {/* <tbody className="usa-input-grid-large"> */}
             <tbody className="cf-form--full-width">
 
