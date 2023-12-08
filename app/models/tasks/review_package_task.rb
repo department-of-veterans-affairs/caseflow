@@ -15,7 +15,6 @@ class ReviewPackageTask < CorrespondenceRootTask
     end
 
     def create_child_task(parent_task, current_user, params)
-      # binding.pry
       Task.create!(
         type: params[:type],
         appeal_type: "Correspondence",

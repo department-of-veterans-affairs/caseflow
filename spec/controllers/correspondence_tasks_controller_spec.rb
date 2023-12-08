@@ -16,7 +16,7 @@ RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
   describe "POST #create_package_action_task" do
     context "RemovePackageTask creation" do
       before do
-        task_creation_params.merge!({ type: "removePackage", instructions: ["please remove task, thanks"] })
+        task_creation_params.merge!(type: "removePackage", instructions: ["please remove task, thanks"])
         post :create_package_action_task, params: task_creation_params
       end
 
