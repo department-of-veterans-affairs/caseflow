@@ -175,7 +175,7 @@ module Seeds
       )
     end
 
-    # TODO: Remove after document controller is implemented
+    # Note: Remove after document controller is implemented
     def create_static_documents
       Document.create!(vbms_document_id: 3)
       Document.create!(vbms_document_id: 4)
