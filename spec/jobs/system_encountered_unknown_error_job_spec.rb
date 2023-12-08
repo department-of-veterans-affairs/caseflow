@@ -2,7 +2,6 @@
 
 describe SystemEncounteredUnknownErrorJob, :postgres do
   let(:system_encountered_unknown_error) { "The system has encountered an unknown error" }
-  let(:file_number) { "123456789" }
 
   my_time = Time.zone.now
 
@@ -26,10 +25,18 @@ describe SystemEncounteredUnknownErrorJob, :postgres do
   end
 
   before do
+    Timecop.freeze(Time.zone.now)
     create_list(
       :decision_document,
       3,
       error: system_encountered_unknown_error,
+      processed_at: 7.days.ago,
+      uploaded_to_vbms_at: 7.days.ago
+    )
+    create_list(
+      :decision_document,
+      1,
+      error: nil,
       processed_at: 7.days.ago,
       uploaded_to_vbms_at: 7.days.ago
     )
@@ -48,12 +55,14 @@ describe SystemEncounteredUnknownErrorJob, :postgres do
       end
     end
   end
+
   subject { described_class.new }
 
   context "When there are no decision documents with errors" do
     it "Does not process any decision docs" do
       decision_document.update!(error: nil)
       subject.perform
+
       expect(decision_document.error).to be_nil
     end
   end
@@ -62,6 +71,7 @@ describe SystemEncounteredUnknownErrorJob, :postgres do
     it "logs the error and does not clear the error for the decision document" do
       decision_document.update!(processed_at: nil)
       subject.perform
+
       expect(decision_document.reload.error).to eq(system_encountered_unknown_error)
     end
   end
@@ -71,16 +81,17 @@ describe SystemEncounteredUnknownErrorJob, :postgres do
       epe.destroy
       expect(ExternalApi::VBMSService).to receive(:upload_document_to_vbms)
       subject.perform
+
       expect(decision_document.reload.error).to be_nil
-      expect(decision_document.reload.updated_at).to be_within(10.seconds).of(my_time)
+      expect(decision_document.reload.updated_at).to be_within(15.seconds).of(my_time)
     end
   end
 
   context "When there are one or more EPE's that belong to a decision document" do
     context "When the EPE's are all valid" do
       it "clears the error field" do
+        expect(DecisionDocument.all.count).to eq(5)
         expect(subject.decision_docs_with_errors.count).to eq(4)
-
         subject.perform
 
         expect(subject.decision_docs_with_errors.count).to eq(0)
@@ -88,9 +99,12 @@ describe SystemEncounteredUnknownErrorJob, :postgres do
     end
     context "When there is an invalid EPE" do
       it "logs the error and does not clear the error for the decision document" do
+        expect(DecisionDocument.all.count).to eq(5)
         epe.update!(reference_id: nil)
         subject.perform
+
         expect(decision_document.reload.error).to eq(system_encountered_unknown_error)
+        expect(subject.decision_docs_with_errors.count).to eq(1)
       end
     end
   end

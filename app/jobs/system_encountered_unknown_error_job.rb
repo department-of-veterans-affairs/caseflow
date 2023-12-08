@@ -23,6 +23,7 @@ class SystemEncounteredUnknownErrorJob < CaseflowJob
     decision_document.processed_at.present? && decision_document.uploaded_to_vbms_at.present?
   end
 
+  # :reek:FeatureEnvy
   def handle_decision_document_without_epe(decision_document)
     ActiveRecord::Base.transaction do
       upload_document_to_vbms(decision_document)
@@ -40,7 +41,8 @@ class SystemEncounteredUnknownErrorJob < CaseflowJob
       if valid_decision_document?(single_decision_document)
         process_records(single_decision_document)
       else
-        @stuck_job_report_service.logs.push("This Decision Document with the ID of #{single_decision_document.id} is invalid.")
+        @stuck_job_report_service.logs.push("This Decision Document with the ID of
+          #{single_decision_document.id} is invalid.")
       end
     end
 
@@ -57,10 +59,12 @@ class SystemEncounteredUnknownErrorJob < CaseflowJob
       @stuck_job_report_service.append_single_record(decision_document.class.name, decision_document.id)
       decision_document.clear_error!
     else
-      @stuck_job_report_service.logs.push("This Decision Document with the ID of #{decision_document.id} has invalid End Product Establishments.")
+      @stuck_job_report_service.logs.push("This Decision Document with the ID of #{decision_document.id}
+        has invalid End Product Establishments.")
     end
   rescue StandardError => error
     log_error(error)
+    @stuck_job_report_service.append_errors(decision_document.class.name, decision_document.id, error)
   end
 
   def all_epes_valid?(epes)
