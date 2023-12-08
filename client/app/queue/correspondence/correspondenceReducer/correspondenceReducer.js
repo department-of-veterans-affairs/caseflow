@@ -6,7 +6,7 @@ export const initialState = {
   newAppealRelatedTasks: [],
   fetchedAppeals: [],
   correspondences: [],
-  radioValue: '2',
+  radioValue: '0',
   relatedCorrespondences: [],
   mailTasks: {},
   unrelatedTasks: [],
