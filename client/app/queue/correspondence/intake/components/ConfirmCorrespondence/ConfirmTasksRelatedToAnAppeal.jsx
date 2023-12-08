@@ -6,6 +6,7 @@ import { css } from 'glamor';
 import LinkToAppeal from '../../../../../hearings/components/assignHearings/LinkToAppeal';
 import HearingBadge from '../../../../../components/badges/HearingBadge/HearingBadge';
 import DocketTypeBadge from '../../../../../components/DocketTypeBadge';
+import { ExternalLinkIcon } from '../../../../../components/icons/ExternalLinkIcon';
 // import Badge from '../../../../../components/badges/Badge';
 
 const styling = { backgroundColor: COLORS.GREY_BACKGROUND, border: 'none' };
@@ -19,23 +20,27 @@ const ConfirmTasksRelatedToAnAppeal = () => {
       <>
         {/* <tr colSpan="100%" style={{ height: '100px', width:'100%', display: 'flex', flexDirection: 'column' }}> */}
         <tr colSpan="100%" style={{ height: '100px', width: '100%', backgroundColor: COLORS.GREY_BACKGROUND }}>
-          <td style={{borderTop:'none' ,padding: 'none', margin: 'none', backgroundColor: COLORS.GREY_BACKGROUND }}>
+          <td style={{ borderTop: 'none', padding: 'none', margin: 'none', borderBottom: 'none', backgroundColor: COLORS.GREY_BACKGROUND }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <th style={styling}></th>
-            Appeal {index + 1} Tasks
-              <b>Linked appeal</b>
-              <LinkToAppeal>
-                <DocketTypeBadge name="Help" number="1234" />
-                <b>{fetchedAppeals.find((appeal) => appeal.id === task).docketNumber}</b></LinkToAppeal>
+              <h3>Appeal {index + 1} Tasks</h3>
+              <b style={{ marginBottom: '5px' }}>Linked appeal</b>
+              <div style={{ width: 'fit-content', padding: '3px', backgroundColor: 'white', border: `1px solid ${COLORS.COLOR_COOL_BLUE_LIGHTER}` }}>
+                <LinkToAppeal>
+                  <DocketTypeBadge name="Help" number="1234" />
+                  <b>{fetchedAppeals.find((appeal) => appeal.id === task).docketNumber}</b>
+                  <ExternalLinkIcon size={15} className="cf-pdf-external-link-icon" color={COLORS.FOCUS_OUTLINE} />
+                </LinkToAppeal>
+              </div>
             </div>
           </td>
-          <td style={{borderTop:'none'}}>
+          <td style={{ borderTop: 'none', borderBottom: 'none', backgroundColor: COLORS.GREY_BACKGROUND }}>
             <p>Currently Active Task</p>
           </td>
-          <td style={{borderTop:'none'}}>
+          <td style={{ borderTop: 'none', borderBottom: 'none', backgroundColor: COLORS.GREY_BACKGROUND }}>
             <p>Evidence Window Waived?</p>
           </td>
-          <td style={{borderTop:'none'}}>
+          <td style={{ borderTop: 'none', borderBottom: 'none', backgroundColor: COLORS.GREY_BACKGROUND }}>
             <p>Assigned To</p>
           </td>
         </tr>
