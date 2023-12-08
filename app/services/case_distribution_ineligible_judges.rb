@@ -10,16 +10,25 @@ class CaseDistributionIneligibleJudges
     end
 
     def ineligible_caseflow_judges
-      User.joins("LEFT JOIN organizations_users ON users.id = organizations_users.user_id")
-        .joins("LEFT JOIN organizations ON organizations_users.organization_id = organizations.id")
-        .where("users.status != ? OR (users.id IN (?) OR (organizations_users.admin = '1'
-      AND organizations.type = 'JudgeTeam'
-      AND organizations.status <> 'active') )", "active", non_admin_users_of_judge_teams)
-        .map { |user| { id: user.id, css_id: user.css_id } }.uniq
+      User.inactive.map { |user| { id: user.id, css_id: user.css_id } }.uniq
     end
 
-    def non_admin_users_of_judge_teams
-      JudgeTeam.all.map(&:non_admins).flatten.map(&:id)
+    def vacols_judges_with_caseflow_records
+      ineligible_vacols_judges.map do |hash|
+        caseflow_user = User.find_by_css_id(hash[:sdomainid])
+        next hash unless caseflow_user
+
+        hash.merge!({ id: caseflow_user.id, css_id: caseflow_user.css_id })
+      end
+    end
+
+    def caseflow_judges_with_vacols_records
+      ineligible_caseflow_judges.map do |hash|
+        vacols_staff = VACOLS::Staff.find_by(sdomainid: hash[:css_id])
+        next hash unless vacols_staff
+
+        hash.merge!({ sattyid: vacols_staff.sattyid, sdomainid: vacols_staff.sdomainid, svlj: vacols_staff.svlj })
+      end
     end
   end
 end
