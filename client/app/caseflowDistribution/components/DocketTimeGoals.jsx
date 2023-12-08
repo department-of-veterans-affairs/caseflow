@@ -24,20 +24,42 @@ const DocketTimeGoals = (props) => {
     '& .usa-input-error label': { bottom: '15px', left: '89px' }
   });
 
+  const errorMessages = {};
+
   const [docketDistributionLevers, setDistributionLever] = useState(filteredDistributionLevers);
   const [docketTimeGoalLevers, setTimeGoalLever] = useState(filteredTimeGoalLevers);
+  const [errorMessagesList, setErrorMessages] = useState(errorMessages);
+
+  const leverInputValidation = (lever, event) => {
+
+    let rangeError = !(/^\d{1,3}$/).test(event);
+
+    if (rangeError) {
+      setErrorMessages({ ...errorMessagesList, [lever.item]: 'Please enter a value less than or equal to 999' });
+
+      return 'FAIL';
+    }
+    setErrorMessages({ ...errorMessagesList, [lever.item]: null });
+
+    return 'SUCCESS';
+  };
 
   const updateLever = (index, leverType) => (event) => {
     if (leverType === 'DistributionPrior') {
 
       const levers = docketDistributionLevers.map((lever, i) => {
         if (index === i) {
-          let errorResult = !(/^\d{0,3}$/).test(event);
 
-          if (errorResult) {
-            lever.errorMessage = 'Please enter a value less than or equal to 999';
-          } else {
-            lever.errorMessage = null;
+          let validationResponse = leverInputValidation(lever, event);
+
+          if (validationResponse === 'SUCCESS') {
+            lever.value = event;
+            leverStore.dispatch({
+              type: Constants.UPDATE_LEVER_VALUE,
+              updated_lever: { item: lever.item, value: event }
+            });
+
+            return lever;
           }
           lever.value = event;
 
@@ -58,12 +80,16 @@ const DocketTimeGoals = (props) => {
       const levers = docketTimeGoalLevers.map((lever, i) => {
         if (index === i) {
 
-          let errorResult = !(/^\d{1,3}$/).test(event);
+          let validationResponse = leverInputValidation(lever, event);
 
-          if (errorResult) {
-            lever.errorMessage = 'Please enter a value between 0 and 999';
-          } else {
-            lever.errorMessage = null;
+          if (validationResponse === 'SUCCESS') {
+            lever.value = event;
+            leverStore.dispatch({
+              type: Constants.UPDATE_LEVER_VALUE,
+              updated_lever: { item: lever.item, value: event }
+            });
+
+            return lever;
           }
 
           lever.value = event;
@@ -123,7 +149,7 @@ const DocketTimeGoals = (props) => {
               readOnly={docketTimeGoalLever.is_disabled}
               value={docketTimeGoalLever.value}
               label={docketTimeGoalLever.unit}
-              errorMessage={docketTimeGoalLever.errorMessage}
+              errorMessage={errorMessagesList[docketTimeGoalLever.item]}
               onChange={updateLever(index, 'TimeGoal')}
             />
           </div>
@@ -135,13 +161,14 @@ const DocketTimeGoals = (props) => {
               toggleSelected={toggleLever(index)}
             />
             <div className={distributionPriorLever.is_active ? styles.toggleSwitchInput : styles.toggleInputHide}>
+
               <NumberField
                 name={`toggle-${distributionPriorLever.item}`}
                 isInteger
                 readOnly={distributionPriorLever.is_disabled}
                 value={distributionPriorLever.value}
                 label={distributionPriorLever.unit}
-                errorMessage={distributionPriorLever.errorMessage}
+                errorMessage={errorMessagesList[distributionPriorLever.item]}
                 onChange={updateLever(index, 'DistributionPrior')}
               />
             </div>

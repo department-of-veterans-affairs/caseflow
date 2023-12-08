@@ -63,7 +63,8 @@ docketTimeGoalsAdmin.story = {
 };
 
 export const docketTimeGoalsMember = () => (
-  <DocketTimeGoals leverList={docketLeversObject} sectionTitles={sectionTitles} leverStore={leverStore} isAdmin={false} />
+  <DocketTimeGoals leverList={docketLeversObject} sectionTitles={sectionTitles}
+    leverStore={leverStore} isAdmin={false} />
 );
 docketTimeGoalsMember.story = {
   name: 'Docket Time Goals for Member'
