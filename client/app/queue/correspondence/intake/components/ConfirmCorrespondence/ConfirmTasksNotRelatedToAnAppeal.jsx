@@ -1,6 +1,5 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { COLORS } from 'app/constants/AppConstants';
 import { PencilIcon } from 'app/components/icons/PencilIcon';
 import { css } from 'glamor';
 
@@ -27,14 +26,6 @@ const ConfirmTasksNotRelatedToAnAppeal = () => {
   return (
     <div>
       <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-        <h2 style={{ display: 'inline', marginBottom: '2rem' }}>Tasks not related to an Appeal</h2>
-        <a
-          class= 'usa-underline-hover'
-          href="#task-not-related-to-an-appeal"
-          style={editSectionStyle}>
-          <span style={{ display: 'inline', position: 'absolute', marginLeft: '171px', marginTop: "3px"}}><PencilIcon size={20} /></span>
-          <span {...css({display: 'inline', marginLeft: '190px' })}>Edit section</span>
-        </a>
       </div>
       <div
         style={{ background: '#f5f5f5', padding: '2rem', paddingTop: '0.5rem', marginBottom: '2rem' }}>
