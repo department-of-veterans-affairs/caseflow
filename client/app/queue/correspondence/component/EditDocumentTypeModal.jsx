@@ -6,10 +6,14 @@ import SearchableDropdown from 'app/components/SearchableDropdown';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateDocumentTypeName } from '../correspondenceReducer/reviewPackageActions';
-
+import { css } from 'glamor';
 import COPY from '../../../../COPY';
 import Modal from '../../../components/Modal';
 import Button from '../../../components/Button';
+
+const modalStyle = css({
+  width: '25%'
+});
 
 class EditDocumentTypeModal extends React.Component {
 
@@ -70,22 +74,19 @@ class EditDocumentTypeModal extends React.Component {
 
     return (
       <Modal
+        customStyles = {modalStyle}
         title= {sprintf(COPY.TITLE_MODAL_EDIT_DOCUMENT_TYPE_CORRESPONDENCE)}
         closeHandler={onCancel}
         confirmButton={<Button disabled={this.state.disabledSaveButton}
           onClick={submit}>Save</Button>}
         cancelButton={<Button linkStyling onClick={onCancel}>Cancel</Button>}
       >
-        <div>
-          <p>{sprintf(COPY.TEXT_MODAL_EDIT_DOCUMENT_TYPE_CORRESPONDENCE)}</p>
-        </div>
+        <p>{sprintf(COPY.TEXT_MODAL_EDIT_DOCUMENT_TYPE_CORRESPONDENCE)}</p>
         <div style={{ fontWeight: 'bold' }}>
           {sprintf(COPY.ORIGINAL_DOC_EDIT_DOCUMENT_TYPE_CORRESPONDENCE)}
         </div>
-        <div>
-          {originalDocumentTitle}
-        </div>
-        <br />
+        <p>{originalDocumentTitle}</p>
+
         <SearchableDropdown
           name = "issue-category"
           label = {sprintf(COPY.NEW_DOC_EDIT_DOCUMENT_TYPE_CORRESPONDENCE)}
@@ -95,6 +96,7 @@ class EditDocumentTypeModal extends React.Component {
           value = {packageDocument}
           onChange = {this.packageDocumentOnChange}
         />
+
       </Modal>
     );
 
