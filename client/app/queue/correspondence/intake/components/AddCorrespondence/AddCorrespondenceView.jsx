@@ -15,8 +15,11 @@ import {
   saveCheckboxState,
   clearCheckboxState
 } from '../../../correspondenceReducer/correspondenceActions';
-class AddCorrespondenceView extends React.Component {
 
+const RELATED_NO = '0';
+const RELATED_YES = '1';
+
+class AddCorrespondenceView extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -55,7 +58,7 @@ class AddCorrespondenceView extends React.Component {
 
   onChange = (value) => {
     this.props.updateRadioValue({ radioValue: value });
-    this.props.onContinueStatusChange(value === '2');
+    this.props.onContinueStatusChange(value === RELATED_NO);
     this.props.clearCheckboxState();
   }
 
@@ -72,8 +75,6 @@ class AddCorrespondenceView extends React.Component {
     const isAnyCheckboxSelected = selectedCheckboxes.length > 0;
 
     this.props.onCheckboxChange(isAnyCheckboxSelected);
-
-    console.log(id)
   }
 
   getKeyForRow = (index, { id }) => {
@@ -90,7 +91,7 @@ class AddCorrespondenceView extends React.Component {
             name={correspondence.id.toString()}
             id={correspondence.id.toString()}
             hideLabel
-            defaultValue={this.props.checkboxes.includes(correspondence)}
+            defaultValue={this.props.checkboxes.some(el => el.id === correspondence.id)}
             onChange={(checked) => this.onChangeCheckbox(correspondence, checked)}
           />
         ),
@@ -185,9 +186,9 @@ class AddCorrespondenceView extends React.Component {
   render() {
     const priorMailAnswer = [
       { displayText: 'Yes',
-        value: '1' },
+        value: RELATED_YES },
       { displayText: 'No',
-        value: '2' }
+        value: RELATED_NO }
     ];
 
     return (
@@ -202,7 +203,7 @@ class AddCorrespondenceView extends React.Component {
           options={priorMailAnswer}
           value={this.props.radioValue}
           onChange={this.onChange} />
-        {this.props.radioValue === '1' && (
+        {this.props.radioValue === RELATED_YES && (
           <div className="cf-app-segment cf-app-segment--alt">
             <p>Please select the prior mail to link to this correspondence</p>
             {/* <p>Viewing {this.props.correspondences.length} out of {this.props.correspondences.length} total</p> */}
@@ -231,8 +232,8 @@ AddCorrespondenceView.propTypes = {
   correspondence: PropTypes.arrayOf(PropTypes.object),
   featureToggles: PropTypes.object,
   correspondenceUuid: PropTypes.string,
-  loadVeteranInformation: PropTypes.object,
-  loadCurrentCorrespondence: PropTypes.object,
+  loadVeteranInformation: PropTypes.func,
+  loadCurrentCorrespondence: PropTypes.func,
   loadCorrespondences: PropTypes.func,
   updateRadioValue: PropTypes.func,
   radioValue: PropTypes.string,
