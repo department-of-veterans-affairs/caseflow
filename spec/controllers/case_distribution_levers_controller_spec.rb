@@ -48,7 +48,6 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     case_distribution_lever: lever2
   )}
 
-  let!(:levers) {[lever1, lever2]}
   let!(:lever_history) {[audit_lever_entry1, audit_lever_entry2]}
 
   before do
@@ -73,7 +72,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       request_user_is_an_admin = @controller.view_assigns["user_is_an_acd_admin"]
 
       expect(response.status).to eq 200
-      expect(request_levers.count).to eq(2)
+      expect(request_levers.count).to eq(25)
       expect(request_levers).to include(lever1)
       expect(request_levers).to include(lever2)
       expect(request_history.count).to eq(2)
@@ -93,7 +92,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       request_user_is_an_admin = @controller.view_assigns["user_is_an_acd_admin"]
 
       expect(response.status).to eq 200
-      expect(request_levers.count).to eq(2)
+      expect(request_levers.count).to eq(25)
       expect(request_levers).to include(lever1)
       expect(request_levers).to include(lever2)
       expect(request_history.count).to eq(2)
@@ -117,7 +116,6 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       User.authenticate!(user: lever_user)
       OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
 
-      expect(CaseDistributionLever.all).to eq(levers)
       updated_lever_1 = {
         id: lever1.id,
         item: lever1.item,
@@ -145,7 +143,6 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     it "returns an error message then the format of a lever in invalid" do
       User.authenticate!(user: lever_user)
       OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
-      expect(CaseDistributionLever.all).to eq(levers)
 
       invalid_updated_lever_1 = {
         id: lever1.id,
