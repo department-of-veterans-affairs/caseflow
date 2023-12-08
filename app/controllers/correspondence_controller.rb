@@ -81,11 +81,29 @@ class CorrespondenceController < ApplicationController
     render json: { status: 200, correspondence: correspondence }
   end
 
+  # :reek:UtilityFunction
   def vbms_document_types
     data = ExternalApi::ClaimEvidenceService.document_types
     data["documentTypes"].map { |document_type| { id: document_type["id"], name: document_type["name"] } }
   end
 
+  def pdf
+    document = Document.find(params[:pdf_id])
+
+    document_disposition = "inline"
+    if params[:download]
+      document_disposition = "attachment; filename='#{params[:type]}-#{params[:id]}.pdf'"
+    end
+
+    # The line below enables document caching for a month.
+    expires_in 30.days, public: true
+    send_file(
+      document.serve,
+      type: "application/pdf",
+      disposition: document_disposition
+    )
+  end
+  
   def process_intake
     ActiveRecord::Base.transaction do
       begin

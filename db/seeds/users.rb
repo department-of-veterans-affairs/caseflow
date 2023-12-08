@@ -345,7 +345,8 @@ module Seeds
       u = User.create!(station_id: 101, css_id: "MAIL_TEAM_SUPERVISOR_ADMIN_USER", full_name: "Jon MailTeam Snow Admin")
       MailTeamSupervisor.singleton.add_user(u)
       OrganizationsUser.make_user_admin(u, MailTeamSupervisor.singleton)
-      u = User.create!(station_id: 101, css_id: "MAIL_TEAM_SUPERVISOR_MAIL_INTAKE_USER", full_name: "Jon MailTeam Snow Mail Intake", roles: ['Mail Intake'])
+      u = User.create!(station_id: 101, css_id: "MAIL_TEAM_SUPERVISOR_MAIL_INTAKE_USER",
+                       full_name: "Jon MailTeam Snow Mail Intake", roles: ["Mail Intake"])
       MailTeamSupervisor.singleton.add_user(u)
     end
 
