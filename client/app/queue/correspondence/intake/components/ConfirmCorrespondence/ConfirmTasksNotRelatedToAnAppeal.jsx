@@ -1,10 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { PencilIcon } from 'app/components/icons/PencilIcon';
-import { css } from 'glamor';
 
 const styling = { backgroundColor: '#f5f5f5'};
-const editSectionStyle = { position: 'absolute', left: '927.4px', top: '10px', class: 'usa-underline-hover'};
 
 const ConfirmTasksNotRelatedToAnAppeal = () => {
   const tasks = useSelector((state) => state.intakeCorrespondence.unrelatedTasks);
