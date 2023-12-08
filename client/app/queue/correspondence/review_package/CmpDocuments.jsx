@@ -2,7 +2,7 @@
 
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React from 'react';
 import COPY from 'app/../COPY';
 import Button from 'app/components/Button';
 
