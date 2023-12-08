@@ -10,15 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-ActiveRecord::Schema.define(version: 2023_11_21_184716) do
-=======
-ActiveRecord::Schema.define(version: 2023_10_24_162133) do
->>>>>>> d7a24a28c (Kev ma/appeals 29262 add timestamps (#19788))
-=======
 ActiveRecord::Schema.define(version: 2023_12_05_171256) do
->>>>>>> feature/APPEALS-27311
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -605,11 +597,8 @@ ActiveRecord::Schema.define(version: 2023_12_05_171256) do
     t.bigint "correspondence_id"
     t.datetime "created_at", null: false, comment: "Date and Time of creation."
     t.string "document_file_number", comment: "From CMP documents table"
-<<<<<<< HEAD
     t.integer "document_type", comment: "ID of the doc to lookup VBMS Doc Type"
     t.integer "pages", comment: "Number of pages in the CMP Document"
-=======
->>>>>>> d7a24a28c (Kev ma/appeals 29262 add timestamps (#19788))
     t.datetime "updated_at", null: false, comment: "Date and Time of last update."
     t.uuid "uuid", comment: "Reference to document in AWS S3"
     t.bigint "vbms_document_type_id", comment: "From CMP documents table"
