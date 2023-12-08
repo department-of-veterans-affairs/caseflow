@@ -128,7 +128,7 @@ feature "Updating Document ID", :all_dbs do
   end
 
   def create_legacy_case_review
-    attorney = create(:user)
+    attorney = create(:user, :with_vacols_attorney_record)
     create(
       :legacy_appeal,
       :with_veteran,

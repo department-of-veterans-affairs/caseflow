@@ -3,25 +3,23 @@
 describe CaseDistributionIneligibleJudges, :postgres do
   describe ".ineligible_vacols_judges" do
     context "when inactive staff exists" do
-      let!(:inactive_staff) { create(:staff, :inactive) }
-      let!(:active_staff) { create(:staff) }
-      let!(:staff_1) { create(:staff, sattyid: nil) }
-      let!(:staff_2) { create(:staff, sattyid: nil, svlj: nil) }
-      let!(:inactive_staff_user) { create(:staff, svlj: "V") }
-      let!(:judge_staff) { create(:staff, :judge_role) }
+      let!(:active_non_judge_staff) { create(:staff) }
+      let!(:inactive_non_judge_staff) { create(:staff, :inactive) }
+      let!(:active_judge_staff) { create(:staff, :judge_role) }
+      let!(:inactive_judge_staff) { create(:staff, :judge_role, :inactive) }
+      let!(:non_judge_with_sattyid) { create(:staff, sattyid: 9999) }
       let!(:attorney_judge_staff) { create(:staff, :attorney_judge_role) }
 
       it "returns ineligible vacols judges" do
         result = described_class.ineligible_vacols_judges
-        eligible_vacols_judges = [staff_1.sdomainid, staff_2.sdomainid, active_staff.sdomainid,
-          judge_staff.sdomainid, attorney_judge_staff.sdomainid]
+        eligible_vacols_judges = [active_judge_staff.sdomainid, attorney_judge_staff.sdomainid]
 
-        expect(result.size).to eq(2)
-        expect(result.first[:sdomainid]).to eq(inactive_staff.sdomainid)
-        expect(result.first[:sattyid]).to eq(inactive_staff.sattyid)
-        expect(result.last[:sdomainid]).to eq(inactive_staff_user.sdomainid)
-        expect(result.last[:sattyid]).to eq(inactive_staff_user.sattyid)
-        expect(eligible_vacols_judges).not_to include(result.first[:sdomainid])
+
+        #expect(result.size).to eq(2)
+        expect(result).to contain_exactly([
+          {:sattyid=>"4", :sdomainid=>"BVA4", :svlj=>"J"},
+          {:sattyid=>"9999", :sdomainid=>"BVA5", :svlj=>nil}
+        ])
       end
     end
   end

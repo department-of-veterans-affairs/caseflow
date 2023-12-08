@@ -12,6 +12,7 @@ FactoryBot.define do
     end
 
     sequence(:stafkey) do |n|
+      #  STAFKEY has maximum size of 16
       if user && user.css_id.size <= 16
         user.css_id
       else
@@ -19,7 +20,8 @@ FactoryBot.define do
       end
     end
     sequence(:slogid) do |n|
-      if user && user.css_id.size <= 16
+      # Some tests use this for DECASS.DEMDUSR which has max size of 12
+      if user && user.css_id.size <= 12
         user.css_id
       else
         "ID#{n}"
