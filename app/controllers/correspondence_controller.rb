@@ -108,9 +108,10 @@ class CorrespondenceController < ApplicationController
       )
     end
   end
-  
+
   def verify_correspondence_access
-    return true if MailTeamSupervisor.singleton.user_has_access?(current_user) || MailTeam.singleton.user_has_access?(current_user)
+    return true if MailTeamSupervisor.singleton.user_has_access?(current_user) ||
+                   MailTeam.singleton.user_has_access?(current_user)
 
     redirect_to "/unauthorized"
   end
