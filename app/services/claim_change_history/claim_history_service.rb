@@ -198,7 +198,7 @@ class ClaimHistoryService
   end
 
   def process_request_issue_events(change_data)
-    request_issue_id = change_data["actual_request_issue_id"]
+    request_issue_id = change_data["request_issue_id"]
 
     if request_issue_id && !@processed_request_issue_ids.include?(request_issue_id)
       @processed_request_issue_ids.add(request_issue_id)

@@ -7,6 +7,7 @@ class InvalidEventType < StandardError
 end
 
 # :reek:TooManyInstanceVariables
+# rubocop:disable Metrics/ClassLength
 class ClaimHistoryEvent
   attr_reader :task_id, :event_type, :event_date, :assigned_at, :days_waiting,
               :veteran_file_number, :claim_type, :claimant_name, :user_facility,
@@ -152,14 +153,14 @@ class ClaimHistoryEvent
     end
 
     def create_add_issue_event(change_data)
-      # Try to guess if it added during intake. If not, it was a probably added during an issue update
+      # Try to guess if it was added during intake. If not, it was a probably added during an issue update
       same_transaction = date_strings_within_seconds?(change_data["intake_completed_at"],
                                                       change_data["request_issue_created_at"],
                                                       REQUEST_ISSUE_TIME_WINDOW)
       event_hash = if same_transaction
                      intake_event_hash(change_data)
                    else
-                     update_event_hash(change_data).merge("event_date" => change_data["request_issue_created_at"])
+                     add_issue_update_event_hash(change_data)
                    end
 
       event_type = determine_add_issue_event_type(change_data)
@@ -234,6 +235,38 @@ class ClaimHistoryEvent
         "user_facility" => change_data["update_user_station_id"],
         "event_user_css_id" => change_data["update_user_css_id"]
       }
+    end
+
+    def add_issue_update_event_hash(change_data)
+      # Check the current request issue updates time to see if the issue update is in the correct row
+      # If it is, then do the normal update_event_hash information
+      if date_strings_within_seconds?(change_data["request_issue_created_at"],
+                                      change_data["request_issue_update_time"],
+                                      REQUEST_ISSUE_TIME_WINDOW)
+        update_event_hash(change_data).merge("event_date" => change_data["request_issue_created_at"])
+      else
+        # If it's not, then do some database fetches to grab the correct information
+        retrieve_issue_update_data(change_data)
+      end
+    end
+
+    def retrieve_issue_update_data(change_data)
+      # This is gross, but thankfully it should happen very rarely
+      task = Task.includes(appeal: :request_issues_updates).where(id: change_data["task_id"]).first
+      issue_update = task.appeal.request_issues_updates.find do |update|
+        (update.after_request_issue_ids - update.before_request_issue_ids).include?(change_data["request_issue_id"])
+      end
+      if issue_update
+        {
+          "event_date" => change_data["request_issue_created_at"],
+          "event_user_name" => issue_update.user.full_name,
+          "user_facility" => issue_update.user.station_id,
+          "event_user_css_id" => issue_update.user.css_id
+        }
+      # If for some reason there was no match, then just default to the row that already exists in the change data
+      else
+        update_event_hash(change_data).merge("event_date" => change_data["request_issue_created_at"])
+      end
     end
 
     def date_strings_within_seconds?(first_date, second_date, time_in_seconds)
@@ -497,3 +530,4 @@ class ClaimHistoryEvent
     [first_name[0].capitalize, ". ", last_name].join
   end
 end
+# rubocop:enable Metrics/ClassLength

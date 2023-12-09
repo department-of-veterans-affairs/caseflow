@@ -194,7 +194,7 @@ class BusinessLine < Organization
         SELECT tasks.id AS task_id, tasks.status AS task_status, request_issues.id AS request_issue_id,
           request_issues_updates.created_at AS request_issue_update_time, decision_issues.description AS decision_description,
           request_issues.benefit_type AS request_issue_benefit_type, request_issues_updates.id AS request_issue_update_id,
-          request_issues.id AS actual_request_issue_id, request_issues.created_at AS request_issue_created_at,
+          request_issues.created_at AS request_issue_created_at,
           intakes.completed_at AS intake_completed_at, update_users.full_name AS update_user_name, tasks.created_at AS task_created_at,
           intake_users.full_name AS intake_user_name, update_users.station_id AS update_user_station_id, tasks.closed_at AS task_closed_at,
           intake_users.station_id AS intake_user_station_id, decision_issues.created_at AS decision_created_at,
@@ -239,7 +239,7 @@ class BusinessLine < Organization
         LEFT JOIN users intake_users ON intakes.user_id = intake_users.id
         LEFT JOIN users update_users ON request_issues_updates.user_id = update_users.id
         LEFT JOIN users decision_users ON decision_users.id = tv.version_closed_by_id::int
-        LEFT join users decision_users_completed_by ON decision_users_completed_by.id = tasks.completed_by_id
+        LEFT JOIN users decision_users_completed_by ON decision_users_completed_by.id = tasks.completed_by_id
         WHERE tasks.type = 'DecisionReviewTask'
         AND tasks.assigned_to_type = 'Organization'
         AND tasks.assigned_to_id = '#{parent.id.to_i}'
