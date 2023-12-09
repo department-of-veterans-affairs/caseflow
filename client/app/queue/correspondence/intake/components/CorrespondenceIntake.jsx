@@ -169,11 +169,11 @@ CorrespondenceIntake.propTypes = {
   correspondence_uuid: PropTypes.string,
   currentCorrespondence: PropTypes.object,
   veteranInformation: PropTypes.object,
+  toggledCorrespondences: PropTypes.array,
+  correspondences: PropTypes.array,
   unrelatedTasks: PropTypes.arrayOf(Object),
   setUnrelatedTasks: PropTypes.func,
   mailTasks: PropTypes.objectOf(PropTypes.bool),
-  toggledCorrespondences: PropTypes.arrayOf(Object),
-  correspondences: PropTypes.arrayOf(Object),
   autoTexts: PropTypes.arrayOf(PropTypes.string)
 };
 

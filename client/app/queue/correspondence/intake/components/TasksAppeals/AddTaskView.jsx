@@ -1,9 +1,72 @@
 import React, { useState } from 'react';
 import TextareaField from '../../../../../components/TextareaField';
 import CheckboxModal from '../CheckboxModal';
-import ReactSelectDropdown from '../../../../../components/ReactSelectDropdown';
 import Button from '../../../../../components/Button';
+import Select from 'react-select';
+import { css } from 'glamor';
 import PropTypes from 'prop-types';
+
+const customSelectStyless = {
+  dropdownIndicator: () => ({
+    width: '80%'
+  }),
+
+  control: (styles) => {
+    return {
+      ...styles,
+      alignContent: 'center',
+      borderRadius: 0,
+      border: '1px solid black'
+    };
+  },
+
+  menu: () => ({
+    boxShadow: '1px 1px 10px grey',
+  }),
+
+  valueContainer: (styles) => ({
+
+    ...styles,
+    lineHeight: 'normal',
+    // this is a hack to fix a problem with changing the height of the dropdown component.
+    // Changing the height causes problems with text shifting.
+    marginTop: '-10%',
+    marginBottom: '-10%',
+    paddingTop: '-10%',
+    minHeight: '140px',
+    borderRadius: 50
+
+  }),
+  singleValue: (styles) => {
+    return {
+      ...styles,
+      alignContent: 'center',
+    };
+  },
+
+  placeholder: (styles) => ({
+    ...styles,
+    color: 'black',
+  }),
+
+  option: (styles, { isFocused }) => ({
+    color: 'black',
+    fontSize: '25px',
+    paddingTop: '10px',
+    paddingBottom: '10px',
+    paddingLeft: '20px',
+    backgroundColor: isFocused ? 'white' : 'null',
+    ':hover': {
+      ...styles[':hover'],
+      backgroundColor: '#5c9ceb',
+      color: 'black',
+    }
+  })
+};
+const selectContainerStyless = css({
+  width: '100%',
+  display: 'inline-block',
+});
 
 const AddTaskView = (props) => {
   const task = props.task;
@@ -62,14 +125,19 @@ const AddTaskView = (props) => {
             { width: '45rem' }
           }
         >
-          <div id="reactSelectContainer">
-            <ReactSelectDropdown
+
+          <div id="reactSelectContainer"
+            {...selectContainerStyless}>
+
+            <label style={{ marginTop: '5px', marginBottom: '5px', marginLeft: '1px' }}>Task</label>
+            <Select
+              placeholder="Select..."
               options={props.availableTaskTypeOptions}
               defaultValue={objectForSelectedTaskType()}
-              label="Task"
-              style={{ width: '50rem' }}
-              onChangeMethod={(selectedOption) => updateTaskType(selectedOption)}
-              className="date-filter-type-dropdown"
+              onChange={(selectedOption) => updateTaskType(selectedOption)}
+              styles={customSelectStyless}
+              className="add-task-dropdown-style"
+              aria-label="dropdown"
             />
           </div>
           <div style={{ padding: '1.5rem' }} />
@@ -111,6 +179,17 @@ AddTaskView.propTypes = {
   displayRemoveCheck: PropTypes.bool.isRequired,
   allTaskTypeOptions: PropTypes.array.isRequired,
   availableTaskTypeOptions: PropTypes.array.isRequired,
+  onChange: PropTypes.func,
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      displayText: PropTypes.string,
+    })
+  ),
+  defaultValue: PropTypes.object,
+  label: PropTypes.string,
+  onChangeMethod: PropTypes.func,
+  className: PropTypes.string,
   autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
