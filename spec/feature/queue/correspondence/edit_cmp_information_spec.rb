@@ -8,10 +8,14 @@ RSpec.feature("The Correspondence Review Package page") do
   let(:correspondence_documents) { create(:correspondence_document, correspondence: correspondence, document_file_number: veteran.file_number) }
   let(:mail_team_user) { create(:user) }
   let(:mail_team_org) { MailTeam.singleton }
+  let(:current_user) { User.create!(station_id: 101, css_id: "MAIL_TEAM_SUPERVISOR_ADMIN_USER", full_name: "Jon MailTeam Snow Admin") }
 
   context "Review package feature toggle" do
     before :each do
-      User.authenticate!(roles: ["Mail Intake"])
+      # User.authenticate!(roles: ["Mail Intake"])
+      FeatureToggle.enable!(:correspondence_queue)
+      mail_team_org.add_user(mail_team_user)
+      User.authenticate!(user: mail_team_user)
     end
 
     it "routes user to /unauthorized if the feature toggle is disabled" do
@@ -24,7 +28,8 @@ RSpec.feature("The Correspondence Review Package page") do
   context "Review package form shell" do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      User.authenticate!(roles: ["Mail Intake"])
+      MailTeamSupervisor.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
       visit "/queue/correspondence/#{correspondence.uuid}/review_package"
     end
 
@@ -55,6 +60,34 @@ RSpec.feature("The Correspondence Review Package page") do
       expect(page).to have_button("Save", disabled: false)
       click_button "Save"
       expect(page).to have_content(6.days.ago.strftime("%m/%d/%Y"))
+    end
+  end
+
+  context "Checking VADOR field is enable for Mail Supervisor" do
+    before do
+      FeatureToggle.enable!(:correspondence_queue)
+      MailTeamSupervisor.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+      visit "/queue/correspondence/#{correspondence.uuid}/review_package"
+    end
+
+    it "Checking VADOR field is enabled for Mail Supervisor" do
+      click_button "Edit"
+      expect(page).to have_field("VA DOR", readonly: false)
+    end
+  end
+
+  context "Checking VADOR field is disabled for General mail user" do
+    before do
+      FeatureToggle.enable!(:correspondence_queue)
+      mail_team_org.add_user(mail_team_user)
+      User.authenticate!(user: mail_team_user)
+      visit "/queue/correspondence/#{correspondence.uuid}/review_package"
+    end
+
+    it "Checking VADOR field is disabled for General mail user" do
+      click_button "Edit"
+      expect(page).to have_field("VA DOR", readonly: true)
     end
   end
 end
