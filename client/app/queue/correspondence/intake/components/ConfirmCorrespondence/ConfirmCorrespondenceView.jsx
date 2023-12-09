@@ -163,21 +163,25 @@ export const ConfirmCorrespondenceView = (props) => {
           </div>
         </div>
         <div style={{ display: 'flex' }}>
-          <h2 style={{ margin: '1px 0 15px 0',
+          <h2 style={{
+            margin: '1px 0 15px 0',
             display: 'inline-block',
-            marginLeft: '10px' }}>Completed Mail Tasks</h2>
+            marginLeft: '0px'
+          }}>Completed Mail Tasks</h2>
           <div style={{ marginLeft: 'auto' }}>
-            <Button linkStyling onClick={() => props.goToStep(2)}>
+            <Button styling={bottonStyling} linkStyling onClick={() => props.goToStep(2)}>
               <span {...css({ position: 'absolute' })}><PencilIcon /></span>
               <span {...css({ marginLeft: '20px' })}>Edit Section</span>
             </Button>
           </div>
         </div>
         <div {...css({ backgroundColor: '#f5f5f5', padding: '20px', marginBottom: '20px' })}>
-          <div {...css({ borderBottom: '1px solid #d6d7d9',
-            padding: '10px 10px',
+          <div {...css({
+            borderBottom: '1px solid #d6d7d9',
+            padding: '10px 0px',
             marginBottom: '20px',
-            fontWeight: 'bold' })}>
+            fontWeight: 'bold'
+          })}>
             Completed Mail Tasks
           </div>
           {checkedMailTasks.map((name, index, array) => (
@@ -195,6 +199,19 @@ export const ConfirmCorrespondenceView = (props) => {
         </div>
       </div>
       <div>
+        <div style={{ display: 'flex' }}>
+          <h2 style={{
+            margin: '1px 0 15px 0',
+            display: 'inline-block',
+            marginLeft: '0px'
+          }}>Tasks not related to an Appeal</h2>
+          <div style={{ marginLeft: 'auto' }}>
+            <Button styling={bottonStyling} linkStyling onClick={() => props.goToStep(2)}>
+              <span {...css({ position: 'absolute' })}><PencilIcon /></span>
+              <span {...css({ marginLeft: '20px' })}>Edit Section</span>
+            </Button>
+          </div>
+        </div>
         <ConfirmTasksNotRelatedToAnAppeal />
       </div>
     </div>
