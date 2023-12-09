@@ -31,6 +31,20 @@ class CorrespondenceController < ApplicationController
     render "correspondence/review_package"
   end
 
+  def intake_update
+    tasks = Task.where("appeal_id = ? and appeal_type = ?", @correspondence.id, "Correspondence")
+    tasks.map do |task|
+      if task.type == "ReviewPackageTask"
+        task.instructions.push("An appeal intake was started because this Correspondence is a 10182")
+        task.assigned_to_id = @correspondence.assigned_by_id
+        task.assigned_to = User.find(@correspondence.assigned_by_id)
+      end
+      task.status = "cancelled"
+      task.save
+    end
+    render json: { correspondence: @correspondence }
+  end
+
   def veteran
     render json: { veteran_id: veteran_by_correspondence&.id, file_number: veteran_by_correspondence&.file_number }
   end
