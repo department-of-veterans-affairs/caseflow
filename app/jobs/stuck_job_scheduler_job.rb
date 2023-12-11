@@ -22,17 +22,18 @@ class StuckJobSchedulerJob < CaseflowJob
   end
 
   def perform
-    parent_job_name = self.class
-    start_time_parent = @stuck_job_report_service.log_time
+    scheduler_job = self.class
+    # start_time_parent = @stuck_job_report_service.log_time
 
     begin
-      perform_parent_stuck_job
+      loop_through_stuck_jobs
+      binding.pry
     rescue StandardError => error
       log_error(error)
     end
 
-    end_time_parent = @stuck_job_report_service.log_time
-    @stuck_job_report_service.execution_time(parent_job_name, start_time_parent, end_time_parent)
+    # end_time_parent = @stuck_job_report_service.log_time
+    # @stuck_job_report_service.execution_time(scheduler_job, start_time_parent, end_time_parent)
 
     # Send report logs to Slack
     msg = @stuck_job_report_service.logs
@@ -43,7 +44,7 @@ class StuckJobSchedulerJob < CaseflowJob
     # binding.pry
   end
 
-  def perform_parent_stuck_job
+  def loop_through_stuck_jobs
     STUCK_JOBS_ARRAY.each do |job|
       execute_stuck_job(job)
     end
@@ -51,26 +52,33 @@ class StuckJobSchedulerJob < CaseflowJob
 
   def execute_stuck_job(stuck_job_class)
     job_name = stuck_job_class
+    job_instance = stuck_job_class.new
 
-    initial_error_count = StuckJobsErrorCounter.errors_count_for_job(stuck_job_class)
+    initial_error_count = job_instance::records_with_errors.count
 
-    @stuck_job_report_service.error_count_message(initial_error_count, stuck_job_class)
-
-    start_time = @stuck_job_report_service.log_time
-    Rails.logger.info "#{job_name} started."
     begin
-      stuck_job_class.perform_now
-      Rails.logger.info "#{stuck_job_class} executed successfully."
-      final_error_count = StuckJobsErrorCounter.errors_count_for_job(stuck_job_class)
+      job_instance.perform_now
+
+      final_error_count = job_instance::records_with_errors.count
     rescue StandardError => error
       log_error(error)
       Rails.logger.info "#{stuck_job_class} failed to run with error: #{error.message}."
     end
 
-    end_time = @stuck_job_report_service.log_time
-    @stuck_job_report_service.execution_time(job_name, start_time, end_time)
-    @stuck_job_report_service.error_count_message(final_error_count, stuck_job_class)
-    @stuck_job_report_service.append_dividier
+    processing_time = job_instance::log_processing_time
+    @stuck_job_report_service.append_job_to_log_table(stuck_job_class, initial_error_count, final_error_count, processing_time)
     # Continues to next job even if errors occur
+  end
+
+  def log_processing_time
+    (@end_time && @start_time) ? @end_time - @start_time : 0
+  end
+
+  def capture_start_time
+    @start_time = Time.zone.now
+  end
+
+  def capture_end_time
+    @end_time = Time.zone.now
   end
 end

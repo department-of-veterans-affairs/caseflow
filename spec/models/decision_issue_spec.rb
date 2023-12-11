@@ -413,6 +413,7 @@ describe DecisionIssue, :postgres do
                        establishment_error: "No payee code"
                      )).to_not be_nil
               expect(decision_review.establishment_error).to eq("DTA SC creation failed")
+              binding.pry
             end
           end
         end

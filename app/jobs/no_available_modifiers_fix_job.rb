@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class NoAvailableModifiersFixJob < CaseflowJob
-  ERROR_TEXT = "NoAvailableModifiers"
   SPACE = 10
 
   def initialize
@@ -9,30 +8,47 @@ class NoAvailableModifiersFixJob < CaseflowJob
     super
   end
 
+  def error_text
+    "NoAvailableModifiers"
+  end
+
   def perform
-    @stuck_job_report_service.append_record_count(supp_claims_with_errors.count, ERROR_TEXT)
+    capture_start_time
+    return if records_with_errors.blank?
+
+    @stuck_job_report_service.append_record_count(records_with_errors.count, error_text)
+
+    loop_through_and_call_process_records
+
+    @stuck_job_report_service.append_record_count(records_with_errors.count, error_text)
+    @stuck_job_report_service.write_log_report(error_text)
+    capture_end_time
+    log_processing_time
+  end
+
+  def loop_through_and_call_process_records
     veterans_with_errors.each do |vet_fn|
       active_count = current_active_eps_count(vet_fn) || 0
+
       available_space = SPACE - active_count
       next if available_space <= 0
 
       supp_claims = supp_claims_on_veteran(vet_fn)
       next if supp_claims.empty?
 
-      process_supplemental_claims(supp_claims, available_space)
+      process_records(supp_claims, available_space)
     end
-    @stuck_job_report_service.append_record_count(supp_claims_with_errors.count, ERROR_TEXT)
-    @stuck_job_report_service.write_log_report(ERROR_TEXT)
   end
 
   # :reek:FeatureEnvy
-  def process_supplemental_claims(supp_claims, available_space)
+  def process_records(supp_claims, available_space)
     supp_claims.each do |sc|
       next if available_space <= 0
 
+      # binding.pry
       @stuck_job_report_service.append_single_record(sc.class.name, sc.id)
       ActiveRecord::Base.transaction do
-        DecisionReviewProcessJob.perform_later(sc)
+        DecisionReviewProcessJob.perform_now(sc)
       rescue StandardError => error
         log_error(error)
         @stuck_job_report_service.append_error(sc.class.name, sc.id, error)
@@ -42,7 +58,7 @@ class NoAvailableModifiersFixJob < CaseflowJob
   end
 
   def supp_claims_on_veteran(file_number)
-    supp_claims_with_errors.select { |sc| sc.veteran_file_number == file_number }
+    records_with_errors.select { |sc| sc.veteran_file_number == file_number }
   end
 
   def current_active_eps_count(file_number)
@@ -51,10 +67,22 @@ class NoAvailableModifiersFixJob < CaseflowJob
   end
 
   def veterans_with_errors
-    supp_claims_with_errors.pluck(:veteran_file_number).uniq
+    records_with_errors.pluck(:veteran_file_number).uniq
   end
 
-  def supp_claims_with_errors
-    SupplementalClaim.where("establishment_error ILIKE ?", "%#{ERROR_TEXT}%")
+  def records_with_errors
+    SupplementalClaim.where("establishment_error ILIKE ?", "%#{error_text}%")
+  end
+
+  def log_processing_time
+    (@end_time && @start_time) ? @end_time - @start_time : 0
+  end
+
+  def capture_start_time
+    @start_time = Time.zone.now
+  end
+
+  def capture_end_time
+    @end_time = Time.zone.now
   end
 end

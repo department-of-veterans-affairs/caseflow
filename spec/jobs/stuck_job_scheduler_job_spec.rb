@@ -5,18 +5,35 @@ require Rails.root.join("lib", "helpers", "stuck_jobs_error_counter.rb")
 
 describe StuckJobSchedulerJob, :postgres do
   let(:stuck_job_report_service) { instance_double("StuckJobReportService") }
+  let(:claim_date_dt_error) { "ClaimDateDt" }
+  let!(:decision_doc_with_error) do
+    create(
+      :decision_document,
+      error: claim_date_dt_error,
+      processed_at: 7.days.ago,
+      uploaded_to_vbms_at: 7.days.ago
+    )
+  end
+
 
   subject { described_class.new }
 
   before do
-    allow(StuckJobReportService).to receive(:new).and_return(stuck_job_report_service)
+    # allow(StuckJobReportService).to receive(:new).and_return(stuck_job_report_service)
     allow(stuck_job_report_service).to receive(:log_time).and_return(Time.zone.now)
   end
 
   describe "#perform" do
+
+    it 'executes the job and updates the error count' do
+      allow(StuckJobReportService).to receive(:new).and_return(stuck_job_report_service)
+      # expect(StuckJobReportService).to receive(:append_record_count).with(1, claim_date_dt_error)
+
+      subject.perform
+    end
     it "executes perform_parent_stuck_job" do
       current_time = Time.zone.now
-      expect(subject).to receive(:perform_parent_stuck_job)
+      # expect(subject).to receive(:perform_parent_stuck_job)
 
       expect(stuck_job_report_service).to receive(:execution_time) do |job, start_time, end_time|
         expect(job).to eq(StuckJobSchedulerJob)
@@ -37,7 +54,7 @@ describe StuckJobSchedulerJob, :postgres do
         expect(subject).to receive(:execute_stuck_job).with(job_class)
       end
 
-      subject.perform_parent_stuck_job
+      subject.loop_through_stuck_jobs
     end
   end
 
