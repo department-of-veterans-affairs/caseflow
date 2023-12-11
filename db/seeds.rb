@@ -69,8 +69,6 @@ class SeedDB
     # Always run this as last one
     call_and_log_seed_step Seeds::StaticTestCaseData
     call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
-    call_and_log_seed_step Seeds::AdditionalRemandedAppeals
-    call_and_log_seed_step Seeds::AdditionalLegacyRemandedAppeals
     call_and_log_seed_step Seeds::AutoTexts
     call_and_log_seed_step Seeds::RemandedAmaAppeals
     call_and_log_seed_step Seeds::RemandedLegacyAppeals
