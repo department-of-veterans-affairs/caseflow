@@ -115,3 +115,12 @@ export const setNewAppealRelatedTasks = (newAppealRelatedTasks) =>
       }
     });
   };
+
+export const setWaivedEvidenceTasks = (task) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SET_WAIVED_EVIDENCE_TASKS,
+    payload: {
+      task
+    }
+  });
+};
