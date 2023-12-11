@@ -8,8 +8,7 @@ class CorrespondenceTasksController < TasksController
     task_params = {
       parent_id: review_package_task.id,
       instructions: params[:instructions],
-      # assigned_to: MailTeamSupervisor.singleton, remove MailTeam and uncomment this after org is created
-      assigned_to: MailTeam.singleton,
+      assigned_to: MailTeamSupervisor.singleton,
       appeal_id: params[:correspondence_id],
       appeal_type: "Correspondence",
       status: Constants.TASK_STATUSES.assigned,

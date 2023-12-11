@@ -12,7 +12,7 @@ class CorrespondenceRootTaskFactory
       ActiveRecord::Base.transaction do
         @root_task = CorrespondenceRootTask.create!(
           appeal_id: @correspondence.id,
-          assigned_to: MailTeam.singleton,
+          assigned_to: MailTeamSupervisor.singleton,
           appeal_type: Correspondence.name,
           type: CorrespondenceRootTask.name
         )
@@ -33,7 +33,7 @@ class CorrespondenceRootTaskFactory
       ReviewPackageTask.create!(
         appeal_id: @correspondence.id,
         parent_id: @root_task.id,
-        assigned_to: MailTeam.singleton,
+        assigned_to: MailTeamSupervisor.singleton,
         appeal_type: Correspondence.name,
         type: ReviewPackageTask.name
       )
