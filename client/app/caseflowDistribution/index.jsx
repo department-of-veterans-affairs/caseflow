@@ -105,7 +105,7 @@ class CaseflowDistribution extends React.PureComponent {
                   <div>
                     <PageRoute
                       exact
-                      path="/acd-controls"
+                      path={["/acd-controls", "/case-distribution-controls"]}
                       title="CaseflowDistribution | Caseflow"
                       component={() => {
                         return (
