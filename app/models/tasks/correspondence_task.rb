@@ -4,11 +4,25 @@ class CorrespondenceTask < Task
   validate :status_is_valid_on_create, on: :create
   validate :assignee_status_is_valid_on_create, on: :create
 
+  def verify_org_task_unique
+    if Task.where(
+      appeal_id: appeal_id,
+      appeal_type: appeal_type,
+      type: type
+    ).any?
+      fail(
+        Caseflow::Error::DuplicateOrgTask,
+        task_type: self.class.name,
+        assignee_type: assigned_to.class.name
+      )
+    end
+  end
+
   private
 
   def status_is_valid_on_create
     if type == "ReviewPackageTask" && status != Constants.TASK_STATUSES.unassigned
-      update!(status: Constants.TASK_STATUSES.unassigned)
+      update!(status: :unassigned)
     elsif type != "ReviewPackageTask" && status != Constants.TASK_STATUSES.assigned
       fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
     end
@@ -22,19 +36,5 @@ class CorrespondenceTask < Task
     end
 
     true
-  end
-
-  def verify_org_task_unique
-    if Task.where(
-      appeal_id: appeal_id,
-      appeal_type: appeal_type,
-      type: type
-    ).any?
-      fail(
-        Caseflow::Error::DuplicateOrgTask,
-        task_type: self.class.name,
-        assignee_type: assigned_to.class.name
-      )
-    end
   end
 end

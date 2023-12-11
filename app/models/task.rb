@@ -155,7 +155,7 @@ class Task < CaseflowRecord
     end
 
     def open_statuses
-      active_statuses.concat([Constants.TASK_STATUSES.on_hold])
+      active_statuses.concat([Constants.TASK_STATUSES.on_hold, Constants.TASK_STATUSES.unassigned])
     end
 
     def create_many_from_params(params_array, current_user)
@@ -933,7 +933,8 @@ class Task < CaseflowRecord
     in_progress: :started_at,
     on_hold: :placed_on_hold_at,
     completed: :closed_at,
-    cancelled: :closed_at
+    cancelled: :closed_at,
+    unassigned: :assigned_at
   }.freeze
 
   def set_timestamp
