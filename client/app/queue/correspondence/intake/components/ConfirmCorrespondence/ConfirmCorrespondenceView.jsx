@@ -215,8 +215,20 @@ export const ConfirmCorrespondenceView = (props) => {
           </div>
         </div>
         <ConfirmTasksNotRelatedToAnAppeal />
-
-        <ConfirmTasksRelatedToAnAppeal buttonStyling={bottonStyling} goToStepTwo = {() => props.goToStep(2)} />
+        <div style={{ display: 'flex' }}>
+          <h2 style={{
+            margin: '1px 0 15px 0',
+            display: 'inline-block',
+            marginLeft: '0px'
+          }}>Tasks related to an Appeal</h2>
+          <div style={{ marginLeft: 'auto' }}>
+            <Button styling={bottonStyling} linkStyling onClick={() => props.goToStep(2)}>
+              <span {...css({ position: 'absolute' })}><PencilIcon /></span>
+              <span {...css({ marginLeft: '20px' })}>Edit Section</span>
+            </Button>
+          </div>
+        </div>
+        <ConfirmTasksRelatedToAnAppeal />
 
       </div>
     </div>

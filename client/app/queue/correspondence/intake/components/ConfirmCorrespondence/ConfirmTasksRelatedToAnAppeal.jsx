@@ -1,14 +1,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { COLORS } from 'app/constants/AppConstants';
-import { PencilIcon } from 'app/components/icons/PencilIcon';
-import { css } from 'glamor';
 import LinkToAppeal from '../../../../../hearings/components/assignHearings/LinkToAppeal';
 import DocketTypeBadge from '../../../../../components/DocketTypeBadge';
 import { ExternalLinkIcon } from '../../../../../components/icons/ExternalLinkIcon';
-import Button from '../../../../../components/Button';
 import PropTypes from 'prop-types';
-// import Badge from '../../../../../components/badges/Badge';
 
 const styling = { backgroundColor: COLORS.GREY_BACKGROUND, border: 'none' };
 
@@ -16,7 +12,7 @@ const borderlessTd = {
   borderTop: 'none', borderBottom: 'none', backgroundColor: COLORS.GREY_BACKGROUND
 };
 
-const ConfirmTasksRelatedToAnAppeal = (props) => {
+const ConfirmTasksRelatedToAnAppeal = () => {
   const tasks = useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks);
   const taskIds = useSelector((state) => state.intakeCorrespondence.taskRelatedAppealIds);
   const fetchedAppeals = useSelector((state) => state.intakeCorrespondence.fetchedAppeals);
@@ -89,16 +85,7 @@ const ConfirmTasksRelatedToAnAppeal = (props) => {
 
   return (
     <>
-      <div>
-        <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-          <h2 style={{ display: 'inline', marginBottom: '2rem' }}>Tasks related to an Appeal</h2>
-          <div style={{ marginLeft: 'auto' }}>
-            <Button styling={props.bottonStyling} linkStyling onClick={props.goToStepTwo}>
-              <span {...css({ position: 'absolute' })}><PencilIcon /></span>
-              <span {...css({ marginLeft: '20px' })}>Edit Section</span>
-            </Button>
-          </div>
-        </div>
+      <div style={{ marginLeft: 'auto' }}>
         <div
           style={{ background: COLORS.GREY_BACKGROUND, padding: '2rem', paddingTop: '0.5rem', marginBottom: '2rem' }}>
           <table className="usa-table-borderless">
