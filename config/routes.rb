@@ -315,6 +315,7 @@ Rails.application.routes.draw do
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
+  match '/explain/correspondence/:correspondence_uuid/:any' => 'explain#show', via: [:get]
 
   # requests to CAVC Dashboard that don't require an appeal_id should go here
   scope path: "/cavc_dashboard" do
