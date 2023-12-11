@@ -69,16 +69,16 @@ class WarmBgsCachesJob < CaseflowJob
   def warm_poa_and_cache_for_appeals_for_hearings_priority
     legacy_start_time = Time.zone.now
     legacy_appeals = LegacyAppeal.where(id: priority_appeal_ids(LegacyAppeal.name).first(LIMITS[:PRIORITY]))
-    legacy_custom_metrics_segment = "warm_poa_bgs_and_cache_legacy_priority"
-    warm_poa_and_cache_for_legacy_appeals(legacy_appeals, legacy_start_time, legacy_custom_metrics_segment)
+    legacy_metrics_segment = "warm_poa_bgs_and_cache_legacy_priority"
+    warm_poa_and_cache_for_legacy_appeals(legacy_appeals, legacy_start_time, legacy_metrics_segment)
 
     ama_start_time = Time.zone.now
     claimants_for_hearing = Claimant.where(
       decision_review_type: Appeal.name,
       decision_review_id: most_recent_appeal_ids(Appeal.name).first(LIMITS[:PRIORITY])
     )
-    ama_custom_metrics_segment = "warm_poa_bgs_and_cache_ama_priority"
-    warm_poa_and_cache_for_ama_appeals(claimants_for_hearing, ama_start_time, ama_custom_metrics_segment)
+    ama_metrics_segment = "warm_poa_bgs_and_cache_ama_priority"
+    warm_poa_and_cache_for_ama_appeals(claimants_for_hearing, ama_start_time, ama_metrics_segment)
   end
 
   # Warm POA and cache 1000(legacy + ama) appeals with active ScheduleHearingTask that have
@@ -88,16 +88,16 @@ class WarmBgsCachesJob < CaseflowJob
   def warm_poa_and_cache_for_appeals_for_hearings_most_recent
     legacy_start_time = Time.zone.now
     legacy_appeals = LegacyAppeal.where(id: most_recent_appeal_ids(LegacyAppeal.name).first(LIMITS[:MOST_RECENT]))
-    legacy_custom_metrics_segment = "warm_poa_bgs_and_cache_legacy_recent"
-    warm_poa_and_cache_for_legacy_appeals(legacy_appeals, legacy_start_time, legacy_custom_metrics_segment)
+    legacy_metrics_segment = "warm_poa_bgs_and_cache_legacy_recent"
+    warm_poa_and_cache_for_legacy_appeals(legacy_appeals, legacy_start_time, legacy_metrics_segment)
 
     ama_start_time = Time.zone.now
     claimants_for_hearing = Claimant.where(
       decision_review_type: Appeal.name,
       decision_review_id: most_recent_appeal_ids(Appeal.name).first(LIMITS[:MOST_RECENT])
     )
-    ama_custom_metrics_segment = "warm_poa_bgs_and_cache_ama_recent"
-    warm_poa_and_cache_for_ama_appeals(claimants_for_hearing, ama_start_time, ama_custom_metrics_segment)
+    ama_metrics_segment = "warm_poa_bgs_and_cache_ama_recent"
+    warm_poa_and_cache_for_ama_appeals(claimants_for_hearing, ama_start_time, ama_metrics_segment)
   end
 
   # Warm POA for claimants that haven't been updated in a while and since we're warming, let's
@@ -120,7 +120,7 @@ class WarmBgsCachesJob < CaseflowJob
         capture_exception(error: error)
       end
     end
-    custom_metrics_report_time_segment(segment: "warm_poa_bgs_oldest", start_time: start_time)
+    metrics_report_time_segment(segment: "warm_poa_bgs_oldest", start_time: start_time)
   end
 
   def warm_poa_and_cache_for_legacy_appeals(legacy_appeals, start_time, datadog_segment)
@@ -135,7 +135,7 @@ class WarmBgsCachesJob < CaseflowJob
       conflict_target: [:appeal_id, :appeal_type], columns: CACHED_APPEALS_BGS_POA_COLUMNS
     }
 
-    custom_metrics_report_time_segment(segment: datadog_segment, start_time: start_time)
+    metrics_report_time_segment(segment: datadog_segment, start_time: start_time)
   end
 
   def warm_poa_and_cache_for_ama_appeals(claimants, start_time, datadog_segment)
@@ -151,7 +151,7 @@ class WarmBgsCachesJob < CaseflowJob
       conflict_target: [:appeal_id, :appeal_type], columns: CACHED_APPEALS_BGS_POA_COLUMNS
     }
 
-    custom_metrics_report_time_segment(segment: datadog_segment, start_time: start_time)
+    metrics_report_time_segment(segment: datadog_segment, start_time: start_time)
   end
 
   # This block of code helps get file numbers associated with appeals in order to fetch poa
@@ -252,7 +252,7 @@ class WarmBgsCachesJob < CaseflowJob
     rescue StandardError => error
       Raven.capture_exception(error)
     end
-    custom_metrics_report_time_segment(segment: "warm_participant_caches", start_time: start_time)
+    metrics_report_time_segment(segment: "warm_participant_caches", start_time: start_time)
   end
 
   def warm_ro_participant_caches(ro_ids)
@@ -274,7 +274,7 @@ class WarmBgsCachesJob < CaseflowJob
       # Ensure errors are sent to Sentry, but don't block the job from continuing.
       Raven.capture_exception(error)
     end
-    custom_metrics_report_time_segment(segment: "warm_ro_participant_caches", start_time: start_time)
+    metrics_report_time_segment(segment: "warm_ro_participant_caches", start_time: start_time)
   end
 
   def warm_veteran_attribute_caches
@@ -296,7 +296,7 @@ class WarmBgsCachesJob < CaseflowJob
         Raven.capture_exception(error)
       end
     end
-    custom_metrics_report_time_segment(segment: "warm_veteran_attribute_caches", start_time: start_time)
+    metrics_report_time_segment(segment: "warm_veteran_attribute_caches", start_time: start_time)
   end
 
   def warm_veterans_for_hearings_on_day(date_to_cache)
@@ -316,6 +316,6 @@ class WarmBgsCachesJob < CaseflowJob
   def warm_attorney_address_caches
     start_time = Time.zone.now
     BgsAttorney.all.each(&:warm_address_cache)
-    custom_metrics_report_time_segment(segment: "warm_attorney_address_caches", start_time: start_time)
+    metrics_report_time_segment(segment: "warm_attorney_address_caches", start_time: start_time)
   end
 end

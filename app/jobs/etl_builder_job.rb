@@ -26,7 +26,7 @@ class ETLBuilderJob < CaseflowJob
   def sweep_etl
     start = Time.zone.now
     swept = ETL::Sweeper.new.call
-    custom_metrics_report_time_segment(segment: "etl_sweeper", start_time: start)
+    metrics_report_time_segment(segment: "etl_sweeper", start_time: start)
 
     return unless swept > 20 # big enough to warrant reality check
 
@@ -37,7 +37,7 @@ class ETLBuilderJob < CaseflowJob
   def build_etl
     start = Time.zone.now
     etl_build = ETL::Builder.new.incremental
-    custom_metrics_report_time_segment(segment: "etl_builder", start_time: start)
+    metrics_report_time_segment(segment: "etl_builder", start_time: start)
 
     return unless etl_build.built == 0
 

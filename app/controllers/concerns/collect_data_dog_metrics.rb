@@ -19,9 +19,9 @@ module CollectDataDogMetrics
     dead = conns.count { |c| c.in_use? && !c.owner.alive? }
     idle = conns.count { |c| !c.in_use? }
 
-    emit_custom_metrics_point("postgres", "active", active)
-    emit_custom_metrics_point("postgres", "dead", dead)
-    emit_custom_metrics_point("postgres", "idle", idle)
+    emit_metrics_point("postgres", "active", active)
+    emit_metrics_point("postgres", "dead", dead)
+    emit_metrics_point("postgres", "idle", idle)
   end
 
   def collect_vacols_metrics
@@ -31,12 +31,12 @@ module CollectDataDogMetrics
     dead = conns.count { |c| c.in_use? && !c.owner.alive? }
     idle = conns.count { |c| !c.in_use? }
 
-    emit_custom_metrics_point("vacols", "active", active)
-    emit_custom_metrics_point("vacols", "dead", dead)
-    emit_custom_metrics_point("vacols", "idle", idle)
+    emit_metrics_point("vacols", "active", active)
+    emit_metrics_point("vacols", "dead", dead)
+    emit_metrics_point("vacols", "idle", idle)
   end
 
-  def emit_custom_metrics_point(db_name, type, count)
+  def emit_metrics_point(db_name, type, count)
     MetricsService.emit_gauge(
       metric_group: "database",
       metric_name: "#{type}_connections",

@@ -17,13 +17,13 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     RequestStore.store[:current_user] = User.system_user
     ama_appeals_start = Time.zone.now
     cache_ama_appeals
-    custom_metrics_report_time_segment(segment: "cache_ama_appeals", start_time: ama_appeals_start)
+    metrics_report_time_segment(segment: "cache_ama_appeals", start_time: ama_appeals_start)
 
     legacy_appeals_start = Time.zone.now
     cache_legacy_appeals
-    custom_metrics_report_time_segment(segment: "cache_legacy_appeals", start_time: legacy_appeals_start)
+    metrics_report_time_segment(segment: "cache_legacy_appeals", start_time: legacy_appeals_start)
 
-    record_success_in_custom_metrics
+    record_success_in_metrics
   rescue StandardError => error
     log_error(@start_time, error)
   end
@@ -53,11 +53,11 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
     cache_postgres_data_start = Time.zone.now
     cache_legacy_appeal_postgres_data(legacy_appeals)
-    custom_metrics_report_time_segment(segment: "cache_legacy_appeal_postgres_data", start_time: cache_postgres_data_start)
+    metrics_report_time_segment(segment: "cache_legacy_appeal_postgres_data", start_time: cache_postgres_data_start)
 
     cache_vacols_data_start = Time.zone.now
     cache_legacy_appeal_vacols_data(all_vacols_ids)
-    custom_metrics_report_time_segment(segment: "cache_legacy_appeal_vacols_data", start_time: cache_vacols_data_start)
+    metrics_report_time_segment(segment: "cache_legacy_appeal_vacols_data", start_time: cache_vacols_data_start)
   end
 
   def cache_legacy_appeal_postgres_data(legacy_appeals)
@@ -121,12 +121,12 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     # * (Too little Postgres data cached) https://app.datadoghq.com/monitors/41421962
     # * (Too little VACOLS data cached) https://app.datadoghq.com/monitors/41234223
     # * (Job has not succeeded in the past day) https://app.datadoghq.com/monitors/41423568
-    record_error_in_custom_metrics
+    record_error_in_metrics
 
-    custom_metrics_report_runtime(metric_group_name: METRIC_GROUP_NAME)
+    metrics_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   end
 
-  def record_success_in_custom_metrics
+  def record_success_in_metrics
     MetricsService.increment_counter(
       app_name: APP_NAME,
       metric_group: METRIC_GROUP_NAME,
@@ -134,7 +134,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     )
   end
 
-  def record_error_in_custom_metrics
+  def record_error_in_metrics
     MetricsService.increment_counter(
       app_name: APP_NAME,
       metric_group: METRIC_GROUP_NAME,

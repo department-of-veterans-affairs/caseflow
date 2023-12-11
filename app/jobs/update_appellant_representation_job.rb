@@ -104,6 +104,6 @@ class UpdateAppellantRepresentationJob < CaseflowJob
 
     slack_service.send_notification("[ERROR] #{msg}", self.class.to_s)
 
-    custom_metrics_report_runtime(metric_group_name: METRIC_GROUP_NAME)
+    metrics_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   end
 end
