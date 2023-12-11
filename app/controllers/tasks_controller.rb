@@ -108,7 +108,6 @@ class TasksController < ApplicationController
   #   assigned_to_id: 23
   # }
   def update
-    binding.pry
     Task.transaction do
       tasks = task.update_from_params(update_params, current_user)
       tasks.each { |t| return invalid_record_error(t) unless t.valid? }
