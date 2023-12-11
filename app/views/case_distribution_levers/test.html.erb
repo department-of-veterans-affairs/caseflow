@@ -54,7 +54,7 @@
 
 
 
-<% cda_group_organization = Organization.where(name: "Case Distribution Algorithm Control Group").first %>
+<% cda_group_organization = CDAControlGroup.singleton %>
 
 <% if cda_group_organization %>
   <h2> CDA Control Group Organization </h2>
