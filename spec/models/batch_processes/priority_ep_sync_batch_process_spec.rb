@@ -109,6 +109,10 @@ describe PriorityEpSyncBatchProcess, :postgres do
   end
 
   describe "#process_batch!" do
+    before(:all) do
+      system("bundle exec rails r -e test db/scripts/external/create_vbms_ext_claim_table.rb")
+    end
+
     let!(:canceled_hlr_epe_w_canceled_vbms_ext_claim) do
       create(:end_product_establishment, :canceled_hlr_with_canceled_vbms_ext_claim)
     end
