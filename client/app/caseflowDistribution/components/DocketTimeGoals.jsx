@@ -31,17 +31,29 @@ const DocketTimeGoals = (props) => {
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
 
   const leverInputValidation = (lever, event) => {
-
+    console.log("INSIDE INPUT VALIDATION")
     let rangeError = !(/^\d{1,3}$/).test(event);
 
+    console.log(rangeError);
     if (rangeError) {
+
       setErrorMessages({ ...errorMessagesList, [lever.item]: 'Please enter a value less than or equal to 999' });
-
-      return 'FAIL';
+    } else {
+      console.log("inside ELSE", event, rangeError)
+      setErrorMessages({ ...errorMessagesList, [lever.item]: null });
     }
-    setErrorMessages({ ...errorMessagesList, [lever.item]: null });
+    // let messageValues = Object.values(errorMessagesList);
+    // let hasErrorMessage = (message) => message !== null;
+    // let messageFilter = messageValues.filter(hasErrorMessage);
 
-    return 'SUCCESS';
+    console.log("messageValues", "messageFilter", errorMessagesList);
+    // if (messageFilter.length < 1) {
+    //   console.log("RETURNING SUCCESS")
+    //   console.log(messageFilter, messageFilter.length);
+    //   return 'SUCCESS';
+    // }
+    console.log("RETURNING FAIL")
+    return 'FAIL';
   };
 
   const updateLever = (index, leverType) => (event) => {
@@ -56,19 +68,23 @@ const DocketTimeGoals = (props) => {
             lever.value = event;
             leverStore.dispatch({
               type: Constants.UPDATE_LEVER_VALUE,
-              updated_lever: { item: lever.item, value: event }
+              updated_lever: { item: lever.item, value: event },
+              validChange: true
             });
 
             return lever;
           }
-          lever.value = event;
+          if (validationResponse === 'FAIL') {
+            lever.value = event;
 
-          leverStore.dispatch({
-            type: Constants.UPDATE_LEVER_VALUE,
-            updated_lever: { item: lever.item, value: event }
-          });
+            leverStore.dispatch({
+              type: Constants.UPDATE_LEVER_VALUE,
+              updated_lever: { item: lever.item, value: event },
+              validChange: false
+            });
 
-          return lever;
+            return lever;
+          }
         }
 
         return lever;
@@ -91,15 +107,17 @@ const DocketTimeGoals = (props) => {
 
             return lever;
           }
+          if (validationResponse === 'FAIL') {
+            lever.value = event;
 
-          lever.value = event;
+            leverStore.dispatch({
+              type: Constants.UPDATE_LEVER_VALUE,
+              updated_lever: { item: lever.item, value: event },
+              validChange: false
+            });
 
-          leverStore.dispatch({
-            type: Constants.UPDATE_LEVER_VALUE,
-            updated_lever: { item: lever.item, value: event }
-          });
-
-          return lever;
+            return lever;
+          }
         }
 
         return lever;

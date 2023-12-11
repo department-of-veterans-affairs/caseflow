@@ -21,7 +21,7 @@ const leversReducer = (state = initialState, action = {}) => {
       return {
         ...state,
         levers: updatedLevers,
-        changesOccurred,
+        changesOccurred: action.validChange,
         saveChangesActivated: !changesOccurred
       }
     case Constants.SAVE_LEVERS:
