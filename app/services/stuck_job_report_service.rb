@@ -14,6 +14,14 @@ class StuckJobReportService
   def initialize
     @logs = ["#{Time.zone.now} ********** Remediation Log Report **********"]
     @folder_name = (Rails.deploy_env == :prod) ? S3_FOLDER_NAME : "#{S3_FOLDER_NAME}-#{Rails.deploy_env}"
+    # Initialize column width for: ** Stuck Job Scheduler Report Table **
+    @colomn_widths = {
+      date: 10,
+      job_name: 30,
+      record_count_before: 20,
+      record_count_after: 20,
+      processing_time: 15
+    }
   end
 
   # Logs the Id and the object that is being updated
@@ -42,29 +50,28 @@ class StuckJobReportService
     S3Service.store_file("#{folder_name}/#{file_name}", content)
   end
 
-  # The methods below are used in StuckJobSchedulerJob for automated
-  # stuck job remediations
+  # Used in StuckJobSchedulerJob to create report table
+  def append_job_to_log_table(job_name, record_count_before, record_count_after, processing_time)
+    timestamp = Time.zone.now.strftime('%Y-%m-%d')
 
-  def execution_time(job_name, start_time, end_time)
-    execution_time = end_time - start_time
-    message = "#{job_name} executed in #{execution_time} seconds."
-    logs.push(message)
+
+    update_column_width(:date, formatted_date)
+    update_column_width(:job_name, job_name.to_s)
+    update_column_width(:record_count_before, record_count_before.to_s)
+    update_column_width(:record_count_after, record_count_after.to_s)
+    update_column_width(:processing_time, processing_time.to_s)
+
+    entry = "#{formatted_date} | #{job_name.ljust(@column_widths[:job_name])} | #{record_count_before.to_s.rjust(@column_widths[:record_count_before])} | #{record_count_after.to_s.rjust(@column_widths[:record_count_after])} | #{execution_time} sec"
+
+    logs.push(entry)
   end
 
-  # :reek:UtilityFunction
-  def log_time
-    Time.zone.now
+  def header_string
+    header = "Date       | Job Name                      | Record Count Before | Record Count After | Execution Time"
+    @logs.push(header)
   end
 
-  def error_count_message(errors_count, job_name)
-    if errors_count > 0
-      logs.push("#{job_name} has #{errors_count} records with errors.")
-    else
-      logs.push("#{job_name} has no records with errors.")
-    end
-  end
-
-  def append_dividier
-    logs.push("_________________________________________")
+  def update_column_width(column, value)
+    @colomn_widths[column] = value.length if value.length > @colomn_widths[column]
   end
 end
