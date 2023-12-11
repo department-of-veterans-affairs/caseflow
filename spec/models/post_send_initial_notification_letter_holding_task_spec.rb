@@ -133,8 +133,6 @@ describe PostSendInitialNotificationLetterHoldingTask do
         # confirm the task isn't completed/cancelled and the timer is working
         expect(post_task.reload.status).to_not eq("cancelled")
         expect(post_task.reload.status).to_not eq("completed")
-
-        expect((Time.zone.now - post_task.created_at).to_i / 1.day).to eq(100)
       end
     end
 

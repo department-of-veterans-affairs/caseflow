@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import AddTaskView from './AddTaskView';
+import AddEvidenceSubmissionTaskView from './AddEvidenceSubmissionTaskView';
 import Button from '../../../../../components/Button';
 import CaseDetailsLink from '../../../../CaseDetailsLink';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -26,6 +27,18 @@ export const ExistingAppealTasksView = (props) => {
     });
   };
 
+  const getWaivedTaskForAppeal = () => {
+    const taskId = props.appeal.evidenceSubmissionTask.id;
+
+    let task = props.waivedTasks.find((el) => el.id === taskId);
+
+    if (typeof task === 'undefined') {
+      task = { id: taskId, isWaived: false, waiveReason: '' };
+    }
+
+    return task;
+  };
+
   const addTask = () => {
     const newTask = { id: props.nextTaskId, appealId: props.appeal.id, type: '', content: '' };
 
@@ -42,6 +55,16 @@ export const ExistingAppealTasksView = (props) => {
     const filtered = props.newTasks.filter((task) => task.id !== updatedTask.id);
 
     props.setNewTasks([...filtered, updatedTask]);
+  };
+
+  const waivedTaskUpdatedCallback = (updatedTask) => {
+    const filtered = props.waivedTasks.filter((task) => task.id !== updatedTask.id);
+
+    if (updatedTask.isWaived) {
+      props.setWaivedTasks([...filtered, updatedTask]);
+    } else {
+      props.setWaivedTasks(filtered);
+    }
   };
 
   useEffect(() => {
@@ -69,6 +92,13 @@ export const ExistingAppealTasksView = (props) => {
       </div>
 
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+        {props.appeal.hasEvidenceSubmissionTask &&
+          <AddEvidenceSubmissionTaskView
+            key={props.appeal.evidenceSubmissionTask.id}
+            task={getWaivedTaskForAppeal()}
+            taskUpdatedCallback={waivedTaskUpdatedCallback}
+          />
+        }
         {getTasksForAppeal().map((task) => {
           return (
             <AddTaskView
@@ -77,7 +107,6 @@ export const ExistingAppealTasksView = (props) => {
               removeTask={removeTask}
               taskUpdatedCallback={taskUpdatedCallback}
               displayRemoveCheck={displayRemoveCheck}
-              setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
               allTaskTypeOptions={props.allTaskTypeOptions}
               availableTaskTypeOptions={availableTaskTypeOptions}
               autoTexts={props.autoTexts}
@@ -115,8 +144,9 @@ ExistingAppealTasksView.propTypes = {
   appeal: PropTypes.object.isRequired,
   newTasks: PropTypes.array.isRequired,
   setNewTasks: PropTypes.func.isRequired,
+  waivedTasks: PropTypes.array.isRequired,
+  setWaivedTasks: PropTypes.func.isRequired,
   nextTaskId: PropTypes.number.isRequired,
-  setRelatedTasksCanContinue: PropTypes.func.isRequired,
   unlinkAppeal: PropTypes.func.isRequired,
   allTaskTypeOptions: PropTypes.array.isRequired,
   filterUnavailableTaskTypeOptions: PropTypes.func.isRequired,
