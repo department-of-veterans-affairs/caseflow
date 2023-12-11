@@ -9,6 +9,7 @@ describe CaseDistributionIneligibleJudges, :postgres do
       let!(:inactive_judge_staff) { create(:staff, :judge_role, :inactive) }
       let!(:non_judge_with_sattyid) { create(:staff, sattyid: 9999) }
       let!(:attorney_judge_staff) { create(:staff, :attorney_judge_role) }
+      # The associated caseflow user record needs to be ACTIVE with an inactive staff record
       let!(:inactive_judge_caseflow_record) { create(:user, :judge, css_id: inactive_judge_staff.sdomainid) }
 
       it ".ineligible_vacols_judges returns correct records" do
@@ -48,6 +49,7 @@ describe CaseDistributionIneligibleJudges, :postgres do
       let!(:inactive_user) { create(:user, :inactive) }
       let!(:inactive_user_no_vacols_record) { create(:user, :inactive) }
       let!(:active_user) { create(:user) }
+      # The associated staff record needs to be ACTIVE with an inactive caseflow user record
       let!(:inactive_user_vacols_record) { create(:staff, user: inactive_user )}
 
       it ".ineligible_caseflow_judges returns correct records" do
