@@ -17,8 +17,18 @@ class Correspondence < CaseflowRecord
   has_many :tasks
 
   after_create :initialize_correspondence_tasks
+  attr_accessor :appeal_split_process
 
   def initialize_correspondence_tasks
     CorrespondenceRootTaskFactory.new(self).create_root_and_sub_tasks!
   end
+
+  def status
+    @status ||= BVACorrespondenceStatus.new(correspondence: self)
+  end
+
+  def type
+    "Correspondence"
+  end
+
 end
