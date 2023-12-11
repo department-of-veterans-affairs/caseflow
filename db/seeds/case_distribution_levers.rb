@@ -103,11 +103,11 @@ module Seeds
           title: 'AMA Hearing Case Affinity Days',
           description: 'For non-priority AMA Hearing cases, sets the number of days an AMA Hearing Case is tied to the judge that held the hearing.',
           data_type: 'radio',
-          value: 'option_1',
+          value: 'value',
           unit: 'days',
           options: [
             {
-              item: 'option_1',
+              item: 'value',
               data_type: 'number',
               value: 0,
               text: 'Attempt distribution to current judge for max of:',
@@ -116,13 +116,13 @@ module Seeds
               max_value: 100,
             },
             {
-              item: 'option_2',
-              value: 'option_2',
+              item: 'infinite',
+              value: 'infinite',
               text: 'Always distribute to current judge',
             },
             {
-              item: 'option_3',
-              value: 'option_3',
+              item: 'omit',
+              value: 'omit',
               text: 'Omit variable from distribution rules',
             }
           ],
@@ -347,7 +347,7 @@ module Seeds
           unit: 'days',
           options: [
             {
-              item: 'option_1',
+              item: 'value',
               data_type: 'boolean',
               value: true,
               text: 'This feature is turned on or off',
@@ -369,7 +369,7 @@ module Seeds
           unit: 'days',
           options: [
             {
-              item: 'option_1',
+              item: 'value',
               data_type: 'boolean',
               value: true,
               text: 'This feature is turned on or off',
@@ -391,7 +391,7 @@ module Seeds
           unit: 'days',
           options: [
             {
-              item: 'option_1',
+              item: 'value',
               data_type: 'boolean',
               value: true,
               text: 'This feature is turned on or off',
