@@ -134,13 +134,13 @@ module Seeds
     # Active Caseflow User who is the admin of an Inactive JudgeTeam and a non-admin of another JudgeTeam
     def active_cf_user_and_inactive_judge_team
       @active_cf_user_and_inactive_judge_team ||= begin
-        user = create(:user,
+        user = User.find_by_css_id("ATTYWITHTEAM") || create(:user,
                       :judge,
                       :with_vacols_acting_judge_record,
                       css_id: "ATTYWITHTEAM",
                       full_name: "Attorney WithInactiveJudgeTeam Affinity")
 
-        JudgeTeam.for_judge(user).inactive!
+        JudgeTeam.for_judge(user)&.inactive!
         another_judge = find_or_create_active_judge("ACTIVEJUDGETEAM", "Judge WithJudgeTeam Active")
         another_judge_team = JudgeTeam.for_judge(another_judge)
         another_judge_team.add_user(user)
