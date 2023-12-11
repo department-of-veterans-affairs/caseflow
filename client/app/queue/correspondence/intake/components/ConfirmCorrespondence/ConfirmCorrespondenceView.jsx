@@ -215,7 +215,8 @@ export const ConfirmCorrespondenceView = (props) => {
           </div>
         </div>
         <ConfirmTasksNotRelatedToAnAppeal />
-        <ConfirmTasksRelatedToAnAppeal />
+
+        <ConfirmTasksRelatedToAnAppeal buttonStyling={bottonStyling} goToStepTwo = {() => props.goToStep(2)} />
 
       </div>
     </div>

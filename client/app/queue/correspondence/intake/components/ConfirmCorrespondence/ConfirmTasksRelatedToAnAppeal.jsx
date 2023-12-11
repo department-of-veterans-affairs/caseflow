@@ -4,19 +4,19 @@ import { COLORS } from 'app/constants/AppConstants';
 import { PencilIcon } from 'app/components/icons/PencilIcon';
 import { css } from 'glamor';
 import LinkToAppeal from '../../../../../hearings/components/assignHearings/LinkToAppeal';
-import HearingBadge from '../../../../../components/badges/HearingBadge/HearingBadge';
 import DocketTypeBadge from '../../../../../components/DocketTypeBadge';
 import { ExternalLinkIcon } from '../../../../../components/icons/ExternalLinkIcon';
-import BadgeArea from '../../../../../components/badges/BadgeArea';
+import Button from '../../../../../components/Button';
+import PropTypes from 'prop-types';
 // import Badge from '../../../../../components/badges/Badge';
 
 const styling = { backgroundColor: COLORS.GREY_BACKGROUND, border: 'none' };
 
 const borderlessTd = {
   borderTop: 'none', borderBottom: 'none', backgroundColor: COLORS.GREY_BACKGROUND
-}
+};
 
-const ConfirmTasksRelatedToAnAppeal = () => {
+const ConfirmTasksRelatedToAnAppeal = (props) => {
   const tasks = useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks);
   const taskIds = useSelector((state) => state.intakeCorrespondence.taskRelatedAppealIds);
   const fetchedAppeals = useSelector((state) => state.intakeCorrespondence.fetchedAppeals);
@@ -24,13 +24,20 @@ const ConfirmTasksRelatedToAnAppeal = () => {
     return (
       <>
         <tr colSpan="100%" style={{ backgroundColor: COLORS.GREY_BACKGROUND }}>
-          <td style={{ borderTop: 'none', padding: 'none', margin: 'none', borderBottom: 'none', backgroundColor: COLORS.GREY_BACKGROUND }}>
+          <td style={{ borderTop: 'none',
+            padding: 'none',
+            margin: 'none',
+            borderBottom: 'none',
+            backgroundColor: COLORS.GREY_BACKGROUND }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <th style={styling}></th>
               <h3>Appeal {index + 1} Tasks</h3>
               <b style={{ marginBottom: '7px' }}>Linked appeal</b>
-              <div style={{ width: 'fit-content', padding: '3px', backgroundColor: 'white', border: `1px solid ${COLORS.COLOR_COOL_BLUE_LIGHTER}` }}>
-              <DocketTypeBadge name={(fetchedAppeals.find((appeal) => appeal.id === task).docketName)} />
+              <div style={{ width: 'fit-content',
+                padding: '3px',
+                backgroundColor: 'white',
+                border: `1px solid ${COLORS.COLOR_COOL_BLUE_LIGHTER}` }}>
+                <DocketTypeBadge name={(fetchedAppeals.find((appeal) => appeal.id === task).docketName)} />
                 <LinkToAppeal appealExternalId={fetchedAppeals.find((appeal) => appeal.id === task).externalId}>
                   <b>{fetchedAppeals.find((appeal) => appeal.id === task).docketNumber}</b>
                   <ExternalLinkIcon size={15} className="cf-pdf-external-link-icon" color={COLORS.FOCUS_OUTLINE} />
@@ -84,24 +91,29 @@ const ConfirmTasksRelatedToAnAppeal = () => {
     <>
       <div>
         <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-          <h2 style={{ display: 'inline', marginBottom: '2rem' }}>Tasks not related to an Appeal</h2>
-          <a href="#task-related-to-an-appeal">
-            <span style={{ position: 'absolute' }}><PencilIcon size={25} /></span>
-            <span {...css({ marginLeft: '24px' })}>Edit section</span>
-          </a>
+          <h2 style={{ display: 'inline', marginBottom: '2rem' }}>Tasks related to an Appeal</h2>
+          <div style={{ marginLeft: 'auto' }}>
+            <Button styling={props.bottonStyling} linkStyling onClick={props.goToStepTwo}>
+              <span {...css({ position: 'absolute' })}><PencilIcon /></span>
+              <span {...css({ marginLeft: '20px' })}>Edit Section</span>
+            </Button>
+          </div>
         </div>
         <div
           style={{ background: COLORS.GREY_BACKGROUND, padding: '2rem', paddingTop: '0.5rem', marginBottom: '2rem' }}>
           <table className="usa-table-borderless">
-            {/* <tbody className="usa-input-grid-large"> */}
-            <tbody className="cf-form--full-width">
-
+            <tbody>
               {rowObjects}
             </tbody>
           </table>
         </div>
       </div></>
   );
+};
+
+ConfirmTasksRelatedToAnAppeal.propTypes = {
+  bottonStyling: PropTypes.object,
+  goToStepTwo: PropTypes.func.isRequired
 };
 
 export default ConfirmTasksRelatedToAnAppeal;
