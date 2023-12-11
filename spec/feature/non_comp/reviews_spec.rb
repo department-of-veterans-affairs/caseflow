@@ -898,36 +898,24 @@ feature "NonComp Reviews Queue", :postgres do
     end
   end
 
-  context "When pagination is clicked Generate task report is clicked get call should not be appended to the url" do
+  context "get params should not get appended to URL  when QueueTable is loading and user navigates to Generate report pages." do
     before do
       create_list(:higher_level_review_vha_task, 30, assigned_to: non_comp_org)
       OrganizationsUser.make_user_admin(user, non_comp_org)
     end
 
-    it "pagination testing" do
+    it "should not contain get params after user navigates another page" do
       visit BASE_URL
       expect(page).to have_content("Veterans Health Administration")
-      # expect(page).to have_content("Viewing 1-15 of 33 total")
-
-      # pagination = page.find(class: "cf-pagination-pages", match: :first)
-      # pagination.find("Button", text: "2", match: :first).click
-
       click_button("Generate task report")
       expect(page).to have_content("Generate task report")
-      # expect(current_url).to include("/decision_reviews/vha")
-      expect(page).to have_content("Report Type")
-      expect(page).to have_button("Generate task report", disabled: true)
-      expect(page).to have_button("Clear filters", disabled: true)
-      click_dropdown(text: "Status")
-      expect(page).to have_button("Generate task report")
-      expect(page).to have_button("Clear filters")
-      sleep(5) # i do not think this test would work without this sleep here
-      click_button("Clear filters")
-      expect(page).to have_button("Generate task report", disabled: true)
-      expect(page).to have_button("Clear filters", disabled: true)
+
+      expect(current_url).to have_content(BASE_URL + "/report")
+
       using_wait_time 5 do
         expect(current_url).to_not have_content(BASE_URL + "/report?tab=in_progress&page=1&sort_by=daysWaitingColumn")
       end
+
       page.go_back
       expect(current_url).to have_content(BASE_URL)
     end
