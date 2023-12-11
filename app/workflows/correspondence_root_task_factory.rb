@@ -5,7 +5,6 @@ class CorrespondenceRootTaskFactory
 
   def initialize(correspondence)
     @correspondence = correspondence
-
   end
 
   def create_root_and_sub_tasks!

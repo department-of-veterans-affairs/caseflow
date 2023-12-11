@@ -30,5 +30,4 @@ class Correspondence < CaseflowRecord
   def type
     "Correspondence"
   end
-
 end

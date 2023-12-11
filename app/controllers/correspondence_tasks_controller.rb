@@ -3,9 +3,10 @@
 class CorrespondenceTasksController < TasksController
   def create_package_action_task
     review_package_task = ReviewPackageTask.find_by(appeal_id: params[:correspondence_id], type: ReviewPackageTask.name)
-
     if review_package_task.children.present?
-      render json: { message: "Existing package action request. Only one package action request may be made at a time" }, status: :bad_request
+      render json:
+      { message: "Existing package action request. Only one package action request may be made at a time" },
+             status: :bad_request
     else
       task = task_to_create
       task_params = {

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class CorrespondenceTask < Task
   before_create :verify_org_task_unique
   validate :status_is_valid_on_create, on: :create
