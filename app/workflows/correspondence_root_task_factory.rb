@@ -38,7 +38,7 @@ class CorrespondenceRootTaskFactory
   def review_package_task
     rpt ||= ReviewPackageTask.where(appeal_id: @correspondence.id, type: ReviewPackageTask.name)
     if rpt.blank?
-      @rpt = ReviewPackageTask.create!(
+      ReviewPackageTask.create!(
         appeal_id: @correspondence.id,
         parent_id: @root_task.id,
         assigned_to: MailTeam.singleton,
@@ -46,7 +46,5 @@ class CorrespondenceRootTaskFactory
         type: ReviewPackageTask.name
       )
     end
-
-    @rpt.update(status: "unassigned")
   end
 end

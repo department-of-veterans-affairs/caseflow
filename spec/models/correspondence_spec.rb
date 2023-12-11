@@ -53,12 +53,18 @@ RSpec.describe Correspondence, type: :model do
         prior_correspondence_id: 999999
       )
 
+      ct = CorrespondenceTask.find_by(appeal_id: correspondence.id, type: "CorrespondenceTask")
+      expect(ct.appeal_id).to eq(correspondence.id)
+      expect(ct.status).to eq("on_hold")
+      expect(ct.type).to eq("CorrespondenceTask")
+
       crt = CorrespondenceRootTask.find_by(appeal_id: correspondence.id)
       expect(crt.appeal_id).to eq(correspondence.id)
       expect(crt.status).to eq("on_hold")
       expect(crt.type).to eq("CorrespondenceRootTask")
+      expect(crt.parent_id).to eq(ct.id)
 
-      rpt = CorrespondenceRootTask.find_by(appeal_id: correspondence.id, type: "ReviewPackageTask")
+      rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id)
       expect(rpt.appeal_id).to eq(correspondence.id)
       expect(rpt.status).to eq("assigned")
       expect(rpt.type).to eq("ReviewPackageTask")
