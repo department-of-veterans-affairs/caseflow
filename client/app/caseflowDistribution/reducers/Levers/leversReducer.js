@@ -1,11 +1,11 @@
 import * as Constants from './leversActionTypes';
- import { update } from 'app/util/ReducerUtil';
 
 export const initialState = {
   saveChangesActivated: false,
   levers: [],
   initial_levers: [],
   formatted_history: {},
+  changesOccurred: false
 };
 
 const leversReducer = (state = initialState, action = {}) => {
@@ -21,13 +21,15 @@ const leversReducer = (state = initialState, action = {}) => {
       return {
         ...state,
         levers: updatedLevers,
-        changesOccurred
+        changesOccurred,
+        saveChangesActivated: !changesOccurred
       }
     case Constants.SAVE_LEVERS:
       return {
-        ...state
-      ,
-      saveChangesActivated: action.saveChangesActivated
+        ...state,
+        initial_levers: state.levers,
+        saveChangesActivated: action.saveChangesActivated,
+        changesOccurred: false
       }
     case Constants.REVERT_LEVERS:
       return {

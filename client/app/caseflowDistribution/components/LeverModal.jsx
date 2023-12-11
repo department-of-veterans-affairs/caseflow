@@ -30,7 +30,7 @@ function SaveLeversToDB(leverStore) {
     audit_lever_entries: [],
   }
 
-  ApiUtil.post('/case_distribution_levers/update_levers_and_history', { data: postData })
+  return ApiUtil.post('/case_distribution_levers/update_levers_and_history', { data: postData })
     .then(() => {
       // UpdateLeverHistory(leverStore);
       SaveLeverChanges(leverStore);
@@ -89,6 +89,7 @@ export function LeverSaveButton({ leverStore }) {
       const leverChangesOccurred = leversString !== initialLeversString;
 
       setChangesOccurred(leverChangesOccurred);
+
     });
 
     return () => {
@@ -103,8 +104,8 @@ export function LeverSaveButton({ leverStore }) {
     }
   };
 
-  const handleConfirmButton = () => {
-    SaveLeversToDB(leverStore);
+  const handleConfirmButton = async () => {
+    await SaveLeversToDB(leverStore);
     setShowModal(false);
     setSaveButtonDisabled(true);
   }
@@ -113,7 +114,11 @@ export function LeverSaveButton({ leverStore }) {
 
   return (
     <>
-      <Button id="LeversSaveButton"  onClick={handleSaveButton} disabled={!changesOccurred || saveButtonDisabled}>
+      <Button
+        id="LeversSaveButton"
+        onClick={handleSaveButton}
+        disabled={!changesOccurred}
+      >
         Save
       </Button>
       {showModal &&
