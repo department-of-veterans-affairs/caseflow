@@ -9,10 +9,8 @@ class CorrespondenceRootTaskFactory
 
   def create_root_and_sub_tasks!
     ActiveRecord::Base.transaction do
-      if FeatureToggle.enabled?(:correspondence_queue)
-        create_root!
-        create_subtasks!
-      end
+      create_root!
+      create_subtasks!
     end
   end
 
@@ -21,7 +19,7 @@ class CorrespondenceRootTaskFactory
   def create_root!
     @correspondence_task = CorrespondenceTask.find_or_create_by!(
       appeal_id: @correspondence.id,
-      assigned_to: Bva.singleton,
+      assigned_to: MailTeamSupervisor.singleton,
       appeal_type: "Correspondence",
       type: "CorrespondenceTask"
     )
@@ -30,7 +28,7 @@ class CorrespondenceRootTaskFactory
 
     @root_task = CorrespondenceRootTask.find_or_create_by!(
       appeal_id: @correspondence.id,
-      assigned_to: Bva.singleton,
+      assigned_to: MailTeamSupervisor.singleton,
       appeal_type: "Correspondence",
       parent_id: @correspondence_task.id,
       type: "CorrespondenceRootTask"
@@ -42,7 +40,7 @@ class CorrespondenceRootTaskFactory
   def create_subtasks!
     @review_package_task = ReviewPackageTask.find_or_create_by!(
       appeal_id: @correspondence.id,
-      assigned_to: Bva.singleton,
+      assigned_to: MailTeamSupervisor.singleton,
       appeal_type: "Correspondence",
       parent_id: @root_task.id,
       type: "ReviewPackageTask"
