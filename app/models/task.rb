@@ -54,7 +54,8 @@ class Task < CaseflowRecord
     Constants.TASK_STATUSES.in_progress.to_sym => Constants.TASK_STATUSES.in_progress,
     Constants.TASK_STATUSES.on_hold.to_sym => Constants.TASK_STATUSES.on_hold,
     Constants.TASK_STATUSES.completed.to_sym => Constants.TASK_STATUSES.completed,
-    Constants.TASK_STATUSES.cancelled.to_sym => Constants.TASK_STATUSES.cancelled
+    Constants.TASK_STATUSES.cancelled.to_sym => Constants.TASK_STATUSES.cancelled,
+    Constants.TASK_STATUSES.unassigned.to_sym => Constants.TASK_STATUSES.unassigned
   }
 
   enum cancellation_reason: {

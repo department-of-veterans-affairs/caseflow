@@ -38,10 +38,11 @@ class CorrespondenceRootTaskFactory
   def review_package_task
     rpt ||= ReviewPackageTask.where(appeal_id: @correspondence.id, type: ReviewPackageTask.name)
     if rpt.blank?
+      binding.pry
       ReviewPackageTask.create!(
         appeal_id: @correspondence.id,
         parent_id: @root_task.id,
-        assigned_to: MailTeam.singleton,
+        assigned_to: Bva.singleton,
         appeal_type: Correspondence.name,
         type: ReviewPackageTask.name
       )
