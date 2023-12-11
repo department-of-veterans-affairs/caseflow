@@ -4,10 +4,10 @@ class Metric < CaseflowRecord
   belongs_to :user
   delegate :css_id, to: :user
 
-  validates :metric_type, inclusion: { in: Caseflow::MetricAttributes::METRIC_TYPES.values }
-  validates :metric_product, inclusion: { in: Caseflow::MetricAttributes::METRIC_GROUPS.values }
-  validates :metric_group, inclusion: { in: Caseflow::MetricAttributes::METRIC_GROUPS.values }
-  validates :app_name, inclusion: { in: Caseflow::MetricAttributes::METRIC_TYPES.values }
+  validates :metric_type, inclusion: { in: MetricAttributes::METRIC_TYPES.values }
+  validates :metric_product, inclusion: { in: MetricAttributes::METRIC_GROUPS.values }
+  validates :metric_group, inclusion: { in: MetricAttributes::METRIC_GROUPS.values }
+  validates :app_name, inclusion: { in: MetricAttributes::METRIC_TYPES.values }
   validate :sent_to_in_log_systems
 
   def self.create_metric(klass, params, user)
@@ -24,8 +24,8 @@ class Metric < CaseflowRecord
   end
 
   def sent_to_in_log_systems
-    invalid_systems = sent_to - Caseflow::MetricAttributes::LOG_SYSTEMS.values
-    msg = "contains invalid log systems. The following are valid log systems #{Caseflow::MetricAttributes::LOG_SYSTEMS.values}"
+    invalid_systems = sent_to - MetricAttributes::LOG_SYSTEMS.values
+    msg = "contains invalid log systems. The following are valid log systems #{MetricAttributes::LOG_SYSTEMS.values}"
     errors.add(:sent_to, msg) if !invalid_systems.empty?
   end
 
@@ -53,13 +53,13 @@ class Metric < CaseflowRecord
     {
       uuid: params[:uuid],
       user: user || RequestStore.store[:current_user] || User.system_user,
-      metric_name: params[:name] || Caseflow::MetricAttributes::METRIC_TYPES[:log],
+      metric_name: params[:name] || MetricAttributes::METRIC_TYPES[:log],
       metric_class: klass&.try(:name) || klass&.class&.name || name,
-      metric_group: params[:group] || Caseflow::MetricAttributes::METRIC_GROUPS[:service],
-      metric_message: params[:message] || Caseflow::MetricAttributes::METRIC_TYPES[:log],
-      metric_type: params[:type] || Caseflow::MetricAttributes::METRIC_TYPES[:log],
-      metric_product: Caseflow::MetricAttributes::METRIC_GROUPS[params[:product].to_sym] || Caseflow::MetricAttributes::METRIC_GROUPS[:caseflow],
-      app_name: params[:app_name] || Caseflow::MetricAttributes::METRIC_TYPES[:caseflow],
+      metric_group: params[:group] || MetricAttributes::METRIC_GROUPS[:service],
+      metric_message: params[:message] || MetricAttributes::METRIC_TYPES[:log],
+      metric_type: params[:type] || MetricAttributes::METRIC_TYPES[:log],
+      metric_product: MetricAttributes::METRIC_GROUPS[params[:product].to_sym] || MetricAttributes::METRIC_GROUPS[:caseflow],
+      app_name: params[:app_name] || MetricAttributes::METRIC_TYPES[:caseflow],
       metric_attributes: params[:metric_attributes],
       additional_info: params[:additional_info],
       sent_to: Array(params[:sent_to]).flatten,

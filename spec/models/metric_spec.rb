@@ -22,7 +22,7 @@ describe Metric do
       metric = Metric.create_metric(self, params, user)
 
       expect(metric.valid?).to be true
-      expect(metric.metric_type).to eq(Caseflow::MetricAttributes::METRIC_TYPES[:performance])
+      expect(metric.metric_type).to eq(MetricAttributes::METRIC_TYPES[:performance])
     end
 
     it "creates a javascript metric for log" do
@@ -30,7 +30,7 @@ describe Metric do
       metric = Metric.create_metric(self, params, user)
 
       expect(metric.valid?).to be true
-      expect(metric.metric_type).to eq(Caseflow::MetricAttributes::METRIC_TYPES[:log])
+      expect(metric.metric_type).to eq(MetricAttributes::METRIC_TYPES[:log])
     end
 
     it "creates a javascript metric for error" do
@@ -38,7 +38,7 @@ describe Metric do
       metric = Metric.create_metric(self, params, user)
 
       expect(metric.valid?).to be true
-      expect(metric.metric_type).to eq(Caseflow::MetricAttributes::METRIC_TYPES[:error])
+      expect(metric.metric_type).to eq(MetricAttributes::METRIC_TYPES[:error])
     end
 
     it "creates a javascript metric with invalid sent_to" do
