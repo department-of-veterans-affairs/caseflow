@@ -19,6 +19,7 @@ class Correspondence < CaseflowRecord
   # has_many :related_correspondences, through: :correspondence_correspondences
 
   after_create :initialize_correspondence_tasks
+  attr_accessor :appeal_split_process
 
   def initialize_correspondence_tasks
     CorrespondenceRootTaskFactory.new(self).create_root_and_sub_tasks!

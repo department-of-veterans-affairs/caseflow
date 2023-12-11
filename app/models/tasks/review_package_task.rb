@@ -1,3 +1,3 @@
-class ReviewPackageTask < CorrespondenceRootTask
+class ReviewPackageTask < CorrespondenceTask
 
 end

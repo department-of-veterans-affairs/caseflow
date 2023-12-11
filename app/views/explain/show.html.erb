@@ -98,24 +98,21 @@
       <% else %>
         <li>status: <%= appeal.status.status.to_s %></li>
       <% end %>
-      <% if appeal.type != "Correspondence" %>
-        <li>priority: <%= appeal.aod? || appeal.cavc? %> (AOD: <%= appeal.aod? %>, CAVC: <%= appeal.cavc? %>)</li>
-        <li><a href="/queue/appeals/<%= appeal["uuid"] || appeal["vacols_id"] %>" target="_blank">Case Details page</a></li>
-
-        <% if sje.records_hash["appeals"].length > 1 %>
-          <li>Related Appeals:
-            <ul>
-              <% sje.records_hash["appeals"].each do |rel_appeal| %>
-                <% next if rel_appeal["uuid"] && rel_appeal["uuid"] == appeal.try(:uuid) %>
-                <% next if rel_appeal["vacols_id"] && rel_appeal["vacols_id"] == appeal.try(:vacols_id) %>
-                <li>Appeal id <%= rel_appeal["id"] %> (<%= rel_appeal["uuid"] || rel_appeal["vacols_id"] %>):
-                  <a href="/queue/appeals/<%= rel_appeal["uuid"] || rel_appeal["vacols_id"] %>" target="_blank">Case Details</a>,
-                  <a href="/explain/appeals/<%= rel_appeal["uuid"] || rel_appeal["vacols_id"] %>" target="_blank">Explain page</a>
-                </li>
-              <% end %>
-            </ul>
-          </li>
-        <% end %>
+      <li>priority: <%= appeal.aod? || appeal.cavc? %> (AOD: <%= appeal.aod? %>, CAVC: <%= appeal.cavc? %>)</li>
+      <li><a href="/queue/appeals/<%= appeal["uuid"] || appeal["vacols_id"] %>" target="_blank">Case Details page</a></li>
+      <% if sje.records_hash["appeals"].length > 1 %>
+        <li>Related Appeals:
+          <ul>
+            <% sje.records_hash["appeals"].each do |rel_appeal| %>
+              <% next if rel_appeal["uuid"] && rel_appeal["uuid"] == appeal.try(:uuid) %>
+              <% next if rel_appeal["vacols_id"] && rel_appeal["vacols_id"] == appeal.try(:vacols_id) %>
+              <li>Appeal id <%= rel_appeal["id"] %> (<%= rel_appeal["uuid"] || rel_appeal["vacols_id"] %>):
+                <a href="/queue/appeals/<%= rel_appeal["uuid"] || rel_appeal["vacols_id"] %>" target="_blank">Case Details</a>,
+                <a href="/explain/appeals/<%= rel_appeal["uuid"] || rel_appeal["vacols_id"] %>" target="_blank">Explain page</a>
+              </li>
+            <% end %>
+          </ul>
+        </li>
       <% end %>
     </ul>
   </td><td>
