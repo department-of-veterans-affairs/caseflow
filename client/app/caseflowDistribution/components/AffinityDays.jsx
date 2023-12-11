@@ -15,13 +15,21 @@ const AffinityDays = (props) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
   });
 
+  const leverNumberDiv = css({
+    '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
+    '& .cf-form-int-input .input-container': { width: 'auto', display: 'inline-block', verticalAlign: 'middle' },
+    '& .cf-form-int-input label': { position: 'absolute', bottom: '15px', left: '100px' },
+    '& .usa-input-error label': { bottom: '24px', left: '115px' }
+  });
+
   const [affinityLevers, setAffinityLevers] = useState(filteredLevers);
 
-  const updateLever = (option, index, value) => {
-    const updatedLevers = affinityLevers.map((l, i) => {
-      if (index === i) {
-        const updatedOptions = l.options.map((op) => {
-          if (op === option) {
+  const updatedLever = (lever, option, value) => {
+
+    const updatedLevers = affinityLevers.map((individualLever) => {
+      if (individualLever.item === lever.item) {
+        const updatedOptions = individualLever.options.map((op) => {
+          if (op.item === option.item) {
             let errorResult = !(/^\d{0,3}$/).test(value);
 
             if (errorResult) {
@@ -36,22 +44,28 @@ const AffinityDays = (props) => {
           return op;
         });
 
-        return { ...l, options: updatedOptions };
-
+        leverStore.dispatch({
+          type: Constants.UPDATE_LEVER_VALUE,
+          updated_lever: { item: option.item, value: option.value }
+        });
+        console.log('Dispatched update action:', { item: option.item, value: option.value });
+        return { ...individualLever, options: updatedOptions}
       }
 
-      return l;
+      return individualLever;
     });
 
     setAffinityLevers(updatedLevers);
+    console.log('AffinityLevers state after update:', updatedLevers);
 
     leverStore.dispatch({
       type: Constants.UPDATE_LEVER_VALUE,
-      updated_lever: { item: option.item, value: option.value }
+      updated_lever: { item: lever.item, value: option.item }
     });
   };
 
   const handleRadioChange = (lever, option) => {
+    console.log(lever, option);
     if (lever && option) {
       const updatedLevers = affinityLevers.map((l) => {
         if (l.item === lever.item) {
@@ -68,18 +82,7 @@ const AffinityDays = (props) => {
     }
   };
 
-
-
-
-  const leverNumberDiv = css({
-    '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
-    '& .cf-form-int-input .input-container': { width: 'auto', display: 'inline-block', verticalAlign: 'middle' },
-    '& .cf-form-int-input label': { position: 'absolute', bottom: '15px', left: '100px' },
-    '& .usa-input-error label': { bottom: '24px', left: '115px' }
-  });
-
-  const generateFields = (dataType, option, lever, index) => {
-
+  const generateFields = (dataType, option, lever, isMemberUser) => {
     if (dataType === 'number') {
       return (
         <NumberField
@@ -89,7 +92,7 @@ const AffinityDays = (props) => {
           readOnly={lever.is_disabled}
           value={option.value}
           errorMessage={option.errorMessage}
-          onChange={(value) => updateLever(lever, option, index, value)}
+          onChange={(value) => updatedLever(lever, option, value)}
         />
       );
     }
@@ -99,8 +102,8 @@ const AffinityDays = (props) => {
           name={option.item}
           label={false}
           readOnly={lever.is_disabled}
-          value={option.value}
-          onChange={(value) => updateLever(lever, option, index, value)}
+          value={displayValue}
+          onChange={(value) => updatedLever(lever, option, value)}
         />
       );
     }
@@ -116,7 +119,7 @@ const AffinityDays = (props) => {
           <div>
             <label className={`${styles.disabledText}`}
               htmlFor={`${lever.item}-${option.item}`}>
-              {option.text} {option.value} {option.unit}
+              {`${option.text}: ${option.value}: ${option.unit}`}
             </label>
           </div>
         </div>
@@ -167,7 +170,7 @@ const AffinityDays = (props) => {
 
                   <div>
                     <div className={styles.combinedRadioInput}>
-                      {generateFields(option.data_type, option, lever, isMemberUser, index)}
+                      {generateFields(option.data_type, option, lever, isMemberUser)}
                     </div>
                   </div>
                 </div>

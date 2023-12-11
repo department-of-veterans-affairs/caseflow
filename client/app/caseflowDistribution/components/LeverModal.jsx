@@ -77,18 +77,21 @@ function leverList(leverStore) {
 export function LeverSaveButton({ leverStore }) {
   const [showModal, setShowModal] = useState(false);
   const [changesOccurred, setChangesOccurred] = useState(false);
-  const [saveButtonDisabled, setSaveButtonDisabled] = useState(false);
+const [saveButtonDisabled, setSaveButtonDisabled] = useState(false);
 
-  useEffect(() => {
-    const unsubscribe = leverStore.subscribe(() => {
+  const leverValuesChanged = () =>{
       const state = leverStore.getState();
 
       const leversString = JSON.stringify(state.levers);
       const initialLeversString = JSON.stringify(state.initial_levers);
 
-      const leverChangesOccurred = leversString !== initialLeversString;
+      return leversString !== initialLeversString;
+  }
 
-      setChangesOccurred(leverChangesOccurred);
+  useEffect(() => {
+    const unsubscribe = leverStore.subscribe(() => {
+
+      setChangesOccurred(leverValuesChanged);
 
     });
 
