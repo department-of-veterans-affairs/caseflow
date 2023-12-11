@@ -15,6 +15,8 @@ class CaseDistributionIneligibleJudges
 
     def vacols_judges_with_caseflow_records
       ineligible_vacols_judges.map do |hash|
+        next hash if hash[:sdomainid].nil?
+
         caseflow_user = User.find_by_css_id(hash[:sdomainid])
         next hash unless caseflow_user
 
