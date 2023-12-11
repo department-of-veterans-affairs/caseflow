@@ -339,8 +339,8 @@ module Seeds
           algorithms_used: ['docket']
         },
         {
-          item: 'ama_hearings',
-          title: 'AMA Hearings',
+          item: 'ama_hearings_start_distribution_prior_to_goals',
+          title: 'AMA Hearings Start Distribution Prior to Goals',
           description: '',
           data_type: 'combination',
           value: 770,
@@ -354,15 +354,15 @@ module Seeds
               unit: ''
             }
           ],
-          is_active: false,
+          is_active: true,
           is_disabled: true,
           min_value: 0,
           max_value: 100,
           algorithms_used: ['proportion']
         },
         {
-          item: 'ama_direct_review',
-          title: 'AMA Direct Review',
+          item: 'ama_direct_review_start_distribution_prior_to_goals',
+          title: 'AMA Direct Review Start Distribution Prior to Goals',
           description: '',
           data_type: 'combination',
           value: 365,
@@ -383,8 +383,8 @@ module Seeds
           algorithms_used: ['docket']
         },
         {
-          item: 'ama_evidence_submission',
-          title: 'AMA Evidence Submission',
+          item: 'ama_evidence_submission_start_distribution_prior_to_goals',
+          title: 'AMA Evidence Submission Start Distribution Prior to Goals',
           description: '',
           data_type: 'combination',
           value: 550,
@@ -399,28 +399,40 @@ module Seeds
             }
           ],
           is_active: false,
-          is_disabled: true,
+          is_disabled: false,
           min_value: 0,
           max_value: 100,
           algorithms_used: ['proportion']
         },
         {
-          item: 'direct_docket_time_goal',
-          title: 'AMA Non-priority Direct Review Docket Time Goal',
+          item: 'ama_hearings_docket_time_goals',
+          title: 'AMA Hearings Docket Time Goals',
           data_type: 'number',
           value: 365,
           unit: 'days',
-          is_active: false,
-          is_disabled: true,
+          is_active: true,
+          is_disabled: false,
           min_value: 0,
           max_value: 1000,
           algorithms_used: ['proportion']
         },
         {
-          item: 'days_before_goal_due_for_distribution',
-          title: 'AMA Non-priority Direct Review Days Before Goal Due for Distribution',
+          item: 'ama_direct_review_docket_time_goals',
+          title: 'AMA Direct Review Docket Time Goals',
           data_type: 'number',
-          value: nil,
+          value: 500,
+          unit: 'days',
+          is_active: false,
+          is_disabled: false,
+          min_value: 0,
+          max_value: 1000,
+          algorithms_used: ['proportion']
+        },
+        {
+          item: 'ama_evidence_submission_docket_time_goals',
+          title: 'AMA Evidence Submission Docket Time Goals',
+          data_type: 'number',
+          value: 123,
           unit: 'days',
           is_active: false,
           is_disabled: true,

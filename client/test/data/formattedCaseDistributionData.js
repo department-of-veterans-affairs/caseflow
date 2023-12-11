@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 /* eslint-disable max-len */
 
 export const formattedHistory = [
@@ -486,6 +487,114 @@ export const formattedLevers = [
     algorithms_used: [],
     control_group: []
   },
+  {
+    id: 17,
+    item: 'lever_18',
+    title: 'AMA Hearings Start Distribution Prior to Goals',
+    description: '',
+    data_type: 'combination',
+    value: 770,
+    unit: 'days',
+    options: [
+      {
+        item: 'option_1',
+        data_type: 'boolean',
+        value: true,
+        text: 'This feature is turned on or off',
+        unit: ''
+      }
+    ],
+    is_active: true,
+    is_disabled: true,
+    min_value: 0,
+    max_value: 100,
+    algorithms_used: ['proportion']
+  },
+  {
+    id: 18,
+    item: 'lever_19',
+    title: 'AMA Direct Review Start Distribution Prior to Goals',
+    description: '',
+    data_type: 'combination',
+    value: 365,
+    unit: 'days',
+    options: [
+      {
+        item: 'option_1',
+        data_type: 'boolean',
+        value: true,
+        text: 'This feature is turned on or off',
+        unit: ''
+      }
+    ],
+    is_active: true,
+    is_disabled: false,
+    min_value: 0,
+    max_value: 100,
+    algorithms_used: ['docket']
+  },
+  {
+    id: 19,
+    item: 'lever_20',
+    title: 'AMA Evidence Submission Start Distribution Prior to Goals',
+    description: '',
+    data_type: 'combination',
+    value: 550,
+    unit: 'days',
+    options: [
+      {
+        item: 'option_1',
+        data_type: 'boolean',
+        value: true,
+        text: 'This feature is turned on or off',
+        unit: ''
+      }
+    ],
+    is_active: false,
+    is_disabled: false,
+    min_value: 0,
+    max_value: 100,
+    algorithms_used: ['proportion']
+  },
+  {
+    id: 20,
+    item: 'lever_21',
+    title: 'AMA Hearings Docket Time Goals',
+    data_type: 'number',
+    value: 435,
+    unit: 'days',
+    is_active: true,
+    is_disabled: false,
+    min_value: 0,
+    max_value: 1000,
+    algorithms_used: ['proportion']
+  },
+  {
+    id: 21,
+    item: 'lever_22',
+    title: 'AMA Direct Review Docket Time Goals',
+    data_type: 'number',
+    value: 500,
+    unit: 'days',
+    is_active: false,
+    is_disabled: false,
+    min_value: 0,
+    max_value: 1000,
+    algorithms_used: ['proportion']
+  },
+  {
+    id: 22,
+    item: 'lever_23',
+    title: 'AMA Evidence Submission Docket Time Goals',
+    data_type: 'number',
+    value: 123,
+    unit: 'days',
+    is_active: false,
+    is_disabled: true,
+    min_value: 0,
+    max_value: 1000,
+    algorithms_used: ['proportion']
+  },
 ];
 
 export const updatedLevers = [
@@ -537,4 +646,112 @@ export const updatedLevers = [
     options: [],
     control_group: []
   },
-]
+  {
+    id: 17,
+    item: 'ama_hearings_start_distribution_prior_to_goals',
+    title: 'AMA Hearings Start Distribution Prior to Goals',
+    description: '',
+    data_type: 'combination',
+    value: 770,
+    unit: 'days',
+    options: [
+      {
+        item: 'option_1',
+        data_type: 'boolean',
+        value: true,
+        text: 'This feature is turned on or off',
+        unit: ''
+      }
+    ],
+    is_active: true,
+    is_disabled: true,
+    min_value: 0,
+    max_value: 100,
+    algorithms_used: ['proportion']
+  },
+  {
+    id: 18,
+    item: 'ama_direct_review_start_distribution_prior_to_goals',
+    title: 'AMA Direct Review Start Distribution Prior to Goals',
+    description: '',
+    data_type: 'combination',
+    value: 365,
+    unit: 'days',
+    options: [
+      {
+        item: 'option_1',
+        data_type: 'boolean',
+        value: true,
+        text: 'This feature is turned on or off',
+        unit: ''
+      }
+    ],
+    is_active: true,
+    is_disabled: false,
+    min_value: 0,
+    max_value: 100,
+    algorithms_used: ['docket']
+  },
+  {
+    id: 19,
+    item: 'ama_evidence_submission_start_distribution_prior_to_goals',
+    title: 'AMA Evidence Submission Start Distribution Prior to Goals',
+    description: '',
+    data_type: 'combination',
+    value: 550,
+    unit: 'days',
+    options: [
+      {
+        item: 'option_1',
+        data_type: 'boolean',
+        value: true,
+        text: 'This feature is turned on or off',
+        unit: ''
+      }
+    ],
+    is_active: false,
+    is_disabled: false,
+    min_value: 0,
+    max_value: 100,
+    algorithms_used: ['proportion']
+  },
+  {
+    id: 20,
+    item: 'ama_hearings_docket_time_goals',
+    title: 'AMA Hearings Docket Time Goals',
+    data_type: 'number',
+    value: 435,
+    unit: 'days',
+    is_active: true,
+    is_disabled: false,
+    min_value: 0,
+    max_value: 1000,
+    algorithms_used: ['proportion']
+  },
+  {
+    id: 21,
+    item: 'ama_direct_review_docket_time_goals',
+    title: 'AMA Direct Review Docket Time Goals',
+    data_type: 'number',
+    value: 500,
+    unit: 'days',
+    is_active: false,
+    is_disabled: false,
+    min_value: 0,
+    max_value: 1000,
+    algorithms_used: ['proportion']
+  },
+  {
+    id: 22,
+    item: 'ama_evidence_submission_docket_time_goals',
+    title: 'AMA Evidence Submission Docket Time Goals',
+    data_type: 'number',
+    value: 123,
+    unit: 'days',
+    is_active: false,
+    is_disabled: true,
+    min_value: 0,
+    max_value: 1000,
+    algorithms_used: ['proportion']
+  },
+];

@@ -1,18 +1,17 @@
 class CaseDistributionLeversController < ApplicationController
   before_action :verify_access
+  before_action :set_acd_group_organization, only: [:acd_lever_index, :update_levers_and_history]
 
   def acd_lever_index
     @acd_levers = CaseDistributionLever.all
     @acd_history = CaseDistributionAuditLeverEntry.past_year
-    cda_group_organization = Organization.where(name: "Case Distribution Algorithm Control Group").first
-    @user_is_an_acd_admin = cda_group_organization && cda_group_organization.user_is_admin?(current_user)
+    @user_is_an_acd_admin = @acd_group_organization.user_is_admin?(current_user)
 
     render "index"
   end
 
   def update_levers_and_history
-    cda_group_organization = Organization.where(name: "Case Distribution Algorithm Control Group").first
-    if cda_group_organization && cda_group_organization.user_is_admin?(current_user)
+    if @acd_group_organization.user_is_admin?(current_user)
       current_levers_list = params["current_levers"].is_a?(Array) ? params["current_levers"].to_json : params["current_levers"]
       errors = update_acd_levers(JSON.parse(current_levers_list))
 
@@ -65,5 +64,9 @@ class CaseDistributionLeversController < ApplicationController
 
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
+  end
+
+  def set_acd_group_organization
+    @acd_group_organization = CDAControlGroup.singleton
   end
 end

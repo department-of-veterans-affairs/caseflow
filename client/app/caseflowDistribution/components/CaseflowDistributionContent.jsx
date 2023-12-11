@@ -14,7 +14,8 @@ const CaseflowDistributionContent = ({
   levers,
   formattedHistory,
   isAdmin,
-  leverStore
+  leverStore,
+  sectionTitles
 }) => {
   const [displayAlert, setDisplayAlert] = useState(false);
 
@@ -40,9 +41,9 @@ const CaseflowDistributionContent = ({
     <div>
       {displayAlert && (
         <LeverAlertBanner
-        title={COPY.CASE_DISTRIBUTION_SUCCESSBANNER_TITLE}
-        message={COPY.CASE_DISTRIBUTION_SUCCESSBANNER_DETAIL}
-        type='success'
+          title={COPY.CASE_DISTRIBUTION_SUCCESSBANNER_TITLE}
+          message={COPY.CASE_DISTRIBUTION_SUCCESSBANNER_DETAIL}
+          type='success'
         />
       )}
       <h1>Administration</h1>
@@ -61,7 +62,8 @@ const CaseflowDistributionContent = ({
             <h2>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_TITLE}</h2>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION}</p>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION_NOTE}</p>
-            <InteractableLeverWrapper levers={levers} leverStore={leverStore} isAdmin={isAdmin} />
+            <InteractableLeverWrapper levers={levers} leverStore={leverStore} isAdmin={isAdmin}
+              sectionTitles={sectionTitles} />
           </div>
         </div>
 
@@ -97,6 +99,7 @@ CaseflowDistributionContent.propTypes = {
   formattedHistory: PropTypes.array.isRequired,
   isAdmin: PropTypes.bool.isRequired,
   leverStore: PropTypes.any.isRequired,
+  sectionTitles: PropTypes.array.isRequired
 };
 
 export default CaseflowDistributionContent;
