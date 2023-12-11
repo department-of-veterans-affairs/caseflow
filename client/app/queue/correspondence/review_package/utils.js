@@ -6,7 +6,8 @@ import {
   PACKAGE_ACTION_REASSIGN_DESCRIPTION,
   PACKAGE_ACTION_REASSIGN_TITLE,
   PACKAGE_ACTION_REASSIGN_TEXTAREA_LABEL,
-  PACKAGE_ACTION_SPLIT_TITLE
+  PACKAGE_ACTION_SPLIT_TITLE,
+  PACKAGE_ACTION_SPLIT_TEXTAREA_LABEL
 } from '../../../../COPY';
 
 export const getPackageActionColumns = (dropdownType) => {
@@ -87,6 +88,7 @@ export const getModalInformation = (dropdownType) => {
     return {
       title: PACKAGE_ACTION_SPLIT_TITLE,
       description: PACKAGE_ACTION_MODAL_DESCRIPTION,
+      label: PACKAGE_ACTION_SPLIT_TEXTAREA_LABEL
     };
   default:
     return {
