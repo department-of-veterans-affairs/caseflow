@@ -249,11 +249,14 @@ exports[`DailyDocketRow renders correctly for non virtual, DVC  1`] = `
       <div
         data-css-leaxad=""
       >
-        <div>
-          <span>
-            Host Link: N/A
-          </span>
-        </div>
+        <span>
+          <button
+            class="usa-button-secondary usa-button"
+            type="button"
+          >
+             Connect to Recording System
+          </button>
+        </span>
         <div>
           <b>
             Pexip
@@ -838,11 +841,14 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
       <div
         data-css-leaxad=""
       >
-        <div>
-          <span>
-            Host Link: N/A
-          </span>
-        </div>
+        <span>
+          <button
+            class="usa-button-secondary usa-button"
+            type="button"
+          >
+             Connect to Recording System
+          </button>
+        </span>
         <div>
           <b>
             Webex
@@ -1200,14 +1206,13 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
               >
                 <input
                   checked=""
-                  disabled=""
                   id="hearingTime0_08:30"
                   name="hearingTime0"
                   type="radio"
                   value="08:30"
                 />
                 <label
-                  class="disabled"
+                  class=""
                   for="hearingTime0_08:30"
                 >
                   8:30 AM Central Time (US & Canada) / 9:30 AM Eastern Time (US & Canada)
@@ -1217,14 +1222,13 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
                 class="cf-form-radio-option"
               >
                 <input
-                  disabled=""
                   id="hearingTime0_12:30"
                   name="hearingTime0"
                   type="radio"
                   value="12:30"
                 />
                 <label
-                  class="disabled"
+                  class=""
                   for="hearingTime0_12:30"
                 >
                   12:30 PM Central Time (US & Canada) / 1:30 PM Eastern Time (US & Canada)
@@ -1234,14 +1238,13 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
                 class="cf-form-radio-option"
               >
                 <input
-                  disabled=""
                   id="hearingTime0_other"
                   name="hearingTime0"
                   type="radio"
                   value="other"
                 />
                 <label
-                  class="disabled"
+                  class=""
                   for="hearingTime0_other"
                 >
                   Other
@@ -1731,14 +1734,13 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
               >
                 <input
                   checked=""
-                  disabled=""
                   id="hearingTime0_08:30"
                   name="hearingTime0"
                   type="radio"
                   value="08:30"
                 />
                 <label
-                  class="disabled"
+                  class=""
                   for="hearingTime0_08:30"
                 >
                   8:30 AM Central Time (US & Canada) / 9:30 AM Eastern Time (US & Canada)
@@ -1748,14 +1750,13 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
                 class="cf-form-radio-option"
               >
                 <input
-                  disabled=""
                   id="hearingTime0_12:30"
                   name="hearingTime0"
                   type="radio"
                   value="12:30"
                 />
                 <label
-                  class="disabled"
+                  class=""
                   for="hearingTime0_12:30"
                 >
                   12:30 PM Central Time (US & Canada) / 1:30 PM Eastern Time (US & Canada)
@@ -1765,14 +1766,13 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
                 class="cf-form-radio-option"
               >
                 <input
-                  disabled=""
                   id="hearingTime0_other"
                   name="hearingTime0"
                   type="radio"
                   value="other"
                 />
                 <label
-                  class="disabled"
+                  class=""
                   for="hearingTime0_other"
                 >
                   Other
@@ -1986,11 +1986,14 @@ exports[`DailyDocketRow renders correctly for non virtual, attorney 1`] = `
       <div
         data-css-leaxad=""
       >
-        <div>
-          <span>
-            Host Link: N/A
-          </span>
-        </div>
+        <span>
+          <button
+            class="usa-button-secondary usa-button"
+            type="button"
+          >
+             Connect to Recording System
+          </button>
+        </span>
         <div>
           <b>
             Pexip
@@ -2575,11 +2578,14 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
       <div
         data-css-leaxad=""
       >
-        <div>
-          <span>
-            Host Link: N/A
-          </span>
-        </div>
+        <span>
+          <button
+            class="usa-button-secondary usa-button"
+            type="button"
+          >
+             Connect to Recording System
+          </button>
+        </span>
         <div>
           <b>
             Webex
@@ -2937,14 +2943,13 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
               >
                 <input
                   checked=""
-                  disabled=""
                   id="hearingTime0_08:30"
                   name="hearingTime0"
                   type="radio"
                   value="08:30"
                 />
                 <label
-                  class="disabled"
+                  class=""
                   for="hearingTime0_08:30"
                 >
                   8:30 AM Central Time (US & Canada) / 9:30 AM Eastern Time (US & Canada)
@@ -2954,14 +2959,13 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
                 class="cf-form-radio-option"
               >
                 <input
-                  disabled=""
                   id="hearingTime0_12:30"
                   name="hearingTime0"
                   type="radio"
                   value="12:30"
                 />
                 <label
-                  class="disabled"
+                  class=""
                   for="hearingTime0_12:30"
                 >
                   12:30 PM Central Time (US & Canada) / 1:30 PM Eastern Time (US & Canada)
@@ -2971,14 +2975,13 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
                 class="cf-form-radio-option"
               >
                 <input
-                  disabled=""
                   id="hearingTime0_other"
                   name="hearingTime0"
                   type="radio"
                   value="other"
                 />
                 <label
-                  class="disabled"
+                  class=""
                   for="hearingTime0_other"
                 >
                   Other
@@ -3192,11 +3195,14 @@ exports[`DailyDocketRow renders correctly for non virtual, judge 1`] = `
       <div
         data-css-leaxad=""
       >
-        <div>
-          <span>
-            Host Link: N/A
-          </span>
-        </div>
+        <span>
+          <button
+            class="usa-button-secondary usa-button"
+            type="button"
+          >
+             Connect to Recording System
+          </button>
+        </span>
         <div>
           <b>
             Webex

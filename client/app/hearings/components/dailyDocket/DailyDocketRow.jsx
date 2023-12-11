@@ -274,9 +274,12 @@ class DailyDocketRow extends React.Component {
   isLegacyHearing = () => this.props.hearing?.docketName === 'legacy';
 
   conferenceLinkOnClick = () => {
-    const { conferenceLink } = this.props;
+    const { conferenceLinks, hearing } = this.props;
 
-    window.open(conferenceLink?.hostLink, 'Recording Session').focus();
+    const linkType = hearing.conferenceProvider === 'webex' ? 'WebexConferenceLink' : 'PexipConferenceLink';
+    const link = conferenceLinks[0].type === linkType ? 0 : 1;
+
+    window.open(conferenceLinks[link].hostLink, 'Recording Session').focus();
 
   }
 
@@ -503,7 +506,8 @@ DailyDocketRow.propTypes = {
     externalId: PropTypes.string,
     disposition: PropTypes.string,
     scheduledForIsPast: PropTypes.bool,
-    scheduledTimeString: PropTypes.string
+    scheduledTimeString: PropTypes.string,
+    conferenceProvider: PropTypes.string
   }),
   user: PropTypes.shape({
     userCanAssignHearingSchedule: PropTypes.bool,
@@ -518,13 +522,13 @@ DailyDocketRow.propTypes = {
   onReceiveAlerts: PropTypes.func,
   onReceiveTransitioningAlert: PropTypes.func,
   transitionAlert: PropTypes.func,
-  conferenceLink: PropTypes.object,
+  conferenceLinks: PropTypes.object,
   conferenceLinkError: PropTypes.bool
 };
 
 const mapStateToProps = (state, props) => ({
   hearing: { ...props.hearing, ...state.dailyDocket.hearings[props.hearingId] },
-  conferenceLink: state.dailyDocket.hearingDay.conferenceLink,
+  conferenceLinks: state.dailyDocket.hearingDay.conferenceLinks,
   conferenceLinkError: state.dailyDocket.conferenceLinkError
 });
 
