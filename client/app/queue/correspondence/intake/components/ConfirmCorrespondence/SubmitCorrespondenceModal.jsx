@@ -15,17 +15,28 @@ export const SubmitCorrespondenceModal = ({ setSubmitCorrespondenceModalVisible 
   const history = useHistory();
   const correspondence = useSelector((state) => state.intakeCorrespondence.currentCorrespondence);
   const relatedCorrespondences = useSelector((state) => state.intakeCorrespondence.relatedCorrespondences);
+  const tasksRelatedToAppeal = useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks);
   const [loading, setLoading] = useState(false);
 
-  const onSubmit = () => {
+  const onSubmit = async() => {
     const relatedUuids = relatedCorrespondences.map((corr) => corr.uuid);
+    const serializedTasksRelatedToAppeal = tasksRelatedToAppeal.map((task) => ({
+      appeal_id: task.appealId,
+      task: task.type.task,
+      assigned_to: task.type.assigned_to,
+      content: task.content
+    })
+    );
     const submitData = {
-      related_correspondence_uuids: relatedUuids
+      related_correspondence_uuids: relatedUuids,
+      tasks_related_to_appeal: serializedTasksRelatedToAppeal
     };
+
+    // console.log(submitData);
 
     setLoading(true);
     // Where data goes to be submitted before redirecting back to correspondence queue
-    ApiUtil.post(`/queue/correspondence/${correspondence.uuid}`, { data: submitData });
+    await ApiUtil.post(`/queue/correspondence/${correspondence.uuid}`, { data: submitData });
     setLoading(false);
     history.push('/queue/correspondence');
     // return onSubmit();
