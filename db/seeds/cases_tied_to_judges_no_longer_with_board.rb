@@ -164,7 +164,7 @@ module Seeds
     end
 
     def active_vacols_user_with_only_sattyid
-      @active_vacols_user_with_only_sattyid ||= find_or_create_active_judge_with_only_sattyid("SATTYIDUSER3", full_name: "User WithOnly Sattyid")
+      @active_vacols_user_with_only_sattyid ||= find_or_create_active_judge_with_only_sattyid("SATTYIDUSER", "User WithOnly Sattyid")
     end
 
     def create_legacy_appeals
