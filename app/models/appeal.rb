@@ -803,7 +803,7 @@ class Appeal < DecisionReview
 
   def set_target_decision_date!
     if direct_review_docket?
-      update!(target_decision_date: receipt_date + Constants.DISTRIBUTION.direct_docket_time_goal.days)
+      update!(target_decision_date: receipt_date + CaseDistributionLever.find_by_item('direct_docket_time_goal').try(:value).to_i.days)
     end
   end
 

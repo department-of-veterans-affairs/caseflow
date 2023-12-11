@@ -25,7 +25,7 @@ class LegacyDocket < Docket
   end
 
   def weight
-    count(priority: false) + nod_count * Constants.DISTRIBUTION.nod_adjustment
+    count(priority: false) + nod_count * CaseDistributionLever.find_by_item('nod_adjustment').try(:value).to_f
   end
 
   def ready_priority_appeal_ids
@@ -97,7 +97,7 @@ class LegacyDocket < Docket
                                      bust_backlog: false)
     return [] unless should_distribute?(distribution, style: style, genpop: genpop)
 
-    return [] if !range.nil? && range <= 0
+    return [] if !range.nil? && range <= CaseDistributionLever.find_by_item('distribute_nonpriority_appeals_range').try(:value).to_i
 
     LegacyAppeal.repository.distribute_nonpriority_appeals(
       distribution.judge, genpop, range, limit, bust_backlog

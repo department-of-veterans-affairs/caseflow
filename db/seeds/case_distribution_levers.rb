@@ -7,26 +7,6 @@ module Seeds
       end
     end
 
-    private
-
-    def create_lever lever
-      CaseDistributionLever.create(
-        item: lever[:item],
-        title: lever[:title],
-        description: lever[:description],
-        data_type: lever[:data_type],
-        value: lever[:value].to_s,
-        unit: lever[:unit],
-        is_active: lever[:is_active] || false,
-        is_disabled: lever[:is_disabled] || false,
-        min_value: lever[:min_value],
-        max_value: lever[:max_value],
-        algorithms_used: lever[:algorithms_used],
-        options: lever[:options],
-        control_group: lever[:control_group]
-      )
-    end
-
     def levers
       [
         {
@@ -428,7 +408,7 @@ module Seeds
           item: 'ama_hearings_docket_time_goals',
           title: 'AMA Hearings Docket Time Goals',
           data_type: 'number',
-          value: 435,
+          value: 365,
           unit: 'days',
           is_active: true,
           is_disabled: false,
@@ -460,7 +440,51 @@ module Seeds
           max_value: 1000,
           algorithms_used: ['proportion']
         },
+        {
+          item: 'distribute_time_out',
+          title: 'Distribute Time Out',
+          data_type: 'number',
+          value: 180000
+        },
+        {
+          item: 'distribute_nonpriority_appeals_range',
+          title: 'Distribute Nonpriority Appeals Range',
+          data_type: 'number',
+          value: 0
+        },
+        {
+          item: 'priority_push_distribution',
+          title: 'Priority Push Distribution',
+          data_type: 'number',
+          value: 0
+        },
+        {
+          item: 'appeal_status_cavc_due_date',
+          title: 'Appeal Status CAVC Due Date',
+          data_type: 'number',
+          value: 120
+        },
       ]
+    end
+
+    private
+
+    def create_lever lever
+      CaseDistributionLever.create(
+        item: lever[:item],
+        title: lever[:title],
+        description: lever[:description],
+        data_type: lever[:data_type],
+        value: lever[:value].to_s,
+        unit: lever[:unit],
+        is_active: lever[:is_active] || false,
+        is_disabled: lever[:is_disabled] || false,
+        min_value: lever[:min_value],
+        max_value: lever[:max_value],
+        algorithms_used: lever[:algorithms_used],
+        options: lever[:options],
+        control_group: lever[:control_group]
+      )
     end
   end
 end

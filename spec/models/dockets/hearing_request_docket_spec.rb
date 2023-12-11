@@ -150,7 +150,7 @@ describe HearingRequestDocket, :all_dbs do
 
         it "only distributes priority, distributable, hearing docket cases
           that are either genpop or not genpop" do
-          num_days = Constants.DISTRIBUTION.hearing_case_affinity_days + 1
+          num_days = CaseDistributionLever.find_by_item('ama_hearing_case_affinity_days').try(:value).to_i + 1
           days_ago = Time.zone.now.days_ago(num_days)
 
           # This one will be included
@@ -458,7 +458,7 @@ describe HearingRequestDocket, :all_dbs do
   end
 
   def matching_all_base_conditions_with_most_recent_held_hearing_outside_affinity
-    num_days = Constants.DISTRIBUTION.hearing_case_affinity_days + 1
+    num_days = CaseDistributionLever.find_by_item('ama_hearing_case_affinity_days').try(:value).to_i + 1
     days_ago = Time.zone.now.days_ago(num_days)
     most_recent = create(:hearing_day, scheduled_for: days_ago)
     appeal = create(:appeal,
@@ -536,7 +536,7 @@ describe HearingRequestDocket, :all_dbs do
   end
 
   def create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge_outside_affinity
-    num_days = Constants.DISTRIBUTION.hearing_case_affinity_days + 1
+    num_days = CaseDistributionLever.find_by_item('ama_hearing_case_affinity_days').try(:value).to_i + 1
     days_ago = Time.zone.now.days_ago(num_days)
     appeal = create(:appeal,
                     :ready_for_distribution,
@@ -554,7 +554,7 @@ describe HearingRequestDocket, :all_dbs do
   end
 
   def create_nonpriority_distributable_hearing_appeal_tied_to_other_judge_outside_affinity
-    num_days = Constants.DISTRIBUTION.hearing_case_affinity_days + 1
+    num_days = CaseDistributionLever.find_by_item('ama_hearing_case_affinity_days').try(:value).to_i + 1
     days_ago = Time.zone.now.days_ago(num_days)
     appeal = create(:appeal,
                     :ready_for_distribution,

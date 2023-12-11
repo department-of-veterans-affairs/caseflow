@@ -35,7 +35,7 @@ class Distribution < CaseflowRecord
     update!(status: :started, started_at: Time.zone.now)
 
     # this might take awhile due to VACOLS, so set our timeout to 3 minutes (in milliseconds).
-    transaction_time_out = 3 * 60 * 1000
+    transaction_time_out = CaseDistributionLever.find_by_item('distribute_time_out').try(:value).to_i #3 * 60 * 1000
 
     multi_transaction do
       ActiveRecord::Base.connection.execute "SET LOCAL statement_timeout = #{transaction_time_out}"
@@ -100,9 +100,9 @@ class Distribution < CaseflowRecord
   end
 
   def judge_has_eight_or_fewer_unassigned_cases
-    return false if judge_tasks.length > Constants.DISTRIBUTION.request_more_cases_minimum
+    return false if judge_tasks.length > CaseDistributionLever.find_by_item('request_more_cases_minimum').try(:value).to_i
 
-    judge_tasks.length + judge_legacy_tasks.length <= Constants.DISTRIBUTION.request_more_cases_minimum
+    judge_tasks.length + judge_legacy_tasks.length <= CaseDistributionLever.find_by_item('request_more_cases_minimum').try(:value).to_i
   end
 
   def judge_cases_waiting_longer_than_thirty_days
@@ -126,9 +126,9 @@ class Distribution < CaseflowRecord
   def batch_size
     team_batch_size = JudgeTeam.for_judge(judge)&.attorneys&.size
 
-    return Constants.DISTRIBUTION.alternative_batch_size if team_batch_size.nil? || team_batch_size == 0
+    return CaseDistributionLever.find_by_item('alternative_batch_size').try(:value).to_i if team_batch_size.nil? || team_batch_size == 0
 
-    team_batch_size * Constants.DISTRIBUTION.batch_size_per_attorney
+    team_batch_size * CaseDistributionLever.find_by_item('batch_size_per_attorney').try(:value).to_i
   end
 
   def error_statistics(error)
