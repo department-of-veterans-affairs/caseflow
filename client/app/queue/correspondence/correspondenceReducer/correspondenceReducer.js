@@ -6,12 +6,13 @@ export const initialState = {
   newAppealRelatedTasks: [],
   fetchedAppeals: [],
   correspondences: [],
-  radioValue: '2',
+  radioValue: '0',
   relatedCorrespondences: [],
   mailTasks: {},
   unrelatedTasks: [],
   currentCorrespondence: [],
-  veteranInformation: []
+  veteranInformation: [],
+  waivedEvidenceTasks: [],
 };
 
 export const intakeCorrespondenceReducer = (state = initialState, action = {}) => {
@@ -107,6 +108,13 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     return update(state, {
       newAppealRelatedTasks: {
         $set: [...action.payload.newAppealRelatedTasks]
+      }
+    });
+
+  case ACTIONS.SET_WAIVED_EVIDENCE_TASKS:
+    return update(state, {
+      waivedEvidenceTasks: {
+        $set: [...action.payload.task]
       }
     });
 
