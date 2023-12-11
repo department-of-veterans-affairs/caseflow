@@ -9,9 +9,10 @@ import { LOGO_COLORS } from '../../../../../constants/AppConstants';
 import RadioField from '../../../../../components/RadioField';
 import ExistingAppealTasksView from './ExistingAppealTasksView';
 import {
+  setFetchedAppeals,
   setNewAppealRelatedTasks,
   setTaskRelatedAppealIds,
-  setFetchedAppeals
+  setWaivedEvidenceTasks
 } from '../../../correspondenceReducer/correspondenceActions';
 
 const RELATED_NO = '0';
@@ -29,6 +30,8 @@ export const AddAppealRelatedTaskView = (props) => {
   const [taskRelatedAppeals, setTaskRelatedAppeals] =
     useState(useSelector((state) => state.intakeCorrespondence.taskRelatedAppealIds));
   const [newTasks, setNewTasks] = useState(useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks));
+  const [waivedTasks, setWaivedTasks] =
+    useState(useSelector((state) => state.intakeCorrespondence.waivedEvidenceTasks));
   const [existingAppealRadio, setExistingAppealRadio] =
     useState(taskRelatedAppeals.length ? RELATED_YES : RELATED_NO);
   const [loading, setLoading] = useState(false);
@@ -56,6 +59,10 @@ export const AddAppealRelatedTaskView = (props) => {
     dispatch(setNewAppealRelatedTasks(newTasks));
   }, [newTasks]);
 
+  useEffect(() => {
+    dispatch(setWaivedEvidenceTasks(waivedTasks));
+  }, [waivedTasks]);
+
   const appealCheckboxOnChange = (appealId, isChecked) => {
     if (isChecked) {
       if (!taskRelatedAppeals.includes(appealId)) {
@@ -72,10 +79,12 @@ export const AddAppealRelatedTaskView = (props) => {
     } else {
       const selectedAppeals = taskRelatedAppeals.filter((checkedId) => checkedId !== appealId);
       const filteredNewTasks = newTasks.filter((task) => task.appealId !== appealId);
+      const waivedEvidenceTasks = filteredNewTasks.filter((taskEvidence) => taskEvidence.isWaived);
 
       setTaskRelatedAppeals(selectedAppeals);
       setNewTasks(filteredNewTasks);
       setTableUpdateTrigger((prev) => prev + 1);
+      setWaivedTasks(waivedEvidenceTasks);
     }
   };
 
@@ -116,6 +125,7 @@ export const AddAppealRelatedTaskView = (props) => {
     if (existingAppealRadio === RELATED_NO) {
       setTaskRelatedAppeals([]);
       setNewTasks([]);
+      setWaivedTasks([]);
     }
   }, [existingAppealRadio]);
 
@@ -135,8 +145,12 @@ export const AddAppealRelatedTaskView = (props) => {
       canContinue = canContinue && ((task.content !== '') && (task.type !== ''));
     });
 
+    waivedTasks.forEach((task) => {
+      canContinue = canContinue && (task.isWaived ? (task.waiveReason !== '') : true);
+    });
+
     props.setRelatedTasksCanContinue(canContinue);
-  }, [newTasks]);
+  }, [newTasks, waivedTasks]);
 
   return (
     <div>
@@ -194,11 +208,14 @@ export const AddAppealRelatedTaskView = (props) => {
                   appeal={appealById(appealId)}
                   newTasks={newTasks}
                   setNewTasks={setNewTasks}
+                  waivedTasks={waivedTasks}
+                  setWaivedTasks={setWaivedTasks}
                   nextTaskId={nextTaskId}
                   setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
                   unlinkAppeal={appealCheckboxOnChange}
                   allTaskTypeOptions={props.allTaskTypeOptions}
                   filterUnavailableTaskTypeOptions={props.filterUnavailableTaskTypeOptions}
+                  autoTexts={props.autoTexts}
                 />
               );
             })}
@@ -213,7 +230,8 @@ AddAppealRelatedTaskView.propTypes = {
   correspondenceUuid: PropTypes.string.isRequired,
   setRelatedTasksCanContinue: PropTypes.func.isRequired,
   filterUnavailableTaskTypeOptions: PropTypes.func.isRequired,
-  allTaskTypeOptions: PropTypes.array.isRequired
+  allTaskTypeOptions: PropTypes.array.isRequired,
+  autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
 export default AddAppealRelatedTaskView;

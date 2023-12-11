@@ -3,6 +3,7 @@
 class CorrespondenceController < ApplicationController
   before_action :verify_feature_toggle
   before_action :correspondence
+  before_action :auto_texts
 
   def intake
     respond_to do |format|
@@ -78,9 +79,27 @@ class CorrespondenceController < ApplicationController
     render json: { status: 200, correspondence: correspondence }
   end
 
+  # :reek:UtilityFunction
   def vbms_document_types
     data = ExternalApi::ClaimEvidenceService.document_types
     data["documentTypes"].map { |document_type| { id: document_type["id"], name: document_type["name"] } }
+  end
+
+  def pdf
+    document = Document.find(params[:pdf_id])
+
+    document_disposition = "inline"
+    if params[:download]
+      document_disposition = "attachment; filename='#{params[:type]}-#{params[:id]}.pdf'"
+    end
+
+    # The line below enables document caching for a month.
+    expires_in 30.days, public: true
+    send_file(
+      document.serve,
+      type: "application/pdf",
+      disposition: document_disposition
+    )
   end
 
   def process_intake
@@ -179,5 +198,9 @@ class CorrespondenceController < ApplicationController
       correspondenceUuid: correspondence.uuid,
       packageDocumentType: correspondence.correspondence_type_id
     }
+  end
+
+  def auto_texts
+    @auto_texts ||= AutoText.all.pluck(:name)
   end
 end
