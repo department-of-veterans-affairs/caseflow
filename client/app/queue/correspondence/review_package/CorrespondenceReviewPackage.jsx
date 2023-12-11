@@ -4,6 +4,7 @@ import ReviewPackageData from './ReviewPackageData';
 import ReviewPackageCaseTitle from './ReviewPackageCaseTitle';
 import Button from '../../../components/Button';
 import ReviewForm from './ReviewForm';
+import CorrespondencePdfUI from '../pdfPreview/CorrespondencePdfUI';
 import { CmpDocuments } from './CmpDocuments';
 import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
@@ -20,11 +21,12 @@ export const CorrespondenceReviewPackage = (props) => {
   const [editableData, setEditableData] = useState({
     notes: '',
     veteran_file_number: '',
-    default_select_value: ''
+    default_select_value: null
   });
   const [apiResponse, setApiResponse] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [selectedId, setSelectedId] = useState(0);
 
   const history = useHistory();
   const fetchData = async () => {
@@ -115,7 +117,8 @@ export const CorrespondenceReviewPackage = (props) => {
           }}
           {...props}
         />
-        <CmpDocuments documents={props.correspondenceDocuments} />
+        <CmpDocuments documents={props.correspondenceDocuments} selectedId={selectedId} setSelectedId={setSelectedId} />
+        <CorrespondencePdfUI documents={props.correspondenceDocuments} selectedId={selectedId} />
       </AppSegment>
       <div className="cf-app-segment">
         <div className="cf-push-left">

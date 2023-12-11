@@ -2,6 +2,9 @@
 
 RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
   let(:correspondence) { create(:correspondence) }
+  let (:related_correspondence_uuids) do
+    (1..3).map { create(:correspondence) }.pluck(:uuid)
+  end
   let(:veteran) { create(:veteran) }
   let(:valid_params) { { notes: "Updated notes", correspondence_type_id: 12 } }
   let(:new_file_number) { "50000005" }
@@ -28,6 +31,56 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
       expect(correspondence_data["notes"]).to eq(correspondence.notes)
       expect(general_info["file_number"]).to eq(veteran.file_number)
       expect(general_info["correspondence_type_id"]).to eq(correspondence.correspondence_type_id)
+    end
+  end
+
+  describe "POST #process_intake" do
+    before do
+      MailTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+      correspondence.update(veteran: veteran)
+      post :process_intake, params: {
+        correspondence_uuid: correspondence.uuid,
+        related_correspondence_uuids: related_correspondence_uuids
+      }
+    end
+    it "responds with created status" do
+      expect(response).to have_http_status(:created)
+    end
+
+    it "relates the correspondence to related correpondences" do
+      rcs = related_correspondence_uuids.map do |uuid|
+        Correspondence.find_by(uuid: uuid)
+      end
+      expect(correspondence.related_correspondences).to eq(rcs)
+
+      rcs.each do |corr|
+        expect(corr.related_correspondences).to eq([correspondence])
+      end
+    end
+  end
+
+  describe "POST #process_intake sad path" do
+    before do
+      MailTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+      correspondence.update(veteran: veteran)
+    end
+
+    it "Rolls back db changes if there is an error" do
+      post :process_intake, params: {
+        correspondence_uuid: correspondence.uuid,
+        related_correspondence_uuids: (related_correspondence_uuids + [3])
+      }
+      expect(correspondence.related_correspondences.empty?).to be(true)
+    end
+
+    it "gives a 400 status if there is an error" do
+      post :process_intake, params: {
+        correspondence_uuid: correspondence.uuid,
+        related_correspondence_uuids: (related_correspondence_uuids + [3])
+      }
+      expect(response.status).to eq(400)
     end
   end
 

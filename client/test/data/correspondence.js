@@ -18,7 +18,6 @@ export const correspondenceData = {
   notes: 'Some CMP notes here',
   package_document_type_id: 15,
   portal_entry_date: '2023-11-16 01:44:47.080996',
-  prior_correspondence_id: 1,
   source_type: 'Mail',
   updated_at: '2023-11-16 01:44:47.094786',
   updated_by_id: null,
@@ -38,7 +37,7 @@ export const correspondenceDocumentsData = [
     correspondence_id: 1,
     document_file_number: veteranInfo.veteran.file_number,
     pages: 30,
-    vbms_document_id: '1',
+    vbms_document_type_id: 1,
     uuid: null,
     document_type: 1250,
     document_title: 'VA Form 10182 Notice of Disagreement'
@@ -47,7 +46,7 @@ export const correspondenceDocumentsData = [
     correspondence_id: 1,
     document_file_number: veteranInfo.veteran.file_number,
     pages: 20,
-    vbms_document_id: '1',
+    vbms_document_type_id: 1,
     uuid: null,
     document_type: 719,
     document_title: 'Exam Request'
