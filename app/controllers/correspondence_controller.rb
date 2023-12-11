@@ -106,6 +106,7 @@ class CorrespondenceController < ApplicationController
     ActiveRecord::Base.transaction do
       begin
         create_correspondence_relations
+        link_appeals
       rescue ActiveRecord::RecordInvalid
         render json: { error: "Failed to update records" }, status: :bad_request
         raise ActiveRecord::Rollback
@@ -124,6 +125,9 @@ class CorrespondenceController < ApplicationController
         related_correspondence_id: Correspondence.find_by(uuid: uuid)&.id
       )
     end
+  end
+
+  def link_appeals
   end
 
   def general_information
