@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "#{Rails.root}/app/controllers/api/v3/decision_reviews/appeals/contestable_issues_controller.rb"
 
 RSpec.shared_examples "contestable issues index requests" do
   include_context "contestable issues request context", include_shared: true
