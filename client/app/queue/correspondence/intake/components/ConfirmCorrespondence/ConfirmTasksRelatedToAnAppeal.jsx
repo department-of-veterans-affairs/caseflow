@@ -5,12 +5,17 @@ import LinkToAppeal from '../../../../../hearings/components/assignHearings/Link
 import DocketTypeBadge from '../../../../../components/DocketTypeBadge';
 import { ExternalLinkIcon } from '../../../../../components/icons/ExternalLinkIcon';
 import PropTypes from 'prop-types';
+import { marginBottom, marginTop } from '../../../../constants';
 
 const styling = { backgroundColor: COLORS.GREY_BACKGROUND, border: 'none' };
 
 const borderlessTd = {
-  borderTop: 'none', borderBottom: 'none', backgroundColor: COLORS.GREY_BACKGROUND
+  borderTop: 'none',
+  borderBottom: 'none',
+  backgroundColor: COLORS.GREY_BACKGROUND,
 };
+
+
 
 const ConfirmTasksRelatedToAnAppeal = () => {
   const tasks = useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks);
@@ -19,37 +24,44 @@ const ConfirmTasksRelatedToAnAppeal = () => {
   const rowObjects = taskIds.map((task, index) => {
     return (
       <>
-        <tr colSpan="100%" style={{ backgroundColor: COLORS.GREY_BACKGROUND }}>
-          <td style={{
-            borderTop: 'none',
-            borderBottom: 'none',
-            backgroundColor: COLORS.GREY_BACKGROUND
-          }}>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <th style={styling}></th>
-              <h3>Appeal {index + 1} Tasks</h3>
-              <b style={{ marginBottom: '7px' }}>Linked appeal</b>
-              <div style={{ width: 'fit-content',
-                padding: '3px',
-                backgroundColor: 'white',
-                border: `1px solid ${COLORS.COLOR_COOL_BLUE_LIGHTER}` }}>
-                <DocketTypeBadge name={(fetchedAppeals.find((appeal) => appeal.id === task).docketName)} />
-                <LinkToAppeal appealExternalId={fetchedAppeals.find((appeal) => appeal.id === task).externalId}>
-                  <b>{fetchedAppeals.find((appeal) => appeal.id === task).docketNumber}</b>
-                  <ExternalLinkIcon size={15} className="cf-pdf-external-link-icon" color={COLORS.FOCUS_OUTLINE} />
-                </LinkToAppeal>
-              </div>
+        <tr>
+          <td colSpan={1} style={{...borderlessTd, ...{paddingBottom:'0px'}}}>
+            <h3 style={{lineHeight:'10%'}}>Appeal {index + 1} Tasks</h3>
+          </td>
+        </tr>
+        <tr rowSpan='4'>
+          <td colSpan='1' style={{ ...borderlessTd, ...{ paddingBottom: '10px' } }}>
+            <b style={{ marginTop: '40px' }}>Linked appeal</b>
+          </td>
+          <td style={borderlessTd}>
+            <b>Currently Active Task</b>
+          </td>
+          <td style={borderlessTd}>
+            <b>Evidence Window Waived?</b>
+          </td>
+          <td style={borderlessTd}>
+            <b>Assigned To</b>
+          </td>
+        </tr>
+        <tr colSpan='100%'>
+          <td style={borderlessTd}>
+            <div style={{ width: 'fit-content',
+              padding: '3px',
+              backgroundColor: 'white',
+              border: `1px solid ${COLORS.COLOR_COOL_BLUE_LIGHTER}`,
+            }}>
+              <DocketTypeBadge name={(fetchedAppeals.find((appeal) => appeal.id === task).docketName)} />
+              <LinkToAppeal appealExternalId={fetchedAppeals.find((appeal) => appeal.id === task).externalId}>
+                <b>{fetchedAppeals.find((appeal) => appeal.id === task).docketNumber}</b>
+                <ExternalLinkIcon size={15} className="cf-pdf-external-link-icon" color={COLORS.FOCUS_OUTLINE} />
+              </LinkToAppeal>
             </div>
           </td>
-          <td style={borderlessTd}>
-            <p>Currently Active Task</p>
-          </td>
-          <td style={borderlessTd}>
-            <p>Evidence Window Waived?</p>
-          </td>
-          <td style={borderlessTd}>
-            <p>Assigned To</p>
-          </td>
+          <td style={borderlessTd}>hi</td>
+          <td style={borderlessTd}>hi</td>
+          <td style={borderlessTd}>hi</td>
+        </tr>
+        <tr colSpan="100%">
         </tr>
         <tr>
           <td
