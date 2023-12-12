@@ -16,14 +16,14 @@ class BgsShareErrorFixJob < CaseflowJob
   end
 
   def perform
-    capture_start_time
+    start_time
 
     clear_hlr_errors if hlrs_with_errors.present?
     clear_rius_errors if rius_with_errors.present?
     clear_bge_errors if bges_with_errors.present?
 
     @stuck_job_report_service.write_log_report(error_text)
-    capture_end_time
+    end_time
     log_processing_time
   end
 
@@ -89,11 +89,11 @@ class BgsShareErrorFixJob < CaseflowJob
     (@end_time && @start_time) ? @end_time - @start_time : 0
   end
 
-  def capture_start_time
+  def start_time
     @start_time ||= Time.zone.now
   end
 
-  def capture_end_time
+  def end_time
     @end_time ||= Time.zone.now
   end
 

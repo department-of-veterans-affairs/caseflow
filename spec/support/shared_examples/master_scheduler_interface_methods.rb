@@ -29,12 +29,12 @@ shared_examples "a Master Scheduler serializable object" do |job_class|
       expect(subject.class.instance_methods(false).include?(:log_processing_time)).to be_truthy
     end
 
-    it "implements capture_start_time method" do
-      expect(subject.class.instance_methods(false).include?(:capture_start_time)).to be_truthy
+    it "implements start_time method" do
+      expect(subject.class.instance_methods(false).include?(:start_time)).to be_truthy
     end
 
-    it "implements capture_end_time method" do
-      expect(subject.class.instance_methods(false).include?(:capture_end_time)).to be_truthy
+    it "implements end_time method" do
+      expect(subject.class.instance_methods(false).include?(:end_time)).to be_truthy
     end
 
     it "is intialized with StuckJobReportService" do
@@ -47,9 +47,9 @@ shared_examples "a Master Scheduler serializable object" do |job_class|
     capture_end_time, log_processing_time" do
       job = job_class.new
 
-      expect(job).to receive(:capture_start_time).ordered
+      expect(job).to receive(:start_time).ordered
       expect(job).to receive(:loop_through_and_call_process_records).ordered
-      expect(job).to receive(:capture_end_time).ordered
+      expect(job).to receive(:end_time).ordered
       expect(job).to receive(:log_processing_time).ordered
 
       job.perform

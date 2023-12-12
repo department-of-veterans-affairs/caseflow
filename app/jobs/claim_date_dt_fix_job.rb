@@ -10,11 +10,11 @@ class ClaimDateDtFixJob < CaseflowJob
   end
 
   def perform
-    capture_start_time
+    start_time
 
     loop_through_and_call_process_records
 
-    capture_end_time
+    end_time
     log_processing_time
   end
 
@@ -61,11 +61,11 @@ class ClaimDateDtFixJob < CaseflowJob
     (@end_time && @start_time) ? @end_time - @start_time : 0
   end
 
-  def capture_start_time
+  def start_time
     @start_time ||= Time.zone.now
   end
 
-  def capture_end_time
+  def end_time
     @end_time ||= Time.zone.now
   end
 end
