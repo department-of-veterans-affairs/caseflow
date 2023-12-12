@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "#{Rails.root}/app/serializers/api/v3/contestable_issue_serializer.rb"
 
 describe V3::ContestableIssueSerializer, :postgres do
   include IntakeHelpers

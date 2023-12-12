@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "#{Rails.root}/app/serializers/api/v2/hearing_serializer.rb"
 
 describe V2::HearingSerializer do
   let(:hearing_day) do

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "#{Rails.root}/app/serializers/api/v3/legacy_related_issue_serializer.rb"
 
 class V3::LegacyAppealSerializer
   include FastJsonapi::ObjectSerializer

@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "#{Rails.root}/app/serializers/api/v2/hearing_serializer.rb"
 
 class Api::V2::HearingsController < Api::ApplicationController
   def show
