@@ -107,8 +107,6 @@ class BgsShareErrorFixJob < CaseflowJob
       EndProductEstablishment.find_by(veteran_file_number: record.veteran_file_number)
     when "BoardGrantEffectuation"
       record.end_product_establishment
-    else
-      # Handle other record types as needed
     end
   end
 end

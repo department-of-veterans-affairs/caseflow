@@ -51,25 +51,27 @@ class StuckJobReportService
   end
 
   # Used in StuckJobSchedulerJob to create report table
+  # :reek:LongParameterList
   def append_job_to_log_table(job_name, record_count_before, record_count_after, processing_time)
-    timestamp = Time.zone.now.strftime('%Y-%m-%d')
+    timestamp = Time.zone.now.strftime("%Y-%m-%d")
 
     job_name = job_name.to_s
     record_count_before_str = record_count_before.to_s
     record_count_after_str = record_count_after.to_s
     processing_time = processing_time.to_s
 
-    entry = "#{timestamp} | #{job_name.ljust(@column_widths[:job_name])} | #{record_count_before.to_s.rjust(@column_widths[:record_count_before])} | #{record_count_after.to_s.rjust(@column_widths[:record_count_after])} | #{processing_time} sec\n"
+    entry = "#{timestamp} | #{job_name.ljust(@column_widths[:job_name])} | #{record_count_before_str.rjust(@column_widths[:record_count_before])} | #{record_count_after_str.rjust(@column_widths[:record_count_after])} | #{processing_time} sec\n"
     logs.push(entry)
   end
 
   def append_scheduler_job_data(job_name, count, processing_time)
-    timestamp = Time.zone.now.strftime('%Y-%m-%d')
+    timestamp = Time.zone.now.strftime("%Y-%m-%d")
 
     entry = "\n\n#{timestamp} | The #{seperate_camel_case(job_name)} cleared #{count} records in #{processing_time}."
     logs.push(entry)
   end
 
+  # :reek:UtilityFunction
   def seperate_camel_case(str)
     str.gsub(/([a-z])([A-Z])/, '\1 \2')
   end
