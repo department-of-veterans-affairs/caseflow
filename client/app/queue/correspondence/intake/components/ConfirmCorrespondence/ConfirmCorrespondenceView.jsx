@@ -31,7 +31,6 @@ export const ConfirmCorrespondenceView = (props) => {
 
   const checkedMailTasks = Object.keys(props.mailTasks).filter((name) => props.mailTasks[name]);
   const relatedCorrespondences = useSelector((state) => state.intakeCorrespondence.relatedCorrespondences);
-  const tasksAssociatedWithAppeal = useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks);
 
   // eslint-disable-next-line max-statements
   const getDocumentColumns = (correspondence) => {
