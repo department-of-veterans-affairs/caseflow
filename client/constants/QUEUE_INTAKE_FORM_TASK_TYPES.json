@@ -38,7 +38,7 @@
       "label": "Power of attorney-related"
     }, {
       "value": {
-        "klass": "PrivacyActMailRequestMailTask",
+        "klass": "PrivacyActRequestMailTask",
         "assigned_to": "PrivacyTeam"
         },
       "label": "Privacy act request"
@@ -107,10 +107,10 @@
       "label": "Evidence or argument"
     }, {
       "value": {
-        "klass": "ExtentionRequestMailTask",
+        "klass": "ExtensionRequestMailTask",
         "assigned_to": "Colocated"
         },
-      "label": "Extention request"
+      "label": "Extension request"
     }, {
       "value": {
         "klass": "FoiaRequestMailTask",
@@ -161,7 +161,7 @@
       "label": "Power of attorney-related"
     }, {
       "value": {
-        "klass": "PrivacyActMailRequestMailTask",
+        "klass": "PrivacyActRequestMailTask",
         "assigned_to": "PrivacyTeam"
         },
       "label": "Privacy act request"

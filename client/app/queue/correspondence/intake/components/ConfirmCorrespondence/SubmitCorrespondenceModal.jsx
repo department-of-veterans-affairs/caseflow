@@ -32,7 +32,7 @@ export const SubmitCorrespondenceModal = ({ setSubmitCorrespondenceModalVisible,
     const relatedUuids = relatedCorrespondences.map((corr) => corr.uuid);
     const serializedTasksRelatedToAppeal = tasksRelatedToAppeal.map((task) => ({
       appeal_id: task.appealId,
-      task: task.type.task,
+      klass: task.type.klass,
       assigned_to: task.type.assigned_to,
       content: task.content
     })

@@ -127,9 +127,9 @@ class CorrespondenceController < ApplicationController
     # intake error message is handled in client/app/queue/correspondence/intake/components/CorrespondenceIntake.jsx
     vet = veteran_by_correspondence
     flash[:correspondence_intake_success] = [
-          "You have successfully submitted a correspondence record for #{vet.name}(#{vet.file_number})",
-          "The mail package has been uploaded to the Veteran's eFolder as well."
-        ]
+      "You have successfully submitted a correspondence record for #{vet.name}(#{vet.file_number})",
+      "The mail package has been uploaded to the Veteran's eFolder as well."
+    ]
   end
 
   def create_correspondence_relations(correspondence_id)
@@ -144,15 +144,18 @@ class CorrespondenceController < ApplicationController
   def add_tasks_to_related_appeals(correspondence_id)
     params[:tasks_related_to_appeal]&.map do |data|
       appeal = Appeal.find(data[:appeal_id])
-      CorrespondencesAppeal.create!(correspondence_id: correspondence_id, appeal_id: appeal.id)
-      data[:klass].constantize.create_from_params(
-        {
-          appeal: appeal,
-          parent_id: appeal.root_task&.id,
-          assigned_to: data[:assigned_to].constantize.singleton,
-          instructions: data[:content]
-        }, current_user
-      ) unless data[:klass] == "HearingWithdrawalMailTask"
+      CorrespondencesAppeal.find_or_create_by(correspondence_id: correspondence_id, appeal_id: appeal.id)
+      # Remove this unless block when HearingWithdrawalMailTask is implemented
+      unless data[:klass] == "HearingWithdrawalMailTask"
+        data[:klass].constantize.create_from_params(
+          {
+            appeal: appeal,
+            parent_id: appeal.root_task&.id,
+            assigned_to: data[:assigned_to].constantize.singleton,
+            instructions: data[:content]
+          }, current_user
+        )
+      end
     end
   end
 
