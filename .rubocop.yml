@@ -99,6 +99,7 @@ Metrics/MethodLength:
   Exclude:
     - app/jobs/middleware/job_sentry_scope_middleware.rb
     - lib/helpers/duplicate_veteran_checker.rb
+    - lib/helpers/claim_label_change.rb
     - "spec/**/*"
 
 Metrics/ClassLength:
