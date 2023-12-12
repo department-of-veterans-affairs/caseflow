@@ -212,6 +212,16 @@ feature "Supplemental Claim Intake", :all_dbs do
 
     expect(intake.detail.end_product_establishments.count).to eq(2)
 
+    ratings_end_product_establishment = EndProductEstablishment.find_by(
+      source: intake.detail,
+      code: "040SCR"
+    )
+
+    expect(ratings_end_product_establishment).to have_attributes(
+      claimant_participant_id: "5382910293",
+      payee_code: "11"
+    )
+
     # ratings end product
     expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
       claim_hash: {
@@ -221,9 +231,9 @@ feature "Supplemental Claim Intake", :all_dbs do
         claim_type: "Claim",
         station_of_jurisdiction: current_user.station_id,
         date: supplemental_claim.receipt_date.to_date,
-        end_product_modifier: "042",
+        end_product_modifier: ratings_end_product_establishment.end_product.modifier,
         end_product_label: "Supplemental Claim Rating",
-        end_product_code: "040SCR",
+        end_product_code: ratings_end_product_establishment.code,
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293",
@@ -235,11 +245,12 @@ feature "Supplemental Claim Intake", :all_dbs do
       user: current_user
     )
 
-    ratings_end_product_establishment = intake.detail.end_product_establishments.find do |epe|
-      epe.code == "040SCR"
-    end
+    nonratings_end_product_establishment = EndProductEstablishment.find_by(
+      source: intake.detail,
+      code: "040SCNR"
+    )
 
-    expect(ratings_end_product_establishment).to have_attributes(
+    expect(nonratings_end_product_establishment).to have_attributes(
       claimant_participant_id: "5382910293",
       payee_code: "11"
     )
@@ -253,9 +264,9 @@ feature "Supplemental Claim Intake", :all_dbs do
         claim_type: "Claim",
         station_of_jurisdiction: current_user.station_id,
         date: supplemental_claim.receipt_date.to_date,
-        end_product_modifier: "041",
+        end_product_modifier: nonratings_end_product_establishment.end_product.modifier,
         end_product_label: "Supplemental Claim Nonrating",
-        end_product_code: "040SCNR",
+        end_product_code: nonratings_end_product_establishment.code,
         gulf_war_registry: false,
         suppress_acknowledgement_letter: false,
         claimant_participant_id: "5382910293",
@@ -265,15 +276,6 @@ feature "Supplemental Claim Intake", :all_dbs do
       },
       veteran_hash: intake.veteran.to_vbms_hash,
       user: current_user
-    )
-
-    nonratings_end_product_establishment = intake.detail.end_product_establishments.find do |epe|
-      epe.code == "040SCNR"
-    end
-
-    expect(nonratings_end_product_establishment).to have_attributes(
-      claimant_participant_id: "5382910293",
-      payee_code: "11"
     )
 
     expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
