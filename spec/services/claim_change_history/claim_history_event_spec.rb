@@ -26,12 +26,13 @@ describe ClaimHistoryEvent do
       "claimant_name" => "Bob Smithboehm",
       "task_id" => 124_28,
       "task_status" => change_data_task_status,
-      "request_issue_update_time" => "2023-10-19 22:47:16.233187",
+      "request_issue_update_time" => request_issue_update_time,
       "decision_description" => "granting clothing allowance",
       "request_issue_benefit_type" => "vha",
       "request_issue_update_id" => 7,
-      "actual_request_issue_id" => 4008,
-      "request_issue_created_at" => "2023-10-19 22:45:43.108934",
+      "request_issue_id" => request_issue_id,
+
+      "request_issue_created_at" => request_issue_created_at,
       "intake_completed_at" => "2023-10-19 22:39:14.270897",
       "update_user_name" => "Tyler User",
       "intake_user_name" => "Monte Mann",
@@ -48,18 +49,20 @@ describe ClaimHistoryEvent do
       "event_date" => change_data_event_date,
       "task_versions" => version_changes,
       "days_waiting" => 25
-
     }
   end
 
   let(:event_type) { :added_issue }
   let(:change_data_task_status) { "completed" }
   let(:change_data_claim_type) { "HigherLevelReview" }
+  let(:request_issue_id) { 4008 }
   let(:change_data_event_user_name) { nil }
   let(:change_data_event_date) { nil }
   let(:change_data_decision_date) { "2023-05-31" }
   let(:change_data_decision_date_added_at) { "2023-10-19 22:48:25.281657" }
   let(:version_changes) { nil }
+  let(:request_issue_update_time) { "2023-10-19 22:47:16.233187" }
+  let(:request_issue_created_at) { "2023-10-19 22:45:43.108934" }
   let(:event_attribute_data) do
     {
       assigned_at: "2023-10-19 22:47:16.222148",
@@ -557,8 +560,10 @@ describe ClaimHistoryEvent do
 
       context "if the request issue was added during a request issues update" do
         let(:event_type) { :added_issue_without_decision_date }
+        # If the request_issue_update_time is not the same as the created it, it will do a DB fetch for issue update
+        let(:request_issue_update_time) { request_issue_created_at }
 
-        # The base change_data was added during an update so no data updates are neccesary
+        # The base change_data was added during an update so no data updates are necessary
         it "should create an added issue without decision date event with update event data" do
           expect_attributes(subject, event_attribute_data.merge(update_event_data))
         end
@@ -568,9 +573,38 @@ describe ClaimHistoryEvent do
         let(:event_type) { :added_issue_without_decision_date }
         let(:change_data_decision_date) { nil }
         let(:change_data_decision_date_added_at) { nil }
+        # If the request_issue_update_time is not the same as the created it, it will do a DB fetch for issue update
+        let(:request_issue_update_time) { request_issue_created_at }
 
         it "should create an added issue without decision date event with update event data" do
           expect_attributes(subject, event_attribute_data.merge(update_event_data))
+        end
+      end
+
+      context "if the request issue and request issue update row data does not match up" do
+        let(:event_type) { :added_issue_without_decision_date }
+        let(:change_data_decision_date) { nil }
+        let(:request_issue_id) { 1 }
+
+        before do
+          # Setup data to fetch for the request issue update from the database
+          new_user = create(:user, css_id: "NEWUSER", full_name: "Update Fetch", station_id: "103")
+          task = create(:higher_level_review_vha_task, id: "12428")
+          update = create(:request_issues_update,
+                          :requires_processing,
+                          review: task.appeal,
+                          before_request_issue_ids: [],
+                          after_request_issue_ids: [request_issue_id],
+                          user: new_user)
+          task.appeal.request_issues_updates << update
+          task.appeal.save
+        end
+
+        it "should create an added issue without decision date event with update event data" do
+          expect(subject.event_user_css_id).to eq("NEWUSER")
+          expect(subject.event_user_name).to eq("Update Fetch")
+          expect(subject.user_facility).to eq("103")
+          expect(subject.event_date).to eq(request_issue_created_at)
         end
       end
     end

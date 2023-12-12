@@ -90,7 +90,9 @@ const ReportPageButtons = ({
   history,
   isGenerateButtonDisabled,
   handleClearFilters,
-  handleSubmit }) => {
+  handleSubmit,
+  loading,
+  loadingText }) => {
   return (
 
     <div {...buttonOuterContainerStyling}>
@@ -118,6 +120,8 @@ const ReportPageButtons = ({
           name="generate-report"
           onClick={handleSubmit}
           disabled={isGenerateButtonDisabled}
+          loading={loading}
+          loadingText={loadingText}
         >
           Generate task report
         </Button>
@@ -321,16 +325,11 @@ const ReportPage = ({ history }) => {
   const submitForm = (data) => {
     console.log(data);
 
-    // Don't know how acceptable this is for compliance.
-    // Could also do something like a modal that grabs focus while it is generating
-    // TODO: Make this less bad
-    window.scrollTo(0, 0);
-
     const filterData = parseFilters(data);
 
     console.log(filterData);
 
-    // Example csv generation code:
+    // Generate and trigger the download of the CSV
     dispatch(downloadReportCSV({ organizationUrl: businessLineUrl, filterData: { filters: filterData } }));
   };
 
@@ -343,15 +342,16 @@ const ReportPage = ({ history }) => {
       buttons={
         <ReportPageButtons
           history={history}
-          isGenerateButtonDisabled={!formState.isDirty || isCSVGenerating}
-          // TODO: figure out why this was done this way? handleClearFilters={() => reset(defaultFormValues)}
+          isGenerateButtonDisabled={!formState.isDirty}
           handleClearFilters={() => reset()}
           handleSubmit={handleSubmit(submitForm)}
+          loading={isCSVGenerating}
+          loadingText="Generating CSV"
         />
       }
     >
       {/* TODO: This is ugly fix me please */}
-      { isCSVGenerating && <h3><span><LoadingMessage message="Generating CSV..." /><LoadingIcon /></span></h3>}
+      {/* { isCSVGenerating && <h3><span><LoadingMessage message="Generating CSV..." /><LoadingIcon /></span></h3>} */}
       <h1>Generate task report</h1>
       <FormProvider {...methods}>
         <form>
@@ -417,6 +417,8 @@ ReportPageButtons.propTypes = {
   isGenerateButtonDisabled: PropTypes.bool,
   handleClearFilters: PropTypes.func,
   handleSubmit: PropTypes.func,
+  loading: PropTypes.bool,
+  loadingText: PropTypes.string,
 };
 
 ReportPage.propTypes = {
