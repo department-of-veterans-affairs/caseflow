@@ -122,7 +122,7 @@ class CorrespondenceController < ApplicationController
   def create_correspondence_relations(correspondence_id)
     params[:related_correspondence_uuids]&.map do |uuid|
       CorrespondenceRelation.create!(
-        correspondence_id: corresponence_id,
+        correspondence_id: correspondence_id,
         related_correspondence_id: Correspondence.find_by(uuid: uuid)&.id
       )
     end
@@ -132,12 +132,14 @@ class CorrespondenceController < ApplicationController
     params[:tasks_related_to_appeal]&.map do |data|
       appeal = Appeal.find(data[:appeal_id])
       CorrespondencesAppeal.create!(correspondence_id: correspondence_id, appeal_id: appeal.id)
-      data[:task].constantize.create!(
-        appeal: appeal,
-        parent: appeal.root_task,
-        assigned_to: data[:assigned_to].constantize.singleton,
-        instructions: data[:content]
-      )
+      data[:klass].constantize.create_from_params(
+        {
+          appeal: appeal,
+          parent_id: appeal.root_task&.id,
+          assigned_to: data[:assigned_to].constantize.singleton,
+          instructions: data[:content]
+        }, current_user
+      ) unless data[:klass] == "HearingWithdrawalMailTask"
     end
   end
 

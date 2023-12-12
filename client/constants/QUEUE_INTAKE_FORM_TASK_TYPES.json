@@ -2,64 +2,55 @@
   "unrelatedToAppeal": [
     {
       "value": {
-        "task": "CavcCorrespondenceMailTask",
-        "parent": "MailTask",
+        "klass": "CavcCorrespondenceMailTask",
         "assigned_to": "CavcLitigationSupport"
         },
       "label": "CAVC Correspondence"
     }, {
       "value": {
-        "task": "CongressionalInterestMailTask",
-        "parent": "MailTask",
+        "klass": "CongressionalInterestMailTask",
         "assigned_to": "LitigationSupport"
         },
       "label": "Congressional interest"
     }, {
       "value": {
-        "task": "DeathCertificateMailTask",
-        "parent": "MailTask",
+        "klass": "DeathCertificateMailTask",
         "assigned_to": "Colocated"
         },
       "label": "Death certificate"
     }, {
       "value": {
-        "task": "FoiaRequestMailTask",
-        "parent": "MailTask",
+        "klass": "FoiaRequestMailTask",
         "assigned_to": "PrivacyTeam"
         },
       "label": "FOIA request"
     }, {
       "value": {
-        "task": "OtherMotionMailTask",
-        "parent": "MailTask",
+        "klass": "OtherMotionMailTask",
         "assigned_to": "LitigationSupport"
         },
       "label": "Other motion"
     }, {
       "value": {
-        "task": "PowerOfAttorneyRelatedMailTask",
-        "parent": "MailTask",
+        "klass": "PowerOfAttorneyRelatedMailTask",
         "assigned_to": "HearingAdmin"
         },
       "label": "Power of attorney-related"
     }, {
       "value": {
-        "task": "PrivacyActMailRequestMailTask",
-        "parent": "MailTask",
+        "klass": "PrivacyActMailRequestMailTask",
         "assigned_to": "PrivacyTeam"
         },
       "label": "Privacy act request"
     }, {
       "value": {
-        "task": "PrivacyComplaintMailTask",
-        "parent": "MailTask",
+        "klass": "PrivacyComplaintMailTask",
         "assigned_to": "PrivacyTeam"
         },
       "label": "Privacy complaint"
     }, {
       "value": {
-        "task": "StatusInquiryMailTask",
-        "parent": "MailTask",
+        "klass": "StatusInquiryMailTask",
         "assigned_to": "LitigationSupport"
         },
       "label": "Status inquiry"
@@ -68,155 +59,133 @@
   "relatedToAppeal": [
     {
       "value": {
-        "task": "CavcCorrespondenceMailTask",
-        "parent": "MailTask",
+        "klass": "CavcCorrespondenceMailTask",
         "assigned_to": "CavcLitigationSupport"
         },
       "label": "CAVC Correspondence"
     }, {
       "value": {
-        "task": "ClearAndUnmistakeableErrorMailTask",
-        "parent": "MailTask",
+        "klass": "ClearAndUnmistakeableErrorMailTask",
         "assigned_to": "LitigationSupport"
         },
       "label": "CUE-related"
     }, {
       "value": {
-        "task": "AddressChangeMailTask",
-        "parent": "MailTask",
+        "klass": "AddressChangeMailTask",
         "assigned_to": "HearingAdmin"
         },
       "label": "Change of address"
     }, {
       "value": {
-        "task": "CongressionalInterestMailTask",
-        "parent": "MailTask",
+        "klass": "CongressionalInterestMailTask",
         "assigned_to": "LitigationSupport"
         },
       "label": "Congressional interest"
     }, {
       "value": {
-        "task": "ControlledCorrespondenceMailTask",
-        "parent": "MailTask",
+        "klass": "ControlledCorrespondenceMailTask",
         "assigned_to": "LitigationSupport"
         },
       "label": "Controlled Correspondence"
     }, {
       "value": {
-        "task": "DeathCertificateMailTask",
-        "parent": "MailTask",
+        "klass": "DeathCertificateMailTask",
         "assigned_to": "Colocated"
         },
       "label": "Death certificate"
     }, {
       "value": {
-        "task": "DocketSwitchMailTask",
-        "parent": "MailTask",
+        "klass": "DocketSwitchMailTask",
         "assigned_to": "ClerkOfTheBoard"
         },
       "label": "Docket switch"
     }, {
       "value": {
-        "task": "EvidenceOrArgumentMailTask",
-        "parent": "MailTask",
+        "klass": "EvidenceOrArgumentMailTask",
         "assigned_to": "Colocated"
         },
       "label": "Evidence or argument"
     }, {
       "value": {
-        "task": "ExtentionRequestMailTask",
-        "parent": "MailTask",
+        "klass": "ExtentionRequestMailTask",
         "assigned_to": "Colocated"
         },
       "label": "Extention request"
     }, {
       "value": {
-        "task": "FoiaRequestMailTask",
-        "parent": "MailTask",
+        "klass": "FoiaRequestMailTask",
         "assigned_to": "PrivacyTeam"
         },
       "label": "FOIA request"
     }, {
       "value": {
-        "task": "HearingPostponementRequestMailTask",
-        "parent": "MailTask",
+        "klass": "HearingPostponementRequestMailTask",
         "assigned_to": "HearingAdmin"
         },
       "label": "Hearing Postponement Request"
     }, {
       "value": {
-        "task": "HearingRelatedMailTask",
-        "parent": "MailTask",
+        "klass": "HearingRelatedMailTask",
         "assigned_to": "HearingAdmin"
         },
       "label": "Hearing-related"
     }, {
       "value": {
-        "task": "HearingWithdrawalMailTask",
-        "parent": "MailTask",
+        "klass": "HearingWithdrawalMailTask",
         "assigned_to": "HearingAdmin"
         },
       "label": "Hearing Withdrawal Request"
     }, {
       "value": {
-        "task": "ReconsiderationMotionMailTask",
-        "parent": "MailTask",
+        "klass": "ReconsiderationMotionMailTask",
         "assigned_to": "LitigationSupport"
         },
       "label": "Motion for reconsideration"
     }, {
       "value": {
-        "task": "AodMotionMailTask",
-        "parent": "MailTask",
+        "klass": "AodMotionMailTask",
         "assigned_to": "AodTeam"
         },
       "label": "Motion to Advance on Docket"
     }, {
       "value": {
-        "task": "OtherMotionMailTask",
-        "parent": "MailTask",
+        "klass": "OtherMotionMailTask",
         "assigned_to": "LitigationSupport"
         },
       "label": "Other motion"
     }, {
       "value": {
-        "task": "PowerOfAttorneyRelatedMailTask",
-        "parent": "MailTask",
+        "klass": "PowerOfAttorneyRelatedMailTask",
         "assigned_to": "HearingAdmin"
         },
       "label": "Power of attorney-related"
     }, {
       "value": {
-        "task": "PrivacyActMailRequestMailTask",
-        "parent": "MailTask",
+        "klass": "PrivacyActMailRequestMailTask",
         "assigned_to": "PrivacyTeam"
         },
       "label": "Privacy act request"
     }, {
       "value": {
-        "task": "PrivacyComplaintMailTask",
-        "parent": "MailTask",
+        "klass": "PrivacyComplaintMailTask",
         "assigned_to": "PrivacyTeam"
         },
       "label": "Privacy complaint"
     }, {
       "value": {
-        "task": "ReturnedUndeliverableCorrespondenceMailTask",
-        "parent": "MailTask",
+        "klass": "ReturnedUndeliverableCorrespondenceMailTask",
         "assigned_to": "BvaDispatch"
         },
       "label": "Returned or undeliverable mail"
     }, {
       "value": {
-        "task": "StatusInquiryMailTask",
-        "parent": "MailTask",
+        "klass": "StatusInquiryMailTask",
         "assigned_to": "LitigationSupport"
         },
       "label": "Status inquiry"
     }, {
       "value": {
-        "task": "AppealWithdrawalMailTask",
-        "parent": "MailTask",
+        "klass": "AppealWithdrawalMailTask",
         "assigned_to": "CaseReview"
         },
       "label": "Withdrawal of appeal"
