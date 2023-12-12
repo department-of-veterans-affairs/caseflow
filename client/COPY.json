@@ -80,6 +80,8 @@
   "CORRESPONDENCE_REVIEW_CMP_INFO_TITLE": "CMP Information",
   "CORRESPONDENCE_INTAKE_FORM_SUBMIT_MODAL_TITLE": "Confirm submission",
   "CORRESPONDENCE_INTAKE_FORM_SUBMIT_MODAL_BODY": "Submitting the correspondence record will upload the mail package to the eFolder.  Make sure that all information is correct before submitting.",
+  "CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TITLE": "The correspondence's documents have failed to upload to the eFolder",
+  "CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TEXT": "You can upload it from this page to the veteran's eFolder at a later time.",
   "DOCUMENT_PREVIEW": "Document Preview",
   "TASK_SNAPSHOT_ABOUT_BOX_TITLE": "About the case",
   "TASK_SNAPSHOT_ABOUT_BOX_HEARING_REQUEST_TYPE_LABEL": "Hearing Type",
