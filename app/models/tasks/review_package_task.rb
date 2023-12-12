@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
-class ReviewPackageTask < CorrespondenceRootTask
+class ReviewPackageTask < CorrespondenceTask
   class << self
     def create_from_params(params, user)
       parent_task = ReviewPackageTask.find(params[:parent_id])
       fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_of_same_type_has_same_assignee(parent_task, params)
 
       verify_current_user_can_create!(user)
-
       params = modify_params_for_create(params)
       child = create_child_task(parent_task, user, params)
       parent_task.update!(status: params[:status]) if params[:status]
@@ -15,7 +14,6 @@ class ReviewPackageTask < CorrespondenceRootTask
     end
 
     def create_child_task(parent_task, current_user, params)
-      # binding.pry
       Task.create!(
         type: params[:type],
         appeal_type: "Correspondence",

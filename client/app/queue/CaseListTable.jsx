@@ -17,7 +17,8 @@ import COPY from '../../COPY';
 import Pagination from 'app/components/Pagination/Pagination';
 
 class CaseListTable extends React.PureComponent {
-  state = { currentPage: this.props.currentPage }
+
+  state = { currentPage: this.props.currentPage };
 
   componentWillUnmount = () => this.props.clearCaseListSearch();
 

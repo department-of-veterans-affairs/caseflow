@@ -21,4 +21,8 @@ class Correspondence < CaseflowRecord
   def initialize_correspondence_tasks
     CorrespondenceRootTaskFactory.new(self).create_root_and_sub_tasks!
   end
+
+  def type
+    "Correspondence"
+  end
 end
