@@ -51,7 +51,7 @@ const ConfirmTasksRelatedToAnAppeal = () => {
         </tr>
         <tr rowSpan="4">
           <td colSpan="1" style={{ ...borderlessTd, ...{ paddingBottom: '10px' } }}>
-            <b style={{ marginTop: '40px' }}>Linked appeal</b>
+            <b style={{ marginTop: '40px' }}>Linked Appeal</b>
           </td>
           <td style={borderlessTd}>
             <b>Currently Active Task</b>
@@ -69,11 +69,12 @@ const ConfirmTasksRelatedToAnAppeal = () => {
               padding: '3px',
               backgroundColor: 'white',
               border: `1px solid ${COLORS.COLOR_COOL_BLUE_LIGHTER}`,
+              whiteSpace:'nowrap'
             }}>
               <DocketTypeBadge name={(fetchedAppeals.find((appeal) => appeal.id === task).docketName)} />
               <LinkToAppeal appealExternalId={fetchedAppeals.find((appeal) => appeal.id === task).externalId}>
                 <b>{fetchedAppeals.find((appeal) => appeal.id === task).docketNumber}</b>
-                <ExternalLinkIcon size={15} className="cf-pdf-external-link-icon" color={COLORS.FOCUS_OUTLINE} />
+                <ExternalLinkIcon size={15} className={"cf-pdf-external-link-icon"} color={COLORS.FOCUS_OUTLINE} />
               </LinkToAppeal>
             </div>
           </td>
@@ -81,8 +82,6 @@ const ConfirmTasksRelatedToAnAppeal = () => {
           <td style={borderlessTd}>{getYesOrNo()} {waivedEvidenceTask === null ? 'No' :
            `Yes- ${waivedEvidenceTask.waiveReason}`}</td>
           <td style={borderlessTd}>{evidenceSubmission.assigned_to_type}</td>
-        </tr>
-        <tr colSpan="100%">
         </tr>
         <tr>
           <td
