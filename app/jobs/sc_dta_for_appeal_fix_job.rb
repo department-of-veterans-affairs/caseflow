@@ -28,6 +28,7 @@ class ScDtaForAppealFixJob < CaseflowJob
     log_processing_time
   end
 
+  # :reek:FeatureEnvy
   def loop_through_and_call_process_records
     records_with_errors.each do |decision_doc|
       claimant = decision_doc.appeal.claimant
