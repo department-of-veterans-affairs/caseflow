@@ -76,7 +76,7 @@ module Seeds
         {
           item: 'batch_size_per_attorney',
           title: 'Batch Size Per Attorney',
-          description: 'Set case distribution batch size for judges with attorney teams. The value for this data element is per attorney.',
+          description: 'Set case-distribution batch size for judges with attorney teams. The value for this data element is per attorney.',
           data_type: 'number',
           value: 3,
           unit: 'cases',
@@ -89,7 +89,7 @@ module Seeds
         {
           item: 'request_more_cases_minimum',
           title: 'Request More Cases Minimum',
-          description: 'Set the number of remaining cases a VLJ must have equal to or less than to request more cases. (The number entered is used to equal to or less than.)',
+          description: 'Set the number of remaining cases a VLJ must have equal to or less than to request more cases. (The number entered is used as equal to or less than)',
           data_type: 'number',
           value: 8,
           unit: 'cases',

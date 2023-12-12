@@ -62,7 +62,8 @@ class Test::UsersController < ApplicationController
         stats: "/stats",
         jobs: "/jobs",
         admin: "/admin",
-        test_veterans: "/test/data"
+        test_veterans: "/test/data",
+        metrics_dashboard: "/metrics/dashboard"
       }
     }
   ].freeze
