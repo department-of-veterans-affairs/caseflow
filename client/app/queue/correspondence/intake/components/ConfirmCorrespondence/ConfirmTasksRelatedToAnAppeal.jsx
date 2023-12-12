@@ -20,11 +20,11 @@ const ConfirmTasksRelatedToAnAppeal = () => {
     return (
       <>
         <tr colSpan="100%" style={{ backgroundColor: COLORS.GREY_BACKGROUND }}>
-          <td style={{ borderTop: 'none',
-            padding: 'none',
-            margin: 'none',
+          <td style={{
+            borderTop: 'none',
             borderBottom: 'none',
-            backgroundColor: COLORS.GREY_BACKGROUND }}>
+            backgroundColor: COLORS.GREY_BACKGROUND
+          }}>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <th style={styling}></th>
               <h3>Appeal {index + 1} Tasks</h3>
@@ -55,14 +55,12 @@ const ConfirmTasksRelatedToAnAppeal = () => {
           <td
             style={{ backgroundColor: COLORS.GREY_BACKGROUND,
               borderTop: 'none',
-              // width: '100%',
               borderSpacing: '0px' }}>
             <b>Additional Tasks</b>
           </td>
           <td
             colSpan="3"
             style={{ backgroundColor: COLORS.GREY_BACKGROUND,
-            // width:'200%',
               borderTop: 'none',
               borderSpacing: '0px' }}>
             <b>Task Instructions or Context</b>
