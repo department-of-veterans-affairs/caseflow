@@ -45,12 +45,12 @@ const ConfirmTasksRelatedToAnAppeal = () => {
     return (
       <>
         <tr>
-          <td colSpan={1} style={{ ...borderlessTd, ...{ paddingBottom: '0px' } }}>
+          <td style={{ ...borderlessTd, ...{ paddingBottom: '0px' } }}>
             <h3 style={{ lineHeight: '10%' }}>Appeal {index + 1} Tasks</h3>
           </td>
         </tr>
         <tr rowSpan="4">
-          <td colSpan="1" style={{ ...borderlessTd, ...{ paddingBottom: '10px' } }}>
+          <td style={{ ...borderlessTd, ...{ paddingBottom: '10px' } }}>
             <b style={{ marginTop: '40px' }}>Linked Appeal</b>
           </td>
           <td style={borderlessTd}>
