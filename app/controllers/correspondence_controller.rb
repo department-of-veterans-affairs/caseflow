@@ -114,7 +114,11 @@ class CorrespondenceController < ApplicationController
       rescue ActiveRecord::RecordInvalid
         render json: { error: "Failed to update records" }, status: :bad_request
         raise ActiveRecord::Rollback
+      rescue ActiveRecord::RecordNotUnique
+        render json: { error: "Failed to update records" }, status: :bad_request
+        raise ActiveRecord::Rollback
       else
+        set_flash_intake_success_message
         render json: {}, status: :created
       end
     end
@@ -135,6 +139,15 @@ class CorrespondenceController < ApplicationController
   def demo_data
     json_file_path = "vbms doc types.json"
     JSON.parse(File.read(json_file_path))
+  end 
+  
+  def set_flash_intake_success_message
+    # intake error message is handled in client/app/queue/correspondence/intake/components/CorrespondenceIntake.jsx
+    vet = veteran_by_correspondence
+    flash[:correspondence_intake_success] = [
+          "You have successfully submitted a correspondence record for #{vet.name}(#{vet.file_number})",
+          "The mail package has been uploaded to the Veteran's eFolder as well."
+        ]
   end
 
   def create_correspondence_relations
