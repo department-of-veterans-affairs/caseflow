@@ -100,6 +100,7 @@ FactoryBot.define do
     end
 
     trait :has_sattyid do
+      svlj { nil }
       sattyid { generated_sattyid }
     end
 
