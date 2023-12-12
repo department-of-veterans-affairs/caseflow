@@ -39,6 +39,8 @@ class FileNumberNotFoundFix
 
   def single_record_fix(appeal)
     veteran = appeal.veteran
+    return unless veteran
+
     bgs_file_number = fetch_file_number_from_bgs_service(veteran)
 
     # ensure that file number from bgs exists and is not already used
@@ -53,7 +55,7 @@ class FileNumberNotFoundFix
 
     update_records!(collections, bgs_file_number, veteran)
   rescue StandardError => error
-    stuck_job_report_service.append_errors(appeal.class.name, appeal.id, error)
+    stuck_job_report_service.append_error(appeal.class.name, appeal.id, error)
     Rails.logger.error("FILENUMBER UPDATE error. Error: #{error}")
   end
 
