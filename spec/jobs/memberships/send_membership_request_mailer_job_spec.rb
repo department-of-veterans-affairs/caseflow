@@ -114,7 +114,7 @@ describe Memberships::SendMembershipRequestMailerJob do
       end
     end
 
-    context "a Datadog metric is captured" do
+    context "a MetricsService metric is captured" do
       let(:type) { "UserRequestCreated" }
       let(:email_message) { instance_double(GovDelivery::TMS::EmailMessage) }
       let(:response) { instance_double("Response") }
