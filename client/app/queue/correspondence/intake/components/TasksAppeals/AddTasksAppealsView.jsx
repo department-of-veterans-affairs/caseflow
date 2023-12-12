@@ -107,7 +107,7 @@ export const AddTasksAppealsView = (props) => {
           </div>
         </div>
 
-        <div style={{ marginTop: '3.8rem' }}>
+        <div id="task-related-to-an-appeal" style={{ marginTop: '3.8rem' }}>
           <h2 style={{ margin: '3rem auto 1rem auto' }}>Tasks related to an existing Appeal</h2>
           <p style={{ marginBottom: '0rem' }}>Is this correspondence related to an existing appeal?</p>
           <AddAppealRelatedTaskView

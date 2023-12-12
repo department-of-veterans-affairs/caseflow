@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import CorrespondenceDetailsTable from './CorrespondenceDetailsTable';
 import ConfirmTasksNotRelatedToAnAppeal from './ConfirmTasksNotRelatedToAnAppeal';
 import Table from '../../../../../components/Table';
+import ConfirmTasksRelatedToAnAppeal from './ConfirmTasksRelatedToAnAppeal';
 
 const bodyStyling = css({
   '& > tr > td': {
@@ -30,6 +31,7 @@ export const ConfirmCorrespondenceView = (props) => {
 
   const checkedMailTasks = Object.keys(props.mailTasks).filter((name) => props.mailTasks[name]);
   const relatedCorrespondences = useSelector((state) => state.intakeCorrespondence.relatedCorrespondences);
+  const tasksAssociatedWithAppeal = useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks);
 
   // eslint-disable-next-line max-statements
   const getDocumentColumns = (correspondence) => {
@@ -213,6 +215,21 @@ export const ConfirmCorrespondenceView = (props) => {
           </div>
         </div>
         <ConfirmTasksNotRelatedToAnAppeal />
+        <div style={{ display: 'flex' }}>
+          <h2 style={{
+            margin: '1px 0 15px 0',
+            display: 'inline-block',
+            marginLeft: '0px'
+          }}>Tasks related to an Appeal</h2>
+          <div style={{ marginLeft: 'auto' }}>
+            <Button styling={bottonStyling} linkStyling onClick={() => props.goToStep(2)}>
+              <span {...css({ position: 'absolute' })}><PencilIcon /></span>
+              <span {...css({ marginLeft: '20px' })}>Edit Section</span>
+            </Button>
+          </div>
+        </div>
+        <ConfirmTasksRelatedToAnAppeal />
+
       </div>
     </div>
   );
