@@ -30,6 +30,24 @@ class ClaimHistoryEvent
     :cancelled
   ].freeze
 
+  ISSUE_EVENTS = [
+    :completed_disposition,
+    :added_issue,
+    :withdrew_issue,
+    :removed_issue,
+    :added_decision_date,
+    :added_issue_without_decision_date
+  ].freeze
+
+  DISPOSITION_EVENTS = [
+    :completed_disposition,
+    :added_issue,
+    :added_issue_without_decision_date,
+    :added_decision_date
+  ].freeze
+
+  STATUS_EVENTS = [:in_progress, :incomplete, :completed, :claim_creation, :cancelled].freeze
+
   REQUEST_ISSUE_TIME_WINDOW = 15
   STATUS_EVENT_TIME_WINDOW = 2
 
@@ -157,9 +175,12 @@ class ClaimHistoryEvent
       same_transaction = date_strings_within_seconds?(change_data["intake_completed_at"],
                                                       change_data["request_issue_created_at"],
                                                       REQUEST_ISSUE_TIME_WINDOW)
-      event_hash = if same_transaction
+      # If it was during intake or if there's no request issue update time then use the intake event hash
+      # This will also catch most request issues that were added to claims that don't have an intake
+      event_hash = if same_transaction || !change_data["request_issue_update_time"]
                      intake_event_hash(change_data)
                    else
+                     # try to guess the request issue update user data
                      add_issue_update_event_hash(change_data)
                    end
 
@@ -194,10 +215,10 @@ class ClaimHistoryEvent
     end
 
     def event_from_version(changes, index, change_data)
+      # If there is no task status change in the set of papertail changes, ignore the object
       if changes["status"]
         event_type = task_status_to_event_type(changes["status"][index])
-        event_date = changes["updated_at"][index]
-        event_date_hash = { "event_date" => event_date, "event_user_name" => "System" }
+        event_date_hash = { "event_date" => changes["updated_at"][index], "event_user_name" => "System" }
         from_change_data(event_type, change_data.merge(event_date_hash))
       end
     end
@@ -259,9 +280,9 @@ class ClaimHistoryEvent
       if issue_update
         {
           "event_date" => change_data["request_issue_created_at"],
-          "event_user_name" => issue_update.user.full_name,
-          "user_facility" => issue_update.user.station_id,
-          "event_user_css_id" => issue_update.user.css_id
+          "event_user_name" => issue_update.user&.full_name,
+          "user_facility" => issue_update.user&.station_id,
+          "event_user_css_id" => issue_update.user&.css_id
         }
       # If for some reason there was no match, then just default to the row that already exists in the change data
       else
@@ -272,13 +293,13 @@ class ClaimHistoryEvent
     def date_strings_within_seconds?(first_date, second_date, time_in_seconds)
       return false unless first_date && second_date
 
-      date_difference = DateTime.iso8601(first_date.tr(" ", "T")) - DateTime.iso8601(second_date.tr(" ", "T"))
-
-      (date_difference.abs * 24 * 60 * 60).to_f < time_in_seconds
+      # Less variables for less garbage collection since this method is used a lot
+      ((DateTime.iso8601(first_date.tr(" ", "T")) -
+        DateTime.iso8601(second_date.tr(" ", "T"))).abs * 24 * 60 * 60).to_f < time_in_seconds
     end
 
     def handle_hookless_cancelled_status_events(versions, change_data)
-      # The remove reqest issues circumvents the normal paper trail hooks and results in a weird database state
+      # The remove request issues circumvents the normal paper trail hooks and results in a weird database state
       return [] unless versions
 
       cancelled_task_versions = versions.select { |element| element.is_a?(Hash) && element.empty? }
@@ -394,23 +415,11 @@ class ClaimHistoryEvent
   end
 
   def issue_event?
-    [
-      :completed_disposition,
-      :added_issue,
-      :withdrew_issue,
-      :removed_issue,
-      :added_decision_date,
-      :added_issue_without_decision_date
-    ].include?(event_type)
+    ISSUE_EVENTS.include?(event_type)
   end
 
   def event_can_contain_disposition?
-    [
-      :completed_disposition,
-      :added_issue,
-      :added_issue_without_decision_date,
-      :added_decision_date
-    ].include?(event_type)
+    DISPOSITION_EVENTS.include?(event_type)
   end
 
   def disposition_event?
@@ -418,7 +427,7 @@ class ClaimHistoryEvent
   end
 
   def status_event?
-    [:in_progress, :incomplete, :completed, :claim_creation, :cancelled].include?(event_type)
+    STATUS_EVENTS.include?(event_type)
   end
 
   private
@@ -466,7 +475,7 @@ class ClaimHistoryEvent
   end
 
   def parse_event_attributes(change_data)
-    standardize_event_date
+    # standardize_event_date
     @user_facility = change_data["user_facility"]
     @event_user_name = change_data["event_user_name"]
     @event_user_css_id = change_data["event_user_css_id"]

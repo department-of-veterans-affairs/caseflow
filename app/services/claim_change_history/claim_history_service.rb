@@ -5,6 +5,7 @@ class ClaimHistoryService
   attr_reader :business_line, :processed_task_ids,
               :processed_request_issue_ids, :processed_request_issue_update_ids,
               :processed_decision_issue_ids, :events, :filters
+  attr_writer :filters
 
   TIMING_RANGES = [
     "before",
@@ -31,7 +32,7 @@ class ClaimHistoryService
 
     all_data = business_line.change_history_rows(@filters)
 
-    all_data.entries.map do |change_data|
+    all_data.entries.each do |change_data|
       process_request_issue_update_events(change_data)
       process_request_issue_events(change_data)
       process_task_events(change_data)
@@ -46,10 +47,6 @@ class ClaimHistoryService
     filter_events_for_last_action_taken!
 
     @events
-  end
-
-  def filters=(value)
-    @filters = parse_filters(value)
   end
 
   private
