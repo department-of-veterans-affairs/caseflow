@@ -212,5 +212,12 @@ module CaseflowCertification
       TOPLEVEL_BINDING.eval("self").extend FinderConsoleMethods
     end
     # :nocov:
+
+    # Unregister `sprockets-rails` source mapping postprocessor to avoid conflicts with source map generation provided
+    # by `react_on_rails`+`webpack`. The addition of this postprocessor in `sprockets-rails` `3.4.0` was causing
+    # corruption of the `webpack-bundle.js` file, thus breaking feature specs in local development environments.
+    config.assets.configure do |env|
+      env.unregister_postprocessor("application/javascript", ::Sprockets::Rails::SourcemappingUrlProcessor)
+    end
   end
 end
