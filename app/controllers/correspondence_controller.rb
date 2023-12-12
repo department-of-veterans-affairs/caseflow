@@ -145,17 +145,14 @@ class CorrespondenceController < ApplicationController
     params[:tasks_related_to_appeal]&.map do |data|
       appeal = Appeal.find(data[:appeal_id])
       CorrespondencesAppeal.find_or_create_by(correspondence_id: correspondence_id, appeal_id: appeal.id)
-      # Remove this unless block when HearingWithdrawalMailTask is implemented
-      unless data[:klass] == "HearingWithdrawalMailTask"
-        data[:klass].constantize.create_from_params(
-          {
-            appeal: appeal,
-            parent_id: appeal.root_task&.id,
-            assigned_to: data[:assigned_to].constantize.singleton,
-            instructions: data[:content]
-          }, current_user
-        )
-      end
+      data[:klass].constantize.create_from_params(
+        {
+          appeal: appeal,
+          parent_id: appeal.root_task&.id,
+          assigned_to: data[:assigned_to].constantize.singleton,
+          instructions: data[:content]
+        }, current_user
+      )
     end
   end
 
