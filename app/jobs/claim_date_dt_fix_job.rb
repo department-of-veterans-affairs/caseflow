@@ -15,7 +15,6 @@ class ClaimDateDtFixJob < CaseflowJob
 
     capture_end_time
     log_processing_time
-    puts "hello"
   end
 
   def error_text
