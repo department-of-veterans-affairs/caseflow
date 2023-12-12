@@ -48,7 +48,6 @@ class StuckJobSchedulerJob < CaseflowJob
     log_processing_time
 
     @stuck_job_report_service.append_scheduler_job_data(scheduler_job, @count, log_processing_time)
-    binding.pry
     @stuck_job_report_service.write_log_report(REPORT_TEXT)
   end
 

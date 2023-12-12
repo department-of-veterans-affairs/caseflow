@@ -60,9 +60,11 @@ class StuckJobReportService
     record_count_after_str = record_count_after.to_s
     processing_time = processing_time.to_s
 
-    entry = "#{timestamp} | #{job_name.ljust(@column_widths[:job_name])} |
-     #{record_count_before_str.rjust(@column_widths[:record_count_before])} |
-      #{record_count_after_str.rjust(@column_widths[:record_count_after])} | #{processing_time} sec\n"
+    entry = "#{timestamp} | " \
+            "#{job_name.ljust(@column_widths[:job_name])} | " \
+            "#{record_count_before_str.rjust(@column_widths[:record_count_before])} | " \
+            "#{record_count_after_str.rjust(@column_widths[:record_count_after])} | " \
+            "#{processing_time} sec\n"
     logs.push(entry)
   end
 
