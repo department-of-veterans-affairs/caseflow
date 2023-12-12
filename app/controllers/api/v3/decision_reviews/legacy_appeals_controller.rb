@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require "#{Rails.root}/app/serializers/api/v3/legacy_appeal_serializer.rb"
+
 
 class Api::V3::DecisionReviews::LegacyAppealsController < Api::V3::BaseController
   include ApiV3FeatureToggleConcern
