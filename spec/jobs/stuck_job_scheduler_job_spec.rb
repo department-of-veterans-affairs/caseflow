@@ -52,7 +52,8 @@ describe StuckJobSchedulerJob, :postgres do
     end
 
     it "writes log report to AWS S3 after processing" do
-      expect(subject.instance_variable_get(:@stuck_job_report_service)).to receive(:write_log_report).with(StuckJobSchedulerJob::REPORT_TEXT)
+      expect(subject.instance_variable_get(:@stuck_job_report_service)).to receive(:write_log_report)
+        .with(StuckJobSchedulerJob::REPORT_TEXT)
       subject.perform
     end
 
