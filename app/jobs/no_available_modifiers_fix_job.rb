@@ -15,7 +15,7 @@ class NoAvailableModifiersFixJob < CaseflowJob
   end
 
   def perform
-    capture_start_time
+    start_time
     return if records_with_errors.blank?
 
     @stuck_job_report_service.append_record_count(records_with_errors.count, error_text)
@@ -24,7 +24,7 @@ class NoAvailableModifiersFixJob < CaseflowJob
 
     @stuck_job_report_service.append_record_count(records_with_errors.count, error_text)
     @stuck_job_report_service.write_log_report(error_text)
-    capture_end_time
+    end_time
     log_processing_time
   end
 
@@ -80,11 +80,11 @@ class NoAvailableModifiersFixJob < CaseflowJob
     (@end_time && @start_time) ? @end_time - @start_time : 0
   end
 
-  def capture_start_time
+  def start_time
     @start_time ||= Time.zone.now
   end
 
-  def capture_end_time
+  def end_time
     @end_time ||= Time.zone.now
   end
 end
