@@ -69,12 +69,12 @@ const ConfirmTasksRelatedToAnAppeal = () => {
               padding: '3px',
               backgroundColor: 'white',
               border: `1px solid ${COLORS.COLOR_COOL_BLUE_LIGHTER}`,
-              whiteSpace:'nowrap'
+              whiteSpace: 'nowrap'
             }}>
               <DocketTypeBadge name={(fetchedAppeals.find((appeal) => appeal.id === task).docketName)} />
               <LinkToAppeal appealExternalId={fetchedAppeals.find((appeal) => appeal.id === task).externalId}>
                 <b>{fetchedAppeals.find((appeal) => appeal.id === task).docketNumber}</b>
-                <ExternalLinkIcon size={15} className={"cf-pdf-external-link-icon"} color={COLORS.FOCUS_OUTLINE} />
+                <ExternalLinkIcon size={15} className="cf-pdf-external-link-icon" color={COLORS.FOCUS_OUTLINE} />
               </LinkToAppeal>
             </div>
           </td>
