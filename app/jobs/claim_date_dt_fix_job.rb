@@ -61,10 +61,10 @@ class ClaimDateDtFixJob < CaseflowJob
   end
 
   def capture_start_time
-    @start_time = Time.zone.now
+    @start_time ||= Time.zone.now
   end
 
   def capture_end_time
-    @end_time = Time.zone.now
+    @end_time ||= Time.zone.now
   end
 end
