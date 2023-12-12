@@ -87,7 +87,10 @@ const PackageActionModal = (props) => {
         history.push('/queue/correspondence');
       }
     }
-    );
+    ).
+      catch(() => {
+        console.error('Review Package Action already exists');
+      });
     setTextInputReason('');
   };
 

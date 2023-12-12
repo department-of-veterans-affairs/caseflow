@@ -6,7 +6,6 @@ class ReviewPackageTask < CorrespondenceTask
       parent_task = ReviewPackageTask.find(params[:parent_id])
       fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_of_same_type_has_same_assignee(parent_task, params)
 
-      verify_current_user_can_create!(user)
       params = modify_params_for_create(params)
       child = create_child_task(parent_task, user, params)
       parent_task.update!(status: params[:status]) if params[:status]
@@ -23,12 +22,6 @@ class ReviewPackageTask < CorrespondenceTask
         assigned_to: params[:assigned_to] || child_task_assignee(parent_task, params),
         instructions: params[:instructions]
       )
-    end
-
-    private
-
-    def verify_current_user_can_create!(user)
-      MailTeam.singleton.user_has_access?(user)
     end
   end
 end
