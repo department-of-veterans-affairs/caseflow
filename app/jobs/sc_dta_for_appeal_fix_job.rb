@@ -3,6 +3,8 @@
 class ScDtaForAppealFixJob < CaseflowJob
   def initialize
     @stuck_job_report_service = StuckJobReportService.new
+    @start_time = nil
+    @end_time = nil
     super
   end
 
@@ -61,10 +63,10 @@ class ScDtaForAppealFixJob < CaseflowJob
   end
 
   def capture_start_time
-    @start_time = Time.zone.now
+    @start_time ||= Time.zone.now
   end
 
   def capture_end_time
-    @end_time = Time.zone.now
+    @end_time ||= Time.zone.now
   end
 end
