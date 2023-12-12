@@ -149,7 +149,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
         virtual_hearing.establishment.update_error!(error_display)
 
-        MetricsService.increment_counter(metric_name: "created_conference.failed", **create_conference_metrics_services_tags)
+        MetricsService.increment_counter(metric_name: "created_conference.failed", **create_conference_metrics_service_tags)
 
         fail pexip_response.error
       end

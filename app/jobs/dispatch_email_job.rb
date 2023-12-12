@@ -41,8 +41,8 @@ class DispatchEmailJob < CaseflowJob
       response_external_url = response.body.dig("_links", "self")
 
       MetricsService.increment_counter(
-        app_name: Constants.METRICS_SERVICES_METRICS.DISPATCH.APP_NAME,
-        metric_group: Constants.METRICS_SERVICES_METRICS.DISPATCH.OUTCODE_GROUP_NAME,
+        app_name: Constants.METRICS_SERVICE_METRICS.DISPATCH.APP_NAME,
+        metric_group: Constants.METRICS_SERVICE_METRICS.DISPATCH.OUTCODE_GROUP_NAME,
         metric_name: "email.sent",
         attrs: {
           email_type: type
