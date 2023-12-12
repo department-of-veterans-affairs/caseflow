@@ -26,7 +26,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     slack_service.send_notification(slack_msg, self.class.name)
     log_error(error)
   ensure
-    datadog_report_runtime(metric_group_name: "priority_appeal_push_job")
+    metrics_services_report_runtime(metric_group_name: "priority_appeal_push_job")
   end
 
   def send_job_report

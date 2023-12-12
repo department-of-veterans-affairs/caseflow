@@ -40,14 +40,14 @@ class Hearings::ReminderService
       "Is it a virtual_hearing?: #{hearing.virtual?}, " \
       "Hearing class and id: #{hearing.class.name}, #{hearing.id})"
     )
-    send_to_datadog(type)
+    send_to_metrics_service(type)
   end
 
   # Remove this when we enable feature to allow reminder for all hearings
-  def send_to_datadog(type)
-    DataDogService.increment_counter(
-      app_name: Constants.DATADOG_METRICS.HEARINGS.APP_NAME,
-      metric_group: Constants.DATADOG_METRICS.HEARINGS.REMINDER_EMAILS_GROUP_NAME,
+  def send_to_metrics_service(type)
+    MetricsService.increment_counter(
+      app_name: Constants.METRICS_SERVICE_METRICS.HEARINGS.APP_NAME,
+      metric_group: Constants.METRICS_SERVICE_METRICS.HEARINGS.REMINDER_EMAILS_GROUP_NAME,
       metric_name: "emails.would_be_sent",
       attrs: {
         reminder_type: type,

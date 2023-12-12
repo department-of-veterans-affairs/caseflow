@@ -99,9 +99,9 @@ class Hearings::SendEmail
       response = msg.response
       response_external_url = response.body.dig("_links", "self")
 
-      DataDogService.increment_counter(
-        app_name: Constants.DATADOG_METRICS.HEARINGS.APP_NAME,
-        metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
+      MetricsService.increment_counter(
+        app_name: Constants.METRICS_SERVICE_METRICS.HEARINGS.APP_NAME,
+        metric_group: Constants.METRICS_SERVICE_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
         metric_name: "emails.submitted",
         attrs: {
           email_type: type

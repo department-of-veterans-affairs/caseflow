@@ -34,19 +34,19 @@ describe ETLBuilderJob, :etl, :all_dbs do
   describe "perform" do
     before do
       allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| @slack_msg = first_arg }
-      expect(DataDogService).to receive(:emit_gauge).with(
+      expect(MetricsService).to receive(:emit_gauge).with(
         app_name: "caseflow_job",
         metric_group: "etl_builder_job",
         metric_name: "runtime",
         metric_value: anything
       )
-      expect(DataDogService).to receive(:emit_gauge).with(
+      expect(MetricsService).to receive(:emit_gauge).with(
         app_name: "caseflow_job_segment",
         metric_group: "etl_builder",
         metric_name: "runtime",
         metric_value: anything
       )
-      expect(DataDogService).to receive(:emit_gauge).with(
+      expect(MetricsService).to receive(:emit_gauge).with(
         app_name: "caseflow_job_segment",
         metric_group: "etl_sweeper",
         metric_name: "runtime",

@@ -5,7 +5,7 @@ class Metrics::V1::HistogramController < ApplicationController
 
   def create
     histograms.each do |metric|
-      DataDogService.histogram(
+      MetricsService.histogram(
         metric_group: metric[:group],
         metric_name: metric[:name],
         metric_value: metric[:value],

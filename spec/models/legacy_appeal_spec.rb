@@ -84,7 +84,7 @@ describe LegacyAppeal, :all_dbs do
       let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case, bfcorlid: "#{ssn}S")) }
 
       before do
-        allow(DataDogService).to receive(:increment_counter) { @datadog_called = true }
+        allow(MetricsService).to receive(:increment_counter) { @datadog_called = true }
       end
 
       it "prefers the Caseflow Veteran.file_number" do

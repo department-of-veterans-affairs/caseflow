@@ -24,8 +24,8 @@ module PumaThreadLogger
           waiting = @waiting
         }
 
-        emit_datadog_point("idle", waiting)
-        emit_datadog_point("active", thread_count - waiting)
+        emit_metrics_service_point("idle", waiting)
+        emit_metrics_service_point("active", thread_count - waiting)
 
         # For some reason, even a single Puma server (not clustered) has two booted ThreadPools.
         # One of them is empty, and the other is actually doing work.
@@ -49,8 +49,8 @@ module PumaThreadLogger
     super *args
   end
 
-  def emit_datadog_point(type, count)
-    DataDogService.emit_gauge(
+  def emit_metrics_service_point(type, count)
+    MetricsService.emit_gauge(
       metric_group: "puma",
       metric_name: "#{type}_threads",
       metric_value: count,

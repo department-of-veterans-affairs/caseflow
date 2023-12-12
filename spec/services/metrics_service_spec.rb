@@ -31,7 +31,7 @@ describe MetricsService do
       it "records metrics" do
         allow(Rails.logger).to receive(:info)
 
-        expect(DataDogService).to receive(:emit_gauge).with(
+        expect(MetricsService).to receive(:emit_gauge).with(
           metric_group: "service",
           metric_name: "request_latency",
           metric_value: anything,
@@ -42,7 +42,7 @@ describe MetricsService do
             uuid: anything
           }
         )
-        expect(DataDogService).to receive(:increment_counter).with(
+        expect(MetricsService).to receive(:increment_counter).with(
           metric_group: "service",
           app_name: "other",
           metric_name: "request_attempt",
@@ -95,7 +95,7 @@ describe MetricsService do
         allow(Benchmark).to receive(:measure).and_raise(StandardError)
 
         expect(Rails.logger).to receive(:error)
-        expect(DataDogService).to receive(:increment_counter).with(
+        expect(MetericsService).to receive(:increment_counter).with(
           metric_group: "service",
           app_name: "other",
           metric_name: "request_error",
@@ -104,7 +104,7 @@ describe MetricsService do
             endpoint: name
           }
         )
-        expect(DataDogService).to receive(:increment_counter).with(
+        expect(MetricsService).to receive(:increment_counter).with(
           metric_group: "service",
           app_name: "other",
           metric_name: "request_attempt",

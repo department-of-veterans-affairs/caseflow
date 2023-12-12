@@ -39,7 +39,7 @@ class StatsCollectorJob < CaseflowJob
   rescue StandardError => error
     log_error(self.class.name, error)
   ensure
-    datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
+    metrics_service_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   end
 
   protected
@@ -52,7 +52,7 @@ class StatsCollectorJob < CaseflowJob
     rescue StandardError => error
       log_error(collector_name, error)
     ensure
-      datadog_report_time_segment(segment: "#{METRIC_GROUP_NAME}.#{collector_name}", start_time: start_time)
+      metrics_service_report_time_segment(segment: "#{METRIC_GROUP_NAME}.#{collector_name}", start_time: start_time)
     end
   end
 
@@ -82,7 +82,7 @@ class StatsCollectorJob < CaseflowJob
   end
 
   def emit(name, value, tags: {})
-    DataDogService.emit_gauge(
+    MetricsService.emit_gauge(
       metric_group: METRIC_GROUP_NAME,
       metric_name: name,
       metric_value: value,

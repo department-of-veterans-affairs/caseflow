@@ -17,13 +17,13 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     RequestStore.store[:current_user] = User.system_user
     ama_appeals_start = Time.zone.now
     cache_ama_appeals
-    datadog_report_time_segment(segment: "cache_ama_appeals", start_time: ama_appeals_start)
+    metrics_service_report_time_segment(segment: "cache_ama_appeals", start_time: ama_appeals_start)
 
     legacy_appeals_start = Time.zone.now
     cache_legacy_appeals
-    datadog_report_time_segment(segment: "cache_legacy_appeals", start_time: legacy_appeals_start)
+    metrics_service_report_time_segment(segment: "cache_legacy_appeals", start_time: legacy_appeals_start)
 
-    record_success_in_datadog
+    record_success_in_metrics_service
   rescue StandardError => error
     log_error(@start_time, error)
   end
@@ -53,11 +53,11 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
     cache_postgres_data_start = Time.zone.now
     cache_legacy_appeal_postgres_data(legacy_appeals)
-    datadog_report_time_segment(segment: "cache_legacy_appeal_postgres_data", start_time: cache_postgres_data_start)
+    metrics_service_report_time_segment(segment: "cache_legacy_appeal_postgres_data", start_time: cache_postgres_data_start)
 
     cache_vacols_data_start = Time.zone.now
     cache_legacy_appeal_vacols_data(all_vacols_ids)
-    datadog_report_time_segment(segment: "cache_legacy_appeal_vacols_data", start_time: cache_vacols_data_start)
+    metrics_service_report_time_segment(segment: "cache_legacy_appeal_vacols_data", start_time: cache_vacols_data_start)
   end
 
   def cache_legacy_appeal_postgres_data(legacy_appeals)
@@ -81,7 +81,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
   def increment_vacols_update_count(count)
     count.times do
-      DataDogService.increment_counter(
+      MetricsService.increment_counter(
         app_name: APP_NAME,
         metric_group: METRIC_GROUP_NAME,
         metric_name: "vacols_cases_cached"
@@ -91,7 +91,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
   def increment_appeal_count(count, appeal_type)
     count.times do
-      DataDogService.increment_counter(
+      MetricsService.increment_counter(
         app_name: APP_NAME,
         metric_group: METRIC_GROUP_NAME,
         metric_name: "appeals_to_cache",
@@ -121,21 +121,21 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     # * (Too little Postgres data cached) https://app.datadoghq.com/monitors/41421962
     # * (Too little VACOLS data cached) https://app.datadoghq.com/monitors/41234223
     # * (Job has not succeeded in the past day) https://app.datadoghq.com/monitors/41423568
-    record_error_in_datadog
+    record_error_in_metrics_service
 
-    datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
+    metrircs_service_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   end
 
-  def record_success_in_datadog
-    DataDogService.increment_counter(
+  def record_success_in_metrics_service
+    MetricsService.increment_counter(
       app_name: APP_NAME,
       metric_group: METRIC_GROUP_NAME,
       metric_name: "success"
     )
   end
 
-  def record_error_in_datadog
-    DataDogService.increment_counter(
+  def record_error_in_metrics_service
+    MetricsService.increment_counter(
       app_name: APP_NAME,
       metric_group: METRIC_GROUP_NAME,
       metric_name: "error"

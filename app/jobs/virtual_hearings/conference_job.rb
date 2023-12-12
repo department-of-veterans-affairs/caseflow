@@ -5,10 +5,10 @@ class VirtualHearings::ConferenceJob < ApplicationJob
 
   private
 
-  def datadog_metric_info
+  def metrics_service_metric_info
     {
-      app_name: Constants.DATADOG_METRICS.HEARINGS.APP_NAME,
-      metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME
+      app_name: Constants.METRICS_SERVICE_METRICS.HEARINGS.APP_NAME,
+      metric_group: Constants.METRICS_SERVICE_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME
     }
   end
 

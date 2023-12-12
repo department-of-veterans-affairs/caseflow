@@ -123,8 +123,8 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
     Rails.logger.info("Establishment Updated At: (#{virtual_hearing.establishment.updated_at})")
   end
 
-  def create_conference_datadog_tags
-    datadog_metric_info.merge(attrs: { hearing_id: virtual_hearing.hearing_id })
+  def create_conference_metrics_service_tags
+    metrics_service_metric_info.merge(attrs: { hearing_id: virtual_hearing.hearing_id })
   end
 
   def create_conference
@@ -149,12 +149,12 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
         virtual_hearing.establishment.update_error!(error_display)
 
-        DataDogService.increment_counter(metric_name: "created_conference.failed", **create_conference_datadog_tags)
+        MetricsService.increment_counter(metric_name: "created_conference.failed", **create_conference_metrics_services_tags)
 
         fail pexip_response.error
       end
 
-      DataDogService.increment_counter(metric_name: "created_conference.successful", **create_conference_datadog_tags)
+      MetricsService.increment_counter(metric_name: "created_conference.successful", **create_conference_metrics_service_tags)
 
       virtual_hearing.update(conference_id: pexip_response.data[:conference_id])
     end

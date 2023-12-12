@@ -35,9 +35,9 @@ class MetricsService
           uuid: uuid
         }
       }
-      DataDogService.emit_gauge(sent_to_info)
+      MetricsService.emit_gauge(sent_to_info)
 
-      sent_to << Metric::LOG_SYSTEMS[:datadog]
+      sent_to << Metric::LOG_SYSTEMS[:datadog] # :metrics_service ?
     end
 
     Rails.logger.info("FINISHED #{description}: #{stopwatch}")
@@ -64,7 +64,7 @@ class MetricsService
     Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
     Raven.capture_exception(error, extra: { type: "request_error", service: service, name: name, app: app })
 
-    increment_datadog_counter("request_error", service, name, app) if service
+    increment_metrics_service_counter("request_error", service, name, app) if service
 
     metric_params = {
       name: "error",
@@ -88,12 +88,12 @@ class MetricsService
     # This is just to capture the metric.
     raise
   ensure
-    increment_datadog_counter("request_attempt", service, name, app) if service
+    increment_metrics_service_counter("request_attempt", service, name, app) if service
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-  private_class_method def self.increment_datadog_counter(metric_name, service, endpoint_name, app_name)
-    DataDogService.increment_counter(
+  private_class_method def self.increment_metrics_service_counter(metric_name, service, endpoint_name, app_name)
+    MetricsService.increment_counter(
       metric_group: "service",
       metric_name: metric_name,
       app_name: app_name,

@@ -2,8 +2,8 @@
 
 require "datadog/statsd"
 
-class DataDogService
-  @statsd = Datadog::Statsd.new
+class MetricsService
+  @statsd = Datadog::Statsd.new # MetricsService::Statsd.new ?
 
   def self.increment_counter(metric_group:, metric_name:, app_name:, attrs: {}, by: 1)
     tags = get_tags(app_name, attrs)

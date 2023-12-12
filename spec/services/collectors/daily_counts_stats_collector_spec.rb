@@ -73,7 +73,7 @@ describe Collectors::DailyCountsStatsCollector do
       end
 
       it "records stats with tags" do
-        allow(DataDogService).to receive(:emit_gauge) { |args| emitted_gauges.push(args) }
+        allow(MetricsService).to receive(:emit_gauge) { |args| emitted_gauges.push(args) }
 
         slack_msg = []
         allow_any_instance_of(SlackService).to receive(:send_notification) { |_, first_arg| slack_msg << first_arg }
