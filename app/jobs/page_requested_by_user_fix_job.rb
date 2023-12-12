@@ -26,6 +26,7 @@ class PageRequestedByUserFixJob < CaseflowJob
     "Page requested by the user is unavailable"
   end
 
+  # :reek:FeatureEnvy
   def loop_through_and_call_process_records
     records_with_errors.each do |bge|
       next if bge.end_product_establishment.nil? || bge.end_product_establishment.established_at.blank?

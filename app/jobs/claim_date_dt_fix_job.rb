@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class ClaimDateDtFixJob < CaseflowJob
-
   def initialize
     @stuck_job_report_service = StuckJobReportService.new
     @start_time = nil

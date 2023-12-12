@@ -25,6 +25,7 @@ class DtaScCreationFailedFixJob < CaseflowJob
     log_processing_time
   end
 
+  # :reek:FeatureEnvy
   def loop_through_and_call_process_records
     records_with_errors.each do |hlr|
       next unless SupplementalClaim.find_by(

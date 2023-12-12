@@ -19,11 +19,13 @@ class StuckJobSchedulerJob < CaseflowJob
   def initialize
     @stuck_job_report_service = StuckJobReportService.new
     @count = 0
+    @start_time = nil
+    @end_time = nil
     super
   end
 
   def perform
-    @start_time = Time.zone.now
+    start_time
     scheduler_job = self.class.to_s
 
     # Remove initial string from reporter
@@ -42,11 +44,11 @@ class StuckJobSchedulerJob < CaseflowJob
     slack_service.send_notification(msg, self.class.to_s)
 
     # Send report logs to AWS S3
-    @end_time = Time.zone.now
+    end_time
     log_processing_time
 
     @stuck_job_report_service.append_scheduler_job_data(scheduler_job, @count, log_processing_time)
-    binding.pry
+    # binding.pry
     @stuck_job_report_service.write_log_report(REPORT_TEXT)
   end
 
@@ -56,6 +58,7 @@ class StuckJobSchedulerJob < CaseflowJob
     end
   end
 
+  # :reek:FeatureEnvy
   def execute_stuck_job(stuck_job_class)
     job_instance = stuck_job_class.new
 
@@ -79,5 +82,13 @@ class StuckJobSchedulerJob < CaseflowJob
 
   def log_processing_time
     (@end_time && @start_time) ? @end_time - @start_time : 0
+  end
+
+  def start_time
+    @start_time ||= Time.zone.now
+  end
+
+  def end_time
+    @end_time ||= Time.zone.now
   end
 end
