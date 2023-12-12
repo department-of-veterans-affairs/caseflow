@@ -510,7 +510,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
       "VLJ in #{vljs_strings.join}"
     else
-      ""
+      "VLJ = 'false'"
     end
   end
 end
