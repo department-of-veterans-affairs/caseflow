@@ -10,6 +10,11 @@ import { setUnrelatedTasks } from '../../correspondenceReducer/correspondenceAct
 import { useHistory, useLocation } from 'react-router-dom';
 import { ConfirmCorrespondenceView } from './ConfirmCorrespondence/ConfirmCorrespondenceView';
 import { SubmitCorrespondenceModal } from './ConfirmCorrespondence/SubmitCorrespondenceModal';
+import Alert from 'app/components/Alert';
+import {
+  CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TITLE,
+  CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TEXT
+} from '../../../../../COPY';
 
 const progressBarSections = [
   {
@@ -31,6 +36,7 @@ export const CorrespondenceIntake = (props) => {
   const [isContinueEnabled, setContinueEnabled] = useState(true);
   const [addTasksVisible, setAddTasksVisible] = useState(false);
   const [submitCorrespondenceModalVisible, setSubmitCorrespondenceModalVisible] = useState(false);
+  const [errorBannerVisible, setErrorBannerVisible] = useState(false);
   const { pathname, hash, key } = useLocation();
   const history = useHistory();
   // For hash routing - Add element id and which step it lives on here
@@ -89,6 +95,11 @@ export const CorrespondenceIntake = (props) => {
   }, [pathname, hash, key]);
 
   return <div>
+    { errorBannerVisible &&
+      <Alert title={CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TITLE} type="error">
+        {CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TEXT}
+      </Alert>
+    }
     <ProgressBar
       sections={sections}
       classNames={['cf-progress-bar', 'cf-']}
@@ -159,6 +170,7 @@ export const CorrespondenceIntake = (props) => {
       {currentStep === 3 && submitCorrespondenceModalVisible &&
         <SubmitCorrespondenceModal
           setSubmitCorrespondenceModalVisible={setSubmitCorrespondenceModalVisible}
+          setErrorBannerVisible={setErrorBannerVisible}
         />
       }
     </div>
@@ -169,11 +181,11 @@ CorrespondenceIntake.propTypes = {
   correspondence_uuid: PropTypes.string,
   currentCorrespondence: PropTypes.object,
   veteranInformation: PropTypes.object,
+  toggledCorrespondences: PropTypes.array,
+  correspondences: PropTypes.array,
   unrelatedTasks: PropTypes.arrayOf(Object),
   setUnrelatedTasks: PropTypes.func,
   mailTasks: PropTypes.objectOf(PropTypes.bool),
-  toggledCorrespondences: PropTypes.arrayOf(Object),
-  correspondences: PropTypes.arrayOf(Object),
   autoTexts: PropTypes.arrayOf(PropTypes.string)
 };
 
