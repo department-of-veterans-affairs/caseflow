@@ -5,6 +5,8 @@ class NoAvailableModifiersFixJob < CaseflowJob
 
   def initialize
     @stuck_job_report_service = StuckJobReportService.new
+    @start_time = nil
+    @end_time = nil
     super
   end
 
