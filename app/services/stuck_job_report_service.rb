@@ -15,11 +15,11 @@ class StuckJobReportService
     @logs = ["#{Time.zone.now} ********** Remediation Log Report **********"]
     @folder_name = (Rails.deploy_env == :prod) ? S3_FOLDER_NAME : "#{S3_FOLDER_NAME}-#{Rails.deploy_env}"
     # Initialize column width for: ** Stuck Job Scheduler Report Table **
-    @colomn_widths = {
+    @column_widths = {
       date: 10,
-      job_name: 30,
-      record_count_before: 20,
-      record_count_after: 20,
+      job_name: 29,
+      record_count_before: 19,
+      record_count_after: 18,
       processing_time: 15
     }
   end
@@ -54,24 +54,28 @@ class StuckJobReportService
   def append_job_to_log_table(job_name, record_count_before, record_count_after, processing_time)
     timestamp = Time.zone.now.strftime('%Y-%m-%d')
 
+    job_name = job_name.to_s
+    record_count_before_str = record_count_before.to_s
+    record_count_after_str = record_count_after.to_s
+    processing_time = processing_time.to_s
 
-    update_column_width(:date, formatted_date)
-    update_column_width(:job_name, job_name.to_s)
-    update_column_width(:record_count_before, record_count_before.to_s)
-    update_column_width(:record_count_after, record_count_after.to_s)
-    update_column_width(:processing_time, processing_time.to_s)
-
-    entry = "#{formatted_date} | #{job_name.ljust(@column_widths[:job_name])} | #{record_count_before.to_s.rjust(@column_widths[:record_count_before])} | #{record_count_after.to_s.rjust(@column_widths[:record_count_after])} | #{execution_time} sec"
-
+    entry = "#{timestamp} | #{job_name.ljust(@column_widths[:job_name])} | #{record_count_before.to_s.rjust(@column_widths[:record_count_before])} | #{record_count_after.to_s.rjust(@column_widths[:record_count_after])} | #{processing_time} sec\n"
     logs.push(entry)
   end
 
-  def header_string
-    header = "Date       | Job Name                      | Record Count Before | Record Count After | Execution Time"
-    @logs.push(header)
+  def append_scheduler_job_data(job_name, count, processing_time)
+    timestamp = Time.zone.now.strftime('%Y-%m-%d')
+
+    entry = "\n\n#{timestamp} | The #{seperate_camel_case(job_name)} cleared #{count} records in #{processing_time}."
+    logs.push(entry)
   end
 
-  def update_column_width(column, value)
-    @colomn_widths[column] = value.length if value.length > @colomn_widths[column]
+  def seperate_camel_case(str)
+    str.gsub(/([a-z])([A-Z])/, '\1 \2')
+  end
+
+  def header_string
+    header = "Date       | Job Name                      | Record Count Before | Record Count After | Execution Time\n"
+    @logs.push(header)
   end
 end
