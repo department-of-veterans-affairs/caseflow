@@ -21,6 +21,10 @@ const CheckboxModal = (props) => {
     setToggledCheckboxes(checkboxes);
   };
 
+  const handleClear = () => {
+    setToggledCheckboxes([]);
+  };
+
   const checkboxSizeStyling = css({
     transform: 'scale(1.3)',
     translate: '11%',
@@ -50,6 +54,13 @@ const CheckboxModal = (props) => {
           onClick: () => props.handleAccept(toggledCheckBoxes),
           disabled: toggledCheckBoxes.length === 0,
         },
+        {
+          id: 'clear-checkboxes-button',
+          classNames: ['usa-button', 'usa-button-secondary', 'cf-margin-left-2rem'],
+          name: 'Clear all',
+          onClick: handleClear,
+          disabled: false,
+        }
       ]}>
       <div style={{
         display: 'flex',
