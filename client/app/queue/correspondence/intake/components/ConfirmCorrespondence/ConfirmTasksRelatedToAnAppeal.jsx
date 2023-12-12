@@ -5,9 +5,6 @@ import LinkToAppeal from '../../../../../hearings/components/assignHearings/Link
 import DocketTypeBadge from '../../../../../components/DocketTypeBadge';
 import { ExternalLinkIcon } from '../../../../../components/icons/ExternalLinkIcon';
 import PropTypes from 'prop-types';
-import { marginBottom, marginTop } from '../../../../constants';
-
-const styling = { backgroundColor: COLORS.GREY_BACKGROUND, border: 'none' };
 
 const borderlessTd = {
   borderTop: 'none',
@@ -15,22 +12,45 @@ const borderlessTd = {
   backgroundColor: COLORS.GREY_BACKGROUND,
 };
 
-
-
 const ConfirmTasksRelatedToAnAppeal = () => {
   const tasks = useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks);
   const taskIds = useSelector((state) => state.intakeCorrespondence.taskRelatedAppealIds);
   const fetchedAppeals = useSelector((state) => state.intakeCorrespondence.fetchedAppeals);
+  const waivedEvidenceTasks = useSelector((state) => state.intakeCorrespondence.waivedEvidenceTasks);
+
   const rowObjects = taskIds.map((task, index) => {
+    const evidenceSubmission = (fetchedAppeals.find((appeal) => appeal.id === task).evidenceSubmissionTask);
+    const waivedEvidenceTask = (waivedEvidenceTasks.find((waivedEvTask) => waivedEvTask.id === evidenceSubmission.id));
+
+    const formatDocketName = () => {
+      let unformattedText = fetchedAppeals.find((appeal) => appeal.id === task).docketName;
+
+      unformattedText = unformattedText.replace('_', ' ');
+
+      // Capitalize the first character of each string
+      const formattedText = unformattedText.split(' ').map((text) =>
+        text.charAt(0).toUpperCase() + text.slice(1)).
+        join(' ').
+        trim();
+
+      return formattedText;
+    };
+
+    const getYesOrNo = () => {
+      if (waivedEvidenceTask === null) {
+        return waivedEvidenceTask.isWaived ? 'No' : 'Yes';
+      }
+    };
+
     return (
       <>
         <tr>
-          <td colSpan={1} style={{...borderlessTd, ...{paddingBottom:'0px'}}}>
-            <h3 style={{lineHeight:'10%'}}>Appeal {index + 1} Tasks</h3>
+          <td colSpan={1} style={{ ...borderlessTd, ...{ paddingBottom: '0px' } }}>
+            <h3 style={{ lineHeight: '10%' }}>Appeal {index + 1} Tasks</h3>
           </td>
         </tr>
-        <tr rowSpan='4'>
-          <td colSpan='1' style={{ ...borderlessTd, ...{ paddingBottom: '10px' } }}>
+        <tr rowSpan="4">
+          <td colSpan="1" style={{ ...borderlessTd, ...{ paddingBottom: '10px' } }}>
             <b style={{ marginTop: '40px' }}>Linked appeal</b>
           </td>
           <td style={borderlessTd}>
@@ -43,7 +63,7 @@ const ConfirmTasksRelatedToAnAppeal = () => {
             <b>Assigned To</b>
           </td>
         </tr>
-        <tr colSpan='100%'>
+        <tr>
           <td style={borderlessTd}>
             <div style={{ width: 'fit-content',
               padding: '3px',
@@ -57,9 +77,10 @@ const ConfirmTasksRelatedToAnAppeal = () => {
               </LinkToAppeal>
             </div>
           </td>
-          <td style={borderlessTd}>hi</td>
-          <td style={borderlessTd}>hi</td>
-          <td style={borderlessTd}>hi</td>
+          <td style={borderlessTd}>{formatDocketName()}</td>
+          <td style={borderlessTd}>{getYesOrNo()} {waivedEvidenceTask === null ? 'No' :
+           `Yes- ${waivedEvidenceTask.waiveReason}`}</td>
+          <td style={borderlessTd}>{evidenceSubmission.assigned_to_type}</td>
         </tr>
         <tr colSpan="100%">
         </tr>
