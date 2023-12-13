@@ -23,23 +23,36 @@ const ConfirmTasksRelatedToAnAppeal = () => {
     const waivedEvidenceTask = (waivedEvidenceTasks.find((waivedEvTask) => waivedEvTask.id === evidenceSubmission.id));
 
     const formatDocketName = () => {
-      let unformattedText = fetchedAppeals.find((appeal) => appeal.id === task).docketName;
+      const currentAppeal = fetchedAppeals.find((appeal) => appeal.id === task);
 
-      unformattedText = unformattedText.replace('_', ' ');
+      if (currentAppeal && evidenceSubmission) {
+        let unformattedText = currentAppeal.docketName;
 
-      // Capitalize the first character of each string
-      const formattedText = unformattedText.split(' ').map((text) =>
-        text.charAt(0).toUpperCase() + text.slice(1)).
-        join(' ').
-        trim();
+        unformattedText = unformattedText.replace('_', ' ');
 
-      return formattedText;
+        // Capitalize the first character of each string
+        const formattedText = unformattedText.split(' ').map((text) =>
+          text.charAt(0).toUpperCase() + text.slice(1)).
+          join(' ').
+          trim();
+
+        return formattedText;
+      }
+
+      return '';
     };
 
+    // Handles what to display for EvidenceW Window Waived? column
     const getYesOrNo = () => {
-      if (waivedEvidenceTask === null) {
-        return waivedEvidenceTask.isWaived ? 'No' : 'Yes';
+      if (waivedEvidenceTask) {
+        return `Yes - ${waivedEvidenceTask.waiveReason}`;
       }
+
+      if (evidenceSubmission) {
+        return 'No';
+      }
+
+      return '';
     };
 
     return (
@@ -54,13 +67,13 @@ const ConfirmTasksRelatedToAnAppeal = () => {
             <b style={{ marginTop: '40px' }}>Linked Appeal</b>
           </td>
           <td style={borderlessTd}>
-            <b>Currently Active Task</b>
+            <b>{evidenceSubmission && "Currently Active Task"}</b>
           </td>
           <td style={borderlessTd}>
-            <b>Evidence Window Waived?</b>
+            <b>{evidenceSubmission && "Evidence Window Waived?"}</b>
           </td>
           <td style={borderlessTd}>
-            <b>Assigned To</b>
+            <b>{evidenceSubmission && "Assigned To"}</b>
           </td>
         </tr>
         <tr>
@@ -79,9 +92,8 @@ const ConfirmTasksRelatedToAnAppeal = () => {
             </div>
           </td>
           <td style={borderlessTd}>{formatDocketName()}</td>
-          <td style={borderlessTd}>{getYesOrNo()} {waivedEvidenceTask ?
-           `Yes- ${waivedEvidenceTask.waiveReason}` : 'No'}</td>
-          <td style={borderlessTd}>{evidenceSubmission.assigned_to_type}</td>
+          <td style={borderlessTd}>{getYesOrNo()}</td>
+          <td style={borderlessTd}>{evidenceSubmission ? evidenceSubmission.assigned_to_type : ''}</td>
         </tr>
         <tr>
           <td
