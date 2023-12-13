@@ -26,6 +26,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [apiResponse, setApiResponse] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [selectedId, setSelectedId] = useState(0);
 
   const history = useHistory();
@@ -90,9 +91,9 @@ export const CorrespondenceReviewPackage = (props) => {
       const hasChanged = isEditableDataChanged();
 
       setDisableButton(hasChanged);
+      setErrorMessage('');
     }
   }, [editableData, apiResponse]);
-
   const intakeLink = `/queue/correspondence/${props.correspondence_uuid}/intake`;
 
   return (
@@ -113,7 +114,9 @@ export const CorrespondenceReviewPackage = (props) => {
             fetchData,
             showModal,
             handleModalClose,
-            handleReview
+            handleReview,
+            errorMessage,
+            setErrorMessage
           }}
           {...props}
         />
@@ -134,6 +137,7 @@ export const CorrespondenceReviewPackage = (props) => {
             styling={{ style: { marginRight: '2rem' } }}
             classNames={['usa-button-secondary']}
             onClick={intakeAppeal}
+            disabled={disableButton}
           />
           <a href={intakeLink}>
             {/* hard coded UUID to link to multi_correspondence.rb data */}
@@ -141,6 +145,7 @@ export const CorrespondenceReviewPackage = (props) => {
               name="Create record"
               classNames={['usa-button-primary']}
               href={intakeLink}
+              disabled={disableButton}
             />
           </a>
         </div>
