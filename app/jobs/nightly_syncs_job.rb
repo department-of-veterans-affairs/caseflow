@@ -24,7 +24,7 @@ class NightlySyncsJob < CaseflowJob
   def sync_vacols_users
     user_cache_start = Time.zone.now
     CachedUser.sync_from_vacols
-    metrics_services_report_time_segment(segment: "sync_users_from_vacols", start_time: user_cache_start)
+    metrics_service_report_time_segment(segment: "sync_users_from_vacols", start_time: user_cache_start)
   rescue StandardError => error
     @slack_report << "*Fatal error in sync_vacols_users:* #{error}"
   end
@@ -54,7 +54,7 @@ class NightlySyncsJob < CaseflowJob
     if vacols_cases_with_error.any?
       @slack_report.unshift("VACOLS cases which cannot be deleted by sync_vacols_cases: #{vacols_cases_with_error}")
     end
-    metrics_services_report_time_segment(segment: "sync_cases_from_vacols", start_time: start_time)
+    metrics_service_report_time_segment(segment: "sync_cases_from_vacols", start_time: start_time)
   rescue StandardError => error
     @slack_report << "*Fatal error in sync_vacols_cases:* #{error}"
   end
@@ -78,7 +78,7 @@ class NightlySyncsJob < CaseflowJob
   def sync_bgs_attorneys
     start_time = Time.zone.now
     BgsAttorney.sync_bgs_attorneys
-    metrics_services_report_time_segment(segment: "sync_bgs_attorneys", start_time: start_time)
+    metrics_service_report_time_segment(segment: "sync_bgs_attorneys", start_time: start_time)
   rescue StandardError => error
     @slack_report << "*Fatal error in sync_bgs_attorneys:* #{error}"
   end
