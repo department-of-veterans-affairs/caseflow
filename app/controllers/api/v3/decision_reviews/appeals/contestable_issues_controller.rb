@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "#{Rails.root}/app/serializers/api/v3/*"
 
 module Api
   module V3
