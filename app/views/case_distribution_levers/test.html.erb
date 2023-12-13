@@ -97,4 +97,29 @@
     <%= button_to 'Create Organization', create_acd_group_org_singleton_case_distribution_levers_tests_path, method: :post %>
 <% end %>
 
+<h2> Case Distribution Algorithm Logs </h2>
+  <table>
+    <thead>
+      <tr>
+        <td> Script Name </td>
+        <td> Levers </td>
+        <td> Starting Distribution ID </td>
+        <td> Ending Distribution ID </td>
+        <td> Start Case ID </td>
+        <td> End Case ID </td>
+      </tr>
+    </thead>
+    <tbody>
+      <% @acd_algorithm_history.each do |entry| %>
+        <tr>
+          <td> <%= entry.script_name %> </td>
+          <td> <%= entry.levers %> </td>
+          <td> <%= entry.starting_distribution_id %> </td>
+          <td> <%= entry.ending_distribution_id %> </td>
+          <td> <%= entry.starting_case_id %> </td>
+          <td> <%= entry.ending_case_id %> </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 

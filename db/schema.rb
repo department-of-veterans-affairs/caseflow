@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_11_06_212732) do
+ActiveRecord::Schema.define(version: 2023_12_13_044932) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 2023_11_06_212732) do
     t.boolean "appeal_docketed", default: false, null: false, comment: "When true, appeal has been docketed"
     t.bigint "appeal_id", null: false, comment: "AMA or Legacy Appeal ID"
     t.string "appeal_type", null: false, comment: "Appeal Type (Appeal or LegacyAppeal)"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", null: false, comment: "Date and Time the record was inserted into the table"
     t.bigint "created_by_id", null: false, comment: "User id of the user that inserted the record"
     t.boolean "decision_mailed", default: false, null: false, comment: "When true, appeal has decision mail request complete"
     t.boolean "hearing_postponed", default: false, null: false, comment: "When true, appeal has hearing postponed and no hearings scheduled"
@@ -100,7 +100,7 @@ ActiveRecord::Schema.define(version: 2023_11_06_212732) do
     t.boolean "privacy_act_complete", default: false, null: false, comment: "When true, appeal has a privacy act request completed"
     t.boolean "privacy_act_pending", default: false, null: false, comment: "When true, appeal has a privacy act request still open"
     t.boolean "scheduled_in_error", default: false, null: false, comment: "When true, hearing was scheduled in error and none scheduled"
-    t.datetime "updated_at"
+    t.datetime "updated_at", comment: "Date and time the record was last updated"
     t.bigint "updated_by_id", comment: "User id of the last user that updated the record"
     t.boolean "vso_ihp_complete", default: false, null: false, comment: "When true, appeal has a VSO IHP request completed"
     t.boolean "vso_ihp_pending", default: false, null: false, comment: "When true, appeal has a VSO IHP request pending"
@@ -343,6 +343,17 @@ ActiveRecord::Schema.define(version: 2023_11_06_212732) do
     t.datetime "updated_at", null: false
     t.index ["sdomainid"], name: "index_cached_user_attributes_on_sdomainid", unique: true
     t.index ["updated_at"], name: "index_cached_user_attributes_on_updated_at"
+  end
+
+  create_table "case_distribution_algorithm_logs", comment: "A generalized table for Case Distribution algorithm logs records within caseflow", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "ending_case_id", comment: "Indicates the ending case id"
+    t.integer "ending_distribution_id", comment: "Indicates the ending distribution id"
+    t.json "levers", comment: "Indicates the Levers information from the CaseDistributionLevers table"
+    t.string "script_name", comment: "Indicates the script name that was run"
+    t.string "starting_case_id", comment: "Indicates the starting case id"
+    t.integer "starting_distribution_id", comment: "Indicates the starting distribution id"
+    t.datetime "updated_at", null: false
   end
 
   create_table "case_distribution_audit_lever_entries", comment: "A generalized table for Case Distribution audit lever records within caseflow", force: :cascade do |t|
@@ -2236,7 +2247,6 @@ ActiveRecord::Schema.define(version: 2023_11_06_212732) do
   add_foreign_key "membership_requests", "users", column: "decider_id"
   add_foreign_key "membership_requests", "users", column: "requestor_id"
   add_foreign_key "messages", "users"
-  add_foreign_key "metrics", "users"
   add_foreign_key "mpi_update_person_events", "api_keys"
   add_foreign_key "nod_date_updates", "appeals"
   add_foreign_key "nod_date_updates", "users"
