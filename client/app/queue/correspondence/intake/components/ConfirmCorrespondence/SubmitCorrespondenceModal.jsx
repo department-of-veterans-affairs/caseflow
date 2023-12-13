@@ -12,6 +12,7 @@ export const SubmitCorrespondenceModal = ({ setSubmitCorrespondenceModalVisible,
 
   const correspondence = useSelector((state) => state.intakeCorrespondence.currentCorrespondence);
   const relatedCorrespondences = useSelector((state) => state.intakeCorrespondence.relatedCorrespondences);
+  const waivedEvidenceTasks = useSelector((state) => state.intakeCorrespondence.waivedEvidenceTasks);
   const [loading, setLoading] = useState(false);
 
   const onCancel = () => {
@@ -29,8 +30,12 @@ export const SubmitCorrespondenceModal = ({ setSubmitCorrespondenceModalVisible,
 
   const onSubmit = async() => {
     const relatedUuids = relatedCorrespondences.map((corr) => corr.uuid);
+    const serializedWaivedEvidenceTasks = waivedEvidenceTasks.map((task) => (
+      { task_id: task.id, waive_reason: task.waiveReason }
+    ));
     const submitData = {
-      related_correspondence_uuids: relatedUuids
+      related_correspondence_uuids: relatedUuids,
+      waived_evidence_submission_window_tasks: serializedWaivedEvidenceTasks
     };
 
     setLoading(true);
