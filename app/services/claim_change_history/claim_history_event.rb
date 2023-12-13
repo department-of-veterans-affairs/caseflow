@@ -146,7 +146,7 @@ class ClaimHistoryEvent
       created_events = []
 
       request_issue_ids.each do |request_issue_id|
-        issue_data = retrieve_issue_data(request_issue_id)
+        issue_data = retrieve_issue_data(request_issue_id, change_data)
 
         unless issue_data
           Rails.logger.error("No request issue found during change history generation for id: #{request_issue_id}")
@@ -190,7 +190,11 @@ class ClaimHistoryEvent
 
     private
 
-    def retrieve_issue_data(request_issue_id)
+    def retrieve_issue_data(request_issue_id, change_data)
+      # If the request issue id is the same as the database row that is being parsed, then skip the database fetch
+      return {} if change_data["request_issue_id"] == request_issue_id
+
+      # Manually try to fetch the request issue from the database
       request_issue = RequestIssue.find_by(id: request_issue_id)
 
       if request_issue
