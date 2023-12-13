@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require "#{Root.rails}/app/serializers/api/v3/higher_level_review_serializer.rb"
+require "#{Rails.root}/app/serializers/api/v3/higher_level_review_serializer.rb"
 
 class Api::V3::DecisionReviews::HigherLevelReviewsController < Api::V3::BaseController
   include ApiV3FeatureToggleConcern
