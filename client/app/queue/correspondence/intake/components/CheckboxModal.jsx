@@ -30,9 +30,6 @@ const CheckboxModal = (props) => {
     translate: '11%',
   });
 
-  // const testTyle = {backgroundColor: 'red'}
-
-  // console.log(props);
   return (
     <Modal
       id="autotextModal"

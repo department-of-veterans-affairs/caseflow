@@ -97,6 +97,10 @@ const AddTaskView = (props) => {
   const handleAutotext = (autoTextValues) => {
     let autoTextOutput = '';
 
+    if (task.content) {
+      autoTextOutput = task.content;
+    }
+
     if (autoTextValues.length > 0) {
       autoTextValues.forEach((id) => {
         autoTextOutput += `${props.autoTexts[id] }\n`;
