@@ -67,13 +67,13 @@ const ConfirmTasksRelatedToAnAppeal = () => {
             <b style={{ marginTop: '40px' }}>Linked Appeal</b>
           </td>
           <td style={borderlessTd}>
-            <b>{evidenceSubmission && "Currently Active Task"}</b>
+            <b>{evidenceSubmission && 'Currently Active Task'}</b>
           </td>
           <td style={borderlessTd}>
-            <b>{evidenceSubmission && "Evidence Window Waived?"}</b>
+            <b>{evidenceSubmission && 'Evidence Window Waived?'}</b>
           </td>
           <td style={borderlessTd}>
-            <b>{evidenceSubmission && "Assigned To"}</b>
+            <b>{evidenceSubmission && 'Assigned To'}</b>
           </td>
         </tr>
         <tr>
