@@ -364,7 +364,7 @@ class BaseHearingUpdateForm
       @virtual_hearing_created = true
     end
 
-    # Merge the hearing ID into the DataDog metrics
+    # Merge the hearing ID into the MetricsService metrics
     updated_metric_info = metrics_service_metric_info.merge(attrs: { hearing_id: hearing&.id })
 
     # Handle the status toggle of the virtual hearing

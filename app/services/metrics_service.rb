@@ -37,7 +37,8 @@ class MetricsService
       }
       MetricsService.emit_gauge(sent_to_info)
 
-      sent_to << Metric::LOG_SYSTEMS[:datadog] # :metrics_service ?
+      sent_to << Metric::LOG_SYSTEMS[:datadog]
+      sent_to << Metric::LOG_SYSTEMS[:dynatrace]
     end
 
     Rails.logger.info("FINISHED #{description}: #{stopwatch}")

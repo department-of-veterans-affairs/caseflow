@@ -5,7 +5,7 @@ class Metric < CaseflowRecord
   delegate :css_id, to: :user
 
   METRIC_TYPES = { error: "error", log: "log", performance: "performance", info: "info" }.freeze
-  LOG_SYSTEMS = { datadog: "datadog", rails_console: "rails_console", javascript_console: "javascript_console" }.freeze
+  LOG_SYSTEMS = { datadog: "datadog", dynatrace: "dynatrace", rails_console: "rails_console", javascript_console: "javascript_console" }.freeze
   PRODUCT_TYPES = {
     queue: "queue",
     hearings: "hearings",
