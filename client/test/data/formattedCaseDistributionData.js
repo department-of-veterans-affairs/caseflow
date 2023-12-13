@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
 /* eslint-disable max-len */
+import * as leverAttributes from "../../constants/LEVER_ATTRIBUTES";
 
 export const formattedHistory = [
   {
@@ -154,28 +155,28 @@ export const formattedLevers = [
     item: 'lever_8',
     title: 'AMA Hearing Case Affinity Days',
     description: 'For non-priority AMA Hearing cases, sets the number of days an AMA Hearing Case is tied to the judge that held the hearing.',
-    data_type: 'radio',
-    value: 'value',
+    data_type: leverAttributes.RADIO,
+    value: leverAttributes.VALUE,
     unit: 'days',
     options: [
       {
-        item: 'value',
+        item: leverAttributes.VALUE,
         data_type: 'number',
         value: 14,
         text: 'Attempt distribution to current judge for max of:',
         unit: 'days'
       },
       {
-        item: 'infinite',
+        item: leverAttributes.INFINITE,
         data_type: '',
-        value: 'infinite',
+        value: leverAttributes.INFINITE,
         text: 'Always distribute to current judge',
         unit: ''
       },
       {
-        item: 'omit',
+        item: leverAttributes.OMIT,
         data_type: '',
-        value: 'omit',
+        value: leverAttributes.OMIT,
         text: 'Omit variable from distribution rules',
         unit: ''
       }
@@ -192,28 +193,28 @@ export const formattedLevers = [
     item: 'lever_9',
     title: 'AMA Hearing Case AOD Affinity Days',
     description: 'Sets the number of days an AMA Hearing appeal that is also AOD will respect the affinity to the most-recent hearing judge before distributing the appeal to any available judge.',
-    data_type: 'radio',
-    value: 'value',
+    data_type: leverAttributes.RADIO,
+    value: leverAttributes.VALUE,
     unit: 'days',
     options: [
       {
-        item: 'value',
+        item: leverAttributes.VALUE,
         data_type: 'number',
         value: 14,
         text: 'Attempt distribution to current judge for max of:',
         unit: 'days'
       },
       {
-        item: 'infinite',
+        item: leverAttributes.INFINITE,
         data_type: '',
-        value: 'infinite',
+        value: leverAttributes.INFINITE,
         text: 'Always distribute to current judge',
         unit: ''
       },
       {
-        item: 'omit',
+        item: leverAttributes.OMIT,
         data_type: '',
-        value: 'omit',
+        value: leverAttributes.OMIT,
         text: 'Omit variable from distribution rules',
         unit: ''
       }
@@ -230,28 +231,28 @@ export const formattedLevers = [
     item: 'lever_10',
     title: 'CAVC Affinity Days*',
     description: 'Sets the number of days a case returned from CAVC respects the affinity to the judge who authored a decision before distributing the appeal to any available judge. This does not include Legacy CAVC Remand Appeals with a hearing held.',
-    data_type: 'radio',
-    value: 'value',
+    data_type: leverAttributes.RADIO,
+    value: leverAttributes.VALUE,
     unit: 'days',
     options: [
       {
-        item: 'value',
+        item: leverAttributes.VALUE,
         data_type: 'number',
         value: '21',
         text: 'Attempt distribution to current judge for max of:',
         unit: 'days'
       },
       {
-        item: 'infinite',
+        item: leverAttributes.INFINITE,
         data_type: '',
-        value: 'infinite',
+        value: leverAttributes.INFINITE,
         text: 'Always distribute to current judge',
         unit: ''
       },
       {
-        item: 'omit',
+        item: leverAttributes.OMIT,
         data_type: '',
-        value: 'omit',
+        value: leverAttributes.OMIT,
         text: 'Omit variable from distribution rules',
         unit: ''
       }
@@ -268,28 +269,28 @@ export const formattedLevers = [
     item: 'lever_11',
     title: 'CAVC AOD Affinity Days',
     description: 'Sets the number of days appeals returned from CAVC that are also AOD respect the affinity to the deciding judge. This is not applicable for legacy apeals for which the deciding judge conducted the most recent hearing.',
-    data_type: 'radio',
-    value: 'value',
+    data_type: leverAttributes.RADIO,
+    value: leverAttributes.VALUE,
     unit: 'days',
     options: [
       {
-        item: 'value',
+        item: leverAttributes.VALUE,
         data_type: 'number',
         value: '21',
         text: 'Attempt distribution to current judge for max of:',
         unit: 'days'
       },
       {
-        item: 'infinite',
+        item: leverAttributes.INFINITE,
         data_type: '',
-        value: 'infinite',
+        value: leverAttributes.INFINITE,
         text: 'Always distribute to current judge',
         unit: ''
       },
       {
-        item: 'omit',
+        item: leverAttributes.OMIT,
         data_type: '',
-        value: 'omit',
+        value: leverAttributes.OMIT,
         text: 'Omit variable from distribution rules',
         unit: ''
       }
@@ -306,28 +307,28 @@ export const formattedLevers = [
     item: 'lever_12',
     title: 'AOJ Affinity Days',
     description: 'Sets the number of days an appeal respects the affinity to the deciding judge for Legacy AOJ Remand Returned appeals with no hearing held before distributing the appeal to any available judge.',
-    data_type: 'radio',
-    value: 'value',
+    data_type: leverAttributes.RADIO,
+    value: leverAttributes.VALUE,
     unit: 'days',
     options: [
       {
-        item: 'value',
+        item: leverAttributes.VALUE,
         data_type: 'number',
         value: 60,
         text: 'Attempt distribution to current judge for max of:',
         unit: 'days'
       },
       {
-        item: 'infinite',
+        item: leverAttributes.INFINITE,
         data_type: '',
-        value: 'infinite',
+        value: leverAttributes.INFINITE,
         text: 'Always distribute to current judge',
         unit: ''
       },
       {
-        item: 'omit',
+        item: leverAttributes.OMIT,
         data_type: '',
-        value: 'omit',
+        value: leverAttributes.OMIT,
         text: 'Omit variable from distribution rules',
         unit: ''
       }
@@ -344,28 +345,28 @@ export const formattedLevers = [
     item: 'lever_13',
     title: 'AOJ AOD Affinity Days',
     description: 'Sets the number of days legacy remand Returned appeals that are also AOD (and may or may not have been CAVC at one time) respect the affinity before distributing the appeal to any available jduge. Affects appeals with hearing held when the remanding judge is not the hearing judge, or any legacy AOD + AOD appeal with no hearing held (whether or not it had been CAVC at one time).',
-    data_type: 'radio',
-    value: 'value',
+    data_type: leverAttributes.RADIO,
+    value: leverAttributes.VALUE,
     unit: 'days',
     options: [
       {
-        item: 'value',
+        item: leverAttributes.VALUE,
         data_type: 'number',
         value: 14,
         text: 'Attempt distribution to current judge for max of:',
         unit: 'days'
       },
       {
-        item: 'infinite',
+        item: leverAttributes.INFINITE,
         data_type: '',
-        value: 'infinite',
+        value: leverAttributes.INFINITE,
         text: 'Always distribute to current judge',
         unit: ''
       },
       {
-        item: 'omit',
+        item: leverAttributes.OMIT,
         data_type: '',
-        value: 'omit',
+        value: leverAttributes.OMIT,
         text: 'Omit variable from distribution rules',
         unit: ''
       }
@@ -382,28 +383,28 @@ export const formattedLevers = [
     item: 'lever_14',
     title: 'AOJ CAVC Affinity Days',
     description: 'Sets the number of days AOJ appeals that were CAVC at some time respect the affinity before the appeal is distributed to any available judge. This applies to any AOJ + CAVC appeal with no hearing held, or those with a hearing held when the remanding judge is not the hearing judge.',
-    data_type: 'radio',
-    value: 'value',
+    data_type: leverAttributes.RADIO,
+    value: leverAttributes.VALUE,
     unit: 'days',
     options: [
       {
-        item: 'value',
+        item: leverAttributes.VALUE,
         data_type: 'number',
         value: 21,
         text: 'Attempt distribution to current judge for max of:',
         unit: 'days'
       },
       {
-        item: 'infinite',
+        item: leverAttributes.INFINITE,
         data_type: '',
-        value: 'infinite',
+        value: leverAttributes.INFINITE,
         text: 'Always distribute to current judge',
         unit: ''
       },
       {
-        item: 'omit',
+        item: leverAttributes.OMIT,
         data_type: '',
-        value: 'omit',
+        value: leverAttributes.OMIT,
         text: 'Omit variable from distribution rules',
         unit: ''
       }
@@ -420,7 +421,7 @@ export const formattedLevers = [
     item: 'lever_15',
     title: 'AMA Hearings',
     description: '',
-    data_type: 'combination',
+    data_type: leverAttributes.COMBO,
     value: 770,
     unit: 'days',
     options: [
@@ -444,7 +445,7 @@ export const formattedLevers = [
     item: 'lever_16',
     title: 'AMA Direct Review',
     description: '',
-    data_type: 'combination',
+    data_type: leverAttributes.COMBO,
     value: 365,
     unit: 'days',
     options: [
@@ -468,7 +469,7 @@ export const formattedLevers = [
     item: 'lever_17',
     title: 'AMA Evidence Submission',
     description: '',
-    data_type: 'combination',
+    data_type: leverAttributes.COMBO,
     value: 550,
     unit: 'days',
     options: [
