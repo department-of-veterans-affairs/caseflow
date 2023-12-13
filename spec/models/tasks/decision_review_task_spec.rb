@@ -125,7 +125,7 @@ describe DecisionReviewTask, :postgres do
           id: hlr.id.to_s,
           isLegacyAppeal: false,
           issueCount: 0,
-          activeRequestIssues: [],
+          activeOrDecidedRequestIssues: [],
           appellant_type: "VeteranClaimant",
           uuid: hlr.uuid
         },
@@ -169,7 +169,7 @@ describe DecisionReviewTask, :postgres do
             id: hlr.id.to_s,
             isLegacyAppeal: false,
             issueCount: 0,
-            activeRequestIssues: [],
+            activeOrDecidedRequestIssues: [],
             uuid: hlr.uuid,
             appellant_type: "VeteranClaimant"
           },
