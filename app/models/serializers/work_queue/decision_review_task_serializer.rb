@@ -72,7 +72,7 @@ class WorkQueue::DecisionReviewTaskSerializer
       uuid: decision_review(object).uuid,
       isLegacyAppeal: false,
       issueCount: issue_count(object),
-      activeRequestIssues: skip_acquiring_request_issues || request_issues(object).active.map(&:serialize),
+      activeRequestIssues: skip_acquiring_request_issues || request_issues(object).active_or_decided.map(&:serialize),
       appellant_type: decision_review(object).claimant&.type
     }
   end
