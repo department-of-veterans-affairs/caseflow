@@ -2,9 +2,10 @@
 
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState } from 'react';
 import COPY from 'app/../COPY';
 import Button from 'app/components/Button';
+import EditDocumentTypeModal from '../component/EditDocumentTypeModal';
 
 const cmpDocumentStyling = css({
   marginTop: '2%'
@@ -20,12 +21,23 @@ const paginationStyle = css({
 });
 
 export const CmpDocuments = (props) => {
-  const { documents, selectedId, setSelectedId } = props;
+  const { documents } = props;
+
+  const [selectedId, setSelectedId] = useState(0);
 
   const paginationText = `Viewing 1-${documents.length} out of ${documents.length} total documents`;
 
   const setCurrentDocument = (index) => {
     setSelectedId(index);
+  };
+
+  const [modalState, setModalState] = useState(false);
+
+  const openModal = () => {
+    setModalState(true);
+  };
+  const closeModal = () => {
+    setModalState(false);
   };
 
   return (
@@ -40,6 +52,15 @@ export const CmpDocuments = (props) => {
               <th className="cf-txt-c"> Action </th>
             </tr>
           </tbody>
+          {modalState &&
+            <EditDocumentTypeModal
+              modalState={modalState}
+              setModalState={setModalState}
+              onCancel={closeModal}
+              document={documents[selectedId]}
+              indexDoc={selectedId}
+            />
+          }
           { documents?.map((document, index) => {
             return (
               <tbody key={index}>
@@ -49,7 +70,12 @@ export const CmpDocuments = (props) => {
                   onClick={() => setCurrentDocument(index)}> {document?.document_title}
                   </td>
                   <td className="cf-txt-c">
-                    <Button linkStyling >
+                    <Button
+                      linkStyling
+                      onClick={() => {
+                        setCurrentDocument(index);
+                        openModal();
+                      }}>
                       <span>Edit</span>
                     </Button>
                   </td>
@@ -65,8 +91,6 @@ export const CmpDocuments = (props) => {
 
 CmpDocuments.propTypes = {
   documents: PropTypes.array,
-  setSelectedId: PropTypes.func,
-  selectedId: PropTypes.number
 };
 
 export default CmpDocuments;
