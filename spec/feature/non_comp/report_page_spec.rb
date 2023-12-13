@@ -97,8 +97,6 @@ feature "NonComp Report Page", :postgres do
 
       csv_file = change_history_csv_file
       number_of_rows = CSV.read(csv_file).length
-      # TODO: get more specific by checking some actual row content at some point
-      # Verify the filters at least
       expect(number_of_rows).to eq(6)
 
       # After submitting the form add one more condition and submit the form again
@@ -118,8 +116,6 @@ feature "NonComp Report Page", :postgres do
 
       csv_file = change_history_csv_file
       number_of_rows = CSV.read(csv_file).length
-      # TODO: get more specific by checking some actual row content at some point
-      # This personnel filter will not match so it should only be the filters row and the column headers row
       expect(number_of_rows).to eq(2)
     end
 
@@ -308,7 +304,6 @@ feature "NonComp Report Page", :postgres do
   end
 
   def clear_filters
-    # Clear the filters
     click_button "Clear filters"
     expect(page).to have_content("Select...")
     expect(page).to have_button("Generate task report", disabled: true)
@@ -316,7 +311,7 @@ feature "NonComp Report Page", :postgres do
 
   def change_history_csv_file
     # This time might have to be adjusted
-    sleep(2)
+    Kernel.sleep(2)
     # Copied from Capybara setup
     download_directory = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
     list_of_files = Dir.glob(File.join(download_directory, "*")).select { |f| File.file?(f) }

@@ -48,12 +48,6 @@ describe ChangeHistoryReporter do
   describe ".as_csv" do
     subject { reporter_object.as_csv }
 
-    let(:column_header_string) do
-      "\nVeteran File Number,Claimant,Task URL,Current Claim Status,Days Waiting," \
-      "Claim Type,Facility,Edit U...e Type,Issue Description,Prior Decision Date," \
-      "Disposition,Disposition Description,Disposition Date\n"
-    end
-
     it "returns a csv string with the column headers and the filters with no events" do
       rows = CSV.parse(subject)
       expect(rows.count).to eq(2)
