@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module CollectDataDogMetrics
+module CollectMetricsServiceMetrics
   extend ActiveSupport::Concern
 
   included do
@@ -19,9 +19,9 @@ module CollectDataDogMetrics
     dead = conns.count { |c| c.in_use? && !c.owner.alive? }
     idle = conns.count { |c| !c.in_use? }
 
-    emit_datadog_point("postgres", "active", active)
-    emit_datadog_point("postgres", "dead", dead)
-    emit_datadog_point("postgres", "idle", idle)
+    emit_metrics_service_point("postgres", "active", active)
+    emit_metrics_service_point("postgres", "dead", dead)
+    emit_metrics_service_point("postgres", "idle", idle)
   end
 
   def collect_vacols_metrics
@@ -31,13 +31,13 @@ module CollectDataDogMetrics
     dead = conns.count { |c| c.in_use? && !c.owner.alive? }
     idle = conns.count { |c| !c.in_use? }
 
-    emit_datadog_point("vacols", "active", active)
-    emit_datadog_point("vacols", "dead", dead)
-    emit_datadog_point("vacols", "idle", idle)
+    emit_metrics_service_point("vacols", "active", active)
+    emit_metrics_service_point("vacols", "dead", dead)
+    emit_metrics_service_point("vacols", "idle", idle)
   end
 
-  def emit_datadog_point(db_name, type, count)
-    DataDogService.emit_gauge(
+  def emit_metrics_service_point(db_name, type, count)
+    MetricsService.emit_gauge(
       metric_group: "database",
       metric_name: "#{type}_connections",
       metric_value: count,

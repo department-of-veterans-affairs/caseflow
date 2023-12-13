@@ -9,7 +9,7 @@ describe FetchEfolderDocumentCountJob do
 
     before do
       @emitted_gauges = []
-      allow(DataDogService).to receive(:emit_gauge) do |args|
+      allow(MetricsService).to receive(:emit_gauge) do |args|
         @emitted_gauges.push(args)
       end
     end

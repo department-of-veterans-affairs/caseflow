@@ -67,15 +67,15 @@ class Hearings::SendSentStatusEmail
   end
 
   def log(message)
-    log_to_datadog(message)
+    log_to_metrics_service(message)
     log_to_logger(message)
   end
 
-  def log_to_datadog(message)
+  def log_to_metrics_service(message)
     hearing = @sent_hearing_email_event.hearing
-    DataDogService.increment_counter(
-      app_name: Constants.DATADOG_METRICS.HEARINGS.APP_NAME,
-      metric_group: Constants.DATADOG_METRICS.HEARINGS.STATUS_EMAILS_GROUP_NAME,
+    MetricsService.increment_counter(
+      app_name: Constants.METRICS_SERVICE_METRICS.HEARINGS.APP_NAME,
+      metric_group: Constants.METRICS_SERVICE_METRICS.HEARINGS.STATUS_EMAILS_GROUP_NAME,
       metric_name: "emails.admin_emails",
       attrs: {
         message: message,

@@ -2,7 +2,7 @@
 
 class HealthChecksController < ActionController::Base
   include TrackRequestId
-  include CollectDataDogMetrics
+  include CollectMetricsServiceMetrics
 
   protect_from_forgery with: :exception
   newrelic_ignore_apdex

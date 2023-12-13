@@ -1,5 +1,5 @@
 unless Rails.env.test?
-  Datadog.configure do |c|
+  MetricsService.configure do |c|
     options = { analytics_enabled: true }
 
     c.analytics_enabled = true

@@ -41,10 +41,10 @@ describe HearingUpdateForm, :all_dbs do
         end
 
         it "sends an update event to datadog" do
-          expect(DataDogService).to receive(:increment_counter).with(
+          expect(MetricsService).to receive(:increment_counter).with(
             hash_including(
               metric_name: "updated_virtual_hearing.successful",
-              metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
+              metric_group: Constants.METRICS_SERVICE_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
               attrs: { hearing_id: hearing.id }
             )
           )
@@ -74,10 +74,10 @@ describe HearingUpdateForm, :all_dbs do
 
     context "creating a virtual hearing" do
       it "sends a create event to datadog" do
-        expect(DataDogService).to receive(:increment_counter).with(
+        expect(MetricsService).to receive(:increment_counter).with(
           hash_including(
             metric_name: "created_virtual_hearing.successful",
-            metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
+            metric_group: Constants.METRICS_SERVICE_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
             attrs: { hearing_id: hearing.id }
           )
         )
