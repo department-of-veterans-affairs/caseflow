@@ -11,13 +11,14 @@ import { decisionReviewTypeSchema } from './Conditions/DecisionReviewType';
 import { facilitySchema } from './Conditions/Facility';
 import { issueDispositionSchema } from './Conditions/IssueDisposition';
 import * as ERRORS from 'constants/REPORT_PAGE_VALIDATION_ERRORS';
+import { issueTypeSchema } from './Conditions/IssueType';
 
 const conditionOptionSchemas = {
   daysWaiting: daysWaitingSchema,
   decisionReviewType: decisionReviewTypeSchema,
   facility: facilitySchema,
   issueDisposition: issueDispositionSchema,
-  issueType: yup.object(),
+  issueType: issueTypeSchema,
   personnel: personnelSchema
 };
 

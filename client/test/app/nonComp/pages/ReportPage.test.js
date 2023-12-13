@@ -45,6 +45,7 @@ describe('ReportPage', () => {
 
   const clickOnReportType = async () => {
     setup({ nonComp: { businessLineUrl: 'vha' } });
+
     await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
   };
 
@@ -193,7 +194,6 @@ describe('ReportPage', () => {
     beforeEach(clickOnReportType);
 
     it('shows the correct checkbox fields', async () => {
-      setup();
       await navigateToConditionInput('Decision Review Type');
 
       expect(screen.getByText('Higher-Level Reviews')).toBeInTheDocument();
@@ -278,6 +278,52 @@ describe('ReportPage', () => {
 
       await checkForValidationText('Please select at least one option');
     });
+  });
+
+  describe('Issue Type Section', () => {
+    it('allows you to select multiple issue types', async () => {
+      await clickOnReportType();
+      await navigateToConditionInput('Issue Type');
+
+      const dropdown = screen.getByLabelText('Issue Type');
+
+      await selectEvent.select(dropdown, ['Clothing Allowance']);
+      expect(screen.getByText('Clothing Allowance')).toBeInTheDocument();
+
+      await selectEvent.select(dropdown, ['Beneficiary Travel']);
+      expect(screen.getByText('Clothing Allowance')).toBeInTheDocument();
+      expect(screen.getByText('Beneficiary Travel')).toBeInTheDocument();
+    });
+
+    it('passes a11y testing', async () => {
+      const { container } = setup();
+
+      await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
+
+      await navigateToConditionInput('Issue Type');
+
+      const results = await axe(container);
+
+      expect(results).toHaveNoViolations();
+    });
+
+    it('renders an error if no selection is made', async () => {
+      await clickOnReportType();
+      await navigateToConditionInput('Issue Type');
+
+      const generateTaskReport = screen.getByRole('button', { name: 'Generate task report' });
+
+      expect(generateTaskReport).not.toHaveClass('usa-button-disabled');
+
+      // Wait for the validation text to appear before making assertions
+      await fireEvent.click(generateTaskReport);
+      await waitFor(() => {
+        const validationText = screen.getByText('Please select at least one option');
+
+        expect(validationText).toBeInTheDocument();
+      });
+    });
+
   });
 
   it('should have Generate task Report button and Clear Filter button disabled on initial load', () => {
