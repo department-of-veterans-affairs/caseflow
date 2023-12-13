@@ -64,12 +64,16 @@ class CorrespondenceController < ApplicationController
   end
 
   def update
-    if veteran_by_correspondence.update(veteran_params) && correspondence.update(
-      correspondence_params.merge(updated_by_id: RequestStore.store[:current_user].id)
+    veteran = Veteran.find_by(file_number: veteran_params["file_number"])
+    if veteran && correspondence.update(
+      correspondence_params.merge(
+        veteran_id: veteran.id,
+        updated_by_id: RequestStore.store[:current_user].id
+      )
     )
       render json: { status: :ok }
     else
-      render json: { error: "Failed to update records" }, status: :unprocessable_entity
+      render json: { error: "Please enter a valid Veteran ID" }, status: :unprocessable_entity
     end
   end
 
@@ -143,6 +147,13 @@ class CorrespondenceController < ApplicationController
   
   def verify_correspondence_access
     return true if MailTeamSupervisor.singleton.user_has_access?(current_user) || MailTeam.singleton.user_has_access?(current_user)
+
+    redirect_to "/unauthorized"
+  end
+
+  def verify_correspondence_access
+    return true if MailTeamSupervisor.singleton.user_has_access?(current_user) ||
+                   MailTeam.singleton.user_has_access?(current_user)
 
     redirect_to "/unauthorized"
   end
