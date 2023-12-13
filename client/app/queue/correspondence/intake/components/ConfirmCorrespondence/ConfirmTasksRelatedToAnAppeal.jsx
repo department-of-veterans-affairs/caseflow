@@ -79,8 +79,8 @@ const ConfirmTasksRelatedToAnAppeal = () => {
             </div>
           </td>
           <td style={borderlessTd}>{formatDocketName()}</td>
-          { <td style={borderlessTd}>{getYesOrNo()} {waivedEvidenceTask ?
-           `Yes- ${waivedEvidenceTask.waiveReason}` : "No"}</td>  }
+          <td style={borderlessTd}>{getYesOrNo()} {waivedEvidenceTask ?
+           `Yes- ${waivedEvidenceTask.waiveReason}` : 'No'}</td>
           <td style={borderlessTd}>{evidenceSubmission.assigned_to_type}</td>
         </tr>
         <tr>
