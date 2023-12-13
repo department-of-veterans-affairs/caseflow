@@ -63,12 +63,16 @@ class CorrespondenceController < ApplicationController
   end
 
   def update
-    if veteran_by_correspondence.update(veteran_params) && correspondence.update(
-      correspondence_params.merge(updated_by_id: RequestStore.store[:current_user].id)
+    veteran = Veteran.find_by(file_number: veteran_params["file_number"])
+    if veteran && correspondence.update(
+      correspondence_params.merge(
+        veteran_id: veteran.id,
+        updated_by_id: RequestStore.store[:current_user].id
+      )
     )
       render json: { status: :ok }
     else
-      render json: { error: "Failed to update records" }, status: :unprocessable_entity
+      render json: { error: "Please enter a valid Veteran ID" }, status: :unprocessable_entity
     end
   end
 
@@ -80,9 +84,27 @@ class CorrespondenceController < ApplicationController
     render json: { status: 200, correspondence: correspondence }
   end
 
+  # :reek:UtilityFunction
   def vbms_document_types
     data = ExternalApi::ClaimEvidenceService.document_types
     data["documentTypes"].map { |document_type| { id: document_type["id"], name: document_type["name"] } }
+  end
+
+  def pdf
+    document = Document.find(params[:pdf_id])
+
+    document_disposition = "inline"
+    if params[:download]
+      document_disposition = "attachment; filename='#{params[:type]}-#{params[:id]}.pdf'"
+    end
+
+    # The line below enables document caching for a month.
+    expires_in 30.days, public: true
+    send_file(
+      document.serve,
+      type: "application/pdf",
+      disposition: document_disposition
+    )
   end
 
   def process_intake
@@ -92,13 +114,26 @@ class CorrespondenceController < ApplicationController
       rescue ActiveRecord::RecordInvalid
         render json: { error: "Failed to update records" }, status: :bad_request
         raise ActiveRecord::Rollback
+      rescue ActiveRecord::RecordNotUnique
+        render json: { error: "Failed to update records" }, status: :bad_request
+        raise ActiveRecord::Rollback
       else
+        set_flash_intake_success_message
         render json: {}, status: :created
       end
     end
   end
 
   private
+
+  def set_flash_intake_success_message
+    # intake error message is handled in client/app/queue/correspondence/intake/components/CorrespondenceIntake.jsx
+    vet = veteran_by_correspondence
+    flash[:correspondence_intake_success] = [
+          "You have successfully submitted a correspondence record for #{vet.name}(#{vet.file_number})",
+          "The mail package has been uploaded to the Veteran's eFolder as well."
+        ]
+  end
 
   def create_correspondence_relations
     params[:related_correspondence_uuids]&.map do |uuid|
