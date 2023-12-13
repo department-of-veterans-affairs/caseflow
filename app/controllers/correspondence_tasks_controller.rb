@@ -33,6 +33,8 @@ class CorrespondenceTasksController < TasksController
       RemovePackageTask
     when "mergePackage"
       MergePackageTask
+    when "splitPackage"
+      SplitPackageTask
     when "reassignPackage"
       ReassignPackageTask
     else

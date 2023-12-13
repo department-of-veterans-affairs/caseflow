@@ -24,6 +24,7 @@ const PackageActionModal = (props) => {
   const [textInputReason, setTextInputReason] = useState('');
   const [mergePackageReason, setMergePackageReason] = useState('');
   const [isOtherOption, setIsOtherOption] = useState(false);
+  const [radioValue, setRadioValue] = useState('');
 
   const rows = [
     {
@@ -42,6 +43,15 @@ const PackageActionModal = (props) => {
       value: 'other' }
   ];
 
+  const RadioOptions = [
+    { displayText: 'Package contains documents related to more than one person.',
+      value: 'Package contains documents related to more than one person.' },
+    { displayText: 'Package contains documents that must be processed by multiple business lines.',
+      value: 'Package contains documents that must be processed by multiple business lines.' },
+    { displayText: 'Other',
+      value: 'Other' }
+  ];
+
   // Disable submit button unless conditional input is met
   const disableSubmit = () => {
     switch (packageActionModal) {
@@ -52,9 +62,13 @@ const PackageActionModal = (props) => {
 
       return mergePackageReason === '';
     case 'removePackage':
-      return textInputReason === '';
     case 'reassignPackage':
       return textInputReason === '';
+    case 'splitPackage': {
+      const isRadioDisabled = radioValue === '' || radioValue === 'Other';
+
+      return isRadioDisabled ? textInputReason === '' : false;
+    }
     default:
       return true;
     }
@@ -68,6 +82,10 @@ const PackageActionModal = (props) => {
     }
   };
 
+  const onChange = (event) => {
+    setRadioValue(event);
+  };
+
   const submitHandler = async () => {
     const data = {
       correspondence_id: correspondence.id,
@@ -75,7 +93,17 @@ const PackageActionModal = (props) => {
       instructions: []
     };
 
-    if (isOtherOption || packageActionModal === 'removePackage' || packageActionModal === 'reassignPackage') {
+    if (radioValue && radioValue !== 'Other') {
+      data.instructions.push(radioValue);
+    }
+
+    if (
+      ( isOtherOption ||
+        packageActionModal === 'removePackage' ||
+        packageActionModal === 'reassignPackage' ||
+        packageActionModal === 'splitPackage') &&
+      textInputReason !== ''
+    ) {
       data.instructions.push(textInputReason);
     }
 
@@ -85,7 +113,11 @@ const PackageActionModal = (props) => {
         history.push('/queue/correspondence');
       }
     }
-    );
+    ).
+      catch(() => {
+        console.error('Review Package Action already exists');
+      });
+    setTextInputReason('');
   };
 
   return (
@@ -125,8 +157,15 @@ const PackageActionModal = (props) => {
           onChange={handleMergeReason}
         />
       }
-      {
-        (isOtherOption || packageActionModal === 'removePackage' || packageActionModal === 'reassignPackage') &&
+      {(packageActionModal === 'splitPackage') && <RadioField
+        name="Select a reason for splitting this package"
+        options={RadioOptions}
+        onChange={onChange}
+      />}
+      {(isOtherOption ||
+        packageActionModal === 'removePackage' ||
+        packageActionModal === 'reassignPackage' ||
+        radioValue === 'Other') && (
         <TextareaField
           label={modalInfo.label}
           name={modalInfo.label}
@@ -134,7 +173,7 @@ const PackageActionModal = (props) => {
           value={textInputReason}
           onChange={(value) => setTextInputReason(value)}
         />
-      }
+      )}
     </Modal>
   );
 };
