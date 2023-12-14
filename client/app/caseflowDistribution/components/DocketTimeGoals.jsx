@@ -126,23 +126,26 @@ const DocketTimeGoals = (props) => {
 
   const generateToggleSwitch = (distributionPriorLever, index, isAdmin) => {
 
-    if (isAdmin) {
-      let docketTimeGoalLever = '';
+    let docketTimeGoalLever = '';
 
-      if (index < docketTimeGoalLevers.length) {
-        docketTimeGoalLever = docketTimeGoalLevers[index];
-      }
+    if (index < docketTimeGoalLevers.length) {
+      docketTimeGoalLever = docketTimeGoalLevers[index];
+    }
+
+    if (isAdmin) {
 
       return (
 
-        <div className={cx(styles.activeLever,
-          distributionPriorLever.is_disabled && docketTimeGoalLever.is_disabled ? styles.leverDisabled : '')}
-        key={`${distributionPriorLever.item}-${index}`}
+        <div className={cx(styles.activeLever)}
+          key={`${distributionPriorLever.item}-${index}`}
         >
           <div className={cx(styles.leverLeft, styles.docketLeverLeft)}>
-            <strong>{index < props.sectionTitles.length ? props.sectionTitles[index] : ''}</strong>
+            <strong className={docketTimeGoalLever.is_disabled ? styles.leverDisabled : ''}>
+              {index < props.sectionTitles.length ? props.sectionTitles[index] : ''}
+            </strong>
           </div>
-          <div className={`${styles.leverMiddle} ${leverNumberDiv}`}>
+          <div className={`${styles.leverMiddle} ${leverNumberDiv}
+            ${docketTimeGoalLever.is_disabled ? styles.leverDisabled : styles.leverActive}}`}>
             <NumberField
               name={docketTimeGoalLever.item}
               isInteger
@@ -184,14 +187,20 @@ const DocketTimeGoals = (props) => {
         key={`${distributionPriorLever.item}-${index}`}
       >
         <div className={cx(styles.leverLeft, styles.docketLeverLeft)}>
-          <strong>{index < props.sectionTitles.length ? props.sectionTitles[index] : ''}</strong>
+          <strong className={docketTimeGoalLever.is_disabled ? styles.leverDisabled : ''}>
+            {index < props.sectionTitles.length ? props.sectionTitles[index] : ''}
+          </strong>
         </div>
         <div className={`${styles.leverMiddle} ${leverNumberDiv}`}>
-          <span className={`${styles.disabledText}`}>{distributionPriorLever.value} {distributionPriorLever.unit}</span>
+          <span className={docketTimeGoalLever.is_disabled ? styles.leverDisabled : styles.leverActive}>
+            {docketTimeGoalLever.value} {docketTimeGoalLever.unit}
+          </span>
         </div>
         <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
           <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
-            <span className={`${styles.disabledText}`}>{distributionPriorLever.is_active ? 'On' : 'Off'}</span>
+            <span className={distributionPriorLever.is_disabled ? styles.leverDisabled : styles.leverActive}>
+              {distributionPriorLever.is_active ? 'On' : 'Off'}
+            </span>
           </div>
         </div>
       </div>

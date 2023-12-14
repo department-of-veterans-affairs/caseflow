@@ -19,8 +19,8 @@ const StaticLeversWrapper = (props) => {
     <table className={styles.tableStyling}>
       <tbody>
         <tr>
-          <th className={styles.tableHeaderStyling}>Data Elements</th>
-          <th className={styles.tableHeaderStyling}>Values</th>
+          <th className={styles.tableHeaderStylingLeft}>Data Elements</th>
+          <th className={styles.tableHeaderStylingRight}>Values</th>
         </tr>
       </tbody>
       {WrapperList}
