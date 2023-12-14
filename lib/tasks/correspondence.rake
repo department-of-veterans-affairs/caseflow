@@ -1,5 +1,12 @@
 # frozen_string_literal: true
 
+require_relative "../../db/seeds/base"
+require_relative "../../db/seeds/correspondence"
+require_relative "../../db/seeds/vbms_document_types"
+require_relative "../../db/seeds/correspondence_types"
+require_relative "../../db/seeds/package_document_types"
+require_relative "../../db/seeds/multi_correspondences"
+
 namespace :correspondence do
   desc "setup data for intake correspondence (autotext and correspondence type)in UAT/PROD"
   task :setup_correspondence_data, [] => :environment do |_|
@@ -62,6 +69,13 @@ namespace :correspondence do
     correspondence_types_list.each do |type|
       CorrespondenceType.find_or_create_by(name: type)
     end
+
+    # REVIEW: package seed data
+    Seeds::Correspondence.new.seed! # create correspondence records
+    Seeds::VbmsDocumentTypes.new.seed! # create vbms_document_type records
+    Seeds::CorrespondenceTypes.new.seed! # create correspondence_type records
+    Seeds::PackageDocumentTypes.new.seed! # create package_document_type records
+    Seeds::MultiCorrespondences.new.seed! # create multi_correspondences records
   end
 
   desc "creates a 20 correspondence and correspondence_document for a veteran"
@@ -80,7 +94,7 @@ namespace :correspondence do
         va_date_of_receipt: Time.zone.yesterday,
         notes: "Notes from CMP - Multi Correspondence Seed",
         assigned_by_id: 81,
-        veteran_id: veteran.id,
+        veteran_id: veteran.id
       )
       CorrespondenceDocument.find_or_create_by(
         document_file_number: veteran.file_number,
