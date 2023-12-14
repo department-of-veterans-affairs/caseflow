@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
-  let(:correspondence) { create(:correspondence) }
-  let (:related_correspondence_uuids) do
+  let(:veteran) { create(:veteran) }
+  let(:correspondence) { create(:correspondence, veteran: veteran) }
+  let(:related_correspondence_uuids) do
     (1..3).map { create(:correspondence) }.pluck(:uuid)
   end
-  let(:veteran) { create(:veteran) }
   let(:valid_params) { { notes: "Updated notes", correspondence_type_id: 12 } }
   let(:new_file_number) { "50000005" }
   let(:current_user) { create(:user) }
@@ -18,7 +18,11 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
   end
 
   describe "GET #show" do
-    before { get :show, params: { correspondence_uuid: correspondence.uuid } }
+    before do
+      MailTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+      get :show, params: { correspondence_uuid: correspondence.uuid }
+    end
 
     it "returns a successful response" do
       expect(response).to have_http_status(:ok)
@@ -31,6 +35,21 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
       expect(correspondence_data["notes"]).to eq(correspondence.notes)
       expect(general_info["file_number"]).to eq(veteran.file_number)
       expect(general_info["correspondence_type_id"]).to eq(correspondence.correspondence_type_id)
+    end
+  end
+
+  describe "GET #show" do
+    it "returns an unauthorized response" do
+      get :show, params: { correspondence_uuid: correspondence.uuid }
+      expect(response.status).to eq 302
+      expect(response.body).to match(/unauthorized/)
+    end
+
+    it "returns a success response when current user is part of MailTeamSupervisor" do
+      MailTeamSupervisor.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+      get :show, params: { correspondence_uuid: correspondence.uuid }
+      expect(response).to have_http_status(:ok)
     end
   end
 
@@ -85,6 +104,7 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
   end
 
   describe "PATCH #update" do
+    let(:veteran) { create(:veteran, file_number: new_file_number) }
     before do
       MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
