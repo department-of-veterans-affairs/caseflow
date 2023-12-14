@@ -12,6 +12,12 @@ import { setFileNumberSearch, doFileNumberSearch } from '../../../intake/actions
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { useHistory } from 'react-router';
+import PackageActionModal from '../modals/PackageActionModal';
+import ReviewPackageNotificationBanner from './ReviewPackageNotificationBanner';
+import {
+  CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER,
+  CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE }
+  from '../../../../COPY';
 
 export const CorrespondenceReviewPackage = (props) => {
   const [reviewDetails, setReviewDetails] = useState({
@@ -27,7 +33,9 @@ export const CorrespondenceReviewPackage = (props) => {
   const [disableButton, setDisableButton] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [packageActionModal, setPackageActionModal] = useState(null);
   const [selectedId, setSelectedId] = useState(0);
+  const [bannerInformation, setBannerInformation] = useState(null);
 
   const history = useHistory();
   const fetchData = async () => {
@@ -64,6 +72,10 @@ export const CorrespondenceReviewPackage = (props) => {
     setShowModal(!showModal);
   };
 
+  const handlePackageActionModal = (value) => {
+    setPackageActionModal(value);
+  };
+
   const handleReview = () => {
     history.push('/queue/correspondence');
   };
@@ -78,6 +90,23 @@ export const CorrespondenceReviewPackage = (props) => {
 
   const intakeAppeal = async () => {
     props.setFileNumberSearch(editableData.veteran_file_number);
+
+    // try to upload correspondence documents to efolder
+    try {
+      await ApiUtil.post(`/queue/correspondence/${props.correspondence_uuid}/upload_documents`);
+    } catch (error) {
+      console.error(error);
+      setBannerInformation({
+        title: CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER,
+        message: CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE,
+        bannerType: 'error'
+      });
+
+      // do not go to intake if upload failed
+      return;
+    }
+
+    // start appeal 10182 intake process
     try {
       await props.doFileNumberSearch('appeal', editableData.veteran_file_number, true);
       window.location.href = '/intake/review_request';
@@ -97,60 +126,76 @@ export const CorrespondenceReviewPackage = (props) => {
   const intakeLink = `/queue/correspondence/${props.correspondence_uuid}/intake`;
 
   return (
-    <React.Fragment>
-      <AppSegment filledBackground>
-        <ReviewPackageCaseTitle />
-        <ReviewPackageData
-          correspondence={props.correspondence}
-          packageDocumentType={props.packageDocumentType} />
-        <ReviewForm
-          {...{
-            reviewDetails,
-            setReviewDetails,
-            editableData,
-            setEditableData,
-            disableButton,
-            setDisableButton,
-            fetchData,
-            showModal,
-            handleModalClose,
-            handleReview,
-            errorMessage,
-            setErrorMessage
-          }}
-          {...props}
+    <div>
+      { bannerInformation && (
+        <ReviewPackageNotificationBanner
+          title={bannerInformation.title}
+          message={bannerInformation.message}
+          type={bannerInformation.bannerType}
         />
-        <CmpDocuments documents={props.correspondenceDocuments} selectedId={selectedId} setSelectedId={setSelectedId} />
-        <CorrespondencePdfUI documents={props.correspondenceDocuments} selectedId={selectedId} />
-      </AppSegment>
-      <div className="cf-app-segment">
-        <div className="cf-push-left">
-          <Button
-            name="Cancel"
-            classNames={['cf-btn-link']}
-            onClick={handleModalClose}
+      )}
+      <React.Fragment>
+        <AppSegment filledBackground>
+          <ReviewPackageCaseTitle handlePackageActionModal={handlePackageActionModal} />
+          <ReviewPackageData
+            correspondence={props.correspondence}
+            packageDocumentType={props.packageDocumentType}
           />
-        </div>
-        <div className="cf-push-right">
-          <Button
-            name="Intake appeal"
-            styling={{ style: { marginRight: '2rem' } }}
-            classNames={['usa-button-secondary']}
-            onClick={intakeAppeal}
-            disabled={disableButton}
-          />
-          <a href={intakeLink}>
-            {/* hard coded UUID to link to multi_correspondence.rb data */}
-            <Button
-              name="Create record"
-              classNames={['usa-button-primary']}
-              href={intakeLink}
-              disabled={disableButton}
+          {packageActionModal &&
+            <PackageActionModal
+              packageActionModal={packageActionModal}
+              closeHandler={handlePackageActionModal}
             />
-          </a>
+          }
+          <ReviewForm
+            {...{
+              reviewDetails,
+              setReviewDetails,
+              editableData,
+              setEditableData,
+              disableButton,
+              setDisableButton,
+              fetchData,
+              showModal,
+              handleModalClose,
+              handleReview
+            }}
+            {...props}
+          />
+          <CmpDocuments
+            documents={props.correspondenceDocuments}
+            selectedId={selectedId}
+            setSelectedId={setSelectedId}
+          />
+          <CorrespondencePdfUI documents={props.correspondenceDocuments} selectedId={selectedId} />
+        </AppSegment>
+        <div className="cf-app-segment">
+          <div className="cf-push-left">
+            <Button
+              name="Cancel"
+              classNames={['cf-btn-link']}
+              onClick={handleModalClose}
+            />
+          </div>
+          <div className="cf-push-right">
+            <Button
+              name="Intake appeal"
+              styling={{ style: { marginRight: '2rem' } }}
+              classNames={['usa-button-secondary']}
+              onClick={intakeAppeal}
+            />
+            <a href={intakeLink}>
+              {/* hard coded UUID to link to multi_correspondence.rb data */}
+              <Button
+                name="Create record"
+                classNames={['usa-button-primary']}
+                href={intakeLink}
+              />
+            </a>
+          </div>
         </div>
-      </div>
-    </React.Fragment>
+      </React.Fragment>
+    </div>
   );
 };
 
@@ -159,6 +204,7 @@ CorrespondenceReviewPackage.propTypes = {
   correspondence: PropTypes.object,
   correspondenceDocuments: PropTypes.arrayOf(PropTypes.object),
   packageDocumentType: PropTypes.object,
+  veteranInformation: PropTypes.object,
   setFileNumberSearch: PropTypes.func,
   doFileNumberSearch: PropTypes.func
 };
@@ -166,7 +212,8 @@ CorrespondenceReviewPackage.propTypes = {
 const mapStateToProps = (state) => ({
   correspondence: state.reviewPackage.correspondence,
   correspondenceDocuments: state.reviewPackage.correspondenceDocuments,
-  packageDocumentType: state.reviewPackage.packageDocumentType
+  packageDocumentType: state.reviewPackage.packageDocumentType,
+  veteranInformation: state.reviewPackage.veteranInformation
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

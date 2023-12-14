@@ -1,0 +1,85 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            7c:f0:70:93:b1:7b:3a:52:d4:36:88:f0:c6:4e:ec:54
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN=VBMS Client Signing CA
+        Validity
+            Not Before: Apr 10 01:21:30 2018 GMT
+            Not After : Apr  7 01:21:30 2028 GMT
+        Subject: CN=vbms-internal.client.vbms.aide.oit.va.gov
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+            RSA Public Key: (2048 bit)
+                Modulus (2048 bit):
+                    00:c9:78:de:40:82:a5:f2:ee:51:ac:85:7b:c3:25:
+                    05:8c:f3:b6:0d:da:1c:67:76:8d:2b:80:33:b3:21:
+                    a2:3b:39:89:44:49:dc:4f:7e:36:6c:ac:df:69:5f:
+                    25:24:af:9b:35:c5:55:16:fe:78:b3:f8:a5:df:94:
+                    69:be:fe:1d:42:9b:33:8e:4a:df:dc:8b:1a:20:33:
+                    7b:3c:93:bf:76:9d:d1:26:a1:87:7b:5a:f6:8a:2f:
+                    17:a3:10:cd:7b:22:21:9b:63:05:4f:e1:47:77:d4:
+                    00:fb:8a:89:ea:5f:23:1e:49:62:79:02:26:5f:e8:
+                    b1:42:8b:41:9c:db:e4:6e:86:2c:6d:75:82:1c:1f:
+                    d6:23:85:f9:df:e7:3f:d7:8c:cb:6e:0d:49:17:fe:
+                    2a:23:d9:97:cb:4f:9f:a0:7d:55:bb:67:4e:01:71:
+                    46:fa:d0:fc:e5:8d:bc:d0:47:7f:9e:23:bf:24:6b:
+                    b6:e8:a7:79:c9:38:8f:a2:4a:72:56:02:ff:66:09:
+                    d2:bf:63:38:f3:0c:88:d4:4f:f6:50:c1:56:e1:e1:
+                    e0:3c:f1:f7:53:ac:d5:eb:c0:dd:cf:37:ae:e4:7a:
+                    1d:c6:13:21:72:1d:a0:d2:64:da:cc:3b:e2:05:85:
+                    a8:76:c6:4c:69:f2:81:0b:98:ae:f3:35:13:c1:aa:
+                    cb:59
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            X509v3 Subject Key Identifier: 
+                54:77:F8:70:1E:18:0F:45:66:84:E4:D1:8F:16:8A:D5:5F:42:6C:F1
+            X509v3 Authority Key Identifier: 
+                keyid:98:01:1F:31:9A:55:01:3C:82:E1:33:EA:25:5F:A6:F6:4A:FD:23:50
+                DirName:/CN=VBMS Client Signing CA
+                serial:A8:06:DE:F6:5E:1C:A1:3F
+
+            X509v3 Extended Key Usage: 
+                TLS Web Client Authentication
+            X509v3 Key Usage: 
+                Digital Signature
+    Signature Algorithm: sha256WithRSAEncryption
+        36:bb:4e:e8:37:d0:06:92:55:48:1e:76:4f:96:1a:99:48:59:
+        02:86:57:a6:f7:6e:04:5a:07:30:8b:b5:b4:9e:26:c7:65:4d:
+        ee:1e:b2:60:dc:c3:25:9c:7c:76:6f:94:8d:d0:ea:fe:2a:fc:
+        c4:24:70:8d:73:73:16:b0:b5:5a:59:6d:16:c6:4f:8b:f9:f6:
+        65:e0:14:62:55:f0:fd:fa:b3:71:20:ef:dc:d3:6c:dd:d5:70:
+        9c:b9:c3:e4:33:bc:2b:f7:d2:1e:86:cd:f7:85:44:20:e1:c4:
+        d0:03:23:99:29:f6:19:75:dd:aa:a8:c1:8d:ab:25:07:fb:87:
+        72:89:ff:08:20:b8:43:fa:a3:f2:bf:79:9f:a6:7e:d4:d1:78:
+        51:51:ca:71:27:ce:92:34:62:42:7e:30:26:7e:98:2d:52:85:
+        6d:c4:cb:51:e6:9b:ab:b3:c1:97:bd:17:0d:24:6a:8a:a3:fb:
+        2f:39:11:2d:a6:27:7a:c2:94:2e:f6:53:24:a6:d5:a6:8b:0f:
+        8c:30:d4:5a:bc:f9:dc:c3:a2:9b:96:4c:5a:d9:2b:46:9b:53:
+        53:6c:c8:b9:34:91:74:cd:24:f5:63:a1:d9:3e:2d:ce:aa:73:
+        b6:83:92:5b:d1:94:8b:b3:3e:b2:c4:ea:01:53:96:55:18:5e:
+        c1:38:e5:f3
+-----BEGIN CERTIFICATE-----
+MIIDgjCCAmqgAwIBAgIQfPBwk7F7OlLUNojwxk7sVDANBgkqhkiG9w0BAQsFADAh
+MR8wHQYDVQQDDBZWQk1TIENsaWVudCBTaWduaW5nIENBMB4XDTE4MDQxMDAxMjEz
+MFoXDTI4MDQwNzAxMjEzMFowNDEyMDAGA1UEAwwpdmJtcy1pbnRlcm5hbC5jbGll
+bnQudmJtcy5haWRlLm9pdC52YS5nb3YwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
+ggEKAoIBAQDJeN5AgqXy7lGshXvDJQWM87YN2hxndo0rgDOzIaI7OYlESdxPfjZs
+rN9pXyUkr5s1xVUW/niz+KXflGm+/h1CmzOOSt/cixogM3s8k792ndEmoYd7WvaK
+LxejEM17IiGbYwVP4Ud31AD7ionqXyMeSWJ5AiZf6LFCi0Gc2+RuhixtdYIcH9Yj
+hfnf5z/XjMtuDUkX/ioj2ZfLT5+gfVW7Z04BcUb60PzljbzQR3+eI78ka7bop3nJ
+OI+iSnJWAv9mCdK/YzjzDIjUT/ZQwVbh4eA88fdTrNXrwN3PN67keh3GEyFyHaDS
+ZNrMO+IFhah2xkxp8oELmK7zNRPBqstZAgMBAAGjgaIwgZ8wCQYDVR0TBAIwADAd
+BgNVHQ4EFgQUVHf4cB4YD0VmhOTRjxaK1V9CbPEwUQYDVR0jBEowSIAUmAEfMZpV
+ATyC4TPqJV+m9kr9I1ChJaQjMCExHzAdBgNVBAMMFlZCTVMgQ2xpZW50IFNpZ25p
+bmcgQ0GCCQCoBt72XhyhPzATBgNVHSUEDDAKBggrBgEFBQcDAjALBgNVHQ8EBAMC
+B4AwDQYJKoZIhvcNAQELBQADggEBADa7Tug30AaSVUgedk+WGplIWQKGV6b3bgRa
+BzCLtbSeJsdlTe4esmDcwyWcfHZvlI3Q6v4q/MQkcI1zcxawtVpZbRbGT4v59mXg
+FGJV8P36s3Eg79zTbN3VcJy5w+QzvCv30h6GzfeFRCDhxNADI5kp9hl13aqowY2r
+JQf7h3KJ/wgguEP6o/K/eZ+mftTReFFRynEnzpI0YkJ+MCZ+mC1ShW3Ey1Hmm6uz
+wZe9Fw0kaoqj+y85ES2mJ3rClC72UySm1aaLD4ww1Fq8+dzDopuWTFrZK0abU1Ns
+yLk0kXTNJPVjodk+Lc6qc7aDklvRlIuzPrLE6gFTllUYXsE45fM=
+-----END CERTIFICATE-----

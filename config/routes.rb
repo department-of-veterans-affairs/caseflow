@@ -307,6 +307,8 @@ Rails.application.routes.draw do
     get '/correspondence/:pdf_id/pdf', to: 'correspondence#pdf'
     patch '/correspondence/:correspondence_uuid', to: 'correspondence#update'
     post '/correspondence/:correspondence_uuid', to: 'correspondence#process_intake'
+    post "/correspondence/:correspondence_uuid/upload_documents", to: "correspondence#upload_documents_to_claim_evidence"
+    post "/correspondence/:correspondence_uuid/task", to: "correspondence_tasks#create_package_action_task"
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:appealId/notifications', to: 'queue#index'
     get '/appeals/:appeal_id/cavc_dashboard', to: 'cavc_dashboard#index'
@@ -314,6 +316,7 @@ Rails.application.routes.draw do
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
+  match '/explain/correspondence/:correspondence_uuid/:any' => 'explain#show', via: [:get]
 
   # requests to CAVC Dashboard that don't require an appeal_id should go here
   scope path: "/cavc_dashboard" do

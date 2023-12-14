@@ -1,25 +1,35 @@
 # frozen_string_literal: true
 
 describe CorrespondenceDocument, :postgres do
-  # remove or update after implementing fetch from S3
-  context "fetch_document" do
-    let(:vet) { create(:veteran) }
-    let(:cors) { create(:correspondence, veteran_id: vet.id) }
-    let(:document) { create(:correspondence_document, document_file_number: vet.file_number, correspondence: cors) }
+  let(:vet) { create(:veteran) }
+  let(:cors) { create(:correspondence, veteran_id: vet.id) }
+  let(:document) do
+    create(
+      :correspondence_document,
+      document_file_number: vet.file_number,
+      correspondence: cors,
+      uuid: SecureRandom.uuid
+    )
+  end
 
-    before do
-      FeatureToggle.enable!(:correspondence_queue)
-      S3Service.store_file(
-        "#{CorrespondenceDocument::S3_BUCKET_NAME}/#{document.uuid}",
-        "lib/pdfs/KnockKnockJokes.pdf", :filepath
-      )
-    end
-    after { FeatureToggle.disable!(:correspondence_queue) }
+  before do
+    FeatureToggle.enable!(:correspondence_queue)
+    S3Service.store_file(
+      "#{CorrespondenceDocument::S3_BUCKET_NAME}/#{document.uuid}",
+      "lib/pdfs/KnockKnockJokes.pdf", :filepath
+    )
+  end
 
-    it "returns document content" do
-      expect(document.fetch_document).to eq(
-        File.read(File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf"))
-      )
-    end
+  it "pdf_name returns name of pdf" do
+    expect(document.pdf_name).to eq("#{document.uuid}.pdf")
+  end
+
+  it "s3_location returns path to doc in s3" do
+    expect(document.s3_location).to eq("#{CorrespondenceDocument::S3_BUCKET_NAME}/#{document.uuid}")
+  end
+
+  it "pdf_location stores file fetched from S3" do
+    document.pdf_location
+    expect(document.output_location).to eq(File.join(Rails.root, "tmp", "pdfs", document.pdf_name).to_s)
   end
 end
