@@ -898,6 +898,29 @@ feature "NonComp Reviews Queue", :postgres do
     end
   end
 
+  context "get params should not get appended to URL  when QueueTable is loading and user navigates to Generate report pages." do
+    before do
+      create_list(:higher_level_review_vha_task, 30, assigned_to: non_comp_org)
+      OrganizationsUser.make_user_admin(user, non_comp_org)
+    end
+
+    it "should not contain get params after user navigates another page" do
+      visit BASE_URL
+      expect(page).to have_content("Veterans Health Administration")
+      click_button("Generate task report")
+      expect(page).to have_content("Generate task report")
+
+      expect(current_url).to have_content(BASE_URL + "/report")
+
+      using_wait_time 5 do
+        expect(current_url).to_not have_content(BASE_URL + "/report?tab=in_progress&page=1&sort_by=daysWaitingColumn")
+      end
+
+      page.go_back
+      expect(current_url).to have_content(BASE_URL)
+    end
+  end
+
   context "For a non comp org that is not VHA" do
     after { FeatureToggle.disable!(:board_grant_effectuation_task) }
     let(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
