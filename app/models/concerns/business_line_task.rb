@@ -3,10 +3,10 @@
 module BusinessLineTask
   extend ActiveSupport::Concern
 
-  def complete_with_payload!(_decision_issue_params, _decision_date, current_user)
+  def complete_with_payload!(_decision_issue_params, _decision_date, user)
     return false unless validate_task
 
-    update!(status: Constants.TASK_STATUSES.completed, closed_at: Time.zone.now, completed_by: current_user)
+    update!(status: Constants.TASK_STATUSES.completed, closed_at: Time.zone.now, completed_by: user)
   end
 
   private
