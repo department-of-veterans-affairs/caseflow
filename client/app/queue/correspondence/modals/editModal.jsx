@@ -43,7 +43,7 @@ class EditModal extends React.Component {
       const formattedVADORDate = moment.utc(response.body.correspondence?.va_date_of_receipt).format('YYYY-MM-DD');
       const packageDocumentTypeName = { label: response.body.package_document_type?.name, value: response.body.package_document_type?.id };
 
-      if (response.body.current_user.css_id === 'MAIL_TEAM_SUPERVISOR_ADMIN_USER' || response.body.current_user.css_id === 'MAIL_TEAM_SUPERVISOR_MAIL_INTAKE_USER') {
+      if (response.body.user_can_edit_vador) {
         this.setState({
           canEditVADOR: false
         });
