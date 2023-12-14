@@ -1,10 +1,5 @@
 import React from 'react';
-import moment from 'moment';
 import {
-  PACKAGE_ACTION_MERGE_DESCRIPTION,
-  PACKAGE_ACTION_MERGE_TITLE,
-  PACKAGE_ACTION_MERGE_TEXTAREA_LABEL,
-  PACKAGE_ACTION_MERGE_RADIO_LABEL,
   PACKAGE_ACTION_MODAL_DESCRIPTION,
   PACKAGE_ACTION_REMOVAL_TITLE,
   PACKAGE_ACTION_REMOVAL_TEXTAREA_LABEL,
@@ -70,42 +65,13 @@ export const getPackageActionColumns = (dropdownType) => {
       }
     );
   }
-
-  if (dropdownType === 'mergePackage') {
-    baseColumns.push(
-      {
-        cellClass: 'vador-details-column',
-        header: (
-          <span id="vador-details-label">
-            VA DOR
-          </span>
-        ),
-        valueFunction: (row) => {
-          const vaDate = moment(row.correspondence.va_date_of_receipt).format('MM/DD/YYYY');
-
-          return (
-            <span className="veteran-info-value">
-              <p>
-                {`${vaDate}`}
-              </p>
-            </span>
-          )}
-      }
-    );
-  }
+  // add the other column here for VADOR
 
   return baseColumns;
 };
 
 export const getModalInformation = (dropdownType) => {
   switch (dropdownType) {
-  case 'mergePackage':
-    return {
-      title: PACKAGE_ACTION_MERGE_TITLE,
-      description: PACKAGE_ACTION_MERGE_DESCRIPTION,
-      label: PACKAGE_ACTION_MERGE_TEXTAREA_LABEL,
-      radioLabel: PACKAGE_ACTION_MERGE_RADIO_LABEL
-    };
   case 'removePackage':
     return {
       title: PACKAGE_ACTION_REMOVAL_TITLE,
