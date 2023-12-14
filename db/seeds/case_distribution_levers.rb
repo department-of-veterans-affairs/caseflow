@@ -1,4 +1,3 @@
-
 module Seeds
   class CaseDistributionLevers < Base
     def seed!
@@ -103,12 +102,12 @@ module Seeds
           item: 'ama_hearing_case_affinity_days',
           title: 'AMA Hearing Case Affinity Days',
           description: 'For non-priority AMA Hearing cases, sets the number of days an AMA Hearing Case is tied to the judge that held the hearing.',
-          data_type: Constants.LEVER_ATTRIBUTES.RADIO,
-          value: Constants.LEVER_ATTRIBUTES.VALUE,
+          data_type: 'radio',
+          value: 'option_1',
           unit: 'days',
           options: [
             {
-              item: Constants.LEVER_ATTRIBUTES.VALUE,
+              item: 'option_1',
               data_type: 'number',
               value: 0,
               text: 'Attempt distribution to current judge for max of:',
@@ -117,13 +116,13 @@ module Seeds
               max_value: 100,
             },
             {
-              item: Constants.LEVER_ATTRIBUTES.INFINITE,
-              value: Constants.LEVER_ATTRIBUTES.INFINITE,
+              item: 'option_2',
+              value: 'option_2',
               text: 'Always distribute to current judge',
             },
             {
-              item: Constants.LEVER_ATTRIBUTES.OMIT,
-              value: Constants.LEVER_ATTRIBUTES.OMIT,
+              item: 'option_3',
+              value: 'option_3',
               text: 'Omit variable from distribution rules',
             }
           ],
@@ -137,28 +136,28 @@ module Seeds
           item: 'ama_hearing_case_aod_affinity_days',
           title: 'AMA Hearing Case AOD Affinity Days',
           description: 'Sets the number of days an AMA Hearing appeal that is also AOD will respect the affinity to the most-recent hearing judge before distributing the appeal to any available judge.',
-          data_type: Constants.LEVER_ATTRIBUTES.RADIO,
-          value: Constants.LEVER_ATTRIBUTES.VALUE,
+          data_type: 'radio',
+          value: 'option_1',
           unit: 'days',
           options: [
             {
-              item: Constants.LEVER_ATTRIBUTES.VALUE,
+              item: 'option_1',
               data_type: 'number',
               value: 0,
               text: 'Attempt distribution to current judge for max of:',
               unit: 'days'
             },
             {
-              item: Constants.LEVER_ATTRIBUTES.INFINITE,
+              item: 'option_2',
               data_type: '',
-              value: Constants.LEVER_ATTRIBUTES.INFINITE,
+              value: 'option_2',
               text: 'Always distribute to current judge',
               unit: ''
             },
             {
-              item: Constants.LEVER_ATTRIBUTES.OMIT,
+              item: 'option_3',
               data_type: '',
-              value: Constants.LEVER_ATTRIBUTES.OMIT,
+              value: 'option_3',
               text: 'Omit variable from distribution rules',
               unit: ''
             }
@@ -173,25 +172,25 @@ module Seeds
           item: 'cavc_affinity_days',
           title: 'CAVC Affinity Days',
           description: 'Sets the number of days a case returned from CAVC respects the affinity to the judge who authored a decision before distributing the appeal to any available judge. This does not include Legacy CAVC Remand Appeals with a hearing held.',
-          data_type: Constants.LEVER_ATTRIBUTES.RADIO,
-          value: Constants.LEVER_ATTRIBUTES.VALUE,
+          data_type: 'radio',
+          value: 'option_1',
           unit: 'days',
           options: [
             {
-              item: Constants.LEVER_ATTRIBUTES.VALUE,
+              item: 'option_1',
               data_type: 'number',
               value: 21,
               text: 'Attempt distribution to current judge for max of:',
               unit: 'days'
             },
             {
-              item: Constants.LEVER_ATTRIBUTES.INFINITE,
-              value: Constants.LEVER_ATTRIBUTES.INFINITE,
+              item: 'option_2',
+              value: 'option_2',
               text: 'Always distribute to current judge'
             },
             {
-              item: Constants.LEVER_ATTRIBUTES.OMIT,
-              value: Constants.LEVER_ATTRIBUTES.OMIT,
+              item: 'option_3',
+              value: 'option_3',
               text: 'Omit variable from distribution rules'
             }
           ],
@@ -205,25 +204,25 @@ module Seeds
           item: 'cavc_aod_affinity_days',
           title: 'CAVC AOD Affinity Days',
           description: 'Sets the number of days appeals returned from CAVC that are also AOD respect the affinity to the deciding judge. This is not applicable for legacy apeals for which the deciding judge conducted the most recent hearing.',
-          data_type: Constants.LEVER_ATTRIBUTES.RADIO,
-          value: Constants.LEVER_ATTRIBUTES.VALUE,
+          data_type: 'radio',
+          value: 'option_1',
           unit: 'days',
           options: [
             {
-              item: Constants.LEVER_ATTRIBUTES.VALUE,
+              item: 'option_1',
               data_type: 'number',
               value: 21,
               text: 'Attempt distribution to current judge for max of:',
               unit: 'days'
             },
             {
-              item: Constants.LEVER_ATTRIBUTES.INFINITE,
-              value: Constants.LEVER_ATTRIBUTES.INFINITE,
+              item: 'option_2',
+              value: 'option_2',
               text: 'Always distribute to current judge',
             },
             {
-              item: Constants.LEVER_ATTRIBUTES.OMIT,
-              value: Constants.LEVER_ATTRIBUTES.OMIT,
+              item: 'option_3',
+              value: 'option_3',
               text: 'Omit variable from distribution rules',
             }
           ],
@@ -235,28 +234,28 @@ module Seeds
           item: 'aoj_affinity_days',
           title: 'AOJ Affinity Days',
           description: 'Sets the number of days an appeal respects the affinity to the deciding judge for Legacy AOJ Remand Returned appeals with no hearing held before distributing the appeal to any available judge.',
-          data_type: Constants.LEVER_ATTRIBUTES.RADIO,
-          value: Constants.LEVER_ATTRIBUTES.VALUE,
+          data_type: 'radio',
+          value: 'option_1',
           unit: 'days',
           options: [
             {
-              item: Constants.LEVER_ATTRIBUTES.VALUE,
+              item: 'option_1',
               data_type: 'number',
               value: 60,
               text: 'Attempt distribution to current judge for max of:',
               unit: 'days'
             },
             {
-              item: Constants.LEVER_ATTRIBUTES.INFINITE,
+              item: 'option_2',
               data_type: '',
-              value: Constants.LEVER_ATTRIBUTES.INFINITE,
+              value: 'option_2',
               text: 'Always distribute to current judge',
               unit: ''
             },
             {
-              item: Constants.LEVER_ATTRIBUTES.OMIT,
+              item: 'option_3',
               data_type: '',
-              value: Constants.LEVER_ATTRIBUTES.OMIT,
+              value: 'option_3',
               text: 'Omit variable from distribution rules',
               unit: ''
             }
@@ -271,28 +270,28 @@ module Seeds
           item: 'aoj_aod_affinity_days',
           title: 'AOJ AOD Affinity Days',
           description: 'Sets the number of days legacy remand Returned appeals that are also AOD (and may or may not have been CAVC at one time) respect the affinity before distributing the appeal to any available jduge. Affects appeals with hearing held when the remanding judge is not the hearing judge, or any legacy AOD + AOD appeal with no hearing held (whether or not it had been CAVC at one time).',
-          data_type: Constants.LEVER_ATTRIBUTES.RADIO,
-          value: Constants.LEVER_ATTRIBUTES.VALUE,
+          data_type: 'radio',
+          value: 'option_1',
           unit: 'days',
           options: [
             {
-              item: Constants.LEVER_ATTRIBUTES.VALUE,
+              item: 'option_1',
               data_type: 'number',
               value: 14,
               text: 'Attempt distribution to current judge for max of:',
               unit: 'days'
             },
             {
-              item: Constants.LEVER_ATTRIBUTES.INFINITE,
+              item: 'option_2',
               data_type: '',
-              value: Constants.LEVER_ATTRIBUTES.INFINITE,
+              value: 'option_2',
               text: 'Always distribute to current judge',
               unit: ''
             },
             {
-              item: Constants.LEVER_ATTRIBUTES.OMIT,
+              item: 'option_3',
               data_type: '',
-              value: Constants.LEVER_ATTRIBUTES.OMIT,
+              value: 'option_3',
               text: 'Omit variable from distribution rules',
               unit: ''
             }
@@ -307,28 +306,28 @@ module Seeds
           item: 'aoj_cavc_affinity_days',
           title: 'AOJ CAVC Affinity Days',
           description: 'Sets the number of days AOJ appeals that were CAVC at some time respect the affinity before the appeal is distributed to any available judge. This applies to any AOJ + CAVC appeal with no hearing held, or those with a hearing held when the remanding judge is not the hearing judge.',
-          data_type: Constants.LEVER_ATTRIBUTES.RADIO,
-          value: Constants.LEVER_ATTRIBUTES.VALUE,
+          data_type: 'radio',
+          value: 'option_1',
           unit: 'days',
           options: [
             {
-              item: Constants.LEVER_ATTRIBUTES.VALUE,
+              item: 'option_1',
               data_type: 'number',
               value: 21,
               text: 'Attempt distribution to current judge for max of:',
               unit: 'days'
             },
             {
-              item: Constants.LEVER_ATTRIBUTES.INFINITE,
+              item: 'option_2',
               data_type: '',
-              value: Constants.LEVER_ATTRIBUTES.INFINITE,
+              value: 'option_2',
               text: 'Always distribute to current judge',
               unit: ''
             },
             {
-              item: Constants.LEVER_ATTRIBUTES.OMIT,
+              item: 'option_3',
               data_type: '',
-              value: Constants.LEVER_ATTRIBUTES.OMIT,
+              value: 'option_3',
               text: 'Omit variable from distribution rules',
               unit: ''
             }
@@ -343,7 +342,7 @@ module Seeds
           item: 'ama_hearings_start_distribution_prior_to_goals',
           title: 'AMA Hearings Start Distribution Prior to Goals',
           description: '',
-          data_type: Constants.LEVER_ATTRIBUTES.COMBO,
+          data_type: 'combination',
           value: 770,
           unit: 'days',
           options: [
@@ -365,7 +364,7 @@ module Seeds
           item: 'ama_direct_review_start_distribution_prior_to_goals',
           title: 'AMA Direct Review Start Distribution Prior to Goals',
           description: '',
-          data_type: Constants.LEVER_ATTRIBUTES.COMBO,
+          data_type: 'combination',
           value: 365,
           unit: 'days',
           options: [
@@ -387,7 +386,7 @@ module Seeds
           item: 'ama_evidence_submission_start_distribution_prior_to_goals',
           title: 'AMA Evidence Submission Start Distribution Prior to Goals',
           description: '',
-          data_type: Constants.LEVER_ATTRIBUTES.COMBO,
+          data_type: 'combination',
           value: 550,
           unit: 'days',
           options: [

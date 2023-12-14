@@ -23,15 +23,12 @@ const CaseflowDistributionContent = ({
     const unsubscribe = leverStore.subscribe(() => {
       const state = leverStore.getState();
 
-      const leversString = JSON.stringify(state.levers);
-      const initialLeversString = JSON.stringify(state.initial_levers);
-
-      const leverChangesOccurred = leversString !== initialLeversString;
-
-      if (state.saveChangesActivate && !leverChangesOccurred) {
+      if (state.saveChangesActivated) {
         setDisplayAlert(true);
-      } else {
-        setDisplayAlert(false)
+
+        setTimeout(() => {
+          setDisplayAlert(false);
+        }, 10000);
       }
     });
 

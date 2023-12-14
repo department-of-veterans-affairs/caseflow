@@ -3,7 +3,6 @@ import AffinityDays from './AffinityDays';
 import { levers } from 'test/data/adminCaseDistributionLevers';
 import { createStore } from 'redux';
 import leversReducer from '../reducers/Levers/leversReducer';
-import * as leverAttributes from "../../constants/LEVER_ATTRIBUTES";
 
 export default {
   title: 'CaseDistribution/InteractableLevers',
@@ -21,7 +20,7 @@ const leverList = ['lever_9', 'lever_13'];
 const affinityLevers = [];
 
 levers.forEach((lever) => {
-  if (lever.data_type === leverAttributes.RADIO && leverList.includes(lever.item)) {
+  if (lever.data_type === 'radio' && leverList.includes(lever.item)) {
     affinityLevers.push(lever.item);
   }
 });
