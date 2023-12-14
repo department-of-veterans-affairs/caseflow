@@ -421,7 +421,7 @@ module Seeds
              submitted_at: Time.zone.now,
              processed_at: Time.zone.now,
              edited_request_issue_ids: [],
-             before_request_issue_ids: [request_issueri.id],
+             before_request_issue_ids: [request_issue.id],
              last_submitted_at: Time.zone.now,
              attempted_at: Time.zone.now,
              after_request_issue_ids: [request_issue.id],
@@ -445,15 +445,15 @@ module Seeds
       request_issue.update(closed_status: "removed", closed_at: Time.zone.now)
       request_issue2 = create(:request_issue,
                               decision_date: 3.months.ago,
-                              benefit_type: hlr.benefit_type,
+                              benefit_type: request_issue.decision_review.benefit_type,
                               nonrating_issue_category: "Other",
                               nonrating_issue_description: "issue added after removing unidentified issues",
-                              decision_review: hlr)
+                              decision_review: request_issue.decision_review)
 
-      hlr.create_business_line_tasks!
+      request_issue.decision_review.create_business_line_tasks!
 
       create(:request_issues_update,
-             review: hlr,
+             review: request_issue.decision_review,
              user: RequestStore[:current_user],
              submitted_at: Time.zone.now,
              processed_at: Time.zone.now,
