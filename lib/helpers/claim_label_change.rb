@@ -47,22 +47,13 @@ module WarRoom
 
     def claim_label_updater(reference_id, original_code, new_code)
       # The End products must be of the same type. (030, 040, 070)
-      if !same_claim_type(original_code, new_code)
-        puts("This is a different End Product, cannot claim label change. Aborting...")
-        fail Interrupt
-      end
+      validate_claim_code(new_code, "This is a different End Product, cannot claim label change. Aborting...")
 
       # Check that the new claim code is valid
-      if !claim_code_check(new_code)
-        puts("Invalid new claim label code. Aborting...")
-        fail Interrupt
-      end
+      validate_claim_code(new_code, "Invalid new claim label code. Aborting...")
 
       # Check that the old claim code is valid for record
-      if !claim_code_check(original_code)
-        puts("Invalid orginal claim label code. Aborting...")
-        fail Interrupt
-      end
+      validate_claim_code(original_code, "Invalid orginal claim label code. Aborting...")
 
       # set the user
       RequestStore[:current_user] = WarRoom.user
@@ -97,6 +88,13 @@ module WarRoom
       if claim_label_check != new_code
         update_vbms(epe, original_code, new_code)
       end
+    end
+  end
+
+  def validate_claim_code(claim_code, error_message)
+    unless claim_code_check(claim_code)
+      puts(error_message)
+      fail Interrupt
     end
   end
 end
