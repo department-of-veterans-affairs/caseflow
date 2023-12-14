@@ -19,8 +19,6 @@ import RadioField from 'app/components/RadioField';
 
 import { get } from 'lodash';
 
-import LoadingMessage from '../../components/LoadingMessage';
-import { LoadingIcon } from '../../components/icons/LoadingIcon';
 import {
   REPORT_TYPE_OPTIONS,
   RADIO_EVENT_TYPE_OPTIONS,
@@ -264,70 +262,50 @@ const ReportPage = ({ history }) => {
     return formattedOptions;
   };
 
-  const processConditionKeys = (condition) => {
-    return condition;
-  };
-
   const parseFilters = (data) => {
-    // console.log(data);
-
     const filters = {};
 
-    // Report Type parsing
+    // Add report type to the filter
     filters.reportType = data.reportType;
 
-    // Event filter
+    // Event specific event types to the filter
     if (data.radioEventAction === 'specific_events_action') {
-      // filters.events = Object.keys(data.specificEventType);
       filters.events = Object.keys(data.specificEventType).filter((key) => data.specificEventType[key] === true);
     }
 
-    // Status filter
+    // Add specific status types to the filter
     if (data.radioStatus === 'specific_status') {
       filters.statuses = Object.keys(data.specificStatus);
     }
 
-    // Timing filter
+    // Add timing to the filter
     filters.timing = data.timing;
 
-    // Specific Status report type
+    // Add Status report type to the filter
     filters.statusReportType = data.radioStatusReportType;
 
-    // Conditions parsing
+    // Parse all the Conditions and add them to the filter
     const transformedConditions = data?.conditions?.reduce((result, item) => {
       const { condition, options } = item;
 
       if (condition && options) {
-        // Possibly parse the condition name as well
-        const newConditionName = processConditionKeys(condition);
-
-        // Parse individual conditions to make them more palatable for the server
+        // Parse the individual conditions
         const newOptions = processConditionOptions(condition, options);
 
-        result[newConditionName] = newOptions;
+        result[condition] = newOptions;
       }
 
       return result;
     }, {});
 
-    // console.log(transformedConditions);
-
-    // Add the conditions into the filters
+    // Add the all the parsed conditions into the filters
     Object.assign(filters, transformedConditions);
-
-    // console.log(filters);
-
-    // return data;
 
     return filters;
   };
 
   const submitForm = (data) => {
-    console.log(data);
-
     const filterData = parseFilters(data);
-
-    console.log(filterData);
 
     // Generate and trigger the download of the CSV
     dispatch(downloadReportCSV({ organizationUrl: businessLineUrl, filterData: { filters: filterData } }));
@@ -350,8 +328,6 @@ const ReportPage = ({ history }) => {
         />
       }
     >
-      {/* TODO: This is ugly fix me please */}
-      {/* { isCSVGenerating && <h3><span><LoadingMessage message="Generating CSV..." /><LoadingIcon /></span></h3>} */}
       <h1>Generate task report</h1>
       <FormProvider {...methods}>
         <form>

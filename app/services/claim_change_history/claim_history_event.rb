@@ -7,6 +7,7 @@ class InvalidEventType < StandardError
 end
 
 # :reek:TooManyInstanceVariables
+# :reek:TooManyConstants
 # rubocop:disable Metrics/ClassLength
 class ClaimHistoryEvent
   attr_reader :task_id, :event_type, :event_date, :assigned_at, :days_waiting,
@@ -146,7 +147,7 @@ class ClaimHistoryEvent
       created_events = []
 
       request_issue_ids.each do |request_issue_id|
-        issue_data = retrieve_issue_data(request_issue_id)
+        issue_data = retrieve_issue_data(request_issue_id, change_data)
 
         unless issue_data
           Rails.logger.error("No request issue found during change history generation for id: #{request_issue_id}")
@@ -190,7 +191,11 @@ class ClaimHistoryEvent
 
     private
 
-    def retrieve_issue_data(request_issue_id)
+    def retrieve_issue_data(request_issue_id, change_data)
+      # If the request issue id is the same as the database row that is being parsed, then skip the database fetch
+      return {} if change_data["request_issue_id"] == request_issue_id
+
+      # Manually try to fetch the request issue from the database
       request_issue = RequestIssue.find_by(id: request_issue_id)
 
       if request_issue
@@ -215,7 +220,7 @@ class ClaimHistoryEvent
     end
 
     def event_from_version(changes, index, change_data)
-      # If there is no task status change in the set of papertail changes, ignore the object
+      # If there is no task status change in the set of papertrail changes, ignore the object
       if changes["status"]
         event_type = task_status_to_event_type(changes["status"][index])
         event_date_hash = { "event_date" => changes["updated_at"][index], "event_user_name" => "System" }
@@ -226,7 +231,7 @@ class ClaimHistoryEvent
     def determine_add_issue_event_type(change_data)
       # If there is no decision_date_added_at time, assume it is old data and that it had a decision date on creation
       had_decision_date = if change_data["decision_date"] && change_data["decision_date_added_at"]
-                            # Assume if the time window was within 15 seconds of creation it had a decision date
+                            # Assume if the time window was within 15 seconds of creation that it had a decision date
                             date_strings_within_seconds?(change_data["request_issue_created_at"],
                                                          change_data["decision_date_added_at"],
                                                          REQUEST_ISSUE_TIME_WINDOW)
@@ -272,7 +277,7 @@ class ClaimHistoryEvent
     end
 
     def retrieve_issue_update_data(change_data)
-      # This is gross, but thankfully it should happen very rarely
+      # This DB fetch is gross, but thankfully it should happen very rarely
       task = Task.includes(appeal: :request_issues_updates).where(id: change_data["task_id"]).first
       issue_update = task.appeal.request_issues_updates.find do |update|
         (update.after_request_issue_ids - update.before_request_issue_ids).include?(change_data["request_issue_id"])
@@ -477,7 +482,7 @@ class ClaimHistoryEvent
   end
 
   def parse_event_attributes(change_data)
-    # standardize_event_date
+    standardize_event_date
     @user_facility = change_data["user_facility"]
     @event_user_name = change_data["event_user_name"]
     @event_user_css_id = change_data["event_user_css_id"]
