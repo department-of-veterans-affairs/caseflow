@@ -131,9 +131,9 @@ class CorrespondenceController < ApplicationController
     # intake error message is handled in client/app/queue/correspondence/intake/components/CorrespondenceIntake.jsx
     vet = veteran_by_correspondence
     flash[:correspondence_intake_success] = [
-          "You have successfully submitted a correspondence record for #{vet.name}(#{vet.file_number})",
-          "The mail package has been uploaded to the Veteran's eFolder as well."
-        ]
+      "You have successfully submitted a correspondence record for #{vet.name}(#{vet.file_number})",
+      "The mail package has been uploaded to the Veteran's eFolder as well."
+    ]
   end
 
   def create_correspondence_relations
@@ -143,12 +143,6 @@ class CorrespondenceController < ApplicationController
         related_correspondence_id: Correspondence.find_by(uuid: uuid)&.id
       )
     end
-  end
-  
-  def verify_correspondence_access
-    return true if MailTeamSupervisor.singleton.user_has_access?(current_user) || MailTeam.singleton.user_has_access?(current_user)
-
-    redirect_to "/unauthorized"
   end
 
   def verify_correspondence_access
