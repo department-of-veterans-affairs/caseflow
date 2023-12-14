@@ -90,7 +90,9 @@ export const CorrespondenceIntake = (props) => {
     ApiUtil.post(`/queue/correspondence/${props.correspondence_uuid}/current_step`, { data }).
       then(
         (response) => {
-          console.debug(response);
+          if (!response.ok) {
+            console.error(response);
+          }
         }
       );
   }, [currentStep]);
