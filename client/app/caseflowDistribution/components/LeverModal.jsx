@@ -43,9 +43,10 @@ function saveLeversToDB(leverStore) {
 }
 
 function handleOptionText(lever) {
-  const selectedOption = lever.options.find((option) => lever.value === option.item);
+  const selectedOption = lever.options.find((option) => {
+    return lever.value === option.value});
 
-  if (selectedOption) {
+  if (selectedOption !== 'undefined') {
     console.log('Selected Option:', selectedOption);
     console.log('Is NaN:', isNaN(selectedOption.value));
 
@@ -56,7 +57,7 @@ function handleOptionText(lever) {
     }
   }
 
-  return null;
+  return lever.value;
 }
 
 function leverList(leverStore) {
@@ -80,7 +81,7 @@ function leverList(leverStore) {
               {lever.value !== initialLevers[index].value && (
                 <React.Fragment>
               <td className={`${styles.modalTableStyling} ${styles.modalTableLeftStyling}`}>{lever.title}</td>
-              <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}>{initialLevers[index].value}</td>
+              <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}>{handleOptionText(initialLevers[index])}</td>
               <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}><strong>{handleOptionText(lever)}</strong></td>
                 </React.Fragment>
               )}
