@@ -298,6 +298,7 @@ Rails.application.routes.draw do
   scope path: '/queue' do
     get '/', to: 'queue#index'
     get '/correspondence', to: 'correspondence#correspondence_cases'
+    post '/correspondence/:correspondence_uuid/correspondence_intake_task', to: 'correspondence_tasks#create_correspondence_intake_task'
     get '/correspondence/:correspondence_uuid/intake', to: 'correspondence#intake'
     get '/correspondence/:correspondence_uuid/review_package', to: 'correspondence#review_package'
     get '/correspondence/:correspondence_uuid/veteran', to: 'correspondence#veteran'

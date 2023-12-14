@@ -14,4 +14,18 @@ class Correspondence < CaseflowRecord
   belongs_to :correspondence_type
   belongs_to :package_document_type
   belongs_to :veteran
+
+  after_create :initialize_correspondence_tasks
+
+  def initialize_correspondence_tasks
+    CorrespondenceRootTaskFactory.new(self).create_root_and_sub_tasks!
+  end
+
+  def type
+    "Correspondence"
+  end
+
+  def tasks
+    Task.where(appeal_id: id, appeal_type: type)
+  end
 end

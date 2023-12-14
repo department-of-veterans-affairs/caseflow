@@ -60,5 +60,28 @@ RSpec.feature("The Correspondence Review Package page") do
       expect(page).to have_text `Review #{veteran.first_name} #{veteran.last_name}'s Decision Review Request: Board Appeal (Notice of Disagreement) - VA Form 10182`
     end
   end
+
+  context "Review package - Create record" do
+    let(:non_10182_package_type) { PackageDocumentType.create(id: 1, active: true, name: "0304") }
+    let(:correspondence_2) { create(:correspondence, :with_single_doc, veteran_id: veteran.id, package_document_type_id: non_10182_package_type.id) }
+
+    before do
+      FeatureToggle.enable!(:correspondence_queue)
+      mail_team_org.add_user(mail_team_user)
+      User.authenticate!(user: mail_team_user)
+    end
+
+    it "click on Create record button" do
+      visit "/queue/correspondence/#{correspondence.uuid}/review_package"
+      click_button "Create record"
+      expect(page).to have_current_path("/queue/correspondence/#{correspondence.uuid}/intake")
+      expect(page).to have_content("Add Related Correspondence")
+      expect(page).to have_content("Add any related correspondence to the mail package that is in progress.")
+      expect(page).to have_content("Is this correspondence related to prior mail?")
+      expect(page).to have_content("Associate with prior Mail")
+      expect(page).to have_content("Yes")
+      expect(page).to have_content("No")
+    end
+  end
 end
 # rubocop:enable Layout/LineLength
