@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../../../components/Modal';
 import TextareaField from '../../../components/TextareaField';
+import RadioField from '../../../components/RadioField';
 import Table from '../../../components/Table';
 import { connect } from 'react-redux';
 import ApiUtil from '../../../util/ApiUtil';
 import { getPackageActionColumns, getModalInformation } from '../review_package/utils';
 import { useHistory } from 'react-router';
-import RadioField from '../../../components/RadioField';
 
 const PackageActionModal = (props) => {
   const {
@@ -22,6 +22,8 @@ const PackageActionModal = (props) => {
   const history = useHistory();
 
   const [textInputReason, setTextInputReason] = useState('');
+  const [mergePackageReason, setMergePackageReason] = useState('');
+  const [isOtherOption, setIsOtherOption] = useState(false);
   const [radioValue, setRadioValue] = useState('');
 
   const rows = [
@@ -30,6 +32,15 @@ const PackageActionModal = (props) => {
       packageDocumentType,
       veteranInformation
     }
+  ];
+
+  const mergePackageReasonOptions = [
+    { displayText: 'Duplicate documents',
+      value: 'Duplicate documents' },
+    { displayText: 'Documents received on same date realating to same issue(s)/appeal(s)',
+      value: 'Documents received' },
+    { displayText: 'Other',
+      value: 'other' }
   ];
 
   const RadioOptions = [
@@ -44,6 +55,12 @@ const PackageActionModal = (props) => {
   // Disable submit button unless conditional input is met
   const disableSubmit = () => {
     switch (packageActionModal) {
+    case 'mergePackage':
+      if (mergePackageReason === 'other') {
+        return textInputReason === '';
+      }
+
+      return mergePackageReason === '';
     case 'removePackage':
     case 'reassignPackage':
       return textInputReason === '';
@@ -54,6 +71,14 @@ const PackageActionModal = (props) => {
     }
     default:
       return true;
+    }
+  };
+
+  const handleMergeReason = (value) => {
+    setMergePackageReason(value);
+    setIsOtherOption(false);
+    if (value === 'other') {
+      setIsOtherOption(true);
     }
   };
 
@@ -70,6 +95,16 @@ const PackageActionModal = (props) => {
 
     if (radioValue && radioValue !== 'Other') {
       data.instructions.push(radioValue);
+    }
+
+    if (
+      ( isOtherOption ||
+        packageActionModal === 'removePackage' ||
+        packageActionModal === 'reassignPackage' ||
+        packageActionModal === 'splitPackage') &&
+      textInputReason !== ''
+    ) {
+      data.instructions.push(textInputReason);
     }
 
     if (
@@ -90,6 +125,7 @@ const PackageActionModal = (props) => {
       catch(() => {
         console.error('Review Package Action already exists');
       });
+    setTextInputReason('');
   };
 
   return (
@@ -119,12 +155,23 @@ const PackageActionModal = (props) => {
         slowReRendersAreOk
         summary="Request Package Action Modal"
       />
+      {
+        (packageActionModal === 'mergePackage') &&
+        <RadioField
+          label={modalInfo.label}
+          name="merge-package"
+          value={mergePackageReason}
+          options={mergePackageReasonOptions}
+          onChange={handleMergeReason}
+        />
+      }
       {(packageActionModal === 'splitPackage') && <RadioField
         name="Select a reason for splitting this package"
         options={RadioOptions}
         onChange={onChange}
       />}
-      {(packageActionModal === 'removePackage' ||
+      {(isOtherOption ||
+        packageActionModal === 'removePackage' ||
         packageActionModal === 'reassignPackage' ||
         radioValue === 'Other') && (
         <TextareaField

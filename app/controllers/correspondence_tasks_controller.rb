@@ -31,10 +31,12 @@ class CorrespondenceTasksController < TasksController
     case params[:type]
     when "removePackage"
       RemovePackageTask
-    when "reassignPackage"
-      ReassignPackageTask
+    when "mergePackage"
+      MergePackageTask
     when "splitPackage"
       SplitPackageTask
+    when "reassignPackage"
+      ReassignPackageTask
     else
       fail NotImplementedError "Type not implemented"
     end

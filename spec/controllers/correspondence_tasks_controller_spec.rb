@@ -49,5 +49,23 @@ RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
         expect(parent.status).to eq(Constants.TASK_STATUSES.on_hold)
       end
     end
+
+    context "MergePackageTask creation" do
+      before do
+        task_creation_params.merge!(type: "mergePackage", instructions: ["Reason for MergePackage"])
+        post :create_package_action_task, params: task_creation_params
+      end
+
+      it "creates merge package task successfully" do
+        expect(response).to have_http_status(:ok)
+        merge_package_task = MergePackageTask.find_by(appeal_id: correspondence.id, type: MergePackageTask.name)
+        parent = ReviewPackageTask.find_by(appeal_id: correspondence.id, type: ReviewPackageTask.name)
+        expect(merge_package_task.appeal).to eq(correspondence)
+        expect(merge_package_task.parent_id).to eq(parent.id)
+        expect(merge_package_task.instructions).to eq(["Reason for MergePackage"])
+        expect(merge_package_task.status).to eq(Constants.TASK_STATUSES.assigned)
+        expect(parent.status).to eq(Constants.TASK_STATUSES.on_hold)
+      end
+    end
   end
 end
