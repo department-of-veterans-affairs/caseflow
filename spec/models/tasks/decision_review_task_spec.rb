@@ -87,6 +87,8 @@ describe DecisionReviewTask, :postgres do
                  caseflow_decision_date: caseflow_decision_date
                )).to_not be_nil
         expect(task.status).to eq "completed"
+        expect(task.completed_by_id).to eq user.id
+        expect(task.appeal.request_issues.first.closed_status).to eq "decided"
 
         remand_sc = hlr.remand_supplemental_claims.first
         expect(remand_sc).to_not be_nil
