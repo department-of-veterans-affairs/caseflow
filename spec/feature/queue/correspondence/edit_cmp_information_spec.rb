@@ -60,6 +60,41 @@ RSpec.feature("The Correspondence Review Package page") do
       click_button "Save"
       expect(page).to have_content(6.days.ago.strftime("%m/%d/%Y"))
     end
+
+    it "displays request package action dropdown" do
+      expect(page).to have_content("Request package action")
+    end
+
+    context "when request package action dropdown is clicked" do
+      before do
+        first(".cf-select__control").click
+      end
+
+      it "displays 4 package actions" do
+        expect(page).to have_content("Reassign package")
+        expect(page).to have_content("Remove package from Caseflow")
+        expect(page).to have_content("Split package")
+        expect(page).to have_content("Merge package")
+      end
+
+      context "when Reassign Package is selected" do
+        before do
+          find(:xpath, '//div[text()="Reassign package"]').click
+        end
+
+        it "modal opens with disabled confirm button" do
+          expect(page).to have_content(
+            "You have selected the following correspondence cases for reassignment to another users. Please confirm your selection(s) below:"
+          )
+          expect(page).to have_button("Confirm request", disabled: true)
+        end
+
+        it "providing a reason enables confirm button" do
+          fill_in "Provide a reason for reassignment", with: "Reason for reassignment"
+          expect(page).to have_button("Confirm request", disabled: false)
+        end
+      end
+    end
   end
 
   context "Checking VADOR field is enable for Mail Supervisor" do
