@@ -451,7 +451,7 @@ module Seeds
     # :reek:FeatureEnvy
     def create_step2_for_unidentified_issues(request_issue)
       request_issue.update(closed_status: "removed", closed_at: Time.zone.now)
-      request_issue2 = create(:request_issue,
+      second_request_issue = create(:request_issue,
                               decision_date: 3.months.ago,
                               benefit_type: request_issue.decision_review.benefit_type,
                               nonrating_issue_category: "Other",
@@ -469,7 +469,7 @@ module Seeds
              before_request_issue_ids: [request_issue.id],
              last_submitted_at: Time.zone.now,
              attempted_at: Time.zone.now,
-             after_request_issue_ids: [request_issue2.id])
+             after_request_issue_ids: [second_request_issue.id])
     end
   end
 end
