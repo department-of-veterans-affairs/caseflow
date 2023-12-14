@@ -253,7 +253,6 @@ feature "NonComp Report Page", :postgres do
     checkbox_label_text_array = labels.is_a?(Array) ? labels : [labels]
 
     checkbox_label_text_array.each do |checkbox_label_text|
-      puts "trying to click: #{checkbox_label_text}"
       find("label", text: checkbox_label_text, exact_text: true).click
     end
   end
@@ -310,7 +309,7 @@ feature "NonComp Report Page", :postgres do
   end
 
   def change_history_csv_file
-    wait_for(2)
+    wait_for(3)
     # Copied from Capybara setup
     download_directory = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
     list_of_files = Dir.glob(File.join(download_directory, "*")).select { |f| File.file?(f) }
