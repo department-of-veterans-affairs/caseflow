@@ -86,7 +86,16 @@ const NonCompTabsUnconnected = (props) => {
     filter((key) => props.businessLineConfig.tabs.includes(key)).
     map((key) => ALL_TABS[key]);
 
+  const resetPageNumberOnTabChange = (value) => {
+    // If the user has selected a new tab then we should reset the pagination page to 0
+    // This is to prevent situations where Viewing 31-45 of 1 total gets displayed and blocks user navigation
+    if (value !== getTabByIndex) {
+      tabPaginationOptions.page = 0;
+    }
+  };
+
   return (<TabWindow
+    onChange={((value) => resetPageNumberOnTabChange(value))}
     name="tasks-organization-queue"
     tabs={tabs}
     defaultPage={props.currentTab || getTabByIndex}
