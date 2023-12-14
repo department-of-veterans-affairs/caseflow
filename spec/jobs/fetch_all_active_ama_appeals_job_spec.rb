@@ -178,12 +178,14 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
 
       it "the vso_ihp_pending column will be set to TRUE" do
         subject.perform
-        expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_colocated_pending.id).vso_ihp_pending).to eq(true)
+        expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_colocated_pending.id).vso_ihp_pending)
+          .to eq(true)
       end
 
       it "the vso_ihp_complete column will be set to FALSE" do
         subject.perform
-        expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_colocated_pending.id).vso_ihp_complete).to eq(false)
+        expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_colocated_pending.id).vso_ihp_complete)
+          .to eq(false)
       end
     end
 
@@ -204,12 +206,14 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
 
       it "the vso_ihp_pending column will be set to FALSE" do
         subject.perform
-        expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_colocated_completed.id).vso_ihp_pending).to eq(false)
+        expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_colocated_completed.id).vso_ihp_pending)
+          .to eq(false)
       end
 
       it "the vso_ihp_complete column will be set to TRUE" do
         subject.perform
-        expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_colocated_completed.id).vso_ihp_complete).to eq(true)
+        expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_colocated_completed.id).vso_ihp_complete)
+          .to eq(true)
       end
     end
 
@@ -240,8 +244,8 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
     let(:privacy_act3) { create(:privacy_act_task, appeal: appeal) }
     context "When there are no privacy act tasks" do
       it "returns the correct hash with two false values" do
-        expect(subject.send(:map_appeal_privacy_act_state,
-                            appeal)).to eq(privacy_act_pending: false, privacy_act_complete: false)
+        expect(subject.send(:map_appeal_privacy_act_state, appeal))
+          .to eq(privacy_act_pending: false, privacy_act_complete: false)
       end
     end
 
@@ -363,23 +367,29 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
       end
     end
 
-    context "when there is an AMA Appeal and the most recent hearing dispostion status is not 'cancelled'" do
-      it "returns correct key value hearing_withdrawn: false" do
-        expect(subject.send(:map_appeal_hearing_withdrawn_state, appeal)).to eq(hearing_withdrawn: false)
+    context "when there is an AMA Appeal and the most recent hearing" do
+      context "and dispostion status is not 'cancelled'" do
+        it "returns correct key value hearing_withdrawn: false" do
+          expect(subject.send(:map_appeal_hearing_withdrawn_state, appeal)).to eq(hearing_withdrawn: false)
+        end
       end
     end
 
-    context "when there is an active AMA Appeal with multiple hearings and the most recent disposition is 'cancelled'" do
-      it "returns correct key value hearing_withdrawn: true" do
-        second_hearing.update(disposition: "cancelled")
-        expect(subject.send(:map_appeal_hearing_withdrawn_state, appeal)).to eq(hearing_withdrawn: true)
+    context "when there is an active AMA Appeal with multiple hearings" do
+      context "and dispostion status is not 'cancelled'" do
+        it "returns correct key value hearing_withdrawn: true" do
+          second_hearing.update(disposition: "cancelled")
+          expect(subject.send(:map_appeal_hearing_withdrawn_state, appeal)).to eq(hearing_withdrawn: true)
+        end
       end
     end
 
-    context "when there is an active AMA Appeal with multiple hearings and the most recent disposition is not 'cancelled'" do
-      it "returns correct key value hearing_withdrawn: false" do
-        second_hearing
-        expect(subject.send(:map_appeal_hearing_withdrawn_state, appeal)).to eq(hearing_withdrawn: false)
+    context "when there is an active AMA Appeal with multiple hearings" do
+      context "and the most recent disposition is not 'cancelled'" do
+        it "returns correct key value hearing_withdrawn: false" do
+          second_hearing
+          expect(subject.send(:map_appeal_hearing_withdrawn_state, appeal)).to eq(hearing_withdrawn: false)
+        end
       end
     end
   end
