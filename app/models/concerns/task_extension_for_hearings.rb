@@ -5,8 +5,6 @@
 # visibility
 
 module TaskExtensionForHearings
-  include RunAsyncable
-
   extend ActiveSupport::Concern
 
   # Implemented in app/models.task.rb
@@ -113,37 +111,18 @@ module TaskExtensionForHearings
     end
   end
 
-  # Purpose: Postponement - When a hearing is postponed through the completion of a NoShowHearingTask,
-  #          AssignHearingDispositionTask, or ChangeHearingDispositionTask, cancel any open
-  #          HearingPostponementRequestMailTasks associated with the appeal, as they have become redundant.
-  #
-  #          Withdrawal - When a withdraw hearing action is completed through a ScheduleHearingTask,
-  #          AssignHearingDispositionTask, or ChangeHearingDispositionTask, cancel any open
-  #          HearingWithdrawalRequestMailTasks associated with the appeal
-  # Params:  request_type - String of task name
-  def cancel_redundant_hearing_req_mail_tasks_of_type(request_type)
-    if HearingRequestMailTask.descendants.exclude?(request_type)
-      fail ArgumentError, "unknown hearing request mail task type"
-    end
-
-    request_tasks = open_hearing_request_mail_tasks_of_type(request_type)
-    request_tasks.each { |task| task.cancel_when_redundant(self, updated_at) }
+  # Purpose: When a hearing is postponed through the completion of a NoShowHearingTask, AssignHearingDispositionTask,
+  #          or ChangeHearingDispositionTask, cancel any open HearingPostponementRequestMailTasks associated with the
+  #          appeal, as they have become redundant.
+  def cancel_redundant_hearing_postponement_req_tasks
+    open_hearing_postponement_requests.each { |task| task.cancel_when_redundant(self, updated_at) }
   end
 
   # Purpose: Finds open HearingPostponementRequestMailTasks (assigned to HearingAdmin and not MailTeam) in task tree
-  def open_hearing_request_mail_tasks_of_type(request_type)
+  def open_hearing_postponement_requests
     appeal.tasks.where(
-      type: request_type.name,
+      type: HearingPostponementRequestMailTask.name,
       assigned_to: HearingAdmin.singleton
     )&.open
-  end
-
-  # Purpose: Deletes the old scheduled virtual hearings
-  # Params: Hearing object
-  # Return: Returns nil
-  def clean_up_virtual_hearing(hearing)
-    if hearing.virtual?
-      perform_later_or_now(VirtualHearings::DeleteConferencesJob)
-    end
   end
 end

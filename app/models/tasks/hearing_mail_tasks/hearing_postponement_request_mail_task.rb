@@ -10,6 +10,7 @@
 ##
 class HearingPostponementRequestMailTask < HearingRequestMailTask
   prepend HearingPostponed
+  include RunAsyncable
 
   class << self
     def label
@@ -58,7 +59,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
       if payload_values[:granted]
         created_tasks = update_hearing_and_create_tasks(payload_values[:after_disposition_update])
       end
-      update_self_and_parent_mail_task(user: user, params: payload_values)
+      update_self_and_parent_mail_task(user: user, payload_values: payload_values)
 
       [self] + (created_tasks || [])
     else
@@ -66,7 +67,75 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     end
   end
 
+  # Purpose: Only show HPR mail task assigned to "HearingAdmin" on the Case Timeline
+  # Params: None
+  # Return: boolean if task is assigned to MailTeam
+  def hide_from_case_timeline
+    assigned_to.is_a?(MailTeam)
+  end
+
+  # Purpose: Determines if there is an open hearing
+  # Params: None
+  # Return: The hearing if one exists
+  def open_hearing
+    @open_hearing ||= open_assign_hearing_disposition_task&.hearing
+  end
+
+  # Purpose: Gives the latest hearing task
+  # Params: None
+  # Return: The hearing task
+  def hearing_task
+    @hearing_task ||= open_hearing&.hearing_task || active_schedule_hearing_task.parent
+  end
+
+  # Purpose: When a hearing is postponed through the completion of a NoShowHearingTask, AssignHearingDispositionTask,
+  #          or ChangeHearingDispositionTask, cancel any open HearingPostponementRequestMailTasks in that appeal's
+  #          task tree, as the HPR mail tasks have become redundant.
+  #
+  # Params: completed_task - task object of the completed task through which the hearing was postponed
+  #         updated_at - datetime when the task was completed
+  #
+  # Return: The cancelled HPR mail tasks
+  def cancel_when_redundant(completed_task, updated_at)
+    user = ensure_user_can_cancel_task(completed_task)
+    params = {
+      status: Constants.TASK_STATUSES.cancelled,
+      instructions: format_cancellation_reason(completed_task.type, updated_at)
+    }
+    update_from_params(params, user)
+  end
+
   private
+
+  # Purpose: Gives the latest active hearing task
+  # Params: None
+  # Return: The latest active hearing task
+  def active_schedule_hearing_task
+    appeal.tasks.of_type(ScheduleHearingTask.name).active.first
+  end
+
+  # ChangeHearingDispositionTask is a subclass of AssignHearingDispositionTask
+  ASSIGN_HEARING_DISPOSITION_TASKS = [
+    AssignHearingDispositionTask.name,
+    ChangeHearingDispositionTask.name
+  ].freeze
+
+  # Purpose: Gives the latest active assign hearing disposition task
+  # Params: None
+  # Return: The latest active assign hearing disposition task
+  def open_assign_hearing_disposition_task
+    @open_assign_hearing_disposition_task ||= appeal.tasks.of_type(ASSIGN_HEARING_DISPOSITION_TASKS).open&.first
+  end
+
+  # Purpose: Associated appeal has an upcoming hearing with an open status
+  # Params: None
+  # Return: Returns a boolean if the appeal has an upcoming hearing
+  def hearing_scheduled_and_awaiting_disposition?
+    return false unless open_hearing
+
+    # Ensure associated hearing is not scheduled for the past
+    !open_hearing.scheduled_for_past?
+  end
 
   # Purpose: Sets the previous hearing's disposition to postponed
   # Params: None
@@ -84,7 +153,7 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
 
       if open_hearing
         postpone_previous_hearing
-        clean_up_virtual_hearing(open_hearing)
+        clean_up_virtual_hearing
       end
       # Schedule hearing or create new ScheduleHearingTask depending on after disposition action
       reschedule_or_schedule_later(after_disposition_update)
@@ -99,6 +168,15 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
       open_hearing.update_caseflow_and_vacols(hearing_hash)
     else
       open_hearing.update(hearing_hash)
+    end
+  end
+
+  # Purpose: Deletes the old scheduled virtual hearings
+  # Params: None
+  # Return: Returns nil
+  def clean_up_virtual_hearing
+    if open_hearing.virtual?
+      perform_later_or_now(VirtualHearings::DeleteConferencesJob)
     end
   end
 
@@ -178,21 +256,41 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
     [new_hearing_task, schedule_task].compact
   end
 
+  # Purpose: Completes the Mail task assigned to the MailTeam and the one for HearingAdmin
+  # Params: user - The current user object
+  # payload_values - The attributes needed for the update
+  # Return: Boolean for if the tasks have been updated
+  def update_self_and_parent_mail_task(user:, payload_values:)
+    # Append instructions/context provided by HearingAdmin to original details from MailTeam
+    updated_instructions = format_instructions_on_completion(
+      admin_context: payload_values[:instructions],
+      ruling: payload_values[:granted] ? "GRANTED" : "DENIED",
+      date_of_ruling: payload_values[:date_of_ruling]
+    )
+
+    # Complete HPR mail task assigned to HearingAdmin
+    update!(
+      completed_by: user,
+      status: Constants.TASK_STATUSES.completed,
+      instructions: updated_instructions
+    )
+    # Complete parent HPR mail task assigned to MailTeam
+    update_parent_status
+  end
+
   # Purpose: Appends instructions on to the instructions provided in the mail task
-  # Params: instructions - String for instructions
-  #         granted - boolean for granted or denied
-  #         date_of_ruling - string for the date of ruling
+  # Params: admin_context - String for instructions
+  # ruling - string for granted or denied
+  # date_of_ruling - string for the date of ruling
   # Return: instructions string
-  def format_instructions_on_completion(params)
-    date_of_ruling, granted, param_instructions = params.values_at(:date_of_ruling, :granted, :instructions)
+  def format_instructions_on_completion(admin_context:, ruling:, date_of_ruling:)
     formatted_date = date_of_ruling.to_date&.strftime("%m/%d/%Y")
-    ruling = granted ? "GRANTED" : "DENIED"
 
     markdown_to_append = <<~EOS
 
       ***
 
-      ###### Mark as complete:
+      ###### Marked as complete:
 
       **DECISION**
       Motion to postpone #{ruling}
@@ -201,9 +299,36 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
       #{formatted_date}
 
       **DETAILS**
-      #{param_instructions}
+      #{admin_context}
     EOS
 
     [instructions[0] + markdown_to_append]
+  end
+
+  # Purpose: If hearing postponed by a member of HearingAdminTeam, return that user. Otherwise, in the
+  #          case that hearing in postponed by HearingChangeDispositionJob, current_user is system_user
+  #          and will not have permission to call Task#update_from_params. Instead, return a user with
+  #          with HearingAdmin privileges.
+  #
+  # Params: completed_task - Task object of task through which heairng was postponed
+  def ensure_user_can_cancel_task(completed_task)
+    current_user = RequestStore[:current_user]
+
+    return current_user if current_user&.in_hearing_admin_team?
+
+    completed_task.hearing.updated_by
+  end
+
+  # Purpose: Format context to be appended to HPR mail tasks instructions upon task cancellation
+  #
+  # Params: task_name - string of name of completed task through which hearing was postponed
+  #         updated_at - datetime when the task was completed
+  #
+  # Return: String to be submitted in instructions field of task
+  def format_cancellation_reason(task_name, updated_at)
+    formatted_date = updated_at.strftime("%m/%d/%Y")
+
+    "##### REASON FOR CANCELLATION:\n" \
+    "Hearing postponed when #{task_name} was completed on #{formatted_date}"
   end
 end

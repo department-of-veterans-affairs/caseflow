@@ -20,6 +20,7 @@
 # the logic in HearingTask#when_child_task_completed properly handles routing or creating ihp task.
 ##
 class AssignHearingDispositionTask < Task
+  include RunAsyncable
   prepend HearingWithdrawn
   prepend HearingPostponed
   prepend HearingScheduledInError
@@ -98,8 +99,6 @@ class AssignHearingDispositionTask < Task
 
     update!(status: Constants.TASK_STATUSES.cancelled, closed_at: Time.zone.now)
 
-    cancel_redundant_hearing_req_mail_tasks_of_type(HearingWithdrawalRequestMailTask)
-
     [maybe_evidence_task].compact
   end
 
@@ -111,7 +110,7 @@ class AssignHearingDispositionTask < Task
     multi_transaction do
       created_tasks = schedule_later
 
-      cancel_redundant_hearing_req_mail_tasks_of_type(HearingPostponementRequestMailTask)
+      cancel_redundant_hearing_postponement_req_tasks
 
       created_tasks
     end
@@ -140,6 +139,12 @@ class AssignHearingDispositionTask < Task
   end
 
   private
+
+  def clean_up_virtual_hearing
+    if hearing.virtual?
+      perform_later_or_now(VirtualHearings::DeleteConferencesJob)
+    end
+  end
 
   def update_children_status_after_closed
     children.open.each { |task| task.update!(status: status) }
@@ -213,7 +218,7 @@ class AssignHearingDispositionTask < Task
   def mark_hearing_cancelled
     multi_transaction do
       update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.cancelled)
-      clean_up_virtual_hearing(hearing)
+      clean_up_virtual_hearing
       cancel!
     end
   end
@@ -240,13 +245,13 @@ class AssignHearingDispositionTask < Task
         update_hearing(disposition: Constants.HEARING_DISPOSITION_TYPES.postponed)
       end
 
-      clean_up_virtual_hearing(hearing)
+      clean_up_virtual_hearing
       created_tasks = reschedule_or_schedule_later(
         instructions: instructions,
         after_disposition_update: payload_values[:after_disposition_update]
       )
 
-      cancel_redundant_hearing_req_mail_tasks_of_type(HearingPostponementRequestMailTask)
+      cancel_redundant_hearing_postponement_req_tasks
 
       created_tasks
     end

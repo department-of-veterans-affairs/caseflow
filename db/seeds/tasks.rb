@@ -219,8 +219,6 @@ module Seeds
       create_veteran_record_request_tasks
       create_ama_hpr_tasks
       create_legacy_hpr_tasks
-      create_ama_hwr_tasks
-      create_legacy_hwr_tasks
     end
 
     def create_ama_distribution_tasks
@@ -1192,77 +1190,12 @@ module Seeds
       end
     end
 
-    def create_ama_hwr_tasks
-      created_appeals = []
-      hear = Constants.AMA_DOCKETS.hearing
-      [
-        { number_of_claimants: nil, docket_type: hear, request_issue_count: 5 },
-        { number_of_claimants: 1, docket_type: hear, request_issue_count: 2 },
-        { number_of_claimants: 1, docket_type: hear, request_issue_count: 8 },
-        { number_of_claimants: 1, docket_type: hear, request_issue_count: 5 },
-        { number_of_claimants: 1, docket_type: hear, request_issue_count: 7 },
-        { number_of_claimants: 1, docket_type: hear, request_issue_count: 1 },
-        { number_of_claimants: 1, docket_type: hear, request_issue_count: 3 },
-        { number_of_claimants: 1, docket_type: hear, request_issue_count: 2 },
-        { number_of_claimants: 1, docket_type: hear, request_issue_count: 8 },
-        { number_of_claimants: 1, docket_type: hear, request_issue_count: 3 }
-      ].each do |params|
-        created_appeals << create(
-          :appeal,
-          number_of_claimants: params[:number_of_claimants],
-          docket_type: params[:docket_type],
-          request_issues: create_list(
-            :request_issue, params[:request_issue_count], :nonrating
-          )
-        )
-      end
-      created_appeals.each_with_index do |appeal, idx|
-        if idx >= 4
-          create_scheduled_hearing_withdrawal_request_task(appeal)
-        else
-          create_unscheduled_hearing_withdrawal_request_task(appeal)
-        end
-      end
-    end
-
-    def create_legacy_hwr_tasks
-      created_legacy_appeals = []
-      offsets = (300..310).to_a
-      user = User.find_by_css_id("BVASYELLOW")
-      RequestStore[:current_user] = user
-      offsets.each do |offset|
-        docket_number = "190000#{offset}"
-        next unless VACOLS::Folder.find_by(tinum: docket_number).nil?
-        veteran = create_veteran
-        vacols_titrnum = veteran.file_number
-        type = offset.even? ? "travel" : "video"
-        regional_office = "RO17"
-        created_legacy_appeals << create_vacols_entries(vacols_titrnum, docket_number, regional_office, type)
-      end
-
-      created_legacy_appeals.each_with_index do |appeal, idx|
-        if idx >= 4
-          create_scheduled_hearing_withdrawal_request_task(appeal)
-        else
-          create_unscheduled_hearing_withdrawal_request_task(appeal)
-        end
-      end
-    end
-
     def create_unscheduled_hearing_postponement_request_task(appeal)
-        create(:hearing_postponement_request_mail_task, :postponement_request_with_unscheduled_hearing, appeal: appeal)
+        create(:hearing_postponement_request_mail_task, :with_unscheduled_hearing, appeal: appeal)
     end
 
     def create_scheduled_hearing_postponement_request_task(appeal)
-        create(:hearing_postponement_request_mail_task, :postponement_request_with_scheduled_hearing, appeal: appeal)
-    end
-
-    def create_unscheduled_hearing_withdrawal_request_task(appeal)
-        create(:hearing_withdrawal_request_mail_task, :withdrawal_request_with_unscheduled_hearing, appeal: appeal)
-    end
-
-    def create_scheduled_hearing_withdrawal_request_task(appeal)
-        create(:hearing_withdrawal_request_mail_task, :withdrawal_request_with_scheduled_hearing, appeal: appeal)
+        create(:hearing_postponement_request_mail_task, :with_scheduled_hearing, appeal: appeal)
     end
 
 
