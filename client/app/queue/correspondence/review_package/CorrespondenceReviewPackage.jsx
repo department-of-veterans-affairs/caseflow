@@ -4,6 +4,7 @@ import ReviewPackageData from './ReviewPackageData';
 import ReviewPackageCaseTitle from './ReviewPackageCaseTitle';
 import Button from '../../../components/Button';
 import ReviewForm from './ReviewForm';
+import CorrespondencePdfUI from '../pdfPreview/CorrespondencePdfUI';
 import { CmpDocuments } from './CmpDocuments';
 import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
@@ -11,6 +12,7 @@ import { setFileNumberSearch, doFileNumberSearch } from '../../../intake/actions
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { useHistory } from 'react-router';
+import PackageActionModal from '../modals/PackageActionModal';
 
 export const CorrespondenceReviewPackage = (props) => {
   const [reviewDetails, setReviewDetails] = useState({
@@ -20,11 +22,14 @@ export const CorrespondenceReviewPackage = (props) => {
   const [editableData, setEditableData] = useState({
     notes: '',
     veteran_file_number: '',
-    default_select_value: ''
+    default_select_value: null
   });
   const [apiResponse, setApiResponse] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [packageActionModal, setPackageActionModal] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [selectedId, setSelectedId] = useState(0);
 
   const history = useHistory();
   const fetchData = async () => {
@@ -61,6 +66,10 @@ export const CorrespondenceReviewPackage = (props) => {
     setShowModal(!showModal);
   };
 
+  const handlePackageActionModal = (value) => {
+    setPackageActionModal(value);
+  };
+
   const handleReview = () => {
     history.push('/queue/correspondence');
   };
@@ -88,18 +97,25 @@ export const CorrespondenceReviewPackage = (props) => {
       const hasChanged = isEditableDataChanged();
 
       setDisableButton(hasChanged);
+      setErrorMessage('');
     }
   }, [editableData, apiResponse]);
-
   const intakeLink = `/queue/correspondence/${props.correspondence_uuid}/intake`;
 
   return (
     <React.Fragment>
       <AppSegment filledBackground>
-        <ReviewPackageCaseTitle />
+        <ReviewPackageCaseTitle handlePackageActionModal={handlePackageActionModal} />
         <ReviewPackageData
           correspondence={props.correspondence}
-          packageDocumentType={props.packageDocumentType} />
+          packageDocumentType={props.packageDocumentType}
+        />
+        {packageActionModal &&
+          <PackageActionModal
+            packageActionModal={packageActionModal}
+            closeHandler={handlePackageActionModal}
+          />
+        }
         <ReviewForm
           {...{
             reviewDetails,
@@ -111,11 +127,14 @@ export const CorrespondenceReviewPackage = (props) => {
             fetchData,
             showModal,
             handleModalClose,
-            handleReview
+            handleReview,
+            errorMessage,
+            setErrorMessage
           }}
           {...props}
         />
-        <CmpDocuments documents={props.correspondenceDocuments} />
+        <CmpDocuments documents={props.correspondenceDocuments} selectedId={selectedId} setSelectedId={setSelectedId} />
+        <CorrespondencePdfUI documents={props.correspondenceDocuments} selectedId={selectedId} />
       </AppSegment>
       <div className="cf-app-segment">
         <div className="cf-push-left">
@@ -132,6 +151,7 @@ export const CorrespondenceReviewPackage = (props) => {
               styling={{ style: { marginRight: '2rem' } }}
               classNames={['usa-button-secondary']}
               onClick={intakeAppeal}
+              disabled={disableButton}
             />
           )}
           <a href={intakeLink}>
@@ -140,6 +160,7 @@ export const CorrespondenceReviewPackage = (props) => {
               name="Create record"
               classNames={['usa-button-primary']}
               href={intakeLink}
+              disabled={disableButton}
             />
           </a>
         </div>
@@ -153,6 +174,7 @@ CorrespondenceReviewPackage.propTypes = {
   correspondence: PropTypes.object,
   correspondenceDocuments: PropTypes.arrayOf(PropTypes.object),
   packageDocumentType: PropTypes.object,
+  veteranInformation: PropTypes.object,
   setFileNumberSearch: PropTypes.func,
   doFileNumberSearch: PropTypes.func
 };
@@ -160,7 +182,8 @@ CorrespondenceReviewPackage.propTypes = {
 const mapStateToProps = (state) => ({
   correspondence: state.reviewPackage.correspondence,
   correspondenceDocuments: state.reviewPackage.correspondenceDocuments,
-  packageDocumentType: state.reviewPackage.packageDocumentType
+  packageDocumentType: state.reviewPackage.packageDocumentType,
+  veteranInformation: state.reviewPackage.veteranInformation
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

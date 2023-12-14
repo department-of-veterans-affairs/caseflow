@@ -2,7 +2,7 @@ import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React from 'react';
 import COPY from 'app/../COPY';
-import Dropdown from '../../../components/Dropdown';
+import SearchableDropdown from '../../../components/SearchableDropdown';
 
 const containingDivStyling = css({
   display: 'block',
@@ -45,44 +45,50 @@ const dropDownDiv = css({
   maxWidth: '100%'
 });
 
-class ReviewPackageCaseTitle extends React.PureComponent {
-  render = () => {
-    return (
-      <div>
-        <CaseTitleScaffolding heading={COPY.CORRESPONDENCE_REVIEW_PACKAGE_TITLE} />
-        <CaseSubTitleScaffolding />
-      </div>
-    );
-  };
-}
+const ReviewPackageCaseTitle = (props) => {
+  return (
+    <div>
+      <CaseTitleScaffolding />
+      <CaseSubTitleScaffolding handlePackageActionModal={props.handlePackageActionModal} />
+    </div>
+  );
+};
 
-const CaseTitleScaffolding = (props) => (
+const CaseTitleScaffolding = () => (
   <div {...containingDivStyling}>
-    <h1 {...headerStyling}>{props.heading}</h1>
+    <h1 {...headerStyling}>{COPY.CORRESPONDENCE_REVIEW_PACKAGE_TITLE}</h1>
   </div>
 );
 
-const CaseSubTitleScaffolding = () => (
+const CaseSubTitleScaffolding = (props) => (
   <div {...listStyling}>
     <div {...columnStyling}>
       {COPY.CORRESPONDENCE_REVIEW_PACKAGE_SUB_TITLE}
     </div>
     <div {...dropDownDiv} style = {{ maxWidth: '25%' }}>
-      <Dropdown
+      <SearchableDropdown
         options={[
-          { value: 'Split package', displayText: 'Split package' },
-          { value: 'Merge package', displayText: 'Merge package' },
-          { value: 'Remove package from Caseflow', displayText: 'Remove package from Caseflow' },
-          { value: 'Reassign package', displayText: 'Reassign package' }
+          { value: 'splitPackage', label: 'Split package' },
+          { value: 'mergePackage', label: 'Merge package' },
+          { value: 'removePackage', label: 'Remove package from Caseflow' },
+          { value: 'reassignPackage', label: 'Reassign package' }
         ]}
-        defaultText="Request package action"
+        onChange={(option) => props.handlePackageActionModal(option.value)}
+        placeholder="Request package action"
+        label="Request package action dropdown"
+        hideLabel
+        name=""
       />
     </div>
   </div>
 );
 
-CaseTitleScaffolding.propTypes = {
-  heading: PropTypes.string
+ReviewPackageCaseTitle.propTypes = {
+  handlePackageActionModal: PropTypes.func
+};
+
+CaseSubTitleScaffolding.propTypes = {
+  handlePackageActionModal: PropTypes.func
 };
 
 export default ReviewPackageCaseTitle;

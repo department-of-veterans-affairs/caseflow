@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import AddTaskView from './AddTaskView';
+import AddEvidenceSubmissionTaskView from './AddEvidenceSubmissionTaskView';
 import Button from '../../../../../components/Button';
 import CaseDetailsLink from '../../../../CaseDetailsLink';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+
+const MAX_NUM_TASKS = 4;
 
 export const ExistingAppealTasksView = (props) => {
   const [displayRemoveCheck, setDisplayRemoveCheck] = useState(false);
@@ -24,6 +27,18 @@ export const ExistingAppealTasksView = (props) => {
     });
   };
 
+  const getWaivedTaskForAppeal = () => {
+    const taskId = props.appeal.evidenceSubmissionTask.id;
+
+    let task = props.waivedTasks.find((el) => el.id === taskId);
+
+    if (typeof task === 'undefined') {
+      task = { id: taskId, isWaived: false, waiveReason: '' };
+    }
+
+    return task;
+  };
+
   const addTask = () => {
     const newTask = { id: props.nextTaskId, appealId: props.appeal.id, type: '', content: '' };
 
@@ -42,6 +57,16 @@ export const ExistingAppealTasksView = (props) => {
     props.setNewTasks([...filtered, updatedTask]);
   };
 
+  const waivedTaskUpdatedCallback = (updatedTask) => {
+    const filtered = props.waivedTasks.filter((task) => task.id !== updatedTask.id);
+
+    if (updatedTask.isWaived) {
+      props.setWaivedTasks([...filtered, updatedTask]);
+    } else {
+      props.setWaivedTasks(filtered);
+    }
+  };
+
   useEffect(() => {
     if (getTasksForAppeal().length > 1) {
       setDisplayRemoveCheck(true);
@@ -51,7 +76,7 @@ export const ExistingAppealTasksView = (props) => {
   }, [props.newTasks]);
 
   useEffect(() => {
-    setavailableTaskTypeOptions(props.filterUnavailableTaskTypeOptions(getTasksForAppeal()));
+    setavailableTaskTypeOptions(props.filterUnavailableTaskTypeOptions(getTasksForAppeal(), props.allTaskTypeOptions));
   }, [props.newTasks]);
 
   return (
@@ -67,6 +92,13 @@ export const ExistingAppealTasksView = (props) => {
       </div>
 
       <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+        {props.appeal.hasEvidenceSubmissionTask &&
+          <AddEvidenceSubmissionTaskView
+            key={props.appeal.evidenceSubmissionTask.id}
+            task={getWaivedTaskForAppeal()}
+            taskUpdatedCallback={waivedTaskUpdatedCallback}
+          />
+        }
         {getTasksForAppeal().map((task) => {
           return (
             <AddTaskView
@@ -75,9 +107,9 @@ export const ExistingAppealTasksView = (props) => {
               removeTask={removeTask}
               taskUpdatedCallback={taskUpdatedCallback}
               displayRemoveCheck={displayRemoveCheck}
-              setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
               allTaskTypeOptions={props.allTaskTypeOptions}
               availableTaskTypeOptions={availableTaskTypeOptions}
+              autoTexts={props.autoTexts}
             />
           );
         })}
@@ -88,7 +120,7 @@ export const ExistingAppealTasksView = (props) => {
           <Button
             type="button"
             onClick={addTask}
-            disabled={false}
+            disabled={getTasksForAppeal().length === MAX_NUM_TASKS}
             name="addasks"
             className={['cf-left-side']}>
           + Add tasks
@@ -112,11 +144,13 @@ ExistingAppealTasksView.propTypes = {
   appeal: PropTypes.object.isRequired,
   newTasks: PropTypes.array.isRequired,
   setNewTasks: PropTypes.func.isRequired,
+  waivedTasks: PropTypes.array.isRequired,
+  setWaivedTasks: PropTypes.func.isRequired,
   nextTaskId: PropTypes.number.isRequired,
-  setRelatedTasksCanContinue: PropTypes.func.isRequired,
   unlinkAppeal: PropTypes.func.isRequired,
   allTaskTypeOptions: PropTypes.array.isRequired,
-  filterUnavailableTaskTypeOptions: PropTypes.func.isRequired
+  filterUnavailableTaskTypeOptions: PropTypes.func.isRequired,
+  autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired
 };
 
 export default ExistingAppealTasksView;

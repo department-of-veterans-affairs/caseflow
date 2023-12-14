@@ -8,6 +8,8 @@
     featureToggles: {
       correspondence_queue: FeatureToggle.enabled?(:correspondence_queue, user: current_user)
     },
-    correspondence: @correspondence
+    correspondence: @correspondence,
+    autoTexts: @auto_texts,
+    veteranInformation: @veteran_information
   }) %>
 <% end %>

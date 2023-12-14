@@ -24,7 +24,8 @@ class EditModal extends React.Component {
       packageOptions: '',
       defaultVADORDate: '',
       defaultPackageDocument: '',
-      saveButtonDisabled: true
+      saveButtonDisabled: true,
+      canEditVADOR: true
     };
   }
 
@@ -41,6 +42,12 @@ class EditModal extends React.Component {
 
       const formattedVADORDate = moment.utc(response.body.correspondence?.va_date_of_receipt).format('YYYY-MM-DD');
       const packageDocumentTypeName = { label: response.body.package_document_type?.name, value: response.body.package_document_type?.id };
+
+      if (response.body.user_can_edit_vador) {
+        this.setState({
+          canEditVADOR: false
+        });
+      }
 
       this.setState({
         VADORDate: formattedVADORDate,
@@ -160,11 +167,13 @@ class EditModal extends React.Component {
         />
         {showEditModal && (
           <Modal buttons={this.getModalButtons()} visible closeHandler={this.onClickCancel} title="Edit CMP information">
-            <div className="add-nonrating-request-issue">
-              <div className="decision-date">
+            <div>
+              <div className="va-dor">
                 <DateSelector
-                  name="decision-date"
+                  name="va-dor-input"
                   label="VA DOR"
+                  readOnly={this.state.canEditVADOR}
+                  strongLabel
                   value={VADORDate}
                   errorMessage={this.state.dateError}
                   onChange={this.VADORDateOnChange}
@@ -173,7 +182,7 @@ class EditModal extends React.Component {
               </div>
               <br />
               <SearchableDropdown
-                name="issue-category"
+                name="package-document-type-input"
                 label="Package document type"
                 placeholder="Select or enter..."
                 options={this.state.packageOptions}

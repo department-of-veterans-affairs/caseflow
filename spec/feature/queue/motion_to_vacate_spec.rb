@@ -858,7 +858,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
           # Add remand reasons for issue 2
           within all("div.remand-reasons-form")[1] do
-            find_field("Medical examinations", visible: false).sibling("label").click
+            find_field("No medical examination", visible: false).sibling("label").click
             find_field("Pre AOJ", visible: false).sibling("label").click
           end
 
@@ -909,7 +909,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
           expect(remanded1.remand_reasons.first).to have_attributes(code: "service_treatment_records")
 
           expect(remanded2.remand_reasons.size).to eq(1)
-          expect(remanded2.remand_reasons.first).to have_attributes(code: "medical_examinations")
+          expect(remanded2.remand_reasons.first).to have_attributes(code: "no_medical_examination")
         end
       end
 

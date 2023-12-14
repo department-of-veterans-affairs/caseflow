@@ -1,11 +1,13 @@
-export const veteranInfo = {
-  veteran: {
-    id: 1928,
-    full_name: 'Bob Vetner',
-    gender: 'M',
-    date_of_birth: '01/10/1935',
-    file_number: '998877665',
+export const veteranInformation = {
+  id: 1928,
+  notes: 'This is a note from CMP',
+  veteran_name: {
+    first_name: 'Bob',
+    middle_name: '',
+    last_name: 'Vetner',
   },
+  file_number: '998877665',
+  correspondence_type_id: 8
 };
 
 export const correspondenceData = {
@@ -18,7 +20,6 @@ export const correspondenceData = {
   notes: 'Some CMP notes here',
   package_document_type_id: 15,
   portal_entry_date: '2023-11-16 01:44:47.080996',
-  prior_correspondence_id: 1,
   source_type: 'Mail',
   updated_at: '2023-11-16 01:44:47.094786',
   updated_by_id: null,
@@ -36,18 +37,18 @@ export const packageDocumentTypeData = {
 export const correspondenceDocumentsData = [
   {
     correspondence_id: 1,
-    document_file_number: veteranInfo.veteran.file_number,
+    document_file_number: veteranInformation.file_number,
     pages: 30,
-    vbms_document_id: '1',
+    vbms_document_type_id: 1,
     uuid: null,
     document_type: 1250,
     document_title: 'VA Form 10182 Notice of Disagreement'
   },
   {
     correspondence_id: 1,
-    document_file_number: veteranInfo.veteran.file_number,
+    document_file_number: veteranInformation.file_number,
     pages: 20,
-    vbms_document_id: '1',
+    vbms_document_type_id: 1,
     uuid: null,
     document_type: 719,
     document_title: 'Exam Request'
@@ -58,6 +59,7 @@ export const reviewPackageDataResponse = {
   body: {
     correspondence: correspondenceData,
     package_document_type: packageDocumentTypeData,
-    correspondence_documents: correspondenceDocumentsData
+    correspondence_documents: correspondenceDocumentsData,
+    general_information: veteranInformation
   }
 };

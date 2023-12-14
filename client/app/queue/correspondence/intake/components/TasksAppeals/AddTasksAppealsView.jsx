@@ -5,6 +5,7 @@ import Checkbox from '../../../../../components/Checkbox';
 import AddAppealRelatedTaskView from './AddAppealRelatedTaskView';
 import AddUnrelatedTaskView from './AddUnrelatedTaskView';
 import { saveMailTaskState } from '../../../correspondenceReducer/correspondenceActions';
+import { INTAKE_FORM_TASK_TYPES } from '../../../../constants';
 
 const mailTasksLeft = [
   'Change of address',
@@ -18,17 +19,8 @@ const mailTasksRight = [
   'Associated with Claims Folder'
 ];
 
-const taskTypeOptions = [
-  { value: 'CAVC Correspondence', label: 'CAVC Correspondence' },
-  { value: 'Congressional interest', label: 'Congressional interest' },
-  { value: 'Death certificate', label: 'Death certificate' },
-  { value: 'FOIA request', label: 'FOIA request' },
-  { value: 'Other motion', label: 'Other motion' },
-  { value: 'Power of attorney-related', label: 'Power of attorney-related' },
-  { value: 'Privacy act request', label: 'Privacy act request' },
-  { value: 'Privacy complaint', label: 'Privacy complaint' },
-  { value: 'Status inquiry', label: 'Status inquiry' }
-];
+const relatedTaskTypes = INTAKE_FORM_TASK_TYPES.relatedToAppeal;
+const unrelatedTaskTypes = INTAKE_FORM_TASK_TYPES.unrelatedToAppeal;
 
 export const AddTasksAppealsView = (props) => {
   const mailTasks = useSelector((state) => state.intakeCorrespondence.mailTasks);
@@ -37,7 +29,7 @@ export const AddTasksAppealsView = (props) => {
 
   const dispatch = useDispatch();
 
-  const filterUnavailableTaskTypeOptions = (tasks) => {
+  const filterUnavailableTaskTypeOptions = (tasks, options) => {
     let otherMotionCount = 0;
 
     const filteredTaskNames = tasks.map((task) => {
@@ -48,7 +40,7 @@ export const AddTasksAppealsView = (props) => {
       return task.type;
     });
 
-    return taskTypeOptions.filter((option) => {
+    return options.filter((option) => {
       // Up to 2 other motion tasks can be created in the workflow
       // so only filter 'other motion' if there are 2 other motion tasks already created
       if (option.value === 'Other motion' && otherMotionCount < 2) {
@@ -109,19 +101,22 @@ export const AddTasksAppealsView = (props) => {
             <AddUnrelatedTaskView
               setUnrelatedTasksCanContinue={setUnrelatedTasksCanContinue}
               filterUnavailableTaskTypeOptions={filterUnavailableTaskTypeOptions}
-              allTaskTypeOptions={taskTypeOptions}
+              allTaskTypeOptions={unrelatedTaskTypes}
+              autoTexts={props.autoTexts}
             />
           </div>
         </div>
 
-        <div style={{ marginTop: '3.8rem' }}>
+        <div id="task-related-to-an-appeal" style={{ marginTop: '3.8rem' }}>
           <h2 style={{ margin: '3rem auto 1rem auto' }}>Tasks related to an existing Appeal</h2>
           <p style={{ marginBottom: '0rem' }}>Is this correspondence related to an existing appeal?</p>
           <AddAppealRelatedTaskView
             correspondenceUuid={props.correspondenceUuid}
             setRelatedTasksCanContinue={setRelatedTasksCanContinue}
             filterUnavailableTaskTypeOptions={filterUnavailableTaskTypeOptions}
-            allTaskTypeOptions={taskTypeOptions}
+            allTaskTypeOptions={relatedTaskTypes}
+            autoTexts={props.autoTexts}
+            veteranInformation={props.veteranInformation}
           />
         </div>
       </div>
@@ -131,7 +126,9 @@ export const AddTasksAppealsView = (props) => {
 
 AddTasksAppealsView.propTypes = {
   correspondenceUuid: PropTypes.string.isRequired,
-  onContinueStatusChange: PropTypes.func.isRequired
+  onContinueStatusChange: PropTypes.func.isRequired,
+  autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
+  veteranInformation: PropTypes.object.isRequired
 };
 
 export default AddTasksAppealsView;

@@ -9,9 +9,10 @@ import { LOGO_COLORS } from '../../../../../constants/AppConstants';
 import RadioField from '../../../../../components/RadioField';
 import ExistingAppealTasksView from './ExistingAppealTasksView';
 import {
+  setFetchedAppeals,
   setNewAppealRelatedTasks,
   setTaskRelatedAppealIds,
-  setFetchedAppeals
+  setWaivedEvidenceTasks
 } from '../../../correspondenceReducer/correspondenceActions';
 
 const RELATED_NO = '0';
@@ -29,6 +30,8 @@ export const AddAppealRelatedTaskView = (props) => {
   const [taskRelatedAppeals, setTaskRelatedAppeals] =
     useState(useSelector((state) => state.intakeCorrespondence.taskRelatedAppealIds));
   const [newTasks, setNewTasks] = useState(useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks));
+  const [waivedTasks, setWaivedTasks] =
+    useState(useSelector((state) => state.intakeCorrespondence.waivedEvidenceTasks));
   const [existingAppealRadio, setExistingAppealRadio] =
     useState(taskRelatedAppeals.length ? RELATED_YES : RELATED_NO);
   const [loading, setLoading] = useState(false);
@@ -56,14 +59,18 @@ export const AddAppealRelatedTaskView = (props) => {
     dispatch(setNewAppealRelatedTasks(newTasks));
   }, [newTasks]);
 
+  useEffect(() => {
+    dispatch(setWaivedEvidenceTasks(waivedTasks));
+  }, [waivedTasks]);
+
   const appealCheckboxOnChange = (appealId, isChecked) => {
     if (isChecked) {
       if (!taskRelatedAppeals.includes(appealId)) {
         setTaskRelatedAppeals([...taskRelatedAppeals, appealId]);
 
-        const tasksForAppeal = newTasks.filter((el) => el.appealId === appealId);
+        const hasEvidenceSubmissionTask = appeals.find((el) => el.id === appealId)?.hasEvidenceSubmissionTask;
 
-        if (!tasksForAppeal.length) {
+        if (!hasEvidenceSubmissionTask) {
           const newTask = { id: nextTaskId, appealId, type: '', content: '' };
 
           setNewTasks([...newTasks, newTask]);
@@ -72,50 +79,21 @@ export const AddAppealRelatedTaskView = (props) => {
     } else {
       const selectedAppeals = taskRelatedAppeals.filter((checkedId) => checkedId !== appealId);
       const filteredNewTasks = newTasks.filter((task) => task.appealId !== appealId);
+      const waivedEvidenceTasks = filteredNewTasks.filter((taskEvidence) => taskEvidence.isWaived);
 
       setTaskRelatedAppeals(selectedAppeals);
       setNewTasks(filteredNewTasks);
       setTableUpdateTrigger((prev) => prev + 1);
+      setWaivedTasks(waivedEvidenceTasks);
     }
   };
-
-  useEffect(() => {
-    // Don't refetch (use cache)
-    if (appeals.length) {
-      return;
-    }
-
-    // Visually indicate that we are fetching data
-    setLoading(true);
-
-    ApiUtil.get(`/queue/correspondence/${props.correspondenceUuid}/veteran`).
-      then((vetResponse) => {
-        const veteranFileNumber = vetResponse.body.file_number;
-
-        ApiUtil.get('/appeals', { headers: { 'case-search': veteranFileNumber } }).
-          then((appealResponse) => {
-            const appealsForStore = prepareAppealForStore(appealResponse.body.appeals);
-
-            const appealArr = [];
-
-            for (const appealUuid in appealsForStore.appeals) {
-              if (Object.prototype.hasOwnProperty.call(appealsForStore.appeals, appealUuid)) {
-                appealArr.push(appealsForStore.appeals[appealUuid]);
-              }
-            }
-
-            dispatch(setFetchedAppeals(appealArr));
-            setLoading(false);
-          });
-      }
-      );
-  }, []);
 
   useEffect(() => {
     // Clear the selected appeals and any tasks when the user toggles the radio button
     if (existingAppealRadio === RELATED_NO) {
       setTaskRelatedAppeals([]);
       setNewTasks([]);
+      setWaivedTasks([]);
     }
   }, [existingAppealRadio]);
 
@@ -135,8 +113,36 @@ export const AddAppealRelatedTaskView = (props) => {
       canContinue = canContinue && ((task.content !== '') && (task.type !== ''));
     });
 
+    waivedTasks.forEach((task) => {
+      canContinue = canContinue && (task.isWaived ? (task.waiveReason !== '') : true);
+    });
+
     props.setRelatedTasksCanContinue(canContinue);
-  }, [newTasks]);
+  }, [newTasks, waivedTasks]);
+
+  const veteranFileNumber = props.veteranInformation.file_number;
+
+  useEffect(() => {
+  // Don't refetch (use cache)
+    if (appeals.length) {
+      return;
+    }
+
+    if (veteranFileNumber) {
+    // Visually indicate that we are fetching data
+      setLoading(true);
+
+      ApiUtil.get('/appeals', { headers: { 'case-search': veteranFileNumber } }).
+        then((appealResponse) => {
+          const appealsForStore = prepareAppealForStore(appealResponse.body.appeals);
+
+          const appealArr = Object.values(appealsForStore.appeals);
+
+          dispatch(setFetchedAppeals(appealArr));
+          setLoading(false);
+        });
+    }
+  }, [veteranFileNumber]);
 
   return (
     <div>
@@ -194,11 +200,14 @@ export const AddAppealRelatedTaskView = (props) => {
                   appeal={appealById(appealId)}
                   newTasks={newTasks}
                   setNewTasks={setNewTasks}
+                  waivedTasks={waivedTasks}
+                  setWaivedTasks={setWaivedTasks}
                   nextTaskId={nextTaskId}
                   setRelatedTasksCanContinue={props.setRelatedTasksCanContinue}
                   unlinkAppeal={appealCheckboxOnChange}
                   allTaskTypeOptions={props.allTaskTypeOptions}
                   filterUnavailableTaskTypeOptions={props.filterUnavailableTaskTypeOptions}
+                  autoTexts={props.autoTexts}
                 />
               );
             })}
@@ -213,7 +222,9 @@ AddAppealRelatedTaskView.propTypes = {
   correspondenceUuid: PropTypes.string.isRequired,
   setRelatedTasksCanContinue: PropTypes.func.isRequired,
   filterUnavailableTaskTypeOptions: PropTypes.func.isRequired,
-  allTaskTypeOptions: PropTypes.array.isRequired
+  allTaskTypeOptions: PropTypes.array.isRequired,
+  autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
+  veteranInformation: PropTypes.object.isRequired
 };
 
 export default AddAppealRelatedTaskView;

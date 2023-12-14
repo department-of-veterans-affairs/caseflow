@@ -46,6 +46,14 @@ const veternalFileStyling = css({
   }
 });
 
+const errorVeternalFileStyling = css({
+  width: '48%',
+  marginTop: '-6.4rem',
+  '@media (max-width: 1599px)': {
+    width: '58%'
+  }
+});
+
 const veternalNameStyling = css({
   width: '60%',
   '@media (max-width: 1081px)': {
@@ -79,7 +87,7 @@ const textareaWidth = css({
 
 export const ReviewForm = (props) => {
   const handleFileNumber = (value) => {
-    const isNumeric = value === '' || (/^[0-9]+$/).test(value);
+    const isNumeric = value === '' || (/^\d{0,9}$/).test(value);
 
     if (isNumeric) {
       const updatedReviewDetails = {
@@ -151,17 +159,24 @@ export const ReviewForm = (props) => {
       },
     };
 
-    await ApiUtil.patch(
-      `/queue/correspondence/${correspondence.correspondence_uuid}`,
-      payloadData
-    ).then((response) => {
+    try {
+      const response = await ApiUtil.patch(
+        `/queue/correspondence/${correspondence.correspondence_uuid}`,
+        payloadData
+      );
+
       const { body } = response;
 
       if (body.status === 'ok') {
         props.fetchData();
         props.setDisableButton((current) => !current);
+        props.setErrorMessage('');
       }
-    });
+    } catch (error) {
+      const { body } = error.response;
+
+      props.setErrorMessage(body.error);
+    }
   };
 
   return (
@@ -180,12 +195,14 @@ export const ReviewForm = (props) => {
         <main {...mainDiv}>
           <div {...divideStyling}>
             <div {...inputStyling}>
-              <div {...veternalFileStyling}>
+              <div {...props.errorMessage ? { ...errorVeternalFileStyling } : { ...veternalFileStyling }}>
                 <TextField
                   label="Veteran file number"
                   value={props.editableData.veteran_file_number}
                   onChange={handleFileNumber}
                   name="veteran-file-number-input"
+                  useAriaLabel
+                  errorMessage={props.errorMessage}
                 />
               </div>
 
@@ -195,6 +212,7 @@ export const ReviewForm = (props) => {
                   value={fullName(props.reviewDetails.veteran_name)}
                   readOnly
                   name="Veteran-name-display"
+                  useAriaLabel
                 />
               </div>
 
@@ -257,7 +275,6 @@ ReviewForm.propTypes = {
       last_name: PropTypes.string,
     }),
     dropdown_values: PropTypes.array,
-    default_select_value: PropTypes.string,
   }),
   editableData: PropTypes.shape({
     notes: PropTypes.string,
@@ -267,10 +284,12 @@ ReviewForm.propTypes = {
   disableButton: PropTypes.bool,
   setEditableData: PropTypes.func,
   setDisableButton: PropTypes.func,
+  setErrorMessage: PropTypes.func,
   fetchData: PropTypes.func,
-  showModal: PropTypes.func,
+  showModal: PropTypes.bool,
   handleModalClose: PropTypes.func,
   handleReview: PropTypes.func,
+  errorMessage: PropTypes.string
 };
 
 export default ReviewForm;
