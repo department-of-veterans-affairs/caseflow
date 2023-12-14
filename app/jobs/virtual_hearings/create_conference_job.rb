@@ -124,7 +124,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
   end
 
   def create_conference_datadog_tags
-    datadog_metric_info.merge(attrs: { hearing_id: virtual_hearing.hearing_id })
+    custom_metric_info.merge(attrs: { hearing_id: virtual_hearing.hearing_id })
   end
 
   def create_conference

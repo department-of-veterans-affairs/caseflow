@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-module CollectDataDogMetrics
+module CollectCustomMetrics
   extend ActiveSupport::Concern
 
   included do
     before_action :collect_data_dog_metrics
   end
 
-  def collect_data_dog_metrics
+  def collect_custom_metrics
     collect_postgres_metrics
     collect_vacols_metrics
   end

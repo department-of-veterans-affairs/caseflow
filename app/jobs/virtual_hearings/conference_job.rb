@@ -5,7 +5,7 @@ class VirtualHearings::ConferenceJob < ApplicationJob
 
   private
 
-  def datadog_metric_info
+  def custom_metric_info
     {
       app_name: Constants.DATADOG_METRICS.HEARINGS.APP_NAME,
       metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME

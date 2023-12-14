@@ -69,7 +69,7 @@ class BaseHearingUpdateForm
 
   private
 
-  def datadog_metric_info
+  def custom_metric_info
     {
       app_name: RequestStore[:application],
       metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME
@@ -365,7 +365,7 @@ class BaseHearingUpdateForm
     end
 
     # Merge the hearing ID into the DataDog metrics
-    updated_metric_info = datadog_metric_info.merge(attrs: { hearing_id: hearing&.id })
+    updated_metric_info = custom_metric_info.merge(attrs: { hearing_id: hearing&.id })
 
     # Handle the status toggle of the virtual hearing
     if virtual_hearing_cancelled?
