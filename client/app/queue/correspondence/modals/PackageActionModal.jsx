@@ -8,6 +8,7 @@ import { connect } from 'react-redux';
 import ApiUtil from '../../../util/ApiUtil';
 import { getPackageActionColumns, getModalInformation } from '../review_package/utils';
 import { useHistory } from 'react-router';
+import RadioField from '../../../components/RadioField';
 
 const PackageActionModal = (props) => {
   const {
@@ -107,6 +108,14 @@ const PackageActionModal = (props) => {
       data.instructions.push(textInputReason);
     }
 
+    if (
+      (packageActionModal === 'removePackage' ||
+        packageActionModal === 'reassignPackage' ||
+        packageActionModal === 'splitPackage') &&
+      textInputReason !== ''
+    ) {
+      data.instructions.push(textInputReason);
+    }
     ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/task`, { data }).then((response) => {
       props.closeHandler(null);
       if (response.ok) {

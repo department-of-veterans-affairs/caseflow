@@ -89,7 +89,8 @@ export const getPackageActionColumns = (dropdownType) => {
                 {`${vaDate}`}
               </p>
             </span>
-          )}
+          )
+        }
       }
     );
   }
