@@ -310,8 +310,7 @@ feature "NonComp Report Page", :postgres do
   end
 
   def change_history_csv_file
-    # This time might have to be adjusted
-    Kernel.sleep(2)
+    wait_for(2)
     # Copied from Capybara setup
     download_directory = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
     list_of_files = Dir.glob(File.join(download_directory, "*")).select { |f| File.file?(f) }
@@ -319,5 +318,12 @@ feature "NonComp Report Page", :postgres do
 
     expect(latest_file).to_not eq(nil)
     latest_file
+  end
+
+  def wait_for(seconds)
+    start_time = Time.zone.now
+    while Time.zone.now - start_time < seconds
+      # Do nothing, just wait
+    end
   end
 end
