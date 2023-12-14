@@ -6,6 +6,7 @@ import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
+import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';
 
 const DocketTimeGoals = (props) => {
@@ -30,42 +31,17 @@ const DocketTimeGoals = (props) => {
   const [docketTimeGoalLevers, setTimeGoalLever] = useState(filteredTimeGoalLevers);
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
 
-  const leverInputValidation = (lever, event) => {
-    console.log("INSIDE INPUT VALIDATION")
-    let rangeError = !(/^\d{1,3}$/).test(event);
-
-    console.log(rangeError);
-    if (rangeError) {
-
-      setErrorMessages({ ...errorMessagesList, [lever.item]: 'Please enter a value less than or equal to 999' });
-    } else {
-      console.log("inside ELSE", event, rangeError)
-      setErrorMessages({ ...errorMessagesList, [lever.item]: null });
-    }
-    // let messageValues = Object.values(errorMessagesList);
-    // let hasErrorMessage = (message) => message !== null;
-    // let messageFilter = messageValues.filter(hasErrorMessage);
-
-    console.log("messageValues", "messageFilter", errorMessagesList);
-    // if (messageFilter.length < 1) {
-    //   console.log("RETURNING SUCCESS")
-    //   console.log(messageFilter, messageFilter.length);
-    //   return 'SUCCESS';
-    // }
-    console.log("RETURNING FAIL")
-    return 'FAIL';
-  };
-
   const updateLever = (index, leverType) => (event) => {
     if (leverType === 'DistributionPrior') {
 
       const levers = docketDistributionLevers.map((lever, i) => {
         if (index === i) {
 
-          let validationResponse = leverInputValidation(lever, event);
+          let validationResponse = leverInputValidation(lever, event, errorMessagesList);
 
-          if (validationResponse === 'SUCCESS') {
+          if (validationResponse.statement === 'SUCCESS') {
             lever.value = event;
+            setErrorMessages(validationResponse.updatedMessages);
             leverStore.dispatch({
               type: Constants.UPDATE_LEVER_VALUE,
               updated_lever: { item: lever.item, value: event },
@@ -74,8 +50,9 @@ const DocketTimeGoals = (props) => {
 
             return lever;
           }
-          if (validationResponse === 'FAIL') {
+          if (validationResponse.statement === 'FAIL') {
             lever.value = event;
+            setErrorMessages(validationResponse.updatedMessages);
 
             leverStore.dispatch({
               type: Constants.UPDATE_LEVER_VALUE,
@@ -96,20 +73,22 @@ const DocketTimeGoals = (props) => {
       const levers = docketTimeGoalLevers.map((lever, i) => {
         if (index === i) {
 
-          let validationResponse = leverInputValidation(lever, event);
+          let validationResponse = leverInputValidation(lever, event, errorMessagesList);
 
-          if (validationResponse === 'SUCCESS') {
+          if (validationResponse.statement === 'SUCCESS') {
             lever.value = event;
+            setErrorMessages(validationResponse.updatedMessages);
             leverStore.dispatch({
               type: Constants.UPDATE_LEVER_VALUE,
-              updated_lever: { item: lever.item, value: event }
+              updated_lever: { item: lever.item, value: event },
+              validChange: true
             });
 
             return lever;
           }
-          if (validationResponse === 'FAIL') {
+          if (validationResponse.statement === 'FAIL') {
             lever.value = event;
-
+            setErrorMessages(validationResponse.updatedMessages);
             leverStore.dispatch({
               type: Constants.UPDATE_LEVER_VALUE,
               updated_lever: { item: lever.item, value: event },

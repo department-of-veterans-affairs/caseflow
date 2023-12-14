@@ -4,6 +4,7 @@ import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActio
 import { css } from 'glamor';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';
+import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';
 
 const BatchSize = (props) => {
@@ -20,27 +21,39 @@ const BatchSize = (props) => {
     '& .usa-input-error label': { bottom: '15px', left: '89px' }
   });
 
+  const errorMessages = {};
   const [batchSizeLevers, setLever] = useState(filteredLevers);
-  const updateLever = (index, changedItem) => (event) => {
-    const lever = batchSizeLevers.find((lever) => lever.item === changedItem);
-
-    leverStore.dispatch({
-      type: Constants.UPDATE_LEVER_VALUE,
-      updated_lever: { item: changedItem, value: event }
-    });
+  const [errorMessagesList, setErrorMessages] = useState(errorMessages);
+  const updateLever = (index) => (event) => {
 
     const levers = batchSizeLevers.map((lever, i) => {
       if (index === i) {
-        let errorResult = !(/^\d{0,3}$/).test(event);
 
-        if (errorResult) {
-          lever.errorMessage = 'Please enter a value less than or equal to 999';
-        } else {
-          lever.errorMessage = null;
+        let validationResponse = leverInputValidation(lever, event, errorMessagesList);
+
+        if (validationResponse.statement === 'SUCCESS') {
+          lever.value = event;
+          setErrorMessages(validationResponse.updatedMessages);
+          leverStore.dispatch({
+            type: Constants.UPDATE_LEVER_VALUE,
+            updated_lever: { item: lever.item, value: event },
+            validChange: true
+          });
+
+          return lever;
         }
-        lever.value = event;
+        if (validationResponse.statement === 'FAIL') {
+          lever.value = event;
+          setErrorMessages(validationResponse.updatedMessages);
 
-        return lever;
+          leverStore.dispatch({
+            type: Constants.UPDATE_LEVER_VALUE,
+            updated_lever: { item: lever.item, value: event },
+            validChange: false
+          });
+
+          return lever;
+        }
       }
 
       return lever;
@@ -76,7 +89,7 @@ const BatchSize = (props) => {
                 isInteger
                 readOnly={lever.is_disabled}
                 value={lever.value}
-                errorMessage={lever.errorMessage}
+                errorMessage={errorMessagesList[lever.item]}
                 onChange={updateLever(index, lever.item, lever.item)}
               />
             }
