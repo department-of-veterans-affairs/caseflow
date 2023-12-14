@@ -346,6 +346,7 @@ module Seeds
       end
     end
 
+    # :reek:FeatureEnvy
     def create_hlr_with_unidentified_issue
       # this will create unidentified issue without decision date as a step 1.
       # decision review under this case will be in incomplete tab
@@ -358,6 +359,7 @@ module Seeds
       end
     end
 
+    # :reek:FeatureEnvy
     def create_hlr_with_unidentified_issue_without_decision_date
       hlr = create(:higher_level_review,
                    :with_intake,
@@ -374,6 +376,7 @@ module Seeds
       hlr
     end
 
+    # :reek:FeatureEnvy
     def create_sc_with_unidentified_issue
       sc = create_sc_with_unidentified_issue_without_decision_date
       ri = sc.request_issues.last
@@ -385,6 +388,7 @@ module Seeds
       end
     end
 
+    # :reek:FeatureEnvy
     def create_sc_with_unidentified_issue_without_decision_date
       # step 1: create supplemental claim with unidentified issue
       create(:supplemental_claim,
@@ -398,6 +402,7 @@ module Seeds
              claimant_type: CLAIMANT_TYPES.sample)
     end
 
+    # :reek:FeatureEnvy
     def create_request_issues_update(request_issue)
       request_issue.save_decision_date!(rand(1.year.ago..1.day.ago))
 
@@ -414,6 +419,7 @@ module Seeds
              after_request_issue_ids: [request_issue.id])
     end
 
+    # :reek:FeatureEnvy
     def create_request_issues_update_for_withdraw(request_issue)
       create(:request_issues_update,
              review: request_issue.decision_review,
@@ -428,6 +434,7 @@ module Seeds
              withdrawn_request_issue_ids: [request_issue.id])
     end
 
+    # :reek:FeatureEnvy
     def create_request_issues_update_for_cancel(request_issue)
       create(:request_issues_update,
              review: request_issue.decision_review,
@@ -441,6 +448,7 @@ module Seeds
              after_request_issue_ids: [])
     end
 
+    # :reek:FeatureEnvy
     def create_step2_for_unidentified_issues(request_issue)
       request_issue.update(closed_status: "removed", closed_at: Time.zone.now)
       request_issue2 = create(:request_issue,
