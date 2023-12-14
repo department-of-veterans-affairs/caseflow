@@ -139,7 +139,6 @@ export const CorrespondenceReviewPackage = (props) => {
               styling={{ style: { marginRight: '2rem' } }}
               classNames={['usa-button-secondary']}
               onClick={intakeAppeal}
-              // disabled={disableButton}
             />
           )}
           <a href={intakeLink}>
