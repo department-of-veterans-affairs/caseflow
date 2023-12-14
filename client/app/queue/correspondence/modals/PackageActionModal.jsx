@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import ApiUtil from '../../../util/ApiUtil';
 import { getPackageActionColumns, getModalInformation } from '../review_package/utils';
 import { useHistory } from 'react-router';
-import RadioField from '../../../components/RadioField';
 
 const PackageActionModal = (props) => {
   const {
