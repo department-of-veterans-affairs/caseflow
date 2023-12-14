@@ -33,6 +33,8 @@ class CorrespondenceTasksController < TasksController
       RemovePackageTask
     when "reassignPackage"
       ReassignPackageTask
+    when "splitPackage"
+      SplitPackageTask
     else
       fail NotImplementedError "Type not implemented"
     end
