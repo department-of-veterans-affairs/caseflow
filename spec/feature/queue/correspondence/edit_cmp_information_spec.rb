@@ -57,6 +57,7 @@ RSpec.feature("The Correspondence Review Package page") do
     it "Saving the VA DOR and Package document type values in modal" do
       click_button "Edit"
       fill_in "VA DOR", with: 6.days.ago.strftime("%m/%d/%Y")
+      expect(page).to have_button("Save", disabled: false)
       click_button "Save"
       expect(page).to have_content(6.days.ago.strftime("%m/%d/%Y"))
     end
