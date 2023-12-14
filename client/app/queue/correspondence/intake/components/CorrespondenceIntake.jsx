@@ -4,14 +4,13 @@ import Button from '../../../../components/Button';
 import PropTypes from 'prop-types';
 import AddCorrespondenceView from './AddCorrespondence/AddCorrespondenceView';
 import { AddTasksAppealsView } from './TasksAppeals/AddTasksAppealsView';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { setUnrelatedTasks } from '../../correspondenceReducer/correspondenceActions';
 import { useHistory, useLocation } from 'react-router-dom';
 import { ConfirmCorrespondenceView } from './ConfirmCorrespondence/ConfirmCorrespondenceView';
 import { SubmitCorrespondenceModal } from './ConfirmCorrespondence/SubmitCorrespondenceModal';
 import Alert from 'app/components/Alert';
-import { useSelector } from 'react-redux';
 import ApiUtil from '../../../../util/ApiUtil';
 import {
   CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TITLE,
