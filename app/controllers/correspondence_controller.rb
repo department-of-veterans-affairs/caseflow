@@ -19,6 +19,9 @@ class CorrespondenceController < ApplicationController
     end
   end
 
+  def current_step
+  end
+
   def correspondence_cases
     respond_to do |format|
       format.html { "correspondence_cases" }

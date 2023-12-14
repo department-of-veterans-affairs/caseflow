@@ -299,6 +299,7 @@ Rails.application.routes.draw do
     get '/', to: 'queue#index'
     get '/correspondence', to: 'correspondence#correspondence_cases'
     get '/correspondence/:correspondence_uuid/intake', to: 'correspondence#intake'
+    post '/correspondence/:correspondence_uuid/current_step', to: 'correspondence#current_step'
     get '/correspondence/:correspondence_uuid/review_package', to: 'correspondence#review_package'
     get '/correspondence/:correspondence_uuid/veteran', to: 'correspondence#veteran'
     put '/correspondence/:correspondence_uuid/update_cmp', to: 'correspondence#update_cmp'
