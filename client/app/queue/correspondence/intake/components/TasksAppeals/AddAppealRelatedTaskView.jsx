@@ -89,38 +89,6 @@ export const AddAppealRelatedTaskView = (props) => {
   };
 
   useEffect(() => {
-    // Don't refetch (use cache)
-    if (appeals.length) {
-      return;
-    }
-
-    // Visually indicate that we are fetching data
-    setLoading(true);
-
-    ApiUtil.get(`/queue/correspondence/${props.correspondenceUuid}/veteran`).
-      then((vetResponse) => {
-        const veteranFileNumber = vetResponse.body.file_number;
-
-        ApiUtil.get('/appeals', { headers: { 'case-search': veteranFileNumber } }).
-          then((appealResponse) => {
-            const appealsForStore = prepareAppealForStore(appealResponse.body.appeals);
-
-            const appealArr = [];
-
-            for (const appealUuid in appealsForStore.appeals) {
-              if (Object.prototype.hasOwnProperty.call(appealsForStore.appeals, appealUuid)) {
-                appealArr.push(appealsForStore.appeals[appealUuid]);
-              }
-            }
-
-            dispatch(setFetchedAppeals(appealArr));
-            setLoading(false);
-          });
-      }
-      );
-  }, []);
-
-  useEffect(() => {
     // Clear the selected appeals and any tasks when the user toggles the radio button
     if (existingAppealRadio === RELATED_NO) {
       setTaskRelatedAppeals([]);
@@ -151,6 +119,30 @@ export const AddAppealRelatedTaskView = (props) => {
 
     props.setRelatedTasksCanContinue(canContinue);
   }, [newTasks, waivedTasks]);
+
+  const veteranFileNumber = props.veteranInformation.file_number;
+
+  useEffect(() => {
+  // Don't refetch (use cache)
+    if (appeals.length) {
+      return;
+    }
+
+    if (veteranFileNumber) {
+    // Visually indicate that we are fetching data
+      setLoading(true);
+
+      ApiUtil.get('/appeals', { headers: { 'case-search': veteranFileNumber } }).
+        then((appealResponse) => {
+          const appealsForStore = prepareAppealForStore(appealResponse.body.appeals);
+
+          const appealArr = Object.values(appealsForStore.appeals);
+
+          dispatch(setFetchedAppeals(appealArr));
+          setLoading(false);
+        });
+    }
+  }, [veteranFileNumber]);
 
   return (
     <div>
@@ -231,7 +223,8 @@ AddAppealRelatedTaskView.propTypes = {
   setRelatedTasksCanContinue: PropTypes.func.isRequired,
   filterUnavailableTaskTypeOptions: PropTypes.func.isRequired,
   allTaskTypeOptions: PropTypes.array.isRequired,
-  autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired
+  autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
+  veteranInformation: PropTypes.object.isRequired
 };
 
 export default AddAppealRelatedTaskView;

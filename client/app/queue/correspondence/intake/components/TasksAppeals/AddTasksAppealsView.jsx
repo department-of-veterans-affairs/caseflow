@@ -116,6 +116,7 @@ export const AddTasksAppealsView = (props) => {
             filterUnavailableTaskTypeOptions={filterUnavailableTaskTypeOptions}
             allTaskTypeOptions={relatedTaskTypes}
             autoTexts={props.autoTexts}
+            veteranInformation={props.veteranInformation}
           />
         </div>
       </div>
@@ -126,7 +127,8 @@ export const AddTasksAppealsView = (props) => {
 AddTasksAppealsView.propTypes = {
   correspondenceUuid: PropTypes.string.isRequired,
   onContinueStatusChange: PropTypes.func.isRequired,
-  autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired
+  autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
+  veteranInformation: PropTypes.object.isRequired
 };
 
 export default AddTasksAppealsView;

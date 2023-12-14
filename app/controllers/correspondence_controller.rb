@@ -4,6 +4,7 @@ class CorrespondenceController < ApplicationController
   before_action :verify_feature_toggle
   before_action :correspondence
   before_action :auto_texts
+  before_action :veteran_information
 
   def intake
     respond_to do |format|
