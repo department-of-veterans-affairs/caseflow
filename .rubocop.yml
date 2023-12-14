@@ -100,19 +100,28 @@ Metrics/MethodLength:
   Max: 20
   Exclude:
     - app/jobs/middleware/job_sentry_scope_middleware.rb
+    - lib/helpers/duplicate_veteran_checker.rb
     - "spec/**/*"
 
 Metrics/ClassLength:
   Max: 400
+  Exclude:
+    - lib/helpers/duplicate_veteran_checker.rb
 
 Metrics/AbcSize:
   Max: 30
   Exclude:
     - app/jobs/virtual_hearings/create_conference_job.rb
+    - lib/helpers/duplicate_veteran_checker.rb
 
 Metrics/CyclomaticComplexity:
   Exclude:
     - app/services/virtual_hearings/resend_virtual_hearing_emails_service.rb
+    - lib/helpers/duplicate_veteran_checker.rb
+
+Metrics/PerceivedComplexity:
+  Exclude:
+    - lib/helpers/duplicate_veteran_checker.rb
 
 Style/DoubleNegation:
   Enabled: false
@@ -176,6 +185,9 @@ Lint/UnusedMethodArgument:
 
 Layout/LineLength:
   Max: 120
+  Exclude:
+    - lib/helpers/duplicate_veteran_checker.rb
+
 
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
