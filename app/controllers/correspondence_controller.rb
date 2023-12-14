@@ -55,6 +55,7 @@ class CorrespondenceController < ApplicationController
       correspondence: correspondence,
       package_document_type: correspondence&.package_document_type,
       general_information: general_information,
+      user_can_edit_vador: MailTeamSupervisor.singleton.user_has_access?(current_user),
       correspondence_documents: corres_docs.map do |doc|
         WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
       end
@@ -130,9 +131,9 @@ class CorrespondenceController < ApplicationController
     # intake error message is handled in client/app/queue/correspondence/intake/components/CorrespondenceIntake.jsx
     vet = veteran_by_correspondence
     flash[:correspondence_intake_success] = [
-          "You have successfully submitted a correspondence record for #{vet.name}(#{vet.file_number})",
-          "The mail package has been uploaded to the Veteran's eFolder as well."
-        ]
+      "You have successfully submitted a correspondence record for #{vet.name}(#{vet.file_number})",
+      "The mail package has been uploaded to the Veteran's eFolder as well."
+    ]
   end
 
   def create_correspondence_relations
