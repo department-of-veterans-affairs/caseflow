@@ -31,6 +31,7 @@ describe('ReportPage', () => {
 
   const clickOnReportType = async () => {
     setup();
+
     await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
   };
 
@@ -179,7 +180,6 @@ describe('ReportPage', () => {
     beforeEach(clickOnReportType);
 
     it('shows the correct checkbox fields', async () => {
-      setup();
       await navigateToConditionInput('Decision Review Type');
 
       expect(screen.getByText('Higher-Level Reviews')).toBeInTheDocument();
@@ -187,7 +187,6 @@ describe('ReportPage', () => {
     });
 
     it('clicking the checkbox should toggle the checked status', async () => {
-      setup();
       await navigateToConditionInput('Decision Review Type');
 
       const checkbox = screen.getByLabelText('Higher-Level Reviews');
@@ -205,7 +204,6 @@ describe('ReportPage', () => {
     beforeEach(clickOnReportType);
 
     it('allows you to select facilities', async () => {
-      setup();
       await navigateToConditionInput('Facility');
 
       const dropdown = screen.getByLabelText('Facility Type');
@@ -219,7 +217,6 @@ describe('ReportPage', () => {
     beforeEach(clickOnReportType);
 
     it('allows you to select issue dispositions', async () => {
-      setup();
       await navigateToConditionInput('Issue Disposition');
 
       const dropdown = screen.getByLabelText('Issue Disposition');
@@ -229,7 +226,6 @@ describe('ReportPage', () => {
     });
 
     it('allows to select multiple options from dropdown', async () => {
-      setup();
       await navigateToConditionInput('Issue Disposition');
 
       const dropdown = screen.getByLabelText('Issue Disposition');
@@ -241,7 +237,6 @@ describe('ReportPage', () => {
     });
 
     it('selects an option from dropdown, then removes it and renders an error', async () => {
-      setup();
       await navigateToConditionInput('Issue Disposition');
 
       const dropdown = screen.getByLabelText('Issue Disposition');
@@ -255,6 +250,52 @@ describe('ReportPage', () => {
 
       expect(screen.queryByText('Granted')).not.toBeInTheDocument();
     });
+  });
+
+  describe('Issue Type Section', () => {
+    it('allows you to select multiple issue types', async () => {
+      await clickOnReportType();
+      await navigateToConditionInput('Issue Type');
+
+      const dropdown = screen.getByLabelText('Issue Type');
+
+      await selectEvent.select(dropdown, ['Clothing Allowance']);
+      expect(screen.getByText('Clothing Allowance')).toBeInTheDocument();
+
+      await selectEvent.select(dropdown, ['Beneficiary Travel']);
+      expect(screen.getByText('Clothing Allowance')).toBeInTheDocument();
+      expect(screen.getByText('Beneficiary Travel')).toBeInTheDocument();
+    });
+
+    it('passes a11y testing', async () => {
+      const { container } = setup();
+
+      await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
+
+      await navigateToConditionInput('Issue Type');
+
+      const results = await axe(container);
+
+      expect(results).toHaveNoViolations();
+    });
+
+    it('renders an error if no selection is made', async () => {
+      await clickOnReportType();
+      await navigateToConditionInput('Issue Type');
+
+      const generateTaskReport = screen.getByRole('button', { name: 'Generate task report' });
+
+      expect(generateTaskReport).not.toHaveClass('usa-button-disabled');
+
+      // Wait for the validation text to appear before making assertions
+      await fireEvent.click(generateTaskReport);
+      await waitFor(() => {
+        const validationText = screen.getByText('Please select at least one option');
+
+        expect(validationText).toBeInTheDocument();
+      });
+    });
+
   });
 
   it('should have Generate task Report button and Clear Filter button disabled on initial load', () => {
@@ -324,30 +365,31 @@ describe('ReportPage', () => {
       );
     });
 
-    it('should add a validation error if Generate Task button is clicked without selecting any specific events actions', async () => {
+    it('should add a validation error if Generate Task button is clicked without selecting any specific events actions',
+      async () => {
 
-      setup();
+        setup();
 
-      await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
-      expect(screen.getAllByText('Event / Action').length).toBe(1);
+        await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
+        expect(screen.getAllByText('Event / Action').length).toBe(1);
 
-      const specificEvents = screen.getAllByText('Specific Events / Actions');
+        const specificEvents = screen.getAllByText('Specific Events / Actions');
 
-      expect(specificEvents.length).toBe(1);
+        expect(specificEvents.length).toBe(1);
 
-      fireEvent.click(screen.getByLabelText('Specific Events / Actions'));
+        fireEvent.click(screen.getByLabelText('Specific Events / Actions'));
 
-      expect(screen.getAllByRole('checkbox').length).toBe(10);
+        expect(screen.getAllByRole('checkbox').length).toBe(10);
 
-      const generateTaskReport = screen.getByRole('button', { name: /Generate task report/i });
+        const generateTaskReport = screen.getByRole('button', { name: /Generate task report/i });
 
-      await userEvent.click(generateTaskReport);
+        await userEvent.click(generateTaskReport);
 
-      await waitFor(() => {
-        expect(screen.getAllByText('Please select at least one option').length).toBe(1);
+        await waitFor(() => {
+          expect(screen.getAllByText('Please select at least one option').length).toBe(1);
+        });
+
       });
-
-    });
 
     it('should add 3 checkbox when radio Specific Status is clicked', async () => {
       setup();
