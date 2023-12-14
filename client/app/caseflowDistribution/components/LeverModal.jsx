@@ -9,20 +9,20 @@ import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 
 
 
-function UpdateLeverHistory(leverStore) {
+function updateLeverHistory(leverStore) {
   leverStore.dispatch({
     type: Constants.FORMAT_LEVER_HISTORY,
   });
 }
 
-function SaveLeverChanges(leverStore)  {
+function saveLeverChanges(leverStore)  {
   leverStore.dispatch({
     type: Constants.SAVE_LEVERS,
     saveChangesActivated: true,
   });
 }
 
-function SaveLeversToDB(leverStore) {
+function saveLeversToDB(leverStore) {
   const leversData = leverStore.getState().levers;
 
   const postData = {
@@ -33,7 +33,7 @@ function SaveLeversToDB(leverStore) {
   return ApiUtil.post('/case_distribution_levers/update_levers_and_history', { data: postData })
     .then(() => {
       // UpdateLeverHistory(leverStore);
-      SaveLeverChanges(leverStore);
+      saveLeverChanges(leverStore);
     })
     .catch((error) => {
       if(error.response) {
@@ -42,9 +42,27 @@ function SaveLeversToDB(leverStore) {
     });
 }
 
+function handleOptionText(lever) {
+  const selectedOption = lever.options.find((option) => lever.value === option.item);
+
+  if (selectedOption) {
+    console.log('Selected Option:', selectedOption);
+    console.log('Is NaN:', isNaN(selectedOption.value));
+
+    if (!isNaN(selectedOption.value)) {
+      return selectedOption.value;
+    } else {
+      return selectedOption.text;
+    }
+  }
+
+  return null;
+}
+
 function leverList(leverStore) {
   const levers = leverStore.getState().levers;
   const initialLevers = leverStore.getState().initial_levers;
+  console.log(levers)
 
   return (
     <div>
@@ -63,7 +81,7 @@ function leverList(leverStore) {
                 <React.Fragment>
               <td className={`${styles.modalTableStyling} ${styles.modalTableLeftStyling}`}>{lever.title}</td>
               <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}>{initialLevers[index].value}</td>
-              <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}><strong>{lever.value}</strong></td>
+              <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}><strong>{handleOptionText(lever)}</strong></td>
                 </React.Fragment>
               )}
             </tr>
@@ -108,7 +126,7 @@ const [saveButtonDisabled, setSaveButtonDisabled] = useState(false);
   };
 
   const handleConfirmButton = async () => {
-    await SaveLeversToDB(leverStore);
+    await saveLeversToDB(leverStore);
     setShowModal(false);
     setSaveButtonDisabled(true);
   }

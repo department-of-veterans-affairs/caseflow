@@ -282,9 +282,9 @@ module Seeds
               unit: 'days'
             },
             {
-              item: 'inifinite',
+              item: 'infinite',
               data_type: '',
-              value: 'inifinite',
+              value: 'infinite',
               text: 'Always distribute to current judge',
               unit: ''
             },
