@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styles from 'app/styles/caseDistribution/StaticLevers.module.scss';
+import * as leverAttributes from "../../../constants/LEVER_ATTRIBUTES";
 
 const StaticLever = ({ lever }) => {
   const renderValue = () => {
@@ -9,9 +10,9 @@ const StaticLever = ({ lever }) => {
       return lever.value.toString();
     case 'number':
       return `${lever.value} ${lever.unit}`;
-    case 'radio':
+    case leverAttributes.RADIO:
       return lever.options.find((option) => option.value === lever.value)?.text;
-    case 'combination':
+    case leverAttributes.COMBO:
       return `${lever.value} ${lever.unit}`;
     default:
       return null;

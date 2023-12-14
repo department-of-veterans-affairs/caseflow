@@ -403,7 +403,7 @@ describe Docket, :all_dbs do
         let(:second_distribution) { Distribution.create!(judge: second_judge) }
 
         before do
-          cavc_distribution_task.update!(assigned_at: (Constants.DISTRIBUTION.cavc_affinity_days + 1).days.ago)
+          cavc_distribution_task.update!(assigned_at: (CaseDistributionLever.find_by_item('cavc_affinity_days').try(:value).to_i + 1).days.ago)
         end
 
         context "when genpop: not_genpop is set" do

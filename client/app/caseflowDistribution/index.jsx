@@ -11,6 +11,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import leversReducer from './reducers/Levers/leversReducer';
 import CaseSearchLink from '../components/CaseSearchLink';
+import * as leverAttributes from "../../constants/LEVER_ATTRIBUTES";
 
 import CaseflowDistributionApp from './pages/CaseflowDistributionApp';
 import { createStore } from 'redux';
@@ -51,33 +52,57 @@ class CaseflowDistribution extends React.PureComponent {
       'aoj_cavc_affinity_days'
     ];
     const affinityLevers = [];
-    const docketLeverList = [
-      'ama_hearings',
-      'ama_direct_review',
-      'ama_evidence_submission',
-      'direct_docket_time_goal',
-      'days_before_goal_due_for_distribution',
+    const docketDistributionPriorLeverList = [
+      'ama_hearings_start_distribution_prior_to_goals',
+      'ama_direct_review_start_distribution_prior_to_goals',
+      'ama_evidence_submission_start_distribution_prior_to_goals',
     ];
-    const docketLevers = [];
+    const docketTimeGoalLeverList = [
+      'ama_hearings_docket_time_goals',
+      'ama_direct_review_docket_time_goals',
+      'ama_evidence_submission_docket_time_goals',
+    ];
+
+    const docketLeverLists = {
+      docketDistributionPriorLeverList,
+      docketTimeGoalLeverList
+    };
+    const docketDistributionPriorLevers = [];
+    const docketTimeGoalLevers = [];
 
     this.props.acd_levers.forEach((lever) => {
       if (lever.data_type === 'number' && batchLeverList.includes(lever.item)) {
         batchSizeLevers.push(lever.item);
       }
-      if (lever.data_type === 'radio' && affinityLeverList.includes(lever.item)) {
+      if (lever.data_type === leverAttributes.RADIO && affinityLeverList.includes(lever.item)) {
         affinityLevers.push(lever.item);
       }
-      if (lever.data_type === 'combination' && docketLeverList.includes(lever.item)) {
+      if (lever.data_type === leverAttributes.COMBO && docketLeverList.includes(lever.item)) {
         docketLevers.push(lever.item);
       }
+      if (lever.data_type === 'number' && docketLeverLists.docketTimeGoalLeverList.includes(lever.item)) {
+        docketTimeGoalLevers.push(lever.item);
+      }
+
     });
+
+    let docketLeversObject = {
+      docketDistributionPriorLevers,
+      docketTimeGoalLevers
+    };
 
     let leversList = {
       staticLevers,
       affinityLevers,
       batchSizeLevers,
-      docketLevers
+      docketLeversObject,
     };
+
+    const sectionTitles = [
+      'AMA Hearings',
+      'AMA Direct Review',
+      'AMA Evidence Submission',
+    ];
 
     return (
       <ReduxBase initialState={initialState} reducer={leversReducer}>
@@ -105,7 +130,7 @@ class CaseflowDistribution extends React.PureComponent {
                   <div>
                     <PageRoute
                       exact
-                      path="/acd-controls"
+                      path={["/acd-controls", "/case-distribution-controls"]}
                       title="CaseflowDistribution | Caseflow"
                       component={() => {
                         return (
@@ -114,6 +139,7 @@ class CaseflowDistribution extends React.PureComponent {
                             acd_history={this.props.acd_history}
                             user_is_an_acd_admin = {this.props.user_is_an_acd_admin}
                             leverStore={leverStore}
+                            sectionTitles={sectionTitles}
                           />
                         );
                       }}

@@ -90,7 +90,12 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :histogram, only: :create
     end
+    namespace :v2 do
+      resources :logs, only: :create
+    end
+    get 'dashboard' => 'dashboard#show'
   end
+
 
   namespace :dispatch do
     get "/", to: redirect("/dispatch/establish-claim")
@@ -251,8 +256,14 @@ Rails.application.routes.draw do
   end
   match '/supplemental_claims/:claim_id/edit/:any' => 'supplemental_claims#edit', via: [:get]
 
-  get 'acd-controls', :to => 'case_distribution_levers#acd_lever_index'
-  get 'acd-controls/test', :to => 'case_distribution_levers_tests#acd_lever_index_test'
+  Rails.application.routes.draw do
+    constraints(lambda { |request| Rails.env.demo? || Rails.env.test? || Rails.env.development? }) do
+      get 'acd-controls', :to => 'case_distribution_levers#acd_lever_index'
+      get 'acd-controls/test', :to => 'case_distribution_levers_tests#acd_lever_index_test'
+    end
+  end
+
+  get 'case-distribution-controls', :to => 'case_distribution_levers#acd_lever_index'
 
   resources :case_distribution_levers_tests, only: [] do
     collection do

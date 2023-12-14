@@ -6,7 +6,6 @@ import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';
 import COPY from '../../../COPY';
 
-
 const BatchSize = (props) => {
   const { leverList, leverStore } = props;
 
@@ -24,10 +23,11 @@ const BatchSize = (props) => {
   const [batchSizeLevers, setLever] = useState(filteredLevers);
   const updateLever = (index, changedItem) => (event) => {
     const lever = batchSizeLevers.find((lever) => lever.item === changedItem);
+
     leverStore.dispatch({
       type: Constants.UPDATE_LEVER_VALUE,
       updated_lever: { item: changedItem, value: event }
-    })
+    });
 
     const levers = batchSizeLevers.map((lever, i) => {
       if (index === i) {
@@ -79,7 +79,7 @@ const BatchSize = (props) => {
                 errorMessage={lever.errorMessage}
                 onChange={updateLever(index, lever.item, lever.item)}
               />
-}
+            }
           </div>
         </div>
       ))}

@@ -4,6 +4,7 @@ import { createStore } from 'redux';
 import leversReducer from '../reducers/Levers/leversReducer';
 import { formattedHistory, formattedLevers } from 'test/data/formattedCaseDistributionData';
 import { MemoryRouter } from 'react-router';
+import * as leverAttributes from "../../../constants/LEVER_ATTRIBUTES";
 
 const preloadedState = {
   levers: JSON.parse(JSON.stringify(formattedLevers)),
@@ -31,15 +32,47 @@ const affinityLeverList = ['lever_8', 'lever_9', 'lever_10', 'lever_11', 'lever_
 const affinityLevers = [];
 
 formattedLevers.forEach((lever) => {
-  if (lever.data_type === 'radio' && affinityLeverList.includes(lever.item)) {
+  if (lever.data_type === leverAttributes.RADIO && affinityLeverList.includes(lever.item)) {
     affinityLevers.push(lever.item);
   }
 });
+
+const leverDistributionPriorList = ['lever_18', 'lever_19', 'lever_20'];
+
+const leverTimeGoalList = ['lever_21', 'lever_22', 'lever_23'];
+
+const docketLeverLists = {
+  leverDistributionPriorList,
+  leverTimeGoalList
+};
+const docketDistributionPriorLevers = [];
+const docketTimeGoalLevers = [];
+
+const sectionTitles = [
+  'AMA Hearings',
+  'AMA Direct Review',
+  'AMA Evidence Submission',
+];
+
+formattedLevers.forEach((lever) => {
+  if (lever.data_type === 'combination' && docketLeverLists.leverDistributionPriorList.includes(lever.item)) {
+    docketDistributionPriorLevers.push(lever.item);
+  }
+  if (lever.data_type === 'number' && docketLeverLists.leverTimeGoalList.includes(lever.item)) {
+    docketTimeGoalLevers.push(lever.item);
+  }
+});
+
+const docketLeversObject = {
+  docketDistributionPriorLevers,
+  docketTimeGoalLevers,
+};
+
 const docketLeverList = ['lever_15', 'lever_16', 'lever_17'];
 const docketLevers = [];
 
 formattedLevers.forEach((lever) => {
-  if (lever.data_type === 'combination' && docketLeverList.includes(lever.item)) {
+  if (lever.data_type === leverAttributes.COMBO && docketLeverList.includes(lever.item)) {
     docketLevers.push(lever.item);
   }
 });
@@ -54,7 +87,7 @@ let leversList = {
   staticLevers,
   affinityLevers,
   batchSizeLevers,
-  docketLevers
+  docketLeversObject
 };
 
 export const Primary = () =>
@@ -64,6 +97,7 @@ export const Primary = () =>
     formattedHistory={formattedHistory}
     leverStore={leverStore}
     isAdmin
+    sectionTitles={sectionTitles}
   />;
 
 Primary.story = {
@@ -77,6 +111,7 @@ export const MemberView = () =>
     formattedHistory={formattedHistory}
     leverStore={leverStore}
     isAdmin={false}
+    sectionTitles={sectionTitles}
   />;
 
 MemberView.story = {

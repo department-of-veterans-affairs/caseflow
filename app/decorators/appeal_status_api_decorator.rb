@@ -295,7 +295,7 @@ class AppealStatusApiDecorator < ApplicationDecorator
   end
 
   def cavc_due_date
-    decision_event_date + 120.days if decision_event_date
+    decision_event_date + CaseDistributionLever.find_by_item('appeal_status_cavc_due_date').try(:value).to_i.days if decision_event_date
   end
 
   def available_review_options

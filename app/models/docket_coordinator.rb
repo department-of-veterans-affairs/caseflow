@@ -33,15 +33,15 @@ class DocketCoordinator
     # When there are no or few "due" direct review appeals, we instead calculate a curve out.
     direct_review_proportion = [
       due_direct_review_proportion,
-      Constants.DISTRIBUTION.maximum_direct_review_proportion
+      CaseDistributionLever.find_by_item('maximum_direct_review_proportion').try(:value).to_f
     ].min
 
     @docket_proportions.add_fixed_proportions!(direct_review: direct_review_proportion)
 
     # The legacy docket proportion is subject to a minimum, provided we have at least that many legacy appeals.
-    if @docket_proportions[:legacy] < Constants.DISTRIBUTION.minimum_legacy_proportion
+    if @docket_proportions[:legacy] < CaseDistributionLever.find_by_item('minimum_legacy_proportion').try(:value).to_f
       legacy_proportion = [
-        Constants.DISTRIBUTION.minimum_legacy_proportion,
+        CaseDistributionLever.find_by_item('minimum_legacy_proportion').try(:value).to_f,
         dockets[:legacy].count(priority: false, ready: true).to_f / docket_margin_net_of_priority
       ].min
 
@@ -119,7 +119,7 @@ class DocketCoordinator
 
   def total_batch_size
     JudgeTeam.includes(:non_admin_users).flat_map(&:non_admin_users).size *
-      Constants.DISTRIBUTION.batch_size_per_attorney
+    CaseDistributionLever.find_by_item('batch_size_per_attorney').try(:value).to_i
   end
 
   def due_direct_review_proportion

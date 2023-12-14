@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
+import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
 import COPY from '../../../COPY';
@@ -10,10 +11,12 @@ import COPY from '../../../COPY';
 const DocketTimeGoals = (props) => {
   const { leverList, leverStore } = props;
 
-  const filteredLevers = leverList.map((item) => {
+  const filteredDistributionLevers = leverList.docketDistributionPriorLevers.map((item) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
   });
-
+  const filteredTimeGoalLevers = leverList.docketTimeGoalLevers.map((item) => {
+    return leverStore.getState().levers.find((lever) => lever.item === item);
+  });
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
     '& .cf-form-int-input .input-container': { width: 'auto', display: 'inline-block', verticalAlign: 'middle' },
@@ -21,30 +24,93 @@ const DocketTimeGoals = (props) => {
     '& .usa-input-error label': { bottom: '15px', left: '89px' }
   });
 
-  const [docketLevers, setLever] = useState(filteredLevers);
-  const updateLever = (index) => (event) => {
-    const levers = docketLevers.map((lever, i) => {
-      if (index === i) {
-        let errorResult = !(/^\d{0,3}$/).test(event);
+  const errorMessages = {};
 
-        if (errorResult) {
-          lever.errorMessage = 'Please enter a value less than or equal to 999';
-        } else {
-          lever.errorMessage = null;
+  const [docketDistributionLevers, setDistributionLever] = useState(filteredDistributionLevers);
+  const [docketTimeGoalLevers, setTimeGoalLever] = useState(filteredTimeGoalLevers);
+  const [errorMessagesList, setErrorMessages] = useState(errorMessages);
+
+  const leverInputValidation = (lever, event) => {
+
+    let rangeError = !(/^\d{1,3}$/).test(event);
+
+    if (rangeError) {
+      setErrorMessages({ ...errorMessagesList, [lever.item]: 'Please enter a value less than or equal to 999' });
+
+      return 'FAIL';
+    }
+    setErrorMessages({ ...errorMessagesList, [lever.item]: null });
+
+    return 'SUCCESS';
+  };
+
+  const updateLever = (index, leverType) => (event) => {
+    if (leverType === 'DistributionPrior') {
+
+      const levers = docketDistributionLevers.map((lever, i) => {
+        if (index === i) {
+
+          let validationResponse = leverInputValidation(lever, event);
+
+          if (validationResponse === 'SUCCESS') {
+            lever.value = event;
+            leverStore.dispatch({
+              type: Constants.UPDATE_LEVER_VALUE,
+              updated_lever: { item: lever.item, value: event }
+            });
+
+            return lever;
+          }
+          lever.value = event;
+
+          leverStore.dispatch({
+            type: Constants.UPDATE_LEVER_VALUE,
+            updated_lever: { item: lever.item, value: event }
+          });
+
+          return lever;
         }
-        lever.value = event;
 
         return lever;
-      }
+      });
 
-      return lever;
-    });
+      setDistributionLever(levers);
+    }
+    if (leverType === 'TimeGoal') {
+      const levers = docketTimeGoalLevers.map((lever, i) => {
+        if (index === i) {
 
-    setLever(levers);
+          let validationResponse = leverInputValidation(lever, event);
+
+          if (validationResponse === 'SUCCESS') {
+            lever.value = event;
+            leverStore.dispatch({
+              type: Constants.UPDATE_LEVER_VALUE,
+              updated_lever: { item: lever.item, value: event }
+            });
+
+            return lever;
+          }
+
+          lever.value = event;
+
+          leverStore.dispatch({
+            type: Constants.UPDATE_LEVER_VALUE,
+            updated_lever: { item: lever.item, value: event }
+          });
+
+          return lever;
+        }
+
+        return lever;
+      });
+
+      setTimeGoalLever(levers);
+    }
   };
 
   const toggleLever = (index) => () => {
-    const levers = docketLevers.map((lever, i) => {
+    const levers = docketDistributionLevers.map((lever, i) => {
       if (index === i) {
         lever.is_active = !lever.is_active;
 
@@ -55,46 +121,55 @@ const DocketTimeGoals = (props) => {
 
     });
 
-    setLever(levers);
+    setDistributionLever(levers);
   };
 
-  const generateToggleSwitch = (lever, index, toggleOn) => {
+  const generateToggleSwitch = (distributionPriorLever, index, isAdmin) => {
 
-    if (toggleOn) {
+    if (isAdmin) {
+      let docketTimeGoalLever = '';
+
+      if (index < docketTimeGoalLevers.length) {
+        docketTimeGoalLever = docketTimeGoalLevers[index];
+      }
+
       return (
 
-        <div className={cx(styles.activeLever, lever.is_disabled ? styles.leverDisabled : '')}
-          key={`${lever.item}-${index}`}
+        <div className={cx(styles.activeLever,
+          distributionPriorLever.is_disabled && docketTimeGoalLever.is_disabled ? styles.leverDisabled : '')}
+        key={`${distributionPriorLever.item}-${index}`}
         >
           <div className={cx(styles.leverLeft, styles.docketLeverLeft)}>
-            <strong>{lever.title}</strong>
+            <strong>{index < props.sectionTitles.length ? props.sectionTitles[index] : ''}</strong>
           </div>
           <div className={`${styles.leverMiddle} ${leverNumberDiv}`}>
             <NumberField
-              name={lever.item}
+              name={docketTimeGoalLever.item}
               isInteger
-              readOnly
-              value={lever.value}
-              label={lever.unit}
-              onChange={updateLever(index)}
+              readOnly={docketTimeGoalLever.is_disabled}
+              value={docketTimeGoalLever.value}
+              label={docketTimeGoalLever.unit}
+              errorMessage={errorMessagesList[docketTimeGoalLever.item]}
+              onChange={updateLever(index, 'TimeGoal')}
             />
           </div>
           <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
             <ToggleSwitch
-              id={`toggle-switch-${lever.item}`}
-              selected={lever.is_active}
-              disabled={lever.is_disabled}
+              id={`toggle-switch-${distributionPriorLever.item}`}
+              selected={distributionPriorLever.is_active}
+              disabled={distributionPriorLever.is_disabled}
               toggleSelected={toggleLever(index)}
             />
-            <div className={lever.is_active ? styles.toggleSwitchInput : styles.toggleInputHide}>
+            <div className={distributionPriorLever.is_active ? styles.toggleSwitchInput : styles.toggleInputHide}>
+
               <NumberField
-                name={`toggle-${lever.item}`}
+                name={`toggle-${distributionPriorLever.item}`}
                 isInteger
-                readOnly={!lever.is_active}
-                value={lever.value}
-                label={lever.unit}
-                errorMessage={lever.errorMessage}
-                onChange={updateLever(index)}
+                readOnly={distributionPriorLever.is_disabled}
+                value={distributionPriorLever.value}
+                label={distributionPriorLever.unit}
+                errorMessage={errorMessagesList[distributionPriorLever.item]}
+                onChange={updateLever(index, 'DistributionPrior')}
               />
             </div>
           </div>
@@ -106,17 +181,17 @@ const DocketTimeGoals = (props) => {
     return (
 
       <div className={cx(styles.activeLever)}
-        key={`${lever.item}-${index}`}
+        key={`${distributionPriorLever.item}-${index}`}
       >
         <div className={cx(styles.leverLeft, styles.docketLeverLeft)}>
-          <strong className={lever.is_disabled ? styles.leverDisabled : styles.leverActive}>{lever.title}</strong>
+          <strong>{index < props.sectionTitles.length ? props.sectionTitles[index] : ''}</strong>
         </div>
         <div className={`${styles.leverMiddle} ${leverNumberDiv}`}>
-          <span className={lever.is_disabled ? styles.leverDisabled : styles.leverActive}>{lever.value} {lever.unit}</span>
+          <span className={`${styles.disabledText}`}>{distributionPriorLever.value} {distributionPriorLever.unit}</span>
         </div>
         <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
           <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
-            <span className={lever.is_disabled ? styles.leverDisabled : styles.leverActive}>Off</span>
+            <span className={`${styles.disabledText}`}>{distributionPriorLever.is_active ? 'On' : 'Off'}</span>
           </div>
         </div>
       </div>
@@ -141,8 +216,11 @@ const DocketTimeGoals = (props) => {
         <div className={styles.leverMiddle}><strong>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_1}</strong></div>
         <div className={styles.leverRight}><strong>{COPY.CASE_DISTRIBUTION_DISTRIBUTION_1}</strong></div>
       </div>
-      {docketLevers && docketLevers.map((lever, index) => (
-        props.isAdmin ? generateToggleSwitch(lever, index, true) : generateToggleSwitch(lever, index, false)
+
+      {docketDistributionLevers && docketDistributionLevers.map((distributionPriorLever, index) => (
+
+        props.isAdmin ? generateToggleSwitch(distributionPriorLever, index, true) :
+          generateToggleSwitch(distributionPriorLever, index, false)
       ))}
     </div>
 
@@ -153,6 +231,7 @@ DocketTimeGoals.propTypes = {
   leverList: PropTypes.arrayOf(PropTypes.string).isRequired,
   leverStore: PropTypes.any,
   isAdmin: PropTypes.bool.isRequired,
+  sectionTitles: PropTypes.array.isRequired
 };
 
 export default DocketTimeGoals;

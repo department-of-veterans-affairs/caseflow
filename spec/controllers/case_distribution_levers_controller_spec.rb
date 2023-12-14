@@ -19,6 +19,54 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     value: 55,
     unit: "Days"
   )}
+  let!(:radio_lever) {create(:case_distribution_lever,
+    item: "radio_lever",
+    title: "Radio Lever",
+    description: "This is the second lever. It is a number data type with the default value of 42. Therefore there should be a number input that displays 42 and 'days' as the unit. This lever is active so it should be in the active lever section",
+    data_type: Constants.LEVER_ATTRIBUTES.RADIO,
+    value: Constants.LEVER_ATTRIBUTES.VALUE,
+    unit: "Days",
+    options: [
+      {
+        item: Constants.LEVER_ATTRIBUTES.VALUE,
+        data_type: 'number',
+        value: 55,
+        text: 'Attempt distribution to current judge for max of:',
+        unit: 'days'
+      },
+      {
+        item: Constants.LEVER_ATTRIBUTES.INFINITE,
+        data_type: '',
+        value: Constants.LEVER_ATTRIBUTES.INFINITE,
+        text: 'Always distribute to current judge',
+        unit: ''
+      },
+      {
+        item: Constants.LEVER_ATTRIBUTES.OMIT,
+        data_type: '',
+        value: Constants.LEVER_ATTRIBUTES.OMIT,
+        text: 'Omit variable from distribution rules',
+        unit: ''
+      }
+    ]
+  )}
+  let!(:combo_lever) {create(:case_distribution_lever,
+    item: "lever_2",
+    title: "Lever 2",
+    description: "This is the second lever. It is a number data type with the default value of 42. Therefore there should be a number input that displays 42 and 'days' as the unit. This lever is active so it should be in the active lever section",
+    data_type: Constants.LEVER_ATTRIBUTES.COMBO,
+    value: 770,
+    unit: 'days',
+    options: [
+      {
+        item: 'option_1',
+        data_type: 'boolean',
+        value: true,
+        text: 'This feature is turned on or off',
+        unit: ''
+      }
+    ]
+  )}
 
   let!(:audit_lever_entry1) {create(:case_distribution_audit_lever_entry,
     user: lever_user,
@@ -48,8 +96,12 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     case_distribution_lever: lever2
   )}
 
-  let!(:levers) {[lever1, lever2]}
+  let!(:levers) {[lever1, lever2, radio_lever, combo_lever]}
   let!(:lever_history) {[audit_lever_entry1, audit_lever_entry2]}
+
+  before do
+    CDAControlGroup.singleton.add_user(lever_user)
+  end
 
   describe "GET acd_lever_index", :type => :request do
     it "redirects the user to the unauthorized page if they are not authorized" do
@@ -69,7 +121,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       request_user_is_an_admin = @controller.view_assigns["user_is_an_acd_admin"]
 
       expect(response.status).to eq 200
-      expect(request_levers.count).to eq(2)
+      expect(request_levers.count).to eq(4)
       expect(request_levers).to include(lever1)
       expect(request_levers).to include(lever2)
       expect(request_history.count).to eq(2)
@@ -80,7 +132,8 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     end
 
     it "renders a page with the correct levers, lever history, and user admin status when user is an admin" do
-      User.authenticate!(roles: ["System Admin"])
+      User.authenticate!(user: lever_user)
+      OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
       get "/acd-controls"
 
       request_levers = @controller.view_assigns["acd_levers"]
@@ -88,7 +141,56 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       request_user_is_an_admin = @controller.view_assigns["user_is_an_acd_admin"]
 
       expect(response.status).to eq 200
-      expect(request_levers.count).to eq(2)
+      expect(request_levers.count).to eq(4)
+      expect(request_levers).to include(lever1)
+      expect(request_levers).to include(lever2)
+      expect(request_history.count).to eq(2)
+      expect(request_history).to include(audit_lever_entry1)
+      expect(request_history).to include(audit_lever_entry2)
+      expect(request_history).not_to include(old_audit_lever_entry)
+      expect(request_user_is_an_admin).to be_truthy
+    end
+  end
+
+  describe "GET acd_lever_index with case-distribution-controls path", :type => :request do
+    it "redirects the user to the unauthorized page if they are not authorized" do
+      User.authenticate!(user: create(:user))
+      get "/case-distribution-controls"
+
+      expect(response.status).to eq 302
+      expect(response.body).to match(/unauthorized/)
+    end
+
+    it "renders a page with the correct levers, lever history, and user admin status when user is allowed to view the page" do
+      User.authenticate!(user: lever_user)
+      get "/case-distribution-controls"
+
+      request_levers = @controller.view_assigns["acd_levers"]
+      request_history = @controller.view_assigns["acd_history"]
+      request_user_is_an_admin = @controller.view_assigns["user_is_an_acd_admin"]
+
+      expect(response.status).to eq 200
+      expect(request_levers.count).to eq(25)
+      expect(request_levers).to include(lever1)
+      expect(request_levers).to include(lever2)
+      expect(request_history.count).to eq(2)
+      expect(request_history).to include(audit_lever_entry1)
+      expect(request_history).to include(audit_lever_entry2)
+      expect(request_history).not_to include(old_audit_lever_entry)
+      expect(request_user_is_an_admin).to be_falsey
+    end
+
+    it "renders a page with the correct levers, lever history, and user admin status when user is an admin" do
+      User.authenticate!(user: lever_user)
+      OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
+      get "/case-distribution-controls"
+
+      request_levers = @controller.view_assigns["acd_levers"]
+      request_history = @controller.view_assigns["acd_history"]
+      request_user_is_an_admin = @controller.view_assigns["user_is_an_acd_admin"]
+
+      expect(response.status).to eq 200
+      expect(request_levers.count).to eq(25)
       expect(request_levers).to include(lever1)
       expect(request_levers).to include(lever2)
       expect(request_history.count).to eq(2)
@@ -109,9 +211,9 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     end
 
     it "updates all provided levers" do
-      User.authenticate!(roles: ["System Admin"])
+      User.authenticate!(user: lever_user)
+      OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
 
-      expect(CaseDistributionLever.all).to eq(levers)
       updated_lever_1 = {
         id: lever1.id,
         item: lever1.item,
@@ -123,7 +225,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       }
 
       save_params = {
-        current_levers: [updated_lever_1, lever2].to_json,
+        current_levers: [updated_lever_1, lever2, radio_lever, combo_lever].to_json,
         audit_lever_entries: [].to_json
       }
 
@@ -137,8 +239,8 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     end
 
     it "returns an error message then the format of a lever in invalid" do
-      User.authenticate!(roles: ["System Admin"])
-      expect(CaseDistributionLever.all).to eq(levers)
+      User.authenticate!(user: lever_user)
+      OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
 
       invalid_updated_lever_1 = {
         id: lever1.id,
@@ -151,7 +253,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       }
 
       save_params = {
-        current_levers: [invalid_updated_lever_1, lever2].to_json,
+        current_levers: [invalid_updated_lever_1, lever2, radio_lever, combo_lever].to_json,
         audit_lever_entries: [].to_json
       }
 
@@ -165,7 +267,8 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     end
 
     it "creates records for the provided audit lever entries in the database" do
-      admin_user = User.authenticate!(roles: ["System Admin"])
+      User.authenticate!(user: lever_user)
+      OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
       created_at_date = Time.now
       audit_lever_entry3 = {
         case_distribution_lever_id: lever1.id,
@@ -197,7 +300,8 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     end
 
     it "returns an error message when the format of the audit lever entry is invalid" do
-      admin_user = User.authenticate!(roles: ["System Admin"])
+      User.authenticate!(user: lever_user)
+      OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
       created_at_date = Time.now
       audit_lever_entry3 = {
         case_distribution_lever_id: lever1.id,
@@ -227,6 +331,103 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       expect(JSON.parse(response.body)["successful"]).to be_falsey
       expect(JSON.parse(response.body)["errors"]).not_to be_empty
     end
+
+    it "updates a radio lever" do
+      User.authenticate!(user: lever_user)
+      OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
+
+      expect(CaseDistributionLever.all).to eq(levers)
+      updated_radio_lever = {
+        id: radio_lever.id,
+        item: radio_lever.item,
+        title: radio_lever.title,
+        description: radio_lever.description,
+        data_type: radio_lever.data_type,
+        value: Constants.LEVER_ATTRIBUTES.VALUE,
+        unit: radio_lever.unit,
+        options: [
+          {
+            item: Constants.LEVER_ATTRIBUTES.VALUE,
+            data_type: 'number',
+            value: 21,
+            text: 'Attempt distribution to current judge for max of:',
+            unit: 'days'
+          },
+          {
+            item: Constants.LEVER_ATTRIBUTES.INFINITE,
+            data_type: '',
+            value: Constants.LEVER_ATTRIBUTES.INFINITE,
+            text: 'Always distribute to current judge',
+            unit: ''
+          },
+          {
+            item: Constants.LEVER_ATTRIBUTES.OMIT,
+            data_type: '',
+            value: Constants.LEVER_ATTRIBUTES.OMIT,
+            text: 'Omit variable from distribution rules',
+            unit: ''
+          }
+        ]
+      }
+
+      save_params = {
+        current_levers: [lever1, lever2, updated_radio_lever, combo_lever].to_json,
+        audit_lever_entries: [].to_json
+      }
+
+      post "update_levers_and_history", params: save_params
+
+      rl = CaseDistributionLever.find(radio_lever.id)
+      expect(rl.value).to eq("value")
+      expect(rl.value).to_not eq(Constants.LEVER_ATTRIBUTES.INFINITE)
+      expect(rl.options.find {|option| option["item"] == rl.value}["value"]).to eq(21)
+      # binding.pry
+      expect(JSON.parse(response.body)["successful"]).to be_truthy
+      expect(JSON.parse(response.body)["errors"]).to be_empty
+    end
+
+    it "updates a combination lever" do
+      User.authenticate!(user: lever_user)
+      OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
+
+      expect(CaseDistributionLever.all).to eq(levers)
+      updated_combo_lever = {
+        id: combo_lever.id,
+        item: combo_lever.item,
+        title: combo_lever.title,
+        description: combo_lever.description,
+        data_type: combo_lever.data_type,
+        value: 66,
+        unit: combo_lever.unit,
+        options: [
+          {
+            item: 'option_1',
+            data_type: 'boolean',
+            value: true,
+            text: 'This feature is turned on or off',
+            unit: ''
+          }
+        ]
+
+      }
+
+      save_params = {
+        current_levers: [lever1, lever2, radio_lever, updated_combo_lever].to_json,
+        audit_lever_entries: [].to_json
+      }
+
+      post "update_levers_and_history", params: save_params
+
+      cl = CaseDistributionLever.find(combo_lever.id)
+
+      expect(cl.value).to eq("66")
+      expect(cl.value).to_not eq("f")
+      expect(cl.options.find {|option| option["item"] == "option_1"}["value"]).to eq(true)
+      expect(JSON.parse(response.body)["successful"]).to be_truthy
+      expect(JSON.parse(response.body)["errors"]).to be_empty
+    end
+
+
   end
 
 end

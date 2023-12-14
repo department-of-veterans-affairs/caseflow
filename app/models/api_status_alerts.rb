@@ -48,7 +48,7 @@ class ApiStatusAlerts
         decisionDate: decision_review.decision_date_for_api_alert,
         availableOptions: decision_review.available_review_options,
         dueDate: decision_review.due_date_to_appeal_decision,
-        cavcDueDate: appeal? ? (decision_review.decision_date_for_api_alert + 120.days) : nil
+        cavcDueDate: appeal? ? (decision_review.decision_date_for_api_alert + CaseDistributionLever.find_by_item('appeal_status_cavc_due_date').try(:value).to_i.days) : nil
       }
     }
   end
@@ -66,7 +66,7 @@ class ApiStatusAlerts
           decisionDate: remand_sc.decision_event_date,
           availableOptions: remand_sc.available_review_options,
           dueDate: remand_sc.decision_event_date + 365.days,
-          cavcDueDate: remand_sc.decision_event_date + 120.days
+          cavcDueDate: remand_sc.decision_event_date + CaseDistributionLever.find_by_item('appeal_status_cavc_due_date').try(:value).to_i.days
         }
       }
     end
@@ -83,7 +83,7 @@ class ApiStatusAlerts
         decisionDate: decision_review.decision_effectuation_event_date,
         availableOptions: decision_review.available_review_options,
         dueDate: decision_review.decision_effectuation_event_date + 365.days,
-        cavcDueDate: decision_review.decision_effectuation_event_date + 120.days
+        cavcDueDate: decision_review.decision_effectuation_event_date + CaseDistributionLever.find_by_item('appeal_status_cavc_due_date').try(:value).to_i.days
       }
     }
   end

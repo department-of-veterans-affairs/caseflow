@@ -1,5 +1,5 @@
-import leversReducer from '../../../app/admin/reducers/Levers/leversReducer';
-import * as Constants from '../../../app/admin/reducers/Levers/leversActionTypes';
+import leversReducer from '../../../app/caseflowDistribution/reducers/Levers/leversReducer';
+import * as Constants from '../../../app/caseflowDistribution/reducers/Levers/leversActionTypes';
 import * as leverData from '../../data/adminCaseDistributionLevers';
 import { createStore } from "@reduxjs/toolkit";
 
@@ -14,7 +14,7 @@ describe('Lever reducer', () => {
       levers: JSON.parse(JSON.stringify(leverData.levers.slice(0,5))), //allows original leverData object to remain unchanged
       initial_levers: JSON.parse(JSON.stringify(leverData.levers.slice(0,5)))
     }
-     leverStore = createStore(leversReducer, preloadedState);
+    leverStore = createStore(leversReducer, preloadedState);
   })
 
   describe('Initialize reducer', () => {
@@ -56,8 +56,14 @@ describe('Lever reducer', () => {
       })
 
       let target_store_lever = leverStore.getState().levers.find(lever => lever.item === "lever_1");
+      let target_store_inital_lever = leverStore.getState().initial_levers.find(lever => lever.item === "lever_1");
+      let changesOccurred = leverStore.getState().changesOccurred
+      let saveChangesActivated = leverStore.getState().saveChangesActivated
 
       expect(target_store_lever).toEqual(lever_update)
+      expect(target_store_inital_lever).not.toEqual(lever_update)
+      expect(changesOccurred).toEqual(true)
+      expect(saveChangesActivated).toEqual(false)
     });
 
     // it('does not update the current levers when invalid value is entered', () => {});
@@ -79,6 +85,8 @@ describe('Lever reducer', () => {
 
       expect(leverStore.getState().levers).not.toEqual(leverData.levers.slice(0,5))
       expect(leverStore.getState().levers).toEqual(leverData.updated_levers)
+      expect(leverStore.getState().initial_levers).toEqual(leverData.updated_levers)
+      expect(leverStore.getState().changesOccurred).toEqual(false)
     });
   });
 

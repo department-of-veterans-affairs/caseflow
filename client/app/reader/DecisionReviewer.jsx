@@ -90,7 +90,8 @@ export class DecisionReviewer extends React.PureComponent {
     return <ReaderLoadingScreen
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
-      vacolsId={vacolsId}>
+      vacolsId={vacolsId}
+      featureToggles={this.props.featureToggles}>
       <PdfListView
         efolderExpressUrl={this.props.efolderExpressUrl}
         userHasEfolderRole={this.props.userHasEfolderRole}
@@ -112,7 +113,8 @@ export class DecisionReviewer extends React.PureComponent {
     return <ReaderLoadingScreen
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
-      vacolsId={vacolsId}>
+      vacolsId={vacolsId}
+      featureToggles={this.props.featureToggles}>
       <PdfViewer
         allDocuments={_.values(this.props.storeDocuments)}
         showPdf={this.showPdf(props.history, vacolsId)}

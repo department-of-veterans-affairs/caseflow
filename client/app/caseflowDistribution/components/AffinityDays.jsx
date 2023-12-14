@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
 import { css } from 'glamor';
@@ -57,8 +57,10 @@ const AffinityDays = (props) => {
         if (l.item === lever.item) {
           return { ...l, value: option.item };
         }
+
         return l;
       });
+
       setAffinityLevers(updatedLevers);
 
       leverStore.dispatch({
@@ -67,9 +69,6 @@ const AffinityDays = (props) => {
       });
     }
   };
-
-
-
 
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
@@ -187,7 +186,4 @@ AffinityDays.propTypes = {
 };
 
 export default AffinityDays;
-
-
-
 

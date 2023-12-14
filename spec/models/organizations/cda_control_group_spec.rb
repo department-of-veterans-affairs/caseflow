@@ -3,13 +3,13 @@
 describe CDAControlGroup do
   describe ".singleton" do
     it "is named correctly" do
-      expect(CDAControlGroup.singleton).to have_attributes(name: "Case Distribution Algorithm Control Group")
+      expect(CDAControlGroup.singleton).to have_attributes(name: "Case Distro Algorithm Control Group")
     end
 
     it "will only have one CDAControlGroup no matter how many times it is run" do
       CDAControlGroup.singleton
       CDAControlGroup.singleton
-      expect(Organization.where(name: "Case Distribution Algorithm Control Group").count).to eq(1)
+      expect(Organization.where(name: "Case Distro Algorithm Control Group").count).to eq(1)
     end
 
     it "will have the correct url name" do

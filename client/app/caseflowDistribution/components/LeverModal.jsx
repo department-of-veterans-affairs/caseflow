@@ -8,10 +8,6 @@ import COPY from '../../../COPY';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 
 
-function DisplayButtonLeverAlert(alert) {
-  console.log("alert", alert)
-  //show small banner displaying the alert
-}
 
 function UpdateLeverHistory(leverStore) {
   leverStore.dispatch({
@@ -22,18 +18,27 @@ function UpdateLeverHistory(leverStore) {
 function SaveLeverChanges(leverStore)  {
   leverStore.dispatch({
     type: Constants.SAVE_LEVERS,
+    saveChangesActivated: true,
   });
 }
 
 function SaveLeversToDB(leverStore) {
   const leversData = leverStore.getState().levers;
 
-  ApiUtil.post('/case_distribution_levers/update_levers_and_history', { leversData })
-    .then((response) => {
-      UpdateLeverHistory(leverStore);
+  const postData = {
+    current_levers: leversData,
+    audit_lever_entries: [],
+  }
+
+  return ApiUtil.post('/case_distribution_levers/update_levers_and_history', { data: postData })
+    .then(() => {
+      // UpdateLeverHistory(leverStore);
       SaveLeverChanges(leverStore);
     })
-    .catch(error => {
+    .catch((error) => {
+      if(error.response) {
+        console.error('Error:', error);
+      }
     });
 }
 
@@ -84,6 +89,7 @@ export function LeverSaveButton({ leverStore }) {
       const leverChangesOccurred = leversString !== initialLeversString;
 
       setChangesOccurred(leverChangesOccurred);
+
     });
 
     return () => {
@@ -98,10 +104,9 @@ export function LeverSaveButton({ leverStore }) {
     }
   };
 
-  const handleConfirmButton = () => {
-    SaveLeversToDB(leverStore);
+  const handleConfirmButton = async () => {
+    await SaveLeversToDB(leverStore);
     setShowModal(false);
-    DisplayButtonLeverAlert('');
     setSaveButtonDisabled(true);
   }
 
@@ -109,7 +114,11 @@ export function LeverSaveButton({ leverStore }) {
 
   return (
     <>
-      <Button id="SaveLeversButton"  onClick={handleSaveButton} disabled={!changesOccurred || saveButtonDisabled}>
+      <Button
+        id="LeversSaveButton"
+        onClick={handleSaveButton}
+        disabled={!changesOccurred}
+      >
         Save
       </Button>
       {showModal &&

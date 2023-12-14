@@ -10,7 +10,7 @@ module AutomaticCaseDistribution
 
   def priority_push_distribution(limit = nil)
     @appeals = []
-    @rem = 0
+    @rem = CaseDistributionLever.find_by_item('priority_push_distribution').try(:value).to_i
 
     if limit.nil?
       # Distribute priority appeals that are tied to judges (not genpop) with no limit.
@@ -27,7 +27,7 @@ module AutomaticCaseDistribution
     @appeals = []
     @rem = batch_size
     @remaining_docket_proportions = docket_proportions.clone
-    @nonpriority_iterations = 0
+    @nonpriority_iterations = CaseDistributionLever.find_by_item('priority_push_distribution').try(:value).to_i
 
     # Distribute legacy cases tied to a judge down to the board provided limit of 30,
     # regardless of the legacy docket range.

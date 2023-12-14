@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import StaticLeversWrapper from './StaticLeversWrapper';
 import InteractableLeverWrapper from './InteractableLeversWrapper';
 import LeverHistory from './LeverHistory';
+import LeverAlertBanner from './LeverAlertBanner';
 import PropTypes from 'prop-types';
 import {
   sectionSegmentStyling,
@@ -9,9 +10,45 @@ import {
   anchorJumpLinkStyling } from 'app/queue/StickyNavContentArea';
 import COPY from '../../../COPY';
 
-const CaseflowDistributionContent = ({ levers, saveChanges, formattedHistory, isAdmin, leverStore }) => {
+const CaseflowDistributionContent = ({
+  levers,
+  formattedHistory,
+  isAdmin,
+  leverStore,
+  sectionTitles
+}) => {
+  const [displayAlert, setDisplayAlert] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = leverStore.subscribe(() => {
+      const state = leverStore.getState();
+
+      const leversString = JSON.stringify(state.levers);
+      const initialLeversString = JSON.stringify(state.initial_levers);
+
+      const leverChangesOccurred = leversString !== initialLeversString;
+
+      if (state.saveChangesActivate && !leverChangesOccurred) {
+        setDisplayAlert(true);
+      } else {
+        setDisplayAlert(false);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [leverStore]);
+
   return (
     <div>
+      {displayAlert && (
+        <LeverAlertBanner
+          title={COPY.CASE_DISTRIBUTION_SUCCESSBANNER_TITLE}
+          message={COPY.CASE_DISTRIBUTION_SUCCESSBANNER_DETAIL}
+          type="success"
+        />
+      )}
       <h1>Administration</h1>
 
       <div> {/* Main Content Wrapper*/}
@@ -28,7 +65,8 @@ const CaseflowDistributionContent = ({ levers, saveChanges, formattedHistory, is
             <h2>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_TITLE}</h2>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION}</p>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION_NOTE}</p>
-            <InteractableLeverWrapper levers={levers} leverStore={leverStore} isAdmin={isAdmin} />
+            <InteractableLeverWrapper levers={levers} leverStore={leverStore} isAdmin={isAdmin}
+              sectionTitles={sectionTitles} />
           </div>
         </div>
 
@@ -63,7 +101,8 @@ CaseflowDistributionContent.propTypes = {
   saveChanges: PropTypes.func.isRequired,
   formattedHistory: PropTypes.array.isRequired,
   isAdmin: PropTypes.bool.isRequired,
-  leverStore: PropTypes.any.isRequired
+  leverStore: PropTypes.any.isRequired,
+  sectionTitles: PropTypes.array.isRequired
 };
 
 export default CaseflowDistributionContent;
