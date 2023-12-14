@@ -39,11 +39,8 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
   end
 
   describe "GET #show" do
-    before do
-      get :show, params: { correspondence_uuid: correspondence.uuid }
-    end
-
     it "returns an unauthorized response" do
+      get :show, params: { correspondence_uuid: correspondence.uuid }
       expect(response.status).to eq 302
       expect(response.body).to match(/unauthorized/)
     end
@@ -52,9 +49,6 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
       MailTeamSupervisor.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       get :show, params: { correspondence_uuid: correspondence.uuid }
-    end
-
-    it "returns a success response when current user is part of MailTeamSupervisor" do
       expect(response).to have_http_status(:ok)
     end
   end
