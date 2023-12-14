@@ -47,19 +47,19 @@ module WarRoom
 
     def claim_label_updater(reference_id, original_code, new_code)
       # The End products must be of the same type. (030, 040, 070)
-      if same_claim_type(original_code, new_code) == false
+      if !same_claim_type(original_code, new_code)
         puts("This is a different End Product, cannot claim label change. Aborting...")
         fail Interrupt
       end
 
       # Check that the new claim code is valid
-      if claim_code_check(new_code) == false
+      if !claim_code_check(new_code)
         puts("Invalid new claim label code. Aborting...")
         fail Interrupt
       end
 
       # Check that the old claim code is valid for record
-      if claim_code_check(original_code) == false
+      if !claim_code_check(original_code)
         puts("Invalid orginal claim label code. Aborting...")
         fail Interrupt
       end

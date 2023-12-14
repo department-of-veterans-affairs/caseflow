@@ -112,6 +112,7 @@ Metrics/AbcSize:
   Exclude:
     - app/jobs/virtual_hearings/create_conference_job.rb
     - lib/helpers/duplicate_veteran_checker.rb
+    - lib/helpers/claim_label_change.rb
 
 Metrics/CyclomaticComplexity:
   Exclude:
