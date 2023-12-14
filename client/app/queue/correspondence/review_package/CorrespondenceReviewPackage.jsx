@@ -32,8 +32,8 @@ export const CorrespondenceReviewPackage = (props) => {
   const [apiResponse, setApiResponse] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
   const [packageActionModal, setPackageActionModal] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
   const [selectedId, setSelectedId] = useState(0);
   const [bannerInformation, setBannerInformation] = useState(null);
 
