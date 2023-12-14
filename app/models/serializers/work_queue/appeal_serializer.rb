@@ -105,7 +105,7 @@ class WorkQueue::AppealSerializer
 
   attribute :assigned_to_location do |object, params|
     if object&.status&.status == :distributed_to_judge
-      if (params[:user]&.judge? || params[:user]&.attorney? || User.list_hearing_coordinators.include?(params[:user]))
+      if params[:user]&.judge? || params[:user]&.attorney? || User.list_hearing_coordinators.include?(params[:user])
         object.assigned_to_location
       end
     else
