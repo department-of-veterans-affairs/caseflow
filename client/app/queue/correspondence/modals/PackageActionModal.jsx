@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Modal from '../../../components/Modal';
 import TextareaField from '../../../components/TextareaField';
+import RadioField from '../../../components/RadioField';
 import Table from '../../../components/Table';
 import { connect } from 'react-redux';
 import ApiUtil from '../../../util/ApiUtil';
@@ -44,6 +45,12 @@ const PackageActionModal = (props) => {
   // Disable submit button unless conditional input is met
   const disableSubmit = () => {
     switch (packageActionModal) {
+    case 'mergePackage':
+      if (mergePackageReason === 'other') {
+        return textInputReason === '';
+      }
+
+      return mergePackageReason === '';
     case 'removePackage':
     case 'reassignPackage':
       return textInputReason === '';
@@ -55,6 +62,16 @@ const PackageActionModal = (props) => {
     default:
       return true;
     }
+
+      return isRadioDisabled ? textInputReason === '' : false;
+    }
+    default:
+      return true;
+    }
+  };
+
+  const onChange = (event) => {
+    setRadioValue(event);
   };
 
   const onChange = (event) => {
