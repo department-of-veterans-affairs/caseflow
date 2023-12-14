@@ -109,14 +109,14 @@ const DocketTimeGoals = (props) => {
         key={`${lever.item}-${index}`}
       >
         <div className={cx(styles.leverLeft, styles.docketLeverLeft)}>
-          <strong>{lever.title}</strong>
+          <strong className={lever.is_disabled ? styles.leverDisabled : styles.leverActive}>{lever.title}</strong>
         </div>
         <div className={`${styles.leverMiddle} ${leverNumberDiv}`}>
-          <span className={`${styles.disabledText}`}>{lever.value} {lever.unit}</span>
+          <span className={lever.is_disabled ? styles.leverDisabled : styles.leverActive}>{lever.value} {lever.unit}</span>
         </div>
         <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
           <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
-            <span className={`${styles.disabledText}`}>Off</span>
+            <span className={lever.is_disabled ? styles.leverDisabled : styles.leverActive}>Off</span>
           </div>
         </div>
       </div>
