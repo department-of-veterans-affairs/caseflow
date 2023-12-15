@@ -109,7 +109,21 @@ export const CorrespondenceReviewPackage = (props) => {
     // start appeal 10182 intake process
     try {
       await props.doFileNumberSearch('appeal', editableData.veteran_file_number, true);
+      await ApiUtil.patch(`/queue/correspondence/${props.correspondence_uuid}/intake_update`);
       window.location.href = '/intake/review_request';
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const intakeLink = async () => {
+    const data = {
+      id: props.correspondence.id
+    };
+
+    try {
+      ApiUtil.post(`/queue/correspondence/${props.correspondence_uuid}/correspondence_intake_task`, { data });
+      window.location.href = `/queue/correspondence/${props.correspondence_uuid}/intake`;
     } catch (error) {
       console.error(error);
     }
@@ -123,7 +137,6 @@ export const CorrespondenceReviewPackage = (props) => {
       setErrorMessage('');
     }
   }, [editableData, apiResponse]);
-  const intakeLink = `/queue/correspondence/${props.correspondence_uuid}/intake`;
 
   return (
     <div>

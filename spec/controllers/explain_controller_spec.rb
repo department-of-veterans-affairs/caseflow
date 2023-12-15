@@ -144,4 +144,41 @@ describe ExplainController, :all_dbs, type: :controller do
       end
     end
   end
+
+  describe "GET explain/correspondence/:correspondence_uuid/:any" do
+    let(:user_roles) { ["System Admin"] }
+    let(:veteran) { create(:veteran) }
+    let(:package_document_type) do
+      PackageDocumentType.create(
+        id: 15,
+        active: true,
+        created_at: Time.zone.now,
+        name: "10182",
+        updated_at: Time.zone.now
+      )
+    end
+    let(:correspondence) do
+      create(
+        :correspondence,
+        :with_single_doc,
+        veteran_id: veteran.id,
+        package_document_type_id: package_document_type.id
+      )
+    end
+
+    subject { get :show, params: { correspondence_uuid: correspondence.uuid, any: "review_package" }, as: response_format }
+
+    before do
+      User.authenticate!(roles: user_roles)
+    end
+
+    context ".json request" do
+      let(:response_format) { :json }
+      it "returns valid JSON tree" do
+        subject
+        json_body = JSON.parse(response.body)
+        expect(json_body.keys).to include("metadata", "appeals", "veterans", "tasks", "users", "organizations")
+      end
+    end
+  end
 end
