@@ -326,6 +326,7 @@ class BusinessLine < Organization
       end
     end
 
+    # rubocop:disable Metrics/AbcSize
     def station_id_filter
       if query_params[:facilities].present?
         <<-SQL
@@ -336,6 +337,8 @@ class BusinessLine < Organization
             #{User.arel_table.alias(:update_users)[:station_id].in(query_params[:facilities]).to_sql}
             OR
             #{User.arel_table.alias(:decision_users)[:station_id].in(query_params[:facilities]).to_sql}
+            OR
+            #{User.arel_table.alias(:decision_users_completed_by)[:station_id].in(query_params[:facilities]).to_sql}
           )
         SQL
       end
@@ -351,10 +354,13 @@ class BusinessLine < Organization
             #{User.arel_table.alias(:update_users)[:css_id].in(query_params[:personnel]).to_sql}
             OR
             #{User.arel_table.alias(:decision_users)[:css_id].in(query_params[:personnel]).to_sql}
+            OR
+            #{User.arel_table.alias(:decision_users_completed_by)[:css_id].in(query_params[:personnel]).to_sql}
           )
         SQL
       end
     end
+    # rubocop:enable Metrics/AbcSize
 
     #################### End of Change history filter helpers ########################
 
