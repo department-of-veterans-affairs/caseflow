@@ -79,7 +79,7 @@ const AffinityDays = (props) => {
       });
     }
   };
-  const generateFields = (dataType, option, lever, isMemberUser) => {
+  const generateFields = (dataType, option, lever) => {
     if (dataType === 'number') {
       return (
         <NumberField
@@ -112,9 +112,9 @@ const AffinityDays = (props) => {
       return (
         <div>
           <div>
-            <label className={`${styles.disabledText}`}
+            <label className={lever.is_disabled ? styles.leverDisabled : styles.leverActive}
               htmlFor={`${lever.item}-${option.item}`}>
-              {`${option.text}: ${option.value}`}
+              {`${option.text} ${option.data_type === 'number' ? option.value : ''}`}
             </label>
           </div>
         </div>
@@ -133,9 +133,8 @@ const AffinityDays = (props) => {
         <div className={styles.leverRight}><strong>Value</strong></div>
       </div>
       {affinityLevers.map((lever, index) => (
-        <div className={cx(styles.activeLever, (lever.is_disabled) ? styles.leverDisabled : '',
-          isMemberUser ? styles.disabledText : '')}
-        key={`${lever.item}-${index}`}
+        <div className={cx(styles.activeLever, lever.is_disabled ? styles.leverDisabled : '')}
+          key={`${lever.item}-${index}`}
         >
           <div className={styles.leverLeft}>
             <strong>{lever.title}</strong>

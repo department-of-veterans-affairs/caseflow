@@ -12,7 +12,7 @@
 };
 
 .descriptionStyling {
-  width: 70%;
+  width: 100%;
   border: none;
   padding-top: 0;
   margin-top: 0;
@@ -23,9 +23,10 @@
 };
 
 .valueStyling {
-  width: 30%;
+  width: 25%;
   border: none;
   padding-top: 0;
+  padding-left: 22%;
   margin-top: 0;
   white-space: noWrap;
   padding-bottom: 20px;
@@ -38,16 +39,28 @@
   margin-right: 5px;
 }
 
-.tableHeaderStyling {
+.tableHeaderStylingLeft {
   border-left: 0;
   border-right: 0;
   border-top: 0;
   border-color: #d6d7d9;
   font-family: Source Sans Pro;
   font-weight: 700;
-  font-size: 21px;
+  font-size: 19px;
   line-height: 1.3em/25px;
 };
+
+.tableHeaderStylingRight {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-color: #d6d7d9;
+  font-family: Source Sans Pro;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.3em/25px;
+  padding-left: 22%;
+}
 
 .tableStyling {
   width: 100%;
