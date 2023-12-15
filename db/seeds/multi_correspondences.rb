@@ -40,22 +40,27 @@ module Seeds
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def create_multi_correspondences
       veteran = create_veteran(first_name: "Adam", last_name: "West")
-      32.times do
-        appeal = create(:appeal, veteran_file_number: veteran.file_number)
-
+      5.times do
+        appeal = create(
+          :appeal,
+          veteran_file_number: veteran.file_number
+          )
         InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-        EvidenceSubmissionWindowTask.create!(
-          appeal: appeal,
-          parent: appeal.root_task,
-          assigned_to: MailTeam.singleton
-        )
       end
-      21.times do |package_doc_id|
+      5.times do
+        appeal = create(
+          :appeal,
+          veteran_file_number: veteran.file_number,
+          docket_type: Constants.AMA_DOCKETS.direct_review
+          )
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+      end
+      21.times do
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
           portal_entry_date: Time.zone.now,
           source_type: "Mail",
-          package_document_type_id: package_doc_id,
+          package_document_type_id: (1..20).to_a.sample,
           correspondence_type_id: 4,
           cmp_queue_id: 1,
           cmp_packet_number: @cmp_packet_number,
@@ -76,15 +81,27 @@ module Seeds
       end
 
       veteran = create_veteran(first_name: "Michael", last_name: "Keaton")
-      13.times do
-        create(:appeal, veteran_file_number: veteran.file_number)
+      2.times do
+        appeal = create(
+          :appeal,
+          veteran_file_number: veteran.file_number
+          )
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
       end
-      31.times do |package_doc_id|
+      5.times do
+        appeal = create(
+          :appeal,
+          veteran_file_number: veteran.file_number,
+          docket_type: Constants.AMA_DOCKETS.direct_review
+          )
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+      end
+      31.times do
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
           portal_entry_date: Time.zone.now,
           source_type: "Mail",
-          package_document_type_id: package_doc_id,
+          package_document_type_id: (1..20).to_a.sample,
           correspondence_type_id: 4,
           cmp_queue_id: 1,
           cmp_packet_number: @cmp_packet_number,
@@ -106,15 +123,27 @@ module Seeds
 
 
       veteran = create_veteran(first_name: "Christian", last_name: "Bale")
-      7.times do
-        create(:appeal, veteran_file_number: veteran.file_number)
+      1.times do
+        appeal = create(
+          :appeal,
+          veteran_file_number: veteran.file_number
+          )
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
       end
-      101.times do |package_doc_id|
+      10.times do
+        appeal = create(
+          :appeal,
+          veteran_file_number: veteran.file_number,
+          docket_type: Constants.AMA_DOCKETS.direct_review
+          )
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+      end
+      101.times do
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
           portal_entry_date: Time.zone.now,
           source_type: "Mail",
-          package_document_type_id: package_doc_id,
+          package_document_type_id: (1..20).to_a.sample,
           correspondence_type_id: 4,
           cmp_queue_id: 1,
           cmp_packet_number: @cmp_packet_number,

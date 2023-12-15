@@ -86,7 +86,21 @@ export const CorrespondenceReviewPackage = (props) => {
     props.setFileNumberSearch(editableData.veteran_file_number);
     try {
       await props.doFileNumberSearch('appeal', editableData.veteran_file_number, true);
+      await ApiUtil.patch(`/queue/correspondence/${props.correspondence_uuid}/intake_update`);
       window.location.href = '/intake/review_request';
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const intakeLink = async () => {
+    const data = {
+      id: props.correspondence.id
+    };
+
+    try {
+      await ApiUtil.post(`/queue/correspondence/${props.correspondence_uuid}/correspondence_intake_task`, { data });
+      window.location.href = `/queue/correspondence/${props.correspondence_uuid}/intake`;
     } catch (error) {
       console.error(error);
     }
@@ -100,7 +114,6 @@ export const CorrespondenceReviewPackage = (props) => {
       setErrorMessage('');
     }
   }, [editableData, apiResponse]);
-  const intakeLink = `/queue/correspondence/${props.correspondence_uuid}/intake`;
 
   return (
     <React.Fragment>
@@ -145,19 +158,20 @@ export const CorrespondenceReviewPackage = (props) => {
           />
         </div>
         <div className="cf-push-right">
-          <Button
-            name="Intake appeal"
-            styling={{ style: { marginRight: '2rem' } }}
-            classNames={['usa-button-secondary']}
-            onClick={intakeAppeal}
-            disabled={disableButton}
-          />
+          { (props.packageDocumentType.name === '10182') && (
+            <Button
+              name="Intake appeal"
+              styling={{ style: { marginRight: '2rem' } }}
+              classNames={['usa-button-secondary']}
+              onClick={intakeAppeal}
+              disabled={disableButton}
+            />
+          )}
           <a href={intakeLink}>
-            {/* hard coded UUID to link to multi_correspondence.rb data */}
             <Button
               name="Create record"
               classNames={['usa-button-primary']}
-              href={intakeLink}
+              onClick={intakeLink}
               disabled={disableButton}
             />
           </a>

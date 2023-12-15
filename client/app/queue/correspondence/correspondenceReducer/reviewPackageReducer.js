@@ -55,6 +55,20 @@ export const reviewPackageReducer = (state = initialState, action = {}) => {
       }
     });
 
+  case ACTIONS.UPDATE_DOCUMENT_TYPE_NAME:
+    return update(state, {
+      correspondenceDocuments: {
+        [action.payload.index]: {
+          vbms_document_type_id: {
+            $set: action.payload.newName.value
+          },
+          document_title: {
+            $set: action.payload.newName.label
+          }
+        }
+      }
+    });
+
   default:
     return state;
   }
