@@ -145,13 +145,15 @@ export const CorrespondenceReviewPackage = (props) => {
           />
         </div>
         <div className="cf-push-right">
-          <Button
-            name="Intake appeal"
-            styling={{ style: { marginRight: '2rem' } }}
-            classNames={['usa-button-secondary']}
-            onClick={intakeAppeal}
-            disabled={disableButton}
-          />
+          { (props.packageDocumentType.name === '10182') && (
+            <Button
+              name="Intake appeal"
+              styling={{ style: { marginRight: '2rem' } }}
+              classNames={['usa-button-secondary']}
+              onClick={intakeAppeal}
+              disabled={disableButton}
+            />
+          )}
           <a href={intakeLink}>
             {/* hard coded UUID to link to multi_correspondence.rb data */}
             <Button
