@@ -23,8 +23,8 @@ module Seeds
     end
 
     def initialize_inactive_cf_user_and_inactive_admin_judge_team_file_number_and_participant_id
-      @inactive_cf_user_and_inactive_admin_judge_team_file_number ||= 700_000_000
-      @inactive_cf_user_and_inactive_admin_judge_team_participant_id ||= 710_000_000
+      @inactive_cf_user_and_inactive_admin_judge_team_file_number ||= 300_000_000
+      @inactive_cf_user_and_inactive_admin_judge_team_participant_id ||= 310_000_000
 
       while find_veteran(@inactive_cf_user_and_inactive_admin_judge_team_file_number)
         @inactive_cf_user_and_inactive_admin_judge_team_file_number += 2000
@@ -33,8 +33,8 @@ module Seeds
     end
 
     def initialize_active_cf_user_and_non_admin_judge_team_file_number_and_participant_id
-      @active_cf_user_and_non_admin_judge_team_file_number ||= 701_000_000
-      @active_cf_user_and_non_admin_judge_team_participant_id ||= 711_000_000
+      @active_cf_user_and_non_admin_judge_team_file_number ||= 301_000_000
+      @active_cf_user_and_non_admin_judge_team_participant_id ||= 311_000_000
 
       while find_veteran(@active_cf_user_and_non_admin_judge_team_file_number)
         @active_cf_user_and_non_admin_judge_team_file_number += 2000
@@ -43,8 +43,8 @@ module Seeds
     end
 
     def initialize_active_cf_user_and_inactive_judge_team_file_number_and_participant_id
-      @active_cf_user_and_inactive_judge_team_file_number ||= 702_000_000
-      @active_cf_user_and_inactive_judge_team_participant_id ||= 712_000_000
+      @active_cf_user_and_inactive_judge_team_file_number ||= 302_000_000
+      @active_cf_user_and_inactive_judge_team_participant_id ||= 312_000_000
 
       while find_veteran(@active_cf_user_and_inactive_judge_team_file_number)
         @active_cf_user_and_inactive_judge_team_file_number += 2000
@@ -53,8 +53,8 @@ module Seeds
     end
 
     def initialize_active_judge_file_number_and_participant_id
-      @file_number ||= 703_000_200
-      @participant_id ||= 713_000_000
+      @file_number ||= 303_000_200
+      @participant_id ||= 313_000_200
 
       while find_veteran(@file_number)
         @file_number += 2000
@@ -77,7 +77,7 @@ module Seeds
 
     def inactive_cf_user_and_inactive_admin_judge_team
       @inactive_cf_user_and_inactive_admin_judge_team ||= begin
-        judge = find_or_create_active_judge("INACTIVECFJUDGE", "Judge InactiveInCF User")
+        judge = find_or_create_active_judge("INACTIVECFJUDGE", "BVADSLADER")
         judge.update_status!("inactive") if judge.active?
         vacols_record = VACOLS::Staff.find_by_sdomainid(judge.css_id)
         vacols_record.update!(sactive: "I") if vacols_record.sactive == "A"
@@ -93,7 +93,7 @@ module Seeds
 
         user = User.find_by_css_id("ACTIVEATTY") ||
                create(:user, :with_vacols_attorney_record,
-                      css_id: "ACTIVEATTY", full_name: "Attorney OnJudgeTeam Active")
+                      css_id: "ACTIVEATTY", full_name: "BVADSSTEVE")
         judge_team.add_user(user)
 
         user
@@ -109,8 +109,8 @@ module Seeds
                       css_id: "ATTYWITHTEAM",
                       full_name: "Attorney WithInactiveJudgeTeam Affinity")
 
-        JudgeTeam.for_judge(user).inactive!
-        another_judge = find_or_create_active_judge("ACTIVEJUDGETEAM", "Judge WithJudgeTeam Active")
+        JudgeTeam.for_judge(user)&.inactive!
+        another_judge = find_or_create_active_judge("ACTIVEJUDGETEAM", "BVADSBOB")
         another_judge_team = JudgeTeam.for_judge(another_judge)
         another_judge_team.add_user(user)
 
@@ -120,12 +120,12 @@ module Seeds
 
     def active_judge_hearing_affinity_45_days
       @active_judge_hearing_affinity_45_days ||=
-        find_or_create_active_judge("JUDGEHEARING1", "Judge Hearings45Days Affinity")
+        find_or_create_active_judge("JUDGEHEARING1", "BVADSJOHN")
     end
 
     def active_judge_hearing_affinity_65_days
       @active_judge_hearing_affinity_65_days ||=
-        find_or_create_active_judge("JUDGEHEARING2", "Judge Hearings65Days Affinity")
+        find_or_create_active_judge("JUDGEHEARING2", "BVADSRICK")
     end
 
     def create_legacy_appeals
