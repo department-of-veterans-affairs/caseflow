@@ -20,6 +20,7 @@ class HearingDaySerializer
   attribute :notes do |hearing_day|
     RequestStore[:current_user]&.board_employee? ? hearing_day.notes : nil
   end
+  attribute :lock
   attribute :readable_request_type do |hearing_day, params|
     get_readable_request_type(hearing_day, params)
   end
