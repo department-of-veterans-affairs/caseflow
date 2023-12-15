@@ -100,6 +100,11 @@ class CorrespondenceController < ApplicationController
     render json: { status: 200, correspondence: correspondence }
   end
 
+  def document_type_correspondence
+    data = vbms_document_types
+    render json: { data: data }
+  end
+
   # :reek:UtilityFunction
   def vbms_document_types
     data = ExternalApi::ClaimEvidenceService.document_types
@@ -145,6 +150,21 @@ class CorrespondenceController < ApplicationController
 
   private
 
+  def vbms_document_types
+    begin
+      data = ExternalApi::ClaimEvidenceService.document_types
+    rescue StandardError => error
+      Rails.logger.error(error.full_message)
+      data ||= demo_data
+    end
+    data["documentTypes"].map { |document_type| { id: document_type["id"], name: document_type["description"] } }
+  end
+
+  def demo_data
+    json_file_path = "vbms doc types.json"
+    JSON.parse(File.read(json_file_path))
+  end 
+  
   def set_flash_intake_success_message
     # intake error message is handled in client/app/queue/correspondence/intake/components/CorrespondenceIntake.jsx
     vet = veteran_by_correspondence

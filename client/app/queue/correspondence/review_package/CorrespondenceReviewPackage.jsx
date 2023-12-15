@@ -93,6 +93,19 @@ export const CorrespondenceReviewPackage = (props) => {
     }
   };
 
+  const intakeLink = async () => {
+    const data = {
+      id: props.correspondence.id
+    };
+
+    try {
+      await ApiUtil.post(`/queue/correspondence/${props.correspondence_uuid}/correspondence_intake_task`, { data });
+      window.location.href = `/queue/correspondence/${props.correspondence_uuid}/intake`;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     if (apiResponse) {
       const hasChanged = isEditableDataChanged();
@@ -101,7 +114,6 @@ export const CorrespondenceReviewPackage = (props) => {
       setErrorMessage('');
     }
   }, [editableData, apiResponse]);
-  const intakeLink = `/queue/correspondence/${props.correspondence_uuid}/intake`;
 
   return (
     <React.Fragment>
@@ -156,11 +168,10 @@ export const CorrespondenceReviewPackage = (props) => {
             />
           )}
           <a href={intakeLink}>
-            {/* hard coded UUID to link to multi_correspondence.rb data */}
             <Button
               name="Create record"
               classNames={['usa-button-primary']}
-              href={intakeLink}
+              onClick={intakeLink}
               disabled={disableButton}
             />
           </a>

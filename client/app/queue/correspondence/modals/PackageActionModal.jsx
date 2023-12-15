@@ -93,6 +93,10 @@ const PackageActionModal = (props) => {
       instructions: []
     };
 
+    if (packageActionModal === 'removePackage' || packageActionModal === 'reassignPackage') {
+      data.instructions.push(textInputReason);
+    }
+
     if (radioValue && radioValue !== 'Other') {
       data.instructions.push(radioValue);
     }

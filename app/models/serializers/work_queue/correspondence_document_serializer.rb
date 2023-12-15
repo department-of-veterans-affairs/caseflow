@@ -3,6 +3,7 @@
 class WorkQueue::CorrespondenceDocumentSerializer
   include FastJsonapi::ObjectSerializer
 
+  attribute :id
   attribute :correspondence_id
   attribute :document_file_number
   attribute :pages

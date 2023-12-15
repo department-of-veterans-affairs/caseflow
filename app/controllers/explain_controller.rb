@@ -36,7 +36,7 @@ class ExplainController < ApplicationController
       Rails.env.development?
   end
 
-  helper_method :legacy_appeal?, :appeal,
+  helper_method :legacy_appeal?, :correspondence?, :appeal,
                 :show_pii_query_param, :fields_query_param, :sections_query_param,
                 :treee_fields, :enabled_sections,
                 :available_fields,
@@ -51,6 +51,13 @@ class ExplainController < ApplicationController
   end
 
   def explain_as_text
+    if appeal.type == "Correspondence"
+      [
+        "show_pii = #{show_pii_query_param}",
+        task_tree_as_text
+      ].join("\n\n")
+    end
+
     [
       "show_pii = #{show_pii_query_param}",
       task_tree_as_text,
@@ -127,6 +134,7 @@ class ExplainController < ApplicationController
 
   def sanitized_json
     return "(LegacyAppeals are not yet supported)".to_json if legacy_appeal?
+    return "(Correspondences are not yet supported)".to_json if correspondence?
 
     SanitizedJsonExporter.new(appeal, sanitize: !show_pii_query_param, verbosity: 0).file_contents
   end
@@ -143,12 +151,18 @@ class ExplainController < ApplicationController
     appeal.is_a?(LegacyAppeal)
   end
 
+  def correspondence?
+    appeal.is_a?(Correspondence)
+  end
+
   def appeal
     @appeal ||= fetch_appeal
   end
 
   def fetch_appeal
-    if appeal_id.start_with?("ama-")
+    if params[:correspondence_uuid].present?
+      Correspondence.find_by_uuid(params[:correspondence_uuid])
+    elsif appeal_id.start_with?("ama-")
       record_id = appeal_id.delete_prefix("ama-")
       Appeal.find_by_id(record_id)
     elsif appeal_id.start_with?("legacy-")
