@@ -3,6 +3,7 @@
 # Correspondence is a top level object similar to Appeals.
 # Serves as a collection of all data related to Correspondence workflow
 class Correspondence < CaseflowRecord
+  has_paper_trail
   include PrintsTaskTree
 
   has_many :correspondence_documents
