@@ -10,7 +10,7 @@ const renderDailyDocketPrinted = (props) => {
 describe('DailyDocketPrinted', () => {
   it('renders tag VLJ when user is not a VSO employee', async () => {
     const mockProps = {
-      user: { userIsBoardEmployee: true },
+      user: { userIsBoardHearingsEmployee: true },
       docket: { judgeFirstName: 'John', judgeLastName: 'Doe' },
     };
 
@@ -20,7 +20,7 @@ describe('DailyDocketPrinted', () => {
 
   it('renders docket notes when user is a board employee', async () => {
     const mockProps = {
-      user: { userIsBoardEmployee: true },
+      user: { userIsBoardHearingsEmployee: true },
       docket: { notes: 'There is a note here' }
     };
 
@@ -30,7 +30,7 @@ describe('DailyDocketPrinted', () => {
 
   it('does not render tag VLJ when user is a VSO employee', () => {
     const mockProps = {
-      user: { userIsBoardEmployee: false },
+      user: { userIsBoardHearingsEmployee: false },
       docket: { judgeFirstName: null, judgeLastName: null },
       disablePrompt: false,
     };
@@ -41,7 +41,7 @@ describe('DailyDocketPrinted', () => {
 
   it('does not render docket notes when user is not a Board employee', async () => {
     const mockProps = {
-      user: { userIsBoardEmployee: false },
+      user: { userIsBoardHearingsEmployee: false },
       docket: { notes: 'There is a note here' },
     };
 

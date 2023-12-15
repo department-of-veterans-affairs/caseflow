@@ -265,7 +265,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     roles.include?("VSO")
   end
 
-  def board_employee?
+  def board_hearings_employee?
     user_roles = roles
 
     return true unless (

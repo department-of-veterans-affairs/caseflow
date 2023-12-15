@@ -97,7 +97,7 @@ export class DailyDocketPrinted extends React.Component {
           </div>
 
           <div className="cf-push-right">
-            {user.userIsBoardEmployee && (
+            {user.userIsBoardHearingsEmployee && (
               <React.Fragment>
                 <strong>VLJ:</strong>
                 {` ${docket.judgeFirstName} ${docket.judgeLastName}`}
