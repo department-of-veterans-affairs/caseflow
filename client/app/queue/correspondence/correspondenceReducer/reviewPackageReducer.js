@@ -4,7 +4,8 @@ import { ACTIONS } from './reviewPackageConstants';
 export const initialState = {
   correspondence: {},
   correspondenceDocuments: [],
-  packageDocumentType: {}
+  packageDocumentType: {},
+  veteranInformation: {}
 };
 
 export const reviewPackageReducer = (state = initialState, action = {}) => {
@@ -27,6 +28,13 @@ export const reviewPackageReducer = (state = initialState, action = {}) => {
     return update(state, {
       packageDocumentType: {
         $set: action.payload.packageDocumentType
+      }
+    });
+
+  case ACTIONS.SET_VETERAN_INFORMATION:
+    return update(state, {
+      veteranInformation: {
+        $set: action.payload.veteranInfo
       }
     });
 
