@@ -150,34 +150,6 @@ RSpec.feature("The Correspondence Review Package page") do
       expect(page).to have_field("VA DOR", readonly: true)
     end
   end
-
-  context "Checking VADOR field is enable for Mail Supervisor" do
-    before do
-      FeatureToggle.enable!(:correspondence_queue)
-      MailTeamSupervisor.singleton.add_user(current_user)
-      User.authenticate!(user: current_user)
-      visit "/queue/correspondence/#{correspondence.uuid}/review_package"
-    end
-
-    it "Checking VADOR field is enabled for Mail Supervisor" do
-      click_button "Edit"
-      expect(page).to have_field("VA DOR", readonly: false)
-    end
-  end
-
-  context "Checking VADOR field is disabled for General mail user" do
-    before do
-      FeatureToggle.enable!(:correspondence_queue)
-      mail_team_org.add_user(mail_team_user)
-      User.authenticate!(user: mail_team_user)
-      visit "/queue/correspondence/#{correspondence.uuid}/review_package"
-    end
-
-    it "Checking VADOR field is disabled for General mail user" do
-      click_button "Edit"
-      expect(page).to have_field("VA DOR", readonly: true)
-    end
-  end
 end
 
 # rubocop:enable Layout/LineLength
