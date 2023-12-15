@@ -101,7 +101,7 @@ feature "Search results for AMA appeal" do
         visit "/search?veteran_ids=#{appeal.veteran.id}"
         expect(appeal.status.status).to eq :distributed_to_judge
         expect(appeal.assigned_to_location).to eq "BVAAABSHIRE" # css_id is part of assigned_to
-        expect(page).not_to have_content("BVAAABSHIRE") # but css_id is not displeyed in the page
+        expect(page).not_to have_content("BVAAABSHIRE") # but css_id is not displayed in the page
       end
 
       scenario "current user is a default user" do
@@ -109,7 +109,7 @@ feature "Search results for AMA appeal" do
         visit "/search?veteran_ids=#{appeal.veteran.id}"
         expect(appeal.status.status).to eq :distributed_to_judge
         expect(appeal.assigned_to_location).to eq "BVAAABSHIRE" # css_id is part of assigned_to
-        expect(page).not_to have_content("BVAAABSHIRE") # but css_id is not displeyed in the page
+        expect(page).not_to have_content("BVAAABSHIRE") # but css_id is not displayed in the page
       end
     end
 
@@ -119,7 +119,7 @@ feature "Search results for AMA appeal" do
         visit "/search?veteran_ids=#{appeal.veteran.id}"
         expect(appeal.status.status).to eq :distributed_to_judge
         expect(appeal.assigned_to_location).to eq "BVAAABSHIRE" # css_id is part of assigned_to
-        expect(page).to have_content("BVAAABSHIRE") # and css_id is displeyed in the page
+        expect(page).to have_content("BVAAABSHIRE") # and css_id is displayed in the page
       end
 
       scenario "user is an judge" do
@@ -127,7 +127,7 @@ feature "Search results for AMA appeal" do
         visit "/search?veteran_ids=#{appeal.veteran.id}"
         expect(appeal.status.status).to eq :distributed_to_judge
         expect(appeal.assigned_to_location).to eq "BVAAABSHIRE" # css_id is part of assigned_to
-        expect(page).to have_content("BVAAABSHIRE") # and css_id is displeyed in the page
+        expect(page).to have_content("BVAAABSHIRE") # and css_id is displayed in the page
       end
 
       scenario "user is an hearings coordinator" do
@@ -135,7 +135,7 @@ feature "Search results for AMA appeal" do
         visit "/search?veteran_ids=#{appeal.veteran.id}"
         expect(appeal.status.status).to eq :distributed_to_judge
         expect(appeal.assigned_to_location).to eq "BVAAABSHIRE" # css_id is part of assigned_to
-        expect(page).to have_content("BVAAABSHIRE") # and css_id is displeyed in the page
+        expect(page).to have_content("BVAAABSHIRE") # and css_id is displayed in the page
       end
     end
   end
