@@ -49,6 +49,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
   )}
 
   let!(:lever_history) {[audit_lever_entry1, audit_lever_entry2]}
+  let!(:levers) {Seeds::CaseDistributionLevers.new.levers + [lever1, lever2]}
 
   before do
     CDAControlGroup.singleton.add_user(lever_user)
@@ -72,7 +73,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       request_user_is_an_admin = @controller.view_assigns["user_is_an_acd_admin"]
 
       expect(response.status).to eq 200
-      expect(request_levers.count).to eq(25)
+      expect(request_levers.count).to eq(levers.count)
       expect(request_levers).to include(lever1)
       expect(request_levers).to include(lever2)
       expect(request_history.count).to eq(2)
@@ -92,7 +93,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       request_user_is_an_admin = @controller.view_assigns["user_is_an_acd_admin"]
 
       expect(response.status).to eq 200
-      expect(request_levers.count).to eq(25)
+      expect(request_levers.count).to eq(levers.count)
       expect(request_levers).to include(lever1)
       expect(request_levers).to include(lever2)
       expect(request_history.count).to eq(2)
@@ -121,7 +122,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       request_user_is_an_admin = @controller.view_assigns["user_is_an_acd_admin"]
 
       expect(response.status).to eq 200
-      expect(request_levers.count).to eq(25)
+      expect(request_levers.count).to eq(levers.count)
       expect(request_levers).to include(lever1)
       expect(request_levers).to include(lever2)
       expect(request_history.count).to eq(2)
@@ -141,7 +142,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       request_user_is_an_admin = @controller.view_assigns["user_is_an_acd_admin"]
 
       expect(response.status).to eq 200
-      expect(request_levers.count).to eq(25)
+      expect(request_levers.count).to eq(levers.count)
       expect(request_levers).to include(lever1)
       expect(request_levers).to include(lever2)
       expect(request_history.count).to eq(2)

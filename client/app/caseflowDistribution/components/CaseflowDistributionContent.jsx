@@ -43,7 +43,7 @@ const CaseflowDistributionContent = ({
         <LeverAlertBanner
           title={COPY.CASE_DISTRIBUTION_SUCCESSBANNER_TITLE}
           message={COPY.CASE_DISTRIBUTION_SUCCESSBANNER_DETAIL}
-          type='success'
+          type="success"
         />
       )}
       <h1>Administration</h1>
