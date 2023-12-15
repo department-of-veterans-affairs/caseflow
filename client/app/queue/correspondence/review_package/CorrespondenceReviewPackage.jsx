@@ -99,7 +99,7 @@ export const CorrespondenceReviewPackage = (props) => {
     };
 
     try {
-      ApiUtil.post(`/queue/correspondence/${props.correspondence_uuid}/correspondence_intake_task`, { data });
+      await ApiUtil.post(`/queue/correspondence/${props.correspondence_uuid}/correspondence_intake_task`, { data });
       window.location.href = `/queue/correspondence/${props.correspondence_uuid}/intake`;
     } catch (error) {
       console.error(error);
@@ -171,7 +171,7 @@ export const CorrespondenceReviewPackage = (props) => {
             <Button
               name="Create record"
               classNames={['usa-button-primary']}
-              href={intakeLink}
+              onClick={intakeLink}
               disabled={disableButton}
             />
           </a>
