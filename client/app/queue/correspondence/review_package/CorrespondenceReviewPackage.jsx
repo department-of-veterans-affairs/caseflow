@@ -158,7 +158,9 @@ export const CorrespondenceReviewPackage = (props) => {
               fetchData,
               showModal,
               handleModalClose,
-              handleReview
+              handleReview,
+              errorMessage,
+              setErrorMessage
             }}
             {...props}
           />
