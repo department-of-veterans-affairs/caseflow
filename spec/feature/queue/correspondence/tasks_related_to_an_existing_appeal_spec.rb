@@ -2,14 +2,12 @@
 
 RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page step 2.3") do
   include CorrespondenceHelpers
-  before do
-    let(:organization) { MailTeam.singleton }
-      let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
+  let(:organization) { MailTeam.singleton }
+  let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
 
-      before do
-        organization.add_user(mail_user)
-        mail_user.reload
-    end
+    before do
+      organization.add_user(mail_user)
+      mail_user.reload
   end
 
   context "Correspondence is not related to an existing appeal" do
