@@ -55,12 +55,12 @@ module Seeds
           )
         InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
       end
-      21.times do |package_doc_id|
+      21.times do
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
           portal_entry_date: Time.zone.now,
           source_type: "Mail",
-          package_document_type_id: package_doc_id,
+          package_document_type_id: (1..20).to_a.sample,
           correspondence_type_id: 4,
           cmp_queue_id: 1,
           cmp_packet_number: @cmp_packet_number,
@@ -96,12 +96,12 @@ module Seeds
           )
         InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
       end
-      31.times do |package_doc_id|
+      31.times do
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
           portal_entry_date: Time.zone.now,
           source_type: "Mail",
-          package_document_type_id: package_doc_id,
+          package_document_type_id: (1..20).to_a.sample,
           correspondence_type_id: 4,
           cmp_queue_id: 1,
           cmp_packet_number: @cmp_packet_number,
@@ -138,12 +138,12 @@ module Seeds
           )
         InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
       end
-      101.times do |package_doc_id|
+      101.times do
         corres = ::Correspondence.create!(
           uuid: SecureRandom.uuid,
           portal_entry_date: Time.zone.now,
           source_type: "Mail",
-          package_document_type_id: package_doc_id,
+          package_document_type_id: (1..20).to_a.sample,
           correspondence_type_id: 4,
           cmp_queue_id: 1,
           cmp_packet_number: @cmp_packet_number,
