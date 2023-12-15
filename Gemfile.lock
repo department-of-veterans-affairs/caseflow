@@ -66,6 +66,19 @@ GIT
       savon (~> 2.12)
 
 GIT
+  remote: https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git
+  revision: f1686404d448e1d8d13e533400817bcab175ed65
+  ref: f1686404d448e1d8d13e533400817bcab175ed65
+  specs:
+    ruby_claim_evidence_api (0.0.1)
+      activesupport
+      base64
+      faraday
+      faraday-multipart
+      httpi
+      railties
+
+GIT
   remote: https://github.com/department-of-veterans-affairs/sniffybara.git
   revision: 351560b5789ca638ba7c9b093c2bb1a9a6fda4b3
   specs:
@@ -81,17 +94,6 @@ GIT
     pdfjs_viewer-rails (0.0.9)
       rails (> 4.2.0)
       sass-rails (~> 5.0)
-
-PATH
-  remote: /Users/jonathanhoang/documents/git/ruby_claim_evidence_api
-  specs:
-    ruby_claim_evidence_api (0.0.1)
-      activesupport
-      base64
-      faraday
-      faraday-multipart
-      httpi
-      railties
 
 GEM
   remote: https://rubygems.org/
