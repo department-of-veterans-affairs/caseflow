@@ -119,18 +119,18 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("+ Add tasks")
       expect(page).to have_button("+ Add tasks", disabled: true)
     end
-# work on this one
+
     it "Two 'Other Motion' tasks is the limit for user" do
       click_on("+ Add tasks")
       all("#reactSelectContainer")[0].click
-      page.find("#react-select-2-input").fill_in with: "Other motion"
-      page.find(".css-e42auv", text: "Other motion").click
+      find_by_id("react-select-2-option-4").click
       expect(page).to have_content("Other motion")
       click_on("+ Add tasks")
-      all("#reactSelectContainer")[0].click
-      page.find("#react-select-2-input").fill_in with: "Other motion"
-      page.find(".css-e42auv", text: "Other motion").click
-      expect(page).to have_content("Other motion")
+      all("#reactSelectContainer")[1].click
+      find_by_id("react-select-3-option-4").click
+      within all("#reactSelectContainer")[1] do
+        expect(page).to have_content("Other motion")
+      end
       expect(page).to have_button("+ Add tasks", disabled: false)
     end
 
