@@ -98,6 +98,7 @@ Metrics/MethodLength:
   Max: 20
   Exclude:
     - app/jobs/middleware/job_sentry_scope_middleware.rb
+    - lib/helpers/payee_code_update.rb
     - "spec/**/*"
 
 Metrics/ClassLength:
@@ -107,6 +108,7 @@ Metrics/AbcSize:
   Max: 30
   Exclude:
     - app/jobs/virtual_hearings/create_conference_job.rb
+    - lib/helpers/payee_code_update.rb
 
 Metrics/CyclomaticComplexity:
   Exclude:
