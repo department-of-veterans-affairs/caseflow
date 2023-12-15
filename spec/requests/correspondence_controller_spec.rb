@@ -6,24 +6,24 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
   let(:current_user) { create(:intake_user) }
 
   let(:redux_store) do
-		{
-			taskRelatedAppealIds: [],
-			newAppealRelatedTasks: [],
-			fetchedAppeals: [],
-			correspondences: [],
-			radioValue: '0',
-			relatedCorrespondences: [],
-			mailTasks: {},
-			unrelatedTasks: [],
-			currentCorrespondence: {
-				id: 181,
-				veteran_id: 3909
-			},
-			veteranInformation: {
-				id: 3909
-			},
-			waivedEvidenceTasks: []
-		}.to_json
+    {
+      taskRelatedAppealIds: [],
+      newAppealRelatedTasks: [],
+      fetchedAppeals: [],
+      correspondences: [],
+      radioValue: '0',
+      relatedCorrespondences: [],
+      mailTasks: {},
+      unrelatedTasks: [],
+      currentCorrespondence: {
+        id: 181,
+        veteran_id: 3909
+      },
+      veteranInformation: {
+        id: 3909
+      },
+      waivedEvidenceTasks: []
+    }.to_json
   end
 
   before do
