@@ -152,6 +152,21 @@ Style/FormatStringToken:
   Enabled: true
   EnforcedStyle: annotated
 
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
+
+Style/ExponentialNotation:
+  Enabled: true
+
+Style/SlicingWithRange:
+  Enabled: true
+
 Naming/FileName:
   Enabled: false
 
@@ -172,8 +187,20 @@ Lint/UnusedMethodArgument:
   Exclude:
     - 'lib/fakes/*.rb'
 
+Lint/RaiseException:
+  Enabled: true
+
+Lint/StructNewOverride:
+  Enabled: true
+
 Layout/LineLength:
   Max: 120
 
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
+
+Layout/EmptyLinesAroundAttributeAccessor:
+  Enabled: true
+
+Layout/SpaceAroundMethodCallOperator:
+  Enabled: true
