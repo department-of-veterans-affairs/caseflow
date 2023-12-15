@@ -9,16 +9,16 @@ class HearingDaySerializer
   attribute :deleted_at
   attribute :id
   attribute :judge_first_name do |hearing_day, params|
-    RequestStore[:current_user]&.non_board_employee? ? nil : get_judge_first_name(hearing_day, params)
+    RequestStore[:current_user]&.board_employee? ? get_judge_first_name(hearing_day, params) : nil
   end
   attribute :judge_id
   attribute :judge_css_id
   attribute :judge_last_name do |hearing_day, params|
-    RequestStore[:current_user]&.non_board_employee? ? nil : get_judge_last_name(hearing_day, params)
+    RequestStore[:current_user]&.board_employee? ? get_judge_last_name(hearing_day, params) : nil
   end
   attribute :lock
   attribute :notes do |hearing_day|
-    RequestStore[:current_user]&.non_board_employee? ? nil : hearing_day.notes
+    RequestStore[:current_user]&.board_employee? ? hearing_day.notes : nil
   end
   attribute :readable_request_type do |hearing_day, params|
     get_readable_request_type(hearing_day, params)

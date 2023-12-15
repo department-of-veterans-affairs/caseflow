@@ -27,7 +27,7 @@ const renderDailyDocket = (props) => {
 
 it('does render docket notes when user is a board employee', async () => {
   const mockProps = {
-    user: { userIsNonBoardEmployee: false },
+    user: { userIsBoardEmployee: true },
     dailyDocket: { notes: 'There is a note here' },
   };
 
@@ -37,7 +37,7 @@ it('does render docket notes when user is a board employee', async () => {
 
 it('does not render docket notes when user is a nonBoardEmployee', async () => {
   const mockProps = {
-    user: { userIsNonBoardEmployee: true },
+    user: { userIsBoardEmployee: false },
     dailyDocket: { notes: 'There is a note here' },
   };
 

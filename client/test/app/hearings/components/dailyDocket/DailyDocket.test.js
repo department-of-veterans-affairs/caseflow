@@ -27,7 +27,7 @@ const renderDailyDocket = (props) => {
 
 it('does render judge name when user is not a nonBoardEmployee', async () => {
   const mockProps = {
-    user: { userIsNonBoardEmployee: false },
+    user: { userNonBoardEmployee: true },
     dailyDocket: { judgeFirstName: 'Jon', judgeLastName: 'Doe' },
   };
 
@@ -38,7 +38,7 @@ it('does render judge name when user is not a nonBoardEmployee', async () => {
 it('does not render judge name when userVsoEmployee is true and judge first name and last name are present',
   async () => {
     const mockProps = {
-      user: { userIsNonBoardEmployee: true },
+      user: { userIsBoardEmployee: false },
       dailyDocket: { judgeFirstName: 'Jon', judgeLastName: 'Doe' },
     };
 
