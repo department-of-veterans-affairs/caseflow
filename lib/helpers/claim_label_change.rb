@@ -32,9 +32,13 @@ module WarRoom
       codes_hash.key?(code)
     end
 
-    def same_claim_type(old_code, new_code)
+    def validate_same_claim_type(old_code, new_code)
       # Checks the sameness of the first two chacters as a substing
-      old_code[0, 2] == new_code[0, 2]
+
+      unless old_code[0, 2] == new_code[0, 2]
+        puts("This is a different End Product, cannot claim label change. Aborting...")
+        fail Interrupt
+      end
     end
 
     def update_caseflow(epe, new_code)
@@ -47,7 +51,7 @@ module WarRoom
 
     def claim_label_updater(reference_id, original_code, new_code)
       # The End products must be of the same type. (030, 040, 070)
-      validate_claim_code(new_code, "This is a different End Product, cannot claim label change. Aborting...")
+      validate_same_claim_type(original_code, new_code)
 
       # Check that the new claim code is valid
       validate_claim_code(new_code, "Invalid new claim label code. Aborting...")
