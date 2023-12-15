@@ -898,6 +898,30 @@ feature "NonComp Reviews Queue", :postgres do
     end
   end
 
+  # rubocop:disable Layout/LineLength
+  context "get params should not get appended to URL  when QueueTable is loading and user navigates to Generate report pages." do
+    before do
+      create_list(:higher_level_review_vha_task, 30, assigned_to: non_comp_org)
+      OrganizationsUser.make_user_admin(user, non_comp_org)
+    end
+
+    it "should reset the pagination page when switching tabs" do
+      visit BASE_URL
+      expect(page).to have_content("Veterans Health Administration")
+
+      # Navigate to the next page
+      pagination = page.find(class: "cf-pagination-pages", match: :first)
+      pagination.find("Button", text: "2", match: :first).click
+
+      expect(page).to have_content("Viewing 16-30 of 33 total")
+
+      # Navigate to another tab
+      click_button("Incomplete tasks")
+      expect(page).to have_content("Viewing 1-2 of 2 total")
+    end
+  end
+  # rubocop:enable Layout/LineLength
+
   context "For a non comp org that is not VHA" do
     after { FeatureToggle.disable!(:board_grant_effectuation_task) }
     let(:non_comp_org) { create(:business_line, name: "Non-Comp Org", url: "nco") }
