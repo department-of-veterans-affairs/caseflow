@@ -1,5 +1,3 @@
-import * as leverAttributes from "../../constants/LEVER_ATTRIBUTES";
-
 export const levers = [
     {
       "item": "lever_1",
@@ -77,7 +75,7 @@ export const levers = [
       "item": "lever_9",
       "title": "Lever 9",
       "description": "This is the ninth lever. It is a radio data type with the default value of option_1. Therefore there should be a radio options displayed and option_1 is selected by default. If the option is text only the text is displayed, but if it is a different data type then the appropriate input and unit are displayed and the value stored. This lever is active so it should be in the active lever section",
-      "data_type": leverAttributes.RADIO,
+      "data_type": "radio",
       "value": "option_1",
       "unit": "Cases",
       "options": [
@@ -89,7 +87,7 @@ export const levers = [
           "unit": ""
           },
           {
-          "item": leverAttributes.VALUE,
+          "item": "option_2",
           "data_type": "number",
           "value": 68,
           "text": "Option 2",
@@ -102,7 +100,7 @@ export const levers = [
         "item": "lever_10",
         "title": "Lever 10",
         "description": "This is the ninth lever. It is a radio data type with the default value of option_1. Therefore there should be a radio options displayed and option_1 is selected by default. If the option is text only the text is displayed, but if it is a different data type then the appropriate input and unit are displayed and the value stored. This lever is active so it should be in the active lever section",
-        "data_type": leverAttributes.COMBO,
+        "data_type": "combination",
         "value": 78,
         "unit": "Cases",
         "options": [
@@ -120,7 +118,7 @@ export const levers = [
       "item": "lever_11",
       "title": "Lever 11",
       "description": "This is the ninth lever. It is a radio data type with the default value of option_1. Therefore there should be a radio options displayed and option_1 is selected by default. If the option is text only the text is displayed, but if it is a different data type then the appropriate input and unit are displayed and the value stored. This lever is active so it should be in the active lever section",
-      "data_type": leverAttributes.COMBO,
+      "data_type": "combination",
       "value": 50,
       "unit": "Days",
       "options": [
@@ -138,7 +136,7 @@ export const levers = [
       "item": "lever_12",
       "title": "Lever 12",
       "description": "This is the ninth lever. It is a radio data type with the default value of option_1. Therefore there should be a radio options displayed and option_1 is selected by default. If the option is text only the text is displayed, but if it is a different data type then the appropriate input and unit are displayed and the value stored. This lever is active so it should be in the active lever section",
-      "data_type": leverAttributes.COMBO,
+      "data_type": "combination",
       "value": 50,
       "unit": "Days",
       "options": [
@@ -157,7 +155,7 @@ export const levers = [
       "item": "lever_13",
       "title": "Lever 13",
       "description": "This is the ninth lever. It is a radio data type with the default value of option_1. Therefore there should be a radio options displayed and option_1 is selected by default. If the option is text only the text is displayed, but if it is a different data type then the appropriate input and unit are displayed and the value stored. This lever is active so it should be in the active lever section",
-      "data_type": leverAttributes.RADIO,
+      "data_type": "radio",
       "value": "option_1",
       "unit": "Cases",
       "options": [
@@ -169,7 +167,7 @@ export const levers = [
           "unit": ""
           },
           {
-          "item": leverAttributes.VALUE,
+          "item": "option_2",
           "data_type": "number",
           "value": 68,
           "text": "Option 2",

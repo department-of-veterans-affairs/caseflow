@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class CaseDistributionLeversController < ApplicationController
   before_action :verify_access
   before_action :set_acd_group_organization, only: [:acd_lever_index, :update_levers_and_history]

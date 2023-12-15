@@ -11,7 +11,6 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import leversReducer from './reducers/Levers/leversReducer';
 import CaseSearchLink from '../components/CaseSearchLink';
-import * as leverAttributes from "../../constants/LEVER_ATTRIBUTES";
 
 import CaseflowDistributionApp from './pages/CaseflowDistributionApp';
 import { createStore } from 'redux';
@@ -74,11 +73,11 @@ class CaseflowDistribution extends React.PureComponent {
       if (lever.data_type === 'number' && batchLeverList.includes(lever.item)) {
         batchSizeLevers.push(lever.item);
       }
-      if (lever.data_type === leverAttributes.RADIO && affinityLeverList.includes(lever.item)) {
+      if (lever.data_type === 'radio' && affinityLeverList.includes(lever.item)) {
         affinityLevers.push(lever.item);
       }
-      if (lever.data_type === leverAttributes.COMBO && docketLeverList.includes(lever.item)) {
-        docketLevers.push(lever.item);
+      if (lever.data_type === 'combination' && docketLeverLists.docketDistributionPriorLeverList.includes(lever.item)) {
+        docketDistributionPriorLevers.push(lever.item);
       }
       if (lever.data_type === 'number' && docketLeverLists.docketTimeGoalLeverList.includes(lever.item)) {
         docketTimeGoalLevers.push(lever.item);
