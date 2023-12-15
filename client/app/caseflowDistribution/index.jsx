@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ReduxBase from '../components/ReduxBase';
 import NavigationBar from '../components/NavigationBar';
 import { BrowserRouter } from 'react-router-dom';
@@ -25,6 +25,7 @@ class CaseflowDistribution extends React.PureComponent {
     };
 
     const leverStore = createStore(leversReducer, preloadedState);
+    const showSuccessBanner = leverStore.getState().showSuccessBanner;
     const Router = this.props.router || BrowserRouter;
     const initialState = leversReducer.initialState;
     const appName = 'Caseflow Distribution';

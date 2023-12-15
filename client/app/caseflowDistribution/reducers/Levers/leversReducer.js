@@ -5,7 +5,9 @@ export const initialState = {
   levers: [],
   initial_levers: [],
   formatted_history: {},
-  changesOccurred: false
+  changesOccurred: false,
+  showSuccessBanner: false,
+  setShowSuccessBanner: false
 };
 
 const leversReducer = (state = initialState, action = {}) => {
@@ -34,6 +36,12 @@ const leversReducer = (state = initialState, action = {}) => {
       return {
         ...state,
         levers: state.initial_levers
+      }
+    case Constants.SHOW_SUCCESS_BANNER:
+      return {
+        ...state,
+        setShowSuccessBanner: action.setShowSuccessBanner,
+        showSuccessBanner: true
       }
     default:
       return state
