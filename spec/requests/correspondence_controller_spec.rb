@@ -34,7 +34,7 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
 
   describe "#current_step" do
     it "saves the user's current step in the intake form" do
-			current_step = 1
+      current_step = 1
 
       post queue_correspondence_intake_current_step_path(correspondence_uuid: correspondence.uuid), params: {
         correspondence_uuid: correspondence.uuid,
