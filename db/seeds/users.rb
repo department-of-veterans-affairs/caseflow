@@ -94,6 +94,7 @@ module Seeds
       create_build_and_edit_hearings_users
       create_non_admin_hearing_coordinator_user
       add_mail_intake_to_all_bva_intake_users
+      create_ro_view_hearsched_user
     end
 
     def create_team_admin
@@ -434,6 +435,15 @@ module Seeds
           user.update!(roles: new_roles)
         end
       end
+    end
+
+    def create_ro_view_hearsched_user
+      # Adds a user that can only view (and not edit) hearing schedules and dockets
+      User.create!(
+        station_id: 317,
+        css_id: "PENELOPEROVIEW",
+        full_name: "Penelope RO Viewer"
+      )
     end
   end
   # rubocop:enable Metrics/AbcSize
