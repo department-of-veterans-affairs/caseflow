@@ -68,4 +68,24 @@ RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
       end
     end
   end
+
+  describe "POST #create_correspondence_intake_task" do
+    context "Create correspondece intake task" do
+      before do
+        task_creation_params[:id] = correspondence.id
+        post :create_correspondence_intake_task, params: task_creation_params
+      end
+
+      it "creates remove package task successfully" do
+        expect(response).to have_http_status(:ok)
+        cit = CorrespondenceIntakeTask.find_by(appeal_id: correspondence.id, type: CorrespondenceIntakeTask.name)
+        review_package_task = ReviewPackageTask.find_by(appeal_id: correspondence.id, type: ReviewPackageTask.name)
+        parent = cit.parent
+        expect(cit.status).to eq(Constants.TASK_STATUSES.assigned)
+        expect(cit.parent_id).to eq(parent.id)
+        expect(review_package_task.status).to eq(Constants.TASK_STATUSES.completed)
+        expect(review_package_task.parent_id).to eq(parent.id)
+      end
+    end
+  end
 end

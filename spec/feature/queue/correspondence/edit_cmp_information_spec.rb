@@ -85,7 +85,7 @@ RSpec.feature("The Correspondence Review Package page") do
 
         it "modal opens with disabled confirm button" do
           expect(page).to have_content(
-            "You have selected the following correspondence cases for reassignment to another users. Please confirm your selection(s) below:"
+            "You have selected the following correspondence cases for reassignment to another user. Please confirm your selection(s) below:"
           )
           expect(page).to have_button("Confirm request", disabled: true)
         end
