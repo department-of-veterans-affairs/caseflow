@@ -12,6 +12,7 @@ import { setFileNumberSearch, doFileNumberSearch } from '../../../intake/actions
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { useHistory } from 'react-router';
+import PackageActionModal from '../modals/PackageActionModal';
 
 export const CorrespondenceReviewPackage = (props) => {
   const [reviewDetails, setReviewDetails] = useState({
@@ -26,6 +27,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [apiResponse, setApiResponse] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [packageActionModal, setPackageActionModal] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [selectedId, setSelectedId] = useState(0);
 
@@ -64,6 +66,10 @@ export const CorrespondenceReviewPackage = (props) => {
     setShowModal(!showModal);
   };
 
+  const handlePackageActionModal = (value) => {
+    setPackageActionModal(value);
+  };
+
   const handleReview = () => {
     history.push('/queue/correspondence');
   };
@@ -80,6 +86,7 @@ export const CorrespondenceReviewPackage = (props) => {
     props.setFileNumberSearch(editableData.veteran_file_number);
     try {
       await props.doFileNumberSearch('appeal', editableData.veteran_file_number, true);
+      await ApiUtil.patch(`/queue/correspondence/${props.correspondence_uuid}/intake_update`);
       window.location.href = '/intake/review_request';
     } catch (error) {
       console.error(error);
@@ -99,10 +106,17 @@ export const CorrespondenceReviewPackage = (props) => {
   return (
     <React.Fragment>
       <AppSegment filledBackground>
-        <ReviewPackageCaseTitle />
+        <ReviewPackageCaseTitle handlePackageActionModal={handlePackageActionModal} />
         <ReviewPackageData
           correspondence={props.correspondence}
-          packageDocumentType={props.packageDocumentType} />
+          packageDocumentType={props.packageDocumentType}
+        />
+        {packageActionModal &&
+          <PackageActionModal
+            packageActionModal={packageActionModal}
+            closeHandler={handlePackageActionModal}
+          />
+        }
         <ReviewForm
           {...{
             reviewDetails,
@@ -132,13 +146,15 @@ export const CorrespondenceReviewPackage = (props) => {
           />
         </div>
         <div className="cf-push-right">
-          <Button
-            name="Intake appeal"
-            styling={{ style: { marginRight: '2rem' } }}
-            classNames={['usa-button-secondary']}
-            onClick={intakeAppeal}
-            disabled={disableButton}
-          />
+          { (props.packageDocumentType.name === '10182') && (
+            <Button
+              name="Intake appeal"
+              styling={{ style: { marginRight: '2rem' } }}
+              classNames={['usa-button-secondary']}
+              onClick={intakeAppeal}
+              disabled={disableButton}
+            />
+          )}
           <a href={intakeLink}>
             {/* hard coded UUID to link to multi_correspondence.rb data */}
             <Button
@@ -159,6 +175,7 @@ CorrespondenceReviewPackage.propTypes = {
   correspondence: PropTypes.object,
   correspondenceDocuments: PropTypes.arrayOf(PropTypes.object),
   packageDocumentType: PropTypes.object,
+  veteranInformation: PropTypes.object,
   setFileNumberSearch: PropTypes.func,
   doFileNumberSearch: PropTypes.func
 };
@@ -166,7 +183,8 @@ CorrespondenceReviewPackage.propTypes = {
 const mapStateToProps = (state) => ({
   correspondence: state.reviewPackage.correspondence,
   correspondenceDocuments: state.reviewPackage.correspondenceDocuments,
-  packageDocumentType: state.reviewPackage.packageDocumentType
+  packageDocumentType: state.reviewPackage.packageDocumentType,
+  veteranInformation: state.reviewPackage.veteranInformation
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

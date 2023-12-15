@@ -72,6 +72,8 @@ import EndHoldModal from './components/EndHoldModal';
 import BulkAssignModal from './components/BulkAssignModal';
 import CompleteHearingPostponementRequestModal
   from './components/hearingMailRequestModals/CompleteHearingPostponementRequestModal';
+import CompleteHearingWithdrawalRequestModal
+  from './components/hearingMailRequestModals/CompleteHearingWithdrawalRequestModal';
 import CaseListView from './CaseListView';
 import CaseDetailsView from './CaseDetailsView';
 import SubmitDecisionView from './SubmitDecisionView';
@@ -670,11 +672,15 @@ class QueueApp extends React.PureComponent {
   );
 
   routedCorrespondenceIntake = (props) => (
-    <CorrespondenceIntake autoTexts={this.props.autoTexts} {...props.match.params} />
+    <CorrespondenceIntake autoTexts={this.props.autoTexts} {...props.match.params} veteranInformation={this.props.veteranInformation} />
   );
 
   routedCorrespondenceCase = () => (
     <CorrespondenceCases {...this.props} />
+  );
+
+  routedCompleteHearingWithdrawalRequest = (props) => (
+    <CompleteHearingWithdrawalRequestModal {...props.match.params} />
   );
 
   queueName = () =>
@@ -1273,6 +1279,12 @@ class QueueApp extends React.PureComponent {
             />
             <PageRoute
               exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.COMPLETE_AND_WITHDRAW.value}`}
+              title={`${PAGE_TITLES.COMPLETE_HEARING_WITHDRAWAL_REQUEST} | Caseflow`}
+              render={this.routedCompleteHearingWithdrawalRequest}
+            />
+            <PageRoute
+              exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.value
                 }`}
               title={`${PAGE_TITLES.ASSIGN_TO_PULAC_CERULLO} | Caseflow`}
@@ -1491,7 +1503,8 @@ QueueApp.propTypes = {
   canViewCavcDashboards: PropTypes.bool,
   userIsCobAdmin: PropTypes.bool,
   correspondence: PropTypes.object,
-  autoTexts: PropTypes.array
+  autoTexts: PropTypes.array,
+  veteranInformation: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({

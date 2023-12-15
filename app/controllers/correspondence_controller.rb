@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 class CorrespondenceController < ApplicationController
+  before_action :verify_correspondence_access
   before_action :verify_feature_toggle
   before_action :correspondence
   before_action :auto_texts
+  before_action :veteran_information
 
   def intake
     respond_to do |format|
@@ -31,6 +33,20 @@ class CorrespondenceController < ApplicationController
     render "correspondence/review_package"
   end
 
+  def intake_update
+    tasks = Task.where("appeal_id = ? and appeal_type = ?", @correspondence.id, "Correspondence")
+    tasks.map do |task|
+      if task.type == "ReviewPackageTask"
+        task.instructions.push("An appeal intake was started because this Correspondence is a 10182")
+        task.assigned_to_id = @correspondence.assigned_by_id
+        task.assigned_to = User.find(@correspondence.assigned_by_id)
+      end
+      task.status = "cancelled"
+      task.save
+    end
+    render json: { correspondence: @correspondence }
+  end
+
   def veteran
     render json: { veteran_id: veteran_by_correspondence&.id, file_number: veteran_by_correspondence&.file_number }
   end
@@ -54,6 +70,7 @@ class CorrespondenceController < ApplicationController
       correspondence: correspondence,
       package_document_type: correspondence&.package_document_type,
       general_information: general_information,
+      user_can_edit_vador: MailTeamSupervisor.singleton.user_has_access?(current_user),
       correspondence_documents: corres_docs.map do |doc|
         WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
       end
@@ -160,6 +177,13 @@ class CorrespondenceController < ApplicationController
     end
   end
 
+  def verify_correspondence_access
+    return true if MailTeamSupervisor.singleton.user_has_access?(current_user) ||
+                   MailTeam.singleton.user_has_access?(current_user)
+
+    redirect_to "/unauthorized"
+  end
+
   def general_information
     vet = veteran_by_correspondence
     {
@@ -202,12 +226,21 @@ class CorrespondenceController < ApplicationController
   end
 
   def veteran_by_correspondence
-    @veteran_by_correspondence ||= Veteran.find(correspondence&.veteran_id)
+    return unless correspondence&.veteran_id
+
+    @veteran_by_correspondence ||= begin
+      veteran = Veteran.find_by(id: correspondence.veteran_id)
+      if veteran.nil?
+        # Handle the case where the veteran is not found
+        puts "Veteran not found for ID: #{correspondence.veteran_id}"
+      end
+      veteran
+    end
   end
 
   def veterans_with_correspondences
     veterans = Veteran.includes(:correspondences).where(correspondences: { id: Correspondence.select(:id) })
-    veterans.map { |veteran| vet_info_serializer(veteran, veteran.correspondences.first) }
+    veterans.map { |veteran| vet_info_serializer(veteran, veteran.correspondences.last) }
   end
 
   def vet_info_serializer(veteran, correspondence)
