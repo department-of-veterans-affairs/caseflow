@@ -15,6 +15,19 @@ function UpdateLeverHistory(leverStore) {
   });
 }
 
+function leverValueDisplay(lever) {
+  const doesDatatypeRequireComplexLogic = lever.data_type === 'radio' || lever.data_type === 'combination'
+  if (doesDatatypeRequireComplexLogic) {
+    const selectedOption = lever.options.find(option => option.item === lever.value)
+    const isSelectedOptionANumber = selectedOption.data_type === 'number'
+    if (isSelectedOptionANumber) {
+      selectedOption.value
+    }
+    return selectedOption.text
+  }
+  return lever.value
+}
+
 function SaveLeverChanges(leverStore)  {
   leverStore.dispatch({
     type: Constants.SAVE_LEVERS,
@@ -42,9 +55,20 @@ function SaveLeversToDB(leverStore) {
     });
 }
 
+function changedOptionValue(changedLever, currentLever) {
+  if (changedLever.data_type === 'radio' || changedLever.data_type === 'radio') {
+    const changedOptionValue = changedLever.options.find(option => option.item === changedLever.value).value
+    const currentOptionValue = currentLever.options.find(option => option.item === currentLever.value)?.value
+    return changedOptionValue !== currentOptionValue
+  } else {
+    return false
+  }
+}
+
 function leverList(leverStore) {
   const levers = leverStore.getState().levers;
   const initialLevers = leverStore.getState().initial_levers;
+  const filteredLevers = levers.filter((lever, i) => lever.value !== initialLevers[i].value || changedOptionValue(lever, initialLevers[i]))
 
   return (
     <div>
@@ -57,15 +81,19 @@ function leverList(leverStore) {
           </tr>
         </tbody>
         <tbody>
-          {levers.map((lever, index) => (
+          {filteredLevers.map((lever, index) => (
             <tr key={index}>
-              {lever.value !== initialLevers[index].value && (
                 <React.Fragment>
               <td className={`${styles.modalTableStyling} ${styles.modalTableLeftStyling}`}>{lever.title}</td>
-              <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}>{initialLevers[index].value}</td>
-              <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}><strong>{lever.value}</strong></td>
+              <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}>{
+                initialLevers[index].data_type === 'radio' || initialLevers[index].data_type === 'radio' ?
+                (initialLevers[index].options.find(option => option.item === initialLevers[index].value).data_type === 'number') ? initialLevers[index].options.find(option => option.item === initialLevers[index].value).value : initialLevers[index].options.find(option => option.item === initialLevers[index].value).text  : initialLevers[index].value
+              }</td>
+              <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}><strong>{
+                lever.data_type === 'radio' || lever.data_type === 'radio' ?
+                (lever.options.find(option => option.item === lever.value).data_type === 'number') ? lever.options.find(option => option.item === lever.value).value : lever.options.find(option => option.item === lever.value).text  : lever.value
+              }</strong></td>
                 </React.Fragment>
-              )}
             </tr>
           ))}
         </tbody>
