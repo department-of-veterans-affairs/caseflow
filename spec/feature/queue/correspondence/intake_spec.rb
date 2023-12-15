@@ -2,9 +2,18 @@
 
 RSpec.feature("The Correspondence Intake page") do
   include CorrespondenceHelpers
+  let(:organization) { MailTeam.singleton }
+  let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
+
+    before do
+      organization.add_user(mail_user)
+      mail_user.reload
+  end
+
   context "intake form feature toggle" do
     before :each do
-      User.authenticate!(roles: ["Mail Intake"])
+      # User.authenticate!(roles: ["Mail Intake"])
+      # User.authenticate!(roles: ["Mail Team"])
       @correspondence_uuid = "123456789"
     end
 
@@ -24,7 +33,7 @@ RSpec.feature("The Correspondence Intake page") do
   context "intake form shell" do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      User.authenticate!(roles: ["Mail Intake"])
+      # User.authenticate!(roles: ["Mail Intake"])
       @correspondence_uuid = "123456789"
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
     end
@@ -76,7 +85,7 @@ RSpec.feature("The Correspondence Intake page") do
   context "access 'Tasks not Related to an Appeals'" do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      User.authenticate!(roles: ["Mail Intake"])
+      # User.authenticate!(roles: ["Mail Intake"])
       @correspondence_uuid = "0c77d6d2-c19f-4dbb-8e79-919a4090ed33"
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
     end
@@ -92,7 +101,7 @@ RSpec.feature("The Correspondence Intake page") do
   context "The mail team user is able to add unrelated tasks" do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      User.authenticate!(roles: ["Mail Intake"])
+      # User.authenticate!(roles: ["Mail Intake"])
       @correspondence_uuid = "0c77d6d2-c19f-4dbb-8e79-919a4090ed33"
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
       click_on("button-continue")
@@ -110,7 +119,7 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("+ Add tasks")
       expect(page).to have_button("+ Add tasks", disabled: true)
     end
-
+# work on this one
     it "Two 'Other Motion' tasks is the limit for user" do
       click_on("+ Add tasks")
       all("#reactSelectContainer")[0].click
@@ -199,7 +208,7 @@ RSpec.feature("The Correspondence Intake page") do
 
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      User.authenticate!(roles: ["Mail Intake"])
+      # User.authenticate!(roles: ["Mail Intake"])
       @correspondence_uuid = "12345"
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
       click_on("button-continue")
