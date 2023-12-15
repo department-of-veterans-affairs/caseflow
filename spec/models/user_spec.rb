@@ -1067,4 +1067,44 @@ describe User, :all_dbs do
       end
     end
   end
+
+  describe ".board_hearings_employee?" do
+    subject { user.board_hearings_employee? }
+
+    context "User is a VSO employee" do
+      let(:user) { create(:user, :vso_role) }
+
+      it { is_expected.to eq false }
+    end
+
+    context "User has the 'RO ViewHearSched' role" do
+      let(:user) { create(:user, roles: ["RO ViewHearSched"]) }
+
+      it { is_expected.to eq false }
+    end
+
+    context "User is a hearing coordinator" do
+      let(:user) { create(:user, roles: ["Build HearSched", "Edit HearSched"]) }
+
+      it { is_expected.to eq true }
+    end
+
+    context "User can perform hearing preps" do
+      let(:user) { create(:user, roles: ["Hearing Prep"]) }
+
+      it { is_expected.to eq true }
+    end
+
+    context "User is a hearing coordinator with an extraneous 'RO ViewHearSched' role" do
+      let(:user) { create(:user, roles: ["Build HearSched", "Edit HearSched", "RO ViewHearSched"]) }
+
+      it { is_expected.to eq true }
+    end
+
+    context "User can perform hearing preps while having an extraneous 'RO ViewHearSched' role" do
+      let(:user) { create(:user, roles: ["Hearing Prep", "RO ViewHearSched"]) }
+
+      it { is_expected.to eq true }
+    end
+  end
 end
