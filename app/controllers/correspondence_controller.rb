@@ -5,6 +5,7 @@ class CorrespondenceController < ApplicationController
   before_action :verify_feature_toggle
   before_action :correspondence
   before_action :auto_texts
+  before_action :veteran_information
 
   def intake
     respond_to do |format|
@@ -212,12 +213,21 @@ class CorrespondenceController < ApplicationController
   end
 
   def veteran_by_correspondence
-    @veteran_by_correspondence ||= Veteran.find(correspondence&.veteran_id)
+    return unless correspondence&.veteran_id
+
+    @veteran_by_correspondence ||= begin
+      veteran = Veteran.find_by(id: correspondence.veteran_id)
+      if veteran.nil?
+        # Handle the case where the veteran is not found
+        puts "Veteran not found for ID: #{correspondence.veteran_id}"
+      end
+      veteran
+    end
   end
 
   def veterans_with_correspondences
     veterans = Veteran.includes(:correspondences).where(correspondences: { id: Correspondence.select(:id) })
-    veterans.map { |veteran| vet_info_serializer(veteran, veteran.correspondences.first) }
+    veterans.map { |veteran| vet_info_serializer(veteran, veteran.correspondences.last) }
   end
 
   def vet_info_serializer(veteran, correspondence)
