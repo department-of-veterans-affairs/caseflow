@@ -305,6 +305,7 @@ Rails.application.routes.draw do
     get '/correspondence/:pdf_id/pdf', to: 'correspondence#pdf'
     patch '/correspondence/:correspondence_uuid', to: 'correspondence#update'
     post '/correspondence/:correspondence_uuid', to: 'correspondence#process_intake'
+    post "/correspondence/:correspondence_uuid/upload_documents", to: "correspondence#upload_documents_to_claim_evidence"
     post "/correspondence/:correspondence_uuid/task", to: "correspondence_tasks#create_package_action_task"
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:appealId/notifications', to: 'queue#index'
