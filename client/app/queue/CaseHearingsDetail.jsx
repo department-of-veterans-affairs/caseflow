@@ -231,13 +231,13 @@ class CaseHearingsDetail extends React.PureComponent {
             label: 'Type',
             value:
               <React.Fragment>
-                {/* {appeal?.readableHearingRequestType}&nbsp;&nbsp;
+                {appeal?.readableHearingRequestType}&nbsp;&nbsp;
                 {appeal?.readableHearingRequestType !== 'Virtual' &&
                   <Link to={`/queue/appeals/${appeal.externalId}/tasks/` +
                     `${task.uniqueId}/${TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.value}`}>
                     {COPY.VSO_CONVERT_TO_VIRTUAL_TEXT}
                   </Link>
-                } */}
+                }
               </React.Fragment>
           },
         ];

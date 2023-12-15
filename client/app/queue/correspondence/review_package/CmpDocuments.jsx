@@ -91,6 +91,8 @@ export const CmpDocuments = (props) => {
 
 CmpDocuments.propTypes = {
   documents: PropTypes.array,
+  setSelectedId: PropTypes.func,
+  selectedId: PropTypes.number
 };
 
 export default CmpDocuments;
