@@ -10,6 +10,11 @@ import { setUnrelatedTasks } from '../../correspondenceReducer/correspondenceAct
 import { useHistory, useLocation } from 'react-router-dom';
 import { ConfirmCorrespondenceView } from './ConfirmCorrespondence/ConfirmCorrespondenceView';
 import { SubmitCorrespondenceModal } from './ConfirmCorrespondence/SubmitCorrespondenceModal';
+import Alert from 'app/components/Alert';
+import {
+  CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TITLE,
+  CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TEXT
+} from '../../../../../COPY';
 
 const progressBarSections = [
   {
@@ -31,6 +36,7 @@ export const CorrespondenceIntake = (props) => {
   const [isContinueEnabled, setContinueEnabled] = useState(true);
   const [addTasksVisible, setAddTasksVisible] = useState(false);
   const [submitCorrespondenceModalVisible, setSubmitCorrespondenceModalVisible] = useState(false);
+  const [errorBannerVisible, setErrorBannerVisible] = useState(false);
   const { pathname, hash, key } = useLocation();
   const history = useHistory();
   // For hash routing - Add element id and which step it lives on here
@@ -89,6 +95,11 @@ export const CorrespondenceIntake = (props) => {
   }, [pathname, hash, key]);
 
   return <div>
+    { errorBannerVisible &&
+      <Alert title={CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TITLE} type="error">
+        {CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TEXT}
+      </Alert>
+    }
     <ProgressBar
       sections={sections}
       classNames={['cf-progress-bar', 'cf-']}
@@ -110,6 +121,7 @@ export const CorrespondenceIntake = (props) => {
         correspondenceUuid={props.correspondence_uuid}
         onContinueStatusChange={handleContinueStatusChange}
         autoTexts={props.autoTexts}
+        veteranInformation={props.veteranInformation}
       />
     }
     {currentStep === 3 &&
@@ -159,6 +171,7 @@ export const CorrespondenceIntake = (props) => {
       {currentStep === 3 && submitCorrespondenceModalVisible &&
         <SubmitCorrespondenceModal
           setSubmitCorrespondenceModalVisible={setSubmitCorrespondenceModalVisible}
+          setErrorBannerVisible={setErrorBannerVisible}
         />
       }
     </div>

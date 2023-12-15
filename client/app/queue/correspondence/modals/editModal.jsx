@@ -24,7 +24,8 @@ class EditModal extends React.Component {
       packageOptions: '',
       defaultVADORDate: '',
       defaultPackageDocument: '',
-      saveButtonDisabled: true
+      saveButtonDisabled: true,
+      canEditVADOR: true
     };
   }
 
@@ -41,6 +42,12 @@ class EditModal extends React.Component {
 
       const formattedVADORDate = moment.utc(response.body.correspondence?.va_date_of_receipt).format('YYYY-MM-DD');
       const packageDocumentTypeName = { label: response.body.package_document_type?.name, value: response.body.package_document_type?.id };
+
+      if (response.body.user_can_edit_vador) {
+        this.setState({
+          canEditVADOR: false
+        });
+      }
 
       this.setState({
         VADORDate: formattedVADORDate,
@@ -130,7 +137,7 @@ class EditModal extends React.Component {
 
   errorOnVADORDate = (value) => {
     if (value.length === 10) {
-      const error = validateDateNotInFuture(value) ? null : 'Decision date cannot be in the future.';
+      const error = validateDateNotInFuture(value) ? null : 'Decision date cannot be in the future';
 
       return error;
     }
@@ -165,6 +172,7 @@ class EditModal extends React.Component {
                 <DateSelector
                   name="va-dor-input"
                   label="VA DOR"
+                  readOnly={this.state.canEditVADOR}
                   strongLabel
                   value={VADORDate}
                   errorMessage={this.state.dateError}
@@ -176,7 +184,6 @@ class EditModal extends React.Component {
               <SearchableDropdown
                 name="package-document-type-input"
                 label="Package document type"
-                strongLabel
                 placeholder="Select or enter..."
                 options={this.state.packageOptions}
                 value={packageDocument}
