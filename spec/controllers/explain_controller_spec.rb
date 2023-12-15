@@ -172,12 +172,31 @@ describe ExplainController, :all_dbs, type: :controller do
       User.authenticate!(roles: user_roles)
     end
 
+    context ".html (default) request" do
+      let(:response_format) { :html }
+      it "responds without error" do
+        subject
+        expect(response).to be_ok
+      end
+    end
+
     context ".json request" do
       let(:response_format) { :json }
-      it "returns valid JSON tree" do
+      it "returns 'unsupported' string" do
         subject
-        json_body = JSON.parse(response.body)
-        expect(json_body.keys).to include("metadata", "appeals", "veterans", "tasks", "users", "organizations")
+        expect(JSON.parse(response.body)).to eq "(Correspondences are not yet supported)"
+      end
+    end
+
+    context ".text request" do
+      let(:response_format) { :text }
+      it "returns plain text task tree" do
+        subject
+        # task tree
+        expect(response.body).to include "Correspondence #{correspondence.id}"
+        expect(response.body).to include "CorrespondenceRootTask"
+        expect(response.body).to include "CorrespondenceTask"
+        expect(response.body).to include "ReviewPackageTask"
       end
     end
   end
