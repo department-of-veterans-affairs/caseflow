@@ -11,11 +11,18 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import leversReducer from './reducers/Levers/leversReducer';
 import CaseSearchLink from '../components/CaseSearchLink';
+import Alert from '../components/Alert';
 
 import CaseflowDistributionApp from './pages/CaseflowDistributionApp';
 import { createStore } from 'redux';
 
 class CaseflowDistribution extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      confirmButtonClicked: false,
+    };
+  }
 
   render() {
     const preloadedState = {
@@ -103,6 +110,7 @@ class CaseflowDistribution extends React.PureComponent {
       'AMA Evidence Submission',
     ];
 
+
     return (
       <ReduxBase initialState={initialState} reducer={leversReducer}>
         <Router {...this.props.routerTestProps}>
@@ -124,21 +132,29 @@ class CaseflowDistribution extends React.PureComponent {
               rightNavElement={<CaseSearchLink />}
               appName="Caseflow Admin"
             >
+              <Alert
+                type="info"
+                title="Alert Title"
+                style={{ display: this.state.confirmButtonClicked ? 'block' : 'none' }}
+              >
+                This is an alert message.
+              </Alert>
               <AppFrame>
                 <AppSegment filledBackground>
                   <div>
                     <PageRoute
                       exact
-                      path={["/acd-controls", "/case-distribution-controls"]}
+                      path={['/acd-controls', '/case-distribution-controls']}
                       title="CaseflowDistribution | Caseflow"
                       component={() => {
                         return (
                           <CaseflowDistributionApp
                             acd_levers={leversList}
                             acd_history={this.props.acd_history}
-                            user_is_an_acd_admin = {this.props.user_is_an_acd_admin}
+                            user_is_an_acd_admin={this.props.user_is_an_acd_admin}
                             leverStore={leverStore}
                             sectionTitles={sectionTitles}
+                            onConfirmButtonClick={() => this.setState({ confirmButtonClicked: true })}
                           />
                         );
                       }}

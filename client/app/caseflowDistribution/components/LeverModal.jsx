@@ -7,22 +7,20 @@ import Button from 'app/components/Button';
 import COPY from '../../../COPY';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 
-
-
-function UpdateLeverHistory(leverStore) {
+function updateLeverHistory(leverStore) {
   leverStore.dispatch({
     type: Constants.FORMAT_LEVER_HISTORY,
   });
 }
 
-function SaveLeverChanges(leverStore)  {
+function saveLeverChanges(leverStore)  {
   leverStore.dispatch({
     type: Constants.SAVE_LEVERS,
     saveChangesActivated: true,
   });
 }
 
-function SaveLeversToDB(leverStore) {
+function saveLeversToDB(leverStore) {
   const leversData = leverStore.getState().levers;
 
   const postData = {
@@ -32,8 +30,8 @@ function SaveLeversToDB(leverStore) {
 
   return ApiUtil.post('/case_distribution_levers/update_levers_and_history', { data: postData })
     .then(() => {
-      // UpdateLeverHistory(leverStore);
-      SaveLeverChanges(leverStore);
+      // updateLeverHistory(leverStore);
+      saveLeverChanges(leverStore);
     })
     .catch((error) => {
       if(error.response) {
@@ -74,7 +72,7 @@ function leverList(leverStore) {
   );
 }
 
-export function LeverSaveButton({ leverStore }) {
+export function LeverSaveButton({ leverStore, onConfirmButtonClick }) {
   const [showModal, setShowModal] = useState(false);
   const [changesOccurred, setChangesOccurred] = useState(false);
   const [saveButtonDisabled, setSaveButtonDisabled] = useState(false);
@@ -82,22 +80,24 @@ export function LeverSaveButton({ leverStore }) {
   useEffect(() => {
     const unsubscribe = leverStore.subscribe(() => {
       const state = leverStore.getState();
+      console.log('Levers:', state.levers);
+      console.log('Initial Levers:', state.initial_levers);
 
       const leversString = JSON.stringify(state.levers);
       const initialLeversString = JSON.stringify(state.initial_levers);
 
       const leverChangesOccurred = leversString !== initialLeversString;
 
-      setChangesOccurred(leverChangesOccurred);
+      console.log('Changes Occurred:', leverChangesOccurred);
 
+      setChangesOccurred(leverChangesOccurred);
     });
 
     return () => {
       unsubscribe();
     };
   }, [leverStore]);
-
-
+  
   const handleSaveButton = () => {
     if (changesOccurred) {
       setShowModal(true);
@@ -105,13 +105,13 @@ export function LeverSaveButton({ leverStore }) {
   };
 
   const handleConfirmButton = async () => {
-    await SaveLeversToDB(leverStore);
+    await saveLeversToDB(leverStore);
     setShowModal(false);
     setSaveButtonDisabled(true);
+    if (onConfirmButtonClick) {
+      onConfirmButtonClick()
+    }
   }
-
-
-
   return (
     <>
       <Button
