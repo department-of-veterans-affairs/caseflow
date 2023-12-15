@@ -31,7 +31,7 @@ class VACOLS::CaseIssue < VACOLS::Record
     }
   end
 
-  # rubocop:disable MethodLength
+  # rubocop:disable Metrics/MethodLength
 
   # Issues can be labeled by looking up the combination of ISSPROG,
   # ISSCODE, ISSLEV1, ISSLEV2, and ISSLEV3 in the ISSREF table.
@@ -109,7 +109,7 @@ class VACOLS::CaseIssue < VACOLS::Record
       memo
     end
   end
-  # rubocop:enable MethodLength
+  # rubocop:enable Metrics/MethodLength
 
   def self.create_issue!(issue_attrs)
     create!(issue_attrs.merge(issseq: generate_sequence_id(issue_attrs[:isskey])))
