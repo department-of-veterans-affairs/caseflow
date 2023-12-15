@@ -296,8 +296,10 @@ Rails.application.routes.draw do
   scope path: '/queue' do
     get '/', to: 'queue#index'
     get '/correspondence', to: 'correspondence#correspondence_cases'
+    post '/correspondence/:correspondence_uuid/correspondence_intake_task', to: 'correspondence_tasks#create_correspondence_intake_task'
     get '/correspondence/:correspondence_uuid/intake', to: 'correspondence#intake'
     get '/correspondence/:correspondence_uuid/review_package', to: 'correspondence#review_package'
+    get '/correspondence/edit_document_type_correspondence', to: 'correspondence#document_type_correspondence'
     patch '/correspondence/:correspondence_uuid/intake_update', to: 'correspondence#intake_update'
     get '/correspondence/:correspondence_uuid/veteran', to: 'correspondence#veteran'
     put '/correspondence/:correspondence_uuid/update_cmp', to: 'correspondence#update_cmp'
@@ -305,6 +307,7 @@ Rails.application.routes.draw do
     get '/correspondence/:correspondence_uuid', to: 'correspondence#show'
     get '/correspondence/:pdf_id/pdf', to: 'correspondence#pdf'
     patch '/correspondence/:correspondence_uuid', to: 'correspondence#update'
+    patch '/correspondence/:id/update_document', to: 'correspondence_document#update_document'
     post '/correspondence/:correspondence_uuid', to: 'correspondence#process_intake'
     post "/correspondence/:correspondence_uuid/task", to: "correspondence_tasks#create_package_action_task"
     get '/appeals/:vacols_id', to: 'queue#index'
