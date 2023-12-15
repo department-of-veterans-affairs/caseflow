@@ -23,7 +23,7 @@ const ExclusionTable = (props) => {
 
   return (
     <div className={styles.exclusionTableContainerStyling}>
-      <table>
+      <table >
         <tbody>
           <th className={styles.tableHeaderStyling}>{' '}</th>
           <th className={styles.tableHeaderStyling}>All Legacy Hearings</th>
@@ -33,7 +33,7 @@ const ExclusionTable = (props) => {
         </tbody>
         <tbody>
           <tr>
-            <td className={styles.exclusionTableStyling}>
+            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
               {isMemberUser ?
                 <h3>All Non-priority</h3> :
                 <span>
@@ -46,7 +46,7 @@ const ExclusionTable = (props) => {
                 </span>
               }
             </td>
-            <td className={styles.exclusionTableStyling}>
+            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
               {isMemberUser ?
                 <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
                 <span>
@@ -58,7 +58,7 @@ const ExclusionTable = (props) => {
                 </span>
               }
             </td>
-            <td className={styles.exclusionTableStyling}>
+            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
               {isMemberUser ?
                 <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
                 <span>
@@ -70,7 +70,7 @@ const ExclusionTable = (props) => {
                 </span>
               }
             </td>
-            <td className={styles.exclusionTableStyling}>
+            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
               {isMemberUser ?
                 <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
                 <span>
@@ -82,7 +82,7 @@ const ExclusionTable = (props) => {
                 </span>
               }
             </td>
-            <td className={styles.exclusionTableStyling}>
+            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
               {isMemberUser ?
                 <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
                 <span>
@@ -96,7 +96,7 @@ const ExclusionTable = (props) => {
             </td>
           </tr>
           <tr>
-            <td className={styles.exclusionTableStyling}>
+            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
               {isMemberUser ?
                 <h3>All Priority</h3> :
                 <span>
@@ -109,7 +109,7 @@ const ExclusionTable = (props) => {
                 </span>
               }
             </td>
-            <td className={styles.exclusionTableStyling}>
+            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
               {isMemberUser ?
                 <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
                 <span>
@@ -121,7 +121,7 @@ const ExclusionTable = (props) => {
                 </span>
               }
             </td>
-            <td className={styles.exclusionTableStyling}>
+            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
               {isMemberUser ?
                 <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
                 <span>
@@ -133,7 +133,7 @@ const ExclusionTable = (props) => {
                 </span>
               }
             </td>
-            <td className={styles.exclusionTableStyling}>
+            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
               {isMemberUser ?
                 <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
                 <span>
@@ -145,7 +145,7 @@ const ExclusionTable = (props) => {
                 </span>
               }
             </td>
-            <td className={styles.exclusionTableStyling}>
+            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
               {isMemberUser ?
                 <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
                 <span>
