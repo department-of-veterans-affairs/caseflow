@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page step 2.3") do
-
-
-    let(:organization) { MailTeam.singleton }
+  let(:organization) { MailTeam.singleton }
     let(:bva_user) { User.authenticate!(roles: ["Mail Intake"]) }
 
     before(:each) do
@@ -14,11 +12,11 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
   include CorrespondenceHelpers
   before do
     let(:organization) { MailTeam.singleton }
-      let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
+    let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
 
-      before do
-        organization.add_user(mail_user)
-        mail_user.reload
+    before do
+      organization.add_user(mail_user)
+      mail_user.reload
     end
   end
 
