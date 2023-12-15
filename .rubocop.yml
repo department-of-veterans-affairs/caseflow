@@ -99,6 +99,7 @@ Metrics/MethodLength:
   Exclude:
     - app/jobs/middleware/job_sentry_scope_middleware.rb
     - lib/helpers/duplicate_veteran_checker.rb
+    - lib/helpers/report_load_end_product_sync.rb
     - "spec/**/*"
 
 Metrics/ClassLength:
@@ -206,6 +207,7 @@ Layout/LineLength:
   Max: 120
   Exclude:
     - lib/helpers/duplicate_veteran_checker.rb
+    - lib/helpers/report_load_end_product_sync.rb
 
 
 Layout/MultilineMethodCallIndentation:
