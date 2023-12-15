@@ -442,7 +442,8 @@ module Seeds
       User.create!(
         station_id: 317,
         css_id: "PENELOPEROVIEW",
-        full_name: "Penelope RO Viewer"
+        full_name: "Penelope RO Viewer",
+        roles: ["RO ViewHearSched"]
       )
     end
   end
