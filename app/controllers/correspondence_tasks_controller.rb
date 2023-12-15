@@ -53,6 +53,10 @@ class CorrespondenceTasksController < TasksController
     case params[:type]
     when "removePackage"
       RemovePackageTask
+    when "mergePackage"
+      MergePackageTask
+    when "splitPackage"
+      SplitPackageTask
     when "reassignPackage"
       ReassignPackageTask
     else

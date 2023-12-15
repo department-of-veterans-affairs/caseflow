@@ -12,6 +12,7 @@ import { setFileNumberSearch, doFileNumberSearch } from '../../../intake/actions
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { useHistory } from 'react-router';
+import PackageActionModal from '../modals/PackageActionModal';
 
 export const CorrespondenceReviewPackage = (props) => {
   const [reviewDetails, setReviewDetails] = useState({
@@ -26,6 +27,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [apiResponse, setApiResponse] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [packageActionModal, setPackageActionModal] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [selectedId, setSelectedId] = useState(0);
 
@@ -62,6 +64,10 @@ export const CorrespondenceReviewPackage = (props) => {
 
   const handleModalClose = () => {
     setShowModal(!showModal);
+  };
+
+  const handlePackageActionModal = (value) => {
+    setPackageActionModal(value);
   };
 
   const handleReview = () => {
@@ -111,10 +117,17 @@ export const CorrespondenceReviewPackage = (props) => {
   return (
     <React.Fragment>
       <AppSegment filledBackground>
-        <ReviewPackageCaseTitle />
+        <ReviewPackageCaseTitle handlePackageActionModal={handlePackageActionModal} />
         <ReviewPackageData
           correspondence={props.correspondence}
-          packageDocumentType={props.packageDocumentType} />
+          packageDocumentType={props.packageDocumentType}
+        />
+        {packageActionModal &&
+          <PackageActionModal
+            packageActionModal={packageActionModal}
+            closeHandler={handlePackageActionModal}
+          />
+        }
         <ReviewForm
           {...{
             reviewDetails,
@@ -170,6 +183,7 @@ CorrespondenceReviewPackage.propTypes = {
   correspondence: PropTypes.object,
   correspondenceDocuments: PropTypes.arrayOf(PropTypes.object),
   packageDocumentType: PropTypes.object,
+  veteranInformation: PropTypes.object,
   setFileNumberSearch: PropTypes.func,
   doFileNumberSearch: PropTypes.func
 };
@@ -177,7 +191,8 @@ CorrespondenceReviewPackage.propTypes = {
 const mapStateToProps = (state) => ({
   correspondence: state.reviewPackage.correspondence,
   correspondenceDocuments: state.reviewPackage.correspondenceDocuments,
-  packageDocumentType: state.reviewPackage.packageDocumentType
+  packageDocumentType: state.reviewPackage.packageDocumentType,
+  veteranInformation: state.reviewPackage.veteranInformation
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
