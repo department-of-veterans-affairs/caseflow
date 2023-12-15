@@ -98,7 +98,7 @@ const PackageActionModal = (props) => {
     }
 
     if (
-      ( isOtherOption ||
+      (isOtherOption ||
         packageActionModal === 'removePackage' ||
         packageActionModal === 'reassignPackage' ||
         packageActionModal === 'splitPackage') &&
