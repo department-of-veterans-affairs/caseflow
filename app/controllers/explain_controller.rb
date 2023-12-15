@@ -51,22 +51,22 @@ class ExplainController < ApplicationController
   end
 
   def explain_as_text
-    if appeal.type == "Correspondence"
+    if correspondence?
       [
         "show_pii = #{show_pii_query_param}",
-        task_tree_as_text
+        appeal.tree(*treee_fields)
+      ].join("\n\n")
+    else
+      [
+        "show_pii = #{show_pii_query_param}",
+        task_tree_as_text,
+        intake_as_text,
+        hearing_as_text,
+        JSON.pretty_generate(event_table_data),
+        JSON.pretty_generate(timeline_data),
+        JSON.pretty_generate(network_graph_data)
       ].join("\n\n")
     end
-
-    [
-      "show_pii = #{show_pii_query_param}",
-      task_tree_as_text,
-      intake_as_text,
-      hearing_as_text,
-      JSON.pretty_generate(event_table_data),
-      JSON.pretty_generate(timeline_data),
-      JSON.pretty_generate(network_graph_data)
-    ].join("\n\n")
   end
 
   def available_fields
