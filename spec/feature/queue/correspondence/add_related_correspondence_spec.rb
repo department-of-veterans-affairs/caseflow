@@ -2,6 +2,15 @@
 
 RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
   include CorrespondenceHelpers
+
+  let(:organization) { MailTeam.singleton }
+  let(:bva_user) { User.authenticate!(roles: ["Mail Intake"]) }
+
+  before(:each) do
+    organization.add_user(bva_user)
+    bva_user.reload
+  end
+
   context "No related correspondence" do
 
     it "Displays the expected content" do
