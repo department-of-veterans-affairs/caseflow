@@ -13,7 +13,7 @@ module WarRoom
       # Issues are printed for ticketing information
       iss = la.issues
       puts "===============ISSUES==============="
-      puts (iss.count > 0) ? iss : "No issues for this appeal"
+      puts((iss.count > 0) ? iss : "No issues for this appeal")
       puts "===================================="
 
       # Temporarily unblock the user by unassigning the task from the user and putting it
@@ -47,7 +47,7 @@ module WarRoom
       # Issues are printed for ticketing information
       iss = la.issues
       puts "===============ISSUES==============="
-      puts (iss.count > 0) ? iss : "No issues for this appeal"
+      puts((iss.count > 0) ? iss : "No issues for this appeal")
       puts "===================================="
 
       return "User id was not nil." unless ec.user_id.nil?
