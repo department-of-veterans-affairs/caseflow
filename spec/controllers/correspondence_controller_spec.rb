@@ -6,6 +6,17 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
   let(:related_correspondence_uuids) do
     (1..3).map { create(:correspondence) }.pluck(:uuid)
   end
+  let (:esw_tasks) do
+    (1..3).map do
+      appeal = create(:appeal)
+      InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+      {
+        task_id: EvidenceSubmissionWindowTask.find_by(appeal: appeal).id,
+        waive_reason: "This is a waive reason."
+      }
+    end
+  end
+  let(:veteran) { create(:veteran) }
   let(:valid_params) { { notes: "Updated notes", correspondence_type_id: 12 } }
   let(:new_file_number) { "50000005" }
   let(:current_user) { create(:user) }
@@ -60,7 +71,8 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
       correspondence.update(veteran: veteran)
       post :process_intake, params: {
         correspondence_uuid: correspondence.uuid,
-        related_correspondence_uuids: related_correspondence_uuids
+        related_correspondence_uuids: related_correspondence_uuids,
+        waived_evidence_submission_window_tasks: esw_tasks
       }
     end
     it "responds with created status" do
@@ -75,6 +87,15 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
 
       rcs.each do |corr|
         expect(corr.related_correspondences).to eq([correspondence])
+      end
+    end
+
+    it "completes evidence window submission tasks" do
+      esw_tasks.each do |esw_task|
+        task = Task.find(esw_task[:task_id])
+        expect(task.status).to eq("completed")
+        expect(task.instructions.include?("This is a waive reason.")).to eq(true)
+        expect(task.appeal.correspondences).to eq([correspondence])
       end
     end
   end

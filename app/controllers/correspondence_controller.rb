@@ -134,6 +134,7 @@ class CorrespondenceController < ApplicationController
       begin
         create_correspondence_relations(correspondence_id)
         add_tasks_to_related_appeals(correspondence_id)
+        complete_waived_evidence_submission_tasks(correspondence_id)
       rescue ActiveRecord::RecordInvalid
         render json: { error: "Failed to update records" }, status: :bad_request
         raise ActiveRecord::Rollback
@@ -179,6 +180,17 @@ class CorrespondenceController < ApplicationController
         correspondence_id: correspondence_id,
         related_correspondence_id: Correspondence.find_by(uuid: uuid)&.id
       )
+    end
+  end
+
+  def complete_waived_evidence_submission_tasks(correspondence_id)
+    params[:waived_evidence_submission_window_tasks]&.map do |task|
+      evidence_submission_window_task = EvidenceSubmissionWindowTask.find(task[:task_id])
+      instructions = evidence_submission_window_task.instructions
+      appeal = evidence_submission_window_task&.appeal
+      CorrespondencesAppeal.find_or_create_by(correspondence_id: correspondence_id, appeal_id: appeal.id)
+      evidence_submission_window_task.when_timer_ends
+      evidence_submission_window_task.update!(instructions: (instructions << task[:waive_reason]))
     end
   end
 
