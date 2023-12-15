@@ -140,6 +140,7 @@ export const CorrespondenceIntake = (props) => {
         correspondenceUuid={props.correspondence_uuid}
         onContinueStatusChange={handleContinueStatusChange}
         autoTexts={props.autoTexts}
+        veteranInformation={props.veteranInformation}
       />
     }
     {currentStep === 3 &&
