@@ -9,20 +9,33 @@ import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 
 
 
-function updateLeverHistory(leverStore) {
+function UpdateLeverHistory(leverStore) {
   leverStore.dispatch({
     type: Constants.FORMAT_LEVER_HISTORY,
   });
 }
 
-function saveLeverChanges(leverStore)  {
+function leverValueDisplay(lever, isPreviousValue) {
+  const doesDatatypeRequireComplexLogic = lever.data_type === 'radio' || lever.data_type === 'combination';
+
+  if (doesDatatypeRequireComplexLogic) {
+    const selectedOption = lever.options.find(option => option.item === lever.value);
+    const isSelectedOptionANumber = selectedOption.data_type === 'number';
+
+    return isSelectedOptionANumber ? selectedOption.value : selectedOption.text;
+  }
+
+  return isPreviousValue ? lever.value : <strong>{lever.value}</strong>;
+}
+
+function SaveLeverChanges(leverStore)  {
   leverStore.dispatch({
     type: Constants.SAVE_LEVERS,
     saveChangesActivated: true,
   });
 }
 
-function saveLeversToDB(leverStore) {
+function SaveLeversToDB(leverStore) {
   const leversData = leverStore.getState().levers;
 
   const postData = {
@@ -33,7 +46,7 @@ function saveLeversToDB(leverStore) {
   return ApiUtil.post('/case_distribution_levers/update_levers_and_history', { data: postData })
     .then(() => {
       // UpdateLeverHistory(leverStore);
-      saveLeverChanges(leverStore);
+      SaveLeverChanges(leverStore);
     })
     .catch((error) => {
       if(error.response) {
@@ -42,28 +55,21 @@ function saveLeversToDB(leverStore) {
     });
 }
 
-function handleOptionText(lever) {
-  const selectedOption = lever.options.find((option) => {
-    return lever.value === option.value});
-
-  if (selectedOption !== 'undefined') {
-    console.log('Selected Option:', selectedOption);
-    console.log('Is NaN:', isNaN(selectedOption.value));
-
-    if (!isNaN(selectedOption.value)) {
-      return selectedOption.value;
-    } else {
-      return selectedOption.text;
-    }
+function changedOptionValue(changedLever, currentLever) {
+  if (changedLever.data_type === 'radio' || changedLever.data_type === 'radio') {
+    const changedOptionValue = changedLever.options.find(option => option.item === changedLever.value).value
+    const currentOptionValue = currentLever.options.find(option => option.item === currentLever.value)?.value
+    return changedOptionValue !== currentOptionValue
+  } else {
+    return false
   }
-
-  return lever.value;
 }
 
 function leverList(leverStore) {
   const levers = leverStore.getState().levers;
   const initialLevers = leverStore.getState().initial_levers;
-  console.log(levers)
+  const filteredLevers = levers.filter((lever, i) => lever.value !== initialLevers[i].value || changedOptionValue(lever, initialLevers[i]));
+  const filteredInitialLevers = initialLevers.filter((lever, i) => initialLevers[i].value !== levers[i].value || changedOptionValue(initialLevers[i], levers[i]));
 
   return (
     <div>
@@ -76,15 +82,17 @@ function leverList(leverStore) {
           </tr>
         </tbody>
         <tbody>
-          {levers.map((lever, index) => (
+          {filteredLevers.map((lever, index) => (
             <tr key={index}>
-              {lever.value !== initialLevers[index].value && (
-                <React.Fragment>
-              <td className={`${styles.modalTableStyling} ${styles.modalTableLeftStyling}`}>{lever.title}</td>
-              <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}>{handleOptionText(initialLevers[index])}</td>
-              <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}><strong>{handleOptionText(lever)}</strong></td>
-                </React.Fragment>
-              )}
+              <React.Fragment>
+                <td className={`${styles.modalTableStyling} ${styles.modalTableLeftStyling}`}>{lever.title}</td>
+                <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}>
+                  {leverValueDisplay(filteredInitialLevers[index], true)}
+                </td>
+                <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}>
+                  {leverValueDisplay(lever, false)}
+                </td>
+              </React.Fragment>
             </tr>
           ))}
         </tbody>
@@ -96,21 +104,18 @@ function leverList(leverStore) {
 export function LeverSaveButton({ leverStore }) {
   const [showModal, setShowModal] = useState(false);
   const [changesOccurred, setChangesOccurred] = useState(false);
-const [saveButtonDisabled, setSaveButtonDisabled] = useState(false);
+  const [saveButtonDisabled, setSaveButtonDisabled] = useState(false);
 
-  const leverValuesChanged = () =>{
+  useEffect(() => {
+    const unsubscribe = leverStore.subscribe(() => {
       const state = leverStore.getState();
 
       const leversString = JSON.stringify(state.levers);
       const initialLeversString = JSON.stringify(state.initial_levers);
 
-      return leversString !== initialLeversString;
-  }
+      const leverChangesOccurred = leversString !== initialLeversString;
 
-  useEffect(() => {
-    const unsubscribe = leverStore.subscribe(() => {
-
-      setChangesOccurred(leverValuesChanged);
+      setChangesOccurred(leverChangesOccurred);
 
     });
 
@@ -127,7 +132,7 @@ const [saveButtonDisabled, setSaveButtonDisabled] = useState(false);
   };
 
   const handleConfirmButton = async () => {
-    await saveLeversToDB(leverStore);
+    await SaveLeversToDB(leverStore);
     setShowModal(false);
     setSaveButtonDisabled(true);
   }

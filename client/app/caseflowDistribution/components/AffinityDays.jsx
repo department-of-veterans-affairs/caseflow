@@ -40,12 +40,12 @@ const AffinityDays = (props) => {
         const updatedOptions = individualLever.options.map((op) => {
           if (op.item === option.item) {
             let validationResponse = leverInputValidation(individualLever, event);
-
+            const newValue = isNaN(event) ? event : individualLever.value
             if (validationResponse === 'SUCCESS') {
               op.value = event;
               leverStore.dispatch({
                 type: Constants.UPDATE_LEVER_VALUE,
-                updated_lever: { item: individualLever.item, value: event }
+                updated_lever: { item: individualLever.item, value: newValue }
               });
             }
           }
