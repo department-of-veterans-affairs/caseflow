@@ -24,4 +24,8 @@ class ReviewPackageTask < CorrespondenceTask
       )
     end
   end
+
+  def when_child_task_created(_child_task)
+    true
+  end
 end

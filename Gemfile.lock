@@ -67,13 +67,14 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git
-  revision: e3380fc6e4c2103322043d4be50fe2e8cdce5dae
-  ref: e3380fc6e4c2103322043d4be50fe2e8cdce5dae
+  revision: f1686404d448e1d8d13e533400817bcab175ed65
+  ref: f1686404d448e1d8d13e533400817bcab175ed65
   specs:
     ruby_claim_evidence_api (0.0.1)
       activesupport
       base64
       faraday
+      faraday-multipart
       httpi
       railties
 
@@ -305,6 +306,8 @@ GEM
       multipart-post (>= 1.2, < 3)
     faraday-http-cache (2.4.1)
       faraday (>= 0.8)
+    faraday-multipart (1.0.4)
+      multipart-post (~> 2)
     faraday_middleware (0.13.1)
       faraday (>= 0.7.4, < 1.0)
     fast_jsonapi (1.5)

@@ -1,6 +1,13 @@
 # frozen_string_literal: true
 
 class CorrespondenceTasksController < TasksController
+  PACKAGE_ACTION_TYPES = [
+    SplitPackageTask: SplitPackageTask,
+    MergePackageTask: MergePackageTask,
+    RemovePackageTask: RemovePackageTask,
+    ReassignPackageTask: ReassignPackageTask
+  ].freeze
+
   def create_package_action_task
     review_package_task = ReviewPackageTask.find_by(appeal_id: params[:correspondence_id], type: ReviewPackageTask.name)
     if review_package_task.children.present?

@@ -35,16 +35,25 @@ class CorrespondenceController < ApplicationController
 
   def intake_update
     tasks = Task.where("appeal_id = ? and appeal_type = ?", @correspondence.id, "Correspondence")
-    tasks.map do |task|
-      if task.type == "ReviewPackageTask"
-        task.instructions.push("An appeal intake was started because this Correspondence is a 10182")
-        task.assigned_to_id = @correspondence.assigned_by_id
-        task.assigned_to = User.find(@correspondence.assigned_by_id)
+    begin
+      tasks.map do |task|
+        if task.type == "ReviewPackageTask"
+          task.instructions.push("An appeal intake was started because this Correspondence is a 10182")
+          task.assigned_to_id = @correspondence.assigned_by_id
+          task.assigned_to = User.find(@correspondence.assigned_by_id)
+        end
+        task.status = "cancelled"
+        task.save
       end
-      task.status = "cancelled"
-      task.save
+      if upload_documents_to_claim_evidence
+        render json: { correspondence: @correspondence }
+      else
+        render json: {}, status: bad_request
+      end
+    rescue StandardError => error
+      Rails.logger.error(error.to_s)
+      render json: {}, status: bad_request
     end
-    render json: { correspondence: @correspondence }
   end
 
   def veteran
@@ -163,8 +172,8 @@ class CorrespondenceController < ApplicationController
   def demo_data
     json_file_path = "vbms doc types.json"
     JSON.parse(File.read(json_file_path))
-  end 
-  
+  end
+
   def set_flash_intake_success_message
     # intake error message is handled in client/app/queue/correspondence/intake/components/CorrespondenceIntake.jsx
     vet = veteran_by_correspondence
@@ -288,5 +297,39 @@ class CorrespondenceController < ApplicationController
 
   def auto_texts
     @auto_texts ||= AutoText.all.pluck(:name)
+  end
+
+  def upload_documents_to_claim_evidence
+    if Rails.env.development? || Rails.env.demo? || Rails.env.test?
+      true
+    else
+      begin
+        correspondence.correspondence_documents.all.each do |doc|
+          ExternalApi::ClaimEvidenceService.upload_document(
+            doc.pdf_location,
+            veteran_by_correspondence.file_number,
+            doc.claim_evidence_upload_json
+          )
+        end
+        true
+      rescue StandardError => error
+        Rails.logger.error(error.to_s)
+        create_efolder_upload_failed_task
+        false
+      end
+    end
+  end
+
+  def create_efolder_upload_failed_task
+    rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id, type: ReviewPackageTask.name)
+    euft = EfolderUploadFailedTask.find_or_create_by(
+      appeal_id: correspondence.id,
+      appeal_type: "Correspondence",
+      type: EfolderUploadFailedTask.name,
+      assigned_to: current_user,
+      parent_id: rpt.id
+    )
+
+    euft.update!(status: Constants.TASK_STATUSES.in_progress)
   end
 end
