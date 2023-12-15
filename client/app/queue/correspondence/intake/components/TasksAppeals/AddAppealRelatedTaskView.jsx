@@ -71,7 +71,7 @@ export const AddAppealRelatedTaskView = (props) => {
         const hasEvidenceSubmissionTask = appeals.find((el) => el.id === appealId)?.hasEvidenceSubmissionTask;
 
         if (!hasEvidenceSubmissionTask) {
-          const newTask = { id: nextTaskId, appealId, type: '', content: '' };
+          const newTask = { id: nextTaskId, appealId, type: '', label: '', content: '' };
 
           setNewTasks([...newTasks, newTask]);
         }
