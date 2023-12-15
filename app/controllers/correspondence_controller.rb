@@ -230,7 +230,7 @@ class CorrespondenceController < ApplicationController
 
   def veterans_with_correspondences
     veterans = Veteran.includes(:correspondences).where(correspondences: { id: Correspondence.select(:id) })
-    veterans.map { |veteran| vet_info_serializer(veteran, veteran.correspondences.first) }
+    veterans.map { |veteran| vet_info_serializer(veteran, veteran.correspondences.last) }
   end
 
   def vet_info_serializer(veteran, correspondence)

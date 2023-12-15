@@ -1406,10 +1406,16 @@
   "EMPLOYER_IDENTIFICATION_NUMBER": "Employer Identification Number",
   "CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER": "The correspondence's documents have failed to upload to the eFolder",
   "CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE": "You can upload it from this page to the veteran's eFolder at a later time.",
+  "PACKAGE_ACTION_MERGE_DESCRIPTION": "By confirming, you will send a request for the supervisor to take action on the following package:",
+  "PACKAGE_ACTION_MERGE_TITLE": "Request merge",
+  "PACKAGE_ACTION_MERGE_TEXTAREA_LABEL": "Reason for merge",
+  "PACKAGE_ACTION_MERGE_RADIO_LABEL": "Select a reason for merging this package.",
   "PACKAGE_ACTION_MODAL_DESCRIPTION": "By confirming, you will send a request for the supervisor to take action on the following package:",
   "PACKAGE_ACTION_REMOVAL_TITLE": "Request package removal",
   "PACKAGE_ACTION_REMOVAL_TEXTAREA_LABEL": "Provide a reason for removal",
   "PACKAGE_ACTION_REASSIGN_DESCRIPTION":"You have selected the following correspondence cases for reassignment to another users. Please confirm your selection(s) below:",
   "PACKAGE_ACTION_REASSIGN_TITLE":"Request package assignment",
-  "PACKAGE_ACTION_REASSIGN_TEXTAREA_LABEL":"Provide a reason for reassignment"
+  "PACKAGE_ACTION_REASSIGN_TEXTAREA_LABEL":"Provide a reason for reassignment",
+  "PACKAGE_ACTION_SPLIT_TEXTAREA_LABEL":"Reason for split",
+  "PACKAGE_ACTION_SPLIT_TITLE": "Request split package"
 }
