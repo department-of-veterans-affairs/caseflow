@@ -194,24 +194,6 @@ export const CorrespondenceReviewPackage = (props) => {
             </a>
           </div>
         </div>
-        <div className="cf-push-right">
-          <Button
-            name="Intake appeal"
-            styling={{ style: { marginRight: '2rem' } }}
-            classNames={['usa-button-secondary']}
-            onClick={intakeAppeal}
-            disabled={disableButton}
-          />
-          <a href={intakeLink}>
-            {/* hard coded UUID to link to multi_correspondence.rb data */}
-            <Button
-              name="Create record"
-              classNames={['usa-button-primary']}
-              href={intakeLink}
-              disabled={disableButton}
-            />
-          </a>
-        </div>
       </React.Fragment>
     </div>
   );
