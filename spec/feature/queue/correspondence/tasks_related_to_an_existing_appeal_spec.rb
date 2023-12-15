@@ -131,6 +131,20 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         expect(page.all(".cf-form-checkbox").last.checked?).to be(false)
       end
 
+
+      it "Clicks an appeal from the table" do
+        visit_intake_form_step_2_with_appeals
+        existing_appeal_radio_options[:yes].click
+        page.should has_selector?("Existing Appeals")
+
+        within find(".cf-case-list-table") do
+          page.all(".cf-form-checkbox").first.click
+          unformatted_id = page.all(".cf-form-checkboxes").first[:class]
+          formatted_id = unformatted_id.split("-")[2].split(" ")[0]
+          expect find_by_id(formatted_id, visible: false).checked?
+        end
+      end
+
       it "table should display active evidence submission window tasks and waie the checkbox" do
         active_evidence_submissions_tasks
 
