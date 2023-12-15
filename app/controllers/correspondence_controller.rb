@@ -33,6 +33,20 @@ class CorrespondenceController < ApplicationController
     render "correspondence/review_package"
   end
 
+  def intake_update
+    tasks = Task.where("appeal_id = ? and appeal_type = ?", @correspondence.id, "Correspondence")
+    tasks.map do |task|
+      if task.type == "ReviewPackageTask"
+        task.instructions.push("An appeal intake was started because this Correspondence is a 10182")
+        task.assigned_to_id = @correspondence.assigned_by_id
+        task.assigned_to = User.find(@correspondence.assigned_by_id)
+      end
+      task.status = "cancelled"
+      task.save
+    end
+    render json: { correspondence: @correspondence }
+  end
+
   def veteran
     render json: { veteran_id: veteran_by_correspondence&.id, file_number: veteran_by_correspondence&.file_number }
   end
@@ -86,6 +100,11 @@ class CorrespondenceController < ApplicationController
     render json: { status: 200, correspondence: correspondence }
   end
 
+  def document_type_correspondence
+    data = vbms_document_types
+    render json: { data: data }
+  end
+
   # :reek:UtilityFunction
   def vbms_document_types
     data = ExternalApi::ClaimEvidenceService.document_types
@@ -110,9 +129,11 @@ class CorrespondenceController < ApplicationController
   end
 
   def process_intake
+    correspondence_id = Correspondence.find_by(uuid: params[:correspondence_uuid])&.id
     ActiveRecord::Base.transaction do
       begin
-        create_correspondence_relations
+        create_correspondence_relations(correspondence_id)
+        add_tasks_to_related_appeals(correspondence_id)
       rescue ActiveRecord::RecordInvalid
         render json: { error: "Failed to update records" }, status: :bad_request
         raise ActiveRecord::Rollback
@@ -128,6 +149,21 @@ class CorrespondenceController < ApplicationController
 
   private
 
+  def vbms_document_types
+    begin
+      data = ExternalApi::ClaimEvidenceService.document_types
+    rescue StandardError => error
+      Rails.logger.error(error.full_message)
+      data ||= demo_data
+    end
+    data["documentTypes"].map { |document_type| { id: document_type["id"], name: document_type["description"] } }
+  end
+
+  def demo_data
+    json_file_path = "vbms doc types.json"
+    JSON.parse(File.read(json_file_path))
+  end 
+  
   def set_flash_intake_success_message
     # intake error message is handled in client/app/queue/correspondence/intake/components/CorrespondenceIntake.jsx
     vet = veteran_by_correspondence
@@ -137,11 +173,26 @@ class CorrespondenceController < ApplicationController
     ]
   end
 
-  def create_correspondence_relations
+  def create_correspondence_relations(correspondence_id)
     params[:related_correspondence_uuids]&.map do |uuid|
       CorrespondenceRelation.create!(
-        correspondence_id: Correspondence.find_by(uuid: params[:correspondence_uuid])&.id,
+        correspondence_id: correspondence_id,
         related_correspondence_id: Correspondence.find_by(uuid: uuid)&.id
+      )
+    end
+  end
+
+  def add_tasks_to_related_appeals(correspondence_id)
+    params[:tasks_related_to_appeal]&.map do |data|
+      appeal = Appeal.find(data[:appeal_id])
+      CorrespondencesAppeal.find_or_create_by(correspondence_id: correspondence_id, appeal_id: appeal.id)
+      data[:klass].constantize.create_from_params(
+        {
+          appeal: appeal,
+          parent_id: appeal.root_task&.id,
+          assigned_to: data[:assigned_to].constantize.singleton,
+          instructions: data[:content]
+        }, current_user
       )
     end
   end
