@@ -14,7 +14,6 @@ class Correspondence < CaseflowRecord
   belongs_to :correspondence_type
   belongs_to :package_document_type
   belongs_to :veteran
-  has_many :tasks
 
   after_create :initialize_correspondence_tasks
 
@@ -24,5 +23,9 @@ class Correspondence < CaseflowRecord
 
   def type
     "Correspondence"
+  end
+
+  def tasks
+    Task.where(appeal_id: id, appeal_type: type)
   end
 end
