@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 class CorrespondenceController < ApplicationController
+  before_action :verify_correspondence_access
   before_action :verify_feature_toggle
   before_action :correspondence
   before_action :auto_texts
+  before_action :veteran_information
 
   def intake
     respond_to do |format|
@@ -68,6 +70,7 @@ class CorrespondenceController < ApplicationController
       correspondence: correspondence,
       package_document_type: correspondence&.package_document_type,
       general_information: general_information,
+      user_can_edit_vador: MailTeamSupervisor.singleton.user_has_access?(current_user),
       correspondence_documents: corres_docs.map do |doc|
         WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
       end
@@ -143,9 +146,9 @@ class CorrespondenceController < ApplicationController
     # intake error message is handled in client/app/queue/correspondence/intake/components/CorrespondenceIntake.jsx
     vet = veteran_by_correspondence
     flash[:correspondence_intake_success] = [
-          "You have successfully submitted a correspondence record for #{vet.name}(#{vet.file_number})",
-          "The mail package has been uploaded to the Veteran's eFolder as well."
-        ]
+      "You have successfully submitted a correspondence record for #{vet.name}(#{vet.file_number})",
+      "The mail package has been uploaded to the Veteran's eFolder as well."
+    ]
   end
 
   def create_correspondence_relations
@@ -155,6 +158,13 @@ class CorrespondenceController < ApplicationController
         related_correspondence_id: Correspondence.find_by(uuid: uuid)&.id
       )
     end
+  end
+
+  def verify_correspondence_access
+    return true if MailTeamSupervisor.singleton.user_has_access?(current_user) ||
+                   MailTeam.singleton.user_has_access?(current_user)
+
+    redirect_to "/unauthorized"
   end
 
   def general_information
@@ -199,12 +209,21 @@ class CorrespondenceController < ApplicationController
   end
 
   def veteran_by_correspondence
-    @veteran_by_correspondence ||= Veteran.find(correspondence&.veteran_id)
+    return unless correspondence&.veteran_id
+
+    @veteran_by_correspondence ||= begin
+      veteran = Veteran.find_by(id: correspondence.veteran_id)
+      if veteran.nil?
+        # Handle the case where the veteran is not found
+        puts "Veteran not found for ID: #{correspondence.veteran_id}"
+      end
+      veteran
+    end
   end
 
   def veterans_with_correspondences
     veterans = Veteran.includes(:correspondences).where(correspondences: { id: Correspondence.select(:id) })
-    veterans.map { |veteran| vet_info_serializer(veteran, veteran.correspondences.first) }
+    veterans.map { |veteran| vet_info_serializer(veteran, veteran.correspondences.last) }
   end
 
   def vet_info_serializer(veteran, correspondence)
