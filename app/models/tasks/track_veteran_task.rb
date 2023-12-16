@@ -46,7 +46,7 @@ class TrackVeteranTask < Task
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Metrics/AbcSize
   def self.sync_tracking_tasks(appeal)
-    return if appeal.predocketed?
+    return [] if appeal.predocketed?
 
     new_task_count = 0
     closed_task_count = 0

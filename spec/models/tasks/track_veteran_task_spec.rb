@@ -46,7 +46,15 @@ describe TrackVeteranTask, :postgres do
     let!(:appeal) { create(:appeal) }
     let!(:root_task) { create(:root_task, appeal: appeal) }
 
+    let!(:pre_docket_appeal) { create(:appeal, :with_pre_docket_task) }
+
     subject { TrackVeteranTask.sync_tracking_tasks(appeal) }
+
+    context "when the appeal is in predocket status" do
+      it "does not create any TrackVeteranTasks" do
+        expect(TrackVeteranTask.sync_tracking_tasks(pre_docket_appeal)).to eq([])
+      end
+    end
 
     context "When former represenative VSO is assigned non-Tracking tasks" do
       let!(:old_vso) { create(:vso, name: "Remember Korea") }

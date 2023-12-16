@@ -669,7 +669,7 @@ class Appeal < DecisionReview
   end
 
   def predocketed?
-    tasks.select { |task| task.class.name == "PreDocketTask" && task.active? }
+    tasks.any? { |task| task.class.name == "PreDocketTask" && task.active? }
   end
 
   def vha_predocket_needed?
