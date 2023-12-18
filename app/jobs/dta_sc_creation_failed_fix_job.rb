@@ -16,22 +16,31 @@ class DtaScCreationFailedFixJob < CaseflowJob
   def perform
     start_time
 
-    return if records_with_errors.blank?
+    begin
+      return if records_with_errors.blank?
 
-    @stuck_job_report_service.append_record_count(records_with_errors.count, error_text)
+      @stuck_job_report_service.append_record_count(records_with_errors.count, error_text)
 
-    loop_through_and_call_process_records
+      loop_through_and_call_process_records
 
-    @stuck_job_report_service.append_record_count(records_with_errors.count, error_text)
-    @stuck_job_report_service.write_log_report(error_text)
+      @stuck_job_report_service.append_record_count(records_with_errors.count, error_text)
+      @stuck_job_report_service.write_log_report(error_text)
 
-    end_time
-    log_processing_time
+      end_time
+      log_processing_time
+    rescue StandardError => error
+      log_error(error)
+      raise error
+    end
   end
 
   def loop_through_and_call_process_records
-    process_records_for_hlrs_with_errors if hlrs_with_errors.present?
-    process_records_for_appeals_with_errors if appeals_with_errors.present?
+    begin
+      process_records_for_hlrs_with_errors if hlrs_with_errors.present?
+      process_records_for_appeals_with_errors if appeals_with_errors.present?
+    rescue StandardError => error
+      log_error(error)
+    end
   end
 
   # Methods for remdiating HLRs with errors
@@ -63,13 +72,15 @@ class DtaScCreationFailedFixJob < CaseflowJob
     end
   end
 
+  # :reek:FeatureEnvy
   def valid_appeal?(appeal)
     return false unless appeal.established_at
 
-    set_default_payee_code(appeal.claimant) if appeal.claimant.payee_code.nil?
+    update_payee_code(appeal.claimant) if appeal.claimant.payee_code.nil?
   end
 
-  def set_default_payee_code(claimant)
+  # :reek:FeatureEnvy
+  def update_payee_code(claimant)
     claimant.update!(payee_code: claimant_type_to_payee_code(claimant.type))
   end
 
@@ -80,14 +91,14 @@ class DtaScCreationFailedFixJob < CaseflowJob
     when "DependentClaimant"
       "10"
     else
-      raise ArgumentError, "Unsupported claimant type: #{type}"
+      Rails.logger.warn("Unsupported claimant type: #{type}")
       # Or add other Claimant types if necessary
     end
   end
 
   # :reek:FeatureEnvy
   def process_records(record)
-    ActiveRecord::Base.transaction do
+    begin
       record.clear_error!
     rescue StandardError => error
       log_error(error)
@@ -124,4 +135,3 @@ class DtaScCreationFailedFixJob < CaseflowJob
     @end_time ||= Time.zone.now
   end
 end
-
