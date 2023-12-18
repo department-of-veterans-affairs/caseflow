@@ -6,7 +6,7 @@ describe Seeds::Users do
 
     it "creates all kinds of users and organizations" do
       expect { subject }.to_not raise_error
-      expect(User.count).to eq(128)
+      expect(User.count).to eq(129)
       expect(Organization.count).to eq(38)
     end
   end

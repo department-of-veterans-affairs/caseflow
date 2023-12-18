@@ -11,7 +11,7 @@ const ConfirmTasksNotRelatedToAnAppeal = () => {
       <tr key={task.id}>
         <td
           style={{ backgroundColor: '#f5f5f5', borderTop: '1px solid #dee2e6', width: '20%' }}>
-          {task.type}
+          {task.label}
         </td>
         <td style={{ backgroundColor: '#f5f5f5', borderTop: '1px solid #dee2e6' }}>
           {task.content}

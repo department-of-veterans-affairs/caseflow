@@ -40,7 +40,7 @@ export const ExistingAppealTasksView = (props) => {
   };
 
   const addTask = () => {
-    const newTask = { id: props.nextTaskId, appealId: props.appeal.id, type: '', content: '' };
+    const newTask = { id: props.nextTaskId, appealId: props.appeal.id, type: '', label: '', content: '' };
 
     props.setNewTasks([...props.newTasks, newTask]);
   };

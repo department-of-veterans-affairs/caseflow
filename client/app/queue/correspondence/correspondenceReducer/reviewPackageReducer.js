@@ -4,7 +4,8 @@ import { ACTIONS } from './reviewPackageConstants';
 export const initialState = {
   correspondence: {},
   correspondenceDocuments: [],
-  packageDocumentType: {}
+  packageDocumentType: {},
+  veteranInformation: {}
 };
 
 export const reviewPackageReducer = (state = initialState, action = {}) => {
@@ -30,6 +31,13 @@ export const reviewPackageReducer = (state = initialState, action = {}) => {
       }
     });
 
+  case ACTIONS.SET_VETERAN_INFORMATION:
+    return update(state, {
+      veteranInformation: {
+        $set: action.payload.veteranInfo
+      }
+    });
+
   case ACTIONS.UPDATE_CMP_INFORMATION:
     return update(state, {
       correspondence: {
@@ -43,6 +51,20 @@ export const reviewPackageReducer = (state = initialState, action = {}) => {
         },
         name: {
           $set: action.payload.packageDocumentType.label
+        }
+      }
+    });
+
+  case ACTIONS.UPDATE_DOCUMENT_TYPE_NAME:
+    return update(state, {
+      correspondenceDocuments: {
+        [action.payload.index]: {
+          vbms_document_type_id: {
+            $set: action.payload.newName.value
+          },
+          document_title: {
+            $set: action.payload.newName.label
+          }
         }
       }
     });
