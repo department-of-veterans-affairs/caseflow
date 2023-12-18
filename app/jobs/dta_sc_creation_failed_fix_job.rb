@@ -63,13 +63,15 @@ class DtaScCreationFailedFixJob < CaseflowJob
     end
   end
 
+  # :reek:FeatureEnvy
   def valid_appeal?(appeal)
     return false unless appeal.established_at
 
-    set_default_payee_code(appeal.claimant) if appeal.claimant.payee_code.nil?
+    update_payee_code(appeal.claimant) if appeal.claimant.payee_code.nil?
   end
 
-  def set_default_payee_code(claimant)
+  # :reek:FeatureEnvy
+  def update_payee_code(claimant)
     claimant.update!(payee_code: claimant_type_to_payee_code(claimant.type))
   end
 
@@ -80,7 +82,7 @@ class DtaScCreationFailedFixJob < CaseflowJob
     when "DependentClaimant"
       "10"
     else
-      raise ArgumentError, "Unsupported claimant type: #{type}"
+      fail ArgumentError, "Unsupported claimant type: #{type}"
       # Or add other Claimant types if necessary
     end
   end
@@ -124,4 +126,3 @@ class DtaScCreationFailedFixJob < CaseflowJob
     @end_time ||= Time.zone.now
   end
 end
-
