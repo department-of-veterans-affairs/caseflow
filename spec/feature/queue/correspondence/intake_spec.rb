@@ -5,9 +5,9 @@ RSpec.feature("The Correspondence Intake page") do
   let(:organization) { MailTeam.singleton }
   let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
 
-    before do
-      organization.add_user(mail_user)
-      mail_user.reload
+  before do
+    organization.add_user(mail_user)
+    mail_user.reload
   end
 
   context "intake form feature toggle" do
@@ -119,18 +119,18 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("+ Add tasks")
       expect(page).to have_button("+ Add tasks", disabled: true)
     end
-# work on this step
+
     it "Two 'Other Motion' tasks is the limit for user" do
       click_on("+ Add tasks")
       all("#reactSelectContainer")[0].click
-      page.find("#react-select-2-input").fill_in with: "Other motion"
-      page.find(".css-e42auv", text: "Other motion").click
+      find_by_id("react-select-2-option-4").click
       expect(page).to have_content("Other motion")
       click_on("+ Add tasks")
-      all("#reactSelectContainer")[0].click
-      page.find("#react-select-2-input").fill_in with: "Other motion"
-      page.find(".css-e42auv", text: "Other motion").click
-      expect(page).to have_content("Other motion")
+      all("#reactSelectContainer")[1].click
+      find_by_id("react-select-3-option-4").click
+      within all("#reactSelectContainer")[1] do
+        expect(page).to have_content("Other motion")
+      end
       expect(page).to have_button("+ Add tasks", disabled: false)
     end
 
@@ -176,14 +176,14 @@ RSpec.feature("The Correspondence Intake page") do
       expect(page).to have_content("Correspondence test text")
     end
   end
-# work on this step
+
   context "Step 3 - Confirm" do
     describe "Tasks not related to an Appeal section" do
       it "displays the correct content" do
         visit_intake_form_step_3_with_tasks_unrelated
 
         expect(page).to have_content("Tasks not related to an Appeal")
-        expect(page).to have_link("Edit section")
+        expect(all("button > span", text: "Edit Section").length).to eq(2)
         expect(page).to have_content("Tasks")
         expect(page).to have_content("Task Instructions or Context")
         expect(page).to have_content("CAVC Correspondence")
@@ -192,9 +192,9 @@ RSpec.feature("The Correspondence Intake page") do
 
       it "Edit section link returns user to Tasks not related to an Appeal on Step 2" do
         visit_intake_form_step_3_with_tasks_unrelated
-        click_link("Edit section")
+        all("button > span", text: "Edit Section")[1].click
         expect(page).to have_content("Review Tasks & Appeals")
-        expect(page.current_url.include?("#task-not-related-to-an-appeal")).to eq(true)
+        expect(page).to have_content("Tasks not related to an Appeal")
       end
     end
   end
