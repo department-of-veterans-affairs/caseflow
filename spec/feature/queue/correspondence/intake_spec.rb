@@ -5,9 +5,9 @@ RSpec.feature("The Correspondence Intake page") do
   let(:organization) { MailTeam.singleton }
   let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
 
-    before do
-      organization.add_user(mail_user)
-      mail_user.reload
+  before do
+    organization.add_user(mail_user)
+    mail_user.reload
   end
 
   context "intake form feature toggle" do
@@ -183,7 +183,7 @@ RSpec.feature("The Correspondence Intake page") do
         visit_intake_form_step_3_with_tasks_unrelated
 
         expect(page).to have_content("Tasks not related to an Appeal")
-        expect(page).to have_link("Edit section")
+        expect(all("button > span", text: "Edit Section").length).to eq(2)
         expect(page).to have_content("Tasks")
         expect(page).to have_content("Task Instructions or Context")
         expect(page).to have_content("CAVC Correspondence")
@@ -192,9 +192,9 @@ RSpec.feature("The Correspondence Intake page") do
 
       it "Edit section link returns user to Tasks not related to an Appeal on Step 2" do
         visit_intake_form_step_3_with_tasks_unrelated
-        click_link("Edit section")
+        all("button > span", text: "Edit Section")[1].click
         expect(page).to have_content("Review Tasks & Appeals")
-        expect(page.current_url.include?("#task-not-related-to-an-appeal")).to eq(true)
+        expect(page).to have_content("Tasks not related to an Appeal")
       end
     end
   end
