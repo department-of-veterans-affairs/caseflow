@@ -14,7 +14,6 @@ describe DtaScCreationFailedFixJob, :postgres do
 
   subject { described_class.new }
   context "#dta_sc_creation_failed_fix" do
-
     context "When SC has decision_review_remanded_id and decision_review_remanded_type" do
       it "clears the error field on related HLR" do
         subject.perform
