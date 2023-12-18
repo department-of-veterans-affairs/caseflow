@@ -547,8 +547,6 @@ export const prepareAppealForSearchStore = (appeals) => {
         issues
       ).length,
       docketNumber: appeal.attributes.docket_number,
-      assignedAttorney: appeal.attributes.assigned_attorney,
-      assignedJudge: appeal.attributes.assigned_judge,
       distributedToJudge: appeal.attributes.distributed_to_a_judge,
       veteranFullName: appeal.attributes.veteran_full_name,
       veteranFileNumber: appeal.attributes.veteran_file_number,
@@ -562,8 +560,6 @@ export const prepareAppealForSearchStore = (appeals) => {
     accumulator[appeal.attributes.external_id] = {
       hearings: prepareAppealHearingsForStore(appeal),
       appellantFullName: appeal.attributes.appellant_full_name,
-      currentUserEmail: appeal.attributes.current_user_email,
-      currentUserTimezone: appeal.attributes.current_user_timezone,
       contestedClaim: appeal.attributes.contested_claim,
       assignedToLocation: appeal.attributes.assigned_to_location,
       veteranParticipantId: appeal.attributes.veteran_participant_id,
