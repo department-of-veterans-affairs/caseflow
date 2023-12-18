@@ -181,8 +181,16 @@ class Docket
         .where(
           "appeals.stream_type != ? OR distribution_task.assigned_at <= ?",
           Constants.AMA_STREAM_TYPES.court_remand,
-          CaseDistributionLever.find_by_item('cavc_affinity_days').try(:value).to_i.days.ago
+          cavc_affinity_days.days.ago
         )
+    end
+
+    def cavc_affinity_days
+      cavc_affinity_days_lever = CaseDistributionLever.find_by_item('cavc_affinity_days')
+      cavc_affinity_days_option = {}
+      cavc_affinity_days_option = cavc_affinity_days_lever.options.detect{|opt|
+      opt["item"] == cavc_affinity_days_lever.value} || {} if cavc_affinity_days_lever
+      cavc_affinity_days_option["value"].to_i
     end
 
     def with_original_appeal_and_judge_task
@@ -199,7 +207,7 @@ class Docket
     def non_genpop_for_judge(judge)
       joins(with_assigned_distribution_task_sql)
         .with_original_appeal_and_judge_task
-        .where("distribution_task.assigned_at > ?", CaseDistributionLever.find_by_item('cavc_affinity_days').try(:value).to_i.days.ago)
+        .where("distribution_task.assigned_at > ?", cavc_affinity_days.days.ago)
         .where(original_judge_task: { assigned_to_id: judge.id })
     end
 

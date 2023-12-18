@@ -402,8 +402,12 @@ describe Docket, :all_dbs do
         let(:second_judge) { create(:user, :judge, :with_vacols_judge_record) }
         let(:second_distribution) { Distribution.create!(judge: second_judge) }
 
+        let(:cavc_affinity_days_lever) { CaseDistributionLever.find_by_item('cavc_affinity_days') }
+        let(:cavc_affinity_days) { cavc_affinity_days_lever.options.find{|opt|
+          opt["item"] == cavc_affinity_days_lever.value}["value"].to_i}
+
         before do
-          cavc_distribution_task.update!(assigned_at: (CaseDistributionLever.find_by_item('cavc_affinity_days').try(:value).to_i + 1).days.ago)
+          cavc_distribution_task.update!(assigned_at: (cavc_affinity_days + 1).days.ago)
         end
 
         context "when genpop: not_genpop is set" do
