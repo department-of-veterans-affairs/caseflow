@@ -4,13 +4,14 @@ import Button from '../../../../components/Button';
 import PropTypes from 'prop-types';
 import AddCorrespondenceView from './AddCorrespondence/AddCorrespondenceView';
 import { AddTasksAppealsView } from './TasksAppeals/AddTasksAppealsView';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { setUnrelatedTasks } from '../../correspondenceReducer/correspondenceActions';
 import { useHistory, useLocation } from 'react-router-dom';
 import { ConfirmCorrespondenceView } from './ConfirmCorrespondence/ConfirmCorrespondenceView';
 import { SubmitCorrespondenceModal } from './ConfirmCorrespondence/SubmitCorrespondenceModal';
 import Alert from 'app/components/Alert';
+import ApiUtil from '../../../../util/ApiUtil';
 import {
   CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TITLE,
   CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TEXT
@@ -32,6 +33,7 @@ const progressBarSections = [
 ];
 
 export const CorrespondenceIntake = (props) => {
+  const intakeCorrespondence = useSelector((state) => state.intakeCorrespondence);
   const [currentStep, setCurrentStep] = useState(1);
   const [isContinueEnabled, setContinueEnabled] = useState(true);
   const [addTasksVisible, setAddTasksVisible] = useState(false);
@@ -76,6 +78,23 @@ export const CorrespondenceIntake = (props) => {
     current: (step === currentStep)
   }),
   );
+
+  useEffect(() => {
+    const data = {
+      correspondence_uuid: props.correspondence_uuid,
+      current_step: currentStep,
+      redux_store: intakeCorrespondence
+    };
+
+    ApiUtil.post(`/queue/correspondence/${props.correspondence_uuid}/current_step`, { data }).
+      then(
+        (response) => {
+          if (!response.ok) {
+            console.error(response);
+          }
+        }
+      );
+  }, [currentStep]);
 
   useEffect(() => {
     if (hash === '') {

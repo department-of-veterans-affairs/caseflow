@@ -20,6 +20,24 @@ class CorrespondenceController < ApplicationController
     end
   end
 
+  def current_step
+    intake = CorrespondenceIntake.find_by(user: current_user, correspondence: current_correspondence) ||
+      CorrespondenceIntake.new(user: current_user, correspondence: current_correspondence)
+
+    intake.update(
+      current_step: params[:current_step],
+      redux_store: params[:redux_store]
+    )
+
+    if intake.valid?
+      intake.save!
+
+      render json: {}, status: :ok and return
+    else
+      render json: intake.errors.full_messages, status: :unprocessable_entity and return
+    end
+  end
+
   def correspondence_cases
     respond_to do |format|
       format.html { "correspondence_cases" }
