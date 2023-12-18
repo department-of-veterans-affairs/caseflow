@@ -50,3 +50,14 @@ export const updateCmpInformation = (packageDocumentType, date) =>
       }
     });
   };
+
+export const updateDocumentTypeName = (newName, index) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.UPDATE_DOCUMENT_TYPE_NAME,
+      payload: {
+        newName,
+        index
+      }
+    });
+  };

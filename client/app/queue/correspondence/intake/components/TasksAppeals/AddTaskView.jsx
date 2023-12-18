@@ -79,13 +79,13 @@ const AddTaskView = (props) => {
   };
 
   const updateTaskContent = (newContent) => {
-    const newTask = { id: task.id, appealId: task.appealId, type: task.type, content: newContent };
+    const newTask = { id: task.id, appealId: task.appealId, type: task.type, label: task.label, content: newContent };
 
     props.taskUpdatedCallback(newTask);
   };
 
   const updateTaskType = (newType) => {
-    const newTask = { id: task.id, appealId: task.appealId, type: newType.value, content: task.content };
+    const newTask = { id: task.id, appealId: task.appealId, type: newType.value, label: newType.label, content: task.content };
 
     props.taskUpdatedCallback(newTask);
   };

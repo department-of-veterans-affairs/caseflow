@@ -128,7 +128,7 @@ describe('PackageActionModal rendering', () => {
     renderPackageActionModal('mergePackage');
 
     expect(screen.getByText('Request merge')).toBeInTheDocument();
-    expect(screen.getByText('Reason for merge')).toBeInTheDocument();
+    expect(screen.getByText('Select a reason for merging this package')).toBeInTheDocument();
     expect(screen.getByText(correspondenceData.cmp_packet_number.toString())).toBeInTheDocument();
     expect(screen.getByText(packageDocumentTypeData.name)).toBeInTheDocument();
 
@@ -140,7 +140,7 @@ describe('PackageActionModal rendering', () => {
     expect(radio1).toBeChecked();
 
     const radio2 = screen.getByRole('radio',
-      { name: 'Documents received on same date realating to same issue(s)/appeal(s)' });
+      { name: 'Documents received on the same date relating to the same issue(s)/appeal(s)' });
 
     userEvent.click(radio2);
     expect(radio2).toBeChecked();
@@ -148,7 +148,7 @@ describe('PackageActionModal rendering', () => {
     const otherRadioOption = screen.getByRole('radio', { name: 'Other' });
 
     userEvent.click(otherRadioOption);
-    const textbox = screen.getByRole('textbox', { name: 'Reason for merge' });
+    const textbox = screen.getByRole('textbox', { name: 'Select a reason for merging this package' });
 
     expect(textbox).toBeInTheDocument();
     userEvent.type(textbox, 'test text for check');

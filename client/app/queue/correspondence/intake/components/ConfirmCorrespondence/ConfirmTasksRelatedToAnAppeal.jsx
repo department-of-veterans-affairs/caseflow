@@ -119,7 +119,7 @@ const ConfirmTasksRelatedToAnAppeal = () => {
           <tr>
             <td
               style={{ backgroundColor: COLORS.GREY_BACKGROUND, borderTop: '1px solid #dee2e6', width: '20%' }}>
-              {taskById.type}
+              {taskById.label}
             </td>
             <td colSpan={3} style={{ backgroundColor: COLORS.GREY_BACKGROUND, borderTop: '1px solid #dee2e6' }}>
               {taskById.content}
