@@ -21,11 +21,13 @@ const BannerDisplay = ({ leverStore }) => {
   return (
     <>
       {showBanner && (
+        <div style={{ marginTop: "28px"}}>
         <LeverAlertBanner
           title={COPY.CASE_DISTRIBUTION_SUCCESSBANNER_TITLE}
           message={COPY.CASE_DISTRIBUTION_SUCCESSBANNER_DETAIL}
           type="success"
         />
+        </div>
       )}
     </>
   );

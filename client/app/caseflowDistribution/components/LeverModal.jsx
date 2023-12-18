@@ -144,7 +144,7 @@ export function LeverSaveButton({ leverStore }) {
 
   const handleConfirmButton = async () => {
     await SaveLeversToDB(leverStore);
-    setShowSuccessBanner(leverStore)
+    setShowSuccessBanner(leverStore);
     setShowModal(false);
     setSaveButtonDisabled(true);
   }
