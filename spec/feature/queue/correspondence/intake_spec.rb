@@ -119,7 +119,7 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("+ Add tasks")
       expect(page).to have_button("+ Add tasks", disabled: true)
     end
-# work on this one
+# work on this step
     it "Two 'Other Motion' tasks is the limit for user" do
       click_on("+ Add tasks")
       all("#reactSelectContainer")[0].click
@@ -176,7 +176,7 @@ RSpec.feature("The Correspondence Intake page") do
       expect(page).to have_content("Correspondence test text")
     end
   end
-
+# work on this step
   context "Step 3 - Confirm" do
     describe "Tasks not related to an Appeal section" do
       it "displays the correct content" do
