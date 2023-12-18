@@ -67,14 +67,6 @@ export const AddAppealRelatedTaskView = (props) => {
     if (isChecked) {
       if (!taskRelatedAppeals.includes(appealId)) {
         setTaskRelatedAppeals([...taskRelatedAppeals, appealId]);
-
-        const hasEvidenceSubmissionTask = appeals.find((el) => el.id === appealId)?.hasEvidenceSubmissionTask;
-
-        if (!hasEvidenceSubmissionTask) {
-          const newTask = { id: nextTaskId, appealId, type: '', content: '' };
-
-          setNewTasks([...newTasks, newTask]);
-        }
       }
     } else {
       const selectedAppeals = taskRelatedAppeals.filter((checkedId) => checkedId !== appealId);
@@ -96,15 +88,6 @@ export const AddAppealRelatedTaskView = (props) => {
       setWaivedTasks([]);
     }
   }, [existingAppealRadio]);
-
-  useEffect(() => {
-    // If user has selected appeals, enable continue
-    if (existingAppealRadio === RELATED_YES) {
-      props.setRelatedTasksCanContinue(taskRelatedAppeals.length);
-    } else {
-      props.setRelatedTasksCanContinue(true);
-    }
-  }, [existingAppealRadio, taskRelatedAppeals]);
 
   useEffect(() => {
     let canContinue = true;
