@@ -210,7 +210,8 @@ const ReportPage = ({ history }) => {
     specificStatus: {
       incomplete: '',
       in_progress: '',
-      completed: ''
+      completed: '',
+      cancelled: ''
     },
     specificEventType: {
       added_decision_date: '',
@@ -277,7 +278,7 @@ const ReportPage = ({ history }) => {
 
     // Add specific status types to the filter
     if (data.radioStatus === 'specific_status') {
-      filters.statuses = Object.keys(data.specificStatus);
+      filters.statuses = Object.keys(data.specificStatus).filter((key) => data.specificStatus[key] === true);
     }
 
     // Add timing to the filter
