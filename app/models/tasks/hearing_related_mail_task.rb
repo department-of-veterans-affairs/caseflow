@@ -26,4 +26,8 @@ class HearingRelatedMailTask < MailTask
 
     Colocated.singleton
   end
+
+  def hide_from_case_timeline
+    true
+  end
 end

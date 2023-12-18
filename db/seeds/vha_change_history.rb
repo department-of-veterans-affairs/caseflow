@@ -307,6 +307,7 @@ module Seeds
       task.save!
     end
 
+    # :reek:FeatureEnvy
     def create_hlr_with_unidentified_issue
       hlr = create(:higher_level_review,
                    :with_intake,
@@ -319,6 +320,7 @@ module Seeds
       hlr.create_business_line_tasks!
     end
 
+    # :reek:FeatureEnvy
     def create_hlr_with_unidentified_issue_without_decision_date
       hlr = create(:higher_level_review,
                    :with_intake,
@@ -332,6 +334,7 @@ module Seeds
       hlr.save
     end
 
+    # :reek:FeatureEnvy
     def create_sc_with_unidentified_issue
       sc = create(:supplemental_claim,
                   :with_intake,
@@ -342,6 +345,7 @@ module Seeds
       sc.create_business_line_tasks!
     end
 
+    # :reek:FeatureEnvy
     def create_sc_with_unidentified_issue_without_decision_date
       sc = create(:supplemental_claim,
                   :with_intake,
