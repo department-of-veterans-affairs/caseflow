@@ -436,7 +436,7 @@ describe ClaimHistoryService do
         end
 
         context "last 7 days filter" do
-          let(:filters) { { timing: { range: "last 7 days" } } }
+          let(:filters) { { timing: { range: "last_7_days" } } }
 
           before do
             new_time = 5.days.ago
@@ -457,7 +457,7 @@ describe ClaimHistoryService do
         end
 
         context "last 30 days filter" do
-          let(:filters) { { timing: { range: "last 30 days" } } }
+          let(:filters) { { timing: { range: "last_30_days" } } }
 
           before do
             # Change the intake date for claim created and one of the issues to more than 30 days
@@ -481,7 +481,7 @@ describe ClaimHistoryService do
         end
 
         context "last 365 days filter" do
-          let(:filters) { { timing: { range: "last 365 days" } } }
+          let(:filters) { { timing: { range: "last_365_days" } } }
 
           before do
             # Change the intake date for claim created and one of the issues to less than 365 days
