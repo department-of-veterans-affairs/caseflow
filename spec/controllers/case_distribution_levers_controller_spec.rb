@@ -2,6 +2,7 @@
 
 RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
   let!(:lever_user) { create(:lever_user) }
+  let!(:lever_user2) { create(:user) }
 
   let!(:lever1) {create(:case_distribution_lever,
     item: "lever_1",
@@ -222,31 +223,40 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       User.authenticate!(user: lever_user)
       OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
       created_at_date = Time.now
-      audit_lever_entry3 = {
-        case_distribution_lever_id: lever1.id,
-        user_id: lever_user.id,
-        user_name: lever_user.full_name,
-        title: lever1.title,
-        created_at: created_at_date
-      }
-      audit_lever_entry4 = {
-        case_distribution_lever_id: lever2.id,
-        user_id: lever_user.id,
-        user_name: lever_user.full_name,
-        title: lever2.title,
-        created_at: created_at_date
-      }
+      formatted_history = [
+        {
+          "user_name": lever_user.full_name,
+          "created_at": created_at_date,
+          "lever_title": lever1.title,
+          "original_value": 10,
+          "current_value": 23
+        },
+        {
+          "user_name": lever_user.full_name,
+          "created_at": created_at_date,
+          "lever_title": lever2.title,
+          "original_value": false,
+          "current_value": true
+        },
+        {
+          "user_name": lever_user2.full_name,
+          "created_at": created_at_date,
+          "lever_title": lever1.title,
+          "original_value": 5,
+          "current_value": 42
+        }
+      ].to_json
 
       save_params = {
         current_levers: [].to_json,
-        audit_lever_entries: [audit_lever_entry3, audit_lever_entry4].to_json
+        audit_lever_entries: formatted_history
       }
 
       expect(CaseDistributionAuditLeverEntry.past_year.count).to eq(2)
 
       post "update_levers_and_history", params: save_params
 
-      expect(CaseDistributionAuditLeverEntry.past_year.count).to eq(4)
+      expect(CaseDistributionAuditLeverEntry.past_year.count).to eq(5)
       expect(JSON.parse(response.body)["successful"]).to be_truthy
       expect(JSON.parse(response.body)["errors"]).to be_empty.or be_nil
     end
@@ -255,24 +265,31 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       User.authenticate!(user: lever_user)
       OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
       created_at_date = Time.now
-      audit_lever_entry3 = {
-        case_distribution_lever_id: lever1.id,
-        user_id: lever_user.id,
-        user_name: lever_user.full_name,
-        title: lever1.title,
-        created_at: created_at_date
-      }
-      audit_lever_entry4 = {
-        case_distribution_lever_id: nil,
-        user_id: lever_user.id,
-        user_name: lever_user.full_name,
-        title: lever2.title,
-        created_at: created_at_date
-      }
+      formatted_history = [
+        {
+          "user_name": lever_user.full_name,
+          "created_at": created_at_date,
+          "lever_title": lever1.title,
+          "original_value": 10,
+          "current_value": 23
+        },
+        {
+          "user_name": lever_user.full_name,
+          "created_at": created_at_date,
+          "lever_title": lever2.title,
+          "original_value": false,
+          "current_value": true
+        },
+        {
+          "created_at": created_at_date,
+          "lever_title": lever1.title,
+          "current_value": 42
+        }
+      ].to_json
 
       save_params = {
         current_levers: [].to_json,
-        audit_lever_entries: [audit_lever_entry3, audit_lever_entry4].to_json
+        audit_lever_entries: formatted_history
       }
 
       expect(CaseDistributionAuditLeverEntry.past_year.count).to eq(2)
