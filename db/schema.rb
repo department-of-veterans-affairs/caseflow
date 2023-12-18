@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_12_05_171256) do
+ActiveRecord::Schema.define(version: 2023_12_14_201518) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -606,15 +606,10 @@ ActiveRecord::Schema.define(version: 2023_12_05_171256) do
   end
 
   create_table "correspondence_intakes", force: :cascade do |t|
-    t.jsonb "added_tasks", comment: "Each object in the array will contain all relevant information to create the specific Task for either the Correspondence or the Related Appeal", array: true
-    t.datetime "canceled_at", comment: "Timestamp of when user cancelled correspondence intake"
-    t.string "canceled_reason", comment: "Details of reason user cancelled correspondence intake"
     t.bigint "correspondence_id", comment: "Foreign key on correspondences table"
     t.datetime "created_at", null: false
-    t.integer "current_step", comment: "Tracks users progress on intake workflow"
-    t.string "error_reason", comment: "Exception details of when correspondence intake failed due to error"
-    t.datetime "errored_at", comment: "Timestamp of when correspondence intake failed due to error"
-    t.bigint "related_appeals", comment: "Will be used to populate correspondence_appeals db table", array: true
+    t.integer "current_step", null: false, comment: "Tracks users progress on intake workflow"
+    t.jsonb "redux_store", null: false, comment: "JSON representation of the data for the current step"
     t.datetime "updated_at", null: false
     t.bigint "user_id", comment: "Foreign key on users table"
     t.index ["correspondence_id"], name: "index_on_correspondence_id"
