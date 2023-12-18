@@ -7,7 +7,8 @@ import {
   notificationDateColumn,
   notificationTypeColumn,
   recipientInformationColumn,
-  statusColumn } from './NotificationTableColumns';
+  statusColumn,
+  responseDetailsColumn } from './NotificationTableColumns';
 import NOTIFICATION_CONFIG from '../../../constants/NOTIFICATION_CONFIG';
 import ApiUtil from '../../util/ApiUtil';
 import NotificationModal from './NotificationModal';
@@ -114,7 +115,8 @@ const NotificationTable = ({ appealId, modalState, openModal, closeModal }) => {
       [NOTIFICATION_CONFIG.COLUMNS.NOTIFICATION_DATE.name]: notificationDateColumn(notificationList),
       [NOTIFICATION_CONFIG.COLUMNS.NOTIFICATION_TYPE.name]: notificationTypeColumn(notificationList),
       [NOTIFICATION_CONFIG.COLUMNS.RECIPIENT_INFORMATION.name]: recipientInformationColumn(notificationList),
-      [NOTIFICATION_CONFIG.COLUMNS.STATUS.name]: statusColumn(notificationList)
+      [NOTIFICATION_CONFIG.COLUMNS.STATUS.name]: statusColumn(notificationList),
+      [NOTIFICATION_CONFIG.COLUMNS.RESPONSE_DETAILS.name]: responseDetailsColumn(notificationList)
     };
 
     return functionForColumn[column.name];

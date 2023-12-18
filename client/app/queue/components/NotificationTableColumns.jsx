@@ -3,6 +3,8 @@ import COPY from '../../../COPY';
 import NOTIFICATION_CONFIG from '../../../constants/NOTIFICATION_CONFIG';
 import EVENT_TYPE_FILTERS from '../../../constants/EVENT_TYPE_FILTERS';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import { PlusIcon } from 'app/components/icons/PlusIcon';
+import { COLORS } from '../../constants/AppConstants';
 
 // Purpose: These are all column objects for the notifications table
 // Params: notifications - The list of notifications
@@ -100,6 +102,20 @@ export const statusColumn = (notifications) => {
 
       return NOTIFICATION_CONFIG.STATUSES[status.toUpperCase()] || status.charAt(0).toUpperCase() + status.slice(1);
     }
+  };
+};
+
+export const responseDetailsColumn = (notifications) => {
+  return {
+    header: COPY.NOTIFICATION_RESPONSE_DETAILS,
+    name: NOTIFICATION_CONFIG.COLUMNS.RESPONSE_DETAILS.name,
+    enableFilter: NOTIFICATION_CONFIG.COLUMNS.RESPONSE_DETAILS.filterable,
+    anyFiltersAreSet: false,
+    label: '',
+    columnName: 'response_details',
+    tableData: notifications,
+    valueName: 'Response Details',
+    valueFunction: () => <PlusIcon size={12} color={COLORS.GREY} />
   };
 };
 

@@ -21,6 +21,10 @@
       "STATUS": {
         "name": "notificationStatusColumn",
         "filterable": true
+      },
+      "RESPONSE_DETAILS": {
+        "name": "responseDetails",
+        "filterable": false
       }
     },
     "COLUMN_SORT_ORDER_ASC": "asc",
