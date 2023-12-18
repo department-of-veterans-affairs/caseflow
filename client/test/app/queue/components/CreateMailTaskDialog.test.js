@@ -12,7 +12,6 @@ import {
 } from './modalUtils';
 import { rootTaskData } from '../../../data/queue/taskActionModals/taskActionModalData';
 import userEvent from '@testing-library/user-event';
-import COPY from '../../../../COPY';
 import ApiUtil from '../../../../app/util/ApiUtil';
 jest.mock('../../../../app/util/ApiUtil');
 
@@ -59,17 +58,7 @@ describe('CreateMailTaskDialog', () => {
   });
 
   describe('after selecting Hearing Postponement Request', () => {
-    const label = 'Include eFolder document hyperlink to request a hearing postponement';
-    const validInput = 'https://vefs-claimevidence-ui-uat.stage.bip.va.gov/pdf/12345678-1234-1234-1234-twelvetwelve';
     const instructionsLabel = 'Provide instructions and context for this action';
-
-    test('efolder url link field is present', () => {
-      setUpMailTaskDialog();
-
-      userEvent.type(screen.getByRole('combobox'), 'Hearing postponement request{enter}');
-
-      expect(screen.getByLabelText(label)).toBeTruthy();
-    });
 
     test('instructions field is present', () => {
       setUpMailTaskDialog();
@@ -77,46 +66,6 @@ describe('CreateMailTaskDialog', () => {
       userEvent.type(screen.getByRole('combobox'), 'Hearing postponement request{enter}');
 
       expect(screen.getByLabelText(instructionsLabel)).toBeTruthy();
-    });
-
-    test('efolder url link field displays error with invalid link format', async () => {
-      jest.useFakeTimers('modern');
-      setUpMailTaskDialog();
-
-      userEvent.type(screen.getByRole('combobox'), 'Hearing postponement request{enter}');
-      userEvent.type(screen.getByLabelText(label), 'asdf');
-
-      expect(await screen.findByText(COPY.EFOLDER_INVALID_LINK_FORMAT)).toBeInTheDocument();
-    });
-
-    test('efolder url link field displays error with vbms when appropriate', async () => {
-      jest.useFakeTimers('modern');
-      setUpMailTaskDialog();
-
-      const response = { status: 500, statusText: 'Error', ok: false };
-
-      ApiUtil.get.mockResolvedValue(response);
-
-      userEvent.type(screen.getByRole('combobox'), 'Hearing postponement request{enter}');
-      userEvent.type(screen.getByLabelText(label), validInput);
-
-      expect(await screen.findByText(COPY.EFOLDER_CONNECTION_ERROR)).toBeInTheDocument();
-      expect(await screen.findByText('Retry')).toBeInTheDocument();
-    });
-
-    test('document not found message appears when no document exists', async () => {
-      jest.useFakeTimers('modern');
-      setUpMailTaskDialog();
-
-      const response = { status: 200, body: { document_presence: false } };
-
-      ApiUtil.get.mockResolvedValue(response);
-
-      userEvent.type(screen.getByRole('combobox'), 'Hearing postponement request{enter}');
-      userEvent.type(screen.getByLabelText(instructionsLabel), 'test instructions');
-      userEvent.type(screen.getByLabelText(label), validInput);
-
-      expect(await screen.findByText(COPY.EFOLDER_DOCUMENT_NOT_FOUND)).toBeInTheDocument();
     });
 
     test('submit button becomes enabled when required fields are complete', async () => {
@@ -129,38 +78,6 @@ describe('CreateMailTaskDialog', () => {
 
       userEvent.type(screen.getByRole('combobox'), 'Hearing postponement request{enter}');
       userEvent.type(screen.getByLabelText(instructionsLabel), 'test instructions');
-      userEvent.type(screen.getByLabelText(label), validInput);
-
-      // wait for debounce to finish, which triggers re-render
-      await act(async() => jest.runAllTimers());
-      // wait for second debounce to get to "same value" guard clause
-      jest.runAllTimers();
-
-      expect(await screen.findByText('Submit')).toBeEnabled();
-    });
-
-    test('submit button becomes disabled after changing and already valid input', async () => {
-      jest.useFakeTimers('modern');
-      setUpMailTaskDialog();
-
-      const response = { status: 200, body: { document_presence: true } };
-
-      ApiUtil.get.mockResolvedValue(response);
-
-      userEvent.type(screen.getByRole('combobox'), 'Hearing postponement request{enter}');
-      userEvent.type(screen.getByLabelText(instructionsLabel), 'test instructions');
-      userEvent.type(screen.getByLabelText(label), validInput);
-
-      // wait for debounce to finish, which triggers re-render
-      await act(async() => jest.runAllTimers());
-      // wait for second debounce to get to "same value" guard clause
-      jest.runAllTimers();
-
-      expect(await screen.findByText('Submit')).toBeEnabled();
-
-      userEvent.type(screen.getByLabelText(label), 'a{backspace}');
-
-      expect(await screen.findByText('Submit')).toBeDisabled();
 
       // wait for debounce to finish, which triggers re-render
       await act(async() => jest.runAllTimers());
