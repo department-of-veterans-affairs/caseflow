@@ -295,8 +295,18 @@ class BusinessLine < Organization
 
     def dispositions_filter
       if query_params[:dispositions].present?
-        sql = where_clause_from_array(DecisionIssue, :disposition, query_params[:dispositions]).to_sql
-        " AND #{sql} "
+        disposition_params = query_params[:dispositions] - ["Blank"]
+        sql = where_clause_from_array(DecisionIssue, :disposition, disposition_params).to_sql
+
+        if query_params[:dispositions].include?("Blank")
+          if disposition_params.empty?
+            " AND decision_issues.disposition IS NULL "
+          else
+            " AND (#{sql} OR decision_issues.disposition IS NULL) "
+          end
+        else
+          " AND #{sql} "
+        end
       end
     end
 

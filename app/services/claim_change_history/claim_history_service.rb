@@ -102,7 +102,10 @@ class ClaimHistoryService
   def process_dispositions_filter(new_events)
     return new_events if @filters[:dispositions].blank?
 
-    new_events.select { |event| event && ensure_array(@filters[:dispositions]).include?(event.disposition) }
+    new_events.select do |event|
+      event && ensure_array(@filters[:dispositions]).include?(event.disposition) ||
+        @filters[:dispositions].include?("Blank") && event.disposition.nil?
+    end
   end
 
   def process_timing_filter(new_events)

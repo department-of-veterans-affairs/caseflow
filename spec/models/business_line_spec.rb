@@ -658,6 +658,33 @@ describe BusinessLine do
           expect(subject.entries).to include(hlr_task_1_ri_2_expectation)
         end
       end
+
+      context "when the disposition filter includes Blank" do
+        let(:change_history_filters) { { dispositions: ["Blank"] } }
+
+        it "should return rows that do not have a disposition" do
+          expect(subject.entries.count).to eq(3)
+          expect(subject.entries).to include(
+            hlr_task_2_ri_1_expectation,
+            hlr_task_2_ri_2_expectation,
+            sc_task_1_ri_1_expectation
+          )
+        end
+
+        context "when it includes Blank and another disposition" do
+          let(:change_history_filters) { { dispositions: %w[denied Blank] } }
+
+          it "should return rows that match denied or have no disposition" do
+            expect(subject.entries.count).to eq(4)
+            expect(subject.entries).to include(
+              hlr_task_1_ri_2_expectation,
+              hlr_task_2_ri_1_expectation,
+              hlr_task_2_ri_2_expectation,
+              sc_task_1_ri_1_expectation
+            )
+          end
+        end
+      end
     end
 
     context "with issue types filter" do

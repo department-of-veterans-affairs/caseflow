@@ -276,6 +276,15 @@ describe ClaimHistoryService do
             expect(service_instance.events).to eq([])
           end
         end
+
+        context "with Blank filter" do
+          let(:filters) { { dipositions: ["Blank"] } }
+
+          it "should return events without a disposition" do
+            subject
+            expect(service_instance.events.count).to eq(14)
+          end
+        end
       end
 
       context "with issue_types filter" do
