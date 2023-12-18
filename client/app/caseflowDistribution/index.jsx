@@ -11,6 +11,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import leversReducer from './reducers/Levers/leversReducer';
 import CaseSearchLink from '../components/CaseSearchLink';
+import BannerDisplay from './components/BannerDisplay';
 
 import CaseflowDistributionApp from './pages/CaseflowDistributionApp';
 import { createStore } from 'redux';
@@ -125,6 +126,7 @@ class CaseflowDistribution extends React.PureComponent {
               appName="Caseflow Admin"
             >
               <AppFrame>
+              <BannerDisplay leverStore={leverStore} />
                 <AppSegment filledBackground>
                   <div>
                     <PageRoute
