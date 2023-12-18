@@ -90,7 +90,12 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :histogram, only: :create
     end
+    namespace :v2 do
+      resources :logs, only: :create
+    end
+    get 'dashboard' => 'dashboard#show'
   end
+
 
   namespace :dispatch do
     get "/", to: redirect("/dispatch/establish-claim")
@@ -158,8 +163,6 @@ Rails.application.routes.draw do
     end
   end
   match '/appeals/:appeal_id/edit/:any' => 'appeals#edit', via: [:get]
-
-  get '/appeals/:appeal_id/document/:series_id' => 'appeals#document_lookup'
 
   get '/appeals/:appeals_id/notifications' => 'appeals#fetch_notification_list'
 
