@@ -44,7 +44,6 @@ function ShowSuccessBanner(shouldShowSuccessBanner)  {
 }
 
 
-
 function SaveLeversToDB(leverStore) {
   const leversData = leverStore.getState().levers;
 
