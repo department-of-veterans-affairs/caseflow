@@ -21,7 +21,7 @@ export const AddUnrelatedTaskView = (props) => {
   }, [newTasks]);
 
   const clickAddTask = () => {
-    const newTask = { id: nextTaskId, type: '', content: '' };
+    const newTask = { id: nextTaskId, type: '', label: '', content: '' };
 
     setNewTasks([...newTasks, newTask]);
   };

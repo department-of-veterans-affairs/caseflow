@@ -37,7 +37,7 @@ const PackageActionModal = (props) => {
   const mergePackageReasonOptions = [
     { displayText: 'Duplicate documents',
       value: 'Duplicate documents' },
-    { displayText: 'Documents received on same date realating to same issue(s)/appeal(s)',
+    { displayText: 'Documents received on the same date relating to the same issue(s)/appeal(s)',
       value: 'Documents received' },
     { displayText: 'Other',
       value: 'other' }
@@ -93,6 +93,10 @@ const PackageActionModal = (props) => {
       instructions: []
     };
 
+    if (packageActionModal === 'removePackage' || packageActionModal === 'reassignPackage') {
+      data.instructions.push(textInputReason);
+    }
+
     if (radioValue && radioValue !== 'Other') {
       data.instructions.push(radioValue);
     }
@@ -134,7 +138,7 @@ const PackageActionModal = (props) => {
       buttons={[
         {
           classNames: ['cf-modal-link', 'cf-btn-link'],
-          name: 'Close',
+          name: 'Cancel',
           onClick: () => closeHandler(null)
         },
         {

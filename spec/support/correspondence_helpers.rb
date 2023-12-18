@@ -1,9 +1,15 @@
 # frozen_string_literal: true
 
 module CorrespondenceHelpers
-  def visit_intake_form_with_correspondence_load
+  def setup_access
     FeatureToggle.enable!(:correspondence_queue)
-    User.authenticate!(roles: ["Mail Intake"])
+    user = create(:user, roles: ["Mail Intake"])
+    MailTeam.singleton.add_user(user)
+    User.authenticate!(user: user)
+  end
+
+  def visit_intake_form_with_correspondence_load
+    setup_access
     veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
     54.times do
       create(
@@ -19,15 +25,13 @@ module CorrespondenceHelpers
   end
 
   def visit_intake_form
-    FeatureToggle.enable!(:correspondence_queue)
-    User.authenticate!(roles: ["Mail Intake"])
+    setup_access
     uuid = SecureRandom.uuid
     visit "/queue/correspondence/#{uuid}/intake"
   end
 
   def visit_intake_form_step_2_with_appeals
-    FeatureToggle.enable!(:correspondence_queue)
-    User.authenticate!(roles: ["Mail Intake"])
+    setup_access
     veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
     13.times { create(:appeal, veteran_file_number: veteran.file_number) }
     3.times do
@@ -46,8 +50,7 @@ module CorrespondenceHelpers
   end
 
   def visit_intake_form_step_3_with_tasks_unrelated
-    FeatureToggle.enable!(:correspondence_queue)
-    User.authenticate!(roles: ["Mail Intake"])
+    setup_access
     veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
     create(
       :correspondence,
@@ -76,8 +79,7 @@ module CorrespondenceHelpers
   end
 
   def active_evidence_submissions_tasks
-    FeatureToggle.enable!(:correspondence_queue)
-    User.authenticate!(roles: ["Mail Intake"])
+    setup_access
     veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
     create(:correspondence, veteran_id: veteran.id, uuid: SecureRandom.uuid, va_date_of_receipt: Time.local(2023, 1, 1))
     2.times do
@@ -93,6 +95,4 @@ module CorrespondenceHelpers
     visit "/queue/correspondence/#{Correspondence.first.uuid}/intake"
     click_button("Continue")
   end
-
-
 end

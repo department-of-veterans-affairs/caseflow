@@ -1,37 +1,194 @@
 {
   "unrelatedToAppeal": [
-    { "value": "CAVC Correspondence", "label": "CAVC Correspondence" },
-    { "value": "Congressional interest", "label": "Congressional interest" },
-    { "value": "Death certificate", "label": "Death certificate" },
-    { "value": "FOIA request", "label": "FOIA request" },
-    { "value": "Other motion", "label": "Other motion" },
-    { "value": "Power of attorney-related", "label": "Power of attorney-related" },
-    { "value": "Privacy act request", "label": "Privacy act request" },
-    { "value": "Privacy complaint", "label": "Privacy complaint" },
-    { "value": "Status inquiry", "label": "Status inquiry" }
+    {
+      "value": {
+        "klass": "CavcCorrespondenceMailTask",
+        "assigned_to": "CavcLitigationSupport"
+        },
+      "label": "CAVC Correspondence"
+    }, {
+      "value": {
+        "klass": "CongressionalInterestMailTask",
+        "assigned_to": "LitigationSupport"
+        },
+      "label": "Congressional interest"
+    }, {
+      "value": {
+        "klass": "DeathCertificateMailTask",
+        "assigned_to": "Colocated"
+        },
+      "label": "Death certificate"
+    }, {
+      "value": {
+        "klass": "FoiaRequestMailTask",
+        "assigned_to": "PrivacyTeam"
+        },
+      "label": "FOIA request"
+    }, {
+      "value": {
+        "klass": "OtherMotionMailTask",
+        "assigned_to": "LitigationSupport"
+        },
+      "label": "Other motion"
+    }, {
+      "value": {
+        "klass": "PowerOfAttorneyRelatedMailTask",
+        "assigned_to": "HearingAdmin"
+        },
+      "label": "Power of attorney-related"
+    }, {
+      "value": {
+        "klass": "PrivacyActRequestMailTask",
+        "assigned_to": "PrivacyTeam"
+        },
+      "label": "Privacy act request"
+    }, {
+      "value": {
+        "klass": "PrivacyComplaintMailTask",
+        "assigned_to": "PrivacyTeam"
+        },
+      "label": "Privacy complaint"
+    }, {
+      "value": {
+        "klass": "StatusInquiryMailTask",
+        "assigned_to": "LitigationSupport"
+        },
+      "label": "Status inquiry"
+    }
   ],
   "relatedToAppeal": [
-    { "value": "CAVC Correspondence", "label": "CAVC Correspondence" },
-    { "value": "CUE-related", "label": "CUE-related" },
-    { "value": "Change of address", "label": "Change of address" },
-    { "value": "Congressional interest", "label": "Congressional interest" },
-    { "value": "Controlled Correspondence", "label": "Controlled Correspondence" },
-    { "value": "Death certificate", "label": "Death certificate" },
-    { "value": "Docket switch", "label": "Docket switch" },
-    { "value": "Evidence or argument", "label": "Evidence or argument" },
-    { "value": "Extension request", "label": "Extension request" },
-    { "value": "FOIA request", "label": "FOIA request" },
-    { "value": "Hearing Postponement Request", "label": "Hearing Postponement Request" },
-    { "value": "Hearing-related", "label": "Hearing-related" },
-    { "value": "Hearing Withdrawal Request", "label": "Hearing Withdrawal Request" },
-    { "value": "Motion for reconsideration", "label": "Motion for reconsideration" },
-    { "value": "Motion to Advance on Docket", "label": "Motion to Advance on Docket" },
-    { "value": "Other motion", "label": "Other motion" },
-    { "value": "Power of attorney-related", "label": "Power of attorney-related" },
-    { "value": "Privacy act request", "label": "Privacy act request" },
-    { "value": "Privacy complaint", "label": "Privacy complaint" },
-    { "value": "Returned or undeliverable mail", "label": "Returned or undeliverable mail" },
-    { "value": "Status inquiry", "label": "Status inquiry" },
-    { "value": "Withdrawal of appeal", "label": "Withdrawal of appeal" }
+    {
+      "value": {
+        "klass": "CavcCorrespondenceMailTask",
+        "assigned_to": "CavcLitigationSupport"
+        },
+      "label": "CAVC Correspondence"
+    }, {
+      "value": {
+        "klass": "ClearAndUnmistakeableErrorMailTask",
+        "assigned_to": "LitigationSupport"
+        },
+      "label": "CUE-related"
+    }, {
+      "value": {
+        "klass": "AddressChangeMailTask",
+        "assigned_to": "HearingAdmin"
+        },
+      "label": "Change of address"
+    }, {
+      "value": {
+        "klass": "CongressionalInterestMailTask",
+        "assigned_to": "LitigationSupport"
+        },
+      "label": "Congressional interest"
+    }, {
+      "value": {
+        "klass": "ControlledCorrespondenceMailTask",
+        "assigned_to": "LitigationSupport"
+        },
+      "label": "Controlled Correspondence"
+    }, {
+      "value": {
+        "klass": "DeathCertificateMailTask",
+        "assigned_to": "Colocated"
+        },
+      "label": "Death certificate"
+    }, {
+      "value": {
+        "klass": "DocketSwitchMailTask",
+        "assigned_to": "ClerkOfTheBoard"
+        },
+      "label": "Docket switch"
+    }, {
+      "value": {
+        "klass": "EvidenceOrArgumentMailTask",
+        "assigned_to": "Colocated"
+        },
+      "label": "Evidence or argument"
+    }, {
+      "value": {
+        "klass": "ExtensionRequestMailTask",
+        "assigned_to": "Colocated"
+        },
+      "label": "Extension request"
+    }, {
+      "value": {
+        "klass": "FoiaRequestMailTask",
+        "assigned_to": "PrivacyTeam"
+        },
+      "label": "FOIA request"
+    }, {
+      "value": {
+        "klass": "HearingPostponementRequestMailTask",
+        "assigned_to": "HearingAdmin"
+        },
+      "label": "Hearing Postponement Request"
+    }, {
+      "value": {
+        "klass": "HearingRelatedMailTask",
+        "assigned_to": "HearingAdmin"
+        },
+      "label": "Hearing-related"
+    }, {
+      "value": {
+        "klass": "HearingWithdrawalMailTask",
+        "assigned_to": "HearingAdmin"
+        },
+      "label": "Hearing Withdrawal Request"
+    }, {
+      "value": {
+        "klass": "ReconsiderationMotionMailTask",
+        "assigned_to": "LitigationSupport"
+        },
+      "label": "Motion for reconsideration"
+    }, {
+      "value": {
+        "klass": "AodMotionMailTask",
+        "assigned_to": "AodTeam"
+        },
+      "label": "Motion to Advance on Docket"
+    }, {
+      "value": {
+        "klass": "OtherMotionMailTask",
+        "assigned_to": "LitigationSupport"
+        },
+      "label": "Other motion"
+    }, {
+      "value": {
+        "klass": "PowerOfAttorneyRelatedMailTask",
+        "assigned_to": "HearingAdmin"
+        },
+      "label": "Power of attorney-related"
+    }, {
+      "value": {
+        "klass": "PrivacyActRequestMailTask",
+        "assigned_to": "PrivacyTeam"
+        },
+      "label": "Privacy act request"
+    }, {
+      "value": {
+        "klass": "PrivacyComplaintMailTask",
+        "assigned_to": "PrivacyTeam"
+        },
+      "label": "Privacy complaint"
+    }, {
+      "value": {
+        "klass": "ReturnedUndeliverableCorrespondenceMailTask",
+        "assigned_to": "BvaDispatch"
+        },
+      "label": "Returned or undeliverable mail"
+    }, {
+      "value": {
+        "klass": "StatusInquiryMailTask",
+        "assigned_to": "LitigationSupport"
+        },
+      "label": "Status inquiry"
+    }, {
+      "value": {
+        "klass": "AppealWithdrawalMailTask",
+        "assigned_to": "CaseReview"
+        },
+      "label": "Withdrawal of appeal"
+    }
   ]
 }
