@@ -114,12 +114,6 @@ class CorrespondenceController < ApplicationController
     render json: { data: data }
   end
 
-  # :reek:UtilityFunction
-  def vbms_document_types
-    data = ExternalApi::ClaimEvidenceService.document_types
-    data["documentTypes"].map { |document_type| { id: document_type["id"], name: document_type["name"] } }
-  end
-
   def pdf
     document = Document.find(params[:pdf_id])
 
@@ -272,8 +266,6 @@ class CorrespondenceController < ApplicationController
     @veteran_by_correspondence ||= begin
       veteran = Veteran.find_by(id: correspondence.veteran_id)
       if veteran.nil?
-        # Handle the case where the veteran is not found
-        puts "Veteran not found for ID: #{correspondence.veteran_id}"
       end
       veteran
     end

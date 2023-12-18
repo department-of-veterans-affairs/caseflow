@@ -20,7 +20,8 @@ RSpec.describe CorrespondenceIntake, type: :model do
       user = User.create!(css_id: "User", station_id: "1")
 
       expect { CorrespondenceIntake.create! }.to raise_error(ActiveRecord::RecordInvalid)
-      expect { CorrespondenceIntake.create!(correspondence_id: correspondence.id) }.to raise_error(ActiveRecord::RecordInvalid)
+      expect { CorrespondenceIntake.create!(correspondence_id: correspondence.id) }
+        .to raise_error(ActiveRecord::RecordInvalid)
       expect { CorrespondenceIntake.create!(user_id: user.id) }.to raise_error(ActiveRecord::RecordInvalid)
     end
   end

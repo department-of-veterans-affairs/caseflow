@@ -8,10 +8,10 @@ class CorrespondenceRelation < ApplicationRecord
   after_create :create_inverse, unless: :has_inverse?
   after_destroy :destroy_inverses, if: :has_inverse?
 
-  validates_presence_of :correspondence_id
-  validates_presence_of :related_correspondence_id
-  validates_numericality_of :correspondence_id
-  validates_numericality_of :related_correspondence_id
+  validates :column, presence: :correspondence_id
+  validates :column, presence: :related_correspondence_id
+  validates :column, numericality: :correspondence_id
+  validates :column, numericality: :related_correspondence_id
 
   def create_inverse
     self.class.create(inverse_match_options)
@@ -21,7 +21,7 @@ class CorrespondenceRelation < ApplicationRecord
     inverses.destroy_all
   end
 
-  def has_inverse?
+  def inverse?
     self.class.exists?(inverse_match_options)
   end
 
