@@ -5,10 +5,10 @@ RSpec.feature("The Correspondence Intake page") do
   let(:organization) { MailTeam.singleton }
   let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
 
-    # before(:all) do
-    #   organization.add_user(mail_user)
-    #   mail_user.reload
-    # end
+  before do
+    organization.add_user(mail_user)
+    mail_user.reload
+  end
 
   context "Mail Tasks Confirm Page" do
     before :each do
@@ -56,7 +56,7 @@ RSpec.feature("The Correspondence Intake page") do
       expect(page).to have_text("Completed Mail Tasks")
       expect(page).to have_text("Change of address")
       expect(page).to have_button("Edit Section")
-      click_button("button-EditMailTasks", visible:"false")
+      all("div > span > button > span", text: "Edit Section")[0].click
       expect(page).to have_text("Mail Tasks")
       checkbox = all("#mail-tasks-left .cf-form-checkbox")[0]
       checkbox_input = checkbox.find('input[name="Change of address"]', visible: :all)
