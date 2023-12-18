@@ -30,6 +30,16 @@ export const setPackageDocumentType = (packageDocumentType) =>
     });
   };
 
+export const setVeteranInformation = (veteranInfo) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_VETERAN_INFORMATION,
+      payload: {
+        veteranInfo
+      }
+    });
+  };
+
 export const updateCmpInformation = (packageDocumentType, date) =>
   (dispatch) => {
     dispatch({
@@ -37,6 +47,17 @@ export const updateCmpInformation = (packageDocumentType, date) =>
       payload: {
         packageDocumentType,
         date
+      }
+    });
+  };
+
+export const updateDocumentTypeName = (newName, index) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.UPDATE_DOCUMENT_TYPE_NAME,
+      payload: {
+        newName,
+        index
       }
     });
   };

@@ -17,14 +17,14 @@ RSpec.feature("The Correspondence Review Package page") do
 
     it "routes user to /unauthorized if the feature toggle is disabled" do
       FeatureToggle.disable!(:correspondence_queue)
-      visit "/queue/correspondence/#{@correspondence_uuid}/review_package"
+      visit "/queue/correspondence/#{correspondence.uuid}/review_package"
       expect(page).to have_current_path("/unauthorized")
     end
 
     it "routes to intake if feature toggle is enabled" do
       FeatureToggle.enable!(:correspondence_queue)
-      visit "/queue/correspondence/#{@correspondence_uuid}/review_package"
-      expect(page).to have_current_path("/queue/correspondence/#{@correspondence_uuid}/review_package")
+      visit "/queue/correspondence/#{correspondence.uuid}/review_package"
+      expect(page).to have_current_path("/queue/correspondence/#{correspondence.uuid}/review_package")
     end
   end
 
@@ -34,11 +34,26 @@ RSpec.feature("The Correspondence Review Package page") do
       mail_team_supervisor_org.add_user(mail_team_supervisor_user)
       User.authenticate!(user: mail_team_supervisor_user)
       @correspondence_uuid = "123456789"
-      visit "/queue/correspondence/#{@correspondence_uuid}/review_package"
+      visit "/queue/correspondence/#{correspondence.uuid}/review_package"
     end
 
     it "the Review package page exists" do
-      expect(page).to have_current_path("/queue/correspondence/#{@correspondence_uuid}/review_package")
+      expect(page).to have_current_path("/queue/correspondence/#{correspondence.uuid}/review_package")
+      expect(page).to have_content(COPY::CORRESPONDENCE_REVIEW_PACKAGE_TITLE)
+    end
+
+    it "check for CMP Edit button" do
+      expect(page).to have_button("Edit")
+      expect(page).to have_button("Cancel")
+      expect(page).to have_button("Create record")
+    end
+
+    it "Intake appeal button should be hidden for document type 10182" do
+      if package_document_type.name.to_s == "10182"
+        expect(page).to have_content("Intake appeal")
+      else
+        expect(page).to_not have_content("Intake appeal")
+      end
     end
   end
 
@@ -58,6 +73,29 @@ RSpec.feature("The Correspondence Review Package page") do
       expect(page).to have_current_path("/intake/review_request")
       expect(page).to have_text `#{veteran.file_number}`
       expect(page).to have_text `Review #{veteran.first_name} #{veteran.last_name}'s Decision Review Request: Board Appeal (Notice of Disagreement) - VA Form 10182`
+    end
+  end
+
+  context "Review package - Create record" do
+    let(:non_10182_package_type) { PackageDocumentType.create(id: 1, active: true, name: "0304") }
+    let(:correspondence_2) { create(:correspondence, :with_single_doc, veteran_id: veteran.id, package_document_type_id: non_10182_package_type.id) }
+
+    before do
+      FeatureToggle.enable!(:correspondence_queue)
+      mail_team_org.add_user(mail_team_user)
+      User.authenticate!(user: mail_team_user)
+    end
+
+    it "click on Create record button" do
+      visit "/queue/correspondence/#{correspondence.uuid}/review_package"
+      click_button "Create record"
+      expect(page).to have_current_path("/queue/correspondence/#{correspondence.uuid}/intake")
+      expect(page).to have_content("Add Related Correspondence")
+      expect(page).to have_content("Add any related correspondence to the mail package that is in progress.")
+      expect(page).to have_content("Is this correspondence related to prior mail?")
+      expect(page).to have_content("Associate with prior Mail")
+      expect(page).to have_content("Yes")
+      expect(page).to have_content("No")
     end
   end
 end

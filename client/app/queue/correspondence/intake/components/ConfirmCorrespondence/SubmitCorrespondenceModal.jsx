@@ -12,6 +12,8 @@ export const SubmitCorrespondenceModal = ({ setSubmitCorrespondenceModalVisible,
 
   const correspondence = useSelector((state) => state.intakeCorrespondence.currentCorrespondence);
   const relatedCorrespondences = useSelector((state) => state.intakeCorrespondence.relatedCorrespondences);
+  const waivedEvidenceTasks = useSelector((state) => state.intakeCorrespondence.waivedEvidenceTasks);
+  const tasksRelatedToAppeal = useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks);
   const [loading, setLoading] = useState(false);
 
   const onCancel = () => {
@@ -29,8 +31,20 @@ export const SubmitCorrespondenceModal = ({ setSubmitCorrespondenceModalVisible,
 
   const onSubmit = async() => {
     const relatedUuids = relatedCorrespondences.map((corr) => corr.uuid);
+    const serializedWaivedEvidenceTasks = waivedEvidenceTasks.map((task) => (
+      { task_id: task.id, waive_reason: task.waiveReason }
+    ));
+    const serializedTasksRelatedToAppeal = tasksRelatedToAppeal.map((task) => ({
+      appeal_id: task.appealId,
+      klass: task.type.klass,
+      assigned_to: task.type.assigned_to,
+      content: task.content
+    })
+    );
     const submitData = {
-      related_correspondence_uuids: relatedUuids
+      related_correspondence_uuids: relatedUuids,
+      tasks_related_to_appeal: serializedTasksRelatedToAppeal,
+      waived_evidence_submission_window_tasks: serializedWaivedEvidenceTasks
     };
 
     setLoading(true);

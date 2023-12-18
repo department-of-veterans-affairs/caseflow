@@ -5,6 +5,7 @@ class CorrespondenceController < ApplicationController
   before_action :verify_feature_toggle
   before_action :correspondence
   before_action :auto_texts
+  before_action :veteran_information
 
   def intake
     respond_to do |format|
@@ -19,6 +20,24 @@ class CorrespondenceController < ApplicationController
     end
   end
 
+  def current_step
+    intake = CorrespondenceIntake.find_by(user: current_user, correspondence: current_correspondence) ||
+      CorrespondenceIntake.new(user: current_user, correspondence: current_correspondence)
+
+    intake.update(
+      current_step: params[:current_step],
+      redux_store: params[:redux_store]
+    )
+
+    if intake.valid?
+      intake.save!
+
+      render json: {}, status: :ok and return
+    else
+      render json: intake.errors.full_messages, status: :unprocessable_entity and return
+    end
+  end
+
   def correspondence_cases
     respond_to do |format|
       format.html { "correspondence_cases" }
@@ -30,6 +49,29 @@ class CorrespondenceController < ApplicationController
 
   def review_package
     render "correspondence/review_package"
+  end
+
+  def intake_update
+    tasks = Task.where("appeal_id = ? and appeal_type = ?", @correspondence.id, "Correspondence")
+    begin
+      tasks.map do |task|
+        if task.type == "ReviewPackageTask"
+          task.instructions.push("An appeal intake was started because this Correspondence is a 10182")
+          task.assigned_to_id = @correspondence.assigned_by_id
+          task.assigned_to = User.find(@correspondence.assigned_by_id)
+        end
+        task.status = "cancelled"
+        task.save
+      end
+      if upload_documents_to_claim_evidence
+        render json: { correspondence: @correspondence }
+      else
+        render json: {}, status: bad_request
+      end
+    rescue StandardError => error
+      Rails.logger.error(error.to_s)
+      render json: {}, status: bad_request
+    end
   end
 
   def veteran
@@ -85,6 +127,11 @@ class CorrespondenceController < ApplicationController
     render json: { status: 200, correspondence: correspondence }
   end
 
+  def document_type_correspondence
+    data = vbms_document_types
+    render json: { data: data }
+  end
+
   # :reek:UtilityFunction
   def vbms_document_types
     data = ExternalApi::ClaimEvidenceService.document_types
@@ -109,9 +156,12 @@ class CorrespondenceController < ApplicationController
   end
 
   def process_intake
+    correspondence_id = Correspondence.find_by(uuid: params[:correspondence_uuid])&.id
     ActiveRecord::Base.transaction do
       begin
-        create_correspondence_relations
+        create_correspondence_relations(correspondence_id)
+        add_tasks_to_related_appeals(correspondence_id)
+        complete_waived_evidence_submission_tasks(correspondence_id)
       rescue ActiveRecord::RecordInvalid
         render json: { error: "Failed to update records" }, status: :bad_request
         raise ActiveRecord::Rollback
@@ -127,6 +177,21 @@ class CorrespondenceController < ApplicationController
 
   private
 
+  def vbms_document_types
+    begin
+      data = ExternalApi::ClaimEvidenceService.document_types
+    rescue StandardError => error
+      Rails.logger.error(error.full_message)
+      data ||= demo_data
+    end
+    data["documentTypes"].map { |document_type| { id: document_type["id"], name: document_type["description"] } }
+  end
+
+  def demo_data
+    json_file_path = "vbms doc types.json"
+    JSON.parse(File.read(json_file_path))
+  end
+
   def set_flash_intake_success_message
     # intake error message is handled in client/app/queue/correspondence/intake/components/CorrespondenceIntake.jsx
     vet = veteran_by_correspondence
@@ -136,11 +201,37 @@ class CorrespondenceController < ApplicationController
     ]
   end
 
-  def create_correspondence_relations
+  def create_correspondence_relations(correspondence_id)
     params[:related_correspondence_uuids]&.map do |uuid|
       CorrespondenceRelation.create!(
-        correspondence_id: Correspondence.find_by(uuid: params[:correspondence_uuid])&.id,
+        correspondence_id: correspondence_id,
         related_correspondence_id: Correspondence.find_by(uuid: uuid)&.id
+      )
+    end
+  end
+
+  def complete_waived_evidence_submission_tasks(correspondence_id)
+    params[:waived_evidence_submission_window_tasks]&.map do |task|
+      evidence_submission_window_task = EvidenceSubmissionWindowTask.find(task[:task_id])
+      instructions = evidence_submission_window_task.instructions
+      appeal = evidence_submission_window_task&.appeal
+      CorrespondencesAppeal.find_or_create_by(correspondence_id: correspondence_id, appeal_id: appeal.id)
+      evidence_submission_window_task.when_timer_ends
+      evidence_submission_window_task.update!(instructions: (instructions << task[:waive_reason]))
+    end
+  end
+
+  def add_tasks_to_related_appeals(correspondence_id)
+    params[:tasks_related_to_appeal]&.map do |data|
+      appeal = Appeal.find(data[:appeal_id])
+      CorrespondencesAppeal.find_or_create_by(correspondence_id: correspondence_id, appeal_id: appeal.id)
+      data[:klass].constantize.create_from_params(
+        {
+          appeal: appeal,
+          parent_id: appeal.root_task&.id,
+          assigned_to: data[:assigned_to].constantize.singleton,
+          instructions: data[:content]
+        }, current_user
       )
     end
   end
@@ -194,12 +285,21 @@ class CorrespondenceController < ApplicationController
   end
 
   def veteran_by_correspondence
-    @veteran_by_correspondence ||= Veteran.find(correspondence&.veteran_id)
+    return unless correspondence&.veteran_id
+
+    @veteran_by_correspondence ||= begin
+      veteran = Veteran.find_by(id: correspondence.veteran_id)
+      if veteran.nil?
+        # Handle the case where the veteran is not found
+        puts "Veteran not found for ID: #{correspondence.veteran_id}"
+      end
+      veteran
+    end
   end
 
   def veterans_with_correspondences
     veterans = Veteran.includes(:correspondences).where(correspondences: { id: Correspondence.select(:id) })
-    veterans.map { |veteran| vet_info_serializer(veteran, veteran.correspondences.first) }
+    veterans.map { |veteran| vet_info_serializer(veteran, veteran.correspondences.last) }
   end
 
   def vet_info_serializer(veteran, correspondence)
@@ -215,5 +315,39 @@ class CorrespondenceController < ApplicationController
 
   def auto_texts
     @auto_texts ||= AutoText.all.pluck(:name)
+  end
+
+  def upload_documents_to_claim_evidence
+    if Rails.env.development? || Rails.env.demo? || Rails.env.test?
+      true
+    else
+      begin
+        correspondence.correspondence_documents.all.each do |doc|
+          ExternalApi::ClaimEvidenceService.upload_document(
+            doc.pdf_location,
+            veteran_by_correspondence.file_number,
+            doc.claim_evidence_upload_json
+          )
+        end
+        true
+      rescue StandardError => error
+        Rails.logger.error(error.to_s)
+        create_efolder_upload_failed_task
+        false
+      end
+    end
+  end
+
+  def create_efolder_upload_failed_task
+    rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id, type: ReviewPackageTask.name)
+    euft = EfolderUploadFailedTask.find_or_create_by(
+      appeal_id: correspondence.id,
+      appeal_type: "Correspondence",
+      type: EfolderUploadFailedTask.name,
+      assigned_to: current_user,
+      parent_id: rpt.id
+    )
+
+    euft.update!(status: Constants.TASK_STATUSES.in_progress)
   end
 end

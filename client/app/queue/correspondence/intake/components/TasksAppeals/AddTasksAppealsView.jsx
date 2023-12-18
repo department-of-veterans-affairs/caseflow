@@ -33,21 +33,21 @@ export const AddTasksAppealsView = (props) => {
     let otherMotionCount = 0;
 
     const filteredTaskNames = tasks.map((task) => {
-      if (task.type === 'Other motion') {
+      if (task.label === 'Other motion') {
         otherMotionCount += 1;
       }
 
-      return task.type;
+      return task.label;
     });
 
     return options.filter((option) => {
       // Up to 2 other motion tasks can be created in the workflow
       // so only filter 'other motion' if there are 2 other motion tasks already created
-      if (option.value === 'Other motion' && otherMotionCount < 2) {
+      if (option.label === 'Other motion' && otherMotionCount < 2) {
         return true;
       }
 
-      return !filteredTaskNames.includes(option.value);
+      return !filteredTaskNames.includes(option.label);
     });
   };
 
@@ -107,7 +107,7 @@ export const AddTasksAppealsView = (props) => {
           </div>
         </div>
 
-        <div style={{ marginTop: '3.8rem' }}>
+        <div id="task-related-to-an-appeal" style={{ marginTop: '3.8rem' }}>
           <h2 style={{ margin: '3rem auto 1rem auto' }}>Tasks related to an existing Appeal</h2>
           <p style={{ marginBottom: '0rem' }}>Is this correspondence related to an existing appeal?</p>
           <AddAppealRelatedTaskView
@@ -116,6 +116,7 @@ export const AddTasksAppealsView = (props) => {
             filterUnavailableTaskTypeOptions={filterUnavailableTaskTypeOptions}
             allTaskTypeOptions={relatedTaskTypes}
             autoTexts={props.autoTexts}
+            veteranInformation={props.veteranInformation}
           />
         </div>
       </div>
@@ -126,7 +127,8 @@ export const AddTasksAppealsView = (props) => {
 AddTasksAppealsView.propTypes = {
   correspondenceUuid: PropTypes.string.isRequired,
   onContinueStatusChange: PropTypes.func.isRequired,
-  autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired
+  autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
+  veteranInformation: PropTypes.object.isRequired
 };
 
 export default AddTasksAppealsView;
