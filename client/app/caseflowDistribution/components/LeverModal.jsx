@@ -16,6 +16,17 @@ function UpdateLeverHistory(leverStore) {
   });
 }
 
+function setShowSuccessBanner(leverStore) {
+  leverStore.dispatch({
+    type: Constants.SHOW_SUCCESS_BANNER,
+  });
+  setTimeout(() => {
+    leverStore.dispatch({
+      type: Constants.HIDE_SUCCESS_BANNER,
+    });
+  }, 10000)
+}
+
 function leverValueDisplay(lever, isPreviousValue) {
   const doesDatatypeRequireComplexLogic = lever.data_type === 'radio' || lever.data_type === 'combination';
 
@@ -146,6 +157,7 @@ export function LeverSaveButton({ leverStore }) {
 
   const handleConfirmButton = async () => {
     await SaveLeversToDB(leverStore);
+    setShowSuccessBanner(leverStore)
     setShowModal(false);
     setSaveButtonDisabled(true);
     ShowSuccessBanner(true);

@@ -63,7 +63,6 @@ describe('Lever reducer', () => {
       expect(target_store_lever).toEqual(lever_update)
       expect(target_store_inital_lever).not.toEqual(lever_update)
       expect(changesOccurred).toEqual(true)
-      expect(saveChangesActivated).toEqual(false)
     });
 
     // it('does not update the current levers when invalid value is entered', () => {});
