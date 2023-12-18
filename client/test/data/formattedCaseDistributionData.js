@@ -504,7 +504,7 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: true,
+    is_active: false,
     is_disabled: true,
     min_value: 0,
     max_value: 100,
@@ -527,8 +527,8 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: true,
-    is_disabled: false,
+    is_active: false,
+    is_disabled: true,
     min_value: 0,
     max_value: 100,
     algorithms_used: ['docket']
@@ -551,7 +551,7 @@ export const formattedLevers = [
       }
     ],
     is_active: false,
-    is_disabled: false,
+    is_disabled: true,
     min_value: 0,
     max_value: 100,
     algorithms_used: ['proportion']
@@ -563,8 +563,8 @@ export const formattedLevers = [
     data_type: 'number',
     value: 435,
     unit: 'days',
-    is_active: true,
-    is_disabled: false,
+    is_active: false,
+    is_disabled: true,
     min_value: 0,
     max_value: 1000,
     algorithms_used: ['proportion']
@@ -576,7 +576,7 @@ export const formattedLevers = [
     data_type: 'number',
     value: 500,
     unit: 'days',
-    is_active: false,
+    is_active: true,
     is_disabled: false,
     min_value: 0,
     max_value: 1000,
