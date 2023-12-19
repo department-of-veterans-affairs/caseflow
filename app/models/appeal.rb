@@ -164,9 +164,7 @@ class Appeal < DecisionReview
         sm_claim.uuid = SecureRandom.uuid
 
         # make sure uuid doesn't exist in the database (by some chance)
-        while SupplementalClaim.find_by(uuid: sm_claim.uuid).nil? == false
-          sm_claim.uuid = SecureRandom.uuid
-        end
+        sm_claim.uuid = SecureRandom.uuid while SupplementalClaim.find_by(uuid: sm_claim.uuid).nil? == false
       end
     })
   end
@@ -175,10 +173,10 @@ class Appeal < DecisionReview
     hearing_date = Hearing.find_by(appeal_id: id)
 
     if hearing_date.nil?
-      return nil
+      nil
 
     else
-      return hearing_date.hearing_day.scheduled_for
+      hearing_date.hearing_day.scheduled_for
     end
   end
 
@@ -253,7 +251,7 @@ class Appeal < DecisionReview
     category_substrings = %w[Contested Apportionment]
 
     request_issues.active.any? do |request_issue|
-      category_substrings.any? { |substring| self.request_issues.active.include?(request_issue) && request_issue.nonrating_issue_category&.include?(substring) }
+      category_substrings.any? { |substring| request_issues.active.include?(request_issue) && request_issue.nonrating_issue_category&.include?(substring) }
     end
   end
 
@@ -670,6 +668,10 @@ class Appeal < DecisionReview
   # matches Legacy behavior
   def cavc
     court_remand?
+  end
+
+  def predocketed?
+    tasks.any? { |task| task.class.name == "PreDocketTask" && task.active? }
   end
 
   def vha_predocket_needed?
