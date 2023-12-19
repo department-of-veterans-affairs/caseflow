@@ -26,7 +26,9 @@ module Seeds
 
     def seed!
       RequestStore[:current_user] = User.system_user
-      create_seeds_for_change_history
+      Timecop.travel(rand(5..15).days.ago) do
+        create_seeds_for_change_history
+      end
     end
 
     private
@@ -44,280 +46,317 @@ module Seeds
 
     def create_hlr_seeds_for_change_history
       15.times do
-        # Adds hlr in in-progress tab with no decision date
         create_hlr_without_decision_date
-        # Adds Prior Decision Date in the HLR
         create_hlr_with_decision_date
-        # # adds Withdrawn status
-        create_withdrawn_hlr
-        create_cancelled_hlr
-        create_hlr_with_updated_assigned_at
-        # create_hlr_completed
         create_hlr_with_disposition
         create_hlr_with_unidentified_issue
+        create_cancelled_hlr
+        create_withdrawn_hlr
         create_hlr_with_unidentified_issue_without_decision_date
       end
     end
 
     def create_sc_seeds_for_change_history
       15.times do
-        create_sc_with_disposition
-        # create_sc_completed
-        create_sc_with_updated_assigned_at
-        create_cancelled_sc
-        create_withdrawn_sc
         create_sc_without_decision_date
         create_sc_with_decision_date
         create_sc_with_unidentified_issue
         create_sc_with_unidentified_issue_without_decision_date
+        create_sc_with_disposition
+        create_withdrawn_sc
+        create_cancelled_sc
       end
     end
 
     def create_hlr_seed(*args)
       claimant_type, issue_type = args
-      hlr = create(:higher_level_review,
-                   :with_specific_issue_type,
-                   :requires_processing,
-                   benefit_type: "vha",
-                   decision_date: 4.months.ago,
-                   claimant_type: claimant_type,
-                   issue_type: issue_type,
-                   number_of_claimants: 1)
-      hlr.create_business_line_tasks!
+      PaperTrail.request(enabled: false) do
+        create(:higher_level_review,
+               :with_intake,
+               :with_issue_type,
+               :processed,
+               :update_assigned_at,
+               assigned_at: rand(1.year.ago..10.minutes.ago),
+               benefit_type: "vha",
+               decision_date: 4.months.ago,
+               claimant_type: claimant_type,
+               issue_type: issue_type,
+               description: "seeded HLR in progress",
+               number_of_claimants: 1)
+      end
     end
 
     def create_sc_seeds(*args)
       claimant_type, issue_type = args
-      sc = create(:supplemental_claim,
-                  :with_specific_issue_type,
-                  :requires_processing,
-                  :with_intake,
-                  benefit_type: "vha",
-                  decision_date: 4.months.ago,
-                  claimant_type: claimant_type,
-                  issue_type: issue_type,
-                  number_of_claimants: 1)
-      sc.create_business_line_tasks!
+      PaperTrail.request(enabled: false) do
+        create(:supplemental_claim,
+               :with_intake,
+               :with_issue_type,
+               :processed,
+               :update_assigned_at,
+               assigned_at: rand(1.year.ago..10.minutes.ago),
+               benefit_type: "vha",
+               decision_date: 4.months.ago,
+               claimant_type: claimant_type,
+               issue_type: issue_type,
+               description: "seeded SC in progress",
+               number_of_claimants: 1)
+      end
     end
 
     # Inserts hlr with or with out decision date.
     # :reek:FeatureEnvy
     def create_hlr_with_decision_date
-      create(:higher_level_review,
-             :with_intake,
-             :with_specific_issue_type,
-             :processed,
-             :create_business_line,
-             decision_date: rand(1.year.ago..1.day.ago),
-             benefit_type: "vha",
-             claimant_type: CLAIMANT_TYPES.sample,
-             issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
-             number_of_claimants: 1)
-    end
-
-    # :reek:FeatureEnvy
-    def create_hlr_without_decision_date
+      # step 1: Insert decision review without decision date
+      # this will be in incomplete tab at this moment.
       hlr = create(:higher_level_review,
                    :with_intake,
-                   :with_specific_issue_type,
+                   :without_decision_date,
                    :processed,
-                   :create_business_line,
+                   :update_assigned_at,
+                   assigned_at: rand(1.year.ago..1.day.ago),
                    benefit_type: "vha",
                    claimant_type: CLAIMANT_TYPES.sample,
                    issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
+                   description: "with decision date added",
                    number_of_claimants: 1)
-      hlr.create_business_line_tasks!
-      hlr.establishment_processed_at = Time.zone.now
-      hlr.save
+
+      # step 2: add decision date and change the status of task to assigned
+      # this will move decision review to in progress tab.
+      ri = hlr.request_issues.last
+      Timecop.travel(rand(17.days.ago..1.day.ago)) do
+        create_request_issues_update(ri)
+      end
+      hlr
     end
 
     # :reek:FeatureEnvy
     def create_sc_with_decision_date
-      sc = create(:supplemental_claim,
-                  :with_intake,
-                  :with_specific_issue_type,
-                  :processed,
-                  decision_date: rand(1.year.ago..1.day.ago),
-                  benefit_type: "vha",
-                  claimant_type: CLAIMANT_TYPES.sample,
-                  issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
-                  number_of_claimants: 1)
-      sc.create_business_line_tasks!
+      # step 1: Insert decision review without decision date
+      # this will be in incomplete tab at this moment.
+      sc = create_sc_without_decision_date
 
-      sc.establishment_processed_at = Time.zone.now
-      sc.save
+      # step 2: add decision date and change the status of task to assigned
+      # this will move decision review to in progress tab.
+      ri = sc.request_issues.last
+      Timecop.travel(rand(17.days.ago..1.day.ago)) do
+        create_request_issues_update(ri)
+      end
+      sc
+    end
+
+    # :reek:FeatureEnvy
+    def create_hlr_without_decision_date
+      # step 1: create decision review without decision date.
+      # will be in-complete decision
+
+      hlr = create(:higher_level_review,
+                   :with_intake,
+                   :without_decision_date,
+                   :processed,
+                   :update_assigned_at,
+                   assigned_at: rand(1.year.ago..1.day.ago),
+                   benefit_type: "vha",
+                   claimant_type: CLAIMANT_TYPES.sample,
+                   issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
+                   description: "with decision date added",
+                   number_of_claimants: 1)
+      hlr
     end
 
     # :reek:FeatureEnvy
     def create_sc_without_decision_date
+      # step 1: create Supplemental claim without decision date.
+      # will be in-complete decision
+
       sc = create(:supplemental_claim,
                   :with_intake,
-                  :with_specific_issue_type,
+                  :without_decision_date,
                   :processed,
+                  :update_assigned_at,
+                  assigned_at: rand(1.year.ago..1.day.ago),
                   benefit_type: "vha",
                   claimant_type: CLAIMANT_TYPES.sample,
                   issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
+                  description: "with decision date added",
                   number_of_claimants: 1)
-      sc.create_business_line_tasks!
 
-      sc.establishment_processed_at = Time.zone.now
-      sc.save
+      sc
     end
 
+    # :reek:FeatureEnvy
     def create_withdrawn_hlr
+      # step1: create decision review with decision date
+      # it will be in-progress
       hlr = create(:higher_level_review,
                    :with_intake,
-                   :with_specific_issue_type,
-                   :processed,
+                   :with_issue_type,
                    benefit_type: "vha",
-                   decision_date: Time.zone.now,
-                   withdraw: true,
+                   decision_date: rand(1.year.ago..1.day.ago),
                    claimant_type: CLAIMANT_TYPES.sample,
                    issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
+                   description: "withdrawn case",
                    number_of_claimants: 1)
+
       hlr.create_business_line_tasks!
+      ri = hlr.request_issues.last
+      # step2. edit decision review and withdraw issue
+      Timecop.travel(ri.created_at + 1.day) do
+        ri.withdraw!(Time.zone.now)
+        create_request_issues_update_for_withdraw(ri)
+        task = hlr.tasks.last
+        task.status = "cancelled"
+        task.cancelled_by_id = VhaBusinessLine.singleton.users.sample.id
+        task.save
+      end
     end
 
+    # :reek:FeatureEnvy
     def create_withdrawn_sc
+      # step1: create decision review with decision date
+      # it will be in-progress
       sc = create(:supplemental_claim,
                   :with_intake,
-                  :with_specific_issue_type,
-                  :processed,
+                  :with_issue_type,
                   benefit_type: "vha",
-                  decision_date: Time.zone.now,
+                  decision_date: rand(1.year.ago..1.day.ago),
                   claimant_type: CLAIMANT_TYPES.sample,
                   issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
-                  withdraw: true,
+                  description: "withdrawn case",
                   number_of_claimants: 1)
+
       sc.create_business_line_tasks!
+      ri = sc.request_issues.last
+
+      # step2. edit decision review and withdraw issue
+
+      Timecop.travel(ri.created_at + 1.day) do
+        ri.withdraw!(Time.zone.now)
+        create_request_issues_update_for_withdraw(ri)
+
+        task = sc.tasks.last
+        task.status = "cancelled"
+        task.cancelled_by_id = VhaBusinessLine.singleton.users.sample.id
+        task.save
+      end
     end
 
     # :reek:FeatureEnvy
     def create_cancelled_hlr
+      # step 1: create decision request with decision date
+      # in progress tab
+
       hlr = create(:higher_level_review,
                    :with_intake,
-                   :with_specific_issue_type,
+                   :with_issue_type,
                    decision_date: rand(1.year.ago..1.day.ago),
                    benefit_type: "vha",
                    claimant_type: CLAIMANT_TYPES.sample,
                    issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
+                   description: "Cancelled task",
                    number_of_claimants: 1)
+
       hlr.create_business_line_tasks!
-      ri = RequestIssue.find_by(decision_review: hlr)
-      ri.remove!
-      task = Task.find_by(appeal: hlr)
-      task.status = "cancelled"
-      task.cancelled_by_id = VhaBusinessLine.singleton.users.sample.id
-      task.save
+      ri = hlr.request_issues.last
+
+      # step 2. remove the issue from the decision review, which should cancel the task
+
+      Timecop.travel(ri.updated_at + rand(1..3).days) do
+        ri.remove!
+        create_request_issues_update_for_cancel(ri)
+        task = hlr.tasks.last
+        task.status = "cancelled"
+        task.cancelled_by_id = VhaBusinessLine.singleton.users.sample.id
+        task.save
+      end
     end
 
     # :reek:FeatureEnvy
     def create_cancelled_sc
       sc = create(:supplemental_claim,
                   :with_intake,
-                  :with_specific_issue_type,
+                  :with_issue_type,
                   decision_date: rand(1.year.ago..1.day.ago),
                   benefit_type: "vha",
                   claimant_type: CLAIMANT_TYPES.sample,
                   issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
+                  description: "Cancelled task",
                   number_of_claimants: 1)
+
       sc.create_business_line_tasks!
-      ri = RequestIssue.find_by(decision_review: sc)
-      ri.remove!
-      task = Task.find_by(appeal: sc)
-      task.status = "cancelled"
-      task.cancelled_by_id = VhaBusinessLine.singleton.users.sample.id
-      task.save
-    end
+      ri = sc.request_issues.last
 
-    # updates assigned dates after hlr is created
-    # :reek:FeatureEnvy
-    def create_hlr_with_updated_assigned_at
-      hlr = create(:higher_level_review,
-                   :with_intake,
-                   :with_specific_issue_type,
-                   :processed,
-                   decision_date: rand(1.year.ago..1.day.ago),
-                   benefit_type: "vha",
-                   claimant_type: CLAIMANT_TYPES.sample,
-                   issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
-                   number_of_claimants: 1)
-      hlr.create_business_line_tasks!
+      # step 2. remove the issue from the decision review, which should cancel the task
 
-      task = Task.find_by(appeal: hlr)
-      task.assigned_at = rand(1.year.ago..1.day.ago)
-      task.save!
-    end
-
-    # :reek:FeatureEnvy
-    def create_sc_with_updated_assigned_at
-      sc = create(:supplemental_claim,
-                  :with_intake,
-                  :with_specific_issue_type,
-                  :processed,
-                  decision_date: rand(1.year.ago..1.day.ago),
-                  benefit_type: "vha",
-                  claimant_type: CLAIMANT_TYPES.sample,
-                  issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
-                  number_of_claimants: 1)
-      sc.create_business_line_tasks!
-
-      task = Task.find_by(appeal: sc)
-      task.assigned_at = rand(1.year.ago..1.day.ago)
-      task.save!
+      Timecop.travel(ri.updated_at + rand(1..3).days) do
+        ri.remove!
+        create_request_issues_update_for_cancel(ri)
+        task = sc.tasks.last
+        task.assigned_at = Time.zone.now
+        task.status = "cancelled"
+        task.cancelled_by_id = VhaBusinessLine.singleton.users.sample.id
+        task.save
+      end
     end
 
     # adds hlr with random disposition.
     # :reek:FeatureEnvy
     def create_hlr_with_disposition
-      hlr = create(:higher_level_review,
-                   :with_intake,
-                   :with_specific_issue_type,
-                   :with_disposition,
-                   :with_update_users,
-                   decision_date: rand(1.year.ago..1.day.ago),
-                   claimant_type: CLAIMANT_TYPES.sample,
-                   issue_type: Constants::ISSUE_CATEGORIES["vha"].sample,
-                   benefit_type: "vha",
-                   disposition: DISPOSITION_LIST.sample)
-      hlr.create_business_line_tasks!
-      task = Task.find_by(appeal: hlr)
-      task.status = "completed"
-      vha = VhaBusinessLine.singleton
-      task.completed_by_id = vha.users.sample.id
-      task.save!
+      hlr = create_hlr_with_decision_date
+
+      # step 3: add disposition to the decision review and change status to complete.
+      # will be in complete tab
+      Timecop.travel(hlr.updated_at + 1.day) do
+        create(:decision_issue,
+               benefit_type: "vha",
+               request_issues: hlr.request_issues,
+               decision_review: hlr,
+               disposition: DISPOSITION_LIST.sample,
+               caseflow_decision_date: Time.zone.now)
+
+        task = hlr.tasks.last
+        task.status = "completed"
+        task.updated_at = Time.zone.now + 1.minute
+        vha = VhaBusinessLine.singleton
+        task.completed_by_id = vha.users.sample.id
+        task.save!
+      end
     end
 
     # :reek:FeatureEnvy
     def create_sc_with_disposition
-      sc = create(:supplemental_claim,
-                  :with_intake,
-                  :with_request_issue,
-                  :with_disposition,
-                  :with_update_users,
-                  claimant_type: CLAIMANT_TYPES.sample,
-                  disposition: DISPOSITION_LIST.reject { |disp| disp == "DTA Error" }.sample,
-                  benefit_type: "vha")
-      sc.create_business_line_tasks!
+      sc = create_sc_with_decision_date
 
-      task = Task.find_by(appeal: sc)
-      task.status = "completed"
-      vha = VhaBusinessLine.singleton
-      task.completed_by_id = vha.users.sample.id
-      task.save!
+      # step 3: add disposition to the decision review and change status to complete.
+      # will be in complete tab
+      Timecop.travel(sc.updated_at + 1.day) do
+        create(:decision_issue,
+               benefit_type: "vha",
+               request_issues: sc.request_issues,
+               decision_review: sc,
+               disposition: DISPOSITION_LIST.sample,
+               caseflow_decision_date: Time.zone.now)
+
+        task = sc.tasks.last
+        task.status = "completed"
+        task.updated_at = Time.zone.now + 1.minute
+        vha = VhaBusinessLine.singleton
+        task.completed_by_id = vha.users.sample.id
+        task.save!
+      end
     end
 
     # :reek:FeatureEnvy
     def create_hlr_with_unidentified_issue
-      hlr = create(:higher_level_review,
-                   :with_intake,
-                   :unidentified_issue,
-                   :with_update_users,
-                   benefit_type: "vha",
-                   claimant_type: CLAIMANT_TYPES.sample,
-                   decision_date: rand(1.year.ago..1.day.ago))
-
-      hlr.create_business_line_tasks!
+      # this will create unidentified issue without decision date as a step 1.
+      # decision review under this case will be in incomplete tab
+      hlr = create_hlr_with_unidentified_issue_without_decision_date
+      ri = hlr.request_issues.last
+      Timecop.travel(hlr.created_at + rand(1..4).day) do
+        # step 2: remove the unidentified issue and add new issue with decision date
+        # decision review now will be moved to progress tab as it will have new identified issue and decision date.
+        create_step2_for_unidentified_issues(ri)
+      end
     end
 
     # :reek:FeatureEnvy
@@ -325,37 +364,112 @@ module Seeds
       hlr = create(:higher_level_review,
                    :with_intake,
                    :unidentified_issue,
-                   :with_update_users,
+                   :update_assigned_at,
+                   assigned_at: rand(1.year.ago..10.minutes.ago),
                    benefit_type: "vha",
                    claimant_type: CLAIMANT_TYPES.sample)
 
       hlr.create_business_line_tasks!
       hlr.establishment_processed_at = Time.zone.now
       hlr.save
+
+      hlr
     end
 
     # :reek:FeatureEnvy
     def create_sc_with_unidentified_issue
-      sc = create(:supplemental_claim,
-                  :with_intake,
-                  :unidentified_issue,
-                  benefit_type: "vha",
-                  claimant_type: CLAIMANT_TYPES.sample,
-                  decision_date: rand(1.year.ago..1.day.ago))
-      sc.create_business_line_tasks!
+      sc = create_sc_with_unidentified_issue_without_decision_date
+      ri = sc.request_issues.last
+
+      Timecop.travel(sc.updated_at + rand(1..5).days) do
+        # step 2: remove the unidentified issue and add new issue with decision date
+        # decision review now will be moved to progress tab as it will have new identified issue and decision date.
+        create_step2_for_unidentified_issues(ri)
+      end
     end
 
     # :reek:FeatureEnvy
     def create_sc_with_unidentified_issue_without_decision_date
-      sc = create(:supplemental_claim,
-                  :with_intake,
-                  :unidentified_issue,
-                  benefit_type: "vha",
-                  claimant_type: CLAIMANT_TYPES.sample)
-      sc.create_business_line_tasks!
+      # step 1: create supplemental claim with unidentified issue
+      create(:supplemental_claim,
+             :with_intake,
+             :unidentified_issue,
+             :update_assigned_at,
+             :processed,
+             assigned_at: rand(1.year.ago..10.minutes.ago),
+             benefit_type: "vha",
+             description: "unidentified issue without decision date",
+             claimant_type: CLAIMANT_TYPES.sample)
+    end
 
-      sc.establishment_processed_at = Time.zone.now
-      sc.save
+    # :reek:FeatureEnvy
+    def create_request_issues_update(request_issue)
+      request_issue.save_decision_date!(rand(1.year.ago..1.day.ago))
+
+      create(:request_issues_update,
+             review: request_issue.decision_review,
+             user: RequestStore[:current_user],
+             submitted_at: Time.zone.now,
+             processed_at: Time.zone.now,
+             last_submitted_at: Time.zone.now,
+             attempted_at: Time.zone.now,
+             updated_at: Time.zone.now + 1.second,
+             edited_request_issue_ids: [request_issue.id],
+             before_request_issue_ids: [request_issue.id],
+             after_request_issue_ids: [request_issue.id])
+    end
+
+    # :reek:FeatureEnvy
+    def create_request_issues_update_for_withdraw(request_issue)
+      create(:request_issues_update,
+             review: request_issue.decision_review,
+             user: RequestStore[:current_user],
+             submitted_at: Time.zone.now,
+             processed_at: Time.zone.now,
+             edited_request_issue_ids: [],
+             before_request_issue_ids: [request_issue.id],
+             last_submitted_at: Time.zone.now,
+             attempted_at: Time.zone.now,
+             after_request_issue_ids: [request_issue.id],
+             withdrawn_request_issue_ids: [request_issue.id])
+    end
+
+    # :reek:FeatureEnvy
+    def create_request_issues_update_for_cancel(request_issue)
+      create(:request_issues_update,
+             review: request_issue.decision_review,
+             user: RequestStore[:current_user],
+             submitted_at: Time.zone.now,
+             processed_at: Time.zone.now,
+             edited_request_issue_ids: [],
+             before_request_issue_ids: [request_issue.id],
+             last_submitted_at: Time.zone.now,
+             attempted_at: Time.zone.now,
+             after_request_issue_ids: [])
+    end
+
+    # :reek:FeatureEnvy
+    def create_step2_for_unidentified_issues(request_issue)
+      request_issue.update(closed_status: "removed", closed_at: Time.zone.now)
+      second_request_issue = create(:request_issue,
+                              decision_date: 3.months.ago,
+                              benefit_type: request_issue.decision_review.benefit_type,
+                              nonrating_issue_category: "Other",
+                              nonrating_issue_description: "issue added after removing unidentified issues",
+                              decision_review: request_issue.decision_review)
+
+      request_issue.decision_review.create_business_line_tasks!
+
+      create(:request_issues_update,
+             review: request_issue.decision_review,
+             user: RequestStore[:current_user],
+             submitted_at: Time.zone.now,
+             processed_at: Time.zone.now,
+             edited_request_issue_ids: [],
+             before_request_issue_ids: [request_issue.id],
+             last_submitted_at: Time.zone.now,
+             attempted_at: Time.zone.now,
+             after_request_issue_ids: [second_request_issue.id])
     end
   end
 end

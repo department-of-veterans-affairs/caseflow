@@ -13,6 +13,10 @@ FactoryBot.define do
     end
 
     transient do
+      assigned_at { Time.zone.now }
+    end
+
+    transient do
       claimant_type { :none }
     end
 
@@ -26,6 +30,10 @@ FactoryBot.define do
 
     transient do
       withdraw { false }
+    end
+
+    transient do
+      description { nil }
     end
 
     transient do
@@ -161,29 +169,29 @@ FactoryBot.define do
       end
     end
 
-    # :reek:DuplicateMethodCall
-    trait :with_specific_issue_type do
-      after(:create) do |hlr, evaluator|
-        ri = create(:request_issue,
-                    :add_decision_date,
-                    decision_date: evaluator.decision_date,
-                    benefit_type: hlr.benefit_type,
-                    nonrating_issue_category: evaluator.issue_type,
-                    nonrating_issue_description: "#{hlr.business_line.name} Seeded issue",
-                    decision_review: hlr)
+    trait :with_issue_type do
+      after(:create) do |higher_level_review, evaluator|
+        create(:request_issue,
+               decision_date: evaluator.decision_date,
+               benefit_type: higher_level_review.benefit_type,
+               nonrating_issue_category: evaluator.issue_type,
+               nonrating_issue_description: "#{higher_level_review.business_line.name} #{evaluator.description}",
+               decision_review: higher_level_review)
 
         if evaluator.veteran
-          hlr.veteran_file_number = evaluator.veteran.file_number
-          hlr.save
+          higher_level_review.veteran_file_number = evaluator.veteran.file_number
+          higher_level_review.save
         end
+      end
+    end
 
-        if evaluator.withdraw
-          ri.withdraw!(Time.zone.now)
-        end
-
-        if evaluator.remove
-          ri.remove!
-        end
+    trait :without_decision_date do
+      after(:create) do |hlr, evaluator|
+        create(:request_issue,
+               benefit_type: hlr.benefit_type,
+               nonrating_issue_category: evaluator.issue_type,
+               nonrating_issue_description: "#{hlr.business_line.name} #{evaluator.description}",
+               decision_review: hlr)
       end
     end
 
@@ -203,14 +211,6 @@ FactoryBot.define do
       after(:create) do |hlr|
         hlr.submit_for_processing!
         hlr.create_business_line_tasks!
-      end
-    end
-
-    trait :with_update_users do
-      after(:create) do |hlr|
-        hlr.create_business_line_tasks!
-
-        create(:request_issues_update, :requires_processing, review: hlr)
       end
     end
 
@@ -257,6 +257,15 @@ FactoryBot.define do
                benefit_type: hlr.benefit_type,
                decision_review: hlr,
                decision_date: evaluator.decision_date.presence ? evaluator.decision_date : nil)
+      end
+    end
+
+    trait :update_assigned_at do
+      after(:create) do |hlr, evaluator|
+        hlr.create_business_line_tasks!
+        task = hlr.tasks.last
+        task.assigned_at = evaluator.assigned_at
+        task.save!
       end
     end
   end

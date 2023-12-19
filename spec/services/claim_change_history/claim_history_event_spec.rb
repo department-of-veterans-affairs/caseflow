@@ -413,9 +413,13 @@ describe ClaimHistoryEvent do
                id: new_request_issue_id,
                nonrating_issue_category: "Updated issue",
                nonrating_issue_description: "Updated issue description",
-               decision_date: Time.zone.today,
-               # This attribute has to match within 15 seconds of the request issues update to guess the event type
-               decision_date_added_at: DateTime.parse(change_data["request_issue_update_time"]))
+               decision_date: Time.zone.today)
+      end
+
+      before do
+        # This attribute has to match within 15 seconds of the request issues update to guess the event type
+        request_issue.decision_date_added_at = DateTime.parse(change_data["request_issue_update_time"])
+        request_issue.save!
       end
 
       subject { described_class.create_issue_events(change_data) }

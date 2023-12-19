@@ -2343,4 +2343,14 @@ describe RequestIssue, :all_dbs do
       end
     end
   end
+
+  context "when appeal is created with decision date" do
+    let(:appeal) { create(:appeal) }
+    let(:request_issue) { create(:request_issue, decision_date: 4.days.ago, decision_review: appeal) }
+    subject { request_issue }
+
+    it "should have add decision_date_added_at" do
+      expect(subject.decision_date_added_at).to eq(subject.created_at)
+    end
+  end
 end
