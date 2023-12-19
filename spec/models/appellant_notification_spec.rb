@@ -152,7 +152,7 @@ describe AppellantNotification do
       let(:contested) { "Appeal decision mailed (Contested claims)" }
       let(:non_contested) { "Appeal decision mailed (Non-contested claims)" }
       let(:dispatch) { LegacyAppealDispatch.new(appeal: legacy_appeal, params: params) }
-      let(:dispatch_func) { "create_decision_document_and_submit_for_processing" }
+      let(:dispatch_func) { "create_decision_document_and_submit_for_processing!" }
       it "Will notify appellant that the legacy appeal decision has been mailed (Non Contested)" do
         expect(AppellantNotification).to receive(:notify_appellant).with(legacy_appeal, non_contested)
         decision_document = dispatch.send dispatch_func, params
@@ -216,6 +216,7 @@ describe AppellantNotification do
           user: User.find(appeal.tasks.find_by(assigned_to_type: "User").assigned_to_id)
         )
       end
+      let(:dispatch_func) { "create_decision_document_and_submit_for_processing!" }
       let(:contested_dispatch) do
         AmaAppealDispatch.new(
           appeal: contested_appeal,
