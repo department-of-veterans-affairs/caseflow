@@ -276,6 +276,15 @@ describe ClaimHistoryService do
             expect(service_instance.events).to eq([])
           end
         end
+
+        context "with Blank filter" do
+          let(:filters) { { dipositions: ["Blank"] } }
+
+          it "should return events without a disposition" do
+            subject
+            expect(service_instance.events.count).to eq(14)
+          end
+        end
       end
 
       context "with issue_types filter" do
@@ -436,7 +445,7 @@ describe ClaimHistoryService do
         end
 
         context "last 7 days filter" do
-          let(:filters) { { timing: { range: "last 7 days" } } }
+          let(:filters) { { timing: { range: "last_7_days" } } }
 
           before do
             new_time = 5.days.ago
@@ -457,7 +466,7 @@ describe ClaimHistoryService do
         end
 
         context "last 30 days filter" do
-          let(:filters) { { timing: { range: "last 30 days" } } }
+          let(:filters) { { timing: { range: "last_30_days" } } }
 
           before do
             # Change the intake date for claim created and one of the issues to more than 30 days
@@ -481,7 +490,7 @@ describe ClaimHistoryService do
         end
 
         context "last 365 days filter" do
-          let(:filters) { { timing: { range: "last 365 days" } } }
+          let(:filters) { { timing: { range: "last_365_days" } } }
 
           before do
             # Change the intake date for claim created and one of the issues to less than 365 days

@@ -7,13 +7,13 @@ class ClaimHistoryService
               :processed_decision_issue_ids, :events, :filters
   attr_writer :filters
 
-  TIMING_RANGES = [
-    "before",
-    "after",
-    "between",
-    "last 7 days",
-    "last 30 days",
-    "last 365 days"
+  TIMING_RANGES = %w[
+    before
+    after
+    between
+    last_7_days
+    last_30_days
+    last_365_days
   ].freeze
 
   def initialize(business_line = VhaBusinessLine.singleton, filters = {})
@@ -102,7 +102,10 @@ class ClaimHistoryService
   def process_dispositions_filter(new_events)
     return new_events if @filters[:dispositions].blank?
 
-    new_events.select { |event| event && ensure_array(@filters[:dispositions]).include?(event.disposition) }
+    new_events.select do |event|
+      event && ensure_array(@filters[:dispositions]).include?(event.disposition) ||
+        @filters[:dispositions].include?("Blank") && event.disposition.nil?
+    end
   end
 
   def process_timing_filter(new_events)
@@ -123,9 +126,9 @@ class ClaimHistoryService
       "before" => [nil, @filters[:timing][:start_date]],
       "after" => [@filters[:timing][:start_date], nil],
       "between" => [@filters[:timing][:start_date], @filters[:timing][:end_date]],
-      "last 7 days" => [Time.zone.today - 6, Time.zone.today],
-      "last 30 days" => [Time.zone.today - 29, Time.zone.today],
-      "last 365 days" => [Time.zone.today - 364, Time.zone.today]
+      "last_7_days" => [Time.zone.today - 6, Time.zone.today],
+      "last_30_days" => [Time.zone.today - 29, Time.zone.today],
+      "last_365_days" => [Time.zone.today - 364, Time.zone.today]
     }[@filters[:timing][:range]]
   end
 

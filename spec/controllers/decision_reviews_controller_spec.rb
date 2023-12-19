@@ -750,6 +750,14 @@ describe DecisionReviewsController, :postgres, type: :controller do
         )
       end
 
+      it "calls MetricsService to record metrics" do
+        expect(MetricsService).to receive(:store_record_metric)
+        get :generate_report, format: :csv,
+                              params: { business_line_slug: non_comp_org.url}.merge(generate_report_filters)
+
+        expect(response.status).to eq 200
+      end
+
       context "missing report parameter" do
         it "raises a param is missing error when report type is missing from filters" do
           params = { business_line_slug: non_comp_org.url }.merge(generate_report_filters.except("report_type"))

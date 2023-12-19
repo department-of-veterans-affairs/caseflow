@@ -65,7 +65,9 @@ class ChangeHistoryFilterParser
       "dismissed" => "Dismissed",
       "Dismissed" => "Dismissed",
       "withdrawn" => "Withdrawn",
-      "Withdrawn" => "Withdrawn"
+      "Withdrawn" => "Withdrawn",
+      "blank" => "Blank",
+      "Blank" => "Blank"
     }
 
     filter_params[:issue_disposition]&.values&.map { |disposition| disposition_mapping[disposition] }

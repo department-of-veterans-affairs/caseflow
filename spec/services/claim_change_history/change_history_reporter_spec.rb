@@ -38,8 +38,8 @@ describe ChangeHistoryReporter do
           "events: [completed, cancelled]",
           "task_status: [testing1, testing2]",
           "claim_type: [HigherLevelReview, SupplementalClaim]",
-          "timing: {:range=>nil}",
-          "days_waiting: {:operator=>\">\", :num_days=>10}"
+          "timing: [range: None]",
+          "days_waiting: [operator: >, num_days: 10]"
         ]
         expect(subject).to eq(expected_formatted_filter)
       end

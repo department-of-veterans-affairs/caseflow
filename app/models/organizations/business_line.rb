@@ -206,7 +206,7 @@ class BusinessLine < Organization
           request_issues_updates.withdrawn_request_issue_ids, request_issues_updates.edited_request_issue_ids,
           decision_issues.caseflow_decision_date, request_issues.decision_date_added_at,
           tasks.appeal_type, tasks.appeal_id, request_issues.nonrating_issue_category, request_issues.nonrating_issue_description,
-          request_issues.decision_date, decision_issues.disposition, tasks.assigned_at,
+          request_issues.decision_date, decision_issues.disposition, tasks.assigned_at, request_issues.unidentified_issue_text,
           request_decision_issues.decision_issue_id, request_issues.closed_at AS request_issue_closed_at,
           tv.object_changes_array AS task_versions, (CURRENT_TIMESTAMP::date - tasks.assigned_at::date) AS days_waiting,
           COALESCE(intakes.veteran_file_number, higher_level_reviews.veteran_file_number, supplemental_claims.veteran_file_number) AS veteran_file_number,
@@ -295,8 +295,18 @@ class BusinessLine < Organization
 
     def dispositions_filter
       if query_params[:dispositions].present?
-        sql = where_clause_from_array(DecisionIssue, :disposition, query_params[:dispositions]).to_sql
-        " AND #{sql} "
+        disposition_params = query_params[:dispositions] - ["Blank"]
+        sql = where_clause_from_array(DecisionIssue, :disposition, disposition_params).to_sql
+
+        if query_params[:dispositions].include?("Blank")
+          if disposition_params.empty?
+            " AND decision_issues.disposition IS NULL "
+          else
+            " AND (#{sql} OR decision_issues.disposition IS NULL) "
+          end
+        else
+          " AND #{sql} "
+        end
       end
     end
 
@@ -326,6 +336,7 @@ class BusinessLine < Organization
       end
     end
 
+    # rubocop:disable Metrics/AbcSize
     def station_id_filter
       if query_params[:facilities].present?
         <<-SQL
@@ -336,6 +347,8 @@ class BusinessLine < Organization
             #{User.arel_table.alias(:update_users)[:station_id].in(query_params[:facilities]).to_sql}
             OR
             #{User.arel_table.alias(:decision_users)[:station_id].in(query_params[:facilities]).to_sql}
+            OR
+            #{User.arel_table.alias(:decision_users_completed_by)[:station_id].in(query_params[:facilities]).to_sql}
           )
         SQL
       end
@@ -351,10 +364,13 @@ class BusinessLine < Organization
             #{User.arel_table.alias(:update_users)[:css_id].in(query_params[:personnel]).to_sql}
             OR
             #{User.arel_table.alias(:decision_users)[:css_id].in(query_params[:personnel]).to_sql}
+            OR
+            #{User.arel_table.alias(:decision_users_completed_by)[:css_id].in(query_params[:personnel]).to_sql}
           )
         SQL
       end
     end
+    # rubocop:enable Metrics/AbcSize
 
     #################### End of Change history filter helpers ########################
 
