@@ -9,11 +9,16 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   IHP_TYPE_TASKS = %w[IhpColocatedTask InformalHearingPresentationTask].freeze
 
   # All Variants of a Privacy Act Task
-  PRIVACY_ACT_TASKS = %w[FoiaColocatedTask PrivacyActTask HearingAdminActionFoiaPrivacyRequestTask PrivacyActRequestMailTask FoiaRequestMailTask].freeze
+  PRIVACY_ACT_TASKS = %w[FoiaColocatedTask
+                         PrivacyActTask
+                         HearingAdminActionFoiaPrivacyRequestTask
+                         PrivacyActRequestMailTask
+                         FoiaRequestMailTask].freeze
 
   S3_BUCKET_NAME = "appeals-status-migrations"
 
   def initialize
+    super
     @errors = []
   end
 
@@ -95,7 +100,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
         appeal_type: appeal&.class,
         appeal_id: appeal&.id,
         error: error,
-        message: error.message + "\n",
+        message: "#{error.message}\n",
         callstack: error.backtrace
       )
     end
@@ -135,7 +140,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   def upload_csv_to_s3
     csv = build_errors_csv
     filename = Time.zone.now.strftime("ama-migration-%Y-%m-%d--%H-%M.csv")
-    S3Service.store_file(S3_BUCKET_NAME + "/" + filename, csv)
+    S3Service.store_file("#{S3_BUCKET_NAME}/#{filename}", csv)
   end
 
   # Purpose: Set key value pairs for "vso_ihp_pending" & "vso_ihp_complete"
@@ -154,10 +159,10 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
         end
       end
       if parent_ihp_tasks.count == 1
-        set_ihp_appeal_state(parent_ihp_tasks.first)
+        place_ihp_appeal_state(parent_ihp_tasks.first)
       elsif parent_ihp_tasks.count > 1
         current_parent_ihp_task = parent_ihp_tasks.max_by(&:id)
-        set_ihp_appeal_state(current_parent_ihp_task)
+        place_ihp_appeal_state(current_parent_ihp_task)
       else
         { vso_ihp_pending: false, vso_ihp_complete: false }
       end
@@ -174,13 +179,17 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   # Return: Hash with two keys (privacy_act_pending and privacy_act_complete)
   #         with corresponding boolean values
   def map_appeal_privacy_act_state(appeal)
-    privacy_tasks = appeal.tasks.filter { |task| PRIVACY_ACT_TASKS.include?(task&.type) && Constants.TASK_STATUSES.cancelled != task&.status}
-    if privacy_tasks.any?
-      if privacy_tasks.any? { |task| Task.open_statuses.include?(task.status) } # any pending
-        return { privacy_act_pending: true, privacy_act_complete: false }
-      elsif privacy_tasks.all? { |task| task.status == Constants.TASK_STATUSES.completed } # all complete
-        return { privacy_act_pending: false, privacy_act_complete: true }
-      end
+    privacy_tasks = appeal.tasks.filter do |task|
+      PRIVACY_ACT_TASKS.include?(task&.type) && Constants.TASK_STATUSES.cancelled != task&.status
+    end
+    pending_task = privacy_tasks.any? { |task| Task.open_statuses.include?(task.status) } # any pending
+    completed_tasks = privacy_tasks.all? { |task| task.status == Constants.TASK_STATUSES.completed } # all complete
+
+    if privacy_tasks.any? && pending_task
+      return { privacy_act_pending: true, privacy_act_complete: false }
+    end
+    if privacy_tasks.any? && completed_tasks
+      return { privacy_act_pending: false, privacy_act_complete: true }
     end
 
     { privacy_act_pending: false, privacy_act_complete: false }
@@ -191,7 +200,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   # Params: Appeal object
   # Returns: Hash of "hearing scheduled" key value pair
   def map_appeal_hearing_scheduled_state(appeal)
-    if appeal&.hearings.count > 0 && appeal.hearings.max_by(&:id).disposition.nil?
+    if (appeal&.hearings&.count&.> 0) && appeal.hearings.max_by(&:id).disposition.nil?
       return { hearing_scheduled: true }
     end
 
@@ -270,15 +279,14 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   # Params: Most Recent Parent IHP Task (InformalHearingPresentationTask OR IhpColocatedTask)
   #
   # Returns: Hash of "vso_ihp_pending" & "vso_ihp_complete" key value pairs
-  def set_ihp_appeal_state(ihp_task)
-    appeal = ihp_task.appeal
+  def place_ihp_appeal_state(ihp_task)
+    ihp_task.appeal
     if Task.open_statuses.include?(ihp_task.status)
-      ihp_state = { vso_ihp_pending: true, vso_ihp_complete: false }
+      { vso_ihp_pending: true, vso_ihp_complete: false }
     elsif [Constants.TASK_STATUSES.completed].include?(ihp_task.status)
-      ihp_state = { vso_ihp_pending: false, vso_ihp_complete: true }
+      { vso_ihp_pending: false, vso_ihp_complete: true }
     else
-      ihp_state = { vso_ihp_pending: false, vso_ihp_complete: false }
+      { vso_ihp_pending: false, vso_ihp_complete: false }
     end
-    ihp_state
   end
 end

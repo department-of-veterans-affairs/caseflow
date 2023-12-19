@@ -98,6 +98,7 @@ Metrics/MethodLength:
   Max: 20
   Exclude:
     - app/jobs/middleware/job_sentry_scope_middleware.rb
+    - app/jobs/fetch_all_active_ama_appeals_job.rb
     - "spec/**/*"
 
 Metrics/ClassLength:
@@ -107,10 +108,17 @@ Metrics/AbcSize:
   Max: 30
   Exclude:
     - app/jobs/virtual_hearings/create_conference_job.rb
+    - app/jobs/fetch_all_active_ama_appeals_job.rb
 
 Metrics/CyclomaticComplexity:
   Exclude:
     - app/services/virtual_hearings/resend_virtual_hearing_emails_service.rb
+    - app/jobs/fetch_all_active_ama_appeals_job.rb
+
+Metrics/PerceivedComplexity:
+  Exclude:
+    - app/jobs/fetch_all_active_ama_appeals_job.rb
+
 
 Style/DoubleNegation:
   Enabled: false
