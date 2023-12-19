@@ -679,9 +679,6 @@ RSpec.feature "Case details", :all_dbs do
 
       scenario "access the appeal's case details" do
         reload_case_detail_page(appeal.external_id)
-        # for some reason the reload method above is still not letting the backend catch up on initial request
-        # so we'll run this check again but for the error banner instead
-        page.find("a", text: "refresh the page").click if page.has_text?("NonUniqueResultException")
         expect(page).to have_content(COPY::DUPLICATE_PHONE_NUMBER_TITLE)
 
         bgs.inaccessible_appeal_vbms_ids = []
