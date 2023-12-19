@@ -1,9 +1,9 @@
+# frozen_string_literal: true
+
 # End Products in VBMS get established (through the processing of End Product Establishments in Caseflow)
 # with a payee code. That code corresponds to the type of claimant on the claim (Veteran - 00, Spouse - 10, Child - 11).
 # If a claim gets established with the incorrect payee code we do not have the ability to update the payee code in VBMS.
 # Therefore we need to cancel the claim and re establish it with the correct payee code.
-
-# frozen_string_literal: true
 
 module WarRoom
   class PayeeCodeUpdate
@@ -40,7 +40,7 @@ module WarRoom
         claim_date: epe.claim_date,
         code: epe.code,
         station: epe.station,
-        claimant_participant_id: (!claimant.nil?) ? claimant.participant_id : epe.claimant_participant_id,
+        claimant_participant_id: claimant.present? ? claimant.participant_id : epe.claimant_participant_id,
         payee_code: correct_payee_code,
         doc_reference_id: epe.doc_reference_id,
         development_item_reference_id: epe.development_item_reference_id,
