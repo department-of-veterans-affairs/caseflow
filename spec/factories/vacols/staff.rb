@@ -6,8 +6,11 @@ FactoryBot.define do
       user { nil }
 
       generated_sattyid do
-        FactoryBot.sequence_by_name(:sattyid).next while VACOLS::Staff.find_by(sattyid: generate(:sattyid))
-        generate(:sattyid)
+        new_sattyid = generate(:sattyid)
+
+        new_sattyid = generate(:sattyid) while VACOLS::Staff.exists?(sattyid: new_sattyid)
+
+        new_sattyid
       end
     end
 
