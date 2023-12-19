@@ -12,9 +12,14 @@ RSpec.feature("The Correspondence Intake page") do
 
   context "intake form feature toggle" do
     before :each do
-      # User.authenticate!(roles: ["Mail Intake"])
-      # User.authenticate!(roles: ["Mail Team"])
-      @correspondence_uuid = "123456789"
+      veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
+      create(
+        :correspondence,
+        veteran_id: veteran.id,
+        uuid: SecureRandom.uuid,
+        va_date_of_receipt: Time.zone.local(2023, 1, 1)
+      )
+      @correspondence_uuid = Correspondence.first.uuid
     end
 
     it "routes user to /unauthorized if the feature toggle is disabled" do
@@ -33,8 +38,14 @@ RSpec.feature("The Correspondence Intake page") do
   context "intake form shell" do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      # User.authenticate!(roles: ["Mail Intake"])
-      @correspondence_uuid = "123456789"
+      veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
+      create(
+        :correspondence,
+        veteran_id: veteran.id,
+        uuid: SecureRandom.uuid,
+        va_date_of_receipt: Time.zone.local(2023, 1, 1)
+      )
+      @correspondence_uuid = Correspondence.first.uuid
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
     end
 
@@ -85,8 +96,14 @@ RSpec.feature("The Correspondence Intake page") do
   context "access 'Tasks not Related to an Appeals'" do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      # User.authenticate!(roles: ["Mail Intake"])
-      @correspondence_uuid = "0c77d6d2-c19f-4dbb-8e79-919a4090ed33"
+      veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
+      create(
+        :correspondence,
+        veteran_id: veteran.id,
+        uuid: SecureRandom.uuid,
+        va_date_of_receipt: Time.zone.local(2023, 1, 1)
+      )
+      @correspondence_uuid = Correspondence.first.uuid
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
     end
 
@@ -101,8 +118,15 @@ RSpec.feature("The Correspondence Intake page") do
   context "The mail team user is able to add unrelated tasks" do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      # User.authenticate!(roles: ["Mail Intake"])
-      @correspondence_uuid = "0c77d6d2-c19f-4dbb-8e79-919a4090ed33"
+      veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
+      create(
+        :correspondence,
+        veteran_id: veteran.id,
+        uuid: SecureRandom.uuid,
+        va_date_of_receipt: Time.zone.local(2023, 1, 1)
+      )
+
+      @correspondence_uuid = Correspondence.first.uuid
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
       click_on("button-continue")
     end
@@ -183,7 +207,7 @@ RSpec.feature("The Correspondence Intake page") do
         visit_intake_form_step_3_with_tasks_unrelated
 
         expect(page).to have_content("Tasks not related to an Appeal")
-        expect(all("button > span", text: "Edit Section").length).to eq(2)
+        expect(all("button > span", text: "Edit Section").length).to eq(3)
         expect(page).to have_content("Tasks")
         expect(page).to have_content("Task Instructions or Context")
         expect(page).to have_content("CAVC Correspondence")
@@ -208,8 +232,14 @@ RSpec.feature("The Correspondence Intake page") do
 
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      # User.authenticate!(roles: ["Mail Intake"])
-      @correspondence_uuid = "12345"
+      veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
+      create(
+        :correspondence,
+        veteran_id: veteran.id,
+        uuid: SecureRandom.uuid,
+        va_date_of_receipt: Time.zone.local(2023, 1, 1)
+      )
+      @correspondence_uuid = Correspondence.first.uuid
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
       click_on("button-continue")
       click_on("+ Add tasks")
