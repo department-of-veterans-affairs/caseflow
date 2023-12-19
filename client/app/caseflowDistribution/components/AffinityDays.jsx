@@ -40,7 +40,8 @@ const AffinityDays = (props) => {
         const updatedOptions = individualLever.options.map((op) => {
           if (op.item === option.item) {
             let validationResponse = leverInputValidation(individualLever, event);
-            const newValue = isNaN(event) ? event : individualLever.value
+            const newValue = isNaN(event) ? event : individualLever.value;
+
             if (validationResponse === 'SUCCESS') {
               op.value = event;
               leverStore.dispatch({
@@ -60,16 +61,16 @@ const AffinityDays = (props) => {
     });
 
     setAffinityLevers(levers);
-    console.log('AffinityLevers state after update:', levers);
+
   };
   const handleRadioChange = (lever, option) => {
     if (lever && option) {
-      const updatedLevers = affinityLevers.map((l) => {
-        if (l.item === lever.item) {
-          return { ...l, value: option.item };
+      const updatedLevers = affinityLevers.map((lev) => {
+        if (lev.item === lever.item) {
+          return { ...lev, value: option.item };
         }
 
-        return l;
+        return lev;
       });
 
       setAffinityLevers(updatedLevers);
@@ -114,7 +115,7 @@ const AffinityDays = (props) => {
           <div>
             <label className={lever.is_disabled ? styles.leverDisabled : styles.leverActive}
               htmlFor={`${lever.item}-${option.item}`}>
-              {`${option.text} ${option.data_type === 'number' ? option.value : ''}`}
+              {`${option.text} ${option.data_type === 'number' ? `${option.value } ${ option.unit}` : ''}`}
             </label>
           </div>
         </div>
