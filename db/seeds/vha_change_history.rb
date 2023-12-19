@@ -26,7 +26,7 @@ module Seeds
 
     def seed!
       RequestStore[:current_user] = User.system_user
-      Timecop.freeze(rand(5..15).days.ago) do
+      Timecop.travel(Time.zone.now - rand(5..15).days.ago) do
         create_seeds_for_change_history
       end
     end
@@ -124,7 +124,7 @@ module Seeds
       # step 2: add decision date and change the status of task to assigned
       # this will move decision review to in progress tab.
       ri = hlr.request_issues.last
-      Timecop.freeze(rand(17.days.ago..1.day.ago)) do
+      Timecop.travel(Time.zone.now - rand(17.days.ago..1.day.ago)) do
         create_request_issues_update(ri)
       end
       hlr
@@ -139,7 +139,7 @@ module Seeds
       # step 2: add decision date and change the status of task to assigned
       # this will move decision review to in progress tab.
       ri = sc.request_issues.last
-      Timecop.freeze(rand(17.days.ago..1.day.ago)) do
+      Timecop.travel(Time.zone.now - rand(17.days.ago..1.day.ago)) do
         create_request_issues_update(ri)
       end
       sc
@@ -201,7 +201,7 @@ module Seeds
       hlr.create_business_line_tasks!
       ri = hlr.request_issues.last
       # step2. edit decision review and withdraw issue
-      Timecop.freeze(ri.created_at + 1.day) do
+      Timecop.travel(ri.created_at + 1.day) do
         ri.withdraw!(Time.zone.now)
         create_request_issues_update_for_withdraw(ri)
         task = hlr.tasks.last
@@ -230,7 +230,7 @@ module Seeds
 
       # step2. edit decision review and withdraw issue
 
-      Timecop.freeze(ri.created_at + 1.day) do
+      Timecop.travel(ri.created_at + 1.day) do
         ri.withdraw!(Time.zone.now)
         create_request_issues_update_for_withdraw(ri)
 
@@ -261,7 +261,7 @@ module Seeds
 
       # step 2. remove the issue from the decision review, which should cancel the task
 
-      Timecop.freeze(ri.updated_at + rand(1..3).days) do
+      Timecop.travel(ri.updated_at + rand(1..3).days) do
         ri.remove!
         create_request_issues_update_for_cancel(ri)
         task = hlr.tasks.last
@@ -288,7 +288,7 @@ module Seeds
 
       # step 2. remove the issue from the decision review, which should cancel the task
 
-      Timecop.freeze(ri.updated_at + rand(1..3).days) do
+      Timecop.travel(ri.updated_at + rand(1..3).days) do
         ri.remove!
         create_request_issues_update_for_cancel(ri)
         task = sc.tasks.last
@@ -306,7 +306,7 @@ module Seeds
 
       # step 3: add disposition to the decision review and change status to complete.
       # will be in complete tab
-      Timecop.freeze(hlr.updated_at + 1.day) do
+      Timecop.travel(hlr.updated_at + 1.day) do
         create(:decision_issue,
                benefit_type: "vha",
                request_issues: hlr.request_issues,
@@ -329,7 +329,7 @@ module Seeds
 
       # step 3: add disposition to the decision review and change status to complete.
       # will be in complete tab
-      Timecop.freeze(sc.updated_at + 1.day) do
+      Timecop.travel(sc.updated_at + 1.day) do
         create(:decision_issue,
                benefit_type: "vha",
                request_issues: sc.request_issues,
@@ -352,7 +352,7 @@ module Seeds
       # decision review under this case will be in incomplete tab
       hlr = create_hlr_with_unidentified_issue_without_decision_date
       ri = hlr.request_issues.last
-      Timecop.freeze(hlr.created_at + rand(1..4).day) do
+      Timecop.travel(hlr.created_at + rand(1..4).day) do
         # step 2: remove the unidentified issue and add new issue with decision date
         # decision review now will be moved to progress tab as it will have new identified issue and decision date.
         create_step2_for_unidentified_issues(ri)
@@ -381,7 +381,7 @@ module Seeds
       sc = create_sc_with_unidentified_issue_without_decision_date
       ri = sc.request_issues.last
 
-      Timecop.freeze(sc.updated_at + rand(1..5).days) do
+      Timecop.travel(sc.updated_at + rand(1..5).days) do
         # step 2: remove the unidentified issue and add new issue with decision date
         # decision review now will be moved to progress tab as it will have new identified issue and decision date.
         create_step2_for_unidentified_issues(ri)
