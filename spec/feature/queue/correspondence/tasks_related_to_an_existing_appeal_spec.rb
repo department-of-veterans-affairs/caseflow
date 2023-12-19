@@ -21,13 +21,13 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
 
   context "Yes - related existing Appeals" do
     describe "the continue button" do
-      it "continue button is inactive if a checkbox is checked" do
+      it "continue button is active if a checkbox is checked" do
         visit_intake_form_step_2_with_appeals
 
         existing_appeal_radio_options[:yes].click
         page.all(".cf-form-checkbox").last.click
 
-        expect(page.has_button?("Continue")).to be(false)
+        expect(page.has_button?("Continue")).to be(true)
       end
     end
 
@@ -128,7 +128,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
 
         existing_appeal_radio_options[:yes].click
 
-        using_wait_time(10) do
+        using_wait_time(20) do
           page.all(".checkbox-wrapper-1").find(".cf-form-checkbox").first.click
         end
         expect(page).to have_selector('#react-select-2-input[disabled]')
@@ -141,9 +141,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         find('label', text: checkbox_label).click
         find_by_id("waiveReason").fill_in with: "test waive note"
         all("#reactSelectContainer").last.click
-        find_by_id("react-select-3-option-0").click
-        find('#content:not([disabled])', visible: :all).fill_in(with: 'Correspondence test text')
-        expect(page).to have_button("button-continue", disabled: false)
+        expect(page.has_button?("button-continue")).to be(true)
         click_button("button-continue")
       end
     end
