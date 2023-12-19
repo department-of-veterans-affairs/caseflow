@@ -25,8 +25,8 @@ class VaDotGovAddressValidator
     # Address was in the Philippines, and assigned to RO58.
     philippines_exception: :defaulted_to_philippines_RO58,
 
-    # Address was foreign (not Philippines), and assigned to RO11.
-    foreign_veteran_exception: :defaulted_to_pittsburgh_RO11,
+    # Foreign addresses need to be handled by an admin.
+    created_foreign_veteran_admin_action: :created_foreign_veteran_admin_action,
 
     # An admin needs to manually handle addresses that can't be verified.
     created_verify_address_admin_action: :created_verify_address_admin_action
@@ -47,6 +47,7 @@ class VaDotGovAddressValidator
     update_closest_regional_office
     destroy_existing_available_hearing_locations!
     create_available_hearing_locations
+
     { status: :matched_available_hearing_locations }
   end
 
@@ -54,12 +55,30 @@ class VaDotGovAddressValidator
     @valid_address ||= if valid_address_response.success?
                          valid_address_response.data
                        else
-                         manually_validate_zip_code
+                         validate_zip_code
                        end
   end
 
   def state_code
-    map_state_code_to_state_with_ro
+    map_country_code_to_state
+  end
+
+  def closest_regional_office
+    @closest_regional_office ||= begin
+      return unless closest_ro_response.success?
+
+      # Note: In `ro_facility_ids_to_geomatch`, the San Antonio facility ID and Elpaso facility Id is passed
+      # as a valid RO for any veteran living in Texas.
+      return "RO62" if closest_regional_office_facility_id_is_san_antonio?
+      return "RO49" if closest_regional_office_facility_id_is_el_paso?
+
+      RegionalOffice
+        .cities
+        .detect do |ro|
+          ro.facility_id == closest_ro_facility_id
+        end
+        .key
+    end
   end
 
   def available_hearing_locations
@@ -124,23 +143,6 @@ class VaDotGovAddressValidator
 
   private
 
-  def closest_regional_office
-    @closest_regional_office ||= begin
-      return unless closest_ro_response.success?
-      # Note: In `ro_facility_ids_to_geomatch`, the San Antonio facility ID and Elpaso facility Id is passed
-      # as a valid RO for any veteran living in Texas.
-      return "RO62" if closest_regional_office_facility_id_is_san_antonio?
-      return "RO49" if closest_regional_office_facility_id_is_el_paso?
-
-      RegionalOffice
-        .cities
-        .detect do |ro|
-          ro.facility_id == closest_ro_facility_id
-        end
-        .key
-    end
-  end
-
   def update_closest_regional_office
     appeal.update(closest_regional_office: closest_regional_office_with_exceptions)
   end
@@ -172,7 +174,7 @@ class VaDotGovAddressValidator
   end
 
   def valid_address_response
-    @valid_address_response ||= VADotGovService.validate_zip_code(address)
+    @valid_address_response ||= VADotGovService.validate_address(address)
   end
 
   def available_hearing_locations_response
@@ -218,13 +220,15 @@ class VaDotGovAddressValidator
     closest_ro_response.data.first&.dig(:facility_id)
   end
 
-  def manually_validate_zip_code
-    return if address.zip_code_not_validatable?
+  def validate_zip_code
+    if address.zip_code_not_validatable?
+      nil
+    else
+      lat_lng = ZipCodeToLatLngMapper::MAPPING[address.zip[0..4]]
 
-    lat_lng = ZipCodeToLatLngMapper::MAPPING[address.zip[0..4]]
+      return nil if lat_lng.nil?
 
-    return if lat_lng.nil?
-
-    { lat: lat_lng[0], long: lat_lng[1], country_code: address.country, state_code: address.state }
+      { lat: lat_lng[0], long: lat_lng[1], country_code: address.country, state_code: address.state }
+    end
   end
 end

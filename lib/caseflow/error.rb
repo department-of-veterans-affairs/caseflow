@@ -46,7 +46,7 @@ module Caseflow::Error
   class VaDotGovInvalidInputError < VaDotGovAPIError; end
   class VaDotGovMultipleAddressError < VaDotGovAPIError; end
   class VaDotGovNullAddressError < StandardError; end
-  class VaDotGovForeignVeteranError < SerializableError; end
+  class VaDotGovForeignVeteranError < StandardError; end
 
   class FetchHearingLocationsJobError < SerializableError; end
 

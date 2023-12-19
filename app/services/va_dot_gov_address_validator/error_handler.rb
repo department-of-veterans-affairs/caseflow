@@ -11,10 +11,6 @@ class VaDotGovAddressValidator::ErrorHandler
   def handle(error)
     if check_for_philippines_and_maybe_update
       :philippines_exception
-    elsif foreign_veteran_errors.any? { |klass| error.instance_of?(klass) }
-      appeal.va_dot_gov_address_validator.assign_ro_and_update_ahls("RO11")
-
-      :foreign_veteran_exception
     elsif verify_address_errors.any? { |klass| error.instance_of?(klass) }
       create_admin_action_for_schedule_hearing_task(
         instructions: "The appellant's address in VBMS does not exist, is incomplete, or is ambiguous.",
@@ -22,6 +18,13 @@ class VaDotGovAddressValidator::ErrorHandler
       )
 
       :created_verify_address_admin_action
+    elsif foreign_veteran_errors.any? { |klass| error.instance_of?(klass) }
+      create_admin_action_for_schedule_hearing_task(
+        instructions: "The appellant's address in VBMS is outside of US territories.",
+        admin_action_type: HearingAdminActionForeignVeteranCaseTask
+      )
+
+      :created_foreign_veteran_admin_action
     else
       # :nocov:
       raise error # rubocop:disable Style/SignalException

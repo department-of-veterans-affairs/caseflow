@@ -5,43 +5,22 @@ describe ExternalApi::VADotGovService do
     stub_const("VADotGovService", Fakes::VADotGovService)
   end
 
-  let(:address) do
-    Address.new(
-      address_line_1: "fake address",
-      address_line_2: "fake address",
-      address_line_3: "fake address",
-      city: "City",
-      state: "State",
-      zip: "11111",
-      country: "USA"
-    )
-  end
-
   describe "#validate_address" do
     it "returns validated address" do
-      result = VADotGovService.validate_address(address)
-
-      body = JSON.parse(result.response.body)
-      message_keys = body["messages"].pluck("key")
-
-      expect(result.error).to be_nil
-      expect(result.data).to_not be_nil
-      expect(message_keys).to_not include("AddressCouldNotBeFound")
-    end
-  end
-
-  describe "#validate_zip_code" do
-    it "returns invalid full address with valid geographic coordinates" do
-      result = VADotGovService.validate_zip_code(address)
-
-      body = JSON.parse(result.response.body)
-      message_keys = body["messages"].pluck("key")
+      result = VADotGovService.validate_address(
+        Address.new(
+          address_line_1: "fake address",
+          address_line_2: "fake address",
+          address_line_3: "fake address",
+          city: "City",
+          state: "State",
+          zip: "Zip",
+          country: "US"
+        )
+      )
 
       expect(result.error).to be_nil
       expect(result.data).to_not be_nil
-      expect(message_keys).to include("AddressCouldNotBeFound")
-      expect(body["geocode"]["latitude"]).to_not eq(0.0)
-      expect(body["geocode"]["longitude"]).to_not eq(0.0)
     end
   end
 

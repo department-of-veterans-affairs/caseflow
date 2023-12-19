@@ -2,7 +2,7 @@
 
 class Fakes::VADotGovService < ExternalApi::VADotGovService
   # rubocop:disable Metrics/MethodLength
-  def self.send_va_dot_gov_request(endpoint:, query: {}, **args)
+  def self.send_va_dot_gov_request(endpoint:, query: {}, **_args)
     if endpoint == VADotGovService::FACILITIES_ENDPOINT
       facilities = query[:ids].split(",").map do |id|
         data = fake_facilities_data[:data][0]
@@ -22,15 +22,7 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
       fake_facilities[:meta][:distances] = distances
       HTTPI::Response.new 200, {}, fake_facilities.to_json
     elsif endpoint == VADotGovService::ADDRESS_VALIDATION_ENDPOINT
-      request_address_keys = args[:body][:requestAddress].keys
-
-      # If request was built by self.zip_code_validations_request
-      if request_address_keys.sort == [:addressLine1, :requestCountry, :zipCode5]
-        HTTPI::Response.new 200, {}, fake_zip_code_data.to_json
-      # If request was built by self.address_validations_request
-      else
-        HTTPI::Response.new 200, {}, fake_address_data.to_json
-      end
+      HTTPI::Response.new 200, {}, fake_address_data.to_json
     elsif endpoint == VADotGovService::FACILITY_IDS_ENDPOINT
       HTTPI::Response.new 200, {}, fake_facilities_ids_data.to_json
     end
@@ -69,7 +61,7 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
           "fipsCode": "US",
           "iso2Code": "US",
           "iso3Code": "USA"
-        }
+        },
       },
       "geocode": {
         "calcDate": "2019-01-03T17:33:57+00:00",
@@ -87,52 +79,6 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
           "string"
         ],
         "validationKey": 113_008_568
-      }
-    }
-  end
-
-  def self.fake_zip_code_data
-    {
-      "messages": [
-        {
-          "code": "ADDRVAL112",
-          "key": "AddressCouldNotBeFound",
-          "text": "The Address could not be found",
-          "severity": "WARN"
-        },
-        {
-          "code": "ADDR306",
-          "key": "lowConfidenceScore",
-          "text": "VaProfile Validation Failed: Confidence Score less than 80",
-          "severity": "WARN"
-        }
-      ],
-      "address": {
-        "addressLine1": "Address",
-        "city": "Deltona",
-        "zipCode5": "32738",
-        "stateProvince": {
-          "name": "Florida",
-          "code": "FL"
-        },
-        "country": {
-          "name": "United States",
-          "code": "USA",
-          "fipsCode": "US",
-          "iso2Code": "US",
-          "iso3Code": "USA"
-        }
-      },
-      "geocode": {
-        "calcDate": "2023-10-16T14:59:05Z",
-        "latitude": 28.9075,
-        "longitude": -81.189
-      },
-      "addressMetaData": {
-        "confidenceScore": 0.0,
-        "addressType": "Domestic",
-        "deliveryPointValidation": "MISSING_ZIP",
-        "validationKey": 361_921_347
       }
     }
   end

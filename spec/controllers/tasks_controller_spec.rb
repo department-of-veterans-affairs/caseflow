@@ -879,7 +879,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           )
         end
         let!(:legacy_appeal) do
-          create(:legacy_appeal, :with_veteran_address, vacols_case: vacols_case)
+          create(:legacy_appeal, vacols_case: vacols_case)
         end
 
         let(:task_type) { :change_hearing_request_type_task }
