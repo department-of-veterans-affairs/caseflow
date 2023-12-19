@@ -19,6 +19,7 @@ export default class NumberField extends React.Component {
       <TextField
         {...this.props}
         onChange={this.onChange}
+        aria-readonly={this.props.readOnly}
       />
     </div>;
   }

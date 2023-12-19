@@ -78,6 +78,7 @@ const BatchSize = (props) => {
                 value={lever.value}
                 errorMessage={lever.errorMessage}
                 onChange={updateLever(index, lever.item, lever.item)}
+                tabIndex={lever.is_disabled ? -1 : undefined}
               />
             }
           </div>

@@ -80,6 +80,8 @@ const AffinityDays = (props) => {
     }
   };
   const generateFields = (dataType, option, lever) => {
+    const useAriaLabel = !lever.is_disabled;
+    const tabIndex = lever.is_disabled ? -1 : undefined;
 
     if (dataType === 'number') {
       return (
@@ -94,6 +96,8 @@ const AffinityDays = (props) => {
           onChange={(event) => updatedLever(lever, option)(event)}
           id={`${lever.item}-${option.value}`}
           inputID={`${lever.item}-${option.value}-input`}
+          useAriaLabel={useAriaLabel}
+          tabIndex={tabIndex}
         />
       );
     }
@@ -108,6 +112,8 @@ const AffinityDays = (props) => {
           onChange={(event) => updatedLever(lever, option)(event)}
           id={`${lever.item}-${option.value}`}
           inputID={`${lever.item}-${option.value}-input`}
+          useAriaLabel={useAriaLabel}
+          tabIndex={tabIndex}
         />
       );
     }

@@ -66,7 +66,6 @@ export const TextField = (props) => {
 
   const idVal = () => {
     if (inputID && inputID !== '') {
-      console.log("INPUT ID:", inputID)
       return inputID;
     } else if (name !== '') {
       return name;
@@ -106,6 +105,7 @@ export const TextField = (props) => {
             type={type}
             defaultValue={defaultValue}
             value={adjustedVal}
+            aria-readonly={readOnly}
             readOnly={readOnly}
             placeholder={placeholder}
             title={title}
