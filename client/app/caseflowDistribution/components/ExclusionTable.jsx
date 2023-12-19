@@ -26,10 +26,10 @@ const ExclusionTable = (props) => {
       <table >
         <tbody>
           <th className={styles.tableHeaderStyling}>{' '}</th>
-          <th className={styles.tableHeaderStyling}>All Legacy Hearings</th>
-          <th className={styles.tableHeaderStyling}>All AMA Hearings</th>
-          <th className={styles.tableHeaderStyling}>All AMA Direct Review Cases</th>
-          <th className={styles.tableHeaderStyling}>All AMA Evidence Submission Cases</th>
+          <th className={styles.tableHeaderStyling}>Legacy Appeals</th>
+          <th className={styles.tableHeaderStyling}>AMA Appeals</th>
+          <th className={styles.tableHeaderStyling}>AMA Direct Review Appeals</th>
+          <th className={styles.tableHeaderStyling}>AMA Evidence Submission Appeals</th>
         </tbody>
         <tbody>
           <tr>
