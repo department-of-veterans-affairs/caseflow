@@ -15,8 +15,8 @@ RSpec.feature("The Correspondence Intake page") do
       FeatureToggle.enable!(:correspondence_queue)
       organization.add_user(mail_user)
       mail_user.reload
-      @correspondence_uuid = "123456789"
-      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+      visit_intake_form_with_correspondence_load
+      @correspondence_uuid = Correspondence.first.uuid
     end
 
     it "the intake page exists" do
