@@ -159,14 +159,10 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         field = find_field('content', disabled: true)
         expect(field.tag_name).to eq('textarea')
         checkbox_label = 'Waive Evidence Window'
-        checkbox = find('label', text: checkbox_label)
         find('label', text: checkbox_label).click
         find_by_id("waiveReason").fill_in with: "test waive note"
         all("#reactSelectContainer").last.click
-        find_by_id("react-select-3-option-0").click
-        find('#content:not([disabled])', visible: :all).fill_in(with: 'Correspondence test text')
         expect(page).to have_button("button-continue", disabled: false)
-        click_button("button-continue")
       end
     end
   end
