@@ -276,8 +276,35 @@ class DecisionReviewsController < ApplicationController
   end
 
   def create_change_history_csv(filter_params)
-    base_url = "#{request.base_url}/decision_reviews/#{business_line.url}/tasks/"
-    events = ClaimHistoryService.new(business_line, filter_params).build_events
-    ChangeHistoryReporter.new(events, base_url, filter_params.to_h).as_csv
+    create_metric_log do
+      base_url = "#{request.base_url}/decision_reviews/#{business_line.url}/tasks/"
+      events = ClaimHistoryService.new(business_line, filter_params).build_events
+      ChangeHistoryReporter.new(events, base_url, filter_params.to_h).as_csv
+    end
+  end
+
+  def create_metric_log
+    start_time = Time.zone.now
+    return_data = yield
+    end_time = Time.zone.now
+
+    MetricsService.store_record_metric(
+      SecureRandom.uuid,
+      {
+        name: "generate_report",
+        message: "Generate Change History Report #{Time.zone.today} #{RequestStore[:current_user].css_id}",
+        type: "info",
+        product: "vha",
+        attrs: { service: "decision_reviews", endpoint: "generate_report" },
+        sent_to: "rails_console",
+        start: start_time,
+        end: end_time,
+        duration: (end_time - start_time) * 1000,
+        additional_info: params[:filters].as_json
+      },
+      nil
+    )
+
+    return_data
   end
 end
