@@ -67,7 +67,7 @@ const AddEvidenceSubmissionTaskView = (props) => {
           {task.isWaived && (
             <TextareaField
               name="waiveReason"
-              label="Provide a reason for the waiver"
+              label="Provide a reason for waiving the evidence window"
               onChange={handleReasonChange}
               value={task.waiveReason}
             />
