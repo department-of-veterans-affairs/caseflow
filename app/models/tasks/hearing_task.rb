@@ -52,7 +52,7 @@ class HearingTask < Task
     # but before the Legacy check to prevent premature location update.
     super
     if appeal.is_a?(LegacyAppeal)
-      if FeatureToggle.enable!(:vlj_legacy_appeal)
+      if FeatureToggle.enabled?(:vlj_legacy_appeal)
         when_scm
       elsif appeal.tasks.open.where(type: HearingTask.name).empty?
         update_legacy_appeal_location
