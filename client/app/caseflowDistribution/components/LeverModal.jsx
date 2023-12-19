@@ -6,6 +6,7 @@ import Modal from 'app/components/Modal';
 import Button from 'app/components/Button';
 import COPY from '../../../COPY';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
+import moment from 'moment';
 
 function GenerateLeverUpdateData(leverStore) {
   const levers = leverStore.getState().levers;
@@ -24,6 +25,11 @@ function GenerateLeverHistory(filteredLevers, filteredInitialLevers) {
   filteredLevers.map((lever, index) => {
     const doesDatatypeRequireComplexLogic = lever.data_type === 'radio' || lever.data_type === 'combination';
 
+    let today = new Date();
+    let todaysDate = moment(today.toISOString());
+
+    let user = "Test User";
+
     if (doesDatatypeRequireComplexLogic) {
       const selectedOption = lever.options.find(option => option.item === lever.value);
       const previousSelectedOption = filteredInitialLevers[index].options.find(option => option.item === filteredInitialLevers[index].value);
@@ -32,8 +38,8 @@ function GenerateLeverHistory(filteredLevers, filteredInitialLevers) {
 
       history.push(
         {
-          created_at: "DateTime",
-          user: "GET USER",
+          created_at: todaysDate,
+          user: user,
           title: lever.title,
           original_value: isPreviouslySelectedOptionANumber ? previousSelectedOption.value : previousSelectedOption.text,
           current_value: isSelectedOptionANumber ? selectedOption.value : selectedOption.text,
@@ -43,8 +49,8 @@ function GenerateLeverHistory(filteredLevers, filteredInitialLevers) {
     } else {
       history.push(
         {
-          created_at: "DateTime",
-          user: "GET USER",
+          created_at: todaysDate,
+          user: user,
           title: lever.title,
           original_value: filteredInitialLevers[index].value,
           current_value: lever.value,
