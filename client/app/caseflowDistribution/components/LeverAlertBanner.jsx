@@ -4,7 +4,7 @@ import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 
 const LeverAlertBanner = ({ title, message, type }) => {
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'auto' });
   }, []);
   const leverBannerAlerts = `${styles.leverAlertBanner} ${type === 'success' ? styles.leverAlertBannerSuccess : styles.leverAlertBannerError}`;
 

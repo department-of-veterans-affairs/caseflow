@@ -121,7 +121,7 @@ export const formattedLevers = [
     id: 5,
     item: 'lever_6',
     title: 'Batch Size Per Attorney*',
-    description: 'Set case distribution batch size for judges with attorney teams. The value for this data element is per attorney.',
+    description: 'Set case-distribution batch size for judges with attorney teams. The value for this data element is per attorney.',
     data_type: 'number',
     value: '3',
     unit: 'cases',
@@ -504,7 +504,7 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: true,
+    is_active: false,
     is_disabled: true,
     min_value: 0,
     max_value: 100,
@@ -527,8 +527,8 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: true,
-    is_disabled: false,
+    is_active: false,
+    is_disabled: true,
     min_value: 0,
     max_value: 100,
     algorithms_used: ['docket']
@@ -551,7 +551,7 @@ export const formattedLevers = [
       }
     ],
     is_active: false,
-    is_disabled: false,
+    is_disabled: true,
     min_value: 0,
     max_value: 100,
     algorithms_used: ['proportion']
@@ -563,8 +563,8 @@ export const formattedLevers = [
     data_type: 'number',
     value: 435,
     unit: 'days',
-    is_active: true,
-    is_disabled: false,
+    is_active: false,
+    is_disabled: true,
     min_value: 0,
     max_value: 1000,
     algorithms_used: ['proportion']
@@ -576,7 +576,7 @@ export const formattedLevers = [
     data_type: 'number',
     value: 500,
     unit: 'days',
-    is_active: false,
+    is_active: true,
     is_disabled: false,
     min_value: 0,
     max_value: 1000,
@@ -618,7 +618,7 @@ export const updatedLevers = [
     id: 5,
     item: 'lever_6',
     title: 'Batch Size Per Attorney*',
-    description: 'Set case distribution batch size for judges with attorney teams. The value for this data element is per attorney.',
+    description: 'Set case-distribution batch size for judges with attorney teams. The value for this data element is per attorney.',
     data_type: 'number',
     value: '6',
     unit: 'cases',
@@ -634,7 +634,7 @@ export const updatedLevers = [
     id: 6,
     item: 'lever_7',
     title: 'Request More Cases Minimum*',
-    description: 'Set the number of remaining cases a VLJ must have equal to or less than to request more cases. (The number entered is used to equal to or less than.)',
+    description: 'Set the number of remaining cases a VLJ must have equal to or less than to request more cases. (The number entered is used as equal to or less than)',
     data_type: 'number',
     value: 16,
     unit: 'cases',
