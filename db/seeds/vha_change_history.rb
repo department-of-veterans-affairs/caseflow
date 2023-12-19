@@ -26,7 +26,7 @@ module Seeds
 
     def seed!
       RequestStore[:current_user] = User.system_user
-      Timecop.travel(Time.zone.now - rand(5..15).days.ago) do
+      Timecop.travel(rand(5..15).days.ago) do
         create_seeds_for_change_history
       end
     end
@@ -124,7 +124,7 @@ module Seeds
       # step 2: add decision date and change the status of task to assigned
       # this will move decision review to in progress tab.
       ri = hlr.request_issues.last
-      Timecop.travel(Time.zone.now - rand(17.days.ago..1.day.ago)) do
+      Timecop.travel(rand(17.days.ago..1.day.ago)) do
         create_request_issues_update(ri)
       end
       hlr
@@ -139,7 +139,7 @@ module Seeds
       # step 2: add decision date and change the status of task to assigned
       # this will move decision review to in progress tab.
       ri = sc.request_issues.last
-      Timecop.travel(Time.zone.now - rand(17.days.ago..1.day.ago)) do
+      Timecop.travel(rand(17.days.ago..1.day.ago)) do
         create_request_issues_update(ri)
       end
       sc
