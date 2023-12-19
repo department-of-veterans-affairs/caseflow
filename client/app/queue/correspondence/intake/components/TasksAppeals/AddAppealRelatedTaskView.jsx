@@ -136,7 +136,7 @@ export const AddAppealRelatedTaskView = (props) => {
         then((appealResponse) => {
           const appealsForStore = prepareAppealForStore(appealResponse.body.appeals);
 
-          const appealArr = Object.values(appealsForStore.appeals);
+          const appealArr = Object.values(appealsForStore.appeals).sort((first, second) => first.id - second.id);
 
           dispatch(setFetchedAppeals(appealArr));
           setLoading(false);
