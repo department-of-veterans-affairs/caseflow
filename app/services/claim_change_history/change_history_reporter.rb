@@ -32,8 +32,14 @@ class ChangeHistoryReporter
 
   # :reek:FeatureEnvy
   def formatted_event_filters
-    event_filters.reject { |_, value| value.nil? }.map do |key, value|
-      value_str = value.is_a?(Array) ? "[#{value.join(', ')}]" : value.to_s
+    event_filters.reject { |_, value| value.blank? }.map do |key, value|
+      value_str = if value.is_a?(Array)
+                    "[#{value.join(', ')}]"
+                  elsif value.is_a?(Hash)
+                    "[#{value.map { |k, v| "#{k}: #{v || 'None'}" }.join(', ')}]"
+                  else
+                    value.to_s
+                  end
       "#{key}: #{value_str}"
     end
   end

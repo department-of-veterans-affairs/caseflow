@@ -206,7 +206,7 @@ class BusinessLine < Organization
           request_issues_updates.withdrawn_request_issue_ids, request_issues_updates.edited_request_issue_ids,
           decision_issues.caseflow_decision_date, request_issues.decision_date_added_at,
           tasks.appeal_type, tasks.appeal_id, request_issues.nonrating_issue_category, request_issues.nonrating_issue_description,
-          request_issues.decision_date, decision_issues.disposition, tasks.assigned_at,
+          request_issues.decision_date, decision_issues.disposition, tasks.assigned_at, request_issues.unidentified_issue_text,
           request_decision_issues.decision_issue_id, request_issues.closed_at AS request_issue_closed_at,
           tv.object_changes_array AS task_versions, (CURRENT_TIMESTAMP::date - tasks.assigned_at::date) AS days_waiting,
           COALESCE(intakes.veteran_file_number, higher_level_reviews.veteran_file_number, supplemental_claims.veteran_file_number) AS veteran_file_number,

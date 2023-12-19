@@ -201,7 +201,8 @@ class ClaimHistoryEvent
       if request_issue
         {
           "nonrating_issue_category" => request_issue.nonrating_issue_category,
-          "nonrating_issue_description" => request_issue.nonrating_issue_description,
+          "nonrating_issue_description" => request_issue.nonrating_issue_description ||
+            request_issue.unidentified_issue_text,
           "decision_date" => request_issue.decision_date,
           "decision_date_added_at" => request_issue.decision_date_added_at&.iso8601,
           "request_issue_closed_at" => request_issue.closed_at
@@ -464,7 +465,7 @@ class ClaimHistoryEvent
   def parse_issue_attributes(change_data)
     if issue_event?
       @issue_type = change_data["nonrating_issue_category"]
-      @issue_description = change_data["nonrating_issue_description"]
+      @issue_description = change_data["nonrating_issue_description"] || change_data["unidentified_issue_text"]
       @decision_date = change_data["decision_date"]
       @withdrawal_request_date = change_data["request_issue_closed_at"]
     end
