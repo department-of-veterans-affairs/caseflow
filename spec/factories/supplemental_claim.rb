@@ -24,6 +24,10 @@ FactoryBot.define do
     end
 
     transient do
+      assigned_at { Time.zone.now }
+    end
+
+    transient do
       disposition { nil }
     end
 
@@ -33,6 +37,10 @@ FactoryBot.define do
 
     transient do
       issue_type { nil }
+    end
+
+    transient do
+      description { nil }
     end
 
     transient do
@@ -144,28 +152,19 @@ FactoryBot.define do
       end
     end
 
-    # :reek:DuplicateMethodCall
-    trait :with_specific_issue_type do
+    # creates request issue with issue type and decision date sent as a evaluator
+    trait :with_issue_type do
       after(:create) do |sc, evaluator|
-        ri = create(:request_issue,
-                    :add_decision_date,
-                    decision_date: evaluator.decision_date,
-                    benefit_type: sc.benefit_type,
-                    nonrating_issue_category: evaluator.issue_type,
-                    nonrating_issue_description: "#{sc.business_line.name} Seeded issue",
-                    decision_review: sc)
+        create(:request_issue,
+               decision_date: evaluator.decision_date,
+               benefit_type: sc.benefit_type,
+               nonrating_issue_category: evaluator.issue_type,
+               nonrating_issue_description: "#{sc.business_line.name} #{evaluator.description}",
+               decision_review: sc)
 
         if evaluator.veteran
           sc.veteran_file_number = evaluator.veteran.file_number
           sc.save
-        end
-
-        if evaluator.withdraw
-          ri.withdraw!(Time.zone.now)
-        end
-
-        if evaluator.remove
-          ri.remove!
         end
       end
     end
@@ -231,13 +230,13 @@ FactoryBot.define do
     end
 
     trait :unidentified_issue do
-      after(:create) do |hlr|
+      after(:create) do |sc, evaluator|
         create(:request_issue,
                :unidentified,
                :add_decision_date,
-               benefit_type: hlr.benefit_type,
-               decision_review: hlr,
-               decision_date: rand(1.year.ago..1.day.ago))
+               benefit_type: sc.benefit_type,
+               decision_review: sc,
+               decision_date: evaluator.decision_date.presence ? evaluator.decision_date : nil)
       end
     end
 
@@ -246,6 +245,25 @@ FactoryBot.define do
         sc.create_business_line_tasks!
 
         create(:request_issues_update, :requires_processing, review: sc)
+      end
+    end
+
+    trait :update_assigned_at do
+      after(:create) do |sc, evaluator|
+        sc.create_business_line_tasks!
+        task = sc.tasks.last
+        task.assigned_at = evaluator.assigned_at
+        task.save!
+      end
+    end
+
+    trait :without_decision_date do
+      after(:create) do |sc, evaluator|
+        create(:request_issue,
+               benefit_type: sc.benefit_type,
+               nonrating_issue_category: evaluator.issue_type,
+               nonrating_issue_description: "#{sc.business_line.name} #{evaluator.description}",
+               decision_review: sc)
       end
     end
   end
