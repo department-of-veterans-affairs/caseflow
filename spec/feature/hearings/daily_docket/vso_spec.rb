@@ -12,6 +12,5 @@ RSpec.feature "Hearing Schedule Daily Docket for VSO", :all_dbs do
     expect(page).to_not have_content("Edit Hearing Day")
     expect(page).to_not have_content("Lock Hearing Day")
     expect(page).to_not have_content("Hearing Details")
-    expect(page).to_not have_content("Notes")
   end
 end
