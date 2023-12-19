@@ -233,9 +233,28 @@ RSpec.feature("The Correspondence Intake page") do
       expect(cancel_count).to eq 1
     end
 
-    it "The user is able to add autotext" do
+    it "Clears all selected options in modal" do
+      find_by_id("addAutotext").click
+      within find_by_id("autotextModal") do
+        expect(page).to have_text("Clear all")
+      end
+      within find_by_id("autotextModal") do
+        page.all(".cf-form-checkbox")[2].click
+        page.all(".cf-form-checkbox")[4].click
+        expect(find_field("Interest noted in telephone call of mm/dd/yy", visible: false)).to be_checked
+        expect(find_field("Email - responded via email on mm/dd/yy", visible: false)).to be_checked
+        find_by_id("Add-autotext-button-id-2").click
+        expect(find_field("Interest noted in telephone call of mm/dd/yy", visible: false)).to_not be_checked
+        expect(find_field("Email - responded via email on mm/dd/yy", visible: false)).to_not be_checked
+      end
+    end
+
+    it "The user is able to add manual text content" do
       fill_in "content", with: "debug data for autofill"
       expect(find_by_id("content").text).to eq "debug data for autofill"
+    end
+
+    it "The user is able to add autotext" do
       find_by_id("addAutotext").click
       checkbox_text = "Possible motion pursuant to BVA decision dated mm/dd/yy"
       within find_by_id("autotextModal") do
@@ -243,6 +262,31 @@ RSpec.feature("The Correspondence Intake page") do
         find_by_id("Add-autotext-button-id-1").click
       end
       expect(find_by_id("content").text).to eq checkbox_text
+    end
+
+    it "Allows multiple autotext options to be selected" do
+      find_by_id("addAutotext").click
+      checkbox_text_1 = "Decision sent to Senator or Congressman mm/dd/yy"
+      checkbox_text_6 = "Possible motion pursuant to BVA decision dated mm/dd/yy"
+      within find_by_id("autotextModal") do
+        page.all(".cf-form-checkbox")[1].click
+        page.all(".cf-form-checkbox")[6].click
+        find_by_id("Add-autotext-button-id-1").click
+      end
+      expect(find_by_id("content").text).to include checkbox_text_1 && checkbox_text_6
+    end
+
+    it "Allows autotext and manual text input" do
+      manual_text = "This is a test"
+      fill_in "content", with: "This is a test\n"
+      expect(find_by_id("content").text).to eq manual_text
+      find_by_id("addAutotext").click
+      checkbox_text = "Possible motion pursuant to BVA decision dated mm/dd/yy"
+      within find_by_id("autotextModal") do
+        page.all(".cf-form-checkbox")[6].click
+        find_by_id("Add-autotext-button-id-1").click
+      end
+      expect(find_by_id("content").text).to include manual_text && checkbox_text
     end
 
     it "Persists data if the user hits the back button, then returns" do
