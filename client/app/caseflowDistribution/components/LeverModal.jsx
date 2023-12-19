@@ -4,6 +4,7 @@ import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActio
 import ApiUtil from '../../util/ApiUtil';
 import Modal from 'app/components/Modal';
 import Button from 'app/components/Button';
+import LeverAlertBanner from './LeverAlertBanner';
 import COPY from '../../../COPY';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 
@@ -46,6 +47,14 @@ function SaveLeverChanges(leverStore)  {
   });
 }
 
+function ShowSuccessBanner(shouldShowSuccessBanner)  {
+  leverStore.dispatch({
+    type: Constants.SHOW_SUCCESS_BANNER,
+    showSuccessBanner: shouldShowSuccessBanner,
+  });
+}
+
+
 function SaveLeversToDB(leverStore) {
   const leversData = leverStore.getState().levers;
 
@@ -84,6 +93,9 @@ function leverList(leverStore) {
 
   return (
     <div>
+      <div>
+        {showSuccessBanner}
+      </div>
       <table>
         <tbody>
           <tr>
@@ -147,6 +159,7 @@ export function LeverSaveButton({ leverStore }) {
     setShowSuccessBanner(leverStore)
     setShowModal(false);
     setSaveButtonDisabled(true);
+    ShowSuccessBanner(true);
   }
 
 

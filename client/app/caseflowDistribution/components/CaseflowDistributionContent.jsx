@@ -27,7 +27,7 @@ const CaseflowDistributionContent = ({
 
         <div id="active-data-elements">  {/* Container for Active Levers*/}
           <h2 {...sectionHeadingStyling}>
-            <a id="our-elemnt" {...anchorJumpLinkStyling}>{COPY.CASE_DISTRIBUTION_ACTIVE_LEVERS_TITLE}</a>
+            <span id="our-elemnt" {...anchorJumpLinkStyling}>{COPY.CASE_DISTRIBUTION_ACTIVE_LEVERS_TITLE}</span>
           </h2>
           <div {...sectionSegmentStyling}>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_ACTIVE_LEVERS_DESCRIPTION}</p>
@@ -42,7 +42,7 @@ const CaseflowDistributionContent = ({
 
         <div id="inactive-data-elements">  {/* Container for Static Levers*/}
           <h2 {...sectionHeadingStyling}>
-            <a id="our-elemnt" {...anchorJumpLinkStyling}>{COPY.CASE_DISTRIBUTION_STATIC_LEVERS_TITLE}</a>
+            <span id="our-elemnt" {...anchorJumpLinkStyling}>{COPY.CASE_DISTRIBUTION_STATIC_LEVERS_TITLE}</span>
           </h2>
           <div {...sectionSegmentStyling}>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_STATIC_LEVERS_DESCRIPTION}</p>
@@ -52,9 +52,9 @@ const CaseflowDistributionContent = ({
 
         <div id="case-distribution-history">  {/* Container for Active Levers*/}
           <h2 {...sectionHeadingStyling}>
-            <a id="our-elemnt" {...anchorJumpLinkStyling}>
+            <span id="our-elemnt" {...anchorJumpLinkStyling}>
               {COPY.CASE_DISTRIBUTION_HISTORY_TITLE}
-            </a>
+            </span>
           </h2>
           <div {...sectionSegmentStyling}>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_HISTORY_DESCRIPTION}</p>

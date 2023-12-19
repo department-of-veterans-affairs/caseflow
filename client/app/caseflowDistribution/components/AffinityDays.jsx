@@ -80,16 +80,24 @@ const AffinityDays = (props) => {
     }
   };
   const generateFields = (dataType, option, lever) => {
+    const useAriaLabel = !lever.is_disabled;
+    const tabIndex = lever.is_disabled ? -1 : undefined;
+
     if (dataType === 'number') {
       return (
         <NumberField
           name={option.item}
+          title={option.text}
           label={option.unit}
           isInteger
           readOnly={lever.is_disabled}
           value={option.value}
           errorMessage={option.errorMessage}
           onChange={(event) => updatedLever(lever, option)(event)}
+          id={`${lever.item}-${option.value}`}
+          inputID={`${lever.item}-${option.value}-input`}
+          useAriaLabel={useAriaLabel}
+          tabIndex={tabIndex}
         />
       );
     }
@@ -97,10 +105,15 @@ const AffinityDays = (props) => {
       return (
         <TextField
           name={option.item}
+          title={option.text}
           label={false}
           readOnly={lever.is_disabled}
           value={value}
           onChange={(event) => updatedLever(lever, option)(event)}
+          id={`${lever.item}-${option.value}`}
+          inputID={`${lever.item}-${option.value}-input`}
+          useAriaLabel={useAriaLabel}
+          tabIndex={tabIndex}
         />
       );
     }
