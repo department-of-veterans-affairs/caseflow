@@ -26,7 +26,7 @@ class AttorneyTask < Task
       Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
     ].compact
 
-    movement_actions = if appeal.is_a?(LegacyAppeal) && FeatureToggle.enable!(:vlj_legacy_appeal)
+    movement_actions = if appeal.is_a?(LegacyAppeal) && FeatureToggle.enabled?(:vlj_legacy_appeal)
                          [
                            Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY_LEGACY.to_h,
                            Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
