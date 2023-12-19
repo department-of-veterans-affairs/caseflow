@@ -131,7 +131,6 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         expect(page.all(".cf-form-checkbox").last.checked?).to be(false)
       end
 
-
       it "Clicks an appeal from the table" do
         visit_intake_form_step_2_with_appeals
         existing_appeal_radio_options[:yes].click
@@ -153,13 +152,13 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         using_wait_time(10) do
           page.all(".checkbox-wrapper-1").find(".cf-form-checkbox").first.click
         end
-        expect(page).to have_selector('#react-select-2-input[disabled]')
+        expect(page).to have_selector("#react-select-2-input[disabled]")
         expect(page).to have_text("Evidence Window Submission Task")
-        expect(page).to have_text('Provide context and instruction on this task')
-        field = find_field('content', disabled: true)
-        expect(field.tag_name).to eq('textarea')
-        checkbox_label = 'Waive Evidence Window'
-        find('label', text: checkbox_label).click
+        expect(page).to have_text("Provide context and instruction on this task")
+        field = find_field("content", disabled: true)
+        expect(field.tag_name).to eq("textarea")
+        checkbox_label = "Waive Evidence Window"
+        find("label", text: checkbox_label).click
         find_by_id("waiveReason").fill_in with: "test waive note"
         all("#reactSelectContainer").last.click
         expect(page).to have_button("button-continue", disabled: false)
