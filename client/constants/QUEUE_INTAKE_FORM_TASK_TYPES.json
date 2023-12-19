@@ -131,7 +131,7 @@
       "label": "Hearing-related"
     }, {
       "value": {
-        "klass": "HearingWithdrawalMailTask",
+        "klass": "HearingWithdrawalRequestMailTask",
         "assigned_to": "HearingAdmin"
         },
       "label": "Hearing Withdrawal Request"
