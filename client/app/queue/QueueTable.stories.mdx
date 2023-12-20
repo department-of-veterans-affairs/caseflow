@@ -1,0 +1,324 @@
+import { Meta, Story, Preview, Props } from "@storybook/addon-docs/blocks";
+import LinkTo from "@storybook/addon-links/react";
+
+import QueueTable from "./QueueTable";
+
+<Meta title="Queue/QueueTable" component={QueueTable} />
+
+# Queue table
+
+Table to display rows of data for different aspects of an appeal. Currently the QueueTable is in use in the following locations of the application:
+
+**Hearings App**
+
+- <LinkTo story="Hearings/Components/ListSchedule">List Schedule</LinkTo>
+- <LinkTo story="Hearings/Components/AssignHearingsTable">
+    Assign Hearings Table
+  </LinkTo>
+- <LinkTo story="Hearings/Components/UpcomingHearingsTable">
+    Upcoming Hearings Table
+  </LinkTo>
+
+**Queue App**
+
+- <LinkTo story="Queue/QueueTableBuilder">Queue Table Builder</LinkTo>
+- <LinkTo story="Queue/Components/TaskTable">Task Table</LinkTo>
+
+### Default View
+
+<Preview>
+  <Story name="Default">
+    <QueueTable
+      columns={[
+        { header: "First", valueFunction: () => "fizz" },
+        { header: "Second", valueFunction: () => "buzz" },
+        { header: "Second", valueName: "type" },
+      ]}
+      rowObjects={[
+        {
+          type: "Something",
+        },
+        {
+          type: "Something Else",
+        },
+        {
+          type: "EstablishClaim",
+        },
+      ]}
+      summary="test table"
+      slowReRendersAreOk
+    />
+  </Story>
+</Preview>
+
+### Table with Column Footer
+
+<Preview>
+  <Story name="With Column Footer">
+    <QueueTable
+      columns={[
+        {
+          footer: "First Footer",
+          header: "First",
+          valueFunction: () => "fizz",
+        },
+        {
+          footer: "Second Footer",
+          header: "Second",
+          valueFunction: () => "buzz",
+        },
+        { footer: "Third Footer", header: "Third", valueName: "type" },
+      ]}
+      rowObjects={[
+        {
+          type: "Something",
+        },
+        {
+          type: "Something Else",
+        },
+        {
+          type: "EstablishClaim",
+        },
+      ]}
+      summary="test table"
+      slowReRendersAreOk
+    />
+  </Story>
+</Preview>
+
+### Table with Row Footer
+
+<Preview>
+  <Story name="With Row Footer">
+    <QueueTable
+      columns={[
+        { header: "First", valueFunction: () => "fizz" },
+        { header: "Second", valueFunction: () => "buzz" },
+        {
+          footer: "Row Footer",
+          span: () => 3,
+          header: "Third",
+          valueName: "type",
+        },
+      ]}
+      rowObjects={[
+        {
+          type: "Something",
+        },
+        {
+          type: "Something Else",
+        },
+        {
+          type: "EstablishClaim",
+        },
+      ]}
+      summary="test table"
+      slowReRendersAreOk
+    />
+  </Story>
+</Preview>
+
+### Table with Pagination
+
+<Preview>
+  <Story name="With Pagination">
+    <QueueTable
+      enablePagination
+      columns={[
+        { header: "First", valueFunction: () => "fizz" },
+        { header: "Second", valueFunction: () => "buzz" },
+        {
+          header: "Third",
+          valueName: "type",
+        },
+      ]}
+      rowObjects={[
+        {
+          type: "Something",
+        },
+        {
+          type: "AttorneyTask",
+        },
+        {
+          type: "EstablishClaim",
+        },
+        {
+          type: "AttorneyTask",
+        },
+        {
+          type: "EstablishClaim",
+        },
+        {
+          type: "EstablishClaim",
+        },
+        {
+          type: "JudgeTask",
+        },
+        {
+          type: "Something",
+        },
+        {
+          type: "EstablishClaim",
+        },
+        {
+          type: "EstablishClaim",
+        },
+        {
+          type: "JudgeTask",
+        },
+        {
+          type: "AttorneyTask",
+        },
+        {
+          type: "Something",
+        },
+        {
+          type: "EstablishClaim",
+        },
+        {
+          type: "EstablishClaim",
+        },
+        {
+          type: "JudgeTask",
+        },
+        {
+          type: "AttorneyTask",
+        },
+      ]}
+      summary="test table"
+      slowReRendersAreOk
+    />
+  </Story>
+</Preview>
+
+### Table with Filters
+
+**NOTE:** To add filters to the table it is important that the `columnName` field is set on the column where the filter will be applied
+
+<Preview>
+  <Story name="With Filters">
+    <QueueTable
+      columns={[
+        {
+          header: "First",
+          valueName: "one",
+        },
+        {
+          header: "Second",
+          valueName: "two",
+          columnName: "two",
+          enableFilter: true,
+          anyFiltersAreSet: true,
+          tableData: [
+            {
+              one: "First column",
+              two: "Second column",
+              type: "Something",
+            },
+            {
+              one: "First column second row",
+              two: "Second column second row",
+              type: "Something Else",
+            },
+            {
+              one: "First column third row",
+              two: "Second column third row",
+              type: "EstablishClaim",
+            },
+          ],
+        },
+        {
+          header: "Third",
+          valueName: "type",
+          columnName: "type",
+          enableFilter: true,
+          anyFiltersAreSet: true,
+          tableData: [
+            {
+              one: "First column",
+              two: "Second column",
+              type: "Something",
+            },
+            {
+              one: "First column second row",
+              two: "Second column second row",
+              type: "Something Else",
+            },
+            {
+              one: "First column third row",
+              two: "Second column third row",
+              type: "EstablishClaim",
+            },
+          ],
+        },
+      ]}
+      rowObjects={[
+        {
+          one: "First column",
+          two: "Second column",
+          type: "Something",
+        },
+        {
+          one: "First column second row",
+          two: "Second column second row",
+          type: "Something Else",
+        },
+        {
+          one: "First column third row",
+          two: "Second column third row",
+          type: "EstablishClaim",
+        },
+      ]}
+      summary="test table"
+      slowReRendersAreOk
+    />
+  </Story>
+</Preview>
+
+### Table with Sorting
+
+<Preview>
+  <Story name="With Sorting">
+    <QueueTable
+      columns={[
+        {
+          header: "First",
+          valueName: "one",
+        },
+        {
+          header: "Second",
+          valueName: "two",
+        },
+        {
+          header: "Third",
+          valueName: "type",
+          name: "type",
+          getSortValue: (obj) => {
+            return obj.type;
+          },
+        },
+      ]}
+      rowObjects={[
+        {
+          one: "First column",
+          two: "Second column",
+          type: "Something",
+        },
+        {
+          one: "First column second row",
+          two: "Second column second row",
+          type: "Something Else",
+        },
+        {
+          one: "First column third row",
+          two: "Second column third row",
+          type: "EstablishClaim",
+        },
+      ]}
+      summary="test table"
+      slowReRendersAreOk
+    />
+  </Story>
+</Preview>
+
+<Props of={QueueTable} />

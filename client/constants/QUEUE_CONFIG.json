@@ -1,0 +1,196 @@
+{
+  "ASSIGNED_TASKS_TAB_NAME": "assigned",
+  "INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME": "assigned_person",
+  "COMPLETED_TASKS_TAB_NAME": "completed",
+  "INDIVIDUALLY_COMPLETED_TASKS_TAB_NAME": "completed_person",
+  "ON_HOLD_TASKS_TAB_NAME": "on_hold",
+  "INDIVIDUALLY_ON_HOLD_TASKS_TAB_NAME": "on_hold_person",
+  "TRACKING_TASKS_TAB_NAME": "tracking",
+  "UNASSIGNED_TASKS_TAB_NAME": "unassignedTab",
+  "AMA_ASSIGN_HEARINGS_TAB_NAME": "amaAssignHearingsTab",
+  "LEGACY_ASSIGN_HEARINGS_TAB_NAME": "legacyAssignHearingsTab",
+  "SUGGESTED_HEARING_LOCATION_COLUMN_NAME": "suggestedLocation",
+  "POWER_OF_ATTORNEY_COLUMN_NAME": "powerOfAttorneyName",
+  "HEARING_REQUEST_TYPE_COLUMN_NAME": "hearingRequestType",
+  "BVA_READY_FOR_REVIEW_TASKS_TAB_NAME": "bvaReadyForReview",
+  "PENDING_TASKS_TAB_NAME": "pending",
+  "BVA_INTAKE_COMPLETED_TAB_NAME": "bvaIntakeCompletedTab",
+  "TRANSCRIPTION_TASK_LABEL": "Transcription Task",
+  "CAMO_ASSIGNED_TASKS_TAB_NAME": "camo_assigned",
+  "CAMO_IN_PROGRESS_TASKS_TAB_NAME": "camo_in_progress",
+  "VHA_PO_ASSIGNED_TASKS_TAB_NAME": "po_assigned",
+  "VHA_PO_IN_PROGRESS_TASKS_TAB_NAME": "po_inProgressTab",
+  "READY_FOR_REVIEW_TASKS_TAB_NAME": "readyForReviewTab",
+  "VHA_PO_ON_HOLD_TASKS_TAB_NAME": "po_on_hold",
+  "VHA_PO_COMPLETED_TASKS_TAB_NAME": "po_completed",
+
+  "EDUCATION_RPO_ASSIGNED_TASKS_TAB_NAME": "education_rpo_assigned",
+  "EDUCATION_RPO_IN_PROGRESS_TASKS_TAB_NAME": "education_rpo_in_progress",
+  "EDUCATION_RPO_COMPLETED_TASKS_TAB_NAME": "education_rpo_completed",
+
+  "EDUCATION_EMO_UNASSIGNED_TASKS_TAB_NAME": "education_emo_unassigned",
+  "EDUCATION_EMO_ASSIGNED_TASKS_TAB_NAME": "education_emo_assigned",
+  "EDUCATION_EMO_COMPLETED_TASKS_TAB_NAME": "education_emo_completed",
+
+  "CAREGIVER_SUPPORT_UNASSIGNED_TASK_TAB_NAME": "vha_caregiver_support_unassigned",
+  "CAREGIVER_SUPPORT_IN_PROGRESS_TASKS_TAB_NAME": "caregiver_support_in_progress",
+  "CAREGIVER_SUPPORT_COMPLETED_TASKS_TAB_NAME": "caregiver_support_completed",
+
+  "COLUMNS": {
+    "APPEAL_TYPE": {
+      "filterable": true,
+      "name": "typeColumn"
+    },
+    "BOARD_INTAKE": {
+      "name": "boardIntakeColumn",
+      "sorting_table": "tasks",
+      "sorting_columns": ["assigned_at"]
+    },
+    "CASE_DETAILS_LINK": {
+      "name": "detailsColumn",
+      "sorting_table": "cached_appeal_attributes",
+      "sorting_columns": ["veteran_name"]
+    },
+    "DAYS_ON_HOLD": {
+      "name": "daysOnHoldColumn"
+    },
+    "DAYS_SINCE_LAST_ACTION": {
+      "name": "daysSinceLastActionColumn"
+    },
+    "DAYS_SINCE_INTAKE": {
+      "name": "daysSinceIntakeColumn"
+    },
+    "RECEIPT_DATE_INTAKE": {
+      "name": "receiptDateColumn",
+      "sorting_table": "appeals",
+      "sorting_columns": [
+        "receipt_date"
+      ]
+    },
+    "DAYS_WAITING": {
+      "name": "daysWaitingColumn",
+      "sorting_table": "tasks",
+      "sorting_columns": ["assigned_at"]
+    },
+    "LAST_ACTION": {
+      "name": "lastActionColumn"
+    },
+    "DOCKET_NUMBER": {
+      "filterable": true,
+      "name": "docketNumberColumn",
+      "sorting_table": "cached_appeal_attributes",
+      "sorting_columns": ["docket_type", "docket_number"]
+    },
+    "DOCUMENT_COUNT_READER_LINK": {
+      "name": "readerLinkColumn"
+    },
+    "DOCUMENT_ID": {
+      "name": "documentIdColumn"
+    },
+    "BADGES": {
+      "name": "badgesColumn"
+    },
+    "CLAIMANT_NAME": {
+      "name": "claimantColumn"
+    },
+    "ISSUE_COUNT": {
+      "name": "issueCountColumn",
+      "sorting_table": "cached_appeal_attributes",
+      "sorting_columns": ["issue_count"]
+    },
+    "ISSUE_TYPES": {
+      "filterable": true,
+      "name": "issueTypesColumn",
+      "sorting_table": "cached_appeal_attributes",
+      "sorting_columns": [
+        "issue_types"
+      ]
+    },
+    "VETERAN_PARTICIPANT_ID": {
+      "name": "veteranParticipantIdColumn"
+    },
+    "VETERAN_SSN": {
+      "name": "veteranSsnColumn"
+    },
+    "READER_LINK_WITH_NEW_DOCS_ICON": {
+      "name": "readerLinkWithNewDocIconColumn"
+    },
+    "REGIONAL_OFFICE": {
+      "filterable": true,
+      "name": "regionalOfficeColumn",
+      "sorting_table": "cached_appeal_attributes",
+      "sorting_columns": ["closest_regional_office_city"]
+    },
+    "TASK_ASSIGNEE": {
+      "filterable": true,
+      "name": "assignedToColumn",
+      "sorting_table": "assignees",
+      "sorting_columns": ["display_name"]
+    },
+    "TASK_ASSIGNER": {
+      "name": "completedToNameColumn"
+    },
+    "TASK_ASSIGNED_BY": {
+      "name": "assignedByColumn"
+    },
+    "TASK_CLOSED_DATE": {
+      "name": "completedDateColumn",
+      "sorting_table": "tasks",
+      "sorting_columns": ["closed_at"]
+    },
+    "TASK_CREATED_AT": {
+      "name": "createdDateColumn",
+      "sorting_table": "tasks",
+      "sorting_columns": ["created_at"]
+    },
+    "TASK_DUE_DATE": {
+      "name": "caseDueDateColumn",
+      "sorting_table": "tasks",
+      "sorting_columns": ["assigned_at"]
+    },
+    "TASK_HOLD_LENGTH": {
+      "name": "caseDaysOnHoldColumn",
+      "sorting_table": "tasks",
+      "sorting_columns": ["placed_on_hold_at"]
+    },
+    "TASK_OWNER": {
+      "name": "taskOwnerColumn",
+      "sorting_table": "assignees",
+      "sorting_columns": ["type", "action", "created_at"]
+    },
+    "TASK_TYPE": {
+      "filterable": true,
+      "name": "taskColumn",
+      "sorting_table": "tasks",
+      "sorting_columns": ["type", "action", "created_at"]
+    },
+    "VAMC_OWNER": {
+      "name": "vamcOwnerColumn",
+      "sorting_table": "assignees",
+      "sorting_columns": ["type", "action", "created_at"]
+    }
+  },
+
+  "TAB_NAME_REQUEST_PARAM": "tab",
+  "PAGE_NUMBER_REQUEST_PARAM": "page",
+  "SORT_COLUMN_REQUEST_PARAM": "sort_by",
+  "SORT_DIRECTION_REQUEST_PARAM": "order",
+  "FILTER_COLUMN_REQUEST_PARAM": "filter",
+  "SEARCH_QUERY_REQUEST_PARAM": "search_query",
+
+  "COLUMN_SORT_ORDER_ASC": "asc",
+  "COLUMN_SORT_ORDER_DESC": "desc",
+
+  "DEFAULT_SORTING_COLUMN_KEY": "sortColName",
+  "DEFAULT_SORTING_DIRECTION_KEY": "sortAscending",
+  "BLANK_FILTER_KEY_VALUE": "None",
+
+  "FILTER_OPTIONS": {
+    "IS_AOD": {
+      "key": "is_aod"
+    },
+    "IS_FORMER_TRAVEL": {
+      "key": "former Travel"
+    }
+  }
+}

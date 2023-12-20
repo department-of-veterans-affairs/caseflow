@@ -1,0 +1,47 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UnscheduledNotes renders correctly 1`] = `
+<div>
+  <div>
+    <div
+      class="cf-form-textarea"
+      data-css-1tc952m=""
+    >
+      <label
+        class="question-label"
+        data-css-42cjjw=""
+        for="undefined-unscheduled-notes"
+      >
+        <strong>
+          <span>
+            Notes
+          </span>
+        </strong>
+      </label>
+      <p
+        style="float: right; margin-bottom: 0px; line-height: inherit;"
+      >
+        <i>
+          985
+           
+          characters
+           
+          left
+        </i>
+      </p>
+      <textarea
+        id="undefined-unscheduled-notes"
+        maxlength="1000"
+        name="undefined-unscheduled-notes"
+      >
+        Type notes here
+      </textarea>
+    </div>
+    <span
+      style="color: rgb(91, 97, 107);"
+    >
+      Last updated by VACOUSER on 09/08/2020
+    </span>
+  </div>
+</div>
+`;

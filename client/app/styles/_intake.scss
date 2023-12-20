@@ -1,0 +1,393 @@
+.cf-intake-step .cf-required {
+  float: none;
+  padding-left: 0.5em;
+}
+
+.cf-intake-establish-credits {
+  text-align: center;
+  font-size: 95%;
+}
+
+// the .cf-app-intake ancestor is needed for these rules to ensure a higher
+// specificity than the stock .cf component classes.
+.cf-app-intake {
+  .cf-success-checklist,
+  .cf-issue-checklist {
+    max-width: 800px;
+    margin: 50px auto 65px;
+  }
+
+  .cf-issue-checklist {
+    list-style-type: none;
+    margin-bottom: 20px;
+
+    li {
+      background: url(#{$image-url}/icons/asterisk.svg) no-repeat left top transparent;
+      background-size: 22px 22px;
+      background-position-y: 4px;
+      padding-left: 38px;
+      padding-top: 3px;
+    }
+  }
+
+  .cf-msg-screen-deck {
+    text-align: left;
+
+    strong {
+      color: $color-black;
+    }
+  }
+
+  nav {
+    .cf-application-title {
+      margin-top: 0;
+    }
+  }
+}
+
+.cf-intake-substeps {
+  padding-left: 1em;
+}
+
+.cf-manage-intakes-header {
+  display: grid;
+  grid-column-gap: 10px;
+  grid-template-columns: auto auto;
+}
+
+.cf-selected-issues {
+  > span { font-weight: bold; }
+  display: block;
+  padding: 0.5em;
+}
+
+.cf-table-selections {
+  border: 1px solid $color-gray-lighter;
+  max-width: 500px;
+  min-width: 500px;
+}
+
+.cf-intake-ratings {
+  padding-bottom: 1em;
+
+  label {
+    max-width: 100%;
+  }
+}
+
+[id=button-begin-next-intake] {
+  margin-top: 10px;
+}
+
+.cf-nonrating-request-issue {
+  display: grid;
+  grid-column-gap: 10px;
+  grid-template-columns: auto auto 120px;
+  padding-bottom: 1em;
+
+  div {
+    margin: 0;
+  }
+
+  label {
+    margin-bottom: 8px;
+  }
+}
+
+.intake-issue-flash {
+  background-color: $color-primary-alt-lightest;
+
+  td {
+    background-color: $color-primary-alt-lightest;
+  }
+}
+
+.intake-add-issues .cf-modal-body {
+  color: $color-gray-dark;
+  width: 750px;
+  max-height: 95%;
+  font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+  font-weight: 400;
+
+  p {
+    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+    font-size: 1.8rem;
+    color: $color-black;
+  }
+
+  h1 {
+    text-align: center;
+    border-bottom: 1px solid $color-gray-lighter;
+    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+    font-weight: 800;
+  }
+
+  h2 {
+    margin-bottom: 10px;
+    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+    font-weight: 800;
+  }
+
+  .cf-form-radio-options {
+    margin-top: 0;
+    margin-bottom: 14px;
+  }
+
+  .question-label {
+    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+  }
+
+  .add-nonrating-request-issue {
+    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+  }
+
+  .add-nonrating-request-issue-description {
+    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+  }
+
+  .cf-benefit-type {
+    margin-bottom: 2%;
+  }
+
+  .cf-form-radio {
+    legend {
+      margin-bottom: 14px;
+    }
+  }
+
+  @media only screen and (max-width: 760px) {
+    width: 650px;
+
+    .usa-button {
+      font-size: 1.5rem;
+      padding: .8rem 1.2rem;
+    }
+  }
+
+  @media only screen and (max-width: 650px) {
+    width: 95%;
+
+    .usa-button {
+      font-size: 1.5rem;
+      padding: .8rem 1.2rem;
+    }
+
+    .no-matching-issues {
+      margin-top: 1em;
+    }
+  }
+}
+
+.intake-cancel .cf-modal-body {
+  color: $color-gray-dark;
+}
+
+.add-issue {
+  margin-left: 1em;
+}
+
+.add-nonrating-request-issue-description {
+  .decision-date {
+    margin-top: 20px;
+    width: 16em;
+  }
+
+  .cf-form-radio {
+    margin-top: 20px;
+  }
+}
+
+.intake-modal {
+  text-align: left;
+}
+
+.cf-intake-edit {
+  th {
+    padding: 0;
+  }
+
+  td {
+    .claim-label-row {
+      color: $color-gray-dark;
+
+      .claim-label {
+        display: inline-block;
+        padding: .75rem 0;
+      }
+
+      .edit-claim-label {
+        float: right;
+        width: 140px;
+
+        button {
+          padding: 1rem;
+          width: 140px;
+        }
+      }
+    }
+
+    .issues {
+      display: table;
+      width: 100%;
+
+      .issue {
+        display: table-row;
+
+        div {
+          display: table-cell;
+          padding: 1em 0;
+        }
+
+        .issue-desc {
+          width: 100%;
+          padding-right: 0.5em;
+
+          .issue-num {
+            padding-right: 0.25em;
+          }
+
+          .issue-notes {
+            display: block;
+            font-style: italic;
+          }
+
+          .issue-date {
+            display: block;
+          }
+        }
+
+        .withdrawn-issue {
+          color: $color-gray-light;
+
+          p {
+            color: $color-gray-dark;
+            font-style: italic;
+          }
+        }
+
+        .correction-pending {
+          color: $color-gray-dark;
+          font-style: italic;
+          font-weight: bold;
+        }
+
+        .added-issue-note {
+          color: $color-gray;
+          font-style: italic;
+        }
+
+        .not-eligible {
+          color: $color-red;
+        }
+
+        .issue-unidentified {
+          color: $color-red;
+        }
+
+        .issue-vacols {
+          .msg {
+            display: block;
+            font-weight: bold;
+          }
+
+          .desc {
+            display: block;
+          }
+        }
+
+        .issue-action {
+          padding: 0;
+          width: 140px;
+          display: block;
+
+          button {
+            i {
+              padding-right: 0.25em;
+            }
+          }
+        }
+      }
+
+      .issue-edit-text {
+        display: table-row;
+        margin-top: 10px;
+        margin-bottom: 10px;
+
+        button {
+          padding-left: 0;
+        }
+      }
+
+      .issue-container:not(:last-child) {
+        border-bottom: 1px solid $color-gray-lighter;
+      }
+
+      .issue-container {
+        .cf-form-textarea {
+          padding-left: 20px;
+          padding-right: 20px;
+          padding-top: 20px;
+
+          textarea {
+            height: 10rem;
+            border: 1px solid $color-gray-light;
+          }
+        }
+
+        .issue-text-style {
+          background-color: $color-gray-lightest;
+          margin-bottom: 10px;
+          border: 1px solid $color-gray-lighter;
+
+          p {
+            padding-left: 30px;
+          }
+        }
+
+        .issue-text-buttons {
+          text-align: right;
+          margin-right: 15px;
+        }
+
+        .issue-edit-submit-button {
+          margin-bottom: 15px;
+        }
+      }
+    }
+  }
+
+  td:first-child {
+    font-weight: $font-bold;
+  }
+
+  td:last-child {
+    min-width: 130px;
+    max-width: 500px;
+  }
+
+  ol {
+    margin: 0;
+    padding-left: 1em;
+  }
+
+  p {
+    margin: .5rem 0;
+  }
+}
+
+.cf-benefit-type {
+  .cf-form-radio-option {
+    display: inline;
+
+    [type=radio]:disabled + label::before {
+      background: $color-gray-lightest;
+      box-shadow: 0 0 0 2px $color-gray-lightest, 0 0 0 3px $color-gray-lighter;
+      cursor: not-allowed;
+    }
+  }
+
+  .cf-radio-option-tooltip {
+    max-width: 600px;
+    word-spacing: -1px;
+  }
+}

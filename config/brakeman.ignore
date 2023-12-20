@@ -1,0 +1,126 @@
+{
+  "ignored_warnings": [
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "140e07405ecb20ab6aa52f2f41aeeef0ed7830d781698d6b752ee3d8b0a9c065",
+      "check_name": "SendFile",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/hearings/schedule_periods_controller.rb",
+      "line": 79,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "send_file(SchedulePeriod.find(params[:schedule_period_id]).spreadsheet_location, :type => \"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\", :disposition => (\"attachment; filename='#{SchedulePeriod.find(params[:schedule_period_id]).file_name}'\"))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Hearings::SchedulePeriodsController",
+        "method": "download"
+      },
+      "user_input": "SchedulePeriod.find(params[:schedule_period_id]).spreadsheet_location",
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "51625fbaea06d71b4cf619f3192432518766296d1356e21eb5f31f3d517a1c7a",
+      "check_name": "SendFile",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/document_controller.rb",
+      "line": 33,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "send_file(Document.find(params[:id]).serve, :type => \"application/pdf\", :disposition => ((\"inline\" or \"attachment; filename='#{params[:type]}-#{params[:id]}.pdf'\")))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "DocumentController",
+        "method": "pdf"
+      },
+      "user_input": "Document.find(params[:id]).serve",
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "72ec86565b55db864b6072d21637438007fd304209abc58a4864288d309ed818",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/jobs/ama_notification_efolder_sync_job.rb",
+      "line": 105,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "Appeal.find_by_sql(\"          SELECT appeals.* FROM appeals\\n          JOIN tasks t ON appeals.id = t.appeal_id\\n          AND t.appeal_type = 'Appeal'\\n          JOIN (#{appeals_on_latest_notifications(ids)}) AS notifs ON\\n            notifs.appeals_id = appeals.\\\"uuid\\\"::text AND notifs.appeals_type = 'Appeal'\\n          JOIN (#{appeals_on_latest_doc_uploads(ids)}) AS vbms_uploads ON\\n            vbms_uploads.appeal_id = appeals.id AND vbms_uploads.appeal_type = 'Appeal'\\n          WHERE (\\n            notifs.notified_at > vbms_uploads.attempted_at\\n          OR\\n            notifs.created_at > vbms_uploads.attempted_at\\n          )\\n          AND t.TYPE = 'RootTask' AND t.status NOT IN ('completed', 'cancelled')\\n          GROUP BY appeals.id\\n\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "AmaNotificationEfolderSyncJob",
+        "method": "get_appeals_from_prev_synced_ids"
+      },
+      "user_input": "appeals_on_latest_notifications(ids)",
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "9f33c98ba6283fe641049e694d167ce0416d39e4c0fe9ee2dc3b637fa59a52b5",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/jobs/legacy_notification_efolder_sync_job.rb",
+      "line": 106,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "LegacyAppeal.find_by_sql(\"              SELECT la.* FROM legacy_appeals la\\n              JOIN tasks t ON la.id = t.appeal_id\\n              AND t.appeal_type = 'LegacyAppeal'\\n              JOIN (#{appeals_on_latest_notifications(ids)}) AS notifs ON\\n                notifs.appeals_id = la.vacols_id AND notifs.appeals_type = 'LegacyAppeal'\\n              JOIN (#{appeals_on_latest_doc_uploads(ids)}) AS vbms_uploads ON\\n                vbms_uploads.appeal_id = la.id AND vbms_uploads.appeal_type = 'LegacyAppeal'\\n              WHERE (\\n                notifs.notified_at > vbms_uploads.attempted_at\\n              OR\\n                notifs.created_at > vbms_uploads.attempted_at\\n              )\\n              AND t.type = 'RootTask' AND t.status NOT IN ('completed', 'cancelled')\\n              GROUP BY la.id\\n\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "LegacyNotificationEfolderSyncJob",
+        "method": "get_appeals_from_prev_synced_ids"
+      },
+      "user_input": "appeals_on_latest_notifications(ids)",
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "b2bd6bb603baecc6357c6dfb9641be1848b106ecec425bd7659844e27b860bf1",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/models/task.rb",
+      "line": 273,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "Arel.sql(\"CASE WHEN #{CachedAppeal.table_name}.is_aod = TRUE THEN #{(\"0 ELSE 1\" or \"1 ELSE 0\")} END, CASE WHEN #{CachedAppeal.table_name}.case_type = 'Court Remand' THEN #{(\"0 ELSE 1\" or \"1 ELSE 0\")} END, #{CachedAppeal.table_name}.docket_number #{order}, #{Task.table_name}.created_at #{order}\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Task",
+        "method": "order_by_appeal_priority_clause"
+      },
+      "user_input": "order",
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
+      "fingerprint": "b7c72cc9ada184e07d9ee28ed88a582353f76433ae8c4677d82953523cc90c92",
+      "check_name": "SendFile",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/idt/api/v2/appeals_controller.rb",
+      "line": 70,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "send_file(Document.find(document_id).serve, :type => \"application/pdf\", :disposition => (\"attachment; filename='#{current_document[0][\"type\"]}-#{document_id}.pdf'\"))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "Idt::Api::V2::AppealsController",
+        "method": "appeals_single_document"
+      },
+      "user_input": "Document.find(document_id).serve",
+      "confidence": "Medium",
+      "note": ""
+    }
+  ],
+  "updated": "2023-07-18 18:21:26 -0400",
+  "brakeman_version": "4.7.1"
+}

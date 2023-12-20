@@ -1,0 +1,69 @@
+import { useState } from 'react';
+
+import { Meta, Story, Canvas, ArgsTable } from '@storybook/addon-docs/blocks';
+
+import * as TextFieldStories from './TextField.stories';
+
+import TextField from './TextField';
+import Button from './Button';
+
+export const typeOpts = ['text', 'number', 'email', 'url', 'tel', 'date'];
+export const argTypes = {
+  type: { control: { type: 'select', options: typeOpts } },
+};
+
+<Meta
+  title="Commons/Components/Form Fields/TextField"
+  component={TextField}
+  argTypes={argTypes}
+/>
+
+# Text Input
+
+A text input field in a form that allows the user to enter requested information. It can appear as a field for a single line of text or an area for multiple lines of text. For multiple lines of text we can also include a character limit description below the text area.
+
+Text inputs appear in 3 different formats depending on the status of the user's input:
+
+- Text Input label (no highlight) indicates that no action has been taken in the text field
+- Text Input Focused (light blue-gray highlight) indicates that the user has selected the input field
+- Text Input Error (red highlight) indicates that the user has made an error when entering their text
+
+<Story story={TextFieldStories.Uncontrolled} />
+
+## Controlled
+
+A controlled input means the updating of the value is handled external to the component
+
+<Story story={TextFieldStories.Controlled} />
+
+<ArgsTable of={TextField} />
+
+### Text Input Error
+
+Similar to the USWDS we mark fields with a “required” or “optional” label to the top fight of the form input type. Our required text is secondary as we’ve done research showing that this makes the demarcation more noticeable. Similarly, prompting questions have the “required” text immediately following the text.
+
+<Canvas>
+  <Story name="Error Message">
+    {() => {
+      const [value, setValue] = useState('');
+      const [errorMsg, setErrorMsg] = useState('');
+      const handleSubmit = () =>
+        setErrorMsg(
+          value ? null : 'This is an error message. Try filling the field!'
+        );
+      return (
+        <React.Fragment>
+          <TextField
+            name="text1"
+            label="Text Input Label"
+            required
+            onChange={(val) => setValue(val)}
+            value={value}
+            errorMessage={errorMsg}
+          />
+          <Button onClick={handleSubmit}>Submit</Button>
+        </React.Fragment>
+      );
+    }}
+  </Story>
+</Canvas>

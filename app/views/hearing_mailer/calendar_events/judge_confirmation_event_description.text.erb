@@ -1,0 +1,12 @@
+You're scheduled for a virtual hearing with <%= formatted_appellant_name(virtual_hearing.hearing.appeal) %>:
+View the Hearing Worksheet: https://appeals.cf.ds.va.gov/hearings/<%= virtual_hearing.hearing.external_id %>/worksheet
+
+Date and Time
+<%= Hearings::CalendarTemplateHelper.formatted_date_time_for_zone(time_zone, start_time_utc) %>
+
+How to Join
+Click on the link below, or copy and paste the link into the address field of your web browser:
+<%= link %>
+
+Help Desk
+If you are experiencing technical difficulties, call the VA Video Connect Helpdesk at 855-519-7116 and press 4 for Board of Veterans' Appeals support.

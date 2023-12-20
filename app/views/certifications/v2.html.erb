@@ -1,0 +1,12 @@
+<% content_for :full_page_content do %>
+<%= react_component("Certification", props: {
+    userDisplayName: current_user.display_name,
+    dropdownUrls: dropdown_urls,
+    feedbackUrl: feedback_url,
+    buildDate: build_date,
+    vacolsId: @certification.vacols_id,
+    featureToggles: {
+        metricsBrowserError: FeatureToggle.enabled?(:metrics_browser_error, user: current_user)
+    }
+}) %>
+<% end %>

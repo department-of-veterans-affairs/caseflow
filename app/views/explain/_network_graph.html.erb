@@ -1,0 +1,55 @@
+<h3>Network graph</h3>
+<details open>
+  <summary id="network_viz" style="color: purple">Network graph</summary>
+  <div style="margin-left: 1em;">
+    <div class="dropdown">
+      <button class="dropbtn">Node types</button>
+      <div class="dropdown-content">
+        <% ["tasks", "users", "organizations"].each do |tableName| %>
+          <input id="<%=tableName%>_node_visible" value="<%=tableName%>" type="checkbox" checked onchange="toggleNodeType(this)">
+          <label for="<%=tableName%>_node_visible"><%=tableName%></label>
+        <% end %>
+      </div>
+    </div>
+
+    <br/><div id="netgraph" style="width: 95%; height: 80vh; border: 2px solid #205493;"></div>
+
+    <details>
+      <summary style="color: gray">Network graph data</summary>
+      <pre style="font-size:0.75em; padding:10px"><code><%= JSON.pretty_generate(network_graph_data) %></code></pre>
+    </details>
+
+    <a class="resourceLink" target="_blank" rel="noopener noreferrer"
+       href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Caseflow-Database-Schema-Documentation#caseflow-erd">
+       Schema ERD</a>
+    <br/>
+  </div>
+</details>
+
+<%= javascript_include_tag 'explain-appeal-network' %>
+<script type="text/javascript">
+  const networkGraphData = <%= network_graph_data.to_json.html_safe %>;
+  const network = addNetworkGraph("netgraph", networkGraphData);
+
+  const nodesById = <%= network_graph_data[:nodes].index_by{|n| n["id"]}.to_json.html_safe %>;
+  network.on("selectNode", (event)=>{
+    const nodeId = event["nodes"][0];
+    if(!nodeId) return;
+
+    const node = nodesById[nodeId];
+    if(!node) {
+      console.warn("Cannot find node with id: "+nodeId, event);
+      return;
+    }
+
+    const nodeDetailsString = formatJson(node);
+    const detailsContentElem = document.getElementById('details_content');
+    if(detailsContentElem)
+      detailsContentElem.innerHTML = '<pre id="formattedGraphData" class="event_detail">' + nodeDetailsString + '</pre>';
+  });
+
+  // To reduce clutter, hide organizations by default
+  const orgNodesCheckbox = document.getElementById('organizations_node_visible');
+  orgNodesCheckbox.checked = false;
+  toggleNodeType(orgNodesCheckbox);
+</script>

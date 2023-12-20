@@ -1,0 +1,542 @@
+{
+  "ADD_ADMIN_ACTION": {
+    "label": "Add admin action",
+    "value": "colocated_task",
+    "func": "add_admin_action_data"
+  },
+  "CHANGE_HEARING_DISPOSITION": {
+    "label": "Change hearing disposition",
+    "value": "modal/change_hearing_disposition"
+  },
+  "CANCEL_CONVERT_HEARING_REQUEST_TYPE_TO_VIRTUAL": {
+    "label": "Cancel convert hearing to virtual",
+    "value": "modal/cancel_task",
+    "func": "cancel_convert_hearing_request_type_data"
+  },
+  "CHANGE_HEARING_REQUEST_TYPE_TO_CENTRAL": {
+    "label": "Convert hearing to Central",
+    "value": "modal/change_hearing_request_type_to_central",
+    "func": "change_hearing_request_type_data"
+  },
+  "CHANGE_HEARING_REQUEST_TYPE_TO_VIDEO": {
+    "label": "Convert hearing to video",
+    "value": "modal/change_hearing_request_type_to_video",
+    "func": "change_hearing_request_type_data"
+  },
+  "CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL": {
+    "label": "Convert hearing to virtual",
+    "value": "change_hearing_request_type_to_virtual",
+    "func": "change_hearing_request_type_data"
+  },
+  "ASSIGN_OMO": {
+    "label": "Assign OMO",
+    "value": "omo_request/evaluate"
+  },
+  "ASSIGN_TO_ATTORNEY": {
+    "label": "Assign to attorney",
+    "value": "modal/assign_to_attorney",
+    "func": "assign_to_attorney_data"
+  },
+  "ASSIGN_TO_HEARING_ADMIN_MEMBER": {
+    "label": "Assign to person",
+    "value": "modal/assign_to_hearing_admin_member",
+    "func": "assign_to_user_data"
+  },
+  "REASSIGN_TO_HEARINGS_TEAMS_MEMBER": {
+    "label": "Assign to person",
+    "value": "modal/reassign_to_person",
+    "func": "assign_to_hearings_user_data"
+  },
+  "ASSIGN_TO_MOTIONS_ATTORNEY": {
+    "label": "Assign to person",
+    "value": "modal/assign_to_person",
+    "func": "assign_to_user_data"
+  },
+  "ASSIGN_TO_PERSON": {
+    "label": "Assign to person",
+    "value": "modal/assign_to_person",
+    "func": "assign_to_user_data"
+  },
+  "ASSIGN_TO_PRIVACY_TEAM": {
+    "label": "Assign to Privacy team",
+    "value": "modal/assign_to_privacy_team",
+    "func": "assign_to_privacy_team_data"
+  },
+  "ASSIGN_TO_TEAM": {
+    "label": "Assign to team",
+    "value": "modal/assign_to_team",
+    "func": "assign_to_organization_data"
+  },
+  "SEND_MOTION_TO_VACATE_TO_JUDGE": {
+    "label": "Send to judge",
+    "value": "send_to_judge",
+    "func": "send_motion_to_vacate_to_judge_data"
+  },
+  "ADDRESS_MOTION_TO_VACATE": {
+    "label": "Address Motion to Vacate",
+    "value": "address_motion_to_vacate",
+    "func": "address_motion_to_vacate_data"
+  },
+  "REVIEW_VACATE_DECISION": {
+    "label": "Decision ready for review",
+    "value": "motion_to_vacate_checkout/review_vacatures"
+  },
+  "REVIEW_VACATE_RETURN_TO_JUDGE": {
+    "label": "Return to judge",
+    "value": "return_to_judge"
+  },
+  "SIGN_MOTION_TO_VACATE": {
+    "label": "Sign Motion to Vacate",
+    "value": "sign_motion_to_vacate",
+    "func": "sign_motion_to_vacate_data"
+  },
+  "DOCKET_SWITCH_SEND_TO_JUDGE": {
+    "label": "Send to Judge",
+    "value": "docket_switch/recommend",
+    "func": "docket_switch_send_to_judge_data"
+  },
+  "DOCKET_SWITCH_JUDGE_RULING": {
+    "label": "Rule on Docket Switch",
+    "value": "docket_switch/ruling",
+    "func": "docket_switch_ruling_data"
+  },
+  "DOCKET_SWITCH_DENIED": {
+    "label": "Deny Docket Switch",
+    "value": "docket_switch/checkout/deny",
+    "func": "docket_switch_denied_data"
+  },
+  "DOCKET_SWITCH_GRANTED": {
+    "label": "Grant Docket Switch",
+    "value": "docket_switch/checkout/grant",
+    "func": "docket_switch_granted_data"
+  },
+  "CANCEL_FOREIGN_VETERANS_CASE_TASK": {
+    "label": "Cancel hearing request",
+    "value": "modal/cancel_task",
+    "func": "cancel_foreign_veterans_case_data"
+  },
+  "CANCEL_AND_RETURN_TASK": {
+    "label": "Cancel task and return to judge",
+    "value": "modal/cancel_task",
+    "func": "cancel_task_data"
+  },
+  "CANCEL_TASK": {
+    "label": "Cancel task",
+    "value": "modal/cancel_task",
+    "func": "cancel_task_data"
+  },
+  "CANCEL_ADDRESS_VERIFY_TASK_AND_ASSIGN_REGIONAL_OFFICE": {
+    "label": "Cancel task and assign Regional Office",
+    "value": "modal/cancel_task_and_assign_regional_office",
+    "func": "cancel_address_verify_task_and_assign_regional_office_data"
+  },
+  "CHANGE_TASK_TYPE": {
+    "label": "Change task type",
+    "value": "modal/change_task_type",
+    "func": "change_task_type_data"
+  },
+  "COLOCATED_RETURN_TO_ATTORNEY": {
+    "label": "Send back to attorney",
+    "value": "modal/mark_task_complete",
+    "func": "mark_task_complete_data"
+  },
+  "COLOCATED_RETURN_TO_JUDGE": {
+    "label": "Send back to judge",
+    "value": "modal/mark_task_complete",
+    "func": "mark_task_complete_data"
+  },
+  "COMPLETE_TRANSCRIPTION": {
+    "label": "Mark as complete: Transcribed",
+    "value": "modal/mark_task_complete",
+    "func": "complete_transcription_data"
+  },
+  "CREATE_CHANGE_HEARING_DISPOSITION_TASK": {
+    "label": "Send for hearing disposition change",
+    "value": "modal/create_change_hearing_disposition_task"
+  },
+  "CREATE_CHANGE_PREVIOUS_HEARING_DISPOSITION_TASK": {
+    "label": "Change previous hearing disposition",
+    "value": "modal/create_change_hearing_disposition_task"
+  },
+  "CREATE_MAIL_TASK": {
+    "label": "Create mail task",
+    "value": "modal/create_mail_task",
+    "func": "mail_assign_to_organization_data"
+  },
+  "JUDGE_LEGACY_CHECKOUT": {
+    "label": "Ready for Dispatch",
+    "value": "dispatch_decision/special_issues"
+  },
+  "JUDGE_AMA_CHECKOUT": {
+    "label": "Ready for Dispatch",
+    "value": "dispatch_decision/dispositions"
+  },
+  "JUDGE_AMA_CHECKOUT_SP_ISSUES": {
+    "label": "Ready for Dispatch",
+    "value": "dispatch_decision/special_issues"
+  },
+  "JUDGE_CHECKOUT_PULAC_CERULLO_REMINDER": {
+    "label": "Ready for Dispatch",
+    "value": "modal/check_cavc"
+  },
+  "JUDGE_RETURN_TO_LIT_SUPPORT": {
+    "value": "modal/return_to_lit_support",
+    "func": "return_to_lit_support_data"
+  },
+  "JUDGE_RETURN_TO_ATTORNEY": {
+    "label": "Return to attorney",
+    "value": "modal/return_to_attorney",
+    "func": "return_to_attorney_data"
+  },
+  "LIT_SUPPORT_PULAC_CERULLO": {
+    "label": "Notify Litigation Support of Possible Conflict of Jurisdiction",
+    "value": "modal/flag_conflict_of_jurisdiction",
+    "func": "flag_conflict_of_jurisdiction_data"
+  },
+  "MARK_COMPLETE": {
+    "label": "Mark task complete",
+    "value": "modal/mark_task_complete",
+    "func": "complete_data"
+  },
+  "MARK_NO_SHOW_HEARING_COMPLETE": {
+    "label": "Mark task complete: Release case for review",
+    "value": "modal/mark_task_complete",
+    "func": "complete_data"
+  },
+  "VHA_PO_SEND_TO_CAMO_FOR_REVIEW": {
+    "label": "Documents ready for VHA CAMO review",
+    "value": "modal/ready_for_review",
+    "func": "vha_complete_data",
+    "sort_order": 4
+  },
+  "VHA_VISN_SEND_TO_VHA_PO_FOR_REVIEW": {
+    "label": "Documents ready for Program Office review",
+    "value": "modal/ready_for_review",
+    "func": "vha_complete_data",
+    "sort_order": 4
+  },
+  "PLACE_TIMED_HOLD": {
+    "label": "Put task on hold",
+    "value": "modal/place_timed_hold"
+  },
+  "END_TIMED_HOLD": {
+    "label": "End hold early",
+    "value": "modal/end_hold"
+  },
+  "CAVC_EXTENSION_REQUEST": {
+    "label": "Extension request",
+    "value": "modal/cavc_extension_request"
+  },
+  "CAVC_REMAND_RECEIVED_MDR": {
+    "label": "Remand ready for 90-day letter",
+    "value": "modal/cavc_remand_received"
+  },
+  "CAVC_REMAND_RECEIVED_VLJ": {
+    "label": "Ready for VLJ",
+    "value": "modal/cavc_remand_received"
+  },
+  "SPECIAL_CASE_MOVEMENT": {
+    "label": "Case Movement: Advance to judge",
+    "value": "modal/distribute_to_judge",
+    "func": "special_case_movement_data"
+  },
+  "BLOCKED_SPECIAL_CASE_MOVEMENT": {
+    "label": "Case Movement: Cancel blocking tasks and advance to judge",
+    "value": "distribute_to_judge",
+    "func": "blocked_special_case_movement_data"
+  },
+  "TOGGLE_TIMED_HOLD": {
+    "func": "toggle_timed_hold",
+    "sort_order": 2
+  },
+  "REASSIGN_TO_JUDGE": {
+    "label": "Re-assign to a judge",
+    "value": "modal/reassign_to_judge",
+    "func": "reassign_to_judge_data"
+  },
+  "REASSIGN_TO_PERSON": {
+    "label": "Re-assign to person",
+    "value": "modal/reassign_to_person",
+    "func": "assign_to_user_data"
+  },
+  "RESCHEDULE_HEARING": {
+    "label": "Mark as complete: Reschedule hearing",
+    "value": "modal/cancel_task",
+    "func": "assign_to_hearing_schedule_team_data"
+  },
+  "RESCHEDULE_NO_SHOW_HEARING": {
+    "label": "Mark as complete: Postpone",
+    "value": "modal/reschedule_hearing"
+  },
+  "QR_RETURN_TO_JUDGE": {
+    "label": "Return to judge",
+    "value": "modal/assign_to_judge",
+    "func": "qr_return_to_judge_data"
+  },
+  "JUDGE_QR_RETURN_TO_ATTORNEY": {
+    "label": "Return to attorney",
+    "value": "modal/judge_qr_return_to_attorney",
+    "func": "judge_qr_return_to_attorney_data"
+  },
+  "DISPATCH_RETURN_TO_JUDGE": {
+    "label": "Return to judge",
+    "value": "modal/dispatch_assign_to_judge",
+    "func": "dispatch_return_to_judge_data"
+  },
+  "JUDGE_DISPATCH_RETURN_TO_ATTORNEY": {
+    "label": "Return to attorney",
+    "value": "modal/judge_dispatch_return_to_attorney",
+    "func": "judge_dispatch_return_to_attorney_data"
+  },
+  "REVIEW_LEGACY_DECISION": {
+    "label": "Decision ready for review",
+    "value": "draft_decision/special_issues"
+  },
+  "REVIEW_AMA_DECISION": {
+    "label": "Decision ready for review",
+    "value": "draft_decision/dispositions"
+  },
+  "REVIEW_AMA_DECISION_SP_ISSUES": {
+    "label": "Decision ready for review",
+    "value": "draft_decision/special_issues"
+  },
+  "REVIEW_DECISION_DRAFT": {
+    "func": "review_decision_draft"
+  },
+  "SCHEDULE_HEARING_SEND_TO_TEAM": {
+    "label": "Hearing does need to be scheduled, create schedule hearing task",
+    "value": "modal/send_colocated_task",
+    "func": "send_colocated_task"
+  },
+  "SCHEDULE_VETERAN": {
+    "label": "Schedule Veteran",
+    "value": "modal/schedule_veteran",
+    "func": "schedule_veteran_data"
+  },
+  "SCHEDULE_VETERAN_V2_PAGE": {
+    "label": "Schedule Veteran",
+    "value": "schedule_veteran",
+    "func": "schedule_veteran_data"
+  },
+  "SEND_TO_SCHEDULE_VETERAN_LIST": {
+    "label": "Send to Schedule Veterans list",
+    "value": "modal/send_to_schedule_veterans_list",
+    "func": "send_to_schedule_veterans_list"
+  },
+  "SEND_TO_TRANSLATION_BLOCKING_DISTRIBUTION": {
+    "label": "Assign Translation Task to Translation team",
+    "value": "modal/assign_to_translation_team",
+    "func": "assign_to_translation_team_blocking_distribution_data"
+  },
+  "SEND_TO_TRANSCRIPTION_BLOCKING_DISTRIBUTION": {
+    "label": "Assign Hearing Transcription Task to Transcription team",
+    "value": "modal/assign_to_transcription_team",
+    "func": "assign_to_transciption_team_blocking_distribution_data"
+  },
+  "SEND_TO_PRIVACY_TEAM_BLOCKING_DISTRIBUTION": {
+    "label": "Assign Privacy Act Task to Privacy team",
+    "value": "modal/assign_to_privacy_team",
+    "func": "assign_to_privacy_team_blocking_distribution_data"
+  },
+  "SEND_IHP_TO_COLOCATED_BLOCKING_DISTRIBUTION": {
+    "label": "Assign IHP task to VLJ Support team",
+    "value": "modal/assign_ihp_to_colocated_team",
+    "func": "assign_ihp_to_colocated_blocking_distribution_data"
+  },
+  "SEND_TO_HEARINGS_BLOCKING_DISTRIBUTION": {
+    "label": "Assign Schedule Hearing task to Hearings team",
+    "value": "modal/assign_schedule_hearing_to_hearings_team",
+    "func": "assign_schedule_hearing_to_hearings_blocking_distribution_data"
+  },
+  "CLARIFY_POA_BLOCKING_CAVC": {
+    "label": "Assign POA Clarification task to CAVC team",
+    "value": "modal/assign_poa_to_cavc_team",
+    "func": "assign_poa_to_cavc_blocking_cavc_data"
+  },
+  "SUBMIT_OMO_REQUEST_FOR_REVIEW": {
+    "label": "Medical Request Ready for Review",
+    "value": "omo_request/submit"
+  },
+  "WITHDRAW_HEARING": {
+    "label": "Withdraw hearing",
+    "value": "modal/cancel_task",
+    "func": "withdraw_hearing_data"
+  },
+  "POSTPONE_HEARING": {
+    "label": "Postpone hearing",
+    "value": "modal/postpone_hearing",
+    "func": "add_schedule_hearing_task_admin_actions_data"
+  },
+  "REMOVE_HEARING_SCHEDULED_IN_ERROR": {
+    "label": "Remove hearing to correct a scheduling error",
+    "value": "modal/hearing_scheduled_in_error"
+  },
+  "DOCKET_APPEAL": {
+    "label": "Docket appeal",
+    "value": "modal/docket_appeal",
+    "func": "docket_appeal_data"
+  },
+  "BVA_INTAKE_RETURN_TO_CAMO": {
+    "label": "Return appeal to VHA CAMO",
+    "value": "modal/bva_intake_return_to_camo",
+    "func": "bva_intake_return_to_camo"
+  },
+  "BVA_INTAKE_RETURN_TO_CAREGIVER": {
+    "label": "Return appeal to VHA Caregiver Support Program",
+    "value": "modal/bva_intake_return_to_caregiver",
+    "func": "bva_intake_return_to_caregiver"
+  },
+  "BVA_INTAKE_RETURN_TO_EMO": {
+    "label": "Return appeal to Education Service",
+    "value": "modal/bva_intake_return_to_emo",
+    "func": "bva_intake_return_to_emo"
+  },
+  "READY_TO_DOCKET": {
+    "label": "Ready to Docket",
+    "value": "modal/ready_to_docket"
+  },
+  "VHA_ASSIGN_TO_PROGRAM_OFFICE": {
+    "label": "Assign to Program Office",
+    "value": "modal/assign_to_program_office",
+    "func": "vha_assign_to_program_office_data",
+    "sort_order": 3
+  },
+  "VHA_ASSIGN_TO_REGIONAL_OFFICE": {
+    "label": "Assign to VISN",
+    "value": "modal/assign_to_regional_office",
+    "func": "vha_assign_to_regional_office_data",
+    "sort_order": 3
+  },
+  "VHA_PROGRAM_OFFICE_RETURN_TO_CAMO": {
+    "label": "Return to VHA CAMO",
+    "value": "modal/return_to_camo",
+    "func": "vha_program_office_return_to_camo",
+    "sort_order": 5
+  },
+  "VHA_REGIONAL_OFFICE_RETURN_TO_PROGRAM_OFFICE": {
+    "label": "Return to Program Office",
+    "value": "modal/return_to_program_office",
+    "func": "vha_regional_office_return_to_program_office",
+    "sort_order": 5
+  },
+  "VHA_DOCUMENTS_READY_FOR_BVA_INTAKE_REVIEW": {
+    "label": "Documents ready for Board Intake review",
+    "value": "modal/vha_documents_ready_for_bva_intake_for_review",
+    "func": "vha_documents_ready_for_bva_intake_for_review"
+  },
+  "VHA_RETURN_TO_BOARD_INTAKE": {
+    "label": "Return to Board Intake",
+    "value": "modal/vha_return_to_board_intake",
+    "func": "vha_return_to_board_intake"
+  },
+  "VHA_MARK_TASK_IN_PROGRESS": {
+    "label": "Mark task in progress",
+    "value": "modal/mark_task_in_progress",
+    "func": "vha_mark_task_in_progress",
+    "sort_order": 1
+  },
+  "VHA_CAREGIVER_SUPPORT_MARK_TASK_IN_PROGRESS": {
+    "label": "Mark task in progress",
+    "value": "modal/mark_task_in_progress",
+    "func": "vha_caregiver_support_mark_task_in_progress"
+  },
+  "EMO_RETURN_TO_BOARD_INTAKE": {
+    "label": "Return to Board Intake",
+    "value": "modal/emo_return_to_board_intake",
+    "func": "emo_return_to_board_intake"
+  },
+  "VHA_CAREGIVER_SUPPORT_DOCUMENTS_READY_FOR_BOARD_INTAKE_REVIEW": {
+    "label": "Documents ready for Board Intake review",
+    "value": "modal/vha_caregiver_support_send_to_board_intake_for_review",
+    "func": "vha_caregiver_support_send_to_board_intake_for_review"
+  },
+  "EMO_SEND_TO_BOARD_INTAKE_FOR_REVIEW": {
+    "label": "Documents ready for Board Intake review",
+    "value": "modal/emo_send_to_board_intake_for_review",
+    "func": "emo_send_to_board_intake_for_review"
+  },
+  "EMO_ASSIGN_TO_RPO": {
+    "label": "Assign to Regional Processing Office",
+    "value": "modal/emo_assign_to_education_rpo",
+    "func": "emo_assign_to_education_rpo_data"
+  },
+  "EDUCATION_RPO_SEND_TO_BOARD_INTAKE_FOR_REVIEW": {
+    "label": "Documents ready for Board Intake review",
+    "value": "modal/rpo_send_to_board_intake_for_review",
+    "func": "education_rpo_send_to_board_intake_for_review"
+  },
+  "EDUCATION_RPO_RETURN_TO_EMO": {
+    "label": "Return to Executive Management Office",
+    "value": "modal/rpo_return_to_emo",
+    "func": "education_rpo_return_to_emo"
+  },
+  "EDUCATION_RPO_MARK_TASK_IN_PROGRESS": {
+    "label": "Mark task in progress",
+    "value": "modal/mark_task_in_progress",
+    "func": "education_rpo_mark_task_in_progress"
+  },
+  "VHA_CAREGIVER_SUPPORT_RETURN_TO_BOARD_INTAKE": {
+    "label": "Return to Board Intake",
+    "value": "modal/vha_caregiver_support_return_to_board_intake",
+    "func": "vha_caregiver_support_return_to_board_intake"
+  },
+  "RESEND_INITIAL_NOTIFICATION_LETTER_POST_HOLDING": {
+    "label": "Resend initial notification letter",
+    "value": "modal/resend_initial_notification_letter_post_holding",
+    "func": "resend_initial_notification_letter_post_holding"
+  },
+  "RESEND_INITIAL_NOTIFICATION_LETTER_FINAL": {
+    "label": "Resend initial notification letter",
+    "value": "modal/resend_initial_notification_letter_final",
+    "func": "resend_initial_notification_letter_final"
+  },
+  "RESEND_FINAL_NOTIFICATION_LETTER": {
+    "label": "Resend final notification letter",
+    "value": "modal/resend_final_notification_letter",
+    "func": "resend_final_notification_letter_task_data"
+  },
+  "MARK_FINAL_NOTIFICATION_LETTER_TASK_COMPLETE": {
+    "label": "Mark task complete",
+    "value": "modal/mark_task_complete_contested_claim",
+    "func": "mark_final_notification_letter"
+  },
+  "CANCEL_CONTESTED_CLAIM_INITIAL_LETTER_TASK": {
+    "label": "Cancel task",
+    "value": "modal/cancel_initial_letter_task",
+    "func": "cancel_initial_letter_task_data"
+  },
+  "CANCEL_CONTESTED_CLAIM_POST_INITIAL_LETTER_TASK": {
+    "label": "Cancel task",
+    "value": "modal/cancel_post_letter_task",
+    "func": "cancel_post_initial_letter_task_data"
+  },
+  "CANCEL_CONTESTED_CLAIM_FINAL_LETTER_TASK": {
+    "label": "Cancel task",
+    "value": "modal/cancel_final_letter_task",
+    "func": "cancel_final_letter_task_data"
+  },
+  "MARK_TASK_AS_COMPLETE_CONTESTED_CLAIM": {
+    "label": "Mark task complete",
+    "value": "modal/mark_task_complete_contested_claim",
+    "func": "mark_task_as_complete_cc"
+  },
+  "PROCEED_FINAL_NOTIFICATION_LETTER_INITIAL": {
+    "label": "Proceed to final notification letter",
+    "value": "modal/proceed_final_notification_letter_initial",
+    "func": "proceed_final_notification_letter_data"
+  },
+  "PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING": {
+    "label": "Proceed to final notification letter",
+    "value": "modal/proceed_final_notification_letter_post_holding",
+    "func": "proceed_final_notification_letter_data"
+  },
+  "COMPLETE_AND_POSTPONE": {
+    "label": "Mark as complete",
+    "value": "modal/complete_and_postpone"
+  },
+  "COMPLETE_AND_WITHDRAW": {
+    "label": "Mark as complete and withdraw",
+    "value": "modal/complete_and_withdraw",
+    "func": "withdraw_hearing_data"
+  }
+}

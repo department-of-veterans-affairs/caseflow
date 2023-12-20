@@ -1,0 +1,16 @@
+<% content_for :full_page_content do %>
+  <%= react_component("asyncableJobs", props: {
+    userDisplayName: current_user.display_name,
+    dropdownUrls: dropdown_urls,
+    feedbackUrl: feedback_url,
+    buildDate: build_date,
+    flash: flash,
+    serverJobs: {
+      job: job.asyncable_ui_hash,
+      notes: job.job_notes.newest_first.map(&:serialize),
+      models: AsyncableJobs.models.map(&:name),
+      fetchedAt: Time.zone.now,
+      asyncableJobKlass: allowed_params[:asyncable_job_klass]
+    }
+  }) %>
+<% end %>

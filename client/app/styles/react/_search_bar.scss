@@ -1,0 +1,105 @@
+.usa-search {
+  &.usa-search-big {
+    [type="submit"] {
+      background-image: none;
+
+      &[class*="cf-loading"] {
+        width: 14rem;
+      }
+    }
+
+    [type="button"].cf-search-close-icon {
+      margin-left: -20px;
+      margin-top: 6px;
+      position: absolute;
+    }
+  }
+
+  &.cf-has-internal-text {
+    display: inline-flex;
+    margin-right: 0.5rem;
+  }
+
+  &.usa-search-small {
+    [type="submit"] {
+
+      &[class*="cf-loading"] {
+        width: 13rem;
+        background-image: none;
+      }
+    }
+  }
+
+  &.cf-search-ahead {
+    flex-grow: 1;
+
+    input {
+      &::placeholder {
+        font-style: italic;
+      }
+    }
+  }
+
+  [type="search"] {
+    border: 1px solid $color-gray-dark;
+
+    &.cf-search-with-internal-text {
+      border-right: 0;
+      -webkit-appearance: searchfield;
+      outline: none;
+      width: 245px;
+    }
+  }
+
+  .cf-search-internal-text {
+    -webkit-appearance: searchfield;
+    text-align: left;
+    width: 9rem;
+    border: 1px solid $color-gray-dark;
+    border-left: 0;
+    margin: 0 0 0 -7px;
+    color: $color-gray;
+    height: 3.3rem;
+    font-size: medium;
+
+    &:hover {
+      cursor: text;
+    }
+  }
+
+  .search-text-spinner {
+    background-color: $color-white;
+    font-size: 1rem;
+    margin-top: 1px;
+    width: 8rem;
+    text-align: right;
+    padding-right: 2rem;
+    padding-top: 3px;
+  }
+}
+
+.cf-search-ahead-parent {
+  display: flex;
+}
+
+// scss-lint:disable PropertyCount
+.cf-search-bar {
+  max-height: 50px;
+  top: 5rem;
+  transition: top .1s linear;
+  position: absolute;
+  background: $color-gray-dark;
+  // .cf-pdf-scroll-view is 5, .cf-pdf-header is 7
+  z-index: 6;
+  color: $color-white;
+  right: 3rem;
+  border-radius: 0 0 6px 6px;
+  padding: 0.5rem 1rem 1rem;
+  width: 440px;
+
+  &.hidden {
+    top: 0;
+    display: none;
+  }
+}
+// scss-lint:disable PropertyCount

@@ -1,0 +1,12 @@
+<h3>
+  <%= "New" if defined?(updated) && updated == true %> Date and Time
+</h3>
+<p>
+<% if @recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge] %>
+  <%= Hearings::CalendarTemplateHelper.central_office_display_time(@hearing || @virtual_hearing&.hearing) %>
+<% elsif @recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:representative] %>
+  <%= Hearings::CalendarTemplateHelper.representative_display_time(@hearing || @virtual_hearing&.hearing) %>
+<% elsif @recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:appellant] %>
+  <%= Hearings::CalendarTemplateHelper.appellant_display_time(@hearing || @virtual_hearing&.hearing) %>
+<% end %>
+</p>

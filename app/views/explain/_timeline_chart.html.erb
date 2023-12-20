@@ -1,0 +1,58 @@
+<% content_for :head do %>
+  <%= stylesheet_link_tag 'explain_appeal_timeline' %>
+<% end %>
+
+<h3>Timeline</h3>
+
+<% enabledTimelineGroups = %w[phases tasks others] %>
+
+<details open>
+  <summary id="timeline_viz" style="color: purple">Timeline visualization</summary>
+  <div style="margin-left: 1em;">
+    <div class="dropdown">
+      <button class="dropbtn">Groups</button>
+      <div class="dropdown-content">
+        <% ["phases", "tasks", "cancelled_tasks", "others"].each do |groupName| %>
+          <% groupEnabled = enabledTimelineGroups.include?(groupName) %>
+          <input id="<%=groupName%>_group_visible" value="<%=groupName%>"
+            type="checkbox"  <%=groupEnabled ? 'checked' : nil%> onchange="toggleTimelineEventGroup(this)">
+          <label for="<%=groupName%>_group_visible"><%=groupName%></label>
+        <% end %>
+      </div>
+    </div>
+    <input type="button" id="fit" value="Fit items" onclick="fitTimeline()">
+
+    <br/><div id="timeline" style="width: 95%; border: 2px solid #205493;"></div>
+
+    <details>
+      <summary style="color: gray">Timeline data</summary>
+      <pre style="font-size:0.84em; padding:10px"><code><%= JSON.pretty_generate(timeline_data) %></code></pre>
+    </details>
+  </div>
+</details>
+
+<%= javascript_include_tag 'explain-appeal-timeline' %>
+<script type="text/javascript">
+  const timeline_data = <%= timeline_data.to_json.html_safe %>;
+  const timeline = addTimeline('timeline', timeline_data);
+
+  const eventsById = <%= timeline_data.index_by{|e| e["id"]}.to_json.html_safe %>;
+  timeline.on("select", (event)=>{
+    const eventId = event["items"][0];
+    if(!eventId) return;
+
+    const eventItem = eventsById[eventId];
+    if(!eventItem) {
+      console.warn("Cannot find event with id: "+eventId, event);
+      return;
+    }
+
+    const eventDetailsString = formatJson(eventItem);
+    const detailsContentElem = document.getElementById('details_content');
+    if(detailsContentElem)
+      detailsContentElem.innerHTML = '<pre id="formattedEventData" class="event_detail">' +
+        eventDetailsString + '</pre>';
+  });
+
+  function fitTimeline(){ timeline.fit(); }
+</script>

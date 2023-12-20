@@ -1,0 +1,179 @@
+require:
+  - rubocop-performance
+  - rubocop-rails
+
+AllCops:
+  Exclude:
+    - 'db/migrate/*'
+    - 'db/schema.rb'
+    - 'db/etl/migrate/*'
+    - 'db/etl/schema.rb'
+    - 'config/**/*'
+    - 'script/**/*'
+    - 'vendor/**/*'
+    - './.simplecov'
+    - 'client/node_modules/**/*'
+    - 'app/mappers/zip_code_to_lat_lng_mapper.rb'
+    - 'db/seeds/*'
+  TargetRailsVersion: 5.1
+  TargetRubyVersion: 2.5
+  UseCache: true
+
+Bundler/OrderedGems:
+  Enabled: true
+  TreatCommentsAsGroupSeparators: false
+
+Style/AsciiComments:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/FrozenStringLiteralComment:
+  Enabled: true
+
+Style/Documentation:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Naming/RescuedExceptionsVariableName:
+  Description: 'Use consistent rescued exceptions variables naming.'
+  Enabled: true
+  PreferredName: error
+
+Rails:
+  Enabled: true
+
+# temporarily disabled due to a bug in Rubocop 0.67.2
+Rails/ActiveRecordOverride:
+  Enabled: false
+
+Rails/Output:
+  Exclude:
+    - 'lib/**/*.rb'
+
+Rails/DynamicFindBy:
+  Enabled: false
+
+Rails/OutputSafety:
+  Enabled: false
+
+Rails/UnknownEnv:
+  Enabled: false
+
+Rails/LexicallyScopedActionFilter:
+  Enabled: false
+
+Rails/SkipsModelValidations:
+  Enabled: false
+
+Rails/ApplicationController:
+  Exclude:
+    - app/controllers/idt/api/v1/base_controller.rb
+
+Rails/FilePath:
+  Enabled: false
+
+Rails/HasManyOrHasOneDependent:
+  Enabled: false
+
+Rails/HelperInstanceVariable:
+  Enabled: true
+  Exclude:
+    - app/helpers/test/hearings_profile_helper.rb
+
+Rails/InverseOf:
+  Enabled: false
+
+Rails/Present:
+  NotBlank: false
+  UnlessBlank: false
+
+Metrics/MethodLength:
+  Max: 20
+  Exclude:
+    - app/jobs/middleware/job_sentry_scope_middleware.rb
+    - "spec/**/*"
+
+Metrics/ClassLength:
+  Max: 400
+
+Metrics/AbcSize:
+  Max: 30
+  Exclude:
+    - app/jobs/virtual_hearings/create_conference_job.rb
+
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - app/services/virtual_hearings/resend_virtual_hearing_emails_service.rb
+
+Style/DoubleNegation:
+  Enabled: false
+
+Style/NegatedIf:
+  Enabled: false
+
+Style/EachWithObject:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+Style/RegexpLiteral:
+  Enabled: false
+
+Style/NumericPredicate:
+  Enabled: false
+
+Style/MultipleComparison:
+  Enabled: false
+
+Style/SymbolArray:
+  EnforcedStyle: brackets
+
+Style/SignalException:
+  EnforcedStyle: semantic
+
+Style/TernaryParentheses:
+  EnforcedStyle: require_parentheses_when_complex
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/RedundantBegin:
+  Enabled: false
+
+Style/FormatStringToken:
+  Enabled: true
+  EnforcedStyle: annotated
+
+Naming/FileName:
+  Enabled: false
+
+Naming/HeredocDelimiterNaming:
+  Enabled: false
+
+Naming/VariableNumber:
+  Enabled: false
+
+Lint/UriEscapeUnescape:
+  Enabled: false
+
+Lint/SuppressedException:
+  Enabled: true
+  AllowComments: true
+
+Lint/UnusedMethodArgument:
+  Exclude:
+    - 'lib/fakes/*.rb'
+
+Layout/LineLength:
+  Max: 120
+
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented

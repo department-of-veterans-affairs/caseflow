@@ -1,0 +1,939 @@
+{
+  "RO01": {
+    "label": "Boston regional office",
+    "city": "Boston",
+    "state": "MA",
+    "timezone": "America/New_York",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_301",
+    "alternate_locations": null
+  },
+  "RO02": {
+    "label": "Togus regional office",
+    "city": "Togus",
+    "state": "ME",
+    "timezone": "America/New_York",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_402",
+    "alternate_locations": ["vha_402GA", "vha_402HB"]
+  },
+  "RO03": {
+    "label": "White River regional office",
+    "city": "White River Foreign Cases",
+    "state": "VT",
+    "timezone": "America/New_York",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO04": {
+    "label": "Providence regional office",
+    "city": "Providence",
+    "state": "RI",
+    "timezone": "America/New_York",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_304",
+    "alternate_locations": null
+  },
+  "RO05": {
+    "label": "White River regional office",
+    "city": "White River Junction",
+    "state": "VT",
+    "timezone": "America/New_York",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_405",
+    "alternate_locations": ["vba_373"]
+  },
+  "RO06": {
+    "label": "New York City regional office",
+    "city": "New York",
+    "state": "NY",
+    "timezone": "America/New_York",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_306",
+    "alternate_locations": ["vba_306b"]
+  },
+  "RO07": {
+    "label": "Buffalo regional office",
+    "city": "Buffalo",
+    "state": "NY",
+    "timezone": "America/New_York",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_307",
+    "alternate_locations": null
+  },
+  "RO08": {
+    "label": "Hartford regional office",
+    "city": "Hartford",
+    "state": "CT",
+    "timezone": "America/New_York",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_308",
+    "alternate_locations": null
+  },
+  "RO09": {
+    "label": "Newark regional office",
+    "city": "Newark",
+    "state": "NJ",
+    "timezone": "America/New_York",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_309",
+    "alternate_locations": [
+      "vha_460HE"
+    ]
+  },
+  "RO10": {
+    "label": "Philadelphia regional office",
+    "city": "Philadelphia",
+    "state": "PA",
+    "timezone": "America/New_York",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_310",
+    "alternate_locations": [
+      "vha_595",
+      "vba_460",
+      "vha_693",
+      "vha_542"
+    ]
+  },
+  "RO11": {
+    "label": "Pittsburgh regional office",
+    "city": "Pittsburgh",
+    "state": "PA",
+    "timezone": "America/New_York",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_311",
+    "alternate_locations": null
+  },
+  "RO13": {
+    "label": "Baltimore regional office",
+    "city": "Baltimore",
+    "state": "MD",
+    "timezone": "America/New_York",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_313",
+    "alternate_locations": null
+  },
+  "RO14": {
+    "label": "Roanoke regional office",
+    "city": "Roanoke",
+    "state": "VA",
+    "timezone": "America/New_York",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_314",
+    "alternate_locations": null
+  },
+  "C": {
+    "label": "Central",
+    "city": "Washington",
+    "state": "DC",
+    "timezone": "America/New_York",
+    "hold_hearings": false,
+    "facility_locator_id": "vba_372",
+    "alternate_locations": null
+  },
+  "RO15": {
+    "label": "Huntington regional office",
+    "city": "Huntington",
+    "state": "WV",
+    "timezone": "America/New_York",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_315",
+    "alternate_locations": null
+  },
+  "RO16": {
+    "label": "Atlanta regional office",
+    "city": "Atlanta",
+    "state": "GA",
+    "timezone": "America/New_York",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_316",
+    "alternate_locations": null
+  },
+  "RO17": {
+    "label": "St. Petersburg regional office",
+    "city": "St. Petersburg",
+    "state": "FL",
+    "timezone": "America/New_York",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_317",
+    "alternate_locations": ["vba_317a", "vc_0742V"]
+  },
+  "RO18": {
+    "label": "Winston-Salem regional office",
+    "city": "Winston-Salem",
+    "state": "NC",
+    "timezone": "America/New_York",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_318",
+    "alternate_locations": null
+  },
+  "RO19": {
+    "label": "Columbia regional office",
+    "city": "Columbia",
+    "state": "SC",
+    "timezone": "America/New_York",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_319",
+    "alternate_locations": null
+  },
+  "RO20": {
+    "label": "Nashville regional office",
+    "city": "Nashville",
+    "state": "TN",
+    "timezone": "America/Chicago",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_320",
+    "alternate_locations": ["vc_0720V", "vc_0719V", "vha_626GF"]
+  },
+  "RO21": {
+    "label": "New Orleans regional office",
+    "city": "New Orleans",
+    "state": "LA",
+    "timezone": "America/Chicago",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_321",
+    "alternate_locations": ["vba_321b", "vha_502GA", "vha_502GB", "vha_502GE", "vc_0704V"]
+  },
+  "RO22": {
+    "label": "Montgomery regional office",
+    "city": "Montgomery",
+    "state": "AL",
+    "timezone": "America/Chicago",
+    "hold_hearings": true,
+    "facility_locator_id": "vha_619",
+    "alternate_locations": null
+  },
+  "RO23": {
+    "label": "Jackson regional office",
+    "city": "Jackson",
+    "state": "MS",
+    "timezone": "America/Chicago",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_323",
+    "alternate_locations": ["vha_614GN", "vc_0737V", "vc_0719V"]
+  },
+  "RO25": {
+    "label": "Cleveland regional office",
+    "city": "Cleveland",
+    "state": "OH",
+    "timezone": "America/New_York",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_325",
+    "alternate_locations": ["vha_539", "vha_757"]
+  },
+  "RO26": {
+    "label": "Indianapolis regional office",
+    "city": "Indianapolis",
+    "state": "IN",
+    "timezone": "America/Indiana/Indianapolis",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_326",
+    "alternate_locations": null
+  },
+  "RO27": {
+    "label": "Louisville regional office",
+    "city": "Louisville",
+    "state": "KY",
+    "timezone": "America/Kentucky/Louisville",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_327",
+    "alternate_locations": [
+      "vba_315",
+      "vba_320",
+      "vha_596",
+      "vba_325b",
+      "vha_539",
+      "vha_657GJ",
+      "vha_596GC",
+      "vha_596GB",
+      "vha_596GA",
+      "vha_657GL",
+      "vha_626GJ",
+      "vha_626GC",
+      "vha_538GB",
+      "vha_603GF",
+      "vha_596GD",
+      "vha_657GP",
+      "vha_657GO",
+      "vha_626GH",
+      "vc_0719V"
+    ]
+  },
+  "RO28": {
+    "label": "Chicago regional office",
+    "city": "Chicago",
+    "state": "IL",
+    "timezone": "America/Chicago",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_328",
+    "alternate_locations": ["vha_636GF"]
+  },
+  "RO29": {
+    "label": "Detroit regional office",
+    "city": "Detroit",
+    "state": "MI",
+    "timezone": "America/New_York",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_329",
+    "alternate_locations": null
+  },
+  "RO30": {
+    "label": "Milwaukee regional office",
+    "city": "Milwaukee",
+    "state": "WI",
+    "timezone": "America/Chicago",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_330",
+    "alternate_locations": [
+      "vba_335",
+      "vha_607",
+      "vha_676",
+      "vha_585",
+      "vha_676GA",
+      "vha_618GM",
+      "vha_676GD",
+      "vha_676GC",
+      "vha_607GE",
+      "vha_607GD",
+      "vha_607GC",
+      "vha_695GD",
+      "vha_695GA",
+      "vha_695BY",
+      "vha_618BY",
+      "vha_676GE",
+      "vha_556GD",
+      "vha_618GH",
+      "vha_585GC",
+      "vha_618GE"
+    ]
+  },
+  "RO31": {
+    "label": "St. Louis regional office",
+    "city": "St. Louis",
+    "state": "MO",
+    "timezone": "America/Chicago",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_331",
+    "alternate_locations": null
+  },
+  "RO33": {
+    "label": "Des Moines regional office",
+    "city": "Des Moines",
+    "state": "IA",
+    "timezone": "America/Chicago",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_333",
+    "alternate_locations": [
+      "vha_636GF",
+      "vha_438GC",
+      "vha_636GJ",
+      "vha_636GD",
+      "vha_438GA",
+      "vha_636GH",
+      "vha_636"
+    ]
+  },
+  "RO34": {
+    "label": "Lincoln regional office",
+    "city": "Lincoln",
+    "state": "NE",
+    "timezone": "America/Chicago",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_334",
+    "alternate_locations": ["vba_442"]
+  },
+  "RO35": {
+    "label": "St. Paul regional office",
+    "city": "St. Paul",
+    "state": "MN",
+    "timezone": "America/Chicago",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_335",
+    "alternate_locations": null
+  },
+  "RO36": {
+    "label": "Ft. Harrison regional office",
+    "city": "Ft. Harrison",
+    "state": "MT",
+    "timezone": "America/Denver",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_436",
+    "alternate_locations": null
+  },
+  "RO37": {
+    "label": "Fargo regional office",
+    "city": "Fargo",
+    "state": "ND",
+    "timezone": "America/Chicago",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_437",
+    "alternate_locations": null
+  },
+  "RO38": {
+    "label": "Sioux Falls regional office",
+    "city": "Sioux Falls",
+    "state": "SD",
+    "timezone": "America/Chicago",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_438",
+    "alternate_locations": ["vha_568", "vha_568A4", "vba_438a"]
+  },
+  "RO39": {
+    "label": "Denver regional office",
+    "city": "Denver",
+    "state": "CO",
+    "timezone": "America/Denver",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_339",
+    "alternate_locations": null
+  },
+  "RO40": {
+    "label": "Albuquerque regional office",
+    "city": "Albuquerque",
+    "state": "NM",
+    "timezone": "America/Denver",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_340",
+    "alternate_locations": null
+  },
+  "RO41": {
+    "label": "Salt Lake City regional office",
+    "city": "Salt Lake City",
+    "state": "UT",
+    "timezone": "America/Denver",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_341",
+    "alternate_locations": null
+  },
+  "RO42": {
+    "label": "Cheyenne regional office",
+    "city": "Cheyenne",
+    "state": "WY",
+    "timezone": "America/Denver",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_442",
+    "alternate_locations": ["vha_666GB"]
+  },
+  "RO43": {
+    "label": "Oakland regional office",
+    "city": "Oakland",
+    "state": "CA",
+    "timezone": "America/Los_Angeles",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_343",
+    "alternate_locations": ["vba_343e"]
+  },
+  "RO44": {
+    "label": "Los Angeles regional office",
+    "city": "Los Angeles",
+    "state": "CA",
+    "timezone": "America/Los_Angeles",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_344",
+    "alternate_locations": null
+  },
+  "RO45": {
+    "label": "Phoenix regional office",
+    "city": "Phoenix",
+    "state": "AZ",
+    "timezone": "America/Phoenix",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_345",
+    "alternate_locations": null
+  },
+  "RO46": {
+    "label": "Seattle regional office",
+    "city": "Seattle",
+    "state": "WA",
+    "timezone": "America/Los_Angeles",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_346",
+    "alternate_locations": [
+      "vha_663GC",
+      "vha_663GE",
+      "vba_348",
+      "vha_668",
+      "vha_687",
+      "vc_0523V"
+    ]
+  },
+  "RO47": {
+    "label": "Boise regional office",
+    "city": "Boise",
+    "state": "ID",
+    "timezone": "America/Boise",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_347",
+    "alternate_locations": ["vha_668", "vha_660GA", "vha_668GB"]
+  },
+  "RO48": {
+    "label": "Portland regional office",
+    "city": "Portland",
+    "state": "OR",
+    "timezone": "America/Los_Angeles",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_348",
+    "alternate_locations": [
+      "vha_653",
+      "vha_653BY",
+      "vba_347",
+      "vha_653GB",
+      "vha_648GA",
+      "vha_692GA",
+      "vha_687GC",
+      "vha_653GA",
+      "vba_346",
+      "vha_692"
+    ]
+  },
+  "RO49": {
+    "label": "Waco regional office",
+    "city": "Waco",
+    "state": "TX",
+    "timezone": "America/Chicago",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_349",
+    "alternate_locations": ["vba_349i"]
+  },
+  "RO50": {
+    "label": "Little Rock regional office",
+    "city": "Little Rock",
+    "state": "AR",
+    "timezone": "America/Chicago",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_350",
+    "alternate_locations": null
+  },
+  "RO51": {
+    "label": "Muskogee regional office",
+    "city": "Muskogee",
+    "state": "OK",
+    "timezone": "America/Chicago",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_351",
+    "alternate_locations": null
+  },
+  "RO52": {
+    "label": "Wichita regional office",
+    "city": "Wichita",
+    "state": "KS",
+    "timezone": "America/Chicago",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_452",
+    "alternate_locations": null
+  },
+  "RO54": {
+    "label": "Reno regional office",
+    "city": "Reno",
+    "state": "NV",
+    "timezone": "America/Los_Angeles",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_354",
+    "alternate_locations": ["vha_593", "vc_0505V"]
+  },
+  "RO55": {
+    "label": "San Juan regional office",
+    "city": "San Juan",
+    "state": "PR",
+    "timezone": "America/Puerto_Rico",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_355",
+    "alternate_locations": null
+  },
+  "RO58": {
+    "label": "Manila regional office",
+    "city": "Manila",
+    "state": "PI",
+    "timezone": "Asia/Manila",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_358",
+    "alternate_locations": null
+  },
+  "RO59": {
+    "label": "Honolulu regional office",
+    "city": "Honolulu",
+    "state": "HI",
+    "timezone": "Pacific/Honolulu",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_459",
+    "alternate_locations": [
+      "vc_0616V",
+      "vba_459h",
+      "vba_459i",
+      "vc_0633V",
+      "vc_0636V",
+      "vc_0634V",
+      "vha_459GH"
+    ]
+  },
+  "RO60": {
+    "label": "Wilmington regional office",
+    "city": "Wilmington",
+    "state": "DE",
+    "timezone": "America/New_York",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO61": {
+    "label": "Houston regional office",
+    "city": "Houston Foreign Cases",
+    "state": "TX",
+    "timezone": "America/Chicago",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO62": {
+    "label": "Houston regional office",
+    "city": "Houston",
+    "state": "TX",
+    "timezone": "America/Chicago",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_362",
+    "alternate_locations": ["vha_671GS", "vha_740GA"]
+  },
+  "RO63": {
+    "label": "Anchorage regional office",
+    "city": "Anchorage",
+    "state": "AK",
+    "timezone": "America/Anchorage",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_463",
+    "alternate_locations": null
+  },
+  "RO64": {
+    "label": null,
+    "city": "Columbia Fiduciary Hub",
+    "state": "SC",
+    "timezone": "America/New_York",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO65": {
+    "label": null,
+    "city": "Indianapolis Fiduciary Hub",
+    "state": "IN",
+    "timezone": "America/Indiana/Indianapolis",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO66": {
+    "label": null,
+    "city": "Lincoln Fiduciary Hub",
+    "state": "NE",
+    "timezone": "America/Chicago",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO67": {
+    "label": null,
+    "city": "Louisville Fiduciary Hub",
+    "state": "KY",
+    "timezone": "America/Kentucky/Louisville",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO68": {
+    "label": null,
+    "city": "Milwaukee Fiduciary Hub",
+    "state": "WI",
+    "timezone": "America/Chicago",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO69": {
+    "label": null,
+    "city": "Western Area Fiduciary Hub",
+    "state": "UT",
+    "timezone": "America/Denver",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO70": {
+    "label": null,
+    "city": "Louisville CLCW",
+    "state": "KY",
+    "timezone": "America/Kentucky/Louisville",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO71": {
+    "label": null,
+    "city": "Pittsburgh Foreign Cases",
+    "state": "PA",
+    "timezone": "America/New_York",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO72": {
+    "label": "Washington, DC regional office",
+    "city": "Washington",
+    "state": "DC",
+    "timezone": "America/New_York",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO73": {
+    "label": "Manchester regional office",
+    "city": "Manchester",
+    "state": "NH",
+    "timezone": "America/New_York",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_373",
+    "alternate_locations": null
+  },
+  "RO74": {
+    "label": null,
+    "city": "Philadelphia RACC",
+    "state": "PA",
+    "timezone": "America/New_York",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO75": {
+    "label": null,
+    "city": "Milwaukee RACC",
+    "state": "WI",
+    "timezone": "America/Chicago",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO76": {
+    "label": null,
+    "city": "St. Paul RACC",
+    "state": "MN",
+    "timezone": "America/Chicago",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO77": {
+    "label": "San Diego regional office",
+    "city": "San Diego",
+    "state": "CA",
+    "timezone": "America/Los_Angeles",
+    "hold_hearings": true,
+    "facility_locator_id": "vba_377",
+    "alternate_locations": null
+  },
+  "RO78": {
+    "label": "Legacy RO (RO78)",
+    "city": "Unknown",
+    "state": "??",
+    "timezone": "America/New_York",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO79": {
+    "label": null,
+    "city": "St. Paul Regional Loan Center",
+    "state": "MN",
+    "timezone": "America/Chicago",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO80": {
+    "label": null,
+    "city": "Philadelphia Insurance Center",
+    "state": "PA",
+    "timezone": "America/New_York",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO81": {
+    "label": null,
+    "city": "Philadelphia Pension Center",
+    "state": "PA",
+    "timezone": "America/New_York",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO82": {
+    "label": null,
+    "city": "Milwaukee Pension Center",
+    "state": "WI",
+    "timezone": "America/Chicago",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO83": {
+    "label": null,
+    "city": "St. Paul Pension Center",
+    "state": "MN",
+    "timezone": "America/Chicago",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO84": {
+    "label": null,
+    "city": "Philadelphia COWAC",
+    "state": "PA",
+    "timezone": "America/New_York",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO85": {
+    "label": null,
+    "city": "Milwaukee COWAC",
+    "state": "WI",
+    "timezone": "America/Chicago",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO86": {
+    "label": null,
+    "city": "St. Paul COWAC",
+    "state": "MN",
+    "timezone": "America/Chicago",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO87": {
+    "label": null,
+    "city": "Atlanta Health Eligibility Center",
+    "state": "GA",
+    "timezone": "America/New_York",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO88": {
+    "label": null,
+    "city": "LGY Eligibility Center - Atlanta",
+    "state": "GA",
+    "timezone": "America/New_York",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO89": {
+    "label": null,
+    "city": "General Counsel",
+    "state": "DC",
+    "timezone": "America/New_York",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO91": {
+    "label": null,
+    "city": "Buffalo Education Center",
+    "state": "NY",
+    "timezone": "America/New_York",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO92": {
+    "label": null,
+    "city": "Atlanta Education Center",
+    "state": "GA",
+    "timezone": "America/New_York",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO93": {
+    "label": null,
+    "city": "Muskogee Education Center",
+    "state": "OK",
+    "timezone": "America/Chicago",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO94": {
+    "label": null,
+    "city": "St. Louis Education Center",
+    "state": "MO",
+    "timezone": "America/Chicago",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO97": {
+    "label": null,
+    "city": "ARC",
+    "state": "DC",
+    "timezone": "America/New_York",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO98": {
+    "label": null,
+    "city": "National Cemetery Administration - St. Louis",
+    "state": "MO",
+    "timezone": "America/Chicago",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "RO99": {
+    "label": null,
+    "city": "VHA CO",
+    "state": "DC",
+    "timezone": "America/New_York",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "DSUSER": {
+    "label": null,
+    "city": "Digital Service HQ",
+    "state": "DC",
+    "timezone": "America/New_York",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "VACO": {
+    "label": "Board of Veterans' Appeals CO Office",
+    "city": "Washington",
+    "state": "DC",
+    "timezone": "America/New_York",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "NWQ": {
+    "label": null,
+    "city": "Washington",
+    "state": "DC",
+    "timezone": "America/New_York",
+    "hold_hearings": false,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  },
+  "R": {
+    "label": "Virtual Hearings",
+    "city": null,
+    "state": null,
+    "timezone": "America/New_York",
+    "hold_hearings": true,
+    "facility_locator_id": null,
+    "alternate_locations": null
+  }
+}

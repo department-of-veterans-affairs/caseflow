@@ -1,0 +1,29 @@
+
+.usa-alert {
+
+  &.fixed {
+    position: fixed;
+    top: 0;
+    margin-top: 0;
+    z-index: 999;
+    left: 50%;
+    transform: translate(-50%, 0);
+  }
+
+  // Remove after USWDS V.2.0
+  &.usa-alert-slim {
+    background-size: 4rem;
+
+    .usa-alert-body {
+      padding-left: 3.5rem;
+    }
+
+    .usa-alert-text {
+      font-size: 2rem;
+    }
+  }
+
+  .usa-alert-text {
+    line-height: 1.5;
+  }
+}

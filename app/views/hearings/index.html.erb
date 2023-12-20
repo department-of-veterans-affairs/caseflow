@@ -1,0 +1,38 @@
+<% content_for :head do %>
+<% if local_assigns.has_key?(:override_stylesheet) %>
+<%= stylesheet_link_tag override_stylesheet, media: 'all' %>
+<% end %>
+<% if local_assigns.has_key?(:print_stylesheet) %>
+<%= stylesheet_link_tag print_stylesheet, media: 'print' %>
+<% end %>
+<% end %>
+
+<% content_for :full_page_content do %>
+<%= react_component("Hearings", props: {
+  userDisplayName: current_user.display_name,
+  dropdownUrls: dropdown_urls,
+  applicationUrls: application_urls,
+  feedbackUrl: feedback_url,
+  buildDate: build_date,
+  userCanAddVirtualHearingDays: FeatureToggle.enabled?(:national_vh_queue, user: current_user),
+  userCanAssignHearingSchedule: current_user.can_assign_hearing_schedule?,
+  userCanBuildHearingSchedule: current_user.can?('Build HearSched'),
+  userCanViewHearingSchedule: current_user.can_view_hearing_schedule?,
+  userCanVsoHearingSchedule: current_user.can_vso_hearing_schedule?,
+  userHasHearingPrepRole: current_user.can?('Hearing Prep'),
+  userInHearingOrTranscriptionOrganization: current_user.in_hearing_or_transcription_organization?,
+  userCanViewFnodBadgeInHearings: FeatureToggle.enabled?(:view_fnod_badge_in_hearings, user: current_user),
+  userVsoEmployee: current_user.vso_employee?,
+  userId: current_user.id,
+  userCssId: current_user.css_id,
+  userIsJudge: current_user.judge?,
+  userIsDvc: current_user.can_view_judge_team_management?,
+  userIsHearingManagement: current_user.in_hearing_management_team?,
+  userIsBoardAttorney: current_user.attorney?,
+  userIsHearingAdmin: current_user.in_hearing_admin_team?,
+  userIsNonBoardEmployee: current_user.non_board_employee?,
+  featureToggles: {
+    metricsBrowserError: FeatureToggle.enabled?(:metrics_browser_error, user: current_user)
+  }
+}) %>
+<% end %>

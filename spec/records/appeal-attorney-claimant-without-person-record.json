@@ -1,0 +1,1849 @@
+{
+  "metadata": {
+    "exported_at": "2021-10-25 20:53:00 UTC",
+    "purpose": "to diagnose appeal"
+  },
+  "appeals": [
+    {
+      "id": 185234,
+      "veteran_file_number": "000409344",
+      "receipt_date": "2021-09-08",
+      "docket_type": "hearing",
+      "established_at": "2021-09-17 16:30:30 UTC",
+      "uuid": "f150ca53-2260-478d-ab04-bf99117d6709",
+      "legacy_opt_in_approved": false,
+      "veteran_is_not_claimant": true,
+      "establishment_submitted_at": "2021-09-17 16:30:31 UTC",
+      "establishment_processed_at": "2021-09-17 16:30:32 UTC",
+      "establishment_attempted_at": "2021-09-17 16:30:32 UTC",
+      "establishment_error": null,
+      "establishment_last_submitted_at": "2021-09-17 16:30:31 UTC",
+      "target_decision_date": null,
+      "closest_regional_office": null,
+      "establishment_canceled_at": null,
+      "docket_range_date": null,
+      "poa_participant_id": null,
+      "created_at": "2021-09-17 16:22:54 UTC",
+      "updated_at": "2021-09-17 16:30:44 UTC",
+      "stream_docket_number": "210908-185234",
+      "stream_type": "original",
+      "aod_based_on_age": false,
+      "changed_hearing_request_type": null,
+      "original_hearing_request_type": null,
+      "filed_by_va_gov": null
+    }
+  ],
+  "veterans": [
+    {
+      "id": 901633,
+      "file_number": "000409344",
+      "participant_id": "33470888",
+      "first_name": "Cristal",
+      "last_name": "Marks",
+      "middle_name": "U",
+      "name_suffix": null,
+      "closest_regional_office": null,
+      "ssn": "000409344",
+      "created_at": "2020-11-02 21:50:05 UTC",
+      "updated_at": "2021-09-23 13:33:57 UTC",
+      "date_of_death": null,
+      "date_of_death_reported_at": null,
+      "bgs_last_synced_at": "2021-09-23 13:33:57 UTC"
+    }
+  ],
+  "intakes": [
+    {
+      "id": 1472838,
+      "detail_id": 185234,
+      "detail_type": "Appeal",
+      "user_id": 955,
+      "veteran_file_number": "000409344",
+      "started_at": "2021-09-17 16:22:54 UTC",
+      "completed_at": "2021-09-17 16:30:32 UTC",
+      "completion_status": "success",
+      "error_code": null,
+      "type": "AppealIntake",
+      "cancel_reason": null,
+      "cancel_other": null,
+      "completion_started_at": "2021-09-17 16:30:30 UTC",
+      "created_at": "2021-09-17 16:22:54 UTC",
+      "updated_at": "2021-09-17 16:30:32 UTC",
+      "veteran_id": null
+    }
+  ],
+  "decision_documents": [
+
+  ],
+  "claimants": [
+    {
+      "id": 1348303,
+      "participant_id": "57065126",
+      "payee_code": null,
+      "decision_review_type": "Appeal",
+      "decision_review_id": 185234,
+      "created_at": "2021-09-17 16:23:49 UTC",
+      "updated_at": "2021-09-17 16:23:49 UTC",
+      "type": "AttorneyClaimant",
+      "notes": null
+    }
+  ],
+  "tasks": [
+    {
+      "id": 2001237,
+      "appeal_id": 185234,
+      "status": "on_hold",
+      "type": "RootTask",
+      "instructions": [
+
+      ],
+      "assigned_to_id": 2,
+      "assigned_by_id": null,
+      "assigned_at": "2021-09-17 16:30:30 UTC",
+      "started_at": null,
+      "created_at": "2021-09-17 16:30:30 UTC",
+      "updated_at": "2021-09-17 16:30:30 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": "2021-09-17 16:30:30 UTC",
+      "assigned_to_type": "Organization",
+      "parent_id": null,
+      "closed_at": null,
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 2001238,
+      "appeal_id": 185234,
+      "status": "on_hold",
+      "type": "DistributionTask",
+      "instructions": [
+
+      ],
+      "assigned_to_id": 2,
+      "assigned_by_id": null,
+      "assigned_at": "2021-09-17 16:30:30 UTC",
+      "started_at": null,
+      "created_at": "2021-09-17 16:30:30 UTC",
+      "updated_at": "2021-09-17 16:30:30 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": "2021-09-17 16:30:30 UTC",
+      "assigned_to_type": "Organization",
+      "parent_id": 2001237,
+      "closed_at": null,
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 2001239,
+      "appeal_id": 185234,
+      "status": "on_hold",
+      "type": "HearingTask",
+      "instructions": [
+
+      ],
+      "assigned_to_id": 2,
+      "assigned_by_id": null,
+      "assigned_at": "2021-09-17 16:30:30 UTC",
+      "started_at": null,
+      "created_at": "2021-09-17 16:30:30 UTC",
+      "updated_at": "2021-09-17 16:30:30 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": "2021-09-17 16:30:30 UTC",
+      "assigned_to_type": "Organization",
+      "parent_id": 2001238,
+      "closed_at": null,
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 2001240,
+      "appeal_id": 185234,
+      "status": "on_hold",
+      "type": "ScheduleHearingTask",
+      "instructions": [
+
+      ],
+      "assigned_to_id": 2,
+      "assigned_by_id": null,
+      "assigned_at": "2021-09-17 16:30:30 UTC",
+      "started_at": null,
+      "created_at": "2021-09-17 16:30:30 UTC",
+      "updated_at": "2021-09-17 17:24:55 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": "2021-09-17 17:24:55 UTC",
+      "assigned_to_type": "Organization",
+      "parent_id": 2001239,
+      "closed_at": null,
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    },
+    {
+      "id": 2001387,
+      "appeal_id": 185234,
+      "status": "assigned",
+      "type": "HearingAdminActionVerifyAddressTask",
+      "instructions": [
+        "Magni nesciunt voluptatem sunt."
+      ],
+      "assigned_to_id": 20,
+      "assigned_by_id": null,
+      "assigned_at": "2021-09-17 17:24:55 UTC",
+      "started_at": null,
+      "created_at": "2021-09-17 17:24:55 UTC",
+      "updated_at": "2021-09-17 17:24:55 UTC",
+      "appeal_type": "Appeal",
+      "placed_on_hold_at": null,
+      "assigned_to_type": "Organization",
+      "parent_id": 2001240,
+      "closed_at": null,
+      "cancelled_by_id": null,
+      "cancellation_reason": null
+    }
+  ],
+  "task_timers": [
+
+  ],
+  "judge_case_reviews": [
+
+  ],
+  "attorney_case_reviews": [
+
+  ],
+  "decision_issues": [
+
+  ],
+  "request_issues": [
+    {
+      "id": 2637076,
+      "contention_reference_id": null,
+      "decision_date": "2021-06-24",
+      "end_product_establishment_id": null,
+      "rating_issue_associated_at": null,
+      "notes": null,
+      "is_unidentified": null,
+      "ineligible_due_to_id": null,
+      "untimely_exemption": null,
+      "untimely_exemption_notes": null,
+      "ineligible_reason": null,
+      "ramp_claim_id": null,
+      "decision_sync_submitted_at": null,
+      "decision_sync_attempted_at": null,
+      "decision_sync_processed_at": null,
+      "decision_sync_error": null,
+      "vacols_id": null,
+      "vacols_sequence_id": null,
+      "created_at": "2021-09-17 16:30:30 UTC",
+      "benefit_type": "compensation",
+      "contested_decision_issue_id": null,
+      "veteran_participant_id": "33470888",
+      "contested_rating_issue_diagnostic_code": null,
+      "decision_review_type": "Appeal",
+      "decision_review_id": 185234,
+      "contested_rating_issue_reference_id": null,
+      "contested_rating_issue_profile_date": null,
+      "contested_issue_description": null,
+      "nonrating_issue_description": "Omnis excepturi commodi voluptates.",
+      "unidentified_issue_text": null,
+      "closed_at": null,
+      "closed_status": null,
+      "decision_sync_last_submitted_at": null,
+      "contention_removed_at": null,
+      "updated_at": "2021-09-17 16:30:30 UTC",
+      "nonrating_issue_category": "Contested Claims - Attorney Fees",
+      "decision_sync_canceled_at": null,
+      "edited_description": null,
+      "contention_updated_at": null,
+      "correction_type": null,
+      "corrected_by_request_issue_id": null,
+      "contested_rating_decision_reference_id": null,
+      "verified_unidentified_issue": null,
+      "covid_timeliness_exempt": null,
+      "type": "RequestIssue"
+    }
+  ],
+  "request_decision_issues": [
+
+  ],
+  "cavc_remands": [
+
+  ],
+  "hearings": [
+
+  ],
+  "hearing_days": [
+
+  ],
+  "virtual_hearings": [
+
+  ],
+  "hearing_task_associations": [
+
+  ],
+  "users": [
+    {
+      "id": 718,
+      "station_id": "101",
+      "css_id": "SAINDPVACO",
+      "full_name": "Elda Grady DO",
+      "email": "floretta.rice@cassin-kling.biz",
+      "roles": [
+        "Reader",
+        "Hearing Prep",
+        "Mail Intake"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-10-22 17:41:45 UTC",
+      "created_at": "2019-02-19 00:00:00 UTC",
+      "updated_at": "2021-10-23 02:05:37 UTC",
+      "efolder_documents_fetched_at": "2021-10-23 02:05:37 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 955,
+      "station_id": "101",
+      "css_id": "SOSNABVAK",
+      "full_name": "Nettie Torp",
+      "email": "barney_heaney@jenkins-green.co",
+      "roles": [
+        "Reader",
+        "Hearing Prep",
+        "Mail Intake"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-10-25 19:52:05 UTC",
+      "created_at": "2019-02-19 00:00:00 UTC",
+      "updated_at": "2021-10-25 19:52:05 UTC",
+      "efolder_documents_fetched_at": "2021-10-22 06:00:38 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 1048,
+      "station_id": "101",
+      "css_id": "DOANBVAN",
+      "full_name": "Vincent Corwin III",
+      "email": "elias@stracke-pfeffer.com",
+      "roles": [
+        "Download eFolder",
+        "Reader",
+        "Hearing Prep"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-10-25 20:20:20 UTC",
+      "created_at": "2019-02-19 00:00:00 UTC",
+      "updated_at": "2021-10-25 20:20:20 UTC",
+      "efolder_documents_fetched_at": "2021-10-25 03:40:36 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 1601,
+      "station_id": "101",
+      "css_id": "AMBRISVACO",
+      "full_name": "Merilyn Kunde",
+      "email": "mae_pagac@satterfield.co",
+      "roles": [
+        "Reader",
+        "Mail Intake",
+        "Build HearSched",
+        "Edit HearSched"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-10-25 20:13:23 UTC",
+      "created_at": "2019-02-19 00:00:00 UTC",
+      "updated_at": "2021-10-25 20:13:23 UTC",
+      "efolder_documents_fetched_at": "2021-10-23 21:15:37 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 1822,
+      "station_id": "101",
+      "css_id": "TAYEHRVACO",
+      "full_name": "Tana Kirlin",
+      "email": "shelly.donnelly@koepp.co",
+      "roles": [
+        "Reader",
+        "Mail Intake",
+        "Build HearSched",
+        "Edit HearSched"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-10-25 20:19:12 UTC",
+      "created_at": "2019-02-19 00:00:00 UTC",
+      "updated_at": "2021-10-25 20:19:12 UTC",
+      "efolder_documents_fetched_at": "2021-10-23 02:40:36 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 1881,
+      "station_id": "101",
+      "css_id": "OWENSBVAT",
+      "full_name": "Chantal O'Kon",
+      "email": "gwenn@turner.info",
+      "roles": [
+        "Reader",
+        "Mail Intake",
+        "Build HearSched",
+        "Edit HearSched"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-06-10 21:30:32 UTC",
+      "created_at": "2019-02-19 00:00:00 UTC",
+      "updated_at": "2021-06-14 07:30:37 UTC",
+      "efolder_documents_fetched_at": "2021-06-14 07:30:37 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 2061,
+      "station_id": "101",
+      "css_id": "SMITHBVAJ",
+      "full_name": "Babette Harvey CPA",
+      "email": "oma.schaefer@kuhlman.com",
+      "roles": [
+        "Reader",
+        "Mail Intake",
+        "Build HearSched",
+        "Edit HearSched"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-10-22 14:09:21 UTC",
+      "created_at": "2019-02-19 00:00:00 UTC",
+      "updated_at": "2021-10-22 14:09:21 UTC",
+      "efolder_documents_fetched_at": "2021-10-22 13:50:37 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 2114,
+      "station_id": "101",
+      "css_id": "MALONEBVAB",
+      "full_name": "Jenni Feil",
+      "email": "marita@boyle.io",
+      "roles": [
+        "Reader",
+        "Mail Intake",
+        "Build HearSched",
+        "Edit HearSched"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-10-25 20:18:28 UTC",
+      "created_at": "2019-02-19 00:00:00 UTC",
+      "updated_at": "2021-10-25 20:18:28 UTC",
+      "efolder_documents_fetched_at": "2021-10-24 23:10:36 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 2170,
+      "station_id": "101",
+      "css_id": "THREAHVACO",
+      "full_name": "Kisha O'Connell",
+      "email": "james@satterfield.io",
+      "roles": [
+        "Reader",
+        "Mail Intake",
+        "Build HearSched",
+        "Edit HearSched"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-10-25 19:08:18 UTC",
+      "created_at": "2019-02-19 00:00:00 UTC",
+      "updated_at": "2021-10-25 19:08:18 UTC",
+      "efolder_documents_fetched_at": "2021-10-24 21:10:37 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 2309,
+      "station_id": "101",
+      "css_id": "CARTELVACO",
+      "full_name": "Elicia Deckow",
+      "email": "marshall@gerhold-smitham.name",
+      "roles": [
+        "Reader",
+        "Mail Intake",
+        "Build HearSched",
+        "Edit HearSched"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-10-25 08:54:08 UTC",
+      "created_at": "2019-02-19 00:00:00 UTC",
+      "updated_at": "2021-10-25 08:54:08 UTC",
+      "efolder_documents_fetched_at": "2021-10-22 02:35:37 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 2324,
+      "station_id": "101",
+      "css_id": "SCREDLEBVAL",
+      "full_name": "Scotty Koss",
+      "email": "berna@jones.com",
+      "roles": [
+        "Download eFolder",
+        "Reader"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-10-25 14:30:09 UTC",
+      "created_at": "2019-02-19 00:00:00 UTC",
+      "updated_at": "2021-10-25 14:30:09 UTC",
+      "efolder_documents_fetched_at": "2021-10-23 13:15:37 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 3937,
+      "station_id": "101",
+      "css_id": "SIMMOJ1VACO",
+      "full_name": "Tennille Fisher",
+      "email": "lavinia.lesch@schneider.info",
+      "roles": [
+        "Reader",
+        "Mail Intake",
+        "Build HearSched",
+        "Edit HearSched"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-10-25 20:26:07 UTC",
+      "created_at": "2019-03-05 20:43:56 UTC",
+      "updated_at": "2021-10-25 20:26:07 UTC",
+      "efolder_documents_fetched_at": "2021-10-25 18:30:36 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 8026,
+      "station_id": "101",
+      "css_id": "ANDERR1VACO",
+      "full_name": "Kristofer Wehner",
+      "email": "letitia@haag.io",
+      "roles": [
+        "Reader",
+        "Mail Intake",
+        "Build HearSched",
+        "Edit HearSched"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-10-22 18:14:20 UTC",
+      "created_at": "2019-04-29 20:01:44 UTC",
+      "updated_at": "2021-10-23 22:30:37 UTC",
+      "efolder_documents_fetched_at": "2021-10-23 22:30:37 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 8793,
+      "station_id": "101",
+      "css_id": "DUNPHDVACO",
+      "full_name": "Gayle Wolf",
+      "email": "raul@reynolds-daniel.com",
+      "roles": [
+        "Reader",
+        "Admin Intake",
+        "Build HearSched",
+        "Edit HearSched"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-10-25 19:00:13 UTC",
+      "created_at": "2019-05-14 10:49:54 UTC",
+      "updated_at": "2021-10-25 19:00:13 UTC",
+      "efolder_documents_fetched_at": "2021-10-25 04:30:36 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 9340,
+      "station_id": "101",
+      "css_id": "GOSNEJVACO",
+      "full_name": "Jasper Bauch",
+      "email": "lucrecia.flatley@kulas.name",
+      "roles": [
+        "Download eFolder",
+        "Reader"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-10-25 20:01:35 UTC",
+      "created_at": "2019-05-28 19:19:33 UTC",
+      "updated_at": "2021-10-25 20:01:35 UTC",
+      "efolder_documents_fetched_at": "2021-10-24 07:55:36 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 11189,
+      "station_id": "101",
+      "css_id": "COLEM1VACO",
+      "full_name": "Margret Wintheiser PhD",
+      "email": "steven.quitzon@keebler.io",
+      "roles": [
+        "Reader",
+        "Mail Intake",
+        "Build HearSched"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-10-25 20:31:38 UTC",
+      "created_at": "2019-08-01 20:02:13 UTC",
+      "updated_at": "2021-10-25 20:31:38 UTC",
+      "efolder_documents_fetched_at": "2021-10-22 05:50:37 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 16249,
+      "station_id": "101",
+      "css_id": "PYOSKVACO",
+      "full_name": "Rhett Rodriguez",
+      "email": "wilburn.oreilly@satterfield-howe.net",
+      "roles": [
+        "Reader",
+        "Mail Intake",
+        "Build HearSched",
+        "Edit HearSched"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-10-25 19:55:12 UTC",
+      "created_at": "2020-06-16 13:47:09 UTC",
+      "updated_at": "2021-10-25 19:55:12 UTC",
+      "efolder_documents_fetched_at": "2021-10-23 23:35:36 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 16552,
+      "station_id": "101",
+      "css_id": "SANTOCVACO",
+      "full_name": "Micheline Durgan",
+      "email": "malcolm.gorczany@collier.co",
+      "roles": [
+        "Reader",
+        "Admin Intake",
+        "Build HearSched",
+        "Edit HearSched"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-10-25 20:38:21 UTC",
+      "created_at": "2020-07-16 18:18:19 UTC",
+      "updated_at": "2021-10-25 20:38:21 UTC",
+      "efolder_documents_fetched_at": "2021-10-24 16:50:36 UTC",
+      "status": "active",
+      "status_updated_at": null
+    },
+    {
+      "id": 20664,
+      "station_id": "101",
+      "css_id": "BAUERVVACO",
+      "full_name": "Emmie Christiansen",
+      "email": "teri@terry.io",
+      "roles": [
+        "Reader",
+        "Mail Intake",
+        "Build HearSched",
+        "Edit HearSched"
+      ],
+      "selected_regional_office": null,
+      "last_login_at": "2021-10-25 20:30:14 UTC",
+      "created_at": "2021-07-26 17:05:17 UTC",
+      "updated_at": "2021-10-25 20:30:14 UTC",
+      "efolder_documents_fetched_at": "2021-10-22 20:50:36 UTC",
+      "status": "active",
+      "status_updated_at": null
+    }
+  ],
+  "organizations_users": [
+    {
+      "id": 2042,
+      "organization_id": 225,
+      "user_id": 1601,
+      "admin": true,
+      "created_at": "2019-02-19 19:24:51 UTC",
+      "updated_at": "2019-02-28 17:04:46 UTC"
+    },
+    {
+      "id": 1021,
+      "organization_id": 124,
+      "user_id": 1048,
+      "admin": true,
+      "created_at": "2018-12-05 19:17:55 UTC",
+      "updated_at": "2018-12-05 19:17:55 UTC"
+    },
+    {
+      "id": 12841,
+      "organization_id": 474,
+      "user_id": 1048,
+      "admin": true,
+      "created_at": "2021-09-30 20:27:44 UTC",
+      "updated_at": "2021-09-30 20:27:46 UTC"
+    },
+    {
+      "id": 2076,
+      "organization_id": 20,
+      "user_id": 2061,
+      "admin": true,
+      "created_at": "2019-02-19 19:42:33 UTC",
+      "updated_at": "2020-06-04 18:38:31 UTC"
+    },
+    {
+      "id": 12842,
+      "organization_id": 461,
+      "user_id": 1048,
+      "admin": true,
+      "created_at": "2021-09-30 20:29:58 UTC",
+      "updated_at": "2021-09-30 20:30:03 UTC"
+    },
+    {
+      "id": 6561,
+      "organization_id": 224,
+      "user_id": 1881,
+      "admin": true,
+      "created_at": "2020-03-18 16:17:41 UTC",
+      "updated_at": "2020-03-18 16:17:44 UTC"
+    },
+    {
+      "id": 6832,
+      "organization_id": 330,
+      "user_id": 9340,
+      "admin": true,
+      "created_at": "2020-04-09 17:13:33 UTC",
+      "updated_at": "2020-04-09 17:13:41 UTC"
+    },
+    {
+      "id": 12843,
+      "organization_id": 18,
+      "user_id": 1048,
+      "admin": true,
+      "created_at": "2021-09-30 20:30:41 UTC",
+      "updated_at": "2021-09-30 20:30:48 UTC"
+    },
+    {
+      "id": 11679,
+      "organization_id": 18,
+      "user_id": 2324,
+      "admin": false,
+      "created_at": "2021-06-22 18:41:09 UTC",
+      "updated_at": "2021-06-22 18:41:09 UTC"
+    },
+    {
+      "id": 13028,
+      "organization_id": 202,
+      "user_id": 9340,
+      "admin": true,
+      "created_at": "2021-10-21 14:21:27 UTC",
+      "updated_at": "2021-10-21 14:21:29 UTC"
+    },
+    {
+      "id": 11680,
+      "organization_id": 461,
+      "user_id": 2324,
+      "admin": false,
+      "created_at": "2021-06-22 18:42:06 UTC",
+      "updated_at": "2021-06-22 18:42:06 UTC"
+    },
+    {
+      "id": 8985,
+      "organization_id": 20,
+      "user_id": 16552,
+      "admin": true,
+      "created_at": "2020-10-20 11:56:29 UTC",
+      "updated_at": "2020-10-20 11:56:38 UTC"
+    },
+    {
+      "id": 1469,
+      "organization_id": 166,
+      "user_id": 718,
+      "admin": false,
+      "created_at": "2018-12-05 19:17:59 UTC",
+      "updated_at": "2018-12-05 19:17:59 UTC"
+    },
+    {
+      "id": 7572,
+      "organization_id": 20,
+      "user_id": 16249,
+      "admin": true,
+      "created_at": "2020-06-17 12:58:12 UTC",
+      "updated_at": "2020-06-17 13:00:09 UTC"
+    },
+    {
+      "id": 4888,
+      "organization_id": 363,
+      "user_id": 8793,
+      "admin": false,
+      "created_at": "2019-08-29 16:41:12 UTC",
+      "updated_at": "2020-02-14 14:04:56 UTC"
+    },
+    {
+      "id": 2094,
+      "organization_id": 20,
+      "user_id": 2170,
+      "admin": true,
+      "created_at": "2019-02-19 22:12:15 UTC",
+      "updated_at": "2021-08-04 18:16:21 UTC"
+    },
+    {
+      "id": 6695,
+      "organization_id": 225,
+      "user_id": 3937,
+      "admin": true,
+      "created_at": "2020-03-30 14:33:24 UTC",
+      "updated_at": "2021-08-04 18:17:52 UTC"
+    },
+    {
+      "id": 7573,
+      "organization_id": 224,
+      "user_id": 16249,
+      "admin": true,
+      "created_at": "2020-06-17 12:59:48 UTC",
+      "updated_at": "2020-06-17 12:59:54 UTC"
+    },
+    {
+      "id": 8986,
+      "organization_id": 224,
+      "user_id": 16552,
+      "admin": true,
+      "created_at": "2020-10-20 11:56:59 UTC",
+      "updated_at": "2020-10-20 11:57:03 UTC"
+    },
+    {
+      "id": 7574,
+      "organization_id": 225,
+      "user_id": 16249,
+      "admin": true,
+      "created_at": "2020-06-17 13:00:20 UTC",
+      "updated_at": "2020-06-17 13:00:25 UTC"
+    },
+    {
+      "id": 6834,
+      "organization_id": 225,
+      "user_id": 9340,
+      "admin": true,
+      "created_at": "2020-04-09 17:13:57 UTC",
+      "updated_at": "2020-04-09 17:14:05 UTC"
+    },
+    {
+      "id": 8987,
+      "organization_id": 225,
+      "user_id": 16552,
+      "admin": true,
+      "created_at": "2020-10-20 11:57:18 UTC",
+      "updated_at": "2020-10-20 11:57:22 UTC"
+    },
+    {
+      "id": 6558,
+      "organization_id": 20,
+      "user_id": 1881,
+      "admin": true,
+      "created_at": "2020-03-18 15:21:39 UTC",
+      "updated_at": "2020-03-18 15:21:54 UTC"
+    },
+    {
+      "id": 2050,
+      "organization_id": 224,
+      "user_id": 1601,
+      "admin": true,
+      "created_at": "2019-02-19 19:32:17 UTC",
+      "updated_at": "2019-04-24 14:17:24 UTC"
+    },
+    {
+      "id": 1816,
+      "organization_id": 20,
+      "user_id": 1601,
+      "admin": true,
+      "created_at": "2018-12-11 20:31:20 UTC",
+      "updated_at": "2019-02-28 17:04:11 UTC"
+    },
+    {
+      "id": 6697,
+      "organization_id": 225,
+      "user_id": 2061,
+      "admin": true,
+      "created_at": "2020-03-30 14:34:29 UTC",
+      "updated_at": "2020-06-04 18:41:46 UTC"
+    },
+    {
+      "id": 8989,
+      "organization_id": 18,
+      "user_id": 16552,
+      "admin": true,
+      "created_at": "2020-10-20 12:17:25 UTC",
+      "updated_at": "2021-06-11 12:55:07 UTC"
+    },
+    {
+      "id": 3801,
+      "organization_id": 20,
+      "user_id": 8026,
+      "admin": true,
+      "created_at": "2019-06-13 17:41:20 UTC",
+      "updated_at": "2019-06-13 17:41:24 UTC"
+    },
+    {
+      "id": 3802,
+      "organization_id": 20,
+      "user_id": 8793,
+      "admin": true,
+      "created_at": "2019-06-13 17:42:07 UTC",
+      "updated_at": "2019-06-13 17:42:09 UTC"
+    },
+    {
+      "id": 6362,
+      "organization_id": 18,
+      "user_id": 9340,
+      "admin": true,
+      "created_at": "2020-03-02 13:11:32 UTC",
+      "updated_at": "2020-03-02 13:11:51 UTC"
+    },
+    {
+      "id": 3803,
+      "organization_id": 225,
+      "user_id": 8026,
+      "admin": true,
+      "created_at": "2019-06-13 17:43:17 UTC",
+      "updated_at": "2019-06-13 17:43:20 UTC"
+    },
+    {
+      "id": 3804,
+      "organization_id": 225,
+      "user_id": 8793,
+      "admin": true,
+      "created_at": "2019-06-13 17:44:01 UTC",
+      "updated_at": "2019-06-13 17:44:03 UTC"
+    },
+    {
+      "id": 8404,
+      "organization_id": 472,
+      "user_id": 16552,
+      "admin": true,
+      "created_at": "2020-09-08 14:02:30 UTC",
+      "updated_at": "2020-09-08 14:02:30 UTC"
+    },
+    {
+      "id": 8511,
+      "organization_id": 472,
+      "user_id": 1048,
+      "admin": false,
+      "created_at": "2020-09-09 15:01:09 UTC",
+      "updated_at": "2020-09-09 15:01:09 UTC"
+    },
+    {
+      "id": 6836,
+      "organization_id": 224,
+      "user_id": 9340,
+      "admin": true,
+      "created_at": "2020-04-09 17:14:38 UTC",
+      "updated_at": "2020-04-09 17:14:46 UTC"
+    },
+    {
+      "id": 9869,
+      "organization_id": 23,
+      "user_id": 2324,
+      "admin": true,
+      "created_at": "2021-01-07 18:01:31 UTC",
+      "updated_at": "2021-01-07 18:01:34 UTC"
+    },
+    {
+      "id": 3805,
+      "organization_id": 224,
+      "user_id": 8026,
+      "admin": true,
+      "created_at": "2019-06-13 17:49:54 UTC",
+      "updated_at": "2019-06-13 17:49:55 UTC"
+    },
+    {
+      "id": 3806,
+      "organization_id": 224,
+      "user_id": 8793,
+      "admin": true,
+      "created_at": "2019-06-13 17:50:30 UTC",
+      "updated_at": "2019-06-13 17:50:32 UTC"
+    },
+    {
+      "id": 6838,
+      "organization_id": 214,
+      "user_id": 9340,
+      "admin": true,
+      "created_at": "2020-04-09 17:14:58 UTC",
+      "updated_at": "2020-04-09 17:15:04 UTC"
+    },
+    {
+      "id": 12266,
+      "organization_id": 518,
+      "user_id": 9340,
+      "admin": false,
+      "created_at": "2021-08-16 14:11:55 UTC",
+      "updated_at": "2021-08-16 14:11:55 UTC"
+    },
+    {
+      "id": 5016,
+      "organization_id": 363,
+      "user_id": 9340,
+      "admin": true,
+      "created_at": "2019-09-12 19:36:14 UTC",
+      "updated_at": "2019-09-12 19:36:16 UTC"
+    },
+    {
+      "id": 4403,
+      "organization_id": 2,
+      "user_id": 9340,
+      "admin": true,
+      "created_at": "2019-07-23 16:28:37 UTC",
+      "updated_at": "2019-07-23 16:28:40 UTC"
+    },
+    {
+      "id": 12269,
+      "organization_id": 518,
+      "user_id": 718,
+      "admin": false,
+      "created_at": "2021-08-16 14:26:01 UTC",
+      "updated_at": "2021-08-16 14:26:01 UTC"
+    },
+    {
+      "id": 7130,
+      "organization_id": 461,
+      "user_id": 9340,
+      "admin": true,
+      "created_at": "2020-04-29 14:15:41 UTC",
+      "updated_at": "2020-05-01 10:53:34 UTC"
+    },
+    {
+      "id": 11747,
+      "organization_id": 363,
+      "user_id": 1048,
+      "admin": false,
+      "created_at": "2021-06-29 13:13:04 UTC",
+      "updated_at": "2021-06-29 13:13:04 UTC"
+    },
+    {
+      "id": 5271,
+      "organization_id": 363,
+      "user_id": 1601,
+      "admin": false,
+      "created_at": "2019-10-04 13:10:51 UTC",
+      "updated_at": "2019-10-04 13:10:51 UTC"
+    },
+    {
+      "id": 7181,
+      "organization_id": 461,
+      "user_id": 955,
+      "admin": true,
+      "created_at": "2020-05-04 13:20:49 UTC",
+      "updated_at": "2021-05-28 12:36:39 UTC"
+    },
+    {
+      "id": 6680,
+      "organization_id": 225,
+      "user_id": 11189,
+      "admin": true,
+      "created_at": "2020-03-30 14:29:58 UTC",
+      "updated_at": "2020-06-18 13:52:04 UTC"
+    },
+    {
+      "id": 6840,
+      "organization_id": 213,
+      "user_id": 9340,
+      "admin": true,
+      "created_at": "2020-04-09 17:15:16 UTC",
+      "updated_at": "2020-04-09 17:15:21 UTC"
+    },
+    {
+      "id": 8814,
+      "organization_id": 474,
+      "user_id": 955,
+      "admin": false,
+      "created_at": "2020-10-06 12:50:24 UTC",
+      "updated_at": "2020-10-06 12:50:24 UTC"
+    },
+    {
+      "id": 9106,
+      "organization_id": 363,
+      "user_id": 11189,
+      "admin": false,
+      "created_at": "2020-10-27 18:44:43 UTC",
+      "updated_at": "2020-10-27 18:44:43 UTC"
+    },
+    {
+      "id": 9109,
+      "organization_id": 363,
+      "user_id": 2061,
+      "admin": false,
+      "created_at": "2020-10-27 18:47:51 UTC",
+      "updated_at": "2020-10-27 18:47:51 UTC"
+    },
+    {
+      "id": 9326,
+      "organization_id": 225,
+      "user_id": 2309,
+      "admin": true,
+      "created_at": "2020-11-17 14:30:51 UTC",
+      "updated_at": "2021-01-14 13:05:50 UTC"
+    },
+    {
+      "id": 8583,
+      "organization_id": 18,
+      "user_id": 1822,
+      "admin": true,
+      "created_at": "2020-09-15 13:41:46 UTC",
+      "updated_at": "2021-07-26 14:06:17 UTC"
+    },
+    {
+      "id": 4669,
+      "organization_id": 20,
+      "user_id": 2114,
+      "admin": true,
+      "created_at": "2019-08-12 18:13:07 UTC",
+      "updated_at": "2020-02-11 19:39:01 UTC"
+    },
+    {
+      "id": 9102,
+      "organization_id": 477,
+      "user_id": 9340,
+      "admin": true,
+      "created_at": "2020-10-27 17:14:46 UTC",
+      "updated_at": "2020-10-27 17:14:47 UTC"
+    },
+    {
+      "id": 6725,
+      "organization_id": 224,
+      "user_id": 2061,
+      "admin": true,
+      "created_at": "2020-03-30 14:44:01 UTC",
+      "updated_at": "2020-06-04 18:39:58 UTC"
+    },
+    {
+      "id": 12888,
+      "organization_id": 330,
+      "user_id": 1048,
+      "admin": true,
+      "created_at": "2021-10-04 19:17:12 UTC",
+      "updated_at": "2021-10-04 19:17:22 UTC"
+    },
+    {
+      "id": 4670,
+      "organization_id": 225,
+      "user_id": 2114,
+      "admin": true,
+      "created_at": "2019-08-12 18:14:36 UTC",
+      "updated_at": "2019-08-12 18:14:39 UTC"
+    },
+    {
+      "id": 12891,
+      "organization_id": 20,
+      "user_id": 1048,
+      "admin": true,
+      "created_at": "2021-10-04 22:24:02 UTC",
+      "updated_at": "2021-10-04 22:24:08 UTC"
+    },
+    {
+      "id": 9108,
+      "organization_id": 363,
+      "user_id": 16249,
+      "admin": false,
+      "created_at": "2020-10-27 18:45:22 UTC",
+      "updated_at": "2020-10-27 18:45:22 UTC"
+    },
+    {
+      "id": 6844,
+      "organization_id": 24,
+      "user_id": 9340,
+      "admin": true,
+      "created_at": "2020-04-09 17:15:53 UTC",
+      "updated_at": "2020-04-09 17:16:01 UTC"
+    },
+    {
+      "id": 4618,
+      "organization_id": 20,
+      "user_id": 11189,
+      "admin": true,
+      "created_at": "2019-08-08 19:34:57 UTC",
+      "updated_at": "2020-06-18 13:50:11 UTC"
+    },
+    {
+      "id": 5732,
+      "organization_id": 224,
+      "user_id": 3937,
+      "admin": true,
+      "created_at": "2019-12-02 13:04:24 UTC",
+      "updated_at": "2021-08-04 18:17:24 UTC"
+    },
+    {
+      "id": 6849,
+      "organization_id": 17,
+      "user_id": 9340,
+      "admin": true,
+      "created_at": "2020-04-09 19:53:04 UTC",
+      "updated_at": "2020-04-09 19:53:13 UTC"
+    },
+    {
+      "id": 5773,
+      "organization_id": 363,
+      "user_id": 2114,
+      "admin": false,
+      "created_at": "2019-12-06 15:01:18 UTC",
+      "updated_at": "2019-12-06 15:01:18 UTC"
+    },
+    {
+      "id": 6857,
+      "organization_id": 23,
+      "user_id": 9340,
+      "admin": true,
+      "created_at": "2020-04-09 20:00:42 UTC",
+      "updated_at": "2020-04-09 20:00:49 UTC"
+    },
+    {
+      "id": 6309,
+      "organization_id": 224,
+      "user_id": 2114,
+      "admin": true,
+      "created_at": "2020-02-21 16:41:16 UTC",
+      "updated_at": "2020-02-21 16:41:23 UTC"
+    },
+    {
+      "id": 6701,
+      "organization_id": 225,
+      "user_id": 2170,
+      "admin": true,
+      "created_at": "2020-03-30 14:34:59 UTC",
+      "updated_at": "2021-08-02 11:32:11 UTC"
+    },
+    {
+      "id": 8777,
+      "organization_id": 474,
+      "user_id": 9340,
+      "admin": true,
+      "created_at": "2020-10-02 17:50:55 UTC",
+      "updated_at": "2020-10-02 17:52:47 UTC"
+    },
+    {
+      "id": 8846,
+      "organization_id": 363,
+      "user_id": 2324,
+      "admin": false,
+      "created_at": "2020-10-07 13:25:31 UTC",
+      "updated_at": "2020-10-07 13:25:31 UTC"
+    },
+    {
+      "id": 6853,
+      "organization_id": 19,
+      "user_id": 9340,
+      "admin": true,
+      "created_at": "2020-04-09 19:54:06 UTC",
+      "updated_at": "2020-04-09 19:54:09 UTC"
+    },
+    {
+      "id": 9324,
+      "organization_id": 20,
+      "user_id": 2309,
+      "admin": true,
+      "created_at": "2020-11-17 14:30:00 UTC",
+      "updated_at": "2021-01-14 13:04:05 UTC"
+    },
+    {
+      "id": 11366,
+      "organization_id": 471,
+      "user_id": 9340,
+      "admin": true,
+      "created_at": "2021-05-20 21:28:12 UTC",
+      "updated_at": "2021-05-20 21:28:12 UTC"
+    },
+    {
+      "id": 6854,
+      "organization_id": 20,
+      "user_id": 9340,
+      "admin": true,
+      "created_at": "2020-04-09 19:54:24 UTC",
+      "updated_at": "2020-04-09 19:54:28 UTC"
+    },
+    {
+      "id": 8560,
+      "organization_id": 473,
+      "user_id": 16552,
+      "admin": true,
+      "created_at": "2020-09-14 15:32:11 UTC",
+      "updated_at": "2020-09-14 15:32:11 UTC"
+    },
+    {
+      "id": 6727,
+      "organization_id": 224,
+      "user_id": 2170,
+      "admin": true,
+      "created_at": "2020-03-30 14:44:28 UTC",
+      "updated_at": "2021-08-02 11:30:33 UTC"
+    },
+    {
+      "id": 6711,
+      "organization_id": 224,
+      "user_id": 11189,
+      "admin": true,
+      "created_at": "2020-03-30 14:40:09 UTC",
+      "updated_at": "2020-06-18 13:51:18 UTC"
+    },
+    {
+      "id": 9162,
+      "organization_id": 363,
+      "user_id": 8026,
+      "admin": false,
+      "created_at": "2020-11-02 20:19:53 UTC",
+      "updated_at": "2020-11-02 20:19:53 UTC"
+    },
+    {
+      "id": 9325,
+      "organization_id": 224,
+      "user_id": 2309,
+      "admin": true,
+      "created_at": "2020-11-17 14:30:29 UTC",
+      "updated_at": "2021-01-14 13:05:18 UTC"
+    },
+    {
+      "id": 9383,
+      "organization_id": 18,
+      "user_id": 2309,
+      "admin": true,
+      "created_at": "2020-11-20 15:38:55 UTC",
+      "updated_at": "2021-06-11 12:56:21 UTC"
+    },
+    {
+      "id": 9396,
+      "organization_id": 18,
+      "user_id": 11189,
+      "admin": true,
+      "created_at": "2020-11-20 15:42:03 UTC",
+      "updated_at": "2021-06-11 12:56:34 UTC"
+    },
+    {
+      "id": 9397,
+      "organization_id": 18,
+      "user_id": 16249,
+      "admin": true,
+      "created_at": "2020-11-20 15:42:30 UTC",
+      "updated_at": "2021-06-11 12:56:35 UTC"
+    },
+    {
+      "id": 6560,
+      "organization_id": 225,
+      "user_id": 1881,
+      "admin": true,
+      "created_at": "2020-03-18 16:17:21 UTC",
+      "updated_at": "2020-03-18 16:17:26 UTC"
+    },
+    {
+      "id": 9554,
+      "organization_id": 20,
+      "user_id": 3937,
+      "admin": true,
+      "created_at": "2020-12-09 16:26:05 UTC",
+      "updated_at": "2021-08-04 18:16:46 UTC"
+    },
+    {
+      "id": 9420,
+      "organization_id": 18,
+      "user_id": 1601,
+      "admin": true,
+      "created_at": "2020-11-24 00:11:35 UTC",
+      "updated_at": "2021-06-11 12:56:46 UTC"
+    },
+    {
+      "id": 9421,
+      "organization_id": 18,
+      "user_id": 3937,
+      "admin": true,
+      "created_at": "2020-11-24 00:15:40 UTC",
+      "updated_at": "2021-06-11 12:56:47 UTC"
+    },
+    {
+      "id": 9429,
+      "organization_id": 18,
+      "user_id": 2170,
+      "admin": true,
+      "created_at": "2020-11-24 00:28:53 UTC",
+      "updated_at": "2021-06-11 12:56:55 UTC"
+    },
+    {
+      "id": 9574,
+      "organization_id": 20,
+      "user_id": 718,
+      "admin": true,
+      "created_at": "2020-12-10 16:09:25 UTC",
+      "updated_at": "2020-12-10 16:09:35 UTC"
+    },
+    {
+      "id": 11850,
+      "organization_id": 330,
+      "user_id": 2324,
+      "admin": false,
+      "created_at": "2021-07-01 20:00:13 UTC",
+      "updated_at": "2021-07-01 20:00:13 UTC"
+    },
+    {
+      "id": 7365,
+      "organization_id": 18,
+      "user_id": 955,
+      "admin": true,
+      "created_at": "2020-05-21 21:53:10 UTC",
+      "updated_at": "2021-06-11 12:56:08 UTC"
+    },
+    {
+      "id": 11582,
+      "organization_id": 20,
+      "user_id": 2324,
+      "admin": true,
+      "created_at": "2021-06-11 21:02:35 UTC",
+      "updated_at": "2021-06-11 21:02:39 UTC"
+    },
+    {
+      "id": 11497,
+      "organization_id": 363,
+      "user_id": 3937,
+      "admin": false,
+      "created_at": "2021-06-04 00:13:00 UTC",
+      "updated_at": "2021-06-04 00:13:00 UTC"
+    },
+    {
+      "id": 11478,
+      "organization_id": 225,
+      "user_id": 2324,
+      "admin": true,
+      "created_at": "2021-06-03 16:19:01 UTC",
+      "updated_at": "2021-06-11 20:58:22 UTC"
+    },
+    {
+      "id": 9382,
+      "organization_id": 18,
+      "user_id": 8026,
+      "admin": true,
+      "created_at": "2020-11-20 15:36:27 UTC",
+      "updated_at": "2021-06-11 12:56:20 UTC"
+    },
+    {
+      "id": 12649,
+      "organization_id": 20,
+      "user_id": 955,
+      "admin": false,
+      "created_at": "2021-09-17 14:28:33 UTC",
+      "updated_at": "2021-09-17 14:28:33 UTC"
+    },
+    {
+      "id": 12033,
+      "organization_id": 20,
+      "user_id": 1822,
+      "admin": true,
+      "created_at": "2021-07-26 14:06:43 UTC",
+      "updated_at": "2021-07-26 14:06:47 UTC"
+    },
+    {
+      "id": 12034,
+      "organization_id": 224,
+      "user_id": 1822,
+      "admin": true,
+      "created_at": "2021-07-26 14:07:06 UTC",
+      "updated_at": "2021-07-26 14:07:09 UTC"
+    },
+    {
+      "id": 12035,
+      "organization_id": 225,
+      "user_id": 1822,
+      "admin": true,
+      "created_at": "2021-07-26 14:07:19 UTC",
+      "updated_at": "2021-07-26 14:07:22 UTC"
+    },
+    {
+      "id": 12087,
+      "organization_id": 20,
+      "user_id": 20664,
+      "admin": true,
+      "created_at": "2021-07-30 18:38:55 UTC",
+      "updated_at": "2021-07-30 18:39:01 UTC"
+    },
+    {
+      "id": 12088,
+      "organization_id": 224,
+      "user_id": 20664,
+      "admin": true,
+      "created_at": "2021-07-30 18:39:37 UTC",
+      "updated_at": "2021-07-30 18:39:42 UTC"
+    },
+    {
+      "id": 12089,
+      "organization_id": 225,
+      "user_id": 20664,
+      "admin": false,
+      "created_at": "2021-07-30 18:40:07 UTC",
+      "updated_at": "2021-07-30 18:40:07 UTC"
+    },
+    {
+      "id": 12964,
+      "organization_id": 363,
+      "user_id": 16552,
+      "admin": false,
+      "created_at": "2021-10-15 13:16:05 UTC",
+      "updated_at": "2021-10-15 13:16:05 UTC"
+    }
+  ],
+  "organizations": [
+    {
+      "id": 2,
+      "type": "Bva",
+      "name": "Board of Veterans' Appeals",
+      "role": null,
+      "url": "bva",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 17,
+      "type": "QualityReview",
+      "name": "Quality Review",
+      "role": null,
+      "url": "quality-review",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 18,
+      "type": "MailTeam",
+      "name": "Mail",
+      "role": null,
+      "url": "mail",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 19,
+      "type": "BvaDispatch",
+      "name": "Board Dispatch",
+      "role": null,
+      "url": "board-dispatch",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 20,
+      "type": "HearingsManagement",
+      "name": "Hearings Management",
+      "role": null,
+      "url": "hearings-management",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 23,
+      "type": "Colocated",
+      "name": "VLJ Support Staff",
+      "role": null,
+      "url": "vlj-support-staff",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 24,
+      "type": "AodTeam",
+      "name": "AOD",
+      "role": null,
+      "url": "aod",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 124,
+      "type": "JudgeTeam",
+      "name": "BVANDOAN",
+      "role": null,
+      "url": "bvandoan",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": "2021-10-04 19:08:15 UTC",
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": false,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 166,
+      "type": "JudgeTeam",
+      "name": "BVAMHERMAN",
+      "role": null,
+      "url": "bvamherman",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": true,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 202,
+      "type": "PrivacyTeam",
+      "name": "Privacy Team",
+      "role": null,
+      "url": "privacy",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 213,
+      "type": "LitigationSupport",
+      "name": "Litigation Support",
+      "role": null,
+      "url": "lit-support",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 214,
+      "type": "Translation",
+      "name": "Translation",
+      "role": null,
+      "url": "translation",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 224,
+      "type": "TranscriptionTeam",
+      "name": "Transcription",
+      "role": null,
+      "url": "transcription",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 225,
+      "type": "HearingAdmin",
+      "name": "Hearing Admin",
+      "role": null,
+      "url": "hearing-admin",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 330,
+      "type": "CaseReview",
+      "name": "Case Review",
+      "role": null,
+      "url": "case-review",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": "2020-04-10 14:48:18 UTC",
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 363,
+      "type": "SpecialCaseMovementTeam",
+      "name": "Case Movement Team",
+      "role": null,
+      "url": "case-movement",
+      "participant_id": null,
+      "created_at": null,
+      "updated_at": null,
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 461,
+      "type": "BvaIntake",
+      "name": "BVA Intake",
+      "role": null,
+      "url": "bva-intake",
+      "participant_id": null,
+      "created_at": "2020-04-10 16:59:42 UTC",
+      "updated_at": "2020-04-10 16:59:42 UTC",
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 471,
+      "type": "DvcTeam",
+      "name": "BVAKOSBORNE",
+      "role": null,
+      "url": "bvakosborne-dvc-team",
+      "participant_id": null,
+      "created_at": "2020-09-08 14:01:49 UTC",
+      "updated_at": "2020-09-08 14:01:49 UTC",
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 472,
+      "type": "DvcTeam",
+      "name": "VACOSANTOC",
+      "role": null,
+      "url": "vacosantoc-dvc-team",
+      "participant_id": null,
+      "created_at": "2020-09-08 14:02:30 UTC",
+      "updated_at": "2020-09-08 14:02:30 UTC",
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 473,
+      "type": "JudgeTeam",
+      "name": "VACOSANTOC",
+      "role": null,
+      "url": "vacosantoc",
+      "participant_id": null,
+      "created_at": "2020-09-14 15:32:11 UTC",
+      "updated_at": "2020-09-16 19:36:18 UTC",
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": false,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 474,
+      "type": "ClerkOfTheBoard",
+      "name": "Clerk of the Board",
+      "role": null,
+      "url": "clerk-of-the-board",
+      "participant_id": null,
+      "created_at": "2020-09-18 14:49:15 UTC",
+      "updated_at": "2020-09-18 14:49:15 UTC",
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 477,
+      "type": "CavcLitigationSupport",
+      "name": "CAVC Litigation Support",
+      "role": null,
+      "url": "cavc-lit-support",
+      "participant_id": null,
+      "created_at": "2020-10-19 19:33:02 UTC",
+      "updated_at": "2020-10-19 19:33:02 UTC",
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    },
+    {
+      "id": 518,
+      "type": "BoardProductOwners",
+      "name": "Board Product Owners",
+      "role": null,
+      "url": "product-owners",
+      "participant_id": null,
+      "created_at": "2021-08-16 14:01:54 UTC",
+      "updated_at": "2021-08-16 14:01:54 UTC",
+      "status": "active",
+      "status_updated_at": null,
+      "accepts_priority_pushed_cases": null,
+      "ama_only_push": false,
+      "ama_only_request": false
+    }
+  ],
+  "people": [
+    {
+      "id": 603351,
+      "participant_id": "33470888",
+      "date_of_birth": "1949-06-24",
+      "created_at": "2020-11-03 01:22:40 UTC",
+      "updated_at": "2020-11-03 01:22:41 UTC",
+      "first_name": "Tyron",
+      "last_name": "Carroll",
+      "middle_name": "P",
+      "name_suffix": null,
+      "email_address": "yuko_schmidt@herman-ritchie.org",
+      "ssn": "000409344"
+    }
+  ],
+  "unrecognized_party_details": [
+
+  ],
+  "unrecognized_appellants": [
+
+  ]
+}

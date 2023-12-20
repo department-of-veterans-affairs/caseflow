@@ -1,0 +1,87 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ */
+
+@import 'vis-timeline/dist/vis-timeline-graph2d.min.css';
+
+body {
+  /* Always show scrollbar so page width doesn't change due to showing tall elements */
+  overflow-y: scroll;
+}
+
+h3 {
+  margin-top: 24px;
+}
+
+.show_pii_true {
+  color: red;
+}
+
+li,
+li ul {
+  margin-bottom: 0px
+}
+
+input[type="button"] {
+  height: auto;
+}
+
+button.menuBtn {
+  padding: 5px;
+  font-size: 0.9em;
+}
+
+summary {
+  display: list-item;
+}
+
+.resourceLink {
+  margin: 5px;
+  font-size: 0.8em;
+  float: right;
+}
+
+/* From https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_js_dropdown_hover */
+.dropdown {
+  position: relative;
+  display: inline-block;
+
+  .dropbtn {
+    background-color: #04b5b5;
+  }
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 46px;
+  width: max-content;
+  box-shadow: 0px 8px 12px 0px;
+  z-index: 1;
+  background-color: lightcyan;
+  padding: 6px;
+  label {
+    padding: 4px 6px;
+    margin: 0px;
+  }
+  label:hover {
+    background-color: cyan;
+  }
+}
+.dropdown:hover {
+  .dropbtn {
+    background-color: darkcyan;
+  }
+  .dropdown-content {
+    display: block;
+  }
+}

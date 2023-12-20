@@ -1,0 +1,48 @@
+{
+  "COLUMNS": {
+    "TIMESTAMP": {
+      "header": "Timestamp",
+      "name": "timestamp",
+      "class": "timestamp"
+    },
+    "OBJECT_TYPE": {
+      "header": "Category",
+      "name": "category",
+      "filterable": true,
+      "class": "category"
+    },
+    "EVENT_TYPE": {
+      "header": "Type",
+      "name": "event_type",
+      "filterable": true,
+      "class": "event_type"
+    },
+    "COMMENT": {
+      "header": "Narrative",
+      "name": "comment",
+      "class": "narrative"
+    },
+    "RELEVANT_DATA": {
+      "header": "Relevant Data",
+      "name": "relevant_data",
+      "class": "rel_data"
+    },
+    "DETAILS": {
+      "header": "Details",
+      "name": "details",
+      "class": "details"
+    }
+  },
+  "UNUSED_COLUMNS": {
+    "CONTEXT": {
+      "header": "Context",
+      "name": "context_id",
+      "class": ""
+    },
+    "OBJECT_ID": {
+      "header": "Object ID",
+      "name": "object_id",
+      "class": ""
+    }
+  }
+}

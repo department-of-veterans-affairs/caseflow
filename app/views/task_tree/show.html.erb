@@ -1,0 +1,92 @@
+<div>
+  <%
+    def task_leaf_to_html(task)
+      task.each do |task_type, task_atts|
+  %>
+    <% if false %><li><pre><%= task_atts.pretty_inspect %></pre></li><% end %>
+
+    <% if task_atts[:tasks].present? and task_atts[:tasks].any? %>
+      <li id="task-<%= task_atts["id"] %>" class="task-name">
+        <span class="caret caret-down">
+          <%= task_type %>
+        </span>
+        <ul class="nested active">
+          <li class="task-atts"><% task_attribute_table(task_atts) %></li>
+          <% task_atts[:tasks].each { |leaf| task_leaf_to_html(leaf) } %>
+        </ul>
+      </li>
+    <% else %>
+      <li id="task-<%= task_atts["id"] %>" class="task-name">
+        <%= task_type %>
+      </li>
+      <li class="task-atts"><% task_attribute_table(task_atts) %></li>
+    <% end %>
+  <%
+      end
+    end
+  %>
+
+  <% def task_attribute_table(task_atts) %>
+    <% task = appeal.tasks.to_a.find { |t| t.id == task_atts["id"] } %>
+    <dl>
+      <dt>Task ID</dt>
+      <dd><%= task_atts["id"] %></dd>
+      <dt>Assigned Date</dt>
+      <dd><%= task_atts["assigned_at"] %></dd>
+      <dt>Closed At Date</dt>
+      <dd><%= task_atts["closed_at"] || "()" %></dd>
+      <dt>Status</dt>
+      <dd><%= task_atts["status"] %></dd>
+      <dt>Days Assigned</dt>
+      <dd><%= (Time.zone.today - task.assigned_at.to_date).to_i %></dd>
+      <dt>Assigned To</dt>
+      <dd><%= task.assigned_to_label %></dd>
+      <dt>Parent</dt>
+      <dd><%= task.parent&.type %>&nbsp;<%= task.parent&.id %></dd>
+    </dl>
+  <% end %>
+
+  <%# #########  main block ########## %>
+
+  <ul class="cf-task-tree">
+    <% task_tree_as_json.each do |appeal_type, tree| %>
+    <li class="appeal-name">
+      <span>
+        <%= appeal_type %> ID: <%= tree[:id] %>
+      </span>
+      <ul class="nested active">
+       <li class="appeal-atts">
+        <dl>
+          <dt>Veteran</dt>
+          <dd><%= appeal.veteran_full_name %> (<%= appeal.veteran_file_number %>)</dd>
+          <dt>Notice Receipt Date</dt>
+          <dd><%= appeal.nod_date %></dd>
+          <dt>Case Established At</dt>
+          <dd><%= appeal.try(:established_at) %></dd>
+          <dt>Days Aged</dt>
+          <dd><%= (Time.zone.today - appeal.nod_date).to_i %></dd>
+          <dt>Docket Type</dt>
+          <dd><%= appeal.docket_type %></dd>
+          <dt>Advance on Docket</dt>
+          <dd><%= appeal.aod? %></dd>
+        </dl>
+      </li>
+     </ul>
+    </li>
+    <ul class="nested active">
+      <% tree[:tasks].each do |task| %>
+        <% task_leaf_to_html(task) %>
+      <% end %>
+    <% end %>
+    </ul>
+  </ul>
+
+  <%= javascript_include_tag 'task-tree' %>
+  <script type="text/javascript">
+    $(".caret").on("click", function() {
+      const clicked = $(this);
+      clicked.parent().find(".nested").toggleClass("active");
+      clicked.toggleClass("caret-down");
+    });
+  </script>
+</div>

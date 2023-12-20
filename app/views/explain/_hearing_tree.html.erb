@@ -1,0 +1,11 @@
+<h3>Hearing (<span class="show_pii_<%=show_pii_query_param%>"><%= show_pii_query_param ? "showing PII" : "no PII" %></span>)</h3>
+<code style="color: green">
+  puts HearingRenderer.render(Appeal.find(<%= appeal.id %>),
+    show_pii: <%= show_pii_query_param ? "true" : "false" %>)
+</code>
+<pre style="font-size:0.9em; padding:10px"><code><%= hearing_as_text %></code></pre>
+
+<a class="resourceLink" target="_blank" rel="noopener noreferrer"
+   href="https://github.com/department-of-veterans-affairs/caseflow/wiki/Hearing-Structure-Renderer">
+   Hearing Structure Renderer</a>
+<br/>

@@ -1,0 +1,21 @@
+<%= content_for :intro do %>
+  <p>
+    Dear <%= @organization_name %> admin,
+  </p>
+<% end %>
+
+<%= content_for :content do %>
+  <p>
+    You have received a new request for access to <%= @organization_name %>. Please log in and navigate to the <%= @organization_name %> team management page in order to review and process this request.
+  </p>
+<% end %>
+
+<%= content_for :content do %>
+  <p style="padding-top:20px">
+    <b> Help </b>
+  </p>
+
+  <p>
+    Please call the Enterprise Service Desk at 855-673-4357 if you experience technical difficulties.
+  </p>
+<% end %>

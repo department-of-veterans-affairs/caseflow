@@ -1,0 +1,1338 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: $cf-background;
+}
+
+pre {
+  font-family: inherit;
+}
+
+.content {
+  min-height: calc(100vh - 125px);
+  padding-bottom: 30px;
+}
+
+a {
+  color: $cf-link;
+  text-decoration: none;
+}
+
+a:visited {
+  color: $color-primary; // Override USWDS
+}
+
+// Override USWDS v1 focus properties with USWDS v2 styling
+*:focus,
+a:focus,
+.usa-focus {
+  outline: .25rem solid $color-focus-outline;
+}
+
+[type=radio]:focus + label::before,
+[type=checkbox]:focus + label::before {
+  outline: .25rem solid $color-focus-outline;
+  outline-offset: 6px;
+}
+
+
+abbr {
+  border: 0;
+  text-decoration: none;
+
+  &[title] {
+    border-bottom: none;
+  }
+}
+
+.cf-success {
+  color: $color-green;
+}
+
+.cf-error {
+  color: $color-secondary;
+}
+
+label {
+  font-weight: $font-normal;
+  margin-top: 0; // Override USWDS
+}
+
+p {
+  margin-top: rem(20px);
+  margin-bottom: rem(24px);
+  color: $color-gray-dark;
+  font-size: 17px;
+  line-height: 1.5em;
+}
+
+.cf-help-content,
+.cf-sg-content {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p {
+    max-width: 70rem;
+  }
+}
+
+.cf-lead-paragraph {
+  font-size: 19px;
+  line-height: 1.5em;
+  margin-bottom: 30px;
+}
+
+.cf-display-1,
+.cf-display-2 {
+  line-height: 1.3em;
+  margin-bottom: 40px;
+}
+// Usage h1 class for accessibility
+.cf-display-1 {
+  font-weight: $font-bold;
+  font-size: 52px;
+}
+
+// Candidate for deprecation/ Unused
+.cf-display-2 {
+  font-size: 44px;
+}
+
+.cf-red-text {
+  color: $color-secondary;
+}
+
+.cf-font-light {
+  font-weight: 300;
+}
+
+//----------------------------------*
+// Globals, Resets, and overrides
+//-----------------------------------*/
+
+.cf-txt-c {
+  text-align: center;
+}
+
+.cf-txt-r {
+  text-align: right;
+}
+
+.cf-txt-l {
+  text-align: left;
+}
+
+.cf-push-left {
+  float: left;
+}
+
+.cf-push-right {
+  float: right;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: inherit;
+  margin-top: 0;
+  color: $color-gray-dark;
+}
+
+h1 {
+  font-size: 34px;
+  margin-bottom: 30px;
+}
+
+h3 {
+  font-size: 19px;
+  margin-bottom: 16px;
+}
+
+h4 {
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+
+h5 {
+  font-size: 13px;
+  font-weight: $font-normal;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+h2 {
+  font-size: 24px;
+  margin-bottom: 30px;
+
+  &[id='page-title'] {
+    margin-left: 0;
+  }
+}
+
+[hidden] {
+  display: none;
+}
+
+legend {
+  display: table; // Causes legend text to wrap in IE
+  font: inherit;
+  white-space: normal;
+}
+
+dd {
+  margin-left: 0;
+}
+
+.cf-pos-fixed {
+  position: fixed;
+}
+
+//------------------------------------
+// Spacers
+//-----------------------------------*/
+
+// This generates a set of margin and padding options that can be added to any element.
+//
+// ex.  <p className="cf-padding-top-3rem">
+//  or  <h4 className="cf-margin-bottom-0">
+//  or  <img className="cf-padding-right-6rem cf-padding-left-0rem">
+
+$styles: ('margin'), ('padding');
+$directions: ('top'), ('bottom'), ('left'), ('right');
+$rems: (
+  '0',
+  '0rem',
+  '1rem',
+  '2rem',
+  '3rem',
+  '4rem',
+  '5rem',
+  '6rem',
+  '7rem',
+  '8rem',
+  '9rem',
+  '10rem'
+);
+
+@each $style in $styles {
+  @each $direction in $directions {
+    @each $rem in $rems {
+      .cf-#{$style}-#{$direction}-#{$rem} {
+        #{$style}-#{$direction}: #{$rem};
+      }
+    }
+  }
+}
+
+//------------------------------------
+// Icons
+//-----------------------------------*/
+
+[class|='cf-icon'] {
+  display: inline-block;
+  height: 0.8em; // Should be an em
+  margin: 0 0.1ex;
+}
+
+.cf-icon-missing {
+  vertical-align: -0.15ex;
+  width: 0.8em;
+  height: 0.8em;
+
+  path {
+    fill: $color-secondary;
+  }
+}
+
+.cf-icon-found {
+  vertical-align: -0.45ex;
+  width: 1em;
+  height: 1em;
+
+  path {
+    fill: $color-green;
+  }
+}
+
+.cf-icon-close {
+  display: block;
+  margin: auto;
+  width: 100%;
+  height: 100%;
+
+  path {
+    fill: $color-gray-dark;
+  }
+
+  &:hover {
+    path {
+      fill: $color-gray-dark;
+    }
+  }
+}
+
+.cf-icon-success--bg {
+  background: url(#{$image-url}/icons/icon-check.svg) bottom no-repeat;
+  background-size: auto 2rem;
+  display: inline-block;
+  height: 3rem;
+  width: 3rem;
+}
+
+//--- Appeal button ---*/
+
+.cf-apppeal-id {
+  box-sizing: border-box;
+  background: $color-white;
+  border: 2px solid $color-gray;
+  color: $color-gray;
+  padding: 1rem;
+
+  &:hover {
+    color: $color-white;
+    background: $color-gray;
+    border-bottom: 2px solid $color-gray;
+
+    path {
+      fill: $color-white;
+    }
+  }
+
+  svg {
+    margin-left: 0.25rem;
+    vertical-align: -1px;
+  }
+}
+
+.cf-icon-appeal-id {
+  display: inline-block;
+  margin-left: 0.25rem;
+  vertical-align: -1px;
+}
+
+//------ Dropdowns --------*/
+.cf-dropdown {
+  $large-screen: em(640) !default;
+  display: inline-block;
+  position: relative;
+
+  a {
+    color: $color-primary;
+
+    &:hover {
+      color: $color-gray-dark;
+    }
+  }
+
+  li {
+    a:hover {
+      color: $color-white;
+    }
+  }
+
+  .usa-button-secondary {
+    box-shadow: inset 0 0 0 2px $color-primary;
+
+    &:hover {
+      color: $color-primary-darker;
+    }
+  }
+}
+
+.cf-app-header {
+  .cf-dropdown {
+    a {
+      color: $color-gray-dark;
+    }
+  }
+}
+
+.cf-dropdown-trigger {
+  cursor: pointer;
+  background-color: $color-white;
+
+  &::after {
+    background: url(#{$image-path}/arrow-down.svg) 50% 100% no-repeat;
+    background-size: 0.75em;
+    content: ' ';
+    display: inline-block;
+    height: 1rem;
+    margin-left: 1rem;
+    width: 1rem;
+
+    &:hover {
+      color: $color-white;
+    }
+  }
+
+  &:hover {
+    text-decoration: none;
+  }
+
+  &.usa-button {
+    &::after {
+      background: url(#{$image-url}/icons/icon-down-arrow.svg) 50% 100%
+        no-repeat;
+    }
+  }
+}
+
+%overlay {
+  background: $color-white;
+  z-index: 1;
+  position: absolute;
+}
+
+.cf-dropdown-menu {
+  @include unstyled-list();
+  @include transition(all 0.2s ease-in-out);
+  @extend %overlay;
+  border: 1px solid $color-gray-lighter;
+  box-shadow: $cf-drop-shadow;
+  cursor: pointer;
+  display: none;
+  text-align: left;
+  width: auto;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  top: 3em;
+
+  &.active {
+    display: block;
+    z-index: 999;
+  }
+
+  a {
+    display: block;
+    color: $color-gray;
+    padding: 10px 20px;
+    text-decoration: none;
+
+    &:hover {
+      background-color: $color-gray;
+      color: $color-white;
+    }
+  }
+
+  .dropdown-border {
+    width: 175px;
+    height: 1px;
+    background-color: $color-gray-lighter;
+    margin: 5px 20px;
+  }
+
+  button {
+    display: block;
+    color: $color-gray;
+    padding: 10px 20px;
+    text-decoration: none;
+    width: 100%;
+    text-align: left;
+    border-radius: 0;
+
+    &:hover {
+      background-color: $color-gray;
+      color: $color-white;
+      text-decoration: none;
+    }
+  }
+}
+
+@media screen and (max-width: 1264px) {
+  .cf-dropdown-menu {
+    right: 0.05rem;
+  }
+}
+
+//------ Modals --------*/
+// don't trip the accessibility warning for white on white, even if title isn't visible
+svg title {
+  color: $color-gray-dark;
+}
+
+.cf-modal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  display: none;
+
+  &.active {
+    display: block;
+    z-index: 15;
+  }
+
+  &::before {
+    content: ' ';
+    background: rgba($color-gray-dark, 0.4);
+    position: fixed;
+    height: inherit;
+    width: inherit;
+  }
+
+  .cf-form-textarea {
+    color: $color-gray-dark;
+
+    textarea {
+      max-height: 120px;
+    }
+  }
+}
+
+// scss-lint:disable PropertyCount
+.cf-modal-body {
+  @include transform(translateY(-50%));
+  top: 50%;
+  background: $color-white;
+  border-radius: 3px;
+  box-shadow: $cf-drop-shadow;
+  color: $color-gray;
+  padding: 3rem;
+  position: relative;
+  margin: 0 auto;
+  width: 490px;
+  max-height: 100%;
+  overflow-y: auto;
+
+  table {
+    margin: 0 0 2em;
+  }
+
+  .cf-retry {
+    margin-top: -1.5em;
+  }
+}
+
+.cf-modal-close {
+  background: transparent;
+  height: 1.5rem;
+  padding: 0.1rem;
+  position: absolute;
+  right: rem(10px);
+  top: rem(10px);
+  width: 1.5rem;
+
+  &[type='button'] {
+    margin-right: 0;
+  }
+
+  &:hover,
+  &:focus,
+  &:active {
+    background: transparent;
+
+    path {
+      fill: $color-gray-dark;
+    }
+  }
+}
+
+.cf-modal-text,
+.cf-modal-controls {
+  position: relative;
+  margin: auto;
+  width: 100%;
+}
+
+.cf-modal-text {
+  font-size: rem(20px);
+  line-height: 2;
+  text-align: center;
+}
+
+.cf-modal-divider {
+  border-bottom: 1px solid $color-gray-lighter;
+  width: 100%;
+  padding-bottom: 30px;
+}
+
+.cf-modal-controls {
+  bottom: 0;
+  padding-bottom: 3rem;
+  margin-top: rem(30px);
+}
+
+.cf-modal-link {
+  padding: 0;
+}
+
+// ===========================*
+// Application progress bar  *
+// ============================*/
+.cf-progress-bar {
+  width: 100%;
+  display: table;
+  table-layout: fixed;
+  font-size: 18px;
+}
+
+.cf-progress-bar-section {
+  display: table-cell;
+  padding: 4px;
+}
+
+.cf-progress-bar-activated {
+  color: $color-gray-dark;
+  font-weight: 700;
+  padding-bottom: 6px;
+  border-bottom: 7px solid $color-gray-dark;
+}
+
+.cf-progress-bar-not-activated {
+  color: $color-gray-dark;
+  font-weight: $font-bold;
+  padding-bottom: 6px;
+  border-bottom: 7px solid $color-gray-light;
+}
+
+// =====================================*
+// Application continuous progress bar  *
+// =====================================*/
+.cf-continuous-progress-bar {
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: $color-gray-light;
+  margin: auto;
+
+  > div {
+    height: 100%;
+    border-radius: 2px;
+    background: $color-gray-dark;
+  }
+
+  > .cf-continuous-progress-bar-warning {
+    background: $color-secondary;
+  }
+}
+
+// ===========================*
+// Application navigation bar  *
+// ============================*/
+.cf-nav {
+  background: $color-white;
+  color: $color-gray;
+  margin: 0;
+  padding: rem(30px) 0;
+  position: relative;
+  border-bottom: 1px solid $color-gray-lighter;
+
+  .usa-width-one-whole {
+    position: relative;
+    padding: 0 2rem;
+  }
+}
+
+.cf-nav-dropdown {
+  position: absolute;
+  right: 2rem;
+}
+
+.cf-logo {
+  color: $color-gray-dark;
+  font-size: 1.7rem;
+  font-weight: 900;
+  display: inline;
+
+  &:hover {
+    color: $color-gray;
+  }
+}
+
+.cf-logo-image {
+  display: inline-block;
+  vertical-align: middle;
+  margin-top: -2px;
+  margin-right: 15px;
+  height: 32px;
+  width: 32px;
+  background-size: 32px;
+}
+
+.cf-application-title {
+  font-size: 1.7rem;
+  font-weight: normal;
+  display: inline;
+}
+
+.cf-logo-name,
+.cf-application-title {
+  // This important can be removed
+  // if its color is updated in FE toolkit
+  // scss-lint:disable ImportantRule
+  color: $color-gray-dark !important;
+  // scss-lint:enable ImportantRule
+  font-weight: normal;
+}
+
+.cf-app-screen {
+  margin: auto;
+  width: 90%;
+}
+
+//.cf-app-segment represents a chunk of an application's
+// page Should be an immediate child of .cf-app. Avoid
+// making .cf-app-segment a grandchild element of .cf-app.
+.cf-app-segment {
+  @include clearfix;
+
+  &--alt {
+    background: $color-white;
+    border: 1px solid $color-gray-lighter;
+    padding: rem(40px);
+  }
+
+  // Make the top margin larger whenever
+  // cf-app-segment is the first-child
+  &:first-child {
+    margin-top: rem(40px);
+  }
+}
+
+// Adds top margin when .cf-app-segment
+// is preceded by an element
+* + .cf-app-segment {
+  margin-top: rem(30px);
+}
+
+.cf-app-footer {
+  > div {
+    box-sizing: border-box;
+    height: 125px;
+    padding: 50px 0;
+    border-top: 1px solid $color-gray-lighter;
+    overflow: hidden;
+  }
+}
+
+//===========================
+// Form controls
+// =========================*/
+
+// Overrides USWDS */
+textarea {
+  max-width: 100%;
+}
+
+form {
+  max-width: none;
+}
+
+.hidden-field {
+  display: none;
+}
+
+//------ Buttons --------*/
+[type='submit'],
+[type='button'],
+.usa-button {
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-right: rem(20px);
+
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.usa-button-red {
+  background-color: $color-red;
+  box-shadow: inset 0 0 0 2px $color-white;
+  color: $color-white;
+}
+
+// Make a link look like a button */
+.cf-link-btn {
+  display: inline-block;
+  padding: 1rem 2rem;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  background-color: $color-white;
+  font-weight: bold;
+  color: $color-primary;
+  border-radius: 5px;
+  border: 0;
+  box-shadow: inset 0 0 0 2px $color-primary;
+
+  &:hover {
+    color: $color-primary-darker;
+    box-shadow: inset 0 0 0 2px $color-primary-darker;
+  }
+}
+
+// Make a button look like a link */
+.cf-btn-link {
+  background: transparent;
+  color: $color-primary;
+  display: inline-block;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: inherit;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+
+  &:visited {
+    color: $color-primary;
+  }
+
+  // Removes padding, so that these links can be placed inline.
+  &--inline {
+    padding: 0;
+  }
+
+  &:hover {
+    background-color: transparent;
+    color: $color-primary-darker;
+    text-decoration: none;
+  }
+
+  &:hover,
+  &.button-hover {
+    color: $color-primary-darker;
+    text-decoration: underline;
+  }
+
+  &:active,
+  &.button-active {
+    background-color: $color-white;
+    color: $color-primary-darkest;
+    text-decoration: underline;
+  }
+
+  &.usa-button-disabled {
+    background-color: $color-white;
+    color: $color-gray-light;
+  }
+
+  &--confirm {
+    &:visited {
+      color: $color-secondary;
+    }
+
+    color: $color-secondary;
+    font-weight: bold;
+  }
+
+  &--cancel {
+    display: inline-block;
+    font-weight: bold;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .cf-no-padding,
+  &.cf-no-padding {
+    padding: 0;
+  }
+
+  &.cf-no-margin {
+    margin: 0;
+  }
+}
+
+.cf-btn-help {
+  background: transparent;
+  margin: 0;
+  padding: 0;
+
+  &:hover {
+    background: transparent;
+  }
+}
+
+// ===========================*
+// Form-related states
+// ============================*/
+
+.required {
+  strong,
+  b {
+    &::after {
+      content: '* ';
+      color: $color-secondary;
+      font-family: inherit;
+    }
+  }
+
+  &-msg {
+    @extend .usa-input-error-message;
+
+    &::before {
+      content: '* ';
+    }
+  }
+}
+
+input {
+  &[type='number'] {
+    display: inline;
+  }
+}
+
+.cf-inline-form {
+  line-height: 4em;
+  @include clearfix;
+
+  label,
+  input {
+    display: inline;
+    margin: 0 10px;
+  }
+
+  input {
+    &[type='number'] {
+      width: 60px;
+      height: 35px;
+    }
+  }
+
+  .cf-form-int-input {
+    input {
+      &[class*='cf-form-textinput'] {
+        margin: 0 12px;
+        width: 3em;
+        height: 36px;
+      }
+    }
+  }
+}
+
+.cf-required {
+  color: $color-gray;
+  float: right;
+  font-style: italic;
+  margin-left: 0.25em;
+}
+
+.cf-optional {
+  color: $color-gray;
+  font-style: italic;
+  margin-left: 1em;
+  float: right;
+}
+
+fieldset {
+  > *,
+  .cf-form-textinput {
+    color: $color-gray-dark;
+    margin-top: 10px;
+  }
+}
+
+* + .cf-form-textinput {
+  @include clearfix;
+  margin-bottom: rem(20px);
+  color: $color-gray-dark;
+}
+
+.cf-form-textarea {
+  @include clearfix;
+  max-width: rem(455px);
+  margin-bottom: 20px;
+
+  p {
+    margin-top: 0;
+  }
+}
+
+// Wrapping element for each option */
+.cf-form-radio-options {
+  @include clearfix;
+
+  input {
+    left: -999em;
+  }
+
+  i {
+    margin-left: 0;
+  }
+
+  .disabled {
+    color: $color-gray-light;
+  }
+}
+
+.cf-form-radio-option {
+  @include clearfix;
+
+  label {
+    max-width: 100%;
+  }
+}
+
+.cf-form-radio-inline {
+  .cf-form-radio-option {
+    float: left;
+    padding-right: rem(30px);
+    margin: 0.5em 0;
+  }
+}
+
+.cf-form-checkboxes {
+  margin-top: rem(20px);
+  margin-bottom: rem(10px);
+
+  .usa-width-one-whole {
+    margin-bottom: 0;
+  }
+
+  // Account for proper alignment of long labels so they don't wrap under the checkbox
+  &.cf-checkbox-group {
+    [type='checkbox'] + label {
+      padding-left: 3.02rem;
+      text-indent: -2rem;
+
+      &::before {
+        position: relative;
+        left: -0.6em;
+        margin-right: 0;
+      }
+    }
+  }
+}
+
+.cf-form-checkbox {
+  &:not(:last-child) {
+    margin-bottom: rem(20px);
+  }
+
+  input {
+    left: -999em;
+  }
+
+  i {
+    margin-left: 0;
+  }
+
+  .cf-required,
+  .cf-optional {
+    display: none;
+  }
+}
+
+.usa-input-error {
+  [type='radio'] + label::before {
+    box-shadow: 0 0 0 2px $color-white, 0 0 0 3px $color-gray-medium;
+  }
+}
+
+//========================
+// Status Message
+//==========================*/
+
+.cf-msg-screen-heading {
+  font-size: rem(52px);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+// "deck" is newspaper speak for "subhead"
+// TODO Refactor
+.cf-msg-screen-deck {
+  text-align: center;
+  font-size: rem(20px);
+  font-weight: normal;
+  color: $color-gray;
+  line-height: 1.5;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: rem(65px);
+  margin-top: rem(15px);
+  width: 65%;
+}
+
+.cf-msg-screen-text {
+  width: 65%;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  color: $color-gray;
+}
+
+.cf-list-checklist {
+  list-style-type: none;
+  margin: 5rem auto 6.5rem;
+  position: relative;
+  width: 50%;
+
+  li::before {
+    content: '';
+  }
+
+  .cf-icon-success--bg {
+    font-size: 2.5rem;
+    margin-right: 1.8rem;
+  }
+}
+
+.cf-success-checklist {
+  position: relative;
+  max-width: 400px;
+  margin: 50px 0 65px 25%;
+  list-style-type: none;
+
+  li {
+    background: url(#{$image-url}/icons/icon-check.svg) no-repeat left top
+      transparent;
+    background-size: 22px 17px;
+    background-position-y: 7px;
+    padding-left: 38px;
+    padding-top: 3px;
+  }
+}
+
+//------------------------------
+// Help page
+// -------------------------------
+
+.cf-help-image-wrapper {
+  text-align: center;
+}
+
+.cf-help-image {
+  max-width: 50%;
+  height: auto;
+}
+
+.cf-help-divider {
+  margin: 30px auto;
+  border-bottom: 1px solid $color-gray-lighter;
+}
+
+ul {
+  &[id='toc'] {
+    li {
+      padding-bottom: 10px;
+    }
+  }
+}
+
+.cf-icon-alert {
+  margin-right: 0.25em;
+  vertical-align: -0.25ex;
+  width: 1em;
+  height: 1em;
+
+  path {
+    fill: $color-secondary;
+  }
+}
+
+.icon-loading-front {
+  @include animation(backwardspin 9s linear infinite);
+}
+
+.icon-loading-back {
+  @include animation(spin 9s linear infinite);
+  margin-left: -33px;
+}
+
+@include keyframes(spin) {
+  from {
+    @include transform(rotate(0deg));
+  }
+
+  to {
+    @include transform(rotate(360deg));
+  }
+}
+
+@include keyframes(backwardspin) {
+  from {
+    @include transform(scale(1) rotate(-30deg));
+  }
+
+  to {
+    @include transform(scale(1) rotate(-390deg));
+  }
+}
+
+.cf-form-checkbox,
+.cf-form-radio-option {
+  position: relative;
+
+  input {
+    left: -999em;
+  }
+
+  label {
+    padding-left: 3rem;
+    display: inline-block;
+
+    &::before {
+      position: absolute;
+      left: 3px;
+      top: 2px;
+    }
+  }
+}
+
+button {
+  // preload default loading button SVG
+  .cf-loading-icon-back,
+  .cf-loading-icon-front {
+    &::after {
+      content: ' ';
+      display: inline-block;
+      width: 0;
+      height: 0;
+      background: url(#{$image-url}/icons/loading-pill.svg) center center
+        no-repeat;
+    }
+  }
+
+  // preload app-specific loading button SVGs
+  &.cf-cert,
+  &.cf-dispatch,
+  .cf-loading-icon-front {
+    &::after {
+      content: ' ';
+      display: inline-block;
+      width: 0;
+      height: 0;
+    }
+  }
+
+  &.cf-cert {
+    .cf-loading-icon-back {
+      &::after {
+        background: url(#{$image-url}/icons/loading-pill-cf-cert.svg) center
+          center no-repeat;
+      }
+    }
+  }
+
+  &.cf-dispatch {
+    .cf-loading-icon-back {
+      &::after {
+        background: url(#{$image-url}/icons/loading-pill-cf-dispatch.svg) center
+          center no-repeat;
+      }
+    }
+  }
+}
+
+.cf-loading {
+  display: inline-block;
+  position: relative;
+
+  .cf-loading-icon-container {
+    display: inline-block;
+    position: relative;
+    padding-right: 23px;
+
+    .cf-loading-icon-back,
+    .cf-loading-icon-front {
+      &::after {
+        // container for preloaded images was 0x0, but now...
+        // scss-lint:disable ImportantRule
+        width: 20px !important;
+        height: 20px !important;
+        // scss-lint:enable ImportantRule
+        box-sizing: border-box;
+        position: absolute;
+        right: 0;
+        top: -0.1rem;
+        @include animation(spin 5s linear infinite);
+      }
+    }
+
+    .cf-loading-icon-front {
+      &::after {
+        @include animation(backwardspin 5s linear infinite);
+        opacity: 0.5;
+      }
+    }
+  }
+}
+
+.input-container {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+
+  .cf-loading-icon-container {
+    position: absolute;
+    padding-right: 23px;
+    top: 30%;
+    left: 93%;
+
+    .cf-loading-icon-back,
+    .cf-loading-icon-front {
+      &::after {
+        content: ' ';
+        // container for preloaded images was 0x0, but now...
+        // scss-lint:disable ImportantRule
+        width: 20px !important;
+        height: 20px !important;
+        // scss-lint:enable ImportantRule
+        box-sizing: border-box;
+        font-size: 99em;
+        position: absolute;
+        right: 0;
+        top: -0.1rem;
+        @include animation(spin 5s linear infinite);
+        background: url(#{$image-url}/icons/loading-pill.svg) center center no-repeat;
+      }
+    }
+
+    .cf-loading-icon-front {
+      &::after {
+        @include animation(backwardspin 5s linear infinite);
+        background: url(#{$image-url}/icons/loading-pill.svg) center center no-repeat;
+        opacity: 0.5;
+      }
+    }
+  }
+}
+
+.usa-accordion-button {
+  background-image: url(#{$image-path}/minus.svg);
+
+  &[aria-expanded='false'] {
+    background-image: url(#{$image-path}/plus.svg);
+  }
+}
+
+.usa-accordion-bordered-outline {
+  .usa-accordion-button {
+    border: 1px solid $color-gray-light;
+  }
+}
+
+.usa-accordion-bordered,
+.usa-accordion,
+.usa-accordion-bordered-outline {
+  margin-bottom: 20px;
+
+  .usa-accordion-button {
+    &,
+    i {
+      color: $color-gray-dark;
+    }
+  }
+}
+
+.csv-link {
+  &:focus {
+    outline: none;
+    box-shadow: none;
+  }
+}
+
+.button-back-button {
+  margin-left: 76%;
+}
+

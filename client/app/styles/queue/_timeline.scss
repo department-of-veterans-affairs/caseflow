@@ -1,0 +1,116 @@
+
+.grayLineStyling {
+  width: 5px;
+  background: $color-gray-lighter;
+  margin: auto;
+  position: absolute;
+  top: 30px;
+  left: 49.5%;
+  bottom: 0;
+}
+
+.grayLineStyling,
+.grayLineTimelineStyling {
+  top: 39px;
+  left: 9%;
+  margin-left: 12px;
+}
+
+.grayBvaPendingLineStyling {
+  width: 5px;
+  background: $color-gray-lighter;
+  margin-left: 0;
+  position: absolute;
+  top: 25px;
+  left: 35.5%;
+  bottom: 0;
+}
+
+.taskContainerStyling {
+  border: none;
+  vertical-align: top;
+  padding: 3px;
+  padding-bottom: 3rem;
+
+}
+
+.taskInformationContainerStyling {
+  width: 25%;
+}
+
+.taskContainerStyling,
+.taskInformationTimelineContainerStyling {
+  text-align: left;
+  width: 50%;
+  max-width: 235px;
+}
+
+.taskInformationContainerStyling,
+.taskTimeTimelineContainerStyling {
+  width: 40%;
+}
+
+.taskInfoWithIconContainer {
+  text-align: center;
+  border: none;
+  padding: 0;
+  position: relative;
+  vertical-align: top;
+  width: 15px;
+}
+
+.taskActionsContainerStyling {
+  width: 50%;
+}
+
+.taskInfoWithIconContainer,
+.taskInfoWithIconTimelineContainer {
+  text-align: left;
+  margin-left: 5px;
+  width: 10%;
+  padding-left: 0;
+}
+
+.greyDotTimelineStyling {
+  padding: 0 0 0 7px;
+}
+
+.timelineLeftPaddingStyle {
+  padding-left: 0;
+}
+
+.greyDotStyling {
+  padding-left: 6px;
+}
+
+.task-instructions > h3 {
+  margin: 1em 0 0;
+}
+
+.task-instructions > h5 {
+  margin: 1em 0 0;
+  font-size: 15px;
+  font-weight: 900;
+  margin-bottom: 2.4rem;
+}
+
+.task-instructions > h6 {
+  margin: 1em 0 0;
+  font-size: 17px;
+  font-weight: 900;
+  margin-bottom: 2.4rem;
+  text-transform: none;
+}
+
+.task-instructions > p {
+  margin-top: 0;
+  word-wrap: break-word;
+
+  strong {
+    font-size: 15px;
+  }
+}
+
+.task-instructions > hr {
+  margin-bottom: 2.4rem;
+}

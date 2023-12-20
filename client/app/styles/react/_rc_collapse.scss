@@ -1,0 +1,80 @@
+@mixin common() {
+
+  width: 0;
+  height: 0;
+  font-size: 0;
+  line-height: 0;
+}
+
+@mixin right($w, $h, $color) {
+
+  border-top: $w solid transparent;
+  border-bottom: $w solid transparent;
+  border-left: $h solid $color;
+}
+
+@mixin bottom($w, $h, $color) {
+
+  border-left: $w solid transparent;
+  border-right: $w solid transparent;
+  border-top: $h solid $color;
+}
+
+// scss-lint:disable IdSelector
+#arrow {
+  @include common();
+  @include right(3px, 4px, $color-gray);
+  @include bottom(3px, 4px, $color-gray);
+}
+
+.rc-collapse {
+
+  &-anim-active {
+    transition: height .2s ease-out;
+  }
+
+  & > &-item {
+    &:first-child {
+      border-top: none;
+    }
+  }
+
+  & > &-item-disabled > .rc-collapse-header {
+    cursor: not-allowed;
+    color: $color-gray-light;
+    background-color: $color-gray-lighter;
+  }
+
+  &-content {
+    overflow: hidden;
+
+    &-inactive {
+      display: none;
+    }
+  }
+
+  &-item:last-child {
+    > .rc-collapse-content {
+      border-radius: 0 0 3px 3px;
+    }
+  }
+
+  & > &-item-active {
+    > .rc-collapse-header {
+
+      .arrow {
+
+        #arrow > {
+          @include bottom(3px, 4px, $color-gray);
+        }
+      }
+    }
+  }
+}
+
+.usa-accordion-content {
+  &:not([aria-hidden]) {
+    position: relative;
+    left: 0;
+  }
+}

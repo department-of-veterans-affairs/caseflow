@@ -1,0 +1,32 @@
+//Local variables
+@import '_variables.scss';
+//USWDS
+@import '~uswds/src/stylesheets/uswds.scss';
+@import '~uswds/dist/scss/lib/_bourbon.scss';
+@import '~uswds/src/stylesheets/core/_variables.scss';
+@import '~font-awesome/css/font-awesome.css';
+
+@import '_inbox.scss';
+@import '_stats.scss';
+@import '_intake.scss';
+@import '_noncomp.scss';
+@import '_jobs.scss';
+@import 'dispatch/_dispatch.scss';
+@import 'reader/_reader_styles_root.scss';
+@import 'hearings/_hearings_styles_root.scss';
+@import '_style_guide.scss';
+@import '_main.scss';
+@import '_commons.scss';
+@import '_table.scss';
+@import 'queue/_timeline.scss';
+@import 'queue/_evaluate_decision.scss';
+@import 'queue/_assigned_cases.scss';
+@import 'queue/assign_to_view';
+@import 'queue/_cavc_dashboard.scss';
+@import '_task_tree.scss';
+@import 'react/_react_styles_root.scss';
+@import '_team_management.scss';
+
+@import '~react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+
+@import '~vis-timeline/dist/vis-timeline-graph2d.min.css';

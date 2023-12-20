@@ -1,0 +1,10 @@
+<% content_for :full_page_content do %>
+  <%= react_component("Error403", props: {
+    userDisplayName: current_user ? current_user.display_name : "",
+    dropdownUrls: dropdown_urls,
+    feedbackUrl: feedback_url,
+    buildDate: build_date,
+    errorTitle: error_title,
+    errorDetail: error_detail
+  }) %>
+<% end %>

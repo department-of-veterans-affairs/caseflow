@@ -1,0 +1,133 @@
+# Caseflow dbs are:
+#  PostgreSQL for Caseflow AMA data
+#  Oracle for VACOLS legacy data
+#  PostgreSQL for Caseflow ETL (reporting) data
+#
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV["DB_CONN_POOL_MAX_SIZE"] || 5 %>
+  timeout: 5000
+  variables:
+    statement_timeout: 30_000 # 30 seconds
+  host: <%= ENV['POSTGRES_HOST'] %>
+  username: <%= ENV['POSTGRES_USER'] || `whoami` %>
+  # If we set the value to nil when the variable isn't present,
+  # the k8s Jenkins environment won't connect
+  <% if ENV['POSTGRES_PASSWORD'] %>
+  password: <%= ENV['POSTGRES_PASSWORD'] %>
+  <% end %>
+
+demo:
+  <<: *default
+  database: caseflow_certification_demo
+
+ssh_forwarding:
+  <<: *default
+  database: caseflow_certification_ssh_forwarding
+
+development:
+  <<: *default
+  database: caseflow_certification_development
+
+staging:
+  <<: *default
+  database: caseflow_certification_staging
+
+production:
+  <<: *default
+  url: <%= ENV["POSTGRES_URL"] %>
+
+# NOTE Rails 6 has native support for multiple databases,
+# and this configuration should change to nest "primary" and "etl" and "vacols"
+# under each env name, per
+# https://guides.rubyonrails.org/active_record_multiple_databases.html
+etl_default: &etl_default
+  <<: *default
+  <% if ENV["ETL_DB_HOST"] || ENV["POSTGRES_HOST"] %>
+  host: <%= ENV["ETL_DB_HOST"] || ENV["POSTGRES_HOST"] %>
+  <% end %>
+  username: <%= ENV["ETL_DB_USER"] || ENV["POSTGRES_USER"] || `whoami` %>
+  <% if ENV["ETL_DB_PASSWORD"] || ENV["POSTGRES_PASSWORD"] %>
+  password: <%= ENV["ETL_DB_PASSWORD"] || ENV["POSTGRES_PASSWORD"] %>
+  <% end %>
+
+etl_development:
+  <<: *etl_default
+  database: caseflow_etl_development
+
+etl_test:
+  <<: *etl_default
+  database: caseflow_etl_test<%= ENV["TEST_SUBCATEGORY"] %>
+
+etl_production:
+  <<: *etl_default
+  url: <%= ENV["ETL_DB_URL"] %>
+
+development_vacols:
+  adapter: oracle_enhanced
+  username: VACOLS_DEV
+  password: VACOLS_DEV
+  <% if ! ENV['DOCKERIZED'] %>
+  host: localhost
+  port: 1521
+  <% end %>
+  database: <%= ENV['DEMO_DB'] || "BVAP" %>
+
+demo_vacols:
+  adapter: sqlite3
+  pool: 5
+  timeout: 5000
+  database: db/demo-vacols.sqlite3
+
+ssh_forwarding_vacols:
+  adapter: oracle_enhanced
+  host: localhost
+  port: 1526
+  username: <%= ENV["VACOLS_USERNAME"] %>
+  password: <%= ENV["VACOLS_PASSWORD"] %>
+  database: BVAP
+
+staging_vacols:
+  adapter: oracle_enhanced
+  username: <%= ENV["VACOLS_USERNAME"] %>
+  password: <%= ENV["VACOLS_PASSWORD"] %>
+  host: vacols.dev.vaco.va.gov
+  port: 1526
+  database: BVAP.VACO.VA.GOV
+
+production_vacols:
+  adapter: oracle_enhanced
+  username: <%= ENV["VACOLS_USERNAME"] %>
+  password: <%= ENV["VACOLS_PASSWORD"] %>
+  host: <%= ENV["VACOLS_HOST"] %>
+  port: <%= ENV["VACOLS_PORT"] %>
+  database: <%= ENV["VACOLS_DATABASE"] %>
+  pool: <%= ENV["DB_CONN_POOL_MAX_SIZE"] || 5 %>
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test:
+  <<: *default
+  username: <%= ENV['POSTGRES_USER'] || `whoami` %>
+  database: caseflow_certification_test<%= ENV['TEST_SUBCATEGORY'] %>
+  <% if ENV['POSTGRES_HOST'] %>
+  host: <%= ENV['POSTGRES_HOST'] %>
+  <% end %>
+  <% if ENV['POSTGRES_PASSWORD'] %>
+  password: <%= ENV['POSTGRES_PASSWORD'] %>
+  <% end %>
+
+# Increase the receive timeout value due to ORA-12609: TNS: Receive timeout occurred
+# Solution: https://www.fatihacar.com/blog/category/databases/oracle/oracle-errors-and-solutions/page/13/
+# Oracle timeout configuration: https://github.com/rsim/oracle-enhanced#timeouts
+test_vacols:
+  adapter: oracle_enhanced
+  username: VACOLS_TEST
+  password: VACOLS_TEST
+  database: "(DESCRIPTION=
+    (ADDRESS_LIST=(ADDRESS=(PROTOCOL=tcp)(HOST=<%= ENV['TEST_VACOLS_HOST']%>)(PORT=1521)))
+    (RECV_TIMEOUT=120)(SEND_TIMEOUT=5)
+    (CONNECT_DATA=(SID=BVAP))
+  )"

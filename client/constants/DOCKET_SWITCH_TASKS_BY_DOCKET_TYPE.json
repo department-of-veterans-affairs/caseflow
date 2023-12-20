@@ -1,0 +1,16 @@
+{
+  "direct_review": [
+    { "name": "DistributionTask", "label": "Distribution Task" }
+  ],
+  "evidence_submission": [
+    { "name": "DistributionTask", "label": "Distribution Task" },
+    {
+      "name": "EvidenceSubmissionWindowTask",
+      "label": "Evidence Submission Window Task"
+    }
+  ],
+  "hearing": [
+    { "name": "DistributionTask", "label": "Distribution Task" },
+    { "name": "HearingTask", "label": "Hearing Task" }
+  ]
+}

@@ -1,0 +1,43 @@
+import { Meta, Story, Preview } from '@storybook/addon-docs/blocks';
+
+import { TextStyles } from './typography/TextStyles';
+import { TextAccessibility } from './typography/TextAccessibility';
+
+<Meta title="Commons/Typography" />
+
+# Typography
+
+The typography of Caseflow is very simple. We use Source Sans Pro as our only font. The text styles comes in different weights and sizes to provide visual hierarchy and clear context for users. Each text style has a set margin-bottomso that there is balance in a page and spacing between applications are consistent. The lead paragraph is encouraged to be used for instructions, descriptions and form copies. For clarity and readability, the text styles are set to a character width limit. On the contrary, the character width is not applicable for Tables and Alerts.
+
+## Text Styles
+
+<Story name="Text Styles">
+  <TextStyles />
+</Story>
+
+## Font Family
+
+<Story name="Font Family">
+  <div className="cf-sg-font-family-examples">
+    <p className="cf-font-light">Source Sans Pro Light (300)</p>
+    <p>Source Sans Pro Regular (400)</p>
+    <p>
+      <i>Source Sans Pro Italic (400)</i>
+    </p>
+    <p>
+      <b>Source Sans Pro Bold (400)</b>
+    </p>
+  </div>
+</Story>
+
+## Text Accessibility
+
+WCAG (Web Content Accessibility Guidelines) ensure that content is accessible by everyone, regardless of disability or user device. To meet these standards, text and interactive elements should have a color contrast ratio of at least 4.5:1. This ensures that viewers who cannot see the full color spectrum are able to read the text.
+
+The options below offer color palette combinations that fall within the range of Section 508 compliant foreground/background color contrast ratios. To ensure that text remains accessible, use only these permitted color combinations.
+
+If you choose to customize beyond this palette, this color contrast tool is a useful resource for testing the compliance of any color combination.
+
+<Story name="Text Accessibility">
+  <TextAccessibility />
+</Story>

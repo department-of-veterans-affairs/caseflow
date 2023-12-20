@@ -1,0 +1,339 @@
+# Example Makefile for developer convenience
+#
+# There's nothing here you can't do the long way. This is just a collection of (hopefully intuitive) shortcuts
+# to ease common development tasks.
+#
+# To use this file:
+#
+#   % ln -s Makefile.example Makefile
+#
+# Examples:
+#
+#   # build all the docker db containers from scratch
+#   % make build
+#
+#   # reset the dbs to the latest schema + seeds
+#   % make reset
+#
+#   # run the dev server
+#   % make run
+#
+#   # run all the linting tasks
+#   % make lint security
+#
+#   # if you add a .git/hooks/pre-commit like this:
+#   #!/bin/sh
+#   exec make lint security
+#
+#   # then you can make sure all your code is lint-free on every commit.
+#   # You can turn it off with:
+#   % make unsafe
+#
+#   # and re-enable with
+#   % make safe
+#
+#   # pulled latest from github? try:
+#   % make install migrate
+#
+#   # get fully up to date with master on origin and all deps & db?
+#   % make update
+#
+# Hopefully the targets are easy enough to remember to make this useful to others.
+#
+.DEFAULT_GOAL := help
+
+# https://stackoverflow.com/a/14061796/2237879
+#
+# This hack allows you to run make commands with any set of arguments.
+#
+# For example, these lines are the same:
+#   > make one-test spec/path/here.rb
+#   > bundle exec rspec spec/path/here.rb
+RUN_ARGS := $(wordlist 2, $(words $(MAKECMDGOALS)), $(MAKECMDGOALS))
+
+whats-next:  ## TODO
+	scripts/whats-next
+
+ready:  ## Helper command that watches the docker containers to finish start up
+	h=`docker-compose ps | grep -i starting`; while [ "$$h" != "" ]; do h=`docker-compose ps | grep -i starting`; echo $$h; sleep 1; done
+
+up:  ## Start the docker containers
+	docker-compose up -d
+
+up-m1:  ## Start the docker containers on a M1 Mac
+	docker-compose -f docker-compose-m1.yml up -d
+
+down:	## Stop the docker containers
+	docker-compose down
+
+down-m1:  ## Stop the docker containers on a M1 Mac
+	docker-compose -f docker-compose-m1.yml down
+
+run: up ready  ## Start rails server and frontend server
+	foreman start
+
+run-m1: up-m1 ready  ## Start rails server and frontend server on a M1 Mac
+	foreman start
+
+run-backend: up ready  ## Start rails server without the frontend
+	REACT_ON_RAILS_ENV=HOT bundle exec rails s -p 3000
+
+run-backend-m1: up-m1 ready  ## Start the rails server without the frontend on a M1 Mac
+	REACT_ON_RAILS_ENV=HOT bundle exec rails s -p 3000
+
+run-frontend: ## Start just the frontend server
+	cd client && yarn run dev:hot
+
+## These "cold" commands makes the app take significantly less resources
+## However this does require a page refresh in the browser to pick up changes
+run-backend-cold: up ready  ## Start rails server without the frontend
+	bundle exec rails s -p 3000
+
+run-backend-cold-m1: up-m1 ready  ## Start the rails server without the frontend on a M1 Mac
+	bundle exec rails s -p 3000
+
+run-frontend-cold: ## Start just the frontend server
+	cd client && yarn dev
+
+storybook: ## run Storybook
+	cd client && yarn storybook
+
+test: clean  ## Run test suite
+	bundle exec rake
+
+clean:  ## Clean logs, compiled webpack assets, and temporary files
+	rm -f log/vacols.log
+	rm -f log/test.log
+	rm -f app/assets/javascripts/*webpack*
+	rm -rf public/assets
+	rm -rf tmp/capybara
+	rm -f log/logstasher.log
+
+realclean: clean ## TODO
+	rm -rf client/node_modules
+	rm -f client/package-lock.json
+
+facols-bash:  ## Connect to the docker FACOLS instance
+	docker exec --tty -i VACOLS_DB bash
+
+facols:  ## Connect directly to the FACOLS oracle database
+	docker exec --tty -i VACOLS_DB sqlplus "VACOLS_DEV/VACOLS_DEV@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=localhost)(PORT=1521))(CONNECT_DATA=(SID=BVAP)))"
+
+download-facols:	## Download the FACOLS Docker image
+	./local/vacols/build_push.sh rake
+
+sqs-conf-dir:	## Create local required dir
+	mkdir -p local/sqs/conf
+
+build: clean sqs-conf-dir download-facols up ready reset	## First time local dev setup
+
+build-m1: clean sqs-conf-dir download-facols up-m1 ready reset	## First time local dev setup on a M1 Mac
+
+destroy: clean
+	bundle exec rake local:destroy
+
+lint:  ## Run linter for javascript and ruby
+	bundle exec rake lint
+
+jslint:  ## Run linter for javascript
+	cd client && yarn run lint
+
+security:  ## Runs brakeman vulnerability scan
+	bundle exec rake security
+
+check: test lint  ## Run tests and lint
+
+logs:  ## Follow the docker logs
+	docker-compose logs -f
+
+db:  ## Connect to your dev postgres (caseflow) db
+	bundle exec rails dbconsole
+
+audit: ## Create caseflow_audit schema, tables, and triggers in postgres
+	bundle exec rails r db/scripts/audit/create_caseflow_audit_schema.rb
+	bundle exec rails r db/scripts/audit/tables/create_appeal_states_audit.rb
+	bundle exec rails r db/scripts/audit/tables/create_vbms_communication_packages_audit.rb
+	bundle exec rails r db/scripts/audit/tables/create_vbms_distributions_audit.rb
+	bundle exec rails r db/scripts/audit/tables/create_vbms_distribution_destinations_audit.rb
+	bundle exec rails r db/scripts/audit/tables/create_vbms_uploaded_documents_audit.rb
+	bundle exec rails r db/scripts/audit/tables/create_priority_end_product_sync_queue_audit.rb
+	bundle exec rails r db/scripts/audit/functions/add_row_to_appeal_states_audit_table_function.rb
+	bundle exec rails r db/scripts/audit/functions/add_row_to_vbms_communication_packages_audit_table_function.rb
+	bundle exec rails r db/scripts/audit/functions/add_row_to_vbms_distributions_audit_table_function.rb
+	bundle exec rails r db/scripts/audit/functions/add_row_to_vbms_distribution_destinations_audit_table_function.rb
+	bundle exec rails r db/scripts/audit/functions/add_row_to_vbms_uploaded_documents_audit_table_function.rb
+	bundle exec rails r db/scripts/audit/functions/add_row_to_priority_end_product_sync_queue_audit_table_function.rb
+	bundle exec rails r db/scripts/audit/triggers/create_appeal_states_audit_trigger.rb
+	bundle exec rails r db/scripts/audit/triggers/create_vbms_communication_packages_audit_trigger.rb
+	bundle exec rails r db/scripts/audit/triggers/create_vbms_distributions_audit_trigger.rb
+	bundle exec rails r db/scripts/audit/triggers/create_vbms_distribution_destinations_audit_trigger.rb
+	bundle exec rails r db/scripts/audit/triggers/create_vbms_uploaded_documents_audit_trigger.rb
+	bundle exec rails r db/scripts/audit/triggers/create_priority_end_product_sync_queue_audit_trigger.rb
+
+audit-remove: ## Remove caseflow_audit schema, tables and triggers in postgres
+	bundle exec rails r db/scripts/audit/remove_caseflow_audit_schema.rb
+
+# The external-db make commands create/remove replicas (for local environment only) of external db tables that exist in Prod
+# These tables should not be included as part of migrations
+external-db-create: ## Creates external_vbms_ext_claim table
+	bundle exec rails r db/scripts/external/create_vbms_ext_claim_table.rb
+
+external-db-remove:  ## Remove external_vbms_ext_claim table
+	bundle exec rails r db/scripts/external/remove_vbms_ext_claim_table.rb
+
+# This needs to be manually run after make reset/migrate in order for local tests involving external tables to pass.
+# Otherwise the caseflow_certification_test schema will not create these tables and will error out.
+external-db-create-test: ## Creates table in caseflow_certification_test DB for local RSPEC tests
+	bundle exec rails r -e test db/scripts/external/create_vbms_ext_claim_table.rb
+
+remove-vbms-ext-claim-seeds: ## Drops audit tables, removes all PriorityEndProductSyncQueue, BatchProcess, and seed-vbms-ext-claim records, then rebuilds audit tables
+	make audit-remove
+	make external-db-create
+	bundle exec rails r db/scripts/external/remove_vbms_ext_claim_seeds.rb
+	make audit
+
+reseed-vbms-ext-claim: remove-vbms-ext-claim-seeds seed-vbms-ext-claim ## Re-seeds database with records created from seed-vbms-ext-claim
+
+# Add trigger to vbms_ext_claim to populate pepsq table
+add-populate-pepsq-trigger:
+	bundle exec rails r db/scripts/add_pepsq_populate_trigger_to_vbms_ext_claim.rb
+
+# Add trigger to vbms_ext_claim to populate pepsq table
+add-populate-pepsq-trigger-test:
+	bundle exec rails r -e test db/scripts/add_pepsq_populate_trigger_to_vbms_ext_claim.rb
+
+# Remove populate pepsq trigger from vbms_ext_claim table
+drop-populate-pepsq-trigger:
+	bundle exec rails r db/scripts/drop_pepsq_populate_trigger_from_vbms_ext_claim.rb
+
+# Remove populate pepsq trigger from vbms_ext_claim table
+drop-populate-pepsq-trigger-test:
+	bundle exec rails r -e test db/scripts/drop_pepsq_populate_trigger_from_vbms_ext_claim.rb
+
+c:  ## Start rails console
+	bundle exec rails console
+
+etl-migrate:	## Migrate ETL database
+	DB=etl bundle exec rake db:migrate
+
+etl-test-prepare:
+	DB=etl bundle exec rake db:test:prepare
+
+etl-rollback:	## Rollback ETL database
+	DB=etl bundle exec rake db:rollback
+
+db-migrate:	## Migrate main Caseflow db
+	bundle exec rake db:migrate
+
+db-rollback:	## Rollback main Caseflow db
+	bundle exec rake db:rollback
+
+migrate: external-db-remove etl-migrate etl-test-prepare db-migrate ## Migrate all non-external Rails databases
+
+rollback: etl-rollback db-rollback	## Rollback all Rails databases
+
+fresh:  ## https://github.com/imsky/git-fresh - updates local master to match origin, stashes changes, prunes remote branches
+	git fresh
+
+reset: reset-dbs seed-dbs enable-feature-flags ## Resets databases and enable feature flags
+
+reset-dbs: ## Resets Caseflow and ETL database schemas
+	make audit-remove
+	make external-db-remove
+	DB=etl bundle exec rake db:drop db:create db:schema:load
+	bundle exec rake db:drop db:create db:schema:load
+	make audit
+	make external-db-create
+
+seed-vbms-ext-claim: ## Seed only vbms_ext_claim
+	bundle exec rake db:seed:vbms_ext_claim
+
+seed-dbs:	## Seed all databases
+	bundle exec rake local:vacols:seed
+	bundle exec rake spec:setup_vacols
+	bundle exec rake db:seed
+	DB=etl bundle exec rake db:seed
+
+enable-feature-flags: ## enable all feature flags
+	bundle exec rails runner scripts/enable_features_dev.rb
+
+bundle-install:  ## Installs ruby dependencies
+	bundle check || bundle install
+
+client-install:  ## Installs javascript dependencies
+	cd client && yarn install
+
+install: bundle-install client-install  ## Installs all dependencies
+
+update: fresh install migrate  ## Get fully up to date with origin master - pulls origin, installs all deps and runs any db migrations
+
+client-build-test client-test:  ## Builds webpack for tests
+	cd client && yarn run build:test
+
+client-build-demo client-demo: ## Builds webpack for local server
+	cd client && yarn run build:demo
+
+client-build-all client-all: client-test client-demo ## Builds webpack for both tests and local server
+
+one-test:  ## run the rspec test passed in
+	bundle exec rspec $(RUN_ARGS)
+
+run-all-queues: ## start shoryuken with all queues
+	bundle exec shoryuken -q caseflow_development_send_notifications caseflow_development_high_priority caseflow_development_low_priority  -R
+
+run-low-priority: ## start shoryuken with just the low priority queue
+	bundle exec shoryuken -q caseflow_development_low_priority  -R
+
+run-high-priority: ## start shoryuken with just the high priority queue
+	bundle exec shoryuken -q caseflow_development_high_priority  -R
+
+run-send-notifications: ## start shoryuken with just the send_notification queue
+	bundle exec shoryuken -q caseflow_development_send_notifications  -R
+
+jest: ## Run jest tests
+	cd client && yarn jest
+
+one-jest:  ## run the jest test passed in (leave off client/)
+	cd client && yarn jest $(RUN_ARGS)
+
+one-jest-snapshot-update: ## Updated the snapshot of a jest test passed in
+	cd client && yarn jest $(RUN_ARGS) -u
+
+unsafe:  ## TODO
+	mv .git/hooks/pre-commit .git/hooks/pre-commit-linter
+
+safe:  ## TODO
+	mv .git/hooks/pre-commit-linter .git/hooks/pre-commit
+
+clear-eps:  ## TODO
+	redis-cli KEYS "end_product_records_development:*" | xargs redis-cli DEL
+
+erd-etl:	## Create ERD diagram for the ETL database
+	ERD_BASE=ETL::Record bundle exec erd --filename docs/schema/etl-erd --title 'ODS/ETL Data Model'
+
+erd-vacols:	## Create ERD diagram for the VACOLS database
+	ERD_BASE=VACOLS::Record bundle exec erd --filename docs/schema/vacols-erd --title 'VACOLS Data Model'
+
+erd-caseflow:	## Create ERD diagram for the Caseflow database
+	ERD_BASE=CaseflowRecord bundle exec erd --filename docs/schema/caseflow-erd --title 'Caseflow Data Model'
+
+erd: erd-etl erd-vacols erd-caseflow ## Create all ERD diagrams
+
+doc-schema-caseflow:	# Create docs/schema/caseflow.csv
+	ERD_BASE="CaseflowRecord" SCHEMA=caseflow bundle exec rake doc:schema
+
+doc-schema-etl:	# Create docs/schema/etl.csv
+	ERD_BASE="ETL::Record" SCHEMA=etl bundle exec rake doc:schema
+
+doc-schema:	doc-schema-caseflow doc-schema-etl	# Create all docs/schema csv files
+
+docs: erd doc-schema	# Build all documentation
+
+check-fks: # Check for missing foreign keys
+	bundle exec rake immigrant:check_keys
+
+# Self-documented makefile from https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
+help:  ## Shows help
+	@grep -E '^[\ a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; { split($$1, C, " "); printf "\033[36m%-30s\033[0m %s\n", C[1], $$2}'
+
+.PHONY: test run clean lint check logs db update one-test client-test security build ready help

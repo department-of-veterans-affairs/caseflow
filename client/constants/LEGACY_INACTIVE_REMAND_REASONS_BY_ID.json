@@ -1,0 +1,22 @@
+{
+  "dutyToAssistAdditionalRecordsRequest": {
+    "CA": "Service medical records",
+    "CB": "Service personnel records",
+    "CC": "JSRRC",
+    "CD": "VA medical records",
+    "CE": "Social Security records",
+    "CF": "Private medical records",
+    "CG": "Other federal records",
+    "CH": "Other private records"
+  },
+  "medicalExam": {
+    "DC": "Consider new criteria",
+    "DF": "Medical Opinion required (no exam)",
+    "DG": "Medical Opinion required w/ exam",
+    "DH": "Inadequate medical opinion"
+  },
+  "dueProcess": {
+    "EF": "Apply law/regulation/court precedent",
+    "EJ": "Additional Information from appellant"
+  }
+}

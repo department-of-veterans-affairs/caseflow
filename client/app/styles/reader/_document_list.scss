@@ -1,0 +1,281 @@
+.section--document-list {
+  .loading-text {
+    font-style: italic;
+  }
+
+  .section--no-search-results {
+    .cf-msg-screen-text {
+      display: none;
+    }
+
+    .cf-app-segment--alt {
+      border: none;
+      margin-top: 0;
+      padding: 4rem 4rem 2rem;
+
+      .cf-msg-screen-deck {
+        word-break: break-word;
+        // scss-lint:disable ImportantRule
+        margin-bottom: 0 !important;
+        // scss-lint:disable ImportantRule
+      }
+    }
+  }
+
+  .table-icon {
+    margin: 1px;
+    margin-left: 5px;
+    cursor: pointer;
+  }
+
+  i {
+    margin: 0;
+  }
+
+  .documents-table {
+    min-width: 810px;
+    margin-top: 0;
+
+    &.full-width {
+      width: 100%;
+    }
+
+    tbody > tr > td {
+      vertical-align: top;
+    }
+
+    .comments-table-header > tr > th {
+      font-weight: $font-normal;
+      float: left;
+      padding-left: 0;
+    }
+  }
+
+  $last-read-column-width: 41px;
+
+  .last-read-column {
+    // This value is determined by the size of the SVG.
+    min-width: $last-read-column-width;
+  }
+
+  .categories-column {
+    min-width: 140px;
+  }
+
+  .receipt-date-column {
+    min-width: 150px;
+  }
+
+  .doc-type-column {
+    width: 28vw;
+    min-width: 185px;
+  }
+
+  .tags-column {
+    width: 28vw;
+  }
+
+  .comments-column {
+    width: 112px;
+    min-width: 112px;
+  }
+
+  .bordered-icon {
+    border: 2px solid $color-gray;
+    padding: 1px 2px;
+    border-radius: 5px;
+    font-size: 15px;
+  }
+
+  .cf-document-list-header-row tr {
+    display: block;
+
+    th > div {
+      display: flex;
+    }
+
+    .table-header-label {
+      vertical-align: super;
+    }
+  }
+
+  .cf-document-list-button-header {
+    display: flex;
+    align-items: center;
+    background-color: $color-white;
+    color: $color-gray-dark;
+    padding: 0;
+    margin: 0;
+    line-height: normal;
+  }
+
+  .cf-document-list-body {
+    display: block;
+    max-height: 65vh;
+    overflow: auto;
+
+    > .borderless {
+      border: none;
+
+      > td {
+        width: 100vw;
+        padding-bottom: 0;
+      }
+
+      .horizontal-comment {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
+
+    .horizontal-comment {
+      display: flex;
+      margin-left: $last-read-column-width;
+      margin-bottom: 1rem;
+      border-radius: 3px;
+      border: 1px solid $color-gray-lighter;
+
+      .comment-relevant-date {
+        width: 16rem;
+        padding-left: 2rem;
+        padding-top: 25px;
+      }
+
+      .comment-page-number {
+        padding: 25px 0 25px 25px;
+        width: 100%;
+        line-height: 25px;
+
+        h4 {
+          margin-bottom: 5px;
+        }
+      }
+    }
+  }
+
+  .document-list-receipt-date {
+    color: $color-gray;
+  }
+
+  .document-list-doc-description {
+    color: $color-gray;
+    font-size: 1.5rem;
+    margin: 0;
+  }
+
+  .document-list-comments-indicator-icon {
+    font-weight: bold;
+    margin: 3px;
+  }
+
+  .document-list-issue-tags {
+    max-width: 225px;
+
+    .document-list-issue-tag {
+      display: inline-block;
+      background: $color-gray-lighter;
+      border-radius: 3px;
+      padding: 4px 7px;
+      text-align: center;
+      margin: 3px;
+      max-width: 225px;
+      word-wrap: break-word;
+    }
+  }
+
+  .cf-dropdown-filter {
+    z-index: 15;
+    position: absolute;
+    border: 1px solid $color-gray-lighter;
+    background: $color-white;
+    box-shadow: 5px 5px 4px -3px $color-gray-lighter;
+    font-weight: normal;
+    padding: 0;
+    $dropdown-interior-padding: 14px;
+
+    @mixin hover {
+      &:hover {
+        background-color: $color-gray;
+        color: $color-white;
+      }
+    }
+
+    .cf-clear-filter-row {
+      border-bottom: 1px solid $color-gray-lighter;
+      padding: 14px;
+      @include hover;
+
+      button {
+        padding: 0 0 0 2px;
+      }
+
+      &:hover .cf-clear-filter-button-wrapper {
+        border-bottom-color: $color-gray;
+      }
+    }
+  }
+
+  .unselected-filter-icon {
+    .unselected-filter-icon-inner {
+      fill: $color-gray-dark;
+    }
+
+    .unselected-filter-icon-border {
+      stroke: $color-gray-dark;
+    }
+  }
+
+  .unselected-filter-icon:hover {
+    .unselected-filter-icon-inner {
+      fill: $color-primary;
+    }
+
+    .unselected-filter-icon-border {
+      stroke: $color-primary;
+    }
+  }
+
+  .cf-text-button {
+    background: inherit;
+    font-weight: inherit;
+    margin: 0;
+    color: inherit;
+
+    &:hover {
+      color: inherit;
+      background: inherit;
+    }
+  }
+}
+
+.document-list-filter-message {
+  margin-top: 15px;
+  margin-bottom: 0;
+
+  &.hidden {
+    visibility: hidden;
+  }
+}
+
+.document-list-header {
+  display: flex;
+  justify-content: space-between;
+
+  .search-bar-and-doc-count {
+    flex-grow: 2;
+
+    .usa-search {
+      flex-grow: 1;
+    }
+
+    .num-of-documents {
+      color: $color-gray;
+      padding: 5px;
+      flex-grow: 1;
+    }
+  }
+}
+
+.document-list-header-issue-tags {
+  min-width: 150px;
+}

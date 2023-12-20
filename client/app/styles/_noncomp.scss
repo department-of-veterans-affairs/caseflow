@@ -1,0 +1,147 @@
+.cf-gray-box {
+  background-color: $color-gray-lightest;
+  border: 1px solid $color-gray-lighter;
+  padding: 2rem;
+  margin: 2rem -2rem;
+
+  .cf-inline-form {
+    line-height: 2em;
+
+    .usa-input-error-message {
+      font-weight: 500;
+    }
+
+    .cf-date-error {
+      input {
+        border: 1px solid $color-secondary-dark;
+      }
+
+    }
+
+  }
+}
+
+.cf-review-details {
+  .cf-claimant-name {
+    font-weight: bold;
+    font-size: 2rem;
+    padding-right: 2rem;
+    border-right: 1px solid $color-gray-lighter;
+  }
+
+  .cf-relationship {
+    padding-left: 2rem;
+  }
+
+  .cf-intake-date {
+    padding-right: 2rem;
+  }
+
+  .pad-top {
+    padding-top: 4px;
+  }
+
+  hr {
+    margin: 2rem 0;
+  }
+
+  .cf-form-details {
+    div {
+      margin-bottom: 1rem;
+    }
+  }
+
+  .row-two {
+    margin: 1rem auto 0;
+  }
+}
+
+.cf-record-request-checkbox {
+  label {
+    max-width: none;
+  }
+
+  .cf-form-checkbox {
+    label::before {
+      position: relative;
+    }
+  }
+}
+
+.cf-noncomp-search {
+  min-width: 500px;
+  margin-right: 0;
+
+  .cf-search-ahead {
+    .cf-search-input-with-close {
+      width: 100%;
+      max-width: 55rem;
+    }
+  }
+}
+
+.cf-noncomp-queue-completed-task {
+  margin-bottom: 20px;
+}
+
+.cf-decisions {
+  .cf-decision {
+    .cf-decision-details {
+      margin: 2rem 0;
+    }
+
+    hr {
+      margin: 3rem 0;
+    }
+
+    .cf-disposition {
+      margin-top: 1.7rem;
+      max-width: 45rem;
+
+      .cf-optional {
+        font-weight: bold;
+      }
+    }
+
+    textarea:disabled {
+      background-color: $color-gray-lighter;
+    }
+  }
+}
+
+.cf-decision-date {
+  input {
+    width: auto;
+  }
+}
+
+.cf-cancel-link {
+  margin-right: 2rem;
+}
+
+.usa-search-small {
+  max-width: none;
+
+  label {
+    margin-bottom: 1rem;
+  }
+}
+
+.cf-pagination-pages {
+  margin-top: 20px;
+  clear: right;
+}
+
+.non-comp-queue-table-wrapper {
+  position: relative;
+
+  .cf-noncomp-search {
+    position: absolute;
+    right: 0;
+    z-index: 1;
+  }
+
+  .cf-pagination-pages {
+    padding-top: 65px;
+  }
+}

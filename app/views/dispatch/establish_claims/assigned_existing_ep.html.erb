@@ -1,0 +1,19 @@
+<% content_for :page_title do task.appeal.task_header end %>
+
+<% content_for :full_page_content do %>
+<%= react_component("EstablishClaimPage", props: {
+    availableTasks: tasks.any_assignable_to?(current_user),
+    buttonText: start_text,
+    checklist: ['Reviewed decision', 'Assigned existing EP to claim'],
+    firstHeader: 'Success!',
+    page: 'EstablishClaimComplete',
+    totalCasesCompleted: total_cases_completed,
+    employeeCount: team_quota.user_count,
+    totalCasesToComplete: to_complete_count,
+    veteranName: task.appeal.veteran_full_name,
+    userDisplayName: current_user.display_name,
+    dropdownUrls: dropdown_urls,
+    feedbackUrl: feedback_url,
+    buildDate: build_date
+	}) %>
+<% end %>

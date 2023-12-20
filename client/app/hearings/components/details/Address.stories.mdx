@@ -1,0 +1,27 @@
+import { Meta, Story, Preview, Props } from '@storybook/addon-docs/blocks';
+
+import { AddressLine } from './Address';
+
+export const Template = (args) => <AddressLine {...args} />
+
+<Meta
+  title="Hearings/Components/Hearing Details/Address"
+  component={AddressLine}
+  args={{
+    name: 'John Smith',
+    addressLine1: '123 Test St.',
+    addressCity: 'Washington',
+    addressState: 'D.C.',
+    addressZip: '20001',
+  }}
+/>
+
+# Address Line
+
+<Preview>
+  <Story name="Normal">
+    {Template.bind({})}
+  </Story>
+</Preview>
+
+<Props of={AddressLine} />

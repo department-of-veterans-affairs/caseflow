@@ -1,0 +1,10 @@
+{
+    "allowed": "Allowed",
+    "remanded": "Remanded",
+    "denied": "Denied",
+    "vacated": "Vacated",
+    "dismissed_death": "Dismissed, Death",
+    "dismissed_matter_of_law": "Dismissed, Matter of Law",
+    "withdrawn": "Withdrawn",
+    "stayed": "Stayed"
+}

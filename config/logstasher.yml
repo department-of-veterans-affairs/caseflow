@@ -1,0 +1,14 @@
+controller_enabled: true
+mailer_enabled: true
+record_enabled: true
+job_enabled: true
+view_enabled: true
+suppress_app_log: false
+source: "logstasher"
+backtrace: true
+logger_path: 'log/logstasher.log'
+log_controller_parameters: true
+development:
+  enabled: true
+production:
+  enabled: true

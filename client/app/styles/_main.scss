@@ -1,0 +1,407 @@
+html,
+body {
+  margin: 0;
+  height: 100%;
+  color: $color-gray-dark;
+}
+
+.cf-content {
+  min-height: 100%;
+
+  .cf-app-header.not-react {
+    background: $color-white;
+    line-height: 4em;
+    margin-bottom: $cf-30px;
+
+    > div {
+      &:first-child {
+
+        border-bottom: 1px solid $color-gray-lighter;
+
+        &::after {
+          content: '\00a0';
+          line-height: 0;
+          display: block;
+          clear: both;
+        }
+      }
+
+      &:not(:first-child) {
+        line-height: normal;
+      }
+    }
+
+    .cf-nav {
+      padding: 0;
+      border: 0;
+    }
+
+    [class*="cf-logo-image-"] {
+      width: auto;
+      height: auto;
+      background-repeat: no-repeat;
+      background-position: center left;
+    }
+  }
+}
+
+.cf-content-inside {
+  padding-bottom: 12.353em;
+
+  &.full-page {
+    padding-bottom: 0;
+  }
+
+  .cf-logo {
+    margin: 0;
+    display: inline-block;
+    line-height: 3em;
+
+    a {
+      color: $color-gray-dark;
+      padding-left: 2.6em;
+    }
+  }
+
+  .cf-app-segment {
+    margin-bottom: $cf-30px;
+  }
+
+  .cf-app-segment:last-child {
+    margin-bottom: 0;
+  }
+
+  .cf-app-segment--alt {
+    border: 1px solid $color-gray-lighter;
+  }
+}
+
+.cf-app-footer.not-react {
+  margin-top: 100px;
+  min-height: 5em;
+
+  > div {
+    padding: $cf-30px 0;
+    height: auto;
+  }
+}
+
+.cf-actions {
+  margin-top: $cf-30px;
+  line-height: 2.225em;
+  clear: both;
+
+  [type="submit"] {
+    margin: 0;
+  }
+
+  &::after {
+    content: '\00a0';
+    line-height: 0;
+    display: block;
+    clear: both;
+  }
+}
+
+// Used for Caseflow app header rendered in Rails
+@mixin app-width($app) {
+  margin-left: auto;
+  margin-right: auto;
+
+  @if $app == 'queue' {
+    width: 85vw;
+  } @else {
+    width: 75vw;
+  }
+}
+
+// Used for Caseflow app header rendered in React
+.cf-wide-app {
+  .usa-grid {
+    padding-left: 0;
+    padding-right: 0;
+    max-width: 85vw;
+  }
+}
+
+.cf-app-width {
+  @include app-width('');
+}
+
+.cf-logo-image-default {
+  background-image: url(#{$image-url}/caseflow-default-logo.svg);
+  width: 32px;
+  height: 32px;
+  background-size: 32px 32px;
+}
+
+.cf-logo-image-certification {
+  background-image: url(#{$image-url}/caseflow-certification-logo.svg);
+  width: 32px;
+  height: 32px;
+  background-size: 32px 32px;
+}
+
+.cf-logo-image-dispatch {
+  background-image: url(#{$image-url}/caseflow-dispatch-logo.svg);
+  width: 32px;
+  height: 32px;
+  background-size: 32px 32px;
+}
+
+.cf-logo-image-intake {
+  background-image: url(#{$image-url}/caseflow-intake-logo.svg);
+  width: 32px;
+  height: 32px;
+  background-size: 32px 32px;
+}
+
+.cf-right-side {
+  text-align: right;
+  float: right;
+}
+
+.cf-validation {
+  min-height: 12px;
+  color: $color-secondary;
+}
+
+.cf-invisible {
+  display: none;
+}
+
+* + .cf-form-dropdown {
+  margin-top: 1.6rem;
+  margin-bottom: 1.6rem;
+}
+
+.cf-form-textinput[readonly] {
+  // scss-lint:disable ImportantRule
+  background: $color-gray-lightest !important;
+  opacity: 1 !important;
+   // scss-lint:enable ImportantRule
+  color: $color-gray-dark;
+}
+
+.cf-button-associated-text-right {
+  color: $color-gray;
+  margin-right: 30px;
+  line-height: 35px;
+}
+
+.cf-form--full-width {
+  width: 100%;
+  max-width: 100%;
+}
+
+.cf-bare-list {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.cf-checklist {
+  list-style-type: none;
+  margin: 0 auto;
+  margin-bottom: 4rem;
+  position: relative;
+  max-width: 50%;
+
+  li::before {
+    content: '';
+  }
+
+  .cf-icon-success--bg {
+    font-size: 2.5rem;
+    margin-right: 1.8rem;
+  }
+}
+
+.cf-msg-screen-deck {
+  // scss-lint:disable ImportantRule
+  margin-bottom: 4rem !important;
+  // scss-lint:enable ImportantRule
+
+  &.cf-success-emoji-text {
+    width: auto;
+  }
+}
+
+.pdfViewer.singlePageView .cf-msg-screen-deck {
+  width: auto;
+}
+
+.cf-warning {
+  background-repeat: no-repeat;
+  background-size: contain;
+  padding-left: 3rem;
+  background-color: inherit;
+}
+
+.cf-tab-window-body {
+  padding-top: 20px;
+  border: 1px solid $color-gray-light;
+  border-top-width: 0;
+
+  &-full-screen {
+    padding: 30px;
+    margin-left: -30px;
+    margin-right: -30px;
+    width: auto;
+  }
+}
+
+.cf-tab-navigation-full-screen {
+  margin-left: -30px;
+  margin-right: -30px;
+  width: auto;
+}
+
+// TODO remove Multiple column override
+@mixin column-count($column, $column-gap) {
+  @include prefixer(column-count, $column, webkit moz spec);
+  @include prefixer(column-gap, $column-gap, webkit moz spec)
+}
+
+.cf-multiple-columns {
+  @include column-count(2, 10re);
+}
+
+select {
+  -webkit-appearance: none;
+
+  &[id="decisionType"] {
+    margin-bottom: 30px;
+  }
+}
+
+
+.cf-react-icon-loading-front {
+  @include animation(backwardspin 6s linear infinite);
+}
+
+.cf-react-icon-loading-back {
+  @include animation(spin 6s linear infinite);
+}
+
+.cf-lock-icon {
+  vertical-align: middle;
+}
+
+.cf-left-padding {
+  padding-left: 75px;
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+.cf-push-left {
+  .cf-btn-link {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.cf-bold-ordered-list {
+  font-weight: bold;
+
+  div {
+    font-weight: normal;
+  }
+}
+
+.cf-no-styling-list {
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.cf-borderless-rows {
+
+  thead {
+    border: 0;
+    padding: 0;
+
+    tr {
+      border: 0;
+      padding: 0;
+
+      th {
+        border: 0;
+        padding: 0;
+      }
+    }
+  }
+
+  tbody {
+    border: 0;
+    padding: 0;
+
+    tr {
+      border: 0;
+      padding: 0;
+
+      td {
+        border: 0;
+        padding: 0;
+      }
+    }
+  }
+}
+
+.cf-title-meta-right {
+  line-height: 1em;
+  margin-bottom: 1.76em;
+
+  .title,
+  .meta {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0;
+  }
+
+  .title {
+    width: 55%;
+  }
+
+  .meta {
+    text-align: right;
+    font-size: 1.15em;
+    width: 45%;
+
+    span {
+      font-size: 1.26em;
+    }
+  }
+}
+
+.cf-form-textinput,
+.cf-form-textarea,
+.cf-form-dropdown {
+  label {
+    margin-bottom: 8px;
+  }
+}
+
+.cf-veteran-name-control {
+  line-height: 2.2;
+  font-size: 22px;
+  color: $color-gray-dark;
+  text-transform: uppercase;
+}
+// this can be used in other areas where the text doesn't indent on multiline labels
+.special-options label {
+  margin-left: 1.5em;
+  text-indent: -1.7em;
+}
+
+.skip-link {
+  margin-left: 1rem;
+  position: absolute;
+  transform: translateX(-200%);
+  transition: transform 0.3s;
+  margin-top: 10px;
+
+  &:focus {
+    position: fixed;
+    transform: translateX(0);
+  }
+}

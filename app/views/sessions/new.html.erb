@@ -1,0 +1,6 @@
+<% content_for :page_title do %>&nbsp &gt &nbspLogin<% end %>
+
+<%= react_component("Login", props: {
+  regionalOfficeOptions: @regional_office_options,
+  redirectTo: @redirect_to
+}) %>

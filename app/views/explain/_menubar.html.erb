@@ -1,0 +1,133 @@
+<style>
+  .sticky {
+    position: sticky;
+    transition: top 0.5s;
+  }
+
+  .sticky_show {
+    top: 0px;
+  }
+
+  .sticky_temp_hide {
+    visibility: hidden;
+  }
+
+  #menubar_settings.show {
+    visibility: visible;
+  }
+</style>
+
+<script type="text/javascript">
+  // Adapted from https://www.w3schools.com/howto/howto_js_navbar_sticky.asp
+  // and https://www.w3schools.com/howto/howto_js_navbar_slide.asp
+
+  const menubar = document.getElementById("<%= menubarId %>");
+  // Number of pixels that are still visible when menubar is hidden
+  const pixelsStillVisible = 8;
+  // When menubar is sticky, don't toggle visibility until this much movement is observed
+  const hysteresisScrollingDown = 20;
+  const hysteresisScrollingUp = 150;
+
+  // Number of pixels of menubar the will be hidden
+  const hiddenPixels = menubar.offsetHeight - pixelsStillVisible
+  // Position on the page where menubar becomes sticky
+  const stickyPos = menubar.offsetTop + hiddenPixels;
+  // Top position of menubar when hidden (negative number being outside the viewable area)
+  const hiddenTop = "-"+hiddenPixels+"px";
+
+  function updateStyles(){
+    function findStyleRule(className) {
+      for(var styleSheet of document.styleSheets) {
+        var rules = styleSheet.rules || styleSheet.cssRules
+        const found = Array.prototype.find.call(rules, rule => rule.selectorText==className);
+        if(found) return found;
+      }
+    }
+
+    // Set the default sticky style (defined at the top of this file) to be hidden
+    stickyStyleRule = findStyleRule(".sticky");
+    stickyStyleRule.style.top = hiddenTop
+
+    // For some reason, this placeholder is no longer needed, but keep this code around, just in case.
+    // Add padding on the main page as a placeholder for the now removed sticky menu
+    // styleSheet = stickyStyleRule.parentStyleSheet
+    // styleSheet.insertRule(".sticky ~ #<%= contentId %> { padding-top: "+menubar.offsetHeight+"px; }", 
+    //                       styleSheet.cssRules.length);
+  }
+  updateStyles();
+
+  const scrollListener = ()=>{
+    if(tempIgnoreScroll) return;
+
+    if(window.pageYOffset < stickyPos - hiddenPixels){
+      disableStickyMenu();
+    } else if (window.pageYOffset >= stickyPos && !menubar.classList.contains("sticky_temp_hide")) {
+      enableStickyMenu();
+    }
+  }
+  window.addEventListener('load', (event) => {
+    console.log('menubar onLoadListener');
+    window.onscroll = scrollListener;
+  });
+
+  function temporarilyHideStickyMenu(){
+    menubar_settings.classList.remove("show");
+    menubar.classList.remove("sticky_show");
+    menubar.classList.add('sticky_temp_hide');
+  }
+
+  const menubar_settings = document.getElementById("menubar_settings");
+  function enableStickyMenu() {
+    if (window.pageYOffset >= stickyPos + hysteresisScrollingUp + hysteresisScrollingDown) {
+      reactToScrolling();
+    }
+
+    if (menubar.classList.contains("sticky")) return;
+
+    menubar.classList.add("sticky");
+    menubar.addEventListener('mouseenter', mouseEnterHandler)
+  }
+
+  const mouseEnterHandler = ()=>{
+    !menubar.classList.contains("sticky_show") && showStickyMenu();
+  }
+
+  // Restores menu back to its original location on the page
+  function disableStickyMenu(){
+    if (!menubar.classList.contains("sticky")) return;
+
+    menubar.removeEventListener('mouseenter', mouseEnterHandler)
+    menubar_settings.classList.remove("show");
+    menubar.classList.remove("sticky", "sticky_show", "sticky_temp_hide");
+  }
+
+  const autoshowElem = document.getElementById("<%= autoshowId %>");
+  var prevScrollPos = window.pageYOffset;
+  function reactToScrolling() {
+    const autoshowFlag = (!autoshowElem || autoshowElem.checked)
+    const diff = prevScrollPos - window.pageYOffset
+    if(autoshowFlag){
+      if (diff > hysteresisScrollingUp) {
+        showStickyMenu();
+        prevScrollPos = window.pageYOffset;
+      } else if (diff < -hysteresisScrollingDown) {
+        hideStickyMenu();
+      }
+    } else {
+      if (Math.abs(diff) > 10)
+        hideStickyMenu();
+    }
+  }
+
+  function showStickyMenu(){
+    menubar_settings.classList.add("show");
+    menubar.classList.add("sticky_show");
+    prevScrollPos = window.pageYOffset;
+  }
+
+  function hideStickyMenu(){
+    menubar_settings.classList.remove("show");
+    menubar.classList.remove("sticky_show");
+    prevScrollPos = window.pageYOffset;
+  }
+</script>

@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PoaRefresh feature toggles poa_last_synced_at hides PoaRefresh text when not toggled 1`] = `
+<PoaRefresh
+  powerOfAttorney={
+    Object {
+      "poa_last_synced_at": "04/08/2021",
+    }
+  }
+/>
+`;
+
+exports[`PoaRefresh feature toggles poa_last_synced_at shows PoaRefresh text when toggled 1`] = `
+<PoaRefresh
+  powerOfAttorney={
+    Object {
+      "poa_last_synced_at": "04/08/2021",
+    }
+  }
+/>
+`;

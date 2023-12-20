@@ -1,0 +1,41 @@
+# frozen_string_literal: true
+
+require "open3"
+
+class ShellCommand
+  # runs shell command and prints output
+  # returns boolean depending on the success of the command
+  def self.run(command, opts = {})
+    success = false
+
+    Open3.popen2e(command, opts) do |_stdin, stdout_and_stderr, thread|
+      while (line = stdout_and_stderr.gets)
+        puts(line)
+      end
+
+      success = thread.value == 0
+    end
+
+    success
+  end
+
+  def self.run_and_batch_output(command)
+    # rubocop:disable Security/Open
+    output_stream = open("|#{command}", "r")
+    # rubocop:enable Security/Open
+    output = ""
+    output_stream.each do |line|
+      output << line
+      print "."
+      $stdout.flush
+    end
+    output_stream.close
+
+    puts output
+
+    exit_status = $CHILD_STATUS.exitstatus
+    # rubocop:disable Rails/Exit
+    exit(exit_status) unless exit_status == 0
+    # rubocop:enable Rails/Exit
+  end
+end

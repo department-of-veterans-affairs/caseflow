@@ -1,0 +1,89 @@
+$cf-select-bg-color: #fff;
+$cf-select-disabled-bg-color: $color-gray-lightest;
+$cf-select-disabled-color: #323a45;
+$cf-select-border-color: #5b616b;
+$cf-select-text-color: #323a45;
+
+.cf-select {
+  .cf-select__control {
+    background-color: $cf-select-bg-color;
+    border: 1px solid $cf-select-border-color;
+    border-collapse: separate;
+    border-radius: 0;
+    border-spacing: 0;
+    color: $cf-select-text-color;
+    cursor: default;
+    max-width: 46rem;
+
+    &--is-disabled {
+      background-color: $cf-select-disabled-bg-color;
+
+      .cf-select__single-value {
+        color: $cf-select-disabled-color;
+      }
+
+      .cf-select__indicators {
+        opacity: 0.35;
+      }
+
+      input {
+        margin: 0;
+      }
+    }
+
+    .cf-select__value-container {
+      padding-bottom: 0;
+      padding-top: 0;
+
+      .cf-select__placeholder {
+        color: $cf-select-text-color;
+      }
+
+      // Ensure that the "selected" value is aligned correctly
+      .cf-select__placeholder,
+      .cf-select__single-value {
+        position: unset;
+        top: unset;
+        transform: unset;
+      }
+    }
+
+    .cf-select__indicators {
+      .cf-select__indicator-separator {
+        background-color: $cf-select-border-color;
+        margin-bottom: 0;
+        margin-top: 0;
+      }
+
+      .cf-select__indicator {
+        svg {
+          fill: $cf-select-text-color;
+        }
+      }
+    }
+  }
+
+  .cf-select__menu {
+    border-radius: 0;
+
+    .cf-select__menu-list {
+      .cf-select__option {
+        background-color: $color-white;
+        color: $color-gray;
+
+        &.cf-select__option--is-focused {
+          background-color: $color-gray;
+          color: $color-white;
+        }
+      }
+    }
+  }
+
+  .usa-input-error & {
+    border: 3px solid $color-secondary-dark;
+
+    .cf-select--is-disabled {
+      input { width: 1px; }
+    }
+  }
+}

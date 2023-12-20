@@ -1,0 +1,288 @@
+### Generic smell configuration
+### Please keep these alphabetical
+detectors:
+  # You can disable smells completely
+  Attribute:
+    exclude:
+      - BulkTaskAssignment
+      - Hearing#override_full_hearing_day_validation
+      - PowerOfAttorney
+      - QueueConfig
+      - RatingDecision
+  BooleanParameter:
+    exclude:
+      - AsyncableJobsReporter#initialize
+      - HearingRepository#slot_new_hearing
+      - HearingRenderer
+      - LegacyDocket#distribute_appeals
+      - Veteran
+      - ControllerSchema#respond_to_missing?
+      - SanitizedJsonDifference
+      - JudgeTeam#create_for_judge
+  ControlParameter:
+    exclude:
+      - ExplainTimelineConcern::TimelineSpanData
+      - ExternalApi::VBMSService#self.send_and_log_request
+      - Fakes::BGSService
+      - Hearings::GeomatchAndCacheAppealJob#perform
+      - HearingRepository#slot_new_hearing
+      - HearingRenderer
+      - Hearings::SendEmail#initialize
+      - LegacyDocket#distribute_appeals
+      - SanitizedJsonDifference
+      - SanitizedJsonConfiguration
+      - Seeds::Tasks#create_legacy_case_with_open_schedule_hearing_task
+      - SlackService#pick_color
+      - Task#actions_allowable?
+      - TaskSorter#sort_requires_case_norm?
+      - VBMSCaseflowLogger#log
+      - Veteran
+      - VirtualHearing#email_recipient_name
+      - JudgeDecisionReviewTask#additional_available_actions
+      - LegacyDocket#should_distribute?
+  UncommunicativeVariableName:
+    exclude:
+      - Address
+      - Seeds::Intake#create_inbox_messages
+      - Seeds::MTV#setup_motion_to_vacate
+      - Seeds::Users
+      - Fakes::PersistentStore#convert_dates_from
+  UncommunicativeMethodName:
+    exclude:
+      - LegacyAppeal#appellant_address_line_1
+      - LegacyAppeal#appellant_address_line_2
+  UncommunicativeParameterName:
+    exclude:
+      - Address
+      - Api::V3::DecisionReviews::ContestableIssueFinder#initialize
+  DataClump:
+    exclude:
+      - ForeignKeyPolymorphicAssociationJob
+      - HearingSerializerBase
+      - LegacyDocket
+      - SanitizedJsonConfiguration
+      - SanitizedJsonImporter
+      - SanitizedJsonExporter
+      - Seeds::Tasks
+      - TaskTreeRenderModule
+  DuplicateMethodCall:
+    enabled: false
+  FeatureEnvy:
+    exclude:
+      - AMOMetricsReportJob#build_report
+      - Api::ApplicationController#on_external_error
+      - Api::ApplicationController#upstream_known_error
+      - AppealAvailableHearingLocations#suggested_hearing_location
+      - AppealTaskHistory#build_events
+      - ApplicationRecord#as_hash
+      - AssignHearingDispositionTask#reschedule_or_schedule_later
+      - AsyncableJobsReporter
+      - CachedAppealService#cache_ama_appeals
+      - CachedAppealService#cache_legacy_appeal_postgres_data
+      - CachedAppealService#cache_legacy_appeal_vacols_data
+      - CachedAppealService#poa_representative_name_for
+      - CachedAppealService#case_fields_for_vacols_ids
+      - ConvertToVirtualHearing#convert_hearing_to_virtual
+      - ClaimReviewAsyncStatsReporter#as_csv
+      - DataIntegrityChecksJob
+      - DecisionIssueSyncJob
+      - ErdRecordAssociations
+      - ErdGraphStyling
+      - VirtualHearings::CreateConferenceJob#log_virtual_hearing_state
+      - VirtualHearings::DeleteConferencesJob#delete_conference
+      - VirtualHearings::DeleteConferencesJob#log_virtual_hearing_state
+      - VirtualHearings::DeleteConferencesJob#perform
+      - VirtualHearings::DeleteConferencesJob#process_virtual_hearing
+      - VirtualHearings::DeleteConferencesJob#send_cancellation_emails
+      - Hearings::SendEmail#external_message_id
+      - Fakes::EndProductStore
+      - Fakes::BGSService#get_participant_id_for_user
+      - Fakes::BGSServiceRecordMaker
+      - Fakes::BGSService#fetch_poas_by_participant_ids
+      - Fakes::PersistentStore#convert_dates_from
+      - FetchDocumentsForReaderJob#fetch_for_appeal
+      - FetchHearingLocationsForVeteransJob#sleep_before_retry_on_limit_error
+      - HearingSerializerBase
+      - HearingSchedule::GenerateHearingDaysSchedule#generate_co_hearing_days_schedule
+      - HearingSchedule::GenerateHearingDaysSchedule#get_fallback_date_for_co
+      - HearingSchedule::ValidateRoSpreadsheet#filter_invalid_range
+      - HearingRenderer
+      - LegacyDocket#count
+      - RedistributedCase#legacy_appeal_relevant_tasks
+      - LegacyAppeal#cancel_open_caseflow_tasks!
+      - MonthlyMetricsReportJob#build_report
+      - NightlySyncsJob#sync_vacols_cases
+      - Person#fetch_bgs_record_by_participant_id
+      - Person#fetch_bgs_record_by_ssn
+      - RequestIssue#find_or_create_decision_issue_from_rating_issue
+      - RequestIssue#special_issues
+      - RequestIssueReporter#as_csv
+      - RunAsyncable#perform_later_or_now
+      - SanitizedJsonConfiguration
+      - ScheduleHearingTask#create_hearing
+      - Seeds::Hearings
+      - Seeds::Tasks#create_colocated_legacy_tasks
+      - Seeds::Users#create_aod_user_and_tasks
+      - SlackService#http_service
+      - SyncReviewsJob
+      - TasksForAppeal#tasks_visible_to_vso_employee
+      - TaskTimerJob
+      - UpdateCachedAppealsAttributesJob
+      - UserReporter#report_user_related_records
+      - User#appeal_has_task_assigned_to_user?
+      - VeteranAttributeCacher
+      - HearingDayRequestTypeQuery#call
+      - WarmBgsCachesJob
+      - ExternalApi::PexipService#send_pexip_request
+      - ControllerSchema#remove_unknown_keys
+      - BusinessLineReporter#as_csv
+  InstanceVariableAssumption:
+    exclude:
+      - Appeal
+      - Task
+      - CaseflowJob
+      - Api::V3::DecisionReviews::HigherLevelReviewIntakeProcessor
+      - ETL::Syncer
+      - User
+  IrresponsibleModule:
+    enabled: false
+  LongParameterList:
+    exclude:
+      - Address#initialize
+      - AssignHearingDispositionTask#reschedule
+      - ExternalApi::VBMSService#self.create_contentions!
+      - JobSentryScopeMiddleware#call
+      - LegacyDocket#new_distributed_case
+      - Api::V3::DecisionReviews::ContestableIssueFinder#initialize
+      - QueueRepository#assign_case_to_attorney!
+      - SanitizedJsonDifference
+      - Seeds::MTV#judge_addresses_mtv
+      - Seeds::MTV#send_mtv_to_judge
+      - Seeds::Tasks#create_task_at_colocated
+      - VirtualHearings::CreateConferenceJob#perform
+      - Docket#distribute_appeals
+      - LegacyDocket#distribute_priority_appeals
+      - LegacyDocket#distribute_nonpriority_appeals
+      - ExternalApi::MPIService#search_people_info
+  ManualDispatch:
+    exclude:
+      - Api::V3::DecisionReviews::IntakeError#potential_error_code
+      - Api::V3::DecisionReviews::HigherLevelReviewIntakeParams#attributes?
+      - Api::V3::DecisionReviews::HigherLevelReviewIntakeParams#params?
+      - Api::V3::DecisionReviews::IntakeError#error_code
+      - Api::V3::DecisionReviews::HigherLevelReviewIntakeParams#claimant_object
+      - Api::V3::DecisionReviews::HigherLevelReviewIntakeParams#claimant_object_present?
+      - Api::V3::DecisionReviews::HigherLevelReviewIntakeParams#describe_shape_error
+      - ETL::Hearing#merge_original_attributes_to_target
+      - RouteDocsController::DocumentedRoute#schema
+  MissingSafeMethod:
+    enabled: false
+  NestedIterators:
+    max_allowed_nesting: 2
+    exclude:
+      - AsyncableJobsReporter
+  NilCheck:
+    enabled: false
+  RepeatedConditional:
+    exclude:
+      - BgsPowerOfAttorney
+      - BulkTaskReassignment
+      - ExplainController
+      - HearingLocation
+      - HearingRenderer
+      - LegacyAppeal
+      - Person
+      - QueueConfig
+      - RequestIssue
+      - Seeds::Hearings
+      - Task
+      - UpdateCachedAppealsAttributesJob
+      - Veteran
+      - LegacyDocket
+  TooManyConstants:
+    exclude:
+      - Fakes::BGSServicePOA
+  TooManyInstanceVariables:
+    exclude:
+      - AmaAppealDispatch
+      - DuplicateUserTask
+      - LegacyAppealDispatch
+      - Address
+      - SanitizedJsonImporter
+      - ExternalApi::PexipService
+      - InvalidAssigneeStatusOnTaskCreate
+      - Api::V3::DecisionReviews::ContestableIssueFinder
+      - Api::V3::DecisionReviews::ContestableIssueParams
+      - Api::V3::DecisionReviews::IntakeError
+      - ControllerSchema::Field
+      - HearingEmailStatusMailer
+  TooManyMethods:
+    enabled: false
+  TooManyStatements:
+    enabled: false
+  UtilityFunction:
+    public_methods_only: true
+    exclude:
+      - AddressMapper#get_address_from_veteran_record
+      - ClaimReviewAsyncStatsReporter#seconds_to_hms
+      - ETLClasses#syncer_klasses
+      - ETL::Builder#last_built
+      - ETL::HearingSyncer#filter?
+      - ETL::LegacyHearingSyncer#filter?
+      - ETL::Syncer#filter?
+      - ETL::TaskSyncer#filter?
+      - Fakes::BGSService
+      - Fakes::RatingStore
+      - Fakes::PexipService
+      - HearingAdminActionVerifyAddressTask#available_hearing_admin_actions
+      - HearingDispositionChangeJob
+      - Helpers::AppealHearingHelper#available_hearing_locations
+      - Helpers::AppealHearingHelper#hearings
+      - HearingRenderer
+      - JudgeLegacyDecisionReviewTask#review_action
+      - LatestRatingDisabilityEvaluation#latest_disability_evaluation
+      - LegacyDocket#age_of_n_oldest_genpop_priority_appeals
+      - OrganizationOnHoldTasksTab#name
+      - OrganizationTrackingTasksTab#column_names
+      - PendingIncompleteAndUncancelledTaskTimersQuery#call
+      - PowerOfAttorneyMapper
+      - Reporter#average
+      - Reporter#median
+      - Reporter#seconds_to_hms
+      - Reporter#percent
+      - SanitizedJsonConfiguration
+      - ScheduleHearingTaskPager#sorted_tasks
+      - UpdatePOAConcern
+      - VBMSCaseflowLogger#log
+      - LegacyDocket
+  UnusedParameters:
+    exclude:
+      - Docket#distribute_appeals
+      - HearingRequestDocket#distribute_appeals
+
+
+### Directory specific configuration
+# You can configure smells on a per-directory base.
+# E.g. the classic Rails case: controllers smell of NestedIterators (see /docs/Nested-Iterators.md) and
+# helpers smell of UtilityFunction (see docs/Utility-Function.md)
+# Note that we only allow configuration on a directory level, not a file level, so all paths have to point to directories.
+directories:
+  "app/controllers":
+    InstanceVariableAssumption:
+      enabled: false
+  "app/helpers":
+    UtilityFunction:
+      enabled: false
+  "app/jobs":
+    UtilityFunction:
+      enabled: false
+  "app/mailers":
+    InstanceVariableAssumption:
+      enabled: false
+
+### Excluding directories
+# Directories and files below will not be scanned at all
+exclude_paths:
+  - db/migrate
+  - db/etl/migrate
+  - spec

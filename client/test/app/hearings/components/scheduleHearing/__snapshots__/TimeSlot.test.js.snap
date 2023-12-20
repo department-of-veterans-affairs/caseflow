@@ -1,0 +1,186 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TimeSlot has correct visual elements renders correctly 1`] = `
+<div>
+  <label
+    class="time-slot-label"
+    for="hearing-time-undefined"
+  >
+    Hearing Time
+  </label>
+  <div>
+    <span>
+      <button
+        class="time-slot-button-toggle cf-btn-link usa-button"
+        type="button"
+      >
+        Choose a custom time
+      </button>
+    </span>
+  </div>
+  <div
+    class="time-slot-button-container"
+  >
+    <div
+      class="time-slot-container"
+    >
+      <span>
+        <button
+          class="usa-button-secondary time-slot-button usa-button"
+          type="button"
+        >
+          <div>
+            <div
+              style="flex: 1;"
+            >
+              6:30 AM MDT (8:30 AM EDT)
+            </div>
+            <div>
+              <i
+                class="fa fa-angle-right time-slot-arrow"
+              />
+            </div>
+          </div>
+        </button>
+      </span>
+      <span>
+        <button
+          class="usa-button-secondary time-slot-button usa-button"
+          type="button"
+        >
+          <div>
+            <div
+              style="flex: 1;"
+            >
+              7:30 AM MDT (9:30 AM EDT)
+            </div>
+            <div>
+              <i
+                class="fa fa-angle-right time-slot-arrow"
+              />
+            </div>
+          </div>
+        </button>
+      </span>
+      <span>
+        <button
+          class="usa-button-secondary time-slot-button usa-button"
+          type="button"
+        >
+          <div>
+            <div
+              style="flex: 1;"
+            >
+              8:30 AM MDT (10:30 AM EDT)
+            </div>
+            <div>
+              <i
+                class="fa fa-angle-right time-slot-arrow"
+              />
+            </div>
+          </div>
+        </button>
+      </span>
+      <span>
+        <button
+          class="usa-button-secondary time-slot-button usa-button"
+          type="button"
+        >
+          <div>
+            <div
+              style="flex: 1;"
+            >
+              9:30 AM MDT (11:30 AM EDT)
+            </div>
+            <div>
+              <i
+                class="fa fa-angle-right time-slot-arrow"
+              />
+            </div>
+          </div>
+        </button>
+      </span>
+    </div>
+    <div
+      class="time-slot-container"
+    >
+      <span>
+        <button
+          class="usa-button-secondary time-slot-button usa-button"
+          type="button"
+        >
+          <div>
+            <div
+              style="flex: 1;"
+            >
+              10:30 AM MDT (12:30 PM EDT)
+            </div>
+            <div>
+              <i
+                class="fa fa-angle-right time-slot-arrow"
+              />
+            </div>
+          </div>
+        </button>
+      </span>
+      <span>
+        <button
+          class="usa-button-secondary time-slot-button usa-button"
+          type="button"
+        >
+          <div>
+            <div
+              style="flex: 1;"
+            >
+              11:30 AM MDT (1:30 PM EDT)
+            </div>
+            <div>
+              <i
+                class="fa fa-angle-right time-slot-arrow"
+              />
+            </div>
+          </div>
+        </button>
+      </span>
+      <span>
+        <button
+          class="usa-button-secondary time-slot-button usa-button"
+          type="button"
+        >
+          <div>
+            <div
+              style="flex: 1;"
+            >
+              12:30 PM MDT (2:30 PM EDT)
+            </div>
+            <div>
+              <i
+                class="fa fa-angle-right time-slot-arrow"
+              />
+            </div>
+          </div>
+        </button>
+      </span>
+      <span>
+        <button
+          class="usa-button-secondary time-slot-button usa-button"
+          type="button"
+        >
+          <div>
+            <div
+              style="flex: 1;"
+            >
+              1:30 PM MDT (3:30 PM EDT)
+            </div>
+            <div>
+              <i
+                class="fa fa-angle-right time-slot-arrow"
+              />
+            </div>
+          </div>
+        </button>
+      </span>
+    </div>
+  </div>
+</div>
+`;

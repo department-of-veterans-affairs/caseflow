@@ -1,0 +1,7 @@
+  <p>
+    <b> Your pending requests: </b>
+  </p>
+
+  <% @pending_organization_request_names.each do |requested_org_name| %>
+    <p> <%= requested_org_name %> </p>
+  <% end %>

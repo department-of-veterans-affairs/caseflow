@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FilterSummary multiple selections renders correctly 1`] = `
+<div>
+  <div
+    class="cf-filter-summary"
+  >
+    <strong>
+      Filtering by:
+    </strong>
+    <span>
+      <span>
+         
+        Case Type
+         (
+        2
+        )
+      </span>
+      , 
+    </span>
+    <span>
+       
+      Tasks
+       (
+      1
+      )
+    </span>
+    <span>
+      <button
+        class="cf-btn-link cf-clear-filters-link"
+      >
+         Clear all filters
+      </button>
+    </span>
+  </div>
+</div>
+`;
+
+exports[`FilterSummary no selections renders correctly 1`] = `<div />`;
+
+exports[`FilterSummary one selection renders correctly 1`] = `
+<div>
+  <div
+    class="cf-filter-summary"
+  >
+    <strong>
+      Filtering by:
+    </strong>
+    <span>
+       
+      Tasks
+       (
+      1
+      )
+    </span>
+    <span>
+      <button
+        class="cf-btn-link cf-clear-filters-link"
+      >
+         Clear all filters
+      </button>
+    </span>
+  </div>
+</div>
+`;

@@ -1,0 +1,125 @@
+version: "2"         # required to adjust maintainability checks
+checks:
+  argument-count:
+    config:
+      threshold: 4
+  complex-logic:
+    config:
+      threshold: 4
+  file-lines:
+    enabled: false
+    config:
+      threshold: 250
+  method-complexity:
+    enabled: false
+    config:
+      threshold: 5
+  method-count:
+    enabled: false
+    config:
+      threshold: 20
+  method-lines:
+    config:
+      threshold: 25
+    enabled: false
+  nested-control-flow:
+    config:
+      threshold: 4
+  return-statements:
+    config:
+      threshold: 4
+  similar-code:
+    enabled: false
+    config:
+      threshold: # language-specific defaults. an override will affect all languages.
+  identical-code:
+    config:
+      threshold: # language-specific defaults. an override will affect all languages.
+    exclude_patterns:
+    - 'client/app/queue/cavc/utils.js'
+
+plugins:
+  brakeman:
+    enabled: true
+  bundler-audit:
+    enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+        ruby:
+        javascript:
+          mass_threshold: 81
+    exclude_patterns:
+    - 'db/migrate/*'
+    - 'app/controllers/idt/api/v2/appeals_controller.rb'
+    - 'spec/controllers/idt/api/v2/appeals_controller_spec.rb'
+    - 'spec/controllers/idt/api/appeals_controller_spec.rb'
+    - 'spec/controllers/tasks_controller_spec.rb'
+    - 'spec/controllers/decision_reviews_controller_spec.rb'
+    - 'spec/models/hearings/conference_link_spec.rb'
+  eslint:
+    enabled: true
+  fixme:
+    enabled: true
+    exclude_patterns:
+    - '.codeclimate.yml'
+    - 'Makefile.example'
+    config:
+      strings:
+      - TODO
+      - FIXME
+      - HACK
+      - BUG
+      - XXX
+  reek:
+    enabled: true
+    checks:
+      Attribute:
+        enabled: false
+    exclude_patterns:
+    - 'db/migrate/*'
+    - 'app/jobs/dispatch_email_job.rb'
+    - 'app/mailers/dispatch_mailer.rb'
+  rubocop:
+    enabled: true
+    channel: rubocop-0-79
+  scss-lint:
+    enabled: true
+  grep:
+    enabled: true
+    config:
+      patterns:
+        tests-sleep:
+          pattern: sleep
+          annotation: "Avoid using sleep in tests"
+          severity: info
+          categories: Performance
+          content: >
+            Avoid using sleep in tests because it affects the performance of the
+            test suite.
+          path_patterns:
+            - "spec/**/*_spec.rb"
+        tests-capybara-non-waiting-finder:
+          pattern: not_to have_content\(?[^,]+\)?$
+          annotation: "Avoid using capybara's `have_content` with an RSpec negative matcher"
+          severity: info
+          categories: Performance
+          content: >
+            Avoid using Capybara's `have_content` finder with RSpec's negative matcher. Capybara's
+            `have_content` selector is a waiting selector, that will block until Capybara finds
+            the element. Prefer using a non-blocking matcher if possible like
+            `expect(page.has_no_content?('...')).to eq(true)`.
+          path_patterns:
+            - "spec/feature/**/*.rb"
+
+exclude_patterns:
+  - 'db/schema.rb'
+  - 'db/seeds.rb'
+  - 'db/scripts/*'
+  - 'node_modules/**/*'
+  - 'app/mappers/zip_code_to_lat_lng_mapper.rb'
+  - 'tmp/**/*'
+  - 'app/assets/**/*'
+  - 'client/test/data/camoQueueConfigData.js'
+  - 'client/app/intake/components/mockData/issueListProps.js'

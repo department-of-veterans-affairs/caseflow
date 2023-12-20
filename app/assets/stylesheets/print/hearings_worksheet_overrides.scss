@@ -1,0 +1,243 @@
+@import 'uswds/src/stylesheets/lib/addons/_font-stacks.scss';
+@import 'uswds/src/stylesheets/core/_variables.scss';
+
+$cell-padding: 10px;
+$body-font-size: 14px;
+
+body {
+  font-family: sans-serif;
+  font-size: $body-font-size;
+  -webkit-print-color-adjust: exact;
+}
+
+body,
+.cf-app-hearings,
+.cf-content {
+  height: auto;
+  min-height: auto;
+  max-height: auto;
+}
+
+b {
+  font-weight: 400;
+}
+
+h1 {
+  font-size: 17px;
+}
+
+h2 {
+  font-size: 15px;
+}
+
+h3,
+h4,
+h5,
+.cf-hearings-worksheet-data h4,
+.cf-hearings-worksheet-data label,
+.cf-hearings-worksheet-data p,
+.cf-hearings-worksheet-data-cell,
+.cf-print-footer {
+  font-size: $body-font-size;
+}
+
+.cf-hearings-worksheet-data .cf-hearings-worksheet-header,
+table {
+  margin: 0px 0px 0px 0px;
+}
+
+#cf-hearings-worksheet-summary p,
+.cf-hearing-worksheet-issues-wrapper p {
+  min-height: 0;
+  margin: 5px 0;
+  padding: 0px;
+  font-size: $body-font-size;
+  line-height: 1.5rem;
+}
+
+.cf-printed-worksheet {
+  width: 980px;
+  margin: 20px auto;
+
+  .cf-hearings-worksheet-data-cell:last-child {
+    margin-bottom: 1.765em;
+  }
+}
+
+.cf-hearings-worksheet-data {
+  display: flex;
+  flex-direction: row;
+  flex-flow: wrap;
+
+  .cf-hearings-worksheet-header {
+    flex: 0 0 100%;
+    border: none;
+  }
+
+  .cf-hearings-worksheet-data-cell {
+    flex: 0 0 20%;
+    padding-left: 0px;
+    padding-right: $cell-padding;
+    display: block;
+    box-sizing: border-box;
+    width: auto;
+  }
+
+  .cf-hearings-worksheet-data-cell.double {
+    flex: 0 0 40%;
+  }
+
+  p {
+    min-height: 1rem;
+  }
+}
+
+.cf-hearings-worksheet-form {
+  > div:first-child {
+    padding-right: $cell-padding;
+  }
+
+  .cf-hearings-worksheet-data {
+    display: block;
+  }
+}
+
+.title h1 {
+  margin: 0px 0px 5px 0px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.cf-hearings-worksheet-data,
+.cf-hearings-worksheet-data p,
+.cf-hearings-worksheet-data > .cf-hearings-worksheet-data-cell {
+  margin: 5px 0px;
+}
+
+.cf-hearings-worksheet-data label,
+.cf-hearings-worksheet-data-cell h4,
+.cf-hearings-procedural-history h4,
+.cf-hearing-worksheet-issue-field h4 {
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.cf-hearings-appeal-procedural-history,
+.cf-hearings-all-issues-wrapper {
+  border: 1px solid $color-black-light;
+  padding: 4px 10px;
+  margin: 10px 0px 5px 0px;
+
+  &:first-child {
+    margin: 5px 0px;
+  }
+}
+
+.cf-hearings-appeal-procedural-history {
+  display: flex;
+  flex-direction: row;
+  flex-flow: wrap;
+
+  > h4 {
+    flex: 0 0 50%;
+    margin: 5px 0px 0px 0px;
+  }
+}
+
+.cf-hearing-worksheet-issues-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-flow: wrap;
+  padding: 0px 5px;
+  margin: $cell-padding 0px;
+  background-color: $color-gray-lightest;
+
+  .cf-hearing-worksheet-issue-field {
+    margin: 5px 0px 0px 0px;
+
+    h4,
+    p {
+      display: inline-block;
+    }
+
+    h4 {
+      margin: 0px 1rem 0px 0px;
+    }
+
+    p {
+      margin: 0px;
+    }
+  }
+
+  .cf-hearing-worksheet-issue-description {
+    flex: 0 0 80%;
+  }
+
+  .cf-hearing-worksheet-issue-diagnostic-code,
+  .cf-hearing-worksheet-issue-benefit-type,
+  .cf-hearing-worksheet-issue-disposition {
+    flex: 0 0 33%;
+  }
+
+  .cf-hearing-worksheet-issue-diagnostic-code,
+  .cf-hearing-worksheet-issue-disposition {
+    padding: 0px 0px 0px $cell-padding;
+  }
+
+  .cf-hearing-worksheet-issue-legacy-disposition {
+    flex: 0 0 20%;
+    padding: 0px 0px 0px $cell-padding;
+  }
+
+  > div {
+    flex: 0 0 100%;
+  }
+
+  .cf-hearings-worksheet-issues {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 5px 0px;
+
+    .cf-form-checkboxes {
+      flex: 0 0 16%;
+      margin: 0px;
+    }
+
+    .cf-form-checkbox {
+      label {
+        padding-left: 2.5rem;
+      }
+
+      label::before {
+        left: 0;
+      }
+
+      [type=checkbox] + label {
+        margin: 0px;
+      }
+
+      [type=checkbox] + label::before {
+        border-radius: 0px;
+        box-shadow: none;
+        border: 1px solid $color-gray-dark;
+      }
+
+      [type=checkbox]:disabled + label::before {
+        height: 1.4rem;
+        width: 1.4rem;
+        border-radius: 0px;
+        line-height: 1.4rem;
+      }
+
+      [type=checkbox]:checked + label::before {
+        background-image: asset-data-url("uswds/src/img/correct9.png");
+        background-image: asset-data-url("uswds/src/img/correct9.svg");
+      }
+    }
+  }
+}

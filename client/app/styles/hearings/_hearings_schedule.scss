@@ -1,0 +1,97 @@
+.section-hearings-list {
+  .loading-text {
+    font-style: italic;
+  }
+
+  .table-icon {
+    margin: 1px;
+    margin-left: 5px;
+    cursor: pointer;
+  }
+
+  .type-column {
+    min-width: 140px;
+  }
+
+  .bordered-icon {
+    border: 2px solid $color-gray;
+    padding: 1px 2px;
+    border-radius: 5px;
+    font-size: 15px;
+  }
+
+  .cf-hearings-list-header-row tr {
+    display: block;
+
+    th > div {
+      display: flex;
+    }
+  }
+
+  option:first-child {
+    font-weight: 400;
+    min-height: 1px;
+  }
+}
+
+.filter-list-message {
+  margin-top: 15px;
+  margin-bottom: 0;
+
+  &.hidden {
+    visibility: hidden;
+  }
+}
+
+.cf-dropdown-filter {
+  z-index: 15;
+  position: absolute;
+  border: 1px solid $color-gray-lighter;
+  background: $color-white;
+  box-shadow: 5px 5px 4px -3px $color-gray-lighter;
+  font-weight: normal;
+  padding: 0;
+  $dropdown-interior-padding: 14px;
+
+  @mixin hover {
+    &:hover {
+      background-color: $color-gray;
+      color: $color-white;
+    }
+  }
+
+  .cf-clear-filter-row {
+    border-bottom: 1px solid $color-gray-lighter;
+    padding: 14px;
+    @include hover;
+
+    button {
+      padding: 0 0 0 2px;
+    }
+
+    &:hover .cf-clear-filter-button-wrapper {
+      border-bottom-color: $color-gray;
+    }
+  }
+}
+
+.unselected-filter-icon {
+  .unselected-filter-icon-inner {
+    fill: $color-gray-dark;
+  }
+
+  .unselected-filter-icon-border {
+    stroke: $color-gray-dark;
+  }
+}
+
+.unselected-filter-icon:hover {
+  .unselected-filter-icon-inner {
+    fill: $color-primary;
+  }
+
+  .unselected-filter-icon-border {
+    stroke: $color-primary;
+  }
+}
+

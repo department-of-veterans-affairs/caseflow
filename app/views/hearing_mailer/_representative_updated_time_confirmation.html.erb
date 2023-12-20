@@ -1,0 +1,29 @@
+<%= content_for :intro do %>
+  <p>
+    Dear <%= @recipient_info.name %>,
+  </p>
+
+  <p>
+    The time has been updated for your Client's virtual hearing with a Veterans Law Judge of the Board of Veterans' Appeals:
+  </p>
+
+  <h3>
+    <%= formatted_appellant_name(@virtual_hearing.hearing.appeal) %>
+  </h3>
+  <p>
+    <a href="<%= caseflow_url(@virtual_hearing.hearing.appeal) %>">
+      View the case details
+    </a> (Note: You must be logged in to the VA network to access case details.)
+  </p>
+<% end %>
+
+<%= content_for :date_time do %>
+  <%= render "hearing_mailer/sections/date_time", updated: true %>
+<% end %>
+
+<%= content_for :signature do %>
+  <p>
+    Sincerely,<br/>
+    The Board of Veterans' Appeals
+  </p>
+<% end %>

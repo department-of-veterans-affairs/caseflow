@@ -1,0 +1,440 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CancelIntakeModal renders correctly 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <div
+        class="intake-cancel"
+      >
+        <section
+          aria-describedby="modal_id-desc"
+          aria-labelledby="modal_id-title"
+          aria-modal="true"
+          class="cf-modal active "
+          id="modal_id"
+          role="dialog"
+        >
+          <div
+            class="cf-modal-body"
+            id=""
+          >
+            <button
+              class="cf-modal-close"
+              id="Cancel-Intake?-button-id-close"
+              type="button"
+            >
+              <span
+                class="usa-sr-only"
+              >
+                Close
+              </span>
+              <svg
+                class="cf-icon-close"
+                height="55"
+                viewBox="0 0 55 55"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <title>
+                  close
+                </title>
+                <g
+                  fill="#212121"
+                >
+                  <path
+                    d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
+                  />
+                </g>
+              </svg>
+            </button>
+            <div
+              style="display: flex;"
+            >
+              <div
+                data-css-1gs0ko2=""
+              >
+                <h1
+                  id="modal_id-title"
+                >
+                  Cancel Intake?
+                </h1>
+                <div
+                  data-css-o98ubo=""
+                >
+                  <fieldset
+                    class="usa-fieldset-inputs cf-form-radio "
+                  >
+                    <legend
+                      class=""
+                    >
+                      <strong>
+                        <span>
+                          Please select the reason you are canceling this intake.
+                           
+                        </span>
+                      </strong>
+                    </legend>
+                    <div
+                      class="cf-form-radio-options"
+                    >
+                      <div
+                        class="cf-form-radio-option"
+                      >
+                        <input
+                          id="Please-select-the-reason-you-are-canceling-this-intake-_duplicate_ep"
+                          name="Please select the reason you are canceling this intake."
+                          type="radio"
+                          value="duplicate_ep"
+                        />
+                        <label
+                          class=""
+                          for="Please-select-the-reason-you-are-canceling-this-intake-_duplicate_ep"
+                        >
+                          Duplicate EP created outside Caseflow
+                        </label>
+                      </div>
+                      <div
+                        class="cf-form-radio-option"
+                      >
+                        <input
+                          id="Please-select-the-reason-you-are-canceling-this-intake-_system_error"
+                          name="Please select the reason you are canceling this intake."
+                          type="radio"
+                          value="system_error"
+                        />
+                        <label
+                          class=""
+                          for="Please-select-the-reason-you-are-canceling-this-intake-_system_error"
+                        >
+                          System error
+                        </label>
+                      </div>
+                      <div
+                        class="cf-form-radio-option"
+                      >
+                        <input
+                          id="Please-select-the-reason-you-are-canceling-this-intake-_missing_signature"
+                          name="Please select the reason you are canceling this intake."
+                          type="radio"
+                          value="missing_signature"
+                        />
+                        <label
+                          class=""
+                          for="Please-select-the-reason-you-are-canceling-this-intake-_missing_signature"
+                        >
+                          Missing signature
+                        </label>
+                      </div>
+                      <div
+                        class="cf-form-radio-option"
+                      >
+                        <input
+                          id="Please-select-the-reason-you-are-canceling-this-intake-_veteran_clarification"
+                          name="Please select the reason you are canceling this intake."
+                          type="radio"
+                          value="veteran_clarification"
+                        />
+                        <label
+                          class=""
+                          for="Please-select-the-reason-you-are-canceling-this-intake-_veteran_clarification"
+                        >
+                          Need clarification from Veteran
+                        </label>
+                      </div>
+                      <div
+                        class="cf-form-radio-option"
+                      >
+                        <input
+                          id="Please-select-the-reason-you-are-canceling-this-intake-_other"
+                          name="Please select the reason you are canceling this intake."
+                          type="radio"
+                          value="other"
+                        />
+                        <label
+                          class=""
+                          for="Please-select-the-reason-you-are-canceling-this-intake-_other"
+                        >
+                          Other
+                        </label>
+                      </div>
+                    </div>
+                  </fieldset>
+                </div>
+              </div>
+            </div>
+            <div
+              class="cf-modal-divider"
+            />
+            <div
+              class="cf-modal-controls"
+            >
+              <span>
+                <button
+                  class="cf-modal-link cf-btn-link close-modal cf-push-left usa-button"
+                  id="Cancel-Intake?-button-id-0"
+                  type="button"
+                >
+                  Close
+                </button>
+              </span>
+              <span>
+                <button
+                  class="confirm-cancel cf-push-right usa-button-disabled usa-button"
+                  disabled=""
+                  id="Cancel-Intake?-button-id-1"
+                  type="button"
+                >
+                  Cancel intake
+                </button>
+              </span>
+            </div>
+          </div>
+        </section>
+        ;
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="intake-cancel"
+    >
+      <section
+        aria-describedby="modal_id-desc"
+        aria-labelledby="modal_id-title"
+        aria-modal="true"
+        class="cf-modal active "
+        id="modal_id"
+        role="dialog"
+      >
+        <div
+          class="cf-modal-body"
+          id=""
+        >
+          <button
+            class="cf-modal-close"
+            id="Cancel-Intake?-button-id-close"
+            type="button"
+          >
+            <span
+              class="usa-sr-only"
+            >
+              Close
+            </span>
+            <svg
+              class="cf-icon-close"
+              height="55"
+              viewBox="0 0 55 55"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <title>
+                close
+              </title>
+              <g
+                fill="#212121"
+              >
+                <path
+                  d="M52.6 46.9l-6 6c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-13-13-13 13c-.8.8-1.9 1.2-3 1.2s-2.2-.4-3-1.2l-6-6c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l13-13-13-13c-.8-.8-1.2-1.9-1.2-3s.4-2.2 1.2-3l6-6c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l13 13 13-13c.8-.8 1.9-1.2 3-1.2s2.2.4 3 1.2l6 6c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3l-13 13 13 13c.8.8 1.2 1.9 1.2 3s-.4 2.2-1.2 3z"
+                />
+              </g>
+            </svg>
+          </button>
+          <div
+            style="display: flex;"
+          >
+            <div
+              data-css-1gs0ko2=""
+            >
+              <h1
+                id="modal_id-title"
+              >
+                Cancel Intake?
+              </h1>
+              <div
+                data-css-o98ubo=""
+              >
+                <fieldset
+                  class="usa-fieldset-inputs cf-form-radio "
+                >
+                  <legend
+                    class=""
+                  >
+                    <strong>
+                      <span>
+                        Please select the reason you are canceling this intake.
+                         
+                      </span>
+                    </strong>
+                  </legend>
+                  <div
+                    class="cf-form-radio-options"
+                  >
+                    <div
+                      class="cf-form-radio-option"
+                    >
+                      <input
+                        id="Please-select-the-reason-you-are-canceling-this-intake-_duplicate_ep"
+                        name="Please select the reason you are canceling this intake."
+                        type="radio"
+                        value="duplicate_ep"
+                      />
+                      <label
+                        class=""
+                        for="Please-select-the-reason-you-are-canceling-this-intake-_duplicate_ep"
+                      >
+                        Duplicate EP created outside Caseflow
+                      </label>
+                    </div>
+                    <div
+                      class="cf-form-radio-option"
+                    >
+                      <input
+                        id="Please-select-the-reason-you-are-canceling-this-intake-_system_error"
+                        name="Please select the reason you are canceling this intake."
+                        type="radio"
+                        value="system_error"
+                      />
+                      <label
+                        class=""
+                        for="Please-select-the-reason-you-are-canceling-this-intake-_system_error"
+                      >
+                        System error
+                      </label>
+                    </div>
+                    <div
+                      class="cf-form-radio-option"
+                    >
+                      <input
+                        id="Please-select-the-reason-you-are-canceling-this-intake-_missing_signature"
+                        name="Please select the reason you are canceling this intake."
+                        type="radio"
+                        value="missing_signature"
+                      />
+                      <label
+                        class=""
+                        for="Please-select-the-reason-you-are-canceling-this-intake-_missing_signature"
+                      >
+                        Missing signature
+                      </label>
+                    </div>
+                    <div
+                      class="cf-form-radio-option"
+                    >
+                      <input
+                        id="Please-select-the-reason-you-are-canceling-this-intake-_veteran_clarification"
+                        name="Please select the reason you are canceling this intake."
+                        type="radio"
+                        value="veteran_clarification"
+                      />
+                      <label
+                        class=""
+                        for="Please-select-the-reason-you-are-canceling-this-intake-_veteran_clarification"
+                      >
+                        Need clarification from Veteran
+                      </label>
+                    </div>
+                    <div
+                      class="cf-form-radio-option"
+                    >
+                      <input
+                        id="Please-select-the-reason-you-are-canceling-this-intake-_other"
+                        name="Please select the reason you are canceling this intake."
+                        type="radio"
+                        value="other"
+                      />
+                      <label
+                        class=""
+                        for="Please-select-the-reason-you-are-canceling-this-intake-_other"
+                      >
+                        Other
+                      </label>
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
+          </div>
+          <div
+            class="cf-modal-divider"
+          />
+          <div
+            class="cf-modal-controls"
+          >
+            <span>
+              <button
+                class="cf-modal-link cf-btn-link close-modal cf-push-left usa-button"
+                id="Cancel-Intake?-button-id-0"
+                type="button"
+              >
+                Close
+              </button>
+            </span>
+            <span>
+              <button
+                class="confirm-cancel cf-push-right usa-button-disabled usa-button"
+                disabled=""
+                id="Cancel-Intake?-button-id-1"
+                type="button"
+              >
+                Cancel intake
+              </button>
+            </span>
+          </div>
+        </div>
+      </section>
+      ;
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;

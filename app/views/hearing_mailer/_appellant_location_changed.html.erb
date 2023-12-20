@@ -1,0 +1,29 @@
+<%= content_for :intro do %>
+  <p>
+    Dear <%= @recipient_info.name %>,
+  </p>
+  <p>
+    Your hearing with a Veterans Law Judge of the Board of Veterans’ Appeals has changed format. Instead of a virtual tele-hearing, you will go in person to <%= @hearing&.hearing_location_or_regional_office&.name %> and the Judge will meet with you <%= @hearing.request_type == 'V' ? "via video conference" : "in person" %>.
+  </p>
+<% end %>
+<%= content_for :date_time do %>
+  <%= render "hearing_mailer/sections/date_time" %>
+<% end %>
+<% content_for :location do %>
+  <%= render "hearing_mailer/sections/location" %>
+<% end %>
+<% content_for :how_to_join do %>
+  <h3>What should I expect on the day of my hearing?</h3>
+  <p>
+   Bring a photo ID and check in with security 30 minutes prior to the scheduled hearing. You will be subject to security screening, including the inspection of personal belongings.  It is against the law to bring firearms or other weapons into a federal facility.  Further, mask-wearing and public health  screenings may be required.  
+  </p>
+<% end %>
+<% content_for :rescheduling_or_canceling_your_hearing do %>
+  <%= render "hearing_mailer/sections/rescheduling_or_canceling_your_hearing" %>
+<% end %>
+<%= content_for :signature do %>
+  <p>
+    Sincerely,<br/>
+    The Board of Veterans' Appeals
+  </p>
+<% end %>
