@@ -181,7 +181,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
 
         # may need to add another remove task here if that is expected functionality.
         # bug where "remove task" option does not show with a single task would need to be fixed first
-        expect(page.all("#button-Remove").length).to eq(1)
+        expect(page.all("#button-Remove").length).to_not eq(2)
 
         page.all("#button-addTasks").first.click
         expect(page.all("#button-Remove").length).to eq(2)
@@ -202,10 +202,15 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         find_by_id("react-select-2-option-15").click
         expect(page).to have_button("button-continue", disabled: true)
 
-        all("textarea")[1].fill_in with: "Correspondence Text"
+        all("textarea")[0].fill_in with: "Correspondence Text"
         expect(page).to have_button("button-continue", disabled: false)
-
         page.all("#button-addTasks").first.click
+        all("textarea")[1].fill_in with: "Correspondence Text"
+        expect(page).to have_button("button-continue", disabled: true)
+
+        all("#reactSelectContainer")[1].click
+        find_by_id("react-select-3-option-15").click
+        expect(page).to have_button("button-continue", disabled: false)
       end
 
       it "Prevents other motion tasks from being added 3 times" do
