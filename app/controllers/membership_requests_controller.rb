@@ -76,11 +76,9 @@ class MembershipRequestsController < ApplicationController
     # Remove any bad nils from unmatched keys
     org_names = keys_to_org_name_hash.values_at(*key_names).compact
 
-    org_list = org_names.map do |org_name|
+    org_names.map do |org_name|
       Organization.find_by(name: org_name)
     end
-
-    org_list
   end
 
   # Generic mapping of options keys to the respective organization names

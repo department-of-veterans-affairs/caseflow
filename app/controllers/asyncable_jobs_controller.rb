@@ -45,6 +45,7 @@ class AsyncableJobsController < ApplicationController
     render json: job_note.serialize
   end
 
+  # rubocop:disable Lint/RescueException
   def start_job
     # start job asynchronously as given by the job_type post param
     job = SCHEDULED_JOBS[allowed_params[:job_type]]
@@ -66,6 +67,7 @@ class AsyncableJobsController < ApplicationController
 
     render json: { success: success }, status: :ok
   end
+  # rubocop:enable Lint/RescueException
 
   private
 
