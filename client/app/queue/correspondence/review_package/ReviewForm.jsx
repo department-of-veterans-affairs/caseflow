@@ -250,7 +250,7 @@ export const ReviewForm = (props) => {
                   onClick: props.handleModalClose },
                 {
                   classNames: ['usa-button'],
-                  name: 'Cancel review',
+                  name: 'Confirm',
                   onClick: props.handleReview,
                 }
               ]}

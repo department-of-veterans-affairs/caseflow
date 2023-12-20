@@ -86,7 +86,7 @@ describe('CorrespondenceReviewPackage', () => {
 
     expect(screen.getByText(/All unsaved changes made to this mail package will be lost/)).toBeInTheDocument();
     const closeButton = screen.getByRole('button', { name: 'Close' });
-    const cancelReviewButton = screen.getByRole('button', { name: 'Cancel review' });
+    const cancelReviewButton = screen.getByRole('button', { name: 'Confirm' });
 
     expect(closeButton).toBeInTheDocument();
     expect(cancelReviewButton).toBeInTheDocument();
@@ -110,7 +110,7 @@ describe('CorrespondenceReviewPackage', () => {
     fireEvent.click(screen.getByText('Return to queue'));
 
     expect(screen.getByText(/All unsaved changes made to this mail package will be lost/)).toBeInTheDocument();
-    const cancelReviewButton = screen.getByRole('button', { name: 'Cancel review' });
+    const cancelReviewButton = screen.getByRole('button', { name: 'Confirm' });
 
     expect(cancelReviewButton).toBeInTheDocument();
     fireEvent.click(cancelReviewButton);
