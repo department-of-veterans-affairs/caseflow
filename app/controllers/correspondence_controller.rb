@@ -221,8 +221,6 @@ class CorrespondenceController < ApplicationController
     params[:waived_evidence_submission_window_tasks]&.map do |task|
       evidence_submission_window_task = EvidenceSubmissionWindowTask.find(task[:task_id])
       instructions = evidence_submission_window_task.instructions
-      # appeal = evidence_submission_window_task&.appeal
-      # CorrespondencesAppeal.find_or_create_by(correspondence_id: correspondence_id, appeal_id: appeal.id)
       evidence_submission_window_task.when_timer_ends
       evidence_submission_window_task.update!(instructions: (instructions << task[:waive_reason]))
     end
@@ -231,7 +229,6 @@ class CorrespondenceController < ApplicationController
   def add_tasks_to_related_appeals(correspondence_id)
     params[:tasks_related_to_appeal]&.map do |data|
       appeal = Appeal.find(data[:appeal_id])
-      # CorrespondencesAppeal.find_or_create_by(correspondence_id: correspondence_id, appeal_id: appeal.id)
       data[:klass].constantize.create_from_params(
         {
           appeal: appeal,
