@@ -5,9 +5,9 @@ class Metric < CaseflowRecord
   delegate :css_id, to: :user
 
   validates :metric_type, inclusion: { in: MetricAttributes::METRIC_TYPES.values }
-  validates :metric_product, inclusion: { in: MetricAttributes::METRIC_GROUPS.values }
+  validates :metric_product, inclusion: { in: MetricAttributes::PRODUCT_TYPES.values }
   validates :metric_group, inclusion: { in: MetricAttributes::METRIC_GROUPS.values }
-  validates :app_name, inclusion: { in: MetricAttributes::METRIC_TYPES.values }
+  validates :app_name, inclusion: { in: MetricAttributes::APP_NAMES.values }
   validate :sent_to_in_log_systems
 
   def self.create_metric(klass, params, user)
