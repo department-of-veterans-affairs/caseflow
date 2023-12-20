@@ -107,6 +107,9 @@ class ApplicationController < ApplicationBaseController
   def application_urls
     urls = []
     urls << queue_application_url
+    if current_user.present? && current_user&.organizations && current_user&.organizations&.any?(&:users_can_view_levers?)
+      urls << case_distribution_url
+    end
 
     urls << hearing_application_url if current_user.hearings_user?
 
@@ -150,6 +153,14 @@ class ApplicationController < ApplicationBaseController
       title: "Queue",
       link: "/queue",
       sort_order: 3
+    }
+  end
+
+  def case_distribution_url
+    {
+      title: "Case Distribution Controls",
+      link: "/case-distribution-controls",
+      sort_order: 6
     }
   end
 
