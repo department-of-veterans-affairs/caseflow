@@ -254,7 +254,7 @@ export const ReviewForm = (props) => {
                   onClick: props.handleReview,
                 }
               ]}
-              title="Cancel review of mail package"
+              title="Return to queue"
               closeHandler={props.handleModalClose}>
               <span className="usa-input" style={{ marginBottom: '5px' }} tabIndex={0}>
                 All unsaved changes made to this mail package will be lost<br />upon cancellation.
