@@ -19,16 +19,12 @@ function GenerateLeverUpdateData(leverStore) {
 
 function GenerateLeverHistory(filteredLevers, filteredInitialLevers) {
   let history = [];
-  console.log("FILTERED LEVERS", filteredLevers);
-  console.log("FILTERED LEVERS", filteredInitialLevers);
 
   filteredLevers.map((lever, index) => {
     const doesDatatypeRequireComplexLogic = lever.data_type === 'radio' || lever.data_type === 'combination';
 
     let today = new Date();
     let todaysDate = moment(today.toISOString());
-
-    let user = "Test User";
 
     if (doesDatatypeRequireComplexLogic) {
       const selectedOption = lever.options.find(option => option.item === lever.value);
@@ -39,7 +35,6 @@ function GenerateLeverHistory(filteredLevers, filteredInitialLevers) {
       history.push(
         {
           created_at: todaysDate,
-          user: user,
           title: lever.title,
           original_value: isPreviouslySelectedOptionANumber ? previousSelectedOption.value : previousSelectedOption.text,
           current_value: isSelectedOptionANumber ? selectedOption.value : selectedOption.text,
@@ -50,7 +45,6 @@ function GenerateLeverHistory(filteredLevers, filteredInitialLevers) {
       history.push(
         {
           created_at: todaysDate,
-          user: user,
           title: lever.title,
           original_value: filteredInitialLevers[index].value,
           current_value: lever.value,
@@ -59,7 +53,7 @@ function GenerateLeverHistory(filteredLevers, filteredInitialLevers) {
       )
     }
   })
-  console.log("HISTORY", history)
+
   return history
 }
 function UpdateLeverHistory(leverStore) {
@@ -68,7 +62,6 @@ function UpdateLeverHistory(leverStore) {
     type: Constants.FORMAT_LEVER_HISTORY,
     history: GenerateLeverHistory(filteredLevers, filteredInitialLevers)
   });
-  console.log(leverStore.getState().formatted_history)
 }
 
 function setShowSuccessBanner(leverStore) {
@@ -112,7 +105,6 @@ function SaveLeversToDB(leverStore) {
     current_levers: leversData,
     audit_lever_entries: auditData
   }
-  console.log(auditData);
   return ApiUtil.post('/case_distribution_levers/update_levers_and_history', { data: postData })
     .then(() => {
       SaveLeverChanges(leverStore);
