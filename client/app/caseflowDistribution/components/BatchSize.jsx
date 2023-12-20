@@ -74,13 +74,13 @@ const BatchSize = (props) => {
       {batchSizeLevers && batchSizeLevers.map((lever, index) => (
         <div className={styles.activeLever} key={`${lever.item}-${index}`}>
           <div className={styles.leverLeft}>
-            <strong>{lever.title}</strong>
-            <p>{lever.description}</p>
+            <strong className={lever.is_disabled ? styles.leverDisabled : styles.leverActive}>{lever.title}</strong>
+            <p className={lever.is_disabled ? styles.leverDisabled : styles.leverActive}>{lever.description}</p>
           </div>
           <div className={`${styles.leverRight} ${leverNumberDiv}`}>
             {isMemberUser ?
 
-              <label className={`${styles.disabledText}`}>
+              <label className={lever.is_disabled ? styles.leverDisabled : styles.leverActive}>
                 {lever.value} {lever.unit}
               </label> :
               <NumberField
@@ -91,6 +91,7 @@ const BatchSize = (props) => {
                 value={lever.value}
                 errorMessage={errorMessagesList[lever.item]}
                 onChange={updateLever(index, lever.item, lever.item)}
+                tabIndex={lever.is_disabled ? -1 : undefined}
               />
             }
           </div>

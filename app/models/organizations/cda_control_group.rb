@@ -5,7 +5,7 @@ class CDAControlGroup < Organization
 
   def self.singleton
     CDAControlGroup.first || CDAControlGroup.create(
-      name: "Case Distro Algorithm Control Group",
+      name: "Case Distro Algorithm Control",
       url: "cda-control-group"
     )
   end

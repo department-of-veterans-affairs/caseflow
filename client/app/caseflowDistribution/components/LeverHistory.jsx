@@ -5,6 +5,20 @@ import styles from 'app/styles/caseDistribution/LeverHistory.module.scss';
 
 const LeverHistory = (props) => {
 
+  console.log(props.historyData);
+  // let historyEntries = [
+  //   {
+  //     created_at: props.historyData.created_at,
+  //     user: props.historyData.user_name,
+  //     titles: [props.historyData.title],
+  //     original_values: [props.historyData.previous_value],
+  //     units: ['TEST UNITS'],
+  //     current_values: [props.historyData.update_value]
+
+  //   }
+  // ];
+  let historyEntries = [];
+
   return (
     <div>
       <table>
@@ -17,7 +31,7 @@ const LeverHistory = (props) => {
             <th className={styles.leverHistoryTableHeaderStyling}>Updated Value</th>
           </tr>
         </tbody>
-        <tbody>{props.historyData.map((entry, index) =>
+        <tbody>{historyEntries.map((entry, index) =>
           <tr key={index}>
             <td className={styles.historyTableStyling}>{entry.created_at}</td>
             <td className={styles.historyTableStyling}>{entry.user}</td>

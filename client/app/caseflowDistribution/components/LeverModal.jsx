@@ -6,13 +6,86 @@ import Modal from 'app/components/Modal';
 import Button from 'app/components/Button';
 import COPY from '../../../COPY';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
+import moment from 'moment';
 
+function GenerateLeverUpdateData(leverStore) {
+  const levers = leverStore.getState().levers;
+  const initialLevers = leverStore.getState().initial_levers;
+  const filteredLevers = levers.filter((lever, i) => lever.value !== initialLevers[i].value || changedOptionValue(lever, initialLevers[i]));
+  const filteredInitialLevers = initialLevers.filter((lever, i) => initialLevers[i].value !== levers[i].value || changedOptionValue(initialLevers[i], levers[i]));
 
+  return ([filteredLevers, filteredInitialLevers])
+}
 
+function GenerateLeverHistory(filteredLevers, filteredInitialLevers) {
+  let history = [];
+
+  filteredLevers.map((lever, index) => {
+    const doesDatatypeRequireComplexLogic = lever.data_type === 'radio' || lever.data_type === 'combination';
+
+    let today = new Date();
+    let todaysDate = moment(today.toISOString());
+
+    if (doesDatatypeRequireComplexLogic) {
+      const selectedOption = lever.options.find(option => option.item === lever.value);
+      const previousSelectedOption = filteredInitialLevers[index].options.find(option => option.item === filteredInitialLevers[index].value);
+      const isSelectedOptionANumber = selectedOption.data_type === 'number';
+      const isPreviouslySelectedOptionANumber = previousSelectedOption.data_type === 'number';
+
+      history.push(
+        {
+          created_at: todaysDate,
+          title: lever.title,
+          original_value: isPreviouslySelectedOptionANumber ? previousSelectedOption.value : previousSelectedOption.text,
+          current_value: isSelectedOptionANumber ? selectedOption.value : selectedOption.text,
+          unit: lever.unit
+        }
+      )
+    } else {
+      history.push(
+        {
+          created_at: todaysDate,
+          title: lever.title,
+          original_value: filteredInitialLevers[index].value,
+          current_value: lever.value,
+          unit: lever.unit
+        }
+      )
+    }
+  })
+
+  return history
+}
 function UpdateLeverHistory(leverStore) {
+  let [filteredLevers, filteredInitialLevers] = GenerateLeverUpdateData(leverStore)
   leverStore.dispatch({
     type: Constants.FORMAT_LEVER_HISTORY,
+    history: GenerateLeverHistory(filteredLevers, filteredInitialLevers)
   });
+}
+
+function setShowSuccessBanner(leverStore) {
+  leverStore.dispatch({
+    type: Constants.SHOW_SUCCESS_BANNER,
+  });
+  setTimeout(() => {
+    leverStore.dispatch({
+      type: Constants.HIDE_SUCCESS_BANNER,
+    });
+  }, 10000)
+}
+
+function leverValueDisplay(lever, isPreviousValue) {
+  const doesDatatypeRequireComplexLogic = lever.data_type === 'radio' || lever.data_type === 'combination';
+
+  if (doesDatatypeRequireComplexLogic) {
+    const selectedOption = lever.options.find(option => option.item === lever.value);
+    const isSelectedOptionANumber = selectedOption.data_type === 'number';
+
+    return isSelectedOptionANumber ? selectedOption.value : selectedOption.text;
+  }
+
+  return isPreviousValue ? lever.value : <strong>{lever.value}</strong>;
 }
 
 function SaveLeverChanges(leverStore)  {
@@ -22,17 +95,26 @@ function SaveLeverChanges(leverStore)  {
   });
 }
 
+function ShowSuccessBanner(shouldShowSuccessBanner)  {
+  leverStore.dispatch({
+    type: Constants.SHOW_SUCCESS_BANNER,
+    showSuccessBanner: shouldShowSuccessBanner,
+  });
+}
+
+
 function SaveLeversToDB(leverStore) {
   const leversData = leverStore.getState().levers;
 
+  UpdateLeverHistory(leverStore);
+  const auditData = leverStore.getState().formatted_history;
+
   const postData = {
     current_levers: leversData,
-    audit_lever_entries: [],
+    audit_lever_entries: auditData
   }
-
   return ApiUtil.post('/case_distribution_levers/update_levers_and_history', { data: postData })
     .then(() => {
-      // UpdateLeverHistory(leverStore);
       SaveLeverChanges(leverStore);
     })
     .catch((error) => {
@@ -42,9 +124,21 @@ function SaveLeversToDB(leverStore) {
     });
 }
 
+function changedOptionValue(changedLever, currentLever) {
+  if (changedLever.data_type === 'radio' || changedLever.data_type === 'radio') {
+    const changedOptionValue = changedLever.options.find(option => option.item === changedLever.value).value
+    const currentOptionValue = currentLever.options.find(option => option.item === currentLever.value)?.value
+    return changedOptionValue !== currentOptionValue
+  } else {
+    return false
+  }
+}
+
 function leverList(leverStore) {
   const levers = leverStore.getState().levers;
   const initialLevers = leverStore.getState().initial_levers;
+  const filteredLevers = levers.filter((lever, i) => lever.value !== initialLevers[i].value || changedOptionValue(lever, initialLevers[i]));
+  const filteredInitialLevers = initialLevers.filter((lever, i) => initialLevers[i].value !== levers[i].value || changedOptionValue(initialLevers[i], levers[i]));
 
   return (
     <div>
@@ -57,15 +151,17 @@ function leverList(leverStore) {
           </tr>
         </tbody>
         <tbody>
-          {levers.map((lever, index) => (
+          {filteredLevers.map((lever, index) => (
             <tr key={index}>
-              {lever.value !== initialLevers[index].value && (
-                <React.Fragment>
-              <td className={`${styles.modalTableStyling} ${styles.modalTableLeftStyling}`}>{lever.title}</td>
-              <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}>{initialLevers[index].value}</td>
-              <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}><strong>{lever.value}</strong></td>
-                </React.Fragment>
-              )}
+              <React.Fragment>
+                <td className={`${styles.modalTableStyling} ${styles.modalTableLeftStyling}`}>{lever.title}</td>
+                <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}>
+                  {leverValueDisplay(filteredInitialLevers[index], true)}
+                </td>
+                <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}>
+                  {leverValueDisplay(lever, false)}
+                </td>
+              </React.Fragment>
             </tr>
           ))}
         </tbody>
@@ -105,8 +201,10 @@ export function LeverSaveButton({ leverStore }) {
 
   const handleConfirmButton = async () => {
     await SaveLeversToDB(leverStore);
+    setShowSuccessBanner(leverStore)
     setShowModal(false);
     setSaveButtonDisabled(true);
+    ShowSuccessBanner(true);
   }
 
   return (

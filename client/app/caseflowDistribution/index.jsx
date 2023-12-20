@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ReduxBase from '../components/ReduxBase';
 import NavigationBar from '../components/NavigationBar';
 import { BrowserRouter } from 'react-router-dom';
@@ -11,6 +11,7 @@ import { LOGO_COLORS } from '../constants/AppConstants';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
 import leversReducer from './reducers/Levers/leversReducer';
 import CaseSearchLink from '../components/CaseSearchLink';
+import BannerDisplay from './components/BannerDisplay';
 
 import CaseflowDistributionApp from './pages/CaseflowDistributionApp';
 import { createStore } from 'redux';
@@ -25,6 +26,7 @@ class CaseflowDistribution extends React.PureComponent {
     };
 
     const leverStore = createStore(leversReducer, preloadedState);
+    const showSuccessBanner = leverStore.getState().showSuccessBanner;
     const Router = this.props.router || BrowserRouter;
     const initialState = leversReducer.initialState;
     const appName = 'Caseflow Distribution';
@@ -125,11 +127,12 @@ class CaseflowDistribution extends React.PureComponent {
               appName="Caseflow Admin"
             >
               <AppFrame>
+                <BannerDisplay leverStore={leverStore} />
                 <AppSegment filledBackground>
                   <div>
                     <PageRoute
                       exact
-                      path={["/acd-controls", "/case-distribution-controls"]}
+                      path={['/acd-controls', '/case-distribution-controls']}
                       title="CaseflowDistribution | Caseflow"
                       component={() => {
                         return (

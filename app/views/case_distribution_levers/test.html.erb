@@ -7,6 +7,8 @@
         <td> Description </td>
         <td> Data Type </td>
         <td> Value </td>
+        <td> Options </td>
+        <td> Option Value </td>
         <td> Active </td>
         <td> Disabled </td>
       </tr>
@@ -19,6 +21,14 @@
           <td> <%= lever.description %> </td>
           <td> <%= lever.data_type %> </td>
           <td> <%= lever.value %> </td>
+          <td> <%= lever.options %> </td>
+          <% if lever.data_type == "radio" %>
+            <td> <%= lever.options.find { |option| option["item"] == lever.value }["value"] %> </td>
+          <% elsif lever.data_type == "combination" %>
+            <td> <%= lever.options.first["value"] %> </td>
+          <% else %>
+            <td> n/a </td>
+          <% end %>
           <td> <%= lever.is_active %> </td>
           <td> <%= lever.is_disabled %> </td>
         </tr>
@@ -43,7 +53,7 @@
         <tr>
           <td> <%= entry.case_distribution_lever.id %> </td>
           <td> <%= entry.title %> </td>
-          <td> <%= entry.user.full_name %> </td>
+          <td> <%= entry.user_name %> </td>
           <td> <%= entry.created_at %> </td>
           <td> <%= entry.previous_value %> </td>
           <td> <%= entry.update_value %> </td>
