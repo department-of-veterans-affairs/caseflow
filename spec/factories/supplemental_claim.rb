@@ -225,7 +225,13 @@ FactoryBot.define do
 
     trait :with_decision do
       after(:create) do |sc|
-        create(:decision_issue, decision_review: sc, request_issues: sc.request_issues, benefit_type: sc.benefit_type)
+        create(
+          :decision_issue,
+          decision_review: sc,
+          request_issues: sc.request_issues,
+          benefit_type: sc.benefit_type,
+          disposition: "Granted"
+        )
       end
     end
 

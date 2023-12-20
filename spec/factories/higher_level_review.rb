@@ -244,7 +244,8 @@ FactoryBot.define do
         create(:decision_issue,
                decision_review: hlr,
                request_issues: hlr.request_issues,
-               benefit_type: hlr.benefit_type)
+               benefit_type: hlr.benefit_type,
+               disposition: "Granted")
       end
     end
 

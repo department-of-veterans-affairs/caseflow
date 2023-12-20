@@ -21,8 +21,6 @@ import RadioField from 'app/components/RadioField';
 
 import { get } from 'lodash';
 
-import LoadingMessage from '../../components/LoadingMessage';
-import { LoadingIcon } from '../../components/icons/LoadingIcon';
 import {
   REPORT_TYPE_OPTIONS,
   RADIO_EVENT_TYPE_OPTIONS,
@@ -92,15 +90,9 @@ const ReportPageButtons = ({
   history,
   isGenerateButtonDisabled,
   handleClearFilters,
-  handleSubmit }) => {
-
-  // eslint-disable-next-line no-console
-  // const onSubmit = (data) => {
-  //   console.log(data);
-
-  //   return data;
-  // };
-
+  handleSubmit,
+  loading,
+  loadingText }) => {
   return (
 
     <div {...buttonOuterContainerStyling}>
@@ -128,6 +120,8 @@ const ReportPageButtons = ({
           name="generate-report"
           onClick={handleSubmit}
           disabled={isGenerateButtonDisabled}
+          loading={loading}
+          loadingText={loadingText}
         >
           Generate task report
         </Button>
@@ -216,7 +210,8 @@ const ReportPage = ({ history }) => {
     specificStatus: {
       incomplete: '',
       in_progress: '',
-      completed: ''
+      completed: '',
+      cancelled: ''
     },
     specificEventType: {
       added_decision_date: '',
@@ -243,24 +238,81 @@ const ReportPage = ({ history }) => {
   const dispatch = useDispatch();
   const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
   const csvGeneration = useSelector((state) => state.changeHistory.status);
-
   const isCSVGenerating = csvGeneration === 'loading';
-
-  const submitForm = (data) => {
-    // eslint-disable-next-line no-console
-    console.log(data);
-
-    // Don't know how acceptable this is for compliance.
-    // Could also do something like a modal that grabs focus while it is generating
-    window.scrollTo(0, 0);
-
-    // Example csv generation code:
-    dispatch(downloadReportCSV({ organizationUrl: businessLineUrl, filterData: { filters: { report: 'true' } } }));
-  };
-
   const watchReportType = watch('reportType');
   const watchRadioEventAction = watch('radioEventAction');
   const watchRadioStatus = watch('radioStatus');
+
+  const processConditionOptions = (condition, options) => {
+    let formattedOptions;
+
+    switch (condition) {
+    case 'decisionReviewType':
+      formattedOptions = Object.keys(options).filter((key) => options[key]);
+      break;
+    // Multi select conditions
+    case 'personnel':
+    case 'facility':
+    case 'issueDisposition':
+    case 'issueType':
+      formattedOptions = Object.values(options)[0].map((item) => item.value);
+      break;
+    // Else it is probably already an object, so it just pass the existing options
+    default:
+      formattedOptions = options;
+    }
+
+    return formattedOptions;
+  };
+
+  const parseFilters = (data) => {
+    const filters = {};
+
+    // Add report type to the filter
+    filters.reportType = data.reportType;
+
+    // Event specific event types to the filter
+    if (data.radioEventAction === 'specific_events_action') {
+      filters.events = Object.keys(data.specificEventType).filter((key) => data.specificEventType[key] === true);
+    }
+
+    // Add specific status types to the filter
+    if (data.radioStatus === 'specific_status') {
+      filters.statuses = Object.keys(data.specificStatus).filter((key) => data.specificStatus[key] === true);
+    }
+
+    // Add timing to the filter
+    filters.timing = data.timing;
+
+    // Add Status report type to the filter
+    filters.statusReportType = data.radioStatusReportType;
+
+    // Parse all the Conditions and add them to the filter
+    const transformedConditions = data?.conditions?.reduce((result, item) => {
+      const { condition, options } = item;
+
+      if (condition && options) {
+        // Parse the individual conditions
+        const newOptions = processConditionOptions(condition, options);
+
+        result[condition] = newOptions;
+      }
+
+      return result;
+    }, {});
+
+    // Add the all the parsed conditions into the filters
+    Object.assign(filters, transformedConditions);
+
+    return filters;
+  };
+
+  const submitForm = (data) => {
+    const filterData = parseFilters(data);
+
+    // Generate and trigger the download of the CSV
+    dispatch(downloadReportCSV({ organizationUrl: businessLineUrl, filterData: { filters: filterData } }));
+  };
 
   useEffect(() => {
     dispatch(fetchUsers({ queryType: 'organization', queryParams: { query: 'vha' } }));
@@ -271,13 +323,14 @@ const ReportPage = ({ history }) => {
       buttons={
         <ReportPageButtons
           history={history}
-          isGenerateButtonDisabled={!formState.isDirty || isCSVGenerating}
-          handleClearFilters={() => reset(defaultFormValues)}
+          isGenerateButtonDisabled={!formState.isDirty}
+          handleClearFilters={() => reset()}
           handleSubmit={handleSubmit(submitForm)}
+          loading={isCSVGenerating}
+          loadingText="Generating CSV"
         />
       }
     >
-      { isCSVGenerating && <LoadingMessage message=<h3>Generating CSV... <LoadingIcon /></h3> />}
       <h1>Generate task report</h1>
       <FormProvider {...methods}>
         <form>
@@ -343,6 +396,8 @@ ReportPageButtons.propTypes = {
   isGenerateButtonDisabled: PropTypes.bool,
   handleClearFilters: PropTypes.func,
   handleSubmit: PropTypes.func,
+  loading: PropTypes.bool,
+  loadingText: PropTypes.string,
 };
 
 ReportPage.propTypes = {
