@@ -2,6 +2,7 @@
 
 class AppealRepository
   class AppealNotValidToClose < StandardError; end
+
   class AppealNotValidToReopen < StandardError
     def initialize(appeal_id)
       super("Appeal id #{appeal_id} is not valid to reopen")
@@ -11,10 +12,8 @@ class AppealRepository
   # :nocov:
 
   class << self
-    def transaction
-      VACOLS::Case.transaction do
-        yield
-      end
+    def transaction(&block)
+      VACOLS::Case.transaction(&block)
     end
 
     def eager_load_legacy_appeals_for_tasks(tasks)
@@ -168,13 +167,12 @@ class AppealRepository
     # :nocov:
 
     # TODO: consider persisting these records
-    def build_appeal(case_record, persist = false)
+    def build_appeal(case_record, persist: false)
       appeal = LegacyAppeal.find_or_initialize_by(vacols_id: case_record.bfkey)
       appeal.save! if persist
       set_vacols_values(appeal: appeal, case_record: case_record)
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def set_vacols_values(appeal:, case_record:)
       correspondent_record = case_record.correspondent
       folder_record = case_record.folder
@@ -207,7 +205,7 @@ class AppealRepository
         ssoc_dates: ssoc_dates_from(case_record),
         hearing_request_type: VACOLS::Case::HEARING_REQUEST_TYPES[case_record.bfhr],
         video_hearing_requested: case_record.bfdocind == "V",
-        hearing_requested: (case_record.bfhr == "1" || case_record.bfhr == "2"),
+        hearing_requested: case_record.bfhr == "1" || case_record.bfhr == "2",
         hearing_held: %w[1 2 6 7].include?(case_record.bfha),
         regional_office_key: case_record.bfregoff,
         certification_date: case_record.bf41stat,
@@ -228,7 +226,6 @@ class AppealRepository
 
       appeal
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     # :nocov:
     def issues(vacols_id)
@@ -544,8 +541,8 @@ class AppealRepository
       close_date = case_record.bfddec
       close_disposition = case_record.bfdc
 
-      if safeguards
-        fail not_valid_to_reopen_err unless %w[9 E F G P O].include? close_disposition
+      if safeguards && !(%w[9 E F G P O].include? close_disposition)
+        fail not_valid_to_reopen_err
       end
 
       previous_active_location = case_record.previous_active_location
