@@ -1,3 +1,5 @@
+require 'csv'
+
 class CaseDistributionLeversTestsController < ApplicationController
   before_action :set_user, only: [:add_user, :remove_user, :make_admin, :remove_admin]
   before_action :check_environment
@@ -43,6 +45,56 @@ class CaseDistributionLeversTestsController < ApplicationController
     OrganizationsUser.remove_admin_rights_from_user(@user, CDAControlGroup.singleton)
 
     reload_page
+  end
+
+  def appeals_ready_to_distribute
+    # Call the BatchAppealsForReaderQuery to get results
+    results = BatchAppealsForReaderQuery.process
+
+    # Get the current date and time for dynamic filename
+    current_datetime = Time.now.strftime('%Y%m%d-%H%M')
+
+    # Convert results to CSV format
+    csv_data = CSV.generate(headers: true) do |csv|
+      # Add headers to CSV
+      csv << ['CSS ID', 'Full Name', 'Status']
+
+      # Iterate through results and add each row to CSV
+      results.each do |record|
+        csv << [record[0].css_id, record[0].full_name, record[0].status]
+      end
+    end
+
+    # Set dynamic filename with current date and time
+    filename = "appeals_ready_to_distribute_#{current_datetime}.csv"
+
+    # Send CSV as a response with dynamic filename
+    send_data csv_data, filename: filename
+  end
+
+  def appeals_distributed
+    # Call the BatchAppealsForReaderQuery to get results
+    results = BatchAppealsForReaderQuery.process
+
+    # Get the current date and time for dynamic filename
+    current_datetime = Time.now.strftime('%Y%m%d-%H%M')
+
+    # Convert results to CSV format
+    csv_data = CSV.generate(headers: true) do |csv|
+      # Add headers to CSV
+      csv << ['CSS ID', 'Full Name', 'Status']
+
+      # Iterate through results and add each row to CSV
+      results.each do |record|
+        csv << [record[0].css_id, record[0].full_name, record[0].status]
+      end
+    end
+
+    # Set dynamic filename with current date and time
+    filename = "distributed_appeals_#{current_datetime}.csv"
+
+    # Send CSV as a response with dynamic filename
+    send_data csv_data, filename: filename
   end
 
   private

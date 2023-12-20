@@ -106,5 +106,8 @@
   <h2> Organization Setup </h2>
     <%= button_to 'Create Organization', create_acd_group_org_singleton_case_distribution_levers_tests_path, method: :post %>
 <% end %>
+<h2>Distribution Status</h2>
+<%= link_to 'Download Appeals Ready to Distribute CSV', appeals_ready_to_distribute_path(format: :csv), class: 'btn btn-primary' %>
+<%= link_to 'Download Distributed Appeals CSV', appeals_distributed_path(format: :csv), class: 'btn btn-primary' %>
 
 

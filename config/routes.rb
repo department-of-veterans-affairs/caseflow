@@ -260,6 +260,8 @@ Rails.application.routes.draw do
     constraints(lambda { |request| Rails.env.demo? || Rails.env.test? || Rails.env.development? }) do
       get 'acd-controls', :to => 'case_distribution_levers#acd_lever_index'
       get 'acd-controls/test', :to => 'case_distribution_levers_tests#acd_lever_index_test'
+      get 'appeals-ready-to-distribute', to: 'case_distribution_levers_tests#appeals_ready_to_distribute'
+      get 'appeals-distributed', to: 'case_distribution_levers_tests#appeals_distributed'
     end
   end
 
