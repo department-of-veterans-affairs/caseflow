@@ -22,11 +22,11 @@ const LeverHistory = (props) => {
 
     if (doesDatatypeRequireComplexLogic) {
 
-      let selectedOption = lever.options.find((option) => option.item === lever.value);
+      // let selectedOption = lever.options.find((option) => option.item === lever.value);
 
-      if (selectedOption.data_type === 'number') {
-        return selectedOption.unit;
-      }
+      // if (selectedOption.data_type === 'number') {
+      //   return selectedOption.unit;
+      // }
 
       return '';
 
