@@ -29,8 +29,11 @@ Capybara.register_driver(:parallel_sniffybara) do |app|
   chrome_options.add_preference(:browser,
                                 disk_cache_dir: cache_directory)
 
+  service = ::Selenium::WebDriver::Service.chrome
+  service.port = 51_674
+
   options = {
-    service: ::Selenium::WebDriver::Service.chrome(args: { port: 51_674 }),
+    service: service,
     browser: :chrome,
     options: chrome_options
   }
@@ -54,8 +57,11 @@ Capybara.register_driver(:sniffybara_headless) do |app|
   chrome_options.args << "--disable-gpu"
   chrome_options.args << "--window-size=1200,1200"
 
+  service = ::Selenium::WebDriver::Service.chrome
+  service.port = 51_674
+
   options = {
-    service: ::Selenium::WebDriver::Service.chrome(args: { port: 51_674 }),
+    service: service,
     browser: :chrome,
     options: chrome_options
   }
