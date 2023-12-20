@@ -33,8 +33,9 @@ class SeedDB
     Rails.logger.debug(msg)
   end
 
+  # rubocop:disable Metrics/MethodLength
   def seed
-    RequestStore[:current_user]=User.system_user
+    RequestStore[:current_user] = User.system_user
     call_and_log_seed_step :clean_db
 
     call_and_log_seed_step Seeds::Annotations
@@ -66,7 +67,11 @@ class SeedDB
     # Always run this as last one
     call_and_log_seed_step Seeds::StaticTestCaseData
     call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
+    call_and_log_seed_step Seeds::BGSServiceRecordMaker
+    call_and_log_seed_step Seeds::AdditionalRemandedAppeals
+    call_and_log_seed_step Seeds::AdditionalLegacyRemandedAppeals
   end
+  # rubocop:enable Metrics/MethodLength
 end
 
 SeedDB.new.seed

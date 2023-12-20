@@ -249,8 +249,32 @@ class Appeal < DecisionReview
     category_substrings = %w[Contested Apportionment]
 
     request_issues.active.any? do |request_issue|
-      category_substrings.any? { |substring| request_issues.active.include?(request_issue) && request_issue.nonrating_issue_category&.include?(substring) }
+      category_substrings.any? do |substring|
+        request_issues.active.include?(request_issue) && request_issue.nonrating_issue_category&.include?(substring)
+      end
     end
+  end
+
+  # :reek:RepeatedConditionals
+  # decision issue status overrules request issues/special issue list for both mst and pact
+  def mst?
+    return false unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user])
+
+    return decision_issues.any?(&:mst_status) unless decision_issues.empty?
+
+    request_issues.active.any?(&:mst_status) ||
+      (special_issue_list &&
+        special_issue_list.created_at < "2023-06-01".to_date &&
+        special_issue_list.military_sexual_trauma)
+  end
+
+  # :reek:RepeatedConditionals
+  def pact?
+    return false unless FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
+
+    return decision_issues.any?(&:pact_status) unless decision_issues.empty?
+
+    request_issues.active.any?(&:pact_status)
   end
 
   # Returns the most directly responsible party for an appeal when it is at the Board,
@@ -279,6 +303,7 @@ class Appeal < DecisionReview
     AppealStatusApiDecorator.new(self)
   end
 
+  # :reek:RepeatedConditionals
   def active_request_issues_or_decision_issues
     decision_issues.empty? ? active_request_issues : fetch_all_decision_issues
   end
@@ -350,6 +375,8 @@ class Appeal < DecisionReview
     dup_remand&.save
   end
 
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # :reek:RepeatedConditionals
   # clone issues clones request_issues the user selected
   # and anydecision_issues/decision_request_issues tied to the request issue
   def clone_issues(parent_appeal, payload_params)
@@ -404,6 +431,7 @@ class Appeal < DecisionReview
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   def clone_aod(parent_appeal)
     # find the appeal AOD
@@ -467,6 +495,7 @@ class Appeal < DecisionReview
     end
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
   def clone_task_tree(parent_appeal, user_css_id)
     # get the task tree from the parent
     parent_ordered_tasks = parent_appeal.tasks.order(:created_at)
@@ -501,6 +530,7 @@ class Appeal < DecisionReview
       break if parent_appeal.tasks.count == tasks.count
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
 
   # clone_task is used for splitting an appeal, tie to css_id for split
   def clone_task(original_task, user_css_id)
@@ -916,6 +946,10 @@ class Appeal < DecisionReview
     end
     return false if relevant_tasks.any?(&:open?)
     return true if relevant_tasks.all?(&:closed?)
+  end
+
+  def is_legacy?
+    false
   end
 
   private
