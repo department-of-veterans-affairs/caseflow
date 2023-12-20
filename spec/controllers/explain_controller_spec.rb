@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "helpers/sanitized_json_configuration.rb"
-require "helpers/sanitized_json_exporter.rb"
-require "helpers/intake_renderer.rb"
-require "helpers/hearing_renderer.rb"
+require "helpers/sanitized_json_configuration"
+require "helpers/sanitized_json_exporter"
+require "helpers/intake_renderer"
+require "helpers/hearing_renderer"
 
 describe ExplainController, :all_dbs, type: :controller do
   include TaskHelpers
@@ -166,7 +166,11 @@ describe ExplainController, :all_dbs, type: :controller do
       )
     end
 
-    subject { get :show, params: { correspondence_uuid: correspondence.uuid, any: "review_package" }, as: response_format }
+    subject do
+      get :show,
+          params: { correspondence_uuid: correspondence.uuid, any: "review_package" },
+          as: response_format
+    end
 
     before do
       User.authenticate!(roles: user_roles)
