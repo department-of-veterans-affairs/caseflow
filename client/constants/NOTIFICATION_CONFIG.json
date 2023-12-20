@@ -22,8 +22,8 @@
         "name": "notificationStatusColumn",
         "filterable": true
       },
-      "RESPONSE_DETAILS": {
-        "name": "responseDetails",
+      "RESPONSE_DETAILS_BUTTON": {
+        "name": "responseDetailsButton",
         "filterable": false
       }
     },

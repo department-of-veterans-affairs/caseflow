@@ -3,7 +3,7 @@ import COPY from '../../../COPY';
 import NOTIFICATION_CONFIG from '../../../constants/NOTIFICATION_CONFIG';
 import EVENT_TYPE_FILTERS from '../../../constants/EVENT_TYPE_FILTERS';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import ResponseDetailsButton from './ResponseDetailsButton';
+import NotificationResponseButton from './NotificationResponseButton';
 
 // Purpose: These are all column objects for the notifications table
 // Params: notifications - The list of notifications
@@ -104,18 +104,18 @@ export const statusColumn = (notifications) => {
   };
 };
 
-export const responseDetailsColumn = (notifications) => {
+export const responseDetailsButtonColumn = (notifications) => {
   return {
-    header: COPY.NOTIFICATION_RESPONSE_DETAILS,
-    name: NOTIFICATION_CONFIG.COLUMNS.RESPONSE_DETAILS.name,
-    enableFilter: NOTIFICATION_CONFIG.COLUMNS.RESPONSE_DETAILS.filterable,
+    header: COPY.NOTIFICATION_RESPONSE_DETAILS_BUTTON,
+    name: NOTIFICATION_CONFIG.COLUMNS.RESPONSE_DETAILS_BUTTON.name,
+    enableFilter: NOTIFICATION_CONFIG.COLUMNS.RESPONSE_DETAILS_BUTTON.filterable,
     anyFiltersAreSet: false,
     label: '',
-    columnName: 'response_details',
+    columnName: 'response_button',
     tableData: notifications,
-    valueName: 'Response Details',
-    valueFunction: () => {
-      return <ResponseDetailsButton />;
+    valueName: 'Response Button',
+    valueFunction: (rowObject, rowId, toggleResponseDetails) => {
+      return <NotificationResponseButton toggleResponseDetails={toggleResponseDetails} />;
     }
   };
 };
