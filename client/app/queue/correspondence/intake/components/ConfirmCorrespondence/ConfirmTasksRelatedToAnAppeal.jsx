@@ -13,7 +13,8 @@ const borderlessTd = {
 
 const ConfirmTasksRelatedToAnAppeal = () => {
   const tasks = useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks);
-  const taskIds = useSelector((state) => state.intakeCorrespondence.taskRelatedAppealIds);
+  const taskIds = useSelector((state) => state.intakeCorrespondence.taskRelatedAppealIds).
+    sort((first, second) => first - second);
   const fetchedAppeals = useSelector((state) => state.intakeCorrespondence.fetchedAppeals);
   const waivedEvidenceTasks = useSelector((state) => state.intakeCorrespondence.waivedEvidenceTasks);
 
