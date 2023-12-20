@@ -101,8 +101,6 @@
   padding: 3rem 4rem;
 
   p {
-    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
-    font-size: 1.8rem;
     color: $color-black;
     margin-top: 0px;
     margin-bottom: 0px;
@@ -110,16 +108,12 @@
 
   h1 {
     text-align: left;
-    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
-    font-weight: 800;
     margin-bottom: 20px;
   }
 
   h2 {
-    padding-top: 30px;
+    margin-top: 30px;
     margin-bottom: 20px;
-    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
-    font-weight: 800;
   }
 
   section {
@@ -128,8 +122,8 @@
 
   button {
     display: inline-block;
-    padding-top: 30px;
-    padding-right: 10px;
+    margin-top: 30px;
+    margin-right: 10px;
   }
 
   table {
@@ -141,8 +135,8 @@
     background-color: $caseflow-background;
     border-bottom: 0;
     border-color: $color-gray-lighter;
-    padding-top: 0vh;
-    padding-bottom: 0vh;
+    margin-top: 0vh;
+    margin-bottom: 0vh;
   }
 
 .corr-icon {
@@ -151,7 +145,7 @@
 
 .corr-sectionlink {
   margin-left: 20px;
-  padding-right: 10px;
+  margin-right: 10px;
 }
 
 .corr-flex {

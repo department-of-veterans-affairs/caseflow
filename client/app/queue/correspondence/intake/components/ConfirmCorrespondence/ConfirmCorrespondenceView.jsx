@@ -24,9 +24,6 @@ const tableStyling = css({
   marginBottom: '-2vh',
   marginTop: '2vh'
 });
-const bottonStyling = css({
-  paddingRight: '10px'
-});
 
 export const ConfirmCorrespondenceView = (props) => {
 
@@ -148,8 +145,8 @@ export const ConfirmCorrespondenceView = (props) => {
               columns={getDocumentColumns}
               // columnsToDisplay={15}
               rowObjects={relatedCorrespondences}
-              styling="corr-table"
-              bodyStyling="corr-tablebody" />
+              styling={tableStyling}
+              bodyStyling={bodyStyling} />
           </div>
         </div>
       </div>
