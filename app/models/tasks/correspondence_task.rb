@@ -19,6 +19,18 @@ class CorrespondenceTask < Task
     end
   end
 
+  def remove_package
+    root_task = CorrespondenceRootTask.find_by!(
+      appeal_id: @correspondence.id,
+      assigned_to: MailTeamSupervisor.singleton,
+      appeal_type: "Correspondence",
+      parent_id: @correspondence_task.id,
+      type: "CorrespondenceRootTask"
+    )
+    root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
+    root_task.cancel_task_and_child_subtasks
+  end
+
   private
 
   def status_is_valid_on_create

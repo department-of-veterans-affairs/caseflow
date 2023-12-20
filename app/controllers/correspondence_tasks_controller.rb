@@ -54,6 +54,17 @@ class CorrespondenceTasksController < TasksController
     end
   end
 
+  def remove_package
+    root_task = CorrespondenceRootTask.find_by!(
+      appeal_id: params[:id],
+      assigned_to: MailTeamSupervisor.singleton,
+      appeal_type: "Correspondence",
+      type: "CorrespondenceRootTask"
+    )
+    root_task.cancel_task_and_child_subtasks
+
+  end
+
   private
 
   def task_to_create

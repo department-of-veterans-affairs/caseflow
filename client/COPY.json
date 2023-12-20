@@ -1421,5 +1421,10 @@
   "PACKAGE_ACTION_SPLIT_TEXTAREA_LABEL":"Reason for split",
   "PACKAGE_ACTION_SPLIT_TITLE": "Request split package",
   "CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER": "The correspondence's documents have failed to upload to the eFolder",
-  "CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE": "You can upload it from this page to the veteran's eFolder at a later time."
+  "CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE": "You can upload it from this page to the veteran's eFolder at a later time.",
+  "CORRESPONDENCE_HEADER_REMOVE_PACKAGE": "Review request",
+  "CORRESPONDENCE_TITLE_REMOVE_PACKAGE": "Reason for removal:",
+  "CORRRESPONDENCE_LABEL_OPTION_REMOVE_PACKAGE": " Choose whether to approve the request for removal or reject it.",
+  "CORRRESPONDENCE_TEXT_REMOVE_PACKAGE": "\nThis is the reason for removal provided by the general user.",
+  "CORRESPONDENCE_TITLE_REMOVE_PACKAGE_REASON_REJECT": "Provide a reason for rejection"
 }

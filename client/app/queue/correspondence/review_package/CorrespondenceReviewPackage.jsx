@@ -9,11 +9,12 @@ import { CmpDocuments } from './CmpDocuments';
 import ApiUtil from '../../../util/ApiUtil';
 import PropTypes from 'prop-types';
 import { setFileNumberSearch, doFileNumberSearch } from '../../../intake/actions/intake';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { useHistory } from 'react-router';
 import PackageActionModal from '../modals/PackageActionModal';
 import ReviewPackageNotificationBanner from './ReviewPackageNotificationBanner';
+import { getAllTasksForAppeal } from '../../../queue/selectors';
 import {
   CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER,
   CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE }
@@ -38,6 +39,7 @@ export const CorrespondenceReviewPackage = (props) => {
   const [bannerInformation, setBannerInformation] = useState(null);
 
   const history = useHistory();
+  const uuid = props.correspondence.disableButton;
   const fetchData = async () => {
     const correspondence = props;
 
@@ -88,6 +90,10 @@ export const CorrespondenceReviewPackage = (props) => {
     return notesChanged || fileNumberChanged || selectValueChanged;
   };
 
+  const tasks = useSelector((state) =>
+    getAllTasksForAppeal(state, { uuid })
+  );
+
   const intakeAppeal = async () => {
     props.setFileNumberSearch(editableData.veteran_file_number);
     try {
@@ -137,7 +143,10 @@ export const CorrespondenceReviewPackage = (props) => {
       )}
       <React.Fragment>
         <AppSegment filledBackground>
-          <ReviewPackageCaseTitle handlePackageActionModal={handlePackageActionModal} />
+          <ReviewPackageCaseTitle
+            handlePackageActionModal={handlePackageActionModal}
+            correspondence={props.correspondence}
+          />
           <ReviewPackageData
             correspondence={props.correspondence}
             packageDocumentType={props.packageDocumentType}
