@@ -2,7 +2,6 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styles from 'app/styles/caseDistribution/LeverHistory.module.scss';
-import moment from 'moment';
 
 const LeverHistory = (props) => {
   const { leverStore } = props;

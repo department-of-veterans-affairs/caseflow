@@ -95,6 +95,14 @@ function SaveLeverChanges(leverStore)  {
   });
 }
 
+function ShowSuccessBanner(shouldShowSuccessBanner)  {
+  leverStore.dispatch({
+    type: Constants.SHOW_SUCCESS_BANNER,
+    showSuccessBanner: shouldShowSuccessBanner,
+  });
+}
+
+
 function SaveLeversToDB(leverStore) {
   const leversData = leverStore.getState().levers;
 
@@ -197,6 +205,7 @@ export function LeverSaveButton({ leverStore }) {
     setShowSuccessBanner(leverStore)
     setShowModal(false);
     setSaveButtonDisabled(true);
+    ShowSuccessBanner(true);
   }
 
 
