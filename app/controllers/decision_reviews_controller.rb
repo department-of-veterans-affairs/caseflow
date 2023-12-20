@@ -6,6 +6,7 @@ class DecisionReviewsController < ApplicationController
 
   before_action :verify_access, :react_routed, :set_application
   before_action :verify_veteran_record_access, only: [:show]
+  before_action :verify_business_line, only: [:index, :generate_report]
 
   delegate :incomplete_tasks,
            :incomplete_tasks_type_counts,
@@ -17,6 +18,7 @@ class DecisionReviewsController < ApplicationController
            :completed_tasks_type_counts,
            :completed_tasks_issue_type_counts,
            :included_tabs,
+           :can_generate_claim_history?,
            to: :business_line
 
   SORT_COLUMN_MAPPINGS = {
@@ -30,19 +32,13 @@ class DecisionReviewsController < ApplicationController
   }.freeze
 
   def index
-    if business_line
-      respond_to do |format|
-        format.html { render "index" }
-        format.csv do
-          jobs_as_csv = BusinessLineReporter.new(business_line).as_csv
-          filename = Time.zone.now.strftime("#{business_line.url}-%Y%m%d.csv")
-          send_data jobs_as_csv, filename: filename
-        end
-        format.json { queue_tasks }
+    respond_to do |format|
+      format.html { render "index" }
+      format.csv do
+        jobs_as_csv = BusinessLineReporter.new(business_line).as_csv
+        send_data jobs_as_csv, filename: csv_filename
       end
-    else
-      # TODO: make index show error message
-      render json: { error: "#{business_line_slug} not found" }, status: :not_found
+      format.json { queue_tasks }
     end
   end
 
@@ -67,6 +63,26 @@ class DecisionReviewsController < ApplicationController
     else
       render json: { error: "Task #{task_id} not found" }, status: :not_found
     end
+  end
+
+  def generate_report
+    return render "errors/404" unless can_generate_claim_history?
+    return requires_admin_access_redirect unless business_line.user_is_admin?(current_user)
+
+    respond_to do |format|
+      format.html { render "index" }
+      format.csv do
+        filter_params = change_history_params
+
+        fail ActionController::ParameterMissing.new(:report), report_missing_message unless filter_params[:report]
+
+        events_as_csv = create_change_history_csv(filter_params)
+        filename = Time.zone.now.strftime("#{business_line.url}-%Y%m%d.csv")
+        send_data events_as_csv, filename: filename, type: "text/csv", disposition: "attachment"
+      end
+    end
+  rescue ActionController::ParameterMissing => error
+    render json: { error: error.message }, status: :bad_request, content_type: "application/json"
   end
 
   def business_line_slug
@@ -107,7 +123,8 @@ class DecisionReviewsController < ApplicationController
 
   def business_line_config_options
     {
-      tabs: included_tabs
+      tabs: included_tabs,
+      canGenerateClaimHistory: can_generate_claim_history?
     }
   end
 
@@ -184,12 +201,33 @@ class DecisionReviewsController < ApplicationController
     redirect_to "/unauthorized"
   end
 
+  def verify_business_line
+    unless business_line
+      render json: { error: "#{business_line_slug} not found" }, status: :not_found
+    end
+  end
+
   def verify_veteran_record_access
     if task.type == VeteranRecordRequest.name && !task.appeal.veteran&.accessible?
       render(Caseflow::Error::ActionForbiddenError.new(
         message: COPY::ACCESS_DENIED_TITLE
       ).serialize_response)
     end
+  end
+
+  def csv_filename
+    Time.zone.now.strftime("#{business_line.url}-%Y%m%d.csv")
+  end
+
+  def report_missing_message
+    "param is missing or the value is empty: report"
+  end
+
+  def requires_admin_access_redirect
+    Rails.logger.info("User without admin access to the business line #{business_line} "\
+      "couldn't access #{request.original_url}")
+    session["return_to"] = request.original_url
+    redirect_to "/unauthorized"
   end
 
   def allowed_params
@@ -209,6 +247,23 @@ class DecisionReviewsController < ApplicationController
     )
   end
 
+  def change_history_params
+    params.require(:filters).permit(
+      :report,
+      events: [],
+      timing: [],
+      statuses: [],
+      conditions: {
+        days_waiting: [],
+        review_type: [],
+        issue_type: [],
+        disposition: [],
+        personnel: [],
+        facility: []
+      }
+    )
+  end
+
   def power_of_attorney_data
     {
       representative_type: task.appeal&.representative_type,
@@ -218,5 +273,38 @@ class DecisionReviewsController < ApplicationController
       representative_tz: task.appeal&.representative_tz,
       poa_last_synced_at: task.appeal&.poa_last_synced_at
     }
+  end
+
+  def create_change_history_csv(filter_params)
+    create_metric_log do
+      base_url = "#{request.base_url}/decision_reviews/#{business_line.url}/tasks/"
+      events = ClaimHistoryService.new(business_line, filter_params).build_events
+      ChangeHistoryReporter.new(events, base_url, filter_params.to_h).as_csv
+    end
+  end
+
+  def create_metric_log
+    start_time = Time.zone.now
+    return_data = yield
+    end_time = Time.zone.now
+
+    MetricsService.store_record_metric(
+      SecureRandom.uuid,
+      {
+        name: "generate_report",
+        message: "Generate Change History Report #{Time.zone.today} #{RequestStore[:current_user].css_id}",
+        type: "info",
+        product: "vha",
+        attrs: { service: "decision_reviews", endpoint: "generate_report" },
+        sent_to: "rails_console",
+        start: start_time,
+        end: end_time,
+        duration: (end_time - start_time) * 1000,
+        additional_info: params[:filters].as_json
+      },
+      nil
+    )
+
+    return_data
   end
 end

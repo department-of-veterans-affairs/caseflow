@@ -408,6 +408,417 @@ describe BusinessLine do
     end
   end
 
+  describe ".change_history_rows" do
+    let(:change_history_filters) { {} }
+    let!(:hlr_task) { create(:higher_level_review_vha_task_with_decision) }
+    let!(:hlr_task2) { create(:higher_level_review_vha_task) }
+    let!(:sc_task) do
+      create(:supplemental_claim_vha_task,
+             appeal: create(:supplemental_claim,
+                            :with_vha_issue,
+                            :with_intake,
+                            benefit_type: "vha",
+                            claimant_type: :dependent_claimant))
+    end
+    let(:decision_issue) { create(:decision_issue, disposition: "denied", benefit_type: hlr_task.appeal.benefit_type) }
+    let(:intake_user) { create(:user, full_name: "Alexander Dewitt", css_id: "ALEXVHA", station_id: "103") }
+    let(:decision_user) { create(:user, full_name: "Gaius Baelsar", css_id: "GAIUSVHA", station_id: "104") }
+
+    # Reusable expectations
+    let(:hlr_task_1_ri_1_expectation) do
+      a_hash_including(
+        "nonrating_issue_category" => "Caregiver | Other",
+        "nonrating_issue_description" => "VHA - Caregiver ",
+        "task_id" => hlr_task.id,
+        "veteran_file_number" => hlr_task.appeal.veteran_file_number,
+        "intake_user_name" => hlr_task.appeal.intake.user.full_name,
+        "intake_user_css_id" => hlr_task.appeal.intake.user.css_id,
+        "intake_user_station_id" => hlr_task.appeal.intake.user.station_id,
+        "disposition" => "allowed",
+        "decision_user_name" => decision_user.full_name,
+        "decision_user_css_id" => decision_user.css_id,
+        "decision_user_station_id" => decision_user.station_id,
+        "first_name" => hlr_task.appeal.claimant.first_name,
+        "last_name" => hlr_task.appeal.claimant.last_name,
+        "task_status" => hlr_task.status,
+        "request_issue_benefit_type" => "vha",
+        "days_waiting" => 10
+      )
+    end
+    let(:hlr_task_1_ri_2_expectation) do
+      a_hash_including(
+        "nonrating_issue_category" => "CHAMPVA",
+        "nonrating_issue_description" => "This is a CHAMPVA issue",
+        "task_id" => hlr_task.id,
+        "veteran_file_number" => hlr_task.appeal.veteran_file_number,
+        "intake_user_name" => hlr_task.appeal.intake.user.full_name,
+        "intake_user_css_id" => hlr_task.appeal.intake.user.css_id,
+        "intake_user_station_id" => hlr_task.appeal.intake.user.station_id,
+        "disposition" => "denied",
+        "decision_user_name" => decision_user.full_name,
+        "decision_user_css_id" => decision_user.css_id,
+        "decision_user_station_id" => decision_user.station_id,
+        "first_name" => hlr_task.appeal.claimant.first_name,
+        "last_name" => hlr_task.appeal.claimant.last_name,
+        "task_status" => hlr_task.status,
+        "request_issue_benefit_type" => "vha",
+        "days_waiting" => 10
+      )
+    end
+    let(:hlr_task_2_ri_1_expectation) do
+      a_hash_including(
+        "nonrating_issue_category" => "Caregiver | Other",
+        "nonrating_issue_description" => "VHA - Caregiver ",
+        "task_id" => hlr_task2.id,
+        "veteran_file_number" => hlr_task2.appeal.veteran_file_number,
+        "intake_user_name" => intake_user.full_name,
+        "intake_user_css_id" => intake_user.css_id,
+        "intake_user_station_id" => intake_user.station_id,
+        "disposition" => nil,
+        "decision_user_name" => nil,
+        "decision_user_css_id" => nil,
+        "decision_user_station_id" => nil,
+        "first_name" => hlr_task2.appeal.claimant.first_name,
+        "last_name" => hlr_task2.appeal.claimant.last_name,
+        "task_status" => hlr_task2.status,
+        "request_issue_benefit_type" => "vha",
+        "days_waiting" => 5
+      )
+    end
+    let(:hlr_task_2_ri_2_expectation) do
+      a_hash_including(
+        "nonrating_issue_category" => "Camp Lejune Family Member",
+        "nonrating_issue_description" => "This is a Camp Lejune issue",
+        "task_id" => hlr_task2.id,
+        "veteran_file_number" => hlr_task2.appeal.veteran_file_number,
+        "intake_user_name" => intake_user.full_name,
+        "intake_user_css_id" => intake_user.css_id,
+        "intake_user_station_id" => intake_user.station_id,
+        "disposition" => nil,
+        "decision_user_name" => nil,
+        "decision_user_css_id" => nil,
+        "decision_user_station_id" => nil,
+        "first_name" => hlr_task2.appeal.claimant.first_name,
+        "last_name" => hlr_task2.appeal.claimant.last_name,
+        "task_status" => hlr_task2.status,
+        "request_issue_benefit_type" => "vha",
+        "days_waiting" => 5
+      )
+    end
+    let(:sc_task_1_ri_1_expectation) do
+      a_hash_including(
+        "nonrating_issue_category" => "Beneficiary Travel",
+        "nonrating_issue_description" => "VHA issue description ",
+        "task_id" => sc_task.id,
+        "veteran_file_number" => sc_task.appeal.veteran_file_number,
+        "intake_user_name" => sc_task.appeal.intake.user.full_name,
+        "intake_user_css_id" => sc_task.appeal.intake.user.css_id,
+        "intake_user_station_id" => sc_task.appeal.intake.user.station_id,
+        "disposition" => nil,
+        "decision_user_name" => nil,
+        "decision_user_css_id" => nil,
+        "decision_user_station_id" => nil,
+        "first_name" => sc_task.appeal.claimant.first_name,
+        "last_name" => sc_task.appeal.claimant.last_name,
+        "task_status" => sc_task.status,
+        "request_issue_benefit_type" => "vha",
+        "days_waiting" => (Time.zone.today - Date.parse(sc_task.assigned_at.iso8601)).to_i
+      )
+    end
+
+    let(:all_expectations) do
+      [
+        hlr_task_1_ri_1_expectation,
+        hlr_task_1_ri_2_expectation,
+        hlr_task_2_ri_1_expectation,
+        hlr_task_2_ri_2_expectation,
+        sc_task_1_ri_1_expectation
+      ]
+    end
+
+    before do
+      issue = create(:request_issue,
+                     nonrating_issue_category: "CHAMPVA",
+                     nonrating_issue_description: "This is a CHAMPVA issue",
+                     benefit_type: "vha")
+      issue2 = create(:request_issue,
+                      nonrating_issue_category: "Camp Lejune Family Member",
+                      nonrating_issue_description: "This is a Camp Lejune issue",
+                      benefit_type: "vha")
+      hlr_task.appeal.request_issues << issue
+      hlr_task2.appeal.request_issues << issue2
+
+      # Add a different intake user to the second hlr task for data differences
+      second_intake = hlr_task2.appeal.intake
+      second_intake.user = intake_user
+      second_intake.save
+
+      # Add a couple of dispostions one here and one through the factory, to the first hlr task
+      decision_issue.request_issues << issue
+      hlr_task.appeal.decision_issues << decision_issue
+      hlr_task.appeal.save
+      hlr_task.completed_by = decision_user
+      hlr_task.assigned_at = 10.days.ago
+      hlr_task.completed!
+
+      hlr_task2.assigned_at = 5.days.ago
+      hlr_task2.save
+
+      # Set the whodunnnit of the completed version status to the decision user
+      version = hlr_task.versions.first
+      version.whodunnit = decision_user.id.to_s
+      version.save
+    end
+
+    subject { business_line.change_history_rows(change_history_filters) }
+
+    context "without filters" do
+      it "should return all rows" do
+        expect(subject.count).to eq 5
+        expect(subject.entries).to include(*all_expectations)
+      end
+    end
+
+    context "with task_id filter" do
+      context "with multiple task ids" do
+        let(:change_history_filters) { { task_id: [hlr_task.id, sc_task.id] } }
+
+        it "should return rows for all matching ids" do
+          expect(subject.entries.count).to eq(3)
+          expect(subject.entries).to include(
+            hlr_task_1_ri_1_expectation,
+            hlr_task_1_ri_2_expectation,
+            sc_task_1_ri_1_expectation
+          )
+        end
+      end
+
+      let(:change_history_filters) { { task_id: hlr_task.id } }
+
+      it "should only return rows for that task" do
+        expect(subject.entries.count).to eq(2)
+        expect(subject.entries).to include(
+          hlr_task_1_ri_1_expectation,
+          hlr_task_1_ri_2_expectation
+        )
+      end
+    end
+
+    context "with claim_type filter" do
+      context "Supplemental Claim filter" do
+        let(:change_history_filters) { { claim_type: "SupplementalClaim" } }
+
+        it "should only return rows for the filtered claim type" do
+          expect(subject.entries.count).to eq(1)
+          expect(subject.entries).to include(sc_task_1_ri_1_expectation)
+        end
+      end
+
+      context "Higher-Level Review claim filter" do
+        let(:change_history_filters) { { claim_type: "HigherLevelReview" } }
+
+        it "should only return rows for the filtered claim type" do
+          expect(subject.entries.count).to eq(4)
+          expect(subject.entries).to include(*(all_expectations - [sc_task_1_ri_1_expectation]))
+        end
+      end
+    end
+
+    context "with task_status filter" do
+      let(:change_history_filters) { { task_status: ["completed"] } }
+
+      it "should only return rows for the filtered status types" do
+        expect(subject.entries.count).to eq(2)
+        expect(subject.entries).to include(
+          hlr_task_1_ri_1_expectation,
+          hlr_task_1_ri_2_expectation
+        )
+      end
+    end
+
+    context "with dispositions filter" do
+      context "with multiple disposition filters" do
+        let(:change_history_filters) { { dispositions: %w[allowed denied] } }
+
+        it "should only return rows for filtered disposition values" do
+          expect(subject.entries.count).to eq(2)
+          expect(subject.entries).to include(
+            hlr_task_1_ri_1_expectation,
+            hlr_task_1_ri_2_expectation
+          )
+        end
+      end
+
+      context "with a single disposition filter" do
+        let(:change_history_filters) { { dispositions: ["denied"] } }
+
+        it "should only return rows for filtered disposition values" do
+          expect(subject.entries.count).to eq(1)
+          expect(subject.entries).to include(hlr_task_1_ri_2_expectation)
+        end
+      end
+    end
+
+    context "with issue types filter" do
+      context "with multiple issue type filters" do
+        let(:change_history_filters) { { issue_types: ["Beneficiary Travel", "CHAMPVA"] } }
+
+        it "should only return rows for the filtered issue type values" do
+          expect(subject.entries.count).to eq(2)
+          expect(subject.entries).to include(
+            hlr_task_1_ri_2_expectation,
+            sc_task_1_ri_1_expectation
+          )
+        end
+      end
+
+      context "with a single issue type filter" do
+        let(:change_history_filters) { { issue_types: ["Caregiver | Other"] } }
+
+        it "should only return rows for the filtered issue type values" do
+          expect(subject.entries.count).to eq(2)
+          expect(subject.entries).to include(
+            hlr_task_1_ri_1_expectation,
+            hlr_task_2_ri_1_expectation
+          )
+        end
+      end
+    end
+
+    context "with days waiting filter" do
+      context "< filter" do
+        let(:change_history_filters) { { days_waiting: { number_of_days: 6, range: "<" } } }
+
+        it "should only return rows that are under the filtered days waiting value" do
+          expect(subject.entries.count).to eq(2)
+          expect(subject.entries).to include(
+            hlr_task_2_ri_1_expectation,
+            hlr_task_2_ri_2_expectation
+          )
+        end
+      end
+
+      context "> filter" do
+        let(:change_history_filters) { { days_waiting: { number_of_days: 11, range: ">" } } }
+
+        it "should only return rows that are over the filtered days waiting value" do
+          expect(subject.entries.count).to eq(1)
+          expect(subject.entries).to include(
+            sc_task_1_ri_1_expectation
+          )
+        end
+      end
+
+      context "= filter" do
+        let(:change_history_filters) { { days_waiting: { number_of_days: 10, range: "=" } } }
+
+        it "should only return rows that are equal to the filtered days waiting value" do
+          expect(subject.entries.count).to eq(2)
+          expect(subject.entries).to include(
+            hlr_task_1_ri_1_expectation,
+            hlr_task_1_ri_2_expectation
+          )
+        end
+      end
+
+      context "between filter" do
+        let(:change_history_filters) { { days_waiting: { number_of_days: 4, end_days: 11, range: "between" } } }
+
+        it "should only return rows that are between the number of days and end of days" do
+          expect(subject.entries.count).to eq(4)
+          expect(subject.entries).to include(*(all_expectations - [sc_task_1_ri_1_expectation]))
+        end
+      end
+    end
+
+    context "user station id filter" do
+      context "when filtering by a station id that has no tasks" do
+        let(:change_history_filters) { { facilities: ["702"] } }
+
+        it "should return no rows" do
+          expect(subject.entries.count).to eq(0)
+          expect(subject.entries).to eq([])
+        end
+      end
+
+      context "when filtering by multiple station ids" do
+        let(:change_history_filters) { { facilities: %w[103 104] } }
+
+        it "only return rows where either an intake, decisions, or updates user matches the station id" do
+          expect(subject.entries.count).to eq(4)
+          expect(subject.entries).to include(*(all_expectations - [sc_task_1_ri_1_expectation]))
+        end
+      end
+
+      context "when filtering by a single station id" do
+        let(:change_history_filters) { { facilities: ["101"] } }
+
+        it "only return rows where either an intake, decisions, or updates user matches the station id" do
+          expect(subject.entries.count).to eq(3)
+          expect(subject.entries).to include(
+            hlr_task_1_ri_1_expectation,
+            hlr_task_1_ri_2_expectation,
+            sc_task_1_ri_1_expectation
+          )
+        end
+      end
+    end
+
+    context "user id filter" do
+      context "when filtering by a user css id that has no tasks" do
+        let(:change_history_filters) { { personnel: ["NOCSSID"] } }
+
+        it "should return no rows" do
+          expect(subject.entries.count).to eq(0)
+          expect(subject.entries).to eq([])
+        end
+      end
+
+      context "when filtering by multiple user css ids" do
+        let(:change_history_filters) { { personnel: [intake_user.css_id, decision_user.css_id] } }
+
+        it "only return rows where either an intake, decisions, or updates user matches the  css_ids" do
+          expect(subject.entries.count).to eq(4)
+          expect(subject.entries).to include(*(all_expectations - [sc_task_1_ri_1_expectation]))
+        end
+      end
+
+      context "when filtering by a single css id" do
+        let(:change_history_filters) { { personnel: [intake_user.css_id] } }
+
+        it "only return rows where either an intake, decisions, or updates user matches the user css id" do
+          expect(subject.entries.count).to eq(2)
+          expect(subject.entries).to include(
+            hlr_task_2_ri_1_expectation,
+            hlr_task_2_ri_2_expectation
+          )
+        end
+      end
+    end
+
+    context "when filtering by multiple filters at the same time" do
+      context "task_id and issue_type" do
+        let(:change_history_filters) { { issue_types: ["Caregiver | Other"], task_id: hlr_task.id } }
+
+        it "should only return rows that match both filters" do
+          expect(subject.entries.count).to eq(1)
+          expect(subject.entries).to include(hlr_task_1_ri_1_expectation)
+        end
+      end
+
+      context "multiple issue types and claim type" do
+        let(:change_history_filters) do
+          { issue_types: ["Beneficiary Travel", "CHAMPVA"], claim_type: "SupplementalClaim" }
+        end
+
+        it "should only return rows that match both filters" do
+          expect(subject.entries.count).to eq(1)
+          expect(subject.entries).to include(sc_task_1_ri_1_expectation)
+        end
+      end
+    end
+  end
+
   def add_veteran_and_request_issues_to_decision_reviews(tasks)
     tasks.each do |task|
       task.appeal.update!(veteran_file_number: veteran.file_number)

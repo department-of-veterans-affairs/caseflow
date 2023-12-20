@@ -69,6 +69,7 @@ class RequestIssue < CaseflowRecord
   before_save :set_contested_rating_issue_profile_date
   before_save :close_if_ineligible!
 
+  after_create :set_decision_date_added_at, if: :decision_date_exists?
   # amoeba gem for splitting appeal request issues
   amoeba do
     enable
@@ -512,7 +513,7 @@ class RequestIssue < CaseflowRecord
   def save_decision_date!(new_decision_date)
     fail DecisionDateInFutureError, id if new_decision_date.to_date > Time.zone.today
 
-    update!(decision_date: new_decision_date)
+    update!(decision_date: new_decision_date, decision_date_added_at: Time.zone.now)
 
     # Special handling for claim reviews that contain issues without a decision date
     decision_review.try(:handle_issues_with_no_decision_date!)
@@ -1017,6 +1018,15 @@ class RequestIssue < CaseflowRecord
 
   def appeal_active?
     decision_review.tasks.open.any?
+  end
+
+  def decision_date_exists?
+    decision_date.present?
+  end
+
+  def set_decision_date_added_at
+    self.decision_date_added_at = created_at
+    save!
   end
 end
 # rubocop:enable Metrics/ClassLength

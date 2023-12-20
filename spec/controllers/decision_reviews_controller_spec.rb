@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# This is needed for the generate_report action for a csv format since the testing environment does not eager load files
+require Rails.root.join("app", "services", "claim_change_history", "change_history_reporter.rb")
+require Rails.root.join("app", "services", "claim_change_history", "claim_history_service.rb")
+
 describe DecisionReviewsController, :postgres, type: :controller do
   before do
     Timecop.freeze(Time.utc(2018, 1, 1, 12, 0, 0))
@@ -674,6 +678,102 @@ describe DecisionReviewsController, :postgres, type: :controller do
         expected_email = "jamie.fakerton@caseflowdemo.com"
         expect(JSON.parse(subject.body)["power_of_attorney"]["representative_email_address"]).to eq expected_email
         expect(JSON.parse(subject.body)["power_of_attorney"]["representative_tz"]).to eq "America/Los_Angeles"
+      end
+    end
+  end
+
+  describe "#generate_report" do
+    let(:non_comp_org) { VhaBusinessLine.singleton }
+
+    context "business-line-slug is not found" do
+      it "returns 404" do
+        get :generate_report, params: { business_line_slug: "foobar" }
+
+        expect(response.status).to eq 404
+      end
+    end
+
+    context "user is not an org admin" do
+      it "returns unauthorized" do
+        get :generate_report, params: { business_line_slug: non_comp_org.url }
+
+        expect(response.status).to eq 302
+        expect(response.body).to match(/unauthorized/)
+      end
+    end
+
+    context "user is an org admin" do
+      let(:generate_report_filters) do
+        {
+          report: "event",
+          events: ["claim_created"],
+          timing: {
+            end_date: Time.zone.now,
+            start_date: Time.zone.now,
+            range: 3
+          },
+          conditions: {
+            days_waiting: {
+              range: "between",
+              number_of_days: 3,
+              start_date: Time.zone.now,
+              end_date: Time.zone.now
+            },
+            review_type: %w[higher_level_review supplemental_claim],
+            issue_type: ["Beneficiary Travel"],
+            disposition: %w[blank granted denied],
+            personnel: ["ACBAUERVVHAH"],
+            facility: [668, 669]
+          }
+        }
+      end
+
+      before do
+        OrganizationsUser.make_user_admin(user, non_comp_org)
+      end
+
+      it "renders the report generation template in HTML format" do
+        get :generate_report, format: :html, params: { business_line_slug: non_comp_org.url }
+
+        expect(response).to have_http_status(:success)
+        expect(response.headers["Content-Type"]).to eq("text/html; charset=utf-8")
+      end
+
+      it "renders the report generation action in a css format" do
+        get :generate_report, format: :csv,
+                              params: { business_line_slug: non_comp_org.url, filters: generate_report_filters }
+
+        expect(response.headers["Content-Type"]).to eq("text/csv")
+        expect(response.headers["Content-Disposition"]).to match(/^attachment; filename=\"vha-20180101.csv\"/)
+      end
+
+      it "calls MetricsService to record metrics" do
+        expect(MetricsService).to receive(:store_record_metric)
+        get :generate_report, format: :csv,
+                              params: { business_line_slug: non_comp_org.url, filters: generate_report_filters }
+
+        expect(response.status).to eq 200
+      end
+
+      context "missing filter parameters" do
+        it "raises a param is missing error when filters are missing" do
+          get :generate_report, format: :csv, params: { business_line_slug: non_comp_org.url }
+          expect(response).to have_http_status(:bad_request)
+          expect(response.content_type).to eq("application/json")
+          json_response = JSON.parse(response.body)
+          expect(json_response["error"]).to eq("param is missing or the value is empty: filters")
+        end
+      end
+
+      context "missing report parameter" do
+        it "raises a param is missing error when report type is missing from filters" do
+          params = { business_line_slug: non_comp_org.url, filters: generate_report_filters.except(:report) }
+          get :generate_report, format: :csv, params: params
+          expect(response).to have_http_status(:bad_request)
+          expect(response.content_type).to eq("application/json")
+          json_response = JSON.parse(response.body)
+          expect(json_response["error"]).to eq("param is missing or the value is empty: report")
+        end
       end
     end
   end
