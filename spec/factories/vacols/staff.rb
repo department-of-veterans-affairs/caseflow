@@ -4,12 +4,32 @@ FactoryBot.define do
   factory :staff, class: VACOLS::Staff do
     transient do
       user { nil }
-      sequence(:generated_slogid) { |n| "ID#{n}" }
+
+      generated_sattyid do
+        new_sattyid = generate(:sattyid)
+
+        new_sattyid = generate(:sattyid) while VACOLS::Staff.exists?(sattyid: new_sattyid)
+
+        new_sattyid
+      end
     end
 
-    sequence(:sattyid)
-    sequence(:stafkey)
-    slogid { generated_slogid }
+    sequence(:stafkey) do |n|
+      #  STAFKEY has maximum size of 16
+      if user && user.css_id.size <= 16
+        user.css_id
+      else
+        n
+      end
+    end
+    sequence(:slogid) do |n|
+      # Some tests use this for DECASS.DEMDUSR which has max size of 12
+      if user && user.css_id.size <= 12
+        user.css_id
+      else
+        "ID#{n}"
+      end
+    end
     sequence(:sdomainid) do |n|
       if user
         user.css_id
@@ -32,6 +52,12 @@ FactoryBot.define do
     trait :judge_role do
       svlj { "J" }
       sactive { "A" }
+    end
+
+    trait :inactive_judge do
+      svlj { "J" }
+      sactive { "I" }
+      sattyid { generated_sattyid }
     end
 
     trait :hearing_coordinator do
