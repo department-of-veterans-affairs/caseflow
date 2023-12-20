@@ -7,7 +7,7 @@ require_relative "../../../app/services/claim_change_history/change_history_filt
 
 feature "NonComp Report Page", :postgres do
   let(:non_comp_org) { VhaBusinessLine.singleton }
-  let(:user) { create(:default_user) }
+  let(:user) { create(:default_user, css_id: "REPORT USER", full_name: "Report User") }
   let(:vha_report_url) { "/decision_reviews/vha/report" }
 
   before do
@@ -309,7 +309,7 @@ feature "NonComp Report Page", :postgres do
   end
 
   def change_history_csv_file
-    wait_for(3)
+    wait_for(5)
     # Copied from Capybara setup
     download_directory = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
     list_of_files = Dir.glob(File.join(download_directory, "*")).select { |f| File.file?(f) }
