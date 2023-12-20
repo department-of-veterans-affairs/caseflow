@@ -183,6 +183,7 @@ const PackageActionModal = (props) => {
           name={modalInfo.label}
           aria-label={modalInfo.label}
           value={textInputReason}
+          placeholder={modalInfo.placeholder}
           onChange={(value) => setTextInputReason(value)}
         />
       )}
