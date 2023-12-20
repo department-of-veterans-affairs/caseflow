@@ -21,7 +21,6 @@ module ByDocketDateDistribution
     @rem = batch_size
     @nonpriority_iterations = 0
     @request_priority_count = priority_target
-    @original_batch_size = batch_size
 
     # If we haven't yet met the priority target, distribute additional priority appeals.
     priority_rem = priority_target.clamp(0, @rem)
@@ -31,7 +30,6 @@ module ByDocketDateDistribution
       # Distribute the oldest nonpriority appeals from any docket if we haven't distributed {batch_size} appeals
       distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem) until @rem <= 0
     end
-    @final_rem = @rem
     @appeals
   end
 
@@ -76,8 +74,6 @@ module ByDocketDateDistribution
 
     {
       batch_size: @appeals.count,
-      final_rem: @final_rem,
-      orignal_batch_size: @original_batch_size,
       total_batch_size: total_batch_size,
       priority_target: @push_priority_target || @request_priority_count,
       priority: priority_counts,

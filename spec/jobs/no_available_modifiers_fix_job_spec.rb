@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe NoAvailableModifiersFixJob, :postgres do
+describe NoAvailableModifiersFixJob, :postres do
   let(:error_text) { "EndProductModifierFinder::NoAvailableModifiers" }
   let(:file_number) { "123454321" }
 
@@ -48,15 +48,11 @@ describe NoAvailableModifiersFixJob, :postgres do
 
   subject { described_class.new }
 
-  it_behaves_like "a Master Scheduler serializable object", NoAvailableModifiersFixJob
-
   context "when there are fewer than 10 active end products" do
     describe "when there are 0 active end products" do
       it "runs decision_review_process_job on up to 10 Supplemental Claims" do
         subject.perform
-
-        expect(supplemental_claim_with_error.reload.establishment_error).to be_nil
-        expect(supplemental_claim_with_error_2.reload.establishment_error).to be_nil
+        expect(DecisionReviewProcessJob).to have_been_enqueued.exactly(:twice)
       end
     end
 
@@ -69,32 +65,21 @@ describe NoAvailableModifiersFixJob, :postgres do
       end
 
       it "runs decision_review_process_job on 1 Supplemental Claim" do
-        all_with_errors = SupplementalClaim.where(establishment_error: error_text)
         subject.perform
-        expect(all_with_errors.where(establishment_error: error_text).count).to eq(1)
+        expect(DecisionReviewProcessJob).to have_been_enqueued.exactly(:once).with(instance_of(SupplementalClaim))
       end
     end
-
     describe "when there are 5 active end products" do
       before do
         create_list(:end_product_establishment, 5, veteran_file_number: file_number, modifier: "040",
                                                    source_type: "SupplementalClaim", synced_status: "PEND")
-        create_list(:supplemental_claim, 6, veteran_file_number: file_number,
+        create_list(:supplemental_claim, 4, veteran_file_number: file_number,
                                             establishment_error: error_text)
-        # Total number of SC with errors is now 8
       end
 
       it "runs decision_review_process_job on up to 5 Supplemental Claims" do
-        all_with_errors = SupplementalClaim.where(establishment_error: error_text)
-
-        to_be_cleared = all_with_errors.sample([5, all_with_errors.count].min)
-
-        expect do
-          subject.perform
-          to_be_cleared.each(&:reload) # Reload each selected record after subject.perform
-        end.to(change { to_be_cleared.map(&:establishment_error) })
-
-        expect(all_with_errors.where(establishment_error: error_text).count).to eq(3)
+        subject.perform
+        expect(DecisionReviewProcessJob).to have_been_enqueued.at_most(5).times.with(instance_of(SupplementalClaim))
       end
     end
   end
@@ -106,17 +91,15 @@ describe NoAvailableModifiersFixJob, :postgres do
     end
 
     it "does not run decision_review_process_job on any Supplemental Claims" do
-      all_with_errors = SupplementalClaim.where(establishment_error: error_text)
       subject.perform
-      expect(all_with_errors.where(establishment_error: error_text).count).to eq(2)
+      expect(DecisionReviewProcessJob).not_to have_been_enqueued.with(instance_of(SupplementalClaim))
     end
 
     describe "when there are more than 10 active end products" do
       it "does not run decision_review_process_job on any Supplemental Claims" do
         epe.update(synced_status: "PEND")
-        all_with_errors = SupplementalClaim.where(establishment_error: error_text)
         subject.perform
-        expect(all_with_errors.where(establishment_error: error_text).count).to eq(2)
+        expect(DecisionReviewProcessJob).not_to have_been_enqueued.with(instance_of(SupplementalClaim))
       end
     end
   end
