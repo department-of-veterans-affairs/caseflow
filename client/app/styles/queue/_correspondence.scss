@@ -94,3 +94,96 @@
     grid-template-rows: repeat(auto-fill, 1fr);
   }
 }
+
+//Intake Form Styling
+.corr {
+  color: $color-black;
+  padding: 3rem 4rem;
+
+  p {
+    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+    font-size: 1.8rem;
+    color: $color-black;
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+
+  h1 {
+    text-align: left;
+    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+    font-weight: 800;
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    padding-top: 30px;
+    margin-bottom: 20px;
+    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+    font-weight: 800;
+  }
+
+  section {
+    background-color: $caseflow-background;
+  }
+
+  button {
+    display: inline-block;
+    padding-top: 30px;
+    padding-right: 10px;
+  }
+
+  table {
+    margin-bottom: -2vh;
+    margin-top: 2vh;
+  }
+
+  tablebody {
+    background-color: $caseflow-background;
+    border-bottom: 0;
+    border-color: $color-gray-lighter;
+    padding-top: 0vh;
+    padding-bottom: 0vh;
+  }
+
+.corr-icon {
+  position:absolute;
+}
+
+.corr-sectionlink {
+  margin-left: 20px;
+  padding-right: 10px;
+}
+
+.corr-flex {
+    display: flex;
+  }
+
+.corr-autoleft {
+    margin-left: auto;
+}
+
+// ===========================*
+// Alternate Borderless (no bottom border)
+// ===========================*
+.corr-table-borderless {
+  background-color: $caseflow-background;
+
+  width: 100%;
+  margin-bottom: 0px;
+
+  th,
+  td {
+    border: 0;
+    background-color: $caseflow-background;
+    padding-top: 2rem;
+    padding-bottom: 0;
+  }
+
+  td {
+    margin: 2px;
+    padding-top: 0;
+    padding-bottom: 25px;
+    }
+}
+
+}

@@ -8,10 +8,11 @@ import CorrespondenceDetailsTable from './CorrespondenceDetailsTable';
 import ConfirmTasksNotRelatedToAnAppeal from './ConfirmTasksNotRelatedToAnAppeal';
 import Table from '../../../../../components/Table';
 import ConfirmTasksRelatedToAnAppeal from './ConfirmTasksRelatedToAnAppeal';
+import { COLORS } from '../../../../../constants/AppConstants';
 
 const bodyStyling = css({
   '& > tr > td': {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: COLORS.GREY_BACKGROUND,
     borderBottom: 'none',
     borderColor: '#d6d7d9',
     paddingTop: '0vh',
@@ -24,7 +25,7 @@ const tableStyling = css({
   marginTop: '2vh'
 });
 const bottonStyling = css({
-  paddingRight: '0px'
+  paddingRight: '10px'
 });
 
 export const ConfirmCorrespondenceView = (props) => {
@@ -124,59 +125,44 @@ export const ConfirmCorrespondenceView = (props) => {
   };
 
   return (
-    <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
-      <h1 style={{ marginBottom: '10px' }}>Review and Confirm Correspondence</h1>
-      <p style={{ fontSize: '.85em' }}>
+    <div className="gray-border corr">
+      <h1 className="corr-h1">Review and Confirm Correspondence</h1>
+      <p className="corr-p">
         Review the details below to make sure the information is correct before submitting.
         If you need to make changes, please go back to the associated section.
       </p>
-      <br></br>
+      <CorrespondenceDetailsTable />
       <div>
-        <CorrespondenceDetailsTable />
-      </div>
-      <div>
-        <div style={{ display: 'flex' }}>
-          <h2 style={{ margin: '1px 0 15px 0',
-            display: 'inline-block' }}>
-                Associated Prior Mail
-          </h2>
-          <div style={{ marginLeft: 'auto' }}>
-            <Button styling={bottonStyling} linkStyling onClick={() => props.goToStep(1)}>
-              <div style={{ marginLeft: 'auto' }}>
-                <span {...css({ position: 'absolute' })}><PencilIcon /></span>
-                <span {...css({ marginLeft: '20px' })}>Edit Section</span>
-              </div>
+        <div className="corr-flex">
+          <h2 className="corr-h2">Associated Prior Mail</h2>
+          <div className="corr-autoleft">
+            <Button className="corr-button" linkStyling onClick={() => props.goToStep(1)}>
+              <span className="corr-icon"><PencilIcon /></span>
+              <span className="corr-sectionlink">Edit Section</span>
             </Button>
           </div>
         </div>
-
-        <div {...css({ backgroundColor: '#f5f5f5', marginBottom: '20px' })}>
-
-          <div {...css({ backgroundColor: '#f5f5f5', padding: '20px' })}>
+        <div {...css({ backgroundColor: COLORS.GREY_BACKGROUND})}>
+          <div {...css({ backgroundColor: COLORS.GREY_BACKGROUND, padding: '20px' })}>
             <Table
               columns={getDocumentColumns}
               // columnsToDisplay={15}
               rowObjects={relatedCorrespondences}
-              bodyStyling= {bodyStyling}
-              styling={tableStyling}
-            />
-
+              styling="corr-table"
+              bodyStyling="corr-tablebody" />
           </div>
         </div>
-        <div style={{ display: 'flex' }}>
-          <h2 style={{
-            margin: '1px 0 15px 0',
-            display: 'inline-block',
-            marginLeft: '0px'
-          }}>Completed Mail Tasks</h2>
-          <div style={{ marginLeft: 'auto' }}>
-            <Button styling={bottonStyling} linkStyling onClick={() => props.goToStep(2)}>
-              <span {...css({ position: 'absolute' })}><PencilIcon /></span>
-              <span {...css({ marginLeft: '20px' })}>Edit Section</span>
+      </div>
+      <div>
+        <div className="corr-flex">
+          <h2 className="corr-h2">Completed Mail Tasks</h2>
+          <div className="corr-autoleft">
+            <Button className="corr-button" linkStyling onClick={() => props.goToStep(2)}>
+              <span className="corr-icon"><PencilIcon /></span>
+              <span className="corr-sectionlink">Edit Section</span>
             </Button>
           </div>
-        </div>
-        <div {...css({ backgroundColor: '#f5f5f5', padding: '20px', marginBottom: '20px' })}>
+        </div><div {...css({ backgroundColor: COLORS.GREY_BACKGROUND, padding: '20px' })}>
           <div {...css({
             borderBottom: '1px solid #d6d7d9',
             padding: '10px 0px',
@@ -200,30 +186,22 @@ export const ConfirmCorrespondenceView = (props) => {
         </div>
       </div>
       <div>
-        <div style={{ display: 'flex' }}>
-          <h2 style={{
-            margin: '1px 0 15px 0',
-            display: 'inline-block',
-            marginLeft: '0px'
-          }}>Tasks not related to an Appeal</h2>
-          <div style={{ marginLeft: 'auto' }}>
-            <Button styling={bottonStyling} linkStyling onClick={() => props.goToStep(2)}>
-              <span {...css({ position: 'absolute' })}><PencilIcon /></span>
-              <span {...css({ marginLeft: '20px' })}>Edit Section</span>
+        <div className="corr-flex">
+          <h2 className="corr-h2">Tasks not related to an Appeal</h2>
+          <div className="corr-autoleft">
+            <Button className="corr-button" linkStyling onClick={() => props.goToStep(2)}>
+              <span className="corr-icon"><PencilIcon /></span>
+              <span className="corr-sectionlink">Edit Section</span>
             </Button>
           </div>
         </div>
         <ConfirmTasksNotRelatedToAnAppeal />
-        <div style={{ display: 'flex' }}>
-          <h2 style={{
-            margin: '1px 0 15px 0',
-            display: 'inline-block',
-            marginLeft: '0px'
-          }}>Linked Appeals & New Tasks</h2>
-          <div style={{ marginLeft: 'auto' }}>
-            <Button styling={bottonStyling} linkStyling onClick={() => props.goToStep(2)}>
-              <span {...css({ position: 'absolute' })}><PencilIcon /></span>
-              <span {...css({ marginLeft: '20px' })}>Edit Section</span>
+        <div className="corr-flex">
+          <h2 className="corr-h2">Linked Appeals & New Tasks</h2>
+          <div className="corr-autoleft">
+            <Button className="corr-button" linkStyling onClick={() => props.goToStep(2)}>
+              <span className="corr-icon"><PencilIcon /></span>
+              <span className="corr-sectionlink">Edit Section</span>
             </Button>
           </div>
         </div>

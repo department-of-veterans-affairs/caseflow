@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { COLORS } from '../../../../../constants/AppConstants';
 
 const styling = { backgroundColor: '#f5f5f5' };
 
@@ -10,10 +11,10 @@ const ConfirmTasksNotRelatedToAnAppeal = () => {
     return (
       <tr key={task.id}>
         <td
-          style={{ backgroundColor: '#f5f5f5', borderTop: '1px solid #dee2e6', width: '20%' }}>
+          style={{ backgroundColor: COLORS.GREY_BACKGROUND, borderTop: '1px solid #dee2e6', width: '20%' }}>
           {task.label}
         </td>
-        <td style={{ backgroundColor: '#f5f5f5', borderTop: '1px solid #dee2e6' }}>
+        <td style={{ backgroundColor: COLORS.GREY_BACKGROUND, borderTop: '1px solid #dee2e6' }}>
           {task.content}
         </td>
       </tr>
@@ -25,7 +26,7 @@ const ConfirmTasksNotRelatedToAnAppeal = () => {
       <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
       </div>
       <div
-        style={{ background: '#f5f5f5', padding: '2rem', paddingTop: '0.5rem', marginBottom: '2rem' }}>
+        style={{ background: COLORS.GREY_BACKGROUND, padding: '2rem', paddingTop: '0.5rem' }}>
         <table className="usa-table-borderless">
           <thead>
             <tr>
