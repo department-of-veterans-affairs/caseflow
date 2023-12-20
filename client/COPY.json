@@ -1410,7 +1410,7 @@
   "EMPLOYER_IDENTIFICATION_NUMBER": "Employer Identification Number",
   "PACKAGE_ACTION_MERGE_DESCRIPTION": "By confirming, you will send a request for the supervisor to take action on the following package:",
   "PACKAGE_ACTION_MERGE_TITLE": "Request merge",
-  "PACKAGE_ACTION_MERGE_TEXTAREA_LABEL": "Select a reason for merging this package",
+  "PACKAGE_ACTION_MERGE_TEXTAREA_LABEL": "Reason for merge",
   "PACKAGE_ACTION_MERGE_RADIO_LABEL": "Select a reason for merging this package.",
   "PACKAGE_ACTION_MODAL_DESCRIPTION": "By confirming, you will send a request for the supervisor to take action on the following package:",
   "PACKAGE_ACTION_REMOVAL_TITLE": "Request package removal",
