@@ -12,7 +12,7 @@ import Modal from '../../../components/Modal';
 import Button from '../../../components/Button';
 
 const modalStyle = css({
-  width: '25%'
+  width: '32%'
 });
 
 class EditDocumentTypeModal extends React.Component {
