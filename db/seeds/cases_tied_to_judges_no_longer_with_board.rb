@@ -319,11 +319,12 @@ module Seeds
     # Creates the video hearing request
     def create_video_vacols_case(veteran, correspondent, judge)
       create(
-        :case,
+        :case_with_form_9,
         :tied_to_judge,
         :video_hearing_requested,
-        :type_original,
+        :type_cavc_remand,
         :ready_for_distribution,
+        :status_active,
         tied_judge: judge,
         correspondent: correspondent,
         bfcorlid: "#{veteran.file_number}S",

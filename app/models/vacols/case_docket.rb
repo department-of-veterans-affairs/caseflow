@@ -432,15 +432,15 @@ class VACOLS::CaseDocket < VACOLS::Record
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
     query = if use_by_docket_date?
               <<-SQL
-        #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
-        where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
-        and (rownum <= ? or 1 = ?)
+                #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
+                where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
+                and (rownum <= ? or 1 = ?)
               SQL
             else
               <<-SQL
-        #{SELECT_PRIORITY_APPEALS}
-        where (((VLJ = ? or (VLJ in (?) and 1 = ?)) and 1 = ?) or (VLJ is null and 1 = ?))
-        and (rownum <= ? or 1 = ?)
+                #{SELECT_PRIORITY_APPEALS}
+                where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
+                and (rownum <= ? or 1 = ?)
               SQL
             end
 
