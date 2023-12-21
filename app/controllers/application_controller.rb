@@ -107,10 +107,6 @@ class ApplicationController < ApplicationBaseController
   def application_urls
     urls = []
     urls << queue_application_url
-    
-    if current_user.present? && current_user&.organizations && current_user&.organizations&.any?(&:users_can_view_levers?)
-      urls << case_distribution_url
-    end
 
     urls << hearing_application_url if current_user.hearings_user?
 
@@ -225,6 +221,10 @@ class ApplicationController < ApplicationBaseController
   def dropdown_urls
     urls = defult_menu_items
     urls.concat(admin_menu_items)
+
+    if current_user.present? && current_user&.organizations && current_user&.organizations&.any?(&:users_can_view_levers?)
+      urls << case_distribution_url
+    end
 
     if current_user.present?
       urls.append(title: "Sign Out", link: url_for(controller: "/sessions", action: "destroy"), border: true)
