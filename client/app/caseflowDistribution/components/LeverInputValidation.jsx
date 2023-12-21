@@ -2,20 +2,20 @@
 import PropTypes from 'prop-types';
 
 const leverInputValidation = (lever, event, currentMessageState, option) => {
+  let maxValue = 999;
 
   const checkIsInRange = () => {
     let validNumber = (/^\d{1,10}$/).test(event);
     let withinLimits = ((lever.min_value) <= event);
 
     //Max value to override lever database maximums on majority levers
-    let maxValue = 999;
 
     if (lever.data_type === 'radio') {
 
       withinLimits = ((option.min_value) <= event && event <= maxValue);
-    }else {
+    } else {
 
-      withinLimits = ((option.min_value) <= event);
+      withinLimits = ((lever.min_value) <= event);
     }
 
     if (validNumber && withinLimits) {
@@ -41,11 +41,11 @@ const leverInputValidation = (lever, event, currentMessageState, option) => {
     }
   } else if (lever.data_type === 'radio') {
     updatedMessages = { ...currentMessageState,
-      [`${lever.item}-${option.item}`]: `Please enter a value from ${ option.min_value } to ${ option.max_value }`
+      [`${lever.item}-${option.item}`]: `Please enter a value from ${ option.min_value } to ${ maxValue }`
     };
   } else {
     updatedMessages = { ...currentMessageState,
-      [lever.item]: `Please enter a value from ${ lever.min_value } to ${ lever.max_value }`
+      [lever.item]: `Please enter a value greater than or equal to ${ lever.min_value }`
     };
   }
 
