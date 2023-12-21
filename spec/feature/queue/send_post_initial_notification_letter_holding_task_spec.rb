@@ -54,8 +54,8 @@ RSpec.feature "Send Post Initial Notification Letter Holding Tasks", :all_dbs do
       expect(page).to have_content(Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING.label)
     end
 
-    it "resend initial notification action
-    creates initial notification task and completes the post initial notification holding task" do
+    it "resend initial notification action" \
+    "creates initial notification task and completes the post initial notification holding task" do
       initial_letter_task.completed!
       visit("/queue")
       visit("/queue/appeals/#{post_letter_task.appeal.external_id}")
