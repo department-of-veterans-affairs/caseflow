@@ -36,7 +36,7 @@ class ChangeHistoryReporter
       value_str = if value.is_a?(Array)
                     "[#{value.join(', ')}]"
                   elsif value.is_a?(Hash)
-                    "[#{value.map { |k, v| "#{k}: #{v || 'None'}" }.join(', ')}]"
+                    "[#{value.map { |key2, value2| "#{key2}: #{value2 || 'None'}" }.join(', ')}]"
                   else
                     value.to_s
                   end
