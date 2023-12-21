@@ -84,7 +84,7 @@ export const CorrespondenceReviewPackage = (props) => {
         setIsReadOnly(true);
       }
     } catch (error) {
-      throw error();
+      console.error(error);
     }
   };
 

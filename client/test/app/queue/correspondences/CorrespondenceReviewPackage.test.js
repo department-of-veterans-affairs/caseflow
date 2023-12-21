@@ -44,6 +44,7 @@ describe('CorrespondenceReviewPackage', () => {
       correspondenceId: '123',
     };
   });
+
   test('render modal', async () => {
     render(
       <Provider store={store}>
@@ -64,8 +65,8 @@ describe('CorrespondenceReviewPackage', () => {
 
     fireEvent.click(closeButton);
     expect(screen.queryByText('Cancel review of mail package')).not.toBeInTheDocument();
-
   });
+
   test('renders modal with correct title, buttons, and text', async () => {
     render(
       <Provider store={store}>
@@ -87,7 +88,6 @@ describe('CorrespondenceReviewPackage', () => {
 
     expect(closeButton).toBeInTheDocument();
     expect(cancelReviewButton).toBeInTheDocument();
-
   });
 
   test('redirect page when Cancel review is clicked', async () => {
@@ -119,6 +119,5 @@ describe('CorrespondenceReviewPackage', () => {
       expect(history.location.pathname).toBe('/queue/correspondence');
     });
   });
-
 });
 
