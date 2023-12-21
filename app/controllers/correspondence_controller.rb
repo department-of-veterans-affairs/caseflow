@@ -250,7 +250,10 @@ class CorrespondenceController < ApplicationController
       file_number: vet.file_number,
       veteran_name: vet.name,
       correspondence_type_id: correspondence.correspondence_type_id,
-      correspondence_types: CorrespondenceType.all
+      correspondence_types: CorrespondenceType.all,
+      correspondence_tasks: correspondence.tasks.map do |task|
+        WorkQueue::CorrespondenceTaskSerializer.new(task).serializable_hash[:data][:attributes]
+      end
     }
   end
 
