@@ -48,20 +48,20 @@ class CaseDistributionLeversTestsController < ApplicationController
   end
 
   def appeals_ready_to_distribute
-    # Call the BatchAppealsForReaderQuery to get results
-    results = BatchAppealsForReaderQuery.process
+    results = AppealsReadyForDistribute.process
 
     # Get the current date and time for dynamic filename
     current_datetime = Time.now.strftime('%Y%m%d-%H%M')
 
     # Convert results to CSV format
+
     csv_data = CSV.generate(headers: true) do |csv|
       # Add headers to CSV
-      csv << ['CSS ID', 'Full Name', 'Status']
+      csv << ['UUID']
 
       # Iterate through results and add each row to CSV
       results.each do |record|
-        csv << [record[0].css_id, record[0].full_name, record[0].status]
+        csv << [record.uuid]
       end
     end
 
@@ -73,7 +73,7 @@ class CaseDistributionLeversTestsController < ApplicationController
   end
 
   def appeals_distributed
-    # Call the BatchAppealsForReaderQuery to get results
+    # change this to the correct class
     results = BatchAppealsForReaderQuery.process
 
     # Get the current date and time for dynamic filename
