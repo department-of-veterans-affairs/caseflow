@@ -69,10 +69,12 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
       MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       correspondence.update(veteran: veteran)
+      appeal_ids = esw_tasks.map { |task| Task.find(task[:task_id]).appeal.id }
       post :process_intake, params: {
         correspondence_uuid: correspondence.uuid,
         related_correspondence_uuids: related_correspondence_uuids,
-        waived_evidence_submission_window_tasks: esw_tasks
+        waived_evidence_submission_window_tasks: esw_tasks,
+        related_appeal_ids: appeal_ids
       }
     end
     it "responds with created status" do

@@ -81,7 +81,7 @@ export const getPackageActionColumns = (dropdownType) => {
           </span>
         ),
         valueFunction: (row) => {
-          const vaDate = moment(row.correspondence.va_date_of_receipt).format('MM/DD/YYYY');
+          const vaDate = moment.utc(row.correspondence.va_date_of_receipt).format('MM/DD/YYYY');
 
           return (
             <span className="veteran-info-value">
@@ -105,7 +105,8 @@ export const getModalInformation = (dropdownType) => {
       title: PACKAGE_ACTION_MERGE_TITLE,
       description: PACKAGE_ACTION_MERGE_DESCRIPTION,
       label: PACKAGE_ACTION_MERGE_TEXTAREA_LABEL,
-      radioLabel: PACKAGE_ACTION_MERGE_RADIO_LABEL
+      radioLabel: PACKAGE_ACTION_MERGE_RADIO_LABEL,
+      placeholder: 'This is a reason for merge',
     };
   case 'removePackage':
     return {
