@@ -178,8 +178,8 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         find_by_id("react-select-2-option-1").click
         find_by_id("content").fill_in with: "Correspondence Text"
 
-        # may need to add another remove task here if that is expected functionality.
-        # bug where "remove task" option does not show with a single task would need to be fixed first
+        # will need to add another "remove task" test if only one task exists.
+        # currently a bug exists where "remove task" option does not show with a single task
         expect(page.all("#button-Remove").length).to_not eq(2)
 
         page.all("#button-addTasks").first.click

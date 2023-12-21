@@ -47,9 +47,6 @@ class AppealsUpdatedSinceQuery
 
   def updated_since_for_appeals_relations
     association_names.map do |association_name|
-      # next if association_name == "correspondences_appeals" || association_name == 'correspondences'
-
-      puts association_name
       association = Appeal.reflections[association_name]
       assoc_klass = association.klass
       assoc_klass.updated_since_for_appeals(since_date)
