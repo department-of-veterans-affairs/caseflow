@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
-import { css } from 'glamor';
+import { css, valid } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';
 import TextField from 'app/components/TextField';
 import COPY from '../../../COPY';
+import leverInputValidation from './LeverInputValidation';
 
 const AffinityDays = (props) => {
   const { leverList, leverStore } = props;
@@ -22,31 +23,44 @@ const AffinityDays = (props) => {
   const errorMessages = {};
   const [affinityLevers, setAffinityLevers] = useState(filteredLevers);
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
-  const leverInputValidation = (lever, event) => {
-    let rangeError = !(/^\d{1,3}$/).test(event);
+  // const leverInputValidation = (lever, event) => {
+  //   let rangeError = !(/^\d{1,3}$/).test(event);
 
-    if (rangeError) {
-      setErrorMessages({ ...errorMessagesList, [lever.item]: 'Please enter a value less than or equal to 999' });
+  //   if (rangeError) {
+  //     setErrorMessages({ ...errorMessagesList, [lever.item]: 'Please enter a value less than or equal to 999' });
 
-      return 'FAIL';
-    }
-    setErrorMessages({ ...errorMessagesList, [lever.item]: null });
+  //     return 'FAIL';
+  //   }
+  //   setErrorMessages({ ...errorMessagesList, [lever.item]: null });
 
-    return 'SUCCESS';
-  };
+  //   return 'SUCCESS';
+  // };
   const updatedLever = (lever, option) => (event) => {
     const levers = affinityLevers.map((individualLever) => {
       if (individualLever.item === lever.item) {
         const updatedOptions = individualLever.options.map((op) => {
           if (op.item === option.item) {
-            let validationResponse = leverInputValidation(individualLever, event);
+            let validationResponse = leverInputValidation(lever, event, errorMessagesList, op);
             const newValue = isNaN(event) ? event : individualLever.value;
-
-            if (validationResponse === 'SUCCESS') {
+            console.log("VALIDATION RESPONSE", validationResponse);
+            if (validationResponse.statement === 'SUCCESS') {
               op.value = event;
+              op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
+              setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
               leverStore.dispatch({
                 type: Constants.UPDATE_LEVER_VALUE,
-                updated_lever: { item: individualLever.item, value: newValue }
+                updated_lever: { item: individualLever.item, value: newValue },
+                validChange: true
+              });
+            }
+            if (validationResponse.statement === 'FAIL') {
+              op.value = event;
+              op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
+              setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
+              leverStore.dispatch({
+                type: Constants.UPDATE_LEVER_VALUE,
+                updated_lever: { item: individualLever.item, value: newValue },
+                validChange: false
               });
             }
           }
@@ -76,7 +90,8 @@ const AffinityDays = (props) => {
       setAffinityLevers(updatedLevers);
       leverStore.dispatch({
         type: Constants.UPDATE_LEVER_VALUE,
-        updated_lever: { item: lever.item, value: option.item }
+        updated_lever: { item: lever.item, value: option.item },
+        validChange: true
       });
     }
   };

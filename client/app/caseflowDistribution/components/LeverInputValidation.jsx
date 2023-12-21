@@ -1,8 +1,22 @@
 
-const leverInputValidation = (lever, event, currentMessageState) => {
+import PropTypes from 'prop-types';
+
+const leverInputValidation = (lever, event, currentMessageState, option) => {
+
   const checkIsInRange = () => {
-    let validNumber = (/^\d{1,5}$/).test(event);
-    let withinLimits = ((lever.min_value) <= event && event <= (lever.max_value));
+    let validNumber = (/^\d{1,10}$/).test(event);
+    let withinLimits = ((lever.min_value) <= event);
+
+    //Max value to override lever database maximums on majority levers
+    let maxValue = 999;
+
+    if (lever.data_type === 'radio') {
+
+      withinLimits = ((option.min_value) <= event && event <= maxValue);
+    }else {
+
+      withinLimits = ((option.min_value) <= event);
+    }
 
     if (validNumber && withinLimits) {
       return true;
@@ -14,9 +28,21 @@ const leverInputValidation = (lever, event, currentMessageState) => {
   let updatedMessages = {};
   let response = {};
 
-  // Checks if value is a valid digit and within the min / max value for the lever.
+  // Checks if value is a valid digit and within the min / max value for the lever requirements.
   if (checkIsInRange()) {
-    updatedMessages = { ...currentMessageState, [lever.item]: null };
+    if (lever.data_type === 'radio') {
+      if (updatedMessages) {
+        updatedMessages = {};
+      } else {
+        updatedMessages = { ...currentMessageState, [`${lever.item}-${option.item}`]: null };
+      }
+    } else {
+      updatedMessages = { ...currentMessageState, [lever.item]: null };
+    }
+  } else if (lever.data_type === 'radio') {
+    updatedMessages = { ...currentMessageState,
+      [`${lever.item}-${option.item}`]: `Please enter a value from ${ option.min_value } to ${ option.max_value }`
+    };
   } else {
     updatedMessages = { ...currentMessageState,
       [lever.item]: `Please enter a value from ${ lever.min_value } to ${ lever.max_value }`
@@ -46,6 +72,11 @@ const leverInputValidation = (lever, event, currentMessageState) => {
   return response;
 };
 
-leverInputValidation.propTypes = {};
+leverInputValidation.propTypes = {
+  lever: PropTypes.object,
+  event: PropTypes.integer,
+  currentMessageState: PropTypes.object,
+  option: PropTypes.object,
+};
 
 export default leverInputValidation;
