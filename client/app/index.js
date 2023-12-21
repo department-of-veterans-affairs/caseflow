@@ -93,7 +93,7 @@ const COMPONENTS = {
   Inbox,
   Explain,
   MPISearch,
-  Admin
+  Admin,
 };
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
