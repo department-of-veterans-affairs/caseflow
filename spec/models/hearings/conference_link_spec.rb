@@ -20,7 +20,9 @@ describe ConferenceLink do
       let(:user) { create(:user) }
       it "raises the missing PIN key error" do
         RequestStore[:current_user] = user
-        expect { described_class.create(hearing_day_id: hearing_day.id) }.to raise_error VirtualHearings::LinkService::PINKeyMissingError
+        expect do
+          described_class.create(hearing_day_id: hearing_day.id)
+        end.to raise_error VirtualHearings::LinkService::PINKeyMissingError
       end
     end
 
@@ -33,7 +35,11 @@ describe ConferenceLink do
       let(:user) { create(:user) }
       it "raises the missing host error" do
         RequestStore[:current_user] = user
-        expect { described_class.create(hearing_day_id: hearing_day.id) }.to raise_error VirtualHearings::LinkService::URLHostMissingError
+        expect do
+          described_class.create(
+            hearing_day_id: hearing_day.id
+          )
+        end .to raise_error VirtualHearings::LinkService::URLHostMissingError
       end
     end
 
@@ -46,7 +52,11 @@ describe ConferenceLink do
       let(:user) { create(:user) }
       it "raises the missing path error" do
         RequestStore[:current_user] = user
-        expect { described_class.create(hearing_day_id: hearing_day.id) }.to raise_error VirtualHearings::LinkService::URLPathMissingError
+        expect do
+          described_class.create(
+            hearing_day_id: hearing_day.id
+          )
+        end .to raise_error VirtualHearings::LinkService::URLPathMissingError
       end
     end
 
@@ -55,7 +65,11 @@ describe ConferenceLink do
       let(:user) { create(:user) }
       it "raises the missing PIN key error" do
         RequestStore[:current_user] = user
-        expect { described_class.create(hearing_day_id: hearing_day.id) }.to raise_error VirtualHearings::LinkService::PINKeyMissingError
+        expect do
+          described_class.create(
+            hearing_day_id: hearing_day.id
+          )
+        end .to raise_error VirtualHearings::LinkService::PINKeyMissingError
       end
     end
   end
@@ -145,9 +159,9 @@ describe ConferenceLink do
 
     let(:conference_link) do
       create(:conference_link,
-            hearing_day_id: hearing_day.id,
-            guest_hearing_link: nil,
-            guest_pin_long: "7470125694")
+             hearing_day_id: hearing_day.id,
+             guest_hearing_link: nil,
+             guest_pin_long: "7470125694")
     end
 
     context "guest_pin_long property already has a pin as a value" do
@@ -183,14 +197,16 @@ describe ConferenceLink do
 
     let(:conference_link) do
       create(:conference_link,
-            hearing_day_id: hearing_day.id,
-            guest_hearing_link: existing_url,
-            guest_pin_long: nil)
+             hearing_day_id: hearing_day.id,
+             guest_hearing_link: existing_url,
+             guest_pin_long: nil)
     end
 
-    let(:existing_url) { "https://example.va.gov/sample/?" \
+    let(:existing_url) do
+      "https://example.va.gov/sample/?" \
       "conference=BVA0000001@example.va.gov&" \
-      "pin=7470125694&callType=video" }
+      "pin=7470125694&callType=video"
+    end
 
     context "guest_hearing_link property already has a link/string as a value" do
       it "Returns the guest_pin for the conference_link" do
@@ -205,12 +221,14 @@ describe ConferenceLink do
         expect(conference_link.guest_hearing_link).to eq(existing_url)
       end
     end
+    # rubocop:disable Metrics/LineLength
     context "If alias_name(aliased for the alias property) is nil AND guest_hearing_link is nil and alias_with_host is NOT nil" do
       it "creates a guest_hearing_link updates the property and updates the alias property" do
-        conference_link.update!(alias: nil, guest_hearing_link: nil, alias_with_host: "BVA0000001@example.va.gov" )
+        conference_link.update!(alias: nil, guest_hearing_link: nil, alias_with_host: "BVA0000001@example.va.gov")
         conference_link.guest_link
         expect(conference_link.guest_hearing_link).to eq(existing_url)
       end
     end
+    # rubocop:enable Metrics/LineLength
   end
 end
