@@ -1126,7 +1126,10 @@ RSpec.feature "Case details", :all_dbs do
       }
     end
     let!(:rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
-    let!(:appeal_serializer) { WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash }
+    let!(:appeal_serializer) do
+      WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
+    end
+
     before do
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:split_appeal_workflow)
@@ -1152,7 +1155,10 @@ RSpec.feature "Case details", :all_dbs do
       }
     end
     let!(:rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
-    let!(:appeal_serializer) { WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash }
+    let!(:appeal_serializer) do
+      WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
+    end
+
     before do
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:split_appeal_workflow)
@@ -2320,7 +2326,7 @@ RSpec.feature "Case details", :all_dbs do
         end
 
         context "when we click into the case details page from the queue table view" do
-          it "displays a loading failed message on the case details page" do
+          it "displays a 1129 failed message on the case details page" do
             visit(queue_home_path)
             click_on("#{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
             expect(page).to have_content(COPY::ACCESS_DENIED_TITLE)

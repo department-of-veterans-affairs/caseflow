@@ -56,7 +56,8 @@ RSpec.feature "Send Initial Notification Letter Tasks", :all_dbs do
       expect(appeal_initial_letter_task.status).to eq("completed")
     end
 
-    it "proceed to final notification action creates final notification task and completes the initial notification task" do
+    it "proceed to final notification action
+    creates final notification task and completes the initial notification task" do
       visit("/queue")
       visit("/queue/appeals/#{initial_letter_task.appeal.external_id}")
       prompt = COPY::TASK_ACTION_DROPDOWN_BOX_LABEL
