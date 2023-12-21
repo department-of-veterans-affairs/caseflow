@@ -99,7 +99,7 @@ class DtaScCreationFailedFixJob < CaseflowJob
 
   # :reek:FeatureEnvy
   def process_records(record)
-    ActiveRecord::Base.transaction do
+    begin
       record.clear_error!
     rescue StandardError => error
       log_error(error)
