@@ -170,7 +170,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     @priority_distributions_this_month_for_all_judges ||= priority_distributions_this_month
       .pluck(:judge_id, :statistics)
       .group_by(&:first)
-      .map { |judge_id, arr| [judge_id, arr.flat_map(&:last).map { |stats| stats["batch_size"] }.sum] }.to_h
+      .transform_values { |arr| arr.flat_map(&:last).map { |stats| stats["batch_size"] }.sum }
   end
 
   def priority_distributions_this_month

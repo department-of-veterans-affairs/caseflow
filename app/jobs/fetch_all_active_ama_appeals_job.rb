@@ -174,7 +174,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   # Return: Hash with two keys (privacy_act_pending and privacy_act_complete)
   #         with corresponding boolean values
   def map_appeal_privacy_act_state(appeal)
-    privacy_tasks = appeal.tasks.filter { |task| PRIVACY_ACT_TASKS.include?(task&.type) && Constants.TASK_STATUSES.cancelled != task&.status}
+    privacy_tasks = appeal.tasks.filter { |task| PRIVACY_ACT_TASKS.include?(task&.type) && Constants.TASK_STATUSES.cancelled != task&.status }
     if privacy_tasks.any?
       if privacy_tasks.any? { |task| Task.open_statuses.include?(task.status) } # any pending
         return { privacy_act_pending: true, privacy_act_complete: false }
@@ -272,13 +272,13 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   # Returns: Hash of "vso_ihp_pending" & "vso_ihp_complete" key value pairs
   def set_ihp_appeal_state(ihp_task)
     appeal = ihp_task.appeal
-    if Task.open_statuses.include?(ihp_task.status)
-      ihp_state = { vso_ihp_pending: true, vso_ihp_complete: false }
-    elsif [Constants.TASK_STATUSES.completed].include?(ihp_task.status)
-      ihp_state = { vso_ihp_pending: false, vso_ihp_complete: true }
-    else
-      ihp_state = { vso_ihp_pending: false, vso_ihp_complete: false }
-    end
+    ihp_state = if Task.open_statuses.include?(ihp_task.status)
+                  { vso_ihp_pending: true, vso_ihp_complete: false }
+                elsif [Constants.TASK_STATUSES.completed].include?(ihp_task.status)
+                  { vso_ihp_pending: false, vso_ihp_complete: true }
+                else
+                  { vso_ihp_pending: false, vso_ihp_complete: false }
+                end
     ihp_state
   end
 end
