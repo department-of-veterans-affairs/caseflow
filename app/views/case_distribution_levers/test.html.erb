@@ -115,6 +115,7 @@
     <p>&nbsp;</p>
     <span>
       <%= button_to 'Destroy Organization', destroy_acd_group_org_case_distribution_levers_tests_path, method: :post %>
+      <br/>
       <%unless current_user.member_of_organization?(cda_group_organization) %>
         <%= button_to 'Add Current User To Organization', add_user_case_distribution_levers_tests_path, method: :post, params:{user: current_user} %>
       <% end %>
