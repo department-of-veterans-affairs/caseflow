@@ -24,7 +24,7 @@ function GenerateLeverHistory(filteredLevers, filteredInitialLevers) {
     const doesDatatypeRequireComplexLogic = lever.data_type === 'radio' || lever.data_type === 'combination';
 
     let today = new Date();
-    let todaysDate = moment(today.toISOString());
+    let todaysDate = moment(today).format('ddd MMM DD hh:mm:ss YYYY');
 
     if (doesDatatypeRequireComplexLogic) {
       const selectedOption = lever.options.find(option => option.item === lever.value);
