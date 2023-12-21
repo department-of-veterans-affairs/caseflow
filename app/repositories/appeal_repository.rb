@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
 class AppealRepository
   class AppealNotValidToClose < StandardError; end
 
@@ -16,6 +17,7 @@ class AppealRepository
       VACOLS::Case.transaction(&block)
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def eager_load_legacy_appeals_for_tasks(tasks)
       # Make a single request to VACOLS to grab all of the rows we want here?
       legacy_appeal_ids = tasks.select { |t| t.appeal.is_a?(LegacyAppeal) }.map(&:appeal).pluck(:vacols_id)
@@ -40,6 +42,7 @@ class AppealRepository
         t.appeal.aod = aod[t.appeal.vacols_id.to_s]
       end
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def find_case_record(id, ignore_misses: false)
       # Oracle cannot load more than 1000 records at a time
@@ -91,6 +94,7 @@ class AppealRepository
       cases.map { |case_record| build_appeal(case_record, true) }
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     def appeals_by_vbms_id_with_preloaded_status_api_attrs(vbms_id)
       MetricsService.record("VACOLS: appeals_by_vbms_id_with_preloaded_status_api_attrs",
                             service: :vacols,
@@ -124,6 +128,7 @@ class AppealRepository
         end
       end
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
 
     def appeals_ready_for_hearing(vbms_id)
       cases = MetricsService.record("VACOLS: appeals_ready_for_hearing",
@@ -173,6 +178,7 @@ class AppealRepository
       set_vacols_values(appeal: appeal, case_record: case_record)
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def set_vacols_values(appeal:, case_record:)
       correspondent_record = case_record.correspondent
       folder_record = case_record.folder
@@ -226,6 +232,7 @@ class AppealRepository
 
       appeal
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     # :nocov:
     def issues(vacols_id)
@@ -369,6 +376,7 @@ class AppealRepository
         .map { |case_record| build_appeal(case_record) }
     end
 
+    # rubocop:disable Metrics/MethodLength
     def close_appeal_with_disposition!(case_record:, folder:, user:, closed_on:, disposition_code:)
       VACOLS::Case.transaction do
         case_record.update!(
@@ -400,6 +408,7 @@ class AppealRepository
         close_associated_hearings(case_record)
       end
     end
+    # rubocop:enable Metrics/MethodLength
 
     # Close an undecided appeal (prematurely, such as for a withdrawal or a VAIMA opt in)
     # WARNING: some parts of this action are not automatically reversable, and must
@@ -431,6 +440,7 @@ class AppealRepository
     #
     # WARNING: some parts of this action are not automatically reversable, and must
     # be reversed by hand
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def close_remand!(appeal:, user:, closed_on:, disposition_code:)
       case_record = appeal.case_record
       folder_record = case_record.folder
@@ -506,6 +516,7 @@ class AppealRepository
         end
       end
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
     # This method opts appeals into AMA even if they were already closed
     def opt_in_decided_appeal!(appeal:, user:, closed_on:)
@@ -530,6 +541,7 @@ class AppealRepository
       )
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     def reopen_undecided_appeal!(appeal:, user:, safeguards:, reopen_issues: true)
       case_record = appeal.case_record
       folder_record = case_record.folder
@@ -585,6 +597,7 @@ class AppealRepository
         end
       end
     end
+    # rubocop:enable Metrics/PerceivedComplexity
 
     def reopen_remand!(appeal:, user:, disposition_code:)
       case_record = appeal.case_record
@@ -621,6 +634,7 @@ class AppealRepository
         VACOLS::CaseIssue.where(isskey: follow_up_appeal_key).delete_all
       end
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
 
     # If an appeal was previously decided, we are just restoring data, we do not have to reset the appeal to active
     # original_data example: { disposition_code: "G", decision_date: "2019-11-30", folder_decision_date: "2019-11-30" }
@@ -858,3 +872,4 @@ class AppealRepository
   end
   # :nocov:
 end
+# rubocop:enable Metrics/ClassLength

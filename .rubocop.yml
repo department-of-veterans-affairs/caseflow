@@ -98,29 +98,20 @@ Metrics/MethodLength:
   Max: 20
   Exclude:
     - app/jobs/middleware/job_sentry_scope_middleware.rb
-    - app/repositories/appeal_repository.rb
     - "spec/**/*"
 
 Metrics/ClassLength:
   Max: 400
-  Exclude:
-    - app/repositories/appeal_repository.rb
 
 Metrics/AbcSize:
   Max: 30
   Exclude:
     - app/jobs/virtual_hearings/create_conference_job.rb
-    - app/repositories/appeal_repository.rb
 
 Metrics/CyclomaticComplexity:
   Exclude:
     - app/services/virtual_hearings/resend_virtual_hearing_emails_service.rb
-    - app/repositories/appeal_repository.rb
 
-Metrics/PerceivedComplexity:
-  Exclude:
-    - app/repositories/appeal_repository.rb
-    
 Style/DoubleNegation:
   Enabled: false
 
