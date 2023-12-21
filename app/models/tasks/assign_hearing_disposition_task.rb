@@ -167,7 +167,6 @@ class AssignHearingDispositionTask < Task
                     else
                       fail ArgumentError, "unknown disposition"
                     end
-    byebug
     update_with_instructions(instructions: params[:instructions]) if params[:instructions].present?
 
     created_tasks

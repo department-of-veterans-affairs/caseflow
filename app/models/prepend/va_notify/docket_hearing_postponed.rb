@@ -11,6 +11,7 @@ module DocketHearingPostponed
   # AMA Hearing Postponed from the Daily Docket
   # original method defined in app/models/hearings/forms/hearing_update_form.rb
   def update_hearing
+    byebug
     super_return_value = super
     if hearing_updates[:disposition] == Constants.HEARING_DISPOSITION_TYPES.postponed
       AppellantNotification.notify_appellant(hearing.appeal, @@template_name)
