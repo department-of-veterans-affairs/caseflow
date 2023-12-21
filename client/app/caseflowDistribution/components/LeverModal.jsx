@@ -7,13 +7,73 @@ import Button from 'app/components/Button';
 import LeverAlertBanner from './LeverAlertBanner';
 import COPY from '../../../COPY';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
+import moment from 'moment';
 
+function GenerateLeverUpdateData(leverStore) {
+  const levers = leverStore.getState().levers;
+  const initialLevers = leverStore.getState().initial_levers;
+  const filteredLevers = levers.filter((lever, i) => lever.value !== initialLevers[i].value || changedOptionValue(lever, initialLevers[i]));
+  const filteredInitialLevers = initialLevers.filter((lever, i) => initialLevers[i].value !== levers[i].value || changedOptionValue(initialLevers[i], levers[i]));
 
+  return ([filteredLevers, filteredInitialLevers])
+}
 
+function GenerateLeverHistory(filteredLevers, filteredInitialLevers) {
+  let history = [];
+
+  filteredLevers.map((lever, index) => {
+    const doesDatatypeRequireComplexLogic = lever.data_type === 'radio' || lever.data_type === 'combination';
+
+    let today = new Date();
+    let todaysDate = moment(today.toISOString());
+
+    if (doesDatatypeRequireComplexLogic) {
+      const selectedOption = lever.options.find(option => option.item === lever.value);
+      const previousSelectedOption = filteredInitialLevers[index].options.find(option => option.item === filteredInitialLevers[index].value);
+      const isSelectedOptionANumber = selectedOption.data_type === 'number';
+      const isPreviouslySelectedOptionANumber = previousSelectedOption.data_type === 'number';
+
+      history.push(
+        {
+          created_at: todaysDate,
+          title: lever.title,
+          original_value: isPreviouslySelectedOptionANumber ? previousSelectedOption.value : previousSelectedOption.text,
+          current_value: isSelectedOptionANumber ? selectedOption.value : selectedOption.text,
+          unit: lever.unit
+        }
+      )
+    } else {
+      history.push(
+        {
+          created_at: todaysDate,
+          title: lever.title,
+          original_value: filteredInitialLevers[index].value,
+          current_value: lever.value,
+          unit: lever.unit
+        }
+      )
+    }
+  })
+
+  return history
+}
 function UpdateLeverHistory(leverStore) {
+  let [filteredLevers, filteredInitialLevers] = GenerateLeverUpdateData(leverStore)
   leverStore.dispatch({
     type: Constants.FORMAT_LEVER_HISTORY,
+    history: GenerateLeverHistory(filteredLevers, filteredInitialLevers)
   });
+}
+
+function setShowSuccessBanner(leverStore) {
+  leverStore.dispatch({
+    type: Constants.SHOW_SUCCESS_BANNER,
+  });
+  setTimeout(() => {
+    leverStore.dispatch({
+      type: Constants.HIDE_SUCCESS_BANNER,
+    });
+  }, 10000)
 }
 
 function leverValueDisplay(lever, isPreviousValue) {
@@ -44,18 +104,18 @@ function ShowSuccessBanner(shouldShowSuccessBanner)  {
 }
 
 
-
 function SaveLeversToDB(leverStore) {
   const leversData = leverStore.getState().levers;
 
+  UpdateLeverHistory(leverStore);
+  const auditData = leverStore.getState().formatted_history;
+
   const postData = {
     current_levers: leversData,
-    audit_lever_entries: [],
+    audit_lever_entries: auditData
   }
-
   return ApiUtil.post('/case_distribution_levers/update_levers_and_history', { data: postData })
     .then(() => {
-      // UpdateLeverHistory(leverStore);
       SaveLeverChanges(leverStore);
     })
     .catch((error) => {
@@ -146,6 +206,7 @@ export function LeverSaveButton({ leverStore }) {
 
   const handleConfirmButton = async () => {
     await SaveLeversToDB(leverStore);
+    setShowSuccessBanner(leverStore)
     setShowModal(false);
     setSaveButtonDisabled(true);
     ShowSuccessBanner(true);

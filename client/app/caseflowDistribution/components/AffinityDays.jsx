@@ -40,7 +40,8 @@ const AffinityDays = (props) => {
         const updatedOptions = individualLever.options.map((op) => {
           if (op.item === option.item) {
             let validationResponse = leverInputValidation(individualLever, event);
-            const newValue = isNaN(event) ? event : individualLever.value
+            const newValue = isNaN(event) ? event : individualLever.value;
+
             if (validationResponse === 'SUCCESS') {
               op.value = event;
               leverStore.dispatch({
@@ -60,16 +61,16 @@ const AffinityDays = (props) => {
     });
 
     setAffinityLevers(levers);
-    console.log('AffinityLevers state after update:', levers);
+
   };
   const handleRadioChange = (lever, option) => {
     if (lever && option) {
-      const updatedLevers = affinityLevers.map((l) => {
-        if (l.item === lever.item) {
-          return { ...l, value: option.item };
+      const updatedLevers = affinityLevers.map((lev) => {
+        if (lev.item === lever.item) {
+          return { ...lev, value: option.item };
         }
 
-        return l;
+        return lev;
       });
 
       setAffinityLevers(updatedLevers);
@@ -80,16 +81,24 @@ const AffinityDays = (props) => {
     }
   };
   const generateFields = (dataType, option, lever) => {
+    const useAriaLabel = !lever.is_disabled;
+    const tabIndex = lever.is_disabled ? -1 : undefined;
+
     if (dataType === 'number') {
       return (
         <NumberField
           name={option.item}
+          title={option.text}
           label={option.unit}
           isInteger
           readOnly={lever.is_disabled}
           value={option.value}
           errorMessage={option.errorMessage}
           onChange={(event) => updatedLever(lever, option)(event)}
+          id={`${lever.item}-${option.value}`}
+          inputID={`${lever.item}-${option.value}-input`}
+          useAriaLabel={useAriaLabel}
+          tabIndex={tabIndex}
         />
       );
     }
@@ -97,10 +106,15 @@ const AffinityDays = (props) => {
       return (
         <TextField
           name={option.item}
+          title={option.text}
           label={false}
           readOnly={lever.is_disabled}
           value={value}
           onChange={(event) => updatedLever(lever, option)(event)}
+          id={`${lever.item}-${option.value}`}
+          inputID={`${lever.item}-${option.value}-input`}
+          useAriaLabel={useAriaLabel}
+          tabIndex={tabIndex}
         />
       );
     }
@@ -114,7 +128,7 @@ const AffinityDays = (props) => {
           <div>
             <label className={lever.is_disabled ? styles.leverDisabled : styles.leverActive}
               htmlFor={`${lever.item}-${option.item}`}>
-              {`${option.text} ${option.data_type === 'number' ? option.value : ''}`}
+              {`${option.text} ${option.data_type === 'number' ? `${option.value } ${ option.unit}` : ''}`}
             </label>
           </div>
         </div>

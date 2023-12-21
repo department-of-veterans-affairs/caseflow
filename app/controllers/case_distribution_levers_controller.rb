@@ -43,10 +43,12 @@ class CaseDistributionLeversController < ApplicationController
     end
   end
 
-  def add_audit_lever_entries(audit_lever_entries)
+  def add_audit_lever_entries(audit_lever_entries_data)
+    formatted_entries = format_audit_lever_entries(audit_lever_entries_data)
+
     begin
       ActiveRecord::Base.transaction do
-        CaseDistributionAuditLeverEntry.create(audit_lever_entries)
+        CaseDistributionAuditLeverEntry.create(formatted_entries)
       end
     rescue Exception => error
       return [error]
@@ -69,4 +71,31 @@ class CaseDistributionLeversController < ApplicationController
   def set_acd_group_organization
     @acd_group_organization = CDAControlGroup.singleton
   end
+
+  def format_audit_lever_entries(audit_lever_entries_data)
+    formatted_audit_lever_entries = []
+
+    begin
+      audit_lever_entries_data.each do |entry_data|
+        lever = CaseDistributionLever.find_by_title entry_data["lever_title"]
+
+        formatted_audit_lever_entries.push ({
+          user: current_user,
+          case_distribution_lever: lever,
+          user_name: current_user.full_name,
+          title: lever.title,
+          previous_value: entry_data["original_value"],
+          update_value: entry_data["current_value"],
+          created_at: entry_data["created_at"]
+
+        })
+      end
+    rescue Exception => error
+      return error
+    end
+
+    return formatted_audit_lever_entries
+
+  end
+
 end
