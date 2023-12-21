@@ -22,7 +22,7 @@ const AffinityDays = (props) => {
   const errorMessages = {};
   const [affinityLevers, setAffinityLevers] = useState(filteredLevers);
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
-  const leverInputValidation = (lever, event) => {
+  const leverInputValidation = (lever, event) => { // eslint-disable-line no-unused-vars
     let rangeError = !(/^\d{1,3}$/).test(event);
 
     if (rangeError) {
@@ -82,7 +82,7 @@ const AffinityDays = (props) => {
   };
   const generateFields = (dataType, option, lever) => {
     const useAriaLabel = !lever.is_disabled;
-    const tabIndex = lever.is_disabled ? -1 : undefined;
+    const tabIndex = lever.is_disabled ? -1 : 'undefined';
 
     if (dataType === 'number') {
       return (
@@ -109,7 +109,7 @@ const AffinityDays = (props) => {
           title={option.text}
           label={false}
           readOnly={lever.is_disabled}
-          value={value}
+          value={option.value}
           onChange={(event) => updatedLever(lever, option)(event)}
           id={`${lever.item}-${option.value}`}
           inputID={`${lever.item}-${option.value}-input`}

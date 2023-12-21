@@ -11,3 +11,7 @@ Dir[Rails.root.join("lib/tasks/support/**/*.rb")].sort.each { |f| require f }
 Rails.application.load_tasks
 
 task "db:schema:dump": "strong_migrations:alphabetize_columns"
+
+task :lint_specific_file, [:file] do |t, args|
+  sh "linter-command --fix #{args.file}"
+end
