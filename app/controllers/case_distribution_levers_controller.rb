@@ -77,13 +77,12 @@ class CaseDistributionLeversController < ApplicationController
 
     begin
       audit_lever_entries_data.each do |entry_data|
-        user = User.find_by_full_name entry_data["user_name"]
         lever = CaseDistributionLever.find_by_title entry_data["lever_title"]
 
         formatted_audit_lever_entries.push ({
-          user: user,
+          user: current_user,
           case_distribution_lever: lever,
-          user_name: user.full_name,
+          user_name: current_user.full_name,
           title: lever.title,
           previous_value: entry_data["original_value"],
           update_value: entry_data["current_value"],
