@@ -13,6 +13,7 @@ export const SubmitCorrespondenceModal = ({ setSubmitCorrespondenceModalVisible,
   const correspondence = useSelector((state) => state.intakeCorrespondence.currentCorrespondence);
   const relatedCorrespondences = useSelector((state) => state.intakeCorrespondence.relatedCorrespondences);
   const waivedEvidenceTasks = useSelector((state) => state.intakeCorrespondence.waivedEvidenceTasks);
+  const relatedAppealIds = useSelector((state) => state.intakeCorrespondence.taskRelatedAppealIds);
   const tasksRelatedToAppeal = useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks);
   const [loading, setLoading] = useState(false);
 
@@ -44,7 +45,8 @@ export const SubmitCorrespondenceModal = ({ setSubmitCorrespondenceModalVisible,
     const submitData = {
       related_correspondence_uuids: relatedUuids,
       tasks_related_to_appeal: serializedTasksRelatedToAppeal,
-      waived_evidence_submission_window_tasks: serializedWaivedEvidenceTasks
+      waived_evidence_submission_window_tasks: serializedWaivedEvidenceTasks,
+      related_appeal_ids: relatedAppealIds
     };
 
     setLoading(true);

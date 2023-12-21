@@ -47,6 +47,7 @@ RSpec.feature("Correspondence Intake submission") do
             page.all(".cf-form-checkbox").last.click
           end
         end
+        page.find("#button-addTasks").click
         all("#reactSelectContainer")[0].click
         find_by_id("react-select-2-option-1").click
         find_by_id("content").fill_in with: "Correspondence Text"
@@ -71,6 +72,7 @@ RSpec.feature("Correspondence Intake submission") do
             page.all(".cf-form-checkbox").last.click
           end
         end
+        page.find("#button-addTasks").click
         all("#reactSelectContainer")[0].click
         find_by_id("react-select-2-option-1").click
         find_by_id("content").fill_in with: "Correspondence Text"
@@ -113,6 +115,27 @@ RSpec.feature("Correspondence Intake submission") do
           page.switch_to_window(page.windows.last)
           expect(page).to have_no_content("Evidence Submission Window Task")
         end
+      end
+    end
+  end
+
+  context "user links appeals but does not add any tasks" do
+    describe "success" do
+      it "displays a success banner, links the appeal" do
+        visit_intake_form_step_2_with_appeals
+        existing_appeal_radio_options[:yes].click
+        using_wait_time(15) do
+          within ".cf-case-list-table" do
+            page.all(".cf-form-checkbox").last.click
+          end
+        end
+        click_button("Continue")
+        click_button("Submit")
+        click_button("Confirm")
+        using_wait_time(10) do
+          expect(page).to have_content("You have successfully submitted a correspondence record")
+        end
+        expect(Correspondence.first.appeals).to eq([Appeal.fifth])
       end
     end
   end
