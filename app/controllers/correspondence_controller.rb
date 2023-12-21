@@ -82,7 +82,8 @@ class CorrespondenceController < ApplicationController
       user_can_edit_vador: MailTeamSupervisor.singleton.user_has_access?(current_user),
       correspondence_documents: corres_docs.map do |doc|
         WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
-      end
+      end,
+      efolder_upload_failed_before: EfolderUploadFailedTask.where(appeal_id: correspondence.id, type: "EfolderUploadFailedTask")
     }
     render({ json: response_json }, status: :ok)
   end
