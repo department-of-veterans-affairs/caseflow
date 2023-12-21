@@ -1,14 +1,15 @@
+/* eslint-disable eqeqeq */
 
 import PropTypes from 'prop-types';
 
-const leverInputValidation = (lever, event, currentMessageState, option) => {
+const leverInputValidation = (lever, event, currentMessageState, initialLever, option) => {
   let maxValue = 999;
 
   const checkIsInRange = () => {
     let validNumber = (/^\d{1,10}$/).test(event);
     let withinLimits = ((lever.min_value) <= event);
 
-    //Max value to override lever database maximums on majority levers
+    // Max value to override lever database maximums on majority levers
 
     if (lever.data_type === 'radio') {
 
@@ -53,6 +54,28 @@ const leverInputValidation = (lever, event, currentMessageState, option) => {
   let hasErrorMessage = (message) => message !== null;
   let messageFilter = messageValues.filter(hasErrorMessage);
 
+  if (lever.data_type === 'radio') {
+    let initialOption = initialLever.options.find((original) => original.item === option.item);
+
+    if (event === initialOption.value) {
+      response = {
+        updatedMessages,
+        statement: 'DUPLICATE',
+        value: event,
+      };
+
+      return response;
+    }
+  } else if (event == initialLever.value) {
+    response = {
+      updatedMessages,
+      statement: 'DUPLICATE',
+      value: event,
+    };
+
+    return response;
+  }
+
   if (messageFilter < 1) {
     response = {
       updatedMessages,
@@ -76,6 +99,7 @@ leverInputValidation.propTypes = {
   lever: PropTypes.object,
   event: PropTypes.integer,
   currentMessageState: PropTypes.object,
+  initialLever: PropTypes.object,
   option: PropTypes.object,
 };
 

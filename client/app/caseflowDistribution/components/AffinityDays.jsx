@@ -40,9 +40,26 @@ const AffinityDays = (props) => {
       if (individualLever.item === lever.item) {
         const updatedOptions = individualLever.options.map((op) => {
           if (op.item === option.item) {
-            let validationResponse = leverInputValidation(lever, event, errorMessagesList, op);
+
+            let initialLever = leverStore.getState().initial_levers.find((original) => original.item === lever.item);
+
+            let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever, op);
+
             const newValue = isNaN(event) ? event : individualLever.value;
-            console.log("VALIDATION RESPONSE", validationResponse);
+
+            if (validationResponse.statement === 'DUPLICATE') {
+              // Logic if other items are valid
+
+              op.value = event;
+              op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
+              setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
+
+              leverStore.dispatch({
+                type: Constants.UPDATE_LEVER_VALUE,
+                updated_lever: { item: individualLever.item, value: newValue },
+                validChange: false
+              });
+            }
             if (validationResponse.statement === 'SUCCESS') {
               op.value = event;
               op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];

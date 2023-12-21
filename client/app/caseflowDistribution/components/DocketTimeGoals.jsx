@@ -10,14 +10,17 @@ import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';
 
 const DocketTimeGoals = (props) => {
+
   const { leverList, leverStore } = props;
 
   const filteredDistributionLevers = leverList.docketDistributionPriorLevers.map((item) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
   });
+
   const filteredTimeGoalLevers = leverList.docketTimeGoalLevers.map((item) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
   });
+
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
     '& .cf-form-int-input .input-container': { width: 'auto', display: 'inline-block', verticalAlign: 'middle' },
@@ -37,8 +40,20 @@ const DocketTimeGoals = (props) => {
       const levers = docketDistributionLevers.map((lever, i) => {
         if (index === i) {
 
-          let validationResponse = leverInputValidation(lever, event, errorMessagesList);
+          let initialLever = leverStore.getState().initial_levers.find((original) => original.item === lever.item);
+          let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
 
+          if (validationResponse.statement === 'DUPLICATE') {
+            // Logic if other items are valid
+
+            lever.value = event;
+            setErrorMessages(validationResponse.updatedMessages);
+            leverStore.dispatch({
+              type: Constants.UPDATE_LEVER_VALUE,
+              updated_lever: { item: lever.item, value: event },
+              validChange: false
+            });
+          }
           if (validationResponse.statement === 'SUCCESS') {
             lever.value = event;
             setErrorMessages(validationResponse.updatedMessages);
@@ -73,7 +88,21 @@ const DocketTimeGoals = (props) => {
       const levers = docketTimeGoalLevers.map((lever, i) => {
         if (index === i) {
 
-          let validationResponse = leverInputValidation(lever, event, errorMessagesList);
+          let initialLever = leverStore.getState().initial_levers.find((original) => original.item === lever.item);
+
+          let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
+
+          if (validationResponse.statement === 'DUPLICATE') {
+            // Logic if other items are valid
+
+            lever.value = event;
+            setErrorMessages(validationResponse.updatedMessages);
+            leverStore.dispatch({
+              type: Constants.UPDATE_LEVER_VALUE,
+              updated_lever: { item: lever.item, value: event },
+              validChange: false
+            });
+          }
 
           if (validationResponse.statement === 'SUCCESS') {
             lever.value = event;
