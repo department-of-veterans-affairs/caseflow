@@ -174,7 +174,7 @@ export const CorrespondenceReviewPackage = (props) => {
         <div className="cf-app-segment">
           <div className="cf-push-left">
             <Button
-              name="Cancel"
+              name="Return to queue"
               classNames={['cf-btn-link']}
               onClick={handleModalClose}
             />
