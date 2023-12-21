@@ -2,13 +2,21 @@
 
 RSpec.feature("The Correspondence Intake page") do
   include CorrespondenceHelpers
+  let(:organization) { MailTeam.singleton }
+  let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
+
+  before do
+    organization.add_user(mail_user)
+    mail_user.reload
+  end
 
   context "Mail Tasks Confirm Page" do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      User.authenticate!(roles: ["Mail Intake"])
-      @correspondence_uuid = "123456789"
-      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+      organization.add_user(mail_user)
+      mail_user.reload
+      visit_intake_form_with_correspondence_load
+      @correspondence_uuid = Correspondence.first.uuid
     end
 
     it "the intake page exists" do
@@ -48,7 +56,7 @@ RSpec.feature("The Correspondence Intake page") do
       expect(page).to have_text("Completed Mail Tasks")
       expect(page).to have_text("Change of address")
       expect(page).to have_button("Edit Section")
-      find("a", text: "Edit section").click
+      all("div > span > button > span", text: "Edit Section")[0].click
       expect(page).to have_text("Mail Tasks")
       checkbox = all("#mail-tasks-left .cf-form-checkbox")[0]
       checkbox_input = checkbox.find('input[name="Change of address"]', visible: :all)

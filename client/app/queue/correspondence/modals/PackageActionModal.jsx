@@ -162,7 +162,7 @@ const PackageActionModal = (props) => {
       {
         (packageActionModal === 'mergePackage') &&
         <RadioField
-          label={modalInfo.label}
+          label={modalInfo.radioLabel}
           name="merge-package"
           value={mergePackageReason}
           options={mergePackageReasonOptions}
