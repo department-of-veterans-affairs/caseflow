@@ -34,6 +34,23 @@ const DocketTimeGoals = (props) => {
   const [docketTimeGoalLevers, setTimeGoalLever] = useState(filteredTimeGoalLevers);
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
 
+  const checkIfOtherChangesExist = (currentLever) => {
+
+    let leversWithChangesList = [];
+
+    leverStore.getState().levers.map((lever) => {
+      if (lever.hasValueChanged === true && lever.item !== currentLever.item) {
+        leversWithChangesList.push(lever);
+      }
+    });
+
+    if (leversWithChangesList.length > 0) {
+      return true;
+    }
+
+    return false;
+  };
+
   const updateLever = (index, leverType) => (event) => {
     if (leverType === 'DistributionPrior') {
 
@@ -44,15 +61,30 @@ const DocketTimeGoals = (props) => {
           let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
 
           if (validationResponse.statement === 'DUPLICATE') {
-            // Logic if other items are valid
 
-            lever.value = event;
-            setErrorMessages(validationResponse.updatedMessages);
-            leverStore.dispatch({
-              type: Constants.UPDATE_LEVER_VALUE,
-              updated_lever: { item: lever.item, value: event },
-              validChange: false
-            });
+            if (checkIfOtherChangesExist(lever)) {
+              lever.value = event;
+              setErrorMessages(validationResponse.updatedMessages);
+
+              leverStore.dispatch({
+                type: Constants.UPDATE_LEVER_VALUE,
+                updated_lever: { item: lever.item, value: event },
+                hasValueChanged: false,
+                validChange: true
+              });
+            } else {
+
+              lever.value = event;
+              setErrorMessages(validationResponse.updatedMessages);
+
+              leverStore.dispatch({
+                type: Constants.UPDATE_LEVER_VALUE,
+                updated_lever: { item: lever.item, value: event },
+                hasValueChanged: false,
+                validChange: false
+              });
+            }
+
           }
           if (validationResponse.statement === 'SUCCESS') {
             lever.value = event;
@@ -93,15 +125,30 @@ const DocketTimeGoals = (props) => {
           let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
 
           if (validationResponse.statement === 'DUPLICATE') {
-            // Logic if other items are valid
 
-            lever.value = event;
-            setErrorMessages(validationResponse.updatedMessages);
-            leverStore.dispatch({
-              type: Constants.UPDATE_LEVER_VALUE,
-              updated_lever: { item: lever.item, value: event },
-              validChange: false
-            });
+            if (checkIfOtherChangesExist(lever)) {
+              lever.value = event;
+              setErrorMessages(validationResponse.updatedMessages);
+
+              leverStore.dispatch({
+                type: Constants.UPDATE_LEVER_VALUE,
+                updated_lever: { item: lever.item, value: event },
+                hasValueChanged: false,
+                validChange: true
+              });
+            } else {
+
+              lever.value = event;
+              setErrorMessages(validationResponse.updatedMessages);
+
+              leverStore.dispatch({
+                type: Constants.UPDATE_LEVER_VALUE,
+                updated_lever: { item: lever.item, value: event },
+                hasValueChanged: false,
+                validChange: false
+              });
+            }
+
           }
 
           if (validationResponse.statement === 'SUCCESS') {

@@ -17,7 +17,7 @@ const leversReducer = (state = initialState, action = {}) => {
         formatted_history: formatLeverHistory(action.history)
       }
     case Constants.UPDATE_LEVER_VALUE:
-      const updatedLevers = updateLevers(state.levers, action.updated_lever);
+      const updatedLevers = updateLevers(state.levers, action.updated_lever, action.hasValueChanged);
       const changesOccurred = JSON.stringify(updatedLevers) !== JSON.stringify(state.initial_levers)
       return {
         ...state,
@@ -73,7 +73,7 @@ export const formatLeverHistory = (lever_history_list) => {
   return formatted_lever_history;
 };
 
-export const updateLevers = (current_levers, updated_lever) => {
+export const updateLevers = (current_levers, updated_lever, hasValueChanged) => {
   const leverIndex = current_levers.findIndex((lever => lever.item == updated_lever.item));
 
   if (leverIndex !== -1) {
@@ -83,6 +83,7 @@ export const updateLevers = (current_levers, updated_lever) => {
     updatedLevers[leverIndex] = {
       ...updatedLevers[leverIndex],
       value: updated_lever.value,
+      hasValueChanged
     };
 
     return updatedLevers

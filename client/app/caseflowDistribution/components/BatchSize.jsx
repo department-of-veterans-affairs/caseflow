@@ -21,6 +21,23 @@ const BatchSize = (props) => {
     '& .usa-input-error label': { bottom: '15px', left: '89px' }
   });
 
+  const checkIfOtherChangesExist = (currentLever) => {
+
+    let leversWithChangesList = [];
+
+    leverStore.getState().levers.map((lever) => {
+      if (lever.hasValueChanged === true && lever.item !== currentLever.item) {
+        leversWithChangesList.push(lever);
+      }
+    });
+
+    if (leversWithChangesList.length > 0) {
+      return true;
+    }
+
+    return false;
+  };
+
   const errorMessages = {};
   const [batchSizeLevers, setLever] = useState(filteredLevers);
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
@@ -34,15 +51,29 @@ const BatchSize = (props) => {
         let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
 
         if (validationResponse.statement === 'DUPLICATE') {
-          // Logic if other items are valid
-          lever.value = event;
-          setErrorMessages(validationResponse.updatedMessages);
 
-          leverStore.dispatch({
-            type: Constants.UPDATE_LEVER_VALUE,
-            updated_lever: { item: lever.item, value: event },
-            validChange: false
-          });
+          if (checkIfOtherChangesExist(lever)) {
+            lever.value = event;
+            setErrorMessages(validationResponse.updatedMessages);
+
+            leverStore.dispatch({
+              type: Constants.UPDATE_LEVER_VALUE,
+              updated_lever: { item: lever.item, value: event },
+              hasValueChanged: false,
+              validChange: true
+            });
+          } else {
+
+            lever.value = event;
+            setErrorMessages(validationResponse.updatedMessages);
+
+            leverStore.dispatch({
+              type: Constants.UPDATE_LEVER_VALUE,
+              updated_lever: { item: lever.item, value: event },
+              hasValueChanged: false,
+              validChange: false
+            });
+          }
 
         }
         if (validationResponse.statement === 'SUCCESS') {
@@ -106,7 +137,7 @@ const BatchSize = (props) => {
                 value={lever.value}
                 errorMessage={errorMessagesList[lever.item]}
                 onChange={updateLever(index, lever.item, lever.item)}
-                tabIndex={lever.is_disabled ? -1 : undefined}
+                tabIndex={lever.is_disabled ? -1 : null}
               />
             }
           </div>

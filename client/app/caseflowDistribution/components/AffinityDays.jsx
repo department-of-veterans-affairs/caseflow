@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
-import { css, valid } from 'glamor';
+import { css } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';
@@ -14,6 +14,24 @@ const AffinityDays = (props) => {
   const filteredLevers = leverList.map((item) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
   });
+
+  const checkIfOtherChangesExist = (currentLever) => {
+
+    let leversWithChangesList = [];
+
+    leverStore.getState().levers.map((lever) => {
+      if (lever.hasValueChanged === true && lever.item !== currentLever.item) {
+        leversWithChangesList.push(lever);
+      }
+    });
+
+    if (leversWithChangesList.length > 0) {
+      return true;
+    }
+
+    return false;
+  };
+
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
     '& .cf-form-int-input .input-container': { width: 'auto', display: 'inline-block', verticalAlign: 'middle' },
@@ -23,18 +41,7 @@ const AffinityDays = (props) => {
   const errorMessages = {};
   const [affinityLevers, setAffinityLevers] = useState(filteredLevers);
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
-  // const leverInputValidation = (lever, event) => {
-  //   let rangeError = !(/^\d{1,3}$/).test(event);
 
-  //   if (rangeError) {
-  //     setErrorMessages({ ...errorMessagesList, [lever.item]: 'Please enter a value less than or equal to 999' });
-
-  //     return 'FAIL';
-  //   }
-  //   setErrorMessages({ ...errorMessagesList, [lever.item]: null });
-
-  //   return 'SUCCESS';
-  // };
   const updatedLever = (lever, option) => (event) => {
     const levers = affinityLevers.map((individualLever) => {
       if (individualLever.item === lever.item) {
@@ -48,17 +55,33 @@ const AffinityDays = (props) => {
             const newValue = isNaN(event) ? event : individualLever.value;
 
             if (validationResponse.statement === 'DUPLICATE') {
-              // Logic if other items are valid
 
-              op.value = event;
-              op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
-              setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
+              if (checkIfOtherChangesExist(lever)) {
+                op.value = event;
+                op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
+                setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
 
-              leverStore.dispatch({
-                type: Constants.UPDATE_LEVER_VALUE,
-                updated_lever: { item: individualLever.item, value: newValue },
-                validChange: false
-              });
+                leverStore.dispatch({
+                  type: Constants.UPDATE_LEVER_VALUE,
+                  updated_lever: { item: individualLever.item, value: newValue },
+                  hasValueChanged: false,
+                  validChange: true
+
+                });
+              } else {
+                op.value = event;
+                op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
+                setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
+
+                leverStore.dispatch({
+                  type: Constants.UPDATE_LEVER_VALUE,
+                  updated_lever: { item: individualLever.item, value: newValue },
+                  hasValueChanged: false,
+                  validChange: false
+
+                });
+              }
+
             }
             if (validationResponse.statement === 'SUCCESS') {
               op.value = event;
@@ -114,7 +137,7 @@ const AffinityDays = (props) => {
   };
   const generateFields = (dataType, option, lever) => {
     const useAriaLabel = !lever.is_disabled;
-    const tabIndex = lever.is_disabled ? -1 : undefined;
+    const tabIndex = lever.is_disabled ? -1 : null;
 
     if (dataType === 'number') {
       return (
@@ -141,7 +164,7 @@ const AffinityDays = (props) => {
           title={option.text}
           label={false}
           readOnly={lever.is_disabled}
-          value={value}
+          value={option.value}
           onChange={(event) => updatedLever(lever, option)(event)}
           id={`${lever.item}-${option.value}`}
           inputID={`${lever.item}-${option.value}-input`}
