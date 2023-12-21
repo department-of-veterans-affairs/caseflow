@@ -163,6 +163,7 @@ export const CorrespondenceReviewPackage = (props) => {
         <AppSegment filledBackground>
           <ReviewPackageCaseTitle
             handlePackageActionModal={handlePackageActionModal}
+            isReadOnly={isReadOnly}
           />
           <ReviewPackageData
             correspondence={props.correspondence}

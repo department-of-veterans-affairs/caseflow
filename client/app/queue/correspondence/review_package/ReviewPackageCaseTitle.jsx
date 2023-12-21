@@ -49,7 +49,9 @@ const ReviewPackageCaseTitle = (props) => {
   return (
     <div>
       <CaseTitleScaffolding />
-      <CaseSubTitleScaffolding handlePackageActionModal={props.handlePackageActionModal} />
+      <CaseSubTitleScaffolding
+        handlePackageActionModal={props.handlePackageActionModal}
+        isReadOnly={props.isReadOnly} />
     </div>
   );
 };
@@ -66,6 +68,7 @@ const CaseSubTitleScaffolding = (props) => (
       {COPY.CORRESPONDENCE_REVIEW_PACKAGE_SUB_TITLE}
     </div>
     <div {...dropDownDiv} style = {{ maxWidth: '25%' }}>
+      { !props.isReadOnly &&
       <SearchableDropdown
         options={[
           { value: 'splitPackage', label: 'Split package' },
@@ -78,17 +81,19 @@ const CaseSubTitleScaffolding = (props) => (
         label="Request package action dropdown"
         hideLabel
         name=""
-      />
+      /> }
     </div>
   </div>
 );
 
 ReviewPackageCaseTitle.propTypes = {
-  handlePackageActionModal: PropTypes.func
+  handlePackageActionModal: PropTypes.func,
+  isReadOnly: PropTypes.bool
 };
 
 CaseSubTitleScaffolding.propTypes = {
-  handlePackageActionModal: PropTypes.func
+  handlePackageActionModal: PropTypes.func,
+  isReadOnly: PropTypes.bool
 };
 
 export default ReviewPackageCaseTitle;
