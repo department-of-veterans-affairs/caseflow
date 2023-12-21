@@ -156,7 +156,7 @@ class CorrespondenceController < ApplicationController
   end
 
   def process_intake
-    if correspondence_intake_processor.process_intake(params)
+    if correspondence_intake_processor.process_intake(params, current_user)
       set_flash_intake_success_message
       render json: {}, status: :created
     else
