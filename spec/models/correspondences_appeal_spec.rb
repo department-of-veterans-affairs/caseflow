@@ -7,7 +7,8 @@ RSpec.describe CorrespondencesAppeal, type: :model do
   before do
     @subject = CorrespondencesAppeal.create!(
       correspondence_id: correspondence.id,
-      appeal_id: appeal.id)
+      appeal_id: appeal.id
+    )
   end
 
   it "exists" do

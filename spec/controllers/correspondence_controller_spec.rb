@@ -6,7 +6,7 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
   let(:related_correspondence_uuids) do
     (1..3).map { create(:correspondence) }.pluck(:uuid)
   end
-  let (:esw_tasks) do
+  let(:esw_tasks) do
     (1..3).map do
       appeal = create(:appeal)
       InitialTasksFactory.new(appeal).create_root_and_sub_tasks!

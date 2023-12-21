@@ -3,7 +3,6 @@
 RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
   include CorrespondenceHelpers
   context "No related correspondence" do
-
     it "Displays the expected content" do
       visit_intake_form
 
