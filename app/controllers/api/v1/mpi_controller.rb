@@ -31,6 +31,7 @@ class Api::V1::MpiController < Api::ApplicationController
     }
   end
 
+  # :reek:UtilityFunction
   def invalid_result?(result)
     result == :no_veteran || result == :missing_deceased_info
   end
