@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { COLORS } from '../../../../../constants/AppConstants';
 
-const styling = { backgroundColor: '#f5f5f5' };
+const styling = { backgroundColor: COLORS.GREY_BACKGROUND };
 
 const ConfirmTasksNotRelatedToAnAppeal = () => {
   const tasks = useSelector((state) => state.intakeCorrespondence.unrelatedTasks);

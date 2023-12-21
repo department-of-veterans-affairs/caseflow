@@ -102,8 +102,6 @@
 
   p {
     color: $color-black;
-    margin-top: 0px;
-    margin-bottom: 0px;
   }
 
   h1 {
@@ -116,27 +114,11 @@
     margin-bottom: 20px;
   }
 
-  section {
-    background-color: $caseflow-background;
-  }
-
   button {
     display: inline-block;
     margin-top: 30px;
     margin-right: 10px;
-  }
-
-  table {
-    margin-bottom: -2vh;
-    margin-top: 2vh;
-  }
-
-  tablebody {
-    background-color: $caseflow-background;
-    border-bottom: 0;
-    border-color: $color-gray-lighter;
-    margin-top: 0vh;
-    margin-bottom: 0vh;
+    padding-right: 0px;
   }
 
 .corr-icon {
@@ -156,14 +138,13 @@
     margin-left: auto;
 }
 
-// ===========================*
 // Alternate Borderless (no bottom border)
-// ===========================*
 .corr-table-borderless {
   background-color: $caseflow-background;
 
   width: 100%;
   margin-bottom: 0px;
+  margin-top: 0px;
 
   th,
   td {

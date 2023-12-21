@@ -14,15 +14,15 @@ const bodyStyling = css({
   '& > tr > td': {
     backgroundColor: COLORS.GREY_BACKGROUND,
     borderBottom: 'none',
-    borderColor: '#d6d7d9',
+    borderColor: COLORS.GREY_LIGHT,
     paddingTop: '0vh',
     paddingBottom: '0vh',
   },
 });
 
 const tableStyling = css({
-  marginBottom: '-2vh',
-  marginTop: '2vh'
+  marginBottom: '-1vh',
+  marginTop: '1vh'
 });
 
 export const ConfirmCorrespondenceView = (props) => {
@@ -139,14 +139,15 @@ export const ConfirmCorrespondenceView = (props) => {
             </Button>
           </div>
         </div>
-        <div {...css({ backgroundColor: COLORS.GREY_BACKGROUND})}>
+        <div {...css({ backgroundColor: COLORS.GREY_BACKGROUND })}>
           <div {...css({ backgroundColor: COLORS.GREY_BACKGROUND, padding: '20px' })}>
             <Table
               columns={getDocumentColumns}
               // columnsToDisplay={15}
               rowObjects={relatedCorrespondences}
               styling={tableStyling}
-              bodyStyling={bodyStyling} />
+              bodyStyling={bodyStyling}
+            />
           </div>
         </div>
       </div>
