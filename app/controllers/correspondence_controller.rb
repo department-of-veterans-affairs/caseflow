@@ -132,12 +132,6 @@ class CorrespondenceController < ApplicationController
     render json: { data: data }
   end
 
-  # :reek:UtilityFunction
-  def vbms_document_types
-    data = ExternalApi::ClaimEvidenceService.document_types
-    data["documentTypes"].map { |document_type| { id: document_type["id"], name: document_type["name"] } }
-  end
-
   def pdf
     document = Document.find(params[:pdf_id])
 
