@@ -434,12 +434,11 @@ describe BusinessLine do
         "intake_user_name" => hlr_task.appeal.intake.user.full_name,
         "intake_user_css_id" => hlr_task.appeal.intake.user.css_id,
         "intake_user_station_id" => hlr_task.appeal.intake.user.station_id,
-        "disposition" => "allowed",
+        "disposition" => "Granted",
         "decision_user_name" => decision_user.full_name,
         "decision_user_css_id" => decision_user.css_id,
         "decision_user_station_id" => decision_user.station_id,
-        "first_name" => hlr_task.appeal.claimant.first_name,
-        "last_name" => hlr_task.appeal.claimant.last_name,
+        "claimant_name" => hlr_task.appeal.claimant.name,
         "task_status" => hlr_task.status,
         "request_issue_benefit_type" => "vha",
         "days_waiting" => 10
@@ -458,8 +457,7 @@ describe BusinessLine do
         "decision_user_name" => decision_user.full_name,
         "decision_user_css_id" => decision_user.css_id,
         "decision_user_station_id" => decision_user.station_id,
-        "first_name" => hlr_task.appeal.claimant.first_name,
-        "last_name" => hlr_task.appeal.claimant.last_name,
+        "claimant_name" => hlr_task.appeal.claimant.name,
         "task_status" => hlr_task.status,
         "request_issue_benefit_type" => "vha",
         "days_waiting" => 10
@@ -478,8 +476,7 @@ describe BusinessLine do
         "decision_user_name" => nil,
         "decision_user_css_id" => nil,
         "decision_user_station_id" => nil,
-        "first_name" => hlr_task2.appeal.claimant.first_name,
-        "last_name" => hlr_task2.appeal.claimant.last_name,
+        "claimant_name" => hlr_task2.appeal.claimant.name,
         "task_status" => hlr_task2.status,
         "request_issue_benefit_type" => "vha",
         "days_waiting" => 5
@@ -498,8 +495,7 @@ describe BusinessLine do
         "decision_user_name" => nil,
         "decision_user_css_id" => nil,
         "decision_user_station_id" => nil,
-        "first_name" => hlr_task2.appeal.claimant.first_name,
-        "last_name" => hlr_task2.appeal.claimant.last_name,
+        "claimant_name" => hlr_task2.appeal.claimant.name,
         "task_status" => hlr_task2.status,
         "request_issue_benefit_type" => "vha",
         "days_waiting" => 5
@@ -518,8 +514,7 @@ describe BusinessLine do
         "decision_user_name" => nil,
         "decision_user_css_id" => nil,
         "decision_user_station_id" => nil,
-        "first_name" => sc_task.appeal.claimant.first_name,
-        "last_name" => sc_task.appeal.claimant.last_name,
+        "claimant_name" => sc_task.appeal.claimant.name,
         "task_status" => sc_task.status,
         "request_issue_benefit_type" => "vha",
         "days_waiting" => (Time.zone.today - Date.parse(sc_task.assigned_at.iso8601)).to_i
@@ -557,12 +552,18 @@ describe BusinessLine do
       decision_issue.request_issues << issue
       hlr_task.appeal.decision_issues << decision_issue
       hlr_task.appeal.save
-      hlr_task.completed_by = decision_user
-      hlr_task.assigned_at = 10.days.ago
-      hlr_task.completed!
 
+      # Set the assigned at for days waiting filtering for hlr_task2
       hlr_task2.assigned_at = 5.days.ago
       hlr_task2.save
+
+      # Set up assigned at for days waiting filtering for hlr_task1
+      PaperTrail.request(enabled: false) do
+        # This uses the task versions whodunnit field now instead of completed by
+        # hlr_task.completed_by = decision_user
+        hlr_task.assigned_at = 10.days.ago
+        hlr_task.save
+      end
 
       # Set the whodunnnit of the completed version status to the decision user
       version = hlr_task.versions.first
@@ -638,7 +639,7 @@ describe BusinessLine do
 
     context "with dispositions filter" do
       context "with multiple disposition filters" do
-        let(:change_history_filters) { { dispositions: %w[allowed denied] } }
+        let(:change_history_filters) { { dispositions: %w[Granted denied] } }
 
         it "should only return rows for filtered disposition values" do
           expect(subject.entries.count).to eq(2)
@@ -655,6 +656,33 @@ describe BusinessLine do
         it "should only return rows for filtered disposition values" do
           expect(subject.entries.count).to eq(1)
           expect(subject.entries).to include(hlr_task_1_ri_2_expectation)
+        end
+      end
+
+      context "when the disposition filter includes Blank" do
+        let(:change_history_filters) { { dispositions: ["Blank"] } }
+
+        it "should return rows that do not have a disposition" do
+          expect(subject.entries.count).to eq(3)
+          expect(subject.entries).to include(
+            hlr_task_2_ri_1_expectation,
+            hlr_task_2_ri_2_expectation,
+            sc_task_1_ri_1_expectation
+          )
+        end
+
+        context "when it includes Blank and another disposition" do
+          let(:change_history_filters) { { dispositions: %w[denied Blank] } }
+
+          it "should return rows that match denied or have no disposition" do
+            expect(subject.entries.count).to eq(4)
+            expect(subject.entries).to include(
+              hlr_task_1_ri_2_expectation,
+              hlr_task_2_ri_1_expectation,
+              hlr_task_2_ri_2_expectation,
+              sc_task_1_ri_1_expectation
+            )
+          end
         end
       end
     end
@@ -687,7 +715,7 @@ describe BusinessLine do
 
     context "with days waiting filter" do
       context "< filter" do
-        let(:change_history_filters) { { days_waiting: { number_of_days: 6, range: "<" } } }
+        let(:change_history_filters) { { days_waiting: { number_of_days: 6, operator: "<" } } }
 
         it "should only return rows that are under the filtered days waiting value" do
           expect(subject.entries.count).to eq(2)
@@ -699,7 +727,7 @@ describe BusinessLine do
       end
 
       context "> filter" do
-        let(:change_history_filters) { { days_waiting: { number_of_days: 11, range: ">" } } }
+        let(:change_history_filters) { { days_waiting: { number_of_days: 11, operator: ">" } } }
 
         it "should only return rows that are over the filtered days waiting value" do
           expect(subject.entries.count).to eq(1)
@@ -710,7 +738,7 @@ describe BusinessLine do
       end
 
       context "= filter" do
-        let(:change_history_filters) { { days_waiting: { number_of_days: 10, range: "=" } } }
+        let(:change_history_filters) { { days_waiting: { number_of_days: 10, operator: "=" } } }
 
         it "should only return rows that are equal to the filtered days waiting value" do
           expect(subject.entries.count).to eq(2)
@@ -722,7 +750,7 @@ describe BusinessLine do
       end
 
       context "between filter" do
-        let(:change_history_filters) { { days_waiting: { number_of_days: 4, end_days: 11, range: "between" } } }
+        let(:change_history_filters) { { days_waiting: { number_of_days: 4, end_days: 11, operator: "between" } } }
 
         it "should only return rows that are between the number of days and end of days" do
           expect(subject.entries.count).to eq(4)

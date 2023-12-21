@@ -5,76 +5,51 @@ class ClaimHistoryService
   attr_reader :business_line, :processed_task_ids,
               :processed_request_issue_ids, :processed_request_issue_update_ids,
               :processed_decision_issue_ids, :events, :filters
+  attr_writer :filters
 
-  TIMING_RANGES = [
-    "before",
-    "after",
-    "between",
-    "last 7 days",
-    "last 30 days",
-    "last 365 days"
+  TIMING_RANGES = %w[
+    before
+    after
+    between
+    last_7_days
+    last_30_days
+    last_365_days
   ].freeze
 
   def initialize(business_line = VhaBusinessLine.singleton, filters = {})
     @business_line = business_line
-    @filters = parse_filters(filters)
+    @filters = filters.to_h
     @processed_task_ids = Set.new
     @processed_request_issue_update_ids = Set.new
     @processed_decision_issue_ids = Set.new
     @processed_request_issue_ids = Set.new
     @events = []
-
-    # Some attributes for processing stats
-    @number_of_database_rows = 0
-    @number_of_database_columns = 0
-    @database_query_time = 0
-    @event_generation_time = 0
   end
 
   def build_events
-    all_data = []
-
     # Reset the instance attributes from the last time build_events was ran
     reset_processing_attributes
 
-    @database_query_time = measure_execution_time do
-      all_data = business_line.change_history_rows(@filters)
+    all_data = business_line.change_history_rows(@filters)
+
+    all_data.entries.each do |change_data|
+      process_request_issue_update_events(change_data)
+      process_request_issue_events(change_data)
+      process_task_events(change_data)
+      process_decision_issue_events(change_data)
     end
 
-    @number_of_database_columns = all_data.nfields
-    @number_of_database_rows = all_data.count
+    # Compact and sort in place to reduce garbage collection
+    @events.compact!
+    @events.sort_by! { |event| [event.task_id, event.event_date] }
 
-    @event_generation_time = measure_execution_time do
-      all_data.entries.map do |change_data|
-        process_request_issue_update_events(change_data)
-        process_request_issue_events(change_data)
-        process_task_events(change_data)
-        process_decision_issue_events(change_data)
-      end
-    end
+    # This currently relies on the events being sorted before hand
+    filter_events_for_last_action_taken!
 
-    @events = @events.compact.sort_by! { |event| [event.task_id, event.event_date] }
-  end
-
-  def event_stats
-    {
-      database_query_time: @database_query_time,
-      event_generation_time: @event_generation_time,
-      number_of_database_columns: @number_of_database_columns,
-      number_of_database_rows: @number_of_database_rows
-    }
-  end
-
-  def filters=(value)
-    @filters = parse_filters(value)
+    @events
   end
 
   private
-
-  def parse_filters(filters)
-    # filters.to_h.with_indifferent_access
-    filters.to_h
-  end
 
   def reset_processing_attributes
     @processed_task_ids.clear
@@ -82,10 +57,6 @@ class ClaimHistoryService
     @processed_decision_issue_ids.clear
     @processed_request_issue_ids.clear
     @events.clear
-    @number_of_database_rows = 0
-    @number_of_database_columns = 0
-    @database_query_time = 0
-    @event_generation_time = 0
   end
 
   def save_events(new_events)
@@ -131,7 +102,10 @@ class ClaimHistoryService
   def process_dispositions_filter(new_events)
     return new_events if @filters[:dispositions].blank?
 
-    new_events.select { |event| event && ensure_array(@filters[:dispositions]).include?(event.disposition) }
+    new_events.select do |event|
+      event && ensure_array(@filters[:dispositions]).include?(event.disposition) ||
+        @filters[:dispositions].include?("Blank") && event.disposition.nil?
+    end
   end
 
   def process_timing_filter(new_events)
@@ -152,9 +126,9 @@ class ClaimHistoryService
       "before" => [nil, @filters[:timing][:start_date]],
       "after" => [@filters[:timing][:start_date], nil],
       "between" => [@filters[:timing][:start_date], @filters[:timing][:end_date]],
-      "last 7 days" => [Time.zone.today - 6, Time.zone.today],
-      "last 30 days" => [Time.zone.today - 29, Time.zone.today],
-      "last 365 days" => [Time.zone.today - 364, Time.zone.today]
+      "last_7_days" => [Time.zone.today - 6, Time.zone.today],
+      "last_30_days" => [Time.zone.today - 29, Time.zone.today],
+      "last_365_days" => [Time.zone.today - 364, Time.zone.today]
     }[@filters[:timing][:range]]
   end
 
@@ -191,6 +165,19 @@ class ClaimHistoryService
     new_events.select { |event| ensure_array(@filters[:facilities]).include?(event.user_facility) }
   end
 
+  def filter_events_for_last_action_taken!
+    return nil unless @filters[:status_report_type].present? && @filters[:status_report_type] == "last_action_taken"
+
+    # This currently assumes that the events will be sorted by task_id and event_date before this
+    # Use slice_when to group events by task_id
+    grouped_events = events.slice_when { |prev, curr| prev.task_id != curr.task_id }
+
+    # Map each group to its last event
+    filtered_events = grouped_events.map(&:last)
+
+    @events = filtered_events
+  end
+
   def process_request_issue_update_events(change_data)
     request_issue_update_id = change_data["request_issue_update_id"]
 
@@ -211,7 +198,7 @@ class ClaimHistoryService
   end
 
   def process_request_issue_events(change_data)
-    request_issue_id = change_data["actual_request_issue_id"]
+    request_issue_id = change_data["request_issue_id"]
 
     if request_issue_id && !@processed_request_issue_ids.include?(request_issue_id)
       @processed_request_issue_ids.add(request_issue_id)
@@ -230,13 +217,5 @@ class ClaimHistoryService
 
   def ensure_array(variable)
     variable.is_a?(Array) ? variable : [variable]
-  end
-
-  # Timing method wrapper
-  def measure_execution_time
-    start_time = Time.zone.now
-    yield
-    end_time = Time.zone.now
-    end_time - start_time
   end
 end

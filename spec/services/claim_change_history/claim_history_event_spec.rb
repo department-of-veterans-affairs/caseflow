@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# I hate doing this
 require_relative "../../../app/services/claim_change_history/claim_history_event.rb"
 
 describe ClaimHistoryEvent do
@@ -12,29 +11,27 @@ describe ClaimHistoryEvent do
       "assigned_at" => "2023-10-19 22:47:16.222148",
       "assigned_to_id" => 200_000_022_2,
       "assigned_to_type" => "Organization",
-      "decision_date" => "2023-05-31",
+      "decision_date" => change_data_decision_date,
       "nonrating_issue_category" => "Clothing Allowance",
       "nonrating_issue_description" => "Clothing allowance no decision date",
-      "decision_date_added_at" => "2023-10-19 22:47:16.233187",
+      "decision_date_added_at" => change_data_decision_date_added_at,
       "veteran_file_number" => "000100022",
       "after_request_issue_ids" => "{4008,4006,4007}",
       "before_request_issue_ids" => "{4008,4006}",
-      "edited_request_issue_ids" => "{4008}",
+      "edited_request_issue_ids" => change_data_edited_request_issue_ids,
       "withdrawn_request_issue_ids" => "{}",
       "caseflow_decision_date" => "2023-10-19",
       "decision_text" => nil,
       "disposition" => "Granted",
-      "first_name" => "Bob",
-      "last_name" => "Smithboehm",
-      "middle_name" => nil,
+      "claimant_name" => "Bob Smithboehm",
       "task_id" => 124_28,
       "task_status" => change_data_task_status,
-      "request_issue_update_time" => "2023-10-19 22:47:16.233187",
+      "request_issue_update_time" => request_issue_update_time,
       "decision_description" => "granting clothing allowance",
       "request_issue_benefit_type" => "vha",
       "request_issue_update_id" => 7,
-      "actual_request_issue_id" => 4008,
-      "request_issue_created_at" => "2023-10-19 22:45:43.108934",
+      "request_issue_id" => request_issue_id,
+      "request_issue_created_at" => request_issue_created_at,
       "intake_completed_at" => "2023-10-19 22:39:14.270897",
       "update_user_name" => "Tyler User",
       "intake_user_name" => "Monte Mann",
@@ -51,16 +48,21 @@ describe ClaimHistoryEvent do
       "event_date" => change_data_event_date,
       "task_versions" => version_changes,
       "days_waiting" => 25
-
     }
   end
 
   let(:event_type) { :added_issue }
+  let(:change_data_edited_request_issue_ids) { "{4008}" }
   let(:change_data_task_status) { "completed" }
   let(:change_data_claim_type) { "HigherLevelReview" }
+  let(:request_issue_id) { 4008 }
   let(:change_data_event_user_name) { nil }
   let(:change_data_event_date) { nil }
+  let(:change_data_decision_date) { "2023-05-31" }
+  let(:change_data_decision_date_added_at) { "2023-10-19 22:48:25.281657" }
   let(:version_changes) { nil }
+  let(:request_issue_update_time) { "2023-10-19 22:47:16.233187" }
+  let(:request_issue_created_at) { "2023-10-19 22:45:43.108934" }
   let(:event_attribute_data) do
     {
       assigned_at: "2023-10-19 22:47:16.222148",
@@ -68,7 +70,7 @@ describe ClaimHistoryEvent do
       claim_type: "HigherLevelReview",
       claimant_name: "Bob Smithboehm",
       days_waiting: 25,
-      decision_date: "2023-05-31",
+      decision_date: change_data_decision_date,
       decision_description: "granting clothing allowance",
       disposition: "Granted",
       disposition_date: "2023-10-19",
@@ -402,13 +404,13 @@ describe ClaimHistoryEvent do
     end
 
     describe ".create_issue_events" do
-      subject { described_class.create_issue_events(change_data) }
+      let(:change_data_edited_request_issue_ids) { "{4001}" }
 
-      let(:request_issue_id) { 4008 }
+      let(:new_request_issue_id) { 4001 }
 
       let!(:request_issue) do
         create(:request_issue,
-               id: request_issue_id,
+               id: new_request_issue_id,
                nonrating_issue_category: "Updated issue",
                nonrating_issue_description: "Updated issue description",
                decision_date: Time.zone.today)
@@ -419,6 +421,8 @@ describe ClaimHistoryEvent do
         request_issue.decision_date_added_at = DateTime.parse(change_data["request_issue_update_time"])
         request_issue.save!
       end
+
+      subject { described_class.create_issue_events(change_data) }
 
       context "when there is an edited issue id with a matching added_decision_date_added_at time" do
         it "should create an added_decision_date event" do
@@ -431,12 +435,27 @@ describe ClaimHistoryEvent do
         end
       end
 
-      context "when there is a withdrawn issue id in the withdrawn request issue ids" do
-        let(:request_issue_id) { 4009 }
+      context "when there is an edited issue id that matches the change history row request issue id" do
+        let(:change_data_edited_request_issue_ids) { "{4008}" }
+        let(:request_issue_id) { 4008 }
 
+        # Make these two the same so it's the correct update event
+        let(:change_data_decision_date_added_at) { request_issue_update_time }
+
+        it "should create an added_decision_date event without a database fetch" do
+          event = subject[0]
+          expect(event.event_type).to eq(:added_decision_date)
+          expect(event.event_date).to eq(change_data["request_issue_update_time"])
+          expect(event.event_user_name).to eq(change_data["update_user_name"])
+          expect(event.event_user_css_id).to eq(change_data["update_user_css_id"])
+          expect(event.decision_date).to eq(change_data["decision_date"])
+        end
+      end
+
+      context "when there is a withdrawn issue id in the withdrawn request issue ids" do
         before do
           change_data["edited_request_issue_ids"] = "{}"
-          change_data["withdrawn_request_issue_ids"] = "{#{request_issue_id}}"
+          change_data["withdrawn_request_issue_ids"] = "{#{new_request_issue_id}}"
         end
 
         it "should create a :withdrew_issue event" do
@@ -450,11 +469,11 @@ describe ClaimHistoryEvent do
       end
 
       context "when there are more before request issue ids than after request issue ids" do
-        let(:request_issue_id) { 4009 }
+        let(:new_request_issue_id) { 4009 }
 
         before do
           change_data["after_request_issue_ids"] = "{}"
-          change_data["before_request_issue_ids"] = "{#{request_issue_id}}"
+          change_data["before_request_issue_ids"] = "{#{new_request_issue_id}}"
         end
 
         it "should create a :removed_issue event" do
@@ -468,7 +487,7 @@ describe ClaimHistoryEvent do
       end
 
       context "when there are two withdrawn request_ids in the same update" do
-        let(:request_issue_id) { 4009 }
+        let(:new_request_issue_id) { 4009 }
 
         let!(:request_issue2) do
           create(:request_issue,
@@ -482,7 +501,7 @@ describe ClaimHistoryEvent do
 
         before do
           change_data["edited_request_issue_ids"] = "{}"
-          change_data["withdrawn_request_issue_ids"] = "{#{request_issue_id},4007}"
+          change_data["withdrawn_request_issue_ids"] = "{#{new_request_issue_id},4007}"
         end
 
         it "should create two :withdrew_issue events" do
@@ -562,10 +581,51 @@ describe ClaimHistoryEvent do
 
       context "if the request issue was added during a request issues update" do
         let(:event_type) { :added_issue_without_decision_date }
+        # If the request_issue_update_time is not the same as the created it, it will do a DB fetch for issue update
+        let(:request_issue_update_time) { request_issue_created_at }
 
-        # The base change_data was added during an update so no data updates are neccesary
-        it "should create an added issue event with intake event data" do
+        # The base change_data was added during an update so no data updates are necessary
+        it "should create an added issue without decision date event with update event data" do
           expect_attributes(subject, event_attribute_data.merge(update_event_data))
+        end
+      end
+
+      context "if the request issue never had a decision date" do
+        let(:event_type) { :added_issue_without_decision_date }
+        let(:change_data_decision_date) { nil }
+        let(:change_data_decision_date_added_at) { nil }
+        # If the request_issue_update_time is not the same as the created it, it will do a DB fetch for issue update
+        let(:request_issue_update_time) { request_issue_created_at }
+
+        it "should create an added issue without decision date event with update event data" do
+          expect_attributes(subject, event_attribute_data.merge(update_event_data))
+        end
+      end
+
+      context "if the request issue and request issue update row data does not match up" do
+        let(:event_type) { :added_issue_without_decision_date }
+        let(:change_data_decision_date) { nil }
+        let(:request_issue_id) { 1 }
+
+        before do
+          # Setup data to fetch for the request issue update from the database
+          new_user = create(:user, css_id: "NEWUSER", full_name: "Update Fetch", station_id: "103")
+          task = create(:higher_level_review_vha_task, id: "12428")
+          update = create(:request_issues_update,
+                          :requires_processing,
+                          review: task.appeal,
+                          before_request_issue_ids: [],
+                          after_request_issue_ids: [request_issue_id],
+                          user: new_user)
+          task.appeal.request_issues_updates << update
+          task.appeal.save
+        end
+
+        it "should create an added issue without decision date event with update event data" do
+          expect(subject.event_user_css_id).to eq("NEWUSER")
+          expect(subject.event_user_name).to eq("Update Fetch")
+          expect(subject.user_facility).to eq("103")
+          expect(subject.event_date).to eq(request_issue_created_at)
         end
       end
     end
@@ -600,7 +660,7 @@ describe ClaimHistoryEvent do
           }
         end
 
-        subject { described_class.send(:retrieve_issue_data, request_issue_id) }
+        subject { described_class.send(:retrieve_issue_data, request_issue_id, {}) }
 
         it "should return a hash with values retrieved from the found request issue" do
           expect(subject).to eq(request_issue_hash)
@@ -716,7 +776,7 @@ describe ClaimHistoryEvent do
           [
             event_instance.veteran_file_number, event_instance.claimant_name, event_instance.task_url,
             event_instance.readable_task_status, event_instance.days_waiting, event_instance.readable_claim_type,
-            event_instance.user_facility, event_instance.readable_user_name,
+            event_instance.readable_facility_name, event_instance.readable_user_name,
             event_instance.readable_event_date, event_instance.readable_event_type,
             event_instance.send(:issue_or_status_information), event_instance.send(:disposition_information)
           ]

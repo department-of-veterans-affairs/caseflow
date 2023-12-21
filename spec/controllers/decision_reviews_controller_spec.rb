@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
-# This is needed for the generate_report action for a csv format since the testing environment does not eager load files
+# This is needed for the generate_report action since the testing environment does not eager load service files
 require Rails.root.join("app", "services", "claim_change_history", "change_history_reporter.rb")
 require Rails.root.join("app", "services", "claim_change_history", "claim_history_service.rb")
+require Rails.root.join("app", "services", "claim_change_history", "change_history_filter_parser.rb")
+require Rails.root.join("app", "services", "claim_change_history", "claim_history_event.rb")
 
 describe DecisionReviewsController, :postgres, type: :controller do
   before do
@@ -705,26 +707,25 @@ describe DecisionReviewsController, :postgres, type: :controller do
     context "user is an org admin" do
       let(:generate_report_filters) do
         {
-          report: "event",
-          events: ["claim_created"],
-          timing: {
-            end_date: Time.zone.now,
-            start_date: Time.zone.now,
-            range: 3
+          "report_type" => "event_type_action",
+          "timing" => {
+            "range" => "after",
+            "start_date" => Time.zone.now
           },
-          conditions: {
-            days_waiting: {
-              range: "between",
-              number_of_days: 3,
-              start_date: Time.zone.now,
-              end_date: Time.zone.now
-            },
-            review_type: %w[higher_level_review supplemental_claim],
-            issue_type: ["Beneficiary Travel"],
-            disposition: %w[blank granted denied],
-            personnel: ["ACBAUERVVHAH"],
-            facility: [668, 669]
-          }
+          "days_waiting" => {
+            "comparison_operator" => "moreThan",
+            "value_one" => "6"
+          },
+          "personnel" => {
+            "0" => "CAREGIVERADMIN",
+            "1" => "VHAPOADMIN",
+            "2" => "THOMAW2VACO"
+          },
+          "decision_review_type" => {
+            "0" => "HigherLevelReview",
+            "1" => "SupplementalClaim"
+          },
+          "business_line_slug" => "vha"
         }
       end
 
@@ -741,38 +742,30 @@ describe DecisionReviewsController, :postgres, type: :controller do
 
       it "renders the report generation action in a css format" do
         get :generate_report, format: :csv,
-                              params: { business_line_slug: non_comp_org.url, filters: generate_report_filters }
+                              params: { business_line_slug: non_comp_org.url }.merge(generate_report_filters)
 
         expect(response.headers["Content-Type"]).to eq("text/csv")
-        expect(response.headers["Content-Disposition"]).to match(/^attachment; filename=\"vha-20180101.csv\"/)
+        expect(response.headers["Content-Disposition"]).to match(
+          /^attachment; filename=\"taskreport-20180101_0700.csv\"/
+        )
       end
 
       it "calls MetricsService to record metrics" do
         expect(MetricsService).to receive(:store_record_metric)
         get :generate_report, format: :csv,
-                              params: { business_line_slug: non_comp_org.url, filters: generate_report_filters }
+                              params: { business_line_slug: non_comp_org.url}.merge(generate_report_filters)
 
         expect(response.status).to eq 200
       end
 
-      context "missing filter parameters" do
-        it "raises a param is missing error when filters are missing" do
-          get :generate_report, format: :csv, params: { business_line_slug: non_comp_org.url }
-          expect(response).to have_http_status(:bad_request)
-          expect(response.content_type).to eq("application/json")
-          json_response = JSON.parse(response.body)
-          expect(json_response["error"]).to eq("param is missing or the value is empty: filters")
-        end
-      end
-
       context "missing report parameter" do
         it "raises a param is missing error when report type is missing from filters" do
-          params = { business_line_slug: non_comp_org.url, filters: generate_report_filters.except(:report) }
+          params = { business_line_slug: non_comp_org.url }.merge(generate_report_filters.except("report_type"))
           get :generate_report, format: :csv, params: params
           expect(response).to have_http_status(:bad_request)
           expect(response.content_type).to eq("application/json")
           json_response = JSON.parse(response.body)
-          expect(json_response["error"]).to eq("param is missing or the value is empty: report")
+          expect(json_response["error"]).to eq("param is missing or the value is empty: reportType")
         end
       end
     end

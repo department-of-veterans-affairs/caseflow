@@ -29,8 +29,22 @@ describe('ReportPage', () => {
     );
   };
 
+  const checkForValidationText = async (text) => {
+    const generateTaskReport = screen.getByRole('button', { name: 'Generate task report' });
+
+    expect(generateTaskReport).not.toHaveClass('usa-button-disabled');
+
+    // Wait for the validation text to appear before making assertions
+    await fireEvent.click(generateTaskReport);
+    await waitFor(() => {
+      const validationText = screen.getByText(text);
+
+      expect(validationText).toBeInTheDocument();
+    });
+  };
+
   const clickOnReportType = async () => {
-    setup();
+    setup({ nonComp: { businessLineUrl: 'vha' } });
 
     await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
   };
@@ -198,6 +212,12 @@ describe('ReportPage', () => {
       expect(checkbox.checked).toEqual(false);
 
     });
+
+    it('should render an error if no checkbox is checked', async () => {
+      await navigateToConditionInput('Decision Review Type');
+      expect(screen.getByText('Higher-Level Reviews')).toBeInTheDocument();
+      await checkForValidationText('Please select at least one option');
+    });
   });
 
   describe('Facility Section', () => {
@@ -210,6 +230,12 @@ describe('ReportPage', () => {
 
       await selectEvent.select(dropdown, ['Albuquerque']);
       expect(screen.getByText('Albuquerque')).toBeInTheDocument();
+    });
+
+    it('should render an error if no facility is selected', async () => {
+      await navigateToConditionInput('Facility');
+      expect(screen.getByText('Facility Type')).toBeInTheDocument();
+      await checkForValidationText('Please select at least one option');
     });
   });
 
@@ -249,6 +275,8 @@ describe('ReportPage', () => {
       userEvent.click(clearButton);
 
       expect(screen.queryByText('Granted')).not.toBeInTheDocument();
+
+      await checkForValidationText('Please select at least one option');
     });
   });
 
@@ -347,7 +375,7 @@ describe('ReportPage', () => {
 
     });
 
-    it('should add 10 checkbox when radio Specific Events/ Actions is clicked', async () => {
+    it('should add 10 checkboxes when radio Specific Events/ Actions is clicked', async () => {
       setup();
 
       await selectEvent.select(screen.getByLabelText('Report Type'), ['Status', 'Event / Action']);
@@ -360,9 +388,9 @@ describe('ReportPage', () => {
       fireEvent.click(screen.getByLabelText('Specific Events / Actions'));
       expect(screen.getAllByRole('checkbox').length).toBe(10);
 
-      REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS.map(
-        (option) => expect(screen.getAllByText(option.label)).toBeTruthy()
-      );
+      REPORT_TYPE_CONSTANTS.SPECTIFIC_EVENT_OPTIONS.forEach((option) => {
+        expect(screen.getAllByText(option.label)).toBeTruthy();
+      });
     });
 
     it('should add a validation error if Generate Task button is clicked without selecting any specific events actions',
@@ -391,7 +419,7 @@ describe('ReportPage', () => {
 
       });
 
-    it('should add 3 checkbox when radio Specific Status is clicked', async () => {
+    it('should add 4 checkbox when radio Specific Status is clicked', async () => {
       setup();
 
       await selectEvent.select(screen.getByLabelText('Report Type'), ['Status']);
@@ -402,7 +430,7 @@ describe('ReportPage', () => {
       expect(specificEvents.length).toBe(1);
 
       fireEvent.click(screen.getByLabelText('Specific Status'));
-      expect(screen.getAllByRole('checkbox').length).toBe(3);
+      expect(screen.getAllByRole('checkbox').length).toBe(4);
 
       REPORT_TYPE_CONSTANTS.SPECIFIC_STATUS_OPTIONS.map((option) =>
         expect(screen.getAllByText(option.label)).toBeTruthy()

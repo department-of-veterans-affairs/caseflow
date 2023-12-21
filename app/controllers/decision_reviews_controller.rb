@@ -74,10 +74,13 @@ class DecisionReviewsController < ApplicationController
       format.csv do
         filter_params = change_history_params
 
-        fail ActionController::ParameterMissing.new(:report), report_missing_message unless filter_params[:report]
+        unless filter_params[:report_type]
+          fail ActionController::ParameterMissing.new(:report_type), report_type_missing_message
+        end
 
-        events_as_csv = create_change_history_csv(filter_params)
-        filename = Time.zone.now.strftime("#{business_line.url}-%Y%m%d.csv")
+        parsed_filters = ChangeHistoryFilterParser.new(filter_params).parse_filters
+        events_as_csv = create_change_history_csv(parsed_filters)
+        filename = Time.zone.now.strftime("taskreport-%Y%m%d_%H%M.csv")
         send_data events_as_csv, filename: filename, type: "text/csv", disposition: "attachment"
       end
     end
@@ -219,8 +222,8 @@ class DecisionReviewsController < ApplicationController
     Time.zone.now.strftime("#{business_line.url}-%Y%m%d.csv")
   end
 
-  def report_missing_message
-    "param is missing or the value is empty: report"
+  def report_type_missing_message
+    "param is missing or the value is empty: reportType"
   end
 
   def requires_admin_access_redirect
@@ -248,19 +251,18 @@ class DecisionReviewsController < ApplicationController
   end
 
   def change_history_params
-    params.require(:filters).permit(
-      :report,
-      events: [],
-      timing: [],
-      statuses: [],
-      conditions: {
-        days_waiting: [],
-        review_type: [],
-        issue_type: [],
-        disposition: [],
-        personnel: [],
-        facility: []
-      }
+    params.permit(
+      :report_type,
+      :status_report_type,
+      events: {},
+      timing: {},
+      statuses: {},
+      days_waiting: {},
+      decision_review_type: {},
+      issue_type: {},
+      issue_disposition: {},
+      personnel: {},
+      facility: {}
     )
   end
 

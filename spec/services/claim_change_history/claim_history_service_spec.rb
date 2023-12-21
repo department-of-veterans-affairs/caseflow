@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# I hate doing this. It seems wrong
 require_relative "../../../app/services/claim_change_history/claim_history_service.rb"
 require_relative "../../../app/services/claim_change_history/claim_history_event.rb"
 
@@ -85,6 +84,17 @@ describe ClaimHistoryService do
   end
 
   before do
+    # Remove the versions to setup specific versions
+    hlr_task.versions.each(&:delete)
+    hlr_task.save
+    hlr_task.reload
+
+    PaperTrail.request(enabled: false) do
+      hlr_task.assigned!
+    end
+
+    hlr_task.assigned!
+
     # Simulate the task status for a task that went intake -> on_hold -> assigned -> completed
     hlr_task.on_hold!
 
@@ -95,11 +105,6 @@ describe ClaimHistoryService do
     extra_hlr_request_issue.save
 
     hlr_task.assigned!
-
-    # Set the whodunnnit of the completed version status to the decision user
-    version = hlr_task.versions.first
-    version.whodunnit = decision_user.id.to_s
-    version.save
 
     # Setup request issues and decision issues
     decision_issue.request_issues << extra_hlr_request_issue
@@ -112,14 +117,16 @@ describe ClaimHistoryService do
     hlr_task.appeal.save
 
     # Set the time and save it for days waiting filter. Should override assigned!
-    # hlr_task.assigned_at = 5.days.ago
     hlr_task.assigned_at = 5.days.ago - 2.hours
     hlr_task.save
 
-    # Set the task status back to completed without triggering papertrail so the task is in the correct state
-    PaperTrail.request(enabled: false) do
-      hlr_task.completed!
-    end
+    # Set the task status back to completed to finish off the versions
+    hlr_task.completed!
+
+    # Set the whodunnnit of the completed version status to the decision user
+    completed_version = hlr_task.versions.last
+    completed_version.whodunnit = decision_user.id.to_s
+    completed_version.save
   end
 
   describe ".build_events" do
@@ -143,7 +150,7 @@ describe ClaimHistoryService do
         disposition_issue_types = ["Caregiver | Other", "Camp Lejune Family Member"]
         disposition_issue_descriptions = ["VHA - Caregiver ", "Camp Lejune description"]
         disposition_user_names = ["Gaius Baelsar", "Gaius Baelsar"]
-        disposition_values = %w[allowed denied]
+        disposition_values = %w[Granted denied]
         expect(disposition_events.map(&:issue_type)).to contain_exactly(*disposition_issue_types)
         expect(disposition_events.map(&:issue_description)).to contain_exactly(*disposition_issue_descriptions)
         expect(disposition_events.map(&:event_user_name)).to contain_exactly(*disposition_user_names)
@@ -248,7 +255,7 @@ describe ClaimHistoryService do
       end
 
       context "with dispositions filter" do
-        let(:filters) { { dispositions: ["allowed"] } }
+        let(:filters) { { dispositions: ["Granted"] } }
 
         it "should only return events for the tasks that match the dispositions filter" do
           subject
@@ -262,11 +269,20 @@ describe ClaimHistoryService do
         end
 
         context "with no filter matches" do
-          let(:filters) { { dispositions: ["Granted"] } }
+          let(:filters) { { dispositions: ["Dismissed"] } }
 
           it "should return no events" do
             subject
             expect(service_instance.events).to eq([])
+          end
+        end
+
+        context "with Blank filter" do
+          let(:filters) { { dipositions: ["Blank"] } }
+
+          it "should return events without a disposition" do
+            subject
+            expect(service_instance.events.count).to eq(14)
           end
         end
       end
@@ -429,7 +445,7 @@ describe ClaimHistoryService do
         end
 
         context "last 7 days filter" do
-          let(:filters) { { timing: { range: "last 7 days" } } }
+          let(:filters) { { timing: { range: "last_7_days" } } }
 
           before do
             new_time = 5.days.ago
@@ -450,7 +466,7 @@ describe ClaimHistoryService do
         end
 
         context "last 30 days filter" do
-          let(:filters) { { timing: { range: "last 30 days" } } }
+          let(:filters) { { timing: { range: "last_30_days" } } }
 
           before do
             # Change the intake date for claim created and one of the issues to more than 30 days
@@ -474,7 +490,7 @@ describe ClaimHistoryService do
         end
 
         context "last 365 days filter" do
-          let(:filters) { { timing: { range: "last 365 days" } } }
+          let(:filters) { { timing: { range: "last_365_days" } } }
 
           before do
             # Change the intake date for claim created and one of the issues to less than 365 days
@@ -519,7 +535,7 @@ describe ClaimHistoryService do
 
       context "days waiting filter" do
         context "less than number of days" do
-          let(:filters) { { days_waiting: { number_of_days: 8, range: "<" } } }
+          let(:filters) { { days_waiting: { number_of_days: 8, operator: "<" } } }
 
           it "should only return events for tasks that match the days waiting filter" do
             subject
@@ -528,7 +544,7 @@ describe ClaimHistoryService do
         end
 
         context "greater than number of days" do
-          let(:filters) { { days_waiting: { number_of_days: 15, range: ">" } } }
+          let(:filters) { { days_waiting: { number_of_days: 15, operator: ">" } } }
 
           it "should only return events for tasks that match the days waiting filter" do
             subject
@@ -537,7 +553,7 @@ describe ClaimHistoryService do
         end
 
         context "equal to number of days" do
-          let(:filters) { { days_waiting: { number_of_days: 5, range: "=" } } }
+          let(:filters) { { days_waiting: { number_of_days: 5, operator: "=" } } }
 
           it "should only return events for tasks that match the days waiting filter" do
             subject
@@ -546,7 +562,7 @@ describe ClaimHistoryService do
         end
 
         context "between number of days" do
-          let(:filters) { { days_waiting: { number_of_days: 3, range: "between", end_days: 6 } } }
+          let(:filters) { { days_waiting: { number_of_days: 3, operator: "between", end_days: 6 } } }
 
           it "should only return events for tasks that match the days waiting filter" do
             subject
@@ -555,7 +571,7 @@ describe ClaimHistoryService do
         end
 
         context "with no filter matches" do
-          let(:filters) { { days_waiting: { number_of_days: 60, range: ">", end_days: 6 } } }
+          let(:filters) { { days_waiting: { number_of_days: 60, operator: ">", end_days: 6 } } }
 
           it "should return no events" do
             subject
@@ -618,6 +634,27 @@ describe ClaimHistoryService do
             subject
             expect(service_instance.events).to eq([])
           end
+        end
+      end
+
+      context "with last_action_taken filter" do
+        let(:filters) { { status_report_type: "last_action_taken" } }
+
+        before do
+          decision_issue.created_at = Time.zone.now + 1.day
+          decision_issue.save
+
+          sc_task.appeal.intake.completed_at = Time.zone.now + 1.day
+          sc_task.appeal.intake.save
+        end
+
+        it "should only return the last event for each task" do
+          subject
+          expected_event_types = [
+            :completed_disposition,
+            :in_progress
+          ]
+          expect(service_instance.events.map(&:event_type)).to contain_exactly(*expected_event_types)
         end
       end
     end
