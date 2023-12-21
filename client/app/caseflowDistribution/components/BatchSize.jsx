@@ -14,10 +14,6 @@ const BatchSize = (props) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
   });
 
-  const filteredInitialLevers = leverList.map((item) => {
-    return leverStore.getState().initial_levers.find((lever) => lever.item === item);
-  });
-
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
     '& .cf-form-int-input .input-container': { width: 'auto', display: 'inline-block', verticalAlign: 'middle' },
