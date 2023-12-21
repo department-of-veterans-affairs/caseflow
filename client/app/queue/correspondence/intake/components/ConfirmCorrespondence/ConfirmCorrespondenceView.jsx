@@ -124,7 +124,7 @@ export const ConfirmCorrespondenceView = (props) => {
   return (
     <div className="gray-border corr">
       <h1 className="corr-h1">Review and Confirm Correspondence</h1>
-      <p className="corr-p">
+      <p style={{ fontSize: '.85em' }}>
         Review the details below to make sure the information is correct before submitting.
         If you need to make changes, please go back to the associated section.
       </p>
