@@ -65,7 +65,7 @@ describe('PackageActionModal rendering', () => {
 
     renderPackageActionModal('reassignPackage');
 
-    expect(screen.getByText('Request package assignment')).toBeInTheDocument();
+    expect(screen.getByText('Request package reassignment')).toBeInTheDocument();
     expect(screen.getByText('Veteran Details')).toBeInTheDocument();
     expect(screen.getByText('Provide a reason for reassignment')).toBeInTheDocument();
     expect(screen.getByText(correspondenceData.cmp_packet_number.toString())).toBeInTheDocument();

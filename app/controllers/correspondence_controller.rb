@@ -20,6 +20,24 @@ class CorrespondenceController < ApplicationController
     end
   end
 
+  def current_step
+    intake = CorrespondenceIntake.find_by(user: current_user, correspondence: current_correspondence) ||
+      CorrespondenceIntake.new(user: current_user, correspondence: current_correspondence)
+
+    intake.update(
+      current_step: params[:current_step],
+      redux_store: params[:redux_store]
+    )
+
+    if intake.valid?
+      intake.save!
+
+      render json: {}, status: :ok and return
+    else
+      render json: intake.errors.full_messages, status: :unprocessable_entity and return
+    end
+  end
+
   def correspondence_cases
     respond_to do |format|
       format.html { "correspondence_cases" }
@@ -155,6 +173,7 @@ class CorrespondenceController < ApplicationController
     ActiveRecord::Base.transaction do
       begin
         create_correspondence_relations(correspondence_id)
+        link_appeals_to_correspondence(correspondence_id)
         add_tasks_to_related_appeals(correspondence_id)
         complete_waived_evidence_submission_tasks(correspondence_id)
       rescue ActiveRecord::RecordInvalid
@@ -205,12 +224,16 @@ class CorrespondenceController < ApplicationController
     end
   end
 
+  def link_appeals_to_correspondence(correspondence_id)
+    params[:related_appeal_ids].map do |appeal_id|
+      CorrespondencesAppeal.find_or_create_by(correspondence_id: correspondence_id, appeal_id: appeal_id)
+    end
+  end
+
   def complete_waived_evidence_submission_tasks(correspondence_id)
     params[:waived_evidence_submission_window_tasks]&.map do |task|
       evidence_submission_window_task = EvidenceSubmissionWindowTask.find(task[:task_id])
       instructions = evidence_submission_window_task.instructions
-      appeal = evidence_submission_window_task&.appeal
-      CorrespondencesAppeal.find_or_create_by(correspondence_id: correspondence_id, appeal_id: appeal.id)
       evidence_submission_window_task.when_timer_ends
       evidence_submission_window_task.update!(instructions: (instructions << task[:waive_reason]))
     end
@@ -219,7 +242,6 @@ class CorrespondenceController < ApplicationController
   def add_tasks_to_related_appeals(correspondence_id)
     params[:tasks_related_to_appeal]&.map do |data|
       appeal = Appeal.find(data[:appeal_id])
-      CorrespondencesAppeal.find_or_create_by(correspondence_id: correspondence_id, appeal_id: appeal.id)
       data[:klass].constantize.create_from_params(
         {
           appeal: appeal,
