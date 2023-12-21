@@ -3,9 +3,11 @@ import AppFrame from '../components/AppFrame';
 import NavigationBar from '../components/NavigationBar';
 import StatusMessage from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/StatusMessage';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
+import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { BrowserRouter } from 'react-router-dom';
 
+// eslint-disable-next-line import/extensions
 import COPY from '../../COPY.json';
 
 const options = [{ title: 'Help',
@@ -35,6 +37,11 @@ const UnderConstruction = (props) => <BrowserRouter>
       buildDate={props.buildDate} />
   </div>
 </BrowserRouter>;
+
+UnderConstruction.propTypes = {
+  feedbackUrl: PropTypes.string,
+  buildDate: PropTypes.object,
+};
 
 export default UnderConstruction;
 
