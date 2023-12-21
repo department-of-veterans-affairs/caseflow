@@ -4,7 +4,6 @@ import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActio
 import ApiUtil from '../../util/ApiUtil';
 import Modal from 'app/components/Modal';
 import Button from 'app/components/Button';
-import LeverAlertBanner from './LeverAlertBanner';
 import COPY from '../../../COPY';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import moment from 'moment';
@@ -143,9 +142,6 @@ function leverList(leverStore) {
 
   return (
     <div>
-      <div>
-        {showSuccessBanner}
-      </div>
       <table>
         <tbody>
           <tr>
