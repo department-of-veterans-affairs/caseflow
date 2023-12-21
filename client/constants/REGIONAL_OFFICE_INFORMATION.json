@@ -157,7 +157,7 @@
     "timezone": "America/New_York",
     "hold_hearings": true,
     "facility_locator_id": "vba_317",
-    "alternate_locations": ["vc_0742V"]
+    "alternate_locations": ["vba_317a", "vc_0742V"]
   },
   "RO18": {
     "label": "Winston-Salem regional office",
