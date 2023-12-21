@@ -136,7 +136,10 @@ export const CorrespondenceReviewPackage = (props) => {
       )}
       <React.Fragment>
         <AppSegment filledBackground>
-          <ReviewPackageCaseTitle handlePackageActionModal={handlePackageActionModal} />
+          <ReviewPackageCaseTitle
+            handlePackageActionModal={handlePackageActionModal}
+            packageActionModal={packageActionModal}
+          />
           <ReviewPackageData
             correspondence={props.correspondence}
             packageDocumentType={props.packageDocumentType}
