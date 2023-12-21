@@ -47,6 +47,7 @@ class AssignHearingDispositionTask < Task
 
       HearingTaskAssociation.create!(hearing: hearing, hearing_task: parent)
 
+
       assign_hearing_disposition_task
     end
   end
@@ -166,7 +167,7 @@ class AssignHearingDispositionTask < Task
                     else
                       fail ArgumentError, "unknown disposition"
                     end
-
+    byebug
     update_with_instructions(instructions: params[:instructions]) if params[:instructions].present?
 
     created_tasks

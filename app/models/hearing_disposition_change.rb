@@ -1,3 +1,3 @@
 class HearingDispositionChange < CaseflowRecord
-  belongs_to :user
+  belongs_to :hearing, polymorphic: true
 end
