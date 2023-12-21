@@ -31,12 +31,12 @@ class Api::V1::MpiController < Api::ApplicationController
     }
   end
 
+  def invalid_result?(result)
+    result == :no_veteran || result == :missing_deceased_info
+  end
+
   def handle_response(result)
-    status = if result == :no_veteran || result == :missing_deceased_info
-               :bad_request
-             else
-               :ok
-             end
+    status = invalid_result?(result) ? :bad_request : :ok
     render json: { result: result }, status: status
   end
 

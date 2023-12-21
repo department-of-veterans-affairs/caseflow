@@ -288,7 +288,7 @@ class TasksController < ApplicationController
     # and AssignHearingDispositionTask for virtual hearing related updates
     # Start with any alerts on the current task, then find alerts on the tasks
     # that resulted from the update
-    tasks.reduce(task.alerts) { |acc, t| acc + t.alerts }
+    tasks.reduce(task.alerts) { |acc, task| acc + task.alerts }
   end
 
   def tasks_hash_with_alerts(tasks)
