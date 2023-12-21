@@ -231,8 +231,8 @@ RSpec.describe Idt::Api::V1::AppealsController, type: :controller do
           # Only 2 of these are relevant to the AMA appeal.
           # AttorneyCaseReviews affect the "documents" attribute, so only 2 documents are returned.
           expect(AttorneyCaseReview.count).to eq 3
-          expect(AttorneyCaseReview.uniq.pluck(:appeal_type)).to match_array %w[Appeal LegacyAppeal]
-          expect(AttorneyCaseReview.uniq.pluck(:appeal_id).size).to eq 1
+          expect(AttorneyCaseReview.all.map(&:appeal_type).uniq).to match_array %w[Appeal LegacyAppeal]
+          expect(AttorneyCaseReview.all.map(&:appeal_id).uniq.size).to eq 1
 
           tasks.first.update(assigned_at: 5.days.ago)
           tasks.second.update(assigned_at: 15.days.ago)
