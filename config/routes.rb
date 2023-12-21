@@ -384,6 +384,8 @@ Rails.application.routes.draw do
 
   get "feedback" => "application#feedback"
 
+  get "under_construction" => "application#under_construction"
+
   %w[403 404 500].each do |code|
     get code, to: "errors#show", status_code: code
   end

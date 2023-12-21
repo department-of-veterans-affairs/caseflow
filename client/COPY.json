@@ -1396,5 +1396,6 @@
   "REFRESH_POA": "Refresh POA",
   "POA_SUCCESSFULLY_REFRESH_MESSAGE": "Successfully refreshed. No power of attorney information was found at this time.",
   "POA_UPDATED_SUCCESSFULLY": "POA Updated Successfully",
-  "EMPLOYER_IDENTIFICATION_NUMBER": "Employer Identification Number"
+  "EMPLOYER_IDENTIFICATION_NUMBER": "Employer Identification Number",
+  "UNDER_CONSTRUCTION_MESSAGE": "This page is under construction."
 }
