@@ -1421,5 +1421,6 @@
   "PACKAGE_ACTION_SPLIT_TEXTAREA_LABEL":"Reason for split",
   "PACKAGE_ACTION_SPLIT_TITLE": "Request split package",
   "CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER": "The correspondence's documents have failed to upload to the eFolder",
-  "CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE": "You can upload it from this page to the veteran's eFolder at a later time."
+  "CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE": "You can upload it from this page to the veteran's eFolder at a later time.",
+  "UNDER_CONSTRUCTION_MESSAGE": "This page is under construction."
 }
