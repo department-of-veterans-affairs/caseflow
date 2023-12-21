@@ -29,6 +29,7 @@ class ClaimDateDtFixJob < CaseflowJob
     records_with_errors.each do |single_decision_document|
       next unless valid_decision_document?(single_decision_document)
 
+      @stuck_job_report_service.append_single_record(single_decision_document.class.name, single_decision_document.id)
       process_records(single_decision_document)
     end
 
