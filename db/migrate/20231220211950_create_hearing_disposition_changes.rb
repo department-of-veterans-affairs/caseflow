@@ -8,7 +8,6 @@ class CreateHearingDispositionChanges < Caseflow::Migration
       t.text :new_disposition
       t.text :change_reason
       t.text :change_justification
-      t.references :user, foreign_key: true
     end
 
     add_reference :hearing_disposition_changes,
@@ -21,5 +20,10 @@ class CreateHearingDispositionChanges < Caseflow::Migration
                   index: true,
                   foreign_key: { to_table: :users },
                   comment: "The ID of the user who most recently updated the virtual hearing"
+    add_reference :hearing_disposition_changes,
+                  :hearing,
+                  index: true,
+                  foreign_key: { to_table: :hearings },
+                  comment: "The ID of the hearing that has most recently been updated through a disposition change"
   end
 end
