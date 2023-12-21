@@ -221,6 +221,10 @@ export class Row extends React.PureComponent {
     this.setState((prevState) => ({ showResponseRow: !prevState.showResponseRow }));
   }
 
+  // This toggles the bottom border of the original row when opening and closing response details
+  // Return the styles for the border
+  toggleBorder = () => this.state.showResponseRow ? { borderBottom: 'hidden' } : { borderBottom: 'inherit' }
+
   render() {
     const props = this.props;
     const rowId = props.footer ? 'footer' : props.rowId;
@@ -228,7 +232,7 @@ export class Row extends React.PureComponent {
 
     return (
       <>
-        <tr id={`table-row-${rowId}`} className={rowClassnameCondition} role="row" style={{borderBottom: 'inherit'}}>
+        <tr id={`table-row-${rowId}`} className={rowClassnameCondition} role="row" style={this.toggleBorder()}>
           {getColumns(props).
             filter((column) => getCellSpan(props.rowObject, column) > 0).
             map((column, columnNumber) => (

@@ -1,24 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PlusIcon } from '../../components/icons/PlusIcon';
 import { MinusIcon } from '../../components/icons/MinusIcon';
 import { COLORS } from '../../constants/AppConstants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 const NotificationResponseButton = (props) => {
+  const [showingDetails, setShowingDetails] = useState(false);
 
-  console.log(props)
+  const styles = {
+    size: 14,
+    color: COLORS.BASE
+  };
 
-  const showResponseDetails = () => {
-    return (
-      <>
-        <Link onClick={() => toggleResponseDetails()}><MinusIcon size={12} color={COLORS.BASE} className="MinusIcon" /></Link>
-      </>
-    );
+  const handleToggle = () => {
+    props.toggleResponseDetails();
+    setShowingDetails(!showingDetails);
   };
 
   return (
     <>
-      <Link onClick={() => props.toggleResponseDetails()}><PlusIcon size={12} color={COLORS.BASE} className="PlusIcon" /></Link>
+      <Link onClick={() => handleToggle()}>
+        {showingDetails ? <MinusIcon size={styles.size} color={styles.color} className="MinusIcon" /> :
+          <PlusIcon size={styles.size} color={styles.color} className="PlusIcon" />}</Link>
     </>
   );
 };
