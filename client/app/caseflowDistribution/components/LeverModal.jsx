@@ -8,6 +8,16 @@ import COPY from '../../../COPY';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import moment from 'moment';
 
+function changedOptionValue(changedLever, currentLever) {
+  if (changedLever.data_type === 'radio' || changedLever.data_type === 'radio') {
+    const changedOptionValue = changedLever.options.find(option => option.item === changedLever.value).value
+    const currentOptionValue = currentLever.options.find(option => option.item === currentLever.value)?.value
+    return changedOptionValue !== currentOptionValue
+  } else {
+    return false
+  }
+}
+
 function GenerateLeverUpdateData(leverStore) {
   const levers = leverStore.getState().levers;
   const initialLevers = leverStore.getState().initial_levers;
@@ -124,16 +134,6 @@ function SaveLeversToDB(leverStore) {
     });
 }
 
-function changedOptionValue(changedLever, currentLever) {
-  if (changedLever.data_type === 'radio' || changedLever.data_type === 'radio') {
-    const changedOptionValue = changedLever.options.find(option => option.item === changedLever.value).value
-    const currentOptionValue = currentLever.options.find(option => option.item === currentLever.value)?.value
-    return changedOptionValue !== currentOptionValue
-  } else {
-    return false
-  }
-}
-
 function leverList(leverStore) {
   const levers = leverStore.getState().levers;
   const initialLevers = leverStore.getState().initial_levers;
@@ -173,7 +173,6 @@ function leverList(leverStore) {
 export function LeverSaveButton({ leverStore }) {
   const [showModal, setShowModal] = useState(false);
   const [changesOccurred, setChangesOccurred] = useState(false);
-  const [saveButtonDisabled, setSaveButtonDisabled] = useState(false);
 
   useEffect(() => {
     const unsubscribe = leverStore.subscribe(() => {
@@ -204,7 +203,6 @@ export function LeverSaveButton({ leverStore }) {
     await SaveLeversToDB(leverStore);
     setShowSuccessBanner(leverStore)
     setShowModal(false);
-    setSaveButtonDisabled(true);
     ShowSuccessBanner(true);
   }
 
