@@ -174,19 +174,38 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
             page.all(".cf-form-checkbox").last.click
           end
         end
+
+        find_by_id("button-addTasks").click
         all("#reactSelectContainer")[0].click
         find_by_id("react-select-2-option-1").click
         find_by_id("content").fill_in with: "Correspondence Text"
 
-        # will need to add another "remove task" test if only one task exists.
-        # currently a bug exists where "remove task" option does not show with a single task
-        expect(page.all("#button-Remove").length).to_not eq(2)
+        expect(page.all("#button-Remove").length).to eq(1)
+        page.all("#button-Remove").first.click
+        expect(page.all("#button-Remove").length).to eq(0)
+      end
 
+      it "Adds and removes multiple tasks from the linked appeal" do
+        visit_intake_form_step_2_with_appeals
+        existing_appeal_radio_options[:yes].click
+        using_wait_time(15) do
+          within ".cf-case-list-table" do
+            page.all(".cf-form-checkbox").last.click
+          end
+        end
+        find_by_id("button-addTasks").click
+        all("#reactSelectContainer")[0].click
+        find_by_id("react-select-2-option-1").click
+        find_by_id("content").fill_in with: "Correspondence Text"
+
+        expect(page.all("#button-Remove").length).to eq(1)
         page.all("#button-addTasks").first.click
         expect(page.all("#button-Remove").length).to eq(2)
 
         page.all("#button-Remove").last.click
-        expect(page.all("#button-Remove").length).to_not eq(2)
+        expect(page.all("#button-Remove").length).to eq(1)
+        page.all("#button-Remove").first.click
+        expect(page.all("#button-Remove").length).to eq(0)
       end
 
       it "Prevents user from clicking continue if task name or text isn't filled out" do
@@ -197,6 +216,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
             page.all(".cf-form-checkbox").last.click
           end
         end
+        find_by_id("button-addTasks").click
         all("#reactSelectContainer")[0].click
         find_by_id("react-select-2-option-15").click
         expect(page).to have_button("button-continue", disabled: true)
@@ -220,6 +240,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
             page.all(".cf-form-checkbox").last.click
           end
         end
+        find_by_id("button-addTasks").click
         all("#reactSelectContainer")[0].click
         find_by_id("react-select-2-option-15").click
         find_by_id("content").fill_in with: "Correspondence Text"
@@ -245,6 +266,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
             page.all(".cf-form-checkbox").last.click
           end
         end
+        find_by_id("button-addTasks").click
         all("#reactSelectContainer")[0].click
         find_by_id("react-select-2-option-15").click
         find_by_id("content").fill_in with: "Correspondence Text"
@@ -263,10 +285,12 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
           end
         end
 
+        find_all("#button-addTasks").first.click
         all("#reactSelectContainer")[0].click
         find_by_id("react-select-2-option-15").click
         all("textarea")[0].fill_in with: "Correspondence Text"
 
+        find_all("#button-addTasks").last.click
         all("#reactSelectContainer")[1].click
         find_by_id("react-select-3-option-15").click
         all("textarea")[1].fill_in with: "Correspondence Text"
