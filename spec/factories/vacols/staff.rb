@@ -40,18 +40,30 @@ FactoryBot.define do
 
     sactive { "A" }
 
+    trait :inactive do
+      sactive { "I" }
+    end
+
     trait :attorney_role do
       sactive { "A" }
+      sattyid { generated_sattyid }
+    end
+
+    # I'm not sure if this reflects real data but it's required for SCM users to see legacy tasks in tests
+    trait :scm_role do
+      sattyid { generated_sattyid }
     end
 
     trait :hearing_judge do
       stitle { "D#{Random.rand(1..5)}" }
       svlj { "A" }
+      sattyid { generated_sattyid }
     end
 
     trait :judge_role do
       svlj { "J" }
       sactive { "A" }
+      sattyid { generated_sattyid }
     end
 
     trait :inactive_judge do
@@ -71,6 +83,7 @@ FactoryBot.define do
     trait :attorney_judge_role do
       svlj { "A" }
       sactive { "A" }
+      sattyid { generated_sattyid }
     end
 
     trait :colocated_role do
@@ -87,6 +100,11 @@ FactoryBot.define do
 
     trait :has_location_code do
       slogid { "55" }
+    end
+
+    trait :has_sattyid do
+      svlj { nil }
+      sattyid { generated_sattyid }
     end
 
     after(:build) do |staff, evaluator|
