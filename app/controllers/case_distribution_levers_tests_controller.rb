@@ -48,7 +48,7 @@ class CaseDistributionLeversTestsController < ApplicationController
   end
 
   def appeals_ready_to_distribute
-    results = AppealsReadyForDistribute.process
+    results = AppealsReadyForDistribution.process
 
     # Get the current date and time for dynamic filename
     current_datetime = Time.now.strftime('%Y%m%d-%H%M')

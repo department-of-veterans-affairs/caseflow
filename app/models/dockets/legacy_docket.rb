@@ -5,6 +5,10 @@ class LegacyDocket < Docket
     "legacy"
   end
 
+  def ready_to_distribute_appeals
+    LegacyAppeal.repository.ready_to_distribute_appeals
+  end
+
   # rubocop:disable Metrics/CyclomaticComplexity
   def count(priority: nil, ready: nil)
     counts_by_priority_and_readiness.inject(0) do |sum, row|

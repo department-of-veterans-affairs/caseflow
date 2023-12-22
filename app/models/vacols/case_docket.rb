@@ -150,6 +150,20 @@ class VACOLS::CaseDocket < VACOLS::Record
     )
   "
 
+  SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19 = "
+    select BFKEY, BFD19, BFDLOOUT, VLJ, AOD,
+      case when BFAC = '7' then 1 else 0 end CAVC
+    from (
+      select BFKEY, BFD19, BFDLOOUT, BFAC, AOD,
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+      from (
+        #{SELECT_READY_APPEALS}
+      ) BRIEFF
+      #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+      order by BFD19
+    )
+  "
+
   # rubocop:disable Metrics/MethodLength
   def self.counts_by_priority_and_readiness
     query = <<-SQL
@@ -367,6 +381,15 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   def self.priority_ready_appeal_vacols_ids
     connection.exec_query(SELECT_PRIORITY_APPEALS).to_hash.map { |appeal| appeal["bfkey"] }
+  end
+
+  def self.ready_to_distribute_appeals
+    query = <<-SQL
+      #{SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19}
+    SQL
+
+    fmtd_query = sanitize_sql_array([query])
+    connection.exec_query(fmtd_query).to_hash
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
