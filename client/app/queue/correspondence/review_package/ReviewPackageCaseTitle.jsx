@@ -92,7 +92,7 @@ ReviewPackageCaseTitle.propTypes = {
 
 CaseSubTitleScaffolding.propTypes = {
   handlePackageActionModal: PropTypes.func,
-  packageActionModal: PropTypes.string
+  packageActionModal: PropTypes.string,
   isReadOnly: PropTypes.bool
 };
 
