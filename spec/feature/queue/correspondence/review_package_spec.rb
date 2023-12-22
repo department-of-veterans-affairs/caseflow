@@ -85,6 +85,10 @@ RSpec.feature("The Correspondence Review Package page") do
       it "request package action dropdown isn't visible" do
         expect(page).to have_no_content("Request pacakge action")
       end
+
+      it "warning banner appears" do
+        expect(page).to have_content("This package has a pending request")
+      end
     end
   end
 
