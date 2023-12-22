@@ -60,7 +60,7 @@ class ClaimHistoryEvent
     def create_completed_disposition_event(change_data)
       if change_data["disposition"]
         event_hash = {
-          "event_date" => change_data["decision_created_at"],
+          "event_date" => change_data["decision_created_at"] || change_data["request_issue_closed_at"],
           "event_user_name" => change_data["decision_user_name"],
           "user_facility" => change_data["decision_user_station_id"],
           "event_user_css_id" => change_data["decision_user_css_id"]
@@ -126,11 +126,12 @@ class ClaimHistoryEvent
 
     def create_issue_events(change_data)
       issue_events = []
-      before_request_issue_ids = (change_data["before_request_issue_ids"] || "").scan(/\d+/).map(&:to_i)
-      after_request_issue_ids = (change_data["after_request_issue_ids"] || "").scan(/\d+/).map(&:to_i)
-      withdrawn_request_issue_ids = (change_data["withdrawn_request_issue_ids"] || "").scan(/\d+/).map(&:to_i)
-      edited_request_issue_ids = (change_data["edited_request_issue_ids"] || "").scan(/\d+/).map(&:to_i)
+      before_request_issue_ids = extract_issue_ids_from_change_data(change_data, "before_request_issue_ids")
+      after_request_issue_ids = extract_issue_ids_from_change_data(change_data, "after_request_issue_ids")
+      withdrawn_request_issue_ids = extract_issue_ids_from_change_data(change_data, "withdrawn_request_issue_ids")
+      edited_request_issue_ids = extract_issue_ids_from_change_data(change_data, "edited_request_issue_ids")
       removed_request_issue_ids = (before_request_issue_ids - after_request_issue_ids)
+
       updates_hash = update_event_hash(change_data).merge("event_date" => change_data["request_issue_update_time"])
 
       # Adds all request issue events to the issue events array
@@ -141,6 +142,10 @@ class ClaimHistoryEvent
       issue_events.push(*process_issue_ids(edited_request_issue_ids, :edited_issue, change_data.merge(updates_hash)))
 
       issue_events
+    end
+
+    def extract_issue_ids_from_change_data(change_data, key)
+      (change_data[key] || "").scan(/\d+/).map(&:to_i)
     end
 
     def process_issue_ids(request_issue_ids, event_type, change_data)
