@@ -72,6 +72,10 @@ class WorkQueue::AppealSearchSerializer
     object.claimant&.name
   end
 
+  attribute :appellant_phone_number do |object|
+    object.claimant&.unrecognized_claimant? ? object.claimant&.phone_number : nil
+  end
+
   attribute :veteran_death_date
 
   attribute :veteran_file_number
