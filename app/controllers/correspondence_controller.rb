@@ -267,9 +267,12 @@ class CorrespondenceController < ApplicationController
   end
 
   def verify_feature_toggle
-    if !FeatureToggle.enabled?(:correspondence_queue)
+    if !FeatureToggle.enabled?(:correspondence_queue) && verify_correspondence_access()
+      redirect_to "/under_construction"
+    elsif !FeatureToggle.enabled?(:correspondence_queue) || !verify_correspondence_access()
       redirect_to "/unauthorized"
     end
+
   end
 
   def correspondence
