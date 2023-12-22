@@ -9,7 +9,7 @@ module ByDocketDateDistribution
 
   def priority_push_distribution(limit)
     @push_priority_target = limit
-    @rem = CaseDistributionLever.find_by_item('priority_push_distribution').try(:value).to_i
+    @rem = 0
     @appeals = []
     # Distribute <limit> number of cases, regardless of docket type, oldest first.
     distribute_priority_appeals_from_all_dockets_by_age_to_limit(limit, style: "push")
@@ -19,7 +19,7 @@ module ByDocketDateDistribution
   def requested_distribution
     @appeals = []
     @rem = batch_size
-    @nonpriority_iterations = CaseDistributionLever.find_by_item('priority_push_distribution').try(:value).to_i
+    @nonpriority_iterations = 0
     @request_priority_count = priority_target
 
     # If we haven't yet met the priority target, distribute additional priority appeals.
@@ -28,7 +28,7 @@ module ByDocketDateDistribution
 
     unless FeatureToggle.enabled?(:acd_disable_nonpriority_distributions, user: RequestStore.store[:current_user])
       # Distribute the oldest nonpriority appeals from any docket if we haven't distributed {batch_size} appeals
-      distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem) until @rem <= CaseDistributionLever.find_by_item('priority_push_distribution').try(:value).to_i
+      distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem) until @rem <= 0
     end
     @appeals
   end
