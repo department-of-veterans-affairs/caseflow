@@ -39,10 +39,6 @@ FactoryBot.define do
       roles { ["Admin Intake"] }
     end
 
-    factory :lever_user do
-      css_id { "LEVERUSER" }
-    end
-
     trait :inactive do
       status { "inactive" }
     end
@@ -67,7 +63,19 @@ FactoryBot.define do
 
     trait :with_vacols_judge_record do
       after(:create) do |user|
-        create(:staff, :judge_role, user: user)
+        create(:staff, :judge_role, slogid: user.css_id, user: user)
+      end
+    end
+
+    trait :with_inactive_vacols_judge_record do
+      after(:create) do |user|
+        create(:staff, :inactive_judge, slogid: user.css_id, user: user)
+      end
+    end
+
+    trait :with_vacols_record do
+      after(:create) do |user|
+        create(:staff, :has_sattyid, slogid: user.css_id, user: user)
       end
     end
 
