@@ -118,6 +118,23 @@ const LeverHistory = (props) => {
     return user;
   };
 
+
+  function formatTime(databaseDate) {
+    // Create a Date object from the database date string
+    const dateObject = new Date(databaseDate);
+    // Use toLocaleDateString() to get a localized date string for the United States
+    const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+    const datePart = dateObject.toLocaleDateString('en-US', options);
+    // Get hours, minutes, and seconds
+    const hours = dateObject.getHours();
+    const minutes = dateObject.getMinutes();
+    const seconds = dateObject.getSeconds();
+    // Format the date string
+    const formattedDate = `${datePart} ${hours}:${minutes}:${seconds}`;
+
+    return formattedDate;
+  }
+
   const formatHistoryData = () => {
 
     let formattedHistoryEntries = [];
@@ -126,7 +143,7 @@ const LeverHistory = (props) => {
 
     sortedTimestamps.map((time) => {
       let historyEntry = {
-        created_at: time,
+        created_at: formatTime(time),
         user: getUserAtTimestamp(time),
         titles: getLeverTitlesAtTimestamp(time),
         previous_values: getPreviousValuesAtTimestamp(time),
