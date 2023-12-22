@@ -556,9 +556,12 @@ export const prepareAppealForSearchStore = (appeals) => {
     return accumulator;
   }, {});
 
+
   const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
     accumulator[appeal.attributes.external_id] = {
       hearings: prepareAppealHearingsForStore(appeal),
+      issues: prepareAppealIssuesForStore(appeal),
+      decisionIssues: appeal.attributes.decision_issues,
       appellantFullName: appeal.attributes.appellant_full_name,
       contestedClaim: appeal.attributes.contested_claim,
       assignedToLocation: appeal.attributes.assigned_to_location,
@@ -567,6 +570,9 @@ export const prepareAppealForSearchStore = (appeals) => {
       status: appeal.attributes.status,
       decisionDate: appeal.attributes.decision_date,
       caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
+      availableHearingLocations: prepareAppealAvailableHearingLocationsForStore(
+        appeal
+      ),
       locationHistory: prepareLocationHistoryForStore(appeal),
     };
 
