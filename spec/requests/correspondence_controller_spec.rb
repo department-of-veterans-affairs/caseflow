@@ -42,9 +42,11 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
         redux_store: redux_store
       }
 
+      correspondence = CorrespondenceIntake.find_by(user: current_user, correspondence: correspondence)
+
       expect(response).to have_http_status(:success)
-      expect(CorrespondenceIntake.find_by(user: current_user, correspondence: correspondence).current_step).to eq(current_step)
-      expect(CorrespondenceIntake.find_by(user: current_user, correspondence: correspondence).redux_store).to eq(redux_store)
+      expect(correspondence.current_step).to eq(current_step)
+      expect(correspondence.redux_store).to eq(redux_store)
     end
   end
 
@@ -63,10 +65,12 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
     end
 
     it "creates tasks not related to an appeal" do
-      post queue_correspondence_intake_process_intake_path(correspondence_uuid: correspondence.uuid), params: { data: post_data }
+      post queue_correspondence_intake_process_intake_path(correspondence_uuid: correspondence.uuid), params: {
+        data: post_data
+      }
 
       expect(response).to have_http_status(:created)
-      expect(DeathCertificateMailTask.last.instructions).to eq(task_content)
+      expect(DeathCertificateMailTask.last.instructions).to eq([task_content])
     end
   end
 end

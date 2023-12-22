@@ -53,7 +53,7 @@ class CorrespondenceIntakeProcessor
   end
 
   private
-  
+
   def create_correspondence_relations(intake_params, correspondence_id, current_user)
     intake_params[:related_correspondence_uuids]&.map do |uuid|
       CorrespondenceRelation.create!(
@@ -112,25 +112,10 @@ class CorrespondenceIntakeProcessor
 
     return if unrelated_task_data.blank? || !unrelated_task_data.length
 
-    correspondence_task = CorrespondenceTask.find_or_create_by!(
-      appeal_id: correspondence.id,
-      assigned_to: MailTeam.singleton,
-      appeal_type: Correspondence.name,
-      type: CorrespondenceTask.name
-    )
-
-    parent = CorrespondenceRootTask.find_or_create_by!(
-      appeal_id: correspondence.id,
-      assigned_to: MailTeam.singleton,
-      appeal_type: Correspondence.name,
-      parent_id: correspondence_task.id,
-      type: CorrespondenceRootTask.name
-    )
-
     unrelated_task_data.map do |data|
       class_for_data(data).create_from_params(
         {
-          parent_id: parent.id,
+          parent_id: correspondence.root_task.id,
           assigned_to: data[:assigned_to].constantize.singleton,
           instructions: data[:content]
         }, current_user
