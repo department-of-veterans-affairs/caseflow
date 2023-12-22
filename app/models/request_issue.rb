@@ -13,6 +13,12 @@ class RequestIssue < CaseflowRecord
   include HasDecisionReviewUpdatedSince
   include SyncLock
 
+  # Pagination for VBMS API
+  paginates_per ENV["REQUEST_ISSUE_PAGINATION_OFFSET"].to_i
+
+  # Max page per limit
+  DEFAULT_UPPER_BOUND_PER_PAGE = ENV["REQUEST_ISSUE_DEFAULT_UPPER_BOUND_PER_PAGE"].to_i
+
   # how many days before we give up trying to sync decisions
   REQUIRES_PROCESSING_WINDOW_DAYS = 30
 
@@ -69,6 +75,7 @@ class RequestIssue < CaseflowRecord
   before_save :set_contested_rating_issue_profile_date
   before_save :close_if_ineligible!
 
+  after_create :set_decision_date_added_at, if: :decision_date_exists?
   # amoeba gem for splitting appeal request issues
   amoeba do
     enable
@@ -157,6 +164,10 @@ class RequestIssue < CaseflowRecord
 
     def active_or_ineligible_or_withdrawn
       active_or_ineligible.or(withdrawn)
+    end
+
+    def active_or_decided
+      active.or(decided).order(id: :asc)
     end
 
     def active_or_decided_or_withdrawn
@@ -252,6 +263,13 @@ class RequestIssue < CaseflowRecord
     return false unless end_product_establishment
 
     end_product_establishment.status_active?
+  end
+
+  def active?
+    eligible? &&
+      closed_at.nil? &&
+      (split_issue_status.nil? ||
+      split_issue_status == "in_progress")
   end
 
   def rating?
@@ -512,7 +530,7 @@ class RequestIssue < CaseflowRecord
   def save_decision_date!(new_decision_date)
     fail DecisionDateInFutureError, id if new_decision_date.to_date > Time.zone.today
 
-    update!(decision_date: new_decision_date)
+    update!(decision_date: new_decision_date, decision_date_added_at: Time.zone.now)
 
     # Special handling for claim reviews that contain issues without a decision date
     decision_review.try(:handle_issues_with_no_decision_date!)
@@ -1017,6 +1035,15 @@ class RequestIssue < CaseflowRecord
 
   def appeal_active?
     decision_review.tasks.open.any?
+  end
+
+  def decision_date_exists?
+    decision_date.present?
+  end
+
+  def set_decision_date_added_at
+    self.decision_date_added_at = created_at
+    save!
   end
 end
 # rubocop:enable Metrics/ClassLength
