@@ -7,6 +7,7 @@
 
 module WarRoom
   class PayeeCodeUpdate
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def run(reference_id, correct_payee_code)
       # set current user
       RequestStore[:current_user] =
@@ -68,5 +69,6 @@ module WarRoom
       # Cancels the orginal EP
       epe.send(:cancel!)
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
   end
 end
