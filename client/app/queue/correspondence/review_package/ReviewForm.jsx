@@ -257,7 +257,7 @@ export const ReviewForm = (props) => {
               title="Return to queue"
               closeHandler={props.handleModalClose}>
               <span className="usa-input" style={{ marginBottom: '5px' }} tabIndex={0}>
-                All unsaved changes made to this mail package will be lost<br />upon cancellation.
+                All unsaved changes made to this mail package will be lost<br />upon returning to your queue.
               </span>
             </Modal>
           )}
