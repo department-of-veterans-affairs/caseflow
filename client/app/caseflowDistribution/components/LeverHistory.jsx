@@ -28,7 +28,6 @@ const LeverHistory = (props) => {
       // if (selectedOption.data_type === 'number') {
       //   return selectedOption.unit;
       // }
-
       return '';
 
     }
