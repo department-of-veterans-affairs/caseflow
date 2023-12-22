@@ -108,6 +108,7 @@ class ClaimHistoryService
     end
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def process_timing_filter(new_events)
     return new_events unless @filters[:timing].present? && TIMING_RANGES.include?(@filters[:timing][:range])
 
@@ -116,10 +117,13 @@ class ClaimHistoryService
     start_date, end_date = parse_date_strings(start_date, end_date)
 
     new_events.select do |event|
+      next unless event.event_date
+
       event_date = Date.parse(event.event_date)
       (start_date.nil? || event_date >= start_date) && (end_date.nil? || event_date <= end_date)
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def date_range_for_timing_filter
     {
