@@ -383,6 +383,7 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
           expect(subject.send(:map_appeal_hearing_withdrawn_state, appeal)).to eq(hearing_withdrawn: true)
         end
       end
+    end
 
     context "when there is an active AMA Appeal with multiple hearings" do
       context "and the most recent disposition is not 'cancelled'" do
@@ -391,6 +392,7 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
           expect(subject.send(:map_appeal_hearing_withdrawn_state, appeal)).to eq(hearing_withdrawn: false)
         end
       end
+    end
   end
 
   describe "#map_appeal_cancelled_state(appeal)" do
