@@ -114,8 +114,14 @@ export const responseDetailsButtonColumn = (notifications) => {
     columnName: 'response_button',
     tableData: notifications,
     valueName: 'Response Button',
-    valueFunction: (rowObject, rowId, toggleResponseDetails) => {
-      return <NotificationResponseButton toggleResponseDetails={toggleResponseDetails} />;
+    valueFunction: (notification, rowId, toggleResponseDetails) => {
+      return notification.status === 'delivered' &&
+        <NotificationResponseButton
+          toggleResponseDetails={toggleResponseDetails}
+          response={notification.response}
+          responseDate={notification.response_date}
+          responseTime={notification.response_time}
+        />;
     }
   };
 };

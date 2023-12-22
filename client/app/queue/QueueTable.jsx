@@ -213,12 +213,19 @@ export const HeaderRow = (props) => {
 export class Row extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.state = { showResponseRow: false };
+    this.state = {
+      showResponseRow: false,
+      responseInfo: {
+        response: '—',
+        date: '—',
+        time: '—'
+      }
+    };
   }
 
   // This toggles the response details dropdown row in the notifications page
-  toggleResponseDetails = () => {
-    this.setState((prevState) => ({ showResponseRow: !prevState.showResponseRow }));
+  toggleResponseDetails = (responseInfo) => {
+    this.setState((prevState) => ({ showResponseRow: !prevState.showResponseRow, responseInfo }));
   }
 
   // This toggles the bottom border of the original row when opening and closing response details
@@ -248,7 +255,12 @@ export class Row extends React.PureComponent {
               </td>
             ))}
         </tr>
-        {this.state.showResponseRow && <NotificationResponseDetails />}
+        {this.state.showResponseRow &&
+          <NotificationResponseDetails
+            response={this.state.responseInfo?.response}
+            date={this.state.responseInfo?.date}
+            time={this.state.responseInfo?.time} />
+        }
       </>
     );
   }
