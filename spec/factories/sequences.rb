@@ -40,4 +40,6 @@ FactoryBot.define do
     FactoryBot.sequence_by_name(:css_id).rewind if n == 999
     shortened_time.concat(format("%<n>03d", n: n))
   end
+
+  sequence :sattyid
 end
