@@ -125,6 +125,67 @@ class ExternalApi::VADotGovService
       ExternalApi::VADotGovService::AddressValidationResponse.new(response)
     end
 
+    # Verifies a veteran's zip code and returns its associated geographic coordinates in latitude and longitude.
+    #
+    # @param zip_code [String] A veteran's five-digit zip code
+    #
+    # @return        [ExternalApi::VADotGovService::AddressValidationResponse]
+    #   A wrapper around the VA.gov API response that includes the geocode (latitude and longitude) associated
+    #   with the veteran's zip code.
+    #
+    #   Note: The response will include an "AddressCouldNotBeFound" and "lowConfidenceScore" messages
+    #
+    # API Documentation: https://developer.va.gov/explore/verification/docs/address_validation
+    #
+    # Expected JSON Response from API:
+    #
+    # ```
+    # {
+    #   "messages": [
+    #     {
+    #       "code": "ADDRVAL112",
+    #       "key": "AddressCouldNotBeFound",
+    #       "text": "The Address could not be found",
+    #       "severity": "WARN"
+    #     },
+    #     {
+    #       "code": "ADDR306",
+    #       "key": "lowConfidenceScore",
+    #       "text": "VaProfile Validation Failed: Confidence Score less than 80",
+    #       "severity": "WARN"
+    #     }
+    #   ],
+    #   "address": {
+    #     "addressLine1": "Address",
+    #     "zipCode5": "string",
+    #     "stateProvince": {},
+    #     "country": {
+    #       "name": "United States",
+    #       "code": "USA",
+    #       "fipsCode": "US",
+    #       "iso2Code": "US",
+    #       "iso3Code": "USA"
+    #     }
+    #   },
+    #   "geocode": {
+    #     "calcDate": "2023-10-12T20:27:04Z",
+    #     "latitude": 40.7029,
+    #     "longitude": -73.8868
+    #   },
+    #   "addressMetaData": {
+    #     "confidenceScore": 0.0,
+    #     "addressType": "Domestic",
+    #     "deliveryPointValidation": "MISSING_ZIP",
+    #     "validationKey": 359084376
+    #   }
+    # }
+    # ```
+    def validate_zip_code(address)
+      response = send_va_dot_gov_request(zip_code_validation_request(address))
+
+      ExternalApi::VADotGovService::ZipCodeValidationResponse.new(response)
+    end
+
     # Gets full list of facility IDs available from the VA.gov API
     #
     # @param ids [Array<String, Symbol>] facility ids to check
@@ -379,6 +440,32 @@ class ExternalApi::VADotGovService
             stateProvince: { name: address.state_name, code: address.state },
             requestCountry: { countryName: address.country_name, countryCode: address.country },
             addressPOU: address.address_pou
+          }
+        },
+        headers: {
+          "Content-Type": "application/json", Accept: "application/json"
+        },
+        endpoint: ADDRESS_VALIDATION_ENDPOINT, method: :post
+      }
+    end
+
+    # Builds a request for the VA.gov veteran address validation endpoint using only the veteran's five-digit zip code.
+    # This will return "AddressCouldNotBeFound" and "lowConfidenceScore" messages. However, given a valid zip code, the
+    # response body will include valid coordinates for latitude and longitude.
+    #
+    # Note 1: Hard code placeholder string for addressLine1 to avoid "InvalidRequestStreetAddress" error
+    # Note 2: Include country name to ensure foreign addresses are properly handled
+    #
+    # @param address [Address] The veteran's address
+    #
+    # @return        [Hash] The payload to send to the VA.gov API
+    def zip_code_validation_request(address)
+      {
+        body: {
+          requestAddress: {
+            addressLine1: "address",
+            zipCode5: address.zip,
+            requestCountry: { countryName: address.country }
           }
         },
         headers: {
