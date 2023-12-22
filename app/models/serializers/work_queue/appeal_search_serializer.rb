@@ -98,6 +98,10 @@ class WorkQueue::AppealSearchSerializer
   attribute :nod_date, &:receipt_date
   attribute :withdrawal_date
 
+  attribute :paper_case do
+    false
+  end
+
   attribute :caseflow_veteran_id do |object|
     object.veteran ? object.veteran.id : nil
   end
