@@ -440,30 +440,6 @@ module Seeds
           max_value: 1000,
           algorithms_used: ['proportion']
         },
-        {
-          item: 'distribute_time_out',
-          title: 'Distribute Time Out',
-          data_type: 'number',
-          value: 180000
-        },
-        {
-          item: 'distribute_nonpriority_appeals_range',
-          title: 'Distribute Nonpriority Appeals Range',
-          data_type: 'number',
-          value: 0
-        },
-        {
-          item: 'priority_push_distribution',
-          title: 'Priority Push Distribution',
-          data_type: 'number',
-          value: 0
-        },
-        {
-          item: 'appeal_status_cavc_due_date',
-          title: 'Appeal Status CAVC Due Date',
-          data_type: 'number',
-          value: 120
-        },
       ]
     end
 

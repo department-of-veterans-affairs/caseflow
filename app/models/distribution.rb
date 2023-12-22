@@ -35,7 +35,7 @@ class Distribution < CaseflowRecord
     update!(status: :started, started_at: Time.zone.now)
 
     # this might take awhile due to VACOLS, so set our timeout to 3 minutes (in milliseconds).
-    transaction_time_out = CaseDistributionLever.find_by_item('distribute_time_out').try(:value).to_i #3 * 60 * 1000
+    transaction_time_out = 3 * 60 * 1000
 
     multi_transaction do
       ActiveRecord::Base.connection.execute "SET LOCAL statement_timeout = #{transaction_time_out}"
