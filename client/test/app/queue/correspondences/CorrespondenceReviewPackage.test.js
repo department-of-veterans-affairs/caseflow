@@ -54,17 +54,20 @@ describe('CorrespondenceReviewPackage', () => {
       </Provider>
     );
 
-    expect(screen.queryByText('Cancel review of mail package')).not.toBeInTheDocument();
+    expect(screen.queryByText('All unsaved changes made to this mail package will be lost')).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByText('Cancel'));
+    const button = screen.getByRole('button', { name: 'Return to queue' });
 
-    expect(screen.queryByText('Cancel review of mail package')).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Return to queue' })).not.toBeInTheDocument();
+    fireEvent.click(button);
+
+    expect(screen.queryByRole('heading', { name: 'Return to queue' })).toBeInTheDocument();
+    expect(screen.getByText(/All unsaved changes made to this mail package will be lost/)).toBeInTheDocument();
     const closeButton = screen.getByRole('button', { name: 'Close' });
 
     expect(closeButton).toBeInTheDocument();
-
     fireEvent.click(closeButton);
-    expect(screen.queryByText('Cancel review of mail package')).not.toBeInTheDocument();
+    expect(screen.queryByText('All unsaved changes made to this mail package will be lost')).not.toBeInTheDocument();
   });
 
   test('renders modal with correct title, buttons, and text', async () => {
@@ -78,13 +81,12 @@ describe('CorrespondenceReviewPackage', () => {
       </Provider>
     );
 
-    expect(screen.queryByText('Cancel review of mail package')).not.toBeInTheDocument();
+    expect(screen.queryByText('All unsaved changes made to this mail package will be lost')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByText('Return to queue'));
 
-    fireEvent.click(screen.getByText('Cancel'));
-
-    expect(screen.queryByText('Cancel review of mail package')).toBeInTheDocument();
+    expect(screen.getByText(/All unsaved changes made to this mail package will be lost/)).toBeInTheDocument();
     const closeButton = screen.getByRole('button', { name: 'Close' });
-    const cancelReviewButton = screen.getByRole('button', { name: 'Cancel review' });
+    const cancelReviewButton = screen.getByRole('button', { name: 'Confirm' });
 
     expect(closeButton).toBeInTheDocument();
     expect(cancelReviewButton).toBeInTheDocument();
@@ -104,15 +106,13 @@ describe('CorrespondenceReviewPackage', () => {
       </Provider>
     );
 
-    expect(screen.queryByText('Cancel review of mail package')).not.toBeInTheDocument();
+    expect(screen.queryByText('All unsaved changes made to this mail package will be lost')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByText('Return to queue'));
 
-    fireEvent.click(screen.getByText('Cancel'));
-
-    expect(screen.queryByText('Cancel review of mail package')).toBeInTheDocument();
-    const cancelReviewButton = screen.getByRole('button', { name: 'Cancel review' });
+    expect(screen.getByText(/All unsaved changes made to this mail package will be lost/)).toBeInTheDocument();
+    const cancelReviewButton = screen.getByRole('button', { name: 'Confirm' });
 
     expect(cancelReviewButton).toBeInTheDocument();
-
     fireEvent.click(cancelReviewButton);
 
     await waitFor(() => {

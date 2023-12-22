@@ -49,9 +49,7 @@ const ReviewPackageCaseTitle = (props) => {
   return (
     <div>
       <CaseTitleScaffolding />
-      <CaseSubTitleScaffolding
-        handlePackageActionModal={props.handlePackageActionModal}
-        isReadOnly={props.isReadOnly} />
+      <CaseSubTitleScaffolding {...props} isReadOnly={props.isReadOnly} />
     </div>
   );
 };
@@ -81,6 +79,7 @@ const CaseSubTitleScaffolding = (props) => (
         label="Request package action dropdown"
         hideLabel
         name=""
+        value={props.packageActionModal}
       /> }
     </div>
   </div>
@@ -93,6 +92,7 @@ ReviewPackageCaseTitle.propTypes = {
 
 CaseSubTitleScaffolding.propTypes = {
   handlePackageActionModal: PropTypes.func,
+  packageActionModal: PropTypes.string
   isReadOnly: PropTypes.bool
 };
 

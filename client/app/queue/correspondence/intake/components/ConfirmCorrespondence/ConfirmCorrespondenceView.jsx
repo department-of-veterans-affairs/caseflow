@@ -170,7 +170,7 @@ export const ConfirmCorrespondenceView = (props) => {
             marginLeft: '0px'
           }}>Completed Mail Tasks</h2>
           <div style={{ marginLeft: 'auto' }}>
-            <Button styling={bottonStyling} linkStyling onClick={() => props.goToStep(2)}>
+            <Button name="EditMailTasks" styling={bottonStyling} linkStyling onClick={() => props.goToStep(2)}>
               <span {...css({ position: 'absolute' })}><PencilIcon /></span>
               <span {...css({ marginLeft: '20px' })}>Edit Section</span>
             </Button>

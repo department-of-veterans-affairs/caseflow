@@ -9,7 +9,6 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 const MAX_NUM_TASKS = 4;
 
 export const ExistingAppealTasksView = (props) => {
-  const [displayRemoveCheck, setDisplayRemoveCheck] = useState(false);
   const [availableTaskTypeOptions, setavailableTaskTypeOptions] = useState([]);
 
   const getTasksForAppeal = () => {
@@ -68,14 +67,6 @@ export const ExistingAppealTasksView = (props) => {
   };
 
   useEffect(() => {
-    if (getTasksForAppeal().length > 1) {
-      setDisplayRemoveCheck(true);
-    } else {
-      setDisplayRemoveCheck(false);
-    }
-  }, [props.newTasks]);
-
-  useEffect(() => {
     setavailableTaskTypeOptions(props.filterUnavailableTaskTypeOptions(getTasksForAppeal(), props.allTaskTypeOptions));
   }, [props.newTasks]);
 
@@ -106,7 +97,7 @@ export const ExistingAppealTasksView = (props) => {
               task={task}
               removeTask={removeTask}
               taskUpdatedCallback={taskUpdatedCallback}
-              displayRemoveCheck={displayRemoveCheck}
+              displayRemoveCheck
               allTaskTypeOptions={props.allTaskTypeOptions}
               availableTaskTypeOptions={availableTaskTypeOptions}
               autoTexts={props.autoTexts}
@@ -121,7 +112,7 @@ export const ExistingAppealTasksView = (props) => {
             type="button"
             onClick={addTask}
             disabled={getTasksForAppeal().length === MAX_NUM_TASKS}
-            name="addasks"
+            name="addTasks"
             className={['cf-left-side']}>
           + Add tasks
           </Button>
