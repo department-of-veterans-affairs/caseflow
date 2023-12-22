@@ -7,12 +7,31 @@ import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';
 import TextField from 'app/components/TextField';
 import COPY from '../../../COPY';
+import leverInputValidation from './LeverInputValidation';
 
 const AffinityDays = (props) => {
   const { leverList, leverStore } = props;
   const filteredLevers = leverList.map((item) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
   });
+
+  const checkIfOtherChangesExist = (currentLever) => {
+
+    let leversWithChangesList = [];
+
+    leverStore.getState().levers.map((lever) => {
+      if (lever.hasValueChanged === true && lever.item !== currentLever.item) {
+        leversWithChangesList.push(lever);
+      }
+    });
+
+    if (leversWithChangesList.length > 0) {
+      return true;
+    }
+
+    return false;
+  };
+
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
     '& .cf-form-int-input .input-container': { width: 'auto', display: 'inline-block', verticalAlign: 'middle' },
@@ -22,31 +41,66 @@ const AffinityDays = (props) => {
   const errorMessages = {};
   const [affinityLevers, setAffinityLevers] = useState(filteredLevers);
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
-  const leverInputValidation = (lever, event) => { // eslint-disable-line no-unused-vars
-    let rangeError = !(/^\d{1,3}$/).test(event);
 
-    if (rangeError) {
-      setErrorMessages({ ...errorMessagesList, [lever.item]: 'Please enter a value less than or equal to 999' });
-
-      return 'FAIL';
-    }
-    setErrorMessages({ ...errorMessagesList, [lever.item]: null });
-
-    return 'SUCCESS';
-  };
   const updatedLever = (lever, option) => (event) => {
     const levers = affinityLevers.map((individualLever) => {
       if (individualLever.item === lever.item) {
         const updatedOptions = individualLever.options.map((op) => {
           if (op.item === option.item) {
-            let validationResponse = leverInputValidation(individualLever, event);
+
+            let initialLever = leverStore.getState().initial_levers.find((original) => original.item === lever.item);
+
+            let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever, op);
+
             const newValue = isNaN(event) ? event : individualLever.value;
 
-            if (validationResponse === 'SUCCESS') {
+            if (validationResponse.statement === 'DUPLICATE') {
+
+              if (checkIfOtherChangesExist(lever)) {
+                op.value = event;
+                op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
+                setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
+
+                leverStore.dispatch({
+                  type: Constants.UPDATE_LEVER_VALUE,
+                  updated_lever: { item: individualLever.item, value: newValue },
+                  hasValueChanged: false,
+                  validChange: true
+
+                });
+              } else {
+                op.value = event;
+                op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
+                setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
+
+                leverStore.dispatch({
+                  type: Constants.UPDATE_LEVER_VALUE,
+                  updated_lever: { item: individualLever.item, value: newValue },
+                  hasValueChanged: false,
+                  validChange: false
+
+                });
+              }
+
+            }
+            if (validationResponse.statement === 'SUCCESS') {
               op.value = event;
+              op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
+              setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
               leverStore.dispatch({
                 type: Constants.UPDATE_LEVER_VALUE,
-                updated_lever: { item: individualLever.item, value: newValue }
+                updated_lever: { item: individualLever.item, value: newValue },
+                validChange: true
+              });
+            }
+            if (validationResponse.statement === 'FAIL') {
+              op.value = event;
+              op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
+              setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
+              leverStore.dispatch({
+                type: Constants.UPDATE_LEVER_VALUE,
+                updated_lever: { item: individualLever.item, value: newValue },
+                validChange: false
               });
             }
           }
@@ -76,13 +130,14 @@ const AffinityDays = (props) => {
       setAffinityLevers(updatedLevers);
       leverStore.dispatch({
         type: Constants.UPDATE_LEVER_VALUE,
-        updated_lever: { item: lever.item, value: option.item }
+        updated_lever: { item: lever.item, value: option.item },
+        validChange: true
       });
     }
   };
   const generateFields = (dataType, option, lever) => {
     const useAriaLabel = !lever.is_disabled;
-    const tabIndex = lever.is_disabled ? -1 : 'undefined';
+    const tabIndex = lever.is_disabled ? -1 : null;
 
     if (dataType === 'number') {
       return (
@@ -128,7 +183,7 @@ const AffinityDays = (props) => {
           <div>
             <label className={lever.is_disabled ? styles.leverDisabled : styles.leverActive}
               htmlFor={`${lever.item}-${option.item}`}>
-              {`${option.text} ${option.data_type === 'number' ? `${option.value } ${ option.unit}` : ''}`}
+              {`${option.text} ${option.data_type === 'number' ? `${option.value} ${option.unit}` : ''}`}
             </label>
           </div>
         </div>

@@ -188,10 +188,9 @@ export function LeverSaveButton({ leverStore }) {
 
       const leversString = JSON.stringify(state.levers);
       const initialLeversString = JSON.stringify(state.initial_levers);
+      const validChangeOccurred = state.changesOccurred;
 
-      const leverChangesOccurred = leversString !== initialLeversString;
-
-      setChangesOccurred(leverChangesOccurred);
+      setChangesOccurred(validChangeOccurred);
 
     });
 
