@@ -101,12 +101,13 @@ describe('QueueTable', () => {
     });
 
     test('function getCellValue(rowObject, rowId, column) calls the valueFunction when set on column', () => {
+      const props = {};
       // Run the test
-      const result = queueTable.getCellValue(rowObject, rowId, columns[0]);
+      const result = queueTable.getCellValue(rowObject, rowId, columns[0], props);
 
       // Assertions
       expect(result).toEqual('fizz');
-      expect(columns[0].valueFunction).toHaveBeenCalledWith(rowObject, rowId);
+      expect(columns[0].valueFunction).toHaveBeenCalledWith(rowObject, rowId, props);
     });
 
     test('function getCellValue(rowObject, rowId, column) returns value name when set on column', () => {

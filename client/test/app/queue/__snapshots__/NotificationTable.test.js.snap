@@ -316,6 +316,21 @@ exports[`NotificationTable matches snapshot 1`] = `
               </span>
             </span>
           </th>
+          <th
+            aria-labelledby="header-responseButton"
+            class=""
+            role="columnheader"
+            scope="col"
+          >
+            <span
+              aria-label=""
+              data-css-9shxm7=""
+            >
+              <span
+                id="header-responseButton"
+              />
+            </span>
+          </th>
         </tr>
       </thead>
       <tbody

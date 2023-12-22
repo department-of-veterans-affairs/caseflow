@@ -47,7 +47,7 @@ describe('NotificationTable', () => {
     setup();
     const row = await screen.findAllByRole('gridcell');
 
-    expect(row[56].textContent).toBe('11/01/2022');
+    expect(row[85].textContent).toBe('11/01/2022');
   });
 
   it('first notification type row should be email type', async () => {
@@ -61,7 +61,7 @@ describe('NotificationTable', () => {
     setup();
     const row = await screen.findAllByRole('gridcell');
 
-    expect(row[7].textContent).toBe('Text');
+    expect(row[8].textContent).toBe('Text');
   });
 
   it('first recipient information row should be a dashed line', async () => {
@@ -75,7 +75,7 @@ describe('NotificationTable', () => {
     setup();
     const row = await screen.findAllByRole('gridcell');
 
-    expect(row[8].textContent).toBe('2468012345');
+    expect(row[9].textContent).toBe('2468012345');
   });
 
   it('Sent status row should show Pending Delivery', async () => {
@@ -89,35 +89,35 @@ describe('NotificationTable', () => {
     setup();
     const row = await screen.findAllByRole('gridcell');
 
-    expect(row[9].textContent).toBe('Delivered');
+    expect(row[10].textContent).toBe('Delivered');
   });
 
   it('Temporary Failure status row should show pending delivery', async () => {
     setup();
     const row = await screen.findAllByRole('gridcell');
 
-    expect(row[14].textContent).toBe('Pending Delivery');
+    expect(row[16].textContent).toBe('Pending Delivery');
   });
 
   it('Permanent Failure status row should show failed delivery', async () => {
     setup();
     const row = await screen.findAllByRole('gridcell');
 
-    expect(row[19].textContent).toBe('Failed Delivery');
+    expect(row[22].textContent).toBe('Failed Delivery');
   });
 
   it('Technical Failure status row should show failed delivery', async () => {
     setup();
     const row = await screen.findAllByRole('gridcell');
 
-    expect(row[24].textContent).toBe('Failed Delivery');
+    expect(row[28].textContent).toBe('Failed Delivery');
   });
 
   it('Preferences Declined status row should show opted out', async () => {
     setup();
     const row = await screen.findAllByRole('gridcell');
 
-    expect(row[34].textContent).toBe('Opted-out');
+    expect(row[40].textContent).toBe('Opted-out');
   });
 
   it('matches snapshot', () => {
