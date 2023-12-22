@@ -40,7 +40,8 @@ export const TextField = (props) => {
     inputProps,
     inputRef,
     loading,
-    id
+    id,
+    inputID
   } = props;
 
   const textInputClass = className.
@@ -64,7 +65,9 @@ export const TextField = (props) => {
   const adjustedVal = useMemo(() => typeof value === 'object' && !value ? '' : value);
 
   const idVal = () => {
-    if (name !== '') {
+    if (inputID && inputID !== '') {
+      return inputID;
+    } else if (name !== '') {
       return name;
     } else if (id !== '') {
       return id;
@@ -102,6 +105,7 @@ export const TextField = (props) => {
             type={type}
             defaultValue={defaultValue}
             value={adjustedVal}
+            aria-readonly={readOnly}
             readOnly={readOnly}
             placeholder={placeholder}
             title={title}
@@ -197,6 +201,7 @@ TextField.propTypes = {
   maxLength: PropTypes.number,
   max: PropTypes.any,
   autoComplete: PropTypes.string,
+  inputID: PropTypes.string,
   placeholder: PropTypes.string,
   readOnly: PropTypes.bool,
   fixedInput: PropTypes.bool,

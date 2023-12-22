@@ -7,7 +7,6 @@ export const initialState = {
   formatted_history: {},
   changesOccurred: false,
   showSuccessBanner: false,
-  setShowSuccessBanner: false
 };
 
 const leversReducer = (state = initialState, action = {}) => {
@@ -18,12 +17,13 @@ const leversReducer = (state = initialState, action = {}) => {
         formatted_history: formatLeverHistory(action.history)
       }
     case Constants.UPDATE_LEVER_VALUE:
-      const updatedLevers = updateLevers(state.levers, action.updated_lever);
+      const updatedLevers = updateLevers(state.levers, action.updated_lever, action.hasValueChanged);
       const changesOccurred = JSON.stringify(updatedLevers) !== JSON.stringify(state.initial_levers)
       return {
         ...state,
         levers: updatedLevers,
-        changesOccurred,
+        changesOccurred: action.validChange,
+        saveChangesActivated: !changesOccurred
       }
     case Constants.SAVE_LEVERS:
       return {
@@ -40,9 +40,14 @@ const leversReducer = (state = initialState, action = {}) => {
     case Constants.SHOW_SUCCESS_BANNER:
       return {
         ...state,
-        setShowSuccessBanner: action.setShowSuccessBanner,
         showSuccessBanner: true
       }
+    case Constants.HIDE_SUCCESS_BANNER:
+      return {
+        ...state,
+        showSuccessBanner: false
+      }
+
     default:
       return state
   }
@@ -51,21 +56,16 @@ const leversReducer = (state = initialState, action = {}) => {
 export const formatLeverHistory = (lever_history_list) => {
   console.log(lever_history_list)
   let formatted_lever_history = []
-  const row_id_list = [...new Set(lever_history_list.map(x => `${x.created_at},${x.user}`))];
 
-  row_id_list.forEach( function (row_id) {
-    let row_created_at = row_id.split(',')[0];
-    let row_user = row_id.split(',')[1];
-    let row_items = lever_history_list.filter((lh_item) => lh_item.user == row_user && lh_item.created_at == row_created_at)
+  lever_history_list.forEach( function (lever_history_entry) {
 
     formatted_lever_history.push(
       {
-        created_at: row_items[0].created_at,
-        user: row_items[0].user,
-        titles: row_items.map((item) => item.title),
-        original_values: row_items.map((item) => item.original_value),
-        current_values: row_items.map((item) => item.current_value),
-        units: row_items.map((item) => item.unit),
+        user_name: lever_history_entry.user,
+        created_at: lever_history_entry.created_at,
+        lever_title: lever_history_entry.title,
+        original_value: lever_history_entry.original_value,
+        current_value: lever_history_entry.current_value
       }
     )
   });
@@ -73,7 +73,7 @@ export const formatLeverHistory = (lever_history_list) => {
   return formatted_lever_history;
 };
 
-export const updateLevers = (current_levers, updated_lever) => {
+export const updateLevers = (current_levers, updated_lever, hasValueChanged) => {
   const leverIndex = current_levers.findIndex((lever => lever.item == updated_lever.item));
 
   if (leverIndex !== -1) {
@@ -83,6 +83,7 @@ export const updateLevers = (current_levers, updated_lever) => {
     updatedLevers[leverIndex] = {
       ...updatedLevers[leverIndex],
       value: updated_lever.value,
+      hasValueChanged
     };
 
     return updatedLevers

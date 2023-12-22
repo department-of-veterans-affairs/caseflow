@@ -1,15 +1,17 @@
-
 .leverContainer {
   width: 100%;
+  box-sizing: border-box !important;
   border: 1px solid #e4e2e0;
   border-radius: 4px;
   margin-top: 20px;
   display: inline-block;
+
   h4: {
-      margin: 0;
-      background: #e4e2e0;
-      padding: 10px 20px;
+    margin: 0;
+    background: #e4e2e0;
+    padding: 10px 20px;
   }
+
   strong: {
     font-size: 19px;
     line-height: 1.5em;
@@ -20,18 +22,18 @@
 
 .leverContent {
   width: 100%;
-  padding: 20px;
+  padding-top: 20px;
   padding-bottom: 0;
   box-sizing: border-box;
 }
 
 .leverTop {
   p {
-      margin: 10px 0;
-      font-size: 19px;
-      line-height: 1.5em;
-      margin-bottom: 5px;
-      margin-top: 5px;
+    margin: 10px 0;
+    font-size: 19px;
+    line-height: 1.5em;
+    margin-bottom: 5px;
+    margin-top: 5px;
   }
 }
 
@@ -67,46 +69,49 @@
   vertical-align: top;
   display: inline-block;
   margin-bottom: 5px;
-  margin-top: 5px;
+  margin-top: 3px;
   input {
-      width: 65px;
-      height: 45px;
-      margin-right: 10px;
-      display: inline-block;
-      text-align: right;
-      font-size: 19px;
-      line-height: 1.5em;
-      margin-bottom: 5px;
-      margin-top: 5px;
+    width: 65px;
+    height: 45px;
+    margin-right: 10px;
+    display: inline-block;
+    text-align: right;
+    font-size: 19px;
+    line-height: 1.5em;
+    margin-bottom: 5px;
+    margin-top: 5px;
   }
 }
+
 .leverUnit {
   width: auto;
   vertical-align: middle;
   display: inline-block;
 }
 
-.docketLeverLeft{
+.docketLeverLeft {
   vertical-align: middle;
   width: 36%;
   margin-right: 0;
 }
 
-.leverMiddle{
+.leverMiddle {
   width: 36%;
   display: inline-block;
   vertical-align: middle;
+
   input {
-      width: 65px;
-      height: 45px;
-      margin-right: 10px;
-      display: inline-block;
-      text-align: right;
-      font-size: 19px;
-      line-height: 1.5em;
-      margin-bottom: 12px;
-      margin-top: 12px;
+    width: 65px;
+    height: 45px;
+    margin-right: 10px;
+    display: inline-block;
+    text-align: right;
+    font-size: 19px;
+    line-height: 1.5em;
+    margin-bottom: 12px;
+    margin-top: 12px;
   }
+
   label {
     margin-right: 10px;
     display: inline-block;
@@ -120,6 +125,7 @@
 
 .docketLeverRight {
   vertical-align: middle;
+
   button {
     vertical-align: middle;
     display: inline-block;
@@ -127,31 +133,32 @@
 }
 
 .leverDisabled {
-  opacity: 72%;
+  opacity: 0.72;
+  color: #757575;
 }
 
 .combinedRadioInput {
   input {
-      width: 65px;
-      height: 45px;
-      margin-right: 10px;
-      font-size: 19px;
-      line-height: 1.5em;
-      display: inline-block;
-      text-align: right;
-      margin-left: 28px;
-      margin-bottom: 10px;
+    width: 65px;
+    height: 45px;
+    margin-right: 10px;
+    font-size: 19px;
+    line-height: 1.5em;
+    display: inline-block;
+    text-align: right;
+    margin-left: 28px;
+    margin-bottom: 10px;
   }
 }
 
 .toggleInputHide {
-    display: none;
+  display: none;
 }
 
 .toggleSwitchInput {
-    width: auto;
-    display: inline-block;
-    vertical-align: middle;
+  width: auto;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .footerStyling {
@@ -206,7 +213,7 @@
   width: 20%;
 }
 
-.updatedModalStyling > div > div {
+.updatedModalStyling>div>div {
   padding-bottom: 0px;
 }
 
