@@ -22,7 +22,7 @@ namespace :add_admins do
   end
 
   desc "given the org id and an array of user ids, batch add users as admins"
-  task :batch_add_admins do
+  task batch_add_admins: :environment do
     STDOUT.puts("Enter the organization id")
     org_id = STDIN.gets.chomp
     if org_id.to_i.is_a? Integer
@@ -56,7 +56,7 @@ namespace :add_admins do
   end
 
   desc "given a list of user ids, batch assign roles to the users"
-  task :batch_assign_roles do
+  task batch_assign_roles: :environment do
     STDOUT.puts("Enter the role to assign to the users. (example: Case Details, Reader, etc.)")
     role = STDIN.gets.chomp
     STDOUT.puts("Enter the user ids to be assigned the role #{role} separated by commas (ex: 1, 2, 3...)")
@@ -70,7 +70,7 @@ namespace :add_admins do
   end
 
   desc "create SSC org and test users for UAT testing"
-  task :create_ssc_and_users do
+  task create_ssc_and_users: :environment do
     STDOUT.puts("Creating the SSC org and all test users")
     SupervisorySeniorCouncil.singleton
     ussc = User.create!(
@@ -137,7 +137,7 @@ namespace :add_admins do
   end
 
   desc "create an appellant substitution for a designated appeal"
-  task :create_appellant_substitution do
+  task create_appellant_substitution: :environment do
     STDOUT.puts("Enter the appeal id you want to add an appellant substitution to.")
     appeal_id = STDIN.gets.chomp
     appeal = Appeal.find(appeal_id.to_i)
@@ -147,18 +147,19 @@ namespace :add_admins do
       created_by: RequestStore[:current_user],
       source_appeal: appeal,
       substitution_date: 5.days.ago.to_date,
-      claimant_type: 'VeteranClaimant',
-      substitute_participant_id: 500001891,
-      poa_participant_id: 600153863
+      claimant_type: "VeteranClaimant",
+      substitute_participant_id: 500001891, # rubocop:disable Style/NumericLiterals
+      poa_participant_id: 600153863 # rubocop:disable Style/NumericLiterals
     )
     appeal.appellant_substitution = as
 
     STDOUT.puts("new appellant substitution: #{as}")
-    STDOUT.puts("New appellant substitution made for appeal #{appeal.id} with vet file number #{appeal.veteran_file_number}")
+    STDOUT.puts("New appellant substitution made for appeal"\
+     " #{appeal.id} with vet file number #{appeal.veteran_file_number}")
   end
 
   desc "create a NOD Date Update for a designated appeal"
-  task :create_nod_update do
+  task create_nod_update: :environment do
     STDOUT.puts("Enter the appeal id you want to add a NOD date update to.")
     appeal_id = STDIN.gets.chomp
     appeal = Appeal.find(appeal_id.to_i)
@@ -178,7 +179,7 @@ namespace :add_admins do
   end
 
   desc "create an IHP Draft for a designated appeal"
-  task :create_ihp_draft do
+  task create_ihp_draft: :environment do
     STDOUT.puts("Enter the appeal id you want to add an IHP Draft to.")
     appeal_id = STDIN.gets.chomp
     appeal = Appeal.find(appeal_id.to_i)

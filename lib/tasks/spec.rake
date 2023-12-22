@@ -22,7 +22,7 @@ namespace :spec do
       spec_names.map(&:to_sym).each do |spec_name|
         desc "Set the database environment for #{spec_name} tests"
 
-        task spec_name do
+        task spec_name: :environment do
           envs = "export TEST_SUBCATEGORY=#{spec_name} && export RAILS_ENV=test &&"
 
           ["rake db:create", "rake db:schema:load"].each do |cmd|
@@ -41,7 +41,7 @@ namespace :spec do
       desc "Run all #{spec_name} #{(spec_name == :unit) ? '' : 'feature '}tests. \
             Configured to run in parallel with other parallel spec tasks."
 
-      task spec_name do
+      task spec_name: :environment do
         envs = "export TEST_SUBCATEGORY=#{spec_name};"
 
         ShellCommand.run_and_batch_output("#{envs} rake spec:#{spec_name}")

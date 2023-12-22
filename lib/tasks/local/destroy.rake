@@ -2,7 +2,7 @@
 
 namespace :local do
   desc "destroy local development environment to have a clean slate when rebuilding"
-  task :destroy do
+  task destroy: :environment do
     puts ">>> BEGIN local:destroy"
 
     puts ">>> 01/02 Dropping development and test caseflow databases"
@@ -19,7 +19,7 @@ namespace :local do
   end
 
   desc "Nuke docker environment (removes all process, containers, images and volumes)"
-  task :nuke do
+  task nuke: :environment do
     puts ">>> BEGIN local:nuke"
 
     puts ">>> 01/05 Stopping all docker processes"

@@ -3,7 +3,7 @@
 require "rainbow"
 
 desc "Runs the frontend React tests"
-task :js_tests do
+task js_tests: :environment do
   js_test_results = ShellCommand.run("cd ./client && yarn run test")
 
   if js_test_results
