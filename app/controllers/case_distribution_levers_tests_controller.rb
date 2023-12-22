@@ -48,22 +48,10 @@ class CaseDistributionLeversTestsController < ApplicationController
   end
 
   def appeals_ready_to_distribute
-    results = AppealsReadyForDistribution.process
+    csv_data = AppealsReadyForDistribution.process
 
     # Get the current date and time for dynamic filename
     current_datetime = Time.now.strftime('%Y%m%d-%H%M')
-
-    # Convert results to CSV format
-
-    csv_data = CSV.generate(headers: true) do |csv|
-      # Add headers to CSV
-      csv << ['UUID']
-
-      # Iterate through results and add each row to CSV
-      results.each do |record|
-        csv << [record.uuid]
-      end
-    end
 
     # Set dynamic filename with current date and time
     filename = "appeals_ready_to_distribute_#{current_datetime}.csv"

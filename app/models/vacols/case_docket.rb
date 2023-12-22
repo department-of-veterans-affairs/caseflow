@@ -61,8 +61,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     on DIARYKEY = BFKEY
   "
 
-  SELECT_READY_APPEALS = "
-    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
+  FROM_READY_APPEALS = "
     from BRIEFF
     #{VACOLS::Case::JOIN_AOD}
     #{JOIN_MAIL_BLOCKS_DISTRIBUTION}
@@ -75,6 +74,17 @@ class VACOLS::CaseDocket < VACOLS::Record
       and BRIEFF.BFD19 is not null
       and MAIL_BLOCKS_DISTRIBUTION = 0
       and DIARY_BLOCKS_DISTRIBUTION = 0
+  "
+
+  SELECT_READY_APPEALS = "
+    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
+    #{FROM_READY_APPEALS}
+  "
+
+  # this version of the query should not be used during distribution it is only intended for reporting usage
+  SELECT_READY_APPEALS_ADDITIONAL_COLS = "
+    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD, BFCORLID
+    #{FROM_READY_APPEALS}
   "
 
   # Judges 000, 888, and 999 are not real judges, but rather VACOLS codes.
@@ -150,14 +160,15 @@ class VACOLS::CaseDocket < VACOLS::Record
     )
   "
 
+  # this query should not be used during distribution it is only intended for reporting usage
   SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19 = "
-    select BFKEY, BFD19, BFDLOOUT, VLJ, AOD,
+    select BFKEY, TINUM, BFCORLID, BFD19, BFDLOOUT, VLJ, AOD,
       case when BFAC = '7' then 1 else 0 end CAVC
     from (
-      select BFKEY, BFD19, BFDLOOUT, BFAC, AOD,
+      select BFKEY, BRIEFF.TINUM, BFCORLID, BFD19, BFDLOOUT, BFAC, AOD,
         case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
       from (
-        #{SELECT_READY_APPEALS}
+        #{SELECT_READY_APPEALS_ADDITIONAL_COLS}
       ) BRIEFF
       #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
       order by BFD19
