@@ -1,10 +1,12 @@
 /* eslint-disable func-style */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styles from 'app/styles/caseDistribution/LeverHistory.module.scss';
 
 const LeverHistory = (props) => {
   const { leverStore } = props;
+  const [history, setHistory] = useState([]);
+  const [historySize, setHistorySize] = useState(0);
   const uniqueTimestamps = [];
 
   props.historyData.map((entry) => {
@@ -136,9 +138,7 @@ const LeverHistory = (props) => {
   }
 
   const formatHistoryData = () => {
-
     let formattedHistoryEntries = [];
-
     let sortedTimestamps = uniqueTimestamps.reverse();
 
     sortedTimestamps.map((time) => {
@@ -154,18 +154,24 @@ const LeverHistory = (props) => {
       formattedHistoryEntries.push(historyEntry);
     });
 
-    return formattedHistoryEntries;
+    setHistory(formattedHistoryEntries);
+    setHistorySize(formattedHistoryEntries.length);
   };
 
   useEffect(() => {
+    const unsubscribe = leverStore.subscribe(() => {
+      formatHistoryData();
+    })
     formatHistoryData();
-  }, [props.historyData]);
 
-  let history = formatHistoryData();
+    return () => {
+      unsubscribe();
+    };
+  }, [leverStore, props.historyData]);
 
   return (
     <div>
-      <table>
+      <table key={historySize}>
         <tbody>
           <tr>
             <th className={styles.leverHistoryTableHeaderStyling}>Date of Last Change</th>
@@ -175,8 +181,8 @@ const LeverHistory = (props) => {
             <th className={styles.leverHistoryTableHeaderStyling}>Updated Value</th>
           </tr>
         </tbody>
-        <tbody>{history.map((entry, index) =>
-          <tr key={index}>
+        <tbody key={historySize}>{history.map((entry, index) =>
+          <tr key={`${historySize}-${index}`}>
             <td className={styles.historyTableStyling}>{entry.created_at}</td>
             <td className={styles.historyTableStyling}>{entry.user}</td>
             <td className={styles.historyTableStyling}>

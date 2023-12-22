@@ -21,7 +21,7 @@ class CaseDistributionLeversController < ApplicationController
       end
 
       if errors.empty?
-        render json: { errors: [], successful: true }
+        render json: { errors: [], successful: true, acd_history: CaseDistributionAuditLeverEntry.past_year }
       else
         render json: { errors: errors, successful: false }
       end

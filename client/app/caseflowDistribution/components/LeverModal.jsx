@@ -113,6 +113,13 @@ function SaveLeverChanges(leverStore) {
   });
 }
 
+function SaveLeverHistoryChanges(leverStore, historyData) {
+  leverStore.dispatch({
+    type: Constants.FORMAT_LEVER_HISTORY,
+    formatted_history: historyData,
+  });
+}
+
 function ShowSuccessBanner(shouldShowSuccessBanner) {
   leverStore.dispatch({
     type: Constants.SHOW_SUCCESS_BANNER,
@@ -132,7 +139,9 @@ function SaveLeversToDB(leverStore) {
   };
 
   return ApiUtil.post('/case_distribution_levers/update_levers_and_history', { data: postData }).
-    then(() => {
+    then((response) => {
+      const newHistoryData = response.body.acd_history;
+      SaveLeverHistoryChanges(leverStore, newHistoryData)
       SaveLeverChanges(leverStore);
     }).
     catch((error) => {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import StaticLeversWrapper from './StaticLeversWrapper';
 import InteractableLeverWrapper from './InteractableLeversWrapper';
 import LeverHistory from './LeverHistory';
@@ -16,6 +16,17 @@ const CaseflowDistributionContent = ({
   leverStore,
   sectionTitles
 }) => {
+
+  const [seed, setSeed] = useState(1);
+
+  const reset = () => {
+    setSeed(Math.random());
+};
+
+  useEffect(() => {
+    reset();
+  }, []);
+
 
   return (
     <div>
@@ -58,7 +69,7 @@ const CaseflowDistributionContent = ({
           </h2>
           <div {...sectionSegmentStyling}>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_HISTORY_DESCRIPTION}</p>
-            <LeverHistory historyData={formattedHistory} leverStore={leverStore} />
+            <LeverHistory historyData={formattedHistory} leverStore={leverStore} key={seed} />
           </div>
         </div>
       </div>
