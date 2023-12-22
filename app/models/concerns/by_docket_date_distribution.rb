@@ -80,10 +80,10 @@ module ByDocketDateDistribution
       priority_target: @push_priority_target || @request_priority_count,
       priority: priority_counts,
       nonpriority: nonpriority_counts,
-      # distributed_cases_tied_to_ineligible_judges: {
-      #   ama: ama_distributed_cases_tied_to_ineligible_judges,
-      #   legacy: distributed_cases_tied_to_ineligible_judges
-      # },
+      distributed_cases_tied_to_ineligible_judges: {
+        ama: ama_distributed_cases_tied_to_ineligible_judges,
+        legacy: distributed_cases_tied_to_ineligible_judges
+      },
       algorithm: "by_docket_date",
       settings: settings
     }
@@ -106,9 +106,8 @@ module ByDocketDateDistribution
 
   def hearing_judge_id(appeal)
     if appeal[:docket] == "legacy"
-      user_id = LegacyAppeal.find_by_vacols_id(appeal[:case_id])&.hearings&.select(&:held?)&.max_by(&:scheduled_for)&.judge_id
-      sattyid = VACOLS::Staff.find_by_sdomainid(User.find_by_id(user_id)&.css_id)&.sattyid
-      sattyid
+      user_id = LegacyAppeal.find_by(vacols_id: appeal[:case_id])&.hearings&.select(&:held?)&.max_by(&:scheduled_for)&.judge_id
+      VACOLS::Staff.find_by_sdomainid(User.find_by_id(user_id)&.css_id)&.sattyid
     else
       Appeal.find_by(uuid: appeal[:case_id])&.hearings&.select(&:held?)&.max_by(&:scheduled_for)&.judge_id
     end
