@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import ApiUtil from '../../../util/ApiUtil';
 import { sprintf } from 'sprintf-js';
 import StringUtil from '../../../util/StringUtil';
-// import { connect } from 'react-redux';
-// import { bindActionCreators } from 'redux';
-// import { updateDocumentTypeName } from '../correspondenceReducer/reviewPackageActions';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { updateLastAction } from '../correspondenceReducer/reviewPackageActions';
 import TextareaField from '../../../components/TextareaField';
 import RadioField from '../../../components/RadioField';
 // import { css } from 'glamor';
@@ -22,7 +22,9 @@ class RemovePackageModal extends React.Component {
     this.state = {
       reasonForRemove: null,
       disabledSaveButton: true,
-      reasonReject: ''
+      reasonReject: '',
+      updateCancelSuccess: false
+
     };
   }
 
@@ -46,12 +48,14 @@ class RemovePackageModal extends React.Component {
 
   removePackage = async () => {
     try {
-      ApiUtil.post(`/queue/correspondence/${this.props.correspondence_id}/remove_package`, {
-      });
+      ApiUtil.post(`/queue/correspondence/${this.props.correspondence_id}/remove_package`).
+        then(() => {
+          this.setState({
+            updateCancelSuccess: true
+          });
+          this.props.updateLastAction('DeleteReviewPackage');
+        });
 
-      return <Redirect to="/queue/correspondence" />;
-      // this.props.updateDocumentTypeName(this.state.packageDocument, this.props.indexDoc);
-      // this.props.setModalState(false);
     } catch (error) {
       console.error(error);
     }
@@ -69,6 +73,10 @@ class RemovePackageModal extends React.Component {
       { displayText: 'Reject request',
         value: 'Reject request' }
     ];
+
+    if (this.state.updateCancelSuccess) {
+      return <Redirect to="/queue/correspondence" />;
+    }
 
     return (
       <Modal
@@ -106,11 +114,24 @@ class RemovePackageModal extends React.Component {
   }
 }
 
+const mapStateToProps = (state) => {
+  return { vetInfo: state.reviewPackage.lastAction };
+};
+
 RemovePackageModal.propTypes = {
   modalState: PropTypes.bool,
   onCancel: PropTypes.func,
   setModalState: PropTypes.func,
-  correspondence_id: PropTypes.number
+  correspondence_id: PropTypes.number,
+  vetInfo: PropTypes.object,
+  updateLastAction: PropTypes.func,
 };
 
-export default (RemovePackageModal);
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  updateLastAction
+}, dispatch);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(RemovePackageModal);
