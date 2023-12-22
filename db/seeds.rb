@@ -56,7 +56,7 @@ class SeedDB
     call_and_log_seed_step Seeds::VeteransHealthAdministration
     call_and_log_seed_step Seeds::MTV
     call_and_log_seed_step Seeds::Education
-    call_and_log_seed_step Seeds::PriorityDistributions
+    # call_and_log_seed_step Seeds::PriorityDistributions
     call_and_log_seed_step Seeds::CaseDitributionTestData
     call_and_log_seed_step Seeds::TestCaseData
     call_and_log_seed_step Seeds::Notifications
