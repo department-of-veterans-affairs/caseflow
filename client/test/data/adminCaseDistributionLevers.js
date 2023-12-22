@@ -210,45 +210,32 @@ export const history = [
   }
 ]
 
-export const formattedHistory =
-  [
-    {
-      "created_at": "2023-07-01 10:10:01",
-      "user": "john_smith",
-      "titles": ["Lever 1", "Lever 2"],
-      "original_values": ["10", "false"],
-      "current_values": ["23", "true"],
-      "units": ["cases", ""]
-    },
-    {
-      "created_at": "2023-07-01 12:10:01",
-      "user": "jane_smith",
-      "titles": ["Lever 1"],
-      "original_values": ["5"],
-      "current_values": ["42"],
-      "units": ["cases"]
-    }
-  ]
-
-/* Reducer Test Data */
-export const formatted_history = [
+export const formattedHistory = [
   {
+    "user_name": "john_smith",
     "created_at": "2023-07-01 10:10:01",
-    "current_values": [23, true],
-    "original_values": [10, false],
-    "titles": ["Lever 1", "Lever 2"],
-    "units": ["cases", ""],
-    "user": "john_smith"
+    "lever_title": 'Lever 1',
+    "original_value": 10,
+    "current_value": 23
   },
   {
+    "user_name": "john_smith",
+    "created_at": "2023-07-01 10:10:01",
+    "lever_title": 'Lever 2',
+    "original_value": false,
+    "current_value": true
+  },
+  {
+    "user_name": "jane_smith",
     "created_at": "2023-07-01 12:10:01",
-    "current_values": [42],
-    "original_values": [5],
-    "titles": ["Lever 1"],
-    "units": ["cases"],
-    "user": "jane_smith"
+    "lever_title": 'Lever 1',
+    "original_value": 5,
+    "current_value": 42
   }
-];
+]
+
+/* Reducer Test Data */
+export const formatted_history = formattedHistory
 
 export const lever1_update = {
   "item": "lever_1",

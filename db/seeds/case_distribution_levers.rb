@@ -61,8 +61,8 @@ module Seeds
         },
         {
           item: 'alternative_batch_size',
-          title: 'Alternate Batch Size',
-          description: 'Set case-distribution batch size for judges who do not have their own attorney teams.',
+          title: 'Alternate Batch Size*',
+          description: 'Sets case-distribution batch size for judges who do not have their own attorney teams.',
           data_type: 'number',
           value: 15,
           unit: 'cases',
@@ -74,8 +74,8 @@ module Seeds
         },
         {
           item: 'batch_size_per_attorney',
-          title: 'Batch Size Per Attorney',
-          description: 'Set case-distribution batch size for judges with attorney teams. The value for this data element is per attorney.',
+          title: 'Batch Size Per Attorney*',
+          description: 'Sets case-distribution batch size for judges with attorney teams. The value for this data element is per attorney.',
           data_type: 'number',
           value: 3,
           unit: 'cases',
@@ -87,8 +87,8 @@ module Seeds
         },
         {
           item: 'request_more_cases_minimum',
-          title: 'Request More Cases Minimum',
-          description: 'Set the number of remaining cases a VLJ must have equal to or less than to request more cases. (The number entered is used as equal to or less than)',
+          title: 'Request More Cases Minimum*',
+          description: 'Sets the number of remaining cases a VLJ must have equal to or less than to request more cases. (The number entered is used as equal to or less than)',
           data_type: 'number',
           value: 8,
           unit: 'cases',
@@ -170,7 +170,7 @@ module Seeds
         },
         {
           item: 'cavc_affinity_days',
-          title: 'CAVC Affinity Days',
+          title: 'CAVC Affinity Days*',
           description: 'Sets the number of days a case returned from CAVC respects the affinity to the judge who authored a decision before distributing the appeal to any available judge. This does not include Legacy CAVC Remand Appeals with a hearing held.',
           data_type: 'radio',
           value: 'value',
@@ -354,7 +354,7 @@ module Seeds
               unit: ''
             }
           ],
-          is_active: true,
+          is_active: false,
           is_disabled: true,
           min_value: 0,
           max_value: 100,
@@ -376,8 +376,8 @@ module Seeds
               unit: ''
             }
           ],
-          is_active: true,
-          is_disabled: false,
+          is_active: false,
+          is_disabled: true,
           min_value: 0,
           max_value: 100,
           algorithms_used: ['docket']
@@ -399,7 +399,7 @@ module Seeds
             }
           ],
           is_active: false,
-          is_disabled: false,
+          is_disabled: true,
           min_value: 0,
           max_value: 100,
           algorithms_used: ['proportion']
@@ -410,8 +410,8 @@ module Seeds
           data_type: 'number',
           value: 365,
           unit: 'days',
-          is_active: true,
-          is_disabled: false,
+          is_active: false,
+          is_disabled: true,
           min_value: 0,
           max_value: 1000,
           algorithms_used: ['proportion']
@@ -422,7 +422,7 @@ module Seeds
           data_type: 'number',
           value: 500,
           unit: 'days',
-          is_active: false,
+          is_active: true,
           is_disabled: false,
           min_value: 0,
           max_value: 1000,

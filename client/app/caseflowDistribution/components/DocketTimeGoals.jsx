@@ -6,17 +6,21 @@ import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
+import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';
 
 const DocketTimeGoals = (props) => {
+
   const { leverList, leverStore } = props;
 
   const filteredDistributionLevers = leverList.docketDistributionPriorLevers.map((item) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
   });
+
   const filteredTimeGoalLevers = leverList.docketTimeGoalLevers.map((item) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
   });
+
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
     '& .cf-form-int-input .input-container': { width: 'auto', display: 'inline-block', verticalAlign: 'middle' },
@@ -30,18 +34,21 @@ const DocketTimeGoals = (props) => {
   const [docketTimeGoalLevers, setTimeGoalLever] = useState(filteredTimeGoalLevers);
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
 
-  const leverInputValidation = (lever, event) => {
+  const checkIfOtherChangesExist = (currentLever) => {
 
-    let rangeError = !(/^\d{1,3}$/).test(event);
+    let leversWithChangesList = [];
 
-    if (rangeError) {
-      setErrorMessages({ ...errorMessagesList, [lever.item]: 'Please enter a value less than or equal to 999' });
+    leverStore.getState().levers.map((lever) => {
+      if (lever.hasValueChanged === true && lever.item !== currentLever.item) {
+        leversWithChangesList.push(lever);
+      }
+    });
 
-      return 'FAIL';
+    if (leversWithChangesList.length > 0) {
+      return true;
     }
-    setErrorMessages({ ...errorMessagesList, [lever.item]: null });
 
-    return 'SUCCESS';
+    return false;
   };
 
   const updateLever = (index, leverType) => (event) => {
@@ -50,25 +57,58 @@ const DocketTimeGoals = (props) => {
       const levers = docketDistributionLevers.map((lever, i) => {
         if (index === i) {
 
-          let validationResponse = leverInputValidation(lever, event);
+          let initialLever = leverStore.getState().initial_levers.find((original) => original.item === lever.item);
+          let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
 
-          if (validationResponse === 'SUCCESS') {
+          if (validationResponse.statement === 'DUPLICATE') {
+
+            if (checkIfOtherChangesExist(lever)) {
+              lever.value = event;
+              setErrorMessages(validationResponse.updatedMessages);
+
+              leverStore.dispatch({
+                type: Constants.UPDATE_LEVER_VALUE,
+                updated_lever: { item: lever.item, value: event },
+                hasValueChanged: false,
+                validChange: true
+              });
+            } else {
+
+              lever.value = event;
+              setErrorMessages(validationResponse.updatedMessages);
+
+              leverStore.dispatch({
+                type: Constants.UPDATE_LEVER_VALUE,
+                updated_lever: { item: lever.item, value: event },
+                hasValueChanged: false,
+                validChange: false
+              });
+            }
+
+          }
+          if (validationResponse.statement === 'SUCCESS') {
             lever.value = event;
+            setErrorMessages(validationResponse.updatedMessages);
             leverStore.dispatch({
               type: Constants.UPDATE_LEVER_VALUE,
-              updated_lever: { item: lever.item, value: event }
+              updated_lever: { item: lever.item, value: event },
+              validChange: true
             });
 
             return lever;
           }
-          lever.value = event;
+          if (validationResponse.statement === 'FAIL') {
+            lever.value = event;
+            setErrorMessages(validationResponse.updatedMessages);
 
-          leverStore.dispatch({
-            type: Constants.UPDATE_LEVER_VALUE,
-            updated_lever: { item: lever.item, value: event }
-          });
+            leverStore.dispatch({
+              type: Constants.UPDATE_LEVER_VALUE,
+              updated_lever: { item: lever.item, value: event },
+              validChange: false
+            });
 
-          return lever;
+            return lever;
+          }
         }
 
         return lever;
@@ -80,26 +120,59 @@ const DocketTimeGoals = (props) => {
       const levers = docketTimeGoalLevers.map((lever, i) => {
         if (index === i) {
 
-          let validationResponse = leverInputValidation(lever, event);
+          let initialLever = leverStore.getState().initial_levers.find((original) => original.item === lever.item);
 
-          if (validationResponse === 'SUCCESS') {
+          let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
+
+          if (validationResponse.statement === 'DUPLICATE') {
+
+            if (checkIfOtherChangesExist(lever)) {
+              lever.value = event;
+              setErrorMessages(validationResponse.updatedMessages);
+
+              leverStore.dispatch({
+                type: Constants.UPDATE_LEVER_VALUE,
+                updated_lever: { item: lever.item, value: event },
+                hasValueChanged: false,
+                validChange: true
+              });
+            } else {
+
+              lever.value = event;
+              setErrorMessages(validationResponse.updatedMessages);
+
+              leverStore.dispatch({
+                type: Constants.UPDATE_LEVER_VALUE,
+                updated_lever: { item: lever.item, value: event },
+                hasValueChanged: false,
+                validChange: false
+              });
+            }
+
+          }
+
+          if (validationResponse.statement === 'SUCCESS') {
             lever.value = event;
+            setErrorMessages(validationResponse.updatedMessages);
             leverStore.dispatch({
               type: Constants.UPDATE_LEVER_VALUE,
-              updated_lever: { item: lever.item, value: event }
+              updated_lever: { item: lever.item, value: event },
+              validChange: true
             });
 
             return lever;
           }
+          if (validationResponse.statement === 'FAIL') {
+            lever.value = event;
+            setErrorMessages(validationResponse.updatedMessages);
+            leverStore.dispatch({
+              type: Constants.UPDATE_LEVER_VALUE,
+              updated_lever: { item: lever.item, value: event },
+              validChange: false
+            });
 
-          lever.value = event;
-
-          leverStore.dispatch({
-            type: Constants.UPDATE_LEVER_VALUE,
-            updated_lever: { item: lever.item, value: event }
-          });
-
-          return lever;
+            return lever;
+          }
         }
 
         return lever;
