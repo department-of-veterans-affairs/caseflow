@@ -264,15 +264,16 @@ Rails.application.routes.draw do
   end
   match '/supplemental_claims/:claim_id/edit/:any' => 'supplemental_claims#edit', via: [:get]
 
-  resources :decision_reviews, param: :business_line_slug, only: [] do
+  resources :decision_reviews, param: :business_line_slug do
     resources :tasks, controller: :decision_reviews, param: :task_id, only: [:show, :update] do
       member do
         get :power_of_attorney
         patch :update_power_of_attorney
       end
     end
+    get "report", to: "decision_reviews#generate_report", on: :member, as: :report, format: false
+    get "/(*all)", to: "decision_reviews#index"
   end
-  match '/decision_reviews/:business_line_slug' => 'decision_reviews#index', via: [:get]
 
   resources :unrecognized_appellants, only: [:update] do
     resource :power_of_attorney, only: [:update], controller: :unrecognized_appellants, action: :update_power_of_attorney
