@@ -41,6 +41,8 @@ class AppealsReadyForDistribution
   end
 
   def self.legacy_rows(appeals, docket)
+
+    # JUST GET THE IDS THE USE LegacyAppeal.repository.find_case_record and look at LegacyAppeal.repository.set_vacols_values
     appeals.map do |appeal|
       {
         docket_number: appeal["tinum"],
