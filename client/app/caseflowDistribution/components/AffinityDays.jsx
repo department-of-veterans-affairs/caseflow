@@ -183,7 +183,7 @@ const AffinityDays = (props) => {
           <div>
             <label className={lever.is_disabled ? styles.leverDisabled : styles.leverActive}
               htmlFor={`${lever.item}-${option.item}`}>
-              {`${option.text} ${option.data_type === 'number' ? `${option.value } ${ option.unit}` : ''}`}
+              {`${option.text} ${option.data_type === 'number' ? `${option.value} ${option.unit}` : ''}`}
             </label>
           </div>
         </div>
