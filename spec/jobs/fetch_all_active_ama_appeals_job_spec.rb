@@ -376,16 +376,16 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
       end
     end
 
-    context "when there is an active AMA Appeal with multiple hearings
-      and the most recent disposition is 'cancelled'" do
+    context "when there is an active AMA Appeal with multiple hearings"
+    context "and the most recent disposition is 'cancelled'" do
       it "returns correct key value hearing_withdrawn: true" do
         second_hearing.update(disposition: "cancelled")
         expect(subject.send(:map_appeal_hearing_withdrawn_state, appeal)).to eq(hearing_withdrawn: true)
       end
     end
 
-    context "when there is an active AMA Appeal with multiple hearings
-      and the most recent disposition is not 'cancelled'" do
+    context "when there is an active AMA Appeal with multiple hearings"
+    context "and the most recent disposition is not 'cancelled'" do
       it "returns correct key value hearing_withdrawn: false" do
         second_hearing
         expect(subject.send(:map_appeal_hearing_withdrawn_state, appeal)).to eq(hearing_withdrawn: false)
