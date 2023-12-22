@@ -55,6 +55,37 @@ RSpec.feature("The Correspondence Review Package page") do
         expect(page).to_not have_content("Intake appeal")
       end
     end
+
+    context "when remove package task is pending review" do
+      let(:review_package_task) { ReviewPackageTask.find_by(appeal_id: correspondence.id, type: ReviewPackageTask.name) }
+
+      before do
+        task_params = {
+          parent_id: review_package_task.id,
+          instructions: ["test remove", "test"],
+          assigned_to: MailTeamSupervisor.singleton,
+          appeal_id: correspondence.id,
+          appeal_type: "Correspondence",
+          status: Constants.TASK_STATUSES.assigned,
+          type: "RemovePackageTask"
+        }
+        ReviewPackageTask.create_from_params(task_params, mail_team_supervisor_user)
+        review_package_task.update!(assigned_to: MailTeamSupervisor.singleton, status: :on_hold)
+        visit "/queue/correspondence/#{correspondence.uuid}/review_package"
+      end
+
+      it "page is readOnly " do
+        expect(page).to have_button("Edit", disabled: true)
+        expect(page).to have_field("Veteran file number", readonly: true)
+        expect(page).to have_field("Veteran name", readonly: true)
+        expect(page).to have_field("Notes", disabled: true)
+        expect(find(".cf-form-dropdown")).to have_css("div.cf-select--is-disabled")
+      end
+
+      it "request package action dropdown isn't visible" do
+        expect(page).to have_no_content("Request pacakge action")
+      end
+    end
   end
 
   context "Review package - intake appeal" do
