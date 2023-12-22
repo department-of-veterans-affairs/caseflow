@@ -17,16 +17,6 @@ const CaseflowDistributionContent = ({
   sectionTitles
 }) => {
 
-  const [seed, setSeed] = useState(1);
-
-  const reset = () => {
-    setSeed(Math.random());
-};
-
-  useEffect(() => {
-    reset();
-  }, []);
-
   return (
     <div>
       <h1>Administration</h1>
@@ -68,7 +58,7 @@ const CaseflowDistributionContent = ({
           </h2>
           <div {...sectionSegmentStyling}>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_HISTORY_DESCRIPTION}</p>
-            <LeverHistory historyData={formattedHistory} leverStore={leverStore} key={seed} />
+            <LeverHistory historyData={formattedHistory} leverStore={leverStore} />
           </div>
         </div>
       </div>
