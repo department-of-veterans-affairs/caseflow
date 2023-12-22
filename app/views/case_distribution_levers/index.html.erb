@@ -1,5 +1,9 @@
 <% content_for :full_page_content do %>
   <%= react_component("CaseflowDistribution", props: {
+    userDisplayName: current_user.display_name,
+    dropdownUrls: dropdown_urls,
+    applicationUrls: application_urls,
+    feedbackUrl: feedback_url,
     acd_levers: @acd_levers,
     acd_history: @acd_history,
     user_is_an_acd_admin: @user_is_an_acd_admin
