@@ -64,6 +64,20 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
       }
     end
 
+  describe "#process_intake" do
+    let(:task_content) { "This is a test" }
+    let(:post_data) do
+      {
+        mail_tasks: [
+          {
+            klass: "DeathCertificateMailTask",
+            assigned_to: "Colocated",
+            content: task_content
+          }
+        ]
+      }
+    end
+
     it "creates tasks not related to an appeal" do
       post queue_correspondence_intake_process_intake_path(correspondence_uuid: correspondence.uuid), params: {
         data: post_data

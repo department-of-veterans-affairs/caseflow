@@ -124,6 +124,19 @@ class CorrespondenceIntakeProcessor
   end
 
   def create_mail_tasks(intake_params, correspondence_id, current_user)
+    mail_task_data = intake_params[:tasks_not_related_to_appeal]
+
+    return if mail_task_data.blank? || !mail_task_data.length
+
+    mail_task_data.map do |data|
+      class_for_data(data).create_from_params(
+        {
+          parent_id: correspondence.root_task.id,
+          assigned_to: data[:assigned_to].constantize.singleton,
+          instructions: data[:content]
+        }, current_user
+      )
+    end
   end
 
   def class_for_data(data)

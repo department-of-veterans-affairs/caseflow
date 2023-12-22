@@ -16,6 +16,7 @@ export const SubmitCorrespondenceModal = ({ setSubmitCorrespondenceModalVisible,
   const relatedAppealIds = useSelector((state) => state.intakeCorrespondence.taskRelatedAppealIds);
   const tasksRelatedToAppeal = useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks);
   const tasksNotRelatedToAppeal = useSelector((state) => state.intakeCorrespondence.unrelatedTasks);
+  const mailTasks = useSelector((state) => state.intakeCorrespondence.mailTasks);
   const [loading, setLoading] = useState(false);
 
   const onCancel = () => {
@@ -50,12 +51,19 @@ export const SubmitCorrespondenceModal = ({ setSubmitCorrespondenceModalVisible,
       content: task.content
     }));
 
+    const serializedMailTasks = mailTasks.map((task) => ({
+      klass: task.type.klass,
+      assigned_to: task.type.assigned_to,
+      content: task.content
+    }));
+
     const submitData = {
       related_correspondence_uuids: relatedUuids,
       tasks_related_to_appeal: serializedTasksRelatedToAppeal,
       waived_evidence_submission_window_tasks: serializedWaivedEvidenceTasks,
       related_appeal_ids: relatedAppealIds,
-      tasks_not_related_to_appeal: serializedTasksNotRelatedToAppeal
+      tasks_not_related_to_appeal: serializedTasksNotRelatedToAppeal,
+      mail_tasks: serializedMailTasks
     };
 
     setLoading(true);
