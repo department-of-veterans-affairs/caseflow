@@ -11,7 +11,7 @@ class CaseflowDistributionApp extends React.PureComponent {
           <CaseflowDistributionContent
             levers = {this.props.acd_levers}
             saveChanges = {[]}
-            formattedHistory={this.props.acd_history}
+            initialHistory={this.props.acd_history}
             leverStore={this.props.leverStore}
             isAdmin = {this.props.user_is_an_acd_admin}
             sectionTitles = {this.props.sectionTitles}

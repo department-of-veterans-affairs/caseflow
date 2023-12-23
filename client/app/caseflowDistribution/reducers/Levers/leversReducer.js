@@ -4,7 +4,8 @@ export const initialState = {
   saveChangesActivated: false,
   levers: [],
   initial_levers: [],
-  formatted_history: {},
+  formatted_history: [],
+  formatted_history_levers: [],
   changesOccurred: false,
   showSuccessBanner: false,
 };
@@ -16,6 +17,11 @@ const leversReducer = (state = initialState, action = {}) => {
         ...state,
         formatted_history: formatLeverHistory(action.history)
       }
+      case Constants.UPDATE_LEVER_HISTORY:
+        return {
+          ...state,
+          formatted_history_levers: [...state.formatted_history_levers,...updateLeverHistory(action.history)]
+        }
     case Constants.UPDATE_LEVER_VALUE:
       const updatedLevers = updateLevers(state.levers, action.updated_lever, action.hasValueChanged);
       const changesOccurred = JSON.stringify(updatedLevers) !== JSON.stringify(state.initial_levers)
@@ -51,6 +57,10 @@ const leversReducer = (state = initialState, action = {}) => {
     default:
       return state
   }
+}
+
+export const updateLeverHistory = (lever_history_list) => {
+  console.log()
 }
 
 export const formatLeverHistory = (lever_history_list) => {

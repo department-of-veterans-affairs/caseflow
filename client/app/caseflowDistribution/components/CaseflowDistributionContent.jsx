@@ -11,7 +11,7 @@ import COPY from '../../../COPY';
 
 const CaseflowDistributionContent = ({
   levers,
-  formattedHistory,
+  initialHistory,
   isAdmin,
   leverStore,
   sectionTitles
@@ -69,7 +69,7 @@ const CaseflowDistributionContent = ({
           </h2>
           <div {...sectionSegmentStyling}>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_HISTORY_DESCRIPTION}</p>
-            <LeverHistory historyData={formattedHistory} leverStore={leverStore} key={seed} />
+            <LeverHistory historyData={initialHistory} leverStore={leverStore} key={seed} />
           </div>
         </div>
       </div>
@@ -80,7 +80,7 @@ const CaseflowDistributionContent = ({
 CaseflowDistributionContent.propTypes = {
   levers: PropTypes.array.isRequired,
   saveChanges: PropTypes.func.isRequired,
-  formattedHistory: PropTypes.array.isRequired,
+  initialHistory: PropTypes.array.isRequired,
   isAdmin: PropTypes.bool.isRequired,
   leverStore: PropTypes.any.isRequired,
   sectionTitles: PropTypes.array.isRequired
