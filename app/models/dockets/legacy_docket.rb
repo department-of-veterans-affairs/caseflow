@@ -25,7 +25,7 @@ class LegacyDocket < Docket
   end
 
   def weight
-    count(priority: false) + nod_count * CaseDistributionLever.find_by_item('nod_adjustment').try(:value).to_f
+    count(priority: false) + nod_count * CaseDistributionLever.find_float_lever('nod_adjustment')
   end
 
   def ready_priority_appeal_ids

@@ -1156,7 +1156,7 @@ describe Appeal, :all_dbs do
       it "sets target decision date" do
         subject.set_target_decision_date!
         expect(subject.target_decision_date).to eq(
-          subject.receipt_date + CaseDistributionLever.find_by_item('direct_docket_time_goal').try(:value).to_i.days
+          subject.receipt_date + CaseDistributionLever.find_integer_lever('direct_docket_time_goal').days
         )
       end
     end

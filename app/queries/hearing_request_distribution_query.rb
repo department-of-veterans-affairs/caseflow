@@ -95,14 +95,14 @@ class HearingRequestDistributionQuery
     def tied_to_distribution_judge(judge)
       joins(with_assigned_distribution_task_sql)
         .where(hearings: { disposition: "held", judge_id: judge.id })
-        .where("distribution_task.assigned_at > ?", CaseDistributionLever.find_by_item('ama_hearing_case_affinity_days').try(:value).to_i.days.ago)
+        .where("distribution_task.assigned_at > ?", CaseDistributionLever.find_integer_lever('ama_hearing_case_affinity_days').days.ago)
     end
 
     # If an appeal has exceeded the affinity, it should be returned to genpop.
     def exceeding_affinity_threshold
       joins(with_assigned_distribution_task_sql)
         .where(hearings: { disposition: "held" })
-        .where("distribution_task.assigned_at <= ?", CaseDistributionLever.find_by_item('ama_hearing_case_affinity_days').try(:value).to_i.days.ago)
+        .where("distribution_task.assigned_at <= ?", CaseDistributionLever.find_integer_lever('ama_hearing_case_affinity_days').days.ago)
     end
 
     # Historical note: We formerly had not_tied_to_any_active_judge until CASEFLOW-1928,

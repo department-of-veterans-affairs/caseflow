@@ -23,4 +23,10 @@ class CaseDistributionLever < ApplicationRecord
       self.value
     end
   end
+
+  def find_integer_lever(lever)
+  end
+
+  def find_float_lever(lever)
+  end
 end
