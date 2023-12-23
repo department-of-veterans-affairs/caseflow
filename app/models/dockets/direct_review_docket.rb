@@ -6,10 +6,10 @@ class DirectReviewDocket < Docket
   end
 
   def due_count
-    days_before_goal_due_for_distribution = CaseDistributionLever.find_by_item('days_before_goal_due_for_distribution').try(:value)
-    if days_before_goal_due_for_distribution.present?
+    days_before_goal_due_for_distribution = CaseDistributionLever.find_integer_lever('days_before_goal_due_for_distribution')
+    if days_before_goal_due_for_distribution > 0
       appeal_ids = appeals(priority: false, ready: true)
-        .where("target_decision_date <= ?", CaseDistributionLever.find_integer_lever('days_before_goal_due_for_distribution').days.from_now)
+        .where("target_decision_date <= ?", days_before_goal_due_for_distribution.days.from_now)
     else
       appeal_ids = appeals(priority: false, ready: true)
     end
