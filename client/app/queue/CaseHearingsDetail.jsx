@@ -353,6 +353,12 @@ class CaseHearingsDetail extends React.PureComponent {
             onCancel={this.closeModal}
           />
         }
+        {
+          <div id="postpone-details">
+            <span {...boldText}>Postponement History:</span>
+
+          </div>
+        }
       </div>
     );
   };
