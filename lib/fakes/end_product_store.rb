@@ -12,7 +12,7 @@ class Fakes::EndProductStore < Fakes::PersistentStore
 
   # we call it a "child" because even though Redis has only key:value pairs,
   # logically the object is a child of an EndProduct
-  class ChildStore < Fakes::EndProductStore
+  class ChildStore < ::Fakes::EndProductStore
     def initialize(parent_key:, child_key:, child:)
       @parent_key = parent_key
       @child_key = child_key.to_s.to_sym

@@ -2,7 +2,7 @@
 
 class WorkQueue::LegacyAppealSerializer
   include FastJsonapi::ObjectSerializer
-  extend Helpers::AppealHearingHelper
+  extend AppealHearingHelper
 
   attribute :assigned_attorney
   attribute :assigned_judge

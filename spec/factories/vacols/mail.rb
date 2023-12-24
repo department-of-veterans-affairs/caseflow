@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :mail, class: VACOLS::Mail do
+  factory :mail, class: "VACOLS::Mail" do
     mltype { "02" }
 
     trait :blocking do

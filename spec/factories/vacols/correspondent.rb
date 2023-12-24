@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :correspondent, class: VACOLS::Correspondent do
+  factory :correspondent, class: "VACOLS::Correspondent" do
     stafkey { generate :vacols_correspondent_key }
 
     snamef { "Joshua" }
