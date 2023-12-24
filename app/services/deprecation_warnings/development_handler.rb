@@ -5,7 +5,7 @@ require_relative "disallowed_deprecations"
 # @note For use with `ActiveSupport::Deprecation.behavior=`.
 module DeprecationWarnings
   class DevelopmentHandler < BaseHandler
-    extend DisallowedDeprecations
+    extend  DeprecationWarnings::DisallowedDeprecations
 
     class << self
       # :reek:LongParameterList
