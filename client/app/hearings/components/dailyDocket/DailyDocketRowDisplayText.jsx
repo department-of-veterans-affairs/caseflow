@@ -12,6 +12,11 @@ import FnodBadge from 'app/components/badges/FnodBadge/FnodBadge';
 import ContestedClaimBadge from 'app/components/badges/ContestedBadge/ContestedClaimBadge';
 import { tooltipListStyling } from 'app/components/badges/style';
 import { DateString } from 'app/util/DateUtil';
+import { css } from 'glamor';
+import { COLORS } from '../../../constants/AppConstants';
+import { ExternalLinkIcon } from '../../../components/icons/ExternalLinkIcon';
+
+const ICON_POSITION_FIX = css({ position: 'relative', top: 1 });
 
 const hearingPropTypes = PropTypes.shape({
   appealExternalId: PropTypes.string,
@@ -39,6 +44,7 @@ export const getHearingAppellantName = (hearing) => {
 
 const AppellantInformation = ({ hearing, userCanViewFnodBadgeInHearings }) => {
   const appellantName = getHearingAppellantName(hearing);
+  const notificationLink = `/queue/appeals/${hearing.appealExternalId}/notifications`;
 
   return <div>
     <strong>{appellantName}</strong><br />
@@ -87,6 +93,16 @@ const AppellantInformation = ({ hearing, userCanViewFnodBadgeInHearings }) => {
       <div>Loading address...</div>}
     <br /><br />
     <PowerOfAttorneyName appealId={hearing.appealExternalId} />
+    <br /><br /><br />
+    <Link href={notificationLink} target="_blank">
+      <strong>
+        Appellant Attendence
+        <span>
+          &nbsp;
+          <ExternalLinkIcon color={COLORS.PRIMARY} />
+        </span>
+      </strong>
+    </Link>
   </div>;
 };
 

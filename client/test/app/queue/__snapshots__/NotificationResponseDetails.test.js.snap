@@ -1,0 +1,42 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NotificationResponseDetails matches snapshot 1`] = `
+<div>
+  <tr
+    style="border-bottom: hidden;"
+  >
+    <td>
+      <strong>
+        Appellant Acknowledgement
+      </strong>
+    </td>
+    <td>
+      <strong>
+        Response Date
+      </strong>
+    </td>
+    <td>
+      <strong>
+        Response Time
+      </strong>
+    </td>
+    <td>
+      <strong />
+    </td>
+    <td>
+      <strong />
+    </td>
+    <td>
+      <strong />
+    </td>
+  </tr>
+  <tr>
+    <td />
+    <td />
+    <td />
+    <td />
+    <td />
+    <td />
+  </tr>
+</div>
+`;

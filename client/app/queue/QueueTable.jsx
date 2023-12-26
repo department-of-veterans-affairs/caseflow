@@ -16,6 +16,7 @@ import LoadingScreen from '../components/LoadingScreen';
 import { tasksWithAppealsFromRawTasks } from './utils';
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 import COPY from '../../COPY';
+import NotificationResponseDetails from './components/NotificationResponseDetails';
 
 /**
  * This component can be used to easily build tables.
@@ -77,9 +78,9 @@ export const getColumns = (props) => {
   return _.isFunction(props.columns) ? props.columns(props.rowObject) : props.columns;
 };
 
-export const getCellValue = (rowObject, rowId, column) => {
+export const getCellValue = (rowObject, rowId, column, props) => {
   if (column.valueFunction) {
-    return column.valueFunction(rowObject, rowId);
+    return column.valueFunction(rowObject, rowId, props);
   }
   if (column.valueName) {
     return rowObject[column.valueName];
@@ -210,27 +211,57 @@ export const HeaderRow = (props) => {
 
 // todo: make these functional components?
 export class Row extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      showResponseRow: false,
+      responseInfo: {
+        response: '—',
+        date: '—',
+        time: '—'
+      }
+    };
+  }
+
+  // This toggles the response details dropdown row in the notifications page
+  toggleResponseDetails = (responseInfo) => {
+    this.setState((prevState) => ({ showResponseRow: !prevState.showResponseRow, responseInfo }));
+  }
+
+  // This toggles the bottom border of the original row when opening and closing response details
+  // Return the styles for the border
+  toggleBorder = () => this.state.showResponseRow ? { borderBottom: 'hidden' } : { borderBottom: 'inherit' }
+
   render() {
     const props = this.props;
     const rowId = props.footer ? 'footer' : props.rowId;
     const rowClassnameCondition = classnames(!props.footer && props.rowClassNames(props.rowObject));
 
     return (
-      <tr id={`table-row-${rowId}`} className={rowClassnameCondition} role="row">
-        {getColumns(props).
-          filter((column) => getCellSpan(props.rowObject, column) > 0).
-          map((column, columnNumber) => (
-            <td
-              tabIndex={-1}
-              role="gridcell"
-              key={columnNumber}
-              className={cellClasses(column)}
-              colSpan={getCellSpan(props.rowObject, column)}
-            >
-              {props.footer ? column.footer : getCellValue(props.rowObject, props.rowId, column)}
-            </td>
-          ))}
-      </tr>
+      <>
+        <tr id={`table-row-${rowId}`} className={rowClassnameCondition} role="row" style={this.toggleBorder()}>
+          {getColumns(props).
+            filter((column) => getCellSpan(props.rowObject, column) > 0).
+            map((column, columnNumber) => (
+              <td
+                tabIndex={-1}
+                role="gridcell"
+                key={columnNumber}
+                className={cellClasses(column)}
+                colSpan={getCellSpan(props.rowObject, column)}
+              >
+                {props.footer ? column.footer :
+                  getCellValue(props.rowObject, props.rowId, column, this.toggleResponseDetails)}
+              </td>
+            ))}
+        </tr>
+        {this.state.showResponseRow &&
+          <NotificationResponseDetails
+            response={this.state.responseInfo?.response}
+            date={this.state.responseInfo?.date}
+            time={this.state.responseInfo?.time} />
+        }
+      </>
     );
   }
 }
