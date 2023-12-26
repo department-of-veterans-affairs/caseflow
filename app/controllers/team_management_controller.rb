@@ -119,7 +119,8 @@ class TeamManagementController < ApplicationController
         org.is_a?(Representative) ||
         org.is_a?(VhaProgramOffice) ||
         org.is_a?(VhaRegionalOffice) ||
-        org.is_a?(EducationRpo)
+        org.is_a?(EducationRpo) || 
+        org.is_a?(MailTeamSupervisor)
     end
   end
 

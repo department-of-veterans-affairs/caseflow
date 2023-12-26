@@ -25,6 +25,41 @@
   margin-bottom: 1em;
 }
 
+.correspondence-document-table {
+  table {
+    width: 100%;
+  }
+
+  th {
+    width: 100%;
+    font-weight: bold;
+
+    &:first-child {
+      padding-left: 1.5%;
+    }
+  }
+
+  tr,
+  th,
+  td {
+    position: relative;
+    border: none;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      width: 95%;
+      left: 1%;
+      border-bottom: 1px solid $color-gray-lighter;
+    }
+  }
+
+  td:first-child {
+    padding-left: 1.5%;
+  }
+}
+
 .cf-filter-option-row {
   margin: 0;
 
@@ -143,4 +178,27 @@
       width: 100%;
     }
   }
+}
+
+// ===========================*
+// Alternate Borderless (no bottom border)
+// ===========================*
+.usa-table-alternate-borderless {
+  background-color: $color-gray-lightest;
+
+  width: 100%;
+
+  th,
+  td {
+    border: 0;
+    background-color: $color-gray-lightest;
+    padding-top: 2rem;
+    padding-bottom: 0;
+  }
+
+  td {
+    margin: 2px;
+    padding-top: 0;
+    padding-bottom: 25px;
+    }
 }
