@@ -215,7 +215,7 @@ components:
           title:
             type: string
     VacolsIssue:
-      description:Issues that are attached to a Legacy Appeal within VACOLS. There can be multiple VACOLS Issues attached to a Legacy Appeal. VACOLS Issues are eligible for AMA if they meet the Legacy Issue opt-in eligibility requirements
+      description: Issues that are attached to a Legacy Appeal within VACOLS. There can be multiple VACOLS Issues attached to a Legacy Appeal. VACOLS Issues are eligible for AMA if they meet the Legacy Issue opt-in eligibility requirements
       type: object
       properties:
         data:
@@ -225,17 +225,22 @@ components:
               type: integer
               description: "The unique identifier for an issue"
             notice_of_disagreement_date:
-              type: datetime
+              type: string
+              format: date
               description: "Receipt date of the appeal form. Used to determine which VACOLS issues are within the timeliness window to be appealed. Only VACOLS issues decided prior to the receipt date will show up as contestable issues."
             legacy_appeal_status:
               type: boolean
               description: "Indicates the status of the Legacy Appeal."
             legacy_appeal_soc_date:
-              type: datetime
+              type: string
+              format: date
               description: "Date/Time Statement of the Case Issued"
             legacy_appeal_ssoc_dates:
               type: array
               description: "Date/Time Supplemental Statement of the Cases Issued"
+              items:
+                type: string
+                format: date
             legacy_appeal_eligible_for_opt_in:
               type: boolean
               description: "Indicates whether a Legacy Appeal is eligible to withdraw matching issues from the Legacy process."
@@ -243,7 +248,7 @@ components:
               type: boolean
               description: "Indicates whether a Legacy Appeal is eligible to withdraw matching issues from the Legacy process due to an exemption."
             vacols_id:
-              type: varchar
+              type: string
               description: "The VACOLS ID (primary key) of the Legacy appeal that the VACOLS issue is part of."
             vacols_sequence_id:
               type: integer
@@ -255,14 +260,15 @@ components:
               type: boolean
               description:  "Indicates whether a VACOLS Issue is eligible to withdraw matching issues from the Legacy process due to an exemption."
             issue_close_date:
-              type: datetime
+              type: string
+              format: date
               description: "The date the VACOLS issue received a disposition."
             issue_description:
-              type: varchar
+              type: string
               description: "The description for the VACOLS issue."
             issue_disposition:
-              type: varchar
+              type: string
               description: "The disposition for each issue on the Legacy appeal. There are fourteen dispositions in total:  some controlled by BVA and others controlled by the field."
             issue_note:
-              type: text
+              type: string
               description: "Notes added to the VACOLS Issue. This may be used to capture handwritten notes on the form, New Material or other comments."
