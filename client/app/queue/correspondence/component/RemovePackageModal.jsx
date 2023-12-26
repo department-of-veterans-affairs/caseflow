@@ -29,7 +29,13 @@ class RemovePackageModal extends React.Component {
   }
 
   handleSelect(reasonForRemove) {
-    this.setState({ reasonForRemove });
+    if (reasonForRemove === 'Approve request') {
+      this.setState({ reasonForRemove,
+        disabledSaveButton: false });
+    } else {
+      this.setState({ reasonForRemove,
+        disabledSaveButton: true });
+    }
   }
 
   reasonChange = (value) => {
@@ -100,7 +106,7 @@ class RemovePackageModal extends React.Component {
           onChange={(val) => this.handleSelect(val)}
         />
 
-        {this.state.reasonForRemove &&
+        {this.state.reasonForRemove === 'Reject request' &&
               <TextareaField
                 name={sprintf(COPY.CORRESPONDENCE_TITLE_REMOVE_PACKAGE_REASON_REJECT)}
                 onChange={this.reasonChange}

@@ -106,11 +106,6 @@ RSpec.feature("The Correspondence Review Package page") do
         expect(page).to have_button("Review removal request")
         click_button "Review removal request"
         page.all(".cf-form-radio-option > label")[0].click
-        expect(page).to have_field("Provide a reason for rejection")
-        expect(page).to have_button("Confirm", disabled: true)
-
-        fill_in "Provide a reason for rejection", with: "Provide a reason for rejection"
-        expect(page).to have_button("Confirm", disabled: false)
       end
 
       it "remove Package" do
