@@ -34,7 +34,7 @@ class SeedDB
   end
 
   def seed
-    RequestStore[:current_user]=User.system_user
+    RequestStore[:current_user] = User.system_user
     call_and_log_seed_step :clean_db
 
     call_and_log_seed_step Seeds::Annotations
@@ -44,23 +44,24 @@ class SeedDB
     call_and_log_seed_step Seeds::Users
     call_and_log_seed_step Seeds::NotificationEvents
     # End of required to exist dependencies
-    call_and_log_seed_step Seeds::Tasks
-    call_and_log_seed_step Seeds::Hearings
+    # call_and_log_seed_step Seeds::Tasks
+    # call_and_log_seed_step Seeds::Hearings
     call_and_log_seed_step Seeds::Intake
-    call_and_log_seed_step Seeds::Dispatch
+    # call_and_log_seed_step Seeds::Dispatch
     call_and_log_seed_step Seeds::Jobs
-    call_and_log_seed_step Seeds::Substitutions
-    call_and_log_seed_step Seeds::DecisionIssues
-    call_and_log_seed_step Seeds::CavcAmaAppeals
+    # call_and_log_seed_step Seeds::Substitutions
+    # call_and_log_seed_step Seeds::DecisionIssues
+    # call_and_log_seed_step Seeds::CavcAmaAppeals
     call_and_log_seed_step Seeds::SanitizedJsonSeeds
     call_and_log_seed_step Seeds::VeteransHealthAdministration
-    call_and_log_seed_step Seeds::MTV
+    # call_and_log_seed_step Seeds::MTV
     call_and_log_seed_step Seeds::Education
-    call_and_log_seed_step Seeds::PriorityDistributions
-    call_and_log_seed_step Seeds::TestCaseData
-    call_and_log_seed_step Seeds::Notifications
+    # call_and_log_seed_step Seeds::PriorityDistributions
+    # call_and_log_seed_step Seeds::TestCaseData
+    # call_and_log_seed_step Seeds::Notifications
     call_and_log_seed_step Seeds::CavcDashboardData
     call_and_log_seed_step Seeds::VbmsExtClaim
+    call_and_log_seed_step Seeds::CasesTiedToJudgesNoLongerWithBoard
     # Always run this as last one
     # call_and_log_seed_step Seeds::StaticTestCaseData
     # call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData

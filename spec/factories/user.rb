@@ -73,6 +73,12 @@ FactoryBot.define do
       end
     end
 
+    trait :with_vacols_record do
+      after(:create) do |user|
+        create(:staff, :has_sattyid, slogid: user.css_id, user: user)
+      end
+    end
+
     trait :with_judge_team do
       after(:create) do |judge|
         JudgeTeam.for_judge(judge) || JudgeTeam.create_for_judge(judge)

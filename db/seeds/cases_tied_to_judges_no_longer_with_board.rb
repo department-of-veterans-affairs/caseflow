@@ -9,11 +9,12 @@ module Seeds
       initialize_active_cf_user_and_non_admin_judge_team_file_number_and_participant_id
       initialize_active_cf_user_and_inactive_judge_team_file_number_and_participant_id
       initialize_active_judge_file_number_and_participant_id
-      initialize_active_cf_user_with_only_sattyid_file_number_and_participant_id
+      initialize_active_vacols_user_with_only_sattyid_file_number_and_participant_id
       initialize_inactive_judge_file_number_and_participant_id
     end
 
     def seed!
+      RequestStore[:current_user] = User.system_user
       create_legacy_appeals
       create_ama_appeals
     end
@@ -63,12 +64,12 @@ module Seeds
       end
     end
 
-    def initialize_active_cf_user_with_only_sattyid_file_number_and_participant_id
-      @active_cf_user_with_only_sattyid_file_number ||= 704_000_000
-      @active_cf_user_with_only_sattyid_participant_id ||= 714_000_000
-      while find_veteran(@active_cf_user_with_only_sattyid_file_number)
-        @active_cf_user_with_only_sattyid_file_number += 2000
-        @active_cf_user_with_only_sattyid_participant_id += 2000
+    def initialize_active_vacols_user_with_only_sattyid_file_number_and_participant_id
+      @active_vacols_user_with_only_sattyid_file_number ||= 704_000_000
+      @active_vacols_user_with_only_sattyid_participant_id ||= 714_000_000
+      while find_veteran(@active_vacols_user_with_only_sattyid_file_number)
+        @active_vacols_user_with_only_sattyid_file_number += 2000
+        @active_vacols_user_with_only_sattyid_participant_id += 2000
       end
     end
 
@@ -102,7 +103,7 @@ module Seeds
 
     def find_or_create_active_judge_with_only_sattyid(css_id, full_name)
        User.find_by_css_id(css_id) ||
-        create(:user, :judge, :with_vacols_record, css_id: css_id, full_name: full_name)
+        create(:user, :with_vacols_record, css_id: css_id, full_name: full_name)
     end
 
     def inactive_cf_user_and_inactive_admin_judge_team
@@ -133,13 +134,13 @@ module Seeds
     # Active Caseflow User who is the admin of an Inactive JudgeTeam and a non-admin of another JudgeTeam
     def active_cf_user_and_inactive_judge_team
       @active_cf_user_and_inactive_judge_team ||= begin
-        user = create(:user,
+        user = User.find_by_css_id("ATTYWITHTEAM") || create(:user,
                       :judge,
                       :with_vacols_acting_judge_record,
                       css_id: "ATTYWITHTEAM",
                       full_name: "Attorney WithInactiveJudgeTeam Affinity")
 
-        JudgeTeam.for_judge(user).inactive!
+        JudgeTeam.for_judge(user)&.inactive!
         another_judge = find_or_create_active_judge("ACTIVEJUDGETEAM", "Judge WithJudgeTeam Active")
         another_judge_team = JudgeTeam.for_judge(another_judge)
         another_judge_team.add_user(user)
@@ -158,19 +159,19 @@ module Seeds
         find_or_create_active_judge("JUDGEHEARING2", "Judge Hearings65Days Affinity")
     end
 
-    def inactive_judge_one
-      @inactive_judge_one ||= find_or_create_inactive_judge("INACTIVEJUDGE", "Inactive Vacols Judge")
+    def inactive_vacols_judge
+      @inactive_vacols_judge ||= find_or_create_inactive_judge("INACTIVEJUDGE", "Judge InactiveInVacols User")
     end
 
-    def active_cf_user_with_only_sattyid
-      @active_cf_user_with_only_sattyid ||= find_or_create_active_judge_with_only_sattyid("USERSATTYID", full_name: "User WithOnly Sattyid")
+    def active_vacols_user_with_only_sattyid
+      @active_vacols_user_with_only_sattyid ||= find_or_create_active_judge_with_only_sattyid("SATTYIDUSER", "User WithOnly Sattyid")
     end
 
     def create_legacy_appeals
       Timecop.travel(65.days.ago)
       APPEALS_LIMIT.times.each do
         create_vacols_case_tied_to_inactive_judge
-        create_vacols_case_tied_to_active_cf_user_with_only_sattyid
+        create_vacols_case_tied_to_active_vacols_user_with_only_sattyid
         create_vacols_case_for_active_judge
         create_vacols_case_for_inactive_judge
       end
@@ -204,9 +205,9 @@ module Seeds
       vacols_case
     end
 
-    def create_vacols_case_tied_to_active_cf_user_with_only_sattyid
+    def create_vacols_case_tied_to_active_vacols_user_with_only_sattyid
         # Create the veteran for this legacy appeal
-        veteran = create_veteran_for_active_cf_user_with_only_sattyid
+        veteran = create_veteran_for_active_vacols_user_with_only_sattyid
 
         regional_office = "RO17"
         #create legacy appeals ready to be distributed that have a hearing held by an active user with only sattyid
@@ -216,7 +217,7 @@ module Seeds
 
         vacols_case = create_video_vacols_case(veteran,
                                              correspondent,
-                                             active_cf_user_with_only_sattyid)
+                                             active_vacols_user_with_only_sattyid)
 
         legacy_appeal = create(
           :legacy_appeal,
@@ -268,7 +269,7 @@ module Seeds
 
         vacols_case = create_video_vacols_case(veteran,
                                              correspondent,
-                                             inactive_judge_one)
+                                             inactive_vacols_judge)
 
         legacy_appeal = create(
           :legacy_appeal,
@@ -291,12 +292,12 @@ module Seeds
       )
     end
 
-    def create_veteran_for_active_cf_user_with_only_sattyid
-      @active_cf_user_with_only_sattyid_file_number += 1
-      @active_cf_user_with_only_sattyid_participant_id += 1
+    def create_veteran_for_active_vacols_user_with_only_sattyid
+      @active_vacols_user_with_only_sattyid_file_number += 1
+      @active_vacols_user_with_only_sattyid_participant_id += 1
       create_veteran(
-        file_number: @active_cf_user_with_only_sattyid_file_number,
-        participant_id: @active_cf_user_with_only_sattyid_participant_id
+        file_number: @active_vacols_user_with_only_sattyid_file_number,
+        participant_id: @active_vacols_user_with_only_sattyid_participant_id
       )
     end
 
@@ -321,8 +322,9 @@ module Seeds
         :case,
         :tied_to_judge,
         :video_hearing_requested,
-        :type_original,
+        :type_cavc_remand,
         :ready_for_distribution,
+        :status_active,
         tied_judge: judge,
         correspondent: correspondent,
         bfcorlid: "#{veteran.file_number}S",

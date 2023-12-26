@@ -6,8 +6,11 @@ FactoryBot.define do
       user { nil }
 
       generated_sattyid do
-        FactoryBot.sequence_by_name(:sattyid).next while VACOLS::Staff.find_by(sattyid: generate(:sattyid))
-        generate(:sattyid)
+        new_sattyid = generate(:sattyid)
+
+        new_sattyid = generate(:sattyid) while VACOLS::Staff.exists?(sattyid: new_sattyid)
+
+        new_sattyid
       end
     end
 
@@ -97,6 +100,11 @@ FactoryBot.define do
 
     trait :has_location_code do
       slogid { "55" }
+    end
+
+    trait :has_sattyid do
+      svlj { nil }
+      sattyid { generated_sattyid }
     end
 
     after(:build) do |staff, evaluator|
