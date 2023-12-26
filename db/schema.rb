@@ -1611,6 +1611,7 @@ ActiveRecord::Schema.define(version: 2023_12_14_201518) do
     t.boolean "covid_timeliness_exempt", comment: "If a veteran requests a timeliness exemption that is related to COVID-19, this is captured when adding a Request Issue and available for reporting."
     t.datetime "created_at", comment: "Automatic timestamp when row was created"
     t.date "decision_date", comment: "Either the rating issue's promulgation date, the decision issue's approx decision date or the decision date entered by the user (for nonrating and unidentified issues)"
+    t.datetime "decision_date_added_at", comment: "Denotes when a decision date was added"
     t.bigint "decision_review_id", comment: "ID of the decision review that this request issue belongs to"
     t.string "decision_review_type", comment: "Class name of the decision review that this request issue belongs to"
     t.datetime "decision_sync_attempted_at", comment: "Async job processing last attempted timestamp"
