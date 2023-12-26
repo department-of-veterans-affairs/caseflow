@@ -97,7 +97,7 @@ class LegacyDocket < Docket
                                      bust_backlog: false)
     return [] unless should_distribute?(distribution, style: style, genpop: genpop)
 
-    return [] if !range.nil? && range <= CaseDistributionLever.find_by_item('distribute_nonpriority_appeals_range').try(:value).to_i
+    return [] if !range.nil? && range <= 0
 
     LegacyAppeal.repository.distribute_nonpriority_appeals(
       distribution.judge, genpop, range, limit, bust_backlog

@@ -14,4 +14,13 @@ class CaseDistributionLever < ApplicationRecord
       updated_lever.save!
     end
   end
+
+  def distribution_value
+    if self.data_type == 'radio'
+      option = self.options.detect{|opt| opt['item'] == self.value}
+      option['value'] if option && option.is_a?(Hash)
+    else
+      self.value
+    end
+  end
 end
