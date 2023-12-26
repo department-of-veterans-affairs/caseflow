@@ -170,7 +170,7 @@ export const ConfirmCorrespondenceView = (props) => {
             marginLeft: '0px'
           }}>Completed Mail Tasks</h2>
           <div style={{ marginLeft: 'auto' }}>
-            <Button styling={bottonStyling} linkStyling onClick={() => props.goToStep(2)}>
+            <Button name="EditMailTasks" styling={bottonStyling} linkStyling onClick={() => props.goToStep(2)}>
               <span {...css({ position: 'absolute' })}><PencilIcon /></span>
               <span {...css({ marginLeft: '20px' })}>Edit Section</span>
             </Button>
@@ -219,7 +219,7 @@ export const ConfirmCorrespondenceView = (props) => {
             margin: '1px 0 15px 0',
             display: 'inline-block',
             marginLeft: '0px'
-          }}>Tasks related to an Appeal</h2>
+          }}>Linked Appeals & New Tasks</h2>
           <div style={{ marginLeft: 'auto' }}>
             <Button styling={bottonStyling} linkStyling onClick={() => props.goToStep(2)}>
               <span {...css({ position: 'absolute' })}><PencilIcon /></span>

@@ -1,4 +1,4 @@
-import { css, right } from 'glamor';
+import { css } from 'glamor';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import COPY from 'app/../COPY';
@@ -54,17 +54,16 @@ const dropDownDiv = css({
 });
 
 const ReviewPackageCaseTitle = (props) => {
+
   return (
     <div>
-      <CaseTitleScaffolding correspondence_id = {props.correspondence.id} />
-      <CaseSubTitleScaffolding handlePackageActionModal={props.handlePackageActionModal} />
+      <CaseTitleScaffolding correspondence_id = {props.correspondence.id} isReadOnly={props.isReadOnly} />
+      <CaseSubTitleScaffolding {...props} isReadOnly={props.isReadOnly} />
     </div>
   );
 };
 
 const CaseTitleScaffolding = (props) => {
-
-  const id = props.correspondence_id;
 
   const [modalState, setModalState] = useState(false);
 
@@ -80,21 +79,23 @@ const CaseTitleScaffolding = (props) => {
       <h1 {...headerStyling}>{COPY.CORRESPONDENCE_REVIEW_PACKAGE_TITLE}</h1>
 
       <span {...removebotton}>
-        <Button
-          name="Review removal request"
-          styling={{ style: { marginRight: '2rem', padding: '15px', fontSize: 'larger' } }}
-          classNames={['usa-button-primary']}
-          onClick={() => {
-            openModal();
-          }}
-        />
+        { props.isReadOnly &&
+          <Button
+            name="Review removal request"
+            styling={{ style: { marginRight: '2rem', padding: '15px', fontSize: 'larger' } }}
+            classNames={['usa-button-primary']}
+            onClick={() => {
+              openModal();
+            }}
+          />
+        }
       </span>
       { modalState &&
       <RemovePackageModal
         modalState={modalState}
         setModalState={setModalState}
         onCancel={closeModal}
-        correspondence_id = {id} />
+        correspondence_id = {props.correspondence_id} />
       }
     </div>
   );
@@ -108,6 +109,7 @@ const CaseSubTitleScaffolding = (props) => (
     </div>
 
     <div {...dropDownDiv} style = {{ maxWidth: '25%' }}>
+      { !props.isReadOnly &&
       <SearchableDropdown
         options={[
           { value: 'splitPackage', label: 'Split package' },
@@ -120,18 +122,27 @@ const CaseSubTitleScaffolding = (props) => (
         label="Request package action dropdown"
         hideLabel
         name=""
-      />
+        value={props.packageActionModal}
+      /> }
     </div>
   </div>
 );
 
 ReviewPackageCaseTitle.propTypes = {
   handlePackageActionModal: PropTypes.func,
-  correspondence_id: PropTypes.number
+  correspondence: PropTypes.object,
+  isReadOnly: PropTypes.bool
 };
 
 CaseSubTitleScaffolding.propTypes = {
-  handlePackageActionModal: PropTypes.func
+  handlePackageActionModal: PropTypes.func,
+  packageActionModal: PropTypes.string,
+  isReadOnly: PropTypes.bool
+};
+
+CaseTitleScaffolding.propTypes = {
+  correspondence_id: PropTypes.number,
+  isReadOnly: PropTypes.bool
 };
 
 export default ReviewPackageCaseTitle;

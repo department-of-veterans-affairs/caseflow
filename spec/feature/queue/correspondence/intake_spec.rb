@@ -2,10 +2,24 @@
 
 RSpec.feature("The Correspondence Intake page") do
   include CorrespondenceHelpers
+  let(:organization) { MailTeam.singleton }
+  let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
+
+  before do
+    organization.add_user(mail_user)
+    mail_user.reload
+  end
+
   context "intake form feature toggle" do
     before :each do
-      User.authenticate!(roles: ["Mail Intake"])
-      @correspondence_uuid = "123456789"
+      veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
+      create(
+        :correspondence,
+        veteran_id: veteran.id,
+        uuid: SecureRandom.uuid,
+        va_date_of_receipt: Time.zone.local(2023, 1, 1)
+      )
+      @correspondence_uuid = Correspondence.first.uuid
     end
 
     it "routes user to /unauthorized if the feature toggle is disabled" do
@@ -24,8 +38,14 @@ RSpec.feature("The Correspondence Intake page") do
   context "intake form shell" do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      User.authenticate!(roles: ["Mail Intake"])
-      @correspondence_uuid = "123456789"
+      veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
+      create(
+        :correspondence,
+        veteran_id: veteran.id,
+        uuid: SecureRandom.uuid,
+        va_date_of_receipt: Time.zone.local(2023, 1, 1)
+      )
+      @correspondence_uuid = Correspondence.first.uuid
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
     end
 
@@ -76,8 +96,14 @@ RSpec.feature("The Correspondence Intake page") do
   context "access 'Tasks not Related to an Appeals'" do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      User.authenticate!(roles: ["Mail Intake"])
-      @correspondence_uuid = "0c77d6d2-c19f-4dbb-8e79-919a4090ed33"
+      veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
+      create(
+        :correspondence,
+        veteran_id: veteran.id,
+        uuid: SecureRandom.uuid,
+        va_date_of_receipt: Time.zone.local(2023, 1, 1)
+      )
+      @correspondence_uuid = Correspondence.first.uuid
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
     end
 
@@ -92,8 +118,15 @@ RSpec.feature("The Correspondence Intake page") do
   context "The mail team user is able to add unrelated tasks" do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      User.authenticate!(roles: ["Mail Intake"])
-      @correspondence_uuid = "0c77d6d2-c19f-4dbb-8e79-919a4090ed33"
+      veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
+      create(
+        :correspondence,
+        veteran_id: veteran.id,
+        uuid: SecureRandom.uuid,
+        va_date_of_receipt: Time.zone.local(2023, 1, 1)
+      )
+
+      @correspondence_uuid = Correspondence.first.uuid
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
       click_on("button-continue")
     end
@@ -114,14 +147,14 @@ RSpec.feature("The Correspondence Intake page") do
     it "Two 'Other Motion' tasks is the limit for user" do
       click_on("+ Add tasks")
       all("#reactSelectContainer")[0].click
-      page.find("#react-select-2-input").fill_in with: "Other motion"
-      page.find(".css-e42auv", text: "Other motion").click
+      find_by_id("react-select-2-option-4").click
       expect(page).to have_content("Other motion")
       click_on("+ Add tasks")
-      all("#reactSelectContainer")[0].click
-      page.find("#react-select-2-input").fill_in with: "Other motion"
-      page.find(".css-e42auv", text: "Other motion").click
-      expect(page).to have_content("Other motion")
+      all("#reactSelectContainer")[1].click
+      find_by_id("react-select-3-option-4").click
+      within all("#reactSelectContainer")[1] do
+        expect(page).to have_content("Other motion")
+      end
       expect(page).to have_button("+ Add tasks", disabled: false)
     end
 
@@ -174,7 +207,7 @@ RSpec.feature("The Correspondence Intake page") do
         visit_intake_form_step_3_with_tasks_unrelated
 
         expect(page).to have_content("Tasks not related to an Appeal")
-        expect(page).to have_link("Edit section")
+        expect(all("button > span", text: "Edit Section").length).to eq(3)
         expect(page).to have_content("Tasks")
         expect(page).to have_content("Task Instructions or Context")
         expect(page).to have_content("CAVC Correspondence")
@@ -183,9 +216,9 @@ RSpec.feature("The Correspondence Intake page") do
 
       it "Edit section link returns user to Tasks not related to an Appeal on Step 2" do
         visit_intake_form_step_3_with_tasks_unrelated
-        click_link("Edit section")
+        all("button > span", text: "Edit Section")[1].click
         expect(page).to have_content("Review Tasks & Appeals")
-        expect(page.current_url.include?("#task-not-related-to-an-appeal")).to eq(true)
+        expect(page).to have_content("Tasks not related to an Appeal")
       end
     end
   end
@@ -199,8 +232,14 @@ RSpec.feature("The Correspondence Intake page") do
 
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      User.authenticate!(roles: ["Mail Intake"])
-      @correspondence_uuid = "12345"
+      veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
+      create(
+        :correspondence,
+        veteran_id: veteran.id,
+        uuid: SecureRandom.uuid,
+        va_date_of_receipt: Time.zone.local(2023, 1, 1)
+      )
+      @correspondence_uuid = Correspondence.first.uuid
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
       click_on("button-continue")
       click_on("+ Add tasks")
@@ -233,9 +272,28 @@ RSpec.feature("The Correspondence Intake page") do
       expect(cancel_count).to eq 1
     end
 
-    it "The user is able to add autotext" do
+    it "Clears all selected options in modal" do
+      find_by_id("addAutotext").click
+      within find_by_id("autotextModal") do
+        expect(page).to have_text("Clear all")
+      end
+      within find_by_id("autotextModal") do
+        page.all(".cf-form-checkbox")[2].click
+        page.all(".cf-form-checkbox")[4].click
+        expect(find_field("Interest noted in telephone call of mm/dd/yy", visible: false)).to be_checked
+        expect(find_field("Email - responded via email on mm/dd/yy", visible: false)).to be_checked
+        find_by_id("Add-autotext-button-id-2").click
+        expect(find_field("Interest noted in telephone call of mm/dd/yy", visible: false)).to_not be_checked
+        expect(find_field("Email - responded via email on mm/dd/yy", visible: false)).to_not be_checked
+      end
+    end
+
+    it "The user is able to add manual text content" do
       fill_in "content", with: "debug data for autofill"
       expect(find_by_id("content").text).to eq "debug data for autofill"
+    end
+
+    it "The user is able to add autotext" do
       find_by_id("addAutotext").click
       checkbox_text = "Possible motion pursuant to BVA decision dated mm/dd/yy"
       within find_by_id("autotextModal") do
@@ -243,6 +301,31 @@ RSpec.feature("The Correspondence Intake page") do
         find_by_id("Add-autotext-button-id-1").click
       end
       expect(find_by_id("content").text).to eq checkbox_text
+    end
+
+    it "Allows multiple autotext options to be selected" do
+      find_by_id("addAutotext").click
+      checkbox_text_1 = "Decision sent to Senator or Congressman mm/dd/yy"
+      checkbox_text_6 = "Possible motion pursuant to BVA decision dated mm/dd/yy"
+      within find_by_id("autotextModal") do
+        page.all(".cf-form-checkbox")[1].click
+        page.all(".cf-form-checkbox")[6].click
+        find_by_id("Add-autotext-button-id-1").click
+      end
+      expect(find_by_id("content").text).to include checkbox_text_1 && checkbox_text_6
+    end
+
+    it "Allows autotext and manual text input" do
+      manual_text = "This is a test"
+      fill_in "content", with: "This is a test\n"
+      expect(find_by_id("content").text).to eq manual_text
+      find_by_id("addAutotext").click
+      checkbox_text = "Possible motion pursuant to BVA decision dated mm/dd/yy"
+      within find_by_id("autotextModal") do
+        page.all(".cf-form-checkbox")[6].click
+        find_by_id("Add-autotext-button-id-1").click
+      end
+      expect(find_by_id("content").text).to include manual_text && checkbox_text
     end
 
     it "Persists data if the user hits the back button, then returns" do

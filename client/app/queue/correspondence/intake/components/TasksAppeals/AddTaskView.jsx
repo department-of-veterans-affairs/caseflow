@@ -85,7 +85,8 @@ const AddTaskView = (props) => {
   };
 
   const updateTaskType = (newType) => {
-    const newTask = { id: task.id, appealId: task.appealId, type: newType.value, label: newType.label, content: task.content };
+    const newTask =
+      { id: task.id, appealId: task.appealId, type: newType.value, label: newType.label, content: task.content };
 
     props.taskUpdatedCallback(newTask);
   };
@@ -96,6 +97,10 @@ const AddTaskView = (props) => {
 
   const handleAutotext = (autoTextValues) => {
     let autoTextOutput = '';
+
+    if (task.content) {
+      autoTextOutput = task.content;
+    }
 
     if (autoTextValues.length > 0) {
       autoTextValues.forEach((id) => {
@@ -114,6 +119,7 @@ const AddTaskView = (props) => {
           toggleModal={handleModalToggle}
           closeHandler={handleModalToggle}
           handleAccept={handleAutotext}
+          handleClear={props.handleClear}
         />
       }
       <div className="gray-border"
@@ -190,7 +196,8 @@ AddTaskView.propTypes = {
   label: PropTypes.string,
   onChangeMethod: PropTypes.func,
   className: PropTypes.string,
-  autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired
+  autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
+  handleClear: PropTypes.func
 };
 
 export default AddTaskView;

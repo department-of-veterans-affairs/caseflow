@@ -296,6 +296,8 @@ Rails.application.routes.draw do
   scope path: '/queue' do
     get '/', to: 'queue#index'
     get '/correspondence', to: 'correspondence#correspondence_cases'
+    get '/correspondence/:correspondence_uuid/intake', to: 'correspondence#intake', as: :queue_correspondence_intake
+    post '/correspondence/:correspondence_uuid/current_step', to: 'correspondence#current_step', as: :queue_correspondence_intake_current_step
     post '/correspondence/:correspondence_uuid/correspondence_intake_task', to: 'correspondence_tasks#create_correspondence_intake_task'
     post '/correspondence/:id/remove_package', to: 'correspondence_tasks#remove_package'
     get '/correspondence/:correspondence_uuid/intake', to: 'correspondence#intake'
@@ -400,6 +402,8 @@ Rails.application.routes.draw do
   get "unauthorized" => "application#unauthorized"
 
   get "feedback" => "application#feedback"
+
+  get "under_construction" => "application#under_construction"
 
   %w[403 404 500].each do |code|
     get code, to: "errors#show", status_code: code

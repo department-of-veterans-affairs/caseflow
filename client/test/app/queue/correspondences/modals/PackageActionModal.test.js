@@ -65,7 +65,7 @@ describe('PackageActionModal rendering', () => {
 
     renderPackageActionModal('reassignPackage');
 
-    expect(screen.getByText('Request package assignment')).toBeInTheDocument();
+    expect(screen.getByText('Request package reassignment')).toBeInTheDocument();
     expect(screen.getByText('Veteran Details')).toBeInTheDocument();
     expect(screen.getByText('Provide a reason for reassignment')).toBeInTheDocument();
     expect(screen.getByText(correspondenceData.cmp_packet_number.toString())).toBeInTheDocument();
@@ -128,7 +128,7 @@ describe('PackageActionModal rendering', () => {
     renderPackageActionModal('mergePackage');
 
     expect(screen.getByText('Request merge')).toBeInTheDocument();
-    expect(screen.getByText('Select a reason for merging this package')).toBeInTheDocument();
+    expect(screen.getByText('Select a reason for merging this package.')).toBeInTheDocument();
     expect(screen.getByText(correspondenceData.cmp_packet_number.toString())).toBeInTheDocument();
     expect(screen.getByText(packageDocumentTypeData.name)).toBeInTheDocument();
 
@@ -148,7 +148,7 @@ describe('PackageActionModal rendering', () => {
     const otherRadioOption = screen.getByRole('radio', { name: 'Other' });
 
     userEvent.click(otherRadioOption);
-    const textbox = screen.getByRole('textbox', { name: 'Select a reason for merging this package' });
+    const textbox = screen.getByRole('textbox', { name: 'Reason for merge' });
 
     expect(textbox).toBeInTheDocument();
     userEvent.type(textbox, 'test text for check');
