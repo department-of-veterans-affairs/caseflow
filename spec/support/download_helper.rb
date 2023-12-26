@@ -5,7 +5,7 @@
 
 module DownloadHelpers
   TIMEOUT = 60
-  WORKDIR = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}")
+  WORKDIR = Rails.root.join("tmp/downloads_#{ENV['TEST_SUBCATEGORY'] || 'all'}").to_s
 
   module_function
 

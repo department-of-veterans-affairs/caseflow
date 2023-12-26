@@ -76,16 +76,57 @@ describe GeomatchService do
           bfddec: nil
         )
       end
+
       let(:appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
+
+      let(:mock_response) { HTTPI::Response.new(200, {}, {}.to_json) }
+      let(:valid_address_response) { ExternalApi::VADotGovService::ZipCodeValidationResponse.new(mock_response) }
+      let(:response_body) { valid_address_response.body }
 
       it "geomatches for the travel board appeal" do
         subject
 
         legacy_appeal = LegacyAppeal.find_by(vacols_id: vacols_case.bfkey)
-
         expect(legacy_appeal).not_to be_nil
         expect(legacy_appeal.closest_regional_office).not_to be_nil
         expect(legacy_appeal.available_hearing_locations).not_to be_empty
+      end
+
+      context "foreign appeal" do
+        before do
+          allow_any_instance_of(VaDotGovAddressValidator).to receive(:valid_address_response)
+            .and_return(valid_address_response)
+          allow(valid_address_response).to receive(:coordinates_invalid?).and_return(true)
+          allow(response_body).to receive(:dig).with(:addressMetaData, :addressType).and_return("International")
+        end
+
+        it "geomatches for a foreign appeal" do
+          subject
+
+          legacy_appeal = LegacyAppeal.find_by(vacols_id: vacols_case.bfkey)
+          expect(legacy_appeal).not_to be_nil
+          expect(legacy_appeal.closest_regional_office).to eq("RO11")
+          expect(legacy_appeal.available_hearing_locations).not_to be_empty
+        end
+      end
+
+      context "phillipines appeal" do
+        before do
+          allow_any_instance_of(VaDotGovAddressValidator).to receive(:valid_address_response)
+            .and_return(valid_address_response)
+          allow(valid_address_response).to receive(:coordinates_invalid?).and_return(true)
+          allow(response_body).to receive(:dig).with(:addressMetaData, :addressType).and_return("International")
+          allow_any_instance_of(Address).to receive(:country).and_return("Philippines")
+        end
+
+        it "geomatches for a phillipines appeal" do
+          subject
+
+          legacy_appeal = LegacyAppeal.find_by(vacols_id: vacols_case.bfkey)
+          expect(legacy_appeal).not_to be_nil
+          expect(legacy_appeal.closest_regional_office).to eq("RO58")
+          expect(legacy_appeal.available_hearing_locations).not_to be_empty
+        end
       end
     end
   end
