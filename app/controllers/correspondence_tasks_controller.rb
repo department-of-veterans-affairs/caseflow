@@ -62,7 +62,6 @@ class CorrespondenceTasksController < TasksController
       type: "CorrespondenceRootTask"
     )
     root_task.cancel_task_and_child_subtasks
-
   end
 
   private

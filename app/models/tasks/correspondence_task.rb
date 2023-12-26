@@ -27,7 +27,6 @@ class CorrespondenceTask < Task
       parent_id: @correspondence_task.id,
       type: "CorrespondenceRootTask"
     )
-    root_task = RootTask.find_or_create_by!(appeal: appeal, assigned_to: Bva.singleton)
     root_task.cancel_task_and_child_subtasks
   end
 
