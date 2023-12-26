@@ -3,12 +3,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { css } from 'glamor';
-import { ICON_SIZES, COLORS } from 'app/constants/AppConstants';
+
 import { onReceiveAmaTasks } from './QueueActions';
 import COPY from '../../COPY';
 import { subHeadTextStyle } from './constants';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import { ExternalLinkIcon } from '../components/icons/ExternalLinkIcon';
 
 class CaseDetailsLink extends React.PureComponent {
   onClick = (...args) => this.props.onClick ? this.props.onClick(args) : true;
@@ -39,24 +38,12 @@ class CaseDetailsLink extends React.PureComponent {
     } = this.props;
 
     return <React.Fragment>
-      {this.props.linkOpensInNewTab ?
-        <Link
-          href={`/queue/appeals/${appeal.externalId}`}
-          target="_blank"
-          disabled={disabled}
-          onClick={this.onClick}>
-          <strong>{this.getLinkText()}</strong>
-          <span className="cf-pdf-external-link-icon">
-            &nbsp;
-            <ExternalLinkIcon color={COLORS.PRIMARY} size={ICON_SIZES.SMALL} />
-          </span>
-        </Link> :
-        <Link
-          href={`/queue/appeals/${appeal.externalId}`}
-          disabled={disabled}
-          onClick={this.onClick}>
-          {this.getLinkText()}
-        </Link>}
+      <Link
+        href={`/queue/appeals/${appeal.externalId}`}
+        disabled={disabled}
+        onClick={this.onClick}>
+        {this.getLinkText()}
+      </Link>
       {appeal.isPaperCase && <React.Fragment>
         <br />
         <span {...subHeadTextStyle}>{COPY.IS_PAPER_CASE}</span>
@@ -71,8 +58,7 @@ CaseDetailsLink.propTypes = {
   disabled: PropTypes.bool,
   userRole: PropTypes.string,
   getLinkText: PropTypes.func,
-  onClick: PropTypes.func,
-  linkOpensInNewTab: PropTypes.bool
+  onClick: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({

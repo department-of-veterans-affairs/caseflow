@@ -1,47 +1,15 @@
 # frozen_string_literal: true
 
-require "helpers/sanitized_json_configuration"
-require "helpers/sanitized_json_exporter"
-require "helpers/sanitized_json_importer"
-require "helpers/intake_renderer"
-require "helpers/hearing_renderer"
+require "helpers/sanitized_json_configuration.rb"
+require "helpers/sanitized_json_exporter.rb"
+require "helpers/sanitized_json_importer.rb"
+require "helpers/intake_renderer.rb"
+require "helpers/hearing_renderer.rb"
 
 RSpec.feature "Explain JSON" do
   let(:user_roles) { ["System Admin"] }
   before do
     User.authenticate!(roles: user_roles)
-  end
-
-  context "given Correspondence" do
-    let(:veteran) { create(:veteran) }
-    let(:package_document_type) do
-      PackageDocumentType.create(
-        id: 15,
-        active: true,
-        created_at: Time.zone.now,
-        name: "10182",
-        updated_at: Time.zone.now
-      )
-    end
-    let(:correspondence) do
-      create(
-        :correspondence,
-        :with_single_doc,
-        veteran_id: veteran.id,
-        package_document_type_id: package_document_type.id
-      )
-    end
-
-    before do
-      FeatureToggle.enable!(:correspondence_queue)
-    end
-
-    scenario "admin visits explain page for correspondence" do
-      visit "explain/correspondence/#{correspondence.uuid}/review_package"
-      expect(page).to have_content("Correspondence #{correspondence.uuid}")
-      expect(page).to have_content("Task Tree")
-      expect(page).to have_content("Task Versions")
-    end
   end
 
   context "given Legacy appeal" do

@@ -113,11 +113,6 @@ realclean: clean ## TODO
 	rm -rf client/node_modules
 	rm -f client/package-lock.json
 
-precompile: ## Precompiles assets for testing
-	bundle exec rake assets:precompile
-
-yeet: clean precompile ## Cleans and precompiles assets for testing
-
 facols-bash:  ## Connect to the docker FACOLS instance
 	docker exec --tty -i VACOLS_DB bash
 

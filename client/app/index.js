@@ -43,7 +43,6 @@ import Error403 from 'app/errors/Error403';
 import Unauthorized from 'app/containers/Unauthorized';
 import OutOfService from 'app/containers/OutOfService';
 import Feedback from 'app/containers/Feedback';
-import UnderConstruction from 'app/containers/UnderConstruction';
 import Login from 'app/login';
 import TestUsers from 'app/test/TestUsers';
 import TestData from 'app/test/TestData';
@@ -81,7 +80,6 @@ const COMPONENTS = {
   OutOfService,
   Unauthorized,
   Feedback,
-  UnderConstruction,
   Hearings,
   PerformanceDegradationBanner,
   Help,
@@ -93,7 +91,7 @@ const COMPONENTS = {
   Inbox,
   Explain,
   MPISearch,
-  Admin,
+  Admin
 };
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {

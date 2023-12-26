@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Table from 'app/components/Table';
 
 import PaginationButton from './PaginationButton';
 
@@ -37,7 +36,7 @@ class Pagination extends React.PureComponent {
   };
 
   generateBlankButton = (key) => {
-    return <button disabled key={`blank-button-${key}`} aria-label="More Pages">...</button>;
+    return <button disabled key={`blank-button-${key}`} aria-label={`More Pages`}>...</button>;
   };
 
   render() {
@@ -126,7 +125,6 @@ class Pagination extends React.PureComponent {
         <div className="cf-pagination-summary">
           {paginationSummary}
         </div>
-        {this.props.table}
         <div className="cf-pagination-pages">
           {paginationButtons}
         </div>
@@ -141,8 +139,7 @@ Pagination.propTypes = {
   currentCases: PropTypes.number.isRequired,
   totalPages: PropTypes.number,
   totalCases: PropTypes.number,
-  updatePage: PropTypes.func.isRequired,
-  table: PropTypes.instanceOf(Table)
+  updatePage: PropTypes.func.isRequired
 };
 
 export default Pagination;
