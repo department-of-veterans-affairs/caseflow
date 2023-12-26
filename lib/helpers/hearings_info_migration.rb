@@ -3,6 +3,7 @@
 module WarRoom
   class HearingsInfoMigration
     # Migrates AMA hearings
+    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def move_ama_hearing(hearing_uuid, appeal_uuid)
       RequestStore[:current_user] = User.system_user
       ActiveRecord::Base.transaction do
@@ -15,6 +16,7 @@ module WarRoom
         if appeal.nil?
           fail "Invalid UUID. Appeal not found. Aborting..."
         end
+
         hearing_task = most_recent_hearing_task(appeal.id, appeal_type)
         schedule_task = most_recent_schedule_hearing_task(appeal.id, appeal_type)
         if schedule_task.nil? || schedule_task.status == "completed" || schedule_task.status == "cancelled"
@@ -44,6 +46,7 @@ module WarRoom
         if appeal.nil?
           fail "INVALID VACOLS ID. Appeal not found. Aborting..."
         end
+
         hearing_task = most_recent_hearing_task(appeal.id, appeal_type)
         schedule_task = most_recent_schedule_hearing_task(appeal.id, appeal_type)
         if schedule_task.nil? || schedule_task.status == "completed" || schedule_task.status == "cancelled"
@@ -61,6 +64,7 @@ module WarRoom
       end
     end
 
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
     # Find the most recent HearingTask
     def most_recent_hearing_task(appeal_id, appeal_type)
       HearingTask.where(appeal_id: appeal_id, appeal_type: appeal_type).order(created_at: :desc).first
@@ -110,8 +114,7 @@ module WarRoom
     def create_tasks(appeal, appeal_type)
       create_args = { appeal: appeal,
                       assigned_to: User.find_by_id(User.system_user.id),
-                      assigned_by_id: User.system_user.id
-                    }
+                      assigned_by_id: User.system_user.id }
       distribution_task = put_distribution_task_on_hold(appeal, appeal_type)
       hearing_task = create_hearing_task(create_args, distribution_task)
       schedule_task = ScheduleHearingTask.create!(**create_args, parent: hearing_task)
