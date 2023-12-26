@@ -1,5 +1,6 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
+import { axe } from 'jest-axe';
 import NotificationResponseButton from '../../../app/queue/components/NotificationResponseButton';
 
 describe('NotificationResponseButton', () => {
@@ -20,5 +21,18 @@ describe('NotificationResponseButton', () => {
 
     fireEvent.click(container.querySelector('.PlusIcon'));
     expect(container.querySelector('.MinusIcon')).toBeTruthy();
+  });
+
+  it('matches snapshot', () => {
+    const { container } = setup();
+
+    expect(container).toMatchSnapshot();
+  });
+
+  it('Virtual passes ally testing', async () => {
+    const { container } = setup();
+    const results = await axe(container);
+
+    expect(results).toHaveNoViolations();
   });
 });
