@@ -174,7 +174,13 @@ $validation-error-color: #cd2026;
 
     .report-page-variable-select {
       width: 40%;
-      margin-right: 1%;
+      margin-right: 2rem;
+
+      // Override the max-width of the SearchableDropdown component so that the validation border fits
+      .cf-select,
+      .cf-select__control {
+        max-width: none;
+      }
     }
 
     .report-page-variable-content {
