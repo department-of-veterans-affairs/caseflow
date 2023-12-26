@@ -136,11 +136,15 @@ const LeverHistory = (props) => {
     return formattedDate;
   }
 
+  const sortTimestamps = (timestamps) => {
+    return timestamps.sort((a,b) => new Date(b) - new Date(a));
+  };
+
   const formatHistoryData = () => {
     let formattedHistoryEntries = [];
-    let sortedTimestamps = uniqueTimestamps.reverse();
+    let sortedTimestamps = sortTimestamps(uniqueTimestamps);
 
-    sortedTimestamps.map((time) => {
+    sortedTimestamps.forEach((time) => {
       let historyEntry = {
         created_at: formatTime(time),
         user: getUserAtTimestamp(time),
