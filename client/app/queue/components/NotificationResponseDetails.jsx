@@ -21,7 +21,7 @@ const NotificationResponseDetails = ({ response, date, time }) => {
 
   return (
     <>
-      <tr style={{ borderBottom: 'hidden' }}>
+      <tr style={{ borderBottom: 'hidden' }} className="responseDetailsRow">
         {renderCol(tableCols)}
       </tr>
       <tr>
