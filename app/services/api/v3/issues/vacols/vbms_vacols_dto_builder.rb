@@ -4,12 +4,12 @@
 class Api::V3::Issues::Vacols::VbmsVacolsDtoBuilder
   attr_reader :hash_response, :vacols_issue_count
 
-  def initialize(veteran, page, per_page = RequestIssue.default_per_page)
+  def initialize(veteran, page, per_page)
     @page = page
     @veteran_participant_id = veteran.participant_id&.to_s
     @veteran_file_number = veteran.file_number&.to_s
     @vacols_issue_count = total_vacols_issue_count
-    @offset = per_page #LegacyIssues will be consistent with AMA RequestIssues
+    @offset = per_page.presence || RequestIssue.default_per_page #LegacyIssues will be consistent with AMA RequestIssues
     @vacols_issues = serialized_vacols_issues
     @total_number_of_pages = (@vacols_issue_count / @offset.to_f).ceil
     @hash_response = build_hash_response
