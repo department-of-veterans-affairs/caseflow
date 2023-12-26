@@ -54,8 +54,7 @@ class Task < CaseflowRecord
     Constants.TASK_STATUSES.in_progress.to_sym => Constants.TASK_STATUSES.in_progress,
     Constants.TASK_STATUSES.on_hold.to_sym => Constants.TASK_STATUSES.on_hold,
     Constants.TASK_STATUSES.completed.to_sym => Constants.TASK_STATUSES.completed,
-    Constants.TASK_STATUSES.cancelled.to_sym => Constants.TASK_STATUSES.cancelled,
-    Constants.TASK_STATUSES.unassigned.to_sym => Constants.TASK_STATUSES.unassigned
+    Constants.TASK_STATUSES.cancelled.to_sym => Constants.TASK_STATUSES.cancelled
   }
 
   enum cancellation_reason: {
@@ -155,7 +154,7 @@ class Task < CaseflowRecord
     end
 
     def open_statuses
-      active_statuses.concat([Constants.TASK_STATUSES.on_hold, Constants.TASK_STATUSES.unassigned])
+      active_statuses.concat([Constants.TASK_STATUSES.on_hold])
     end
 
     def create_many_from_params(params_array, current_user)
@@ -933,8 +932,7 @@ class Task < CaseflowRecord
     in_progress: :started_at,
     on_hold: :placed_on_hold_at,
     completed: :closed_at,
-    cancelled: :closed_at,
-    unassigned: :assigned_at
+    cancelled: :closed_at
   }.freeze
 
   def set_timestamp
