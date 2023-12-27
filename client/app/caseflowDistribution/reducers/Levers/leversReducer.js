@@ -67,6 +67,7 @@ export const formatLeverHistory = (lever_history_list) => {
 
     formatted_lever_history.push(
       {
+
         user_name: lever_history_entry.user,
         created_at: lever_history_entry.created_at,
         lever_title: lever_history_entry.title,
@@ -80,9 +81,18 @@ export const formatLeverHistory = (lever_history_list) => {
 };
 
 export const updateHistoryDisplay = (updated_history) => {
-  transform updated_history to match front end expectations (LeverHistory.jsx)
-
-  return updated_history
+  return updated_history.map((entry) => {
+    return {
+      id: entry.id,
+      case_distribution_lever_id: entry.case_distribution_lever_id,
+      created_at: entry.created_at,
+      previous_value: entry.previous_value,
+      title: entry.title,
+      update_value: entry.update_value,
+      user_name: entry.user_name,
+      user_id: entry.user_id
+    };
+  });
 }
 
 export const updateLevers = (current_levers, updated_lever, hasValueChanged) => {

@@ -127,11 +127,11 @@ function ShowSuccessBanner(shouldShowSuccessBanner) {
   });
 }
 
-function SaveLeversToDB(leverStore) {
+async function SaveLeversToDB(leverStore) {
   const leversData = leverStore.getState().levers;
 
   UpdateLeverHistory(leverStore);
-  const auditData = leverStore.getState().formatted_history_entry;
+  const auditData = leverStore.getState().formatted_history;
 
   const postData = {
     current_levers: leversData,

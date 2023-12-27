@@ -237,6 +237,43 @@ export const formattedHistory = [
 /* Reducer Test Data */
 export const formatted_history = formattedHistory
 
+export const initial_lever_history = [
+  {
+    id: 9670000,
+    case_distribution_lever_id: 8,
+    created_at: '2023-12-26T06:06:51.000Z',
+    previous_value: '0',
+    title: 'AMA Hearing Case Affinity Days',
+    update_value: 'Always distribute to current judge',
+    user_id: 4337,
+    user_name: 'CSS_ID052211'
+  },
+];
+
+export const updated_history = [
+  {
+    id: 9670000,
+    case_distribution_lever_id: 8,
+    created_at: '2023-12-26T06:06:51.000Z',
+    previous_value: '0',
+    title: 'AMA Hearing Case Affinity Days',
+    update_value: 'Always distribute to current judge',
+    user_id: 4337,
+    user_name: 'CSS_ID052211'
+  },
+  {
+    id: 9670001,
+    case_distribution_lever_id: 8,
+    created_at: '2023-12-26T06:07:51.000Z',
+    previous_value: 'INFINITE',
+    title: 'AMA Hearing Case Affinity Days',
+    update_value: 'OMIT',
+    user_id: 4337,
+    user_name: 'CSS_ID052211'
+  },
+];
+
+
 export const lever1_update = {
   "item": "lever_1",
   "title": "Lever 1",

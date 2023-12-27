@@ -37,19 +37,20 @@ describe('Lever reducer', () => {
     // it('returns error message when input is not in correct format', () => {});
   });
 
-  describe(Constants.UPDATE_LEVER_HISTORY), () => {
+  describe(Constants.UPDATE_LEVER_HISTORY, () => {
+    it('updates the displayed history with the new value', () => {
+      console.log('received history:', leverStore.getState().displayed_history)
+      console.log('expected history:', leverStore.getState().updated_history)
+      expect(leverStore.getState().displayed_history).toEqual(leverData.initial_lever_history);
 
-    expect(expect(leverStore.getState().displayed_history).toEqual(leverData.initial_lever_history))
+      leverStore.dispatch({
+        type: Constants.UPDATE_LEVER_HISTORY,
+        history_display: leverData.updated_history
+      });
 
-
-
-    leverStore.dispatch({
-      type: Constants.UPDATE_LEVER_HISTORY,
-      history_display: leverData.updated_lever_history
-    })
-
-    expect(leverStore.getState().displayed_history).toEqual(leverData.updated_lever_history)
-  }
+      expect(leverStore.getState().displayed_history).toEqual(leverData.updated_history);
+    });
+  });
 
   describe(Constants.UPDATE_LEVER_VALUE, () => {
     const levers = leverData.levers.slice(0,5)

@@ -8,10 +8,10 @@ const LeverHistory = (props) => {
   const uniqueTimestamps = [];
 
   const getLeverHistoryData = (leverStore) => {
-    return leverStore.getState().displayed_history
+    return leverStore.getState().displayed_history;
   }
 
-  getLeverHistoryData().map((entry) => {
+  getLeverHistoryData(leverStore).map((entry) => {
     let findTimestamp = uniqueTimestamps.find((x) => x === entry.created_at);
 
     if (!findTimestamp) {
@@ -42,7 +42,7 @@ const LeverHistory = (props) => {
 
     let titles = [];
 
-    getLeverHistoryData().map((entry) => {
+    getLeverHistoryData(leverStore).map((entry) => {
 
       let sameTimestamp = entry.created_at === timestamp;
 
@@ -57,7 +57,7 @@ const LeverHistory = (props) => {
   const getLeverUnitsAtTimestamp = (timestamp) => {
     let units = [];
 
-    getLeverHistoryData().map((entry) => {
+    getLeverHistoryData(leverStore).map((entry) => {
       let sameTimestamp = entry.created_at === timestamp;
 
       if (sameTimestamp) {
@@ -76,7 +76,7 @@ const LeverHistory = (props) => {
 
     let previousValues = [];
 
-    getLeverHistoryData().map((entry) => {
+    getLeverHistoryData(leverStore).map((entry) => {
 
       let sameTimestamp = entry.created_at === timestamp;
 
@@ -93,7 +93,7 @@ const LeverHistory = (props) => {
 
     let updatedValues = [];
 
-    getLeverHistoryData().map((entry) => {
+    getLeverHistoryData(leverStore).map((entry) => {
 
       let sameTimestamp = entry.created_at === timestamp;
 
@@ -109,7 +109,7 @@ const LeverHistory = (props) => {
 
     let user = '';
 
-    getLeverHistoryData().map((entry) => {
+    getLeverHistoryData(leverStore).map((entry) => {
 
       let sameTimestamp = entry.created_at === timestamp;
 
@@ -163,7 +163,7 @@ const LeverHistory = (props) => {
 
   useEffect(() => {
     formatHistoryData();
-  }, [getLeverHistoryData()]);
+  }, [leverStore]);
 
   let history = formatHistoryData();
 
