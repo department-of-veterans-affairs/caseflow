@@ -278,7 +278,6 @@ Rails.application.routes.draw do
     collection do
       post :update_levers_and_history
       get :update_levers_and_history
-
     end
   end
 

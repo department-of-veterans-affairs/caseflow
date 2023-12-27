@@ -7,7 +7,11 @@ const LeverHistory = (props) => {
   const { leverStore } = props;
   const uniqueTimestamps = [];
 
-  props.historyData.map((entry) => {
+  const getLeverHistoryData = (leverStore) => {
+    return leverStore.getState().displayed_history
+  }
+
+  getLeverHistoryData().map((entry) => {
     let findTimestamp = uniqueTimestamps.find((x) => x === entry.created_at);
 
     if (!findTimestamp) {
@@ -38,7 +42,7 @@ const LeverHistory = (props) => {
 
     let titles = [];
 
-    props.historyData.map((entry) => {
+    getLeverHistoryData().map((entry) => {
 
       let sameTimestamp = entry.created_at === timestamp;
 
@@ -53,7 +57,7 @@ const LeverHistory = (props) => {
   const getLeverUnitsAtTimestamp = (timestamp) => {
     let units = [];
 
-    props.historyData.map((entry) => {
+    getLeverHistoryData().map((entry) => {
       let sameTimestamp = entry.created_at === timestamp;
 
       if (sameTimestamp) {
@@ -72,7 +76,7 @@ const LeverHistory = (props) => {
 
     let previousValues = [];
 
-    props.historyData.map((entry) => {
+    getLeverHistoryData().map((entry) => {
 
       let sameTimestamp = entry.created_at === timestamp;
 
@@ -89,7 +93,7 @@ const LeverHistory = (props) => {
 
     let updatedValues = [];
 
-    props.historyData.map((entry) => {
+    getLeverHistoryData().map((entry) => {
 
       let sameTimestamp = entry.created_at === timestamp;
 
@@ -105,7 +109,7 @@ const LeverHistory = (props) => {
 
     let user = '';
 
-    props.historyData.map((entry) => {
+    getLeverHistoryData().map((entry) => {
 
       let sameTimestamp = entry.created_at === timestamp;
 
@@ -159,7 +163,7 @@ const LeverHistory = (props) => {
 
   useEffect(() => {
     formatHistoryData();
-  }, [props.historyData]);
+  }, [getLeverHistoryData()]);
 
   let history = formatHistoryData();
 
@@ -211,8 +215,7 @@ const LeverHistory = (props) => {
 };
 
 LeverHistory.propTypes = {
-  historyData: PropTypes.array,
-  leverStore: PropTypes.any,
+  leverStore: PropTypes.any
 };
 
 export default LeverHistory;

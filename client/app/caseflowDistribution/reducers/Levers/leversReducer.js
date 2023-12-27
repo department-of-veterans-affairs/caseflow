@@ -5,6 +5,7 @@ export const initialState = {
   levers: [],
   initial_levers: [],
   formatted_history: {},
+  displayed_history: [],
   changesOccurred: false,
   showSuccessBanner: false,
 };
@@ -15,6 +16,12 @@ const leversReducer = (state = initialState, action = {}) => {
       return {
         ...state,
         formatted_history: formatLeverHistory(action.history)
+      }
+    case Constants.UPDATE_LEVER_HISTORY:
+      const updated_history = (action.history_display)
+      return {
+        ...state,
+        displayed_history: updateHistoryDisplay(updated_history)
       }
     case Constants.UPDATE_LEVER_VALUE:
       const updatedLevers = updateLevers(state.levers, action.updated_lever, action.hasValueChanged);
@@ -71,6 +78,12 @@ export const formatLeverHistory = (lever_history_list) => {
 
   return formatted_lever_history;
 };
+
+export const updateHistoryDisplay = (updated_history) => {
+  transform updated_history to match front end expectations (LeverHistory.jsx)
+
+  return updated_history
+}
 
 export const updateLevers = (current_levers, updated_lever, hasValueChanged) => {
   const leverIndex = current_levers.findIndex((lever => lever.item == updated_lever.item));

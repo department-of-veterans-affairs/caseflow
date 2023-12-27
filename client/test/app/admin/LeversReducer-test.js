@@ -12,7 +12,8 @@ describe('Lever reducer', () => {
   beforeEach(() => {
     const preloadedState = {
       levers: JSON.parse(JSON.stringify(leverData.levers.slice(0,5))), //allows original leverData object to remain unchanged
-      initial_levers: JSON.parse(JSON.stringify(leverData.levers.slice(0,5)))
+      initial_levers: JSON.parse(JSON.stringify(leverData.levers.slice(0,5))),
+      displayed_history: JSON.parse(JSON.stringify(leverData.initial_lever_history))
     }
     leverStore = createStore(leversReducer, preloadedState);
   })
@@ -30,11 +31,25 @@ describe('Lever reducer', () => {
         history: leverData.history
       })
 
-      expect(leverStore.getState().formatted_history).toEqual(leverData.formatted_history)
+      expect(leverStore.getState().formatted_history_entry).toEqual(leverData.formatted_history_entry)
     });
 
     // it('returns error message when input is not in correct format', () => {});
   });
+
+  describe(Constants.UPDATE_LEVER_HISTORY), () => {
+
+    expect(expect(leverStore.getState().displayed_history).toEqual(leverData.initial_lever_history))
+
+
+
+    leverStore.dispatch({
+      type: Constants.UPDATE_LEVER_HISTORY,
+      history_display: leverData.updated_lever_history
+    })
+
+    expect(leverStore.getState().displayed_history).toEqual(leverData.updated_lever_history)
+  }
 
   describe(Constants.UPDATE_LEVER_VALUE, () => {
     const levers = leverData.levers.slice(0,5)

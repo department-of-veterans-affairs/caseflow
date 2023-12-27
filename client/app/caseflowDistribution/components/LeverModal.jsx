@@ -115,8 +115,8 @@ function SaveLeverChanges(leverStore) {
 
 function SaveLeverHistoryChanges(leverStore, historyData) {
   leverStore.dispatch({
-    type: Constants.FORMAT_LEVER_HISTORY,
-    formatted_history: historyData,
+    type: Constants.UPDATE_LEVER_HISTORY,
+    history_display: historyData,
   });
 }
 
@@ -131,7 +131,7 @@ function SaveLeversToDB(leverStore) {
   const leversData = leverStore.getState().levers;
 
   UpdateLeverHistory(leverStore);
-  const auditData = leverStore.getState().formatted_history;
+  const auditData = leverStore.getState().formatted_history_entry;
 
   const postData = {
     current_levers: leversData,

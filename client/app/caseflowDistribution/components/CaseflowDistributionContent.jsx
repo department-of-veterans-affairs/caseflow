@@ -68,7 +68,6 @@ const CaseflowDistributionContent = ({
           <div {...sectionSegmentStyling}>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_HISTORY_DESCRIPTION}</p>
             <LeverHistory
-            historyData={formattedHistory}
             leverStore={leverStore}
             />
           </div>
