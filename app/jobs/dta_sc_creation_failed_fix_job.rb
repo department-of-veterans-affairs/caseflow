@@ -91,8 +91,7 @@ class DtaScCreationFailedFixJob < CaseflowJob
     when "DependentClaimant"
       "10"
     else
-      puts, "Warning: Unsupported claimant type: #{type}"
-      next
+      Rails.logger.warn("Unsupported claimant type: #{type}")
       # Or add other Claimant types if necessary
     end
   end
