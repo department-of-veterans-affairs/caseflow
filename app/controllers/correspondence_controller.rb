@@ -100,7 +100,8 @@ class CorrespondenceController < ApplicationController
       user_can_edit_vador: MailTeamSupervisor.singleton.user_has_access?(current_user),
       correspondence_documents: corres_docs.map do |doc|
         WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
-      end
+      end,
+      efolder_upload_failed_before: EfolderUploadFailedTask.where(appeal_id: correspondence.id, type: "EfolderUploadFailedTask")
     }
     render({ json: response_json }, status: :ok)
   end
@@ -113,6 +114,12 @@ class CorrespondenceController < ApplicationController
         updated_by_id: RequestStore.store[:current_user].id
       )
     )
+      correspondence.tasks.map do |task|
+        if task.type == "ReviewPackageTask"
+          task.status = "in_progress"
+          task.save
+        end
+      end
       render json: { status: :ok }
     else
       render json: { error: "Please enter a valid Veteran ID" }, status: :unprocessable_entity
@@ -124,6 +131,12 @@ class CorrespondenceController < ApplicationController
       va_date_of_receipt: params["VADORDate"].in_time_zone,
       package_document_type_id: params["packageDocument"]["value"].to_i
     )
+    correspondence.tasks.map do |task|
+      if task.type == "ReviewPackageTask"
+        task.status = "in_progress"
+        task.save
+      end
+    end
     render json: { status: 200, correspondence: correspondence }
   end
 
@@ -320,6 +333,7 @@ class CorrespondenceController < ApplicationController
 
   def upload_documents_to_claim_evidence
     if Rails.env.development? || Rails.env.demo? || Rails.env.test?
+      create_efolder_upload_failed_task
       true
     else
       begin
