@@ -81,7 +81,7 @@ class StuckJobReportService
   end
 
   def header_string
-    header = " Date       | Job Name                      | Record Count Before | Record Count After | Execution Time\n"
+    header = "Date       | Job Name                      | Record Count Before | Record Count After | Execution Time\n"
     @logs.push(header)
   end
 end

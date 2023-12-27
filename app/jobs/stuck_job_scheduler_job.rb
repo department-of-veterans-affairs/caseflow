@@ -39,16 +39,17 @@ class StuckJobSchedulerJob < CaseflowJob
       log_error(error)
     end
 
-    # Send report logs to Slack
-    msg = @stuck_job_report_service.logs
-    slack_service.send_notification(msg, self.class.to_s)
-
     # Send report logs to AWS S3
     end_time
     log_processing_time
 
     @stuck_job_report_service.append_scheduler_job_data(scheduler_job, @count, log_processing_time)
     @stuck_job_report_service.write_log_report(REPORT_TEXT)
+
+    # Send report logs to Slack
+    msg = @stuck_job_report_service.logs.join("\n")
+    binding.pry
+    slack_service.send_notification(msg, self.class.to_s)
   end
 
   def loop_through_stuck_jobs
