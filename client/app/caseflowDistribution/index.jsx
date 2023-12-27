@@ -15,6 +15,7 @@ import BannerDisplay from './components/BannerDisplay';
 
 import CaseflowDistributionApp from './pages/CaseflowDistributionApp';
 import { createStore } from 'redux';
+import rootReducer from '../caseflowDistribution/reducers/root';
 
 class CaseflowDistribution extends React.PureComponent {
 
@@ -112,7 +113,7 @@ class CaseflowDistribution extends React.PureComponent {
     ];
 
     return (
-      <ReduxBase initialState={initialState} reducer={leversReducer}>
+      <ReduxBase reducer={rootReducer}>
         <Router {...this.props.routerTestProps}>
           <div>
             <NavigationBar
