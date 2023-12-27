@@ -48,7 +48,6 @@ class StuckJobSchedulerJob < CaseflowJob
 
     # Send report logs to Slack
     msg = @stuck_job_report_service.logs.join("\n")
-    binding.pry
     slack_service.send_notification(msg, self.class.to_s)
   end
 
