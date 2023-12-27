@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
+import { ACTIONS } from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
 import Button from 'app/components/Button';
 
 function CancelLeverChanges(leverStore) {
   leverStore.dispatch({
-    type: Constants.REVERT_LEVERS,
+    type: ACTIONS.REVERT_LEVERS,
   });
 }
 

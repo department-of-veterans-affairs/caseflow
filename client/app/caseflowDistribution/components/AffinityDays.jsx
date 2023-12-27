@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
+import { ACTIONS } from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
 import { css } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
@@ -62,7 +62,7 @@ const AffinityDays = (props) => {
                 setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
 
                 leverStore.dispatch({
-                  type: Constants.UPDATE_LEVER_VALUE,
+                  type: ACTIONS.UPDATE_LEVER_VALUE,
                   updated_lever: { item: individualLever.item, value: newValue },
                   hasValueChanged: false,
                   validChange: true
@@ -74,7 +74,7 @@ const AffinityDays = (props) => {
                 setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
 
                 leverStore.dispatch({
-                  type: Constants.UPDATE_LEVER_VALUE,
+                  type: ACTIONS.UPDATE_LEVER_VALUE,
                   updated_lever: { item: individualLever.item, value: newValue },
                   hasValueChanged: false,
                   validChange: false
@@ -88,7 +88,7 @@ const AffinityDays = (props) => {
               op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
               setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
               leverStore.dispatch({
-                type: Constants.UPDATE_LEVER_VALUE,
+                type: ACTIONS.UPDATE_LEVER_VALUE,
                 updated_lever: { item: individualLever.item, value: newValue },
                 validChange: true
               });
@@ -98,7 +98,7 @@ const AffinityDays = (props) => {
               op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
               setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
               leverStore.dispatch({
-                type: Constants.UPDATE_LEVER_VALUE,
+                type: ACTIONS.UPDATE_LEVER_VALUE,
                 updated_lever: { item: individualLever.item, value: newValue },
                 validChange: false
               });
@@ -129,7 +129,7 @@ const AffinityDays = (props) => {
 
       setAffinityLevers(updatedLevers);
       leverStore.dispatch({
-        type: Constants.UPDATE_LEVER_VALUE,
+        type: ACTIONS.UPDATE_LEVER_VALUE,
         updated_lever: { item: lever.item, value: option.item },
         validChange: true
       });

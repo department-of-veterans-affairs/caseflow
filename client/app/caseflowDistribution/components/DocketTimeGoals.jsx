@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
-import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
+import { ACTIONS } from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
 import leverInputValidation from './LeverInputValidation';
@@ -67,7 +67,7 @@ const DocketTimeGoals = (props) => {
               setErrorMessages(validationResponse.updatedMessages);
 
               leverStore.dispatch({
-                type: Constants.UPDATE_LEVER_VALUE,
+                type: ACTIONS.UPDATE_LEVER_VALUE,
                 updated_lever: { item: lever.item, value: event },
                 hasValueChanged: false,
                 validChange: true
@@ -78,7 +78,7 @@ const DocketTimeGoals = (props) => {
               setErrorMessages(validationResponse.updatedMessages);
 
               leverStore.dispatch({
-                type: Constants.UPDATE_LEVER_VALUE,
+                type: ACTIONS.UPDATE_LEVER_VALUE,
                 updated_lever: { item: lever.item, value: event },
                 hasValueChanged: false,
                 validChange: false
@@ -90,7 +90,7 @@ const DocketTimeGoals = (props) => {
             lever.value = event;
             setErrorMessages(validationResponse.updatedMessages);
             leverStore.dispatch({
-              type: Constants.UPDATE_LEVER_VALUE,
+              type: ACTIONS.UPDATE_LEVER_VALUE,
               updated_lever: { item: lever.item, value: event },
               validChange: true
             });
@@ -102,7 +102,7 @@ const DocketTimeGoals = (props) => {
             setErrorMessages(validationResponse.updatedMessages);
 
             leverStore.dispatch({
-              type: Constants.UPDATE_LEVER_VALUE,
+              type: ACTIONS.UPDATE_LEVER_VALUE,
               updated_lever: { item: lever.item, value: event },
               validChange: false
             });
@@ -131,7 +131,7 @@ const DocketTimeGoals = (props) => {
               setErrorMessages(validationResponse.updatedMessages);
 
               leverStore.dispatch({
-                type: Constants.UPDATE_LEVER_VALUE,
+                type: ACTIONS.UPDATE_LEVER_VALUE,
                 updated_lever: { item: lever.item, value: event },
                 hasValueChanged: false,
                 validChange: true
@@ -142,7 +142,7 @@ const DocketTimeGoals = (props) => {
               setErrorMessages(validationResponse.updatedMessages);
 
               leverStore.dispatch({
-                type: Constants.UPDATE_LEVER_VALUE,
+                type: ACTIONS.UPDATE_LEVER_VALUE,
                 updated_lever: { item: lever.item, value: event },
                 hasValueChanged: false,
                 validChange: false
@@ -155,7 +155,7 @@ const DocketTimeGoals = (props) => {
             lever.value = event;
             setErrorMessages(validationResponse.updatedMessages);
             leverStore.dispatch({
-              type: Constants.UPDATE_LEVER_VALUE,
+              type: ACTIONS.UPDATE_LEVER_VALUE,
               updated_lever: { item: lever.item, value: event },
               validChange: true
             });
@@ -166,7 +166,7 @@ const DocketTimeGoals = (props) => {
             lever.value = event;
             setErrorMessages(validationResponse.updatedMessages);
             leverStore.dispatch({
-              type: Constants.UPDATE_LEVER_VALUE,
+              type: ACTIONS.UPDATE_LEVER_VALUE,
               updated_lever: { item: lever.item, value: event },
               validChange: false
             });

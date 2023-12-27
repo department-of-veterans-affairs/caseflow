@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import { createStore } from '@reduxjs/toolkit';
 import LeverButtonsWrapper from './LeverButtonsWrapper';
 import leversReducer from '../reducers/Levers/leversReducer';
-import * as Constants from '../reducers/Levers/leversActionTypes';
+import { ACTIONS } from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
 import * as leverData from 'test/data/adminCaseDistributionLevers';
 
 describe('LeverButtonsWrapper', () => {
@@ -31,11 +31,11 @@ describe('LeverButtonsWrapper', () => {
       const cancelButton = buttonsDiv.container.querySelector('#CancelLeversButton');
 
       leverStore.dispatch({
-        type: Constants.UPDATE_LEVER_VALUE,
+        type: ACTIONS.UPDATE_LEVER_VALUE,
         updated_lever: leverData.lever1_update
       });
       leverStore.dispatch({
-        type: Constants.UPDATE_LEVER_VALUE,
+        type: ACTIONS.UPDATE_LEVER_VALUE,
         updated_lever: leverData.lever5_update
       });
 
@@ -59,11 +59,11 @@ describe('LeverButtonsWrapper', () => {
       const saveButton = buttonsDiv.container.querySelector('#SaveLeversButton');
 
       leverStore.dispatch({
-        type: Constants.UPDATE_LEVER_VALUE,
+        type: ACTIONS.UPDATE_LEVER_VALUE,
         updated_lever: leverData.lever1_update
       });
       leverStore.dispatch({
-        type: Constants.UPDATE_LEVER_VALUE,
+        type: ACTIONS.UPDATE_LEVER_VALUE,
         updated_lever: leverData.lever5_update
       });
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
+import { ACTIONS } from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
 import { css } from 'glamor';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';
@@ -57,7 +57,7 @@ const BatchSize = (props) => {
             setErrorMessages(validationResponse.updatedMessages);
 
             leverStore.dispatch({
-              type: Constants.UPDATE_LEVER_VALUE,
+              type: ACTIONS.UPDATE_LEVER_VALUE,
               updated_lever: { item: lever.item, value: event },
               hasValueChanged: false,
               validChange: true
@@ -68,7 +68,7 @@ const BatchSize = (props) => {
             setErrorMessages(validationResponse.updatedMessages);
 
             leverStore.dispatch({
-              type: Constants.UPDATE_LEVER_VALUE,
+              type: ACTIONS.UPDATE_LEVER_VALUE,
               updated_lever: { item: lever.item, value: event },
               hasValueChanged: false,
               validChange: false
@@ -81,7 +81,7 @@ const BatchSize = (props) => {
           lever.value = event;
           setErrorMessages(validationResponse.updatedMessages);
           leverStore.dispatch({
-            type: Constants.UPDATE_LEVER_VALUE,
+            type: ACTIONS.UPDATE_LEVER_VALUE,
             updated_lever: { item: lever.item, value: event },
             validChange: true
           });
@@ -93,7 +93,7 @@ const BatchSize = (props) => {
           setErrorMessages(validationResponse.updatedMessages);
 
           leverStore.dispatch({
-            type: Constants.UPDATE_LEVER_VALUE,
+            type: ACTIONS.UPDATE_LEVER_VALUE,
             updated_lever: { item: lever.item, value: event },
             validChange: false
           });
