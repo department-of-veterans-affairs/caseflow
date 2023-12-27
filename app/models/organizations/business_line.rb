@@ -252,6 +252,7 @@ class BusinessLine < Organization
         # increase the timeout for the transaction because the query more than the default 30 seconds
         ActiveRecord::Base.connection.execute "SET LOCAL statement_timeout = 120000"
         ActiveRecord::Base.connection.execute change_history_sql_block
+      end
     end
     # rubocop:enable Metrics/MethodLength
 
