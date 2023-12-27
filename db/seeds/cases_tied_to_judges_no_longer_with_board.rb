@@ -326,6 +326,7 @@ module Seeds
         :ready_for_distribution,
         :status_active,
         tied_judge: judge,
+        bfd19: 2.years.ago,
         correspondent: correspondent,
         bfcorlid: "#{veteran.file_number}S",
         case_issues: create_list(:case_issue, 3, :compensation)
