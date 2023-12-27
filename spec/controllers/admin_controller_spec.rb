@@ -8,13 +8,12 @@ RSpec.describe AdminController, :all_dbs, type: :controller do
 
       2.times do
         create(:correspondent,
-          snamef: "Bobby",
-          snamemi: "F",
-          snamel: "Veteran",
-          stadtime: Time.zone.now)
+               snamef: "Bobby",
+               snamemi: "F",
+               snamel: "Veteran",
+               stadtime: Time.zone.now)
       end
     end
-
 
     context "when user has access to admin" do
       let(:admin_user) { create(:user) }
