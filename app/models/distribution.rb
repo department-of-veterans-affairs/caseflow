@@ -100,9 +100,9 @@ class Distribution < CaseflowRecord
   end
 
   def judge_has_eight_or_fewer_unassigned_cases
-    return false if judge_tasks.length > CaseDistributionLever.find_by_item('request_more_cases_minimum').try(:value).to_i
+    return false if judge_tasks.length > CaseDistributionLever.find_integer_lever('request_more_cases_minimum')
 
-    judge_tasks.length + judge_legacy_tasks.length <= CaseDistributionLever.find_by_item('request_more_cases_minimum').try(:value).to_i
+    judge_tasks.length + judge_legacy_tasks.length <= CaseDistributionLever.find_integer_lever('request_more_cases_minimum')
   end
 
   def judge_cases_waiting_longer_than_thirty_days
@@ -126,9 +126,9 @@ class Distribution < CaseflowRecord
   def batch_size
     team_batch_size = JudgeTeam.for_judge(judge)&.attorneys&.size
 
-    return CaseDistributionLever.find_by_item('alternative_batch_size').try(:value).to_i if team_batch_size.nil? || team_batch_size == 0
+    return CaseDistributionLever.find_integer_lever('alternative_batch_size') if team_batch_size.nil? || team_batch_size == 0
 
-    team_batch_size * CaseDistributionLever.find_by_item('batch_size_per_attorney').try(:value).to_i
+    team_batch_size * CaseDistributionLever.find_integer_lever('batch_size_per_attorney')
   end
 
   def error_statistics(error)
