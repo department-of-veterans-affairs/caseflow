@@ -90,6 +90,8 @@ class MailTask < Task
     end
 
     def case_active?(parent)
+      return true if parent.appeal.type == Correspondence.name
+
       parent.appeal.active?
     end
 
