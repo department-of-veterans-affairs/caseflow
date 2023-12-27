@@ -14,6 +14,8 @@ const initialState = {
     status: 'idle',
     error: null,
   },
+  status: 'idle',
+  error: null,
 };
 
 export const downloadReportCSV = createAsyncThunk('changeHistory/downloadReport',
