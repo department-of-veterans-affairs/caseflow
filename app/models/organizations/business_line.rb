@@ -248,7 +248,10 @@ class BusinessLine < Organization
       # Append all of the filter queries to the end of the sql block
       change_history_sql_block += change_history_sql_filter_array.join(" ")
 
-      ActiveRecord::Base.connection.execute change_history_sql_block
+      ActiveRecord::Base.transaction do
+        # increase the timeout for the transaction because the query more than the default 30 seconds
+        ActiveRecord::Base.connection.execute "SET LOCAL statement_timeout = 120000"
+        ActiveRecord::Base.connection.execute change_history_sql_block
     end
     # rubocop:enable Metrics/MethodLength
 
