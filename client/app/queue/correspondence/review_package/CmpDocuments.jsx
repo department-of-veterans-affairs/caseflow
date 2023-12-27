@@ -22,7 +22,7 @@ const paginationStyle = css({
 });
 
 export const CmpDocuments = (props) => {
-  const { documents } = props;
+  const { documents, isReadOnly } = props;
 
   const [selectedId, setSelectedId] = useState(0);
 
@@ -72,6 +72,7 @@ export const CmpDocuments = (props) => {
                   </td>
                   <td className="cf-txt-c">
                     <Button
+                      disabled={isReadOnly}
                       linkStyling
                       onClick={() => {
                         setCurrentDocument(index);
@@ -94,7 +95,8 @@ export const CmpDocuments = (props) => {
 CmpDocuments.propTypes = {
   documents: PropTypes.array,
   setSelectedId: PropTypes.func,
-  selectedId: PropTypes.number
+  selectedId: PropTypes.number,
+  isReadOnly: PropTypes.bool
 };
 
 export default CmpDocuments;
