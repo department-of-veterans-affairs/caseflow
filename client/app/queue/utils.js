@@ -550,16 +550,21 @@ export const prepareAppealForSearchStore = (appeals) => {
       distributedToJudge: appeal.attributes.distributed_to_a_judge,
       veteranFullName: appeal.attributes.veteran_full_name,
       veteranFileNumber: appeal.attributes.veteran_file_number,
+      isPaperCase: appeal.attributes.paper_case,
       vacateType: appeal.attributes.vacate_type,
     };
 
     return accumulator;
   }, {});
 
+
   const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
     accumulator[appeal.attributes.external_id] = {
       hearings: prepareAppealHearingsForStore(appeal),
+      issues: prepareAppealIssuesForStore(appeal),
+      decisionIssues: appeal.attributes.decision_issues,
       appellantFullName: appeal.attributes.appellant_full_name,
+      appellantPhoneNumber: appeal.attributes.appellant_phone_number,
       contestedClaim: appeal.attributes.contested_claim,
       assignedToLocation: appeal.attributes.assigned_to_location,
       veteranParticipantId: appeal.attributes.veteran_participant_id,
@@ -567,6 +572,9 @@ export const prepareAppealForSearchStore = (appeals) => {
       status: appeal.attributes.status,
       decisionDate: appeal.attributes.decision_date,
       caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
+      availableHearingLocations: prepareAppealAvailableHearingLocationsForStore(
+        appeal
+      ),
       locationHistory: prepareLocationHistoryForStore(appeal),
     };
 
