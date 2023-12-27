@@ -5,8 +5,6 @@ import styles from 'app/styles/caseDistribution/LeverHistory.module.scss';
 
 const LeverHistory = (props) => {
   const { leverStore } = props;
-  const [history, setHistory] = useState([]);
-  const [historySize, setHistorySize] = useState(0);
   const uniqueTimestamps = [];
 
   props.historyData.map((entry) => {
@@ -156,25 +154,18 @@ const LeverHistory = (props) => {
 
       formattedHistoryEntries.push(historyEntry);
     });
-
-    setHistory(formattedHistoryEntries);
-    setHistorySize(formattedHistoryEntries.length);
+    return formattedHistoryEntries;
   };
 
   useEffect(() => {
-    const unsubscribe = leverStore.subscribe(() => {
-      formatHistoryData();
-    })
     formatHistoryData();
+  }, [props.historyData]);
 
-    return () => {
-      unsubscribe();
-    };
-  }, [leverStore, props.historyData]);
+  let history = formatHistoryData();
 
   return (
     <div>
-      <table key={historySize}>
+      <table>
         <tbody>
           <tr>
             <th className={styles.leverHistoryTableHeaderStyling}>Date of Last Change</th>
@@ -184,8 +175,8 @@ const LeverHistory = (props) => {
             <th className={styles.leverHistoryTableHeaderStyling}>Updated Value</th>
           </tr>
         </tbody>
-        <tbody key={historySize}>{history.map((entry, index) =>
-          <tr key={`${historySize}-${index}`}>
+        <tbody>{history.map((entry, index) =>
+          <tr key={index}>
             <td className={styles.historyTableStyling}>{entry.created_at}</td>
             <td className={styles.historyTableStyling}>{entry.user}</td>
             <td className={styles.historyTableStyling}>

@@ -219,6 +219,7 @@ export function LeverSaveButton({ leverStore }) {
     setShowSuccessBanner(leverStore);
     setShowModal(false);
     ShowSuccessBanner(true);
+    window.location.reload();
   };
 
   return (
