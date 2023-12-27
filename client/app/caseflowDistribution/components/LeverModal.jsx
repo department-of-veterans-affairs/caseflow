@@ -225,6 +225,7 @@ export function LeverSaveButton({ leverStore }) {
         <Modal
           isOpen={showModal}
           onClose={() => setShowModal(false)}
+          closeHandler={() => setShowModal(false)}
           title={COPY.CASE_DISTRIBUTION_MODAL_TITLE}
           confirmButton={<Button onClick={handleConfirmButton}>{COPY.MODAL_CONFIRM_BUTTON}</Button>}
           cancelButton={<Button onClick={() => setShowModal(false)}>{COPY.MODAL_CANCEL_BUTTON}</Button>}
