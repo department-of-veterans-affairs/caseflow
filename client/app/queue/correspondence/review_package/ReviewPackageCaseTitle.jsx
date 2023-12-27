@@ -1,8 +1,10 @@
 import { css } from 'glamor';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState } from 'react';
 import COPY from 'app/../COPY';
+import Button from '../../../components/Button';
 import SearchableDropdown from '../../../components/SearchableDropdown';
+import RemovePackageModal from '../component/RemovePackageModal';
 
 const containingDivStyling = css({
   display: 'block',
@@ -14,6 +16,12 @@ const containingDivStyling = css({
     display: 'inline-block',
     margin: '0'
   }
+});
+
+const removebotton = css({
+  float: 'right',
+  marginRight: '2rem !important'
+
 });
 
 const headerStyling = css({
@@ -46,25 +54,60 @@ const dropDownDiv = css({
 });
 
 const ReviewPackageCaseTitle = (props) => {
+
   return (
     <div>
-      <CaseTitleScaffolding />
+      <CaseTitleScaffolding correspondence_id = {props.correspondence.id} isReadOnly={props.isReadOnly} />
       <CaseSubTitleScaffolding {...props} isReadOnly={props.isReadOnly} />
     </div>
   );
 };
 
-const CaseTitleScaffolding = () => (
-  <div {...containingDivStyling}>
-    <h1 {...headerStyling}>{COPY.CORRESPONDENCE_REVIEW_PACKAGE_TITLE}</h1>
-  </div>
-);
+const CaseTitleScaffolding = (props) => {
+
+  const [modalState, setModalState] = useState(false);
+
+  const openModal = () => {
+    setModalState(true);
+  };
+  const closeModal = () => {
+    setModalState(false);
+  };
+
+  return (
+    <div {...containingDivStyling}>
+      <h1 {...headerStyling}>{COPY.CORRESPONDENCE_REVIEW_PACKAGE_TITLE}</h1>
+
+      <span {...removebotton}>
+        { props.isReadOnly &&
+          <Button
+            name="Review removal request"
+            styling={{ style: { marginRight: '2rem', padding: '15px', fontSize: 'larger' } }}
+            classNames={['usa-button-primary']}
+            onClick={() => {
+              openModal();
+            }}
+          />
+        }
+      </span>
+      { modalState &&
+      <RemovePackageModal
+        modalState={modalState}
+        setModalState={setModalState}
+        onCancel={closeModal}
+        correspondence_id = {props.correspondence_id} />
+      }
+    </div>
+  );
+
+};
 
 const CaseSubTitleScaffolding = (props) => (
   <div {...listStyling}>
     <div {...columnStyling}>
       {COPY.CORRESPONDENCE_REVIEW_PACKAGE_SUB_TITLE}
     </div>
+
     <div {...dropDownDiv} style = {{ maxWidth: '25%' }}>
       { !props.isReadOnly &&
       <SearchableDropdown
@@ -87,12 +130,18 @@ const CaseSubTitleScaffolding = (props) => (
 
 ReviewPackageCaseTitle.propTypes = {
   handlePackageActionModal: PropTypes.func,
+  correspondence: PropTypes.object,
   isReadOnly: PropTypes.bool
 };
 
 CaseSubTitleScaffolding.propTypes = {
   handlePackageActionModal: PropTypes.func,
   packageActionModal: PropTypes.string,
+  isReadOnly: PropTypes.bool
+};
+
+CaseTitleScaffolding.propTypes = {
+  correspondence_id: PropTypes.number,
   isReadOnly: PropTypes.bool
 };
 
