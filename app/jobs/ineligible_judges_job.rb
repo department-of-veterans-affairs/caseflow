@@ -22,7 +22,8 @@ class IneligibleJudgesJob < CaseflowJob
   # {Grabs both vacols and caseflow ineligible judges then merges into one list with duplicates merged if they have the same CSS_ID/SDOMAINID}
   def case_distribution_ineligible_judges
     Rails.cache.fetch("case_distribution_ineligible_judges", expires_in: 1.week) do
-      [*CaseDistributionIneligibleJudges.ineligible_vacols_judges, *CaseDistributionIneligibleJudges.ineligible_caseflow_judges]
+      [*CaseDistributionIneligibleJudges.vacols_judges_with_caseflow_records,
+       *CaseDistributionIneligibleJudges.caseflow_judges_with_vacols_records]
         .group_by { |h| h[:sdomainid] || h[:css_id] }
         .flat_map do |k, v|
         next v unless k
