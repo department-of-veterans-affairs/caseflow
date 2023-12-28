@@ -11,12 +11,11 @@ class VirtualHearings::LinkService
   class URLPathMissingError < StandardError; end
   class PINMustBePresentError < StandardError; end
 
+  attr_accessor :conference_id
+
   def initialize(conference_id = nil)
     @conference_id = conference_id
-  end
-
-  def get_conference_id
-    conference_id
+    @conference_id = VirtualHearings::SequenceConferenceId.next if @conference_id.blank?
   end
 
   def host_link
@@ -40,11 +39,6 @@ class VirtualHearings::LinkService
   end
 
   private
-
-  def conference_id
-    @conference_id = VirtualHearings::SequenceConferenceId.next if @conference_id.blank?
-    @conference_id
-  end
 
   def link(pin)
     fail PINMustBePresentError if pin.blank?

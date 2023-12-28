@@ -54,7 +54,7 @@ class ConferenceLink < CaseflowRecord
       update!(guest_hearing_link: link_service.guest_link)
     elsif !alias_with_host.nil?
       link_service = VirtualHearings::LinkService.new(alias_with_host.split("@")[0].split("A")[1])
-      update!(guest_hearing_link: link_service.guest_link, alias: link_service.get_conference_id)
+      update!(guest_hearing_link: link_service.guest_link, alias: link_service.conference_id)
     end
     guest_hearing_link
   end
@@ -68,7 +68,7 @@ class ConferenceLink < CaseflowRecord
     begin
       link_service = VirtualHearings::LinkService.new
       update!(
-        alias: link_service.get_conference_id,
+        alias: link_service.conference_id,
         host_link: link_service.host_link,
         host_pin_long: link_service.host_pin,
         alias_with_host: link_service.alias_with_host,
