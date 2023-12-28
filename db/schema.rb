@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_11_07_173746) do
+ActiveRecord::Schema.define(version: 2023_12_27_195310) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -2054,6 +2054,7 @@ ActiveRecord::Schema.define(version: 2023_11_07_173746) do
     t.boolean "appellant_email_sent", default: false, null: false, comment: "Determines whether or not a notification email was sent to the appellant"
     t.datetime "appellant_reminder_sent_at", comment: "The datetime the last reminder email was sent to the appellant."
     t.string "appellant_tz", limit: 50, comment: "Stores appellant timezone"
+    t.string "co_host_hearing_link"
     t.boolean "conference_deleted", default: false, null: false, comment: "Whether or not the conference was deleted from Pexip"
     t.string "conference_id", comment: "ID of conference from Pexip"
     t.datetime "created_at", null: false, comment: "Automatic timestamp of when virtual hearing was created"
@@ -2068,6 +2069,7 @@ ActiveRecord::Schema.define(version: 2023_11_07_173746) do
     t.string "host_pin_long", limit: 8, comment: "Change the host pin to store a longer pin with the # sign trailing"
     t.string "judge_email", comment: "Judge's email address"
     t.boolean "judge_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the judge"
+    t.string "new_attribute"
     t.string "representative_email", comment: "Veteran's representative's email address"
     t.boolean "representative_email_sent", default: false, null: false, comment: "Whether or not a notification email was sent to the veteran's representative"
     t.datetime "representative_reminder_sent_at", comment: "The datetime the last reminder email was sent to the representative."
