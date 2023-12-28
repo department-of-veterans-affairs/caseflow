@@ -33,7 +33,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     slack_service.send_notification(slack_report.join("\n"), self.class.name)
   end
 
-  def slack_report
+  def slack_report # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     report = []
     if use_by_docket_date?
       total_cases = @genpop_distributions.map(&:distributed_batch_size).sum
@@ -64,7 +64,7 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     report << ""
     report << "*Debugging information*"
     report << "Priority Target: #{priority_target}"
-    report << "Previous monthly distributions {judge_id=>count}: #{priority_distributions_this_month_for_eligible_judges}"
+    report << "Previous monthly distributions {judge_id=>count}: #{priority_distributions_this_month_for_eligible_judges}" # rubocop:disable Layout/LineLength
 
     if appeals_not_distributed.values.flatten.any?
       add_stuck_appeals_to_report(report, appeals_not_distributed)

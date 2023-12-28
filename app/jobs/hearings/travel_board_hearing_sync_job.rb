@@ -60,7 +60,7 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
   # Params: exclude_ids - A list of vacols ids that already exist in Caseflow
   #         limit - The max number of appeals to process
   # Return: All the newly created legacy appeals
-  def fetch_vacols_travel_board_appeals(limit)
+  def fetch_vacols_travel_board_appeals(limit) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     cases = VACOLS::Case
       .where(
         # Travel Board Hearing Request
