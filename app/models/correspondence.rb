@@ -5,6 +5,7 @@
 class Correspondence < CaseflowRecord
   has_paper_trail
   include PrintsTaskTree
+  include AppealableCorrespondence
 
   has_many :correspondence_documents
   has_many :correspondence_intakes
