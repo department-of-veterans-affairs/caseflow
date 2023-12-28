@@ -1,5 +1,7 @@
+$exclusion-table-header-color: #d3d3d3;
+
 .exclusionTableHeaderStyling {
-  color: #d3d3d3;
+  color: $exclusion-table-header-color;
   padding-top: 0;
   padding-bottom: 0;
   margin-top: 0;
