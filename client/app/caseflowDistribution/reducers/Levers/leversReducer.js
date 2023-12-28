@@ -4,6 +4,7 @@ import { update } from '../../../util/ReducerUtil';
 export const initialState = {
   saveChangesActivated: false,
   loadedLevers: [],
+  editedLevers: [],
   levers: [],
   initial_levers: [],
   formatted_history: {},
@@ -26,16 +27,22 @@ const leversReducer = (state = initialState, action = {}) => {
       ...state,
       formatted_history: formatLeverHistory(action.history)
     };
-  case ACTIONS.UPDATE_LEVER_VALUE:
-    const updatedLevers = updateLevers(state.levers, action.updated_lever, action.hasValueChanged);
-    const changesOccurred = JSON.stringify(updatedLevers) !== JSON.stringify(state.initial_levers);
+    // pass at adding affinity lever action. action breaks on in AffinityDays
+  case ACTIONS.UPDATE_AFFINITY_LEVER:
+    return update(state, {
+      editedLevers: {
+        $set: action.payload.leverValue
+      }
+    });
+    // const updatedLevers = updateLevers(state.levers, action.updated_lever, action.hasValueChanged);
+    // const changesOccurred = JSON.stringify(updatedLevers) !== JSON.stringify(state.initial_levers);
 
-    return {
-      ...state,
-      levers: updatedLevers,
-      changesOccurred: action.validChange,
-      saveChangesActivated: !changesOccurred
-    };
+    // return {
+    //   ...state,
+    //   levers: updatedLevers,
+    //   changesOccurred: action.validChange,
+    //   saveChangesActivated: !changesOccurred
+    // };
   case ACTIONS.SAVE_LEVERS:
     return {
       ...state,
