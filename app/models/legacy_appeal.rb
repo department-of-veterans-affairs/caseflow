@@ -350,6 +350,7 @@ class LegacyAppeal < CaseflowRecord
   ## BEGIN Hearing specific attributes and methods
 
   attr_writer :hearings
+
   def hearings
     @hearings ||= HearingRepository.hearings_for_appeal(vacols_id)
   end
@@ -381,6 +382,7 @@ class LegacyAppeal < CaseflowRecord
   ## END Hearing specific attributes and methods
 
   attr_writer :cavc_decisions
+
   def cavc_decisions
     @cavc_decisions ||= CAVCDecision.repository.cavc_decisions_by_appeal(vacols_id)
   end
@@ -644,6 +646,7 @@ class LegacyAppeal < CaseflowRecord
   end
 
   attr_writer :issues
+
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
   end
