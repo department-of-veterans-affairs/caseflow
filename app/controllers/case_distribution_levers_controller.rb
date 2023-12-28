@@ -10,6 +10,18 @@ class CaseDistributionLeversController < ApplicationController
     render "index"
   end
 
+  def acd_lever_temp_index
+    respond_to do |format|
+      format.html { return render "index" }
+      format.json do
+        render json: {
+          acdLevers: CaseDistributionLever.all,
+          acdHistory: CaseDistributionAuditLeverEntry.past_year
+        }
+      end
+    end
+  end
+
   def update_levers_and_history
     if @acd_group_organization.user_is_admin?(current_user)
       current_levers_list = params["current_levers"].is_a?(Array) ? params["current_levers"].to_json : params["current_levers"]

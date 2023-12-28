@@ -19,7 +19,7 @@ export const AffinityDays = (props) => {
 
   // place holder to see if store working properly
   const futureLeverList = useSelector((state) => state.caseDistributionLevers.loadedLevers);
-  console.log(`log futureLeverList from hook: ${JSON.stringify(futureLeverList, null, 2)}`);
+  // console.log(`log futureLeverList from hook: ${JSON.stringify(futureLeverList, null, 2)}`);
 
   const filteredLevers = leverList.map((item) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);

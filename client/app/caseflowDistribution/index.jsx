@@ -16,9 +16,24 @@ import BannerDisplay from './components/BannerDisplay';
 import CaseflowDistributionApp from './pages/CaseflowDistributionApp';
 import { createStore } from 'redux';
 import rootReducer from '../caseflowDistribution/reducers/root';
+import ApiUtil from '../util/ApiUtil';
 
 class CaseflowDistribution extends React.PureComponent {
 
+  // test for getting JSON payload from new route
+  componentDidMount() {
+    return ApiUtil.get('/acd-controls-test-route?json').then((response) => {
+      const returnedObject = response.body;
+      const acdLevers = returnedObject.acdLevers;
+      const acdHistory = returnedObject.acdHistory;
+      console.log(`levers from new method (levers): ${JSON.stringify(acdLevers, null, 2)}`)
+      console.log(`levers from new method (history): ${JSON.stringify(acdHistory, null, 2)}`)
+
+    }).
+    catch((err) => {
+      console.error(new Error(`Problem with GET /acd-controls-test-route?json ${err}`));
+    });
+  }
   render() {
     const preloadedState = {
       levers: JSON.parse(JSON.stringify(this.props.acd_levers)),
@@ -26,6 +41,7 @@ class CaseflowDistribution extends React.PureComponent {
       formatted_history: JSON.parse(JSON.stringify(this.props.acd_history))
     };
 
+    // console.log(`levers from props: ${JSON.stringify(this.props.acd_levers, null, 2)}`)
     const leverStore = createStore(leversReducer, preloadedState);
     const showSuccessBanner = leverStore.getState().showSuccessBanner;
     const Router = this.props.router || BrowserRouter;
