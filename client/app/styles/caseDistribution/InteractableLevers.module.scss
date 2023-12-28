@@ -1,13 +1,18 @@
 $border-color: #e4e2e0;
 $lever-disabled-color: #757575;
+
 $modal-border-color: #d6d7d9;
 $modal-table-color: #212121;
+
 $lever-alert-bg-color: #f1f1f1;
 $lever-alert-banner-color: #205493;
+
 $lever-alert-banner-hover-color: #112e51;
 $before-bg-color: #8b8b8b;
+
 $success-bg-color: #e7f4e4;
 $success-before-bg-color: #2e8540;
+
 $error-color: #f9dede;
 $error-before-bg-color: #e31c3d;
 
@@ -189,9 +194,7 @@ $error-before-bg-color: #e31c3d;
 .modalTableStyling {
   margin-top: 0;
   padding: 18px 0;
-  border-left: 0;
-  border-right: 0;
-  border-bottom: 0;
+  border-left: 0; border-right: 0; border-bottom: 0;
   border-color: $modal-border-color;
   color: $modal-table-color;
   vertical-align: text-top;
@@ -241,14 +244,12 @@ $error-before-bg-color: #e31c3d;
 .leverAlertBanner {
   background-color: $lever-alert-bg-color;
   background-position: 2rem 2rem;
-  background-repeat: no-repeat;
   background-size: 5.2rem;
   padding-left: .75rem;
   padding-top: 1em;
   padding-bottom: 0.02rem;
   position: relative;
   margin-top: 1.5em;
-  margin: auto;
   align-items: center;
   text-align: left;
 

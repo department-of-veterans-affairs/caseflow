@@ -41,8 +41,7 @@ const LeverHistory = (props) => {
 
     let titles = [];
 
-    props.historyData.map((entry) => {
-
+    props.historyData.forEach((entry) => {
       let sameTimestamp = entry.created_at === timestamp;
 
       if (sameTimestamp) {
