@@ -118,17 +118,30 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
 
   return (
     <div {...rowThirds} {...hearingLinksContainer}>
-      {showHostLink && <LinkContainer
+      {showHostLink && (
+        <LinkContainer
+          hearing={hearing}
+          isVirtual={isVirtual}
+          label={COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL}
+          link={virtualHearing?.hostLink}
+          linkText={COPY.VLJ_VIRTUAL_HEARINGS_LINK_TEXT}
+          role="VLJ"
+          user={user}
+          virtualHearing={virtualHearing}
+          wasVirtual={wasVirtual}
+        />
+      )}
+      <LinkContainer
         hearing={hearing}
         isVirtual={isVirtual}
-        label={COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL}
-        link={virtualHearing?.hostLink}
-        linkText={COPY.VLJ_VIRTUAL_HEARINGS_LINK_TEXT}
-        role="VLJ"
+        label={COPY.GUEST_VIRTUAL_HEARING_LINK_LABEL}
+        link={virtualHearing?.coHostHearingLink}
+        linkText={COPY.GUEST_VIRTUAL_HEARINGS_LINK_TEXT}
+        role="Guest"
         user={user}
         virtualHearing={virtualHearing}
         wasVirtual={wasVirtual}
-      />}
+      />
       <LinkContainer
         hearing={hearing}
         isVirtual={isVirtual}
