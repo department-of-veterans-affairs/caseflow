@@ -20,7 +20,7 @@ module JailerPolymorphicAssociations
       "JobNote.job_type" => [SupplementalClaim, HigherLevelReview],
       "hearing_type" => [Hearing, LegacyHearing],
       "assigned_to_type" => [User, Organization],
-      "stuck_record" => [PriorityEndProductSyncQueue]
+      "CaseflowStuckRecord.stuck_record" => [PriorityEndProductSyncQueue]
     }.freeze
   end
 
