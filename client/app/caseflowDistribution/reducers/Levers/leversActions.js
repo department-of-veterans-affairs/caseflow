@@ -10,10 +10,10 @@ export const loadLevers = (loadedLevers) =>
     });
   };
 
-export const updateLeverValue = (leverValue) =>
+export const updateAffinityLever = (leverValue) =>
   (dispatch) => {
     dispatch({
-      type: ACTIONS.UPDATE_LEVER_VALUE,
+      type: ACTIONS.UPDATE_AFFINITY_LEVER,
       payload: {
         leverValue
       }

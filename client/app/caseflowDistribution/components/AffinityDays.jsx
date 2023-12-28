@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
-import { ACTIONS } from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
 import { css } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
@@ -8,9 +8,19 @@ import NumberField from 'app/components/NumberField';
 import TextField from 'app/components/TextField';
 import COPY from '../../../COPY';
 import leverInputValidation from './LeverInputValidation';
+import {
+  updateAffinityLever
+} from '../reducers/Levers/leversActions';
 
-const AffinityDays = (props) => {
-  const { leverList, leverStore } = props;
+export const AffinityDays = (props) => {
+  // set dispatch to redux store
+  const dispatch = useDispatch();
+  const { leverStore, leverList } = props;
+
+  // place holder to see if store working properly
+  const futureLeverList = useSelector((state) => state.caseDistributionLevers.loadedLevers);
+  console.log(`log futureLeverList from hook: ${JSON.stringify(futureLeverList, null, 2)}`);
+
   const filteredLevers = leverList.map((item) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
   });
@@ -42,6 +52,18 @@ const AffinityDays = (props) => {
   const [affinityLevers, setAffinityLevers] = useState(filteredLevers);
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
 
+  // package and dispatch lever to redux store
+  const dispatchLever = (item, value, hasValueChanged, validChange) => {
+    let lever = {
+      item,
+      value,
+      hasValueChanged,
+      validChange
+    };
+
+    dispatch(updateAffinityLever(lever));
+  };
+
   const updatedLever = (lever, option) => (event) => {
     const levers = affinityLevers.map((individualLever) => {
       if (individualLever.item === lever.item) {
@@ -61,25 +83,31 @@ const AffinityDays = (props) => {
                 op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
                 setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
 
-                leverStore.dispatch({
-                  type: ACTIONS.UPDATE_LEVER_VALUE,
-                  updated_lever: { item: individualLever.item, value: newValue },
-                  hasValueChanged: false,
-                  validChange: true
+                // package lever and dispatch to store
+                dispatchLever(individualLever.item, newValue, false, true);
 
-                });
+                // leverStore.dispatch({
+                //   type: ACTIONS.UPDATE_LEVER_VALUE,
+                //   updated_lever: { item: individualLever.item, value: newValue },
+                //   hasValueChanged: false,
+                //   validChange: true
+
+                // });
               } else {
                 op.value = event;
                 op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
                 setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
 
-                leverStore.dispatch({
-                  type: ACTIONS.UPDATE_LEVER_VALUE,
-                  updated_lever: { item: individualLever.item, value: newValue },
-                  hasValueChanged: false,
-                  validChange: false
+                // package lever and dispatch to store
+                dispatchLever(individualLever.item, newValue, false, false);
 
-                });
+                // leverStore.dispatch({
+                //   type: ACTIONS.UPDATE_LEVER_VALUE,
+                //   updated_lever: { item: individualLever.item, value: newValue },
+                //   hasValueChanged: false,
+                //   validChange: false
+
+                // });
               }
 
             }
@@ -87,21 +115,29 @@ const AffinityDays = (props) => {
               op.value = event;
               op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
               setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
-              leverStore.dispatch({
-                type: ACTIONS.UPDATE_LEVER_VALUE,
-                updated_lever: { item: individualLever.item, value: newValue },
-                validChange: true
-              });
+
+              // package lever and dispatch to store
+              dispatchLever(individualLever.item, newValue, null, true);
+
+              // leverStore.dispatch({
+              //   type: ACTIONS.UPDATE_LEVER_VALUE,
+              //   updated_lever: { item: individualLever.item, value: newValue },
+              //   validChange: true
+              // });
             }
             if (validationResponse.statement === 'FAIL') {
               op.value = event;
               op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
               setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
-              leverStore.dispatch({
-                type: ACTIONS.UPDATE_LEVER_VALUE,
-                updated_lever: { item: individualLever.item, value: newValue },
-                validChange: false
-              });
+
+              // package lever and dispatch to store
+              dispatchLever(individualLever.item, newValue, null, false);
+
+              // leverStore.dispatch({
+              //   type: ACTIONS.UPDATE_LEVER_VALUE,
+              //   updated_lever: { item: individualLever.item, value: newValue },
+              //   validChange: false
+              // });
             }
           }
 
@@ -128,11 +164,15 @@ const AffinityDays = (props) => {
       });
 
       setAffinityLevers(updatedLevers);
-      leverStore.dispatch({
-        type: ACTIONS.UPDATE_LEVER_VALUE,
-        updated_lever: { item: lever.item, value: option.item },
-        validChange: true
-      });
+
+      // package lever and dispatch to store
+      // dispatch(dispatchLever(lever.item, option.item, null, true));
+
+      // leverStore.dispatch({
+      //   type: ACTIONS.UPDATE_LEVER_VALUE,
+      //   updated_lever: { item: lever.item, value: option.item },
+      //   validChange: true
+      // });
     }
   };
   const generateFields = (dataType, option, lever) => {
