@@ -12,15 +12,11 @@ const cancelLeverChanges = (leverStore) => {
 const refreshLevers = () => {
   window.location.reload(false);
 };
-const displayButtonLeverAlert = (alert) => {
-  console.log('alert', alert);
-};
 
 export const leverCancelButton = ({ leverStore }) => {
   const cancelButtonActions = () => {
     cancelLeverChanges(leverStore);
     refreshLevers();
-    displayButtonLeverAlert('Cancelled');
   };
 
   return (

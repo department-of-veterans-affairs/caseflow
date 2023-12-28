@@ -10,10 +10,10 @@ import moment from 'moment';
 
 const changedOptionValue = (changedLever, currentLever) => {
   if (changedLever.data_type === 'radio' || changedLever.data_type === 'radio') {
-    const changedOptionValue = changedLever.options.find((option) => option.item === changedLever.value).value;
+    const newChangedOptionValue = changedLever.options.find((option) => option.item === changedLever.value).value;
     const currentOptionValue = currentLever.options.find((option) => option.item === currentLever.value)?.value;
 
-    return changedOptionValue !== currentOptionValue;
+    return newChangedOptionValue !== currentOptionValue;
   }
 
   return false;
@@ -32,11 +32,8 @@ const generateLeverUpdateData = (leverStore) => {
 
   return ([filteredLevers, filteredInitialLevers]);
 };
-
 const generateLeverHistory = (filteredLevers, filteredInitialLevers) => {
-  let history = [];
-
-  filteredLevers.map((lever, index) => {
+  return filteredLevers.map((lever, index) => {
     const doesDatatypeRequireComplexLogic = lever.data_type === 'radio' || lever.data_type === 'combination';
 
     let today = new Date();
@@ -49,30 +46,25 @@ const generateLeverHistory = (filteredLevers, filteredInitialLevers) => {
       const isSelectedOptionANumber = selectedOption.data_type === 'number';
       const isPreviouslySelectedOptionANumber = previousSelectedOption.data_type === 'number';
 
-      history.push(
-        {
-          created_at: todaysDate,
-          title: lever.title,
-          original_value: isPreviouslySelectedOptionANumber ?
-            previousSelectedOption.value : previousSelectedOption.text,
-          current_value: isSelectedOptionANumber ? selectedOption.value : selectedOption.text,
-          unit: lever.unit
-        }
-      );
-    } else {
-      history.push(
-        {
-          created_at: todaysDate,
-          title: lever.title,
-          original_value: filteredInitialLevers[index].value,
-          current_value: lever.value,
-          unit: lever.unit
-        }
-      );
+      return {
+        created_at: todaysDate,
+        title: lever.title,
+        original_value: isPreviouslySelectedOptionANumber ?
+          previousSelectedOption.value : previousSelectedOption.text,
+        current_value: isSelectedOptionANumber ? selectedOption.value : selectedOption.text,
+        unit: lever.unit
+      };
     }
-  });
 
-  return history;
+    return {
+      created_at: todaysDate,
+      title: lever.title,
+      original_value: filteredInitialLevers[index].value,
+      current_value: lever.value,
+      unit: lever.unit
+    };
+
+  });
 };
 
 const updateLeverHistory = (leverStore) => {
@@ -93,7 +85,7 @@ const setShowSuccessBanner = (leverStore) => {
       type: Constants.HIDE_SUCCESS_BANNER,
     });
   }, 10000);
-}
+};
 
 const leverValueDisplay = (lever, isPreviousValue) => {
   const doesDatatypeRequireComplexLogic = lever.data_type === 'radio' || lever.data_type === 'combination';
@@ -115,7 +107,7 @@ const saveLeverChanges = (leverStore) => {
   });
 };
 
-const ShowSuccessBanner = (leverStore, shouldShowSuccessBanner) => {
+const showSuccessBanner = (leverStore, shouldShowSuccessBanner) => {
   leverStore.dispatch({
     type: Constants.SHOW_SUCCESS_BANNER,
     showSuccessBanner: shouldShowSuccessBanner,
@@ -211,7 +203,7 @@ export const leverSaveButton = ({ leverStore }) => {
     await saveLeversToDB(leverStore);
     setShowSuccessBanner(leverStore);
     setShowModal(false);
-    ShowSuccessBanner(true);
+    showSuccessBanner(true);
   };
 
   return (

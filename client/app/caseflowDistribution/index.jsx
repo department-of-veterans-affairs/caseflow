@@ -91,8 +91,10 @@ class CaseflowDistribution extends React.PureComponent {
       docketTimeGoalLevers
     };
 
-    batchSizeLevers = batchSizeLevers.sort((batchA, batchB) => batchLeverList.indexOf(batchA) - batchLeverList.indexOf(batchB));
-    affinityLevers = affinityLevers.sort((batchA, batchB) => affinityLeverList.indexOf(batchA) - affinityLeverList.indexOf(batchB));
+    batchSizeLevers = batchSizeLevers.sort((batchA, batchB) =>
+      batchLeverList.indexOf(batchA) - batchLeverList.indexOf(batchB));
+    affinityLevers = affinityLevers.sort((batchA, batchB) =>
+      affinityLeverList.indexOf(batchA) - affinityLeverList.indexOf(batchB));
     docketDistributionPriorLevers = docketDistributionPriorLevers.sort((batchA, batchB) =>
       docketDistributionPriorLeverList.indexOf(batchA) - docketDistributionPriorLeverList.indexOf(batchB));
     docketTimeGoalLevers = docketTimeGoalLevers.sort((batchA, batchB) =>

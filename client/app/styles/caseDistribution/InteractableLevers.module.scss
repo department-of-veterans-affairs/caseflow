@@ -7,13 +7,13 @@ $border-color: #e4e2e0;
   margin-top: 20px;
   display: inline-block;
 
-  h4: {
+  h4 {
     margin: 0;
     background: $border-color;
     padding: 10px 20px;
   }
 
-  strong: {
+  strong {
     font-size: 19px;
     line-height: 1.5em;
     margin-bottom: 5px;
@@ -254,13 +254,13 @@ $lever-alert-bg-color: #f1f1f1;
 
   h3 {
     font-size: 24px;
-    margin-bottom: .1rem;
+    margin-bottom: 0.1rem;
     padding-left: 3em;
   }
 
   p {
     font-size: 17px;
-    margin-top: .1rem;
+    margin-top: 0.1rem;
     padding-left: 4.25em;
   }
 
