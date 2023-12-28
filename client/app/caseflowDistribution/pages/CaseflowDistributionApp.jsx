@@ -3,6 +3,12 @@ import PropTypes from 'prop-types';
 import CaseflowDistributionContent from '../components/CaseflowDistributionContent';
 
 class CaseflowDistributionApp extends React.PureComponent {
+  componentDidMount() {
+    this.props.leverStore.dispatch({
+      type: 'UPDATE_FORMATTED_HISTORY',
+      formatted_history: this.props.acd_history
+    })
+  }
   render() {
 
     return (
@@ -11,7 +17,6 @@ class CaseflowDistributionApp extends React.PureComponent {
           <CaseflowDistributionContent
             levers = {this.props.acd_levers}
             saveChanges = {[]}
-            initialHistory={this.props.acd_history}
             leverStore={this.props.leverStore}
             isAdmin = {this.props.user_is_an_acd_admin}
             sectionTitles = {this.props.sectionTitles}

@@ -116,7 +116,7 @@ function SaveLeverChanges(leverStore) {
 function SaveLeverHistoryChanges(leverStore, historyData) {
   leverStore.dispatch({
     type: Constants.FORMAT_LEVER_HISTORY,
-    formatted_history: historyData,
+    history: historyData,
   });
 }
 

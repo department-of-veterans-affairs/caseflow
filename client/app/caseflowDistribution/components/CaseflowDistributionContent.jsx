@@ -69,7 +69,7 @@ const CaseflowDistributionContent = ({
           </h2>
           <div {...sectionSegmentStyling}>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_HISTORY_DESCRIPTION}</p>
-            <LeverHistory historyData={initialHistory} leverStore={leverStore} key={seed} />
+            <LeverHistory leverStore={leverStore} key={seed} />
           </div>
         </div>
       </div>
@@ -80,7 +80,6 @@ const CaseflowDistributionContent = ({
 CaseflowDistributionContent.propTypes = {
   levers: PropTypes.array.isRequired,
   saveChanges: PropTypes.func.isRequired,
-  initialHistory: PropTypes.array.isRequired,
   isAdmin: PropTypes.bool.isRequired,
   leverStore: PropTypes.any.isRequired,
   sectionTitles: PropTypes.array.isRequired

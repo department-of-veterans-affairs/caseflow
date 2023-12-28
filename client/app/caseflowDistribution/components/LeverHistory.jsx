@@ -5,168 +5,51 @@ import styles from 'app/styles/caseDistribution/LeverHistory.module.scss';
 
 const LeverHistory = (props) => {
   const { leverStore } = props;
+  const historyEntries = leverStore.getState().formatted_history
+  const [historyData, setHistoryData] = React.useState([]);
   const [history, setHistory] = useState([]);
   const [historySize, setHistorySize] = useState(0);
-  const uniqueTimestamps = [];
-
-  props.historyData.map((entry) => {
-    let findTimestamp = uniqueTimestamps.find((x) => x === entry.created_at);
-
-    if (!findTimestamp) {
-      uniqueTimestamps.push(entry.created_at);
-    }
-  });
-
-  const getUnitsFromLever = (lever) => {
-
-    const doesDatatypeRequireComplexLogic = lever.data_type === 'radio' || lever.data_type === 'combination';
-
-    if (doesDatatypeRequireComplexLogic) {
-
-      // let selectedOption = lever.options.find((option) => option.item === lever.value);
-
-      // if (selectedOption.data_type === 'number') {
-      //   return selectedOption.unit;
-      // }
-      return '';
-
-    }
-
-    return lever.unit;
-
-  };
-
-  const getLeverTitlesAtTimestamp = (timestamp) => {
-
-    let titles = [];
-
-    props.historyData.map((entry) => {
-
-      let sameTimestamp = entry.created_at === timestamp;
-
-      if (sameTimestamp) {
-        titles.push(entry.title);
-      }
-    });
-
-    return titles;
-  };
-
-  const getLeverUnitsAtTimestamp = (timestamp) => {
-    let units = [];
-
-    props.historyData.map((entry) => {
-      let sameTimestamp = entry.created_at === timestamp;
-
-      if (sameTimestamp) {
-        let lever = leverStore.getState().levers.find((lever) => lever.title === entry.title);
-
-        let unit = getUnitsFromLever(lever);
-
-        units.push(unit);
-      }
-    });
-
-    return units;
-  };
-
-  const getPreviousValuesAtTimestamp = (timestamp) => {
-
-    let previousValues = [];
-
-    props.historyData.map((entry) => {
-
-      let sameTimestamp = entry.created_at === timestamp;
-
-      if (sameTimestamp) {
-
-        previousValues.push(entry.previous_value);
-      }
-    });
-
-    return previousValues;
-  };
-
-  const getUpdatedValuesAtTimestamp = (timestamp) => {
-
-    let updatedValues = [];
-
-    props.historyData.map((entry) => {
-
-      let sameTimestamp = entry.created_at === timestamp;
-
-      if (sameTimestamp) {
-        updatedValues.push(entry.update_value);
-      }
-    });
-
-    return updatedValues;
-  };
-
-  const getUserAtTimestamp = (timestamp) => {
-
-    let user = '';
-
-    props.historyData.map((entry) => {
-
-      let sameTimestamp = entry.created_at === timestamp;
-
-      if (sameTimestamp) {
-        user = entry.user_name;
-      }
-    });
-
-    return user;
-  };
 
 
-  function formatTime(databaseDate) {
-    // Create a Date object from the database date string
-    const dateObject = new Date(databaseDate);
-    // Use toLocaleDateString() to get a localized date string for the United States
-    const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
-    const datePart = dateObject.toLocaleDateString('en-US', options);
-    // Get hours, minutes, and seconds
-    const hours = dateObject.getHours();
-    const minutes = dateObject.getMinutes();
-    const seconds = dateObject.getSeconds();
-    // Format the date string
-    const formattedDate = `${datePart} ${hours}:${minutes}:${seconds}`;
+  function formatHistoryData(historyEntries) {
 
-    return formattedDate;
-  }
+    if (!historyEntries) return [];
 
-  const formatHistoryData = () => {
-    let formattedHistoryEntries = [];
-    let sortedTimestamps = uniqueTimestamps.reverse();
-
-    sortedTimestamps.map((time) => {
-      let historyEntry = {
-        created_at: formatTime(time),
-        user: getUserAtTimestamp(time),
-        titles: getLeverTitlesAtTimestamp(time),
-        previous_values: getPreviousValuesAtTimestamp(time),
-        updated_values: getUpdatedValuesAtTimestamp(time),
-        units: getLeverUnitsAtTimestamp(time)
+   const formatted = historyEntries.reduce((accumulator, entry) => {
+    // Find an existing entry in the accumulator with the same timestamp and user
+    const existingEntry = accumulator.find(
+      (item) => item.created_at === entry.created_at && item.user_id === entry.user_id
+    );
+    // If an existing entry is found, update its values
+    if (existingEntry) {
+      existingEntry.titles.push(entry.title);
+      existingEntry.previous_values.push(entry.previous_value);
+      existingEntry.updated_values.push(entry.update_value);
+      existingEntry.units.push(entry.unit || 'null');
+    } else {
+      // If no existing entry is found, create a new entry
+      const newEntry = {
+        created_at: entry.created_at,
+        user_id: entry.user_id,
+        user_name: entry.user_name,
+        titles: [entry.title],
+        previous_values: [entry.previous_value],
+        updated_values: [entry.update_value],
+        units: [entry.unit || 'null'],
       };
-
-      formattedHistoryEntries.push(historyEntry);
-    });
-
-    setHistory(formattedHistoryEntries);
-    setHistorySize(formattedHistoryEntries.length);
-  };
+      accumulator.push(newEntry);
+    }
+    return accumulator;
+  }, []);
+  return formatted
+}
 
   useEffect(() => {
-    const unsubscribe = leverStore.subscribe(() => {
-      formatHistoryData();
-    })
-    formatHistoryData();
-
-    return () => {
-      unsubscribe();
-    };
-  }, [leverStore, props.historyData]);
+    // Format the historyData based on the changes in formatted_history
+    const formattedEntries = formatHistoryData(historyEntries);
+    // Update the component state with the formatted history data
+    setHistoryData(formattedEntries);
+  }, [historyEntries]);
 
   return (
     <div>
@@ -180,7 +63,7 @@ const LeverHistory = (props) => {
             <th className={styles.leverHistoryTableHeaderStyling}>Updated Value</th>
           </tr>
         </tbody>
-        <tbody key={historySize}>{history.map((entry, index) =>
+        <tbody key={historySize}>{historyData && historyData.map((entry, index) =>
           <tr key={`${historySize}-${index}`}>
             <td className={styles.historyTableStyling}>{entry.created_at}</td>
             <td className={styles.historyTableStyling}>{entry.user}</td>
@@ -216,7 +99,6 @@ const LeverHistory = (props) => {
 };
 
 LeverHistory.propTypes = {
-  historyData: PropTypes.array,
   leverStore: PropTypes.any,
 };
 
