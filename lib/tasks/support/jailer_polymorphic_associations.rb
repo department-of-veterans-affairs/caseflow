@@ -20,7 +20,8 @@ module JailerPolymorphicAssociations
       "JobNote.job_type" => [SupplementalClaim, HigherLevelReview],
       "hearing_type" => [Hearing, LegacyHearing],
       "assigned_to_type" => [User, Organization],
-      "CaseflowStuckRecord.stuck_record_type" => [PriorityEndProductSyncQueue]
+      "CaseflowStuckRecord.stuck_record_type" => [PriorityEndProductSyncQueue],
+      "VbmsCommunicationPackage.document_mailable_via_pacman_type" => [DecisionDocument, VbmsUploadedDocument]
     }.freeze
   end
 
