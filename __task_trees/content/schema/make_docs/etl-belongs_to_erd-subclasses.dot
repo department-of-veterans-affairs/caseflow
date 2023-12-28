@@ -1,5 +1,5 @@
 digraph belongs_to_erd_subclasses {
-	graph [bb="0,0,1382.8,2103",
+	graph [bb="0,0,1382.8,2043",
 		rankdir=LR
 	];
 	node [label="\N"];
@@ -65,7 +65,7 @@ digraph belongs_to_erd_subclasses {
 	Task	[color="#0000ff",
 		fillcolor="#00ff00",
 		fontcolor="#0000ff",
-		label="Task|(110 tasks)",
+		label="Task|(120 tasks)",
 		shape=record,
 		style=filled,
 		];
@@ -75,7 +75,7 @@ digraph belongs_to_erd_subclasses {
 	Claimant	[color="#0000ff",
 		fillcolor="#a9a9a9",
 		fontcolor="#0000ff",
-		label="Claimant|AttorneyClaimant,\nBgsRelatedClaimant,\nOtherClaimant,\nDependentClaimant,\nVeteranClaimant",
+		label="Claimant|(6 claimants)",
 		shape=record,
 		style=filled,
 		];
