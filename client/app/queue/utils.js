@@ -398,6 +398,7 @@ const prepareLocationHistoryForStore = (appeal) => {
   return locationHistory;
 };
 
+
 export const prepareAppealForStore = (appeals) => {
   const appealHash = appeals.reduce((accumulator, appeal) => {
     const {
@@ -511,6 +512,69 @@ export const prepareAppealForStore = (appeals) => {
       showPostCavcStreamMsg: appeal.attributes.show_post_cavc_stream_msg,
       remandJudgeName: appeal.attributes.remand_judge_name,
       hasNotifications: appeal.attributes.has_notifications,
+      locationHistory: prepareLocationHistoryForStore(appeal),
+    };
+
+    return accumulator;
+  }, {});
+
+  return {
+    appeals: appealHash,
+    appealDetails: appealDetailsHash,
+  };
+};
+
+export const prepareAppealForSearchStore = (appeals) => {
+  const appealHash = appeals.reduce((accumulator, appeal) => {
+    const {
+      attributes: { issues },
+    } = appeal;
+
+    accumulator[appeal.attributes.external_id] = {
+      id: appeal.id,
+      externalId: appeal.attributes.external_id,
+      docketName: appeal.attributes.docket_name,
+      withdrawn: appeal.attributes.withdrawn,
+      overtime: appeal.attributes.overtime,
+      contestedClaim: appeal.attributes.contested_claim,
+      veteranAppellantDeceased: appeal.attributes.veteran_appellant_deceased,
+      withdrawalDate: formatDateStrUtc(appeal.attributes.withdrawal_date),
+      isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
+      caseType: appeal.attributes.type,
+      isAdvancedOnDocket: appeal.attributes.aod,
+      issueCount: (appeal.attributes.docket_name === 'legacy' ?
+        getUndecidedIssues(issues) :
+        issues
+      ).length,
+      docketNumber: appeal.attributes.docket_number,
+      distributedToJudge: appeal.attributes.distributed_to_a_judge,
+      veteranFullName: appeal.attributes.veteran_full_name,
+      veteranFileNumber: appeal.attributes.veteran_file_number,
+      isPaperCase: appeal.attributes.paper_case,
+      vacateType: appeal.attributes.vacate_type,
+    };
+
+    return accumulator;
+  }, {});
+
+
+  const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
+    accumulator[appeal.attributes.external_id] = {
+      hearings: prepareAppealHearingsForStore(appeal),
+      issues: prepareAppealIssuesForStore(appeal),
+      decisionIssues: appeal.attributes.decision_issues,
+      appellantFullName: appeal.attributes.appellant_full_name,
+      appellantPhoneNumber: appeal.attributes.appellant_phone_number,
+      contestedClaim: appeal.attributes.contested_claim,
+      assignedToLocation: appeal.attributes.assigned_to_location,
+      veteranParticipantId: appeal.attributes.veteran_participant_id,
+      externalId: appeal.attributes.external_id,
+      status: appeal.attributes.status,
+      decisionDate: appeal.attributes.decision_date,
+      caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
+      availableHearingLocations: prepareAppealAvailableHearingLocationsForStore(
+        appeal
+      ),
       locationHistory: prepareLocationHistoryForStore(appeal),
     };
 
