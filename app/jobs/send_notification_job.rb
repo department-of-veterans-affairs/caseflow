@@ -42,7 +42,7 @@ class SendNotificationJob < CaseflowJob
 
     @message = validate_message(JSON.parse(message_json, object_class: OpenStruct))
 
-    multi_transaction do
+    ActiveRecord::Base.transaction do
       @notification_audit = find_or_create_notification_audit
       update_notification_statuses
       maybe_send_to_va_notify if message_status_valid?
@@ -56,30 +56,45 @@ class SendNotificationJob < CaseflowJob
   end
 
   def event
-    @event ||= NotificationEvent.find(event_type: event_type)
+    @event ||= NotificationEvent.find_by(event_type: event_type)
   end
 
   def appeal
-    @appeal ||= Appeal.find_by_uuid(@message.appeal_id) || LegacyAppeal.find_by_vacols_id(@message.appeal_id)
+    @appeal ||= find_appeal_by_external_id
   end
 
+  # Purpose: Find appeal by external ID
+  #
+  # Returns: Appeal object
+  def find_appeal_by_external_id
+    appeal = Appeal.find_by_uuid(@message.appeal_id) || LegacyAppeal.find_by_vacols_id(@message.appeal_id)
+
+    return appeal unless appeal.nil?
+
+    fail SendNotificationJobError, "Associated appeal cannot be found"
+  end
+
+  # Purpose: Determine if either a quarterly sms notification or non-quarterly sms notification
+  #
+  # Returns: Boolean
+  def sms_enabled
+    @sms_enabled ||= va_notify_sms_enabled? || va_notify_quarterly_sms_enabled?
+  end
+
+  # Purpose: Ensure necessary message attributes present to send notification
+  #
+  # Params: messag: object containing details from appeal for notification
+  #
+  # Returns: message
   def validate_message(message)
-    attributes = [:appeal_id, :appeal_type, :template_name]
-    nil_attributes = attributes.filter { |attr| message.send(attr).nil? }
+    nil_attributes = [:appeal_id, :appeal_type, :template_name].filter { |attr| message.send(attr).nil? }
 
     return message unless nil_attributes.any?
 
     fail SendNotificationJobError, "Nil message attribute(s): #{nil_attributes.map(&:to_s).join(', ')}"
   end
 
-  # Purpose: Method to create a new notification table row for the appeal
-  #
-  # Params:
-  # - appeals_id - UUID or vacols_id of the appeals the event triggered
-  # - appeals_type - Polymorphic column to identify the type of appeal
-  # - - Appeal
-  # - - LegacyAppeal
-  # - event_type: Name of the event that has transpired. Event names can be found in the notification_events table
+  # Purpose: Find or create a new notification table row for the appeal
   #
   # Returns: Notification active model or nil
   def find_or_create_notification_audit
@@ -97,9 +112,21 @@ class SendNotificationJob < CaseflowJob
       return notification unless notification.nil?
     end
 
-    create_notification(params.merge(participant_id: @message.participant_id, notified_at: Time.zone.now))
+    create_notification(**params, participant_id: @message.participant_id, notified_at: Time.zone.now)
   end
 
+  # Purpose: Determine if the notification event is for a legacy appeal that has been docketed
+  #
+  # Returns: Boolean
+  def legacy_appeal_docketed_event?
+    event_type == "Appeal docketed" && appeal.is_a?(LegacyAppeal)
+  end
+
+  # Purpose: Create notification audit record
+  #
+  # Params: params: Payload of attributes with which to create notification object
+  #
+  # Returns: Notification object
   def create_notification(params)
     notification = Notification.create(params)
 
@@ -108,21 +135,37 @@ class SendNotificationJob < CaseflowJob
     fail SendNotificationJobError, "Notification audit record was unable to be found or created"
   end
 
-  # Purpose: Updates and saves notification status for notification_audit_record
+  # Purpose: Updates and saves notification status for notification object
   #
-  # Params: notification_audit_record: object,
-  #         to_update: hash. key corresponds to notification_events column and value corresponds to new value
-  #
-  # Response: Updated notification_audit_record
+  # Response: Updated notification object
   def update_notification_statuses
-    params = {}
     status = format_message_status
+    params = {}
     params[:email_notification_status] = status if FeatureToggle.enabled?(:va_notify_email)
     params[:sms_notification_status] = status if sms_enabled
 
     @notification_audit.update(params)
   end
 
+  # Purpose: Reformat message status if status belongs to invalid category
+  #
+  # Response: Message string
+  def format_message_status
+    return @message.status if message_status_valid?
+
+    (@message.status == "No participant_id") ? "No Participant Id Found" : "No Claimant Found"
+  end
+
+  # Purpose: Determine if message status belongs to invalid
+  #
+  # Response: Boolean
+  def message_status_valid?
+    ["No participant_id", "No claimant"].exclude?(@message.status)
+  end
+
+  # Purpose: Send message to VA Notify unless certain feature toggles are disabled
+  #
+  # Response: Updated notification object
   def maybe_send_to_va_notify
     if legacy_appeal_docketed_and_notifications_disabled?
       @notification_audit.update(email_enabled: false)
@@ -131,31 +174,39 @@ class SendNotificationJob < CaseflowJob
     end
   end
 
+  # Purpose: Determine whether notification should be sent for legacy docketed appeal
+  #
+  # Response: Boolean
+  def legacy_appeal_docketed_and_notifications_disabled?
+    legacy_appeal_docketed_event? && !FeatureToggle.enabled?(:appeal_docketed_notification)
+  end
+
   # Purpose: Send message to VA Notify to send notification
   #
-  # Params: message (object containing participant_id, template_name, and others) Details from appeal for notification
-  #         notification_id: ID of the notification_audit record (must be converted to string to work with API)
-  #
-  # Response: Updated Notification object (still not saved)
+  # Response: Updated Notification object
   def send_to_va_notify
     send_va_notify_email if FeatureToggle.enabled?(:va_notify_email)
     send_va_notify_sms if sms_enabled
   end
 
+  # Purpose: Build payload for VA Notify request body
+  #
+  # Response: Payload object
   def va_notify_payload
     {
       participant_id: @message.participant_id,
       notification_id: @notification_audit.id.to_s,
       first_name: first_name || "Appellant",
       docket_number: appeal.docket_number,
-      status: message.appeal_status || ""
+      status: @message.appeal_status || ""
     }
   end
 
+  # Purpose: Send payload to VA Notify to send email notification
+  #
+  # Response: Updated notification object
   def send_va_notify_email
-    response = VANotifyService.send_email_notifications(
-      va_notify_payload.merge(email_template_id: event.email_template_id)
-    )
+    response = VANotifyService.send_email_notifications(**va_notify_payload, email_template_id: event.email_template_id)
 
     if response.present?
       @notification_audit.update(
@@ -166,10 +217,11 @@ class SendNotificationJob < CaseflowJob
     end
   end
 
+  # Purpose: Send payload to VA Notify to send sms notification
+  #
+  # Response: Updated notification object
   def send_va_notify_sms
-    response = VANotifyService.send_sms_notifications(
-      va_notify_payload.merge(sms_template_id: event.sms_template_id)
-    )
+    response = VANotifyService.send_sms_notifications(**va_notify_payload, sms_template_id: event.sms_template_id)
 
     if response.present?
       @notification_audit.update(
@@ -179,6 +231,9 @@ class SendNotificationJob < CaseflowJob
     end
   end
 
+  # Purpose: Parse first name of veteran or appellant from appeal
+  #
+  # Response: String
   def first_name
     appeal&.appellant_or_veteran_name&.split(" ")&.first
   end
@@ -193,10 +248,6 @@ class SendNotificationJob < CaseflowJob
     end
   end
 
-  def sms_enabled
-    @sms_enabled ||= va_notify_sms_enabled? || va_notify_quarterly_sms_enabled?
-  end
-
   def va_notify_sms_enabled?
     FeatureToggle.enabled?(:va_notify_sms) && !quarterly_notification?
   end
@@ -207,23 +258,5 @@ class SendNotificationJob < CaseflowJob
 
   def quarterly_notification?
     event_type == "Quarterly Notification"
-  end
-
-  def legacy_appeal_docketed_event?
-    event_type == "Appeal docketed" && appeal.is_a?(LegacyAppeal)
-  end
-
-  def legacy_appeal_docketed_and_notifications_disabled?
-    legacy_appeal_docketed_event? && !FeatureToggle.enabled?(:appeal_docketed_notification)
-  end
-
-  def format_message_status
-    return @message.status if message_status_valid?
-
-    (@message.status == "No participant_id") ? "No Participant Id Found" : "No Claimant Found"
-  end
-
-  def message_status_valid?
-    ["No participant_id", "No claimant"].exclude?(@message.status)
   end
 end
