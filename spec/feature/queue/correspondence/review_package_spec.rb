@@ -15,10 +15,10 @@ RSpec.feature("The Correspondence Review Package page") do
       @correspondence_uuid = "123456789"
     end
 
-    it "routes user to /unauthorized if the feature toggle is disabled" do
+    it "routes user to /under_construction if the feature toggle is disabled" do
       FeatureToggle.disable!(:correspondence_queue)
       visit "/queue/correspondence/#{correspondence.uuid}/review_package"
-      expect(page).to have_current_path("/unauthorized")
+      expect(page).to have_current_path("/under_construction")
     end
 
     it "routes to intake if feature toggle is enabled" do
