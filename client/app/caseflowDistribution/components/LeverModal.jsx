@@ -8,7 +8,7 @@ import COPY from '../../../COPY';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import moment from 'moment';
 
-function changedOptionValue(changedLever, currentLever) {
+const changedOptionValue = (changedLever, currentLever) => {
   if (changedLever.data_type === 'radio' || changedLever.data_type === 'radio') {
     const changedOptionValue = changedLever.options.find((option) => option.item === changedLever.value).value;
     const currentOptionValue = currentLever.options.find((option) => option.item === currentLever.value)?.value;
@@ -17,10 +17,9 @@ function changedOptionValue(changedLever, currentLever) {
   }
 
   return false;
+};
 
-}
-
-function GenerateLeverUpdateData(leverStore) {
+const generateLeverUpdateData = (leverStore) => {
   const levers = leverStore.getState().levers;
   const initialLevers = leverStore.getState().initial_levers;
   const filteredLevers = levers.filter((lever, i) =>
@@ -32,9 +31,9 @@ function GenerateLeverUpdateData(leverStore) {
   );
 
   return ([filteredLevers, filteredInitialLevers]);
-}
+};
 
-function GenerateLeverHistory(filteredLevers, filteredInitialLevers) {
+const generateLeverHistory = (filteredLevers, filteredInitialLevers) => {
   let history = [];
 
   filteredLevers.map((lever, index) => {
@@ -45,7 +44,8 @@ function GenerateLeverHistory(filteredLevers, filteredInitialLevers) {
 
     if (doesDatatypeRequireComplexLogic) {
       const selectedOption = lever.options.find((option) => option.item === lever.value);
-      const previousSelectedOption = filteredInitialLevers[index].options.find((option) => option.item === filteredInitialLevers[index].value);
+      const previousSelectedOption =
+        filteredInitialLevers[index].options.find((option) => option.item === filteredInitialLevers[index].value);
       const isSelectedOptionANumber = selectedOption.data_type === 'number';
       const isPreviouslySelectedOptionANumber = previousSelectedOption.data_type === 'number';
 
@@ -53,7 +53,8 @@ function GenerateLeverHistory(filteredLevers, filteredInitialLevers) {
         {
           created_at: todaysDate,
           title: lever.title,
-          original_value: isPreviouslySelectedOptionANumber ? previousSelectedOption.value : previousSelectedOption.text,
+          original_value: isPreviouslySelectedOptionANumber ?
+            previousSelectedOption.value : previousSelectedOption.text,
           current_value: isSelectedOptionANumber ? selectedOption.value : selectedOption.text,
           unit: lever.unit
         }
@@ -72,17 +73,18 @@ function GenerateLeverHistory(filteredLevers, filteredInitialLevers) {
   });
 
   return history;
-}
-function UpdateLeverHistory(leverStore) {
-  let [filteredLevers, filteredInitialLevers] = GenerateLeverUpdateData(leverStore);
+};
+
+const updateLeverHistory = (leverStore) => {
+  let [filteredLevers, filteredInitialLevers] = generateLeverUpdateData(leverStore);
 
   leverStore.dispatch({
     type: Constants.FORMAT_LEVER_HISTORY,
-    history: GenerateLeverHistory(filteredLevers, filteredInitialLevers)
+    history: generateLeverHistory(filteredLevers, filteredInitialLevers)
   });
-}
+};
 
-function setShowSuccessBanner(leverStore) {
+const setShowSuccessBanner = (leverStore) => {
   leverStore.dispatch({
     type: Constants.SHOW_SUCCESS_BANNER,
   });
@@ -93,7 +95,7 @@ function setShowSuccessBanner(leverStore) {
   }, 10000);
 }
 
-function leverValueDisplay(lever, isPreviousValue) {
+const leverValueDisplay = (lever, isPreviousValue) => {
   const doesDatatypeRequireComplexLogic = lever.data_type === 'radio' || lever.data_type === 'combination';
 
   if (doesDatatypeRequireComplexLogic) {
@@ -104,49 +106,51 @@ function leverValueDisplay(lever, isPreviousValue) {
   }
 
   return isPreviousValue ? lever.value : <strong>{lever.value}</strong>;
-}
+};
 
-function SaveLeverChanges(leverStore) {
+const saveLeverChanges = (leverStore) => {
   leverStore.dispatch({
     type: Constants.SAVE_LEVERS,
     saveChangesActivated: true,
   });
-}
+};
 
-function ShowSuccessBanner(shouldShowSuccessBanner) {
+const ShowSuccessBanner = (leverStore, shouldShowSuccessBanner) => {
   leverStore.dispatch({
     type: Constants.SHOW_SUCCESS_BANNER,
     showSuccessBanner: shouldShowSuccessBanner,
   });
-}
+};
 
-function SaveLeversToDB(leverStore) {
-  const leversData = leverStore.getState().levers;
+const saveLeversToDB = async (leverStore) => {
+  try {
+    const leversData = leverStore.getState().levers;
 
-  UpdateLeverHistory(leverStore);
-  const auditData = leverStore.getState().formatted_history;
+    updateLeverHistory(leverStore);
+    const auditData = leverStore.getState().formatted_history;
 
-  const postData = {
-    current_levers: leversData,
-    audit_lever_entries: auditData
-  };
+    const postData = {
+      current_levers: leversData,
+      audit_lever_entries: auditData
+    };
 
-  return ApiUtil.post('/case_distribution_levers/update_levers_and_history', { data: postData }).
-    then(() => {
-      SaveLeverChanges(leverStore);
-    }).
-    catch((error) => {
-      if (error.response) {
-        console.error('Error:', error);
-      }
-    });
-}
+    await ApiUtil.post('/case_distribution_levers/update_levers_and_history', { data: postData });
 
-function leverList(leverStore) {
+    saveLeverChanges(leverStore);
+  } catch (error) {
+    if (error.response) {
+      console.error('Error:', error);
+    }
+  }
+};
+
+const leverList = (leverStore) => {
   const levers = leverStore.getState().levers;
   const initialLevers = leverStore.getState().initial_levers;
-  const filteredLevers = levers.filter((lever, i) => lever.value !== initialLevers[i].value || changedOptionValue(lever, initialLevers[i]));
-  const filteredInitialLevers = initialLevers.filter((lever, i) => initialLevers[i].value !== levers[i].value || changedOptionValue(initialLevers[i], levers[i]));
+  const filteredLevers = levers.filter((lever, i) =>
+    lever.value !== initialLevers[i].value || changedOptionValue(lever, initialLevers[i]));
+  const filteredInitialLevers = initialLevers.filter((lever, i) =>
+    initialLevers[i].value !== levers[i].value || changedOptionValue(initialLevers[i], levers[i]));
 
   return (
     <div>
@@ -176,9 +180,9 @@ function leverList(leverStore) {
       </table>
     </div>
   );
-}
+};
 
-export function LeverSaveButton({ leverStore }) {
+export const leverSaveButton = ({ leverStore }) => {
   const [showModal, setShowModal] = useState(false);
   const [changesOccurred, setChangesOccurred] = useState(false);
 
@@ -186,8 +190,6 @@ export function LeverSaveButton({ leverStore }) {
     const unsubscribe = leverStore.subscribe(() => {
       const state = leverStore.getState();
 
-      const leversString = JSON.stringify(state.levers);
-      const initialLeversString = JSON.stringify(state.initial_levers);
       const validChangeOccurred = state.changesOccurred;
 
       setChangesOccurred(validChangeOccurred);
@@ -206,7 +208,7 @@ export function LeverSaveButton({ leverStore }) {
   };
 
   const handleConfirmButton = async () => {
-    await SaveLeversToDB(leverStore);
+    await saveLeversToDB(leverStore);
     setShowSuccessBanner(leverStore);
     setShowModal(false);
     ShowSuccessBanner(true);
@@ -237,8 +239,8 @@ export function LeverSaveButton({ leverStore }) {
       }
     </>
   );
-}
+};
 
-LeverSaveButton.propTypes = {
+leverSaveButton.propTypes = {
   leverStore: PropTypes.any,
 };

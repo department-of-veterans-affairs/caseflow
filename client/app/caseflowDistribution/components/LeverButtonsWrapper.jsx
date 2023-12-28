@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { LeverCancelButton } from './LeverButtons';
-import { LeverSaveButton } from './LeverModal';
+import { leverCancelButton } from './LeverButtons';
+import { leverSaveButton } from './LeverModal';
 import { css } from 'glamor';
 
 const saveButtonStyling = css({
@@ -22,8 +22,8 @@ const buttonWrapperStyling = css({
 const LeverButtonsWrapper = (props) => {
   const { leverStore } = props;
 
-  const cancelButton = <LeverCancelButton leverStore={leverStore} />;
-  const saveButton = <LeverSaveButton leverStore={leverStore} />;
+  const cancelButton = <leverCancelButton leverStore={leverStore} />;
+  const saveButton = <leverSaveButton leverStore={leverStore} />;
 
   return (
     <div {...buttonWrapperStyling}>

@@ -16,20 +16,11 @@ const AffinityDays = (props) => {
   });
 
   const checkIfOtherChangesExist = (currentLever) => {
+    const leversWithChangesList = leverStore.getState().levers.filter(
+      (lever) => lever.hasValueChanged === true && lever.item !== currentLever.item
+    );
 
-    let leversWithChangesList = [];
-
-    leverStore.getState().levers.map((lever) => {
-      if (lever.hasValueChanged === true && lever.item !== currentLever.item) {
-        leversWithChangesList.push(lever);
-      }
-    });
-
-    if (leversWithChangesList.length > 0) {
-      return true;
-    }
-
-    return false;
+    return leversWithChangesList.length > 0;
   };
 
   const leverNumberDiv = css({

@@ -236,7 +236,7 @@ $modal-table-color: #212121;
   opacity: 100%;
 }
 
-$modal-table-color: #f1f1f1;
+$lever-alert-bg-color: #f1f1f1;
 
 .leverAlertBanner {
   background-color: $lever-alert-bg-color;
@@ -262,6 +262,25 @@ $modal-table-color: #f1f1f1;
     font-size: 17px;
     margin-top: .1rem;
     padding-left: 4.25em;
+  }
+
+  $lever-alert-banner-color: #205493;
+  $lever-alert-banner-hover-color: #112e51;
+
+  a {
+    color: $lever-alert-banner-color;
+
+    &:focus,
+
+    &:hover {
+      color: $lever-alert-banner-hover-color;
+    }
+  }
+
+  ul {
+    margin-bottom: 0;
+    margin-top: 1rem;
+    padding-left: 1rem;
   }
 
   $before-bg-color: #8b8b8b;
@@ -310,9 +329,11 @@ $modal-table-color: #f1f1f1;
     background-color: $success-bg-color;
     background-image: url('~uswds/src/img/alerts/success.png');
     background-image: url('~uswds/src/img/alerts/success.svg');
-    &::before {
+
+    ::before {
       background-color: $success-before-bg-color;
     }
+
     & .leverAlertBanner-body {
       padding-left: 5rem;
     }
@@ -325,9 +346,11 @@ $modal-table-color: #f1f1f1;
     background-color: $error-color;
     background-image: url('~uswds/src/img/alerts/error.png');
     background-image: url('~uswds/src/img/alerts/error.svg');
-    &::before {
+
+    ::before {
       background-color: $error-before-bg-color;
     }
+
     & .leverAlertBanner-body {
       padding-left: 5rem;
     }
@@ -340,20 +363,4 @@ $modal-table-color: #f1f1f1;
   &-paragraph {
     width: 66ch;
   }
-}
-$lever-alert-banner-color: #205493;
-$lever-alert-banner-hover-color: #112e51;
-
-.leverAlertBanner a {
-  color: $lever-alert-banner-color;
-  &:focus,
-  &:hover {
-    color: $lever-alert-banner-hover-color;
-  }
-}
-
-.leverAlertBanner ul {
-  margin-bottom: 0;
-  margin-top: 1rem;
-  padding-left: 1rem;
 }

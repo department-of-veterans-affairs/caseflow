@@ -20,22 +20,12 @@ const BatchSize = (props) => {
     '& .cf-form-int-input label': { position: 'absolute', bottom: '8px', left: '75px' },
     '& .usa-input-error label': { bottom: '15px', left: '89px' }
   });
-
   const checkIfOtherChangesExist = (currentLever) => {
+    const leversWithChangesList = leverStore.getState().levers.filter(
+      (lever) => lever.hasValueChanged === true && lever.item !== currentLever.item
+    );
 
-    let leversWithChangesList = [];
-
-    leverStore.getState().levers.map((lever) => {
-      if (lever.hasValueChanged === true && lever.item !== currentLever.item) {
-        leversWithChangesList.push(lever);
-      }
-    });
-
-    if (leversWithChangesList.length > 0) {
-      return true;
-    }
-
-    return false;
+    return leversWithChangesList.length > 0;
   };
 
   const errorMessages = {};
