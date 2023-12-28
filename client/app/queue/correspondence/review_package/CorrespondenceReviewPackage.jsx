@@ -218,7 +218,7 @@ export const CorrespondenceReviewPackage = (props) => {
                 styling={{ style: { marginRight: '2rem' } }}
                 classNames={['usa-button-secondary']}
                 onClick={intakeAppeal}
-                disabled={disableButton}
+                disabled={disableButton || isReadOnly}
               />
             )}
             <a href={intakeLink}>
@@ -226,7 +226,7 @@ export const CorrespondenceReviewPackage = (props) => {
                 name="Create record"
                 classNames={['usa-button-primary']}
                 onClick={intakeLink}
-                disabled={disableButton}
+                disabled={disableButton || isReadOnly}
               />
             </a>
           </div>

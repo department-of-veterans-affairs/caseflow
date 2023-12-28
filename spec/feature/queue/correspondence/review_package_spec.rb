@@ -142,6 +142,7 @@ RSpec.feature("The Correspondence Review Package page") do
       using_wait_time(10) do
         expect(page).to have_text `#{veteran.file_number}`
         expect(page).to have_text `Review #{veteran.first_name} #{veteran.last_name}'s Decision Review Request: Board Appeal (Notice of Disagreement) - VA Form 10182`
+        # expect(page).to have_current_path("/intake/review_request")
       end
     end
   end
