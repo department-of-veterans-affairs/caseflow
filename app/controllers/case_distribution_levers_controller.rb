@@ -50,19 +50,15 @@ class CaseDistributionLeversController < ApplicationController
       ActiveRecord::Base.transaction do
         CaseDistributionAuditLeverEntry.create(formatted_entries)
       end
-    rescue Exception => error
-      return [error]
+    rescue StandardError => error
+      render json: { errors: error.message, successful: false } && return
     end
-
-    return []
   end
 
   private
-  def verify_access
-    return true if current_user&.organizations && current_user&.organizations&.any?(&:users_can_view_levers?)
 
-    Rails.logger.debug("User with roles #{current_user.roles.join(', ')} "\
-      "couldn't access #{request.original_url}")
+  def verify_access
+    return true if current_user.present? && current_user.organizations.any?(&:users_can_view_levers?)
 
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
@@ -79,7 +75,7 @@ class CaseDistributionLeversController < ApplicationController
       audit_lever_entries_data.each do |entry_data|
         lever = CaseDistributionLever.find_by_title entry_data["lever_title"]
 
-        formatted_audit_lever_entries.push ({
+        formatted_audit_lever_entries.push(
           user: current_user,
           case_distribution_lever: lever,
           user_name: current_user.css_id,
@@ -87,15 +83,12 @@ class CaseDistributionLeversController < ApplicationController
           previous_value: entry_data["original_value"],
           update_value: entry_data["current_value"],
           created_at: entry_data["created_at"]
-
-        })
+        )
       end
-    rescue Exception => error
+    rescue StandardError => error
       return error
     end
 
-    return formatted_audit_lever_entries
-
+    formatted_audit_lever_entries
   end
-
 end
