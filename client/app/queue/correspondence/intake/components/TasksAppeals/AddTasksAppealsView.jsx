@@ -23,11 +23,27 @@ const relatedTaskTypes = INTAKE_FORM_TASK_TYPES.relatedToAppeal;
 const unrelatedTaskTypes = INTAKE_FORM_TASK_TYPES.unrelatedToAppeal;
 
 export const AddTasksAppealsView = (props) => {
-  const mailTasks = useSelector((state) => state.intakeCorrespondence.mailTasks);
+  const [mailTasks, setMailTasks] = useState(useSelector((state) => state.intakeCorrespondence.mailTasks));
   const [relatedTasksCanContinue, setRelatedTasksCanContinue] = useState(true);
   const [unrelatedTasksCanContinue, setUnrelatedTasksCanContinue] = useState(true);
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(saveMailTaskState(mailTasks));
+  }, [mailTasks]);
+
+  const mailTaskCheckboxOnChange = (name, isChecked) => {
+    if (isChecked) {
+      if (!mailTasks.includes(name)) {
+        setMailTasks([...mailTasks, name]);
+      }
+    } else {
+      const selectedMailTasks = mailTasks.filter((taskName) => taskName !== name);
+
+      setMailTasks(selectedMailTasks);
+    }
+  };
 
   const filterUnavailableTaskTypeOptions = (tasks, options) => {
     let otherMotionCount = 0;
@@ -72,7 +88,7 @@ export const AddTasksAppealsView = (props) => {
                   name={name}
                   label={name}
                   defaultValue={mailTasks[name] || false}
-                  onChange={(isChecked) => dispatch(saveMailTaskState(name, isChecked))}
+                  onChange={(checked) => mailTaskCheckboxOnChange(name, checked)}
                 />
               );
             })}
@@ -85,7 +101,7 @@ export const AddTasksAppealsView = (props) => {
                   name={name}
                   label={name}
                   defaultValue={mailTasks[name] || false}
-                  onChange={(isChecked) => dispatch(saveMailTaskState(name, isChecked))}
+                  onChange={(checked) => mailTaskCheckboxOnChange(name, checked)}
                 />
               );
             })}
