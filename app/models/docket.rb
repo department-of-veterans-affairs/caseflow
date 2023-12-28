@@ -34,6 +34,7 @@ class Docket
     appeals(priority: priority, ready: ready).ids.size
   end
 
+  # currently this is used for reporting needs
   def ready_to_distribute_appeals
     docket_appeals.active.ready_for_distribution
   end

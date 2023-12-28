@@ -5,6 +5,7 @@ class LegacyDocket < Docket
     "legacy"
   end
 
+  # currently this is used for reporting needs
   def ready_to_distribute_appeals
     LegacyAppeal.repository.ready_to_distribute_appeals
   end
