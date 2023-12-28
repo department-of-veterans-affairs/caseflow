@@ -40,6 +40,7 @@ export const AddTasksAppealsView = (props) => {
       }
     } else {
       const selectedMailTasks = mailTasks.filter((taskName) => taskName !== name);
+
       setMailTasks(selectedMailTasks);
     }
   };
