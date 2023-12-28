@@ -721,6 +721,15 @@
       "zip" : "39531",
       "timezone" : "America/Chicago"
    },
+   "vc_0742V" :{
+      "address_1" : "1118 Burlington Street",
+      "address_2" : null,
+      "address_3" : null,
+      "city" : "Holdrege",
+      "state" : "NE",
+      "zip" : "68949-1705",
+      "timezone" : "America/New_York"
+   },
    "vha_402GA" : {
       "address_1" : "163 Van Buren Road",
       "address_2" : null,

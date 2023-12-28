@@ -6,6 +6,7 @@ import React, { useState } from 'react';
 import COPY from 'app/../COPY';
 import Button from 'app/components/Button';
 import EditDocumentTypeModal from '../component/EditDocumentTypeModal';
+import CorrespondencePdfUI from '../pdfPreview/CorrespondencePdfUI';
 
 const cmpDocumentStyling = css({
   marginTop: '2%'
@@ -85,6 +86,7 @@ export const CmpDocuments = (props) => {
           })}
         </table>
       </div>
+      <CorrespondencePdfUI documents={documents} selectedId={selectedId} />
     </div>
   );
 };
