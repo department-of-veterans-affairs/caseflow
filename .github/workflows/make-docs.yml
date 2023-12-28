@@ -164,6 +164,6 @@ jobs:
             echo "::group::Committing changes locally"
             git config --local user.email "$WIKI_COMMIT_USER_EMAIL"
             git config --local user.name "$WIKI_COMMIT_USER_NAME"
-            git commit -m "$WIKI_COMMIT_MESSAGE"
+            git commit -m "$WIKI_COMMIT_MESSAGE" && git push
             echo "::endgroup::"
           fi
