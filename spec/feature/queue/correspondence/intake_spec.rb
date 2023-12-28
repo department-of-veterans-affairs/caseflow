@@ -4,6 +4,7 @@ RSpec.feature("The Correspondence Intake page") do
   include CorrespondenceHelpers
   let(:organization) { MailTeam.singleton }
   let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
+  let(:unauthorized_user) { User.authenticate!(roles: ["Not Mail Team"]) }
 
   before do
     organization.add_user(mail_user)
@@ -22,16 +23,25 @@ RSpec.feature("The Correspondence Intake page") do
       @correspondence_uuid = Correspondence.first.uuid
     end
 
-    it "routes user to /unauthorized if the feature toggle is disabled" do
+    it "routes user to /under_construction if the feature toggle is disabled" do
       FeatureToggle.disable!(:correspondence_queue)
+      User.authenticate!(user: mail_user)
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
-      expect(page).to have_current_path("/unauthorized")
+      expect(page).to have_current_path("/under_construction")
     end
 
     it "routes to intake if feature toggle is enabled" do
       FeatureToggle.enable!(:correspondence_queue)
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
       expect(page).to have_current_path("/queue/correspondence/#{@correspondence_uuid}/intake")
+    end
+
+    it "routes unauthorized user to /unauthorized regardless of feature toggle status" do
+      FeatureToggle.disable!(:correspondence_queue)
+      User.authenticate!(user: unauthorized_user)
+      unauthorized_user.reload
+      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+      expect(page).to have_current_path("/unauthorized")
     end
   end
 
