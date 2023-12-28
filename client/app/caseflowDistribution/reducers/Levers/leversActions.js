@@ -1,11 +1,11 @@
 import { ACTIONS } from './leversActionTypes';
 
-export const loadLevers = (levers) =>
+export const loadLevers = (loadedLevers) =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.LOAD_LEVERS,
       payload: {
-        levers
+        loadedLevers
       }
     });
   };
