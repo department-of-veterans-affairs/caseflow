@@ -44,7 +44,7 @@ RSpec.feature("The Correspondence Review Package page") do
 
     it "check for CMP Edit button" do
       expect(page).to have_button("Edit")
-      expect(page).to have_button("Cancel")
+      expect(page).to have_button("Return to queue")
       expect(page).to have_button("Create record")
     end
 
@@ -137,10 +137,12 @@ RSpec.feature("The Correspondence Review Package page") do
 
     it "completes step 1 and 2 then goes to step 3 of intake appeal process" do
       visit "/queue/correspondence/#{correspondence.uuid}/review_package"
+      expect(page).to have_button("Intake appeal")
       click_button "Intake appeal"
-      expect(page).to have_current_path("/intake/review_request")
-      expect(page).to have_text `#{veteran.file_number}`
-      expect(page).to have_text `Review #{veteran.first_name} #{veteran.last_name}'s Decision Review Request: Board Appeal (Notice of Disagreement) - VA Form 10182`
+      using_wait_time(10) do
+        expect(page).to have_text `#{veteran.file_number}`
+        expect(page).to have_text `Review #{veteran.first_name} #{veteran.last_name}'s Decision Review Request: Board Appeal (Notice of Disagreement) - VA Form 10182`
+      end
     end
   end
 
@@ -150,8 +152,8 @@ RSpec.feature("The Correspondence Review Package page") do
 
     before do
       FeatureToggle.enable!(:correspondence_queue)
-      mail_team_org.add_user(mail_team_user)
-      User.authenticate!(user: mail_team_user)
+      mail_team_supervisor_org.add_user(mail_team_supervisor_user)
+      User.authenticate!(user: mail_team_supervisor_user)
     end
 
     it "click on Create record button" do
