@@ -40,7 +40,7 @@ export const saveLever = (lever) =>
     });
   };
 
-export const reverLevers = (lever) =>
+export const revertLevers = (lever) =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.REVERT_LEVERS,
