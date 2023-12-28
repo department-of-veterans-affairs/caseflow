@@ -208,10 +208,12 @@ def create_veteran(options = {})
   @participant_id += 1
   params = {
     file_number: format("%<n>09d", n: @file_number),
-    participant_id: format("%<n>09d", n: @participant_id)
+    participant_id: format("%<n>09d", n: @participant_id),
+    ssn: Generators::Random.unique_ssn
   }
   veteran = Generators::Veteran.build(params.merge(options))
   veteran.save!
+  veteran.update!(params)
   5.times do
     Appeal.create!(
       veteran_file_number: veteran.file_number,
@@ -436,11 +438,12 @@ def create_correspondence_veteran(options = {})
   @participant_id += 1
   params = {
     file_number: format("%<n>09d", n: @file_number),
-    participant_id: format("%<n>09d", n: @participant_id)
+    participant_id: format("%<n>09d", n: @participant_id),
+    ssn: Generators::Random.unique_ssn
   }
   veteran = Generators::Veteran.build(params.merge(options))
-  veteran.save
-  puts veteran
+  veteran.save!
+  veteran.update!(params)
   veteran
 end
 
