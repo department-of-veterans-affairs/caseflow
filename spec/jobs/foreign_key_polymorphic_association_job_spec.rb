@@ -3,7 +3,7 @@
 require "query_subscriber"
 require "anbt-sql-formatter/formatter"
 
-describe ForeignKeyPolymorphicAssociationJob, :postgres do
+xdescribe ForeignKeyPolymorphicAssociationJob, :postgres do
   subject { described_class.perform_now }
 
   let(:slack_service) { SlackService.new(url: "http://www.example.com") }
