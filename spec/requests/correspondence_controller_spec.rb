@@ -42,11 +42,11 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
         redux_store: redux_store
       }
 
-      correspondence = CorrespondenceIntake.find_by(user: current_user, correspondence: correspondence)
-
       expect(response).to have_http_status(:success)
-      expect(correspondence.current_step).to eq(current_step)
-      expect(correspondence.redux_store).to eq(redux_store)
+      
+      intake_correspondence = CorrespondenceIntake.find_by(user: current_user, correspondence: correspondence)
+      expect(intake_correspondence.current_step).to eq(current_step)
+      expect(intake_correspondence.redux_store).to eq(redux_store)
     end
   end
 
