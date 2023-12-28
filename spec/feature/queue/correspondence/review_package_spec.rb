@@ -117,8 +117,8 @@ RSpec.feature("The Correspondence Review Package page") do
 
     before do
       FeatureToggle.enable!(:correspondence_queue)
-      mail_team_org.add_user(mail_team_user)
-      User.authenticate!(user: mail_team_user)
+      mail_team_supervisor_org.add_user(mail_team_supervisor_user)
+      User.authenticate!(user: mail_team_supervisor_user)
     end
 
     it "click on Create record button" do
