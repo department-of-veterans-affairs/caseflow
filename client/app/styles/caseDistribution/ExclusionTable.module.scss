@@ -1,5 +1,5 @@
 .exclusionTableHeaderStyling {
-  color: lightgray;
+  color: #d3d3d3;
   padding-top: 0;
   padding-bottom: 0;
   margin-top: 0;
@@ -11,6 +11,8 @@
   padding-bottom: 0;
 }
 
+$border-color: #d6d7d9;
+
 .exclusionTableStyling {
   padding-top: 0;
   margin-top: 0;
@@ -18,7 +20,7 @@
   border-left: 0;
   border-right: 0;
   border-top: 0;
-  border-color: #d6d7d9;
+  border-color: $border-color;
   vertical-align: text-top;
   font-family: Source Sans Pro;
   font-weight: 400;
@@ -31,7 +33,7 @@
   border-left: 0;
   border-right: 0;
   border-top: 0;
-  border-color: #d6d7d9;
+  border-color: $border-color;
   font-family: Source Sans Pro;
   font-weight: 700;
   font-size: 19px;
@@ -45,7 +47,7 @@
   border-left: 0;
   border-right: 0;
   border-top: 0;
-  border-color: #d6d7d9;
+  border-color: $border-color;
   vertical-align: text-top;
   font-family: Source Sans Pro;
   font-weight: 400;
