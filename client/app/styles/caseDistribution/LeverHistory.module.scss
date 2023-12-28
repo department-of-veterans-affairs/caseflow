@@ -2,7 +2,6 @@ $historytablebordercolor: #d6d7d9;
 
 .historyTableStyling {
   padding-top: 0;
-  margin-top: 0;
   padding-bottom: 0;
   border-left: 0;
   border-right: 0;
@@ -10,9 +9,7 @@ $historytablebordercolor: #d6d7d9;
   border-color: $historytablebordercolor;
   vertical-align: text-top;
   font-family: Source Sans Pro;
-  font-weight: 400;
   font-size: 19px;
-  line-height: 1.3em/25px;
   width: 20%;
 }
 
