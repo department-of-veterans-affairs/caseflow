@@ -4,6 +4,8 @@ class WorkQueue::AppealSerializer
   include FastJsonapi::ObjectSerializer
   extend Helpers::AppealHearingHelper
 
+  EXCLUDE_STATUS = ["No Participant Id Found", "No Claimant Found", "No External Id"].freeze
+
   attribute :assigned_attorney
   attribute :assigned_judge
 
@@ -65,7 +67,7 @@ class WorkQueue::AppealSerializer
   end
 
   attribute :substitute_appellant_claimant_options do |object|
-    object.veteran&.relationships.map do |relation|
+    object.veteran&.relationships&.map do |relation|
       {
         displayText: "#{relation.first_name} #{relation.last_name}, #{relation.relationship_type}",
         value: relation.participant_id
@@ -299,9 +301,9 @@ class WorkQueue::AppealSerializer
   attribute :has_notifications do |object|
     @all_notifications = Notification.where(appeals_id: object.uuid.to_s, appeals_type: "Appeal")
     @allowed_notifications = @all_notifications.where(email_notification_status: nil)
-      .or(@all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))
+      .or(@all_notifications.where.not(email_notification_status: EXCLUDE_STATUS))
       .merge(@all_notifications.where(sms_notification_status: nil)
-      .or(@all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))).any?
+      .or(@all_notifications.where.not(sms_notification_status: EXCLUDE_STATUS))).any?
   end
 
   attribute :cavc_remands_with_dashboard do |appeal|
