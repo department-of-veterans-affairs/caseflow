@@ -6,12 +6,25 @@ import { bindActionCreators } from 'redux';
 import {
   loadLevers
 } from '../reducers/Levers/leversActions';
+import ApiUtil from '../../util/ApiUtil';
 
 class CaseflowDistributionApp extends React.PureComponent {
 
   // FOR PROOF OF CONCEPT; REMOVE
+  // test for getting JSON payload from new route
   componentDidMount() {
-    this.props.loadLevers(this.props.acd_levers);
+    ApiUtil.get('/acd-controls-test-route?json').then((response) => {
+      const returnedObject = response.body;
+      const acdLevers = returnedObject.acdLevers;
+      const acdHistory = returnedObject.acdHistory;
+      console.log(`levers from new method (levers): ${JSON.stringify(acdLevers, null, 2)}`)
+      console.log(`levers from new method (history): ${JSON.stringify(acdHistory, null, 2)}`);
+
+      this.props.loadLevers(acdLevers);
+    }).
+      catch((err) => {
+        console.error(new Error(`Problem with GET /acd-controls-test-route?json ${err}`));
+      });
   }
 
   render() {
