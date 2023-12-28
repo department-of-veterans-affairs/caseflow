@@ -25,6 +25,25 @@ class WorkQueue::AppealSearchSerializer
 
   attribute :status
 
+  attribute :decision_issues do |object, params|
+    if params[:user].nil?
+      fail Caseflow::Error::MissingRequiredProperty, message: "Params[:user] is required"
+    end
+
+    decision_issues = AppealDecisionIssuesPolicy.new(appeal: object, user: params[:user]).visible_decision_issues
+    decision_issues.uniq.map do |issue|
+      {
+        id: issue.id,
+        disposition: issue.disposition,
+        description: issue.description,
+        benefit_type: issue.benefit_type,
+        remand_reasons: issue.remand_reasons,
+        diagnostic_code: issue.diagnostic_code,
+        request_issue_ids: issue.request_decision_issues.pluck(:request_issue_id)
+      }
+    end
+  end
+
   attribute(:hearings) do |object, params|
     # For substitution appeals after death dismissal, we need to show hearings from the source appeal
     # in addition to those on the new/target appeal; this avoids copying them to new appeal stream
@@ -53,6 +72,10 @@ class WorkQueue::AppealSearchSerializer
     object.claimant&.name
   end
 
+  attribute :appellant_phone_number do |object|
+    object.claimant&.unrecognized_claimant? ? object.claimant&.phone_number : nil
+  end
+
   attribute :veteran_death_date
 
   attribute :veteran_file_number
@@ -60,6 +83,8 @@ class WorkQueue::AppealSearchSerializer
   attribute :veteran_full_name do |object|
     object.veteran ? object.veteran.name.formatted(:readable_full) : "Cannot locate"
   end
+
+  attribute(:available_hearing_locations) { |object| available_hearing_locations(object) }
 
   attribute :external_id, &:uuid
 
@@ -73,6 +98,10 @@ class WorkQueue::AppealSearchSerializer
   attribute :nod_date, &:receipt_date
   attribute :withdrawal_date
 
+  attribute :paper_case do
+    false
+  end
+
   attribute :caseflow_veteran_id do |object|
     object.veteran ? object.veteran.id : nil
   end
@@ -81,5 +110,9 @@ class WorkQueue::AppealSearchSerializer
     if object.docket_switch
       WorkQueue::DocketSwitchSerializer.new(object.docket_switch).serializable_hash[:data][:attributes]
     end
+  end
+
+  attribute :evidence_submission_task do |object|
+    object.tasks.find_by(type: "EvidenceSubmissionWindowTask", status: "assigned")
   end
 end
