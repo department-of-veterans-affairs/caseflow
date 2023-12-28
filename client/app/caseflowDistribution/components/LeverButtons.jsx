@@ -13,7 +13,7 @@ const refreshLevers = () => {
   window.location.reload(false);
 };
 
-export const leverCancelButton = ({ leverStore }) => {
+export const LeverCancelButton = ({ leverStore }) => {
   const cancelButtonActions = () => {
     cancelLeverChanges(leverStore);
     refreshLevers();
@@ -29,6 +29,6 @@ export const leverCancelButton = ({ leverStore }) => {
     </Button>
   );
 };
-leverCancelButton.propTypes = {
+LeverCancelButton.propTypes = {
   leverStore: PropTypes.any
 };

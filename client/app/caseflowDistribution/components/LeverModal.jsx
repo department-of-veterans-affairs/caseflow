@@ -174,7 +174,7 @@ const leverList = (leverStore) => {
   );
 };
 
-export const leverSaveButton = ({ leverStore }) => {
+export const LeverSaveButton = ({ leverStore }) => {
   const [showModal, setShowModal] = useState(false);
   const [changesOccurred, setChangesOccurred] = useState(false);
 
@@ -233,6 +233,6 @@ export const leverSaveButton = ({ leverStore }) => {
   );
 };
 
-leverSaveButton.propTypes = {
+LeverSaveButton.propTypes = {
   leverStore: PropTypes.any,
 };
