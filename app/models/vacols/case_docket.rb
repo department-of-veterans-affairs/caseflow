@@ -83,7 +83,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   # this version of the query should not be used during distribution it is only intended for reporting usage
   SELECT_READY_APPEALS_ADDITIONAL_COLS = "
-    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD, BFCORLID
+    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD, BFCORKEY, BFCORLID
     #{FROM_READY_APPEALS}
   "
 
@@ -162,17 +162,22 @@ class VACOLS::CaseDocket < VACOLS::Record
 
   # this query should not be used during distribution it is only intended for reporting usage
   SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19 = "
-    select BFKEY, TINUM, BFCORLID, BFD19, BFDLOOUT, VLJ, AOD,
-      case when BFAC = '7' then 1 else 0 end CAVC
+    select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFDLOOUT, APPEALS.AOD, APPEALS.BFCORLID,
+      CORRES.SNAMEF, CORRES.SNAMEL, CORRES.SSN,
+      STAFF.SNAMEF as VLJ_NAMEF, STAFF.SNAMEL as VLJ_NAMEL,
+      case when APPEALS.BFAC = '7' then 1 else 0 end CAVC
     from (
-      select BFKEY, BRIEFF.TINUM, BFCORLID, BFD19, BFDLOOUT, BFAC, AOD,
+      select BFKEY, BRIEFF.TINUM, BFD19, BFDLOOUT, BFAC, BFCORKEY, AOD, BFCORLID,
         case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
       from (
         #{SELECT_READY_APPEALS_ADDITIONAL_COLS}
       ) BRIEFF
       #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
       order by BFD19
-    )
+    ) APPEALS
+    left join CORRES on APPEALS.BFCORKEY = CORRES.STAFKEY
+    left join STAFF on APPEALS.VLJ = STAFF.STAFKEY
+    order by BFD19
   "
 
   # rubocop:disable Metrics/MethodLength

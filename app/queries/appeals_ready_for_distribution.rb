@@ -41,17 +41,22 @@ class AppealsReadyForDistribution
   end
 
   def self.legacy_rows(appeals, docket)
-
-    # JUST GET THE IDS THE USE LegacyAppeal.repository.find_case_record and look at LegacyAppeal.repository.set_vacols_values
     appeals.map do |appeal|
+      veteran_name = FullName.new(appeal["snamef"], nil, appeal["snamel"]).to_s
+      vlj_name = FullName.new(appeal["vlj_namef"], nil, appeal["vlj_namel"]).to_s
+      hearing_judge = if vlj_name.empty?
+                        nil
+                      else
+                        vlj_name
+                      end
       {
         docket_number: appeal["tinum"],
         docket: docket.to_s,
         receipt_date: appeal["bfd19"],
         ready_for_distribution_at: appeal["bfdloout"],
-        veteran_file_number: appeal["bfcorlid"],
-        veteran_name: nil,
-        hearing_judge: appeal["vlj"],
+        veteran_file_number: appeal["ssn"] || appeal["bfcorlid"],
+        veteran_name: veteran_name,
+        hearing_judge: hearing_judge,
         aod: appeal["aod"] == 1,
         cavc: appeal["cavc"] == 1
       }
