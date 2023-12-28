@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 $border-color: #e4e2e0;
 $lever-disabled-color: #757575;
 $modal-border-color: #d6d7d9;
@@ -321,28 +319,26 @@ $error-before-bg-color: #e31c3d;
 
   &-success {
     background-color: $success-bg-color;
-    background-image: url('~uswds/src/img/alerts/success.png');
     background-image: url('~uswds/src/img/alerts/success.svg');
 
     ::before {
       background-color: $success-before-bg-color;
     }
 
-    & .leverAlertBanner-body {
+    .leverAlertBanner-body {
       padding-left: 5rem;
     }
   }
 
   &-error {
     background-color: $error-color;
-    background-image: url('~uswds/src/img/alerts/error.png');
     background-image: url('~uswds/src/img/alerts/error.svg');
 
     ::before {
       background-color: $error-before-bg-color;
     }
 
-    & .leverAlertBanner-body {
+    .leverAlertBanner-body {
       padding-left: 5rem;
     }
   }
