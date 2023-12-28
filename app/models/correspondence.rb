@@ -5,6 +5,7 @@
 class Correspondence < CaseflowRecord
   has_paper_trail
   include PrintsTaskTree
+  include AppealableCorrespondence
 
   has_many :correspondence_documents
   has_many :correspondence_intakes
@@ -29,10 +30,6 @@ class Correspondence < CaseflowRecord
   # Cannot use has_many :tasks - Task model does not contain a correspondence_id column
   def tasks
     Task.where(appeal_id: id, appeal_type: type)
-  end
-
-  def root_task
-    Task.find_by(appeal_id: id, appeal_type: type, type: CorrespondenceRootTask.name)
   end
 
   # Methods below are included to allow Correspondences to render in explain page

@@ -35,8 +35,6 @@ class CavcCorrespondenceMailTask < MailTask
   private
 
   def cavc_appeal_stream
-    return if appeal_is_correspondence
-
     if !appeal.cavc?
       fail Caseflow::Error::ActionForbiddenError,
            message: "CAVC Correspondence can only be added to Court Remand Appeals."
@@ -44,8 +42,6 @@ class CavcCorrespondenceMailTask < MailTask
   end
 
   def appeal_at_cavc_lit_support
-    return if appeal_is_correspondence
-
     if !open_cavc_task
       fail Caseflow::Error::ActionForbiddenError,
            message: "CAVC Correspondence can only be added while the appeal is with CAVC Litigation Support."
@@ -53,11 +49,7 @@ class CavcCorrespondenceMailTask < MailTask
   end
 
   def open_cavc_task
-    CavcTask.open.where(appeal_id: appeal.id).any?
-  end
-
-  def appeal_is_correspondence
-    appeal.type == Correspondence.name
+    appeal.open_cavc_task
   end
 
   def organization_task_actions
