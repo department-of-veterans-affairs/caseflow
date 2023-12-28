@@ -14,7 +14,7 @@ function GenerateLeverUpdateData(leverStore) {
   const filteredLevers = levers.filter((lever, i) => lever.value !== initialLevers[i].value || changedOptionValue(lever, initialLevers[i]));
   const filteredInitialLevers = initialLevers.filter((lever, i) => initialLevers[i].value !== levers[i].value || changedOptionValue(initialLevers[i], levers[i]));
 
-  return ([filteredLevers, filteredInitialLevers])
+  return ([filteredLevers, filteredInitialLevers]);
 }
 
 function GenerateLeverHistory(filteredLevers, filteredInitialLevers) {
@@ -27,8 +27,8 @@ function GenerateLeverHistory(filteredLevers, filteredInitialLevers) {
     let todaysDate = moment(today.toISOString());
 
     if (doesDatatypeRequireComplexLogic) {
-      const selectedOption = lever.options.find(option => option.item === lever.value);
-      const previousSelectedOption = filteredInitialLevers[index].options.find(option => option.item === filteredInitialLevers[index].value);
+      const selectedOption = lever.options.find((option) => option.item === lever.value);
+      const previousSelectedOption = filteredInitialLevers[index].options.find((option) => option.item === filteredInitialLevers[index].value);
       const isSelectedOptionANumber = selectedOption.data_type === 'number';
       const isPreviouslySelectedOptionANumber = previousSelectedOption.data_type === 'number';
 
@@ -40,7 +40,7 @@ function GenerateLeverHistory(filteredLevers, filteredInitialLevers) {
           current_value: isSelectedOptionANumber ? selectedOption.value : selectedOption.text,
           unit: lever.unit
         }
-      )
+      );
     } else {
       history.push(
         {
@@ -50,14 +50,15 @@ function GenerateLeverHistory(filteredLevers, filteredInitialLevers) {
           current_value: lever.value,
           unit: lever.unit
         }
-      )
+      );
     }
-  })
+  });
 
-  return history
+  return history;
 }
 function UpdateLeverHistory(leverStore) {
-  let [filteredLevers, filteredInitialLevers] = GenerateLeverUpdateData(leverStore)
+  let [filteredLevers, filteredInitialLevers] = GenerateLeverUpdateData(leverStore);
+
   leverStore.dispatch({
     type: Constants.FORMAT_LEVER_HISTORY,
     history: GenerateLeverHistory(filteredLevers, filteredInitialLevers)
@@ -72,14 +73,14 @@ function setShowSuccessBanner(leverStore) {
     leverStore.dispatch({
       type: Constants.HIDE_SUCCESS_BANNER,
     });
-  }, 10000)
+  }, 10000);
 }
 
 function leverValueDisplay(lever, isPreviousValue) {
   const doesDatatypeRequireComplexLogic = lever.data_type === 'radio' || lever.data_type === 'combination';
 
   if (doesDatatypeRequireComplexLogic) {
-    const selectedOption = lever.options.find(option => option.item === lever.value);
+    const selectedOption = lever.options.find((option) => option.item === lever.value);
     const isSelectedOptionANumber = selectedOption.data_type === 'number';
 
     return isSelectedOptionANumber ? selectedOption.value : selectedOption.text;
@@ -88,20 +89,19 @@ function leverValueDisplay(lever, isPreviousValue) {
   return isPreviousValue ? lever.value : <strong>{lever.value}</strong>;
 }
 
-function SaveLeverChanges(leverStore)  {
+function SaveLeverChanges(leverStore) {
   leverStore.dispatch({
     type: Constants.SAVE_LEVERS,
     saveChangesActivated: true,
   });
 }
 
-function ShowSuccessBanner(shouldShowSuccessBanner)  {
+function ShowSuccessBanner(shouldShowSuccessBanner) {
   leverStore.dispatch({
     type: Constants.SHOW_SUCCESS_BANNER,
     showSuccessBanner: shouldShowSuccessBanner,
   });
 }
-
 
 function SaveLeversToDB(leverStore) {
   const leversData = leverStore.getState().levers;
@@ -112,13 +112,14 @@ function SaveLeversToDB(leverStore) {
   const postData = {
     current_levers: leversData,
     audit_lever_entries: auditData
-  }
-  return ApiUtil.post('/case_distribution_levers/update_levers_and_history', { data: postData })
-    .then(() => {
+  };
+
+  return ApiUtil.post('/case_distribution_levers/update_levers_and_history', { data: postData }).
+    then(() => {
       SaveLeverChanges(leverStore);
-    })
-    .catch((error) => {
-      if(error.response) {
+    }).
+    catch((error) => {
+      if (error.response) {
         console.error('Error:', error);
       }
     });
@@ -126,12 +127,14 @@ function SaveLeversToDB(leverStore) {
 
 function changedOptionValue(changedLever, currentLever) {
   if (changedLever.data_type === 'radio' || changedLever.data_type === 'radio') {
-    const changedOptionValue = changedLever.options.find(option => option.item === changedLever.value).value
-    const currentOptionValue = currentLever.options.find(option => option.item === currentLever.value)?.value
-    return changedOptionValue !== currentOptionValue
-  } else {
-    return false
+    const changedOptionValue = changedLever.options.find((option) => option.item === changedLever.value).value;
+    const currentOptionValue = currentLever.options.find((option) => option.item === currentLever.value)?.value;
+
+    return changedOptionValue !== currentOptionValue;
   }
+
+  return false;
+
 }
 
 function leverList(leverStore) {
@@ -193,7 +196,6 @@ export function LeverSaveButton({ leverStore }) {
     };
   }, [leverStore]);
 
-
   const handleSaveButton = () => {
     if (changesOccurred) {
       setShowModal(true);
@@ -202,13 +204,11 @@ export function LeverSaveButton({ leverStore }) {
 
   const handleConfirmButton = async () => {
     await SaveLeversToDB(leverStore);
-    setShowSuccessBanner(leverStore)
+    setShowSuccessBanner(leverStore);
     setShowModal(false);
     setSaveButtonDisabled(true);
     ShowSuccessBanner(true);
-  }
-
-
+  };
 
   return (
     <>
