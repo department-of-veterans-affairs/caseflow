@@ -19,7 +19,8 @@ module JailerPolymorphicAssociations
       "EndProductUpdate.original_decision_review_type" => [SupplementalClaim, HigherLevelReview],
       "JobNote.job_type" => [SupplementalClaim, HigherLevelReview],
       "hearing_type" => [Hearing, LegacyHearing],
-      "assigned_to_type" => [User, Organization]
+      "assigned_to_type" => [User, Organization],
+      "stuck_record" => [PriorityEndProductSyncQueue]
     }.freeze
   end
 
