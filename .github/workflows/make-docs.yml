@@ -2,8 +2,13 @@ name: Make-docs-to-webpage
 
 # Trigger running when a PR is closed
 on:
+  # pull_request:
+  #   types: [ closed ]
+
+  # Temp addition for testing
+  workflow_dispatch:
   pull_request:
-    types: [ closed ]
+    types: [opened, reopened, synchronize]
 
 jobs:
   make_docs:
@@ -13,13 +18,21 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:11
+        image: postgres:14.8
         env:
           POSTGRES_DB: caseflow_certification_test
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
         ports: ["5432:5432"]
+      redis:
+        image: redis:2.8.23
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports: ["6379:6379"]
 
     steps:
       - name: Debugging info
