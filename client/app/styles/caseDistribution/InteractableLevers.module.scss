@@ -1,4 +1,15 @@
 $border-color: #e4e2e0;
+$lever-disabled-color: #757575;
+$modal-border-color: #d6d7d9;
+$modal-table-color: #212121;
+$lever-alert-bg-color: #f1f1f1;
+$lever-alert-banner-color: #205493;
+$lever-alert-banner-hover-color: #112e51;
+$before-bg-color: #8b8b8b;
+$success-bg-color: #e7f4e4;
+$success-before-bg-color: #2e8540;
+$error-color: #f9dede;
+$error-before-bg-color: #e31c3d;
 
 .leverContainer {
   width: 100%;
@@ -134,8 +145,6 @@ $border-color: #e4e2e0;
   }
 }
 
-$lever-disabled-color: #757575;
-
 .leverDisabled {
   opacity: 0.72;
   color: $lever-disabled-color;
@@ -177,16 +186,9 @@ $lever-disabled-color: #757575;
   vertical-align: middle;
 }
 
-$modal-border-color: #d6d7d9;
-
-$modal-table-color: #212121;
-
 .modalTableStyling {
   margin-top: 0;
-  padding-top: 18px;
-  padding-bottom: 18px;
-  padding-left: 0;
-  padding-right: 0;
+  padding: 18px 0;
   border-left: 0;
   border-right: 0;
   border-bottom: 0;
@@ -236,8 +238,6 @@ $modal-table-color: #212121;
   opacity: 100%;
 }
 
-$lever-alert-bg-color: #f1f1f1;
-
 .leverAlertBanner {
   background-color: $lever-alert-bg-color;
   background-position: 2rem 2rem;
@@ -260,12 +260,9 @@ $lever-alert-bg-color: #f1f1f1;
 
   p {
     font-size: 17px;
-    margin-top: 0.1rem;
+    margin-top: .1rem;
     padding-left: 4.25em;
   }
-
-  $lever-alert-banner-color: #205493;
-  $lever-alert-banner-hover-color: #112e51;
 
   a {
     color: $lever-alert-banner-color;
@@ -282,8 +279,6 @@ $lever-alert-bg-color: #f1f1f1;
     margin-top: 1rem;
     padding-left: 1rem;
   }
-
-  $before-bg-color: #8b8b8b;
 
   &::before {
     background-color: $before-bg-color;
@@ -322,9 +317,6 @@ $lever-alert-bg-color: #f1f1f1;
     }
   }
 
-  $success-bg-color: #e7f4e4;
-  $success-before-bg-color: #2e8540;
-
   &-success {
     background-color: $success-bg-color;
     background-image: url('~uswds/src/img/alerts/success.png');
@@ -338,9 +330,6 @@ $lever-alert-bg-color: #f1f1f1;
       padding-left: 5rem;
     }
   }
-
-  $error-color: #f9dede;
-  $error-before-bg-color: #e31c3d;
 
   &-error {
     background-color: $error-color;
