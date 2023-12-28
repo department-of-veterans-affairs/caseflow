@@ -3,6 +3,7 @@ import { update } from '../../../util/ReducerUtil';
 
 export const initialState = {
   saveChangesActivated: false,
+  loadedLevers: [],
   levers: [],
   initial_levers: [],
   formatted_history: {},
@@ -12,6 +13,14 @@ export const initialState = {
 
 const leversReducer = (state = initialState, action = {}) => {
   switch (action.type) {
+
+  case ACTIONS.LOAD_LEVERS:
+    return update(state, {
+      loadedLevers: {
+        $set: action.payload.loadedLevers
+      }
+    });
+
   case ACTIONS.FORMAT_LEVER_HISTORY:
     return {
       ...state,
