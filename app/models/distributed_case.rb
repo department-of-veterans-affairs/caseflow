@@ -23,8 +23,6 @@ class DistributedCase < CaseflowRecord
         "\n already exists for appeal of uuid #{task.appeal.uuid}.")
   end
 
-  private
-
   def docket_has_hearing_option
     %w[legacy hearing].include?(docket)
   end

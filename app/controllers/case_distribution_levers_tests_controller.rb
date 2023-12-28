@@ -62,21 +62,10 @@ class CaseDistributionLeversTestsController < ApplicationController
 
   def appeals_distributed
     # change this to the correct class
-    results = BatchAppealsForReaderQuery.process
+    csv_data = BatchAppealsForReaderQuery.process
 
     # Get the current date and time for dynamic filename
     current_datetime = Time.now.strftime('%Y%m%d-%H%M')
-
-    # Convert results to CSV format
-    csv_data = CSV.generate(headers: true) do |csv|
-      # Add headers to CSV
-      csv << ['CSS ID', 'Full Name', 'Status']
-
-      # Iterate through results and add each row to CSV
-      results.each do |record|
-        csv << [record[0].css_id, record[0].full_name, record[0].status]
-      end
-    end
 
     # Set dynamic filename with current date and time
     filename = "distributed_appeals_#{current_datetime}.csv"
