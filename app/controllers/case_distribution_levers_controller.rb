@@ -15,7 +15,7 @@ class CaseDistributionLeversController < ApplicationController
       format.html { return render "index" }
       format.json do
         render json: {
-          acdLevers: CaseDistributionLever.all,
+          acdLevers: CaseDistributionLever.all.group_by(&:lever_group),
           acdHistory: CaseDistributionAuditLeverEntry.past_year
         }
       end
