@@ -8,6 +8,7 @@ import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
 import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';
+import { checkIfOtherChangesExist } from '../utils.js';
 
 const DocketTimeGoals = (props) => {
 
@@ -33,14 +34,6 @@ const DocketTimeGoals = (props) => {
   const [docketDistributionLevers, setDistributionLever] = useState(filteredDistributionLevers);
   const [docketTimeGoalLevers, setTimeGoalLever] = useState(filteredTimeGoalLevers);
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
-
-  const checkIfOtherChangesExist = (currentLever) => {
-    const leversWithChangesList = leverStore.getState().levers.filter(
-      (lever) => lever.hasValueChanged === true && lever.item !== currentLever.item
-    );
-
-    return leversWithChangesList.length > 0;
-  };
 
   const updateLever = (index, leverType) => (event) => {
     if (leverType === 'DistributionPrior') {
