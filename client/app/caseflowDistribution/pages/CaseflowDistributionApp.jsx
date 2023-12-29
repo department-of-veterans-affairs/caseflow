@@ -17,8 +17,8 @@ class CaseflowDistributionApp extends React.PureComponent {
       const returnedObject = response.body;
       const acdLevers = returnedObject.acdLevers;
       const acdHistory = returnedObject.acdHistory;
-      console.log(`levers from new method (levers): ${JSON.stringify(acdLevers, null, 2)}`)
-      console.log(`levers from new method (history): ${JSON.stringify(acdHistory, null, 2)}`);
+      // console.log(`levers from new method (levers): ${JSON.stringify(acdLevers, null, 2)}`)
+      // console.log(`levers from new method (history): ${JSON.stringify(acdHistory, null, 2)}`);
 
       this.props.loadLevers(acdLevers);
     }).
@@ -33,6 +33,7 @@ class CaseflowDistributionApp extends React.PureComponent {
       <div>
         <div> {/* Wrapper*/}
           <CaseflowDistributionContent
+            loadedLevers = {this.props.loadedLevers}
             levers = {this.props.acd_levers}
             saveChanges = {[]}
             formattedHistory={this.props.acd_history}

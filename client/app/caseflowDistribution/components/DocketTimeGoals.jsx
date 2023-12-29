@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import PropTypes, { object } from 'prop-types';
 import { css } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
@@ -11,7 +11,7 @@ import COPY from '../../../COPY';
 
 const DocketTimeGoals = (props) => {
 
-  const { leverList, leverStore } = props;
+  const { leverList, leverStore, loadedLevers } = props;
 
   const filteredDistributionLevers = leverList.docketDistributionPriorLevers.map((item) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
@@ -313,7 +313,8 @@ DocketTimeGoals.propTypes = {
   leverList: PropTypes.arrayOf(PropTypes.string).isRequired,
   leverStore: PropTypes.any,
   isAdmin: PropTypes.bool.isRequired,
-  sectionTitles: PropTypes.array.isRequired
+  sectionTitles: PropTypes.array.isRequired,
+  loadedLevers: PropTypes.arrayOf(object).isRequired
 };
 
 export default DocketTimeGoals;

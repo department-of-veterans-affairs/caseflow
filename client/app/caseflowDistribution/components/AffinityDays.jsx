@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import PropTypes from 'prop-types';
+import PropTypes, { object } from 'prop-types';
 import { css } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
@@ -15,7 +15,7 @@ import {
 export const AffinityDays = (props) => {
   // set dispatch to redux store
   const dispatch = useDispatch();
-  const { leverStore, leverList } = props;
+  const { leverStore, leverList, loadedLevers } = props;
 
   // place holder to see if store working properly
   const futureLeverList = useSelector((state) => state.caseDistributionLevers.loadedLevers);
@@ -288,5 +288,6 @@ AffinityDays.propTypes = {
   leverList: PropTypes.arrayOf(PropTypes.string).isRequired,
   leverStore: PropTypes.any,
   isAdmin: PropTypes.bool.isRequired,
+  loadedLevers: PropTypes.arrayOf(object).isRequired
 };
 export default AffinityDays;

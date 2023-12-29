@@ -14,7 +14,8 @@ const CaseflowDistributionContent = ({
   formattedHistory,
   isAdmin,
   leverStore,
-  sectionTitles
+  sectionTitles,
+  loadedLevers
 }) => {
 
   return (
@@ -35,7 +36,7 @@ const CaseflowDistributionContent = ({
             <h2>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_TITLE}</h2>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION}</p>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION_NOTE}</p>
-            <InteractableLeverWrapper levers={levers} leverStore={leverStore} isAdmin={isAdmin}
+            <InteractableLeverWrapper loadedLevers={loadedLevers} levers={levers} leverStore={leverStore} isAdmin={isAdmin}
               sectionTitles={sectionTitles} />
           </div>
         </div>
@@ -46,7 +47,7 @@ const CaseflowDistributionContent = ({
           </h2>
           <div {...sectionSegmentStyling}>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_STATIC_LEVERS_DESCRIPTION}</p>
-            <StaticLeversWrapper leverList={levers.staticLevers} leverStore={leverStore} />
+            <StaticLeversWrapper loadedLevers= {loadedLevers.static} leverList={levers.staticLevers} leverStore={leverStore} />
           </div>
         </div>
 
@@ -72,7 +73,8 @@ CaseflowDistributionContent.propTypes = {
   formattedHistory: PropTypes.array.isRequired,
   isAdmin: PropTypes.bool.isRequired,
   leverStore: PropTypes.any.isRequired,
-  sectionTitles: PropTypes.array.isRequired
+  sectionTitles: PropTypes.array.isRequired,
+  loadedLevers: PropTypes.object.isRequired
 };
 
 export default CaseflowDistributionContent;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import PropTypes, { object } from 'prop-types';
 import { ACTIONS } from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
 import { css } from 'glamor';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
@@ -8,7 +8,7 @@ import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';
 
 const BatchSize = (props) => {
-  const { leverList, leverStore } = props;
+  const { leverList, leverStore, loadedLevers } = props;
 
   const filteredLevers = leverList.map((item) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
@@ -153,6 +153,7 @@ BatchSize.propTypes = {
   leverList: PropTypes.arrayOf(PropTypes.string).isRequired,
   leverStore: PropTypes.any,
   isAdmin: PropTypes.bool.isRequired,
+  loadedLevers: PropTypes.arrayOf(object).isRequired
 };
 
 export default BatchSize;
