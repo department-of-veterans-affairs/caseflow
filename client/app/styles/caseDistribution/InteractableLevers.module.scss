@@ -151,6 +151,12 @@
   }
 }
 
+.outlineRadioInput {
+  input{
+    outline: none;
+  }
+}
+
 .toggleInputHide {
   display: none;
 }
