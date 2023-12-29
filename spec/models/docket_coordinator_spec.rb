@@ -81,7 +81,7 @@ describe DocketCoordinator do
     end
 
     let(:days_before_goal_due) { CaseDistributionLever.find_integer_lever('days_before_goal_due_for_distribution') }
-    let(:days_to_decision_goal) { CaseDistributionLever.find_integer_lever('direct_docket_time_goal') }
+    let(:days_to_decision_goal) { CaseDistributionLever.find_integer_lever('ama_direct_review_docket_time_goals') }
 
     let!(:other_direct_review_cases) do
       (0...10).map do
