@@ -57,7 +57,7 @@ import Inbox from 'app/inbox';
 import Explain from 'app/explain';
 import MPISearch from 'app/mpi/MPISearch';
 import Admin from 'app/admin';
-import CaseflowDistribution from 'app/caseflowDistribution';
+import CaseflowDistribution from 'app/caseflowDistribution/index';
 import uuid from 'uuid';
 
 const COMPONENTS = {

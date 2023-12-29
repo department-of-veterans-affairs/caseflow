@@ -27,14 +27,14 @@ export class ErrorBoundary extends React.Component {
     if (info) {
       // eslint-disable-next-line
       const errorDetails = process.env.NODE_ENV === 'development' ? (
-        <React.Fragment>
+        <div style={{ padding: '1rem' }}>
           <h2 className="error">An unexpected error has occurred.</h2>
-          <details className="preserve-space">
+          <details className="preserve-space" open>
             {error && error.toString()}
             <br />
             {info.componentStack}
           </details>
-        </React.Fragment>
+        </div>
       ) : (
         <Error500 />
       );
