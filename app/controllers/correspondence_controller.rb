@@ -132,12 +132,6 @@ class CorrespondenceController < ApplicationController
     render json: { data: data }
   end
 
-  # :reek:UtilityFunction
-  def vbms_document_types
-    data = ExternalApi::ClaimEvidenceService.document_types
-    data["documentTypes"].map { |document_type| { id: document_type["id"], name: document_type["name"] } }
-  end
-
   def pdf
     document = Document.find(params[:pdf_id])
 
@@ -204,7 +198,10 @@ class CorrespondenceController < ApplicationController
       file_number: vet.file_number,
       veteran_name: vet.name,
       correspondence_type_id: correspondence.correspondence_type_id,
-      correspondence_types: CorrespondenceType.all
+      correspondence_types: CorrespondenceType.all,
+      correspondence_tasks: correspondence.tasks.map do |task|
+        WorkQueue::CorrespondenceTaskSerializer.new(task).serializable_hash[:data][:attributes]
+      end
     }
   end
 

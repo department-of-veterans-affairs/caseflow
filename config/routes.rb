@@ -300,6 +300,8 @@ Rails.application.routes.draw do
     get '/correspondence/:correspondence_uuid/intake', to: 'correspondence#intake', as: :queue_correspondence_intake
     post '/correspondence/:correspondence_uuid/current_step', to: 'correspondence#current_step', as: :queue_correspondence_intake_current_step
     post '/correspondence/:correspondence_uuid/correspondence_intake_task', to: 'correspondence_tasks#create_correspondence_intake_task'
+    post '/correspondence/:id/remove_package', to: 'correspondence_tasks#remove_package'
+    get '/correspondence/:correspondence_uuid/intake', to: 'correspondence#intake'
     get '/correspondence/:correspondence_uuid/review_package', to: 'correspondence#review_package'
     get '/correspondence/edit_document_type_correspondence', to: 'correspondence#document_type_correspondence'
     patch '/correspondence/:correspondence_uuid/intake_update', to: 'correspondence#intake_update'

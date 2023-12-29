@@ -88,4 +88,26 @@ RSpec.describe CorrespondenceTasksController, :all_dbs, type: :controller do
       end
     end
   end
+
+  describe "POST #remove_package" do
+    context "Delete correspondence package from Caseflow" do
+      before do
+        task_creation_params.merge!(type: "removePackage", instructions: ["please remove task, thanks"])
+        post :create_package_action_task, params: task_creation_params
+        expect(response).to have_http_status(:ok)
+        remove_package_task = RemovePackageTask.find_by(appeal_id: correspondence.id, type: RemovePackageTask.name)
+        task_creation_params[:id] = correspondence.id
+        post :remove_package, params: task_creation_params
+
+        it "creates remove package task successfully" do
+          expect(response).to have_http_status(:ok)
+          remove_package_task = RemovePackageTask.find_by(appeal_id: correspondence.id, type: RemovePackageTask.name)
+          expect(remove_package_task.status).to eq(Constants.TASK_STATUSES.canceled)
+          parent = CorrespondenceTask.find_by(appeal_id: correspondence.id, type: CorrespondenceTask.name)
+          expect(parent.status).to eq(Constants.TASK_STATUSES.on_hold)
+          expect(parent.children.status).to eq(Constants.TASK_STATUSES.on_hold)
+        end
+      end
+    end
+  end
 end

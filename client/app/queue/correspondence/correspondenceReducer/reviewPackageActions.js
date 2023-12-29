@@ -61,3 +61,13 @@ export const updateDocumentTypeName = (newName, index) =>
       }
     });
   };
+
+export const updateLastAction = (currentAction) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.REMOVE_PACKAGE_ACTION,
+      payload: {
+        currentAction
+      }
+    });
+  };

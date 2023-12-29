@@ -128,7 +128,7 @@ describe('PackageActionModal rendering', () => {
     renderPackageActionModal('mergePackage');
 
     expect(screen.getByText('Request merge')).toBeInTheDocument();
-    expect(screen.getByText('Reason for merge')).toBeInTheDocument();
+    expect(screen.getByText('Select a reason for merging this package.')).toBeInTheDocument();
     expect(screen.getByText(correspondenceData.cmp_packet_number.toString())).toBeInTheDocument();
     expect(screen.getByText(packageDocumentTypeData.name)).toBeInTheDocument();
 
