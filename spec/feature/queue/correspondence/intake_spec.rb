@@ -4,15 +4,12 @@ RSpec.feature("The Correspondence Intake page") do
   include CorrespondenceHelpers
   let(:organization) { MailTeam.singleton }
   let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
-  let(:unauthorized_user) { User.authenticate!(roles: ["Not Mail User"]) }
+  let(:unauthorized_user) { create(:user) }
 
   context "correspondence intake form access" do
-    before do
-      # let!(:current_user) do
-      #   User.authenticate!(roles: ["Not Mail Intake"])
-      # end
+    before :each do
+      Bva.singleton.add_user(unauthorized_user)
       User.authenticate!(user: unauthorized_user)
-      unauthorized_user.reload
     end
 
     it "routes unauthorized user to /unauthorized if feature toggle is disabled" do
@@ -28,7 +25,7 @@ RSpec.feature("The Correspondence Intake page") do
     end
   end
 
-  before do
+  before :each do
     organization.add_user(mail_user)
     mail_user.reload
   end
