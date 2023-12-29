@@ -345,17 +345,6 @@ ActiveRecord::Schema.define(version: 2023_12_29_184556) do
     t.index ["updated_at"], name: "index_cached_user_attributes_on_updated_at"
   end
 
-  create_table "case_distribution_algorithm_logs", comment: "A generalized table for Case Distribution algorithm logs records within caseflow", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.string "ending_case_id", comment: "Indicates the ending case id"
-    t.integer "ending_distribution_id", comment: "Indicates the ending distribution id"
-    t.json "levers", comment: "Indicates the Levers information from the CaseDistributionLevers table"
-    t.string "script_name", comment: "Indicates the script name that was run"
-    t.string "starting_case_id", comment: "Indicates the starting case id"
-    t.integer "starting_distribution_id", comment: "Indicates the starting distribution id"
-    t.datetime "updated_at", null: false
-  end
-
   create_table "case_distribution_audit_lever_entries", comment: "A generalized table for Case Distribution audit lever records within caseflow", force: :cascade do |t|
     t.bigint "case_distribution_lever_id", null: false, comment: "Indicates the Case Distriubution levers id"
     t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false

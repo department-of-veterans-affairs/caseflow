@@ -212,6 +212,8 @@ class ApplicationController < ApplicationBaseController
     admin_urls = []
     admin_urls.concat(manage_teams_menu_items) if current_user&.administered_teams&.any?
     admin_urls.push(manage_users_menu_item) if current_user&.can_view_user_management?
+    admin_urls.push(case_distribution_url) if current_user&.organizations&.any?(&:users_can_view_levers?)
+
     if current_user&.can_view_team_management? || current_user&.can_view_judge_team_management?
       admin_urls.unshift(manage_all_teams_menu_item)
     end
@@ -221,10 +223,6 @@ class ApplicationController < ApplicationBaseController
   def dropdown_urls
     urls = defult_menu_items
     urls.concat(admin_menu_items)
-
-    if current_user.present? && current_user&.organizations && current_user&.organizations&.any?(&:users_can_view_levers?)
-      urls << case_distribution_url
-    end
 
     if current_user.present?
       urls.append(title: "Sign Out", link: url_for(controller: "/sessions", action: "destroy"), border: true)

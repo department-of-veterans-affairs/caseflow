@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CaseDistributionLeversController < ApplicationController
   before_action :verify_access
   before_action :set_acd_group_organization, only: [:acd_lever_index, :update_levers_and_history]
@@ -11,22 +13,17 @@ class CaseDistributionLeversController < ApplicationController
   end
 
   def update_levers_and_history
-    if @acd_group_organization.user_is_admin?(current_user)
-      current_levers_list = params["current_levers"].is_a?(Array) ? params["current_levers"].to_json : params["current_levers"]
-      errors = update_acd_levers(JSON.parse(current_levers_list))
+    redirect_to "/unauthorized" unless @acd_group_organization.user_is_admin?(current_user)
 
-      if errors.empty?
-        audit_lever_entries_list = params["audit_lever_entries"].is_a?(Array) ? params["audit_lever_entries"].to_json : params["audit_lever_entries"]
-        errors = add_audit_lever_entries(JSON.parse(audit_lever_entries_list))
-      end
+    current_levers_list = params["current_levers"].is_a?(Array) ? params["current_levers"].to_json : params["current_levers"]
+    errors = update_acd_levers(JSON.parse(current_levers_list))
 
-      if errors.empty?
-        render json: { errors: [], successful: true }
-      else
-        render json: { errors: errors, successful: false }
-      end
+    if errors.empty?
+      audit_lever_entries_list = params["audit_lever_entries"].is_a?(Array) ? params["audit_lever_entries"].to_json : params["audit_lever_entries"]
+      errors = add_audit_lever_entries(JSON.parse(audit_lever_entries_list))
+      render json: { errors: [], successful: true }
     else
-      redirect_to "/unauthorized"
+      render json: { errors: errors, successful: false }
     end
   end
 
@@ -35,10 +32,10 @@ class CaseDistributionLeversController < ApplicationController
 
     ActiveRecord::Base.transaction do
       @levers = CaseDistributionLever.update(grouped_levers.keys, grouped_levers.values)
-      if @levers.all? { |lever| lever.changed? }
+      if @levers.all?(&:changed?)
         return []
       else
-        return @levers.select(&:invalid?).map{ |l| "Lever ID:#{l.id} - #{l.errors.full_messages}" }.join("<br/>")
+        return @levers.select(&:invalid?).map { |lever| "Lever ID:#{lever.id} - #{lever.errors.full_messages}" }.join("<br/>")
       end
     end
   end
@@ -50,14 +47,15 @@ class CaseDistributionLeversController < ApplicationController
       ActiveRecord::Base.transaction do
         CaseDistributionAuditLeverEntry.create(formatted_entries)
       end
-    rescue Exception => error
+    rescue StandardError => error
       return [error]
     end
 
-    return []
+    []
   end
 
   private
+
   def verify_access
     return true if current_user&.organizations && current_user&.organizations&.any?(&:users_can_view_levers?)
 
@@ -94,8 +92,6 @@ class CaseDistributionLeversController < ApplicationController
       return error
     end
 
-    return formatted_audit_lever_entries
-
+    formatted_audit_lever_entries
   end
-
 end

@@ -1,35 +1,36 @@
 # frozen_string_literal: true
 
 class BatchAppealsForReaderQuery
-   # define CSV headers and use this to pull fields to maintain order
-   HEADERS = {
-    docket_number: 'Docket Number',
-    docket: 'Docket',
-    aod: 'AOD',
-    cavc: 'CAVC',
-    receipt_date: 'Receipt Date',
-    ready_for_distribution_at: 'Ready for Distribution at',
-    distributed_at: 'Distributed At',
-    hearing_judge: 'Hearing Judge',
-    veteran_file_number: 'Veteran File number',
-    veteran_name: 'Veteran'
+  # define CSV headers and use this to pull fields to maintain order
+  HEADERS = {
+    docket_number: "Docket Number",
+    docket: "Docket",
+    aod: "AOD",
+    cavc: "CAVC",
+    receipt_date: "Receipt Date",
+    ready_for_distribution_at: "Ready for Distribution at",
+    distributed_at: "Distributed At",
+    hearing_judge: "Hearing Judge",
+    veteran_file_number: "Veteran File number",
+    veteran_name: "Veteran"
   }.freeze
 
   def self.process
     # Convert results to CSV format
-    csv_data = CSV.generate(headers: true) do |csv|
+    CSV.generate(headers: true) do |csv|
       # Add headers to CSV
       csv << HEADERS.values
 
       # Iterate through results and add each row to CSV
       distributed_appeals.each do |record|
-        csv << HEADERS.keys.map { |k| record[k] }
+        csv << HEADERS.keys.map { |key| record[key] }
       end
     end
   end
 
-  # DistributedCase table records all distributions that occur so can pull records from there then use the case_id to find
-  # the appeal
+  # DistributedCase table records all distributions that occur so can pull records from there
+  # then use the case_id to find the appeal
+  #
   # Legacy and AMA appeals look at different tables so need to separate them so can pull needed additional info
   # .where(created_at: Date.today - 10.days..Date.today)
   def self.distributed_appeals
@@ -57,7 +58,7 @@ class BatchAppealsForReaderQuery
   def self.ama_appeal(appeal, distributed_cases)
     distributed_case = distributed_cases.filter { |dc| dc.case_id == appeal.uuid }.first
     hearing_judge = appeal.hearings
-      .filter{ |h| h.disposition = Constants.HEARING_DISPOSITION_TYPES.held}
+      .filter { |hearing| hearing.disposition = Constants.HEARING_DISPOSITION_TYPES.held }
       .first&.judge&.full_name
 
     {
@@ -99,7 +100,7 @@ class BatchAppealsForReaderQuery
       docket_number: folder_record.tinum,
       docket: distributed_case.docket,
       aod: aod,
-      cavc: case_record.bfac == '7',
+      cavc: case_record.bfac == "7",
       receipt_date: normalize_vacols_date(case_record.bfd19),
       ready_for_distribution_at: distributed_case.ready_at,
       distributed_at: distributed_case.created_at,
