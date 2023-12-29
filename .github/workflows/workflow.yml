@@ -28,14 +28,14 @@ jobs:
           POSTGRES_DB: caseflow_certification_test
 
         ports:
-        - 5432:5432
+          - 5432:5432
 
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
       redis:
         image: redis:4.0.10
         ports:
-        - 6379:6379
+          - 6379:6379
 
       facols_db:
         image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/facols:latest
@@ -43,7 +43,7 @@ jobs:
           username: AWS
           password: ${{ secrets.ECR_PASSWORD }}
         ports:
-        - 1521:1521
+          - 1521:1521
 
     strategy:
       fail-fast: false
@@ -59,24 +59,24 @@ jobs:
         password: ${{ secrets.ECR_PASSWORD }}
 
       env:
-          DBUS_SESSION_BUS_ADDRESS: /dev/null
-          RAILS_ENV: test
-          NODE_ENV: test
-          BUNDLE_PATH: vendor/bundle
-          COVERAGE_DIR: /home/circleci/coverage-${{matrix.ci_node_index}} #circleci is the USER
-          POSTGRES_HOST: postgres
-          POSTGRES_USER: root
-          POSTGRES_PASSWORD: password
-          KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
-          KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: ${{ secrets.KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC }}
-          KNAPSACK_PRO_CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
-          KNAPSACK_PRO_CI_NODE_INDEX: ${{ matrix.ci_node_index }}
-          KNAPSACK_PRO_LOG_LEVEL: info
-          KNAPSACK_PRO_FIXED_QUEUE_SPLIT: true
-          WD_INSTALL_DIR: .webdrivers
-          CI: true
-          REDIS_URL_CACHE: redis://redis:6379/0/cache/
-          TEST_VACOLS_HOST: facols_db
+        DBUS_SESSION_BUS_ADDRESS: /dev/null
+        RAILS_ENV: test
+        NODE_ENV: test
+        BUNDLE_PATH: vendor/bundle
+        COVERAGE_DIR: /home/circleci/coverage-${{matrix.ci_node_index}} #circleci is the USER
+        POSTGRES_HOST: postgres
+        POSTGRES_USER: root
+        POSTGRES_PASSWORD: password
+        KNAPSACK_PRO_RSPEC_SPLIT_BY_TEST_EXAMPLES: true
+        KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC: ${{ secrets.KNAPSACK_PRO_TEST_SUITE_TOKEN_RSPEC }}
+        KNAPSACK_PRO_CI_NODE_TOTAL: ${{ matrix.ci_node_total }}
+        KNAPSACK_PRO_CI_NODE_INDEX: ${{ matrix.ci_node_index }}
+        KNAPSACK_PRO_LOG_LEVEL: info
+        KNAPSACK_PRO_FIXED_QUEUE_SPLIT: true
+        WD_INSTALL_DIR: .webdrivers
+        CI: true
+        REDIS_URL_CACHE: redis://redis:6379/0/cache/
+        TEST_VACOLS_HOST: facols_db
 
     steps:
       - uses: actions/checkout@v3
@@ -84,7 +84,7 @@ jobs:
       # If we don't explicitly set this, the runner doesn't find the path when trying to save the cache
       - name: Set yarn cache directory
         id: set-yarn-cache-dir
-        run:  mkdir -p ~/.cache/yarn && yarn config set cache-folder ~/.cache/yarn
+        run: mkdir -p ~/.cache/yarn && yarn config set cache-folder ~/.cache/yarn
 
       - name: restore yarn cache
         id: cache-yarn-cache
@@ -215,8 +215,7 @@ jobs:
       # --tty forces Rspec to produce color
       # circleci is the USER
 
-
-    # Artifacts --- circleci is the USER
+      # Artifacts --- circleci is the USER
       - run: (cd /home/circleci && tar -zcvf coverage-${{matrix.ci_node_index}}.tar.gz coverage-${{matrix.ci_node_index}})
       - uses: actions/upload-artifact@v3
         if: success()
@@ -246,8 +245,6 @@ jobs:
         with:
           path: ./log/bullet-${{matrix.ci_node_index}}.log
 
-
-
   caseflow_jest_job:
     # This job will run the jest, change the value below to false if you wish to turn it off.
     if: true
@@ -255,16 +252,16 @@ jobs:
     container:
       image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
       credentials:
-          username: AWS
-          password: ${{ secrets.ECR_PASSWORD }}
+        username: AWS
+        password: ${{ secrets.ECR_PASSWORD }}
       env:
-          DBUS_SESSION_BUS_ADDRESS: /dev/null
-          RAILS_ENV: test
-          NODE_ENV: test
-          JEST_DIR: /home/circleci/test-results/jest #circleci is the USER
-          TEST_REPORTER: jest-junit
-          JEST_JUNIT_OUTPUT_DIR: /home/circleci/test-results/jest #circleci is the USER
-          COVERAGE_DIR: /home/circleci/coverage #circleci is the USER
+        DBUS_SESSION_BUS_ADDRESS: /dev/null
+        RAILS_ENV: test
+        NODE_ENV: test
+        JEST_DIR: /home/circleci/test-results/jest #circleci is the USER
+        TEST_REPORTER: jest-junit
+        JEST_JUNIT_OUTPUT_DIR: /home/circleci/test-results/jest #circleci is the USER
+        COVERAGE_DIR: /home/circleci/coverage #circleci is the USER
 
     steps:
       - name: Install Chrome
@@ -302,8 +299,6 @@ jobs:
         with:
           path: ./all_logs.log
 
-
-
   caseflow_lint_job:
     # This job will run the security lint checker, change the value below to false if you wish to turn it off.
     if: true
@@ -311,14 +306,14 @@ jobs:
     container:
       image: 008577686731.dkr.ecr.us-gov-west-1.amazonaws.com/gaimg-ruby:2.7.3-ga-browsers
       credentials:
-          username: AWS
-          password: ${{ secrets.ECR_PASSWORD }}
+        username: AWS
+        password: ${{ secrets.ECR_PASSWORD }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          fetch-depth: '0'
+          fetch-depth: "0"
 
       - name: Install Ruby Dependencies
         run: |
@@ -336,10 +331,9 @@ jobs:
       #     DANGER_GITHUB_API_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
 
       - name: Lint
-        run:  ./ci-bin/capture-log "bundle exec rake lint"
+        run: ./ci-bin/capture-log "bundle exec rake lint"
         if: ${{ always() }}
 
       # - name: Security
       #   run:  ./ci-bin/capture-log "bundle exec rake security"
       #   if: ${{ always() }}
-
