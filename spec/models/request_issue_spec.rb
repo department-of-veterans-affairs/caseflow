@@ -4,17 +4,9 @@ describe RequestIssue, :all_dbs do
   before do
     Timecop.freeze(Time.zone.now)
     FeatureToggle.enable!(:use_ama_activation_date)
-    FeatureToggle.enable!(:mst_identification)
-    FeatureToggle.enable!(:pact_identification)
-    FeatureToggle.enable!(:legacy_mst_pact_identification)
   end
 
-  after do
-    FeatureToggle.disable!(:mst_identification)
-    FeatureToggle.disable!(:pact_identification)
-    FeatureToggle.disable!(:legacy_mst_pact_identification)
-    FeatureToggle.disable!(:use_ama_activation_date)
-  end
+  after { FeatureToggle.disable!(:use_ama_activation_date) }
 
   let(:contested_rating_issue_reference_id) { "abc123" }
   let(:contested_rating_decision_reference_id) { nil }
@@ -63,7 +55,11 @@ describe RequestIssue, :all_dbs do
     )
   end
 
-  let!(:veteran) { Generators::Veteran.build(file_number: "789987789") }
+  let(:veteran_file_number) { "789987789" }
+  let!(:veteran) do
+    Generators::Veteran.build(file_number: veteran_file_number).save!
+    Veteran.find_by(file_number: veteran_file_number)
+  end
   let!(:decision_sync_processed_at) { nil }
   let!(:end_product_establishment) { nil }
 
@@ -1090,147 +1086,6 @@ describe RequestIssue, :all_dbs do
     end
   end
 
-  context "._from_intake_data with mst and pact params" do
-    subject { RequestIssue.from_intake_data(data) }
-    context "when mst or pact is in the payload" do
-      let(:data) do
-        {
-          rating_issue_reference_id: rating_issue_reference_id,
-          decision_text: "decision text",
-          nonrating_issue_category: nonrating_issue_category,
-          is_unidentified: is_unidentified,
-          decision_date: Time.zone.today,
-          notes: "notes",
-          untimely_exemption: true,
-          untimely_exemption_notes: "untimely notes",
-          ramp_claim_id: "ramp_claim_id",
-          vacols_sequence_id: 2,
-          contested_decision_issue_id: contested_decision_issue_id,
-          ineligible_reason: "untimely",
-          ineligible_due_to_id: 345,
-          rating_issue_diagnostic_code: "2222",
-          is_predocket_needed: is_predocket_needed,
-          mst_status: true,
-          pact_status: false
-        }
-      end
-
-      let(:rating_issue_reference_id) { nil }
-      let(:contested_decision_issue_id) { nil }
-      let(:nonrating_issue_category) { nil }
-      let(:is_unidentified) { nil }
-
-      it "expects mst and pact are saved to the model" do
-        RequestIssue.from_intake_data(data)
-        is_expected.to have_attributes(
-          decision_date: Time.zone.today,
-          notes: "notes",
-          untimely_exemption: true,
-          untimely_exemption_notes: "untimely notes",
-          ramp_claim_id: "ramp_claim_id",
-          vacols_sequence_id: 2,
-          ineligible_reason: "untimely",
-          ineligible_due_to_id: 345,
-          contested_rating_issue_diagnostic_code: "2222",
-          mst_status: true,
-          pact_status: false
-        )
-      end
-    end
-
-    context "pact is in the payload" do
-      let(:data) do
-        {
-          rating_issue_reference_id: rating_issue_reference_id,
-          decision_text: "decision text",
-          nonrating_issue_category: nonrating_issue_category,
-          is_unidentified: is_unidentified,
-          decision_date: Time.zone.today,
-          notes: "notes",
-          untimely_exemption: true,
-          untimely_exemption_notes: "untimely notes",
-          ramp_claim_id: "ramp_claim_id",
-          vacols_sequence_id: 2,
-          contested_decision_issue_id: contested_decision_issue_id,
-          ineligible_reason: "untimely",
-          ineligible_due_to_id: 345,
-          rating_issue_diagnostic_code: "2222",
-          is_predocket_needed: is_predocket_needed,
-          mst_status: false,
-          pact_status: true
-        }
-      end
-
-      let(:rating_issue_reference_id) { nil }
-      let(:contested_decision_issue_id) { nil }
-      let(:nonrating_issue_category) { nil }
-      let(:is_unidentified) { nil }
-
-      it "expect the pact status to return true" do
-        RequestIssue.from_intake_data(data)
-        is_expected.to have_attributes(
-          decision_date: Time.zone.today,
-          notes: "notes",
-          untimely_exemption: true,
-          untimely_exemption_notes: "untimely notes",
-          ramp_claim_id: "ramp_claim_id",
-          vacols_sequence_id: 2,
-          ineligible_reason: "untimely",
-          ineligible_due_to_id: 345,
-          contested_rating_issue_diagnostic_code: "2222",
-          mst_status: false,
-          pact_status: true
-        )
-      end
-    end
-
-    context "mst and pact are in the payload" do
-      let(:data) do
-        {
-          rating_issue_reference_id: rating_issue_reference_id,
-          decision_text: "decision text",
-          nonrating_issue_category: nonrating_issue_category,
-          is_unidentified: is_unidentified,
-          decision_date: Time.zone.today,
-          notes: "notes",
-          untimely_exemption: true,
-          untimely_exemption_notes: "untimely notes",
-          ramp_claim_id: "ramp_claim_id",
-          vacols_sequence_id: 2,
-          contested_decision_issue_id: contested_decision_issue_id,
-          ineligible_reason: "untimely",
-          ineligible_due_to_id: 345,
-          rating_issue_diagnostic_code: "2222",
-          is_predocket_needed: is_predocket_needed,
-          mst_status: true,
-          pact_status: true
-        }
-      end
-
-      let(:rating_issue_reference_id) { nil }
-      let(:contested_decision_issue_id) { nil }
-      let(:nonrating_issue_category) { nil }
-      let(:is_unidentified) { nil }
-
-      it "expect mst and pact in the payload" do
-        RequestIssue.from_intake_data(data)
-        is_expected.to have_attributes(
-          decision_date: Time.zone.today,
-          notes: "notes",
-          untimely_exemption: true,
-          untimely_exemption_notes: "untimely notes",
-          ramp_claim_id: "ramp_claim_id",
-          vacols_sequence_id: 2,
-          ineligible_reason: "untimely",
-          ineligible_due_to_id: 345,
-          contested_rating_issue_diagnostic_code: "2222",
-          mst_status: true,
-          pact_status: true
-        )
-      end
-    end
-  end
-
   context "#move_stream!" do
     subject { request_issue.move_stream!(new_appeal_stream: new_appeal_stream, closed_status: closed_status) }
     let(:closed_status) { "docket_switch" }
@@ -1510,185 +1365,6 @@ describe RequestIssue, :all_dbs do
 
       it "nonrating? is false" do
         expect(request_issue.nonrating?).to be false
-      end
-    end
-  end
-
-  context "#mst_contention_status?, #pact_contention_status?" do
-    let(:claim_id) { "600118959" }
-    let(:end_prod_establishment) do
-      create(
-        :end_product_establishment,
-        reference_id: claim_id
-      )
-    end
-    context "when mst is available and pact is not available" do
-      let!(:mst_contention) do
-        Generators::Contention.build_mst_contention(
-          claim_id: claim_id
-        )
-      end
-      let(:mst_request_issue) do
-        create(
-          :request_issue,
-          contention_reference_id: mst_contention.id,
-          end_product_establishment: end_prod_establishment
-        )
-      end
-      let!(:bgs_contention) do
-        Generators::BgsContention.build_mst_contention(
-          reference_id: mst_contention.id,
-          claim_id: end_prod_establishment.reference_id
-        )
-      end
-
-      before do
-        end_prod_establishment.bgs_contentions << bgs_contention
-      end
-
-      after do
-        end_prod_establishment.bgs_contentions.clear
-      end
-
-      it "mst_contention_status? is true" do
-        expect(mst_request_issue.mst_contention_status?).to be true
-      end
-
-      it "pact_contention_status? is false" do
-        expect(mst_request_issue.pact_contention_status?).to be false
-      end
-    end
-
-    context "when pact is available and mst is not available" do
-      let(:pact_contention) do
-        Generators::Contention.build_pact_contention(
-          claim_id: claim_id
-        )
-      end
-
-      let(:pact_request_issue) do
-        create(
-          :request_issue,
-          contention_reference_id: pact_contention.id,
-          end_product_establishment: end_prod_establishment
-        )
-      end
-
-      let!(:bgs_contention) do
-        Generators::BgsContention.build_pact_contention(
-          reference_id: pact_contention.id,
-          claim_id: end_prod_establishment.reference_id
-        )
-      end
-
-      before do
-        end_prod_establishment.bgs_contentions << bgs_contention
-      end
-
-      after do
-        end_prod_establishment.bgs_contentions.clear
-      end
-
-      it "mst_contention_status? is false" do
-        expect(pact_request_issue.mst_contention_status?).to be false
-      end
-
-      it "pact_contention_status? is true" do
-        expect(pact_request_issue.pact_contention_status?).to be true
-      end
-    end
-
-    context "when pact and mst are available" do
-      let(:mst_and_pact_contention) do
-        Generators::Contention.build_mst_and_pact_contention(
-          claim_id: claim_id
-        )
-      end
-
-      let(:mst_and_pact_request_issue) do
-        create(
-          :request_issue,
-          contention_reference_id: mst_and_pact_contention.id,
-          end_product_establishment: end_prod_establishment
-        )
-      end
-
-      let!(:bgs_contention) do
-        Generators::BgsContention.build(
-          reference_id: mst_and_pact_contention.id,
-          claim_id: end_prod_establishment.reference_id,
-          special_issues: [
-            {
-              call_id: "12345",
-              jrn_dt: 5.days.ago,
-              name: "SpecialIssue",
-              spis_tc: "MST",
-              spis_tn: "Military Sexual Trauma (MST)"
-            },
-            {
-              call_id: "12345",
-              jrn_dt: 5.days.ago,
-              name: "SpecialIssue",
-              spis_tc: "PACT",
-              spis_tn: "PACT"
-            }
-          ]
-        )
-      end
-
-      before do
-        end_prod_establishment.bgs_contentions << bgs_contention
-      end
-
-      after do
-        end_prod_establishment.bgs_contentions.clear
-      end
-
-      it "mst_contention_status? is true" do
-        expect(mst_and_pact_request_issue.mst_contention_status?).to be true
-      end
-
-      it "pact_contention_status? is true" do
-        expect(mst_and_pact_request_issue.pact_contention_status?).to be true
-      end
-    end
-
-    context "when pact and mst are not available" do
-      let(:contention) do
-        Generators::Contention.build(
-          claim_id: claim_id
-        )
-      end
-
-      let(:request_issue) do
-        create(
-          :request_issue,
-          contention_reference_id: contention.id,
-          end_product_establishment: end_prod_establishment
-        )
-      end
-
-      let!(:bgs_contention) do
-        Generators::BgsContention.build(
-          reference_id: contention.id,
-          claim_id: end_prod_establishment.reference_id
-        )
-      end
-
-      before do
-        end_prod_establishment.bgs_contentions << bgs_contention
-      end
-
-      after do
-        end_prod_establishment.bgs_contentions.clear
-      end
-
-      it "mst_contention_status? is false" do
-        expect(request_issue.mst_contention_status?).to be false
-      end
-
-      it "pact_contention_status? is false" do
-        expect(request_issue.pact_contention_status?).to be false
       end
     end
   end
@@ -2439,6 +2115,228 @@ describe RequestIssue, :all_dbs do
             expect(nonrating_request_issue.processed?).to eq(false)
           end
         end
+
+        context "when hlr_sync_lock is applied to the sync method" do
+          let(:ep_code) { "030HLRR" }
+          let!(:epe) do
+            epe = create(
+              :end_product_establishment,
+              :cleared,
+              established_at: 5.days.ago,
+              modifier: "030",
+              code: "030HLRR",
+              source: create(
+                :higher_level_review,
+                veteran_file_number: veteran.file_number
+              )
+            )
+            EndProductEstablishment.find epe.id
+          end
+          let!(:review) do
+            epe.source
+          end
+
+          let!(:epe2) do
+            epe = create(
+              :end_product_establishment,
+              :cleared,
+              established_at: 5.days.ago,
+              modifier: "030",
+              code: "030HLRR",
+              source: create(
+                :supplemental_claim,
+                veteran_file_number: veteran.file_number
+              )
+            )
+            EndProductEstablishment.find epe.id
+          end
+          let!(:review2) do
+            epe2.source
+          end
+
+          let!(:contention_sc1) do
+            Generators::Contention.build(
+              id: "111222333",
+              claim_id: epe2.reference_id,
+              disposition: "Difference of Opinion"
+            )
+          end
+
+          let!(:contention_hlr1) do
+            Generators::Contention.build(
+              id: "123456789",
+              claim_id: epe.reference_id,
+              disposition: "Difference of Opinion"
+            )
+          end
+          let!(:contention_hlr2) do
+            Generators::Contention.build(
+              id: "555566660",
+              claim_id: epe.reference_id,
+              disposition: "DTA Error"
+            )
+          end
+
+          let(:original_decision_sync_last_submitted_at) { Time.zone.now - 1.hour }
+          let(:original_decision_sync_submitted_at) { Time.zone.now - 1.hour }
+
+          let(:request_issue1) do
+            create(
+              :request_issue,
+              decision_review: review,
+              nonrating_issue_description: "some description",
+              nonrating_issue_category: "a category",
+              decision_date: 1.day.ago,
+              end_product_establishment: epe,
+              contention_reference_id: contention_hlr1.id,
+              benefit_type: review.benefit_type,
+              decision_sync_last_submitted_at: original_decision_sync_last_submitted_at,
+              decision_sync_submitted_at: original_decision_sync_submitted_at
+            )
+          end
+
+          let(:request_issue2) do
+            create(
+              :request_issue,
+              decision_review: review,
+              nonrating_issue_description: "some description",
+              nonrating_issue_category: "a category",
+              decision_date: 1.day.ago,
+              end_product_establishment: epe,
+              contention_reference_id: contention_hlr2.id,
+              benefit_type: review.benefit_type,
+              decision_sync_last_submitted_at: original_decision_sync_last_submitted_at,
+              decision_sync_submitted_at: original_decision_sync_submitted_at
+            )
+          end
+
+          let(:request_issue3) do
+            create(
+              :request_issue,
+              decision_review: review2,
+              nonrating_issue_description: "some description",
+              nonrating_issue_category: "a category",
+              decision_date: 1.day.ago,
+              end_product_establishment: epe2,
+              contention_reference_id: contention_sc1.id,
+              benefit_type: review2.benefit_type,
+              decision_sync_last_submitted_at: original_decision_sync_last_submitted_at,
+              decision_sync_submitted_at: original_decision_sync_submitted_at
+            )
+          end
+
+          let!(:claimant) do
+            Claimant.create!(decision_review: epe.source,
+                             participant_id: epe.veteran.participant_id,
+                             payee_code: "00")
+          end
+
+          let!(:claimant2) do
+            Claimant.create!(decision_review: epe2.source,
+                             participant_id: epe2.veteran.participant_id,
+                             payee_code: "00")
+          end
+
+          let(:sync_lock_err) { Caseflow::Error::SyncLockFailed }
+
+          it "prevents a request issue from acquiring the SyncLock when there is already a lock using the EPE's ID" do
+            redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
+            lock_key = "hlr_sync_lock:#{epe.id}"
+            redis.set(lock_key, "lock is set", nx: true, ex: 5.seconds)
+            expect { request_issue1.sync_decision_issues! }.to raise_error(sync_lock_err)
+            redis.del(lock_key)
+          end
+
+          it "allows a request issue to sync if there is no existing lock using the EPE's ID" do
+            epe_id = request_issue2.end_product_establishment.id.to_s
+            allow(Rails.logger).to receive(:info)
+            expect(request_issue2.sync_decision_issues!).to eq(true)
+            expect(Rails.logger).to have_received(:info).with("hlr_sync_lock:" + epe_id + " has been created")
+            expect(request_issue2.processed?).to eq(true)
+            expect(Rails.logger).to have_received(:info).with("hlr_sync_lock:" + epe_id + " has been released")
+            expect(SupplementalClaim.count).to eq(2)
+          end
+
+          it "allows non HLRs to sync decision issues" do
+            expect(request_issue3.sync_decision_issues!).to eq(true)
+            expect(request_issue3.processed?).to eq(true)
+          end
+
+          it "multiple request issues can sync and a remand_supplemental_claim is created" do
+            expect(request_issue1.sync_decision_issues!).to eq(true)
+            expect(request_issue2.sync_decision_issues!).to eq(true)
+            expect(request_issue1.processed?).to eq(true)
+            expect(request_issue2.processed?).to eq(true)
+
+            # The newly created remand SC will be added to the SC count for a total of 2
+            expect(SupplementalClaim.count).to eq(2)
+            sc = SupplementalClaim.last
+            expect(sc.request_issues.count).to eq(2)
+            supplemental_claim_request_issue1 = sc.request_issues.first
+            supplemental_claim_request_issue2 = sc.request_issues.last
+
+            # both request issues link to the same SupplementalClaim
+            expect(sc.id).to eq(request_issue1.end_product_establishment.source.remand_supplemental_claims.first.id)
+            expect(sc.id).to eq(request_issue2.end_product_establishment.source.remand_supplemental_claims.first.id)
+
+            # DecisionIssue ID should match contested_decision_issue_id
+            expect(DecisionIssue.count).to eq(2)
+            decision_issue1 = DecisionIssue.first
+            decision_issue2 = DecisionIssue.last
+
+            expect(decision_issue1.id).to eq(supplemental_claim_request_issue1.contested_decision_issue_id)
+            expect(decision_issue2.id).to eq(supplemental_claim_request_issue2.contested_decision_issue_id)
+          end
+        end
+      end
+    end
+  end
+
+  context "#save_decision_date!" do
+    let(:new_decision_date) { Time.zone.now }
+    let(:benefit_type) { "vha" }
+
+    subject { nonrating_request_issue.save_decision_date!(new_decision_date) }
+
+    it "should update the decision date and call the review's handle_issues_with_no_decision_date! method" do
+      expect(review).to receive(:handle_issues_with_no_decision_date!).once
+      subject
+      expect(nonrating_request_issue.decision_date).to eq(new_decision_date.to_date)
+    end
+
+    context "when the decision date is in the future" do
+      let(:future_date) { 2.days.from_now.to_date }
+
+      subject { nonrating_request_issue }
+
+      it "throws DecisionDateInFutureError" do
+        allow(subject).to receive(:update!)
+
+        expect { subject.save_decision_date!(future_date) }.to raise_error(RequestIssue::DecisionDateInFutureError)
+        expect(subject).to_not have_received(:update!)
+      end
+    end
+  end
+
+  context "vha handle issues with no decision date" do
+    let(:new_decision_date) { Time.zone.now }
+    let(:benefit_type) { "vha" }
+
+    context("#remove!") do
+      subject { nonrating_request_issue.remove! }
+
+      it "should call the review's handle_issues_with_no_decision_date! method for removal" do
+        expect(review).to receive(:handle_issues_with_no_decision_date!).once
+        subject
+      end
+    end
+
+    context("#withdraw!") do
+      subject { nonrating_request_issue.withdraw!(Time.zone.now) }
+
+      it "should call the review's handle_issues_with_no_decision_date! method for removal" do
+        expect(review).to receive(:handle_issues_with_no_decision_date!).once
+        subject
       end
     end
   end

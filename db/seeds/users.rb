@@ -69,7 +69,6 @@ module Seeds
       BvaIntake.singleton.add_user(bva_intake_user)
 
       Functions.grant!("System Admin", users: User.all.pluck(:css_id))
-
       create_team_admin
       create_colocated_users
       create_transcription_team
@@ -282,7 +281,7 @@ module Seeds
     end
 
     def create_org_queue_users
-      nca = BusinessLine.create!(name: "National Cemetery Administration", url: "nca")
+      nca = BusinessLine.find_or_create_by!(name: "National Cemetery Administration", url: "nca")
       %w[Parveen Chandra Sydney Tai Kennedy].each do |name|
         u = User.create!(station_id: 101, css_id: "NCA_QUEUE_USER_#{name}", full_name: "#{name} NCAUser Carter")
         nca.add_user(u)
@@ -383,22 +382,17 @@ module Seeds
         station_id: 101,
         css_id: "COB_USER",
         full_name: "Clark ClerkOfTheBoardUser Bard",
-        roles: ["Hearing Prep", "Mail Intake"]
+        roles: ["Hearing Prep"]
       )
       ClerkOfTheBoard.singleton.add_user(atty)
 
-      judge = create(:user, full_name: "Judith COTB Judge", css_id: "BVACOTBJUDGE", roles: ["Hearing Prep", "Mail Intake"])
+      judge = create(:user, full_name: "Judith COTB Judge", css_id: "BVACOTBJUDGE", roles: ["Hearing Prep"])
       create(:staff, :judge_role, sdomainid: judge.css_id)
       ClerkOfTheBoard.singleton.add_user(judge)
 
-      admin = create(:user, full_name: "Ty ClerkOfTheBoardAdmin Cobb", css_id: "BVATCOBB", roles: ["Hearing Prep", "Mail Intake"])
+      admin = create(:user, full_name: "Ty ClerkOfTheBoardAdmin Cobb", css_id: "BVATCOBB", roles: ["Hearing Prep"])
       ClerkOfTheBoard.singleton.add_user(admin)
       OrganizationsUser.make_user_admin(admin, ClerkOfTheBoard.singleton)
-
-      # added to Bva Intake so they can intake
-      BvaIntake.singleton.add_user(atty)
-      BvaIntake.singleton.add_user(judge)
-      BvaIntake.singleton.add_user(admin)
     end
 
     def create_case_search_only_user

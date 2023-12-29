@@ -19,6 +19,17 @@ import { shouldFetchAppeal } from '../reader/utils';
 import { DOCUMENTS_OR_COMMENTS_ENUM } from './DocumentList/actionTypes';
 
 export class PdfListView extends React.Component {
+  setClearAllFiltersCallbacks = (callbacks) => {
+    this.setState({ clearAllFiltersCallbacks: [...this.state.clearAllFiltersCallbacks, ...callbacks] });
+  };
+
+  constructor() {
+    super();
+    this.state = {
+      clearAllFiltersCallbacks: []
+    };
+  }
+
   componentDidMount() {
     if (shouldFetchAppeal(this.props.appeal, this.props.match.params.vacolsId)) {
       // if the appeal is fetched through case selected appeals, re-use that existing appeal
@@ -56,6 +67,8 @@ export class PdfListView extends React.Component {
         sortBy={this.props.sortBy}
         docFilterCriteria={this.props.docFilterCriteria}
         showPdf={this.props.showPdf}
+        setClearAllFiltersCallbacks={this.setClearAllFiltersCallbacks}
+        featureToggles={this.props.featureToggles}
       />;
     }
 
@@ -68,15 +81,19 @@ export class PdfListView extends React.Component {
       <AppSegment filledBackground>
         <div className="section--document-list">
           <ClaimsFolderDetails appeal={this.props.appeal} documents={this.props.documents} />
-          <LastRetrievalAlert appeal={this.props.appeal} />
+          <LastRetrievalAlert
+            userHasEfolderRole={this.props.userHasEfolderRole}
+            efolderExpressUrl={this.props.efolderExpressUrl}
+            appeal={this.props.appeal} />
           <DocumentListHeader
             documents={this.props.documents}
             noDocuments={noDocuments}
+            clearAllFiltersCallbacks={this.state.clearAllFiltersCallbacks}
           />
           {tableView}
         </div>
       </AppSegment>
-      <LastRetrievalInfo />
+      <LastRetrievalInfo appeal={this.props.appeal} />
     </div>;
   }
 }
@@ -89,7 +106,6 @@ const mapStateToProps = (state, props) => {
       state.pdfViewer.loadedAppeal,
     caseSelectedAppeal: state.caseSelect.selectedAppeal,
     manifestVbmsFetchedAt: state.documentList.manifestVbmsFetchedAt,
-    manifestVvaFetchedAt: state.documentList.manifestVvaFetchedAt,
     queueRedirectUrl: state.documentList.queueRedirectUrl,
     queueTaskType: state.documentList.queueTaskType
   };
@@ -102,12 +118,28 @@ const mapDispatchToProps = (dispatch) => (
   }, dispatch)
 );
 
+PdfListView.propTypes = {
+  documents: PropTypes.arrayOf(PropTypes.object).isRequired,
+  onJumpToComment: PropTypes.func,
+  sortBy: PropTypes.string,
+  appeal: PropTypes.object,
+  efolderExpressUrl: PropTypes.string,
+  userHasEfolderRole: PropTypes.bool,
+  readerSearchImprovements: PropTypes.bool,
+  featureToggles: PropTypes.object,
+  match: PropTypes.object,
+  caseSelectedAppeal: PropTypes.object,
+  onReceiveAppealDetails: PropTypes.func,
+  fetchAppealDetails: PropTypes.func,
+  docFilterCriteria: PropTypes.object,
+  viewingDocumentsOrComments: PropTypes.string,
+  documentPathBase: PropTypes.string,
+  showPdf: PropTypes.func,
+  queueRedirectUrl: PropTypes.string,
+  queueTaskType: PropTypes.node
+};
+
 export default connect(
   mapStateToProps, mapDispatchToProps
 )(PdfListView);
 
-PdfListView.propTypes = {
-  documents: PropTypes.arrayOf(PropTypes.object).isRequired,
-  onJumpToComment: PropTypes.func,
-  sortBy: PropTypes.string
-};

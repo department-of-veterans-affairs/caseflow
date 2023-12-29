@@ -41,6 +41,20 @@ describe MailRequest, :postgres do
     end
   end
 
+  shared_examples "Valid mail request called upon creates desired artifacts" do
+    before do
+      RequestStore.store[:current_user] = User.system_user
+    end
+
+    it "creates a vbms_distribution" do
+      expect { subject }.to change(VbmsDistribution, :count).by(1)
+    end
+
+    it "creates a vbms_distribution_destination" do
+      expect { subject }.to change(VbmsDistributionDestination, :count).by(1)
+    end
+  end
+
   let(:mail_request_spec_object_1) { build(:mail_request, :nil_recipient_type) }
   include_examples "mail request has valid attributes"
   it "is not valid without a recipient type" do
@@ -51,17 +65,23 @@ describe MailRequest, :postgres do
     context "when valid parameters are passed into the mail requests initialize method." do
       subject { described_class.new(mail_request_params).call }
 
-      before do
-        RequestStore.store[:current_user] = User.system_user
+      include_examples "Valid mail request called upon creates desired artifacts"
+    end
+
+    context "When the recipient_type param is 'ro-colocated" do
+      let(:ro_colocated_mail_request_params) do
+        ActionController::Parameters.new(
+          recipient_type: "ro-colocated",
+          claimant_station_of_jurisdiction: "123",
+          poa_code: "02A",
+          name: "POA Name",
+          destination_type: "derived"
+        )
       end
 
-      it "creates a vbms_distribution" do
-        expect { subject }.to change(VbmsDistribution, :count).by(1)
-      end
+      subject { described_class.new(ro_colocated_mail_request_params).call }
 
-      it "creates a vbms_distribution_destination" do
-        expect { subject }.to change(VbmsDistributionDestination, :count).by(1)
-      end
+      include_examples "Valid mail request called upon creates desired artifacts"
     end
 
     context "when invalid parameters are passed into the mail requests initialize method." do

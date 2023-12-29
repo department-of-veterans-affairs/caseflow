@@ -41,10 +41,6 @@ export class DailyDocketPrinted extends React.Component {
           <div>
             <strong>Number:</strong> {hearing.docketNumber}<br />
             <strong>Disposition:</strong> {disposition}<br />
-            <strong>Special Issues:</strong>
-              {hearing.mst && <span className="cf-red-text">&nbsp;&nbsp;MST</span>}
-              {hearing.pact && <span className="cf-red-text">&nbsp;&nbsp;PACT</span>}
-              <br />
             {this.isUserJudge() &&
               <span>
                 <strong>AOD:</strong> {hearing.aod ? AOD_CODE_TO_LABEL_MAP[hearing.aod] : 'None'}
@@ -87,25 +83,31 @@ export class DailyDocketPrinted extends React.Component {
       <AppSegment extraClassNames={['cf-daily-docket-printed']}>
         <div className="cf-app-segment">
           <div className="cf-push-left">
-            <h2>Daily Docket ({moment(docket.scheduledFor).format('ddd M/DD/YYYY')})</h2>
-            {docket.notes &&
+            <h2>
+              Daily Docket (
+              {moment(docket.scheduledFor).format('ddd M/DD/YYYY')})
+            </h2>
+            {docket.notes && (
               <div>
-                <strong>Notes:</strong><br />
+                <strong>Notes:</strong>
+                <br />
                 {docket.notes}
               </div>
-            }
+            )}
           </div>
 
           <div className="cf-push-right">
-            {!user.userVsoEmployee && (
+            {!user.userIsNonBoardEmployee && (
               <React.Fragment>
-                <strong>VLJ:</strong> `${docket.judgeFirstName}` `${docket.judgeLastName}`
+                <strong>VLJ:</strong>
+                {` ${docket.judgeFirstName} ${docket.judgeLastName}`}
                 <br />
               </React.Fragment>
             )}
             <strong>Coordinator:</strong> {docket.bvaPoc} <br />
             <strong>Hearing type:</strong> {docket.readableRequestType} <br />
-            <strong>Regional office:</strong> {docket.regionalOffice}<br />
+            <strong>Regional office:</strong> {docket.regionalOffice}
+            <br />
             <strong>Room number:</strong> {docket.room}
           </div>
         </div>
@@ -116,7 +118,7 @@ export class DailyDocketPrinted extends React.Component {
           slowReRendersAreOk
         />
 
-        {_.size(previousHearings) > 0 &&
+        {_.size(previousHearings) > 0 && (
           <div>
             <h2>Previous Hearings</h2>
 
@@ -126,7 +128,7 @@ export class DailyDocketPrinted extends React.Component {
               slowReRendersAreOk
             />
           </div>
-        }
+        )}
       </AppSegment>
     );
   }

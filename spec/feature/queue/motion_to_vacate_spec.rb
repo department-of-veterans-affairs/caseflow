@@ -678,7 +678,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
       it "correctly handles return to judge" do
         User.authenticate!(user: drafting_attorney)
 
-        visit "/queue/appeals/#{vacate_stream.uuid}"
+        reload_case_detail_page(vacate_stream.uuid)
 
         check_cavc_alert
         verify_cavc_conflict_action
@@ -691,7 +691,9 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
         expect(page.current_path).to eq(review_decisions_path)
 
-        find(".usa-alert-text").find("a").click
+        within find(".usa-alert-text") do
+          click_link("please return to the judge")
+        end
 
         expect(page).to have_content(COPY::MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_TITLE)
         expect(page).to have_content(COPY::MTV_CHECKOUT_RETURN_TO_JUDGE_MODAL_DESCRIPTION)
@@ -856,7 +858,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
           # Add remand reasons for issue 2
           within all("div.remand-reasons-form")[1] do
-            find_field("Medical examinations", visible: false).sibling("label").click
+            find_field("No medical examination", visible: false).sibling("label").click
             find_field("Pre AOJ", visible: false).sibling("label").click
           end
 
@@ -907,7 +909,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
           expect(remanded1.remand_reasons.first).to have_attributes(code: "service_treatment_records")
 
           expect(remanded2.remand_reasons.size).to eq(1)
-          expect(remanded2.remand_reasons.first).to have_attributes(code: "medical_examinations")
+          expect(remanded2.remand_reasons.first).to have_attributes(code: "no_medical_examination")
         end
       end
 
@@ -977,7 +979,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
           expect(visible_options.length).to eq Constants::CO_LOCATED_ADMIN_ACTIONS.length
         end
 
-        fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions
+        fill_in COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: instructions
 
         click_on COPY::ADD_COLOCATED_TASK_ANOTHER_BUTTON_LABEL
 
@@ -985,7 +987,7 @@ RSpec.feature "Motion to vacate", :all_dbs do
 
         within all("div.admin-action-item")[1] do
           click_dropdown(text: selected_opt_0)
-          fill_in COPY::ADD_COLOCATED_TASK_INSTRUCTIONS_LABEL, with: instructions
+          fill_in COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: instructions
         end
 
         expect(page).to have_content("Duplicate admin actions detected")

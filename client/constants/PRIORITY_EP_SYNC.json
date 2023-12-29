@@ -1,0 +1,8 @@
+{
+  "not_processed": "NOT_PROCESSED",
+  "pre_processing": "PRE_PROCESSING",
+  "processing": "PROCESSING",
+  "synced": "SYNCED",
+  "error": "ERROR",
+  "stuck": "STUCK"
+}

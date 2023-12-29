@@ -116,17 +116,7 @@ describe VbmsDistributionDestination, :postgres do
   end
 
   context "destination type is militaryAddress" do
-    let(:destination) do
-      VbmsDistributionDestination.new(
-        destination_type: "militaryAddress",
-        vbms_distribution: distribution,
-        address_line_1: "address line 1",
-        city: "city",
-        state: "NY",
-        postal_code: "11385",
-        country_code: "US"
-      )
-    end
+    before { destination.destination_type = "militaryAddress" }
 
     include_examples "destination has valid attributes"
     include_examples "destination is a physical mailing address"
@@ -134,12 +124,9 @@ describe VbmsDistributionDestination, :postgres do
   end
 
   context "destination type is internationalAddress" do
-    let(:destination) do
-      VbmsDistributionDestination.new(
+    before do
+      destination.update(
         destination_type: "internationalAddress",
-        vbms_distribution: distribution,
-        address_line_1: "address line 1",
-        city: "city",
         country_name: "France",
         country_code: "FR"
       )
@@ -152,6 +139,49 @@ describe VbmsDistributionDestination, :postgres do
       destination.country_name = nil
       expect(destination).to_not be_valid
       expect(destination.errors[:country_name]).to eq(["can't be blank"])
+    end
+  end
+
+  context "destination type is derived" do
+    let(:destination) do
+      VbmsDistributionDestination.new(
+        destination_type: "derived",
+        vbms_distribution: distribution
+      )
+    end
+
+    before { distribution.recipient_type = "ro-colocated" }
+
+    it "the recipient_type of associated vbms_distribution must be ro-colocated" do
+      expect(destination).to be_valid
+
+      distribution.recipient_type = "person"
+      expect(destination).to_not be_valid
+
+      error_msg = destination.errors.messages[:destination_type]
+      expect(error_msg).to eq(["cannot be derived unless recipient type of associated distribution is ro-colocated"])
+    end
+
+    PHYSICAL_ADDRESS_FIELDS = [
+      :address_line_1, :address_line_2, :address_line_3, :address_line_4, :address_line_5, :address_line_6,
+      :treat_line_2_as_addressee, :treat_line_3_as_addressee, :city, :state, :postal_code, :country_name,
+      :country_code
+    ].freeze
+
+    it "physical mailing address fields must be blank" do
+      PHYSICAL_ADDRESS_FIELDS.each do |field|
+        destination[field] = "address info"
+        expect(destination).to_not be_valid
+        expect(destination.errors[field]).to eq(["must be blank"])
+      end
+    end
+
+    context "recipient_type of associated vbms_distribution is ro-colocated" do
+      it "must have a destination_type of derived" do
+        destination.destination_type = "domesticAddress"
+        expect(destination).to_not be_valid
+        expect(destination.errors[:destination_type]).to eq(["must be derived if recipient type is ro-colocated"])
+      end
     end
   end
 end

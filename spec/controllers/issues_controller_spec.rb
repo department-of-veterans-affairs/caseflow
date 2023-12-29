@@ -26,9 +26,7 @@ RSpec.describe IssuesController, :all_dbs, type: :controller do
           level_1: "03",
           level_2: "5252",
           level_3: nil,
-          note: "test",
-          mst_status: "Y",
-          pact_status: "Y"
+          note: "test"
         }
       end
 
@@ -84,9 +82,7 @@ RSpec.describe IssuesController, :all_dbs, type: :controller do
           level_1: "03",
           level_2: "04",
           level_3: nil,
-          note: "test",
-          mst_status: "N",
-          pact_status: "N"
+          note: "test"
         }
       end
 
@@ -108,9 +104,7 @@ RSpec.describe IssuesController, :all_dbs, type: :controller do
           level_1: "03",
           level_2: "5252",
           level_3: nil,
-          note: "test",
-          mst_status: "N",
-          pact_status: "Y"
+          note: "test"
         }
       end
 
@@ -135,9 +129,7 @@ RSpec.describe IssuesController, :all_dbs, type: :controller do
           level_1: "03",
           level_2: "5252",
           level_3: nil,
-          note: "test",
-          mst_status: "N",
-          pact_status: "Y"
+          note: "test"
         }
       end
 
@@ -170,9 +162,7 @@ RSpec.describe IssuesController, :all_dbs, type: :controller do
           level_1: "03",
           level_2: "04",
           level_3: nil,
-          note: "test",
-          mst_status: "N",
-          pact_status: "N"
+          note: "test"
         }
       end
 

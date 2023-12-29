@@ -15,9 +15,15 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
   def perform
     RequestStore[:current_user] = User.system_user
 
-    all_active_legacy_appeals = (appeals_recently_outcoded + appeals_never_synced + ready_for_resync).uniq
+    all_active_legacy_appeals = if FeatureToggle.enabled?(:phase_1_notification_sync_job_rollout)
+                                  appeals_never_synced
+                                elsif FeatureToggle.enabled?(:phase_2_notification_sync_job_rollout)
+                                  appeals_never_synced + ready_for_resync
+                                else
+                                  appeals_recently_outcoded + appeals_never_synced + ready_for_resync
+                                end
 
-    sync_notification_reports(all_active_legacy_appeals.first(BATCH_LIMIT.to_i))
+    sync_notification_reports(all_active_legacy_appeals.uniq(&:id).first(BATCH_LIMIT.to_i))
   end
 
   private
@@ -124,8 +130,16 @@ class LegacyNotificationEfolderSyncJob < CaseflowJob
     <<-SQL
       SELECT n1.* FROM legacy_appeals a
       JOIN notifications n1 on n1.appeals_id = a.vacols_id AND n1.appeals_type = 'LegacyAppeal'
-      LEFT OUTER JOIN notifications n2 ON (n2.appeals_id = a.vacols_id AND n1.appeals_type = 'LegacyAppeal' AND
-          (n1.notified_at < n2.notified_at OR (n1.notified_at = n2.notified_at AND n1.id < n2.id)))
+      AND (n1.email_notification_status IS NULL OR
+        n1.email_notification_status NOT IN ('No Participant Id Found', 'No Claimant Found', 'No External Id'))
+      AND (n1.sms_notification_status IS NULL OR
+          n1.sms_notification_status NOT IN ('No Participant Id Found', 'No Claimant Found', 'No External Id'))
+      LEFT OUTER JOIN notifications n2 ON (n2.appeals_id = a.vacols_id AND n1.appeals_type = 'LegacyAppeal'
+        AND (n2.email_notification_status IS NULL OR
+          n2.email_notification_status NOT IN ('No Participant Id Found', 'No Claimant Found', 'No External Id'))
+        AND (n2.sms_notification_status IS NULL OR
+            n2.sms_notification_status NOT IN ('No Participant Id Found', 'No Claimant Found', 'No External Id'))
+        AND (n1.notified_at < n2.notified_at OR (n1.notified_at = n2.notified_at AND n1.id < n2.id)))
       WHERE n2.id IS NULL
         AND n1.id IS NOT NULL
         AND (n1.email_notification_status <> 'Failure Due to Deceased'

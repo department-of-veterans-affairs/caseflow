@@ -199,8 +199,6 @@ const appealAttributesFromRawTask = (task) => ({
   veteranFullName: task.attributes.veteran_full_name,
   veteranFileNumber: task.attributes.veteran_file_number,
   isPaperCase: task.attributes.paper_case,
-  mst: task.attributes.mst,
-  pact: task.attributes.pact
 });
 
 const extractAppealsFromTasks = (tasks) => {
@@ -278,8 +276,6 @@ export const prepareLegacyTasksForStore = (tasks) => {
           task.attributes.latest_informal_hearing_presentation_task
             ?.received_at,
       },
-      mst: task.attributes.mst,
-      pact: task.attributes.pact
     };
   });
 
@@ -402,6 +398,7 @@ const prepareLocationHistoryForStore = (appeal) => {
   return locationHistory;
 };
 
+
 export const prepareAppealForStore = (appeals) => {
   const appealHash = appeals.reduce((accumulator, appeal) => {
     const {
@@ -442,8 +439,6 @@ export const prepareAppealForStore = (appeals) => {
         appeal.attributes.readable_original_hearing_request_type,
       vacateType: appeal.attributes.vacate_type,
       cavcRemandsWithDashboard: appeal.attributes.cavc_remands_with_dashboard,
-      mst: appeal.attributes.mst,
-      pact: appeal.attributes.pact
     };
 
     return accumulator;
@@ -518,8 +513,69 @@ export const prepareAppealForStore = (appeals) => {
       remandJudgeName: appeal.attributes.remand_judge_name,
       hasNotifications: appeal.attributes.has_notifications,
       locationHistory: prepareLocationHistoryForStore(appeal),
-      mst: appeal.attributes.mst,
-      pact: appeal.attributes.pact
+    };
+
+    return accumulator;
+  }, {});
+
+  return {
+    appeals: appealHash,
+    appealDetails: appealDetailsHash,
+  };
+};
+
+export const prepareAppealForSearchStore = (appeals) => {
+  const appealHash = appeals.reduce((accumulator, appeal) => {
+    const {
+      attributes: { issues },
+    } = appeal;
+
+    accumulator[appeal.attributes.external_id] = {
+      id: appeal.id,
+      externalId: appeal.attributes.external_id,
+      docketName: appeal.attributes.docket_name,
+      withdrawn: appeal.attributes.withdrawn,
+      overtime: appeal.attributes.overtime,
+      contestedClaim: appeal.attributes.contested_claim,
+      veteranAppellantDeceased: appeal.attributes.veteran_appellant_deceased,
+      withdrawalDate: formatDateStrUtc(appeal.attributes.withdrawal_date),
+      isLegacyAppeal: appeal.attributes.docket_name === 'legacy',
+      caseType: appeal.attributes.type,
+      isAdvancedOnDocket: appeal.attributes.aod,
+      issueCount: (appeal.attributes.docket_name === 'legacy' ?
+        getUndecidedIssues(issues) :
+        issues
+      ).length,
+      docketNumber: appeal.attributes.docket_number,
+      distributedToJudge: appeal.attributes.distributed_to_a_judge,
+      veteranFullName: appeal.attributes.veteran_full_name,
+      veteranFileNumber: appeal.attributes.veteran_file_number,
+      isPaperCase: appeal.attributes.paper_case,
+      vacateType: appeal.attributes.vacate_type,
+    };
+
+    return accumulator;
+  }, {});
+
+
+  const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
+    accumulator[appeal.attributes.external_id] = {
+      hearings: prepareAppealHearingsForStore(appeal),
+      issues: prepareAppealIssuesForStore(appeal),
+      decisionIssues: appeal.attributes.decision_issues,
+      appellantFullName: appeal.attributes.appellant_full_name,
+      appellantPhoneNumber: appeal.attributes.appellant_phone_number,
+      contestedClaim: appeal.attributes.contested_claim,
+      assignedToLocation: appeal.attributes.assigned_to_location,
+      veteranParticipantId: appeal.attributes.veteran_participant_id,
+      externalId: appeal.attributes.external_id,
+      status: appeal.attributes.status,
+      decisionDate: appeal.attributes.decision_date,
+      caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
+      availableHearingLocations: prepareAppealAvailableHearingLocationsForStore(
+        appeal
+      ),
+      locationHistory: prepareLocationHistoryForStore(appeal),
     };
 
     return accumulator;
@@ -618,36 +674,6 @@ export const getIssueDiagnosticCodeLabel = (code) => {
   }
 
   return `${code} - ${readableLabel.staff_description}`;
-};
-
-export const getMstPactStatus = (issue) => {
-  const mstStatus = issue.mst_status;
-  const pactStatus = issue.pact_status;
-
-  if (!mstStatus && !pactStatus) {
-    return 'None';
-  } else if (mstStatus && pactStatus) {
-    return 'MST and PACT';
-  } else if (mstStatus) {
-    return 'MST';
-  } else if (pactStatus) {
-    return 'PACT';
-  }
-};
-
-export const getLegacyMstPactStatus = (issue) => {
-  const mstStatusLegacy = issue.mst_status;
-  const pactStatusLegacy = issue.pact_status;
-
-  if (!mstStatusLegacy && !pactStatusLegacy) {
-    return 'None';
-  } else if (mstStatusLegacy && pactStatusLegacy) {
-    return 'MST and PACT';
-  } else if (mstStatusLegacy) {
-    return 'MST';
-  } else if (pactStatusLegacy) {
-    return 'PACT';
-  }
 };
 
 // Build case review payloads for attorney decision draft submissions as well as judge decision evaluations.
@@ -1052,4 +1078,8 @@ export const getPreviousTaskInstructions = (parentTask, tasks) => {
   const previousInstructions = reviewNotes ? childTask.instructions.slice(-1)[0] : null;
 
   return { reviewNotes, previousInstructions };
+};
+
+export const replaceSpecialCharacters = (string_replace) => {
+  return string_replace.replace(/[^\w\s]/gi, '_')
 };

@@ -10,6 +10,7 @@ class IntakesController < ApplicationController
 
   def index
     no_cache
+
     respond_to do |format|
       format.html { render(:index) }
     end
@@ -42,7 +43,6 @@ class IntakesController < ApplicationController
   def review
     if intake.review!(params)
       render json: intake.ui_hash
-
     else
       render json: { error_codes: intake.review_errors }, status: :unprocessable_entity
     end
@@ -56,9 +56,10 @@ class IntakesController < ApplicationController
 
   def complete
     intake.complete!(params)
+
     if !detail.is_a?(Appeal) && detail.try(:processed_in_caseflow?)
-      flash[:success] = success_message
-      render json: { serverIntake: { redirect_to: detail.business_line.tasks_url } }
+      flash[:success] = (detail.benefit_type == "vha") ? vha_success_message : success_message
+      render json: { serverIntake: { redirect_to: detail.try(:redirect_url) || business_line.tasks_url } }
     else
       render json: intake.ui_hash
     end
@@ -97,7 +98,6 @@ class IntakesController < ApplicationController
     {
       userDisplayName: current_user.display_name,
       userCanIntakeAppeals: current_user.can_intake_appeals?,
-      userCanEditIntakeIssues: current_user.can_edit_intake_issues?,
       serverIntake: intake_ui_hash,
       dropdownUrls: dropdown_urls,
       applicationUrls: application_urls,
@@ -151,13 +151,10 @@ class IntakesController < ApplicationController
       filedByVaGovHlr: FeatureToggle.enabled?(:filed_by_va_gov_hlr, user: current_user),
       updatedIntakeForms: FeatureToggle.enabled?(:updated_intake_forms, user: current_user),
       eduPreDocketAppeals: FeatureToggle.enabled?(:edu_predocket_appeals, user: current_user),
-      mstIdentification: FeatureToggle.enabled?(:mst_identification, user: current_user),
-      pactIdentification: FeatureToggle.enabled?(:pact_identification, user: current_user),
-      legacyMstPactIdentification: FeatureToggle.enabled?(:legacy_mst_pact_identification, user: current_user),
-      justificationReason: FeatureToggle.enabled?(:justification_reason, user: current_user),
       updatedAppealForm: FeatureToggle.enabled?(:updated_appeal_form, user: current_user),
       hlrScUnrecognizedClaimants: FeatureToggle.enabled?(:hlr_sc_unrecognized_claimants, user: current_user),
-      vhaClaimReviewEstablishment: FeatureToggle.enabled?(:vha_claim_review_establishment, user: current_user)
+      vhaClaimReviewEstablishment: FeatureToggle.enabled?(:vha_claim_review_establishment, user: current_user),
+      metricsBrowserError: FeatureToggle.enabled?(:metrics_browser_error, user: current_user)
     }
   end
 
@@ -193,9 +190,23 @@ class IntakesController < ApplicationController
     @detail ||= intake&.detail
   end
 
+  def claimant_name
+    if detail.veteran_is_not_claimant
+      detail.claimant.try(:name)
+    else
+      detail.veteran_full_name
+    end
+  end
+
   def success_message
-    claimant_name = detail.veteran_full_name
-    claimant_name = detail.claimant.try(:name) if detail.veteran_is_not_claimant
     "#{claimant_name} (Veteran SSN: #{detail.veteran.ssn}) #{detail.class.review_title} has been processed."
+  end
+
+  def vha_success_message
+    if detail.request_issues_without_decision_dates?
+      "You have successfully saved #{claimant_name}'s #{detail.class.review_title}"
+    else
+      "You have successfully established #{claimant_name}'s #{detail.class.review_title}"
+    end
   end
 end

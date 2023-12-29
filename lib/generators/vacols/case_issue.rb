@@ -5,7 +5,7 @@ class Generators::Vacols::CaseIssue
     def case_issue_attrs
       {
         isskey: "877483",
-        issseq: 1,
+        issseq: 8,
         issprog: "02",
         isscode: "12",
         isslev1: "04",
@@ -25,12 +25,7 @@ class Generators::Vacols::CaseIssue
     end
 
     def create(attrs = [{}])
-      attrs = attrs.each_with_index do |issue, index|
-        # increment issseq
-        issue[:issseq] = index + 1
-
-        case_issue_attrs.merge(issue)
-      end
+      attrs = attrs.map { |issue| case_issue_attrs.merge(issue) }
 
       VACOLS::CaseIssue.create(attrs)
     end

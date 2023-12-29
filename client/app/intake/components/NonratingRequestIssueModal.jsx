@@ -16,7 +16,7 @@ import ISSUE_CATEGORIES from '../../../constants/ISSUE_CATEGORIES';
 import { validateDateNotInFuture, isTimely } from '../util/issues';
 import { formatDateStr } from 'app/util/DateUtil';
 import { VHA_PRE_DOCKET_ISSUE_BANNER } from 'app/../COPY';
-import Checkbox from '../../components/Checkbox';
+import { generateSkipButton } from '../util/buttonUtils';
 
 const NO_MATCH_TEXT = 'None of these match';
 
@@ -48,9 +48,6 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleReason: null,
       decisionReviewTitle: null,
       isPreDocketNeeded: null,
-      userCanEditIntakeIssues: props.userCanEditIntakeIssues,
-      mstChecked: false,
-      pactChecked: false,
       dateError: ''
     };
   }
@@ -69,17 +66,6 @@ class NonratingRequestIssueModal extends React.Component {
   isPreDocketNeededOnChange = (isPreDocketNeeded) => {
     this.setState({
       isPreDocketNeeded
-    });
-  };
-
-  isMstChecked = (mstChecked) => {
-    this.setState({
-      mstChecked
-    });
-  };
-  isPactChecked = (pactChecked) => {
-    this.setState({
-      pactChecked
     });
   };
 
@@ -151,8 +137,6 @@ class NonratingRequestIssueModal extends React.Component {
       ineligibleReason,
       decisionReviewTitle,
       isPreDocketNeeded,
-      mstChecked,
-      pactChecked,
     } = this.state;
 
     const currentIssue = {
@@ -165,8 +149,6 @@ class NonratingRequestIssueModal extends React.Component {
       decisionReviewTitle,
       isRating: false,
       isPreDocketNeeded,
-      mstChecked,
-      pactChecked,
       timely: isTimely(formType, decisionDate, intakeData.receiptDate)
     };
 
@@ -193,10 +175,17 @@ class NonratingRequestIssueModal extends React.Component {
     return (
       !description ||
       !category ||
-      !decisionDate ||
+      (!this.vhaHlrOrSC() && !decisionDate) ||
       (formType === 'appeal' && !benefitType) ||
       enforcePreDocketRequirement
     );
+  }
+
+  vhaHlrOrSC() {
+    const { benefitType } = this.state;
+    const { formType } = this.props;
+
+    return ((formType === 'higher_level_review' || formType === 'supplemental_claim') && benefitType === 'vha');
   }
 
   getModalButtons() {
@@ -210,17 +199,11 @@ class NonratingRequestIssueModal extends React.Component {
         classNames: ['usa-button', 'add-issue'],
         name: this.props.submitText,
         onClick: this.onAddIssue,
-        disabled: this.requiredFieldsMissing() || this.state.decisionDate.length < 10 || Boolean(this.state.dateError)
+        disabled: this.requiredFieldsMissing() || Boolean(this.state.dateError)
       }
     ];
 
-    if (this.props.onSkip) {
-      btns.push({
-        classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
-        name: this.props.skipText,
-        onClick: this.props.onSkip
-      });
-    }
+    generateSkipButton(btns, this.props);
 
     return btns;
   }
@@ -285,6 +268,7 @@ class NonratingRequestIssueModal extends React.Component {
             errorMessage={this.state.dateError}
             onChange={this.decisionDateOnChange}
             type="date"
+            optional={this.vhaHlrOrSC()}
           />
         </div>
 
@@ -293,34 +277,10 @@ class NonratingRequestIssueModal extends React.Component {
     );
   }
 
-  getSpecialIssues() {
-    return (
-      <div className="special-issues-selection">
-        <label><b>Select any special issues that apply</b></label>
-        <Checkbox
-          name="mst-checkbox"
-          label="Military Sexual Trauma (MST)"
-          value={this.mstChecked}
-          onChange={this.isMstChecked}
-        />
-        <Checkbox
-          name="pact-checkbox"
-          label="PACT Act"
-          value={this.pactChecked}
-          onChange={this.isPactChecked}
-        />
-      </div>
-    );
-  }
-
   render() {
     const { formType, intakeData, onCancel, featureToggles } = this.props;
     const { benefitType, category, selectedNonratingIssueId, isPreDocketNeeded } = this.state;
     const eduPreDocketAppeals = featureToggles.eduPreDocketAppeals;
-    const mstIdentification = featureToggles.mstIdentification && formType === 'appeal' ?
-      featureToggles.mstIdentification : featureToggles.mst_identification;
-    const pactIdentification = featureToggles.pactIdentification && formType === 'appeal' ?
-      featureToggles.pactIdentification : featureToggles.pact_identification;
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
 
@@ -344,10 +304,6 @@ class NonratingRequestIssueModal extends React.Component {
     const preDocketRadioFields =
       formType === 'appeal' ? <PreDocketRadioField value={isPreDocketNeeded}
         onChange={this.isPreDocketNeededOnChange} /> : null;
-
-    const getSpecialIssues =
-      ((mstIdentification || pactIdentification) && this.props.userCanEditIntakeIssues) ?
-        this.getSpecialIssues() : null;
 
     return (
       <div className="intake-add-issues">
@@ -378,9 +334,6 @@ class NonratingRequestIssueModal extends React.Component {
             </div>
             {(isPreDocketNeeded === 'true' && showPreDocketBanner) &&
               <Alert message={VHA_PRE_DOCKET_ISSUE_BANNER} type="info" />}
-            <div className="get-special-issues">
-              {getSpecialIssues}
-            </div>
           </div>
         </Modal>
       </div>
@@ -400,9 +353,6 @@ NonratingRequestIssueModal.propTypes = {
   activeNonratingRequestIssues: PropTypes.object,
   receiptDate: PropTypes.string,
   addedIssues: PropTypes.array,
-  userCanEditIntakeIssues: PropTypes.bool,
-  mstChecked: PropTypes.bool,
-  pactChecked: PropTypes.bool,
   featureToggles: PropTypes.object
 };
 

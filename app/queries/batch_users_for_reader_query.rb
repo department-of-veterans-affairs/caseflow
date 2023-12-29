@@ -7,7 +7,7 @@ class BatchUsersForReaderQuery
     User.where("(efolder_documents_fetched_at <= ? " \
                "OR efolder_documents_fetched_at IS NULL) " \
                "AND last_login_at >= ?", 24.hours.ago, 1.week.ago)
-      .order("efolder_documents_fetched_at IS NULL DESC, efolder_documents_fetched_at ASC")
+      .order(Arel.sql("efolder_documents_fetched_at IS NULL DESC, efolder_documents_fetched_at ASC"))
       .limit(DEFAULT_USERS_LIMIT)
   end
 end

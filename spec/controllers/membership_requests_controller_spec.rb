@@ -6,7 +6,7 @@ describe MembershipRequestsController, :postgres, type: :controller do
   let(:requestor) { create(:user, css_id: "REQUESTOR1", email: "requestoremail@test.com", full_name: "Gaius Baelsar") }
   let(:camo_admin) { create(:user, css_id: "CAMO ADMIN", email: "camoemail@test.com", full_name: "CAMO ADMIN") }
   let(:camo_org) { VhaCamo.singleton }
-  let(:vha_business_line) { BusinessLine.find_by(url: "vha") }
+  let(:vha_business_line) { VhaBusinessLine.singleton }
   let(:existing_org) { create(:organization, name: "Testing Adverse Affects", url: "adverse-1") }
   let(:camo_membership_request) { create(:membership_request, organization: camo_org, requestor: requestor) }
   let(:vha_membership_request) { create(:membership_request, organization: vha_business_line, requestor: requestor) }
@@ -229,7 +229,7 @@ describe MembershipRequestsController, :postgres, type: :controller do
 
   def create_vha_orgs
     VhaCamo.singleton
-    create(:business_line, name: "Veterans Health Administration", url: "vha")
+    VhaBusinessLine.singleton
     VhaCaregiverSupport.singleton
     create(:vha_program_office,
            name: "Community Care - Veteran and Family Members Program",

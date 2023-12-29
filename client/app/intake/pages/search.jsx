@@ -64,9 +64,33 @@ const incidentFlashError = React.createElement(
 );
 
 class Search extends React.PureComponent {
-  handleSearchSubmit = () => (
-    this.props.doFileNumberSearch(this.props.formType, this.props.fileNumberSearchInput)
-  )
+  constructor(props) {
+    super(props);
+    this.state = {
+      isWaitingForResponse: false
+    };
+    this.updateIsWaitingForResponse = this.updateIsWaitingForResponse.bind(this);
+  }
+
+  updateIsWaitingForResponse(nextState) {
+    this.setState({ isWaitingForResponse: nextState });
+  }
+
+  handleSearchSubmit = () => {
+    if (this.state.isWaitingForResponse) {
+      return;
+    }
+
+    this.updateIsWaitingForResponse(true);
+
+    return (
+      this.props.doFileNumberSearch(
+        this.props.formType,
+        this.props.fileNumberSearchInput,
+        this.updateIsWaitingForResponse
+      )
+    );
+  }
 
   clearSearch = () => this.props.setFileNumberSearch('')
 

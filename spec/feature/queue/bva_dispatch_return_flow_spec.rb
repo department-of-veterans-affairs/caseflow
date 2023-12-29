@@ -89,6 +89,10 @@ def attorney_checkout
   visit "/queue"
   click_on veteran_full_name
   click_dropdown(prompt: "Select an action", text: "Decision ready for review")
+  if !find("#no_special_issues", visible: false).checked?
+    find("label", text: "No Special Issues").click
+  end
+  click_on "Continue"
 
   click_on "+ Add decision"
   fill_in "Text Box", with: "test"
@@ -102,11 +106,13 @@ def attorney_checkout
   click_on "Continue"
 end
 
+# rubocop:disable Metrics/AbcSize
 def judge_checkout
   User.authenticate!(user: judge_user)
   visit "/queue"
   click_on "(#{appeal.veteran_file_number})"
   click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
+  click_on "Continue" if page.has_content?("No Special Issues")
   click_on "Continue"
   find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
   text_to_click = "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"
@@ -118,3 +124,4 @@ def judge_checkout
   fill_in "additional-factors", with: dummy_note
   click_on "Continue"
 end
+# rubocop:enable Metrics/AbcSize

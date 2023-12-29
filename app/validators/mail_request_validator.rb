@@ -35,6 +35,18 @@ module MailRequestValidator
         validates :country_name, if: -> { destination_type == "internationalAddress" }
       end
 
+      # If destination type is derived:
+      #   - The recipient type of associated distribution must be ro-colocated
+      #   - All physical address fields must be null/blank
+      with_options if: -> { destination_type == "derived" } do
+        validate :recipient_type_ro_colocated?
+        validates(*PHYSICAL_ADDRESS_FIELDS, absence: true)
+      end
+      # And vice versa: if recipient type is ro-colocated, destination type must be derived
+      validates :destination_type,
+                inclusion: { in: ["derived"], message: "must be derived if recipient type is ro-colocated" },
+                if: -> { ro_colocated? }
+
       validates :treat_line_2_as_addressee,
                 inclusion: { in: [true], message: "cannot be false if line 3 is treated as addressee" },
                 if: -> { treat_line_3_as_addressee == true }
@@ -49,8 +61,30 @@ module MailRequestValidator
       %w[domesticAddress internationalAddress militaryAddress].include?(destination_type)
     end
 
+    PHYSICAL_ADDRESS_FIELDS = [
+      :address_line_1, :address_line_2, :address_line_3, :address_line_4, :address_line_5, :address_line_6,
+      :treat_line_2_as_addressee, :treat_line_3_as_addressee, :city, :state, :postal_code, :country_name,
+      :country_code
+    ].freeze
+
     def us_address?
       %w[domesticAddress militaryAddress].include?(destination_type)
+    end
+
+    def ro_colocated?
+      case self
+      when MailRequest then recipient_type == "ro-colocated"
+      when VbmsDistributionDestination then vbms_distribution&.recipient_type == "ro-colocated"
+      else
+        false
+      end
+    end
+
+    def recipient_type_ro_colocated?
+      unless ro_colocated?
+        errors.add(:destination_type,
+                   "cannot be derived unless recipient type of associated distribution is ro-colocated")
+      end
     end
 
     def valid_country_code?

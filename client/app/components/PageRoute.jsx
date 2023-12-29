@@ -31,7 +31,10 @@ const PageRoute = (props) => {
 
   // Render the Loading Screen while the default route props are loading
   return loading ?
-    <LoadingScreen spinnerColor={LOGO_COLORS[props.appName.toUpperCase()].ACCENT} message={loadingMessage} /> :
+    <LoadingScreen
+      spinnerColor={LOGO_COLORS[props.appName.toUpperCase()].ACCENT}
+      message={loadingMessage}
+    /> :
     <Route {...routeProps} />;
 };
 

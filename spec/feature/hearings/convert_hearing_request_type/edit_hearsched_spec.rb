@@ -218,6 +218,7 @@ RSpec.feature "Convert hearing request type" do
 
           step "go to schedule veterans page" do
             visit "hearings/schedule/assign"
+            expect(page).to have_content("Regional Office")
 
             click_dropdown(text: "Virtual Hearings")
           end
@@ -272,6 +273,7 @@ RSpec.feature "Convert hearing request type" do
 
         # Check the schedule veterans tab to ensure the hearing is present
         visit "hearings/schedule/assign"
+        expect(page).to have_content("Regional Office")
 
         click_dropdown(text: "Central")
         click_button("AMA Veterans Waiting")
@@ -320,6 +322,7 @@ RSpec.feature "Convert hearing request type" do
 
         # Check the schedule veterans tab to ensure the hearing is present
         visit "hearings/schedule/assign"
+        expect(page).to have_content("Regional Office")
 
         click_dropdown(text: "St. Petersburg, FL")
         click_button("AMA Veterans Waiting")

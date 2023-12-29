@@ -7,6 +7,8 @@ import IssueCounter from '../../components/IssueCounter';
 import { completeIntake } from '../../actions/decisionReview';
 import { REQUEST_STATE, FORM_TYPES } from '../../constants';
 import { issueCountSelector } from '../../selectors';
+import { some } from 'lodash';
+import PropTypes from 'prop-types';
 
 class FinishNextButton extends React.PureComponent {
   handleClick = () => {
@@ -20,7 +22,13 @@ class FinishNextButton extends React.PureComponent {
   }
 
   buttonText = () => {
-    if (this.props.higherLevelReview.processedInCaseflow) {
+    const { benefitType, addedIssues, processedInCaseflow } = this.props.higherLevelReview;
+
+    if (benefitType === 'vha' && some(addedIssues, (obj) => !obj.decisionDate)) {
+      return `Save ${FORM_TYPES.HIGHER_LEVEL_REVIEW.shortName}`;
+    }
+
+    if (processedInCaseflow) {
       return `Establish ${FORM_TYPES.HIGHER_LEVEL_REVIEW.shortName}`;
     }
 
@@ -37,6 +45,16 @@ class FinishNextButton extends React.PureComponent {
       {this.buttonText()}
     </Button>;
 }
+
+FinishNextButton.propTypes = {
+  issueCount: PropTypes.number,
+  requestState: PropTypes.string,
+  addedIssues: PropTypes.shape([PropTypes.object]),
+  higherLevelReview: PropTypes.object,
+  completeIntake: PropTypes.func,
+  history: PropTypes.object,
+  intakeId: PropTypes.number,
+};
 
 const FinishNextButtonConnected = connect(
   ({ higherLevelReview, intake }) => ({
@@ -66,4 +84,8 @@ export class FinishButtons extends React.PureComponent {
       <IssueCounterConnected />
     </div>
 }
+
+FinishButtons.propTypes = {
+  history: PropTypes.object
+};
 
