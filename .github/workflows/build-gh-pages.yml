@@ -99,8 +99,8 @@ jobs:
       - name: "✏️ Update task_trees subsite with Caseflow code comments"
         env:
           WIKI_COMMIT_MESSAGE: '`comments_to_descriptions.py` - automatic update of task_trees docs with Caseflow code comments'
-          WIKI_COMMIT_USER_EMAIL: 'yoomlam@navapbc.com'
-          WIKI_COMMIT_USER_NAME: 'yoomlam'
+          WIKI_COMMIT_USER_EMAIL: 'Quillman_Samantha@bah.com'
+          WIKI_COMMIT_USER_NAME: 'samantha-quillman'
         run: |
           MY_HOME=`pwd`
           cd __task_trees/content/trees
