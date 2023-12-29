@@ -2,7 +2,6 @@ name: Make-docs-to-webpage
 
 # Trigger running when a PR is closed
 on:
-  workflow_dispatch:
   pull_request:
     types: [ closed ]
 
