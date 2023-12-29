@@ -1,3 +1,5 @@
+require 'csv'
+
 class CaseDistributionLeversTestsController < ApplicationController
   before_action :set_user, only: [:add_user, :remove_user, :make_admin, :remove_admin]
   before_action :check_environment
@@ -44,6 +46,33 @@ class CaseDistributionLeversTestsController < ApplicationController
     OrganizationsUser.remove_admin_rights_from_user(@user, CDAControlGroup.singleton)
 
     reload_page
+  end
+
+  def appeals_ready_to_distribute
+    csv_data = AppealsReadyForDistribution.process
+
+    # Get the current date and time for dynamic filename
+    current_datetime = Time.now.strftime('%Y%m%d-%H%M')
+
+    # Set dynamic filename with current date and time
+    filename = "appeals_ready_to_distribute_#{current_datetime}.csv"
+
+    # Send CSV as a response with dynamic filename
+    send_data csv_data, filename: filename
+  end
+
+  def appeals_distributed
+    # change this to the correct class
+    csv_data = BatchAppealsForReaderQuery.process
+
+    # Get the current date and time for dynamic filename
+    current_datetime = Time.now.strftime('%Y%m%d-%H%M')
+
+    # Set dynamic filename with current date and time
+    filename = "distributed_appeals_#{current_datetime}.csv"
+
+    # Send CSV as a response with dynamic filename
+    send_data csv_data, filename: filename
   end
 
   private

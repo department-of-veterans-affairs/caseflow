@@ -34,6 +34,11 @@ class Docket
     appeals(priority: priority, ready: ready).ids.size
   end
 
+  # currently this is used for reporting needs
+  def ready_to_distribute_appeals
+    docket_appeals.active.ready_for_distribution
+  end
+
   def genpop_priority_count
     # By default all cases are considered genpop. This can be overridden for specific dockets
     # For evidence submission and direct review docket, all appeals are genpop;

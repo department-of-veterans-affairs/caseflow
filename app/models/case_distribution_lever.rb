@@ -8,7 +8,7 @@ class CaseDistributionLever < ApplicationRecord
   validates :is_disabled, inclusion: { in: [true, false] }
 
   self.table_name = "case_distribution_levers"
-  INTEGER_LEVERS = %w(direct_docket_time_goal request_more_cases_minimum alternative_batch_size batch_size_per_attorney days_before_goal_due_for_distribution ama_hearing_case_affinity_days cavc_affinity_days)
+  INTEGER_LEVERS = %w(ama_direct_review_docket_time_goals request_more_cases_minimum alternative_batch_size batch_size_per_attorney days_before_goal_due_for_distribution ama_hearing_case_affinity_days cavc_affinity_days)
   FLOAT_LEVERS = %w(maximum_direct_review_proportion minimum_legacy_proportion nod_adjustment)
 
   def update_levers(lever_list)
