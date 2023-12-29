@@ -13,6 +13,8 @@ const LeverHistory = (props) => {
     if (!findTimestamp) {
       uniqueTimestamps.push(entry.created_at);
     }
+
+    return null;
   });
 
   const getUnitsFromLever = (lever) => {
@@ -39,8 +41,7 @@ const LeverHistory = (props) => {
 
     let titles = [];
 
-    props.historyData.map((entry) => {
-
+    props.historyData.forEach((entry) => {
       let sameTimestamp = entry.created_at === timestamp;
 
       if (sameTimestamp) {
@@ -58,12 +59,13 @@ const LeverHistory = (props) => {
       let sameTimestamp = entry.created_at === timestamp;
 
       if (sameTimestamp) {
-        let lever = leverStore.getState().levers.find((lever) => lever.title === entry.title);
-
-        let unit = getUnitsFromLever(lever);
+        let leverEntry = leverStore.getState().levers.find((lever) => lever.title === entry.title);
+        let unit = getUnitsFromLever(leverEntry);
 
         units.push(unit);
       }
+
+      return null;
     });
 
     return units;
@@ -81,6 +83,8 @@ const LeverHistory = (props) => {
 
         previousValues.push(entry.previous_value);
       }
+
+      return null;
     });
 
     return previousValues;
@@ -97,6 +101,8 @@ const LeverHistory = (props) => {
       if (sameTimestamp) {
         updatedValues.push(entry.update_value);
       }
+
+      return null;
     });
 
     return updatedValues;
@@ -113,11 +119,12 @@ const LeverHistory = (props) => {
       if (sameTimestamp) {
         user = entry.user_name;
       }
+
+      return null;
     });
 
     return user;
   };
-
 
   function formatTime(databaseDate) {
     // Create a Date object from the database date string
@@ -151,7 +158,7 @@ const LeverHistory = (props) => {
         units: getLeverUnitsAtTimestamp(time)
       };
 
-      formattedHistoryEntries.push(historyEntry);
+      return formattedHistoryEntries.push(historyEntry);
     });
 
     return formattedHistoryEntries;

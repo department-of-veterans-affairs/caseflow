@@ -8,6 +8,7 @@ import NumberField from 'app/components/NumberField';
 import TextField from 'app/components/TextField';
 import COPY from '../../../COPY';
 import leverInputValidation from './LeverInputValidation';
+import { checkIfOtherChangesExist } from '../utils';
 import {
   updateAffinityLever
 } from '../reducers/Levers/leversActions';
@@ -21,26 +22,10 @@ export const AffinityDays = (props) => {
   const futureLeverList = useSelector((state) => state.caseDistributionLevers.loadedLevers);
   // console.log(`log futureLeverList from hook: ${JSON.stringify(futureLeverList, null, 2)}`);
 
+
   const filteredLevers = leverList.map((item) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
   });
-
-  const checkIfOtherChangesExist = (currentLever) => {
-
-    let leversWithChangesList = [];
-
-    leverStore.getState().levers.map((lever) => {
-      if (lever.hasValueChanged === true && lever.item !== currentLever.item) {
-        leversWithChangesList.push(lever);
-      }
-    });
-
-    if (leversWithChangesList.length > 0) {
-      return true;
-    }
-
-    return false;
-  };
 
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },

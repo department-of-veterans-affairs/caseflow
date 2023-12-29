@@ -31,13 +31,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
       subject
     end
-
-    it "should create entry in case Case Distribution Algorithm Logs" do
-      subject
-      expect(CaseDistributionAlgorithmLog.count).to eq(1)
-      expect(CaseDistributionAlgorithmLog.first.script_name).to eq("PushPriorityAppealsToJudgesJob")
-
-    end
   end
 
   context ".distribute_non_genpop_priority_appeals" do

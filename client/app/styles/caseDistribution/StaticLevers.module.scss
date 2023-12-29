@@ -11,6 +11,8 @@
   column-span: all;
 };
 
+$stylingborderbottom: #ccc;
+
 .descriptionStyling {
   width: 100%;
   border: none;
@@ -19,7 +21,7 @@
   padding-right: 20px;
   padding-bottom: 20px;
   vertical-align: text-top;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid $stylingborderbottom;
 };
 
 .valueStyling {
@@ -32,18 +34,20 @@
   padding-bottom: 20px;
   padding-right: 20px;
   vertical-align: text-top;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid $stylingborderbottom;
 };
 
 .valueRightStyling {
   margin-right: 5px;
 }
 
+$tableheaderbordercolor: #d6d7d9;
+
 .tableHeaderStylingLeft {
   border-left: 0;
   border-right: 0;
   border-top: 0;
-  border-color: #d6d7d9;
+  border-color: $tableheaderbordercolor;
   font-family: Source Sans Pro;
   font-weight: 700;
   font-size: 19px;
@@ -54,7 +58,7 @@
   border-left: 0;
   border-right: 0;
   border-top: 0;
-  border-color: #d6d7d9;
+  border-color: $tableheaderbordercolor;
   font-family: Source Sans Pro;
   font-weight: 700;
   font-size: 20px;
