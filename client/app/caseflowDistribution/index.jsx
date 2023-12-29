@@ -26,7 +26,6 @@ class CaseflowDistribution extends React.PureComponent {
     };
 
     const leverStore = createStore(leversReducer, preloadedState);
-    const showSuccessBanner = leverStore.getState().showSuccessBanner;
     const Router = this.props.router || BrowserRouter;
     const initialState = leversReducer.initialState;
     const appName = 'Caseflow Distribution';
@@ -92,11 +91,14 @@ class CaseflowDistribution extends React.PureComponent {
       docketTimeGoalLevers
     };
 
-    batchSizeLevers = batchSizeLevers.sort((a,b) => batchLeverList.indexOf(a) - batchLeverList.indexOf(b));
-    affinityLevers = affinityLevers.sort((a,b) => affinityLeverList.indexOf(a) - affinityLeverList.indexOf(b));
-    docketDistributionPriorLevers = docketDistributionPriorLevers.sort((a,b) => docketDistributionPriorLeverList.indexOf(a) - docketDistributionPriorLeverList.indexOf(b));
-    docketTimeGoalLevers = docketTimeGoalLevers.sort((a,b) => docketTimeGoalLeverList.indexOf(a) - docketTimeGoalLeverList.indexOf(b));
-
+    batchSizeLevers = batchSizeLevers.sort((batchA, batchB) =>
+      batchLeverList.indexOf(batchA) - batchLeverList.indexOf(batchB));
+    affinityLevers = affinityLevers.sort((batchA, batchB) =>
+      affinityLeverList.indexOf(batchA) - affinityLeverList.indexOf(batchB));
+    docketDistributionPriorLevers = docketDistributionPriorLevers.sort((batchA, batchB) =>
+      docketDistributionPriorLeverList.indexOf(batchA) - docketDistributionPriorLeverList.indexOf(batchB));
+    docketTimeGoalLevers = docketTimeGoalLevers.sort((batchA, batchB) =>
+      docketTimeGoalLeverList.indexOf(batchA) - docketTimeGoalLeverList.indexOf(batchB));
 
     let leversList = {
       staticLevers,

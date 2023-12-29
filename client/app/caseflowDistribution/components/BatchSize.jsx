@@ -6,6 +6,7 @@ import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';
 import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';
+import { checkIfOtherChangesExist } from '../utils.js';
 
 const BatchSize = (props) => {
   const { leverList, leverStore } = props;
@@ -20,23 +21,6 @@ const BatchSize = (props) => {
     '& .cf-form-int-input label': { position: 'absolute', bottom: '8px', left: '75px' },
     '& .usa-input-error label': { bottom: '15px', left: '89px' }
   });
-
-  const checkIfOtherChangesExist = (currentLever) => {
-
-    let leversWithChangesList = [];
-
-    leverStore.getState().levers.map((lever) => {
-      if (lever.hasValueChanged === true && lever.item !== currentLever.item) {
-        leversWithChangesList.push(lever);
-      }
-    });
-
-    if (leversWithChangesList.length > 0) {
-      return true;
-    }
-
-    return false;
-  };
 
   const errorMessages = {};
   const [batchSizeLevers, setLever] = useState(filteredLevers);
