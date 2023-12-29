@@ -8,20 +8,13 @@ import NumberField from 'app/components/NumberField';
 import TextField from 'app/components/TextField';
 import COPY from '../../../COPY';
 import leverInputValidation from './LeverInputValidation';
+import { checkIfOtherChangesExist } from '../utils.js';
 
 const AffinityDays = (props) => {
   const { leverList, leverStore } = props;
   const filteredLevers = leverList.map((item) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
   });
-
-  const checkIfOtherChangesExist = (currentLever) => {
-    const leversWithChangesList = leverStore.getState().levers.filter(
-      (lever) => lever.hasValueChanged === true && lever.item !== currentLever.item
-    );
-
-    return leversWithChangesList.length > 0;
-  };
 
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
