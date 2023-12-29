@@ -222,12 +222,13 @@ class ApplicationController < ApplicationBaseController
     urls = defult_menu_items
     urls.concat(admin_menu_items)
 
-    if current_user.present? && current_user&.organizations && current_user&.organizations&.any?(&:users_can_view_levers?)
-      urls << case_distribution_url
-    end
-
     if current_user.present?
       urls.append(title: "Sign Out", link: url_for(controller: "/sessions", action: "destroy"), border: true)
+
+      if current_user.organizations&.any?(&:users_can_view_levers?)
+        urls << case_distribution_url
+      end
+
       if ApplicationController.dependencies_faked?
         urls.append(title: "Switch User", link: url_for(controller: "/test/users", action: "index"))
       end
