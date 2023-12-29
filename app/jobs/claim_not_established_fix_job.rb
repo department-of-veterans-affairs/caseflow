@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ClaimNotEstablishedFixJob < CaseflowJob
+  include MasterSchedulerInterface
+
   EPECODES = %w[030 040 930 682].freeze
 
   def initialize
