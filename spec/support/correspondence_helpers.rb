@@ -3,7 +3,7 @@
 module CorrespondenceHelpers
   def setup_access
     FeatureToggle.enable!(:correspondence_queue)
-    user = create(:user, roles: ["Mail Intake"])
+    user = create(:user, roles: ["Mail Team"])
     MailTeam.singleton.add_user(user)
     User.authenticate!(user: user)
   end

@@ -4,8 +4,28 @@ RSpec.feature("The Correspondence Intake page") do
   include CorrespondenceHelpers
   let(:organization) { MailTeam.singleton }
   let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
+  let(:unauthorized_user) { create(:user) }
 
-  before do
+  context "correspondence intake form access" do
+    before :each do
+      Bva.singleton.add_user(unauthorized_user)
+      User.authenticate!(user: unauthorized_user)
+    end
+
+    it "routes unauthorized user to /unauthorized if feature toggle is disabled" do
+      FeatureToggle.disable!(:correspondence_queue)
+      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+      expect(page).to have_current_path("/unauthorized")
+    end
+
+    it "routes unauthorized user to /unauthorized if feature toggle enabled" do
+      FeatureToggle.disable!(:correspondence_queue)
+      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+      expect(page).to have_current_path("/unauthorized")
+    end
+  end
+
+  before :each do
     organization.add_user(mail_user)
     mail_user.reload
   end
@@ -22,10 +42,11 @@ RSpec.feature("The Correspondence Intake page") do
       @correspondence_uuid = Correspondence.first.uuid
     end
 
-    it "routes user to /unauthorized if the feature toggle is disabled" do
+    it "routes user to /under_construction if the feature toggle is disabled" do
       FeatureToggle.disable!(:correspondence_queue)
+      User.authenticate!(user: mail_user)
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
-      expect(page).to have_current_path("/unauthorized")
+      expect(page).to have_current_path("/under_construction")
     end
 
     it "routes to intake if feature toggle is enabled" do
