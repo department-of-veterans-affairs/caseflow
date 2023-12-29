@@ -169,6 +169,12 @@ $error-before-bg-color: #e31c3d;
   }
 }
 
+.outlineRadioInput {
+  input{
+    outline: none;
+  }
+}
+
 .toggleInputHide {
   display: none;
 }
