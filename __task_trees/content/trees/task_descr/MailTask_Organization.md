@@ -16,6 +16,8 @@ Code comments extracted from Ruby file:
     - withdrawing an appeal
     - switching dockets
     - add post-decision motions
+    - postponing a hearing
+    - withdrawing a hearing
 * Adding a mail task to an appeal is done by mail team members and will create a task assigned to the mail team. It
   will also automatically create a child task assigned to the team the task should be routed to.
 <!-- class_comments:end -->
