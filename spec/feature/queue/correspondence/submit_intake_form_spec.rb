@@ -23,19 +23,50 @@ RSpec.feature("Correspondence Intake submission") do
 
   context "user selects completed mail tasks" do
     describe "success" do
-      # pending feature
+      it "displays confirm submission" do
+      visit_intake_form_step_2_with_appeals
+      page.all(".cf-form-checkbox")[2].click
+      click_button("Continue")
+      click_button("Submit")
+      click_button("Confirm")
+      using_wait_time(10) do
+        expect(page).to have_content("You have successfully submitted a correspondence record")
+      end
+      end
     end
   end
 
   context "user add tasks not related to an appeal" do
     describe "success" do
-      # pending feature
+      before do
+        require Rails.root.join("db/seeds/base.rb").to_s
+        Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
+        Seeds::AutoTexts.new.seed!
+      end
+      it "displays confirm submission" do
+        visit_intake_form_step_2_with_appeals
+        click_button("+ Add tasks")
+        all("#reactSelectContainer")[0].click
+        find_by_id("react-select-2-option-1").click
+        find_by_id("addAutotext").click
+        checkbox_text = "Possible motion pursuant to BVA decision dated mm/dd/yy"
+        within find_by_id("autotextModal") do
+          page.all(".cf-form-checkbox")[6].click
+          find_by_id("Add-autotext-button-id-1").click
+        end
+        click_button("Continue")
+        click_button("Submit")
+        click_button("Confirm")
+        using_wait_time(10) do
+          expect(page).to have_content("You have successfully submitted a correspondence record")
+        end
+      end
     end
+  end
 
     describe "failure" do
       # pending feature
     end
-  end
 
   context "user adds tasks related to an appeal" do
     describe "success" do
