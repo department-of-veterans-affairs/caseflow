@@ -187,7 +187,7 @@ export const ReviewForm = (props) => {
           name="Save changes"
           href="/queue/correspondence/12/intake"
           classNames={['usa-button-primary']}
-          disabled={!props.disableButton}
+          disabled={!props.disableButton || props.isReadOnly}
           onClick={handleSubmit}
         />
       </div>
@@ -203,6 +203,7 @@ export const ReviewForm = (props) => {
                   name="veteran-file-number-input"
                   useAriaLabel
                   errorMessage={props.errorMessage}
+                  readOnly={props.isReadOnly}
                 />
               </div>
 
@@ -226,6 +227,7 @@ export const ReviewForm = (props) => {
                 value={defaultSelectedValue}
                 options={generateOptions(props.reviewDetails.dropdown_values)}
                 onChange={handleSelect}
+                readOnly={props.isReadOnly}
               />
             </div>
 
@@ -238,6 +240,7 @@ export const ReviewForm = (props) => {
                 textAreaStyling={textareaWidth}
                 value={props.editableData.notes}
                 onChange={handleChangeNotes}
+                disabled={props.isReadOnly}
               />
             </div>
           </div>
@@ -289,7 +292,8 @@ ReviewForm.propTypes = {
   showModal: PropTypes.bool,
   handleModalClose: PropTypes.func,
   handleReview: PropTypes.func,
-  errorMessage: PropTypes.string
+  errorMessage: PropTypes.string,
+  isReadOnly: PropTypes.bool
 };
 
 export default ReviewForm;

@@ -45,13 +45,14 @@ class ReviewPackageData extends React.PureComponent {
       <div>
         <CmpInfoScaffolding
           correspondence={this.props.correspondence}
-          packageDocumentType = {this.props.packageDocumentType} />
+          packageDocumentType = {this.props.packageDocumentType}
+          isReadOnly={this.props.isReadOnly} />
       </div>
     );
   };
 }
 
-const CmpInfoScaffolding = () => {
+const CmpInfoScaffolding = ({ isReadOnly }) => {
   const correspondence = useSelector(
     (state) => state.reviewPackage.correspondence
   );
@@ -66,7 +67,7 @@ const CmpInfoScaffolding = () => {
     <div>
       <div style={{ display: 'inline-flex' }}>
         <h2 style={{ marginRight: '20px' }}> {COPY.CORRESPONDENCE_REVIEW_CMP_INFO_TITLE}</h2>
-        <EditModal />
+        <EditModal isReadOnly={isReadOnly} />
       </div>
 
       <TitleDetailsSubheader id="caseTitleDetailsSubheader">
@@ -95,7 +96,8 @@ const CmpInfoScaffolding = () => {
 
 CmpInfoScaffolding.propTypes = {
   packageDocumentType: PropTypes.object,
-  correspondence: PropTypes.object
+  correspondence: PropTypes.object,
+  isReadOnly: PropTypes.bool
 };
 
 TitleDetailsSubheaderSection.propTypes = {
@@ -105,7 +107,8 @@ TitleDetailsSubheaderSection.propTypes = {
 
 ReviewPackageData.propTypes = {
   correspondence: PropTypes.object,
-  packageDocumentType: PropTypes.object
+  packageDocumentType: PropTypes.object,
+  isReadOnly: PropTypes.bool
 };
 
 export default ReviewPackageData;
