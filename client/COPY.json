@@ -1422,7 +1422,10 @@
   "PACKAGE_ACTION_SPLIT_TITLE": "Request split package",
   "CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER": "The correspondence's documents have failed to upload to the eFolder",
   "CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE": "You can upload it from this page to the veteran's eFolder at a later time.",
-  "UNDER_CONSTRUCTION_MESSAGE": "This page is under construction.",
+  "ASSOCIATED_WITH_CLAIMS_FOLDER_MAIL_TASK_LABEL": "Associated with claims folder",
+  "VACOLS_UPDATED_MAIL_TASK_LABEL": "VACOLS updated",
+  "SENT_TO_ROJ_MAIL_TASK_LABEL": "Sent to ROJ",
+  "UNDER_CONSTRUCTION_MESSAGE": "This page is under construction."
   "CORRESPONDENCE_READONLY_BANNER_HEADER": "This package has a pending request",
   "CORRESPONDENCE_READONLY_BANNER_MESSAGE": "Any further actions cannot be made on this package until a supervisor or superuser reviews the request."
 }
