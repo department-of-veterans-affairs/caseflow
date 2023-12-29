@@ -34,6 +34,8 @@ class CorrespondenceTasksController < TasksController
 
   def create_correspondence_intake_task
     review_package_task = ReviewPackageTask.find_by(appeal_id: params[:id], type: ReviewPackageTask.name)
+    return render json: { message: "Correspondence Root Task not found" }, status: :not_found unless review_package_task
+
     current_parent = review_package_task.parent
     current_cit = CorrespondenceIntakeTask.find_by(parent_id: current_parent.id, type: CorrespondenceIntakeTask.name)
 
