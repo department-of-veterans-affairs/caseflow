@@ -250,8 +250,10 @@ RSpec.feature "MailTasks", :postgres do
       before do
         perform_enqueued_jobs do
           FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
-          page = appeal.is_a?(Appeal) ? "queue/appeals/#{appeal.uuid}" : "queue/appeals/#{appeal.vacols_id}"
+          uuid = appeal.is_a?(Appeal) ? appeal.uuid : appeal.vacols_id
+          page = "queue/appeals/#{uuid}"
           visit(page)
+          reload_case_detail_page(uuid)
           within("tr", text: "TASK", match: :first) do
             click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
                            text: Constants.TASK_ACTIONS.COMPLETE_AND_POSTPONE.label,
