@@ -186,7 +186,7 @@ export const AffinityDays = (props) => {
           title={option.text}
           label={option.unit}
           isInteger
-          readOnly={lever.is_disabled}
+          readOnly={lever.is_disabled ? true : (lever.value != option.item)}
           value={option.value}
           errorMessage={option.errorMessage}
           onChange={(event) => updatedLever(lever, option)(event)}
@@ -203,7 +203,7 @@ export const AffinityDays = (props) => {
           name={option.item}
           title={option.text}
           label={false}
-          readOnly={lever.is_disabled}
+          readOnly={lever.is_disabled ? true : (lever.value != option.item)}
           value={option.value}
           onChange={(event) => updatedLever(lever, option)(event)}
           id={`${lever.item}-${option.value}`}
@@ -269,7 +269,7 @@ export const AffinityDays = (props) => {
                     </label>
                   </div>
                   <div>
-                    <div className={styles.combinedRadioInput}>
+                    <div className={cx(styles.combinedRadioInput, (lever.value != option.item) ? styles.outlineRadioInput:'')}>
                       {generateFields(option.data_type, option, lever, isMemberUser)}
                     </div>
                   </div>
