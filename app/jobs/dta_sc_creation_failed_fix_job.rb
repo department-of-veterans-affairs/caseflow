@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class DtaScCreationFailedFixJob < CaseflowJob
+  # include MasterSchedulerInterface
+
   def initialize
     @stuck_job_report_service = StuckJobReportService.new
     @start_time = nil
@@ -37,8 +39,8 @@ class DtaScCreationFailedFixJob < CaseflowJob
 
   def loop_through_and_call_process_records
     begin
-      process_records_for_hlrs_with_errors if hlrs_with_errors.present?
-      process_records_for_appeals_with_errors if appeals_with_errors.present?
+      loop_through_and_process_records_for_hlrs_with_errors if hlrs_with_errors.present?
+      loop_through_and_process_records_for_appeals_with_errors if appeals_with_errors.present?
     rescue StandardError => error
       log_error(error)
     end
@@ -46,12 +48,16 @@ class DtaScCreationFailedFixJob < CaseflowJob
 
   # Methods for remdiating HLRs with errors
 
-  def process_records_for_hlrs_with_errors
+  def loop_through_and_process_records_for_hlrs_with_errors
     hlrs_with_errors.each do |hlr|
-      next unless remanded_hlr?(hlr)
+      begin
+        next unless remanded_hlr?(hlr)
 
-      @stuck_job_report_service.append_single_record(hlr.class.name, hlr.id)
-      process_records(hlr)
+        @stuck_job_report_service.append_single_record(hlr.class.name, hlr.id)
+        process_records(hlr)
+      rescue StandardError => error
+        log_error(error)
+      end
     end
 
     stuck_job_report_service.append_record_count(hlrs_with_errors.count, ERROR_TEXT)
@@ -67,11 +73,15 @@ class DtaScCreationFailedFixJob < CaseflowJob
 
   # Methods for remdiating Appeals with errors
 
-  def process_records_for_appeals_with_errors
+  def loop_through_and_process_records_for_appeals_with_errors
     appeals_with_errors.each do |appeal|
-      if valid_appeal?(appeal)
-        @stuck_job_report_service.append_single_record(appeal.class.name, appeal.id)
-        process_records(appeal)
+      begin
+        if valid_appeal?(appeal)
+          @stuck_job_report_service.append_single_record(appeal.class.name, appeal.id)
+          process_records(appeal)
+        end
+      rescue StandardError => error
+        log_error(error)
       end
     end
   end
