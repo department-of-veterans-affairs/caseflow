@@ -23,7 +23,8 @@ class RemovePackageModal extends React.Component {
       reasonForRemove: null,
       disabledSaveButton: true,
       reasonReject: '',
-      updateCancelSuccess: false
+      updateCancelSuccess: false,
+      textToShow: StringUtil.nl2br(COPY.CORRRESPONDENCE_TEXT_REMOVE_PACKAGE)
 
     };
   }
@@ -31,9 +32,12 @@ class RemovePackageModal extends React.Component {
   handleSelect(reasonForRemove) {
     if (reasonForRemove === 'Approve request') {
       this.setState({ reasonForRemove,
-        disabledSaveButton: false });
+        disabledSaveButton: false,
+        textToShow: StringUtil.nl2br(COPY.CORRRESPONDENCE_TEXT_REMOVE_PACKAGE)
+      });
     } else {
       this.setState({ reasonForRemove,
+        textToShow: StringUtil.nl2br(COPY.CORRRESPONDENCE_SECOND_TEXT_REMOVE_PACKAGE),
         disabledSaveButton: true });
     }
   }
@@ -94,7 +98,7 @@ class RemovePackageModal extends React.Component {
       >
         <p>
           <span style= {{ fontWeight: 'bold' }}>{sprintf(COPY.CORRESPONDENCE_TITLE_REMOVE_PACKAGE)}</span>
-          {StringUtil.nl2br(COPY.CORRRESPONDENCE_TEXT_REMOVE_PACKAGE)}
+          {this.state.textToShow}
         </p>
 
         <RadioField
@@ -111,6 +115,7 @@ class RemovePackageModal extends React.Component {
                 name={sprintf(COPY.CORRESPONDENCE_TITLE_REMOVE_PACKAGE_REASON_REJECT)}
                 onChange={this.reasonChange}
                 value={this.state.reasonReject}
+                placeholder= "This is an example of a reason"
               />
         }
 
