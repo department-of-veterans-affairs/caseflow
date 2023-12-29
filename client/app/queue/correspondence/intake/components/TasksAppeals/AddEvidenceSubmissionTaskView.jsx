@@ -4,6 +4,7 @@ import ReactSelectDropdown from '../../../../../components/ReactSelectDropdown';
 import Checkbox from '../../../../../components/Checkbox';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
+import { COLORS } from '../../../../../constants/AppConstants';
 
 const AddEvidenceSubmissionTaskView = (props) => {
   const task = props.task;
@@ -55,7 +56,7 @@ const AddEvidenceSubmissionTaskView = (props) => {
             name="content"
             label="Provide context and instruction on this task"
             disabled
-            textAreaStyling={css({ cursor: 'not-allowed' })}
+            textAreaStyling={css({ cursor: 'not-allowed', backgroundColor: COLORS.GREY_BACKGROUND })}
           />
           <Checkbox
             name={`${task.id}`}
