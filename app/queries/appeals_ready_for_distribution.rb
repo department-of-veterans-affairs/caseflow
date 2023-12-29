@@ -69,7 +69,7 @@ class AppealsReadyForDistribution
 
   def self.ama_rows(appeals, docket)
     appeals.map do |appeal|
-      # This comes from the DistributionTask"s assigned_at date
+      # This comes from the DistributionTask's assigned_at date
       ready_for_distribution_at = appeal.tasks
         .filter {|task| task.class == DistributionTask && task.status == Constants.TASK_STATUSES.assigned }
         .first&.assigned_at

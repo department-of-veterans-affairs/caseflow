@@ -77,7 +77,7 @@ class BatchAppealsForReaderQuery
 
   # Pull all the Legacy Appeals found
   def self.legacy_appeals(legacy_bfkeys, distributed_cases)
-    # AOD is stored separately and doesn"t come in as a part of VACOLS::Case relationships
+    # AOD is stored separately and doesn't come in as a part of VACOLS::Case relationships
     aod_appeals = VACOLS::Case.aod(legacy_bfkeys)
 
     LegacyAppeal.repository.vacols_records_for_appeals(legacy_bfkeys).map do |case_record|
