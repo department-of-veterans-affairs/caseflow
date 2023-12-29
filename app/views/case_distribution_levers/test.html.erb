@@ -1,4 +1,24 @@
-<h2> Case Distribution Levers </h2>
+<h1 id='top'>Case Distribution Levers Dashboard</h1>
+<p>This page is for lower env use only and provides a convient place to review Case Distribution related data</p>
+<h2>Navigation</h2>
+<ul>
+  <li>
+    <%= link_to 'Case Distribution Levers', { anchor: 'levers'}, class: 'btn btn-primary' %>
+  </li>
+  <li>
+    <%= link_to 'Case Distribution Audit Levers', { anchor: 'audit'}, class: 'btn btn-primary' %>
+  </li>
+  <li>
+    <%= link_to 'CDA Control Group', { anchor: 'organization'}, class: 'btn btn-primary' %>
+  </li>
+  <li>
+    <%= link_to 'Case Distribution Algorithm Logs', { anchor: 'distributions'}, class: 'btn btn-primary'%>
+  </li>
+  <li>
+    <%= link_to 'Distribution Status', { anchor: 'distribution_status'}, class: 'btn btn-primary' %>
+  </li>
+</ul>
+<h2 id='levers'> Case Distribution Levers </h2>
   <table id="case-table-description" class="usa-table-borderless undefined">
     <thead>
       <tr>
@@ -35,8 +55,8 @@
       <% end %>
     </tbody>
   </table>
-
-<h2> Case Distribution Audit Levers </h2>
+<hr/>
+<h2 id='audit'> Case Distribution Audit Levers </h2>
   <table>
     <thead>
       <tr>
@@ -61,13 +81,13 @@
       <% end %>
     </tbody>
   </table>
-
+<hr/>
 
 
 <% cda_group_organization = CDAControlGroup.singleton %>
 
 <% if cda_group_organization %>
-  <h2> CDA Control Group Organization </h2>
+  <h2 id='organization'> CDA Control Group Organization </h2>
     <h3> Organization Info </h3>
       <%= "Name: " + cda_group_organization.name %>
     <h3> Users </h3>
@@ -98,38 +118,52 @@
     <p>&nbsp;</p>
     <span>
       <%= button_to 'Destroy Organization', destroy_acd_group_org_case_distribution_levers_tests_path, method: :post %>
+      <br/>
       <%unless current_user.member_of_organization?(cda_group_organization) %>
         <%= button_to 'Add Current User To Organization', add_user_case_distribution_levers_tests_path, method: :post, params:{user: current_user} %>
       <% end %>
     </span>
 <% else %>
-  <h2> Organization Setup </h2>
+  <h2 id='organization'> Organization Setup </h2>
     <%= button_to 'Create Organization', create_acd_group_org_singleton_case_distribution_levers_tests_path, method: :post %>
 <% end %>
 
-<h2> Case Distribution Algorithm Logs </h2>
-  <table>
-    <thead>
+<h2 id='distributions'> Case Distribution Algorithm Logs </h2>
+<table>
+  <thead>
+    <tr>
+      <td> Script Name </td>
+      <td> Levers </td>
+      <td> Starting Distribution ID </td>
+      <td> Ending Distribution ID </td>
+      <td> Start Case ID </td>
+      <td> End Case ID </td>
+    </tr>
+  </thead>
+  <tbody>
+    <% @acd_algorithm_history.each do |entry| %>
       <tr>
-        <td> Script Name </td>
-        <td> Levers </td>
-        <td> Starting Distribution ID </td>
-        <td> Ending Distribution ID </td>
-        <td> Start Case ID </td>
-        <td> End Case ID </td>
+        <td> <%= entry.script_name %> </td>
+        <td> <%= entry.levers %> </td>
+        <td> <%= entry.starting_distribution_id %> </td>
+        <td> <%= entry.ending_distribution_id %> </td>
+        <td> <%= entry.starting_case_id %> </td>
+        <td> <%= entry.ending_case_id %> </td>
       </tr>
-    </thead>
-    <tbody>
-      <% @acd_algorithm_history.each do |entry| %>
-        <tr>
-          <td> <%= entry.script_name %> </td>
-          <td> <%= entry.levers %> </td>
-          <td> <%= entry.starting_distribution_id %> </td>
-          <td> <%= entry.ending_distribution_id %> </td>
-          <td> <%= entry.starting_case_id %> </td>
-          <td> <%= entry.ending_case_id %> </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+    <% end %>
+  </tbody>
+</table>
 
+<hr/>
+<h2 id='distribution_status'>Distribution Status</h2>
+<ul>
+  <li>
+    <%= link_to 'Download Appeals Ready to Distribute CSV', appeals_ready_to_distribute_path(format: :csv), class: 'btn btn-primary' %>
+  </li>
+  <li>
+    <%= link_to 'Download Distributed Appeals CSV', appeals_distributed_path(format: :csv), class: 'btn btn-primary' %>
+  </li>
+</ul>
+
+<hr/>
+<%= link_to 'Back to Top', { anchor: 'top'}, class: 'btn btn-primary' %>

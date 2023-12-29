@@ -63,7 +63,8 @@ class Test::UsersController < ApplicationController
         jobs: "/jobs",
         admin: "/admin",
         test_veterans: "/test/data",
-        metrics_dashboard: "/metrics/dashboard"
+        metrics_dashboard: "/metrics/dashboard",
+        case_distribution_dashboard: "/acd-controls/test"
       }
     }
   ].freeze
