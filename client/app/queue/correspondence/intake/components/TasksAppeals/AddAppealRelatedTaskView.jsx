@@ -58,14 +58,8 @@ export const AddAppealRelatedTaskView = (props) => {
     // Creates an array of Task IDs then sorts them so that the highest ID is the last in the array.
     const existingIds = newTasks.map((task) => task.id).sort((task1, task2) => task1.id - task2.id);
 
-    // handles the scenario in which there are no tasks yet.
-    if (existingIds.length === 0) {
-      setNextTaskId(0);
-    }
-
-    if (existingIds.length > 0) {
-      setNextTaskId(existingIds[existingIds.length - 1] + 1);
-    }
+    // Set the value to 0 if there are no IDs. Otherwise use the highest value ID + 1
+    setNextTaskId(existingIds.empty ? 0 : existingIds.last + 1);
 
     dispatch(setNewAppealRelatedTasks(newTasks));
   }, [newTasks]);
