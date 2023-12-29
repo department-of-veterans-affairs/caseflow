@@ -5,24 +5,21 @@
     <link>https://department-of-veterans-affairs.github.io/caseflow/task_trees/menu.html</link>
     <description>Recent content on Task Trees &amp; DBs</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="https://department-of-veterans-affairs.github.io/caseflow/task_trees/menu/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language>
+    <atom:link href="https://department-of-veterans-affairs.github.io/caseflow/task_trees/menu/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title></title>
       <link>https://department-of-veterans-affairs.github.io/caseflow/task_trees/menu/footer.html</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/menu/footer.html</guid>
       <description> Task trees All tasks DR tasklist DR:parent-child DR:child-parent DR:task-creation ES tasklist ES:parent-child ES:child-parent ES:task-creation H tasklist H:parent-child H:child-parent H:task-creation Tags Categories </description>
     </item>
-    
     <item>
       <title></title>
       <link>https://department-of-veterans-affairs.github.io/caseflow/task_trees/menu/header.html</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/menu/header.html</guid>
       <description> (Back to Caseflow) Roles Overview Tasks Overview </description>
     </item>
-    
   </channel>
 </rss>

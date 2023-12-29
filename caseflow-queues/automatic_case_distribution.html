@@ -4,19 +4,61 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
-    <title>Automatic Case Distribution - Caseflow Docs</title>
-    <link
-      rel="shortcut icon"
-      href="/caseflow/favicon.ico"
-      type="image/x-icon"
-    />
     <link
       rel="stylesheet"
       href="/caseflow/assets/css/just-the-docs-default.css"
     />
+    <link
+      rel="stylesheet"
+      href="/caseflow/assets/css/just-the-docs-head-nav.css"
+      id="jtd-head-nav-stylesheet"
+    />
+    <style id="jtd-nav-activation">
+      .site-nav > ul.nav-list:first-child > li > a,
+      .site-nav > ul.nav-list:first-child > li > ul > li:not(:nth-child(1)) > a,
+      .site-nav > ul.nav-list:first-child > li > ul > li > ul > li > a {
+        background-image: none;
+      }
+      .site-nav > ul.nav-list:not(:first-child) a,
+      .site-nav li.external a {
+        background-image: none;
+      }
+      .site-nav
+        > ul.nav-list:first-child
+        > li:nth-child(4)
+        > ul
+        > li:nth-child(1)
+        > a {
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .site-nav > ul.nav-list:first-child > li:nth-child(4) > button svg,
+      .site-nav
+        > ul.nav-list:first-child
+        > li:nth-child(4)
+        > ul
+        > li:nth-child(1)
+        > button
+        svg {
+        transform: rotate(-90deg);
+      }
+      .site-nav
+        > ul.nav-list:first-child
+        > li.nav-list-item:nth-child(4)
+        > ul.nav-list,
+      .site-nav
+        > ul.nav-list:first-child
+        > li.nav-list-item:nth-child(4)
+        > ul.nav-list
+        > li.nav-list-item:nth-child(1)
+        > ul.nav-list {
+        display: block;
+      }
+    </style>
     <script src="/caseflow/assets/js/vendor/lunr.min.js"></script>
     <script src="/caseflow/assets/js/just-the-docs.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="/caseflow/favicon.ico" type="image/x-icon" />
     <!-- Begin Jekyll SEO tag v2.8.0 -->
     <title>Automatic Case Distribution | Caseflow Docs</title>
     <meta name="generator" content="Jekyll v3.9.2" />
@@ -49,7 +91,7 @@
   </head>
   <body>
     <a class="skip-to-main" href="#main-content">Skip to main content</a>
-    <svg xmlns="http://www.w3.org/2000/svg" style="display: none">
+    <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
       <symbol id="svg-link" viewbox="0 0 24 24">
         <title>Link</title>
         <svg
@@ -70,24 +112,6 @@
           <path
             d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"
           ></path>
-        </svg>
-      </symbol>
-      <symbol id="svg-search" viewbox="0 0 24 24">
-        <title>Search</title>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewbox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="feather feather-search"
-        >
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
       </symbol>
       <symbol id="svg-menu" viewbox="0 0 24 24">
@@ -126,26 +150,6 @@
           <polyline points="9 18 15 12 9 6"></polyline>
         </svg>
       </symbol>
-      <symbol id="svg-doc" viewbox="0 0 24 24">
-        <title>Document</title>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewbox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="feather feather-file"
-        >
-          <path
-            d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"
-          ></path>
-          <polyline points="13 2 13 9 20 9"></polyline>
-        </svg>
-      </symbol>
       <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
       <symbol
         id="svg-external-link"
@@ -166,15 +170,95 @@
         <polyline points="15 3 21 3 21 9"></polyline>
         <line x1="10" y1="14" x2="21" y2="3"></line>
       </symbol>
+      <symbol id="svg-doc" viewbox="0 0 24 24">
+        <title>Document</title>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewbox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="feather feather-file"
+        >
+          <path
+            d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"
+          ></path>
+          <polyline points="13 2 13 9 20 9"></polyline>
+        </svg>
+      </symbol>
+      <symbol id="svg-search" viewbox="0 0 24 24">
+        <title>Search</title>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewbox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="feather feather-search"
+        >
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </symbol>
+      <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+      <symbol id="svg-copy" viewbox="0 0 16 16">
+        <title>Copy</title>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="currentColor"
+          class="bi bi-clipboard"
+          viewbox="0 0 16 16"
+        >
+          <path
+            d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"
+          ></path>
+          <path
+            d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"
+          ></path>
+        </svg>
+      </symbol>
+      <symbol id="svg-copied" viewbox="0 0 16 16">
+        <title>Copied</title>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          fill="currentColor"
+          class="bi bi-clipboard-check-fill"
+          viewbox="0 0 16 16"
+        >
+          <path
+            d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"
+          ></path>
+          <path
+            d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"
+          ></path>
+        </svg>
+      </symbol>
     </svg>
     <div class="side-bar">
-      <div class="site-header">
+      <div class="site-header" role="banner">
         <a href="/caseflow/" class="site-title lh-tight"> Caseflow Docs </a>
-        <a href="#" id="menu-button" class="site-button">
-          <svg viewbox="0 0 24 24" class="icon">
+        <button
+          id="menu-button"
+          class="site-button btn-reset"
+          aria-label="Toggle menu"
+          aria-pressed="false"
+        >
+          <svg viewbox="0 0 24 24" class="icon" aria-hidden="true">
             <use xlink:href="#svg-menu"></use>
           </svg>
-        </a>
+        </button>
       </div>
       <nav aria-label="Main" id="site-nav" class="site-nav">
         <ul class="nav-list">
@@ -189,23 +273,23 @@
               >DB Schema</a
             >
           </li>
-          <li class="nav-list-item active">
-            <a
-              href="#"
-              class="nav-list-expander"
-              aria-label="toggle links in Caseflow Queue category"
+          <li class="nav-list-item">
+            <button
+              class="nav-list-expander btn-reset"
+              aria-label="toggle items in Caseflow Queue category"
+              aria-pressed="false"
             >
-              <svg viewbox="0 0 24 24">
+              <svg viewbox="0 0 24 24" aria-hidden="true">
                 <use xlink:href="#svg-arrow-right"></use>
-              </svg> </a
+              </svg></button
             ><a href="/caseflow/caseflow-queues/" class="nav-list-link"
               >Caseflow Queue</a
             >
             <ul class="nav-list">
-              <li class="nav-list-item active">
+              <li class="nav-list-item">
                 <a
                   href="/caseflow/caseflow-queues/automatic_case_distribution.html"
-                  class="nav-list-link active"
+                  class="nav-list-link"
                   >Automatic Case Distribution</a
                 >
               </li>
@@ -229,7 +313,7 @@
     </div>
     <div class="main" id="top">
       <div id="main-header" class="main-header">
-        <div class="search">
+        <div class="search" role="search">
           <div class="search-input-wrap">
             <input
               type="text"
@@ -260,7 +344,7 @@
           </ul>
         </nav>
       </div>
-      <div id="main-content-wrap" class="main-content-wrap">
+      <div class="main-content-wrap">
         <nav aria-label="Breadcrumb" class="breadcrumb-nav">
           <ol class="breadcrumb-nav-list">
             <li class="breadcrumb-nav-list-item">
@@ -271,286 +355,291 @@
             </li>
           </ol>
         </nav>
-        <div id="main-content" class="main-content" role="main">
-          <h1 id="presentations">
-            <a
-              href="#presentations"
-              class="anchor-heading"
-              aria-labelledby="presentations"
-              ><svg viewbox="0 0 16 16" aria-hidden="true">
-                <use xlink:href="#svg-link"></use></svg
-            ></a>
-            Presentations
-          </h1>
-          <ul>
-            <li>
+        <div id="main-content" class="main-content">
+          <main>
+            <h1 id="presentations">
               <a
-                href="https://docs.google.com/presentation/d/143KwMEkw55YoKRxPL3vumVFGPR3X2n23eqxrcy1tDyM/edit#slide=id.g54fd333abc_0_70"
-                >May 2020 Case Distribution Overview</a
-              >
-            </li>
-            <li>
+                href="#presentations"
+                class="anchor-heading"
+                aria-labelledby="presentations"
+                ><svg viewbox="0 0 16 16" aria-hidden="true">
+                  <use xlink:href="#svg-link"></use></svg
+              ></a>
+              Presentations
+            </h1>
+            <ul>
+              <li>
+                <a
+                  href="https://docs.google.com/presentation/d/143KwMEkw55YoKRxPL3vumVFGPR3X2n23eqxrcy1tDyM/edit#slide=id.g54fd333abc_0_70"
+                  >May 2020 Case Distribution Overview</a
+                >
+              </li>
+              <li>
+                <a
+                  href="https://github.com/department-of-veterans-affairs/caseflow/files/2971837/2018-11-14.Automatic.Case.Distribution.UPDATED.pdf"
+                  >November 2018 Presentation with cute robots describing how
+                  Automatic Case Distribution works</a
+                >
+              </li>
+            </ul>
+            <h1 id="goal">
+              <a href="#goal" class="anchor-heading" aria-labelledby="goal"
+                ><svg viewbox="0 0 16 16" aria-hidden="true">
+                  <use xlink:href="#svg-link"></use></svg
+              ></a>
+              Goal
+            </h1>
+            <p>
+              When a Veterans Law Judge requests cases that are ready for a
+              decision, those cases are drawn from the Board’s various dockets
+              according to a set of rules. Prior to the implementation of the
+              Appeals Modernization Act in February 2019, there was only a
+              single docket, and the distribution of cases could be done by
+              hand. With AMA in place, there are now four dockets, and the rules
+              for distribution have reached a level of complexity that this task
+              now must be automated.
+            </p>
+            <p>
+              This pages describes the rules by which cases are distributed.
+            </p>
+            <h1 id="concepts">
               <a
-                href="https://github.com/department-of-veterans-affairs/caseflow/files/2971837/2018-11-14.Automatic.Case.Distribution.UPDATED.pdf"
-                >November 2018 Presentation with cute robots describing how
-                Automatic Case Distribution works</a
-              >
-            </li>
-          </ul>
-          <h1 id="goal">
-            <a href="#goal" class="anchor-heading" aria-labelledby="goal"
-              ><svg viewbox="0 0 16 16" aria-hidden="true">
-                <use xlink:href="#svg-link"></use></svg
-            ></a>
-            Goal
-          </h1>
-          <p>
-            When a Veterans Law Judge requests cases that are ready for a
-            decision, those cases are drawn from the Board’s various dockets
-            according to a set of rules. Prior to the implementation of the
-            Appeals Modernization Act in February 2019, there was only a single
-            docket, and the distribution of cases could be done by hand. With
-            AMA in place, there are now four dockets, and the rules for
-            distribution have reached a level of complexity that this task now
-            must be automated.
-          </p>
-          <p>This pages describes the rules by which cases are distributed.</p>
-          <h1 id="concepts">
-            <a
-              href="#concepts"
-              class="anchor-heading"
-              aria-labelledby="concepts"
-              ><svg viewbox="0 0 16 16" aria-hidden="true">
-                <use xlink:href="#svg-link"></use></svg
-            ></a>
-            Concepts
-          </h1>
-          <h2 id="docket">
-            <a href="#docket" class="anchor-heading" aria-labelledby="docket"
-              ><svg viewbox="0 0 16 16" aria-hidden="true">
-                <use xlink:href="#svg-link"></use></svg
-            ></a>
-            Docket
-          </h2>
-          <p>
-            A docket is a line. We can generally think of a docket like a
-            first-in, first-out (FIFO) queue, however there are some exceptions
-            to this rule. One is that a case must be “ready” to be distributed,
-            i.e. it must have no other tasks to be completed before a decision
-            is written. So a ready case will be distributed before a non-ready
-            case, even if the non-ready case is ahead of it on the docket. The
-            Board is also allowed a small amount of wiggle room so that it
-            doesn’t have to strictly observe docket order at the cost of
-            efficiency; before AMA this was known as the “docket range,” a
-            number of cases that were close enough to the front of the line to
-            be considered eligible to be distributed.
-          </p>
-          <h2 id="priority">
-            <a
-              href="#priority"
-              class="anchor-heading"
-              aria-labelledby="priority"
-              ><svg viewbox="0 0 16 16" aria-hidden="true">
-                <use xlink:href="#svg-link"></use></svg
-            ></a>
-            Priority
-          </h2>
-          <p>
-            If an appellant is suffering a serious illness, in financial
-            distress, or for another sufficient cause, their appeal can be
-            Advanced on the Docket, or prioritized. If the appellant is older
-            than 75, their appeal is automatically AOD; otherwise, they must
-            file a motion requesting this status.
-          </p>
-          <p>
-            Board decisions can be appealed to the Court of Appeals for Veterans
-            Claims. If CAVC disagrees with the Board’s decision, they will
-            remand it back to the Board for another decision. These post-CAVC
-            remands are also prioritized.
-          </p>
-          <p>
-            There is no differentiation between the various reasons for
-            prioritizing cases. All priority cases are prioritized equally.
-          </p>
-          <h2 id="genpop">
-            <a href="#genpop" class="anchor-heading" aria-labelledby="genpop"
-              ><svg viewbox="0 0 16 16" aria-hidden="true">
-                <use xlink:href="#svg-link"></use></svg
-            ></a>
-            Genpop
-          </h2>
-          <p>
-            Before AMA, if a judge held a hearing with the appellant, that same
-            judge would be required to write the decision on the appeal. We
-            would say that this appeal is “tied to the judge.” A Veteran could
-            waive this right, enabling their appeal to go to any judge. They
-            would be asked to do this if the judge retired, for example. At this
-            point, their case would be deemed “genpop” — eligible to go to any
-            judge.
-          </p>
-          <p>
-            Under AMA, this is no longer a requirement under law. However, it is
-            still preferable for an appeal to go to the same judge who heard the
-            hearing, provided they are still active at the Board.
-          </p>
-          <p>
-            An additional caveat, AOD appeals that are remanded by CAVC are tied
-            to the same judge as wrote the original decision.
-          </p>
-          <p>
-            In the app, appeals that meet either one of these conditions are
-            considered genpop:
-          </p>
-          <ul>
-            <li>All appeals without a hearing</li>
-            <li>
-              All appeals with hearings, but none that are held (<code
-                class="language-plaintext highlighter-rouge"
-                >disposition == "held"</code
-              >)
-            </li>
-            <li>
-              All appeals whose most recently held hearing is not tied to any
-              active judge. A judge is considered active if they have logged in
-              within the past 60 days. The hearing date is obtained by joining
-              on the
-              <code class="language-plaintext highlighter-rouge"
-                >HearingDay</code
-              >
-              table’s
-              <code class="language-plaintext highlighter-rouge"
-                >scheduled_for</code
-              >
-              field.
-            </li>
-          </ul>
-          <h2 id="batch-size">
-            <a
-              href="#batch-size"
-              class="anchor-heading"
-              aria-labelledby="batch-size"
-              ><svg viewbox="0 0 16 16" aria-hidden="true">
-                <use xlink:href="#svg-link"></use></svg
-            ></a>
-            Batch size
-          </h2>
-          <p>
-            When a judge requests a distribution of cases, they will receive a
-            certain number of cases in their queue. This number is called the
-            batch size. It is a multiple of the number of attorneys on the
-            judge’s team (currently 3 x the number of attorneys). If the judge
-            does not have their own team, for example if they are a DVC, they
-            receive a set number of cases known as an alternative batch size
-            (currently 15 cases).
-          </p>
-          <p>
-            We also can calculate a number called a total batch size, which is
-            the sum of all of the individual judge’s batch sizes. The total
-            batch size is used as a denominator for calculating things like the
-            optimal percentage of priority cases to distribute.
-          </p>
-          <h2 id="legacy-docket-range">
-            <a
-              href="#legacy-docket-range"
-              class="anchor-heading"
-              aria-labelledby="legacy-docket-range"
-              ><svg viewbox="0 0 16 16" aria-hidden="true">
-                <use xlink:href="#svg-link"></use></svg
-            ></a>
-            Legacy docket range
-          </h2>
-          <p>
-            The legacy docket combines hearing and non-hearing appeals. As a
-            result, it is not optimal to always grab the frontmost case; there
-            may be cases farther back on the docket that can only be distributed
-            to this specific judge, and it will be advantageous to overall
-            timeliness to distribute them ahead of genpop cases that could be
-            worked by anybody. But we still need to respect docket order, and we
-            do this, similar to how the legacy docket was manually managed, by
-            calculating a docket range. This is the range of cases on the legacy
-            docket that are close enough to the front of the line to be
-            distributed.
-          </p>
-          <p>
-            The legacy docket range is equal to the total batch size, minus the
-            count of priority cases, times the legacy docket proportion (see
-            Docket Proportions below). A hearing case within that range is
-            considered eligible to be distributed to its judge as if it was at
-            the front of the line.
-          </p>
-          <h2 id="ready">
-            <a href="#ready" class="anchor-heading" aria-labelledby="ready"
-              ><svg viewbox="0 0 16 16" aria-hidden="true">
-                <use xlink:href="#svg-link"></use></svg
-            ></a>
-            Ready
-          </h2>
-          <p>
-            Cases considered “ready” for distribution must have all
-            pre-distribution tasks completed.
-          </p>
-          <p>
-            For AMA Appeals, this is simply determined by the state of the
-            appeal’s
-            <a
-              href="https://github.com/department-of-veterans-affairs/appeals-team/blob/master/Project%20Folders/Tasks/tasktrees/descr/DistributionTask_Organization.md"
-              >distribution task</a
-            >. If this task has a status of “assigned”, all child tasks that
-            must be completed for distribution are either complete or cancelled,
-            meaning the appeal is ready for distribution.
-          </p>
-          <p>
-            For legacy appeals, the appeal must meet the following conditions to
-            be considered ready to distribute:
-          </p>
-          <ol>
-            <li>
-              The appeal must be active at the board (<code
-                class="language-plaintext highlighter-rouge"
-                >bfmpro</code
-              >
-              of the vacols case is “ACT”)
-            </li>
-            <li>
-              The appeal must be in case storage (<code
-                class="language-plaintext highlighter-rouge"
-                >bfcurloc</code
-              >
-              of the vacols case is “81” or “83”)
-            </li>
-            <li>
-              The appeal must not belong to a special team at the board (<code
-                class="language-plaintext highlighter-rouge"
-                >bfbox</code
-              >
-              of the vacols case is null)
-            </li>
-            <li>
-              The appeal must not have any open blocking vacols diaries (<code
-                class="language-plaintext highlighter-rouge"
-                >tskdcls</code
-              >
-              is null (diary is open) and
-              <code class="language-plaintext highlighter-rouge">tskactcd</code>
-              is one of ‘EXT’, ‘HCL’, or ‘POA’ of any associated vacols diary
-              record (diary is a blocking diary type))
-            </li>
-            <li>
-              The appeal must not have any open blocking vacols mail (<code
-                class="language-plaintext highlighter-rouge"
-                >mlcompdate</code
-              >
-              is null (mail task is open) and
-              <code class="language-plaintext highlighter-rouge">mltype</code>
-              is NOT one of ‘02’, ‘05’, ‘08’, or ‘13’ of any associated vacols
-              mail record (mail task is a blocking distribution type))
-            </li>
-          </ol>
-          <div class="language-ruby highlighter-rouge">
-            <div class="highlight">
-              <pre
-                class="highlight"
-              ><code><span class="n">appeal</span> <span class="o">=</span> <span class="no">LegacyAppeal</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">vacols_id: </span><span class="mi">3856200</span><span class="p">)</span>
+                href="#concepts"
+                class="anchor-heading"
+                aria-labelledby="concepts"
+                ><svg viewbox="0 0 16 16" aria-hidden="true">
+                  <use xlink:href="#svg-link"></use></svg
+              ></a>
+              Concepts
+            </h1>
+            <h2 id="docket">
+              <a href="#docket" class="anchor-heading" aria-labelledby="docket"
+                ><svg viewbox="0 0 16 16" aria-hidden="true">
+                  <use xlink:href="#svg-link"></use></svg
+              ></a>
+              Docket
+            </h2>
+            <p>
+              A docket is a line. We can generally think of a docket like a
+              first-in, first-out (FIFO) queue, however there are some
+              exceptions to this rule. One is that a case must be “ready” to be
+              distributed, i.e. it must have no other tasks to be completed
+              before a decision is written. So a ready case will be distributed
+              before a non-ready case, even if the non-ready case is ahead of it
+              on the docket. The Board is also allowed a small amount of wiggle
+              room so that it doesn’t have to strictly observe docket order at
+              the cost of efficiency; before AMA this was known as the “docket
+              range,” a number of cases that were close enough to the front of
+              the line to be considered eligible to be distributed.
+            </p>
+            <h2 id="priority">
+              <a
+                href="#priority"
+                class="anchor-heading"
+                aria-labelledby="priority"
+                ><svg viewbox="0 0 16 16" aria-hidden="true">
+                  <use xlink:href="#svg-link"></use></svg
+              ></a>
+              Priority
+            </h2>
+            <p>
+              If an appellant is suffering a serious illness, in financial
+              distress, or for another sufficient cause, their appeal can be
+              Advanced on the Docket, or prioritized. If the appellant is older
+              than 75, their appeal is automatically AOD; otherwise, they must
+              file a motion requesting this status.
+            </p>
+            <p>
+              Board decisions can be appealed to the Court of Appeals for
+              Veterans Claims. If CAVC disagrees with the Board’s decision, they
+              will remand it back to the Board for another decision. These
+              post-CAVC remands are also prioritized.
+            </p>
+            <p>
+              There is no differentiation between the various reasons for
+              prioritizing cases. All priority cases are prioritized equally.
+            </p>
+            <h2 id="genpop">
+              <a href="#genpop" class="anchor-heading" aria-labelledby="genpop"
+                ><svg viewbox="0 0 16 16" aria-hidden="true">
+                  <use xlink:href="#svg-link"></use></svg
+              ></a>
+              Genpop
+            </h2>
+            <p>
+              Before AMA, if a judge held a hearing with the appellant, that
+              same judge would be required to write the decision on the appeal.
+              We would say that this appeal is “tied to the judge.” A Veteran
+              could waive this right, enabling their appeal to go to any judge.
+              They would be asked to do this if the judge retired, for example.
+              At this point, their case would be deemed “genpop” — eligible to
+              go to any judge.
+            </p>
+            <p>
+              Under AMA, this is no longer a requirement under law. However, it
+              is still preferable for an appeal to go to the same judge who
+              heard the hearing, provided they are still active at the Board.
+            </p>
+            <p>
+              An additional caveat, AOD appeals that are remanded by CAVC are
+              tied to the same judge as wrote the original decision.
+            </p>
+            <p>
+              In the app, appeals that meet either one of these conditions are
+              considered genpop:
+            </p>
+            <ul>
+              <li>All appeals without a hearing</li>
+              <li>
+                All appeals with hearings, but none that are held (<code
+                  class="language-plaintext highlighter-rouge"
+                  >disposition == "held"</code
+                >)
+              </li>
+              <li>
+                All appeals whose most recently held hearing is not tied to any
+                active judge. A judge is considered active if they have logged
+                in within the past 60 days. The hearing date is obtained by
+                joining on the
+                <code class="language-plaintext highlighter-rouge"
+                  >HearingDay</code
+                >
+                table’s
+                <code class="language-plaintext highlighter-rouge"
+                  >scheduled_for</code
+                >
+                field.
+              </li>
+            </ul>
+            <h2 id="batch-size">
+              <a
+                href="#batch-size"
+                class="anchor-heading"
+                aria-labelledby="batch-size"
+                ><svg viewbox="0 0 16 16" aria-hidden="true">
+                  <use xlink:href="#svg-link"></use></svg
+              ></a>
+              Batch size
+            </h2>
+            <p>
+              When a judge requests a distribution of cases, they will receive a
+              certain number of cases in their queue. This number is called the
+              batch size. It is a multiple of the number of attorneys on the
+              judge’s team (currently 3 x the number of attorneys). If the judge
+              does not have their own team, for example if they are a DVC, they
+              receive a set number of cases known as an alternative batch size
+              (currently 15 cases).
+            </p>
+            <p>
+              We also can calculate a number called a total batch size, which is
+              the sum of all of the individual judge’s batch sizes. The total
+              batch size is used as a denominator for calculating things like
+              the optimal percentage of priority cases to distribute.
+            </p>
+            <h2 id="legacy-docket-range">
+              <a
+                href="#legacy-docket-range"
+                class="anchor-heading"
+                aria-labelledby="legacy-docket-range"
+                ><svg viewbox="0 0 16 16" aria-hidden="true">
+                  <use xlink:href="#svg-link"></use></svg
+              ></a>
+              Legacy docket range
+            </h2>
+            <p>
+              The legacy docket combines hearing and non-hearing appeals. As a
+              result, it is not optimal to always grab the frontmost case; there
+              may be cases farther back on the docket that can only be
+              distributed to this specific judge, and it will be advantageous to
+              overall timeliness to distribute them ahead of genpop cases that
+              could be worked by anybody. But we still need to respect docket
+              order, and we do this, similar to how the legacy docket was
+              manually managed, by calculating a docket range. This is the range
+              of cases on the legacy docket that are close enough to the front
+              of the line to be distributed.
+            </p>
+            <p>
+              The legacy docket range is equal to the total batch size, minus
+              the count of priority cases, times the legacy docket proportion
+              (see Docket Proportions below). A hearing case within that range
+              is considered eligible to be distributed to its judge as if it was
+              at the front of the line.
+            </p>
+            <h2 id="ready">
+              <a href="#ready" class="anchor-heading" aria-labelledby="ready"
+                ><svg viewbox="0 0 16 16" aria-hidden="true">
+                  <use xlink:href="#svg-link"></use></svg
+              ></a>
+              Ready
+            </h2>
+            <p>
+              Cases considered “ready” for distribution must have all
+              pre-distribution tasks completed.
+            </p>
+            <p>
+              For AMA Appeals, this is simply determined by the state of the
+              appeal’s
+              <a
+                href="https://github.com/department-of-veterans-affairs/appeals-team/blob/master/Project%20Folders/Tasks/tasktrees/descr/DistributionTask_Organization.md"
+                >distribution task</a
+              >. If this task has a status of “assigned”, all child tasks that
+              must be completed for distribution are either complete or
+              cancelled, meaning the appeal is ready for distribution.
+            </p>
+            <p>
+              For legacy appeals, the appeal must meet the following conditions
+              to be considered ready to distribute:
+            </p>
+            <ol>
+              <li>
+                The appeal must be active at the board (<code
+                  class="language-plaintext highlighter-rouge"
+                  >bfmpro</code
+                >
+                of the vacols case is “ACT”)
+              </li>
+              <li>
+                The appeal must be in case storage (<code
+                  class="language-plaintext highlighter-rouge"
+                  >bfcurloc</code
+                >
+                of the vacols case is “81” or “83”)
+              </li>
+              <li>
+                The appeal must not belong to a special team at the board (<code
+                  class="language-plaintext highlighter-rouge"
+                  >bfbox</code
+                >
+                of the vacols case is null)
+              </li>
+              <li>
+                The appeal must not have any open blocking vacols diaries (<code
+                  class="language-plaintext highlighter-rouge"
+                  >tskdcls</code
+                >
+                is null (diary is open) and
+                <code class="language-plaintext highlighter-rouge"
+                  >tskactcd</code
+                >
+                is one of ‘EXT’, ‘HCL’, or ‘POA’ of any associated vacols diary
+                record (diary is a blocking diary type))
+              </li>
+              <li>
+                The appeal must not have any open blocking vacols mail (<code
+                  class="language-plaintext highlighter-rouge"
+                  >mlcompdate</code
+                >
+                is null (mail task is open) and
+                <code class="language-plaintext highlighter-rouge">mltype</code>
+                is NOT one of ‘02’, ‘05’, ‘08’, or ‘13’ of any associated vacols
+                mail record (mail task is a blocking distribution type))
+              </li>
+            </ol>
+            <div class="language-ruby highlighter-rouge">
+              <div class="highlight">
+                <pre
+                  class="highlight"
+                ><code><span class="n">appeal</span> <span class="o">=</span> <span class="no">LegacyAppeal</span><span class="p">.</span><span class="nf">find_by</span><span class="p">(</span><span class="ss">vacols_id: </span><span class="mi">3856200</span><span class="p">)</span>
 
 <span class="no">VACOLS</span><span class="o">::</span><span class="no">CaseDocket</span><span class="p">.</span><span class="nf">priority_ready_appeal_vacols_ids</span><span class="p">.</span><span class="nf">include?</span> <span class="n">appeal</span><span class="p">.</span><span class="nf">vacols_id</span>
 <span class="o">=&gt;</span> <span class="kp">false</span>
@@ -580,373 +669,378 @@
 <span class="o">=&gt;</span> <span class="p">[</span><span class="s2">"07"</span><span class="p">]</span>
 <span class="c1"># There is an open blocking mail item in vacols, meaning this case is not ready to distribute</span>
 </code></pre>
+              </div>
             </div>
-          </div>
-          <h1 id="ama-dockets">
-            <a
-              href="#ama-dockets"
-              class="anchor-heading"
-              aria-labelledby="ama-dockets"
-              ><svg viewbox="0 0 16 16" aria-hidden="true">
-                <use xlink:href="#svg-link"></use></svg
-            ></a>
-            AMA dockets
-          </h1>
-          <p>
-            The Appeals Modernization Act created two new dockets, in addition
-            to the existing “legacy” docket, and allowed VA to create as many
-            additional dockets as it wants. VA decided to make one additional
-            docket, bringing the total number to four.
-          </p>
-          <p>
-            1) <em>Legacy docket.</em> The original flavor docket. This docket
-            contains appeals of decisions before AMA took effect. As there was
-            previously only one docket, the legacy docket contains both hearing
-            and non-hearing appeals. It also has an open record, meaning that
-            evidence can be added to an appeal at any time. 1)
-            <em>Direct Review docket.</em> This AMA docket contains appeals
-            where the Veteran has decided they do not want to add new evidence
-            and do not want a hearing. To encourage people to use this option,
-            the Board has promised that the average number of days to complete
-            appeals on this docket will be 365 days, one year. 1)
-            <em>Evidence Submission docket.</em> On this AMA docket, a Veteran
-            can add evidence during the 90 days after they begin their appeal.
-            There is no timeliness goal for this docket. 1)
-            <em>Hearing Request docket.</em> On this AMA docket, the Veteran has
-            requested a hearing with a judge. They can also submit evidence at
-            their hearing, or during the 90 days after the hearing.
-          </p>
-          <h1 id="policy-objectives">
-            <a
-              href="#policy-objectives"
-              class="anchor-heading"
-              aria-labelledby="policy-objectives"
-              ><svg viewbox="0 0 16 16" aria-hidden="true">
-                <use xlink:href="#svg-link"></use></svg
-            ></a>
-            Policy Objectives
-          </h1>
-          <p>
-            In designing the automatic case distribution, there were a number of
-            policy objectives that the team sought to realize.
-          </p>
-          <ul>
-            <li>
-              Priority cases should be balanced among judges. No judge should
-              request a distribution and receive all priority cases.
-            </li>
-            <li>Priority cases should be distributed quickly.</li>
-            <li>
-              Docket order should be respected. An appeal that has an earlier
-              docket date should be distributed before one with a later docket
-              date. A certain amount of allowance is made on the legacy docket,
-              where some appeals are tied to judges. In this case, we’ll want to
-              maximize the docket efficiency, that is the extent to which we do
-              not need to look too deep on the docket to find cases for a given
-              judge.
-            </li>
-            <li>
-              Nonpriority appeals on the Direct Review docket should receive a
-              decision about 365 days after VA received the form starting the
-              appeal.
-            </li>
-            <li>
-              However, the Board should also start to work some Direct Review
-              cases straight away, and not just wait for one year before
-              starting to work the Direct Review docket. As a result, we want to
-              ramp up to the 365 day timeline.
-            </li>
-            <li>
-              The other dockets, legacy, Evidence Submission, and Hearing
-              Request, should be balanced proportionately. That is the number of
-              nonpriority cases distributed from each docket should be
-              proportionate to the number of cases on each docket.
-            </li>
-            <li>
-              Clearing the legacy backlog should be prioritized, but meeting the
-              Direct Review timeliness goal is a higher priority.
-            </li>
-          </ul>
-          <h1 id="wrangling-the-dockets">
-            <a
-              href="#wrangling-the-dockets"
-              class="anchor-heading"
-              aria-labelledby="wrangling-the-dockets"
-              ><svg viewbox="0 0 16 16" aria-hidden="true">
-                <use xlink:href="#svg-link"></use></svg
-            ></a>
-            Wrangling the dockets
-          </h1>
-          <h2 id="priority-target">
-            <a
-              href="#priority-target"
-              class="anchor-heading"
-              aria-labelledby="priority-target"
-              ><svg viewbox="0 0 16 16" aria-hidden="true">
-                <use xlink:href="#svg-link"></use></svg
-            ></a>
-            Priority Target
-          </h2>
-          <p>
-            How much of a given distribution should be priority cases? If we
-            were to just always distribute a priority case if one was available,
-            we would see that some judges would get far more priority cases than
-            others, just by virtue of the timing of their request. Instead,
-            we’ll calculate an optimal number of cases for a given distribution
-            that should be priority.
-          </p>
-          <p>
-            We start by
-            <a
-              href="https://github.com/department-of-veterans-affairs/caseflow/blob/a349110aa64f93561aa52297738dcf537ba28364/app/models/docket_coordinator.rb#L62"
-              >counting</a
-            >
-            all of the priority cases that are ready to be distributed on any
-            docket. We then
-            <a
-              href="https://github.com/department-of-veterans-affairs/caseflow/blob/a349110aa64f93561aa52297738dcf537ba28364/app/models/concerns/ama_case_distribution.rb#L111"
-              >divide this number by the total batch size</a
-            >
-            to get an target percentage, and then multiply by the individual
-            judge’s batch size (rounding up) to get the target number of
-            priority cases that should be distributed.
-          </p>
-          <h2 id="docket-proportions">
-            <a
-              href="#docket-proportions"
-              class="anchor-heading"
-              aria-labelledby="docket-proportions"
-              ><svg viewbox="0 0 16 16" aria-hidden="true">
-                <use xlink:href="#svg-link"></use></svg
-            ></a>
-            Docket Proportions
-          </h2>
-          <p>
-            We don’t have to worry about which docket priority cases come from;
-            all priority cases are treated the same. But for nonpriority cases,
-            we must balance the four dockets, calculating the percentage of
-            cases that we want to come from each docket.
-          </p>
-          <h3 id="direct-review-docket">
-            <a
-              href="#direct-review-docket"
-              class="anchor-heading"
-              aria-labelledby="direct-review-docket"
-              ><svg viewbox="0 0 16 16" aria-hidden="true">
-                <use xlink:href="#svg-link"></use></svg
-            ></a>
-            Direct Review docket
-          </h3>
-          <p>
-            Unlike the other dockets, cases on the Direct Review docket are
-            distributed based on the Board’s 365 day timeliness goal. We do this
-            by giving each Direct Review case a
-            <code class="language-plaintext highlighter-rouge"
-              >target_decision_date</code
-            >
-            at intake of 365 days after the
-            <code class="language-plaintext highlighter-rouge"
-              >receipt_date</code
-            >
-            (this allows the Board the option of increasing the goal, while
-            respecting the promises made to Veterans who are already in the
-            door). We can then mark cases as due a
-            <a
-              href="https://github.com/department-of-veterans-affairs/caseflow/blob/a349110aa64f93561aa52297738dcf537ba28364/app/models/dockets/direct_review_docket.rb#L5"
-              >set number of days</a
-            >
-            before their
-            <code class="language-plaintext highlighter-rouge"
-              >target_decision_date</code
-            >. We then
-            <a
-              href="https://github.com/department-of-veterans-affairs/caseflow/blob/a349110aa64f93561aa52297738dcf537ba28364/app/models/dockets/direct_review_docket.rb#L11"
-              >count the number of due cases</a
-            >, and like we do with the priority target,
-            <a
-              href="https://github.com/department-of-veterans-affairs/caseflow/blob/a349110aa64f93561aa52297738dcf537ba28364/app/models/docket_coordinator.rb#L36"
-              >divide by the total batch size</a
-            >
-            (this time after excluding the count of priority cases from the
-            denominator) to get the direct review proportion.
-          </p>
-          <p>
-            However, this proportion would remain at zero for nearly a year,
-            waiting for cases to become due, and this is contrary to the Board’s
-            goal of beginning to work these cases immediately. So we will also
-            calculate an
-            <a
-              href="https://github.com/department-of-veterans-affairs/caseflow/blob/a349110aa64f93561aa52297738dcf537ba28364/app/models/docket_coordinator.rb#L73"
-              >interpolated minimum direct review proportion</a
-            >. We use the rate at which Direct Reviews are arriving to calculate
-            a pacesetting proportion, or the proportion of nonpriority decision
-            capacity that would need to go to the Direct Review docket in order
-            to keep pace with what’s arriving. We will then interpolate between
-            0 and the pacesetting proportion based on the age of the oldest
-            Direct Review in the system. Finally, to accelerate the curve out,
-            we multiply this interpolated figure by the
-            <a
-              href="https://github.com/department-of-veterans-affairs/caseflow/blob/a349110aa64f93561aa52297738dcf537ba28364/app/models/docket_coordinator.rb#L10"
-              >interpolated direct review proportion adjustment</a
-            >. This gives us a curve out of the direct review proportion that
-            would look something like the following:
-          </p>
-          <p>
-            <img
-              src="/caseflow/assets/images/distribution-from-direct-docket.png"
-              alt=""
-            />
-          </p>
-          <p>
-            The “jolt” in this chart shows when the calculation switched from
-            using the interpolated minimum to using the standard due proportion.
-          </p>
-          <p>
-            The direct review proportion is also subject to a maximum. It
-            currently cannot exceed 80%. This prevents a complete halt to work
-            on other dockets should demand for direct reviews approach the
-            Board’s capacity.
-          </p>
-          <h2 id="balanced-dockets">
-            <a
-              href="#balanced-dockets"
-              class="anchor-heading"
-              aria-labelledby="balanced-dockets"
-              ><svg viewbox="0 0 16 16" aria-hidden="true">
-                <use xlink:href="#svg-link"></use></svg
-            ></a>
-            Balanced dockets
-          </h2>
-          <p>
-            The other dockets are balanced proportionate to the number of cases
-            on the docket. After the direct review proportion is deducted, the
-            remaining proportions are divided among the other dockets according
-            to their weight, the number of cases waiting.
-          </p>
-          <p>
-            The legacy docket has two exceptions to this rule. First, in
-            addition to counting the cases on the docket, we also count the
-            number of cases where the Agency of Original Jurisdiction has
-            received a Notice of Disagreement but where the appeal has not yet
-            reached the Form 9 stage. We count these cases at a 40% discount,
-            reflecting the likelihood that they will come to the Board and
-            providing a fuller picture of what is waiting.
-          </p>
-          <p>
-            Second, the legacy docket is subject to a 10% minimum. This ensures
-            that even as the legacy docket is winnowed, VA does not let up off
-            the gas of finishing these older cases. Note that the sum of this
-            minimum and the direct review maximum should not exceed 100%.
-          </p>
-          <h1 id="case-distribution">
-            <a
-              href="#case-distribution"
-              class="anchor-heading"
-              aria-labelledby="case-distribution"
-              ><svg viewbox="0 0 16 16" aria-hidden="true">
-                <use xlink:href="#svg-link"></use></svg
-            ></a>
-            Case distribution
-          </h1>
-          <h2 id="requested">
-            <a
-              href="#requested"
-              class="anchor-heading"
-              aria-labelledby="requested"
-              ><svg viewbox="0 0 16 16" aria-hidden="true">
-                <use xlink:href="#svg-link"></use></svg
-            ></a>
-            Requested
-          </h2>
-          <p>
-            When a judge requests the distribution, we distribute cases
-            according to the following steps:
-          </p>
-          <p>
-            1) We distribute priority legacy cases that are tied to a judge. As
-            many as available, up to the limit of the batch size. 1) We
-            distribute priority AMA hearing cases that are tied to a judge.
-            Again, as many as available. 1) We distribute nonpriority legacy
-            cases that are tied to a judge. We’ll distribute as many as
-            available, but they must be within the legacy docket range. 1) We
-            distribute nonpriority AMA hearing cases that are tied to a judge.
-            As many as available. 1) At this point, we may have distributed some
-            priority appeals. We’ll deduct those appeals from the priority
-            target to get the number of additional priority appeals that we
-            should distribute. We ask each docket for its priority appeals that
-            have been waiting the longest, and distribute the oldest ones up to
-            the priority remaining number, irrespective of docket. 1) We have
-            also potentially distributed some nonpriority appeals from the
-            legacy and AMA hearing dockets. We’ll deduct these cases from the
-            docket proportions. 1) Now we’re ready to distribute the remaining
-            nonpriority cases from each of the dockets according to the updated
-            docket proportions. As some of these proportions may be small, we do
-            this by means of
-            <a
-              href="https://github.com/department-of-veterans-affairs/caseflow/blob/a349110aa64f93561aa52297738dcf537ba28364/app/models/concerns/proportion_hash.rb#L31"
-              >stochastic allocation</a
-            >. 1) If when we try to distribute cases from a given docket, we
-            find that it has no cases that are ready to distribute, we’ll
-            reallocate those cases among the other dockets according to the
-            docket proportions and try again until we’ve found a number of cases
-            equal to the batch size.
-          </p>
-          <h2 id="priority-push">
-            <a
-              href="#priority-push"
-              class="anchor-heading"
-              aria-labelledby="priority-push"
-              ><svg viewbox="0 0 16 16" aria-hidden="true">
-                <use xlink:href="#svg-link"></use></svg
-            ></a>
-            Priority Push
-          </h2>
-          <p>
-            In an effort to get priority cases to judges without waiting for
-            them to request cases, every Monday morning, a<code
-              class="language-plaintext highlighter-rouge"
-              >PushPriorityAppealsToJudgesJob</code
-            >
-            is run to push ready priority cases to judges that can receive them.
-            Judges can receive this push if they have an active judge team in
-            caseflow and they hav not been removed from the job. DVCs are in
-            charge of keeping this list of judges up to date and can add and
-            remove judges from this job from the Team Management page.
-          </p>
-          <p>
-            To ensure some judges are not distributed more than others, we first
-            distribute all priority cases that are tied to a judge (non-genpop)
-            to that respective judge. We then look at the number of cases all
-            eligible judges have received in the last month (including the ones
-            just distributed), calculate a target number for each judge that
-            would get us as close to even as possible, and distribute the
-            remaining ready priority genpop appeals based on that calculation.
-            The board is in charge of manually handling any cases that cannot be
-            distributed due to the associated judge being unable to receive
-            cases (they have left the board, they are no longer a judge, they
-            are on vacation, etc).
-          </p>
-          <h1 id="further-reading">
-            <a
-              href="#further-reading"
-              class="anchor-heading"
-              aria-labelledby="further-reading"
-              ><svg viewbox="0 0 16 16" aria-hidden="true">
-                <use xlink:href="#svg-link"></use></svg
-            ></a>
-            Further reading
-          </h1>
-          <p>
-            <a
-              href="https://github.com/department-of-veterans-affairs/caseflow/files/2971837/2018-11-14.Automatic.Case.Distribution.UPDATED.pdf"
-              >Presentation with cute robots describing how Automatic Case
-              Distribution works</a
-            >
-            <a
-              href="https://github.com/department-of-veterans-affairs/docketeer"
-              >Jupyter Notebooks</a
-            >
-          </p>
+            <h1 id="ama-dockets">
+              <a
+                href="#ama-dockets"
+                class="anchor-heading"
+                aria-labelledby="ama-dockets"
+                ><svg viewbox="0 0 16 16" aria-hidden="true">
+                  <use xlink:href="#svg-link"></use></svg
+              ></a>
+              AMA dockets
+            </h1>
+            <p>
+              The Appeals Modernization Act created two new dockets, in addition
+              to the existing “legacy” docket, and allowed VA to create as many
+              additional dockets as it wants. VA decided to make one additional
+              docket, bringing the total number to four.
+            </p>
+            <p>
+              1) <em>Legacy docket.</em> The original flavor docket. This docket
+              contains appeals of decisions before AMA took effect. As there was
+              previously only one docket, the legacy docket contains both
+              hearing and non-hearing appeals. It also has an open record,
+              meaning that evidence can be added to an appeal at any time. 1)
+              <em>Direct Review docket.</em> This AMA docket contains appeals
+              where the Veteran has decided they do not want to add new evidence
+              and do not want a hearing. To encourage people to use this option,
+              the Board has promised that the average number of days to complete
+              appeals on this docket will be 365 days, one year. 1)
+              <em>Evidence Submission docket.</em> On this AMA docket, a Veteran
+              can add evidence during the 90 days after they begin their appeal.
+              There is no timeliness goal for this docket. 1)
+              <em>Hearing Request docket.</em> On this AMA docket, the Veteran
+              has requested a hearing with a judge. They can also submit
+              evidence at their hearing, or during the 90 days after the
+              hearing.
+            </p>
+            <h1 id="policy-objectives">
+              <a
+                href="#policy-objectives"
+                class="anchor-heading"
+                aria-labelledby="policy-objectives"
+                ><svg viewbox="0 0 16 16" aria-hidden="true">
+                  <use xlink:href="#svg-link"></use></svg
+              ></a>
+              Policy Objectives
+            </h1>
+            <p>
+              In designing the automatic case distribution, there were a number
+              of policy objectives that the team sought to realize.
+            </p>
+            <ul>
+              <li>
+                Priority cases should be balanced among judges. No judge should
+                request a distribution and receive all priority cases.
+              </li>
+              <li>Priority cases should be distributed quickly.</li>
+              <li>
+                Docket order should be respected. An appeal that has an earlier
+                docket date should be distributed before one with a later docket
+                date. A certain amount of allowance is made on the legacy
+                docket, where some appeals are tied to judges. In this case,
+                we’ll want to maximize the docket efficiency, that is the extent
+                to which we do not need to look too deep on the docket to find
+                cases for a given judge.
+              </li>
+              <li>
+                Nonpriority appeals on the Direct Review docket should receive a
+                decision about 365 days after VA received the form starting the
+                appeal.
+              </li>
+              <li>
+                However, the Board should also start to work some Direct Review
+                cases straight away, and not just wait for one year before
+                starting to work the Direct Review docket. As a result, we want
+                to ramp up to the 365 day timeline.
+              </li>
+              <li>
+                The other dockets, legacy, Evidence Submission, and Hearing
+                Request, should be balanced proportionately. That is the number
+                of nonpriority cases distributed from each docket should be
+                proportionate to the number of cases on each docket.
+              </li>
+              <li>
+                Clearing the legacy backlog should be prioritized, but meeting
+                the Direct Review timeliness goal is a higher priority.
+              </li>
+            </ul>
+            <h1 id="wrangling-the-dockets">
+              <a
+                href="#wrangling-the-dockets"
+                class="anchor-heading"
+                aria-labelledby="wrangling-the-dockets"
+                ><svg viewbox="0 0 16 16" aria-hidden="true">
+                  <use xlink:href="#svg-link"></use></svg
+              ></a>
+              Wrangling the dockets
+            </h1>
+            <h2 id="priority-target">
+              <a
+                href="#priority-target"
+                class="anchor-heading"
+                aria-labelledby="priority-target"
+                ><svg viewbox="0 0 16 16" aria-hidden="true">
+                  <use xlink:href="#svg-link"></use></svg
+              ></a>
+              Priority Target
+            </h2>
+            <p>
+              How much of a given distribution should be priority cases? If we
+              were to just always distribute a priority case if one was
+              available, we would see that some judges would get far more
+              priority cases than others, just by virtue of the timing of their
+              request. Instead, we’ll calculate an optimal number of cases for a
+              given distribution that should be priority.
+            </p>
+            <p>
+              We start by
+              <a
+                href="https://github.com/department-of-veterans-affairs/caseflow/blob/a349110aa64f93561aa52297738dcf537ba28364/app/models/docket_coordinator.rb#L62"
+                >counting</a
+              >
+              all of the priority cases that are ready to be distributed on any
+              docket. We then
+              <a
+                href="https://github.com/department-of-veterans-affairs/caseflow/blob/a349110aa64f93561aa52297738dcf537ba28364/app/models/concerns/ama_case_distribution.rb#L111"
+                >divide this number by the total batch size</a
+              >
+              to get an target percentage, and then multiply by the individual
+              judge’s batch size (rounding up) to get the target number of
+              priority cases that should be distributed.
+            </p>
+            <h2 id="docket-proportions">
+              <a
+                href="#docket-proportions"
+                class="anchor-heading"
+                aria-labelledby="docket-proportions"
+                ><svg viewbox="0 0 16 16" aria-hidden="true">
+                  <use xlink:href="#svg-link"></use></svg
+              ></a>
+              Docket Proportions
+            </h2>
+            <p>
+              We don’t have to worry about which docket priority cases come
+              from; all priority cases are treated the same. But for nonpriority
+              cases, we must balance the four dockets, calculating the
+              percentage of cases that we want to come from each docket.
+            </p>
+            <h3 id="direct-review-docket">
+              <a
+                href="#direct-review-docket"
+                class="anchor-heading"
+                aria-labelledby="direct-review-docket"
+                ><svg viewbox="0 0 16 16" aria-hidden="true">
+                  <use xlink:href="#svg-link"></use></svg
+              ></a>
+              Direct Review docket
+            </h3>
+            <p>
+              Unlike the other dockets, cases on the Direct Review docket are
+              distributed based on the Board’s 365 day timeliness goal. We do
+              this by giving each Direct Review case a
+              <code class="language-plaintext highlighter-rouge"
+                >target_decision_date</code
+              >
+              at intake of 365 days after the
+              <code class="language-plaintext highlighter-rouge"
+                >receipt_date</code
+              >
+              (this allows the Board the option of increasing the goal, while
+              respecting the promises made to Veterans who are already in the
+              door). We can then mark cases as due a
+              <a
+                href="https://github.com/department-of-veterans-affairs/caseflow/blob/a349110aa64f93561aa52297738dcf537ba28364/app/models/dockets/direct_review_docket.rb#L5"
+                >set number of days</a
+              >
+              before their
+              <code class="language-plaintext highlighter-rouge"
+                >target_decision_date</code
+              >. We then
+              <a
+                href="https://github.com/department-of-veterans-affairs/caseflow/blob/a349110aa64f93561aa52297738dcf537ba28364/app/models/dockets/direct_review_docket.rb#L11"
+                >count the number of due cases</a
+              >, and like we do with the priority target,
+              <a
+                href="https://github.com/department-of-veterans-affairs/caseflow/blob/a349110aa64f93561aa52297738dcf537ba28364/app/models/docket_coordinator.rb#L36"
+                >divide by the total batch size</a
+              >
+              (this time after excluding the count of priority cases from the
+              denominator) to get the direct review proportion.
+            </p>
+            <p>
+              However, this proportion would remain at zero for nearly a year,
+              waiting for cases to become due, and this is contrary to the
+              Board’s goal of beginning to work these cases immediately. So we
+              will also calculate an
+              <a
+                href="https://github.com/department-of-veterans-affairs/caseflow/blob/a349110aa64f93561aa52297738dcf537ba28364/app/models/docket_coordinator.rb#L73"
+                >interpolated minimum direct review proportion</a
+              >. We use the rate at which Direct Reviews are arriving to
+              calculate a pacesetting proportion, or the proportion of
+              nonpriority decision capacity that would need to go to the Direct
+              Review docket in order to keep pace with what’s arriving. We will
+              then interpolate between 0 and the pacesetting proportion based on
+              the age of the oldest Direct Review in the system. Finally, to
+              accelerate the curve out, we multiply this interpolated figure by
+              the
+              <a
+                href="https://github.com/department-of-veterans-affairs/caseflow/blob/a349110aa64f93561aa52297738dcf537ba28364/app/models/docket_coordinator.rb#L10"
+                >interpolated direct review proportion adjustment</a
+              >. This gives us a curve out of the direct review proportion that
+              would look something like the following:
+            </p>
+            <p>
+              <img
+                src="/caseflow/assets/images/distribution-from-direct-docket.png"
+                alt=""
+              />
+            </p>
+            <p>
+              The “jolt” in this chart shows when the calculation switched from
+              using the interpolated minimum to using the standard due
+              proportion.
+            </p>
+            <p>
+              The direct review proportion is also subject to a maximum. It
+              currently cannot exceed 80%. This prevents a complete halt to work
+              on other dockets should demand for direct reviews approach the
+              Board’s capacity.
+            </p>
+            <h2 id="balanced-dockets">
+              <a
+                href="#balanced-dockets"
+                class="anchor-heading"
+                aria-labelledby="balanced-dockets"
+                ><svg viewbox="0 0 16 16" aria-hidden="true">
+                  <use xlink:href="#svg-link"></use></svg
+              ></a>
+              Balanced dockets
+            </h2>
+            <p>
+              The other dockets are balanced proportionate to the number of
+              cases on the docket. After the direct review proportion is
+              deducted, the remaining proportions are divided among the other
+              dockets according to their weight, the number of cases waiting.
+            </p>
+            <p>
+              The legacy docket has two exceptions to this rule. First, in
+              addition to counting the cases on the docket, we also count the
+              number of cases where the Agency of Original Jurisdiction has
+              received a Notice of Disagreement but where the appeal has not yet
+              reached the Form 9 stage. We count these cases at a 40% discount,
+              reflecting the likelihood that they will come to the Board and
+              providing a fuller picture of what is waiting.
+            </p>
+            <p>
+              Second, the legacy docket is subject to a 10% minimum. This
+              ensures that even as the legacy docket is winnowed, VA does not
+              let up off the gas of finishing these older cases. Note that the
+              sum of this minimum and the direct review maximum should not
+              exceed 100%.
+            </p>
+            <h1 id="case-distribution">
+              <a
+                href="#case-distribution"
+                class="anchor-heading"
+                aria-labelledby="case-distribution"
+                ><svg viewbox="0 0 16 16" aria-hidden="true">
+                  <use xlink:href="#svg-link"></use></svg
+              ></a>
+              Case distribution
+            </h1>
+            <h2 id="requested">
+              <a
+                href="#requested"
+                class="anchor-heading"
+                aria-labelledby="requested"
+                ><svg viewbox="0 0 16 16" aria-hidden="true">
+                  <use xlink:href="#svg-link"></use></svg
+              ></a>
+              Requested
+            </h2>
+            <p>
+              When a judge requests the distribution, we distribute cases
+              according to the following steps:
+            </p>
+            <p>
+              1) We distribute priority legacy cases that are tied to a judge.
+              As many as available, up to the limit of the batch size. 1) We
+              distribute priority AMA hearing cases that are tied to a judge.
+              Again, as many as available. 1) We distribute nonpriority legacy
+              cases that are tied to a judge. We’ll distribute as many as
+              available, but they must be within the legacy docket range. 1) We
+              distribute nonpriority AMA hearing cases that are tied to a judge.
+              As many as available. 1) At this point, we may have distributed
+              some priority appeals. We’ll deduct those appeals from the
+              priority target to get the number of additional priority appeals
+              that we should distribute. We ask each docket for its priority
+              appeals that have been waiting the longest, and distribute the
+              oldest ones up to the priority remaining number, irrespective of
+              docket. 1) We have also potentially distributed some nonpriority
+              appeals from the legacy and AMA hearing dockets. We’ll deduct
+              these cases from the docket proportions. 1) Now we’re ready to
+              distribute the remaining nonpriority cases from each of the
+              dockets according to the updated docket proportions. As some of
+              these proportions may be small, we do this by means of
+              <a
+                href="https://github.com/department-of-veterans-affairs/caseflow/blob/a349110aa64f93561aa52297738dcf537ba28364/app/models/concerns/proportion_hash.rb#L31"
+                >stochastic allocation</a
+              >. 1) If when we try to distribute cases from a given docket, we
+              find that it has no cases that are ready to distribute, we’ll
+              reallocate those cases among the other dockets according to the
+              docket proportions and try again until we’ve found a number of
+              cases equal to the batch size.
+            </p>
+            <h2 id="priority-push">
+              <a
+                href="#priority-push"
+                class="anchor-heading"
+                aria-labelledby="priority-push"
+                ><svg viewbox="0 0 16 16" aria-hidden="true">
+                  <use xlink:href="#svg-link"></use></svg
+              ></a>
+              Priority Push
+            </h2>
+            <p>
+              In an effort to get priority cases to judges without waiting for
+              them to request cases, every Monday morning, a<code
+                class="language-plaintext highlighter-rouge"
+                >PushPriorityAppealsToJudgesJob</code
+              >
+              is run to push ready priority cases to judges that can receive
+              them. Judges can receive this push if they have an active judge
+              team in caseflow and they hav not been removed from the job. DVCs
+              are in charge of keeping this list of judges up to date and can
+              add and remove judges from this job from the Team Management page.
+            </p>
+            <p>
+              To ensure some judges are not distributed more than others, we
+              first distribute all priority cases that are tied to a judge
+              (non-genpop) to that respective judge. We then look at the number
+              of cases all eligible judges have received in the last month
+              (including the ones just distributed), calculate a target number
+              for each judge that would get us as close to even as possible, and
+              distribute the remaining ready priority genpop appeals based on
+              that calculation. The board is in charge of manually handling any
+              cases that cannot be distributed due to the associated judge being
+              unable to receive cases (they have left the board, they are no
+              longer a judge, they are on vacation, etc).
+            </p>
+            <h1 id="further-reading">
+              <a
+                href="#further-reading"
+                class="anchor-heading"
+                aria-labelledby="further-reading"
+                ><svg viewbox="0 0 16 16" aria-hidden="true">
+                  <use xlink:href="#svg-link"></use></svg
+              ></a>
+              Further reading
+            </h1>
+            <p>
+              <a
+                href="https://github.com/department-of-veterans-affairs/caseflow/files/2971837/2018-11-14.Automatic.Case.Distribution.UPDATED.pdf"
+                >Presentation with cute robots describing how Automatic Case
+                Distribution works</a
+              >
+              <a
+                href="https://github.com/department-of-veterans-affairs/docketeer"
+                >Jupyter Notebooks</a
+              >
+            </p>
+          </main>
           <hr />
           <footer>
             <a href="#top" id="back-to-top">Back to top</a>

@@ -3,288 +3,336 @@
     "title": "README",
     "content": "Welcome to the GitHub Pages for Caseflow! The webpage can be viewed at http://department-of-veterans-affairs.github.io/caseflow/. | Making changes | Purpose of the gh-pages and main-gh-pages branches | The main-gh-pages branch | Checking out the branch | Committing big changes | Previewing changes | Jekyll | Subsites . | Jekyll subsite | Hugo subsite . | Task tree Hugo subsite | . | HTML subsite | . | FAQ . | How was the gh-pages branch created without a commit history? | Why not use the GitHub Wiki? | Why not use the basic GitHub Pages (without GitHub Actions)? | What GitHub Actions are involved? | . | . ",
     "url": "/caseflow/README.html",
+    
     "relUrl": "/README.html"
   },"1": {
     "doc": "README",
     "title": "Making changes",
     "content": "For small changes, most pages can be modified by clicking on the Edit this page link at the bottom of the page, modifying the md file, and committing the change. For larger changes, checkout the main-gh-pages branch, make local modifications, and push your changes. This will trigger an update to the gh-pages branch used by GitHub Pages. ",
     "url": "/caseflow/README.html#making-changes",
+    
     "relUrl": "/README.html#making-changes"
   },"2": {
     "doc": "README",
     "title": "Purpose of the gh-pages and main-gh-pages branches",
     "content": "The (gh-pages branch) contains the html and asset files displayed by GitHub Pages. The branch is not intended to be merged in the master branch. Note that it has a completely separate commit history from the Caseflow application master branch. For more info, see the FAQ. The gh-pages branch is updated by a build-gh-pages GitHub Action that uses files from the main-gh-pages branch to generate html and asset files, which are pushed to the gh-pages branch. You should not modify the gh-pages branch directly, so you don’t need to git checkout the branch. Any commit to the main-gh-pages branch will trigger the GitHub Action, which can be seen here. See Committing changes for how to make changes. Note that there may be some other GitHub Action that updates the gh-pages branch, so make sure to not cause folder or file name collisions when updating main-gh-pages. ",
     "url": "/caseflow/README.html#purpose-of-the-gh-pages-and-main-gh-pages-branches",
+    
     "relUrl": "/README.html#purpose-of-the-gh-pages-and-main-gh-pages-branches"
   },"3": {
     "doc": "README",
     "title": "The main-gh-pages branch",
     "content": "The main-gh-pages branch has files for documentation. Some are automatically generated (e.g., Caseflow DB schema by a GitHub Action); others are manually created (e.g., Bat Team Remedies). ",
     "url": "/caseflow/README.html#the-main-gh-pages-branch",
+    
     "relUrl": "/README.html#the-main-gh-pages-branch"
   },"4": {
     "doc": "README",
     "title": "Checking out the branch",
     "content": "Even though main-gh-pages is another branch in the Caseflow repo, it is highly encouraged to check out the main-gh-pages branch in a directory separate from caseflow because it has no common files with Caseflow’s master branch and to avoid accidentally deleting git-ignored files in your development branches. To checkout to a main-gh-pages directory as a sibling of your caseflow directory: . cd $YOUR_PATH_TO/caseflow cd .. git clone --recurse-submodules -b main-gh-pages --single-branch https://github.com/department-of-veterans-affairs/caseflow.git main-gh-pages . ",
     "url": "/caseflow/README.html#checking-out-the-branch",
+    
     "relUrl": "/README.html#checking-out-the-branch"
   },"5": {
     "doc": "README",
     "title": "Committing big changes",
     "content": "Treat the main-gh-pages branch like Caseflow’s master branch. A difference is that anyone can commit to main-gh-pages without a peer-review (just like the Caseflow wiki page). However for significant changes, it is encouraged to create a development branch and do a squash-merge when you are satisfied with the changes, just like what is done in Caseflow’s master branch. cd main-gh-pages git checkout -b my/add-amazing-new-page # Make modifications, preview changes, and commit git add . git commit # Once ready to merge git checkout main-gh-pages git merge --squash my/add-amazing-new-page git commit # Push to GitHub repo git push . ",
     "url": "/caseflow/README.html#committing-big-changes",
+    
     "relUrl": "/README.html#committing-big-changes"
   },"6": {
     "doc": "README",
     "title": "Previewing changes",
     "content": "To preview changes locally, run the website generators locally as follows: . make run # Alternatively, to run from a clean state: make clean_run . If it’s the first time running it, install some tools: . bundle install make install_jekyll_diagram_dependencies # only needed to view diagrams locally Stephan Ward - 10/21/2023 comment: Used 'sudo apt install graphviz' to fix dependency issue to view graphs. To update the subsites: . make build_subsites . which puts the subsites as subdirectories under the _site directory. ",
     "url": "/caseflow/README.html#previewing-changes",
+    
     "relUrl": "/README.html#previewing-changes"
   },"7": {
     "doc": "README",
     "title": "Jekyll",
     "content": "This top-level site uses the Jekyll theme Just the Docs. The help subsite uses a different Jekyll theme, specified in __help/_config.yml. Jekyll can be configured to use plugins. Each md file can define front matter to specify how the corresponding page should be treated or visualized by the Jekyll theme. ",
     "url": "/caseflow/README.html#jekyll",
+    
     "relUrl": "/README.html#jekyll"
   },"8": {
     "doc": "README",
     "title": "Subsites",
     "content": "A subsite is useful for presenting documentation using a different theme or layout. To create a new Jekyll subsite called SUBSITE: . | Create subdirectory __SUBSITE (prefixed with 2 underscores); the underscore prefix is needed so that Jekyll doesn’t process it when building the main site | Create a new __SUBSITE/_config.yml to override the defaults set in __subsite_config.yml | Add a new entry in Makefile to build the html files into destination directory _site/SUBSITE | Add SUBSITE to the keep_files configuration setting in _config.yml so that Jekyll doesn’t delete the _site/SUBSITE directory when building the main site | . Refer to the __help directory as an example. Note that any static site generator besides Jekyll can be used, such as Hugo, Gatsby, and Pelican – adapt the instructions accordingly. Jekyll subsite . The Help subsite demonstrates how to create a subsite using Jekyll. Hugo subsite . The Task trees subsite uses Hugo for its speed in processing the hundreds of task md files, among other features. The subsite source files are under the __task_trees folder and follows Hugo’s folder structure. Spending time to read this tutorial is highly recommended before digging into Hugo’s documentation, which is less amenable to learning. Task tree Hugo subsite . Some Hugo customizations have been applied to the Task trees subsite to make it easier to update. These customizations are under the __task_trees folder. To add a new section, create a subfolder under the content folder. To add the section to the navigation menu, add this front matter to the top of a new my-subfolder-name/_index.md file: . --- title: My New Section menu: navmenu: identifier: my-subfolder-name # whether the child pages in this section will be collapsed when not selected collapsible: true # affects ordering in the navigation menu weight: 3 --- # My New Section Check out these new pages. Clicking on the section link in the navigation menu will render _index.md followed by a listing of the constituent pages. To display the list of pages elsewhere, insert {{&lt; pages_list &gt;}} at the desired location in the _index.md file. (This feature is provided by layouts/_default/list.html and layout/shortcodes/pages_list.html.) . For each page in the new subfolder, add this front matter to the page’s md file in order to display it in the navigation menu: . --- title: Page 1 within Section menu: navmenu: parent: my-subfolder-name weight: 1 --- . Note that pages and sections with a negative weight will not be shown in the navigation menu. To avoid having to set the 3-line parent property for every page, add a front matter cascade configuration under the cascade section of config.yml instead, which will set the front matter for all files in my-subfolder-name except those beginning with _: . - menu: navmenu: parent: my-subfolder-name _target: path: /my-subfolder-name/[!_]* . To further customize the menu, modify menu/header.md and menu/footer.md. HTML subsite . The Table associations subsite is simply a set of html files under the schema/html folder, which is generated by Jailer run by the make_docs GitHub Action. Jailer queries Caseflow’s DB schema and generates the HTML documentation. Additional bootstrapping was added to Jailer in order for polymorphic associations to be included in the documentation. ",
     "url": "/caseflow/README.html#subsites",
+    
     "relUrl": "/README.html#subsites"
   },"9": {
     "doc": "README",
     "title": "FAQ",
     "content": "How was the gh-pages branch created without a commit history? . git checkout --orphan gh-pages git reset --hard git commit --allow-empty -m \"Initializing gh-pages branch\" git push origin gh-pages git checkout master . (reference) . Also see GitHub’s “Creating your site” instructions. Why not use the GitHub Wiki? . GitHub Wiki has the following limitations: . | Cannot serve up html content or files, along with referenced css files | No table of content generation | No built-in diagramming markup language | While the wiki context can be organized into folder, the wiki presentation doesn’t reflect the organization | Inability to present different documentation types using different styles/themes/layouts | . GitHub Pages provides more control over web page organization and presentation – see next section. Why not use the basic GitHub Pages (without GitHub Actions)? . By default, GitHub Pages employs the Jekyll static site generator to convert md files into html files, all without any additional configuration – see GitHub Pages setup documentation. To enable additional website features and documentation presentation capabilities, a GitHub Action runs Jekyll and potentially other tools to generate the html files for GitHub Pages. The additional capabilities include: . | incorporating sets of generated html files, like Caseflow DB schema created via Jailer | generating table of contents and site navigation menu | using markup syntax to generate diagrams, like diagrams.md | enabling subsites with different website themes/layouts, like the help subsite | quick text search (provided by the Just the Docs theme) | . These capabilities open up opportunities for enhanced presentation of Caseflow documentation, which aims to make information easier to find and understand. What GitHub Actions are involved? . The following GitHub Actions are employed to create this website: . | build-gh-pages in the main-gh-pages branch . | Triggered when changes are pushed to the main-gh-pages branch | Builds this top-level site and subsites (according to the Makefile) . | Installs Ruby, Graphviz, Node, and Python dependencies | Runs Jekyll, Hugo, and other static site generators | Clones Caseflow code to extract code comments and update the task descriptions for the Task trees subsite | Commits updated task descriptions to the main-gh-pages branch (this does not re-trigger this GitHub Action to run) | . | Deploys the files generated in _site to the gh-pages branch, which is displayed by GH Pages | . | make_docs in the main (master) branch . | Triggered when a PR is merged to the main branch | Generates Caseflow database documentation files . | Sets up Caseflow test database | Executes a subset of commands run by make docs | Runs gen_jailer_schema_docs.sh to bootstrap and run Jailer | . | Creates a PR to updates Caseflow database documentation files in the main-gh-pages branch . | Commits updated files to the main-gh-pages branch (this will not trigger the build-gh-pages GitHub Action to run: “An action in a workflow run can’t trigger a new workflow run”) | Creates or updates a PR for the gh-actions/make_docs-update_docs branch. This PR accumulates documentation changes until it is manually merged into the main-gh-pages branch, which will trigger the build-gh-pages GitHub Action. | . | . | . Their execution can be seen under the Actions tab. ",
     "url": "/caseflow/README.html#faq",
+    
     "relUrl": "/README.html#faq"
   },"10": {
     "doc": "Automatic Case Distribution",
     "title": "Presentations",
     "content": ". | May 2020 Case Distribution Overview | November 2018 Presentation with cute robots describing how Automatic Case Distribution works | . ",
     "url": "/caseflow/caseflow-queues/automatic_case_distribution.html#presentations",
+    
     "relUrl": "/caseflow-queues/automatic_case_distribution.html#presentations"
   },"11": {
     "doc": "Automatic Case Distribution",
     "title": "Goal",
     "content": "When a Veterans Law Judge requests cases that are ready for a decision, those cases are drawn from the Board’s various dockets according to a set of rules. Prior to the implementation of the Appeals Modernization Act in February 2019, there was only a single docket, and the distribution of cases could be done by hand. With AMA in place, there are now four dockets, and the rules for distribution have reached a level of complexity that this task now must be automated. This pages describes the rules by which cases are distributed. ",
     "url": "/caseflow/caseflow-queues/automatic_case_distribution.html#goal",
+    
     "relUrl": "/caseflow-queues/automatic_case_distribution.html#goal"
   },"12": {
     "doc": "Automatic Case Distribution",
     "title": "Concepts",
     "content": " ",
     "url": "/caseflow/caseflow-queues/automatic_case_distribution.html#concepts",
+    
     "relUrl": "/caseflow-queues/automatic_case_distribution.html#concepts"
   },"13": {
     "doc": "Automatic Case Distribution",
     "title": "Docket",
     "content": "A docket is a line. We can generally think of a docket like a first-in, first-out (FIFO) queue, however there are some exceptions to this rule. One is that a case must be “ready” to be distributed, i.e. it must have no other tasks to be completed before a decision is written. So a ready case will be distributed before a non-ready case, even if the non-ready case is ahead of it on the docket. The Board is also allowed a small amount of wiggle room so that it doesn’t have to strictly observe docket order at the cost of efficiency; before AMA this was known as the “docket range,” a number of cases that were close enough to the front of the line to be considered eligible to be distributed. ",
     "url": "/caseflow/caseflow-queues/automatic_case_distribution.html#docket",
+    
     "relUrl": "/caseflow-queues/automatic_case_distribution.html#docket"
   },"14": {
     "doc": "Automatic Case Distribution",
     "title": "Priority",
     "content": "If an appellant is suffering a serious illness, in financial distress, or for another sufficient cause, their appeal can be Advanced on the Docket, or prioritized. If the appellant is older than 75, their appeal is automatically AOD; otherwise, they must file a motion requesting this status. Board decisions can be appealed to the Court of Appeals for Veterans Claims. If CAVC disagrees with the Board’s decision, they will remand it back to the Board for another decision. These post-CAVC remands are also prioritized. There is no differentiation between the various reasons for prioritizing cases. All priority cases are prioritized equally. ",
     "url": "/caseflow/caseflow-queues/automatic_case_distribution.html#priority",
+    
     "relUrl": "/caseflow-queues/automatic_case_distribution.html#priority"
   },"15": {
     "doc": "Automatic Case Distribution",
     "title": "Genpop",
     "content": "Before AMA, if a judge held a hearing with the appellant, that same judge would be required to write the decision on the appeal. We would say that this appeal is “tied to the judge.” A Veteran could waive this right, enabling their appeal to go to any judge. They would be asked to do this if the judge retired, for example. At this point, their case would be deemed “genpop” — eligible to go to any judge. Under AMA, this is no longer a requirement under law. However, it is still preferable for an appeal to go to the same judge who heard the hearing, provided they are still active at the Board. An additional caveat, AOD appeals that are remanded by CAVC are tied to the same judge as wrote the original decision. In the app, appeals that meet either one of these conditions are considered genpop: . | All appeals without a hearing | All appeals with hearings, but none that are held (disposition == \"held\") | All appeals whose most recently held hearing is not tied to any active judge. A judge is considered active if they have logged in within the past 60 days. The hearing date is obtained by joining on the HearingDay table’s scheduled_for field. | . ",
     "url": "/caseflow/caseflow-queues/automatic_case_distribution.html#genpop",
+    
     "relUrl": "/caseflow-queues/automatic_case_distribution.html#genpop"
   },"16": {
     "doc": "Automatic Case Distribution",
     "title": "Batch size",
     "content": "When a judge requests a distribution of cases, they will receive a certain number of cases in their queue. This number is called the batch size. It is a multiple of the number of attorneys on the judge’s team (currently 3 x the number of attorneys). If the judge does not have their own team, for example if they are a DVC, they receive a set number of cases known as an alternative batch size (currently 15 cases). We also can calculate a number called a total batch size, which is the sum of all of the individual judge’s batch sizes. The total batch size is used as a denominator for calculating things like the optimal percentage of priority cases to distribute. ",
     "url": "/caseflow/caseflow-queues/automatic_case_distribution.html#batch-size",
+    
     "relUrl": "/caseflow-queues/automatic_case_distribution.html#batch-size"
   },"17": {
     "doc": "Automatic Case Distribution",
     "title": "Legacy docket range",
     "content": "The legacy docket combines hearing and non-hearing appeals. As a result, it is not optimal to always grab the frontmost case; there may be cases farther back on the docket that can only be distributed to this specific judge, and it will be advantageous to overall timeliness to distribute them ahead of genpop cases that could be worked by anybody. But we still need to respect docket order, and we do this, similar to how the legacy docket was manually managed, by calculating a docket range. This is the range of cases on the legacy docket that are close enough to the front of the line to be distributed. The legacy docket range is equal to the total batch size, minus the count of priority cases, times the legacy docket proportion (see Docket Proportions below). A hearing case within that range is considered eligible to be distributed to its judge as if it was at the front of the line. ",
     "url": "/caseflow/caseflow-queues/automatic_case_distribution.html#legacy-docket-range",
+    
     "relUrl": "/caseflow-queues/automatic_case_distribution.html#legacy-docket-range"
   },"18": {
     "doc": "Automatic Case Distribution",
     "title": "Ready",
     "content": "Cases considered “ready” for distribution must have all pre-distribution tasks completed. For AMA Appeals, this is simply determined by the state of the appeal’s distribution task. If this task has a status of “assigned”, all child tasks that must be completed for distribution are either complete or cancelled, meaning the appeal is ready for distribution. For legacy appeals, the appeal must meet the following conditions to be considered ready to distribute: . | The appeal must be active at the board (bfmpro of the vacols case is “ACT”) | The appeal must be in case storage (bfcurloc of the vacols case is “81” or “83”) | The appeal must not belong to a special team at the board (bfbox of the vacols case is null) | The appeal must not have any open blocking vacols diaries (tskdcls is null (diary is open) and tskactcd is one of ‘EXT’, ‘HCL’, or ‘POA’ of any associated vacols diary record (diary is a blocking diary type)) | The appeal must not have any open blocking vacols mail (mlcompdate is null (mail task is open) and mltype is NOT one of ‘02’, ‘05’, ‘08’, or ‘13’ of any associated vacols mail record (mail task is a blocking distribution type)) | . appeal = LegacyAppeal.find_by(vacols_id: 3856200) VACOLS::CaseDocket.priority_ready_appeal_vacols_ids.include? appeal.vacols_id =&gt; false # Appeal is considered either not ready or not priority appeal.aod? =&gt; true # Is priority appeal.location_code =&gt; \"81\" # Appeal is in case storage, one of the conditions for \"ready to distribute\" VACOLS::Case.find_by(bfkey: appeal.vacols_id).bfmpro =&gt; \"ACT\" # Appeal is active, one of the conditions for \"ready to distribute\" VACOLS::Case.find_by(bfkey: appeal.vacols_id).bfbox =&gt; nil # Case does not belong to a special team, one of the conditions for \"ready to distribute\" VACOLS::Note.where(tsktknm: appeal.vacols_id, tskdcls: nil, tskactcd: ['EXT', 'HCL', 'POA']).count =&gt; 0 # No blocking diary items in vacols, one of the conditions for \"ready to distribute\" VACOLS::Mail.where(mlfolder: appeal.vacols_id, mlcompdate: nil).pluck(:mltype) =&gt; [\"07\"] # There is an open blocking mail item in vacols, meaning this case is not ready to distribute . ",
     "url": "/caseflow/caseflow-queues/automatic_case_distribution.html#ready",
+    
     "relUrl": "/caseflow-queues/automatic_case_distribution.html#ready"
   },"19": {
     "doc": "Automatic Case Distribution",
     "title": "AMA dockets",
     "content": "The Appeals Modernization Act created two new dockets, in addition to the existing “legacy” docket, and allowed VA to create as many additional dockets as it wants. VA decided to make one additional docket, bringing the total number to four. 1) Legacy docket. The original flavor docket. This docket contains appeals of decisions before AMA took effect. As there was previously only one docket, the legacy docket contains both hearing and non-hearing appeals. It also has an open record, meaning that evidence can be added to an appeal at any time. 1) Direct Review docket. This AMA docket contains appeals where the Veteran has decided they do not want to add new evidence and do not want a hearing. To encourage people to use this option, the Board has promised that the average number of days to complete appeals on this docket will be 365 days, one year. 1) Evidence Submission docket. On this AMA docket, a Veteran can add evidence during the 90 days after they begin their appeal. There is no timeliness goal for this docket. 1) Hearing Request docket. On this AMA docket, the Veteran has requested a hearing with a judge. They can also submit evidence at their hearing, or during the 90 days after the hearing. ",
     "url": "/caseflow/caseflow-queues/automatic_case_distribution.html#ama-dockets",
+    
     "relUrl": "/caseflow-queues/automatic_case_distribution.html#ama-dockets"
   },"20": {
     "doc": "Automatic Case Distribution",
     "title": "Policy Objectives",
     "content": "In designing the automatic case distribution, there were a number of policy objectives that the team sought to realize. | Priority cases should be balanced among judges. No judge should request a distribution and receive all priority cases. | Priority cases should be distributed quickly. | Docket order should be respected. An appeal that has an earlier docket date should be distributed before one with a later docket date. A certain amount of allowance is made on the legacy docket, where some appeals are tied to judges. In this case, we’ll want to maximize the docket efficiency, that is the extent to which we do not need to look too deep on the docket to find cases for a given judge. | Nonpriority appeals on the Direct Review docket should receive a decision about 365 days after VA received the form starting the appeal. | However, the Board should also start to work some Direct Review cases straight away, and not just wait for one year before starting to work the Direct Review docket. As a result, we want to ramp up to the 365 day timeline. | The other dockets, legacy, Evidence Submission, and Hearing Request, should be balanced proportionately. That is the number of nonpriority cases distributed from each docket should be proportionate to the number of cases on each docket. | Clearing the legacy backlog should be prioritized, but meeting the Direct Review timeliness goal is a higher priority. | . ",
     "url": "/caseflow/caseflow-queues/automatic_case_distribution.html#policy-objectives",
+    
     "relUrl": "/caseflow-queues/automatic_case_distribution.html#policy-objectives"
   },"21": {
     "doc": "Automatic Case Distribution",
     "title": "Wrangling the dockets",
     "content": " ",
     "url": "/caseflow/caseflow-queues/automatic_case_distribution.html#wrangling-the-dockets",
+    
     "relUrl": "/caseflow-queues/automatic_case_distribution.html#wrangling-the-dockets"
   },"22": {
     "doc": "Automatic Case Distribution",
     "title": "Priority Target",
     "content": "How much of a given distribution should be priority cases? If we were to just always distribute a priority case if one was available, we would see that some judges would get far more priority cases than others, just by virtue of the timing of their request. Instead, we’ll calculate an optimal number of cases for a given distribution that should be priority. We start by counting all of the priority cases that are ready to be distributed on any docket. We then divide this number by the total batch size to get an target percentage, and then multiply by the individual judge’s batch size (rounding up) to get the target number of priority cases that should be distributed. ",
     "url": "/caseflow/caseflow-queues/automatic_case_distribution.html#priority-target",
+    
     "relUrl": "/caseflow-queues/automatic_case_distribution.html#priority-target"
   },"23": {
     "doc": "Automatic Case Distribution",
     "title": "Docket Proportions",
     "content": "We don’t have to worry about which docket priority cases come from; all priority cases are treated the same. But for nonpriority cases, we must balance the four dockets, calculating the percentage of cases that we want to come from each docket. Direct Review docket . Unlike the other dockets, cases on the Direct Review docket are distributed based on the Board’s 365 day timeliness goal. We do this by giving each Direct Review case a target_decision_date at intake of 365 days after the receipt_date (this allows the Board the option of increasing the goal, while respecting the promises made to Veterans who are already in the door). We can then mark cases as due a set number of days before their target_decision_date. We then count the number of due cases, and like we do with the priority target, divide by the total batch size (this time after excluding the count of priority cases from the denominator) to get the direct review proportion. However, this proportion would remain at zero for nearly a year, waiting for cases to become due, and this is contrary to the Board’s goal of beginning to work these cases immediately. So we will also calculate an interpolated minimum direct review proportion. We use the rate at which Direct Reviews are arriving to calculate a pacesetting proportion, or the proportion of nonpriority decision capacity that would need to go to the Direct Review docket in order to keep pace with what’s arriving. We will then interpolate between 0 and the pacesetting proportion based on the age of the oldest Direct Review in the system. Finally, to accelerate the curve out, we multiply this interpolated figure by the interpolated direct review proportion adjustment. This gives us a curve out of the direct review proportion that would look something like the following: . The “jolt” in this chart shows when the calculation switched from using the interpolated minimum to using the standard due proportion. The direct review proportion is also subject to a maximum. It currently cannot exceed 80%. This prevents a complete halt to work on other dockets should demand for direct reviews approach the Board’s capacity. ",
     "url": "/caseflow/caseflow-queues/automatic_case_distribution.html#docket-proportions",
+    
     "relUrl": "/caseflow-queues/automatic_case_distribution.html#docket-proportions"
   },"24": {
     "doc": "Automatic Case Distribution",
     "title": "Balanced dockets",
     "content": "The other dockets are balanced proportionate to the number of cases on the docket. After the direct review proportion is deducted, the remaining proportions are divided among the other dockets according to their weight, the number of cases waiting. The legacy docket has two exceptions to this rule. First, in addition to counting the cases on the docket, we also count the number of cases where the Agency of Original Jurisdiction has received a Notice of Disagreement but where the appeal has not yet reached the Form 9 stage. We count these cases at a 40% discount, reflecting the likelihood that they will come to the Board and providing a fuller picture of what is waiting. Second, the legacy docket is subject to a 10% minimum. This ensures that even as the legacy docket is winnowed, VA does not let up off the gas of finishing these older cases. Note that the sum of this minimum and the direct review maximum should not exceed 100%. ",
     "url": "/caseflow/caseflow-queues/automatic_case_distribution.html#balanced-dockets",
+    
     "relUrl": "/caseflow-queues/automatic_case_distribution.html#balanced-dockets"
   },"25": {
     "doc": "Automatic Case Distribution",
     "title": "Case distribution",
     "content": " ",
     "url": "/caseflow/caseflow-queues/automatic_case_distribution.html#case-distribution",
+    
     "relUrl": "/caseflow-queues/automatic_case_distribution.html#case-distribution"
   },"26": {
     "doc": "Automatic Case Distribution",
     "title": "Requested",
     "content": "When a judge requests the distribution, we distribute cases according to the following steps: . 1) We distribute priority legacy cases that are tied to a judge. As many as available, up to the limit of the batch size. 1) We distribute priority AMA hearing cases that are tied to a judge. Again, as many as available. 1) We distribute nonpriority legacy cases that are tied to a judge. We’ll distribute as many as available, but they must be within the legacy docket range. 1) We distribute nonpriority AMA hearing cases that are tied to a judge. As many as available. 1) At this point, we may have distributed some priority appeals. We’ll deduct those appeals from the priority target to get the number of additional priority appeals that we should distribute. We ask each docket for its priority appeals that have been waiting the longest, and distribute the oldest ones up to the priority remaining number, irrespective of docket. 1) We have also potentially distributed some nonpriority appeals from the legacy and AMA hearing dockets. We’ll deduct these cases from the docket proportions. 1) Now we’re ready to distribute the remaining nonpriority cases from each of the dockets according to the updated docket proportions. As some of these proportions may be small, we do this by means of stochastic allocation. 1) If when we try to distribute cases from a given docket, we find that it has no cases that are ready to distribute, we’ll reallocate those cases among the other dockets according to the docket proportions and try again until we’ve found a number of cases equal to the batch size. ",
     "url": "/caseflow/caseflow-queues/automatic_case_distribution.html#requested",
+    
     "relUrl": "/caseflow-queues/automatic_case_distribution.html#requested"
   },"27": {
     "doc": "Automatic Case Distribution",
     "title": "Priority Push",
     "content": "In an effort to get priority cases to judges without waiting for them to request cases, every Monday morning, aPushPriorityAppealsToJudgesJob is run to push ready priority cases to judges that can receive them. Judges can receive this push if they have an active judge team in caseflow and they hav not been removed from the job. DVCs are in charge of keeping this list of judges up to date and can add and remove judges from this job from the Team Management page. To ensure some judges are not distributed more than others, we first distribute all priority cases that are tied to a judge (non-genpop) to that respective judge. We then look at the number of cases all eligible judges have received in the last month (including the ones just distributed), calculate a target number for each judge that would get us as close to even as possible, and distribute the remaining ready priority genpop appeals based on that calculation. The board is in charge of manually handling any cases that cannot be distributed due to the associated judge being unable to receive cases (they have left the board, they are no longer a judge, they are on vacation, etc). ",
     "url": "/caseflow/caseflow-queues/automatic_case_distribution.html#priority-push",
+    
     "relUrl": "/caseflow-queues/automatic_case_distribution.html#priority-push"
   },"28": {
     "doc": "Automatic Case Distribution",
     "title": "Further reading",
     "content": "Presentation with cute robots describing how Automatic Case Distribution works Jupyter Notebooks . ",
     "url": "/caseflow/caseflow-queues/automatic_case_distribution.html#further-reading",
+    
     "relUrl": "/caseflow-queues/automatic_case_distribution.html#further-reading"
   },"29": {
     "doc": "Automatic Case Distribution",
     "title": "Automatic Case Distribution",
     "content": " ",
     "url": "/caseflow/caseflow-queues/automatic_case_distribution.html",
+    
     "relUrl": "/caseflow-queues/automatic_case_distribution.html"
   },"30": {
     "doc": "DB Schema",
     "title": "Autogenerated documentation",
     "content": "These are the most up-to-date documentation. | Schema Diagrams | Schema CSVs . | Caseflow Schema CSV | ETL Schema CSV | . | . ",
     "url": "/caseflow/schema/db_schema.html#autogenerated-documentation",
+    
     "relUrl": "/schema/db_schema.html#autogenerated-documentation"
   },"31": {
     "doc": "DB Schema",
     "title": "Manual documentation",
     "content": "See Caseflow Data Model. Participant IDs . A participant ID is provided by BGS to uniquely identify (1) Claimants (who may be Veterans) and (2) POA entities (which can be an organization or individual). Several tables refer to the participant ID by different names, depending on who they are referencing. A participant ID for a POA is usually named poa_participant_id, for example in the DB tables: appeals, appellant_substitutions, bgs_power_of_attorneys, and unrecognized_appellants. Some exceptions are the bgs_attorneys and organizations tables, which simply use participant_id. Note: For the organizations table, only organizations with type=\"Representative\" have a non-null participant_id. A participant ID for a claimant or veteran goes by several names, such as claimant_participant_id, veteran_participant_id, and substitute_participant_id. The claimants, veterans, people, and decision_issues tables simply use participant_id. ",
     "url": "/caseflow/schema/db_schema.html#manual-documentation",
+    
     "relUrl": "/schema/db_schema.html#manual-documentation"
   },"32": {
     "doc": "DB Schema",
     "title": "Semi-automated documentation",
     "content": ". | Ever want to see the schema for a subset of tables? Paste excerpts from schema.rb and “Import” into http://dbdiagram.io/, then move the boxes around to your liking. Example diagram of Document-related tables and more in ticket #15510. | Extending previous work on parent-child task type relationships (such as this for the DR docket) and playing with Jupyter notebook, here’s an interactive graph showing parent-child task type relationships for all task trees in prod as of July 19, 2020. | Some diagrams and documentation of Caseflow’s DB schema created in Oct 2019. | . ",
     "url": "/caseflow/schema/db_schema.html#semi-automated-documentation",
+    
     "relUrl": "/schema/db_schema.html#semi-automated-documentation"
   },"33": {
     "doc": "DB Schema",
     "title": "DB Schema",
     "content": "This page is a resource to understand Caseflow’s database. ",
     "url": "/caseflow/schema/db_schema.html",
+    
     "relUrl": "/schema/db_schema.html"
   },"34": {
     "doc": "Caseflow Queue",
     "title": "About Queue",
     "content": "Caseflow Queue is a workflow management tool that will allow BVA employees process legacy and AMA appeals at the Board. It’s also the entry point for Caseflow Reader; users navigate to Reader from Queue. ",
     "url": "/caseflow/caseflow-queues/#about-queue",
+    
     "relUrl": "/caseflow-queues/#about-queue"
   },"35": {
     "doc": "Caseflow Queue",
     "title": "Definitions and term-usage",
     "content": " ",
     "url": "/caseflow/caseflow-queues/#definitions-and-term-usage",
+    
     "relUrl": "/caseflow-queues/#definitions-and-term-usage"
   },"36": {
     "doc": "Caseflow Queue",
     "title": "User groups",
     "content": "All Board teams use Caseflow Queue to view and complete their tasks. Some branches also use other Caseflow products and features, like the Hearing Branch uses Caseflow Hearings to schedule hearings. | Team | Primary Caseflow functionality | . | Case Review | Caseflow IntakeCaseflow QueueCaseflow ReaderIssues | . | Mail | Caseflow Queue | . | Translation | Caseflow QueueCaseflow Reader | . | Hearing Branch | Caseflow QueueCaseflow Hearings | . | Privacy Team | Caseflow QueueeFolder Express | . | Decision-drafting attorneys | Caseflow QueueCaseflow ReaderIssues | . | Judges &amp; acting judges | Caseflow QueueCaseflow ReaderCaseflow HearingsIssuesAutomatic Case Distribution | . | [VLJ Support Staff](https://github.com/department-of-veterans-affairs/caseflow/wiki/VLJ-Support) | Caseflow QueueCaseflow Reader | . | [BVA Dispatch](https://github.com/department-of-veterans-affairs/caseflow/wiki/BVA-Dispatch) | Caseflow QueueCaseflow ReaderInteractive Decision Template | . | [Quality Review](https://github.com/department-of-veterans-affairs/caseflow/wiki/Quality-Review) | Caseflow QueueCaseflow Reader | . | Litigation Support | Caseflow QueueCaseflow Reader | . | Advanced on the Docket (AOD) | Caseflow QueueCaseflow Reader | . | [VSOs](https://github.com/department-of-veterans-affairs/caseflow/wiki/VSOs) | Caseflow QueueCaseflow ReaderCaseflow Hearings | . | Private attorneys and claims agents | Caseflow QueueCaseflow ReaderCaseflow Hearings | . Other VA . | VA call center | . ",
     "url": "/caseflow/caseflow-queues/#user-groups",
+    
     "relUrl": "/caseflow-queues/#user-groups"
   },"37": {
     "doc": "Caseflow Queue",
     "title": "Features",
     "content": "Please see the TOC below for a list of high level features . ",
     "url": "/caseflow/caseflow-queues/#features",
+    
     "relUrl": "/caseflow-queues/#features"
   },"38": {
     "doc": "Caseflow Queue",
     "title": "Caseflow Queue",
     "content": " ",
     "url": "/caseflow/caseflow-queues/",
+    
     "relUrl": "/caseflow-queues/"
   },"39": {
     "doc": "Workflows",
     "title": "Workflows",
     "content": "See Workflows in the Task Trees subsite. ",
     "url": "/caseflow/workflows/",
+    
     "relUrl": "/workflows/"
   },"40": {
     "doc": "Tasks",
     "title": "What are tasks?",
     "content": "See all Caseflow tasks’ source code here. Tasks are how Caseflow records who has responsibility for taking action on an appeal. Tasks contain three essential pieces of information: . | Appeal. Which appeal requires this action. | Assignee. Who is supposed to take the action. The assignee can be a person, a team of people, or an abstract organization used as a placeholder for some automated action that will be taken on the appeal. | Type. The type of task implies the action that is supposed to be taken. | . | Each appeal is associated with a root task. All required tasks for the appeal will be children of this root task. | Actions or task state change can cause new tasks to be associated with the root task or its descendant tasks. | Tasks determine what actions are available to a role. | A task’s state is affected by actions taken by a user. | . | Many tasks are first assigned to an Organization. When the admin for the organization (e.g., judge, coordinator) assigns a case to an individual user, a child task (or subtask) is created and assigned to a user within that organization. The task and child task have the same type but different assigned_to_type. | When the child task is created and assigned, the parent task’s state is on_hold. | When the child task’s state is complete, a hook causes the parent task’s state to be complete. | When the child task’s state is cancelled, a hook causes the parent task’s state to be cancelled. | Task Types that do not follow the Parent Org - Child User structure are all Judge Tasks, all Attorney Tasks, and the root task. | Judge &amp; Attorney have a similar parent/child structure, but do not mimic the behavior. | This distinction is a historic artifact, rather than a deliberate choice, as those Judge &amp; Attorney task types predate Organizations. | . | . | . Task status . | Possible task status values (see task.rb: enum status): assigned, in_progress, on_hold, completed, cancelled. | A task is closed if it is completed or cancelled (see Task.closed_statuses). | task.open? is implemented as !self.class.closed_statuses.include?(status). | A task is active (task.active?) if it is assigned or in_progress (see Task.active_statuses). | Note that Task.open_statuses is implemented as active_statuses.concat([Constants.TASK_STATUSES.on_hold]), which corresponds with task.open? as long as no other status values are added. | When a status is “active” we expect properties of the task to change. When a task is not “active” we expect that properties of the task will not change. | . Cancellation reason . There are many reasons why a task might be cancelled. cancellation_reason provides a means to identify a reason for a task’s most recent cancelled status. Usually a cancelled status is a final state for a task, so we wouldn’t expect it to change again. The cancellation_reason can be cleared for a task if the task ever gets uncancelled, and a new reason can be added, should it be cancelled for a different reason. Supplemental information from users for cancellation_reason can be stored in instructions. Possible values for cancellation_reason are detailed here (see also task.rb: enum cancellation_reason): . | cancellation_reason value | Description | . | poa_change | IHP tasks are cancelled when there is a change of POA for an appeal. The IHP task for the original POA gets cancelled and a new IHP task is opened for the new POA. | . How do tasks map to the appeals process? . | For further description, see this slide deck. | Also check out this generated Task Tree documentation | . Task timestamps . Tasks all have 6 timestamps that record when certain events happen . | created_at: When the ActiveRecord was created (done automatically by rails) | updated_at: When any field of the ActiveRecord was last updated (done automatically by rails) | assigned_at: When the ActiveRecord is created, this is set to the creation datetime or what assigned_at attribute is passed to the task upon creation. It is also set when a task’s status is updated to “assigned” | started_at: When a task’s status is updated to “in_progress” | placed_on_hold_at: When a task’s status is updated to “on_hold” | closed_at: When a task’s status is updated to “completed” or “cancelled” | . ",
     "url": "/caseflow/caseflow-queues/tasks.html#what-are-tasks",
+    
     "relUrl": "/caseflow-queues/tasks.html#what-are-tasks"
   },"41": {
     "doc": "Tasks",
     "title": "What are task actions?",
     "content": "Task actions are the options that are presented in a dropdown menu on the case details page of an individual appeal. Each task has a set of actions available to be taken on it given the state of the appeal, type of task, and relationship of the current user to the appeal. Task actions do only one thing: redirect the current user to a different URL when clicked. The resulting page may be a modal or workflow where additional information is gathered to be sent in a subsequent request to the server. Task actions enumerated . ",
     "url": "/caseflow/caseflow-queues/tasks.html#what-are-task-actions",
+    
     "relUrl": "/caseflow-queues/tasks.html#what-are-task-actions"
   },"42": {
     "doc": "Tasks",
     "title": "How do tasks and organizations interact?",
     "content": "For a more complete look into how tasks and organizations interact, please view this video recording of a presentation on the subject. ",
     "url": "/caseflow/caseflow-queues/tasks.html#how-do-tasks-and-organizations-interact",
+    
     "relUrl": "/caseflow-queues/tasks.html#how-do-tasks-and-organizations-interact"
   },"43": {
     "doc": "Tasks",
     "title": "How do I recover if the task tree is in a bad state?",
     "content": "When the task tree cannot be restored to the correct state by actions available to Caseflow users (like cancelling a task), the Caseflow application development team can manually correct the state of the task tree. For specific examples of these occasions please visit the dedicated wiki page. ",
     "url": "/caseflow/caseflow-queues/tasks.html#how-do-i-recover-if-the-task-tree-is-in-a-bad-state",
+    
     "relUrl": "/caseflow-queues/tasks.html#how-do-i-recover-if-the-task-tree-is-in-a-bad-state"
   },"44": {
     "doc": "Tasks",
     "title": "What are Timed Tasks?",
     "content": "Tasks indicate that an action needs to be performed by somebody or some automated process. In addition to tasks that indicate some action needs to be taken by a person or some other active system, sometimes an appeal just needs to wait for some time to pass, so we created the timed task mechanism as a way to satisfy that need. ",
     "url": "/caseflow/caseflow-queues/tasks.html#what-are-timed-tasks",
+    
     "relUrl": "/caseflow-queues/tasks.html#what-are-timed-tasks"
   },"45": {
     "doc": "Tasks",
     "title": "What are Engineering Tasks?",
     "content": "An EngineeringTask is used to keep Caseflow users aware of engineering work (including long-term Bat Team work) on an appeal, reduce false positives when checking for stuck appeals, and enable more accurate time-keeping when reporting on Caseflow users’ time spent on an appeal. For motivating factors, see the EngineeringTask Tech Spec #16445. For usage examples, see the associated RSpec. The EngineeringTask is assigned to a specific engineer when possible; otherwise it is assigned to the Caseflow user (User.system_user). One use case is to create a child EngineeringTask to block a parent task (e.g., BvaDispatchTask) when the complete workflow is not yet implemented (e.g., Unrecognized Appellant work). ",
     "url": "/caseflow/caseflow-queues/tasks.html#what-are-engineering-tasks",
+    
     "relUrl": "/caseflow-queues/tasks.html#what-are-engineering-tasks"
   },"46": {
     "doc": "Tasks",
     "title": "What are Blocking Tasks?",
     "content": "What Blocking Means . There are three general ways we use the concept of “blocking” in Caseflow, one general, and two aligned with how a case processes runs. General Use Task A is blocking task B if no work can be done on Task B until Task A is completed. Examples here would include Attorney Drafting Tasks blocking Judge Decision Review, Timed Hold Tasks block any task that requests it, etc. This is implemented in two ways, via a child-task relationship of task B to task A in the task tree (eg Attorney Decision Drafting is the child of a Judge Decision Review), or by the explicit creation of Task B upon completion of Task A (eg Judge Assign Task is created when the Distribution Task completes). Blocks Distribution Tasks which block distribution are a specific case of general blocking, implemented via the child-task relationship. Tasks which block distribution are created as children of the Distribution Task. A case is ready for distribution only when all children of the Distribution Task are complete. In Evidence Window dockets, the Evidence Submission window blocks distribution. In hearing dockets, the hearing task &amp; all its children block distribution. In Direct Review, there are no tasks blocking distribution by default. All dockets may have their distribution blocked if they receive a Blocking Mail Task. Blocks Dispatch As of June 2020, there is no special handling for blocking dispatch. Only the general blocking as defined above applies. Non blocking . In Caseflow, nonblocking tasks can be worked in parallel. This is implemented by having the Tasks be on different branches. All leaf tasks on a task tree can be worked in parallel. Examples include an attorney creating two colocated tasks, or if a non-blocking Mail task comes in. The Root Task . Every Appeal has one root task. It is used as a container and tracker for the entire case’s task tree. The root task is never considered blocked. Tasks created off the Root Task can run in parallel to each other. When any child task of the root task is completed, that task is responsible for creating a new sibling on the root task to track the next stage of the case process. For example, when a Distribution task is completed, the Judge Assign task is created. When the Judge Assign task is completed, the Judge Decision Review Task with a child Attorney Decision Drafting tasks are created. Mail Tasks . Most tasks of the same type tend to behave the same. Mail Tasks are the exception to this. Some Mail tasks block Distribution, if the case has not yet been sent to a judge for drafting the decision. These mail tasks will block case distribution if they come in before the distribution, pulled June 2020. &gt; MailTask.blocking_subclasses =&gt; [\"CongressionalInterestMailTask\", \"ExtensionRequestMailTask\", \"FoiaRequestMailTask\", \"HearingRelatedMailTask\", \"PowerOfAttorneyRelatedMailTask\", \"PrivacyActRequestMailTask\", \"PrivacyComplaintMailTask\"] . Other Mail Tasks are worked in parallel. Any mail tasks that come in after a case has been distributed are created off the root task, and worked in parallel. See the Mail Tasks TaskTree Documentation . Exceptions . DecisionReviewTask and Dispatch::Tasks may follow different paradigms. Hearing Tasks follow general blocking, but may have different flow within the Hearing Task Tree Branch. In Queue, User tasks do not block their matching parent Organization Task. Rather, the pair tend to complete at the same time. Organizations tasks are used by Organization admin users to track the appeal as it is under control of their org. They also give the admin users access to reassign or cancel that user task, as appropriate. User tasks are assigned to individual users within the org to track to actual work of the case. Docket Switch Tasks . Task Behavior . The docket switch flow begins with the creation of a DocketSwitchMailTask by a user at the Clerk of the Board. This task gets created as a child of the DistributionTask to block distribution to a VLJ while the docket switch request is under review. The task gets assigned to that same user whereupon they will send the request to switch dockets to a VLJ. Sending the request to a judge closes the DocketSwitchMailTask with a status of completed, closes the parent DocketSwitchMailTask assigned to the Organization as well, and creates a DocketSwitchRulingTask. Once the VLJ decides to either grant or deny the request to switch dockets, that in turn will create either a DocketSwitchGrantedTask or DocketSwitchDeniedTask and close the DocketSwitchRulingTask with a status of completed. These are the final tasks within the docket switch task flow. Docket Switch Granted Task Tree . Appeal 1639 (D 210726-1639 Original) ────── │ ID │ STATUS │ ASGN_BY │ ASGN_TO │ UPDATED_AT │ └── RootTask │ 6876 │ cancelled │ │ Bva │ 2021-07-27 17:39:06 UTC │ └── DistributionTask │ 6877 │ cancelled │ │ Bva │ 2021-07-27 17:43:28 UTC │ ├── DocketSwitchMailTask │ 6878 │ completed │ │ ClerkOfTheBoard │ 2021-07-27 17:40:40 UTC │ │ └── DocketSwitchMailTask │ 6879 │ completed │ COB_USER │ COB_USER │ 2021-07-27 17:40:40 UTC │ └── DocketSwitchRulingTask │ 6880 │ completed │ COB_USER │ BVAAABSHIRE │ 2021-07-27 17:43:28 UTC │ └── DocketSwitchGrantedTask │ 6881 │ completed │ BVAAABSHIRE │ ClerkOfTheBoard │ 2021-07-27 17:43:28 UTC │ └── DocketSwitchGrantedTask │ 6882 │ completed │ BVAAABSHIRE │ COB_USER │ 2021-07-27 17:43:29 UTC │ └────────────────────────────────────────────────────────────────────────────┘ . Docket Switch Denied Task Tree . Appeal 1640 (E 210726-1639 Original) ───── │ ID │ STATUS │ ASGN_BY │ ASGN_TO │ UPDATED_AT │ └── RootTask │ 6883 │ on_hold │ │ Bva │ 2021-07-27 17:43:28 UTC │ ├── DistributionTask │ 6884 │ on_hold │ │ Bva │ 2021-07-27 17:43:28 UTC │ │ ├── EvidenceSubmissionWindowTask │ 6885 │ assigned │ │ MailTeam │ 2021-07-27 17:43:28 UTC │ │ ├── DocketSwitchMailTask │ 6887 │ completed │ │ ClerkOfTheBoard │ 2021-07-27 17:45:37 UTC │ │ │ └── DocketSwitchMailTask │ 6888 │ completed │ COB_USER │ COB_USER │ 2021-07-27 17:45:37 UTC │ │ └── DocketSwitchRulingTask │ 6889 │ completed │ COB_USER │ BVAAABSHIRE │ 2021-07-27 17:49:06 UTC │ │ └── DocketSwitchDeniedTask │ 6890 │ completed │ BVAAABSHIRE │ ClerkOfTheBoard │ 2021-07-27 17:49:05 UTC │ │ └── DocketSwitchDeniedTask │ 6891 │ completed │ BVAAABSHIRE │ COB_USER │ 2021-07-27 17:49:06 UTC │ . Task Creation . Upon switching an appeal to a different docket type, and in turn creating a new appeal stream, the task creation process largely mimics when intaking a new appeal. All new appeals will have a RootTask and DistributionTask with a status of on_hold. The new appeal will also have a DocketSwitchGrantedTask with a status of complete which is shown in the Case Timeline and requires no action. When switching to a DirectReview docket, an InformalHearingPresentation task will be created as a child of the DistributionTask if the appellant has a VSO representing them and that VSO is configured to perform IHPs. When switching to an EvidenceSubmission docket, an EvidenceSubmissionWindowTask will be automatically created as a child of the DistributionTask and with a status of assigned. This task signifies the 90-day window during which an appellant may submit additional evidence before the appeal gets distributed to a VLJ. An InformalHearingPresentation task will also be created as a child of the DistributionTask after the 90-day evidence submission window is complete if the appellant has a VSO representing them and that VSO is configured to perform IHPs. When switching to a Hearing docket, a Hearing task will be automatically created as a child of the DistributionTask and a ScheduleHearingTask will be automatically created as a child of the Hearing task. Once these tasks are completed by scheduling and holding a hearing, the appeal will be ready for distribution to a VLJ. Tasks ineligible to switch dockets . Tasks listed below are ineligible to switch dockets. All other tasks will default to switching dockets but the user granting the request can remove these tasks from switching in the UI . | Open tasks with children | RootTask - Newly created for new appeal stream | DistributionTask - Newly created for new appeal stream | EvidenceSubmissionWindowTask &amp; children | HearingTask &amp; children | DocketSwitch tasks - New DocketSwitchGrantedTask created for new appeal stream | . Tasks that should have only one open at a time . There are certain task types that an appeal should have only one open instance of at a time. Team Echo is currently working with the board to confirm which task types have these restrictions. For an evolving list, please see this github comment. ",
     "url": "/caseflow/caseflow-queues/tasks.html#what-are-blocking-tasks",
+    
     "relUrl": "/caseflow-queues/tasks.html#what-are-blocking-tasks"
   },"47": {
     "doc": "Tasks",
     "title": "Tasks",
     "content": ". | What are tasks? . | Task status | Cancellation reason | How do tasks map to the appeals process? | Task timestamps | . | What are task actions? | How do tasks and organizations interact? | How do I recover if the task tree is in a bad state? | What are Timed Tasks? | What are Engineering Tasks? | What are Blocking Tasks? . | What Blocking Means | Non blocking | The Root Task | Mail Tasks | Exceptions | Docket Switch Tasks . | Task Behavior . | Docket Switch Granted Task Tree | Docket Switch Denied Task Tree | . | Task Creation | Tasks ineligible to switch dockets | . | Tasks that should have only one open at a time | . | . ",
     "url": "/caseflow/caseflow-queues/tasks.html",
+    
     "relUrl": "/caseflow-queues/tasks.html"
   }
 }

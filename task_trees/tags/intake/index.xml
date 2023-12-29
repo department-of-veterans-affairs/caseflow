@@ -5,18 +5,14 @@
     <link>https://department-of-veterans-affairs.github.io/caseflow/task_trees/tags/intake.html</link>
     <description>Recent content in intake on Task Trees &amp; DBs</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="https://department-of-veterans-affairs.github.io/caseflow/task_trees/tags/intake/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language>
+    <atom:link href="https://department-of-veterans-affairs.github.io/caseflow/task_trees/tags/intake/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Intake Workflow</title>
       <link>https://department-of-veterans-affairs.github.io/caseflow/task_trees/workflows/intake-workflow.html</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://department-of-veterans-affairs.github.io/caseflow/task_trees/workflows/intake-workflow.html</guid>
-      <description>Intake Workflow # Intake creates data that can trace a claim through its initial decision, through any requests to contest that decision or subsequent decisions, all the way to the final decision(s).
-It helps present data to veterans in the same way they already view decision reviews, as an extension to their original claim.
-Issues presentation
-Mail Intake # graph TD claim --&gt; claim_decision claim_decision --&gt; V[Veteran] V --&gt; |form| BvaMail[BVA mail intake] BvaMail -.</description>
+      <description>Intake Workflow # Intake creates data that can trace a claim through its initial decision, through any requests to contest that decision or subsequent decisions, all the way to the final decision(s).&#xA;It helps present data to veterans in the same way they already view decision reviews, as an extension to their original claim.&#xA;Issues presentation&#xA;Mail Intake # graph TD claim --&gt; claim_decision claim_decision --&gt; V[Veteran] V --&gt; |form| BvaMail[BVA mail intake] BvaMail -.</description>
     </item>
-    
   </channel>
 </rss>
