@@ -1,18 +1,35 @@
+$border-color: #e4e2e0;
+$lever-disabled-color: #757575;
+
+$modal-border-color: #d6d7d9;
+$modal-table-color: #212121;
+
+$lever-alert-bg-color: #f1f1f1;
+$lever-alert-banner-color: #205493;
+
+$lever-alert-banner-hover-color: #112e51;
+$before-bg-color: #8b8b8b;
+
+$success-bg-color: #e7f4e4;
+$success-before-bg-color: #2e8540;
+
+$error-color: #f9dede;
+$error-before-bg-color: #e31c3d;
+
 .leverContainer {
   width: 100%;
-  box-sizing: border-box !important;
-  border: 1px solid #e4e2e0;
+  border: 1px solid $border-color;
   border-radius: 4px;
   margin-top: 20px;
   display: inline-block;
 
-  h4: {
+  h4 {
     margin: 0;
-    background: #e4e2e0;
+    background: $border-color;
     padding: 10px 20px;
   }
 
-  strong: {
+  strong {
     font-size: 19px;
     line-height: 1.5em;
     margin-bottom: 5px;
@@ -40,7 +57,7 @@
 .activeLever {
   width: 100%;
   padding: 15px;
-  border-bottom: 1px solid #e4e2e0;
+  border-bottom: 1px solid $border-color;
   box-sizing: border-box;
   font-size: 19px;
   line-height: 1.5em;
@@ -49,7 +66,7 @@
 
 .leverHead {
   width: 100%;
-  border-bottom: 1px solid #e4e2e0;
+  border-bottom: 1px solid $border-color;
   display: inline-block;
   padding-bottom: 15px;
 }
@@ -70,6 +87,7 @@
   display: inline-block;
   margin-bottom: 5px;
   margin-top: 3px;
+
   input {
     width: 65px;
     height: 45px;
@@ -134,7 +152,7 @@
 
 .leverDisabled {
   opacity: 0.72;
-  color: #757575;
+  color: $lever-disabled-color;
 }
 
 .combinedRadioInput {
@@ -148,6 +166,12 @@
     text-align: right;
     margin-left: 28px;
     margin-bottom: 10px;
+  }
+}
+
+.outlineRadioInput {
+  input{
+    outline: none;
   }
 }
 
@@ -166,7 +190,7 @@
   padding-top: 10px;
 }
 
-#numberFieldInput {
+.numberFieldInput {
   font-size: 19px;
   line-height: 1.5em;
   margin-bottom: 5px;
@@ -174,31 +198,26 @@
 }
 
 .modalTableStyling {
-  margin-top: 0;
-  padding-top: 18px;
-  padding-bottom: 18px;
-  padding-left: 0;
-  padding-right: 0;
+  padding: 18px 0;
   border-left: 0;
   border-right: 0;
   border-bottom: 0;
-  border-color: #d6d7d9;
-  color: #212121;
+  border-color: $modal-border-color;
+  color: $modal-table-color;
   vertical-align: text-top;
-  font-family: Source Sans Pro;
-  font-weight: 400;
   font-size: 16px;
   line-height: 1.3em/25px;
-  width: 20%
+  width: 20%;
 }
+
 
 .modalTableHeaderStyling {
   border-left: 0;
   border-right: 0;
   border-top: 0;
   padding-left: 0;
-  color: #212121;
-  border-color: #d6d7d9;
+  color: $modal-table-color;
+  border-color: $modal-border-color;
   font-family: Source Sans Pro;
   font-weight: 700;
   font-size: 16px;
@@ -214,36 +233,34 @@
 }
 
 .updatedModalStyling>div>div {
-  padding-bottom: 0px;
+  padding-bottom: 0;
 }
 
 .disabledText {
-  color: #212121 !important;
-  opacity: 100% !important;
+  color: $modal-table-color;
+  opacity: 100%;
 }
 
 .leverActive {
-  color: #212121 !important;
-  opacity: 100% !important;
+  color: $modal-table-color;
+  opacity: 100%;
 }
 
 .leverAlertBanner {
-  background-color: #f1f1f1;
+  background-color: $lever-alert-bg-color;
   background-position: 2rem 2rem;
-  background-repeat: no-repeat;
   background-size: 5.2rem;
   padding-left: .75rem;
   padding-top: 1em;
   padding-bottom: 0.02rem;
   position: relative;
   margin-top: 1.5em;
-  margin: auto;
   align-items: center;
   text-align: left;
 
   h3 {
     font-size: 24px;
-    margin-bottom: .1rem;
+    margin-bottom: 0.1rem;
     padding-left: 3em;
   }
 
@@ -253,8 +270,24 @@
     padding-left: 4.25em;
   }
 
+  a {
+    color: $lever-alert-banner-color;
+
+    &:focus,
+
+    &:hover {
+      color: $lever-alert-banner-hover-color;
+    }
+  }
+
+  ul {
+    margin-bottom: 0;
+    margin-top: 1rem;
+    padding-left: 1rem;
+  }
+
   &::before {
-    background-color: #8b8b8b;
+    background-color: $before-bg-color;
     content: '';
     height: 100%;
     left: 0;
@@ -280,7 +313,7 @@
   }
 
   &-text {
-    font-family: "Source Sans Pro", "Helvetica Neue", "Helvetica", "Roboto", "Arial", sans-serif;
+    font-family: 'Source Sans Pro', 'Helvetica Neue', 'Helvetica', 'Roboto', 'Arial', sans-serif;
     margin-bottom: 0;
     margin-top: 0;
 
@@ -291,29 +324,27 @@
   }
 
   &-success {
-    background-color: #e7f4e4;
-    background-image: url("~uswds/src/img/alerts/success.png");
-    background-image: url("~uswds/src/img/alerts/success.svg");
+    background-color: $success-bg-color;
+    background-image: url('~uswds/src/img/alerts/success.svg');
 
-    &::before {
-      background-color: #2e8540;
+    ::before {
+      background-color: $success-before-bg-color;
     }
 
-    & .leverAlertBanner-body {
+    .leverAlertBanner-body {
       padding-left: 5rem;
     }
   }
 
   &-error {
-    background-color: #f9dede;
-    background-image: url("~uswds/src/img/alerts/error.png");
-    background-image: url("~uswds/src/img/alerts/error.svg");
+    background-color: $error-color;
+    background-image: url('~uswds/src/img/alerts/error.svg');
 
-    &::before {
-      background-color: #e31c3d;
+    ::before {
+      background-color: $error-before-bg-color;
     }
 
-    & .leverAlertBanner-body {
+    .leverAlertBanner-body {
       padding-left: 5rem;
     }
   }
@@ -325,19 +356,4 @@
   &-paragraph {
     width: 66ch;
   }
-}
-
-.leverAlertBanner a {
-  color: #205493;
-
-  &:focus,
-  &:hover {
-    color: #112e51;
-  }
-}
-
-.leverAlertBanner ul {
-  margin-bottom: 0;
-  margin-top: 1rem;
-  padding-left: 1rem;
 }

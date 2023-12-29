@@ -6,7 +6,8 @@ const LeverAlertBanner = ({ title, message, type }) => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'auto' });
   }, []);
-  const leverBannerAlerts = `${styles.leverAlertBanner} ${type === 'success' ? styles.leverAlertBannerSuccess : styles.leverAlertBannerError}`;
+  const leverBannerAlerts = `${styles.leverAlertBanner}
+    ${type === 'success' ? styles.leverAlertBannerSuccess : styles.leverAlertBannerError}`;
 
   return (
     <div className={leverBannerAlerts}>

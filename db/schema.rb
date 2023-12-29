@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_11_06_212732) do
+ActiveRecord::Schema.define(version: 2023_12_29_184556) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -366,6 +366,7 @@ ActiveRecord::Schema.define(version: 2023_11_06_212732) do
     t.boolean "is_active", null: false, comment: "Indicates the active lever"
     t.boolean "is_disabled", null: false, comment: "Used to diabled the row"
     t.string "item", null: false, comment: "Is unique value to identify the Caseflow Distribution lever"
+    t.string "lever_group", null: false, comment: "Case Distribution lever grouping"
     t.integer "max_value", comment: "Set max value for the input"
     t.integer "min_value", comment: "Set min value for the input"
     t.json "options", comment: "Indicates the options which contain json formatted data"

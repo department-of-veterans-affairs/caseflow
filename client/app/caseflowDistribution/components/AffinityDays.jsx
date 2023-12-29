@@ -8,29 +8,13 @@ import NumberField from 'app/components/NumberField';
 import TextField from 'app/components/TextField';
 import COPY from '../../../COPY';
 import leverInputValidation from './LeverInputValidation';
+import { checkIfOtherChangesExist } from '../utils.js';
 
 const AffinityDays = (props) => {
   const { leverList, leverStore } = props;
   const filteredLevers = leverList.map((item) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);
   });
-
-  const checkIfOtherChangesExist = (currentLever) => {
-
-    let leversWithChangesList = [];
-
-    leverStore.getState().levers.map((lever) => {
-      if (lever.hasValueChanged === true && lever.item !== currentLever.item) {
-        leversWithChangesList.push(lever);
-      }
-    });
-
-    if (leversWithChangesList.length > 0) {
-      return true;
-    }
-
-    return false;
-  };
 
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
@@ -146,7 +130,7 @@ const AffinityDays = (props) => {
           title={option.text}
           label={option.unit}
           isInteger
-          readOnly={lever.is_disabled}
+          readOnly={lever.is_disabled ? true : (lever.value != option.item)}
           value={option.value}
           errorMessage={option.errorMessage}
           onChange={(event) => updatedLever(lever, option)(event)}
@@ -163,7 +147,7 @@ const AffinityDays = (props) => {
           name={option.item}
           title={option.text}
           label={false}
-          readOnly={lever.is_disabled}
+          readOnly={lever.is_disabled ? true : (lever.value != option.item)}
           value={option.value}
           onChange={(event) => updatedLever(lever, option)(event)}
           id={`${lever.item}-${option.value}`}
@@ -229,7 +213,7 @@ const AffinityDays = (props) => {
                     </label>
                   </div>
                   <div>
-                    <div className={styles.combinedRadioInput}>
+                    <div className={cx(styles.combinedRadioInput, (lever.value != option.item) ? styles.outlineRadioInput:'')}>
                       {generateFields(option.data_type, option, lever, isMemberUser)}
                     </div>
                   </div>

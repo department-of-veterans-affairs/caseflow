@@ -20,7 +20,8 @@ module Seeds
           is_disabled: true,
           min_value: 0,
           max_value: 1,
-          algorithms_used: ['proportion']
+          algorithms_used: ['proportion'],
+          lever_group: 'static'
         },
         {
           item: 'minimum_legacy_proportion',
@@ -33,7 +34,8 @@ module Seeds
           is_disabled: true,
           min_value: 0,
           max_value: 1,
-          algorithms_used: ['proportion']
+          algorithms_used: ['proportion'],
+          lever_group: 'static'
         },
         {
           item: 'nod_adjustment',
@@ -46,7 +48,8 @@ module Seeds
           is_disabled: true,
           min_value: 0,
           max_value: 1,
-          algorithms_used: ['proportion']
+          algorithms_used: ['proportion'],
+          lever_group: 'static'
         },
         {
           item: 'bust_backlog',
@@ -57,7 +60,8 @@ module Seeds
           unit: '',
           is_active: false,
           is_disabled: true,
-          algorithms_used: ['proportion']
+          algorithms_used: ['proportion'],
+          lever_group: 'static'
         },
         {
           item: 'alternative_batch_size',
@@ -70,7 +74,8 @@ module Seeds
           is_disabled: false,
           min_value: 0,
           max_value: 100,
-          algorithms_used: ['docket', 'proportion']
+          algorithms_used: ['docket', 'proportion'],
+          lever_group: 'batch'
         },
         {
           item: 'batch_size_per_attorney',
@@ -83,7 +88,8 @@ module Seeds
           is_disabled: false,
           min_value: 0,
           max_value: 100,
-          algorithms_used: ['docket', 'proportion']
+          algorithms_used: ['docket', 'proportion'],
+          lever_group: 'batch'
         },
         {
           item: 'request_more_cases_minimum',
@@ -96,7 +102,8 @@ module Seeds
           is_disabled: false,
           min_value: 0,
           max_value: 100,
-          algorithms_used: ['docket', 'proportion']
+          algorithms_used: ['docket', 'proportion'],
+          lever_group: 'batch'
         },
         {
           item: 'ama_hearing_case_affinity_days',
@@ -130,7 +137,8 @@ module Seeds
           is_disabled: false,
           min_value: 0,
           max_value: 100,
-          algorithms_used: ['docket']
+          algorithms_used: ['docket'],
+          lever_group: 'affinity'
         },
         {
           item: 'ama_hearing_case_aod_affinity_days',
@@ -166,7 +174,8 @@ module Seeds
           is_disabled: true,
           min_value: 0,
           max_value: 100,
-          algorithms_used: ['proportion']
+          algorithms_used: ['proportion'],
+          lever_group: 'affinity'
         },
         {
           item: 'cavc_affinity_days',
@@ -198,7 +207,8 @@ module Seeds
           is_disabled: true,
           min_value: 0,
           max_value: 100,
-          algorithms_used: ['docket', 'proportion']
+          algorithms_used: ['docket', 'proportion'],
+          lever_group: 'affinity'
         },
         {
           item: 'cavc_aod_affinity_days',
@@ -228,7 +238,8 @@ module Seeds
           ],
           is_active: false,
           is_disabled: true,
-          algorithms_used: ['proportion']
+          algorithms_used: ['proportion'],
+          lever_group: 'affinity'
         },
         {
           item: 'aoj_affinity_days',
@@ -264,7 +275,8 @@ module Seeds
           is_disabled: true,
           min_value: 0,
           max_value: 100,
-          algorithms_used: ['proportion']
+          algorithms_used: ['proportion'],
+          lever_group: 'affinity'
         },
         {
           item: 'aoj_aod_affinity_days',
@@ -300,7 +312,8 @@ module Seeds
           is_disabled: true,
           min_value: 0,
           max_value: 100,
-          algorithms_used: ['proportion']
+          algorithms_used: ['proportion'],
+          lever_group: 'affinity'
         },
         {
           item: 'aoj_cavc_affinity_days',
@@ -336,7 +349,8 @@ module Seeds
           is_disabled: true,
           min_value: 0,
           max_value: 100,
-          algorithms_used: ['docket']
+          algorithms_used: ['docket'],
+          lever_group: 'affinity'
         },
         {
           item: 'ama_hearings_start_distribution_prior_to_goals',
@@ -358,7 +372,8 @@ module Seeds
           is_disabled: true,
           min_value: 0,
           max_value: 100,
-          algorithms_used: ['proportion']
+          algorithms_used: ['proportion'],
+          lever_group: 'docket_distribution_prior'
         },
         {
           item: 'ama_direct_review_start_distribution_prior_to_goals',
@@ -380,7 +395,8 @@ module Seeds
           is_disabled: true,
           min_value: 0,
           max_value: 100,
-          algorithms_used: ['docket']
+          algorithms_used: ['docket'],
+          lever_group: 'docket_distribution_prior'
         },
         {
           item: 'ama_evidence_submission_start_distribution_prior_to_goals',
@@ -402,7 +418,8 @@ module Seeds
           is_disabled: true,
           min_value: 0,
           max_value: 100,
-          algorithms_used: ['proportion']
+          algorithms_used: ['proportion'],
+          lever_group: 'docket_distribution_prior'
         },
         {
           item: 'ama_hearings_docket_time_goals',
@@ -414,7 +431,8 @@ module Seeds
           is_disabled: true,
           min_value: 0,
           max_value: 1000,
-          algorithms_used: ['proportion']
+          algorithms_used: ['proportion'],
+          lever_group: 'docket_time_goal'
         },
         {
           item: 'ama_direct_review_docket_time_goals',
@@ -426,7 +444,8 @@ module Seeds
           is_disabled: false,
           min_value: 0,
           max_value: 1000,
-          algorithms_used: ['proportion']
+          algorithms_used: ['proportion'],
+          lever_group: 'docket_time_goal'
         },
         {
           item: 'ama_evidence_submission_docket_time_goals',
@@ -438,7 +457,8 @@ module Seeds
           is_disabled: true,
           min_value: 0,
           max_value: 1000,
-          algorithms_used: ['proportion']
+          algorithms_used: ['proportion'],
+          lever_group: 'docket_time_goal'
         },
       ]
     end
@@ -459,7 +479,8 @@ module Seeds
         max_value: lever[:max_value],
         algorithms_used: lever[:algorithms_used],
         options: lever[:options],
-        control_group: lever[:control_group]
+        control_group: lever[:control_group],
+        lever_group: lever[:lever_group]
       )
     end
   end
