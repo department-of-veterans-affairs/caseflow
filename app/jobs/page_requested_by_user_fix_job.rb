@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class PageRequestedByUserFixJob < CaseflowJob
+  include MasterSchedulerInterface
+
   def initialize
     @stuck_job_report_service = StuckJobReportService.new
     @start_time = nil

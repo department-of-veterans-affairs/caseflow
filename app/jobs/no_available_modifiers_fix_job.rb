@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class NoAvailableModifiersFixJob < CaseflowJob
+  include MasterSchedulerInterface
+
   SPACE = 10
 
   def initialize
