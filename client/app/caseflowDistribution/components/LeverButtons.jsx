@@ -10,18 +10,11 @@ function CancelLeverChanges(leverStore) {
 }
 
 function RefreshLevers () {
-  window.location.reload(false); // PLACEHOLDER
-  // Find levers div
-  // refresh levers div
+  window.location.reload(false);
 }
 
 function DisplayButtonLeverAlert(alert) {
   console.log('alert', alert);
-  // show small banner displaying the alert
-}
-
-function DisableSaveButton() {
-  document.getElementById('SaveLeversButton').disabled = true;
 }
 
 export function LeverCancelButton({ leverStore }) {

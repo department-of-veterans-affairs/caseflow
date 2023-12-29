@@ -153,6 +153,14 @@ class ApplicationController < ApplicationBaseController
     }
   end
 
+  def case_distribution_url
+    {
+      title: "Case Distribution Controls",
+      link: "/case-distribution-controls",
+      sort_order: 6
+    }
+  end
+
   def hearing_application_url
     {
       title: "Hearings",
@@ -213,6 +221,10 @@ class ApplicationController < ApplicationBaseController
   def dropdown_urls
     urls = defult_menu_items
     urls.concat(admin_menu_items)
+
+    if current_user.present? && current_user&.organizations && current_user&.organizations&.any?(&:users_can_view_levers?)
+      urls << case_distribution_url
+    end
 
     if current_user.present?
       urls.append(title: "Sign Out", link: url_for(controller: "/sessions", action: "destroy"), border: true)

@@ -8,11 +8,28 @@ import COPY from '../../../COPY';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import moment from 'moment';
 
+function changedOptionValue(changedLever, currentLever) {
+  if (changedLever.data_type === 'radio' || changedLever.data_type === 'radio') {
+    const changedOptionValue = changedLever.options.find((option) => option.item === changedLever.value).value;
+    const currentOptionValue = currentLever.options.find((option) => option.item === currentLever.value)?.value;
+
+    return changedOptionValue !== currentOptionValue;
+  }
+
+  return false;
+
+}
+
 function GenerateLeverUpdateData(leverStore) {
   const levers = leverStore.getState().levers;
   const initialLevers = leverStore.getState().initial_levers;
-  const filteredLevers = levers.filter((lever, i) => lever.value !== initialLevers[i].value || changedOptionValue(lever, initialLevers[i]));
-  const filteredInitialLevers = initialLevers.filter((lever, i) => initialLevers[i].value !== levers[i].value || changedOptionValue(initialLevers[i], levers[i]));
+  const filteredLevers = levers.filter((lever, i) =>
+    lever.value !== initialLevers[i].value || changedOptionValue(lever, initialLevers[i])
+  );
+
+  const filteredInitialLevers = initialLevers.filter((lever, i) =>
+    initialLevers[i].value !== levers[i].value || changedOptionValue(initialLevers[i], levers[i])
+  );
 
   return ([filteredLevers, filteredInitialLevers]);
 }
@@ -24,7 +41,7 @@ function GenerateLeverHistory(filteredLevers, filteredInitialLevers) {
     const doesDatatypeRequireComplexLogic = lever.data_type === 'radio' || lever.data_type === 'combination';
 
     let today = new Date();
-    let todaysDate = moment(today.toISOString());
+    let todaysDate = moment(today).format('ddd MMM DD hh:mm:ss YYYY');
 
     if (doesDatatypeRequireComplexLogic) {
       const selectedOption = lever.options.find((option) => option.item === lever.value);
@@ -125,18 +142,6 @@ function SaveLeversToDB(leverStore) {
     });
 }
 
-function changedOptionValue(changedLever, currentLever) {
-  if (changedLever.data_type === 'radio' || changedLever.data_type === 'radio') {
-    const changedOptionValue = changedLever.options.find((option) => option.item === changedLever.value).value;
-    const currentOptionValue = currentLever.options.find((option) => option.item === currentLever.value)?.value;
-
-    return changedOptionValue !== currentOptionValue;
-  }
-
-  return false;
-
-}
-
 function leverList(leverStore) {
   const levers = leverStore.getState().levers;
   const initialLevers = leverStore.getState().initial_levers;
@@ -176,7 +181,6 @@ function leverList(leverStore) {
 export function LeverSaveButton({ leverStore }) {
   const [showModal, setShowModal] = useState(false);
   const [changesOccurred, setChangesOccurred] = useState(false);
-  const [saveButtonDisabled, setSaveButtonDisabled] = useState(false);
 
   useEffect(() => {
     const unsubscribe = leverStore.subscribe(() => {
@@ -184,10 +188,9 @@ export function LeverSaveButton({ leverStore }) {
 
       const leversString = JSON.stringify(state.levers);
       const initialLeversString = JSON.stringify(state.initial_levers);
+      const validChangeOccurred = state.changesOccurred;
 
-      const leverChangesOccurred = leversString !== initialLeversString;
-
-      setChangesOccurred(leverChangesOccurred);
+      setChangesOccurred(validChangeOccurred);
 
     });
 
@@ -206,7 +209,6 @@ export function LeverSaveButton({ leverStore }) {
     await SaveLeversToDB(leverStore);
     setShowSuccessBanner(leverStore);
     setShowModal(false);
-    setSaveButtonDisabled(true);
     ShowSuccessBanner(true);
   };
 
@@ -220,17 +222,18 @@ export function LeverSaveButton({ leverStore }) {
         Save
       </Button>
       {showModal &&
-      <Modal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        title={COPY.CASE_DISTRIBUTION_MODAL_TITLE}
-        confirmButton={<Button onClick={handleConfirmButton}>{COPY.MODAL_CONFIRM_BUTTON}</Button>}
-        cancelButton={<Button onClick={() => setShowModal(false)}>{COPY.MODAL_CANCEL_BUTTON}</Button>}
-        className={styles.updatedModalStyling}
-      >
-        <p>{COPY.CASE_DISTRIBUTION_MODAL_DESCRIPTION}</p>
-        {leverList(leverStore)}
-      </Modal>
+        <Modal
+          isOpen={showModal}
+          onClose={() => setShowModal(false)}
+          closeHandler={() => setShowModal(false)}
+          title={COPY.CASE_DISTRIBUTION_MODAL_TITLE}
+          confirmButton={<Button onClick={handleConfirmButton}>{COPY.MODAL_CONFIRM_BUTTON}</Button>}
+          cancelButton={<Button onClick={() => setShowModal(false)}>{COPY.MODAL_CANCEL_BUTTON}</Button>}
+          className={styles.updatedModalStyling}
+        >
+          <p>{COPY.CASE_DISTRIBUTION_MODAL_DESCRIPTION}</p>
+          {leverList(leverStore)}
+        </Modal>
       }
     </>
   );

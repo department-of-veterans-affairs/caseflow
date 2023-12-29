@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import ReduxBase from '../components/ReduxBase';
 import NavigationBar from '../components/NavigationBar';
 import { BrowserRouter } from 'react-router-dom';
@@ -42,7 +42,7 @@ class CaseflowDistribution extends React.PureComponent {
       'batch_size_per_attorney',
       'request_more_cases_minimum'
     ];
-    const batchSizeLevers = [];
+    let batchSizeLevers = [];
     const affinityLeverList = [
       'ama_hearing_case_affinity_days',
       'ama_hearing_case_aod_affinity_days',
@@ -52,7 +52,7 @@ class CaseflowDistribution extends React.PureComponent {
       'aoj_aod_affinity_days',
       'aoj_cavc_affinity_days'
     ];
-    const affinityLevers = [];
+    let affinityLevers = [];
     const docketDistributionPriorLeverList = [
       'ama_hearings_start_distribution_prior_to_goals',
       'ama_direct_review_start_distribution_prior_to_goals',
@@ -68,8 +68,8 @@ class CaseflowDistribution extends React.PureComponent {
       docketDistributionPriorLeverList,
       docketTimeGoalLeverList
     };
-    const docketDistributionPriorLevers = [];
-    const docketTimeGoalLevers = [];
+    let docketDistributionPriorLevers = [];
+    let docketTimeGoalLevers = [];
 
     this.props.acd_levers.forEach((lever) => {
       if (lever.data_type === 'number' && batchLeverList.includes(lever.item)) {
@@ -91,6 +91,12 @@ class CaseflowDistribution extends React.PureComponent {
       docketDistributionPriorLevers,
       docketTimeGoalLevers
     };
+
+    batchSizeLevers = batchSizeLevers.sort((a,b) => batchLeverList.indexOf(a) - batchLeverList.indexOf(b));
+    affinityLevers = affinityLevers.sort((a,b) => affinityLeverList.indexOf(a) - affinityLeverList.indexOf(b));
+    docketDistributionPriorLevers = docketDistributionPriorLevers.sort((a,b) => docketDistributionPriorLeverList.indexOf(a) - docketDistributionPriorLeverList.indexOf(b));
+    docketTimeGoalLevers = docketTimeGoalLevers.sort((a,b) => docketTimeGoalLeverList.indexOf(a) - docketTimeGoalLeverList.indexOf(b));
+
 
     let leversList = {
       staticLevers,

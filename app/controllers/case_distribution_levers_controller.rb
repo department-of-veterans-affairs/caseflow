@@ -82,7 +82,7 @@ class CaseDistributionLeversController < ApplicationController
         formatted_audit_lever_entries.push ({
           user: current_user,
           case_distribution_lever: lever,
-          user_name: current_user.full_name,
+          user_name: current_user.css_id,
           title: lever.title,
           previous_value: entry_data["original_value"],
           update_value: entry_data["current_value"],

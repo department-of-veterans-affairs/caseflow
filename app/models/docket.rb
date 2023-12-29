@@ -191,11 +191,7 @@ class Docket
     end
 
     def cavc_affinity_days
-      cavc_affinity_days_lever = CaseDistributionLever.find_by_item('cavc_affinity_days')
-      cavc_affinity_days_option = {}
-      cavc_affinity_days_option = cavc_affinity_days_lever.options.detect{|opt|
-      opt["item"] == cavc_affinity_days_lever.value} || {} if cavc_affinity_days_lever
-      cavc_affinity_days_option["value"].to_i
+      cavc_affinity_days_lever = CaseDistributionLever.find_integer_lever('cavc_affinity_days')
     end
 
     def with_original_appeal_and_judge_task
