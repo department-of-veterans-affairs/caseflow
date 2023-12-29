@@ -1422,5 +1422,17 @@
   "PACKAGE_ACTION_SPLIT_TITLE": "Request split package",
   "CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER": "The correspondence's documents have failed to upload to the eFolder",
   "CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE": "You can upload it from this page to the veteran's eFolder at a later time.",
-  "UNDER_CONSTRUCTION_MESSAGE": "This page is under construction."
+  "CORRESPONDENCE_HEADER_REMOVE_PACKAGE": "Review request",
+  "CORRESPONDENCE_TITLE_REMOVE_PACKAGE": "Reason for removal:",
+  "CORRRESPONDENCE_LABEL_OPTION_REMOVE_PACKAGE": " Choose whether to approve the request for removal or reject it.",
+  "CORRRESPONDENCE_TEXT_REMOVE_PACKAGE": "\nThis is the reason for removal provided by the general user.",
+  "CORRESPONDENCE_TITLE_REMOVE_PACKAGE_REASON_REJECT": "Provide a reason for rejection",
+  "CORRESPONDENCE_TITLE_REMOVE_PACKAGE_BANNER": "You have successfully removed a mail package for %s",
+  "CORRESPONDENCE_MESSAGE_REMOVE_PACKAGE_BANNER": "The package has been removed from Caseflow and must be manually uploaded again from the Centralized Mail Portal, if it needs to be processed.",
+  "UNDER_CONSTRUCTION_MESSAGE": "This page is under construction.",
+  "CORRESPONDENCE_READONLY_BANNER_HEADER": "This package has a pending request",
+  "CORRESPONDENCE_READONLY_BANNER_MESSAGE": "Any further actions cannot be made on this package until a supervisor or superuser reviews the request.",
+  "ASSOCIATED_WITH_CLAIMS_FOLDER_MAIL_TASK_LABEL": "Associated with claims folder",
+  "VACOLS_UPDATED_MAIL_TASK_LABEL": "VACOLS updated",
+  "SENT_TO_ROJ_MAIL_TASK_LABEL": "Sent to ROJ"
 }
