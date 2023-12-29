@@ -120,7 +120,7 @@ jobs:
       # and https://github.com/Andrew-Chen-Wang/github-wiki-action/blob/master/entrypoint.sh
       # and https://github.community/t/how-to-updade-repo-wiki-from-github-actions/121151/7
       - name: Checkout branch main-gh-pages
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: main-gh-pages
           path: main-gh-pages_checkout
