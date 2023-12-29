@@ -14,6 +14,8 @@ import { useHistory } from 'react-router';
 import PackageActionModal from '../modals/PackageActionModal';
 import ReviewPackageNotificationBanner from './ReviewPackageNotificationBanner';
 import {
+  CORRESPONDENCE_READONLY_BANNER_HEADER,
+  CORRESPONDENCE_READONLY_BANNER_MESSAGE,
   CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER,
   CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE }
   from '../../../../COPY';
@@ -34,11 +36,24 @@ export const CorrespondenceReviewPackage = (props) => {
   const [packageActionModal, setPackageActionModal] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [selectedId, setSelectedId] = useState(0);
+  const [isReadOnly, setIsReadOnly] = useState(false);
+
+  // Banner Information takes in the following object:
+  // {  title: ,  message: ,  bannerType: }
   const [bannerInformation, setBannerInformation] = useState(null);
 
   const history = useHistory();
   const fetchData = async () => {
     const correspondence = props;
+
+    // When a remove package task is active and pending review, the page is read-only
+    const isPageReadOnly = (tasks) => {
+      const assignedRemoveTask = tasks.find((task) => task.status === 'assigned' && task.type === 'RemovePackageTask');
+      const isMailTeamSupervisor = correspondence.organizations.find((org) => org.name === 'Mail Team Supervisor');
+
+      // Return true if a removePackageTask that is currently assigned is found, else false
+      return (typeof assignedRemoveTask !== 'undefined') && isMailTeamSupervisor;
+    };
 
     try {
       const response = await ApiUtil.get(
@@ -58,8 +73,17 @@ export const CorrespondenceReviewPackage = (props) => {
         veteran_file_number: data.file_number,
         default_select_value: data.correspondence_type_id,
       });
+
+      if (isPageReadOnly(data.correspondence_tasks)) {
+        setBannerInformation({
+          title: CORRESPONDENCE_READONLY_BANNER_HEADER,
+          message: CORRESPONDENCE_READONLY_BANNER_MESSAGE,
+          bannerType: 'warning'
+        });
+        setIsReadOnly(true);
+      }
     } catch (error) {
-      throw error();
+      console.error(error);
     }
   };
 
@@ -138,11 +162,14 @@ export const CorrespondenceReviewPackage = (props) => {
         <AppSegment filledBackground>
           <ReviewPackageCaseTitle
             handlePackageActionModal={handlePackageActionModal}
+            correspondence={props.correspondence}
             packageActionModal={packageActionModal}
+            isReadOnly={isReadOnly}
           />
           <ReviewPackageData
             correspondence={props.correspondence}
             packageDocumentType={props.packageDocumentType}
+            isReadOnly={isReadOnly}
           />
           {packageActionModal &&
             <PackageActionModal
@@ -163,7 +190,8 @@ export const CorrespondenceReviewPackage = (props) => {
               handleModalClose,
               handleReview,
               errorMessage,
-              setErrorMessage
+              setErrorMessage,
+              isReadOnly
             }}
             {...props}
           />
@@ -171,6 +199,7 @@ export const CorrespondenceReviewPackage = (props) => {
             documents={props.correspondenceDocuments}
             selectedId={selectedId}
             setSelectedId={setSelectedId}
+            isReadOnly={isReadOnly}
           />
 
         </AppSegment>
@@ -189,7 +218,7 @@ export const CorrespondenceReviewPackage = (props) => {
                 styling={{ style: { marginRight: '2rem' } }}
                 classNames={['usa-button-secondary']}
                 onClick={intakeAppeal}
-                disabled={disableButton}
+                disabled={disableButton || isReadOnly}
               />
             )}
             <a href={intakeLink}>
@@ -197,7 +226,7 @@ export const CorrespondenceReviewPackage = (props) => {
                 name="Create record"
                 classNames={['usa-button-primary']}
                 onClick={intakeLink}
-                disabled={disableButton}
+                disabled={disableButton || isReadOnly}
               />
             </a>
           </div>
@@ -214,14 +243,21 @@ CorrespondenceReviewPackage.propTypes = {
   packageDocumentType: PropTypes.object,
   veteranInformation: PropTypes.object,
   setFileNumberSearch: PropTypes.func,
-  doFileNumberSearch: PropTypes.func
+  doFileNumberSearch: PropTypes.func,
+  organizations: PropTypes.arrayOf(
+    PropTypes.shape({
+      name: PropTypes.string,
+      url: PropTypes.string
+    })
+  )
 };
 
 const mapStateToProps = (state) => ({
   correspondence: state.reviewPackage.correspondence,
   correspondenceDocuments: state.reviewPackage.correspondenceDocuments,
   packageDocumentType: state.reviewPackage.packageDocumentType,
-  veteranInformation: state.reviewPackage.veteranInformation
+  veteranInformation: state.reviewPackage.veteranInformation,
+  organizations: state.ui.organizations
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
