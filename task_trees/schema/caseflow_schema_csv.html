@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Caseflow Schema CSV # Source: http://department-of-veterans-affairs.github.io/caseflow/schema/make_docs/caseflow.csv Tables advance_on_docket_motions allocations annotations api_keys api_views appeals appeal_series hearing_appeal_stream_snapshots appeal_views appellant_substitutions attorney_case_reviews available_hearing_locations bgs_attorneys bgs_power_of_attorneys board_grant_effectuations cached_appeal_attributes cached_user_attributes cavc_remands certifications certification_cancellations claim_establishments claimants claims_folder_searches conference_links decision_documents decision_issues dispatch_tasks distributed_cases distributions docket_snapshots docket_switches docket_tracers documents document_views documents_tags end_product_code_updates end_product_establishments end_product_updates form8s global_admin_logins hearings hearing_days hearing_email_recipients hearing_issue_notes hearing_locations hearing_task_associations hearing_views higher_level_reviews ihp_drafts intakes job_notes judge_case_reviews legacy_appeals legacy_hearings legacy_issues legacy_issue_optins messages nod_date_updates non_availabilities notifications notification_events organizations organizations_users people post_decision_motions ramp_closed_appeals ramp_elections ramp_election_rollbacks ramp_issues ramp_refilings record_synced_by_jobs remand_reasons request_decision_issues request_issues request_issues_updates schedule_periods sent_hearing_admin_email_events sent_hearing_email_events special_issue_lists split_correlation_tables supplemental_claims tags tasks task_timers team_quotas transcriptions unrecognized_appellants unrecognized_party_details users user_quotas vbms_uploaded_documents veterans virtual_hearings virtual_hearing_establishments vso_configs work_modes worksheet_issues &#39;advance_on_docket_motions&#39; table Column Type Required Unique Index Description appeal_id integer FK x The ID of the appeal this motion is associated with appeal_type string x The type of appeal this motion is associated with created_at datetime ∗ x granted boolean x Whether VLJ has determined that there is sufficient cause to fast-track an appeal, i.">
+<meta name="description" content="Caseflow Schema CSV # Source: http://department-of-veterans-affairs.github.io/caseflow/schema/make_docs/caseflow.csv Tables advance_on_docket_motions allocations annotations api_keys api_views appeals appeal_series appeal_states hearing_appeal_stream_snapshots appeal_views appellant_substitutions appellant_substitution_histories attorney_case_reviews available_hearing_locations batch_processes bgs_attorneys bgs_power_of_attorneys board_grant_effectuations cached_appeal_attributes cached_user_attributes caseflow_stuck_records cavc_dashboards cavc_dashboard_dispositions cavc_dashboard_issues cavc_decision_reasons cavc_dispositions_to_reasons cavc_reasons_to_bases cavc_remands cavc_remands_appellant_substitutions cavc_selection_bases certifications certification_cancellations claim_establishments claimants claims_folder_searches conference_links decision_documents decision_issues dispatch_tasks distributed_cases distributions docket_snapshots docket_switches docket_tracers documents document_views documents_tags end_product_code_updates end_product_establishments end_product_updates form8s global_admin_logins hearings hearing_days hearing_email_recipients hearing_issue_notes hearing_locations hearing_task_associations hearing_views higher_level_reviews ihp_drafts intakes job_notes judge_case_reviews legacy_appeals legacy_hearings legacy_issues legacy_issue_optins membership_requests messages metrics mpi_update_person_events nod_date_updates non_availabilities notifications notification_events organizations organizations_users people post_decision_motions priority_end_product_sync_queue ramp_closed_appeals ramp_elections ramp_election_rollbacks ramp_issues ramp_refilings record_synced_by_jobs remand_reasons request_decision_issues request_issues request_issues_updates schedule_periods sent_hearing_admin_email_events sent_hearing_email_events special_issue_lists split_correlation_tables supplemental_claims system_admin_events tags tasks task_timers team_quotas transcriptions unrecognized_appellants unrecognized_party_details users user_quotas vbms_communication_packages vbms_distributions vbms_distribution_destinations vbms_uploaded_documents veterans virtual_hearings virtual_hearing_establishments vso_configs work_modes worksheet_issues &#39;advance_on_docket_motions&#39; table Column Type Required Unique Index Description appeal_id integer FK x The ID of the appeal this motion is associated with appeal_type string x The type of appeal this motion is associated with created_at datetime ∗ x granted boolean x Whether VLJ has determined that there is sufficient cause to fast-track an appeal, i.">
 <meta name="theme-color" content="#FFFFFF"><meta property="og:title" content="Caseflow Schema CSV" />
-<meta property="og:description" content="Caseflow Schema CSV # Source: http://department-of-veterans-affairs.github.io/caseflow/schema/make_docs/caseflow.csv Tables advance_on_docket_motions allocations annotations api_keys api_views appeals appeal_series hearing_appeal_stream_snapshots appeal_views appellant_substitutions attorney_case_reviews available_hearing_locations bgs_attorneys bgs_power_of_attorneys board_grant_effectuations cached_appeal_attributes cached_user_attributes cavc_remands certifications certification_cancellations claim_establishments claimants claims_folder_searches conference_links decision_documents decision_issues dispatch_tasks distributed_cases distributions docket_snapshots docket_switches docket_tracers documents document_views documents_tags end_product_code_updates end_product_establishments end_product_updates form8s global_admin_logins hearings hearing_days hearing_email_recipients hearing_issue_notes hearing_locations hearing_task_associations hearing_views higher_level_reviews ihp_drafts intakes job_notes judge_case_reviews legacy_appeals legacy_hearings legacy_issues legacy_issue_optins messages nod_date_updates non_availabilities notifications notification_events organizations organizations_users people post_decision_motions ramp_closed_appeals ramp_elections ramp_election_rollbacks ramp_issues ramp_refilings record_synced_by_jobs remand_reasons request_decision_issues request_issues request_issues_updates schedule_periods sent_hearing_admin_email_events sent_hearing_email_events special_issue_lists split_correlation_tables supplemental_claims tags tasks task_timers team_quotas transcriptions unrecognized_appellants unrecognized_party_details users user_quotas vbms_uploaded_documents veterans virtual_hearings virtual_hearing_establishments vso_configs work_modes worksheet_issues &#39;advance_on_docket_motions&#39; table Column Type Required Unique Index Description appeal_id integer FK x The ID of the appeal this motion is associated with appeal_type string x The type of appeal this motion is associated with created_at datetime ∗ x granted boolean x Whether VLJ has determined that there is sufficient cause to fast-track an appeal, i." />
+<meta property="og:description" content="Caseflow Schema CSV # Source: http://department-of-veterans-affairs.github.io/caseflow/schema/make_docs/caseflow.csv Tables advance_on_docket_motions allocations annotations api_keys api_views appeals appeal_series appeal_states hearing_appeal_stream_snapshots appeal_views appellant_substitutions appellant_substitution_histories attorney_case_reviews available_hearing_locations batch_processes bgs_attorneys bgs_power_of_attorneys board_grant_effectuations cached_appeal_attributes cached_user_attributes caseflow_stuck_records cavc_dashboards cavc_dashboard_dispositions cavc_dashboard_issues cavc_decision_reasons cavc_dispositions_to_reasons cavc_reasons_to_bases cavc_remands cavc_remands_appellant_substitutions cavc_selection_bases certifications certification_cancellations claim_establishments claimants claims_folder_searches conference_links decision_documents decision_issues dispatch_tasks distributed_cases distributions docket_snapshots docket_switches docket_tracers documents document_views documents_tags end_product_code_updates end_product_establishments end_product_updates form8s global_admin_logins hearings hearing_days hearing_email_recipients hearing_issue_notes hearing_locations hearing_task_associations hearing_views higher_level_reviews ihp_drafts intakes job_notes judge_case_reviews legacy_appeals legacy_hearings legacy_issues legacy_issue_optins membership_requests messages metrics mpi_update_person_events nod_date_updates non_availabilities notifications notification_events organizations organizations_users people post_decision_motions priority_end_product_sync_queue ramp_closed_appeals ramp_elections ramp_election_rollbacks ramp_issues ramp_refilings record_synced_by_jobs remand_reasons request_decision_issues request_issues request_issues_updates schedule_periods sent_hearing_admin_email_events sent_hearing_email_events special_issue_lists split_correlation_tables supplemental_claims system_admin_events tags tasks task_timers team_quotas transcriptions unrecognized_appellants unrecognized_party_details users user_quotas vbms_communication_packages vbms_distributions vbms_distribution_destinations vbms_uploaded_documents veterans virtual_hearings virtual_hearing_establishments vso_configs work_modes worksheet_issues &#39;advance_on_docket_motions&#39; table Column Type Required Unique Index Description appeal_id integer FK x The ID of the appeal this motion is associated with appeal_type string x The type of appeal this motion is associated with created_at datetime ∗ x granted boolean x Whether VLJ has determined that there is sufficient cause to fast-track an appeal, i." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://department-of-veterans-affairs.github.io/caseflow/task_trees/schema/caseflow_schema_csv.html" /><meta property="article:section" content="schema" />
 
@@ -16,7 +16,7 @@
 <link rel="icon" href="/caseflow/task_trees/favicon.png" type="image/x-icon">
 <link rel="stylesheet" href="/caseflow/task_trees/book.min.ca918a1851cb640f46d02aeb342f9722369ca7bdc4eda15d8d9048c31d455275.css" integrity="sha256-ypGKGFHLZA9G0CrrNC&#43;XIjacp73E7aFdjZBIwx1FUnU=" crossorigin="anonymous">
   <script defer src="/caseflow/task_trees/flexsearch.min.js"></script>
-  <script defer src="/caseflow/task_trees/en.search.min.e0fa86311dfba4cab9d65ea24fc9b33f1b587d4dabc7831ef9e8d0df9ce58e48.js" integrity="sha256-4PqGMR37pMq51l6iT8mzPxtYfU2rx4Me&#43;ejQ35zljkg=" crossorigin="anonymous"></script>
+  <script defer src="/caseflow/task_trees/en.search.min.9fbc3934908d1ef7167a6e083f12de8bcd9b5709b801a74524dde9c9600beff0.js" integrity="sha256-n7w5NJCNHvcWem4IPxLei82bVwm4AadFJN3pyWAL7/A=" crossorigin="anonymous"></script>
 <!--
 Made with Book Theme
 https://github.com/alex-shpak/hugo-book
@@ -623,12 +623,6 @@ https://github.com/alex-shpak/hugo-book
 
   
 
-  
-
-  
-
-  
-
 
 
 Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/make_docs/caseflow.csv>http://department-of-veterans-affairs.github.io/caseflow/schema/make_docs/caseflow.csv</a>
@@ -900,6 +894,66 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
   
   
     
+    <li><a href="#appeal_states">appeal_states</a></li>
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    
     <li><a href="#hearing_appeal_stream_snapshots">hearing_appeal_stream_snapshots</a></li>
   
 
@@ -952,6 +1006,42 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
   
 
   
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    
+    <li><a href="#appellant_substitution_histories">appellant_substitution_histories</a></li>
   
 
   
@@ -1051,6 +1141,42 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
   
 
   
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    
+    <li><a href="#batch_processes">batch_processes</a></li>
   
 
   
@@ -1262,6 +1388,9 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
 
   
   
+
+  
+  
     
     <li><a href="#cached_user_attributes">cached_user_attributes</a></li>
   
@@ -1279,6 +1408,219 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
   
 
   
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    
+    <li><a href="#caseflow_stuck_records">caseflow_stuck_records</a></li>
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    
+    <li><a href="#cavc_dashboards">cavc_dashboards</a></li>
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    
+    <li><a href="#cavc_dashboard_dispositions">cavc_dashboard_dispositions</a></li>
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    
+    <li><a href="#cavc_dashboard_issues">cavc_dashboard_issues</a></li>
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    
+    <li><a href="#cavc_decision_reasons">cavc_decision_reasons</a></li>
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    
+    <li><a href="#cavc_dispositions_to_reasons">cavc_dispositions_to_reasons</a></li>
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    
+    <li><a href="#cavc_reasons_to_bases">cavc_reasons_to_bases</a></li>
   
 
   
@@ -1339,6 +1681,75 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
   
 
   
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    
+    <li><a href="#cavc_remands_appellant_substitutions">cavc_remands_appellant_substitutions</a></li>
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    
+    <li><a href="#cavc_selection_bases">cavc_selection_bases</a></li>
   
 
   
@@ -1661,8 +2072,20 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
 
   
   
+
+  
+  
+
+  
+  
     
     <li><a href="#decision_documents">decision_documents</a></li>
+  
+
+  
+  
+
+  
   
 
   
@@ -3234,6 +3657,39 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
   
   
     
+    <li><a href="#membership_requests">membership_requests</a></li>
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    
     <li><a href="#messages">messages</a></li>
   
 
@@ -3244,6 +3700,96 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
   
 
   
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    
+    <li><a href="#metrics">metrics</a></li>
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    
+    <li><a href="#mpi_update_person_events">mpi_update_person_events</a></li>
   
 
   
@@ -3325,6 +3871,15 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
   
     
     <li><a href="#notifications">notifications</a></li>
+  
+
+  
+  
+
+  
+  
+
+  
   
 
   
@@ -3505,6 +4060,36 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
   
     
     <li><a href="#post_decision_motions">post_decision_motions</a></li>
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    
+    <li><a href="#priority_end_product_sync_queue">priority_end_product_sync_queue</a></li>
   
 
   
@@ -4229,6 +4814,9 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
 
   
   
+
+  
+  
     
     <li><a href="#supplemental_claims">supplemental_claims</a></li>
   
@@ -4290,6 +4878,36 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
   
   
     
+    <li><a href="#system_admin_events">system_admin_events</a></li>
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    
     <li><a href="#tags">tags</a></li>
   
 
@@ -4309,6 +4927,9 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
   
     
     <li><a href="#tasks">tasks</a></li>
+  
+
+  
   
 
   
@@ -4565,6 +5186,12 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
 
   
   
+
+  
+  
+
+  
+  
     
     <li><a href="#users">users</a></li>
   
@@ -4635,7 +5262,181 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
   
   
     
+    <li><a href="#vbms_communication_packages">vbms_communication_packages</a></li>
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    
+    <li><a href="#vbms_distributions">vbms_distributions</a></li>
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    
+    <li><a href="#vbms_distribution_destinations">vbms_distribution_destinations</a></li>
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    
     <li><a href="#vbms_uploaded_documents">vbms_uploaded_documents</a></li>
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
   
 
   
@@ -7575,6 +8376,634 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
         </tbody>
       </table>
     
+    <h2 id="appeal_states">'appeal_states' table</h2>
+    <div class="tableComment"></div>
+    <table class="caseflowCsv appeal_states">
+    <thead>
+      <tr>
+        
+          <th class="Column"><div class="outer"><div class="inner">Column</div><div></th>
+        
+          <th class="Type"><div class="outer"><div class="inner">Type</div><div></th>
+        
+          <th class="Required"><div class="outer"><div class="inner">Required</div><div></th>
+        
+          <th class="Unique"><div class="outer"><div class="inner">Unique</div><div></th>
+        
+          <th class="Index"><div class="outer"><div class="inner">Index</div><div></th>
+        
+          <th class="Description"><div class="outer"><div class="inner">Description</div><div></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+  
+  <tr>
+    
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">appeal_cancelled</td>
+      
+        
+        
+        <td class="Type nonblank">boolean ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">When true, appeal&#39;s root task is cancelled</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">appeal_docketed</td>
+      
+        
+        
+        <td class="Type nonblank">boolean ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">When true, appeal has been docketed</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">appeal_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) ∗ FK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">AMA or Legacy Appeal ID</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">appeal_type</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">Appeal Type (Appeal or LegacyAppeal)</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_by_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) ∗ FK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">User id of the user that inserted the record</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">decision_mailed</td>
+      
+        
+        
+        <td class="Type nonblank">boolean ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">When true, appeal has decision mail request complete</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">hearing_postponed</td>
+      
+        
+        
+        <td class="Type nonblank">boolean ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">When true, appeal has hearing postponed and no hearings scheduled</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">hearing_scheduled</td>
+      
+        
+        
+        <td class="Type nonblank">boolean ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">When true, appeal has at least one hearing scheduled</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">hearing_withdrawn</td>
+      
+        
+        
+        <td class="Type nonblank">boolean ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">When true, appeal has hearing withdrawn and no hearings scheduled</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) PK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">privacy_act_complete</td>
+      
+        
+        
+        <td class="Type nonblank">boolean ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">When true, appeal has a privacy act request completed</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">privacy_act_pending</td>
+      
+        
+        
+        <td class="Type nonblank">boolean ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">When true, appeal has a privacy act request still open</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">scheduled_in_error</td>
+      
+        
+        
+        <td class="Type nonblank">boolean ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">When true, hearing was scheduled in error and none scheduled</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_by_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">User id of the last user that updated the record</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">vso_ihp_complete</td>
+      
+        
+        
+        <td class="Type nonblank">boolean ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">When true, appeal has a VSO IHP request completed</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">vso_ihp_pending</td>
+      
+        
+        
+        <td class="Type nonblank">boolean ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">When true, appeal has a VSO IHP request pending</td>
+      
+    
+  </tr>
+
+  
+  
+    
+    
+        </tbody>
+      </table>
+    
     <h2 id="hearing_appeal_stream_snapshots">'hearing_appeal_stream_snapshots' table</h2>
     <div class="tableComment"></div>
     <table class="caseflowCsv hearing_appeal_stream_snapshots">
@@ -8425,6 +9854,370 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
         
         
         <td class="Description nonblank">Standard created_at/updated_at timestamps</td>
+      
+    
+  </tr>
+
+  
+  
+    
+    
+        </tbody>
+      </table>
+    
+    <h2 id="appellant_substitution_histories">'appellant_substitution_histories' table</h2>
+    <div class="tableComment"></div>
+    <table class="caseflowCsv appellant_substitution_histories">
+    <thead>
+      <tr>
+        
+          <th class="Column"><div class="outer"><div class="inner">Column</div><div></th>
+        
+          <th class="Type"><div class="outer"><div class="inner">Type</div><div></th>
+        
+          <th class="Required"><div class="outer"><div class="inner">Required</div><div></th>
+        
+          <th class="Unique"><div class="outer"><div class="inner">Unique</div><div></th>
+        
+          <th class="Index"><div class="outer"><div class="inner">Index</div><div></th>
+        
+          <th class="Description"><div class="outer"><div class="inner">Description</div><div></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+  
+  <tr>
+    
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">appellant_substitution_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">Appellant substitution id of the last user that updated the CAVC record</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_by_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Current user who created Appellant substitution</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">current_appellant_substitute_participant_id</td>
+      
+        
+        
+        <td class="Type nonblank">string FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Current Appellant Substitute participant Id</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">current_appellant_veteran_participant_id</td>
+      
+        
+        
+        <td class="Type nonblank">string FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Current Appellant Veteran participant Id</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) PK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">original_appellant_substitute_participant_id</td>
+      
+        
+        
+        <td class="Type nonblank">string FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Original Appellant Substitute participant Id</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">original_appellant_veteran_participant_id</td>
+      
+        
+        
+        <td class="Type nonblank">string FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Original Appeallant Veteran Participant Id</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">substitution_date</td>
+      
+        
+        
+        <td class="Type nonblank">date</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Timestamp of substitution granted date</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
       
     
   </tr>
@@ -9450,6 +11243,370 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
         
         
         <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+    
+    
+        </tbody>
+      </table>
+    
+    <h2 id="batch_processes">'batch_processes' table</h2>
+    <div class="tableComment">A generalized table for batching and processing records within caseflow</div>
+    <table class="caseflowCsv batch_processes">
+    <thead>
+      <tr>
+        
+          <th class="Column"><div class="outer"><div class="inner">Column</div><div></th>
+        
+          <th class="Type"><div class="outer"><div class="inner">Type</div><div></th>
+        
+          <th class="Required"><div class="outer"><div class="inner">Required</div><div></th>
+        
+          <th class="Unique"><div class="outer"><div class="inner">Unique</div><div></th>
+        
+          <th class="Index"><div class="outer"><div class="inner">Index</div><div></th>
+        
+          <th class="Description"><div class="outer"><div class="inner">Description</div><div></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+  
+  <tr>
+    
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">batch_id</td>
+      
+        
+        
+        <td class="Type nonblank">uuid PK FK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">batch_type</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">Indicates what type of record is being batched</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Date and Time that batch was created.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">ended_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The date/time that the batch finsished processing</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">records_attempted</td>
+      
+        
+        
+        <td class="Type nonblank">integer</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The number of records in the batch attempting to be processed</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">records_completed</td>
+      
+        
+        
+        <td class="Type nonblank">integer</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The number of records in the batch that completed processing successfully</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">records_failed</td>
+      
+        
+        
+        <td class="Type nonblank">integer</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">The number of records in the batch that failed processing</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">started_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The date/time that the batch began processing</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">state</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">The state that the batch is currently in. PRE_PROCESSING, PROCESSING, PROCESSED</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Date and Time that batch was last updated.</td>
       
     
   </tr>
@@ -11116,6 +13273,39 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
+        <td class="Column nonblank">issue_types</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">A string delimited list of nonrating issue categories on the appeal.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
         <td class="Column nonblank">power_of_attorney_name</td>
       
         
@@ -11699,6 +13889,2125 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
         
         
         <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+    
+    
+        </tbody>
+      </table>
+    
+    <h2 id="caseflow_stuck_records">'caseflow_stuck_records' table</h2>
+    <div class="tableComment">This is a polymorphic table consisting of records that have repeatedly errored out of the syncing process. Currently, the only records on this table come from the PriorityEndProductSyncQueue table.</div>
+    <table class="caseflowCsv caseflow_stuck_records">
+    <thead>
+      <tr>
+        
+          <th class="Column"><div class="outer"><div class="inner">Column</div><div></th>
+        
+          <th class="Type"><div class="outer"><div class="inner">Type</div><div></th>
+        
+          <th class="Required"><div class="outer"><div class="inner">Required</div><div></th>
+        
+          <th class="Unique"><div class="outer"><div class="inner">Unique</div><div></th>
+        
+          <th class="Index"><div class="outer"><div class="inner">Index</div><div></th>
+        
+          <th class="Description"><div class="outer"><div class="inner">Description</div><div></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+  
+  <tr>
+    
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">determined_stuck_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The date/time at which the record in question was determined to be stuck.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">error_messages</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Array of Error Message(s) containing Batch ID and specific error if a failure occurs</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) PK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">remediated</td>
+      
+        
+        
+        <td class="Type nonblank">boolean ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Reflects if the stuck record has been reviewed and fixed</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">remediation_notes</td>
+      
+        
+        
+        <td class="Type nonblank">text</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Brief description of the encountered issue and remediation strategy</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">stuck_record_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) ∗ FK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">The id / primary key of the stuck record and the type / where the record came from</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">stuck_record_type</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The time an update occurred on the record</td>
+      
+    
+  </tr>
+
+  
+  
+    
+    
+        </tbody>
+      </table>
+    
+    <h2 id="cavc_dashboards">'cavc_dashboards' table</h2>
+    <div class="tableComment"></div>
+    <table class="caseflowCsv cavc_dashboards">
+    <thead>
+      <tr>
+        
+          <th class="Column"><div class="outer"><div class="inner">Column</div><div></th>
+        
+          <th class="Type"><div class="outer"><div class="inner">Type</div><div></th>
+        
+          <th class="Required"><div class="outer"><div class="inner">Required</div><div></th>
+        
+          <th class="Unique"><div class="outer"><div class="inner">Unique</div><div></th>
+        
+          <th class="Index"><div class="outer"><div class="inner">Index</div><div></th>
+        
+          <th class="Description"><div class="outer"><div class="inner">Description</div><div></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+  
+  <tr>
+    
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">board_decision_date</td>
+      
+        
+        
+        <td class="Type nonblank">date ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The decision date of the source appeal</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">board_docket_number</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The docket number of the source appeal</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">cavc_decision_date</td>
+      
+        
+        
+        <td class="Type nonblank">date ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The decision date from the CAVC board</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">cavc_docket_number</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The docket number assigned by the CAVC board</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">cavc_remand_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">ID of the associated CAVC Remand</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_by_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The ID for the user that created the record</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) PK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">joint_motion_for_remand</td>
+      
+        
+        
+        <td class="Type nonblank">boolean</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Whether the CAVC appeal is JMR/JMPR or not</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_by_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The ID for the user that most recently changed the record</td>
+      
+    
+  </tr>
+
+  
+  
+    
+    
+        </tbody>
+      </table>
+    
+    <h2 id="cavc_dashboard_dispositions">'cavc_dashboard_dispositions' table</h2>
+    <div class="tableComment"></div>
+    <table class="caseflowCsv cavc_dashboard_dispositions">
+    <thead>
+      <tr>
+        
+          <th class="Column"><div class="outer"><div class="inner">Column</div><div></th>
+        
+          <th class="Type"><div class="outer"><div class="inner">Type</div><div></th>
+        
+          <th class="Required"><div class="outer"><div class="inner">Required</div><div></th>
+        
+          <th class="Unique"><div class="outer"><div class="inner">Unique</div><div></th>
+        
+          <th class="Index"><div class="outer"><div class="inner">Index</div><div></th>
+        
+          <th class="Description"><div class="outer"><div class="inner">Description</div><div></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+  
+  <tr>
+    
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">cavc_dashboard_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">ID of the associated CAVC Dashboard</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">cavc_dashboard_issue_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_by_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The ID for the user that created the record</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">disposition</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The disposition of the issue</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) PK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">request_issue_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">ID for a request issue that was filed with the CAVC Remand</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_by_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The ID for the user that most recently changed the record</td>
+      
+    
+  </tr>
+
+  
+  
+    
+    
+        </tbody>
+      </table>
+    
+    <h2 id="cavc_dashboard_issues">'cavc_dashboard_issues' table</h2>
+    <div class="tableComment"></div>
+    <table class="caseflowCsv cavc_dashboard_issues">
+    <thead>
+      <tr>
+        
+          <th class="Column"><div class="outer"><div class="inner">Column</div><div></th>
+        
+          <th class="Type"><div class="outer"><div class="inner">Type</div><div></th>
+        
+          <th class="Required"><div class="outer"><div class="inner">Required</div><div></th>
+        
+          <th class="Unique"><div class="outer"><div class="inner">Unique</div><div></th>
+        
+          <th class="Index"><div class="outer"><div class="inner">Index</div><div></th>
+        
+          <th class="Description"><div class="outer"><div class="inner">Description</div><div></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+  
+  <tr>
+    
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">benefit_type</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">cavc_dashboard_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">ID of the associated CAVC Dashboard</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_by_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) PK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">issue_category</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">issue_description</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_by_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+    
+    
+        </tbody>
+      </table>
+    
+    <h2 id="cavc_decision_reasons">'cavc_decision_reasons' table</h2>
+    <div class="tableComment"></div>
+    <table class="caseflowCsv cavc_decision_reasons">
+    <thead>
+      <tr>
+        
+          <th class="Column"><div class="outer"><div class="inner">Column</div><div></th>
+        
+          <th class="Type"><div class="outer"><div class="inner">Type</div><div></th>
+        
+          <th class="Required"><div class="outer"><div class="inner">Required</div><div></th>
+        
+          <th class="Unique"><div class="outer"><div class="inner">Unique</div><div></th>
+        
+          <th class="Index"><div class="outer"><div class="inner">Index</div><div></th>
+        
+          <th class="Description"><div class="outer"><div class="inner">Description</div><div></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+  
+  <tr>
+    
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">basis_for_selection_category</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The category that the decision reason belongs to. Optional.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">decision_reason</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The reason for the CAVC decision</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) PK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">order</td>
+      
+        
+        
+        <td class="Type nonblank">integer</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The order that the reasons should display in the UI. Child reasons will be ordered under their parent.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">parent_decision_reason_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Associates a child decision reason to its parent in this table</td>
+      
+    
+  </tr>
+
+  
+  
+    
+    
+        </tbody>
+      </table>
+    
+    <h2 id="cavc_dispositions_to_reasons">'cavc_dispositions_to_reasons' table</h2>
+    <div class="tableComment"></div>
+    <table class="caseflowCsv cavc_dispositions_to_reasons">
+    <thead>
+      <tr>
+        
+          <th class="Column"><div class="outer"><div class="inner">Column</div><div></th>
+        
+          <th class="Type"><div class="outer"><div class="inner">Type</div><div></th>
+        
+          <th class="Required"><div class="outer"><div class="inner">Required</div><div></th>
+        
+          <th class="Unique"><div class="outer"><div class="inner">Unique</div><div></th>
+        
+          <th class="Index"><div class="outer"><div class="inner">Index</div><div></th>
+        
+          <th class="Description"><div class="outer"><div class="inner">Description</div><div></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+  
+  <tr>
+    
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">cavc_dashboard_disposition_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">ID of the associated CAVC Dashboard Disposition</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">cavc_decision_reason_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">ID of the associated CAVC Decision Reason</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_by_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The ID for the user that created the record</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) PK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_by_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The ID for the user that most recently changed the record</td>
+      
+    
+  </tr>
+
+  
+  
+    
+    
+        </tbody>
+      </table>
+    
+    <h2 id="cavc_reasons_to_bases">'cavc_reasons_to_bases' table</h2>
+    <div class="tableComment"></div>
+    <table class="caseflowCsv cavc_reasons_to_bases">
+    <thead>
+      <tr>
+        
+          <th class="Column"><div class="outer"><div class="inner">Column</div><div></th>
+        
+          <th class="Type"><div class="outer"><div class="inner">Type</div><div></th>
+        
+          <th class="Required"><div class="outer"><div class="inner">Required</div><div></th>
+        
+          <th class="Unique"><div class="outer"><div class="inner">Unique</div><div></th>
+        
+          <th class="Index"><div class="outer"><div class="inner">Index</div><div></th>
+        
+          <th class="Description"><div class="outer"><div class="inner">Description</div><div></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+  
+  <tr>
+    
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">cavc_dispositions_to_reason_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">ID of the associated CAVC Decision Reason</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">cavc_selection_basis_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">ID of the associated CAVC Basis for Selection</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_by_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The ID for the user that created the record</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) PK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_by_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The ID for the user that most recently changed the record</td>
       
     
   </tr>
@@ -12327,6 +16636,701 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
         
         
         <td class="Description nonblank">User that updated this record. For MDR remands, judgement and mandate dates will be added after the record is first created.</td>
+      
+    
+  </tr>
+
+  
+  
+    
+    
+        </tbody>
+      </table>
+    
+    <h2 id="cavc_remands_appellant_substitutions">'cavc_remands_appellant_substitutions' table</h2>
+    <div class="tableComment"></div>
+    <table class="caseflowCsv cavc_remands_appellant_substitutions">
+    <thead>
+      <tr>
+        
+          <th class="Column"><div class="outer"><div class="inner">Column</div><div></th>
+        
+          <th class="Type"><div class="outer"><div class="inner">Type</div><div></th>
+        
+          <th class="Required"><div class="outer"><div class="inner">Required</div><div></th>
+        
+          <th class="Unique"><div class="outer"><div class="inner">Unique</div><div></th>
+        
+          <th class="Index"><div class="outer"><div class="inner">Index</div><div></th>
+        
+          <th class="Description"><div class="outer"><div class="inner">Description</div><div></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+  
+  <tr>
+    
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">appellant_substitution_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">Appellant Substitution this is tied to</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">cavc_remand_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">Cavc Remand this is tied to</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_by_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8)</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Current user who created substitution</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) PK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">is_appellant_substituted</td>
+      
+        
+        
+        <td class="Type nonblank">boolean</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Y/N Boolean for active substitution</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">participant_id</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">Claimant Participant Id</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">remand_source</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Source of Remand - From Add or Edit</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">substitute_participant_id</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">Appellant Substitute participant Id</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">substitution_date</td>
+      
+        
+        
+        <td class="Type nonblank">date</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Timestamp of substitution</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_by_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8)</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Current user who updated substitution</td>
+      
+    
+  </tr>
+
+  
+  
+    
+    
+        </tbody>
+      </table>
+    
+    <h2 id="cavc_selection_bases">'cavc_selection_bases' table</h2>
+    <div class="tableComment"></div>
+    <table class="caseflowCsv cavc_selection_bases">
+    <thead>
+      <tr>
+        
+          <th class="Column"><div class="outer"><div class="inner">Column</div><div></th>
+        
+          <th class="Type"><div class="outer"><div class="inner">Type</div><div></th>
+        
+          <th class="Required"><div class="outer"><div class="inner">Required</div><div></th>
+        
+          <th class="Unique"><div class="outer"><div class="inner">Unique</div><div></th>
+        
+          <th class="Index"><div class="outer"><div class="inner">Index</div><div></th>
+        
+          <th class="Description"><div class="outer"><div class="inner">Description</div><div></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+  
+  <tr>
+    
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">basis_for_selection</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">category</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_by</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8)</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) PK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_by</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8)</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
       
     
   </tr>
@@ -14640,7 +19644,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Description nonblank">The class name for the single table inheritance type of Claimant, for example VeteranClaimant, DependentClaimant, AttorneyClaimant, or OtherClaimant.</td>
+        <td class="Description nonblank">The class name for the single table inheritance type of Claimant, for example VeteranClaimant, DependentClaimant, AttorneyClaimant, OtherClaimant, or HealthcareProviderClaimant.</td>
       
     
   </tr>
@@ -15183,6 +20187,72 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
+        <td class="Column nonblank">guest_hearing_link</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Guest link for hearing daily docket.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">guest_pin_long</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Pin provided for the guest, allowing them entry into the video conference.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
         <td class="Column nonblank">hearing_day_id</td>
       
         
@@ -15667,6 +20737,72 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
         
         
         <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">document_series_reference_id</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">UUID that is provided by eFolder that represents the group of documentsthis document belongs to. Think of a series as a stack of versions.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">document_version_reference_id</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">UUID that is provided by eFolder that represents the specific version of the document.</td>
       
     
   </tr>
@@ -20426,7 +25562,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Index blank"></td>
+        <td class="Index nonblank">x</td>
       
         
         
@@ -31681,6 +36817,337 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
         </tbody>
       </table>
     
+    <h2 id="membership_requests">'membership_requests' table</h2>
+    <div class="tableComment"></div>
+    <table class="caseflowCsv membership_requests">
+    <thead>
+      <tr>
+        
+          <th class="Column"><div class="outer"><div class="inner">Column</div><div></th>
+        
+          <th class="Type"><div class="outer"><div class="inner">Type</div><div></th>
+        
+          <th class="Required"><div class="outer"><div class="inner">Required</div><div></th>
+        
+          <th class="Unique"><div class="outer"><div class="inner">Unique</div><div></th>
+        
+          <th class="Index"><div class="outer"><div class="inner">Index</div><div></th>
+        
+          <th class="Description"><div class="outer"><div class="inner">Description</div><div></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+  
+  <tr>
+    
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">decided_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The date and time when the deider user made a decision about the membership request</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">decider_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">The user who decides the status of the membership request</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) PK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">note</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">A note that provides additional context from the requestor about their request for access to the organization</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">organization_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">The organization that the membership request is asking to join</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">requestor_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">The User that is requesting access to the organization</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">status</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗ U</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique nonblank">x</td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">The status of the membership request at any given point of time</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+    
+    
+        </tbody>
+      </table>
+    
     <h2 id="messages">'messages' table</h2>
     <div class="tableComment"></div>
     <table class="caseflowCsv messages">
@@ -32001,6 +37468,932 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
         
         
         <td class="Description nonblank">The user for whom the message is intended</td>
+      
+    
+  </tr>
+
+  
+  
+    
+    
+        </tbody>
+      </table>
+    
+    <h2 id="metrics">'metrics' table</h2>
+    <div class="tableComment"></div>
+    <table class="caseflowCsv metrics">
+    <thead>
+      <tr>
+        
+          <th class="Column"><div class="outer"><div class="inner">Column</div><div></th>
+        
+          <th class="Type"><div class="outer"><div class="inner">Type</div><div></th>
+        
+          <th class="Required"><div class="outer"><div class="inner">Required</div><div></th>
+        
+          <th class="Unique"><div class="outer"><div class="inner">Unique</div><div></th>
+        
+          <th class="Index"><div class="outer"><div class="inner">Index</div><div></th>
+        
+          <th class="Description"><div class="outer"><div class="inner">Description</div><div></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+  
+  <tr>
+    
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">additional_info</td>
+      
+        
+        
+        <td class="Type nonblank">json</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">additional data to store for the metric</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">app_name</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">Application name: caseflow or efolder</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">duration</td>
+      
+        
+        
+        <td class="Type nonblank">float</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Time in milliseconds from start to end</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">end</td>
+      
+        
+        
+        <td class="Type nonblank">datetime</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">When metric recording stopped</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) PK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">metric_attributes</td>
+      
+        
+        
+        <td class="Type nonblank">json</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Store attributes relevant to the metric: OS, browser, etc</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">metric_class</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Class of metric, use reflection to find value to populate this</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">metric_group</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Metric group: service, etc</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">metric_message</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Message or log for metric</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">metric_name</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">Name of metric</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">metric_product</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">Where in application: Queue, Hearings, Intake, VHA, etc</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">metric_type</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Type of metric: ERROR, LOG, PERFORMANCE, etc</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">relevant_tables_info</td>
+      
+        
+        
+        <td class="Type nonblank">json</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Store information to tie metric to database table(s)</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">sent_to</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">Which system metric was sent to: Datadog, Rails Console, Javascript Console, etc </td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">sent_to_info</td>
+      
+        
+        
+        <td class="Type nonblank">json</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Additional information for which system metric was sent to</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">start</td>
+      
+        
+        
+        <td class="Type nonblank">datetime</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">When metric recording started</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">user_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) ∗ FK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">The ID of the user who generated metric.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">uuid</td>
+      
+        
+        
+        <td class="Type nonblank">uuid ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Unique ID for the metric, can be used to search within various systems for the logging</td>
+      
+    
+  </tr>
+
+  
+  
+    
+    
+        </tbody>
+      </table>
+    
+    <h2 id="mpi_update_person_events">'mpi_update_person_events' table</h2>
+    <div class="tableComment"></div>
+    <table class="caseflowCsv mpi_update_person_events">
+    <thead>
+      <tr>
+        
+          <th class="Column"><div class="outer"><div class="inner">Column</div><div></th>
+        
+          <th class="Type"><div class="outer"><div class="inner">Type</div><div></th>
+        
+          <th class="Required"><div class="outer"><div class="inner">Required</div><div></th>
+        
+          <th class="Unique"><div class="outer"><div class="inner">Unique</div><div></th>
+        
+          <th class="Index"><div class="outer"><div class="inner">Index</div><div></th>
+        
+          <th class="Description"><div class="outer"><div class="inner">Description</div><div></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+  
+  <tr>
+    
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">api_key_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) ∗ FK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">API Key used to initiate the event</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">completed_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Timestamp of when update was completed, regardless of success or failure</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Timestamp of when update was initiated</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) PK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">info</td>
+      
+        
+        
+        <td class="Type nonblank">json</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Additional information about the update</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">update_type</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Type or Result of update</td>
       
     
   </tr>
@@ -32709,7 +39102,40 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Column nonblank">email_notification_external_id</td>
+        <td class="Column nonblank">email_enabled</td>
+      
+        
+        
+        <td class="Type nonblank">boolean ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">email_notification_content</td>
       
         
         
@@ -32726,6 +39152,39 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
         
         
         <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Full Email Text Content of Notification</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">email_notification_external_id</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
       
         
         
@@ -32758,7 +39217,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Index blank"></td>
+        <td class="Index nonblank">x</td>
       
         
         
@@ -32944,11 +39403,11 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Type nonblank">datetime ∗</td>
+        <td class="Type nonblank">datetime</td>
       
         
         
-        <td class="Required nonblank">x</td>
+        <td class="Required blank"></td>
       
         
         
@@ -33072,7 +39531,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Column nonblank">sms_notification_external_id</td>
+        <td class="Column nonblank">sms_notification_content</td>
       
         
         
@@ -33089,6 +39548,39 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
         
         
         <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Full SMS Text Content of Notification</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">sms_notification_external_id</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
       
         
         
@@ -33121,7 +39613,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Index blank"></td>
+        <td class="Index nonblank">x</td>
       
         
         
@@ -34682,6 +41174,304 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
         
         
         <td class="Description nonblank">When a motion to vacate is partially granted, this includes an array of the appeal&#39;s decision issue IDs that were chosen for vacatur in this post-decision motion. For full grant, this includes all prior decision issue IDs.</td>
+      
+    
+  </tr>
+
+  
+  
+    
+    
+        </tbody>
+      </table>
+    
+    <h2 id="priority_end_product_sync_queue">'priority_end_product_sync_queue' table</h2>
+    <div class="tableComment">Queue of End Product Establishments that need to sync with VBMS</div>
+    <table class="caseflowCsv priority_end_product_sync_queue">
+    <thead>
+      <tr>
+        
+          <th class="Column"><div class="outer"><div class="inner">Column</div><div></th>
+        
+          <th class="Type"><div class="outer"><div class="inner">Type</div><div></th>
+        
+          <th class="Required"><div class="outer"><div class="inner">Required</div><div></th>
+        
+          <th class="Unique"><div class="outer"><div class="inner">Unique</div><div></th>
+        
+          <th class="Index"><div class="outer"><div class="inner">Index</div><div></th>
+        
+          <th class="Description"><div class="outer"><div class="inner">Description</div><div></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+  
+  <tr>
+    
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">batch_id</td>
+      
+        
+        
+        <td class="Type nonblank">uuid FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">A unique UUID for the batch the record is executed with</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Date and Time the record was inserted into the queue</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">end_product_establishment_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer ∗ FK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">ID of end_product_establishment record to be synced</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">error_messages</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Array of Error Message(s) containing Batch ID and specific error if a failure occurs</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) PK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">last_batched_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">Date and Time the record was last batched</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">status</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">A status to indicate what state the record is in such as PROCESSING and PROCESSED</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Date and Time the record was last updated.</td>
       
     
   </tr>
@@ -41341,7 +48131,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       </table>
     
     <h2 id="split_correlation_tables">'split_correlation_tables' table</h2>
-    <div class="tableComment"></div>
+    <div class="tableComment">Associates the request issues of the split appeal to the original appeal.</div>
     <table class="caseflowCsv split_correlation_tables">
     <thead>
       <tr>
@@ -41379,7 +48169,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Type nonblank">bigint</td>
+        <td class="Type nonblank">integer</td>
       
         
         
@@ -41395,7 +48185,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Description nonblank">The new ID of the split appeal associated with this record</td>
+        <td class="Description nonblank">The new ID of the split appeal associated with this record.</td>
       
     
   </tr>
@@ -41412,7 +48202,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Type nonblank">string</td>
+        <td class="Type nonblank">string ∗</td>
       
         
         
@@ -41428,7 +48218,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Description nonblank">The type of appeal that the split appeal was orginally motioned as (i.e. DR</td>
+        <td class="Description nonblank">The type of appeal that the split appeal was orginally motioned as (i.e. DR,ES,SC).</td>
       
     
   </tr>
@@ -41445,11 +48235,11 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Type nonblank">uuid</td>
+        <td class="Type nonblank">uuid ∗</td>
       
         
         
-        <td class="Required blank"></td>
+        <td class="Required nonblank">x</td>
       
         
         
@@ -41461,7 +48251,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Description nonblank">The universally unique identifier for the appeal</td>
+        <td class="Description nonblank">The universally unique identifier for the appeal, which allows a single ID to determine an appeal for Caseflow splitted appeals.</td>
       
     
   </tr>
@@ -41478,7 +48268,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Type nonblank">datetime</td>
+        <td class="Type nonblank">datetime ∗</td>
       
         
         
@@ -41511,7 +48301,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Type nonblank">bigint</td>
+        <td class="Type nonblank">integer ∗</td>
       
         
         
@@ -41527,7 +48317,40 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Description nonblank">The user css_id that created the split appeal</td>
+        <td class="Description nonblank">The user css_id that created the split appeal.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) PK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
       
     
   </tr>
@@ -41544,7 +48367,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Type nonblank">bigint</td>
+        <td class="Type nonblank">integer ∗</td>
       
         
         
@@ -41560,7 +48383,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Description nonblank">The original appeal id from where the split appeal appeal_id was created from</td>
+        <td class="Description nonblank">The original appeal id from where the split appeal appeal_id was created from.</td>
       
     
   </tr>
@@ -41577,7 +48400,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Type nonblank">string </td>
+        <td class="Type nonblank">string ∗</td>
       
         
         
@@ -41593,7 +48416,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Description nonblank">The original source appeal uuid from where the split was generated from</td>
+        <td class="Description nonblank">The original source appeal uuid from where the split was generated from.</td>
       
     
   </tr>
@@ -41606,11 +48429,11 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Column nonblank">original_request_issue_ids</td>
+        <td class="Column nonblank">original_request_issue_id</td>
       
         
         
-        <td class="Type nonblank">integer</td>
+        <td class="Type nonblank">integer ∗</td>
       
         
         
@@ -41626,7 +48449,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Description nonblank">The new split_appeal relationship type created from the split and maybe used for future correlations</td>
+        <td class="Description nonblank">The original request issue id and the corresponding request issue id created from the split appeal process.</td>
       
     
   </tr>
@@ -41659,7 +48482,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Description nonblank">The new split_appeal relationship type created from the split and maybe used for future correlations</td>
+        <td class="Description nonblank">The new split_appeal relationship type created from the split and maybe used for future correlations.</td>
       
     
   </tr>
@@ -41692,7 +48515,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Description nonblank">The other reason for splitting the appeal from comment section</td>
+        <td class="Description nonblank">The other reason for splitting the appeal from comment section.</td>
       
     
   </tr>
@@ -41709,7 +48532,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Type nonblank">string </td>
+        <td class="Type nonblank">string</td>
       
         
         
@@ -41725,7 +48548,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Description nonblank">Reason for splitting the appeal from drop menu</td>
+        <td class="Description nonblank">Reason for splitting the appeal from drop menu.</td>
       
     
   </tr>
@@ -41738,11 +48561,11 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Column nonblank">split_request_issue_ids</td>
+        <td class="Column nonblank">split_request_issue_id</td>
       
         
         
-        <td class="Type nonblank">integer</td>
+        <td class="Type nonblank">integer ∗</td>
       
         
         
@@ -41758,7 +48581,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Description nonblank">An array of the split request issue IDs that were transferred to the split appeal</td>
+        <td class="Description nonblank">The original request issue id and the corresponding request issue id created from the split appeal process.</td>
       
     
   </tr>
@@ -41775,7 +48598,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Type nonblank">datetime </td>
+        <td class="Type nonblank">datetime</td>
       
         
         
@@ -41791,7 +48614,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Description nonblank">The datetime when the split appeal was updated at</td>
+        <td class="Description nonblank">The datetime when the split appeal was updated at.</td>
       
     
   </tr>
@@ -41808,7 +48631,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Type nonblank">bigint</td>
+        <td class="Type nonblank">integer</td>
       
         
         
@@ -41824,7 +48647,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Description nonblank">The user css_id who most recently updated the split appeal workflow</td>
+        <td class="Description nonblank">The user css_id who most recently updated the split appeal workflow.</td>
       
     
   </tr>
@@ -41841,7 +48664,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Type nonblank">string</td>
+        <td class="Type nonblank">string ∗</td>
       
         
         
@@ -41857,7 +48680,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Description nonblank">The work flow status of the split appeal (i.e. on_hold</td>
+        <td class="Description nonblank">The work flow status of the split appeal (i.e. on_hold, in_progress, cancelled, completed).</td>
       
     
   </tr>
@@ -42497,6 +49320,304 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
         </tbody>
       </table>
     
+    <h2 id="system_admin_events">'system_admin_events' table</h2>
+    <div class="tableComment"></div>
+    <table class="caseflowCsv system_admin_events">
+    <thead>
+      <tr>
+        
+          <th class="Column"><div class="outer"><div class="inner">Column</div><div></th>
+        
+          <th class="Type"><div class="outer"><div class="inner">Type</div><div></th>
+        
+          <th class="Required"><div class="outer"><div class="inner">Required</div><div></th>
+        
+          <th class="Unique"><div class="outer"><div class="inner">Unique</div><div></th>
+        
+          <th class="Index"><div class="outer"><div class="inner">Index</div><div></th>
+        
+          <th class="Description"><div class="outer"><div class="inner">Description</div><div></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+  
+  <tr>
+    
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">completed_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Timestamp of when event was completed without error</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Timestamp of when event was initiated</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">errored_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Timestamp of when event failed due to error</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">event_type</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Type of event</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) PK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">info</td>
+      
+        
+        
+        <td class="Type nonblank">json</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Additional information about the event</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Timestamp of when event was last updated</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">user_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) ∗ FK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description nonblank">User who initiated the event</td>
+      
+    
+  </tr>
+
+  
+  
+    
+    
+        </tbody>
+      </table>
+    
     <h2 id="tags">'tags' table</h2>
     <div class="tableComment"></div>
     <table class="caseflowCsv tags">
@@ -42983,6 +50104,39 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
         
         
         <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">completed_by_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">ID of user that marked task complete</td>
       
     
   </tr>
@@ -44372,7 +51526,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Description nonblank">The OtherClaimant record associating this appellant to a DecisionReview</td>
+        <td class="Description nonblank">The OtherClaimant or HealthcareProviderClaimant record associating this appellant to a DecisionReview.</td>
       
     
   </tr>
@@ -44570,7 +51724,7 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Description nonblank">Relationship to veteran. Allowed values: attorney, child, spouse, other</td>
+        <td class="Description nonblank">Relationship to veteran. Allowed values: attorney, child, spouse, other, or healthcare_provider.</td>
       
     
   </tr>
@@ -44947,6 +52101,39 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
+        <td class="Column nonblank">ein</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">PII. Employer Identification Number</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
         <td class="Column nonblank">email_address</td>
       
         
@@ -45166,6 +52353,39 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
         
         
         <td class="Description nonblank">PII</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">ssn</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">PII. Social Security Number</td>
       
     
   </tr>
@@ -46004,6 +53224,1659 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
         </tbody>
       </table>
     
+    <h2 id="vbms_communication_packages">'vbms_communication_packages' table</h2>
+    <div class="tableComment"></div>
+    <table class="caseflowCsv vbms_communication_packages">
+    <thead>
+      <tr>
+        
+          <th class="Column"><div class="outer"><div class="inner">Column</div><div></th>
+        
+          <th class="Type"><div class="outer"><div class="inner">Type</div><div></th>
+        
+          <th class="Required"><div class="outer"><div class="inner">Required</div><div></th>
+        
+          <th class="Unique"><div class="outer"><div class="inner">Unique</div><div></th>
+        
+          <th class="Index"><div class="outer"><div class="inner">Index</div><div></th>
+        
+          <th class="Description"><div class="outer"><div class="inner">Description</div><div></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+  
+  <tr>
+    
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">comm_package_name</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">copies</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_by_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8)</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">document_mailable_via_pacman_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">document_mailable_via_pacman_type</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">file_number</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">number associated with the documents.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) PK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">status</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_by_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8)</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">uuid</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">UUID of the communication package in Package Manager (Pacman)</td>
+      
+    
+  </tr>
+
+  
+  
+    
+    
+        </tbody>
+      </table>
+    
+    <h2 id="vbms_distributions">'vbms_distributions' table</h2>
+    <div class="tableComment"></div>
+    <table class="caseflowCsv vbms_distributions">
+    <thead>
+      <tr>
+        
+          <th class="Column"><div class="outer"><div class="inner">Column</div><div></th>
+        
+          <th class="Type"><div class="outer"><div class="inner">Type</div><div></th>
+        
+          <th class="Required"><div class="outer"><div class="inner">Required</div><div></th>
+        
+          <th class="Unique"><div class="outer"><div class="inner">Unique</div><div></th>
+        
+          <th class="Index"><div class="outer"><div class="inner">Index</div><div></th>
+        
+          <th class="Description"><div class="outer"><div class="inner">Description</div><div></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+  
+  <tr>
+    
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">claimant_station_of_jurisdiction</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Can&#39;t be null if [recipient_type] is ro-colocated.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_by_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8)</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">first_name</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">recipient&#39;s first name. If Type is [person] then it cant be null.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) PK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">last_name</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">recipient&#39;s last name. If Type is [person] then it cant be null.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">middle_name</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">recipient&#39;s middle name.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">name</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">should only be used for non-person entity names. Not null if [recipient_type] is organization, ro-colocated, or System.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">participant_id</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">recipient&#39;s participant id.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">poa_code</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Can&#39;t be null if [recipient_type] is ro-colocated. The recipients POA code</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">recipient_type</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Must be one of [person, organization, ro-colocated, System].</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_by_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8)</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">uuid</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">UUID of the distrubtion in Package Manager (Pacman)</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">vbms_communication_package_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+    
+    
+        </tbody>
+      </table>
+    
+    <h2 id="vbms_distribution_destinations">'vbms_distribution_destinations' table</h2>
+    <div class="tableComment"></div>
+    <table class="caseflowCsv vbms_distribution_destinations">
+    <thead>
+      <tr>
+        
+          <th class="Column"><div class="outer"><div class="inner">Column</div><div></th>
+        
+          <th class="Type"><div class="outer"><div class="inner">Type</div><div></th>
+        
+          <th class="Required"><div class="outer"><div class="inner">Required</div><div></th>
+        
+          <th class="Unique"><div class="outer"><div class="inner">Unique</div><div></th>
+        
+          <th class="Index"><div class="outer"><div class="inner">Index</div><div></th>
+        
+          <th class="Description"><div class="outer"><div class="inner">Description</div><div></th>
+        
+      </tr>
+    </thead>
+    <tbody>
+  
+  <tr>
+    
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">address_line_1</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">PII. If destination_type is domestic, international, or military then Must not be null.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">address_line_2</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">PII. If treatLine2AsAddressee is [true] then must not be null</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">address_line_3</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">PII. If treatLine3AsAddressee is [true] then must not be null</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">address_line_4</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">PII.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">address_line_5</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">PII.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">address_line_6</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">PII.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">city</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">PII. If type is [domestic, international, military] then Must not be null</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">country_code</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Must be exactly two-letter ISO 3166 code.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">country_name</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">created_by_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8)</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">destination_type</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">Must be &#39;domesticAddress&#39;, &#39;internationalAddress&#39;, &#39;militaryAddress&#39;, &#39;derived&#39;, &#39;email&#39;, or &#39;sms&#39;. Cannot be &#39;physicalAddress&#39;.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) PK</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">postal_code</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">state</td>
+      
+        
+        
+        <td class="Type nonblank">string ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">PII. Must be exactly two-letter ISO 3166-2 code. If destination_type is domestic or military then Must not be null</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">treat_line_2_as_addressee</td>
+      
+        
+        
+        <td class="Type nonblank">boolean</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">treat_line_3_as_addressee</td>
+      
+        
+        
+        <td class="Type nonblank">boolean</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">If true, treatLine2AsAddressee must also be true</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_at</td>
+      
+        
+        
+        <td class="Type nonblank">datetime ∗</td>
+      
+        
+        
+        <td class="Required nonblank">x</td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">updated_by_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8)</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">vbms_distribution_id</td>
+      
+        
+        
+        <td class="Type nonblank">integer (8) FK</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+    
+    
+        </tbody>
+      </table>
+    
     <h2 id="vbms_uploaded_documents">'vbms_uploaded_documents' table</h2>
     <div class="tableComment"></div>
     <table class="caseflowCsv vbms_uploaded_documents">
@@ -46043,11 +54916,11 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Type nonblank">integer (8) ∗ FK</td>
+        <td class="Type nonblank">integer (8) FK</td>
       
         
         
-        <td class="Required nonblank">x</td>
+        <td class="Required blank"></td>
       
         
         
@@ -46076,11 +54949,11 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
-        <td class="Type nonblank">string ∗</td>
+        <td class="Type nonblank">string</td>
       
         
         
-        <td class="Required nonblank">x</td>
+        <td class="Required blank"></td>
       
         
         
@@ -46204,6 +55077,105 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
       
         
         
+        <td class="Column nonblank">document_name</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">document_series_reference_id</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">UUID that is provided by eFolder that represents the group of documentsthis document belongs to. Think of a series as a stack of versions.</td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">document_subject</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
         <td class="Column nonblank">document_type</td>
       
         
@@ -46225,6 +55197,39 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
         
         
         <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">document_version_reference_id</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description nonblank">UUID that is provided by eFolder that represents the specific version of the document.</td>
       
     
   </tr>
@@ -46452,6 +55457,39 @@ Source: <a href=http://department-of-veterans-affairs.github.io/caseflow/schema/
         
         
         <td class="Index blank"></td>
+      
+        
+        
+        <td class="Description blank"></td>
+      
+    
+  </tr>
+
+  
+  
+  <tr>
+    
+    
+      
+        
+        
+        <td class="Column nonblank">veteran_file_number</td>
+      
+        
+        
+        <td class="Type nonblank">string</td>
+      
+        
+        
+        <td class="Required blank"></td>
+      
+        
+        
+        <td class="Unique blank"></td>
+      
+        
+        
+        <td class="Index nonblank">x</td>
       
         
         
