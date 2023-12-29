@@ -1,10 +1,17 @@
 # frozen_string_literal: true
 
 RSpec.feature("The Correspondence Intake page") do
+  let(:organization) { MailTeam.singleton }
+  let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
+
+  before do
+    organization.add_user(mail_user)
+    mail_user.reload
+  end
+
   context "intake form shell" do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      User.authenticate!(roles: ["Mail Intake"])
       @correspondence_uuid = "123456789"
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
     end

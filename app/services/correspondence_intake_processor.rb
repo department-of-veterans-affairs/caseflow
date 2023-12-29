@@ -4,29 +4,25 @@ class CorrespondenceIntakeProcessor
   def process_intake(intake_params, current_user)
     correspondence = Correspondence.find_by(uuid: intake_params[:correspondence_uuid])
 
-    raise "Correspondence not found" if correspondence.blank?
+    fail "Correspondence not found" if correspondence.blank?
 
     success = true
-    param_data = intake_params[:data]
 
     ActiveRecord::Base.transaction do
       begin
-        create_correspondence_relations(param_data, correspondence.id, current_user)
-        link_appeals_to_correspondence(param_data, correspondence.id, current_user)
-        add_tasks_to_related_appeals(param_data, correspondence.id, current_user)
-        complete_waived_evidence_submission_tasks(param_data, correspondence.id, current_user)
-        create_tasks_not_related_to_appeals(param_data, correspondence, current_user)
-        create_mail_tasks(param_data, correspondence.id, current_user)
-      rescue ActiveRecord::RecordInvalid
-        success = false
-        raise ActiveRecord::Rollback
-      rescue ActiveRecord::RecordNotUnique
+        create_correspondence_relations(intake_params, correspondence.id)
+        link_appeals_to_correspondence(intake_params, correspondence.id)
+        add_tasks_to_related_appeals(intake_params, current_user)
+        complete_waived_evidence_submission_tasks(intake_params)
+        create_tasks_not_related_to_appeals(intake_params, correspondence, current_user)
+        create_mail_tasks(intake_params, correspondence, current_user)
+      rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid
         success = false
         raise ActiveRecord::Rollback
       end
     end
 
-    return success
+    success
   end
 
   def upload_documents_to_claim_evidence(correspondence, current_user)
@@ -42,19 +38,19 @@ class CorrespondenceIntakeProcessor
           )
         end
 
-        return true
+        true
       rescue StandardError => error
         Rails.logger.error(error.to_s)
         create_efolder_upload_failed_task(correspondence, current_user)
 
-        return false
+        false
       end
     end
   end
 
   private
 
-  def create_correspondence_relations(intake_params, correspondence_id, current_user)
+  def create_correspondence_relations(intake_params, correspondence_id)
     intake_params[:related_correspondence_uuids]&.map do |uuid|
       CorrespondenceRelation.create!(
         correspondence_id: correspondence_id,
@@ -63,13 +59,13 @@ class CorrespondenceIntakeProcessor
     end
   end
 
-  def link_appeals_to_correspondence(intake_params, correspondence_id, current_user)
+  def link_appeals_to_correspondence(intake_params, correspondence_id)
     intake_params[:related_appeal_ids]&.map do |appeal_id|
       CorrespondencesAppeal.find_or_create_by(correspondence_id: correspondence_id, appeal_id: appeal_id)
     end
   end
 
-  def add_tasks_to_related_appeals(intake_params, correspondence_id, current_user)
+  def add_tasks_to_related_appeals(intake_params, current_user)
     intake_params[:tasks_related_to_appeal]&.map do |data|
       appeal = Appeal.find(data[:appeal_id])
 
@@ -84,7 +80,7 @@ class CorrespondenceIntakeProcessor
     end
   end
 
-  def complete_waived_evidence_submission_tasks(intake_params, correspondence_id, current_user)
+  def complete_waived_evidence_submission_tasks(intake_params)
     intake_params[:waived_evidence_submission_window_tasks]&.map do |task|
       evidence_submission_window_task = EvidenceSubmissionWindowTask.find(task[:task_id])
       instructions = evidence_submission_window_task.instructions
@@ -123,20 +119,35 @@ class CorrespondenceIntakeProcessor
     end
   end
 
-  def create_mail_tasks(intake_params, correspondence_id, current_user)
-    mail_task_data = intake_params[:tasks_not_related_to_appeal]
+  def create_mail_tasks(intake_params, correspondence, current_user)
+    mail_task_data = intake_params[:mail_tasks]
 
     return if mail_task_data.blank? || !mail_task_data.length
 
-    mail_task_data.map do |data|
-      class_for_data(data).create_from_params(
+    mail_task_data.map do |mail_task_type|
+      task = mail_task_class_for_type(mail_task_type).create_from_params(
         {
           parent_id: correspondence.root_task.id,
-          assigned_to: data[:assigned_to].constantize.singleton,
-          instructions: data[:content]
+          assigned_to_id: current_user.id,
+          assigned_to_type: User.name
         }, current_user
       )
+
+      task.update!(status: Constants.TASK_STATUSES.completed)
     end
+  end
+
+  def mail_task_class_for_type(task_type)
+    task_types = {
+      "Associated with Claims Folder": AssociatedWithClaimsFolderMailTask.name,
+      "Change of address": AddressChangeMailTask.name,
+      "Evidence or argument": EvidenceOrArgumentMailTask.name,
+      "Returned or undeliverable mail": ReturnedUndeliverableCorrespondenceMailTask.name,
+      "Sent to ROJ": SentToRojMailTask.name,
+      "VACOLS updated": VacolsUpdatedMailTask.name
+    }.with_indifferent_access
+
+    task_types[task_type]&.constantize
   end
 
   def class_for_data(data)
