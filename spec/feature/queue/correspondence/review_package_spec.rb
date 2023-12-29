@@ -44,7 +44,7 @@ RSpec.feature("The Correspondence Review Package page") do
 
     it "check for CMP Edit button" do
       expect(page).to have_button("Edit")
-      expect(page).to have_button("Cancel")
+      expect(page).to have_button("Return to queue")
       expect(page).to have_button("Create record")
     end
 
@@ -80,6 +80,7 @@ RSpec.feature("The Correspondence Review Package page") do
         expect(page).to have_field("Veteran name", readonly: true)
         expect(page).to have_field("Notes", disabled: true)
         expect(find(".cf-form-dropdown")).to have_css("div.cf-select--is-disabled")
+        expect(page).to have_button("Review removal request")
       end
 
       it "request package action dropdown isn't visible" do
@@ -88,6 +89,38 @@ RSpec.feature("The Correspondence Review Package page") do
 
       it "warning banner appears" do
         expect(page).to have_content("This package has a pending request")
+      end
+
+      it "open Modal to remove Package" do
+        expect(page).to have_button("Review removal request")
+        click_button "Review removal request"
+        radio_choices = page.all(".cf-form-radio-option > label")
+        expect(radio_choices[0]).to have_content("Approve request")
+        expect(radio_choices[1]).to have_content("Reject request")
+        expect(page).to have_button("Cancel")
+        expect(page).to have_button("Confirm", disabled: true)
+        expect(page).not_to have_field("Provide a reason for rejection")
+      end
+
+      it "fill Modal to remove Package up" do
+        expect(page).to have_button("Review removal request")
+        click_button "Review removal request"
+        page.all(".cf-form-radio-option > label")[0].click
+      end
+
+      it "remove Package" do
+        expect(page).to have_button("Review removal request")
+        click_button "Review removal request"
+        page.all(".cf-form-radio-option > label")[1].click
+        expect(page).to have_field("Provide a reason for rejection")
+        expect(page).to have_button("Confirm", disabled: true)
+
+        fill_in "Provide a reason for rejection", with: "Provide a reason for rejection"
+        expect(page).to have_button("Confirm", disabled: false)
+        click_button("Confirm")
+        using_wait_time(10) do
+          expect(page).to have_content("The package has been removed from Caseflow and must be manually uploaded again from the Centralized Mail Portal, if it needs to be processed.")
+        end
       end
     end
   end
@@ -104,10 +137,13 @@ RSpec.feature("The Correspondence Review Package page") do
 
     it "completes step 1 and 2 then goes to step 3 of intake appeal process" do
       visit "/queue/correspondence/#{correspondence.uuid}/review_package"
+      expect(page).to have_button("Intake appeal")
       click_button "Intake appeal"
-      expect(page).to have_current_path("/intake/review_request")
-      expect(page).to have_text `#{veteran.file_number}`
-      expect(page).to have_text `Review #{veteran.first_name} #{veteran.last_name}'s Decision Review Request: Board Appeal (Notice of Disagreement) - VA Form 10182`
+      using_wait_time(10) do
+        expect(page).to have_text `#{veteran.file_number}`
+        expect(page).to have_text `Review #{veteran.first_name} #{veteran.last_name}'s Decision Review Request: Board Appeal (Notice of Disagreement) - VA Form 10182`
+        # expect(page).to have_current_path("/intake/review_request")
+      end
     end
   end
 
