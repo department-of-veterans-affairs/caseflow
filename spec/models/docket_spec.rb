@@ -402,9 +402,7 @@ describe Docket, :all_dbs do
         let(:second_judge) { create(:user, :judge, :with_vacols_judge_record) }
         let(:second_distribution) { Distribution.create!(judge: second_judge) }
 
-        let(:cavc_affinity_days_lever) { CaseDistributionLever.find_by_item('cavc_affinity_days') }
-        let(:cavc_affinity_days) { cavc_affinity_days_lever.options.find{|opt|
-          opt["item"] == cavc_affinity_days_lever.value}["value"].to_i}
+        let(:cavc_affinity_days) { CaseDistributionLever.find_integer_lever('cavc_affinity_days')}
 
         before do
           cavc_distribution_task.update!(assigned_at: (cavc_affinity_days + 1).days.ago)

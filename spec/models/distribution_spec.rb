@@ -102,7 +102,7 @@ describe Distribution, :all_dbs do
 
   context "#batch_size" do
     it "is set to alternative batch size if judge has no attorneys" do
-      expect(new_distribution.send(:batch_size)).to eq(CaseDistributionLever.find_by_item('alternative_batch_size').try(:value).to_i)
+      expect(new_distribution.send(:batch_size)).to eq(CaseDistributionLever.find_integer_lever('alternative_batch_size'))
     end
 
     it "is set based on number of attorneys on team" do
@@ -112,7 +112,7 @@ describe Distribution, :all_dbs do
         judge_team.add_user(team_member)
       end
 
-      expect(new_distribution.send(:batch_size)).to eq(3 * CaseDistributionLever.find_by_item('batch_size_per_attorney').try(:value).to_i)
+      expect(new_distribution.send(:batch_size)).to eq(3 * CaseDistributionLever.find_integer_lever('batch_size_per_attorney'))
     end
   end
 
@@ -258,7 +258,7 @@ describe Distribution, :all_dbs do
   context "requested distributions" do
     context "when priority_acd is enabled" do
       let(:limit) { 10 }
-      let(:batch_size) { CaseDistributionLever.find_by_item('alternative_batch_size').try(:value).to_i }
+      let(:batch_size) { CaseDistributionLever.find_integer_lever('alternative_batch_size') }
 
       before { FeatureToggle.enable!(:priority_acd) }
 

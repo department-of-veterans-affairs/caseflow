@@ -34,6 +34,11 @@ class Docket
     appeals(priority: priority, ready: ready).ids.size
   end
 
+  # currently this is used for reporting needs
+  def ready_to_distribute_appeals
+    docket_appeals.active.ready_for_distribution
+  end
+
   def genpop_priority_count
     # By default all cases are considered genpop. This can be overridden for specific dockets
     # For evidence submission and direct review docket, all appeals are genpop;
@@ -186,12 +191,7 @@ class Docket
     end
 
     def cavc_affinity_days
-      cavc_affinity_days_lever = CaseDistributionLever.find_by_item('cavc_affinity_days')
-      cavc_affinity_days_option = cavc_affinity_days_lever.options.detect do |opt|
-        opt["item"] == cavc_affinity_days_lever.value
-      end || {} if cavc_affinity_days_lever
-
-      cavc_affinity_days_option["value"].to_i
+      cavc_affinity_days_lever = CaseDistributionLever.find_integer_lever('cavc_affinity_days')
     end
 
     def with_original_appeal_and_judge_task
