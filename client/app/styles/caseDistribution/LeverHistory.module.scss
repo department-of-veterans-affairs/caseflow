@@ -1,0 +1,27 @@
+$historytablebordercolor: #d6d7d9;
+
+.historyTableStyling {
+  padding-top: 0;
+  padding-bottom: 0;
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-color: $historytablebordercolor;
+  vertical-align: text-top;
+  font-family: Source Sans Pro;
+  font-size: 19px;
+  width: 20%;
+}
+
+$historytableheadercolor: #d6d7d9;
+
+.leverHistoryTableHeaderStyling {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-color: $historytableheadercolor;
+  font-family: Source Sans Pro;
+  font-weight: 700;
+  font-size: 19px;
+  line-height: 1.3em/25px;
+}
