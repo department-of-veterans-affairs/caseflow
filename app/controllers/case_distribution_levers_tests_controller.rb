@@ -1,4 +1,6 @@
-require 'csv'
+# frozen_string_literal: true
+
+require "csv"
 
 class CaseDistributionLeversTestsController < ApplicationController
   before_action :set_user, only: [:add_user, :remove_user, :make_admin, :remove_admin]
@@ -52,7 +54,7 @@ class CaseDistributionLeversTestsController < ApplicationController
     csv_data = AppealsReadyForDistribution.process
 
     # Get the current date and time for dynamic filename
-    current_datetime = Time.now.strftime('%Y%m%d-%H%M')
+    current_datetime = Time.zone.now.strftime("%Y%m%d-%H%M")
 
     # Set dynamic filename with current date and time
     filename = "appeals_ready_to_distribute_#{current_datetime}.csv"
@@ -66,7 +68,7 @@ class CaseDistributionLeversTestsController < ApplicationController
     csv_data = BatchAppealsForReaderQuery.process
 
     # Get the current date and time for dynamic filename
-    current_datetime = Time.now.strftime('%Y%m%d-%H%M')
+    current_datetime = Time.zone.now.strftime("%Y%m%d-%H%M")
 
     # Set dynamic filename with current date and time
     filename = "distributed_appeals_#{current_datetime}.csv"
@@ -76,6 +78,7 @@ class CaseDistributionLeversTestsController < ApplicationController
   end
 
   private
+
   def set_user
     if params["user"]
       @user = User.find(params["user"])
