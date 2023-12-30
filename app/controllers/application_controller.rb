@@ -217,7 +217,6 @@ class ApplicationController < ApplicationBaseController
     if current_user&.can_view_team_management? || current_user&.can_view_judge_team_management?
       admin_urls.unshift(manage_all_teams_menu_item)
     end
-
     admin_urls.flatten
   end
 
