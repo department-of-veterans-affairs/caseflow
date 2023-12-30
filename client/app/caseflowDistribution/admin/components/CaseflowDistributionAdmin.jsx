@@ -7,24 +7,27 @@ import COPY from '../../../../COPY';
 import ActiveDataElements from './ActiveDataElements';
 import InactiveDataElements from './InactiveDataElements';
 import ChangeHistory from './ChangeHistory';
+import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 export const CaseflowDistributionAdmin = (props) => {
   const testRedux = useSelector((state) => state.caseflowDistribution);
 
   return (
-    <div>
-      <h1>Administration</h1>
-
+    <AppSegment filledBackground>
       <div>
-        <h2>{COPY.CASE_DISTRIBUTION_TITLE}</h2>
+        <h1>Administration</h1>
 
-        <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_ALGORITHM_DESCRIPTION}</p>
+        <div>
+          <h2>{COPY.CASE_DISTRIBUTION_TITLE}</h2>
 
-        <ActiveDataElements />
-        <InactiveDataElements />
-        <ChangeHistory />
+          <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_ALGORITHM_DESCRIPTION}</p>
+
+          <ActiveDataElements />
+          <InactiveDataElements />
+          <ChangeHistory />
+        </div>
       </div>
-    </div>
+    </AppSegment>
   );
 };
 
