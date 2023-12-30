@@ -25,19 +25,19 @@ export const ExclusionTable = (props) => {
 
   return (
     <div className={styles.exclusionTableContainerStyling}>
-        <h2>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_TITLE}</h2>
+      <h2>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_TITLE}</h2>
 
-        <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION}</p>
-        <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION_NOTE}</p>
-        <table >
+      <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION}</p>
+      <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION_NOTE}</p>
+      <table >
         <tbody>
-          <th className={styles.tableHeaderStyling}>{' '}</th>
-          <th className={styles.tableHeaderStyling}>Legacy Appeals</th>
-          <th className={styles.tableHeaderStyling}>AMA Appeals</th>
-          <th className={styles.tableHeaderStyling}>AMA Direct Review Appeals</th>
-          <th className={styles.tableHeaderStyling}>AMA Evidence Submission Appeals</th>
-        </tbody>
-        <tbody>
+          <tr>
+            <th className={styles.tableHeaderStyling}>{' '}</th>
+            <th className={styles.tableHeaderStyling}>Legacy Appeals</th>
+            <th className={styles.tableHeaderStyling}>AMA Appeals</th>
+            <th className={styles.tableHeaderStyling}>AMA Direct Review Appeals</th>
+            <th className={styles.tableHeaderStyling}>AMA Evidence Submission Appeals</th>
+          </tr>
           <tr>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
               {isMemberUser ?
