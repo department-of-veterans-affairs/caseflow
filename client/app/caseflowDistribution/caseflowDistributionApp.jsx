@@ -10,6 +10,7 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import NavigationBar from '../components/NavigationBar';
 import PageRoute from '../components/PageRoute';
 import ScrollToTop from '../components/ScrollToTop';
+import { FlashAlerts } from '../nonComp/components/Alerts';
 
 import CaseflowDistributionAdmin from './admin/components/CaseflowDistributionAdmin';
 
@@ -21,7 +22,7 @@ class CaseflowDistributionApp extends React.PureComponent {
   render = () => (
     <NavigationBar
       wideApp
-      defaultUrl={this.props.caseSearchHomePage || this.props.hasCaseDetailsRole ?  '/search' : '/queue'}
+      defaultUrl={this.props.caseSearchHomePage || this.props.hasCaseDetailsRole ? '/search' : '/queue'}
       userDisplayName={this.props.userDisplayName}
       dropdownUrls={this.props.dropdownUrls}
       applicationUrls={this.props.applicationUrls}
