@@ -7,14 +7,17 @@ import AffinityDays from './ActiveDataElements/AffinityDays';
 import BatchSize from './ActiveDataElements/BatchSize';
 import ExclusionTable from './ActiveDataElements/ExclusionTable';
 import NonPriorityDistributionGoals from './ActiveDataElements/NonPriorityDistributionGoals';
+import {
+  sectionSegmentStyling,
+  sectionHeadingStyling } from 'app/queue/StickyNavContentArea';
 
 export const ActiveDataElements = (props) => {
   return (
     <div id="active-data-elements">
-      <h2>
+      <h2 {...sectionHeadingStyling}>
         <span>{COPY.CASE_DISTRIBUTION_ACTIVE_LEVERS_TITLE}</span>
       </h2>
-      <div>
+      <div {...sectionSegmentStyling}>
         <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_ACTIVE_LEVERS_DESCRIPTION}</p>
 
         <div className="cf-help-divider"></div>
