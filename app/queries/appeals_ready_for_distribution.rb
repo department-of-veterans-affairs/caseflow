@@ -1,15 +1,17 @@
+# frozen_string_literal: true
+
 class AppealsReadyForDistribution
   # define CSV headers and use this to pull fields to maintain order
   HEADERS = {
-    docket_number: 'Docket Number',
-    docket: 'Docket',
-    aod: 'AOD',
-    cavc: 'CAVC',
-    receipt_date: 'Receipt Date',
-    ready_for_distribution_at: 'Ready for Distribution at',
-    hearing_judge: 'Hearing Judge',
-    veteran_file_number: 'Veteran File number',
-    veteran_name: 'Veteran'
+    docket_number: "Docket Number",
+    docket: "Docket",
+    aod: "AOD",
+    cavc: "CAVC",
+    receipt_date: "Receipt Date",
+    ready_for_distribution_at: "Ready for Distribution at",
+    hearing_judge: "Hearing Judge",
+    veteran_file_number: "Veteran File number",
+    veteran_name: "Veteran"
   }.freeze
 
   def self.process
@@ -21,7 +23,7 @@ class AppealsReadyForDistribution
 
       # Iterate through results and add each row to CSV
       ready_appeals.each do |record|
-        csv << HEADERS.keys.map { |k| record[k] }
+        csv << HEADERS.keys.map { |key| record[key] }
       end
     end
   end
@@ -29,7 +31,6 @@ class AppealsReadyForDistribution
   # Uses DocketCoordinator to pull appeals ready for distribution
   # DocketCoordinator is used by Automatic Case Distribution so this will give us the most accurate list of appeals
   def self.ready_appeals
-    ready_appeals = []
     docket_coordinator = DocketCoordinator.new
 
     docket_coordinator.dockets
@@ -70,12 +71,12 @@ class AppealsReadyForDistribution
     appeals.map do |appeal|
       # This comes from the DistributionTask's assigned_at date
       ready_for_distribution_at = appeal.tasks
-        .filter{|t| t.class == DistributionTask && t.status == Constants.TASK_STATUSES.assigned}
+        .filter {|task| task.class == DistributionTask && task.status == Constants.TASK_STATUSES.assigned }
         .first&.assigned_at
 
       # only look for hearings that were held
       hearing_judge = appeal.hearings
-        .filter{ |h| h.disposition = Constants.HEARING_DISPOSITION_TYPES.held}
+        .filter { |hearing| hearing.disposition = Constants.HEARING_DISPOSITION_TYPES.held }
         .first&.judge&.full_name
 
       {

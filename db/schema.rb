@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_12_13_044932) do
+ActiveRecord::Schema.define(version: 2023_12_29_184556) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -345,17 +345,6 @@ ActiveRecord::Schema.define(version: 2023_12_13_044932) do
     t.index ["updated_at"], name: "index_cached_user_attributes_on_updated_at"
   end
 
-  create_table "case_distribution_algorithm_logs", comment: "A generalized table for Case Distribution algorithm logs records within caseflow", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.string "ending_case_id", comment: "Indicates the ending case id"
-    t.integer "ending_distribution_id", comment: "Indicates the ending distribution id"
-    t.json "levers", comment: "Indicates the Levers information from the CaseDistributionLevers table"
-    t.string "script_name", comment: "Indicates the script name that was run"
-    t.string "starting_case_id", comment: "Indicates the starting case id"
-    t.integer "starting_distribution_id", comment: "Indicates the starting distribution id"
-    t.datetime "updated_at", null: false
-  end
-
   create_table "case_distribution_audit_lever_entries", comment: "A generalized table for Case Distribution audit lever records within caseflow", force: :cascade do |t|
     t.bigint "case_distribution_lever_id", null: false, comment: "Indicates the Case Distriubution levers id"
     t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
@@ -377,6 +366,7 @@ ActiveRecord::Schema.define(version: 2023_12_13_044932) do
     t.boolean "is_active", null: false, comment: "Indicates the active lever"
     t.boolean "is_disabled", null: false, comment: "Used to diabled the row"
     t.string "item", null: false, comment: "Is unique value to identify the Caseflow Distribution lever"
+    t.string "lever_group", null: false, comment: "Case Distribution lever grouping"
     t.integer "max_value", comment: "Set max value for the input"
     t.integer "min_value", comment: "Set min value for the input"
     t.json "options", comment: "Indicates the options which contain json formatted data"

@@ -12,7 +12,6 @@ describe DocketCoordinator do
           team.add_user(attorney)
         end
       end
-      #create(:case_distribution_lever, title:'AMA Non-priority Direct Docket Time Goal', item:'direct_docket_time_goal', data_type:'number', value: 365)
 
       allow(Docket)
         .to receive(:nonpriority_decisions_per_year)
@@ -81,7 +80,7 @@ describe DocketCoordinator do
     end
 
     let(:days_before_goal_due) { CaseDistributionLever.find_integer_lever('days_before_goal_due_for_distribution') }
-    let(:days_to_decision_goal) { CaseDistributionLever.find_integer_lever('direct_docket_time_goal') }
+    let(:days_to_decision_goal) { CaseDistributionLever.find_integer_lever('ama_direct_review_docket_time_goals') }
 
     let!(:other_direct_review_cases) do
       (0...10).map do
@@ -128,7 +127,6 @@ describe DocketCoordinator do
       it "uses the number of due direct reviews as a proportion of the docket margin net of priority" do
         expect(docket_coordinator.docket_proportions).to include(
           direct_review: CaseDistributionLever.find_float_lever('maximum_direct_review_proportion')
-          #direct_review: Constants.DISTRIBUTION.maximum_direct_review_proportion
         )
         expect(docket_coordinator.target_number_of_ama_hearings(2.years)).to eq(30)
       end

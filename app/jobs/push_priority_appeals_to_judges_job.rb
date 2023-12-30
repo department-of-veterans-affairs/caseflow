@@ -12,16 +12,12 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   application_attr :queue
 
   def perform
-    @cd_algorithm_log = CaseDistributionAlgorithmLog.create!(
-      script_name: "PushPriorityAppealsToJudgesJob",
-      levers: CaseDistributionLever.all.map{|lever| [lever.item, lever.distribution_value] }.to_h
-    )
     unless use_by_docket_date?
       @tied_distributions = distribute_non_genpop_priority_appeals
     end
 
     @genpop_distributions = distribute_genpop_priority_appeals
-    update_case_distribution_algorithm_log!
+
     send_job_report
   rescue StandardError => error
     start_time ||= Time.zone.now # temporary fix to get this job to succeed
@@ -31,21 +27,6 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
     log_error(error)
   ensure
     datadog_report_runtime(metric_group_name: "priority_appeal_push_job")
-  end
-
-  def update_case_distribution_algorithm_log!
-    start_distribution = nil
-    end_distribution = nil
-    start_distribution, end_distribution = @tied_distributions.values_at(0,-1) if @tied_distributions
-    if @genpop_distributions
-      start_distribution = @genpop_distributions.first if start_distribution.nil?
-      end_distribution = @genpop_distributions.last
-    end
-    if start_distribution && end_distribution
-      start_case_id = start_distribution.distributed_cases.first.try(:case_id)
-      end_case_id = end_distribution.distributed_cases.last.try(:case_id)
-      @cd_algorithm_log.update!(starting_distribution_id: start_distribution.id, ending_distribution_id: end_distribution.id, starting_case_id: start_case_id, ending_case_id: end_case_id)
-    end
   end
 
   def send_job_report
