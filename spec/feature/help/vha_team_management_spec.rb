@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.feature "VhaTeamManagement" do
-  let(:vha_business_line) { create(:business_line, name: "Veterans Health Administration", url: "vha") }
+  let(:vha_business_line) { VhaBusinessLine.singleton }
   let(:camo_org) { VhaCamo.singleton }
   let(:vha_admin) { create(:user, full_name: "VHA ADMIN", css_id: "VHA_ADMIN") }
 

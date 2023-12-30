@@ -9,7 +9,7 @@ describe VhaMembershipRequestMailBuilder, :postgres do
   end
 
   let(:camo_org) { VhaCamo.singleton }
-  let(:vha_business_line) { BusinessLine.find_by(url: "vha") }
+  let(:vha_business_line) { VhaBusinessLine.singleton }
   let(:requestor) { create(:user, full_name: "Alice", email: "alice@test.com", css_id: "ALICEREQUEST") }
   let(:membership_requests) do
     [
@@ -199,7 +199,7 @@ describe VhaMembershipRequestMailBuilder, :postgres do
   private
 
   def create_vha_orgs
-    create(:business_line, name: "Veterans Health Administration", url: "vha")
+    VhaBusinessLine.singleton
     VhaCamo.singleton
     VhaCaregiverSupport.singleton
     create(:vha_program_office,

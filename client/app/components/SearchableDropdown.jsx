@@ -91,9 +91,10 @@ export class SearchableDropdown extends React.Component {
     }
   }
 
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillReceiveProps = (nextProps) => {
-    this.setState({ value: nextProps.value });
+  componentDidUpdate = (prevProps) => {
+    if (prevProps.value !== this.props.value) {
+      this.setState({ value: this.props.value });
+    }
   };
 
   onChange = (value) => {
@@ -428,7 +429,7 @@ SearchableDropdown.propTypes = {
   searchable: PropTypes.bool,
   selfManageValueState: PropTypes.bool,
   styling: PropTypes.object,
-  value: PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array]),
+  value: PropTypes.oneOfType([PropTypes.object, PropTypes.string, PropTypes.array, PropTypes.number]),
 };
 
 /* eslint-disable no-undefined */

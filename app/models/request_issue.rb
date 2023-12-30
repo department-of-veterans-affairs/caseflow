@@ -11,6 +11,7 @@ class RequestIssue < CaseflowRecord
   include HasBusinessLine
   include DecisionSyncable
   include HasDecisionReviewUpdatedSince
+  include SyncLock
 
   # how many days before we give up trying to sync decisions
   REQUIRES_PROCESSING_WINDOW_DAYS = 30
@@ -73,6 +74,13 @@ class RequestIssue < CaseflowRecord
     enable
     exclude_association :decision_review_id
     exclude_association :request_decision_issues
+  end
+
+  class DecisionDateInFutureError < StandardError
+    def initialize(request_issue_id)
+      super("Request Issue #{request_issue_id} cannot edit issue decision date " \
+        "due to decision date being in the future")
+    end
   end
   class ErrorCreatingDecisionIssue < StandardError
     def initialize(request_issue_id)
@@ -431,13 +439,21 @@ class RequestIssue < CaseflowRecord
     # to avoid a slow BGS call causing the transaction to timeout
     end_product_establishment.veteran
 
-    transaction do
-      return unless create_decision_issues
+    ### hlr_sync_lock will stop any other request issues associated with the current End Product Establishment
+    ### from syncing with BGS concurrently if the claim is a Higher Level Review. This will ensure that
+    ### the remand supplemental claim generation that occurs within '#on_decision_issue_sync_processed' will
+    ### not be inadvertantly bypassed due to two request issues from the same claim being synced at the same
+    ### time. If this situation does occur, one of the request issues will error out with
+    ### Caseflow::Error:SyncLockFailed and be picked up to sync again later
+    hlr_sync_lock do
+      transaction do
+        return unless create_decision_issues
 
-      end_product_establishment.on_decision_issue_sync_processed(self)
-      clear_error!
-      close_decided_issue!
-      processed!
+        end_product_establishment.on_decision_issue_sync_processed(self)
+        clear_error!
+        close_decided_issue!
+        processed!
+      end
     end
   end
 
@@ -459,6 +475,10 @@ class RequestIssue < CaseflowRecord
 
     transaction do
       update!(closed_at: closed_at_value, closed_status: status)
+
+      # Special handling for claim reviews that contain issues without a decision date
+      decision_review.try(:handle_issues_with_no_decision_date!)
+
       yield if block_given?
     end
   end
@@ -489,12 +509,22 @@ class RequestIssue < CaseflowRecord
     update!(edited_description: new_description, contention_updated_at: nil)
   end
 
+  def save_decision_date!(new_decision_date)
+    fail DecisionDateInFutureError, id if new_decision_date.to_date > Time.zone.today
+
+    update!(decision_date: new_decision_date)
+
+    # Special handling for claim reviews that contain issues without a decision date
+    decision_review.try(:handle_issues_with_no_decision_date!)
+  end
+
   def remove!
     close!(status: :removed) do
       legacy_issue_optin&.flag_for_rollback!
 
       # If the decision issue is not associated with any other request issue, also delete
       decision_issues.each(&:soft_delete_on_removed_request_issue)
+
       # Removing a request issue also deletes the associated request_decision_issue
       request_decision_issues.update_all(deleted_at: Time.zone.now)
       canceled! if submitted_not_processed?

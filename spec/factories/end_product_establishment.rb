@@ -46,7 +46,7 @@ FactoryBot.define do
       active_hlr
       modifier { "030" }
       code { "030HLRR" }
-      after(:build) do |end_product_establishment, _evaluator|
+      after(:create) do |end_product_establishment, _evaluator|
         create(:vbms_ext_claim, :hlr, :canceled, claim_id: end_product_establishment.reference_id)
         ep = end_product_establishment.result
         ep_store = Fakes::EndProductStore.new
@@ -59,7 +59,7 @@ FactoryBot.define do
       active_hlr
       modifier { "030" }
       code { "030HLRR" }
-      after(:build) do |end_product_establishment, _evaluator|
+      after(:create) do |end_product_establishment, _evaluator|
         create(:vbms_ext_claim, :hlr, :rdc, claim_id: end_product_establishment.reference_id)
         ep = end_product_establishment.result
         ep_store = Fakes::EndProductStore.new
@@ -72,7 +72,7 @@ FactoryBot.define do
       active_hlr
       modifier { "030" }
       code { "030HLRR" }
-      after(:build) do |end_product_establishment, _evaluator|
+      after(:create) do |end_product_establishment, _evaluator|
         create(:vbms_ext_claim, :hlr, :cleared, claim_id: end_product_establishment.reference_id)
         ep = end_product_establishment.result
         ep_store = Fakes::EndProductStore.new
@@ -87,7 +87,7 @@ FactoryBot.define do
       modifier { "030" }
       code { "030HLRR" }
       source { create(:higher_level_review, veteran_file_number: veteran_file_number) }
-      after(:build) do |end_product_establishment, _evaluator|
+      after(:create) do |end_product_establishment, _evaluator|
         create(:vbms_ext_claim, :hlr, :canceled, claim_id: end_product_establishment.reference_id)
         ep = end_product_establishment.result
         ep_store = Fakes::EndProductStore.new
@@ -115,7 +115,7 @@ FactoryBot.define do
       active_supp
       modifier { "040" }
       code { "040SCR" }
-      after(:build) do |end_product_establishment, _evaluator|
+      after(:create) do |end_product_establishment, _evaluator|
         create(:vbms_ext_claim, :slc, :canceled, claim_id: end_product_establishment.reference_id)
         ep = end_product_establishment.result
         ep_store = Fakes::EndProductStore.new
@@ -128,7 +128,7 @@ FactoryBot.define do
       active_supp
       modifier { "040" }
       code { "040SCR" }
-      after(:build) do |end_product_establishment, _evaluator|
+      after(:create) do |end_product_establishment, _evaluator|
         create(:vbms_ext_claim, :slc, :rdc, claim_id: end_product_establishment.reference_id)
         ep = end_product_establishment.result
         ep_store = Fakes::EndProductStore.new
@@ -141,7 +141,7 @@ FactoryBot.define do
       active_supp
       modifier { "040" }
       code { "040SCR" }
-      after(:build) do |end_product_establishment, _evaluator|
+      after(:create) do |end_product_establishment, _evaluator|
         create(:vbms_ext_claim, :slc, :cleared, claim_id: end_product_establishment.reference_id)
         ep = end_product_establishment.result
         ep_store = Fakes::EndProductStore.new
@@ -156,7 +156,7 @@ FactoryBot.define do
       modifier { "040" }
       code { "040SCR" }
       source { create(:supplemental_claim, veteran_file_number: veteran_file_number) }
-      after(:build) do |end_product_establishment, _evaluator|
+      after(:create) do |end_product_establishment, _evaluator|
         create(:vbms_ext_claim, :slc, :canceled, claim_id: end_product_establishment.reference_id)
         ep = end_product_establishment.result
         ep_store = Fakes::EndProductStore.new
@@ -171,7 +171,7 @@ FactoryBot.define do
       modifier { "040" }
       code { "040SCR" }
       source { create(:supplemental_claim, veteran_file_number: veteran_file_number) }
-      after(:build) do |end_product_establishment, _evaluator|
+      after(:create) do |end_product_establishment, _evaluator|
         create(:vbms_ext_claim, :slc, :cleared, claim_id: end_product_establishment.reference_id)
         ep = end_product_establishment.result
         ep_store = Fakes::EndProductStore.new
@@ -186,7 +186,7 @@ FactoryBot.define do
       modifier { "030" }
       code { "030HLRR" }
       source { create(:higher_level_review, veteran_file_number: veteran_file_number) }
-      after(:build) do |end_product_establishment, _evaluator|
+      after(:create) do |end_product_establishment, _evaluator|
         create(:vbms_ext_claim, :hlr, :cleared, claim_id: end_product_establishment.reference_id)
         ep = end_product_establishment.result
         ep_store = Fakes::EndProductStore.new

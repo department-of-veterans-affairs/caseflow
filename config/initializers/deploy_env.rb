@@ -5,6 +5,7 @@ module Rails
     deploy_env = {
       "uat"     => :uat,
       "preprod" => :preprod,
+      "prodtest" => :prodtest,
       "prod"    => :prod
     }[ENV["DEPLOY_ENV"]] || :demo
 

@@ -14,9 +14,18 @@
   "medicalExam": {
     "medical_examinations": "Medical examinations",
     "medical_opinions": "Medical opinions",
+    "no_medical_examination": "No medical examination",
+    "inadequate_medical_examination": "Inadequate medical examination",
+    "no_medical_opinion": "No medical opinion",
+    "inadequate_opinion": "Inadequate medical opinion",
     "advisory_medical_opinion": "Advisory medical opinion"
   },
   "dueProcess": {
     "due_process_deficiency" : "Other due process deficiency"
+  },
+  "other": {
+    "inextricably_intertwined" : "Inextricably intertwined",
+    "error" : "Error satisfying regulatory or statutory duty",
+    "other" : "Other"
   }
 }

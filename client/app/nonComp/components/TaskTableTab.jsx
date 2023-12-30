@@ -20,6 +20,8 @@ import {
   extractEnabledTaskFilters,
   parseFilterOptions,
 } from '../util/index';
+import pluralize from 'pluralize';
+import { snakeCase } from 'lodash';
 
 class TaskTableTabUnconnected extends React.PureComponent {
   constructor(props) {
@@ -35,6 +37,7 @@ class TaskTableTabUnconnected extends React.PureComponent {
       predefinedColumns: this.props.predefinedColumns,
       searchText,
       searchValue: searchText,
+      tabName: this.props.tabName
     };
   }
 
@@ -55,8 +58,23 @@ class TaskTableTabUnconnected extends React.PureComponent {
     this.setState({ searchText: '', searchValue: '' });
   };
 
+  claimantColumnHelper = () => {
+    const { tabName } = this.state;
+    const claimantColumnObject = claimantColumn();
+
+    if (tabName === 'incomplete') {
+      claimantColumnObject.valueFunction = (task) => {
+        const claimType = pluralize(snakeCase(task.appeal.type));
+
+        return <a href={`/${claimType}/${task.externalAppealId}/edit`}>{task.claimant.name}</a>;
+      };
+    }
+
+    return claimantColumnObject;
+  };
+
   getTableColumns = () => [
-    claimantColumn(),
+    this.claimantColumnHelper(),
     {
       ...decisionReviewTypeColumn(),
       ...buildDecisionReviewFilterInformation(
@@ -133,6 +151,7 @@ TaskTableTabUnconnected.propTypes = {
   filterableTaskTypes: PropTypes.object,
   filterableTaskIssueTypes: PropTypes.object,
   onHistoryUpdate: PropTypes.func,
+  tabName: PropTypes.string
 };
 
 const TaskTableTab = connect(

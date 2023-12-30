@@ -51,8 +51,24 @@ const completedHLRTaskData = {
           benefit_type: 'vha',
           is_predocket_needed: null
         }
-      ]
+      ],
+      appellant_type: null
     },
+    power_of_attorney: {
+      representative_type: 'Attorney',
+      representative_name: 'Clarence Darrow',
+      representative_address: {
+        address_line_1: '9999 MISSION ST',
+        address_line_2: 'UBER',
+        address_line_3: 'APT 2',
+        city: 'SAN FRANCISCO',
+        zip: '94103',
+        country: 'USA',
+        state: 'CA'
+      },
+      representative_email_address: 'jamie.fakerton@caseflowdemo.com'
+    },
+    appellant_type: null,
     issue_count: 1,
     tasks_url: '/decision_reviews/vha',
     id: 10467,
@@ -384,7 +400,20 @@ const completedHLRTaskData = {
     formType: 'higher_level_review'
   },
   selectedTask: null,
-  decisionIssuesStatus: {}
+  decisionIssuesStatus: {},
+  powerOfAttorneyName: null,
+  poaAlert: {},
+  featureToggles: {
+    decisionReviewQueueSsnColumn: true
+  },
+  loadingPowerOfAttorney: {
+    loading: false
+  },
+  ui: {
+    featureToggles: {
+      poa_button_refresh: true
+    }
+  },
 };
 
 

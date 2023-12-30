@@ -3,6 +3,8 @@
 require "database_cleaner"
 
 # because db/seeds is not in the autoload path, we must load them explicitly here
+# base.rb needs to be loaded first because the other seeds inherit from it
+require Rails.root.join("db/seeds/base.rb").to_s
 Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
 
 class SeedDB
@@ -38,6 +40,7 @@ class SeedDB
     call_and_log_seed_step Seeds::Annotations
     call_and_log_seed_step Seeds::Tags
     # These must be ran before others
+    call_and_log_seed_step Seeds::BusinessLineOrg
     call_and_log_seed_step Seeds::Users
     call_and_log_seed_step Seeds::NotificationEvents
     # End of required to exist dependencies
@@ -58,6 +61,8 @@ class SeedDB
     call_and_log_seed_step Seeds::Notifications
     call_and_log_seed_step Seeds::CavcDashboardData
     call_and_log_seed_step Seeds::VbmsExtClaim
+    call_and_log_seed_step Seeds::RemandedAmaAppeals
+    call_and_log_seed_step Seeds::RemandedLegacyAppeals
     # Always run this as last one
     call_and_log_seed_step Seeds::StaticTestCaseData
     call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData

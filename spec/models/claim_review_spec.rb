@@ -401,18 +401,19 @@ describe ClaimReview, :postgres do
 
   context "#create_business_line_tasks!" do
     subject { claim_review.create_business_line_tasks! }
-    let!(:request_issue) { create(:request_issue, decision_review: claim_review) }
+    let!(:request_issue) { create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now) }
 
     context "when processed in caseflow" do
       let(:benefit_type) { "vha" }
 
-      it "creates a decision review task" do
+      it "creates a decision review task with a status of assigned" do
         expect { subject }.to change(DecisionReviewTask, :count).by(1)
 
         expect(DecisionReviewTask.last).to have_attributes(
           appeal: claim_review,
           assigned_at: Time.zone.now,
-          assigned_to: BusinessLine.find_by(url: "vha")
+          assigned_to: VhaBusinessLine.singleton,
+          status: "assigned"
         )
       end
 
@@ -434,6 +435,21 @@ describe ClaimReview, :postgres do
           expect { subject }.to_not change(DecisionReviewTask, :count)
         end
       end
+
+      context "when one of a vha review's issues has no decision date" do
+        let!(:request_issue) { create(:request_issue, decision_review: claim_review) }
+
+        it "creates a decision review task with a status of on_hold" do
+          expect { subject }.to change(DecisionReviewTask, :count).by(1)
+
+          expect(DecisionReviewTask.last).to have_attributes(
+            appeal: claim_review,
+            assigned_at: Time.zone.now,
+            assigned_to: VhaBusinessLine.singleton,
+            status: "on_hold"
+          )
+        end
+      end
     end
 
     context "when processed in VBMS" do
@@ -441,6 +457,142 @@ describe ClaimReview, :postgres do
 
       it "does nothing" do
         expect { subject }.to_not change(DecisionReviewTask, :count)
+      end
+    end
+  end
+
+  describe "#request_issues_without_decision_dates?" do
+    let(:claim_review) { create(:higher_level_review, benefit_type: benefit_type) }
+
+    subject { claim_review.request_issues_without_decision_dates? }
+
+    context "it should return true if there are any issues without a decision date" do
+      let!(:request_issues) do
+        [
+          create(:request_issue, decision_review: claim_review),
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now)
+        ]
+      end
+
+      it "should return true" do
+        expect(subject).to be_truthy
+      end
+    end
+
+    context "it should return false if there are not any issues without a decision date" do
+      let!(:request_issues) do
+        [
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now),
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now)
+        ]
+      end
+
+      it "should return false" do
+        expect(subject).to be_falsey
+      end
+    end
+  end
+
+  describe "handle_issues_with_no_decision_date!" do
+    let(:benefit_type) { "vha" }
+    let(:claim_review) { create(:higher_level_review, benefit_type: benefit_type) }
+    let!(:decision_review_task) do
+      create(:higher_level_review_vha_task, appeal: claim_review, assigned_to: VhaBusinessLine.singleton)
+    end
+
+    subject { claim_review.handle_issues_with_no_decision_date! }
+
+    context "while it has any request issues without a decision date" do
+      let!(:request_issues) do
+        [
+          create(:request_issue, decision_review: claim_review),
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now)
+        ]
+      end
+
+      it "the task should have a status of on_hold" do
+        subject
+        expect(decision_review_task.reload.status).to eq "on_hold"
+      end
+    end
+
+    context "while all request issues have a decision date" do
+      let!(:request_issues) do
+        [
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now - 1.day),
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now)
+        ]
+      end
+
+      it "the task should have a status of assigned" do
+        subject
+        expect(decision_review_task.reload.status).to eq "assigned"
+      end
+    end
+
+    context "while it has any request issues without a decision date and is not vha benefit type" do
+      let(:benefit_type) { "compensation" }
+      let(:comp_org) { BusinessLine.find_or_create_by(name: Constants::BENEFIT_TYPES[benefit_type], url: benefit_type) }
+      let!(:decision_review_task) do
+        create(:higher_level_review_vha_task, appeal: claim_review, assigned_to: comp_org)
+      end
+      let!(:request_issues) do
+        [
+          create(:request_issue, decision_review: claim_review),
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now)
+        ]
+      end
+
+      it "the task should have a status of assigned" do
+        subject
+        expect(decision_review_task.reload.status).to eq "assigned"
+      end
+    end
+  end
+
+  describe "redirect_url" do
+    let(:benefit_type) { "vha" }
+    let(:claim_review) { create(:higher_level_review, benefit_type: benefit_type) }
+
+    subject { claim_review.redirect_url }
+
+    context "it should return the incomplete tab url if there are any issues without a decision date" do
+      let!(:request_issues) do
+        [
+          create(:request_issue, decision_review: claim_review),
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now)
+        ]
+      end
+
+      it "should return the incomplete tasks tab route" do
+        expect(subject).to eq "/decision_reviews/vha?tab=incomplete"
+      end
+    end
+
+    context "it should return the decision review url if the benefit type is not vha" do
+      let(:benefit_type) { "compensation" }
+      let!(:request_issues) do
+        [
+          create(:request_issue, decision_review: claim_review),
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now)
+        ]
+      end
+
+      it "should return the normal decision tasks url" do
+        expect(subject).to eq "/decision_reviews/compensation"
+      end
+    end
+
+    context "it should return the decision review url if there are not any issues without a decision date" do
+      let!(:request_issues) do
+        [
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now - 1.week),
+          create(:request_issue, decision_review: claim_review, decision_date: Time.zone.now)
+        ]
+      end
+
+      it "should return the normal decision tasks url" do
+        expect(subject).to eq "/decision_reviews/vha"
       end
     end
   end
@@ -959,6 +1111,11 @@ describe ClaimReview, :postgres do
 
         expect(claim_review.end_product_establishments.count).to eq(2)
 
+        ratings_end_product_establishment = EndProductEstablishment.find_by(
+          source: claim_review,
+          code: "030HLRR"
+        )
+
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
             benefit_type_code: "1",
@@ -967,9 +1124,9 @@ describe ClaimReview, :postgres do
             claim_type: "Claim",
             station_of_jurisdiction: user.station_id,
             date: claim_review.receipt_date.to_date,
-            end_product_modifier: "030",
+            end_product_modifier: ratings_end_product_establishment.end_product.modifier,
             end_product_label: "Higher-Level Review Rating",
-            end_product_code: "030HLRR",
+            end_product_code: ratings_end_product_establishment.code,
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
             claimant_participant_id: veteran_participant_id,
@@ -983,7 +1140,7 @@ describe ClaimReview, :postgres do
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
-          claim_id: claim_review.end_product_establishments.find_by(code: "030HLRR").reference_id,
+          claim_id: ratings_end_product_establishment.reference_id,
           contentions: array_including(description: "decision text",
                                        contention_type: Constants.CONTENTION_TYPES.higher_level_review),
           user: user,
@@ -991,10 +1148,15 @@ describe ClaimReview, :postgres do
         )
 
         expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
-          claim_id: claim_review.end_product_establishments.find_by(code: "030HLRR").reference_id,
+          claim_id: ratings_end_product_establishment.reference_id,
           rating_issue_contention_map: {
             "reference-id" => rating_request_issue.reload.contention_reference_id
           }
+        )
+
+        nonratings_end_product_establishment = EndProductEstablishment.find_by(
+          source: claim_review,
+          code: "030HLRNR"
         )
 
         expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
@@ -1005,9 +1167,9 @@ describe ClaimReview, :postgres do
             claim_type: "Claim",
             station_of_jurisdiction: user.station_id,
             date: claim_review.receipt_date.to_date,
-            end_product_modifier: "031", # Important that the modifier increments for the second EP
+            end_product_modifier: nonratings_end_product_establishment.end_product.modifier,
             end_product_label: "Higher-Level Review Nonrating",
-            end_product_code: "030HLRNR",
+            end_product_code: nonratings_end_product_establishment.code,
             gulf_war_registry: false,
             suppress_acknowledgement_letter: false,
             claimant_participant_id: veteran_participant_id,
@@ -1021,7 +1183,7 @@ describe ClaimReview, :postgres do
 
         expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: veteran_file_number,
-          claim_id: claim_review.end_product_establishments.find_by(code: "030HLRNR").reference_id,
+          claim_id: nonratings_end_product_establishment.reference_id,
           contentions: array_including(description: "surgery - Issue text",
                                        contention_type: Constants.CONTENTION_TYPES.higher_level_review),
           user: user,
@@ -1032,6 +1194,8 @@ describe ClaimReview, :postgres do
         expect(claim_review.end_product_establishments.last).to be_committed
         expect(rating_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
         expect(non_rating_request_issue.rating_issue_associated_at).to be_nil
+        # verify that the EP modifier is incremented on the second establishment
+        expect(claim_review.end_product_establishments.map(&:modifier)).to contain_exactly("030", "031")
       end
     end
   end
@@ -1064,7 +1228,10 @@ describe ClaimReview, :postgres do
   describe "#search_table_ui_hash" do
     let!(:appeal) { create(:appeal) }
     let!(:sc) do
-      create(:supplemental_claim, veteran_file_number: appeal.veteran_file_number, number_of_claimants: 2)
+      create(:supplemental_claim,
+             veteran_file_number: appeal.veteran_file_number,
+             claimant_type: :dependent_claimant,
+             number_of_claimants: 2)
     end
 
     it "returns review type" do

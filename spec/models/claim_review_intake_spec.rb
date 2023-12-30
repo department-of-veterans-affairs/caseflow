@@ -4,7 +4,7 @@ describe ClaimReviewIntake, :postgres do
   let(:veteran_file_number) { "64205555" }
   let(:user) { Generators::User.build }
   let(:detail) { nil }
-  let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
+  let!(:veteran) { Generators::Veteran.build(file_number: "64205555").save! }
   let(:completed_at) { nil }
   let(:completion_started_at) { nil }
 

@@ -529,5 +529,14 @@
     "label": "Proceed to final notification letter",
     "value": "modal/proceed_final_notification_letter_post_holding",
     "func": "proceed_final_notification_letter_data"
+  },
+  "COMPLETE_AND_POSTPONE": {
+    "label": "Mark as complete",
+    "value": "modal/complete_and_postpone"
+  },
+  "COMPLETE_AND_WITHDRAW": {
+    "label": "Mark as complete and withdraw",
+    "value": "modal/complete_and_withdraw",
+    "func": "withdraw_hearing_data"
   }
 }

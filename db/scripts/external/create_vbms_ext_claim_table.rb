@@ -45,3 +45,5 @@ conn.execute('CREATE TABLE IF NOT EXISTS public.vbms_ext_claim (
 conn.execute('CREATE INDEX IF NOT EXISTS claim_id_index ON public.vbms_ext_claim ("CLAIM_ID")')
 conn.execute('CREATE INDEX IF NOT EXISTS level_status_code_index ON public.vbms_ext_claim ("LEVEL_STATUS_CODE")')
 conn.close
+
+system("bundle exec rails r db/scripts/add_pepsq_populate_trigger_to_vbms_ext_claim.rb")

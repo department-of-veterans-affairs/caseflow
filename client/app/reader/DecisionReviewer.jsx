@@ -90,14 +90,18 @@ export class DecisionReviewer extends React.PureComponent {
     return <ReaderLoadingScreen
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
-      vacolsId={vacolsId}>
+      vacolsId={vacolsId}
+      featureToggles={this.props.featureToggles}>
       <PdfListView
+        efolderExpressUrl={this.props.efolderExpressUrl}
+        userHasEfolderRole={this.props.userHasEfolderRole}
         showPdf={this.showPdf(props.history, vacolsId)}
         sortBy={this.state.sortBy}
         selectedLabels={this.state.selectedLabels}
         isCommentLabelSelected={this.state.isCommentLabelSelected}
         documentPathBase={`/${vacolsId}/documents`}
         onJumpToComment={this.onJumpToComment(props.history, vacolsId)}
+        featureToggles={this.props.featureToggles}
         {...props}
       />
     </ReaderLoadingScreen>;
@@ -109,7 +113,8 @@ export class DecisionReviewer extends React.PureComponent {
     return <ReaderLoadingScreen
       appealDocuments={this.props.appealDocuments}
       annotations={this.props.annotations}
-      vacolsId={vacolsId}>
+      vacolsId={vacolsId}
+      featureToggles={this.props.featureToggles}>
       <PdfViewer
         allDocuments={_.values(this.props.storeDocuments)}
         showPdf={this.showPdf(props.history, vacolsId)}
@@ -173,6 +178,8 @@ DecisionReviewer.propTypes = {
   dropdownUrls: PropTypes.array,
   featureToggles: PropTypes.any,
   feedbackUrl: PropTypes.any,
+  efolderExpressUrl: PropTypes.any,
+  userHasEfolderRole: PropTypes.bool,
   isPlacingAnnotation: PropTypes.any,
   onScrollToComment: PropTypes.func,
   setCategoryFilter: PropTypes.func,

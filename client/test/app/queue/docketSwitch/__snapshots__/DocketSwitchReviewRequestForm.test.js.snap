@@ -29,15 +29,19 @@ exports[`DocketSwitchReviewRequestForm default values full grant populates with 
             </span>
           </strong>
         </label>
-        <input
-          class="cf-form-textinput"
-          id="receiptDate"
-          max="9999-12-31"
-          name="receiptDate"
-          placeholder="mm/dd/yyyy"
-          type="date"
-          value=""
-        />
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput"
+            id="receiptDate"
+            max="9999-12-31"
+            name="receiptDate"
+            placeholder="mm/dd/yyyy"
+            type="date"
+            value=""
+          />
+        </div>
       </div>
       <fieldset
         class="usa-fieldset-inputs cf-form-radio "
@@ -220,15 +224,19 @@ exports[`DocketSwitchReviewRequestForm default values partial grant populates wi
             </span>
           </strong>
         </label>
-        <input
-          class="cf-form-textinput"
-          id="receiptDate"
-          max="9999-12-31"
-          name="receiptDate"
-          placeholder="mm/dd/yyyy"
-          type="date"
-          value=""
-        />
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput"
+            id="receiptDate"
+            max="9999-12-31"
+            name="receiptDate"
+            placeholder="mm/dd/yyyy"
+            type="date"
+            value=""
+          />
+        </div>
       </div>
       <fieldset
         class="usa-fieldset-inputs cf-form-radio "
@@ -452,15 +460,19 @@ exports[`DocketSwitchReviewRequestForm renders correctly 1`] = `
             </span>
           </strong>
         </label>
-        <input
-          class="cf-form-textinput"
-          id="receiptDate"
-          max="9999-12-31"
-          name="receiptDate"
-          placeholder="mm/dd/yyyy"
-          type="date"
-          value=""
-        />
+        <div
+          class="input-container"
+        >
+          <input
+            class="cf-form-textinput"
+            id="receiptDate"
+            max="9999-12-31"
+            name="receiptDate"
+            placeholder="mm/dd/yyyy"
+            type="date"
+            value=""
+          />
+        </div>
       </div>
       <fieldset
         class="usa-fieldset-inputs cf-form-radio "
