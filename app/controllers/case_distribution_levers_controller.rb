@@ -27,6 +27,8 @@ class CaseDistributionLeversController < ApplicationController
     end
   end
 
+  private
+  
   def update_acd_levers(current_levers)
     grouped_levers = current_levers.index_by { |lever| lever["id"] }
 
@@ -53,8 +55,6 @@ class CaseDistributionLeversController < ApplicationController
 
     []
   end
-
-  private
 
   def verify_access
     return true if current_user&.organizations && current_user&.organizations&.any?(&:users_can_view_levers?)
