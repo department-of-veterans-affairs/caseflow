@@ -8,6 +8,30 @@ import COPY from '../../../COPY';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import moment from 'moment';
 
+//list is to define the order of the levers in the modal pop up and also history
+const leversHistoryOrder = [
+'alternative_batch_size',
+'batch_size_per_attorney',
+'request_more_cases_minimum',
+'ama_hearing_case_affinity_days',
+'ama_hearing_case_aod_affinity_days',
+'cavc_affinity_days',
+'cavc_aod_affinity_days',
+'aoj_affinity_days',
+'aoj_aod_affinity_days',
+'aoj_cavc_affinity_days',
+'ama_direct_review_docket_time_goals',
+'ama_evidence_submission_docket_time_goals',
+'ama_hearings_docket_time_goals',
+'ama_hearings_start_distribution_prior_to_goals',
+'ama_direct_review_start_distribution_prior_to_goals',
+'ama_evidence_submission_start_distribution_prior_to_goals',
+'maximum_direct_review_proportion',
+'minimum_legacy_proportion',
+'nod_adjustment',
+'bust_backlog',
+];
+
 const changedOptionValue = (changedLever, currentLever) => {
   if (changedLever.data_type === 'radio' || changedLever.data_type === 'radio') {
     const newChangedOptionValue = changedLever.options.find((option) => option.item === changedLever.value).value;
@@ -22,12 +46,10 @@ const changedOptionValue = (changedLever, currentLever) => {
 const generateLeverUpdateData = (leverStore) => {
   const levers = leverStore.getState().levers;
   const initialLevers = leverStore.getState().initial_levers;
-  const filteredLevers = levers.filter((lever, i) =>
-    lever.value !== initialLevers[i].value || changedOptionValue(lever, initialLevers[i])
+  const filteredLevers = levers.sort((a, b) => leversHistoryOrder.indexOf(a.item) - leversHistoryOrder.indexOf(b.item)).filter((lever, i) =>lever.value !== initialLevers[i].value || changedOptionValue(lever, initialLevers[i])
   );
 
-  const filteredInitialLevers = initialLevers.filter((lever, i) =>
-    initialLevers[i].value !== levers[i].value || changedOptionValue(initialLevers[i], levers[i])
+  const filteredInitialLevers = initialLevers.sort((a, b) => leversHistoryOrder.indexOf(a.item) - leversHistoryOrder.indexOf(b.item)).filter((lever, i) => initialLevers[i].value !== levers[i].value || changedOptionValue(initialLevers[i], levers[i])
   );
 
   return ([filteredLevers, filteredInitialLevers]);
@@ -139,10 +161,8 @@ const saveLeversToDB = async (leverStore) => {
 const leverList = (leverStore) => {
   const levers = leverStore.getState().levers;
   const initialLevers = leverStore.getState().initial_levers;
-  const filteredLevers = levers.filter((lever, i) =>
-    lever.value !== initialLevers[i].value || changedOptionValue(lever, initialLevers[i]));
-  const filteredInitialLevers = initialLevers.filter((lever, i) =>
-    initialLevers[i].value !== levers[i].value || changedOptionValue(initialLevers[i], levers[i]));
+  const filteredLevers = levers.filter((lever, i) => lever.value !== initialLevers[i].value || changedOptionValue(lever, initialLevers[i])).sort((a, b) => leversHistoryOrder.indexOf(a.item) - leversHistoryOrder.indexOf(b.item));
+  const filteredInitialLevers = initialLevers.filter((lever, i) => initialLevers[i].value !== levers[i].value || changedOptionValue(initialLevers[i], levers[i])).sort((a, b) => leversHistoryOrder.indexOf(a.item) - leversHistoryOrder.indexOf(b.item));
 
   return (
     <div>
