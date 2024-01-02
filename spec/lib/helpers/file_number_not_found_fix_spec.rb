@@ -3,6 +3,7 @@
 require "helpers/file_number_not_found_fix"
 
 describe FileNumberNotFoundFix, :postgres do
+  it_behaves_like "a Master Scheduler serializable object", FileNumberNotFoundFix
   let!(:error_text) { "FILENUMBER does not exist" }
 
   before do
@@ -42,7 +43,7 @@ describe FileNumberNotFoundFix, :postgres do
     let!(:ramp_refiling) { RampRefiling.create(veteran_file_number: number) }
     let!(:supplemental_claim) { create(:supplemental_claim, veteran_file_number: number) }
 
-    context "#fix_multiple_records" do
+    context "#loop_through_and_call_process_records" do
       subject { FileNumberNotFoundFix.new }
 
       let(:bgs_service) { instance_double("BGSService") }
@@ -58,14 +59,14 @@ describe FileNumberNotFoundFix, :postgres do
         end
 
         it "updates the veteran file_number" do
-          subject.fix_multiple_records
+          subject.loop_through_and_call_process_records
 
           expect(veteran.reload.file_number).to eq(bgs_file_number)
           expect(veteran_2.reload.file_number).to eq(bgs_file_number_2)
         end
 
         it "updates associated objects" do
-          subject.fix_multiple_records
+          subject.loop_through_and_call_process_records
           expect(veteran.reload.file_number).to eq(bgs_file_number)
           expect(available_hearing_locations.reload.veteran_file_number).to eq(bgs_file_number)
           expect(end_product_establishment.reload.veteran_file_number).to eq(bgs_file_number)
@@ -86,7 +87,7 @@ describe FileNumberNotFoundFix, :postgres do
           allow(bgs_service).to receive(:fetch_file_number_by_ssn)
             .and_return(nil)
 
-          subject.fix_multiple_records
+          subject.loop_through_and_call_process_records
 
           expect(veteran.reload.file_number).to eq(number)
           expect(available_hearing_locations.reload.veteran_file_number).to eq(number)
@@ -107,7 +108,7 @@ describe FileNumberNotFoundFix, :postgres do
             allow(bgs_service).to receive(:fetch_file_number_by_ssn)
               .and_return(number)
 
-            subject.fix_multiple_records
+            subject.loop_through_and_call_process_records
             expect(veteran.reload.file_number).to eq(number)
           end
         end
@@ -116,14 +117,14 @@ describe FileNumberNotFoundFix, :postgres do
           it "does not update the file_number" do
             allow(bgs_service).to receive(:fetch_file_number_by_ssn)
               .and_return(nil)
-            subject.fix_multiple_records
+            subject.loop_through_and_call_process_records
             expect(veteran.reload.file_number).to eq(number)
           end
         end
       end
     end
 
-    context "#single_record_fix" do
+    context "#process_records" do
       subject { FileNumberNotFoundFix.new }
 
       let(:bgs_service) { instance_double("BGSService") }
@@ -139,12 +140,12 @@ describe FileNumberNotFoundFix, :postgres do
         end
 
         it "updates the veteran file_number" do
-          subject.single_record_fix(appeal)
+          subject.process_records(decision_document)
           expect(veteran.reload.file_number).to eq(bgs_file_number)
         end
 
         it "updates associated objects" do
-          subject.single_record_fix(appeal)
+          subject.process_records(decision_document)
           expect(veteran.reload.file_number).to eq(bgs_file_number)
           expect(available_hearing_locations.reload.veteran_file_number).to eq(bgs_file_number)
           expect(end_product_establishment.reload.veteran_file_number).to eq(bgs_file_number)
@@ -163,7 +164,7 @@ describe FileNumberNotFoundFix, :postgres do
           allow(bgs_service).to receive(:fetch_file_number_by_ssn)
             .and_return(nil)
 
-          subject.single_record_fix(appeal)
+          subject.process_records(decision_document)
 
           expect(veteran.reload.file_number).to eq(number)
           expect(available_hearing_locations.reload.veteran_file_number).to eq(number)
@@ -183,7 +184,7 @@ describe FileNumberNotFoundFix, :postgres do
           it "does not update the file_number" do
             allow(bgs_service).to receive(:fetch_file_number_by_ssn)
               .and_return(number)
-            subject.single_record_fix(appeal)
+            subject.process_records(decision_document)
             expect(veteran.reload.file_number).to eq(number)
           end
         end
@@ -192,7 +193,7 @@ describe FileNumberNotFoundFix, :postgres do
           it "does not update the file_number" do
             allow(bgs_service).to receive(:fetch_file_number_by_ssn)
               .and_return(nil)
-            subject.single_record_fix(appeal)
+            subject.process_records(decision_document)
             expect(veteran.reload.file_number).to eq(number)
           end
         end
@@ -231,7 +232,7 @@ describe FileNumberNotFoundFix, :postgres do
         .to receive(:get_collections)
         .with(veteran_2)
         .and_return([FixFileNumberWizard::Collection.new(Form8, veteran_2.ssn)])
-      subject.fix_multiple_records
+      subject.loop_through_and_call_process_records
       veteran_2.reload
       expect(veteran_2.file_number).to eq(bgs_file_number)
       expect(form8.reload.file_number).to eq(bgs_file_number)

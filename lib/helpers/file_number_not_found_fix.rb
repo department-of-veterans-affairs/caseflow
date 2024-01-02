@@ -4,44 +4,44 @@ require "./lib/helpers/fix_file_number_wizard"
 require "./lib/helpers/duplicate_veteran_checker"
 
 # This .rb file fixes the file number not found error on
-# decision documents. The fix can either be run as a
-# scheduled job or run against an individual appeal by
-# running FileNumberNotFoundFix.new.single_record_fix(appeal)
+# decision documents
 
 class FileNumberNotFoundFix
-  ERRORTEXT = "FILENUMBER does not exist"
-
+  include MasterSchedulerInterface
   ASSOCIATED_OBJECTS = FixFileNumberWizard::ASSOCIATIONS
 
   attr_reader :stuck_job_report_service
 
   def initialize
     @stuck_job_report_service = StuckJobReportService.new
+    @start_time = nil
+    @end_time = nil
     super
   end
 
-  def fix_multiple_records
-    return if bulk_decision_docs_with_error.blank?
+  def perform
+    start_time
+    loop_through_and_call_process_records
+    stuck_job_report_service.write_log_report(error_text)
+    end_time
+    log_processing_time
+  end
 
-    stuck_job_report_service.append_record_count(bulk_decision_docs_with_error.count, ERRORTEXT)
+  def loop_through_and_call_process_records
+    return if records_with_errors.blank?
 
-    bulk_decision_docs_with_error.each do |decision_document|
-      appeal = decision_document.appeal
+    stuck_job_report_service.append_record_count(records_with_errors.count, error_text)
 
-      single_record_fix(appeal)
-      decision_document.clear_error!
+    records_with_errors.each do |decision_document|
+      process_records(decision_document)
     end
 
     # record count with errors after fix
-    stuck_job_report_service.append_record_count(bulk_decision_docs_with_error.count, ERRORTEXT)
-    stuck_job_report_service.write_log_report(ERRORTEXT)
+    stuck_job_report_service.append_record_count(records_with_errors.count, error_text)
   end
 
-  def single_record_fix(appeal)
-    veteran = appeal.veteran
-    # ensure no action is taken if veteran returns nil
-    return unless veteran
-
+  def process_records(decision_doc)
+    veteran = decision_doc.appeal.veteran
     bgs_file_number = fetch_file_number_from_bgs_service(veteran)
 
     # ensure that file number from bgs exists and is not already used
@@ -55,16 +55,34 @@ class FileNumberNotFoundFix
     return if collections.map(&:count).sum == 0
 
     update_records!(collections, bgs_file_number, veteran)
+    stuck_job_report_service.append_single_record(decision_doc.class.name, decision_doc.id)
+    decision_doc.clear_error!
   rescue StandardError => error
-    stuck_job_report_service.append_error(appeal.class.name, appeal.id, error)
-    Rails.logger.error("FILENUMBER UPDATE error. Error: #{error}")
+    stuck_job_report_service.append_error(decision_doc.class.name, decision_doc.id, error)
+    log_error(error)
+  end
+
+  def error_text
+    "FILENUMBER does not exist"
+  end
+
+  def log_processing_time
+    (@end_time && @start_time) ? @end_time - @start_time : 0
+  end
+
+  def start_time
+    @start_time ||= Time.zone.now
+  end
+
+  def end_time
+    @end_time ||= Time.zone.now
+  end
+
+  def records_with_errors
+    DecisionDocument.where("error LIKE ?", "%#{error_text}%")
   end
 
   private
-
-  def bulk_decision_docs_with_error
-    DecisionDocument.where("error LIKE ?", "%#{ERRORTEXT}%")
-  end
 
   def fetch_file_number_from_bgs_service(veteran)
     FetchFileNumberBySSN.call(veteran.ssn)
