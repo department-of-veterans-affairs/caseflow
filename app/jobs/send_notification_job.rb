@@ -112,7 +112,7 @@ class SendNotificationJob < CaseflowJob
       return notification unless notification.nil?
     end
 
-    create_notification(**params, participant_id: @message.participant_id, notified_at: Time.zone.now)
+    create_notification(params.merge(participant_id: @message.participant_id, notified_at: Time.zone.now))
   end
 
   # Purpose: Determine if the notification event is for a legacy appeal that has been docketed
@@ -206,7 +206,9 @@ class SendNotificationJob < CaseflowJob
   #
   # Response: Updated notification object
   def send_va_notify_email
-    response = VANotifyService.send_email_notifications(**va_notify_payload, email_template_id: event.email_template_id)
+    response = VANotifyService.send_email_notifications(
+      va_notify_payload.merge(email_template_id: event.email_template_id)
+    )
 
     if response.present?
       @notification_audit.update(
@@ -221,7 +223,7 @@ class SendNotificationJob < CaseflowJob
   #
   # Response: Updated notification object
   def send_va_notify_sms
-    response = VANotifyService.send_sms_notifications(**va_notify_payload, sms_template_id: event.sms_template_id)
+    response = VANotifyService.send_sms_notifications(va_notify_payload.merge(sms_template_id: event.sms_template_id))
 
     if response.present?
       @notification_audit.update(
