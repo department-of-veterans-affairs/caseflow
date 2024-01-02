@@ -9,8 +9,6 @@ on:
 jobs:
   make_docs:
     name: Update DB schema files in webpage
-    # Only run if the PR has been merged (rather than simply closed)
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     services:
       postgres:
