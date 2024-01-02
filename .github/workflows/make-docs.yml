@@ -1,10 +1,9 @@
 name: Make-docs-to-webpage
 
-# Trigger whenever changes are made to the master branch
+# Trigger running when a PR is closed
 on:
-  push:
-    branches:
-      - master
+  pull_request:
+    types: [ closed ]
 
 jobs:
   make_docs:
@@ -14,21 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:14.8
+        image: postgres:11
         env:
           POSTGRES_DB: caseflow_certification_test
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
         ports: ["5432:5432"]
-      redis:
-        image: redis:2.8.23
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports: ["6379:6379"]
 
     steps:
       - name: Debugging info
@@ -40,7 +31,7 @@ jobs:
           env
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       # Since installing a client to Oracle DB is a pain and setting up the VACOLS DB is not necessary, let's skip it.
       - name: Remove references to VACOLS Oracle DB
@@ -120,7 +111,7 @@ jobs:
       # and https://github.com/Andrew-Chen-Wang/github-wiki-action/blob/master/entrypoint.sh
       # and https://github.community/t/how-to-updade-repo-wiki-from-github-actions/121151/7
       - name: Checkout branch main-gh-pages
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
         with:
           ref: main-gh-pages
           path: main-gh-pages_checkout
@@ -149,17 +140,17 @@ jobs:
 
           git add .
           if git diff-index --quiet HEAD; then
-            echo "name=changes_docs::false" >> $GITHUB_OUTPUT
+            echo "::set-output name=changes_docs::false"
 
             echo "::group::No changes to make_docs"
             ls -alR schema/make_docs
             echo "::endgroup::"
           else
-            echo "name=changes_docs::true" >> $GITHUB_OUTPUT
+            echo "::set-output name=changes_docs::true"
 
             echo "::group::Committing changes locally"
             git config --local user.email "$WIKI_COMMIT_USER_EMAIL"
             git config --local user.name "$WIKI_COMMIT_USER_NAME"
-            git commit -m "$WIKI_COMMIT_MESSAGE" && git push
+            git commit -m "$WIKI_COMMIT_MESSAGE"
             echo "::endgroup::"
           fi

@@ -72,36 +72,8 @@ class WorkQueue::AppealSearchSerializer
     object.claimant&.name
   end
 
-  attribute :appellant_first_name do |object|
-    object.claimant&.first_name
-  end
-
-  attribute :appellant_middle_name do |object|
-    object.claimant&.middle_name
-  end
-
-  attribute :appellant_last_name do |object|
-    object.claimant&.last_name
-  end
-
-  attribute :appellant_suffix do |object|
-    object.claimant&.suffix
-  end
-
-  attribute :appellant_date_of_birth do |object|
-    object.claimant&.date_of_birth
-  end
-
-  attribute :appellant_address do |object|
-    object.claimant&.address
-  end
-
   attribute :appellant_phone_number do |object|
     object.claimant&.unrecognized_claimant? ? object.claimant&.phone_number : nil
-  end
-
-  attribute :appellant_email_address do |object|
-    object.claimant&.email_address
   end
 
   attribute :veteran_death_date
