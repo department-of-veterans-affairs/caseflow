@@ -94,6 +94,7 @@ module Seeds
       create_build_and_edit_hearings_users
       create_non_admin_hearing_coordinator_user
       add_mail_intake_to_all_bva_intake_users
+      create_cda_control_group_users
     end
 
     def create_team_admin
@@ -434,6 +435,20 @@ module Seeds
           user.update!(roles: new_roles)
         end
       end
+    end
+
+    def create_cda_control_group_users
+      leo = User.create!(station_id: 101,
+                          css_id: "CDAADMINLEO",
+                          full_name: "Leonardo CDAC_Admin Turtur",
+                          roles: ["Mail Intake"])
+      CDAControlGroup.singleton.add_user(leo)
+      OrganizationsUser.make_user_admin(leo, CDAControlGroup.singleton)
+      casey = User.create!(station_id: 101,
+                            css_id: "CDAUSERCASEY",
+                            full_name: "Casey CDAC_User Jones",
+                            roles: ["Mail Intake"])
+      CDAControlGroup.singleton.add_user(casey)
     end
   end
   # rubocop:enable Metrics/AbcSize
