@@ -1,14 +1,10 @@
-
 import React from 'react';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import PropTypes from 'prop-types';
 import RadioField from 'app/components/RadioField';
 import styles from 'app/styles/caseDistribution/ExclusionTable.module.scss';
-
 const ExclusionTable = (props) => {
-
   let isMemberUser = !props.isAdmin;
-
   // Placeholder options until future implementation
   let options = [
     { displayText: 'On',
@@ -27,7 +23,7 @@ const ExclusionTable = (props) => {
         <tbody>
           <th className={styles.tableHeaderStyling}>{' '}</th>
           <th className={styles.tableHeaderStyling}>Legacy Appeals</th>
-          <th className={styles.tableHeaderStyling}>AMA Appeals</th>
+          <th className={styles.tableHeaderStyling}>AMA Hearings Appeals</th>
           <th className={styles.tableHeaderStyling}>AMA Direct Review Appeals</th>
           <th className={styles.tableHeaderStyling}>AMA Evidence Submission Appeals</th>
         </tbody>
@@ -161,12 +157,10 @@ const ExclusionTable = (props) => {
         </tbody>
       </table>
     </div>
-
   );
 };
 
 ExclusionTable.propTypes = {
   isAdmin: PropTypes.bool.isRequired,
 };
-
 export default ExclusionTable;

@@ -6,7 +6,6 @@ module Seeds
         create_lever lever
       end
     end
-
     def levers
       [
         {
@@ -40,7 +39,7 @@ module Seeds
         {
           item: 'nod_adjustment',
           title: 'NOD Adjustment',
-          description: 'Applied for docket balancing reflecting the likelihood that HODs will advance to a Form 9.',
+          description: 'Applied for docket balancing reflecting the likelihood that NODs will advance to a Form 9.',
           data_type: 'number',
           value: 0.4,
           unit: '%',
@@ -462,9 +461,7 @@ module Seeds
         },
       ]
     end
-
     private
-
     def create_lever lever
       CaseDistributionLever.create(
         item: lever[:item],
