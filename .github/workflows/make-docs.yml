@@ -1,9 +1,10 @@
 name: Make-docs-to-webpage
 
-# Trigger running when a PR is closed
+# Trigger whenever changes are made to the master branch
 on:
-  pull_request:
-    types: [ closed ]
+  push:
+    branches:
+      - master
 
 jobs:
   make_docs:
