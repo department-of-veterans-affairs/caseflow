@@ -1,0 +1,15 @@
+{
+  "omit": "omit",
+  "infinite": "infinite",
+  "value": "value",
+  "radio": "radio",
+  "combination": "combination",
+  "boolean": "boolean",
+  "number": "number",
+  "days": "days",
+  "cases": "cases",
+  "SUCCESS": "SUCCESS",
+  "FAIL": "FAIL",
+  "DUPLICATE": "DUPLICATE",
+  "ERROR": "ERROR"
+}

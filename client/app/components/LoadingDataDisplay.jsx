@@ -4,11 +4,12 @@ import PropTypes from 'prop-types';
 import LoadingScreen from './LoadingScreen';
 import StatusMessage from './StatusMessage';
 import COPY from '../../COPY';
+import ACD_LEVERS from '../../constants/ACD_LEVERS';
 import { recordAsyncMetrics } from '../util/Metrics';
 
 const PROMISE_RESULTS = {
-  SUCCESS: 'SUCCESS',
-  FAILURE: 'FAILURE'
+  SUCCESS: ACD_LEVERS.SUCCESS,
+  FAILURE: ACD_LEVERS.FAILURE
 };
 
 const accessDeniedTitle = { title: COPY.ACCESS_DENIED_TITLE };

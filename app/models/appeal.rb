@@ -803,7 +803,7 @@ class Appeal < DecisionReview
 
   def set_target_decision_date!
     if direct_review_docket?
-      update!(target_decision_date: receipt_date + CaseDistributionLever.find_integer_lever('ama_direct_review_docket_time_goals').days)
+      update!(target_decision_date: receipt_date + CaseDistributionLever.find_integer_lever(Constants.DISTRIBUTION.ama_direct_review_docket_time_goals).days)
     end
   end
 

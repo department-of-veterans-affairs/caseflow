@@ -8,7 +8,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     item: "lever_1",
     title: "lever 1",
     description: "This is the first lever. It is a boolean with the default value of true. Therefore there should be a two radio buttons that display true and false as the example with true being the default option chosen. This lever is active so it should be in the active lever section",
-    data_type: "boolean",
+    data_type: Constants.ACD_LEVERS.boolean,
     value: true,
     unit: ""
   )}
@@ -16,7 +16,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     item: "lever_2",
     title: "Lever 2",
     description: "This is the second lever. It is a number data type with the default value of 42. Therefore there should be a number input that displays 42 and 'days' as the unit. This lever is active so it should be in the active lever section",
-    data_type: "number",
+    data_type: Constants.ACD_LEVERS.number,
     value: 55,
     unit: "Days"
   )}

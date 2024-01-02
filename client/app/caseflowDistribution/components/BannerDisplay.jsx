@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import COPY from '../../../COPY';
+import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import LeverAlertBanner from './LeverAlertBanner';
 import PropTypes from 'prop-types';
 
@@ -24,7 +25,7 @@ const BannerDisplay = ({ leverStore }) => {
         <LeverAlertBanner
           title={COPY.CASE_DISTRIBUTION_SUCCESSBANNER_TITLE}
           message={COPY.CASE_DISTRIBUTION_SUCCESSBANNER_DETAIL}
-          type="success"
+          type={ACD_LEVERS.SUCCESS}
         />
       )}
     </>
