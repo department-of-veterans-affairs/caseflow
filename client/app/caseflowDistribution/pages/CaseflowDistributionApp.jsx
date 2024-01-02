@@ -60,7 +60,6 @@ CaseflowDistributionApp.propTypes = {
   loadedLevers: PropTypes.object
 };
 
-// FOR PROOF OF CONCEPT; REMOVE!
 const mapStateToProps = (state) => ({
   loadedLevers: state.caseDistributionLevers.loadedLevers
 });
