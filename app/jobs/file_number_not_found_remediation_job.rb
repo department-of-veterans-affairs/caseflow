@@ -7,7 +7,7 @@ class FileNumberNotFoundRemediationJob < CaseflowJob
   def perform
     RequestStore[:current_user] = User.system_user
 
-    FileNumberNotFoundFix.new.fix_multiple_records
+    FileNumberNotFoundFix.new.perform
   rescue StandardError => error
     log_error(error)
   end
