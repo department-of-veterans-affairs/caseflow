@@ -197,7 +197,7 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
   # Params: Appeal object
   # Returns: Hash of "hearing scheduled" key value pair
   def map_appeal_hearing_scheduled_state(appeal)
-    if appeal&.hearings&.count&.> 0 && appeal.hearings.max_by(&:id).disposition.nil?
+    if appeal&.hearings.count > 0 && appeal.hearings.max_by(&:id).disposition.nil? # rubocop:disable Lint/SafeNavigationChain
       return { hearing_scheduled: true }
     end
 
