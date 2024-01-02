@@ -10,17 +10,19 @@ import ApiUtil from '../../util/ApiUtil';
 
 class CaseflowDistributionApp extends React.PureComponent {
 
-  // FOR PROOF OF CONCEPT; REMOVE
-  // test for getting JSON payload from new route
+  // load the lever and history info from database
+  // the GET request can be moved into an action if needed
   componentDidMount() {
+    // use ApiUtil to get the JSON info from our route
     ApiUtil.get('/acd-controls-test-route?json').then((response) => {
+      // unpack the returned response
       const returnedObject = response.body;
       const acdLevers = returnedObject.acdLevers;
       const acdHistory = returnedObject.acdHistory;
-      // console.log(`levers from new method (levers): ${JSON.stringify(acdLevers, null, 2)}`)
-      // console.log(`levers from new method (history): ${JSON.stringify(acdHistory, null, 2)}`);
 
+      // load lever and history into redux store using actions
       this.props.loadLevers(acdLevers);
+      // load initial history action goes here
     }).
       catch((err) => {
         console.error(new Error(`Problem with GET /acd-controls-test-route?json ${err}`));
@@ -54,7 +56,8 @@ CaseflowDistributionApp.propTypes = {
   user_is_an_acd_admin: PropTypes.bool,
   leverStore: PropTypes.any,
   sectionTitles: PropTypes.array,
-  loadLevers: PropTypes.func
+  loadLevers: PropTypes.func,
+  loadedLevers: PropTypes.object
 };
 
 // FOR PROOF OF CONCEPT; REMOVE!

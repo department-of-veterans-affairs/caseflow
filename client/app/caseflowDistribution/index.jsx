@@ -26,10 +26,8 @@ class CaseflowDistribution extends React.PureComponent {
       formatted_history: JSON.parse(JSON.stringify(this.props.acd_history))
     };
 
-    // console.log(`levers from props: ${JSON.stringify(this.props.acd_levers, null, 2)}`)
     const leverStore = createStore(leversReducer, preloadedState);
     const Router = this.props.router || BrowserRouter;
-    const initialState = leversReducer.initialState;
     const appName = 'Caseflow Distribution';
 
     const staticLevers = [

@@ -6,8 +6,8 @@ export const initialState = {
   loadedLevers: [],
   editedLevers: [],
   levers: [],
-  initial_levers: [],
-  formatted_history: {},
+  initialLevers: [],
+  formattedHistory: {},
   changesOccurred: false,
   showSuccessBanner: false,
 };
@@ -22,27 +22,15 @@ const leversReducer = (state = initialState, action = {}) => {
       }
     });
 
+  // needs to be reworked; remove comment when done
   case ACTIONS.FORMAT_LEVER_HISTORY:
     return {
       ...state,
       formatted_history: formatLeverHistory(action.history)
     };
-    // pass at adding affinity lever action. action breaks on in AffinityDays
-  case ACTIONS.UPDATE_AFFINITY_LEVER:
-    return update(state, {
-      editedLevers: {
-        $set: action.payload.leverValue
-      }
-    });
-    // const updatedLevers = updateLevers(state.levers, action.updated_lever, action.hasValueChanged);
-    // const changesOccurred = JSON.stringify(updatedLevers) !== JSON.stringify(state.initial_levers);
 
-    // return {
-    //   ...state,
-    //   levers: updatedLevers,
-    //   changesOccurred: action.validChange,
-    //   saveChangesActivated: !changesOccurred
-    // };
+
+  // needs to be reworked; remove comment when done
   case ACTIONS.SAVE_LEVERS:
     return {
       ...state,
@@ -50,16 +38,22 @@ const leversReducer = (state = initialState, action = {}) => {
       saveChangesActivated: action.saveChangesActivated,
       changesOccurred: false
     };
+
+  // needs to be reworked; remove comment when done
   case ACTIONS.REVERT_LEVERS:
     return {
       ...state,
       levers: state.initial_levers
     };
+
+  // needs to be reworked; remove comment when done
   case ACTIONS.SHOW_SUCCESS_BANNER:
     return {
       ...state,
       showSuccessBanner: true
     };
+
+  // needs to be reworked; remove comment when done
   case ACTIONS.HIDE_SUCCESS_BANNER:
     return {
       ...state,
@@ -71,6 +65,7 @@ const leversReducer = (state = initialState, action = {}) => {
   }
 };
 
+// this should probably be moved into the action in leversAction.js
 export const formatLeverHistory = (lever_history_list) => {
   console.log(lever_history_list);
   let formatted_lever_history = [];
@@ -91,6 +86,7 @@ export const formatLeverHistory = (lever_history_list) => {
   return formatted_lever_history;
 };
 
+// this should probably be moved into the action in leversAction.js
 export const updateLevers = (current_levers, updated_lever, hasValueChanged) => {
   const leverIndex = current_levers.findIndex((lever) => lever.item == updated_lever.item);
 

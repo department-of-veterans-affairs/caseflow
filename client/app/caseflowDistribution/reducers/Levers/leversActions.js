@@ -10,16 +10,7 @@ export const loadLevers = (loadedLevers) =>
     });
   };
 
-export const updateAffinityLever = (leverValue) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.UPDATE_AFFINITY_LEVER,
-      payload: {
-        leverValue
-      }
-    });
-  };
-
+// work in progress
 export const formatLeverHistory = (leverHistory) =>
   (dispatch) => {
     dispatch({
@@ -30,32 +21,3 @@ export const formatLeverHistory = (leverHistory) =>
     });
   };
 
-export const saveLever = (lever) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.SAVE_LEVERS,
-      payload: {
-        lever
-      }
-    });
-  };
-
-export const revertLevers = (lever) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.REVERT_LEVERS,
-      payload: {
-        lever
-      }
-    });
-  };
-
-export const successBanner = (banner) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.SHOW_SUCCESS_BANNER,
-      payload: {
-        banner
-      }
-    });
-  };
