@@ -223,7 +223,7 @@ const CorrespondencePdfUI = (props) => {
   }, [pdfDocProxy, pdfPageProxies]));
 
   if (!pdfDocProxy || !pdfPageProxies) {
-    return <div>Loading...</div>;
+    return <div></div>;
   }
 
   if (loadError) {
