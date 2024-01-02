@@ -30,7 +30,7 @@ class SendNotificationJob < CaseflowJob
   DISCARD_ERRORS.each do |err|
     discard_on(err) do |job, exception|
       message = "Discarding #{job.class.name} (#{job.job_id}) because failed with error: #{exception}"
-      err_level = err.instance_of?(SendNotificationJob) ? :error : :warn
+      err_level = exception.instance_of?(SendNotificationJobError) ? :error : :warn
       Rails.logger.send(err_level, message)
     end
   end

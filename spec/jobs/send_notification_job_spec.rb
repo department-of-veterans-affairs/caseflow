@@ -160,22 +160,23 @@ describe SendNotificationJob, type: :job do
       end
 
       it "logs error when message is nil" do
-        expect(Rails.logger).to receive(:error).with(/There was no message passed/)
+        expect(Rails.logger).to receive(:send).with(:error, /Message argument of value nil supplied to job/)
         perform_enqueued_jobs do
           SendNotificationJob.perform_later(nil)
         end
       end
 
       it "logs error when appeals_id, appeals_type, or event_type is nil" do
-        expect(Rails.logger).to receive(:error).with(/appeals_id or appeal_type or event_type/)
+        expect(Rails.logger).to receive(:send).with(:error, /Nil message attribute\(s\): appeal_type/)
         perform_enqueued_jobs do
           SendNotificationJob.perform_later(fail_create_message.to_json)
         end
       end
 
       it "logs error when audit record is nil" do
-        allow_any_instance_of(SendNotificationJob).to receive(:create_notification_audit_record).and_return(nil)
-        expect(Rails.logger).to receive(:error).with(/Audit record was unable to be found or created/)
+        allow_any_instance_of(Notification).to receive(:nil?).and_return(true)
+        expect(Rails.logger).to receive(:send)
+          .with(:error, /Notification audit record was unable to be found or created/)
         perform_enqueued_jobs do
           SendNotificationJob.perform_later(good_message.to_json)
         end
@@ -255,10 +256,9 @@ describe SendNotificationJob, type: :job do
     end
   end
 
-  describe "#create_notification_audit_record" do
+  describe "#create_notification" do
     it "makes a new notification object" do
-      expect(Notification).to receive(:new)
-      SendNotificationJob.perform_now(good_message.to_json)
+      expect { SendNotificationJob.perform_now(good_message.to_json) }.to change(Notification, :count).by(1)
     end
   end
 
@@ -327,14 +327,7 @@ describe SendNotificationJob, type: :job do
       after { FeatureToggle.disable!(:va_notify_email) }
 
       it "is expected to send a generic saluation instead of a name" do
-        expect(VANotifyService).to receive(:send_email_notifications).with(
-          no_name_participant_id,
-          "",
-          notification_event.email_template_id,
-          "Appellant",
-          no_name_appeal.docket_number,
-          ""
-        )
+        expect(VANotifyService).to receive(:send_email_notifications).with(hash_including(first_name: "Appellant"))
 
         SendNotificationJob.perform_now(no_name_message.to_json)
       end
@@ -345,14 +338,7 @@ describe SendNotificationJob, type: :job do
       after { FeatureToggle.disable!(:va_notify_sms) }
 
       it "is expected to send a generic saluation instead of a name" do
-        expect(VANotifyService).to receive(:send_sms_notifications).with(
-          no_name_participant_id,
-          "",
-          notification_event.sms_template_id,
-          "Appellant",
-          no_name_appeal.docket_number,
-          ""
-        )
+        expect(VANotifyService).to receive(:send_sms_notifications).with(hash_including(first_name: "Appellant"))
 
         SendNotificationJob.perform_now(no_name_message.to_json)
       end
@@ -364,9 +350,8 @@ describe SendNotificationJob, type: :job do
       it "does not create multiple notification objects" do
         FeatureToggle.enable!(:va_notify_email)
         job = SendNotificationJob.new(good_message.to_json)
-        job.instance_variable_set(:@notification_audit_record, notification)
-        expect(Notification).not_to receive(:create)
-        job.perform_now
+        allow(job).to receive(:find_or_create_notification_audit).and_return(notification)
+        expect { job.perform_now }.not_to change(Notification, :count)
       end
     end
   end
@@ -374,12 +359,8 @@ describe SendNotificationJob, type: :job do
   context "feature flags for setting notification type" do
     it "notification type should be email if only email flag is on" do
       job = SendNotificationJob.new(good_message.to_json)
-      job.instance_variable_set(:@va_notify_email, true)
-      record = job.send(:create_notification_audit_record,
-                        notification.appeals_id,
-                        notification.appeals_type,
-                        notification.event_type,
-                        "123456789")
+      FeatureToggle.enable!(:va_notify_email)
+      record = job.send(:find_or_create_notification_audit)
       expect(record.notification_type).to eq("Email")
     end
 
