@@ -1416,5 +1416,10 @@
   "CASE_DISTRIBUTION_MODAL_TITLE": "Confirm Case Distribution Algorithm Changes",
   "CASE_DISTRIBUTION_MODAL_DESCRIPTION": "Please confirm the following changes to the Case Distribution algorithm below. Once saved, these changes will apply to the next scheduled case distribution event.",
   "CASE_DISTRIBUTION_SUCCESSBANNER_TITLE": "You have successfully updated the Case Distribution Algorithm",
-  "CASE_DISTRIBUTION_SUCCESSBANNER_DETAIL": "Your changes will apply to the next Case Distribution event."
+  "CASE_DISTRIBUTION_SUCCESSBANNER_DETAIL": "Your changes will apply to the next Case Distribution event.",
+  "CASE_DISTRIBUTION_EXCLUSION_TABLE_LEGACY_APPEALS_HEADER": "Legacy Appeals",
+  "CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_HEARINGS_HEADER": "AMA Hearings Appeals",
+  "CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_DIRECT_HEADER": "AMA Direct Review Appeals",
+  "CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_EVIDENCE_HEADER": "AMA Evidence Submission Appeals"
+
 }

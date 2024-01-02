@@ -73,7 +73,7 @@ export const formattedLevers = [
     id: 2,
     item: 'lever_3',
     title: 'NOD Adjustment',
-    description: 'Applied for docket balancing reflecting the likelihood that HODs will advance to a Form 9.',
+    description: 'Applied for docket balancing reflecting the likelihood that NODs will advance to a Form 9.',
     data_type: 'number',
     value: '90',
     unit: '%',
