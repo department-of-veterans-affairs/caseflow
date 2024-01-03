@@ -70,6 +70,7 @@ class SeedDB
     call_and_log_seed_step Seeds::MultiCorrespondences
     call_and_log_seed_step Seeds::VbmsDocumentTypes
     call_and_log_seed_step Seeds::AmaIntake
+    call_and_log_seed_step Seeds::VhaChangeHistory
     # Always run this as last one
     call_and_log_seed_step Seeds::StaticTestCaseData
     call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
