@@ -17,20 +17,17 @@ const LeverHistory = (props) => {
     return null;
   });
 
+  const getLeverForEntry = (entry) => {
+    return leverStore.getState().levers.
+      find((lever) => lever.id === entry.case_distribution_lever_id);
+  };
+
   const getUnitsFromLever = (lever) => {
 
     const doesDatatypeRequireComplexLogic = lever.data_type === 'radio' || lever.data_type === 'combination';
 
     if (doesDatatypeRequireComplexLogic) {
-
-      // let selectedOption = lever.options.find((option) => option.item === lever.value);
-
-      // if (selectedOption.data_type === 'number') {
-      //   return selectedOption.unit;
-      // }
-
       return '';
-
     }
 
     return lever.unit;
@@ -45,7 +42,7 @@ const LeverHistory = (props) => {
       let sameTimestamp = entry.created_at === timestamp;
 
       if (sameTimestamp) {
-        titles.push(entry.title);
+        titles.push(getLeverForEntry(entry)?.title);
       }
     });
 
@@ -59,10 +56,13 @@ const LeverHistory = (props) => {
       let sameTimestamp = entry.created_at === timestamp;
 
       if (sameTimestamp) {
-        let leverEntry = leverStore.getState().levers.find((lever) => lever.title === entry.title);
-        let unit = getUnitsFromLever(leverEntry);
+        let leverEntry = getLeverForEntry(entry);
 
-        units.push(unit);
+        if (leverEntry) {
+          let unit = getUnitsFromLever(leverEntry);
+
+          units.push(unit);
+        }
       }
 
       return null;
