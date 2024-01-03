@@ -4,10 +4,10 @@ import PropTypes from 'prop-types';
 import styles from 'app/styles/caseDistribution/LeverHistory.module.scss';
 
 const LeverHistory = (props) => {
-  const { leverStore } = props;
+  const { historyData } = props;
   const uniqueTimestamps = [];
 
-  props.historyData.map((entry) => {
+  historyData.map((entry) => {
     let findTimestamp = uniqueTimestamps.find((x) => x === entry.created_at);
 
     if (!findTimestamp) {
@@ -17,20 +17,15 @@ const LeverHistory = (props) => {
     return null;
   });
 
-  const getLeverForEntry = (entry) => {
-    return leverStore.getState().levers.
-      find((lever) => lever.id === entry.case_distribution_lever_id);
-  };
+  const getUnitsFromLever = (leverDataType, leverUnit) => {
 
-  const getUnitsFromLever = (lever) => {
-
-    const doesDatatypeRequireComplexLogic = lever.data_type === 'radio' || lever.data_type === 'combination';
+    const doesDatatypeRequireComplexLogic = leverDataType === 'radio' || leverDataType === 'combination';
 
     if (doesDatatypeRequireComplexLogic) {
       return '';
     }
 
-    return lever.unit;
+    return leverUnit;
 
   };
 
@@ -38,11 +33,11 @@ const LeverHistory = (props) => {
 
     let titles = [];
 
-    props.historyData.forEach((entry) => {
+    historyData.forEach((entry) => {
       let sameTimestamp = entry.created_at === timestamp;
 
       if (sameTimestamp) {
-        titles.push(getLeverForEntry(entry)?.title);
+        titles.push(entry.lever_title);
       }
     });
 
@@ -52,17 +47,13 @@ const LeverHistory = (props) => {
   const getLeverUnitsAtTimestamp = (timestamp) => {
     let units = [];
 
-    props.historyData.map((entry) => {
+    historyData.map((entry) => {
       let sameTimestamp = entry.created_at === timestamp;
 
       if (sameTimestamp) {
-        let leverEntry = getLeverForEntry(entry);
+        let unit = getUnitsFromLever(entry.lever_data_type, entry.lever_unit);
 
-        if (leverEntry) {
-          let unit = getUnitsFromLever(leverEntry);
-
-          units.push(unit);
-        }
+        units.push(unit);
       }
 
       return null;
@@ -75,7 +66,7 @@ const LeverHistory = (props) => {
 
     let previousValues = [];
 
-    props.historyData.map((entry) => {
+    historyData.map((entry) => {
 
       let sameTimestamp = entry.created_at === timestamp;
 
@@ -94,7 +85,7 @@ const LeverHistory = (props) => {
 
     let updatedValues = [];
 
-    props.historyData.map((entry) => {
+    historyData.map((entry) => {
 
       let sameTimestamp = entry.created_at === timestamp;
 
@@ -112,7 +103,7 @@ const LeverHistory = (props) => {
 
     let user = '';
 
-    props.historyData.map((entry) => {
+    historyData.map((entry) => {
 
       let sameTimestamp = entry.created_at === timestamp;
 
@@ -166,7 +157,7 @@ const LeverHistory = (props) => {
 
   useEffect(() => {
     formatHistoryData();
-  }, [props.historyData]);
+  }, [historyData]);
 
   let history = formatHistoryData();
 
