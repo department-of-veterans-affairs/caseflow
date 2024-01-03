@@ -51,6 +51,7 @@ class CorrespondenceController < ApplicationController
     render "correspondence/review_package"
   end
 
+  # rubocop:disable Metrics/MethodLength
   def intake_update
     tasks = Task.where("appeal_id = ? and appeal_type = ?", correspondence.id, "Correspondence")
     begin
@@ -63,16 +64,18 @@ class CorrespondenceController < ApplicationController
         task.status = "cancelled"
         task.save
       end
-      if correspondence_intake_processor.upload_documents_to_claim_evidence(correspondence, current_user)
+      if upload_documents_to_claim_evidence
         render json: { correspondence: correspondence }
       else
-        render json: {}, status: bad_request
+        render json: {}, status: :bad_request
       end
     rescue StandardError => error
       Rails.logger.error(error.to_s)
-      render json: {}, status: bad_request
+      Raven.capture_exception(error)
+      render json: {}, status: :bad_request
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def veteran
     render json: { veteran_id: veteran_by_correspondence&.id, file_number: veteran_by_correspondence&.file_number }
