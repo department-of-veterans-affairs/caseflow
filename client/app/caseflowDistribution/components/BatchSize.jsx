@@ -10,7 +10,6 @@ import COPY from '../../../COPY';
 import { checkIfOtherChangesExist } from '../utils.js';
 
 const BatchSize = (props) => {
-  const { leverList, leverStore, loadedLevers } = props;
 
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
@@ -21,18 +20,13 @@ const BatchSize = (props) => {
 
   const errorMessages = {};
   const storeLevers = useSelector((state) => state.caseDistributionLevers.loadedLevers.batch);
-
-  console.log(`storeLevers: ${JSON.stringify(storeLevers, null, 2)}`);
-  const [batchSizeLevers, setLever] = useState(useSelector((state) => state.caseDistributionLevers.loadedLevers.batch));
+  const [batchSizeLevers, setLever] = useState(storeLevers);
 
   useEffect(() => {
     if (batchSizeLevers === undefined) {
       setLever(storeLevers);
     }
   });
-
-  // const [batchSizeLevers, setLever] = useState(loadedLevers);
-  console.log(`lever list: ${JSON.stringify(batchSizeLevers, null, 2)}`);
 
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
   const updateLever = (index) => (event) => {
@@ -50,23 +44,23 @@ const BatchSize = (props) => {
             lever.value = event;
             setErrorMessages(validationResponse.updatedMessages);
 
-            leverStore.dispatch({
-              type: ACTIONS.UPDATE_LEVER_VALUE,
-              updated_lever: { item: lever.item, value: event },
-              hasValueChanged: false,
-              validChange: true
-            });
+            // leverStore.dispatch({
+            //   type: ACTIONS.UPDATE_LEVER_VALUE,
+            //   updated_lever: { item: lever.item, value: event },
+            //   hasValueChanged: false,
+            //   validChange: true
+            // });
           } else {
 
             lever.value = event;
             setErrorMessages(validationResponse.updatedMessages);
 
-            leverStore.dispatch({
-              type: ACTIONS.UPDATE_LEVER_VALUE,
-              updated_lever: { item: lever.item, value: event },
-              hasValueChanged: false,
-              validChange: false
-            });
+            // leverStore.dispatch({
+            //   type: ACTIONS.UPDATE_LEVER_VALUE,
+            //   updated_lever: { item: lever.item, value: event },
+            //   hasValueChanged: false,
+            //   validChange: false
+            // });
           }
 
         }
@@ -74,11 +68,11 @@ const BatchSize = (props) => {
 
           lever.value = event;
           setErrorMessages(validationResponse.updatedMessages);
-          leverStore.dispatch({
-            type: ACTIONS.UPDATE_LEVER_VALUE,
-            updated_lever: { item: lever.item, value: event },
-            validChange: true
-          });
+          // leverStore.dispatch({
+          //   type: ACTIONS.UPDATE_LEVER_VALUE,
+          //   updated_lever: { item: lever.item, value: event },
+          //   validChange: true
+          // });
 
           return lever;
         }
@@ -86,11 +80,11 @@ const BatchSize = (props) => {
           lever.value = event;
           setErrorMessages(validationResponse.updatedMessages);
 
-          leverStore.dispatch({
-            type: ACTIONS.UPDATE_LEVER_VALUE,
-            updated_lever: { item: lever.item, value: event },
-            validChange: false
-          });
+          // leverStore.dispatch({
+          //   type: ACTIONS.UPDATE_LEVER_VALUE,
+          //   updated_lever: { item: lever.item, value: event },
+          //   validChange: false
+          // });
 
           return lever;
         }
@@ -144,10 +138,7 @@ const BatchSize = (props) => {
 };
 
 BatchSize.propTypes = {
-  leverList: PropTypes.arrayOf(PropTypes.string).isRequired,
-  leverStore: PropTypes.any,
-  isAdmin: PropTypes.bool.isRequired,
-  loadedLevers: PropTypes.arrayOf(object).isRequired
+  isAdmin: PropTypes.bool.isRequired
 };
 
 export default BatchSize;
