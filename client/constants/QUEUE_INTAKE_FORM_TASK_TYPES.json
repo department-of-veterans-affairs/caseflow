@@ -11,49 +11,49 @@
         "klass": "CongressionalInterestMailTask",
         "assigned_to": "LitigationSupport"
         },
-      "label": "Congressional interest"
+      "label": "Congressional Interest"
     }, {
       "value": {
         "klass": "DeathCertificateMailTask",
         "assigned_to": "Colocated"
         },
-      "label": "Death certificate"
+      "label": "Death Certificate"
     }, {
       "value": {
         "klass": "FoiaRequestMailTask",
         "assigned_to": "PrivacyTeam"
         },
-      "label": "FOIA request"
+      "label": "FOIA Request"
     }, {
       "value": {
         "klass": "OtherMotionMailTask",
         "assigned_to": "LitigationSupport"
         },
-      "label": "Other motion"
+      "label": "Other Motion"
     }, {
       "value": {
         "klass": "PowerOfAttorneyRelatedMailTask",
         "assigned_to": "HearingAdmin"
         },
-      "label": "Power of attorney-related"
+      "label": "Power Of Attorney-Related"
     }, {
       "value": {
         "klass": "PrivacyActRequestMailTask",
         "assigned_to": "PrivacyTeam"
         },
-      "label": "Privacy act request"
+      "label": "Privacy Act Request"
     }, {
       "value": {
         "klass": "PrivacyComplaintMailTask",
         "assigned_to": "PrivacyTeam"
         },
-      "label": "Privacy complaint"
+      "label": "Privacy Complaint"
     }, {
       "value": {
         "klass": "StatusInquiryMailTask",
         "assigned_to": "LitigationSupport"
         },
-      "label": "Status inquiry"
+      "label": "Status Inquiry"
     }
   ],
   "relatedToAppeal": [
@@ -68,19 +68,19 @@
         "klass": "ClearAndUnmistakeableErrorMailTask",
         "assigned_to": "LitigationSupport"
         },
-      "label": "CUE-related"
+      "label": "CUE-Related"
     }, {
       "value": {
         "klass": "AddressChangeMailTask",
         "assigned_to": "HearingAdmin"
         },
-      "label": "Change of address"
+      "label": "Change Of Address"
     }, {
       "value": {
         "klass": "CongressionalInterestMailTask",
         "assigned_to": "LitigationSupport"
         },
-      "label": "Congressional interest"
+      "label": "Congressional Interest"
     }, {
       "value": {
         "klass": "ControlledCorrespondenceMailTask",
@@ -92,31 +92,31 @@
         "klass": "DeathCertificateMailTask",
         "assigned_to": "Colocated"
         },
-      "label": "Death certificate"
+      "label": "Death Certificate"
     }, {
       "value": {
         "klass": "DocketSwitchMailTask",
         "assigned_to": "ClerkOfTheBoard"
         },
-      "label": "Docket switch"
+      "label": "Docket Switch"
     }, {
       "value": {
         "klass": "EvidenceOrArgumentMailTask",
         "assigned_to": "Colocated"
         },
-      "label": "Evidence or argument"
+      "label": "Evidence Or Argument"
     }, {
       "value": {
         "klass": "ExtensionRequestMailTask",
         "assigned_to": "Colocated"
         },
-      "label": "Extension request"
+      "label": "Extension Request"
     }, {
       "value": {
         "klass": "FoiaRequestMailTask",
         "assigned_to": "PrivacyTeam"
         },
-      "label": "FOIA request"
+      "label": "FOIA Request"
     }, {
       "value": {
         "klass": "HearingPostponementRequestMailTask",
@@ -128,7 +128,7 @@
         "klass": "HearingRelatedMailTask",
         "assigned_to": "HearingAdmin"
         },
-      "label": "Hearing-related"
+      "label": "Hearing-Related"
     }, {
       "value": {
         "klass": "HearingWithdrawalRequestMailTask",
@@ -140,55 +140,55 @@
         "klass": "ReconsiderationMotionMailTask",
         "assigned_to": "LitigationSupport"
         },
-      "label": "Motion for reconsideration"
+      "label": "Motion For Reconsideration"
     }, {
       "value": {
         "klass": "AodMotionMailTask",
         "assigned_to": "AodTeam"
         },
-      "label": "Motion to Advance on Docket"
+      "label": "Motion To Advance On Docket"
     }, {
       "value": {
         "klass": "OtherMotionMailTask",
         "assigned_to": "LitigationSupport"
         },
-      "label": "Other motion"
+      "label": "Other Motion"
     }, {
       "value": {
         "klass": "PowerOfAttorneyRelatedMailTask",
         "assigned_to": "HearingAdmin"
         },
-      "label": "Power of attorney-related"
+      "label": "Power Of Attorney-Related"
     }, {
       "value": {
         "klass": "PrivacyActRequestMailTask",
         "assigned_to": "PrivacyTeam"
         },
-      "label": "Privacy act request"
+      "label": "Privacy Act Request"
     }, {
       "value": {
         "klass": "PrivacyComplaintMailTask",
         "assigned_to": "PrivacyTeam"
         },
-      "label": "Privacy complaint"
+      "label": "Privacy Complaint"
     }, {
       "value": {
         "klass": "ReturnedUndeliverableCorrespondenceMailTask",
         "assigned_to": "BvaDispatch"
         },
-      "label": "Returned or undeliverable mail"
+      "label": "Returned Or Undeliverable Mail"
     }, {
       "value": {
         "klass": "StatusInquiryMailTask",
         "assigned_to": "LitigationSupport"
         },
-      "label": "Status inquiry"
+      "label": "Status Inquiry"
     }, {
       "value": {
         "klass": "AppealWithdrawalMailTask",
         "assigned_to": "CaseReview"
         },
-      "label": "Withdrawal of appeal"
+      "label": "Withdrawal Of Appeal"
     }
   ]
 }
