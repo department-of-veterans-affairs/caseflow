@@ -8,8 +8,13 @@ module WarRoom
     S3_FILE_NAME = "dta-doo-description-remediation-logs"
     S3_ACL = "private"
     S3_ENCRYPTION = "AES256"
-    S3_BUCKET = "data-remediation-output"
+    S3_BUCKET_UAT = "vaec-appeals-uat-data-remediation-output"
+    S3_BUCKET_PROD = "vaec-appeals-prod-data-remediation-output"
 
+    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/AbcSize
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/PerceivedComplexity
     def run_by_report_load(report_load)
       logs = ["DtaDooDescriptionRemediation::Log\n"]
       no_remand_generated = []
@@ -25,7 +30,7 @@ module WarRoom
 
       higher_levels_reviews.each do |hlr|
         decision_issues = decision_issues.select do |di|
-          di.decision_review_id == hlr.id && di.decision_review_type == 'HigherLevelReview'
+          di.decision_review_id == hlr.id && di.decision_review_type == "HigherLevelReview"
         end
 
         decision_issues.each do |di|
@@ -59,7 +64,7 @@ module WarRoom
         TEXT
       end
 
-      logs.push("Remediation Summary Report\n");
+      logs.push("Remediation Summary Report\n")
       remand_count = 0
       no_remand_count = 0
 
@@ -91,13 +96,17 @@ module WarRoom
       upload_logs_to_aws_s3 logs
       logs
     end
+    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize
+    # rubocop:enable Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/PerceivedComplexity
 
     private
 
     def upload_logs_to_aws_s3(logs)
       s3client = Aws::S3::Client.new
       s3resource = Aws::S3::Resource.new(client: s3client)
-      s3bucket = s3resource.bucket(S3_BUCKET)
+      s3bucket = s3resource.bucket(s3_bucket)
       content = logs.join("\n")
       temporary_file = Tempfile.new("dta-log.txt")
       filepath = temporary_file.path
@@ -108,7 +117,12 @@ module WarRoom
       temporary_file.close!
     end
 
+    def s3_bucket
+      (Rails.deploy_env == :prod) ? S3_BUCKET_PROD : S3_BUCKET_UAT
+    end
+
     # Grab qualifying descision issue IDs so we know what to remediate
+    # rubocop:disable Metrics/MethodLength
     def get_decision_issue_ids(rep_load)
       # Establish connection
       conn = ActiveRecord::Base.connection
@@ -187,5 +201,6 @@ module WarRoom
 
       response
     end
+    # rubocop:enable Metrics/MethodLength
   end
 end
