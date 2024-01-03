@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_12_29_184556) do
+ActiveRecord::Schema.define(version: 2024_01_03_134452) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -349,10 +349,8 @@ ActiveRecord::Schema.define(version: 2023_12_29_184556) do
     t.bigint "case_distribution_lever_id", null: false, comment: "Indicates the Case Distriubution levers id"
     t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
     t.string "previous_value", comment: "Indicates the previous value of the column"
-    t.string "title", null: false, comment: "Indicates the title to maintain the history"
     t.string "update_value", comment: "Indicates the updated value of the column"
-    t.bigint "user_id", comment: "Indicates the id of the user who perfomed the action"
-    t.string "user_name", null: false, comment: "Indicates the Username"
+    t.bigint "user_id", null: false, comment: "Indicates the id of the user who perfomed the action"
     t.index ["case_distribution_lever_id"], name: "index_cd_audit_lever_entries_on_cd_lever_id"
     t.index ["user_id"], name: "index_case_distribution_audit_lever_entries_on_user_id"
   end

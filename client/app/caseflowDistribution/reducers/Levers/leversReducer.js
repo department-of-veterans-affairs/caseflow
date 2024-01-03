@@ -29,7 +29,6 @@ const leversReducer = (state = initialState, action = {}) => {
       formatted_history: formatLeverHistory(action.history)
     };
 
-
   // needs to be reworked; remove comment when done
   case ACTIONS.SAVE_LEVERS:
     return {
@@ -67,7 +66,6 @@ const leversReducer = (state = initialState, action = {}) => {
 
 // this should probably be moved into the action in leversAction.js
 export const formatLeverHistory = (lever_history_list) => {
-  console.log(lever_history_list);
   let formatted_lever_history = [];
 
   lever_history_list.forEach((lever_history_entry) => {
