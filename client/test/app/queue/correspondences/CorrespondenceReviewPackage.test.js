@@ -44,6 +44,7 @@ describe('CorrespondenceReviewPackage', () => {
       correspondenceId: '123',
     };
   });
+
   test('render modal', async () => {
     render(
       <Provider store={store}>
@@ -67,7 +68,6 @@ describe('CorrespondenceReviewPackage', () => {
     expect(closeButton).toBeInTheDocument();
     fireEvent.click(closeButton);
     expect(screen.queryByText('All unsaved changes made to this mail package will be lost')).not.toBeInTheDocument();
-
   });
 
   test('renders modal with correct title, buttons, and text', async () => {
@@ -119,6 +119,5 @@ describe('CorrespondenceReviewPackage', () => {
       expect(history.location.pathname).toBe('/queue/correspondence');
     });
   });
-
 });
 

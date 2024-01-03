@@ -124,7 +124,8 @@ export const getModalInformation = (dropdownType) => {
     return {
       title: PACKAGE_ACTION_SPLIT_TITLE,
       description: PACKAGE_ACTION_MODAL_DESCRIPTION,
-      label: PACKAGE_ACTION_SPLIT_TEXTAREA_LABEL
+      label: PACKAGE_ACTION_SPLIT_TEXTAREA_LABEL,
+      placeholder: 'This is a reason for split',
     };
   default:
     return {

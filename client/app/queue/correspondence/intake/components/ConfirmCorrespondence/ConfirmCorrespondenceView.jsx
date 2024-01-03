@@ -27,7 +27,7 @@ const tableStyling = css({
 
 export const ConfirmCorrespondenceView = (props) => {
 
-  const checkedMailTasks = Object.keys(props.mailTasks).filter((name) => props.mailTasks[name]);
+  const checkedMailTasks = props.mailTasks;
   const relatedCorrespondences = useSelector((state) => state.intakeCorrespondence.relatedCorrespondences);
 
   // eslint-disable-next-line max-statements
@@ -169,16 +169,16 @@ export const ConfirmCorrespondenceView = (props) => {
           })}>
             Completed Mail Tasks
           </div>
-          {checkedMailTasks.map((name, index, array) => (
+          {checkedMailTasks.map((name, index) => (
             <div
               key={index}
               {...css({
-                borderBottom: index === array.length - 1 ? 'none' : '1px solid #d6d7d9',
+                borderBottom: index === checkedMailTasks.length - 1 ? 'none' : '1px solid #d6d7d9',
                 padding: '10px 10px',
                 marginBottom: '10px',
               })}
             >
-              {props.mailTasks[name] && <span>{name}</span>}
+              <span>{name}</span>
             </div>
           ))}
         </div>
@@ -212,6 +212,6 @@ export const ConfirmCorrespondenceView = (props) => {
 
 ConfirmCorrespondenceView.propTypes = {
   goToStep: PropTypes.func,
-  mailTasks: PropTypes.objectOf(PropTypes.bool)
+  mailTasks: PropTypes.arrayOf(PropTypes.string)
 };
 export default ConfirmCorrespondenceView;

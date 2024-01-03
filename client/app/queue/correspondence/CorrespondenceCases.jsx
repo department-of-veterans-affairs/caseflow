@@ -6,9 +6,11 @@ import { loadVetCorrespondence } from './correspondenceReducer/correspondenceAct
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
+import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
 import CorrespondenceTable from './CorrespondenceTable';
 import QueueOrganizationDropdown from '../components/QueueOrganizationDropdown';
+import Alert from '../../components/Alert';
 
 // import {
 //   initialAssignTasksToUser,
@@ -41,12 +43,26 @@ class CorrespondenceCases extends React.PureComponent {
 
   render = () => {
     const {
-      organizations
+      organizations,
+      currentAction,
+      veteranInformation
+
     } = this.props;
+
+    let vetName = '';
+
+    if (Object.keys(veteranInformation).length > 0) {
+      vetName = `${veteranInformation.veteran_name.first_name.trim()} ${
+        veteranInformation.veteran_name.last_name.trim()}`;
+    }
 
     return (
       <React.Fragment>
         <AppSegment filledBackground>
+          {(Object.keys(veteranInformation).length > 0) &&
+            currentAction.action_type === 'DeleteReviewPackage' &&
+          <Alert type="success" title={sprintf(COPY.CORRESPONDENCE_TITLE_REMOVE_PACKAGE_BANNER, vetName)}
+            message={COPY.CORRESPONDENCE_MESSAGE_REMOVE_PACKAGE_BANNER} scrollOnAlert={false} />}
           <h1 {...css({ display: 'inline-block' })}>{COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES}</h1>
           <QueueOrganizationDropdown organizations={organizations} />
           {this.props.vetCorrespondences &&
@@ -63,11 +79,15 @@ class CorrespondenceCases extends React.PureComponent {
 CorrespondenceCases.propTypes = {
   organizations: PropTypes.array,
   loadVetCorrespondence: PropTypes.func,
-  vetCorrespondences: PropTypes.array
+  vetCorrespondences: PropTypes.array,
+  currentAction: PropTypes.object,
+  veteranInformation: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({
-  vetCorrespondences: state.intakeCorrespondence.vetCorrespondences
+  vetCorrespondences: state.intakeCorrespondence.vetCorrespondences,
+  currentAction: state.reviewPackage.lastAction,
+  veteranInformation: state.reviewPackage.veteranInformation
 });
 
 const mapDispatchToProps = (dispatch) => (

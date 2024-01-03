@@ -164,6 +164,7 @@ class EditModal extends React.Component {
           name="Edit"
           onClick={() => this.onClickEditCMP()}
           classNames={['usa-button-primary']}
+          disabled={this.props.isReadOnly}
         />
         {showEditModal && (
           <Modal buttons={this.getModalButtons()} visible closeHandler={this.onClickCancel} title="Edit CMP information">
@@ -199,7 +200,8 @@ class EditModal extends React.Component {
 
 EditModal.propTypes = {
   onCancel: PropTypes.func,
-  updateCmpInformation: PropTypes.func
+  updateCmpInformation: PropTypes.func,
+  isReadOnly: PropTypes.bool
 };
 
 const mapDispatchToProps = (dispatch) => (
