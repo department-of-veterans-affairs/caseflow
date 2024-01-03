@@ -3,7 +3,7 @@ import { update } from '../../../util/ReducerUtil';
 
 export const initialState = {
   saveChangesActivated: false,
-  loadedLevers: [],
+  loadedLevers: {},
   editedLevers: [],
   levers: [],
   initialLevers: [],

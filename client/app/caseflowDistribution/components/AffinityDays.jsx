@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import cx from 'classnames';
@@ -23,8 +24,17 @@ const AffinityDays = (props) => {
     '& .usa-input-error label': { bottom: '24px', left: '115px' }
   });
   const errorMessages = {};
-  const [affinityLevers, setAffinityLevers] = useState(filteredLevers);
+
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
+  // pulled value from store, but having issue with passing to affinityLevers w/o the file breaking
+  const storeLevers = useSelector((state) => state.caseDistributionLevers.loadedLevers.affinity);
+  const [affinityLevers, setAffinityLevers] = useState(filteredLevers);
+
+  useEffect(() => {
+    if (affinityLevers === undefined) {
+      setAffinityLevers(storeLevers);
+    }
+  });
 
   const updatedLever = (lever, option) => (event) => {
     const levers = affinityLevers.map((individualLever) => {
