@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes, { object } from 'prop-types';
 import { css } from 'glamor';
 import cx from 'classnames';
@@ -12,16 +13,6 @@ import { checkIfOtherChangesExist } from '../utils.js';
 
 const DocketTimeGoals = (props) => {
 
-  const { leverList, leverStore, loadedLevers } = props;
-
-  const filteredDistributionLevers = leverList.docketDistributionPriorLevers.map((item) => {
-    return leverStore.getState().levers.find((lever) => lever.item === item);
-  });
-
-  const filteredTimeGoalLevers = leverList.docketTimeGoalLevers.map((item) => {
-    return leverStore.getState().levers.find((lever) => lever.item === item);
-  });
-
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
     '& .cf-form-int-input .input-container': { width: 'auto', display: 'inline-block', verticalAlign: 'middle' },
@@ -31,9 +22,21 @@ const DocketTimeGoals = (props) => {
 
   const errorMessages = {};
 
-  const [docketDistributionLevers, setDistributionLever] = useState(filteredDistributionLevers);
-  const [docketTimeGoalLevers, setTimeGoalLever] = useState(filteredTimeGoalLevers);
+  // pull docket time goal and distribution levers from the store
+  const storeTimeLevers = useSelector((state) => state.caseDistributionLevers.loadedLevers.docket_time_goal);
+  const storeDistributionLevers = useSelector((state) => state.caseDistributionLevers.loadedLevers.docket_distribution_prior);
+  const [docketDistributionLevers, setDistributionLever] = useState(storeDistributionLevers);
+  const [docketTimeGoalLevers, setTimeGoalLever] = useState(storeTimeLevers);
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
+
+  useEffect(() => {
+    if (docketDistributionLevers === undefined) {
+      setDistributionLever(storeDistributionLevers);
+    }
+    if (docketTimeGoalLevers === undefined) {
+      setTimeGoalLever(storeTimeLevers);
+    }
+  });
 
   const updateLever = (index, leverType) => (event) => {
     if (leverType === 'DistributionPrior') {
@@ -41,8 +44,8 @@ const DocketTimeGoals = (props) => {
       const levers = docketDistributionLevers.map((lever, i) => {
         if (index === i) {
 
-          let initialLever = leverStore.getState().initial_levers.find((original) => original.item === lever.item);
-          let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
+          // let initialLever = leverStore.getState().initial_levers.find((original) => original.item === lever.item);
+          let validationResponse = leverInputValidation(lever, event, errorMessagesList, lever);
 
           if (validationResponse.statement === 'DUPLICATE') {
 
@@ -50,34 +53,34 @@ const DocketTimeGoals = (props) => {
               lever.value = event;
               setErrorMessages(validationResponse.updatedMessages);
 
-              leverStore.dispatch({
-                type: ACTIONS.UPDATE_LEVER_VALUE,
-                updated_lever: { item: lever.item, value: event },
-                hasValueChanged: false,
-                validChange: true
-              });
+              // leverStore.dispatch({
+              //   type: ACTIONS.UPDATE_LEVER_VALUE,
+              //   updated_lever: { item: lever.item, value: event },
+              //   hasValueChanged: false,
+              //   validChange: true
+              // });
             } else {
 
               lever.value = event;
               setErrorMessages(validationResponse.updatedMessages);
 
-              leverStore.dispatch({
-                type: ACTIONS.UPDATE_LEVER_VALUE,
-                updated_lever: { item: lever.item, value: event },
-                hasValueChanged: false,
-                validChange: false
-              });
+              // leverStore.dispatch({
+              //   type: ACTIONS.UPDATE_LEVER_VALUE,
+              //   updated_lever: { item: lever.item, value: event },
+              //   hasValueChanged: false,
+              //   validChange: false
+              // });
             }
 
           }
           if (validationResponse.statement === 'SUCCESS') {
             lever.value = event;
             setErrorMessages(validationResponse.updatedMessages);
-            leverStore.dispatch({
-              type: ACTIONS.UPDATE_LEVER_VALUE,
-              updated_lever: { item: lever.item, value: event },
-              validChange: true
-            });
+            // leverStore.dispatch({
+            //   type: ACTIONS.UPDATE_LEVER_VALUE,
+            //   updated_lever: { item: lever.item, value: event },
+            //   validChange: true
+            // });
 
             return lever;
           }
@@ -85,11 +88,11 @@ const DocketTimeGoals = (props) => {
             lever.value = event;
             setErrorMessages(validationResponse.updatedMessages);
 
-            leverStore.dispatch({
-              type: ACTIONS.UPDATE_LEVER_VALUE,
-              updated_lever: { item: lever.item, value: event },
-              validChange: false
-            });
+            // leverStore.dispatch({
+            //   type: ACTIONS.UPDATE_LEVER_VALUE,
+            //   updated_lever: { item: lever.item, value: event },
+            //   validChange: false
+            // });
 
             return lever;
           }
@@ -103,9 +106,6 @@ const DocketTimeGoals = (props) => {
     if (leverType === 'TimeGoal') {
       const levers = docketTimeGoalLevers.map((lever, i) => {
         if (index === i) {
-
-          let initialLever = leverStore.getState().initial_levers.find((original) => original.item === lever.item);
-
           let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
 
           if (validationResponse.statement === 'DUPLICATE') {
@@ -114,23 +114,23 @@ const DocketTimeGoals = (props) => {
               lever.value = event;
               setErrorMessages(validationResponse.updatedMessages);
 
-              leverStore.dispatch({
-                type: ACTIONS.UPDATE_LEVER_VALUE,
-                updated_lever: { item: lever.item, value: event },
-                hasValueChanged: false,
-                validChange: true
-              });
+              // leverStore.dispatch({
+              //   type: ACTIONS.UPDATE_LEVER_VALUE,
+              //   updated_lever: { item: lever.item, value: event },
+              //   hasValueChanged: false,
+              //   validChange: true
+              // });
             } else {
 
               lever.value = event;
               setErrorMessages(validationResponse.updatedMessages);
 
-              leverStore.dispatch({
-                type: ACTIONS.UPDATE_LEVER_VALUE,
-                updated_lever: { item: lever.item, value: event },
-                hasValueChanged: false,
-                validChange: false
-              });
+              // leverStore.dispatch({
+              //   type: ACTIONS.UPDATE_LEVER_VALUE,
+              //   updated_lever: { item: lever.item, value: event },
+              //   hasValueChanged: false,
+              //   validChange: false
+              // });
             }
 
           }
@@ -138,22 +138,22 @@ const DocketTimeGoals = (props) => {
           if (validationResponse.statement === 'SUCCESS') {
             lever.value = event;
             setErrorMessages(validationResponse.updatedMessages);
-            leverStore.dispatch({
-              type: ACTIONS.UPDATE_LEVER_VALUE,
-              updated_lever: { item: lever.item, value: event },
-              validChange: true
-            });
+            // leverStore.dispatch({
+            //   type: ACTIONS.UPDATE_LEVER_VALUE,
+            //   updated_lever: { item: lever.item, value: event },
+            //   validChange: true
+            // });
 
             return lever;
           }
           if (validationResponse.statement === 'FAIL') {
             lever.value = event;
             setErrorMessages(validationResponse.updatedMessages);
-            leverStore.dispatch({
-              type: ACTIONS.UPDATE_LEVER_VALUE,
-              updated_lever: { item: lever.item, value: event },
-              validChange: false
-            });
+            // leverStore.dispatch({
+            //   type: ACTIONS.UPDATE_LEVER_VALUE,
+            //   updated_lever: { item: lever.item, value: event },
+            //   validChange: false
+            // });
 
             return lever;
           }
