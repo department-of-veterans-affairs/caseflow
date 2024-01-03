@@ -23,9 +23,13 @@ describe "AssocationWrapper" do
                  [:completed_by, "User", "User", nil, nil],
                  [:appeal, "Appeal", nil, true, "appeal_type"],
                  [:ama_appeal, "Appeal", "Appeal", nil, nil],
+                 [:ama_appeal_for_this_record, "Appeal", "Appeal", nil, nil],
                  [:legacy_appeal, "LegacyAppeal", "LegacyAppeal", nil, nil],
+                 [:legacy_appeal_for_this_record, "LegacyAppeal", "LegacyAppeal", nil, nil],
                  [:supplemental_claim, "SupplementalClaim", "SupplementalClaim", nil, nil],
+                 [:supplemental_claim_for_this_record, "SupplementalClaim", "SupplementalClaim", nil, nil],
                  [:higher_level_review, "HigherLevelReview", "HigherLevelReview", nil, nil],
+                 [:higher_level_review_for_this_record, "HigherLevelReview", "HigherLevelReview", nil, nil],
                  [:attorney_case_reviews, "AttorneyCaseReview", nil, nil, nil],
                  [:task_timers, "TaskTimer", nil, nil, nil],
                  [:cached_appeal, "CachedAppeal", nil, nil, nil]
@@ -43,9 +47,13 @@ describe "AssocationWrapper" do
           [:task_timers, nil],
           [:cached_appeal, nil],
           [:ama_appeal, nil],
+          [:ama_appeal_for_this_record, nil],
           [:legacy_appeal, nil],
+          [:legacy_appeal_for_this_record, nil],
           [:higher_level_review, nil],
-          [:supplemental_claim, nil]
+          [:higher_level_review_for_this_record, nil],
+          [:supplemental_claim, nil],
+          [:supplemental_claim_for_this_record, nil]
         ]
         expect(subject.select_associations.map { |assoc| [assoc.name, assoc.options[:foreign_key]] }).to match_array [
           [:versions, nil],
@@ -60,9 +68,13 @@ describe "AssocationWrapper" do
           [:task_timers, nil],
           [:cached_appeal, :appeal_id],
           [:ama_appeal, "appeal_id"],
+          [:ama_appeal_for_this_record, "appeal_id"],
           [:legacy_appeal, "appeal_id"],
+          [:legacy_appeal_for_this_record, "appeal_id"],
           [:higher_level_review, "appeal_id"],
-          [:supplemental_claim, "appeal_id"]
+          [:higher_level_review_for_this_record, "appeal_id"],
+          [:supplemental_claim, "appeal_id"],
+          [:supplemental_claim_for_this_record, "appeal_id"]
         ]
 
         map_foreign_keys = lambda { |assoc|
@@ -83,9 +95,13 @@ describe "AssocationWrapper" do
           [:appeal, true, false, "appeal_id", "appeal_id", "appeal_type"],
           # belongs_to created dynamically by BelongsToPolymorphicAppealConcern
           [:ama_appeal, true, false, "appeal_id", "appeal_id", nil],
+          [:ama_appeal_for_this_record, true, false, "appeal_id", "appeal_id", nil],
           [:legacy_appeal, true, false, "appeal_id", "legacy_appeal_id", nil],
+          [:legacy_appeal_for_this_record, true, false, "appeal_id", "legacy_appeal_id", nil],
           [:higher_level_review, true, false, "appeal_id", "higher_level_review_id", nil],
+          [:higher_level_review_for_this_record, true, false, "appeal_id", "higher_level_review_id", nil],
           [:supplemental_claim, true, false, "appeal_id", "supplemental_claim_id", nil],
+          [:supplemental_claim_for_this_record, true, false, "appeal_id", "supplemental_claim_id", nil],
           # has_many declared in Task
           # Note: JudgeCaseReview is not listed; that `belongs_to` association can be traced from JudgeCaseReview
           [:attorney_case_reviews, false, false, "task_id", "attorney_case_review_id", nil],
