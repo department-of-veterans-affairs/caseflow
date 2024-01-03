@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styles from 'app/styles/caseDistribution/LeverHistory.module.scss';
+import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 
 const LeverHistory = (props) => {
   const { historyData } = props;
@@ -19,7 +20,8 @@ const LeverHistory = (props) => {
 
   const getUnitsFromLever = (leverDataType, leverUnit) => {
 
-    const doesDatatypeRequireComplexLogic = leverDataType === 'radio' || leverDataType === 'combination';
+    const doesDatatypeRequireComplexLogic = (leverDataType === ACD_LEVERS.radio ||
+      leverDataType === ACD_LEVERS.combination);
 
     if (doesDatatypeRequireComplexLogic) {
       return '';

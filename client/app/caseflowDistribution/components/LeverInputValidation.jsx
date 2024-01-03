@@ -1,6 +1,7 @@
 /* eslint-disable eqeqeq */
 
 import PropTypes from 'prop-types';
+import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 
 const leverInputValidation = (lever, event, currentMessageState, initialLever, option) => {
   let maxValue = 999;
@@ -11,7 +12,7 @@ const leverInputValidation = (lever, event, currentMessageState, initialLever, o
 
     // Max value to override lever database maximums on majority levers
 
-    if (lever.data_type === 'radio') {
+    if (lever.data_type === ACD_LEVERS.radio) {
 
       withinLimits = ((option.min_value) <= event && event <= maxValue);
     } else {
@@ -31,7 +32,7 @@ const leverInputValidation = (lever, event, currentMessageState, initialLever, o
 
   // Checks if value is a valid digit and within the min / max value for the lever requirements.
   if (checkIsInRange()) {
-    if (lever.data_type === 'radio') {
+    if (lever.data_type === ACD_LEVERS.radio) {
       if (updatedMessages) {
         updatedMessages = {};
       } else {
@@ -40,7 +41,7 @@ const leverInputValidation = (lever, event, currentMessageState, initialLever, o
     } else {
       updatedMessages = { ...currentMessageState, [lever.item]: null };
     }
-  } else if (lever.data_type === 'radio') {
+  } else if (lever.data_type === ACD_LEVERS.radio) {
     updatedMessages = { ...currentMessageState,
       [`${lever.item}-${option.item}`]: `Please enter a value from ${ option.min_value } to ${ maxValue }`
     };
@@ -54,13 +55,13 @@ const leverInputValidation = (lever, event, currentMessageState, initialLever, o
   let hasErrorMessage = (message) => message !== null;
   let messageFilter = messageValues.filter(hasErrorMessage);
 
-  if (lever.data_type === 'radio') {
+  if (lever.data_type === ACD_LEVERS.radio) {
     let initialOption = initialLever.options.find((original) => original.item === option.item);
 
     if (event === initialOption.value) {
       response = {
         updatedMessages,
-        statement: 'DUPLICATE',
+        statement: ACD_LEVERS.DUPLICATE,
         value: event,
       };
 
@@ -69,7 +70,7 @@ const leverInputValidation = (lever, event, currentMessageState, initialLever, o
   } else if (event == initialLever.value) {
     response = {
       updatedMessages,
-      statement: 'DUPLICATE',
+      statement: ACD_LEVERS.DUPLICATE,
       value: event,
     };
 
@@ -79,7 +80,7 @@ const leverInputValidation = (lever, event, currentMessageState, initialLever, o
   if (messageFilter < 1) {
     response = {
       updatedMessages,
-      statement: 'SUCCESS',
+      statement: ACD_LEVERS.SUCCESS,
       value: event,
     };
 
@@ -88,7 +89,7 @@ const leverInputValidation = (lever, event, currentMessageState, initialLever, o
 
   response = {
     updatedMessages,
-    statement: 'FAIL',
+    statement: ACD_LEVERS.FAIL,
     value: event,
   };
 
