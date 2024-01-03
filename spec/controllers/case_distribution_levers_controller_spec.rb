@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
-  let!(:lever_user) { create(:lever_user) }
+  let!(:lever_user) { create(:user) }
   let!(:lever_user2) { create(:user) }
 
   let!(:lever1) {create(:case_distribution_lever,
@@ -10,7 +10,8 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     description: "This is the first lever. It is a boolean with the default value of true. Therefore there should be a two radio buttons that display true and false as the example with true being the default option chosen. This lever is active so it should be in the active lever section",
     data_type: "boolean",
     value: true,
-    unit: ""
+    unit: "",
+    lever_group: "alternative_batch_size"
   )}
   let!(:lever2) {create(:case_distribution_lever,
     item: "lever_2",
@@ -18,7 +19,8 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     description: "This is the second lever. It is a number data type with the default value of 42. Therefore there should be a number input that displays 42 and 'days' as the unit. This lever is active so it should be in the active lever section",
     data_type: "number",
     value: 55,
-    unit: "Days"
+    unit: "Days",
+    lever_group: "alternative_batch_size"
   )}
 
   let!(:audit_lever_entry1) {create(:case_distribution_audit_lever_entry,
