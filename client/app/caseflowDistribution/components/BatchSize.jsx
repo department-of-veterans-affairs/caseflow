@@ -10,33 +10,18 @@ import COPY from '../../../COPY';
 import { checkIfOtherChangesExist } from '../utils.js';
 
 const BatchSize = (props) => {
-  const { leverList, leverStore, loadedLevers } = props;
-
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
     '& .cf-form-int-input .input-container': { width: 'auto', display: 'inline-block', verticalAlign: 'middle' },
     '& .cf-form-int-input label': { position: 'absolute', bottom: '8px', left: '75px' },
     '& .usa-input-error label': { bottom: '15px', left: '89px' }
   });
+  const isMemberUser = !props.isAdmin;
+  const { leverList, leverStore, loadedLevers } = props;
+  const [errorMessagesList, setErrorMessages] = useState({});
+  const [batchSizeLevers, setBatchSizeLevers] = useState(useSelector((state) => state.caseDistributionLevers.loadedLevers.batch));
 
-  const errorMessages = {};
-  const storeLevers = useSelector((state) => state.caseDistributionLevers.loadedLevers.batch);
-
-  console.log(`storeLevers: ${JSON.stringify(storeLevers, null, 2)}`);
-  const [batchSizeLevers, setLever] = useState(useSelector((state) => state.caseDistributionLevers.loadedLevers.batch));
-
-  useEffect(() => {
-    if (batchSizeLevers === undefined) {
-      setLever(storeLevers);
-    }
-  });
-
-  // const [batchSizeLevers, setLever] = useState(loadedLevers);
-  console.log(`lever list: ${JSON.stringify(batchSizeLevers, null, 2)}`);
-
-  const [errorMessagesList, setErrorMessages] = useState(errorMessages);
   const updateLever = (index) => (event) => {
-
     const levers = batchSizeLevers.map((lever, i) => {
       if (index === i) {
 
@@ -99,10 +84,8 @@ const BatchSize = (props) => {
       return lever;
     });
 
-    setLever(levers);
+    setBatchSizeLevers(levers);
   };
-
-  let isMemberUser = !props.isAdmin;
 
   return (
     <div className={styles.leverContent}>

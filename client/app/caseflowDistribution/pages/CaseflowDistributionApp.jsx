@@ -8,15 +8,12 @@ import {
 } from '../reducers/Levers/leversActions';
 
 class CaseflowDistributionApp extends React.PureComponent {
-
-  componentDidMount() {
-    // load lever and history into redux store using actions
+  constructor(props) {
+    super(props);
     this.props.loadLevers(this.props.acdLeversForStore);
-    // load initial history action goes here
   }
 
   render() {
-
     return (
       <div>
         <div> {/* Wrapper*/}
