@@ -716,7 +716,7 @@ class LegacyAppeal < CaseflowRecord
 
     caseflow_file_number = veteran.file_number
     if vacols_file_number != caseflow_file_number
-      DataDogService.increment_counter(
+      MetricsService.increment_counter(
         metric_group: "database_disagreement",
         metric_name: "file_number",
         app_name: RequestStore[:application],

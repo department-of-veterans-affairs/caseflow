@@ -185,7 +185,7 @@ describe VirtualHearings::DeleteConferencesJob do
 
       it "it marks the virtual hearing as deleted" do
         expect(job).to receive(:client).twice.and_return(PexipService.new)
-        expect(DataDogService).to receive(:increment_counter).with(
+        expect(MetricsService).to receive(:increment_counter).with(
           hash_including(
             metric_name: "deleted_conferences.successful",
             metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
@@ -210,7 +210,7 @@ describe VirtualHearings::DeleteConferencesJob do
         include_examples "job is retried", 5
 
         it "does not mark the virtual hearings as deleted" do
-          expect(DataDogService).to receive(:increment_counter).with(
+          expect(MetricsService).to receive(:increment_counter).with(
             hash_including(
               metric_name: "deleted_conferences.failed",
               metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
@@ -238,7 +238,7 @@ describe VirtualHearings::DeleteConferencesJob do
         include_examples "job is not retried"
 
         it "assumes a 404 means the virtual hearing conference was already deleted" do
-          expect(DataDogService).to receive(:increment_counter).with(
+          expect(MetricsService).to receive(:increment_counter).with(
             hash_including(
               metric_name: "deleted_conferences.successful",
               metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
@@ -267,7 +267,7 @@ describe VirtualHearings::DeleteConferencesJob do
           include_examples "job is retried", 5
 
           it "fails to delete conference" do
-            expect(DataDogService).to receive(:increment_counter).with(
+            expect(MetricsService).to receive(:increment_counter).with(
               hash_including(
                 metric_name: "deleted_conferences.failed",
                 metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
@@ -292,7 +292,7 @@ describe VirtualHearings::DeleteConferencesJob do
           include_examples "job is retried"
 
           it "fails first but then succeeds in deleting conference" do
-            expect(DataDogService).to receive(:increment_counter).with(
+            expect(MetricsService).to receive(:increment_counter).with(
               hash_including(
                 metric_name: "deleted_conferences.successful",
                 metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,
@@ -300,7 +300,7 @@ describe VirtualHearings::DeleteConferencesJob do
               )
             )
 
-            expect(DataDogService).to receive(:increment_counter).with(
+            expect(MetricsService).to receive(:increment_counter).with(
               hash_including(
                 metric_name: "deleted_conferences.failed",
                 metric_group: Constants.DATADOG_METRICS.HEARINGS.VIRTUAL_HEARINGS_GROUP_NAME,

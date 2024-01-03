@@ -98,7 +98,7 @@ describe TaskTimerJob, :postgres do
   end
 
   it "records the job's runtime with Datadog" do
-    expect(DataDogService).to receive(:emit_gauge).with(
+    expect(MetricsService).to receive(:emit_gauge).with(
       app_name: "caseflow_job",
       metric_group: TaskTimerJob.name.underscore,
       metric_name: "runtime",

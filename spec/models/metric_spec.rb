@@ -22,7 +22,8 @@ describe Metric do
       metric = Metric.create_metric(self, params, user)
 
       expect(metric.valid?).to be true
-      expect(metric.metric_type).to eq(Metric::METRIC_TYPES[:performance])
+      p metric.errors.messages
+      expect(metric.metric_type).to eq(MetricAttributes::METRIC_TYPES[:performance])
     end
 
     it "creates a javascript metric for log" do
@@ -30,7 +31,8 @@ describe Metric do
       metric = Metric.create_metric(self, params, user)
 
       expect(metric.valid?).to be true
-      expect(metric.metric_type).to eq(Metric::METRIC_TYPES[:log])
+      p metric.errors.messages
+      expect(metric.metric_type).to eq(MetricAttributes::METRIC_TYPES[:log])
     end
 
     it "creates a javascript metric for error" do
@@ -38,7 +40,8 @@ describe Metric do
       metric = Metric.create_metric(self, params, user)
 
       expect(metric.valid?).to be true
-      expect(metric.metric_type).to eq(Metric::METRIC_TYPES[:error])
+      p metric.errors.messages
+      expect(metric.metric_type).to eq(MetricAttributes::METRIC_TYPES[:error])
     end
 
     it "creates a javascript metric with invalid sent_to" do
