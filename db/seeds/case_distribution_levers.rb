@@ -10,10 +10,10 @@ module Seeds
     def levers
       [
         {
-          item: 'maximum_direct_review_proportion',
+          item: Constants.DISTRIBUTION.maximum_direct_review_proportion,
           title: 'Maximum Direct Review Proportion',
           description: "Sets the maximum number of direct reviews in relation to due direct review proportion to prevent a complete halt to work on other dockets should demand for direct reviews approach the Board's capacity.",
-          data_type: 'number',
+          data_type: Constants.ACD_LEVERS.number,
           value: 0.07,
           unit: '%',
           is_active: false,
@@ -24,10 +24,10 @@ module Seeds
           lever_group: 'static'
         },
         {
-          item: 'minimum_legacy_proportion',
+          item: Constants.DISTRIBUTION.minimum_legacy_proportion,
           title: 'Minimum Legacy Proportion',
           description: 'Sets the minimum proportion of legacy appeals that will be distributed.',
-          data_type: 'number',
+          data_type: Constants.ACD_LEVERS.number,
           value: 0.9,
           unit: '%',
           is_active: false,
@@ -38,10 +38,10 @@ module Seeds
           lever_group: 'static'
         },
         {
-          item: 'nod_adjustment',
+          item: Constants.DISTRIBUTION.nod_adjustment,
           title: 'NOD Adjustment',
-          description: 'Applied for docket balancing reflecting the likelihood that HODs will advance to a Form 9.',
-          data_type: 'number',
+          description: 'Applied for docket balancing reflecting the likelihood that NODs will advance to a Form 9.',
+          data_type: Constants.ACD_LEVERS.number,
           value: 0.4,
           unit: '%',
           is_active: false,
@@ -52,10 +52,10 @@ module Seeds
           lever_group: 'static'
         },
         {
-          item: 'bust_backlog',
+          item: Constants.DISTRIBUTION.bust_backlog,
           title: 'Priority Bust Backlog',
           description: 'Distribute legacy cases tied to a judge to the Board-provided limit of 30, regardless of the legacy docket range.',
-          data_type: 'boolean',
+          data_type: Constants.ACD_LEVERS.boolean,
           value: false,
           unit: '',
           is_active: false,
@@ -64,12 +64,12 @@ module Seeds
           lever_group: 'static'
         },
         {
-          item: 'alternative_batch_size',
+          item: Constants.DISTRIBUTION.alternative_batch_size,
           title: 'Alternate Batch Size*',
           description: 'Sets case-distribution batch size for judges who do not have their own attorney teams.',
-          data_type: 'number',
+          data_type: Constants.ACD_LEVERS.number,
           value: 15,
-          unit: 'cases',
+          unit: Constants.ACD_LEVERS.cases,
           is_active: true,
           is_disabled: false,
           min_value: 0,
@@ -78,12 +78,12 @@ module Seeds
           lever_group: 'batch'
         },
         {
-          item: 'batch_size_per_attorney',
+          item: Constants.DISTRIBUTION.batch_size_per_attorney,
           title: 'Batch Size Per Attorney*',
           description: 'Sets case-distribution batch size for judges with attorney teams. The value for this data element is per attorney.',
-          data_type: 'number',
+          data_type: Constants.ACD_LEVERS.number,
           value: 3,
-          unit: 'cases',
+          unit: Constants.ACD_LEVERS.cases,
           is_active: true,
           is_disabled: false,
           min_value: 0,
@@ -92,12 +92,12 @@ module Seeds
           lever_group: 'batch'
         },
         {
-          item: 'request_more_cases_minimum',
+          item: Constants.DISTRIBUTION.request_more_cases_minimum,
           title: 'Request More Cases Minimum*',
           description: 'Sets the number of remaining cases a VLJ must have equal to or less than to request more cases. (The number entered is used as equal to or less than)',
-          data_type: 'number',
+          data_type: Constants.ACD_LEVERS.number,
           value: 8,
-          unit: 'cases',
+          unit: Constants.ACD_LEVERS.cases,
           is_active: true,
           is_disabled: false,
           min_value: 0,
@@ -106,30 +106,30 @@ module Seeds
           lever_group: 'batch'
         },
         {
-          item: 'ama_hearing_case_affinity_days',
+          item: Constants.DISTRIBUTION.ama_hearing_case_affinity_days,
           title: 'AMA Hearing Case Affinity Days',
           description: 'For non-priority AMA Hearing cases, sets the number of days an AMA Hearing Case is tied to the judge that held the hearing.',
-          data_type: 'radio',
+          data_type: Constants.ACD_LEVERS.radio,
           value: 'value',
-          unit: 'days',
+          unit: Constants.ACD_LEVERS.days,
           options: [
             {
               item: 'value',
-              data_type: 'number',
+              data_type: Constants.ACD_LEVERS.number,
               value: 0,
               text: 'Attempt distribution to current judge for max of:',
-              unit: 'days',
+              unit: Constants.ACD_LEVERS.days,
               min_value: 0,
               max_value: 100,
             },
             {
-              item: 'infinite',
-              value: 'infinite',
+              item: Constants.ACD_LEVERS.infinite,
+              value: Constants.ACD_LEVERS.infinite,
               text: 'Always distribute to current judge',
             },
             {
-              item: 'omit',
-              value: 'omit',
+              item: Constants.ACD_LEVERS.omit,
+              value: Constants.ACD_LEVERS.omit,
               text: 'Omit variable from distribution rules',
             }
           ],
@@ -141,31 +141,31 @@ module Seeds
           lever_group: 'affinity'
         },
         {
-          item: 'ama_hearing_case_aod_affinity_days',
+          item: Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days,
           title: 'AMA Hearing Case AOD Affinity Days',
           description: 'Sets the number of days an AMA Hearing appeal that is also AOD will respect the affinity to the most-recent hearing judge before distributing the appeal to any available judge.',
-          data_type: 'radio',
+          data_type: Constants.ACD_LEVERS.radio,
           value: 'value',
-          unit: 'days',
+          unit: Constants.ACD_LEVERS.days,
           options: [
             {
               item: 'value',
-              data_type: 'number',
+              data_type: Constants.ACD_LEVERS.number,
               value: 0,
               text: 'Attempt distribution to current judge for max of:',
-              unit: 'days'
+              unit: Constants.ACD_LEVERS.days
             },
             {
-              item: 'infinite',
+              item: Constants.ACD_LEVERS.infinite,
               data_type: '',
-              value: 'infinite',
+              value: Constants.ACD_LEVERS.infinite,
               text: 'Always distribute to current judge',
               unit: ''
             },
             {
-              item: 'omit',
+              item: Constants.ACD_LEVERS.omit,
               data_type: '',
-              value: 'omit',
+              value: Constants.ACD_LEVERS.omit,
               text: 'Omit variable from distribution rules',
               unit: ''
             }
@@ -178,28 +178,28 @@ module Seeds
           lever_group: 'affinity'
         },
         {
-          item: 'cavc_affinity_days',
+          item: Constants.DISTRIBUTION.cavc_affinity_days,
           title: 'CAVC Affinity Days*',
           description: 'Sets the number of days a case returned from CAVC respects the affinity to the judge who authored a decision before distributing the appeal to any available judge. This does not include Legacy CAVC Remand Appeals with a hearing held.',
-          data_type: 'radio',
+          data_type: Constants.ACD_LEVERS.radio,
           value: 'value',
-          unit: 'days',
+          unit: Constants.ACD_LEVERS.days,
           options: [
             {
               item: 'value',
-              data_type: 'number',
+              data_type: Constants.ACD_LEVERS.number,
               value: 21,
               text: 'Attempt distribution to current judge for max of:',
-              unit: 'days'
+              unit: Constants.ACD_LEVERS.days
             },
             {
-              item: 'infinite',
-              value: 'infinite',
+              item: Constants.ACD_LEVERS.infinite,
+              value: Constants.ACD_LEVERS.infinite,
               text: 'Always distribute to current judge'
             },
             {
-              item: 'omit',
-              value: 'omit',
+              item: Constants.ACD_LEVERS.omit,
+              value: Constants.ACD_LEVERS.omit,
               text: 'Omit variable from distribution rules'
             }
           ],
@@ -211,28 +211,28 @@ module Seeds
           lever_group: 'affinity'
         },
         {
-          item: 'cavc_aod_affinity_days',
+          item: Constants.DISTRIBUTION.cavc_aod_affinity_days,
           title: 'CAVC AOD Affinity Days',
           description: 'Sets the number of days appeals returned from CAVC that are also AOD respect the affinity to the deciding judge. This is not applicable for legacy apeals for which the deciding judge conducted the most recent hearing.',
-          data_type: 'radio',
+          data_type: Constants.ACD_LEVERS.radio,
           value: 'value',
-          unit: 'days',
+          unit: Constants.ACD_LEVERS.days,
           options: [
             {
               item: 'value',
-              data_type: 'number',
+              data_type: Constants.ACD_LEVERS.number,
               value: 21,
               text: 'Attempt distribution to current judge for max of:',
-              unit: 'days'
+              unit: Constants.ACD_LEVERS.days
             },
             {
-              item: 'infinite',
-              value: 'infinite',
+              item: Constants.ACD_LEVERS.infinite,
+              value: Constants.ACD_LEVERS.infinite,
               text: 'Always distribute to current judge',
             },
             {
-              item: 'omit',
-              value: 'omit',
+              item: Constants.ACD_LEVERS.omit,
+              value: Constants.ACD_LEVERS.omit,
               text: 'Omit variable from distribution rules',
             }
           ],
@@ -242,31 +242,31 @@ module Seeds
           lever_group: 'affinity'
         },
         {
-          item: 'aoj_affinity_days',
+          item: Constants.DISTRIBUTION.aoj_affinity_days,
           title: 'AOJ Affinity Days',
           description: 'Sets the number of days an appeal respects the affinity to the deciding judge for Legacy AOJ Remand Returned appeals with no hearing held before distributing the appeal to any available judge.',
-          data_type: 'radio',
+          data_type: Constants.ACD_LEVERS.radio,
           value: 'value',
-          unit: 'days',
+          unit: Constants.ACD_LEVERS.days,
           options: [
             {
               item: 'value',
-              data_type: 'number',
+              data_type: Constants.ACD_LEVERS.number,
               value: 60,
               text: 'Attempt distribution to current judge for max of:',
-              unit: 'days'
+              unit: Constants.ACD_LEVERS.days
             },
             {
-              item: 'infinite',
+              item: Constants.ACD_LEVERS.infinite,
               data_type: '',
-              value: 'infinite',
+              value: Constants.ACD_LEVERS.infinite,
               text: 'Always distribute to current judge',
               unit: ''
             },
             {
-              item: 'omit',
+              item: Constants.ACD_LEVERS.omit,
               data_type: '',
-              value: 'omit',
+              value: Constants.ACD_LEVERS.omit,
               text: 'Omit variable from distribution rules',
               unit: ''
             }
@@ -279,31 +279,31 @@ module Seeds
           lever_group: 'affinity'
         },
         {
-          item: 'aoj_aod_affinity_days',
+          item: Constants.DISTRIBUTION.aoj_aod_affinity_days,
           title: 'AOJ AOD Affinity Days',
           description: 'Sets the number of days legacy remand Returned appeals that are also AOD (and may or may not have been CAVC at one time) respect the affinity before distributing the appeal to any available jduge. Affects appeals with hearing held when the remanding judge is not the hearing judge, or any legacy AOD + AOD appeal with no hearing held (whether or not it had been CAVC at one time).',
-          data_type: 'radio',
+          data_type: Constants.ACD_LEVERS.radio,
           value: 'value',
-          unit: 'days',
+          unit: Constants.ACD_LEVERS.days,
           options: [
             {
               item: 'value',
-              data_type: 'number',
+              data_type: Constants.ACD_LEVERS.number,
               value: 14,
               text: 'Attempt distribution to current judge for max of:',
-              unit: 'days'
+              unit: Constants.ACD_LEVERS.days
             },
             {
-              item: 'infinite',
+              item: Constants.ACD_LEVERS.infinite,
               data_type: '',
-              value: 'infinite',
+              value: Constants.ACD_LEVERS.infinite,
               text: 'Always distribute to current judge',
               unit: ''
             },
             {
-              item: 'omit',
+              item: Constants.ACD_LEVERS.omit,
               data_type: '',
-              value: 'omit',
+              value: Constants.ACD_LEVERS.omit,
               text: 'Omit variable from distribution rules',
               unit: ''
             }
@@ -316,31 +316,31 @@ module Seeds
           lever_group: 'affinity'
         },
         {
-          item: 'aoj_cavc_affinity_days',
+          item: Constants.DISTRIBUTION.aoj_cavc_affinity_days,
           title: 'AOJ CAVC Affinity Days',
           description: 'Sets the number of days AOJ appeals that were CAVC at some time respect the affinity before the appeal is distributed to any available judge. This applies to any AOJ + CAVC appeal with no hearing held, or those with a hearing held when the remanding judge is not the hearing judge.',
-          data_type: 'radio',
+          data_type: Constants.ACD_LEVERS.radio,
           value: 'value',
-          unit: 'days',
+          unit: Constants.ACD_LEVERS.days,
           options: [
             {
               item: 'value',
-              data_type: 'number',
+              data_type: Constants.ACD_LEVERS.number,
               value: 21,
               text: 'Attempt distribution to current judge for max of:',
-              unit: 'days'
+              unit: Constants.ACD_LEVERS.days
             },
             {
-              item: 'infinite',
+              item: Constants.ACD_LEVERS.infinite,
               data_type: '',
-              value: 'infinite',
+              value: Constants.ACD_LEVERS.infinite,
               text: 'Always distribute to current judge',
               unit: ''
             },
             {
-              item: 'omit',
+              item: Constants.ACD_LEVERS.omit,
               data_type: '',
-              value: 'omit',
+              value: Constants.ACD_LEVERS.omit,
               text: 'Omit variable from distribution rules',
               unit: ''
             }
@@ -353,16 +353,16 @@ module Seeds
           lever_group: 'affinity'
         },
         {
-          item: 'ama_hearings_start_distribution_prior_to_goals',
+          item: Constants.DISTRIBUTION.ama_hearings_start_distribution_prior_to_goals,
           title: 'AMA Hearings Start Distribution Prior to Goals',
           description: '',
-          data_type: 'combination',
+          data_type: Constants.ACD_LEVERS.combination,
           value: 770,
-          unit: 'days',
+          unit: Constants.ACD_LEVERS.days,
           options: [
             {
               item: 'value',
-              data_type: 'boolean',
+              data_type: Constants.ACD_LEVERS.boolean,
               value: true,
               text: 'This feature is turned on or off',
               unit: ''
@@ -376,16 +376,16 @@ module Seeds
           lever_group: 'docket_distribution_prior'
         },
         {
-          item: 'ama_direct_review_start_distribution_prior_to_goals',
+          item: Constants.DISTRIBUTION.ama_direct_review_start_distribution_prior_to_goals,
           title: 'AMA Direct Review Start Distribution Prior to Goals',
           description: '',
-          data_type: 'combination',
+          data_type: Constants.ACD_LEVERS.combination,
           value: 365,
-          unit: 'days',
+          unit: Constants.ACD_LEVERS.days,
           options: [
             {
               item: 'value',
-              data_type: 'boolean',
+              data_type: Constants.ACD_LEVERS.boolean,
               value: true,
               text: 'This feature is turned on or off',
               unit: ''
@@ -399,16 +399,16 @@ module Seeds
           lever_group: 'docket_distribution_prior'
         },
         {
-          item: 'ama_evidence_submission_start_distribution_prior_to_goals',
+          item: Constants.DISTRIBUTION.ama_evidence_submission_start_distribution_prior_to_goals,
           title: 'AMA Evidence Submission Start Distribution Prior to Goals',
           description: '',
-          data_type: 'combination',
+          data_type: Constants.ACD_LEVERS.combination,
           value: 550,
-          unit: 'days',
+          unit: Constants.ACD_LEVERS.days,
           options: [
             {
               item: 'value',
-              data_type: 'boolean',
+              data_type: Constants.ACD_LEVERS.boolean,
               value: true,
               text: 'This feature is turned on or off',
               unit: ''
@@ -422,11 +422,11 @@ module Seeds
           lever_group: 'docket_distribution_prior'
         },
         {
-          item: 'ama_hearings_docket_time_goals',
+          item: Constants.DISTRIBUTION.ama_hearings_docket_time_goals,
           title: 'AMA Hearings Docket Time Goals',
-          data_type: 'number',
+          data_type: Constants.ACD_LEVERS.number,
           value: 365,
-          unit: 'days',
+          unit: Constants.ACD_LEVERS.days,
           is_active: false,
           is_disabled: true,
           min_value: 0,
@@ -435,11 +435,11 @@ module Seeds
           lever_group: 'docket_time_goal'
         },
         {
-          item: 'ama_direct_review_docket_time_goals',
+          item: Constants.DISTRIBUTION.ama_direct_review_docket_time_goals,
           title: 'AMA Direct Review Docket Time Goals',
-          data_type: 'number',
+          data_type: Constants.ACD_LEVERS.number,
           value: 500,
-          unit: 'days',
+          unit: Constants.ACD_LEVERS.days,
           is_active: true,
           is_disabled: false,
           min_value: 0,
@@ -448,11 +448,11 @@ module Seeds
           lever_group: 'docket_time_goal'
         },
         {
-          item: 'ama_evidence_submission_docket_time_goals',
+          item: Constants.DISTRIBUTION.ama_evidence_submission_docket_time_goals,
           title: 'AMA Evidence Submission Docket Time Goals',
-          data_type: 'number',
+          data_type: Constants.ACD_LEVERS.number,
           value: 123,
-          unit: 'days',
+          unit: Constants.ACD_LEVERS.days,
           is_active: false,
           is_disabled: true,
           min_value: 0,
@@ -462,7 +462,6 @@ module Seeds
         },
       ]
     end
-
     private
 
     def create_lever lever

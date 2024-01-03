@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
-import BatchSize from './BatchSize';
+import BatchSize from 'app/caseflowDistribution/components/BatchSize';
 import { levers } from 'test/data/adminCaseDistributionLevers';
 
 jest.mock('app/styles/caseDistribution/InteractableLevers.module.scss', () => '');

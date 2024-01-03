@@ -5,11 +5,12 @@ import ApiUtil from '../../util/ApiUtil';
 import Modal from 'app/components/Modal';
 import Button from 'app/components/Button';
 import COPY from '../../../COPY';
+import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import moment from 'moment';
 
 const changedOptionValue = (changedLever, currentLever) => {
-  if (changedLever.data_type === 'radio' || changedLever.data_type === 'radio') {
+  if (changedLever.data_type === ACD_LEVERS.radio || changedLever.data_type === ACD_LEVERS.radio) {
     const newChangedOptionValue = changedLever.options.find((option) => option.item === changedLever.value).value;
     const currentOptionValue = currentLever.options.find((option) => option.item === currentLever.value)?.value;
 
@@ -34,7 +35,8 @@ const generateLeverUpdateData = (leverStore) => {
 };
 const generateLeverHistory = (filteredLevers, filteredInitialLevers) => {
   return filteredLevers.map((lever, index) => {
-    const doesDatatypeRequireComplexLogic = lever.data_type === 'radio' || lever.data_type === 'combination';
+    const doesDatatypeRequireComplexLogic = (lever.data_type === ACD_LEVERS.radio ||
+      lever.data_type === ACD_LEVERS.combination);
 
     let today = new Date();
     let todaysDate = moment(today).format('ddd MMM DD hh:mm:ss YYYY');
@@ -43,8 +45,8 @@ const generateLeverHistory = (filteredLevers, filteredInitialLevers) => {
       const selectedOption = lever.options.find((option) => option.item === lever.value);
       const previousSelectedOption =
         filteredInitialLevers[index].options.find((option) => option.item === filteredInitialLevers[index].value);
-      const isSelectedOptionANumber = selectedOption.data_type === 'number';
-      const isPreviouslySelectedOptionANumber = previousSelectedOption.data_type === 'number';
+      const isSelectedOptionANumber = selectedOption.data_type === ACD_LEVERS.number;
+      const isPreviouslySelectedOptionANumber = previousSelectedOption.data_type === ACD_LEVERS.number;
 
       return {
         created_at: todaysDate,
@@ -88,11 +90,12 @@ const setShowSuccessBanner = (leverStore) => {
 };
 
 const leverValueDisplay = (lever, isPreviousValue) => {
-  const doesDatatypeRequireComplexLogic = lever.data_type === 'radio' || lever.data_type === 'combination';
+  const doesDatatypeRequireComplexLogic = (lever.data_type === ACD_LEVERS.radio ||
+    lever.data_type === ACD_LEVERS.combination);
 
   if (doesDatatypeRequireComplexLogic) {
     const selectedOption = lever.options.find((option) => option.item === lever.value);
-    const isSelectedOptionANumber = selectedOption.data_type === 'number';
+    const isSelectedOptionANumber = selectedOption.data_type === ACD_LEVERS.number;
 
     return isSelectedOptionANumber ? selectedOption.value : selectedOption.text;
   }

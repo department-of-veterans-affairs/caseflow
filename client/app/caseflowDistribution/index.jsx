@@ -12,6 +12,8 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import leversReducer from './reducers/Levers/leversReducer';
 import CaseSearchLink from '../components/CaseSearchLink';
 import BannerDisplay from './components/BannerDisplay';
+import ACD_LEVERS from '../../constants/ACD_LEVERS';
+import DISTRIBUTION from '../../constants/DISTRIBUTION';
 
 import CaseflowDistributionApp from './pages/CaseflowDistributionApp';
 import { createStore } from 'redux';
@@ -31,36 +33,36 @@ class CaseflowDistribution extends React.PureComponent {
     const appName = 'Caseflow Distribution';
 
     const staticLevers = [
-      'maximum_direct_review_proportion',
-      'minimum_legacy_proportion',
-      'nod_adjustment',
-      'bust_backlog',
+      DISTRIBUTION.maximum_direct_review_proportion,
+      DISTRIBUTION.minimum_legacy_proportion,
+      DISTRIBUTION.nod_adjustment,
+      DISTRIBUTION.bust_backlog,
     ];
     const batchLeverList = [
-      'alternative_batch_size',
-      'batch_size_per_attorney',
-      'request_more_cases_minimum'
+      DISTRIBUTION.alternative_batch_size,
+      DISTRIBUTION.batch_size_per_attorney,
+      DISTRIBUTION.request_more_cases_minimum
     ];
     let batchSizeLevers = [];
     const affinityLeverList = [
-      'ama_hearing_case_affinity_days',
-      'ama_hearing_case_aod_affinity_days',
-      'cavc_affinity_days',
-      'cavc_aod_affinity_days',
-      'aoj_affinity_days',
-      'aoj_aod_affinity_days',
-      'aoj_cavc_affinity_days'
+      DISTRIBUTION.ama_hearing_case_affinity_days,
+      DISTRIBUTION.ama_hearing_case_aod_affinity_days,
+      DISTRIBUTION.cavc_affinity_days,
+      DISTRIBUTION.cavc_aod_affinity_days,
+      DISTRIBUTION.aoj_affinity_days,
+      DISTRIBUTION.aoj_aod_affinity_days,
+      DISTRIBUTION.aoj_cavc_affinity_days
     ];
     let affinityLevers = [];
     const docketDistributionPriorLeverList = [
-      'ama_hearings_start_distribution_prior_to_goals',
-      'ama_direct_review_start_distribution_prior_to_goals',
-      'ama_evidence_submission_start_distribution_prior_to_goals',
+      DISTRIBUTION.ama_hearings_start_distribution_prior_to_goals,
+      DISTRIBUTION.ama_direct_review_start_distribution_prior_to_goals,
+      DISTRIBUTION.ama_evidence_submission_start_distribution_prior_to_goals,
     ];
     const docketTimeGoalLeverList = [
-      'ama_hearings_docket_time_goals',
-      'ama_direct_review_docket_time_goals',
-      'ama_evidence_submission_docket_time_goals',
+      DISTRIBUTION.ama_hearings_docket_time_goals,
+      DISTRIBUTION.ama_direct_review_docket_time_goals,
+      DISTRIBUTION.ama_evidence_submission_docket_time_goals,
     ];
 
     const docketLeverLists = {
@@ -71,16 +73,17 @@ class CaseflowDistribution extends React.PureComponent {
     let docketTimeGoalLevers = [];
 
     this.props.acd_levers.forEach((lever) => {
-      if (lever.data_type === 'number' && batchLeverList.includes(lever.item)) {
+      if (lever.data_type === ACD_LEVERS.number && batchLeverList.includes(lever.item)) {
         batchSizeLevers.push(lever.item);
       }
-      if (lever.data_type === 'radio' && affinityLeverList.includes(lever.item)) {
+      if (lever.data_type === ACD_LEVERS.radio && affinityLeverList.includes(lever.item)) {
         affinityLevers.push(lever.item);
       }
-      if (lever.data_type === 'combination' && docketLeverLists.docketDistributionPriorLeverList.includes(lever.item)) {
+      if (lever.data_type === (ACD_LEVERS.combination &&
+        docketLeverLists.docketDistributionPriorLeverList.includes(lever.item))) {
         docketDistributionPriorLevers.push(lever.item);
       }
-      if (lever.data_type === 'number' && docketLeverLists.docketTimeGoalLeverList.includes(lever.item)) {
+      if (lever.data_type === ACD_LEVERS.number && docketLeverLists.docketTimeGoalLeverList.includes(lever.item)) {
         docketTimeGoalLevers.push(lever.item);
       }
 

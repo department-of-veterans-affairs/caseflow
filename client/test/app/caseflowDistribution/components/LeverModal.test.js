@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { leverSaveButton } from './LeverModal';
+import { leverSaveButton } from 'app/caseflowDistribution/components/LeverModal';
 import { createStore } from '@reduxjs/toolkit';
-import COPY from '../../../COPY';
+import COPY from 'COPY';
 
 jest.mock('app/styles/caseDistribution/InteractableLevers.module.scss', () => '');
 describe('leverSaveButton Component', () => {

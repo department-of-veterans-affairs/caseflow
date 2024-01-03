@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
-import DocketTimeGoals from './DocketTimeGoals';
+import DocketTimeGoals from 'app/caseflowDistribution/components/DocketTimeGoals';
 import { levers } from 'test/data/adminCaseDistributionLevers';
 
 jest.mock('app/styles/caseDistribution/InteractableLevers.module.scss', () => '');

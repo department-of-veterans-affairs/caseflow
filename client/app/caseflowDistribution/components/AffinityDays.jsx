@@ -7,6 +7,7 @@ import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';
 import TextField from 'app/components/TextField';
 import COPY from '../../../COPY';
+import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import { ACTIONS } from '../reducers/Levers/leversActionTypes.js';
 import leverInputValidation from './LeverInputValidation';
 import { checkIfOtherChangesExist } from '../utils.js';
@@ -43,7 +44,7 @@ const AffinityDays = (props) => {
 
             const newValue = isNaN(event) ? event : individualLever.value;
 
-            if (validationResponse.statement === 'DUPLICATE') {
+            if (validationResponse.statement === ACD_LEVERS.DUPLICATE) {
 
               if (checkIfOtherChangesExist(lever)) {
                 op.value = event;
@@ -72,7 +73,7 @@ const AffinityDays = (props) => {
               }
 
             }
-            if (validationResponse.statement === 'SUCCESS') {
+            if (validationResponse.statement === ACD_LEVERS.SUCCESS) {
               op.value = event;
               op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
               setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
@@ -82,7 +83,7 @@ const AffinityDays = (props) => {
                 validChange: true
               });
             }
-            if (validationResponse.statement === 'FAIL') {
+            if (validationResponse.statement === ACD_LEVERS.FAIL) {
               op.value = event;
               op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
               setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
@@ -128,7 +129,7 @@ const AffinityDays = (props) => {
     const useAriaLabel = !lever.is_disabled;
     const tabIndex = lever.is_disabled ? -1 : null;
 
-    if (dataType === 'number') {
+    if (dataType === ACD_LEVERS.number) {
       return (
         <NumberField
           name={option.item}
@@ -172,7 +173,7 @@ const AffinityDays = (props) => {
           <div>
             <label className={lever.is_disabled ? styles.leverDisabled : styles.leverActive}
               htmlFor={`${lever.item}-${option.item}`}>
-              {`${option.text} ${option.data_type === 'number' ? `${option.value} ${option.unit}` : ''}`}
+              {`${option.text} ${option.data_type === ACD_LEVERS.number ? `${option.value} ${option.unit}` : ''}`}
             </label>
           </div>
         </div>
@@ -206,7 +207,7 @@ const AffinityDays = (props) => {
                   <div>
                     <input
                       checked={option.item === lever.value}
-                      type="radio"
+                      type={ACD_LEVERS.radio}
                       value={option.item}
                       disabled={lever.is_disabled}
                       id={`${lever.item}-${option.item}`}
@@ -218,7 +219,7 @@ const AffinityDays = (props) => {
                     </label>
                   </div>
                   <div>
-                    <div className={cx(styles.combinedRadioInput, (lever.value != option.item) ? styles.outlineRadioInput:'')}>
+                    <div className={cx(styles.combinedRadioInput, (lever.value != option.item) ? styles.outlineRadioInput : '')}>
                       {generateFields(option.data_type, option, lever, isMemberUser)}
                     </div>
                   </div>

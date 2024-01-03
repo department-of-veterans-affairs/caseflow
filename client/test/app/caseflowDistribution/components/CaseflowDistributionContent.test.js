@@ -1,9 +1,9 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import CaseflowDistributionContent from './CaseflowDistributionContent';
+import CaseflowDistributionContent from 'app/caseflowDistribution/components/CaseflowDistributionContent';
 import { formattedHistory, formattedLevers } from 'test/data/formattedCaseDistributionData';
 import { createStore } from 'redux';
-import leversReducer from '../reducers/Levers/leversReducer';
+import leversReducer from 'app/caseflowDistribution/reducers/Levers/leversReducer';
 
 jest.mock('app/styles/caseDistribution/InteractableLevers.module.scss', () => '');
 jest.mock('app/styles/caseDistribution/StaticLevers.module.scss', () => '');

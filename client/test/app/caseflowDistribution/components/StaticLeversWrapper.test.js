@@ -1,8 +1,8 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import StaticLeverWrapper from './StaticLeversWrapper';
+import StaticLeverWrapper from 'app/caseflowDistribution/components/StaticLeversWrapper';
 import { levers } from 'test/data/adminCaseDistributionLevers';
-import leversReducer from '../reducers/Levers/leversReducer';
+import leversReducer from 'app/caseflowDistribution/reducers/Levers/leversReducer';
 import { createStore } from 'redux';
 
 const preloadedState = {

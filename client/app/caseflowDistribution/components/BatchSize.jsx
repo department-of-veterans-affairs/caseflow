@@ -7,6 +7,7 @@ import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';
 import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';
+import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import { checkIfOtherChangesExist } from '../utils.js';
 
 const BatchSize = (props) => {
@@ -28,7 +29,7 @@ const BatchSize = (props) => {
 
         let validationResponse = leverInputValidation(lever, event, errorMessagesList, lever);
 
-        if (validationResponse.statement === 'DUPLICATE') {
+        if (validationResponse.statement === ACD_LEVERS.DUPLICATE) {
 
           if (checkIfOtherChangesExist(lever)) {
             lever.value = event;
@@ -54,7 +55,7 @@ const BatchSize = (props) => {
           }
 
         }
-        if (validationResponse.statement === 'SUCCESS') {
+        if (validationResponse.statement === ACD_LEVERS.SUCCESS) {
 
           lever.value = event;
           setErrorMessages(validationResponse.updatedMessages);
@@ -66,7 +67,7 @@ const BatchSize = (props) => {
 
           return lever;
         }
-        if (validationResponse.statement === 'FAIL') {
+        if (validationResponse.statement === ACD_LEVERS.FAIL) {
           lever.value = event;
           setErrorMessages(validationResponse.updatedMessages);
 
