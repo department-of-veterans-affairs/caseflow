@@ -5,23 +5,15 @@ class CaseDistributionLeversController < ApplicationController
   before_action :set_acd_group_organization, only: [:acd_lever_index, :update_levers_and_history]
 
   def acd_lever_index
+    # acd_levers_for_store should replace the acd_levers value
+    # once the lever list has been cleaned up and removed from the
+    # current frontend workflow.
     @acd_levers = CaseDistributionLever.all
+    @acd_levers_for_store = CaseDistributionLever.all.group_by(&:lever_group)
     @acd_history = CaseDistributionAuditLeverEntry.past_year
     @user_is_an_acd_admin = @acd_group_organization.user_is_admin?(current_user)
 
     render "index"
-  end
-
-  def acd_lever_temp_index
-    respond_to do |format|
-      format.html { return render "index" }
-      format.json do
-        render json: {
-          acdLevers: CaseDistributionLever.all.group_by(&:lever_group),
-          acdHistory: CaseDistributionAuditLeverEntry.past_year
-        }
-      end
-    end
   end
 
   def update_levers_and_history

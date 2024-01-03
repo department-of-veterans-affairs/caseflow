@@ -263,10 +263,6 @@ Rails.application.routes.draw do
 
   get 'case-distribution-controls', :to => 'case_distribution_levers#acd_lever_index'
 
-  # place holder for new work
-  get 'acd-controls-test-route', :to => 'case_distribution_levers#acd_lever_temp_index'
-
-
   resources :case_distribution_levers_tests, only: [] do
     collection do
       post :create_acd_group_org_singleton

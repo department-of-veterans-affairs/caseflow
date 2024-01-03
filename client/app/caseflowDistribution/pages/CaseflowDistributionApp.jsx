@@ -6,27 +6,13 @@ import { bindActionCreators } from 'redux';
 import {
   loadLevers
 } from '../reducers/Levers/leversActions';
-import ApiUtil from '../../util/ApiUtil';
 
 class CaseflowDistributionApp extends React.PureComponent {
 
-  // load the lever and history info from database
-  // the GET request can be moved into an action if needed
   componentDidMount() {
-    // use ApiUtil to get the JSON info from our route
-    ApiUtil.get('/acd-controls-test-route?json').then((response) => {
-      // unpack the returned response
-      const returnedObject = response.body;
-      const acdLevers = returnedObject.acdLevers;
-      const acdHistory = returnedObject.acdHistory;
-
-      // load lever and history into redux store using actions
-      this.props.loadLevers(acdLevers);
-      // load initial history action goes here
-    }).
-      catch((err) => {
-        console.error(new Error(`Problem with GET /acd-controls-test-route?json ${err}`));
-      });
+    // load lever and history into redux store using actions
+    this.props.loadLevers(this.props.acdLeversForStore);
+    // load initial history action goes here
   }
 
   render() {
@@ -57,7 +43,8 @@ CaseflowDistributionApp.propTypes = {
   leverStore: PropTypes.any,
   sectionTitles: PropTypes.array,
   loadLevers: PropTypes.func,
-  loadedLevers: PropTypes.object
+  loadedLevers: PropTypes.object,
+  acdLeversForStore: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({
@@ -68,7 +55,7 @@ const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     loadLevers
   }, dispatch)
-)
+);
 
 export default connect(
   mapStateToProps,
