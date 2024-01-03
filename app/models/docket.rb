@@ -191,7 +191,7 @@ class Docket
     end
 
     def cavc_affinity_days
-      cavc_affinity_days_lever = CaseDistributionLever.find_integer_lever('cavc_affinity_days')
+      cavc_affinity_days_lever = CaseDistributionLever.find_integer_lever(Constants.DISTRIBUTION.cavc_affinity_days)
     end
 
     def with_original_appeal_and_judge_task

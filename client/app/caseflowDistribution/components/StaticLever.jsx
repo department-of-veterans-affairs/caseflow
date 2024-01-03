@@ -1,17 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styles from 'app/styles/caseDistribution/StaticLevers.module.scss';
+import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 
 const StaticLever = ({ lever }) => {
   const renderValue = () => {
     switch (lever.data_type) {
-    case 'boolean':
+    case ACD_LEVERS.boolean:
       return lever.value.toString();
-    case 'number':
+    case ACD_LEVERS.number:
       return `${lever.value} ${lever.unit}`;
-    case 'radio':
+    case ACD_LEVERS.radio:
       return lever.options.find((option) => option.value === lever.value)?.text;
-    case 'combination':
+    case ACD_LEVERS.combination:
       return `${lever.value} ${lever.unit}`;
     default:
       return null;
