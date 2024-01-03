@@ -55,8 +55,6 @@ const leversReducer = (state = initialState, action = {}) => {
 };
 
 export const formatLeverHistory = (lever_history_list) => {
-  console.log("LOOK HERE");
-  console.log(lever_history_list);
   let formatted_lever_history = [];
 
   lever_history_list.forEach((lever_history_entry) => {
