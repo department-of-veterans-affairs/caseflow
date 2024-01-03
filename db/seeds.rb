@@ -61,6 +61,7 @@ class SeedDB
     call_and_log_seed_step Seeds::PriorityDistributions
     call_and_log_seed_step Seeds::CaseDitributionTestData
     call_and_log_seed_step Seeds::TestCaseData
+    call_and_log_seed_step Seeds::CaseDistributionAuditLeverEntries
     # End of Case Distribution Seed Data
     call_and_log_seed_step Seeds::Notifications
     call_and_log_seed_step Seeds::CavcDashboardData
