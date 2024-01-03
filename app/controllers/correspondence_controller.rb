@@ -22,7 +22,7 @@ class CorrespondenceController < ApplicationController
 
   def current_step
     intake = CorrespondenceIntake.find_by(user: current_user, correspondence: current_correspondence) ||
-      CorrespondenceIntake.new(user: current_user, correspondence: current_correspondence)
+             CorrespondenceIntake.new(user: current_user, correspondence: current_correspondence)
 
     intake.update(
       current_step: params[:current_step],
@@ -32,9 +32,9 @@ class CorrespondenceController < ApplicationController
     if intake.valid?
       intake.save!
 
-      render json: {}, status: :ok and return
+      render(json: {}, status: :ok) && return
     else
-      render json: intake.errors.full_messages, status: :unprocessable_entity and return
+      render(json: intake.errors.full_messages, status: :unprocessable_entity) && return
     end
   end
 
@@ -51,6 +51,7 @@ class CorrespondenceController < ApplicationController
     render "correspondence/review_package"
   end
 
+  # rubocop:disable Metrics/MethodLength
   def intake_update
     tasks = Task.where("appeal_id = ? and appeal_type = ?", correspondence.id, "Correspondence")
     begin
@@ -63,16 +64,18 @@ class CorrespondenceController < ApplicationController
         task.status = "cancelled"
         task.save
       end
-      if correspondence_intake_processor.upload_documents_to_claim_evidence(correspondence, current_user)
+      if upload_documents_to_claim_evidence
         render json: { correspondence: correspondence }
       else
-        render json: {}, status: bad_request
+        render json: {}, status: :bad_request
       end
     rescue StandardError => error
       Rails.logger.error(error.to_s)
-      render json: {}, status: bad_request
+      Raven.capture_exception(error)
+      render json: {}, status: :bad_request
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def veteran
     render json: { veteran_id: veteran_by_correspondence&.id, file_number: veteran_by_correspondence&.file_number }
@@ -100,7 +103,8 @@ class CorrespondenceController < ApplicationController
       user_can_edit_vador: MailTeamSupervisor.singleton.user_has_access?(current_user),
       correspondence_documents: corres_docs.map do |doc|
         WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
-      end
+      end,
+      efolder_upload_failed_before: EfolderUploadFailedTask.where(appeal_id: correspondence.id, type: "EfolderUploadFailedTask")
     }
     render({ json: response_json }, status: :ok)
   end
@@ -113,6 +117,12 @@ class CorrespondenceController < ApplicationController
         updated_by_id: RequestStore.store[:current_user].id
       )
     )
+      correspondence.tasks.map do |task|
+        if task.type == "ReviewPackageTask"
+          task.status = "in_progress"
+          task.save
+        end
+      end
       render json: { status: :ok }
     else
       render json: { error: "Please enter a valid Veteran ID" }, status: :unprocessable_entity
@@ -124,6 +134,12 @@ class CorrespondenceController < ApplicationController
       va_date_of_receipt: params["VADORDate"].in_time_zone,
       package_document_type_id: params["packageDocument"]["value"].to_i
     )
+    correspondence.tasks.map do |task|
+      if task.type == "ReviewPackageTask"
+        task.status = "in_progress"
+        task.save
+      end
+    end
     render json: { status: 200, correspondence: correspondence }
   end
 
@@ -273,5 +289,40 @@ class CorrespondenceController < ApplicationController
       correspondenceUuid: correspondence.uuid,
       packageDocumentType: correspondence.correspondence_type_id
     }
+  end
+
+  def upload_documents_to_claim_evidence
+    if Rails.env.development? || Rails.env.demo? || Rails.env.test?
+      create_efolder_upload_failed_task
+      true
+    else
+      begin
+        correspondence.correspondence_documents.all.each do |doc|
+          ExternalApi::ClaimEvidenceService.upload_document(
+            doc.pdf_location,
+            veteran_by_correspondence.file_number,
+            doc.claim_evidence_upload_json
+          )
+        end
+        true
+      rescue StandardError => error
+        Rails.logger.error(error.to_s)
+        create_efolder_upload_failed_task
+        false
+      end
+    end
+  end
+
+  def create_efolder_upload_failed_task
+    rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id, type: ReviewPackageTask.name)
+    euft = EfolderUploadFailedTask.find_or_create_by(
+      appeal_id: correspondence.id,
+      appeal_type: "Correspondence",
+      type: EfolderUploadFailedTask.name,
+      assigned_to: current_user,
+      parent_id: rpt.id
+    )
+
+    euft.update!(status: Constants.TASK_STATUSES.in_progress)
   end
 end

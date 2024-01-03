@@ -63,6 +63,13 @@ export const CorrespondenceReviewPackage = (props) => {
       setApiResponse(response.body.general_information);
       const data = response.body.general_information;
 
+      if (response.body.efolder_upload_failed_before.length > 0) {
+        setBannerInformation({
+          title: CORRESPONDENCE_DOC_UPLOAD_FAILED_HEADER,
+          message: CORRESPONDENCE_DOC_UPLOAD_FAILED_MESSAGE,
+          bannerType: 'error'
+        });
+      }
       setReviewDetails({
         veteran_name: data.veteran_name || {},
         dropdown_values: data.correspondence_types || [],
