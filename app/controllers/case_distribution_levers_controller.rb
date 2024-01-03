@@ -10,7 +10,9 @@ class CaseDistributionLeversController < ApplicationController
     # current frontend workflow.
     @acd_levers = CaseDistributionLever.all
     @acd_levers_for_store = CaseDistributionLever.all.group_by(&:lever_group)
-    @acd_history = CaseDistributionAuditLeverEntry.past_year
+    history = CaseDistributionAuditLeverEntry.includes(:user, :case_distribution_lever).past_year
+    @acd_history = CaseDistributionAuditLeverEntrySerializer.new(history)
+      .serializable_hash[:data].map{ |entry| entry[:attributes] }
     @user_is_an_acd_admin = @acd_group_organization.user_is_admin?(current_user)
 
     render "index"
@@ -86,6 +88,7 @@ class CaseDistributionLeversController < ApplicationController
           previous_value: entry_data["original_value"],
           update_value: entry_data["current_value"],
           created_at: entry_data["created_at"]
+
         )
       end
     rescue StandardError => error
