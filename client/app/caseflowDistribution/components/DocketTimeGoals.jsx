@@ -295,7 +295,7 @@ const DocketTimeGoals = (props) => {
 };
 
 DocketTimeGoals.propTypes = {
-  leverList: PropTypes.arrayOf(PropTypes.string).isRequired,
+  leverList: PropTypes.object.isRequired,
   leverStore: PropTypes.any,
   isAdmin: PropTypes.bool.isRequired,
   sectionTitles: PropTypes.array.isRequired

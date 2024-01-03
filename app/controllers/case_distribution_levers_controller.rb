@@ -6,7 +6,9 @@ class CaseDistributionLeversController < ApplicationController
 
   def acd_lever_index
     @acd_levers = CaseDistributionLever.all
-    @acd_history = CaseDistributionAuditLeverEntry.past_year
+    history = CaseDistributionAuditLeverEntry.includes(:user, :case_distribution_lever).past_year
+    @acd_history = CaseDistributionAuditLeverEntrySerializer.new(history)
+      .serializable_hash[:data].map{ |entry| entry[:attributes] }
     @user_is_an_acd_admin = @acd_group_organization.user_is_admin?(current_user)
 
     render "index"

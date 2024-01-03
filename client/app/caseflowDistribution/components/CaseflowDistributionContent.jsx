@@ -67,7 +67,7 @@ const CaseflowDistributionContent = ({
 };
 
 CaseflowDistributionContent.propTypes = {
-  levers: PropTypes.array.isRequired,
+  levers: PropTypes.object.isRequired,
   saveChanges: PropTypes.func.isRequired,
   formattedHistory: PropTypes.array.isRequired,
   isAdmin: PropTypes.bool.isRequired,

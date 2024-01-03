@@ -11,53 +11,53 @@ export const initialState = {
 
 const leversReducer = (state = initialState, action = {}) => {
   switch (action.type) {
-    case Constants.FORMAT_LEVER_HISTORY:
-      return {
-        ...state,
-        formatted_history: formatLeverHistory(action.history)
-      }
-    case Constants.UPDATE_LEVER_VALUE:
-      const updatedLevers = updateLevers(state.levers, action.updated_lever, action.hasValueChanged);
-      const changesOccurred = JSON.stringify(updatedLevers) !== JSON.stringify(state.initial_levers)
-      return {
-        ...state,
-        levers: updatedLevers,
-        changesOccurred: action.validChange,
-        saveChangesActivated: !changesOccurred
-      }
-    case Constants.SAVE_LEVERS:
-      return {
-        ...state,
-        initial_levers: state.levers,
-        saveChangesActivated: action.saveChangesActivated,
-        changesOccurred: false
-      }
-    case Constants.REVERT_LEVERS:
-      return {
-        ...state,
-        levers: state.initial_levers
-      }
-    case Constants.SHOW_SUCCESS_BANNER:
-      return {
-        ...state,
-        showSuccessBanner: true
-      }
-    case Constants.HIDE_SUCCESS_BANNER:
-      return {
-        ...state,
-        showSuccessBanner: false
-      }
+  case Constants.FORMAT_LEVER_HISTORY:
+    return {
+      ...state,
+      formatted_history: formatLeverHistory(action.history)
+    };
+  case Constants.UPDATE_LEVER_VALUE:
+    const updatedLevers = updateLevers(state.levers, action.updated_lever, action.hasValueChanged);
+    const changesOccurred = JSON.stringify(updatedLevers) !== JSON.stringify(state.initial_levers);
 
-    default:
-      return state
+    return {
+      ...state,
+      levers: updatedLevers,
+      changesOccurred: action.validChange,
+      saveChangesActivated: !changesOccurred
+    };
+  case Constants.SAVE_LEVERS:
+    return {
+      ...state,
+      initial_levers: state.levers,
+      saveChangesActivated: action.saveChangesActivated,
+      changesOccurred: false
+    };
+  case Constants.REVERT_LEVERS:
+    return {
+      ...state,
+      levers: state.initial_levers
+    };
+  case Constants.SHOW_SUCCESS_BANNER:
+    return {
+      ...state,
+      showSuccessBanner: true
+    };
+  case Constants.HIDE_SUCCESS_BANNER:
+    return {
+      ...state,
+      showSuccessBanner: false
+    };
+
+  default:
+    return state;
   }
-}
+};
 
 export const formatLeverHistory = (lever_history_list) => {
-  console.log(lever_history_list)
-  let formatted_lever_history = []
+  let formatted_lever_history = [];
 
-  lever_history_list.forEach( function (lever_history_entry) {
+  lever_history_list.forEach((lever_history_entry) => {
 
     formatted_lever_history.push(
       {
@@ -67,14 +67,14 @@ export const formatLeverHistory = (lever_history_list) => {
         original_value: lever_history_entry.original_value,
         current_value: lever_history_entry.current_value
       }
-    )
+    );
   });
 
   return formatted_lever_history;
 };
 
 export const updateLevers = (current_levers, updated_lever, hasValueChanged) => {
-  const leverIndex = current_levers.findIndex((lever => lever.item == updated_lever.item));
+  const leverIndex = current_levers.findIndex((lever) => lever.item === updated_lever.item);
 
   if (leverIndex !== -1) {
 
@@ -86,10 +86,10 @@ export const updateLevers = (current_levers, updated_lever, hasValueChanged) => 
       hasValueChanged
     };
 
-    return updatedLevers
+    return updatedLevers;
   }
 
-  return current_levers
+  return current_levers;
 };
 
 export default leversReducer;
