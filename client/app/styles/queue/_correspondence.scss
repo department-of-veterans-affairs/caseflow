@@ -95,6 +95,72 @@
   }
 }
 
+//Intake Form Styling
+.corr {
+  color: $color-black;
+  padding: 3rem 4rem;
+
+  p {
+    color: $color-black;
+  }
+
+  h1 {
+    text-align: left;
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    margin-top: 30px;
+    margin-bottom: 20px;
+  }
+
+  button {
+    display: inline-block;
+    margin-top: 30px;
+    margin-right: 10px;
+    padding-right: 0;
+  }
+
+  .corr-icon {
+    position: absolute;
+}
+
+  .corr-sectionlink {
+    margin-left: 20px;
+    margin-right: 10px;
+}
+
+  .corr-flex {
+    display: flex;
+  }
+
+  .corr-autoleft {
+    margin-left: auto;
+}
+
+// Alternate Borderless (no bottom border)
+  .corr-table-borderless {
+    background-color: $caseflow-background;
+
+    width: 100%;
+    margin-bottom: 0;
+    margin-top: 0;
+
+    th,
+    td {
+      border: 0;
+      background-color: $caseflow-background;
+      padding-top: 2rem;
+      padding-bottom: 0;
+    }
+
+    td {
+      margin: 2px;
+      padding-top: 0;
+      padding-bottom: 25px;
+      }
+  }
+}
 .correspondence-doctype-edit-dropdown .cf-select .cf-select__control {
   max-width: 43rem;
 }
