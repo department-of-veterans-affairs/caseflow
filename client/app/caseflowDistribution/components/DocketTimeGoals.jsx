@@ -29,15 +29,6 @@ const DocketTimeGoals = (props) => {
   const [docketTimeGoalLevers, setTimeGoalLever] = useState(storeTimeLevers);
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
 
-  useEffect(() => {
-    if (docketDistributionLevers === undefined) {
-      setDistributionLever(storeDistributionLevers);
-    }
-    if (docketTimeGoalLevers === undefined) {
-      setTimeGoalLever(storeTimeLevers);
-    }
-  });
-
   const updateLever = (index, leverType) => (event) => {
     if (leverType === 'DistributionPrior') {
 

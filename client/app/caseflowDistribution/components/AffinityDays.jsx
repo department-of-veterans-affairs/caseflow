@@ -30,11 +30,6 @@ const AffinityDays = (props) => {
   const storeLevers = useSelector((state) => state.caseDistributionLevers.loadedLevers.affinity);
   const [affinityLevers, setAffinityLevers] = useState(filteredLevers);
 
-  useEffect(() => {
-    if (affinityLevers === undefined) {
-      setAffinityLevers(storeLevers);
-    }
-  });
 
   const updatedLever = (lever, option) => (event) => {
     const levers = affinityLevers.map((individualLever) => {
