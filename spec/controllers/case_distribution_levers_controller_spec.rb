@@ -23,27 +23,21 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
 
   let!(:audit_lever_entry1) {create(:case_distribution_audit_lever_entry,
     user: lever_user,
-    user_name: "john smith",
     created_at: "2023-07-01 10:10:01",
-    title: 'Lever 1',
     previous_value: 10,
     update_value: 42,
     case_distribution_lever: lever2
   )}
   let!(:audit_lever_entry2) {create(:case_distribution_audit_lever_entry,
     user: lever_user,
-    user_name: "john smith",
     created_at: "2023-07-01 10:11:01",
-    title: 'Lever 1',
     previous_value: 42,
     update_value: 55,
     case_distribution_lever: lever2
   )}
   let!(:old_audit_lever_entry) {create(:case_distribution_audit_lever_entry,
     user: lever_user,
-    user_name: "john smith",
     created_at: "2020-07-01 10:11:01",
-    title: 'Lever 1',
     previous_value: 42,
     update_value: 55,
     case_distribution_lever: lever2
