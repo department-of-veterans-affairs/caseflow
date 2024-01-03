@@ -21,7 +21,7 @@ const InteractableLeverWrapper = ({ levers, leverStore, isAdmin, sectionTitles }
 };
 
 InteractableLeverWrapper.propTypes = {
-  levers: PropTypes.array.isRequired,
+  levers: PropTypes.object.isRequired,
   leverStore: PropTypes.any,
   isAdmin: PropTypes.bool,
   sectionTitles: PropTypes.array.isRequired

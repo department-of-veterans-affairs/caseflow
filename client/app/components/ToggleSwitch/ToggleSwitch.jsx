@@ -44,7 +44,7 @@ ToggleSwitch.defaultProps = {
 
 ToggleSwitch.propTypes = {
   selected: PropTypes.bool.isRequired,
-  toggleSelected: PropTypes.func.isRequired,
+  toggleSelected: PropTypes.func,
   id: PropTypes.string,
   name: PropTypes.string,
   optionLabels: PropTypes.array,
