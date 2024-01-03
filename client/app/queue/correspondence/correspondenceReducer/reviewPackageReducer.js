@@ -5,7 +5,8 @@ export const initialState = {
   correspondence: {},
   correspondenceDocuments: [],
   packageDocumentType: {},
-  veteranInformation: {}
+  veteranInformation: {},
+  lastAction: {}
 };
 
 export const reviewPackageReducer = (state = initialState, action = {}) => {
@@ -65,6 +66,15 @@ export const reviewPackageReducer = (state = initialState, action = {}) => {
           document_title: {
             $set: action.payload.newName.label
           }
+        }
+      }
+    });
+
+  case ACTIONS.REMOVE_PACKAGE_ACTION:
+    return update(state, {
+      lastAction: {
+        action_type: {
+          $set: action.payload.currentAction
         }
       }
     });

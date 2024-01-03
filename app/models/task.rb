@@ -180,6 +180,8 @@ class Task < CaseflowRecord
     end
 
     def verify_user_can_create!(user, parent)
+      return true if parent.appeal_type == Correspondence.name && MailTeam.singleton.user_has_access?(user)
+
       can_create = parent&.available_actions(user)&.map do |action|
         parent.build_action_hash(action, user)
       end&.any? do |action|
@@ -187,11 +189,15 @@ class Task < CaseflowRecord
       end
 
       if !parent&.actions_allowable?(user) || !can_create
-        user_description = user ? "User #{user.id}" : "nil User"
-        parent_description = parent ? " from #{parent.class.name} #{parent.id}" : ""
-        message = "#{user_description} cannot assign #{name}#{parent_description}."
-        fail Caseflow::Error::ActionForbiddenError, message: message
+        fail Caseflow::Error::ActionForbiddenError, message: user_can_create_error_message(user, parent)
       end
+    end
+
+    def user_can_create_error_message(user, parent)
+      user_description = user.present? ? "User #{user.id}" : "nil User"
+      parent_description = parent.present? ? "from #{parent.class.name} #{parent.id}" : ""
+
+      "#{user_description} cannot assign #{name} #{parent_description}."
     end
 
     def child_task_assignee(_parent, params)

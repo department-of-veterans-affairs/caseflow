@@ -208,11 +208,19 @@ def create_veteran(options = {})
   @participant_id += 1
   params = {
     file_number: format("%<n>09d", n: @file_number),
-    participant_id: format("%<n>09d", n: @participant_id)
+    participant_id: format("%<n>09d", n: @participant_id),
+    ssn: Generators::Random.unique_ssn
   }
-  veteran = FactoryBot.create(:veteran, params.merge(options))
+  veteran = Generators::Veteran.build(params.merge(options))
+  veteran.save!
+  veteran.update!(params)
   5.times do
-    FactoryBot.create(:appeal, veteran_file_number: veteran.file_number)
+    Appeal.create!(
+      veteran_file_number: veteran.file_number,
+      receipt_date: Time.zone.now,
+      established_at: Time.zone.now,
+      docket_type: Constants.AMA_DOCKETS.evidence_submission
+    )
   end
   veteran
 end
@@ -430,25 +438,32 @@ def create_correspondence_veteran(options = {})
   @participant_id += 1
   params = {
     file_number: format("%<n>09d", n: @file_number),
-    participant_id: format("%<n>09d", n: @participant_id)
+    participant_id: format("%<n>09d", n: @participant_id),
+    ssn: Generators::Random.unique_ssn
   }
-  FactoryBot.create(:veteran, params.merge(options))
+  veteran = Generators::Veteran.build(params.merge(options))
+  veteran.save!
+  veteran.update!(params)
+  veteran
 end
 
 def create_multi_correspondences
   veteran = create_correspondence_veteran(first_name: "Adam", last_name: "West")
   5.times do
-    appeal = FactoryBot.create(
-      :appeal,
-      veteran_file_number: veteran.file_number
+    appeal = Appeal.create!(
+      veteran_file_number: veteran.file_number,
+      receipt_date: Time.zone.now,
+      established_at: Time.zone.now,
+      docket_type: Constants.AMA_DOCKETS.evidence_submission
     )
     InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
   end
   5.times do
-    appeal = FactoryBot.create(
-      :appeal,
+    appeal = Appeal.create!(
       veteran_file_number: veteran.file_number,
-      docket_type: Constants.AMA_DOCKETS.direct_review
+      receipt_date: Time.zone.now,
+      established_at: Time.zone.now,
+      docket_type: Constants.AMA_DOCKETS.evidence_submission
     )
     InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
   end
@@ -479,17 +494,20 @@ def create_multi_correspondences
 
   veteran = create_correspondence_veteran(first_name: "Michael", last_name: "Keaton")
   2.times do
-    appeal = FactoryBot.create(
-      :appeal,
-      veteran_file_number: veteran.file_number
+    appeal = Appeal.create!(
+      veteran_file_number: veteran.file_number,
+      receipt_date: Time.zone.now,
+      established_at: Time.zone.now,
+      docket_type: Constants.AMA_DOCKETS.evidence_submission
     )
     InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
   end
   5.times do
-    appeal = FactoryBot.create(
-      :appeal,
+    appeal = Appeal.create!(
       veteran_file_number: veteran.file_number,
-      docket_type: Constants.AMA_DOCKETS.direct_review
+      receipt_date: Time.zone.now,
+      established_at: Time.zone.now,
+      docket_type: Constants.AMA_DOCKETS.evidence_submission
     )
     InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
   end
@@ -520,17 +538,20 @@ def create_multi_correspondences
 
   veteran = create_correspondence_veteran(first_name: "Christian", last_name: "Bale")
   1.times do
-    appeal = FactoryBot.create(
-      :appeal,
-      veteran_file_number: veteran.file_number
+    appeal = Appeal.create!(
+      veteran_file_number: veteran.file_number,
+      receipt_date: Time.zone.now,
+      established_at: Time.zone.now,
+      docket_type: Constants.AMA_DOCKETS.evidence_submission
     )
     InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
   end
   10.times do
-    appeal = FactoryBot.create(
-      :appeal,
+    appeal = Appeal.create!(
       veteran_file_number: veteran.file_number,
-      docket_type: Constants.AMA_DOCKETS.direct_review
+      receipt_date: Time.zone.now,
+      established_at: Time.zone.now,
+      docket_type: Constants.AMA_DOCKETS.evidence_submission
     )
     InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
   end

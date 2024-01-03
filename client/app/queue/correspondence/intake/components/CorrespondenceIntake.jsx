@@ -185,7 +185,7 @@ CorrespondenceIntake.propTypes = {
   correspondences: PropTypes.array,
   unrelatedTasks: PropTypes.arrayOf(Object),
   setUnrelatedTasks: PropTypes.func,
-  mailTasks: PropTypes.objectOf(PropTypes.bool),
+  mailTasks: PropTypes.arrayOf(PropTypes.string),
   autoTexts: PropTypes.arrayOf(PropTypes.string)
 };
 
