@@ -7,6 +7,8 @@ RSpec.feature("The Correspondence Review Package page") do
   let(:correspondence) { create(:correspondence, :with_single_doc, veteran_id: veteran.id, package_document_type_id: package_document_type.id) }
   let(:mail_team_supervisor_user) { create(:user, roles: ["Mail Intake"]) }
   let(:mail_team_supervisor_org) { MailTeamSupervisor.singleton }
+  let(:mail_team_user) { create(:user) }
+  let(:mail_team_org) { MailTeam.singleton }
 
   context "Review package feature toggle" do
     before :each do
@@ -15,10 +17,10 @@ RSpec.feature("The Correspondence Review Package page") do
       @correspondence_uuid = "123456789"
     end
 
-    it "routes user to /unauthorized if the feature toggle is disabled" do
+    it "routes user to /under_construction if the feature toggle is disabled" do
       FeatureToggle.disable!(:correspondence_queue)
       visit "/queue/correspondence/#{correspondence.uuid}/review_package"
-      expect(page).to have_current_path("/unauthorized")
+      expect(page).to have_current_path("/under_construction")
     end
 
     it "routes to intake if feature toggle is enabled" do
@@ -97,6 +99,7 @@ RSpec.feature("The Correspondence Review Package page") do
         radio_choices = page.all(".cf-form-radio-option > label")
         expect(radio_choices[0]).to have_content("Approve request")
         expect(radio_choices[1]).to have_content("Reject request")
+        expect(page).to have_content(COPY::CORRRESPONDENCE_TEXT_REMOVE_PACKAGE)
         expect(page).to have_button("Cancel")
         expect(page).to have_button("Confirm", disabled: true)
         expect(page).not_to have_field("Provide a reason for rejection")
@@ -106,6 +109,7 @@ RSpec.feature("The Correspondence Review Package page") do
         expect(page).to have_button("Review removal request")
         click_button "Review removal request"
         page.all(".cf-form-radio-option > label")[0].click
+        expect(page).to have_content(COPY::CORRRESPONDENCE_TEXT_REMOVE_PACKAGE)
       end
 
       it "remove Package" do
@@ -167,6 +171,30 @@ RSpec.feature("The Correspondence Review Package page") do
       expect(page).to have_content("Associate with prior Mail")
       expect(page).to have_content("Yes")
       expect(page).to have_content("No")
+    end
+  end
+
+  context "Review package - check on ReviewPackageTask status" do
+    let(:non_10182_package_type) { PackageDocumentType.create(id: 1, active: true, name: "0304") }
+    let(:correspondence) { create(:correspondence, :with_single_doc, veteran_id: veteran.id, package_document_type_id: non_10182_package_type.id) }
+
+    before do
+      FeatureToggle.enable!(:correspondence_queue)
+      mail_team_supervisor_org.add_user(mail_team_supervisor_user)
+      User.authenticate!(user: mail_team_supervisor_user)
+      visit "/queue/correspondence/#{correspondence.uuid}/review_package"
+    end
+
+    it "before editing the review package general details" do
+      expect(correspondence.tasks.find_by_type("ReviewPackageTask").status).to eq("unassigned")
+    end
+
+    it "after editing the review package general details" do
+      fill_in "Notes", with: " Updated"
+      expect(page).to have_button("Save changes", disabled: false)
+      click_button "Save changes"
+      sleep 1
+      expect(correspondence.tasks.find_by_type("ReviewPackageTask").status).to eq("in_progress")
     end
   end
 end

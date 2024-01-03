@@ -32,6 +32,10 @@ class Correspondence < CaseflowRecord
     Task.where(appeal_id: id, appeal_type: type)
   end
 
+  def root_task
+    Task.find_by(appeal_id: id, appeal_type: type, type: CorrespondenceRootTask.name)
+  end
+
   # Methods below are included to allow Correspondences to render in explain page
 
   # Alias for cmp_packet_number
