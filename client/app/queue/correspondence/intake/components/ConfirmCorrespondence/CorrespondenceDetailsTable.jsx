@@ -9,8 +9,8 @@ export const CorrespondenceDetailsTable = () => {
 
   return (
     <div>
-      <h2 className="cf-review-about-correspondence">About the Correspondence</h2>
-      <table className="usa-table-alternate-borderless">
+      <h2 className="corr-h2">About the Correspondence</h2>
+      <table className="corr-table-borderless">
         <tbody>
           <tr>
             <th><strong>Portal Entry Date</strong></th>
