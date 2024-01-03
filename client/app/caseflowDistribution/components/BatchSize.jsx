@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes, { object } from 'prop-types';
 import { ACTIONS } from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
 import { css } from 'glamor';
@@ -11,10 +12,6 @@ import { checkIfOtherChangesExist } from '../utils.js';
 const BatchSize = (props) => {
   const { leverList, leverStore, loadedLevers } = props;
 
-  const filteredLevers = leverList.map((item) => {
-    return leverStore.getState().levers.find((lever) => lever.item === item);
-  });
-
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
     '& .cf-form-int-input .input-container': { width: 'auto', display: 'inline-block', verticalAlign: 'middle' },
@@ -23,16 +20,29 @@ const BatchSize = (props) => {
   });
 
   const errorMessages = {};
-  const [batchSizeLevers, setLever] = useState(filteredLevers);
+  const storeLevers = useSelector((state) => state.caseDistributionLevers.loadedLevers.batch);
+
+  console.log(`storeLevers: ${JSON.stringify(storeLevers, null, 2)}`);
+  const [batchSizeLevers, setLever] = useState(useSelector((state) => state.caseDistributionLevers.loadedLevers.batch));
+
+  useEffect(() => {
+    if (batchSizeLevers === undefined) {
+      setLever(storeLevers);
+    }
+  });
+
+  // const [batchSizeLevers, setLever] = useState(loadedLevers);
+  console.log(`lever list: ${JSON.stringify(batchSizeLevers, null, 2)}`);
+
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
   const updateLever = (index) => (event) => {
 
     const levers = batchSizeLevers.map((lever, i) => {
       if (index === i) {
 
-        let initialLever = leverStore.getState().initial_levers.find((original) => original.item === lever.item);
+        // let initialLever = leverStore.getState().initial_levers.find((original) => original.item === lever.item);
 
-        let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
+        let validationResponse = leverInputValidation(lever, event, errorMessagesList, lever);
 
         if (validationResponse.statement === 'DUPLICATE') {
 
