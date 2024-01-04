@@ -11,24 +11,30 @@ import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import { checkIfOtherChangesExist } from '../utils.js';
 
 const BatchSize = (props) => {
+  const { isAdmin } = props;
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
     '& .cf-form-int-input .input-container': { width: 'auto', display: 'inline-block', verticalAlign: 'middle' },
     '& .cf-form-int-input label': { position: 'absolute', bottom: '8px', left: '75px' },
     '& .usa-input-error label': { bottom: '15px', left: '89px' }
   });
-  const isMemberUser = !props.isAdmin;
+
+  const initialLevers = useSelector((state) => state.caseDistributionLevers.initialLevers);
+  const storeLevers = useSelector((state) => state.caseDistributionLevers.loadedLevers.batch);
   const [errorMessagesList, setErrorMessages] = useState({});
-  const [batchSizeLevers, setBatchSizeLevers] = useState(useSelector(
-    (state) => state.caseDistributionLevers.loadedLevers.batch));
+  const [batchSizeLevers, setBatchSizeLevers] = useState(storeLevers);
+
+  useEffect(() => {
+    setBatchSizeLevers(storeLevers);
+  }, [storeLevers]);
 
   const updateLever = (index) => (event) => {
     const levers = batchSizeLevers.map((lever, i) => {
       if (index === i) {
 
-        // let initialLever = leverStore.getState().initial_levers.find((original) => original.item === lever.item);
+        let initialLever = initialLevers.find((original) => original.item === lever.item);
 
-        let validationResponse = leverInputValidation(lever, event, errorMessagesList, lever);
+        let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
 
         if (validationResponse.statement === ACD_LEVERS.DUPLICATE) {
 
@@ -102,11 +108,7 @@ const BatchSize = (props) => {
             <p className={lever.is_disabled ? styles.leverDisabled : styles.leverActive}>{lever.description}</p>
           </div>
           <div className={`${styles.leverRight} ${leverNumberDiv}`}>
-            {isMemberUser ?
-
-              <label className={lever.is_disabled ? styles.leverDisabled : styles.leverActive}>
-                {lever.value} {lever.unit}
-              </label> :
+            {isAdmin ?
               <NumberField
                 name={lever.item}
                 label={lever.unit}
@@ -116,7 +118,10 @@ const BatchSize = (props) => {
                 errorMessage={errorMessagesList[lever.item]}
                 onChange={updateLever(index, lever.item, lever.item)}
                 tabIndex={lever.is_disabled ? -1 : null}
-              />
+              /> :
+              <label className={lever.is_disabled ? styles.leverDisabled : styles.leverActive}>
+                {lever.value} {lever.unit}
+              </label>
             }
           </div>
         </div>
