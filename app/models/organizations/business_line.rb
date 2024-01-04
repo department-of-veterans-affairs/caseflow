@@ -188,6 +188,10 @@ class BusinessLine < Organization
               END) AS version_closed_by_id
           FROM
               versions
+          INNER JOIN tasks ON tasks.id = versions.item_id
+            AND versions.item_type = 'Task'
+            AND tasks.assigned_to_type = 'Organization'
+            AND tasks.assigned_to_id = '#{parent.id.to_i}'
           GROUP BY
               versions.item_id, versions.item_type
         )
