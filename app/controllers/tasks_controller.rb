@@ -113,11 +113,19 @@ class TasksController < ApplicationController
       tasks = task.update_from_params(update_params, current_user)
       tasks.each { |t| return invalid_record_error(t) unless t.valid? }
 
+      tasks_hash = json_tasks(tasks.uniq)
       if task.appeal.class != LegacyAppeal
         modified_task_contested_claim
       end
+      # currently alerts are only returned by ScheduleHearingTask
+      # and AssignHearingDispositionTask for virtual hearing related updates
+      # Start with any alerts on the current task, then find alerts on the tasks
+      # that resulted from the update
+      alerts = tasks.reduce(task.alerts) { |acc, t| acc + t.alerts }
 
-      render json: { tasks: tasks_hash_with_alerts(tasks) }
+      tasks_hash[:alerts] = alerts if alerts # does not add to hash if alerts == []
+
+      render json: { tasks: tasks_hash }
     end
   rescue Caseflow::Error::InvalidEmailError => error
     Raven.capture_exception(error, extra: { application: "hearings" })
@@ -259,43 +267,24 @@ class TasksController < ApplicationController
   end
 
   def process_contested_claim_final_task
-    select_opc = params["select_opc"]
     case task.status
     when "cancelled"
-      if select_opc == "resend_initial_notification_letter_final"
+      if params["select_opc"] == "resend_initial_notification_letter_final"
         send_initial_notification_letter
       end
     when "completed"
-      if select_opc == "resend_final_notification_letter"
+      if params["select_opc"] == "resend_final_notification_letter"
         send_final_notification_letter
-      elsif select_opc == "task_complete_contested_claim"
-        create_docket_switch_mail_task_from_params
+      elsif params["select_opc"] == "task_complete_contested_claim"
+        radio_opc = params["radio_value"].to_i
+        if radio_opc == 1
+          root_task_id = task.appeal.tasks.find_by(type: "RootTask").id
+          params[:parent_id] = root_task_id
+          # params[:instructions] = params[:task][:instructions]
+          DocketSwitchMailTask.create_from_params(params, current_user)
+        end
       end
     end
-  end
-
-  def create_docket_switch_mail_task_from_params
-    radio_opc = params["radio_value"].to_i
-    if radio_opc == 1
-      root_task_id = task.appeal.tasks.find_by(type: "RootTask").id
-      params[:parent_id] = root_task_id
-      DocketSwitchMailTask.create_from_params(params, current_user)
-    end
-  end
-
-  def build_alerts_hash_from_tasks(tasks)
-    # currently alerts are only returned by ScheduleHearingTask
-    # and AssignHearingDispositionTask for virtual hearing related updates
-    # Start with any alerts on the current task, then find alerts on the tasks
-    # that resulted from the update
-    tasks.reduce(task.alerts) { |acc, task| acc + task.alerts }
-  end
-
-  def tasks_hash_with_alerts(tasks)
-    tasks_hash = json_tasks(tasks.uniq)
-    alerts = build_alerts_hash_from_tasks(tasks)
-    tasks_hash[:alerts] = alerts if alerts # does not add to hash if alerts == []
-    tasks_hash
   end
 
   def render_update_errors(errors)
