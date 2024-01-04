@@ -113,6 +113,8 @@ class Task < CaseflowRecord
 
   scope :with_assignees, -> { joins(Task.joins_with_assignees_clause) }
 
+  scope :not_correspondence, -> { where.not(appeal_type: "Correspondence") }
+
   scope :with_assigners, -> { joins(Task.joins_with_assigners_clause) }
 
   scope :with_cached_appeals, -> { joins(Task.joins_with_cached_appeals_clause) }
