@@ -73,4 +73,3 @@ describe DtaScCreationFailedFixJob, :postgres do
     end
   end
 end
-
