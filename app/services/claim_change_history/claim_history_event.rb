@@ -60,7 +60,7 @@ class ClaimHistoryEvent
     def create_completed_disposition_event(change_data)
       if change_data["disposition"]
         event_hash = {
-          "event_date" => change_data["decision_created_at"] || change_data["request_issue_closed_at"],
+          "event_date" => change_data["decision_created_at"] || change_data["request_decision_created_at"],
           "event_user_name" => change_data["decision_user_name"],
           "user_facility" => change_data["decision_user_station_id"],
           "event_user_css_id" => change_data["decision_user_css_id"]
