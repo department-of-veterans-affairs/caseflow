@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { COLORS } from 'app/constants/AppConstants';
 import DocketTypeBadge from '../../../../../components/DocketTypeBadge';
 import { ExternalLinkIcon } from '../../../../../components/icons/ExternalLinkIcon';
+import { css } from 'glamor';
 import PropTypes from 'prop-types';
 
 const borderlessTd = {
@@ -131,16 +132,35 @@ const ConfirmTasksRelatedToAnAppeal = () => {
     );
   });
 
+  const renderingTask = () => {
+
+    if (taskIds.length === 0) {
+      const taskRenderer = <div {...css({
+        padding: '10px 0px',
+        paddingTop: '30px',
+        marginBottom: '150px',
+        fontWeight: 'bold'
+      })}> Correspondence is not related to an existing appeals </div>;
+
+      return taskRenderer;
+    }
+    const taskRenderer = <table className="usa-table-borderless">
+      <tbody>
+        {rowObjects}
+      </tbody>
+    </table>;
+
+    return taskRenderer;
+
+  };
+
   return (
     <>
       <div style={{ marginLeft: 'auto' }}>
         <div
           style={{ background: COLORS.GREY_BACKGROUND, padding: '2rem', paddingTop: '0.5rem', marginBottom: '2rem' }}>
-          <table className="usa-table-borderless">
-            <tbody>
-              {rowObjects}
-            </tbody>
-          </table>
+          {renderingTask()}
+
         </div>
       </div></>
   );

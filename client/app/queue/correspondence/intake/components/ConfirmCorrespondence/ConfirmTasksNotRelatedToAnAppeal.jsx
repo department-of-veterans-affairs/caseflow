@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { COLORS } from '../../../../../constants/AppConstants';
+import { css } from 'glamor';
 
 const styling = { backgroundColor: COLORS.GREY_BACKGROUND };
 
@@ -21,12 +22,28 @@ const ConfirmTasksNotRelatedToAnAppeal = () => {
     );
   });
 
+  const renderNonRelatedTask = () => {
+    if (tasks.length === 0) {
+      const rendererOfNonRelatedTask = <div {...css({
+        padding: '10px 0px',
+        marginBottom: '120px',
+        fontWeight: 'bold'
+      })}> </div>;
+
+      return rendererOfNonRelatedTask;
+    }
+    const rendererOfNonRelatedTask = rowObjects;
+
+    return rendererOfNonRelatedTask;
+
+  };
+
   return (
     <div>
       <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
       </div>
       <div
-        style={{ background: COLORS.GREY_BACKGROUND, padding: '2rem', paddingTop: '0.5rem' }}>
+        style={{ background: COLORS.GREY_BACKGROUND, padding: '2rem', paddingTop: '0.1rem' }}>
         <table className="usa-table-borderless">
           <thead>
             <tr>
@@ -35,7 +52,7 @@ const ConfirmTasksNotRelatedToAnAppeal = () => {
             </tr>
           </thead>
           <tbody>
-            {rowObjects}
+            {renderNonRelatedTask()}
           </tbody>
         </table>
       </div>

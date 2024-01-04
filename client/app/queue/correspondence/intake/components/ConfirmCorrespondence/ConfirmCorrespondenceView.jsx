@@ -29,6 +29,8 @@ export const ConfirmCorrespondenceView = (props) => {
 
   const checkedMailTasks = props.mailTasks;
   const relatedCorrespondences = useSelector((state) => state.intakeCorrespondence.relatedCorrespondences);
+  let correspondenceTable = null;
+  let mailTaskTable = null;
 
   // eslint-disable-next-line max-statements
   const getDocumentColumns = (correspondence) => {
@@ -121,8 +123,50 @@ export const ConfirmCorrespondenceView = (props) => {
     ];
   };
 
+  if (relatedCorrespondences.length === 0) {
+    correspondenceTable =
+    <div {...css({
+      padding: '10px 0px',
+      marginBottom: '150px',
+      fontWeight: 'bold'
+    })}> Correspondence is not related to prior mail </div>;
+  } else {
+
+    correspondenceTable = <Table
+      columns={getDocumentColumns}
+      // columnsToDisplay={15}
+      rowObjects={relatedCorrespondences}
+      styling={tableStyling}
+      bodyStyling={bodyStyling}
+    />;
+  }
+
+  if (checkedMailTasks.length === 0) {
+    mailTaskTable = <div {...css({
+      padding: '10px 0px',
+      marginBottom: '120px',
+      fontWeight: 'bold'
+    })}>  </div>;
+  } else {
+    mailTaskTable = checkedMailTasks.map((name, index) => (
+      <div
+        key={index}
+        {...css({
+          borderBottom: index === checkedMailTasks.length - 1 ? 'none' : '1px solid #d6d7d9',
+          padding: '10px 10px',
+          marginBottom: '10px',
+        })}
+      >
+        <span>{name}</span>
+      </div>
+    ));
+  }
+
   return (
-    <div className="gray-border corr">
+    <div className="gray-border corr" {...css({
+      paddingBottom: '20px',
+      marginBottom: '20px',
+    })}>
       <h1 className="corr-h1">Review and Confirm Correspondence</h1>
       <p style={{ fontSize: '.85em' }}>
         Review the details below to make sure the information is correct before submitting.
@@ -141,13 +185,7 @@ export const ConfirmCorrespondenceView = (props) => {
         </div>
         <div {...css({ backgroundColor: COLORS.GREY_BACKGROUND })}>
           <div {...css({ backgroundColor: COLORS.GREY_BACKGROUND, padding: '20px' })}>
-            <Table
-              columns={getDocumentColumns}
-              // columnsToDisplay={15}
-              rowObjects={relatedCorrespondences}
-              styling={tableStyling}
-              bodyStyling={bodyStyling}
-            />
+            {correspondenceTable}
           </div>
         </div>
       </div>
@@ -169,31 +207,10 @@ export const ConfirmCorrespondenceView = (props) => {
           })}>
             Completed Mail Tasks
           </div>
-          {checkedMailTasks.map((name, index) => (
-            <div
-              key={index}
-              {...css({
-                borderBottom: index === checkedMailTasks.length - 1 ? 'none' : '1px solid #d6d7d9',
-                padding: '10px 10px',
-                marginBottom: '10px',
-              })}
-            >
-              <span>{name}</span>
-            </div>
-          ))}
+          {mailTaskTable}
         </div>
       </div>
       <div>
-        <div className="corr-flex">
-          <h2 className="corr-h2">Tasks not related to an Appeal</h2>
-          <div className="corr-autoleft">
-            <Button className="corr-button" linkStyling onClick={() => props.goToStep(2)}>
-              <span className="corr-icon"><PencilIcon /></span>
-              <span className="corr-sectionlink">Edit Section</span>
-            </Button>
-          </div>
-        </div>
-        <ConfirmTasksNotRelatedToAnAppeal />
         <div className="corr-flex">
           <h2 className="corr-h2">Linked Appeals & New Tasks</h2>
           <div className="corr-autoleft">
@@ -205,6 +222,16 @@ export const ConfirmCorrespondenceView = (props) => {
         </div>
         <ConfirmTasksRelatedToAnAppeal />
 
+        <div className="corr-flex">
+          <h2 className="corr-h2">Tasks not related to an Appeal</h2>
+          <div className="corr-autoleft">
+            <Button className="corr-button" linkStyling onClick={() => props.goToStep(2)}>
+              <span className="corr-icon"><PencilIcon /></span>
+              <span className="corr-sectionlink">Edit Section</span>
+            </Button>
+          </div>
+        </div>
+        <ConfirmTasksNotRelatedToAnAppeal />
       </div>
     </div>
   );
