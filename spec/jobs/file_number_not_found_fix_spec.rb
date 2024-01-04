@@ -2,8 +2,8 @@
 
 require "helpers/file_number_not_found_fix"
 
-describe FileNumberNotFoundFix, :postgres do
-  it_behaves_like "a Master Scheduler serializable object", FileNumberNotFoundFix
+describe FileNumberNotFoundFixJob, :postgres do
+  it_behaves_like "a Master Scheduler serializable object", FileNumberNotFoundFixJob
   let!(:error_text) { "FILENUMBER does not exist" }
 
   before do
