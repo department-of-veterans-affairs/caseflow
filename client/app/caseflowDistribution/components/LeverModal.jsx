@@ -74,7 +74,7 @@ const updateLeverHistory = (leverStore) => {
 
   leverStore.dispatch({
     type: ACTIONS.FORMAT_LEVER_HISTORY,
-    history: GenerateLeverHistory(filteredLevers, filteredInitialLevers)
+    history: generateLeverHistory(filteredLevers, filteredInitialLevers)
   });
 };
 
