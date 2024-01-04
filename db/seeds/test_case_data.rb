@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "./helpers/seed_helpers"
+
 module Seeds
   class TestCaseData < Base
     include SeedHelpers

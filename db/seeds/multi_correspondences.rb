@@ -2,6 +2,8 @@
 
 # create correspondence seeds
 # :reek:InstanceVariableAssumption
+require_relative "./helpers/seed_helpers"
+
 module Seeds
   class MultiCorrespondences < Base
     include SeedHelpers

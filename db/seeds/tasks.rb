@@ -2,6 +2,9 @@
 
 # create tasks and their related appeals
 # to do: split this up more logically for legacy, AMA, etc.
+
+require_relative "./helpers/seed_helpers"
+
 module Seeds
   # rubocop:disable Metrics/PerceivedComplexity
   # rubocop:disable Metrics/CyclomaticComplexity

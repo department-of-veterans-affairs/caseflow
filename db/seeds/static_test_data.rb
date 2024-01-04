@@ -4,6 +4,8 @@
 # cases to other seed files changes the order in which data is created and therefore the ID values of data,
 # which can make regression testing difficult or change the ID values of known cases used in manual testing.
 
+require_relative "./helpers/seed_helpers"
+
 module Seeds
   class StaticTestCaseData < Base
     include SeedHelpers

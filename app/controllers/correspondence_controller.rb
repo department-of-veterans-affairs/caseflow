@@ -105,7 +105,10 @@ class CorrespondenceController < ApplicationController
       correspondence_documents: corres_docs.map do |doc|
         WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
       end,
-      efolder_upload_failed_before: EfolderUploadFailedTask.where(appeal_id: correspondence.id, type: "EfolderUploadFailedTask")
+      efolder_upload_failed_before: EfolderUploadFailedTask.where(
+        appeal_id: correspondence.id,
+        type: "EfolderUploadFailedTask"
+      )
     }
     render({ json: response_json }, status: :ok)
   end
@@ -232,12 +235,11 @@ class CorrespondenceController < ApplicationController
   end
 
   def verify_feature_toggle
-    if !FeatureToggle.enabled?(:correspondence_queue) && verify_correspondence_access()
+    if !FeatureToggle.enabled?(:correspondence_queue) && verify_correspondence_access
       redirect_to "/under_construction"
-    elsif !FeatureToggle.enabled?(:correspondence_queue) || !verify_correspondence_access()
+    elsif !FeatureToggle.enabled?(:correspondence_queue) || !verify_correspondence_access
       redirect_to "/unauthorized"
     end
-
   end
 
   def correspondence

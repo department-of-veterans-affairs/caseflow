@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+require_relative "./helpers/seed_helpers"
+
 module Seeds
   class CavcDashboardData < Base
     include SeedHelpers
