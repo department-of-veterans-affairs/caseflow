@@ -208,7 +208,7 @@ class SendNotificationJob < CaseflowJob
   #
   # Response: Updated Notification object
   def send_to_va_notify
-    send_va_notify_email if email_enabled?
+    send_va_notify_email if email_enabled
     send_va_notify_sms if sms_enabled
   end
 
