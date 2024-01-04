@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import RadioField from 'app/components/RadioField';
 import styles from 'app/styles/caseDistribution/ExclusionTable.module.scss';
 import COPY from '../../../COPY';
+import DISTRIBUTION from '../../../constants/DISTRIBUTION';
 
 const ExclusionTable = (props) => {
   let isMemberUser = !props.isAdmin;
@@ -23,13 +24,15 @@ const ExclusionTable = (props) => {
     <div className={styles.exclusionTableContainerStyling}>
       <table >
         <tbody>
-          <th className={styles.tableHeaderStyling}>{' '}</th>
-          <th className={styles.tableHeaderStyling}>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_LEGACY_APPEALS_HEADER}</th>
-          <th className={styles.tableHeaderStyling}>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_HEARINGS_HEADER}</th>
-          <th className={styles.tableHeaderStyling}>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_DIRECT_HEADER}</th>
-          <th className={styles.tableHeaderStyling}>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_EVIDENCE_HEADER}</th>
-        </tbody>
-        <tbody>
+          <tr>
+            <th className={styles.tableHeaderStyling}>{' '}</th>
+            <th className={styles.tableHeaderStyling}>
+              {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_LEGACY_APPEALS_HEADER}
+            </th>
+            <th className={styles.tableHeaderStyling}>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_HEARINGS_HEADER}</th>
+            <th className={styles.tableHeaderStyling}>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_DIRECT_HEADER}</th>
+            <th className={styles.tableHeaderStyling}>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_EVIDENCE_HEADER}</th>
+          </tr>
           <tr>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
               {isMemberUser ?
@@ -37,7 +40,7 @@ const ExclusionTable = (props) => {
                 <span>
                   <h4 className={styles.exclusionTableHeaderStyling}>All Non-priority</h4>
                   <ToggleSwitch
-                    id = "All Non-priority"
+                    id = {DISTRIBUTION.all_non_priority}
                     selected = {false}
                     disabled
                   />
@@ -100,7 +103,7 @@ const ExclusionTable = (props) => {
                 <span>
                   <h4 className={styles.exclusionTableHeaderStyling}>All Priority</h4>
                   <ToggleSwitch
-                    id = "All Priority"
+                    id = {DISTRIBUTION.all_priority}
                     selected = {false}
                     disabled
                   />

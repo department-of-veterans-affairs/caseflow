@@ -10,7 +10,7 @@ class CaseflowDistributionApp extends React.PureComponent {
         <div> {/* Wrapper*/}
           <CaseflowDistributionContent
             levers = {this.props.acd_levers}
-            saveChanges = {[]}
+            saveChanges = {() => {}}
             formattedHistory={this.props.acd_history}
             leverStore={this.props.leverStore}
             isAdmin = {this.props.user_is_an_acd_admin}
@@ -24,7 +24,7 @@ class CaseflowDistributionApp extends React.PureComponent {
 }
 
 CaseflowDistributionApp.propTypes = {
-  acd_levers: PropTypes.array,
+  acd_levers: PropTypes.object,
   acd_history: PropTypes.array,
   user_is_an_acd_admin: PropTypes.bool,
   leverStore: PropTypes.any,

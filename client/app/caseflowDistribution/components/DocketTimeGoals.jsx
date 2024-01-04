@@ -8,6 +8,7 @@ import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
 import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';
+import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import { checkIfOtherChangesExist } from '../utils.js';
 
 const DocketTimeGoals = (props) => {
@@ -44,7 +45,7 @@ const DocketTimeGoals = (props) => {
           let initialLever = leverStore.getState().initial_levers.find((original) => original.item === lever.item);
           let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
 
-          if (validationResponse.statement === 'DUPLICATE') {
+          if (validationResponse.statement === ACD_LEVERS.DUPLICATE) {
 
             if (checkIfOtherChangesExist(lever)) {
               lever.value = event;
@@ -70,7 +71,7 @@ const DocketTimeGoals = (props) => {
             }
 
           }
-          if (validationResponse.statement === 'SUCCESS') {
+          if (validationResponse.statement === ACD_LEVERS.SUCCESS) {
             lever.value = event;
             setErrorMessages(validationResponse.updatedMessages);
             leverStore.dispatch({
@@ -81,7 +82,7 @@ const DocketTimeGoals = (props) => {
 
             return lever;
           }
-          if (validationResponse.statement === 'FAIL') {
+          if (validationResponse.statement === ACD_LEVERS.FAIL) {
             lever.value = event;
             setErrorMessages(validationResponse.updatedMessages);
 
@@ -108,7 +109,7 @@ const DocketTimeGoals = (props) => {
 
           let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
 
-          if (validationResponse.statement === 'DUPLICATE') {
+          if (validationResponse.statement === ACD_LEVERS.DUPLICATE) {
 
             if (checkIfOtherChangesExist(lever)) {
               lever.value = event;
@@ -135,7 +136,7 @@ const DocketTimeGoals = (props) => {
 
           }
 
-          if (validationResponse.statement === 'SUCCESS') {
+          if (validationResponse.statement === ACD_LEVERS.SUCCESS) {
             lever.value = event;
             setErrorMessages(validationResponse.updatedMessages);
             leverStore.dispatch({
@@ -146,7 +147,7 @@ const DocketTimeGoals = (props) => {
 
             return lever;
           }
-          if (validationResponse.statement === 'FAIL') {
+          if (validationResponse.statement === ACD_LEVERS.FAIL) {
             lever.value = event;
             setErrorMessages(validationResponse.updatedMessages);
             leverStore.dispatch({
@@ -294,7 +295,7 @@ const DocketTimeGoals = (props) => {
 };
 
 DocketTimeGoals.propTypes = {
-  leverList: PropTypes.arrayOf(PropTypes.string).isRequired,
+  leverList: PropTypes.object.isRequired,
   leverStore: PropTypes.any,
   isAdmin: PropTypes.bool.isRequired,
   sectionTitles: PropTypes.array.isRequired

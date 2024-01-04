@@ -8,7 +8,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     item: "lever_1",
     title: "lever 1",
     description: "This is the first lever. It is a boolean with the default value of true. Therefore there should be a two radio buttons that display true and false as the example with true being the default option chosen. This lever is active so it should be in the active lever section",
-    data_type: "boolean",
+    data_type: Constants.ACD_LEVERS.boolean,
     value: true,
     unit: "",
     lever_group: "alternative_batch_size"
@@ -17,7 +17,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     item: "lever_2",
     title: "Lever 2",
     description: "This is the second lever. It is a number data type with the default value of 42. Therefore there should be a number input that displays 42 and 'days' as the unit. This lever is active so it should be in the active lever section",
-    data_type: "number",
+    data_type: Constants.ACD_LEVERS.number,
     value: 55,
     unit: "Days",
     lever_group: "alternative_batch_size"
@@ -25,27 +25,21 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
 
   let!(:audit_lever_entry1) {create(:case_distribution_audit_lever_entry,
     user: lever_user,
-    user_name: "john smith",
     created_at: "2023-07-01 10:10:01",
-    title: 'Lever 1',
     previous_value: 10,
     update_value: 42,
     case_distribution_lever: lever2
   )}
   let!(:audit_lever_entry2) {create(:case_distribution_audit_lever_entry,
     user: lever_user,
-    user_name: "john smith",
     created_at: "2023-07-01 10:11:01",
-    title: 'Lever 1',
     previous_value: 42,
     update_value: 55,
     case_distribution_lever: lever2
   )}
   let!(:old_audit_lever_entry) {create(:case_distribution_audit_lever_entry,
     user: lever_user,
-    user_name: "john smith",
     created_at: "2020-07-01 10:11:01",
-    title: 'Lever 1',
     previous_value: 42,
     update_value: 55,
     case_distribution_lever: lever2
