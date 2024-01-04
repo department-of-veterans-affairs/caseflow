@@ -58,16 +58,7 @@ RSpec.feature("The Correspondence Intake page") do
 
   context "intake form shell" do
     before :each do
-      FeatureToggle.enable!(:correspondence_queue)
-      veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
-      create(
-        :correspondence,
-        veteran_id: veteran.id,
-        uuid: SecureRandom.uuid,
-        va_date_of_receipt: Time.zone.local(2023, 1, 1)
-      )
-      @correspondence_uuid = Correspondence.first.uuid
-      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+      setup_and_visit_intake
     end
 
     it "the intake page exists" do
@@ -116,16 +107,7 @@ RSpec.feature("The Correspondence Intake page") do
 
   context "access 'Tasks not Related to an Appeals'" do
     before :each do
-      FeatureToggle.enable!(:correspondence_queue)
-      veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
-      create(
-        :correspondence,
-        veteran_id: veteran.id,
-        uuid: SecureRandom.uuid,
-        va_date_of_receipt: Time.zone.local(2023, 1, 1)
-      )
-      @correspondence_uuid = Correspondence.first.uuid
-      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+      setup_and_visit_intake
     end
 
     it "Paragraph text appears below the title" do

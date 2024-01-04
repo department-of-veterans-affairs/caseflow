@@ -111,4 +111,17 @@ module CorrespondenceHelpers
     visit "/queue/correspondence/#{Correspondence.first.uuid}/intake"
     click_button("Continue")
   end
+
+  def setup_and_visit_intake
+    FeatureToggle.enable!(:correspondence_queue)
+    veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
+    create(
+      :correspondence,
+      veteran_id: veteran.id,
+      uuid: SecureRandom.uuid,
+      va_date_of_receipt: Time.zone.local(2023, 1, 1)
+    )
+    @correspondence_uuid = Correspondence.first.uuid
+    visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+  end
 end
