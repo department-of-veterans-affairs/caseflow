@@ -6,19 +6,14 @@ import AffinityDays from './AffinityDays';
 import LeverButtonsWrapper from './LeverButtonsWrapper';
 import ExclusionTable from './ExclusionTable';
 
-const InteractableLeverWrapper = ({ levers, leverStore, isAdmin, sectionTitles, loadedLevers }) => {
+const InteractableLeverWrapper = ({ levers, leverStore, isAdmin, sectionTitles }) => {
 
   return (
     <div>
       <ExclusionTable isAdmin={isAdmin} />
       <BatchSize isAdmin={isAdmin} />
-      <AffinityDays
-        loadedLevers={loadedLevers.affinity}
-        leverList={levers.affinityLevers}
-        leverStore={leverStore} isAdmin={isAdmin} 
-      />
+      <AffinityDays leverList={levers.affinityLevers} leverStore={leverStore} isAdmin={isAdmin}/>
       <DocketTimeGoals
-        loadedLevers={loadedLevers.docket_time_goal}
         leverList={levers.docketLeversObject}
         leverStore={leverStore}
         isAdmin={isAdmin}

@@ -13,6 +13,7 @@ import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import { checkIfOtherChangesExist } from '../utils.js';
 
 const DocketTimeGoals = (props) => {
+  const { isAdmin, sectionTitles } = props;
 
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
@@ -174,7 +175,7 @@ const DocketTimeGoals = (props) => {
     setDistributionLever(levers);
   };
 
-  const generateToggleSwitch = (distributionPriorLever, index, isAdmin) => {
+  const generateToggleSwitch = (distributionPriorLever, index) => {
 
     let docketTimeGoalLever = '';
 
@@ -191,7 +192,7 @@ const DocketTimeGoals = (props) => {
         >
           <div className={cx(styles.leverLeft, styles.docketLeverLeft)}>
             <strong className={docketTimeGoalLever.is_disabled ? styles.leverDisabled : ''}>
-              {index < props.sectionTitles.length ? props.sectionTitles[index] : ''}
+              {index < sectionTitles.length ? sectionTitles[index] : ''}
             </strong>
           </div>
           <div className={`${styles.leverMiddle} ${leverNumberDiv}
@@ -238,7 +239,7 @@ const DocketTimeGoals = (props) => {
       >
         <div className={cx(styles.leverLeft, styles.docketLeverLeft)}>
           <strong className={docketTimeGoalLever.is_disabled ? styles.leverDisabled : ''}>
-            {index < props.sectionTitles.length ? props.sectionTitles[index] : ''}
+            {index < sectionTitles.length ? sectionTitles[index] : ''}
           </strong>
         </div>
         <div className={`${styles.leverMiddle} ${leverNumberDiv}`}>
@@ -277,9 +278,7 @@ const DocketTimeGoals = (props) => {
       </div>
 
       {docketDistributionLevers && docketDistributionLevers.map((distributionPriorLever, index) => (
-
-        props.isAdmin ? generateToggleSwitch(distributionPriorLever, index, true) :
-          generateToggleSwitch(distributionPriorLever, index, false)
+        generateToggleSwitch(distributionPriorLever, index)
       ))}
     </div>
 

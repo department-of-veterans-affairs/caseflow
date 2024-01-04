@@ -4,7 +4,7 @@ import StaticLever from './StaticLever';
 import styles from 'app/styles/caseDistribution/StaticLevers.module.scss';
 
 const StaticLeversWrapper = (props) => {
-  const { leverList, leverStore, loadedLevers } = props;
+  const { leverList, leverStore } = props;
 
   const orderedLeversList = leverList.map((item) => {
     return leverStore.getState().levers.find((lever) => lever.item === item);

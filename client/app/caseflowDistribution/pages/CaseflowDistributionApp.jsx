@@ -18,7 +18,6 @@ class CaseflowDistributionApp extends React.PureComponent {
       <div>
         <div> {/* Wrapper*/}
           <CaseflowDistributionContent
-            loadedLevers = {this.props.loadedLevers}
             levers = {this.props.acd_levers}
             saveChanges = {() => {}}
             formattedHistory={this.props.acd_history}
@@ -40,12 +39,11 @@ CaseflowDistributionApp.propTypes = {
   leverStore: PropTypes.any,
   sectionTitles: PropTypes.array,
   initialLoad: PropTypes.func,
-  loadedLevers: PropTypes.object,
   acdLeversForStore: PropTypes.object
 };
 
+// eslint-disable-next-line no-unused-vars
 const mapStateToProps = (state) => ({
-  loadedLevers: state.caseDistributionLevers.loadedLevers
 });
 
 const mapDispatchToProps = (dispatch) => (
