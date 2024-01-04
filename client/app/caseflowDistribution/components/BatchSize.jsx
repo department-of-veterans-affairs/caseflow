@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import PropTypes, { object } from 'prop-types';
+import { ACTIONS } from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
 import { css } from 'glamor';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';
@@ -10,12 +11,7 @@ import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import { checkIfOtherChangesExist } from '../utils.js';
 
 const BatchSize = (props) => {
-  const { leverList, leverStore } = props;
-
-  const filteredLevers = leverList.map((item) => {
-    return leverStore.getState().levers.find((lever) => lever.item === item);
-  });
-
+  const { isAdmin } = props;
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
     '& .cf-form-int-input .input-container': { width: 'auto', display: 'inline-block', verticalAlign: 'middle' },
@@ -23,15 +19,20 @@ const BatchSize = (props) => {
     '& .usa-input-error label': { bottom: '15px', left: '89px' }
   });
 
-  const errorMessages = {};
-  const [batchSizeLevers, setLever] = useState(filteredLevers);
-  const [errorMessagesList, setErrorMessages] = useState(errorMessages);
-  const updateLever = (index) => (event) => {
+  const initialLevers = useSelector((state) => state.caseDistributionLevers.initialLevers);
+  const storeLevers = useSelector((state) => state.caseDistributionLevers.loadedLevers.batch);
+  const [errorMessagesList, setErrorMessages] = useState({});
+  const [batchSizeLevers, setBatchSizeLevers] = useState(storeLevers);
 
+  useEffect(() => {
+    setBatchSizeLevers(storeLevers);
+  }, [storeLevers]);
+
+  const updateLever = (index) => (event) => {
     const levers = batchSizeLevers.map((lever, i) => {
       if (index === i) {
 
-        let initialLever = leverStore.getState().initial_levers.find((original) => original.item === lever.item);
+        let initialLever = initialLevers.find((original) => original.item === lever.item);
 
         let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
 
@@ -41,23 +42,23 @@ const BatchSize = (props) => {
             lever.value = event;
             setErrorMessages(validationResponse.updatedMessages);
 
-            leverStore.dispatch({
-              type: Constants.UPDATE_LEVER_VALUE,
-              updated_lever: { item: lever.item, value: event },
-              hasValueChanged: false,
-              validChange: true
-            });
+            // leverStore.dispatch({
+            //   type: ACTIONS.UPDATE_LEVER_VALUE,
+            //   updated_lever: { item: lever.item, value: event },
+            //   hasValueChanged: false,
+            //   validChange: true
+            // });
           } else {
 
             lever.value = event;
             setErrorMessages(validationResponse.updatedMessages);
 
-            leverStore.dispatch({
-              type: Constants.UPDATE_LEVER_VALUE,
-              updated_lever: { item: lever.item, value: event },
-              hasValueChanged: false,
-              validChange: false
-            });
+            // leverStore.dispatch({
+            //   type: ACTIONS.UPDATE_LEVER_VALUE,
+            //   updated_lever: { item: lever.item, value: event },
+            //   hasValueChanged: false,
+            //   validChange: false
+            // });
           }
 
         }
@@ -65,11 +66,11 @@ const BatchSize = (props) => {
 
           lever.value = event;
           setErrorMessages(validationResponse.updatedMessages);
-          leverStore.dispatch({
-            type: Constants.UPDATE_LEVER_VALUE,
-            updated_lever: { item: lever.item, value: event },
-            validChange: true
-          });
+          // leverStore.dispatch({
+          //   type: ACTIONS.UPDATE_LEVER_VALUE,
+          //   updated_lever: { item: lever.item, value: event },
+          //   validChange: true
+          // });
 
           return lever;
         }
@@ -77,11 +78,11 @@ const BatchSize = (props) => {
           lever.value = event;
           setErrorMessages(validationResponse.updatedMessages);
 
-          leverStore.dispatch({
-            type: Constants.UPDATE_LEVER_VALUE,
-            updated_lever: { item: lever.item, value: event },
-            validChange: false
-          });
+          // leverStore.dispatch({
+          //   type: ACTIONS.UPDATE_LEVER_VALUE,
+          //   updated_lever: { item: lever.item, value: event },
+          //   validChange: false
+          // });
 
           return lever;
         }
@@ -90,10 +91,8 @@ const BatchSize = (props) => {
       return lever;
     });
 
-    setLever(levers);
+    setBatchSizeLevers(levers);
   };
-
-  let isMemberUser = !props.isAdmin;
 
   return (
     <div className={styles.leverContent}>
@@ -109,11 +108,7 @@ const BatchSize = (props) => {
             <p className={lever.is_disabled ? styles.leverDisabled : styles.leverActive}>{lever.description}</p>
           </div>
           <div className={`${styles.leverRight} ${leverNumberDiv}`}>
-            {isMemberUser ?
-
-              <label className={lever.is_disabled ? styles.leverDisabled : styles.leverActive}>
-                {lever.value} {lever.unit}
-              </label> :
+            {isAdmin ?
               <NumberField
                 name={lever.item}
                 label={lever.unit}
@@ -123,7 +118,10 @@ const BatchSize = (props) => {
                 errorMessage={errorMessagesList[lever.item]}
                 onChange={updateLever(index, lever.item, lever.item)}
                 tabIndex={lever.is_disabled ? -1 : null}
-              />
+              /> :
+              <label className={lever.is_disabled ? styles.leverDisabled : styles.leverActive}>
+                {lever.value} {lever.unit}
+              </label>
             }
           </div>
         </div>
@@ -135,9 +133,7 @@ const BatchSize = (props) => {
 };
 
 BatchSize.propTypes = {
-  leverList: PropTypes.arrayOf(PropTypes.string).isRequired,
-  leverStore: PropTypes.any,
-  isAdmin: PropTypes.bool.isRequired,
+  isAdmin: PropTypes.bool.isRequired
 };
 
 export default BatchSize;

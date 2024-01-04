@@ -4,7 +4,11 @@ class CaseDistributionLeversController < ApplicationController
   before_action :verify_access
 
   def acd_lever_index
+    # acd_levers_for_store should replace the acd_levers value
+    # once the lever list has been cleaned up and removed from the
+    # current frontend workflow.
     @acd_levers = CaseDistributionLever.all
+    @acd_levers_for_store = CaseDistributionLever.all.group_by(&:lever_group)
     history = CaseDistributionAuditLeverEntry.includes(:user, :case_distribution_lever).past_year
     @acd_history = CaseDistributionAuditLeverEntrySerializer.new(history)
       .serializable_hash[:data].map{ |entry| entry[:attributes] }
@@ -36,13 +40,9 @@ class CaseDistributionLeversController < ApplicationController
   end
 
   def verify_access
-    return true if current_user&.organizations && current_user&.organizations&.any?(&:users_can_view_levers?)
-
-    Rails.logger.debug("User with roles #{current_user.roles.join(', ')} "\
-      "couldn't access #{request.original_url}")
+    return true if current_user&.organizations && current_user.organizations.any?(&:users_can_view_levers?)
 
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
   end
-
 end

@@ -17,6 +17,7 @@ import DISTRIBUTION from '../../constants/DISTRIBUTION';
 
 import CaseflowDistributionApp from './pages/CaseflowDistributionApp';
 import { createStore } from 'redux';
+import rootReducer from '../caseflowDistribution/reducers/root';
 
 class CaseflowDistribution extends React.PureComponent {
 
@@ -29,7 +30,6 @@ class CaseflowDistribution extends React.PureComponent {
 
     const leverStore = createStore(leversReducer, preloadedState);
     const Router = this.props.router || BrowserRouter;
-    const initialState = leversReducer.initialState;
     const appName = 'Caseflow Distribution';
 
     const staticLevers = [
@@ -117,7 +117,7 @@ class CaseflowDistribution extends React.PureComponent {
     ];
 
     return (
-      <ReduxBase initialState={initialState} reducer={leversReducer}>
+      <ReduxBase reducer={rootReducer}>
         <Router {...this.props.routerTestProps}>
           <div>
             <NavigationBar
@@ -148,6 +148,7 @@ class CaseflowDistribution extends React.PureComponent {
                       component={() => {
                         return (
                           <CaseflowDistributionApp
+                            acdLeversForStore={this.props.acdLeversForStore}
                             acd_levers={leversList}
                             acd_history={this.props.acd_history}
                             user_is_an_acd_admin = {this.props.user_is_an_acd_admin}
