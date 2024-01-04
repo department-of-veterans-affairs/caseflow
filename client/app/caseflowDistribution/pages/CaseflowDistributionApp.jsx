@@ -1,10 +1,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import CaseflowDistributionContent from '../components/CaseflowDistributionContent';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import {
+  initialLoad
+} from '../reducers/Levers/leversActions';
 
 class CaseflowDistributionApp extends React.PureComponent {
-  render() {
+  constructor(props) {
+    super(props);
+    this.props.initialLoad(this.props.acdLeversForStore);
+  }
 
+  render() {
     return (
       <div>
         <div> {/* Wrapper*/}
@@ -28,7 +37,22 @@ CaseflowDistributionApp.propTypes = {
   acd_history: PropTypes.array,
   user_is_an_acd_admin: PropTypes.bool,
   leverStore: PropTypes.any,
-  sectionTitles: PropTypes.array
+  sectionTitles: PropTypes.array,
+  initialLoad: PropTypes.func,
+  acdLeversForStore: PropTypes.object
 };
 
-export default CaseflowDistributionApp;
+// eslint-disable-next-line no-unused-vars
+const mapStateToProps = (state) => ({
+});
+
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    initialLoad
+  }, dispatch)
+);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CaseflowDistributionApp);

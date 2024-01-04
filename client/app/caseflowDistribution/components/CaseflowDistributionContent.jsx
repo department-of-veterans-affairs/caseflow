@@ -72,7 +72,7 @@ CaseflowDistributionContent.propTypes = {
   formattedHistory: PropTypes.array.isRequired,
   isAdmin: PropTypes.bool.isRequired,
   leverStore: PropTypes.any.isRequired,
-  sectionTitles: PropTypes.array.isRequired
+  sectionTitles: PropTypes.array.isRequired,
 };
 
 export default CaseflowDistributionContent;

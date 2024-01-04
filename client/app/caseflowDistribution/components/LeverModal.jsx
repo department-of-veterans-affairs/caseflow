@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
+import { ACTIONS } from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
 import ApiUtil from '../../util/ApiUtil';
 import Modal from 'app/components/Modal';
 import Button from 'app/components/Button';
@@ -73,18 +73,18 @@ const updateLeverHistory = (leverStore) => {
   let [filteredLevers, filteredInitialLevers] = generateLeverUpdateData(leverStore);
 
   leverStore.dispatch({
-    type: Constants.FORMAT_LEVER_HISTORY,
+    type: ACTIONS.FORMAT_LEVER_HISTORY,
     history: generateLeverHistory(filteredLevers, filteredInitialLevers)
   });
 };
 
 const setShowSuccessBanner = (leverStore) => {
   leverStore.dispatch({
-    type: Constants.SHOW_SUCCESS_BANNER,
+    type: ACTIONS.SHOW_SUCCESS_BANNER,
   });
   setTimeout(() => {
     leverStore.dispatch({
-      type: Constants.HIDE_SUCCESS_BANNER,
+      type: ACTIONS.HIDE_SUCCESS_BANNER,
     });
   }, 10000);
 };
@@ -105,14 +105,14 @@ const leverValueDisplay = (lever, isPreviousValue) => {
 
 const saveLeverChanges = (leverStore) => {
   leverStore.dispatch({
-    type: Constants.SAVE_LEVERS,
+    type: ACTIONS.SAVE_LEVERS,
     saveChangesActivated: true,
   });
 };
 
 const showSuccessBanner = (leverStore, shouldShowSuccessBanner) => {
   leverStore.dispatch({
-    type: Constants.SHOW_SUCCESS_BANNER,
+    type: ACTIONS.SHOW_SUCCESS_BANNER,
     showSuccessBanner: shouldShowSuccessBanner,
   });
 };

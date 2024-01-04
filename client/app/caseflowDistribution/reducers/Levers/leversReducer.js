@@ -1,49 +1,68 @@
-import * as Constants from './leversActionTypes';
+import {ACTIONS } from '../Levers/leversActionTypes';
+import { update } from '../../../util/ReducerUtil';
 
 export const initialState = {
   saveChangesActivated: false,
+  loadedLevers: {},
+  editedLevers: [],
   levers: [],
-  initial_levers: [],
-  formatted_history: {},
+  initialLevers: [],
+  formattedHistory: {},
   changesOccurred: false,
   showSuccessBanner: false,
 };
 
 const leversReducer = (state = initialState, action = {}) => {
   switch (action.type) {
-  case Constants.FORMAT_LEVER_HISTORY:
+
+  case ACTIONS.INITIAL_LOAD:
+    return update(state, {
+      loadedLevers: {
+        $set: action.payload.levers
+      },
+      initialLevers: {
+        $set: action.payload.levers
+      }
+    });
+
+  case ACTIONS.LOAD_LEVERS:
+    return update(state, {
+      loadedLevers: {
+        $set: action.payload.loadedLevers
+      }
+    });
+  // needs to be reworked; remove comment when done
+  case ACTIONS.FORMAT_LEVER_HISTORY:
     return {
       ...state,
       formatted_history: formatLeverHistory(action.history)
     };
-  case Constants.UPDATE_LEVER_VALUE:
-    const updatedLevers = updateLevers(state.levers, action.updated_lever, action.hasValueChanged);
-    const changesOccurred = JSON.stringify(updatedLevers) !== JSON.stringify(state.initial_levers);
 
-    return {
-      ...state,
-      levers: updatedLevers,
-      changesOccurred: action.validChange,
-      saveChangesActivated: !changesOccurred
-    };
-  case Constants.SAVE_LEVERS:
+  // needs to be reworked; remove comment when done
+  case ACTIONS.SAVE_LEVERS:
     return {
       ...state,
       initial_levers: state.levers,
       saveChangesActivated: action.saveChangesActivated,
       changesOccurred: false
     };
-  case Constants.REVERT_LEVERS:
+
+  // needs to be reworked; remove comment when done
+  case ACTIONS.REVERT_LEVERS:
     return {
       ...state,
       levers: state.initial_levers
     };
-  case Constants.SHOW_SUCCESS_BANNER:
+
+  // needs to be reworked; remove comment when done
+  case ACTIONS.SHOW_SUCCESS_BANNER:
     return {
       ...state,
       showSuccessBanner: true
     };
-  case Constants.HIDE_SUCCESS_BANNER:
+
+  // needs to be reworked; remove comment when done
+  case ACTIONS.HIDE_SUCCESS_BANNER:
     return {
       ...state,
       showSuccessBanner: false
@@ -54,6 +73,7 @@ const leversReducer = (state = initialState, action = {}) => {
   }
 };
 
+// this should probably be moved into the action in leversAction.js
 export const formatLeverHistory = (lever_history_list) => {
   let formatted_lever_history = [];
 
@@ -73,8 +93,9 @@ export const formatLeverHistory = (lever_history_list) => {
   return formatted_lever_history;
 };
 
+// this should probably be moved into the action in leversAction.js
 export const updateLevers = (current_levers, updated_lever, hasValueChanged) => {
-  const leverIndex = current_levers.findIndex((lever) => lever.item === updated_lever.item);
+  const leverIndex = current_levers.findIndex((lever) => lever.item == updated_lever.item);
 
   if (leverIndex !== -1) {
 

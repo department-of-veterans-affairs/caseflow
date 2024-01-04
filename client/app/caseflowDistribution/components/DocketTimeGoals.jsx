@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import PropTypes, { object } from 'prop-types';
 import { css } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
-import * as Constants from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
+import { ACTIONS } from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
 import leverInputValidation from './LeverInputValidation';
@@ -12,16 +13,7 @@ import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import { checkIfOtherChangesExist } from '../utils.js';
 
 const DocketTimeGoals = (props) => {
-
-  const { leverList, leverStore } = props;
-
-  const filteredDistributionLevers = leverList.docketDistributionPriorLevers.map((item) => {
-    return leverStore.getState().levers.find((lever) => lever.item === item);
-  });
-
-  const filteredTimeGoalLevers = leverList.docketTimeGoalLevers.map((item) => {
-    return leverStore.getState().levers.find((lever) => lever.item === item);
-  });
+  const { isAdmin, sectionTitles } = props;
 
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
@@ -32,9 +24,21 @@ const DocketTimeGoals = (props) => {
 
   const errorMessages = {};
 
-  const [docketDistributionLevers, setDistributionLever] = useState(filteredDistributionLevers);
-  const [docketTimeGoalLevers, setTimeGoalLever] = useState(filteredTimeGoalLevers);
+  // pull docket time goal and distribution levers from the store
+  const storeTimeLevers = useSelector((state) => state.caseDistributionLevers.loadedLevers.docket_time_goal);
+  const storeDistributionLevers = useSelector(
+    (state) => state.caseDistributionLevers.loadedLevers.docket_distribution_prior);
+  const [docketDistributionLevers, setDistributionLever] = useState(storeDistributionLevers);
+  const [docketTimeGoalLevers, setTimeGoalLever] = useState(storeTimeLevers);
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
+
+  useEffect(() => {
+    setDistributionLever(storeDistributionLevers);
+  }, [storeDistributionLevers]);
+
+  useEffect(() => {
+    setTimeGoalLever(storeTimeLevers);
+  }, [storeTimeLevers]);
 
   const updateLever = (index, leverType) => (event) => {
     if (leverType === 'DistributionPrior') {
@@ -42,8 +46,8 @@ const DocketTimeGoals = (props) => {
       const levers = docketDistributionLevers.map((lever, i) => {
         if (index === i) {
 
-          let initialLever = leverStore.getState().initial_levers.find((original) => original.item === lever.item);
-          let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
+          // let initialLever = leverStore.getState().initial_levers.find((original) => original.item === lever.item);
+          let validationResponse = leverInputValidation(lever, event, errorMessagesList, lever);
 
           if (validationResponse.statement === ACD_LEVERS.DUPLICATE) {
 
@@ -51,34 +55,34 @@ const DocketTimeGoals = (props) => {
               lever.value = event;
               setErrorMessages(validationResponse.updatedMessages);
 
-              leverStore.dispatch({
-                type: Constants.UPDATE_LEVER_VALUE,
-                updated_lever: { item: lever.item, value: event },
-                hasValueChanged: false,
-                validChange: true
-              });
+              // leverStore.dispatch({
+              //   type: ACTIONS.UPDATE_LEVER_VALUE,
+              //   updated_lever: { item: lever.item, value: event },
+              //   hasValueChanged: false,
+              //   validChange: true
+              // });
             } else {
 
               lever.value = event;
               setErrorMessages(validationResponse.updatedMessages);
 
-              leverStore.dispatch({
-                type: Constants.UPDATE_LEVER_VALUE,
-                updated_lever: { item: lever.item, value: event },
-                hasValueChanged: false,
-                validChange: false
-              });
+              // leverStore.dispatch({
+              //   type: ACTIONS.UPDATE_LEVER_VALUE,
+              //   updated_lever: { item: lever.item, value: event },
+              //   hasValueChanged: false,
+              //   validChange: false
+              // });
             }
 
           }
           if (validationResponse.statement === ACD_LEVERS.SUCCESS) {
             lever.value = event;
             setErrorMessages(validationResponse.updatedMessages);
-            leverStore.dispatch({
-              type: Constants.UPDATE_LEVER_VALUE,
-              updated_lever: { item: lever.item, value: event },
-              validChange: true
-            });
+            // leverStore.dispatch({
+            //   type: ACTIONS.UPDATE_LEVER_VALUE,
+            //   updated_lever: { item: lever.item, value: event },
+            //   validChange: true
+            // });
 
             return lever;
           }
@@ -86,11 +90,11 @@ const DocketTimeGoals = (props) => {
             lever.value = event;
             setErrorMessages(validationResponse.updatedMessages);
 
-            leverStore.dispatch({
-              type: Constants.UPDATE_LEVER_VALUE,
-              updated_lever: { item: lever.item, value: event },
-              validChange: false
-            });
+            // leverStore.dispatch({
+            //   type: ACTIONS.UPDATE_LEVER_VALUE,
+            //   updated_lever: { item: lever.item, value: event },
+            //   validChange: false
+            // });
 
             return lever;
           }
@@ -104,9 +108,6 @@ const DocketTimeGoals = (props) => {
     if (leverType === 'TimeGoal') {
       const levers = docketTimeGoalLevers.map((lever, i) => {
         if (index === i) {
-
-          let initialLever = leverStore.getState().initial_levers.find((original) => original.item === lever.item);
-
           let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
 
           if (validationResponse.statement === ACD_LEVERS.DUPLICATE) {
@@ -115,23 +116,23 @@ const DocketTimeGoals = (props) => {
               lever.value = event;
               setErrorMessages(validationResponse.updatedMessages);
 
-              leverStore.dispatch({
-                type: Constants.UPDATE_LEVER_VALUE,
-                updated_lever: { item: lever.item, value: event },
-                hasValueChanged: false,
-                validChange: true
-              });
+              // leverStore.dispatch({
+              //   type: ACTIONS.UPDATE_LEVER_VALUE,
+              //   updated_lever: { item: lever.item, value: event },
+              //   hasValueChanged: false,
+              //   validChange: true
+              // });
             } else {
 
               lever.value = event;
               setErrorMessages(validationResponse.updatedMessages);
 
-              leverStore.dispatch({
-                type: Constants.UPDATE_LEVER_VALUE,
-                updated_lever: { item: lever.item, value: event },
-                hasValueChanged: false,
-                validChange: false
-              });
+              // leverStore.dispatch({
+              //   type: ACTIONS.UPDATE_LEVER_VALUE,
+              //   updated_lever: { item: lever.item, value: event },
+              //   hasValueChanged: false,
+              //   validChange: false
+              // });
             }
 
           }
@@ -139,22 +140,22 @@ const DocketTimeGoals = (props) => {
           if (validationResponse.statement === ACD_LEVERS.SUCCESS) {
             lever.value = event;
             setErrorMessages(validationResponse.updatedMessages);
-            leverStore.dispatch({
-              type: Constants.UPDATE_LEVER_VALUE,
-              updated_lever: { item: lever.item, value: event },
-              validChange: true
-            });
+            // leverStore.dispatch({
+            //   type: ACTIONS.UPDATE_LEVER_VALUE,
+            //   updated_lever: { item: lever.item, value: event },
+            //   validChange: true
+            // });
 
             return lever;
           }
           if (validationResponse.statement === ACD_LEVERS.FAIL) {
             lever.value = event;
             setErrorMessages(validationResponse.updatedMessages);
-            leverStore.dispatch({
-              type: Constants.UPDATE_LEVER_VALUE,
-              updated_lever: { item: lever.item, value: event },
-              validChange: false
-            });
+            // leverStore.dispatch({
+            //   type: ACTIONS.UPDATE_LEVER_VALUE,
+            //   updated_lever: { item: lever.item, value: event },
+            //   validChange: false
+            // });
 
             return lever;
           }
@@ -182,7 +183,7 @@ const DocketTimeGoals = (props) => {
     setDistributionLever(levers);
   };
 
-  const generateToggleSwitch = (distributionPriorLever, index, isAdmin) => {
+  const generateToggleSwitch = (distributionPriorLever, index) => {
 
     let docketTimeGoalLever = '';
 
@@ -199,7 +200,7 @@ const DocketTimeGoals = (props) => {
         >
           <div className={cx(styles.leverLeft, styles.docketLeverLeft)}>
             <strong className={docketTimeGoalLever.is_disabled ? styles.leverDisabled : ''}>
-              {index < props.sectionTitles.length ? props.sectionTitles[index] : ''}
+              {index < sectionTitles.length ? sectionTitles[index] : ''}
             </strong>
           </div>
           <div className={`${styles.leverMiddle} ${leverNumberDiv}
@@ -246,7 +247,7 @@ const DocketTimeGoals = (props) => {
       >
         <div className={cx(styles.leverLeft, styles.docketLeverLeft)}>
           <strong className={docketTimeGoalLever.is_disabled ? styles.leverDisabled : ''}>
-            {index < props.sectionTitles.length ? props.sectionTitles[index] : ''}
+            {index < sectionTitles.length ? sectionTitles[index] : ''}
           </strong>
         </div>
         <div className={`${styles.leverMiddle} ${leverNumberDiv}`}>
@@ -285,9 +286,7 @@ const DocketTimeGoals = (props) => {
       </div>
 
       {docketDistributionLevers && docketDistributionLevers.map((distributionPriorLever, index) => (
-
-        props.isAdmin ? generateToggleSwitch(distributionPriorLever, index, true) :
-          generateToggleSwitch(distributionPriorLever, index, false)
+        generateToggleSwitch(distributionPriorLever, index)
       ))}
     </div>
 

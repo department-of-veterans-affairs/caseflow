@@ -5,7 +5,11 @@ class CaseDistributionLeversController < ApplicationController
   before_action :set_acd_group_organization, only: [:acd_lever_index, :update_levers_and_history]
 
   def acd_lever_index
+    # acd_levers_for_store should replace the acd_levers value
+    # once the lever list has been cleaned up and removed from the
+    # current frontend workflow.
     @acd_levers = CaseDistributionLever.all
+    @acd_levers_for_store = CaseDistributionLever.all.group_by(&:lever_group)
     history = CaseDistributionAuditLeverEntry.includes(:user, :case_distribution_lever).past_year
     @acd_history = CaseDistributionAuditLeverEntrySerializer.new(history)
       .serializable_hash[:data].map{ |entry| entry[:attributes] }
@@ -59,10 +63,7 @@ class CaseDistributionLeversController < ApplicationController
   private
 
   def verify_access
-    return true if current_user&.organizations && current_user&.organizations&.any?(&:users_can_view_levers?)
-
-    Rails.logger.debug("User with roles #{current_user.roles.join(', ')} "\
-      "couldn't access #{request.original_url}")
+    return true if current_user&.organizations && current_user.organizations.any?(&:users_can_view_levers?)
 
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
@@ -79,7 +80,7 @@ class CaseDistributionLeversController < ApplicationController
       audit_lever_entries_data.each do |entry_data|
         lever = CaseDistributionLever.find_by_title entry_data["lever_title"]
 
-        formatted_audit_lever_entries.push ({
+        formatted_audit_lever_entries.push(
           user: current_user,
           case_distribution_lever: lever,
           user_name: current_user.css_id,
@@ -88,9 +89,9 @@ class CaseDistributionLeversController < ApplicationController
           update_value: entry_data["current_value"],
           created_at: entry_data["created_at"]
 
-        })
+        )
       end
-    rescue Exception => error
+    rescue StandardError => error
       return error
     end
 

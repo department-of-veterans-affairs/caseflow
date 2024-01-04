@@ -1,5 +1,5 @@
 import leversReducer from '../../../app/caseflowDistribution/reducers/Levers/leversReducer';
-import * as Constants from '../../../app/caseflowDistribution/reducers/Levers/leversActionTypes';
+import { ACTIONS } from '../../../app/caseflowDistribution/reducers/Levers/leversActionTypes';
 import * as leverData from '../../data/adminCaseDistributionLevers';
 import { createStore } from "@reduxjs/toolkit";
 
@@ -23,10 +23,10 @@ describe('Lever reducer', () => {
     });
   });
 
-  describe(Constants.FORMAT_LEVER_HISTORY, () => {
+  describe(ACTIONS.FORMAT_LEVER_HISTORY, () => {
     it('returns a formatted lever history array', () => {
       leverStore.dispatch({
-        type: Constants.FORMAT_LEVER_HISTORY,
+        type: ACTIONS.FORMAT_LEVER_HISTORY,
         history: leverData.history
       })
 
@@ -36,7 +36,7 @@ describe('Lever reducer', () => {
     // it('returns error message when input is not in correct format', () => {});
   });
 
-  describe(Constants.UPDATE_LEVER_VALUE, () => {
+  describe(ACTIONS.UPDATE_LEVER_VALUE, () => {
     const levers = leverData.levers.slice(0,5)
 
     it('updates the current levers with the new value', () => {
@@ -51,7 +51,7 @@ describe('Lever reducer', () => {
       }
 
       leverStore.dispatch({
-        type: Constants.UPDATE_LEVER_VALUE,
+        type: ACTIONS.UPDATE_LEVER_VALUE,
         updated_lever: lever_update
       })
 
@@ -68,18 +68,18 @@ describe('Lever reducer', () => {
     // it('does not update the current levers when invalid value is entered', () => {});
   });
 
-  describe(Constants.SAVE_LEVERS, () => {
+  describe(ACTIONS.SAVE_LEVERS, () => {
     it('returns the current state of the levers', () => {
       leverStore.dispatch({
-        type: Constants.UPDATE_LEVER_VALUE,
+        type: ACTIONS.UPDATE_LEVER_VALUE,
         updated_lever:leverData.lever1_update
       })
       leverStore.dispatch({
-        type: Constants.UPDATE_LEVER_VALUE,
+        type: ACTIONS.UPDATE_LEVER_VALUE,
         updated_lever: leverData.lever5_update
       })
       leverStore.dispatch({
-        type: Constants.SAVE_LEVERS,
+        type: ACTIONS.SAVE_LEVERS,
       })
 
       expect(leverStore.getState().levers).not.toEqual(leverData.levers.slice(0,5))
@@ -89,18 +89,18 @@ describe('Lever reducer', () => {
     });
   });
 
-  describe(Constants.REVERT_LEVERS, () => {
+  describe(ACTIONS.REVERT_LEVERS, () => {
     it('returns the original state of the levers', () => {
       leverStore.dispatch({
-        type: Constants.UPDATE_LEVER_VALUE,
+        type: ACTIONS.UPDATE_LEVER_VALUE,
         updated_lever: leverData.lever1_update
       })
       leverStore.dispatch({
-        type: Constants.UPDATE_LEVER_VALUE,
+        type: ACTIONS.UPDATE_LEVER_VALUE,
         updated_lever: leverData.lever5_update
       })
       leverStore.dispatch({
-        type: Constants.REVERT_LEVERS,
+        type: ACTIONS.REVERT_LEVERS,
       })
 
       expect(leverStore.getState().levers).not.toEqual(leverData.updated_levers)

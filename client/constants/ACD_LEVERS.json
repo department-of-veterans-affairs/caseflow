@@ -6,6 +6,7 @@
   "combination": "combination",
   "boolean": "boolean",
   "number": "number",
+  "text": "text",
   "days": "days",
   "cases": "cases",
   "SUCCESS": "SUCCESS",
