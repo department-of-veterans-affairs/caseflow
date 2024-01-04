@@ -87,7 +87,7 @@ export const AddTasksAppealsView = (props) => {
                   key={index}
                   name={name}
                   label={name}
-                  defaultValue={mailTasks[name] || false}
+                  defaultValue={mailTasks.includes(name)}
                   onChange={(checked) => mailTaskCheckboxOnChange(name, checked)}
                 />
               );
@@ -100,7 +100,7 @@ export const AddTasksAppealsView = (props) => {
                   key={index}
                   name={name}
                   label={name}
-                  defaultValue={mailTasks[name] || false}
+                  defaultValue={mailTasks.includes(name)}
                   onChange={(checked) => mailTaskCheckboxOnChange(name, checked)}
                 />
               );
