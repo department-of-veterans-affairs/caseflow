@@ -149,7 +149,8 @@ class CorrespondenceController < ApplicationController
   end
 
   def pdf
-    document = Document.find(params[:pdf_id])
+    # Hard-coding Document access until CorrespondenceDocuments are uploaded to S3Bucket
+    document = Document.all[params[:pdf_id].to_i]
 
     document_disposition = "inline"
     if params[:download]
