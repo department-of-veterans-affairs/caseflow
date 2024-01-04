@@ -25,7 +25,8 @@ const DocketTimeGoals = (props) => {
 
   // pull docket time goal and distribution levers from the store
   const storeTimeLevers = useSelector((state) => state.caseDistributionLevers.loadedLevers.docket_time_goal);
-  const storeDistributionLevers = useSelector((state) => state.caseDistributionLevers.loadedLevers.docket_distribution_prior);
+  const storeDistributionLevers = useSelector(
+    (state) => state.caseDistributionLevers.loadedLevers.docket_distribution_prior);
   const [docketDistributionLevers, setDistributionLever] = useState(storeDistributionLevers);
   const [docketTimeGoalLevers, setTimeGoalLever] = useState(storeTimeLevers);
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
@@ -289,8 +290,7 @@ DocketTimeGoals.propTypes = {
   leverList: PropTypes.object.isRequired,
   leverStore: PropTypes.any,
   isAdmin: PropTypes.bool.isRequired,
-  sectionTitles: PropTypes.array.isRequired,
-  loadedLevers: PropTypes.arrayOf(object).isRequired
+  sectionTitles: PropTypes.array.isRequired
 };
 
 export default DocketTimeGoals;

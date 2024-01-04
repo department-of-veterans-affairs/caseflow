@@ -31,8 +31,7 @@ const StaticLeversWrapper = (props) => {
 
 StaticLeversWrapper.propTypes = {
   leverList: PropTypes.arrayOf(PropTypes.string).isRequired,
-  leverStore: PropTypes.any,
-  loadedLevers: PropTypes.arrayOf(object).isRequired
+  leverStore: PropTypes.any
 };
 
 export default StaticLeversWrapper;

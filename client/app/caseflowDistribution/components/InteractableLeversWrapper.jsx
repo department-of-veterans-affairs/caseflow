@@ -24,8 +24,7 @@ InteractableLeverWrapper.propTypes = {
   levers: PropTypes.object.isRequired,
   leverStore: PropTypes.any,
   isAdmin: PropTypes.bool,
-  sectionTitles: PropTypes.array.isRequired,
-  loadedLevers: PropTypes.arrayOf(object).isRequired
+  sectionTitles: PropTypes.array.isRequired
 };
 
 export default InteractableLeverWrapper;

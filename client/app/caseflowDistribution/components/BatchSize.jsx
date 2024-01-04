@@ -19,7 +19,8 @@ const BatchSize = (props) => {
   });
   const isMemberUser = !props.isAdmin;
   const [errorMessagesList, setErrorMessages] = useState({});
-  const [batchSizeLevers, setBatchSizeLevers] = useState(useSelector((state) => state.caseDistributionLevers.loadedLevers.batch));
+  const [batchSizeLevers, setBatchSizeLevers] = useState(useSelector(
+    (state) => state.caseDistributionLevers.loadedLevers.batch));
 
   const updateLever = (index) => (event) => {
     const levers = batchSizeLevers.map((lever, i) => {
