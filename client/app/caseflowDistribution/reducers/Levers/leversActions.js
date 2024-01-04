@@ -1,5 +1,15 @@
 import { ACTIONS } from './leversActionTypes';
 
+export const initialLoad = (levers) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.INITIAL_LOAD,
+      payload: {
+        levers
+      }
+    });
+  };
+
 export const loadLevers = (loadedLevers) =>
   (dispatch) => {
     dispatch({

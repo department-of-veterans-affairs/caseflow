@@ -15,13 +15,22 @@ export const initialState = {
 const leversReducer = (state = initialState, action = {}) => {
   switch (action.type) {
 
+  case ACTIONS.INITIAL_LOAD:
+    return update(state, {
+      loadedLevers: {
+        $set: action.payload.levers
+      },
+      initialLevers: {
+        $set: action.payload.levers
+      }
+    });
+
   case ACTIONS.LOAD_LEVERS:
     return update(state, {
       loadedLevers: {
         $set: action.payload.loadedLevers
       }
     });
-
   // needs to be reworked; remove comment when done
   case ACTIONS.FORMAT_LEVER_HISTORY:
     return {
