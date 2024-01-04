@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
+
 class AppealRepository
   class AppealNotValidToClose < StandardError; end
   class AppealNotValidToReopen < StandardError
@@ -374,30 +376,11 @@ class AppealRepository
 
     def close_appeal_with_disposition!(case_record:, folder:, user:, closed_on:, disposition_code:)
       VACOLS::Case.transaction do
-        case_record.update!(
-          bfmpro: "HIS",
-          bfddec: dateshift_to_utc(closed_on),
-          bfdc: disposition_code,
-          bfboard: "00",
-          bfmemid: "000",
-          bfattid: "000"
-        )
-
-        case_record.update_vacols_location!(LegacyAppeal::LOCATION_CODES[:closed])
-
-        folder.update!(
-          ticukey: "HISTORY",
-          tikeywrd: "HISTORY",
-          tidcls: dateshift_to_utc(closed_on),
-          timdtime: VacolsHelper.local_time_with_utc_timezone,
-          timduser: user.regional_office
-        )
+        update_case_record(case_record, closed_on, disposition_code)
+        update_folder(folder, closed_on, user)
 
         # Close any issues associated to the appeal
-        case_record.case_issues.where(issdc: nil).update_all(
-          issdc: disposition_code,
-          issdcls: VacolsHelper.local_time_with_utc_timezone
-        )
+        update_case_issues(case_record, disposition_code)
 
         close_associated_diary_notes(case_record, user)
         close_associated_hearings(case_record)
@@ -856,6 +839,35 @@ class AppealRepository
         tskmdtm: VacolsHelper.local_time_with_utc_timezone,
         tskmdusr: user.regional_office,
         tskstat: "C"
+      )
+    end
+
+    def update_case_record(case_record, closed_on, disposition_code)
+      case_record.update!(
+        bfmpro: "HIS",
+        bfddec: dateshift_to_utc(closed_on),
+        bfdc: disposition_code,
+        bfboard: "00",
+        bfmemid: "000",
+        bfattid: "000"
+      )
+      case_record.update_vacols_location!(LegacyAppeal::LOCATION_CODES[:closed])
+    end
+
+    def update_folder(folder, closed_on, user)
+      folder.update!(
+        ticukey: "HISTORY",
+        tikeywrd: "HISTORY",
+        tidcls: dateshift_to_utc(closed_on),
+        timdtime: VacolsHelper.local_time_with_utc_timezone,
+        timduser: user.regional_office
+      )
+    end
+
+    def update_case_issues(case_record, disposition_code)
+      case_record.case_issues.where(issdc: nil).update_all(
+        issdc: disposition_code,
+        issdcls: VacolsHelper.local_time_with_utc_timezone
       )
     end
   end
