@@ -9,9 +9,6 @@
     <%= link_to 'Case Distribution Audit Levers', { anchor: 'audit'}, class: 'btn btn-primary' %>
   </li>
   <li>
-    <%= link_to 'CDA Control Group', { anchor: 'organization'}, class: 'btn btn-primary' %>
-  </li>
-  <li>
     <%= link_to 'Distribution Status', { anchor: 'distribution_status'}, class: 'btn btn-primary' %>
   </li>
 </ul>
@@ -69,8 +66,8 @@
       <% @acd_history.each do |entry| %>
         <tr>
           <td> <%= entry.case_distribution_lever.id %> </td>
-          <td> <%= entry.title %> </td>
-          <td> <%= entry.user_name %> </td>
+          <td> <%= entry.case_distribution_lever.title %> </td>
+          <td> <%= entry.user.full_name %> </td>
           <td> <%= entry.created_at %> </td>
           <td> <%= entry.previous_value %> </td>
           <td> <%= entry.update_value %> </td>
@@ -78,53 +75,6 @@
       <% end %>
     </tbody>
   </table>
-<hr/>
-
-
-<% cda_group_organization = CDAControlGroup.singleton %>
-
-<% if cda_group_organization %>
-  <h2 id='organization'> CDA Control Group Organization </h2>
-    <h3> Organization Info </h3>
-      <%= "Name: " + cda_group_organization.name %>
-    <h3> Users </h3>
-      <table>
-        <thead>
-          <tr>
-            <td> Name </td>
-            <td> Admin? </td>
-            <td> Actions </td>
-          </tr>
-        </thead>
-        <tbody>
-          <% cda_group_organization.users.each do |user| %>
-            <tr>
-              <td> <%= user.full_name %> </td>
-              <td> <%= user.administered_teams.include?(cda_group_organization) %> </td>
-              <td> <%= button_to 'Remove From Organization', remove_user_case_distribution_levers_tests_path, method: :post, params:{user: current_user} %>
-                <% if user.administered_teams.include?(cda_group_organization) %>
-                  <%= button_to 'Remove Admin', remove_admin_case_distribution_levers_tests_path, method: :post, params:{user: current_user} %>
-                <% else %>
-                  <%= button_to 'Make User Admin', make_admin_case_distribution_levers_tests_path, method: :post, params:{user: current_user} %>
-                <%end%>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    <p>&nbsp;</p>
-    <span>
-      <%= button_to 'Destroy Organization', destroy_acd_group_org_case_distribution_levers_tests_path, method: :post %>
-      <br/>
-      <%unless current_user.member_of_organization?(cda_group_organization) %>
-        <%= button_to 'Add Current User To Organization', add_user_case_distribution_levers_tests_path, method: :post, params:{user: current_user} %>
-      <% end %>
-    </span>
-<% else %>
-  <h2 id='organization'> Organization Setup </h2>
-    <%= button_to 'Create Organization', create_acd_group_org_singleton_case_distribution_levers_tests_path, method: :post %>
-<% end %>
-
 <hr/>
 <h2 id='distribution_status'>Distribution Status</h2>
 <ul>
