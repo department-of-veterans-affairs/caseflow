@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# :reek:RepeatedConditional
 class CorrespondenceController < ApplicationController
   before_action :verify_correspondence_access
   before_action :verify_feature_toggle
@@ -176,6 +177,7 @@ class CorrespondenceController < ApplicationController
 
   private
 
+  # :reek:FeatureEnvy
   def vbms_document_types
     begin
       data = ExternalApi::ClaimEvidenceService.document_types

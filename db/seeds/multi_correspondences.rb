@@ -1,6 +1,7 @@
 # frozen_string_literal :true
 
 # create correspondence seeds
+# :reek:InstanceVariableAssumption
 module Seeds
   class MultiCorrespondences < Base
     include SeedHelpers
