@@ -2,7 +2,8 @@
 
 module Seeds
   class CavcAmaAppeals < Base
-  include SeedHelpers
+    include SeedHelpers
+
     def initialize
       initial_id_values
       @ama_appeals = []

@@ -3,7 +3,7 @@
 # create correspondence seeds
 module Seeds
   class MultiCorrespondences < Base
-  include SeedHelpers
+    include SeedHelpers
 
     def initialize
       initial_id_values

@@ -10,7 +10,8 @@ module Seeds
   # rubocop:disable Metrics/MethodLength
   # rubocop:disable Lint/DuplicateMethods
   class Tasks < Base
-  include SeedHelpers
+    include SeedHelpers
+
     def initialize
       @ama_appeals = []
       initial_file_number_and_participant_id
