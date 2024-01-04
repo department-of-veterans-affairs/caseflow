@@ -30,6 +30,18 @@ class CorrespondenceTask < Task
     root_task.cancel_task_and_child_subtasks
   end
 
+  def self.create_child_task(parent_task, current_user, params)
+    Task.create!(
+      type: params[:type],
+      appeal_type: "Correspondence",
+      appeal: parent_task.appeal,
+      assigned_by_id: child_assigned_by_id(parent_task, current_user),
+      parent_id: parent_task.id,
+      assigned_to: params[:assigned_to] || child_task_assignee(parent_task, params),
+      instructions: params[:instructions]
+    )
+  end
+
   private
 
   def status_is_valid_on_create
