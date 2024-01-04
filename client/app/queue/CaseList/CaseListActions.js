@@ -4,7 +4,7 @@ import * as Constants from './actionTypes';
 
 import { get, size } from 'lodash';
 import { onReceiveAppealDetails, onReceiveClaimReviewDetails } from '../QueueActions';
-import { prepareAppealForStore prepareClaimReviewForStore } from '../utils';
+import { prepareAppealForStore, prepareClaimReviewForStore } from '../utils';
 import ValidatorsUtil from '../../util/ValidatorsUtil';
 
 const { validSSN, validFileNum, validDocketNum } = ValidatorsUtil;
