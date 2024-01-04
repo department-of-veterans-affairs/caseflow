@@ -108,6 +108,7 @@ class TasksController < ApplicationController
   # {
   #   assigned_to_id: 23
   # }
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def update
     Task.transaction do
       tasks = task.update_from_params(update_params, current_user)
@@ -142,6 +143,7 @@ class TasksController < ApplicationController
 
     render_update_errors(["title": COPY::FAILED_HEARING_UPDATE, "message": error.message, "code": error.code])
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def for_appeal
     no_cache
@@ -266,6 +268,7 @@ class TasksController < ApplicationController
     end
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def process_contested_claim_final_task
     case task.status
     when "cancelled"
@@ -286,6 +289,7 @@ class TasksController < ApplicationController
       end
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def render_update_errors(errors)
     render json: { "errors": errors }, status: :bad_request
