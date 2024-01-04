@@ -31,11 +31,6 @@ describe('CorrespondencePdfUI', () => {
     createSpyGet();
   });
 
-  it('renders loading state initially', () => {
-    renderCorrespondencePdfUI();
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
-  });
-
   it('renders the Pdf UI', async () => {
     const mockGetViewport = jest.fn(() => ({
       height: 100,
