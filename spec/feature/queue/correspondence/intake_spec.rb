@@ -228,9 +228,7 @@ RSpec.feature("The Correspondence Intake page") do
 
   context "The user is able to use the autotext feature" do
     before do
-      require Rails.root.join("db/seeds/base.rb").to_s
-      Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
-      Seeds::AutoTexts.new.seed!
+      seed_autotext_table
     end
 
     before :each do

@@ -124,4 +124,10 @@ module CorrespondenceHelpers
     @correspondence_uuid = Correspondence.first.uuid
     visit "/queue/correspondence/#{@correspondence_uuid}/intake"
   end
+
+  def seed_autotext_table
+    require Rails.root.join("db/seeds/base.rb").to_s
+    Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
+    Seeds::AutoTexts.new.seed!
+  end
 end

@@ -39,9 +39,7 @@ RSpec.feature("Correspondence Intake submission") do
   context "user add tasks not related to an appeal" do
     describe "success" do
       before do
-        require Rails.root.join("db/seeds/base.rb").to_s
-        Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
-        Seeds::AutoTexts.new.seed!
+        seed_autotext_table
       end
       it "displays confirm submission" do
         visit_intake_form_step_2_with_appeals
