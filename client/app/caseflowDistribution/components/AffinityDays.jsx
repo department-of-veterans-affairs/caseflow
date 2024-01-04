@@ -13,10 +13,7 @@ import leverInputValidation from './LeverInputValidation';
 import { checkIfOtherChangesExist } from '../utils.js';
 
 const AffinityDays = (props) => {
-  const { leverList, leverStore } = props;
-  const filteredLevers = leverList.map((item) => {
-    return leverStore.getState().levers.find((lever) => lever.item === item);
-  });
+  const { leverStore, isAdmin } = props;
 
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
@@ -27,10 +24,13 @@ const AffinityDays = (props) => {
   const errorMessages = {};
 
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
-  // pulled value from store, but having issue with passing to affinityLevers w/o the file breaking
   const storeLevers = useSelector((state) => state.caseDistributionLevers.loadedLevers.affinity);
-  const [affinityLevers, setAffinityLevers] = useState(filteredLevers);
+  const initialLevers = useSelector((state) => state.caseDistributionLevers.initialLevers);
+  const [affinityLevers, setAffinityLevers] = useState(storeLevers);
 
+  useEffect(() => {
+    setAffinityLevers(storeLevers);
+  }, [storeLevers]);
 
   const updatedLever = (lever, option) => (event) => {
     const levers = affinityLevers.map((individualLever) => {
@@ -38,7 +38,7 @@ const AffinityDays = (props) => {
         const updatedOptions = individualLever.options.map((op) => {
           if (op.item === option.item) {
 
-            let initialLever = leverStore.getState().initial_levers.find((original) => original.item === lever.item);
+            let initialLever = initialLevers.find((original) => original.item === lever.item);
 
             let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever, op);
 
@@ -107,6 +107,7 @@ const AffinityDays = (props) => {
     setAffinityLevers(levers);
 
   };
+
   const handleRadioChange = (lever, option) => {
     if (lever && option) {
       const updatedLevers = affinityLevers.map((lev) => {
@@ -125,6 +126,7 @@ const AffinityDays = (props) => {
       });
     }
   };
+
   const generateFields = (dataType, option, lever) => {
     const useAriaLabel = !lever.is_disabled;
     const tabIndex = lever.is_disabled ? -1 : null;
@@ -136,7 +138,7 @@ const AffinityDays = (props) => {
           title={option.text}
           label={option.unit}
           isInteger
-          readOnly={lever.is_disabled ? true : (lever.value != option.item)}
+          readOnly={lever.is_disabled ? true : (lever.value !== option.item)}
           value={option.value}
           errorMessage={option.errorMessage}
           onChange={(event) => updatedLever(lever, option)(event)}
@@ -147,13 +149,13 @@ const AffinityDays = (props) => {
         />
       );
     }
-    if (dataType === 'text') {
+    if (dataType === ACD_LEVERS.text) {
       return (
         <TextField
           name={option.item}
           title={option.text}
           label={false}
-          readOnly={lever.is_disabled ? true : (lever.value != option.item)}
+          readOnly={lever.is_disabled ? true : (lever.value !== option.item)}
           value={option.value}
           onChange={(event) => updatedLever(lever, option)(event)}
           id={`${lever.item}-${option.value}`}
@@ -166,6 +168,7 @@ const AffinityDays = (props) => {
 
     return null;
   };
+
   const generateMemberViewLabel = (option, lever) => {
     if (lever.value === option.item) {
       return (
@@ -182,7 +185,34 @@ const AffinityDays = (props) => {
 
     return null;
   };
-  let isMemberUser = !props.isAdmin;
+
+  const renderAdminInput = (option, lever, index) => {
+    const className = cx(styles.combinedRadioInput, (lever.value === option.item) ? '' : styles.outlineRadioInput);
+
+    return (
+      <div key={`${lever.item}-${index}-${option.item}`}>
+        <div>
+          <input
+            checked={option.item === lever.value}
+            type={ACD_LEVERS.radio}
+            value={option.item}
+            disabled={lever.is_disabled}
+            id={`${lever.item}-${option.item}`}
+            name={lever.item}
+            onChange={() => handleRadioChange(lever, option)}
+          />
+          <label htmlFor={`${lever.item}-${option.item}`}>
+            {option.text}
+          </label>
+        </div>
+        <div>
+          <div className={className}>
+            {generateFields(option.data_type, option, lever, isAdmin)}
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className={styles.leverContent}>
@@ -201,29 +231,7 @@ const AffinityDays = (props) => {
           </div>
           <div className={`${styles.leverRight} ${leverNumberDiv}`}>
             {lever.options.map((option) => (
-              (isMemberUser) ?
-                generateMemberViewLabel(option, lever) :
-                <div key={`${lever.item}-${index}-${option.item}`}>
-                  <div>
-                    <input
-                      checked={option.item === lever.value}
-                      type={ACD_LEVERS.radio}
-                      value={option.item}
-                      disabled={lever.is_disabled}
-                      id={`${lever.item}-${option.item}`}
-                      name={lever.item}
-                      onChange={() => handleRadioChange(lever, option)}
-                    />
-                    <label htmlFor={`${lever.item}-${option.item}`}>
-                      {option.text}
-                    </label>
-                  </div>
-                  <div>
-                    <div className={cx(styles.combinedRadioInput, (lever.value != option.item) ? styles.outlineRadioInput : '')}>
-                      {generateFields(option.data_type, option, lever, isMemberUser)}
-                    </div>
-                  </div>
-                </div>
+              (isAdmin) ? renderAdminInput(option, lever, index) : generateMemberViewLabel(option, lever)
             ))}
           </div>
         </div>
