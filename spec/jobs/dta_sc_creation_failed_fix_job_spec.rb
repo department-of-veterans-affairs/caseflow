@@ -10,7 +10,7 @@ describe DtaScCreationFailedFixJob, :postgres do
   let!(:appeal) { create(:appeal, establishment_error: dta_error, veteran: veteran) }
   let!(:claimant) { create(:claimant, decision_review_id: appeal.id, decision_review_type: "Appeal") }
 
-  # it_behaves_like "a Master Scheduler serializable object", DtaScCreationFailedFixJob
+  it_behaves_like "a Master Scheduler serializable object", DtaScCreationFailedFixJob
 
   subject { described_class.new }
   context "#dta_sc_creation_failed_fix" do

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class DtaScCreationFailedFixJob < CaseflowJob
-  # include MasterSchedulerInterface
+  include MasterSchedulerInterface
 
   def initialize
     @stuck_job_report_service = StuckJobReportService.new
