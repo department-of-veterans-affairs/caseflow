@@ -23,7 +23,7 @@ class ExternalApi::BgsAddressFinder
   attr_reader :participant_id
 
   def fetch_addresses
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
 
     response = MetricsService.record("BGS: fetch address by participant_id: #{participant_id}",
                                      service: :bgs,

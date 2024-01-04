@@ -16,7 +16,7 @@ class ExternalApi::BgsVeteranStationUserConflict
   # "false" means no conflict.
   # a "DTO" is a Data Type Object which is just BGS SOAP API speak.
   def conflict?
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
 
     return false unless station_dtos.any?
 

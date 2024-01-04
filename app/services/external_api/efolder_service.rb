@@ -122,7 +122,7 @@ class ExternalApi::EfolderService
   end
 
   def self.send_efolder_request(endpoint, user, headers = {}, method: :get)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
 
     url = URI::DEFAULT_PARSER.escape(efolder_base_url + endpoint)
     request = HTTPI::Request.new(url)

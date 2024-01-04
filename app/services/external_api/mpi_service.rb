@@ -18,7 +18,7 @@ class ExternalApi::MPIService
   # rubocop:disable Metrics/MethodLength
   def search_people_info(last_name:, first_name: nil, middle_name: nil,
                          ssn: nil, date_of_birth: nil, gender: nil, address: nil, telephone: nil)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
 
     mpi_info = MetricsService.record("MPI: search people info: \
                                      last_name = #{last_name}, \
@@ -48,7 +48,7 @@ class ExternalApi::MPIService
   # rubocop:enable Metrics/MethodLength
 
   def fetch_person_info(icn)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
 
     mpi_info = MetricsService.record("MPI: fetch person info: #{icn}",
                                      service: :mpi,
