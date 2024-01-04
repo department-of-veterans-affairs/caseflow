@@ -6,8 +6,8 @@ module Seeds
 
     def initialize
       initialize_inactive_cf_user_and_inactive_admin_judge_team_file_number_and_participant_id
-      initialize_active_cf_user_and_non_admin_judge_team_file_number_and_participant_id
-      initialize_active_cf_user_and_inactive_judge_team_file_number_and_participant_id
+      # initialize_active_cf_user_and_non_admin_judge_team_file_number_and_participant_id
+      # initialize_active_cf_user_and_inactive_judge_team_file_number_and_participant_id
       initialize_active_judge_file_number_and_participant_id
       initialize_active_vacols_user_with_only_sattyid_file_number_and_participant_id
       initialize_inactive_judge_file_number_and_participant_id
@@ -34,25 +34,25 @@ module Seeds
       end
     end
 
-    def initialize_active_cf_user_and_non_admin_judge_team_file_number_and_participant_id
-      @active_cf_user_and_non_admin_judge_team_file_number ||= 701_000_000
-      @active_cf_user_and_non_admin_judge_team_participant_id ||= 711_000_000
+    # def initialize_active_cf_user_and_non_admin_judge_team_file_number_and_participant_id
+    #   @active_cf_user_and_non_admin_judge_team_file_number ||= 701_000_000
+    #   @active_cf_user_and_non_admin_judge_team_participant_id ||= 711_000_000
 
-      while find_veteran(@active_cf_user_and_non_admin_judge_team_file_number)
-        @active_cf_user_and_non_admin_judge_team_file_number += 2000
-        @active_cf_user_and_non_admin_judge_team_participant_id += 2000
-      end
-    end
+    #   while find_veteran(@active_cf_user_and_non_admin_judge_team_file_number)
+    #     @active_cf_user_and_non_admin_judge_team_file_number += 2000
+    #     @active_cf_user_and_non_admin_judge_team_participant_id += 2000
+    #   end
+    # end
 
-    def initialize_active_cf_user_and_inactive_judge_team_file_number_and_participant_id
-      @active_cf_user_and_inactive_judge_team_file_number ||= 702_000_000
-      @active_cf_user_and_inactive_judge_team_participant_id ||= 712_000_000
+    # def initialize_active_cf_user_and_inactive_judge_team_file_number_and_participant_id
+    #   @active_cf_user_and_inactive_judge_team_file_number ||= 702_000_000
+    #   @active_cf_user_and_inactive_judge_team_participant_id ||= 712_000_000
 
-      while find_veteran(@active_cf_user_and_inactive_judge_team_file_number)
-        @active_cf_user_and_inactive_judge_team_file_number += 2000
-        @active_cf_user_and_inactive_judge_team_participant_id += 2000
-      end
-    end
+    #   while find_veteran(@active_cf_user_and_inactive_judge_team_file_number)
+    #     @active_cf_user_and_inactive_judge_team_file_number += 2000
+    #     @active_cf_user_and_inactive_judge_team_participant_id += 2000
+    #   end
+    # end
 
     def initialize_active_judge_file_number_and_participant_id
       @file_number ||= 703_000_200
@@ -337,8 +337,8 @@ module Seeds
       APPEALS_LIMIT.times.each do
         create_ama_appeals_for_active_judge
         create_ama_appeals_for_inactive_cf_user_and_inactive_admin_judge_team
-        create_ama_appeals_for_active_cf_user_and_non_admin_judge_team
-        create_ama_appeals_for_active_cf_user_and_inactive_judge_team
+        # create_ama_appeals_for_active_cf_user_and_non_admin_judge_team
+        # create_ama_appeals_for_active_cf_user_and_inactive_judge_team
       end
     end
 
@@ -362,33 +362,33 @@ module Seeds
 
 
 
-    def create_ama_appeals_for_active_cf_user_and_non_admin_judge_team
-      veteran = create_veteran_for_active_cf_user_and_non_admin_judge_team
-      create_ama_appeals_ready_to_distribute_45_days(active_cf_user_and_non_admin_judge_team, veteran)
-    end
+    # def create_ama_appeals_for_active_cf_user_and_non_admin_judge_team
+    #   veteran = create_veteran_for_active_cf_user_and_non_admin_judge_team
+    #   create_ama_appeals_ready_to_distribute_45_days(active_cf_user_and_non_admin_judge_team, veteran)
+    # end
 
-    def create_veteran_for_active_cf_user_and_non_admin_judge_team
-      @active_cf_user_and_non_admin_judge_team_file_number += 1
-      @active_cf_user_and_non_admin_judge_team_participant_id += 1
-      create_veteran(
-        file_number: @active_cf_user_and_non_admin_judge_team_file_number,
-        participant_id: @active_cf_user_and_non_admin_judge_team_participant_id
-      )
-    end
+    # def create_veteran_for_active_cf_user_and_non_admin_judge_team
+    #   @active_cf_user_and_non_admin_judge_team_file_number += 1
+    #   @active_cf_user_and_non_admin_judge_team_participant_id += 1
+    #   create_veteran(
+    #     file_number: @active_cf_user_and_non_admin_judge_team_file_number,
+    #     participant_id: @active_cf_user_and_non_admin_judge_team_participant_id
+    #   )
+    # end
 
-    def create_ama_appeals_for_active_cf_user_and_inactive_judge_team
-      veteran = create_veteran_for_active_cf_user_and_inactive_judge_team
-      create_ama_appeals_ready_to_distribute_45_days(active_cf_user_and_inactive_judge_team, veteran)
-    end
+    # def create_ama_appeals_for_active_cf_user_and_inactive_judge_team
+    #   veteran = create_veteran_for_active_cf_user_and_inactive_judge_team
+    #   create_ama_appeals_ready_to_distribute_45_days(active_cf_user_and_inactive_judge_team, veteran)
+    # end
 
-    def create_veteran_for_active_cf_user_and_inactive_judge_team
-      @active_cf_user_and_inactive_judge_team_file_number += 1
-      @active_cf_user_and_inactive_judge_team_participant_id += 1
-      create_veteran(
-        file_number: @active_cf_user_and_inactive_judge_team_file_number,
-        participant_id: @active_cf_user_and_inactive_judge_team_participant_id
-      )
-    end
+    # def create_veteran_for_active_cf_user_and_inactive_judge_team
+    #   @active_cf_user_and_inactive_judge_team_file_number += 1
+    #   @active_cf_user_and_inactive_judge_team_participant_id += 1
+    #   create_veteran(
+    #     file_number: @active_cf_user_and_inactive_judge_team_file_number,
+    #     participant_id: @active_cf_user_and_inactive_judge_team_participant_id
+    #   )
+    # end
 
     # AC2,4,5,6: ready to distribute for less than 60 days
     def create_ama_appeals_ready_to_distribute_45_days(judge, veteran)
