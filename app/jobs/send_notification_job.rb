@@ -4,6 +4,8 @@
 # This job saves the data to an audit table and If the corresponding feature flag is enabled will send
 # an email or SMS request to VA Notify API
 class SendNotificationJob < CaseflowJob
+  include Hearings::EnsureCurrentUserIsSet
+
   queue_as ApplicationController.dependencies_faked? ? :send_notifications : :"send_notifications.fifo"
   application_attr :hearing_schedule
 
@@ -38,6 +40,8 @@ class SendNotificationJob < CaseflowJob
   # Must receive JSON string as argument
 
   def perform(message_json)
+    ensure_current_user_is_set
+
     fail SendNotificationJobError, "Message argument of value nil supplied to job" if message_json.nil?
 
     @message = validate_message(JSON.parse(message_json, object_class: OpenStruct))
@@ -79,6 +83,25 @@ class SendNotificationJob < CaseflowJob
   # Returns: Boolean
   def sms_enabled
     @sms_enabled ||= va_notify_sms_enabled? || va_notify_quarterly_sms_enabled?
+  end
+
+  def va_notify_sms_enabled?
+    FeatureToggle.enabled?(:va_notify_sms) && !quarterly_notification?
+  end
+
+  def va_notify_quarterly_sms_enabled?
+    FeatureToggle.enabled?(:va_notify_quarterly_sms) && quarterly_notification?
+  end
+
+  def quarterly_notification?
+    event_type == "Quarterly Notification"
+  end
+
+  # Purpose: Determine if email notifications enabled
+  #
+  # Returns: Boolean
+  def email_enabled
+    @email_enabled ||= FeatureToggle.enabled?(:va_notify_email)
   end
 
   # Purpose: Ensure necessary message attributes present to send notification
@@ -141,7 +164,7 @@ class SendNotificationJob < CaseflowJob
   def update_notification_statuses
     status = format_message_status
     params = {}
-    params[:email_notification_status] = status if FeatureToggle.enabled?(:va_notify_email)
+    params[:email_notification_status] = status if email_enabled
     params[:sms_notification_status] = status if sms_enabled
 
     @notification_audit.update(params)
@@ -185,7 +208,7 @@ class SendNotificationJob < CaseflowJob
   #
   # Response: Updated Notification object
   def send_to_va_notify
-    send_va_notify_email if FeatureToggle.enabled?(:va_notify_email)
+    send_va_notify_email if email_enabled?
     send_va_notify_sms if sms_enabled
   end
 
@@ -233,15 +256,11 @@ class SendNotificationJob < CaseflowJob
     end
   end
 
-  # Purpose: Parse first name of veteran or appellant from appeal
+  # Purpose: Determine notification type depending on enabled feature toggles and event type
   #
   # Response: String
-  def first_name
-    appeal&.appellant_or_veteran_name&.split(" ")&.first
-  end
-
   def notification_type
-    if FeatureToggle.enabled?(:va_notify_email)
+    if email_enabled
       sms_enabled ? "Email and SMS" : "Email"
     elsif sms_enabled
       "SMS"
@@ -250,15 +269,10 @@ class SendNotificationJob < CaseflowJob
     end
   end
 
-  def va_notify_sms_enabled?
-    FeatureToggle.enabled?(:va_notify_sms) && !quarterly_notification?
-  end
-
-  def va_notify_quarterly_sms_enabled?
-    FeatureToggle.enabled?(:va_notify_quarterly_sms) && quarterly_notification?
-  end
-
-  def quarterly_notification?
-    event_type == "Quarterly Notification"
+  # Purpose: Parse first name of veteran or appellant from appeal
+  #
+  # Response: String
+  def first_name
+    appeal&.appellant_or_veteran_name&.split(" ")&.first
   end
 end
