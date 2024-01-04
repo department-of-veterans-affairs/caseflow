@@ -4,6 +4,9 @@
     userId: current_user.id,
     userRole: (current_user.vacols_roles.first || "").capitalize,
     userCssId: current_user.css_id,
+    dropdownUrls: dropdown_urls,
+    applicationUrls: application_urls,
+    feedbackUrl: feedback_url,
     organizations: current_user.selectable_organizations.map {|o| o.slice(:name, :url)},
     featureToggles: {
       correspondence_queue: FeatureToggle.enabled?(:correspondence_queue, user: current_user)
