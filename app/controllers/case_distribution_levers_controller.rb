@@ -2,7 +2,6 @@
 
 class CaseDistributionLeversController < ApplicationController
   before_action :verify_access
-  before_action :set_acd_group_organization, only: [:acd_lever_index, :update_levers_and_history]
 
   def acd_lever_index
     # acd_levers_for_store should replace the acd_levers value
@@ -13,13 +12,13 @@ class CaseDistributionLeversController < ApplicationController
     history = CaseDistributionAuditLeverEntry.includes(:user, :case_distribution_lever).past_year
     @acd_history = CaseDistributionAuditLeverEntrySerializer.new(history)
       .serializable_hash[:data].map{ |entry| entry[:attributes] }
-    @user_is_an_acd_admin = @acd_group_organization.user_is_admin?(current_user)
+    @user_is_an_acd_admin = CDAControlGroup.singleton.user_is_admin?(current_user)
 
     render "index"
   end
 
   def update_levers_and_history
-    redirect_to "/unauthorized" unless @acd_group_organization.user_is_admin?(current_user)
+    redirect_to "/unauthorized" unless CDAControlGroup.singleton.user_is_admin?(current_user)
 
     current_levers_list = params["current_levers"].is_a?(Array) ? params["current_levers"].to_json : params["current_levers"]
     errors = update_acd_levers(JSON.parse(current_levers_list))
@@ -67,10 +66,6 @@ class CaseDistributionLeversController < ApplicationController
 
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
-  end
-
-  def set_acd_group_organization
-    @acd_group_organization = CDAControlGroup.singleton
   end
 
   def format_audit_lever_entries(audit_lever_entries_data)

@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+require_relative "../../app/serializers/case_distribution/case_distribution_lever_audit_entry_serializer.rb"
+
 RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
-  let!(:lever_user) { create(:lever_user) }
+  let!(:lever_user) { create(:user) }
   let!(:lever_user2) { create(:user) }
 
   let!(:lever1) {create(:case_distribution_lever,
@@ -10,7 +12,8 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     description: "This is the first lever. It is a boolean with the default value of true. Therefore there should be a two radio buttons that display true and false as the example with true being the default option chosen. This lever is active so it should be in the active lever section",
     data_type: Constants.ACD_LEVERS.boolean,
     value: true,
-    unit: ""
+    unit: "",
+    lever_group: "static"
   )}
   let!(:lever2) {create(:case_distribution_lever,
     item: "lever_2",
@@ -18,7 +21,8 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     description: "This is the second lever. It is a number data type with the default value of 42. Therefore there should be a number input that displays 42 and 'days' as the unit. This lever is active so it should be in the active lever section",
     data_type: Constants.ACD_LEVERS.number,
     value: 55,
-    unit: "Days"
+    unit: "Days",
+    lever_group: "static"
   )}
 
   let!(:audit_lever_entry1) {create(:case_distribution_audit_lever_entry,
@@ -28,6 +32,9 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     update_value: 42,
     case_distribution_lever: lever2
   )}
+  let!(:audit_lever_entry1_serialized) {
+    CaseDistributionAuditLeverEntrySerializer.new(audit_lever_entry1).serializable_hash[:data][:attributes]
+  }
   let!(:audit_lever_entry2) {create(:case_distribution_audit_lever_entry,
     user: lever_user,
     created_at: "2023-07-01 10:11:01",
@@ -35,6 +42,9 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     update_value: 55,
     case_distribution_lever: lever2
   )}
+  let!(:audit_lever_entry2_serialized) {
+    CaseDistributionAuditLeverEntrySerializer.new(audit_lever_entry2).serializable_hash[:data][:attributes]
+  }
   let!(:old_audit_lever_entry) {create(:case_distribution_audit_lever_entry,
     user: lever_user,
     created_at: "2020-07-01 10:11:01",
@@ -42,6 +52,9 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     update_value: 55,
     case_distribution_lever: lever2
   )}
+  let!(:old_audit_lever_entry_serialized) {
+    CaseDistributionAuditLeverEntrySerializer.new(old_audit_lever_entry).serializable_hash[:data][:attributes]
+  }
 
   let!(:lever_history) {[audit_lever_entry1, audit_lever_entry2]}
   let!(:levers) {Seeds::CaseDistributionLevers.new.levers + [lever1, lever2]}
@@ -72,9 +85,9 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       expect(request_levers).to include(lever1)
       expect(request_levers).to include(lever2)
       expect(request_history.count).to eq(2)
-      expect(request_history).to include(audit_lever_entry1)
-      expect(request_history).to include(audit_lever_entry2)
-      expect(request_history).not_to include(old_audit_lever_entry)
+      expect(request_history).to include(audit_lever_entry1_serialized)
+      expect(request_history).to include(audit_lever_entry2_serialized)
+      expect(request_history).not_to include(old_audit_lever_entry_serialized)
       expect(request_user_is_an_admin).to be_falsey
     end
 
@@ -92,9 +105,9 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       expect(request_levers).to include(lever1)
       expect(request_levers).to include(lever2)
       expect(request_history.count).to eq(2)
-      expect(request_history).to include(audit_lever_entry1)
-      expect(request_history).to include(audit_lever_entry2)
-      expect(request_history).not_to include(old_audit_lever_entry)
+      expect(request_history).to include(audit_lever_entry1_serialized)
+      expect(request_history).to include(audit_lever_entry2_serialized)
+      expect(request_history).not_to include(old_audit_lever_entry_serialized)
       expect(request_user_is_an_admin).to be_truthy
     end
   end
@@ -121,9 +134,9 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       expect(request_levers).to include(lever1)
       expect(request_levers).to include(lever2)
       expect(request_history.count).to eq(2)
-      expect(request_history).to include(audit_lever_entry1)
-      expect(request_history).to include(audit_lever_entry2)
-      expect(request_history).not_to include(old_audit_lever_entry)
+      expect(request_history).to include(audit_lever_entry1_serialized)
+      expect(request_history).to include(audit_lever_entry2_serialized)
+      expect(request_history).not_to include(old_audit_lever_entry_serialized)
       expect(request_user_is_an_admin).to be_falsey
     end
 
@@ -141,9 +154,9 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       expect(request_levers).to include(lever1)
       expect(request_levers).to include(lever2)
       expect(request_history.count).to eq(2)
-      expect(request_history).to include(audit_lever_entry1)
-      expect(request_history).to include(audit_lever_entry2)
-      expect(request_history).not_to include(old_audit_lever_entry)
+      expect(request_history).to include(audit_lever_entry1_serialized)
+      expect(request_history).to include(audit_lever_entry2_serialized)
+      expect(request_history).not_to include(old_audit_lever_entry_serialized)
       expect(request_user_is_an_admin).to be_truthy
     end
   end
@@ -172,11 +185,11 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       }
 
       save_params = {
-        current_levers: [updated_lever_1, lever2].to_json,
-        audit_lever_entries: [].to_json
+        current_levers: [updated_lever_1, lever2],
+        audit_lever_entries: []
       }
 
-      post "update_levers_and_history", params: save_params
+      post "update_levers_and_history", params: save_params, as: :json
 
       expect(CaseDistributionLever.find(lever1.id).value).to eq("f")
       expect(CaseDistributionLever.all).to include(lever2)
@@ -200,11 +213,11 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       }
 
       save_params = {
-        current_levers: [invalid_updated_lever_1, lever2].to_json,
-        audit_lever_entries: [].to_json
+        current_levers: [invalid_updated_lever_1, lever2],
+        audit_lever_entries: []
       }
 
-      post "update_levers_and_history", params: save_params
+      post "update_levers_and_history", params: save_params, as: :json
 
       expect(CaseDistributionLever.find(lever1.id).value).to eq("t")
       expect(CaseDistributionLever.all).to include(lever2)
@@ -239,16 +252,16 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
           "original_value": 5,
           "current_value": 42
         }
-      ].to_json
+      ]
 
       save_params = {
-        current_levers: [].to_json,
+        current_levers: [],
         audit_lever_entries: formatted_history
       }
 
       expect(CaseDistributionAuditLeverEntry.past_year.count).to eq(2)
 
-      post "update_levers_and_history", params: save_params
+      post "update_levers_and_history", params: save_params, as: :json
 
       expect(CaseDistributionAuditLeverEntry.past_year.count).to eq(5)
       expect(JSON.parse(response.body)["successful"]).to be_truthy
@@ -279,16 +292,16 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
           "lever_title": lever1.title,
           "current_value": 42
         }
-      ].to_json
+      ]
 
       save_params = {
-        current_levers: [].to_json,
+        current_levers: [],
         audit_lever_entries: formatted_history
       }
 
       expect(CaseDistributionAuditLeverEntry.past_year.count).to eq(2)
 
-      post "update_levers_and_history", params: save_params
+      post "update_levers_and_history", params: save_params, as: :json
 
       expect(CaseDistributionAuditLeverEntry.past_year.count).to eq(2)
       expect(JSON.parse(response.body)["successful"]).to be_falsey
