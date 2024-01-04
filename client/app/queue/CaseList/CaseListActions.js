@@ -4,7 +4,7 @@ import * as Constants from './actionTypes';
 
 import { get, size } from 'lodash';
 import { onReceiveAppealDetails, onReceiveClaimReviewDetails } from '../QueueActions';
-import { prepareAppealForStore, prepareAppealForSearchStore, prepareClaimReviewForStore } from '../utils';
+import { prepareAppealForStore prepareClaimReviewForStore } from '../utils';
 import ValidatorsUtil from '../../util/ValidatorsUtil';
 
 const { validSSN, validFileNum, validDocketNum } = ValidatorsUtil;
@@ -54,7 +54,7 @@ export const fetchedNoAppeals = (searchQuery) => ({
 });
 
 export const onReceiveAppeals = (appeals) => (dispatch) => {
-  dispatch(onReceiveAppealDetails(prepareAppealForSearchStore(appeals)));
+  dispatch(onReceiveAppealDetails(prepareAppealForStore(appeals)));
   dispatch({
     type: Constants.RECEIVED_APPEALS_USING_VETERAN_ID_SUCCESS
   });
