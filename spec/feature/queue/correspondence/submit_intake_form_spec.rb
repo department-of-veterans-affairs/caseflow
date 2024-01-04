@@ -24,14 +24,14 @@ RSpec.feature("Correspondence Intake submission") do
   context "user selects completed mail tasks" do
     describe "success" do
       it "displays confirm submission" do
-      visit_intake_form_step_2_with_appeals
-      page.all(".cf-form-checkbox")[2].click
-      click_button("Continue")
-      click_button("Submit")
-      click_button("Confirm")
-      using_wait_time(10) do
-        expect(page).to have_content("You have successfully submitted a correspondence record")
-      end
+        visit_intake_form_step_2_with_appeals
+        page.all(".cf-form-checkbox")[2].click
+        click_button("Continue")
+        click_button("Submit")
+        click_button("Confirm")
+        using_wait_time(10) do
+          expect(page).to have_content("You have successfully submitted a correspondence record")
+        end
       end
     end
   end
@@ -47,7 +47,6 @@ RSpec.feature("Correspondence Intake submission") do
         all("#reactSelectContainer")[0].click
         find_by_id("react-select-2-option-1").click
         find_by_id("addAutotext").click
-        checkbox_text = "Possible motion pursuant to BVA decision dated mm/dd/yy"
         within find_by_id("autotextModal") do
           page.all(".cf-form-checkbox")[6].click
           find_by_id("Add-autotext-button-id-1").click
@@ -62,7 +61,13 @@ RSpec.feature("Correspondence Intake submission") do
     end
 
     describe "failure" do
-      let(:mock_correspondence_intake_processor) { instance_double(CorrespondenceIntakeProcessor, process_intake: false) }
+      let(:mock_correspondence_intake_processor) do
+        instance_double(
+          CorrespondenceIntakeProcessor,
+          process_intake: false
+        )
+      end
+
       before do
         allow(CorrespondenceIntakeProcessor).to receive(:new).and_return(mock_correspondence_intake_processor)
         require Rails.root.join("db/seeds/base.rb").to_s
@@ -75,7 +80,6 @@ RSpec.feature("Correspondence Intake submission") do
         all("#reactSelectContainer")[0].click
         find_by_id("react-select-2-option-1").click
         find_by_id("addAutotext").click
-        checkbox_text = "Possible motion pursuant to BVA decision dated mm/dd/yy"
         within find_by_id("autotextModal") do
           page.all(".cf-form-checkbox")[6].click
           find_by_id("Add-autotext-button-id-1").click
@@ -89,7 +93,6 @@ RSpec.feature("Correspondence Intake submission") do
       end
     end
   end
-
 
   context "user adds tasks related to an appeal" do
     describe "success" do
@@ -149,7 +152,7 @@ RSpec.feature("Correspondence Intake submission") do
         using_wait_time(10) do
           page.all(".checkbox-wrapper-1").find(".cf-form-checkbox").first.click
         end
-        find('label', text: 'Waive Evidence Window').click
+        find("label", text: "Waive Evidence Window").click
         find_by_id("waiveReason").fill_in with: "test waive note"
         click_button("Continue")
         find(".cf-pdf-external-link-icon").click

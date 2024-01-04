@@ -270,9 +270,9 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         all("#reactSelectContainer")[0].click
         find_by_id("react-select-2-option-15").click
         find_by_id("content").fill_in with: "Correspondence Text"
-        expect((find_all("#reactSelectContainer")).length).to eq(1)
+        expect(find_all("#reactSelectContainer").length).to eq(1)
         find_all(".fa.fa-unlink").last.click
-        expect((find_all("#reactSelectContainer")).length).to eq(0)
+        expect(find_all("#reactSelectContainer").length).to eq(0)
       end
 
       it "Unlinks only one appeal if multiple are selected when the unlink appeal button is clicked" do
@@ -295,9 +295,9 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         find_by_id("react-select-3-option-15").click
         all("textarea")[1].fill_in with: "Correspondence Text"
 
-        expect((find_all("#reactSelectContainer")).length).to eq(2)
+        expect(find_all("#reactSelectContainer").length).to eq(2)
         find_all(".fa.fa-unlink").last.click
-        expect((find_all("#reactSelectContainer")).length).to eq(1)
+        expect(find_all("#reactSelectContainer").length).to eq(1)
       end
     end
   end
