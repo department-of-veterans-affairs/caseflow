@@ -109,7 +109,10 @@ RSpec.feature("The Correspondence Review Package page") do
         expect(page).to have_button("Review removal request")
         click_button "Review removal request"
         page.all(".cf-form-radio-option > label")[0].click
-        expect(page).to have_content(COPY::CORRRESPONDENCE_TEXT_REMOVE_PACKAGE)
+        click_button("Confirm")
+        using_wait_time(10) do
+          expect(page).to have_content("The package has been removed from Caseflow and must be manually uploaded again from the Centralized Mail Portal, if it needs to be processed.")
+        end
       end
 
       it "remove Package" do
