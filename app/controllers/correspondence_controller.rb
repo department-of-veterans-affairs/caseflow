@@ -64,7 +64,10 @@ class CorrespondenceController < ApplicationController
         task.status = "cancelled"
         task.save
       end
-      if upload_documents_to_claim_evidence
+
+      rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id, type: ReviewPackageTask.name)
+
+      if correspondence_documents_efolder_uploader.upload_documents_to_claim_evidence(correspondence, current_user, rpt)
         render json: { correspondence: correspondence }
       else
         render json: {}, status: :bad_request
@@ -230,12 +233,11 @@ class CorrespondenceController < ApplicationController
   end
 
   def verify_feature_toggle
-    if !FeatureToggle.enabled?(:correspondence_queue) && verify_correspondence_access()
+    if !FeatureToggle.enabled?(:correspondence_queue) && verify_correspondence_access
       redirect_to "/under_construction"
-    elsif !FeatureToggle.enabled?(:correspondence_queue) || !verify_correspondence_access()
+    elsif !FeatureToggle.enabled?(:correspondence_queue) || !verify_correspondence_access
       redirect_to "/unauthorized"
     end
-
   end
 
   def correspondence
@@ -259,10 +261,12 @@ class CorrespondenceController < ApplicationController
 
     @veteran_by_correspondence ||= begin
       veteran = Veteran.find_by(id: correspondence.veteran_id)
+
       if veteran.nil?
         # Handle the case where the veteran is not found
-        puts "Veteran not found for ID: #{correspondence.veteran_id}"
+        Rails.logger.error("Veteran not found for ID: #{correspondence.veteran_id}")
       end
+
       veteran
     end
   end
@@ -276,10 +280,6 @@ class CorrespondenceController < ApplicationController
     @auto_texts ||= AutoText.all.pluck(:name)
   end
 
-  def correspondence_intake_processor
-    @correspondence_intake_processor ||= CorrespondenceIntakeProcessor.new
-  end
-
   def vet_info_serializer(veteran, correspondence)
     {
       firstName: veteran.first_name,
@@ -291,38 +291,11 @@ class CorrespondenceController < ApplicationController
     }
   end
 
-  def upload_documents_to_claim_evidence
-    if Rails.env.development? || Rails.env.demo? || Rails.env.test?
-      create_efolder_upload_failed_task
-      true
-    else
-      begin
-        correspondence.correspondence_documents.all.each do |doc|
-          ExternalApi::ClaimEvidenceService.upload_document(
-            doc.pdf_location,
-            veteran_by_correspondence.file_number,
-            doc.claim_evidence_upload_json
-          )
-        end
-        true
-      rescue StandardError => error
-        Rails.logger.error(error.to_s)
-        create_efolder_upload_failed_task
-        false
-      end
-    end
+  def correspondence_intake_processor
+    @correspondence_intake_processor ||= CorrespondenceIntakeProcessor.new
   end
 
-  def create_efolder_upload_failed_task
-    rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id, type: ReviewPackageTask.name)
-    euft = EfolderUploadFailedTask.find_or_create_by(
-      appeal_id: correspondence.id,
-      appeal_type: "Correspondence",
-      type: EfolderUploadFailedTask.name,
-      assigned_to: current_user,
-      parent_id: rpt.id
-    )
-
-    euft.update!(status: Constants.TASK_STATUSES.in_progress)
+  def correspondence_documents_efolder_uploader
+    @correspondence_documents_efolder_uploader ||= CorrespondenceDocumentsEfolderUploader.new
   end
 end

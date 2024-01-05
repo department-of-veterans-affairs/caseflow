@@ -6,7 +6,7 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
   let(:related_correspondence_uuids) do
     (1..3).map { create(:correspondence) }.pluck(:uuid)
   end
-  let (:esw_tasks) do
+  let(:esw_tasks) do
     (1..3).map do
       appeal = create(:appeal)
       InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
@@ -20,12 +20,18 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
   let(:valid_params) { { notes: "Updated notes", correspondence_type_id: 12 } }
   let(:new_file_number) { "50000005" }
   let(:current_user) { create(:user) }
+  let!(:parent_task) { create(:correspondence_intake_task, appeal: correspondence, assigned_to: current_user) }
+
+  let(:mock_doc_uploader) { instance_double(CorrespondenceDocumentsEfolderUploader) }
 
   before do
     Fakes::Initializer.load!
     FeatureToggle.enable!(:correspondence_queue)
     User.authenticate!(roles: ["Mail Intake"])
     correspondence.update(veteran: veteran)
+
+    allow(CorrespondenceDocumentsEfolderUploader).to receive(:new).and_return(mock_doc_uploader)
+    allow(mock_doc_uploader).to receive(:upload_documents_to_claim_evidence).and_return(true)
   end
 
   describe "GET #show" do
