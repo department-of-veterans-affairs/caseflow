@@ -1,7 +1,7 @@
 class CreateCaseDistributionLevers < Caseflow::Migration
   def change
-    create_table :case_distribution_levers, comment:"A generalized table for Caseflow Distribution lever records within caseflow" do |t|
-      t.string :item, null: false, comment:"Is unique value to identify the Caseflow Distribution lever"
+    create_table :case_distribution_levers, comment:"A generalized table for Case Distribution lever records within caseflow" do |t|
+      t.string :item, null: false, comment:"Is unique value to identify the Case Distribution lever"
       t.string :title, null: false, comment:"Indicates the Lever title"
       t.text :description, null: true, comment:"Indicates the description of the Lever"
       t.string :data_type, null: false, comment:"Indicates which type of record either BOOLEAN/RADIO/COMBO"

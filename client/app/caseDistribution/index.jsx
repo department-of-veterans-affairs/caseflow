@@ -30,7 +30,7 @@ class CaseflowDistribution extends React.PureComponent {
 
     const leverStore = createStore(leversReducer, preloadedState);
     const Router = this.props.router || BrowserRouter;
-    const appName = 'Caseflow Distribution';
+    const appName = 'Case Distribution';
 
     const staticLevers = [
       DISTRIBUTION.maximum_direct_review_proportion,
