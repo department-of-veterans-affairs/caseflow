@@ -104,7 +104,8 @@ class CorrespondenceController < ApplicationController
       correspondence_documents: corres_docs.map do |doc|
         WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
       end,
-      efolder_upload_failed_before: EfolderUploadFailedTask.where(appeal_id: correspondence.id, type: "EfolderUploadFailedTask")
+      efolder_upload_failed_before: EfolderUploadFailedTask.where(appeal_id: correspondence.id, type: "EfolderUploadFailedTask"),
+      reasonForRemovePackage: RemovePackageTask.find_by(appeal_id: correspondence.id, type: RemovePackageTask.name).instructions
     }
     render({ json: response_json }, status: :ok)
   end

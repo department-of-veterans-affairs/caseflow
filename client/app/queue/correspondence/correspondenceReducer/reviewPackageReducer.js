@@ -6,7 +6,8 @@ export const initialState = {
   correspondenceDocuments: [],
   packageDocumentType: {},
   veteranInformation: {},
-  lastAction: {}
+  lastAction: {},
+  reasonForRemovePackage: {}
 };
 
 export const reviewPackageReducer = (state = initialState, action = {}) => {
@@ -76,6 +77,13 @@ export const reviewPackageReducer = (state = initialState, action = {}) => {
         action_type: {
           $set: action.payload.currentAction
         }
+      }
+    });
+
+  case ACTIONS.SET_REASON_REMOVE_PACKAGE:
+    return update(state, {
+      reasonForRemovePackage: {
+        $set: action.payload.reasonForRemove
       }
     });
 
