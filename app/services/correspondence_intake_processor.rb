@@ -27,13 +27,7 @@ class CorrespondenceIntakeProcessor
 
   def upload_documents_to_claim_evidence(correspondence, current_user)
     begin
-      if !Rails.env.production?
-        if FeatureToggle.enabled?(:ce_api_demo_toggle)
-          true
-        else
-          fail "Mock failure for upload in non-prod env"
-        end
-      else
+      if Rails.env.production?
         correspondence.correspondence_documents.all.each do |doc|
           ExternalApi::ClaimEvidenceService.upload_document(
             doc.pdf_location,
@@ -43,6 +37,12 @@ class CorrespondenceIntakeProcessor
         end
 
         true
+      else
+        if FeatureToggle.enabled?(:ce_api_demo_toggle)
+          true
+        else
+          fail "Mock failure for upload in non-prod env"
+        end
       end
     rescue StandardError => error
       Rails.logger.error(error.to_s)
