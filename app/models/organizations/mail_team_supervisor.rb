@@ -6,6 +6,7 @@ class MailTeamSupervisor < Organization
       MailTeamSupervisor.create(name: "Mail Team Supervisor", url: "mail-team-supervisor")
   end
 
+  # :reek:UtilityFunction
   def selectable_in_queue?
     !Rails.env.production?
   end

@@ -58,16 +58,7 @@ RSpec.feature("The Correspondence Intake page") do
 
   context "intake form shell" do
     before :each do
-      FeatureToggle.enable!(:correspondence_queue)
-      veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
-      create(
-        :correspondence,
-        veteran_id: veteran.id,
-        uuid: SecureRandom.uuid,
-        va_date_of_receipt: Time.zone.local(2023, 1, 1)
-      )
-      @correspondence_uuid = Correspondence.first.uuid
-      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+      setup_and_visit_intake
     end
 
     it "the intake page exists" do
@@ -116,22 +107,13 @@ RSpec.feature("The Correspondence Intake page") do
 
   context "access 'Tasks not Related to an Appeals'" do
     before :each do
-      FeatureToggle.enable!(:correspondence_queue)
-      veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
-      create(
-        :correspondence,
-        veteran_id: veteran.id,
-        uuid: SecureRandom.uuid,
-        va_date_of_receipt: Time.zone.local(2023, 1, 1)
-      )
-      @correspondence_uuid = Correspondence.first.uuid
-      visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+      setup_and_visit_intake
     end
 
     it "Paragraph text appears below the title" do
       click_on("button-continue")
       expect(page).to have_button("+ Add tasks")
-      expect(page).to have_text("Add new tasks related to this correspondence or " +
+      expect(page).to have_text("Add new tasks related to this correspondence or " \
         "to an appeal not yet created in Caseflow.")
     end
   end
@@ -169,12 +151,12 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("+ Add tasks")
       all("#reactSelectContainer")[0].click
       find_by_id("react-select-2-option-4").click
-      expect(page).to have_content("Other motion")
+      expect(page).to have_content("Other Motion")
       click_on("+ Add tasks")
       all("#reactSelectContainer")[1].click
       find_by_id("react-select-3-option-4").click
       within all("#reactSelectContainer")[1] do
-        expect(page).to have_content("Other motion")
+        expect(page).to have_content("Other Motion")
       end
       expect(page).to have_button("+ Add tasks", disabled: false)
     end
@@ -228,7 +210,7 @@ RSpec.feature("The Correspondence Intake page") do
         visit_intake_form_step_3_with_tasks_unrelated
 
         expect(page).to have_content("Tasks not related to an Appeal")
-        expect(all("button > span", text: "Edit Section").length).to eq(3)
+        expect(all("button > span", text: "Edit Section").length).to eq(4)
         expect(page).to have_content("Tasks")
         expect(page).to have_content("Task Instructions or Context")
         expect(page).to have_content("CAVC Correspondence")
@@ -246,9 +228,7 @@ RSpec.feature("The Correspondence Intake page") do
 
   context "The user is able to use the autotext feature" do
     before do
-      require Rails.root.join("db/seeds/base.rb").to_s
-      Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
-      Seeds::AutoTexts.new.seed!
+      seed_autotext_table
     end
 
     before :each do

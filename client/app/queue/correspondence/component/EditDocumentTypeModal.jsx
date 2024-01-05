@@ -16,7 +16,7 @@ class EditDocumentTypeModal extends React.Component {
     super(props);
 
     this.state = {
-      packageDocument: {},
+      packageDocument: null,
       disabledSaveButton: true,
       packageOptions: {},
     };
@@ -85,7 +85,7 @@ class EditDocumentTypeModal extends React.Component {
             name = "issue-category"
             label = {sprintf(COPY.NEW_DOC_EDIT_DOCUMENT_TYPE_CORRESPONDENCE)}
             strongLabel = {false}
-            placeholder = "Select or enter..."
+            placeholder = "Type to search..."
             options = {this.state.packageOptions}
             value = {packageDocument}
             onChange = {this.packageDocumentOnChange}

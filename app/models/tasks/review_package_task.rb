@@ -11,18 +11,6 @@ class ReviewPackageTask < CorrespondenceTask
       parent_task.update!(status: params[:status]) if params[:status]
       child
     end
-
-    def create_child_task(parent_task, current_user, params)
-      Task.create!(
-        type: params[:type],
-        appeal_type: "Correspondence",
-        appeal: parent_task.appeal,
-        assigned_by_id: child_assigned_by_id(parent_task, current_user),
-        parent_id: parent_task.id,
-        assigned_to: params[:assigned_to] || child_task_assignee(parent_task, params),
-        instructions: params[:instructions]
-      )
-    end
   end
 
   def when_child_task_created(_child_task)
