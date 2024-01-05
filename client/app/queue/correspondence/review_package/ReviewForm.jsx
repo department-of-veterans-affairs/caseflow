@@ -108,17 +108,6 @@ export const ReviewForm = (props) => {
     props.setEditableData(updatedNotes);
   };
 
-  const findDefaultVal = (array, id) => {
-    const foundItem = array.find((item) => item.id === id);
-
-    return foundItem ? { label: foundItem.name, value: foundItem.name } : null;
-  };
-
-  const defaultSelectedValue = findDefaultVal(
-    props.reviewDetails.dropdown_values,
-    props.editableData.default_select_value
-  );
-
   const generateOptions = (options) =>
     options.map((option) => ({
       value: option.name,
@@ -224,10 +213,10 @@ export const ReviewForm = (props) => {
                 name="correspondence-dropdown"
                 label="Correspondence type"
                 styling={tagStyling}
-                value={defaultSelectedValue}
                 options={generateOptions(props.reviewDetails.dropdown_values)}
                 onChange={handleSelect}
                 readOnly={props.isReadOnly}
+                placeholder="Select..."
               />
             </div>
 
