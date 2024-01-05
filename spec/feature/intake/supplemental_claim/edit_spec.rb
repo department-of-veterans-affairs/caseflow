@@ -69,7 +69,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
   before do
     supplemental_claim.create_claimant!(participant_id: "5382910292", payee_code: "10", type: "DependentClaimant")
 
-    allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+    allow(Caseflow::Fakes::VBMSService).to receive(:create_contentions!).and_call_original
 
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
       first_name: "BOB",
@@ -97,7 +97,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       supplemental_claim.establish!
       supplemental_claim.reload
       request_issue.reload
-      Fakes::VBMSService.remove_contention!(request_issue.contention)
+      Caseflow::Fakes::VBMSService.remove_contention!(request_issue.contention)
     end
 
     it "automatically removes issues" do
@@ -483,10 +483,10 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     end
 
     it "updates selected issues" do
-      allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
-      allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-      allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
-      allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
+      allow(Caseflow::Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+      allow(Caseflow::Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+      allow(Caseflow::Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
+      allow(Caseflow::Fakes::VBMSService).to receive(:remove_contention!).and_call_original
 
       visit "supplemental_claims/#{rating_ep_claim_id}/edit"
       click_remove_intake_issue_dropdown("PTSD denied")
@@ -519,7 +519,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
       expect(new_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
 
       # expect contentions to reflect issue update
-      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+      expect(Caseflow::Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: veteran.file_number,
         claim_id: rating_ep_claim_id,
         contentions: [{ description: "Left knee granted",
@@ -527,13 +527,13 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         user: current_user,
         claim_date: supplemental_claim.receipt_date.to_date
       )
-      expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
+      expect(Caseflow::Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
         claim_id: rating_ep_claim_id,
         rating_issue_contention_map: {
           new_request_issue.contested_rating_issue_reference_id => new_request_issue.contention_reference_id
         }
       )
-      expect(Fakes::VBMSService).to have_received(:remove_contention!).once
+      expect(Caseflow::Fakes::VBMSService).to have_received(:remove_contention!).once
     end
 
     feature "cancel edits" do
@@ -570,7 +570,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
     context "when a user can withdraw issues" do
       before do
         CaseReview.singleton.add_user(current_user)
-        allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
+        allow(Caseflow::Fakes::VBMSService).to receive(:remove_contention!).and_call_original
       end
 
       scenario "remove an issue with dropdown" do
@@ -613,7 +613,7 @@ feature "Supplemental Claim Edit issues", :all_dbs do
         expect(withdrawn_issue).to_not be_nil
         expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
         expect(withdrawn_issue.decision_review.end_product_establishments.first.synced_status).to eq("CAN")
-        expect(Fakes::VBMSService).to have_received(:remove_contention!).once
+        expect(Caseflow::Fakes::VBMSService).to have_received(:remove_contention!).once
       end
 
       scenario "show withdrawn issue when edit page is reloaded" do

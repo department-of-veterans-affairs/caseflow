@@ -19,8 +19,8 @@ FactoryBot.define do
         appeal.veteran_file_number = evaluator.veteran.file_number
       end
 
-      Fakes::VBMSService.document_records ||= {}
-      Fakes::VBMSService.document_records[appeal.veteran_file_number] = evaluator.documents
+      Caseflow::Fakes::VBMSService.document_records ||= {}
+      Caseflow::Fakes::VBMSService.document_records[appeal.veteran_file_number] = evaluator.documents
     end
 
     # Appeal's after_save interferes with explicit updated_at values

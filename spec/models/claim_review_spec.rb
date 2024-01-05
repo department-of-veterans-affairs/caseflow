@@ -790,9 +790,9 @@ describe ClaimReview, :postgres do
       claim_review.save!
       claim_review.create_issues!(issues)
 
-      allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
-      allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-      allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
+      allow(Caseflow::Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+      allow(Caseflow::Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+      allow(Caseflow::Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
     end
 
     subject { claim_review.establish! }
@@ -803,7 +803,7 @@ describe ClaimReview, :postgres do
       it "establishes the claim and creates the contentions in VBMS" do
         subject
 
-        expect(Fakes::VBMSService).to have_received(:establish_claim!).once.with(
+        expect(Caseflow::Fakes::VBMSService).to have_received(:establish_claim!).once.with(
           claim_hash: {
             benefit_type_code: "1",
             payee_code: "00",
@@ -825,7 +825,7 @@ describe ClaimReview, :postgres do
           user: user
         )
 
-        expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
+        expect(Caseflow::Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
           claim_id: claim_review.end_product_establishments.last.reference_id,
           contentions: array_including(
@@ -840,7 +840,7 @@ describe ClaimReview, :postgres do
           claim_date: claim_review.receipt_date.to_date
         )
 
-        expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
+        expect(Caseflow::Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
           claim_id: claim_review.end_product_establishments.last.reference_id,
           rating_issue_contention_map: {
             "reference-id" => rating_request_issue.reload.contention_reference_id,
@@ -872,7 +872,7 @@ describe ClaimReview, :postgres do
 
         it "does not associate_rating_request_issues" do
           subject
-          expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
+          expect(Caseflow::Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
           expect(non_rating_request_issue.rating_issue_associated_at).to be_nil
         end
       end
@@ -883,8 +883,8 @@ describe ClaimReview, :postgres do
         it "doesn't establish it again in VBMS" do
           subject
 
-          expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
-          expect(Fakes::VBMSService).to have_received(:create_contentions!)
+          expect(Caseflow::Fakes::VBMSService).to_not have_received(:establish_claim!)
+          expect(Caseflow::Fakes::VBMSService).to have_received(:create_contentions!)
         end
 
         context "when the end product is no longer active" do
@@ -899,9 +899,9 @@ describe ClaimReview, :postgres do
           it "does not attempt subsequent actions on the end product and completes the establishment job" do
             subject
 
-            expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
-            expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
-            expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
+            expect(Caseflow::Fakes::VBMSService).to_not have_received(:establish_claim!)
+            expect(Caseflow::Fakes::VBMSService).to_not have_received(:create_contentions!)
+            expect(Caseflow::Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
             expect(Fakes::BGSService.manage_claimant_letter_v2_requests).to be_nil
             expect(Fakes::BGSService.generate_tracked_items_requests).to be_nil
             expect(claim_review.establishment_processed_at).to eq Time.zone.now
@@ -922,7 +922,7 @@ describe ClaimReview, :postgres do
           it "doesn't create them in VBMS, and re-sends the new contention map" do
             subject
 
-            expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
+            expect(Caseflow::Fakes::VBMSService).to have_received(:create_contentions!).once.with(
               veteran_file_number: veteran_file_number,
               claim_id: claim_review.end_product_establishments.last.reference_id,
               contentions: containing_exactly(
@@ -935,7 +935,7 @@ describe ClaimReview, :postgres do
               claim_date: claim_review.receipt_date.to_date
             )
 
-            expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
+            expect(Caseflow::Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
               claim_id: claim_review.end_product_establishments.last.reference_id,
               rating_issue_contention_map: {
                 "reference-id" => rating_request_issue.reload.contention_reference_id,
@@ -962,9 +962,9 @@ describe ClaimReview, :postgres do
           it "doesn't create them in VBMS" do
             subject
 
-            expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
-            expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
-            expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
+            expect(Caseflow::Fakes::VBMSService).to_not have_received(:establish_claim!)
+            expect(Caseflow::Fakes::VBMSService).to_not have_received(:create_contentions!)
+            expect(Caseflow::Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
           end
         end
 
@@ -993,15 +993,15 @@ describe ClaimReview, :postgres do
         it "remains idempotent despite multiple VBMS failures" do
           raise_error_on_end_product_establishment_establish_claim
 
-          expect(Fakes::VBMSService).to receive(:establish_claim!).once
+          expect(Caseflow::Fakes::VBMSService).to receive(:establish_claim!).once
           expect { subject }.to raise_error(vbms_error)
           expect(claim_review.establishment_processed_at).to be_nil
 
           allow_end_product_establishment_establish_claim
           raise_error_on_create_contentions
 
-          expect(Fakes::VBMSService).to receive(:establish_claim!).once
-          expect(Fakes::VBMSService).to receive(:create_contentions!).once
+          expect(Caseflow::Fakes::VBMSService).to receive(:establish_claim!).once
+          expect(Caseflow::Fakes::VBMSService).to receive(:create_contentions!).once
           expect { subject }.to raise_error(vbms_error)
           expect(claim_review.establishment_processed_at).to be_nil
           expect(epe.reference_id).to_not be_nil
@@ -1010,9 +1010,9 @@ describe ClaimReview, :postgres do
           allow_create_contentions
           raise_error_on_associate_rating_request_issues
 
-          expect(Fakes::VBMSService).to_not receive(:establish_claim!)
-          expect(Fakes::VBMSService).to receive(:create_contentions!).once
-          expect(Fakes::VBMSService).to receive(:associate_rating_request_issues!).once
+          expect(Caseflow::Fakes::VBMSService).to_not receive(:establish_claim!)
+          expect(Caseflow::Fakes::VBMSService).to receive(:create_contentions!).once
+          expect(Caseflow::Fakes::VBMSService).to receive(:associate_rating_request_issues!).once
           expect { subject }.to raise_error(vbms_error)
           expect(claim_review.establishment_processed_at).to be_nil
 
@@ -1022,40 +1022,40 @@ describe ClaimReview, :postgres do
 
           allow_associate_rating_request_issues
 
-          expect(Fakes::VBMSService).to_not receive(:establish_claim!)
-          expect(Fakes::VBMSService).to_not receive(:create_contentions!)
-          expect(Fakes::VBMSService).to receive(:associate_rating_request_issues!).once
+          expect(Caseflow::Fakes::VBMSService).to_not receive(:establish_claim!)
+          expect(Caseflow::Fakes::VBMSService).to_not receive(:create_contentions!)
+          expect(Caseflow::Fakes::VBMSService).to receive(:associate_rating_request_issues!).once
           subject
           expect(claim_review.establishment_processed_at).to eq(Time.zone.now)
 
-          expect(Fakes::VBMSService).to_not receive(:establish_claim!)
-          expect(Fakes::VBMSService).to_not receive(:create_contentions!)
-          expect(Fakes::VBMSService).to_not receive(:associate_rating_request_issues!)
+          expect(Caseflow::Fakes::VBMSService).to_not receive(:establish_claim!)
+          expect(Caseflow::Fakes::VBMSService).to_not receive(:create_contentions!)
+          expect(Caseflow::Fakes::VBMSService).to_not receive(:associate_rating_request_issues!)
           subject
         end
 
         def raise_error_on_end_product_establishment_establish_claim
-          allow(Fakes::VBMSService).to receive(:establish_claim!).and_raise(vbms_error)
+          allow(Caseflow::Fakes::VBMSService).to receive(:establish_claim!).and_raise(vbms_error)
         end
 
         def allow_end_product_establishment_establish_claim
-          allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+          allow(Caseflow::Fakes::VBMSService).to receive(:establish_claim!).and_call_original
         end
 
         def raise_error_on_create_contentions
-          allow(Fakes::VBMSService).to receive(:create_contentions!).and_raise(vbms_error)
+          allow(Caseflow::Fakes::VBMSService).to receive(:create_contentions!).and_raise(vbms_error)
         end
 
         def allow_create_contentions
-          allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+          allow(Caseflow::Fakes::VBMSService).to receive(:create_contentions!).and_call_original
         end
 
         def raise_error_on_associate_rating_request_issues
-          allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_raise(vbms_error)
+          allow(Caseflow::Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_raise(vbms_error)
         end
 
         def allow_associate_rating_request_issues
-          allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
+          allow(Caseflow::Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
         end
 
         def claim_contentions_for_all_issues_on_epe
@@ -1116,7 +1116,7 @@ describe ClaimReview, :postgres do
           code: "030HLRR"
         )
 
-        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+        expect(Caseflow::Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
             benefit_type_code: "1",
             payee_code: "00",
@@ -1138,7 +1138,7 @@ describe ClaimReview, :postgres do
           user: user
         )
 
-        expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
+        expect(Caseflow::Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
           claim_id: ratings_end_product_establishment.reference_id,
           contentions: array_including(description: "decision text",
@@ -1147,7 +1147,7 @@ describe ClaimReview, :postgres do
           claim_date: claim_review.receipt_date.to_date
         )
 
-        expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
+        expect(Caseflow::Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
           claim_id: ratings_end_product_establishment.reference_id,
           rating_issue_contention_map: {
             "reference-id" => rating_request_issue.reload.contention_reference_id
@@ -1159,7 +1159,7 @@ describe ClaimReview, :postgres do
           code: "030HLRNR"
         )
 
-        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+        expect(Caseflow::Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
             benefit_type_code: "1",
             payee_code: "00",
@@ -1181,7 +1181,7 @@ describe ClaimReview, :postgres do
           user: user
         )
 
-        expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+        expect(Caseflow::Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: veteran_file_number,
           claim_id: nonratings_end_product_establishment.reference_id,
           contentions: array_including(description: "surgery - Issue text",
