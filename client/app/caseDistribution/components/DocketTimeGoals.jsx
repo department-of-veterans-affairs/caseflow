@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import PropTypes, { object } from 'prop-types';
+import { useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
-import { ACTIONS } from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
+// import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
 import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
-import { checkIfOtherChangesExist } from '../utils.js';
+import { checkIfOtherChangesExist } from '../utils';
 
 const DocketTimeGoals = (props) => {
   const { isAdmin, sectionTitles } = props;
@@ -28,6 +28,10 @@ const DocketTimeGoals = (props) => {
   const storeTimeLevers = useSelector((state) => state.caseDistributionLevers.levers.docket_time_goal);
   const storeDistributionLevers = useSelector(
     (state) => state.caseDistributionLevers.levers.docket_distribution_prior);
+  const initialTimeLevers = useSelector((state) => state.caseDistributionLevers.initialLevers.docket_time_goal);
+  const initialDistributionLevers = useSelector(
+    (state) => state.caseDistributionLevers.initialLevers.docket_distribution_prior);
+
   const [docketDistributionLevers, setDistributionLever] = useState(storeDistributionLevers);
   const [docketTimeGoalLevers, setTimeGoalLever] = useState(storeTimeLevers);
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
@@ -46,8 +50,8 @@ const DocketTimeGoals = (props) => {
       const levers = docketDistributionLevers.map((lever, i) => {
         if (index === i) {
 
-          // let initialLever = leverStore.getState().initial_levers.find((original) => original.item === lever.item);
-          let validationResponse = leverInputValidation(lever, event, errorMessagesList, lever);
+          let initialLever = initialDistributionLevers.find((original) => original.item === lever.item);
+          let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
 
           if (validationResponse.statement === ACD_LEVERS.DUPLICATE) {
 
@@ -108,6 +112,7 @@ const DocketTimeGoals = (props) => {
     if (leverType === 'TimeGoal') {
       const levers = docketTimeGoalLevers.map((lever, i) => {
         if (index === i) {
+          let initialLever = initialTimeLevers.find((original) => original.item === lever.item);
           let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
 
           if (validationResponse.statement === ACD_LEVERS.DUPLICATE) {

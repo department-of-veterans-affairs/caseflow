@@ -9,17 +9,17 @@ import AppFrame from '../components/AppFrame';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
-import leversReducer from './reducers/Levers/leversReducer';
+import leversReducer from './reducers/levers/leversReducer';
 import CaseSearchLink from '../components/CaseSearchLink';
 import BannerDisplay from './components/BannerDisplay';
 import ACD_LEVERS from '../../constants/ACD_LEVERS';
 import DISTRIBUTION from '../../constants/DISTRIBUTION';
 
-import CaseflowDistributionApp from './pages/CaseflowDistributionApp';
+import CaseDistributionApp from './pages/CaseDistributionApp';
 import { createStore } from 'redux';
-import rootReducer from '../caseflowDistribution/reducers/root';
+import rootReducer from '../caseDistribution/reducers/root';
 
-class CaseflowDistribution extends React.PureComponent {
+class CaseDistribution extends React.PureComponent {
 
   render() {
     const preloadedState = {
@@ -30,7 +30,7 @@ class CaseflowDistribution extends React.PureComponent {
 
     const leverStore = createStore(leversReducer, preloadedState);
     const Router = this.props.router || BrowserRouter;
-    const appName = 'Caseflow Distribution';
+    const appName = 'Case Distribution';
 
     const staticLevers = [
       DISTRIBUTION.maximum_direct_review_proportion,
@@ -144,10 +144,10 @@ class CaseflowDistribution extends React.PureComponent {
                     <PageRoute
                       exact
                       path={['/acd-controls', '/case-distribution-controls']}
-                      title="CaseflowDistribution | Caseflow"
+                      title="Case Distribution | Caseflow"
                       component={() => {
                         return (
-                          <CaseflowDistributionApp
+                          <CaseDistributionApp
                             acdLeversForStore={this.props.acdLeversForStore}
                             acd_levers={leversList}
                             acd_history={this.props.acd_history}
@@ -174,4 +174,4 @@ class CaseflowDistribution extends React.PureComponent {
   }
 }
 
-export default CaseflowDistribution;
+export default CaseDistribution;

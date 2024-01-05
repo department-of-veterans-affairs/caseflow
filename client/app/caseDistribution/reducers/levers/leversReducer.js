@@ -1,4 +1,4 @@
-import {ACTIONS } from '../Levers/leversActionTypes';
+import {ACTIONS } from '../levers/leversActionTypes';
 import { update } from '../../../util/ReducerUtil';
 
 export const initialState = {

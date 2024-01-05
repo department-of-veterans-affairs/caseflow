@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
-import AffinityDays from 'app/caseflowDistribution/components/AffinityDays';
+import AffinityDays from 'app/caseDistribution/components/AffinityDays';
 import { levers } from 'test/data/adminCaseDistributionLevers';
 
 jest.mock('app/styles/caseDistribution/InteractableLevers.module.scss', () => '');

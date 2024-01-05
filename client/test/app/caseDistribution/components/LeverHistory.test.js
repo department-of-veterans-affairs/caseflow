@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import LeverHistory from 'app/caseflowDistribution/components/LeverHistory';
+import LeverHistory from 'app/caseDistribution/components/LeverHistory';
 
 jest.mock('app/styles/caseDistribution/LeverHistory.module.scss', () => '');
 describe('LeverHistory', () => {

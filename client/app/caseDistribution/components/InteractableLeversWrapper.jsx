@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes, { object } from 'prop-types';
+import PropTypes from 'prop-types';
 import BatchSize from './BatchSize';
 import DocketTimeGoals from './DocketTimeGoals';
 import AffinityDays from './AffinityDays';
@@ -12,7 +12,7 @@ const InteractableLeverWrapper = ({ levers, leverStore, isAdmin, sectionTitles }
     <div>
       <ExclusionTable isAdmin={isAdmin} />
       <BatchSize isAdmin={isAdmin} />
-      <AffinityDays leverList={levers.affinityLevers} leverStore={leverStore} isAdmin={isAdmin}/>
+      <AffinityDays leverList={levers.affinityLevers} leverStore={leverStore} isAdmin={isAdmin} />
       <DocketTimeGoals
         leverList={levers.docketLeversObject}
         leverStore={leverStore}

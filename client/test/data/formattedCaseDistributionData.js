@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 /* eslint-disable max-len */
-import ACD_LEVERS from '../../constants/ACD_LEVERS'
+import ACD_LEVERS from '../../constants/ACD_LEVERS';
+import DISTRIBUTION from '../../constants/DISTRIBUTION';
 
 export const formattedHistory = [
   {

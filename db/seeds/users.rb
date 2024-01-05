@@ -37,7 +37,7 @@ module Seeds
       User.create(css_id: "BVASRITCHIE", station_id: 101, full_name: "Sharree AttorneyNoCases Ritchie")
       User.create(css_id: "BVAAABSHIRE", station_id: 101, full_name: "Aaron Judge_HearingsAndCases Abshire")
       User.create(css_id: "BVARERDMAN", station_id: 101, full_name: "Rachael JudgeHasAttorneys_Cases Erdman")
-      User.create(css_id: "BVAEBECKER", station_id: 101, full_name: "Elizabeth Judge_CaseToAssign Becker")
+      create_bvaebecker
       create_bvakkeeling
       User.create(css_id: "BVAAWAKEFIELD", station_id: 101, full_name: "Apurva Judge_CaseAtDispatch Wakefield")
       User.create(css_id: "BVAABELANGER", station_id: 101, full_name: "Andy Attorney_CaseAtDispatch Belanger")
@@ -100,6 +100,11 @@ module Seeds
       create_non_admin_hearing_coordinator_user
       add_mail_intake_to_all_bva_intake_users
       create_cda_control_group_users
+    end
+
+    def create_bvaebecker
+      bvaebecker = User.create(css_id: "BVAEBECKER", station_id: 101, full_name: "Elizabeth Judge_CaseToAssign Becker")
+      CDAControlGroup.singleton.add_user(bvaebecker)
     end
 
     def create_bvakkeeling

@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import PropTypes, { object } from 'prop-types';
-import { ACTIONS } from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
+import { useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
+// import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
 import { css } from 'glamor';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';
 import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
-import { checkIfOtherChangesExist } from '../utils.js';
+import { checkIfOtherChangesExist } from '../utils';
 
 const BatchSize = (props) => {
   const { isAdmin } = props;

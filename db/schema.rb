@@ -355,7 +355,7 @@ ActiveRecord::Schema.define(version: 2024_01_03_134452) do
     t.index ["user_id"], name: "index_case_distribution_audit_lever_entries_on_user_id"
   end
 
-  create_table "case_distribution_levers", comment: "A generalized table for Caseflow Distribution lever records within caseflow", force: :cascade do |t|
+  create_table "case_distribution_levers", comment: "A generalized table for Case Distribution lever records within caseflow", force: :cascade do |t|
     t.json "algorithms_used", comment: "Indicates the algorithms used"
     t.json "control_group", comment: "Indicates the group which contain json formatted data that controls the Case Distribution Levers"
     t.datetime "created_at", null: false
@@ -363,7 +363,7 @@ ActiveRecord::Schema.define(version: 2024_01_03_134452) do
     t.text "description", comment: "Indicates the description of the Lever"
     t.boolean "is_active", null: false, comment: "Indicates the active lever"
     t.boolean "is_disabled", null: false, comment: "Used to diabled the row"
-    t.string "item", null: false, comment: "Is unique value to identify the Caseflow Distribution lever"
+    t.string "item", null: false, comment: "Is unique value to identify the Case Distribution lever"
     t.string "lever_group", default: "", null: false, comment: "Case Distribution lever grouping"
     t.integer "max_value", comment: "Set max value for the input"
     t.integer "min_value", comment: "Set min value for the input"

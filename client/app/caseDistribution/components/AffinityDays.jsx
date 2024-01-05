@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import cx from 'classnames';
@@ -8,9 +8,9 @@ import NumberField from 'app/components/NumberField';
 import TextField from 'app/components/TextField';
 import COPY from '../../../COPY';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
-import { ACTIONS } from '../reducers/Levers/leversActionTypes.js';
+import { ACTIONS } from '../reducers/levers/leversActionTypes';
 import leverInputValidation from './LeverInputValidation';
-import { checkIfOtherChangesExist } from '../utils.js';
+import { checkIfOtherChangesExist } from '../utils';
 
 const AffinityDays = (props) => {
   const { leverStore, isAdmin } = props;

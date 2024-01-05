@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import StaticLever from 'app/caseflowDistribution/components/StaticLever';
+import StaticLever from 'app/caseDistribution/components/StaticLever';
 
 jest.mock('app/styles/caseDistribution/StaticLevers.module.scss', () => '');
 describe('StaticLever', () => {
