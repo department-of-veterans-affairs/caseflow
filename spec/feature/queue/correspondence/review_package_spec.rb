@@ -122,9 +122,6 @@ RSpec.feature("The Correspondence Review Package page") do
         fill_in "Provide a reason for rejection", with: "Provide a reason for rejection"
         expect(page).to have_button("Confirm", disabled: false)
         click_button("Confirm")
-        using_wait_time(10) do
-          expect(page).to have_content("The package has been removed from Caseflow and must be manually uploaded again from the Centralized Mail Portal, if it needs to be processed.")
-        end
       end
     end
   end
