@@ -10,12 +10,12 @@ export const initialLoad = (levers) =>
     });
   };
 
-export const loadLevers = (loadedLevers) =>
+export const loadLevers = (levers) =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.LOAD_LEVERS,
       payload: {
-        loadedLevers
+        levers
       }
     });
   };
