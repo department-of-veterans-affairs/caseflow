@@ -151,12 +151,12 @@ RSpec.feature("The Correspondence Intake page") do
       click_on("+ Add tasks")
       all("#reactSelectContainer")[0].click
       find_by_id("react-select-2-option-4").click
-      expect(page).to have_content("Other motion")
+      expect(page).to have_content("Other Motion")
       click_on("+ Add tasks")
       all("#reactSelectContainer")[1].click
       find_by_id("react-select-3-option-4").click
       within all("#reactSelectContainer")[1] do
-        expect(page).to have_content("Other motion")
+        expect(page).to have_content("Other Motion")
       end
       expect(page).to have_button("+ Add tasks", disabled: false)
     end

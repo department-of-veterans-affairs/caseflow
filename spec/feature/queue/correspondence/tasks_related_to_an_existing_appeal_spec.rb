@@ -244,13 +244,13 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         all("#reactSelectContainer")[0].click
         find_by_id("react-select-2-option-15").click
         find_by_id("content").fill_in with: "Correspondence Text"
-        expect((all("#reactSelectContainer")[0]).text).to include("Other motion")
+        expect((all("#reactSelectContainer")[0]).text).to include("Other Motion")
 
         page.all("#button-addTasks").first.click
         all("#reactSelectContainer")[1].click
         find_by_id("react-select-3-option-15").click
         all("textarea")[1].fill_in with: "Correspondence Text"
-        expect(all("#reactSelectContainer")[1].text).to include("Other motion")
+        expect(all("#reactSelectContainer")[1].text).to include("Other Motion")
 
         page.all("#button-addTasks").first.click
         all("#reactSelectContainer")[2].click
