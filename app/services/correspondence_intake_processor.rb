@@ -26,10 +26,14 @@ class CorrespondenceIntakeProcessor
   end
 
   def upload_documents_to_claim_evidence(correspondence, current_user)
-    if Rails.env.development? || Rails.env.demo? || Rails.env.test?
-      true
-    else
-      begin
+    begin
+      if !Rails.env.production?
+        if FeatureToggle.enabled?(:ce_api_demo_toggle)
+          true
+        else
+          fail "Mock failure for upload in non-prod env"
+        end
+      else
         correspondence.correspondence_documents.all.each do |doc|
           ExternalApi::ClaimEvidenceService.upload_document(
             doc.pdf_location,
@@ -39,12 +43,12 @@ class CorrespondenceIntakeProcessor
         end
 
         true
-      rescue StandardError => error
-        Rails.logger.error(error.to_s)
-        create_efolder_upload_failed_task(correspondence, current_user)
-
-        false
       end
+    rescue StandardError => error
+      Rails.logger.error(error.to_s)
+      create_efolder_upload_failed_task(correspondence, current_user)
+
+      false
     end
   end
 
@@ -94,7 +98,7 @@ class CorrespondenceIntakeProcessor
 
     euft = EfolderUploadFailedTask.find_or_create_by(
       appeal_id: correspondence.id,
-      appeal_type: "Correspondence",
+      appeal_type: Correspondence.name,
       type: EfolderUploadFailedTask.name,
       assigned_to: current_user,
       parent_id: rpt.id
