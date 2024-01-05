@@ -96,6 +96,11 @@ class CorrespondenceController < ApplicationController
 
   def show
     corres_docs = correspondence.correspondence_documents
+    reason_remove = if RemovePackageTask.find_by(appeal_id: correspondence.id, type: RemovePackageTask.name).nil?
+                      ""
+                    else
+                      RemovePackageTask.find_by(appeal_id: correspondence.id, type: RemovePackageTask.name).instructions
+                    end
     response_json = {
       correspondence: correspondence,
       package_document_type: correspondence&.package_document_type,
@@ -105,7 +110,7 @@ class CorrespondenceController < ApplicationController
         WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
       end,
       efolder_upload_failed_before: EfolderUploadFailedTask.where(appeal_id: correspondence.id, type: "EfolderUploadFailedTask"),
-      reasonForRemovePackage: RemovePackageTask.find_by(appeal_id: correspondence.id, type: RemovePackageTask.name).instructions
+      reasonForRemovePackage: reason_remove
     }
     render({ json: response_json }, status: :ok)
   end
@@ -236,7 +241,6 @@ class CorrespondenceController < ApplicationController
     elsif !FeatureToggle.enabled?(:correspondence_queue) || !verify_correspondence_access()
       redirect_to "/unauthorized"
     end
-
   end
 
   def correspondence
