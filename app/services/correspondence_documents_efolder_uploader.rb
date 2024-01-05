@@ -18,7 +18,7 @@ class CorrespondenceDocumentsEfolderUploader
       end
     end
   rescue StandardError => error
-    Rails.logger.error(error.to_s)
+    Rails.logger.error(error.full_message)
     create_efolder_upload_failed_task(correspondence, current_user, parent_task)
 
     false

@@ -30,7 +30,7 @@ describe CorrespondenceDocumentsEfolderUploader do
       before do
         expect(FeatureToggle).to receive(:enabled?).with(:ce_api_demo_toggle).and_return(false)
         expect(ExternalApi::ClaimEvidenceService).not_to receive(:upload_document)
-        expect(Rails.logger).to receive(:error).with("Mock failure for upload in non-prod env")
+        expect(Rails.logger).to receive(:error).with(/Mock failure for upload in non-prod env/)
       end
 
       it "fails and creates a EfolderUploadFailedTask task" do

@@ -33,7 +33,7 @@ class CorrespondenceIntakeProcessor
 
     true
   rescue StandardError => error
-    Rails.logger.error(error.message)
+    Rails.logger.error(error.full_message)
 
     false
   end
