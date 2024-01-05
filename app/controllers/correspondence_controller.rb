@@ -261,9 +261,7 @@ class CorrespondenceController < ApplicationController
   def veteran_by_correspondence
     return unless correspondence&.veteran_id
 
-    @veteran_by_correspondence ||= begin
-      Veteran.find_by(id: correspondence.veteran_id)
-    end
+    @veteran_by_correspondence ||= Veteran.find_by(id: correspondence.veteran_id)
   end
 
   def veterans_with_correspondences
