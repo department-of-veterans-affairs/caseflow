@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative "../../lib/helpers/master_scheduler_interface.rb"
 class ClaimNotEstablishedFixJob < CaseflowJob
   include MasterSchedulerInterface
 

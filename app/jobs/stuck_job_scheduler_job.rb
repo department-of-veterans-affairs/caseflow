@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
+require_relative "../../lib/helpers/master_scheduler_interface.rb"
 class StuckJobSchedulerJob < CaseflowJob
+  queue_with_priority :low_priority
   include MasterSchedulerInterface
 
   REPORT_TEXT = "Stuck Jobs Profiling Logs"

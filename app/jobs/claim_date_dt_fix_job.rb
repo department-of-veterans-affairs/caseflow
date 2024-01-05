@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative "../../lib/helpers/master_scheduler_interface.rb"
+
 class ClaimDateDtFixJob < CaseflowJob
   include MasterSchedulerInterface
 
