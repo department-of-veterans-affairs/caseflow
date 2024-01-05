@@ -177,6 +177,12 @@ class BusinessLine < Organization
 
     def change_history_rows
       change_history_sql_block = <<-SQL
+        WITH filtered_task AS (
+          SELECT * FROM tasks
+          WHERE tasks.type = 'DecisionReviewTask'
+          AND tasks.assigned_to_type = 'Organization'
+          AND tasks.assigned_to_id = '#{parent.id.to_i}'
+        )
         WITH versions_agg AS (
           SELECT
               versions.item_id,
@@ -188,10 +194,8 @@ class BusinessLine < Organization
               END) AS version_closed_by_id
           FROM
               versions
-          INNER JOIN tasks ON tasks.id = versions.item_id
+          INNER JOIN filtered_task as tasks ON tasks.id = versions.item_id
             AND versions.item_type = 'Task'
-            AND tasks.assigned_to_type = 'Organization'
-            AND tasks.assigned_to_id = '#{parent.id.to_i}'
           GROUP BY
               versions.item_id, versions.item_type
         )
@@ -219,7 +223,7 @@ class BusinessLine < Organization
             NULLIF(CONCAT(people.first_name, ' ', people.last_name), ' '),
             bgs_attorneys.name
           ) AS claimant_name
-        FROM tasks
+        FROM filtered_task as tasks
         INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
         AND request_issues.decision_review_id = tasks.appeal_id
         LEFT JOIN higher_level_reviews ON tasks.appeal_type = 'HigherLevelReview'
@@ -244,9 +248,7 @@ class BusinessLine < Organization
         LEFT JOIN users update_users ON request_issues_updates.user_id = update_users.id
         LEFT JOIN users decision_users ON decision_users.id = tv.version_closed_by_id::int
         LEFT JOIN users decision_users_completed_by ON decision_users_completed_by.id = tasks.completed_by_id
-        WHERE tasks.type = 'DecisionReviewTask'
-        AND tasks.assigned_to_type = 'Organization'
-        AND tasks.assigned_to_id = '#{parent.id.to_i}'
+        WHERE 1 = 1
       SQL
 
       # Append all of the filter queries to the end of the sql block
