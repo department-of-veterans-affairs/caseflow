@@ -28,7 +28,7 @@ export const VirtualHearingLinkDetails = ({
 }) => (
   <React.Fragment>
     {hearing?.scheduledForIsPast || wasVirtual ? (
-      <span>Expired</span>
+      <span>N/A</span>
     ) : (
       <VirtualHearingLink
         label={label}
@@ -39,14 +39,18 @@ export const VirtualHearingLinkDetails = ({
         hearing={hearing}
       />
     )}
-    <div {...labelPaddingFirst}>
-      <strong>Conference Room: </strong>
-      {`${aliasWithHost}`}
-    </div>
-    <div {...labelPadding}>
-      <strong>PIN: </strong>
-      {pin}
-    </div>
+    {hearing.conferenceProvider === 'pexip' ?
+      (<><div {...labelPaddingFirst}>
+        <strong>Conference Room: </strong>
+        {`${aliasWithHost}`}
+      </div>
+      <div {...labelPadding}>
+        <strong>PIN: </strong>
+        {pin}
+      </div></>) : (<div {...labelPaddingFirst} className="helper-text">
+        {link}
+      </div>)
+    }
     {!hearing?.scheduledForIsPast && !wasVirtual && (
       <CopyTextButton ariaLabel={`Copy ${role} Link`} text={`Copy ${role} Link`} textToCopy={link} />
     )}
