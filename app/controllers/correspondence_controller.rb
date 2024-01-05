@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# :reek:RepeatedConditional
 class CorrespondenceController < ApplicationController
   before_action :verify_correspondence_access
   before_action :verify_feature_toggle
@@ -104,7 +105,10 @@ class CorrespondenceController < ApplicationController
       correspondence_documents: corres_docs.map do |doc|
         WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
       end,
-      efolder_upload_failed_before: EfolderUploadFailedTask.where(appeal_id: correspondence.id, type: "EfolderUploadFailedTask")
+      efolder_upload_failed_before: EfolderUploadFailedTask.where(
+        appeal_id: correspondence.id,
+        type: "EfolderUploadFailedTask"
+      )
     }
     render({ json: response_json }, status: :ok)
   end
@@ -177,6 +181,7 @@ class CorrespondenceController < ApplicationController
 
   private
 
+  # :reek:FeatureEnvy
   def vbms_document_types
     begin
       data = ExternalApi::ClaimEvidenceService.document_types
@@ -231,12 +236,11 @@ class CorrespondenceController < ApplicationController
   end
 
   def verify_feature_toggle
-    if !FeatureToggle.enabled?(:correspondence_queue) && verify_correspondence_access()
+    if !FeatureToggle.enabled?(:correspondence_queue) && verify_correspondence_access
       redirect_to "/under_construction"
-    elsif !FeatureToggle.enabled?(:correspondence_queue) || !verify_correspondence_access()
+    elsif !FeatureToggle.enabled?(:correspondence_queue) || !verify_correspondence_access
       redirect_to "/unauthorized"
     end
-
   end
 
   def correspondence
@@ -258,14 +262,7 @@ class CorrespondenceController < ApplicationController
   def veteran_by_correspondence
     return unless correspondence&.veteran_id
 
-    @veteran_by_correspondence ||= begin
-      veteran = Veteran.find_by(id: correspondence.veteran_id)
-      if veteran.nil?
-        # Handle the case where the veteran is not found
-        puts "Veteran not found for ID: #{correspondence.veteran_id}"
-      end
-      veteran
-    end
+    @veteran_by_correspondence ||= Veteran.find_by(id: correspondence.veteran_id)
   end
 
   def veterans_with_correspondences
@@ -316,13 +313,16 @@ class CorrespondenceController < ApplicationController
 
   def create_efolder_upload_failed_task
     rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id, type: ReviewPackageTask.name)
-    euft = EfolderUploadFailedTask.find_or_create_by(
+    # rubocop:disable Layout/MultilineOperationIndentation)
+    euft = EfolderUploadFailedTask.where(appeal_id: correspondence.id, type: EfolderUploadFailedTask.name).first ||
+    EfolderUploadFailedTask.create!(
       appeal_id: correspondence.id,
       appeal_type: "Correspondence",
       type: EfolderUploadFailedTask.name,
       assigned_to: current_user,
       parent_id: rpt.id
     )
+    # rubocop:enable Layout/MultilineOperationIndentation)
 
     euft.update!(status: Constants.TASK_STATUSES.in_progress)
   end

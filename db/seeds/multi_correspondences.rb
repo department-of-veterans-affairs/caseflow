@@ -1,8 +1,12 @@
 # frozen_string_literal :true
 
 # create correspondence seeds
+# :reek:InstanceVariableAssumption
+require_relative "./helpers/seed_helpers"
+
 module Seeds
   class MultiCorrespondences < Base
+    include SeedHelpers
 
     def initialize
       initial_id_values
@@ -25,16 +29,6 @@ module Seeds
 
       @cmp_packet_number ||= 2_000_000_000
       @cmp_packet_number += 10_000 while ::Correspondence.find_by(cmp_packet_number: @cmp_packet_number + 1)
-    end
-
-    def create_veteran(options = {})
-      @file_number += 1
-      @participant_id += 1
-      params = {
-        file_number: format("%<n>09d", n: @file_number),
-        participant_id: format("%<n>09d", n: @participant_id)
-      }
-      create(:veteran, params.merge(options))
     end
 
     # rubocop:disable Metrics/AbcSize, Metrics/MethodLength

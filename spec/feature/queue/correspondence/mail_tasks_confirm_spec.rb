@@ -56,7 +56,7 @@ RSpec.feature("The Correspondence Intake page") do
       expect(page).to have_text("Completed Mail Tasks")
       expect(page).to have_text("Change of address")
       expect(page).to have_button("Edit Section")
-      all("div > span > button > span", text: "Edit Section")[0].click
+      all("div > span > button > span", text: "Edit Section")[1].click
       expect(page).to have_text("Mail Tasks")
       checkbox = all("#mail-tasks-left .cf-form-checkbox")[0]
       checkbox_input = checkbox.find('input[name="Change of address"]', visible: :all)
