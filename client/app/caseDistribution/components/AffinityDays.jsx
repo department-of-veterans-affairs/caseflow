@@ -8,7 +8,7 @@ import NumberField from 'app/components/NumberField';
 import TextField from 'app/components/TextField';
 import COPY from '../../../COPY';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
-import { ACTIONS } from '../reducers/Levers/leversActionTypes.js';
+import { ACTIONS } from '../reducers/levers/leversActionTypes.js';
 import leverInputValidation from './LeverInputValidation';
 import { checkIfOtherChangesExist } from '../utils.js';
 

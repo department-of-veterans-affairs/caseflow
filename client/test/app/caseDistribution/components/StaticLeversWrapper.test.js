@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import StaticLeverWrapper from 'app/caseDistribution/components/StaticLeversWrapper';
 import { levers } from 'test/data/adminCaseDistributionLevers';
-import leversReducer from 'app/caseDistribution/reducers/Levers/leversReducer';
+import leversReducer from 'app/caseDistribution/reducers/levers/leversReducer';
 import { createStore } from 'redux';
 
 const preloadedState = {

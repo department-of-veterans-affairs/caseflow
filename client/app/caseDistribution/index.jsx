@@ -9,7 +9,7 @@ import AppFrame from '../components/AppFrame';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Footer';
-import leversReducer from './reducers/Levers/leversReducer';
+import leversReducer from './reducers/levers/leversReducer';
 import CaseSearchLink from '../components/CaseSearchLink';
 import BannerDisplay from './components/BannerDisplay';
 import ACD_LEVERS from '../../constants/ACD_LEVERS';

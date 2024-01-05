@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import PropTypes, { object } from 'prop-types';
-import { ACTIONS } from 'app/caseDistribution/reducers/Levers/leversActionTypes';
+import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
 import { css } from 'glamor';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';

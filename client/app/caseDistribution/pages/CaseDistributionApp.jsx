@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
   initialLoad
-} from '../reducers/Levers/leversActions';
+} from '../reducers/levers/leversActions';
 
 class CaseDistributionApp extends React.PureComponent {
   constructor(props) {

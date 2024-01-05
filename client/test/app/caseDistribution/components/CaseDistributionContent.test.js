@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import CaseDistributionContent from 'app/caseDistribution/components/CaseDistributionContent';
 import { formattedHistory, formattedLevers } from 'test/data/formattedCaseDistributionData';
 import { createStore } from 'redux';
-import leversReducer from 'app/caseDistribution/reducers/Levers/leversReducer';
+import leversReducer from 'app/caseDistribution/reducers/levers/leversReducer';
 
 jest.mock('app/styles/caseDistribution/InteractableLevers.module.scss', () => '');
 jest.mock('app/styles/caseDistribution/StaticLevers.module.scss', () => '');

@@ -1,4 +1,4 @@
-import leverStore from './reducers/Levers/leversReducer';
+import leverStore from './reducers/levers/leversReducer';
 
 export const checkIfOtherChangesExist = (currentLever) => {
   const leversWithChangesList = leverStore.getState().levers.filter(
