@@ -106,7 +106,6 @@ export const getModalInformation = (dropdownType) => {
       description: PACKAGE_ACTION_MERGE_DESCRIPTION,
       label: PACKAGE_ACTION_MERGE_TEXTAREA_LABEL,
       radioLabel: PACKAGE_ACTION_MERGE_RADIO_LABEL,
-      placeholder: 'This is a reason for merge',
     };
   case 'removePackage':
     return {
