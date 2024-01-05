@@ -431,7 +431,6 @@ class AppealRepository
       )
     end
 
-
     # Close a remand (prematurely, such as for a withdrawal or a VAIMA opt in)
     # Remands need to be closed without overwriting the disposition data. A new
     # Appeal record is opened and subsequently closed to record the disposition
