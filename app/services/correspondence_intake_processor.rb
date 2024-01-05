@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# :reek:DataClump
+# :reek:FeatureEnvy
 class CorrespondenceIntakeProcessor
   def process_intake(intake_params, current_user)
     correspondence = Correspondence.find_by(uuid: intake_params[:correspondence_uuid])
