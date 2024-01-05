@@ -222,7 +222,10 @@ GEM
       no_proxy_fix
       octokit (~> 4.7)
       terminal-table (~> 1)
-    database_cleaner (1.7.0)
+    database_cleaner-active_record (2.1.0)
+      activerecord (>= 5.a)
+      database_cleaner-core (~> 2.0.0)
+    database_cleaner-core (2.0.1)
     date (3.3.3)
     ddtrace (0.34.1)
       msgpack
@@ -754,7 +757,7 @@ DEPENDENCIES
   console_tree_renderer!
   countries
   danger (~> 6.2.2)
-  database_cleaner
+  database_cleaner-active_record
   ddtrace
   debase
   derailed_benchmarks
