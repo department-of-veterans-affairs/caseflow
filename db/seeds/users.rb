@@ -104,7 +104,7 @@ module Seeds
 
     def create_bvaebecker
       bvaebecker = User.create(css_id: "BVAEBECKER", station_id: 101, full_name: "Elizabeth Judge_CaseToAssign Becker")
-      OrganizationsUser.make_user_admin(bvaebecker, CDAControlGroup.singleton)
+      CDAControlGroup.singleton.add_user(bvaebecker)
     end
 
     def create_bvakkeeling
