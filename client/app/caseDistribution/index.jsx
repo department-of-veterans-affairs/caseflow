@@ -15,7 +15,7 @@ import BannerDisplay from './components/BannerDisplay';
 import ACD_LEVERS from '../../constants/ACD_LEVERS';
 import DISTRIBUTION from '../../constants/DISTRIBUTION';
 
-import CaseflowDistributionApp from './pages/CaseflowDistributionApp';
+import CaseDistributionApp from './pages/CaseDistributionApp';
 import { createStore } from 'redux';
 import rootReducer from '../caseDistribution/reducers/root';
 
@@ -147,7 +147,7 @@ class CaseflowDistribution extends React.PureComponent {
                       title="CaseflowDistribution | Caseflow"
                       component={() => {
                         return (
-                          <CaseflowDistributionApp
+                          <CaseDistributionApp
                             acdLeversForStore={this.props.acdLeversForStore}
                             acd_levers={leversList}
                             acd_history={this.props.acd_history}

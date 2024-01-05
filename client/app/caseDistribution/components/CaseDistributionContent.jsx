@@ -9,7 +9,7 @@ import {
   anchorJumpLinkStyling } from 'app/queue/StickyNavContentArea';
 import COPY from '../../../COPY';
 
-const CaseflowDistributionContent = ({
+const CaseDistributionContent = ({
   levers,
   formattedHistory,
   isAdmin,
@@ -66,7 +66,7 @@ const CaseflowDistributionContent = ({
   );
 };
 
-CaseflowDistributionContent.propTypes = {
+CaseDistributionContent.propTypes = {
   levers: PropTypes.object.isRequired,
   saveChanges: PropTypes.func.isRequired,
   formattedHistory: PropTypes.array.isRequired,
@@ -75,4 +75,4 @@ CaseflowDistributionContent.propTypes = {
   sectionTitles: PropTypes.array.isRequired,
 };
 
-export default CaseflowDistributionContent;
+export default CaseDistributionContent;

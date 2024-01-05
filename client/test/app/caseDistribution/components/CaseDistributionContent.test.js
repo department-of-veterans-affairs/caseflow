@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import CaseflowDistributionContent from 'app/caseDistribution/components/CaseflowDistributionContent';
+import CaseDistributionContent from 'app/caseDistribution/components/CaseDistributionContent';
 import { formattedHistory, formattedLevers } from 'test/data/formattedCaseDistributionData';
 import { createStore } from 'redux';
 import leversReducer from 'app/caseDistribution/reducers/Levers/leversReducer';
@@ -10,7 +10,7 @@ jest.mock('app/styles/caseDistribution/StaticLevers.module.scss', () => '');
 jest.mock('app/styles/caseDistribution/LeverHistory.module.scss', () => '');
 jest.mock('app/styles/caseDistribution/ExclusionTable.module.scss', () => '');
 
-describe('CaseflowDistributionContent', () => {
+describe('CaseDistributionContent', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -18,10 +18,10 @@ describe('CaseflowDistributionContent', () => {
 
   const setup = (testProps) =>
     render(
-      <CaseflowDistributionContent {...testProps} />
+      <CaseDistributionContent {...testProps} />
     );
 
-  it('renders the "CaseflowDistributionContent Component" with the data imported', () => {
+  it('renders the "CaseDistributionContent Component" with the data imported', () => {
     const preloadedState = {
       levers: JSON.parse(JSON.stringify(formattedLevers)),
       initial_levers: JSON.parse(JSON.stringify(formattedLevers))

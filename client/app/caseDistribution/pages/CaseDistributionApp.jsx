@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import CaseflowDistributionContent from '../components/CaseflowDistributionContent';
+import CaseflowDistributionContent from '../components/CaseDistributionContent';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
   initialLoad
 } from '../reducers/Levers/leversActions';
 
-class CaseflowDistributionApp extends React.PureComponent {
+class CaseDistributionApp extends React.PureComponent {
   constructor(props) {
     super(props);
     this.props.initialLoad(this.props.acdLeversForStore);
@@ -32,7 +32,7 @@ class CaseflowDistributionApp extends React.PureComponent {
   }
 }
 
-CaseflowDistributionApp.propTypes = {
+CaseDistributionApp.propTypes = {
   acd_levers: PropTypes.object,
   acd_history: PropTypes.array,
   user_is_an_acd_admin: PropTypes.bool,
@@ -55,4 +55,4 @@ const mapDispatchToProps = (dispatch) => (
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(CaseflowDistributionApp);
+)(CaseDistributionApp);
