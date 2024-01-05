@@ -15,9 +15,7 @@ RSpec.feature("Persistence of the intake correspondence page") do
 
   context "step 1" do
     it "creates a correspondence_intake record on page load" do
-      expect {
-        visit_intake_page
-      }.to change(CorrespondenceIntake, :count).by(1)
+      expect { visit_intake_page }.to change(CorrespondenceIntake, :count).by(1)
 
       expect(CorrespondenceIntake.find_by(user: current_user, correspondence: correspondence).current_step).to eq(1)
       expect(CorrespondenceIntake.find_by(user: current_user, correspondence: correspondence).redux_store).not_to be_nil

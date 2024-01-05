@@ -4,6 +4,6 @@ class CorrespondenceIntake < ApplicationRecord
   belongs_to :correspondence
   belongs_to :user
 
-  validates_presence_of :correspondence_id
-  validates_presence_of :user_id
+  validates :correspondence_id, presence: true
+  validates :user_id, presence: true
 end
