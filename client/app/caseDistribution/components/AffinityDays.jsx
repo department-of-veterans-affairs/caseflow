@@ -24,8 +24,8 @@ const AffinityDays = (props) => {
   const errorMessages = {};
 
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
-  const storeLevers = useSelector((state) => state.caseDistributionLevers.loadedLevers.affinity);
-  const initialLevers = useSelector((state) => state.caseDistributionLevers.initialLevers);
+  const storeLevers = useSelector((state) => state.caseDistributionLevers.levers.affinity);
+  const initialLevers = useSelector((state) => state.caseDistributionLevers.initialLevers.affinity);
   const [affinityLevers, setAffinityLevers] = useState(storeLevers);
 
   useEffect(() => {
