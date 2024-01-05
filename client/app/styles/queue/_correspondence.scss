@@ -95,18 +95,9 @@
   }
 }
 
-.correspondence-doctype-edit-dropdown .cf-select .cf-select__control {
-  max-width: 43rem;
-}
-
 //Intake Form Styling
 .corr {
-  color: $color-black;
   padding: 3rem 4rem;
-
-  p {
-    color: $color-black;
-  }
 
   h1 {
     text-align: left;
@@ -164,4 +155,7 @@
       padding-bottom: 25px;
       }
   }
+}
+.correspondence-doctype-edit-dropdown .cf-select .cf-select__control {
+  max-width: 43rem;
 }

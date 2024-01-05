@@ -136,11 +136,10 @@ const ConfirmTasksRelatedToAnAppeal = () => {
 
     if (taskIds.length === 0) {
       const taskRenderer = <div {...css({
-        padding: '10px 0px',
-        paddingTop: '30px',
+        paddingTop: '20px',
         marginBottom: '150px',
         fontWeight: 'bold'
-      })}> Correspondence is not related to an existing appeals </div>;
+      })}> Correspondence is not related to an existing appeal</div>;
 
       return taskRenderer;
     }

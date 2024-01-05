@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { COLORS } from '../../../../../constants/AppConstants';
 import { css } from 'glamor';
 
-const styling = { backgroundColor: COLORS.GREY_BACKGROUND };
+const styling = { backgroundColor: COLORS.GREY_BACKGROUND, paddingTop: '0px'};
 
 const ConfirmTasksNotRelatedToAnAppeal = () => {
   const tasks = useSelector((state) => state.intakeCorrespondence.unrelatedTasks);
@@ -25,8 +25,8 @@ const ConfirmTasksNotRelatedToAnAppeal = () => {
   const renderNonRelatedTask = () => {
     if (tasks.length === 0) {
       const rendererOfNonRelatedTask = <div {...css({
-        padding: '10px 0px',
-        marginBottom: '120px',
+        marginBottom: '150px',
+        paddingTop: '10px',
         fontWeight: 'bold'
       })}> </div>;
 
@@ -43,7 +43,7 @@ const ConfirmTasksNotRelatedToAnAppeal = () => {
       <div style={{ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
       </div>
       <div
-        style={{ background: COLORS.GREY_BACKGROUND, padding: '2rem', paddingTop: '0.1rem' }}>
+        style={{ background: COLORS.GREY_BACKGROUND, padding: '2rem', paddingTop: '.1rem', paddingLeft: '20px', paddingRight: '20px'}}>
         <table className="usa-table-borderless">
           <thead>
             <tr>

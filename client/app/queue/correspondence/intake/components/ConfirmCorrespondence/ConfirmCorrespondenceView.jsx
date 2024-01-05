@@ -126,7 +126,6 @@ export const ConfirmCorrespondenceView = (props) => {
   if (relatedCorrespondences.length === 0) {
     correspondenceTable =
     <div {...css({
-      padding: '10px 0px',
       marginBottom: '150px',
       fontWeight: 'bold'
     })}> Correspondence is not related to prior mail </div>;
@@ -143,8 +142,7 @@ export const ConfirmCorrespondenceView = (props) => {
 
   if (checkedMailTasks.length === 0) {
     mailTaskTable = <div {...css({
-      padding: '10px 0px',
-      marginBottom: '120px',
+      marginBottom: '150px',
       fontWeight: 'bold'
     })}>  </div>;
   } else {
@@ -163,10 +161,7 @@ export const ConfirmCorrespondenceView = (props) => {
   }
 
   return (
-    <div className="gray-border corr" {...css({
-      paddingBottom: '20px',
-      marginBottom: '20px',
-    })}>
+    <div className="gray-border corr" style={{ marginBottom: '2rem' }}>
       <h1 className="corr-h1">Review and Confirm Correspondence</h1>
       <p style={{ fontSize: '.85em' }}>
         Review the details below to make sure the information is correct before submitting.

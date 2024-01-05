@@ -77,7 +77,7 @@ export const AddTasksAppealsView = (props) => {
       <p>Review any previously completed tasks by the mail team and add new tasks for
       either the mail package or for linked appeals, if any.</p>
       <div>
-        <h2 style={{ margin: '25px auto 15px auto' }}>Mail Tasks</h2>
+        <h2 style={{ margin: '30px auto 20px auto' }}>Mail Tasks</h2>
         <div className="gray-border" style={{ padding: '0rem 2rem' }}>
           <p style={{ marginBottom: '0.5rem' }}>Select any tasks completed by the Mail team for this correspondence.</p>
           <div id="mail-tasks-left" style={{ display: 'inline-block', marginRight: '14rem' }}>
@@ -87,7 +87,7 @@ export const AddTasksAppealsView = (props) => {
                   key={index}
                   name={name}
                   label={name}
-                  defaultValue={mailTasks[name] || false}
+                  defaultValue={mailTasks.includes(name)}
                   onChange={(checked) => mailTaskCheckboxOnChange(name, checked)}
                 />
               );
@@ -100,7 +100,7 @@ export const AddTasksAppealsView = (props) => {
                   key={index}
                   name={name}
                   label={name}
-                  defaultValue={mailTasks[name] || false}
+                  defaultValue={mailTasks.includes(name)}
                   onChange={(checked) => mailTaskCheckboxOnChange(name, checked)}
                 />
               );
@@ -108,8 +108,21 @@ export const AddTasksAppealsView = (props) => {
           </div>
         </div>
 
+        <div id="task-related-to-an-appeal">
+          <h2 style={{ margin: '30px auto 20px auto' }}>Tasks related to an existing Appeal</h2>
+          <p style={{ marginBottom: '-7px' }}>Is this correspondence related to an existing appeal?</p>
+          <AddAppealRelatedTaskView
+            correspondenceUuid={props.correspondenceUuid}
+            setRelatedTasksCanContinue={setRelatedTasksCanContinue}
+            filterUnavailableTaskTypeOptions={filterUnavailableTaskTypeOptions}
+            allTaskTypeOptions={relatedTaskTypes}
+            autoTexts={props.autoTexts}
+            veteranInformation={props.veteranInformation}
+          />
+        </div>
+
         <div id="task-not-related-to-an-appeal">
-          <h2 style={{ margin: '3rem auto 1rem auto' }}>Tasks not related to an Appeal</h2>
+          <h2 style={{ margin: '30px auto 20px auto' }}>Tasks not related to an Appeal</h2>
           <p style={{ marginTop: '0rem', marginBottom: '2rem' }}>
             Add new tasks related to this correspondence or to an appeal not yet created in Caseflow.
           </p>
@@ -123,18 +136,6 @@ export const AddTasksAppealsView = (props) => {
           </div>
         </div>
 
-        <div id="task-related-to-an-appeal" style={{ marginTop: '3.8rem' }}>
-          <h2 style={{ margin: '3rem auto 1rem auto' }}>Tasks related to an existing Appeal</h2>
-          <p style={{ marginBottom: '0rem' }}>Is this correspondence related to an existing appeal?</p>
-          <AddAppealRelatedTaskView
-            correspondenceUuid={props.correspondenceUuid}
-            setRelatedTasksCanContinue={setRelatedTasksCanContinue}
-            filterUnavailableTaskTypeOptions={filterUnavailableTaskTypeOptions}
-            allTaskTypeOptions={relatedTaskTypes}
-            autoTexts={props.autoTexts}
-            veteranInformation={props.veteranInformation}
-          />
-        </div>
       </div>
     </div>
   );
