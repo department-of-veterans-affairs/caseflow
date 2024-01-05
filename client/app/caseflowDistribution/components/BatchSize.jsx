@@ -19,8 +19,8 @@ const BatchSize = (props) => {
     '& .usa-input-error label': { bottom: '15px', left: '89px' }
   });
 
-  const initialLevers = useSelector((state) => state.caseDistributionLevers.initialLevers);
-  const storeLevers = useSelector((state) => state.caseDistributionLevers.loadedLevers.batch);
+  const initialLevers = useSelector((state) => state.caseDistributionLevers.initialLevers.batch);
+  const storeLevers = useSelector((state) => state.caseDistributionLevers.levers.batch);
   const [errorMessagesList, setErrorMessages] = useState({});
   const [batchSizeLevers, setBatchSizeLevers] = useState(storeLevers);
 
