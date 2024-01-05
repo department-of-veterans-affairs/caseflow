@@ -1415,7 +1415,7 @@
   "PACKAGE_ACTION_MODAL_DESCRIPTION": "By confirming, you will send a request for the supervisor to take action on the following package:",
   "PACKAGE_ACTION_REMOVAL_TITLE": "Request package removal",
   "PACKAGE_ACTION_REMOVAL_TEXTAREA_LABEL": "Provide a reason for removal",
-  "PACKAGE_ACTION_REASSIGN_DESCRIPTION":"You have selected the following correspondence cases for reassignment to another users. Please confirm your selection(s) below:",
+  "PACKAGE_ACTION_REASSIGN_DESCRIPTION": "By confirming, you will send a request for the supervisor to take action on the following package:",
   "PACKAGE_ACTION_REASSIGN_TITLE":"Request package reassignment",
   "PACKAGE_ACTION_REASSIGN_TEXTAREA_LABEL":"Provide a reason for reassignment",
   "PACKAGE_ACTION_SPLIT_TEXTAREA_LABEL":"Reason for split",
