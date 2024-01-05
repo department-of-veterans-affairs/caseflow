@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import CaseflowDistributionContent from '../components/CaseDistributionContent';
+import CaseDistributionContent from '../components/CaseDistributionContent';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
@@ -17,7 +17,7 @@ class CaseDistributionApp extends React.PureComponent {
     return (
       <div>
         <div> {/* Wrapper*/}
-          <CaseflowDistributionContent
+          <CaseDistributionContent
             levers = {this.props.acd_levers}
             saveChanges = {() => {}}
             formattedHistory={this.props.acd_history}

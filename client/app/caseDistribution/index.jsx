@@ -19,7 +19,7 @@ import CaseDistributionApp from './pages/CaseDistributionApp';
 import { createStore } from 'redux';
 import rootReducer from '../caseDistribution/reducers/root';
 
-class CaseflowDistribution extends React.PureComponent {
+class CaseDistribution extends React.PureComponent {
 
   render() {
     const preloadedState = {
@@ -144,7 +144,7 @@ class CaseflowDistribution extends React.PureComponent {
                     <PageRoute
                       exact
                       path={['/acd-controls', '/case-distribution-controls']}
-                      title="CaseflowDistribution | Caseflow"
+                      title="Case Distribution | Caseflow"
                       component={() => {
                         return (
                           <CaseDistributionApp
@@ -174,4 +174,4 @@ class CaseflowDistribution extends React.PureComponent {
   }
 }
 
-export default CaseflowDistribution;
+export default CaseDistribution;
