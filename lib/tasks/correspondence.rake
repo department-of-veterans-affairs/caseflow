@@ -360,6 +360,7 @@ def create_multiple_docs(corres, veteran)
     vbms_document_type_id: 18
   )
 end
+# rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
 # Note: Remove after document controller is implemented
 def create_static_documents
@@ -387,6 +388,7 @@ def create_document_types
   VbmsDocumentType.import(doc_types, validate: false) unless doc_types.empty?
 end
 
+# rubocop:disable Metrics/MethodLength
 def create_correspondence_types
   correspondence_types_list =
     ["Abeyance",
@@ -418,6 +420,7 @@ def create_correspondence_types
     CorrespondenceType.find_or_create_by(name: type)
   end
 end
+# rubocop:enable Metrics/MethodLength
 
 def create_package_document_types
   [
@@ -447,6 +450,8 @@ def create_correspondence_veteran(options = {})
   veteran
 end
 
+# rubocop:disable Metrics/MethodLength
+# rubocop:disable Metrics/AbcSize
 def create_multi_correspondences
   veteran = create_correspondence_veteran(first_name: "Adam", last_name: "West")
   5.times do
@@ -580,3 +585,5 @@ def create_multi_correspondences
     @cmp_packet_number += 1
   end
 end
+# rubocop:enable Metrics/MethodLength
+# rubocop:enable Metrics/AbcSize
