@@ -177,7 +177,8 @@ class BusinessLine < Organization
 
     def change_history_rows
       # Generate all of the filter queries to be used in both the HLR and SC block
-      extra_filters = change_history_sql_filter_array.join(" ")
+      sql = Arel.sql(change_history_sql_filter_array.join(" "))
+      sanitized_filters = ActiveRecord::Base.sanitize_sql_array([sql])
 
       change_history_sql_block = <<-SQL
         WITH versions_agg AS NOT MATERIALIZED (
@@ -248,7 +249,7 @@ class BusinessLine < Organization
         WHERE tasks.type = 'DecisionReviewTask'
         AND tasks.assigned_to_type = 'Organization'
         AND tasks.assigned_to_id = '#{parent.id.to_i}'
-        #{extra_filters}
+        #{sanitized_filters}
         UNION ALL
         SELECT tasks.id AS task_id, tasks.status AS task_status, request_issues.id AS request_issue_id,
           request_issues_updates.created_at AS request_issue_update_time, decision_issues.description AS decision_description,
@@ -300,7 +301,7 @@ class BusinessLine < Organization
         WHERE tasks.type = 'DecisionReviewTask'
         AND tasks.assigned_to_type = 'Organization'
         AND tasks.assigned_to_id = '#{parent.id.to_i}'
-        #{extra_filters}
+        #{sanitized_filters}
       SQL
 
       ActiveRecord::Base.transaction do
