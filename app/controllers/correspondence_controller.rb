@@ -153,7 +153,8 @@ class CorrespondenceController < ApplicationController
   end
 
   def pdf
-    document = Document.find(params[:pdf_id])
+    # Hard-coding Document access until CorrespondenceDocuments are uploaded to S3Bucket
+    document = Document.limit(200)[params[:pdf_id].to_i]
 
     document_disposition = "inline"
     if params[:download]
@@ -312,13 +313,16 @@ class CorrespondenceController < ApplicationController
 
   def create_efolder_upload_failed_task
     rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id, type: ReviewPackageTask.name)
-    euft = EfolderUploadFailedTask.find_or_create_by(
+    # rubocop:disable Layout/MultilineOperationIndentation)
+    euft = EfolderUploadFailedTask.where(appeal_id: correspondence.id, type: EfolderUploadFailedTask.name).first ||
+    EfolderUploadFailedTask.create!(
       appeal_id: correspondence.id,
       appeal_type: "Correspondence",
       type: EfolderUploadFailedTask.name,
       assigned_to: current_user,
       parent_id: rpt.id
     )
+    # rubocop:enable Layout/MultilineOperationIndentation)
 
     euft.update!(status: Constants.TASK_STATUSES.in_progress)
   end
