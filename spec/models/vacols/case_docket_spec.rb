@@ -18,6 +18,9 @@ describe VACOLS::CaseDocket, :all_dbs do
   let(:another_judge) { create(:user) }
   let!(:another_vacols_judge) { create(:staff, :judge_role, sdomainid: another_judge.css_id) }
 
+  let(:inactive_judge) { create(:user, :inactive) }
+  let!(:inactive_vacols_judge) { create(:staff, :judge_role, svlj: "V", sdomainid: inactive_judge.css_id) }
+
   let(:nonpriority_ready_case_bfbox) { nil }
   let(:nonpriority_ready_case_docket_number) { "1801001" }
   let!(:nonpriority_ready_case) do
@@ -55,6 +58,28 @@ describe VACOLS::CaseDocket, :all_dbs do
       bfdloout: 1.day.ago,
       folder: build(:folder, tinum: another_nonpriority_ready_case_docket_number, titrnum: "123456789S")
     ).tap { |vacols_case| create(:mail, :blocking, :completed, mlfolder: vacols_case.bfkey) }
+  end
+
+  let(:third_nonpriority_ready_case_docket_number) { "1801005" }
+  let(:third_nonpriority_ready_case) do
+    create(:case,
+           bfd19: 1.year.ago,
+           bfac: "3",
+           bfmpro: "ACT",
+           bfcurloc: "83",
+           bfdloout: 1.day.ago,
+           folder: build(:folder, tinum: third_nonpriority_ready_case_docket_number, titrnum: "123456789S"))
+  end
+  let(:inactive_original_judge) { inactive_judge.vacols_attorney_id }
+  let(:inactive_original_case) do
+    create(:case,
+           bfd19: 1.year.ago,
+           bfac: "1",
+           bfmpro: "HIS",
+           bfcurloc: "99",
+           bfattid: "111",
+           bfmemid: inactive_original_judge,
+           folder: build(:folder, tinum: third_nonpriority_ready_case_docket_number, titrnum: "123456789S"))
   end
 
   let!(:nonpriority_unready_case) do
@@ -228,6 +253,7 @@ describe VACOLS::CaseDocket, :all_dbs do
     let(:hearing_judge) { judge.vacols_attorney_id }
     let(:first_case) { nonpriority_ready_case }
     let(:second_case) { another_nonpriority_ready_case }
+    let(:third_case) { third_nonpriority_ready_case }
 
     before do
       create(
@@ -269,6 +295,29 @@ describe VACOLS::CaseDocket, :all_dbs do
         expect(subject).to eq 2
       end
     end
+
+    context "when there are ready non priority hearings linked to the judge and inactive judge" do
+      before do
+        FeatureToggle.enable!(:acd_cases_tied_to_judges_no_longer_with_board)
+        third_nonpriority_ready_case
+        inactive_original_case
+        create(
+          :case_hearing,
+          :disposition_held,
+          folder_nr: third_case.bfkey,
+          hearing_date: 5.days.ago.to_date,
+          board_member: inactive_judge.vacols_attorney_id
+        )
+      end
+
+      it "returns the number of ready non priority hearings" do
+        allow(Rails.cache).to receive(:fetch).with('case_distribution_ineligible_judges')
+          .and_return([{ sattyid: inactive_vacols_judge.sattyid}])
+        allow(DatabaseRequestCounter).to receive(:increment_counter).and_return(3)
+
+        expect(subject).to eq 3
+      end
+    end
   end
 
   context ".distribute_nonpriority_appeals" do
@@ -277,12 +326,18 @@ describe VACOLS::CaseDocket, :all_dbs do
     let(:limit) { 10 }
     let(:bust_backlog) { false }
 
+    before {
+      FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
+      third_nonpriority_ready_case
+    }
+
     subject { VACOLS::CaseDocket.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog) }
 
     it "distributes ready genpop cases" do
-      expect(subject.count).to eq(2)
+      expect(subject.count).to eq(3)
       expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
       expect(another_nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+      expect(third_nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
     end
 
     it "does not distribute non-ready or priority cases" do
@@ -297,6 +352,7 @@ describe VACOLS::CaseDocket, :all_dbs do
         expect(subject.count).to eq(1)
         expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
+        expect(third_nonpriority_ready_case.reload.bfcurloc).to eq("83")
       end
     end
 
@@ -306,6 +362,7 @@ describe VACOLS::CaseDocket, :all_dbs do
         expect(subject.count).to eq(1)
         expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
+        expect(third_nonpriority_ready_case.reload.bfcurloc).to eq("83")
       end
 
       context "when the docket number is pre-y2k" do
@@ -314,6 +371,7 @@ describe VACOLS::CaseDocket, :all_dbs do
           expect(subject.count).to eq(1)
           expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
           expect(another_nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+          expect(third_nonpriority_ready_case.reload.bfcurloc).to eq("83")
         end
       end
     end
@@ -343,21 +401,24 @@ describe VACOLS::CaseDocket, :all_dbs do
           expect(subject.count).to eq(1)
           expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
+          expect(third_nonpriority_ready_case.reload.bfcurloc).to eq("83")
         end
       end
 
       context "when genpop is any" do
         it "distributes the case" do
-          expect(subject.count).to eq(1)
+          expect(subject.count).to eq(2)
           expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
+          expect(third_nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         end
       end
 
       context "when genpop is yes" do
         let(:genpop) { "only_genpop" }
-        it "does not distribute the case" do
-          expect(subject.count).to eq(0)
+        it "does distribute the case only tied to inactive judge" do
+          expect(subject.count).to eq(1)
+          expect(third_nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
           expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
         end
@@ -372,8 +433,9 @@ describe VACOLS::CaseDocket, :all_dbs do
         end
 
         it "distributes the case" do
-          expect(subject.count).to eq(1)
+          expect(subject.count).to eq(2)
           expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+          expect(third_nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
           expect(another_nonpriority_ready_case.reload.bfcurloc).to eq("83")
         end
       end
@@ -421,7 +483,7 @@ describe VACOLS::CaseDocket, :all_dbs do
       let!(:mail) { create(:mail, mlfolder: nonpriority_ready_case.bfkey, mltype: mltype) }
 
       it "does not distribute the case" do
-        expect(subject.count).to eq(1)
+        expect(subject.count).to eq(2)
         expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
       end
 
@@ -429,7 +491,7 @@ describe VACOLS::CaseDocket, :all_dbs do
         let(:mltype) { "02" }
 
         it "distributes the case" do
-          expect(subject.count).to eq(2)
+          expect(subject.count).to eq(3)
           expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         end
       end
@@ -440,7 +502,7 @@ describe VACOLS::CaseDocket, :all_dbs do
       let!(:diary) { create(:diary, tsktknm: nonpriority_ready_case.bfkey, tskactcd: code) }
 
       it "does not distribute the case" do
-        expect(subject.count).to eq(1)
+        expect(subject.count).to eq(2)
         expect(nonpriority_ready_case.reload.bfcurloc).to eq("81")
       end
 
@@ -448,8 +510,9 @@ describe VACOLS::CaseDocket, :all_dbs do
         let(:code) { "IHP" }
 
         it "distributes the case" do
-          expect(subject.count).to eq(2)
+          expect(subject.count).to eq(3)
           expect(nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
+          expect(third_nonpriority_ready_case.reload.bfcurloc).to eq(judge.vacols_uniq_id)
         end
       end
     end
