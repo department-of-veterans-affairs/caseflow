@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { createStore } from '@reduxjs/toolkit';
-import LeverButtonsWrapper from './LeverButtonsWrapper';
+import LeverButtonsWrapper from 'app/caseDistribution/components/LeverButtonsWrapper';
 import leversReducer from '../reducers/levers/leversReducer';
 import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
 import * as leverData from 'test/data/adminCaseDistributionLevers';
