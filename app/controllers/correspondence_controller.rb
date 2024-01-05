@@ -262,12 +262,7 @@ class CorrespondenceController < ApplicationController
     return unless correspondence&.veteran_id
 
     @veteran_by_correspondence ||= begin
-      veteran = Veteran.find_by(id: correspondence.veteran_id)
-      if veteran.nil?
-        # Handle the case where the veteran is not found
-        puts "Veteran not found for ID: #{correspondence.veteran_id}"
-      end
-      veteran
+      Veteran.find_by(id: correspondence.veteran_id)
     end
   end
 
