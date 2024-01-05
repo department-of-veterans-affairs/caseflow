@@ -4,7 +4,7 @@ import PropTypes, { object } from 'prop-types';
 import { css } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
-import { ACTIONS } from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
+import { ACTIONS } from 'app/caseDistribution/reducers/Levers/leversActionTypes';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
 import leverInputValidation from './LeverInputValidation';

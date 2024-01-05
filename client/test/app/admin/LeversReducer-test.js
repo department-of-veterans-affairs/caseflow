@@ -1,5 +1,5 @@
-import leversReducer from '../../../app/caseflowDistribution/reducers/Levers/leversReducer';
-import { ACTIONS } from '../../../app/caseflowDistribution/reducers/Levers/leversActionTypes';
+import leversReducer from '../../../app/caseDistribution/reducers/Levers/leversReducer';
+import { ACTIONS } from '../../../app/caseDistribution/reducers/Levers/leversActionTypes';
 import * as leverData from '../../data/adminCaseDistributionLevers';
 import { createStore } from "@reduxjs/toolkit";
 

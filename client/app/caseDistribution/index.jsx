@@ -17,7 +17,7 @@ import DISTRIBUTION from '../../constants/DISTRIBUTION';
 
 import CaseflowDistributionApp from './pages/CaseflowDistributionApp';
 import { createStore } from 'redux';
-import rootReducer from '../caseflowDistribution/reducers/root';
+import rootReducer from '../caseDistribution/reducers/root';
 
 class CaseflowDistribution extends React.PureComponent {
 

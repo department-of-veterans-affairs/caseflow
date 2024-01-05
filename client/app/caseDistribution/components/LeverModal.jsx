@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { ACTIONS } from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
+import { ACTIONS } from 'app/caseDistribution/reducers/Levers/leversActionTypes';
 import ApiUtil from '../../util/ApiUtil';
 import Modal from 'app/components/Modal';
 import Button from 'app/components/Button';

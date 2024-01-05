@@ -1,7 +1,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ACTIONS } from 'app/caseflowDistribution/reducers/Levers/leversActionTypes';
+import { ACTIONS } from 'app/caseDistribution/reducers/Levers/leversActionTypes';
 import Button from 'app/components/Button';
 
 const cancelLeverChanges = (leverStore) => {
