@@ -21,7 +21,8 @@ module Seeds
           min_value: 0,
           max_value: 1,
           algorithms_used: ['proportion'],
-          lever_group: 'static'
+          lever_group: 'static',
+          lever_group_order: 1000
         },
         {
           item: Constants.DISTRIBUTION.minimum_legacy_proportion,
@@ -35,7 +36,8 @@ module Seeds
           min_value: 0,
           max_value: 1,
           algorithms_used: ['proportion'],
-          lever_group: 'static'
+          lever_group: 'static',
+          lever_group_order: 1001
         },
         {
           item: Constants.DISTRIBUTION.nod_adjustment,
@@ -49,7 +51,8 @@ module Seeds
           min_value: 0,
           max_value: 1,
           algorithms_used: ['proportion'],
-          lever_group: 'static'
+          lever_group: 'static',
+          lever_group_order: 1002
         },
         {
           item: Constants.DISTRIBUTION.bust_backlog,
@@ -61,7 +64,8 @@ module Seeds
           is_toggle_active: false,
           is_disabled_in_ui: true,
           algorithms_used: ['proportion'],
-          lever_group: 'static'
+          lever_group: 'static',
+          lever_group_order: 1003
         },
         {
           item: Constants.DISTRIBUTION.alternative_batch_size,
@@ -75,7 +79,8 @@ module Seeds
           min_value: 0,
           max_value: 100,
           algorithms_used: ['docket', 'proportion'],
-          lever_group: 'batch'
+          lever_group: 'batch',
+          lever_group_order: 2000
         },
         {
           item: Constants.DISTRIBUTION.batch_size_per_attorney,
@@ -89,7 +94,8 @@ module Seeds
           min_value: 0,
           max_value: 100,
           algorithms_used: ['docket', 'proportion'],
-          lever_group: 'batch'
+          lever_group: 'batch',
+          lever_group_order: 2001
         },
         {
           item: Constants.DISTRIBUTION.request_more_cases_minimum,
@@ -103,7 +109,8 @@ module Seeds
           min_value: 0,
           max_value: 100,
           algorithms_used: ['docket', 'proportion'],
-          lever_group: 'batch'
+          lever_group: 'batch',
+          lever_group_order: 2002
         },
         {
           item: Constants.DISTRIBUTION.ama_hearing_case_affinity_days,
@@ -138,7 +145,8 @@ module Seeds
           min_value: 0,
           max_value: 100,
           algorithms_used: ['docket'],
-          lever_group: 'affinity'
+          lever_group: 'affinity',
+          lever_group_order: 3000
         },
         {
           item: Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days,
@@ -175,7 +183,8 @@ module Seeds
           min_value: 0,
           max_value: 100,
           algorithms_used: ['proportion'],
-          lever_group: 'affinity'
+          lever_group: 'affinity',
+          lever_group_order: 3001
         },
         {
           item: Constants.DISTRIBUTION.cavc_affinity_days,
@@ -208,7 +217,8 @@ module Seeds
           min_value: 0,
           max_value: 100,
           algorithms_used: ['docket', 'proportion'],
-          lever_group: 'affinity'
+          lever_group: 'affinity',
+          lever_group_order: 3002
         },
         {
           item: Constants.DISTRIBUTION.cavc_aod_affinity_days,
@@ -239,7 +249,8 @@ module Seeds
           is_toggle_active: false,
           is_disabled_in_ui: true,
           algorithms_used: ['proportion'],
-          lever_group: 'affinity'
+          lever_group: 'affinity',
+          lever_group_order: 3003
         },
         {
           item: Constants.DISTRIBUTION.aoj_affinity_days,
@@ -276,7 +287,8 @@ module Seeds
           min_value: 0,
           max_value: 100,
           algorithms_used: ['proportion'],
-          lever_group: 'affinity'
+          lever_group: 'affinity',
+          lever_group_order: 3004
         },
         {
           item: Constants.DISTRIBUTION.aoj_aod_affinity_days,
@@ -313,7 +325,8 @@ module Seeds
           min_value: 0,
           max_value: 100,
           algorithms_used: ['proportion'],
-          lever_group: 'affinity'
+          lever_group: 'affinity',
+          lever_group_order: 3005
         },
         {
           item: Constants.DISTRIBUTION.aoj_cavc_affinity_days,
@@ -350,7 +363,8 @@ module Seeds
           min_value: 0,
           max_value: 100,
           algorithms_used: ['docket'],
-          lever_group: 'affinity'
+          lever_group: 'affinity',
+          lever_group_order: 3006
         },
         {
           item: Constants.DISTRIBUTION.ama_hearings_start_distribution_prior_to_goals,
@@ -373,7 +387,8 @@ module Seeds
           min_value: 0,
           max_value: 100,
           algorithms_used: ['proportion'],
-          lever_group: 'docket_distribution_prior'
+          lever_group: 'docket_distribution_prior',
+          lever_group_order: 4000
         },
         {
           item: Constants.DISTRIBUTION.ama_direct_review_start_distribution_prior_to_goals,
@@ -396,7 +411,8 @@ module Seeds
           min_value: 0,
           max_value: 100,
           algorithms_used: ['docket'],
-          lever_group: 'docket_distribution_prior'
+          lever_group: 'docket_distribution_prior',
+          lever_group_order: 4001
         },
         {
           item: Constants.DISTRIBUTION.ama_evidence_submission_start_distribution_prior_to_goals,
@@ -419,7 +435,8 @@ module Seeds
           min_value: 0,
           max_value: 100,
           algorithms_used: ['proportion'],
-          lever_group: 'docket_distribution_prior'
+          lever_group: 'docket_distribution_prior',
+          lever_group_order: 4002
         },
         {
           item: Constants.DISTRIBUTION.ama_hearings_docket_time_goals,
@@ -432,7 +449,8 @@ module Seeds
           min_value: 0,
           max_value: 1000,
           algorithms_used: ['proportion'],
-          lever_group: 'docket_time_goal'
+          lever_group: 'docket_time_goal',
+          lever_group_order: 4003
         },
         {
           item: Constants.DISTRIBUTION.ama_direct_review_docket_time_goals,
@@ -445,7 +463,8 @@ module Seeds
           min_value: 0,
           max_value: 1000,
           algorithms_used: ['proportion'],
-          lever_group: 'docket_time_goal'
+          lever_group: 'docket_time_goal',
+          lever_group_order: 4004
         },
         {
           item: Constants.DISTRIBUTION.ama_evidence_submission_docket_time_goals,
@@ -458,7 +477,8 @@ module Seeds
           min_value: 0,
           max_value: 1000,
           algorithms_used: ['proportion'],
-          lever_group: 'docket_time_goal'
+          lever_group: 'docket_time_goal',
+          lever_group_order: 4005
         },
       ]
     end
@@ -479,7 +499,8 @@ module Seeds
         algorithms_used: lever[:algorithms_used],
         options: lever[:options],
         control_group: lever[:control_group],
-        lever_group: lever[:lever_group]
+        lever_group: lever[:lever_group],
+        lever_group_order: lever[:lever_group_order]
       )
     end
   end
