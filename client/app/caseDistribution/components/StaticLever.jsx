@@ -47,7 +47,8 @@ StaticLever.propTypes = {
     data_type: PropTypes.string.isRequired,
     value: PropTypes.oneOfType([PropTypes.bool, PropTypes.number, PropTypes.string]).isRequired,
     unit: PropTypes.string.isRequired,
-    is_active: PropTypes.bool.isRequired,
+    is_toggle_active: PropTypes.bool,
+    is_disabled_in_ui: PropTypes.bool,
     options: PropTypes.arrayOf(
       PropTypes.shape({
         item: PropTypes.string.isRequired,

@@ -128,8 +128,8 @@ const AffinityDays = (props) => {
   };
 
   const generateFields = (dataType, option, lever) => {
-    const useAriaLabel = !lever.is_disabled;
-    const tabIndex = lever.is_disabled ? -1 : null;
+    const useAriaLabel = !lever.is_disabled_in_ui;
+    const tabIndex = lever.is_disabled_in_ui ? -1 : null;
 
     if (dataType === ACD_LEVERS.number) {
       return (
@@ -138,7 +138,7 @@ const AffinityDays = (props) => {
           title={option.text}
           label={option.unit}
           isInteger
-          readOnly={lever.is_disabled ? true : (lever.value !== option.item)}
+          readOnly={lever.is_disabled_in_ui ? true : (lever.value !== option.item)}
           value={option.value}
           errorMessage={option.errorMessage}
           onChange={(event) => updatedLever(lever, option)(event)}
@@ -155,7 +155,7 @@ const AffinityDays = (props) => {
           name={option.item}
           title={option.text}
           label={false}
-          readOnly={lever.is_disabled ? true : (lever.value !== option.item)}
+          readOnly={lever.is_disabled_in_ui ? true : (lever.value !== option.item)}
           value={option.value}
           onChange={(event) => updatedLever(lever, option)(event)}
           id={`${lever.item}-${option.value}`}
@@ -174,7 +174,7 @@ const AffinityDays = (props) => {
       return (
         <div>
           <div>
-            <label className={lever.is_disabled ? styles.leverDisabled : styles.leverActive}
+            <label className={lever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}
               htmlFor={`${lever.item}-${option.item}`}>
               {`${option.text} ${option.data_type === ACD_LEVERS.number ? `${option.value} ${option.unit}` : ''}`}
             </label>
@@ -196,7 +196,7 @@ const AffinityDays = (props) => {
             checked={option.item === lever.value}
             type={ACD_LEVERS.radio}
             value={option.item}
-            disabled={lever.is_disabled}
+            disabled={lever.is_disabled_in_ui}
             id={`${lever.item}-${option.item}`}
             name={lever.item}
             onChange={() => handleRadioChange(lever, option)}
@@ -222,7 +222,7 @@ const AffinityDays = (props) => {
         <div className={styles.leverRight}><strong>Value</strong></div>
       </div>
       {affinityLevers.map((lever, index) => (
-        <div className={cx(styles.activeLever, lever.is_disabled ? styles.leverDisabled : '')}
+        <div className={cx(styles.activeLever, lever.is_disabled_in_ui ? styles.leverDisabled : '')}
           key={`${lever.item}-${index}`}
         >
           <div className={styles.leverLeft}>

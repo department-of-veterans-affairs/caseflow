@@ -176,7 +176,7 @@ const DocketTimeGoals = (props) => {
   const toggleLever = (index) => () => {
     const levers = docketDistributionLevers.map((lever, i) => {
       if (index === i) {
-        lever.is_active = !lever.is_active;
+        lever.is_toggle_active = !lever.is_toggle_active;
 
         return lever;
       }
@@ -204,16 +204,16 @@ const DocketTimeGoals = (props) => {
           key={`${distributionPriorLever.item}-${index}`}
         >
           <div className={cx(styles.leverLeft, styles.docketLeverLeft)}>
-            <strong className={docketTimeGoalLever.is_disabled ? styles.leverDisabled : ''}>
+            <strong className={docketTimeGoalLever.is_disabled_in_ui ? styles.leverDisabled : ''}>
               {index < sectionTitles.length ? sectionTitles[index] : ''}
             </strong>
           </div>
           <div className={`${styles.leverMiddle} ${leverNumberDiv}
-            ${docketTimeGoalLever.is_disabled ? styles.leverDisabled : styles.leverActive}}`}>
+            ${docketTimeGoalLever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}}`}>
             <NumberField
               name={docketTimeGoalLever.item}
               isInteger
-              readOnly={docketTimeGoalLever.is_disabled}
+              readOnly={docketTimeGoalLever.is_disabled_in_ui}
               value={docketTimeGoalLever.value}
               label={docketTimeGoalLever.unit}
               errorMessage={errorMessagesList[docketTimeGoalLever.item]}
@@ -223,16 +223,16 @@ const DocketTimeGoals = (props) => {
           <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
             <ToggleSwitch
               id={`toggle-switch-${distributionPriorLever.item}`}
-              selected={distributionPriorLever.is_active}
-              disabled={distributionPriorLever.is_disabled}
+              selected={distributionPriorLever.is_toggle_active}
+              disabled={distributionPriorLever.is_disabled_in_ui}
               toggleSelected={toggleLever(index)}
             />
-            <div className={distributionPriorLever.is_active ? styles.toggleSwitchInput : styles.toggleInputHide}>
+            <div className={distributionPriorLever.is_toggle_active ? styles.toggleSwitchInput : styles.toggleInputHide}>
 
               <NumberField
                 name={`toggle-${distributionPriorLever.item}`}
                 isInteger
-                readOnly={distributionPriorLever.is_disabled}
+                readOnly={distributionPriorLever.is_disabled_in_ui}
                 value={distributionPriorLever.value}
                 label={distributionPriorLever.unit}
                 errorMessage={errorMessagesList[distributionPriorLever.item]}
@@ -251,19 +251,19 @@ const DocketTimeGoals = (props) => {
         key={`${distributionPriorLever.item}-${index}`}
       >
         <div className={cx(styles.leverLeft, styles.docketLeverLeft)}>
-          <strong className={docketTimeGoalLever.is_disabled ? styles.leverDisabled : ''}>
+          <strong className={docketTimeGoalLever.is_disabled_in_ui ? styles.leverDisabled : ''}>
             {index < sectionTitles.length ? sectionTitles[index] : ''}
           </strong>
         </div>
         <div className={`${styles.leverMiddle} ${leverNumberDiv}`}>
-          <span className={docketTimeGoalLever.is_disabled ? styles.leverDisabled : styles.leverActive}>
+          <span className={docketTimeGoalLever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}>
             {docketTimeGoalLever.value} {docketTimeGoalLever.unit}
           </span>
         </div>
         <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
           <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
-            <span className={distributionPriorLever.is_disabled ? styles.leverDisabled : styles.leverActive}>
-              {distributionPriorLever.is_active ? 'On' : 'Off'}
+            <span className={distributionPriorLever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}>
+              {distributionPriorLever.is_toggle_active ? 'On' : 'Off'}
             </span>
           </div>
         </div>
