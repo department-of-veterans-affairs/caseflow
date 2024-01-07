@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
-// import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
+import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
 import leverInputValidation from './LeverInputValidation';
@@ -49,8 +49,7 @@ const DocketTimeGoals = (props) => {
   }, [currentTimeLevers]);
 
   const updateLever = (leverItem, leverType, usesToggle = false) => (event) => {
-    console.log({leverItem, leverType, usesToggle, event})
-    dispatch(updateLever(leverType, leverItem, event, false, usesToggle))
+    dispatch(ACTIONS.updateLever(leverType, leverItem, event, false, usesToggle))
   }
     // if (leverType === 'DistributionPrior') {
 
