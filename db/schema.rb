@@ -355,16 +355,16 @@ ActiveRecord::Schema.define(version: 2024_01_06_021307) do
     t.index ["user_id"], name: "index_case_distribution_audit_lever_entries_on_user_id"
   end
 
-  create_table "case_distribution_levers", comment: "A generalized table for Caseflow Distribution lever records within caseflow", force: :cascade do |t|
+  create_table "case_distribution_levers", comment: "A generalized table for Case Distribution lever records within caseflow", force: :cascade do |t|
     t.json "algorithms_used", comment: "stores an array of which algorithms the lever is used in. There are some UI niceties that are implemented to indicate which algorithm is used."
     t.json "control_group", comment: "supports the exclusion table that has toggles that control multiple levers"
     t.datetime "created_at", null: false
     t.string "data_type", null: false, comment: "Indicates which type of record either BOOLEAN/RADIO/COMBO"
     t.text "description", comment: "Indicates the description of the Lever"
     t.boolean "is_disabled_in_ui", null: false, comment: "Determines behavior in the controls page"
-    t.boolean "is_toggle_active", comment: "used for the docket time goals, otherwise it is true and unused"
-    t.string "item", null: false, comment: "Is unique value to identify the Caseflow Distribution lever"
-    t.string "lever_group", null: false, comment: "Case Distribution lever grouping"
+    t.boolean "is_toggle_active", null: false, comment: "used for the docket time goals, otherwise it is true and unused"
+    t.string "item", null: false, comment: "Is unique value to identify the Case Distribution lever"
+    t.string "lever_group", default: "", null: false, comment: "Case Distribution lever grouping"
     t.integer "lever_group_order", null: false, comment: "determines the order that the lever appears in each section of inputs, and the order in the history table"
     t.integer "max_value", comment: "Set max value for the input"
     t.integer "min_value", comment: "Set min value for the input"
