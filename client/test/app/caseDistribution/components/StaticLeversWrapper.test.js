@@ -7,7 +7,7 @@ import { createStore } from 'redux';
 
 const preloadedState = {
   levers: JSON.parse(JSON.stringify(levers)),
-  initial_levers: JSON.parse(JSON.stringify(levers))
+  backendLevers: JSON.parse(JSON.stringify(levers))
 };
 const leverStore = createStore(leversReducer, preloadedState);
 const leverList = ['lever_3', 'lever_2', 'lever_7'];

@@ -24,7 +24,7 @@ describe('CaseDistributionContent', () => {
   it('renders the "CaseDistributionContent Component" with the data imported', () => {
     const preloadedState = {
       levers: JSON.parse(JSON.stringify(formattedLevers)),
-      initial_levers: JSON.parse(JSON.stringify(formattedLevers))
+      backendLevers: JSON.parse(JSON.stringify(formattedLevers))
     };
 
     const leverStore = createStore(leversReducer, preloadedState);

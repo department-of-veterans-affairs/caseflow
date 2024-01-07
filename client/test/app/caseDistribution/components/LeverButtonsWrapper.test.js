@@ -13,7 +13,7 @@ describe('LeverButtonsWrapper', () => {
   beforeEach(() => {
     const preloadedState = {
       levers: JSON.parse(JSON.stringify(leverData.levers.slice(0, 5))),
-      initial_levers: JSON.parse(JSON.stringify(leverData.levers.slice(0, 5)))
+      backendLevers: JSON.parse(JSON.stringify(leverData.levers.slice(0, 5)))
     };
 
     leverStore = createStore(leversReducer, preloadedState);
