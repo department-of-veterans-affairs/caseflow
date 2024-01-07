@@ -20,7 +20,7 @@ export const loadLevers = (levers) =>
     });
   };
 
-export const updateLever = (leverGroup, leverItem, value, usesOption = false, usesToggle = false) =>
+export const updateLeverState = (leverGroup, leverItem, value, usesOption = false, usesToggle = false, toggleValue = false) =>
 (dispatch) => {
   dispatch({
     type: ACTIONS.UPDATE_LEVER,
@@ -29,7 +29,8 @@ export const updateLever = (leverGroup, leverItem, value, usesOption = false, us
       leverItem,
       value,
       usesOption,
-      usesToggle
+      usesToggle,
+      toggleValue
     }
   })
 }

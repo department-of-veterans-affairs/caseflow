@@ -4,7 +4,8 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
-import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
+import {updateLeverState} from '../reducers/levers/leversActions'
+// import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
 import leverInputValidation from './LeverInputValidation';
@@ -48,136 +49,10 @@ const DocketTimeGoals = (props) => {
     setTimeGoalLever(currentTimeLevers);
   }, [currentTimeLevers]);
 
-  const updateLever = (leverItem, leverType, usesToggle = false) => (event) => {
-    dispatch(ACTIONS.updateLever(leverType, leverItem, event, false, usesToggle))
+  const updateLever = (leverItem, leverType, usesToggle = false, toggleValue = false) => (event) => {
+    console.log({updateLeverState})
+    dispatch(updateLeverState(leverType, leverItem, event, false, usesToggle, toggleValue))
   }
-    // if (leverType === 'DistributionPrior') {
-
-    //   const levers = docketDistributionLevers.map((lever, i) => {
-    //     if (index === i) {
-
-    //       let initialLever = initialDistributionLevers.find((original) => original.item === lever.item);
-    //       let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
-
-    //       if (validationResponse.statement === ACD_LEVERS.DUPLICATE) {
-
-    //         if (checkIfOtherChangesExist(lever)) {
-    //           lever.value = event;
-    //           setErrorMessages(validationResponse.updatedMessages);
-
-    //           // leverStore.dispatch({
-    //           //   type: ACTIONS.UPDATE_LEVER_VALUE,
-    //           //   updated_lever: { item: lever.item, value: event },
-    //           //   hasValueChanged: false,
-    //           //   validChange: true
-    //           // });
-    //         } else {
-
-    //           lever.value = event;
-    //           setErrorMessages(validationResponse.updatedMessages);
-
-    //           // leverStore.dispatch({
-    //           //   type: ACTIONS.UPDATE_LEVER_VALUE,
-    //           //   updated_lever: { item: lever.item, value: event },
-    //           //   hasValueChanged: false,
-    //           //   validChange: false
-    //           // });
-    //         }
-
-    //       }
-    //       if (validationResponse.statement === ACD_LEVERS.SUCCESS) {
-    //         lever.value = event;
-    //         setErrorMessages(validationResponse.updatedMessages);
-    //         // leverStore.dispatch({
-    //         //   type: ACTIONS.UPDATE_LEVER_VALUE,
-    //         //   updated_lever: { item: lever.item, value: event },
-    //         //   validChange: true
-    //         // });
-
-    //         return lever;
-    //       }
-    //       if (validationResponse.statement === ACD_LEVERS.FAIL) {
-    //         lever.value = event;
-    //         setErrorMessages(validationResponse.updatedMessages);
-
-    //         // leverStore.dispatch({
-    //         //   type: ACTIONS.UPDATE_LEVER_VALUE,
-    //         //   updated_lever: { item: lever.item, value: event },
-    //         //   validChange: false
-    //         // });
-
-    //         return lever;
-    //       }
-    //     }
-
-    //     return lever;
-    //   });
-
-    //   setDistributionLever(levers);
-    // }
-    // if (leverType === 'TimeGoal') {
-    //   const levers = docketTimeGoalLevers.map((lever, i) => {
-    //     if (index === i) {
-    //       let initialLever = initialTimeLevers.find((original) => original.item === lever.item);
-    //       let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
-
-    //       if (validationResponse.statement === ACD_LEVERS.DUPLICATE) {
-
-    //         if (checkIfOtherChangesExist(lever)) {
-    //           lever.value = event;
-    //           setErrorMessages(validationResponse.updatedMessages);
-
-    //           // leverStore.dispatch({
-    //           //   type: ACTIONS.UPDATE_LEVER_VALUE,
-    //           //   updated_lever: { item: lever.item, value: event },
-    //           //   hasValueChanged: false,
-    //           //   validChange: true
-    //           // });
-    //         } else {
-
-    //           lever.value = event;
-    //           setErrorMessages(validationResponse.updatedMessages);
-
-    //           // leverStore.dispatch({
-    //           //   type: ACTIONS.UPDATE_LEVER_VALUE,
-    //           //   updated_lever: { item: lever.item, value: event },
-    //           //   hasValueChanged: false,
-    //           //   validChange: false
-    //           // });
-    //         }
-
-    //       }
-
-    //       if (validationResponse.statement === ACD_LEVERS.SUCCESS) {
-    //         lever.value = event;
-    //         setErrorMessages(validationResponse.updatedMessages);
-    //         // leverStore.dispatch({
-    //         //   type: ACTIONS.UPDATE_LEVER_VALUE,
-    //         //   updated_lever: { item: lever.item, value: event },
-    //         //   validChange: true
-    //         // });
-
-    //         return lever;
-    //       }
-    //       if (validationResponse.statement === ACD_LEVERS.FAIL) {
-    //         lever.value = event;
-    //         setErrorMessages(validationResponse.updatedMessages);
-    //         // leverStore.dispatch({
-    //         //   type: ACTIONS.UPDATE_LEVER_VALUE,
-    //         //   updated_lever: { item: lever.item, value: event },
-    //         //   validChange: false
-    //         // });
-
-    //         return lever;
-    //       }
-    //     }
-
-    //     return lever;
-    //   });
-
-    //   setTimeGoalLever(levers);
-    // }
-  // };
 
   const toggleLever = (index) => () => {
     const levers = docketDistributionLevers.map((lever, i) => {

@@ -11,7 +11,6 @@ const getLeversByGroupConstant = (state, leverSet, groupName) => {
 export const getLeversByGroup = createSelector(
   [getLeversByGroupConstant],
   (leversByGroup) => {
-    console.log({leversByGroup})
     return leversByGroup
   }
 );

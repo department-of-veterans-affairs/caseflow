@@ -32,27 +32,27 @@ const leversReducer = (state = initialState, action = {}) => {
       }
     });
 
-  case ACTIONS.UPDATE_LEVER:
-    const { leverGroup, leverItem, value, usesOption, usesToggle } = action.payload
-
-    const updateLeverValue = (lever) => {
-      if (usesOption) { //affinity days
-        return lever.option[0].value = value
-      } else if (usesToggle) { //docket distribution
-        return lever.value = value
-      } else { //batch or docket time goals
-        return lever.value = value
-      }
-    }
-
-    const updatedLever = update(state.levers[leverGroup], {
-      $apply: (levers) => levers.map((lever) => lever.item === leverItem ? updateLeverValue(lever) : lever)
-    })
-    return update(state, {
-      levers: {
-        [leverGroup]: { $set: updatedLever}
-      }
-    })
+    case ACTIONS.UPDATE_LEVER:
+      const { leverGroup, leverItem, value, usesOption, usesToggle, toggleValue } = action.payload;
+      const updateLeverValue = (lever) => {
+        if (usesOption) {
+          return { ...lever, option: [{ value }] }; // Update the option value
+        } else if (usesToggle) {
+          return { ...lever, value, is_toggle_active: toggleValue }; // Update both value and is_toggle_active
+        } else {
+          return { ...lever, value }; // Update only the value
+        }
+      };
+      const updatedLever = state.levers[leverGroup].map((lever) =>
+        lever.item === leverItem ? updateLeverValue(lever) : lever
+      );
+      return {
+        ...state,
+        levers: {
+          ...state.levers,
+          [leverGroup]: updatedLever,
+        },
+      };
   // needs to be reworked; remove comment when done
   case ACTIONS.FORMAT_LEVER_HISTORY:
     return {
