@@ -11,6 +11,8 @@ import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import { checkIfOtherChangesExist } from '../utils';
+import { Constant } from '../constants';
+import { getLeversByGroup } from '../reducers/levers/leversSelector';
 
 const DocketTimeGoals = (props) => {
   const { isAdmin, sectionTitles } = props;
@@ -25,7 +27,9 @@ const DocketTimeGoals = (props) => {
   const errorMessages = {};
 
   // pull docket time goal and distribution levers from the store
-  const storeTimeLevers = useSelector((state) => state.caseDistributionLevers.levers.docket_time_goal);
+  const storeTimeLevers = getLeversByGroup(state, Constant.DOCKET_TIME_GOAL)
+  //  const storeTimeLevers = useSelector((state) => state.caseDistributionLevers.levers.docket_time_goal);
+  console.log({storeTimeLevers})
   const storeDistributionLevers = useSelector(
     (state) => state.caseDistributionLevers.levers.docket_distribution_prior);
   const initialTimeLevers = useSelector((state) => state.caseDistributionLevers.backendLevers.docket_time_goal);
@@ -299,8 +303,6 @@ const DocketTimeGoals = (props) => {
 };
 
 DocketTimeGoals.propTypes = {
-  leverList: PropTypes.object.isRequired,
-  leverStore: PropTypes.any,
   isAdmin: PropTypes.bool.isRequired,
   sectionTitles: PropTypes.array.isRequired
 };
