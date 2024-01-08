@@ -20,6 +20,20 @@ export const loadLevers = (levers) =>
     });
   };
 
+export const updateLeverState = (leverGroup, leverItem, value, usesOption = false, usesToggle = false, toggleValue = false) =>
+(dispatch) => {
+  dispatch({
+    type: ACTIONS.UPDATE_LEVER,
+    payload: {
+      leverGroup,
+      leverItem,
+      value,
+      usesOption,
+      usesToggle,
+      toggleValue
+    }
+  })
+}
 // work in progress
 export const formatLeverHistory = (leverHistory) =>
   (dispatch) => {
