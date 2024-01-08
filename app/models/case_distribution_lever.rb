@@ -4,8 +4,8 @@ class CaseDistributionLever < ApplicationRecord
   validates :title, presence: true
   validates :data_type, presence: true
   validates :value, presence: true, if: Proc.new { |lever| lever.data_type != Constants.ACD_LEVERS.number }
-  validates :is_active, inclusion: { in: [true, false] }
-  validates :is_disabled, inclusion: { in: [true, false] }
+  validates :is_toggle_active, inclusion: { in: [true, false] }
+  validates :is_disabled_in_ui, inclusion: { in: [true, false] }
 
   self.table_name = "case_distribution_levers"
   INTEGER_LEVERS = %W(

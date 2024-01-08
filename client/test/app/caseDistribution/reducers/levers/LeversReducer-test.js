@@ -47,7 +47,7 @@ describe('Lever reducer', () => {
         "data_type": "boolean",
         "value": false,
         "unit": "",
-        "is_active": true
+        "is_toggle_active": true
       }
 
       leverStore.dispatch({

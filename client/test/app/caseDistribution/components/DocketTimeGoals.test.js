@@ -50,10 +50,10 @@ describe('DocketTimeGoals Component', () => {
   it('toggles lever on switch click', () => {
     const lever = mockLeverStore.getState().levers.find((lev) => lev.item === 'lever_11');
 
-    expect(lever.is_active).toBe(false);
+    expect(lever.is_toggle_active).toBe(false);
     const leverToggle = component.container.querySelector('#toggle-switch-lever_11');
 
     fireEvent.click(leverToggle);
-    expect(mockLeverStore.getState().levers.find((lev) => lev.item === 'lever_11').is_active).toBe(true);
+    expect(mockLeverStore.getState().levers.find((lev) => lev.item === 'lever_11').is_toggle_active).toBe(true);
   });
 });

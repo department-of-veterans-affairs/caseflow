@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :case_distribution_lever do
-    is_active {true}
-    is_disabled {false}
+    is_toggle_active {true}
+    is_disabled_in_ui {false}
   end
 end
