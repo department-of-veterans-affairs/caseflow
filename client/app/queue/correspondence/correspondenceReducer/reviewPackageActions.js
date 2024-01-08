@@ -71,3 +71,13 @@ export const updateLastAction = (currentAction) =>
       }
     });
   };
+
+export const setReasonRemovePackage = (reasonForRemove) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_REASON_REMOVE_PACKAGE,
+      payload: {
+        reasonForRemove
+      }
+    });
+  };
