@@ -29,12 +29,17 @@ const DocketTimeGoals = (props) => {
 
   const dispatch = useDispatch();
   const state = useSelector(state => state);
+  // pull docket time goal and distribution levers from the store
+  const storeTimeLevers = useSelector((state) => state.caseDistributionLevers.levers.docket_time_goal);
+  const storeDistributionLevers = useSelector(
+    (state) => state.caseDistributionLevers.levers.docket_distribution_prior);
+  // const initialTimeLevers = useSelector((state) => state.caseDistributionLevers.backendLevers.docket_time_goal);
+  // const initialDistributionLevers = useSelector(
+    // (state) => state.caseDistributionLevers.backendLevers.docket_distribution_prior);
 
   // pull docket time goal and distribution levers from the store
   const currentTimeLevers = getLeversByGroup(state, Constant.LEVERS, Constant.DOCKET_TIME_GOAL)
   const currentDistributionPriorLevers = getLeversByGroup(state, Constant.LEVERS, Constant.DOCKET_DISTRIBUTION_PRIOR);
-  const initialTimeLevers = getLeversByGroup(state, Constant.BACKEND_LEVERS, Constant.DOCKET_TIME_GOAL)
-  const initialDistributionLevers = getLeversByGroup(state, Constant.BACKEND_LEVERS, Constant.DOCKET_DISTRIBUTION_PRIOR)
 
 
   const [docketDistributionLevers, setDistributionLever] = useState(currentDistributionPriorLevers);
@@ -108,7 +113,9 @@ const DocketTimeGoals = (props) => {
               disabled={distributionPriorLever.is_disabled_in_ui}
               toggleSelected={toggleLever(index)}
             />
-            <div className={distributionPriorLever.is_toggle_active ? styles.toggleSwitchInput : styles.toggleInputHide}>
+            <div
+              className={distributionPriorLever.is_toggle_active ? styles.toggleSwitchInput : styles.toggleInputHide}
+            >
 
               <NumberField
                 name={`toggle-${distributionPriorLever.item}`}
