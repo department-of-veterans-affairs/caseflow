@@ -227,7 +227,9 @@ const DocketTimeGoals = (props) => {
               disabled={distributionPriorLever.is_disabled_in_ui}
               toggleSelected={toggleLever(index)}
             />
-            <div className={distributionPriorLever.is_toggle_active ? styles.toggleSwitchInput : styles.toggleInputHide}>
+            <div
+              className={distributionPriorLever.is_toggle_active ? styles.toggleSwitchInput : styles.toggleInputHide}
+            >
 
               <NumberField
                 name={`toggle-${distributionPriorLever.item}`}
