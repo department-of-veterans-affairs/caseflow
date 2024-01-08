@@ -61,7 +61,7 @@ const generateLeverHistory = (filteredLevers, filteredBackendLevers) => {
     return {
       created_at: todaysDate,
       title: lever.title,
-      original_value: filteredInitialLevers[index].value,
+      original_value: filteredLevers[index].value,
       current_value: lever.value,
       unit: lever.unit
     };
@@ -70,11 +70,11 @@ const generateLeverHistory = (filteredLevers, filteredBackendLevers) => {
 };
 
 const updateLeverHistory = (leverStore) => {
-  let [filteredLevers, filteredBackendLevers] = generateLeverUpdateData(leverStore);
+  let [filteredLevers] = generateLeverUpdateData(leverStore);
 
   leverStore.dispatch({
     type: ACTIONS.FORMAT_LEVER_HISTORY,
-    history: generateLeverHistory(filteredLevers, filteredInitialLevers)
+    history: generateLeverHistory(filteredLevers, filteredLevers)
   });
 };
 

@@ -31,6 +31,28 @@ const leversReducer = (state = initialState, action = {}) => {
         $set: action.payload.levers
       }
     });
+
+    case ACTIONS.UPDATE_LEVER:
+      const { leverGroup, leverItem, value, usesOption, usesToggle, toggleValue } = action.payload;
+      const updateLeverValue = (lever) => {
+        if (usesOption) {
+          return { ...lever, option: [{ value }] }; // Update the option value
+        } else if (usesToggle) {
+          return { ...lever, value, is_toggle_active: toggleValue }; // Update both value and is_toggle_active
+        } else {
+          return { ...lever, value }; // Update only the value
+        }
+      };
+      const updatedLever = state.levers[leverGroup].map((lever) =>
+        lever.item === leverItem ? updateLeverValue(lever) : lever
+      );
+      return {
+        ...state,
+        levers: {
+          ...state.levers,
+          [leverGroup]: updatedLever,
+        },
+      };
   // needs to be reworked; remove comment when done
   case ACTIONS.FORMAT_LEVER_HISTORY:
     return {
@@ -68,6 +90,8 @@ const leversReducer = (state = initialState, action = {}) => {
       ...state,
       showSuccessBanner: false
     };
+
+
 
   default:
     return state;
