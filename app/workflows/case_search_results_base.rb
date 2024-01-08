@@ -60,11 +60,11 @@ class CaseSearchResultsBase
   def json_appeals(appeals)
     ama_appeals, legacy_appeals = appeals.partition { |appeal| appeal.is_a?(Appeal) }
 
-    ama_hash = WorkQueue::AppealSearchSerializer.new(
+    ama_hash = WorkQueue::AppealSerializer.new(
       ama_appeals, is_collection: true, params: { user: user }
     ).serializable_hash
 
-    legacy_hash = WorkQueue::LegacyAppealSearchSerializer.new(
+    legacy_hash = WorkQueue::LegacyAppealSerializer.new(
       legacy_appeals, is_collection: true, params: { user: user }
     ).serializable_hash
 
