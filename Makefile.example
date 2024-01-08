@@ -138,7 +138,7 @@ lint:  ## Run linter for javascript and ruby
 jslint:  ## Run linter for javascript
 	cd client && yarn run lint
 
-security:  ## Runs brakeman vulnerability scanmake
+security:  ## Runs brakeman vulnerability scan
 	bundle exec rake security
 
 check: test lint  ## Run tests and lint
@@ -169,7 +169,7 @@ external-db-remove:  ## Remove external_vbms_ext_claim table
 # This needs to be manually run after make reset/migrate in order for local tests involving external tables to pass.
 # Otherwise the caseflow_certification_test schema will not create these tables and will error out.
 external-db-create-test: ## Creates table in caseflow_certification_test DB for local RSPEC tests
-#	bundle exec rails r -e test db/scripts/external/create_vbms_ext_claim_table.rb
+	bundle exec rails r -e test db/scripts/external/create_vbms_ext_claim_table.rb
 
 remove-vbms-ext-claim-seeds: ## Drops audit tables, removes all PriorityEndProductSyncQueue, BatchProcess, and seed-vbms-ext-claim records, then rebuilds audit tables
 	make audit-remove
