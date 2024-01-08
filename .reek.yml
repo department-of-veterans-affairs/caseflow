@@ -22,7 +22,7 @@ detectors:
   ControlParameter:
     exclude:
       - ExplainTimelineConcern::TimelineSpanData
-      - ExternalApi::VBMSService#self.send_and_log_request
+      - VBMSService#self.send_and_log_request
       - Fakes::BGSService
       - Hearings::GeomatchAndCacheAppealJob#perform
       - HearingRepository#slot_new_hearing
@@ -150,7 +150,7 @@ detectors:
     exclude:
       - Address#initialize
       - AssignHearingDispositionTask#reschedule
-      - ExternalApi::VBMSService#self.create_contentions!
+      - VBMSService#self.create_contentions!
       - JobSentryScopeMiddleware#call
       - LegacyDocket#new_distributed_case
       - Api::V3::DecisionReviews::ContestableIssueFinder#initialize
