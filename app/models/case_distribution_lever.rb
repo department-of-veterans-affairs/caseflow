@@ -2,14 +2,7 @@ class CaseDistributionLever < ApplicationRecord
 
   validates :item, presence: true
   validates :title, presence: true
-  validates :data_type, presence: true, inclusion: { in: [
-    Constants.ACD_LEVERS.data_types.radio, 
-    Constants.ACD_LEVERS.data_types.number, 
-    Constants.ACD_LEVERS.data_types.boolean,
-    Constants.ACD_LEVERS.data_types.text,
-    Constants.ACD_LEVERS.data_types.combination
-  ]}
-  validates :value, presence: true, if: Proc.new { |lever| lever.data_type != Constants.ACD_LEVERS.data_types.number }
+  validates :data_type, presence: true, inclusion: { in: Constants.ACD_LEVERS.data_types.to_h.values }
   validates :is_toggle_active, inclusion: { in: [true, false] }
   validates :is_disabled_in_ui, inclusion: { in: [true, false] }
   validate :value_matches_data_type
@@ -31,10 +24,35 @@ class CaseDistributionLever < ApplicationRecord
   )
 
   def value_matches_data_type
-    if lever.data_type != Constants.ACD_LEVERS.data_types.number && value.empty?
-      errors.add(:item, "has to have a value")
+    case data_type
+    when Constants.ACD_LEVERS.data_types.radio 
+    when Constants.ACD_LEVERS.data_types.number
+      validate_number_data_type
+    when Constants.ACD_LEVERS.data_types.boolean
+    when Constants.ACD_LEVERS.data_types.text
+    when Constants.ACD_LEVERS.data_types.combination
     end
+  end
 
+  def validate_radio_data_type
+    
+  end
+
+  def validate_number_data_type
+    unless INTEGER_LEVERS.include?(item) || FLOAT_LEVERS.include?(lever)
+      errors.add(:item, "value does not match its data_type") 
+    end    
+  end
+
+  def validate_boolean_data_type
+  
+  end
+
+  def validate_text_data_type
+    
+  end
+
+  def validate_combination_data_type
     
   end
 
