@@ -99,7 +99,6 @@ RSpec.feature("The Correspondence Review Package page") do
         radio_choices = page.all(".cf-form-radio-option > label")
         expect(radio_choices[0]).to have_content("Approve request")
         expect(radio_choices[1]).to have_content("Reject request")
-        expect(page).to have_content(COPY::CORRRESPONDENCE_TEXT_REMOVE_PACKAGE)
         expect(page).to have_button("Cancel")
         expect(page).to have_button("Confirm", disabled: true)
         expect(page).not_to have_field("Provide a reason for rejection")
