@@ -8,7 +8,7 @@ import { updateLeverState } from '../reducers/levers/leversActions';
 // import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
-import leverInputValidation from './LeverInputValidation';
+// import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';
 // import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import { checkIfOtherChangesExist } from '../utils';
