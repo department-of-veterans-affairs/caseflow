@@ -13,13 +13,11 @@ class CaseDistributionLeversController < ApplicationController
     @acd_history = CaseDistributionAuditLeverEntrySerializer.new(history)
       .serializable_hash[:data].map{ |entry| entry[:attributes] }
     @user_is_an_acd_admin = CDAControlGroup.singleton.user_is_admin?(current_user)
-    @user_is_an_acd_admin = CDAControlGroup.singleton.user_is_admin?(current_user)
 
     render "index"
   end
 
   def update_levers_and_history
-    redirect_to "/unauthorized" unless CDAControlGroup.singleton.user_is_admin?(current_user)
     redirect_to "/unauthorized" unless CDAControlGroup.singleton.user_is_admin?(current_user)
 
     puts params.class
