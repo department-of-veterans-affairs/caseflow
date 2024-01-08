@@ -5,13 +5,9 @@ import { css } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import { updateLeverState } from '../reducers/levers/leversActions';
-// import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
-// import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';
-// import ACD_LEVERS from '../../../constants/ACD_LEVERS';
-import { checkIfOtherChangesExist } from '../utils';
 import { Constant } from '../constants';
 import { getLeversByGroup } from '../reducers/levers/leversSelector';
 
@@ -28,17 +24,16 @@ const DocketTimeGoals = (props) => {
   const errorMessages = {};
 
   const dispatch = useDispatch();
-  const state = useSelector(state => state);
-
+  const theState = useSelector((state) => state);
 
   // pull docket time goal and distribution levers from the store
-  const currentTimeLevers = getLeversByGroup(state, Constant.LEVERS, Constant.DOCKET_TIME_GOAL)
-  const currentDistributionPriorLevers = getLeversByGroup(state, Constant.LEVERS, Constant.DOCKET_DISTRIBUTION_PRIOR);
-
+  const currentTimeLevers = getLeversByGroup(theState, Constant.LEVERS, Constant.DOCKET_TIME_GOAL);
+  const currentDistributionPriorLevers =
+    getLeversByGroup(theState, Constant.LEVERS, Constant.DOCKET_DISTRIBUTION_PRIOR);
 
   const [docketDistributionLevers, setDistributionLever] = useState(currentDistributionPriorLevers);
   const [docketTimeGoalLevers, setTimeGoalLever] = useState(currentTimeLevers);
-  const [errorMessagesList, setErrorMessages] = useState(errorMessages);
+  const [errorMessagesList] = useState(errorMessages);
 
   useEffect(() => {
     setDistributionLever(currentDistributionPriorLevers);
@@ -49,9 +44,8 @@ const DocketTimeGoals = (props) => {
   }, [currentTimeLevers]);
 
   const updateLever = (leverItem, leverType, usesToggle = false, toggleValue = false) => (event) => {
-    console.log({updateLeverState})
-    dispatch(updateLeverState(leverType, leverItem, event, false, usesToggle, toggleValue))
-  }
+    dispatch(updateLeverState(leverType, leverItem, event, false, usesToggle, toggleValue));
+  };
 
   const toggleLever = (index) => () => {
     const levers = docketDistributionLevers.map((lever, i) => {
