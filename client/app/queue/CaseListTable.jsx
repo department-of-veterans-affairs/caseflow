@@ -9,25 +9,56 @@ import DocketTypeBadge from '../components/DocketTypeBadge';
 import Table from '../components/Table';
 import BadgeArea from 'app/components/badges/BadgeArea';
 import { clearCaseListSearch } from './CaseList/CaseListActions';
+import { Checkbox } from '../components/Checkbox';
 
 import { DateString } from '../util/DateUtil';
 import { statusLabel, labelForLocation, renderAppealType, mostRecentHeldHearingForAppeal } from './utils';
 import COPY from '../../COPY';
+import Pagination from 'app/components/Pagination/Pagination';
 
 class CaseListTable extends React.PureComponent {
+
+  state = { currentPage: this.props.currentPage };
+
   componentWillUnmount = () => this.props.clearCaseListSearch();
 
   getKeyForRow = (rowNumber, object) => object.id;
 
   getColumns = () => {
-    const columns = [
+    const columns = [];
+
+    if (this.props.showCheckboxes) {
+      columns.push(
+        {
+          header: '',
+          valueFunction: (appeal) => {
+            return (
+              <Checkbox
+                name={`${appeal.id}`}
+                id={`${appeal.id}`}
+                defaultValue={this.props.taskRelatedAppealIds.includes(appeal.id)}
+                hideLabel
+                onChange={(checked) => this.props.checkboxOnChange(appeal.id, checked)}
+              />
+            );
+          }
+        }
+      );
+    }
+
+    columns.push(
       {
         header: COPY.CASE_LIST_TABLE_DOCKET_NUMBER_COLUMN_TITLE,
         valueFunction: (appeal) => {
           return (
             <React.Fragment>
               <DocketTypeBadge name={appeal.docketName} number={appeal.docketNumber} />
-              <CaseDetailsLink appeal={appeal} userRole={this.props.userRole} getLinkText={() => appeal.docketNumber} />
+              <CaseDetailsLink
+                appeal={appeal}
+                userRole={this.props.userRole}
+                getLinkText={() => appeal.docketNumber}
+                linkOpensInNewTab={this.props.linkOpensInNewTab}
+              />
             </React.Fragment>
           );
         }
@@ -56,7 +87,7 @@ class CaseListTable extends React.PureComponent {
         header: COPY.CASE_LIST_TABLE_APPEAL_LOCATION_COLUMN_TITLE,
         valueFunction: (appeal) => labelForLocation(appeal, this.props.userCssId)
       }
-    ];
+    );
 
     const anyAppealsHaveFnod = Boolean(
       find(this.props.appeals, (appeal) => appeal.veteranAppellantDeceased)
@@ -99,24 +130,70 @@ class CaseListTable extends React.PureComponent {
       return <p>{COPY.CASE_LIST_TABLE_EMPTY_TEXT}</p>;
     }
 
+    const updatePageHandler = (idx) => {
+      const newCurrentPage = idx + 1;
+
+      this.setState({ currentPage: newCurrentPage });
+
+      if (typeof this.props.updatePageHandlerCallback !== 'undefined') {
+        this.props.updatePageHandlerCallback(newCurrentPage);
+      }
+    };
+    const totalPages = Math.ceil(this.props.appeals.length / 5);
+    const startIndex = (this.state.currentPage * 5) - 5;
+    const endIndex = (this.state.currentPage * 5);
+
     return (
-      <Table
-        className="cf-case-list-table"
-        columns={this.getColumns}
-        rowObjects={this.props.appeals}
-        getKeyForRow={this.getKeyForRow}
-        styling={this.props.styling}
-      />
+      this.props.paginate ?
+        <div>
+          <Pagination
+            pageSize={5}
+            currentPage={this.state.currentPage}
+            currentCases={this.props.appeals.slice(startIndex, endIndex).length}
+            totalPages={totalPages}
+            totalCases={this.props.appeals.length}
+            updatePage={updatePageHandler}
+            table={
+              <Table
+                className="cf-case-list-table"
+                columns={this.getColumns}
+                rowObjects={this.props.appeals.slice(startIndex, endIndex)}
+                getKeyForRow={this.getKeyForRow}
+                styling={this.props.styling}
+              />
+            }
+          />
+        </div> :
+        <Table
+          className="cf-case-list-table"
+          columns={this.getColumns}
+          rowObjects={this.props.appeals}
+          getKeyForRow={this.getKeyForRow}
+          styling={this.props.styling}
+        />
     );
   };
 }
 
 CaseListTable.propTypes = {
   appeals: PropTypes.arrayOf(PropTypes.object).isRequired,
+  taskRelatedAppealIds: PropTypes.array,
+  showCheckboxes: PropTypes.bool,
+  paginate: PropTypes.bool,
+  linkOpensInNewTab: PropTypes.bool,
+  checkboxOnChange: PropTypes.func,
   styling: PropTypes.object,
   clearCaseListSearch: PropTypes.func,
   userRole: PropTypes.string,
-  userCssId: PropTypes.string
+  userCssId: PropTypes.string,
+  currentPage: PropTypes.number,
+  updatePageHandlerCallback: PropTypes.func
+};
+
+CaseListTable.defaultProps = {
+  showCheckboxes: false,
+  paginate: false,
+  currentPage: 1
 };
 
 const mapStateToProps = (state) => ({

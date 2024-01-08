@@ -25,7 +25,7 @@ class TaskPager
 
   def paged_tasks
     @paged_tasks ||= begin
-      tasks = sorted_tasks(filtered_tasks)
+      tasks = sorted_tasks(filtered_tasks).not_correspondence
       pagination_enabled ? tasks.page(page).per(TASKS_PER_PAGE) : tasks
     end
   end
