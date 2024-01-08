@@ -19,10 +19,13 @@ describe CorrespondenceDocumentsEfolderUploader do
       end
 
       it "succeeds and does not create any EfolderUploadFailedTask tasks" do
-        result = described.upload_documents_to_claim_evidence(correspondence, current_user, parent_task)
+        result = nil
+
+        expect do
+          result = described.upload_documents_to_claim_evidence(correspondence, current_user, parent_task)
+        end.not_to change(EfolderUploadFailedTask, :count)
 
         expect(result).to eq(true)
-        expect(EfolderUploadFailedTask.count).to eq(0)
       end
     end
 
@@ -34,7 +37,11 @@ describe CorrespondenceDocumentsEfolderUploader do
       end
 
       it "fails and creates a EfolderUploadFailedTask task" do
-        result = described.upload_documents_to_claim_evidence(correspondence, current_user, parent_task)
+        result = nil
+
+        expect do
+          result = described.upload_documents_to_claim_evidence(correspondence, current_user, parent_task)
+        end.to change(EfolderUploadFailedTask, :count)
 
         expect(result).to eq(false)
 
@@ -42,6 +49,16 @@ describe CorrespondenceDocumentsEfolderUploader do
         expect(failed_task.appeal_id).to eq(correspondence.id)
         expect(failed_task.assigned_to).to eq(current_user)
         expect(failed_task.parent_id).to eq(parent_task.id)
+      end
+
+      context "with existing EfolderUploadFailedTask" do
+        let!(:existing_failed_task) { create(:efolder_upload_failed_task, appeal: correspondence) }
+
+        it "does not create a new EfolderUploadFailedTask if one already exists" do
+          expect do
+            described.upload_documents_to_claim_evidence(correspondence, current_user, parent_task)
+          end.not_to change(EfolderUploadFailedTask, :count)
+        end
       end
     end
   end

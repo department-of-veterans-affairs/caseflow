@@ -565,6 +565,9 @@ FactoryBot.define do
       factory :correspondence_intake_task, class: CorrespondenceIntakeTask do
       end
 
+      factory :efolder_upload_failed_task, class: EfolderUploadFailedTask do
+      end
+
       factory :no_show_hearing_task, class: NoShowHearingTask do
         assigned_to { HearingsManagement.singleton }
         parent { create(:assign_hearing_disposition_task, appeal: appeal) }
