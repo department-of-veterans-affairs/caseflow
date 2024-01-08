@@ -4,13 +4,13 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
-import {updateLeverState} from '../reducers/levers/leversActions'
+import { updateLeverState } from '../reducers/levers/leversActions';
 // import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
 import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';
-import ACD_LEVERS from '../../../constants/ACD_LEVERS';
+// import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import { checkIfOtherChangesExist } from '../utils';
 import { Constant } from '../constants';
 import { getLeversByGroup } from '../reducers/levers/leversSelector';
@@ -29,13 +29,7 @@ const DocketTimeGoals = (props) => {
 
   const dispatch = useDispatch();
   const state = useSelector(state => state);
-  // pull docket time goal and distribution levers from the store
-  const storeTimeLevers = useSelector((state) => state.caseDistributionLevers.levers.docket_time_goal);
-  const storeDistributionLevers = useSelector(
-    (state) => state.caseDistributionLevers.levers.docket_distribution_prior);
-  // const initialTimeLevers = useSelector((state) => state.caseDistributionLevers.backendLevers.docket_time_goal);
-  // const initialDistributionLevers = useSelector(
-    // (state) => state.caseDistributionLevers.backendLevers.docket_distribution_prior);
+
 
   // pull docket time goal and distribution levers from the store
   const currentTimeLevers = getLeversByGroup(state, Constant.LEVERS, Constant.DOCKET_TIME_GOAL)
