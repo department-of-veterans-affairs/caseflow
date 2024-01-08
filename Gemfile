@@ -149,6 +149,7 @@ group :test do
   # For retrying failed feature tests. Read more: https://github.com/NoRedInk/rspec-retry
   gem "rspec-retry"
   gem "webmock"
+  gem "shoulda-matchers"
 end
 # rubocop:enable Layout/LineLength
 
