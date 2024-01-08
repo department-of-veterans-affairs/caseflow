@@ -42,7 +42,7 @@ class CorrespondenceTask < Task
     true
   end
 
-  def self.create_child_task(parent_task, current_user, params)
+  def create_child_task(parent_task, current_user, params)
     Task.create!(
       type: params[:type],
       appeal_type: "Correspondence",

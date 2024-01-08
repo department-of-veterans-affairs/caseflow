@@ -193,9 +193,6 @@ RSpec.feature("The Correspondence Review Package page") do
       fill_in "Notes", with: " Updated"
       expect(page).to have_button("Save changes", disabled: false)
       click_button "Save changes"
-      Timeout.timeout(10) do
-        sleep(0.1) until correspondence.tasks.find_by_type("ReviewPackageTask").status == "in_progress"
-      end
       expect(correspondence.tasks.find_by_type("ReviewPackageTask").status).to eq("in_progress")
     end
   end
