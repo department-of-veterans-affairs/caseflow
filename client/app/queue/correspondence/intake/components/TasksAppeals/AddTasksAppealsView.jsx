@@ -121,6 +121,8 @@ export const AddTasksAppealsView = (props) => {
           />
         </div>
 
+        <hr />
+
         <div id="task-not-related-to-an-appeal">
           <h2 style={{ margin: '30px auto 20px auto' }}>Tasks not related to an Appeal</h2>
           <p style={{ marginTop: '0rem', marginBottom: '2rem' }}>
