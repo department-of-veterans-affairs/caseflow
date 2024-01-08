@@ -1,5 +1,6 @@
 import {ACTIONS } from '../levers/leversActionTypes';
 import { update } from '../../../util/ReducerUtil';
+import { Constant } from '../../constants'
 
 export const initialState = {
   saveChangesActivated: false,
@@ -15,17 +16,58 @@ export const initialState = {
 const leversReducer = (state = initialState, action = {}) => {
   switch (action.type) {
 
-  case ACTIONS.INITIAL_LOAD:
-    return update(state, {
-      levers: {
-        $set: action.payload.levers
-      },
-      backendLevers: {
-        $set: action.payload.levers
-      }
-    });
+    case ACTIONS.INITIAL_LOAD:
+      const leverGroups = Object.keys(action.payload.levers);
+
+      const leversWithValues = () => {
+        return leverGroups.reduce((updatedLevers, leverGroup) => {
+          updatedLevers[leverGroup] = action.payload.levers[leverGroup].map(lever => {
+            let value = null;
+
+            if (lever.lever_group === Constant.AFFINITY) {
+              value = lever.options.find(option => option.item === lever.value).value;
+            } else {
+              value = lever.value;
+            }
+
+            // Add backendValue and currentValue attributes
+            return {
+              ...lever,
+              backendValue: value,
+              currentValue: value,
+            };
+          });
+
+          return updatedLevers;
+        }, {});
+      };
+
+      const updatedLeversWithValues = leversWithValues();
+
+      return update(state, {
+        levers: {
+          $set: updatedLeversWithValues,
+        },
+        backendLevers: {
+          $set: updatedLeversWithValues,
+        },
+      });
 
   case ACTIONS.LOAD_LEVERS:
+    // const leverGroups = Object.keys(action.payload.levers)
+    // const levers = leverGroups.forEach(leverGroup => leverGroup.forEach(lever => {
+    //   let value = null;
+    //    switch(lever.lever_group) {
+    //     case Constant.AFFINITY:
+    //       value = lever.options[lever.value].value
+    //       return
+    //     default:
+    //       value = lever.value
+    //       return
+    //   }
+    //   lever.backendValue = value;
+    //   lever.currentValue = value;
+    // }))
     return update(state, {
       levers: {
         $set: action.payload.levers
@@ -33,14 +75,16 @@ const leversReducer = (state = initialState, action = {}) => {
     });
 
     case ACTIONS.UPDATE_LEVER:
-      const { leverGroup, leverItem, value, usesOption, usesToggle, toggleValue } = action.payload;
+      const { leverGroup, leverItem, value, optionValue, usesToggle, toggleValue } = action.payload;
       const updateLeverValue = (lever) => {
-        if (usesOption) {
-          return { ...lever, option: [{ value }] }; // Update the option value
+        if (leverGroup === Constant.AFFINITY) {
+          const selectedOption = lever.options.find(option => option.item ===value)
+          selectedOption.value = optionValue
+          return { ...lever, currentValue: optionValue, value };
         } else if (usesToggle) {
-          return { ...lever, value, is_toggle_active: toggleValue }; // Update both value and is_toggle_active
+          return { ...lever, value, currentValue: `${toggleValue}-${value}`, is_toggle_active: toggleValue };
         } else {
-          return { ...lever, value }; // Update only the value
+          return { ...lever, value, currentValue: value };
         }
       };
       const updatedLever = state.levers[leverGroup].map((lever) =>

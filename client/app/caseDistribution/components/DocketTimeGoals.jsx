@@ -50,7 +50,6 @@ const DocketTimeGoals = (props) => {
   }, [currentTimeLevers]);
 
   const updateLever = (leverItem, leverType, usesToggle = false, toggleValue = false) => (event) => {
-    console.log({updateLeverState})
     dispatch(updateLeverState(leverType, leverItem, event, false, usesToggle, toggleValue))
   }
 
