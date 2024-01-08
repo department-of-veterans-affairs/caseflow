@@ -4,13 +4,13 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
-import {updateLeverState} from '../reducers/levers/leversActions'
+import { updateLeverState } from '../reducers/levers/leversActions';
 // import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
-import leverInputValidation from './LeverInputValidation';
+// import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';
-import ACD_LEVERS from '../../../constants/ACD_LEVERS';
+// import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import { checkIfOtherChangesExist } from '../utils';
 import { Constant } from '../constants';
 import { getLeversByGroup } from '../reducers/levers/leversSelector';
@@ -33,9 +33,6 @@ const DocketTimeGoals = (props) => {
   // pull docket time goal and distribution levers from the store
   const currentTimeLevers = getLeversByGroup(state, Constant.LEVERS, Constant.DOCKET_TIME_GOAL)
   const currentDistributionPriorLevers = getLeversByGroup(state, Constant.LEVERS, Constant.DOCKET_DISTRIBUTION_PRIOR);
-  const initialTimeLevers = getLeversByGroup(state, Constant.BACKEND_LEVERS, Constant.DOCKET_TIME_GOAL)
-  const initialDistributionLevers = getLeversByGroup(state, Constant.BACKEND_LEVERS, Constant.DOCKET_DISTRIBUTION_PRIOR)
-
 
   const [docketDistributionLevers, setDistributionLever] = useState(currentDistributionPriorLevers);
   const [docketTimeGoalLevers, setTimeGoalLever] = useState(currentTimeLevers);
@@ -49,8 +46,8 @@ const DocketTimeGoals = (props) => {
     setTimeGoalLever(currentTimeLevers);
   }, [currentTimeLevers]);
 
-  const updateLever = (leverItem, leverType, usesToggle = false, toggleValue = false) => (event) => {
-    dispatch(updateLeverState(leverType, leverItem, event, false, usesToggle, toggleValue))
+  const updateLever = (leverItem, leverType, toggleValue = false) => (event) => {
+    dispatch(updateLeverState(leverType, leverItem, event, null, toggleValue))
   }
 
   const toggleLever = (index) => () => {
@@ -107,7 +104,9 @@ const DocketTimeGoals = (props) => {
               disabled={distributionPriorLever.is_disabled_in_ui}
               toggleSelected={toggleLever(index)}
             />
-            <div className={distributionPriorLever.is_toggle_active ? styles.toggleSwitchInput : styles.toggleInputHide}>
+            <div
+              className={distributionPriorLever.is_toggle_active ? styles.toggleSwitchInput : styles.toggleInputHide}
+            >
 
               <NumberField
                 name={`toggle-${distributionPriorLever.item}`}

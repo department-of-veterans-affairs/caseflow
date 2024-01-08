@@ -2,13 +2,14 @@ import {ACTIONS } from '../levers/leversActionTypes';
 import { update } from '../../../util/ReducerUtil';
 import { Constant } from '../../constants'
 
+// saveChangesActivated, editedLevers, formattedHistory, changesOccurred should be deleted. Refactor where it is used before deletion
 export const initialState = {
   saveChangesActivated: false,
   editedLevers: [],
   levers: {},
   backendLevers: [],
   formattedHistory: {},
-  historyList: {},
+  historyList: [],
   changesOccurred: false,
   showSuccessBanner: false,
 };
@@ -17,16 +18,21 @@ const leversReducer = (state = initialState, action = {}) => {
   switch (action.type) {
 
     case ACTIONS.INITIAL_LOAD:
+      // all of the logic to append currentValue and backendValue needs to be moved to LOAD_LEVERS
+      // remove all calls to INITIAL_LOAD and use LOAD_LEVERS instead
       const leverGroups = Object.keys(action.payload.levers);
 
       const leversWithValues = () => {
         return leverGroups.reduce((updatedLevers, leverGroup) => {
           updatedLevers[leverGroup] = action.payload.levers[leverGroup].map(lever => {
             let value = null;
-
-            if (lever.lever_group === Constant.AFFINITY) {
+            const group = lever.lever_group
+            if (group === Constant.AFFINITY) {
               value = lever.options.find(option => option.item === lever.value).value;
-            } else {
+            } else if (group === Constant.DOCKET_DISTRIBUTION_PRIOR) {
+              value = `${lever.is_toggle_active}-${lever.value}`;
+             }
+            else {
               value = lever.value;
             }
 
@@ -75,13 +81,13 @@ const leversReducer = (state = initialState, action = {}) => {
     });
 
     case ACTIONS.UPDATE_LEVER:
-      const { leverGroup, leverItem, value, optionValue, usesToggle, toggleValue } = action.payload;
+      const { leverGroup, leverItem, value, optionValue, toggleValue } = action.payload;
       const updateLeverValue = (lever) => {
         if (leverGroup === Constant.AFFINITY) {
           const selectedOption = lever.options.find(option => option.item ===value)
           selectedOption.value = optionValue
           return { ...lever, currentValue: optionValue, value };
-        } else if (usesToggle) {
+        } else if (leverGroup === Constant.DOCKET_DISTRIBUTION_PRIOR) {
           return { ...lever, value, currentValue: `${toggleValue}-${value}`, is_toggle_active: toggleValue };
         } else {
           return { ...lever, value, currentValue: value };

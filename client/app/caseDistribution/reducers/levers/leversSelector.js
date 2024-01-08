@@ -19,7 +19,6 @@ const countChangedLevers = state => {
   return changedLevers.length;
 };
 
-
 export const getLeversByGroup = createSelector(
   [getLeversByGroupConstant],
   (leversByGroup) => {
