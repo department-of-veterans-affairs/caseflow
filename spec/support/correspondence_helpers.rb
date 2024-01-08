@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ModuleLength
 module CorrespondenceHelpers
   def setup_access
     FeatureToggle.enable!(:correspondence_queue)
@@ -103,7 +104,12 @@ module CorrespondenceHelpers
   def active_evidence_submissions_tasks
     setup_access
     veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
-    create(:correspondence, veteran_id: veteran.id, uuid: SecureRandom.uuid, va_date_of_receipt: Time.zone.local(2023, 1, 1))
+    create(
+      :correspondence,
+      veteran_id: veteran.id,
+      uuid: SecureRandom.uuid,
+      va_date_of_receipt: Time.zone.local(2023, 1, 1)
+    )
     2.times do
       appeal = create(:appeal, veteran_file_number: veteran.file_number)
       InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
@@ -130,4 +136,5 @@ module CorrespondenceHelpers
     Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
     Seeds::AutoTexts.new.seed!
   end
+  # rubocop:enable Metrics/ModuleLength
 end

@@ -4,6 +4,7 @@ class CorrespondenceDocument < CaseflowRecord
   belongs_to :correspondence
   belongs_to :vbms_document_type
 
+  # :reek:UtilityFunction
   def pdf_location
     File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf")
   end

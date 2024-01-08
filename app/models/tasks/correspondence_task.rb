@@ -30,18 +30,6 @@ class CorrespondenceTask < Task
     root_task.cancel_task_and_child_subtasks
   end
 
-  private
-
-  def status_is_valid_on_create
-    if type == "ReviewPackageTask" && status != Constants.TASK_STATUSES.unassigned
-      update!(status: :unassigned)
-    elsif type != "ReviewPackageTask" && status != Constants.TASK_STATUSES.assigned
-      fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
-    end
-
-    true
-  end
-
   def self.create_child_task(parent_task, current_user, params)
     Task.create!(
       type: params[:type],
@@ -52,6 +40,18 @@ class CorrespondenceTask < Task
       assigned_to: params[:assigned_to] || child_task_assignee(parent_task, params),
       instructions: params[:instructions]
     )
+  end
+
+  private
+
+  def status_is_valid_on_create
+    if type == "ReviewPackageTask" && status != Constants.TASK_STATUSES.unassigned
+      update!(status: :unassigned)
+    elsif type != "ReviewPackageTask" && status != Constants.TASK_STATUSES.assigned
+      fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
+    end
+
+    true
   end
 
   def assignee_status_is_valid_on_create
