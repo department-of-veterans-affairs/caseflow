@@ -8,8 +8,8 @@ feature "Intake", :all_dbs do
 
     Fakes::BGSService.inaccessible_appeal_vbms_ids = []
 
-    allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
-    allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+    allow(Caseflow::Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+    allow(Caseflow::Fakes::VBMSService).to receive(:create_contentions!).and_call_original
   end
 
   let!(:veteran) do

@@ -7,7 +7,7 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
     Fakes::BGSService.inaccessible_appeal_vbms_ids ||= []
     Fakes::BGSService.inaccessible_appeal_vbms_ids << inaccessible_appeal.veteran_file_number
 
-    allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+    allow(Caseflow::Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow(AppealRepository).to receive(:update_vacols_after_dispatch!).and_call_original
   end
 
@@ -656,7 +656,7 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
 
       scenario "Establish a new claim routed to ARC", :aggregate_failure do
         # Mock the claim_id returned by VBMS's create end product
-        Fakes::VBMSService.end_product_claim_id = "CLAIM_ID_123"
+        Caseflow::Fakes::VBMSService.end_product_claim_id = "CLAIM_ID_123"
 
         visit "/dispatch/establish-claim"
         # Decision Page
@@ -687,7 +687,7 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
         expect(page).to have_css(".cf-progress-bar-activated", text: "2. Route Claim")
         expect(page).to have_css(".cf-progress-bar-activated", text: "3. Confirmation")
 
-        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+        expect(Caseflow::Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
             benefit_type_code: "1",
             payee_code: "00",
@@ -782,7 +782,7 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
         expect(task.appeal.reload.rice_compliance).to be_truthy
         expect(task.reload.completion_status).to eq("routed_to_ro")
 
-        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+        expect(Caseflow::Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
             benefit_type_code: "1",
             payee_code: "00",
@@ -865,7 +865,7 @@ RSpec.feature "Establish Claim - ARC Dispatch", :all_dbs do
           expect(page).to have_current_path("/dispatch/establish-claim/#{task.id}")
           expect(page).to have_content("Success!")
 
-          expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+          expect(Caseflow::Fakes::VBMSService).to have_received(:establish_claim!).with(
             claim_hash: {
               benefit_type_code: "1",
               payee_code: "00",

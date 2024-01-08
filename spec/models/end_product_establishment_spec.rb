@@ -125,9 +125,9 @@ describe EndProductEstablishment, :postgres do
     subject { end_product_establishment.perform! }
 
     before do
-      Fakes::VBMSService.end_product_claim_ids_by_file_number ||= {}
-      Fakes::VBMSService.end_product_claim_ids_by_file_number[veteran.file_number] = fake_claim_id
-      allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+      Caseflow::Fakes::VBMSService.end_product_claim_ids_by_file_number ||= {}
+      Caseflow::Fakes::VBMSService.end_product_claim_ids_by_file_number[veteran.file_number] = fake_claim_id
+      allow(Caseflow::Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     end
 
     context "when end product and contentions are already established" do
@@ -135,7 +135,7 @@ describe EndProductEstablishment, :postgres do
 
       it "does nothing and returns" do
         subject
-        expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
+        expect(Caseflow::Fakes::VBMSService).to_not have_received(:establish_claim!)
       end
     end
 
@@ -166,7 +166,7 @@ describe EndProductEstablishment, :postgres do
         Fakes::BGSService.edit_veteran_record(veteran.file_number, :address_line1, "Changed")
         subject
 
-        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+        expect(Caseflow::Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
             benefit_type_code: Veteran::BENEFIT_TYPE_CODE_DEATH,
             payee_code: "00",
@@ -200,7 +200,7 @@ describe EndProductEstablishment, :postgres do
 
       it "creates an end product with the next valid modifier" do
         subject
-        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+        expect(Caseflow::Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
             benefit_type_code: Veteran::BENEFIT_TYPE_CODE_DEATH,
             payee_code: "00",
@@ -231,7 +231,7 @@ describe EndProductEstablishment, :postgres do
 
         it "creates an end product with the correction valid modifier" do
           subject
-          expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+          expect(Caseflow::Fakes::VBMSService).to have_received(:establish_claim!).with(
             claim_hash: {
               benefit_type_code: Veteran::BENEFIT_TYPE_CODE_DEATH,
               payee_code: "00",
@@ -263,7 +263,7 @@ describe EndProductEstablishment, :postgres do
 
         it "creates an ep with the next valid modifier" do
           subject
-          expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+          expect(Caseflow::Fakes::VBMSService).to have_received(:establish_claim!).with(
             claim_hash: hash_including(
               benefit_type_code: Veteran::BENEFIT_TYPE_CODE_DEATH,
               payee_code: "00",
@@ -311,7 +311,7 @@ describe EndProductEstablishment, :postgres do
         allow(source).to receive(:previously_attempted?).and_return(true)
         allow(end_product_establishment.veteran).to receive(:end_products).and_return([orphaned_end_product])
         subject
-        expect(Fakes::VBMSService).not_to have_received(:establish_claim!)
+        expect(Caseflow::Fakes::VBMSService).not_to have_received(:establish_claim!)
         expect(end_product_establishment).to have_attributes(
           reference_id: orphaned_end_product.claim_id,
           established_at: Time.zone.now,
@@ -344,7 +344,7 @@ describe EndProductEstablishment, :postgres do
 
       it "considers those EP modifiers as open" do
         subject
-        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+        expect(Caseflow::Fakes::VBMSService).to have_received(:establish_claim!).with(
           hash_including(veteran_hash: veteran.reload.to_vbms_hash)
         )
       end
@@ -376,7 +376,7 @@ describe EndProductEstablishment, :postgres do
           modifier: "030"
         )
 
-        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+        expect(Caseflow::Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
             benefit_type_code: Veteran::BENEFIT_TYPE_CODE_DEATH,
             payee_code: "00",
@@ -413,7 +413,7 @@ describe EndProductEstablishment, :postgres do
 
   context "#create_contentions!" do
     before do
-      allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+      allow(Caseflow::Fakes::VBMSService).to receive(:create_contentions!).and_call_original
     end
 
     subject { end_product_establishment.create_contentions! }
@@ -482,7 +482,7 @@ describe EndProductEstablishment, :postgres do
       subject
 
       expect(contentions.second[:description].length).to eq(255)
-      expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
+      expect(Caseflow::Fakes::VBMSService).to have_received(:create_contentions!).once.with(
         veteran_file_number: veteran_file_number,
         claim_id: end_product_establishment.reference_id,
         contentions: array_including(contentions),
@@ -504,7 +504,7 @@ describe EndProductEstablishment, :postgres do
       it "sets special issues when creating the contentions" do
         subject
 
-        expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
+        expect(Caseflow::Fakes::VBMSService).to have_received(:create_contentions!).once.with(
           veteran_file_number: veteran_file_number,
           claim_id: end_product_establishment.reference_id,
           contentions: array_including(
@@ -554,7 +554,7 @@ describe EndProductEstablishment, :postgres do
         it "sends the original contention ids when creating the contention" do
           subject
 
-          expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
+          expect(Caseflow::Fakes::VBMSService).to have_received(:create_contentions!).once.with(
             veteran_file_number: veteran_file_number,
             claim_id: end_product_establishment.reference_id,
             contentions: array_including(
@@ -572,7 +572,7 @@ describe EndProductEstablishment, :postgres do
 
   context "#associate_rating_request_issues!" do
     before do
-      allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
+      allow(Caseflow::Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
     end
 
     let(:reference_id) { "stevenasmith" }
@@ -598,7 +598,7 @@ describe EndProductEstablishment, :postgres do
 
       it "skips ineligible rating request issues" do
         subject
-        expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
+        expect(Caseflow::Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
       end
     end
 
@@ -617,7 +617,7 @@ describe EndProductEstablishment, :postgres do
 
       it "sends mapping of rating request issues to contentions" do
         subject
-        expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
+        expect(Caseflow::Fakes::VBMSService).to have_received(:associate_rating_request_issues!).once.with(
           claim_id: reference_id,
           rating_issue_contention_map: { request_issues[0].contested_rating_issue_reference_id => contention_ref_id }
         )
@@ -641,7 +641,7 @@ describe EndProductEstablishment, :postgres do
       it "skips mapping since there is no associated rating issue" do
         subject
         expect(request_issues.first.rating?).to be true
-        expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
+        expect(Caseflow::Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
       end
     end
 
@@ -675,7 +675,7 @@ describe EndProductEstablishment, :postgres do
       it "skips rating request issues with no associated rating issue" do
         subject
         expect(request_issues.first.rating?).to be true
-        expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
+        expect(Caseflow::Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
       end
     end
   end
@@ -968,13 +968,13 @@ describe EndProductEstablishment, :postgres do
       end
 
       context "when the end product is canceled" do
-        before { allow(Fakes::VBMSService).to receive(:fetch_contentions).and_call_original }
+        before { allow(Caseflow::Fakes::VBMSService).to receive(:fetch_contentions).and_call_original }
         let(:status_type_code) { EndProduct::STATUSES.key("Canceled") }
 
         it "closes request issues, cancels establishment, and doesn't fetch contentions" do
           subject
 
-          expect(Fakes::VBMSService).to_not have_received(:fetch_contentions)
+          expect(Caseflow::Fakes::VBMSService).to_not have_received(:fetch_contentions)
           expect(end_product_establishment.reload.synced_status).to eq("CAN")
           expect(end_product_establishment.source.canceled?).to be true
           expect(request_issues.first.reload.closed_at).to eq(Time.zone.now)

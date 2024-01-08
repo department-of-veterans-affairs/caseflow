@@ -3,7 +3,7 @@
 describe DBService do
   context ".request" do
     subject do
-      DBService.release_db_connections
+      DBService.release_db_connections(VACOLS::Record)
     end
 
     context "when feature flag is turned on", db_clean: :truncation do

@@ -397,8 +397,8 @@ FactoryBot.define do
     end
 
     after(:build) do |vacols_case, evaluator|
-      Fakes::VBMSService.document_records ||= {}
-      Fakes::VBMSService.document_records[vacols_case.bfcorlid.gsub(/[^0-9]/, "")] =
+      Caseflow::Fakes::VBMSService.document_records ||= {}
+      Caseflow::Fakes::VBMSService.document_records[vacols_case.bfcorlid.gsub(/[^0-9]/, "")] =
         evaluator.documents + evaluator.nod_document + evaluator.soc_document +
         evaluator.form9_document + evaluator.ssoc_documents + evaluator.decision_document
     end
