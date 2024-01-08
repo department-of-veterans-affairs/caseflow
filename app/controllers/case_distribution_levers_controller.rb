@@ -22,7 +22,7 @@ class CaseDistributionLeversController < ApplicationController
 
     errors = CaseDistributionLever.update_acd_levers(allowed_params[:current_levers], current_user)
 
-    render json: { errors: errors, successful: false }
+    render json: { errors: errors, successful: errors.empty? }
   end
 
   private
