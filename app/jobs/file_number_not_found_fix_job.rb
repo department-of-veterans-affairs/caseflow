@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require_relative "../../lib/helpers/fix_file_number_wizard"
+require_relative "../../lib/helpers/duplicate_veteran_checker"
+
 class FileNumberNotFoundFixJob < CaseflowJob
   include MasterSchedulerInterface
   ASSOCIATED_OBJECTS = FixFileNumberWizard::ASSOCIATIONS
@@ -20,8 +23,7 @@ class FileNumberNotFoundFixJob < CaseflowJob
     loop_through_and_call_process_records
     end_time
     log_processing_time
-    stuck_job_report_service.write_log_report(error_text)
-
+    @stuck_job_report_service.write_log_report(error_text)
   rescue StandardError => error
     log_error(error)
   end
@@ -29,14 +31,14 @@ class FileNumberNotFoundFixJob < CaseflowJob
   def loop_through_and_call_process_records
     return if records_with_errors.blank?
 
-    stuck_job_report_service.append_record_count(records_with_errors.count, error_text)
+    @stuck_job_report_service.append_record_count(records_with_errors.count, error_text)
 
     records_with_errors.each do |decision_document|
       process_records(decision_document)
     end
 
     # record count with errors after fix
-    stuck_job_report_service.append_record_count(records_with_errors.count, error_text)
+    @stuck_job_report_service.append_record_count(records_with_errors.count, error_text)
   end
 
   def process_records(decision_doc)
@@ -54,10 +56,10 @@ class FileNumberNotFoundFixJob < CaseflowJob
     return if collections.map(&:count).sum == 0
 
     update_records!(collections, bgs_file_number, veteran)
-    stuck_job_report_service.append_single_record(decision_doc.class.name, decision_doc.id)
+    @stuck_job_report_service.append_single_record(decision_doc.class.name, decision_doc.id)
     decision_doc.clear_error!
   rescue StandardError => error
-    stuck_job_report_service.append_error(decision_doc.class.name, decision_doc.id, error)
+    @stuck_job_report_service.append_error(decision_doc.class.name, decision_doc.id, error)
     log_error(error)
   end
 
