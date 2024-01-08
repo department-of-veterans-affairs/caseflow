@@ -104,8 +104,12 @@ const BatchSize = (props) => {
       {batchSizeLevers && batchSizeLevers.map((lever, index) => (
         <div className={styles.activeLever} key={`${lever.item}-${index}`}>
           <div className={styles.leverLeft}>
-            <strong className={lever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}>{lever.title}</strong>
-            <p className={lever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}>{lever.description}</p>
+            <strong className={lever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}>
+              {lever.title}
+            </strong>
+            <p className={lever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}>
+              {lever.description}
+            </p>
           </div>
           <div className={`${styles.leverRight} ${leverNumberDiv}`}>
             {isAdmin ?
