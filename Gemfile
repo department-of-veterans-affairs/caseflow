@@ -149,6 +149,7 @@ group :test do
   gem "rspec-retry"
   gem "webmock"
   gem "rspec-github", require: false
+  gem "shoulda-matchers"
 end
 # rubocop:enable Metrics/LineLength
 
