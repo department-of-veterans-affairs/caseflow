@@ -10,7 +10,7 @@ describe('StaticLever', () => {
     data_type: 'number',
     value: 10,
     unit: 'Days',
-    is_active: true,
+    is_toggle_active: true,
     options: [],
   };
 

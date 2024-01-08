@@ -12,7 +12,7 @@ describe('Lever reducer', () => {
   beforeEach(() => {
     const preloadedState = {
       levers: JSON.parse(JSON.stringify(leverData.levers.slice(0,5))), //allows original leverData object to remain unchanged
-      initial_levers: JSON.parse(JSON.stringify(leverData.levers.slice(0,5)))
+      backendLevers: JSON.parse(JSON.stringify(leverData.levers.slice(0,5)))
     }
     leverStore = createStore(leversReducer, preloadedState);
   })
@@ -30,7 +30,7 @@ describe('Lever reducer', () => {
         history: leverData.history
       })
 
-      expect(leverStore.getState().formatted_history).toEqual(leverData.formatted_history)
+      expect(leverStore.getState().historyList).toEqual(leverData.historyList)
     });
 
     // it('returns error message when input is not in correct format', () => {});
@@ -47,7 +47,7 @@ describe('Lever reducer', () => {
         "data_type": "boolean",
         "value": false,
         "unit": "",
-        "is_active": true
+        "is_toggle_active": true
       }
 
       leverStore.dispatch({
@@ -56,7 +56,7 @@ describe('Lever reducer', () => {
       })
 
       let target_store_lever = leverStore.getState().levers.find(lever => lever.item === "lever_1");
-      let target_store_inital_lever = leverStore.getState().initial_levers.find(lever => lever.item === "lever_1");
+      let target_store_inital_lever = leverStore.getState().backendLevers.find(lever => lever.item === "lever_1");
       let changesOccurred = leverStore.getState().changesOccurred
       let saveChangesActivated = leverStore.getState().saveChangesActivated
 
@@ -84,7 +84,7 @@ describe('Lever reducer', () => {
 
       expect(leverStore.getState().levers).not.toEqual(leverData.levers.slice(0,5))
       expect(leverStore.getState().levers).toEqual(leverData.updated_levers)
-      expect(leverStore.getState().initial_levers).toEqual(leverData.updated_levers)
+      expect(leverStore.getState().backendLevers).toEqual(leverData.updated_levers)
       expect(leverStore.getState().changesOccurred).toEqual(false)
     });
   });

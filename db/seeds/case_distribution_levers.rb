@@ -16,12 +16,13 @@ module Seeds
           data_type: Constants.ACD_LEVERS.number,
           value: 0.07,
           unit: '%',
-          is_active: false,
-          is_disabled: true,
+          is_toggle_active: false,
+          is_disabled_in_ui: true,
           min_value: 0,
           max_value: 1,
           algorithms_used: ['proportion'],
-          lever_group: 'static'
+          lever_group: 'static',
+          lever_group_order: 1000
         },
         {
           item: Constants.DISTRIBUTION.minimum_legacy_proportion,
@@ -30,12 +31,13 @@ module Seeds
           data_type: Constants.ACD_LEVERS.number,
           value: 0.9,
           unit: '%',
-          is_active: false,
-          is_disabled: true,
+          is_toggle_active: false,
+          is_disabled_in_ui: true,
           min_value: 0,
           max_value: 1,
           algorithms_used: ['proportion'],
-          lever_group: 'static'
+          lever_group: 'static',
+          lever_group_order: 1001
         },
         {
           item: Constants.DISTRIBUTION.nod_adjustment,
@@ -44,12 +46,13 @@ module Seeds
           data_type: Constants.ACD_LEVERS.number,
           value: 0.4,
           unit: '%',
-          is_active: false,
-          is_disabled: true,
+          is_toggle_active: false,
+          is_disabled_in_ui: true,
           min_value: 0,
           max_value: 1,
           algorithms_used: ['proportion'],
-          lever_group: 'static'
+          lever_group: 'static',
+          lever_group_order: 1002
         },
         {
           item: Constants.DISTRIBUTION.bust_backlog,
@@ -58,10 +61,11 @@ module Seeds
           data_type: Constants.ACD_LEVERS.boolean,
           value: false,
           unit: '',
-          is_active: false,
-          is_disabled: true,
+          is_toggle_active: false,
+          is_disabled_in_ui: true,
           algorithms_used: ['proportion'],
-          lever_group: 'static'
+          lever_group: 'static',
+          lever_group_order: 1003
         },
         {
           item: Constants.DISTRIBUTION.alternative_batch_size,
@@ -70,12 +74,13 @@ module Seeds
           data_type: Constants.ACD_LEVERS.number,
           value: 15,
           unit: Constants.ACD_LEVERS.cases,
-          is_active: true,
-          is_disabled: false,
+          is_toggle_active: true,
+          is_disabled_in_ui: false,
           min_value: 0,
           max_value: 100,
           algorithms_used: ['docket', 'proportion'],
-          lever_group: 'batch'
+          lever_group: 'batch',
+          lever_group_order: 2000
         },
         {
           item: Constants.DISTRIBUTION.batch_size_per_attorney,
@@ -84,12 +89,13 @@ module Seeds
           data_type: Constants.ACD_LEVERS.number,
           value: 3,
           unit: Constants.ACD_LEVERS.cases,
-          is_active: true,
-          is_disabled: false,
+          is_toggle_active: true,
+          is_disabled_in_ui: false,
           min_value: 0,
           max_value: 100,
           algorithms_used: ['docket', 'proportion'],
-          lever_group: 'batch'
+          lever_group: 'batch',
+          lever_group_order: 2001
         },
         {
           item: Constants.DISTRIBUTION.request_more_cases_minimum,
@@ -98,12 +104,13 @@ module Seeds
           data_type: Constants.ACD_LEVERS.number,
           value: 8,
           unit: Constants.ACD_LEVERS.cases,
-          is_active: true,
-          is_disabled: false,
+          is_toggle_active: true,
+          is_disabled_in_ui: false,
           min_value: 0,
           max_value: 100,
           algorithms_used: ['docket', 'proportion'],
-          lever_group: 'batch'
+          lever_group: 'batch',
+          lever_group_order: 2002
         },
         {
           item: Constants.DISTRIBUTION.ama_hearing_case_affinity_days,
@@ -133,12 +140,13 @@ module Seeds
               text: 'Omit variable from distribution rules',
             }
           ],
-          is_active: true,
-          is_disabled: false,
+          is_toggle_active: true,
+          is_disabled_in_ui: false,
           min_value: 0,
           max_value: 100,
           algorithms_used: ['docket'],
-          lever_group: 'affinity'
+          lever_group: 'affinity',
+          lever_group_order: 3000
         },
         {
           item: Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days,
@@ -170,12 +178,13 @@ module Seeds
               unit: ''
             }
           ],
-          is_active: false,
-          is_disabled: true,
+          is_toggle_active: false,
+          is_disabled_in_ui: true,
           min_value: 0,
           max_value: 100,
           algorithms_used: ['proportion'],
-          lever_group: 'affinity'
+          lever_group: 'affinity',
+          lever_group_order: 3001
         },
         {
           item: Constants.DISTRIBUTION.cavc_affinity_days,
@@ -203,12 +212,13 @@ module Seeds
               text: 'Omit variable from distribution rules'
             }
           ],
-          is_active: false,
-          is_disabled: true,
+          is_toggle_active: false,
+          is_disabled_in_ui: true,
           min_value: 0,
           max_value: 100,
           algorithms_used: ['docket', 'proportion'],
-          lever_group: 'affinity'
+          lever_group: 'affinity',
+          lever_group_order: 3002
         },
         {
           item: Constants.DISTRIBUTION.cavc_aod_affinity_days,
@@ -236,10 +246,11 @@ module Seeds
               text: 'Omit variable from distribution rules',
             }
           ],
-          is_active: false,
-          is_disabled: true,
+          is_toggle_active: false,
+          is_disabled_in_ui: true,
           algorithms_used: ['proportion'],
-          lever_group: 'affinity'
+          lever_group: 'affinity',
+          lever_group_order: 3003
         },
         {
           item: Constants.DISTRIBUTION.aoj_affinity_days,
@@ -271,12 +282,13 @@ module Seeds
               unit: ''
             }
           ],
-          is_active: false,
-          is_disabled: true,
+          is_toggle_active: false,
+          is_disabled_in_ui: true,
           min_value: 0,
           max_value: 100,
           algorithms_used: ['proportion'],
-          lever_group: 'affinity'
+          lever_group: 'affinity',
+          lever_group_order: 3004
         },
         {
           item: Constants.DISTRIBUTION.aoj_aod_affinity_days,
@@ -308,12 +320,13 @@ module Seeds
               unit: ''
             }
           ],
-          is_active: false,
-          is_disabled: true,
+          is_toggle_active: false,
+          is_disabled_in_ui: true,
           min_value: 0,
           max_value: 100,
           algorithms_used: ['proportion'],
-          lever_group: 'affinity'
+          lever_group: 'affinity',
+          lever_group_order: 3005
         },
         {
           item: Constants.DISTRIBUTION.aoj_cavc_affinity_days,
@@ -345,12 +358,13 @@ module Seeds
               unit: ''
             }
           ],
-          is_active: true,
-          is_disabled: true,
+          is_toggle_active: true,
+          is_disabled_in_ui: true,
           min_value: 0,
           max_value: 100,
           algorithms_used: ['docket'],
-          lever_group: 'affinity'
+          lever_group: 'affinity',
+          lever_group_order: 3006
         },
         {
           item: Constants.DISTRIBUTION.ama_hearings_start_distribution_prior_to_goals,
@@ -368,12 +382,13 @@ module Seeds
               unit: ''
             }
           ],
-          is_active: false,
-          is_disabled: true,
+          is_toggle_active: false,
+          is_disabled_in_ui: true,
           min_value: 0,
           max_value: 100,
           algorithms_used: ['proportion'],
-          lever_group: 'docket_distribution_prior'
+          lever_group: 'docket_distribution_prior',
+          lever_group_order: 4000
         },
         {
           item: Constants.DISTRIBUTION.ama_direct_review_start_distribution_prior_to_goals,
@@ -391,12 +406,13 @@ module Seeds
               unit: ''
             }
           ],
-          is_active: false,
-          is_disabled: true,
+          is_toggle_active: false,
+          is_disabled_in_ui: true,
           min_value: 0,
           max_value: 100,
           algorithms_used: ['docket'],
-          lever_group: 'docket_distribution_prior'
+          lever_group: 'docket_distribution_prior',
+          lever_group_order: 4001
         },
         {
           item: Constants.DISTRIBUTION.ama_evidence_submission_start_distribution_prior_to_goals,
@@ -414,12 +430,13 @@ module Seeds
               unit: ''
             }
           ],
-          is_active: false,
-          is_disabled: true,
+          is_toggle_active: false,
+          is_disabled_in_ui: true,
           min_value: 0,
           max_value: 100,
           algorithms_used: ['proportion'],
-          lever_group: 'docket_distribution_prior'
+          lever_group: 'docket_distribution_prior',
+          lever_group_order: 4002
         },
         {
           item: Constants.DISTRIBUTION.ama_hearings_docket_time_goals,
@@ -427,12 +444,13 @@ module Seeds
           data_type: Constants.ACD_LEVERS.number,
           value: 365,
           unit: Constants.ACD_LEVERS.days,
-          is_active: false,
-          is_disabled: true,
+          is_toggle_active: false,
+          is_disabled_in_ui: true,
           min_value: 0,
           max_value: 1000,
           algorithms_used: ['proportion'],
-          lever_group: 'docket_time_goal'
+          lever_group: 'docket_time_goal',
+          lever_group_order: 4003
         },
         {
           item: Constants.DISTRIBUTION.ama_direct_review_docket_time_goals,
@@ -440,12 +458,13 @@ module Seeds
           data_type: Constants.ACD_LEVERS.number,
           value: 500,
           unit: Constants.ACD_LEVERS.days,
-          is_active: true,
-          is_disabled: false,
+          is_toggle_active: true,
+          is_disabled_in_ui: false,
           min_value: 0,
           max_value: 1000,
           algorithms_used: ['proportion'],
-          lever_group: 'docket_time_goal'
+          lever_group: 'docket_time_goal',
+          lever_group_order: 4004
         },
         {
           item: Constants.DISTRIBUTION.ama_evidence_submission_docket_time_goals,
@@ -453,12 +472,13 @@ module Seeds
           data_type: Constants.ACD_LEVERS.number,
           value: 123,
           unit: Constants.ACD_LEVERS.days,
-          is_active: false,
-          is_disabled: true,
+          is_toggle_active: false,
+          is_disabled_in_ui: true,
           min_value: 0,
           max_value: 1000,
           algorithms_used: ['proportion'],
-          lever_group: 'docket_time_goal'
+          lever_group: 'docket_time_goal',
+          lever_group_order: 4005
         },
       ]
     end
@@ -472,14 +492,15 @@ module Seeds
         data_type: lever[:data_type],
         value: lever[:value].to_s,
         unit: lever[:unit],
-        is_active: lever[:is_active] || false,
-        is_disabled: lever[:is_disabled] || false,
+        is_toggle_active: lever[:is_toggle_active] || false,
+        is_disabled_in_ui: lever[:is_disabled_in_ui] || false,
         min_value: lever[:min_value],
         max_value: lever[:max_value],
         algorithms_used: lever[:algorithms_used],
         options: lever[:options],
         control_group: lever[:control_group],
-        lever_group: lever[:lever_group]
+        lever_group: lever[:lever_group],
+        lever_group_order: lever[:lever_group_order]
       )
     end
   end

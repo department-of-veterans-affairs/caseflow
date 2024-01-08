@@ -1,3 +1,4 @@
+
 export const levers = [
     {
       "item": "lever_1",
@@ -6,7 +7,9 @@ export const levers = [
       "data_type": "boolean",
       "value": true,
       "unit": "",
-      "is_active": true
+      "is_toggle_active": true,
+      "lever_group": "static",
+      "lever_group_order": 0
     },
     {
       "item": "lever_2",
@@ -15,7 +18,9 @@ export const levers = [
       "data_type": "boolean",
       "value": false,
       "unit": "",
-      "is_active": true
+      "is_toggle_active": true,
+      "lever_group": "static",
+      "lever_group_order": 1
     },
     {
       "item": "lever_3",
@@ -24,7 +29,9 @@ export const levers = [
       "data_type": "boolean",
       "value": true,
       "unit": "",
-      "is_active": false
+      "is_toggle_active": false,
+      "lever_group": "static",
+      "lever_group_order": 2
     },
     {
       "item": "lever_4",
@@ -33,7 +40,9 @@ export const levers = [
       "data_type": "boolean",
       "value": false,
       "unit": "",
-      "is_active": true
+      "is_toggle_active": true,
+      "lever_group": "static",
+      "lever_group_order": 3
     },
     {
       "item": "lever_5",
@@ -42,7 +51,9 @@ export const levers = [
       "data_type": "number",
       "value": 42,
       "unit": "Days",
-      "is_active": true
+      "is_toggle_active": true,
+      "lever_group": "static",
+      "lever_group_order": 4
     },
     {
       "item": "lever_6",
@@ -51,7 +62,9 @@ export const levers = [
       "data_type": "number",
       "value": 15,
       "unit": "Days",
-      "is_active": false
+      "is_toggle_active": false,
+      "lever_group": "static",
+      "lever_group_order": 5
     },
       {
       "item": "lever_7",
@@ -60,7 +73,9 @@ export const levers = [
       "data_type": "number",
       "value": 35,
       "unit": "Cases",
-      "is_active": true
+      "is_toggle_active": true,
+      "lever_group": "static",
+      "lever_group_order": 6
     },
     {
       "item": "lever_8",
@@ -69,7 +84,9 @@ export const levers = [
       "data_type": "number",
       "value": 200,
       "unit": "Cases",
-      "is_active": false
+      "is_toggle_active": false,
+      "lever_group": "static",
+      "lever_group_order": 7
     },
     {
       "item": "lever_9",
@@ -94,7 +111,9 @@ export const levers = [
           "unit": "Days"
           }
       ],
-      "is_active": true
+      "is_toggle_active": true,
+      "lever_group": "static",
+      "lever_group_order": 8
     },
     {
         "item": "lever_10",
@@ -112,7 +131,9 @@ export const levers = [
             "unit": ""
             }
         ],
-        "is_active": true
+        "is_toggle_active": true,
+        "lever_group": "static",
+        "lever_group_order": 9
     },
     {
       "item": "lever_11",
@@ -130,7 +151,9 @@ export const levers = [
           "unit": ""
           }
       ],
-      "is_active": false
+      "is_toggle_active": false,
+      "lever_group": "static",
+      "lever_group_order": 10
     },
     {
       "item": "lever_12",
@@ -148,8 +171,10 @@ export const levers = [
           "unit": ""
           }
       ],
-      "is_active": false,
-      "is_disabled": true
+      "is_toggle_active": false,
+      "is_disabled_in_ui": true,
+      "lever_group": "static",
+      "lever_group_order": 11
     },
     {
       "item": "lever_13",
@@ -178,8 +203,10 @@ export const levers = [
             "text": "Option 3",
           }
       ],
-      "is_active": true,
-      "is_disabled": true
+      "is_toggle_active": true,
+      "is_disabled_in_ui": true,
+      "lever_group": "static",
+      "lever_group_order": 12
     },
   ]
 
@@ -235,7 +262,7 @@ export const formattedHistory = [
 ]
 
 /* Reducer Test Data */
-export const formatted_history = formattedHistory
+export const historyList = formattedHistory
 
 export const lever1_update = {
   "item": "lever_1",
@@ -244,7 +271,7 @@ export const lever1_update = {
   "data_type": "boolean",
   "value": false,
   "unit": "",
-  "is_active": true
+  "is_toggle_active": true
 }
 
 export const lever5_update = {
@@ -254,7 +281,7 @@ export const lever5_update = {
   "data_type": "number",
   "value": 90,
   "unit": "days",
-  "is_active": true
+  "is_toggle_active": true
 }
 
 export const updated_levers = [
@@ -265,7 +292,7 @@ export const updated_levers = [
     "data_type": "boolean",
     "value": false,
     "unit": "",
-    "is_active": true
+    "is_toggle_active": true
   },
   {
     "item": "lever_2",
@@ -274,7 +301,7 @@ export const updated_levers = [
     "data_type": "boolean",
     "value": false,
     "unit": "",
-    "is_active": true
+    "is_toggle_active": true
   },
   {
     "item": "lever_3",
@@ -283,7 +310,7 @@ export const updated_levers = [
     "data_type": "boolean",
     "value": true,
     "unit": "",
-    "is_active": false
+    "is_toggle_active": false
   },
   {
     "item": "lever_4",
@@ -292,7 +319,7 @@ export const updated_levers = [
     "data_type": "boolean",
     "value": false,
     "unit": "",
-    "is_active": true
+    "is_toggle_active": true
   },
   {
     "item": "lever_5",
@@ -301,7 +328,7 @@ export const updated_levers = [
     "data_type": "number",
     "value": 90,
     "unit": "Days",
-    "is_active": true
+    "is_toggle_active": true
   }
 ]
 

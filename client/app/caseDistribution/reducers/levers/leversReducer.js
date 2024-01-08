@@ -5,7 +5,7 @@ export const initialState = {
   saveChangesActivated: false,
   editedLevers: [],
   levers: {},
-  initialLevers: [],
+  backendLevers: [],
   formattedHistory: {},
   historyList: {},
   changesOccurred: false,
@@ -20,7 +20,7 @@ const leversReducer = (state = initialState, action = {}) => {
       levers: {
         $set: action.payload.levers
       },
-      initialLevers: {
+      backendLevers: {
         $set: action.payload.levers
       }
     });
@@ -35,14 +35,15 @@ const leversReducer = (state = initialState, action = {}) => {
   case ACTIONS.FORMAT_LEVER_HISTORY:
     return {
       ...state,
-      formatted_history: formatLeverHistory(action.history)
+      historyList: formatLeverHistory(action.history)
     };
 
   // needs to be reworked; remove comment when done
+  // we are no longer going to be replacing the backendLevers with levers on save. We will be replacing the list upon save with data from the backend
   case ACTIONS.SAVE_LEVERS:
     return {
       ...state,
-      initial_levers: state.levers,
+      backendLevers: state.levers,
       saveChangesActivated: action.saveChangesActivated,
       changesOccurred: false
     };
@@ -51,7 +52,7 @@ const leversReducer = (state = initialState, action = {}) => {
   case ACTIONS.REVERT_LEVERS:
     return {
       ...state,
-      levers: state.initial_levers
+      levers: state.backendLevers
     };
 
   // needs to be reworked; remove comment when done

@@ -43,8 +43,8 @@
           <% else %>
             <td> n/a </td>
           <% end %>
-          <td> <%= lever.is_active %> </td>
-          <td> <%= lever.is_disabled %> </td>
+          <td> <%= lever.is_toggle_active %> </td>
+          <td> <%= lever.is_disabled_in_ui %> </td>
         </tr>
       <% end %>
     </tbody>
@@ -67,7 +67,7 @@
         <tr>
           <td> <%= entry.case_distribution_lever.id %> </td>
           <td> <%= entry.case_distribution_lever.title %> </td>
-          <td> <%= entry.user.full_name %> </td>
+          <td> <%= entry.user.css_id %> </td>
           <td> <%= entry.created_at %> </td>
           <td> <%= entry.previous_value %> </td>
           <td> <%= entry.update_value %> </td>

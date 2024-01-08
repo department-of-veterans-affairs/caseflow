@@ -47,8 +47,8 @@ export const formattedLevers = [
     data_type: ACD_LEVERS.number,
     value: '80',
     unit: '%',
-    is_active: false,
-    is_disabled: false,
+    is_toggle_active: false,
+    is_disabled_in_ui: false,
     min_value: 0,
     max_value: 500,
     algorithms_used: [],
@@ -63,8 +63,8 @@ export const formattedLevers = [
     data_type: ACD_LEVERS.number,
     value: '20',
     unit: '%',
-    is_active: false,
-    is_disabled: false,
+    is_toggle_active: false,
+    is_disabled_in_ui: false,
     min_value: 0,
     max_value: 500,
     algorithms_used: [],
@@ -79,8 +79,8 @@ export const formattedLevers = [
     data_type: ACD_LEVERS.number,
     value: '90',
     unit: '%',
-    is_active: false,
-    is_disabled: false,
+    is_toggle_active: false,
+    is_disabled_in_ui: false,
     min_value: 0,
     max_value: 500,
     algorithms_used: [],
@@ -95,8 +95,8 @@ export const formattedLevers = [
     data_type: ACD_LEVERS.boolean,
     value: true,
     unit: '',
-    is_active: false,
-    is_disabled: false,
+    is_toggle_active: false,
+    is_disabled_in_ui: false,
     min_value: 0,
     max_value: 500,
     algorithms_used: [],
@@ -111,8 +111,8 @@ export const formattedLevers = [
     data_type: ACD_LEVERS.number,
     value: '15',
     unit: ACD_LEVERS.cases,
-    is_active: false,
-    is_disabled: true,
+    is_toggle_active: false,
+    is_disabled_in_ui: true,
     min_value: 0,
     max_value: 500,
     algorithms_used: [],
@@ -127,8 +127,8 @@ export const formattedLevers = [
     data_type: ACD_LEVERS.number,
     value: '3',
     unit: ACD_LEVERS.cases,
-    is_active: true,
-    is_disabled: true,
+    is_toggle_active: true,
+    is_disabled_in_ui: true,
     min_value: 0,
     max_value: 500,
     algorithms_used: [],
@@ -143,8 +143,8 @@ export const formattedLevers = [
     data_type: ACD_LEVERS.number,
     value: 8,
     unit: ACD_LEVERS.cases,
-    is_active: false,
-    is_disabled: false,
+    is_toggle_active: false,
+    is_disabled_in_ui: false,
     min_value: 0,
     max_value: 500,
     algorithms_used: [],
@@ -182,8 +182,8 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: true,
-    is_disabled: false,
+    is_toggle_active: true,
+    is_disabled_in_ui: false,
     min_value: 0,
     max_value: 500,
     algorithms_used: [],
@@ -220,8 +220,8 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: false,
-    is_disabled: true,
+    is_toggle_active: false,
+    is_disabled_in_ui: true,
     min_value: 0,
     max_value: 500,
     algorithms_used: [],
@@ -258,8 +258,8 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: false,
-    is_disabled: true,
+    is_toggle_active: false,
+    is_disabled_in_ui: true,
     min_value: 0,
     max_value: 500,
     algorithms_used: [],
@@ -296,8 +296,8 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: false,
-    is_disabled: true,
+    is_toggle_active: false,
+    is_disabled_in_ui: true,
     min_value: 0,
     max_value: 500,
     algorithms_used: [],
@@ -334,8 +334,8 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: false,
-    is_disabled: true,
+    is_toggle_active: false,
+    is_disabled_in_ui: true,
     min_value: 0,
     max_value: 500,
     algorithms_used: [],
@@ -372,8 +372,8 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: false,
-    is_disabled: true,
+    is_toggle_active: false,
+    is_disabled_in_ui: true,
     min_value: 0,
     max_value: 500,
     algorithms_used: [],
@@ -410,8 +410,8 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: true,
-    is_disabled: true,
+    is_toggle_active: true,
+    is_disabled_in_ui: true,
     min_value: 0,
     max_value: 500,
     algorithms_used: [],
@@ -434,8 +434,8 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: false,
-    is_disabled: true,
+    is_toggle_active: false,
+    is_disabled_in_ui: true,
     min_value: 0,
     max_value: 500,
     algorithms_used: [],
@@ -458,8 +458,8 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: true,
-    is_disabled: false,
+    is_toggle_active: true,
+    is_disabled_in_ui: false,
     min_value: 0,
     max_value: 500,
     algorithms_used: [],
@@ -482,8 +482,8 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: false,
-    is_disabled: true,
+    is_toggle_active: false,
+    is_disabled_in_ui: true,
     min_value: 0,
     max_value: 500,
     algorithms_used: [],
@@ -506,8 +506,8 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: false,
-    is_disabled: true,
+    is_toggle_active: false,
+    is_disabled_in_ui: true,
     min_value: 0,
     max_value: 100,
     algorithms_used: ['proportion']
@@ -529,8 +529,8 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: false,
-    is_disabled: true,
+    is_toggle_active: false,
+    is_disabled_in_ui: true,
     min_value: 0,
     max_value: 100,
     algorithms_used: ['docket']
@@ -552,8 +552,8 @@ export const formattedLevers = [
         unit: ''
       }
     ],
-    is_active: false,
-    is_disabled: true,
+    is_toggle_active: false,
+    is_disabled_in_ui: true,
     min_value: 0,
     max_value: 100,
     algorithms_used: ['proportion']
@@ -565,8 +565,8 @@ export const formattedLevers = [
     data_type: ACD_LEVERS.number,
     value: 435,
     unit: ACD_LEVERS.days,
-    is_active: false,
-    is_disabled: true,
+    is_toggle_active: false,
+    is_disabled_in_ui: true,
     min_value: 0,
     max_value: 1000,
     algorithms_used: ['proportion']
@@ -578,8 +578,8 @@ export const formattedLevers = [
     data_type: ACD_LEVERS.number,
     value: 500,
     unit: ACD_LEVERS.days,
-    is_active: true,
-    is_disabled: false,
+    is_toggle_active: true,
+    is_disabled_in_ui: false,
     min_value: 0,
     max_value: 1000,
     algorithms_used: ['proportion']
@@ -591,8 +591,8 @@ export const formattedLevers = [
     data_type: ACD_LEVERS.number,
     value: 123,
     unit: ACD_LEVERS.days,
-    is_active: false,
-    is_disabled: true,
+    is_toggle_active: false,
+    is_disabled_in_ui: true,
     min_value: 0,
     max_value: 1000,
     algorithms_used: ['proportion']
@@ -608,8 +608,8 @@ export const updatedLevers = [
     data_type: ACD_LEVERS.number,
     value: '30',
     unit: ACD_LEVERS.cases,
-    is_active: true,
-    is_disabled: false,
+    is_toggle_active: true,
+    is_disabled_in_ui: false,
     min_value: 0,
     max_value: 500,
     algorithms_used: [],
@@ -624,8 +624,8 @@ export const updatedLevers = [
     data_type: ACD_LEVERS.number,
     value: '6',
     unit: ACD_LEVERS.cases,
-    is_active: true,
-    is_disabled: false,
+    is_toggle_active: true,
+    is_disabled_in_ui: false,
     min_value: 0,
     max_value: 500,
     algorithms_used: [],
@@ -640,8 +640,8 @@ export const updatedLevers = [
     data_type: ACD_LEVERS.number,
     value: 16,
     unit: ACD_LEVERS.cases,
-    is_active: true,
-    is_disabled: false,
+    is_toggle_active: true,
+    is_disabled_in_ui: false,
     min_value: 0,
     max_value: 500,
     algorithms_used: [],
@@ -665,8 +665,8 @@ export const updatedLevers = [
         unit: ''
       }
     ],
-    is_active: true,
-    is_disabled: true,
+    is_toggle_active: true,
+    is_disabled_in_ui: true,
     min_value: 0,
     max_value: 100,
     algorithms_used: ['proportion']
@@ -688,8 +688,8 @@ export const updatedLevers = [
         unit: ''
       }
     ],
-    is_active: true,
-    is_disabled: false,
+    is_toggle_active: true,
+    is_disabled_in_ui: false,
     min_value: 0,
     max_value: 100,
     algorithms_used: ['docket']
@@ -711,8 +711,8 @@ export const updatedLevers = [
         unit: ''
       }
     ],
-    is_active: false,
-    is_disabled: false,
+    is_toggle_active: false,
+    is_disabled_in_ui: false,
     min_value: 0,
     max_value: 100,
     algorithms_used: ['proportion']
@@ -724,8 +724,8 @@ export const updatedLevers = [
     data_type: ACD_LEVERS.number,
     value: 435,
     unit: ACD_LEVERS.days,
-    is_active: true,
-    is_disabled: false,
+    is_toggle_active: true,
+    is_disabled_in_ui: false,
     min_value: 0,
     max_value: 1000,
     algorithms_used: ['proportion']
@@ -737,8 +737,8 @@ export const updatedLevers = [
     data_type: ACD_LEVERS.number,
     value: 500,
     unit: ACD_LEVERS.days,
-    is_active: false,
-    is_disabled: false,
+    is_toggle_active: false,
+    is_disabled_in_ui: false,
     min_value: 0,
     max_value: 1000,
     algorithms_used: ['proportion']
@@ -750,8 +750,8 @@ export const updatedLevers = [
     data_type: ACD_LEVERS.number,
     value: 123,
     unit: ACD_LEVERS.days,
-    is_active: false,
-    is_disabled: true,
+    is_toggle_active: false,
+    is_disabled_in_ui: true,
     min_value: 0,
     max_value: 1000,
     algorithms_used: ['proportion']
