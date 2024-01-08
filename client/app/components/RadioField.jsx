@@ -113,7 +113,7 @@ export const RadioField = (props) => {
             <input
               name={name}
               onChange={handleChange}
-              type={ACD_LEVERS.radio}
+              type={ACD_LEVERS.data_types.radio}
               id={`${idPart}_${option.value}`}
               value={option.value}
               // eslint-disable-next-line no-undefined

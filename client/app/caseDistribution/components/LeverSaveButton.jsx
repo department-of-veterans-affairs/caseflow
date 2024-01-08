@@ -10,7 +10,7 @@ import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import moment from 'moment';
 
 const changedOptionValue = (changedLever, currentLever) => {
-  if (changedLever.data_type === ACD_LEVERS.radio || changedLever.data_type === ACD_LEVERS.radio) {
+  if (changedLever.data_type === ACD_LEVERS.data_types.radio || changedLever.data_type === ACD_LEVERS.data_types.radio) {
     const newChangedOptionValue = changedLever.options.find((option) => option.item === changedLever.value).value;
     const currentOptionValue = currentLever.options.find((option) => option.item === currentLever.value)?.value;
 
@@ -35,8 +35,8 @@ const generateLeverUpdateData = (leverStore) => {
 };
 const generateLeverHistory = (filteredLevers, filteredBackendLevers) => {
   return filteredLevers.map((lever, index) => {
-    const doesDatatypeRequireComplexLogic = (lever.data_type === ACD_LEVERS.radio ||
-      lever.data_type === ACD_LEVERS.combination);
+    const doesDatatypeRequireComplexLogic = (lever.data_type === ACD_LEVERS.data_types.radio ||
+      lever.data_type === ACD_LEVERS.data_types.combination);
 
     let today = new Date();
     let todaysDate = moment(today).format('ddd MMM DD hh:mm:ss YYYY');
@@ -45,8 +45,8 @@ const generateLeverHistory = (filteredLevers, filteredBackendLevers) => {
       const selectedOption = lever.options.find((option) => option.item === lever.value);
       const previousSelectedOption =
         filteredBackendLevers[index].options.find((option) => option.item === filteredBackendLevers[index].value);
-      const isSelectedOptionANumber = selectedOption.data_type === ACD_LEVERS.number;
-      const isPreviouslySelectedOptionANumber = previousSelectedOption.data_type === ACD_LEVERS.number;
+      const isSelectedOptionANumber = selectedOption.data_type === ACD_LEVERS.data_types.number;
+      const isPreviouslySelectedOptionANumber = previousSelectedOption.data_type === ACD_LEVERS.data_types.number;
 
       return {
         created_at: todaysDate,
@@ -90,12 +90,12 @@ const setShowSuccessBanner = (leverStore) => {
 };
 
 const leverValueDisplay = (lever, isPreviousValue) => {
-  const doesDatatypeRequireComplexLogic = (lever.data_type === ACD_LEVERS.radio ||
-    lever.data_type === ACD_LEVERS.combination);
+  const doesDatatypeRequireComplexLogic = (lever.data_type === ACD_LEVERS.data_types.radio ||
+    lever.data_type === ACD_LEVERS.data_types.combination);
 
   if (doesDatatypeRequireComplexLogic) {
     const selectedOption = lever.options.find((option) => option.item === lever.value);
-    const isSelectedOptionANumber = selectedOption.data_type === ACD_LEVERS.number;
+    const isSelectedOptionANumber = selectedOption.data_type === ACD_LEVERS.data_types.number;
 
     return isSelectedOptionANumber ? selectedOption.value : selectedOption.text;
   }

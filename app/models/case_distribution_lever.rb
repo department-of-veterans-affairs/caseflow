@@ -2,10 +2,17 @@ class CaseDistributionLever < ApplicationRecord
 
   validates :item, presence: true
   validates :title, presence: true
-  validates :data_type, presence: true
-  validates :value, presence: true, if: Proc.new { |lever| lever.data_type != Constants.ACD_LEVERS.number }
+  validates :data_type, presence: true, inclusion: { in: [
+    Constants.ACD_LEVERS.data_types.radio, 
+    Constants.ACD_LEVERS.data_types.number, 
+    Constants.ACD_LEVERS.data_types.boolean,
+    Constants.ACD_LEVERS.data_types.text,
+    Constants.ACD_LEVERS.data_types.combination
+  ]}
+  validates :value, presence: true, if: Proc.new { |lever| lever.data_type != Constants.ACD_LEVERS.data_types.number }
   validates :is_toggle_active, inclusion: { in: [true, false] }
   validates :is_disabled_in_ui, inclusion: { in: [true, false] }
+  validate :value_matches_data_type
 
   self.table_name = "case_distribution_levers"
   INTEGER_LEVERS = %W(
@@ -23,8 +30,16 @@ class CaseDistributionLever < ApplicationRecord
     #{Constants.DISTRIBUTION.nod_adjustment}
   )
 
+  def value_matches_data_type
+    if lever.data_type != Constants.ACD_LEVERS.data_types.number && value.empty?
+      errors.add(:item, "has to have a value")
+    end
+
+    
+  end
+
   def distribution_value
-    if self.data_type == Constants.ACD_LEVERS.radio
+    if self.data_type == Constants.ACD_LEVERS.data_types.radio
       option = self.options.detect{|opt| opt['item'] == self.value}
       option['value'] if option && option.is_a?(Hash)
     else
@@ -47,12 +62,13 @@ class CaseDistributionLever < ApplicationRecord
       grouped_levers = current_levers.index_by { |lever| lever["id"] }
       previous_levers = CaseDistributionLever.where(id: grouped_levers.keys).index_by { |lever| lever["id"] }
       errors = []
-
+      levers = []
+      
       ActiveRecord::Base.transaction do
         levers = CaseDistributionLever.update(grouped_levers.keys, grouped_levers.values)
 
         unless levers.all?(&:changed?)
-          errors = levers.select(&:invalid?).map { |lever| "Lever :#{lever.title} - #{lever.errors.full_messages}" }.join("<br/>")
+          errors = levers.select(&:invalid?).map { |lever| "Lever :#{lever.title} - #{lever.errors.full_messages}" }
         end
       end
 
@@ -66,11 +82,8 @@ class CaseDistributionLever < ApplicationRecord
         entries.push ({
           user: current_user,
           case_distribution_lever: lever,
-          user_name: current_user.css_id,
-          title: lever.title,
           previous_value: previous_lever.value,
           update_value: lever.value
-
         })
       end
 

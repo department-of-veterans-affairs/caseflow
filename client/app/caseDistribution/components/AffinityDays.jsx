@@ -131,7 +131,7 @@ const AffinityDays = (props) => {
     const useAriaLabel = !lever.is_disabled_in_ui;
     const tabIndex = lever.is_disabled_in_ui ? -1 : null;
 
-    if (dataType === ACD_LEVERS.number) {
+    if (dataType === ACD_LEVERS.data_types.number) {
       return (
         <NumberField
           name={option.item}
@@ -149,7 +149,7 @@ const AffinityDays = (props) => {
         />
       );
     }
-    if (dataType === ACD_LEVERS.text) {
+    if (dataType === ACD_LEVERS.data_types.text) {
       return (
         <TextField
           name={option.item}
@@ -176,7 +176,7 @@ const AffinityDays = (props) => {
           <div>
             <label className={lever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}
               htmlFor={`${lever.item}-${option.item}`}>
-              {`${option.text} ${option.data_type === ACD_LEVERS.number ? `${option.value} ${option.unit}` : ''}`}
+              {`${option.text} ${option.data_type === ACD_LEVERS.data_types.number ? `${option.value} ${option.unit}` : ''}`}
             </label>
           </div>
         </div>
@@ -194,7 +194,7 @@ const AffinityDays = (props) => {
         <div>
           <input
             checked={option.item === lever.value}
-            type={ACD_LEVERS.radio}
+            type={ACD_LEVERS.data_types.radio}
             value={option.item}
             disabled={lever.is_disabled_in_ui}
             id={`${lever.item}-${option.item}`}

@@ -6,13 +6,13 @@ import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 const StaticLever = ({ lever }) => {
   const renderValue = () => {
     switch (lever.data_type) {
-    case ACD_LEVERS.boolean:
+    case ACD_LEVERS.data_types.boolean:
       return lever.value.toString();
-    case ACD_LEVERS.number:
+    case ACD_LEVERS.data_types.number:
       return `${lever.value} ${lever.unit}`;
-    case ACD_LEVERS.radio:
+    case ACD_LEVERS.data_types.radio:
       return lever.options.find((option) => option.value === lever.value)?.text;
-    case ACD_LEVERS.combination:
+    case ACD_LEVERS.data_types.combination:
       return `${lever.value} ${lever.unit}`;
     default:
       return null;
