@@ -28,9 +28,9 @@ const DocketTimeGoals = (props) => {
   const storeTimeLevers = useSelector((state) => state.caseDistributionLevers.levers.docket_time_goal);
   const storeDistributionLevers = useSelector(
     (state) => state.caseDistributionLevers.levers.docket_distribution_prior);
-  const initialTimeLevers = useSelector((state) => state.caseDistributionLevers.initialLevers.docket_time_goal);
+  const initialTimeLevers = useSelector((state) => state.caseDistributionLevers.backendLevers.docket_time_goal);
   const initialDistributionLevers = useSelector(
-    (state) => state.caseDistributionLevers.initialLevers.docket_distribution_prior);
+    (state) => state.caseDistributionLevers.backendLevers.docket_distribution_prior);
 
   const [docketDistributionLevers, setDistributionLever] = useState(storeDistributionLevers);
   const [docketTimeGoalLevers, setTimeGoalLever] = useState(storeTimeLevers);

@@ -9,7 +9,7 @@ describe('leverSaveButton Component', () => {
   it('should render the component without errors', () => {
     const mockLeverStore = createStore(() => ({
       levers: [{ title: 'Lever 4', value: 30 }, { title: 'Lever 5', value: 6 }],
-      initial_levers: [{ title: 'Lever 4', value: 80 }, { title: 'Lever 5', value: 20 }],
+      backendLevers: [{ title: 'Lever 4', value: 80 }, { title: 'Lever 5', value: 20 }],
     }));
 
     render(<leverSaveButton leverStore={mockLeverStore} />);
@@ -19,7 +19,7 @@ describe('leverSaveButton Component', () => {
   it('should display the modal when Save button is clicked', () => {
     const mockLeverStore = createStore(() => ({
       levers: [{ title: 'Lever 4', value: 30 }, { title: 'Lever 5', value: 6 }],
-      initial_levers: [{ title: 'Lever 4', value: 80 }, { title: 'Lever 5', value: 20 }],
+      backendLevers: [{ title: 'Lever 4', value: 80 }, { title: 'Lever 5', value: 20 }],
     }));
 
     render(<leverSaveButton leverStore={mockLeverStore} />);
@@ -32,7 +32,7 @@ describe('leverSaveButton Component', () => {
   it('should not display the modal initially', () => {
     const mockLeverStore = createStore(() => ({
       levers: [{ title: 'Lever 1', value: 10 }, { title: 'Lever 2', value: 20 }],
-      initial_levers: [{ title: 'Lever 1', value: 5 }, { title: 'Lever 2', value: 15 }],
+      backendLevers: [{ title: 'Lever 1', value: 5 }, { title: 'Lever 2', value: 15 }],
     }));
 
     render(<leverSaveButton leverStore={mockLeverStore} />);

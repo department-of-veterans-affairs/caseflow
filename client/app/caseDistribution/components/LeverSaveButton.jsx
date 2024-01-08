@@ -22,18 +22,18 @@ const changedOptionValue = (changedLever, currentLever) => {
 
 const generateLeverUpdateData = (leverStore) => {
   const levers = leverStore.getState().levers;
-  const initialLevers = leverStore.getState().initial_levers;
+  const backendLevers = leverStore.getState().backendLevers;
   const filteredLevers = levers.filter((lever, i) =>
-    lever.value !== initialLevers[i].value || changedOptionValue(lever, initialLevers[i])
+    lever.value !== backendLevers[i].value || changedOptionValue(lever, backendLevers[i])
   );
 
-  const filteredInitialLevers = initialLevers.filter((lever, i) =>
-    initialLevers[i].value !== levers[i].value || changedOptionValue(initialLevers[i], levers[i])
+  const filteredBackendLevers = backendLevers.filter((lever, i) =>
+    backendLevers[i].value !== levers[i].value || changedOptionValue(backendLevers[i], levers[i])
   );
 
-  return ([filteredLevers, filteredInitialLevers]);
+  return ([filteredLevers, filteredBackendLevers]);
 };
-const generateLeverHistory = (filteredLevers, filteredInitialLevers) => {
+const generateLeverHistory = (filteredLevers, filteredBackendLevers) => {
   return filteredLevers.map((lever, index) => {
     const doesDatatypeRequireComplexLogic = (lever.data_type === ACD_LEVERS.radio ||
       lever.data_type === ACD_LEVERS.combination);
@@ -44,7 +44,7 @@ const generateLeverHistory = (filteredLevers, filteredInitialLevers) => {
     if (doesDatatypeRequireComplexLogic) {
       const selectedOption = lever.options.find((option) => option.item === lever.value);
       const previousSelectedOption =
-        filteredInitialLevers[index].options.find((option) => option.item === filteredInitialLevers[index].value);
+        filteredBackendLevers[index].options.find((option) => option.item === filteredBackendLevers[index].value);
       const isSelectedOptionANumber = selectedOption.data_type === ACD_LEVERS.number;
       const isPreviouslySelectedOptionANumber = previousSelectedOption.data_type === ACD_LEVERS.number;
 
@@ -70,7 +70,7 @@ const generateLeverHistory = (filteredLevers, filteredInitialLevers) => {
 };
 
 const updateLeverHistory = (leverStore) => {
-  let [filteredLevers, filteredInitialLevers] = generateLeverUpdateData(leverStore);
+  let [filteredLevers, filteredBackendLevers] = generateLeverUpdateData(leverStore);
 
   leverStore.dispatch({
     type: ACTIONS.FORMAT_LEVER_HISTORY,
@@ -122,7 +122,7 @@ const saveLeversToDB = async (leverStore) => {
     const leversData = leverStore.getState().levers;
 
     updateLeverHistory(leverStore);
-    const auditData = leverStore.getState().formatted_history;
+    const auditData = leverStore.getState().historyList;
 
     const postData = {
       current_levers: leversData,
@@ -141,11 +141,11 @@ const saveLeversToDB = async (leverStore) => {
 
 const leverList = (leverStore) => {
   const levers = leverStore.getState().levers;
-  const initialLevers = leverStore.getState().initial_levers;
+  const backendLevers = leverStore.getState().backendLevers;
   const filteredLevers = levers.filter((lever, i) =>
-    lever.value !== initialLevers[i].value || changedOptionValue(lever, initialLevers[i]));
-  const filteredInitialLevers = initialLevers.filter((lever, i) =>
-    initialLevers[i].value !== levers[i].value || changedOptionValue(initialLevers[i], levers[i]));
+    lever.value !== backendLevers[i].value || changedOptionValue(lever, backendLevers[i]));
+  const filteredBackendLevers = backendLevers.filter((lever, i) =>
+    backendLevers[i].value !== levers[i].value || changedOptionValue(backendLevers[i], levers[i]));
 
   return (
     <div>
@@ -163,7 +163,7 @@ const leverList = (leverStore) => {
               <React.Fragment>
                 <td className={`${styles.modalTableStyling} ${styles.modalTableLeftStyling}`}>{lever.title}</td>
                 <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}>
-                  {leverValueDisplay(filteredInitialLevers[index], true)}
+                  {leverValueDisplay(filteredBackendLevers[index], true)}
                 </td>
                 <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}>
                   {leverValueDisplay(lever, false)}

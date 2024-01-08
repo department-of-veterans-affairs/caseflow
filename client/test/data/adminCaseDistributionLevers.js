@@ -262,7 +262,7 @@ export const formattedHistory = [
 ]
 
 /* Reducer Test Data */
-export const formatted_history = formattedHistory
+export const historyList = formattedHistory
 
 export const lever1_update = {
   "item": "lever_1",

@@ -25,7 +25,7 @@ const AffinityDays = (props) => {
 
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
   const storeLevers = useSelector((state) => state.caseDistributionLevers.levers.affinity);
-  const initialLevers = useSelector((state) => state.caseDistributionLevers.initialLevers.affinity);
+  const backendLevers = useSelector((state) => state.caseDistributionLevers.backendLevers.affinity);
   const [affinityLevers, setAffinityLevers] = useState(storeLevers);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ const AffinityDays = (props) => {
         const updatedOptions = individualLever.options.map((op) => {
           if (op.item === option.item) {
 
-            let initialLever = initialLevers.find((original) => original.item === lever.item);
+            let initialLever = backendLevers.find((original) => original.item === lever.item);
 
             let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever, op);
 

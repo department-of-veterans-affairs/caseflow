@@ -19,7 +19,7 @@ const BatchSize = (props) => {
     '& .usa-input-error label': { bottom: '15px', left: '89px' }
   });
 
-  const initialLevers = useSelector((state) => state.caseDistributionLevers.initialLevers.batch);
+  const backendLevers = useSelector((state) => state.caseDistributionLevers.backendLevers.batch);
   const storeLevers = useSelector((state) => state.caseDistributionLevers.levers.batch);
   const [errorMessagesList, setErrorMessages] = useState({});
   const [batchSizeLevers, setBatchSizeLevers] = useState(storeLevers);
@@ -32,7 +32,7 @@ const BatchSize = (props) => {
     const levers = batchSizeLevers.map((lever, i) => {
       if (index === i) {
 
-        let initialLever = initialLevers.find((original) => original.item === lever.item);
+        let initialLever = backendLevers.find((original) => original.item === lever.item);
 
         let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
 
