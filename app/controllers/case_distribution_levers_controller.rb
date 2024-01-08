@@ -17,18 +17,10 @@ class CaseDistributionLeversController < ApplicationController
     render "index"
   end
 
-  def update_levers_and_history
+  def update_levers
     redirect_to "/unauthorized" unless CDAControlGroup.singleton.user_is_admin?(current_user)
 
-    puts params.class
-    puts params
-    puts allowed_params.class
-    puts allowed_params.keys
-    puts allowed_params
-    puts allowed_params[:current_levers].class
-    puts allowed_params[:current_levers]
-
-    errors = CaseDistributionLever.update_acd_levers(allowed_params[:current_levers])
+    errors = CaseDistributionLever.update_acd_levers(allowed_params[:current_levers], current_user)
 
     render json: { errors: errors, successful: false }
   end
@@ -36,7 +28,7 @@ class CaseDistributionLeversController < ApplicationController
   private
 
   def allowed_params
-    params.permit(current_levers: [])
+    params.permit(current_levers: [:id, :value])
   end
 
   def verify_access

@@ -122,14 +122,12 @@ const saveLeversToDB = async (leverStore) => {
     const leversData = leverStore.getState().levers;
 
     updateLeverHistory(leverStore);
-    const auditData = leverStore.getState().historyList;
 
     const postData = {
-      current_levers: leversData,
-      audit_lever_entries: auditData
+      current_levers: leversData
     };
 
-    await ApiUtil.post('/case_distribution_levers/update_levers_and_history', { data: postData });
+    await ApiUtil.post('/case_distribution_levers/update_levers', { data: postData });
 
     saveLeverChanges(leverStore);
   } catch (error) {
