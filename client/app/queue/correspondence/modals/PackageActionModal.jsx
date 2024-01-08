@@ -6,6 +6,8 @@ import RadioField from '../../../components/RadioField';
 import Table from '../../../components/Table';
 import { connect } from 'react-redux';
 import ApiUtil from '../../../util/ApiUtil';
+import { bindActionCreators } from 'redux';
+import { setReasonRemovePackage } from '../correspondenceReducer/reviewPackageActions';
 import { getPackageActionColumns, getModalInformation } from '../review_package/utils';
 import { useHistory } from 'react-router';
 
@@ -122,6 +124,9 @@ const PackageActionModal = (props) => {
     ApiUtil.post(`/queue/correspondence/${correspondence.uuid}/task`, { data }).then((response) => {
       props.closeHandler(null);
       if (response.ok) {
+        if (packageActionModal === 'removePackage') {
+          props.setReasonRemovePackage(textInputReason);
+        }
         history.push('/queue/correspondence');
       }
     }
@@ -198,7 +203,8 @@ PackageActionModal.propTypes = {
   columns: PropTypes.arrayOf(PropTypes.object),
   modalInfo: PropTypes.object,
   packageActionModal: PropTypes.string,
-  closeHandler: PropTypes.func
+  closeHandler: PropTypes.func,
+  setReasonRemovePackage: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
@@ -207,7 +213,11 @@ const mapStateToProps = (state) => ({
   veteranInformation: state.reviewPackage.veteranInformation
 });
 
+const mapDispatchToProps = (dispatch) => bindActionCreators({
+  setReasonRemovePackage
+}, dispatch);
+
 export default connect(
   mapStateToProps,
-  null,
+  mapDispatchToProps,
 )(PackageActionModal);
