@@ -99,7 +99,11 @@ export const CorrespondenceReviewPackage = (props) => {
   }, []);
 
   const handleModalClose = () => {
-    setShowModal(!showModal);
+    if (disableButton) {
+      setShowModal(!showModal);
+    } else {
+      history.push('/queue/correspondence');
+    }
   };
 
   const handlePackageActionModal = (value) => {
