@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative "../../app/serializers/case_distribution/case_distribution_lever_audit_entry_serializer.rb"
-
 RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
   let!(:lever_user) { create(:user) }
   let!(:lever_user2) { create(:user) }
