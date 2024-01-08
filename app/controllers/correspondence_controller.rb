@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# :reek:RepeatedConditional
 class CorrespondenceController < ApplicationController
   before_action :verify_correspondence_access
   before_action :verify_feature_toggle
@@ -99,6 +100,11 @@ class CorrespondenceController < ApplicationController
 
   def show
     corres_docs = correspondence.correspondence_documents
+    reason_remove = if RemovePackageTask.find_by(appeal_id: correspondence.id, type: RemovePackageTask.name).nil?
+                      ""
+                    else
+                      RemovePackageTask.find_by(appeal_id: correspondence.id, type: RemovePackageTask.name).instructions
+                    end
     response_json = {
       correspondence: correspondence,
       package_document_type: correspondence&.package_document_type,
@@ -107,7 +113,10 @@ class CorrespondenceController < ApplicationController
       correspondence_documents: corres_docs.map do |doc|
         WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
       end,
-      efolder_upload_failed_before: EfolderUploadFailedTask.where(appeal_id: correspondence.id, type: "EfolderUploadFailedTask")
+      efolder_upload_failed_before: EfolderUploadFailedTask.where(
+        appeal_id: correspondence.id, type: "EfolderUploadFailedTask"
+      ),
+      reasonForRemovePackage: reason_remove
     }
     render({ json: response_json }, status: :ok)
   end
@@ -152,7 +161,8 @@ class CorrespondenceController < ApplicationController
   end
 
   def pdf
-    document = Document.find(params[:pdf_id])
+    # Hard-coding Document access until CorrespondenceDocuments are uploaded to S3Bucket
+    document = Document.limit(200)[params[:pdf_id].to_i]
 
     document_disposition = "inline"
     if params[:download]
@@ -179,6 +189,7 @@ class CorrespondenceController < ApplicationController
 
   private
 
+  # :reek:FeatureEnvy
   def vbms_document_types
     begin
       data = ExternalApi::ClaimEvidenceService.document_types
@@ -257,18 +268,9 @@ class CorrespondenceController < ApplicationController
   end
 
   def veteran_by_correspondence
-    return unless correspondence&.veteran_id
-
-    @veteran_by_correspondence ||= begin
-      veteran = Veteran.find_by(id: correspondence.veteran_id)
-
-      if veteran.nil?
-        # Handle the case where the veteran is not found
-        Rails.logger.error("Veteran not found for ID: #{correspondence.veteran_id}")
-      end
-
-      veteran
-    end
+    return nil unless correspondence&.veteran_id
+    
+    @veteran_by_correspondence ||= Veteran.find_by(id: correspondence.veteran_id)
   end
 
   def veterans_with_correspondences
