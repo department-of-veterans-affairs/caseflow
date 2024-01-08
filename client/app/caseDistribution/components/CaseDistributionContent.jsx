@@ -1,7 +1,6 @@
 import React from 'react';
 import StaticLeversWrapper from './StaticLeversWrapper';
 import InteractableLeverWrapper from './InteractableLeversWrapper';
-import LeverHistory from './LeverHistory';
 import PropTypes from 'prop-types';
 import {
   sectionSegmentStyling,
@@ -11,7 +10,6 @@ import COPY from '../../../COPY';
 
 const CaseDistributionContent = ({
   levers,
-  formattedHistory,
   isAdmin,
   leverStore,
   sectionTitles
@@ -19,7 +17,7 @@ const CaseDistributionContent = ({
 
   return (
     <div>
-      <h1>Administration</h1>
+      <h1>{COPY.CASE_DISTRIBUTION_CONTENT_TITLE_H1_TITLE}</h1>
 
       <div> {/* Main Content Wrapper*/}
         <h2>{COPY.CASE_DISTRIBUTION_TITLE}</h2>
@@ -68,8 +66,6 @@ const CaseDistributionContent = ({
 
 CaseDistributionContent.propTypes = {
   levers: PropTypes.object.isRequired,
-  saveChanges: PropTypes.func.isRequired,
-  formattedHistory: PropTypes.array.isRequired,
   isAdmin: PropTypes.bool.isRequired,
   leverStore: PropTypes.any.isRequired,
   sectionTitles: PropTypes.array.isRequired,

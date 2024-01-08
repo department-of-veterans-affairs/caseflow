@@ -36,9 +36,11 @@ const ExclusionTable = (props) => {
           <tr>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
               {isMemberUser ?
-                <h3>All Non-priority</h3> :
+                <h3>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}</h3> :
                 <span>
-                  <h4 className={styles.exclusionTableHeaderStyling}>All Non-priority</h4>
+                  <h4 className={styles.exclusionTableHeaderStyling}>
+                    {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
+                  </h4>
                   <ToggleSwitch
                     id = {DISTRIBUTION.all_non_priority}
                     selected = {false}
@@ -49,7 +51,9 @@ const ExclusionTable = (props) => {
             </td>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
               {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
+                <label className={styles.exclusionTableMemberViewStyling}>
+                  {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
+                </label> :
                 <span>
                   <RadioField
                     name=""
@@ -61,7 +65,9 @@ const ExclusionTable = (props) => {
             </td>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
               {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
+                <label className={styles.exclusionTableMemberViewStyling}>
+                  {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
+                </label> :
                 <span>
                   <RadioField
                     name=""
@@ -73,7 +79,9 @@ const ExclusionTable = (props) => {
             </td>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
               {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
+                <label className={styles.exclusionTableMemberViewStyling}>
+                  {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
+                </label> :
                 <span>
                   <RadioField
                     name=""
@@ -85,7 +93,9 @@ const ExclusionTable = (props) => {
             </td>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
               {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
+                <label className={styles.exclusionTableMemberViewStyling}>
+                  {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
+                </label> :
                 <span>
                   <RadioField
                     name=""
@@ -99,9 +109,11 @@ const ExclusionTable = (props) => {
           <tr>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
               {isMemberUser ?
-                <h3>All Priority</h3> :
+                <h3>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}</h3> :
                 <span>
-                  <h4 className={styles.exclusionTableHeaderStyling}>All Priority</h4>
+                  <h4 className={styles.exclusionTableHeaderStyling}>
+                    {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
+                  </h4>
                   <ToggleSwitch
                     id = {DISTRIBUTION.all_priority}
                     selected = {false}
@@ -112,7 +124,9 @@ const ExclusionTable = (props) => {
             </td>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
               {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
+                <label className={styles.exclusionTableMemberViewStyling}>
+                  {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
+                </label> :
                 <span>
                   <RadioField
                     name=""
@@ -124,7 +138,9 @@ const ExclusionTable = (props) => {
             </td>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
               {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
+                <label className={styles.exclusionTableMemberViewStyling}>
+                  {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
+                </label> :
                 <span>
                   <RadioField
                     name=""
@@ -136,7 +152,9 @@ const ExclusionTable = (props) => {
             </td>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
               {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
+                <label className={styles.exclusionTableMemberViewStyling}>
+                  {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
+                </label> :
                 <span>
                   <RadioField
                     name=""
@@ -148,7 +166,9 @@ const ExclusionTable = (props) => {
             </td>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
               {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
+                <label className={styles.exclusionTableMemberViewStyling}>
+                  {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
+                </label> :
                 <span>
                   <RadioField
                     name=""

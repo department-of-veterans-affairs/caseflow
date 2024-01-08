@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import StaticLever from './StaticLever';
+import COPY from '../../../COPY';
 import styles from 'app/styles/caseDistribution/StaticLevers.module.scss';
 
 const StaticLeversWrapper = (props) => {
@@ -19,8 +20,8 @@ const StaticLeversWrapper = (props) => {
     <table className={styles.tableStyling}>
       <tbody>
         <tr>
-          <th className={styles.tableHeaderStylingLeft}>Data Elements</th>
-          <th className={styles.tableHeaderStylingRight}>Values</th>
+          <th className={styles.tableHeaderStylingLeft}>{COPY.CASE_DISTRIBUTION_BATCHSIZE_LEVER_LEFT_TITLE}</th>
+          <th className={styles.tableHeaderStylingRight}>{COPY.CASE_DISTRIBUTION_STATIC_LEVERS_VALUES}</th>
         </tr>
       </tbody>
       {WrapperList}

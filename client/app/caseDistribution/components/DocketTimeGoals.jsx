@@ -277,19 +277,19 @@ const DocketTimeGoals = (props) => {
   return (
     <div className={styles.leverContent}>
       <div className={styles.leverHead}>
-        <h2>{COPY.CASE_DISTRIBUTION_DISTRIBUTION_TITLE}</h2>
+        <h2>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_SECTION_TITLE}</h2>
         <p className="cf-lead-paragraph">
-          <strong className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_1}</strong>
-          {COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_2}
+          <strong className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_TITLE_LEFT}</strong>
+          {COPY.CASE_DISTRIBUTION_DOCKET_TIME_DESCRIPTION_LEFT}
         </p>
         <p className="cf-lead-paragraph">
-          <strong className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_DISTRIBUTION_1}</strong>
-          {COPY.CASE_DISTRIBUTION_DISTRIBUTION_2}
+          <strong className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_TITLE_RIGHT}</strong>
+          {COPY.CASE_DISTRIBUTION_DOCKET_TIME_DESCRIPTION_RIGHT}
         </p>
         <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_DOCKET_TIME_NOTE}</p>
         <div className={cx(styles.leverLeft, styles.docketLeverLeft)}><strong></strong></div>
-        <div className={styles.leverMiddle}><strong>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_1}</strong></div>
-        <div className={styles.leverRight}><strong>{COPY.CASE_DISTRIBUTION_DISTRIBUTION_1}</strong></div>
+        <div className={styles.leverMiddle}><strong>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_TITLE_LEFT}</strong></div>
+        <div className={styles.leverRight}><strong>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_TITLE_RIGHT}</strong></div>
       </div>
 
       {docketDistributionLevers && docketDistributionLevers.map((distributionPriorLever, index) => (
