@@ -31,6 +31,8 @@ class CorrespondenceDocumentsEfolderUploader
   end
 
   def create_efolder_upload_failed_task(correspondence, current_user, parent_task)
+    return if EfolderUploadFailedTask.where(appeal_id: correspondence.id, type: EfolderUploadFailedTask.name).count
+
     euft = EfolderUploadFailedTask.find_or_create_by(
       appeal_id: correspondence.id,
       appeal_type: Correspondence.name,
