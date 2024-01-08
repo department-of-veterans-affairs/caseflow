@@ -103,12 +103,31 @@ module CorrespondenceHelpers
   def active_evidence_submissions_tasks
     setup_access
     veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
-    create(:correspondence, veteran_id: veteran.id, uuid: SecureRandom.uuid, va_date_of_receipt: Time.local(2023, 1, 1))
+    create(:correspondence, veteran_id: veteran.id, uuid: SecureRandom.uuid, va_date_of_receipt: Time.zone.local(2023, 1, 1))
     2.times do
       appeal = create(:appeal, veteran_file_number: veteran.file_number)
       InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
     end
     visit "/queue/correspondence/#{Correspondence.first.uuid}/intake"
     click_button("Continue")
+  end
+
+  def setup_and_visit_intake
+    FeatureToggle.enable!(:correspondence_queue)
+    veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
+    create(
+      :correspondence,
+      veteran_id: veteran.id,
+      uuid: SecureRandom.uuid,
+      va_date_of_receipt: Time.zone.local(2023, 1, 1)
+    )
+    @correspondence_uuid = Correspondence.first.uuid
+    visit "/queue/correspondence/#{@correspondence_uuid}/intake"
+  end
+
+  def seed_autotext_table
+    require Rails.root.join("db/seeds/base.rb").to_s
+    Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
+    Seeds::AutoTexts.new.seed!
   end
 end

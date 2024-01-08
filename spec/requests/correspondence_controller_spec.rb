@@ -72,8 +72,10 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
 
           it "creates tasks not related to an appeal" do
             expect do
-              post queue_correspondence_intake_process_intake_path(correspondence_uuid: correspondence.uuid),
+              post queue_correspondence_intake_process_intake_path(
+                correspondence_uuid: correspondence.uuid,
                 params: post_data
+              )
             end.to change(Task, :count)
 
             expect(response).to have_http_status(:created)
