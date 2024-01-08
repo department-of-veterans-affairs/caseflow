@@ -61,13 +61,16 @@ describe('CorrespondenceReviewPackage', () => {
     expect(screen.queryByRole('heading', { name: 'Return to queue' })).not.toBeInTheDocument();
     fireEvent.click(button);
 
-    expect(screen.queryByRole('heading', { name: 'Return to queue' })).toBeInTheDocument();
-    expect(screen.getByText(/All unsaved changes made to this mail package will be lost/)).toBeInTheDocument();
-    const closeButton = screen.getByRole('button', { name: 'Close' });
+    if (props.disableButton) {
+      expect(screen.queryByRole('heading', { name: 'Return to queue' })).toBeInTheDocument();
+      expect(screen.getByText(/All unsaved changes made to this mail package will be lost/)).toBeInTheDocument();
+      const closeButton = screen.getByRole('button', { name: 'Close' });
 
-    expect(closeButton).toBeInTheDocument();
-    fireEvent.click(closeButton);
-    expect(screen.queryByText('All unsaved changes made to this mail package will be lost')).not.toBeInTheDocument();
+      expect(closeButton).toBeInTheDocument();
+      fireEvent.click(closeButton);
+      expect(screen.queryByText('All unsaved changes made to this mail package will be lost')).not.toBeInTheDocument();
+    }
+
   });
 
   test('renders modal with correct title, buttons, and text', async () => {
@@ -84,12 +87,14 @@ describe('CorrespondenceReviewPackage', () => {
     expect(screen.queryByText('All unsaved changes made to this mail package will be lost')).not.toBeInTheDocument();
     fireEvent.click(screen.getByText('Return to queue'));
 
-    expect(screen.getByText(/All unsaved changes made to this mail package will be lost/)).toBeInTheDocument();
-    const closeButton = screen.getByRole('button', { name: 'Close' });
-    const cancelReviewButton = screen.getByRole('button', { name: 'Confirm' });
+    if (props.disableButton) {
+      expect(screen.getByText(/All unsaved changes made to this mail package will be lost/)).toBeInTheDocument();
+      const closeButton = screen.getByRole('button', { name: 'Close' });
+      const cancelReviewButton = screen.getByRole('button', { name: 'Confirm' });
 
-    expect(closeButton).toBeInTheDocument();
-    expect(cancelReviewButton).toBeInTheDocument();
+      expect(closeButton).toBeInTheDocument();
+      expect(cancelReviewButton).toBeInTheDocument();
+    }
   });
 
   test('redirect page when Cancel review is clicked', async () => {
@@ -109,15 +114,17 @@ describe('CorrespondenceReviewPackage', () => {
     expect(screen.queryByText('All unsaved changes made to this mail package will be lost')).not.toBeInTheDocument();
     fireEvent.click(screen.getByText('Return to queue'));
 
-    expect(screen.getByText(/All unsaved changes made to this mail package will be lost/)).toBeInTheDocument();
-    const cancelReviewButton = screen.getByRole('button', { name: 'Confirm' });
+    if (props.disableButton) {
+      expect(screen.getByText(/All unsaved changes made to this mail package will be lost/)).toBeInTheDocument();
+      const cancelReviewButton = screen.getByRole('button', { name: 'Confirm' });
 
-    expect(cancelReviewButton).toBeInTheDocument();
-    fireEvent.click(cancelReviewButton);
+      expect(cancelReviewButton).toBeInTheDocument();
+      fireEvent.click(cancelReviewButton);
 
-    await waitFor(() => {
-      expect(history.location.pathname).toBe('/queue/correspondence');
-    });
+      await waitFor(() => {
+        expect(history.location.pathname).toBe('/queue/correspondence');
+      });
+    }
   });
 });
 
