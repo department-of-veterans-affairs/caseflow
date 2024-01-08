@@ -21,18 +21,6 @@ class CorrespondenceIntakeTask < CorrespondenceTask
       child
     end
 
-    def create_child_task(parent_task, current_user, params)
-      Task.create!(
-        type: params[:type],
-        appeal_type: "Correspondence",
-        appeal: parent_task.appeal,
-        assigned_by_id: child_assigned_by_id(parent_task, current_user),
-        parent_id: parent_task.id,
-        assigned_to: params[:assigned_to] || child_task_assignee(parent_task, params),
-        instructions: params[:instructions]
-      )
-    end
-
     private
 
     def verify_current_user_can_create!(user)

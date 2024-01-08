@@ -7,7 +7,7 @@ import { AddTasksAppealsView } from './TasksAppeals/AddTasksAppealsView';
 import { connect, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { setUnrelatedTasks } from '../../correspondenceReducer/correspondenceActions';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { ConfirmCorrespondenceView } from './ConfirmCorrespondence/ConfirmCorrespondenceView';
 import { SubmitCorrespondenceModal } from './ConfirmCorrespondence/SubmitCorrespondenceModal';
 import Alert from 'app/components/Alert';
@@ -39,10 +39,7 @@ export const CorrespondenceIntake = (props) => {
   const [addTasksVisible, setAddTasksVisible] = useState(false);
   const [submitCorrespondenceModalVisible, setSubmitCorrespondenceModalVisible] = useState(false);
   const [errorBannerVisible, setErrorBannerVisible] = useState(false);
-  const { pathname, hash, key } = useLocation();
   const history = useHistory();
-  // For hash routing - Add element id and which step it lives on here
-  const SECTION_MAP = { 'task-not-related-to-an-appeal': 2 };
 
   const handleContinueStatusChange = (isEnabled) => {
     setContinueEnabled(isEnabled);
@@ -95,23 +92,6 @@ export const CorrespondenceIntake = (props) => {
         }
       );
   }, [currentStep]);
-
-  useEffect(() => {
-    if (hash === '') {
-      window.scrollTo(0, 0);
-    } else {
-      setTimeout(() => {
-        const id = hash.replace('#', '');
-
-        setCurrentStep(SECTION_MAP[id]);
-        const element = document.getElementById(id);
-
-        if (element) {
-          element.scrollIntoView();
-        }
-      }, 0);
-    }
-  }, [pathname, hash, key]);
 
   return <div>
     { errorBannerVisible &&

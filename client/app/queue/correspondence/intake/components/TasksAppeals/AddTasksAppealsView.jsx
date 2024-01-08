@@ -49,7 +49,7 @@ export const AddTasksAppealsView = (props) => {
     let otherMotionCount = 0;
 
     const filteredTaskNames = tasks.map((task) => {
-      if (task.label === 'Other motion') {
+      if (task.label.toLowerCase() === 'other motion') {
         otherMotionCount += 1;
       }
 
@@ -59,7 +59,7 @@ export const AddTasksAppealsView = (props) => {
     return options.filter((option) => {
       // Up to 2 other motion tasks can be created in the workflow
       // so only filter 'other motion' if there are 2 other motion tasks already created
-      if (option.label === 'Other motion' && otherMotionCount < 2) {
+      if (option.label.toLowerCase() === 'other motion' && otherMotionCount < 2) {
         return true;
       }
 

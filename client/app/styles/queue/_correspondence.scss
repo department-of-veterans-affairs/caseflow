@@ -97,7 +97,12 @@
 
 //Intake Form Styling
 .corr {
+  color: $color-black;
   padding: 3rem 4rem;
+
+  p {
+    color: $color-black;
+  }
 
   h1 {
     text-align: left;
