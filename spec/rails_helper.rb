@@ -113,6 +113,14 @@ RSpec::Matchers.define :excluding do |expected|
   end
 end
 
+# configuration for "shoulda-matchers" gem
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
+  end
+end
+
 RSpec.configure do |config|
   config.include ActionView::Helpers::NumberHelper
   config.include FakeDateHelper
