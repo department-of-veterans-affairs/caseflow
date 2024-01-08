@@ -140,7 +140,7 @@ describe RampElectionIntake, :all_dbs do
     end
 
     it "closes out the appeals correctly and creates an end product" do
-      expect(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+      expect(Caseflow::Fakes::VBMSService).to receive(:establish_claim!).and_call_original
 
       subject
 

@@ -190,11 +190,11 @@ class Generators::LegacyAppeal
 
     def setup_vbms_documents(attrs)
       documents = attrs.delete(:documents)
-      Fakes::VBMSService.document_records ||= {}
-      Fakes::VBMSService.document_records[attrs[:vbms_id]] = documents
+      Caseflow::Fakes::VBMSService.document_records ||= {}
+      Caseflow::Fakes::VBMSService.document_records[attrs[:vbms_id]] = documents
 
-      Fakes::VBMSService.manifest_vbms_fetched_at = attrs.delete(:manifest_vbms_fetched_at)
-      Fakes::VBMSService.manifest_vva_fetched_at = attrs.delete(:manifest_vva_fetched_at)
+      Caseflow::Fakes::VBMSService.manifest_vbms_fetched_at = attrs.delete(:manifest_vbms_fetched_at)
+      Caseflow::Fakes::VBMSService.manifest_vva_fetched_at = attrs.delete(:manifest_vva_fetched_at)
     end
 
     def set_vacols_issues(appeal:, vacols_record:, attrs:)

@@ -6,8 +6,8 @@ feature "RAMP Election Intake", :all_dbs do
   before do
     Timecop.freeze(post_ramp_start_date)
 
-    allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
-    allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+    allow(Caseflow::Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+    allow(Caseflow::Fakes::VBMSService).to receive(:create_contentions!).and_call_original
     FeatureToggle.enable!(:ramp_intake)
   end
 
@@ -204,7 +204,7 @@ feature "RAMP Election Intake", :all_dbs do
   end
 
   scenario "Complete intake for RAMP Election form" do
-    Fakes::VBMSService.end_product_claim_id = "SHANE9642"
+    Caseflow::Fakes::VBMSService.end_product_claim_id = "SHANE9642"
 
     intake = RampElectionIntake.new(veteran_file_number: "12341234", user: current_user)
     intake.start!
@@ -245,19 +245,19 @@ feature "RAMP Election Intake", :all_dbs do
     expect(page).to have_button("Cancel intake", disabled: false)
     click_label("confirm-finish")
 
-    Fakes::VBMSService.hold_request!
+    Caseflow::Fakes::VBMSService.hold_request!
     safe_click "button#button-submit-review"
 
     expect(page).to have_button("Cancel intake", disabled: true)
 
-    Fakes::VBMSService.resume_request!
+    Caseflow::Fakes::VBMSService.resume_request!
 
     expect(page).to have_content("Intake completed")
     expect(page).to have_content(
       "Established EP: 682HLRRRAMP - Higher-Level Review Rating for Station 397"
     )
 
-    expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+    expect(Caseflow::Fakes::VBMSService).to have_received(:establish_claim!).with(
       claim_hash: {
         benefit_type_code: "1",
         payee_code: "00",

@@ -26,7 +26,7 @@ class ExternalApi::BGSService
   # :nocov:
 
   def get_end_products(vbms_id)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
 
     @end_products[vbms_id] ||=
       MetricsService.record("BGS: get end products for vbms id: #{vbms_id}",
@@ -37,7 +37,7 @@ class ExternalApi::BGSService
   end
 
   def cancel_end_product(veteran_file_number, end_product_code, end_product_modifier, payee_code, benefit_type)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
 
     @end_products[veteran_file_number] ||=
       MetricsService.record("BGS: cancel end product by: \
@@ -60,7 +60,7 @@ class ExternalApi::BGSService
 
   # rubocop:disable Metrics/ParameterLists
   def update_benefit_claim(veteran_file_number:, payee_code:, claim_date:, benefit_type_code:, modifier:, new_code:)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
 
     MetricsService.record("BGS: update benefit claim: \
                           file_number = #{veteran_file_number}, \
@@ -84,7 +84,7 @@ class ExternalApi::BGSService
   # rubocop:enable Metrics/ParameterLists
 
   def fetch_veteran_info(vbms_id)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
 
     @veteran_info[vbms_id] ||=
       Rails.cache.fetch(fetch_veteran_info_cache_key(vbms_id), expires_in: 10.minutes) do
@@ -97,7 +97,7 @@ class ExternalApi::BGSService
   end
 
   def fetch_person_info(participant_id)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
 
     bgs_info = MetricsService.record("BGS: fetch person info by participant id: #{participant_id}",
                                      service: :bgs,
@@ -140,7 +140,7 @@ class ExternalApi::BGSService
   #   :jrn_status_type_cd
   #   :jrn_user_id
   def fetch_person_by_ssn(ssn)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
 
     @people_by_ssn[ssn] ||=
       MetricsService.record("BGS: fetch person by ssn: #{ssn}",
@@ -166,7 +166,7 @@ class ExternalApi::BGSService
 
   # For Claimant POA via BGS claimants. endpoint
   def fetch_poa_by_file_number_by_claimants(file_number)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
 
     unless @poas[file_number]
       bgs_poa = MetricsService.record("BGS: fetch poa for file number: #{file_number}",
@@ -182,7 +182,7 @@ class ExternalApi::BGSService
 
   # For Claimant POA via BGS org. endpoint
   def fetch_poa_by_file_number_by_org(file_number)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
 
     unless @poas[file_number]
       bgs_poa = MetricsService.record("BGS: fetch poa for file number: #{file_number}",
@@ -199,7 +199,7 @@ class ExternalApi::BGSService
   # The participant_id here is for a User, not a Claimant.
   # I.e. returns the list of VSOs that a User represents.
   def fetch_poas_by_participant_id(participant_id)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
 
     unless @poa_by_participant_ids[participant_id]
       bgs_poas = MetricsService.record("BGS: fetch poas for participant id: #{participant_id}",
@@ -216,7 +216,7 @@ class ExternalApi::BGSService
   # The participant IDs here are for Claimants.
   # I.e. returns the list of POAs that represent the Claimants.
   def fetch_poas_by_participant_ids(participant_ids)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
 
     bgs_poas = MetricsService.record("BGS: fetch poas for participant ids: #{participant_ids}",
                                      service: :bgs,
@@ -229,7 +229,7 @@ class ExternalApi::BGSService
   end
 
   def fetch_limited_poas_by_claim_ids(claim_ids)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
 
     bgs_limited_poas = MetricsService.record("BGS: fetch limited poas for claim ids: #{claim_ids}",
                                              service: :bgs,
@@ -245,7 +245,7 @@ class ExternalApi::BGSService
   end
 
   def fetch_poas_list
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
     MetricsService.record("BGS: fetch list of poas",
                           service: :bgs,
                           name: "data.find_power_of_attorneys") do
@@ -254,7 +254,7 @@ class ExternalApi::BGSService
   end
 
   def get_security_profile(username:, station_id:)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
     MetricsService.record("BGS: get security profile",
                           service: :bgs,
                           name: "common_security.get_security_profile") do
@@ -279,7 +279,7 @@ class ExternalApi::BGSService
   # The veteran record is so that subsequent calls to fetch_veteran_info can read from cache.
   def can_access?(vbms_id)
     Rails.cache.fetch(can_access_cache_key(current_user, vbms_id), expires_in: 2.hours) do
-      DBService.release_db_connections
+      DBService.release_db_connections(VACOLS::Record)
 
       MetricsService.record("BGS: can_access? (find_by_file_number): #{vbms_id}",
                             service: :bgs,
@@ -322,7 +322,7 @@ class ExternalApi::BGSService
   end
 
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
 
     start_date, end_date = formatted_start_and_end_dates(start_date, end_date)
 
@@ -341,7 +341,7 @@ class ExternalApi::BGSService
   end
 
   def fetch_rating_profile(participant_id:, profile_date:)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
 
     MetricsService.record("BGS: fetch rating profile: \
                            participant_id = #{participant_id}, \
@@ -353,7 +353,7 @@ class ExternalApi::BGSService
   end
 
   def fetch_rating_profiles_in_range(participant_id:, start_date:, end_date:)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
 
     start_date, end_date = formatted_start_and_end_dates(start_date, end_date)
 
@@ -372,7 +372,7 @@ class ExternalApi::BGSService
   end
 
   def fetch_claimant_info_by_participant_id(participant_id)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
 
     MetricsService.record("BGS: fetch claimant info: \
                            participant_id = #{participant_id}",
@@ -384,7 +384,7 @@ class ExternalApi::BGSService
   end
 
   def find_all_relationships(participant_id:)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
 
     MetricsService.record("BGS: find all relationships: \
                            participant_id = #{participant_id}",
@@ -399,7 +399,7 @@ class ExternalApi::BGSService
   end
 
   def get_participant_id_for_css_id_and_station_id(css_id, station_id)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
 
     MetricsService.record("BGS: find participant id for user #{css_id}, #{station_id}",
                           service: :bgs,
@@ -410,7 +410,7 @@ class ExternalApi::BGSService
 
   # This method is available to retrieve and validate a letter created with manage_claimant_letter_v2
   def find_claimant_letters(document_id)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
     MetricsService.record("BGS: find claimant letter for document #{document_id}",
                           service: :bgs,
                           name: "documents.find_claimant_letters") do
@@ -419,7 +419,7 @@ class ExternalApi::BGSService
   end
 
   def manage_claimant_letter_v2!(claim_id:, program_type_cd:, claimant_participant_id:)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
     MetricsService.record("BGS: creates the claimant letter for \
                            claim_id: #{claim_id}, program_type_cd: #{program_type_cd}, \
                            claimant_participant_id: #{claimant_participant_id}",
@@ -434,7 +434,7 @@ class ExternalApi::BGSService
   end
 
   def generate_tracked_items!(claim_id)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
     MetricsService.record("BGS: generate tracked items for claim #{claim_id}",
                           service: :bgs,
                           name: "documents.generate_tracked_items") do
@@ -443,7 +443,7 @@ class ExternalApi::BGSService
   end
 
   def find_contentions_by_claim_id(claim_id)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
     MetricsService.record("BGS: find contentions for veteran by claim_id #{claim_id}",
                           service: :bgs,
                           name: "contention.find_contention_by_claim_id") do
@@ -452,7 +452,7 @@ class ExternalApi::BGSService
   end
 
   def find_current_rating_profile_by_ptcpnt_id(participant_id)
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
     MetricsService.record("BGS: find current rating profile for veteran by participant_id #{participant_id}",
                           service: :bgs,
                           name: "rating_profile.find_current_rating_profile_by_ptcpnt_id") do
@@ -461,7 +461,7 @@ class ExternalApi::BGSService
   end
 
   def pay_grade_list
-    DBService.release_db_connections
+    DBService.release_db_connections(VACOLS::Record)
 
     @pay_grade_list ||=
       Rails.cache.fetch("pay_grade_list", expires_in: 1.day) do

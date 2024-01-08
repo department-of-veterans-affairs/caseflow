@@ -88,7 +88,7 @@ describe RampElection, :postgres do
 
     # Stub the id of the end product being created
     before do
-      Fakes::VBMSService.end_product_claim_id = "454545"
+      Caseflow::Fakes::VBMSService.end_product_claim_id = "454545"
     end
 
     context "when option_selected is nil" do
@@ -111,11 +111,11 @@ describe RampElection, :postgres do
       end
 
       it "creates end product and saves end_product_reference_id" do
-        allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+        allow(Caseflow::Fakes::VBMSService).to receive(:establish_claim!).and_call_original
 
         expect(subject).to eq(:created)
 
-        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+        expect(Caseflow::Fakes::VBMSService).to have_received(:establish_claim!).with(
           claim_hash: {
             benefit_type_code: "1",
             payee_code: "00",
@@ -147,11 +147,11 @@ describe RampElection, :postgres do
         let(:option_selected) { "higher_level_review" }
 
         it "should use the modifier 682" do
-          allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+          allow(Caseflow::Fakes::VBMSService).to receive(:establish_claim!).and_call_original
 
           expect(subject).to eq(:created)
 
-          expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+          expect(Caseflow::Fakes::VBMSService).to have_received(:establish_claim!).with(
             hash_including(claim_hash: hash_including(end_product_modifier: modifier))
           )
         end
@@ -170,7 +170,7 @@ describe RampElection, :postgres do
         end
 
         it "connects that EP to the ramp election and does not establish a claim" do
-          expect(Fakes::VBMSService).to_not receive(:establish_claim!)
+          expect(Caseflow::Fakes::VBMSService).to_not receive(:establish_claim!)
 
           expect(subject).to eq(:connected)
 

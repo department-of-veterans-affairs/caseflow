@@ -94,8 +94,8 @@ feature "Higher Level Review Edit issues", :all_dbs do
   before do
     higher_level_review.create_claimant!(participant_id: participant_id, payee_code: "10", type: "DependentClaimant")
 
-    allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-    allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
+    allow(Caseflow::Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+    allow(Caseflow::Fakes::VBMSService).to receive(:remove_contention!).and_call_original
 
     allow_any_instance_of(Fakes::BGSService).to receive(:find_all_relationships).and_return(
       first_name: "BOB",
@@ -111,7 +111,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       higher_level_review.establish!
       higher_level_review.reload
       request_issue.reload
-      Fakes::VBMSService.remove_contention!(request_issue.contention)
+      Caseflow::Fakes::VBMSService.remove_contention!(request_issue.contention)
     end
 
     it "automatically removes issues" do
@@ -1157,9 +1157,9 @@ feature "Higher Level Review Edit issues", :all_dbs do
 
       # expect contentions to reflect issue update
       expect(existing_contention.text).to eq("PTSD denied")
-      expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(existing_contention)
+      expect(Caseflow::Fakes::VBMSService).to have_received(:remove_contention!).once.with(existing_contention)
 
-      expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
+      expect(Caseflow::Fakes::VBMSService).to have_received(:create_contentions!).once.with(
         veteran_file_number: veteran.file_number,
         claim_id: rating_epe.reference_id,
         contentions: array_including(
@@ -1176,7 +1176,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         claim_date: higher_level_review.receipt_date.to_date
       )
 
-      expect(Fakes::VBMSService).to have_received(:create_contentions!).once.with(
+      expect(Caseflow::Fakes::VBMSService).to have_received(:create_contentions!).once.with(
         veteran_file_number: veteran.file_number,
         claim_id: nonrating_epe.reference_id,
         contentions: [{ description: "Active Duty Adjustments - Description for Active Duty Adjustments",
@@ -1224,10 +1224,10 @@ feature "Higher Level Review Edit issues", :all_dbs do
     end
 
     it "updates selected issues" do
-      allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
-      allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-      allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
-      allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
+      allow(Caseflow::Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+      allow(Caseflow::Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+      allow(Caseflow::Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
+      allow(Caseflow::Fakes::VBMSService).to receive(:remove_contention!).and_call_original
 
       contention_to_remove = request_issue.reload.contention
 
@@ -1256,7 +1256,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
       expect(new_request_issue.rating_issue_associated_at).to eq(Time.zone.now)
 
       # expect contentions to reflect issue update
-      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+      expect(Caseflow::Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: veteran.file_number,
         claim_id: rating_ep_claim_id,
         contentions: [{ description: "Left knee granted",
@@ -1264,13 +1264,13 @@ feature "Higher Level Review Edit issues", :all_dbs do
         user: current_user,
         claim_date: higher_level_review.receipt_date.to_date
       )
-      expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
+      expect(Caseflow::Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
         claim_id: rating_ep_claim_id,
         rating_issue_contention_map: {
           new_request_issue.contested_rating_issue_reference_id => new_request_issue.contention_reference_id
         }
       )
-      expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(contention_to_remove)
+      expect(Caseflow::Fakes::VBMSService).to have_received(:remove_contention!).once.with(contention_to_remove)
 
       # reload to verify that the new issues populate the form
       visit "higher_level_reviews/#{rating_ep_claim_id}/edit"
@@ -1352,7 +1352,7 @@ feature "Higher Level Review Edit issues", :all_dbs do
         expect(withdrawn_issue).to_not be_nil
         expect(withdrawn_issue.closed_at).to eq(1.day.ago.to_date.to_datetime)
         expect(withdrawn_issue.decision_review.end_product_establishments.first.synced_status).to eq("CAN")
-        expect(Fakes::VBMSService).to have_received(:remove_contention!).once
+        expect(Caseflow::Fakes::VBMSService).to have_received(:remove_contention!).once
       end
 
       scenario "show withdrawn issue when page is reloaded" do

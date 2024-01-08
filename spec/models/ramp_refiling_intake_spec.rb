@@ -410,7 +410,7 @@ describe RampRefilingIntake, :postgres do
       let(:option_selected) { "supplemental_claim" }
 
       it "saves issues and creates an end product" do
-        expect(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+        expect(Caseflow::Fakes::VBMSService).to receive(:establish_claim!).and_call_original
 
         subject
 
@@ -425,7 +425,7 @@ describe RampRefilingIntake, :postgres do
         let(:source_issues) { nil }
 
         it "works, but does not create an EP" do
-          expect(Fakes::VBMSService).to_not receive(:establish_claim!)
+          expect(Caseflow::Fakes::VBMSService).to_not receive(:establish_claim!)
 
           subject
 
@@ -442,7 +442,7 @@ describe RampRefilingIntake, :postgres do
       let(:appeal_docket) { Constants.AMA_DOCKETS.direct_review }
 
       it "saves issues and does NOT create an end product" do
-        expect(Fakes::VBMSService).to_not receive(:establish_claim!)
+        expect(Caseflow::Fakes::VBMSService).to_not receive(:establish_claim!)
 
         subject
 
@@ -483,7 +483,7 @@ describe RampRefilingIntake, :postgres do
       let(:option_selected) { "supplemental_claim" }
 
       it "saves issue and creates an end product" do
-        expect(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+        expect(Caseflow::Fakes::VBMSService).to receive(:establish_claim!).and_call_original
 
         subject
 
