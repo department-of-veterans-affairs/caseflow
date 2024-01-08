@@ -2,13 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ApiUtil from '../../../util/ApiUtil';
 import { sprintf } from 'sprintf-js';
-import StringUtil from '../../../util/StringUtil';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateLastAction } from '../correspondenceReducer/reviewPackageActions';
 import TextareaField from '../../../components/TextareaField';
 import RadioField from '../../../components/RadioField';
-// import { css } from 'glamor';
 import COPY from '../../../../COPY';
 import Modal from '../../../components/Modal';
 import Button from '../../../components/Button';
@@ -23,21 +21,17 @@ class RemovePackageModal extends React.Component {
       reasonForRemove: null,
       disabledSaveButton: true,
       reasonReject: '',
-      updateCancelSuccess: false,
-      textToShow: StringUtil.nl2br(COPY.CORRRESPONDENCE_TEXT_REMOVE_PACKAGE)
-
+      updateCancelSuccess: false
     };
   }
 
   handleSelect(reasonForRemove) {
     if (reasonForRemove === 'Approve request') {
       this.setState({ reasonForRemove,
-        disabledSaveButton: false,
-        textToShow: StringUtil.nl2br(COPY.CORRRESPONDENCE_TEXT_REMOVE_PACKAGE)
+        disabledSaveButton: false
       });
     } else {
       this.setState({ reasonForRemove,
-        textToShow: StringUtil.nl2br(COPY.CORRRESPONDENCE_SECOND_TEXT_REMOVE_PACKAGE),
         disabledSaveButton: true });
     }
   }
@@ -123,8 +117,8 @@ class RemovePackageModal extends React.Component {
         cancelButton={<Button linkStyling onClick={onCancel}>Cancel</Button>}
       >
         <p>
-          <span style= {{ fontWeight: 'bold' }}>{sprintf(COPY.CORRESPONDENCE_TITLE_REMOVE_PACKAGE)}</span>
-          {this.state.textToShow}
+          <span style= {{ fontWeight: 'bold' }}>{sprintf(COPY.CORRESPONDENCE_TITLE_REMOVE_PACKAGE)}</span><br />
+          {this.props.reasonRemovePackage[0]}
         </p>
 
         <RadioField
@@ -141,7 +135,6 @@ class RemovePackageModal extends React.Component {
                 name={sprintf(COPY.CORRESPONDENCE_TITLE_REMOVE_PACKAGE_REASON_REJECT)}
                 onChange={this.reasonChange}
                 value={this.state.reasonReject}
-                placeholder= "This is an example of a reason"
               />
         }
 
@@ -152,7 +145,8 @@ class RemovePackageModal extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  return { vetInfo: state.reviewPackage.lastAction };
+  return { vetInfo: state.reviewPackage.lastAction,
+    reasonRemovePackage: state.reviewPackage.reasonForRemovePackage };
 };
 
 RemovePackageModal.propTypes = {
@@ -161,6 +155,7 @@ RemovePackageModal.propTypes = {
   setModalState: PropTypes.func,
   correspondence_id: PropTypes.number,
   vetInfo: PropTypes.object,
+  reasonRemovePackage: PropTypes.object,
   updateLastAction: PropTypes.func,
 };
 
