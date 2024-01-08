@@ -154,9 +154,8 @@ audit: ## Create caseflow_audit schema, tables, and triggers in postgres
 	bundle exec rails r db/scripts/audit/functions/create_bulk_function_script.rb
 	bundle exec rails r db/scripts/audit/triggers/create_bulk_trigger_script.rb
 
-
 audit-remove: ## Remove caseflow_audit schema, tables and triggers in postgres
-
+	bundle exec rails r db/scripts/audit/remove_caseflow_audit_schema.rb
 
 # The external-db make commands create/remove replicas (for local environment only) of external db tables that exist in Prod
 # These tables should not be included as part of migrations
