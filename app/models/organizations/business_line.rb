@@ -228,7 +228,7 @@ class BusinessLine < Organization
         AND request_issues.decision_review_id = tasks.appeal_id
         INNER JOIN higher_level_reviews ON tasks.appeal_type = 'HigherLevelReview'
         AND tasks.appeal_id = higher_level_reviews.id
-        LEFT JOIN intakes ON tasks.appeal_type = intakes.detail_type
+        INNER JOIN intakes ON tasks.appeal_type = intakes.detail_type
         AND intakes.detail_id = tasks.appeal_id
         LEFT JOIN request_issues_updates ON request_issues_updates.review_type = tasks.appeal_type
         AND request_issues_updates.review_id = tasks.appeal_id
@@ -237,7 +237,7 @@ class BusinessLine < Organization
         AND decision_issues.decision_review_type = tasks.appeal_type AND decision_issues.id = request_decision_issues.decision_issue_id
         LEFT JOIN claimants ON claimants.decision_review_id = tasks.appeal_id
         AND claimants.decision_review_type = tasks.appeal_type
-        LEFT join versions_agg tv ON tv.item_type = 'Task' AND tv.item_id = tasks.id
+        LEFT JOIN versions_agg tv ON tv.item_type = 'Task' AND tv.item_id = tasks.id
         LEFT JOIN people ON claimants.participant_id = people.participant_id
         LEFT JOIN bgs_attorneys ON claimants.participant_id = bgs_attorneys.participant_id
         LEFT JOIN unrecognized_appellants ON claimants.id = unrecognized_appellants.claimant_id
@@ -289,7 +289,7 @@ class BusinessLine < Organization
         AND decision_issues.decision_review_type = tasks.appeal_type AND decision_issues.id = request_decision_issues.decision_issue_id
         LEFT JOIN claimants ON claimants.decision_review_id = tasks.appeal_id
         AND claimants.decision_review_type = tasks.appeal_type
-        LEFT join versions_agg tv ON tv.item_type = 'Task' AND tv.item_id = tasks.id
+        LEFT JOIN versions_agg tv ON tv.item_type = 'Task' AND tv.item_id = tasks.id
         LEFT JOIN people ON claimants.participant_id = people.participant_id
         LEFT JOIN bgs_attorneys ON claimants.participant_id = bgs_attorneys.participant_id
         LEFT JOIN unrecognized_appellants ON claimants.id = unrecognized_appellants.claimant_id
