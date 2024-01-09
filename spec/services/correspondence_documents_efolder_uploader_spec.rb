@@ -14,8 +14,8 @@ describe CorrespondenceDocumentsEfolderUploader do
         doc = correspondence.correspondence_documents.first
 
         expect(FeatureToggle).to receive(:enabled?).with(:ce_api_demo_toggle).and_return(true)
-        expect(ExternalApi::ClaimEvidenceService).to receive(:upload_document).
-          with(doc.pdf_location, veteran.file_number, doc.claim_evidence_upload_json).once
+        expect(ExternalApi::ClaimEvidenceService).to receive(:upload_document)
+          .with(doc.pdf_location, veteran.file_number, doc.claim_evidence_upload_json).once
       end
 
       it "succeeds and does not create any EfolderUploadFailedTask tasks" do
