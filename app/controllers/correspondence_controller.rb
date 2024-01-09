@@ -253,7 +253,7 @@ class CorrespondenceController < ApplicationController
   end
 
   def veteran_by_correspondence
-    return nil unless correspondence&.veteran_id.present?
+    return nil if correspondence&.veteran_id.blank?
 
     @veteran_by_correspondence ||= Veteran.find_by(id: correspondence.veteran_id)
   end

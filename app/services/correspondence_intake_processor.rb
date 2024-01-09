@@ -21,6 +21,7 @@ class CorrespondenceIntakeProcessor
 
   private
 
+  # :reek:LongParameterList
   def do_upload_success_actions(parent_task, intake_params, correspondence, current_user)
     ActiveRecord::Base.transaction do
       parent_task.update!(status: Constants.TASK_STATUSES.completed)
