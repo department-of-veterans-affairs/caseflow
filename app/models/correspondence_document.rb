@@ -9,7 +9,7 @@ class CorrespondenceDocument < CaseflowRecord
   end
 
   def pdf_location
-    File.join(Rails.root, "tmp", "pdfs", "KnockKnockJokes.pdf")
+    File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf")
   end
 
   def claim_evidence_upload_json
