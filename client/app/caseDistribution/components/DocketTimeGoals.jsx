@@ -43,9 +43,9 @@ const DocketTimeGoals = (props) => {
     setTimeGoalLever(currentTimeLevers);
   }, [currentTimeLevers]);
 
-  const updateLever = (leverItem, leverType, usesToggle = false, toggleValue = false) => (event) => {
-    dispatch(updateLeverState(leverType, leverItem, event, false, usesToggle, toggleValue));
-  };
+  const updateLever = (leverItem, leverType, toggleValue = false) => (event) => {
+    dispatch(updateLeverState(leverType, leverItem, event, null, toggleValue))
+  }
 
   const toggleLever = (index) => () => {
     const levers = docketDistributionLevers.map((lever, i) => {
