@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import cx from 'classnames';
-import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
+// import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import { updateLeverState } from '../reducers/levers/leversActions';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';

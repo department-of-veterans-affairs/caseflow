@@ -2,7 +2,7 @@ import React from 'react';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import PropTypes from 'prop-types';
 import RadioField from 'app/components/RadioField';
-import styles from 'app/styles/caseDistribution/ExclusionTable.module.scss';
+// import styles from 'app/styles/caseDistribution/ExclusionTable.module.scss';
 import COPY from '../../../COPY';
 import DISTRIBUTION from '../../../constants/DISTRIBUTION';
 

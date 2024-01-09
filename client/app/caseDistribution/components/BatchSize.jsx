@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 // import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
 import { css } from 'glamor';
-import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
+// import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';
 import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';

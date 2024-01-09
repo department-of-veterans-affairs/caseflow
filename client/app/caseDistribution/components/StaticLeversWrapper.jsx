@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import StaticLever from './StaticLever';
-import styles from 'app/styles/caseDistribution/StaticLevers.module.scss';
+// import styles from 'app/styles/caseDistribution/StaticLevers.module.scss';
 
 const StaticLeversWrapper = (props) => {
   const { leverList, leverStore } = props;

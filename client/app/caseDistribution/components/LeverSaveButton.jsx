@@ -7,7 +7,7 @@ import Modal from 'app/components/Modal';
 import Button from 'app/components/Button';
 import COPY from '../../../COPY';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
-import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
+// import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import moment from 'moment';
 
 const changedOptionValue = (changedLever, currentLever) => {

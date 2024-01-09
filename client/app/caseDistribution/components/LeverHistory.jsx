@@ -1,7 +1,7 @@
 /* eslint-disable func-style */
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import styles from 'app/styles/caseDistribution/LeverHistory.module.scss';
+// import styles from 'app/styles/caseDistribution/LeverHistory.module.scss';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 
 const LeverHistory = (props) => {
