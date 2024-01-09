@@ -24,7 +24,6 @@ class CaseDistributionApp extends React.PureComponent {
             saveChanges = {() => {}}
             formattedHistory={this.props.acd_history}
             leverStore={this.props.leverStore}
-            isAdmin = {this.props.user_is_an_acd_admin}
             sectionTitles = {this.props.sectionTitles}
           />
         </div>
