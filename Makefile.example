@@ -195,7 +195,7 @@ remove-vbms-ext-claim-seeds: ## Drops audit tables, removes all PriorityEndProdu
 	make audit-remove
 	make external-db-create
 	bundle exec rails r db/scripts/external/remove_vbms_ext_claim_seeds.rb
-	make consolidated_db_scripts
+	make audit
 
 reseed-vbms-ext-claim: remove-vbms-ext-claim-seeds seed-vbms-ext-claim ## Re-seeds database with records created from seed-vbms-ext-claim
 
