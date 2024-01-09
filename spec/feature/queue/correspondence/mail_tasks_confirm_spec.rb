@@ -5,11 +5,6 @@ RSpec.feature("The Correspondence Intake page") do
   let(:organization) { MailTeam.singleton }
   let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
 
-  before do
-    organization.add_user(mail_user)
-    mail_user.reload
-  end
-
   context "Mail Tasks Confirm Page" do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
