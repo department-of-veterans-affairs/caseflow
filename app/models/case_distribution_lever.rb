@@ -1,5 +1,6 @@
 class CaseDistributionLever < ApplicationRecord
 
+  has_many :case_distribution_audit_lever_entries, dependent: :delete_all
   validates :item, presence: true
   validates :title, presence: true
   validates :data_type, presence: true, inclusion: { in: Constants.ACD_LEVERS.data_types.to_h.values }
@@ -16,6 +17,8 @@ class CaseDistributionLever < ApplicationRecord
     #{Constants.DISTRIBUTION.days_before_goal_due_for_distribution}
     #{Constants.DISTRIBUTION.ama_hearing_case_affinity_days}
     #{Constants.DISTRIBUTION.cavc_affinity_days}
+    #{Constants.DISTRIBUTION.ama_evidence_submission_docket_time_goals}
+    #{Constants.DISTRIBUTION.ama_hearings_docket_time_goals}
   )
   FLOAT_LEVERS = %W(
     #{Constants.DISTRIBUTION.maximum_direct_review_proportion}
@@ -26,34 +29,33 @@ class CaseDistributionLever < ApplicationRecord
   def value_matches_data_type
     case data_type
     when Constants.ACD_LEVERS.data_types.radio 
+      validate_options
     when Constants.ACD_LEVERS.data_types.number
       validate_number_data_type
     when Constants.ACD_LEVERS.data_types.boolean
-    when Constants.ACD_LEVERS.data_types.text
+      validate_boolean_data_type
     when Constants.ACD_LEVERS.data_types.combination
+      validate_options
     end
   end
 
-  def validate_radio_data_type
-    
+  def add_error_value_not_match_data_type
+    errors.add(:value, "does not match its data_type #{data_type}. Value is #{value}") 
+  end
+
+  def validate_options
+    errors.add(:item, "is of #{data_type} and does not contain an options object") if options.nil?
   end
 
   def validate_number_data_type
-    unless INTEGER_LEVERS.include?(item) || FLOAT_LEVERS.include?(lever)
-      errors.add(:item, "value does not match its data_type") 
-    end    
+    add_error_value_not_match_data_type if value.match(/\A[0-9]*\.?[0-9]+\z/).nil?
+    unless INTEGER_LEVERS.include?(item) || FLOAT_LEVERS.include?(item)
+      errors.add(:item, "is of data_type number but is not included in INTEGER_LEVERS or FLOAT_LEVERS") 
+    end
   end
 
   def validate_boolean_data_type
-  
-  end
-
-  def validate_text_data_type
-    
-  end
-
-  def validate_combination_data_type
-    
+      add_error_value_not_match_data_type if value.match(/\A(t|true|f|false)\z/i).nil?
   end
 
   def distribution_value
