@@ -206,6 +206,11 @@ RSpec.feature("The Correspondence Intake page") do
   end
 
   context "Step 3 - Confirm" do
+    before :each do
+      Bva.singleton.add_user(mail_user)
+      User.authenticate!(user: mail_user)
+      FeatureToggle.enable!(:correspondence_queue)
+    end
     describe "Tasks not related to an Appeal section" do
       it "displays the correct content" do
         visit_intake_form_step_3_with_tasks_unrelated
