@@ -309,4 +309,60 @@ describe ChangeHearingRequestTypeTask do
       end
     end
   end
+
+  describe "eager loading Legacy appeals with `includes`" do
+    subject { described_class.open.includes(:legacy_appeal) }
+
+    let!(:_legacy_task) { create(:task) }
+    let!(:_supplemental_claim_task) { create(:supplemental_claim_task) }
+    let!(:_higher_level_review_task) { create(:higher_level_review_task) }
+
+    context "when there are no ChangeHearingRequestTypeTasks" do
+      it { should be_none }
+    end
+
+    context "when there are ChangeHearingRequestTypeTasks" do
+      let!(:change_hearing_request_type_tasks) do
+        create_list(:change_hearing_request_type_task, 10, :assigned,
+                    appeal: create(:legacy_appeal, vacols_id: rand(100_000..999_999).to_s))
+      end
+
+      it { should contain_exactly(*change_hearing_request_type_tasks) }
+
+      it "prevents N+1 queries" do
+        QuerySubscriber.new.tap do |subscriber|
+          subscriber.track { subject.map { |task| task.legacy_appeal.id } }
+          expect(subscriber.queries.count).to eq 2
+        end
+      end
+    end
+  end
+
+  describe "eager loading Legacy appeals with `preload`" do
+    subject { described_class.open.legacy.preload(:appeal) }
+
+    let!(:_legacy_task) { create(:task) }
+    let!(:_supplemental_claim_task) { create(:supplemental_claim_task) }
+    let!(:_higher_level_review_task) { create(:higher_level_review_task) }
+
+    context "when there are no ChangeHearingRequestTypeTasks" do
+      it { should be_none }
+    end
+
+    context "when there are ChangeHearingRequestTypeTasks" do
+      let!(:change_hearing_request_type_tasks) do
+        create_list(:change_hearing_request_type_task, 10, :assigned,
+                    appeal: create(:legacy_appeal, vacols_id: rand(100_000..999_999).to_s))
+      end
+
+      it { should contain_exactly(*change_hearing_request_type_tasks) }
+
+      it "prevents N+1 queries" do
+        QuerySubscriber.new.tap do |subscriber|
+          subscriber.track { subject.map { |task| task.appeal.id } }
+          expect(subscriber.queries.count).to eq 2
+        end
+      end
+    end
+  end
 end
