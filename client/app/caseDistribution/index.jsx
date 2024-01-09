@@ -25,7 +25,8 @@ class CaseDistribution extends React.PureComponent {
     const preloadedState = {
       levers: JSON.parse(JSON.stringify(this.props.acd_levers)),
       backendLevers: JSON.parse(JSON.stringify(this.props.acd_levers)),
-      historyList: JSON.parse(JSON.stringify(this.props.acd_history))
+      historyList: JSON.parse(JSON.stringify(this.props.acd_history)),
+      isUserAcdAdmin: JSON.parse(JSON.stringify(this.props.user_is_an_acd_admin))
     };
 
     const leverStore = createStore(leversReducer, preloadedState);

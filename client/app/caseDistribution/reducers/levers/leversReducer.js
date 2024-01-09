@@ -12,6 +12,7 @@ export const initialState = {
   historyList: [],
   changesOccurred: false,
   showSuccessBanner: false,
+  isUserAcdAdmin: false
 };
 
 const leversReducer = (state = initialState, action = {}) => {
@@ -79,6 +80,14 @@ const leversReducer = (state = initialState, action = {}) => {
         $set: action.payload.levers
       }
     });
+
+    case ACTIONS.SET_USER_IS_ACD_ADMIN:
+
+    return update(state, {
+      isUserAcdAdmin: {
+        $set: action.payload.isUserAcdAdmin
+      }
+    })
 
     case ACTIONS.UPDATE_LEVER:
       const { leverGroup, leverItem, value, optionValue, toggleValue } = action.payload;

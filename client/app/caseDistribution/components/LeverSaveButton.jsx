@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
-import { haveLeversChanged } from '../reducers/levers/leversSelector';
+// import { haveLeversChanged } from '../reducers/levers/leversSelector';
 import ApiUtil from '../../util/ApiUtil';
 import Modal from 'app/components/Modal';
 import Button from 'app/components/Button';
