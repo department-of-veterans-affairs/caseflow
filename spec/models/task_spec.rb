@@ -36,6 +36,8 @@ describe Task, :all_dbs do
     end
   end
 
+  it_behaves_like "Task belongs_to polymorphic appeal"
+
   describe ".post_dispatch_task?" do
     let(:root_task) { create(:root_task) }
     let(:appeal) { root_task.appeal }
