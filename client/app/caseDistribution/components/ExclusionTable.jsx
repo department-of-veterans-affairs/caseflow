@@ -1,13 +1,17 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
-import PropTypes from 'prop-types';
 import RadioField from 'app/components/RadioField';
 import styles from 'app/styles/caseDistribution/ExclusionTable.module.scss';
 import COPY from '../../../COPY';
 import DISTRIBUTION from '../../../constants/DISTRIBUTION';
+import { getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
 
 const ExclusionTable = (props) => {
-  let isMemberUser = !props.isAdmin;
+  const theState = useSelector((state) => state);
+
+  const isUserAcdAdmin = getUserIsAcdAdmin(theState);
+
   // Placeholder options until future implementation
   let options = [
     { displayText: 'On',
@@ -23,7 +27,7 @@ const ExclusionTable = (props) => {
   return (
     <div className={styles.exclusionTableContainerStyling}>
       <table >
-        <tbody>
+        <thead>
           <tr>
             <th className={styles.tableHeaderStyling}>{' '}</th>
             <th className={styles.tableHeaderStyling}>
@@ -33,10 +37,11 @@ const ExclusionTable = (props) => {
             <th className={styles.tableHeaderStyling}>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_DIRECT_HEADER}</th>
             <th className={styles.tableHeaderStyling}>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_EVIDENCE_HEADER}</th>
           </tr>
+        </thead>
+        {isUserAcdAdmin ?
+          <tbody>
           <tr>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-              {isMemberUser ?
-                <h3>All Non-priority</h3> :
                 <span>
                   <h4 className={styles.exclusionTableHeaderStyling}>All Non-priority</h4>
                   <ToggleSwitch
@@ -45,11 +50,8 @@ const ExclusionTable = (props) => {
                     disabled
                   />
                 </span>
-              }
             </td>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-              {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
                 <span>
                   <RadioField
                     name=""
@@ -57,11 +59,8 @@ const ExclusionTable = (props) => {
                     vertical
                   />
                 </span>
-              }
             </td>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-              {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
                 <span>
                   <RadioField
                     name=""
@@ -69,11 +68,17 @@ const ExclusionTable = (props) => {
                     vertical
                   />
                 </span>
-              }
             </td>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-              {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
+              <span>
+                <RadioField
+                  name=""
+                  options={options}
+                  vertical
+                />
+              </span>
+            </td>
+            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
                 <span>
                   <RadioField
                     name=""
@@ -81,38 +86,38 @@ const ExclusionTable = (props) => {
                     vertical
                   />
                 </span>
-              }
-            </td>
-            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-              {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
-                <span>
-                  <RadioField
-                    name=""
-                    options={options}
-                    vertical
-                  />
-                </span>
-              }
             </td>
           </tr>
           <tr>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-              {isMemberUser ?
-                <h3>All Priority</h3> :
-                <span>
-                  <h4 className={styles.exclusionTableHeaderStyling}>All Priority</h4>
-                  <ToggleSwitch
-                    id = {DISTRIBUTION.all_priority}
-                    selected = {false}
-                    disabled
-                  />
-                </span>
-              }
+              <span>
+                <h4 className={styles.exclusionTableHeaderStyling}>All Priority</h4>
+                <ToggleSwitch
+                  id = {DISTRIBUTION.all_priority}
+                  selected = {false}
+                  disabled
+                />
+              </span>
             </td>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-              {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
+              <span>
+                <RadioField
+                  name=""
+                  options={options}
+                  vertical
+                />
+              </span>
+            </td>
+            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
+              <span>
+                <RadioField
+                  name=""
+                  options={options}
+                  vertical
+                />
+              </span>
+            </td>
+            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
                 <span>
                   <RadioField
                     name=""
@@ -120,11 +125,8 @@ const ExclusionTable = (props) => {
                     vertical
                   />
                 </span>
-              }
             </td>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-              {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
                 <span>
                   <RadioField
                     name=""
@@ -132,40 +134,49 @@ const ExclusionTable = (props) => {
                     vertical
                   />
                 </span>
-              }
-            </td>
-            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-              {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
-                <span>
-                  <RadioField
-                    name=""
-                    options={options}
-                    vertical
-                  />
-                </span>
-              }
-            </td>
-            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-              {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>Off</label> :
-                <span>
-                  <RadioField
-                    name=""
-                    options={options}
-                    vertical
-                  />
-                </span>
-              }
             </td>
           </tr>
-        </tbody>
+        </tbody> :
+
+        <tbody>
+          <tr>
+            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
+                <h3>All Non-priority</h3>
+            </td>
+            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
+              <label className={styles.exclusionTableMemberViewStyling}>Off</label>
+            </td>
+            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
+                <label className={styles.exclusionTableMemberViewStyling}>Off</label>
+            </td>
+            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
+              <label className={styles.exclusionTableMemberViewStyling}>Off</label>
+            </td>
+            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
+              <label className={styles.exclusionTableMemberViewStyling}>Off</label>
+            </td>
+          </tr>
+          <tr>
+            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
+                <h3>All Priority</h3>
+            </td>
+            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
+              <label className={styles.exclusionTableMemberViewStyling}>Off</label>
+            </td>
+            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
+              <label className={styles.exclusionTableMemberViewStyling}>Off</label>
+            </td>
+            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
+              <label className={styles.exclusionTableMemberViewStyling}>Off</label>
+            </td>
+            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
+              <label className={styles.exclusionTableMemberViewStyling}>Off</label>
+            </td>
+          </tr>
+        </tbody> }
       </table>
     </div>
   );
 };
 
-ExclusionTable.propTypes = {
-  isAdmin: PropTypes.bool.isRequired,
-};
 export default ExclusionTable;
