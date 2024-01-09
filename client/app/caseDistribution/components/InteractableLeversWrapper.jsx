@@ -16,7 +16,6 @@ const InteractableLeverWrapper = ({ levers, leverStore, isAdmin, sectionTitles }
       <DocketTimeGoals
         leverList={levers.docketLeversObject}
         leverStore={leverStore}
-        isAdmin={isAdmin}
         sectionTitles={sectionTitles} />
       {isAdmin ? <LeverButtonsWrapper leverStore={leverStore} /> : ''}
     </div>
