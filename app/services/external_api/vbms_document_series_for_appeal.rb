@@ -11,14 +11,14 @@ class ExternalApi::VbmsDocumentSeriesForAppeal < ExternalApi::VbmsRequestWithFil
     if FeatureToggle.enabled?(:vbms_pagination, user: RequestStore[:current_user])
       service = VBMS::Service::PagedDocuments.new(client: vbms_client)
 
-      VBMSService.call_and_log_service(
+      Caseflow::VBMSService.call_and_log_service(
         service: service,
         vbms_id: ssn_or_claim_number
       )&.[](:documents) || []
     else
       request = VBMS::Requests::FindDocumentSeriesReference.new(ssn_or_claim_number)
 
-      VBMSService.send_and_log_request(
+      Caseflow::VBMSService.send_and_log_request(
         ssn_or_claim_number,
         request,
         override_vbms_client: vbms_client

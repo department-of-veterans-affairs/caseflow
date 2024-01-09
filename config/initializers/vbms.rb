@@ -1,6 +1,6 @@
 require 'caseflow'
 
-VBMSService = (!ApplicationController.dependencies_faked? ? Caseflow::ExternalApi::VBMSService : Fakes::VBMSService)
+VBMSService = (!ApplicationController.dependencies_faked? ? Caseflow::VBMSService : Fakes::VBMSService)
 
 if ApplicationController.dependencies_faked?
   VBMSService.manifest_vbms_fetched_at = Time.zone.now
