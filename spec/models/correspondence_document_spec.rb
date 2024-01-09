@@ -17,7 +17,6 @@ describe CorrespondenceDocument, :postgres do
   end
 
   it "pdf_location gets file path of static document" do
-    document.pdf_location
-    expect(document.output_location).to eq(File.join(Rails.root, "tmp", "pdfs", document.pdf_name).to_s)
+    expect(document.pdf_location).to eq(File.join(Rails.root, "tmp", "pdfs", "KnockKnockJokes.pdf").to_s)
   end
 end
