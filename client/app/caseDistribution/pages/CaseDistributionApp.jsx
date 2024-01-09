@@ -21,7 +21,6 @@ class CaseDistributionApp extends React.PureComponent {
         <div> {/* Wrapper*/}
           <CaseDistributionContent
             levers = {this.props.acd_levers}
-            saveChanges = {() => {}}
             formattedHistory={this.props.acd_history}
             leverStore={this.props.leverStore}
             sectionTitles = {this.props.sectionTitles}

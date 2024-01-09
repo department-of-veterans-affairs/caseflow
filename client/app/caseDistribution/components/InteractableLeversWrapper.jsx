@@ -9,7 +9,7 @@ import ExclusionTable from './ExclusionTable';
 import { getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
 import { sectionTitles } from '../constants';
 
-const InteractableLeverWrapper = ({ levers, leverStore, sectionTitles }) => {
+const InteractableLeverWrapper = ({ levers, leverStore }) => {
   const theState = useSelector((state) => state);
   const isUserAcdAdmin = getUserIsAcdAdmin(theState);
 

@@ -68,7 +68,6 @@ const CaseDistributionContent = ({
 
 CaseDistributionContent.propTypes = {
   levers: PropTypes.object.isRequired,
-  saveChanges: PropTypes.func.isRequired,
   formattedHistory: PropTypes.array.isRequired,
   leverStore: PropTypes.any.isRequired,
 };
