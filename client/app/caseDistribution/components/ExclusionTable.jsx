@@ -43,7 +43,7 @@ const ExclusionTable = (props) => {
           <tr>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
                 <span>
-                  <h4 className={styles.exclusionTableHeaderStyling}>All Non-priority</h4>
+                  <h4 className={styles.exclusionTableHeaderStyling}>COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY</h4>
                   <ToggleSwitch
                     id = {DISTRIBUTION.all_non_priority}
                     selected = {false}
@@ -91,7 +91,9 @@ const ExclusionTable = (props) => {
           <tr>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
               <span>
-                <h4 className={styles.exclusionTableHeaderStyling}>All Priority</h4>
+                <h4 className={styles.exclusionTableHeaderStyling}>
+                  {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
+                </h4>
                 <ToggleSwitch
                   id = {DISTRIBUTION.all_priority}
                   selected = {false}
@@ -141,19 +143,27 @@ const ExclusionTable = (props) => {
         <tbody>
           <tr>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-                <h3>All Non-priority</h3>
+                <h3>COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY</h3>
             </td>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-              <label className={styles.exclusionTableMemberViewStyling}>Off</label>
+              <label className={styles.exclusionTableMemberViewStyling}>
+                {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
+              </label>
             </td>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-                <label className={styles.exclusionTableMemberViewStyling}>Off</label>
+              <label className={styles.exclusionTableMemberViewStyling}>
+                {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
+              </label>
             </td>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-              <label className={styles.exclusionTableMemberViewStyling}>Off</label>
+              <label className={styles.exclusionTableMemberViewStyling}>
+                {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
+              </label>
             </td>
             <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-              <label className={styles.exclusionTableMemberViewStyling}>Off</label>
+              <label className={styles.exclusionTableMemberViewStyling}>
+                {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
+              </label>
             </td>
           </tr>
           <tr>

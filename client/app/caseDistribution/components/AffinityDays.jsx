@@ -221,9 +221,13 @@ const AffinityDays = (props) => {
   return (
     <div className={styles.leverContent}>
       <div className={styles.leverHead}>
-        <h2>Affinity Days</h2>
-        <div className={styles.leverLeft}><strong>Data Elements</strong></div>
-        <div className={styles.leverRight}><strong>Value</strong></div>
+        <h2>{COPY.CASE_DISTRIBUTION_AFFINITY_DAYS_H2_TITLE}</h2>
+        <div className={styles.leverLeft}>
+          <strong>{COPY.CASE_DISTRIBUTION_BATCHSIZE_LEVER_LEFT_TITLE}</strong>
+        </div>
+        <div className={styles.leverRight}>
+          <strong>{COPY.CASE_DISTRIBUTION_BATCHSIZE_LEVER_RIGHT_TITLE}</strong>
+        </div>
       </div>
       {affinityLevers.map((lever, index) => (
         <div className={cx(styles.activeLever, lever.is_disabled_in_ui ? styles.leverDisabled : '')}

@@ -7,6 +7,7 @@ import AffinityDays from './AffinityDays';
 import LeverButtonsWrapper from './LeverButtonsWrapper';
 import ExclusionTable from './ExclusionTable';
 import { getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
+import { sectionTitles } from '../constants';
 
 const InteractableLeverWrapper = ({ levers, leverStore, sectionTitles }) => {
   const theState = useSelector((state) => state);
@@ -28,8 +29,7 @@ const InteractableLeverWrapper = ({ levers, leverStore, sectionTitles }) => {
 
 InteractableLeverWrapper.propTypes = {
   levers: PropTypes.object.isRequired,
-  leverStore: PropTypes.any,
-  sectionTitles: PropTypes.array.isRequired
+  leverStore: PropTypes.any
 };
 
 export default InteractableLeverWrapper;

@@ -3,6 +3,7 @@ import StaticLeversWrapper from './StaticLeversWrapper';
 import InteractableLeverWrapper from './InteractableLeversWrapper';
 import LeverHistory from './LeverHistory';
 import PropTypes from 'prop-types';
+import { sectionTitles } from '../constants';
 import {
   sectionSegmentStyling,
   sectionHeadingStyling,
@@ -18,7 +19,7 @@ const CaseDistributionContent = ({
 
   return (
     <div>
-      <h1>Administration</h1>
+      <h1>{COPY.CASE_DISTRIBUTION_CONTENT_TITLE_H1_TITLE}</h1>
 
       <div> {/* Main Content Wrapper*/}
         <h2>{COPY.CASE_DISTRIBUTION_TITLE}</h2>
@@ -70,7 +71,6 @@ CaseDistributionContent.propTypes = {
   saveChanges: PropTypes.func.isRequired,
   formattedHistory: PropTypes.array.isRequired,
   leverStore: PropTypes.any.isRequired,
-  sectionTitles: PropTypes.array.isRequired,
 };
 
 export default CaseDistributionContent;

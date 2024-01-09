@@ -8,11 +8,10 @@ import { updateLeverState } from '../reducers/levers/leversActions';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
 import COPY from '../../../COPY';
-import { Constant } from '../constants';
+import { Constant, sectionTitles } from '../constants';
 import { getLeversByGroup, getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
 
 const DocketTimeGoals = (props) => {
-  const { sectionTitles } = props;
 
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
@@ -153,19 +152,19 @@ const DocketTimeGoals = (props) => {
   return (
     <div className={styles.leverContent}>
       <div className={styles.leverHead}>
-        <h2>{COPY.CASE_DISTRIBUTION_DISTRIBUTION_TITLE}</h2>
+        <h2>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_SECTION_TITLE}</h2>
         <p className="cf-lead-paragraph">
-          <strong className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_1}</strong>
-          {COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_2}
+          <strong className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_TITLE_LEFT}</strong>
+          {COPY.CASE_DISTRIBUTION_DOCKET_TIME_DESCRIPTION_LEFT}
         </p>
         <p className="cf-lead-paragraph">
-          <strong className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_DISTRIBUTION_1}</strong>
-          {COPY.CASE_DISTRIBUTION_DISTRIBUTION_2}
+          <strong className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_TITLE_RIGHT}</strong>
+          {COPY.CASE_DISTRIBUTION_DOCKET_TIME_DESCRIPTION_RIGHT}
         </p>
         <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_DOCKET_TIME_NOTE}</p>
         <div className={cx(styles.leverLeft, styles.docketLeverLeft)}><strong></strong></div>
-        <div className={styles.leverMiddle}><strong>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_1}</strong></div>
-        <div className={styles.leverRight}><strong>{COPY.CASE_DISTRIBUTION_DISTRIBUTION_1}</strong></div>
+        <div className={styles.leverMiddle}><strong>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_TITLE_LEFT}</strong></div>
+        <div className={styles.leverRight}><strong>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_TITLE_RIGHT}</strong></div>
       </div>
 
       {docketDistributionLevers && docketDistributionLevers.map((distributionPriorLever, index) => (
