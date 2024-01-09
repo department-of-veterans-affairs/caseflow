@@ -26,6 +26,17 @@ class CaseDistributionLever < ApplicationRecord
     #{Constants.DISTRIBUTION.nod_adjustment}
   )
 
+  def distribution_value
+    if self.data_type == Constants.ACD_LEVERS.data_types.radio
+      option = self.options.detect{|opt| opt['item'] == self.value}
+      option['value'] if option && option.is_a?(Hash)
+    else
+      self.value
+    end
+  end
+
+  private
+
   def value_matches_data_type
     case data_type
     when Constants.ACD_LEVERS.data_types.radio 
@@ -58,15 +69,6 @@ class CaseDistributionLever < ApplicationRecord
       add_error_value_not_match_data_type if value.match(/\A(t|true|f|false)\z/i).nil?
   end
 
-  def distribution_value
-    if self.data_type == Constants.ACD_LEVERS.data_types.radio
-      option = self.options.detect{|opt| opt['item'] == self.value}
-      option['value'] if option && option.is_a?(Hash)
-    else
-      self.value
-    end
-  end
-
   class << self
     def find_integer_lever(lever)
       return 0 unless INTEGER_LEVERS.include?(lever)
@@ -95,6 +97,8 @@ class CaseDistributionLever < ApplicationRecord
       errors.concat(add_audit_lever_entries(previous_levers, levers, current_user))
     end
 
+    private 
+    
     def add_audit_lever_entries(previous_levers, levers, current_user)
       entries = []
       levers.each do |lever|

@@ -57,7 +57,6 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     CaseDistributionAuditLeverEntrySerializer.new(old_audit_lever_entry).serializable_hash[:data][:attributes]
   }
 
-  let!(:lever_history) {[audit_lever_entry1, audit_lever_entry2]}
   let!(:levers) {Seeds::CaseDistributionLevers.new.levers + [lever1, lever2]}
 
   before do
