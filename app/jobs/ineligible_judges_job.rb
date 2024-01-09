@@ -49,7 +49,7 @@ class IneligibleJudgesJob < CaseflowJob
     ineligible_return_list = []
 
     ineligible_judge_list.each do |judge|
-      judges_from_distributions.include? judge.id ? ineligible_list_return_list.push(judge)
+      judges_from_distributions.include? judge.id ? ineligible_list_return_list.push(judge) : nil
     end
     ineligible_return_list
   end
