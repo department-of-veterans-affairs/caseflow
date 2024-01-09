@@ -9,11 +9,11 @@ class CorrespondenceDocumentsEfolderUploader
     elsif FeatureToggle.enabled?(:ce_api_demo_toggle)
       if Rails.env.test?
         do_upload(correspondence)
-
-        true
-      else
-        fail "Mock failure for upload in non-prod env"
       end
+
+      true
+    else
+      fail "Mock failure for upload in non-prod env"
     end
   rescue StandardError => error
     Rails.logger.error(error.full_message)
