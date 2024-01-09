@@ -65,7 +65,10 @@ class CorrespondenceController < ApplicationController
         task.status = "cancelled"
         task.save
       end
-      if upload_documents_to_claim_evidence
+
+      rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id, type: ReviewPackageTask.name)
+
+      if correspondence_documents_efolder_uploader.upload_documents_to_claim_evidence(correspondence, current_user, rpt)
         render json: { correspondence: correspondence }
       else
         render json: {}, status: :bad_request
@@ -265,7 +268,7 @@ class CorrespondenceController < ApplicationController
   end
 
   def veteran_by_correspondence
-    return unless correspondence&.veteran_id
+    return nil unless correspondence&.veteran_id.present?
 
     @veteran_by_correspondence ||= Veteran.find_by(id: correspondence.veteran_id)
   end
@@ -279,10 +282,6 @@ class CorrespondenceController < ApplicationController
     @auto_texts ||= AutoText.all.pluck(:name)
   end
 
-  def correspondence_intake_processor
-    @correspondence_intake_processor ||= CorrespondenceIntakeProcessor.new
-  end
-
   def vet_info_serializer(veteran, correspondence)
     {
       firstName: veteran.first_name,
@@ -294,41 +293,11 @@ class CorrespondenceController < ApplicationController
     }
   end
 
-  def upload_documents_to_claim_evidence
-    if Rails.env.development? || Rails.env.demo? || Rails.env.test?
-      create_efolder_upload_failed_task
-      true
-    else
-      begin
-        correspondence.correspondence_documents.all.each do |doc|
-          ExternalApi::ClaimEvidenceService.upload_document(
-            doc.pdf_location,
-            veteran_by_correspondence.file_number,
-            doc.claim_evidence_upload_json
-          )
-        end
-        true
-      rescue StandardError => error
-        Rails.logger.error(error.to_s)
-        create_efolder_upload_failed_task
-        false
-      end
-    end
+  def correspondence_intake_processor
+    @correspondence_intake_processor ||= CorrespondenceIntakeProcessor.new
   end
 
-  def create_efolder_upload_failed_task
-    rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id, type: ReviewPackageTask.name)
-    # rubocop:disable Layout/MultilineOperationIndentation)
-    euft = EfolderUploadFailedTask.where(appeal_id: correspondence.id, type: EfolderUploadFailedTask.name).first ||
-    EfolderUploadFailedTask.create!(
-      appeal_id: correspondence.id,
-      appeal_type: "Correspondence",
-      type: EfolderUploadFailedTask.name,
-      assigned_to: current_user,
-      parent_id: rpt.id
-    )
-    # rubocop:enable Layout/MultilineOperationIndentation)
-
-    euft.update!(status: Constants.TASK_STATUSES.in_progress)
+  def correspondence_documents_efolder_uploader
+    @correspondence_documents_efolder_uploader ||= CorrespondenceDocumentsEfolderUploader.new
   end
 end
