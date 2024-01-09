@@ -46,6 +46,13 @@ class HearingSerializer
   attribute :contested_claim do |hearing|
     hearing.appeal.contested_claim?
   end
+  attribute :mst do |hearing|
+    hearing.appeal.mst?
+  end
+  attribute :pact do |hearing|
+    hearing.appeal.pact?
+  end
+  attribute :conference_provider
   attribute :current_issue_count
   attribute :disposition
   attribute :disposition_editable

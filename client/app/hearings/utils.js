@@ -56,6 +56,8 @@ export const getWorksheetAppealsAndIssues = (worksheet) => {
   const worksheetAppeals = keyBy(worksheet.appeals_ready_for_hearing, 'id');
   let worksheetIssues = keyBy(flatMap(worksheetAppeals, 'worksheet_issues'), 'id');
 
+  worksheetIssues = { ...worksheetIssues, ...keyBy(worksheet.worksheet_issues, 'id') };
+
   if (isEmpty(worksheetIssues)) {
     worksheetIssues = keyBy(worksheet.worksheet_issues, 'id');
   }
@@ -215,6 +217,11 @@ export const virtualHearingLinkLabelFull = (role) =>
   role === VIRTUAL_HEARING_HOST ?
     COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL_FULL :
     COPY.REPRESENTATIVE_VIRTUAL_HEARING_LINK_LABEL;
+
+export const virtualHearingScheduledDatePassedLabelFull = (role) =>
+role === VIRTUAL_HEARING_HOST ?
+`${COPY.VLJ_VIRTUAL_HEARING_LINK_LABEL_FULL}: N/A` :
+`${COPY.REPRESENTATIVE_VIRTUAL_HEARING_PASSED_LABEL}: N/A`;
 
 export const pollVirtualHearingData = (hearingId, onSuccess) => (
   // Did not specify retryCount so if api call fails, it'll stop polling.

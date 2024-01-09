@@ -2,6 +2,7 @@
 
 class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   include BgsService
+  include ConferenceableConcern
 
   has_many :dispatch_tasks, class_name: "Dispatch::Task"
   has_many :document_views
@@ -149,6 +150,11 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def administer_org_users?
     admin? || granted?("Admin Intake") || roles.include?("Admin Intake") || member_of_organization?(Bva.singleton)
+  end
+
+  # editing logic for MST and PACT
+  def can_edit_intake_issues?
+    BvaIntake.singleton.admins.include?(self) || member_of_organization?(ClerkOfTheBoard.singleton)
   end
 
   def can_view_overtime_status?

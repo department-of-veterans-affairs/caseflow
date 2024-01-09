@@ -50,10 +50,20 @@ Rails.application.routes.draw do
         resources :intake_statuses, only: :show
         get 'legacy_appeals', to: "legacy_appeals#index"
       end
+      namespace :issues do
+        namespace :ama do
+          get "find_by_veteran/:participant_id", to: "veterans#show"
+        end
+        namespace :vacols do
+          get 'find_by_veteran', to: "veterans#show" # passing in ssn/vfn as a header
+        end
+      end
     end
     namespace :docs do
       namespace :v3, defaults: { format: 'json' } do
         get 'decision_reviews', to: 'docs#decision_reviews'
+        get "ama_issues", to: "docs#ama_issues"
+        get "vacols_issues", to: "docs#vacols_issues"
       end
     end
     get "metadata", to: 'metadata#index'
@@ -172,6 +182,8 @@ Rails.application.routes.draw do
 
   get '/explain/appeals/:appeal_id' => 'explain#show'
 
+  get '/appeals/:appeal_id/active_evidence_submissions' => 'appeals#active_evidence_submissions'
+
   resources :regional_offices, only: [:index]
   get '/regional_offices/:regional_office/hearing_dates', to: "regional_offices#hearing_dates"
 
@@ -254,15 +266,16 @@ Rails.application.routes.draw do
   end
   match '/supplemental_claims/:claim_id/edit/:any' => 'supplemental_claims#edit', via: [:get]
 
-  resources :decision_reviews, param: :business_line_slug, only: [] do
+  resources :decision_reviews, param: :business_line_slug do
     resources :tasks, controller: :decision_reviews, param: :task_id, only: [:show, :update] do
       member do
         get :power_of_attorney
         patch :update_power_of_attorney
       end
     end
+    get "report", to: "decision_reviews#generate_report", on: :member, as: :report, format: false
+    get "/(*all)", to: "decision_reviews#index"
   end
-  match '/decision_reviews/:business_line_slug' => 'decision_reviews#index', via: [:get]
 
   resources :unrecognized_appellants, only: [:update] do
     resource :power_of_attorney, only: [:update], controller: :unrecognized_appellants, action: :update_power_of_attorney
@@ -293,6 +306,24 @@ Rails.application.routes.draw do
 
   scope path: '/queue' do
     get '/', to: 'queue#index'
+    get '/correspondence', to: 'correspondence#correspondence_cases'
+    get '/correspondence/:correspondence_uuid/intake', to: 'correspondence#intake', as: :queue_correspondence_intake
+    post '/correspondence/:correspondence_uuid/current_step', to: 'correspondence#current_step', as: :queue_correspondence_intake_current_step
+    post '/correspondence/:correspondence_uuid/correspondence_intake_task', to: 'correspondence_tasks#create_correspondence_intake_task'
+    post '/correspondence/:id/remove_package', to: 'correspondence_tasks#remove_package'
+    get '/correspondence/:correspondence_uuid/intake', to: 'correspondence#intake'
+    get '/correspondence/:correspondence_uuid/review_package', to: 'correspondence#review_package'
+    get '/correspondence/edit_document_type_correspondence', to: 'correspondence#document_type_correspondence'
+    patch '/correspondence/:correspondence_uuid/intake_update', to: 'correspondence#intake_update'
+    get '/correspondence/:correspondence_uuid/veteran', to: 'correspondence#veteran'
+    put '/correspondence/:correspondence_uuid/update_cmp', to: 'correspondence#update_cmp'
+    get '/correspondence/packages', to: 'correspondence#package_documents'
+    get '/correspondence/:correspondence_uuid', to: 'correspondence#show'
+    get '/correspondence/:pdf_id/pdf', to: 'correspondence#pdf'
+    patch '/correspondence/:correspondence_uuid', to: 'correspondence#update'
+    patch '/correspondence/:id/update_document', to: 'correspondence_document#update_document'
+    post '/correspondence/:correspondence_uuid', to: 'correspondence#process_intake', as: :queue_correspondence_intake_process_intake
+    post "/correspondence/:correspondence_uuid/task", to: "correspondence_tasks#create_package_action_task"
     get '/appeals/:vacols_id', to: 'queue#index'
     get '/appeals/:appealId/notifications', to: 'queue#index'
     get '/appeals/:appeal_id/cavc_dashboard', to: 'cavc_dashboard#index'
@@ -300,6 +331,7 @@ Rails.application.routes.draw do
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
+  match '/explain/correspondence/:correspondence_uuid/:any' => 'explain#show', via: [:get]
 
   # requests to CAVC Dashboard that don't require an appeal_id should go here
   scope path: "/cavc_dashboard" do
@@ -381,6 +413,8 @@ Rails.application.routes.draw do
   get "unauthorized" => "application#unauthorized"
 
   get "feedback" => "application#feedback"
+
+  get "under_construction" => "application#under_construction"
 
   %w[403 404 500].each do |code|
     get code, to: "errors#show", status_code: code

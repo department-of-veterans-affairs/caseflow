@@ -11,6 +11,7 @@ export default class QueueOrganizationDropdown extends React.Component {
     const url = window.location.pathname.split('/');
     const location = url[url.length - 1];
     const queueHref = (location === 'queue') ? '#' : '/queue';
+    let correspondenceItems = {};
 
     if (organizations.length < 1) {
       return null;
@@ -33,7 +34,19 @@ export default class QueueOrganizationDropdown extends React.Component {
       };
     });
 
-    const items = [queueItem, ...organizationItems];
+    let items = [queueItem, ...organizationItems];
+
+    if (organizations[0].name === 'Mail' || organizations[0].name === 'Mail Team Supervisor') {
+      const orgHref = '/queue/correspondence';
+
+      correspondenceItems = {
+        key: (2).toString(),
+        href: orgHref,
+        label: sprintf(COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES)
+      };
+
+      items = [...items, correspondenceItems];
+    }
 
     return <QueueSelectorDropdown items={items} />;
   }
@@ -43,5 +56,5 @@ QueueOrganizationDropdown.propTypes = {
   organizations: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired
-  }))
+  })),
 };

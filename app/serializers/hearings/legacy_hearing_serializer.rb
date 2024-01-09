@@ -39,6 +39,7 @@ class LegacyHearingSerializer
   attribute :contested_claim do |hearing|
     hearing.appeal.contested_claim
   end
+  attribute :conference_provider
   attribute :current_issue_count
   attribute :disposition
   attribute :disposition_editable
@@ -121,5 +122,14 @@ class LegacyHearingSerializer
 
   attribute :current_user_timezone do |_, params|
     params[:user]&.timezone
+  end
+
+  attribute :worksheet_issues, &:prepare_worksheet_issues
+  attribute :mst do |object|
+    object.appeal.mst?
+  end
+
+  attribute :pact do |object|
+    object.appeal.pact?
   end
 end

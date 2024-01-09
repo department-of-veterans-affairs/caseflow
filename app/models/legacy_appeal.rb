@@ -630,6 +630,23 @@ class LegacyAppeal < CaseflowRecord
     end
   end
 
+  def mst?
+    return false unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) &&
+                        FeatureToggle.enabled?(:legacy_mst_pact_identification, user: RequestStore[:current_user])
+
+    issues.any?(&:mst_status) ||
+      (special_issue_list &&
+        special_issue_list.created_at < "2023-06-01".to_date &&
+        special_issue_list.military_sexual_trauma)
+  end
+
+  def pact?
+    return false unless FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user]) &&
+                        FeatureToggle.enabled?(:legacy_mst_pact_identification, user: RequestStore[:current_user])
+
+    issues.any?(&:pact_status)
+  end
+
   def documents_with_type(*types)
     @documents_by_type ||= {}
     types.reduce([]) do |accumulator, type|
@@ -915,6 +932,28 @@ class LegacyAppeal < CaseflowRecord
     veteran_is_not_claimant ? person_for_appellant&.participant_id : veteran&.participant_id
   end
 
+  # :reek:FeatureEnvy
+  def hearing_day_if_schedueled
+    hearing_date = Hearing.find_by(appeal_id: id)
+
+    if hearing_date.nil?
+      nil
+
+    else
+      hearing_date.hearing_day.scheduled_for
+    end
+  end
+
+  def ui_hash
+    Intake::LegacyAppealSerializer.new(self).serializable_hash[:data][:attributes]
+  end
+
+  # rubocop:disable Naming/PredicateName
+  def is_legacy?
+    true
+  end
+  # rubocop:enable Naming/PredicateName
+
   private
 
   def soc_eligible_for_opt_in?(receipt_date:, covid_flag: false)
@@ -1170,6 +1209,19 @@ class LegacyAppeal < CaseflowRecord
         user: user,
         original_data: original_data
       )
+    end
+
+    # fetch_appeals_by_file_number method will retrieve VACOLS cases (appeals) and
+    # build Legacy Appeal records for each one if they don't already exist
+    def veteran_has_appeals_in_vacols?(veteran_file_number)
+      fetch_appeals_by_file_number(veteran_file_number).any?
+    rescue StandardError
+      cases = MetricsService.record("VACOLS: appeals_by_vbms_id",
+                                    service: :vacols,
+                                    name: "appeals_by_vbms_id") do
+        VACOLS::Case.where(bfcorlid: convert_file_number_to_vacols(veteran_file_number))
+      end
+      cases.any?
     end
 
     private

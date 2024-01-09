@@ -23,7 +23,7 @@ Rails.application.configure do
   else
     config.action_controller.perform_caching = false
 
-    config.cache_store = :null_store
+    # config.cache_store = :null_store
   end
 
   # Store uploaded files on the local file system (see config/storage.yml for options)
@@ -111,8 +111,12 @@ Rails.application.configure do
   ENV["BATCH_PROCESS_ERROR_DELAY"] ||= "3" # In number of hours
   ENV["BATCH_PROCESS_MAX_ERRORS_BEFORE_STUCK"] ||= "3" # When record errors for X time, it's declared stuck
 
+  # RequestIssue paginates_per offset (vbms intake)
+  ENV["REQUEST_ISSUE_PAGINATION_OFFSET"] ||= "10"
+  ENV["REQUEST_ISSUE_DEFAULT_UPPER_BOUND_PER_PAGE"] ||= "50"
+
   # Necessary vars needed to create virtual hearing links
-  # Used by VirtualHearings::LinkService
+  # Used by VirtualHearings::PexipLinkService
   ENV["VIRTUAL_HEARING_PIN_KEY"] ||= "mysecretkey"
   ENV["VIRTUAL_HEARING_URL_HOST"] ||= "example.va.gov"
   ENV["VIRTUAL_HEARING_URL_PATH"] ||= "/sample"

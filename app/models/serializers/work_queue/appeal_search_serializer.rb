@@ -8,6 +8,10 @@ class WorkQueue::AppealSearchSerializer
 
   attribute :contested_claim, &:contested_claim?
 
+  attribute :closest_regional_office
+
+  attribute :closest_regional_office_label
+
   attribute :issues do |object|
     object.request_issues.active_or_decided_or_withdrawn.includes(:remand_reasons).map do |issue|
       {
@@ -138,5 +142,9 @@ class WorkQueue::AppealSearchSerializer
     if object.docket_switch
       WorkQueue::DocketSwitchSerializer.new(object.docket_switch).serializable_hash[:data][:attributes]
     end
+  end
+
+  attribute :evidence_submission_task do |object|
+    object.tasks.find_by(type: "EvidenceSubmissionWindowTask", status: "assigned")
   end
 end

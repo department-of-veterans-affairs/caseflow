@@ -9,6 +9,10 @@ class WorkQueue::LegacyAppealSearchSerializer
   attribute :assigned_attorney
   attribute :assigned_judge
 
+  attribute :closest_regional_office
+
+  attribute :closest_regional_office_label
+
   attribute :issues do |object|
     object.issues.map do |issue|
       WorkQueue::LegacyIssueSerializer.new(issue).serializable_hash[:data][:attributes]
