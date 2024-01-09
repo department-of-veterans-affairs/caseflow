@@ -149,7 +149,7 @@ logs:  ## Follow the docker logs
 db:  ## Connect to your dev postgres (caseflow) db
 	bundle exec rails dbconsole
 
-audit: ## Create caseflow_audit schema, tables, and triggers in postgres
+consolidated_db_scripts: ## Create caseflow_audit schema, tables, and triggers in postgres
 	bundle exec rails r db/scripts/audit/tables/create_bulk_audit_script.rb
 	bundle exec rails r db/scripts/audit/functions/create_bulk_function_script.rb
 	bundle exec rails r db/scripts/audit/triggers/create_bulk_trigger_script.rb
@@ -174,7 +174,7 @@ remove-vbms-ext-claim-seeds: ## Drops audit tables, removes all PriorityEndProdu
 	make audit-remove
 	make external-db-create
 	bundle exec rails r db/scripts/external/remove_vbms_ext_claim_seeds.rb
-	make audit
+	make consolidated_db_scripts
 
 reseed-vbms-ext-claim: remove-vbms-ext-claim-seeds seed-vbms-ext-claim ## Re-seeds database with records created from seed-vbms-ext-claim
 
@@ -224,7 +224,7 @@ reset: reset-dbs seed-dbs enable-feature-flags ## Resets databases and enable fe
 reset-dbs: ## Resets Caseflow and ETL database schemas
 	DB=etl bundle exec rake db:drop db:create db:schema:load
 	bundle exec rake db:drop db:create db:schema:load
-	make audit
+	make consolidated_db_scripts
 
 seed-vbms-ext-claim: ## Seed only vbms_ext_claim
 	bundle exec rake db:seed:vbms_ext_claim
