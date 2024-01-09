@@ -1,7 +1,7 @@
 /* eslint-disable func-style */
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import styles from 'app/styles/caseDistribution/LeverHistory.module.scss';
+// import styles from 'app/styles/caseDistribution/LeverHistory.module.scss';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 
 const LeverHistory = (props) => {
@@ -168,18 +168,18 @@ const LeverHistory = (props) => {
       <table>
         <tbody>
           <tr>
-            <th className={styles.leverHistoryTableHeaderStyling}>Date of Last Change</th>
-            <th className={styles.leverHistoryTableHeaderStyling}>User ID</th>
-            <th className={styles.leverHistoryTableHeaderStyling}>Data Element Changed</th>
-            <th className={styles.leverHistoryTableHeaderStyling}>Previous Value</th>
-            <th className={styles.leverHistoryTableHeaderStyling}>Updated Value</th>
+            <th className='lever-history-table-header-styling'>Date of Last Change</th>
+            <th className='lever-history-table-header-styling'>User ID</th>
+            <th className='lever-history-table-header-styling'>Data Element Changed</th>
+            <th className='lever-history-table-header-styling'>Previous Value</th>
+            <th className='lever-history-table-header-styling'>Updated Value</th>
           </tr>
         </tbody>
         <tbody>{history.map((entry, index) =>
           <tr key={index}>
-            <td className={styles.historyTableStyling}>{entry.created_at}</td>
-            <td className={styles.historyTableStyling}>{entry.user}</td>
-            <td className={styles.historyTableStyling}>
+            <td className='history-table-styling'>{entry.created_at}</td>
+            <td className='history-table-styling'>{entry.user}</td>
+            <td className='history-table-styling'>
               <ol>
                 {entry.titles.map((title) => {
                   return <li key={title}>{title}</li>;
