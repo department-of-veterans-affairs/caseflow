@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styles from 'app/styles/caseDistribution/LeverHistory.module.scss';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
+import COPY from '../../../COPY';
 
 const LeverHistory = (props) => {
   const { historyData } = props;
@@ -168,11 +169,21 @@ const LeverHistory = (props) => {
       <table>
         <tbody>
           <tr>
-            <th className={styles.leverHistoryTableHeaderStyling}>Date of Last Change</th>
-            <th className={styles.leverHistoryTableHeaderStyling}>User ID</th>
-            <th className={styles.leverHistoryTableHeaderStyling}>Data Element Changed</th>
-            <th className={styles.leverHistoryTableHeaderStyling}>Previous Value</th>
-            <th className={styles.leverHistoryTableHeaderStyling}>Updated Value</th>
+            <th className={styles.leverHistoryTableHeaderStyling}>
+              {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_DATE}
+            </th>
+            <th className={styles.leverHistoryTableHeaderStyling}>
+              {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_USER}
+            </th>
+            <th className={styles.leverHistoryTableHeaderStyling}>
+              {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_DATA_ELEMENT}
+            </th>
+            <th className={styles.leverHistoryTableHeaderStyling}>
+              {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_PREV_VALUE}
+            </th>
+            <th className={styles.leverHistoryTableHeaderStyling}>
+              {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_UPDATED_VALUE}
+            </th>
           </tr>
         </tbody>
         <tbody>{history.map((entry, index) =>

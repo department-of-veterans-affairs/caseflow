@@ -151,9 +151,15 @@ const leverList = (leverStore) => {
       <table>
         <tbody>
           <tr>
-            <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableLeftStyling}`}>Data Element</th>
-            <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableRightStyling}`}>Previous Value</th>
-            <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableRightStyling}`}>New Value</th>
+            <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableLeftStyling}`}>
+              {COPY.ASE_DISTRIBUTION_LEVER_SAVE_BUTTON_DATA}
+            </th>
+            <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableRightStyling}`}>
+              {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_PREV_VALUE}
+            </th>
+            <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableRightStyling}`}>
+              {COPY.CASE_DISTRIBUTION_LEVER_SAVE_BUTTON_VALUE}
+            </th>
           </tr>
         </tbody>
         <tbody>
