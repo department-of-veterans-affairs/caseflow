@@ -1,8 +1,15 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ModuleLength
 module CorrespondenceHelpers
   def current_user
-    @current_user ||= create(:user, roles: ["Mail Team"])
+    User.find_or_create_by(
+      css_id: "TEST_USER",
+      full_name: "Test User",
+      email: "testuser@example.com",
+      station_id: 101,
+      roles: ["Mail Team"]
+    )
   end
 
   def setup_access
@@ -155,4 +162,5 @@ module CorrespondenceHelpers
     Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
     Seeds::AutoTexts.new.seed!
   end
+  # rubocop:enable Metrics/ModuleLength
 end

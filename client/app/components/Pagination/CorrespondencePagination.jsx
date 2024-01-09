@@ -110,7 +110,7 @@ class CorrespondencePagination extends React.PureComponent {
       paginationButtons.push(
         <button
           key="next-button"
-          aria-label="Next Page"
+          aria-label="Next page"
           disabled={currentPage === totalPages}
           onClick={() => this.handleNext()}>
           Next
