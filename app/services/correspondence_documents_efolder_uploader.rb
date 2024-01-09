@@ -6,11 +6,9 @@ class CorrespondenceDocumentsEfolderUploader
       do_upload(correspondence)
 
       true
-    else
-      if FeatureToggle.enabled?(:ce_api_demo_toggle)
-        if Rails.env.test?
-          do_upload(correspondence)
-        end
+    elsif FeatureToggle.enabled?(:ce_api_demo_toggle)
+      if Rails.env.test?
+        do_upload(correspondence)
 
         true
       else
@@ -44,6 +42,7 @@ class CorrespondenceDocumentsEfolderUploader
     euft.update!(status: Constants.TASK_STATUSES.in_progress)
   end
 
+  # :reek:FeatureEnvy
   def do_upload(correspondence)
     correspondence.correspondence_documents.each do |doc|
       ExternalApi::ClaimEvidenceService.upload_document(

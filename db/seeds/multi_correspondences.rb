@@ -4,8 +4,8 @@
 require_relative "./helpers/seed_helpers"
 
 module Seeds
+  # :reek:InstanceVariableAssumption
   class MultiCorrespondences < Base
-    # :reek:InstanceVariableAssumption
 
     include SeedHelpers
 

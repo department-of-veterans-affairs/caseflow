@@ -52,7 +52,7 @@ class CorrespondenceController < ApplicationController
     render "correspondence/review_package"
   end
 
-  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def intake_update
     tasks = Task.where("appeal_id = ? and appeal_type = ?", correspondence.id, "Correspondence")
     begin
@@ -79,7 +79,7 @@ class CorrespondenceController < ApplicationController
       render json: {}, status: :bad_request
     end
   end
-  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   def veteran
     render json: { veteran_id: veteran_by_correspondence&.id, file_number: veteran_by_correspondence&.file_number }
@@ -268,7 +268,7 @@ class CorrespondenceController < ApplicationController
   end
 
   def veteran_by_correspondence
-    return nil unless correspondence&.veteran_id.present?
+    return nil if correspondence&.veteran_id.blank?
 
     @veteran_by_correspondence ||= Veteran.find_by(id: correspondence.veteran_id)
   end
