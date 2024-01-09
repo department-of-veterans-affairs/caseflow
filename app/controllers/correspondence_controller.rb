@@ -286,6 +286,7 @@ class CorrespondenceController < ApplicationController
     @correspondence_documents_efolder_uploader ||= CorrespondenceDocumentsEfolderUploader.new
   end
 
+  # :reek:FeatureEnvy
   def intake_appeal_update_tasks
     tasks = Task.where("appeal_id = ? and appeal_type = ?", correspondence.id, "Correspondence")
     tasks.map do |task|
