@@ -3,6 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
 import Button from 'app/components/Button';
+import COPY from '../../../COPY';
 
 const cancelLeverChanges = (leverStore) => {
   leverStore.dispatch({
@@ -25,7 +26,7 @@ export const LeverCancelButton = ({ leverStore }) => {
       id="CancelLeversButton"
       classNames={['cf-btn-link']}
       onClick={() => cancelButtonActions(leverStore)}>
-      Cancel
+      {COPY.CASE_DISTRIBUTION_LEVER_CANCEL_BUTTON}
     </Button>
   );
 };
