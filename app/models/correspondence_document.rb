@@ -4,22 +4,12 @@ class CorrespondenceDocument < CaseflowRecord
   belongs_to :correspondence
   belongs_to :vbms_document_type
 
-  S3_BUCKET_NAME = "documents"
-
   def pdf_name
     "#{uuid}.pdf"
   end
 
-  def s3_location
-    "#{S3_BUCKET_NAME}/#{uuid}"
-  end
-
-  def output_location
-    File.join(Rails.root, "tmp", "pdfs", pdf_name)
-  end
-
   def pdf_location
-    S3Service.fetch_file(s3_location, output_location)
+    File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf")
   end
 
   def claim_evidence_upload_json
