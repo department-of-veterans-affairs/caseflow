@@ -44,6 +44,7 @@ class CorrespondenceDocumentsEfolderUploader
     euft.update!(status: Constants.TASK_STATUSES.in_progress)
   end
 
+  # :reek:FeatureEnvy
   def do_upload(correspondence)
     correspondence.correspondence_documents.each do |doc|
       ExternalApi::ClaimEvidenceService.upload_document(
