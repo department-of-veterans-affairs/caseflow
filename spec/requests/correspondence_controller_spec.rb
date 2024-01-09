@@ -4,11 +4,17 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
   let(:veteran) { create(:veteran, last_name: "Smith", file_number: "12345678") }
   let(:correspondence) { create(:correspondence, veteran_id: veteran.id, uuid: SecureRandom.uuid) }
   let(:current_user) { create(:intake_user) }
+  let!(:parent_task) { create(:correspondence_intake_task, appeal: correspondence, assigned_to: current_user) }
+
+  let(:mock_doc_uploader) { instance_double(CorrespondenceDocumentsEfolderUploader) }
 
   before do
     FeatureToggle.enable!(:correspondence_queue)
     MailTeam.singleton.add_user(current_user)
     User.authenticate!(user: current_user)
+
+    allow(CorrespondenceDocumentsEfolderUploader).to receive(:new).and_return(mock_doc_uploader)
+    allow(mock_doc_uploader).to receive(:upload_documents_to_claim_evidence).and_return(true)
   end
 
   describe "#current_step" do
@@ -43,8 +49,6 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
         redux_store: redux_store
       }
 
-      correspondence = CorrespondenceIntake.find_by(user: current_user, correspondence: correspondence)
-
       expect(response).to have_http_status(:success)
 
       intake_correspondence = CorrespondenceIntake.find_by(user: current_user, correspondence: correspondence)
@@ -72,10 +76,8 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
 
           it "creates tasks not related to an appeal" do
             expect do
-              post queue_correspondence_intake_process_intake_path(
-                correspondence_uuid: correspondence.uuid,
-                params: post_data
-              )
+              post queue_correspondence_intake_process_intake_path(correspondence_uuid: correspondence.uuid),
+                   params: post_data
             end.to change(Task, :count)
 
             expect(response).to have_http_status(:created)

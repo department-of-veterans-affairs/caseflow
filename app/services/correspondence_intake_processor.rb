@@ -8,49 +8,37 @@ class CorrespondenceIntakeProcessor
 
     fail "Correspondence not found" if correspondence.blank?
 
-    success = true
+    parent_task = CorrespondenceIntakeTask.find_by(appeal_id: correspondence.id, type: CorrespondenceIntakeTask.name)
 
-    ActiveRecord::Base.transaction do
-      begin
-        create_correspondence_relations(intake_params, correspondence.id)
-        link_appeals_to_correspondence(intake_params, correspondence.id)
-        add_tasks_to_related_appeals(intake_params, current_user)
-        complete_waived_evidence_submission_tasks(intake_params)
-        create_tasks_not_related_to_appeals(intake_params, correspondence, current_user)
-        create_mail_tasks(intake_params, correspondence, current_user)
-      rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid
-        success = false
-        raise ActiveRecord::Rollback
-      end
-    end
+    return false if !correspondence_documents_efolder_uploader.upload_documents_to_claim_evidence(
+      correspondence,
+      current_user,
+      parent_task
+    )
 
-    success
-  end
-
-  def upload_documents_to_claim_evidence(correspondence, current_user)
-    if Rails.env.development? || Rails.env.demo? || Rails.env.test?
-      true
-    else
-      begin
-        correspondence.correspondence_documents.all.each do |doc|
-          ExternalApi::ClaimEvidenceService.upload_document(
-            doc.pdf_location,
-            veteran_by_correspondence.file_number,
-            doc.claim_evidence_upload_json
-          )
-        end
-
-        true
-      rescue StandardError => error
-        Rails.logger.error(error.to_s)
-        create_efolder_upload_failed_task(correspondence, current_user)
-
-        false
-      end
-    end
+    do_upload_success_actions(parent_task, intake_params, correspondence, current_user)
   end
 
   private
+
+  def do_upload_success_actions(parent_task, intake_params, correspondence, current_user)
+    ActiveRecord::Base.transaction do
+      parent_task.update!(status: Constants.TASK_STATUSES.completed)
+
+      create_correspondence_relations(intake_params, correspondence.id)
+      link_appeals_to_correspondence(intake_params, correspondence.id)
+      add_tasks_to_related_appeals(intake_params, current_user)
+      complete_waived_evidence_submission_tasks(intake_params)
+      create_tasks_not_related_to_appeals(intake_params, correspondence, current_user)
+      create_mail_tasks(intake_params, correspondence, current_user)
+    end
+
+    true
+  rescue StandardError => error
+    Rails.logger.error(error.full_message)
+
+    false
+  end
 
   def create_correspondence_relations(intake_params, correspondence_id)
     intake_params[:related_correspondence_uuids]&.map do |uuid|
@@ -89,20 +77,6 @@ class CorrespondenceIntakeProcessor
       evidence_submission_window_task.when_timer_ends
       evidence_submission_window_task.update!(instructions: (instructions << task[:waive_reason]))
     end
-  end
-
-  def create_efolder_upload_failed_task(correspondence, current_user)
-    rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id, type: ReviewPackageTask.name)
-
-    euft = EfolderUploadFailedTask.find_or_create_by(
-      appeal_id: correspondence.id,
-      appeal_type: "Correspondence",
-      type: EfolderUploadFailedTask.name,
-      assigned_to: current_user,
-      parent_id: rpt.id
-    )
-
-    euft.update!(status: Constants.TASK_STATUSES.in_progress)
   end
 
   def create_tasks_not_related_to_appeals(intake_params, correspondence, current_user)
@@ -154,5 +128,9 @@ class CorrespondenceIntakeProcessor
 
   def class_for_data(data)
     data[:klass]&.constantize
+  end
+
+  def correspondence_documents_efolder_uploader
+    @correspondence_documents_efolder_uploader ||= CorrespondenceDocumentsEfolderUploader.new
   end
 end
