@@ -11,7 +11,7 @@ class IneligibleJudgesJob < CaseflowJob
   def perform
     @start_time ||= Time.zone.now
     case_distribution_ineligible_judges
-
+    log_judge_list
     log_success(@start_time)
   rescue StandardError => error
     log_error(error)
@@ -31,6 +31,32 @@ class IneligibleJudgesJob < CaseflowJob
         v.reduce(&:merge)
       end
     end
+  end
+
+  def judges_from_distributions
+    <<-SQL
+      SELECT "hearings"."judge_id" AS "judge_id"
+      FROM "hearings"
+      LEFT JOIN "appeals" "Appeals" ON "hearings"."appeal_id" = "Appeals"."id" LEFT JOIN "distributed_cases" "Distributed Cases" ON "Appeals"."veteran_file_number" = "Distributed Cases"."case_id" LEFT JOIN "distributions" "Distributions" ON "Distributed Cases"."distribution_id" = "Distributions"."id"
+      WHERE ("Distributions"."completed_at" >= CAST(now() AS date)
+        AND "Distributions"."completed_at" < CAST((CAST(now() AS timestamp) + (INTERVAL '1 day')) AS date))
+      LIMIT 1048575
+    SQL
+  end
+
+  def cross_check_ineligible_judge_list
+    ineligible_judge_list = Rails.cache.fetch("case_distribution_ineligible_judges")
+    ineligible_return_list = []
+
+    ineligible_judge_list.each do |judge|
+      judges_from_distributions.include? judge.id ? ineligible_list_return_list.push(judge)
+    end
+    ineligible_return_list
+  end
+
+  def log_judge_list
+    msg = "Cross-checked ineligible judge list: #{cross_check_ineligible_judge_list}"
+    Rails.logger.info(msg)
   end
 
   def log_success(start_time)
