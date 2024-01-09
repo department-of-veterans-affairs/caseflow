@@ -1,7 +1,9 @@
 import React from 'react';
 import StaticLeversWrapper from './StaticLeversWrapper';
 import InteractableLeverWrapper from './InteractableLeversWrapper';
+import LeverHistory from './LeverHistory';
 import PropTypes from 'prop-types';
+import { sectionTitles } from '../constants';
 import {
   sectionSegmentStyling,
   sectionHeadingStyling,
@@ -10,9 +12,9 @@ import COPY from '../../../COPY';
 
 const CaseDistributionContent = ({
   levers,
+  formattedHistory,
   isAdmin,
-  leverStore,
-  sectionTitles
+  leverStore
 }) => {
 
   return (
@@ -66,9 +68,9 @@ const CaseDistributionContent = ({
 
 CaseDistributionContent.propTypes = {
   levers: PropTypes.object.isRequired,
+  formattedHistory: PropTypes.object.isRequired,
   isAdmin: PropTypes.bool.isRequired,
   leverStore: PropTypes.any.isRequired,
-  sectionTitles: PropTypes.array.isRequired,
 };
 
 export default CaseDistributionContent;

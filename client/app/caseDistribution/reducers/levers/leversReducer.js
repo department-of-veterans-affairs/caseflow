@@ -1,4 +1,4 @@
-import {ACTIONS } from '../levers/leversActionTypes';
+import { ACTIONS } from '../levers/leversActionTypes';
 import { update } from '../../../util/ReducerUtil';
 
 export const initialState = {
@@ -32,27 +32,29 @@ const leversReducer = (state = initialState, action = {}) => {
       }
     });
 
-    case ACTIONS.UPDATE_LEVER:
-      const { leverGroup, leverItem, value, usesOption, usesToggle, toggleValue } = action.payload;
-      const updateLeverValue = (lever) => {
-        if (usesOption) {
-          return { ...lever, option: [{ value }] }; // Update the option value
-        } else if (usesToggle) {
-          return { ...lever, value, is_toggle_active: toggleValue }; // Update both value and is_toggle_active
-        } else {
-          return { ...lever, value }; // Update only the value
-        }
-      };
-      const updatedLever = state.levers[leverGroup].map((lever) =>
-        lever.item === leverItem ? updateLeverValue(lever) : lever
-      );
-      return {
-        ...state,
-        levers: {
-          ...state.levers,
-          [leverGroup]: updatedLever,
-        },
-      };
+  case ACTIONS.UPDATE_LEVER:
+    const { leverGroup, leverItem, value, usesOption, usesToggle, toggleValue } = action.payload;
+    const updateLeverValue = (lever) => {
+      if (usesOption) {
+        return { ...lever, option: [{ value }] }; // Update the option value
+      } else if (usesToggle) {
+        return { ...lever, value, is_toggle_active: toggleValue }; // Update both value and is_toggle_active
+      }
+
+      return { ...lever, value }; // Update only the value
+
+    };
+    const updatedLever = state.levers[leverGroup].map((lever) =>
+      lever.item === leverItem ? updateLeverValue(lever) : lever
+    );
+
+    return {
+      ...state,
+      levers: {
+        ...state.levers,
+        [leverGroup]: updatedLever,
+      },
+    };
   // needs to be reworked; remove comment when done
   case ACTIONS.FORMAT_LEVER_HISTORY:
     return {
@@ -91,8 +93,6 @@ const leversReducer = (state = initialState, action = {}) => {
       showSuccessBanner: false
     };
 
-
-
   default:
     return state;
   }
@@ -120,7 +120,7 @@ export const formatLeverHistory = (lever_history_list) => {
 
 // this should probably be moved into the action in leversAction.js
 export const updateLevers = (current_levers, updated_lever, hasValueChanged) => {
-  const leverIndex = current_levers.findIndex((lever) => lever.item == updated_lever.item);
+  const leverIndex = current_levers.findIndex((lever) => lever.item === updated_lever.item);
 
   if (leverIndex !== -1) {
 

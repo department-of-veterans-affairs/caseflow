@@ -8,11 +8,11 @@ import { updateLeverState } from '../reducers/levers/leversActions';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
 import COPY from '../../../COPY';
-import { Constant } from '../constants';
+import { Constant, sectionTitles } from '../constants';
 import { getLeversByGroup } from '../reducers/levers/leversSelector';
 
 const DocketTimeGoals = (props) => {
-  const { isAdmin, sectionTitles } = props;
+  const { isAdmin } = props;
 
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
