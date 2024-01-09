@@ -7,15 +7,15 @@ describe RequestIssuesUpdate, :all_dbs do
   end
 
   def allow_associate_rating_request_issues
-    allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
+    allow(Caseflow::Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
   end
 
   def allow_remove_contention
-    allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
+    allow(Caseflow::Fakes::VBMSService).to receive(:remove_contention!).and_call_original
   end
 
   def allow_update_contention
-    allow(Fakes::VBMSService).to receive(:update_contention!).and_call_original
+    allow(Caseflow::Fakes::VBMSService).to receive(:update_contention!).and_call_original
   end
 
   # TODO: make it simpler to set up a completed claim review, with end product data
@@ -332,7 +332,7 @@ describe RequestIssuesUpdate, :all_dbs do
             *(existing_request_issues.map(&:id) + [RequestIssue.last.id])
           )
 
-          expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+          expect(Caseflow::Fakes::VBMSService).to have_received(:create_contentions!).with(
             hash_including(
               veteran_file_number: review.veteran_file_number,
               contentions: array_including(
@@ -349,7 +349,7 @@ describe RequestIssuesUpdate, :all_dbs do
             review.request_issues.reload
           )
 
-          expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
+          expect(Caseflow::Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
             claim_id: rating_end_product_establishment.reference_id,
             rating_issue_contention_map: new_map
           )
@@ -385,7 +385,7 @@ describe RequestIssuesUpdate, :all_dbs do
 
             subject
 
-            expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+            expect(Caseflow::Fakes::VBMSService).to have_received(:create_contentions!).with(
               hash_including(
                 veteran_file_number: review.veteran_file_number,
                 contentions: array_including(
@@ -477,14 +477,14 @@ describe RequestIssuesUpdate, :all_dbs do
           expect(existing_legacy_opt_in_request_issue).to be_removed
           expect(existing_legacy_opt_in_request_issue.legacy_issue_optin.rollback_processed_at).to_not be_nil
 
-          expect(Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)
+          expect(Caseflow::Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)
 
           new_map = rating_end_product_establishment.reload.send(
             :rating_issue_contention_map,
             review.reload.request_issues.active
           )
 
-          expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
+          expect(Caseflow::Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
             claim_id: rating_end_product_establishment.reference_id,
             rating_issue_contention_map: new_map
           )
@@ -616,14 +616,14 @@ describe RequestIssuesUpdate, :all_dbs do
           expect(existing_legacy_opt_in_request_issue).to be_withdrawn
           expect(existing_legacy_opt_in_request_issue.legacy_issue_optin.rollback_processed_at).to be_nil
 
-          expect(Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)
+          expect(Caseflow::Fakes::VBMSService).to have_received(:remove_contention!).with(request_issue_contentions.last)
 
           new_map = rating_end_product_establishment.reload.send(
             :rating_issue_contention_map,
             review.reload.request_issues.active
           )
 
-          expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
+          expect(Caseflow::Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
             claim_id: rating_end_product_establishment.reference_id,
             rating_issue_contention_map: new_map
           )
@@ -779,19 +779,19 @@ describe RequestIssuesUpdate, :all_dbs do
       end
 
       def raise_error_on_create_contentions
-        allow(Fakes::VBMSService).to receive(:create_contentions!).and_raise(vbms_error)
+        allow(Caseflow::Fakes::VBMSService).to receive(:create_contentions!).and_raise(vbms_error)
       end
 
       def allow_create_contentions
-        allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+        allow(Caseflow::Fakes::VBMSService).to receive(:create_contentions!).and_call_original
       end
 
       def raise_error_on_remove_contention
-        allow(Fakes::VBMSService).to receive(:remove_contention!).and_raise(vbms_error)
+        allow(Caseflow::Fakes::VBMSService).to receive(:remove_contention!).and_raise(vbms_error)
       end
 
       def allow_remove_contention
-        allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original
+        allow(Caseflow::Fakes::VBMSService).to receive(:remove_contention!).and_call_original
       end
     end
   end
@@ -853,7 +853,7 @@ describe RequestIssuesUpdate, :all_dbs do
 
       updated_contention = edited_issue_contention
       updated_contention.text = edited_description
-      expect(Fakes::VBMSService).to have_received(:update_contention!).with(updated_contention)
+      expect(Caseflow::Fakes::VBMSService).to have_received(:update_contention!).with(updated_contention)
       expect(edited_issue.reload.contention_updated_at).to eq(Time.zone.now)
     end
 
@@ -863,7 +863,7 @@ describe RequestIssuesUpdate, :all_dbs do
 
       it "does not try to update the contention in VBMS" do
         expect(subject).to be_truthy
-        expect(Fakes::VBMSService).to_not have_received(:update_contention!)
+        expect(Caseflow::Fakes::VBMSService).to_not have_received(:update_contention!)
         expect(edited_issue.reload.contention_updated_at).to be nil
       end
     end

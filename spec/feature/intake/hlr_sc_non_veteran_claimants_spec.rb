@@ -25,9 +25,9 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
 
   before do
     Timecop.freeze(post_ama_start_date)
-    allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
-    allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-    allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
+    allow(Caseflow::Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+    allow(Caseflow::Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+    allow(Caseflow::Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
     FeatureToggle.enable!(:filed_by_va_gov_hlr)
     FeatureToggle.enable!(:updated_intake_forms)
     FeatureToggle.enable!(:hlr_sc_unrecognized_claimants)

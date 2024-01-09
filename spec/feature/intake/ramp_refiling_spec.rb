@@ -7,8 +7,8 @@ RSpec.feature "RAMP Refiling Intake", :postgres do
     Timecop.freeze(post_ramp_start_date)
     FeatureToggle.enable!(:ramp_intake)
 
-    allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
-    allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+    allow(Caseflow::Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+    allow(Caseflow::Fakes::VBMSService).to receive(:create_contentions!).and_call_original
   end
 
   after { FeatureToggle.disable!(:ramp_intake) }
@@ -312,7 +312,7 @@ RSpec.feature "RAMP Refiling Intake", :postgres do
       expect(page).to have_content("Appeal record saved in Caseflow")
       expect(page).to have_content(COPY::APPEAL_RECORD_SAVED_MESSAGE)
 
-      expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
+      expect(Caseflow::Fakes::VBMSService).to_not have_received(:establish_claim!)
       expect(ramp_refiling.issues.count).to eq(2)
       expect(ramp_refiling.issues.first.description).to eq("Left knee rating increase")
       expect(ramp_refiling.issues.last.description).to eq("Left shoulder service connection")
@@ -359,7 +359,7 @@ RSpec.feature "RAMP Refiling Intake", :postgres do
 
       intake.start!
 
-      Fakes::VBMSService.end_product_claim_id = "SHANE9123242"
+      Caseflow::Fakes::VBMSService.end_product_claim_id = "SHANE9123242"
 
       visit "/intake"
 
@@ -373,12 +373,12 @@ RSpec.feature "RAMP Refiling Intake", :postgres do
       find("label", text: "Left knee rating increase").click
       find("label", text: "The Veteran's form lists at least one ineligible contention").click
 
-      Fakes::VBMSService.hold_request!
+      Caseflow::Fakes::VBMSService.hold_request!
       expect(page).to have_button("Cancel intake", disabled: false)
       safe_click "#finish-intake"
       expect(page).to have_button("Cancel intake", disabled: true)
 
-      Fakes::VBMSService.resume_request!
+      Caseflow::Fakes::VBMSService.resume_request!
 
       expect(page).to have_content("Intake completed")
 
@@ -387,7 +387,7 @@ RSpec.feature "RAMP Refiling Intake", :postgres do
       ramp_refiling = RampRefiling.find_by(veteran_file_number: "12341234")
       expect(ramp_refiling.has_ineligible_issue).to eq(true)
 
-      expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+      expect(Caseflow::Fakes::VBMSService).to have_received(:establish_claim!).with(
         claim_hash: {
           benefit_type_code: "1",
           payee_code: "00",
@@ -409,7 +409,7 @@ RSpec.feature "RAMP Refiling Intake", :postgres do
         user: current_user
       )
 
-      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+      expect(Caseflow::Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: "12341234",
         claim_id: "SHANE9123242",
         contentions: [{ description: "Left knee rating increase" }],
@@ -483,8 +483,8 @@ RSpec.feature "RAMP Refiling Intake", :postgres do
       expect(ramp_refiling.has_ineligible_issue).to eq(true)
       expect(ramp_refiling.issues.count).to eq(0)
 
-      expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
-      expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
+      expect(Caseflow::Fakes::VBMSService).to_not have_received(:establish_claim!)
+      expect(Caseflow::Fakes::VBMSService).to_not have_received(:create_contentions!)
     end
 
     scenario "Complete intake for RAMP Refiling fails due to duplicate EP" do

@@ -6,9 +6,9 @@ feature "Higher-Level Review", :all_dbs do
   before do
     Timecop.freeze(post_ama_start_date)
 
-    allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
-    allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-    allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
+    allow(Caseflow::Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+    allow(Caseflow::Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+    allow(Caseflow::Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
   end
 
   let(:ineligible_constants) { Constants.INELIGIBLE_REQUEST_ISSUES }
@@ -264,7 +264,7 @@ feature "Higher-Level Review", :all_dbs do
     )
 
     # ratings end product
-    expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+    expect(Caseflow::Fakes::VBMSService).to have_received(:establish_claim!).with(
       hash_including(
         claim_hash: hash_including(
           benefit_type_code: "1",
@@ -296,7 +296,7 @@ feature "Higher-Level Review", :all_dbs do
     )
 
     # nonratings end product
-    expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+    expect(Caseflow::Fakes::VBMSService).to have_received(:establish_claim!).with(
       claim_hash: hash_including(
         benefit_type_code: "1",
         payee_code: "10",
@@ -314,7 +314,7 @@ feature "Higher-Level Review", :all_dbs do
       user: current_user
     )
 
-    expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+    expect(Caseflow::Fakes::VBMSService).to have_received(:create_contentions!).with(
       hash_including(
         veteran_file_number: veteran_file_number,
         claim_id: ratings_end_product_establishment.reference_id,
@@ -325,7 +325,7 @@ feature "Higher-Level Review", :all_dbs do
       )
     )
 
-    expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+    expect(Caseflow::Fakes::VBMSService).to have_received(:create_contentions!).with(
       hash_including(
         veteran_file_number: veteran_file_number,
         claim_id: nonratings_end_product_establishment.reference_id,
@@ -342,7 +342,7 @@ feature "Higher-Level Review", :all_dbs do
 
     expect(rating_request_issue).to have_attributes(benefit_type: "compensation")
 
-    expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
+    expect(Caseflow::Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
       claim_id: ratings_end_product_establishment.reference_id,
       rating_issue_contention_map: {
         rating_request_issue.contested_rating_issue_reference_id => rating_request_issue.contention_reference_id
@@ -417,7 +417,7 @@ feature "Higher-Level Review", :all_dbs do
     after { FeatureToggle.enable!(:updated_intake_forms) }
 
     it "Creates contentions with same office special issue" do
-      Fakes::VBMSService.end_product_claim_id = special_issue_reference_id
+      Caseflow::Fakes::VBMSService.end_product_claim_id = special_issue_reference_id
 
       visit "/intake"
       select_form(Constants.INTAKE_FORM_NAMES.higher_level_review)
@@ -462,7 +462,7 @@ feature "Higher-Level Review", :all_dbs do
 
       expect(page).to have_content("#{Constants.INTAKE_FORM_NAMES.higher_level_review} has been submitted.")
 
-      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+      expect(Caseflow::Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: veteran_file_number,
         claim_id: special_issue_reference_id,
         contentions: [{ description: "PTSD denied",
@@ -1064,7 +1064,7 @@ feature "Higher-Level Review", :all_dbs do
       expect(old_rating_decision_request_issue.contested_rating_decision_reference_id).to_not be_nil
       expect(old_rating_decision_request_issue).to be_before_ama
 
-      expect(Fakes::VBMSService).to_not have_received(:create_contentions!).with(
+      expect(Caseflow::Fakes::VBMSService).to_not have_received(:create_contentions!).with(
         hash_including(
           contentions: array_including(
             { description: "Old injury" },
@@ -1074,7 +1074,7 @@ feature "Higher-Level Review", :all_dbs do
         )
       )
 
-      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+      expect(Caseflow::Fakes::VBMSService).to have_received(:create_contentions!).with(
         hash_including(
           contentions: array_including(description: "Left knee granted 2",
                                        contention_type: Constants.CONTENTION_TYPES.higher_level_review)

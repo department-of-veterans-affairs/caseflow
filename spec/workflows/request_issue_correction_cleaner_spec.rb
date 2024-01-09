@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe "Request Issue Correction Cleaner", :postgres do
-  before { allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original }
+  before { allow(Caseflow::Fakes::VBMSService).to receive(:remove_contention!).and_call_original }
 
   let(:veteran) { create(:veteran) }
 
@@ -35,7 +35,7 @@ describe "Request Issue Correction Cleaner", :postgres do
         subject
 
         expect(dta_request_issue.closed_status).to eq("removed")
-        expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(dta_request_issue.contention)
+        expect(Caseflow::Fakes::VBMSService).to have_received(:remove_contention!).once.with(dta_request_issue.contention)
         expect(dta_request_issue.end_product_establishment.synced_status).to eq("CAN")
       end
 
@@ -74,7 +74,7 @@ describe "Request Issue Correction Cleaner", :postgres do
         subject
 
         expect(dta_request_issue.closed_status).to eq("removed")
-        expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(dta_request_issue.contention)
+        expect(Caseflow::Fakes::VBMSService).to have_received(:remove_contention!).once.with(dta_request_issue.contention)
         expect(dta_request_issue.end_product_establishment.synced_status).to_not eq("CAN")
       end
     end
@@ -93,7 +93,7 @@ describe "Request Issue Correction Cleaner", :postgres do
 
         subject
         expect(dta_request_issue.closed_status).to eq("decided")
-        expect(Fakes::VBMSService).to_not have_received(:remove_contention!)
+        expect(Caseflow::Fakes::VBMSService).to_not have_received(:remove_contention!)
         expect(dta_request_issue.end_product_establishment.synced_status).to eq("CLR")
       end
     end
