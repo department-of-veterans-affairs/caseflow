@@ -10,6 +10,7 @@ RSpec.feature("The Correspondence Intake page") do
     before :each do
       Bva.singleton.add_user(unauthorized_user)
       User.authenticate!(user: unauthorized_user)
+      FeatureToggle.enable!(:correspondence_queue)
     end
 
     it "routes unauthorized user to /unauthorized if feature toggle is disabled" do

@@ -7,6 +7,7 @@ RSpec.feature("Add Related Correspondence - Correspondence Intake page") do
   let(:bva_user) { User.authenticate!(roles: ["Mail Intake"]) }
 
   before(:each) do
+    FeatureToggle.enable!(:correspondence_queue)
     organization.add_user(bva_user)
     bva_user.reload
   end

@@ -5,6 +5,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
   let(:mail_user) { create(:user) }
 
   before do
+    FeatureToggle.enable!(:correspondence_queue)
     MailTeam.singleton.add_user(mail_user)
     User.authenticate!(user: mail_user)
     mail_user.reload

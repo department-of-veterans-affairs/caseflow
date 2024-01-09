@@ -3,6 +3,15 @@
 RSpec.feature("Correspondence Intake submission") do
   include CorrespondenceHelpers
 
+  let(:organization) { MailTeam.singleton }
+  let(:bva_user) { User.authenticate!(roles: ["Mail Intake"]) }
+
+  before(:each) do
+    FeatureToggle.enable!(:correspondence_queue)
+    organization.add_user(bva_user)
+    bva_user.reload
+  end
+
   context "user associates correspondence with prior mail" do
     describe "success" do
       it "displays a success banner and links the correspondence" do
