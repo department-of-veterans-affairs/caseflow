@@ -29,6 +29,7 @@ export const SaveModal = (props) => {
   };
 
   const leverList = () => {
+    // WILL NEED UPDATING WHEN RADIO AND COMBINATION LEVERS ARE EDITABLE
     const updatedLevers = Object.values(levers).flat().
       filter((lever) =>
         lever.data_type !== ACD_LEVERS.data_types.radio &&

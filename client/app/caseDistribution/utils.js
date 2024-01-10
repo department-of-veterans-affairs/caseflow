@@ -50,7 +50,8 @@ export const createUpdatedLever = (state, action) => {
 };
 
 /**
- *  Do not trust this code. It is untested
+ * Do not trust this code. It is untested
+ * WILL NEED UPDATING WHEN RADIO AND COMBINATION LEVERS ARE EDITABLE
  */
 export const createUpdatedRadioLever = (state, action) => {
   const { leverGroup, leverItem, value, optionValue } = action.payload;
@@ -74,7 +75,8 @@ export const createUpdatedRadioLever = (state, action) => {
 };
 
 /**
- *  Do not trust this code. It is untested
+ * Do not trust this code. It is untested
+ * WILL NEED UPDATING WHEN RADIO AND COMBINATION LEVERS ARE EDITABLE
  */
 export const createUpdatedCombinationLever = (state, action) => {
   const { leverGroup, leverItem, value, toggleValue } = action.payload;
