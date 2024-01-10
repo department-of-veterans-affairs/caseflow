@@ -105,21 +105,29 @@ export const createUpdatedLeversWithValues = (levers) => {
   const leversWithValues = () => {
     return leverGroups.reduce((updatedLevers, leverGroup) => {
       updatedLevers[leverGroup] = levers[leverGroup].map((lever) => {
-        let value = null;
+        let additionalValues = {
+          backendValue: lever.value
+        };
+
         const dataType = lever.data_type;
 
         // Only add a new property for radio and combination data types as these have special handling logic
         // to retrieve value
         if (dataType === ACD_LEVERS.data_types.radio) {
-          value = findOption(lever, lever.value).value;
+          additionalValues = {
+            currentValue: findOption(lever, lever.value).value,
+            backendValue: findOption(lever, lever.value).value,
+          };
         } else if (dataType === ACD_LEVERS.data_types.combination) {
-          value = createCombinationValue(lever.is_toggle_active, lever.value);
+          additionalValues = {
+            currentValue: createCombinationValue(lever.is_toggle_active, lever.value),
+            backendValue: createCombinationValue(lever.is_toggle_active, lever.value)
+          };
         }
 
         return {
           ...lever,
-          currentValue: value,
-          backendValue: value,
+          ...additionalValues
         };
       });
 

@@ -33,7 +33,7 @@ export const SaveModal = (props) => {
       filter((lever) =>
         lever.data_type !== ACD_LEVERS.data_types.radio &&
         lever.data_type !== ACD_LEVERS.data_types.combination &&
-        lever.backendValue !== 'undefined' &&
+        lever.backendValue !== null &&
         `${lever.value}` !== lever.backendValue
       );
 
