@@ -1,5 +1,5 @@
 import leverStore from './reducers/levers/leversReducer';
-import { Constant } from './constants';
+import ACD_LEVERS from '../../constants/ACD_LEVERS';
 
 export const checkIfOtherChangesExist = (currentLever) => {
   // this isn't going to work as is because levers is currently split up into grouping
@@ -25,9 +25,9 @@ export const checkIfOtherChangesExist = (currentLever) => {
   return leversWithChangesList.length > 0;
 };
 
-const findOptionValue = (lever, value) => lever.options.find((option) => option.item === value).value;
+export const findOption = (lever, value) => lever.options.find((option) => option.item === value);
 
-const createDocketDistributionPriorValue = (toggleValue, value) => `${toggleValue}-${value}`;
+const createCombinationValue = (toggleValue, value) => `${toggleValue}-${value}`;
 
 /**
  * Updates levers of data type number, boolean, and text
@@ -49,51 +49,21 @@ export const createUpdatedLever = (state, action) => {
   return [updatedLeverGroup, hasValueChanged];
 };
 
+/**
+ *  Do not trust this code. It is untested
+ */
 export const createUpdatedRadioLever = (state, action) => {
-  const { leverGroup, leverItem, value, optionValue, toggleValue } = action.payload;
+  const { leverGroup, leverItem, value, optionValue } = action.payload;
   let hasValueChanged = false;
 
   const updateLeverValue = (lever) => {
-    if (leverGroup === Constant.AFFINITY) {
-      const selectedOption = findOptionValue(lever, value);
+    const selectedOption = findOption(lever, value);
 
-      selectedOption.value = optionValue;
+    hasValueChanged = `${optionValue}` !== lever.backendValue;
 
-      return { ...lever, value: optionValue };
-    } else if (leverGroup === Constant.DOCKET_DISTRIBUTION_PRIOR) {
-      const newValue = createDocketDistributionPriorValue(toggleValue, value);
+    selectedOption.value = optionValue;
 
-      return { ...lever, value: newValue, is_toggle_active: toggleValue };
-    }
-
-    return { ...lever, value };
-  };
-
-  const updatedLeverGroup = state.levers[leverGroup].map((lever) =>
-    lever.item === leverItem ? updateLeverValue(lever) : lever
-  );
-
-  return [updatedLeverGroup, hasValueChanged];
-};
-
-export const createUpdatedCombinationLever = (state, action) => {
-  const { leverGroup, leverItem, value, optionValue, toggleValue } = action.payload;
-  let hasValueChanged = false;
-
-  const updateLeverValue = (lever) => {
-    if (leverGroup === Constant.AFFINITY) {
-      const selectedOption = findOptionValue(lever, value);
-
-      selectedOption.value = optionValue;
-
-      return { ...lever, value: optionValue };
-    } else if (leverGroup === Constant.DOCKET_DISTRIBUTION_PRIOR) {
-      const newValue = createDocketDistributionPriorValue(toggleValue, value);
-
-      return { ...lever, value: newValue, is_toggle_active: toggleValue };
-    }
-
-    return { ...lever, value };
+    return { ...lever, currentValue: optionValue };
   };
 
   const updatedLeverGroup = state.levers[leverGroup].map((lever) =>
@@ -104,7 +74,30 @@ export const createUpdatedCombinationLever = (state, action) => {
 };
 
 /**
- * Add backendValue and currentValue attributes to each lever
+ *  Do not trust this code. It is untested
+ */
+export const createUpdatedCombinationLever = (state, action) => {
+  const { leverGroup, leverItem, value, toggleValue } = action.payload;
+  let hasValueChanged = false;
+
+  const updateLeverValue = (lever) => {
+    const newValue = createCombinationValue(toggleValue, value);
+
+    hasValueChanged = `${newValue}` !== lever.backendValue;
+
+    return { ...lever, currentValue: newValue, is_toggle_active: toggleValue };
+  };
+
+  const updatedLeverGroup = state.levers[leverGroup].map((lever) =>
+    lever.item === leverItem ? updateLeverValue(lever) : lever
+  );
+
+  return [updatedLeverGroup, hasValueChanged];
+};
+
+/**
+ * Add backendValue attributes to each lever
+ * For radio and combination levers add currentValue
  */
 export const createUpdatedLeversWithValues = (levers) => {
   const leverGroups = Object.keys(levers);
@@ -113,18 +106,19 @@ export const createUpdatedLeversWithValues = (levers) => {
     return leverGroups.reduce((updatedLevers, leverGroup) => {
       updatedLevers[leverGroup] = levers[leverGroup].map((lever) => {
         let value = null;
-        const group = lever.lever_group;
+        const dataType = lever.data_type;
 
-        if (group === Constant.AFFINITY) {
-          value = findOptionValue(lever, lever.value).value;
-        } else if (group === Constant.DOCKET_DISTRIBUTION_PRIOR) {
-          value = createDocketDistributionPriorValue(lever.is_toggle_active, lever.value);
-        } else {
-          value = lever.value;
+        // Only add a new property for radio and combination data types as these have special handling logic
+        // to retrieve value
+        if (dataType === ACD_LEVERS.data_types.radio) {
+          value = findOption(lever, lever.value).value;
+        } else if (dataType === ACD_LEVERS.data_types.combination) {
+          value = createCombinationValue(lever.is_toggle_active, lever.value);
         }
 
         return {
           ...lever,
+          currentValue: value,
           backendValue: value,
         };
       });

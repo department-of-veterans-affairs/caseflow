@@ -8,10 +8,9 @@ import {
   formatLeverHistory
 } from '../../utils';
 
-// saveChangesActivated, editedLevers, formattedHistory, changesOccurred should be deleted.
+// editedLevers, formattedHistory, changesOccurred should be deleted.
 // Refactor where it is used before deletion
 export const initialState = {
-  saveChangesActivated: false,
   editedLevers: [],
   levers: {},
   backendLevers: [],
@@ -35,20 +34,6 @@ const leversReducer = (state = initialState, action = {}) => {
     });
 
   case ACTIONS.LOAD_LEVERS:
-    // const leverGroups = Object.keys(action.payload.levers)
-    // const levers = leverGroups.forEach(leverGroup => leverGroup.forEach(lever => {
-    //   let value = null;
-    //    switch(lever.lever_group) {
-    //     case Constant.AFFINITY:
-    //       value = lever.options[lever.value].value
-    //       return
-    //     default:
-    //       value = lever.value
-    //       return
-    //   }
-    //   lever.backendValue = value;
-    //   lever.value = value;
-    // }))
     return update(state, {
       levers: {
         $set: action.payload.levers

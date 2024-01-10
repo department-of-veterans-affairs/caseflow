@@ -20,7 +20,7 @@ export const loadLevers = (levers) =>
     });
   };
 
-export const updateRadioLever = (leverGroup, leverItem, value, optionValue = null, toggleValue = false) =>
+export const updateRadioLever = (leverGroup, leverItem, value, optionValue = null) =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.UPDATE_RADIO_LEVER,
@@ -28,13 +28,12 @@ export const updateRadioLever = (leverGroup, leverItem, value, optionValue = nul
         leverGroup,
         leverItem,
         value,
-        optionValue,
-        toggleValue
+        optionValue
       }
     });
   };
 
-export const updateCombinationLever = (leverGroup, leverItem, value, optionValue = null, toggleValue = false) =>
+export const updateCombinationLever = (leverGroup, leverItem, value, toggleValue = false) =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.UPDATE_COMBINATION_LEVER,
@@ -42,7 +41,6 @@ export const updateCombinationLever = (leverGroup, leverItem, value, optionValue
         leverGroup,
         leverItem,
         value,
-        optionValue,
         toggleValue
       }
     });
