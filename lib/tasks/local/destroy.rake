@@ -19,7 +19,7 @@ namespace :local do
   end
 
   desc "Nuke docker environment (removes all process, containers, images and volumes)"
-  task nuke: :environment do
+  task :nuke do # rubocop:disable Rails/RakeEnvironment
     puts ">>> BEGIN local:nuke"
 
     puts ">>> 01/05 Stopping all docker processes"

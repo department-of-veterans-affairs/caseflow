@@ -179,7 +179,7 @@ namespace :add_admins do
   end
 
   desc "create an IHP Draft for a designated appeal"
-  task create_ihp_draft: :environment do
+  task :create_ihp_draft do # rubocop:disable Rails/RakeEnvironment
     STDOUT.puts("Enter the appeal id you want to add an IHP Draft to.")
     appeal_id = STDIN.gets.chomp
     appeal = Appeal.find(appeal_id.to_i)
