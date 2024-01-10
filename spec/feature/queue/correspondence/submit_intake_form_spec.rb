@@ -2,6 +2,7 @@
 
 RSpec.feature("Correspondence Intake submission") do
   include CorrespondenceHelpers
+  let(:wait_time) { 30 }
 
   context "user associates correspondence with prior mail" do
     describe "success" do
@@ -13,7 +14,7 @@ RSpec.feature("Correspondence Intake submission") do
         click_button("Continue")
         click_button("Submit")
         click_button("Confirm")
-        using_wait_time(10) do
+        using_wait_time(wait_time) do
           expect(page).to have_content("You have successfully submitted a correspondence record")
         end
         expect(Correspondence.first.related_correspondences).to eq([Correspondence.second])
@@ -29,7 +30,7 @@ RSpec.feature("Correspondence Intake submission") do
         click_button("Continue")
         click_button("Submit")
         click_button("Confirm")
-        using_wait_time(10) do
+        using_wait_time(wait_time) do
           expect(page).to have_content("You have successfully submitted a correspondence record")
         end
       end
@@ -54,7 +55,7 @@ RSpec.feature("Correspondence Intake submission") do
         click_button("Continue")
         click_button("Submit")
         click_button("Confirm")
-        using_wait_time(10) do
+        using_wait_time(wait_time) do
           expect(page).to have_content("You have successfully submitted a correspondence record")
         end
       end
@@ -87,7 +88,7 @@ RSpec.feature("Correspondence Intake submission") do
         click_button("Continue")
         click_button("Submit")
         click_button("Confirm")
-        using_wait_time(10) do
+        using_wait_time(wait_time) do
           expect(page).to have_content("The correspondence's documents have failed")
         end
       end
@@ -99,7 +100,7 @@ RSpec.feature("Correspondence Intake submission") do
       it "displays a success banner, links the appeal, and creates the task" do
         visit_intake_form_step_2_with_appeals
         existing_appeal_radio_options[:yes].click
-        using_wait_time(15) do
+        using_wait_time(wait_time) do
           within ".cf-case-list-table" do
             page.all(".cf-form-checkbox").last.click
           end
@@ -111,7 +112,7 @@ RSpec.feature("Correspondence Intake submission") do
         click_button("Continue")
         click_button("Submit")
         click_button("Confirm")
-        using_wait_time(10) do
+        using_wait_time(wait_time) do
           expect(page).to have_content("You have successfully submitted a correspondence record")
         end
         expect(Correspondence.first.appeals).to eq([Appeal.fifth])
@@ -124,7 +125,7 @@ RSpec.feature("Correspondence Intake submission") do
         # this fails because the seed appeal has no root task
         visit_intake_form_step_2_with_appeals_without_initial_tasks
         existing_appeal_radio_options[:yes].click
-        using_wait_time(15) do
+        using_wait_time(wait_time) do
           within ".cf-case-list-table" do
             page.all(".cf-form-checkbox").last.click
           end
@@ -136,7 +137,7 @@ RSpec.feature("Correspondence Intake submission") do
         click_button("Continue")
         click_button("Submit")
         click_button("Confirm")
-        using_wait_time(10) do
+        using_wait_time(wait_time) do
           expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
         end
         expect(Correspondence.first.appeals).to eq([])
@@ -149,26 +150,26 @@ RSpec.feature("Correspondence Intake submission") do
       it "completes the evidence submission window task" do
         active_evidence_submissions_tasks
         existing_appeal_radio_options[:yes].click
-        using_wait_time(10) do
+        using_wait_time(wait_time) do
           page.all(".checkbox-wrapper-1").find(".cf-form-checkbox").first.click
         end
         find("label", text: "Waive Evidence Window").click
         find_by_id("waiveReason").fill_in with: "test waive note"
         click_button("Continue")
         find(".cf-pdf-external-link-icon").click
-        using_wait_time(15) do
+        using_wait_time(wait_time) do
           page.switch_to_window(page.windows.last)
           expect(page).to have_content("Evidence Submission Window Task")
         end
         page.switch_to_window(page.windows.first)
         click_button("Submit")
         click_button("Confirm")
-        using_wait_time(15) do
+        using_wait_time(wait_time) do
           expect(page).to have_content("You have successfully submitted a correspondence record")
         end
         page.switch_to_window(page.windows.last)
         refresh
-        using_wait_time(15) do
+        using_wait_time(wait_time) do
           page.switch_to_window(page.windows.last)
           expect(page).to have_no_content("Evidence Submission Window Task")
         end
@@ -181,7 +182,7 @@ RSpec.feature("Correspondence Intake submission") do
       it "displays a success banner, links the appeal" do
         visit_intake_form_step_2_with_appeals
         existing_appeal_radio_options[:yes].click
-        using_wait_time(15) do
+        using_wait_time(wait_time) do
           within ".cf-case-list-table" do
             page.all(".cf-form-checkbox").last.click
           end
@@ -189,7 +190,7 @@ RSpec.feature("Correspondence Intake submission") do
         click_button("Continue")
         click_button("Submit")
         click_button("Confirm")
-        using_wait_time(10) do
+        using_wait_time(wait_time) do
           expect(page).to have_content("You have successfully submitted a correspondence record")
         end
         expect(Correspondence.first.appeals).to eq([Appeal.fifth])
