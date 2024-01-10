@@ -2,82 +2,9 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
 import ApiUtil from '../../util/ApiUtil';
-import Modal from 'app/components/Modal';
 import Button from 'app/components/Button';
-import COPY from '../../../COPY';
-import ACD_LEVERS from '../../../constants/ACD_LEVERS';
-import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
-import moment from 'moment';
-
-const changedOptionValue = (changedLever, currentLever) => {
-  if (changedLever.data_type === ACD_LEVERS.data_types.radio ||
-    changedLever.data_type === ACD_LEVERS.data_types.radio) {
-    const newChangedOptionValue = changedLever.options.find((option) => option.item === changedLever.value).value;
-    const currentOptionValue = currentLever.options.find((option) => option.item === currentLever.value)?.value;
-
-    return newChangedOptionValue !== currentOptionValue;
-  }
-
-  return false;
-};
-
-const generateLeverUpdateData = (leverStore) => {
-  const levers = leverStore.getState().levers;
-  const backendLevers = leverStore.getState().backendLevers;
-  const filteredLevers = levers.filter((lever, i) =>
-    lever.value !== backendLevers[i].value || changedOptionValue(lever, backendLevers[i])
-  );
-
-  const filteredBackendLevers = backendLevers.filter((lever, i) =>
-    backendLevers[i].value !== levers[i].value || changedOptionValue(backendLevers[i], levers[i])
-  );
-
-  return ([filteredLevers, filteredBackendLevers]);
-};
-const generateLeverHistory = (filteredLevers, filteredBackendLevers) => {
-  return filteredLevers.map((lever, index) => {
-    const doesDatatypeRequireComplexLogic = (lever.data_type === ACD_LEVERS.data_types.radio ||
-      lever.data_type === ACD_LEVERS.data_types.combination);
-
-    let today = new Date();
-    let todaysDate = moment(today).format('ddd MMM DD hh:mm:ss YYYY');
-
-    if (doesDatatypeRequireComplexLogic) {
-      const selectedOption = lever.options.find((option) => option.item === lever.value);
-      const previousSelectedOption =
-        filteredBackendLevers[index].options.find((option) => option.item === filteredBackendLevers[index].value);
-      const isSelectedOptionANumber = selectedOption.data_type === ACD_LEVERS.data_types.number;
-      const isPreviouslySelectedOptionANumber = previousSelectedOption.data_type === ACD_LEVERS.data_types.number;
-
-      return {
-        created_at: todaysDate,
-        title: lever.title,
-        original_value: isPreviouslySelectedOptionANumber ?
-          previousSelectedOption.value : previousSelectedOption.text,
-        current_value: isSelectedOptionANumber ? selectedOption.value : selectedOption.text,
-        unit: lever.unit
-      };
-    }
-
-    return {
-      created_at: todaysDate,
-      title: lever.title,
-      original_value: filteredLevers[index].value,
-      current_value: lever.value,
-      unit: lever.unit
-    };
-
-  });
-};
-
-const updateLeverHistory = (leverStore) => {
-  let [filteredLevers] = generateLeverUpdateData(leverStore);
-
-  leverStore.dispatch({
-    type: ACTIONS.FORMAT_LEVER_HISTORY,
-    history: generateLeverHistory(filteredLevers, filteredLevers)
-  });
-};
+import { useDispatch, useSelector } from 'react-redux';
+import SaveModal from './SaveModal';
 
 const setShowSuccessBanner = (leverStore) => {
   leverStore.dispatch({
@@ -88,20 +15,6 @@ const setShowSuccessBanner = (leverStore) => {
       type: ACTIONS.HIDE_SUCCESS_BANNER,
     });
   }, 10000);
-};
-
-const leverValueDisplay = (lever, isPreviousValue) => {
-  const doesDatatypeRequireComplexLogic = (lever.data_type === ACD_LEVERS.data_types.radio ||
-    lever.data_type === ACD_LEVERS.data_types.combination);
-
-  if (doesDatatypeRequireComplexLogic) {
-    const selectedOption = lever.options.find((option) => option.item === lever.value);
-    const isSelectedOptionANumber = selectedOption.data_type === ACD_LEVERS.data_types.number;
-
-    return isSelectedOptionANumber ? selectedOption.value : selectedOption.text;
-  }
-
-  return isPreviousValue ? lever.value : <strong>{lever.value}</strong>;
 };
 
 const saveLeverChanges = (leverStore) => {
@@ -122,8 +35,6 @@ const saveLeversToDB = async (leverStore) => {
   try {
     const leversData = leverStore.getState().levers;
 
-    updateLeverHistory(leverStore);
-
     const postData = {
       current_levers: leversData
     };
@@ -138,73 +49,17 @@ const saveLeversToDB = async (leverStore) => {
   }
 };
 
-const leverList = (leverStore) => {
-  const levers = leverStore.getState().levers;
-  const backendLevers = leverStore.getState().backendLevers;
-  const filteredLevers = levers.filter((lever, i) =>
-    lever.value !== backendLevers[i].value || changedOptionValue(lever, backendLevers[i]));
-  const filteredBackendLevers = backendLevers.filter((lever, i) =>
-    backendLevers[i].value !== levers[i].value || changedOptionValue(backendLevers[i], levers[i]));
-
-  return (
-    <div>
-      <table>
-        <tbody>
-          <tr>
-            <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableLeftStyling}`}>
-              {COPY.ASE_DISTRIBUTION_LEVER_SAVE_BUTTON_DATA}
-            </th>
-            <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableRightStyling}`}>
-              {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_PREV_VALUE}
-            </th>
-            <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableRightStyling}`}>
-              {COPY.CASE_DISTRIBUTION_LEVER_SAVE_BUTTON_VALUE}
-            </th>
-          </tr>
-        </tbody>
-        <tbody>
-          {filteredLevers.map((lever, index) => (
-            <tr key={index}>
-              <React.Fragment>
-                <td className={`${styles.modalTableStyling} ${styles.modalTableLeftStyling}`}>{lever.title}</td>
-                <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}>
-                  {leverValueDisplay(filteredBackendLevers[index], true)}
-                </td>
-                <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}>
-                  {leverValueDisplay(lever, false)}
-                </td>
-              </React.Fragment>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-};
-
 export const LeverSaveButton = ({ leverStore }) => {
+  const changesOccurred = useSelector((state) => state.caseDistributionLevers.changesOccurred);
   const [showModal, setShowModal] = useState(false);
-  const [changesOccurred, setChangesOccurred] = useState(false);
+  const [enableSave, setEnableSave] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = leverStore.subscribe(() => {
-      const state = leverStore.getState();
-
-      const validChangeOccurred = state.changesOccurred;
-
-      setChangesOccurred(validChangeOccurred);
-
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, [leverStore]);
+    setEnableSave(changesOccurred);
+  }, [changesOccurred]);
 
   const handleSaveButton = () => {
-    if (changesOccurred) {
-      setShowModal(true);
-    }
+    setShowModal(true);
   };
 
   const handleConfirmButton = async () => {
@@ -219,23 +74,15 @@ export const LeverSaveButton = ({ leverStore }) => {
       <Button
         id="LeversSaveButton"
         onClick={handleSaveButton}
-        disabled={!changesOccurred}
+        disabled={!enableSave}
       >
         Save
       </Button>
       {showModal &&
-        <Modal
-          isOpen={showModal}
-          onClose={() => setShowModal(false)}
-          closeHandler={() => setShowModal(false)}
-          title={COPY.CASE_DISTRIBUTION_MODAL_TITLE}
-          confirmButton={<Button onClick={handleConfirmButton}>{COPY.MODAL_CONFIRM_BUTTON}</Button>}
-          cancelButton={<Button onClick={() => setShowModal(false)}>{COPY.MODAL_CANCEL_BUTTON}</Button>}
-          className={styles.updatedModalStyling}
-        >
-          <p>{COPY.CASE_DISTRIBUTION_MODAL_DESCRIPTION}</p>
-          {leverList(leverStore)}
-        </Modal>
+        <SaveModal
+          setShowModal={setShowModal}
+          handleConfirmButton={handleConfirmButton}
+        />
       }
     </>
   );
