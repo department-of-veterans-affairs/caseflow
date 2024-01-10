@@ -163,9 +163,9 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
           page.all(".cf-form-checkbox").first.click
           using_wait_time(wait_time) do
             unformatted_id = page.all(".cf-form-checkboxes").first[:class]
+            formatted_id = unformatted_id.split("-")[2].split(" ")[0]
+            expect find_by_id(formatted_id, visible: false).checked?
           end
-          formatted_id = unformatted_id.split("-")[2].split(" ")[0]
-          expect find_by_id(formatted_id, visible: false).checked?
         end
       end
 
