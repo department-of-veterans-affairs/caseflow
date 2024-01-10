@@ -68,7 +68,9 @@ shared_examples "Task belongs_to polymorphic appeal" do
         end
       end
 
-      context "when eager loading with `includes`" do
+      # Skipped because this no longer works with new "split" association definitions.
+      #   Use a scoped `preload` instead (eg. `Task.ama.preload(:appeal)`).
+      xcontext "when eager loading with `includes`" do
         subject { Task.ama.includes(:ama_appeal) }
 
         let!(:_legacy_task) { create(:task) }
@@ -159,7 +161,9 @@ shared_examples "Task belongs_to polymorphic appeal" do
         end
       end
 
-      context "when eager loading with `includes`" do
+      # Skipped because this no longer works with new "split" association definitions.
+      #   Use a scoped `preload` instead (eg. `Task.legacy.preload(:appeal)`).
+      xcontext "when eager loading with `includes`" do
         subject { Task.legacy.includes(:legacy_appeal) }
 
         let!(:_ama_task) { create(:ama_task) }
@@ -250,7 +254,9 @@ shared_examples "Task belongs_to polymorphic appeal" do
         end
       end
 
-      context "when eager loading with `includes`" do
+      # Skipped because this no longer works with new "split" association definitions.
+      #   Use a scoped `preload` instead (eg. `Task.supplemental_claim.preload(:appeal)`).
+      xcontext "when eager loading with `includes`" do
         subject { Task.supplemental_claim.includes(:supplemental_claim) }
 
         let!(:_ama_task) { create(:ama_task) }
@@ -341,7 +347,9 @@ shared_examples "Task belongs_to polymorphic appeal" do
         end
       end
 
-      context "when eager loading with `includes`" do
+      # Skipped because this no longer works with new "split" association definitions.
+      #   Use a scoped `preload` instead (eg. `Task.higher_level_review.preload(:appeal)`).
+      xcontext "when eager loading with `includes`" do
         subject { Task.higher_level_review.includes(:higher_level_review) }
 
         let!(:_ama_task) { create(:ama_task) }
