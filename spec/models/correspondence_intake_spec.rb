@@ -7,15 +7,23 @@ RSpec.describe CorrespondenceIntake, type: :model do
   end
 
   describe "Record entry" do
-    it "can be created" do
-      correspondence = Correspondence.create!(
-        updated_by_id: 1,
-        correspondence_type_id: 1,
-        assigned_by_id: 1,
-        veteran_id: 1,
-        package_document_type_id: 1
+    before do
+      CorrespondenceType.create!(
+        name: "a correspondence type"
       )
+      PackageDocumentType.create!
+
+      FactoryBot.create(:veteran)
+    end
+    it "can be created" do
       user = User.create!(css_id: "User", station_id: "1")
+      correspondence = Correspondence.create!(
+        updated_by_id: User.first.id,
+        correspondence_type: CorrespondenceType.first,
+        assigned_by_id: User.first.id,
+        veteran_id: Veteran.first.id,
+        package_document_type: PackageDocumentType.first
+      )
       subject = CorrespondenceIntake.create!(
         correspondence_id: correspondence.id,
         user_id: user.id,
@@ -27,14 +35,14 @@ RSpec.describe CorrespondenceIntake, type: :model do
     end
 
     it "validates :correspondence_id and :user_id" do
-      correspondence = Correspondence.create!(
-        correspondence_type_id: 1,
-        assigned_by_id: 1,
-        updated_by_id: 1,
-        veteran_id: 1,
-        package_document_type_id: 1
-      )
       user = User.create!(css_id: "User", station_id: "1")
+      correspondence = Correspondence.create!(
+        updated_by_id: User.first.id,
+        correspondence_type: CorrespondenceType.first,
+        assigned_by_id: User.first.id,
+        veteran_id: Veteran.first.id,
+        package_document_type: PackageDocumentType.first
+      )
 
       expect { CorrespondenceIntake.create! }.to raise_error(ActiveRecord::RecordInvalid)
       expect { CorrespondenceIntake.create!(correspondence_id: correspondence.id) }
