@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 // import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
 import { css } from 'glamor';
@@ -9,6 +9,9 @@ import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import { checkIfOtherChangesExist } from '../utils';
+import { getLeversByGroup } from '../reducers/levers/leversSelector';
+import { Constant } from '../constants';
+import { updateLeverState } from '../reducers/levers/leversActions';
 
 const BatchSize = (props) => {
   const { isAdmin } = props;
@@ -19,9 +22,11 @@ const BatchSize = (props) => {
     '& .usa-input-error label': { bottom: '15px', left: '89px' }
   });
 
-  const backendLevers = useSelector((state) => state.caseDistributionLevers.backendLevers.batch);
-  const storeLevers = useSelector((state) => state.caseDistributionLevers.levers.batch);
-  const [errorMessagesList, setErrorMessages] = useState({});
+  const errorMessages = {};
+  const dispatch = useDispatch();
+  const theState = useSelector((state) => state);
+  const storeLevers = getLeversByGroup(theState, Constant.LEVERS, Constant.BATCH);
+  const [errorMessagesList] = useState(errorMessages);
   const [batchSizeLevers, setBatchSizeLevers] = useState(storeLevers);
 
   useEffect(() => {
@@ -29,69 +34,24 @@ const BatchSize = (props) => {
   }, [storeLevers]);
 
   const updateLever = (index) => (event) => {
-    const levers = batchSizeLevers.map((lever, i) => {
-      if (index === i) {
+    setBatchSizeLevers((prevLevers) =>
+      prevLevers.map((lever, i) => {
+        if (index === i) {
+          console.log('Updating Lever:', lever);
+          const initialLever = theState.backendLevers.find((backendLever) => backendLever.item === lever.item);
+          console.log('Initial Lever:', lever.item);
+          const validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
 
-        let initialLever = backendLevers.find((original) => original.item === lever.item);
-
-        let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
-
-        if (validationResponse.statement === ACD_LEVERS.DUPLICATE) {
-
-          if (checkIfOtherChangesExist(lever)) {
-            lever.value = event;
-            setErrorMessages(validationResponse.updatedMessages);
-
-            // leverStore.dispatch({
-            //   type: ACTIONS.UPDATE_LEVER_VALUE,
-            //   updated_lever: { item: lever.item, value: event },
-            //   hasValueChanged: false,
-            //   validChange: true
-            // });
-          } else {
-
-            lever.value = event;
-            setErrorMessages(validationResponse.updatedMessages);
-
-            // leverStore.dispatch({
-            //   type: ACTIONS.UPDATE_LEVER_VALUE,
-            //   updated_lever: { item: lever.item, value: event },
-            //   hasValueChanged: false,
-            //   validChange: false
-            // });
+          if (validationResponse.statement === ACD_LEVERS.SUCCESS || validationResponse.statement === ACD_LEVERS.FAIL) {
+            // dispatch(updateLeverState(Constant.BATCH, lever.item, event));
+          } else if (validationResponse.statement === ACD_LEVERS.DUPLICATE && checkIfOtherChangesExist(lever)) {
+            // dispatch(updateLeverState(Constant.BATCH, lever.item, event));
           }
-
         }
-        if (validationResponse.statement === ACD_LEVERS.SUCCESS) {
 
-          lever.value = event;
-          setErrorMessages(validationResponse.updatedMessages);
-          // leverStore.dispatch({
-          //   type: ACTIONS.UPDATE_LEVER_VALUE,
-          //   updated_lever: { item: lever.item, value: event },
-          //   validChange: true
-          // });
-
-          return lever;
-        }
-        if (validationResponse.statement === ACD_LEVERS.FAIL) {
-          lever.value = event;
-          setErrorMessages(validationResponse.updatedMessages);
-
-          // leverStore.dispatch({
-          //   type: ACTIONS.UPDATE_LEVER_VALUE,
-          //   updated_lever: { item: lever.item, value: event },
-          //   validChange: false
-          // });
-
-          return lever;
-        }
-      }
-
-      return lever;
-    });
-
-    setBatchSizeLevers(levers);
+        return lever;
+      })
+    );
   };
 
   return (
