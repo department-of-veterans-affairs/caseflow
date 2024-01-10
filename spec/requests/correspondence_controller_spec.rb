@@ -18,8 +18,6 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
     )
   end
 
-
-
   let(:mock_doc_uploader) { instance_double(CorrespondenceDocumentsEfolderUploader) }
 
   before do
