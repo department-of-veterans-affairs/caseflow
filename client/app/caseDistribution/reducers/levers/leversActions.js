@@ -34,6 +34,36 @@ export const updateLeverState = (leverGroup, leverItem, value, optionValue = nul
     });
   };
 
+export const updateAffinityLevers = (leverGroup, leverItem, value, optionValue = null, toggleValue = false) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.UPDATE_AFFINITY_LEVER,
+      payload: {
+        leverGroup,
+        leverItem,
+        value,
+        optionValue,
+        toggleValue
+      }
+    });
+  };
+
+export const updateDocketDistributionPriors = (
+  leverGroup, leverItem, value, optionValue = null, toggleValue = false
+) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.UPDATE_DOCKET_DISTRIBUTION_PRIOR_LEVER,
+      payload: {
+        leverGroup,
+        leverItem,
+        value,
+        optionValue,
+        toggleValue
+      }
+    });
+  };
+
 // work in progress
 export const formatLeverHistory = (leverHistory) =>
   (dispatch) => {
