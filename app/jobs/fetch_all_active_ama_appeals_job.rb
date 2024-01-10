@@ -150,7 +150,6 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   # Params: Appeal or LegacyAppeal object
   #
   # Returns: Hash of "vso_ihp_pending" & "vso_ihp_complete" key value pairs
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def map_appeal_ihp_state(appeal)
     appeal_task_types = appeal.tasks.map(&:type)
     if IHP_TYPE_TASKS.any? { |ihp_task| appeal_task_types.include?(ihp_task) }
@@ -195,7 +194,6 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
 
     { privacy_act_pending: false, privacy_act_complete: false }
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   # Purpose: Determines if the hearing scheduled attribute within the associated
   # appeal_state record should be set to true
