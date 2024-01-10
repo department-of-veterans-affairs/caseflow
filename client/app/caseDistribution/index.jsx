@@ -110,12 +110,6 @@ class CaseDistribution extends React.PureComponent {
       docketLeversObject,
     };
 
-    const sectionTitles = [
-      'AMA Hearings',
-      'AMA Direct Review',
-      'AMA Evidence Submission',
-    ];
-
     return (
       <ReduxBase reducer={rootReducer}>
         <Router {...this.props.routerTestProps}>
@@ -153,7 +147,6 @@ class CaseDistribution extends React.PureComponent {
                             acd_history={this.props.acd_history}
                             user_is_an_acd_admin = {this.props.user_is_an_acd_admin}
                             leverStore={leverStore}
-                            sectionTitles={sectionTitles}
                           />
                         );
                       }}

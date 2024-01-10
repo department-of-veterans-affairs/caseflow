@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 // import styles from 'app/styles/caseDistribution/LeverHistory.module.scss';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
+import COPY from '../../../COPY';
 
 const LeverHistory = (props) => {
   const { historyData } = props;
@@ -168,11 +169,21 @@ const LeverHistory = (props) => {
       <table>
         <tbody>
           <tr>
-            <th className='lever-history-table-header-styling'>Date of Last Change</th>
-            <th className='lever-history-table-header-styling'>User ID</th>
-            <th className='lever-history-table-header-styling'>Data Element Changed</th>
-            <th className='lever-history-table-header-styling'>Previous Value</th>
-            <th className='lever-history-table-header-styling'>Updated Value</th>
+            <th className='lever-history-table-header-styling'>
+              {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_DATE}
+            </th>
+            <th className='lever-history-table-header-styling'>
+              {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_USER}
+            </th>
+            <th className='lever-history-table-header-styling'>
+              {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_DATA_ELEMENT}
+            </th>
+            <th className='lever-history-table-header-styling'>
+              {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_PREV_VALUE}
+            </th>
+            <th className='lever-history-table-header-styling'>
+              {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_UPDATED_VALUE}
+            </th>
           </tr>
         </tbody>
         <tbody>{history.map((entry, index) =>
@@ -187,7 +198,7 @@ const LeverHistory = (props) => {
                 }
               </ol>
             </td>
-            <td className={styles.historyTableStyling}>
+            <td className='history-table-styling'>
               <ol>
                 {entry.previous_values.map((previousValue, idx) => {
                   return <li key={previousValue}>{previousValue}{' '}{entry.units[idx]}</li>;
@@ -195,7 +206,7 @@ const LeverHistory = (props) => {
                 }
               </ol>
             </td>
-            <td className={styles.historyTableStyling}>
+            <td className='history-table-styling'>
               <ol>
                 {entry.updated_values.map((updatedValue, idx) => {
                   return <li key={updatedValue}>{updatedValue}{' '}{entry.units[idx]}</li>;

@@ -5,8 +5,9 @@ import DocketTimeGoals from './DocketTimeGoals';
 import AffinityDays from './AffinityDays';
 import LeverButtonsWrapper from './LeverButtonsWrapper';
 import ExclusionTable from './ExclusionTable';
+import { sectionTitles } from '../constants';
 
-const InteractableLeverWrapper = ({ levers, leverStore, isAdmin, sectionTitles }) => {
+const InteractableLeverWrapper = ({ levers, leverStore, isAdmin }) => {
 
   return (
     <div>
@@ -27,7 +28,6 @@ InteractableLeverWrapper.propTypes = {
   levers: PropTypes.object.isRequired,
   leverStore: PropTypes.any,
   isAdmin: PropTypes.bool,
-  sectionTitles: PropTypes.array.isRequired
 };
 
 export default InteractableLeverWrapper;
