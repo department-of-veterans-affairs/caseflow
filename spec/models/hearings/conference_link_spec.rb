@@ -39,7 +39,7 @@ describe ConferenceLink do
           described_class.create(
             hearing_day_id: hearing_day.id
           )
-        end .to raise_error VirtualHearings::LinkService::URLHostMissingError
+        end.to raise_error VirtualHearings::LinkService::URLHostMissingError
       end
     end
 
@@ -56,7 +56,7 @@ describe ConferenceLink do
           described_class.create(
             hearing_day_id: hearing_day.id
           )
-        end .to raise_error VirtualHearings::LinkService::URLPathMissingError
+        end.to raise_error VirtualHearings::LinkService::URLPathMissingError
       end
     end
 
@@ -69,7 +69,7 @@ describe ConferenceLink do
           described_class.create(
             hearing_day_id: hearing_day.id
           )
-        end .to raise_error VirtualHearings::LinkService::PINKeyMissingError
+        end.to raise_error VirtualHearings::LinkService::PINKeyMissingError
       end
     end
   end
@@ -221,7 +221,7 @@ describe ConferenceLink do
         expect(conference_link.guest_hearing_link).to eq(existing_url)
       end
     end
-    # rubocop:disable Metrics/LineLength
+    # rubocop:disable Layout/LineLength
     context "If alias_name(aliased for the alias property) is nil AND guest_hearing_link is nil and alias_with_host is NOT nil" do
       it "creates a guest_hearing_link updates the property and updates the alias property" do
         conference_link.update!(alias: nil, guest_hearing_link: nil, alias_with_host: "BVA0000001@example.va.gov")
@@ -229,6 +229,6 @@ describe ConferenceLink do
         expect(conference_link.guest_hearing_link).to eq(existing_url)
       end
     end
-    # rubocop:enable Metrics/LineLength
+    # rubocop:enable Layout/LineLength
   end
 end
