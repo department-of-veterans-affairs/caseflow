@@ -1,7 +1,7 @@
 require_relative "../../lib/helpers/master_scheduler_interface.rb"
 # frozen_string_literal: true
 
-class SystemEncounteredUnknownErrorJob < CaseflowJob
+class SystemEncounteredUnknownErrorFixJob < CaseflowJob
   include MasterSchedulerInterface
 
   def initialize

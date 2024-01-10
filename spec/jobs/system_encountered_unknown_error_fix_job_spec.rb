@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe SystemEncounteredUnknownErrorJob, :postgres do
+describe SystemEncounteredUnknownErrorFixJob, :postgres do
   let(:system_encountered_unknown_error) { "The system has encountered an unknown error" }
 
   my_time = Time.zone.now
@@ -56,7 +56,7 @@ describe SystemEncounteredUnknownErrorJob, :postgres do
     end
   end
 
-  it_behaves_like "a Master Scheduler serializable object", SystemEncounteredUnknownErrorJob
+  it_behaves_like "a Master Scheduler serializable object", SystemEncounteredUnknownErrorFixJob
   subject { described_class.new }
 
   context "When there are no decision documents with errors" do
