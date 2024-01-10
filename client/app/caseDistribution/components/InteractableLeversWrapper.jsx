@@ -5,7 +5,6 @@ import DocketTimeGoals from './DocketTimeGoals';
 import AffinityDays from './AffinityDays';
 import LeverButtonsWrapper from './LeverButtonsWrapper';
 import ExclusionTable from './ExclusionTable';
-import { sectionTitles } from '../constants';
 
 const InteractableLeverWrapper = ({ levers, leverStore, isAdmin }) => {
 
@@ -17,8 +16,7 @@ const InteractableLeverWrapper = ({ levers, leverStore, isAdmin }) => {
       <DocketTimeGoals
         leverList={levers.docketLeversObject}
         leverStore={leverStore}
-        isAdmin={isAdmin}
-        sectionTitles={sectionTitles} />
+        isAdmin={isAdmin} />
       {isAdmin ? <LeverButtonsWrapper leverStore={leverStore} /> : ''}
     </div>
   );

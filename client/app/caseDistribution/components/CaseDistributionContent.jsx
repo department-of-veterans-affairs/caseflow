@@ -3,7 +3,6 @@ import StaticLeversWrapper from './StaticLeversWrapper';
 import InteractableLeverWrapper from './InteractableLeversWrapper';
 import LeverHistory from './LeverHistory';
 import PropTypes from 'prop-types';
-import { sectionTitles } from '../constants';
 import {
   sectionSegmentStyling,
   sectionHeadingStyling,
@@ -35,8 +34,7 @@ const CaseDistributionContent = ({
             <h2>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_TITLE}</h2>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION}</p>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION_NOTE}</p>
-            <InteractableLeverWrapper levers={levers} leverStore={leverStore} isAdmin={isAdmin}
-              sectionTitles={sectionTitles} />
+            <InteractableLeverWrapper levers={levers} leverStore={leverStore} isAdmin={isAdmin}/>
           </div>
         </div>
 
@@ -68,7 +66,7 @@ const CaseDistributionContent = ({
 
 CaseDistributionContent.propTypes = {
   levers: PropTypes.object.isRequired,
-  formattedHistory: PropTypes.object.isRequired,
+  formattedHistory: PropTypes.array.isRequired,
   isAdmin: PropTypes.bool.isRequired,
   leverStore: PropTypes.any.isRequired,
 };

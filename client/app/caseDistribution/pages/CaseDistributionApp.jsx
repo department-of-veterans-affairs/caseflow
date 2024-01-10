@@ -23,7 +23,6 @@ class CaseDistributionApp extends React.PureComponent {
             formattedHistory={this.props.acd_history}
             leverStore={this.props.leverStore}
             isAdmin = {this.props.user_is_an_acd_admin}
-            sectionTitles = {this.props.sectionTitles}
           />
         </div>
       </div>
@@ -37,7 +36,6 @@ CaseDistributionApp.propTypes = {
   acd_history: PropTypes.array,
   user_is_an_acd_admin: PropTypes.bool,
   leverStore: PropTypes.any,
-  sectionTitles: PropTypes.array,
   initialLoad: PropTypes.func,
   acdLeversForStore: PropTypes.object
 };
