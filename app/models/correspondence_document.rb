@@ -8,9 +8,11 @@ class CorrespondenceDocument < CaseflowRecord
     "#{uuid}.pdf"
   end
 
+  # :nocov:
   def pdf_location
     File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf")
   end
+  # :nocov:
 
   def claim_evidence_upload_json
     {
