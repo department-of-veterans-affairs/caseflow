@@ -29,22 +29,15 @@ const findOptionValue = (lever, value) => lever.options.find((option) => option.
 
 const createDocketDistributionPriorValue = (toggleValue, value) => `${toggleValue}-${value}`;
 
+/**
+ * Updates levers of data type number, boolean, and text
+ */
 export const createUpdatedLever = (state, action) => {
-  const { leverGroup, leverItem, value, optionValue, toggleValue } = action.payload;
+  const { leverGroup, leverItem, value } = action.payload;
   let hasValueChanged = false;
 
   const updateLeverValue = (lever) => {
-    if (leverGroup === Constant.AFFINITY) {
-      const selectedOption = findOptionValue(lever, value);
-
-      selectedOption.value = optionValue;
-
-      return { ...lever, value: optionValue };
-    } else if (leverGroup === Constant.DOCKET_DISTRIBUTION_PRIOR) {
-      const newValue = createDocketDistributionPriorValue(toggleValue, value);
-
-      return { ...lever, value: newValue, is_toggle_active: toggleValue };
-    }
+    hasValueChanged = `${value}` !== lever.backendValue;
 
     return { ...lever, value };
   };

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
-import { updateLeverState } from '../reducers/levers/leversActions';
+import { updateNumberLever } from '../reducers/levers/leversActions';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
 import COPY from '../../../COPY';
@@ -43,8 +43,8 @@ const DocketTimeGoals = (props) => {
     setTimeGoalLever(currentTimeLevers);
   }, [currentTimeLevers]);
 
-  const updateLever = (leverItem, leverType, toggleValue = false) => (event) => {
-    dispatch(updateLeverState(leverType, leverItem, event, null, toggleValue));
+  const updateNumberFieldLever = (leverItem, leverType) => (event) => {
+    dispatch(updateNumberLever(leverType, leverItem, event));
   };
 
   const toggleLever = (index) => () => {
@@ -91,7 +91,7 @@ const DocketTimeGoals = (props) => {
               value={docketTimeGoalLever.value}
               label={docketTimeGoalLever.unit}
               errorMessage={errorMessagesList[docketTimeGoalLever.item]}
-              onChange={updateLever(docketTimeGoalLever.item, Constant.DOCKET_TIME_GOAL)}
+              onChange={updateNumberFieldLever(docketTimeGoalLever.item, Constant.DOCKET_TIME_GOAL)}
             />
           </div>
           <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
@@ -112,7 +112,7 @@ const DocketTimeGoals = (props) => {
                 value={distributionPriorLever.value}
                 label={distributionPriorLever.unit}
                 errorMessage={errorMessagesList[distributionPriorLever.item]}
-                onChange={updateLever(distributionPriorLever.item, Constant.DOCKET_DISTRIBUTION_PRIOR, true)}
+                onChange={updateNumberFieldLever(distributionPriorLever.item, Constant.DOCKET_DISTRIBUTION_PRIOR, true)}
               />
             </div>
           </div>
