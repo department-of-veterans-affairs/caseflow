@@ -4,9 +4,16 @@ class CorrespondenceDocument < CaseflowRecord
   belongs_to :correspondence
   belongs_to :vbms_document_type
 
+  def pdf_name
+    "#{uuid}.pdf"
+  end
+
+  # :reek:UtilityFunction
+  # :nocov:
   def pdf_location
     File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf")
   end
+  # :nocov:
 
   def claim_evidence_upload_json
     {

@@ -20,6 +20,16 @@ FactoryBot.define do
         create(:correspondence_document, correspondence: correspondence)
       end
     end
+
+    trait :with_correspondence_intake_task do
+      transient do
+        assigned_to { nil }
+      end
+
+      after(:create) do |correspondence, evaluator|
+        create(:correspondence_intake_task, appeal: correspondence, assigned_to: evaluator.assigned_to)
+      end
+    end
   end
 
   factory :correspondence_document do

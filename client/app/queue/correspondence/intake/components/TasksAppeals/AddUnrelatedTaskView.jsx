@@ -4,6 +4,7 @@ import Button from '../../../../../components/Button';
 import AddTaskView from './AddTaskView';
 import { setUnrelatedTasks } from '../../../correspondenceReducer/correspondenceActions';
 import PropTypes from 'prop-types';
+import { COLORS } from '../../../../../constants/AppConstants';
 
 const MAX_NUM_TASKS = 4;
 
@@ -93,7 +94,7 @@ export const AddUnrelatedTaskView = (props) => {
         style={{ padding: '0rem 0rem', display: 'flex', flexWrap: 'wrap', flexDirection: 'column' }}
       >
         <div style={{ width: '100%', height: 'auto', backgroundColor: 'white', paddingBottom: '3rem' }}>
-          <div style={{ backgroundColor: '#f1f1f1', width: '100%', height: '50px', paddingTop: '1.5rem' }}>
+          <div style={{ backgroundColor: COLORS.GREY_BACKGROUND, width: '100%', height: '50px', paddingTop: '1.5rem' }}>
             <b style={{
               verticalAlign: 'center',
               paddingLeft: '2.5rem',

@@ -1,11 +1,26 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ModuleLength
 module CorrespondenceHelpers
+  def current_user
+    User.find_or_create_by(
+      css_id: "TEST_USER",
+      full_name: "Test User",
+      email: "testuser@example.com",
+      station_id: 101,
+      roles: ["Mail Team"]
+    )
+  end
+
   def setup_access
     FeatureToggle.enable!(:correspondence_queue)
-    user = create(:user, roles: ["Mail Team"])
-    MailTeam.singleton.add_user(user)
-    User.authenticate!(user: user)
+    MailTeam.singleton.add_user(current_user)
+    User.authenticate!(user: current_user)
+
+    mock_doc_uploader = instance_double(CorrespondenceDocumentsEfolderUploader)
+
+    allow(CorrespondenceDocumentsEfolderUploader).to receive(:new).and_return(mock_doc_uploader)
+    allow(mock_doc_uploader).to receive(:upload_documents_to_claim_evidence).and_return(true)
   end
 
   def visit_intake_form_with_correspondence_load
@@ -14,6 +29,8 @@ module CorrespondenceHelpers
     54.times do
       create(
         :correspondence,
+        :with_correspondence_intake_task,
+        assigned_to: current_user,
         veteran_id: veteran.id,
         uuid: SecureRandom.uuid,
         va_date_of_receipt: Time.zone.local(2023, 1, 1)
@@ -40,6 +57,8 @@ module CorrespondenceHelpers
     3.times do
       create(
         :correspondence,
+        :with_correspondence_intake_task,
+        assigned_to: current_user,
         veteran_id: veteran.id,
         uuid: SecureRandom.uuid,
         va_date_of_receipt: Time.zone.local(2023, 1, 1)
@@ -59,6 +78,8 @@ module CorrespondenceHelpers
     3.times do
       create(
         :correspondence,
+        :with_correspondence_intake_task,
+        assigned_to: current_user,
         veteran_id: veteran.id,
         uuid: SecureRandom.uuid,
         va_date_of_receipt: Time.zone.local(2023, 1, 1)
@@ -76,6 +97,8 @@ module CorrespondenceHelpers
     veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
     create(
       :correspondence,
+      :with_correspondence_intake_task,
+      assigned_to: current_user,
       veteran_id: veteran.id,
       uuid: SecureRandom.uuid,
       va_date_of_receipt: Time.zone.local(2023, 1, 1)
@@ -103,7 +126,14 @@ module CorrespondenceHelpers
   def active_evidence_submissions_tasks
     setup_access
     veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
-    create(:correspondence, veteran_id: veteran.id, uuid: SecureRandom.uuid, va_date_of_receipt: Time.zone.local(2023, 1, 1))
+    create(
+      :correspondence,
+      :with_correspondence_intake_task,
+      assigned_to: current_user,
+      veteran_id: veteran.id,
+      uuid: SecureRandom.uuid,
+      va_date_of_receipt: Time.zone.local(2023, 1, 1)
+    )
     2.times do
       appeal = create(:appeal, veteran_file_number: veteran.file_number)
       InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
@@ -117,6 +147,8 @@ module CorrespondenceHelpers
     veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
     create(
       :correspondence,
+      :with_correspondence_intake_task,
+      assigned_to: current_user,
       veteran_id: veteran.id,
       uuid: SecureRandom.uuid,
       va_date_of_receipt: Time.zone.local(2023, 1, 1)
@@ -130,4 +162,5 @@ module CorrespondenceHelpers
     Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
     Seeds::AutoTexts.new.seed!
   end
+  # rubocop:enable Metrics/ModuleLength
 end

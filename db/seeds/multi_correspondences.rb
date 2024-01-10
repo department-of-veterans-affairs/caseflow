@@ -1,11 +1,12 @@
-# frozen_string_literal :true
+# frozen_string_literal: true
 
 # create correspondence seeds
-# :reek:InstanceVariableAssumption
 require_relative "./helpers/seed_helpers"
 
 module Seeds
+  # :reek:InstanceVariableAssumption
   class MultiCorrespondences < Base
+
     include SeedHelpers
 
     def initialize
@@ -38,7 +39,7 @@ module Seeds
         appeal = create(
           :appeal,
           veteran_file_number: veteran.file_number
-          )
+        )
         InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
       end
       5.times do
@@ -46,7 +47,7 @@ module Seeds
           :appeal,
           veteran_file_number: veteran.file_number,
           docket_type: Constants.AMA_DOCKETS.direct_review
-          )
+        )
         InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
       end
       21.times do
@@ -80,7 +81,7 @@ module Seeds
         appeal = create(
           :appeal,
           veteran_file_number: veteran.file_number
-          )
+        )
         InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
       end
       5.times do
@@ -88,7 +89,7 @@ module Seeds
           :appeal,
           veteran_file_number: veteran.file_number,
           docket_type: Constants.AMA_DOCKETS.direct_review
-          )
+        )
         InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
       end
       31.times do
@@ -117,13 +118,12 @@ module Seeds
         @cmp_packet_number += 1
       end
 
-
       veteran = create_veteran(first_name: "Christian", last_name: "Bale")
       1.times do
         appeal = create(
           :appeal,
           veteran_file_number: veteran.file_number
-          )
+        )
         InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
       end
       10.times do
@@ -131,7 +131,7 @@ module Seeds
           :appeal,
           veteran_file_number: veteran.file_number,
           docket_type: Constants.AMA_DOCKETS.direct_review
-          )
+        )
         InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
       end
       101.times do
@@ -160,5 +160,6 @@ module Seeds
         @cmp_packet_number += 1
       end
     end
+    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
   end
 end

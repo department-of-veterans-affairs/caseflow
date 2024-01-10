@@ -3,6 +3,26 @@
     {
       "warning_type": "File Access",
       "warning_code": 16,
+      "fingerprint": "0801535c3d74c53eb2f14e884b7e8e581f44fb5d61f32ff8faced9e85ceba102",
+      "check_name": "SendFile",
+      "message": "Model attribute used in file name",
+      "file": "app/controllers/correspondence_controller.rb",
+      "line": 172,
+      "link": "https://brakemanscanner.org/docs/warning_types/file_access/",
+      "code": "send_file(Document.limit(200)[params[:pdf_id].to_i].serve, :type => \"application/pdf\", :disposition => ((\"inline\" or \"attachment; filename='#{params[:type]}-#{params[:id]}.pdf'\")))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "CorrespondenceController",
+        "method": "pdf"
+      },
+      "user_input": "Document.limit(200)[params[:pdf_id].to_i].serve",
+      "confidence": "Medium",
+      "note": ""
+    },
+    {
+      "warning_type": "File Access",
+      "warning_code": 16,
       "fingerprint": "140e07405ecb20ab6aa52f2f41aeeef0ed7830d781698d6b752ee3d8b0a9c065",
       "check_name": "SendFile",
       "message": "Model attribute used in file name",
@@ -107,7 +127,7 @@
       "check_name": "SQL",
       "message": "Possible SQL injection",
       "file": "app/models/task.rb",
-      "line": 273,
+      "line": 282,
       "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
       "code": "Arel.sql(\"CASE WHEN #{CachedAppeal.table_name}.is_aod = TRUE THEN #{(\"0 ELSE 1\" or \"1 ELSE 0\")} END, CASE WHEN #{CachedAppeal.table_name}.case_type = 'Court Remand' THEN #{(\"0 ELSE 1\" or \"1 ELSE 0\")} END, #{CachedAppeal.table_name}.docket_number #{order}, #{Task.table_name}.created_at #{order}\")",
       "render_path": null,
@@ -141,6 +161,6 @@
       "note": ""
     }
   ],
-  "updated": "2023-12-12 16:28:43 -0500",
+  "updated": "2024-01-08 13:49:30 -0600",
   "brakeman_version": "4.7.1"
 }
