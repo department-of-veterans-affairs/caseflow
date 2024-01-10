@@ -62,7 +62,7 @@ const DocketTimeGoals = (props) => {
     setDistributionLever(levers);
   };
 
-  const generateToggleSwitch = (distributionPriorLever, index) => {
+  const renderDocketDistributionLever = (distributionPriorLever, index) => {
 
     let docketTimeGoalLever = '';
 
@@ -167,7 +167,7 @@ const DocketTimeGoals = (props) => {
       </div>
 
       {docketDistributionLevers && docketDistributionLevers.map((distributionPriorLever, index) => (
-        generateToggleSwitch(distributionPriorLever, index)
+        renderDocketDistributionLever(distributionPriorLever, index)
       ))}
     </div>
 
@@ -175,8 +175,7 @@ const DocketTimeGoals = (props) => {
 };
 
 DocketTimeGoals.propTypes = {
-  isAdmin: PropTypes.bool.isRequired,
-  sectionTitles: PropTypes.array.isRequired
+  isAdmin: PropTypes.bool.isRequired
 };
 
 export default DocketTimeGoals;
