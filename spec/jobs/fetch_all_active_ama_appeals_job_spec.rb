@@ -370,9 +370,11 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
       end
     end
 
-    context "when there is an AMA Appeal and the most recent hearing dispostion status is not 'cancelled'" do
-      it "returns correct key value hearing_withdrawn: false" do
-        expect(subject.send(:map_appeal_hearing_withdrawn_state, appeal)).to eq(hearing_withdrawn: false)
+    context "when there is an AMA Appeal and the most recent hearing" do
+      context "and dispostion status is not 'cancelled'" do
+        it "returns correct key value hearing_withdrawn: false" do
+          expect(subject.send(:map_appeal_hearing_withdrawn_state, appeal)).to eq(hearing_withdrawn: false)
+        end
       end
     end
 
