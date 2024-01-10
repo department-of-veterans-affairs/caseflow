@@ -14,5 +14,16 @@
     "boolean": "boolean",
     "number": "number",
     "text": "text"
+  },
+  "algorithms": {
+    "docket": "docket",
+    "proportion": "proportion"
+  },
+  "lever_groups": {
+    "static": "static",
+    "batch": "batch",
+    "affinity": "affinity",
+    "docket_distribution_prior": "docket_distribution_prior",
+    "docket_time_goal": "docket_time_goal"
   }
 }
