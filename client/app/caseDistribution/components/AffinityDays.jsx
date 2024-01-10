@@ -11,9 +11,13 @@ import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import { ACTIONS } from '../reducers/levers/leversActionTypes';
 import leverInputValidation from './LeverInputValidation';
 import { checkIfOtherChangesExist } from '../utils';
+import { getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
 
 const AffinityDays = (props) => {
-  const { leverStore, isAdmin } = props;
+  // leverStore needs to be refactored out to conform with the new redux pattern
+  const { leverStore } = props;
+  const theState = useSelector((state) => state);
+  const isUserAcdAdmin = getUserIsAcdAdmin(theState);
 
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
@@ -207,7 +211,7 @@ const AffinityDays = (props) => {
         </div>
         <div>
           <div className={className}>
-            {generateFields(option.data_type, option, lever, isAdmin)}
+            {generateFields(option.data_type, option, lever, isUserAcdAdmin)}
           </div>
         </div>
       </div>
@@ -235,7 +239,7 @@ const AffinityDays = (props) => {
           </div>
           <div className={`${styles.leverRight} ${leverNumberDiv}`}>
             {lever.options.map((option) => (
-              (isAdmin) ? renderAdminInput(option, lever, index) : generateMemberViewLabel(option, lever)
+              (isUserAcdAdmin) ? renderAdminInput(option, lever, index) : generateMemberViewLabel(option, lever)
             ))}
           </div>
         </div>
@@ -247,8 +251,6 @@ const AffinityDays = (props) => {
 };
 
 AffinityDays.propTypes = {
-  leverList: PropTypes.arrayOf(PropTypes.string).isRequired,
-  leverStore: PropTypes.any,
-  isAdmin: PropTypes.bool.isRequired,
+  leverStore: PropTypes.any
 };
 export default AffinityDays;

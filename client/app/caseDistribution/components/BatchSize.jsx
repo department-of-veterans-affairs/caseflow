@@ -9,12 +9,12 @@ import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import { checkIfOtherChangesExist } from '../utils';
-import { getLeversByGroup } from '../reducers/levers/leversSelector';
-import { Constant } from '../constants';
-import { updateLeverState } from '../reducers/levers/leversActions';
+import { getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
 
 const BatchSize = (props) => {
-  const { isAdmin } = props;
+  const theState = useSelector((state) => state);
+  const isUserAcdAdmin = getUserIsAcdAdmin(theState);
+
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
     '& .cf-form-int-input .input-container': { width: 'auto', display: 'inline-block', verticalAlign: 'middle' },
@@ -72,7 +72,7 @@ const BatchSize = (props) => {
             </p>
           </div>
           <div className={`${styles.leverRight} ${leverNumberDiv}`}>
-            {isAdmin ?
+            {isUserAcdAdmin ?
               <NumberField
                 name={lever.item}
                 label={lever.unit}
@@ -94,10 +94,6 @@ const BatchSize = (props) => {
       <div className="cf-help-divider"></div>
     </div>
   );
-};
-
-BatchSize.propTypes = {
-  isAdmin: PropTypes.bool.isRequired
 };
 
 export default BatchSize;

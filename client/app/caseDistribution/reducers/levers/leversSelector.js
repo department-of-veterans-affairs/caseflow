@@ -7,6 +7,10 @@ const getLeversByGroupConstant = (state, leverSet, groupName) => {
   return getLevers(state, leverSet)[groupName] || []
 };
 
+const getAdminStatus = (state) => {
+  return state.caseDistributionLevers.isUserAcdAdmin
+};
+
 const countChangedLevers = state => {
   const flattenLevers = Object.values(state.levers).flat();
   const flattenBackendLevers = Object.values(state.backendLevers).flat();
@@ -23,6 +27,13 @@ export const getLeversByGroup = createSelector(
   [getLeversByGroupConstant],
   (leversByGroup) => {
     return leversByGroup
+  }
+);
+
+export const getUserIsAcdAdmin = createSelector(
+  [getAdminStatus],
+  (userIsAcdAdmin) => {
+    return userIsAcdAdmin
   }
 );
 

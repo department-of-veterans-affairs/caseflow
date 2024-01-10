@@ -10,6 +10,16 @@ export const initialLoad = (levers) =>
     });
   };
 
+  export const setUserIsAcdAdmin = (isUserAcdAdmin) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_USER_IS_ACD_ADMIN,
+      payload: {
+        isUserAcdAdmin
+      }
+    });
+  };
+
 export const loadLevers = (levers) =>
   (dispatch) => {
     dispatch({

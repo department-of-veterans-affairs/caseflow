@@ -9,10 +9,9 @@ import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
 import COPY from '../../../COPY';
 import { Constant, sectionTitles } from '../constants';
-import { getLeversByGroup } from '../reducers/levers/leversSelector';
+import { getLeversByGroup, getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
 
 const DocketTimeGoals = (props) => {
-  const { isAdmin } = props;
 
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
@@ -28,6 +27,8 @@ const DocketTimeGoals = (props) => {
 
   // pull docket time goal and distribution levers from the store
   const currentTimeLevers = getLeversByGroup(theState, Constant.LEVERS, Constant.DOCKET_TIME_GOAL);
+  const isUserAcdAdmin = getUserIsAcdAdmin(theState);
+
   const currentDistributionPriorLevers =
     getLeversByGroup(theState, Constant.LEVERS, Constant.DOCKET_DISTRIBUTION_PRIOR);
 
@@ -70,7 +71,7 @@ const DocketTimeGoals = (props) => {
       docketTimeGoalLever = docketTimeGoalLevers[index];
     }
 
-    if (isAdmin) {
+    if (isUserAcdAdmin) {
 
       return (
 
@@ -175,7 +176,6 @@ const DocketTimeGoals = (props) => {
 };
 
 DocketTimeGoals.propTypes = {
-  isAdmin: PropTypes.bool.isRequired,
   sectionTitles: PropTypes.array.isRequired
 };
 
