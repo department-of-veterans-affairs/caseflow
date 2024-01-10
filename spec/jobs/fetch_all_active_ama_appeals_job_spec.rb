@@ -133,12 +133,12 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
         expect(AppealState.all.count).to eq(1)
       end
 
-      it "the vso_ihp_pending column will be set to TRUE" do
+      it "the 'vso_ihp_pending' column will be set to TRUE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_pending.id).vso_ihp_pending).to eq(true)
       end
 
-      it "the vso_ihp_complete column will be set to FALSE" do
+      it "the 'vso_ihp_complete' column will be set to FALSE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_pending.id).vso_ihp_complete).to eq(false)
       end
@@ -152,12 +152,12 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
         expect(AppealState.all.count).to eq(1)
       end
 
-      it "the vso_ihp_pending column will be set to FALSE" do
+      it "the 'vso_ihp_pending' column will be set to FALSE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_completed.id).vso_ihp_pending).to eq(false)
       end
 
-      it "the vso_ihp_complete column will be set to TRUE" do
+      it "the 'vso_ihp_complete' column will be set to TRUE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_completed.id).vso_ihp_complete).to eq(true)
       end
@@ -176,13 +176,13 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
         expect(AppealState.all.count).to eq(1)
       end
 
-      it "the vso_ihp_pending column will be set to TRUE" do
+      it "the 'vso_ihp_pending' column will be set to TRUE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_colocated_pending.id).vso_ihp_pending)
           .to eq(true)
       end
 
-      it "the vso_ihp_complete column will be set to FALSE" do
+      it "the 'vso_ihp_complete' column will be set to FALSE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_colocated_pending.id).vso_ihp_complete)
           .to eq(false)
@@ -193,6 +193,7 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
       let!(:open_ama_appeal_with_ihp_colocated_completed) do
         create(:appeal, :active, :with_completed_ihp_colocated_task)
       end
+
       it "a single record will be inserted into the Appeal States table" do
         subject.perform
         expect(
@@ -204,13 +205,13 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
         expect(AppealState.all.count).to eq(1)
       end
 
-      it "the vso_ihp_pending column will be set to FALSE" do
+      it "the 'vso_ihp_pending' column will be set to FALSE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_colocated_completed.id).vso_ihp_pending)
           .to eq(false)
       end
 
-      it "the vso_ihp_complete column will be set to TRUE" do
+      it "the 'vso_ihp_complete' column will be set to TRUE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_ama_appeal_with_ihp_colocated_completed.id).vso_ihp_complete)
           .to eq(true)
@@ -225,12 +226,12 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
         expect(AppealState.all.count).to eq(1)
       end
 
-      it "the vso_ihp_pending column will be set to FALSE" do
+      it "the 'vso_ihp_pending' column will be set to FALSE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_ama_appeal.id).vso_ihp_pending).to eq(false)
       end
 
-      it "the vso_ihp_complete column will be set to FALSE" do
+      it "the 'vso_ihp_complete' column will be set to FALSE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_ama_appeal.id).vso_ihp_complete).to eq(false)
       end
@@ -252,24 +253,24 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
     context "When there is only one privacy act task (completed)" do
       it "returns the correct hash with pending: false and complete: true" do
         privacy_act1.update(status: Constants.TASK_STATUSES.completed)
-        expect(subject.send(:map_appeal_privacy_act_state,
-                            appeal)).to eq(privacy_act_pending: false, privacy_act_complete: true)
+        expect(subject.send(:map_appeal_privacy_act_state, appeal))
+          .to eq(privacy_act_pending: false, privacy_act_complete: true)
       end
     end
 
     context "When there is only one privacy act task (pending)" do
       it "returns the correct hash with pending: true and complete: false" do
         privacy_act1
-        expect(subject.send(:map_appeal_privacy_act_state,
-                            appeal)).to eq(privacy_act_pending: true, privacy_act_complete: false)
+        expect(subject.send(:map_appeal_privacy_act_state, appeal))
+          .to eq(privacy_act_pending: true, privacy_act_complete: false)
       end
     end
 
     context "When there is only one privacy act task (cancelled)" do
       it "returns the correct hash with pending: false and complete: false" do
         privacy_act1.update(status: Constants.TASK_STATUSES.cancelled)
-        expect(subject.send(:map_appeal_privacy_act_state,
-                            appeal)).to eq(privacy_act_pending: false, privacy_act_complete: false)
+        expect(subject.send(:map_appeal_privacy_act_state, appeal))
+          .to eq(privacy_act_pending: false, privacy_act_complete: false)
       end
     end
 
@@ -278,8 +279,8 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
         privacy_act1.update(status: Constants.TASK_STATUSES.completed)
         privacy_act2.update(status: Constants.TASK_STATUSES.completed)
         privacy_act3.update(status: Constants.TASK_STATUSES.completed)
-        expect(subject.send(:map_appeal_privacy_act_state,
-                            appeal)).to eq(privacy_act_pending: false, privacy_act_complete: true)
+        expect(subject.send(:map_appeal_privacy_act_state, appeal))
+          .to eq(privacy_act_pending: false, privacy_act_complete: true)
       end
     end
 
@@ -288,8 +289,8 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
         privacy_act1.update(status: Constants.TASK_STATUSES.cancelled)
         privacy_act2.update(status: Constants.TASK_STATUSES.cancelled)
         privacy_act3.update(status: Constants.TASK_STATUSES.cancelled)
-        expect(subject.send(:map_appeal_privacy_act_state,
-                            appeal)).to eq(privacy_act_pending: false, privacy_act_complete: false)
+        expect(subject.send(:map_appeal_privacy_act_state, appeal))
+          .to eq(privacy_act_pending: false, privacy_act_complete: false)
       end
     end
 
@@ -298,8 +299,8 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
         privacy_act1
         privacy_act2.update(status: Constants.TASK_STATUSES.completed)
         privacy_act3.update(status: Constants.TASK_STATUSES.cancelled)
-        expect(subject.send(:map_appeal_privacy_act_state,
-                            appeal)).to eq(privacy_act_pending: true, privacy_act_complete: false)
+        expect(subject.send(:map_appeal_privacy_act_state, appeal))
+          .to eq(privacy_act_pending: true, privacy_act_complete: false)
       end
     end
 
@@ -308,8 +309,8 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
         privacy_act1.update(status: Constants.TASK_STATUSES.completed)
         privacy_act2.update(status: Constants.TASK_STATUSES.cancelled)
         privacy_act3.update(status: Constants.TASK_STATUSES.completed)
-        expect(subject.send(:map_appeal_privacy_act_state,
-                            appeal)).to eq(privacy_act_pending: false, privacy_act_complete: true)
+        expect(subject.send(:map_appeal_privacy_act_state, appeal))
+          .to eq(privacy_act_pending: false, privacy_act_complete: true)
       end
     end
   end
@@ -323,13 +324,15 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
     let(:empty_appeal) { create(:appeal) }
     context "When the last hearing has a disposition of postponed" do
       it "returns the correct hash with a boolean value of true" do
-        expect(subject.send(:map_appeal_hearing_postponed_state, postponed_appeal)).to eq(hearing_postponed: true)
+        expect(subject.send(:map_appeal_hearing_postponed_state, postponed_appeal))
+          .to eq(hearing_postponed: true)
       end
     end
 
     context "When the last hearing does not have a disposition of postponed" do
       it "returns the correct hash with a boolean value of false" do
-        expect(subject.send(:map_appeal_hearing_postponed_state, appeal)).to eq(hearing_postponed: false)
+        expect(subject.send(:map_appeal_hearing_postponed_state, appeal))
+          .to eq(hearing_postponed: false)
       end
     end
 
@@ -376,7 +379,7 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
     end
 
     context "when there is an active AMA Appeal with multiple hearings" do
-      context "and dispostion status is 'cancelled'" do
+      context "and the most recent disposition is 'cancelled'" do
         it "returns correct key value hearing_withdrawn: true" do
           second_hearing.update(disposition: "cancelled")
           expect(subject.send(:map_appeal_hearing_withdrawn_state, appeal)).to eq(hearing_withdrawn: true)
@@ -385,7 +388,7 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
     end
 
     context "when there is an active AMA Appeal with multiple hearings" do
-      context "when there is an active AMA Appeal with multiple hearings" do
+      context "and the most recent disposition is not 'cancelled'" do
         it "returns correct key value hearing_withdrawn: false" do
           second_hearing
           expect(subject.send(:map_appeal_hearing_withdrawn_state, appeal)).to eq(hearing_withdrawn: false)
@@ -471,15 +474,15 @@ describe FetchAllActiveAmaAppealsJob, type: :job do
     context "When there are multiple hearings associated with an appeal and the last one is not postponed" do
       it "returns the correct hash with a boolean value of false" do
         second_hearing
-        expect(subject.send(:map_appeal_hearing_scheduled_in_error_state,
-                            error_appeal)).to eq(scheduled_in_error: false)
+        expect(subject.send(:map_appeal_hearing_scheduled_in_error_state, error_appeal))
+          .to eq(scheduled_in_error: false)
       end
     end
 
     context "When there are no hearings associated with an appeal" do
       it "returns the correct hash with a boolean value of false" do
-        expect(subject.send(:map_appeal_hearing_scheduled_in_error_state,
-                            empty_appeal)).to eq(scheduled_in_error: false)
+        expect(subject.send(:map_appeal_hearing_scheduled_in_error_state, empty_appeal))
+          .to eq(scheduled_in_error: false)
       end
     end
   end
