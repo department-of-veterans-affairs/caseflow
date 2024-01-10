@@ -12,18 +12,18 @@ RSpec.describe Correspondence, type: :model do
 
   it "can be bi-directionally related to other correspondences" do
     c_1 = Correspondence.create!(
-      updated_by_id: -1,
-      correspondence_type_id: -1,
-      assigned_by_id: -1,
-      veteran_id: -1,
-      package_document_type_id: -1
+      updated_by_id: 1,
+      correspondence_type_id: 1,
+      assigned_by_id: 1,
+      veteran_id: 1,
+      package_document_type_id: 1
     )
     c_2 = Correspondence.create!(
-      updated_by_id: -2,
-      correspondence_type_id: -2,
-      assigned_by_id: -2,
-      veteran_id: -2,
-      package_document_type_id: -2
+      updated_by_id: 2,
+      correspondence_type_id: 2,
+      assigned_by_id: 2,
+      veteran_id: 2,
+      package_document_type_id: 2
     )
 
     expect(c_1.related_correspondences).to eq([])
