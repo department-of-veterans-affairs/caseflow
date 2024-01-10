@@ -114,9 +114,9 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
 
     def format_cancel_body(task, text, name)
       if task.is_a?(MailTask)
-       ""
+        ""
       else
-       format(text, name)
+        format(text, name)
       end
     end
 
