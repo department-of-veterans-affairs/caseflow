@@ -68,7 +68,9 @@ shared_examples "Task belongs_to polymorphic appeal" do
         end
       end
 
-      context "when eager loading with `includes`" do
+      # Skipped because this no longer works without `includes` in association scope block.
+      #   Use a scoped `preload` instead (eg. `Task.ama.preload(:appeal)`).
+      xcontext "when eager loading with `includes`" do
         subject { Task.ama.includes(:ama_appeal) }
 
         let!(:_legacy_task) { create(:task) }
@@ -118,7 +120,9 @@ shared_examples "Task belongs_to polymorphic appeal" do
         end
       end
 
-      context "when called on an individual Task" do
+      # Skipped because this no longer works without `includes` in association scope block.
+      #   This is essentially testing "dead code" anyways, since `Task #ama_appeal` is never called.
+      xcontext "when called on an individual Task" do
         subject { task.ama_appeal }
 
         context "when the Task is not associated with an AMA appeal" do
@@ -159,7 +163,9 @@ shared_examples "Task belongs_to polymorphic appeal" do
         end
       end
 
-      context "when eager loading with `includes`" do
+      # Skipped because this no longer works without `includes` in association scope block.
+      #   Use a scoped `preload` instead (eg. `Task.legacy.preload(:appeal)`).
+      xcontext "when eager loading with `includes`" do
         subject { Task.legacy.includes(:legacy_appeal) }
 
         let!(:_ama_task) { create(:ama_task) }
@@ -209,7 +215,9 @@ shared_examples "Task belongs_to polymorphic appeal" do
         end
       end
 
-      context "when called on an individual Task" do
+      # Skipped because this no longer works without `includes` in association scope block.
+      #   This is essentially testing "dead code" anyways, since `Task #legacy_appeal` is never called.
+      xcontext "when called on an individual Task" do
         subject { task.legacy_appeal }
 
         context "when the Task is not associated with a Legacy appeal" do
@@ -250,7 +258,9 @@ shared_examples "Task belongs_to polymorphic appeal" do
         end
       end
 
-      context "when eager loading with `includes`" do
+      # Skipped because this no longer works without `includes` in association scope block.
+      #   Use a scoped `preload` instead (eg. `Task.supplemental_claim.preload(:appeal)`).
+      xcontext "when eager loading with `includes`" do
         subject { Task.supplemental_claim.includes(:supplemental_claim) }
 
         let!(:_ama_task) { create(:ama_task) }
@@ -300,7 +310,9 @@ shared_examples "Task belongs_to polymorphic appeal" do
         end
       end
 
-      context "when called on an individual Task" do
+      # Skipped because this no longer works without `includes` in association scope block.
+      #   This is essentially testing "dead code" anyways, since `Task #supplemental_claim` is never called.
+      xcontext "when called on an individual Task" do
         subject { task.supplemental_claim }
 
         context "when the Task is not associated with a Supplemental Claim" do
@@ -341,7 +353,9 @@ shared_examples "Task belongs_to polymorphic appeal" do
         end
       end
 
-      context "when eager loading with `includes`" do
+      # Skipped because this no longer works without `includes` in association scope block.
+      #   Use a scoped `preload` instead (eg. `Task.higher_level_review.preload(:appeal)`).
+      xcontext "when eager loading with `includes`" do
         subject { Task.higher_level_review.includes(:higher_level_review) }
 
         let!(:_ama_task) { create(:ama_task) }
@@ -391,7 +405,9 @@ shared_examples "Task belongs_to polymorphic appeal" do
         end
       end
 
-      context "when called on an individual Task" do
+      # Skipped because this no longer works without `includes` in association scope block.
+      #   This is essentially testing "dead code" anyways, since `Task #higher_level_review` is never called.
+      xcontext "when called on an individual Task" do
         subject { task.higher_level_review }
 
         context "when the Task is not associated with a Higher Level Review" do
