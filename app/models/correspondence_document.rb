@@ -8,6 +8,7 @@ class CorrespondenceDocument < CaseflowRecord
     "#{uuid}.pdf"
   end
 
+  # :reek:UtilityFunction
   # :nocov:
   def pdf_location
     File.join(Rails.root, "lib", "pdfs", "KnockKnockJokes.pdf")
