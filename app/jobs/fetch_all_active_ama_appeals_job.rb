@@ -18,6 +18,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   S3_BUCKET_NAME = "appeals-status-migrations"
 
   def initialize
+    super
     @errors = []
   end
 
@@ -99,11 +100,12 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
         appeal_type: appeal&.class,
         appeal_id: appeal&.id,
         error: error,
-        message: error.message + "\n",
+        message: "#{error.message}\n",
         callstack: error.backtrace
       )
     end
   end
+  # rubocop:enable
 
   # Purpose: Method that builds a CSV file from errors in the job
   #
@@ -139,7 +141,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   def upload_csv_to_s3
     csv = build_errors_csv
     filename = Time.zone.now.strftime("ama-migration-%Y-%m-%d--%H-%M.csv")
-    S3Service.store_file(S3_BUCKET_NAME + "/" + filename, csv)
+    S3Service.store_file("#{S3_BUCKET_NAME}/#{filename}", csv)
   end
 
   # Purpose: Set key value pairs for "vso_ihp_pending" & "vso_ihp_complete"
@@ -158,10 +160,10 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
         end
       end
       if parent_ihp_tasks.count == 1
-        ihp_appeal_state(parent_ihp_tasks.first)
+        set_ihp_appeal_state(parent_ihp_tasks.first)
       elsif parent_ihp_tasks.count > 1
         current_parent_ihp_task = parent_ihp_tasks.max_by(&:id)
-        ihp_appeal_state(current_parent_ihp_task)
+        set_ihp_appeal_state(current_parent_ihp_task)
       else
         { vso_ihp_pending: false, vso_ihp_complete: false }
       end
@@ -179,8 +181,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   #         with corresponding boolean values
   def map_appeal_privacy_act_state(appeal)
     privacy_tasks = appeal.tasks.filter do |task|
-      PRIVACY_ACT_TASKS.include?(task&.type) &&
-        Constants.TASK_STATUSES.cancelled != task&.status
+      PRIVACY_ACT_TASKS.include?(task&.type) && Constants.TASK_STATUSES.cancelled != task&.status
     end
     if privacy_tasks.any?
       if privacy_tasks.any? { |task| Task.open_statuses.include?(task.status) } # any pending
@@ -198,7 +199,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   # Params: Appeal object
   # Returns: Hash of "hearing scheduled" key value pair
   def map_appeal_hearing_scheduled_state(appeal)
-    if appeal&.hearings.count > 0 && appeal.hearings.max_by(&:id).disposition.nil? # rubocop:disable Lint/SafeNavigationChain
+    if (appeal&.hearings&.count&.> 0) && appeal.hearings.max_by(&:id).disposition.nil?
       return { hearing_scheduled: true }
     end
 
@@ -277,14 +278,16 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   # Params: Most Recent Parent IHP Task (InformalHearingPresentationTask OR IhpColocatedTask)
   #
   # Returns: Hash of "vso_ihp_pending" & "vso_ihp_complete" key value pairs
-  def ihp_appeal_state(ihp_task)
-    ihp_state = if Task.open_statuses.include?(ihp_task.status)
-                  { vso_ihp_pending: true, vso_ihp_complete: false }
-                elsif [Constants.TASK_STATUSES.completed].include?(ihp_task.status)
-                  { vso_ihp_pending: false, vso_ihp_complete: true }
-                else
-                  { vso_ihp_pending: false, vso_ihp_complete: false }
-                end
-    ihp_state
+  # rubocop:disable Naming/AccessorMethodName
+  def set_ihp_appeal_state(ihp_task)
+    ihp_task.appeal
+    if Task.open_statuses.include?(ihp_task.status)
+      { vso_ihp_pending: true, vso_ihp_complete: false }
+    elsif [Constants.TASK_STATUSES.completed].include?(ihp_task.status)
+      { vso_ihp_pending: false, vso_ihp_complete: true }
+    else
+      { vso_ihp_pending: false, vso_ihp_complete: false }
+    end
   end
+  # rubocop:enable Naming/AccessorMethodName
 end
