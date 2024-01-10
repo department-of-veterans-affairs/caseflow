@@ -64,8 +64,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
   # Params: Appeal object
   #
   # Returns: nil
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-  def add_record_to_appeal_states_table(appeal)
+  def add_record_to_appeal_states_table(appeal) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     begin
       appeal_id_and_type = { appeal_id: appeal.id, appeal_type: appeal.class.to_s }
       ihp_state = map_appeal_ihp_state(appeal)
@@ -106,7 +105,7 @@ class FetchAllActiveAmaAppealsJob < CaseflowJob
       )
     end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:enable
 
   # Purpose: Method that builds a CSV file from errors in the job
   #
