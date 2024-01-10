@@ -135,6 +135,7 @@ class CorrespondenceIntakeProcessor
     mail_task_types[task_type]&.constantize
   end
 
+  # rubocop:disable Metrics/MethodLength
   def task_class_for_type(task_type)
     task_types = {
       "AddressChangeMailTask": AddressChangeMailTask.name,
@@ -163,6 +164,7 @@ class CorrespondenceIntakeProcessor
 
     task_types[task_type]&.constantize
   end
+  # rubocop:enable Metrics/MethodLength
 
   def class_for_assigned_to(assigned_to)
     available_assignees = {
