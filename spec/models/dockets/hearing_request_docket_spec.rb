@@ -45,30 +45,16 @@ describe HearingRequestDocket, :all_dbs do
       it "only distributes nonpriority, distributable, hearing docket cases
           where the most recent held hearing is tied to the distribution judge
           but doesn't exceed affinity threshold" do
-        # commenting out parts of the test because setting hearing_case_affinity_days to 0 means cases can no longer be
-        # tied to judges
-        # When completing work under https://vajira.max.gov/browse/APPEALS-8311 this should be cleaned up or removed
-
         create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
         matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
 
-        # This is the only one that is still considered tied (we want only non_genpop)
-        appeal = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
-
         # This appeal should not be returned because it is now considered genpop
         outside_affinity = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge_outside_affinity
-
         tasks = subject
 
         distributed_appeals = distribution_judge.reload.tasks.map(&:appeal)
 
         expect(tasks.length).to eq(0)
-        # expect(tasks.first.class).to eq(DistributedCase)
-        # expect(tasks.first.genpop).to eq false
-        # expect(tasks.first.genpop_query).to eq "not_genpop"
-        # expect(distribution.distributed_cases.length).to eq(1)
-        # expect(distribution_judge.reload.tasks.map(&:appeal)).to eq([appeal])
-
         # If hearing date exceeds specified days for affinity, appeal no longer tied to judge
         expect(distributed_appeals).not_to include(outside_affinity)
       end
@@ -83,10 +69,6 @@ describe HearingRequestDocket, :all_dbs do
 
       it "only distributes priority, distributable, hearing docket cases
           where the most recent held hearing is tied to the distribution judge" do
-        # commenting out parts of the test because setting hearing_case_affinity_days to 0 means cases can no longer be
-        # tied to judges
-        # When completing work under https://vajira.max.gov/browse/APPEALS-8311 this should be cleaned up or removed
-
         # appeals that should not be returned
         create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
         create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
@@ -94,19 +76,9 @@ describe HearingRequestDocket, :all_dbs do
         matching_all_base_conditions_with_most_recent_hearing_tied_to_distribution_judge_but_not_held
         matching_all_base_conditions_with_most_recent_held_hearing_not_tied_to_any_judge
         matching_all_base_conditions_with_most_recent_held_hearing_tied_to_other_judge
-
-        # appeals that should be returned
-        appeal = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
-        another = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
-
         tasks = subject
 
         expect(tasks.length).to eq(0)
-        # expect(tasks.first.class).to eq(DistributedCase)
-        # expect(tasks.first.genpop).to eq false
-        # expect(tasks.first.genpop_query).to eq "not_genpop"
-        # expect(distribution.distributed_cases.length).to eq(2)
-        # expect(distribution_judge.reload.tasks.map(&:appeal)).to match_array([appeal, another])
         expect(distribution_judge.reload.tasks.map(&:appeal).length).to eq(0)
       end
     end
