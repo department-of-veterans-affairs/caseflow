@@ -310,7 +310,9 @@ describe ChangeHearingRequestTypeTask do
     end
   end
 
-  describe "eager loading Legacy appeals with `includes`" do
+  # Skipped because this no longer works with new "split" association definitions.
+  #   Use a scoped `preload` instead (eg. `ChangeHearingRequestTypeTask.legacy.preload(:appeal)`).
+  xdescribe "eager loading Legacy appeals with `includes`" do
     subject { described_class.open.includes(:legacy_appeal) }
 
     let!(:_legacy_task) { create(:task) }

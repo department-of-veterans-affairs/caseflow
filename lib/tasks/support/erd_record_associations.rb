@@ -90,7 +90,10 @@ module ErdRecordAssociations
 
     # These associations are created dynamically by BelongsToPolymorphicHearingConcern
     # and is already indicated in the visualization
-    :ama_hearing, :legacy_hearing
+    :ama_hearing, :legacy_hearing,
+
+    # These associations are not meant to be accessed directly
+    :ama_appeal_for_record, :legacy_appeal_for_record, :supplemental_claim_for_record, :higher_level_review_for_record
   ].freeze
   def exclude_verbose_associations(associations)
     associations.reject { |assoc| EXCLUDED_ASSOCIATIONS.include?(assoc.name) }

@@ -17,42 +17,66 @@ module TaskBelongsToPolymorphicAppealConcern
 
     # ------------------------------------------------------------------------------------------------------------------
 
+    # Association for `joins` on ama_appeal (eg. `Task.joins(:ama_appeal)`)
     belongs_to :ama_appeal,
-               -> { includes(:tasks).where(tasks: { appeal_type: "Appeal" }) },
+               -> { where(tasks: { appeal_type: "Appeal" }) },
                class_name: "Appeal", foreign_key: "appeal_id", optional: true
 
+    # Association for querying ama_appeal on an individual Task (eg. `@some_task.ama_appeal`)
+    belongs_to :ama_appeal_for_record,
+               class_name: "Appeal", foreign_key: "appeal_id", optional: true
+    private :ama_appeal_for_record, :ama_appeal_for_record=
+
     def ama_appeal
-      super() if appeal_type == "Appeal"
+      ama_appeal_for_record if appeal_type == "Appeal"
     end
 
     # ------------------------------------------------------------------------------------------------------------------
 
+    # Association for `joins` on legacy_appeal (eg. `Task.joins(:legacy_appeal)`)
     belongs_to :legacy_appeal,
-               -> { includes(:tasks).where(tasks: { appeal_type: "LegacyAppeal" }) },
+               -> { where(tasks: { appeal_type: "LegacyAppeal" }) },
                class_name: "LegacyAppeal", foreign_key: "appeal_id", optional: true
 
+    # Association for querying legacy_appeal on an individual Task (eg. `@some_task.legacy_appeal`)
+    belongs_to :legacy_appeal_for_record,
+               class_name: "LegacyAppeal", foreign_key: "appeal_id", optional: true
+    private :legacy_appeal_for_record, :legacy_appeal_for_record=
+
     def legacy_appeal
-      super() if appeal_type == "LegacyAppeal"
+      legacy_appeal_for_record if appeal_type == "LegacyAppeal"
     end
 
     #---------------------------------------------------------------------------------------------------------------------
 
+    # Association for `joins` on supplemental_claim (eg. `Task.joins(:supplemental_claim)`)
     belongs_to :supplemental_claim,
-               -> { includes(:tasks).where(tasks: { appeal_type: "SupplementalClaim" }) },
+               -> { where(tasks: { appeal_type: "SupplementalClaim" }) },
                class_name: "SupplementalClaim", foreign_key: "appeal_id", optional: true
 
+    # Association for querying supplemental_claim on an individual Task (eg. `@some_task.supplemental_claim`)
+    belongs_to :supplemental_claim_for_record,
+               class_name: "SupplementalClaim", foreign_key: "appeal_id", optional: true
+    private :supplemental_claim_for_record, :supplemental_claim_for_record=
+
     def supplemental_claim
-      super() if appeal_type == "SupplementalClaim"
+      supplemental_claim_for_record if appeal_type == "SupplementalClaim"
     end
 
     #---------------------------------------------------------------------------------------------------------------------
 
+    # Association for `joins` on higher_level_review (eg. `Task.joins(:higher_level_review)`)
     belongs_to :higher_level_review,
-               -> { includes(:tasks).where(tasks: { appeal_type: "HigherLevelReview" }) },
+               -> { where(tasks: { appeal_type: "HigherLevelReview" }) },
                class_name: "HigherLevelReview", foreign_key: "appeal_id", optional: true
 
+    # Association for querying higher_level_review on an individual Task (eg. `@some_task.higher_level_review`)
+    belongs_to :higher_level_review_for_record,
+               class_name: "HigherLevelReview", foreign_key: "appeal_id", optional: true
+    private :higher_level_review_for_record, :higher_level_review_for_record=
+
     def higher_level_review
-      super() if appeal_type == "HigherLevelReview"
+      higher_level_review_for_record if appeal_type == "HigherLevelReview"
     end
 
     #===================================================================================================================
