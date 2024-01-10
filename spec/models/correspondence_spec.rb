@@ -6,13 +6,25 @@ RSpec.describe Correspondence, type: :model do
   end
 
   it "exists" do
-    c = Correspondence.create!
+    c = Correspondence.new
     expect(c).to be_a(Correspondence)
   end
 
   it "can be bi-directionally related to other correspondences" do
-    c_1 = Correspondence.create!
-    c_2 = Correspondence.create!
+    c_1 = Correspondence.create!(
+      updated_by_id: -1,
+      correspondence_type_id: -1,
+      assigned_by_id: -1,
+      veteran_id: -1,
+      package_document_type_id: -1
+    )
+    c_2 = Correspondence.create!(
+      updated_by_id: -2,
+      correspondence_type_id: -2,
+      assigned_by_id: -2,
+      veteran_id: -2,
+      package_document_type_id: -2
+    )
 
     expect(c_1.related_correspondences).to eq([])
     expect(c_2.related_correspondences).to eq([])
@@ -41,6 +53,7 @@ RSpec.describe Correspondence, type: :model do
         va_date_of_receipt: Time.zone.yesterday,
         notes: "This is a note from CMP.",
         assigned_by_id: 81,
+        updated_by_id: 81,
         veteran_id: 1
       )
 

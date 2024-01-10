@@ -12,6 +12,7 @@ FactoryBot.define do
     va_date_of_receipt { Time.zone.yesterday }
     notes { "This is a note from CMP." }
     assigned_by_id { 81 }
+    updated_by_id { 81 }
     veteran_id { 1 }
 
     trait :with_single_doc do
