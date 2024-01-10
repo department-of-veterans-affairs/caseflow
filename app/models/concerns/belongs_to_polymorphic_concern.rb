@@ -34,14 +34,12 @@ module BelongsToPolymorphicConcern
       return unless inverse_association_name
 
       belongs_to method_name,
-                 -> { where(self_table_name => { type_column => type_name }) },
-                 class_name: type_name, foreign_key: id_column.to_s, optional: true
-
-      belongs_to "#{method_name}_for_this_record".to_sym,
+                 -> { includes(inverse_association_name).where(self_table_name => { type_column => type_name }) },
                  class_name: type_name, foreign_key: id_column.to_s, optional: true
 
       define_method method_name do
-        send("#{method_name}_for_this_record".to_sym) if send(type_column) == type_name
+        # `super()` will call the method created by the `belongs_to` above
+        super() if send(type_column) == type_name
       end
     end
 
