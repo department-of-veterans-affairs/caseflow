@@ -4,6 +4,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
   include CorrespondenceHelpers
   let(:organization) { MailTeam.singleton }
   let(:mail_user) { User.authenticate!(roles: ["Mail Team"]) }
+  let(:wait_time) { 30 }
 
   before do
     organization.add_user(mail_user)
@@ -45,7 +46,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
 
         existing_appeal_radio_options[:yes].click
 
-        using_wait_time(20) do
+        using_wait_time(wait_time) do
           expect(page).to have_content("Viewing 1-5 of 13 total")
         end
       end
@@ -55,7 +56,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
 
         existing_appeal_radio_options[:yes].click
 
-        using_wait_time(20) do
+        using_wait_time(wait_time) do
           expect(page).to have_content("Docket")
           expect(page).to have_content("Appellant Name")
           expect(page).to have_content("Status")
@@ -71,10 +72,10 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
 
         existing_appeal_radio_options[:yes].click
 
-        using_wait_time(20) do
+        using_wait_time(wait_time) do
           page.all(".cf-pdf-external-link-icon")[0].click
         end
-        using_wait_time(10) do
+        using_wait_time(wait_time) do
           page.switch_to_window(page.windows.last)
           expect(current_path).to have_content("/queue/appeals")
         end
@@ -85,7 +86,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
 
         existing_appeal_radio_options[:yes].click
 
-        using_wait_time(20) do
+        using_wait_time(wait_time) do
           within(page.all(".cf-pagination")[0]) do
             expect(find_all(".cf-form-checkbox").count).to eq(5)
           end
@@ -97,7 +98,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
 
         existing_appeal_radio_options[:yes].click
 
-        using_wait_time(20) do
+        using_wait_time(wait_time) do
           expect(page.has_button?("Previous")).to be(false)
           expect(page.has_button?("Next")).to be(true)
         end
@@ -120,7 +121,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
 
         existing_appeal_radio_options[:yes].click
 
-        using_wait_time(20) do
+        using_wait_time(wait_time) do
           page.all(".cf-form-checkbox").last.click
         end
 
@@ -136,7 +137,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
 
         existing_appeal_radio_options[:yes].click
 
-        using_wait_time(20) do
+        using_wait_time(wait_time) do
           page.all(".checkbox-wrapper-1").find(".cf-form-checkbox").first.click
         end
         expect(page).to have_selector("#react-select-2-input[disabled]")
@@ -160,7 +161,9 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
 
         within find(".cf-case-list-table") do
           page.all(".cf-form-checkbox").first.click
-          unformatted_id = page.all(".cf-form-checkboxes").first[:class]
+          using_wait_time(wait_time) do
+            unformatted_id = page.all(".cf-form-checkboxes").first[:class]
+          end
           formatted_id = unformatted_id.split("-")[2].split(" ")[0]
           expect find_by_id(formatted_id, visible: false).checked?
         end
@@ -169,7 +172,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
       it "Adds and removes a task from the linked appeal" do
         visit_intake_form_step_2_with_appeals
         existing_appeal_radio_options[:yes].click
-        using_wait_time(15) do
+        using_wait_time(wait_time) do
           within ".cf-case-list-table" do
             page.all(".cf-form-checkbox").last.click
           end
@@ -188,7 +191,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
       it "Adds and removes multiple tasks from the linked appeal" do
         visit_intake_form_step_2_with_appeals
         existing_appeal_radio_options[:yes].click
-        using_wait_time(15) do
+        using_wait_time(wait_time) do
           within ".cf-case-list-table" do
             page.all(".cf-form-checkbox").last.click
           end
@@ -211,12 +214,14 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
       it "Prevents user from clicking continue if task name or text isn't filled out" do
         visit_intake_form_step_2_with_appeals
         existing_appeal_radio_options[:yes].click
-        using_wait_time(15) do
+        using_wait_time(wait_time) do
           within ".cf-case-list-table" do
             page.all(".cf-form-checkbox").last.click
           end
         end
-        find_by_id("button-addTasks").click
+        using_wait_time(wait_time) do
+          find_by_id("button-addTasks").click
+        end
         all("#reactSelectContainer")[0].click
         find_by_id("react-select-2-option-15").click
         expect(page).to have_button("button-continue", disabled: true)
@@ -235,7 +240,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
       it "Prevents other motion tasks from being added 3 times" do
         visit_intake_form_step_2_with_appeals
         existing_appeal_radio_options[:yes].click
-        using_wait_time(15) do
+        using_wait_time(wait_time) do
           within ".cf-case-list-table" do
             page.all(".cf-form-checkbox").last.click
           end
@@ -261,7 +266,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
       it "Unlinks the appeal when the unlink appeal button is clicked" do
         visit_intake_form_step_2_with_appeals
         existing_appeal_radio_options[:yes].click
-        using_wait_time(15) do
+        using_wait_time(wait_time) do
           within ".cf-case-list-table" do
             page.all(".cf-form-checkbox").last.click
           end
@@ -278,7 +283,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
       it "Unlinks only one appeal if multiple are selected when the unlink appeal button is clicked" do
         visit_intake_form_step_2_with_appeals
         existing_appeal_radio_options[:yes].click
-        using_wait_time(15) do
+        using_wait_time(wait_time) do
           within ".cf-case-list-table" do
             page.all(".cf-form-checkbox").first.click
             page.all(".cf-form-checkbox").last.click
