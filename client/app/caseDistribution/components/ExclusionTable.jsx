@@ -2,7 +2,7 @@ import React from 'react';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import PropTypes from 'prop-types';
 import RadioField from 'app/components/RadioField';
-import styles from 'app/styles/caseDistribution/ExclusionTable.module.scss';
+import cx from 'classnames';
 import COPY from '../../../COPY';
 import DISTRIBUTION from '../../../constants/DISTRIBUTION';
 
@@ -21,24 +21,24 @@ const ExclusionTable = (props) => {
   ];
 
   return (
-    <div className={styles.exclusionTableContainerStyling}>
+    <div className='exclusion-table-container-styling'>
       <table >
         <tbody>
           <tr>
-            <th className={styles.tableHeaderStyling}>{' '}</th>
-            <th className={styles.tableHeaderStyling}>
+            <th className='table-header-styling'>{' '}</th>
+            <th className='table-header-styling'>
               {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_LEGACY_APPEALS_HEADER}
             </th>
-            <th className={styles.tableHeaderStyling}>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_HEARINGS_HEADER}</th>
-            <th className={styles.tableHeaderStyling}>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_DIRECT_HEADER}</th>
-            <th className={styles.tableHeaderStyling}>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_EVIDENCE_HEADER}</th>
+            <th className='table-header-styling'>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_HEARINGS_HEADER}</th>
+            <th className='table-header-styling'>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_DIRECT_HEADER}</th>
+            <th className='table-header-styling'>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_EVIDENCE_HEADER}</th>
           </tr>
           <tr>
-            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
+            <td className={cx('exclusion-table-styling', 'lever-disabled')}>
               {isMemberUser ?
                 <h3>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}</h3> :
                 <span>
-                  <h4 className={styles.exclusionTableHeaderStyling}>
+                  <h4 className='exclusion-table-header-styling'>
                     {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
                   </h4>
                   <ToggleSwitch
@@ -49,9 +49,9 @@ const ExclusionTable = (props) => {
                 </span>
               }
             </td>
-            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
+            <td className={cx('exclusion-table-styling', 'lever-disabled')}>
               {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>
+                <label className='exclusion-table-member-view-styling'>
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label> :
                 <span>
@@ -63,9 +63,9 @@ const ExclusionTable = (props) => {
                 </span>
               }
             </td>
-            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
+            <td className={cx('exclusion-table-styling', 'lever-disabled')}>
               {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>
+                <label className='exclusion-table-member-view-styling'>
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label> :
                 <span>
@@ -77,9 +77,9 @@ const ExclusionTable = (props) => {
                 </span>
               }
             </td>
-            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
+            <td className={cx('exclusion-table-styling', 'lever-disabled')}>
               {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>
+                <label className='exclusion-table-member-view-styling'>
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label> :
                 <span>
@@ -91,9 +91,9 @@ const ExclusionTable = (props) => {
                 </span>
               }
             </td>
-            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
+            <td className={cx('exclusion-table-styling', 'lever-disabled')}>
               {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>
+                <label className='exclusion-table-member-view-styling'>
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label> :
                 <span>
@@ -107,11 +107,11 @@ const ExclusionTable = (props) => {
             </td>
           </tr>
           <tr>
-            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
+            <td className={cx('exclusion-table-styling', 'lever-disabled')}>
               {isMemberUser ?
                 <h3>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}</h3> :
                 <span>
-                  <h4 className={styles.exclusionTableHeaderStyling}>
+                  <h4 className='exclusion-table-header-styling'>
                     {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
                   </h4>
                   <ToggleSwitch
@@ -122,9 +122,9 @@ const ExclusionTable = (props) => {
                 </span>
               }
             </td>
-            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
+            <td className={cx('exclusion-table-styling', 'lever-disabled')}>
               {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>
+                <label className='exclusion-table-member-view-styling'>
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label> :
                 <span>
@@ -136,9 +136,9 @@ const ExclusionTable = (props) => {
                 </span>
               }
             </td>
-            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
+            <td className={cx('exclusion-table-styling', 'lever-disabled')}>
               {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>
+                <label className='exclusion-table-member-view-styling'>
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label> :
                 <span>
@@ -150,9 +150,9 @@ const ExclusionTable = (props) => {
                 </span>
               }
             </td>
-            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
+            <td className={cx('exclusion-table-styling', 'lever-disabled')}>
               {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>
+                <label className='exclusion-table-member-view-styling'>
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label> :
                 <span>
@@ -164,9 +164,9 @@ const ExclusionTable = (props) => {
                 </span>
               }
             </td>
-            <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
+            <td className={cx('exclusion-table-styling', 'lever-disabled')}>
               {isMemberUser ?
-                <label className={styles.exclusionTableMemberViewStyling}>
+                <label className='exclusion-table-member-view-styling'>
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label> :
                 <span>

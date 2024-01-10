@@ -1,20 +1,20 @@
 $exclusion-table-header-color: #d3d3d3;
 $border-color: #d6d7d9;
 
-.exclusionTableHeaderStyling {
+.exclusion-table-header-styling {
   color: $exclusion-table-header-color;
   padding: 0;
   margin-top: 0;
   margin-bottom: 0;
 }
 
-.exclusionTableContainerStyling {
+.exclusion-table-container-styling {
   padding: 0;
 }
 
-.exclusionTableStyling,
-.tableHeaderStyling,
-.exclusionTableMemberViewStyling {
+.exclusion-table-styling,
+.table-header-styling,
+.exclusion-table-member-view-styling {
   padding: 0;
   margin-top: 0;
   border: 0;
@@ -27,16 +27,16 @@ $border-color: #d6d7d9;
   width: 20%;
 }
 
-.tableHeaderStyling {
+.table-header-styling {
   font-weight: 700;
 }
 
-.exclusionTableMemberViewStyling {
+.exclusion-table-member-view-styling {
   padding-top: 10px;
   padding-bottom: 10px;
   margin-top: 10px;
 }
 
-.leverDisabled {
+.lever-disabled {
   opacity: 72%;
 }
