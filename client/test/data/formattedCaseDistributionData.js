@@ -40,170 +40,158 @@ export const formattedHistory = [
 
 export const formattedLevers = [
   {
-    id: 0,
-    item: 'lever_1',
+    item: DISTRIBUTION.maximum_direct_review_proportion,
     title: 'Maximum Direct Review Proportion',
     description: "Sets the maximum number of direct reviews in relation to due direct review proportion to prevent a complete halt to work on other dockets should demand for direct reviews approach the Board's capacity.",
     data_type: ACD_LEVERS.number,
-    value: '80',
+    value: 0.07,
     unit: '%',
     is_toggle_active: false,
-    is_disabled_in_ui: false,
+    is_disabled_in_ui: true,
     min_value: 0,
-    max_value: 500,
-    algorithms_used: [],
-    options: [],
-    control_group: []
+    max_value: 1,
+    algorithms_used: ['proportion'],
+    lever_group: 'static',
+    lever_group_order: 1000
   },
   {
-    id: 1,
-    item: 'lever_2',
+    item: DISTRIBUTION.minimum_legacy_proportion,
     title: 'Minimum Legacy Proportion',
     description: 'Sets the minimum proportion of legacy appeals that will be distributed.',
     data_type: ACD_LEVERS.number,
-    value: '20',
+    value: 0.9,
     unit: '%',
     is_toggle_active: false,
-    is_disabled_in_ui: false,
+    is_disabled_in_ui: true,
     min_value: 0,
-    max_value: 500,
-    algorithms_used: [],
-    options: [],
-    control_group: []
+    max_value: 1,
+    algorithms_used: ['proportion'],
+    lever_group: 'static',
+    lever_group_order: 1001
   },
   {
-    id: 2,
-    item: 'lever_3',
+    item: DISTRIBUTION.nod_adjustment,
     title: 'NOD Adjustment',
     description: 'Applied for docket balancing reflecting the likelihood that NODs will advance to a Form 9.',
     data_type: ACD_LEVERS.number,
-    value: '90',
+    value: 0.4,
     unit: '%',
     is_toggle_active: false,
-    is_disabled_in_ui: false,
+    is_disabled_in_ui: true,
     min_value: 0,
-    max_value: 500,
-    algorithms_used: [],
-    options: [],
-    control_group: []
+    max_value: 1,
+    algorithms_used: ['proportion'],
+    lever_group: 'static',
+    lever_group_order: 1002
   },
   {
-    id: 3,
-    item: 'lever_4',
+    item: DISTRIBUTION.bust_backlog,
     title: 'Priority Bust Backlog',
     description: 'Distribute legacy cases tied to a judge to the Board-provided limit of 30, regardless of the legacy docket range.',
     data_type: ACD_LEVERS.boolean,
-    value: true,
+    value: false,
     unit: '',
     is_toggle_active: false,
-    is_disabled_in_ui: false,
-    min_value: 0,
-    max_value: 500,
-    algorithms_used: [],
-    options: [],
-    control_group: []
-  },
-  {
-    id: 4,
-    item: 'lever_5',
-    title: 'Alternate Batch Size*',
-    description: 'Set case-distribution batch size for judges who do not have their own attorney teams.',
-    data_type: ACD_LEVERS.number,
-    value: '15',
-    unit: ACD_LEVERS.cases,
-    is_toggle_active: false,
     is_disabled_in_ui: true,
-    min_value: 0,
-    max_value: 500,
-    algorithms_used: [],
-    options: [],
-    control_group: []
+    algorithms_used: ['proportion'],
+    lever_group: 'static',
+    lever_group_order: 1003
   },
   {
-    id: 5,
-    item: 'lever_6',
-    title: 'Batch Size Per Attorney*',
-    description: 'Set case-distribution batch size for judges with attorney teams. The value for this data element is per attorney.',
+    item: DISTRIBUTION.alternative_batch_size,
+    title: 'Alternate Batch Size*',
+    description: 'Sets case-distribution batch size for judges who do not have their own attorney teams.',
     data_type: ACD_LEVERS.number,
-    value: '3',
+    value: 15,
     unit: ACD_LEVERS.cases,
     is_toggle_active: true,
-    is_disabled_in_ui: true,
+    is_disabled_in_ui: false,
     min_value: 0,
-    max_value: 500,
-    algorithms_used: [],
-    options: [],
-    control_group: []
+    max_value: 100,
+    algorithms_used: ['docket', 'proportion'],
+    lever_group: 'batch',
+    lever_group_order: 2000
   },
   {
-    id: 6,
-    item: 'lever_7',
+    item: DISTRIBUTION.batch_size_per_attorney,
+    title: 'Batch Size Per Attorney*',
+    description: 'Sets case-distribution batch size for judges with attorney teams. The value for this data element is per attorney.',
+    data_type: ACD_LEVERS.number,
+    value: 3,
+    unit: ACD_LEVERS.cases,
+    is_toggle_active: true,
+    is_disabled_in_ui: false,
+    min_value: 0,
+    max_value: 100,
+    algorithms_used: ['docket', 'proportion'],
+    lever_group: 'batch',
+    lever_group_order: 2001
+  },
+  {
+    item: DISTRIBUTION.request_more_cases_minimum,
     title: 'Request More Cases Minimum*',
-    description: 'Set the number of remaining cases a VLJ must have equal to or less than to request more cases. (The number entered is used to equal to or less than.)',
+    description: 'Sets the number of remaining cases a VLJ must have equal to or less than to request more cases. (The number entered is used as equal to or less than)',
     data_type: ACD_LEVERS.number,
     value: 8,
     unit: ACD_LEVERS.cases,
-    is_toggle_active: false,
+    is_toggle_active: true,
     is_disabled_in_ui: false,
     min_value: 0,
-    max_value: 500,
-    algorithms_used: [],
-    options: [],
-    control_group: []
+    max_value: 100,
+    algorithms_used: ['docket', 'proportion'],
+    lever_group: 'batch',
+    lever_group_order: 2002
   },
   {
-    id: 7,
-    item: 'lever_8',
+    item: DISTRIBUTION.ama_hearing_case_affinity_days,
     title: 'AMA Hearing Case Affinity Days',
     description: 'For non-priority AMA Hearing cases, sets the number of days an AMA Hearing Case is tied to the judge that held the hearing.',
     data_type: ACD_LEVERS.radio,
-    value: ACD_LEVERS.value,
+    value: 'value',
     unit: ACD_LEVERS.days,
     options: [
       {
         item: 'value',
         data_type: ACD_LEVERS.number,
-        value: 14,
+        value: 0,
         text: 'Attempt distribution to current judge for max of:',
-        unit: ACD_LEVERS.day
+        unit: ACD_LEVERS.days,
+        min_value: 0,
+        max_value: 100,
       },
       {
         item: ACD_LEVERS.infinite,
-        data_type: '',
         value: ACD_LEVERS.infinite,
         text: 'Always distribute to current judge',
-        unit: ''
       },
       {
         item: ACD_LEVERS.omit,
-        data_type: '',
         value: ACD_LEVERS.omit,
         text: 'Omit variable from distribution rules',
-        unit: ''
       }
     ],
     is_toggle_active: true,
     is_disabled_in_ui: false,
     min_value: 0,
-    max_value: 500,
-    algorithms_used: [],
-    control_group: []
+    max_value: 100,
+    algorithms_used: ['docket'],
+    lever_group: 'affinity',
+    lever_group_order: 3000
   },
   {
-    id: 8,
-    item: 'lever_9',
+    item: DISTRIBUTION.ama_hearing_case_aod_affinity_days,
     title: 'AMA Hearing Case AOD Affinity Days',
     description: 'Sets the number of days an AMA Hearing appeal that is also AOD will respect the affinity to the most-recent hearing judge before distributing the appeal to any available judge.',
     data_type: ACD_LEVERS.radio,
-    value: ACD_LEVERS.value,
+    value: 'value',
     unit: ACD_LEVERS.days,
     options: [
       {
         item: 'value',
         data_type: ACD_LEVERS.number,
-        value: 14,
+        value: 0,
         text: 'Attempt distribution to current judge for max of:',
-        unit: ACD_LEVERS.day
+        unit: ACD_LEVERS.days
       },
       {
         item: ACD_LEVERS.infinite,
@@ -223,169 +211,17 @@ export const formattedLevers = [
     is_toggle_active: false,
     is_disabled_in_ui: true,
     min_value: 0,
-    max_value: 500,
-    algorithms_used: [],
-    control_group: []
+    max_value: 100,
+    algorithms_used: ['proportion'],
+    lever_group: 'affinity',
+    lever_group_order: 3001
   },
   {
-    id: 9,
-    item: 'lever_10',
+    item: DISTRIBUTION.cavc_affinity_days,
     title: 'CAVC Affinity Days*',
     description: 'Sets the number of days a case returned from CAVC respects the affinity to the judge who authored a decision before distributing the appeal to any available judge. This does not include Legacy CAVC Remand Appeals with a hearing held.',
     data_type: ACD_LEVERS.radio,
-    value: ACD_LEVERS.value,
-    unit: ACD_LEVERS.days,
-    options: [
-      {
-        item: 'value',
-        data_type: ACD_LEVERS.number,
-        value: '21',
-        text: 'Attempt distribution to current judge for max of:',
-        unit: ACD_LEVERS.day
-      },
-      {
-        item: ACD_LEVERS.infinite,
-        data_type: '',
-        value: ACD_LEVERS.infinite,
-        text: 'Always distribute to current judge',
-        unit: ''
-      },
-      {
-        item: ACD_LEVERS.omit,
-        data_type: '',
-        value: ACD_LEVERS.omit,
-        text: 'Omit variable from distribution rules',
-        unit: ''
-      }
-    ],
-    is_toggle_active: false,
-    is_disabled_in_ui: true,
-    min_value: 0,
-    max_value: 500,
-    algorithms_used: [],
-    control_group: []
-  },
-  {
-    id: 10,
-    item: 'lever_11',
-    title: 'CAVC AOD Affinity Days',
-    description: 'Sets the number of days appeals returned from CAVC that are also AOD respect the affinity to the deciding judge. This is not applicable for legacy apeals for which the deciding judge conducted the most recent hearing.',
-    data_type: ACD_LEVERS.radio,
-    value: ACD_LEVERS.value,
-    unit: ACD_LEVERS.days,
-    options: [
-      {
-        item: 'value',
-        data_type: ACD_LEVERS.number,
-        value: '21',
-        text: 'Attempt distribution to current judge for max of:',
-        unit: ACD_LEVERS.day
-      },
-      {
-        item: ACD_LEVERS.infinite,
-        data_type: '',
-        value: ACD_LEVERS.infinite,
-        text: 'Always distribute to current judge',
-        unit: ''
-      },
-      {
-        item: ACD_LEVERS.omit,
-        data_type: '',
-        value: ACD_LEVERS.omit,
-        text: 'Omit variable from distribution rules',
-        unit: ''
-      }
-    ],
-    is_toggle_active: false,
-    is_disabled_in_ui: true,
-    min_value: 0,
-    max_value: 500,
-    algorithms_used: [],
-    control_group: []
-  },
-  {
-    id: 11,
-    item: 'lever_12',
-    title: 'AOJ Affinity Days',
-    description: 'Sets the number of days an appeal respects the affinity to the deciding judge for Legacy AOJ Remand Returned appeals with no hearing held before distributing the appeal to any available judge.',
-    data_type: ACD_LEVERS.radio,
-    value: ACD_LEVERS.value,
-    unit: ACD_LEVERS.days,
-    options: [
-      {
-        item: 'value',
-        data_type: ACD_LEVERS.number,
-        value: 60,
-        text: 'Attempt distribution to current judge for max of:',
-        unit: ACD_LEVERS.day
-      },
-      {
-        item: ACD_LEVERS.infinite,
-        data_type: '',
-        value: ACD_LEVERS.infinite,
-        text: 'Always distribute to current judge',
-        unit: ''
-      },
-      {
-        item: ACD_LEVERS.omit,
-        data_type: '',
-        value: ACD_LEVERS.omit,
-        text: 'Omit variable from distribution rules',
-        unit: ''
-      }
-    ],
-    is_toggle_active: false,
-    is_disabled_in_ui: true,
-    min_value: 0,
-    max_value: 500,
-    algorithms_used: [],
-    control_group: []
-  },
-  {
-    id: 12,
-    item: 'lever_13',
-    title: 'AOJ AOD Affinity Days',
-    description: 'Sets the number of days legacy remand Returned appeals that are also AOD (and may or may not have been CAVC at one time) respect the affinity before distributing the appeal to any available jduge. Affects appeals with hearing held when the remanding judge is not the hearing judge, or any legacy AOD + AOD appeal with no hearing held (whether or not it had been CAVC at one time).',
-    data_type: ACD_LEVERS.radio,
-    value: ACD_LEVERS.value,
-    unit: ACD_LEVERS.days,
-    options: [
-      {
-        item: 'value',
-        data_type: ACD_LEVERS.number,
-        value: 14,
-        text: 'Attempt distribution to current judge for max of:',
-        unit: ACD_LEVERS.day
-      },
-      {
-        item: ACD_LEVERS.infinite,
-        data_type: '',
-        value: ACD_LEVERS.infinite,
-        text: 'Always distribute to current judge',
-        unit: ''
-      },
-      {
-        item: ACD_LEVERS.omit,
-        data_type: '',
-        value: ACD_LEVERS.omit,
-        text: 'Omit variable from distribution rules',
-        unit: ''
-      }
-    ],
-    is_toggle_active: false,
-    is_disabled_in_ui: true,
-    min_value: 0,
-    max_value: 500,
-    algorithms_used: [],
-    control_group: []
-  },
-  {
-    id: 13,
-    item: 'lever_14',
-    title: 'AOJ CAVC Affinity Days',
-    description: 'Sets the number of days AOJ appeals that were CAVC at some time respect the affinity before the appeal is distributed to any available judge. This applies to any AOJ + CAVC appeal with no hearing held, or those with a hearing held when the remanding judge is not the hearing judge.',
-    data_type: ACD_LEVERS.radio,
-    value: ACD_LEVERS.value,
+    value: 'value',
     unit: ACD_LEVERS.days,
     options: [
       {
@@ -393,7 +229,149 @@ export const formattedLevers = [
         data_type: ACD_LEVERS.number,
         value: 21,
         text: 'Attempt distribution to current judge for max of:',
-        unit: ACD_LEVERS.day
+        unit: ACD_LEVERS.days
+      },
+      {
+        item: ACD_LEVERS.infinite,
+        value: ACD_LEVERS.infinite,
+        text: 'Always distribute to current judge'
+      },
+      {
+        item: ACD_LEVERS.omit,
+        value: ACD_LEVERS.omit,
+        text: 'Omit variable from distribution rules'
+      }
+    ],
+    is_toggle_active: false,
+    is_disabled_in_ui: true,
+    min_value: 0,
+    max_value: 100,
+    algorithms_used: ['docket', 'proportion'],
+    lever_group: 'affinity',
+    lever_group_order: 3002
+  },
+  {
+    item: DISTRIBUTION.cavc_aod_affinity_days,
+    title: 'CAVC AOD Affinity Days',
+    description: 'Sets the number of days appeals returned from CAVC that are also AOD respect the affinity to the deciding judge. This is not applicable for legacy apeals for which the deciding judge conducted the most recent hearing.',
+    data_type: ACD_LEVERS.radio,
+    value: 'value',
+    unit: ACD_LEVERS.days,
+    options: [
+      {
+        item: 'value',
+        data_type: ACD_LEVERS.number,
+        value: 21,
+        text: 'Attempt distribution to current judge for max of:',
+        unit: ACD_LEVERS.days
+      },
+      {
+        item: ACD_LEVERS.infinite,
+        value: ACD_LEVERS.infinite,
+        text: 'Always distribute to current judge',
+      },
+      {
+        item: ACD_LEVERS.omit,
+        value: ACD_LEVERS.omit,
+        text: 'Omit variable from distribution rules',
+      }
+    ],
+    is_toggle_active: false,
+    is_disabled_in_ui: true,
+    algorithms_used: ['proportion'],
+    lever_group: 'affinity',
+    lever_group_order: 3003
+  },
+  {
+    item: DISTRIBUTION.aoj_affinity_days,
+    title: 'AOJ Affinity Days',
+    description: 'Sets the number of days an appeal respects the affinity to the deciding judge for Legacy AOJ Remand Returned appeals with no hearing held before distributing the appeal to any available judge.',
+    data_type: ACD_LEVERS.radio,
+    value: 'value',
+    unit: ACD_LEVERS.days,
+    options: [
+      {
+        item: 'value',
+        data_type: ACD_LEVERS.number,
+        value: 60,
+        text: 'Attempt distribution to current judge for max of:',
+        unit: ACD_LEVERS.days
+      },
+      {
+        item: ACD_LEVERS.infinite,
+        data_type: '',
+        value: ACD_LEVERS.infinite,
+        text: 'Always distribute to current judge',
+        unit: ''
+      },
+      {
+        item: ACD_LEVERS.omit,
+        data_type: '',
+        value: ACD_LEVERS.omit,
+        text: 'Omit variable from distribution rules',
+        unit: ''
+      }
+    ],
+    is_toggle_active: false,
+    is_disabled_in_ui: true,
+    min_value: 0,
+    max_value: 100,
+    algorithms_used: ['proportion'],
+    lever_group: 'affinity',
+    lever_group_order: 3004
+  },
+  {
+    item: DISTRIBUTION.aoj_aod_affinity_days,
+    title: 'AOJ AOD Affinity Days',
+    description: 'Sets the number of days legacy remand Returned appeals that are also AOD (and may or may not have been CAVC at one time) respect the affinity before distributing the appeal to any available jduge. Affects appeals with hearing held when the remanding judge is not the hearing judge, or any legacy AOD + AOD appeal with no hearing held (whether or not it had been CAVC at one time).',
+    data_type: ACD_LEVERS.radio,
+    value: 'value',
+    unit: ACD_LEVERS.days,
+    options: [
+      {
+        item: 'value',
+        data_type: ACD_LEVERS.number,
+        value: 14,
+        text: 'Attempt distribution to current judge for max of:',
+        unit: ACD_LEVERS.days
+      },
+      {
+        item: ACD_LEVERS.infinite,
+        data_type: '',
+        value: ACD_LEVERS.infinite,
+        text: 'Always distribute to current judge',
+        unit: ''
+      },
+      {
+        item: ACD_LEVERS.omit,
+        data_type: '',
+        value: ACD_LEVERS.omit,
+        text: 'Omit variable from distribution rules',
+        unit: ''
+      }
+    ],
+    is_toggle_active: false,
+    is_disabled_in_ui: true,
+    min_value: 0,
+    max_value: 100,
+    algorithms_used: ['proportion'],
+    lever_group: 'affinity',
+    lever_group_order: 3005
+  },
+  {
+    item: DISTRIBUTION.aoj_cavc_affinity_days,
+    title: 'AOJ CAVC Affinity Days',
+    description: 'Sets the number of days AOJ appeals that were CAVC at some time respect the affinity before the appeal is distributed to any available judge. This applies to any AOJ + CAVC appeal with no hearing held, or those with a hearing held when the remanding judge is not the hearing judge.',
+    data_type: ACD_LEVERS.radio,
+    value: 'value',
+    unit: ACD_LEVERS.days,
+    options: [
+      {
+        item: 'value',
+        data_type: ACD_LEVERS.number,
+        value: 21,
+        text: 'Attempt distribution to current judge for max of:',
+        unit: ACD_LEVERS.days
       },
       {
         item: ACD_LEVERS.infinite,
@@ -413,243 +391,12 @@ export const formattedLevers = [
     is_toggle_active: true,
     is_disabled_in_ui: true,
     min_value: 0,
-    max_value: 500,
-    algorithms_used: [],
-    control_group: []
-  },
-  {
-    id: 14,
-    item: 'lever_15',
-    title: 'AMA Hearings',
-    description: '',
-    data_type: ACD_LEVERS.combination,
-    value: 770,
-    unit: ACD_LEVERS.days,
-    options: [
-      {
-        item: 'option_1',
-        data_type: ACD_LEVERS.boolean,
-        value: true,
-        text: 'This feature is turned on or off',
-        unit: ''
-      }
-    ],
-    is_toggle_active: false,
-    is_disabled_in_ui: true,
-    min_value: 0,
-    max_value: 500,
-    algorithms_used: [],
-    control_group: []
-  },
-  {
-    id: 15,
-    item: 'lever_16',
-    title: 'AMA Direct Review',
-    description: '',
-    data_type: ACD_LEVERS.combination,
-    value: 365,
-    unit: ACD_LEVERS.days,
-    options: [
-      {
-        item: 'option_1',
-        data_type: ACD_LEVERS.boolean,
-        value: true,
-        text: 'This feature is turned on or off',
-        unit: ''
-      }
-    ],
-    is_toggle_active: true,
-    is_disabled_in_ui: false,
-    min_value: 0,
-    max_value: 500,
-    algorithms_used: [],
-    control_group: []
-  },
-  {
-    id: 16,
-    item: 'lever_17',
-    title: 'AMA Evidence Submission',
-    description: '',
-    data_type: ACD_LEVERS.combination,
-    value: 550,
-    unit: ACD_LEVERS.days,
-    options: [
-      {
-        item: 'option_1',
-        data_type: ACD_LEVERS.boolean,
-        value: true,
-        text: 'This feature is turned on or off',
-        unit: ''
-      }
-    ],
-    is_toggle_active: false,
-    is_disabled_in_ui: true,
-    min_value: 0,
-    max_value: 500,
-    algorithms_used: [],
-    control_group: []
-  },
-  {
-    id: 17,
-    item: 'lever_18',
-    title: 'AMA Hearings Start Distribution Prior to Goals',
-    description: '',
-    data_type: ACD_LEVERS.combination,
-    value: 770,
-    unit: ACD_LEVERS.days,
-    options: [
-      {
-        item: 'option_1',
-        data_type: ACD_LEVERS.boolean,
-        value: true,
-        text: 'This feature is turned on or off',
-        unit: ''
-      }
-    ],
-    is_toggle_active: false,
-    is_disabled_in_ui: true,
-    min_value: 0,
     max_value: 100,
-    algorithms_used: ['proportion']
+    algorithms_used: ['docket'],
+    lever_group: 'affinity',
+    lever_group_order: 3006
   },
   {
-    id: 18,
-    item: 'lever_19',
-    title: 'AMA Direct Review Start Distribution Prior to Goals',
-    description: '',
-    data_type: ACD_LEVERS.combination,
-    value: 365,
-    unit: ACD_LEVERS.days,
-    options: [
-      {
-        item: 'option_1',
-        data_type: ACD_LEVERS.boolean,
-        value: true,
-        text: 'This feature is turned on or off',
-        unit: ''
-      }
-    ],
-    is_toggle_active: false,
-    is_disabled_in_ui: true,
-    min_value: 0,
-    max_value: 100,
-    algorithms_used: ['docket']
-  },
-  {
-    id: 19,
-    item: 'lever_20',
-    title: 'AMA Evidence Submission Start Distribution Prior to Goals',
-    description: '',
-    data_type: ACD_LEVERS.combination,
-    value: 550,
-    unit: ACD_LEVERS.days,
-    options: [
-      {
-        item: 'option_1',
-        data_type: ACD_LEVERS.boolean,
-        value: true,
-        text: 'This feature is turned on or off',
-        unit: ''
-      }
-    ],
-    is_toggle_active: false,
-    is_disabled_in_ui: true,
-    min_value: 0,
-    max_value: 100,
-    algorithms_used: ['proportion']
-  },
-  {
-    id: 20,
-    item: 'lever_21',
-    title: 'AMA Hearings Docket Time Goals',
-    data_type: ACD_LEVERS.number,
-    value: 435,
-    unit: ACD_LEVERS.days,
-    is_toggle_active: false,
-    is_disabled_in_ui: true,
-    min_value: 0,
-    max_value: 1000,
-    algorithms_used: ['proportion']
-  },
-  {
-    id: 21,
-    item: 'lever_22',
-    title: 'AMA Direct Review Docket Time Goals',
-    data_type: ACD_LEVERS.number,
-    value: 500,
-    unit: ACD_LEVERS.days,
-    is_toggle_active: true,
-    is_disabled_in_ui: false,
-    min_value: 0,
-    max_value: 1000,
-    algorithms_used: ['proportion']
-  },
-  {
-    id: 22,
-    item: 'lever_23',
-    title: 'AMA Evidence Submission Docket Time Goals',
-    data_type: ACD_LEVERS.number,
-    value: 123,
-    unit: ACD_LEVERS.days,
-    is_toggle_active: false,
-    is_disabled_in_ui: true,
-    min_value: 0,
-    max_value: 1000,
-    algorithms_used: ['proportion']
-  },
-];
-
-export const updatedLevers = [
-  {
-    id: 4,
-    item: 'lever_5',
-    title: 'Alternate Batch Size*',
-    description: 'Set case-distribution batch size for judges who do not have their own attorney teams.',
-    data_type: ACD_LEVERS.number,
-    value: '30',
-    unit: ACD_LEVERS.cases,
-    is_toggle_active: true,
-    is_disabled_in_ui: false,
-    min_value: 0,
-    max_value: 500,
-    algorithms_used: [],
-    options: [],
-    control_group: []
-  },
-  {
-    id: 5,
-    item: 'lever_6',
-    title: 'Batch Size Per Attorney*',
-    description: 'Set case-distribution batch size for judges with attorney teams. The value for this data element is per attorney.',
-    data_type: ACD_LEVERS.number,
-    value: '6',
-    unit: ACD_LEVERS.cases,
-    is_toggle_active: true,
-    is_disabled_in_ui: false,
-    min_value: 0,
-    max_value: 500,
-    algorithms_used: [],
-    options: [],
-    control_group: []
-  },
-  {
-    id: 6,
-    item: 'lever_7',
-    title: 'Request More Cases Minimum*',
-    description: 'Set the number of remaining cases a VLJ must have equal to or less than to request more cases. (The number entered is used as equal to or less than)',
-    data_type: ACD_LEVERS.number,
-    value: 16,
-    unit: ACD_LEVERS.cases,
-    is_toggle_active: true,
-    is_disabled_in_ui: false,
-    min_value: 0,
-    max_value: 500,
-    algorithms_used: [],
-    options: [],
-    control_group: []
-  },
-  {
-    id: 17,
     item: DISTRIBUTION.ama_hearings_start_distribution_prior_to_goals,
     title: 'AMA Hearings Start Distribution Prior to Goals',
     description: '',
@@ -658,21 +405,22 @@ export const updatedLevers = [
     unit: ACD_LEVERS.days,
     options: [
       {
-        item: 'option_1',
+        item: 'value',
         data_type: ACD_LEVERS.boolean,
         value: true,
         text: 'This feature is turned on or off',
         unit: ''
       }
     ],
-    is_toggle_active: true,
+    is_toggle_active: false,
     is_disabled_in_ui: true,
     min_value: 0,
     max_value: 100,
-    algorithms_used: ['proportion']
+    algorithms_used: ['proportion'],
+    lever_group: 'docket_distribution_prior',
+    lever_group_order: 4000
   },
   {
-    id: 18,
     item: DISTRIBUTION.ama_direct_review_start_distribution_prior_to_goals,
     title: 'AMA Direct Review Start Distribution Prior to Goals',
     description: '',
@@ -681,21 +429,22 @@ export const updatedLevers = [
     unit: ACD_LEVERS.days,
     options: [
       {
-        item: 'option_1',
+        item: 'value',
         data_type: ACD_LEVERS.boolean,
         value: true,
         text: 'This feature is turned on or off',
         unit: ''
       }
     ],
-    is_toggle_active: true,
-    is_disabled_in_ui: false,
+    is_toggle_active: false,
+    is_disabled_in_ui: true,
     min_value: 0,
     max_value: 100,
-    algorithms_used: ['docket']
+    algorithms_used: ['docket'],
+    lever_group: 'docket_distribution_prior',
+    lever_group_order: 4001
   },
   {
-    id: 19,
     item: DISTRIBUTION.ama_evidence_submission_start_distribution_prior_to_goals,
     title: 'AMA Evidence Submission Start Distribution Prior to Goals',
     description: '',
@@ -704,7 +453,7 @@ export const updatedLevers = [
     unit: ACD_LEVERS.days,
     options: [
       {
-        item: 'option_1',
+        item: 'value',
         data_type: ACD_LEVERS.boolean,
         value: true,
         text: 'This feature is turned on or off',
@@ -712,39 +461,42 @@ export const updatedLevers = [
       }
     ],
     is_toggle_active: false,
-    is_disabled_in_ui: false,
+    is_disabled_in_ui: true,
     min_value: 0,
     max_value: 100,
-    algorithms_used: ['proportion']
+    algorithms_used: ['proportion'],
+    lever_group: 'docket_distribution_prior',
+    lever_group_order: 4002
   },
   {
-    id: 20,
     item: DISTRIBUTION.ama_hearings_docket_time_goals,
     title: 'AMA Hearings Docket Time Goals',
     data_type: ACD_LEVERS.number,
-    value: 435,
+    value: 365,
     unit: ACD_LEVERS.days,
-    is_toggle_active: true,
-    is_disabled_in_ui: false,
+    is_toggle_active: false,
+    is_disabled_in_ui: true,
     min_value: 0,
     max_value: 1000,
-    algorithms_used: ['proportion']
+    algorithms_used: ['proportion'],
+    lever_group: 'docket_time_goal',
+    lever_group_order: 4003
   },
   {
-    id: 21,
     item: DISTRIBUTION.ama_direct_review_docket_time_goals,
     title: 'AMA Direct Review Docket Time Goals',
     data_type: ACD_LEVERS.number,
     value: 500,
     unit: ACD_LEVERS.days,
-    is_toggle_active: false,
+    is_toggle_active: true,
     is_disabled_in_ui: false,
     min_value: 0,
     max_value: 1000,
-    algorithms_used: ['proportion']
+    algorithms_used: ['proportion'],
+    lever_group: 'docket_time_goal',
+    lever_group_order: 4004
   },
   {
-    id: 22,
     item: DISTRIBUTION.ama_evidence_submission_docket_time_goals,
     title: 'AMA Evidence Submission Docket Time Goals',
     data_type: ACD_LEVERS.number,
@@ -754,6 +506,8 @@ export const updatedLevers = [
     is_disabled_in_ui: true,
     min_value: 0,
     max_value: 1000,
-    algorithms_used: ['proportion']
+    algorithms_used: ['proportion'],
+    lever_group: 'docket_time_goal',
+    lever_group_order: 4005
   },
 ];
