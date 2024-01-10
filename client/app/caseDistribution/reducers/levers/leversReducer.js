@@ -2,6 +2,8 @@ import { ACTIONS } from '../levers/leversActionTypes';
 import { update } from '../../../util/ReducerUtil';
 import {
   createUpdatedLever,
+  createUpdatedRadioLever,
+  createUpdatedCombinationLever,
   createUpdatedLeversWithValues,
   formatLeverHistory
 } from '../../utils';
@@ -53,8 +55,34 @@ const leversReducer = (state = initialState, action = {}) => {
       }
     });
 
-  case ACTIONS.UPDATE_LEVER: {
+  case ACTIONS.UPDATE_BOOLEAN_LEVER:
+  case ACTIONS.UPDATE_NUMBER_LEVER:
+  case ACTIONS.UPDATE_TEXT_LEVER: {
     const [leverGroup, hasValueChanged] = createUpdatedLever(state, action);
+
+    return {
+      ...state,
+      changesOccurred: hasValueChanged,
+      levers: {
+        ...state.levers,
+        [action.payload.leverGroup]: leverGroup,
+      },
+    };
+  }
+  case ACTIONS.UPDATE_COMBINATION_LEVER: {
+    const [leverGroup, hasValueChanged] = createUpdatedCombinationLever(state, action);
+
+    return {
+      ...state,
+      changesOccurred: hasValueChanged,
+      levers: {
+        ...state.levers,
+        [action.payload.leverGroup]: leverGroup,
+      },
+    };
+  }
+  case ACTIONS.UPDATE_RADIO_LEVER: {
+    const [leverGroup, hasValueChanged] = createUpdatedRadioLever(state, action);
 
     return {
       ...state,

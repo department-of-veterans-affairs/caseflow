@@ -20,10 +20,10 @@ export const loadLevers = (levers) =>
     });
   };
 
-export const updateLeverState = (leverGroup, leverItem, value, optionValue = null, toggleValue = false) =>
+export const updateRadioLever = (leverGroup, leverItem, value, optionValue = null, toggleValue = false) =>
   (dispatch) => {
     dispatch({
-      type: ACTIONS.UPDATE_LEVER,
+      type: ACTIONS.UPDATE_RADIO_LEVER,
       payload: {
         leverGroup,
         leverItem,
@@ -34,10 +34,10 @@ export const updateLeverState = (leverGroup, leverItem, value, optionValue = nul
     });
   };
 
-export const updateAffinityLevers = (leverGroup, leverItem, value, optionValue = null, toggleValue = false) =>
+export const updateCombinationLever = (leverGroup, leverItem, value, optionValue = null, toggleValue = false) =>
   (dispatch) => {
     dispatch({
-      type: ACTIONS.UPDATE_AFFINITY_LEVER,
+      type: ACTIONS.UPDATE_COMBINATION_LEVER,
       payload: {
         leverGroup,
         leverItem,
@@ -48,18 +48,38 @@ export const updateAffinityLevers = (leverGroup, leverItem, value, optionValue =
     });
   };
 
-export const updateDocketDistributionPriors = (
-  leverGroup, leverItem, value, optionValue = null, toggleValue = false
-) =>
+export const updateBooleanLever = (leverGroup, leverItem, value) =>
   (dispatch) => {
     dispatch({
-      type: ACTIONS.UPDATE_DOCKET_DISTRIBUTION_PRIOR_LEVER,
+      type: ACTIONS.UPDATE_BOOLEAN_LEVER,
       payload: {
         leverGroup,
         leverItem,
-        value,
-        optionValue,
-        toggleValue
+        value
+      }
+    });
+  };
+
+export const updateTextLever = (leverGroup, leverItem, value) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.UPDATE_TEXT_LEVER,
+      payload: {
+        leverGroup,
+        leverItem,
+        value
+      }
+    });
+  };
+
+export const updateNumberLever = (leverGroup, leverItem, value) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.UPDATE_NUMBER_LEVER,
+      payload: {
+        leverGroup,
+        leverItem,
+        value
       }
     });
   };

@@ -31,6 +31,8 @@ const createDocketDistributionPriorValue = (toggleValue, value) => `${toggleValu
 
 export const createUpdatedLever = (state, action) => {
   const { leverGroup, leverItem, value, optionValue, toggleValue } = action.payload;
+  let hasValueChanged = false;
+
   const updateLeverValue = (lever) => {
     if (leverGroup === Constant.AFFINITY) {
       const selectedOption = findOptionValue(lever, value);
@@ -47,9 +49,65 @@ export const createUpdatedLever = (state, action) => {
     return { ...lever, value };
   };
 
-  return state.levers[leverGroup].map((lever) =>
+  const updatedLeverGroup = state.levers[leverGroup].map((lever) =>
     lever.item === leverItem ? updateLeverValue(lever) : lever
   );
+
+  return [updatedLeverGroup, hasValueChanged];
+};
+
+export const createUpdatedRadioLever = (state, action) => {
+  const { leverGroup, leverItem, value, optionValue, toggleValue } = action.payload;
+  let hasValueChanged = false;
+
+  const updateLeverValue = (lever) => {
+    if (leverGroup === Constant.AFFINITY) {
+      const selectedOption = findOptionValue(lever, value);
+
+      selectedOption.value = optionValue;
+
+      return { ...lever, value: optionValue };
+    } else if (leverGroup === Constant.DOCKET_DISTRIBUTION_PRIOR) {
+      const newValue = createDocketDistributionPriorValue(toggleValue, value);
+
+      return { ...lever, value: newValue, is_toggle_active: toggleValue };
+    }
+
+    return { ...lever, value };
+  };
+
+  const updatedLeverGroup = state.levers[leverGroup].map((lever) =>
+    lever.item === leverItem ? updateLeverValue(lever) : lever
+  );
+
+  return [updatedLeverGroup, hasValueChanged];
+};
+
+export const createUpdatedCombinationLever = (state, action) => {
+  const { leverGroup, leverItem, value, optionValue, toggleValue } = action.payload;
+  let hasValueChanged = false;
+
+  const updateLeverValue = (lever) => {
+    if (leverGroup === Constant.AFFINITY) {
+      const selectedOption = findOptionValue(lever, value);
+
+      selectedOption.value = optionValue;
+
+      return { ...lever, value: optionValue };
+    } else if (leverGroup === Constant.DOCKET_DISTRIBUTION_PRIOR) {
+      const newValue = createDocketDistributionPriorValue(toggleValue, value);
+
+      return { ...lever, value: newValue, is_toggle_active: toggleValue };
+    }
+
+    return { ...lever, value };
+  };
+
+  const updatedLeverGroup = state.levers[leverGroup].map((lever) =>
+    lever.item === leverItem ? updateLeverValue(lever) : lever
+  );
+
+  return [updatedLeverGroup, hasValueChanged];
 };
 
 /**
