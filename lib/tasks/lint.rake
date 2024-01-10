@@ -5,7 +5,7 @@ require "rainbow"
 
 desc "shortcut to run all linting tools, at the same time."
 task(:lint).clear
-task lint: :environment do
+task :lint do # rubocop:disable Rails/RakeEnvironment
   puts "running scss-lint..."
   scss_result = ShellCommand.run("scss-lint --color")
 
