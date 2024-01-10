@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
-import { haveLeversChanged } from '../reducers/levers/leversSelector';
 import ApiUtil from '../../util/ApiUtil';
 import Modal from 'app/components/Modal';
 import Button from 'app/components/Button';
@@ -11,7 +10,8 @@ import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import moment from 'moment';
 
 const changedOptionValue = (changedLever, currentLever) => {
-  if (changedLever.data_type === ACD_LEVERS.data_types.radio || changedLever.data_type === ACD_LEVERS.data_types.radio) {
+  if (changedLever.data_type === ACD_LEVERS.data_types.radio ||
+    changedLever.data_type === ACD_LEVERS.data_types.radio) {
     const newChangedOptionValue = changedLever.options.find((option) => option.item === changedLever.value).value;
     const currentOptionValue = currentLever.options.find((option) => option.item === currentLever.value)?.value;
 
