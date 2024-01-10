@@ -369,7 +369,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     connection.exec_query(SELECT_PRIORITY_APPEALS).to_hash.map { |appeal| appeal["bfkey"] }
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
     fail(DocketNumberCentennialLoop, COPY::MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE) if Time.zone.now.year >= 2030
 
@@ -414,22 +414,22 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     distribute_appeals(fmtd_query, judge, dry_run)
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
 
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
-    if use_by_docket_date?
-      query = <<-SQL
-        #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
-        where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
-        and (rownum <= ? or 1 = ?)
-      SQL
-    else
-      query = <<-SQL
-        #{SELECT_PRIORITY_APPEALS}
-        where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
-        and (rownum <= ? or 1 = ?)
-      SQL
-    end
+    query =
+      if use_by_docket_date?
+        <<-SQL
+          #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
+          where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
+          and (rownum <= ? or 1 = ?)
+        SQL
+      else
+        <<-SQL
+          #{SELECT_PRIORITY_APPEALS}
+          where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
+          and (rownum <= ? or 1 = ?)
+        SQL
+      end
 
     fmtd_query = sanitize_sql_array([
                                       query,
@@ -442,7 +442,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     distribute_appeals(fmtd_query, judge, dry_run)
   end
-
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
   # :nocov:
 
   def self.distribute_appeals(query, judge, dry_run)
