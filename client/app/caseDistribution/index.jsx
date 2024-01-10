@@ -23,10 +23,10 @@ class CaseDistribution extends React.PureComponent {
 
   render() {
     const preloadedState = {
-      levers: JSON.parse(JSON.stringify(this.props.acd_levers)),
-      backendLevers: JSON.parse(JSON.stringify(this.props.acd_levers)),
-      historyList: JSON.parse(JSON.stringify(this.props.acd_history)),
-      isUserAcdAdmin: JSON.parse(JSON.stringify(this.props.user_is_an_acd_admin))
+      levers: this.props.acd_levers,
+      backendLevers: this.props.acd_levers,
+      historyList: this.props.acd_history,
+      isUserAcdAdmin: this.props.user_is_an_acd_admin
     };
 
     const leverStore = createStore(leversReducer, preloadedState);
@@ -110,6 +110,15 @@ class CaseDistribution extends React.PureComponent {
       batchSizeLevers,
       docketLeversObject,
     };
+
+    let sortedAcdLevers = {};
+
+    Object.keys(this.props.acdLeversForStore).forEach((group) => {
+      let sortedList = this.props.acdLeversForStore[group].sort(
+        (lever1, lever2) => lever1.lever_group_order - lever2.lever_group_order);
+
+      sortedAcdLevers[group] = sortedList;
+    });
 
     return (
       <ReduxBase reducer={rootReducer}>

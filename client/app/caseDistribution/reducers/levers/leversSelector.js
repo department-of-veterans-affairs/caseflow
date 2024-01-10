@@ -17,16 +17,21 @@ const countChangedLevers = state => {
   const changedLevers = flattenLevers.filter((lever, index) => {
     const backendValue = flattenBackendLevers[index].backendValue;
     const currentValue = lever.currentValue;
+
     // Check if backendValue and currentValue are different
     return backendValue !== currentValue;
   });
+
   return changedLevers.length;
 };
 
 export const getLeversByGroup = createSelector(
   [getLeversByGroupConstant],
   (leversByGroup) => {
-    return leversByGroup
+    let sortedLeversByGroup = leversByGroup.sort(
+      (lever1, lever2) => lever1.lever_group_order - lever2.lever_group_order);
+
+    return sortedLeversByGroup;
   }
 );
 
