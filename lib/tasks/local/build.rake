@@ -2,7 +2,7 @@
 
 namespace :local do
   desc "build local development environment"
-  task build: :environment do
+  task :build do # rubocop:disable Rails/RakeEnvironment
     puts ">>> BEGIN local:build"
     puts ">>> 01/08 Downloading FACOLS image from ECR"
     system("./local/vacols/build_push.sh rake") || abort

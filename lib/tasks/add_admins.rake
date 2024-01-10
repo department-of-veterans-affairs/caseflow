@@ -22,7 +22,7 @@ namespace :add_admins do
   end
 
   desc "given the org id and an array of user ids, batch add users as admins"
-  task batch_add_admins: :environment do
+  task :batch_add_admins do # rubocop:disable Rails/RakeEnvironment
     STDOUT.puts("Enter the organization id")
     org_id = STDIN.gets.chomp
     if org_id.to_i.is_a? Integer
@@ -56,7 +56,7 @@ namespace :add_admins do
   end
 
   desc "given a list of user ids, batch assign roles to the users"
-  task batch_assign_roles: :environment do
+  task :batch_assign_roles do # rubocop:disable Rails/RakeEnvironment
     STDOUT.puts("Enter the role to assign to the users. (example: Case Details, Reader, etc.)")
     role = STDIN.gets.chomp
     STDOUT.puts("Enter the user ids to be assigned the role #{role} separated by commas (ex: 1, 2, 3...)")
@@ -70,7 +70,7 @@ namespace :add_admins do
   end
 
   desc "create SSC org and test users for UAT testing"
-  task create_ssc_and_users: :environment do
+  task :create_ssc_and_users do # rubocop:disable Rails/RakeEnvironment
     STDOUT.puts("Creating the SSC org and all test users")
     SupervisorySeniorCouncil.singleton
     ussc = User.create!(
@@ -137,7 +137,7 @@ namespace :add_admins do
   end
 
   desc "create an appellant substitution for a designated appeal"
-  task create_appellant_substitution: :environment do
+  task :create_appellant_substitution do # rubocop:disable Rails/RakeEnvironment
     STDOUT.puts("Enter the appeal id you want to add an appellant substitution to.")
     appeal_id = STDIN.gets.chomp
     appeal = Appeal.find(appeal_id.to_i)
@@ -159,7 +159,7 @@ namespace :add_admins do
   end
 
   desc "create a NOD Date Update for a designated appeal"
-  task create_nod_update: :environment do
+  task :create_nod_update  do # rubocop:disable Rails/RakeEnvironment
     STDOUT.puts("Enter the appeal id you want to add a NOD date update to.")
     appeal_id = STDIN.gets.chomp
     appeal = Appeal.find(appeal_id.to_i)

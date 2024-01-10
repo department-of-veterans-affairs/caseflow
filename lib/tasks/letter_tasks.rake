@@ -2,7 +2,7 @@
 
 namespace :letter_tasks do
   desc "create 10 appeals with post initial letter tasks that will expire in 2 days"
-  task create_post_task_appeals: :environment do
+  task :create_post_task_appeals => :environment do # rubocop:disable Style/HashSyntax
     # only allow to run in demo or test environment
     if Rails.env.development? || Rails.env.demo?
       cob = Organization.find_by_url("clerk-of-the-board")
@@ -52,7 +52,7 @@ namespace :letter_tasks do
   end
 
   desc "create 10 appeals with final letter tasks for demo testing."
-  task create_final_letter_task_appeals: :environment do
+  task :create_final_letter_task_appeals => :environment do # rubocop:disable Style/HashSyntax
     # only allow to run in demo or test environment
     if Rails.env.development? || Rails.env.demo?
       cob = Organization.find_by_url("clerk-of-the-board")

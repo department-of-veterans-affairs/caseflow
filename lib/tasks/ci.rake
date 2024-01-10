@@ -23,7 +23,7 @@ namespace :ci do
   task other: %w[ci:verify_code_coverage lint security js_tests]
 
   desc "Verify code coverge (via simplecov) after tests have been run in parallel"
-  task verify_code_coverage: :environment do
+  task :verify_code_coverage do # rubocop:disable Rails/RakeEnvironment
     puts "\nVerifying code coverage"
     require "simplecov"
 
@@ -47,7 +47,7 @@ namespace :ci do
   end
 
   desc "Verify code coverage on Github Actions "
-  task gha_verify_code_coverage: :environment do
+  task :gha_verify_code_coverage do # rubocop:disable Rails/RakeEnvironment
     require "simplecov"
 
     # Using the same dir as :gha_verify_code_coverage

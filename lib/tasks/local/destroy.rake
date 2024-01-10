@@ -2,7 +2,7 @@
 
 namespace :local do
   desc "destroy local development environment to have a clean slate when rebuilding"
-  task destroy: :environment do
+  task :destroy do # rubocop:disable Rails/RakeEnvironment
     puts ">>> BEGIN local:destroy"
 
     puts ">>> 01/02 Dropping development and test caseflow databases"
