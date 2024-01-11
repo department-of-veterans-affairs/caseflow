@@ -83,7 +83,8 @@ class CaseDistribution extends React.PureComponent {
         docketLeverLists.docketDistributionPriorLeverList.includes(lever.item))) {
         docketDistributionPriorLevers.push(lever.item);
       }
-      if (lever.data_type === ACD_LEVERS.data_types.number && docketLeverLists.docketTimeGoalLeverList.includes(lever.item)) {
+      if (lever.data_type === ACD_LEVERS.data_types.number &&
+          docketLeverLists.docketTimeGoalLeverList.includes(lever.item)) {
         docketTimeGoalLevers.push(lever.item);
       }
 

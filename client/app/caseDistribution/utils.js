@@ -4,7 +4,6 @@ export const findOption = (lever, value) => lever.options.find((option) => optio
 
 export const createCombinationValue = (toggleValue, value) => `${toggleValue}-${value}`;
 
-
 /**
  * Add backendValue attributes to each lever
  * For radio and combination levers add currentValue

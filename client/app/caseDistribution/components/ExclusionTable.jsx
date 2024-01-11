@@ -7,7 +7,7 @@ import COPY from '../../../COPY';
 import DISTRIBUTION from '../../../constants/DISTRIBUTION';
 import { getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
 
-const ExclusionTable = (props) => {
+const ExclusionTable = () => {
   const theState = useSelector((state) => state);
 
   const isUserAcdAdmin = getUserIsAcdAdmin(theState);
