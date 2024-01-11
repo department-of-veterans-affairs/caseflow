@@ -23,7 +23,7 @@ const LeverButtonsWrapper = (props) => {
   const { leverStore } = props;
 
   const cancelButton = <LeverCancelButton leverStore={leverStore} />;
-  const saveButton = <LeverSaveButton leverStore={leverStore} />;
+  const saveButton = <LeverSaveButton />;
 
   return (
     <div {...buttonWrapperStyling}>

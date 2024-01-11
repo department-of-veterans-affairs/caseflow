@@ -12,11 +12,8 @@ const InteractableLeverWrapper = ({ levers, leverStore, isAdmin }) => {
     <div>
       <ExclusionTable isAdmin={isAdmin} />
       <BatchSize isAdmin={isAdmin} />
-      <AffinityDays leverList={levers.affinityLevers} leverStore={leverStore} isAdmin={isAdmin} />
-      <DocketTimeGoals
-        leverList={levers.docketLeversObject}
-        leverStore={leverStore}
-        isAdmin={isAdmin} />
+      <AffinityDays isAdmin={isAdmin} />
+      <DocketTimeGoals isAdmin={isAdmin} />
       {isAdmin ? <LeverButtonsWrapper leverStore={leverStore} /> : ''}
     </div>
   );

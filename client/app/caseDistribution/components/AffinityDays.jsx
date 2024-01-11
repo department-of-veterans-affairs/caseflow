@@ -149,8 +149,6 @@ const AffinityDays = (props) => {
 };
 
 AffinityDays.propTypes = {
-  leverList: PropTypes.arrayOf(PropTypes.string).isRequired,
-  leverStore: PropTypes.any,
   isAdmin: PropTypes.bool.isRequired,
 };
 export default AffinityDays;
