@@ -1,3 +1,5 @@
+PaperTrail.config.enabled = !Rails.env.test?
+
 module PaperTrail
   class Version < ActiveRecord::Base
     def user
