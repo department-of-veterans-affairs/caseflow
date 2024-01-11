@@ -277,33 +277,7 @@ cellspacing="0">
     <tr>
       <td style="vertical-align: top; width: 1px;"><br>
       </td>
-      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;decision_review_id</td>
-      <td style="vertical-align: top; width: 10px;" ><br>
-      </td>
-	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int8<br>
-      </td>
-      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
-      </td>
-      <td style="vertical-align: top;width: 100%;" ><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top; width: 1px;"><br>
-      </td>
-      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;decision_review_type</td>
-      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
-      </td>
-	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br>
-      </td>
-      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow"><br>
-      </td>
-      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top; width: 1px;"><br>
-      </td>
-      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;decision_sync_attempted_at</td>
+      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;decision_date_added_at</td>
       <td style="vertical-align: top; width: 10px;" ><br>
       </td>
 	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;timestamp<br>
@@ -316,7 +290,33 @@ cellspacing="0">
     <tr>
       <td style="vertical-align: top; width: 1px;"><br>
       </td>
-      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;decision_sync_canceled_at</td>
+      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;decision_review_id</td>
+      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int8<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow"><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;decision_review_type</td>
+      <td style="vertical-align: top; width: 10px;" ><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" ><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;decision_sync_attempted_at</td>
       <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
       </td>
 	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;timestamp<br>
@@ -329,10 +329,10 @@ cellspacing="0">
     <tr>
       <td style="vertical-align: top; width: 1px;"><br>
       </td>
-      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;decision_sync_error</td>
+      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;decision_sync_canceled_at</td>
       <td style="vertical-align: top; width: 10px;" ><br>
       </td>
-	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br>
+	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;timestamp<br>
       </td>
       <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
       </td>
@@ -342,7 +342,33 @@ cellspacing="0">
     <tr>
       <td style="vertical-align: top; width: 1px;"><br>
       </td>
-      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;decision_sync_last_submitted_at</td>
+      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;decision_sync_error</td>
+      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow"><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;decision_sync_last_submitted_at</td>
+      <td style="vertical-align: top; width: 10px;" ><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;timestamp<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" ><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;decision_sync_processed_at</td>
       <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
       </td>
 	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;timestamp<br>
@@ -355,7 +381,7 @@ cellspacing="0">
     <tr>
       <td style="vertical-align: top; width: 1px;"><br>
       </td>
-      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;decision_sync_processed_at</td>
+      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;decision_sync_submitted_at</td>
       <td style="vertical-align: top; width: 10px;" ><br>
       </td>
 	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;timestamp<br>
@@ -368,59 +394,7 @@ cellspacing="0">
     <tr>
       <td style="vertical-align: top; width: 1px;"><br>
       </td>
-      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;decision_sync_submitted_at</td>
-      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
-      </td>
-	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;timestamp<br>
-      </td>
-      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow"><br>
-      </td>
-      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top; width: 1px;"><br>
-      </td>
-      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;edited_description</td>
-      <td style="vertical-align: top; width: 10px;" ><br>
-      </td>
-	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br>
-      </td>
-      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
-      </td>
-      <td style="vertical-align: top;width: 100%;" ><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top; width: 1px;"><br>
-      </td>
-      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;end_product_establishment_id</td>
-      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
-      </td>
-	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int4<br>
-      </td>
-      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow"><br>
-      </td>
-      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top; width: 1px;"><br>
-      </td>
-      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;ineligible_due_to_id</td>
-      <td style="vertical-align: top; width: 10px;" ><br>
-      </td>
-	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int8<br>
-      </td>
-      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
-      </td>
-      <td style="vertical-align: top;width: 100%;" ><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top; width: 1px;"><br>
-      </td>
-      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;ineligible_reason</td>
+      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;edited_description</td>
       <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
       </td>
 	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br>
@@ -433,189 +407,7 @@ cellspacing="0">
     <tr>
       <td style="vertical-align: top; width: 1px;"><br>
       </td>
-      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;is_predocket_needed</td>
-      <td style="vertical-align: top; width: 10px;" ><br>
-      </td>
-	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool<br>
-      </td>
-      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
-      </td>
-      <td style="vertical-align: top;width: 100%;" ><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top; width: 1px;"><br>
-      </td>
-      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;is_unidentified</td>
-      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
-      </td>
-	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool<br>
-      </td>
-      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow"><br>
-      </td>
-      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top; width: 1px;"><br>
-      </td>
-      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;nonrating_issue_category</td>
-      <td style="vertical-align: top; width: 10px;" ><br>
-      </td>
-	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br>
-      </td>
-      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
-      </td>
-      <td style="vertical-align: top;width: 100%;" ><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top; width: 1px;"><br>
-      </td>
-      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;nonrating_issue_description</td>
-      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
-      </td>
-	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br>
-      </td>
-      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow"><br>
-      </td>
-      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top; width: 1px;"><br>
-      </td>
-      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;notes</td>
-      <td style="vertical-align: top; width: 10px;" ><br>
-      </td>
-	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br>
-      </td>
-      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
-      </td>
-      <td style="vertical-align: top;width: 100%;" ><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top; width: 1px;"><br>
-      </td>
-      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;ramp_claim_id</td>
-      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
-      </td>
-	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br>
-      </td>
-      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow"><br>
-      </td>
-      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top; width: 1px;"><br>
-      </td>
-      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;rating_issue_associated_at</td>
-      <td style="vertical-align: top; width: 10px;" ><br>
-      </td>
-	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;timestamp<br>
-      </td>
-      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
-      </td>
-      <td style="vertical-align: top;width: 100%;" ><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top; width: 1px;"><br>
-      </td>
-      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;split_issue_status</td>
-      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
-      </td>
-	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br>
-      </td>
-      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow"><br>
-      </td>
-      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top; width: 1px;"><br>
-      </td>
-      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;type</td>
-      <td style="vertical-align: top; width: 10px;" ><br>
-      </td>
-	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br>
-      </td>
-      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
-      </td>
-      <td style="vertical-align: top;width: 100%;" ><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top; width: 1px;"><br>
-      </td>
-      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;unidentified_issue_text</td>
-      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
-      </td>
-	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br>
-      </td>
-      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow"><br>
-      </td>
-      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top; width: 1px;"><br>
-      </td>
-      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;untimely_exemption</td>
-      <td style="vertical-align: top; width: 10px;" ><br>
-      </td>
-	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool<br>
-      </td>
-      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
-      </td>
-      <td style="vertical-align: top;width: 100%;" ><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top; width: 1px;"><br>
-      </td>
-      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;untimely_exemption_notes</td>
-      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
-      </td>
-	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br>
-      </td>
-      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow"><br>
-      </td>
-      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top; width: 1px;"><br>
-      </td>
-      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;updated_at</td>
-      <td style="vertical-align: top; width: 10px;" ><br>
-      </td>
-	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;timestamp<br>
-      </td>
-      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
-      </td>
-      <td style="vertical-align: top;width: 100%;" ><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top; width: 1px;"><br>
-      </td>
-      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;vacols_id</td>
-      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
-      </td>
-	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br>
-      </td>
-      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow"><br>
-      </td>
-      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><br>
-      </td>
-    </tr>
-    <tr>
-      <td style="vertical-align: top; width: 1px;"><br>
-      </td>
-      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;vacols_sequence_id</td>
+      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;end_product_establishment_id</td>
       <td style="vertical-align: top; width: 10px;" ><br>
       </td>
 	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int4<br>
@@ -628,7 +420,33 @@ cellspacing="0">
     <tr>
       <td style="vertical-align: top; width: 1px;"><br>
       </td>
-      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;verified_unidentified_issue</td>
+      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;ineligible_due_to_id</td>
+      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int8<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow"><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;ineligible_reason</td>
+      <td style="vertical-align: top; width: 10px;" ><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" ><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;is_predocket_needed</td>
       <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
       </td>
 	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool<br>
@@ -641,7 +459,33 @@ cellspacing="0">
     <tr>
       <td style="vertical-align: top; width: 1px;"><br>
       </td>
-      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;veteran_participant_id</td>
+      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;is_unidentified</td>
+      <td style="vertical-align: top; width: 10px;" ><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" ><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;nonrating_issue_category</td>
+      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow"><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;nonrating_issue_description</td>
       <td style="vertical-align: top; width: 10px;" ><br>
       </td>
 	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br>
@@ -649,6 +493,175 @@ cellspacing="0">
       <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
       </td>
       <td style="vertical-align: top;width: 100%;" ><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;notes</td>
+      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow"><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;ramp_claim_id</td>
+      <td style="vertical-align: top; width: 10px;" ><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" ><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;rating_issue_associated_at</td>
+      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;timestamp<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow"><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;split_issue_status</td>
+      <td style="vertical-align: top; width: 10px;" ><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" ><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;type</td>
+      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow"><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;unidentified_issue_text</td>
+      <td style="vertical-align: top; width: 10px;" ><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" ><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;untimely_exemption</td>
+      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow"><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;untimely_exemption_notes</td>
+      <td style="vertical-align: top; width: 10px;" ><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" ><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;updated_at</td>
+      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;timestamp<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow"><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;vacols_id</td>
+      <td style="vertical-align: top; width: 10px;" ><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" ><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;vacols_sequence_id</td>
+      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int4<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow"><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;verified_unidentified_issue</td>
+      <td style="vertical-align: top; width: 10px;" ><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" ><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" ><br>
+      </td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top; width: 1px;"><br>
+      </td>
+      <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;veteran_participant_id</td>
+      <td style="vertical-align: top; width: 10px;" class="highlightedrow"><br>
+      </td>
+	  <td style="vertical-align: top; width: 1px;" class="highlightedrow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;varchar<br>
+      </td>
+      <td style="vertical-align: top; width: 1px;color: rgb(120, 0, 0);" class="highlightedrow"><br>
+      </td>
+      <td style="vertical-align: top;width: 100%;" class="highlightedrow"><br>
       </td>
     </tr>
 
