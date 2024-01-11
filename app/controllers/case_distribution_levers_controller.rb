@@ -22,7 +22,6 @@ class CaseDistributionLeversController < ApplicationController
 
     render json: {
       errors: errors,
-      successful: errors.empty?,
       lever_history: lever_history,
       levers: levers
     }
