@@ -84,7 +84,7 @@ plugins:
   rubocop:
     enabled: true
     channel: rubocop-0-79
-  stylelint:
+  scss-lint:
     enabled: true
   grep:
     enabled: true

@@ -686,8 +686,7 @@ describe "SanitizedJsonExporter/Importer" do
 
       # pp "DIFFERENCES counts", sji.differences(orig_appeals, ignore_expected_diffs: false).transform_values(&:count)
       # pp sji.differences(orig_appeals, ignore_expected_diffs: false)
-      diffs = sji.differences(orig_appeals, additional_expected_diffs_fields:
-        { Appeal => ["uuid"], RequestIssue => ["decision_date_added_at"] })
+      diffs = sji.differences(orig_appeals, additional_expected_diffs_fields: { Appeal => ["uuid"] })
       # pp "DIFFERENCES minus expected diffs", diffs
       expect(diffs.values.flatten).to be_empty
     end

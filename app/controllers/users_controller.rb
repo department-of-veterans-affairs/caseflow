@@ -8,7 +8,6 @@ class UsersController < ApplicationController
   def index
     return filter_by_role if params[:role]
     return filter_by_css_id_or_name if css_id
-    return filter_by_organization if params[:organization]
 
     render json: {}, status: :ok
   end
@@ -77,13 +76,6 @@ class UsersController < ApplicationController
       org = Organization.find_by_name_or_url(params[:exclude_org])
       users -= org.users
     end
-    render json: { users: json_users(users) }
-  end
-
-  def filter_by_organization
-    finder = UserFinder.new(organization: params[:organization])
-    users = finder.users || []
-
     render json: { users: json_users(users) }
   end
 

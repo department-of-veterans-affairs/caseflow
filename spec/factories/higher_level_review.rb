@@ -13,31 +13,7 @@ FactoryBot.define do
     end
 
     transient do
-      assigned_at { Time.zone.now }
-    end
-
-    transient do
       claimant_type { :none }
-    end
-
-    transient do
-      issue_type { nil }
-    end
-
-    transient do
-      decision_date { nil }
-    end
-
-    transient do
-      withdraw { false }
-    end
-
-    transient do
-      description { nil }
-    end
-
-    transient do
-      remove { false }
     end
 
     transient do
@@ -45,10 +21,6 @@ FactoryBot.define do
         Veteran.find_by(file_number: veteran_file_number) ||
           create(:veteran, file_number: (generate :veteran_file_number))
       end
-    end
-
-    transient do
-      disposition { nil }
     end
 
     after(:build) do |hlr, evaluator|
@@ -169,32 +141,6 @@ FactoryBot.define do
       end
     end
 
-    trait :with_issue_type do
-      after(:create) do |higher_level_review, evaluator|
-        create(:request_issue,
-               decision_date: evaluator.decision_date,
-               benefit_type: higher_level_review.benefit_type,
-               nonrating_issue_category: evaluator.issue_type,
-               nonrating_issue_description: "#{higher_level_review.business_line.name} #{evaluator.description}",
-               decision_review: higher_level_review)
-
-        if evaluator.veteran
-          higher_level_review.veteran_file_number = evaluator.veteran.file_number
-          higher_level_review.save
-        end
-      end
-    end
-
-    trait :without_decision_date do
-      after(:create) do |hlr, evaluator|
-        create(:request_issue,
-               benefit_type: hlr.benefit_type,
-               nonrating_issue_category: evaluator.issue_type,
-               nonrating_issue_description: "#{hlr.business_line.name} #{evaluator.description}",
-               decision_review: hlr)
-      end
-    end
-
     trait :processed do
       establishment_submitted_at { Time.zone.now }
       establishment_last_submitted_at { Time.zone.now }
@@ -211,61 +157,6 @@ FactoryBot.define do
       after(:create) do |hlr|
         hlr.submit_for_processing!
         hlr.create_business_line_tasks!
-      end
-    end
-
-    trait :with_disposition do
-      after(:create) do |hlr, evaluator|
-        create(:decision_issue,
-               benefit_type: "vha",
-               request_issues: hlr.request_issues,
-               decision_review: hlr,
-               disposition: evaluator.disposition,
-               caseflow_decision_date: Time.zone.now)
-      end
-    end
-
-    trait :with_intake do
-      after(:create) do |hlr|
-        css_id = "CSS_ID#{generate :css_id}"
-
-        intake_user = User.find_by(css_id: css_id)
-
-        if intake_user.nil?
-          intake_user = create(:user, css_id: css_id)
-        end
-
-        create(:intake, :completed, detail: hlr, veteran_file_number: hlr.veteran_file_number, user: intake_user)
-      end
-    end
-
-    trait :with_decision do
-      after(:create) do |hlr|
-        create(:decision_issue,
-               decision_review: hlr,
-               request_issues: hlr.request_issues,
-               benefit_type: hlr.benefit_type,
-               disposition: "Granted")
-      end
-    end
-
-    trait :unidentified_issue do
-      after(:create) do |hlr, evaluator|
-        create(:request_issue,
-               :unidentified,
-               :add_decision_date,
-               benefit_type: hlr.benefit_type,
-               decision_review: hlr,
-               decision_date: evaluator.decision_date.presence ? evaluator.decision_date : nil)
-      end
-    end
-
-    trait :update_assigned_at do
-      after(:create) do |hlr, evaluator|
-        hlr.create_business_line_tasks!
-        task = hlr.tasks.last
-        task.assigned_at = evaluator.assigned_at
-        task.save!
       end
     end
   end

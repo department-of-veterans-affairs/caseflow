@@ -156,7 +156,7 @@ TaskTableTabUnconnected.propTypes = {
 
 const TaskTableTab = connect(
   (state) => ({
-    featureToggles: state.nonComp.featureToggles
+    featureToggles: state.featureToggles
   }),
 )(TaskTableTabUnconnected);
 

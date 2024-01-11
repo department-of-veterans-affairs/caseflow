@@ -15,14 +15,17 @@
       appeal: task.appeal_ui_hash,
       poaAlert: {},
       featureToggles: {
-        decisionReviewQueueSsnColumn: FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: current_user),
-        poa_button_refresh: FeatureToggle.enabled?(:poa_button_refresh, user: current_user)
+        decisionReviewQueueSsnColumn: FeatureToggle.enabled?(:decision_review_queue_ssn_column, user: current_user)
       },
       loadingPowerOfAttorney: {
         loading: false,
         error: false
-      },
-      isBusinessLineAdmin: business_line.user_is_admin?(current_user)
+     },
+      ui: {
+        featureToggles: {
+          poa_button_refresh: FeatureToggle.enabled?(:poa_button_refresh)
+        }
+      }
     }
   }) %>
 <% end %>

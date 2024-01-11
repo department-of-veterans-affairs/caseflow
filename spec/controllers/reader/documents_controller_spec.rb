@@ -51,8 +51,7 @@ describe Reader::DocumentsController, :postgres, type: :controller do
         end
       end
       it "efficiently queries and returns correct response" do
-        # The following line causes all log output including SQL queries to logged and test results truncate in GHA
-        # ActiveRecord::Base.logger = Logger.new(STDOUT)
+        ActiveRecord::Base.logger = Logger.new(STDOUT)
         controller_query_data = SqlTracker.track do
           get :index, params: params
         end

@@ -100,7 +100,7 @@ class NonCompDispositions extends React.PureComponent {
 
     this.state = {
       requestIssues: formatRequestIssuesWithDecisionIssues(
-        this.props.task.appeal.activeOrDecidedRequestIssues, this.props.appeal.decisionIssues),
+        this.props.task.appeal.activeRequestIssues, this.props.appeal.decisionIssues),
       decisionDate: '',
       isFilledOut: false
     };
@@ -266,8 +266,8 @@ NonCompDispositions.propTypes = {
 
 export default connect(
   (state) => ({
-    appeal: state.nonComp.appeal,
-    task: state.nonComp.task,
-    decisionIssuesStatus: state.nonComp.decisionIssuesStatus
+    appeal: state.appeal,
+    task: state.task,
+    decisionIssuesStatus: state.decisionIssuesStatus
   })
 )(NonCompDispositions);

@@ -192,56 +192,6 @@ RSpec.describe UsersController, :all_dbs, type: :controller do
     end
   end
 
-  describe "GET /users?organization=<org_url | org_name>" do
-    let(:non_org_users) { create_list(:user, 4) }
-    let(:org) { create(:organization) }
-    let(:body) { JSON.parse(response.body) }
-    let(:organization_param) { org.url }
-
-    subject { get(:index, params: { organization: organization_param }) }
-
-    context "when there are zero matches" do
-      it "returns empty array" do
-        subject
-
-        expect(response.status).to eq(200)
-        expect(body["users"]).to eq([])
-      end
-    end
-
-    context "when searching by organization url or name" do
-      let!(:org_users) { create_list(:user, 4) }
-
-      before do
-        org_users.each { |user| org.add_user(user) }
-      end
-
-      it "matches the org users by org url" do
-        subject
-
-        expect(response.status).to eq(200)
-        found_users = body["users"]["data"]
-        found_ids = found_users.map { |user| user["id"].to_i }
-        expect(found_users.count).to eq(4)
-        expect(found_ids).to match_array(org_users.map(&:id))
-      end
-
-      context "when searching by name" do
-        let(:organization_param) { org.name }
-
-        it "matches the org users by org name" do
-          subject
-
-          expect(response.status).to eq(200)
-          found_users = body["users"]["data"]
-          found_ids = found_users.map { |user| user["id"].to_i }
-          expect(found_users.count).to eq(4)
-          expect(found_ids).to match_array(org_users.map(&:id))
-        end
-      end
-    end
-  end
-
   describe "GET /user" do
     let(:user) { create(:user) }
     let(:params) { {} }

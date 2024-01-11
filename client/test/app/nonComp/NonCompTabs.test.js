@@ -84,7 +84,7 @@ const checkFilterableHeaders = (expectedHeaders) => {
 
 const renderNonCompTabs = (props) => {
 
-  const nonCompTabsReducer = createReducer({ nonComp: props });
+  const nonCompTabsReducer = createReducer(props);
 
   const store = createStore(nonCompTabsReducer);
 

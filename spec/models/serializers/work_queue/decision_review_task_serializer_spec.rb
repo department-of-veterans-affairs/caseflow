@@ -27,7 +27,7 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
             id: hlr.id.to_s,
             isLegacyAppeal: false,
             issueCount: 0,
-            activeOrDecidedRequestIssues: [],
+            activeRequestIssues: [],
             uuid: task.appeal.uuid,
             appellant_type: "VeteranClaimant"
           },
@@ -76,7 +76,7 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
               id: hlr.id.to_s,
               isLegacyAppeal: false,
               issueCount: 0,
-              activeOrDecidedRequestIssues: [],
+              activeRequestIssues: [],
               uuid: task.appeal.uuid,
               appellant_type: nil
             },
@@ -128,7 +128,7 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
               id: hlr.id.to_s,
               isLegacyAppeal: false,
               issueCount: 0,
-              activeOrDecidedRequestIssues: [],
+              activeRequestIssues: [],
               uuid: task.appeal.uuid,
               appellant_type: claimant.type
             },
@@ -192,7 +192,7 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
               id: hlr.id.to_s,
               isLegacyAppeal: false,
               issueCount: 2,
-              activeOrDecidedRequestIssues: serialized_issues,
+              activeRequestIssues: serialized_issues,
               appellant_type: "VeteranClaimant",
               uuid: task.appeal.uuid
             },

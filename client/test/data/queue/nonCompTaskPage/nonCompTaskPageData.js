@@ -19,7 +19,7 @@ const completedHLRTaskData = {
       id: '17',
       isLegacyAppeal: false,
       issueCount: 1,
-      activeOrDecidedRequestIssues: [
+      activeRequestIssues: [
         {
           id: 3710,
           rating_issue_reference_id: null,

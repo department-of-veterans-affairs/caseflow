@@ -1,6 +1,0 @@
-[
-  { "label": "Less than", "value": "lessThan" },
-  { "label": "More than", "value": "moreThan" },
-  { "label": "Equal to", "value": "equalTo" },
-  { "label": "Between", "value": "between" }
-]

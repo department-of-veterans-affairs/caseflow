@@ -5,7 +5,6 @@ FactoryBot.define do
     association(:decision_review, factory: [:appeal, :with_post_intake_tasks])
     benefit_type { "compensation" }
     contested_rating_issue_diagnostic_code { "5008" }
-    decision_date { nil }
 
     factory :request_issue_with_epe do
       end_product_establishment { create(:end_product_establishment, source: decision_review) }
@@ -126,46 +125,6 @@ FactoryBot.define do
 
         ri.decision_issues << evaluator.decision_issues
         ri.save
-      end
-    end
-
-    trait :add_decision_date do
-      after(:create) do |ri, evaluator|
-        if evaluator.decision_date.present?
-          Timecop.freeze(ri.updated_at + rand(1..10).days.ago) do
-            ri.save_decision_date!(evaluator.decision_date)
-            create(:request_issues_update,
-                   review: ri.decision_review,
-                   user: RequestStore[:current_user],
-                   submitted_at: Time.zone.now,
-                   processed_at: Time.zone.now,
-                   last_submitted_at: Time.zone.now,
-                   attempted_at: Time.zone.now,
-                   updated_at: Time.zone.now + 1.second,
-                   edited_request_issue_ids: [ri.id],
-                   before_request_issue_ids: [ri.id],
-                   after_request_issue_ids: [ri.id])
-          end
-        end
-      end
-    end
-
-    trait :request_issues_update do
-      after(:create) do |ri, evaluator|
-        if evaluator.decision_date.present?
-          Timecop.freeze(rand(1..17).days) do
-            create(:request_issues_update,
-                   review: ri.decision_review,
-                   user: RequestStore[:current_user],
-                   submitted_at: Time.zone.now,
-                   processed_at: Time.zone.now,
-                   last_submitted_at: Time.zone.now,
-                   attempted_at: Time.zone.now,
-                   edited_request_issue_ids: [ri.id],
-                   before_request_issue_ids: [ri.id],
-                   after_request_issue_ids: [ri.id])
-          end
-        end
       end
     end
   end

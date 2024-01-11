@@ -407,7 +407,6 @@ SearchableDropdown.propTypes = {
     PropTypes.func,
     // Or the instance of a DOM native element (see the note about SSR)
     PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
-    PropTypes.shape({ current: PropTypes.instanceOf(Object) }),
   ]),
   label: PropTypes.string,
   strongLabel: PropTypes.bool,

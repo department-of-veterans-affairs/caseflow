@@ -21,7 +21,7 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
             id: appeal.external_id,
             isLegacyAppeal: false,
             issueCount: 0,
-            activeOrDecidedRequestIssues: [],
+            activeRequestIssues: [],
             uuid: appeal.uuid,
             appellant_type: appeal.claimant.type
           },
@@ -75,7 +75,7 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
               id: appeal.external_id,
               isLegacyAppeal: false,
               issueCount: 0,
-              activeOrDecidedRequestIssues: [],
+              activeRequestIssues: [],
               uuid: appeal.uuid,
               appellant_type: appeal.claimant.type
             },
@@ -134,7 +134,7 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
               id: appeal.external_id,
               isLegacyAppeal: false,
               issueCount: 0,
-              activeOrDecidedRequestIssues: [],
+              activeRequestIssues: [],
               uuid: appeal.uuid,
               appellant_type: appeal.claimant.type
             },

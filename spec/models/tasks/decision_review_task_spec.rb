@@ -5,8 +5,6 @@ describe DecisionReviewTask, :postgres do
 
   let(:benefit_type) { "education" }
 
-  let(:user) { create(:default_user) }
-
   describe "#label" do
     subject { create(:higher_level_review_task) }
 
@@ -62,7 +60,7 @@ describe DecisionReviewTask, :postgres do
       ]
     end
     let(:task) { create(:higher_level_review_task, trait, appeal: hlr) }
-    subject { task.complete_with_payload!(decision_issue_params, decision_date, user) }
+    subject { task.complete_with_payload!(decision_issue_params, decision_date) }
 
     context "assigned task" do
       it "can be completed" do
@@ -87,8 +85,6 @@ describe DecisionReviewTask, :postgres do
                  caseflow_decision_date: caseflow_decision_date
                )).to_not be_nil
         expect(task.status).to eq "completed"
-        expect(task.completed_by_id).to eq user.id
-        expect(task.appeal.request_issues.first.closed_status).to eq "decided"
 
         remand_sc = hlr.remand_supplemental_claims.first
         expect(remand_sc).to_not be_nil
@@ -127,7 +123,7 @@ describe DecisionReviewTask, :postgres do
           id: hlr.id.to_s,
           isLegacyAppeal: false,
           issueCount: 0,
-          activeOrDecidedRequestIssues: [],
+          activeRequestIssues: [],
           appellant_type: "VeteranClaimant",
           uuid: hlr.uuid
         },
@@ -171,7 +167,7 @@ describe DecisionReviewTask, :postgres do
             id: hlr.id.to_s,
             isLegacyAppeal: false,
             issueCount: 0,
-            activeOrDecidedRequestIssues: [],
+            activeRequestIssues: [],
             uuid: hlr.uuid,
             appellant_type: "VeteranClaimant"
           },

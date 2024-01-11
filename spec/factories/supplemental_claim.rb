@@ -23,34 +23,6 @@ FactoryBot.define do
       end
     end
 
-    transient do
-      assigned_at { Time.zone.now }
-    end
-
-    transient do
-      disposition { nil }
-    end
-
-    transient do
-      decision_date { nil }
-    end
-
-    transient do
-      issue_type { nil }
-    end
-
-    transient do
-      description { nil }
-    end
-
-    transient do
-      withdraw { false }
-    end
-
-    transient do
-      remove { false }
-    end
-
     after(:build) do |sc, evaluator|
       if evaluator.veteran
         sc.veteran_file_number = evaluator.veteran.file_number
@@ -152,23 +124,6 @@ FactoryBot.define do
       end
     end
 
-    # creates request issue with issue type and decision date sent as a evaluator
-    trait :with_issue_type do
-      after(:create) do |sc, evaluator|
-        create(:request_issue,
-               decision_date: evaluator.decision_date,
-               benefit_type: sc.benefit_type,
-               nonrating_issue_category: evaluator.issue_type,
-               nonrating_issue_description: "#{sc.business_line.name} #{evaluator.description}",
-               decision_review: sc)
-
-        if evaluator.veteran
-          sc.veteran_file_number = evaluator.veteran.file_number
-          sc.save
-        end
-      end
-    end
-
     trait :with_vha_issue do
       benefit_type { "vha" }
       after(:create) do |supplemental_claim, evaluator|
@@ -196,81 +151,6 @@ FactoryBot.define do
       establishment_submitted_at { (HigherLevelReview.processing_retry_interval_hours + 1).hours.ago }
       establishment_last_submitted_at { (HigherLevelReview.processing_retry_interval_hours + 1).hours.ago }
       establishment_processed_at { nil }
-    end
-
-    trait :with_disposition do
-      after(:create) do |sc, evaluator|
-        create(:decision_issue,
-               benefit_type: "vha",
-               request_issues: sc.request_issues,
-               decision_review: sc,
-               disposition: evaluator.disposition,
-               caseflow_decision_date: Time.zone.now)
-      end
-    end
-
-    trait :with_intake do
-      after(:create) do |sc|
-        css_id = "CSS_ID#{generate :css_id}"
-
-        intake_user = User.find_by(css_id: css_id)
-
-        if intake_user.nil?
-          intake_user = create(:user, css_id: css_id)
-        end
-
-        create(:intake, :completed, detail: sc, veteran_file_number: sc.veteran_file_number, user: intake_user)
-      end
-    end
-
-    trait :with_decision do
-      after(:create) do |sc|
-        create(
-          :decision_issue,
-          decision_review: sc,
-          request_issues: sc.request_issues,
-          benefit_type: sc.benefit_type,
-          disposition: "Granted"
-        )
-      end
-    end
-
-    trait :unidentified_issue do
-      after(:create) do |sc, evaluator|
-        create(:request_issue,
-               :unidentified,
-               :add_decision_date,
-               benefit_type: sc.benefit_type,
-               decision_review: sc,
-               decision_date: evaluator.decision_date.presence ? evaluator.decision_date : nil)
-      end
-    end
-
-    trait :with_update_users do
-      after(:create) do |sc|
-        sc.create_business_line_tasks!
-
-        create(:request_issues_update, :requires_processing, review: sc)
-      end
-    end
-
-    trait :update_assigned_at do
-      after(:create) do |sc, evaluator|
-        sc.create_business_line_tasks!
-        task = sc.tasks.last
-        task.assigned_at = evaluator.assigned_at
-        task.save!
-      end
-    end
-
-    trait :without_decision_date do
-      after(:create) do |sc, evaluator|
-        create(:request_issue,
-               benefit_type: sc.benefit_type,
-               nonrating_issue_category: evaluator.issue_type,
-               nonrating_issue_description: "#{sc.business_line.name} #{evaluator.description}",
-               decision_review: sc)
-      end
     end
   end
 end

@@ -102,13 +102,11 @@ class ClaimReview < DecisionReview
     # Guard clause to only perform this update for VHA claim reviews for now
     return nil if benefit_type != "vha"
 
-    review_task = tasks.find { |task| task.is_a?(DecisionReviewTask) }
-
-    return nil unless review_task&.open?
-
     if request_issues_without_decision_dates?
+      review_task = tasks.find { |task| task.is_a?(DecisionReviewTask) }
       review_task&.on_hold!
     elsif !request_issues_without_decision_dates?
+      review_task = tasks.find { |task| task.is_a?(DecisionReviewTask) }
       review_task&.assigned!
     end
   end

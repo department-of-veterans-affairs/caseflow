@@ -16,8 +16,4 @@ class VhaBusinessLine < BusinessLine
       completed: "recently_completed"
     }
   end
-
-  def can_generate_claim_history?
-    true
-  end
 end

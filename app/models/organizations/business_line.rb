@@ -16,10 +16,6 @@ class BusinessLine < Organization
     }
   end
 
-  def can_generate_claim_history?
-    false
-  end
-
   # Example Params:
   # sort_order: 'desc',
   # sort_by: 'assigned_at',
@@ -73,11 +69,6 @@ class BusinessLine < Organization
     QueryBuilder.new(query_type: :completed, parent: self).issue_type_count
   end
 
-  def change_history_rows(filters = {})
-    QueryBuilder.new(query_params: filters, parent: self).change_history_rows
-  end
-
-  # rubocop:disable Metrics/ClassLength
   class QueryBuilder
     attr_accessor :query_type, :parent, :query_params
 
@@ -107,11 +98,11 @@ class BusinessLine < Organization
     def initialize(query_type: :in_progress, parent: business_line, query_params: {})
       @query_type = query_type
       @parent = parent
-      @query_params = query_params.dup
+      @query_params = query_params
 
       # Initialize default sorting
-      @query_params[:sort_by] ||= DEFAULT_ORDERING_HASH[query_type][:sort_by]
-      @query_params[:sort_order] ||= "desc"
+      query_params[:sort_by] ||= DEFAULT_ORDERING_HASH[query_type][:sort_by]
+      query_params[:sort_order] ||= "desc"
     end
 
     def build_query
@@ -173,210 +164,10 @@ class BusinessLine < Organization
 
       issue_count_options
     end
-    # rubocop:enable Metrics/AbcSize
-
-    def change_history_rows
-      change_history_sql_block = <<-SQL
-        WITH versions_agg AS (
-          SELECT
-              versions.item_id,
-              versions.item_type,
-              ARRAY_AGG(versions.object_changes ORDER BY versions.id) AS object_changes_array,
-              MAX(CASE
-                  WHEN versions.object_changes LIKE '%closed_at:%' THEN versions.whodunnit
-                  ELSE NULL
-              END) AS version_closed_by_id
-          FROM
-              versions
-          GROUP BY
-              versions.item_id, versions.item_type
-        )
-        SELECT tasks.id AS task_id, tasks.status AS task_status, request_issues.id AS request_issue_id,
-          request_issues_updates.created_at AS request_issue_update_time, decision_issues.description AS decision_description,
-          request_issues.benefit_type AS request_issue_benefit_type, request_issues_updates.id AS request_issue_update_id,
-          request_issues.created_at AS request_issue_created_at,
-          intakes.completed_at AS intake_completed_at, update_users.full_name AS update_user_name, tasks.created_at AS task_created_at,
-          intake_users.full_name AS intake_user_name, update_users.station_id AS update_user_station_id, tasks.closed_at AS task_closed_at,
-          intake_users.station_id AS intake_user_station_id, decision_issues.created_at AS decision_created_at,
-          COALESCE(decision_users.station_id, decision_users_completed_by.station_id) AS decision_user_station_id,
-          COALESCE(decision_users.full_name, decision_users_completed_by.full_name) AS decision_user_name,
-          COALESCE(decision_users.css_id, decision_users_completed_by.css_id) AS decision_user_css_id,
-          intake_users.css_id AS intake_user_css_id, update_users.css_id AS update_user_css_id,
-          request_issues_updates.before_request_issue_ids, request_issues_updates.after_request_issue_ids,
-          request_issues_updates.withdrawn_request_issue_ids, request_issues_updates.edited_request_issue_ids,
-          decision_issues.caseflow_decision_date, request_issues.decision_date_added_at,
-          tasks.appeal_type, tasks.appeal_id, request_issues.nonrating_issue_category, request_issues.nonrating_issue_description,
-          request_issues.decision_date, decision_issues.disposition, tasks.assigned_at, request_issues.unidentified_issue_text,
-          request_decision_issues.decision_issue_id, request_issues.closed_at AS request_issue_closed_at,
-          tv.object_changes_array AS task_versions, (CURRENT_TIMESTAMP::date - tasks.assigned_at::date) AS days_waiting,
-          COALESCE(intakes.veteran_file_number, higher_level_reviews.veteran_file_number, supplemental_claims.veteran_file_number) AS veteran_file_number,
-          COALESCE(
-            NULLIF(CONCAT(unrecognized_party_details.name, ' ', unrecognized_party_details.last_name), ' '),
-            NULLIF(CONCAT(people.first_name, ' ', people.last_name), ' '),
-            bgs_attorneys.name
-          ) AS claimant_name
-        FROM tasks
-        INNER JOIN request_issues ON request_issues.decision_review_type = tasks.appeal_type
-        AND request_issues.decision_review_id = tasks.appeal_id
-        LEFT JOIN higher_level_reviews ON tasks.appeal_type = 'HigherLevelReview'
-        AND tasks.appeal_id = higher_level_reviews.id
-        LEFT JOIN supplemental_claims ON tasks.appeal_type = 'SupplementalClaim'
-        AND tasks.appeal_id = supplemental_claims.id
-        LEFT JOIN intakes ON tasks.appeal_type = intakes.detail_type
-        AND intakes.detail_id = tasks.appeal_id
-        LEFT JOIN request_issues_updates ON request_issues_updates.review_type = tasks.appeal_type
-        AND request_issues_updates.review_id = tasks.appeal_id
-        LEFT JOIN request_decision_issues ON request_decision_issues.request_issue_id = request_issues.id
-        LEFT JOIN decision_issues ON decision_issues.decision_review_id = tasks.appeal_id
-        AND decision_issues.decision_review_type = tasks.appeal_type AND decision_issues.id = request_decision_issues.decision_issue_id
-        LEFT JOIN claimants ON claimants.decision_review_id = tasks.appeal_id
-        AND claimants.decision_review_type = tasks.appeal_type
-        LEFT join versions_agg tv ON tv.item_type = 'Task' AND tv.item_id = tasks.id
-        LEFT JOIN people ON claimants.participant_id = people.participant_id
-        LEFT JOIN bgs_attorneys ON claimants.participant_id = bgs_attorneys.participant_id
-        LEFT JOIN unrecognized_appellants ON claimants.id = unrecognized_appellants.claimant_id
-        LEFT JOIN unrecognized_party_details ON unrecognized_appellants.unrecognized_party_detail_id = unrecognized_party_details.id
-        LEFT JOIN users intake_users ON intakes.user_id = intake_users.id
-        LEFT JOIN users update_users ON request_issues_updates.user_id = update_users.id
-        LEFT JOIN users decision_users ON decision_users.id = tv.version_closed_by_id::int
-        LEFT JOIN users decision_users_completed_by ON decision_users_completed_by.id = tasks.completed_by_id
-        WHERE tasks.type = 'DecisionReviewTask'
-        AND tasks.assigned_to_type = 'Organization'
-        AND tasks.assigned_to_id = '#{parent.id.to_i}'
-      SQL
-
-      # Append all of the filter queries to the end of the sql block
-      change_history_sql_block += change_history_sql_filter_array.join(" ")
-
-      ActiveRecord::Base.transaction do
-        # increase the timeout for the transaction because the query more than the default 30 seconds
-        ActiveRecord::Base.connection.execute "SET LOCAL statement_timeout = 180000"
-        ActiveRecord::Base.connection.execute change_history_sql_block
-      end
-    end
     # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/AbcSize
 
     private
-
-    #################### Change history filter helpers ############################
-
-    def change_history_sql_filter_array
-      [
-        # Task status and claim type filtering always happens regardless of params
-        task_status_filter,
-        claim_type_filter,
-        # All the other filters are optional
-        task_id_filter,
-        dispositions_filter,
-        issue_types_filter,
-        days_waiting_filter,
-        station_id_filter,
-        user_css_id_filter
-      ].compact
-    end
-
-    def task_status_filter
-      if query_params[:task_status].present?
-        " AND #{where_clause_from_array(Task, :status, query_params[:task_status]).to_sql}"
-      else
-        " AND tasks.status IN ('assigned', 'in_progress', 'on_hold', 'completed', 'cancelled') "
-      end
-    end
-
-    def claim_type_filter
-      if query_params[:claim_type].present?
-        " AND #{where_clause_from_array(Task, :appeal_type, query_params[:claim_type]).to_sql}"
-      else
-        " AND tasks.appeal_type IN ('HigherLevelReview', 'SupplementalClaim') "
-      end
-    end
-
-    def task_id_filter
-      if query_params[:task_id].present?
-        " AND #{where_clause_from_array(Task, :id, query_params[:task_id]).to_sql} "
-      end
-    end
-
-    def dispositions_filter
-      if query_params[:dispositions].present?
-        disposition_params = query_params[:dispositions] - ["Blank"]
-        sql = where_clause_from_array(DecisionIssue, :disposition, disposition_params).to_sql
-
-        if query_params[:dispositions].include?("Blank")
-          if disposition_params.empty?
-            " AND decision_issues.disposition IS NULL "
-          else
-            " AND (#{sql} OR decision_issues.disposition IS NULL) "
-          end
-        else
-          " AND #{sql} "
-        end
-      end
-    end
-
-    def issue_types_filter
-      if query_params[:issue_types].present?
-        sql = where_clause_from_array(RequestIssue, :nonrating_issue_category, query_params[:issue_types]).to_sql
-        " AND #{sql} "
-      end
-    end
-
-    def days_waiting_filter
-      if query_params[:days_waiting].present?
-        number_of_days = query_params[:days_waiting][:number_of_days]
-        operator = query_params[:days_waiting][:operator]
-        case operator
-        when ">", "<", "="
-          <<-SQL
-            AND (CURRENT_TIMESTAMP::date - tasks.assigned_at::date)::integer #{operator} '#{number_of_days.to_i}'
-          SQL
-        when "between"
-          end_days = query_params[:days_waiting][:end_days]
-          <<-SQL
-            AND (CURRENT_TIMESTAMP::date - tasks.assigned_at::date)::integer BETWEEN '#{number_of_days.to_i}' AND '#{end_days.to_i}'
-            AND (CURRENT_TIMESTAMP::date - tasks.assigned_at::date)::integer BETWEEN '#{number_of_days.to_i}' AND '#{end_days.to_i}'
-          SQL
-        end
-      end
-    end
-
-    # rubocop:disable Metrics/AbcSize
-    def station_id_filter
-      if query_params[:facilities].present?
-        <<-SQL
-          AND
-          (
-            #{User.arel_table.alias(:intake_users)[:station_id].in(query_params[:facilities]).to_sql}
-            OR
-            #{User.arel_table.alias(:update_users)[:station_id].in(query_params[:facilities]).to_sql}
-            OR
-            #{User.arel_table.alias(:decision_users)[:station_id].in(query_params[:facilities]).to_sql}
-            OR
-            #{User.arel_table.alias(:decision_users_completed_by)[:station_id].in(query_params[:facilities]).to_sql}
-          )
-        SQL
-      end
-    end
-
-    def user_css_id_filter
-      if query_params[:personnel].present?
-        <<-SQL
-          AND
-          (
-            #{User.arel_table.alias(:intake_users)[:css_id].in(query_params[:personnel]).to_sql}
-            OR
-            #{User.arel_table.alias(:update_users)[:css_id].in(query_params[:personnel]).to_sql}
-            OR
-            #{User.arel_table.alias(:decision_users)[:css_id].in(query_params[:personnel]).to_sql}
-            OR
-            #{User.arel_table.alias(:decision_users_completed_by)[:css_id].in(query_params[:personnel]).to_sql}
-          )
-        SQL
-      end
-    end
-    # rubocop:enable Metrics/AbcSize
-
-    #################### End of Change history filter helpers ########################
 
     def business_line_id
       parent.id
@@ -717,12 +508,7 @@ class BusinessLine < Organization
         filter["col"].include?("issueTypesColumn")
       end
     end
-
-    def where_clause_from_array(table_class, column, values_array)
-      table_class.arel_table[column].in(values_array)
-    end
   end
-  # rubocop:enable Metrics/ClassLength
 end
 
 require_dependency "vha_business_line"
