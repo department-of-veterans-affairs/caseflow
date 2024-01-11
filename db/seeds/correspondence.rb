@@ -34,7 +34,8 @@ module Seeds
       }
       veteran = create(:veteran, params.merge(options))
       5.times do
-        create(:appeal, veteran_file_number: veteran.file_number)
+        appeal = create(:appeal, veteran_file_number: veteran.file_number)
+        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
       end
       veteran
     end
