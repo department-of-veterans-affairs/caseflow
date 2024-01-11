@@ -1,20 +1,11 @@
 # frozen_string_literal: true
 
 RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
-  let(:veteran) { create(:veteran, last_name: "Smith", file_number: "12345678") }
   let(:current_user) { create(:intake_user) }
   let!(:parent_task) { create(:correspondence_intake_task, appeal: correspondence, assigned_to: current_user) }
-  let!(:correspondence_type) { CorrespondenceType.create!(name: "a correspondence type.") }
-  let!(:package_document_type) { PackageDocumentType.create! }
   let(:correspondence) do
     create(
-      :correspondence,
-      veteran_id: veteran.id,
-      uuid: SecureRandom.uuid,
-      assigned_by_id: current_user.id,
-      updated_by_id: current_user.id,
-      correspondence_type: correspondence_type,
-      package_document_type: package_document_type
+      :correspondence
     )
   end
 
@@ -54,13 +45,7 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
     it "saves the user's current step in the intake form" do
       current_step = 1
       correspondence = create(
-        :correspondence,
-        veteran_id: veteran.id,
-        uuid: SecureRandom.uuid,
-        assigned_by_id: current_user.id,
-        updated_by_id: current_user.id,
-        correspondence_type: correspondence_type,
-        package_document_type: package_document_type
+        :correspondence
       )
 
       post queue_correspondence_intake_current_step_path(correspondence_uuid: correspondence.uuid), params: {
