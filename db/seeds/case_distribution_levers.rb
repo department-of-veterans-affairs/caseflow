@@ -140,8 +140,8 @@ module Seeds
               text: 'Omit variable from distribution rules',
             }
           ],
-          is_toggle_active: true,
-          is_disabled_in_ui: false,
+          is_toggle_active: false,
+          is_disabled_in_ui: true,
           min_value: 0,
           max_value: 100,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],

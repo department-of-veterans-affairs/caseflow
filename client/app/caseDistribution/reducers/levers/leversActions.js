@@ -112,7 +112,7 @@ export const saveLevers = (levers) =>
 export const hideSuccessBanner = () =>
   (dispatch) => {
     dispatch({
-      type: ACTIONS.HIDE_SUCCESS_BANNER
+      type: ACTIONS.HIDE_BANNER
     });
   };
 

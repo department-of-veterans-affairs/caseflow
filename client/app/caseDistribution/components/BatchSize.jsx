@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-// import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
 import { css } from 'glamor';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';
-import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';
-import ACD_LEVERS from '../../../constants/ACD_LEVERS';
-import { hasChangedLevers } from '../reducers/levers/leversSelector';
+import { getLeversByGroup } from '../reducers/levers/leversSelector';
+import { updateNumberLever } from '../reducers/levers/leversActions';
+import { Constant } from '../constants';
 
 const BatchSize = (props) => {
   const { isAdmin } = props;
@@ -19,80 +18,20 @@ const BatchSize = (props) => {
     '& .usa-input-error label': { bottom: '15px', left: '89px' }
   });
 
+  const errorMessages = {};
+
+  const dispatch = useDispatch();
   const theState = useSelector((state) => state);
-  const backendLevers = useSelector((state) => state.caseDistributionLevers.backendLevers.batch);
-  const storeLevers = useSelector((state) => state.caseDistributionLevers.levers.batch);
-  const [errorMessagesList, setErrorMessages] = useState({});
-  const [batchSizeLevers, setBatchSizeLevers] = useState(storeLevers);
+  const batchLevers = getLeversByGroup(theState, Constant.LEVERS, Constant.BATCH);
+  const [errorMessagesList] = useState(errorMessages);
+  const [batchSizeLevers, setBatchSizeLevers] = useState(batchLevers);
 
   useEffect(() => {
-    setBatchSizeLevers(storeLevers);
-  }, [storeLevers]);
+    setBatchSizeLevers(batchLevers);
+  }, [batchLevers]);
 
-  const updateLever = (index) => (event) => {
-    const levers = batchSizeLevers.map((lever, i) => {
-      if (index === i) {
-
-        let initialLever = backendLevers.find((original) => original.item === lever.item);
-
-        let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
-
-        if (validationResponse.statement === ACD_LEVERS.DUPLICATE) {
-
-          if (hasChangedLevers(theState)) {
-            lever.value = event;
-            setErrorMessages(validationResponse.updatedMessages);
-
-            // leverStore.dispatch({
-            //   type: ACTIONS.UPDATE_LEVER_VALUE,
-            //   updated_lever: { item: lever.item, value: event },
-            //   hasValueChanged: false,
-            //   validChange: true
-            // });
-          } else {
-
-            lever.value = event;
-            setErrorMessages(validationResponse.updatedMessages);
-
-            // leverStore.dispatch({
-            //   type: ACTIONS.UPDATE_LEVER_VALUE,
-            //   updated_lever: { item: lever.item, value: event },
-            //   hasValueChanged: false,
-            //   validChange: false
-            // });
-          }
-
-        }
-        if (validationResponse.statement === ACD_LEVERS.SUCCESS) {
-
-          lever.value = event;
-          setErrorMessages(validationResponse.updatedMessages);
-          // leverStore.dispatch({
-          //   type: ACTIONS.UPDATE_LEVER_VALUE,
-          //   updated_lever: { item: lever.item, value: event },
-          //   validChange: true
-          // });
-
-          return lever;
-        }
-        if (validationResponse.statement === ACD_LEVERS.FAIL) {
-          lever.value = event;
-          setErrorMessages(validationResponse.updatedMessages);
-
-          // leverStore.dispatch({
-          //   type: ACTIONS.UPDATE_LEVER_VALUE,
-          //   updated_lever: { item: lever.item, value: event },
-          //   validChange: false
-          // });
-
-          return lever;
-        }
-      }
-
-      return lever;
-    });
-
-    setBatchSizeLevers(levers);
+  const updateNumberFieldLever = (leverItem, leverType) => (event) => {
+    dispatch(updateNumberLever(leverType, leverItem, event));
   };
 
   return (
@@ -121,7 +60,7 @@ const BatchSize = (props) => {
                 readOnly={lever.is_disabled_in_ui}
                 value={lever.value}
                 errorMessage={errorMessagesList[lever.item]}
-                onChange={updateLever(index, lever.item, lever.item)}
+                onChange={updateNumberFieldLever(lever.item, Constant.BATCH)}
                 tabIndex={lever.is_disabled_in_ui ? -1 : null}
               /> :
               <label className={lever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}>

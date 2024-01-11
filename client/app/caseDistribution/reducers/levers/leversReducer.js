@@ -99,7 +99,7 @@ const leversReducer = (state = initialState, action = {}) => {
       levers: createUpdatedLeversWithValues(state.backendLevers)
     };
 
-  case ACTIONS.HIDE_SUCCESS_BANNER:
+  case ACTIONS.HIDE_BANNER:
     return {
       ...state,
       displayBanner: false
