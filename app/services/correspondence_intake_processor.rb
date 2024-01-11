@@ -64,7 +64,7 @@ class CorrespondenceIntakeProcessor
         {
           appeal: appeal,
           parent_id: appeal.root_task&.id,
-          assigned_to: data[:assigned_to].constantize.singleton,
+          assigned_to: class_for_assigned_to(data[:assigned_to]).singleton,
           instructions: data[:content]
         }, current_user
       )
@@ -89,7 +89,7 @@ class CorrespondenceIntakeProcessor
       class_for_data(data).create_from_params(
         {
           parent_id: correspondence.root_task.id,
-          assigned_to: data[:assigned_to].constantize.singleton,
+          assigned_to: class_for_assigned_to(data[:assigned_to]).singleton,
           instructions: data[:content]
         }, current_user
       )
@@ -114,8 +114,16 @@ class CorrespondenceIntakeProcessor
     end
   end
 
+  def class_for_data(data)
+    task_class_for_type(data[:klass])
+  end
+
+  def correspondence_documents_efolder_uploader
+    @correspondence_documents_efolder_uploader ||= CorrespondenceDocumentsEfolderUploader.new
+  end
+
   def mail_task_class_for_type(task_type)
-    task_types = {
+    mail_task_types = {
       "Associated with Claims Folder": AssociatedWithClaimsFolderMailTask.name,
       "Change of address": AddressChangeMailTask.name,
       "Evidence or argument": EvidenceOrArgumentMailTask.name,
@@ -124,14 +132,53 @@ class CorrespondenceIntakeProcessor
       "VACOLS updated": VacolsUpdatedMailTask.name
     }.with_indifferent_access
 
+    mail_task_types[task_type]&.constantize
+  end
+
+  # rubocop:disable Metrics/MethodLength
+  def task_class_for_type(task_type)
+    task_types = {
+      "AddressChangeMailTask": AddressChangeMailTask.name,
+      "AodMotionMailTask": AodMotionMailTask.name,
+      "AppealWithdrawalMailTask": AppealWithdrawalMailTask.name,
+      "CavcCorrespondenceMailTask": CavcCorrespondenceMailTask.name,
+      "ClearAndUnmistakeableErrorMailTask": ClearAndUnmistakeableErrorMailTask.name,
+      "CongressionalInterestMailTask": CongressionalInterestMailTask.name,
+      "ControlledCorrespondenceMailTask": ControlledCorrespondenceMailTask.name,
+      "DeathCertificateMailTask": DeathCertificateMailTask.name,
+      "DocketSwitchMailTask": DocketSwitchMailTask.name,
+      "EvidenceOrArgumentMailTask": EvidenceOrArgumentMailTask.name,
+      "ExtensionRequestMailTask": ExtensionRequestMailTask.name,
+      "FoiaRequestMailTask": FoiaRequestMailTask.name,
+      "HearingPostponementRequestMailTask": HearingPostponementRequestMailTask.name,
+      "HearingRelatedMailTask": HearingRelatedMailTask.name,
+      "HearingWithdrawalRequestMailTask": HearingWithdrawalRequestMailTask.name,
+      "OtherMotionMailTask": OtherMotionMailTask.name,
+      "PowerOfAttorneyRelatedMailTask": PowerOfAttorneyRelatedMailTask.name,
+      "PrivacyActRequestMailTask": PrivacyActRequestMailTask.name,
+      "PrivacyComplaintMailTask": PrivacyComplaintMailTask.name,
+      "ReconsiderationMotionMailTask": ReconsiderationMotionMailTask.name,
+      "ReturnedUndeliverableCorrespondenceMailTask": ReturnedUndeliverableCorrespondenceMailTask.name,
+      "StatusInquiryMailTask": StatusInquiryMailTask.name
+    }.with_indifferent_access
+
     task_types[task_type]&.constantize
   end
+  # rubocop:enable Metrics/MethodLength
 
-  def class_for_data(data)
-    data[:klass]&.constantize
-  end
+  def class_for_assigned_to(assigned_to)
+    available_assignees = {
+      "AodTeam": AodTeam.name,
+      "BvaDispatch": BvaDispatch.name,
+      "CaseReview": CaseReview.name,
+      "CavcLitigationSupport": CavcLitigationSupport.name,
+      "ClerkOfTheBoard": ClerkOfTheBoard.name,
+      "Colocated": Colocated.name,
+      "HearingAdmin": HearingAdmin.name,
+      "LitigationSupport": LitigationSupport.name,
+      "PrivacyTeam": PrivacyTeam.name
+    }.with_indifferent_access
 
-  def correspondence_documents_efolder_uploader
-    @correspondence_documents_efolder_uploader ||= CorrespondenceDocumentsEfolderUploader.new
+    available_assignees[assigned_to]&.constantize
   end
 end
