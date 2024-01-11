@@ -20,6 +20,12 @@ export const loadLevers = (levers) =>
       }
     });
   };
+export const revertLevers = () =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.REVERT_LEVERS,
+    });
+  };
 
 export const updateRadioLever = (leverGroup, leverItem, value, optionValue = null) =>
   (dispatch) => {
