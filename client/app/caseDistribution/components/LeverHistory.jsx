@@ -111,7 +111,7 @@ const LeverHistory = (props) => {
       let sameTimestamp = entry.created_at === timestamp;
 
       if (sameTimestamp) {
-        user = entry.user_name;
+        user = entry.user_css_id;
       }
 
       return null;
