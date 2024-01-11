@@ -8,7 +8,7 @@ class CaseDistributionLeversController < ApplicationController
     # once the lever list has been cleaned up and removed from the
     # current frontend workflow.
     @acd_levers = CaseDistributionLever.all
-    @acd_levers_for_store = CaseDistributionLever.all.group_by(&:lever_group)
+    @acd_levers_for_store = levers
     @acd_history = lever_history
     @user_is_an_acd_admin = CDAControlGroup.singleton.user_is_admin?(current_user)
 
@@ -20,7 +20,12 @@ class CaseDistributionLeversController < ApplicationController
 
     errors = CaseDistributionLever.update_acd_levers(allowed_params[:current_levers], current_user)
 
-    render json: { errors: errors, successful: errors.empty?, lever_history: lever_history }
+    render json: {
+      errors: errors,
+      successful: errors.empty?,
+      lever_history: lever_history,
+      levers: levers
+    }
   end
 
   private
@@ -34,6 +39,10 @@ class CaseDistributionLeversController < ApplicationController
 
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
+  end
+
+  def levers
+    CaseDistributionLever.all.group_by(&:lever_group)
   end
 
   def lever_history
