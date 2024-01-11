@@ -17,6 +17,10 @@ const getLeversByGroupConstant = (state, attribute, groupName) => {
   return getAttribute(state, attribute)[groupName] || [];
 };
 
+const getAdminStatus = (state) => {
+  return state.caseDistributionLevers.isUserAcdAdmin
+};
+
 /**
  * WILL NEED UPDATING WHEN RADIO AND COMBINATION LEVERS ARE EDITABLE
  */
@@ -39,6 +43,13 @@ export const getLeversByGroup = createSelector(
   [getLeversByGroupConstant],
   (leversByGroup) => {
     return leversByGroup;
+  }
+);
+
+export const getUserIsAcdAdmin = createSelector(
+  [getAdminStatus],
+  (userIsAcdAdmin) => {
+    return userIsAcdAdmin;
   }
 );
 

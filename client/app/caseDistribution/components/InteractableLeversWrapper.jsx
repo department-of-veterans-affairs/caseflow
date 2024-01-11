@@ -1,28 +1,30 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import BatchSize from './BatchSize';
 import DocketTimeGoals from './DocketTimeGoals';
 import AffinityDays from './AffinityDays';
 import LeverButtonsWrapper from './LeverButtonsWrapper';
 import ExclusionTable from './ExclusionTable';
+import { getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
 
-const InteractableLeverWrapper = ({ levers, leverStore, isAdmin }) => {
+const InteractableLeverWrapper = ({ leverStore }) => {
+  const theState = useSelector((state) => state);
+  const isUserAcdAdmin = getUserIsAcdAdmin(theState);
 
   return (
     <div>
-      <ExclusionTable isAdmin={isAdmin} />
-      <BatchSize isAdmin={isAdmin} />
-      <AffinityDays isAdmin={isAdmin} />
-      <DocketTimeGoals isAdmin={isAdmin} />
-      {isAdmin ? <LeverButtonsWrapper leverStore={leverStore} /> : ''}
+      <ExclusionTable />
+      <BatchSize />
+      <AffinityDays />
+      <DocketTimeGoals />
+      {isUserAcdAdmin ? <LeverButtonsWrapper leverStore={leverStore} /> : ''}
     </div>
   );
 };
 
 InteractableLeverWrapper.propTypes = {
-  levers: PropTypes.object.isRequired,
-  leverStore: PropTypes.any,
-  isAdmin: PropTypes.bool,
+  leverStore: PropTypes.any
 };
 
 export default InteractableLeverWrapper;

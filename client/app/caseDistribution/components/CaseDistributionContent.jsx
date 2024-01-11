@@ -12,7 +12,6 @@ import COPY from '../../../COPY';
 const CaseDistributionContent = ({
   levers,
   formattedHistory,
-  isAdmin,
   leverStore
 }) => {
 
@@ -34,7 +33,7 @@ const CaseDistributionContent = ({
             <h2>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_TITLE}</h2>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION}</p>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION_NOTE}</p>
-            <InteractableLeverWrapper levers={levers} leverStore={leverStore} isAdmin={isAdmin}/>
+            <InteractableLeverWrapper leverStore={leverStore} />
           </div>
         </div>
 
@@ -67,7 +66,6 @@ const CaseDistributionContent = ({
 CaseDistributionContent.propTypes = {
   levers: PropTypes.object.isRequired,
   formattedHistory: PropTypes.array.isRequired,
-  isAdmin: PropTypes.bool.isRequired,
   leverStore: PropTypes.any.isRequired,
 };
 

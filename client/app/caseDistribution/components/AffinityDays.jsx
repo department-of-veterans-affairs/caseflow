@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
@@ -8,9 +7,11 @@ import NumberField from 'app/components/NumberField';
 import TextField from 'app/components/TextField';
 import COPY from '../../../COPY';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
+import { getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
 
-const AffinityDays = (props) => {
-  const { isAdmin } = props;
+const AffinityDays = () => {
+  const theState = useSelector((state) => state);
+  const isUserAcdAdmin = getUserIsAcdAdmin(theState);
 
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
@@ -107,7 +108,7 @@ const AffinityDays = (props) => {
         </div>
         <div>
           <div className={className}>
-            {generateFields(option.data_type, option, lever, isAdmin)}
+            {generateFields(option.data_type, option, lever, isUserAcdAdmin)}
           </div>
         </div>
       </div>
@@ -137,7 +138,7 @@ const AffinityDays = (props) => {
           </div>
           <div className={`${styles.leverRight} ${leverNumberDiv}`}>
             {lever.options.map((option) => (
-              (isAdmin) ? renderAdminInput(option, lever, index) : generateMemberViewLabel(option, lever)
+              (isUserAcdAdmin) ? renderAdminInput(option, lever, index) : generateMemberViewLabel(option, lever)
             ))}
           </div>
         </div>
@@ -148,7 +149,4 @@ const AffinityDays = (props) => {
   );
 };
 
-AffinityDays.propTypes = {
-  isAdmin: PropTypes.bool.isRequired,
-};
 export default AffinityDays;

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
@@ -9,11 +8,10 @@ import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
 import COPY from '../../../COPY';
 import { Constant, sectionTitles, docketTimeGoalPriorMappings } from '../constants';
-import { getLeversByGroup } from '../reducers/levers/leversSelector';
+import { getLeversByGroup, getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 
-const DocketTimeGoals = (props) => {
-  const { isAdmin } = props;
+const DocketTimeGoals = () => {
 
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
@@ -29,6 +27,8 @@ const DocketTimeGoals = (props) => {
 
   // pull docket time goal and distribution levers from the store
   const currentTimeLevers = getLeversByGroup(theState, Constant.LEVERS, ACD_LEVERS.lever_groups.docket_time_goal);
+  const isUserAcdAdmin = getUserIsAcdAdmin(theState);
+
   const currentDistributionPriorLevers =
     getLeversByGroup(theState, Constant.LEVERS, ACD_LEVERS.lever_groups.docket_distribution_prior);
 
@@ -67,9 +67,7 @@ const DocketTimeGoals = (props) => {
     let docketTimeGoalLever = docketTimeGoalLevers.find((lever) =>
       lever.item === docketTimeGoalPriorMappings[distributionPriorLever.item]);
 
-    if (isAdmin) {
-
-      const sectionTitle = sectionTitles[distributionPriorLever.item];
+    if (isUserAcdAdmin) {
 
       return (
 
@@ -175,10 +173,6 @@ const DocketTimeGoals = (props) => {
     </div>
 
   );
-};
-
-DocketTimeGoals.propTypes = {
-  isAdmin: PropTypes.bool.isRequired
 };
 
 export default DocketTimeGoals;
