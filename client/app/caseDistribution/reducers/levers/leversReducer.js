@@ -77,12 +77,6 @@ const leversReducer = (state = initialState, action = {}) => {
       },
     };
   }
-  // needs to be reworked; remove comment when done
-  case ACTIONS.FORMAT_LEVER_HISTORY:
-    return {
-      ...state,
-      historyList: formatLeverHistory(action.history)
-    };
 
   case ACTIONS.SAVE_LEVERS:
     return {

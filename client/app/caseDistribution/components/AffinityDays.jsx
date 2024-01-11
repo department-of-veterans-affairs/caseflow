@@ -8,10 +8,9 @@ import NumberField from 'app/components/NumberField';
 import TextField from 'app/components/TextField';
 import COPY from '../../../COPY';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
-import { ACTIONS } from '../reducers/levers/leversActionTypes';
 
 const AffinityDays = (props) => {
-  const { leverStore, isAdmin } = props;
+  const { isAdmin } = props;
 
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
@@ -26,25 +25,6 @@ const AffinityDays = (props) => {
   useEffect(() => {
     setAffinityLevers(storeLevers);
   }, [storeLevers]);
-
-  const handleRadioChange = (lever, option) => {
-    if (lever && option) {
-      const updatedLevers = affinityLevers.map((lev) => {
-        if (lev.item === lever.item) {
-          return { ...lev, value: option.item };
-        }
-
-        return lev;
-      });
-
-      setAffinityLevers(updatedLevers);
-      leverStore.dispatch({
-        type: ACTIONS.UPDATE_LEVER_VALUE,
-        updated_lever: { item: lever.item, value: option.item },
-        validChange: true
-      });
-    }
-  };
 
   const generateFields = (dataType, option, lever) => {
     const useAriaLabel = !lever.is_disabled_in_ui;
@@ -119,7 +99,7 @@ const AffinityDays = (props) => {
             disabled={lever.is_disabled_in_ui}
             id={`${lever.item}-${option.item}`}
             name={lever.item}
-            onChange={() => handleRadioChange(lever, option)}
+            onChange={() => console.warn('not implemented')}
           />
           <label htmlFor={`${lever.item}-${option.item}`}>
             {option.text}

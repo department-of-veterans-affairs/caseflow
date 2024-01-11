@@ -4,13 +4,13 @@ import CaseDistributionContent from '../components/CaseDistributionContent';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
-  initialLoad
+  loadLevers
 } from '../reducers/levers/leversActions';
 
 class CaseDistributionApp extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.props.initialLoad(this.props.acdLeversForStore);
+    this.props.loadLevers(this.props.acdLeversForStore);
   }
 
   render() {
@@ -36,7 +36,7 @@ CaseDistributionApp.propTypes = {
   acd_history: PropTypes.array,
   user_is_an_acd_admin: PropTypes.bool,
   leverStore: PropTypes.any,
-  initialLoad: PropTypes.func,
+  loadLevers: PropTypes.func,
   acdLeversForStore: PropTypes.object
 };
 
@@ -46,7 +46,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    initialLoad
+    loadLevers
   }, dispatch)
 );
 

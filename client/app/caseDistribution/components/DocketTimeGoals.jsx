@@ -150,8 +150,6 @@ const DocketTimeGoals = (props) => {
 
   };
 
-  console.log(docketDistributionLevers?.toSorted((leverA, leverB) => leverA.lever_group_order - leverB.lever_group_order));
-
   return (
     <div className={styles.leverContent}>
       <div className={styles.leverHead}>
