@@ -2,7 +2,6 @@
 
 require "rspec"
 
-
 describe Reporter do
   class TestReporter
     include Reporter
