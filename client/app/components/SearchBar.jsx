@@ -41,8 +41,8 @@ export default class SearchBar extends React.Component {
   }
 
   /* eslint-disable camelcase */
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (this.props.value !== nextProps.value) {
+  componentDidUpdate(prevProps) {
+    if (this.props.value !== prevProps.value) {
       this.clearSearchCallback();
 
       this.searchTimeout = setTimeout(() => {
@@ -163,7 +163,7 @@ export default class SearchBar extends React.Component {
             {this.getInternalField(spinnerColor)}
           </div>
         )}
-        {_.size(value) > 0 && (
+        {(_.size(value) > 0 && !this.props.disableClearSearch) && (
           <Button
             ariaLabel="clear search"
             name="clear search"
@@ -196,6 +196,7 @@ export default class SearchBar extends React.Component {
 
 SearchBar.defaultProps = {
   spinnerColor: COLORS.WHITE,
+  disableClearSearch: false
 };
 
 SearchBar.propTypes = {
@@ -291,4 +292,9 @@ SearchBar.propTypes = {
    * Text to display when there is no search term in the `input`
    */
   placeholder: PropTypes.string,
+
+  /**
+   * Value to determine wheter or not the search bar shows the clear button
+   */
+  disableClearSearch: PropTypes.bool
 };

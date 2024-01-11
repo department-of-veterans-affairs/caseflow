@@ -5,14 +5,28 @@ import { nonCompReducer, mapDataToInitialState } from '../reducers';
 import NonCompTabsUnconnected from './NonCompTabs';
 
 const ReduxDecorator = (Story, options) => {
+
+  const tabs = (typeValue) => {
+    if (typeValue === 'vha') {
+      return ['incomplete', 'in_progress', 'completed'];
+    }
+
+    return ['in_progress', 'completed'];
+
+  };
+
   const props = {
     serverNonComp: {
       featureToggles: {
         decisionReviewQueueSsnColumn: options.args.decisionReviewQueueSsnColumn
       },
-      businessLineUrl: 'vha',
+      businessLineUrl: options.args.businessLineType || 'vha',
       baseTasksUrl: '/decision_reviews/vha',
+      businessLineConfig: {
+        tabs: tabs(options.args.businessLineType)
+      },
       taskFilterDetails: {
+        incomplete: {},
         in_progress: {
           '["BoardGrantEffectuationTask", "Appeal"]': 1,
           '["DecisionReviewTask", "HigherLevelReview"]': 10,
@@ -39,6 +53,7 @@ const ReduxDecorator = (Story, options) => {
           'Prosthetics | Other (not clothing allowance)': 12,
           'Spina Bifida Treatment (Non-Compensation)': 10
         },
+        incomplete_issue_types: {},
         completed_issue_types: {}
       }
     }
@@ -60,8 +75,14 @@ export default {
   parameters: {},
   args: defaultArgs,
   argTypes: {
-    decisionReviewQueueSsnColumn: { control: 'boolean' }
-  },
+    decisionReviewQueueSsnColumn: { control: 'boolean' },
+    businessLineType: {
+      control: {
+        type: 'select',
+        options: ['vha', 'generic'],
+      },
+    }
+  }
 };
 
 const Template = (args) => {

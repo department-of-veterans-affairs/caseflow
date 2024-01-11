@@ -114,11 +114,25 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
         }
       end
 
+      subject { get :distribution, params: { distribution_id: vbms_distribution.id } }
+
       it "returns the expected converted response" do
-        get :distribution, params: { distribution_id: vbms_distribution.id }
+        subject
 
         expect(response).to have_http_status(200)
         expect(JSON.parse(response.body.to_json)).to eq(expected_response.to_json)
+      end
+
+      it "Returns Pacman's response whenever we receive something we cannot parse as JSON and logs the error" do
+        allow(PacmanService).to receive(:get_distribution_request).and_return(
+          HTTPI::Response.new(200, {}, "An invalid JSON string")
+        )
+
+        expect_any_instance_of(Idt::Api::V2::DistributionsController).to receive(:log_error)
+
+        subject
+
+        expect(response.body).to eq "An invalid JSON string"
       end
     end
 

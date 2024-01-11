@@ -3,6 +3,10 @@ import { issueByIndex } from '../util/issues';
 
 const analytics = true;
 
+export const toggleAddDecisionDateModal = () => ({
+  type: ACTIONS.TOGGLE_ADD_DECISION_DATE_MODAL,
+});
+
 export const toggleAddingIssue = () => ({
   type: ACTIONS.TOGGLE_ADDING_ISSUE,
   meta: { analytics }
@@ -41,6 +45,11 @@ export const toggleCorrectionTypeModal = ({ index, isNewIssue } = {}) => ({
 export const toggleLegacyOptInModal = (currentIssueAndNotes = {}) => ({
   type: ACTIONS.TOGGLE_LEGACY_OPT_IN_MODAL,
   payload: { currentIssueAndNotes }
+});
+
+export const addDecisionDate = ({ decisionDate, index }) => ({
+  type: ACTIONS.ADD_DECISION_DATE,
+  payload: { decisionDate, index }
 });
 
 export const removeIssue = (index) => ({

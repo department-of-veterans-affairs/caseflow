@@ -60,7 +60,7 @@ RSpec.feature "SwitchApps", :postgres do
     end
 
     let!(:vha_business_line) do
-      create(:business_line, url: "vha", name: "Veterans Health Administration")
+      VhaBusinessLine.singleton
     end
 
     let!(:list_order) do

@@ -6,7 +6,11 @@ RSpec.shared_context "enable business line" do
 end
 
 RSpec.shared_context :business_line do |name, url|
-  let(:business_line) { create(:business_line, name: name, url: url) }
+  if url == "vha"
+    let(:business_line) { VhaBusinessLine.singleton }
+  else
+    let(:business_line) { create(:business_line, name: name, url: url) }
+  end
 end
 
 RSpec.shared_context :organization do |name, type|

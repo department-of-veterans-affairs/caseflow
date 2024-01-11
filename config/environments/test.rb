@@ -1,12 +1,5 @@
 require "fileutils"
 Rails.application.configure do
-  config.after_initialize do
-    Bullet.enable        = false
-    Bullet.bullet_logger = true
-    Bullet.rails_logger  = true
-    Bullet.raise = true
-    Bullet.unused_eager_loading_enable = false
-  end
   # Settings specified here will take precedence over those in config/application.rb.
 
   # The test environment is used exclusively to run your application's
@@ -27,7 +20,7 @@ Rails.application.configure do
   # Configure public file server for tests with Cache-Control for performance.
   config.public_file_server.enabled = true
   config.public_file_server.headers = {
-    'Cache-Control' => 'public, max-age=#{1.hour.seconds.to_i}'
+    'Cache-Control' => "public, max-age=#{1.hour.to_i}"
   }
 
   # Show full error reports and disable caching.
@@ -39,6 +32,10 @@ Rails.application.configure do
 
   # Disable request forgery protection in test environment.
   config.action_controller.allow_forgery_protection = false
+
+  # Store uploaded files on the local file system in a temporary directory
+  config.active_storage.service = :test
+
   config.action_mailer.perform_caching = false
 
   # Tell Action Mailer not to deliver emails to the real world.
@@ -47,24 +44,9 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :test
 
   # Print deprecation notices to the stderr.
-  config.active_support.deprecation = :stderr
-
-  # Setup S3
-  config.s3_enabled = false
-
-  config.vacols_db_name = "VACOLS_TEST"
-
-  if ENV['TEST_SUBCATEGORY']
-    assets_cache_path = Rails.root.join("tmp/cache/assets/#{ENV['TEST_SUBCATEGORY']}")
-    config.assets.configure do |env|
-      env.cache = Sprockets::Cache::FileStore.new(assets_cache_path)
-    end
-  end
-
-  # Allows rake scripts to be run without querying VACOLS on startup
-  if ENV['DISABLE_FACTORY_BOT_INITIALIZERS']
-    config.factory_bot.definition_file_paths = []
-  end
+  # config.active_support.deprecation = :stderr
+  require_relative "../../app/services/deprecation_warnings/test_handler"
+  ActiveSupport::Deprecation.behavior = DeprecationWarnings::TestHandler
 
   unless ENV['RAILS_ENABLE_TEST_LOG']
     config.logger = Logger.new(nil)
@@ -75,6 +57,19 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
+  #=====================================================================================================================
+  # Please keep custom config settings below this comment.
+  #   This will ensure cleaner diffs when generating config file changes during Rails upgrades.
+  #=====================================================================================================================
+
+  config.after_initialize do
+    Bullet.enable        = false
+    Bullet.bullet_logger = true
+    Bullet.rails_logger  = true
+    Bullet.raise = true
+    Bullet.unused_eager_loading_enable = false
+  end
 
   ENV["VA_DOT_GOV_API_URL"] = "https://sandbox-api.va.gov/"
 
@@ -87,10 +82,35 @@ Rails.application.configure do
   ENV["AWS_ACCESS_KEY_ID"] ||= "dummykeyid"
   ENV["AWS_SECRET_ACCESS_KEY"] ||= "dummysecretkey"
 
+  # BatchProcess ENVs
+  # priority_ep_sync
+  ENV["BATCH_PROCESS_JOB_DURATION"] ||= "50" # Number of minutes the job will run for
+  ENV["BATCH_PROCESS_SLEEP_DURATION"] ||= "0" # Number of seconds between loop iterations
+  ENV["BATCH_PROCESS_BATCH_LIMIT"]||= "100" # Max number of records in a batch
+  ENV["BATCH_PROCESS_ERROR_DELAY"] ||= "3" # In number of hours
+  ENV["BATCH_PROCESS_MAX_ERRORS_BEFORE_STUCK"] ||= "3" # When record errors for X time, it's declared stuck
+
   config.active_job.queue_adapter = :test
 
   # Disable SqlTracker from creating tmp/sql_tracker-*.json files -- https://github.com/steventen/sql_tracker/pull/10
   SqlTracker::Config.enabled = false
+
+  # Setup S3
+  config.s3_enabled = false
+
+  config.vacols_db_name = "VACOLS_TEST"
+
+  if ENV["TEST_SUBCATEGORY"]
+    assets_cache_path = Rails.root.join("tmp/cache/assets/#{ENV['TEST_SUBCATEGORY']}")
+    config.assets.configure do |env|
+      env.cache = Sprockets::Cache::FileStore.new(assets_cache_path)
+    end
+  end
+
+  # Allows rake scripts to be run without querying VACOLS on startup
+  if ENV["DISABLE_FACTORY_BOT_INITIALIZERS"]
+    config.factory_bot.definition_file_paths = []
+  end
 
   # VA Notify evnironment variables
   ENV["VA_NOTIFY_API_URL"] ||= "https://staging-api.va.gov/vanotify"
@@ -107,6 +127,9 @@ Rails.application.configure do
 
   # Travel Board Sync Batch Size
   ENV["TRAVEL_BOARD_HEARING_SYNC_BATCH_LIMIT"] ||= "250"
+
+  # Time in seconds before the sync lock expires
+  LOCK_TIMEOUT = ENV["SYNC_LOCK_MAX_DURATION"] ||= "60"
 
   # Notifications page eFolder link
   ENV["CLAIM_EVIDENCE_EFOLDER_BASE_URL"] ||= "https://vefs-claimevidence-ui-uat.stage.bip.va.gov"

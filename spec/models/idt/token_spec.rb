@@ -7,6 +7,7 @@ describe Idt::Token do
 
   let(:css_id) { "TEST_ID" }
   let(:key_token_pair) { Idt::Token.generate_one_time_key_and_proposed_token }
+
   # rubocop:disable Metrics/LineLength
   let(:invalid_token) { "9373a256a2ac3c3bd320adeeb8a1e4d996ef064d1332357954410f25740bf0c17b6565e152760c461a85587e6a6845457f955ccfa20a8e462a77b776eb10b72c" }
   # rubocop:enable Metrics/LineLength
@@ -50,7 +51,12 @@ describe Idt::Token do
       expect(Idt::Token.active?(invalid_token)).to eq(false)
     end
 
-    xit "returns false after a token expires" do
+    it "returns false after a token expires" do
+      key, token = key_token_pair
+      Idt::Token.activate_proposed_token(key, css_id)
+      expect(Idt::Token.active?(token)).to eq(true)
+      Idt::Token.client.expire("valid_tokens_key" + token, -1)
+      expect(Idt::Token.active?(token)).to eq(false)
     end
   end
 end

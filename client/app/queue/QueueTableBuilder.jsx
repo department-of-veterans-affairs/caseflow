@@ -226,7 +226,7 @@ const QueueTableBuilder = (props) => {
             totalTaskCount={totalTaskCount}
             taskPagesApiEndpoint={tabConfig.task_page_endpoint_base_path}
             tabPaginationOptions={
-              savedPaginationOptions.tab === tabConfig.name && savedPaginationOptions
+              savedPaginationOptions.tab === tabConfig.name ? savedPaginationOptions : {}
             }
             // Limit filter preservation/retention to only VHA orgs for now.
             {...(isVhaOrg ? { preserveFilter: true } : {})}

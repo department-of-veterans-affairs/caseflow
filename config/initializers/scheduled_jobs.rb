@@ -1,7 +1,11 @@
+require "./app/jobs/batch_processes/priority_ep_sync_batch_process_job.rb"
+require "./app/jobs/batch_processes/batch_process_rescue_job.rb"
+
 SCHEDULED_JOBS = {
     "amo_metrics_report" => AMOMetricsReportJob,
     "annual_metrics" => AnnualMetricsReportJob,
-    "calculate_dispatch_stats" => CalculateDispatchStatsJob,
+    "priority_ep_sync_batch_process_job" => PriorityEpSyncBatchProcessJob,
+    "batch_process_rescue_job" => BatchProcessRescueJob,
     "create_establish_claim" => CreateEstablishClaimTasksJob,
     "data_integrity_checks" => DataIntegrityChecksJob,
     "delete_conferences_job" => VirtualHearings::DeleteConferencesJob,
@@ -45,5 +49,6 @@ SCHEDULED_JOBS = {
     "legacy_notification_efolder_sync_job" => LegacyNotificationEfolderSyncJob,
     "change_hearing_request_type_task_cancellation_job" => ChangeHearingRequestTypeTaskCancellationJob,
     "cannot_delete_contention_remediation_job" => CannotDeleteContentionRemediationJob,
-    "contention_not_found_remediation_job" => ContentionNotFoundRemediationJob
+    "contention_not_found_remediation_job" => ContentionNotFoundRemediationJob,
+    "process_notification_status_updates_job" => ProcessNotificationStatusUpdatesJob
 }.freeze

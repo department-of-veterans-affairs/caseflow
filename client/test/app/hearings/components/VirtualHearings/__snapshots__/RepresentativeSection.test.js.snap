@@ -16313,18 +16313,22 @@ SAN FRANCISCO, CA 94103
                   </FormLabel>
                 </strong>
               </label>
-              <input
-                className={
-                  Array [
-                    "cf-form-textinput cf-inline-field",
-                  ]
-                }
-                id="POA/Representative Email (for these notifications only)"
-                name="POA/Representative Email (for these notifications only)"
-                onBlur={[Function]}
-                onChange={[Function]}
-                type="text"
-              />
+              <div
+                className="input-container"
+              >
+                <input
+                  className={
+                    Array [
+                      "cf-form-textinput cf-inline-field",
+                    ]
+                  }
+                  id="POA/Representative Email (for these notifications only)"
+                  name="POA/Representative Email (for these notifications only)"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  type="text"
+                />
+              </div>
             </div>
           </TextField>
           <HelperText
@@ -16725,18 +16729,22 @@ exports[`RepresentativeSection Does not display address when formFieldsOnly = tr
                   </FormLabel>
                 </strong>
               </label>
-              <input
-                className={
-                  Array [
-                    "cf-form-textinput cf-inline-field",
-                  ]
-                }
-                id="POA/Representative Email (for these notifications only)"
-                name="POA/Representative Email (for these notifications only)"
-                onBlur={[Function]}
-                onChange={[Function]}
-                type="text"
-              />
+              <div
+                className="input-container"
+              >
+                <input
+                  className={
+                    Array [
+                      "cf-form-textinput cf-inline-field",
+                    ]
+                  }
+                  id="POA/Representative Email (for these notifications only)"
+                  name="POA/Representative Email (for these notifications only)"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  type="text"
+                />
+              </div>
             </div>
           </TextField>
           <HelperText
@@ -16958,18 +16966,22 @@ SAN FRANCISCO, CA 94103
                   </FormLabel>
                 </strong>
               </label>
-              <input
-                className={
-                  Array [
-                    "cf-form-textinput cf-inline-field",
-                  ]
-                }
-                id="POA/Representative Email (for these notifications only)"
-                name="POA/Representative Email (for these notifications only)"
-                onBlur={[Function]}
-                onChange={[Function]}
-                type="text"
-              />
+              <div
+                className="input-container"
+              >
+                <input
+                  className={
+                    Array [
+                      "cf-form-textinput cf-inline-field",
+                    ]
+                  }
+                  id="POA/Representative Email (for these notifications only)"
+                  name="POA/Representative Email (for these notifications only)"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  type="text"
+                />
+              </div>
             </div>
           </TextField>
           <HelperText
@@ -17208,18 +17220,22 @@ exports[`RepresentativeSection Shows Representative name when representative add
                   </FormLabel>
                 </strong>
               </label>
-              <input
-                className={
-                  Array [
-                    "cf-form-textinput cf-inline-field",
-                  ]
-                }
-                id="POA/Representative Email (for these notifications only)"
-                name="POA/Representative Email (for these notifications only)"
-                onBlur={[Function]}
-                onChange={[Function]}
-                type="text"
-              />
+              <div
+                className="input-container"
+              >
+                <input
+                  className={
+                    Array [
+                      "cf-form-textinput cf-inline-field",
+                    ]
+                  }
+                  id="POA/Representative Email (for these notifications only)"
+                  name="POA/Representative Email (for these notifications only)"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  type="text"
+                />
+              </div>
             </div>
           </TextField>
           <HelperText
@@ -17451,18 +17467,22 @@ exports[`RepresentativeSection Shows Representative not present message when no 
                   </FormLabel>
                 </strong>
               </label>
-              <input
-                className={
-                  Array [
-                    "cf-form-textinput cf-inline-field",
-                  ]
-                }
-                id="POA/Representative Email (for these notifications only)"
-                name="POA/Representative Email (for these notifications only)"
-                onBlur={[Function]}
-                onChange={[Function]}
-                type="text"
-              />
+              <div
+                className="input-container"
+              >
+                <input
+                  className={
+                    Array [
+                      "cf-form-textinput cf-inline-field",
+                    ]
+                  }
+                  id="POA/Representative Email (for these notifications only)"
+                  name="POA/Representative Email (for these notifications only)"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  type="text"
+                />
+              </div>
             </div>
           </TextField>
           <HelperText

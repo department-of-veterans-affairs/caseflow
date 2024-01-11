@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_07_31_194341) do
+ActiveRecord::Schema.define(version: 2023_10_16_132819) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 2023_07_31_194341) do
     t.boolean "appeal_docketed", default: false, null: false, comment: "When true, appeal has been docketed"
     t.bigint "appeal_id", null: false, comment: "AMA or Legacy Appeal ID"
     t.string "appeal_type", null: false, comment: "Appeal Type (Appeal or LegacyAppeal)"
-    t.datetime "created_at", null: false, comment: "Date and Time the record was inserted into the table"
+    t.datetime "created_at", null: false
     t.bigint "created_by_id", null: false, comment: "User id of the user that inserted the record"
     t.boolean "decision_mailed", default: false, null: false, comment: "When true, appeal has decision mail request complete"
     t.boolean "hearing_postponed", default: false, null: false, comment: "When true, appeal has hearing postponed and no hearings scheduled"
@@ -100,7 +100,7 @@ ActiveRecord::Schema.define(version: 2023_07_31_194341) do
     t.boolean "privacy_act_complete", default: false, null: false, comment: "When true, appeal has a privacy act request completed"
     t.boolean "privacy_act_pending", default: false, null: false, comment: "When true, appeal has a privacy act request still open"
     t.boolean "scheduled_in_error", default: false, null: false, comment: "When true, hearing was scheduled in error and none scheduled"
-    t.datetime "updated_at", comment: "Date and time the record was last updated"
+    t.datetime "updated_at"
     t.bigint "updated_by_id", comment: "User id of the last user that updated the record"
     t.boolean "vso_ihp_complete", default: false, null: false, comment: "When true, appeal has a VSO IHP request completed"
     t.boolean "vso_ihp_pending", default: false, null: false, comment: "When true, appeal has a VSO IHP request pending"
@@ -220,6 +220,21 @@ ActiveRecord::Schema.define(version: 2023_07_31_194341) do
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
   end
 
+  create_table "batch_processes", primary_key: "batch_id", id: :uuid, default: -> { "uuid_generate_v4()" }, comment: "A generalized table for batching and processing records within caseflow", force: :cascade do |t|
+    t.string "batch_type", null: false, comment: "Indicates what type of record is being batched"
+    t.datetime "created_at", null: false, comment: "Date and Time that batch was created."
+    t.datetime "ended_at", comment: "The date/time that the batch finsished processing"
+    t.integer "records_attempted", default: 0, comment: "The number of records in the batch attempting to be processed"
+    t.integer "records_completed", default: 0, comment: "The number of records in the batch that completed processing successfully"
+    t.integer "records_failed", default: 0, comment: "The number of records in the batch that failed processing"
+    t.datetime "started_at", comment: "The date/time that the batch began processing"
+    t.string "state", default: "PRE_PROCESSING", null: false, comment: "The state that the batch is currently in. PRE_PROCESSING, PROCESSING, PROCESSED"
+    t.datetime "updated_at", null: false, comment: "Date and Time that batch was last updated."
+    t.index ["batch_type"], name: "index_batch_processes_on_batch_type"
+    t.index ["records_failed"], name: "index_batch_processes_on_records_failed"
+    t.index ["state"], name: "index_batch_processes_on_state"
+  end
+
   create_table "bgs_attorneys", comment: "Cache of unique BGS attorney data — used for adding claimants to cases pulled from POA data", force: :cascade do |t|
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
     t.datetime "last_synced_at", comment: "The last time BGS was checked"
@@ -328,6 +343,17 @@ ActiveRecord::Schema.define(version: 2023_07_31_194341) do
     t.datetime "updated_at", null: false
     t.index ["sdomainid"], name: "index_cached_user_attributes_on_sdomainid", unique: true
     t.index ["updated_at"], name: "index_cached_user_attributes_on_updated_at"
+  end
+
+  create_table "caseflow_stuck_records", comment: "This is a polymorphic table consisting of records that have repeatedly errored out of the syncing process. Currently, the only records on this table come from the PriorityEndProductSyncQueue table.", force: :cascade do |t|
+    t.datetime "determined_stuck_at", null: false, comment: "The date/time at which the record in question was determined to be stuck."
+    t.string "error_messages", default: [], comment: "Array of Error Message(s) containing Batch ID and specific error if a failure occurs", array: true
+    t.boolean "remediated", default: false, null: false, comment: "Reflects if the stuck record has been reviewed and fixed"
+    t.text "remediation_notes", comment: "Brief description of the encountered issue and remediation strategy"
+    t.bigint "stuck_record_id", null: false, comment: "The id / primary key of the stuck record and the type / where the record came from"
+    t.string "stuck_record_type", null: false
+    t.datetime "updated_at", comment: "The time an update occurred on the record"
+    t.index ["stuck_record_type", "stuck_record_id"], name: "index_caseflow_stuck_records_on_stuck_record_id_and_type"
   end
 
   create_table "cavc_dashboard_dispositions", force: :cascade do |t|
@@ -765,6 +791,7 @@ ActiveRecord::Schema.define(version: 2023_07_31_194341) do
     t.datetime "updated_at"
     t.integer "user_id", comment: "The ID of the user who performed the decision review intake."
     t.string "veteran_file_number", null: false, comment: "PII. The file number of the Veteran submitted when establishing the end product."
+    t.index ["reference_id"], name: "index_end_product_establishments_on_reference_id"
     t.index ["source_type", "source_id"], name: "index_end_product_establishments_on_source_type_and_source_id"
     t.index ["updated_at"], name: "index_end_product_establishments_on_updated_at"
     t.index ["user_id"], name: "index_end_product_establishments_on_user_id"
@@ -1224,6 +1251,33 @@ ActiveRecord::Schema.define(version: 2023_07_31_194341) do
     t.index ["updated_at"], name: "index_messages_on_updated_at"
   end
 
+  create_table "metrics", force: :cascade do |t|
+    t.json "additional_info", comment: "additional data to store for the metric"
+    t.string "app_name", null: false, comment: "Application name: caseflow or efolder"
+    t.datetime "created_at", null: false
+    t.float "duration", comment: "Time in milliseconds from start to end"
+    t.datetime "end", comment: "When metric recording stopped"
+    t.json "metric_attributes", comment: "Store attributes relevant to the metric: OS, browser, etc"
+    t.string "metric_class", null: false, comment: "Class of metric, use reflection to find value to populate this"
+    t.string "metric_group", default: "service", null: false, comment: "Metric group: service, etc"
+    t.string "metric_message", null: false, comment: "Message or log for metric"
+    t.string "metric_name", null: false, comment: "Name of metric"
+    t.string "metric_product", null: false, comment: "Where in application: Queue, Hearings, Intake, VHA, etc"
+    t.string "metric_type", null: false, comment: "Type of metric: ERROR, LOG, PERFORMANCE, etc"
+    t.json "relevant_tables_info", comment: "Store information to tie metric to database table(s)"
+    t.string "sent_to", comment: "Which system metric was sent to: Datadog, Rails Console, Javascript Console, etc ", array: true
+    t.json "sent_to_info", comment: "Additional information for which system metric was sent to"
+    t.datetime "start", comment: "When metric recording started"
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false, comment: "The ID of the user who generated metric."
+    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false, comment: "Unique ID for the metric, can be used to search within various systems for the logging"
+    t.index ["app_name"], name: "index_metrics_on_app_name"
+    t.index ["metric_name"], name: "index_metrics_on_metric_name"
+    t.index ["metric_product"], name: "index_metrics_on_metric_product"
+    t.index ["sent_to"], name: "index_metrics_on_sent_to"
+    t.index ["user_id"], name: "index_metrics_on_user_id"
+  end
+
   create_table "mpi_update_person_events", force: :cascade do |t|
     t.bigint "api_key_id", null: false, comment: "API Key used to initiate the event"
     t.datetime "completed_at", comment: "Timestamp of when update was completed, regardless of success or failure"
@@ -1266,7 +1320,7 @@ ActiveRecord::Schema.define(version: 2023_07_31_194341) do
     t.string "appeals_type", null: false, comment: "Type of Appeal"
     t.datetime "created_at", comment: "Timestamp of when Noticiation was Created"
     t.boolean "email_enabled", default: true, null: false
-    t.text "email_notification_content", comment: "Full Email Text Content of Notification"
+    t.string "email_notification_content", comment: "Full Email Text Content of Notification"
     t.string "email_notification_external_id", comment: "VA Notify Notification Id for the email notification send through their API "
     t.string "email_notification_status", comment: "Status of the Email Notification"
     t.date "event_date", null: false, comment: "Date of Event"
@@ -1277,12 +1331,16 @@ ActiveRecord::Schema.define(version: 2023_07_31_194341) do
     t.string "participant_id", comment: "ID of Participant"
     t.string "recipient_email", comment: "Participant's Email Address"
     t.string "recipient_phone_number", comment: "Participants Phone Number"
-    t.text "sms_notification_content", comment: "Full SMS Text Content of Notification"
-    t.string "sms_notification_external_id"
+    t.string "sms_notification_content", comment: "Full SMS Text Content of Notification"
+    t.string "sms_notification_external_id", comment: "VA Notify Notification Id for the sms notification send through their API "
     t.string "sms_notification_status", comment: "Status of SMS/Text Notification"
     t.datetime "updated_at", comment: "TImestamp of when Notification was Updated"
     t.index ["appeals_id", "appeals_type"], name: "index_appeals_notifications_on_appeals_id_and_appeals_type"
+    t.index ["email_notification_external_id"], name: "index_notifications_on_email_notification_external_id"
+    t.index ["email_notification_status"], name: "index_notifications_on_email_notification_status"
     t.index ["participant_id"], name: "index_participant_id"
+    t.index ["sms_notification_external_id"], name: "index_notifications_on_sms_notification_external_id"
+    t.index ["sms_notification_status"], name: "index_notifications_on_sms_notification_status"
   end
 
   create_table "organizations", force: :cascade do |t|
@@ -1342,6 +1400,20 @@ ActiveRecord::Schema.define(version: 2023_07_31_194341) do
     t.integer "vacated_decision_issue_ids", comment: "When a motion to vacate is partially granted, this includes an array of the appeal's decision issue IDs that were chosen for vacatur in this post-decision motion. For full grant, this includes all prior decision issue IDs.", array: true
     t.index ["task_id"], name: "index_post_decision_motions_on_task_id"
     t.index ["updated_at"], name: "index_post_decision_motions_on_updated_at"
+  end
+
+  create_table "priority_end_product_sync_queue", comment: "Queue of End Product Establishments that need to sync with VBMS", force: :cascade do |t|
+    t.uuid "batch_id", comment: "A unique UUID for the batch the record is executed with"
+    t.datetime "created_at", null: false, comment: "Date and Time the record was inserted into the queue"
+    t.integer "end_product_establishment_id", null: false, comment: "ID of end_product_establishment record to be synced"
+    t.string "error_messages", default: [], comment: "Array of Error Message(s) containing Batch ID and specific error if a failure occurs", array: true
+    t.datetime "last_batched_at", comment: "Date and Time the record was last batched"
+    t.string "status", default: "NOT_PROCESSED", null: false, comment: "A status to indicate what state the record is in such as PROCESSING and PROCESSED"
+    t.datetime "updated_at", null: false, comment: "Date and Time the record was last updated."
+    t.index ["batch_id"], name: "index_priority_end_product_sync_queue_on_batch_id"
+    t.index ["end_product_establishment_id"], name: "index_priority_end_product_sync_queue_on_epe_id", unique: true
+    t.index ["last_batched_at"], name: "index_priority_ep_sync_queue_on_last_batched_at"
+    t.index ["status"], name: "index_priority_ep_sync_queue_on_status"
   end
 
   create_table "ramp_closed_appeals", id: :serial, comment: "Keeps track of legacy appeals that are closed or partially closed in VACOLS due to being transitioned to a RAMP election.  This data can be used to rollback the RAMP Election if needed.", force: :cascade do |t|
@@ -1458,6 +1530,7 @@ ActiveRecord::Schema.define(version: 2023_07_31_194341) do
     t.boolean "covid_timeliness_exempt", comment: "If a veteran requests a timeliness exemption that is related to COVID-19, this is captured when adding a Request Issue and available for reporting."
     t.datetime "created_at", comment: "Automatic timestamp when row was created"
     t.date "decision_date", comment: "Either the rating issue's promulgation date, the decision issue's approx decision date or the decision date entered by the user (for nonrating and unidentified issues)"
+    t.datetime "decision_date_added_at", comment: "Denotes when a decision date was added"
     t.bigint "decision_review_id", comment: "ID of the decision review that this request issue belongs to"
     t.string "decision_review_type", comment: "Class name of the decision review that this request issue belongs to"
     t.datetime "decision_sync_attempted_at", comment: "Async job processing last attempted timestamp"
@@ -1749,6 +1822,7 @@ ActiveRecord::Schema.define(version: 2023_07_31_194341) do
     t.string "country", null: false
     t.datetime "created_at", null: false
     t.date "date_of_birth", comment: "PII"
+    t.string "ein", comment: "PII. Employer Identification Number"
     t.string "email_address", comment: "PII"
     t.string "last_name", comment: "PII"
     t.string "middle_name", comment: "PII"
@@ -2095,6 +2169,7 @@ ActiveRecord::Schema.define(version: 2023_07_31_194341) do
   add_foreign_key "membership_requests", "users", column: "decider_id"
   add_foreign_key "membership_requests", "users", column: "requestor_id"
   add_foreign_key "messages", "users"
+  add_foreign_key "metrics", "users"
   add_foreign_key "mpi_update_person_events", "api_keys"
   add_foreign_key "nod_date_updates", "appeals"
   add_foreign_key "nod_date_updates", "users"
@@ -2104,6 +2179,8 @@ ActiveRecord::Schema.define(version: 2023_07_31_194341) do
   add_foreign_key "organizations_users", "users"
   add_foreign_key "post_decision_motions", "appeals"
   add_foreign_key "post_decision_motions", "tasks"
+  add_foreign_key "priority_end_product_sync_queue", "batch_processes", column: "batch_id", primary_key: "batch_id", name: "priority_end_product_sync_queue_batch_processes_id_fk"
+  add_foreign_key "priority_end_product_sync_queue", "end_product_establishments", name: "priority_end_product_sync_queue_end_product_establishment_id_fk"
   add_foreign_key "ramp_closed_appeals", "ramp_elections"
   add_foreign_key "ramp_election_rollbacks", "ramp_elections"
   add_foreign_key "ramp_election_rollbacks", "users"

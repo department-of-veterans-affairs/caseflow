@@ -533,42 +533,54 @@ exports[`OrgRow with VSO renders correctly 1`] = `
       <div
         class="cf-form-textinput   "
       >
-        <input
-          aria-label="Name-1"
-          class="cf-form-textinput"
-          id="Name-1"
-          name="Name-1"
-          type="text"
-          value="Schaden - Russel"
-        />
+        <div
+          class="input-container"
+        >
+          <input
+            aria-label="Name-1"
+            class="cf-form-textinput"
+            id="Name-1"
+            name="Name-1"
+            type="text"
+            value="Schaden - Russel"
+          />
+        </div>
       </div>
     </td>
     <td>
       <div
         class="cf-form-textinput   "
       >
-        <input
-          aria-label="URL-1"
-          class="cf-form-textinput"
-          id="URL-1"
-          name="URL-1"
-          type="text"
-          value="schaden---russel"
-        />
+        <div
+          class="input-container"
+        >
+          <input
+            aria-label="URL-1"
+            class="cf-form-textinput"
+            id="URL-1"
+            name="URL-1"
+            type="text"
+            value="schaden---russel"
+          />
+        </div>
       </div>
     </td>
     <td>
       <div
         class="cf-form-textinput   "
       >
-        <input
-          aria-label="BGS Participant ID-1"
-          class="cf-form-textinput"
-          id="BGS Participant ID-1"
-          name="BGS Participant ID-1"
-          type="text"
-          value="2779976"
-        />
+        <div
+          class="input-container"
+        >
+          <input
+            aria-label="BGS Participant ID-1"
+            class="cf-form-textinput"
+            id="BGS Participant ID-1"
+            name="BGS Participant ID-1"
+            type="text"
+            value="2779976"
+          />
+        </div>
       </div>
     </td>
     <td>

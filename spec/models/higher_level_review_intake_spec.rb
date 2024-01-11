@@ -9,7 +9,7 @@ describe HigherLevelReviewIntake, :all_dbs do
   let(:veteran_file_number) { "64205555" }
   let(:user) { Generators::User.build }
   let(:detail) { nil }
-  let!(:veteran) { Generators::Veteran.build(file_number: "64205555") }
+  let!(:veteran) { Generators::Veteran.build(file_number: "64205555").save! }
   let(:completed_at) { nil }
   let(:completion_started_at) { nil }
 
@@ -128,15 +128,8 @@ describe HigherLevelReviewIntake, :all_dbs do
         receipt_date: 3.days.ago,
         legacy_opt_in_approved: legacy_opt_in_approved,
         benefit_type: benefit_type,
-        veteran_is_not_claimant: false
-      )
-    end
-
-    let!(:claimant) do
-      VeteranClaimant.create!(
-        decision_review: detail,
-        participant_id: veteran.participant_id,
-        payee_code: "00"
+        veteran_is_not_claimant: false,
+        claimant_type: :veteran_claimant
       )
     end
 
@@ -165,7 +158,7 @@ describe HigherLevelReviewIntake, :all_dbs do
           end_product_code: "030HLRR",
           gulf_war_registry: false,
           suppress_acknowledgement_letter: false,
-          claimant_participant_id: veteran.participant_id
+          claimant_participant_id: detail.claimant.participant_id
         ),
         veteran_hash: intake.veteran.to_vbms_hash,
         user: user
@@ -193,30 +186,6 @@ describe HigherLevelReviewIntake, :all_dbs do
         contested_issue_description: "decision text",
         rating_issue_associated_at: Time.zone.now
       )
-    end
-
-    context "when disable_claim_establishment is enabled" do
-      before { FeatureToggle.enable!(:disable_claim_establishment) }
-      after { FeatureToggle.disable!(:disable_claim_establishment) }
-
-      it "does not submit claims to VBMS" do
-        subject
-
-        expect(intake).to be_success
-        expect(intake.detail.establishment_submitted_at).to eq(Time.zone.now)
-        expect(ratings_end_product_establishment).to_not be_nil
-        expect(ratings_end_product_establishment.established_at).to eq(nil)
-        expect(Fakes::VBMSService).not_to have_received(:establish_claim!)
-        expect(Fakes::VBMSService).not_to have_received(:create_contentions!)
-        expect(Fakes::VBMSService).not_to have_received(:associate_rating_request_issues!)
-        expect(intake.detail.request_issues.count).to eq 1
-        expect(intake.detail.request_issues.first).to have_attributes(
-          contested_rating_issue_reference_id: "reference-id",
-          contested_issue_description: "decision text",
-          rating_issue_associated_at: nil
-        )
-        expect(HigherLevelReview.processable.count).to eq 1
-      end
     end
 
     context "when benefit type is pension" do

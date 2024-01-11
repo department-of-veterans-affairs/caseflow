@@ -50,7 +50,7 @@ namespace :ci do
   task :gha_verify_code_coverage  do
     require "simplecov"
 
-    # Using the same dir as :circleci_verify_code_coverage
+    # Using the same dir as :gha_verify_code_coverage
     coverage_dir = "./coverage/combined"
     SimpleCov.coverage_dir(coverage_dir)
     SimpleCov.merge_timeout(3600 * 24 * 30)

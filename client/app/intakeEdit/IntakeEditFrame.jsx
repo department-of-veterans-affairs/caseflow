@@ -8,7 +8,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_PATHS } from '../intake/constants';
-import { EditAddIssuesPage } from '../intake/pages/addIssues';
+import { EditAddIssuesPage } from '../intake/pages/addIssues/addIssues';
 import SplitAppealView from '../intake/pages/SplitAppealView';
 import DecisionReviewEditCompletedPage from '../intake/pages/decisionReviewEditCompleted';
 import Message from './pages/message';

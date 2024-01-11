@@ -29,6 +29,7 @@ export const mapDataToInitialState = function(props = {}) {
     featureToggles,
     userCanWithdrawIssues,
     userCanSplitAppeal,
+    addDecisionDateModalVisible: false,
     addIssuesModalVisible: false,
     nonRatingRequestIssueModalVisible: false,
     unidentifiedIssuesModalVisible: false,

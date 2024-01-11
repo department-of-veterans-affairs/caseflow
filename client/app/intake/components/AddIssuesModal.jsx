@@ -8,6 +8,7 @@ import Modal from '../../components/Modal';
 import RadioField from '../../components/RadioField';
 import TextField from '../../components/TextField';
 import { issueByIndex } from '../util/issues';
+import { generateSkipButton } from '../util/buttonUtils';
 
 class AddIssuesModal extends React.Component {
   constructor(props) {
@@ -108,12 +109,8 @@ class AddIssuesModal extends React.Component {
       }
     ];
 
-    if (this.props.onSkip && !this.props.intakeData.isDtaError) {
-      btns.push({
-        classNames: ['usa-button', 'usa-button-secondary', 'no-matching-issues'],
-        name: this.props.skipText,
-        onClick: this.props.onSkip
-      });
+    if (!this.props.intakeData.isDtaError) {
+      generateSkipButton(btns, this.props);
     }
 
     return btns;

@@ -8,6 +8,12 @@ export const commonReducers = (state, action) => {
   let actionsMap = {};
   let listOfIssues = state.addedIssues ? state.addedIssues : [];
 
+  actionsMap[ACTIONS.TOGGLE_ADD_DECISION_DATE_MODAL] = () => {
+    return update(state, {
+      $toggle: ['addDecisionDateModalVisible']
+    });
+  };
+
   actionsMap[ACTIONS.TOGGLE_ADDING_ISSUE] = () => {
     return update(state, {
       $toggle: ['addingIssue']
@@ -87,6 +93,18 @@ export const commonReducers = (state, action) => {
         $set: action.payload.currentIssueAndNotes
       }
     });
+  };
+
+  actionsMap[ACTIONS.ADD_DECISION_DATE] = () => {
+    const { decisionDate, index } = action.payload;
+
+    listOfIssues[index].decisionDate = decisionDate;
+    listOfIssues[index].editedDecisionDate = decisionDate;
+
+    return {
+      ...state,
+      editedIssues: listOfIssues
+    };
   };
 
   actionsMap[ACTIONS.ADD_ISSUE] = () => {
