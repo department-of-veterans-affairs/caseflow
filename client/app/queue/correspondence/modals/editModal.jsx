@@ -137,7 +137,7 @@ class EditModal extends React.Component {
 
   errorOnVADORDate = (value) => {
     if (value.length === 10) {
-      const error = validateDateNotInFuture(value) ? null : 'Receipt Date cannot be in the future';
+      const error = validateDateNotInFuture(value) ? null : 'Receipt date cannot be in the future';
 
       return error;
     }
