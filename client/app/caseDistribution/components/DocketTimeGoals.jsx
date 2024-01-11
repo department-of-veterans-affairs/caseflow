@@ -8,8 +8,9 @@ import { updateNumberLever } from '../reducers/levers/leversActions';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
 import COPY from '../../../COPY';
-import { Constant, sectionTitles } from '../constants';
+import { Constant, sectionTitles, docketTimeGoalPriorMappings } from '../constants';
 import { getLeversByGroup } from '../reducers/levers/leversSelector';
+import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 
 const DocketTimeGoals = (props) => {
   const { isAdmin } = props;
@@ -27,9 +28,9 @@ const DocketTimeGoals = (props) => {
   const theState = useSelector((state) => state);
 
   // pull docket time goal and distribution levers from the store
-  const currentTimeLevers = getLeversByGroup(theState, Constant.LEVERS, Constant.DOCKET_TIME_GOAL);
+  const currentTimeLevers = getLeversByGroup(theState, Constant.LEVERS, ACD_LEVERS.lever_groups.docket_time_goal);
   const currentDistributionPriorLevers =
-    getLeversByGroup(theState, Constant.LEVERS, Constant.DOCKET_DISTRIBUTION_PRIOR);
+    getLeversByGroup(theState, Constant.LEVERS, ACD_LEVERS.lever_groups.docket_distribution_prior);
 
   const [docketDistributionLevers, setDistributionLever] = useState(currentDistributionPriorLevers);
   const [docketTimeGoalLevers, setTimeGoalLever] = useState(currentTimeLevers);
@@ -63,14 +64,12 @@ const DocketTimeGoals = (props) => {
   };
 
   const renderDocketDistributionLever = (distributionPriorLever, index) => {
-
-    let docketTimeGoalLever = '';
-
-    if (index < docketTimeGoalLevers.length) {
-      docketTimeGoalLever = docketTimeGoalLevers[index];
-    }
+    let docketTimeGoalLever = docketTimeGoalLevers.find((lever) =>
+      lever.item === docketTimeGoalPriorMappings[distributionPriorLever.item]);
 
     if (isAdmin) {
+
+      const sectionTitle = sectionTitles[distributionPriorLever.item];
 
       return (
 
@@ -79,7 +78,7 @@ const DocketTimeGoals = (props) => {
         >
           <div className={cx(styles.leverLeft, styles.docketLeverLeft)}>
             <strong className={docketTimeGoalLever.is_disabled_in_ui ? styles.leverDisabled : ''}>
-              {index < sectionTitles.length ? sectionTitles[index] : ''}
+              {sectionTitle || ''}
             </strong>
           </div>
           <div className={`${styles.leverMiddle} ${leverNumberDiv}
@@ -91,7 +90,7 @@ const DocketTimeGoals = (props) => {
               value={docketTimeGoalLever.value}
               label={docketTimeGoalLever.unit}
               errorMessage={errorMessagesList[docketTimeGoalLever.item]}
-              onChange={updateNumberFieldLever(docketTimeGoalLever.item, Constant.DOCKET_TIME_GOAL)}
+              onChange={updateNumberFieldLever(docketTimeGoalLever.item, ACD_LEVERS.lever_groups.docket_time_goal)}
             />
           </div>
           <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
@@ -112,7 +111,10 @@ const DocketTimeGoals = (props) => {
                 value={distributionPriorLever.value}
                 label={distributionPriorLever.unit}
                 errorMessage={errorMessagesList[distributionPriorLever.item]}
-                onChange={updateNumberFieldLever(distributionPriorLever.item, Constant.DOCKET_DISTRIBUTION_PRIOR, true)}
+                onChange={
+                  updateNumberFieldLever(distributionPriorLever.item,
+                    ACD_LEVERS.lever_groups.docket_distribution_prior, true)
+                }
               />
             </div>
           </div>
@@ -148,6 +150,8 @@ const DocketTimeGoals = (props) => {
 
   };
 
+  console.log(docketDistributionLevers?.toSorted((leverA, leverB) => leverA.lever_group_order - leverB.lever_group_order));
+
   return (
     <div className={styles.leverContent}>
       <div className={styles.leverHead}>
@@ -166,9 +170,10 @@ const DocketTimeGoals = (props) => {
         <div className={styles.leverRight}><strong>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_TITLE_RIGHT}</strong></div>
       </div>
 
-      {docketDistributionLevers && docketDistributionLevers.map((distributionPriorLever, index) => (
-        renderDocketDistributionLever(distributionPriorLever, index)
-      ))}
+      {docketDistributionLevers?.
+        toSorted((leverA, leverB) => leverA.lever_group_order - leverB.lever_group_order).
+        map((distributionPriorLever, index) => (renderDocketDistributionLever(distributionPriorLever, index)))
+      }
     </div>
 
   );

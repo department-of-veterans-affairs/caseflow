@@ -1,21 +1,22 @@
-const AFFINITY = 'affinity';
-const BACKEND_LEVERS = 'backendLevers';
-const BATCH = 'batch';
-const DOCKET_DISTRIBUTION_PRIOR = 'docket_distribution_prior';
-const DOCKET_TIME_GOAL = 'docket_time_goal';
+import DISTRIBUTION from '../../constants/DISTRIBUTION';
+
 const LEVERS = 'levers';
 
 export const Constant = {
-  AFFINITY,
-  BACKEND_LEVERS,
-  BATCH,
-  DOCKET_DISTRIBUTION_PRIOR,
-  DOCKET_TIME_GOAL,
   LEVERS
 };
 
-export const sectionTitles = [
-  'AMA Hearings',
-  'AMA Direct Review',
-  'AMA Evidence Submission',
-];
+export const sectionTitles = {
+  [DISTRIBUTION.ama_hearings_start_distribution_prior_to_goals]: 'AMA Hearings',
+  [DISTRIBUTION.ama_direct_review_start_distribution_prior_to_goals]: 'AMA Direct Review',
+  [DISTRIBUTION.ama_evidence_submission_start_distribution_prior_to_goals]: 'AMA Evidence Submission'
+};
+
+export const docketTimeGoalPriorMappings = {
+  [DISTRIBUTION.ama_hearings_start_distribution_prior_to_goals]:
+    DISTRIBUTION.ama_hearings_docket_time_goals,
+  [DISTRIBUTION.ama_direct_review_start_distribution_prior_to_goals]:
+    DISTRIBUTION.ama_direct_review_docket_time_goals,
+  [DISTRIBUTION.ama_evidence_submission_start_distribution_prior_to_goals]:
+    DISTRIBUTION.ama_evidence_submission_docket_time_goals
+};
