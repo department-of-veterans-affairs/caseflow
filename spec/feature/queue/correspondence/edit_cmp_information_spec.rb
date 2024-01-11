@@ -17,8 +17,6 @@ RSpec.feature("The Correspondence Review Package page") do
       uuid: SecureRandom.uuid,
       assigned_by_id: mail_team_user.id,
       updated_by_id: mail_team_user.id,
-      correspondence_type: correspondence_type,
-      package_document_type: package_document_type
     )
   end
 
