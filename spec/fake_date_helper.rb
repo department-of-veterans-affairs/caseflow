@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module FakeDateHelper
-  def get_unique_dates_between(start_date, end_date, num_of_dates,
+  def get_unique_dates_between(start_date, end_date, num_of_dates, # rubocop:disable Metrics/CyclomaticComplexity
                                exclude_weekends = true)
     dates = Set.new
 
@@ -18,7 +18,7 @@ module FakeDateHelper
     dates.to_a
   end
 
-  def get_dates_between(start_date, end_date, num_of_dates,
+  def get_dates_between(start_date, end_date, num_of_dates, # rubocop:disable Metrics/CyclomaticComplexity
                         exclude_weekends = true, max_same_date = 4)
     dates = []
     holidays = Holidays.between(start_date, end_date, :federal_reserve)
