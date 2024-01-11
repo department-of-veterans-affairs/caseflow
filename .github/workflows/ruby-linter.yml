@@ -1,0 +1,56 @@
+name: Ruby Linter
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+concurrency:
+  group: ${{ github.ref }}-lint
+  cancel-in-progress: true
+
+jobs:
+  ruby-linter:
+    env:
+      TZ: "US/Eastern"
+      FORCE_COLOR: "1"
+      # Tells bundler to not worry about any group except for our 'lint' group.
+      # This was used since BUNLDE_ONLY did not work.
+      BUNDLE_WITHOUT: "default:test:staging:ssh_forwarding:development:demo:production"
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Caseflow
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          # Ruby version is determined by the .ruby-version file
+          bundler-cache: true
+
+      - name: Get Changed Ruby Files
+        id: changed-ruby-files
+        uses: tj-actions/changed-files@v41
+        with:
+          files: |
+            **.rb
+            **.erb
+
+      - name: Rubocop
+        if: steps.changed-ruby-files.outputs.any_changed == 'true' && (success() || failure())
+        run: bundle exec rubocop ${{ steps.changed-ruby-files.outputs.all_changed_files }}
+
+      - name: Reek
+        if: steps.changed-ruby-files.outputs.any_changed == 'true' && (success() || failure())
+        run: bundle exec reek ${{ steps.changed-ruby-files.outputs.all_changed_files }}
+
+      - name: Fasterer
+        if: success() || failure()
+        run: bundle exec fasterer
+
+        # This gem is no longer maintained
+      - name: scss-lint
+        if: success() || failure()
+        run: bundle exec scss-lint --color
