@@ -21,8 +21,8 @@ const LeverHistory = (props) => {
 
   const getUnitsFromLever = (leverDataType, leverUnit) => {
 
-    const doesDatatypeRequireComplexLogic = (leverDataType === ACD_LEVERS.radio ||
-      leverDataType === ACD_LEVERS.combination);
+    const doesDatatypeRequireComplexLogic = (leverDataType === ACD_LEVERS.data_types.radio ||
+      leverDataType === ACD_LEVERS.data_types.combination);
 
     if (doesDatatypeRequireComplexLogic) {
       return '';

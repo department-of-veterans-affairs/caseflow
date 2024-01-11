@@ -1,25 +1,67 @@
-import leverStore from './reducers/levers/leversReducer';
+import ACD_LEVERS from '../../constants/ACD_LEVERS';
 
-export const checkIfOtherChangesExist = (currentLever) => {
-  // this isn't going to work as is because levers is currently split up into grouping
-  /*
-    The code will look something like:
-    const countChangedItems = (state = initialState) => {
-  const { levers } = state;
-  // Flatten the array of lever groups into a single array
-  const allLevers = Object.values(levers).flat();
-  // Use reduce to count the number of items where hasItemChanged is true
-  const changedItemsCount = allLevers.reduce((count, lever) => {
-    return lever.hasItemChanged ? count + 1 : count;
-  }, 0);
-  return changedItemsCount;
+export const findOption = (lever, value) => lever.options.find((option) => option.item === value);
+
+export const createCombinationValue = (toggleValue, value) => `${toggleValue}-${value}`;
+
+/**
+ * Add backendValue attributes to each lever
+ * For radio and combination levers add currentValue
+ */
+export const createUpdatedLeversWithValues = (levers) => {
+  const leverGroups = Object.keys(levers);
+
+  const leversWithValues = () => {
+    return leverGroups.reduce((updatedLevers, leverGroup) => {
+      updatedLevers[leverGroup] = levers[leverGroup].map((lever) => {
+        let additionalValues = {
+          backendValue: lever.value
+        };
+
+        const dataType = lever.data_type;
+
+        // Only add a new property for radio and combination data types as these have special handling logic
+        // to retrieve value
+        if (dataType === ACD_LEVERS.data_types.radio) {
+          additionalValues = {
+            currentValue: findOption(lever, lever.value).value,
+            backendValue: findOption(lever, lever.value).value,
+          };
+        } else if (dataType === ACD_LEVERS.data_types.combination) {
+          additionalValues = {
+            currentValue: createCombinationValue(lever.is_toggle_active, lever.value),
+            backendValue: createCombinationValue(lever.is_toggle_active, lever.value)
+          };
+        }
+
+        return {
+          ...lever,
+          ...additionalValues
+        };
+      });
+
+      return updatedLevers;
+    }, {});
+  };
+
+  return leversWithValues();
 };
 
-    })
-  */
-  const leversWithChangesList = leverStore.getState().levers.filter(
-    (lever) => lever.hasValueChanged === true && lever.item !== currentLever.item
-  );
+export const formatLeverHistory = (leverHistoryList) => {
+  let formattedLeverHistory = [];
 
-  return leversWithChangesList.length > 0;
+  leverHistoryList.forEach((leverHistoryEntry) => {
+
+    formattedLeverHistory.push(
+      {
+        user_name: leverHistoryEntry.user,
+        created_at: leverHistoryEntry.created_at,
+        lever_title: leverHistoryEntry.title,
+        original_value: leverHistoryEntry.original_value,
+        current_value: leverHistoryEntry.current_value
+      }
+    );
+  });
+
+  return formattedLeverHistory;
 };

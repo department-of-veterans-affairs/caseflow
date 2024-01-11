@@ -12,7 +12,7 @@ const leverInputValidation = (lever, event, currentMessageState, initialLever, o
 
     // Max value to override lever database maximums on majority levers
 
-    if (lever.data_type === ACD_LEVERS.radio) {
+    if (lever.data_type === ACD_LEVERS.data_types.radio) {
 
       withinLimits = ((option.min_value) <= event && event <= maxValue);
     } else {
@@ -32,7 +32,7 @@ const leverInputValidation = (lever, event, currentMessageState, initialLever, o
 
   // Checks if value is a valid digit and within the min / max value for the lever requirements.
   if (checkIsInRange()) {
-    if (lever.data_type === ACD_LEVERS.radio) {
+    if (lever.data_type === ACD_LEVERS.data_types.radio) {
       if (updatedMessages) {
         updatedMessages = {};
       } else {
@@ -41,7 +41,7 @@ const leverInputValidation = (lever, event, currentMessageState, initialLever, o
     } else {
       updatedMessages = { ...currentMessageState, [lever.item]: null };
     }
-  } else if (lever.data_type === ACD_LEVERS.radio) {
+  } else if (lever.data_type === ACD_LEVERS.data_types.radio) {
     updatedMessages = { ...currentMessageState,
       [`${lever.item}-${option.item}`]: `Please enter a value from ${ option.min_value } to ${ maxValue }`
     };
@@ -55,7 +55,7 @@ const leverInputValidation = (lever, event, currentMessageState, initialLever, o
   let hasErrorMessage = (message) => message !== null;
   let messageFilter = messageValues.filter(hasErrorMessage);
 
-  if (lever.data_type === ACD_LEVERS.radio) {
+  if (lever.data_type === ACD_LEVERS.data_types.radio) {
     let initialOption = initialLever.options.find((original) => original.item === option.item);
 
     if (event === initialOption.value) {

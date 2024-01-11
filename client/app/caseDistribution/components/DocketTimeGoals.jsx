@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
-import { updateLeverState } from '../reducers/levers/leversActions';
+import { updateNumberLever } from '../reducers/levers/leversActions';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
 import COPY from '../../../COPY';
-import { Constant, sectionTitles } from '../constants';
+import { Constant, sectionTitles, docketTimeGoalPriorMappings } from '../constants';
 import { getLeversByGroup, getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
+import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 
-const DocketTimeGoals = (props) => {
+const DocketTimeGoals = () => {
 
   const leverNumberDiv = css({
     '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
@@ -26,11 +26,11 @@ const DocketTimeGoals = (props) => {
   const theState = useSelector((state) => state);
 
   // pull docket time goal and distribution levers from the store
-  const currentTimeLevers = getLeversByGroup(theState, Constant.LEVERS, Constant.DOCKET_TIME_GOAL);
+  const currentTimeLevers = getLeversByGroup(theState, Constant.LEVERS, ACD_LEVERS.lever_groups.docket_time_goal);
   const isUserAcdAdmin = getUserIsAcdAdmin(theState);
 
   const currentDistributionPriorLevers =
-    getLeversByGroup(theState, Constant.LEVERS, Constant.DOCKET_DISTRIBUTION_PRIOR);
+    getLeversByGroup(theState, Constant.LEVERS, ACD_LEVERS.lever_groups.docket_distribution_prior);
 
   const [docketDistributionLevers, setDistributionLever] = useState(currentDistributionPriorLevers);
   const [docketTimeGoalLevers, setTimeGoalLever] = useState(currentTimeLevers);
@@ -44,9 +44,9 @@ const DocketTimeGoals = (props) => {
     setTimeGoalLever(currentTimeLevers);
   }, [currentTimeLevers]);
 
-  const updateLever = (leverItem, leverType, toggleValue = false) => (event) => {
-    dispatch(updateLeverState(leverType, leverItem, event, null, toggleValue))
-  }
+  const updateNumberFieldLever = (leverType, leverItem) => (event) => {
+    dispatch(updateNumberLever(leverType, leverItem, event));
+  };
 
   const toggleLever = (index) => () => {
     const levers = docketDistributionLevers.map((lever, i) => {
@@ -63,15 +63,13 @@ const DocketTimeGoals = (props) => {
     setDistributionLever(levers);
   };
 
-  const generateToggleSwitch = (distributionPriorLever, index) => {
-
-    let docketTimeGoalLever = '';
-
-    if (index < docketTimeGoalLevers.length) {
-      docketTimeGoalLever = docketTimeGoalLevers[index];
-    }
+  const renderDocketDistributionLever = (distributionPriorLever, index) => {
+    let docketTimeGoalLever = docketTimeGoalLevers.find((lever) =>
+      lever.item === docketTimeGoalPriorMappings[distributionPriorLever.item]);
 
     if (isUserAcdAdmin) {
+
+      const sectionTitle = sectionTitles[distributionPriorLever.item];
 
       return (
 
@@ -80,7 +78,7 @@ const DocketTimeGoals = (props) => {
         >
           <div className={cx(styles.leverLeft, styles.docketLeverLeft)}>
             <strong className={docketTimeGoalLever.is_disabled_in_ui ? styles.leverDisabled : ''}>
-              {index < sectionTitles.length ? sectionTitles[index] : ''}
+              {sectionTitle || ''}
             </strong>
           </div>
           <div className={`${styles.leverMiddle} ${leverNumberDiv}
@@ -92,7 +90,7 @@ const DocketTimeGoals = (props) => {
               value={docketTimeGoalLever.value}
               label={docketTimeGoalLever.unit}
               errorMessage={errorMessagesList[docketTimeGoalLever.item]}
-              onChange={updateLever(docketTimeGoalLever.item, Constant.DOCKET_TIME_GOAL)}
+              onChange={updateNumberFieldLever(ACD_LEVERS.lever_groups.docket_time_goal, docketTimeGoalLever.item)}
             />
           </div>
           <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
@@ -113,7 +111,10 @@ const DocketTimeGoals = (props) => {
                 value={distributionPriorLever.value}
                 label={distributionPriorLever.unit}
                 errorMessage={errorMessagesList[distributionPriorLever.item]}
-                onChange={updateLever(distributionPriorLever.item, Constant.DOCKET_DISTRIBUTION_PRIOR, true)}
+                onChange={
+                  updateNumberFieldLever(ACD_LEVERS.lever_groups.docket_distribution_prior, true,
+                    distributionPriorLever.item)
+                }
               />
             </div>
           </div>
@@ -167,16 +168,13 @@ const DocketTimeGoals = (props) => {
         <div className={styles.leverRight}><strong>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_TITLE_RIGHT}</strong></div>
       </div>
 
-      {docketDistributionLevers && docketDistributionLevers.map((distributionPriorLever, index) => (
-        generateToggleSwitch(distributionPriorLever, index)
-      ))}
+      {docketDistributionLevers?.
+        toSorted((leverA, leverB) => leverA.lever_group_order - leverB.lever_group_order).
+        map((distributionPriorLever, index) => (renderDocketDistributionLever(distributionPriorLever, index)))
+      }
     </div>
 
   );
-};
-
-DocketTimeGoals.propTypes = {
-  sectionTitles: PropTypes.array.isRequired
 };
 
 export default DocketTimeGoals;

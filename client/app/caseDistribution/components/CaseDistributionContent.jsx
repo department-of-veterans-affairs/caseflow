@@ -33,7 +33,7 @@ const CaseDistributionContent = ({
             <h2>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_TITLE}</h2>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION}</p>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION_NOTE}</p>
-            <InteractableLeverWrapper levers={levers} leverStore={leverStore} />
+            <InteractableLeverWrapper leverStore={leverStore} />
           </div>
         </div>
 

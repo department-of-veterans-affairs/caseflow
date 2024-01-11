@@ -58,8 +58,10 @@ class SeedDB
     call_and_log_seed_step Seeds::MTV
     call_and_log_seed_step Seeds::Education
     # Case Distribution Seed Data
+    # Creates 300+ priority cases ready for distribution
+    # Warning a number are not setup correctly so cannot be used beyond
+    # just distributing
     call_and_log_seed_step Seeds::PriorityDistributions
-    call_and_log_seed_step Seeds::CaseDitributionTestData
     call_and_log_seed_step Seeds::TestCaseData
     call_and_log_seed_step Seeds::CaseDistributionAuditLeverEntries
     # End of Case Distribution Seed Data

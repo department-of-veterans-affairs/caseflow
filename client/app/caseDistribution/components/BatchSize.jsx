@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
-// import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
+import { useDispatch, useSelector } from 'react-redux';
 import { css } from 'glamor';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';
-import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';
+import { getLeversByGroup, getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
+import { updateNumberLever } from '../reducers/levers/leversActions';
+import { Constant } from '../constants';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
-import { checkIfOtherChangesExist } from '../utils';
-import { getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
 
-const BatchSize = (props) => {
+const BatchSize = () => {
   const theState = useSelector((state) => state);
   const isUserAcdAdmin = getUserIsAcdAdmin(theState);
 
@@ -22,87 +20,29 @@ const BatchSize = (props) => {
     '& .usa-input-error label': { bottom: '15px', left: '89px' }
   });
 
-  const backendLevers = useSelector((state) => state.caseDistributionLevers.backendLevers.batch);
-  const storeLevers = useSelector((state) => state.caseDistributionLevers.levers.batch);
-  const [errorMessagesList, setErrorMessages] = useState({});
-  const [batchSizeLevers, setBatchSizeLevers] = useState(storeLevers);
+  const errorMessages = {};
+
+  const dispatch = useDispatch();
+  const batchLevers = getLeversByGroup(theState, Constant.LEVERS, ACD_LEVERS.lever_groups.batch);
+  const [errorMessagesList] = useState(errorMessages);
+  const [batchSizeLevers, setBatchSizeLevers] = useState(batchLevers);
 
   useEffect(() => {
-    setBatchSizeLevers(storeLevers);
-  }, [storeLevers]);
+    setBatchSizeLevers(batchLevers);
+  }, [batchLevers]);
 
-  const updateLever = (index) => (event) => {
-    const levers = batchSizeLevers.map((lever, i) => {
-      if (index === i) {
-
-        let initialLever = backendLevers.find((original) => original.item === lever.item);
-
-        let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever);
-
-        if (validationResponse.statement === ACD_LEVERS.DUPLICATE) {
-
-          if (checkIfOtherChangesExist(lever)) {
-            lever.value = event;
-            setErrorMessages(validationResponse.updatedMessages);
-
-            // leverStore.dispatch({
-            //   type: ACTIONS.UPDATE_LEVER_VALUE,
-            //   updated_lever: { item: lever.item, value: event },
-            //   hasValueChanged: false,
-            //   validChange: true
-            // });
-          } else {
-
-            lever.value = event;
-            setErrorMessages(validationResponse.updatedMessages);
-
-            // leverStore.dispatch({
-            //   type: ACTIONS.UPDATE_LEVER_VALUE,
-            //   updated_lever: { item: lever.item, value: event },
-            //   hasValueChanged: false,
-            //   validChange: false
-            // });
-          }
-
-        }
-        if (validationResponse.statement === ACD_LEVERS.SUCCESS) {
-
-          lever.value = event;
-          setErrorMessages(validationResponse.updatedMessages);
-          // leverStore.dispatch({
-          //   type: ACTIONS.UPDATE_LEVER_VALUE,
-          //   updated_lever: { item: lever.item, value: event },
-          //   validChange: true
-          // });
-
-          return lever;
-        }
-        if (validationResponse.statement === ACD_LEVERS.FAIL) {
-          lever.value = event;
-          setErrorMessages(validationResponse.updatedMessages);
-
-          // leverStore.dispatch({
-          //   type: ACTIONS.UPDATE_LEVER_VALUE,
-          //   updated_lever: { item: lever.item, value: event },
-          //   validChange: false
-          // });
-
-          return lever;
-        }
-      }
-
-      return lever;
-    });
-
-    setBatchSizeLevers(levers);
+  const updateNumberFieldLever = (leverType, leverItem) => (event) => {
+    dispatch(updateNumberLever(leverType, leverItem, event));
   };
+
+  batchLevers?.sort((leverA, leverB) => leverA.lever_group_order - leverB.lever_group_order);
 
   return (
     <div className={styles.leverContent}>
       <div className={styles.leverHead}>
-        <h2>{COPY.CASE_DISTRIBUTION_BATCHSIZE_H2_TITLE}</h2>
-        <div className={styles.leverLeft}><strong>{COPY.CASE_DISTRIBUTION_BATCHSIZE_LEVER_LEFT_TITLE}</strong></div>
-        <div className={styles.leverRight}><strong>{COPY.CASE_DISTRIBUTION_BATCHSIZE_LEVER_RIGHT_TITLE}</strong></div>
+        <h2>{COPY.CASE_DISTRIBUTION_BATCH_SIZE_H2_TITLE}</h2>
+        <div className={styles.leverLeft}><strong>{COPY.CASE_DISTRIBUTION_BATCH_SIZE_LEVER_LEFT_TITLE}</strong></div>
+        <div className={styles.leverRight}><strong>{COPY.CASE_DISTRIBUTION_BATCH_SIZE_LEVER_RIGHT_TITLE}</strong></div>
       </div>
       {batchSizeLevers && batchSizeLevers.map((lever, index) => (
         <div className={styles.activeLever} key={`${lever.item}-${index}`}>
@@ -123,7 +63,7 @@ const BatchSize = (props) => {
                 readOnly={lever.is_disabled_in_ui}
                 value={lever.value}
                 errorMessage={errorMessagesList[lever.item]}
-                onChange={updateLever(index, lever.item, lever.item)}
+                onChange={updateNumberFieldLever(ACD_LEVERS.lever_groups.batch, lever.item)}
                 tabIndex={lever.is_disabled_in_ui ? -1 : null}
               /> :
               <label className={lever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}>

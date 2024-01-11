@@ -24,7 +24,6 @@ class CaseDistribution extends React.PureComponent {
   render() {
     const preloadedState = {
       levers: JSON.parse(JSON.stringify(this.props.acd_levers)),
-      backendLevers: JSON.parse(JSON.stringify(this.props.acd_levers)),
       historyList: JSON.parse(JSON.stringify(this.props.acd_history)),
       isUserAcdAdmin: JSON.parse(JSON.stringify(this.props.user_is_an_acd_admin))
     };
@@ -74,17 +73,18 @@ class CaseDistribution extends React.PureComponent {
     let docketTimeGoalLevers = [];
 
     this.props.acd_levers.forEach((lever) => {
-      if (lever.data_type === ACD_LEVERS.number && batchLeverList.includes(lever.item)) {
+      if (lever.data_type === ACD_LEVERS.data_types.number && batchLeverList.includes(lever.item)) {
         batchSizeLevers.push(lever.item);
       }
-      if (lever.data_type === ACD_LEVERS.radio && affinityLeverList.includes(lever.item)) {
+      if (lever.data_type === ACD_LEVERS.data_types.radio && affinityLeverList.includes(lever.item)) {
         affinityLevers.push(lever.item);
       }
-      if (lever.data_type === (ACD_LEVERS.combination &&
+      if (lever.data_type === (ACD_LEVERS.data_types.combination &&
         docketLeverLists.docketDistributionPriorLeverList.includes(lever.item))) {
         docketDistributionPriorLevers.push(lever.item);
       }
-      if (lever.data_type === ACD_LEVERS.number && docketLeverLists.docketTimeGoalLeverList.includes(lever.item)) {
+      if (lever.data_type === ACD_LEVERS.data_types.number &&
+          docketLeverLists.docketTimeGoalLeverList.includes(lever.item)) {
         docketTimeGoalLevers.push(lever.item);
       }
 
@@ -133,7 +133,7 @@ class CaseDistribution extends React.PureComponent {
               appName="Caseflow Admin"
             >
               <AppFrame>
-                <BannerDisplay leverStore={leverStore} />
+                <BannerDisplay />
                 <AppSegment filledBackground>
                   <div>
                     <PageRoute

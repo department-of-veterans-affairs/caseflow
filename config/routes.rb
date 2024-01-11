@@ -263,21 +263,9 @@ Rails.application.routes.draw do
 
   get 'case-distribution-controls', :to => 'case_distribution_levers#acd_lever_index'
 
-  resources :case_distribution_levers_tests, only: [] do
-    collection do
-      post :create_acd_group_org_singleton
-      post :destroy_acd_group_org
-      post :add_user
-      post :remove_user
-      post :make_admin
-      post :remove_admin
-    end
-  end
-
   resources :case_distribution_levers, only: [] do
     collection do
-      post :update_levers_and_history
-      get :update_levers_and_history
+      post :update_levers
     end
   end
 

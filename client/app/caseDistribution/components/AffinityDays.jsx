@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
@@ -8,14 +7,9 @@ import NumberField from 'app/components/NumberField';
 import TextField from 'app/components/TextField';
 import COPY from '../../../COPY';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
-import { ACTIONS } from '../reducers/levers/leversActionTypes';
-import leverInputValidation from './LeverInputValidation';
-import { checkIfOtherChangesExist } from '../utils';
 import { getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
 
-const AffinityDays = (props) => {
-  // leverStore needs to be refactored out to conform with the new redux pattern
-  const { leverStore } = props;
+const AffinityDays = () => {
   const theState = useSelector((state) => state);
   const isUserAcdAdmin = getUserIsAcdAdmin(theState);
 
@@ -25,117 +19,19 @@ const AffinityDays = (props) => {
     '& .cf-form-int-input label': { position: 'absolute', bottom: '15px', left: '100px' },
     '& .usa-input-error label': { bottom: '24px', left: '115px' }
   });
-  const errorMessages = {};
 
-  const [errorMessagesList, setErrorMessages] = useState(errorMessages);
   const storeLevers = useSelector((state) => state.caseDistributionLevers.levers.affinity);
-  const backendLevers = useSelector((state) => state.caseDistributionLevers.backendLevers.affinity);
   const [affinityLevers, setAffinityLevers] = useState(storeLevers);
 
   useEffect(() => {
     setAffinityLevers(storeLevers);
   }, [storeLevers]);
 
-  const updatedLever = (lever, option) => (event) => {
-    const levers = affinityLevers.map((individualLever) => {
-      if (individualLever.item === lever.item) {
-        const updatedOptions = individualLever.options.map((op) => {
-          if (op.item === option.item) {
-
-            let initialLever = backendLevers.find((original) => original.item === lever.item);
-
-            let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever, op);
-
-            const newValue = isNaN(event) ? event : individualLever.value;
-
-            if (validationResponse.statement === ACD_LEVERS.DUPLICATE) {
-
-              if (checkIfOtherChangesExist(lever)) {
-                op.value = event;
-                op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
-                setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
-
-                leverStore.dispatch({
-                  type: ACTIONS.UPDATE_LEVER_VALUE,
-                  updated_lever: { item: individualLever.item, value: newValue },
-                  hasValueChanged: false,
-                  validChange: true
-
-                });
-              } else {
-                op.value = event;
-                op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
-                setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
-
-                leverStore.dispatch({
-                  type: ACTIONS.UPDATE_LEVER_VALUE,
-                  updated_lever: { item: individualLever.item, value: newValue },
-                  hasValueChanged: false,
-                  validChange: false
-
-                });
-              }
-
-            }
-            if (validationResponse.statement === ACD_LEVERS.SUCCESS) {
-              op.value = event;
-              op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
-              setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
-              leverStore.dispatch({
-                type: ACTIONS.UPDATE_LEVER_VALUE,
-                updated_lever: { item: individualLever.item, value: newValue },
-                validChange: true
-              });
-            }
-            if (validationResponse.statement === ACD_LEVERS.FAIL) {
-              op.value = event;
-              op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
-              setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
-              leverStore.dispatch({
-                type: ACTIONS.UPDATE_LEVER_VALUE,
-                updated_lever: { item: individualLever.item, value: newValue },
-                validChange: false
-              });
-            }
-          }
-
-          return op;
-        });
-
-        return { ...individualLever, options: updatedOptions };
-      }
-
-      return individualLever;
-    });
-
-    setAffinityLevers(levers);
-
-  };
-
-  const handleRadioChange = (lever, option) => {
-    if (lever && option) {
-      const updatedLevers = affinityLevers.map((lev) => {
-        if (lev.item === lever.item) {
-          return { ...lev, value: option.item };
-        }
-
-        return lev;
-      });
-
-      setAffinityLevers(updatedLevers);
-      leverStore.dispatch({
-        type: ACTIONS.UPDATE_LEVER_VALUE,
-        updated_lever: { item: lever.item, value: option.item },
-        validChange: true
-      });
-    }
-  };
-
   const generateFields = (dataType, option, lever) => {
     const useAriaLabel = !lever.is_disabled_in_ui;
     const tabIndex = lever.is_disabled_in_ui ? -1 : null;
 
-    if (dataType === ACD_LEVERS.number) {
+    if (dataType === ACD_LEVERS.data_types.number) {
       return (
         <NumberField
           name={option.item}
@@ -145,7 +41,7 @@ const AffinityDays = (props) => {
           readOnly={lever.is_disabled_in_ui ? true : (lever.value !== option.item)}
           value={option.value}
           errorMessage={option.errorMessage}
-          onChange={(event) => updatedLever(lever, option)(event)}
+          onChange={() => console.warn('not implemented')}
           id={`${lever.item}-${option.value}`}
           inputID={`${lever.item}-${option.value}-input`}
           useAriaLabel={useAriaLabel}
@@ -153,7 +49,7 @@ const AffinityDays = (props) => {
         />
       );
     }
-    if (dataType === ACD_LEVERS.text) {
+    if (dataType === ACD_LEVERS.data_types.text) {
       return (
         <TextField
           name={option.item}
@@ -161,7 +57,7 @@ const AffinityDays = (props) => {
           label={false}
           readOnly={lever.is_disabled_in_ui ? true : (lever.value !== option.item)}
           value={option.value}
-          onChange={(event) => updatedLever(lever, option)(event)}
+          onChange={() => console.warn('not implemented')}
           id={`${lever.item}-${option.value}`}
           inputID={`${lever.item}-${option.value}-input`}
           useAriaLabel={useAriaLabel}
@@ -180,7 +76,8 @@ const AffinityDays = (props) => {
           <div>
             <label className={lever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}
               htmlFor={`${lever.item}-${option.item}`}>
-              {`${option.text} ${option.data_type === ACD_LEVERS.number ? `${option.value} ${option.unit}` : ''}`}
+              {`${option.text} ${option.data_type === ACD_LEVERS.data_types.number ?
+                `${option.value} ${option.unit}` : ''}`}
             </label>
           </div>
         </div>
@@ -198,12 +95,12 @@ const AffinityDays = (props) => {
         <div>
           <input
             checked={option.item === lever.value}
-            type={ACD_LEVERS.radio}
+            type={ACD_LEVERS.data_types.radio}
             value={option.item}
             disabled={lever.is_disabled_in_ui}
             id={`${lever.item}-${option.item}`}
             name={lever.item}
-            onChange={() => handleRadioChange(lever, option)}
+            onChange={() => console.warn('not implemented')}
           />
           <label htmlFor={`${lever.item}-${option.item}`}>
             {option.text}
@@ -218,15 +115,17 @@ const AffinityDays = (props) => {
     );
   };
 
+  affinityLevers?.sort((leverA, leverB) => leverA.lever_group_order - leverB.lever_group_order);
+
   return (
     <div className={styles.leverContent}>
       <div className={styles.leverHead}>
         <h2>{COPY.CASE_DISTRIBUTION_AFFINITY_DAYS_H2_TITLE}</h2>
         <div className={styles.leverLeft}>
-          <strong>{COPY.CASE_DISTRIBUTION_BATCHSIZE_LEVER_LEFT_TITLE}</strong>
+          <strong>{COPY.CASE_DISTRIBUTION_BATCH_SIZE_LEVER_LEFT_TITLE}</strong>
         </div>
         <div className={styles.leverRight}>
-          <strong>{COPY.CASE_DISTRIBUTION_BATCHSIZE_LEVER_RIGHT_TITLE}</strong>
+          <strong>{COPY.CASE_DISTRIBUTION_BATCH_SIZE_LEVER_RIGHT_TITLE}</strong>
         </div>
       </div>
       {affinityLevers.map((lever, index) => (
@@ -250,7 +149,4 @@ const AffinityDays = (props) => {
   );
 };
 
-AffinityDays.propTypes = {
-  leverStore: PropTypes.any
-};
 export default AffinityDays;
