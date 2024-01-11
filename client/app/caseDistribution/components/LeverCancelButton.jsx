@@ -1,13 +1,8 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
-import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
-import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import Button from 'app/components/Button';
 import COPY from '../../../COPY';
-// import { Constant } from '../constants';
-import { getLevers } from '../reducers/levers/leversSelector';
 import { revertLevers } from '../reducers/levers/leversActions';
 
 export const LeverCancelButton = () => {
@@ -28,6 +23,4 @@ export const LeverCancelButton = () => {
     </Button>
   );
 };
-LeverCancelButton.propTypes = {
-  leverStore: PropTypes.any
-};
+
