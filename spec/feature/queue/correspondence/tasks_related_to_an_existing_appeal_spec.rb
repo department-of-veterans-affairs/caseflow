@@ -47,7 +47,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         existing_appeal_radio_options[:yes].click
 
         using_wait_time(wait_time) do
-          expect(page).to have_content("Viewing 1-5 of 13 total")
+          page.find("Viewing 1-5 of 13 total")
         end
       end
 
@@ -140,6 +140,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
         using_wait_time(wait_time) do
           page.all(".checkbox-wrapper-1").find(".cf-form-checkbox").first.click
         end
+        page.find("#react-select-2-input[disabled]")
         expect(page).to have_selector("#react-select-2-input[disabled]")
         expect(page).to have_text("Evidence Window Submission Task")
         expect(page).to have_text("Provide context and instruction on this task")
@@ -178,6 +179,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
           end
         end
 
+        page.find("button-addTasks")
         find_by_id("button-addTasks").click
         all("#reactSelectContainer")[0].click
         find_by_id("react-select-2-option-1").click
@@ -196,6 +198,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
             page.all(".cf-form-checkbox").last.click
           end
         end
+        page.find("button-addTasks")
         find_by_id("button-addTasks").click
         all("#reactSelectContainer")[0].click
         find_by_id("react-select-2-option-1").click
@@ -220,6 +223,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
           end
         end
         using_wait_time(wait_time) do
+          page.find("button-addTasks")
           find_by_id("button-addTasks").click
         end
         all("#reactSelectContainer")[0].click
@@ -245,6 +249,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
             page.all(".cf-form-checkbox").last.click
           end
         end
+        page.find("button-addTasks")
         find_by_id("button-addTasks").click
         all("#reactSelectContainer")[0].click
         find_by_id("react-select-2-option-15").click
@@ -271,6 +276,7 @@ RSpec.feature("Tasks related to an existing Appeal - Correspondence Intake page 
             page.all(".cf-form-checkbox").last.click
           end
         end
+        page.find("button-addTasks")
         find_by_id("button-addTasks").click
         all("#reactSelectContainer")[0].click
         find_by_id("react-select-2-option-15").click

@@ -15,7 +15,7 @@ RSpec.feature("Correspondence Intake submission") do
         click_button("Submit")
         click_button("Confirm")
         using_wait_time(wait_time) do
-          expect(page).to have_content("You have successfully submitted a correspondence record")
+          page.find("You have successfully submitted a correspondence record")
         end
         expect(Correspondence.first.related_correspondences).to eq([Correspondence.second])
       end
@@ -31,7 +31,7 @@ RSpec.feature("Correspondence Intake submission") do
         click_button("Submit")
         click_button("Confirm")
         using_wait_time(wait_time) do
-          expect(page).to have_content("You have successfully submitted a correspondence record")
+          page.find("You have successfully submitted a correspondence record")
         end
       end
     end
@@ -56,7 +56,7 @@ RSpec.feature("Correspondence Intake submission") do
         click_button("Submit")
         click_button("Confirm")
         using_wait_time(wait_time) do
-          expect(page).to have_content("You have successfully submitted a correspondence record")
+          page.find("You have successfully submitted a correspondence record")
         end
       end
     end
@@ -89,7 +89,7 @@ RSpec.feature("Correspondence Intake submission") do
         click_button("Submit")
         click_button("Confirm")
         using_wait_time(wait_time) do
-          expect(page).to have_content("The correspondence's documents have failed")
+          page.find("The correspondence's documents have failed")
         end
       end
     end
@@ -113,7 +113,7 @@ RSpec.feature("Correspondence Intake submission") do
         click_button("Submit")
         click_button("Confirm")
         using_wait_time(wait_time) do
-          expect(page).to have_content("You have successfully submitted a correspondence record")
+          page.find("You have successfully submitted a correspondence record")
         end
         expect(Correspondence.first.appeals).to eq([Appeal.fifth])
         expect(Correspondence.first.appeals[0].tasks.pluck(:type)).to include("ClearAndUnmistakeableErrorMailTask")
@@ -138,7 +138,7 @@ RSpec.feature("Correspondence Intake submission") do
         click_button("Submit")
         click_button("Confirm")
         using_wait_time(wait_time) do
-          expect(page).to have_content("The correspondence's documents have failed to upload to the eFolder")
+          page.find("The correspondence's documents have failed to upload to the eFolder")
         end
         expect(Correspondence.first.appeals).to eq([])
       end
@@ -159,13 +159,13 @@ RSpec.feature("Correspondence Intake submission") do
         find(".cf-pdf-external-link-icon").click
         using_wait_time(wait_time) do
           page.switch_to_window(page.windows.last)
-          expect(page).to have_content("Evidence Submission Window Task")
+          page.find("Evidence Submission Window Task")
         end
         page.switch_to_window(page.windows.first)
         click_button("Submit")
         click_button("Confirm")
         using_wait_time(wait_time) do
-          expect(page).to have_content("You have successfully submitted a correspondence record")
+          page.find("You have successfully submitted a correspondence record")
         end
         page.switch_to_window(page.windows.last)
         refresh
@@ -191,7 +191,7 @@ RSpec.feature("Correspondence Intake submission") do
         click_button("Submit")
         click_button("Confirm")
         using_wait_time(wait_time) do
-          expect(page).to have_content("You have successfully submitted a correspondence record")
+          page.find("You have successfully submitted a correspondence record")
         end
         expect(Correspondence.first.appeals).to eq([Appeal.fifth])
       end
