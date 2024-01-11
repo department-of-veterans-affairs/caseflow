@@ -5,8 +5,7 @@
 class Correspondence < CaseflowRecord
   validates :correspondence_type_id, presence: true
   validates :package_document_type_id, presence: true
-  validates :assigned_by_id, presence: true
-  validates :updated_by_id, presence: true
+  validates :updated_by_id, presence: true, on: :update
   validates :veteran_id, presence: true
 
   has_paper_trail
@@ -22,6 +21,7 @@ class Correspondence < CaseflowRecord
   belongs_to :correspondence_type
   belongs_to :package_document_type
   belongs_to :veteran
+  belongs_to :assigned_by, class_name: "User", foreign_key: :assigned_by_id, optional: false
 
   after_create :initialize_correspondence_tasks
 
