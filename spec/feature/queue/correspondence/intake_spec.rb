@@ -32,10 +32,12 @@ RSpec.feature("The Correspondence Intake page") do
 
   context "intake form feature toggle" do
     before :each do
-      veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
+      CorrespondenceType.create!(
+        name: "a correspondence type"
+      )
+      PackageDocumentType.create!
       create(
         :correspondence,
-        veteran_id: veteran.id,
         uuid: SecureRandom.uuid,
         va_date_of_receipt: Time.zone.local(2023, 1, 1)
       )
@@ -121,12 +123,13 @@ RSpec.feature("The Correspondence Intake page") do
   context "The mail team user is able to add unrelated tasks" do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
+      CorrespondenceType.create!(
+        name: "a correspondence type"
+      )
       create(
         :correspondence,
-        veteran_id: veteran.id,
         uuid: SecureRandom.uuid,
-        va_date_of_receipt: Time.zone.local(2023, 1, 1)
+        va_date_of_receipt: Time.zone.local(2023, 1, 1),
       )
 
       @correspondence_uuid = Correspondence.first.uuid
@@ -233,12 +236,10 @@ RSpec.feature("The Correspondence Intake page") do
 
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
       create(
         :correspondence,
-        veteran_id: veteran.id,
         uuid: SecureRandom.uuid,
-        va_date_of_receipt: Time.zone.local(2023, 1, 1)
+        va_date_of_receipt: Time.zone.local(2023, 1, 1),
       )
       @correspondence_uuid = Correspondence.first.uuid
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"
