@@ -107,6 +107,7 @@ export const saveLevers = (levers) =>
         dispatch({
           type: ACTIONS.SAVE_LEVERS,
           payload: {
+            levers: resp.levers,
             successful: resp.successful,
             errors: resp.errors,
             leverHistory: resp.lever_history
