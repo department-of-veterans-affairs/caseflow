@@ -83,7 +83,7 @@ const leversReducer = (state = initialState, action = {}) => {
       levers: createUpdatedLeversWithValues(action.payload.levers),
       historyList: formatLeverHistory(action.payload.leverHistory),
       backendLevers: createUpdatedLeversWithValues(action.payload.levers),
-      displayBanner: action.payload.successful,
+      displayBanner: true,
       errors: action.payload.errors
     };
 
