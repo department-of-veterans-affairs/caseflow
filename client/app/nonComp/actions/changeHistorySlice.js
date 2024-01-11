@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import ApiUtil from '../../util/ApiUtil';
+import { getMinutesToMilliseconds } from '../../util/DateUtil';
 
 // Define the initial state
 const initialState = {
@@ -22,7 +23,12 @@ export const downloadReportCSV = createAsyncThunk('changeHistory/downloadReport'
   async ({ organizationUrl, filterData }, thunkApi) => {
     try {
       const postData = ApiUtil.convertToSnakeCase(filterData);
-      const getOptions = { query: postData.filters, headers: { Accept: 'text/csv' }, responseType: 'arraybuffer' };
+      const getOptions = {
+        query: postData.filters,
+        headers: { Accept: 'text/csv' },
+        responseType: 'arraybuffer',
+        timeout: { response: getMinutesToMilliseconds(3) }
+      };
       const response = await ApiUtil.get(`/decision_reviews/${organizationUrl}/report`, getOptions);
 
       // Create a Blob from the array buffer
