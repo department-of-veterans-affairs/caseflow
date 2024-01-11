@@ -12,7 +12,7 @@ module.exports = {
           "id": "6115",
           "isLegacyAppeal": false,
           "issueCount": 1,
-          "activeRequestIssues": 1
+          "activeOrDecidedRequestIssues": 1
         },
         "issue_count": 1,
         "issue_types": "Caregiver | Eligibility",
@@ -41,7 +41,7 @@ module.exports = {
           "id": "6114",
           "isLegacyAppeal": false,
           "issueCount": 1,
-          "activeRequestIssues": 1
+          "activeOrDecidedRequestIssues": 1
         },
         "issue_count": 1,
         "issue_types": "Initial Eligibility and Enrollment in VHA Healthcare",
@@ -70,7 +70,7 @@ module.exports = {
           "id": "17",
           "isLegacyAppeal": false,
           "issueCount": 1,
-          "activeRequestIssues": 1
+          "activeOrDecidedRequestIssues": 1
         },
         "issue_count": 1,
         "issue_types": "Initial Eligibility and Enrollment in VHA Healthcare",
@@ -99,7 +99,7 @@ module.exports = {
           "id": "3f67e4b2-392b-4248-a722-0845b2d3a29e",
           "isLegacyAppeal": false,
           "issueCount": 0,
-          "activeRequestIssues": 0
+          "activeOrDecidedRequestIssues": 0
         },
         "issue_count": 0,
         "issue_types": "",
@@ -128,7 +128,7 @@ module.exports = {
           "id": "14",
           "isLegacyAppeal": false,
           "issueCount": 1,
-          "activeRequestIssues": 1
+          "activeOrDecidedRequestIssues": 1
         },
         "issue_count": 1,
         "issue_types": "Caregiver | Revocation/Discharge",
@@ -157,7 +157,7 @@ module.exports = {
           "id": "13",
           "isLegacyAppeal": false,
           "issueCount": 1,
-          "activeRequestIssues": 1
+          "activeOrDecidedRequestIssues": 1
         },
         "issue_count": 1,
         "issue_types": "Initial Eligibility and Enrollment in VHA Healthcare",
@@ -186,7 +186,7 @@ module.exports = {
           "id": "5061",
           "isLegacyAppeal": false,
           "issueCount": 1,
-          "activeRequestIssues": 1
+          "activeOrDecidedRequestIssues": 1
         },
         "issue_count": 1,
         "issue_types": "Initial Eligibility and Enrollment in VHA Healthcare",
@@ -243,7 +243,7 @@ module.exports = {
           "id": "5105",
           "isLegacyAppeal": false,
           "issueCount": 1,
-          "activeRequestIssues": 1
+          "activeOrDecidedRequestIssues": 1
         },
         "issue_count": 1,
         "issue_types": "Foreign Medical Program",
@@ -272,7 +272,7 @@ module.exports = {
           "id": "5096",
           "isLegacyAppeal": false,
           "issueCount": 2,
-          "activeRequestIssues": 2
+          "activeOrDecidedRequestIssues": 2
         },
         "issue_count": 2,
         "issue_types": "Foreign Medical Program,Spina Bifida Treatment (Non-Compensation)",
@@ -301,7 +301,7 @@ module.exports = {
           "id": "5083",
           "isLegacyAppeal": false,
           "issueCount": 1,
-          "activeRequestIssues": 1
+          "activeOrDecidedRequestIssues": 1
         },
         "issue_count": 1,
         "issue_types": "Spina Bifida Treatment (Non-Compensation)",
@@ -330,7 +330,7 @@ module.exports = {
           "id": "5081",
           "isLegacyAppeal": false,
           "issueCount": 1,
-          "activeRequestIssues": 1
+          "activeOrDecidedRequestIssues": 1
         },
         "issue_count": 1,
         "issue_types": "Camp Lejune Family Member",
@@ -359,7 +359,7 @@ module.exports = {
           "id": "5106",
           "isLegacyAppeal": false,
           "issueCount": 1,
-          "activeRequestIssues": 1
+          "activeOrDecidedRequestIssues": 1
         },
         "issue_count": 1,
         "issue_types": "Camp Lejune Family Member",
@@ -388,7 +388,7 @@ module.exports = {
           "id": "5101",
           "isLegacyAppeal": false,
           "issueCount": 1,
-          "activeRequestIssues": 1
+          "activeOrDecidedRequestIssues": 1
         },
         "issue_count": 1,
         "issue_types": "Other",
@@ -417,7 +417,7 @@ module.exports = {
           "id": "5094",
           "isLegacyAppeal": false,
           "issueCount": 1,
-          "activeRequestIssues": 1
+          "activeOrDecidedRequestIssues": 1
         },
         "issue_count": 1,
         "issue_types": "Caregiver | Other",
