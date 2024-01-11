@@ -5,6 +5,7 @@ class UserQuota < CaseflowRecord
   belongs_to :team_quota
 
   attr_writer :task_count
+
   delegate :date, :task_klass, to: :team_quota
 
   after_create :update_team_quota
