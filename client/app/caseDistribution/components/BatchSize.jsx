@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 // import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
 import { css } from 'glamor';
-import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';
 import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';
@@ -95,23 +94,23 @@ const BatchSize = (props) => {
   };
 
   return (
-    <div className={styles.leverContent}>
-      <div className={styles.leverHead}>
+    <div className='lever-content'>
+      <div className='lever-head'>
         <h2>{COPY.CASE_DISTRIBUTION_BATCHSIZE_H2_TITLE}</h2>
-        <div className={styles.leverLeft}><strong>{COPY.CASE_DISTRIBUTION_BATCHSIZE_LEVER_LEFT_TITLE}</strong></div>
-        <div className={styles.leverRight}><strong>{COPY.CASE_DISTRIBUTION_BATCHSIZE_LEVER_RIGHT_TITLE}</strong></div>
+        <div className='lever-left'><strong>{COPY.CASE_DISTRIBUTION_BATCHSIZE_LEVER_LEFT_TITLE}</strong></div>
+        <div className='lever-right'><strong>{COPY.CASE_DISTRIBUTION_BATCHSIZE_LEVER_RIGHT_TITLE}</strong></div>
       </div>
       {batchSizeLevers && batchSizeLevers.map((lever, index) => (
-        <div className={styles.activeLever} key={`${lever.item}-${index}`}>
-          <div className={styles.leverLeft}>
-            <strong className={lever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}>
+        <div className='active-lever' key={`${lever.item}-${index}`}>
+          <div className='lever-left'>
+            <strong className={lever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}>
               {lever.title}
             </strong>
-            <p className={lever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}>
+            <p className={lever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}>
               {lever.description}
             </p>
           </div>
-          <div className={`${styles.leverRight} ${leverNumberDiv}`}>
+          <div className={`lever-right ${leverNumberDiv}`}>
             {isAdmin ?
               <NumberField
                 name={lever.item}
@@ -123,14 +122,14 @@ const BatchSize = (props) => {
                 onChange={updateLever(index, lever.item, lever.item)}
                 tabIndex={lever.is_disabled_in_ui ? -1 : null}
               /> :
-              <label className={lever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}>
+              <label className={lever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}>
                 {lever.value} {lever.unit}
               </label>
             }
           </div>
         </div>
       ))}
-      <h4 className={styles.footerStyling}>{COPY.CASE_DISTRIBUTION_FOOTER_ASTERISK_DESCRIPTION}</h4>
+      <h4 className='footer-styling'>{COPY.CASE_DISTRIBUTION_FOOTER_ASTERISK_DESCRIPTION}</h4>
       <div className="cf-help-divider"></div>
     </div>
   );

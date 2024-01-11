@@ -7,7 +7,6 @@ import Modal from 'app/components/Modal';
 import Button from 'app/components/Button';
 import COPY from '../../../COPY';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
-import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import moment from 'moment';
 
 const changedOptionValue = (changedLever, currentLever) => {
@@ -153,13 +152,13 @@ const leverList = (leverStore) => {
       <table>
         <tbody>
           <tr>
-            <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableLeftStyling}`}>
+            <th className={`'modal-table-header-styling' 'modal-table-left-styling'`}>
               {COPY.ASE_DISTRIBUTION_LEVER_SAVE_BUTTON_DATA}
             </th>
-            <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableRightStyling}`}>
+            <th className={`'modal-table-header-styling' 'modal-table-right-styling'`}>
               {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_PREV_VALUE}
             </th>
-            <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableRightStyling}`}>
+            <th className={`'modal-table-header-styling' 'modal-table-right-styling'`}>
               {COPY.CASE_DISTRIBUTION_LEVER_SAVE_BUTTON_VALUE}
             </th>
           </tr>
@@ -168,11 +167,11 @@ const leverList = (leverStore) => {
           {filteredLevers.map((lever, index) => (
             <tr key={index}>
               <React.Fragment>
-                <td className={`${styles.modalTableStyling} ${styles.modalTableLeftStyling}`}>{lever.title}</td>
-                <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}>
+                <td className={`'modal-table-styling' 'modal-table-left-styling'`}>{lever.title}</td>
+                <td className={`'modal-table-styling' 'modal-table-right-styling'`}>
                   {leverValueDisplay(filteredBackendLevers[index], true)}
                 </td>
-                <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}>
+                <td className={`'modal-table-styling' 'modal-table-right-styling'`}>
                   {leverValueDisplay(lever, false)}
                 </td>
               </React.Fragment>
@@ -233,7 +232,7 @@ export const LeverSaveButton = ({ leverStore }) => {
           title={COPY.CASE_DISTRIBUTION_MODAL_TITLE}
           confirmButton={<Button onClick={handleConfirmButton}>{COPY.MODAL_CONFIRM_BUTTON}</Button>}
           cancelButton={<Button onClick={() => setShowModal(false)}>{COPY.MODAL_CANCEL_BUTTON}</Button>}
-          className={styles.updatedModalStyling}
+          className='updated-modal-styling'
         >
           <p>{COPY.CASE_DISTRIBUTION_MODAL_DESCRIPTION}</p>
           {leverList(leverStore)}

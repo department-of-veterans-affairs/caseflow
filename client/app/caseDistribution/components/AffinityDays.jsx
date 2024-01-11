@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import cx from 'classnames';
-import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';
 import TextField from 'app/components/TextField';
 import COPY from '../../../COPY';
@@ -174,7 +173,7 @@ const AffinityDays = (props) => {
       return (
         <div>
           <div>
-            <label className={lever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}
+            <label className={lever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}
               htmlFor={`${lever.item}-${option.item}`}>
               {`${option.text} ${option.data_type === ACD_LEVERS.number ? `${option.value} ${option.unit}` : ''}`}
             </label>
@@ -187,7 +186,7 @@ const AffinityDays = (props) => {
   };
 
   const renderAdminInput = (option, lever, index) => {
-    const className = cx(styles.combinedRadioInput, (lever.value === option.item) ? '' : styles.outlineRadioInput);
+    const className = cx('combined-radio-input', (lever.value === option.item) ? '' : 'outline-radio-input');
 
     return (
       <div key={`${lever.item}-${index}-${option.item}`}>
@@ -215,33 +214,33 @@ const AffinityDays = (props) => {
   };
 
   return (
-    <div className={styles.leverContent}>
-      <div className={styles.leverHead}>
+    <div className='lever-content'>
+      <div className='lever-head'>
         <h2>{COPY.CASE_DISTRIBUTION_AFFINITY_DAYS_H2_TITLE}</h2>
-        <div className={styles.leverLeft}>
+        <div className='lever-left'>
           <strong>{COPY.CASE_DISTRIBUTION_BATCHSIZE_LEVER_LEFT_TITLE}</strong>
         </div>
-        <div className={styles.leverRight}>
+        <div className='lever-right'>
           <strong>{COPY.CASE_DISTRIBUTION_BATCHSIZE_LEVER_RIGHT_TITLE}</strong>
         </div>
       </div>
       {affinityLevers.map((lever, index) => (
-        <div className={cx(styles.activeLever, lever.is_disabled_in_ui ? styles.leverDisabled : '')}
+        <div className={cx('active-lever', lever.is_disabled_in_ui ? 'lever-disabled' : '')}
           key={`${lever.item}-${index}`}
         >
-          <div className={styles.leverLeft}>
+          <div className='lever-left'>
             <strong>{lever.title}</strong>
             <p>{lever.description}</p>
           </div>
-          <div className={`${styles.leverRight} ${leverNumberDiv}`}>
+          <div className={`lever-right ${leverNumberDiv}`}>
             {lever.options.map((option) => (
               (isAdmin) ? renderAdminInput(option, lever, index) : generateMemberViewLabel(option, lever)
             ))}
           </div>
         </div>
       ))}
-      <h4 className={styles.footerStyling}>{COPY.CASE_DISTRIBUTION_FOOTER_ASTERISK_DESCRIPTION}</h4>
-      <div className="cf-help-divider"></div>
+      <h4 className='footer-styling'>{COPY.CASE_DISTRIBUTION_FOOTER_ASTERISK_DESCRIPTION}</h4>
+      <div className='cf-help-divider'></div>
     </div>
   );
 };
