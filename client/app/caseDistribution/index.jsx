@@ -132,7 +132,7 @@ class CaseDistribution extends React.PureComponent {
               appName="Caseflow Admin"
             >
               <AppFrame>
-                <BannerDisplay leverStore={leverStore} />
+                <BannerDisplay />
                 <AppSegment filledBackground>
                   <div>
                     <PageRoute

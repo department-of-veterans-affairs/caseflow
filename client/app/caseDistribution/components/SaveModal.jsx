@@ -8,11 +8,12 @@ import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import COPY from '../../../COPY';
 import PropTypes from 'prop-types';
 import { findOption } from '../utils';
+import { changedLevers } from '../reducers/levers/leversSelector';
 
 export const SaveModal = (props) => {
   const { setShowModal, handleConfirmButton } = props;
 
-  const levers = useSelector((state) => state.caseDistributionLevers.levers);
+  const theState = useSelector((state) => state);
 
   const leverValueDisplay = (lever) => {
     const doesDatatypeRequireComplexLogic = (lever.data_type === ACD_LEVERS.data_types.radio ||
@@ -29,14 +30,7 @@ export const SaveModal = (props) => {
   };
 
   const leverList = () => {
-    // WILL NEED UPDATING WHEN RADIO AND COMBINATION LEVERS ARE EDITABLE
-    const updatedLevers = Object.values(levers).flat().
-      filter((lever) =>
-        lever.data_type !== ACD_LEVERS.data_types.radio &&
-        lever.data_type !== ACD_LEVERS.data_types.combination &&
-        lever.backendValue !== null &&
-        `${lever.value}` !== lever.backendValue
-      );
+    const updatedLevers = changedLevers(theState);
 
     return (
       <div>

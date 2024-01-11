@@ -140,21 +140,21 @@ export const createUpdatedLeversWithValues = (levers) => {
   return leversWithValues();
 };
 
-export const formatLeverHistory = (lever_history_list) => {
-  let formatted_lever_history = [];
+export const formatLeverHistory = (leverHistoryList) => {
+  let formattedLeverHistory = [];
 
-  lever_history_list.forEach((lever_history_entry) => {
+  leverHistoryList.forEach((leverHistoryEntry) => {
 
-    formatted_lever_history.push(
+    formattedLeverHistory.push(
       {
-        user_name: lever_history_entry.user,
-        created_at: lever_history_entry.created_at,
-        lever_title: lever_history_entry.title,
-        original_value: lever_history_entry.original_value,
-        current_value: lever_history_entry.current_value
+        user_name: leverHistoryEntry.user,
+        created_at: leverHistoryEntry.created_at,
+        lever_title: leverHistoryEntry.title,
+        original_value: leverHistoryEntry.original_value,
+        current_value: leverHistoryEntry.current_value
       }
     );
   });
 
-  return formatted_lever_history;
+  return formattedLeverHistory;
 };

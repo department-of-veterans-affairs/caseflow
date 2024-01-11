@@ -1,4 +1,5 @@
 import { ACTIONS } from './leversActionTypes';
+import ApiUtil from '../../../util/ApiUtil';
 
 export const initialLoad = (levers) =>
   (dispatch) => {
@@ -82,14 +83,36 @@ export const updateNumberLever = (leverGroup, leverItem, value) =>
     });
   };
 
-// work in progress
-export const formatLeverHistory = (leverHistory) =>
+export const saveLevers = (levers) =>
+  (dispatch) => {
+    const changedValues = Object.values(levers).flat().
+      map((lever) => ({
+        id: lever.id,
+        value: lever.value
+      }));
+
+    const postData = {
+      current_levers: changedValues
+    };
+
+    return ApiUtil.post('/case_distribution_levers/update_levers', { data: postData }).
+      then((resp) => resp.body).
+      then((resp) => {
+        dispatch({
+          type: ACTIONS.SAVE_LEVERS,
+          payload: {
+            successful: resp.successful,
+            errors: resp.errors,
+            leverHistory: resp.lever_history
+          }
+        });
+      });
+  };
+
+export const hideSuccessBanner = () =>
   (dispatch) => {
     dispatch({
-      type: ACTIONS.FORMAT_LEVER_HISTORY,
-      payload: {
-        leverHistory
-      }
+      type: ACTIONS.HIDE_SUCCESS_BANNER
     });
   };
 

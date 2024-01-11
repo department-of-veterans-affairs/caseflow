@@ -1,33 +1,40 @@
 import { createSelector } from 'reselect';
-const getLevers = (state, leverSet) => {
-  return state.caseDistributionLevers[leverSet] || [];
-};
-const getLeversByGroupConstant = (state, leverSet, groupName) => {
-  return getLevers(state, leverSet)[groupName] || [];
+import ACD_LEVERS from '../../../../constants/ACD_LEVERS';
+
+const getStore = (state) => {
+  return state.caseDistributionLevers;
 };
 
-const countChangedLevers = (state) => {
-  const flattenLevers = Object.values(state.levers).flat();
-  const flattenBackendLevers = Object.values(state.backendLevers).flat();
-  const changedLevers = flattenLevers.filter((lever, index) => {
-    const backendValue = flattenBackendLevers[index].backendValue;
-    const value = lever.value;
-
-    // Check if backendValue and currentValue are different
-    return backendValue !== value;
-  });
-
-  return changedLevers.length;
+const getLevers = (state) => {
+  return getStore(state).levers;
 };
+const getAttribute = (state, attribute) => {
+  return getStore(state)[attribute];
+};
+
+const getLeversByGroupConstant = (state, attribute, groupName) => {
+  return getAttribute(state, attribute)[groupName] || [];
+};
+
+/**
+ * WILL NEED UPDATING WHEN RADIO AND COMBINATION LEVERS ARE EDITABLE
+ */
+export const changedLevers = createSelector(
+  [getLevers],
+  (levers) => {
+    return Object.values(levers).flat().
+      filter((lever) =>
+        lever.data_type !== ACD_LEVERS.data_types.radio &&
+        lever.data_type !== ACD_LEVERS.data_types.combination &&
+        lever.backendValue !== null &&
+        `${lever.value}` !== lever.backendValue
+      );
+  }
+);
 
 export const getLeversByGroup = createSelector(
   [getLeversByGroupConstant],
   (leversByGroup) => {
     return leversByGroup;
   }
-);
-
-export const haveLeversChanged = createSelector(
-  [countChangedLevers],
-  (count) => count > 0
 );

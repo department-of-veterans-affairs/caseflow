@@ -9,9 +9,7 @@ class CaseDistributionLeversController < ApplicationController
     # current frontend workflow.
     @acd_levers = CaseDistributionLever.all
     @acd_levers_for_store = CaseDistributionLever.all.group_by(&:lever_group)
-    history = CaseDistributionAuditLeverEntry.includes(:user, :case_distribution_lever).past_year
-    @acd_history = CaseDistributionAuditLeverEntrySerializer.new(history)
-      .serializable_hash[:data].map{ |entry| entry[:attributes] }
+    @acd_history = lever_history
     @user_is_an_acd_admin = CDAControlGroup.singleton.user_is_admin?(current_user)
 
     render "index"
@@ -22,7 +20,7 @@ class CaseDistributionLeversController < ApplicationController
 
     errors = CaseDistributionLever.update_acd_levers(allowed_params[:current_levers], current_user)
 
-    render json: { errors: errors, successful: errors.empty? }
+    render json: { errors: errors, successful: errors.empty?, lever_history: lever_history }
   end
 
   private
@@ -36,5 +34,10 @@ class CaseDistributionLeversController < ApplicationController
 
     session["return_to"] = request.original_url
     redirect_to "/unauthorized"
+  end
+
+  def lever_history
+    history = CaseDistributionAuditLeverEntry.includes(:user, :case_distribution_lever).past_year
+    CaseDistributionAuditLeverEntrySerializer.new(history).serializable_hash[:data].map{ |entry| entry[:attributes] }
   end
 end

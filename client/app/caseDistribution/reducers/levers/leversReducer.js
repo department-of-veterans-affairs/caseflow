@@ -8,16 +8,16 @@ import {
   formatLeverHistory
 } from '../../utils';
 
-// editedLevers, formattedHistory, changesOccurred should be deleted.
+// formattedHistory should be deleted.
 // Refactor where it is used before deletion
 export const initialState = {
-  editedLevers: [],
   levers: {},
   backendLevers: [],
   formattedHistory: {},
   historyList: [],
   changesOccurred: false,
   showSuccessBanner: false,
+  errors: []
 };
 
 const leversReducer = (state = initialState, action = {}) => {
@@ -88,9 +88,10 @@ const leversReducer = (state = initialState, action = {}) => {
   case ACTIONS.SAVE_LEVERS:
     return {
       ...state,
-      backendLevers: state.levers,
-      saveChangesActivated: action.saveChangesActivated,
-      changesOccurred: false
+      changesOccurred: false,
+      historyList: formatLeverHistory(action.payload.leverHistory),
+      showSuccessBanner: action.payload.successful,
+      errors: action.payload.errors
     };
 
   case ACTIONS.REVERT_LEVERS:
@@ -99,14 +100,6 @@ const leversReducer = (state = initialState, action = {}) => {
       levers: createUpdatedLeversWithValues(state.backendLevers)
     };
 
-  // needs to be reworked; remove comment when done
-  case ACTIONS.SHOW_SUCCESS_BANNER:
-    return {
-      ...state,
-      showSuccessBanner: true
-    };
-
-  // needs to be reworked; remove comment when done
   case ACTIONS.HIDE_SUCCESS_BANNER:
     return {
       ...state,
