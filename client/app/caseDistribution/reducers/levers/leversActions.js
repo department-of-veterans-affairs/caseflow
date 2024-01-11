@@ -1,7 +1,7 @@
 import { ACTIONS } from './leversActionTypes';
 import ApiUtil from '../../../util/ApiUtil';
 
-  export const setUserIsAcdAdmin = (isUserAcdAdmin) =>
+export const setUserIsAcdAdmin = (isUserAcdAdmin) =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.SET_USER_IS_ACD_ADMIN,
@@ -115,4 +115,3 @@ export const hideSuccessBanner = () =>
       type: ACTIONS.HIDE_BANNER
     });
   };
-

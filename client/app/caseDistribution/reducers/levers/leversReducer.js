@@ -25,8 +25,7 @@ export const initialState = {
 
 const leversReducer = (state = initialState, action = {}) => {
   switch (action.type) {
-
-  case ACTIONS.INITIAL_LOAD:
+  case ACTIONS.LOAD_LEVERS:
     return update(state, {
       levers: {
         $set: createUpdatedLeversWithValues(action.payload.levers),
@@ -35,16 +34,7 @@ const leversReducer = (state = initialState, action = {}) => {
         $set: createUpdatedLeversWithValues(action.payload.levers),
       },
     });
-
-  case ACTIONS.LOAD_LEVERS:
-    return update(state, {
-      levers: {
-        $set: action.payload.levers
-      }
-    });
-
   case ACTIONS.SET_USER_IS_ACD_ADMIN:
-
     return update(state, {
       isUserAcdAdmin: {
         $set: action.payload.isUserAcdAdmin

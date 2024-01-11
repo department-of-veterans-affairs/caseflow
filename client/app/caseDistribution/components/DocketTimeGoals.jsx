@@ -44,7 +44,7 @@ const DocketTimeGoals = () => {
     setTimeGoalLever(currentTimeLevers);
   }, [currentTimeLevers]);
 
-  const updateNumberFieldLever = (leverItem, leverType) => (event) => {
+  const updateNumberFieldLever = (leverType, leverItem) => (event) => {
     dispatch(updateNumberLever(leverType, leverItem, event));
   };
 
@@ -69,6 +69,8 @@ const DocketTimeGoals = () => {
 
     if (isUserAcdAdmin) {
 
+      const sectionTitle = sectionTitles[distributionPriorLever.item];
+
       return (
 
         <div className={cx(styles.activeLever)}
@@ -88,7 +90,7 @@ const DocketTimeGoals = () => {
               value={docketTimeGoalLever.value}
               label={docketTimeGoalLever.unit}
               errorMessage={errorMessagesList[docketTimeGoalLever.item]}
-              onChange={updateNumberFieldLever(docketTimeGoalLever.item, ACD_LEVERS.lever_groups.docket_time_goal)}
+              onChange={updateNumberFieldLever(ACD_LEVERS.lever_groups.docket_time_goal, docketTimeGoalLever.item)}
             />
           </div>
           <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
@@ -110,8 +112,8 @@ const DocketTimeGoals = () => {
                 label={distributionPriorLever.unit}
                 errorMessage={errorMessagesList[distributionPriorLever.item]}
                 onChange={
-                  updateNumberFieldLever(distributionPriorLever.item,
-                    ACD_LEVERS.lever_groups.docket_distribution_prior, true)
+                  updateNumberFieldLever(ACD_LEVERS.lever_groups.docket_distribution_prior, true,
+                    distributionPriorLever.item)
                 }
               />
             </div>

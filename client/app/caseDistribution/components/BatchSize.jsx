@@ -23,7 +23,7 @@ const BatchSize = () => {
   const errorMessages = {};
 
   const dispatch = useDispatch();
-  const batchLevers = getLeversByGroup(theState, Constant.LEVERS,ACD_LEVERS.lever_groups.batch);
+  const batchLevers = getLeversByGroup(theState, Constant.LEVERS, ACD_LEVERS.lever_groups.batch);
   const [errorMessagesList] = useState(errorMessages);
   const [batchSizeLevers, setBatchSizeLevers] = useState(batchLevers);
 
@@ -31,7 +31,7 @@ const BatchSize = () => {
     setBatchSizeLevers(batchLevers);
   }, [batchLevers]);
 
-  const updateNumberFieldLever = (leverItem, leverType) => (event) => {
+  const updateNumberFieldLever = (leverType, leverItem) => (event) => {
     dispatch(updateNumberLever(leverType, leverItem, event));
   };
 
@@ -63,7 +63,7 @@ const BatchSize = () => {
                 readOnly={lever.is_disabled_in_ui}
                 value={lever.value}
                 errorMessage={errorMessagesList[lever.item]}
-                onChange={updateNumberFieldLever(lever.item, Constant.BATCH)}
+                onChange={updateNumberFieldLever(ACD_LEVERS.lever_groups.batch, lever.item)}
                 tabIndex={lever.is_disabled_in_ui ? -1 : null}
               /> :
               <label className={lever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}>
