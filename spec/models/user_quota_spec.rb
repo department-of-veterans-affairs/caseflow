@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class FakeTask < Dispatch::Task
+class FakeTask < DispatchTask
   before_create do
     # Automatically set appeal to make test data setup easier
     self.appeal ||= Generators::LegacyAppeal.create

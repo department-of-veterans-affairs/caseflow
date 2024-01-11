@@ -31,7 +31,7 @@ describe NightlySyncsJob, :all_dbs do
     end
 
     context "dangling LegacyAppeal" do
-      class FakeTask < Dispatch::Task
+      class FakeTask < DispatchTask
       end
 
       context "with zero tasks" do

@@ -82,7 +82,7 @@ class Dispatch::EstablishClaimsController < Dispatch::TasksController
   end
 
   def cancel
-    Dispatch::Task.transaction do
+    DispatchTask.transaction do
       task.appeal.update!(special_issues_params) if params[:special_issues]
       task.cancel!(cancel_feedback)
     end

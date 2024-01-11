@@ -35,10 +35,10 @@ describe LegacyAppealsWithNoVacolsCase do
     end
 
     # LegacyAppeal records were created to satisfy new foreign key constraints.
-    # Their vacols_id are 'for Dispatch::Task' or 'for WorksheetIssue'.
+    # Their vacols_id are 'for DispatchTask' or 'for WorksheetIssue'.
     # These records should be ignored by this job since there is no action required.
     context "when VACOLS case ID starts with 'for '" do
-      let!(:legacy_appeal) { create(:legacy_appeal, vacols_id: "for Dispatch::Task 123") }
+      let!(:legacy_appeal) { create(:legacy_appeal, vacols_id: "for DispatchTask 123") }
 
       it "reports zero missing cases" do
         subject.call

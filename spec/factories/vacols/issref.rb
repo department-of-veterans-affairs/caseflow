@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :issref, class: VACOLS::Issref do
+  factory :issref, class: "VACOLS::Issref" do
     prog_code { nil }
     prog_desc { nil }
     iss_code { nil }

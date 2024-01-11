@@ -14,8 +14,8 @@ RSpec.describe Idt::Api::V2::DistributionsController, type: :controller do
     before do
       allow(SecureRandom).to receive(:uuid).and_return(error_uuid)
 
-      key, t = Idt::Token.generate_one_time_key_and_proposed_token
-      Idt::Token.activate_proposed_token(key, user.css_id)
+      key, t = IdtToken.generate_one_time_key_and_proposed_token
+      IdtToken.activate_proposed_token(key, user.css_id)
 
       request.headers["TOKEN"] = t
       create(:staff, :attorney_role, sdomainid: user.css_id)

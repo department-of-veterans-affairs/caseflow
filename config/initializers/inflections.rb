@@ -16,5 +16,8 @@
 # end
 
 ActiveSupport::Inflector.inflections do |inflect|
+  inflect.acronym 'ETL'
+
+
   inflect.plural 'quota', 'quotas'
 end

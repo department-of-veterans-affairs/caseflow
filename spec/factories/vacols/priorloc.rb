@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :priorloc, class: VACOLS::Priorloc do
+  factory :priorloc, class: "VACOLS::Priorloc" do
     sequence(:lockey)
 
     before(:create) do |loc, evaluator|

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :staff, class: VACOLS::Staff do
+  factory :staff, class: "VACOLS::Staff" do
     transient do
       user { nil }
       sequence(:generated_slogid) { |n| "ID#{n}" }

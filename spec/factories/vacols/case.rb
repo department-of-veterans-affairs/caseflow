@@ -9,7 +9,7 @@
 # to ensure the correct associations are made between a veteran, case, and legacy appeal.
 
 FactoryBot.define do
-  factory :case, class: VACOLS::Case do
+  factory :case, class: "VACOLS::Case" do
     bfkey { generate :vacols_case_key } # a.k.a. VACOLS_ID
     bfcorkey { generate :vacols_correspondent_key }
     bfcorlid { "#{generate :veteran_file_number}S" }

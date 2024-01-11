@@ -61,7 +61,7 @@ class Idt::Api::V1::BaseController < ActionController::Base
 
   def validate_token
     return render json: { message: "Missing token" }, status: :bad_request unless token
-    return render json: { message: "Invalid token" }, status: :forbidden unless Idt::Token.active?(token)
+    return render json: { message: "Invalid token" }, status: :forbidden unless IdtToken.active?(token)
   end
 
   def verify_access
@@ -98,7 +98,7 @@ class Idt::Api::V1::BaseController < ActionController::Base
   end
 
   def css_id
-    Idt::Token.associated_css_id(token)
+    IdtToken.associated_css_id(token)
   end
 
   def feature_enabled?(feature)

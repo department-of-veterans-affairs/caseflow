@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Helpers::AppealHearingHelper
+module AppealHearingHelper
   def available_hearing_locations(appeal)
     locations = appeal.available_hearing_locations || []
 
