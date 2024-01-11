@@ -22,6 +22,7 @@ describe CaseDistributionAuditLeverEntrySerializer do
   it "serializes a CaseDistributionAuditLeverEntry" do
     entry = subject.new(audit_lever_entry).serializable_hash[:data][:attributes]
 
+    expect(entry[:user_css_id]).to equal(lever_user.css_id)
     expect(entry[:user_name]).to equal(lever_user.full_name)
     expect(entry[:lever_title]).to equal(lever.title)
     expect(entry[:lever_data_type]).to equal(lever.data_type)
