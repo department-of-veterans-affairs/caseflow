@@ -2,7 +2,9 @@
 
 RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
   let(:veteran) { create(:veteran) }
+  let(:correspondence_type) { create(:correspondence_type) }
   let(:correspondence) { create(:correspondence, veteran: veteran) }
+
   let(:related_correspondence_uuids) do
     (1..3).map { create(:correspondence) }.pluck(:uuid)
   end
@@ -17,7 +19,7 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
     end
   end
   let(:veteran) { create(:veteran) }
-  let(:valid_params) { { notes: "Updated notes", correspondence_type_id: 12 } }
+  let(:valid_params) { { notes: "Updated notes", correspondence_type_id: correspondence_type.id } }
   let(:new_file_number) { "50000005" }
   let(:current_user) { create(:user) }
   let!(:parent_task) { create(:correspondence_intake_task, appeal: correspondence, assigned_to: current_user) }
@@ -149,7 +151,7 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(veteran.reload.file_number).to eq(new_file_number)
       expect(correspondence.reload.notes).to eq("Updated notes")
-      expect(correspondence.reload.correspondence_type_id).to eq(12)
+      expect(correspondence.reload.correspondence_type_id).to eq(1)
       expect(correspondence.reload.updated_by_id).to eq(current_user.id)
     end
   end
