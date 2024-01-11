@@ -102,7 +102,8 @@ const leversReducer = (state = initialState, action = {}) => {
   case ACTIONS.HIDE_BANNER:
     return {
       ...state,
-      displayBanner: false
+      displayBanner: false,
+      errors: []
     };
 
   default:
