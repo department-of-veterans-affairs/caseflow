@@ -15,6 +15,10 @@ class CaseDistributionLeversController < ApplicationController
     render "index"
   end
 
+  def get_levers
+    render json: { levers: grouped_levers, lever_history: lever_history }
+  end
+
   def update_levers
     redirect_to "/unauthorized" unless CDAControlGroup.singleton.user_is_admin?(current_user)
 
