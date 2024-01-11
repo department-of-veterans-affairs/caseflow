@@ -10,6 +10,7 @@ FactoryBot.define do
     correspondence_type
     veteran
     user
+    package_document_type
     uuid { SecureRandom.uuid }
     portal_entry_date { Time.zone.now }
     source_type { "Mail" }
@@ -21,7 +22,6 @@ FactoryBot.define do
     assigned_by_id { user.id }
     updated_by_id { user.id }
     veteran_id { veteran.id }
-    package_document_type { PackageDocumentType.create! }
 
     trait :with_single_doc do
       after(:create) do |correspondence|
