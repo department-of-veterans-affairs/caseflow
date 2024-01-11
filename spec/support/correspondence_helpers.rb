@@ -94,14 +94,11 @@ module CorrespondenceHelpers
 
   def visit_intake_form_step_3_with_tasks_unrelated
     setup_access
-    veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
     create(
       :correspondence,
       :with_correspondence_intake_task,
-      assigned_to: current_user,
-      veteran_id: veteran.id,
       uuid: SecureRandom.uuid,
-      va_date_of_receipt: Time.zone.local(2023, 1, 1)
+      va_date_of_receipt: Time.zone.local(2023, 1, 1),
     )
     visit "/queue/correspondence/#{Correspondence.first.uuid}/intake"
 
@@ -144,12 +141,9 @@ module CorrespondenceHelpers
 
   def setup_and_visit_intake
     FeatureToggle.enable!(:correspondence_queue)
-    veteran = create(:veteran, last_name: "Smith", file_number: "12345678")
     create(
       :correspondence,
       :with_correspondence_intake_task,
-      assigned_to: current_user,
-      veteran_id: veteran.id,
       uuid: SecureRandom.uuid,
       va_date_of_receipt: Time.zone.local(2023, 1, 1)
     )
