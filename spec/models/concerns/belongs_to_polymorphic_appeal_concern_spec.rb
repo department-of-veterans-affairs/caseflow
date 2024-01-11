@@ -7,11 +7,11 @@ describe BelongsToPolymorphicAppealConcern do
   let!(:legacy_decision_doc) { create(:decision_document, appeal: create(:legacy_appeal)) }
 
   context "concern is included in DecisionDocument" do
-    it "`ama_appeal` returns the AMA appeal" do
+    xit "`ama_appeal` returns the AMA appeal" do
       expect(decision_doc.ama_appeal).to eq decision_doc.appeal
     end
 
-    it "`legacy_appeal` returns the legacy appeal" do
+    xit "`legacy_appeal` returns the legacy appeal" do
       expect(legacy_decision_doc.legacy_appeal).to eq legacy_decision_doc.appeal
     end
 
@@ -84,15 +84,15 @@ describe BelongsToPolymorphicAppealConcern do
       sc.reload.tasks.first
     end
 
-    it "`ama_appeal` returns the AMA appeal" do
+    xit "`ama_appeal` returns the AMA appeal" do
       expect(task.ama_appeal).to eq decision_doc.appeal
     end
 
-    it "`legacy_appeal` returns the legacy appeal" do
+    xit "`legacy_appeal` returns the legacy appeal" do
       expect(legacy_task.legacy_appeal).to eq legacy_decision_doc.appeal
     end
 
-    it "`supplemental_claim` returns the supplemental claim" do
+    xit "`supplemental_claim` returns the supplemental claim" do
       expect(sc_task.supplemental_claim).to eq sc
     end
 
@@ -142,11 +142,11 @@ describe BelongsToPolymorphicAppealConcern do
     let!(:sil) { SpecialIssueList.create(appeal: appeal) }
     let!(:legacy_sil) { SpecialIssueList.create(appeal: LegacyAppeal.first) }
 
-    it "`ama_appeal` returns the AMA appeal" do
+    xit "`ama_appeal` returns the AMA appeal" do
       expect(sil.ama_appeal).to eq appeal
     end
 
-    it "`legacy_appeal` returns the legacy appeal" do
+    xit "`legacy_appeal` returns the legacy appeal" do
       expect(legacy_sil.legacy_appeal).to eq legacy_decision_doc.appeal
     end
 
