@@ -98,7 +98,7 @@ module CorrespondenceHelpers
       :correspondence,
       :with_correspondence_intake_task,
       uuid: SecureRandom.uuid,
-      va_date_of_receipt: Time.zone.local(2023, 1, 1),
+      va_date_of_receipt: Time.zone.local(2023, 1, 1)
     )
     visit "/queue/correspondence/#{Correspondence.first.uuid}/intake"
 

@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-
   User.find_or_create_by(
     css_id: "TEST_USER",
     station_id: 101
@@ -13,17 +12,13 @@ FactoryBot.define do
     source_type { "Mail" }
     package_document_type_id { 15 }
     correspondence_type { CorrespondenceType.find_or_create_by(name: "a correspondence type.") }
-    # correspondence_type_id { correspondence_type.id }
     cmp_queue_id { 1 }
     cmp_packet_number { rand(1_000_000_000..9_999_999_999) }
     va_date_of_receipt { Time.zone.yesterday }
     notes { "This is a note from CMP." }
-    # binding.pry
     assigned_by_id { User.first.id }
     updated_by_id { User.first.id }
-    veteran_id {   Veteran.find_or_create_by(
-      last_name: "Smith", file_number: "12345678"
-    ).id }
+    veteran_id { Veteran.find_or_create_by(last_name: "Smith", file_number: "12345678").id }
     package_document_type { PackageDocumentType.create! }
 
     trait :with_single_doc do
