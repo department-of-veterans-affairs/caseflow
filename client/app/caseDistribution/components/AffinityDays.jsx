@@ -9,8 +9,6 @@ import TextField from 'app/components/TextField';
 import COPY from '../../../COPY';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import { ACTIONS } from '../reducers/levers/leversActionTypes';
-import leverInputValidation from './LeverInputValidation';
-import { hasChangedLevers } from '../reducers/levers/leversSelector';
 
 const AffinityDays = (props) => {
   const { leverStore, isAdmin } = props;
@@ -21,93 +19,13 @@ const AffinityDays = (props) => {
     '& .cf-form-int-input label': { position: 'absolute', bottom: '15px', left: '100px' },
     '& .usa-input-error label': { bottom: '24px', left: '115px' }
   });
-  const errorMessages = {};
 
-  const [errorMessagesList, setErrorMessages] = useState(errorMessages);
-  const theState = useSelector((state) => state);
   const storeLevers = useSelector((state) => state.caseDistributionLevers.levers.affinity);
-  const backendLevers = useSelector((state) => state.caseDistributionLevers.backendLevers.affinity);
   const [affinityLevers, setAffinityLevers] = useState(storeLevers);
 
   useEffect(() => {
     setAffinityLevers(storeLevers);
   }, [storeLevers]);
-
-  const updatedLever = (lever, option) => (event) => {
-    const levers = affinityLevers.map((individualLever) => {
-      if (individualLever.item === lever.item) {
-        const updatedOptions = individualLever.options.map((op) => {
-          if (op.item === option.item) {
-
-            let initialLever = backendLevers.find((original) => original.item === lever.item);
-
-            let validationResponse = leverInputValidation(lever, event, errorMessagesList, initialLever, op);
-
-            const newValue = isNaN(event) ? event : individualLever.value;
-
-            if (validationResponse.statement === ACD_LEVERS.DUPLICATE) {
-
-              if (hasChangedLevers(theState)) {
-                op.value = event;
-                op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
-                setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
-
-                leverStore.dispatch({
-                  type: ACTIONS.UPDATE_LEVER_VALUE,
-                  updated_lever: { item: individualLever.item, value: newValue },
-                  hasValueChanged: false,
-                  validChange: true
-
-                });
-              } else {
-                op.value = event;
-                op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
-                setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
-
-                leverStore.dispatch({
-                  type: ACTIONS.UPDATE_LEVER_VALUE,
-                  updated_lever: { item: individualLever.item, value: newValue },
-                  hasValueChanged: false,
-                  validChange: false
-
-                });
-              }
-
-            }
-            if (validationResponse.statement === ACD_LEVERS.SUCCESS) {
-              op.value = event;
-              op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
-              setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
-              leverStore.dispatch({
-                type: ACTIONS.UPDATE_LEVER_VALUE,
-                updated_lever: { item: individualLever.item, value: newValue },
-                validChange: true
-              });
-            }
-            if (validationResponse.statement === ACD_LEVERS.FAIL) {
-              op.value = event;
-              op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
-              setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);
-              leverStore.dispatch({
-                type: ACTIONS.UPDATE_LEVER_VALUE,
-                updated_lever: { item: individualLever.item, value: newValue },
-                validChange: false
-              });
-            }
-          }
-
-          return op;
-        });
-
-        return { ...individualLever, options: updatedOptions };
-      }
-
-      return individualLever;
-    });
-
-    setAffinityLevers(levers);
-
-  };
 
   const handleRadioChange = (lever, option) => {
     if (lever && option) {
@@ -142,7 +60,7 @@ const AffinityDays = (props) => {
           readOnly={lever.is_disabled_in_ui ? true : (lever.value !== option.item)}
           value={option.value}
           errorMessage={option.errorMessage}
-          onChange={(event) => updatedLever(lever, option)(event)}
+          onChange={() => console.warn('not implemented')}
           id={`${lever.item}-${option.value}`}
           inputID={`${lever.item}-${option.value}-input`}
           useAriaLabel={useAriaLabel}
@@ -158,7 +76,7 @@ const AffinityDays = (props) => {
           label={false}
           readOnly={lever.is_disabled_in_ui ? true : (lever.value !== option.item)}
           value={option.value}
-          onChange={(event) => updatedLever(lever, option)(event)}
+          onChange={() => console.warn('not implemented')}
           id={`${lever.item}-${option.value}`}
           inputID={`${lever.item}-${option.value}-input`}
           useAriaLabel={useAriaLabel}
@@ -177,7 +95,8 @@ const AffinityDays = (props) => {
           <div>
             <label className={lever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}
               htmlFor={`${lever.item}-${option.item}`}>
-              {`${option.text} ${option.data_type === ACD_LEVERS.data_types.number ? `${option.value} ${option.unit}` : ''}`}
+              {`${option.text} ${option.data_type === ACD_LEVERS.data_types.number ?
+                `${option.value} ${option.unit}` : ''}`}
             </label>
           </div>
         </div>
@@ -214,6 +133,8 @@ const AffinityDays = (props) => {
       </div>
     );
   };
+
+  affinityLevers?.sort((leverA, leverB) => leverA.lever_group_order - leverB.lever_group_order);
 
   return (
     <div className={styles.leverContent}>
