@@ -18,7 +18,7 @@ export const initialState = {
   formattedHistory: {},
   historyList: [],
   changesOccurred: false,
-  showSuccessBanner: false,
+  displayBanner: false,
   errors: []
 };
 
@@ -89,7 +89,7 @@ const leversReducer = (state = initialState, action = {}) => {
       ...state,
       changesOccurred: false,
       historyList: formatLeverHistory(action.payload.leverHistory),
-      showSuccessBanner: action.payload.successful,
+      displayBanner: action.payload.successful,
       errors: action.payload.errors
     };
 
@@ -102,7 +102,7 @@ const leversReducer = (state = initialState, action = {}) => {
   case ACTIONS.HIDE_SUCCESS_BANNER:
     return {
       ...state,
-      showSuccessBanner: false
+      displayBanner: false
     };
 
   default:

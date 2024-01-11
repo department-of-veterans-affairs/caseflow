@@ -6,25 +6,37 @@ import { hideSuccessBanner } from '../reducers/levers/leversActions';
 
 const BannerDisplay = () => {
   const dispatch = useDispatch();
-  const showSuccessBanner = useSelector((state) => state.caseDistributionLevers.showSuccessBanner);
+  const displayBanner = useSelector((state) => state.caseDistributionLevers.displayBanner);
+  const errors = useSelector((state) => state.caseDistributionLevers.errors);
   const [showBanner, setShowBanner] = useState(false);
 
   useEffect(() => {
-    setShowBanner(showSuccessBanner);
-    if (showSuccessBanner) {
+    setShowBanner(displayBanner);
+    if (displayBanner) {
       setTimeout(() => {
         dispatch(hideSuccessBanner());
       }, 10000);
     }
-  }, [showSuccessBanner]);
+  }, [displayBanner]);
+
+  let title = COPY.CASE_DISTRIBUTION_SUCCESS_BANNER_TITLE;
+  let message = COPY.CASE_DISTRIBUTION_SUCCESS_BANNER_DETAIL;
+  let type = 'success';
+
+  if (errors.length > 0) {
+    console.error(errors);
+    title = COPY.CASE_DISTRIBUTION_FAILURE_BANNER_TITLE;
+    message = COPY.CASE_DISTRIBUTION_FAILURE_BANNER_DETAIL;
+    type = 'error';
+  }
 
   return (
     <>
       {showBanner && (
         <Alert
-          title={COPY.CASE_DISTRIBUTION_SUCCESSBANNER_TITLE}
-          message={COPY.CASE_DISTRIBUTION_SUCCESSBANNER_DETAIL}
-          type="success"
+          title={title}
+          message={message}
+          type={type}
         />
       )}
     </>

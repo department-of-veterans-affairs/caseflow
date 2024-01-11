@@ -220,10 +220,10 @@ const AffinityDays = (props) => {
       <div className={styles.leverHead}>
         <h2>{COPY.CASE_DISTRIBUTION_AFFINITY_DAYS_H2_TITLE}</h2>
         <div className={styles.leverLeft}>
-          <strong>{COPY.CASE_DISTRIBUTION_BATCHSIZE_LEVER_LEFT_TITLE}</strong>
+          <strong>{COPY.CASE_DISTRIBUTION_BATCH_SIZE_LEVER_LEFT_TITLE}</strong>
         </div>
         <div className={styles.leverRight}>
-          <strong>{COPY.CASE_DISTRIBUTION_BATCHSIZE_LEVER_RIGHT_TITLE}</strong>
+          <strong>{COPY.CASE_DISTRIBUTION_BATCH_SIZE_LEVER_RIGHT_TITLE}</strong>
         </div>
       </div>
       {affinityLevers.map((lever, index) => (

@@ -98,9 +98,9 @@ const BatchSize = (props) => {
   return (
     <div className={styles.leverContent}>
       <div className={styles.leverHead}>
-        <h2>{COPY.CASE_DISTRIBUTION_BATCHSIZE_H2_TITLE}</h2>
-        <div className={styles.leverLeft}><strong>{COPY.CASE_DISTRIBUTION_BATCHSIZE_LEVER_LEFT_TITLE}</strong></div>
-        <div className={styles.leverRight}><strong>{COPY.CASE_DISTRIBUTION_BATCHSIZE_LEVER_RIGHT_TITLE}</strong></div>
+        <h2>{COPY.CASE_DISTRIBUTION_BATCH_SIZE_H2_TITLE}</h2>
+        <div className={styles.leverLeft}><strong>{COPY.CASE_DISTRIBUTION_BATCH_SIZE_LEVER_LEFT_TITLE}</strong></div>
+        <div className={styles.leverRight}><strong>{COPY.CASE_DISTRIBUTION_BATCH_SIZE_LEVER_RIGHT_TITLE}</strong></div>
       </div>
       {batchSizeLevers && batchSizeLevers.map((lever, index) => (
         <div className={styles.activeLever} key={`${lever.item}-${index}`}>
