@@ -32,27 +32,32 @@ module HearingDayMapper
 
     def validate_regional_office(regional_office)
       return if regional_office.nil?
-      return regional_office if [HearingDay::REQUEST_TYPES[:central],
-                                 HearingDay::REQUEST_TYPES[:virtual]].include?(regional_office)
 
-      begin
-        ro = RegionalOffice.find!(regional_office)
-        ro.key
-      rescue RegionalOffice::NotFoundError
-        Rails.logger.error("Regional office #{regional_office} was not found.")
-        raise InvalidRegionalOfficeError
+      if [HearingDay::REQUEST_TYPES[:central], HearingDay::REQUEST_TYPES[:virtual]].include?(regional_office)
+        return regional_office
       end
+
+      ro = begin
+        RegionalOffice.find!(regional_office)
+      rescue RegionalOffice::NotFoundError
+        nil
+      end
+      fail(InvalidRegionalOfficeError) if ro.nil?
+
+      ro.key
     end
 
     def city_for_regional_office(regional_office)
-      return "" if regional_office.nil?
+      return if regional_office.nil?
 
-      begin
-        ro = RegionalOffice.find!(regional_office)
-        "#{ro.city}, #{ro.state}"
+      ro = begin
+        RegionalOffice.find!(regional_office)
       rescue RegionalOffice::NotFoundError
-        Rails.logger.error("Regional office #{regional_office} was not found.")
+        nil
       end
+      return "" if ro.nil?
+
+      "#{ro.city}, #{ro.state}"
     end
   end
 end
