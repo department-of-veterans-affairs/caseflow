@@ -10,7 +10,7 @@ import COPY from '../../../COPY';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import { ACTIONS } from '../reducers/levers/leversActionTypes';
 import leverInputValidation from './LeverInputValidation';
-import { checkIfOtherChangesExist } from '../utils';
+import { hasChangedLevers } from '../reducers/levers/leversSelector';
 
 const AffinityDays = (props) => {
   const { leverStore, isAdmin } = props;
@@ -24,6 +24,7 @@ const AffinityDays = (props) => {
   const errorMessages = {};
 
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
+  const theState = useSelector((state) => state);
   const storeLevers = useSelector((state) => state.caseDistributionLevers.levers.affinity);
   const backendLevers = useSelector((state) => state.caseDistributionLevers.backendLevers.affinity);
   const [affinityLevers, setAffinityLevers] = useState(storeLevers);
@@ -46,7 +47,7 @@ const AffinityDays = (props) => {
 
             if (validationResponse.statement === ACD_LEVERS.DUPLICATE) {
 
-              if (checkIfOtherChangesExist(lever)) {
+              if (hasChangedLevers(theState)) {
                 op.value = event;
                 op.errorMessage = validationResponse.updatedMessages[`${lever.item}-${option.item}`];
                 setErrorMessages(validationResponse.updatedMessages[`${lever.item}-${option.item}`]);

@@ -1,11 +1,12 @@
 import { createSelector } from 'reselect';
 import ACD_LEVERS from '../../../../constants/ACD_LEVERS';
+import { findOption, createCombinationValue } from '../../utils';
 
 const getStore = (state) => {
   return state.caseDistributionLevers;
 };
 
-const getLevers = (state) => {
+export const getLevers = (state) => {
   return getStore(state).levers;
 };
 const getAttribute = (state, attribute) => {
@@ -32,9 +33,63 @@ export const changedLevers = createSelector(
   }
 );
 
+export const hasChangedLevers = (state) => changedLevers(state).length > 0;
+
 export const getLeversByGroup = createSelector(
   [getLeversByGroupConstant],
   (leversByGroup) => {
     return leversByGroup;
   }
 );
+
+const updateLeverGroup = (state, leverGroup, leverItem, updateLeverValue) =>
+  state.levers[leverGroup].map((lever) =>
+    lever.item === leverItem ? updateLeverValue(lever) : lever
+  );
+
+/**
+ * Updates levers of data type number, boolean, and text
+ */
+export const createUpdatedLever = (state, action) => {
+  const { leverGroup, leverItem, value } = action.payload;
+
+  const updateLeverValue = (lever) => {
+    return { ...lever, value };
+  };
+
+  return updateLeverGroup(state, leverGroup, leverItem, updateLeverValue);
+};
+
+/**
+ * Do not trust this code. It is untested
+ * WILL NEED UPDATING WHEN RADIO AND COMBINATION LEVERS ARE EDITABLE
+ */
+export const createUpdatedRadioLever = (state, action) => {
+  const { leverGroup, leverItem, value, optionValue } = action.payload;
+
+  const updateLeverValue = (lever) => {
+    const selectedOption = findOption(lever, value);
+
+    selectedOption.value = optionValue;
+
+    return { ...lever, currentValue: optionValue };
+  };
+
+  return updateLeverGroup(state, leverGroup, leverItem, updateLeverValue);
+};
+
+/**
+ * Do not trust this code. It is untested
+ * WILL NEED UPDATING WHEN RADIO AND COMBINATION LEVERS ARE EDITABLE
+ */
+export const createUpdatedCombinationLever = (state, action) => {
+  const { leverGroup, leverItem, value, toggleValue } = action.payload;
+
+  const updateLeverValue = (lever) => {
+    const newValue = createCombinationValue(toggleValue, value);
+
+    return { ...lever, currentValue: newValue, is_toggle_active: toggleValue };
+  };
+
+  return updateLeverGroup(state, leverGroup, leverItem, updateLeverValue);
+};

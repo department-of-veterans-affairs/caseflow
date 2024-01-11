@@ -3,22 +3,24 @@ import Button from 'app/components/Button';
 import { useDispatch, useSelector } from 'react-redux';
 import SaveModal from './SaveModal';
 import { saveLevers } from '../reducers/levers/leversActions';
-import { changedLevers } from '../reducers/levers/leversSelector';
+import { changedLevers, getLevers, hasChangedLevers } from '../reducers/levers/leversSelector';
 
 export const LeverSaveButton = () => {
   const dispatch = useDispatch();
   const theState = useSelector((state) => state);
-  const changesOccurred = useSelector((state) => state.caseDistributionLevers.changesOccurred);
+  const levers = getLevers(theState);
   const [showModal, setShowModal] = useState(false);
   const [enableSave, setEnableSave] = useState(false);
 
   useEffect(() => {
-    setEnableSave(changesOccurred);
+    const enable = hasChangedLevers(theState);
 
-    if (!changesOccurred) {
+    setEnableSave(enable);
+
+    if (!enable) {
       setShowModal(false);
     }
-  }, [changesOccurred]);
+  }, [levers]);
 
   const handleSaveButton = () => {
     setShowModal(true);

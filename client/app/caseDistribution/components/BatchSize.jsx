@@ -8,7 +8,7 @@ import NumberField from 'app/components/NumberField';
 import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
-import { checkIfOtherChangesExist } from '../utils';
+import { hasChangedLevers } from '../reducers/levers/leversSelector';
 
 const BatchSize = (props) => {
   const { isAdmin } = props;
@@ -19,6 +19,7 @@ const BatchSize = (props) => {
     '& .usa-input-error label': { bottom: '15px', left: '89px' }
   });
 
+  const theState = useSelector((state) => state);
   const backendLevers = useSelector((state) => state.caseDistributionLevers.backendLevers.batch);
   const storeLevers = useSelector((state) => state.caseDistributionLevers.levers.batch);
   const [errorMessagesList, setErrorMessages] = useState({});
@@ -38,7 +39,7 @@ const BatchSize = (props) => {
 
         if (validationResponse.statement === ACD_LEVERS.DUPLICATE) {
 
-          if (checkIfOtherChangesExist(lever)) {
+          if (hasChangedLevers(theState)) {
             lever.value = event;
             setErrorMessages(validationResponse.updatedMessages);
 
