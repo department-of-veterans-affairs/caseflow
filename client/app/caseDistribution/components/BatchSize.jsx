@@ -8,6 +8,7 @@ import COPY from '../../../COPY';
 import { getLeversByGroup } from '../reducers/levers/leversSelector';
 import { updateNumberLever } from '../reducers/levers/leversActions';
 import { Constant } from '../constants';
+import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 
 const BatchSize = (props) => {
   const { isAdmin } = props;
@@ -22,7 +23,7 @@ const BatchSize = (props) => {
 
   const dispatch = useDispatch();
   const theState = useSelector((state) => state);
-  const batchLevers = getLeversByGroup(theState, Constant.LEVERS, Constant.BATCH);
+  const batchLevers = getLeversByGroup(theState, Constant.LEVERS,ACD_LEVERS.lever_groups.batch);
   const [errorMessagesList] = useState(errorMessages);
   const [batchSizeLevers, setBatchSizeLevers] = useState(batchLevers);
 
@@ -33,6 +34,8 @@ const BatchSize = (props) => {
   const updateNumberFieldLever = (leverItem, leverType) => (event) => {
     dispatch(updateNumberLever(leverType, leverItem, event));
   };
+
+  batchLevers?.sort((leverA, leverB) => leverA.lever_group_order - leverB.lever_group_order);
 
   return (
     <div className={styles.leverContent}>
