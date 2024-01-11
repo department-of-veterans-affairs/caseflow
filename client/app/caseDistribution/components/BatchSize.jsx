@@ -5,7 +5,7 @@ import { css } from 'glamor';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';
 import COPY from '../../../COPY';
-import { Constant } from '../constants';
+import ACD_LEVERS from '../../../constants/ACD_LEVERS.json'
 import { getUserIsAcdAdmin, getLeversByGroup } from '../reducers/levers/leversSelector';
 import { updateLeverState } from '../reducers/levers/leversActions';
 
@@ -20,7 +20,7 @@ const BatchSize = () => {
   const errorMessages = {};
   const dispatch = useDispatch();
   const theState = useSelector((state) => state);
-  const storeLevers = getLeversByGroup(theState, Constant.LEVERS, Constant.BATCH);
+  const storeLevers = getLeversByGroup(theState, ACD_LEVERS.LEVERS, ACD_LEVERS.BATCH);
   const isUserAcdAdmin = getUserIsAcdAdmin(theState);
   const [errorMessagesList] = useState(errorMessages);
   const [batchSizeLevers, setBatchSizeLevers] = useState(storeLevers);
@@ -30,7 +30,7 @@ const BatchSize = () => {
   }, [storeLevers]);
 
   const updateLever = (leverItem, value = false) => (event) => {
-    dispatch(updateLeverState(leverItem, value, event, null));
+    dispatch(updateLeverState(ACD_LEVERS.BATCH, leverItem, event));
   };
 
   if (isUserAcdAdmin) {
@@ -60,7 +60,7 @@ const BatchSize = () => {
                 readOnly={lever.is_disabled_in_ui}
                 value={lever.value}
                 errorMessage={errorMessagesList[lever.item]}
-                onChange={updateLever(index, lever.item, lever.value)}
+                onChange={updateLever(lever.item)}
                 tabIndex={lever.is_disabled_in_ui ? -1 : null}
               />
               {!lever.is_disabled_in_ui && (

@@ -1,4 +1,5 @@
 {
+  "BATCH": "batch",
   "omit": "omit",
   "infinite": "infinite",
   "value": "value",
@@ -12,5 +13,6 @@
   "SUCCESS": "SUCCESS",
   "FAIL": "FAIL",
   "DUPLICATE": "DUPLICATE",
-  "ERROR": "ERROR"
+  "ERROR": "ERROR",
+  "LEVERS": "levers"
 }
