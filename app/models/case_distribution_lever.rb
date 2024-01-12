@@ -3,7 +3,7 @@ class CaseDistributionLever < ApplicationRecord
   has_many :case_distribution_audit_lever_entries, dependent: :delete_all
   validates :item, presence: true
   validates :title, presence: true
-  validates :data_type, presence: true, inclusion: { in: Constants.ACD_LEVERS.data_types.to_h.values }
+  # validates :data_type, presence: true, inclusion: { in: Constants.ACD_LEVERS.data_types.to_h.values }
   validates :is_toggle_active, inclusion: { in: [true, false] }
   validates :is_disabled_in_ui, inclusion: { in: [true, false] }
   validate :value_matches_data_type

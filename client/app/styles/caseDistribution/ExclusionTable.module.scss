@@ -10,6 +10,16 @@ $border-color: #d6d7d9;
 
 .exclusionTableContainerStyling {
   padding: 0;
+  table {
+    width: 100%;
+    tr {
+      border-bottom: 1px solid #d6d7d9;
+      th {
+        padding: 30px 0;
+        background-color: #fff;
+      }
+    } 
+  }
 }
 
 .exclusionTableStyling,
@@ -25,6 +35,10 @@ $border-color: #d6d7d9;
   font-size: 19px;
   line-height: 1.3em/25px;
   width: 20%;
+}
+
+.exclusionTableStyling h3, .exclusionTableStyling h4 {
+  word-wrap: break-word;
 }
 
 .tableHeaderStyling {

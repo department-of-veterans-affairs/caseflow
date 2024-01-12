@@ -35,7 +35,7 @@ const ExclusionTable = () => {
             </th>
             <th className={styles.tableHeaderStyling}>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_HEARINGS_HEADER}</th>
             <th className={styles.tableHeaderStyling}>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_DIRECT_HEADER}</th>
-            <th className={styles.tableHeaderStyling}>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_EVIDENCE_HEADER}</th>
+            <th className={styles.tableHeaderStyling}>AMA DOC</th>
           </tr>
         </thead>
         {isUserAcdAdmin ?
@@ -145,7 +145,7 @@ const ExclusionTable = () => {
           <tbody>
             <tr>
               <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-                <h3>COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY</h3>
+                <h3>All Non-Priority</h3>
               </td>
               <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
                 <label className={styles.exclusionTableMemberViewStyling}>
