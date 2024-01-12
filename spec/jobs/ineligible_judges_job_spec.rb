@@ -35,8 +35,10 @@ RSpec.describe IneligibleJudgesJob, type: :job do
   describe "#case_distribution_ineligible_judges" do
     it "merges ineligible judges from different sources and store to cache" do
       # Stub the methods that fetch data from different sources
-      allow(CaseDistributionIneligibleJudges).to receive(:caseflow_judges_with_vacols_records).and_return([{ css_id: "454" }])
-      allow(CaseDistributionIneligibleJudges).to receive(:vacols_judges_with_caseflow_records).and_return([{ sdomainid: "123" }])
+      allow(CaseDistributionIneligibleJudges)
+        .to receive(:caseflow_judges_with_vacols_records).and_return([{ css_id: "454" }])
+      allow(CaseDistributionIneligibleJudges)
+        .to receive(:vacols_judges_with_caseflow_records).and_return([{ sdomainid: "123" }])
 
       result = job.send(:case_distribution_ineligible_judges)
 
@@ -49,8 +51,10 @@ RSpec.describe IneligibleJudgesJob, type: :job do
 
     it "groups and merges data by css_id or sdomainid" do
       # Stub the methods that fetch data from different sources
-      allow(CaseDistributionIneligibleJudges).to receive(:caseflow_judges_with_vacols_records).and_return([{ css_id: "123" }])
-      allow(CaseDistributionIneligibleJudges).to receive(:vacols_judges_with_caseflow_records).and_return([{ sdomainid: "123" }])
+      allow(CaseDistributionIneligibleJudges)
+        .to receive(:caseflow_judges_with_vacols_records).and_return([{ css_id: "123" }])
+      allow(CaseDistributionIneligibleJudges)
+        .to receive(:vacols_judges_with_caseflow_records).and_return([{ sdomainid: "123" }])
 
       result = job.send(:case_distribution_ineligible_judges)
 
@@ -62,8 +66,10 @@ RSpec.describe IneligibleJudgesJob, type: :job do
 
     it "fetches ineligible judges from cache" do
       # Stub the methods that fetch data from different sources
-      allow(CaseDistributionIneligibleJudges).to receive(:caseflow_judges_with_vacols_records).and_return([{ css_id: "123" }])
-      allow(CaseDistributionIneligibleJudges).to receive(:vacols_judges_with_caseflow_records).and_return([{ sdomainid: "123" }])
+      allow(CaseDistributionIneligibleJudges)
+        .to receive(:caseflow_judges_with_vacols_records).and_return([{ css_id: "123" }])
+      allow(CaseDistributionIneligibleJudges)
+        .to receive(:vacols_judges_with_caseflow_records).and_return([{ sdomainid: "123" }])
 
       job.send(:case_distribution_ineligible_judges)
       result = Rails.cache.fetch("case_distribution_ineligible_judges")
