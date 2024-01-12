@@ -56,6 +56,7 @@ module Seeds
           va_date_of_receipt: Time.zone.yesterday,
           notes: "This is a note from CMP.",
           assigned_by_id: 81,
+          updated_by_id: 81,
           veteran_id: veteran.id,
         )
         create_multiple_docs(corres, veteran)
@@ -75,6 +76,7 @@ module Seeds
           va_date_of_receipt: Time.zone.yesterday,
           notes: "This is a note from CMP.",
           assigned_by_id: 81,
+          updated_by_id: 81,
           veteran_id: veteran.id,
         )
         CorrespondenceDocument.find_or_create_by(
@@ -101,6 +103,7 @@ module Seeds
           va_date_of_receipt: Time.zone.yesterday,
           notes: "This is a note from CMP.",
           assigned_by_id: 81,
+          updated_by_id: 81,
           veteran_id: veteran.id,
         )
         CorrespondenceDocument.find_or_create_by(
@@ -127,6 +130,7 @@ module Seeds
           va_date_of_receipt: Time.zone.yesterday,
           notes: "This is a note from CMP.",
           assigned_by_id: 81,
+          updated_by_id: 81,
           veteran_id: veteran.id,
         )
         CorrespondenceDocument.find_or_create_by(

@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
 RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
-  let(:veteran) { create(:veteran, last_name: "Smith", file_number: "12345678") }
-  let(:correspondence) { create(:correspondence, veteran_id: veteran.id, uuid: SecureRandom.uuid) }
   let(:current_user) { create(:intake_user) }
   let!(:parent_task) { create(:correspondence_intake_task, appeal: correspondence, assigned_to: current_user) }
+  let(:correspondence) do
+    create(
+      :correspondence
+    )
+  end
 
   let(:mock_doc_uploader) { instance_double(CorrespondenceDocumentsEfolderUploader) }
 
@@ -41,7 +44,9 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
 
     it "saves the user's current step in the intake form" do
       current_step = 1
-      correspondence = create(:correspondence, veteran_id: veteran.id, uuid: SecureRandom.uuid)
+      correspondence = create(
+        :correspondence
+      )
 
       post queue_correspondence_intake_current_step_path(correspondence_uuid: correspondence.uuid), params: {
         correspondence_uuid: correspondence.uuid,

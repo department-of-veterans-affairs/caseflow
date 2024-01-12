@@ -4,11 +4,21 @@
 RSpec.feature("The Correspondence Review Package page") do
   let(:veteran) { create(:veteran) }
   let(:package_document_type) { PackageDocumentType.create(id: 15, active: true, created_at: Time.zone.now, name: 10_182, updated_at: Time.zone.now) }
-  let(:correspondence) { create(:correspondence, veteran_id: veteran.id, package_document_type_id: package_document_type.id) }
   let(:correspondence_documents) { create(:correspondence_document, correspondence: correspondence, document_file_number: veteran.file_number) }
   let(:mail_team_user) { create(:user) }
   let(:mail_team_org) { MailTeam.singleton }
   let(:current_user) { User.create!(station_id: 101, css_id: "MAIL_TEAM_SUPERVISOR_ADMIN_USER", full_name: "Jon MailTeam Snow Admin") }
+  let!(:correspondence_type) { CorrespondenceType.create!(name: "a correspondence type.") }
+  let!(:package_document_type) { PackageDocumentType.create! }
+  let(:correspondence) do
+    create(
+      :correspondence,
+      veteran_id: veteran.id,
+      uuid: SecureRandom.uuid,
+      assigned_by_id: mail_team_user.id,
+      updated_by_id: mail_team_user.id,
+    )
+  end
 
   context "Review package feature toggle" do
     before :each do
