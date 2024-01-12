@@ -66,10 +66,9 @@ const DocketTimeGoals = () => {
   const renderDocketDistributionLever = (distributionPriorLever, index) => {
     let docketTimeGoalLever = docketTimeGoalLevers.find((lever) =>
       lever.item === docketTimeGoalPriorMappings[distributionPriorLever.item]);
+    const sectionTitle = sectionTitles[distributionPriorLever.item];
 
     if (isUserAcdAdmin) {
-
-      const sectionTitle = sectionTitles[distributionPriorLever.item];
 
       return (
 
@@ -127,18 +126,23 @@ const DocketTimeGoals = () => {
 
       <div className={cx(styles.activeLever)}
         key={`${distributionPriorLever.item}-${index}`}
+        id={`${distributionPriorLever.item}-lever-section`}
       >
         <div className={cx(styles.leverLeft, styles.docketLeverLeft)}>
           <strong className={docketTimeGoalLever.is_disabled_in_ui ? styles.leverDisabled : ''}>
-            {index < sectionTitles.length ? sectionTitles[index] : ''}
+            { sectionTitle || '' }
           </strong>
         </div>
-        <div className={`${styles.leverMiddle} ${leverNumberDiv}`}>
+        <div className={`${styles.leverMiddle} ${leverNumberDiv}`}
+          id={`${distributionPriorLever.item}-lever-value`}
+        >
           <span className={docketTimeGoalLever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}>
             {docketTimeGoalLever.value} {docketTimeGoalLever.unit}
           </span>
         </div>
-        <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
+        <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}
+          id={`${distributionPriorLever.item}-lever-toggle`}
+        >
           <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
             <span className={distributionPriorLever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}>
               {distributionPriorLever.is_toggle_active ? 'On' : 'Off'}
