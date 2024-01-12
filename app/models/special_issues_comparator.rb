@@ -34,9 +34,8 @@ class SpecialIssuesComparator
   # values generated from ratings special issues and contentions
   def special_issues
     # guard for MST/PACT feature toggle
-    # commented out for testing
-    # return [] unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) ||
-    #                  FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
+    return [] unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) ||
+                     FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
 
     [{
       mst_available: mst_from_rating_or_contention,
