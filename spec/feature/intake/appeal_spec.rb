@@ -196,7 +196,8 @@ feature "Appeal Intake", :all_dbs do
       contested_rating_issue_profile_date: profile_date.to_s,
       contested_issue_description: "PTSD denied",
       decision_date: promulgation_date,
-      benefit_type: "compensation"
+      benefit_type: "compensation",
+      decision_date_added_at: post_ama_start_date
     )
 
     expect(nonrating_request_issue).to have_attributes(
@@ -204,7 +205,8 @@ feature "Appeal Intake", :all_dbs do
       contested_rating_issue_profile_date: nil,
       nonrating_issue_category: "Active Duty Adjustments",
       nonrating_issue_description: "Description for Active Duty Adjustments",
-      benefit_type: "compensation"
+      benefit_type: "compensation",
+      decision_date_added_at: post_ama_start_date
     )
     expect(nonrating_request_issue.decision_date.to_date).to eq(nonrating_date)
   end
