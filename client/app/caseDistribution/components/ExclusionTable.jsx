@@ -44,7 +44,7 @@ const ExclusionTable = () => {
               <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
                 <span>
                   <h4 className={styles.exclusionTableHeaderStyling}>
-                    COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY
+                    {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
                   </h4>
                   <ToggleSwitch
                     id = {DISTRIBUTION.all_non_priority}

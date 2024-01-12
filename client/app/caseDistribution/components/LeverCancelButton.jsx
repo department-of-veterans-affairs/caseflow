@@ -1,23 +1,16 @@
 
 import React from 'react';
-import PropTypes from 'prop-types';
-import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
+import { useDispatch, useSelector } from 'react-redux';
 import Button from 'app/components/Button';
 import COPY from '../../../COPY';
+import { revertLevers } from '../reducers/levers/leversActions';
 
-const cancelLeverChanges = (leverStore) => {
-  leverStore.dispatch({
-    type: ACTIONS.REVERT_LEVERS,
-  });
-};
-const refreshLevers = () => {
-  window.location.reload(false);
-};
+export const LeverCancelButton = () => {
+  const theState = useSelector((state) => state);
+  const dispatch = useDispatch();
 
-export const LeverCancelButton = ({ leverStore }) => {
   const cancelButtonActions = () => {
-    cancelLeverChanges(leverStore);
-    refreshLevers();
+    dispatch(revertLevers(theState));
   };
 
   return (
@@ -25,11 +18,9 @@ export const LeverCancelButton = ({ leverStore }) => {
       style={{ background: 'none', color: 'blue', 'font-weight': '300' }}
       id="CancelLeversButton"
       classNames={['cf-btn-link']}
-      onClick={() => cancelButtonActions(leverStore)}>
+      onClick={() => cancelButtonActions()}>
       {COPY.CASE_DISTRIBUTION_LEVER_CANCEL_BUTTON}
     </Button>
   );
 };
-LeverCancelButton.propTypes = {
-  leverStore: PropTypes.any
-};
+

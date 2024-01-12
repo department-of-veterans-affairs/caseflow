@@ -39,7 +39,7 @@ class CaseDistributionLever < ApplicationRecord
 
   def value_matches_data_type
     case data_type
-    when Constants.ACD_LEVERS.data_types.radio 
+    when Constants.ACD_LEVERS.data_types.radio
       validate_options
     when Constants.ACD_LEVERS.data_types.number
       validate_number_data_type
@@ -51,7 +51,7 @@ class CaseDistributionLever < ApplicationRecord
   end
 
   def add_error_value_not_match_data_type
-    errors.add(:value, "does not match its data_type #{data_type}. Value is #{value}") 
+    errors.add(:value, "does not match its data_type #{data_type}. Value is #{value}")
   end
 
   def validate_options
@@ -61,7 +61,7 @@ class CaseDistributionLever < ApplicationRecord
   def validate_number_data_type
     add_error_value_not_match_data_type if value.match(/\A[0-9]*\.?[0-9]+\z/).nil?
     unless INTEGER_LEVERS.include?(item) || FLOAT_LEVERS.include?(item)
-      errors.add(:item, "is of data_type number but is not included in INTEGER_LEVERS or FLOAT_LEVERS") 
+      errors.add(:item, "is of data_type number but is not included in INTEGER_LEVERS or FLOAT_LEVERS")
     end
   end
 
@@ -85,11 +85,11 @@ class CaseDistributionLever < ApplicationRecord
       previous_levers = CaseDistributionLever.where(id: grouped_levers.keys).index_by { |lever| lever["id"] }
       errors = []
       levers = []
-      
+
       ActiveRecord::Base.transaction do
         levers = CaseDistributionLever.update(grouped_levers.keys, grouped_levers.values)
 
-        unless levers.all?(&:changed?)
+        unless levers.all?(&:valid?)
           errors = levers.select(&:invalid?).map { |lever| "Lever :#{lever.title} - #{lever.errors.full_messages}" }
         end
       end
@@ -97,8 +97,8 @@ class CaseDistributionLever < ApplicationRecord
       errors.concat(add_audit_lever_entries(previous_levers, levers, current_user))
     end
 
-    private 
-    
+    private
+
     def add_audit_lever_entries(previous_levers, levers, current_user)
       entries = []
       levers.each do |lever|
