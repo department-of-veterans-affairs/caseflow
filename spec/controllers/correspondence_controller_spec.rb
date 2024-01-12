@@ -151,7 +151,7 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
       expect(response).to have_http_status(:ok)
       expect(veteran.reload.file_number).to eq(new_file_number)
       expect(correspondence.reload.notes).to eq("Updated notes")
-      expect(correspondence.reload.correspondence_type_id).to eq(1)
+      expect(correspondence.reload.correspondence_type_id).to eq(correspondence_type.id)
       expect(correspondence.reload.updated_by_id).to eq(current_user.id)
     end
   end
