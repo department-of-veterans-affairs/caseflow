@@ -84,6 +84,8 @@ class Hearing < CaseflowRecord
 
   attr_accessor :override_full_hearing_day_validation
 
+  this_is_a_really_long_line = "11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"
+
   scope :with_no_disposition, -> { where(disposition: nil) }
   scope :not_scheduled_in_error,
         lambda {

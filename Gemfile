@@ -92,18 +92,14 @@ end
 
 group :test, :development, :demo do
   # Security scanners
-  gem "brakeman"
   gem "bullet"
-  gem "bundler-audit"
   # Testing tools
   gem "capybara"
   gem "capybara-screenshot"
-  gem "danger", "~> 6.2.2"
   gem "database_cleaner"
   gem "factory_bot_rails", "~> 5.2"
   gem "faker"
   gem "guard-rspec"
-  gem "immigrant"
   # Linters
   gem "jshint", platforms: :ruby
   gem "pluck_to_hash"
@@ -116,10 +112,6 @@ group :test, :development, :demo do
   gem "rspec-rails"
   # For CircleCI test metadata analysis
   gem "rspec_junit_formatter"
-  gem "rubocop", "= 0.79", require: false
-  gem "rubocop-performance"
-  gem "rubocop-rails"
-  gem "scss_lint", require: false
   gem "simplecov", git: "https://github.com/colszowka/simplecov.git", require: false
   gem "single_cov"
   gem "sniffybara", git: "https://github.com/department-of-veterans-affairs/sniffybara.git"
@@ -135,7 +127,6 @@ group :development do
   gem "debase"
   gem "derailed_benchmarks"
   gem "dotenv-rails"
-  gem "fasterer", require: false
   gem "foreman"
   gem "meta_request"
   gem "ruby-debug-ide"
@@ -143,12 +134,25 @@ group :development do
   gem "solargraph"
 end
 
+group :lint do
+  gem "brakeman"
+  gem "bundler-audit"
+  gem "danger", "~> 6.2.2"
+  gem "fasterer", require: false
+  gem "immigrant"
+  gem "reek"
+  gem "rubocop", "= 0.79", require: false
+  gem "rubocop-performance"
+  gem "rubocop-rails"
+  gem "scss_lint", require: false
+end
+
 group :test do
   gem "knapsack_pro", "~> 3.8"
   # For retrying failed feature tests. Read more: https://github.com/NoRedInk/rspec-retry
+  gem "rspec-github", require: false
   gem "rspec-retry"
   gem "webmock"
-  gem "rspec-github", require: false
 end
 # rubocop:enable Metrics/LineLength
 
