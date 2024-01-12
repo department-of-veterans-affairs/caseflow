@@ -126,6 +126,7 @@ namespace :correspondence do
         va_date_of_receipt: Time.zone.yesterday,
         notes: "Notes from CMP - Multi Correspondence Seed",
         assigned_by_id: 81,
+        updated_by_id: 81,
         veteran_id: veteran.id
       )
       CorrespondenceDocument.find_or_create_by(
@@ -241,6 +242,7 @@ def create_correspondences_with_documents
       va_date_of_receipt: Time.zone.yesterday,
       notes: "This is a note from CMP.",
       assigned_by_id: 81,
+      updated_by_id: 81,
       veteran_id: veteran.id
     )
     create_multiple_docs(corres, veteran)
@@ -260,6 +262,7 @@ def create_correspondences_with_documents
       va_date_of_receipt: Time.zone.yesterday,
       notes: "This is a note from CMP.",
       assigned_by_id: 81,
+      updated_by_id: 81,
       veteran_id: veteran.id
     )
     CorrespondenceDocument.find_or_create_by(
@@ -286,6 +289,7 @@ def create_correspondences_with_documents
       va_date_of_receipt: Time.zone.yesterday,
       notes: "This is a note from CMP.",
       assigned_by_id: 81,
+      updated_by_id: 81,
       veteran_id: veteran.id
     )
     CorrespondenceDocument.find_or_create_by(
@@ -312,6 +316,7 @@ def create_correspondences_with_documents
       va_date_of_receipt: Time.zone.yesterday,
       notes: "This is a note from CMP.",
       assigned_by_id: 81,
+      updated_by_id: 81,
       veteran_id: veteran.id
     )
     CorrespondenceDocument.find_or_create_by(
@@ -484,6 +489,7 @@ def create_multi_correspondences
       va_date_of_receipt: Time.zone.yesterday,
       notes: "Notes from CMP - Multi Correspondence Seed",
       assigned_by_id: 81,
+      updated_by_id: 81,
       veteran_id: veteran.id
     )
     CorrespondenceDocument.find_or_create_by(
@@ -528,6 +534,7 @@ def create_multi_correspondences
       va_date_of_receipt: Time.zone.yesterday,
       notes: "Notes from CMP - Multi Correspondence Seed",
       assigned_by_id: 81,
+      updated_by_id: 81,
       veteran_id: veteran.id
     )
     CorrespondenceDocument.find_or_create_by(
@@ -572,6 +579,7 @@ def create_multi_correspondences
       va_date_of_receipt: Time.zone.yesterday,
       notes: "Notes from CMP - Multi Correspondence Seed",
       assigned_by_id: 81,
+      updated_by_id: 81,
       veteran_id: veteran.id
     )
     CorrespondenceDocument.find_or_create_by(
