@@ -1,5 +1,4 @@
-/* eslint-disable max-lines */
-/* eslint-disable max-len */
+/* eslint-disable max-lines, max-len */
 
 import querystring from 'querystring';
 import React from 'react';
@@ -224,6 +223,10 @@ class QueueApp extends React.PureComponent {
       appealId={props.match.params.appealId}
       taskId={props.match.params.taskId}
       checkoutFlow={props.match.params.checkoutFlow}
+      justificationFeatureToggle={this.props.featureToggles.justification_reason}
+      mstFeatureToggle={this.props.featureToggles.mst_identification}
+      pactFeatureToggle={this.props.featureToggles.pact_identification}
+      legacyMstPactFeatureToggle={this.props.featureToggles.legacy_mst_pact_identification}
     />
   );
 
@@ -235,6 +238,8 @@ class QueueApp extends React.PureComponent {
         <SelectSpecialIssuesView
           appealId={appealId}
           taskId={taskId}
+          legacyMstIdentification={this.props.featureToggles.legacy_mst_pact_identification}
+          mstIdentification={this.props.featureToggles.mst_identification}
           prevStep={`/queue/appeals/${appealId}`}
           nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
         />
@@ -249,6 +254,8 @@ class QueueApp extends React.PureComponent {
       <AddEditIssueView
         nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
         prevStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
+        justificationFeatureToggle={this.props.featureToggles.justification_reason}
+        legacyMstPactFeatureToggle={this.props.featureToggles.legacy_mst_pact_identification}
         {...props.match.params}
       />
     );
