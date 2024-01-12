@@ -11,7 +11,7 @@ import {
 class CaseDistributionApp extends React.PureComponent {
   constructor(props) {
     super(props);
-    this.props.loadLevers(this.props.acdLeversForStore);
+    this.props.loadLevers(this.props.acdLeversForStore, this.props.acd_history);
     this.props.setUserIsAcdAdmin(this.props.user_is_an_acd_admin);
   }
 
@@ -21,7 +21,6 @@ class CaseDistributionApp extends React.PureComponent {
         <div> {/* Wrapper*/}
           <CaseDistributionContent
             levers = {this.props.acd_levers}
-            formattedHistory={this.props.acd_history}
             leverStore={this.props.leverStore}
           />
         </div>

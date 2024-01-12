@@ -47,21 +47,53 @@ export const createUpdatedLeversWithValues = (levers) => {
   return leversWithValues();
 };
 
+export const formateTimestamp = (entry) => {
+  const dateEntry = new Date(entry);
+  const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+  const datePart = dateEntry.toLocaleDateString('en-US', options);
+  const hours = dateEntry.getHours();
+  const minutes = dateEntry.getMinutes();
+  const seconds = dateEntry.getSeconds();
+  const formattedDate = `${datePart} ${hours}:${minutes}:${seconds}`;
+
+  return formattedDate;
+};
+
 export const formatLeverHistory = (leverHistoryList) => {
-  let formattedLeverHistory = [];
 
-  leverHistoryList.forEach((leverHistoryEntry) => {
+  if (!leverHistoryList) {
+    return [];
+  }
 
-    formattedLeverHistory.push(
-      {
-        user_name: leverHistoryEntry.user,
-        created_at: leverHistoryEntry.created_at,
-        lever_title: leverHistoryEntry.title,
-        original_value: leverHistoryEntry.original_value,
-        current_value: leverHistoryEntry.current_value
-      }
+  const formattedHistory = leverHistoryList.reduce((accumulator, entry) => {
+    const existingEntry = accumulator.find(
+      (item) => formateTimestamp(item.created_at) === formateTimestamp(entry.created_at) &&
+      item.user_id === entry.user_name
     );
-  });
 
-  return formattedLeverHistory;
+    if (existingEntry) {
+      existingEntry.titles.push(entry.lever_title);
+      existingEntry.previous_values.push(entry.previous_value);
+      existingEntry.updated_values.push(entry.update_value);
+      existingEntry.units.push(entry.lever_unit || 'null');
+    } else {
+      const newEntry = {
+        created_at: formateTimestamp(entry.created_at),
+        user_id: entry.user_name,
+        user_name: entry.user_name,
+        titles: [entry.lever_title],
+        previous_values: [entry.previous_value],
+        updated_values: [entry.update_value],
+        units: [entry.lever_unit || 'null'],
+      };
+
+      accumulator.push(newEntry);
+    }
+
+    return accumulator;
+  }, []);
+
+  let descendingFormattedHistory = formattedHistory.reverse();
+
+  return descendingFormattedHistory;
 };

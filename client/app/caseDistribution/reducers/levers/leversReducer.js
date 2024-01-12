@@ -33,6 +33,9 @@ const leversReducer = (state = initialState, action = {}) => {
       backendLevers: {
         $set: createUpdatedLeversWithValues(action.payload.levers),
       },
+      historyList: {
+        $set: formatLeverHistory(action.payload.historyList)
+      }
     });
   case ACTIONS.SET_USER_IS_ACD_ADMIN:
     return update(state, {
@@ -75,15 +78,6 @@ const leversReducer = (state = initialState, action = {}) => {
       },
     };
   }
-
-  case ACTIONS.SAVE_LEVERS:
-    return {
-      ...state,
-      changesOccurred: false,
-      historyList: formatLeverHistory(action.payload.leverHistory),
-      displayBanner: action.payload.successful,
-      errors: action.payload.errors
-    };
 
   case ACTIONS.REVERT_LEVERS:
     return {

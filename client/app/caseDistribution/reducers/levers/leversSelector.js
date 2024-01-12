@@ -9,6 +9,10 @@ const getStore = (state) => {
 export const getLevers = (state) => {
   return getStore(state).levers;
 };
+
+export const getLeverHistory = (state) => {
+  return getStore(state).historyList;
+};
 const getAttribute = (state, attribute) => {
   return getStore(state)[attribute];
 };
@@ -43,6 +47,13 @@ export const getLeversByGroup = createSelector(
   [getLeversByGroupConstant],
   (leversByGroup) => {
     return leversByGroup;
+  }
+);
+
+export const getLeverHistoryTable = createSelector(
+  [getLeverHistory],
+  (leverHistory) => {
+    return leverHistory;
   }
 );
 

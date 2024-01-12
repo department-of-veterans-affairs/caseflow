@@ -11,12 +11,13 @@ export const setUserIsAcdAdmin = (isUserAcdAdmin) =>
     });
   };
 
-export const loadLevers = (levers) =>
+export const loadLevers = (levers, historyList) =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.LOAD_LEVERS,
       payload: {
-        levers
+        levers,
+        historyList
       }
     });
   };
@@ -99,14 +100,15 @@ export const saveLevers = (levers) =>
       then((resp) => resp.body).
       then((resp) => {
         dispatch({
-          type: ACTIONS.SAVE_LEVERS,
+          type: ACTIONS.LOAD_LEVERS,
           payload: {
             successful: resp.successful,
             errors: resp.errors,
-            leverHistory: resp.lever_history
+            levers: resp.levers,
+            historyList: resp.lever_history
           }
         });
-      });
+      })
   };
 
 export const hideSuccessBanner = () =>
