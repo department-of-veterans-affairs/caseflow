@@ -104,9 +104,9 @@ describe HigherLevelReviewIntake, :all_dbs do
     subject { intake.complete!(params) }
 
     before do
-      allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
-      allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
-      allow(Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
+      allow(Caseflow::Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+      allow(Caseflow::Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+      allow(Caseflow::Fakes::VBMSService).to receive(:associate_rating_request_issues!).and_call_original
     end
 
     let(:issue_data) do
@@ -145,7 +145,7 @@ describe HigherLevelReviewIntake, :all_dbs do
       expect(ratings_end_product_establishment).to_not be_nil
       expect(ratings_end_product_establishment.established_at).to eq(Time.zone.now)
 
-      expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+      expect(Caseflow::Fakes::VBMSService).to have_received(:establish_claim!).with(
         claim_hash: hash_including(
           benefit_type_code: "1",
           payee_code: "00",
@@ -164,7 +164,7 @@ describe HigherLevelReviewIntake, :all_dbs do
         user: user
       )
 
-      expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+      expect(Caseflow::Fakes::VBMSService).to have_received(:create_contentions!).with(
         veteran_file_number: intake.detail.veteran_file_number,
         claim_id: ratings_end_product_establishment.reference_id,
         contentions: array_including(description: "decision text",
@@ -173,7 +173,7 @@ describe HigherLevelReviewIntake, :all_dbs do
         claim_date: detail.receipt_date.to_date
       )
 
-      expect(Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
+      expect(Caseflow::Fakes::VBMSService).to have_received(:associate_rating_request_issues!).with(
         claim_id: ratings_end_product_establishment.reference_id,
         rating_issue_contention_map: {
           "reference-id" => intake.detail.request_issues.first.contention_reference_id
@@ -200,7 +200,7 @@ describe HigherLevelReviewIntake, :all_dbs do
         expect(pension_rating_ep_establishment).to_not be_nil
         expect(pension_rating_ep_establishment.established_at).to eq(Time.zone.now)
 
-        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+        expect(Caseflow::Fakes::VBMSService).to have_received(:establish_claim!).with(
           hash_including(claim_hash: hash_including(end_product_code: "030HLRRPMC"))
         )
       end
@@ -271,9 +271,9 @@ describe HigherLevelReviewIntake, :all_dbs do
       it "does nothing" do
         subject
 
-        expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
-        expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
-        expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
+        expect(Caseflow::Fakes::VBMSService).to_not have_received(:establish_claim!)
+        expect(Caseflow::Fakes::VBMSService).to_not have_received(:create_contentions!)
+        expect(Caseflow::Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
       end
     end
 
@@ -283,9 +283,9 @@ describe HigherLevelReviewIntake, :all_dbs do
       it "does nothing" do
         subject
 
-        expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
-        expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
-        expect(Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
+        expect(Caseflow::Fakes::VBMSService).to_not have_received(:establish_claim!)
+        expect(Caseflow::Fakes::VBMSService).to_not have_received(:create_contentions!)
+        expect(Caseflow::Fakes::VBMSService).to_not have_received(:associate_rating_request_issues!)
       end
     end
 

@@ -94,10 +94,10 @@ describe RampRefiling, :postgres do
 
     before do
       ramp_refiling.save!
-      Fakes::VBMSService.end_product_claim_id = "1337"
+      Caseflow::Fakes::VBMSService.end_product_claim_id = "1337"
 
-      allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
-      allow(Fakes::VBMSService).to receive(:create_contentions!).and_call_original
+      allow(Caseflow::Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+      allow(Caseflow::Fakes::VBMSService).to receive(:create_contentions!).and_call_original
     end
 
     let(:receipt_date) { 1.day.ago }
@@ -111,8 +111,8 @@ describe RampRefiling, :postgres do
       it "does not try and create end product or contentions" do
         expect(subject).to be_nil
 
-        expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
-        expect(Fakes::VBMSService).to_not have_received(:create_contentions!)
+        expect(Caseflow::Fakes::VBMSService).to_not have_received(:establish_claim!)
+        expect(Caseflow::Fakes::VBMSService).to_not have_received(:create_contentions!)
       end
     end
 
@@ -136,7 +136,7 @@ describe RampRefiling, :postgres do
       end
 
       context "when an issue is not created in VBMS" do
-        # Issues with the description "FAIL ME" are configured to fail in Fakes::VBMSService
+        # Issues with the description "FAIL ME" are configured to fail in Caseflow::Fakes::VBMSService
         let!(:issue_to_fail) do
           ramp_refiling.issues.create!(description: "FAIL ME")
         end
@@ -171,9 +171,9 @@ describe RampRefiling, :postgres do
         it "creates contentions but doesn't establish the claim" do
           subject
 
-          expect(Fakes::VBMSService).to_not have_received(:establish_claim!)
+          expect(Caseflow::Fakes::VBMSService).to_not have_received(:establish_claim!)
 
-          expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+          expect(Caseflow::Fakes::VBMSService).to have_received(:create_contentions!).with(
             veteran_file_number: "64205555",
             claim_id: "testtest",
             contentions: [
@@ -191,10 +191,10 @@ describe RampRefiling, :postgres do
       it "sends requests to VBMS to create both the end_product and the uncreated issues" do
         subject
 
-        expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+        expect(Caseflow::Fakes::VBMSService).to have_received(:establish_claim!).with(
           hash_including(claim_hash: hash_including(end_product_modifier: modifier))
         )
-        expect(Fakes::VBMSService).to have_received(:create_contentions!).with(
+        expect(Caseflow::Fakes::VBMSService).to have_received(:create_contentions!).with(
           veteran_file_number: "64205555",
           claim_id: "1337",
           contentions: [

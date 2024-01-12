@@ -114,7 +114,7 @@ describe Document, :postgres do
       end
     end
 
-    context "EFolderService is Fakes::VBMSService" do
+    context "EFolderService is Caseflow::Fakes::VBMSService" do
       context "application is not reader" do
         before do
           RequestStore.store[:application] = Faker::Creature::Cat.name

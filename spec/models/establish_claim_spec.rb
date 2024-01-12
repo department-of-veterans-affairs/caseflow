@@ -149,7 +149,7 @@ describe EstablishClaim, :all_dbs do
   context "#perform!" do
     # Stub the id of the end product being created
     before do
-      Fakes::VBMSService.end_product_claim_id = "12345"
+      Caseflow::Fakes::VBMSService.end_product_claim_id = "12345"
     end
 
     let(:claim_params) do

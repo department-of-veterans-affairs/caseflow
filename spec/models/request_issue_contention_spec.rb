@@ -36,7 +36,7 @@ describe RequestIssueContention, :postgres do
   context "#update_text!" do
     subject { request_issue_contention.update_text! }
 
-    before { allow(Fakes::VBMSService).to receive(:update_contention!).and_call_original }
+    before { allow(Caseflow::Fakes::VBMSService).to receive(:update_contention!).and_call_original }
 
     let(:edited_description) { "new request issue description" }
 
@@ -46,7 +46,7 @@ describe RequestIssueContention, :postgres do
 
       expect(subject).to be true
       expect(request_issue.contention_updated_at).to be_within(1.second).of Time.zone.now
-      expect(Fakes::VBMSService).to have_received(:update_contention!).with(updated_contention)
+      expect(Caseflow::Fakes::VBMSService).to have_received(:update_contention!).with(updated_contention)
     end
 
     context "when the contention has already been updated in VBMS" do
@@ -65,7 +65,7 @@ describe RequestIssueContention, :postgres do
   end
 
   context "#remove!" do
-    before { allow(Fakes::VBMSService).to receive(:remove_contention!).and_call_original }
+    before { allow(Caseflow::Fakes::VBMSService).to receive(:remove_contention!).and_call_original }
 
     subject { request_issue_contention.remove! }
 
@@ -74,13 +74,13 @@ describe RequestIssueContention, :postgres do
 
       subject
 
-      expect(Fakes::VBMSService).to have_received(:remove_contention!).once.with(removed_contention)
+      expect(Caseflow::Fakes::VBMSService).to have_received(:remove_contention!).once.with(removed_contention)
       expect(request_issue.contention_removed_at).to be_within(1.second).of Time.zone.now
     end
 
     context "when VBMS throws an error" do
       before do
-        allow(Fakes::VBMSService).to receive(:remove_contention!).and_raise(vbms_error)
+        allow(Caseflow::Fakes::VBMSService).to receive(:remove_contention!).and_raise(vbms_error)
       end
 
       it "does not remove contentions" do

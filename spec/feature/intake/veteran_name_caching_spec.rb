@@ -6,7 +6,7 @@ feature "Higher-Level Review", :postgres do
   before do
     Timecop.freeze(post_ramp_start_date)
 
-    allow(Fakes::VBMSService).to receive(:establish_claim!).and_call_original
+    allow(Caseflow::Fakes::VBMSService).to receive(:establish_claim!).and_call_original
     allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info).and_call_original
     allow_any_instance_of(Veteran).to receive(:bgs).and_return(bgs)
     allow(bgs).to receive(:fetch_veteran_info).and_call_original
@@ -48,7 +48,7 @@ feature "Higher-Level Review", :postgres do
 
       expect(veteran.last_name).to eq("Changed")
 
-      expect(Fakes::VBMSService).to have_received(:establish_claim!).with(
+      expect(Caseflow::Fakes::VBMSService).to have_received(:establish_claim!).with(
         hash_including(veteran_hash: hash_including(last_name: "Changed"))
       )
     end
