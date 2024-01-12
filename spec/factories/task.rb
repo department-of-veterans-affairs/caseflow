@@ -448,15 +448,67 @@ FactoryBot.define do
       end
 
       factory :higher_level_review_vha_task, class: DecisionReviewTask do
-        appeal { create(:higher_level_review, :with_vha_issue, benefit_type: "vha", claimant_type: :veteran_claimant) }
+        appeal do
+          create(:higher_level_review,
+                 :with_vha_issue,
+                 :with_intake,
+                 benefit_type: "vha",
+                 claimant_type: :veteran_claimant)
+        end
         assigned_by { nil }
         assigned_to { VhaBusinessLine.singleton }
       end
 
-      factory :supplemental_claim_vha_task, class: DecisionReviewTask do
-        appeal { create(:supplemental_claim, :with_vha_issue, benefit_type: "vha", claimant_type: :veteran_claimant) }
+      factory :higher_level_review_vha_task_with_decision, class: DecisionReviewTask do
+        appeal do
+          create(:higher_level_review,
+                 :with_vha_issue,
+                 :with_intake,
+                 :with_decision,
+                 benefit_type: "vha",
+                 claimant_type: :veteran_claimant)
+        end
         assigned_by { nil }
         assigned_to { VhaBusinessLine.singleton }
+
+        after(:create) do |task|
+          task.status = "completed"
+          task.updated_at = Time.zone.now + 1.minute
+          task.save
+        end
+      end
+
+      factory :supplemental_claim_vha_task, class: DecisionReviewTask do
+        appeal do
+          create(
+            :supplemental_claim,
+            :with_vha_issue,
+            :with_intake,
+            benefit_type: "vha",
+            claimant_type: :veteran_claimant
+          )
+        end
+        assigned_by { nil }
+        assigned_to { VhaBusinessLine.singleton }
+      end
+
+      factory :supplemental_claim_vha_task_with_decision, class: DecisionReviewTask do
+        appeal do
+          create(:supplemental_claim,
+                 :with_vha_issue,
+                 :with_intake,
+                 :with_decision,
+                 benefit_type: "vha",
+                 claimant_type: :veteran_claimant)
+        end
+        assigned_by { nil }
+        assigned_to { VhaBusinessLine.singleton }
+
+        after(:create) do |task|
+          task.status = "completed"
+          task.updated_at = Time.zone.now + 1.minute
+          task.save
+        end
       end
 
       factory :distribution_task, class: DistributionTask do

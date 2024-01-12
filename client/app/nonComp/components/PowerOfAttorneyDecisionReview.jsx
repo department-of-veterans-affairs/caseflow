@@ -14,19 +14,18 @@ import { getPoAValue } from '../actions/task';
  * @returns {function} -- A function that selects the power of attorney from the Redux state.
  */
 const powerOfAttorneyFromNonCompState = () =>
-  (state) => {
-    return {
+  (state) => (
+    {
       /* eslint-disable-next-line camelcase */
-      appellantType: state.task?.appellant_type,
+      appellantType: state.nonComp.task?.appellant_type,
       /* eslint-disable-next-line camelcase */
-      powerOfAttorney: state.task?.power_of_attorney,
-      loading: state?.loadingPowerOfAttorney?.loading,
-      error: state?.loadingPowerOfAttorney?.error,
-      poaAlert: state.poaAlert,
-      taskId: state.task?.id
-    };
-  }
-  ;
+      powerOfAttorney: state.nonComp.task?.power_of_attorney,
+      loading: state.nonComp.loadingPowerOfAttorney?.loading,
+      error: state.nonComp.loadingPowerOfAttorney?.error,
+      poaAlert: state.nonComp.poaAlert,
+      taskId: state.nonComp.task?.id
+    }
+  );
 
 /**
  * Wraps a component with logic to fetch the power of attorney data from the API.
