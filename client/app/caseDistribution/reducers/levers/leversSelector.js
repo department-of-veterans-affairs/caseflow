@@ -18,7 +18,7 @@ const getLeversByGroupConstant = (state, attribute, groupName) => {
 };
 
 const getAdminStatus = (state) => {
-  return state.caseDistributionLevers.isUserAcdAdmin
+  return state.caseDistributionLevers.isUserAcdAdmin;
 };
 
 /**

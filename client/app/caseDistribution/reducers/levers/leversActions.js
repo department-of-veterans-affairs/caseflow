@@ -21,6 +21,19 @@ export const loadLevers = (levers) =>
     });
   };
 
+export const revertLevers = () => async (dispatch) => {
+  const resp = await ApiUtil.get('/case_distribution_levers/get_levers');
+  const { levers, history_list: historyList } = resp.body;
+
+  dispatch({
+    type: ACTIONS.LOAD_LEVERS,
+    payload: {
+      levers,
+      historyList,
+    },
+  });
+};
+
 export const updateRadioLever = (leverGroup, leverItem, value, optionValue = null) =>
   (dispatch) => {
     dispatch({
