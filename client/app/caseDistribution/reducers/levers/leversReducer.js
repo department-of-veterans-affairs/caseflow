@@ -10,12 +10,10 @@ import {
   formatLeverHistory
 } from '../../utils';
 
-// formattedHistory should be deleted.
 // Refactor where it is used before deletion
 export const initialState = {
   levers: {},
   backendLevers: [],
-  formattedHistory: {},
   historyList: [],
   changesOccurred: false,
   displayBanner: false,

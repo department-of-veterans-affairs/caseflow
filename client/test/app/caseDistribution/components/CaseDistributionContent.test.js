@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import CaseDistributionContent from 'app/caseDistribution/components/CaseDistributionContent';
-import { formattedHistory, formattedLevers } from 'test/data/formattedCaseDistributionData';
+import { formattedLevers } from 'test/data/formattedCaseDistributionData';
 import { createStore } from 'redux';
 import leversReducer from 'app/caseDistribution/reducers/levers/leversReducer';
 
@@ -43,7 +43,6 @@ describe('CaseDistributionContent', () => {
     let testProps = {
       levers: leversList,
       saveChanges: {},
-      formattedHistory,
       leverStore,
       isAdmin: true
     };
