@@ -142,7 +142,7 @@ Pagination.propTypes = {
   totalPages: PropTypes.number,
   totalCases: PropTypes.number,
   updatePage: PropTypes.func.isRequired,
-  table: PropTypes.instanceOf(Table)
+  table: PropTypes.oneOfType([PropTypes.instanceOf(Table), PropTypes.object])
 };
 
 export default Pagination;
