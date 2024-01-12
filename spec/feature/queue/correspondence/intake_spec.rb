@@ -129,7 +129,7 @@ RSpec.feature("The Correspondence Intake page") do
       create(
         :correspondence,
         uuid: SecureRandom.uuid,
-        va_date_of_receipt: Time.zone.local(2023, 1, 1),
+        va_date_of_receipt: Time.zone.local(2023, 1, 1)
       )
 
       @correspondence_uuid = Correspondence.first.uuid
@@ -239,7 +239,7 @@ RSpec.feature("The Correspondence Intake page") do
       create(
         :correspondence,
         uuid: SecureRandom.uuid,
-        va_date_of_receipt: Time.zone.local(2023, 1, 1),
+        va_date_of_receipt: Time.zone.local(2023, 1, 1)
       )
       @correspondence_uuid = Correspondence.first.uuid
       visit "/queue/correspondence/#{@correspondence_uuid}/intake"

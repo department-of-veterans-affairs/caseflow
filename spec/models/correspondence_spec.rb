@@ -32,7 +32,6 @@ RSpec.describe Correspondence, type: :model do
     it "Create Root Task and Review Package task for correspondence" do
       correspondence = create(:correspondence)
 
-
       ct = CorrespondenceTask.find_by(appeal_id: correspondence.id, type: "CorrespondenceTask")
       expect(ct.appeal_id).to eq(correspondence.id)
       expect(ct.status).to eq("on_hold")

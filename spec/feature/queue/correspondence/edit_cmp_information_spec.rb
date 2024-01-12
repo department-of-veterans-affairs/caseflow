@@ -16,7 +16,7 @@ RSpec.feature("The Correspondence Review Package page") do
       veteran_id: veteran.id,
       uuid: SecureRandom.uuid,
       assigned_by_id: mail_team_user.id,
-      updated_by_id: mail_team_user.id,
+      updated_by_id: mail_team_user.id
     )
   end
 
