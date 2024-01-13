@@ -35,13 +35,20 @@ const BatchSize = () => {
 
   const handleValidation = (lever, leverItem, value) => {
     const validationErrors = validateLeverInput(lever, value)
-    validationErrors.length > 0 ? dispatch(addLeverErrors(validationErrors)) : dispatch(removeLeverErrors(leverItem))
+    const errorExists = leverErrors(leverItem).length > 0
+    if(validationErrors.length > 0 && !errorExists) {
+      dispatch(addLeverErrors(validationErrors))
+    }
+
+    if (validationErrors.length === 0 && errorExists) {
+      dispatch(removeLeverErrors(leverItem))
+    }
 
   }
 
   const updateNumberFieldLever = (lever) => (event) => {
     const { lever_group, item } = lever
-    if (event !== undefined || lever.value !== event.value) { handleValidation(lever, item, event)}
+    handleValidation(lever, item, event)
     dispatch(updateNumberLever(lever_group, item, event));
   };
 
