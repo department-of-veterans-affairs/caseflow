@@ -7,7 +7,8 @@ import NumberField from 'app/components/NumberField';
 import TextField from 'app/components/TextField';
 import COPY from '../../../COPY';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
-import { getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
+import { getLeversByGroup, getLeverErrors, getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
+import { updateNumberLever, addLeverErrors, removeLeverErrors } from '../reducers/levers/leversActions';
 
 const AffinityDays = () => {
   const theState = useSelector((state) => state);
@@ -20,12 +21,25 @@ const AffinityDays = () => {
     '& .usa-input-error label': { bottom: '24px', left: '115px' }
   });
 
-  const storeLevers = useSelector((state) => state.caseDistributionLevers.levers.affinity);
+  const storeLevers = getLeversByGroup(theState, Constant.LEVERS, ACD_LEVERS.lever_groups.affinity);
   const [affinityLevers, setAffinityLevers] = useState(storeLevers);
+
+  function leverErrors(leverItem) {
+    return getLeverErrors(theState, leverItem)
+  }
 
   useEffect(() => {
     setAffinityLevers(storeLevers);
   }, [storeLevers]);
+
+  const handleValidation = (lever, value) => {
+    // warning: not tested
+    const affinityUniqueItem = `${lever.item}-${lever.value}`
+    lever.item = affinityUniqueItem
+    const validationErrors = validateLeverInput(lever, value)
+    validationErrors.length > 0 ? dispatch(addLeverErrors(validationErrors)) : dispatch(removeLeverErrors(affinityUniqueItem))
+
+  }
 
   const generateFields = (dataType, option, lever) => {
     const useAriaLabel = !lever.is_disabled_in_ui;
@@ -40,7 +54,7 @@ const AffinityDays = () => {
           isInteger
           readOnly={lever.is_disabled_in_ui ? true : (lever.value !== option.item)}
           value={option.value}
-          errorMessage={option.errorMessage}
+          errorMessage={handleValidation(lever, option.value)}
           onChange={() => console.warn('not implemented')}
           id={`${lever.item}-${option.value}`}
           inputID={`${lever.item}-${option.value}-input`}

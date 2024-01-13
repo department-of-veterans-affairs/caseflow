@@ -4,10 +4,11 @@ import { css } from 'glamor';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';
 import COPY from '../../../COPY';
-import { getLeversByGroup, getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
-import { updateNumberLever } from '../reducers/levers/leversActions';
+import { getLeversByGroup, getLeverErrors, getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
+import { updateNumberLever, addLeverErrors, removeLeverErrors } from '../reducers/levers/leversActions';
 import { Constant } from '../constants';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
+import { validateLeverInput } from '../utils';
 
 const BatchSize = () => {
   const theState = useSelector((state) => state);
@@ -20,20 +21,31 @@ const BatchSize = () => {
     '& .usa-input-error label': { bottom: '15px', left: '89px' }
   });
 
-  const errorMessages = {};
-
   const dispatch = useDispatch();
   const batchLevers = getLeversByGroup(theState, Constant.LEVERS, ACD_LEVERS.lever_groups.batch);
-  const [errorMessagesList] = useState(errorMessages);
   const [batchSizeLevers, setBatchSizeLevers] = useState(batchLevers);
+
+  function leverErrors(leverItem) {
+    return getLeverErrors(theState, leverItem)
+  }
 
   useEffect(() => {
     setBatchSizeLevers(batchLevers);
   }, [batchLevers]);
 
-  const updateNumberFieldLever = (leverType, leverItem) => (event) => {
-    dispatch(updateNumberLever(leverType, leverItem, event));
+  const handleValidation = (lever, leverItem, value) => {
+    const validationErrors = validateLeverInput(lever, value)
+    validationErrors.length > 0 ? dispatch(addLeverErrors(validationErrors)) : dispatch(removeLeverErrors(leverItem))
+
+  }
+
+  const updateNumberFieldLever = (lever) => (event) => {
+    const { lever_group, item } = lever
+    handleValidation(lever, item, event)
+    dispatch(updateNumberLever(lever_group, item, event));
   };
+
+
 
   batchLevers?.sort((leverA, leverB) => leverA.lever_group_order - leverB.lever_group_order);
 
@@ -62,8 +74,8 @@ const BatchSize = () => {
                 isInteger
                 readOnly={lever.is_disabled_in_ui}
                 value={lever.value}
-                errorMessage={errorMessagesList[lever.item]}
-                onChange={updateNumberFieldLever(ACD_LEVERS.lever_groups.batch, lever.item)}
+                errorMessage={leverErrors(lever.item)}
+                onChange={updateNumberFieldLever(lever)}
                 tabIndex={lever.is_disabled_in_ui ? -1 : null}
               /> :
               <label className={lever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}>

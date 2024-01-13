@@ -65,3 +65,19 @@ export const formatLeverHistory = (leverHistoryList) => {
 
   return formattedLeverHistory;
 };
+
+export const validateLeverInput = (lever, value) => {
+  const errors = []
+  const { item, min_value, max_value, data_type } = lever;
+    if (value === null || value === '') errors.push({leverItem: lever.item, message: ACD_LEVERS.validation_error_message.minimum_not_met })
+    if (parseFloat(value)) {
+      if (value < min_value) {
+        errors.push({leverItem: lever.item, message: ACD_LEVERS.validation_error_message.minimum_not_met })
+      }
+      if (max_value && value > max_value) {
+        errors.push({leverItem: lever.item, message: ACD_LEVERS.validation_error_message.out_of_bounds})
+      }
+    }
+
+    return errors
+}
