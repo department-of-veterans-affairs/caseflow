@@ -54,7 +54,7 @@ const DocketTimeGoals = () => {
 
   const updateNumberFieldLever = (lever) => (event) => {
     const { lever_group, item } = lever
-    handleValidation(lever, item, event)
+    if (event !== undefined || lever.value !== event.value) { handleValidation(lever, item, event)}
     dispatch(updateNumberLever(lever_group, item, event));
   };
 

@@ -7,7 +7,8 @@ import {
 } from './leversSelector';
 import {
   createUpdatedLeversWithValues,
-  formatLeverHistory
+  formatLeverHistory,
+  leverErrorMessageExists
 } from '../../utils';
 
 // formattedHistory should be deleted.
@@ -104,7 +105,7 @@ const leversReducer = (state = initialState, action = {}) => {
     case ACTIONS.ADD_LEVER_VALIDATION_ERRORS:
       return {
         ...state,
-        leversErrors: [...state.leversErrors, ...action.payload.errors]
+        leversErrors: leverErrorMessageExists(state.leversErrors, action.payload.errors) ? state.leversErrors : [...state.leversErrors, ...action.payload.errors]
       }
     case ACTIONS.REMOVE_LEVER_VALIDATION_ERRORS:
       const errorList = [...new Set(state.leversErrors.filter(error => error.leverItem !== action.payload.leverItem))]

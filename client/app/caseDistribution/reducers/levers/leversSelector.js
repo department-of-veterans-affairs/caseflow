@@ -24,6 +24,12 @@ const getAdminStatus = (state) => {
 const leverErrorList = (state, leverItem) => {
   return state.caseDistributionLevers.leversErrors?.filter(error => error.leverItem === leverItem).map(error => error.message).join('')
 }
+
+const leverErrorCount = (state, leverItem) => {
+  return state.caseDistributionLevers.leversErrors.length
+}
+
+
 /**
  * WILL NEED UPDATING WHEN RADIO AND COMBINATION LEVERS ARE EDITABLE
  */
@@ -96,6 +102,13 @@ export const getLeverErrors = createSelector(
   [leverErrorList],
     (errors) => {
     return errors
+  }
+)
+
+export const hasNoLeverErrors = createSelector(
+  [leverErrorCount],
+    (count) => {
+    return count === 0
   }
 )
 

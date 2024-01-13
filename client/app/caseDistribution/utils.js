@@ -81,3 +81,11 @@ export const validateLeverInput = (lever, value) => {
 
     return errors
 }
+
+export const leverErrorMessageExists = (existingErrors, newErrors) => {
+  return existingErrors.some(existingError =>
+    newErrors.every(newError =>
+      JSON.stringify(existingError) === JSON.stringify(newError)
+    )
+  );
+};
