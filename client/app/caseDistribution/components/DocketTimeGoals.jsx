@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
 import cx from 'classnames';
 import { updateLeverState } from '../reducers/levers/leversActions';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
@@ -12,13 +11,6 @@ import { getLeversByGroup } from '../reducers/levers/leversSelector';
 
 const DocketTimeGoals = (props) => {
   const { isAdmin } = props;
-
-  const leverNumberDiv = css({
-    '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
-    '& .cf-form-int-input .input-container': { width: 'auto', display: 'inline-block', verticalAlign: 'middle' },
-    '& .cf-form-int-input label': { position: 'absolute', bottom: '8px', left: '75px' },
-    '& .usa-input-error label': { bottom: '15px', left: '89px' }
-  });
 
   const errorMessages = {};
 
@@ -81,7 +73,7 @@ const DocketTimeGoals = (props) => {
               {index < sectionTitles.length ? sectionTitles[index] : ''}
             </strong>
           </div>
-          <div className={`lever-middle ${leverNumberDiv}
+          <div className={`lever-middle docket-time-lever-num-sec
             ${docketTimeGoalLever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}}`}>
             <NumberField
               name={docketTimeGoalLever.item}
@@ -93,7 +85,7 @@ const DocketTimeGoals = (props) => {
               onChange={updateLever(docketTimeGoalLever.item, Constant.DOCKET_TIME_GOAL)}
             />
           </div>
-          <div className={`lever-right docket-lever-right ${leverNumberDiv}`}>
+          <div className={`lever-right docket-lever-right docket-time-lever-num-sec`}>
             <ToggleSwitch
               id={`toggle-switch-${distributionPriorLever.item}`}
               selected={distributionPriorLever.is_toggle_active}
@@ -130,13 +122,13 @@ const DocketTimeGoals = (props) => {
             {index < sectionTitles.length ? sectionTitles[index] : ''}
           </strong>
         </div>
-        <div className={`'lever-middle' ${leverNumberDiv}`}>
+        <div className={`lever-middle docket-time-lever-num-sec`}>
           <span className={docketTimeGoalLever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}>
             {docketTimeGoalLever.value} {docketTimeGoalLever.unit}
           </span>
         </div>
-        <div className={`lever-right docket-lever-right ${leverNumberDiv}`}>
-          <div className={`lever-right docket-lever-right ${leverNumberDiv}`}>
+        <div className={`lever-right docket-lever-right docket-time-lever-num-sec`}>
+          <div className={`lever-right docket-lever-right docket-time-lever-num-sec`}>
             <span className={distributionPriorLever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}>
               {distributionPriorLever.is_toggle_active ? 'On' : 'Off'}
             </span>

@@ -56,7 +56,7 @@ $error-before-bg-color: #e31c3d;
 
 .active-lever {
   width: 100%;
-  padding: 15px;
+  padding: 15px 0;
   border-bottom: 1px solid $border-color;
   box-sizing: border-box;
   font-size: 19px;
@@ -89,7 +89,7 @@ $error-before-bg-color: #e31c3d;
   margin-top: 3px;
 
   input {
-    width: 65px;
+    width: 70px;
     height: 45px;
     margin-right: 10px;
     display: inline-block;
@@ -157,7 +157,7 @@ $error-before-bg-color: #e31c3d;
 
 .combined-radio-input {
   input {
-    width: 65px;
+    width: 70px;
     height: 45px;
     margin-right: 10px;
     font-size: 19px;

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import { css } from 'glamor';
 import cx from 'classnames';
 import NumberField from 'app/components/NumberField';
 import TextField from 'app/components/TextField';
@@ -14,12 +13,6 @@ import { checkIfOtherChangesExist } from '../utils';
 const AffinityDays = (props) => {
   const { leverStore, isAdmin } = props;
 
-  const leverNumberDiv = css({
-    '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
-    '& .cf-form-int-input .input-container': { width: 'auto', display: 'inline-block', verticalAlign: 'middle' },
-    '& .cf-form-int-input label': { position: 'absolute', bottom: '15px', left: '100px' },
-    '& .usa-input-error label': { bottom: '24px', left: '115px' }
-  });
   const errorMessages = {};
 
   const [errorMessagesList, setErrorMessages] = useState(errorMessages);
@@ -232,7 +225,7 @@ const AffinityDays = (props) => {
             <strong>{lever.title}</strong>
             <p>{lever.description}</p>
           </div>
-          <div className={`lever-right ${leverNumberDiv}`}>
+          <div className={`lever-right affinity-lever-num-sec`}>
             {lever.options.map((option) => (
               (isAdmin) ? renderAdminInput(option, lever, index) : generateMemberViewLabel(option, lever)
             ))}

@@ -165,7 +165,7 @@ const LeverHistory = (props) => {
   let history = formatHistoryData();
 
   return (
-    <div>
+    <div className='lever-history-styling'>
       <table>
         <tbody>
           <tr>

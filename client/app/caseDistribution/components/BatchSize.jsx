@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 // import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
-import { css } from 'glamor';
 import NumberField from 'app/components/NumberField';
 import leverInputValidation from './LeverInputValidation';
 import COPY from '../../../COPY';
@@ -11,12 +10,6 @@ import { checkIfOtherChangesExist } from '../utils';
 
 const BatchSize = (props) => {
   const { isAdmin } = props;
-  const leverNumberDiv = css({
-    '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
-    '& .cf-form-int-input .input-container': { width: 'auto', display: 'inline-block', verticalAlign: 'middle' },
-    '& .cf-form-int-input label': { position: 'absolute', bottom: '8px', left: '75px' },
-    '& .usa-input-error label': { bottom: '15px', left: '89px' }
-  });
 
   const backendLevers = useSelector((state) => state.caseDistributionLevers.backendLevers.batch);
   const storeLevers = useSelector((state) => state.caseDistributionLevers.levers.batch);
@@ -110,7 +103,7 @@ const BatchSize = (props) => {
               {lever.description}
             </p>
           </div>
-          <div className={`lever-right ${leverNumberDiv}`}>
+          <div className={`lever-right batch-lever-num-sec`}>
             {isAdmin ?
               <NumberField
                 name={lever.item}

@@ -25,3 +25,32 @@ $historytableheadercolor: #d6d7d9;
   font-size: 19px;
   line-height: 1.3em/25px;
 }
+
+#case-distribution-history {
+  .cf-lead-paragraph {
+    margin-bottom: 0;
+  }
+}
+
+.lever-history-styling {
+  padding: 0;
+  table {
+    width: 100%;
+    margin-top: 0;
+    tr {
+      border-bottom: 1px solid $historytablebordercolor;
+      th {
+        padding: 20px 0;
+      }
+      td {
+        padding: 0;
+        vertical-align: middle;
+
+        ol {
+          list-style-position: inside;
+          padding-left: 0;
+        }
+      }
+    }
+  }
+}
