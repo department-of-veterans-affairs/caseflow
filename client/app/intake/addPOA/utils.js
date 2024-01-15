@@ -74,7 +74,8 @@ export const schemaHlrOrSc = yup.object().shape({
     is: 'organization',
     then: yup.string().required(),
   }),
-  ...sharedValidation
+  listedAttorney: yup.object().required(),
+  // ...sharedValidation
 });
 
 const defaultFormValues = {

@@ -21,7 +21,6 @@ class DecisionReviewIntake < Intake
 
   def complete!(request_params)
     return if complete? || pending?
-
     req_issues = request_params[:request_issues] || []
     transaction do
       start_completion!
@@ -48,11 +47,11 @@ class DecisionReviewIntake < Intake
       participant_id: participant_id,
       payee_code: (need_payee_code? ? request_params[:payee_code] : nil)
     )
-
     if claimant&.unrecognized_claimant?
       claimant.save_unrecognized_details!(
         request_params[:unlisted_claimant],
-        request_params[:poa]
+        request_params[:poa],
+        request_params[:benefit_type]
       )
     else
       update_person!
