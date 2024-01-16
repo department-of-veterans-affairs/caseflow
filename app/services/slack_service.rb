@@ -6,7 +6,7 @@ class SlackService
                       "#appeals-job-alerts"
                     when :prodtest
                       "#appeals-prodtest-alerts"
-                    when :uat
+                    else
                       "#appeals-uat-alerts"
                     end
 
