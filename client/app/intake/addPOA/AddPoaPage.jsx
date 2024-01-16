@@ -134,7 +134,9 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
   const isHLROrSCForm = formType === FORM_TYPES.HIGHER_LEVEL_REVIEW.key ||
     formType === FORM_TYPES.SUPPLEMENTAL_CLAIM.key;
 
-  const vhaBenefitType = intakeData.benefitType === 'vha';
+  const benefitType = intakeData?.benefitType;
+
+  const vhaBenefitType = benefitType === 'vha';
 
   const asyncFn = useCallback(
     debounce((search, callback) => {
@@ -304,6 +306,7 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
             onConfirm={handleConfirm}
             claimant={claimant}
             poa={poa}
+            benefitType={benefitType}
           />
         )}
       </IntakeLayout>
