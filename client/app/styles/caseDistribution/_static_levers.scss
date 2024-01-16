@@ -1,4 +1,4 @@
-.titleStyling {
+.title-styling {
   border: none;
   padding-top: 20px;
   margin-top: 0;
@@ -9,11 +9,14 @@
   font-size: 19px;
   line-height: 1.5em/25px;
   column-span: all;
+  padding-left: 0;
+  vertical-align: middle;
 };
 
 $stylingborderbottom: #ccc;
+$border-color: #d6d7d9;
 
-.descriptionStyling {
+.description-styling {
   width: 100%;
   border: none;
   padding-top: 0;
@@ -22,9 +25,11 @@ $stylingborderbottom: #ccc;
   padding-bottom: 20px;
   vertical-align: text-top;
   border-bottom: 1px solid $stylingborderbottom;
+  padding-left: 0;
+  vertical-align: middle;
 };
 
-.valueStyling {
+.value-styling {
   width: 25%;
   border: none;
   padding-top: 0;
@@ -35,15 +40,16 @@ $stylingborderbottom: #ccc;
   padding-right: 20px;
   vertical-align: text-top;
   border-bottom: 1px solid $stylingborderbottom;
+  vertical-align: middle;
 };
 
-.valueRightStyling {
+.value-right-styling {
   margin-right: 5px;
 }
 
-$tableheaderbordercolor: #d6d7d9;
+$tableheaderbordercolor: $border-color;
 
-.tableHeaderStylingLeft {
+.table-header-styling-left {
   border-left: 0;
   border-right: 0;
   border-top: 0;
@@ -52,9 +58,10 @@ $tableheaderbordercolor: #d6d7d9;
   font-weight: 700;
   font-size: 19px;
   line-height: 1.3em/25px;
+  padding-left: 0;
 };
 
-.tableHeaderStylingRight {
+.table-header-styling-right {
   border-left: 0;
   border-right: 0;
   border-top: 0;
@@ -66,7 +73,14 @@ $tableheaderbordercolor: #d6d7d9;
   padding-left: 22%;
 }
 
-.tableStyling {
+.table-styling {
   width: 100%;
   table-layout: fixed;
+  margin-top: 10px;
+  }
+
+#inactive-data-elements {
+  .cf-lead-paragraph {
+    margin-bottom: 0;
+  }
 }

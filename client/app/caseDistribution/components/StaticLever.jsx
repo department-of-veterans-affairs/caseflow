@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import styles from 'app/styles/caseDistribution/StaticLevers.module.scss';
+import cx from 'classnames';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 
 const StaticLever = ({ lever }) => {
@@ -27,12 +27,12 @@ const StaticLever = ({ lever }) => {
   return (
     <tbody>
       <tr>
-        <td className={styles.titleStyling}>{lever.title}</td>
+        <td className='title-styling'>{lever.title}</td>
       </tr>
       <tr>
-        <td className={`cf-lead-paragraph ${styles.descriptionStyling}`}>{lever.description}</td>
-        <td className={`cf-lead-paragraph ${styles.valueStyling}`}>
-          <span className={styles.valueRightStyling}>{value} </span>
+        <td className={cx('cf-lead-paragraph', 'description-styling')}>{lever.description}</td>
+        <td className={cx('cf-lead-paragraph', 'value-styling')}>
+          <span className='value-right-styling'>{value} </span>
           <span>{unit}</span>
         </td>
       </tr>
