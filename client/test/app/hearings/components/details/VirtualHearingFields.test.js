@@ -33,7 +33,6 @@ describe('VirtualHearingFields', () => {
     // Assertions
     expect(virtualHearingForm.children()).toHaveLength(0);
     expect(virtualHearingForm).toMatchSnapshot();
-
   });
 
   test('Shows only hearing links with no virtualHearing', () => {
@@ -72,11 +71,101 @@ describe('VirtualHearingFields', () => {
       }
     );
 
+    const hearingMeetingType = amaHearing.judge.meetingType;
+
     // Assertions
     expect(virtualHearingForm.find(ContentSection)).toHaveLength(1);
     expect(virtualHearingForm.find(HearingLinks)).toHaveLength(1);
+    expect(hearingMeetingType).toBeTruthy();
+    expect(hearingMeetingType).toStrictEqual('pexip' || 'webex');
 
     expect(virtualHearingForm).toMatchSnapshot();
   });
-})
-;
+
+  test('Renders webex conference when conference provider is webex', () => {
+    const webexHearing = {
+      ...amaHearing,
+      conferenceProvider: 'webex'
+    };
+
+    // Run the test
+    const virtualHearingForm = mount(
+      <VirtualHearingFields
+        update={updateSpy}
+        hearing={webexHearing}
+        virtualHearing={{
+          ...virtualHearing.virtualHearing,
+          conferenceProvider: 'webex'
+        }}
+      />,
+
+      {
+        wrappingComponent: hearingDetailsWrapper(anyUser, webexHearing),
+        wrappingComponentProps: { store: detailsStore }
+      }
+    );
+
+    // Assertions
+    expect(virtualHearingForm.text().includes('Webex hearing')).toBeTruthy();
+
+    expect(virtualHearingForm).toMatchSnapshot();
+  });
+
+  test('Renders pexip conference when conference provider is pexip', () => {
+    const webexHearing = {
+      ...amaHearing,
+      conferenceProvider: 'pexip'
+    };
+
+    // Run the test
+    const virtualHearingForm = mount(
+      <VirtualHearingFields
+        update={updateSpy}
+        hearing={webexHearing}
+        virtualHearing={{
+          ...virtualHearing.virtualHearing,
+          conferenceProvider: 'pexip'
+        }}
+      />,
+
+      {
+        wrappingComponent: hearingDetailsWrapper(anyUser, webexHearing),
+        wrappingComponentProps: { store: detailsStore }
+      }
+    );
+
+    // Assertions
+    expect(virtualHearingForm.text().includes('Pexip hearing')).toBeTruthy();
+
+    expect(virtualHearingForm).toMatchSnapshot();
+  });
+
+  test('Renders pexip conference when conference provider is null', () => {
+    const webexHearing = {
+      ...amaHearing,
+      conferenceProvider: null
+    };
+
+    // Run the test
+    const virtualHearingForm = mount(
+      <VirtualHearingFields
+        update={updateSpy}
+        hearing={webexHearing}
+        virtualHearing={{
+          ...virtualHearing.virtualHearing,
+          conferenceProvider: null
+        }}
+      />,
+
+      {
+        wrappingComponent: hearingDetailsWrapper(anyUser, webexHearing),
+        wrappingComponentProps: { store: detailsStore }
+      }
+    );
+
+    // Assertions
+    expect(virtualHearingForm.text().includes('Pexip hearing')).toBeTruthy();
+
+    expect(virtualHearingForm).toMatchSnapshot();
+  });
+});
