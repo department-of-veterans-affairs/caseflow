@@ -66,6 +66,14 @@ module Seeds
       end
     end
 
+    def setup_specialty_case_team
+      regular_user = create(:user, full_name: "Ron SCTUser SCT", css_id: "SCTUSER")
+      admin_user = create(:user, full_name: "Adam SCTAdmin SCT", css_id: "SCTADMIN")
+      sct = SpecialtyCaseTeam.singleton
+      sct.add_user(regular_user)
+      OrganizationsUser.make_user_admin(admin_user, sct)
+    end
+
     def create_visn_org_teams!
       regular_user = create(:user, full_name: "Stacy VISNUser Smith", css_id: "VISNUSER")
       admin_user = create(:user, full_name: "Betty VISNAdmin Rose", css_id: "VISNADMIN")
