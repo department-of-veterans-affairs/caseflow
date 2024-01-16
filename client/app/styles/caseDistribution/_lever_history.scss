@@ -1,0 +1,56 @@
+$historytablebordercolor: #d6d7d9;
+
+.history-table-styling {
+  padding-top: 0;
+  padding-bottom: 0;
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-color: $historytablebordercolor;
+  vertical-align: text-top;
+  font-family: Source Sans Pro;
+  font-size: 19px;
+  width: 20%;
+}
+
+$historytableheadercolor: #d6d7d9;
+
+.lever-history-table-header-styling {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  border-color: $historytableheadercolor;
+  font-family: Source Sans Pro;
+  font-weight: 700;
+  font-size: 19px;
+  line-height: 1.3em/25px;
+}
+
+#case-distribution-history {
+  .cf-lead-paragraph {
+    margin-bottom: 0;
+  }
+}
+
+.lever-history-styling {
+  padding: 0;
+  table {
+    width: 100%;
+    margin-top: 0;
+    tr {
+      border-bottom: 1px solid $historytablebordercolor;
+      th {
+        padding: 20px 0;
+      }
+      td {
+        padding: 0;
+        vertical-align: middle;
+
+        ol {
+          list-style-position: inside;
+          padding-left: 0;
+        }
+      }
+    }
+  }
+}
