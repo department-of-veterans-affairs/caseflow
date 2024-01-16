@@ -488,8 +488,9 @@ class VACOLS::CaseDocket < VACOLS::Record
     FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
   end
 
-  def self.ineligible_judges_sattyid_cache
-    if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) && !Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:sattyid)&.reject(&:blank?).blank?
+  def self.ineligible_judges_sattyid_cache # rubocop:disable Metrics/MethodLength
+    if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) &&
+       !Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:sattyid)&.reject(&:blank?).blank?
       list = Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:sattyid)&.reject(&:blank?)
       split_lists = {}
       num_of_lists = (list.size.to_f / 999).ceil
