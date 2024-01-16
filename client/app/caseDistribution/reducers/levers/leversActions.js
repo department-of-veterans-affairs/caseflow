@@ -112,10 +112,14 @@ export const saveLevers = (levers) =>
       then((resp) => resp.body).
       then((resp) => {
         dispatch({
-          type: ACTIONS.SAVE_LEVERS,
+          type: ACTIONS.LOAD_LEVERS,
           payload: {
             levers: resp.levers,
-            successful: resp.successful,
+          }
+        });
+        dispatch({
+          type: ACTIONS.SAVE_LEVERS,
+          payload: {
             errors: resp.errors,
             leverHistory: resp.lever_history
           }

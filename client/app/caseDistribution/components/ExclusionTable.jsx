@@ -145,7 +145,7 @@ const ExclusionTable = () => {
           <tbody>
             <tr>
               <td className={cx('exclusion-table-styling', 'lever-disabled')}>
-                <h3>COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY</h3>
+                <h3>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}</h3>
               </td>
               <td className={cx('exclusion-table-styling', 'lever-disabled')}>
                 <label className={'exclusion-table-member-view-styling'}>

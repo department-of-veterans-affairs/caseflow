@@ -28,9 +28,9 @@ const DocketTimeGoals = () => {
   const currentTimeLevers = getLeversByGroup(theState, Constant.LEVERS, ACD_LEVERS.lever_groups.docket_time_goal);
   const isUserAcdAdmin = getUserIsAcdAdmin(theState);
 
-  function leverErrors(leverItem) {
-    return getLeverErrors(theState, leverItem)
-  }
+  const leverErrors = (leverItem) => {
+    return getLeverErrors(theState, leverItem);
+  };
 
   const currentDistributionPriorLevers =
     getLeversByGroup(theState, Constant.LEVERS, ACD_LEVERS.lever_groups.docket_distribution_prior);
@@ -47,21 +47,24 @@ const DocketTimeGoals = () => {
   }, [currentTimeLevers]);
 
   const handleValidation = (lever, leverItem, value) => {
-    const validationErrors = validateLeverInput(lever, value)
-    const errorExists = leverErrors(leverItem).length > 0
-    if(validationErrors.length > 0 && !errorExists) {
-      dispatch(addLeverErrors(validationErrors))
+    const validationErrors = validateLeverInput(lever, value);
+    const errorExists = leverErrors(leverItem).length > 0;
+
+    if (validationErrors.length > 0 && !errorExists) {
+      dispatch(addLeverErrors(validationErrors));
     }
 
     if (validationErrors.length === 0 && errorExists) {
-      dispatch(removeLeverErrors(leverItem))
+      dispatch(removeLeverErrors(leverItem));
     }
 
-  }
+  };
 
   const updateNumberFieldLever = (lever) => (event) => {
-    const { lever_group, item } = lever
-    handleValidation(lever, item, event)
+    // eslint-disable-next-line camelcase
+    const { lever_group, item } = lever;
+
+    handleValidation(lever, item, event);
     dispatch(updateNumberLever(lever_group, item, event));
   };
 
@@ -150,7 +153,9 @@ const DocketTimeGoals = () => {
         <div className={`${styles.leverMiddle} ${leverNumberDiv}`}
           id={`${distributionPriorLever.item}-lever-value`}
         >
-          <span className={docketTimeGoalLever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}>
+          <span className={docketTimeGoalLever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}
+            data-disabled-in-ui={docketTimeGoalLever.is_disabled_in_ui}
+          >
             {docketTimeGoalLever.value} {docketTimeGoalLever.unit}
           </span>
         </div>
@@ -158,7 +163,9 @@ const DocketTimeGoals = () => {
           id={`${distributionPriorLever.item}-lever-toggle`}
         >
           <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
-            <span className={distributionPriorLever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}>
+            <span className={distributionPriorLever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}
+              data-disabled-in-ui={distributionPriorLever.is_disabled_in_ui}
+            >
               {distributionPriorLever.is_toggle_active ? 'On' : 'Off'}
             </span>
           </div>

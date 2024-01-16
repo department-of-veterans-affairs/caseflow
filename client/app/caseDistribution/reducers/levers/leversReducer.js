@@ -82,9 +82,7 @@ const leversReducer = (state = initialState, action = {}) => {
     return {
       ...state,
       changesOccurred: false,
-      levers: createUpdatedLeversWithValues(action.payload.levers),
       historyList: formatLeverHistory(action.payload.leverHistory),
-      backendLevers: createUpdatedLeversWithValues(action.payload.levers),
       displayBanner: true,
       errors: action.payload.errors
     };
@@ -102,18 +100,19 @@ const leversReducer = (state = initialState, action = {}) => {
       errors: []
     };
 
-    case ACTIONS.ADD_LEVER_VALIDATION_ERRORS:
-      return {
-        ...state,
-        leversErrors: leverErrorMessageExists(state.leversErrors, action.payload.errors) ? state.leversErrors : [...state.leversErrors, ...action.payload.errors]
-      }
-    case ACTIONS.REMOVE_LEVER_VALIDATION_ERRORS:
-      const errorList = [...new Set(state.leversErrors.filter(error => error.leverItem !== action.payload.leverItem))]
+  case ACTIONS.ADD_LEVER_VALIDATION_ERRORS:
+    return {
+      ...state,
+      leversErrors: leverErrorMessageExists(state.leversErrors, action.payload.errors) ?
+        state.leversErrors : [...state.leversErrors, ...action.payload.errors]
+    };
+  case ACTIONS.REMOVE_LEVER_VALIDATION_ERRORS:
+    const errorList = [...new Set(state.leversErrors.filter((error) => error.leverItem !== action.payload.leverItem))];
 
-      return {
-        ...state,
-        leversErrors: errorList
-      }
+    return {
+      ...state,
+      leversErrors: errorList
+    };
 
   default:
     return state;

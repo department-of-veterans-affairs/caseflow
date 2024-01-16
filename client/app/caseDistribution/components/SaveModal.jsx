@@ -38,7 +38,7 @@ export const SaveModal = (props) => {
           <tbody>
             <tr>
               <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableLeftStyling}`}>
-                {COPY.ASE_DISTRIBUTION_LEVER_SAVE_BUTTON_DATA}
+                {COPY.CASE_DISTRIBUTION_LEVER_SAVE_BUTTON_DATA}
               </th>
               <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableRightStyling}`}>
                 {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_PREV_VALUE}
