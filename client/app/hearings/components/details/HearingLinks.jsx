@@ -97,6 +97,7 @@ export const LinkContainer = (
   </div>
 );
 
+
 LinkContainer.propTypes = {
   hearing: PropTypes.object,
   isVirtual: PropTypes.bool,
