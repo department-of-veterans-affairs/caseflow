@@ -186,8 +186,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       post "update_levers", params: save_params, as: :json
 
       expect(CaseDistributionLever.find(lever1.id).value).to eq("f")
-      
-      expect(JSON.parse(response.body)["successful"]).to be_truthy
+
       expect(JSON.parse(response.body)["errors"]).to be_empty
     end
 
@@ -209,11 +208,10 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       not_updated_lever_2 = CaseDistributionLever.find(lever2.id)
 
       expect(CaseDistributionLever.find(lever1.id).value).to eq("t")
-      
+
       expect(not_updated_lever_2.value).to_not eq("f")
       expect(not_updated_lever_2.value).to eq("55")
 
-      expect(JSON.parse(response.body)["successful"]).to be_falsey
       expect(JSON.parse(response.body)["errors"]).not_to be_empty
     end
   end

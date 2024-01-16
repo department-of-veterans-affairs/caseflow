@@ -21,6 +21,19 @@ export const loadLevers = (levers) =>
     });
   };
 
+export const revertLevers = () => async (dispatch) => {
+  const resp = await ApiUtil.get('/case_distribution_levers/get_levers');
+  const { levers, history_list: historyList } = resp.body;
+
+  dispatch({
+    type: ACTIONS.LOAD_LEVERS,
+    payload: {
+      levers,
+      historyList,
+    },
+  });
+};
+
 export const updateRadioLever = (leverGroup, leverItem, value, optionValue = null) =>
   (dispatch) => {
     dispatch({
@@ -101,6 +114,7 @@ export const saveLevers = (levers) =>
         dispatch({
           type: ACTIONS.SAVE_LEVERS,
           payload: {
+            levers: resp.levers,
             successful: resp.successful,
             errors: resp.errors,
             leverHistory: resp.lever_history
@@ -113,5 +127,25 @@ export const hideSuccessBanner = () =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.HIDE_BANNER
+    });
+  };
+
+  export const addLeverErrors = (errors) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.ADD_LEVER_VALIDATION_ERRORS,
+      payload: {
+        errors
+      }
+    });
+  };
+
+  export const removeLeverErrors = (leverItem) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.REMOVE_LEVER_VALIDATION_ERRORS,
+      payload: {
+        leverItem
+      }
     });
   };

@@ -3,13 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { css } from 'glamor';
 import cx from 'classnames';
 import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
-import { updateNumberLever } from '../reducers/levers/leversActions';
+import { updateNumberLever, addLeverErrors, removeLeverErrors } from '../reducers/levers/leversActions';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
 import COPY from '../../../COPY';
 import { Constant, sectionTitles, docketTimeGoalPriorMappings } from '../constants';
-import { getLeversByGroup, getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
+import { getLeversByGroup, getLeverErrors, getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
+import { validateLeverInput } from '../utils';
 
 const DocketTimeGoals = () => {
 
@@ -20,8 +21,6 @@ const DocketTimeGoals = () => {
     '& .usa-input-error label': { bottom: '15px', left: '89px' }
   });
 
-  const errorMessages = {};
-
   const dispatch = useDispatch();
   const theState = useSelector((state) => state);
 
@@ -29,12 +28,15 @@ const DocketTimeGoals = () => {
   const currentTimeLevers = getLeversByGroup(theState, Constant.LEVERS, ACD_LEVERS.lever_groups.docket_time_goal);
   const isUserAcdAdmin = getUserIsAcdAdmin(theState);
 
+  function leverErrors(leverItem) {
+    return getLeverErrors(theState, leverItem)
+  }
+
   const currentDistributionPriorLevers =
     getLeversByGroup(theState, Constant.LEVERS, ACD_LEVERS.lever_groups.docket_distribution_prior);
 
   const [docketDistributionLevers, setDistributionLever] = useState(currentDistributionPriorLevers);
   const [docketTimeGoalLevers, setTimeGoalLever] = useState(currentTimeLevers);
-  const [errorMessagesList] = useState(errorMessages);
 
   useEffect(() => {
     setDistributionLever(currentDistributionPriorLevers);
@@ -44,8 +46,23 @@ const DocketTimeGoals = () => {
     setTimeGoalLever(currentTimeLevers);
   }, [currentTimeLevers]);
 
-  const updateNumberFieldLever = (leverType, leverItem) => (event) => {
-    dispatch(updateNumberLever(leverType, leverItem, event));
+  const handleValidation = (lever, leverItem, value) => {
+    const validationErrors = validateLeverInput(lever, value)
+    const errorExists = leverErrors(leverItem).length > 0
+    if(validationErrors.length > 0 && !errorExists) {
+      dispatch(addLeverErrors(validationErrors))
+    }
+
+    if (validationErrors.length === 0 && errorExists) {
+      dispatch(removeLeverErrors(leverItem))
+    }
+
+  }
+
+  const updateNumberFieldLever = (lever) => (event) => {
+    const { lever_group, item } = lever
+    handleValidation(lever, item, event)
+    dispatch(updateNumberLever(lever_group, item, event));
   };
 
   const toggleLever = (index) => () => {
@@ -88,8 +105,8 @@ const DocketTimeGoals = () => {
               readOnly={docketTimeGoalLever.is_disabled_in_ui}
               value={docketTimeGoalLever.value}
               label={docketTimeGoalLever.unit}
-              errorMessage={errorMessagesList[docketTimeGoalLever.item]}
-              onChange={updateNumberFieldLever(ACD_LEVERS.lever_groups.docket_time_goal, docketTimeGoalLever.item)}
+              errorMessage={leverErrors(docketTimeGoalLever.item)}
+              onChange={updateNumberFieldLever(docketTimeGoalLever)}
             />
           </div>
           <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
@@ -109,11 +126,8 @@ const DocketTimeGoals = () => {
                 readOnly={distributionPriorLever.is_disabled_in_ui}
                 value={distributionPriorLever.value}
                 label={distributionPriorLever.unit}
-                errorMessage={errorMessagesList[distributionPriorLever.item]}
-                onChange={
-                  updateNumberFieldLever(ACD_LEVERS.lever_groups.docket_distribution_prior, true,
-                    distributionPriorLever.item)
-                }
+                errorMessage={leverErrors(distributionPriorLever.item)}
+                onChange={updateNumberFieldLever(distributionPriorLever)}
               />
             </div>
           </div>
