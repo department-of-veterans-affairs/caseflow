@@ -69,10 +69,10 @@ const AffinityDays = () => {
     return null;
   };
 
-  const generateMemberViewLabel = (option, lever) => {
+  const generateMemberViewLabel = (option, lever, index) => {
     if (lever.value === option.item) {
       return (
-        <div>
+        <div key={`${option.item}-${lever.item}-${index}`}>
           <div>
             <label className={lever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}
               htmlFor={`${lever.item}-${option.item}`}>
@@ -136,9 +136,9 @@ const AffinityDays = () => {
             <strong>{lever.title}</strong>
             <p>{lever.description}</p>
           </div>
-          <div className={`${styles.leverRight} ${leverNumberDiv}`}>
+          <div className={`${styles.leverRight} ${leverNumberDiv}`} >
             {lever.options.map((option) => (
-              (isUserAcdAdmin) ? renderAdminInput(option, lever, index) : generateMemberViewLabel(option, lever)
+              (isUserAcdAdmin) ? renderAdminInput(option, lever, index) : generateMemberViewLabel(option, lever, index)
             ))}
           </div>
         </div>
