@@ -36,7 +36,7 @@ a:focus,
 [type=radio]:focus + label::before,
 [type=checkbox]:focus + label::before {
   outline: .25rem solid $color-focus-outline;
-  outline-offset: 6px;
+  outline-offset: 3px;
 }
 
 

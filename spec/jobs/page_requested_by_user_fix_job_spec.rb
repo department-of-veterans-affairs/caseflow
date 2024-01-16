@@ -23,6 +23,8 @@ describe PageRequestedByUserFixJob, :postgres do
 
   subject { described_class.new }
 
+  it_behaves_like "a Master Scheduler serializable object", PageRequestedByUserFixJob
+
   context "Board Grant Effectuation error clear" do
     context "when the error exists on BGE"
     describe "when EPE has established_at date" do
