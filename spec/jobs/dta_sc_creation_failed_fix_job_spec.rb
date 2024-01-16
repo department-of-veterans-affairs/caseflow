@@ -64,6 +64,14 @@ describe DtaScCreationFailedFixJob, :postgres do
       end
     end
 
+    context "When the appeal is established but the claimant_type is not valid" do
+      it "does not clear the error" do
+        appeal.claimant.update(type: "InvalidType")
+        subject.perform
+        expect(appeal.reload.establishment_error).to eq(dta_error)
+      end
+    end
+
     context "When the appeal is not established" do
       it "does not clear the error" do
         appeal.update(established_at: nil)

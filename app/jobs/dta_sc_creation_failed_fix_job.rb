@@ -73,10 +73,14 @@ class DtaScCreationFailedFixJob < CaseflowJob
   def loop_through_and_process_records_for_appeals_with_errors
     appeals_with_errors.each do |appeal|
       begin
-        if valid_appeal?(appeal)
-          @stuck_job_report_service.append_single_record(appeal.class.name, appeal.id)
-          process_records(appeal)
+        next unless valid_appeal?(appeal)
+
+        if appeal.claimant.payee_code.nil?
+          update_payee_code(appeal.claimant)
         end
+
+        @stuck_job_report_service.append_single_record(appeal.class.name, appeal.id)
+        process_records(appeal)
       rescue StandardError => error
         log_error(error)
       end
@@ -85,9 +89,7 @@ class DtaScCreationFailedFixJob < CaseflowJob
 
   # :reek:FeatureEnvy
   def valid_appeal?(appeal)
-    return false unless appeal.established_at
-
-    update_payee_code(appeal.claimant) if appeal.claimant.payee_code.nil?
+    appeal.established_at.present?
   end
 
   # :reek:FeatureEnvy
