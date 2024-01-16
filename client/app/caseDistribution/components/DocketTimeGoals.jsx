@@ -28,9 +28,9 @@ const DocketTimeGoals = () => {
   const currentTimeLevers = getLeversByGroup(theState, Constant.LEVERS, ACD_LEVERS.lever_groups.docket_time_goal);
   const isUserAcdAdmin = getUserIsAcdAdmin(theState);
 
-  function leverErrors(leverItem) {
-    return getLeverErrors(theState, leverItem)
-  }
+  const leverErrors = (leverItem) => {
+    return getLeverErrors(theState, leverItem);
+  };
 
   const currentDistributionPriorLevers =
     getLeversByGroup(theState, Constant.LEVERS, ACD_LEVERS.lever_groups.docket_distribution_prior);
@@ -47,21 +47,24 @@ const DocketTimeGoals = () => {
   }, [currentTimeLevers]);
 
   const handleValidation = (lever, leverItem, value) => {
-    const validationErrors = validateLeverInput(lever, value)
-    const errorExists = leverErrors(leverItem).length > 0
-    if(validationErrors.length > 0 && !errorExists) {
-      dispatch(addLeverErrors(validationErrors))
+    const validationErrors = validateLeverInput(lever, value);
+    const errorExists = leverErrors(leverItem).length > 0;
+
+    if (validationErrors.length > 0 && !errorExists) {
+      dispatch(addLeverErrors(validationErrors));
     }
 
     if (validationErrors.length === 0 && errorExists) {
-      dispatch(removeLeverErrors(leverItem))
+      dispatch(removeLeverErrors(leverItem));
     }
 
-  }
+  };
 
   const updateNumberFieldLever = (lever) => (event) => {
-    const { lever_group, item } = lever
-    handleValidation(lever, item, event)
+    // eslint-disable-next-line camelcase
+    const { lever_group, item } = lever;
+
+    handleValidation(lever, item, event);
     dispatch(updateNumberLever(lever_group, item, event));
   };
 
