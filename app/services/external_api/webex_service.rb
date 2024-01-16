@@ -39,7 +39,7 @@ class ExternalApi::WebexService
         "exp": 0
       },
       "aud": @aud,
-      "numHost": 1,
+      "numHost": 2,
       "provideShortUrls": true,
       "verticalType": "gen"
     }
