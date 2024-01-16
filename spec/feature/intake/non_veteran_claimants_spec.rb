@@ -630,7 +630,6 @@ feature "Non-veteran claimants", :postgres do
           expect(page).to have_content("Review and confirm claimant information")
           expect(page).to have_content("#{first_name} #{last_name}")
           expect(page).to have_content("No recognized POA")
-
         end
       end
     end
