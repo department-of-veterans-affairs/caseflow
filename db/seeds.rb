@@ -69,6 +69,7 @@ class SeedDB
     call_and_log_seed_step Seeds::Correspondence
     call_and_log_seed_step Seeds::MultiCorrespondences
     call_and_log_seed_step Seeds::VbmsDocumentTypes
+    call_and_log_seed_step Seeds::CasesTiedToJudgesNoLongerWithBoard
     call_and_log_seed_step Seeds::VhaChangeHistory
     call_and_log_seed_step Seeds::AmaIntake
     # Always run this as last one
