@@ -682,6 +682,7 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_button("Continue", disabled: true)
     end
 
+    # rubocop:disable Metrics/AbcSize
     def skill_form(appeal)
       # add issues to the appeal
       appeal.request_issues << request_issue_1
@@ -702,6 +703,7 @@ feature "Appeal Edit issues", :all_dbs do
       click_button("Continue")
       expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/review_split")
     end
+    # rubocop:enable Metrics/AbcSize
 
     def wait_for_ajax
       max_time = Capybara::Helpers.monotonic_time + Capybara.default_max_wait_time
@@ -761,15 +763,12 @@ feature "Appeal Edit issues", :all_dbs do
 
     scenario "on the review_split page, testing appellant and vetera" do
       skill_form(appeal2)
+      row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
+      row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
+      expect(row2_1).to eq("Veteran")
       if expect(appeal2.veteran_is_not_claimant).to be(false)
-        row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
-        row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
-        expect(row2_1).to eq("Veteran")
         expect(row3_1).to eq("Docket Number")
       else
-        row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
-        row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
-        expect(row2_1).to eq("Veteran")
         expect(row3_1).to eq("Appellant")
       end
     end

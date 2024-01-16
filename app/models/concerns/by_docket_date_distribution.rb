@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 # rubocop:disable Metrics/ModuleLength
-
 module ByDocketDateDistribution
   extend ActiveSupport::Concern
   include CaseDistribution
@@ -117,13 +116,13 @@ module ByDocketDateDistribution
   def num_oldest_priority_appeals_for_judge_by_docket(distribution, num)
     return {} unless num > 0
 
-    dockets
-      .flat_map do |sym, docket|
+    mapped_dockets = dockets.flat_map do |sym, docket|
       docket.age_of_n_oldest_priority_appeals_available_to_judge(
         distribution.judge, num
       ).map { |age| [age, sym] }
     end
-      .sort_by { |age, _| age }
+
+    mapped_dockets.sort_by { |age, _| age }
       .first(num)
       .group_by { |_, sym| sym }
       .transform_values(&:count)
@@ -132,13 +131,13 @@ module ByDocketDateDistribution
   def num_oldest_nonpriority_appeals_for_judge_by_docket(distribution, num)
     return {} unless num > 0
 
-    dockets
-      .flat_map do |sym, docket|
+    mapped_dockets = dockets.flat_map do |sym, docket|
       docket.age_of_n_oldest_nonpriority_appeals_available_to_judge(
         distribution.judge, num
       ).map { |age| [age, sym] }
     end
-      .sort_by { |age, _| age }
+
+    mapped_dockets.sort_by { |age, _| age }
       .first(num)
       .group_by { |_, sym| sym }
       .transform_values(&:count)

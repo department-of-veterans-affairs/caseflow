@@ -13,6 +13,7 @@ class Issue
 
   # Labels are only loaded if we run the joins to ISSREF and VFTYPES (see VACOLS::CaseIssue)
   attr_writer :labels
+
   def labels
     fail Caseflow::Error::AttributeNotLoaded if @labels == :not_loaded
 
@@ -20,11 +21,13 @@ class Issue
   end
 
   attr_writer :appeal
+
   def appeal
     @appeal ||= LegacyAppeal.find_or_create_by_vacols_id(id)
   end
 
   attr_writer :cavc_decisions
+
   def cavc_decisions
     # This should probably always be preloaded to avoid each issue triggering an additional VACOLS query.
     @cavc_decisions ||= CAVCDecision.repository.cavc_decisions_by_issue(id, vacols_sequence_id)
@@ -244,6 +247,7 @@ class Issue
   end
 
   attr_writer :remand_reasons
+
   def remand_reasons
     @remand_reasons ||= self.class.remand_repository.load_remands_from_vacols(id, vacols_sequence_id)
   end
@@ -279,6 +283,7 @@ class Issue
     legacy_appeal.ssoc_dates&.any? { |ssoc_date| close_date > ssoc_date }
   end
 
+  # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def friendly_description_for_codes(code_array)
     issue_description = code_array.reduce(Constants::ISSUE_INFO) do |levels, code|
       return nil unless levels[code]
@@ -316,6 +321,7 @@ class Issue
 
     issue_description
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   class << self
     def repository

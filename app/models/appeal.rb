@@ -377,10 +377,10 @@ class Appeal < DecisionReview
     dup_remand&.save
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   # :reek:RepeatedConditionals
   # clone issues clones request_issues the user selected
   # and anydecision_issues/decision_request_issues tied to the request issue
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def clone_issues(parent_appeal, payload_params)
     # set request store to the user that split the appeal
     RequestStore[:current_user] = User.find_by_css_id payload_params[:user_css_id]
@@ -535,6 +535,7 @@ class Appeal < DecisionReview
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
 
   # clone_task is used for splitting an appeal, tie to css_id for split
+
   def clone_task(original_task, user_css_id)
     # clone the task
     dup_task = original_task.amoeba_dup

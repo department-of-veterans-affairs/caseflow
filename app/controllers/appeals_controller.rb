@@ -50,7 +50,7 @@ class AppealsController < ApplicationController
     end
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Layout/LineLength
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def fetch_notification_list
     appeals_id = params[:appeals_id]
     respond_to do |format|
@@ -65,7 +65,8 @@ class AppealsController < ApplicationController
         begin
           if !appeal.nil?
             pdf = PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal)
-            send_data pdf, filename: "Notification Report " + appeals_id + " " + date + ".pdf", type: "application/pdf", disposition: :attachment
+            pdf_file_name = "Notification Report " + appeals_id + " " + date + ".pdf"
+            send_data pdf, filename: pdf_file_name, type: "application/pdf", disposition: :attachment
           else
             fail ActionController::RoutingError, "Appeal Not Found"
           end
@@ -84,7 +85,7 @@ class AppealsController < ApplicationController
       end
     end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Layout/LineLength
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   def document_count
     doc_count = EFolderService.document_count(appeal.veteran_file_number, current_user)
@@ -565,14 +566,19 @@ class AppealsController < ApplicationController
   # Params: appeals_id (vacols_id OR uuid)
   #
   # Response: Returns an array of all retrieved notifications
-  # rubocop:disable Layout/LineLength
   def find_notifications_by_appeals_id(appeals_id)
     # Retrieve notifications based on appeals_id, excluding statuses of 'No participant_id' & 'No claimant'
     @all_notifications = Notification.where(appeals_id: appeals_id)
     @allowed_notifications = @all_notifications.where(email_notification_status: nil)
-      .or(@all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))
+      .or(@all_notifications.where.not(
+            email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]
+          ))
       .merge(@all_notifications.where(sms_notification_status: nil)
-      .or(@all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"])))
+      .or(@all_notifications.where.not(sms_notification_status: [
+                                         "No Participant Id Found",
+                                         "No Claimant Found",
+                                         "No External Id"
+                                       ])))
     # If no notifications were found, return an empty array, else return serialized notifications
     if @allowed_notifications == []
       []
@@ -580,7 +586,6 @@ class AppealsController < ApplicationController
       WorkQueue::NotificationSerializer.new(@allowed_notifications).serializable_hash[:data]
     end
   end
-  # rubocop:enable Layout/LineLength
 
   # Notification report pdf template only accepts the Appeal or Legacy Appeal object
   # Finds appeal object using appeals id passed through url params
