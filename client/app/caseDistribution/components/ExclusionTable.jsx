@@ -25,17 +25,17 @@ const ExclusionTable = () => {
   ];
 
   return (
-    <div className='exclusion-table-container-styling'>
+    <div className="exclusion-table-container-styling">
       <table >
         <thead>
           <tr>
-            <th className='table-header-styling'>{' '}</th>
-            <th className='table-header-styling'>
+            <th className="table-header-styling">{' '}</th>
+            <th className="table-header-styling">
               {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_LEGACY_APPEALS_HEADER}
             </th>
-            <th className='table-header-styling'>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_HEARINGS_HEADER}</th>
-            <th className='table-header-styling'>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_DIRECT_HEADER}</th>
-            <th className='table-header-styling'>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_EVIDENCE_HEADER}</th>
+            <th className="table-header-styling">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_HEARINGS_HEADER}</th>
+            <th className="table-header-styling">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_DIRECT_HEADER}</th>
+            <th className="table-header-styling">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_EVIDENCE_HEADER}</th>
           </tr>
         </thead>
         {isUserAcdAdmin ?
@@ -43,7 +43,7 @@ const ExclusionTable = () => {
             <tr>
               <td className={cx('exclusion-table-styling', 'lever-disabled')}>
                 <span>
-                  <h4 className='exclusion-table-header-styling'>
+                  <h4 className="exclusion-table-header-styling">
                     {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
                   </h4>
                   <ToggleSwitch
@@ -93,7 +93,7 @@ const ExclusionTable = () => {
             <tr>
               <td className={cx('exclusion-table-styling', 'lever-disabled')}>
                 <span>
-                  <h4 className='exclusion-table-header-styling'>
+                  <h4 className="exclusion-table-header-styling">
                     {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
                   </h4>
                   <ToggleSwitch
@@ -148,22 +148,22 @@ const ExclusionTable = () => {
                 <h3>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}</h3>
               </td>
               <td className={cx('exclusion-table-styling', 'lever-disabled')}>
-                <label className={'exclusion-table-member-view-styling'}>
+                <label className="exclusion-table-member-view-styling">
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label>
               </td>
               <td className={cx('exclusion-table-styling', 'lever-disabled')}>
-                <label className={'exclusion-table-member-view-styling'}>
+                <label className="exclusion-table-member-view-styling">
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label>
               </td>
               <td className={cx('exclusion-table-styling', 'lever-disabled')}>
-                <label className={'exclusion-table-member-view-styling'}>
+                <label className="exclusion-table-member-view-styling">
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label>
               </td>
               <td className={cx('exclusion-table-styling', 'lever-disabled')}>
-                <label className={'exclusion-table-member-view-styling'}>
+                <label className="exclusion-table-member-view-styling">
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label>
               </td>
@@ -173,16 +173,16 @@ const ExclusionTable = () => {
                 <h3>All Priority</h3>
               </td>
               <td className={cx('exclusion-table-styling', 'lever-disabled')}>
-                <label className={'exclusion-table-member-view-styling'}>Off</label>
+                <label className="exclusion-table-member-view-styling">Off</label>
               </td>
               <td className={cx('exclusion-table-styling', 'lever-disabled')}>
-                <label className={'exclusion-table-member-view-styling'}>Off</label>
+                <label className="exclusion-table-member-view-styling">Off</label>
               </td>
               <td className={cx('exclusion-table-styling', 'lever-disabled')}>
-                <label className={'exclusion-table-member-view-styling'}>Off</label>
+                <label className="exclusion-table-member-view-styling">Off</label>
               </td>
               <td className={cx('exclusion-table-styling', 'lever-disabled')}>
-                <label className={'exclusion-table-member-view-styling'}>Off</label>
+                <label className="exclusion-table-member-view-styling">Off</label>
               </td>
             </tr>
           </tbody> }

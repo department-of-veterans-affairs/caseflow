@@ -27,12 +27,12 @@ const StaticLever = ({ lever }) => {
   return (
     <tbody>
       <tr>
-        <td className='title-styling'>{lever.title}</td>
+        <td className="title-styling">{lever.title}</td>
       </tr>
       <tr>
         <td className={cx('cf-lead-paragraph', 'description-styling')}>{lever.description}</td>
         <td className={cx('cf-lead-paragraph', 'value-styling')}>
-          <span className='value-right-styling'>{value} </span>
+          <span className="value-right-styling">{value} </span>
           <span>{unit}</span>
         </td>
       </tr>

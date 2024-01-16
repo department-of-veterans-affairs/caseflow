@@ -16,11 +16,11 @@ const StaticLeversWrapper = (props) => {
 
   return (
 
-    <table className='table-styling'>
+    <table className="table-styling">
       <tbody>
         <tr>
-          <th className='table-header-styling-left'>{COPY.CASE_DISTRIBUTION_BATCH_SIZE_LEVER_LEFT_TITLE}</th>
-          <th className='table-header-styling-right'>{COPY.CASE_DISTRIBUTION_STATIC_LEVERS_VALUES}</th>
+          <th className="table-header-styling-left">{COPY.CASE_DISTRIBUTION_BATCH_SIZE_LEVER_LEFT_TITLE}</th>
+          <th className="table-header-styling-right">{COPY.CASE_DISTRIBUTION_STATIC_LEVERS_VALUES}</th>
         </tr>
       </tbody>
       {WrapperList}
