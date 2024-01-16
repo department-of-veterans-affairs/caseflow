@@ -19,7 +19,6 @@ module Seeds
       create_ama_appeals
     end
 
-
     def find_veteran(file_number)
       Veteran.find_by(file_number: format("%<n>09d", n: file_number + 1))
     end
@@ -102,8 +101,7 @@ module Seeds
     end
 
     def find_or_create_active_judge_with_only_sattyid(css_id, full_name)
-       User.find_by_css_id(css_id) ||
-        create(:user, :with_vacols_record, css_id: css_id, full_name: full_name)
+      User.find_by_css_id(css_id) || create(:user, :with_vacols_record, css_id: css_id, full_name: full_name)
     end
 
     def inactive_cf_user_and_inactive_admin_judge_team
@@ -134,7 +132,8 @@ module Seeds
     # Active Caseflow User who is the admin of an Inactive JudgeTeam and a non-admin of another JudgeTeam
     def active_cf_user_and_inactive_judge_team
       @active_cf_user_and_inactive_judge_team ||= begin
-        user = User.find_by_css_id("ATTYWITHTEAM") || create(:user,
+        user = User.find_by_css_id("ATTYWITHTEAM") ||
+               create(:user,
                       :judge,
                       :with_vacols_acting_judge_record,
                       css_id: "ATTYWITHTEAM",
@@ -164,7 +163,8 @@ module Seeds
     end
 
     def active_vacols_user_with_only_sattyid
-      @active_vacols_user_with_only_sattyid ||= find_or_create_active_judge_with_only_sattyid("SATTYIDUSER", "User WithOnly Sattyid")
+      @active_vacols_user_with_only_sattyid ||=
+        find_or_create_active_judge_with_only_sattyid("SATTYIDUSER", "User WithOnly Sattyid")
     end
 
     def create_legacy_appeals
@@ -206,81 +206,81 @@ module Seeds
     end
 
     def create_vacols_case_tied_to_active_vacols_user_with_only_sattyid
-        # Create the veteran for this legacy appeal
-        veteran = create_veteran_for_active_vacols_user_with_only_sattyid
+      # Create the veteran for this legacy appeal
+      veteran = create_veteran_for_active_vacols_user_with_only_sattyid
 
-        regional_office = "RO17"
-        #create legacy appeals ready to be distributed that have a hearing held by an active user with only sattyid
-        correspondent = create(:correspondent,
+      regional_office = "RO17"
+      # create legacy appeals ready to be distributed that have a hearing held by an active user with only sattyid
+      correspondent = create(:correspondent,
                              snamef: veteran.first_name, snamel: veteran.last_name,
                              ssalut: "", ssn: veteran.file_number)
 
-        vacols_case = create_video_vacols_case(veteran,
+      vacols_case = create_video_vacols_case(veteran,
                                              correspondent,
                                              active_vacols_user_with_only_sattyid)
 
-        legacy_appeal = create(
-          :legacy_appeal,
-          :with_root_task,
-          vacols_case: vacols_case,
-          closest_regional_office: regional_office
-        )
+      legacy_appeal = create(
+        :legacy_appeal,
+        :with_root_task,
+        vacols_case: vacols_case,
+        closest_regional_office: regional_office
+      )
 
-        create(:available_hearing_locations, regional_office, appeal: legacy_appeal)
+      create(:available_hearing_locations, regional_office, appeal: legacy_appeal)
 
-        vacols_case
+      vacols_case
     end
 
     def create_vacols_case_for_active_judge
-        # Create the veteran for this legacy appeal
-        veteran = create_veteran_for_active_judge
+      # Create the veteran for this legacy appeal
+      veteran = create_veteran_for_active_judge
 
-        regional_office = "RO17"
+      regional_office = "RO17"
 
-        correspondent = create(:correspondent,
+      correspondent = create(:correspondent,
                              snamef: veteran.first_name, snamel: veteran.last_name,
                              ssalut: "", ssn: veteran.file_number)
 
-        vacols_case = create_video_vacols_case(veteran,
+      vacols_case = create_video_vacols_case(veteran,
                                              correspondent,
                                              active_judge_hearing_affinity_45_days)
 
-        legacy_appeal = create(
-          :legacy_appeal,
-          :with_root_task,
-          vacols_case: vacols_case,
-          closest_regional_office: regional_office
-        )
+      legacy_appeal = create(
+        :legacy_appeal,
+        :with_root_task,
+        vacols_case: vacols_case,
+        closest_regional_office: regional_office
+      )
 
-        create(:available_hearing_locations, regional_office, appeal: legacy_appeal)
+      create(:available_hearing_locations, regional_office, appeal: legacy_appeal)
 
-        vacols_case
+      vacols_case
     end
 
     def create_vacols_case_for_inactive_judge
-        # Create the veteran for this legacy appeal
-        veteran = create_veteran_for_inactive_judge
+      # Create the veteran for this legacy appeal
+      veteran = create_veteran_for_inactive_judge
 
-        regional_office = "RO17"
-        # AC1: create legacy appeals ready to be distributed that have a hearing held by an inactive judge
-        correspondent = create(:correspondent,
+      regional_office = "RO17"
+      # AC1: create legacy appeals ready to be distributed that have a hearing held by an inactive judge
+      correspondent = create(:correspondent,
                              snamef: veteran.first_name, snamel: veteran.last_name,
                              ssalut: "", ssn: veteran.file_number)
 
-        vacols_case = create_video_vacols_case(veteran,
+      vacols_case = create_video_vacols_case(veteran,
                                              correspondent,
                                              inactive_vacols_judge)
 
-        legacy_appeal = create(
-          :legacy_appeal,
-          :with_root_task,
-          vacols_case: vacols_case,
-          closest_regional_office: regional_office
-        )
+      legacy_appeal = create(
+        :legacy_appeal,
+        :with_root_task,
+        vacols_case: vacols_case,
+        closest_regional_office: regional_office
+      )
 
-        create(:available_hearing_locations, regional_office, appeal: legacy_appeal)
+      create(:available_hearing_locations, regional_office, appeal: legacy_appeal)
 
-        vacols_case
+      vacols_case
     end
 
     def create_veteran_for_inactive_cf_user_and_inactive_admin_judge_team
@@ -359,8 +359,6 @@ module Seeds
         create_veteran_for_active_judge
       )
     end
-
-
 
     def create_ama_appeals_for_active_cf_user_and_non_admin_judge_team
       veteran = create_veteran_for_active_cf_user_and_non_admin_judge_team

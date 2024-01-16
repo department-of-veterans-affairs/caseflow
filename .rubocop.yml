@@ -31,15 +31,14 @@ Style/StringLiterals:
 
 Style/FrozenStringLiteralComment:
   Enabled: true
+  Exclude:
+    - 'client/constants/*'
 
 Style/Documentation:
   Enabled: false
 
 Style/ClassAndModuleChildren:
   Enabled: false
-
-Style/BracesAroundHashParameters:
-  EnforcedStyle: context_dependent
 
 Metrics/BlockLength:
   Enabled: false

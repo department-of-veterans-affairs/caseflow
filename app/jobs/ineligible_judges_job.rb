@@ -19,7 +19,8 @@ class IneligibleJudgesJob < CaseflowJob
 
   private
 
-  # {Grabs both vacols and caseflow ineligible judges then merges into one list with duplicates merged if they have the same CSS_ID/SDOMAINID}
+  # {Grabs both vacols and caseflow ineligible judges then merges into one list with duplicates merged
+  # if they have the same CSS_ID/SDOMAINID}
   def case_distribution_ineligible_judges
     # delete the cache key to ensure the cache will be updated when the job runs even if less than 1 week has passed
     Rails.cache.delete("case_distribution_ineligible_judges")
