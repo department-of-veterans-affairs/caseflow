@@ -293,8 +293,14 @@ run-send-notifications: ## start shoryuken with just the send_notification queue
 jest: ## Run jest tests
 	cd client && yarn jest
 
+jest-coverage: ## Run jest tests
+	cd client && yarn jest --coverage
+
 one-jest:  ## run the jest test passed in (leave off client/)
 	cd client && yarn jest $(RUN_ARGS)
+
+one-jest-coverage:  ## run the jest test passed in (leave off client/)
+	cd client && yarn jest $(RUN_ARGS) --coverage
 
 one-jest-snapshot-update: ## Updated the snapshot of a jest test passed in
 	cd client && yarn jest $(RUN_ARGS) -u

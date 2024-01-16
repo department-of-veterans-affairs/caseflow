@@ -9,6 +9,7 @@
     "analyze:build": "webpack -p --mode=production --config webpack.config.js --profile --json > ../tmp/bundle-stats.json",
     "analyze:view": "webpack-bundle-analyzer ../tmp/bundle-stats.json build",
     "test:jest": "NODE_ENV=test jest",
+    "test:jest:coverage": "NODE_ENV=test --coverage",
     "test:jest:watch": "NODE_ENV=test jest --watch",
     "test:jest:update": "NODE_ENV=test jest --updateSnapshot",
     "test:legacy:watch": "yarn run test:legacy --watch",
