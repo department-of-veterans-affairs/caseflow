@@ -103,6 +103,8 @@ RSpec.describe CaseDistributionLever, :all_dbs do
       audit1 = CaseDistributionAuditLeverEntry.where(case_distribution_lever: request_more_cases_minimum).last
       audit2 = CaseDistributionAuditLeverEntry.where(case_distribution_lever: minimum_legacy_proportion).last
 
+      expect(request_more_cases_minimum.value).to_not eq(lever1["value"])
+      expect(audit1.update_value).to_not eq(lever1["value"])
       expect(audit2.previous_value).to eq(minimum_legacy_proportion.value)
 
       expect(audit2.update_value).to eq(lever2["value"].to_s)
