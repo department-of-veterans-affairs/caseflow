@@ -79,6 +79,17 @@ const leversReducer = (state = initialState, action = {}) => {
     };
   }
 
+  case ACTIONS.SAVE_LEVERS:
+    return {
+      ...state,
+      changesOccurred: false,
+      levers: createUpdatedLeversWithValues(action.payload.levers),
+      historyList: formatLeverHistory(action.payload.leverHistory),
+      backendLevers: createUpdatedLeversWithValues(action.payload.levers),
+      displayBanner: true,
+      errors: action.payload.errors
+    };
+
   case ACTIONS.REVERT_LEVERS:
     return {
       ...state,

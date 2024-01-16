@@ -118,7 +118,6 @@ export const saveLevers = (levers) =>
             levers: resp.levers,
             successful: resp.successful,
             errors: resp.errors,
-            levers: resp.levers,
             historyList: resp.lever_history
           }
         });

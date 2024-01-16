@@ -24,7 +24,12 @@ class CaseDistributionLeversController < ApplicationController
 
     errors = CaseDistributionLever.update_acd_levers(allowed_params[:current_levers], current_user)
 
-    render json: { errors: errors, successful: errors.empty?, lever_history: lever_history, levers: CaseDistributionLever.all.group_by(&:lever_group) }
+    render json: {
+      errors: errors,
+      successful: errors.empty?,
+      lever_history: lever_history,
+      levers: grouped_levers
+    }
   end
 
   private

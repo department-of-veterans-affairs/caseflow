@@ -47,7 +47,7 @@ export const createUpdatedLeversWithValues = (levers) => {
   return leversWithValues();
 };
 
-export const formateTimestamp = (entry) => {
+export const formatTimestamp = (entry) => {
   const dateEntry = new Date(entry);
   const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
   const datePart = dateEntry.toLocaleDateString('en-US', options);
@@ -67,8 +67,8 @@ export const formatLeverHistory = (leverHistoryList) => {
 
   const formattedHistory = leverHistoryList.reduce((accumulator, entry) => {
     const existingEntry = accumulator.find(
-      (item) => formateTimestamp(item.created_at) === formateTimestamp(entry.created_at) &&
-      item.user_id === entry.user_name
+      (item) => formatTimestamp(item.created_at) === formatTimestamp(entry.created_at) &&
+      item.user_css_id === entry.user_css_id
     );
 
     if (existingEntry) {
@@ -78,8 +78,8 @@ export const formatLeverHistory = (leverHistoryList) => {
       existingEntry.units.push(entry.lever_unit || 'null');
     } else {
       const newEntry = {
-        created_at: formateTimestamp(entry.created_at),
-        user_id: entry.user_name,
+        created_at: formatTimestamp(entry.created_at),
+        user_css_id: entry.user_css_id,
         user_name: entry.user_name,
         titles: [entry.lever_title],
         previous_values: [entry.previous_value],

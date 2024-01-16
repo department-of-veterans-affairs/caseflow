@@ -1,7 +1,6 @@
 /* eslint-disable func-style */
 import React from 'react';
 import { useSelector } from 'react-redux';
-import PropTypes from 'prop-types';
 import styles from 'app/styles/caseDistribution/LeverHistory.module.scss';
 import { getLeverHistoryTable } from '../reducers/levers/leversSelector';
 import COPY from '../../../COPY';
@@ -37,7 +36,7 @@ const LeverHistory = () => {
         <tbody>{leverHistoryTable.map((entry, index) =>
           <tr key={index}>
             <td className={styles.historyTableStyling}>{entry.created_at}</td>
-            <td className={styles.historyTableStyling}>{entry.user_id}</td>
+            <td className={styles.historyTableStyling}>{entry.user_css_id}</td>
             <td className={styles.historyTableStyling}>
               <ol>
                 {entry.titles.map((title) => {
@@ -67,10 +66,6 @@ const LeverHistory = () => {
       </table>
     </div>
   );
-};
-
-LeverHistory.propTypes = {
-  leverStore: PropTypes.any,
 };
 
 export default LeverHistory;
