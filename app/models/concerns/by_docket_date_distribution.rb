@@ -106,7 +106,8 @@ module ByDocketDateDistribution
 
   def hearing_judge_id(appeal)
     if appeal[:docket] == "legacy"
-      user_id = LegacyAppeal.find_by(vacols_id: appeal[:case_id])&.hearings&.select(&:held?)&.max_by(&:scheduled_for)&.judge_id
+      user_id = LegacyAppeal.find_by(vacols_id: appeal[:case_id])
+        &.hearings&.select(&:held?)&.max_by(&:scheduled_for)&.judge_id
       VACOLS::Staff.find_by_sdomainid(User.find_by_id(user_id)&.css_id)&.sattyid
     else
       Appeal.find_by(uuid: appeal[:case_id])&.hearings&.select(&:held?)&.max_by(&:scheduled_for)&.judge_id

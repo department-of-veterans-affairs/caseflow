@@ -311,8 +311,8 @@ describe VACOLS::CaseDocket, :all_dbs do
       end
 
       it "returns the number of ready non priority hearings" do
-        allow(Rails.cache).to receive(:fetch).with('case_distribution_ineligible_judges')
-          .and_return([{ sattyid: inactive_vacols_judge.sattyid}])
+        allow(Rails.cache).to receive(:fetch).with("case_distribution_ineligible_judges")
+          .and_return([{ sattyid: inactive_vacols_judge.sattyid }])
         allow(DatabaseRequestCounter).to receive(:increment_counter).and_return(3)
 
         expect(subject).to eq 3
@@ -326,10 +326,10 @@ describe VACOLS::CaseDocket, :all_dbs do
     let(:limit) { 10 }
     let(:bust_backlog) { false }
 
-    before {
+    before do
       FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
       third_nonpriority_ready_case
-    }
+    end
 
     subject { VACOLS::CaseDocket.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog) }
 
