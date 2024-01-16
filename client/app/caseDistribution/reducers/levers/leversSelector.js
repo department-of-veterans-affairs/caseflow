@@ -25,6 +25,15 @@ const getAdminStatus = (state) => {
   return state.caseDistributionLevers.isUserAcdAdmin;
 };
 
+const leverErrorList = (state, leverItem) => {
+  return state.caseDistributionLevers.leversErrors?.filter(error => error.leverItem === leverItem).map(error => error.message).join('')
+}
+
+const leverErrorCount = (state, leverItem) => {
+  return state.caseDistributionLevers.leversErrors.length
+}
+
+
 /**
  * WILL NEED UPDATING WHEN RADIO AND COMBINATION LEVERS ARE EDITABLE
  */
@@ -99,6 +108,20 @@ export const createUpdatedRadioLever = (state, action) => {
 
   return updateLeverGroup(state, leverGroup, leverItem, updateLeverValue);
 };
+
+export const getLeverErrors = createSelector(
+  [leverErrorList],
+    (errors) => {
+    return errors
+  }
+)
+
+export const hasNoLeverErrors = createSelector(
+  [leverErrorCount],
+    (count) => {
+    return count === 0
+  }
+)
 
 /**
  * Do not trust this code. It is untested

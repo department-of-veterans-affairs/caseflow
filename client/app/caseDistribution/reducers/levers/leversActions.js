@@ -131,3 +131,23 @@ export const hideSuccessBanner = () =>
       type: ACTIONS.HIDE_BANNER
     });
   };
+
+  export const addLeverErrors = (errors) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.ADD_LEVER_VALIDATION_ERRORS,
+      payload: {
+        errors
+      }
+    });
+  };
+
+  export const removeLeverErrors = (leverItem) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.REMOVE_LEVER_VALIDATION_ERRORS,
+      payload: {
+        leverItem
+      }
+    });
+  };
