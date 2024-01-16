@@ -136,7 +136,9 @@ const DocketTimeGoals = () => {
         <div className={`${styles.leverMiddle} ${leverNumberDiv}`}
           id={`${distributionPriorLever.item}-lever-value`}
         >
-          <span className={docketTimeGoalLever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}>
+          <span className={docketTimeGoalLever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}
+            data-disabled-in-ui={docketTimeGoalLever.is_disabled_in_ui}
+          >
             {docketTimeGoalLever.value} {docketTimeGoalLever.unit}
           </span>
         </div>
@@ -144,7 +146,9 @@ const DocketTimeGoals = () => {
           id={`${distributionPriorLever.item}-lever-toggle`}
         >
           <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
-            <span className={distributionPriorLever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}>
+            <span className={distributionPriorLever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}
+              data-disabled-in-ui={distributionPriorLever.is_disabled_in_ui}
+            >
               {distributionPriorLever.is_toggle_active ? 'On' : 'Off'}
             </span>
           </div>
