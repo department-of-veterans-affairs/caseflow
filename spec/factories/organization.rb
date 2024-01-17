@@ -79,9 +79,5 @@ FactoryBot.define do
       type { "HearingsManagement" }
       name { "Hearings Management" }
     end
-
-    factory :specialty_case_team do
-      type { SpecialtyCaseTeam.name }
-    end
   end
 end
