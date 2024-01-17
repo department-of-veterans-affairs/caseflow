@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_12_14_201518) do
+ActiveRecord::Schema.define(version: 2024_01_17_195653) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1417,6 +1417,18 @@ ActiveRecord::Schema.define(version: 2023_12_14_201518) do
     t.index ["sms_notification_status"], name: "index_notifications_on_sms_notification_status"
   end
 
+  create_table "organization_permissions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "description", null: false
+    t.boolean "enabled", default: false, null: false
+    t.bigint "organization_id", null: false
+    t.bigint "parent_permission_id"
+    t.string "permission", null: false
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_organization_permissions_on_organization_id"
+    t.index ["parent_permission_id"], name: "index_organization_permissions_on_parent_permission_id"
+  end
+
   create_table "organizations", force: :cascade do |t|
     t.boolean "accepts_priority_pushed_cases", comment: "Whether a JudgeTeam currently accepts distribution of automatically pushed priority cases"
     t.boolean "ama_only_push", default: false, comment: "whether a JudgeTeam should only get AMA appeals during the PushPriorityAppealsToJudgesJob"
@@ -2254,6 +2266,11 @@ ActiveRecord::Schema.define(version: 2023_12_14_201518) do
   add_foreign_key "correspondence_intakes", "users"
   add_foreign_key "correspondence_relations", "correspondences"
   add_foreign_key "correspondence_relations", "correspondences", column: "related_correspondence_id"
+  add_foreign_key "correspondences", "correspondence_types"
+  add_foreign_key "correspondences", "package_document_types"
+  add_foreign_key "correspondences", "users", column: "assigned_by_id"
+  add_foreign_key "correspondences", "users", column: "updated_by_id"
+  add_foreign_key "correspondences", "veterans"
   add_foreign_key "correspondences_appeals", "appeals"
   add_foreign_key "correspondences_appeals", "correspondences"
   add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"
@@ -2309,6 +2326,8 @@ ActiveRecord::Schema.define(version: 2023_12_14_201518) do
   add_foreign_key "nod_date_updates", "users"
   add_foreign_key "non_availabilities", "schedule_periods"
   add_foreign_key "notifications", "notification_events", column: "event_type", primary_key: "event_type"
+  add_foreign_key "organization_permissions", "organization_permissions", column: "parent_permission_id"
+  add_foreign_key "organization_permissions", "organizations"
   add_foreign_key "organizations_users", "organizations"
   add_foreign_key "organizations_users", "users"
   add_foreign_key "post_decision_motions", "appeals"
