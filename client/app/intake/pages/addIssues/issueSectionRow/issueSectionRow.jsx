@@ -17,7 +17,6 @@ const issueSectionRow = (
     onClickIssueAction,
     sectionIssues,
     userCanWithdrawIssues,
-    userCanEditIntakeIssues,
     withdrawReview
   }) => {
   const reviewHasPredocketVhaIssues = sectionIssues.some(
@@ -41,10 +40,6 @@ const issueSectionRow = (
           onClickIssueAction={onClickIssueAction}
           userCanWithdrawIssues={userCanWithdrawIssues}
           withdrawReview={withdrawReview}
-          userCanEditIntakeIssues={userCanEditIntakeIssues &&
-              (featureToggles.mst_identification ||
-              featureToggles.pact_identification ||
-              featureToggles.legacy_mst_pact_identification)}
         />
         {showPreDocketBanner && <Alert message={COPY.VHA_PRE_DOCKET_ADD_ISSUES_NOTICE} type="info" />}
       </div>
@@ -65,5 +60,4 @@ issueSectionRow.propTypes = {
   sectionIssues: PropTypes.arrayOf(PropTypes.object),
   userCanWithdrawIssues: PropTypes.bool,
   withdrawIssue: PropTypes.func,
-  userCanEditIntakeIssues: PropTypes.bool
 };

@@ -21,13 +21,7 @@ class InitialTasksFactory
 
   STATE_CODES_REQUIRING_TRANSLATION_TASK = %w[VI VQ PR PH RP PI].freeze
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def create_root_and_sub_tasks!
-    # if changes to mst or pact, create IssueUpdateTask
-    if (@appeal.mst? && FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user])) ||
-       (@appeal.pact? && FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user]))
-      create_establishment_task
-    end
     create_vso_tracking_tasks
     ActiveRecord::Base.transaction do
       create_subtasks! if @appeal.original? || @appeal.cavc? || @appeal.appellant_substitution?
@@ -37,7 +31,6 @@ class InitialTasksFactory
     end
     maybe_create_translation_task
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   private
 
@@ -52,6 +45,7 @@ class InitialTasksFactory
   # rubocop:disable Metrics/CyclomaticComplexity
   def create_subtasks!
     distribution_task # ensure distribution_task exists
+
     if @appeal.appellant_substitution?
       create_selected_tasks
     elsif @appeal.cavc?
@@ -89,15 +83,13 @@ class InitialTasksFactory
     when "direct_review"
       parent_task = distribution_task
     end
-    unless parent_task.nil?
-      @send_initial_notification_letter ||= @appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
-                                            SendInitialNotificationLetterTask.create!(
-                                              appeal: @appeal,
-                                              parent: parent_task,
-                                              assigned_to: Organization.find_by_url("clerk-of-the-board"),
-                                              assigned_by: RequestStore[:current_user]
-                                            )
-    end
+    @send_initial_notification_letter ||= @appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
+                                          SendInitialNotificationLetterTask.create!(
+                                            appeal: @appeal,
+                                            parent: parent_task,
+                                            assigned_to: Organization.find_by_url("clerk-of-the-board"),
+                                            assigned_by: RequestStore[:current_user]
+                                          ) unless parent_task.nil?
   end
 
   def create_ihp_task
@@ -206,17 +198,5 @@ class InitialTasksFactory
     state_code = veteran_state_code
   ensure
     TranslationTask.create_from_parent(distribution_task) if STATE_CODES_REQUIRING_TRANSLATION_TASK.include?(state_code)
-  end
-
-  def create_establishment_task
-    task = EstablishmentTask.create!(
-      appeal: @appeal,
-      parent: @root_task,
-      assigned_by: RequestStore[:current_user],
-      assigned_to: SpecialIssueEditTeam.singleton,
-      completed_by: RequestStore[:current_user]
-    )
-    task.format_instructions(@appeal.request_issues)
-    task.completed!
   end
 end

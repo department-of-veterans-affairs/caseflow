@@ -73,10 +73,7 @@ class AssignHearingsContainer extends React.PureComponent {
   };
 
   render = () => {
-    const { selectedRegionalOffice,
-      mstIdentification,
-      pactIdentification,
-      legacyMstPactIdentification } = this.props;
+    const { selectedRegionalOffice } = this.props;
 
     return (
       <AppSegment filledBackground>
@@ -109,9 +106,6 @@ class AssignHearingsContainer extends React.PureComponent {
               onSelectedHearingDayChange={this.props.onSelectedHearingDayChange}
               selectedHearingDay={this.props.selectedHearingDay}
               userId={this.props.userId}
-              mstIdentification={mstIdentification}
-              pactIdentification={pactIdentification}
-              legacyMstPactIdentification={legacyMstPactIdentification}
             />
           </LoadingDataDisplay>
         }
@@ -135,10 +129,7 @@ AssignHearingsContainer.propTypes = {
   setUserCssId: PropTypes.func,
   upcomingHearingDays: PropTypes.object,
   userCssId: PropTypes.string,
-  userId: PropTypes.number,
-  mstIdentification: PropTypes.bool,
-  pactIdentification: PropTypes.bool,
-  legacyMstPactIdentification: PropTypes.bool
+  userId: PropTypes.number
 };
 
 const mapStateToProps = (state) => ({

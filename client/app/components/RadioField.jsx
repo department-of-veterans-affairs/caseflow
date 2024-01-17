@@ -68,11 +68,11 @@ export const RadioField = (props) => {
 
   const maybeAddTooltip = (option, radioField) => {
     if (option.tooltipText) {
-      const keyId = `tooltip-${option.value}`;
+      const idKey = `tooltip-${option.value}`;
 
       return <Tooltip
-        key={keyId}
-        id={keyId}
+        key={idKey}
+        id={idKey}
         text={option.tooltipText}
         position="right"
         className="cf-radio-option-tooltip"
@@ -103,13 +103,14 @@ export const RadioField = (props) => {
       <div className="cf-form-radio-options" style={optionsStyling}>
         {options.map((option, i) => {
           const optionDisabled = isDisabled(option);
+
           const radioField = (<div
             className="cf-form-radio-option"
             key={`${idPart}-${option.value}-${i}`}
           >
             <input
-              onChange={handleChange}
               name={name}
+              onChange={handleChange}
               type="radio"
               id={`${idPart}_${option.value}`}
               value={option.value}
