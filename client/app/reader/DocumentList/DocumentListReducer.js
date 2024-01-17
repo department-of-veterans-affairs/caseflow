@@ -44,14 +44,24 @@ const initialState = {
     },
     category: {},
     tag: {},
-    searchQuery: ''
+    document: {},
+    docTypeList: '',
+    searchQuery: '',
+    receiptFilterType: '',
+    receiptFilterDates: {
+      fromDate: '',
+      toDate: '',
+      onDate: ''
+    },
   },
   pdfList: {
     scrollTop: null,
     lastReadDocId: null,
     dropdowns: {
       tag: false,
-      category: false
+      category: false,
+      document: false,
+      receiptDate: false
     }
   },
   manifestVbmsFetchedAt: null
@@ -122,6 +132,7 @@ const documentListReducer = (state = initialState, action = {}) => {
         }
       }
     });
+
   case Constants.CLEAR_TAG_FILTER:
     return update(state, {
       docFilterCriteria: {
@@ -129,6 +140,19 @@ const documentListReducer = (state = initialState, action = {}) => {
           $set: {}
         }
       }
+    });
+
+    // Receipt date filter
+  case Constants.SET_RECEIPT_DATE_FILTER:
+    return update(state, {
+      docFilterCriteria: {
+        receiptFilterType: {
+          $set: action.payload.receiptFilterType
+        },
+        receiptFilterDates: {
+          $set: action.payload.receiptDatesHash
+        }
+      },
     });
     // Scrolling
   case Constants.SET_DOC_LIST_SCROLL_POSITION:
@@ -145,6 +169,38 @@ const documentListReducer = (state = initialState, action = {}) => {
         $set: action.payload.documentsOrComments
       }
     });
+
+    // Document filter
+  case Constants.SET_DOC_FILTER:
+    return update(state, {
+      docFilterCriteria: {
+        document: {
+          [action.payload.text]: {
+            $set: action.payload.checked
+          }
+        }
+      }
+    });
+
+  case Constants.CLEAR_DOC_FILTER:
+    return update(state, {
+      docFilterCriteria: {
+        document: {
+          $set: {}
+        }
+      }
+    });
+
+    // holds the unique different document types for reader.
+  case Constants.SET_DOC_TYPES:
+    return update(state, {
+      docFilterCriteria: {
+        docTypeList: {
+          $set: action.payload.docToAdd
+        }
+      }
+    });
+
   // Document header
   case Constants.SET_SEARCH:
     return update(state, {
@@ -169,6 +225,13 @@ const documentListReducer = (state = initialState, action = {}) => {
           $set: {}
         },
         tag: {
+          $set: {}
+        },
+        document: {
+          $set: {}
+        },
+        receiptFilterType: { $set: '' },
+        receiptFilterDates: {
           $set: {}
         }
       },

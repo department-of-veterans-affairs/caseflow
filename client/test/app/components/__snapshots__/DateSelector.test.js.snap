@@ -12,15 +12,19 @@ exports[`DateSelector renders correctly 1`] = `
         date1
       </span>
     </label>
-    <input
-      class="cf-form-textinput"
-      id="date1"
-      max="9999-12-31"
-      name="date1"
-      placeholder="mm/dd/yyyy"
-      type="text"
-      value=""
-    />
+    <div
+      class="input-container"
+    >
+      <input
+        class="cf-form-textinput"
+        id="date1"
+        max="9999-12-31"
+        name="date1"
+        placeholder="mm/dd/yyyy"
+        type="text"
+        value=""
+      />
+    </div>
   </div>
 </div>
 `;

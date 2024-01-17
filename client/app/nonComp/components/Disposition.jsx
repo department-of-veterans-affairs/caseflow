@@ -84,7 +84,7 @@ class NonCompDecisionIssue extends React.PureComponent {
           <TextareaField name={`description-issue-${index}`}
             label={`description-issue-${index}`}
             hideLabel
-            value={this.props.decisionDescription}
+            value={this.props.decisionDescription || ''}
             disabled={disabled}
             onChange={this.handleDescriptionChange} />
         </div>
@@ -100,7 +100,7 @@ class NonCompDispositions extends React.PureComponent {
 
     this.state = {
       requestIssues: formatRequestIssuesWithDecisionIssues(
-        this.props.task.appeal.activeRequestIssues, this.props.appeal.decisionIssues),
+        this.props.task.appeal.activeOrDecidedRequestIssues, this.props.appeal.decisionIssues),
       decisionDate: '',
       isFilledOut: false
     };
@@ -266,8 +266,8 @@ NonCompDispositions.propTypes = {
 
 export default connect(
   (state) => ({
-    appeal: state.appeal,
-    task: state.task,
-    decisionIssuesStatus: state.decisionIssuesStatus
+    appeal: state.nonComp.appeal,
+    task: state.nonComp.task,
+    decisionIssuesStatus: state.nonComp.decisionIssuesStatus
   })
 )(NonCompDispositions);

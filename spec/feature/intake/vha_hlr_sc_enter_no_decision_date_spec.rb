@@ -67,11 +67,16 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       expect(page).to have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
 
       expect(page).to have_button("Save", disabled: true)
+      request_issue = RequestIssue.last
 
-      issue_id = RequestIssue.last.id
+      issue_id = request_issue.id
+
+      expect(request_issue.decision_date).to be_nil
+      expect(request_issue.decision_date_added_at).to be_nil
 
       # Click the first issue actions button and select Add a decision date
       within "#issue-#{issue_id}" do
+        expect("issue-action-0").to_not have_content("Withdraw Issue")
         first("select").select("Add decision date")
       end
 
@@ -174,6 +179,8 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       # Edit the decision date for added issue
       # this is issue-undefined because the issue has not yet been created and does not have an id
       within "#issue-undefined" do
+        # newly made issue should not have withdraw issue as its not yet saved into the database
+        expect("issue-action-1").to_not have_content("Withdraw Issue")
         select("Add decision date", from: "issue-action-1")
       end
 
@@ -391,6 +398,42 @@ feature "Vha Higher-Level Review and Supplemental Claims Enter No Decision Date"
       end
 
       it_behaves_like "Vha HLR/SC adding issue without decision date to existing claim review"
+    end
+  end
+
+  context "adding an unidentified issue without a decision date" do
+    let(:intake_type) do
+      start_higher_level_review(veteran, benefit_type: "vha")
+    end
+
+    it "should not show no decision date banner or edit decision date issue option" do
+      intake_type
+      visit "/intake"
+      click_intake_continue
+      click_intake_add_issue
+      click_intake_no_matching_issues
+
+      fill_in "Transcribe the issue as it's written on the form", with: "unidentified issue"
+      click_on("Add this issue", class: "add-issue")
+
+      expect(page).to_not have_content(COPY::VHA_NO_DECISION_DATE_BANNER)
+      click_intake_finish
+
+      expect(page).to have_content("Veterans Health Administration")
+      click_on veteran.name.to_s
+
+      # Grab the new HLR and visit the edit page
+      hlr = Intake.last.detail
+      issue_id = hlr.request_issues.first.id
+
+      expect(page).to have_content("Edit Issues")
+
+      within "#issue-#{issue_id}" do
+        expect(page).to have_no_selector("select option", text: "Add decision date")
+      end
+
+      expect(hlr.request_issues.last.decision_date).to be_nil
+      expect(hlr.request_issues.last.decision_date_added_at).to be_nil
     end
   end
 end

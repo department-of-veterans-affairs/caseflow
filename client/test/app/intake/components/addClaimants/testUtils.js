@@ -24,14 +24,21 @@ const street1 = '1000 Monticello';
 const city = 'Washington';
 const zip = '20000';
 const country = 'USA';
+const ein = '123456789'
 
-export const fillForm = async () => {
+export const fillForm = async (isHLROrSCForm = false) => {
   //   Enter organization
   await userEvent.type(
     screen.getByRole('textbox', { name: /Organization name/i }),
     organization
   );
 
+  if (isHLROrSCForm) {
+    await userEvent.type(
+      screen.getByRole('textbox', { name: /employer identification number/i }),
+      ein
+    );
+  }
   //   Enter  Street1
   await userEvent.type(
     screen.getByRole('textbox', { name: /Street address 1/i }),

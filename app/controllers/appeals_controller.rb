@@ -344,4 +344,3 @@ class AppealsController < ApplicationController
     end
   end
 end
-

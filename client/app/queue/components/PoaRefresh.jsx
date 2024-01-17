@@ -9,22 +9,23 @@ import { useSelector } from 'react-redux';
 import { boldText } from '../constants';
 
 import { PoaRefreshButton } from './PoaRefreshButton';
+import { selectIsVhaBusinessLine, selectPoaRefreshButton } from '../../nonComp/selectors/nonCompSelectors';
 
-export const textStyling = css({
+const textStyling = css({
   display: 'flex',
   justifyContent: 'space-between'
 });
 
-export const syncStyling = css({
+const syncStyling = css({
   textAlign: 'right',
   width: '33%'
 });
 
-export const gutterStyling = css({
+const gutterStyling = css({
   width: '5%'
 });
 
-export const marginTopStyling = css({
+const marginTopStyling = css({
   marginTop: '-45px'
 });
 
@@ -32,17 +33,16 @@ export const PoaRefresh = ({ powerOfAttorney, appealId }) => {
   const poaSyncInfo = {
     poaSyncDate: formatDateStr(powerOfAttorney.poa_last_synced_at) || formatDateStr(new Date())
   };
-
   const lastSyncedCopy = sprintf(COPY.CASE_DETAILS_POA_LAST_SYNC_DATE_COPY, poaSyncInfo);
-  const viewPoaRefresh = useSelector((state) => state.ui.featureToggles.poa_button_refresh);
-  const businessLineUrl = useSelector((state) => state.businessLineUrl);
+  const viewPoaRefresh = useSelector(selectPoaRefreshButton);
+  const isVha = useSelector(selectIsVhaBusinessLine);
 
   return <React.Fragment>
     {viewPoaRefresh &&
     <div {...textStyling}>
       <em>{ COPY.CASE_DETAILS_POA_REFRESH_BUTTON_EXPLANATION }</em>
       <div {...gutterStyling}></div>
-      <div {...boldText}{...syncStyling}{...(businessLineUrl === 'vha' ? marginTopStyling : { })}>
+      <div {...boldText}{...syncStyling}{...(isVha ? marginTopStyling : { })}>
         {poaSyncInfo.poaSyncDate &&
           <em>{lastSyncedCopy}</em>
         }
@@ -57,5 +57,8 @@ PoaRefresh.propTypes = {
   powerOfAttorney: PropTypes.shape({
     poa_last_synced_at: PropTypes.string
   }),
-  appealId: PropTypes.string
+  appealId: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.string
+  ])
 };

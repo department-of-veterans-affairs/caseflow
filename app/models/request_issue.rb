@@ -11,6 +11,7 @@ class RequestIssue < CaseflowRecord
   include HasBusinessLine
   include DecisionSyncable
   include HasDecisionReviewUpdatedSince
+  include SyncLock
 
   # how many days before we give up trying to sync decisions
   REQUIRES_PROCESSING_WINDOW_DAYS = 30
@@ -68,6 +69,7 @@ class RequestIssue < CaseflowRecord
   before_save :set_contested_rating_issue_profile_date
   before_save :close_if_ineligible!
 
+  after_create :set_decision_date_added_at, if: :decision_date_exists?
   # amoeba gem for splitting appeal request issues
   amoeba do
     enable
@@ -156,6 +158,10 @@ class RequestIssue < CaseflowRecord
 
     def active_or_ineligible_or_withdrawn
       active_or_ineligible.or(withdrawn)
+    end
+
+    def active_or_decided
+      active.or(decided).order(id: :asc)
     end
 
     def active_or_decided_or_withdrawn
@@ -438,13 +444,21 @@ class RequestIssue < CaseflowRecord
     # to avoid a slow BGS call causing the transaction to timeout
     end_product_establishment.veteran
 
-    transaction do
-      return unless create_decision_issues
+    ### hlr_sync_lock will stop any other request issues associated with the current End Product Establishment
+    ### from syncing with BGS concurrently if the claim is a Higher Level Review. This will ensure that
+    ### the remand supplemental claim generation that occurs within '#on_decision_issue_sync_processed' will
+    ### not be inadvertantly bypassed due to two request issues from the same claim being synced at the same
+    ### time. If this situation does occur, one of the request issues will error out with
+    ### Caseflow::Error:SyncLockFailed and be picked up to sync again later
+    hlr_sync_lock do
+      transaction do
+        return unless create_decision_issues
 
-      end_product_establishment.on_decision_issue_sync_processed(self)
-      clear_error!
-      close_decided_issue!
-      processed!
+        end_product_establishment.on_decision_issue_sync_processed(self)
+        clear_error!
+        close_decided_issue!
+        processed!
+      end
     end
   end
 
@@ -503,7 +517,7 @@ class RequestIssue < CaseflowRecord
   def save_decision_date!(new_decision_date)
     fail DecisionDateInFutureError, id if new_decision_date.to_date > Time.zone.today
 
-    update!(decision_date: new_decision_date)
+    update!(decision_date: new_decision_date, decision_date_added_at: Time.zone.now)
 
     # Special handling for claim reviews that contain issues without a decision date
     decision_review.try(:handle_issues_with_no_decision_date!)
@@ -1008,6 +1022,15 @@ class RequestIssue < CaseflowRecord
 
   def appeal_active?
     decision_review.tasks.open.any?
+  end
+
+  def decision_date_exists?
+    decision_date.present?
+  end
+
+  def set_decision_date_added_at
+    self.decision_date_added_at = created_at
+    save!
   end
 end
 # rubocop:enable Metrics/ClassLength

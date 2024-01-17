@@ -7,24 +7,27 @@ import SmallLoader from '../../components/SmallLoader';
 import { setPoaRefreshAlert } from '../uiReducer/uiActions';
 import { setPoaRefreshAlertDecisionReview } from '../../nonComp/actions/task';
 import { css } from 'glamor';
+import { selectBaseTasksUrl,
+  selectIsVhaBusinessLine,
+  selectPoaRefreshButton } from '../../nonComp/selectors/nonCompSelectors';
 
-export const spacingStyling = css({
+const spacingStyling = css({
   marginTop: '8px'
 });
 
 export const PoaRefreshButton = ({ appealId }) => {
   const dispatch = useDispatch();
   const [buttonText, setButtonText] = useState('Refresh POA');
-  const viewPoaRefreshButton = useSelector((state) => state.ui.featureToggles.poa_button_refresh);
-  let baseTasksUrl = useSelector((state) => state.baseTasksUrl);
-  const businessLineUrl = useSelector((state) => state.businessLineUrl);
+  const viewPoaRefreshButton = useSelector(selectPoaRefreshButton);
+  let baseTasksUrl = useSelector(selectBaseTasksUrl);
+  const isVhaBusinessLine = useSelector(selectIsVhaBusinessLine);
 
-  baseTasksUrl = businessLineUrl === 'vha' ? `${baseTasksUrl}/tasks` : '/appeals';
+  baseTasksUrl = isVhaBusinessLine ? `${baseTasksUrl}/tasks` : '/appeals';
 
   const patchUrl = `${baseTasksUrl}/${appealId}/update_power_of_attorney`;
 
   const callDispatch = (data) => {
-    if (businessLineUrl === 'vha') {
+    if (isVhaBusinessLine) {
       dispatch(
         setPoaRefreshAlertDecisionReview(data.body.alert_type, data.body.message, data.body.power_of_attorney)
       );
@@ -59,5 +62,8 @@ export const PoaRefreshButton = ({ appealId }) => {
 };
 
 PoaRefreshButton.propTypes = {
-  appealId: PropTypes.string
+  appealId: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.string
+  ])
 };
