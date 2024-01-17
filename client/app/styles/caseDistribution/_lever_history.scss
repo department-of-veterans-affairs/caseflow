@@ -26,7 +26,7 @@ $historytableheadercolor: #d6d7d9;
   line-height: 1.3em/25px;
 }
 
-#case-distribution-history {
+.case-distribution-history-content {
   .cf-lead-paragraph {
     margin-bottom: 0;
   }
@@ -34,14 +34,18 @@ $historytableheadercolor: #d6d7d9;
 
 .lever-history-styling {
   padding: 0;
+
   table {
     width: 100%;
     margin-top: 0;
+
     tr {
       border-bottom: 1px solid $historytablebordercolor;
+
       th {
         padding: 20px 0;
       }
+
       td {
         padding: 0;
         vertical-align: middle;

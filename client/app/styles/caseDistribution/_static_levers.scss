@@ -3,11 +3,8 @@
   padding-top: 20px;
   margin-top: 0;
   padding-bottom: 0;
-  vertical-align: text-top;
-  font-family: Source Sans Pro;
   font-weight: bold;
   font-size: 19px;
-  line-height: 1.5em/25px;
   column-span: all;
   padding-left: 0;
   vertical-align: middle;
@@ -23,7 +20,6 @@ $border-color: #d6d7d9;
   margin-top: 0;
   padding-right: 20px;
   padding-bottom: 20px;
-  vertical-align: text-top;
   border-bottom: 1px solid $stylingborderbottom;
   padding-left: 0;
   vertical-align: middle;
@@ -38,7 +34,6 @@ $border-color: #d6d7d9;
   white-space: noWrap;
   padding-bottom: 20px;
   padding-right: 20px;
-  vertical-align: text-top;
   border-bottom: 1px solid $stylingborderbottom;
   vertical-align: middle;
 };
@@ -79,7 +74,7 @@ $tableheaderbordercolor: $border-color;
   margin-top: 10px;
   }
 
-#inactive-data-elements {
+.inactive-data-content {
   .cf-lead-paragraph {
     margin-bottom: 0;
   }

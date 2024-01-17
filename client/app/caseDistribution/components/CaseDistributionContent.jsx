@@ -23,7 +23,7 @@ const CaseDistributionContent = ({
         <h2>{COPY.CASE_DISTRIBUTION_TITLE}</h2>
         <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_ALGORITHM_DESCRIPTION}</p>
 
-        <div id="active-data-elements">  {/* Container for Active Levers*/}
+        <div className="active-data-content" id="active-data-elements">  {/* Container for Active Levers*/}
           <h2 {...sectionHeadingStyling}>
             <span id="our-elemnt" {...anchorJumpLinkStyling}>{COPY.CASE_DISTRIBUTION_ACTIVE_LEVERS_TITLE}</span>
           </h2>
@@ -37,7 +37,7 @@ const CaseDistributionContent = ({
           </div>
         </div>
 
-        <div id="inactive-data-elements">  {/* Container for Static Levers*/}
+        <div className="inactive-data-content" id="inactive-data-elements">  {/* Container for Static Levers*/}
           <h2 {...sectionHeadingStyling}>
             <span id="our-elemnt" {...anchorJumpLinkStyling}>{COPY.CASE_DISTRIBUTION_STATIC_LEVERS_TITLE}</span>
           </h2>
@@ -47,7 +47,8 @@ const CaseDistributionContent = ({
           </div>
         </div>
 
-        <div id="case-distribution-history">  {/* Container for Active Levers*/}
+        {/* Container for Active Levers*/}
+        <div className="case-distribution-history-content" id="case-distribution-history">
           <h2 {...sectionHeadingStyling}>
             <span id="our-elemnt" {...anchorJumpLinkStyling}>
               {COPY.CASE_DISTRIBUTION_HISTORY_TITLE}

@@ -3,18 +3,18 @@
     width: auto;
     display: inline-block;
     position: relative;
-  }
 
-  .cf-form-int-input .input-container {
-    width: auto;
-    display: inline-block;
-    vertical-align: middle;
-  }
+    .input-container {
+      width: auto;
+      display: inline-block;
+      vertical-align: middle;
+    }
 
-  .cf-form-int-input label {
-    position: absolute;
-    bottom: 8px;
-    left: 75px;
+    label {
+      position: absolute;
+      bottom: 8px;
+      left: 75px;
+    }
   }
 
   .usa-input-error label {
