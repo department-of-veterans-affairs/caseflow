@@ -252,6 +252,8 @@ class QueueApp extends React.PureComponent {
         prevStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
         justificationFeatureToggle={this.props.featureToggles.justification_reason}
         legacyMstPactFeatureToggle={this.props.featureToggles.legacy_mst_pact_identification}
+        mstFeatureToggle={this.props.featureToggles.mst_identification}
+        pactFeatureToggle={this.props.featureToggles.pact_identification}
         {...props.match.params}
       />
     );
