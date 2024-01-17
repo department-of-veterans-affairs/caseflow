@@ -296,22 +296,22 @@ class NonratingRequestIssueModal extends React.Component {
     );
   }
 
-  getSpecialIssues() {
+  getSpecialIssues(mstIdentification, pactIdentification) {
     return (
       <div className="special-issues-selection">
         <label><b>Select any special issues that apply</b></label>
-        <Checkbox
+        {mstIdentification && <Checkbox
           name="mst-checkbox"
           label="Military Sexual Trauma (MST)"
           value={this.mstChecked}
           onChange={this.isMstChecked}
-        />
-        <Checkbox
+        />}
+        {pactIdentification && <Checkbox
           name="pact-checkbox"
           label="PACT Act"
           value={this.pactChecked}
           onChange={this.isPactChecked}
-        />
+        />}
       </div>
     );
   }
@@ -350,7 +350,7 @@ class NonratingRequestIssueModal extends React.Component {
 
     const getSpecialIssues =
       ((mstIdentification || pactIdentification) && this.props.userCanEditIntakeIssues) ?
-        this.getSpecialIssues() : null;
+        this.getSpecialIssues(mstIdentification, pactIdentification) : null;
 
     return (
       <div className="intake-add-issues">
