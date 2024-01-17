@@ -28,11 +28,11 @@ class CreateTranscriptionTransactions < ActiveRecord::Migration[5.2]
     add_index :transcription_transactions,
               [:appeal_id, :appeal_type, :docket_number, :file_status, :aws_link_mp4, :aws_link_mp3, :aws_link_vtt, :aws_link_rtf],
               unique: true,
-              name: "idx_transcript_transactions_on_appeal_and_file_status_and_links"
+              name: "idx_transcription_transacts_on_appeal_and_file_and_aws_links"
     add_index :transcription_transactions,
               [:appeal_id, :appeal_type, :docket_number],
               unique: true,
-              name: "idx_transcription_transactions_on_appeal_and_docket_number"
+              name: "idx_transcription_transacts_on_appeal_id_appeal_type_and_docket"
     add_index :transcription_transactions, [:appeal_id, :appeal_type], unique: true
     add_index :transcription_transactions, [:docket_number], unique: true
     add_index :transcription_transactions, [:file_status], unique: true
