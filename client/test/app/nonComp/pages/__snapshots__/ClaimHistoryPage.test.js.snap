@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`] = `
+<div>
+  <a
+    href="/decision_reviews/vha/tasks/10467"
+  >
+    <b>
+      &lt; Back to Decision Review
+    </b>
+  </a>
+  <div>
+    <section
+      class="cf-app-segment cf-app-segment--alt"
+    >
+      <div>
+        <h1>
+          Bob Smithgreen
+        </h1>
+      </div>
+    </section>
+  </div>
+</div>
+`;

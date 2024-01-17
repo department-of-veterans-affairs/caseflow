@@ -50,6 +50,18 @@ class DecisionReviewsController < ApplicationController
     end
   end
 
+  def history
+    return requires_admin_access_redirect unless business_line == VhaBusinessLine.singleton &&
+                                                 business_line.user_is_admin?(current_user)
+
+    # just do show for now to get some basic task info. will be filled out with task history stuff in later stories
+    if task
+      render "show"
+    else
+      render json: { error: "Task #{task_id} not found" }, status: :not_found
+    end
+  end
+
   def update
     if task
       if task.complete_with_payload!(decision_issue_params, decision_date, current_user)
