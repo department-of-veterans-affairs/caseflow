@@ -8,7 +8,7 @@ import { sample1 } from './testData';
 describe('AddIssuesModal', () => {
   const formType = 'higher_level_review';
   const intakeData = sample1.intakeData;
-  const featureToggles = {mst_identification: true}
+  const featureToggles = { mst_identification: true };
 
   describe('renders', () => {
     it('renders button text', () => {
