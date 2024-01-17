@@ -26,7 +26,7 @@ module Seeds
       setup_camo_org
       setup_caregiver_org
       setup_program_offices!
-      setup_specialty_case_team
+      setup_specialty_case_team!
       create_visn_org_teams!
       create_vha_camo
       create_vha_caregiver
@@ -67,7 +67,7 @@ module Seeds
       end
     end
 
-    def setup_specialty_case_team
+    def setup_specialty_case_team!
       regular_user = create(:user, full_name: "Ron SCTUser SCT", css_id: "SCTUSER")
       admin_user = create(:user, full_name: "Adam SCTAdmin SCT", css_id: "SCTADMIN")
       sct = SpecialtyCaseTeam.singleton
