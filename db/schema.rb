@@ -1419,11 +1419,11 @@ ActiveRecord::Schema.define(version: 2024_01_17_195653) do
 
   create_table "organization_permissions", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.string "description", null: false
-    t.boolean "enabled", default: false, null: false
-    t.bigint "organization_id", null: false
-    t.bigint "parent_permission_id"
-    t.string "permission", null: false
+    t.string "description", null: false, comment: "UX display value"
+    t.boolean "enabled", default: false, null: false, comment: "Whether permission is enabled or disabled"
+    t.bigint "organization_id", null: false, comment: "Foreign key to organizations table"
+    t.bigint "parent_permission_id", comment: "Foreign key to self"
+    t.string "permission", null: false, comment: "Developer friendly value"
     t.datetime "updated_at", null: false
     t.index ["organization_id"], name: "index_organization_permissions_on_organization_id"
     t.index ["parent_permission_id"], name: "index_organization_permissions_on_parent_permission_id"
