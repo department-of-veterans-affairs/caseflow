@@ -27,6 +27,7 @@ class CorrespondenceTable extends React.Component {
         align: 'left',
         valueName: 'packageDocumentType',
         enableFilter: true,
+        label: 'package-document-type-filter',
         getSortValue: (row) => row.packageDocumentType,
         backendCanSort: true
       },
