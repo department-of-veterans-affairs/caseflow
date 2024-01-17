@@ -13,7 +13,7 @@ import {
   ADD_CLAIMANT_CONFIRM_MODAL_DESCRIPTION,
   ADD_CLAIMANT_CONFIRM_MODAL_NO_POA,
   ADD_CLAIMANT_CONFIRM_MODAL_LAST_NAME_ALERT,
-  VHA_RECOGNIZED_POA
+  VHA_NO_RECOGNIZED_POA
 } from 'app/../COPY';
 import { claimantPropTypes, poaPropTypes } from './utils';
 import { AddressBlock } from './AddressBlock';
@@ -73,7 +73,7 @@ export const AddClaimantConfirmationModal = ({
   const claimantEntity = useMemo(() => shapeAddressBlock(claimant), [claimant]);
   const poaEntity = useMemo(() => shapeAddressBlock(poa), [poa]);
 
-  const displayUnrecognizedBanner = poaEntity?.listedAttorney?.value === 'not_listed' && (benefitType === 'vha');
+  const shouldDisplayUnrecognizedBanner = poaEntity?.listedAttorney?.value === 'not_listed' && (benefitType === 'vha');
 
   const missingLastName = useMemo(
     () => {
@@ -114,9 +114,9 @@ export const AddClaimantConfirmationModal = ({
         <div className={classes.addressHeader}>
           <strong>Claimant's POA</strong>
         </div>
-        {displayUnrecognizedBanner ? <div>{VHA_RECOGNIZED_POA} </div> : null }
+        {shouldDisplayUnrecognizedBanner ? <div>{VHA_NO_RECOGNIZED_POA} </div> : null }
         {!showPoa && <div>{ADD_CLAIMANT_CONFIRM_MODAL_NO_POA}</div>}
-        {(showPoa && !displayUnrecognizedBanner) ? <AddressBlock entity={poaEntity} /> : null }
+        {(showPoa && !shouldDisplayUnrecognizedBanner) ? <AddressBlock entity={poaEntity} /> : null }
       </section>
     </Modal>
   );

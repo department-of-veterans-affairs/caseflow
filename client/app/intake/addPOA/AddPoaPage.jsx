@@ -84,8 +84,9 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
       return <Redirect to={PAGE_PATHS.ADD_CLAIMANT} />;
     }
   }
+  const benefitType = intakeData?.benefitType;
 
-  const methods = useAddPoaForm({ defaultValues: poa, selectedForm });
+  const methods = useAddPoaForm({ defaultValues: poa, selectedForm, benType: benefitType });
   const {
     control,
     register,
@@ -134,9 +135,7 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
   const isHLROrSCForm = formType === FORM_TYPES.HIGHER_LEVEL_REVIEW.key ||
     formType === FORM_TYPES.SUPPLEMENTAL_CLAIM.key;
 
-  const benefitType = intakeData?.benefitType;
-
-  const vhaBenefitType = benefitType === 'vha';
+  const isVhaBenefitType = benefitType === 'vha';
 
   const asyncFn = useCallback(
     debounce((search, callback) => {
@@ -202,7 +201,7 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
             </div>
           )}
 
-          {showPartyType && !vhaBenefitType && (
+          {(showPartyType && !isVhaBenefitType) ? (
             <RadioField
               name="partyType"
               label="Is the representative an organization or individual?"
@@ -211,16 +210,16 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
               vertical
               options={partyTypeOpts}
             />
-          )}
+          ) : null}
 
-          {showPartyType && vhaBenefitType && (
+          {(showPartyType && isVhaBenefitType) ? (
             <div className="cf-sg-alert-slim">
               <Alert message={VHA_POA_NAME_NOT_LISTED} type="info" />
             </div>
-          )}
+          ) : null}
 
           <br />
-          {isIndividualPartyType && (
+          {isIndividualPartyType ? (
             <>
               <FieldDiv>
                 <TextField
@@ -258,7 +257,7 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
                 />
               </Suffix>
             </>
-          )}
+          ) : null}
 
           {showPartyType && isOrgPartyType && (
             <FieldDiv>
