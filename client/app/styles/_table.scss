@@ -25,41 +25,6 @@
   margin-bottom: 1em;
 }
 
-.correspondence-document-table {
-  table {
-    width: 100%;
-  }
-
-  th {
-    width: 100%;
-    font-weight: bold;
-
-    &:first-child {
-      padding-left: 1.5%;
-    }
-  }
-
-  tr,
-  th,
-  td {
-    position: relative;
-    border: none;
-
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      width: 95%;
-      left: 1%;
-      border-bottom: 1px solid $color-gray-lighter;
-    }
-  }
-
-  td:first-child {
-    padding-left: 1.5%;
-  }
-}
-
 .cf-filter-option-row {
   margin: 0;
 

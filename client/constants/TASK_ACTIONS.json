@@ -538,9 +538,5 @@
     "label": "Mark as complete and withdraw",
     "value": "modal/complete_and_withdraw",
     "func": "withdraw_hearing_data"
-  },
-  "CORRESPONDENCE_REMOVE_PACKAGE": {
-    "label": "Request to remove package",
-    "value": "temp"
   }
 }
