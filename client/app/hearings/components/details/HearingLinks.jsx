@@ -165,7 +165,6 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
         virtualHearing={virtualHearing}
         wasVirtual={wasVirtual}
       />
-      <div />
     </div>
   );
 };
