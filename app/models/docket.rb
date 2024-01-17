@@ -61,11 +61,11 @@ class Docket
   end
 
   def age_of_oldest_priority_appeal
-    if use_by_docket_date?
-      @age_of_oldest_priority_appeal ||= appeals(priority: true, ready: true).limit(1).first&.receipt_date
-    else
-      @age_of_oldest_priority_appeal ||= appeals(priority: true, ready: true).limit(1).first&.ready_for_distribution_at
-    end
+    @age_of_oldest_priority_appeal ||= if use_by_docket_date?
+                                         appeals(priority: true, ready: true).limit(1).first&.receipt_date
+                                       else
+                                         appeals(priority: true, ready: true).limit(1).first&.ready_for_distribution_at
+                                       end
   end
 
   def oldest_priority_appeal_days_waiting
@@ -81,9 +81,15 @@ class Docket
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Lint/UnusedMethodArgument
   # :reek:FeatureEnvy
   def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1, style: "push")
+    # TODO: Need to pull out all of the Vha benefit type appeals at this point
+    # This might need to be in loop or while block until appeals are = to the limit after SCT appeals have been removed
     appeals = appeals(priority: priority, ready: true, genpop: genpop, judge: distribution.judge).limit(limit)
+    # TODO: Gross
+    sct_appeals = appeals.select! { |appeal| appeal.request_issues.select { |issue| issue.benefit_type == "vha" } }
+
     tasks = assign_judge_tasks_for_appeals(appeals, distribution.judge)
-    tasks.map do |task|
+    sct_tasks = assign_sct_tasks_for_vha_appeals(sct_appeals)
+    [tasks + sct_tasks].map do |task|
       next if task.nil?
 
       # If a distributed case already exists for this appeal, alter the existing distributed case's case id.

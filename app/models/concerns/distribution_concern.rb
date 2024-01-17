@@ -20,6 +20,12 @@ module DistributionConcern
     end
   end
 
+  def assign_sct_tasks_for_vha_appeals(appeals)
+    appeals.map do |appeal|
+      next nil unless appeal.tasks.open.of_type(:DistributionTask).any?
+    end
+  end
+
   def cancel_previous_judge_assign_task(appeal, judge_id)
     appeal.tasks.of_type(:JudgeAssignTask).where.not(assigned_to_id: judge_id).update(status: :cancelled)
   end
