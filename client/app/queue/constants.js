@@ -219,7 +219,7 @@ export const CUSTOM_HOLD_DURATION_TEXT = 'Custom';
 export const COLOCATED_HOLD_DURATIONS = [15, 30, 45, 60, 90, 120, CUSTOM_HOLD_DURATION_TEXT];
 export const VHA_HOLD_DURATIONS = [15, 30, 45, CUSTOM_HOLD_DURATION_TEXT];
 
-export const DECISION_SPECIAL_ISSUES = [
+export const DECISION_SPECIAL_ISSUES_WITH_MST_PACT = [
   {
     id: 'blue_water',
     label: 'Blue Water',
@@ -242,7 +242,43 @@ export const DECISION_SPECIAL_ISSUES = [
   },
 ];
 
-export const DECISION_SPECIAL_ISSUES_NO_MST_PACT = [
+export const DECISION_SPECIAL_ISSUES_WITH_MST = [
+  {
+    id: 'blue_water',
+    label: 'Blue Water',
+    requiresJustification: false
+  },
+  {
+    id: 'burn_pit',
+    label: 'Burn Pit',
+    requiresJustification: false
+  },
+  {
+    id: 'mst_status',
+    label: 'Military Sexual Trauma (MST)',
+    requiresJustification: true
+  },
+];
+
+export const DECISION_SPECIAL_ISSUES_WITH_PACT = [
+  {
+    id: 'blue_water',
+    label: 'Blue Water',
+    requiresJustification: false
+  },
+  {
+    id: 'burn_pit',
+    label: 'Burn Pit',
+    requiresJustification: false
+  },
+  {
+    id: 'pact_status',
+    label: 'PACT Act',
+    requiresJustification: true
+  },
+];
+
+export const DECISION_SPECIAL_ISSUES = [
   {
     id: 'blue_water',
     label: 'Blue Water',
