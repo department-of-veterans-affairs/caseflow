@@ -174,6 +174,10 @@ class CorrespondenceController < ApplicationController
     end
   end
 
+  def auto_assign_correspondences
+    perform_later_or_now(AutoAssignCorrespondenceJob)
+  end
+
   private
 
   # :reek:FeatureEnvy

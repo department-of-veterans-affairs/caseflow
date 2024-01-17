@@ -46,6 +46,14 @@ export const CorrespondenceCases = (props) => {
         veteranInformation.veteran_name.last_name.trim()}`;
   }
 
+  const handleAutoAssign = async () => {
+    try {
+      const response = await ApiUtil.get('/queue/correspondence/auto_assign_correspondences');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <AppSegment filledBackground>
       {(Object.keys(veteranInformation).length > 0) &&
@@ -58,6 +66,14 @@ export const CorrespondenceCases = (props) => {
       }
       <h1 {...css({ display: 'inline-block' })}>{COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES}</h1>
       <QueueOrganizationDropdown organizations={organizations} />
+      <div>
+        <Button
+          onClick={handleAutoAssign}
+          ariaLabel="Auto assign correspnodences"
+        >
+          {COPY.AUTO_ASSIGN_CORRESPONDENCES_BUTTON}
+        </Button>
+      </div>
       {vetCorrespondences &&
         <CorrespondenceTable
           vetCorrespondences={vetCorrespondences}
