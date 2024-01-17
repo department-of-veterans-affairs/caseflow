@@ -40,7 +40,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
       }
       isVirtual={true}
       label="VLJ Link"
-      linkText="Start Virtual Hearing"
+      linkText="Start Hearing"
       role="VLJ"
       user={
         Object {
@@ -78,7 +78,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
             }
           }
           isVirtual={true}
-          label="Start Virtual Hearing"
+          label="Start Hearing"
           pin="1234567890#"
           role="VLJ"
           user={
@@ -108,7 +108,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
               }
             }
             isVirtual={true}
-            label="Start Virtual Hearing"
+            label="Start Hearing"
             newWindow={true}
             showFullLink={false}
             user={
@@ -139,7 +139,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                 type={null}
               >
                 <strong>
-                  Start Virtual Hearing
+                  Start Hearing
                 </strong>
                 <span
                   data-css-32srrr=""
@@ -369,7 +369,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
       }
       isVirtual={true}
       label="Guest Link"
-      linkText="Join Virtual Hearing"
+      linkText="Join Hearing"
       role="Guest"
       user={
         Object {
@@ -407,7 +407,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
             }
           }
           isVirtual={true}
-          label="Join Virtual Hearing"
+          label="Join Hearing"
           pin="12345678#"
           role="Guest"
           user={
@@ -437,7 +437,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
               }
             }
             isVirtual={true}
-            label="Join Virtual Hearing"
+            label="Join Hearing"
             newWindow={true}
             showFullLink={false}
             user={
@@ -468,7 +468,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
                 type={null}
               >
                 <strong>
-                  Join Virtual Hearing
+                  Join Hearing
                 </strong>
                 <span
                   data-css-32srrr=""
@@ -690,7 +690,6 @@ exports[`HearingLinks Matches snapshot when hearing is virtual and in progress 1
         </VirtualHearingLinkDetails>
       </div>
     </LinkContainer>
-    <div />
   </div>
 </HearingLinks>
 `;
@@ -734,7 +733,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
         }
       }
       label="VLJ Link"
-      linkText="Start Virtual Hearing"
+      linkText="Start Hearing"
       role="VLJ"
       user={
         Object {
@@ -772,7 +771,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
               "scheduledForIsPast": false,
             }
           }
-          label="Start Virtual Hearing"
+          label="Start Hearing"
           pin="1234567890#"
           role="VLJ"
           user={
@@ -813,7 +812,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
         }
       }
       label="Guest Link"
-      linkText="Join Virtual Hearing"
+      linkText="Join Hearing"
       role="Guest"
       user={
         Object {
@@ -851,7 +850,7 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
               "scheduledForIsPast": false,
             }
           }
-          label="Join Virtual Hearing"
+          label="Join Hearing"
           pin="12345678#"
           role="Guest"
           user={
@@ -885,7 +884,6 @@ exports[`HearingLinks Matches snapshot when hearing was virtual and occurred 1`]
         </VirtualHearingLinkDetails>
       </div>
     </LinkContainer>
-    <div />
   </div>
 </HearingLinks>
 `;
@@ -1168,7 +1166,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
       isVirtual={true}
       label="Guest Link"
       link="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
-      linkText="Join Virtual Hearing"
+      linkText="Join Hearing"
       role="Guest"
       user={
         Object {
@@ -1329,7 +1327,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
             }
           }
           isVirtual={true}
-          label="Join Virtual Hearing"
+          label="Join Hearing"
           link="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
           pin="2684353125#"
           role="Guest"
@@ -1483,7 +1481,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
               }
             }
             isVirtual={true}
-            label="Join Virtual Hearing"
+            label="Join Hearing"
             link="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
             newWindow={true}
             showFullLink={false}
@@ -1528,7 +1526,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                 type={null}
               >
                 <strong>
-                  Join Virtual Hearing
+                  Join Hearing
                 </strong>
                 <span
                   data-css-32srrr=""
@@ -1762,7 +1760,6 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
         </VirtualHearingLinkDetails>
       </div>
     </LinkContainer>
-    <div />
   </div>
 </HearingLinks>
 `;

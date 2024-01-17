@@ -33,12 +33,12 @@ describe('HearingLinks', () => {
     );
 
     expect(form).toMatchSnapshot();
-    expect(form.find(VirtualHearingLink)).toHaveLength(2);
+    expect(form.find('LinkContainer')).toHaveLength(2);
     expect(
-      form.find(VirtualHearingLink).exists({ label: 'Join Virtual Hearing' })
+      form.find('VirtualHearingLinkDetails').exists({ label: 'Join Hearing' })
     ).toBe(true);
     expect(
-      form.find(VirtualHearingLink).exists({ label: 'Start Virtual Hearing' })
+      form.find('VirtualHearingLinkDetails').exists({ label: 'Start Hearing' })
     ).toBe(true);
   });
 
@@ -73,5 +73,5 @@ describe('HearingLinks', () => {
     expect(form.find(VirtualHearingLink)).toHaveLength(1);
     // Ensure it's the guest link
     expect(form.find(VirtualHearingLink).prop('link')).toEqual(amaHearing.virtualHearing.guestLink)
-  })
+  });
 });
