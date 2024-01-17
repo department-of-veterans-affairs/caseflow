@@ -5,11 +5,15 @@ import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 
 const StaticLever = ({ lever }) => {
   const renderValue = () => {
+    let leverValueString = '';
+
     switch (lever.data_type) {
     case ACD_LEVERS.data_types.boolean:
-      return lever.value.toString();
+      leverValueString = lever.value.toString();
+
+      return leverValueString.charAt(0).toUpperCase() + leverValueString.slice(1);
     case ACD_LEVERS.data_types.number:
-      return `${lever.value} ${lever.unit}`;
+      return `${(lever.value * 100).toFixed(0)} ${lever.unit}`;
     case ACD_LEVERS.data_types.radio:
       return lever.options.find((option) => option.value === lever.value)?.text;
     case ACD_LEVERS.data_types.combination:
