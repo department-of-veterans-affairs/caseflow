@@ -179,9 +179,11 @@ const DocketTimeGoals = () => {
           {COPY.CASE_DISTRIBUTION_DOCKET_TIME_DESCRIPTION_RIGHT}
         </p>
         <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_DOCKET_TIME_NOTE}</p>
-        <div className={cx('lever-left', 'docket-lever-left')}><strong></strong></div>
-        <div className="lever-middle"><strong>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_TITLE_LEFT}</strong></div>
-        <div className="lever-right"><strong>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_TITLE_RIGHT}</strong></div>
+        <div className="docker-lever-table">
+          <div className={cx('lever-left', 'docket-lever-left')}><strong></strong></div>
+          <div className="lever-middle"><strong>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_TITLE_LEFT}</strong></div>
+          <div className="lever-right"><strong>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_TITLE_RIGHT}</strong></div>
+        </div>
       </div>
 
       {docketDistributionLevers?.

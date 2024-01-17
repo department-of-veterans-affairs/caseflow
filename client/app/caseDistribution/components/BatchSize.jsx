@@ -85,7 +85,7 @@ const BatchSize = () => {
           </div>
         </div>
       ))}
-      <h4 className="footerStyling">{COPY.CASE_DISTRIBUTION_FOOTER_ASTERISK_DESCRIPTION}</h4>
+      <h4 className="footer-styling">{COPY.CASE_DISTRIBUTION_FOOTER_ASTERISK_DESCRIPTION}</h4>
       <div className="cf-help-divider"></div>
     </div>
   );

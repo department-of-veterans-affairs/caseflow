@@ -125,7 +125,7 @@ const AffinityDays = () => {
         >
           <div className="lever-left">
             <strong>{lever.title}</strong>
-            <p>{lever.description}</p>
+            <p className="affinity-lever-text">{lever.description}</p>
           </div>
           <div className={cx('lever-right', 'affinity-lever-num-sec')} >
             {lever.options.map((option) => (

@@ -79,11 +79,16 @@ $error-before-bg-color: #e31c3d;
   line-height: 1.5em;
   margin-bottom: 5px;
   margin-top: 5px;
+  vertical-align: middle;
+}
+
+.affinity-lever-text {
+  margin: 0;
 }
 
 .lever-right {
   width: 25%;
-  vertical-align: top;
+  vertical-align: middle;
   display: inline-block;
   margin-bottom: 5px;
   margin-top: 3px;
@@ -105,6 +110,10 @@ $error-before-bg-color: #e31c3d;
   width: auto;
   vertical-align: middle;
   display: inline-block;
+}
+
+.docker-lever-table {
+  margin-top: 20px;
 }
 
 .docket-lever-left {
@@ -186,8 +195,8 @@ $error-before-bg-color: #e31c3d;
 }
 
 .footer-styling {
-  margin-top: 10px;
-  padding-top: 10px;
+  margin: 0;
+  padding-top: 20px;
 }
 
 .number-field-input {
@@ -244,6 +253,7 @@ $error-before-bg-color: #e31c3d;
 .lever-active {
   color: $modal-table-color;
   opacity: 100%;
+  margin-top: 0;
 }
 
 .lever-alert-banner {
