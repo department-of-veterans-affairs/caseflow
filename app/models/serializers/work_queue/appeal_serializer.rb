@@ -4,6 +4,8 @@ class WorkQueue::AppealSerializer
   include FastJsonapi::ObjectSerializer
   extend Helpers::AppealHearingHelper
 
+  EXCLUDE_STATUS = ["No Participant Id Found", "No Claimant Found", "No External Id"].freeze
+
   attribute :assigned_attorney
   attribute :assigned_judge
 
@@ -28,6 +30,10 @@ class WorkQueue::AppealSerializer
 
   attribute :contested_claim, &:contested_claim?
 
+  attribute :mst, &:mst?
+
+  attribute :pact, &:pact?
+
   attribute :issues do |object|
     object.request_issues.active_or_decided_or_withdrawn.includes(:remand_reasons).map do |issue|
       {
@@ -38,7 +44,11 @@ class WorkQueue::AppealSerializer
         diagnostic_code: issue.contested_rating_issue_diagnostic_code,
         remand_reasons: issue.remand_reasons,
         closed_status: issue.closed_status,
-        decision_date: issue.decision_date
+        decision_date: issue.decision_date,
+        mst_status: issue.mst_status,
+        pact_status: issue.pact_status,
+        mst_justification: issue&.mst_status_update_reason_notes,
+        pact_justification: issue&.pact_status_update_reason_notes
       }
     end
   end
@@ -59,13 +69,15 @@ class WorkQueue::AppealSerializer
         benefit_type: issue.benefit_type,
         remand_reasons: issue.remand_reasons,
         diagnostic_code: issue.diagnostic_code,
-        request_issue_ids: issue.request_decision_issues.pluck(:request_issue_id)
+        request_issue_ids: issue.request_decision_issues.pluck(:request_issue_id),
+        mst_status: issue.mst_status,
+        pact_status: issue.pact_status
       }
     end
   end
 
   attribute :substitute_appellant_claimant_options do |object|
-    object.veteran&.relationships.map do |relation|
+    object.veteran&.relationships&.map do |relation|
       {
         displayText: "#{relation.first_name} #{relation.last_name}, #{relation.relationship_type}",
         value: relation.participant_id
@@ -307,9 +319,9 @@ class WorkQueue::AppealSerializer
   attribute :has_notifications do |object|
     @all_notifications = Notification.where(appeals_id: object.uuid.to_s, appeals_type: "Appeal")
     @allowed_notifications = @all_notifications.where(email_notification_status: nil)
-      .or(@all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))
+      .or(@all_notifications.where.not(email_notification_status: EXCLUDE_STATUS))
       .merge(@all_notifications.where(sms_notification_status: nil)
-      .or(@all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))).any?
+      .or(@all_notifications.where.not(sms_notification_status: EXCLUDE_STATUS))).any?
   end
 
   attribute :cavc_remands_with_dashboard do |appeal|

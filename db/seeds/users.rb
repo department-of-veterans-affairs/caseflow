@@ -83,6 +83,7 @@ module Seeds
       create_lit_support_user
       create_oai_team_user
       create_occ_team_user
+      create_mail_team_supervisor_user
       create_cavc_lit_support_user
       create_pulac_cerullo_user
       create_mail_team_user
@@ -354,6 +355,15 @@ module Seeds
       OaiTeam.singleton.add_user(u)
     end
 
+    def create_mail_team_supervisor_user
+      u = User.create!(station_id: 101, css_id: "MAIL_TEAM_SUPERVISOR_ADMIN_USER", full_name: "Jon MailTeam Snow Admin")
+      MailTeamSupervisor.singleton.add_user(u)
+      OrganizationsUser.make_user_admin(u, MailTeamSupervisor.singleton)
+      u = User.create!(station_id: 101, css_id: "MAIL_TEAM_SUPERVISOR_MAIL_INTAKE_USER",
+                       full_name: "Jon MailTeam Snow Mail Intake", roles: ["Mail Intake"])
+      MailTeamSupervisor.singleton.add_user(u)
+    end
+
     def create_cavc_lit_support_user
       users_info = [
         { css_id: "CAVC_LIT_SUPPORT_ADMIN", full_name: "Diego CAVCLitSupportAdmin Christiansen" },
@@ -396,17 +406,22 @@ module Seeds
         station_id: 101,
         css_id: "COB_USER",
         full_name: "Clark ClerkOfTheBoardUser Bard",
-        roles: ["Hearing Prep"]
+        roles: ["Hearing Prep", "Mail Intake"]
       )
       ClerkOfTheBoard.singleton.add_user(atty)
 
-      judge = create(:user, full_name: "Judith COTB Judge", css_id: "BVACOTBJUDGE", roles: ["Hearing Prep"])
+      judge = create(:user, full_name: "Judith COTB Judge", css_id: "BVACOTBJUDGE", roles: ["Hearing Prep", "Mail Intake"])
       create(:staff, :judge_role, sdomainid: judge.css_id)
       ClerkOfTheBoard.singleton.add_user(judge)
 
-      admin = create(:user, full_name: "Ty ClerkOfTheBoardAdmin Cobb", css_id: "BVATCOBB", roles: ["Hearing Prep"])
+      admin = create(:user, full_name: "Ty ClerkOfTheBoardAdmin Cobb", css_id: "BVATCOBB", roles: ["Hearing Prep", "Mail Intake"])
       ClerkOfTheBoard.singleton.add_user(admin)
       OrganizationsUser.make_user_admin(admin, ClerkOfTheBoard.singleton)
+
+      # added to Bva Intake so they can intake
+      BvaIntake.singleton.add_user(atty)
+      BvaIntake.singleton.add_user(judge)
+      BvaIntake.singleton.add_user(admin)
     end
 
     def create_case_search_only_user

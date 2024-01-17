@@ -4,6 +4,8 @@ class WorkQueue::LegacyAppealSerializer
   include FastJsonapi::ObjectSerializer
   extend Helpers::AppealHearingHelper
 
+  EXCLUDE_STATUS = ["No Participant Id Found", "No Claimant Found", "No External Id"].freeze
+
   attribute :assigned_attorney
   attribute :assigned_judge
 
@@ -65,6 +67,10 @@ class WorkQueue::LegacyAppealSerializer
 
   attribute :closest_regional_office_label
 
+  attribute :mst, &:mst?
+
+  attribute :pact, &:pact?
+
   attribute(:available_hearing_locations) { |object| available_hearing_locations(object) }
 
   attribute :docket_name do
@@ -90,6 +96,10 @@ class WorkQueue::LegacyAppealSerializer
     ).editable?
   end
 
+  attribute :can_edit_request_issues do |object, params|
+    AppealRequestIssuesPolicy.new(user: params[:user], appeal: object).legacy_issues_editable?
+  end
+
   attribute :attorney_case_review_id do |object|
     latest_vacols_attorney_case_review(object)&.vacols_id
   end
@@ -105,9 +115,9 @@ class WorkQueue::LegacyAppealSerializer
   attribute :has_notifications do |object|
     @all_notifications = Notification.where(appeals_id: object.vacols_id.to_s, appeals_type: "LegacyAppeal")
     @allowed_notifications = @all_notifications.where(email_notification_status: nil)
-      .or(@all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))
+      .or(@all_notifications.where.not(email_notification_status: EXCLUDE_STATUS))
       .merge(@all_notifications.where(sms_notification_status: nil)
-      .or(@all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))).any?
+      .or(@all_notifications.where.not(sms_notification_status: EXCLUDE_STATUS))).any?
   end
 
   attribute :location_history do |object|

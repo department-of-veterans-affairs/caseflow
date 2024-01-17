@@ -162,7 +162,9 @@ describe DecisionReview, :postgres do
         titleOfActiveReview: nil,
         sourceReviewType: "HigherLevelReview",
         timely: true,
-        latestIssuesInChain: [{ id: decision_issues.first.id, approxDecisionDate: promulgation_date }]
+        latestIssuesInChain: [{ id: decision_issues.first.id, approxDecisionDate: promulgation_date }],
+        mstAvailable: false,
+        pactAvailable: false
       )
 
       expect(find_serialized_issue(serialized_contestable_issues, "456")).to eq(
@@ -178,7 +180,9 @@ describe DecisionReview, :postgres do
         titleOfActiveReview: nil,
         sourceReviewType: nil,
         timely: true,
-        latestIssuesInChain: [{ id: nil, approxDecisionDate: promulgation_date }]
+        latestIssuesInChain: [{ id: nil, approxDecisionDate: promulgation_date }],
+        mstAvailable: false,
+        pactAvailable: false
       )
 
       expect(find_serialized_issue(serialized_contestable_issues, "789")).to eq(
@@ -194,7 +198,9 @@ describe DecisionReview, :postgres do
         titleOfActiveReview: nil,
         sourceReviewType: "HigherLevelReview",
         timely: true,
-        latestIssuesInChain: [{ id: decision_issues.second.id, approxDecisionDate: promulgation_date + 1.day }]
+        latestIssuesInChain: [{ id: decision_issues.second.id, approxDecisionDate: promulgation_date + 1.day }],
+        mstAvailable: false,
+        pactAvailable: false
       )
 
       expect(find_serialized_issue(serialized_contestable_issues, "decision issue 3")).to eq(
@@ -210,7 +216,9 @@ describe DecisionReview, :postgres do
         titleOfActiveReview: nil,
         sourceReviewType: "HigherLevelReview",
         timely: true,
-        latestIssuesInChain: [{ id: decision_issues.third.id, approxDecisionDate: promulgation_date }]
+        latestIssuesInChain: [{ id: decision_issues.third.id, approxDecisionDate: promulgation_date }],
+        mstAvailable: false,
+        pactAvailable: false
       )
     end
 
@@ -328,10 +336,11 @@ describe DecisionReview, :postgres do
     it "only returns active request issues" do
       review = build_stubbed(:appeal)
       active_request_issue = create(:request_issue, decision_review: review)
-      inactive_request_issue = create(
-        :request_issue, closed_at: Time.zone.now, decision_review: review
-      )
-      withdrawn_request_issue = create(
+
+      # Inactive request issue
+      create(:request_issue, closed_at: Time.zone.now, decision_review: review)
+      # Withdrawn request issue
+      create(
         :request_issue,
         closed_status: "withdrawn",
         closed_at: Time.zone.now,
@@ -345,16 +354,16 @@ describe DecisionReview, :postgres do
   describe "#withdrawn_request_issues" do
     it "only returns withdrawn request issues" do
       review = build_stubbed(:appeal)
-      active_request_issue = create(:request_issue, decision_review: review)
+      # Active request issue
+      create(:request_issue, decision_review: review)
       withdrawn_request_issue = create(
         :request_issue,
         closed_status: "withdrawn",
         closed_at: Time.zone.now,
         decision_review: review
       )
-      inactive_request_issue = create(
-        :request_issue, closed_at: Time.zone.now, decision_review: review
-      )
+      # Inactive request issue
+      create(:request_issue, closed_at: Time.zone.now, decision_review: review)
 
       expect(review.withdrawn_request_issues).to match_array([withdrawn_request_issue])
     end

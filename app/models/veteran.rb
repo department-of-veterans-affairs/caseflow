@@ -4,9 +4,11 @@
 #
 # TODO: How do we deal with differences between the BGS vet values and the
 #       VACOLS vet values (coming from Appeal#veteran_full_name, etc)
+# rubocop:disable Metrics/ClassLength
 class Veteran < CaseflowRecord
   include AssociatedBgsRecord
 
+  has_many :correspondences
   has_many :available_hearing_locations,
            foreign_key: :veteran_file_number,
            primary_key: :file_number, class_name: "AvailableHearingLocations"
@@ -553,3 +555,4 @@ class Veteran < CaseflowRecord
     )
   end
 end
+# rubocop:enable Metrics/ClassLength

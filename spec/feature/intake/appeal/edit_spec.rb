@@ -682,6 +682,7 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_button("Continue", disabled: true)
     end
 
+    # rubocop:disable Metrics/AbcSize
     def skill_form(appeal)
       # add issues to the appeal
       appeal.request_issues << request_issue_1
@@ -702,6 +703,7 @@ feature "Appeal Edit issues", :all_dbs do
       click_button("Continue")
       expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/review_split")
     end
+    # rubocop:enable Metrics/AbcSize
 
     def wait_for_ajax
       max_time = Capybara::Helpers.monotonic_time + Capybara.default_max_wait_time
@@ -713,7 +715,7 @@ feature "Appeal Edit issues", :all_dbs do
           sleep 0.1
         end
       end
-      raise "wait_for_ajax timeout" unless finished
+      fail "wait_for_ajax timeout" unless finished
     end
 
     def finished_all_ajax_requests?
@@ -761,15 +763,12 @@ feature "Appeal Edit issues", :all_dbs do
 
     scenario "on the review_split page, testing appellant and vetera" do
       skill_form(appeal2)
+      row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
+      row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
+      expect(row2_1).to eq("Veteran")
       if expect(appeal2.veteran_is_not_claimant).to be(false)
-        row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
-        row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
-        expect(row2_1).to eq("Veteran")
         expect(row3_1).to eq("Docket Number")
       else
-        row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
-        row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
-        expect(row2_1).to eq("Veteran")
         expect(row3_1).to eq("Appellant")
       end
     end
@@ -1215,6 +1214,135 @@ feature "Appeal Edit issues", :all_dbs do
           expect(cancelled_task.status).to eq(Constants.TASK_STATUSES.cancelled)
           expect(cancelled_task.closed_at).to eq(Time.zone.now)
         end
+      end
+    end
+  end
+
+  context "with BVA Intake Admin user" do
+    # creates organization
+    let(:bva_intake) { BvaIntake.singleton }
+    # creates admin user
+    let(:bva_intake_admin_user) { create(:user, roles: ["Mail Intake"]) }
+
+    let(:legacy_appeal_mst_pact_unchecked) do
+      create(
+        :legacy_appeal,
+        :with_veteran,
+        vacols_case: create(
+          :case,
+          case_issues: [
+            create(:case_issue, issmst: "N", isspact: "N")
+          ]
+        )
+      )
+    end
+
+    let(:legacy_appeal_mst_pact_checked) do
+      create(
+        :legacy_appeal,
+        :with_veteran,
+        vacols_case: create(
+          :case,
+          case_issues: [
+            create(:case_issue, issmst: "Y", isspact: "Y")
+          ]
+        )
+      )
+    end
+
+    before do
+      # joins the user with the organization to grant access to role and org permissions
+      OrganizationsUser.make_user_admin(bva_intake_admin_user, bva_intake)
+      # authenticates and sets the user
+      User.authenticate!(user: bva_intake_admin_user)
+    end
+
+    def go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal)
+      visit "/queue"
+      click_on "Search cases"
+      fill_in "search", with: legacy_appeal.veteran_file_number
+      click_on "Search"
+      click_on legacy_appeal.docket_number
+      click_on "Correct issues"
+    end
+
+    context "with Legacy MST/PACT identifications" do
+      before do
+        FeatureToggle.enable!(:mst_identification)
+        FeatureToggle.enable!(:pact_identification)
+        FeatureToggle.enable!(:legacy_mst_pact_identification)
+      end
+
+      after do
+        FeatureToggle.disable!(:mst_identification)
+        FeatureToggle.disable!(:pact_identification)
+        FeatureToggle.disable!(:legacy_mst_pact_identification)
+      end
+
+      scenario "can add MST/PACT to issues" do
+        go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_unchecked)
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
+        check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+        find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
+        click_on "Save"
+
+        click_on "Save"
+
+        expect(page).to have_content("MST and PACT")
+      end
+
+      scenario "can remove MST/PACT issues" do
+        go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_checked)
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
+        uncheck("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+        find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
+        click_on "Save"
+
+        click_on "Save"
+
+        expect(page).to have_no_content("MST and PACT")
+      end
+
+      scenario "can add and remove only PACT to an issue" do
+        go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_unchecked)
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
+        find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
+        click_on "Save"
+
+        click_on "Save"
+        expect(page).to have_content("SPECIAL ISSUES\nPACT")
+
+        click_on "Correct issues"
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
+        find(:xpath, "//label[@for='PACT Act']").click(allow_label_click: true, visible: false)
+        click_on "Save"
+
+        click_on "Save"
+        expect(page).to have_no_content("SPECIAL ISSUES\nPact")
+      end
+
+      scenario "can add and remove only MST to an issue" do
+        go_to_queue_edit_issues_page_with_legacy_appeal(legacy_appeal_mst_pact_unchecked)
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
+        check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+        click_on "Save"
+
+        click_on "Save"
+        expect(page).to have_content("SPECIAL ISSUES\nMST")
+
+        click_on "Correct issues"
+        find("select", id: "issue-action-0").click
+        find("option", id: "issue-action-0_edit").click
+        uncheck("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
+        click_on "Save"
+
+        click_on "Save"
+        expect(page).to have_no_content("SPECIAL ISSUES\nMST")
       end
     end
   end

@@ -38,12 +38,12 @@ class Generators::Vacols::Case
         bfbsasgn: nil,
         bfattid: "1286",
         bfdasgn: nil,
-        bfcclkid: "8927941",
+        bfcclkid: nil,
         bfdqrsnt: nil,
         bfdlocin: "2017-11-30 09:01:21 UTC",
         bfdloout: "2017-11-30 09:01:21 UTC",
         bfstasgn: nil,
-        bfcurloc: "98",
+        bfcurloc: "CASEFLOW",
         bfnrcopy: nil,
         bfmemid: "909",
         bfdmem: nil,
@@ -96,8 +96,8 @@ class Generators::Vacols::Case
         bfdcertool: "2017-05-24 00:00:00 UTC"
       }
     end
-    # rubocop:enable Metrics/MethodLength
 
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def create(attrs = {})
       custom_case_attrs = attrs[:case_attrs].nil? ? {} : attrs[:case_attrs]
       custom_case_attrs = case_attrs.merge(custom_case_attrs)
@@ -111,9 +111,11 @@ class Generators::Vacols::Case
       representative_attrs[:repkey] = custom_case_attrs[:bfkey]
       Generators::Vacols::Representative.create(representative_attrs)
 
-      correspondent_attrs = attrs[:correspondent_attrs].nil? ? {} : attrs[:correspondent_attrs]
-      correspondent_attrs[:stafkey] = custom_case_attrs[:bfcorkey]
-      Generators::Vacols::Correspondent.create(correspondent_attrs)
+      unless attrs[:corres_exists]
+        correspondent_attrs = attrs[:correspondent_attrs].nil? ? {} : attrs[:correspondent_attrs]
+        correspondent_attrs[:stafkey] = custom_case_attrs[:bfcorkey]
+        Generators::Vacols::Correspondent.create(correspondent_attrs)
+      end
 
       note_attrs = attrs[:note_attrs].nil? ? {} : attrs[:note_attrs]
       note_attrs[:tsktknm] = custom_case_attrs[:bfkey]
@@ -141,5 +143,6 @@ class Generators::Vacols::Case
 
       VACOLS::Case.create(custom_case_attrs)
     end
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   end
 end

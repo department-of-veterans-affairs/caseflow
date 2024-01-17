@@ -27,11 +27,13 @@ class VACOLS::CaseIssue < VACOLS::Record
       level_2: isslev2,
       level_3: isslev3,
       vacols_id: isskey,
-      note: issdesc
+      note: issdesc,
+      mst_status: issmst,
+      pact_status: isspact
     }
   end
 
-  # rubocop:disable MethodLength
+  # rubocop:disable Metrics/MethodLength
 
   # Issues can be labeled by looking up the combination of ISSPROG,
   # ISSCODE, ISSLEV1, ISSLEV2, and ISSLEV3 in the ISSREF table.
@@ -55,6 +57,8 @@ class VACOLS::CaseIssue < VACOLS::Record
         ISSUES.ISSLEV1,
         ISSUES.ISSLEV2,
         ISSUES.ISSLEV3,
+        ISSUES.ISSMST,
+        ISSUES.ISSPACT,
         ISSREF.PROG_DESC ISSPROG_LABEL,
         ISSREF.ISS_DESC ISSCODE_LABEL,
         case when ISSUES.ISSLEV1 is not null then
@@ -109,7 +113,7 @@ class VACOLS::CaseIssue < VACOLS::Record
       memo
     end
   end
-  # rubocop:enable MethodLength
+  # rubocop:enable Metrics/MethodLength
 
   def self.create_issue!(issue_attrs)
     create!(issue_attrs.merge(issseq: generate_sequence_id(issue_attrs[:isskey])))

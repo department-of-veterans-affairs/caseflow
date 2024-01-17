@@ -63,6 +63,7 @@ disabled_flags = %w[
   acd_disable_legacy_distributions
   acd_disable_nonpriority_distributions
   acd_disable_legacy_lock_ready_appeals
+  justification_reason
 ]
 
 all_features = AllFeatureToggles.new.call.flatten.uniq

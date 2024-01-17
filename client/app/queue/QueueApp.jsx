@@ -1,5 +1,4 @@
-/* eslint-disable max-lines */
-/* eslint-disable max-len */
+/* eslint-disable max-lines, max-len */
 
 import querystring from 'querystring';
 import React from 'react';
@@ -8,6 +7,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import StringUtil from '../util/StringUtil';
+import CorrespondenceCases from './correspondence/CorrespondenceCases';
 
 import {
   setCanEditAod,
@@ -35,6 +35,7 @@ import Footer from '@department-of-veterans-affairs/caseflow-frontend-toolkit/co
 import AppFrame from '../components/AppFrame';
 import QueueLoadingScreen from './QueueLoadingScreen';
 import CaseDetailsLoadingScreen from './CaseDetailsLoadingScreen';
+import ReviewPackageLoadingScreen from './correspondence/review_package/ReviewPackageLoadingScreen';
 import AttorneyTaskListView from './AttorneyTaskListView';
 import ColocatedTaskListView from './ColocatedTaskListView';
 import JudgeDecisionReviewTaskListView from './JudgeDecisionReviewTaskListView';
@@ -85,6 +86,8 @@ import OrganizationUsers from './OrganizationUsers';
 import OrganizationQueueLoadingScreen from './OrganizationQueueLoadingScreen';
 import TeamManagement from './teamManagement/TeamManagement';
 import UserManagement from './UserManagement';
+import CorrespondenceReviewPackage from './correspondence/review_package/CorrespondenceReviewPackage';
+import CorrespondenceIntake from './correspondence/intake/components/CorrespondenceIntake';
 
 import { LOGO_COLORS } from '../constants/AppConstants';
 import { PAGE_TITLES } from './constants';
@@ -220,6 +223,10 @@ class QueueApp extends React.PureComponent {
       appealId={props.match.params.appealId}
       taskId={props.match.params.taskId}
       checkoutFlow={props.match.params.checkoutFlow}
+      justificationFeatureToggle={this.props.featureToggles.justification_reason}
+      mstFeatureToggle={this.props.featureToggles.mst_identification}
+      pactFeatureToggle={this.props.featureToggles.pact_identification}
+      legacyMstPactFeatureToggle={this.props.featureToggles.legacy_mst_pact_identification}
     />
   );
 
@@ -231,6 +238,8 @@ class QueueApp extends React.PureComponent {
         <SelectSpecialIssuesView
           appealId={appealId}
           taskId={taskId}
+          legacyMstIdentification={this.props.featureToggles.legacy_mst_pact_identification}
+          mstIdentification={this.props.featureToggles.mst_identification}
           prevStep={`/queue/appeals/${appealId}`}
           nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
         />
@@ -245,6 +254,8 @@ class QueueApp extends React.PureComponent {
       <AddEditIssueView
         nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
         prevStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
+        justificationFeatureToggle={this.props.featureToggles.justification_reason}
+        legacyMstPactFeatureToggle={this.props.featureToggles.legacy_mst_pact_identification}
         {...props.match.params}
       />
     );
@@ -612,6 +623,12 @@ class QueueApp extends React.PureComponent {
     <PostponeHearingTaskModal {...props.match.params} />
   );
 
+  routedReviewPackage = (props) => (
+    <ReviewPackageLoadingScreen {...props.match.params}>
+      <CorrespondenceReviewPackage {...props.match.params} />
+    </ReviewPackageLoadingScreen>
+  );
+
   routedStartHoldModal = (props) => <StartHoldModal {...props.match.params} />;
 
   routedEndHoldModal = (props) => <EndHoldModal {...props.match.params} />;
@@ -659,6 +676,14 @@ class QueueApp extends React.PureComponent {
 
   routedCompleteHearingPostponementRequest = (props) => (
     <CompleteHearingPostponementRequestModal {...props.match.params} />
+  );
+
+  routedCorrespondenceIntake = (props) => (
+    <CorrespondenceIntake autoTexts={this.props.autoTexts} {...props.match.params} veteranInformation={this.props.veteranInformation} />
+  );
+
+  routedCorrespondenceCase = () => (
+    <CorrespondenceCases {...this.props} />
   );
 
   routedCompleteHearingWithdrawalRequest = (props) => (
@@ -718,6 +743,14 @@ class QueueApp extends React.PureComponent {
               title={`${this.queueName()}  | Caseflow`}
               render={this.routedQueueList}
             />
+
+            <PageRoute
+              exact
+              path="/queue/correspondence"
+              title={`${PAGE_TITLES.CORRESPONDENCE_CASES_LIST}`}
+              render={this.routedCorrespondenceCase}
+            />
+
             <PageRoute
               exact
               path="/queue/:userId"
@@ -876,6 +909,13 @@ class QueueApp extends React.PureComponent {
 
             <PageRoute
               exact
+              path="/queue/correspondence/:correspondence_uuid/review_package"
+              title={`${PAGE_TITLES.REVIEW_PACKAGE}`}
+              render={this.routedReviewPackage}
+            />
+
+            <PageRoute
+              exact
               path="/queue/appeals/:appealId/edit_poa_information"
               title={`${PAGE_TITLES.EDIT_POA_INFORMATION} | Caseflow`}
               render={this.routedEditPOAInformation}
@@ -890,6 +930,17 @@ class QueueApp extends React.PureComponent {
               path="/user_management"
               title={`${PAGE_TITLES.USER_MANAGEMENT} | Caseflow`}
               render={this.routedUserManagement}
+            />
+            <PageRoute
+              path="/queue/correspondence/:correspondence_uuid/intake"
+              title={`${PAGE_TITLES.USER_MANAGEMENT} | Caseflow`}
+              render={this.routedCorrespondenceIntake}
+            />
+
+            <PageRoute
+              path="/queue/correspondence/:correspondence_uuid/intake"
+              title={`${PAGE_TITLES.CORRESPONDENCE_INTAKE}`}
+              render={this.routedCorrespondenceIntake}
             />
 
             {motionToVacateRoutes.page}
@@ -1402,7 +1453,6 @@ class QueueApp extends React.PureComponent {
               path="/team_management/lookup_participant_id"
               render={this.routedLookupParticipantIdModal}
             />
-
             {motionToVacateRoutes.modal}
           </Switch>
         </div>
@@ -1459,6 +1509,9 @@ QueueApp.propTypes = {
   canEditCavcDashboards: PropTypes.bool,
   canViewCavcDashboards: PropTypes.bool,
   userIsCobAdmin: PropTypes.bool,
+  correspondence: PropTypes.object,
+  autoTexts: PropTypes.array,
+  veteranInformation: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({

@@ -13,6 +13,12 @@ class RequestIssue < CaseflowRecord
   include HasDecisionReviewUpdatedSince
   include SyncLock
 
+  # Pagination for VBMS API
+  paginates_per ENV["REQUEST_ISSUE_PAGINATION_OFFSET"].to_i
+
+  # Max page per limit
+  DEFAULT_UPPER_BOUND_PER_PAGE = ENV["REQUEST_ISSUE_DEFAULT_UPPER_BOUND_PER_PAGE"].to_i
+
   # how many days before we give up trying to sync decisions
   REQUIRES_PROCESSING_WINDOW_DAYS = 30
 
@@ -190,7 +196,7 @@ class RequestIssue < CaseflowRecord
 
     private
 
-    # rubocop:disable Metrics/MethodLength
+    # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     def attributes_from_intake_data(data)
       contested_issue_present = attributes_look_like_contested_issue?(data)
       issue_text = (data[:is_unidentified] || data[:verified_unidentified_issue]) ? data[:decision_text] : nil
@@ -219,10 +225,16 @@ class RequestIssue < CaseflowRecord
         edited_description: data[:edited_description],
         correction_type: data[:correction_type],
         verified_unidentified_issue: data[:verified_unidentified_issue],
-        is_predocket_needed: data[:is_predocket_needed]
+        is_predocket_needed: data[:is_predocket_needed],
+        mst_status: data[:mst_status],
+        vbms_mst_status: data[:vbms_mst_status],
+        mst_status_update_reason_notes: data[:mst_status_update_reason_notes],
+        pact_status: data[:pact_status],
+        vbms_pact_status: data[:vbms_pact_status],
+        pact_status_update_reason_notes: data[:pact_status_update_reason_notes]
       }
     end
-    # rubocop:enable Metrics/MethodLength
+    # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
     def attributes_look_like_contested_issue?(data)
       data[:rating_issue_reference_id] ||
@@ -257,6 +269,41 @@ class RequestIssue < CaseflowRecord
     return false unless end_product_establishment
 
     end_product_establishment.status_active?
+  end
+
+  def active?
+    eligible? &&
+      closed_at.nil? &&
+      (split_issue_status.nil? ||
+      split_issue_status == "in_progress")
+  end
+
+  def mst_contention_status?
+    return false if bgs_contention.nil?
+
+    if bgs_contention.special_issues.is_a?(Hash)
+      return bgs_contention.special_issues[:spis_tc] == "MST" if bgs_contention&.special_issues
+    elsif bgs_contention.special_issues.is_a?(Array)
+      bgs_contention.special_issues.each do |issue|
+        return true if issue[:spis_tc] == "MST"
+      end
+    end
+    false
+  end
+
+  def pact_contention_status?
+    return false if bgs_contention.nil?
+
+    if bgs_contention.special_issues.is_a?(Hash)
+      if bgs_contention&.special_issues
+        return %w[PACT PACTDICRE PEES1].include?(bgs_contention.special_issues[:spis_tc])
+      end
+    elsif bgs_contention.special_issues.is_a?(Array)
+      bgs_contention.special_issues.each do |issue|
+        return true if %w[PACT PACTDICRE PEES1].include?(issue[:spis_tc])
+      end
+    end
+    false
   end
 
   def rating?
@@ -644,7 +691,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def contention
-    end_product_establishment.contention_for_object(self)
+    end_product_establishment&.contention_for_object(self)
   end
 
   def bgs_contention
