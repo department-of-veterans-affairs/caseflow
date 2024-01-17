@@ -15,8 +15,9 @@ const cancelButtonStyling = css({
 });
 
 const buttonWrapperStyling = css({
-  paddingBottom: '10px',
-  marginBottom: '10px'
+  // paddingBottom: '20px',
+  marginBottom: '30px',
+  marginTop: '30px',
 });
 
 const LeverButtonsWrapper = (props) => {
