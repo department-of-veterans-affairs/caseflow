@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-# The Specialty Case Team
-# An appeal is routed to this organization when both of the following are true:
-#   - Veterans Health Administration (VHA) is selected as the benefit type
-#   - VHA issues are added during the intake of an appeal
-# The appeal is to be routed following appeal distribution request
+# The Specialty Case Team (SCT)
+#
+# A single organization within the Board of Veteran Appeals (BVA).
+# Established to increase efficiency in decision-writing for appeals with rare issues.
+# Cases with rare issues are assigned to specific attorneys that specialize in particular legal topic areas.
 
 class SpecialtyCaseTeam < Organization
   def self.singleton
