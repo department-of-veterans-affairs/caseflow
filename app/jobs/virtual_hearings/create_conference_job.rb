@@ -163,6 +163,7 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
     virtual_hearing.update(
       host_hearing_link: create_webex_conference_response.host_link,
+      co_host_hearing_link: create_webex_conference_response.co_host_link,
       guest_hearing_link: create_webex_conference_response.guest_link
     )
   end

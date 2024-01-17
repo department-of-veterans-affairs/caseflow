@@ -170,6 +170,10 @@ class VirtualHearing < CaseflowRecord
     "pin=#{guest_pin}&role=guest"
   end
 
+  def co_host_hearing_link
+    self[:co_host_hearing_link]
+  end
+
   def host_link
     return host_hearing_link if host_hearing_link.present?
 
