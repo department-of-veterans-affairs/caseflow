@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_01_17_030132) do
+ActiveRecord::Schema.define(version: 2024_01_17_030548) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -572,6 +572,7 @@ ActiveRecord::Schema.define(version: 2024_01_17_030132) do
   create_table "conference_links", force: :cascade do |t|
     t.string "alias", comment: "Alias of the conference"
     t.string "alias_with_host", comment: "Alieas of the conference for the host"
+    t.string "co_host_link"
     t.boolean "conference_deleted", default: false, null: false, comment: "Flag to represent if a con ference has been deleted"
     t.string "conference_id", comment: "Id of the conference"
     t.datetime "created_at", null: false, comment: "Date and Time of creation"
