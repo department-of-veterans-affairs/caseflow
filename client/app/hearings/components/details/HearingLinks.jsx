@@ -39,7 +39,7 @@ export const VirtualHearingLinkDetails = ({
         hearing={hearing}
       />
     )}
-    {hearing.conferenceProvider === "pexip" ? (
+    {hearing.conferenceProvider === 'pexip' ? (
       <>
         <div {...labelPaddingFirst}>
           <strong>Conference Room: </strong>
@@ -139,7 +139,7 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
             virtualHearing={virtualHearing}
             wasVirtual={wasVirtual}
           />
-          {hearing.conferenceProvider === "webex" && (
+          {hearing.conferenceProvider === 'webex' && (
             <LinkContainer
               hearing={hearing}
               isVirtual={isVirtual}
