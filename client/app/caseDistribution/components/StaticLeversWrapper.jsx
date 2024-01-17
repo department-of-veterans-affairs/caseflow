@@ -1,17 +1,19 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import StaticLever from './StaticLever';
 import COPY from '../../../COPY';
 import styles from 'app/styles/caseDistribution/StaticLevers.module.scss';
+import { Constant } from '../constants';
+import { getLeversByGroup } from '../reducers/levers/leversSelector';
+import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 
-const StaticLeversWrapper = (props) => {
-  const { leverList, leverStore } = props;
+const StaticLeversWrapper = () => {
 
-  const orderedLeversList = leverList.map((item) => {
-    return leverStore.getState().levers.find((lever) => lever.item === item);
-  });
+  const theState = useSelector((state) => state);
 
-  const WrapperList = orderedLeversList.map((lever) => (
+  const currentStaticLevers = getLeversByGroup(theState, Constant.LEVERS, ACD_LEVERS.lever_groups.static);
+
+  const WrapperList = currentStaticLevers.map((lever) => (
     <StaticLever key={lever.item} lever={lever} />
   ));
 
@@ -28,11 +30,6 @@ const StaticLeversWrapper = (props) => {
     </table>
   );
 
-};
-
-StaticLeversWrapper.propTypes = {
-  leverList: PropTypes.arrayOf(PropTypes.string).isRequired,
-  leverStore: PropTypes.any
 };
 
 export default StaticLeversWrapper;
