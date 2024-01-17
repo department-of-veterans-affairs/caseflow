@@ -19,7 +19,7 @@ module Seeds
           is_toggle_active: false,
           is_disabled_in_ui: true,
           min_value: 0,
-          max_value: 1,
+          max_value: nil,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
           lever_group: Constants.ACD_LEVERS.lever_groups.static,
           lever_group_order: 1000
@@ -34,7 +34,7 @@ module Seeds
           is_toggle_active: false,
           is_disabled_in_ui: true,
           min_value: 0,
-          max_value: 1,
+          max_value: nil,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
           lever_group: Constants.ACD_LEVERS.lever_groups.static,
           lever_group_order: 1001
@@ -49,7 +49,7 @@ module Seeds
           is_toggle_active: false,
           is_disabled_in_ui: true,
           min_value: 0,
-          max_value: 1,
+          max_value: nil,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
           lever_group: Constants.ACD_LEVERS.lever_groups.static,
           lever_group_order: 1002
@@ -77,7 +77,7 @@ module Seeds
           is_toggle_active: true,
           is_disabled_in_ui: false,
           min_value: 0,
-          max_value: 100,
+          max_value: nil,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.docket, Constants.ACD_LEVERS.algorithms.proportion],
           lever_group: Constants.ACD_LEVERS.lever_groups.batch,
           lever_group_order: 2000
@@ -92,7 +92,7 @@ module Seeds
           is_toggle_active: true,
           is_disabled_in_ui: false,
           min_value: 0,
-          max_value: 100,
+          max_value: nil,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.docket, Constants.ACD_LEVERS.algorithms.proportion],
           lever_group: Constants.ACD_LEVERS.lever_groups.batch,
           lever_group_order: 2001
@@ -107,7 +107,7 @@ module Seeds
           is_toggle_active: true,
           is_disabled_in_ui: false,
           min_value: 0,
-          max_value: 100,
+          max_value: nil,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.docket, Constants.ACD_LEVERS.algorithms.proportion],
           lever_group: Constants.ACD_LEVERS.lever_groups.batch,
           lever_group_order: 2002
@@ -385,7 +385,7 @@ module Seeds
           is_toggle_active: false,
           is_disabled_in_ui: true,
           min_value: 0,
-          max_value: 100,
+          max_value: nil,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
           lever_group: Constants.ACD_LEVERS.lever_groups.docket_distribution_prior,
           lever_group_order: 4000
@@ -409,7 +409,7 @@ module Seeds
           is_toggle_active: false,
           is_disabled_in_ui: true,
           min_value: 0,
-          max_value: 100,
+          max_value: nil,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
           lever_group: Constants.ACD_LEVERS.lever_groups.docket_distribution_prior,
           lever_group_order: 4001
@@ -433,7 +433,7 @@ module Seeds
           is_toggle_active: false,
           is_disabled_in_ui: true,
           min_value: 0,
-          max_value: 100,
+          max_value: nil,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
           lever_group: Constants.ACD_LEVERS.lever_groups.docket_distribution_prior,
           lever_group_order: 4002
@@ -447,7 +447,7 @@ module Seeds
           is_toggle_active: false,
           is_disabled_in_ui: true,
           min_value: 0,
-          max_value: 1000,
+          max_value: nil,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
           lever_group: Constants.ACD_LEVERS.lever_groups.docket_time_goal,
           lever_group_order: 4003
@@ -461,7 +461,7 @@ module Seeds
           is_toggle_active: true,
           is_disabled_in_ui: false,
           min_value: 0,
-          max_value: 1000,
+          max_value: nil,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
           lever_group: Constants.ACD_LEVERS.lever_groups.docket_time_goal,
           lever_group_order: 4004
@@ -475,7 +475,7 @@ module Seeds
           is_toggle_active: false,
           is_disabled_in_ui: true,
           min_value: 0,
-          max_value: 1000,
+          max_value: nil,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
           lever_group: Constants.ACD_LEVERS.lever_groups.docket_time_goal,
           lever_group_order: 4005
