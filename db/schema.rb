@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_11_07_173746) do
+ActiveRecord::Schema.define(version: 2024_01_17_030132) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -2015,6 +2015,7 @@ ActiveRecord::Schema.define(version: 2023_11_07_173746) do
     t.boolean "appellant_email_sent", default: false, null: false, comment: "Determines whether or not a notification email was sent to the appellant"
     t.datetime "appellant_reminder_sent_at", comment: "The datetime the last reminder email was sent to the appellant."
     t.string "appellant_tz", limit: 50, comment: "Stores appellant timezone"
+    t.string "co_host_hearing_link"
     t.boolean "conference_deleted", default: false, null: false, comment: "Whether or not the conference was deleted from Pexip"
     t.string "conference_id", comment: "ID of conference from Pexip"
     t.datetime "created_at", null: false, comment: "Automatic timestamp of when virtual hearing was created"
