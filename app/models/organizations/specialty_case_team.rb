@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# The Spcialty Case Team
+# The Specialty Case Team
 # An appeal is routed to this organization when both of the following are true:
 #   - Veterans Health Administration (VHA) is selected as the benefit type
 #   - VHA issues are added during the intake of an appeal
