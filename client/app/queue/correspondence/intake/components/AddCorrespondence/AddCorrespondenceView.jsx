@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Checkbox from '../../../../../components/Checkbox';
+import Button from '../../../../../components/Button';
 import RadioField from '../../../../../components/RadioField';
 import ApiUtil from '../../../../../util/ApiUtil';
 import CorrespondencePaginationWrapper from '../../../CorrespondencePaginationWrapper';
@@ -196,6 +197,16 @@ class AddCorrespondenceView extends React.Component {
       <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
         <h1 style={{ marginBottom: '20px' }}>Add Related Correspondence</h1>
         <p style={{ marginTop: '0px' }}>Add any related correspondence to the mail package that is in progress.</p>
+        <h2 style={{ margin: '30px auto 20px auto' }}>Response Letter</h2>
+        <div style={{ width: '80%', marginBottom: '30px' }}>
+          <Button
+            type="button"
+            name="addLetter"
+            className={['cf-left-side']}>
+          + Add letter
+          </Button>
+        </div>
+        <hr style={{ borderTop: '1px solid #d6d7d9' }} />
         <h2 style={{ margin: '30px auto 20px auto' }}>Associate with prior Mail</h2>
         <p style={{ marginTop: '0px', marginBottom: '-7px' }}>Is this correspondence related to prior mail?</p>
         <RadioField style={{}}
