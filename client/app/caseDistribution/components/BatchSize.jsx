@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { css } from 'glamor';
-import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
+import cx from 'classnames';
 import NumberField from 'app/components/NumberField';
 import COPY from '../../../COPY';
 import { getLeversByGroup, getLeverErrors, getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
@@ -13,13 +12,6 @@ import { validateLeverInput } from '../utils';
 const BatchSize = () => {
   const theState = useSelector((state) => state);
   const isUserAcdAdmin = getUserIsAcdAdmin(theState);
-
-  const leverNumberDiv = css({
-    '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
-    '& .cf-form-int-input .input-container': { width: 'auto', display: 'inline-block', verticalAlign: 'middle' },
-    '& .cf-form-int-input label': { position: 'absolute', bottom: '8px', left: '75px' },
-    '& .usa-input-error label': { bottom: '15px', left: '89px' }
-  });
 
   const dispatch = useDispatch();
   const batchLevers = getLeversByGroup(theState, Constant.LEVERS, ACD_LEVERS.lever_groups.batch);
@@ -58,23 +50,23 @@ const BatchSize = () => {
   batchLevers?.sort((leverA, leverB) => leverA.lever_group_order - leverB.lever_group_order);
 
   return (
-    <div className={styles.leverContent}>
-      <div className={styles.leverHead}>
+    <div className="lever-content">
+      <div className="lever-head">
         <h2>{COPY.CASE_DISTRIBUTION_BATCH_SIZE_H2_TITLE}</h2>
-        <div className={styles.leverLeft}><strong>{COPY.CASE_DISTRIBUTION_BATCH_SIZE_LEVER_LEFT_TITLE}</strong></div>
-        <div className={styles.leverRight}><strong>{COPY.CASE_DISTRIBUTION_BATCH_SIZE_LEVER_RIGHT_TITLE}</strong></div>
+        <div className="lever-left"><strong>{COPY.CASE_DISTRIBUTION_BATCH_SIZE_LEVER_LEFT_TITLE}</strong></div>
+        <div className="lever-right"><strong>{COPY.CASE_DISTRIBUTION_BATCH_SIZE_LEVER_RIGHT_TITLE}</strong></div>
       </div>
       {batchSizeLevers && batchSizeLevers.map((lever, index) => (
-        <div className={styles.activeLever} key={`${lever.item}-${index}`}>
-          <div className={styles.leverLeft}>
-            <strong className={lever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}>
+        <div className="active-lever" key={`${lever.item}-${index}`}>
+          <div className="lever-left">
+            <strong className={lever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}>
               {lever.title}
             </strong>
-            <p className={lever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}>
+            <p className={lever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}>
               {lever.description}
             </p>
           </div>
-          <div className={`${styles.leverRight} ${leverNumberDiv}`}>
+          <div className={cx('lever-right', 'batch-lever-num-sec')}>
             {isUserAcdAdmin ?
               <NumberField
                 name={lever.item}
@@ -86,14 +78,14 @@ const BatchSize = () => {
                 onChange={updateNumberFieldLever(lever)}
                 tabIndex={lever.is_disabled_in_ui ? -1 : null}
               /> :
-              <label className={lever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}>
+              <label className={lever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}>
                 {lever.value} {lever.unit}
               </label>
             }
           </div>
         </div>
       ))}
-      <h4 className={styles.footerStyling}>{COPY.CASE_DISTRIBUTION_FOOTER_ASTERISK_DESCRIPTION}</h4>
+      <h4 className="footerStyling">{COPY.CASE_DISTRIBUTION_FOOTER_ASTERISK_DESCRIPTION}</h4>
       <div className="cf-help-divider"></div>
     </div>
   );

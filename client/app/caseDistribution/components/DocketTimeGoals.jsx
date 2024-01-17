@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { css } from 'glamor';
 import cx from 'classnames';
-import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import { updateNumberLever, addLeverErrors, removeLeverErrors } from '../reducers/levers/leversActions';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import NumberField from 'app/components/NumberField';
@@ -13,13 +11,6 @@ import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import { validateLeverInput } from '../utils';
 
 const DocketTimeGoals = () => {
-
-  const leverNumberDiv = css({
-    '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
-    '& .cf-form-int-input .input-container': { width: 'auto', display: 'inline-block', verticalAlign: 'middle' },
-    '& .cf-form-int-input label': { position: 'absolute', bottom: '8px', left: '75px' },
-    '& .usa-input-error label': { bottom: '15px', left: '89px' }
-  });
 
   const dispatch = useDispatch();
   const theState = useSelector((state) => state);
@@ -92,16 +83,16 @@ const DocketTimeGoals = () => {
 
       return (
 
-        <div className={cx(styles.activeLever)}
+        <div className={cx('active-lever')}
           key={`${distributionPriorLever.item}-${index}`}
         >
-          <div className={cx(styles.leverLeft, styles.docketLeverLeft)}>
-            <strong className={docketTimeGoalLever.is_disabled_in_ui ? styles.leverDisabled : ''}>
+          <div className={cx('lever-left', 'docket-lever-left')}>
+            <strong className={docketTimeGoalLever.is_disabled_in_ui ? 'lever-disabled' : ''}>
               {sectionTitle || ''}
             </strong>
           </div>
-          <div className={`${styles.leverMiddle} ${leverNumberDiv}
-            ${docketTimeGoalLever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}}`}>
+          <div className={`lever-middle docket-time-lever-num-sec
+            ${docketTimeGoalLever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}}`}>
             <NumberField
               name={docketTimeGoalLever.item}
               isInteger
@@ -112,7 +103,7 @@ const DocketTimeGoals = () => {
               onChange={updateNumberFieldLever(docketTimeGoalLever)}
             />
           </div>
-          <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
+          <div className={cx('lever-right', 'docket-lever-right', 'docket-time-lever-num-sec')}>
             <ToggleSwitch
               id={`toggle-switch-${distributionPriorLever.item}`}
               selected={distributionPriorLever.is_toggle_active}
@@ -120,7 +111,7 @@ const DocketTimeGoals = () => {
               toggleSelected={toggleLever(index)}
             />
             <div
-              className={distributionPriorLever.is_toggle_active ? styles.toggleSwitchInput : styles.toggleInputHide}
+              className={distributionPriorLever.is_toggle_active ? 'toggle-switch-input' : 'toggle-input-hide'}
             >
 
               <NumberField
@@ -141,29 +132,29 @@ const DocketTimeGoals = () => {
 
     return (
 
-      <div className={cx(styles.activeLever)}
+      <div className="active-lever"
         key={`${distributionPriorLever.item}-${index}`}
         id={`${distributionPriorLever.item}-lever-section`}
       >
-        <div className={cx(styles.leverLeft, styles.docketLeverLeft)}>
-          <strong className={docketTimeGoalLever.is_disabled_in_ui ? styles.leverDisabled : ''}>
+        <div className={cx('lever-left', 'docket-lever-left')}>
+          <strong className={docketTimeGoalLever.is_disabled_in_ui ? 'lever-disabled' : ''}>
             { sectionTitle || '' }
           </strong>
         </div>
-        <div className={`${styles.leverMiddle} ${leverNumberDiv}`}
+        <div className={cx('lever-middle', 'docket-time-lever-num-sec')}
           id={`${distributionPriorLever.item}-lever-value`}
         >
-          <span className={docketTimeGoalLever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}
+          <span className={docketTimeGoalLever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}
             data-disabled-in-ui={docketTimeGoalLever.is_disabled_in_ui}
           >
             {docketTimeGoalLever.value} {docketTimeGoalLever.unit}
           </span>
         </div>
-        <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}
+        <div className={cx('lever-right', 'docket-lever-right', 'docket-time-lever-num-sec')}
           id={`${distributionPriorLever.item}-lever-toggle`}
         >
-          <div className={`${styles.leverRight} ${styles.docketLeverRight} ${leverNumberDiv}`}>
-            <span className={distributionPriorLever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}
+          <div className={cx('lever-right', 'docket-lever-right', 'docket-time-lever-num-sec')}>
+            <span className={distributionPriorLever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}
               data-disabled-in-ui={distributionPriorLever.is_disabled_in_ui}
             >
               {distributionPriorLever.is_toggle_active ? 'On' : 'Off'}
@@ -176,8 +167,8 @@ const DocketTimeGoals = () => {
   };
 
   return (
-    <div className={styles.leverContent}>
-      <div className={styles.leverHead}>
+    <div className="lever-content">
+      <div className="lever-head">
         <h2>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_SECTION_TITLE}</h2>
         <p className="cf-lead-paragraph">
           <strong className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_TITLE_LEFT}</strong>
@@ -188,9 +179,9 @@ const DocketTimeGoals = () => {
           {COPY.CASE_DISTRIBUTION_DOCKET_TIME_DESCRIPTION_RIGHT}
         </p>
         <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_DOCKET_TIME_NOTE}</p>
-        <div className={cx(styles.leverLeft, styles.docketLeverLeft)}><strong></strong></div>
-        <div className={styles.leverMiddle}><strong>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_TITLE_LEFT}</strong></div>
-        <div className={styles.leverRight}><strong>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_TITLE_RIGHT}</strong></div>
+        <div className={cx('lever-left', 'docket-lever-left')}><strong></strong></div>
+        <div className="lever-middle"><strong>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_TITLE_LEFT}</strong></div>
+        <div className="lever-right"><strong>{COPY.CASE_DISTRIBUTION_DOCKET_TIME_GOALS_TITLE_RIGHT}</strong></div>
       </div>
 
       {docketDistributionLevers?.

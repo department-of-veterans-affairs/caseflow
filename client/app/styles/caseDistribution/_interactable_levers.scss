@@ -16,7 +16,7 @@ $success-before-bg-color: #2e8540;
 $error-color: #f9dede;
 $error-before-bg-color: #e31c3d;
 
-.leverContainer {
+.lever-container {
   width: 100%;
   border: 1px solid $border-color;
   border-radius: 4px;
@@ -37,14 +37,14 @@ $error-before-bg-color: #e31c3d;
   }
 }
 
-.leverContent {
+.lever-content {
   width: 100%;
   padding-top: 20px;
   padding-bottom: 0;
   box-sizing: border-box;
 }
 
-.leverTop {
+.lever-top {
   p {
     margin: 10px 0;
     font-size: 19px;
@@ -54,9 +54,9 @@ $error-before-bg-color: #e31c3d;
   }
 }
 
-.activeLever {
+.active-lever {
   width: 100%;
-  padding: 15px;
+  padding: 15px 0;
   border-bottom: 1px solid $border-color;
   box-sizing: border-box;
   font-size: 19px;
@@ -64,14 +64,14 @@ $error-before-bg-color: #e31c3d;
   margin-bottom: 5px;
 }
 
-.leverHead {
+.lever-head {
   width: 100%;
   border-bottom: 1px solid $border-color;
   display: inline-block;
   padding-bottom: 15px;
 }
 
-.leverLeft {
+.lever-left {
   width: 70%;
   display: inline-block;
   margin-right: 30px;
@@ -81,7 +81,7 @@ $error-before-bg-color: #e31c3d;
   margin-top: 5px;
 }
 
-.leverRight {
+.lever-right {
   width: 25%;
   vertical-align: top;
   display: inline-block;
@@ -89,7 +89,7 @@ $error-before-bg-color: #e31c3d;
   margin-top: 3px;
 
   input {
-    width: 65px;
+    width: 70px;
     height: 45px;
     margin-right: 10px;
     display: inline-block;
@@ -101,19 +101,19 @@ $error-before-bg-color: #e31c3d;
   }
 }
 
-.leverUnit {
+.lever-unit {
   width: auto;
   vertical-align: middle;
   display: inline-block;
 }
 
-.docketLeverLeft {
+.docket-lever-left {
   vertical-align: middle;
   width: 36%;
   margin-right: 0;
 }
 
-.leverMiddle {
+.lever-middle {
   width: 36%;
   display: inline-block;
   vertical-align: middle;
@@ -141,7 +141,7 @@ $error-before-bg-color: #e31c3d;
   }
 }
 
-.docketLeverRight {
+.docket-lever-right {
   vertical-align: middle;
 
   button {
@@ -150,14 +150,14 @@ $error-before-bg-color: #e31c3d;
   }
 }
 
-.leverDisabled {
+.lever-disabled {
   opacity: 0.72;
   color: $lever-disabled-color;
 }
 
-.combinedRadioInput {
+.combined-radio-input {
   input {
-    width: 65px;
+    width: 70px;
     height: 45px;
     margin-right: 10px;
     font-size: 19px;
@@ -169,35 +169,35 @@ $error-before-bg-color: #e31c3d;
   }
 }
 
-.outlineRadioInput {
+.outline-radio-input {
   input {
     outline: none;
   }
 }
 
-.toggleInputHide {
+.toggle-input-hide {
   display: none;
 }
 
-.toggleSwitchInput {
+.toggle-switch-input {
   width: auto;
   display: inline-block;
   vertical-align: middle;
 }
 
-.footerStyling {
+.footer-styling {
   margin-top: 10px;
   padding-top: 10px;
 }
 
-.numberFieldInput {
+.number-field-input {
   font-size: 19px;
   line-height: 1.5em;
   margin-bottom: 5px;
   vertical-align: middle;
 }
 
-.modalTableStyling {
+.modal-table-styling {
   padding: 18px 0;
   border-left: 0;
   border-right: 0;
@@ -211,7 +211,7 @@ $error-before-bg-color: #e31c3d;
 }
 
 
-.modalTableHeaderStyling {
+.modal-table-header-styling {
   border-left: 0;
   border-right: 0;
   border-top: 0;
@@ -224,29 +224,29 @@ $error-before-bg-color: #e31c3d;
   line-height: 1.3em/25px;
 }
 
-.modalTableLeftStyling {
+.modal-table-left-styling {
   width: 60%;
 }
 
-.modalTableRightStyling {
+.modal-table-right-styling {
   width: 20%;
 }
 
-.updatedModalStyling>div>div {
+.updated-modal-styling>div>div {
   padding-bottom: 0;
 }
 
-.disabledText {
+.disabled-text {
   color: $modal-table-color;
   opacity: 100%;
 }
 
-.leverActive {
+.lever-active {
   color: $modal-table-color;
   opacity: 100%;
 }
 
-.leverAlertBanner {
+.lever-alert-banner {
   background-color: $lever-alert-bg-color;
   background-position: 2rem 2rem;
   background-size: 5.2rem;
