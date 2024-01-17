@@ -26,6 +26,7 @@ module Seeds
       setup_camo_org
       setup_caregiver_org
       setup_program_offices!
+      setup_specialty_case_team
       create_visn_org_teams!
       create_vha_camo
       create_vha_caregiver
