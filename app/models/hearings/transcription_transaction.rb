@@ -16,4 +16,14 @@ class TranscriptionTransaction < CaseflowRecord
   def upload_raw_transcript
     nil
   end
+
+  # Update transcription file status
+  def update_file_status
+    nil
+  end
+
+  # Download transcription files from S3
+  def download_transcription_files
+    nil
+  end
 end
