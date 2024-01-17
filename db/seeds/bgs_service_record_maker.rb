@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Seeds
-  class BGSServiceRecordMaker < Base
+  class BgsServiceRecordMaker < Base
     # :reek:UtilityFunction
     def seed!
       # run the BGSServiceMaker file located in lib/fakes
