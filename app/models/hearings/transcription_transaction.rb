@@ -3,7 +3,7 @@
 class TranscriptionTransaction < CaseflowRecord
   include BelongsToPolymorphicAppealConcern
   belongs_to_polymorphic_appeal :appeal
-  belongs_to :transcriptions
+  belongs_to :transcription
   belongs_to :transcript
   belongs_to :docket
 
