@@ -53,11 +53,11 @@ module Seeds
           correspondence_type_id: 8,
           cmp_queue_id: 1,
           cmp_packet_number: @cmp_packet_number,
-          va_date_of_receipt: Time.zone.yesterday,
+          va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "This is a note from CMP.",
           assigned_by_id: 81,
           updated_by_id: 81,
-          veteran_id: veteran.id,
+          veteran_id: veteran.id
         )
         create_multiple_docs(corres, veteran)
         @cmp_packet_number += 1
@@ -73,7 +73,7 @@ module Seeds
           correspondence_type_id: 8,
           cmp_queue_id: 1,
           cmp_packet_number: @cmp_packet_number,
-          va_date_of_receipt: Time.zone.yesterday,
+          va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "This is a note from CMP.",
           assigned_by_id: 81,
           updated_by_id: 81,
@@ -100,7 +100,7 @@ module Seeds
           correspondence_type_id: corres_type_id,
           cmp_queue_id: 1,
           cmp_packet_number: @cmp_packet_number,
-          va_date_of_receipt: Time.zone.yesterday,
+          va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "This is a note from CMP.",
           assigned_by_id: 81,
           updated_by_id: 81,
@@ -127,7 +127,7 @@ module Seeds
           correspondence_type_id: 8,
           cmp_queue_id: cmp_queue_id,
           cmp_packet_number: @cmp_packet_number,
-          va_date_of_receipt: Time.zone.yesterday,
+          va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "This is a note from CMP.",
           assigned_by_id: 81,
           updated_by_id: 81,
