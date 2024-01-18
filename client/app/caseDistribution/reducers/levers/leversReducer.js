@@ -33,6 +33,9 @@ const leversReducer = (state = initialState, action = {}) => {
       backendLevers: {
         $set: createUpdatedLeversWithValues(action.payload.levers),
       },
+    });
+  case ACTIONS.LOAD_HISTORY:
+    return update(state, {
       historyList: {
         $set: formatLeverHistory(action.payload.historyList)
       }
@@ -83,7 +86,6 @@ const leversReducer = (state = initialState, action = {}) => {
     return {
       ...state,
       changesOccurred: false,
-      historyList: formatLeverHistory(action.payload.leverHistory),
       displayBanner: true,
       errors: action.payload.errors
     };

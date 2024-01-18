@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import rootReducer from 'app/caseDistribution/reducers/root';
 import thunk from 'redux-thunk';
-import { loadLevers } from '../../../../../client/app/caseDistribution/reducers/levers/leversActions';
+import { loadHistory } from '../../../../../client/app/caseDistribution/reducers/levers/leversActions';
 import ACD_LEVERS from '../../../../constants/ACD_LEVERS';
 import DISTRIBUTION from '../../../../constants/DISTRIBUTION';
 
@@ -97,7 +97,7 @@ describe('LeverHistory', () => {
 
     const store = getStore();
 
-    store.dispatch(loadLevers(levers, testHistory));
+    store.dispatch(loadHistory(testHistory));
 
     render(
       <Provider store={store}>
@@ -124,7 +124,7 @@ describe('LeverHistory', () => {
 
     const store = getStore();
 
-    store.dispatch(loadLevers(levers, testHistory2));
+    store.dispatch(loadHistory(testHistory2));
 
     render(
       <Provider store={store}>
