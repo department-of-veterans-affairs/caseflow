@@ -2,23 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { LeverCancelButton } from './LeverCancelButton';
 import { LeverSaveButton } from './LeverSaveButton';
-import { css } from 'glamor';
-
-const saveButtonStyling = css({
-  display: 'inline-block',
-  float: 'right',
-  paddingRight: '20px',
-});
-const cancelButtonStyling = css({
-  display: 'inline-block',
-  paddingLeft: '20px',
-});
-
-const buttonWrapperStyling = css({
-  // paddingBottom: '20px',
-  marginBottom: '30px',
-  marginTop: '30px',
-});
 
 const LeverButtonsWrapper = (props) => {
   const { leverStore } = props;
@@ -27,9 +10,9 @@ const LeverButtonsWrapper = (props) => {
   const saveButton = <LeverSaveButton />;
 
   return (
-    <div {...buttonWrapperStyling}>
-      <div {...cancelButtonStyling}>{cancelButton}</div>
-      <div {...saveButtonStyling}>{saveButton}</div>
+    <div className="button-wrapper-styling">
+      <div className="cancel-button-styling">{cancelButton}</div>
+      <div className="save-button-styling">{saveButton}</div>
     </div>
   );
 };
