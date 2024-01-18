@@ -117,4 +117,6 @@ class HearingSerializer
   attribute :current_user_timezone do |_, params|
     params[:user]&.timezone
   end
+
+  attribute :scheduled_in_timezone
 end
