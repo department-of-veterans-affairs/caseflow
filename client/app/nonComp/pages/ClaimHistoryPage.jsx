@@ -1,39 +1,22 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import NonCompLayout from '../components/NonCompLayout';
 import Link from 'app/components/Link';
 
-class ClaimHistoryPageUnconnected extends React.PureComponent {
+const ClaimHistoryPage = () => {
 
-  render = () => {
-    const { task } = this.props;
+  const task = useSelector(
+    (state) => state.nonComp.task
+  );
 
-    const returnLink = `${task.tasks_url}/tasks/${task.id}`;
+  const returnLink = `${task.tasks_url}/tasks/${task.id}`;
 
-    return <>
-      <Link href={returnLink}><b><u>&lt; Back to Decision Review</u></b></Link>
-      <NonCompLayout>
-        <h1>{task.claimant.name}</h1>
-      </NonCompLayout>
-    </>;
-  }
-}
-
-ClaimHistoryPageUnconnected.propTypes = {
-  task: PropTypes.shape({
-    id: PropTypes.number,
-    claimant: PropTypes.object,
-    tasks_url: PropTypes.string,
-    type: PropTypes.string,
-    created_at: PropTypes.string
-  }),
+  return <>
+    <Link href={returnLink}><b><u>&lt; Back to Decision Review</u></b></Link>
+    <NonCompLayout>
+      <h1>{task.claimant.name}</h1>
+    </NonCompLayout>
+  </>;
 };
-
-const ClaimHistoryPage = connect(
-  (state) => ({
-    task: state.nonComp.task,
-  })
-)(ClaimHistoryPageUnconnected);
 
 export default ClaimHistoryPage;
