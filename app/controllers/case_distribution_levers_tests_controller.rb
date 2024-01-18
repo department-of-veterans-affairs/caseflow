@@ -7,7 +7,7 @@ class CaseDistributionLeversTestsController < ApplicationController
 
   def acd_lever_index_test
     @acd_levers = CaseDistributionLever.all
-    @acd_history = lever_history
+    @acd_history = CaseDistributionAuditLeverEntry.lever_history
 
     render "case_distribution_levers/test"
   end
@@ -46,10 +46,5 @@ class CaseDistributionLeversTestsController < ApplicationController
     return true if Rails.deploy_env?(:demo)
 
     redirect_to "/unauthorized"
-  end
-
-  def lever_history
-    history = CaseDistributionAuditLeverEntry.includes(:user, :case_distribution_lever).past_year
-    CaseDistributionAuditLeverEntrySerializer.new(history).serializable_hash[:data].map{ |entry| entry[:attributes] }
   end
 end
