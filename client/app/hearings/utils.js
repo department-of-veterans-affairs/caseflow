@@ -432,7 +432,7 @@ export const timezones = (time, roTimezone) => {
   }
 
   // Convert the time into a date object with the RO timezone
-  const dateTime = moment.tz(time, 'HH:mm', roTimezone);
+  const dateTime = moment.tz(time, 'HH:mm A', roTimezone);
 
   // Map the available timeTIMEZONES to a select options object
   const unorderedOptions = Object.keys(TIMEZONES).map((zone) => {
