@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_01_17_195653) do
+ActiveRecord::Schema.define(version: 2024_01_18_184304) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1429,6 +1429,16 @@ ActiveRecord::Schema.define(version: 2024_01_17_195653) do
     t.index ["parent_permission_id"], name: "index_organization_permissions_on_parent_permission_id"
   end
 
+  create_table "organization_user_permissions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "organization_permission_id", null: false, comment: "Foreign key to organization_permission table"
+    t.bigint "organizations_user_id", null: false, comment: "Foreign key to organizations_user table"
+    t.boolean "permitted", default: false, null: false, comment: "Whether or not the organization_user has the given permission enabled"
+    t.datetime "updated_at", null: false
+    t.index ["organization_permission_id"], name: "index_on_organization_permission_id"
+    t.index ["organizations_user_id"], name: "index_organization_user_permissions_on_organizations_user_id"
+  end
+
   create_table "organizations", force: :cascade do |t|
     t.boolean "accepts_priority_pushed_cases", comment: "Whether a JudgeTeam currently accepts distribution of automatically pushed priority cases"
     t.boolean "ama_only_push", default: false, comment: "whether a JudgeTeam should only get AMA appeals during the PushPriorityAppealsToJudgesJob"
@@ -2328,6 +2338,8 @@ ActiveRecord::Schema.define(version: 2024_01_17_195653) do
   add_foreign_key "notifications", "notification_events", column: "event_type", primary_key: "event_type"
   add_foreign_key "organization_permissions", "organization_permissions", column: "parent_permission_id"
   add_foreign_key "organization_permissions", "organizations"
+  add_foreign_key "organization_user_permissions", "organization_permissions"
+  add_foreign_key "organization_user_permissions", "organizations_users"
   add_foreign_key "organizations_users", "organizations"
   add_foreign_key "organizations_users", "users"
   add_foreign_key "post_decision_motions", "appeals"

@@ -9,6 +9,7 @@ describe OrganizationPermission do
       should have_many(:child_permissions).with_foreign_key("parent_permission_id")
         .class_name("OrganizationPermission").dependent(:destroy)
     }
+    it { should have_many(:organization_user_permissions).dependent(:destroy) }
   end
 
   describe "Validations" do
