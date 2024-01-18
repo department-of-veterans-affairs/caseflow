@@ -241,7 +241,7 @@ module Seeds
 
     def legacy_inactive_admin_judge_team
       @legacy_inactive_admin_judge_team ||= begin
-        judge = find_or_create_inactive_judge("INACTIVECFJUDGE", "Judge InactiveInCF User")
+        judge = find_or_create_inactive_judge("INACTIVECFJUDGE", "Judge InactiveInCF_AVLJ User")
         judge.update_status!("inactive") if judge.active?
         vacols_record = VACOLS::Staff.find_by_sdomainid(judge.css_id)
         vacols_record.update!(sactive: "I") if vacols_record.sactive == "A"
