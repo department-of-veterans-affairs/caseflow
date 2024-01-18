@@ -113,12 +113,14 @@ class AddedIssue extends React.PureComponent {
     }
 
     let specialIssuesMessage = 'None';
+    const showMstStatus = issue.mstChecked && mstFeatureToggle;
+    const showPactStatus = issue.pactChecked && pactFeatureToggle;
 
-    if (issue.mstChecked && issue.pactChecked) {
+    if (showMstStatus && showPactStatus) {
       specialIssuesMessage = `${COPY.MST_SHORT_LABEL}, ${COPY.PACT_SHORT_LABEL}`;
-    } else if (issue.mstChecked) {
+    } else if (showMstStatus) {
       specialIssuesMessage = COPY.MST_SHORT_LABEL;
-    } else if (issue.pactChecked) {
+    } else if (showPactStatus) {
       specialIssuesMessage = COPY.PACT_SHORT_LABEL;
     }
 
