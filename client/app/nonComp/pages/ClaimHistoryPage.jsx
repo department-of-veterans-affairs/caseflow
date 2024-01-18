@@ -12,7 +12,7 @@ class ClaimHistoryPageUnconnected extends React.PureComponent {
     const returnLink = `${task.tasks_url}/tasks/${task.id}`;
 
     return <>
-      <Link href={returnLink}><b>&lt; Back to Decision Review</b></Link>
+      <Link href={returnLink}><b><u>&lt; Back to Decision Review</u></b></Link>
       <NonCompLayout>
         <h1>{task.claimant.name}</h1>
       </NonCompLayout>
