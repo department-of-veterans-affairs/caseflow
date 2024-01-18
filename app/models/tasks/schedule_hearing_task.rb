@@ -187,6 +187,19 @@ class ScheduleHearingTask < Task
       task_values = params.delete(:business_payloads)[:values]
       hearing = create_hearing(task_values)
 
+      if task_values[:scheduled_time_string].present?
+        if (task_values[:scheduled_time_string].include?("AM"))
+          index = task_values[:scheduled_time_string].index("AM") + 2
+        else
+          index = task_values[:scheduled_time_string].index("PM") + 2
+        end
+
+        scheduled_time = task_values[:scheduled_time_string][0..index].strip
+        timezone = task_values[:scheduled_time_string][index..].strip
+        scheduled_time_in_utc = Time.use_zone(timezone){Time.zone.parse(scheduled_time)}.utc
+        task_values[:scheduled_time_string] = scheduled_time_in_utc
+      end
+
       # Create the virtual hearing if the attributes have been passed
       if task_values[:virtual_hearing_attributes].present?
         @alerts = VirtualHearings::ConvertToVirtualHearingService

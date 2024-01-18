@@ -29,11 +29,13 @@ class HearingTimeService
     end
 
     def legacy_formatted_scheduled_for(scheduled_for:, scheduled_time_string:)
-      hour, min = scheduled_time_string.split(":")
+
+      scheduled_time_in_utc = Time.zone.parse(scheduled_time_string).utc
+
       time = scheduled_for.to_datetime
       Time.use_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE) do
-        Time.zone.now.change(
-          year: time.year, month: time.month, day: time.day, hour: hour.to_i, min: min.to_i
+        Time.zone.parse(
+          "#{time.year}-#{time.month}-#{time.day} #{scheduled_time_in_utc.hour}:#{scheduled_time_in_utc.min} UTC"
         )
       end
     end
