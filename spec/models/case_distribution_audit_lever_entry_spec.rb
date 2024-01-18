@@ -17,57 +17,10 @@ RSpec.describe CaseDistributionAuditLeverEntry, type: :model do
 
       ]
 
-      entry_0_serialized = {
-        id: entries[0].id,
-        case_distribution_lever_id: lever.id,
-        created_at: entries[0].created_at,
-        previous_value: nil,
-        update_value: nil,
-        user_css_id: user.css_id,
-        user_name: user.full_name,
-        lever_title: lever.title,
-        lever_data_type: lever.data_type,
-        lever_unit: lever.unit
-      }
-
-      entry_1_serialized = {
-        id: entries[1].id,
-        case_distribution_lever_id: lever.id,
-        created_at: entries[1].created_at,
-        previous_value: nil,
-        update_value: nil,
-        user_css_id: user.css_id,
-        user_name: user.full_name,
-        lever_title: lever.title,
-        lever_data_type: lever.data_type,
-        lever_unit: lever.unit
-      }
-
-      entry_2_serialized = {
-        id: entries[2].id,
-        case_distribution_lever_id: lever.id,
-        created_at: entries[2].created_at,
-        previous_value: nil,
-        update_value: nil,
-        user_css_id: user.css_id,
-        user_name: user.full_name,
-        lever_title: lever.title,
-        lever_data_type: lever.data_type,
-        lever_unit: lever.unit
-      }
-
-      entry_3_serialized = {
-        id: entries[3].id,
-        case_distribution_lever_id: lever.id,
-        created_at: entries[3].created_at,
-        previous_value: nil,
-        update_value: nil,
-        user_css_id: user.css_id,
-        user_name: user.full_name,
-        lever_title: lever.title,
-        lever_data_type: lever.data_type,
-        lever_unit: lever.unit
-      }
+      entry_0_serialized = mock_serialize_audit_lever_entry(entries[0], lever, user)
+      entry_1_serialized = mock_serialize_audit_lever_entry(entries[1], lever, user)
+      entry_2_serialized = mock_serialize_audit_lever_entry(entries[2], lever, user)
+      entry_3_serialized = mock_serialize_audit_lever_entry(entries[3], lever, user)
 
       result = described_class.lever_history
 
@@ -77,4 +30,19 @@ RSpec.describe CaseDistributionAuditLeverEntry, type: :model do
       expect(result).to include(entry_3_serialized)
     end
   end
+end
+
+def mock_serialize_audit_lever_entry(entry, lever, user)
+  return {
+    id: entry.id,
+    case_distribution_lever_id: lever.id,
+    created_at: entry.created_at,
+    previous_value: nil,
+    update_value: nil,
+    user_css_id: user.css_id,
+    user_name: user.full_name,
+    lever_title: lever.title,
+    lever_data_type: lever.data_type,
+    lever_unit: lever.unit
+  }
 end
