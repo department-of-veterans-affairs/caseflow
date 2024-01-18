@@ -76,7 +76,7 @@ class SystemEncounteredUnknownErrorFixJob < CaseflowJob
     end
   rescue StandardError => error
     log_error(error)
-    @stuck_job_report_service.append_errors(decision_document.class.name, decision_document.id, error)
+    @stuck_job_report_service.append_error(decision_document.class.name, decision_document.id, error)
   end
 
   def all_epes_valid?(epes)
