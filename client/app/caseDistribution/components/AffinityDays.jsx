@@ -29,7 +29,7 @@ const AffinityDays = () => {
 
   const generateFields = (dataType, option, lever) => {
     const useAriaLabel = !lever.is_disabled_in_ui;
-    const tabIndex = lever.is_disabled_in_ui ? -1 : null;
+    const tabIndex = lever.is_disabled_in_ui ? -1 : 0;
 
     if (dataType === ACD_LEVERS.data_types.number) {
       return (

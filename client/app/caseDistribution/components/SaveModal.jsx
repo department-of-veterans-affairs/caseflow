@@ -37,13 +37,13 @@ export const SaveModal = (props) => {
         <table>
           <tbody>
             <tr>
-              <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableLeftStyling}`}>
+              <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableLeftStyling}`} scope="column">
                 {COPY.CASE_DISTRIBUTION_LEVER_SAVE_BUTTON_DATA}
               </th>
-              <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableRightStyling}`}>
+              <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableRightStyling}`} scope="column">
                 {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_PREV_VALUE}
               </th>
-              <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableRightStyling}`}>
+              <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableRightStyling}`} scope="column">
                 {COPY.CASE_DISTRIBUTION_LEVER_SAVE_BUTTON_VALUE}
               </th>
             </tr>
