@@ -102,7 +102,7 @@ class CaseDistributionTest extends React.PureComponent {
                                     <td> { lever.value } </td>
                                     <td> { lever.min_value }/{lever.max_value } </td>
                                     <td> { lever.unit } </td>
-                                    <td> { JSON.stringify(lever.options)  } </td>
+                                    <td> { lever.options?.map((option) => option.value).join(',') } </td>
                                     <td> { lever.is_toggle_active.toString() } </td>
                                     <td> { lever.is_disabled_in_ui.toString()  } </td>
                                     <td> { lever.algorithms_used } </td>
