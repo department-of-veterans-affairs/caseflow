@@ -932,22 +932,6 @@ ActiveRecord::Schema.define(version: 2024_01_16_173849) do
     t.index ["updated_by_id"], name: "index_hearing_days_on_updated_by_id"
   end
 
-  create_table "hearing_disposition_changes", force: :cascade do |t|
-    t.text "change_justification"
-    t.text "change_reason"
-    t.datetime "created_at"
-    t.bigint "created_by_id", comment: "The ID of the user who created the disposition change"
-    t.bigint "hearing_id", comment: "The ID of the hearing that has most recently been updated through a disposition change"
-    t.string "hearing_type"
-    t.text "new_disposition"
-    t.text "previous_disposition"
-    t.datetime "updated_at"
-    t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the virtual hearing"
-    t.index ["created_by_id"], name: "index_hearing_disposition_changes_on_created_by_id"
-    t.index ["hearing_type", "hearing_id"], name: "hearing_index"
-    t.index ["updated_by_id"], name: "index_hearing_disposition_changes_on_updated_by_id"
-  end
-
   create_table "hearing_email_recipients", comment: "Recipients of hearings-related emails", force: :cascade do |t|
     t.bigint "appeal_id", comment: "The ID of the appeal this email recipient is associated with"
     t.string "appeal_type", comment: "The type of appeal this email recipient is associated with"
@@ -1943,46 +1927,6 @@ ActiveRecord::Schema.define(version: 2024_01_16_173849) do
     t.index ["created_by_id"], name: "index_vbms_distributions_on_created_by_id"
     t.index ["updated_by_id"], name: "index_vbms_distributions_on_updated_by_id"
     t.index ["vbms_communication_package_id"], name: "index_vbms_distributions_on_vbms_communication_package_id"
-  end
-
-  create_table "vbms_ext_claim", primary_key: "CLAIM_ID", id: :decimal, precision: 38, force: :cascade do |t|
-    t.string "ALLOW_POA_ACCESS", limit: 5
-    t.decimal "CLAIMANT_PERSON_ID", precision: 38
-    t.datetime "CLAIM_DATE"
-    t.string "CLAIM_SOJ", limit: 25
-    t.integer "CONTENTION_COUNT"
-    t.datetime "CREATEDDT", null: false
-    t.string "EP_CODE", limit: 25
-    t.datetime "ESTABLISHMENT_DATE"
-    t.datetime "EXPIRATIONDT"
-    t.string "INTAKE_SITE", limit: 25
-    t.datetime "LASTUPDATEDT", null: false
-    t.string "LEVEL_STATUS_CODE", limit: 25
-    t.datetime "LIFECYCLE_STATUS_CHANGE_DATE"
-    t.string "LIFECYCLE_STATUS_NAME", limit: 50
-    t.string "ORGANIZATION_NAME", limit: 100
-    t.string "ORGANIZATION_SOJ", limit: 25
-    t.string "PAYEE_CODE", limit: 25
-    t.string "POA_CODE", limit: 25
-    t.integer "PREVENT_AUDIT_TRIG", limit: 2, default: 0, null: false
-    t.string "PRE_DISCHARGE_IND", limit: 5
-    t.string "PRE_DISCHARGE_TYPE_CODE", limit: 10
-    t.string "PRIORITY", limit: 10
-    t.string "PROGRAM_TYPE_CODE", limit: 10
-    t.string "RATING_SOJ", limit: 25
-    t.string "SERVICE_TYPE_CODE", limit: 10
-    t.string "SUBMITTER_APPLICATION_CODE", limit: 25
-    t.string "SUBMITTER_ROLE_CODE", limit: 25
-    t.datetime "SUSPENSE_DATE"
-    t.string "SUSPENSE_REASON_CODE", limit: 25
-    t.string "SUSPENSE_REASON_COMMENTS", limit: 1000
-    t.decimal "SYNC_ID", precision: 38, null: false
-    t.string "TEMPORARY_CLAIM_SOJ", limit: 25
-    t.string "TYPE_CODE", limit: 25
-    t.decimal "VERSION", precision: 38, null: false
-    t.decimal "VETERAN_PERSON_ID", precision: 15
-    t.index ["CLAIM_ID"], name: "claim_id_index"
-    t.index ["LEVEL_STATUS_CODE"], name: "level_status_code_index"
   end
 
   create_table "vbms_uploaded_documents", force: :cascade do |t|
