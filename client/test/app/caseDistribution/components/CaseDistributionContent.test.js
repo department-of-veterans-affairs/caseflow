@@ -5,10 +5,10 @@ import { formattedHistory, formattedLevers } from 'test/data/formattedCaseDistri
 import { createStore } from 'redux';
 import leversReducer from 'app/caseDistribution/reducers/levers/leversReducer';
 
-jest.mock('app/styles/caseDistribution/InteractableLevers.module.scss', () => '');
-jest.mock('app/styles/caseDistribution/StaticLevers.module.scss', () => '');
-jest.mock('app/styles/caseDistribution/LeverHistory.module.scss', () => '');
-jest.mock('app/styles/caseDistribution/ExclusionTable.module.scss', () => '');
+jest.mock('app/styles/caseDistribution/_interactable_levers.scss', () => '');
+jest.mock('app/styles/caseDistribution/_static_levers.scss', () => '');
+jest.mock('app/styles/caseDistribution/_lever_history.scss', () => '');
+jest.mock('app/styles/caseDistribution/_exclusion_table.scss', () => '');
 
 describe('CaseDistributionContent', () => {
 
