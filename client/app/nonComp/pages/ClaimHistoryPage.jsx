@@ -9,10 +9,10 @@ const ClaimHistoryPage = () => {
     (state) => state.nonComp.task
   );
 
-  const returnLink = `${task.tasks_url}/tasks/${task.id}`;
+  const returnLink = `../${task.id}`;
 
   return <>
-    <Link href={returnLink}><b><u>&lt; Back to Decision Review</u></b></Link>
+    <Link to={returnLink}><b><u>&lt; Back to Decision Review</u></b></Link>
     <NonCompLayout>
       <h1>{task.claimant.name}</h1>
     </NonCompLayout>
