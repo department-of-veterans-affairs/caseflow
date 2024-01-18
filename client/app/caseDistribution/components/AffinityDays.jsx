@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { css } from 'glamor';
 import cx from 'classnames';
-import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
 import NumberField from 'app/components/NumberField';
 import TextField from 'app/components/TextField';
 import COPY from '../../../COPY';
@@ -12,13 +10,6 @@ import { getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
 const AffinityDays = () => {
   const theState = useSelector((state) => state);
   const isUserAcdAdmin = getUserIsAcdAdmin(theState);
-
-  const leverNumberDiv = css({
-    '& .cf-form-int-input': { width: 'auto', display: 'inline-block', position: 'relative' },
-    '& .cf-form-int-input .input-container': { width: 'auto', display: 'inline-block', verticalAlign: 'middle' },
-    '& .cf-form-int-input label': { position: 'absolute', bottom: '15px', left: '100px' },
-    '& .usa-input-error label': { bottom: '24px', left: '115px' }
-  });
 
   const storeLevers = useSelector((state) => state.caseDistributionLevers.levers.affinity);
   const [affinityLevers, setAffinityLevers] = useState(storeLevers);
@@ -74,7 +65,7 @@ const AffinityDays = () => {
       return (
         <div key={`${option.item}-${lever.item}-${index}`}>
           <div>
-            <label className={lever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}
+            <label className={lever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}
               htmlFor={`${lever.item}-${option.item}`}>
               {`${option.text} ${option.data_type === ACD_LEVERS.data_types.number ?
                 `${option.value} ${option.unit}` : ''}`}
@@ -88,7 +79,7 @@ const AffinityDays = () => {
   };
 
   const renderAdminInput = (option, lever, index) => {
-    const className = cx(styles.combinedRadioInput, (lever.value === option.item) ? '' : styles.outlineRadioInput);
+    const className = cx('combined-radio-input', (lever.value === option.item) ? '' : 'outline-radio-input');
 
     return (
       <div key={`${lever.item}-${index}-${option.item}`}>
@@ -118,32 +109,32 @@ const AffinityDays = () => {
   affinityLevers?.sort((leverA, leverB) => leverA.lever_group_order - leverB.lever_group_order);
 
   return (
-    <div className={styles.leverContent}>
-      <div className={styles.leverHead}>
+    <div className="lever-content">
+      <div className="lever-head">
         <h2>{COPY.CASE_DISTRIBUTION_AFFINITY_DAYS_H2_TITLE}</h2>
-        <div className={styles.leverLeft}>
+        <div className="lever-left">
           <strong>{COPY.CASE_DISTRIBUTION_BATCH_SIZE_LEVER_LEFT_TITLE}</strong>
         </div>
-        <div className={styles.leverRight}>
+        <div className="lever-right">
           <strong>{COPY.CASE_DISTRIBUTION_BATCH_SIZE_LEVER_RIGHT_TITLE}</strong>
         </div>
       </div>
       {affinityLevers.map((lever, index) => (
-        <div className={cx(styles.activeLever, lever.is_disabled_in_ui ? styles.leverDisabled : '')}
+        <div className={cx('active-lever', lever.is_disabled_in_ui ? 'lever-disabled' : '')}
           key={`${lever.item}-${index}`}
         >
-          <div className={styles.leverLeft}>
+          <div className="lever-left">
             <strong>{lever.title}</strong>
-            <p>{lever.description}</p>
+            <p className="affinity-lever-text">{lever.description}</p>
           </div>
-          <div className={`${styles.leverRight} ${leverNumberDiv}`} >
+          <div className={cx('lever-right', 'affinity-lever-num-sec')} >
             {lever.options.map((option) => (
               (isUserAcdAdmin) ? renderAdminInput(option, lever, index) : generateMemberViewLabel(option, lever, index)
             ))}
           </div>
         </div>
       ))}
-      <h4 className={styles.footerStyling}>{COPY.CASE_DISTRIBUTION_FOOTER_ASTERISK_DESCRIPTION}</h4>
+      <h4 className="footer-styling">{COPY.CASE_DISTRIBUTION_FOOTER_ASTERISK_DESCRIPTION}</h4>
       <div className="cf-help-divider"></div>
     </div>
   );

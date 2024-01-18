@@ -33,10 +33,10 @@ module Seeds
 
     def create_users
       User.create(css_id: "CASEFLOW1", station_id: 317, full_name: "System User")
-      User.create(css_id: "BVASCASPER1", station_id: 101, full_name: "Steve Attorney_Cases Casper")
+      User.create(css_id: "BVASCASPER1", station_id: 101, full_name: "Steve Attorney_Cases_AVLJ Casper")
       User.create(css_id: "BVASRITCHIE", station_id: 101, full_name: "Sharree AttorneyNoCases Ritchie")
       User.create(css_id: "BVAAABSHIRE", station_id: 101, full_name: "Aaron Judge_HearingsAndCases Abshire")
-      User.create(css_id: "BVARERDMAN", station_id: 101, full_name: "Rachael JudgeHasAttorneys_Cases Erdman")
+      User.create(css_id: "BVARERDMAN", station_id: 101, full_name: "Rachael JudgeHasAttorneys_Cases_AVLJ Erdman")
       create_bvaebecker
       create_bvakkeeling
       User.create(css_id: "BVAAWAKEFIELD", station_id: 101, full_name: "Apurva Judge_CaseAtDispatch Wakefield")
@@ -55,21 +55,21 @@ module Seeds
 
       case_review_admin = User.create(css_id: "BVAKBLUE", station_id: 101, full_name: "Kim CaseReviewAdmin Blue")
       OrganizationsUser.make_user_admin(case_review_admin, CaseReview.singleton)
-      
+
       special_case_movement_user = User.create(css_id: "BVARDUNKLE",
                                                station_id: 101,
                                                full_name: "Rosalie SpecialCaseMovement Dunkle")
       FactoryBot.create(:staff, user: special_case_movement_user)
       SpecialCaseMovementTeam.singleton.add_user(special_case_movement_user)
-      
+
       special_case_movement_admin = User.create(css_id: "BVAGBEEKMAN",
                                                 station_id: 101,
                                                 full_name: "Bryan SpecialCaseMovementAdmin Beekman")
       FactoryBot.create(:staff, user: special_case_movement_admin)
       OrganizationsUser.make_user_admin(special_case_movement_admin, SpecialCaseMovementTeam.singleton)
-      
+
       create_bvadwise
-      
+
       bva_intake_user = User.create(css_id: "BVAISHAW", station_id: 101, full_name: "Ignacio BvaIntakeUser Shaw")
       BvaIntake.singleton.add_user(bva_intake_user)
 

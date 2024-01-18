@@ -1,0 +1,24 @@
+.affinity-lever-num-sec {
+  .cf-form-int-input {
+    width: auto;
+    display: inline-block;
+    position: relative;
+
+    .input-container {
+      width: auto;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    label {
+      position: absolute;
+      bottom: 10px;
+      left: 110px;
+    }
+  }
+
+  .usa-input-error label {
+    bottom: 24px;
+    left: 115px;
+  }
+}

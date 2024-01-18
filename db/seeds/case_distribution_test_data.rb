@@ -21,28 +21,28 @@ module Seeds
     private
 
     def create_scenario_2_appeals
-      create_ama_hearing_held_aod_appeals(1, find_or_create_nontester_judge("BVAABSHIRE", "BVA Abshire"), (20.years + 3.days).ago, 370.days.ago)
-      create_ama_hearing_held_aod_appeals(4, find_or_create_tester_judge_team("BVAREDMAN", "BVA Redman", 2), (20.years + 2.days).ago, 200.days.ago)
+      create_ama_hearing_held_aod_appeals(1, find_or_create_nontester_judge("BVAABSHIRE", "BVA Judge Abshire"), (20.years + 3.days).ago, 370.days.ago)
+      create_ama_hearing_held_aod_appeals(4, find_or_create_tester_judge_team("BVAREDMAN", "BVA Judge Redman", 2), (20.years + 2.days).ago, 200.days.ago)
       create_create_legacy_appeals(6, (20.years + 1.day).ago, 390.days.ago)
       create_direct_review_appeals(7, (20.years + 1.day).ago, 390.days.ago)
     end
 
     def create_scenario_3_appeals
-      create_ama_hearing_held_aod_appeals(4, find_or_create_nontester_judge("BVAABSHIRE", "BVA Abshire"), (15.years + 3.days).ago, 20.days.ago)
-      create_ama_hearing_held_aod_appeals(9, find_or_create_tester_judge_team("BVABECKER", "BVA Becker", 3), (15.years + 2.days).ago, 8.days.ago)
+      create_ama_hearing_held_aod_appeals(4, find_or_create_nontester_judge("BVAABSHIRE", "BVA Judge Abshire"), (15.years + 3.days).ago, 20.days.ago)
+      create_ama_hearing_held_aod_appeals(9, find_or_create_tester_judge_team("BVABECKER", "BVA Judge Becker", 3), (15.years + 2.days).ago, 8.days.ago)
       create_create_legacy_appeals(20, (15.years + 1.day).ago, 340.days.ago)
       create_direct_review_appeals(21, (15.years + 1.day).ago, 340.days.ago)
     end
 
     def create_scenario_4_appeals
-      create_ama_hearing_held_aod_appeals(2, find_or_create_tester_judge_team("BVABECKER", "BVA Becker", 3), (10.years + 2.days).ago, 7.days.ago)
+      create_ama_hearing_held_aod_appeals(2, find_or_create_tester_judge_team("BVABECKER", "BVA Judge Becker", 3), (10.years + 2.days).ago, 7.days.ago)
       create_create_legacy_appeals(8, (10.years + 1.days).ago, 310.days.ago)
       create_direct_review_appeals(8, (10.years + 1.days).ago, 310.days.ago)
     end
 
     def create_scenario_5_appeals
-      create_ama_hearing_held_aod_appeals(5, find_or_create_nontester_judge("BVAABSHIRE", "BVA Abshire"), (5.years + 3.days).ago, 40.days.ago)
-      create_ama_hearing_held_aod_appeals(10, find_or_create_tester_judge_team("BVABECKER", "BVA Becker", 3), (5.years + 2.days).ago, 6.days.ago)
+      create_ama_hearing_held_aod_appeals(5, find_or_create_nontester_judge("BVAABSHIRE", "BVA Judge Abshire"), (5.years + 3.days).ago, 40.days.ago)
+      create_ama_hearing_held_aod_appeals(10, find_or_create_tester_judge_team("BVABECKER", "BVA Judge Becker", 3), (5.years + 2.days).ago, 6.days.ago)
       create_create_legacy_appeals(1, (5.years + 1.day).ago, 290.days.ago)
       create_direct_review_appeals(2, (5.years + 1.day).ago, 290.days.ago)
     end
@@ -151,7 +151,7 @@ module Seeds
     end
 
     def create_missing_tester_judges
-      find_or_create_tester_judge("BVAKEELING", "BV A Keeling")
+      find_or_create_tester_judge("BVAKEELING", "BVA Judge Keeling")
       find_or_create_tester_judge("BVACOTBJ", "BVA ChairOfThe BoardJudge")
     end
 
@@ -241,7 +241,7 @@ module Seeds
 
     def legacy_inactive_admin_judge_team
       @legacy_inactive_admin_judge_team ||= begin
-        judge = find_or_create_inactive_judge("INACTIVECFJUDGE", "Judge InactiveInCF User")
+        judge = find_or_create_inactive_judge("INACTIVECFJUDGE", "Judge InactiveInCF_AVLJ User")
         judge.update_status!("inactive") if judge.active?
         vacols_record = VACOLS::Staff.find_by_sdomainid(judge.css_id)
         vacols_record.update!(sactive: "I") if vacols_record.sactive == "A"

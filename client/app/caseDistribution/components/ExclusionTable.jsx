@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import ToggleSwitch from 'app/components/ToggleSwitch/ToggleSwitch';
 import RadioField from 'app/components/RadioField';
-import styles from 'app/styles/caseDistribution/ExclusionTable.module.scss';
+import cx from 'classnames';
 import COPY from '../../../COPY';
 import DISTRIBUTION from '../../../constants/DISTRIBUTION';
 import { getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
@@ -25,28 +25,25 @@ const ExclusionTable = () => {
   ];
 
   return (
-    <div className={styles.exclusionTableContainerStyling}>
+    <div className="exclusion-table-container-styling">
       <table >
         <thead>
           <tr>
-            <th className={styles.tableHeaderStyling} scope="column">{' '}</th>
-            <th className={styles.tableHeaderStyling} scope="column">
+            <th className="table-header-styling" scope="column">{' '}</th>
+            <th className="table-header-styling" scope="column">
               {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_LEGACY_APPEALS_HEADER}
             </th>
-            <th className={styles.tableHeaderStyling} scope="column">
-              {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_HEARINGS_HEADER}</th>
-            <th className={styles.tableHeaderStyling} scope="column">
-              {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_DIRECT_HEADER}</th>
-            <th className={styles.tableHeaderStyling} scope="column">
-              {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_EVIDENCE_HEADER}</th>
+            <th className="table-header-styling" scope="column">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_HEARINGS_HEADER}</th>
+            <th className="table-header-styling" scope="column">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_DIRECT_HEADER}</th>
+            <th className="table-header-styling" scope="column">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_EVIDENCE_HEADER}</th>
           </tr>
         </thead>
         {isUserAcdAdmin ?
           <tbody>
             <tr>
-              <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`} aria-label="All non-priority">
+              <td className={cx('exclusion-table-styling', 'lever-disabled')} aria-label="All non-priority">
                 <span>
-                  <h4 className={styles.exclusionTableHeaderStyling}>
+                  <h4 className="exclusion-table-header-styling">
                     {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
                   </h4>
                   <ToggleSwitch
@@ -56,7 +53,7 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`} aria-label="All non-priority">
+              <td className={cx('exclusion-table-styling', 'lever-disabled')} aria-label="All non-priority">
                 <span>
                   <RadioField
                     name=""
@@ -65,7 +62,7 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`} aria-label="All non-priority">
+              <td className={cx('exclusion-table-styling', 'lever-disabled')} aria-label="All non-priority">
                 <span>
                   <RadioField
                     name=""
@@ -74,7 +71,7 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`} aria-label="All non-priority">
+              <td className={cx('exclusion-table-styling', 'lever-disabled')} aria-label="All non-priority">
                 <span>
                   <RadioField
                     name=""
@@ -83,7 +80,7 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`} aria-label="All non-priority">
+              <td className={cx('exclusion-table-styling', 'lever-disabled')} aria-label="All non-priority">
                 <span>
                   <RadioField
                     name=""
@@ -94,9 +91,9 @@ const ExclusionTable = () => {
               </td>
             </tr>
             <tr>
-              <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`} aria-label="All Priority">
+              <td className={cx('exclusion-table-styling', 'lever-disabled')} aria-label="All Priority">
                 <span>
-                  <h4 className={styles.exclusionTableHeaderStyling}>
+                  <h4 className="exclusion-table-header-styling">
                     {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
                   </h4>
                   <ToggleSwitch
@@ -106,7 +103,7 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`} aria-label="All Priority">
+              <td className={cx('exclusion-table-styling', 'lever-disabled')} aria-label="All Priority">
                 <span>
                   <RadioField
                     name=""
@@ -115,7 +112,7 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`} aria-label="All Priority">
+              <td className={cx('exclusion-table-styling', 'lever-disabled')} aria-label="All Priority">
                 <span>
                   <RadioField
                     name=""
@@ -124,7 +121,7 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`} aria-label="All Priority">
+              <td className={cx('exclusion-table-styling', 'lever-disabled')} aria-label="All Priority">
                 <span>
                   <RadioField
                     name=""
@@ -133,7 +130,7 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`} aria-label="All Priority">
+              <td className={cx('exclusion-table-styling', 'lever-disabled')} aria-label="All Priority">
                 <span>
                   <RadioField
                     name=""
@@ -148,54 +145,46 @@ const ExclusionTable = () => {
           <tbody>
             <th aria-label="All Non-Priority"></th>
             <tr>
-              <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
                 <h3>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}</h3>
               </td>
-              <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-                <label className={styles.exclusionTableMemberViewStyling}>
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
+                <label className="exclusion-table-member-view-styling">
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label>
               </td>
-              <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-                <label className={styles.exclusionTableMemberViewStyling}>
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
+                <label className="exclusion-table-member-view-styling">
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label>
               </td>
-              <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-                <label className={styles.exclusionTableMemberViewStyling}>
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
+                <label className="exclusion-table-member-view-styling">
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label>
               </td>
-              <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-                <label className={styles.exclusionTableMemberViewStyling}>
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
+                <label className="exclusion-table-member-view-styling">
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label>
               </td>
             </tr>
             <th aria-label="All Priority"></th>
             <tr>
-              <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
                 <h3>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}</h3>
               </td>
-              <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-                <label className={styles.exclusionTableMemberViewStyling}>
-                  {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
-                </label>
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
+                <label className="exclusion-table-member-view-styling">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}</label>
               </td>
-              <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-                <label className={styles.exclusionTableMemberViewStyling}>
-                  {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
-                </label>
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
+                <label className="exclusion-table-member-view-styling">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}</label>
               </td>
-              <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-                <label className={styles.exclusionTableMemberViewStyling}>
-                  {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
-                </label>
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
+                <label className="exclusion-table-member-view-styling">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}</label>
               </td>
-              <td className={`${styles.exclusionTableStyling} ${styles.leverDisabled}`}>
-                <label className={styles.exclusionTableMemberViewStyling}>
-                  {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
-                </label>
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
+                <label className="exclusion-table-member-view-styling">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}</label>
               </td>
             </tr>
           </tbody> }
