@@ -38,7 +38,6 @@ const Template = (args) => {
 };
 
 export const ClaimHistoryPageTemplate = Template.bind({});
-// export const TaskPageInProgress = Template.bind({});
 
 ClaimHistoryPageTemplate.story = {
   name: 'Completed High level Claims'
