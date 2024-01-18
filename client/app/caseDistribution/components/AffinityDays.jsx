@@ -107,7 +107,7 @@ const AffinityDays = () => {
           </label>
         </div>
         <div>
-          <div className={className}>
+          <div className={className} aria-label="Say this thing">
             {generateFields(option.data_type, option, lever, isUserAcdAdmin)}
           </div>
         </div>
