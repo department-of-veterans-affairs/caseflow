@@ -106,8 +106,6 @@ export const RadioField = (props) => {
         {options.map((option, i) => {
           const optionDisabled = isDisabled(option);
 
-          const uniqueId = `${idPart}_${option.value}_${i}`;
-
           const radioField = (<div
             className="cf-form-radio-option"
             key={`${idPart}-${option.value}-${i}`}
@@ -116,7 +114,7 @@ export const RadioField = (props) => {
               name={name}
               onChange={handleChange}
               type={ACD_LEVERS.data_types.radio}
-              id={uniqueId}
+              id={`${idPart}_${option.value}`}
               value={option.value}
               // eslint-disable-next-line no-undefined
               checked={controlled ? value === option.value : undefined}
