@@ -705,6 +705,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
     context "task is not in VHA" do
       before do
         non_comp_org.add_user(user)
+        OrganizationsUser.make_user_admin(user, non_comp_org)
       end
       it "returns unauthorized" do
         get :history, params: { task_id: task.id, decision_review_business_line_slug: non_comp_org.url }
