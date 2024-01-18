@@ -9,14 +9,14 @@ class CaseDistributionLeversController < ApplicationController
     # current frontend workflow.
     @acd_levers = CaseDistributionLever.all
     @acd_levers_for_store = grouped_levers
-    @acd_history = lever_history
+    @acd_history = CaseDistributionAuditLeverEntry.lever_history
     @user_is_an_acd_admin = CDAControlGroup.singleton.user_is_admin?(current_user)
 
     render "index"
   end
 
   def get_levers
-    render json: { levers: grouped_levers, lever_history: lever_history }
+    render json: { levers: grouped_levers, lever_history: CaseDistributionAuditLeverEntry.lever_history }
   end
 
   def update_levers
@@ -26,7 +26,7 @@ class CaseDistributionLeversController < ApplicationController
 
     render json: {
       errors: errors,
-      lever_history: lever_history,
+      lever_history: CaseDistributionAuditLeverEntry.lever_history,
       levers: grouped_levers
     }
   end
@@ -46,10 +46,5 @@ class CaseDistributionLeversController < ApplicationController
 
   def grouped_levers
     CaseDistributionLever.all.group_by(&:lever_group)
-  end
-
-  def lever_history
-    history = CaseDistributionAuditLeverEntry.includes(:user, :case_distribution_lever).past_year
-    CaseDistributionAuditLeverEntrySerializer.new(history).serializable_hash[:data].map{ |entry| entry[:attributes] }
   end
 end
