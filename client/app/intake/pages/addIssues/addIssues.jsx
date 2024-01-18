@@ -354,8 +354,12 @@ class AddIssuesPage extends React.Component {
       )
     );
 
+    const whichVHAPOATextToDisplay =
+      (['claimant_not_listed', ''].includes(intakeData.claimant)) ? COPY.VHA_NO_RECOGNIZED_POA : COPY.VHA_NO_POA;
+
     if (shouldAddPoAField) {
-      const noPoaText = intakeData.benefitType === 'vha' ? COPY.VHA_NO_POA : COPY.ADD_CLAIMANT_CONFIRM_MODAL_NO_POA;
+      const noPoaText =
+        intakeData.benefitType === 'vha' ? whichVHAPOATextToDisplay : COPY.ADD_CLAIMANT_CONFIRM_MODAL_NO_POA;
 
       fieldsForFormType = fieldsForFormType.concat({
         field: 'Claimant\'s POA',
