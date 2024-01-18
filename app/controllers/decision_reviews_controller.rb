@@ -51,7 +51,6 @@ class DecisionReviewsController < ApplicationController
     return requires_admin_access_redirect unless business_line == VhaBusinessLine.singleton &&
                                                  business_line.user_is_admin?(current_user)
 
-    # just do show for now to get some basic task info. will be filled out with task history stuff in later stories
     render "show"
   end
 
