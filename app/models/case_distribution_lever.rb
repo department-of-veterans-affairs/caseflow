@@ -101,7 +101,7 @@ class CaseDistributionLever < ApplicationRecord
 
     def add_audit_lever_entries(previous_levers, levers, current_user)
       entries = []
-      levers.each do |lever|
+      levers.filter(&:valid?).each do |lever|
         previous_lever = previous_levers[lever.id]
         entries.push ({
           user: current_user,
