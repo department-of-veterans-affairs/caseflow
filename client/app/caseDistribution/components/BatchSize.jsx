@@ -66,7 +66,7 @@ const BatchSize = () => {
               {lever.description}
             </p>
           </div>
-          <div className={cx('lever-right', 'batch-lever-num-sec')}>
+          <div className={cx('lever-right', 'batch-lever-num-sec')} aria-label={`${lever.title} ${lever.description}`}>
             {isUserAcdAdmin ?
               <NumberField
                 name={lever.item}
