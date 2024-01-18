@@ -187,13 +187,16 @@ class ScheduleHearingTask < Task
       task_values = params.delete(:business_payloads)[:values]
       hearing = create_hearing(task_values)
 
+      # Convert scheduled_time_string to a UTC time string
       if task_values[:scheduled_time_string].present?
+        # Find the AM/PM index value in the string
         if (task_values[:scheduled_time_string].include?("AM"))
           index = task_values[:scheduled_time_string].index("AM") + 2
         else
           index = task_values[:scheduled_time_string].index("PM") + 2
         end
 
+        # Generate the scheduled_time in UTC and update the scheduled_time_string
         scheduled_time = task_values[:scheduled_time_string][0..index].strip
         timezone = task_values[:scheduled_time_string][index..].strip
         scheduled_time_in_utc = Time.use_zone(timezone){Time.zone.parse(scheduled_time)}.utc

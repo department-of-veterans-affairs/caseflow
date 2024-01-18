@@ -29,7 +29,7 @@ class HearingTimeService
     end
 
     def legacy_formatted_scheduled_for(scheduled_for:, scheduled_time_string:)
-
+      # Parse the scheduled_time_string as a UTC time
       scheduled_time_in_utc = Time.zone.parse(scheduled_time_string).utc
 
       time = scheduled_for.to_datetime
