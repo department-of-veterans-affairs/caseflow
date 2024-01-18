@@ -81,12 +81,43 @@ class Docket
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Lint/UnusedMethodArgument
   # :reek:FeatureEnvy
   def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1, style: "push")
-    # TODO: Need to pull out all of the Vha benefit type appeals at this point
     # This might need to be in loop or while block until appeals are = to the limit after SCT appeals have been removed
     appeals = appeals(priority: priority, ready: true, genpop: genpop, judge: distribution.judge).limit(limit)
     # TODO: Gross
     # TODO: Maybe expand this out so work with any possible benefit types or some selection criterion
-    sct_appeals = appeals.select! { |appeal| appeal.request_issues.select { |issue| issue.benefit_type == "vha" } }
+    # TODO: See if this event works
+    sct_appeals = appeals.select { |appeal| appeal.request_issues.select { |issue| issue.benefit_type == "vha" } }
+
+    # Example data:
+    # appeals = 12
+    # sct_appeals = 3
+    appeals -= sct_appeals
+
+    # TODO: Probably can't even count these things
+    if sct_appeals
+      loop do
+        inner_appeals = appeals(priority: priority, ready: true, genpop: genpop, judge: distribution.judge)
+          .offset(appeals.count + sct_appeals.count)
+          .limit(limit - appeals.count)
+
+        # inner_appeals_count = inner_appeals.count
+
+        break unless inner_appeals.exists?
+
+        inner_sct_appeals = inner_appeals.select do |appeal|
+          appeal.request_issues.select do |issue|
+            issue.benefit_type == "vha"
+          end
+        end
+
+        inner_appeals -= inner_sct_appeals
+
+        appeals += inner_appeals
+        sct_appeals += inner_sct_appeals
+
+        break if appeals >= limit
+      end
+    end
 
     tasks = assign_judge_tasks_for_appeals(appeals, distribution.judge)
     sct_tasks = assign_sct_tasks_for_appeals(sct_appeals)
