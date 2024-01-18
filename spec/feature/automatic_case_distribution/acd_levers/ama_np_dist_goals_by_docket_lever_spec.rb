@@ -15,21 +15,18 @@ RSpec.feature "AMA Non-priority Distribution Goals by Docket Levers" do
   let(:ama_direct_reviews_field) {Constants.DISTRIBUTION.ama_direct_review_docket_time_goals}
   let(:ama_evidence_submissions_field) {Constants.DISTRIBUTION.ama_evidence_submission_docket_time_goals}
 
-  let(:disabled_color) {"rgba(117, 117, 117, 1)"}
-  let(:enabled_color) {"rgba(33, 33, 33, 1)"}
-
   context "user is in Case Distro Algorithm Control organization but not an admin" do
     scenario "visits the lever control page", type: :feature do
       visit "case-distribution-controls"
       confirm_page_and_section_loaded
 
-      expect(find(:css, "##{ama_hearings}-lever-value > span").native.style('color')).to eq(disabled_color)
-      expect(find(:css, "##{ama_direct_reviews}-lever-value > span").native.style('color')).to eq(enabled_color)
-      expect(find(:css, "##{ama_evidence_submissions}-lever-value > span").native.style('color')).to eq(disabled_color)
+      expect(find("##{ama_hearings}-lever-value > span")["data-disabled-in-ui"]).to eq("true")
+      expect(find("##{ama_direct_reviews}-lever-value > span")["data-disabled-in-ui"]).to eq("false")
+      expect(find("##{ama_evidence_submissions}-lever-value > span")["data-disabled-in-ui"]).to eq("true")
 
-      expect(find(:css, "##{ama_hearings}-lever-toggle > div > span").native.style('color')).to eq(disabled_color)
-      expect(find(:css, "##{ama_direct_reviews}-lever-toggle > div > span").native.style('color')).to eq(disabled_color)
-      expect(find(:css, "##{ama_evidence_submissions}-lever-toggle > div > span").native.style('color')).to eq(disabled_color)
+      expect(find("##{ama_hearings}-lever-toggle > div > span")["data-disabled-in-ui"]).to eq("true")
+      expect(find("##{ama_direct_reviews}-lever-toggle > div > span")["data-disabled-in-ui"]).to eq("true")
+      expect(find("##{ama_evidence_submissions}-lever-toggle > div > span")["data-disabled-in-ui"]).to eq("true")
     end
   end
 
@@ -93,9 +90,9 @@ end
 
 def confirm_page_and_section_loaded
   expect(page).to have_content(COPY::CASE_DISTRIBUTION_DOCKET_TIME_GOALS_SECTION_TITLE)
-  expect(page).to have_content("AMA Hearings")
-  expect(page).to have_content("AMA Direct Review")
-  expect(page).to have_content("AMA Evidence Submission")
+  expect(page).to have_content(Constants.DISTRIBUTION.ama_hearings_section_title)
+  expect(page).to have_content(Constants.DISTRIBUTION.ama_direct_review_section_title)
+  expect(page).to have_content(Constants.DISTRIBUTION.ama_evidence_submission_section_title)
 end
 
 def click_save_button

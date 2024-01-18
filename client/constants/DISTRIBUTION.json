@@ -21,5 +21,8 @@
   "ama_evidence_submission_docket_time_goals": "ama_evidence_submission_docket_time_goals",
   "days_before_goal_due_for_distribution": "days_before_goal_due_for_distribution",
   "all_priority": "All Priority",
-  "all_non_priority": "All Non-priority"
+  "all_non_priority": "All Non-priority",
+  "ama_hearings_section_title": "AMA Hearings",
+  "ama_direct_review_section_title": "AMA Direct Review",
+  "ama_evidence_submission_section_title": "AMA Evidence Submission"
 }

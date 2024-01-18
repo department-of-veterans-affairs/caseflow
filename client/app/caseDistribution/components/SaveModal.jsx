@@ -4,7 +4,7 @@ import Modal from 'app/components/Modal';
 import Button from 'app/components/Button';
 import { useSelector } from 'react-redux';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
-import styles from 'app/styles/caseDistribution/InteractableLevers.module.scss';
+import cx from 'classnames';
 import COPY from '../../../COPY';
 import PropTypes from 'prop-types';
 import { findOption } from '../utils';
@@ -37,13 +37,13 @@ export const SaveModal = (props) => {
         <table>
           <tbody>
             <tr>
-              <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableLeftStyling}`}>
-                {COPY.ASE_DISTRIBUTION_LEVER_SAVE_BUTTON_DATA}
+              <th className={cx('modal-table-header-styling', 'modal-table-left-styling')}>
+                {COPY.CASE_DISTRIBUTION_LEVER_SAVE_BUTTON_DATA}
               </th>
-              <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableRightStyling}`}>
+              <th className={cx('modal-table-header-styling', 'modal-table-right-styling')}>
                 {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_PREV_VALUE}
               </th>
-              <th className={`${styles.modalTableHeaderStyling} ${styles.modalTableRightStyling}`}>
+              <th className={cx('modal-table-header-styling', 'modal-table-right-styling')}>
                 {COPY.CASE_DISTRIBUTION_LEVER_SAVE_BUTTON_VALUE}
               </th>
             </tr>
@@ -52,11 +52,11 @@ export const SaveModal = (props) => {
             {updatedLevers.map((lever, index) => (
               <tr key={index}>
                 <React.Fragment>
-                  <td className={`${styles.modalTableStyling} ${styles.modalTableLeftStyling}`}>{lever.title}</td>
-                  <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}>
+                  <td className={cx('modal-table-styling', 'modal-table-left-styling')}>{lever.title}</td>
+                  <td className={cx('modal-table-styling', 'modal-table-right-styling')}>
                     {lever.backendValue}
                   </td>
-                  <td className={`${styles.modalTableStyling} ${styles.modalTableRightStyling}`}>
+                  <td className={cx('modal-table-styling', 'modal-table-right-styling')}>
                     {leverValueDisplay(lever)}
                   </td>
                 </React.Fragment>
@@ -73,7 +73,7 @@ export const SaveModal = (props) => {
       isOpen
       onClose={() => setShowModal(false)}
       closeHandler={() => setShowModal(false)}
-      className={styles.updatedModalStyling}
+      className="updated-modal-styling"
       title={COPY.CASE_DISTRIBUTION_MODAL_TITLE}
       confirmButton={<Button id="save-modal-confirm" onClick={handleConfirmButton}>
         {COPY.MODAL_CONFIRM_BUTTON}</Button>}

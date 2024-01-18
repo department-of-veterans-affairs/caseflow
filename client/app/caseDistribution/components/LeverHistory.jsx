@@ -1,7 +1,6 @@
 /* eslint-disable func-style */
 import React from 'react';
 import { useSelector } from 'react-redux';
-import styles from 'app/styles/caseDistribution/LeverHistory.module.scss';
 import { getLeverHistoryTable } from '../reducers/levers/leversSelector';
 import COPY from '../../../COPY';
 
@@ -12,32 +11,32 @@ const LeverHistory = () => {
   const leverHistoryTable = getLeverHistoryTable(theState);
 
   return (
-    <div>
+    <div className="lever-history-styling">
       <table>
         <tbody>
           <tr>
-            <th className={styles.leverHistoryTableHeaderStyling}>
+            <th className="lever-history-table-header-styling">
               {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_DATE}
             </th>
-            <th className={styles.leverHistoryTableHeaderStyling}>
+            <th className="lever-history-table-header-styling">
               {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_USER}
             </th>
-            <th className={styles.leverHistoryTableHeaderStyling}>
+            <th className="lever-history-table-header-styling">
               {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_DATA_ELEMENT}
             </th>
-            <th className={styles.leverHistoryTableHeaderStyling}>
+            <th className="lever-history-table-header-styling">
               {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_PREV_VALUE}
             </th>
-            <th className={styles.leverHistoryTableHeaderStyling}>
+            <th className="lever-history-table-header-styling">
               {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_UPDATED_VALUE}
             </th>
           </tr>
         </tbody>
         <tbody>{leverHistoryTable.map((entry, index) =>
           <tr key={index}>
-            <td className={`${styles.historyTableStyling} entry-created-at`}>{entry.created_at}</td>
-            <td className={`${styles.historyTableStyling} entry-user-id`}>{entry.user_css_id}</td>
-            <td className={`${styles.historyTableStyling} entry-titles`}>
+            <td className="history-table-styling entry-created-at">{entry.created_at}</td>
+            <td className="history-table-styling entry-user-id">{entry.user}</td>
+            <td className="history-table-styling entry-titles">
               <ol>
                 {entry.titles.map((title) => {
                   return <li key={title}>{title}</li>;
@@ -45,7 +44,7 @@ const LeverHistory = () => {
                 }
               </ol>
             </td>
-            <td className={`${styles.historyTableStyling} entry-previous-values`}>
+            <td className="history-table-styling entry-previous-values">
               <ol>
                 {entry.previous_values.map((previousValue, idx) => {
                   return <li key={previousValue}>
@@ -54,7 +53,7 @@ const LeverHistory = () => {
                 }
               </ol>
             </td>
-            <td className={`${styles.historyTableStyling} entry-updated-values`}>
+            <td className="history-table-styling entry-updated-values">
               <ol>
                 {entry.updated_values.map((updatedValue, idx) => {
                   return <li key={updatedValue}>

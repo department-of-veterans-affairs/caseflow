@@ -4,7 +4,7 @@ import { leverSaveButton } from 'app/caseDistribution/components/LeverModal';
 import { createStore } from '@reduxjs/toolkit';
 import COPY from 'COPY';
 
-jest.mock('app/styles/caseDistribution/InteractableLevers.module.scss', () => '');
+jest.mock('app/styles/caseDistribution/_interactable_levers.scss', () => '');
 describe('leverSaveButton Component', () => {
   it('should render the component without errors', () => {
     const mockLeverStore = createStore(() => ({
