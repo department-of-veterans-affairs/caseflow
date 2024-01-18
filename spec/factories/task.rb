@@ -540,6 +540,18 @@ FactoryBot.define do
       factory :ama_judge_assign_task, class: JudgeAssignTask do
       end
 
+      factory :sct_assign_task, class: SpecialtyCaseTeamAssignTask do
+        appeal do
+          create(:appeal,
+                 :with_vha_issue,
+                 :with_post_intake_tasks)
+        end
+        assigned_to { SpecialtyCaseTeam.singleton }
+        parent { appeal.root_task || create(:root_task, appeal: appeal) }
+        # TODO: Also create a distribution task unless it should be done from appeal
+        # Maybe should also give it request issues?
+      end
+
       factory :assign_hearing_disposition_task, class: AssignHearingDispositionTask do
         assigned_to { Bva.singleton }
         parent { create(:hearing_task, appeal: appeal) }

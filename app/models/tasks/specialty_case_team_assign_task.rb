@@ -32,7 +32,7 @@ class SpecialtyCaseTeamAssignTask < Task
   # end
 
   def self.label
-    COPY::JUDGE_ASSIGN_TASK_LABEL
+    COPY::SPECIALTY_CASE_TEAM_ASSIGN_TASK_LABEL
   end
 
   def hide_from_case_timeline

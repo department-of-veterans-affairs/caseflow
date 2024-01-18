@@ -85,10 +85,11 @@ class Docket
     # This might need to be in loop or while block until appeals are = to the limit after SCT appeals have been removed
     appeals = appeals(priority: priority, ready: true, genpop: genpop, judge: distribution.judge).limit(limit)
     # TODO: Gross
+    # TODO: Maybe expand this out so work with any possible benefit types or some selection criterion
     sct_appeals = appeals.select! { |appeal| appeal.request_issues.select { |issue| issue.benefit_type == "vha" } }
 
     tasks = assign_judge_tasks_for_appeals(appeals, distribution.judge)
-    sct_tasks = assign_sct_tasks_for_vha_appeals(sct_appeals)
+    sct_tasks = assign_sct_tasks_for_appeals(sct_appeals)
     [tasks + sct_tasks].map do |task|
       next if task.nil?
 
