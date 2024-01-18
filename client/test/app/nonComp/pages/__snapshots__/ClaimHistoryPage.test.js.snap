@@ -2,8 +2,9 @@
 
 exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`] = `
 <div>
+        
   <a
-    href="/decision_reviews/vha/tasks/10467"
+    href="/10467"
   >
     <b>
       <u>

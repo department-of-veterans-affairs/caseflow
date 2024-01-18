@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
-
+import { MemoryRouter as Router } from 'react-router-dom';
 import ReduxBase from 'app/components/ReduxBase';
 import ClaimHistoryPage from 'app/nonComp/pages/ClaimHistoryPage';
 import CombinedNonCompReducer, { mapDataToInitialState } from 'app/nonComp/reducers';
@@ -15,7 +15,9 @@ const renderClaimHistoryPage = (storeValues = {}) => {
 
   return render(
     <ReduxBase initialState={initialState} reducer={CombinedNonCompReducer} >
-      <ClaimHistoryPage />
+      <Router>
+        <ClaimHistoryPage />
+      </Router>
     </ReduxBase>
   );
 };
