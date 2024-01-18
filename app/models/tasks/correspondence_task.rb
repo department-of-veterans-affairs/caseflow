@@ -22,7 +22,7 @@ class CorrespondenceTask < Task
   def remove_package
     root_task = CorrespondenceRootTask.find_by!(
       appeal_id: @correspondence.id,
-      assigned_to: MailTeamSupervisor.singleton,
+      assigned_to: InboundOpsTeam.singleton,
       appeal_type: "Correspondence",
       parent_id: @correspondence_task.id,
       type: "CorrespondenceRootTask"
