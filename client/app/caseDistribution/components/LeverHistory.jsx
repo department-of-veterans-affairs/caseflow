@@ -35,7 +35,7 @@ const LeverHistory = () => {
         <tbody>{leverHistoryTable.map((entry, index) =>
           <tr key={index}>
             <td className="history-table-styling entry-created-at">{entry.created_at}</td>
-            <td className="history-table-styling entry-user-id">{entry.user}</td>
+            <td className="history-table-styling entry-user-id">{entry.user_css_id}</td>
             <td className="history-table-styling entry-titles">
               <ol>
                 {entry.titles.map((title) => {
