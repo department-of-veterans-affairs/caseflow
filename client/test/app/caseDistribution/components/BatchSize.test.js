@@ -3,7 +3,7 @@ import { render, fireEvent } from '@testing-library/react';
 import BatchSize from 'app/caseDistribution/components/BatchSize';
 import { levers } from 'test/data/adminCaseDistributionLevers';
 
-jest.mock('app/styles/caseDistribution/InteractableLevers.module.scss', () => '');
+jest.mock('app/styles/caseDistribution/_interactable_levers.scss', () => '');
 describe('BatchSize', () => {
   let props;
   let component;
