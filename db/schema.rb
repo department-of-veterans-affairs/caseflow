@@ -2143,8 +2143,6 @@ ActiveRecord::Schema.define(version: 2024_01_16_173849) do
   add_foreign_key "hearing_days", "users", column: "created_by_id"
   add_foreign_key "hearing_days", "users", column: "judge_id"
   add_foreign_key "hearing_days", "users", column: "updated_by_id"
-  add_foreign_key "hearing_disposition_changes", "users", column: "created_by_id"
-  add_foreign_key "hearing_disposition_changes", "users", column: "updated_by_id"
   add_foreign_key "hearing_issue_notes", "hearings"
   add_foreign_key "hearing_issue_notes", "request_issues"
   add_foreign_key "hearing_task_associations", "tasks", column: "hearing_task_id"
