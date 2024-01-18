@@ -143,16 +143,13 @@ class AddIssuesModal extends React.Component {
 
       switch (whatToRender) {
       case 'mst':
-        featureFlagToUse = featureToggles.mst_identification ?
-          featureToggles.mst_identification : featureToggles.mstIdentification;
+        featureFlagToUse = featureToggles.mstIdentification;
         break;
       case 'pact':
-        featureFlagToUse = featureToggles.pact_identification ?
-          featureToggles.mst_identification : featureToggles.pactIdentification;
+        featureFlagToUse = featureToggles.pactIdentification;
         break;
       case 'justification':
-        featureFlagToUse = featureToggles.justification_reason ?
-          featureToggles.justification_reason : featureToggles.justificationReason;
+        featureFlagToUse = featureToggles.justificationReason;
         break;
       default:
         // Do nothing if variable not specified in list

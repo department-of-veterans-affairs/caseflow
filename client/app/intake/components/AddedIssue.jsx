@@ -89,10 +89,10 @@ class AddedIssue extends React.PureComponent {
       cssKlasses: ['issue-desc']
     };
 
-    const mstFeatureToggle = featureToggles.mst_identification || featureToggles.mstIdentification;
-    const pactFeatureToggle = featureToggles.pact_identification || featureToggles.pactIdentification;
+    const mstFeatureToggle = featureToggles.mstIdentification;
+    const pactFeatureToggle = featureToggles.pactIdentification;
     // eslint-disable-next-line max-len
-    const legacyMstPactFeatureToggle = featureToggles.legacy_mst_pact_identification || featureToggles.legacyMstPactIdentification;
+    const legacyMstPactFeatureToggle = featureToggles.legacyMstPactIdentification;
 
     const vacolsIssue = legacyIssue(issue, legacyAppeals);
 
