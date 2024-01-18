@@ -64,8 +64,8 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
       expect(response.body).to match(/unauthorized/)
     end
 
-    it "returns a success response when current user is part of MailTeamSupervisor" do
-      MailTeamSupervisor.singleton.add_user(current_user)
+    it "returns a success response when current user is part of InboundOpsTeam" do
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       get :show, params: { correspondence_uuid: correspondence.uuid }
       expect(response).to have_http_status(:ok)
