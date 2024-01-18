@@ -105,22 +105,22 @@ const defaultFormValues = {
   listedAttorney: null
 };
 
-const selectSchema = (isHLROrSCForm, benType) => {
+const selectSchema = (isHLROrSCForm, benefitType) => {
   if (!isHLROrSCForm) {
     return schema;
   }
 
-  return benType === 'vha' ? schemaHlrOrScVHA : schemaHLROrScOther;
+  return benefitType === 'vha' ? schemaHlrOrScVHA : schemaHLROrScOther;
 };
 
-export const useAddPoaForm = ({ defaultValues = {}, selectedForm = {}, benType = '' } = {}) => {
+export const useAddPoaForm = ({ defaultValues = {}, selectedForm = {}, benefitType = '' } = {}) => {
   const isHLROrSCForm = [
     FORM_TYPES.HIGHER_LEVEL_REVIEW.key,
     FORM_TYPES.SUPPLEMENTAL_CLAIM.key
   ].includes(selectedForm.key);
 
   const methods = useForm({
-    resolver: yupResolver(selectSchema(isHLROrSCForm, benType)),
+    resolver: yupResolver(selectSchema(isHLROrSCForm, benefitType)),
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: { ...defaultValues, ...defaultFormValues },
