@@ -91,7 +91,7 @@ const AffinityDays = () => {
     const className = cx(styles.combinedRadioInput, (lever.value === option.item) ? '' : styles.outlineRadioInput);
 
     return (
-      <div key={`${lever.item}-${index}-${option.item}`}>
+      <div aria-label={lever.title} key={`${lever.item}-${index}-${option.item}`}>
         <div>
           <input
             checked={option.item === lever.value}

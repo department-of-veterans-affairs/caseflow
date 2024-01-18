@@ -100,7 +100,7 @@ const DocketTimeGoals = () => {
               {sectionTitle || ''}
             </strong>
           </div>
-          <div className={`${styles.leverMiddle} ${leverNumberDiv}
+          <div aria-label={docketTimeGoalLever.title} id={`${docketTimeGoalLever.item}-lever-middle`} className={`${styles.leverMiddle} ${leverNumberDiv}
             ${docketTimeGoalLever.is_disabled_in_ui ? styles.leverDisabled : styles.leverActive}}`}>
             <NumberField
               name={docketTimeGoalLever.item}

@@ -74,7 +74,7 @@ const BatchSize = () => {
               {lever.description}
             </p>
           </div>
-          <div className={`${styles.leverRight} ${leverNumberDiv}`}>
+          <div aria-label={`${lever.title} ${lever.description}`} className={`${styles.leverRight} ${leverNumberDiv}`}>
             {isUserAcdAdmin ?
               <NumberField
                 name={lever.item}
