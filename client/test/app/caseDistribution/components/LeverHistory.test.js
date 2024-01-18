@@ -6,8 +6,6 @@ import { createStore, applyMiddleware } from 'redux';
 import rootReducer from 'app/caseDistribution/reducers/root';
 import thunk from 'redux-thunk';
 import { loadHistory } from '../../../../../client/app/caseDistribution/reducers/levers/leversActions';
-import ACD_LEVERS from '../../../../constants/ACD_LEVERS';
-import DISTRIBUTION from '../../../../constants/DISTRIBUTION';
 
 describe('LeverHistory', () => {
 
@@ -53,41 +51,6 @@ describe('LeverHistory', () => {
       user_css_id: 'BVADWISE'
     }
   ];
-
-  let levers = {
-    batch: [
-      {
-        item: DISTRIBUTION.alternative_batch_size,
-        title: 'Alternate Batch Size*',
-        description: 'Sets case-distribution batch size for judges who do not have their own attorney teams.',
-        data_type: ACD_LEVERS.data_types.number,
-        value: 15,
-        unit: ACD_LEVERS.cases,
-        is_toggle_active: true,
-        is_disabled_in_ui: false,
-        min_value: 0,
-        max_value: 100,
-        algorithms_used: [ACD_LEVERS.algorithms.docket, ACD_LEVERS.algorithms.proportion],
-        lever_group: ACD_LEVERS.lever_groups.batch,
-        lever_group_order: 2000
-      },
-      {
-        item: DISTRIBUTION.batch_size_per_attorney,
-        title: 'Batch Size Per Attorney*',
-        description: 'Sets case-distribution batch size for judges with attorney teams.',
-        data_type: ACD_LEVERS.data_types.number,
-        value: 3,
-        unit: ACD_LEVERS.cases,
-        is_toggle_active: true,
-        is_disabled_in_ui: false,
-        min_value: 0,
-        max_value: 'nil',
-        algorithms_used: [ACD_LEVERS.algorithms.docket, ACD_LEVERS.algorithms.proportion],
-        lever_group: ACD_LEVERS.lever_groups.batch,
-        lever_group_order: 2001
-      }
-
-    ] };
 
   it('renders the "LeverHistory Component" with the proper history data imported', () => {
 
