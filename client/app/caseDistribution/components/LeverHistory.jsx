@@ -35,9 +35,9 @@ const LeverHistory = () => {
         </tbody>
         <tbody>{leverHistoryTable.map((entry, index) =>
           <tr key={index}>
-            <td className={styles.historyTableStyling}>{entry.created_at}</td>
-            <td className={styles.historyTableStyling}>{entry.user_css_id}</td>
-            <td className={styles.historyTableStyling}>
+            <td className={`${styles.historyTableStyling} entry-created-at`}>{entry.created_at}</td>
+            <td className={`${styles.historyTableStyling} entry-user-id`}>{entry.user_css_id}</td>
+            <td className={`${styles.historyTableStyling} entry-titles`}>
               <ol>
                 {entry.titles.map((title) => {
                   return <li key={title}>{title}</li>;
@@ -45,18 +45,20 @@ const LeverHistory = () => {
                 }
               </ol>
             </td>
-            <td className={styles.historyTableStyling}>
+            <td className={`${styles.historyTableStyling} entry-previous-values`}>
               <ol>
                 {entry.previous_values.map((previousValue, idx) => {
-                  return <li key={previousValue}>{previousValue}{' '}{entry.units[idx]}</li>;
+                  return <li key={previousValue}>
+                    {previousValue}{' '}{entry.units[idx]}</li>;
                 })
                 }
               </ol>
             </td>
-            <td className={styles.historyTableStyling}>
+            <td className={`${styles.historyTableStyling} entry-updated-values`}>
               <ol>
                 {entry.updated_values.map((updatedValue, idx) => {
-                  return <li key={updatedValue}>{updatedValue}{' '}{entry.units[idx]}</li>;
+                  return <li key={updatedValue}>
+                    {updatedValue}{' '}{entry.units[idx]}</li>;
                 })
                 }
               </ol>
