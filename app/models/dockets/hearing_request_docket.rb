@@ -48,11 +48,10 @@ class HearingRequestDocket < Docket
 
     appeals = hearing_distribution_query(base_relation: base_relation, genpop: genpop, judge: distribution.judge).call
 
-    appeals = if genpop.eql?("any")
-                self.class.limit_genpop_appeals(appeals, limit)
-              elsif genpop.eql?("only_genpop")
-                self.class.limit_only_genpop_appeals(appeals, limit)
-              end
+    appeals = self.class.limit_genpop_appeals(appeals, limit) if genpop.eql? "any"
+
+    appeals = self.class.limit_only_genpop_appeals(appeals, limit) if genpop.eql? "only_genpop"
+
     HearingRequestCaseDistributor.new(
       appeals: appeals, genpop: genpop, distribution: distribution, priority: priority
     ).call
