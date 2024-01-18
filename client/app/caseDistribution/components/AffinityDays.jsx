@@ -91,7 +91,7 @@ const AffinityDays = () => {
     const className = cx(styles.combinedRadioInput, (lever.value === option.item) ? '' : styles.outlineRadioInput);
 
     return (
-      <div aria-label={lever.title} key={`${lever.item}-${index}-${option.item}`}>
+      <div key={`${lever.item}-${index}-${option.item}`}>
         <div>
           <input
             checked={option.item === lever.value}
@@ -107,7 +107,7 @@ const AffinityDays = () => {
           </label>
         </div>
         <div>
-          <div className={className}>
+          <div className={className} aria-label={option.unit}>
             {generateFields(option.data_type, option, lever, isUserAcdAdmin)}
           </div>
         </div>
