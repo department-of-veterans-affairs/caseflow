@@ -2,7 +2,6 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import StaticLever from './StaticLever';
 import COPY from '../../../COPY';
-import styles from 'app/styles/caseDistribution/StaticLevers.module.scss';
 import { Constant } from '../constants';
 import { getLeversByGroup } from '../reducers/levers/leversSelector';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
@@ -19,11 +18,11 @@ const StaticLeversWrapper = () => {
 
   return (
 
-    <table className={styles.tableStyling}>
+    <table className="table-styling">
       <tbody>
         <tr>
-          <th className={styles.tableHeaderStylingLeft}>{COPY.CASE_DISTRIBUTION_BATCH_SIZE_LEVER_LEFT_TITLE}</th>
-          <th className={styles.tableHeaderStylingRight}>{COPY.CASE_DISTRIBUTION_STATIC_LEVERS_VALUES}</th>
+          <th className="table-header-styling-left">{COPY.CASE_DISTRIBUTION_BATCH_SIZE_LEVER_LEFT_TITLE}</th>
+          <th className="table-header-styling-right">{COPY.CASE_DISTRIBUTION_STATIC_LEVERS_VALUES}</th>
         </tr>
       </tbody>
       {WrapperList}

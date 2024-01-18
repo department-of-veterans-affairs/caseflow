@@ -3,7 +3,7 @@ import { render, fireEvent } from '@testing-library/react';
 import DocketTimeGoals from 'app/caseDistribution/components/DocketTimeGoals';
 import { levers } from 'test/data/adminCaseDistributionLevers';
 
-jest.mock('app/styles/caseDistribution/InteractableLevers.module.scss', () => '');
+jest.mock('app/styles/caseDistribution/_interactable_levers.scss', () => '');
 describe('DocketTimeGoals Component', () => {
   const mockLeverList = ['lever_10', 'lever_11', 'lever_12'];
   const mockLeverStore = {
