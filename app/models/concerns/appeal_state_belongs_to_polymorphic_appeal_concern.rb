@@ -10,19 +10,9 @@ module AppealStateBelongsToPolymorphicAppealConcern
                -> { includes(:appeal_state).where(appeal_states: { appeal_type: "Appeal" }) },
                class_name: "Appeal", foreign_key: "appeal_id", optional: true
 
-    def ama_appeal
-      # `super()` will call the method created by the `belongs_to` above
-      super() if appeal_type == "Appeal"
-    end
-
     belongs_to :legacy_appeal,
                -> { includes(:appeal_state).where(appeal_states: { appeal_type: "LegacyAppeal" }) },
                class_name: "LegacyAppeal", foreign_key: "appeal_id", optional: true
-
-    def legacy_appeal
-      # `super()` will call the method created by the `belongs_to` above
-      super() if appeal_type == "LegacyAppeal"
-    end
 
     scope :ama, -> { where(appeal_type: "Appeal") }
     scope :legacy, -> { where(appeal_type: "LegacyAppeal") }
