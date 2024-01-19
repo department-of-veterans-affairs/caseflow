@@ -617,6 +617,9 @@ FactoryBot.define do
       factory :correspondence_intake_task, class: CorrespondenceIntakeTask do
       end
 
+      factory :review_package_task, class: ReviewPackageTask do
+      end
+
       factory :efolder_upload_failed_task, class: EfolderUploadFailedTask do
       end
 
