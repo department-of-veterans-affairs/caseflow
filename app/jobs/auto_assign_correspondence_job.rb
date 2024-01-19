@@ -18,12 +18,14 @@ class AutoAssignCorrespondenceJob < CaseflowJob
 
     unassigned_correspondences_task_id_pairs.each do |id_pair|
       begin
-        unassigned_review_package_task = ReviewPackageTask.find(id_pair[1])
+        correspondence_id = id_pair[0]
+        task_id = id_pair[1]
+        unassigned_review_package_task = ReviewPackageTask.find(task_id)
         task_params = {
-          parent_id: id_pair[1],
+          parent_id: task_id,
           instructions: ["Auto assigned by #{RequestStore[:current_user].css_id}"],
           assigned_to: InboundOpsTeam.singleton,
-          appeal_id: id_pair[0],
+          appeal_id: correspondence_id,
           appeal_type: "Correspondence",
           status: Constants.TASK_STATUSES.assigned,
           type: ReassignPackageTask.name
@@ -38,5 +40,3 @@ class AutoAssignCorrespondenceJob < CaseflowJob
   end
   # rubocop:enable Metrics/MethodLength
 end
-
-
