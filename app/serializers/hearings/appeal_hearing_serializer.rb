@@ -22,4 +22,5 @@ class AppealHearingSerializer
     !hearing.hearing_views.empty?
   end
   attribute :created_at
+  attribute :scheduled_in_timezone
 end
