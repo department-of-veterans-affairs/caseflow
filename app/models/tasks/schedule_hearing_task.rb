@@ -189,16 +189,17 @@ class ScheduleHearingTask < Task
 
       # Convert scheduled_time_string to a UTC time string
       if task_values[:scheduled_time_string].present?
+        time_string = task_values[:scheduled_time_string]
         # Find the AM/PM index value in the string
-        if (task_values[:scheduled_time_string].include?("AM"))
-          index = task_values[:scheduled_time_string].index("AM") + 2
+        if (time_string.include?("AM"))
+          index = time_string.index("AM") + 2
         else
-          index = task_values[:scheduled_time_string].index("PM") + 2
+          index = time_string.index("PM") + 2
         end
 
         # Generate the scheduled_time in UTC and update the scheduled_time_string
-        scheduled_time = task_values[:scheduled_time_string][0..index].strip
-        timezone = task_values[:scheduled_time_string][index..].strip
+        scheduled_time = time_string[0..index].strip
+        timezone = time_string[index..-1].strip
         scheduled_time_in_utc = Time.use_zone(timezone){Time.zone.parse(scheduled_time)}.utc
         task_values[:scheduled_time_string] = scheduled_time_in_utc
       end

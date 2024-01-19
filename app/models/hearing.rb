@@ -192,7 +192,9 @@ class Hearing < CaseflowRecord
     # time zone
     scheduled_time_in_utc = scheduled_time.utc
 
-    utc_time_string = "#{hearing_day.scheduled_for.year}-#{hearing_day.scheduled_for.month}-#{hearing_day.scheduled_for.day} #{scheduled_time_in_utc.hour}:#{scheduled_time_in_utc.min}:#{scheduled_time_in_utc.sec} UTC"
+    utc_day = "#{hearing_day.scheduled_for.year}-#{hearing_day.scheduled_for.month}-#{hearing_day.scheduled_for.day}"
+    utc_time = "#{scheduled_time_in_utc.hour}:#{scheduled_time_in_utc.min}:#{scheduled_time_in_utc.sec} UTC"
+    utc_time_string = "#{utc_day} #{utc_time}"
 
     Time.use_zone(regional_office_timezone) do
       Time.zone.parse(utc_time_string)
