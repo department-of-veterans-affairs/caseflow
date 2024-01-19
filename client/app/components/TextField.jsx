@@ -55,7 +55,6 @@ export const TextField = (props) => {
       name={name}
       required={required}
       optional={optional}
-      labelTextId={`label-${name}`}
     />
   );
 
