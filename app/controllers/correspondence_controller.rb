@@ -175,7 +175,11 @@ class CorrespondenceController < ApplicationController
   end
 
   def auto_assign_correspondences
-    perform_later_or_now(AutoAssignCorrespondenceJob)
+    job_args = {
+      current_user_id: current_user.id
+    }
+
+    perform_later_or_now(AutoAssignCorrespondenceJob, job_args)
   end
 
   private
