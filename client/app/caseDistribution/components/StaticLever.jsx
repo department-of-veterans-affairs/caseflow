@@ -13,20 +13,17 @@ const StaticLever = ({ lever }) => {
 
       return leverValueString.charAt(0).toUpperCase() + leverValueString.slice(1);
     case ACD_LEVERS.data_types.number:
-      return `${(lever.value * 100).toFixed(0)} ${lever.unit}`;
+      return `${(lever.value * 100).toFixed(0)}`;
     case ACD_LEVERS.data_types.radio:
       return lever.options.find((option) => option.value === lever.value)?.text;
     case ACD_LEVERS.data_types.combination:
-      return `${lever.value} ${lever.unit}`;
+      return `${lever.value}`;
     default:
       return null;
     }
   };
 
-  const valueWithUnit = renderValue();
-  const valueArray = valueWithUnit?.split(' ');
-  const value = valueArray ? valueArray[0] : '';
-  const unit = valueArray ? valueArray[1] : '';
+  const formattedValue = renderValue();
 
   return (
     <tbody>
@@ -34,10 +31,12 @@ const StaticLever = ({ lever }) => {
         <td className="title-styling">{lever.title}</td>
       </tr>
       <tr>
-        <td className={cx('cf-lead-paragraph', 'description-styling')}>{lever.description}</td>
-        <td className={cx('cf-lead-paragraph', 'value-styling')}>
-          <span className="value-right-styling">{value} </span>
-          <span>{unit}</span>
+        <td className={cx('cf-lead-paragraph', 'description-styling')} id={`${lever.title}-description`}>
+          {lever.description}
+        </td>
+        <td className={cx('cf-lead-paragraph', 'value-styling')} id={`${lever.title}-product`}>
+          <span className="value-right-styling" id={`${lever.title}-value`}>{formattedValue} </span>
+          <span id={`${lever.title}-unit`}>{lever.unit}</span>
         </td>
       </tr>
     </tbody>

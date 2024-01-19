@@ -333,3 +333,20 @@ export const updated_levers = [
 ]
 
 /* END Reducer Test Data */
+
+/* Outlier Test Data for Testing Coverage */
+
+export const unknownDataTypeStaticLevers = [
+  {
+    "item": "lever_unknown_dt_static",
+    "title": "lever_unknown_dt_static_title",
+    "description": "lever_unknown_dt_static_desc",
+    "data_type": "",
+    "value": 'test-value-unknown-dt-static',
+    "unit": "test-unit-unknown-dt-static",
+    "is_toggle_active": true,
+    "lever_group": "static",
+    "lever_group_order": 0
+  }
+];
+/* END Outlier Test Data for Testing Coverage */

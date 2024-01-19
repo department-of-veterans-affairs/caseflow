@@ -1,13 +1,12 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import StaticLeversWrapper from 'app/caseDistribution/components/StaticLeversWrapper';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import rootReducer from 'app/caseDistribution/reducers/root';
 import thunk from 'redux-thunk';
-import ACD_LEVERS from '../../../../constants/ACD_LEVERS';
-import DISTRIBUTION from '../../../../constants/DISTRIBUTION';
 import { loadLevers } from 'app/caseDistribution/reducers/levers/leversActions';
+import { levers } from '../../../data/adminCaseDistributionLevers';
 
 describe('Static Lever', () => {
 
@@ -15,25 +14,8 @@ describe('Static Lever', () => {
     jest.clearAllMocks();
   });
 
-  let staticLevers = [
-    {
-      item: DISTRIBUTION.minimum_legacy_proportion,
-      title: 'Minimum Legacy Proportion',
-      description: 'Sets the minimum proportion of legacy appeals that will be distributed.',
-      data_type: ACD_LEVERS.data_types.number,
-      value: 0.2,
-      unit: '%',
-      is_toggle_active: false,
-      is_disabled_in_ui: true,
-      min_value: 0,
-      max_value: 1,
-      algorithms_used: [ACD_LEVERS.algorithms.proportion],
-      lever_group: ACD_LEVERS.lever_groups.static,
-      lever_group_order: 1001
-    },
-  ];
-
-  let levers = {
+  let staticLevers = levers.filter((lever) => (lever.lever_group === 'static' && lever.data_type === 'number'));
+  let testLevers = {
     static: staticLevers,
   };
 
@@ -45,7 +27,7 @@ describe('Static Lever', () => {
 
     const store = getStore();
 
-    store.dispatch(loadLevers(levers));
+    store.dispatch(loadLevers(testLevers));
 
     render(
       <Provider store={store}>
@@ -53,8 +35,10 @@ describe('Static Lever', () => {
       </Provider>
     );
 
-    expect(screen.getByText('Sets the minimum proportion of legacy appeals that will be distributed.')).
-      toBeInTheDocument();
-    expect(screen.getByText('20')).toBeInTheDocument();
+    for (const lever of staticLevers) {
+      expect(document.getElementById(`${lever.title}-value`)).toHaveTextContent(lever.value);
+      expect(document.getElementById(`${lever.title}-description`)).toHaveTextContent(lever.description);
+      expect(document.getElementById(`${lever.title}-unit`)).toHaveTextContent(lever.unit);
+    }
   });
 });
