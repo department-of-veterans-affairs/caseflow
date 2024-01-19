@@ -2,25 +2,34 @@
 
 exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`] = `
 <div>
-  <a
-    href="/10467"
+  <div
+    class="individual-claim-history"
   >
-    <b>
-      <u>
-        &lt; Back to Decision Review
-      </u>
-    </b>
-  </a>
-  <div>
-    <section
-      class="cf-app-segment cf-app-segment--alt"
+    <div
+      class="sc-bdfBwQ bDdaSe"
     >
-      <div>
-        <h1>
-          Bob Smithgreen
-        </h1>
-      </div>
-    </section>
+       
+      <a
+        href="/10467"
+      >
+        <b>
+          <u>
+            &lt; Back to Decision Review
+          </u>
+        </b>
+      </a>
+    </div>
+    <div>
+      <section
+        class="cf-app-segment cf-app-segment--alt"
+      >
+        <div>
+          <h1>
+            Bob Smithgreen
+          </h1>
+        </div>
+      </section>
+    </div>
   </div>
 </div>
 `;
