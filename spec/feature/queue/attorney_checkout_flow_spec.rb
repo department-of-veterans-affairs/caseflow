@@ -10,6 +10,19 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
   let(:valid_document_id) { "12345678.123" }
   let(:invalid_document_id) { "222333" }
 
+  before do
+    User.authenticate!(user: attorney_user)
+    FeatureToggle.enable!(:mst_identification)
+    FeatureToggle.enable!(:pact_identification)
+    FeatureToggle.enable!(:legacy_mst_pact_identification)
+  end
+
+  after do
+    FeatureToggle.disable!(:legacy_mst_pact_identification)
+    FeatureToggle.disable!(:mst_identification)
+    FeatureToggle.disable!(:pact_identification)
+  end
+
   context "given a valid ama appeal" do
     before do
       root_task = create(:root_task, appeal: appeal)
@@ -59,11 +72,6 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
           contested_rating_issue_diagnostic_code: diagnostic_code
         )
       )
-    end
-
-    before do
-      FeatureToggle.enable!(:mst_identification)
-      FeatureToggle.enable!(:pact_identification)
     end
 
     scenario "submits draft decision" do
@@ -325,15 +333,6 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
           case_issues: case_issues
         )
       )
-    end
-
-    before do
-      User.authenticate!(user: attorney_user)
-      FeatureToggle.enable!(:legacy_mst_pact_identification)
-    end
-
-    after do
-      FeatureToggle.disable!(:legacy_mst_pact_identification)
     end
 
     context "with a single issue" do
@@ -781,16 +780,6 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
     end
 
     context " - AMA Appeals" do
-      before do
-        FeatureToggle.enable!(:mst_identification)
-        FeatureToggle.enable!(:pact_identification)
-      end
-
-      after do
-        FeatureToggle.disable!(:mst_identification)
-        FeatureToggle.disable!(:pact_identification)
-      end
-
       context "given a single issue" do
         before do
           root_task = create(:root_task, appeal: appeal)
@@ -1097,15 +1086,6 @@ RSpec.feature "Attorney checkout flow", :all_dbs do
             ]
           )
         )
-      end
-
-      before do
-        User.authenticate!(user: attorney_user)
-        FeatureToggle.enable!(:legacy_mst_pact_identification)
-      end
-
-      after do
-        FeatureToggle.disable!(:legacy_mst_pact_identification)
       end
 
       it " - add mst to an issue" do
