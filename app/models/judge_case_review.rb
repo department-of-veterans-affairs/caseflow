@@ -2,6 +2,8 @@
 
 class JudgeCaseReview < CaseflowRecord
   include CaseReviewConcern
+  include BelongsToPolymorphicAppealConcern
+  belongs_to_polymorphic_appeal :appeal
   include HasAppealUpdatedSince
   include IssueUpdater
 
