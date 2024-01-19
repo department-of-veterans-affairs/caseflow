@@ -16,6 +16,7 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
         type: :board_grant_effectuation_task,
         attributes: {
           has_poa: true,
+          not_listed_poa: false,
           claimant: { name: appeal.veteran_full_name, relationship: "self" },
           appeal: {
             id: appeal.external_id,
@@ -70,6 +71,7 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
           type: :board_grant_effectuation_task,
           attributes: {
             has_poa: true,
+            not_listed_poa: false,
             claimant: { name: "claimant", relationship: "Unknown" },
             appeal: {
               id: appeal.external_id,
@@ -129,6 +131,7 @@ describe WorkQueue::BoardGrantEffectuationTaskSerializer, :postgres do
           type: :board_grant_effectuation_task,
           attributes: {
             has_poa: true,
+            not_listed_poa: false,
             claimant: { name: claimant.name, relationship: "Veteran" },
             appeal: {
               id: appeal.external_id,
