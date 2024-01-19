@@ -24,9 +24,9 @@ const StaticLever = ({ lever }) => {
   };
 
   const valueWithUnit = renderValue();
-  const valueArray = valueWithUnit.split(' ');
-  const value = valueArray[0];
-  const unit = valueArray[1];
+  const valueArray = valueWithUnit?.split(' ');
+  const value = valueArray ? valueArray[0] : '';
+  const unit = valueArray ? valueArray[1] : '';
 
   return (
     <tbody>
