@@ -1,4 +1,5 @@
-import * as React from 'react';
+
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ApiUtil from '../../util/ApiUtil';
@@ -11,70 +12,76 @@ import { css } from 'glamor';
 import CorrespondenceTable from './CorrespondenceTable';
 import QueueOrganizationDropdown from '../components/QueueOrganizationDropdown';
 import Alert from '../../components/Alert';
+import Button from '../../components/Button';
 
-// import {
-//   initialAssignTasksToUser,
-//   initialCamoAssignTasksToVhaProgramOffice
-// } from '../QueueActions';
+export const CorrespondenceCases = (props) => {
+  const {
+    organizations,
+    currentAction,
+    veteranInformation,
+    vetCorrespondences,
+  } = props;
 
-class CorrespondenceCases extends React.PureComponent {
+  useEffect(() => {
+    // grabs correspondences and loads into intakeCorrespondence redux store.
+    const getVeteransWithCorrespondence = async () => {
+      return ApiUtil.get('/queue/correspondence?json').then((response) => {
+        const returnedObject = response.body;
 
-  // grabs correspondences and loads into intakeCorrespondence redux store.
-  getVeteransWithCorrespondence() {
-    return ApiUtil.get('/queue/correspondence?json').then((response) => {
-      const returnedObject = response.body;
-      const vetCorrespondences = returnedObject.vetCorrespondences;
+        props.loadVetCorrespondence(returnedObject.vetCorrespondences);
+      }).
+        catch((err) => {
+          // allow HTTP errors to fall on the floor via the console.
+          console.error(new Error(`Problem with GET /queue/correspondence?json ${err}`));
+        });
+    };
 
-      this.props.loadVetCorrespondence(vetCorrespondences);
-    }).
-      catch((err) => {
-        // allow HTTP errors to fall on the floor via the console.
-        console.error(new Error(`Problem with GET /queue/correspondence?json ${err}`));
-      });
-  }
+    getVeteransWithCorrespondence();
+  }, []);
 
-  // load veteran correspondence info on page load
-  componentDidMount() {
-    // Retry the request after a delay
-    setTimeout(() => {
-      this.getVeteransWithCorrespondence();
-    }, 1000);
-  }
+  let vetName = '';
 
-  render = () => {
-    const {
-      organizations,
-      currentAction,
-      veteranInformation
-
-    } = this.props;
-
-    let vetName = '';
-
-    if (Object.keys(veteranInformation).length > 0) {
-      vetName = `${veteranInformation.veteran_name.first_name.trim()} ${
+  if (Object.keys(veteranInformation).length > 0) {
+    vetName = `${veteranInformation.veteran_name.first_name.trim()} ${
         veteranInformation.veteran_name.last_name.trim()}`;
-    }
-
-    return (
-      <React.Fragment>
-        <AppSegment filledBackground>
-          {(Object.keys(veteranInformation).length > 0) &&
-            currentAction.action_type === 'DeleteReviewPackage' &&
-          <Alert type="success" title={sprintf(COPY.CORRESPONDENCE_TITLE_REMOVE_PACKAGE_BANNER, vetName)}
-            message={COPY.CORRESPONDENCE_MESSAGE_REMOVE_PACKAGE_BANNER} scrollOnAlert={false} />}
-          <h1 {...css({ display: 'inline-block' })}>{COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES}</h1>
-          <QueueOrganizationDropdown organizations={organizations} />
-          {this.props.vetCorrespondences &&
-          <CorrespondenceTable
-            vetCorrespondences={this.props.vetCorrespondences}
-          />
-          }
-        </AppSegment>
-      </React.Fragment>
-    );
   }
-}
+
+  const handleAutoAssign = async () => {
+    try {
+      await ApiUtil.get('/queue/correspondence/auto_assign_correspondences');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <AppSegment filledBackground>
+      {(Object.keys(veteranInformation).length > 0) &&
+        currentAction.action_type === 'DeleteReviewPackage' &&
+        <Alert
+          type="success"
+          title={sprintf(COPY.CORRESPONDENCE_TITLE_REMOVE_PACKAGE_BANNER, vetName)}
+          message={COPY.CORRESPONDENCE_MESSAGE_REMOVE_PACKAGE_BANNER} scrollOnAlert={false}
+        />
+      }
+      <h1 {...css({ display: 'inline-block' })}>{COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES}</h1>
+      <QueueOrganizationDropdown organizations={organizations} />
+      <div>
+        <Button
+          onClick={handleAutoAssign}
+          ariaLabel="Auto assign correspnodences"
+        >
+          {COPY.AUTO_ASSIGN_CORRESPONDENCES_BUTTON}
+        </Button>
+      </div>
+      {vetCorrespondences &&
+        <CorrespondenceTable
+          vetCorrespondences={vetCorrespondences}
+        />
+      }
+    </AppSegment>
+  );
+};
 
 CorrespondenceCases.propTypes = {
   organizations: PropTypes.array,
