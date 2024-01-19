@@ -10,6 +10,11 @@ const ToggleSwitch = ({
   optionLabels,
   disabled
 }) => {
+
+  const buttonStyles = cx('toggleButton', {
+    toggleSwitchDisabled: disabled
+  });
+
   const h5Style = cx('toggleButtonText', {
     switchDisabled: disabled,
     switchOn: selected,
@@ -18,11 +23,7 @@ const ToggleSwitch = ({
 
   return (
     <button
-      className={
-        disabled ?
-          cx('toggleButton', 'toggleSwitchDisabled') :
-          'toggleButton'
-      }
+      className={buttonStyles}
       disabled={disabled}
       id={id}
       name={name}
