@@ -21,7 +21,7 @@ class AutoAssignCorrespondenceJob < CaseflowJob
         unassigned_review_package_task = ReviewPackageTask.find(id_pair[1])
         task_params = {
           parent_id: id_pair[1],
-          instructions: ["Auto assigned by #{RequestStore[:current_user]}"],
+          instructions: ["Auto assigned by #{RequestStore[:current_user].css_id}"],
           assigned_to: InboundOpsTeam.singleton,
           appeal_id: id_pair[0],
           appeal_type: "Correspondence",
