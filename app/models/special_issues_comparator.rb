@@ -54,7 +54,7 @@ class SpecialIssuesComparator
 
   # check rating for existing pact status; if none, search contentions
   def pact_from_rating_or_contention
-    return false unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user])
+    return false unless FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
     return true if pact_from_rating?
     return true if pact_from_contention?
 
