@@ -324,9 +324,9 @@ module IntakeHelpers
   # rubocop:disable Metrics/ParameterLists
   def add_intake_nonrating_issue(
     benefit_type: "Compensation",
-    category: "Active Duty Adjustments",
+    category: "Unknown Issue Category",
     description: "Some description",
-    date: "01/01/2016",
+    date: "01/02/2024",
     legacy_issues: false,
     is_predocket_needed: false
   )
@@ -336,7 +336,7 @@ module IntakeHelpers
 
     # has_css will wait 5 seconds by default, and we want an instant decision.
     # we can trust the modal is rendered because of the expect() calls above.
-    if page.has_css?("#issue-benefit-type", wait: 0)
+    if page.has_css?("#issue-benefit-type", wait: 1)
       fill_in "Benefit type", with: benefit_type
       find("#issue-benefit-type").send_keys :enter
     end
@@ -349,8 +349,9 @@ module IntakeHelpers
 
     fill_in "Issue category", with: category
     find("#issue-category").send_keys :enter
-    fill_in "Issue description", with: description
     fill_in "Decision date", with: date
+    find("#decision-date").send_keys :enter
+    fill_in "Issue description", with: description
     expect(page).to have_button(add_button_text, disabled: false)
     safe_click ".add-issue"
   end

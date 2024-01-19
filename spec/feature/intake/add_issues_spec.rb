@@ -871,7 +871,7 @@ feature "Intake Add Issues Page", :all_dbs do
       click_intake_add_issue
       click_intake_no_matching_issues
       find_by_id("mst-checkbox", visible: false).check(allow_label_click: true)
-      add_intake_nonrating_issue(date: "01/01/2023")
+      add_intake_nonrating_issue
       click_on "Establish appeal"
 
       appeal_id = Appeal.find_by(veteran_file_number: veteran.file_number).uuid
@@ -889,7 +889,7 @@ feature "Intake Add Issues Page", :all_dbs do
       click_intake_continue
       click_intake_add_issue
       find_by_id("pact-checkbox", visible: false).check(allow_label_click: true)
-      add_intake_nonrating_issue(date: "01/01/2023")
+      add_intake_nonrating_issue
       click_on "Establish appeal"
 
       appeal_id = Appeal.find_by(veteran_file_number: veteran_no_ratings.file_number).uuid
@@ -909,7 +909,7 @@ feature "Intake Add Issues Page", :all_dbs do
       click_intake_add_issue
       find_by_id("mst-checkbox", visible: false).check(allow_label_click: true)
       find_by_id("pact-checkbox", visible: false).check(allow_label_click: true)
-      add_intake_nonrating_issue(date: "01/01/2023")
+      add_intake_nonrating_issue
       click_on "Establish appeal"
 
       appeal_id = Appeal.find_by(veteran_file_number: veteran_no_ratings.file_number).uuid
