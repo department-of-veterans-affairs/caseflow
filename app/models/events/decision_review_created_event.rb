@@ -4,5 +4,4 @@
 # Represents a single "event" and is tied to "event records" that contain info regarding
 # the different objects that Caseflow performs backfill creations for after VBMS Intake.
 class DecisionReviewCreatedEvent < Event
-  has_many :event_records
 end
