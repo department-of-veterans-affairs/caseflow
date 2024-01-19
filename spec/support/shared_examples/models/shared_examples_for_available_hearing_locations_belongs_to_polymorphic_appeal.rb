@@ -16,7 +16,7 @@ shared_examples "AvailableHearingLocations belongs_to polymorphic appeal" do
           # Create records having different `appeal_type` but the same `appeal_id`. This will ensure the test fails in
           # the case where the `joins` result contains duplicate entries for records having the same `appeal_id` but
           # different `appeal_type`.
-          let(:shared_id) { 1 }
+          let(:shared_id) { 99999 }
           let!(:_legacy_available_hearing_locations) do
             create(:available_hearing_locations,
                    appeal: create(:legacy_appeal, vacols_case: create(:case), id: shared_id))
@@ -36,7 +36,7 @@ shared_examples "AvailableHearingLocations belongs_to polymorphic appeal" do
         end
 
         context "when eager loading with `includes`" do
-          subject { AvailableHearingLocations.ama.includes(:ama_appeal) }
+          subject { AvailableHearingLocations.ama.includes(:appeal) }
 
           let!(:_legacy_available_hearing_locations) { create(:available_hearing_locations, :legacy) }
 
@@ -51,7 +51,7 @@ shared_examples "AvailableHearingLocations belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.ama_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
@@ -59,7 +59,7 @@ shared_examples "AvailableHearingLocations belongs_to polymorphic appeal" do
         end
 
         context "when eager loading with `preload`" do
-          subject { AvailableHearingLocations.ama.preload(:ama_appeal) }
+          subject { AvailableHearingLocations.ama.preload(:appeal) }
 
           let!(:_legacy_available_hearing_locations) { create(:available_hearing_locations, :legacy) }
 
@@ -74,27 +74,10 @@ shared_examples "AvailableHearingLocations belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.ama_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
-          end
-        end
-
-        context "when called on an individual AvailableHearingLocations" do
-          subject { available_hearing_locations.ama_appeal }
-
-          context "when the AvailableHearingLocations is not associated with an AMA appeal" do
-            let(:available_hearing_locations) { create(:available_hearing_locations, :legacy) }
-
-            it { should be_nil }
-          end
-
-          context "when the AvailableHearingLocations is associated with an AMA appeal" do
-            let(:available_hearing_locations) { create(:available_hearing_locations, appeal: ama_appeal) }
-            let(:ama_appeal) { create(:appeal) }
-
-            it { should eq(ama_appeal) }
           end
         end
       end
@@ -106,7 +89,7 @@ shared_examples "AvailableHearingLocations belongs_to polymorphic appeal" do
           # Create records having different `appeal_type` but the same `appeal_id`. This will ensure the test fails in
           # the case where the `joins` result contains duplicate entries for records having the same `appeal_id` but
           # different `appeal_type`.
-          let(:shared_id) { 1 }
+          let(:shared_id) { 99999 }
           let!(:_ama_available_hearing_locations) do
             create(:available_hearing_locations, appeal: create(:appeal, id: shared_id))
           end
@@ -126,7 +109,7 @@ shared_examples "AvailableHearingLocations belongs_to polymorphic appeal" do
         end
 
         context "when eager loading with `includes`" do
-          subject { AvailableHearingLocations.legacy.includes(:legacy_appeal) }
+          subject { AvailableHearingLocations.legacy.includes(:appeal) }
 
           let!(:_ama_available_hearing_locations) { create(:available_hearing_locations, :ama) }
 
@@ -141,7 +124,7 @@ shared_examples "AvailableHearingLocations belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.legacy_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
@@ -149,7 +132,7 @@ shared_examples "AvailableHearingLocations belongs_to polymorphic appeal" do
         end
 
         context "when eager loading with `preload`" do
-          subject { AvailableHearingLocations.legacy.preload(:legacy_appeal) }
+          subject { AvailableHearingLocations.legacy.preload(:appeal) }
 
           let!(:_ama_available_hearing_locations) { create(:available_hearing_locations, :ama) }
 
@@ -164,27 +147,10 @@ shared_examples "AvailableHearingLocations belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.legacy_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
-          end
-        end
-
-        context "when called on an individual AvailableHearingLocations" do
-          subject { available_hearing_locations.legacy_appeal }
-
-          context "when the AvailableHearingLocations is not associated with a Legacy appeal" do
-            let(:available_hearing_locations) { create(:available_hearing_locations, :ama) }
-
-            it { should be_nil }
-          end
-
-          context "when the AvailableHearingLocations is associated with a Legacy appeal" do
-            let(:available_hearing_locations) { create(:available_hearing_locations, appeal: legacy_appeal) }
-            let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
-
-            it { should eq(legacy_appeal) }
           end
         end
       end
