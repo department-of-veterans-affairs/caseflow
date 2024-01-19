@@ -28,7 +28,7 @@ RSpec.feature("The Correspondence Cases page") do
 
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      MailTeamSupervisor.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       @correspondence_uuid = "123456789"
       10.times do
