@@ -49,7 +49,9 @@ const ExclusionTable = () => {
         {isUserAcdAdmin ?
           <tbody>
             <tr>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')} aria-label="All non-priority">
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
+              >
                 <span>
                   <h4 className="exclusion-table-header-styling">
                     {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
@@ -61,7 +63,9 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')} aria-label="All non-priority">
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
+              >
                 <span>
                   <RadioField
                     name=""
@@ -72,7 +76,9 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')} aria-label="All non-priority">
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
+              >
                 <span>
                   <RadioField
                     name=""
@@ -83,7 +89,9 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')} aria-label="All non-priority">
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
+              >
                 <span>
                   <RadioField
                     name=""
@@ -94,7 +102,9 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')} aria-label="All non-priority">
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
+              >
                 <span>
                   <RadioField
                     name=""
@@ -107,7 +117,9 @@ const ExclusionTable = () => {
               </td>
             </tr>
             <tr>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')} aria-label="All Priority">
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
+              >
                 <span>
                   <h4 className="exclusion-table-header-styling">
                     {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
@@ -119,7 +131,8 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')} aria-label="All Priority">
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}>
                 <span>
                   <RadioField
                     name=""
@@ -130,7 +143,9 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')} aria-label="All Priority">
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
+              >
                 <span>
                   <RadioField
                     name=""
@@ -141,7 +156,9 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')} aria-label="All Priority">
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
+              >
                 <span>
                   <RadioField
                     name=""
@@ -152,7 +169,9 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')} aria-label="All Priority">
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
+              >
                 <span>
                   <RadioField
                     name=""
@@ -167,7 +186,7 @@ const ExclusionTable = () => {
           </tbody> :
 
           <tbody>
-            <th aria-label="All Non-Priority"></th>
+            <th aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}></th>
             <tr>
               <td className={cx('exclusion-table-styling', 'lever-disabled')}>
                 <h3>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}</h3>

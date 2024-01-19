@@ -25,7 +25,7 @@ const StaticLever = ({ lever }) => {
   const unit = valueArray[1];
 
   return (
-    <div>
+    <tbody>
       <tr>
         <td className="title-styling">{lever.title}</td>
       </tr>
@@ -36,7 +36,7 @@ const StaticLever = ({ lever }) => {
           <span>{unit}</span>
         </td>
       </tr>
-    </div>
+    </tbody>
   );
 };
 
