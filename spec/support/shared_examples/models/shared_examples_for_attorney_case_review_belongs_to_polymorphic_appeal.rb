@@ -35,7 +35,7 @@ shared_examples "AttorneyCaseReview belongs_to polymorphic appeal" do
         end
 
         context "when eager loading with `includes`" do
-          subject { AttorneyCaseReview.ama.includes(:ama_appeal) }
+          subject { AttorneyCaseReview.ama.includes(:appeal) }
 
           let!(:_legacy_attorney_case_review) { create(:attorney_case_review, :legacy) }
 
@@ -50,7 +50,7 @@ shared_examples "AttorneyCaseReview belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.ama_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
@@ -58,7 +58,7 @@ shared_examples "AttorneyCaseReview belongs_to polymorphic appeal" do
         end
 
         context "when eager loading with `preload`" do
-          subject { AttorneyCaseReview.ama.preload(:ama_appeal) }
+          subject { AttorneyCaseReview.ama.preload(:appeal) }
 
           let!(:_legacy_attorney_case_review) { create(:attorney_case_review, :legacy) }
 
@@ -73,27 +73,10 @@ shared_examples "AttorneyCaseReview belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.ama_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
-          end
-        end
-
-        context "when called on an individual AttorneyCaseReview" do
-          subject { attorney_case_review.ama_appeal }
-
-          context "when the AttorneyCaseReview is not associated with an AMA appeal" do
-            let(:attorney_case_review) { create(:attorney_case_review, :legacy) }
-
-            it { should be_nil }
-          end
-
-          context "when the AttorneyCaseReview is associated with an AMA appeal" do
-            let(:attorney_case_review) { create(:attorney_case_review, :ama, appeal: ama_appeal) }
-            let(:ama_appeal) { create(:appeal) }
-
-            it { should eq(ama_appeal) }
           end
         end
       end
@@ -124,7 +107,7 @@ shared_examples "AttorneyCaseReview belongs_to polymorphic appeal" do
         end
 
         context "when eager loading with `includes`" do
-          subject { AttorneyCaseReview.legacy.includes(:legacy_appeal) }
+          subject { AttorneyCaseReview.legacy.includes(:appeal) }
 
           let!(:_ama_attorney_case_review) { create(:attorney_case_review, :ama) }
 
@@ -139,7 +122,7 @@ shared_examples "AttorneyCaseReview belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.legacy_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
@@ -147,7 +130,7 @@ shared_examples "AttorneyCaseReview belongs_to polymorphic appeal" do
         end
 
         context "when eager loading with `preload`" do
-          subject { AttorneyCaseReview.legacy.preload(:legacy_appeal) }
+          subject { AttorneyCaseReview.legacy.preload(:appeal) }
 
           let!(:_ama_attorney_case_review) { create(:attorney_case_review, :ama) }
 
@@ -162,27 +145,10 @@ shared_examples "AttorneyCaseReview belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.legacy_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
-          end
-        end
-
-        context "when called on an individual AttorneyCaseReview" do
-          subject { attorney_case_review.legacy_appeal }
-
-          context "when the AttorneyCaseReview is not associated with a Legacy appeal" do
-            let(:attorney_case_review) { create(:attorney_case_review, :ama) }
-
-            it { should be_nil }
-          end
-
-          context "when the AttorneyCaseReview is associated with a Legacy appeal" do
-            let(:attorney_case_review) { create(:attorney_case_review, :legacy, appeal: legacy_appeal) }
-            let(:legacy_appeal) { create(:legacy_appeal) }
-
-            it { should eq(legacy_appeal) }
           end
         end
       end
