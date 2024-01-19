@@ -56,8 +56,7 @@ describe EventRecord, :postgres do
     # Legacy Issue Optin
     let!(:legacy_issue_optin) { LegacyIssueOptin.new(request_issue_id: request_issue.id) }
     let!(:legacy_issue_optin_event_record) do
-      EventRecord.create!(event_id: event2.id,
-                          backfill_record: legacy_issue_optin)
+      EventRecord.create!(event_id: event2.id, backfill_record: legacy_issue_optin)
     end
     # User
     let(:session) { { "user" => { "id" => "BrockPurdy", "station_id" => "310", "name" => "Brock Purdy" } } }
