@@ -679,6 +679,11 @@ class QueueApp extends React.PureComponent {
     <CorrespondenceCases {...this.props} />
   );
 
+  routedCorrespondenceTeam = () => (
+    // KiQuestion - New page required? Conditional logic on CorrespondenceCases page?
+    <CorrespondenceCases {...this.props} />
+  );
+
   routedCompleteHearingWithdrawalRequest = (props) => (
     <CompleteHearingWithdrawalRequestModal {...props.match.params} />
   );
@@ -739,8 +744,16 @@ class QueueApp extends React.PureComponent {
 
             <PageRoute
               exact
-              path="/queue/correspondence"
+              path="/queue/correspondence/team"
               title={`${PAGE_TITLES.CORRESPONDENCE_CASES_LIST}`}
+              render={this.routedCorrespondenceCase}
+            />
+
+            {/* KiQuestion - change render?  Update between two */}
+            <PageRoute
+              exact
+              path="/queue/correspondence"
+              title={`${PAGE_TITLES.CORRESPONDENCE_OWN_LIST}`}
               render={this.routedCorrespondenceCase}
             />
 

@@ -40,6 +40,16 @@ export const loadVetCorrespondence = (vetCorrespondences) =>
     });
   };
 
+export const loadCorrespondenceTasks = (correspondenceTasks) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.LOAD_CORRESPONDENCE_TASKS,
+      payload: {
+        correspondenceTasks
+      }
+    });
+  };
+
 export const updateRadioValue = (value) =>
   (dispatch) => {
     dispatch({

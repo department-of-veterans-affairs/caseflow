@@ -43,7 +43,9 @@ class CorrespondenceController < ApplicationController
     respond_to do |format|
       format.html { "correspondence_cases" }
       format.json do
-        render json: { vetCorrespondences: veterans_with_correspondences }
+        render json: { correspondenceTasks: user_correspondence_tasks }
+        # render json: { correspondenceTasks: all_correspondence_tasks }
+        # render json: { vetCorrespondences: veterans_with_correspondences }
       end
     end
   end
@@ -104,6 +106,19 @@ class CorrespondenceController < ApplicationController
       reasonForRemovePackage: reason_remove
     }
     render({ json: response_json }, status: :ok)
+  end
+
+  def correspondence_team
+    if MailTeamSupervisor.singleton.user_has_access?(current_user)
+      respond_to do |format|
+        format.html { "correspondence_team" }
+        format.json do
+          render json: { correspondenceTasks: all_correspondence_tasks }
+        end
+      end
+    else
+      redirect_to "/unauthorized"
+    end
   end
 
   def update
@@ -261,6 +276,29 @@ class CorrespondenceController < ApplicationController
   def veterans_with_correspondences
     veterans = Veteran.includes(:correspondences).where(correspondences: { id: Correspondence.select(:id) })
     veterans.map { |veteran| vet_info_serializer(veteran, veteran.correspondences.last) }
+  end
+
+  def all_correspondence_tasks
+    @tasks = CorrespondenceTask.all
+    # veterans = Veteran.includes(:correspondences).where(correspondences: { id: Correspondence.select(:id) })
+    # veterans.map { |veteran| vet_info_serializer(veteran, veteran.correspondences.last) }
+    # @tasks = CorrespondenceTask.includes(:veteran, :correspondence)
+    # @tasks.map { |task| task_info_serializer(task) }
+  end
+
+  def user_correspondence_tasks
+    @tasks = CorrespondenceTask.where(tasks: { assigned_to_id: current_user.id })
+    # tasks = CorrespondenceTask.includes(:correspondences).where(
+    #   correspondences: { assigned_to: Correspondence.select(current_user) }
+    # )
+    # tasks.map { |task| task_info_serializer(task, task.veterans.last, task.veterans.correspondences.last) }
+  end
+
+  def task_info_serializer(task)
+    {
+      taskType: task.type,
+      taskId: task.id
+    }
   end
 
   def auto_texts

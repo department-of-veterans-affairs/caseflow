@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ApiUtil from '../../util/ApiUtil';
-import { loadVetCorrespondence } from './correspondenceReducer/correspondenceActions';
+import { loadVetCorrespondence, loadCorrespondenceTasks } from './correspondenceReducer/correspondenceActions';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
@@ -20,12 +20,15 @@ import Alert from '../../components/Alert';
 class CorrespondenceCases extends React.PureComponent {
 
   // grabs correspondences and loads into intakeCorrespondence redux store.
-  getVeteransWithCorrespondence() {
-    return ApiUtil.get('/queue/correspondence?json').then((response) => {
+  getCorrespondenceTasks() {
+    return ApiUtil.get('/queue/correspondence/team?json').then((response) => {
+      // KiQuestion - This ApiUtil.get requires changing to correspondence/team since it's "technically another page"
       const returnedObject = response.body;
-      const vetCorrespondences = returnedObject.vetCorrespondences;
+      // const vetCorrespondences = returnedObject.vetCorrespondences;
+      const correspondenceTasks = returnedObject.correspondenceTasks;
 
-      this.props.loadVetCorrespondence(vetCorrespondences);
+      // this.props.loadVetCorrespondence(vetCorrespondences);
+      this.props.loadCorrespondenceTasks(correspondenceTasks);
     }).
       catch((err) => {
         // allow HTTP errors to fall on the floor via the console.
@@ -37,7 +40,7 @@ class CorrespondenceCases extends React.PureComponent {
   componentDidMount() {
     // Retry the request after a delay
     setTimeout(() => {
-      this.getVeteransWithCorrespondence();
+      this.getCorrespondenceTasks();
     }, 1000);
   }
 
@@ -80,19 +83,23 @@ CorrespondenceCases.propTypes = {
   organizations: PropTypes.array,
   loadVetCorrespondence: PropTypes.func,
   vetCorrespondences: PropTypes.array,
+  loadCorrespondenceTasks: PropTypes.func,
+  correspondenceTasks: PropTypes.array,
   currentAction: PropTypes.object,
   veteranInformation: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({
   vetCorrespondences: state.intakeCorrespondence.vetCorrespondences,
+  correspondenceTasks: state.intakeCorrespondence.correspondenceTasks,
   currentAction: state.reviewPackage.lastAction,
   veteranInformation: state.reviewPackage.veteranInformation
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    loadVetCorrespondence
+    loadVetCorrespondence,
+    loadCorrespondenceTasks,
   }, dispatch)
 );
 
