@@ -2,6 +2,8 @@
 
 # :reek:RepeatedConditional
 class CorrespondenceController < ApplicationController
+  include RunAsyncable
+
   before_action :verify_correspondence_access
   before_action :verify_feature_toggle
   before_action :correspondence
@@ -170,6 +172,10 @@ class CorrespondenceController < ApplicationController
     else
       render json: { error: "Failed to update records" }, status: :bad_request
     end
+  end
+
+  def auto_assign_correspondences
+    perform_later_or_now(AutoAssignCorrespondenceJob)
   end
 
   private
