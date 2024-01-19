@@ -59,11 +59,11 @@ module Seeds
           correspondence_type_id: 4,
           cmp_queue_id: 1,
           cmp_packet_number: @cmp_packet_number,
-          va_date_of_receipt: Time.zone.yesterday,
+          va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "Notes from CMP - Multi Correspondence Seed",
           assigned_by_id: 81,
           updated_by_id: 81,
-          veteran_id: veteran.id,
+          veteran_id: veteran.id
         )
         CorrespondenceDocument.find_or_create_by(
           document_file_number: veteran.file_number,
@@ -101,11 +101,11 @@ module Seeds
           correspondence_type_id: 4,
           cmp_queue_id: 1,
           cmp_packet_number: @cmp_packet_number,
-          va_date_of_receipt: Time.zone.yesterday,
+          va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "Notes from CMP - Multi Correspondence Seed",
           assigned_by_id: 81,
           updated_by_id: 81,
-          veteran_id: veteran.id,
+          veteran_id: veteran.id
         )
         CorrespondenceDocument.find_or_create_by(
           document_file_number: veteran.file_number,
@@ -143,11 +143,11 @@ module Seeds
           correspondence_type_id: 4,
           cmp_queue_id: 1,
           cmp_packet_number: @cmp_packet_number,
-          va_date_of_receipt: Time.zone.yesterday,
+          va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "Notes from CMP - Multi Correspondence Seed",
           assigned_by_id: 81,
           updated_by_id: 81,
-          veteran_id: veteran.id,
+          veteran_id: veteran.id
         )
         CorrespondenceDocument.find_or_create_by(
           document_file_number: veteran.file_number,
