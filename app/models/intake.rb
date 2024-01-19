@@ -6,6 +6,7 @@ class Intake < CaseflowRecord
   belongs_to :user
   belongs_to :veteran
   belongs_to :detail, polymorphic: true
+  has_many :event_records, as: :backfill_record
 
   COMPLETION_TIMEOUT = 5.minutes
   IN_PROGRESS_EXPIRES_AFTER = 1.day
