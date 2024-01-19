@@ -1,4 +1,4 @@
-class AddCoHostLinkToVirtualHearings < Caseflow::Migration[5.2]
+class AddCoHostLinkToVirtualHearings < Caseflow::Migration
   def change
     add_column :virtual_hearings, :co_host_hearing_link, :string
   end
