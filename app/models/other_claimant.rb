@@ -30,7 +30,7 @@ class OtherClaimant < Claimant
     unrecognized_appellant&.relationship&.titleize || "Other"
   end
 
-  def save_unrecognized_details!(params, poa_params)
+  def save_unrecognized_details!(params, poa_params, benefit_type)
     poa_form = params.delete(:poa_form)
     params.delete(:listed_attorney)
     appellant = create_appellant!(params)
@@ -39,6 +39,8 @@ class OtherClaimant < Claimant
 
       if poa_participant_id != "not_listed"
         appellant.update!(poa_participant_id: poa_participant_id)
+      elsif poa_participant_id == "not_listed" && benefit_type == "vha"
+        appellant.update!(not_listed_power_of_attorney: NotListedPowerOfAttorney.create!)
       else
         poa_params.permit!
         appellant.update!(unrecognized_power_of_attorney: create_party_detail!(poa_params))

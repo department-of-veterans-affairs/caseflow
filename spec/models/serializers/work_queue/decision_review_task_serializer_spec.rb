@@ -22,6 +22,7 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
         type: :decision_review_task,
         attributes: {
           has_poa: true,
+          not_listed_poa: false,
           claimant: { name: hlr.veteran_full_name, relationship: "self" },
           appeal: {
             id: hlr.id.to_s,
@@ -71,6 +72,7 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
           type: :decision_review_task,
           attributes: {
             has_poa: false,
+            not_listed_poa: false,
             claimant: { name: "claimant", relationship: "Unknown" },
             appeal: {
               id: hlr.id.to_s,
@@ -123,6 +125,7 @@ describe WorkQueue::DecisionReviewTaskSerializer, :postgres do
           type: :decision_review_task,
           attributes: {
             has_poa: true,
+            not_listed_poa: false,
             claimant: { name: claimant.name, relationship: "Veteran" },
             appeal: {
               id: hlr.id.to_s,
