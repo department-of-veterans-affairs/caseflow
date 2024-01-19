@@ -20,8 +20,4 @@ class VhaBusinessLine < BusinessLine
   def can_generate_claim_history?
     true
   end
-
-  def can_generate_change_history?
-    true
-  end
 end

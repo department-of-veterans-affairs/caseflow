@@ -20,10 +20,6 @@ class BusinessLine < Organization
     false
   end
 
-  def can_generate_change_history?
-    false
-  end
-
   # Example Params:
   # sort_order: 'desc',
   # sort_by: 'assigned_at',
