@@ -346,9 +346,8 @@ class NonratingRequestIssueModal extends React.Component {
       formType === 'appeal' ? <PreDocketRadioField value={isPreDocketNeeded}
         onChange={this.isPreDocketNeededOnChange} /> : null;
 
-    const getSpecialIssues =
-      ((mstIdentification || pactIdentification) && this.props.userCanEditIntakeIssues) ?
-        this.getSpecialIssues(mstIdentification, pactIdentification) : null;
+    const getSpecialIssues = this.props.userCanEditIntakeIssues ?
+      this.getSpecialIssues(mstIdentification, pactIdentification) : null;
 
     return (
       <div className="intake-add-issues">

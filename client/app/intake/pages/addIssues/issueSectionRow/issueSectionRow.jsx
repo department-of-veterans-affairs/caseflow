@@ -41,10 +41,7 @@ const issueSectionRow = (
           onClickIssueAction={onClickIssueAction}
           userCanWithdrawIssues={userCanWithdrawIssues}
           withdrawReview={withdrawReview}
-          userCanEditIntakeIssues={userCanEditIntakeIssues &&
-              (featureToggles.mstIdentification ||
-              featureToggles.pactIdentification ||
-              featureToggles.legacyMstPactIdentification)}
+          userCanEditIntakeIssues={userCanEditIntakeIssues}
         />
         {showPreDocketBanner && <Alert message={COPY.VHA_PRE_DOCKET_ADD_ISSUES_NOTICE} type="info" />}
       </div>
