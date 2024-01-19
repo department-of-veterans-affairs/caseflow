@@ -534,7 +534,7 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
               isVirtual={true}
               label="Guest Link"
               link="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
-              linkText="Join Virtual Hearing"
+              linkText="Join Hearing"
               role="Guest"
               user={
                 Object {
@@ -693,7 +693,7 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
                     }
                   }
                   isVirtual={true}
-                  label="Join Virtual Hearing"
+                  label="Join Hearing"
                   link="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
                   pin="2684353125#"
                   role="Guest"
@@ -845,7 +845,7 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
                       }
                     }
                     isVirtual={true}
-                    label="Join Virtual Hearing"
+                    label="Join Hearing"
                     link="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
                     newWindow={true}
                     showFullLink={false}
@@ -887,7 +887,7 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
                         type={null}
                       >
                         <strong>
-                          Join Virtual Hearing
+                          Join Hearing
                         </strong>
                         <span
                           data-css-32srrr=""
@@ -1111,7 +1111,6 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
                 </VirtualHearingLinkDetails>
               </div>
             </LinkContainer>
-            <div />
           </div>
         </HearingLinks>
       </div>
@@ -1555,7 +1554,7 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
               isVirtual={true}
               label="Guest Link"
               link="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
-              linkText="Join Virtual Hearing"
+              linkText="Join Hearing"
               role="Guest"
               user={
                 Object {
@@ -1714,7 +1713,7 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
                     }
                   }
                   isVirtual={true}
-                  label="Join Virtual Hearing"
+                  label="Join Hearing"
                   link="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
                   pin="2684353125#"
                   role="Guest"
@@ -1866,7 +1865,7 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
                       }
                     }
                     isVirtual={true}
-                    label="Join Virtual Hearing"
+                    label="Join Hearing"
                     link="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
                     newWindow={true}
                     showFullLink={false}
@@ -1908,7 +1907,7 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
                         type={null}
                       >
                         <strong>
-                          Join Virtual Hearing
+                          Join Hearing
                         </strong>
                         <span
                           data-css-32srrr=""
@@ -2142,7 +2141,6 @@ exports[`VirtualHearingFields Renders pexip conference when conference provider 
                 </VirtualHearingLinkDetails>
               </div>
             </LinkContainer>
-            <div />
           </div>
         </HearingLinks>
       </div>
@@ -2586,7 +2584,7 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
               isVirtual={true}
               label="Guest Link"
               link="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
-              linkText="Join Virtual Hearing"
+              linkText="Join Hearing"
               role="Guest"
               user={
                 Object {
@@ -2745,7 +2743,7 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
                     }
                   }
                   isVirtual={true}
-                  label="Join Virtual Hearing"
+                  label="Join Hearing"
                   link="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
                   pin="2684353125#"
                   role="Guest"
@@ -2897,7 +2895,7 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
                       }
                     }
                     isVirtual={true}
-                    label="Join Virtual Hearing"
+                    label="Join Hearing"
                     link="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
                     newWindow={true}
                     showFullLink={false}
@@ -2939,7 +2937,7 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
                         type={null}
                       >
                         <strong>
-                          Join Virtual Hearing
+                          Join Hearing
                         </strong>
                         <span
                           data-css-32srrr=""
@@ -3163,7 +3161,6 @@ exports[`VirtualHearingFields Renders webex conference when conference provider 
                 </VirtualHearingLinkDetails>
               </div>
             </LinkContainer>
-            <div />
           </div>
         </HearingLinks>
       </div>
@@ -3607,7 +3604,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
               isVirtual={true}
               label="Guest Link"
               link="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
-              linkText="Join Virtual Hearing"
+              linkText="Join Hearing"
               role="Guest"
               user={
                 Object {
@@ -3766,7 +3763,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                     }
                   }
                   isVirtual={true}
-                  label="Join Virtual Hearing"
+                  label="Join Hearing"
                   link="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
                   pin="2684353125#"
                   role="Guest"
@@ -3918,7 +3915,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                       }
                     }
                     isVirtual={true}
-                    label="Join Virtual Hearing"
+                    label="Join Hearing"
                     link="https://care.evn.va.gov/bva-app/?join=1&media=&escalate=1&conference=BVA0000009@care.evn.va.gov&pin=2684353125#&role=guest"
                     newWindow={true}
                     showFullLink={false}
@@ -3960,7 +3957,7 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                         type={null}
                       >
                         <strong>
-                          Join Virtual Hearing
+                          Join Hearing
                         </strong>
                         <span
                           data-css-32srrr=""
@@ -4194,7 +4191,6 @@ exports[`VirtualHearingFields Shows hearing details with virtualHearing 1`] = `
                 </VirtualHearingLinkDetails>
               </div>
             </LinkContainer>
-            <div />
           </div>
         </HearingLinks>
       </div>
@@ -4601,7 +4597,7 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
               }
               isVirtual={true}
               label="Guest Link"
-              linkText="Join Virtual Hearing"
+              linkText="Join Hearing"
               role="Guest"
               user={
                 Object {
@@ -4629,7 +4625,6 @@ exports[`VirtualHearingFields Shows only hearing links with no virtualHearing 1`
                 </span>
               </div>
             </LinkContainer>
-            <div />
           </div>
         </HearingLinks>
       </div>

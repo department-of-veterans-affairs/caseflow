@@ -17,7 +17,7 @@ class Fakes::WebexService
   def initialize(**args)
     @status_code = args[:status_code] || 200
     @error_message = args[:error_message] || "Error"
-    @num_hosts = args[:num_hosts] || 1
+    @num_hosts = args[:num_hosts] || 2
     @num_guests = args[:num_guests] || 1
   end
 
