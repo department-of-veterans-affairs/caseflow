@@ -6,7 +6,6 @@ import { createStore, applyMiddleware } from 'redux';
 import rootReducer from 'app/caseDistribution/reducers/root';
 import thunk from 'redux-thunk';
 import ACD_LEVERS from '../../../../constants/ACD_LEVERS';
-import DISTRIBUTION from '../../../../constants/DISTRIBUTION';
 
 describe('Static Lever', () => {
 
