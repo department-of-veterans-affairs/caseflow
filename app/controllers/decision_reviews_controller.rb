@@ -20,6 +20,7 @@ class DecisionReviewsController < ApplicationController
            :completed_tasks_issue_type_counts,
            :included_tabs,
            :can_generate_claim_history?,
+           :can_generate_change_history?,
            to: :business_line
 
   SORT_COLUMN_MAPPINGS = {
@@ -48,7 +49,7 @@ class DecisionReviewsController < ApplicationController
   end
 
   def history
-    return requires_admin_access_redirect unless business_line == VhaBusinessLine.singleton &&
+    return requires_admin_access_redirect unless can_generate_change_history? &&
                                                  business_line.user_is_admin?(current_user)
 
     render "show"
