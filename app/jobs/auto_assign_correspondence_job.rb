@@ -11,7 +11,7 @@ class AutoAssignCorrespondenceJob < CaseflowJob
 
   private
 
-  def
+  def correspondence_auto_assigner
     @correspondence_auto_assigner ||= CorrespondenceAutoAssigner.new
   end
 end
