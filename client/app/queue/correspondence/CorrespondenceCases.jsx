@@ -48,7 +48,7 @@ export const CorrespondenceCases = (props) => {
 
   const handleAutoAssign = async () => {
     try {
-      const response = await ApiUtil.get('/queue/correspondence/auto_assign_correspondences');
+      await ApiUtil.get('/queue/correspondence/auto_assign_correspondences');
     } catch (error) {
       console.error(error);
     }
