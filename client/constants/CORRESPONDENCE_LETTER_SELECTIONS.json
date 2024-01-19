@@ -1,11 +1,7 @@
 [
   {
     "letter_type": "Pre-docketing",
-    "response_window_options": {
-      "default": false,
-      "custom": false,
-      "no_response_window": true
-    },
+    "response_window_option_default": "No response window",
     "letter_titles": [
       {
         "letter_title": "Intake 10182 Recv Needs AOJ Development",
@@ -40,11 +36,7 @@
   },
   {
     "letter_type": "Ineligible",
-    "response_window_options": {
-      "default": "65 days",
-      "custom": true,
-      "no_response_window": false
-    },
+    "response_window_option_default": "No response window",
     "letter_titles": [
       {
         "letter_title": "Intake AMA HLR or Supp Claim Pending Letter",
@@ -94,38 +86,40 @@
   },
   {
     "letter_type": "General",
-    "response_window_options": {
-      "default": "65 days",
-      "custom": true,
-      "no_response_window": true
-    },
     "letter_titles": [
       {
         "letter_title": "Intake AMA Corrective App Receipt",
+        "response_window_option_default": "65 days",
         "letter_subcategories": []
       },
       {
         "letter_title": "Intake AMA Docket Switch New Form Needed",
+        "response_window_option_default": "65 days",
         "letter_subcategories": []
       },
       {
         "letter_title": "Intake AMA How to withdraw a Board Appeal",
+        "response_window_option_default": "65 days",
         "letter_subcategories": []
       },
       {
         "letter_title": "Intake AMA Next Friend Letter",
+        "response_window_option_default": "65 days",
         "letter_subcategories": []
       },
       {
         "letter_title": "Intake AMA NOD - 10182 After Vet Death Docketing Letter Take Back",
+        "response_window_option_default": "No response window",
         "letter_subcategories": []
       },
       {
         "letter_title": "Intake AMA NOD - 10182 Cannot Docket after Vet Death",
+        "response_window_option_default": "No response window",
         "letter_subcategories": []
       },
       {
         "letter_title": "Intake AMA Rejection Sent in Error",
+        "response_window_option_default": "No response window",
         "letter_subcategories": [
           {
             "subcategory": "Previously submitted 10182 is accepted and rejection sent in error",
@@ -135,6 +129,7 @@
       },
       {
         "letter_title": "Intake Legacy Corrective App Receipt",
+        "response_window_option_default": "No response window",
         "letter_subcategories": [
           {
             "subcategory": "Docket letter for AMA issued in error for a Legacy appeal currently pending",
@@ -146,11 +141,7 @@
   },
   {
     "letter_type": "Clarification",
-    "response_window_options": {
-      "default": "65 days",
-      "custom": true,
-      "no_response_window": true
-    },
+    "response_window_option_default": "65 days",
     "letter_titles": [
       {
         "letter_title": "Intake AMA 10182/HLR/Supp Clarification",
@@ -174,15 +165,123 @@
         "letter_subcategories": [
           {
             "subcategory": "0995",
-            "reasons": ["No", "issues", "No", "lane", "selected", "Multiple", "lanes", "selected", "Unsigned", "No", "issues", "&", "no", "lane", "selected", "No", "issues", "&", "multiple", "lanes", "selected", "No", "issues", "&", "unsigned", "Unsigned", "&", "no", "lane", "selected", "Unsigned", "&", "multiple", "lanes", "selected"]
+            "reasons": [
+              "No",
+              "issues",
+              "No",
+              "lane",
+              "selected",
+              "Multiple",
+              "lanes",
+              "selected",
+              "Unsigned",
+              "No",
+              "issues",
+              "&",
+              "no",
+              "lane",
+              "selected",
+              "No",
+              "issues",
+              "&",
+              "multiple",
+              "lanes",
+              "selected",
+              "No",
+              "issues",
+              "&",
+              "unsigned",
+              "Unsigned",
+              "&",
+              "no",
+              "lane",
+              "selected",
+              "Unsigned",
+              "&",
+              "multiple",
+              "lanes",
+              "selected"
+            ]
           },
           {
             "subcategory": "0996",
-            "reasons": ["No", "issues", "No", "lane", "selected", "Multiple", "lanes", "selected", "Unsigned", "No", "issues", "&", "no", "lane", "selected", "No", "issues", "&", "multiple", "lanes", "selected", "No", "issues", "&", "unsigned", "Unsigned", "&", "no", "lane", "selected", "Unsigned", "&", "multiple", "lanes", "selected"]
+            "reasons": [
+              "No",
+              "issues",
+              "No",
+              "lane",
+              "selected",
+              "Multiple",
+              "lanes",
+              "selected",
+              "Unsigned",
+              "No",
+              "issues",
+              "&",
+              "no",
+              "lane",
+              "selected",
+              "No",
+              "issues",
+              "&",
+              "multiple",
+              "lanes",
+              "selected",
+              "No",
+              "issues",
+              "&",
+              "unsigned",
+              "Unsigned",
+              "&",
+              "no",
+              "lane",
+              "selected",
+              "Unsigned",
+              "&",
+              "multiple",
+              "lanes",
+              "selected"
+            ]
           },
           {
             "subcategory": "0995 & 0996",
-            "reasons": ["No", "issues", "No", "lane", "selected", "Multiple", "lanes", "selected", "Unsigned", "No", "issues", "&", "no", "lane", "selected", "No", "issues", "&", "multiple", "lanes", "selected", "No", "issues", "&", "unsigned", "Unsigned", "&", "no", "lane", "selected", "Unsigned", "&", "multiple", "lanes", "selected"]
+            "reasons": [
+              "No",
+              "issues",
+              "No",
+              "lane",
+              "selected",
+              "Multiple",
+              "lanes",
+              "selected",
+              "Unsigned",
+              "No",
+              "issues",
+              "&",
+              "no",
+              "lane",
+              "selected",
+              "No",
+              "issues",
+              "&",
+              "multiple",
+              "lanes",
+              "selected",
+              "No",
+              "issues",
+              "&",
+              "unsigned",
+              "Unsigned",
+              "&",
+              "no",
+              "lane",
+              "selected",
+              "Unsigned",
+              "&",
+              "multiple",
+              "lanes",
+              "selected"
+            ]
           }
         ]
       },
@@ -191,16 +290,37 @@
         "letter_subcategories": [
           {
             "subcategory": "1 reason",
-            "reasons": ["No issues", "No decision dates", "No lane selected", "Multiple lanes selected", "Unsigned"]
+            "reasons": [
+              "No issues",
+              "No decision dates",
+              "No lane selected",
+              "Multiple lanes selected",
+              "Unsigned"
+            ]
           },
           {
             "subcategory": "2 reasons",
-            "reasons": ["No issue(s) or decision date", "No issue(s) & no lane selected", "No issue(s) & multiple lanes are selected", "No issue(s) & unsigned", "No decision dates & no lane selected", "No decision dates & multiple lanes selected", "No decison dates(s) & unsigned", "No lane selected & unsigned", "Multiple lanes selected & unsigned"]
+            "reasons": [
+              "No issue(s) or decision date",
+              "No issue(s) & no lane selected",
+              "No issue(s) & multiple lanes are selected",
+              "No issue(s) & unsigned",
+              "No decision dates & no lane selected",
+              "No decision dates & multiple lanes selected",
+              "No decison dates(s) & unsigned",
+              "No lane selected & unsigned",
+              "Multiple lanes selected & unsigned"
+            ]
           },
           {
             "subcategory": "3 reasons",
-            "reasons": ["No issues, no lane selected & unsigned", "No issues, multiple lanes selected & unsigned", "No issues, no decision(s) date & unsigned", "No lane selected, no decision(s) date & unsigned"]
-          }    
+            "reasons": [
+              "No issues, no lane selected & unsigned",
+              "No issues, multiple lanes selected & unsigned",
+              "No issues, no decision(s) date & unsigned",
+              "No lane selected, no decision(s) date & unsigned"
+            ]
+          }
         ]
       },
       {
@@ -209,7 +329,7 @@
           {
             "subcategory": "Attempt to appeal without submitting a 10182",
             "reasons": []
-          } 
+          }
         ]
       },
       {
@@ -218,7 +338,7 @@
           {
             "subcategory": "10182 received for a VHA appeal without a decision date",
             "reasons": []
-          } 
+          }
         ]
       },
       {
@@ -227,7 +347,7 @@
           {
             "subcategory": "Correspondence received attempting to appeal VHA decision without a 10182",
             "reasons": []
-          } 
+          }
         ]
       },
       {
@@ -240,7 +360,7 @@
           {
             "subcategory": "Correspondence received attempting to appeal VHA decision without a 10182, decision before 9/28/2021",
             "reasons": []
-          } 
+          }
         ]
       },
       {
@@ -265,11 +385,7 @@
   },
   {
     "letter_type": "Untimely",
-    "response_window_options": {
-      "default": "No response window",
-      "custom": true,
-      "65_days": true
-    },
+    "response_window_option_default": "No response window",
     "letter_titles": [
       {
         "letter_title": "Intake AMA Untimely NOD No Opt In",
@@ -311,11 +427,7 @@
   },
   {
     "letter_type": "Docketing",
-    "response_window_options": {
-      "default": "No response window",
-      "custom": true,
-      "65_days": true
-    },
+    "response_window_option_default": "No response window",
     "letter_titles": [
       {
         "letter_title": "Intake Queue (with Docket)",
