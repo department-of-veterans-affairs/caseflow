@@ -32,13 +32,19 @@ RSpec.describe DecisionReviewCreatedEvent, type: :model do
     let!(:my_event) { create(:decision_review_created_event) }
     let!(:intake) { create(:intake)}
     let!(:event_record) {EventRecord.create!(event_id: my_event.id, backfill_record: intake)}
-
-    it "should associate with it's event_records" do
-      expect(my_event.event_records.count).to eq 1
+    let(:veteran_file_number) { "64205050" }
+    let!(:higher_level_review) { HigherLevelReview.new(veteran_file_number: veteran_file_number) }
+    let!(:higher_level_review_event_record) do
+      EventRecord.create!(event_id: my_event.id, backfill_record: higher_level_review)
     end
 
-    it "should have event_records that have a 2 way relationship with itself" do
+    it "should associate with it's event_records" do
+      expect(my_event.event_records.count).to eq 2
+    end
+
+    it "should have event_records that have a bi-directional relationship with itself" do
       expect(my_event.event_records.first.event_id).to eq my_event.id
+      expect(my_event.event_records.last.event_id).to eq my_event.id
     end
   end
 end
