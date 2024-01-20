@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 describe EventRecord, :postgres do
+
   context "One Event with One Event Record with One Intake" do
     let(:user) { Generators::User.build }
     let(:veteran_file_number) { "64205050" }
@@ -10,10 +11,11 @@ describe EventRecord, :postgres do
     it "Event Record backfill ID and type match Intake ID and type" do
       expect(intake_event_record.backfill_record_type).to eq("Intake")
       expect(intake_event_record.backfill_record_id).to eq(intake.id)
-      expect(intake.event_records.count).to eq 1
+      expect(intake.event_record).to eq intake_event_record
     end
   end
-  context "One Event with 10 Different Event Records" do
+
+  context "One Event with 10 Different Event Records to simulate a VBMS backfill" do
     let(:veteran_file_number) { "64205050" }
     let!(:event2) { DecisionReviewCreatedEvent.create!(reference_id: "2") }
     # HLR
@@ -65,44 +67,57 @@ describe EventRecord, :postgres do
     it "10 Event Records Backfilled ID and Type correctly match" do
       expect(higher_level_review_event_record.backfill_record_type).to eq("HigherLevelReview")
       expect(higher_level_review_event_record.backfill_record_id).to eq(higher_level_review.id)
-      expect(higher_level_review.event_records.count).to eq 1
+      expect(higher_level_review.event_record).to eq higher_level_review_event_record
+
       expect(supplemental_claim_event_record.backfill_record_type).to eq("SupplementalClaim")
       expect(supplemental_claim_event_record.backfill_record_id).to eq(supplemental_claim.id)
-      expect(supplemental_claim.event_records.count).to eq 1
+      expect(supplemental_claim.event_record).to eq supplemental_claim_event_record
+
       expect(end_product_establishment_event_record.backfill_record_type).to eq("EndProductEstablishment")
       expect(end_product_establishment_event_record.backfill_record_id).to eq(end_product_establishment.id)
-      expect(end_product_establishment.event_records.count).to eq 1
+      expect(end_product_establishment.event_record).to eq end_product_establishment_event_record
+
+
       expect(claimant_event_record.backfill_record_type).to eq("Claimant")
       expect(claimant_event_record.backfill_record_id).to eq(claimant.id)
-      expect(claimant.event_records.count).to eq 1
+      expect(claimant.event_record).to eq claimant_event_record
+
       expect(veteran_event_record.backfill_record_type).to eq("Veteran")
       expect(veteran_event_record.backfill_record_id).to eq(veteran.id)
-      expect(veteran.event_records.count).to eq 1
+      expect(veteran.event_record).to eq veteran_event_record
+
       expect(person_event_record.backfill_record_type).to eq("Person")
       expect(person_event_record.backfill_record_id).to eq(person.id)
-      expect(person.event_records.count).to eq 1
+      expect(person.event_record).to eq person_event_record
+
       expect(request_issue_event_record.backfill_record_type).to eq("RequestIssue")
       expect(request_issue_event_record.backfill_record_id).to eq(request_issue.id)
-      expect(request_issue.event_records.count).to eq 1
+      expect(request_issue.event_record).to eq request_issue_event_record
+
       expect(legacy_issue_event_record.backfill_record_type).to eq("LegacyIssue")
       expect(legacy_issue_event_record.backfill_record_id).to eq(legacy_issue.id)
-      expect(legacy_issue.event_records.count).to eq 1
+      expect(legacy_issue.event_record).to eq legacy_issue_event_record
+
       expect(legacy_issue_optin_event_record.backfill_record_type).to eq("LegacyIssueOptin")
       expect(legacy_issue_optin_event_record.backfill_record_id).to eq(legacy_issue_optin.id)
-      expect(legacy_issue_optin.event_records.count).to eq 1
+      expect(legacy_issue_optin.event_record).to eq legacy_issue_optin_event_record
+
       expect(user_event_record.backfill_record_type).to eq("User")
       expect(user_event_record.backfill_record_id).to eq(user.id)
-      expect(user.event_records.count).to eq 1
+      expect(user.event_record).to eq user_event_record
+
       expect(EventRecord.count).to eq 10
     end
   end
+
   # create an failing Event Record Backfill
-  context "Event Record Backfill does not occur due to incorrect association" do
+  context "EventRecord does not have a bi-directional association with non related models" do
     let!(:attorney) { create(:bgs_attorney, name: "Brock Purdy") }
     let!(:event3) { DecisionReviewCreatedEvent.create!(reference_id: "3") }
     let!(:attorney_event_record) { EventRecord.create!(event_id: 3, backfill_record: attorney) }
-    it "Event Record Backfill raises error" do
-      expect { attorney.event_records }.to raise_error(NoMethodError)
+    it "should raise an error" do
+      expect { attorney.event_record }.to raise_error(NoMethodError)
     end
   end
+
 end

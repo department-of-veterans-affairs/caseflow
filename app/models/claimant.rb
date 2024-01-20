@@ -14,7 +14,7 @@ class Claimant < CaseflowRecord
   has_one :unrecognized_appellant, lambda { |claimant|
     where(id: UnrecognizedAppellant.order(:id).find_by(claimant: claimant)&.id)
   }, dependent: :destroy
-  has_many :event_records, as: :backfill_record
+  has_one :event_record, as: :backfill_record
 
   validates :participant_id,
             uniqueness: { scope: [:decision_review_id, :decision_review_type],

@@ -10,7 +10,7 @@ class Veteran < CaseflowRecord
   has_many :available_hearing_locations,
            foreign_key: :veteran_file_number,
            primary_key: :file_number, class_name: "AvailableHearingLocations"
-  has_many :event_records, as: :backfill_record
+  has_one :event_record, as: :backfill_record
 
   bgs_attr_accessor :ptcpnt_id, :sex, :address_line1, :address_line2,
                     :address_line3, :city, :state, :country, :zip_code,

@@ -34,7 +34,7 @@ class RequestIssue < CaseflowRecord
   has_many :hearing_issue_notes
   has_one :legacy_issue_optin
   has_many :legacy_issues
-  has_many :event_records, as: :backfill_record
+  has_one :event_record, as: :backfill_record
   belongs_to :correction_request_issue, class_name: "RequestIssue", foreign_key: "corrected_by_request_issue_id"
   belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   belongs_to :contested_decision_issue, class_name: "DecisionIssue"
