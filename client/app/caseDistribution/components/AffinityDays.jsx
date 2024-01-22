@@ -37,6 +37,7 @@ const AffinityDays = () => {
           inputID={`${lever.item}-${option.value}-input`}
           useAriaLabel={useAriaLabel}
           tabIndex={tabIndex}
+          disabled={lever.is_disabled_in_ui}
         />
       );
     }
@@ -53,6 +54,7 @@ const AffinityDays = () => {
           inputID={`${lever.item}-${option.value}-input`}
           useAriaLabel={useAriaLabel}
           tabIndex={tabIndex}
+          disabled={lever.is_disabled_in_ui}
         />
       );
     }

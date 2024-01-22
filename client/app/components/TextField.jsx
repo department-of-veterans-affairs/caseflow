@@ -41,7 +41,8 @@ export const TextField = (props) => {
     inputRef,
     loading,
     id,
-    inputID
+    inputID,
+    disabled
   } = props;
 
   const textInputClass = className.
@@ -112,6 +113,7 @@ export const TextField = (props) => {
             maxLength={maxLength}
             max={max}
             autoComplete={autoComplete}
+            disabled={disabled}
             {...inputProps}
             {...ariaLabelObj}
             {...inputStyling}
@@ -210,6 +212,7 @@ TextField.propTypes = {
   type: PropTypes.string,
   validationError: PropTypes.string,
   loading: PropTypes.bool,
+  disabled: PropTypes.bool,
 
   /**
    * The value of the `input` element; required for a controlled component
