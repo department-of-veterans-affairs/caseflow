@@ -86,7 +86,7 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
   }
   const benefitType = intakeData?.benefitType;
 
-  const methods = useAddPoaForm({ defaultValues: poa, selectedForm, benType: benefitType });
+  const methods = useAddPoaForm({ defaultValues: poa, selectedForm, benefitType });
   const {
     control,
     register,

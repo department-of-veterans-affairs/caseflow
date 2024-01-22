@@ -585,12 +585,17 @@ feature "Non-veteran claimants", :postgres do
     end
 
     context "when user select name not listed claimant for VHA benefit type" do
+<<<<<<< HEAD
       before do
+=======
+      it "should display a alert banner with message" do
+>>>>>>> feature/APPEALS-32861
         start_higher_level_review(
           veteran,
           benefit_type: "vha"
         )
 
+<<<<<<< HEAD
         visit "/intake"
       end
 
@@ -602,6 +607,10 @@ feature "Non-veteran claimants", :postgres do
 
         # # Review page
         # visit "/intake"
+=======
+        # Review page
+        visit "/intake"
+>>>>>>> feature/APPEALS-32861
         expect(page).to have_current_path("/intake/review_request")
         within_fieldset("Is the claimant someone other than the Veteran?") do
           find("label", text: "Yes", match: :prefer_exact).click
@@ -638,6 +647,7 @@ feature "Non-veteran claimants", :postgres do
         within("#add_claimant_modal") do
           expect(page).to have_content("Review and confirm claimant information")
           expect(page).to have_content("#{first_name} #{last_name}")
+<<<<<<< HEAD
           expect(page).to have_content(COPY::VHA_NO_RECOGNIZED_POA)
 
           click_button "Confirm"
@@ -729,6 +739,10 @@ feature "Non-veteran claimants", :postgres do
         expect(page).to have_content("Add / Remove Issues")
         expect(page).to have_content(COPY::VHA_NO_RECOGNIZED_POA)
         expect(page).to have_content "Add Issue"
+=======
+          expect(page).to have_content("No recognized POA")
+        end
+>>>>>>> feature/APPEALS-32861
       end
     end
   end
