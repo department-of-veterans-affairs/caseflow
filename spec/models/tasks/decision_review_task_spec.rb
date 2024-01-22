@@ -150,7 +150,7 @@ describe DecisionReviewTask, :postgres do
         external_appeal_id: decision_review_task.appeal.uuid,
         appeal_type: "HigherLevelReview",
         has_poa: true,
-        not_listed_poa: false,
+        not_listed_poa: false
       }
       expect(subject).to eq serialized_hash
       expect(subject.key?(:attributes)).to eq false
@@ -194,7 +194,7 @@ describe DecisionReviewTask, :postgres do
           external_appeal_id: decision_review_task.appeal.uuid,
           appeal_type: "HigherLevelReview",
           has_poa: true,
-          not_listed_poa: false,
+          not_listed_poa: false
         }
       }
 
