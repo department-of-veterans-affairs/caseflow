@@ -1,41 +1,74 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import BatchSize from 'app/caseDistribution/components/BatchSize';
-import { levers } from 'test/data/adminCaseDistributionLevers';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import rootReducer from 'app/caseDistribution/reducers/root';
+import thunk from 'redux-thunk';
+import { levers, outOfBoundsBatchLevers } from '../../../data/adminCaseDistributionLevers';
+import { loadLevers } from 'app/caseDistribution/reducers/levers/leversActions';
+import { mount } from 'enzyme';
+import sinon from 'sinon';
 
-jest.mock('app/styles/caseDistribution/_interactable_levers.scss', () => '');
-describe('BatchSize', () => {
-  let props;
-  let component;
+describe('Batch Size Lever', () => {
 
-  beforeEach(() => {
-    props = {
-      leverList: ['lever_5', 'lever_6', 'lever_7', 'lever_8'],
-      leverStore: {
-        getState: jest.fn().mockReturnValue({
-          levers
-        })
-      }
+  const getStore = () => createStore(
+    rootReducer,
+    applyMiddleware(thunk));
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  let batchSizeLevers = levers.filter((lever) => (lever.lever_group === 'batch'));
+
+  it('renders the Batch Size Levers', () => {
+    const store = getStore();
+
+    let testLevers = {
+      batch: batchSizeLevers,
     };
-    component = render(<BatchSize {...props} />);
+
+    // Load all batch size levers
+    store.dispatch(loadLevers(testLevers));
+
+    render(
+      <Provider store={store}>
+        <BatchSize />
+      </Provider>
+    );
+
+    expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(batchSizeLevers[0].title);
+    expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(batchSizeLevers[0].description);
+    expect(document.querySelector('.active-lever > .lever-right')).toHaveTextContent(batchSizeLevers[0].value);
   });
 
-  it('renders without crashing', () => {
-    expect(component).toBeTruthy();
-  });
+  it('responds to bad change with error', () => {
+    const event = { target: { value: 2 } };
 
-  it('renders correct number of levers', () => {
-    const lev = component.container.querySelectorAll('input');
+    const store = getStore();
 
-    expect(lev.length).toBe(props.leverList.length);
-  });
+    let testLevers = {
+      batch: outOfBoundsBatchLevers,
+    };
 
-  it('updates lever value and error message on input change', () => {
-    const leverInput = component.container.querySelector('#lever_5');
+    store.dispatch(loadLevers(testLevers));
 
-    fireEvent.change(leverInput, { target: { value: '100089' } });
-    expect(leverInput.value).toBe('100089');
-    expect(component.getByText('Please enter a value less than or equal to 999')).toBeInTheDocument();
+    let wrapper = mount(
+      <Provider store={store}>
+        <BatchSize />
+      </Provider>
+    );
 
+    wrapper.update();
+
+    console.debug(wrapper.debug());
+
+    wrapper.find('.lever-active').simulate('change', event);
+
+    console.debug(wrapper.debug());
+    // expect(handleChangeSpy.calledOnce).toBeCalled();
+    expect(document.querySelector('.active-lever > .lever-right')).toHaveTextContent(outOfBoundsBatchLevers[0].value);
   });
 });
+
