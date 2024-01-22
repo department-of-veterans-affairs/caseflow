@@ -20,7 +20,7 @@ exports[`Timezone Can set timezone 1`] = `
   }
   readOnly={false}
   roTimezone="America/New_York"
-  time="08:15"
+  time="8:15 AM Eastern Time (US & Canada)"
   value={null}
 >
   <SearchableDropdown
@@ -16100,7 +16100,7 @@ exports[`Timezone Displays Regional Office timezones first 1`] = `
   name="Timezone"
   readOnly={false}
   roTimezone="America/New_York"
-  time="08:15"
+  time="8:15 AM Eastern Time (US & Canada)"
   value={null}
 >
   <SearchableDropdown
@@ -32124,7 +32124,7 @@ exports[`Timezone Does not show required when ReadOnly 1`] = `
   readOnly={true}
   required={true}
   roTimezone="America/New_York"
-  time="08:15"
+  time="8:15 AM Eastern Time (US & Canada)"
   value={null}
 >
   <SearchableDropdown
@@ -46328,7 +46328,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
   name="Timezone"
   readOnly={false}
   roTimezone="America/Los_Angeles"
-  time="08:15"
+  time="08:15 am"
   value={null}
 >
   <SearchableDropdown
@@ -63145,7 +63145,7 @@ exports[`Timezone Respects required prop 1`] = `
   readOnly={false}
   required={true}
   roTimezone="America/New_York"
-  time="08:15"
+  time="8:15 AM Eastern Time (US & Canada)"
   value={null}
 >
   <SearchableDropdown

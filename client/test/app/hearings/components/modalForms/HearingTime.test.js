@@ -24,7 +24,7 @@ describe('HearingTime', () => {
 
     // A single input is checked by default, and it's the "Other" radio
     expect(checkedRadio.exists()).toBe(true);
-    expect(checkedRadio.exists({ value: 'other' })).toBe(true);
+    expect(checkedRadio.exists({ value: 'Other' })).toBe(true);
 
     const dropdown = form.find('Select');
 
@@ -42,24 +42,27 @@ describe('HearingTime', () => {
     // Run the test
     const hearingTime = mount(<HearingTime enableZone value={HEARING_TIME_OPTIONS[0].value} />);
 
+    //console.log(hearingTime.debug());
+
+
     // Assertions
     expect(hearingTime).toMatchSnapshot();
     expect(hearingTime.find('Select').prop('value').label).toContain(timezoneLabel);
   });
 
   test('Matches snapshot when other time is not selected', () => {
-    const form = mount(<HearingTime value="12:30" />);
+    const form = mount(<HearingTime value="12:30 PM Eastern Time (US & Canada)" />);
 
     expect(form).toMatchSnapshot();
 
     expect(form.exists('SearchableDropdown')).toBe(false);
-    expect(form.find('input').exists({ checked: true, value: '12:30' })).toBe(
+    expect(form.find('input').exists({ checked: true, value: '12:30 PM Eastern Time (US & Canada)' })).toBe(
       true
     );
   });
 
   test('Matches snapshot when other time is selected', () => {
-    const selectedTime = '13:45';
+    const selectedTime = '1:45 PM Eastern Time (US & Canada)';
     const option = HEARING_TIME_OPTIONS.find(({ value }) => value === selectedTime);
 
     const form = mount(<HearingTime value={selectedTime} />);
@@ -67,7 +70,7 @@ describe('HearingTime', () => {
     expect(form).toMatchSnapshot();
 
     // Expect "Other" radio to be checked
-    expect(form.find('input').exists({ checked: true, value: 'other' })).toBe(true);
+    expect(form.find('input').exists({ checked: true, value: 'Other' })).toBe(true);
 
     // Expect dropdown to be populated with correct time
     expect(form.exists('SearchableDropdown')).toBe(true);
