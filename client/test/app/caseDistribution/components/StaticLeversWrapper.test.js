@@ -1,24 +1,44 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import StaticLeverWrapper from 'app/caseDistribution/components/StaticLeversWrapper';
-import { levers } from 'test/data/adminCaseDistributionLevers';
-import leversReducer from 'app/caseDistribution/reducers/levers/leversReducer';
-import { createStore } from 'redux';
+import StaticLeversWrapper from 'app/caseDistribution/components/StaticLeversWrapper';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import rootReducer from 'app/caseDistribution/reducers/root';
+import thunk from 'redux-thunk';
+import { loadLevers } from 'app/caseDistribution/reducers/levers/leversActions';
+import { levers } from '../../../data/adminCaseDistributionLevers';
 
-const preloadedState = {
-  levers: JSON.parse(JSON.stringify(levers)),
-  backendLevers: JSON.parse(JSON.stringify(levers))
-};
-const leverStore = createStore(leversReducer, preloadedState);
-const leverList = ['lever_3', 'lever_2', 'lever_7'];
+describe('Static Lever', () => {
 
-jest.mock('app/styles/caseDistribution/StaticLevers.module.scss', () => '');
-describe('StaticLeverWrapper', () => {
-  it('renders inactive levers correctly', () => {
-    const inactiveLevers = levers.filter((lever) => !lever.is_active);
-    const { getByText } = render(<StaticLeverWrapper leverList={leverList} leverStore={leverStore} />);
-    const inactiveLever = getByText(inactiveLevers[0].description);
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
-    expect(inactiveLever).toBeInTheDocument();
+  let staticLevers = levers.filter((lever) => (lever.lever_group === 'static' && lever.data_type === 'number'));
+  let testLevers = {
+    static: staticLevers,
+  };
+
+  it('renders the Static Lever', () => {
+
+    const getStore = () => createStore(
+      rootReducer,
+      applyMiddleware(thunk));
+
+    const store = getStore();
+
+    store.dispatch(loadLevers(testLevers));
+
+    render(
+      <Provider store={store}>
+        <StaticLeversWrapper />
+      </Provider>
+    );
+
+    for (const lever of staticLevers) {
+      expect(document.getElementById(`${lever.title}-value`)).toHaveTextContent(lever.value);
+      expect(document.getElementById(`${lever.title}-description`)).toHaveTextContent(lever.description);
+      expect(document.getElementById(`${lever.title}-unit`)).toHaveTextContent(lever.unit);
+    }
   });
 });

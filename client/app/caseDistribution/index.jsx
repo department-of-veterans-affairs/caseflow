@@ -32,12 +32,6 @@ class CaseDistribution extends React.PureComponent {
     const Router = this.props.router || BrowserRouter;
     const appName = 'Case Distribution';
 
-    const staticLevers = [
-      DISTRIBUTION.maximum_direct_review_proportion,
-      DISTRIBUTION.minimum_legacy_proportion,
-      DISTRIBUTION.nod_adjustment,
-      DISTRIBUTION.bust_backlog,
-    ];
     const batchLeverList = [
       DISTRIBUTION.alternative_batch_size,
       DISTRIBUTION.batch_size_per_attorney,
@@ -105,7 +99,6 @@ class CaseDistribution extends React.PureComponent {
       docketTimeGoalLeverList.indexOf(batchA) - docketTimeGoalLeverList.indexOf(batchB));
 
     let leversList = {
-      staticLevers,
       affinityLevers,
       batchSizeLevers,
       docketLeversObject,
