@@ -34,7 +34,6 @@ class OtherClaimant < Claimant
     poa_form = params.delete(:poa_form)
     params.delete(:listed_attorney)
     appellant = create_appellant!(params)
-
     if poa_form
       poa_participant_id = poa_params&.delete(:listed_attorney)&.dig(:value)
 

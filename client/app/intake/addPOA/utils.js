@@ -32,6 +32,29 @@ const sharedValidation = {
   phoneNumber: yup.string()
 };
 
+const schemaHlrOrSc = {
+  lastName: yup.string().when('partyType', {
+    is: 'individual',
+    then: yup.string().required(),
+  }),
+  addressLine1: yup.string().when('partyType', {
+    is: 'organization',
+    then: yup.string().required(),
+  }),
+  city: yup.string().when('partyType', {
+    is: 'organization',
+    then: yup.string().required(),
+  }),
+  state: yup.string().when('partyType', {
+    is: 'organization',
+    then: yup.string().required(),
+  }),
+  country: yup.string().when('partyType', {
+    is: 'organization',
+    then: yup.string().required(),
+  }),
+};
+
 export const schema = yup.object().shape({
   lastName: yup.string(),
   addressLine1: yup.string().when('partyType', {
@@ -53,28 +76,14 @@ export const schema = yup.object().shape({
   ...sharedValidation
 });
 
-export const schemaHlrOrSc = yup.object().shape({
-  lastName: yup.string().when('partyType', {
-    is: 'individual',
-    then: yup.string().required(),
-  }),
-  addressLine1: yup.string().when('partyType', {
-    is: 'organization',
-    then: yup.string().required(),
-  }),
-  city: yup.string().when('partyType', {
-    is: 'organization',
-    then: yup.string().required(),
-  }),
-  state: yup.string().when('partyType', {
-    is: 'organization',
-    then: yup.string().required(),
-  }),
-  country: yup.string().when('partyType', {
-    is: 'organization',
-    then: yup.string().required(),
-  }),
+export const schemaHLROrScOther = yup.object().shape({
+  ...schemaHlrOrSc,
   ...sharedValidation
+});
+
+export const schemaHlrOrScVHA = yup.object().shape({
+  ...schemaHlrOrSc,
+  listedAttorney: yup.object().required(),
 });
 
 const defaultFormValues = {
@@ -96,14 +105,22 @@ const defaultFormValues = {
   listedAttorney: null
 };
 
-export const useAddPoaForm = ({ defaultValues = {}, selectedForm = {} } = {}) => {
+const selectSchema = (isHLROrSCForm, benefitType) => {
+  if (!isHLROrSCForm) {
+    return schema;
+  }
+
+  return benefitType === 'vha' ? schemaHlrOrScVHA : schemaHLROrScOther;
+};
+
+export const useAddPoaForm = ({ defaultValues = {}, selectedForm = {}, benefitType = '' } = {}) => {
   const isHLROrSCForm = [
     FORM_TYPES.HIGHER_LEVEL_REVIEW.key,
     FORM_TYPES.SUPPLEMENTAL_CLAIM.key
   ].includes(selectedForm.key);
 
   const methods = useForm({
-    resolver: isHLROrSCForm ? yupResolver(schemaHlrOrSc) : yupResolver(schema),
+    resolver: yupResolver(selectSchema(isHLROrSCForm, benefitType)),
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: { ...defaultValues, ...defaultFormValues },

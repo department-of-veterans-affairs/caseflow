@@ -583,6 +583,56 @@ feature "Non-veteran claimants", :postgres do
         expect(page).to have_current_path("/intake/")
       end
     end
+
+    context "when user select name not listed claimant for VHA benefit type" do
+      it "should display a alert banner with message" do
+        start_higher_level_review(
+          veteran,
+          benefit_type: "vha"
+        )
+
+        # Review page
+        visit "/intake"
+        expect(page).to have_current_path("/intake/review_request")
+        within_fieldset("Is the claimant someone other than the Veteran?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+        find("label", text: "Claimant not listed", match: :prefer_exact).click
+        click_intake_continue
+
+        # Add Claimant Page
+        fill_in("Relationship to the Veteran", with: "child").send_keys :enter
+        first_name = Faker::Name.first_name
+        last_name = Faker::Name.last_name
+        fill_in "First name", with: first_name
+        fill_in "Last name", with: last_name
+        fill_in "Street address 1", with: Faker::Address.street_address
+        fill_in "City", with: Faker::Address.city
+        fill_in("State", with: Faker::Address.state_abbr).send_keys :enter
+        fill_in("Zip", with: "12345").send_keys :enter
+        fill_in("Country", with: "United States").send_keys :enter
+        within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+        click_intake_continue
+
+        # Add POA Page
+        expect(page).to have_content("Add Claimant's POA")
+        expect(page).to have_current_path("/intake/add_power_of_attorney")
+        fill_in("Representative's name", with: "Name not listed")
+        find("div", class: "cf-select__option", text: "Name not listed").click
+        expect(page).to have_content(COPY::VHA_POA_NAME_NOT_LISTED)
+        continue_button = find("button", text: "Continue to next step")
+        expect(continue_button[:disabled]).to eq "false"
+
+        continue_button.click
+        within("#add_claimant_modal") do
+          expect(page).to have_content("Review and confirm claimant information")
+          expect(page).to have_content("#{first_name} #{last_name}")
+          expect(page).to have_content("No recognized POA")
+        end
+      end
+    end
   end
 
   def add_existing_attorney(attorney)

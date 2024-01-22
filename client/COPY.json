@@ -921,6 +921,7 @@
   "ADD_CLAIMANT_CONFIRM_MODAL_DESCRIPTION": "Please review the claimant and their POA's information (if applicable) to ensure it matches the form(s). If you need to make edits, please click \"cancel and edit\" and make the edits accordingly.",
   "ADD_CLAIMANT_CONFIRM_MODAL_NO_POA": "Intake does not have a Form 21-22",
   "VHA_NO_POA": "No known POA",
+  "VHA_NO_RECOGNIZED_POA": "No recognized POA",
   "ADD_CLAIMANT_CONFIRM_MODAL_LAST_NAME_ALERT": "We noticed that you didn't enter a last name for the claimant. Are you sure they haven't included a last name?",
   "ADD_CLAIMANT_MODAL_TITLE": "Add Claimant",
   "ADD_CLAIMANT_MODAL_DESCRIPTION": "To add a claimant, select their relationship to the Veteran and type to search for their name. **Please note:** at this time, you are only able to add attorneys as claimants.\n\nIf you are unable to find the attorney in the list of names below, please cancel the intake and [email](mailto:VACaseflowIntake@va.gov) for assistance. Remember to encrypt any emails that contain PII.",
@@ -1394,5 +1395,6 @@
   "REFRESH_POA": "Refresh POA",
   "POA_SUCCESSFULLY_REFRESH_MESSAGE": "Successfully refreshed. No power of attorney information was found at this time.",
   "POA_UPDATED_SUCCESSFULLY": "POA Updated Successfully",
-  "EMPLOYER_IDENTIFICATION_NUMBER": "Employer Identification Number"
+  "EMPLOYER_IDENTIFICATION_NUMBER": "Employer Identification Number",
+  "VHA_POA_NAME_NOT_LISTED": "VHA does not allow manual entry of unrecognized POAs. Please proceed to next step for the intake, as you do not need to enter additional information."
 }
