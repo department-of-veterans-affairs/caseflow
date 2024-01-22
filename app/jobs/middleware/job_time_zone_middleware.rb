@@ -1,16 +1,13 @@
 # frozen_string_literal: true
 
-# This middleware adds tracking for job status such as start & end time
+# This middleware ensures all jobs run in UTC.
 class JobTimeZoneMiddleware
   def call(_worker, _queue, _msg, body)
     job_class = body["job_class"]
-    byebug
-    if Time.zone.name !- "UTC"
-      Time.use_zone("UTC")
+    current_tz = Time.zone.name
+    if current_tz != "UTC"
+      Rails.logger.info("#{job_class} current timezone is #{current_tz}")
+      Time.use_zone("UTC") { yield }
     end
-
-    yield
-
-    Time.use_zone(user.time_zone)
   end
 end
