@@ -375,6 +375,16 @@ class ApplicationController < ApplicationBaseController
     subject.nil? ? "Caseflow" : feedback_hash[subject]
   end
 
+  def authenticate_microservice!
+    # Check if the provided token matches the expected token
+    expected_token = Rails.application.credentials.microservice_token
+    provided_token = request.headers["Authorization"]
+
+    unless provided_token == expected_token
+      render json: { error: "Unauthorized" }, status: :unauthorized
+    end
+  end
+
   def feedback_url
     "/feedback"
   end

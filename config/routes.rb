@@ -55,6 +55,11 @@ Rails.application.routes.draw do
         get 'decision_reviews', to: 'docs#decision_reviews'
       end
     end
+    namespace :events do
+      namespace :v1 do
+        post '/decision_review_created', to: 'decision_reviews#decision_review_created'
+      end
+    end
     get "metadata", to: 'metadata#index'
   end
 
