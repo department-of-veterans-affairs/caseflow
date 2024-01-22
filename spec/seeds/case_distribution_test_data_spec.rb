@@ -24,19 +24,30 @@ describe Seeds::CaseDitributionTestData do
     it "creates test data for case distribution" do
       seed.seed!
 
-      # expect(Appeal.where(docket_type: "direct_review").count).to eq 38
       expect(Appeal.where(docket_type: "direct_review").count).to eq 38
+      expect(Appeal.where(docket_type: "direct_review").first.receipt_date).to eq Date.strptime("01/21/2004","%m/%d/%Y")
+
+      expect(Appeal.where(docket_type: "hearing").count).to eq 35
+      expect(Appeal.where(docket_type: "hearing").first.receipt_date).to eq Date.strptime("01/19/2004","%m/%d/%Y")
+
       expect(AppealState.where(appeal_type: "Appeal").count).to eq 73
       expect(Claimant.count).to eq 73
 
       expect(LegacyAppeal.where(closest_regional_office: "RO17").count).to eq 35
 
-      expect(User.find_by_css_id("BVAABSHIRE").full_name).to eq "BVA Abshire"
-      expect(User.find_by_css_id("BVAREDMAN").full_name).to eq "BVA Redman"
-      expect(User.find_by_css_id("BVABECKER").full_name).to eq "BVA Becker"
+      expect(User.count).to eq 48
+      expect(User.find_by_css_id("BVAABSHIRE").full_name).to eq "BVA Judge Abshire"
+      expect(User.find_by_css_id("BVAREDMAN").full_name).to eq "BVA Judge Redman"
+      expect(User.find_by_css_id("BVABECKER").full_name).to eq "BVA Judge Becker"
+
+      #creates data for missing tester judges data
+      expect(User.find_by_css_id("BVAKEELING").full_name).to eq "BVA Judge Keeling"
+      expect(User.find_by_css_id("BVACOTBJ").full_name).to eq "BVA ChairOfThe BoardJudge"
 
       expect(Veteran.where(first_name: "Bob").first.file_number).to eq "709000201"
+      expect(Veteran.where(first_name: "Bob").first.participant_id).to eq "719000001"
       expect(Veteran.count).to eq 108
     end
   end
 end
+
