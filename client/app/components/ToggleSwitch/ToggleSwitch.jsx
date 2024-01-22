@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-import styles from './ToggleSwitch.module.scss';
 
 const ToggleSwitch = ({
   id,
@@ -11,25 +10,27 @@ const ToggleSwitch = ({
   optionLabels,
   disabled
 }) => {
+
+  const buttonStyles = cx('toggleButton', {
+    toggleSwitchDisabled: disabled
+  });
+
+  const h5Style = cx('toggleButtonText', {
+    switchDisabled: disabled,
+    switchOn: selected,
+    switchOff: !selected
+  });
+
   return (
     <button
-      className={
-        disabled ?
-          cx(styles.toggleButton, styles.toggleSwitchDisabled) :
-          styles.toggleButton
-      }
+      className={buttonStyles}
       disabled={disabled}
       id={id}
       name={name}
       onClick={toggleSelected}>
-      <span className={styles.toggleButtonSpace}></span>
+      <span className="toggleButtonSpace"></span>
       <h5
-        className={
-          `${styles.toggleButtonText} ${selected ?
-            styles.switchOn :
-            styles.switchOff} ${disabled ?
-              styles.switchDisabled :
-              ''}`}
+        className={h5Style}
       >
         {selected ? optionLabels[0] : optionLabels[1]}
       </h5>
