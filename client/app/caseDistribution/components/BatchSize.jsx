@@ -77,6 +77,7 @@ const BatchSize = () => {
                 errorMessage={leverErrors(lever.item)}
                 onChange={updateNumberFieldLever(lever)}
                 tabIndex={lever.is_disabled_in_ui ? -1 : null}
+                disabled={lever.is_disabled_in_ui}
               /> :
               <label className={lever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}>
                 {lever.value} {lever.unit}
