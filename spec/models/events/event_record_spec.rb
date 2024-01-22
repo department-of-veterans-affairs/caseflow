@@ -110,12 +110,12 @@ describe EventRecord, :postgres do
     end
   end
 
-  # create an failing Event Record Backfill
+  # create an failing Event Record association
   context "EventRecord does not have a bi-directional association with non related models" do
     let!(:attorney) { create(:bgs_attorney, name: "Brock Purdy") }
     let!(:event3) { DecisionReviewCreatedEvent.create!(reference_id: "3") }
-    let!(:attorney_event_record) { EventRecord.create!(event_id: 3, backfill_record: attorney) }
-    it "should raise an error" do
+    it "should not create an EventRecord and should raise an error" do
+      expect { EventRecord.create!(event_id: event3.id, backfill_record: attorney) }.to raise_error(ActiveRecord::RecordInvalid)
       expect { attorney.event_record }.to raise_error(NoMethodError)
     end
   end
