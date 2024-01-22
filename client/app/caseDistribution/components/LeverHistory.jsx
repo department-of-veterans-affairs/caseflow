@@ -168,19 +168,19 @@ const LeverHistory = (props) => {
       <table>
         <tbody>
           <tr>
-            <th className="lever-history-table-header-styling">
+            <th className="lever-history-table-header-styling" scope="column">
               {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_DATE}
             </th>
-            <th className="lever-history-table-header-styling">
+            <th className="lever-history-table-header-styling" scope="column">
               {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_USER}
             </th>
-            <th className="lever-history-table-header-styling">
+            <th className="lever-history-table-header-styling" scope="column">
               {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_DATA_ELEMENT}
             </th>
-            <th className="lever-history-table-header-styling">
+            <th className="lever-history-table-header-styling" scope="column">
               {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_PREV_VALUE}
             </th>
-            <th className="lever-history-table-header-styling">
+            <th className="lever-history-table-header-styling" scope="column">
               {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_UPDATED_VALUE}
             </th>
           </tr>

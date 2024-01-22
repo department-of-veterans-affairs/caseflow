@@ -104,7 +104,11 @@ const DocketTimeGoals = () => {
               disabled={docketTimeGoalLever.is_disabled_in_ui}
             />
           </div>
-          <div className={cx('lever-right', 'docket-lever-right', 'docket-time-lever-num-sec')}>
+          <div
+            className={cx('lever-right', 'docket-lever-right', 'docket-time-lever-num-sec')}
+            aria-label={docketTimeGoalLever.title}
+            id={`${docketTimeGoalLever.item}-lever-middle`}
+          >
             <ToggleSwitch
               id={`toggle-switch-${distributionPriorLever.item}`}
               selected={distributionPriorLever.is_toggle_active}
