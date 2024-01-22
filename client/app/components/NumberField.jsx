@@ -20,6 +20,7 @@ export default class NumberField extends React.Component {
         {...this.props}
         onChange={this.onChange}
         aria-readonly={this.props.readOnly}
+        disabled={this.props.disabled}
       />
     </div>;
   }
@@ -54,5 +55,6 @@ NumberField.propTypes = {
   value: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number
-  ])
+  ]),
+  disabled: PropTypes.bool
 };
