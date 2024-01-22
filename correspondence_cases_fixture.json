@@ -1,0 +1,3923 @@
+{
+  "organization_name": "Mail",
+  "type": "MailTeam",
+  "id": 14,
+  "is_vso": false,
+  "queue_config": {
+    "table_title": "Mail cases",
+    "active_tab": "unassignedTab",
+    "tasks_per_page": 15,
+    "use_task_pages_api": true,
+    "tabs": [
+      {
+        "label": "Unassigned (%d)",
+        "name": "unassignedTab",
+        "description": "Cases owned by the Mail team that are unassigned to a person.",
+        "columns": [
+          {
+            "name": "badgesColumn",
+            "filterable": false,
+            "filter_options": []
+          },
+          {
+            "name": "detailsColumn",
+            "filterable": false,
+            "filter_options": []
+          },
+          {
+            "name": "taskColumn",
+            "filterable": true,
+            "filter_options": [
+              {
+                "value": "ExtensionRequestMailTask",
+                "displayText": "Extension request (30)"
+              },
+              {
+                "value": "ScheduleHearingTask",
+                "displayText": "Schedule hearing (1)"
+              },
+              {
+                "value": "EvidenceSubmissionWindowTask",
+                "displayText": "Evidence Submission Window Task (1349)"
+              }
+            ]
+          },
+          {
+            "name": "assignedByColumn",
+            "filterable": false,
+            "filter_options": []
+          },
+          {
+            "name": "typeColumn",
+            "filterable": true,
+            "filter_options": [
+              {
+                "value": "Original",
+                "displayText": "Original (650)"
+              },
+              {
+                "value": "%253C%253Cblank%253E%253E",
+                "displayText": "<<blank>> (730)"
+              }
+            ]
+          },
+          {
+            "name": "docketNumberColumn",
+            "filterable": true,
+            "filter_options": [
+              {
+                "value": "hearing",
+                "displayText": "Hearing (35)"
+              },
+              {
+                "value": "direct_review",
+                "displayText": "Direct Review (30)"
+              },
+              {
+                "value": "%253C%253Cblank%253E%253E",
+                "displayText": "<<blank>> (730)"
+              },
+              {
+                "value": "evidence_submission",
+                "displayText": "Evidence (585)"
+              }
+            ]
+          },
+          {
+            "name": "daysWaitingColumn",
+            "filterable": false,
+            "filter_options": []
+          },
+          {
+            "name": "readerLinkColumn",
+            "filterable": false,
+            "filter_options": []
+          }
+        ],
+        "allow_bulk_assign": true,
+        "contains_legacy_tasks": false,
+        "defaultSort": {
+          "sortColName": "typeColumn",
+          "sortAscending": true
+        },
+        "tasks": [
+          {
+            "id": "1199",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "direct_review",
+              "appeal_receipt_date": "2023-12-18",
+              "docket_number": "231218-390",
+              "external_appeal_id": "d337d1c4-53ee-4bd3-88e8-5f00c93d3a51",
+              "paper_case": null,
+              "veteran_full_name": "Bob Smithlesch",
+              "veteran_file_number": "551640739",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Extension request",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2023-12-16T13:34:46.319-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": null,
+                "name": null,
+                "type": null,
+                "id": null
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": true,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "1189",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "direct_review",
+              "appeal_receipt_date": "2023-12-19",
+              "docket_number": "231219-387",
+              "external_appeal_id": "465ea2ae-d15d-4ad8-903e-13ede0cc39e6",
+              "paper_case": null,
+              "veteran_full_name": "Bob Smithmayert",
+              "veteran_file_number": "551640733",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Extension request",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2023-12-16T13:34:44.725-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": null,
+                "name": null,
+                "type": null,
+                "id": null
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": true,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "3420",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "hearing",
+              "appeal_receipt_date": "2023-12-20",
+              "docket_number": "231220-1048",
+              "external_appeal_id": "d2ca5117-40a8-452f-8d8e-c50cf04e5478",
+              "paper_case": null,
+              "veteran_full_name": "Bob Smithjaskolski",
+              "veteran_file_number": "551671890",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Evidence Submission Window Task",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2023-12-18T13:39:11.636-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": null,
+                "name": null,
+                "type": null,
+                "id": null
+              },
+              "assigned_by": {
+                "first_name": "Lauren",
+                "last_name": "Roth",
+                "css_id": "CSS_ID675589",
+                "pg_id": 698
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": false,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "1179",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "direct_review",
+              "appeal_receipt_date": "2023-12-20",
+              "docket_number": "231220-384",
+              "external_appeal_id": "89d5d14c-4a4f-4002-b602-ab9d1f13837d",
+              "paper_case": null,
+              "veteran_full_name": "Bob Smithanderson",
+              "veteran_file_number": "551640727",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Extension request",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2023-12-14T13:34:43.129-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": null,
+                "name": null,
+                "type": null,
+                "id": null
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": true,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "3130",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "hearing",
+              "appeal_receipt_date": "2023-12-20",
+              "docket_number": "231220-928",
+              "external_appeal_id": "1a123fb7-bddf-4fec-aa75-60602129f3fe",
+              "paper_case": null,
+              "veteran_full_name": "Bob Smithhagenes",
+              "veteran_file_number": "551671650",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Evidence Submission Window Task",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2023-12-15T13:38:46.747-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": null,
+                "name": null,
+                "type": null,
+                "id": null
+              },
+              "assigned_by": {
+                "first_name": "Lauren",
+                "last_name": "Roth",
+                "css_id": "CSS_ID672419",
+                "pg_id": 528
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": false,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "1169",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "direct_review",
+              "appeal_receipt_date": "2023-12-21",
+              "docket_number": "231221-381",
+              "external_appeal_id": "ec164266-d253-4590-95b5-21275effe12b",
+              "paper_case": null,
+              "veteran_full_name": "Bob Smithwaters",
+              "veteran_file_number": "551640721",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Extension request",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2023-12-18T13:34:41.527-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": null,
+                "name": null,
+                "type": null,
+                "id": null
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": true,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "1159",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "direct_review",
+              "appeal_receipt_date": "2023-12-22",
+              "docket_number": "231222-378",
+              "external_appeal_id": "b2f7a37a-dc2c-4536-a17b-430f7c0139db",
+              "paper_case": null,
+              "veteran_full_name": "Bob Smithbogisich",
+              "veteran_file_number": "551640715",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Extension request",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2023-12-17T13:34:39.995-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": null,
+                "name": null,
+                "type": null,
+                "id": null
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": true,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "2964",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "hearing",
+              "appeal_receipt_date": "2023-12-22",
+              "docket_number": "231222-864",
+              "external_appeal_id": "ae697583-7a37-4e85-a39c-9e3d85fc82a8",
+              "paper_case": null,
+              "veteran_full_name": "Bob Smithhoeger",
+              "veteran_file_number": "551671522",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Evidence Submission Window Task",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2023-12-16T13:38:32.792-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": null,
+                "name": null,
+                "type": null,
+                "id": null
+              },
+              "assigned_by": {
+                "first_name": "Lauren",
+                "last_name": "Roth",
+                "css_id": "CSS_ID671317",
+                "pg_id": 426
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": false,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "3268",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "hearing",
+              "appeal_receipt_date": "2023-12-22",
+              "docket_number": "231222-984",
+              "external_appeal_id": "4efcf2d0-6e38-4966-96d3-92ac4c943923",
+              "paper_case": null,
+              "veteran_full_name": "Bob Smithbrekke",
+              "veteran_file_number": "551671762",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Evidence Submission Window Task",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2023-12-13T13:38:58.081-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": null,
+                "name": null,
+                "type": null,
+                "id": null
+              },
+              "assigned_by": {
+                "first_name": "Lauren",
+                "last_name": "Roth",
+                "css_id": "CSS_ID673501",
+                "pg_id": 610
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": false,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "3406",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "hearing",
+              "appeal_receipt_date": "2023-12-23",
+              "docket_number": "231223-1042",
+              "external_appeal_id": "643a8fe7-e242-4561-9f00-d65788fb329f",
+              "paper_case": null,
+              "veteran_full_name": "Bob Smithpowlowski",
+              "veteran_file_number": "551671878",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Evidence Submission Window Task",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2023-12-15T13:39:10.342-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": null,
+                "name": null,
+                "type": null,
+                "id": null
+              },
+              "assigned_by": {
+                "first_name": "Lauren",
+                "last_name": "Roth",
+                "css_id": "CSS_ID675581",
+                "pg_id": 690
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": false,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "1149",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "direct_review",
+              "appeal_receipt_date": "2023-12-23",
+              "docket_number": "231223-375",
+              "external_appeal_id": "8c9a60fa-8f84-4e08-858e-266676f4ba0d",
+              "paper_case": null,
+              "veteran_full_name": "Bob Smithoreilly",
+              "veteran_file_number": "551640709",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Extension request",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2023-12-17T13:34:38.435-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": null,
+                "name": null,
+                "type": null,
+                "id": null
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": true,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "2666",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "hearing",
+              "appeal_receipt_date": "2023-12-23",
+              "docket_number": "231223-742",
+              "external_appeal_id": "e941102d-ff71-4894-b467-f06639136bbe",
+              "paper_case": null,
+              "veteran_full_name": "Bob Smithkunze",
+              "veteran_file_number": "551661278",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Evidence Submission Window Task",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2023-12-14T13:38:07.067-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": null,
+                "name": null,
+                "type": null,
+                "id": null
+              },
+              "assigned_by": {
+                "first_name": "Lauren",
+                "last_name": "Roth",
+                "css_id": "CSS_ID668141",
+                "pg_id": 250
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": false,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "2816",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "hearing",
+              "appeal_receipt_date": "2023-12-23",
+              "docket_number": "231223-802",
+              "external_appeal_id": "4718799b-c1d7-4e8c-8e71-e1eab7cdd995",
+              "paper_case": null,
+              "veteran_full_name": "Bob Smithswaniawski",
+              "veteran_file_number": "551661398",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Evidence Submission Window Task",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2023-12-17T13:38:19.553-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": null,
+                "name": null,
+                "type": null,
+                "id": null
+              },
+              "assigned_by": {
+                "first_name": "Lauren",
+                "last_name": "Roth",
+                "css_id": "CSS_ID669231",
+                "pg_id": 340
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": false,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "3116",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "hearing",
+              "appeal_receipt_date": "2023-12-23",
+              "docket_number": "231223-922",
+              "external_appeal_id": "cf16bed8-c0a5-4415-8bb7-b9e3827a02cb",
+              "paper_case": null,
+              "veteran_full_name": "Bob Smithbogisich",
+              "veteran_file_number": "551671638",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Evidence Submission Window Task",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2023-12-17T13:38:45.566-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": null,
+                "name": null,
+                "type": null,
+                "id": null
+              },
+              "assigned_by": {
+                "first_name": "Lauren",
+                "last_name": "Roth",
+                "css_id": "CSS_ID672411",
+                "pg_id": 520
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": false,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "1139",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "direct_review",
+              "appeal_receipt_date": "2023-12-24",
+              "docket_number": "231224-372",
+              "external_appeal_id": "2e6ca3ba-2484-4e39-a885-272755679741",
+              "paper_case": null,
+              "veteran_full_name": "Bob Smithbahringer",
+              "veteran_file_number": "551640703",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Extension request",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2023-12-16T13:34:36.873-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": null,
+                "name": null,
+                "type": null,
+                "id": null
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": true,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          }
+        ],
+        "task_page_count": 92,
+        "total_task_count": 1380,
+        "task_page_endpoint_base_path": "/organizations/mail/task_pages?tab=unassignedTab"
+      },
+      {
+        "label": "Assigned (%d)",
+        "name": "assigned",
+        "description": "Cases assigned to a member of the Mail team:",
+        "columns": [
+          {
+            "name": "badgesColumn",
+            "filterable": false,
+            "filter_options": []
+          },
+          {
+            "name": "detailsColumn",
+            "filterable": false,
+            "filter_options": []
+          },
+          {
+            "name": "taskColumn",
+            "filterable": true,
+            "filter_options": [
+              {
+                "value": "SendInitialNotificationLetterTask",
+                "displayText": "Send Initial Notification Letter Task (30)"
+              },
+              {
+                "value": "HearingPostponementRequestMailTask",
+                "displayText": "Hearing postponement request (21)"
+              },
+              {
+                "value": "AodMotionMailTask",
+                "displayText": "Motion to Advance on Docket (1)"
+              },
+              {
+                "value": "AddressChangeMailTask",
+                "displayText": "Change of address (3)"
+              },
+              {
+                "value": "FoiaRequestMailTask",
+                "displayText": "FOIA request (3)"
+              },
+              {
+                "value": "HearingWithdrawalRequestMailTask",
+                "displayText": "Hearing withdrawal request (21)"
+              }
+            ]
+          },
+          {
+            "name": "typeColumn",
+            "filterable": true,
+            "filter_options": [
+              {
+                "value": "Original",
+                "displayText": "Original (73)"
+              },
+              {
+                "value": "%253C%253Cblank%253E%253E",
+                "displayText": "<<blank>> (6)"
+              }
+            ]
+          },
+          {
+            "name": "assignedToColumn",
+            "filterable": true,
+            "filter_options": [
+              {
+                "value": "AOD",
+                "displayText": "AOD (1)"
+              },
+              {
+                "value": "Clerk%2520of%2520the%2520Board",
+                "displayText": "Clerk of the Board (30)"
+              },
+              {
+                "value": "Hearing%2520Admin",
+                "displayText": "Hearing Admin (42)"
+              },
+              {
+                "value": "Privacy%2520Team",
+                "displayText": "Privacy Team (6)"
+              }
+            ]
+          },
+          {
+            "name": "docketNumberColumn",
+            "filterable": true,
+            "filter_options": [
+              {
+                "value": "evidence_submission",
+                "displayText": "Evidence (31)"
+              },
+              {
+                "value": "hearing",
+                "displayText": "Hearing (20)"
+              },
+              {
+                "value": "legacy",
+                "displayText": "Legacy (22)"
+              },
+              {
+                "value": "%253C%253Cblank%253E%253E",
+                "displayText": "<<blank>> (6)"
+              }
+            ]
+          },
+          {
+            "name": "daysWaitingColumn",
+            "filterable": false,
+            "filter_options": []
+          }
+        ],
+        "allow_bulk_assign": false,
+        "contains_legacy_tasks": false,
+        "defaultSort": {
+          "sortColName": "typeColumn",
+          "sortAscending": true
+        },
+        "tasks": [
+          {
+            "id": "3954",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [
+                "**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"
+              ],
+              "docket_name": "legacy",
+              "appeal_receipt_date": null,
+              "docket_number": "180000300",
+              "external_appeal_id": "551680031",
+              "paper_case": true,
+              "veteran_full_name": "Angelo Kuhlman",
+              "veteran_file_number": "100000148",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Hearing postponement request",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2024-01-17T13:40:17.446-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Hearing Admin",
+                "type": "HearingAdmin",
+                "id": 37
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": null,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Hearing Admin",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "3960",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [
+                "**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"
+              ],
+              "docket_name": "legacy",
+              "appeal_receipt_date": null,
+              "docket_number": "180000301",
+              "external_appeal_id": "551680032",
+              "paper_case": true,
+              "veteran_full_name": "Georgine Bode",
+              "veteran_file_number": "100000149",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Hearing postponement request",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2024-01-17T13:40:17.719-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Hearing Admin",
+                "type": "HearingAdmin",
+                "id": 37
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": null,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Hearing Admin",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "3966",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [
+                "**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"
+              ],
+              "docket_name": "legacy",
+              "appeal_receipt_date": null,
+              "docket_number": "180000302",
+              "external_appeal_id": "551680033",
+              "paper_case": true,
+              "veteran_full_name": "Precious Koss",
+              "veteran_file_number": "100000150",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Hearing postponement request",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2024-01-17T13:40:17.964-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Hearing Admin",
+                "type": "HearingAdmin",
+                "id": 37
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": null,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Hearing Admin",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "3972",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [
+                "**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"
+              ],
+              "docket_name": "legacy",
+              "appeal_receipt_date": null,
+              "docket_number": "180000303",
+              "external_appeal_id": "551680034",
+              "paper_case": true,
+              "veteran_full_name": "Jamaal Schamberger",
+              "veteran_file_number": "100000151",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Hearing postponement request",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2024-01-17T13:40:18.209-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Hearing Admin",
+                "type": "HearingAdmin",
+                "id": 37
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": null,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Hearing Admin",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "3979",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [
+                "**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"
+              ],
+              "docket_name": "legacy",
+              "appeal_receipt_date": null,
+              "docket_number": "180000304",
+              "external_appeal_id": "551680035",
+              "paper_case": true,
+              "veteran_full_name": "Cletus Grimes",
+              "veteran_file_number": "100000152",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Hearing postponement request",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2024-01-17T13:40:19.361-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Hearing Admin",
+                "type": "HearingAdmin",
+                "id": 37
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": null,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Hearing Admin",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "3986",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [
+                "**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"
+              ],
+              "docket_name": "legacy",
+              "appeal_receipt_date": null,
+              "docket_number": "180000305",
+              "external_appeal_id": "551680036",
+              "paper_case": true,
+              "veteran_full_name": "Tracy Heidenreich",
+              "veteran_file_number": "100000153",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Hearing postponement request",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2024-01-17T13:40:19.789-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Hearing Admin",
+                "type": "HearingAdmin",
+                "id": 37
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": null,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Hearing Admin",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "3993",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [
+                "**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"
+              ],
+              "docket_name": "legacy",
+              "appeal_receipt_date": null,
+              "docket_number": "180000306",
+              "external_appeal_id": "551680037",
+              "paper_case": true,
+              "veteran_full_name": "Elliot Boehm",
+              "veteran_file_number": "100000154",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Hearing postponement request",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2024-01-17T13:40:20.261-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Hearing Admin",
+                "type": "HearingAdmin",
+                "id": 37
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": null,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Hearing Admin",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "4000",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [
+                "**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"
+              ],
+              "docket_name": "legacy",
+              "appeal_receipt_date": null,
+              "docket_number": "180000307",
+              "external_appeal_id": "551680038",
+              "paper_case": true,
+              "veteran_full_name": "Suzy Christiansen",
+              "veteran_file_number": "100000155",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Hearing postponement request",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2024-01-17T13:40:20.805-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Hearing Admin",
+                "type": "HearingAdmin",
+                "id": 37
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": null,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Hearing Admin",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "4007",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [
+                "**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"
+              ],
+              "docket_name": "legacy",
+              "appeal_receipt_date": null,
+              "docket_number": "180000308",
+              "external_appeal_id": "551680039",
+              "paper_case": true,
+              "veteran_full_name": "Charlie Howe",
+              "veteran_file_number": "100000156",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Hearing postponement request",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2024-01-17T13:40:21.372-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Hearing Admin",
+                "type": "HearingAdmin",
+                "id": 37
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": null,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Hearing Admin",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "4014",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [
+                "**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"
+              ],
+              "docket_name": "legacy",
+              "appeal_receipt_date": null,
+              "docket_number": "180000309",
+              "external_appeal_id": "551680040",
+              "paper_case": true,
+              "veteran_full_name": "Shari Breitenberg",
+              "veteran_file_number": "100000157",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Hearing postponement request",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2024-01-17T13:40:21.936-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Hearing Admin",
+                "type": "HearingAdmin",
+                "id": 37
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": null,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Hearing Admin",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "4021",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [
+                "**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"
+              ],
+              "docket_name": "legacy",
+              "appeal_receipt_date": null,
+              "docket_number": "180000310",
+              "external_appeal_id": "551680041",
+              "paper_case": true,
+              "veteran_full_name": "Carrol Waters",
+              "veteran_file_number": "100000158",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Hearing postponement request",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2024-01-17T13:40:22.456-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Hearing Admin",
+                "type": "HearingAdmin",
+                "id": 37
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": null,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Hearing Admin",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "4225",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [
+                "**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"
+              ],
+              "docket_name": "legacy",
+              "appeal_receipt_date": null,
+              "docket_number": "190000300",
+              "external_appeal_id": "551680042",
+              "paper_case": true,
+              "veteran_full_name": "Santa Keeling",
+              "veteran_file_number": "100000159",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Hearing withdrawal request",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2024-01-17T13:40:52.604-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Hearing Admin",
+                "type": "HearingAdmin",
+                "id": 37
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": null,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Hearing Admin",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "4231",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [
+                "**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"
+              ],
+              "docket_name": "legacy",
+              "appeal_receipt_date": null,
+              "docket_number": "190000301",
+              "external_appeal_id": "551680043",
+              "paper_case": true,
+              "veteran_full_name": "Giovanni Hauck",
+              "veteran_file_number": "100000160",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Hearing withdrawal request",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2024-01-17T13:40:52.781-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Hearing Admin",
+                "type": "HearingAdmin",
+                "id": 37
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": null,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Hearing Admin",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "4237",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [
+                "**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"
+              ],
+              "docket_name": "legacy",
+              "appeal_receipt_date": null,
+              "docket_number": "190000302",
+              "external_appeal_id": "551680044",
+              "paper_case": true,
+              "veteran_full_name": "Billy Cassin",
+              "veteran_file_number": "100000161",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Hearing withdrawal request",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2024-01-17T13:40:52.953-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Hearing Admin",
+                "type": "HearingAdmin",
+                "id": 37
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": null,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Hearing Admin",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "4243",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [
+                "**LINK TO DOCUMENT:** \n https://www.caseflowreader.com/doc \n\n **DETAILS:** \n Context on task creation"
+              ],
+              "docket_name": "legacy",
+              "appeal_receipt_date": null,
+              "docket_number": "190000303",
+              "external_appeal_id": "551680045",
+              "paper_case": true,
+              "veteran_full_name": "Oliva Nikolaus",
+              "veteran_file_number": "100000162",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Hearing withdrawal request",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "assigned",
+              "assigned_at": "2024-01-17T13:40:53.115-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Hearing Admin",
+                "type": "HearingAdmin",
+                "id": 37
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": null,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Hearing Admin",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          }
+        ],
+        "task_page_count": 6,
+        "total_task_count": 79,
+        "task_page_endpoint_base_path": "/organizations/mail/task_pages?tab=assigned"
+      },
+      {
+        "label": "On hold (%d)",
+        "name": "on_hold",
+        "description": "Cases on hold in a Mail team member's queue.",
+        "columns": [
+          {
+            "name": "badgesColumn",
+            "filterable": false,
+            "filter_options": []
+          },
+          {
+            "name": "detailsColumn",
+            "filterable": false,
+            "filter_options": []
+          },
+          {
+            "name": "taskColumn",
+            "filterable": true,
+            "filter_options": [
+              {
+                "value": "EvidenceOrArgumentMailTask",
+                "displayText": "Evidence or argument (1)"
+              }
+            ]
+          },
+          {
+            "name": "typeColumn",
+            "filterable": true,
+            "filter_options": [
+              {
+                "value": "%253C%253Cblank%253E%253E",
+                "displayText": "<<blank>> (1)"
+              }
+            ]
+          },
+          {
+            "name": "assignedToColumn",
+            "filterable": true,
+            "filter_options": [
+              {
+                "value": "VLJ%2520Support%2520Staff",
+                "displayText": "VLJ Support Staff (1)"
+              }
+            ]
+          },
+          {
+            "name": "docketNumberColumn",
+            "filterable": true,
+            "filter_options": [
+              {
+                "value": "%253C%253Cblank%253E%253E",
+                "displayText": "<<blank>> (1)"
+              }
+            ]
+          },
+          {
+            "name": "daysOnHoldColumn",
+            "filterable": false,
+            "filter_options": []
+          }
+        ],
+        "allow_bulk_assign": false,
+        "contains_legacy_tasks": false,
+        "defaultSort": {
+          "sortColName": "typeColumn",
+          "sortAscending": true
+        },
+        "tasks": [
+          {
+            "id": "2001805325",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [
+                "Autem ratione nobis laboriosam."
+              ],
+              "docket_name": "hearing",
+              "appeal_receipt_date": "2020-01-03",
+              "docket_number": "200103-61110",
+              "external_appeal_id": "b5eba21a-9baf-41a3-ac1c-08470c2b79c4",
+              "paper_case": null,
+              "veteran_full_name": "Danial Reynolds",
+              "veteran_file_number": "000543695",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": true,
+              "case_type": "Original",
+              "label": "Evidence or argument",
+              "placed_on_hold_at": "2021-06-28T12:38:07.000-04:00",
+              "on_hold_duration": null,
+              "status": "on_hold",
+              "assigned_at": null,
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "VLJ Support Staff",
+                "type": "Colocated",
+                "id": 2000000023
+              },
+              "assigned_by": {
+                "first_name": "Dr.",
+                "last_name": "Mitchell",
+                "css_id": "BARNAMCL",
+                "pg_id": 2000000462
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": false,
+              "veteran_appellant_deceased": true,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "VLJ Support Staff",
+              "days_since_last_status_change": 935,
+              "days_since_board_intake": 935,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          }
+        ],
+        "task_page_count": 1,
+        "total_task_count": 1,
+        "task_page_endpoint_base_path": "/organizations/mail/task_pages?tab=on_hold"
+      },
+      {
+        "label": "Completed",
+        "name": "completed",
+        "description": "Cases completed (last 7 days):",
+        "columns": [
+          {
+            "name": "badgesColumn",
+            "filterable": false,
+            "filter_options": []
+          },
+          {
+            "name": "detailsColumn",
+            "filterable": false,
+            "filter_options": []
+          },
+          {
+            "name": "taskColumn",
+            "filterable": true,
+            "filter_options": [
+              {
+                "value": "EvidenceOrArgumentMailTask",
+                "displayText": "Evidence or argument (3)"
+              },
+              {
+                "value": "EvidenceSubmissionWindowTask",
+                "displayText": "Evidence Submission Window Task (257)"
+              },
+              {
+                "value": "ReconsiderationMotionMailTask",
+                "displayText": "Motion for reconsideration (3)"
+              }
+            ]
+          },
+          {
+            "name": "typeColumn",
+            "filterable": true,
+            "filter_options": [
+              {
+                "value": "Original",
+                "displayText": "Original (1)"
+              },
+              {
+                "value": "%253C%253Cblank%253E%253E",
+                "displayText": "<<blank>> (262)"
+              }
+            ]
+          },
+          {
+            "name": "assignedToColumn",
+            "filterable": true,
+            "filter_options": [
+              {
+                "value": "Mail",
+                "displayText": "Mail (263)"
+              }
+            ]
+          },
+          {
+            "name": "docketNumberColumn",
+            "filterable": true,
+            "filter_options": [
+              {
+                "value": "evidence_submission",
+                "displayText": "Evidence (1)"
+              },
+              {
+                "value": "%253C%253Cblank%253E%253E",
+                "displayText": "<<blank>> (262)"
+              }
+            ]
+          },
+          {
+            "name": "daysWaitingColumn",
+            "filterable": false,
+            "filter_options": []
+          }
+        ],
+        "allow_bulk_assign": false,
+        "contains_legacy_tasks": false,
+        "defaultSort": {
+          "sortColName": "typeColumn",
+          "sortAscending": true
+        },
+        "tasks": [
+          {
+            "id": "1202",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "evidence_submission",
+              "appeal_receipt_date": "2024-01-16",
+              "docket_number": "240116-391",
+              "external_appeal_id": "70af4b43-c4a3-4186-8eec-ade3f3c02e08",
+              "paper_case": null,
+              "veteran_full_name": "Julius Hodge",
+              "veteran_file_number": "100000046",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Evidence Submission Window Task",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "completed",
+              "assigned_at": "2024-01-17T13:34:46.600-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Mail",
+                "type": "MailTeam",
+                "id": 14
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": true,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "7429",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "direct_review",
+              "appeal_receipt_date": "2023-12-23",
+              "docket_number": "231223-1812",
+              "external_appeal_id": "24eaa621-f9d4-4e86-a4bb-8cc60a96b9a8",
+              "paper_case": null,
+              "veteran_full_name": "Jane Deceased Substitutions Seed",
+              "veteran_file_number": "54545454",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Evidence or argument",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "completed",
+              "assigned_at": "2024-01-17T13:47:08.235-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Mail",
+                "type": "MailTeam",
+                "id": 14
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": false,
+              "veteran_appellant_deceased": true,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "7430",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "direct_review",
+              "appeal_receipt_date": "2023-12-23",
+              "docket_number": "231223-1812",
+              "external_appeal_id": "24eaa621-f9d4-4e86-a4bb-8cc60a96b9a8",
+              "paper_case": null,
+              "veteran_full_name": "Jane Deceased Substitutions Seed",
+              "veteran_file_number": "54545454",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Motion for reconsideration",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "completed",
+              "assigned_at": "2024-01-17T13:47:08.271-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Mail",
+                "type": "MailTeam",
+                "id": 14
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": false,
+              "veteran_appellant_deceased": true,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "7437",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "evidence_submission",
+              "appeal_receipt_date": "2023-12-23",
+              "docket_number": "231223-1813",
+              "external_appeal_id": "fa59e876-69fe-42a0-b0f2-736ee5d13874",
+              "paper_case": null,
+              "veteran_full_name": "Jane Deceased Substitutions Seed",
+              "veteran_file_number": "54545454",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Evidence Submission Window Task",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "completed",
+              "assigned_at": "2024-01-17T13:47:08.650-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Mail",
+                "type": "MailTeam",
+                "id": 14
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": false,
+              "veteran_appellant_deceased": true,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "7455",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "evidence_submission",
+              "appeal_receipt_date": "2023-12-23",
+              "docket_number": "231223-1814",
+              "external_appeal_id": "d721643f-6df4-4981-9b60-532b54b932b6",
+              "paper_case": null,
+              "veteran_full_name": "Jane Deceased Substitutions Seed",
+              "veteran_file_number": "54545454",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Evidence or argument",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "completed",
+              "assigned_at": "2024-01-17T13:47:10.122-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Mail",
+                "type": "MailTeam",
+                "id": 14
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": false,
+              "veteran_appellant_deceased": true,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "7456",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "evidence_submission",
+              "appeal_receipt_date": "2023-12-23",
+              "docket_number": "231223-1814",
+              "external_appeal_id": "d721643f-6df4-4981-9b60-532b54b932b6",
+              "paper_case": null,
+              "veteran_full_name": "Jane Deceased Substitutions Seed",
+              "veteran_file_number": "54545454",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Motion for reconsideration",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "completed",
+              "assigned_at": "2024-01-17T13:47:10.154-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Mail",
+                "type": "MailTeam",
+                "id": 14
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": false,
+              "veteran_appellant_deceased": true,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "7483",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "hearing",
+              "appeal_receipt_date": "2023-12-23",
+              "docket_number": "231223-1816",
+              "external_appeal_id": "498d954f-9557-4713-804e-761fe49dc4b7",
+              "paper_case": null,
+              "veteran_full_name": "Jane Deceased Substitutions Seed",
+              "veteran_file_number": "54545454",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Evidence or argument",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "completed",
+              "assigned_at": "2024-01-17T13:47:12.063-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Mail",
+                "type": "MailTeam",
+                "id": 14
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": false,
+              "veteran_appellant_deceased": true,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "7484",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "hearing",
+              "appeal_receipt_date": "2023-12-23",
+              "docket_number": "231223-1816",
+              "external_appeal_id": "498d954f-9557-4713-804e-761fe49dc4b7",
+              "paper_case": null,
+              "veteran_full_name": "Jane Deceased Substitutions Seed",
+              "veteran_file_number": "54545454",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Motion for reconsideration",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "completed",
+              "assigned_at": "2024-01-17T13:47:12.091-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Mail",
+                "type": "MailTeam",
+                "id": 14
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": false,
+              "veteran_appellant_deceased": true,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "7491",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "evidence_submission",
+              "appeal_receipt_date": "2024-01-16",
+              "docket_number": "240116-1818",
+              "external_appeal_id": "7512a771-ee99-4ff5-aa49-2826f0dfb8d9",
+              "paper_case": null,
+              "veteran_full_name": "Bob Smithprosacco",
+              "veteran_file_number": "400000001",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Evidence Submission Window Task",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "completed",
+              "assigned_at": "2024-01-17T13:47:12.702-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Mail",
+                "type": "MailTeam",
+                "id": 14
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": false,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "7503",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "evidence_submission",
+              "appeal_receipt_date": "2024-01-16",
+              "docket_number": "240116-1820",
+              "external_appeal_id": "e3026642-fded-4b0b-b0c8-92e12e3fe063",
+              "paper_case": null,
+              "veteran_full_name": "Bob Smithjacobi",
+              "veteran_file_number": "400000002",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Evidence Submission Window Task",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "completed",
+              "assigned_at": "2024-01-17T13:47:14.100-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Mail",
+                "type": "MailTeam",
+                "id": 14
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": false,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "7515",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "evidence_submission",
+              "appeal_receipt_date": "2024-01-16",
+              "docket_number": "240116-1822",
+              "external_appeal_id": "c85dd135-ad94-46fb-b247-ccdec6507e5c",
+              "paper_case": null,
+              "veteran_full_name": "Bob Smithmurphy",
+              "veteran_file_number": "400000003",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Evidence Submission Window Task",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "completed",
+              "assigned_at": "2024-01-17T13:47:15.479-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Mail",
+                "type": "MailTeam",
+                "id": 14
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": false,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "7527",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "evidence_submission",
+              "appeal_receipt_date": "2024-01-16",
+              "docket_number": "240116-1824",
+              "external_appeal_id": "1c0992eb-0688-4872-8292-be46b5769090",
+              "paper_case": null,
+              "veteran_full_name": "Bob Smithbednar",
+              "veteran_file_number": "400000004",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Evidence Submission Window Task",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "completed",
+              "assigned_at": "2024-01-17T13:47:16.797-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Mail",
+                "type": "MailTeam",
+                "id": 14
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": false,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "7539",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "evidence_submission",
+              "appeal_receipt_date": "2024-01-16",
+              "docket_number": "240116-1826",
+              "external_appeal_id": "012d6859-b35f-4d52-be33-f2ae4e44d179",
+              "paper_case": null,
+              "veteran_full_name": "Bob Smithlehner",
+              "veteran_file_number": "400000005",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Evidence Submission Window Task",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "completed",
+              "assigned_at": "2024-01-17T13:47:18.109-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Mail",
+                "type": "MailTeam",
+                "id": 14
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": false,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "7551",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "evidence_submission",
+              "appeal_receipt_date": "2024-01-16",
+              "docket_number": "240116-1828",
+              "external_appeal_id": "2e63b4d2-0b44-4eae-b2c0-abaf2c5b3468",
+              "paper_case": null,
+              "veteran_full_name": "Bob Smithrunolfsdottir",
+              "veteran_file_number": "400000006",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Evidence Submission Window Task",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "completed",
+              "assigned_at": "2024-01-17T13:47:19.561-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Mail",
+                "type": "MailTeam",
+                "id": 14
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": false,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          },
+          {
+            "id": "7563",
+            "type": "task_column",
+            "attributes": {
+              "instructions": [],
+              "docket_name": "evidence_submission",
+              "appeal_receipt_date": "2024-01-16",
+              "docket_number": "240116-1830",
+              "external_appeal_id": "20e9fb6d-d7e0-49f9-8587-ba38bef1e082",
+              "paper_case": null,
+              "veteran_full_name": "Bob Smithmcglynn",
+              "veteran_file_number": "400000007",
+              "started_at": null,
+              "issue_count": null,
+              "issue_types": null,
+              "aod": false,
+              "case_type": "Original",
+              "label": "Evidence Submission Window Task",
+              "placed_on_hold_at": null,
+              "on_hold_duration": null,
+              "status": "completed",
+              "assigned_at": "2024-01-17T13:47:21.009-05:00",
+              "closest_regional_office": null,
+              "assigned_to": {
+                "css_id": null,
+                "is_organization": true,
+                "name": "Mail",
+                "type": "MailTeam",
+                "id": 14
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              },
+              "hearing_request_type": null,
+              "former_travel": null,
+              "power_of_attorney_name": null,
+              "suggested_hearing_location": null,
+              "overtime": false,
+              "contested_claim": false,
+              "veteran_appellant_deceased": false,
+              "document_id": null,
+              "decision_prepared_by": null,
+              "latest_informal_hearing_presentation_task": {},
+              "owned_by": "Mail",
+              "days_since_last_status_change": 2,
+              "days_since_board_intake": 2,
+              "assignee_name": null,
+              "is_legacy": null,
+              "type": null,
+              "appeal_id": null,
+              "created_at": null,
+              "closed_at": null,
+              "appeal_type": null,
+              "timeline_title": null,
+              "hide_from_queue_table_view": null,
+              "hide_from_case_timeline": null,
+              "hide_from_task_snapshot": null,
+              "docket_range_date": null,
+              "external_hearing_id": null,
+              "available_hearing_locations": null,
+              "previous_task": {
+                "assigned_at": null
+              },
+              "available_actions": [],
+              "cancelled_by": {
+                "css_id": null
+              },
+              "converted_by": {
+                "css_id": null
+              },
+              "converted_on": null
+            }
+          }
+        ],
+        "task_page_count": 18,
+        "total_task_count": 263,
+        "task_page_endpoint_base_path": "/organizations/mail/task_pages?tab=completed"
+      }
+    ]
+  },
+  "user_can_bulk_assign": false
+}

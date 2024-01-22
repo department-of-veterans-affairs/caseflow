@@ -1,0 +1,2 @@
+class CorrespondenceQueueTab < QueueTab
+end

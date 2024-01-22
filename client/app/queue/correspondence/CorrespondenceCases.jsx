@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
 import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
+import QueueTableBuilder from '../QueueTableBuilder';
 import CorrespondenceTable from './CorrespondenceTable';
 import QueueOrganizationDropdown from '../components/QueueOrganizationDropdown';
 import Alert from '../../components/Alert';
@@ -25,7 +26,7 @@ class CorrespondenceCases extends React.PureComponent {
       const returnedObject = response.body;
       const vetCorrespondences = returnedObject.vetCorrespondences;
 
-      this.props.loadVetCorrespondence(vetCorrespondences);
+      this.props.loadVetCorrespondence(vetCorrespondences.queue_config);
     }).
       catch((err) => {
         // allow HTTP errors to fall on the floor via the console.
@@ -66,9 +67,10 @@ class CorrespondenceCases extends React.PureComponent {
           <h1 {...css({ display: 'inline-block' })}>{COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES}</h1>
           <QueueOrganizationDropdown organizations={organizations} />
           {this.props.vetCorrespondences &&
-          <CorrespondenceTable
-            vetCorrespondences={this.props.vetCorrespondences}
-          />
+          // <CorrespondenceTable
+          //   vetCorrespondences={this.props.vetCorrespondences}
+          // />
+          <QueueTableBuilder />
           }
         </AppSegment>
       </React.Fragment>
@@ -79,7 +81,7 @@ class CorrespondenceCases extends React.PureComponent {
 CorrespondenceCases.propTypes = {
   organizations: PropTypes.array,
   loadVetCorrespondence: PropTypes.func,
-  vetCorrespondences: PropTypes.array,
+  vetCorrespondences: PropTypes.object,
   currentAction: PropTypes.object,
   veteranInformation: PropTypes.object
 };
