@@ -455,9 +455,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     distribute_appeals(fmtd_query, judge, dry_run)
   end
-
   # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
-
   # :nocov:
 
   def self.distribute_appeals(query, judge, dry_run)

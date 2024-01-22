@@ -8,6 +8,7 @@ class Docket
     fail Caseflow::Error::MustImplementInSubclass
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   # :reek:LongParameterList
   def appeals(priority: nil, genpop: nil, ready: nil, judge: nil)
     fail "'ready for distribution' value cannot be false" if ready == false
@@ -25,6 +26,7 @@ class Docket
 
     scope.order("appeals.receipt_date")
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def count(priority: nil, ready: nil)
     # The underlying scopes here all use `group_by` statements, so calling
@@ -61,11 +63,12 @@ class Docket
   end
 
   def age_of_oldest_priority_appeal
-    if use_by_docket_date?
-      @age_of_oldest_priority_appeal ||= appeals(priority: true, ready: true).limit(1).first&.receipt_date
-    else
-      @age_of_oldest_priority_appeal ||= appeals(priority: true, ready: true).limit(1).first&.ready_for_distribution_at
-    end
+    @age_of_oldest_priority_appeal ||=
+      if use_by_docket_date?
+        appeals(priority: true, ready: true).limit(1).first&.receipt_date
+      else
+        appeals(priority: true, ready: true).limit(1).first&.ready_for_distribution_at
+      end
   end
 
   def oldest_priority_appeal_days_waiting
