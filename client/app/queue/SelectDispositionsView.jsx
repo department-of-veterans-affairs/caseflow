@@ -459,11 +459,9 @@ class SelectDispositionsView extends React.PureComponent {
     const buildCheckboxValues = () => {
       if (mstFeatureToggle && pactFeatureToggle) {
         return DECISION_SPECIAL_ISSUES_WITH_MST_PACT;
-      }
-      else if (mstFeatureToggle) {
+      } else if (mstFeatureToggle) {
         return DECISION_SPECIAL_ISSUES_WITH_MST;
-      }
-      else if (pactFeatureToggle) {
+      } else if (pactFeatureToggle) {
         return DECISION_SPECIAL_ISSUES_WITH_PACT;
       }
 
