@@ -18,7 +18,8 @@ describe Api::V2::HearingSerializer do
       build(
         :hearing,
         hearing_day: hearing_day,
-        hearing_location: nil
+        hearing_location: nil,
+        scheduled_in_timezone: "America/New_York"
       )
     end
 
@@ -29,6 +30,7 @@ describe Api::V2::HearingSerializer do
       expect(subject[:timezone]).to eq "America/New_York"
       expect(subject[:zip_code]).to eq "02203"
       expect(subject[:address]).to eq "15 New Sudbury Street"
+      expect(subject[:scheduled_in_timezone]).to eq "America/New_York"
     end
   end
 
