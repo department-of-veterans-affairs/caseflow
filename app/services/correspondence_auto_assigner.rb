@@ -38,7 +38,21 @@ class CorrespondenceAutoAssigner
       type: ReassignPackageTask.name
     }
 
-    ReviewPackageTask.create_from_params(task_params, current_user)
+    assign_user_review_package_task(user: current_user, task_params: task_params)
     unassigned_review_package_task.update!(assigned_to: InboundOpsTeam.singleton, status: :on_hold)
+  end
+
+  def assign_user_review_package_task(user:, task_params:)
+    return unless permission_checker.can?(
+      permission_name: Constants.ORGANIZATION_PERMISSIONS.auto_assign,
+      organization: InboundOpsTeam.singleton,
+      user: user
+    )
+
+    ReviewPackageTask.create_from_params(task_params, current_user)
+  end
+
+  def permission_checker
+    @permission_checker ||= OrganizationUserPermissionChecker.new
   end
 end
