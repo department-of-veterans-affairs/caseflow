@@ -24,6 +24,9 @@ describe Seeds::CaseDitributionTestData do
     it "creates test data for case distribution" do
       seed.seed!
 
+      #checking CaseDistributionlevers count
+      expect( CaseDistributionLever.count).to eq 20
+
       expect(Appeal.where(docket_type: "direct_review").count).to eq 38
       expect(Appeal.where(docket_type: "direct_review").first.receipt_date).to eq Date.strptime("01/21/2004","%m/%d/%Y")
 
