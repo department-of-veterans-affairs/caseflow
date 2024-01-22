@@ -15,11 +15,7 @@ import CertificationProgressBar from './CertificationProgressBar';
 import WindowUtil from '../util/WindowUtil';
 
 export class DocumentsCheck extends React.Component {
-  // TODO: updating state in UNSAFE_componentWillMount is
-  // sometimes thought of as an anti-pattern.
-  // is there a better way to do this?
-  // eslint-disable-next-line camelcase
-  UNSAFE_componentWillMount() {
+  componentDidMount() {
     this.props.updateProgressBar();
   }
 
@@ -57,13 +53,13 @@ export class DocumentsCheck extends React.Component {
         <p>If the document status is marked
           with an <NotFoundIcon />, try checking:</p>
         <ul>The <strong>document type</strong> in VBMS to make sure it's
-        <a href="/certification/help#mismatched-documents"> labeled correctly.</a></ul>
+          <a href="/certification/help#mismatched-documents"> labeled correctly.</a></ul>
         <ul>The <strong>document date</strong> in VBMS. NOD and Form 9 dates must match their VACOLS dates.
         SOC and SSOC dates are considered matching if the VBMS date is the same as the VACOLS date,
         or if the VBMS date is 4 days or fewer before the VACOLS date.
         <a href="/certification/help#cannot-find-documents"> Learn more about document dates.</a> </ul>
         <p>Once you've made corrections,&nbsp;
-        <a href={`/certifications/${match.params.vacols_id}/check_documents`}>refresh this page.</a></p>
+          <a href={`/certifications/${match.params.vacols_id}/check_documents`}>refresh this page.</a></p>
         <p>If you can't find the document, <a href="#"
           onClick={toggleCancellationModal}>cancel this certification.</a></p>
       </div>;

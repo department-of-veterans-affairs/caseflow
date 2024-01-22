@@ -41,8 +41,8 @@ export default class SearchBar extends React.Component {
   }
 
   /* eslint-disable camelcase */
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    if (this.props.value !== nextProps.value) {
+  componentDidUpdate(prevProps) {
+    if (this.props.value !== prevProps.value) {
       this.clearSearchCallback();
 
       this.searchTimeout = setTimeout(() => {

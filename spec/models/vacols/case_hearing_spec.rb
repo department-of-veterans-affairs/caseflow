@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 describe VACOLS::CaseHearing, :all_dbs do
+  specify "primary key sequence increments in intervals of 1" do
+    case_hearing_1 = create(:case_hearing)
+    case_hearing_2 = create(:case_hearing)
+    expect(case_hearing_2.hearing_pkseq - case_hearing_1.hearing_pkseq).to eq(1)
+  end
+
   context ".load_hearing" do
     subject { VACOLS::CaseHearing.load_hearing(case_hearing.hearing_pkseq).hearing_venue }
     let(:ro_id) { "RO04" }
