@@ -49,12 +49,12 @@ export const createUpdatedLeversWithValues = (levers) => {
 
 export const formatTimestamp = (entry) => {
   const dateEntry = new Date(entry);
-  const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
-  const datePart = dateEntry.toLocaleDateString('en-US', options);
-  const hours = dateEntry.getHours();
-  const minutes = dateEntry.getMinutes();
-  const seconds = dateEntry.getSeconds();
-  const formattedDate = `${datePart} ${hours}:${minutes}:${seconds}`;
+  const formattedDate = `${dateEntry.toLocaleDateString('en-US', {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  }) } ${dateEntry.getHours()}:${dateEntry.getMinutes()}:${dateEntry.getSeconds()}`;
 
   return formattedDate;
 };
@@ -99,24 +99,27 @@ export const formatLeverHistory = (leverHistoryList) => {
 };
 
 export const validateLeverInput = (lever, value) => {
-  const errors = []
+  const errors = [];
   const { item, min_value, max_value, data_type } = lever;
-    if (value === null || value === '') errors.push({leverItem: lever.item, message: ACD_LEVERS.validation_error_message.minimum_not_met })
-    if (parseFloat(value)) {
-      if (value < min_value) {
-        errors.push({leverItem: lever.item, message: ACD_LEVERS.validation_error_message.minimum_not_met })
-      }
-      if (max_value && value > max_value) {
-        errors.push({leverItem: lever.item, message: ACD_LEVERS.validation_error_message.out_of_bounds})
-      }
-    }
 
-    return errors
-}
+  if (value === null || value === '') {
+    errors.push({ leverItem: lever.item, message: ACD_LEVERS.validation_error_message.minimum_not_met });
+  }
+  if (parseFloat(value)) {
+    if (value < min_value) {
+      errors.push({ leverItem: lever.item, message: ACD_LEVERS.validation_error_message.minimum_not_met });
+    }
+    if (max_value && value > max_value) {
+      errors.push({ leverItem: lever.item, message: ACD_LEVERS.validation_error_message.out_of_bounds });
+    }
+  }
+
+  return errors;
+};
 
 export const leverErrorMessageExists = (existingErrors, newErrors) => {
-  return existingErrors.some(existingError =>
-    newErrors.every(newError =>
+  return existingErrors.some((existingError) =>
+    newErrors.every((newError) =>
       JSON.stringify(existingError) === JSON.stringify(newError)
     )
   );
