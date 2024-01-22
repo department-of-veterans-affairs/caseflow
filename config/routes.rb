@@ -58,11 +58,6 @@ Rails.application.routes.draw do
           get 'find_by_veteran', to: "veterans#show" # passing in ssn/vfn as a header
         end
       end
-      namespace :events do
-        namespace :v1 do
-          post '/decision_review_created', to: 'decision_reviews#decision_review_created'
-        end
-      end
     end
     namespace :docs do
       namespace :v3, defaults: { format: 'json' } do
@@ -71,7 +66,7 @@ Rails.application.routes.draw do
         get "vacols_issues", to: "docs#vacols_issues"
       end
     end
-    
+
     namespace :events do
       namespace :v1 do
         post '/decision_review_created', to: 'decision_reviews#decision_review_created'
