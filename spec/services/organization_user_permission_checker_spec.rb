@@ -9,7 +9,6 @@ describe OrganizationUserPermissionChecker do
   let!(:org_user) { create(:organizations_user, user: user, organization: organization) }
   let(:valid_permission_name) { OrganizationPermission.valid_permission_names.first }
 
-
   describe "#can_do_all?" do
     context "when permissions are enabled" do
       let!(:organization_permission) do
