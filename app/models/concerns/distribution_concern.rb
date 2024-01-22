@@ -24,7 +24,7 @@ module DistributionConcern
     appeals.map do |appeal|
       next nil unless appeal.tasks.open.of_type(:DistributionTask).any?
 
-      distribution_task_assignee_id = appeals.tasks_of_type(:DistributionTask).first.assigned_to_id
+      distribution_task_assignee_id = appeal.tasks.of_type(:DistributionTask).first.assigned_to_id
       Rails.logger.info("Calling SCTAssignTaskCreator for appeal #{appeal.id}")
       SCTAssignTaskCreator.new(appeal: appeal,
                                assigned_by_id: distribution_task_assignee_id).call

@@ -78,29 +78,27 @@ class Docket
     appeals(priority: true, ready: true).pluck(:uuid)
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Lint/UnusedMethodArgument
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Lint/UnusedMethodArgument, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   # :reek:FeatureEnvy
   def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1, style: "push")
     # This might need to be in loop or while block until appeals are = to the limit after SCT appeals have been removed
     appeals = appeals(priority: priority, ready: true, genpop: genpop, judge: distribution.judge).limit(limit)
+      .includes(:request_issues)
+
     # TODO: Gross
     # TODO: Maybe expand this out so work with any possible benefit types or some selection criterion
-    # TODO: See if this event works
-    sct_appeals = appeals.select { |appeal| appeal.request_issues.select { |issue| issue.benefit_type == "vha" } }
-
+    # TODO: See if this even works
+    sct_appeals = appeals.select { |appeal| appeal.request_issues.find { |issue| issue.benefit_type == "vha" } }
     # Example data:
     # appeals = 12
     # sct_appeals = 3
     appeals -= sct_appeals
 
-    # TODO: Probably can't even count these things
-    if sct_appeals
+    if sct_appeals.any?
       loop do
         inner_appeals = appeals(priority: priority, ready: true, genpop: genpop, judge: distribution.judge)
           .offset(appeals.count + sct_appeals.count)
           .limit(limit - appeals.count)
-
-        # inner_appeals_count = inner_appeals.count
 
         break unless inner_appeals.exists?
 
@@ -115,13 +113,14 @@ class Docket
         appeals += inner_appeals
         sct_appeals += inner_sct_appeals
 
-        break if appeals >= limit
+        break if appeals.count >= limit
       end
     end
 
     tasks = assign_judge_tasks_for_appeals(appeals, distribution.judge)
     sct_tasks = assign_sct_tasks_for_appeals(sct_appeals)
-    [tasks + sct_tasks].map do |task|
+    tasks_array = tasks + sct_tasks
+    tasks_array.map do |task|
       next if task.nil?
 
       # If a distributed case already exists for this appeal, alter the existing distributed case's case id.
@@ -134,7 +133,8 @@ class Docket
                                                                docket: docket_type,
                                                                priority: priority,
                                                                ready_at: task.appeal.ready_for_distribution_at,
-                                                               task: task)
+                                                               task: task,
+                                                               sct_appeal: task.is_a?(SpecialtyCaseTeamAssignTask))
         # In a race condition for distributions, two JudgeAssignTasks will be created; this cancels the first one
         cancel_previous_judge_assign_task(task.appeal, distribution.judge.id)
         # Returns the new DistributedCase as expected by calling methods; case in elsif is implicitly returned
@@ -144,11 +144,12 @@ class Docket
                                                docket: docket_type,
                                                priority: priority,
                                                ready_at: task.appeal.ready_for_distribution_at,
-                                               task: task)
+                                               task: task,
+                                               sct_appeal: task.is_a?(SpecialtyCaseTeamAssignTask))
       end
     end
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Lint/UnusedMethodArgument
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Lint/UnusedMethodArgument, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
 
   def self.nonpriority_decisions_per_year
     Appeal.extending(Scopes).nonpriority

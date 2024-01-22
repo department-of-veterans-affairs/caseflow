@@ -15,7 +15,7 @@ class SCTAssignTaskCreator
 
     Rails.logger.info("Assigning SCT task for appeal #{appeal.id}")
     task = reassign_or_create
-    Rails.logger.info("Assigned SCT task with task id #{task.id} to #{task.assigned_to.css_id}")
+    Rails.logger.info("Assigned SCT task with task id #{task.id} to #{task.assigned_to.name}")
 
     Rails.logger.info("Closing distribution task for appeal #{appeal.id} with task id #{task.id}")
     close_distribution_tasks_for_appeal if appeal.is_a?(Appeal)
@@ -26,10 +26,10 @@ class SCTAssignTaskCreator
 
   private
 
-  attr_reader :appeal, :judge
+  attr_reader :appeal
 
   def reassign_or_create
-    open_sct_assign_task = @appeal.tasks.open.find_by_type(:SpecialtyCaseTeamAssignTask)
+    open_sct_assign_task = appeal.tasks.open.find_by_type(:SpecialtyCaseTeamAssignTask)
 
     return reassign_existing_open_task(open_sct_assign_task) if open_sct_assign_task
 

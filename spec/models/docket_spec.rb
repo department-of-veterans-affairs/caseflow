@@ -567,15 +567,18 @@ describe Docket, :all_dbs do
         create(:appeal,
                :with_post_intake_tasks,
                docket_type: Constants.AMA_DOCKETS.direct_review)
-      end
+      end.push(
+        create(:appeal, :with_post_intake_tasks, :with_vha_issue, docket_type: Constants.AMA_DOCKETS.direct_review)
+      )
     end
 
     let(:judge_user) { create(:user) }
     let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
     let!(:distribution) { Distribution.create!(judge: judge_user) }
+    let!(:sct_org) { SpecialtyCaseTeam.singleton }
 
     context "nonpriority appeals" do
-      subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: false, limit: 10) }
+      subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: false, limit: 15) }
 
       it "creates distributed cases and judge tasks" do
         tasks = subject
