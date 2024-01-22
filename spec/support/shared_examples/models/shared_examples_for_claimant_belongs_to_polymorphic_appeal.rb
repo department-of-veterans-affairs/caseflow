@@ -40,7 +40,7 @@ shared_examples "Claimant belongs_to polymorphic appeal" do |claimant_subclass|
         end
 
         context "when eager loading with `includes`" do
-          subject { claimant_subclass.ama.includes(:ama_appeal) }
+          subject { claimant_subclass.ama.includes(:decision_review) }
 
           let!(:_legacy_claimant) { create(:claimant, :legacy, type: claimant_subclass.to_s) }
 
@@ -55,7 +55,7 @@ shared_examples "Claimant belongs_to polymorphic appeal" do |claimant_subclass|
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.ama_appeal.id } }
+                subscriber.track { subject.map { |record| record.decision_review.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
@@ -63,7 +63,7 @@ shared_examples "Claimant belongs_to polymorphic appeal" do |claimant_subclass|
         end
 
         context "when eager loading with `preload`" do
-          subject { claimant_subclass.ama.preload(:ama_appeal) }
+          subject { claimant_subclass.ama.preload(:decision_review) }
 
           let!(:_legacy_claimant) { create(:claimant, :legacy, type: claimant_subclass.to_s) }
 
@@ -78,7 +78,7 @@ shared_examples "Claimant belongs_to polymorphic appeal" do |claimant_subclass|
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.ama_appeal.id } }
+                subscriber.track { subject.map { |record| record.decision_review.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
@@ -112,6 +112,52 @@ shared_examples "Claimant belongs_to polymorphic appeal" do |claimant_subclass|
             it { should contain_exactly(legacy_claimant) }
           end
         end
+
+        context "when eager loading with `includes`" do
+          subject { claimant_subclass.legacy.includes(:decision_review) }
+
+          let!(:_ama_claimants) { create_list(:claimant, 10, :ama, type: claimant_subclass.to_s) }
+
+          context "when there are no Claimants with Legacy appeals" do
+            it { should be_none }
+          end
+
+          context "when there are Claimants with Legacy appeals" do
+            let!(:legacy_claimants) { create(:claimant, :legacy, type: claimant_subclass.to_s) }
+
+            it { should contain_exactly(*legacy_claimants) }
+
+            it "prevents N+1 queries" do
+              QuerySubscriber.new.tap do |subscriber|
+                subscriber.track { subject.map { |record| record.decision_review.id } }
+                expect(subscriber.queries.count).to eq 2
+              end
+            end
+          end
+        end
+
+        context "when eager loading with `preload`" do
+          subject { claimant_subclass.legacy.preload(:decision_review) }
+
+          let!(:_ama_claimants) { create_list(:claimant, 10, :ama, type: claimant_subclass.to_s) }
+
+          context "when there are no Claimants with Legacy appeals" do
+            it { should be_none }
+          end
+
+          context "when there are Claimants with Legacy appeals" do
+            let!(:legacy_claimants) { create(:claimant, :legacy, type: claimant_subclass.to_s) }
+
+            it { should contain_exactly(*legacy_claimants) }
+
+            it "prevents N+1 queries" do
+              QuerySubscriber.new.tap do |subscriber|
+                subscriber.track { subject.map { |record| record.decision_review.id } }
+                expect(subscriber.queries.count).to eq 2
+              end
+            end
+          end
+        end
       end
 
       describe "higher_level_review" do
@@ -143,33 +189,8 @@ shared_examples "Claimant belongs_to polymorphic appeal" do |claimant_subclass|
           end
         end
 
-        context "when eager loading with `includes`" do
-          subject { claimant_subclass.higher_level_review.includes(:higher_level_review) }
-
-          let!(:_legacy_claimant) { create(:claimant, :legacy, type: claimant_subclass.to_s) }
-
-          context "when there are no Claimants with HigherLevelReviews" do
-            it { should be_none }
-          end
-
-          context "when there are Claimants with HigherLevelReviews" do
-            let!(:higher_level_review_claimants) do
-              create_list(:claimant, 10, :higher_level_review, type: claimant_subclass.to_s)
-            end
-
-            it { should contain_exactly(*higher_level_review_claimants) }
-
-            it "prevents N+1 queries" do
-              QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.higher_level_review.id } }
-                expect(subscriber.queries.count).to eq 2
-              end
-            end
-          end
-        end
-
         context "when eager loading with `preload`" do
-          subject { claimant_subclass.higher_level_review.preload(:higher_level_review) }
+          subject { claimant_subclass.higher_level_review.preload(:decision_review) }
 
           let!(:_legacy_claimant) { create(:claimant, :legacy, type: claimant_subclass.to_s) }
 
@@ -186,7 +207,7 @@ shared_examples "Claimant belongs_to polymorphic appeal" do |claimant_subclass|
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.higher_level_review.id } }
+                subscriber.track { subject.map { |record| record.decision_review.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
@@ -223,33 +244,8 @@ shared_examples "Claimant belongs_to polymorphic appeal" do |claimant_subclass|
           end
         end
 
-        context "when eager loading with `includes`" do
-          subject { claimant_subclass.supplemental_claim.includes(:supplemental_claim) }
-
-          let!(:_legacy_claimant) { create(:claimant, :legacy, type: claimant_subclass.to_s) }
-
-          context "when there are no Claimants with SupplementalClaims" do
-            it { should be_none }
-          end
-
-          context "when there are Claimants with SupplementalClaims" do
-            let!(:supplemental_claim_claimants) do
-              create_list(:claimant, 10, :supplemental_claim, type: claimant_subclass.to_s)
-            end
-
-            it { should contain_exactly(*supplemental_claim_claimants) }
-
-            it "prevents N+1 queries" do
-              QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.supplemental_claim.id } }
-                expect(subscriber.queries.count).to eq 2
-              end
-            end
-          end
-        end
-
         context "when eager loading with `preload`" do
-          subject { claimant_subclass.supplemental_claim.preload(:supplemental_claim) }
+          subject { claimant_subclass.supplemental_claim.preload(:decision_review) }
 
           let!(:_legacy_claimant) { create(:claimant, :legacy, type: claimant_subclass.to_s) }
 
@@ -266,7 +262,7 @@ shared_examples "Claimant belongs_to polymorphic appeal" do |claimant_subclass|
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.supplemental_claim.id } }
+                subscriber.track { subject.map { |record| record.decision_review.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
