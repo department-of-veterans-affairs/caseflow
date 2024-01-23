@@ -70,6 +70,7 @@ class SeedDB
     call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
     call_and_log_seed_step Seeds::BgsServiceRecordMaker
     call_and_log_seed_step Seeds::MstPactLegacyCaseAppeals
+
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 end
