@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
 describe HearingEmailRecipient do
+  # Execute block for all HearingEmailRecipient subclasses...
+  Dir[Rails.root.join("app/models/**/*.rb")].each { |f| require f } # load all models (for HearingEmailRecipient subclasses)
+  described_class.descendants.each do |hearing_email_recipient_subclass|
+    context "#{hearing_email_recipient_subclass}" do
+      it_behaves_like "HearingEmailRecipient belongs_to polymorphic appeal", hearing_email_recipient_subclass
+    end
+  end
+
   context "#create" do
     let(:hearing) { create(:hearing) }
     let(:email_address) { "test@email.com" }
