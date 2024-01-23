@@ -5,7 +5,7 @@
 namespace :db do
   desc "Generates a smattering of legacy appeals with VACOLS cases that have special issues assocaited with them"
   task :generate_legacy_appeals, [:add_special_issues, :user_id] => :environment do |_, args|
-    ADD_SPECIAL_ISSUES = args.add_special_issues == "true"
+    ADD_SPECIAL_ISSUES = args.add_special_issues.to_s == "true"
     USER_ID = args.user_id
     class LegacyAppealFactory
       class << self
@@ -115,7 +115,7 @@ namespace :db do
         vets = []
 
         (1..5).each do |_|
-          vets << Veteran.find(Random.new.rand(1..250))
+          vets << Veteran.find(Random.new.rand(1..Veteran.count))
         end
 
         veterans_with_like_45_appeals = vets[0..5].pluck(:file_number)
