@@ -89,7 +89,7 @@ class SelectSpecialIssuesView extends React.PureComponent {
   }
 
   legacySpecialIssuesSections = () => {
-    const mstIdentification = this.props.mstIdentification || this.props.legacyMstIdentification;
+    const mstIdentification = this.props.mstIdentification && this.props.legacyMstIdentification;
 
     return [
       specialIssueFilters(true).noneSection(),

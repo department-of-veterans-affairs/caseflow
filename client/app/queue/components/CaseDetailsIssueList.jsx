@@ -51,11 +51,11 @@ export default function CaseDetailsIssueList(props) {
     return <AmaIssueList
       requestIssues={props.issues}
       decisionIssues={props.decisionIssues}
-      mstFeatureToggle={props.featureToggles.mst_identification}
-      pactFeatureToggle={props.featureToggles.pact_identification}>
+      mstFeatureToggle={props.featureToggles.mstIdentification}
+      pactFeatureToggle={props.featureToggles.pactIdentification}>
       <DecisionIssues
-        mstFeatureToggle={props.featureToggles.mst_identification}
-        pactFeatureToggle={props.featureToggles.pact_identification}
+        mstFeatureToggle={props.featureToggles.mstIdentification}
+        pactFeatureToggle={props.featureToggles.pactIdentification}
         decisionIssues={updatedDecisionIssues} />
     </AmaIssueList>;
   }
@@ -64,7 +64,7 @@ export default function CaseDetailsIssueList(props) {
     {props.issues.map((issue, i) =>
       <div key={i} {...singleIssueContainerStyling}>
         <h3 {...headingStyling}>Issue {1 + i}</h3>
-        <LegacyIssueDetails legacyMstPactFeatureToggle={props.featureToggles.legacy_mst_pact_identification}>
+        <LegacyIssueDetails legacyMstPactFeatureToggle={props.featureToggles.legacyMstPactIdentification}>
           {issue}
         </LegacyIssueDetails>
       </div>

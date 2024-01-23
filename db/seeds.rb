@@ -79,6 +79,7 @@ class SeedDB
     call_and_log_seed_step Seeds::BGSServiceRecordMaker
     call_and_log_seed_step Seeds::AdditionalRemandedAppeals
     call_and_log_seed_step Seeds::AdditionalLegacyRemandedAppeals
+
   end
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 end

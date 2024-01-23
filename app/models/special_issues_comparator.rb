@@ -33,11 +33,6 @@ class SpecialIssuesComparator
   # returns a hash with mst_available and pact_available values
   # values generated from ratings special issues and contentions
   def special_issues
-    # guard for MST/PACT feature toggle
-    # commented out for testing
-    # return [] unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) ||
-    #                  FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
-
     [{
       mst_available: mst_from_rating_or_contention,
       pact_available: pact_from_rating_or_contention
@@ -46,6 +41,7 @@ class SpecialIssuesComparator
 
   # check rating for existing mst status; if none, search contentions
   def mst_from_rating_or_contention
+    return false unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user])
     return true if mst_from_rating?
     return true if mst_from_contention?
 
@@ -54,6 +50,7 @@ class SpecialIssuesComparator
 
   # check rating for existing pact status; if none, search contentions
   def pact_from_rating_or_contention
+    return false unless FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
     return true if pact_from_rating?
     return true if pact_from_contention?
 

@@ -26,7 +26,9 @@ import {
   VACOLS_DISPOSITIONS,
   ISSUE_DISPOSITIONS,
   DECISION_SPECIAL_ISSUES,
-  DECISION_SPECIAL_ISSUES_NO_MST_PACT
+  DECISION_SPECIAL_ISSUES_WITH_PACT,
+  DECISION_SPECIAL_ISSUES_WITH_MST,
+  DECISION_SPECIAL_ISSUES_WITH_MST_PACT
 } from './constants';
 import ApiUtil from '../util/ApiUtil';
 
@@ -452,6 +454,20 @@ class SelectDispositionsView extends React.PureComponent {
     const connectedIssues = this.connectedRequestIssuesWithoutCurrentId(connectedRequestIssues, requestIdToDelete);
     const toDeleteHasConnectedIssue = connectedIssues.length > 0;
 
+    // switch statement to show checkbox values depending on
+    // mst/pact feature toggles
+    const buildCheckboxValues = () => {
+      if (mstFeatureToggle && pactFeatureToggle) {
+        return DECISION_SPECIAL_ISSUES_WITH_MST_PACT;
+      } else if (mstFeatureToggle) {
+        return DECISION_SPECIAL_ISSUES_WITH_MST;
+      } else if (pactFeatureToggle) {
+        return DECISION_SPECIAL_ISSUES_WITH_PACT;
+      }
+
+      return DECISION_SPECIAL_ISSUES;
+    };
+
     const specialIssuesValues = {
       // eslint-disable-next-line camelcase
       blue_water: decisionIssue?.decisionSpecialIssue?.blue_water,
@@ -592,7 +608,7 @@ class SelectDispositionsView extends React.PureComponent {
         />
         { (mstFeatureToggle || pactFeatureToggle) && <QueueCheckboxGroup
           name={COPY.INTAKE_EDIT_ISSUE_SELECT_SPECIAL_ISSUES}
-          options={(mstFeatureToggle || pactFeatureToggle) ? DECISION_SPECIAL_ISSUES : DECISION_SPECIAL_ISSUES_NO_MST_PACT}
+          options={buildCheckboxValues()}
           values={specialIssuesValues}
           styling={specialIssuesCheckboxStyling}
           onChange={(event) => this.onCheckboxChange(event, decisionIssue)}

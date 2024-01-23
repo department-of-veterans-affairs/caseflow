@@ -152,25 +152,36 @@ feature "Attorney checkout flow", :all_dbs do
     Colocated.singleton.tap { |org| org.add_user(create(:user)) }
   end
 
-  before do
-    User.authenticate!(user: bva_intake_admin_user)
+  # format date to be yesterday in month/day/year format
+  let!(:issue_date) do
+    Time.zone.yesterday.strftime("%m/%d/%Y")
   end
+
+  before do
+    # creates admin user
+    User.authenticate!(user: bva_intake_admin_user)
+    OrganizationsUser.make_user_admin(bva_intake_admin_user, bva_intake)
+    # joins the user with the organization to grant access to role and org permissions
+    FeatureToggle.enable!(:mst_identification)
+    FeatureToggle.enable!(:pact_identification)
+    FeatureToggle.enable!(:acd_distribute_by_docket_date)
+  end
+
+  after do
+    FeatureToggle.disable!(:mst_identification)
+    FeatureToggle.disable!(:pact_identification)
+    FeatureToggle.disable!(:acd_distribute_by_docket_date)
+  end
+
   # Adding a new issue to appeal
   context "AC 1.1 It passes the feature tests for adding a new issue appeal MST" do
-    before do
-      # creates admin user
-      # joins the user with the organization to grant access to role and org permissions
-      OrganizationsUser.make_user_admin(bva_intake_admin_user, bva_intake)
-      FeatureToggle.enable!(:mst_identification)
-      FeatureToggle.enable!(:pact_identification)
-      FeatureToggle.enable!(:acd_distribute_by_docket_date)
-    end
+
     scenario "Adding a new issue with MST" do
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       click_on "+ Add issue"
       check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
-      add_intake_nonrating_issue(date: "01/01/2023")
+      add_intake_nonrating_issue(date: issue_date)
       click_on "Save"
       click_on "Yes, save"
       visit "/queue/appeals/#{appeal_vanilla_vet.uuid}"
@@ -179,21 +190,14 @@ feature "Attorney checkout flow", :all_dbs do
       expect(page).to have_content("Special Issues: MST")
     end
   end
+
   context "AC 1.2 It passes the feature tests for adding a new issue appeal PACT" do
-    before do
-      # creates admin user
-      # joins the user with the organization to grant access to role and org permissions
-      OrganizationsUser.make_user_admin(bva_intake_admin_user, bva_intake)
-      FeatureToggle.enable!(:mst_identification)
-      FeatureToggle.enable!(:pact_identification)
-      FeatureToggle.enable!(:acd_distribute_by_docket_date)
-    end
     scenario "Adding a new issue with PACT" do
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       click_on "+ Add issue"
       check("PACT Act", allow_label_click: true, visible: false)
-      add_intake_nonrating_issue(date: "01/01/2023")
+      add_intake_nonrating_issue(date: issue_date)
       click_on "Save"
       click_on "Yes, save"
       visit "/queue/appeals/#{appeal_vanilla_vet.uuid}"
@@ -203,21 +207,13 @@ feature "Attorney checkout flow", :all_dbs do
     end
   end
   context "AC 1.3 It passes the feature tests for adding a new issue appeal MST + PACT" do
-    before do
-      # creates admin user
-      # joins the user with the organization to grant access to role and org permissions
-      OrganizationsUser.make_user_admin(bva_intake_admin_user, bva_intake)
-      FeatureToggle.enable!(:mst_identification)
-      FeatureToggle.enable!(:pact_identification)
-      FeatureToggle.enable!(:acd_distribute_by_docket_date)
-    end
     scenario "Adding a new issue with PACT" do
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       click_on "+ Add issue"
       check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
       check("PACT Act", allow_label_click: true, visible: false)
-      add_intake_nonrating_issue(date: "01/01/2023")
+      add_intake_nonrating_issue(date: issue_date)
       click_on "Save"
       click_on "Yes, save"
       visit "/queue/appeals/#{appeal_vanilla_vet.uuid}"
@@ -229,14 +225,6 @@ feature "Attorney checkout flow", :all_dbs do
 
   # Adding a new issue to appeal coming from a contention
   context " AC 1.4 It passes the feature tests for adding a new issue appeal MST" do
-    before do
-      # creates admin user
-      # joins the user with the organization to grant access to role and org permissions
-      OrganizationsUser.make_user_admin(bva_intake_admin_user, bva_intake)
-      FeatureToggle.enable!(:mst_identification)
-      FeatureToggle.enable!(:pact_identification)
-      FeatureToggle.enable!(:acd_distribute_by_docket_date)
-    end
     scenario "Adding a new issue with MST" do
       generate_rating_with_mst_pact(veteran)
       visit "/appeals/#{appeal.uuid}/edit"
@@ -261,14 +249,6 @@ feature "Attorney checkout flow", :all_dbs do
   end
 
   context " AC 1.5 It passes the feature tests for adding a new issue appeal PACT" do
-    before do
-      # creates admin user
-      # joins the user with the organization to grant access to role and org permissions
-      OrganizationsUser.make_user_admin(bva_intake_admin_user, bva_intake)
-      FeatureToggle.enable!(:mst_identification)
-      FeatureToggle.enable!(:pact_identification)
-      FeatureToggle.enable!(:acd_distribute_by_docket_date)
-    end
     scenario "Adding a new issue with PACT" do
       generate_rating_with_mst_pact(veteran)
       visit "/appeals/#{appeal.uuid}/edit"
@@ -293,14 +273,6 @@ feature "Attorney checkout flow", :all_dbs do
   end
 
   context " AC 1.6 It passes the feature tests for adding a new issue appeal MST & PACT" do
-    before do
-      # creates admin user
-      # joins the user with the organization to grant access to role and org permissions
-      OrganizationsUser.make_user_admin(bva_intake_admin_user, bva_intake)
-      FeatureToggle.enable!(:mst_identification)
-      FeatureToggle.enable!(:pact_identification)
-      FeatureToggle.enable!(:acd_distribute_by_docket_date)
-    end
     scenario "Adding a new issue with MST & PACT" do
       generate_rating_with_mst_pact(veteran)
       visit "/appeals/#{appeal.uuid}/edit"
@@ -326,14 +298,6 @@ feature "Attorney checkout flow", :all_dbs do
   end
 
   context " AC 2.5 adding a new issue appeal MST & PACT coming from a contention, then removing MST/PACT designation" do
-    before do
-      # creates admin user
-      # joins the user with the organization to grant access to role and org permissions
-      OrganizationsUser.make_user_admin(bva_intake_admin_user, bva_intake)
-      FeatureToggle.enable!(:mst_identification)
-      FeatureToggle.enable!(:pact_identification)
-      FeatureToggle.enable!(:acd_distribute_by_docket_date)
-    end
     scenario "Adding a new issue with MST & PACT" do
       generate_rating_with_mst_pact(veteran)
       visit "/appeals/#{appeal.uuid}/edit"
@@ -361,20 +325,12 @@ feature "Attorney checkout flow", :all_dbs do
 
   # Editing an issue on an appeal
   context " AC 2.1 It passes the feature tests for editing an issue on an appeal by adding MST" do
-    before do
-      # creates admin user
-      # joins the user with the organization to grant access to role and org permissions
-      OrganizationsUser.make_user_admin(bva_intake_admin_user, bva_intake)
-      FeatureToggle.enable!(:mst_identification)
-      FeatureToggle.enable!(:pact_identification)
-      FeatureToggle.enable!(:acd_distribute_by_docket_date)
-    end
     scenario "Editing an issue with MST" do
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       click_on "+ Add issue"
       check("PACT Act", allow_label_click: true, visible: false)
-      add_intake_nonrating_issue(date: "01/01/2023")
+      add_intake_nonrating_issue(date: issue_date)
       find("#issue-action-3").find(:xpath, "option[3]").select_option
       check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
       find("#Edit-issue-button-id-1").click
@@ -388,20 +344,12 @@ feature "Attorney checkout flow", :all_dbs do
   end
 
   context "AC 2.2 It passes the feature tests for editing an issue on an appeal by adding PACT" do
-    before do
-      # creates admin user
-      # joins the user with the organization to grant access to role and org permissions
-      OrganizationsUser.make_user_admin(bva_intake_admin_user, bva_intake)
-      FeatureToggle.enable!(:mst_identification)
-      FeatureToggle.enable!(:pact_identification)
-      FeatureToggle.enable!(:acd_distribute_by_docket_date)
-    end
     scenario "Editing an issue with MST" do
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       click_on "+ Add issue"
       check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
-      add_intake_nonrating_issue(date: "01/01/2023")
+      add_intake_nonrating_issue(date: issue_date)
       find("#issue-action-3").find(:xpath, "option[3]").select_option
       find("label[for='PACT Act']").click
       find("#Edit-issue-button-id-1").click
@@ -415,19 +363,11 @@ feature "Attorney checkout flow", :all_dbs do
   end
 
   context "AC 2.3 It passes the feature tests for editing an issue on an appeal by adding MST + PACT" do
-    before do
-      # creates admin user
-      # joins the user with the organization to grant access to role and org permissions
-      OrganizationsUser.make_user_admin(bva_intake_admin_user, bva_intake)
-      FeatureToggle.enable!(:mst_identification)
-      FeatureToggle.enable!(:pact_identification)
-      FeatureToggle.enable!(:acd_distribute_by_docket_date)
-    end
     scenario "Editing an issue with MST + PACT" do
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       click_on "+ Add issue"
-      add_intake_nonrating_issue(date: "01/01/2023")
+      add_intake_nonrating_issue(date: issue_date)
       find("#issue-action-3").find(:xpath, "option[3]").select_option
       check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
       find("label[for='PACT Act']").click
@@ -441,19 +381,11 @@ feature "Attorney checkout flow", :all_dbs do
     end
   end
   context "AC 2.4 It passes the feature tests for editing an issue on an appeal by removing PACT" do
-    before do
-      # creates admin user
-      # joins the user with the organization to grant access to role and org permissions
-      OrganizationsUser.make_user_admin(bva_intake_admin_user, bva_intake)
-      FeatureToggle.enable!(:mst_identification)
-      FeatureToggle.enable!(:pact_identification)
-      FeatureToggle.enable!(:acd_distribute_by_docket_date)
-    end
     scenario "Editing an issue with MST" do
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       click_on "+ Add issue"
-      add_intake_nonrating_issue(date: "01/01/2023")
+      add_intake_nonrating_issue(date: issue_date)
       find("#issue-action-3").find(:xpath, "option[3]").select_option
       check("Military Sexual Trauma (MST)", allow_label_click: true, visible: false)
       find("label[for='PACT Act']").click
@@ -472,14 +404,6 @@ feature "Attorney checkout flow", :all_dbs do
 
   # Removing an issue on an appeal
   context "AC 3.1 ,3.2 ,3.3 It passes the feature tests for removing an issue on an appeal with MST + PACT" do
-    before do
-      # creates admin user
-      # joins the user with the organization to grant access to role and org permissions
-      OrganizationsUser.make_user_admin(bva_intake_admin_user, bva_intake)
-      FeatureToggle.enable!(:mst_identification)
-      FeatureToggle.enable!(:pact_identification)
-      FeatureToggle.enable!(:acd_distribute_by_docket_date)
-    end
     scenario "Removing an issue on an appeal with MST + PACT" do
       appeal_vanilla_vet.request_issues[0].update(mst_status: true)
       appeal_vanilla_vet.request_issues[1].update(pact_status: true)
@@ -488,7 +412,7 @@ feature "Attorney checkout flow", :all_dbs do
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       # Adding issue so entire appeal is deleted
       click_on "+ Add issue"
-      add_intake_nonrating_issue(date: "01/01/2023")
+      add_intake_nonrating_issue(date: issue_date)
       3.times do
         find("#issue-action-0").find(:xpath, "option[2]").select_option
         click_on "Yes, remove issue"

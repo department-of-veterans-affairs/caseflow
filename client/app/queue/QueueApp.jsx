@@ -223,10 +223,10 @@ class QueueApp extends React.PureComponent {
       appealId={props.match.params.appealId}
       taskId={props.match.params.taskId}
       checkoutFlow={props.match.params.checkoutFlow}
-      justificationFeatureToggle={this.props.featureToggles.justification_reason}
-      mstFeatureToggle={this.props.featureToggles.mst_identification}
-      pactFeatureToggle={this.props.featureToggles.pact_identification}
-      legacyMstPactFeatureToggle={this.props.featureToggles.legacy_mst_pact_identification}
+      justificationFeatureToggle={this.props.featureToggles.justificationReason}
+      mstFeatureToggle={this.props.featureToggles.mstIdentification}
+      pactFeatureToggle={this.props.featureToggles.pactIdentification}
+      legacyMstPactFeatureToggle={this.props.featureToggles.legacyMstPactIdentification}
     />
   );
 
@@ -238,8 +238,8 @@ class QueueApp extends React.PureComponent {
         <SelectSpecialIssuesView
           appealId={appealId}
           taskId={taskId}
-          legacyMstIdentification={this.props.featureToggles.legacy_mst_pact_identification}
-          mstIdentification={this.props.featureToggles.mst_identification}
+          legacyMstIdentification={this.props.featureToggles.legacyMstPactIdentification}
+          mstIdentification={this.props.featureToggles.mstIdentification}
           prevStep={`/queue/appeals/${appealId}`}
           nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
         />
@@ -254,8 +254,10 @@ class QueueApp extends React.PureComponent {
       <AddEditIssueView
         nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
         prevStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
-        justificationFeatureToggle={this.props.featureToggles.justification_reason}
-        legacyMstPactFeatureToggle={this.props.featureToggles.legacy_mst_pact_identification}
+        justificationFeatureToggle={this.props.featureToggles.justificationReason}
+        legacyMstPactFeatureToggle={this.props.featureToggles.legacyMstPactIdentification}
+        mstFeatureToggle={this.props.featureToggles.mstIdentification}
+        pactFeatureToggle={this.props.featureToggles.pactIdentification}
         {...props.match.params}
       />
     );

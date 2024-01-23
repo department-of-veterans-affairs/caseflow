@@ -296,22 +296,22 @@ class NonratingRequestIssueModal extends React.Component {
     );
   }
 
-  getSpecialIssues() {
+  getSpecialIssues(mstIdentification, pactIdentification) {
     return (
       <div className="special-issues-selection">
         <label><b>Select any special issues that apply</b></label>
-        <Checkbox
+        {mstIdentification && <Checkbox
           name="mst-checkbox"
           label="Military Sexual Trauma (MST)"
           value={this.mstChecked}
           onChange={this.isMstChecked}
-        />
-        <Checkbox
+        />}
+        {pactIdentification && <Checkbox
           name="pact-checkbox"
           label="PACT Act"
           value={this.pactChecked}
           onChange={this.isPactChecked}
-        />
+        />}
       </div>
     );
   }
@@ -320,10 +320,8 @@ class NonratingRequestIssueModal extends React.Component {
     const { formType, intakeData, onCancel, featureToggles } = this.props;
     const { benefitType, category, selectedNonratingIssueId, isPreDocketNeeded } = this.state;
     const eduPreDocketAppeals = featureToggles.eduPreDocketAppeals;
-    const mstIdentification = featureToggles.mstIdentification && formType === 'appeal' ?
-      featureToggles.mstIdentification : featureToggles.mst_identification;
-    const pactIdentification = featureToggles.pactIdentification && formType === 'appeal' ?
-      featureToggles.pactIdentification : featureToggles.pact_identification;
+    const mstIdentification = featureToggles.mstIdentification && formType === 'appeal';
+    const pactIdentification = featureToggles.pactIdentification && formType === 'appeal';
 
     const issueNumber = (intakeData.addedIssues || []).length + 1;
 
@@ -348,9 +346,8 @@ class NonratingRequestIssueModal extends React.Component {
       formType === 'appeal' ? <PreDocketRadioField value={isPreDocketNeeded}
         onChange={this.isPreDocketNeededOnChange} /> : null;
 
-    const getSpecialIssues =
-      ((mstIdentification || pactIdentification) && this.props.userCanEditIntakeIssues) ?
-        this.getSpecialIssues() : null;
+    const getSpecialIssues = this.props.userCanEditIntakeIssues ?
+      this.getSpecialIssues(mstIdentification, pactIdentification) : null;
 
     return (
       <div className="intake-add-issues">
