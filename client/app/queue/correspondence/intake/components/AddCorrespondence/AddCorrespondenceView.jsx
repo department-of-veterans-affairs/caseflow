@@ -199,7 +199,9 @@ class AddCorrespondenceView extends React.Component {
         <p style={{ marginTop: '0px' }}>Add any related correspondence to the mail package that is in progress.</p>
         <h2 style={{ margin: '30px auto 20px auto' }}>Response Letter</h2>
         {/* add letter here */}
-        <AddLetter />
+        <AddLetter
+          onContinueStatusChange={this.props.onContinueStatusChange}
+        />
         <hr style={{ borderTop: '1px solid #d6d7d9' }} />
         <h2 style={{ margin: '30px auto 20px auto' }}>Associate with prior Mail</h2>
         <p style={{ marginTop: '0px', marginBottom: '-7px' }}>Is this correspondence related to prior mail?</p>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 // import { connect } from 'react-redux';
 // import { bindActionCreators } from 'redux';
@@ -13,9 +13,11 @@ import RadioField from '../../../../../components/RadioField';
 //   setResponseLetters
 // } from '../../../correspondenceReducer/correspondenceActions';
 
-export const AddLetter = () => {
+export const AddLetter = (props) => {
+  const onContinueStatusChange = props.onContinueStatusChange;
 
   const [letters, setLetters] = useState([]);
+  const [unrelatedTasksCanContinue, setUnrelatedTasksCanContinue] = useState(true);
   // const [AddLetterButtonState, setAddLetterButtonState] = useState(false);
 
   const addLetter = (index) => {
@@ -28,9 +30,31 @@ export const AddLetter = () => {
     setLetters(restLetters);
   };
 
+  useEffect(() => {
+    onContinueStatusChange(unrelatedTasksCanContinue);
+  }, [unrelatedTasksCanContinue]);
+
+  useEffect(() => {
+    if (letters.length > 0) {
+      setUnrelatedTasksCanContinue(false);
+    } else {
+      setUnrelatedTasksCanContinue(true);
+    }
+  }, [letters]);
+
+  // useEffect(() => {
+  //   let canContinue = true;
+
+  //   // letters.forEach((letter) => {
+  //   //   // canContinue = canContinue && ((letter.content !== '') && (task.type !== ''));
+  //   // });
+
+  //   setUnrelatedTasksCanContinue(canContinue);
+  // }, [letters]);
+
   const radioOptions = [
     { displayText: '65 days',
-      value: 65 },
+      value: '65' },
     { displayText: 'No response window',
       value: 'no_response' },
     { displayText: 'Custom',
@@ -69,6 +93,7 @@ AddLetter.propTypes = {
   radioOptions: PropTypes.array,
   removeLetter: PropTypes.func,
   index: PropTypes.number,
+  onContinueStatusChange: PropTypes.func,
 };
 
 export const NewLetter = (props) => {
