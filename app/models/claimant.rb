@@ -86,6 +86,11 @@ class Claimant < CaseflowRecord
     # no-op except on BgsRelatedClaimants
   end
 
+  def from_decision_review_created_event?
+    # refer back to the associated Person record to see if both objects came from DRCE
+    person.from_decision_review_created_event?
+  end
+
   private
 
   def bgs_address_service

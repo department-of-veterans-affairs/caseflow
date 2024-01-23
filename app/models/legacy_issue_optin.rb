@@ -110,6 +110,11 @@ class LegacyIssueOptin < CaseflowRecord
     AppealRepository.issues(vacols_id).find { |issue| issue.vacols_sequence_id == vacols_sequence_id }
   end
 
+  def from_decision_review_created_event?
+    # refer back to the associated Intake to see if both objects came from DRCE
+    request_issue&.from_decision_review_created_event?
+  end
+
   private
 
   def revert_open_remand_issues

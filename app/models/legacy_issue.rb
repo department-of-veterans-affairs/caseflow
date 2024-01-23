@@ -6,4 +6,9 @@ class LegacyIssue < CaseflowRecord
   has_one :event_record, as: :backfill_record
 
   validates :request_issue, presence: true
+
+  def from_decision_review_created_event?
+    # refer back to the associated Intake to see if both objects came from DRCE
+    request_issue&.from_decision_review_created_event?
+  end
 end

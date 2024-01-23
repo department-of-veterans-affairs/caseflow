@@ -203,6 +203,25 @@ class Veteran < CaseflowRecord
     service.map { |service| service[:pay_grade] }.compact
   end
 
+  # Check if this Veteran is associated with a DecisionReviewCreatedEvent
+  def from_decision_review_created_event?
+    if from_event?
+      # retrieve the record and the event the record is tied to
+      record = EventRecord.find_by(backfill_record_id: id)
+      event = Event.find(record.event_id)
+
+      event.type == "DecisionReviewCreatedEvent"
+    else
+      return false
+    end
+  end
+
+  # Check if this Veteran is associated with any Event, regardless of type
+  # check if this Veteran exists in the Event Records table
+  def from_event?
+    EventRecord.find_by(backfill_record_id: id).present?
+  end
+
   alias zip zip_code
   alias address_line_1 address_line1
   alias address_line_2 address_line2

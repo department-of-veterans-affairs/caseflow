@@ -301,6 +301,11 @@ class ClaimReview < DecisionReview
     processed? && cleared_end_products.any?(&:nonrating?)
   end
 
+  def from_decision_review_created_event?
+    # refer back to the associated Intake to see if both objects came from DRCE
+    intake ? intake.from_decision_review_created_event? : false
+  end
+
   private
 
   def cleared_end_products

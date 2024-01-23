@@ -475,6 +475,25 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     false
   end
 
+  # Check if this User is associated with a DecisionReviewCreatedEvent
+  def from_decision_review_created_event?
+    if from_event?
+      # retrieve the record and the event the record is tied to
+      record = EventRecord.find_by(backfill_record_id: id)
+      event = Event.find(record.event_id)
+
+      event.type == "DecisionReviewCreatedEvent"
+    else
+      return false
+    end
+  end
+
+  # Check if this User is associated with any Event, regardless of type
+  # check if this User exists in the Event Records table
+  def from_event?
+    EventRecord.find_by(backfill_record_id: id).present?
+  end
+
   private
 
   def inactive_judge_team

@@ -716,6 +716,11 @@ class RequestIssue < CaseflowRecord
     decision_date >= (receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
   end
 
+  def from_decision_review_created_event?
+    # refer back to the associated Intake to see if both objects came from DRCE
+    decision_review&.from_decision_review_created_event?
+  end
+
   private
 
   def create_legacy_issue!

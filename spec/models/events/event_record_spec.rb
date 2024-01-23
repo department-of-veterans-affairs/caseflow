@@ -8,26 +8,29 @@ describe EventRecord, :postgres do
     let!(:event1) { DecisionReviewCreatedEvent.create!(reference_id: "1") }
     let!(:intake) { Intake.create!(veteran_file_number: veteran_file_number, user: user) }
     let!(:intake_event_record) { EventRecord.create!(event_id: event1.id, backfill_record: intake) }
-    it "Event Record backfill ID and type match Intake ID and type" do
+    it "Event Record backfill ID and type should match Intake ID and type" do
       expect(intake_event_record.backfill_record_type).to eq("Intake")
       expect(intake_event_record.backfill_record_id).to eq(intake.id)
       expect(intake.event_record).to eq intake_event_record
+      expect(intake.from_decision_review_created_event?).to eq(true)
     end
   end
 
   context "One Event with 10 Different Event Records to simulate a VBMS backfill" do
+    let(:user) { Generators::User.build }
     let(:veteran_file_number) { "64205050" }
     let!(:event2) { DecisionReviewCreatedEvent.create!(reference_id: "2") }
+    # Intake
+    let!(:intake) { Intake.create!(veteran_file_number: veteran_file_number, user: user) }
+    let!(:intake_event_record) { EventRecord.create!(event_id: event2.id, backfill_record: intake) }
     # HLR
     let!(:higher_level_review) { HigherLevelReview.new(veteran_file_number: veteran_file_number) }
     let!(:higher_level_review_event_record) do
       EventRecord.create!(event_id: event2.id, backfill_record: higher_level_review)
     end
-    # SLC
+    # SC, not tied to Event
     let!(:supplemental_claim) { SupplementalClaim.new(veteran_file_number: veteran_file_number) }
-    let!(:supplemental_claim_event_record) do
-      EventRecord.create!(event_id: event2.id, backfill_record: supplemental_claim)
-    end
+
     # End Product Establishment
     let!(:end_product_establishment) do
       EndProductEstablishment.new(
@@ -50,10 +53,10 @@ describe EventRecord, :postgres do
     let!(:person) { create(:person, participant_id: "1129318238") }
     let!(:person_event_record) { EventRecord.create!(event_id: event2.id, backfill_record: person) }
     # Request Issue
-    let!(:request_issue) { RequestIssue.new(benefit_type: "compensation") }
+    let!(:request_issue) { RequestIssue.new(benefit_type: "compensation", decision_review: higher_level_review) }
     let!(:request_issue_event_record) { EventRecord.create!(event_id: event2.id, backfill_record: request_issue) }
     # Legacy Issue
-    let!(:legacy_issue) { LegacyIssue.new(request_issue_id: 1, vacols_id: "vacols111", vacols_sequence_id: 1) }
+    let!(:legacy_issue) { LegacyIssue.new(request_issue_id: request_issue.id, vacols_id: "vacols111", vacols_sequence_id: 1) }
     let!(:legacy_issue_event_record) { EventRecord.create!(event_id: event2.id, backfill_record: legacy_issue) }
     # Legacy Issue Optin
     let!(:legacy_issue_optin) { LegacyIssueOptin.new(request_issue_id: request_issue.id) }
@@ -69,44 +72,55 @@ describe EventRecord, :postgres do
       expect(higher_level_review_event_record.backfill_record_id).to eq(higher_level_review.id)
       expect(higher_level_review.event_record).to eq higher_level_review_event_record
 
-      expect(supplemental_claim_event_record.backfill_record_type).to eq("SupplementalClaim")
-      expect(supplemental_claim_event_record.backfill_record_id).to eq(supplemental_claim.id)
-      expect(supplemental_claim.event_record).to eq supplemental_claim_event_record
+      intake.update!(detail: higher_level_review)
+      expect(higher_level_review.from_decision_review_created_event?).to eq(true)
 
       expect(end_product_establishment_event_record.backfill_record_type).to eq("EndProductEstablishment")
       expect(end_product_establishment_event_record.backfill_record_id).to eq(end_product_establishment.id)
       expect(end_product_establishment.event_record).to eq end_product_establishment_event_record
+      expect(end_product_establishment.from_decision_review_created_event?).to eq(true)
 
 
       expect(claimant_event_record.backfill_record_type).to eq("Claimant")
       expect(claimant_event_record.backfill_record_id).to eq(claimant.id)
       expect(claimant.event_record).to eq claimant_event_record
+      expect(end_product_establishment.from_decision_review_created_event?).to eq(true)
 
       expect(veteran_event_record.backfill_record_type).to eq("Veteran")
       expect(veteran_event_record.backfill_record_id).to eq(veteran.id)
       expect(veteran.event_record).to eq veteran_event_record
+      expect(veteran.from_decision_review_created_event?).to eq(true)
 
       expect(person_event_record.backfill_record_type).to eq("Person")
       expect(person_event_record.backfill_record_id).to eq(person.id)
       expect(person.event_record).to eq person_event_record
+      expect(person.from_decision_review_created_event?).to eq(true)
 
       expect(request_issue_event_record.backfill_record_type).to eq("RequestIssue")
       expect(request_issue_event_record.backfill_record_id).to eq(request_issue.id)
       expect(request_issue.event_record).to eq request_issue_event_record
+      expect(request_issue.from_decision_review_created_event?).to eq(true)
 
       expect(legacy_issue_event_record.backfill_record_type).to eq("LegacyIssue")
       expect(legacy_issue_event_record.backfill_record_id).to eq(legacy_issue.id)
       expect(legacy_issue.event_record).to eq legacy_issue_event_record
+      expect(legacy_issue.from_decision_review_created_event?).to eq(true)
 
       expect(legacy_issue_optin_event_record.backfill_record_type).to eq("LegacyIssueOptin")
       expect(legacy_issue_optin_event_record.backfill_record_id).to eq(legacy_issue_optin.id)
       expect(legacy_issue_optin.event_record).to eq legacy_issue_optin_event_record
+      expect(legacy_issue_optin.from_decision_review_created_event?).to eq(true)
 
       expect(user_event_record.backfill_record_type).to eq("User")
       expect(user_event_record.backfill_record_id).to eq(user.id)
       expect(user.event_record).to eq user_event_record
+      expect(user.from_decision_review_created_event?).to eq(true)
 
       expect(EventRecord.count).to eq 10
+    end
+
+    it "SupplementalClaim not associated to a backfill Intake should fail #from_decision_review_created_event?" do
+      expect(supplemental_claim.from_decision_review_created_event?).to eq(false)
     end
   end
 
