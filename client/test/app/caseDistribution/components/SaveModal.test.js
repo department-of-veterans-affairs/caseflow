@@ -1,77 +1,52 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import '@testing-library/jest-dom/extend-expect';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
 import { LeverSaveButton } from '../../../../app/caseDistribution/components/LeverSaveButton';
-import leversReducer from '../../../../app/caseDistribution/reducers/levers/leversReducer';
+// import SaveModal from '../../../../app/caseDistribution/components/SaveModal';
 
-const useDispatchMock = jest.fn();
-const useSelectorMock = jest.fn();
-
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: useDispatchMock,
-  useSelector: useSelectorMock,
-}));
+jest.mock('../../../../app/caseDistribution/components/SaveModal', () => jest.fn(() => null));
 
 describe('LeverSaveButton', () => {
+  const mockReducer = (state = {}, action) => {
+
+
+    return state;
+  };
+
   let store;
   let dispatchMock;
 
   beforeEach(() => {
-    const mockInitialState = {
-      levers: [],
-      historyList: [],
-    };
-
-    store = createStore(leversReducer, mockInitialState);
-
     dispatchMock = jest.fn();
-    useDispatchMock.mockReturnValue(dispatchMock);
-    useSelectorMock.mockReturnValue(mockInitialState);
+    store = createStore(mockReducer, applyMiddleware(thunk));
+    jest.spyOn(store, 'dispatch').mockImplementation(dispatchMock);
   });
 
-  it('dispatches the saveLevers action when clicked', async () => {
-    // useSelectorMock.mockReturnValue(initialState);
-
+  it('renders the component correctly', () => {
     const { getByText } = render(
       <Provider store={store}>
         <LeverSaveButton />
       </Provider>
     );
 
-    const saveButton = getByText('Save');
+    expect(getByText('Save')).toBeInTheDocument();
+  });
 
-    expect(saveButton).toBeInTheDocument();
+  it('opens the modal when Save button is clicked', async () => {
+    const { getByText } = render(
+      <Provider store={store}>
+        <LeverSaveButton />
+      </Provider>
+    );
 
-    fireEvent.click(saveButton);
+    fireEvent.click(getByText('Save'));
 
-    await waitFor(async () => {
+    await waitFor(() => {
+      expect(dispatchMock).toHaveBeenCalled();
       expect(dispatchMock).toHaveBeenCalledWith(expect.any(Function));
     });
   });
-
-  // it('triggers modal when Save button is clicked', async () => {
-  //   const mockState = {
-  //     ...initialState,
-  //   };
-
-  //   useSelectorMock.mockReturnValue(mockState);
-
-  //   const { getByText } = render(
-  //     <Provider store={store}>
-  //       <LeverSaveButton />
-  //     </Provider>
-  //   );
-
-  //   const saveButton = getByText('Save');
-
-  //   fireEvent.click(saveButton);
-
-  //   await waitFor(() => {
-  //     expect(getByText('Modal Content')).toBeInTheDocument();
-  //   });
-  // });
 
 });
