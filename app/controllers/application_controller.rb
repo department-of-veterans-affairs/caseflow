@@ -377,10 +377,9 @@ class ApplicationController < ApplicationBaseController
 
   def authenticate_microservice!
     # Check if the provided token matches the expected token
-    expected_token = ENV["MICROSERVICE_API_KEY"]
     provided_token = request.headers["Authorization"]
 
-    unless provided_token == expected_token
+    unless provided_token && ApiKey.authorize(provided_token)
       render json: { error: "Unauthorized" }, status: :unauthorized
     end
   end

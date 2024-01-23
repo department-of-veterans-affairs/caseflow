@@ -118,8 +118,6 @@ Rails.application.configure do
   ENV["PACMAN_API_SYS_ACCOUNT"] ||= "CSS_ID_OF_OUR_ACCOUNT"
   ENV["PACMAN_API_URL"] ||= "https://pacman-uat.dev.bip.va.gov/"
 
-  ENV["MICROSERVICE_API_KEY"] ||= "microservice-token"
-
   if ENV["WITH_TEST_EMAIL_SERVER"]
     config.action_mailer.delivery_method = :smtp
     config.action_mailer.smtp_settings = {
