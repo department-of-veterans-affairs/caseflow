@@ -9,11 +9,7 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
   IHP_TYPE_TASKS = %w[IhpColocatedTask InformalHearingPresentationTask].freeze
 
   # All Variants of a Privacy Act Task
-  PRIVACY_ACT_TASKS = %w[FoiaColocatedTask
-                         PrivacyActTask
-                         HearingAdminActionFoiaPrivacyRequestTask
-                         PrivacyActRequestMailTask
-                         FoiaRequestMailTask].freeze
+  PRIVACY_ACT_TASKS = %w[FoiaColocatedTask PrivacyActTask HearingAdminActionFoiaPrivacyRequestTask PrivacyActRequestMailTask FoiaRequestMailTask].freeze
 
   S3_BUCKET_NAME = "appeals-status-migrations"
 
@@ -63,7 +59,7 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
   # Params: LegacyAppeal object
   #
   # Returns: nil
-  def add_record_to_appeal_states_table(appeal) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  def add_record_to_appeal_states_table(appeal)
     begin
       appeal_id_and_type = { appeal_id: appeal.id, appeal_type: appeal.class.to_s }
       ihp_state = map_appeal_ihp_state(appeal)
@@ -158,10 +154,10 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
         end
       end
       if parent_ihp_tasks.count == 1
-        ihp_appeal_state(parent_ihp_tasks.first)
+        set_ihp_appeal_state(parent_ihp_tasks.first)
       elsif parent_ihp_tasks.count > 1
         current_parent_ihp_task = parent_ihp_tasks.max_by(&:id)
-        ihp_appeal_state(current_parent_ihp_task)
+        set_ihp_appeal_state(current_parent_ihp_task)
       else
         { vso_ihp_pending: false, vso_ihp_complete: false }
       end
@@ -178,9 +174,7 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
   # Return: Hash with two keys (privacy_act_pending and privacy_act_complete)
   #         with corresponding boolean values
   def map_appeal_privacy_act_state(appeal)
-    privacy_tasks = appeal.tasks.filter do |task|
-      PRIVACY_ACT_TASKS.include?(task&.type) && Constants.TASK_STATUSES.cancelled != task&.status
-    end
+    privacy_tasks = appeal.tasks.filter { |task| PRIVACY_ACT_TASKS.include?(task&.type) && Constants.TASK_STATUSES.cancelled != task&.status}
     if privacy_tasks.any?
       if privacy_tasks.any? { |task| Task.open_statuses.include?(task.status) } # any pending
         return { privacy_act_pending: true, privacy_act_complete: false }
@@ -197,7 +191,7 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
   # Params: Appeal object
   # Returns: Hash of "hearing scheduled" key value pair
   def map_appeal_hearing_scheduled_state(appeal)
-    if appeal&.hearings.count > 0 && appeal.hearings.max_by(&:id).disposition.nil? # rubocop:disable Lint/SafeNavigationChain
+    if appeal&.hearings.count > 0 && appeal.hearings.max_by(&:id).disposition.nil?
       return { hearing_scheduled: true }
     end
 
@@ -276,14 +270,14 @@ class FetchAllActiveLegacyAppealsJob < CaseflowJob
   # Params: Most Recent Parent IHP Task (InformalHearingPresentationTask OR IhpColocatedTask)
   #
   # Returns: Hash of "vso_ihp_pending" & "vso_ihp_complete" key value pairs
-  def ihp_appeal_state(ihp_task)
-    ihp_state = if Task.open_statuses.include?(ihp_task.status)
-                  { vso_ihp_pending: true, vso_ihp_complete: false }
-                elsif [Constants.TASK_STATUSES.completed].include?(ihp_task.status)
-                  { vso_ihp_pending: false, vso_ihp_complete: true }
-                else
-                  { vso_ihp_pending: false, vso_ihp_complete: false }
-                end
+  def set_ihp_appeal_state(ihp_task)
+    if Task.open_statuses.include?(ihp_task.status)
+      ihp_state = { vso_ihp_pending: true, vso_ihp_complete: false }
+    elsif [Constants.TASK_STATUSES.completed].include?(ihp_task.status)
+      ihp_state = { vso_ihp_pending: false, vso_ihp_complete: true }
+    else
+      ihp_state = { vso_ihp_pending: false, vso_ihp_complete: false }
+    end
     ihp_state
   end
 end

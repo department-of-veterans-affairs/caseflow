@@ -328,7 +328,6 @@ class BaseHearingUpdateForm
     update_judge_recipient
   end
 
-  # rubocop:disable Metrics/MethodLength
   def create_or_update_email_recipients
     if appellant_email.present?
       hearing.create_or_update_recipients(
@@ -356,7 +355,6 @@ class BaseHearingUpdateForm
       )
     end
   end
-  # rubocop:enable Metrics/MethodLength
 
   def create_or_update_virtual_hearing
     # TODO: All of this is not atomic :(. Revisit later, since Rails 6 offers an upsert.

@@ -24,7 +24,7 @@ class WorkQueue::CavcDashboardSerializer
       {
         id: issue.id,
         benefit_type: issue.benefit_type,
-        description: issue.description
+        description: issue.description,
       }
     end
   end

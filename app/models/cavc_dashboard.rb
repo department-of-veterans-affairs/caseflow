@@ -26,8 +26,8 @@ class CavcDashboard < CaseflowRecord
   end
 
   def remand_request_issues
-    remand_appeal_issues = cavc_remand.remand_appeal ? cavc_remand.remand_appeal&.request_issues&.order(:id) : []
-    source_issues = cavc_remand.source_appeal&.request_issues&.order(:id)
+    remand_appeal_issues = cavc_remand.remand_appeal ? cavc_remand.remand_appeal&.request_issues.order(:id) : []
+    source_issues = cavc_remand.source_appeal&.request_issues.order(:id)
 
     remand_appeal_issues + source_issues.reject do |ri|
       remand_appeal_issues.any? do |rai|

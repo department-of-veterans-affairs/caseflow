@@ -5,7 +5,6 @@ class MpiUpdatePersonEvent < CaseflowRecord
 
   validates :update_type, presence: true
 
-  # rubocop:disable Rails/EnumUniqueness
   enum update_type: {
     started: "started",
     no_veteran: "no_veteran",
@@ -16,5 +15,4 @@ class MpiUpdatePersonEvent < CaseflowRecord
     successful: "successful",
     error: "error"
   }
-  # rubocop:enable Rails/EnumUniqueness
 end

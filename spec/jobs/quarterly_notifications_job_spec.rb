@@ -4,7 +4,7 @@ describe QuarterlyNotificationsJob, type: :job do
   include ActiveJob::TestHelper
   let(:appeal) { create(:appeal, :active) }
   let(:legacy_appeal) { create(:legacy_appeal, vacols_case: vacols_case) }
-  let(:vacols_case) { create(:case) }
+  let(:vacols_case) { create(:case)}
   let(:user) { create(:user) }
   subject { QuarterlyNotificationsJob.perform_now }
   describe "#perform" do

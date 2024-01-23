@@ -41,7 +41,6 @@ RSpec.feature "Convert hearing request type" do
     ]
   end
 
-  # rubocop:disable Metrics/AbcSize
   def change_request_type(appeal, request_type, ro_message)
     step "select change hearing request type action" do
       click_dropdown(text: Constants.TASK_ACTIONS.CHANGE_HEARING_REQUEST_TYPE_TO_VIRTUAL.label)
@@ -88,7 +87,7 @@ RSpec.feature "Convert hearing request type" do
       expect(page).not_to have_content(ChangeHearingRequestTypeTask.label)
     end
   end
-  # rubocop:enable Metrics/AbcSize
+
   context "for 'Edit HearSched' (Hearing Coordinator)" do
     let!(:current_user) { User.authenticate!(roles: ["Edit HearSched"]) }
 

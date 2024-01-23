@@ -74,7 +74,7 @@ class UploadDocumentToVbms
   end
 
   def s3_location
-    "#{s3_bucket_by_doc_type}/#{pdf_name}"
+    s3_bucket_by_doc_type + "/" + pdf_name
   end
 
   def output_location
@@ -91,7 +91,7 @@ class UploadDocumentToVbms
 
   def log_info(info_message)
     uuid = SecureRandom.uuid
-    Rails.logger.info("#{info_message} ID: #{uuid}")
+    Rails.logger.info(info_message + " ID: " + uuid)
   end
 
   # Purpose: Get the s3_sub_bucket based on the document type

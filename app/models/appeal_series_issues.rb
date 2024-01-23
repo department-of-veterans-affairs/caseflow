@@ -69,7 +69,6 @@ class AppealSeriesIssues
     end
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def last_action_for_issues(issues)
     issues.reduce(date: nil, type: nil) do |memo, issue|
       if issue.close_date && (memo[:date].nil? || issue.close_date > memo[:date])
@@ -94,7 +93,6 @@ class AppealSeriesIssues
       memo
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def last_action_type_from_disposition(disposition)
     LAST_ACTION_TYPE_FOR_DISPOSITIONS.keys.find do |type|

@@ -171,12 +171,12 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
         expect(AppealState.all.count).to eq(1)
       end
 
-      it "the 'vso_ihp_pending' column will be set to TRUE" do
+      it "the #{"vso_ihp_pending"} column will be set to TRUE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_legacy_appeal_with_ihp_pending.id).vso_ihp_pending).to eq(true)
       end
 
-      it "the 'vso_ihp_complete' column will be set to FALSE" do
+      it "the #{"vso_ihp_complete"} column will be set to FALSE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_legacy_appeal_with_ihp_pending.id).vso_ihp_complete).to eq(false)
       end
@@ -190,12 +190,12 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
         expect(AppealState.all.count).to eq(1)
       end
 
-      it "the 'vso_ihp_pending' column will be set to FALSE" do
+      it "the #{"vso_ihp_pending"} column will be set to FALSE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_legacy_appeal_with_ihp_completed.id).vso_ihp_pending).to eq(false)
       end
 
-      it "the 'vso_ihp_complete' column will be set to TRUE" do
+      it "the #{"vso_ihp_complete"} column will be set to TRUE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_legacy_appeal_with_ihp_completed.id).vso_ihp_complete).to eq(true)
       end
@@ -209,12 +209,12 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
         expect(AppealState.all.count).to eq(1)
       end
 
-      it "the 'vso_ihp_pending' column will be set to FALSE" do
+      it "the #{"vso_ihp_pending"} column will be set to FALSE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_legacy_appeal.id).vso_ihp_pending).to eq(false)
       end
 
-      it "the 'vso_ihp_complete' column will be set to FALSE" do
+      it "the #{"vso_ihp_complete"} column will be set to FALSE" do
         subject.perform
         expect(AppealState.find_by(appeal_id: open_legacy_appeal.id).vso_ihp_complete).to eq(false)
       end
@@ -386,6 +386,7 @@ describe FetchAllActiveLegacyAppealsJob, type: :job do
       end
     end
   end
+
 
   describe "map appeal docketed state" do
     context "legacy appeals" do

@@ -38,10 +38,10 @@ module HearingDayMapper
       end
 
       ro = begin
-        RegionalOffice.find!(regional_office)
-      rescue RegionalOffice::NotFoundError
-        nil
-      end
+             RegionalOffice.find!(regional_office)
+           rescue RegionalOffice::NotFoundError
+             nil
+           end
       fail(InvalidRegionalOfficeError) if ro.nil?
 
       ro.key
@@ -52,8 +52,8 @@ module HearingDayMapper
 
       ro = begin
         RegionalOffice.find!(regional_office)
-      rescue RegionalOffice::NotFoundError
-        nil
+           rescue RegionalOffice::NotFoundError
+             nil
       end
       return "" if ro.nil?
 

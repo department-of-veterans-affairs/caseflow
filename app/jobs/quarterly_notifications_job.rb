@@ -10,7 +10,7 @@ class QuarterlyNotificationsJob < CaseflowJob
   # Params: none
   #
   # Response: None
-  def perform # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/PerceivedComplexity
+  def perform
     RequestStore.store[:current_user] = User.system_user
     AppealState.where.not(
       decision_mailed: true, appeal_cancelled: true
@@ -62,7 +62,7 @@ class QuarterlyNotificationsJob < CaseflowJob
   # Params: appeal state, appeal
   #
   # Response: SendNotificationJob queued to send_notification SQS queue
-  def send_quarterly_notifications(appeal_state, appeal) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+  def send_quarterly_notifications(appeal_state, appeal)
     # if either there's a hearing postponed or a hearing scheduled in error
     if appeal_state.hearing_postponed || appeal_state.scheduled_in_error
       # appeal status is Hearing to be Rescheduled / Privacy Act Pending

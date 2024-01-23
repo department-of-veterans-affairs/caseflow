@@ -16,7 +16,6 @@ class DocketCoordinator
     @dockets ||= all_dockets
   end
 
-  # rubocop:disable Metrics/MethodLength
   def docket_proportions
     return @docket_proportions if @docket_proportions
 
@@ -53,7 +52,6 @@ class DocketCoordinator
     end
     @docket_proportions
   end
-  # rubocop:enable Metrics/MethodLength
 
   # Returns how many AMA hearings need to be scheduled in a given time period.
   #

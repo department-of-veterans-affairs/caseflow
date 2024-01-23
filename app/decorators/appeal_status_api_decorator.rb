@@ -56,7 +56,6 @@ class AppealStatusApiDecorator < ApplicationDecorator
     end
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def fetch_post_decision_status
     if remand_supplemental_claims.any?
       active_remanded_claims? ? :ama_remand : :post_bva_dta_decision
@@ -74,7 +73,7 @@ class AppealStatusApiDecorator < ApplicationDecorator
     end
   end
 
-  def fetch_details_for_status # rubocop:disable Metrics/MethodLength
+  def fetch_details_for_status
     case fetch_status
     when :bva_decision
       {
@@ -105,7 +104,6 @@ class AppealStatusApiDecorator < ApplicationDecorator
       {}
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def post_bva_dta_decision_status_details
     issue_list = remanded_sc_decision_issues
@@ -197,6 +195,12 @@ class AppealStatusApiDecorator < ApplicationDecorator
     return "other" unless all_request_issues_same_aoj?
 
     request_issues.first.api_aoj_from_benefit_type
+  end
+
+  def all_request_issues_same_aoj?
+    request_issues.all? do |ri|
+      ri.api_aoj_from_benefit_type == request_issues.first.api_aoj_from_benefit_type
+    end
   end
 
   def all_request_issues_same_aoj?

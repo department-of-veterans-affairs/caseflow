@@ -3,7 +3,7 @@
 describe AnnualMetricsReportJob, :postgres do
   include_context "Metrics Reports"
 
-  # rubocop:disable Layout/LineLength
+  # rubocop:disable Metrics/LineLength
   let(:report) do
     [
       "Annual report 2018-03-01 to 2019-02-28",
@@ -21,7 +21,7 @@ describe AnnualMetricsReportJob, :postgres do
       "" # We end the body of the message with a newline character.
     ].join("\n")
   end
-  # rubocop:enable Layout/LineLength
+  # rubocop:enable Metrics/LineLength
 
   describe "#perform" do
     before do

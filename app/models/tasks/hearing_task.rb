@@ -142,7 +142,7 @@ class HearingTask < Task
   def update_status_if_children_tasks_are_closed(_child_task)
     if children.open.empty? && children.select do |child|
          child.type == AssignHearingDispositionTask.name && child.cancelled?
-       end.any?
+       end .any?
       return update!(status: :cancelled)
     end
 

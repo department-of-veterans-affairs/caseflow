@@ -29,8 +29,8 @@ class SendNotificationJob < CaseflowJob
 
   # Must receive JSON string as argument
 
-  # rubocop:disable Layout/LineLength, Metrics/BlockNesting
-  def perform(message_json) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+  # rubocop:disable Layout/LineLength
+  def perform(message_json)
     if message_json
       @va_notify_email = FeatureToggle.enabled?(:va_notify_email)
       @va_notify_sms = FeatureToggle.enabled?(:va_notify_sms)
@@ -81,7 +81,7 @@ class SendNotificationJob < CaseflowJob
       log_error("There was no message passed into the SendNotificationListener.perform_later function. Exiting job.")
     end
   end
-  # rubocop:enable Layout/LineLength, Metrics/BlockNesting
+  # rubocop:enable Layout/LineLength
 
   private
 
@@ -103,7 +103,7 @@ class SendNotificationJob < CaseflowJob
   #         notification_id: ID of the notification_audit record (must be converted to string to work with API)
   #
   # Response: Updated Notification object (still not saved)
-  def send_to_va_notify(message, notification_audit_record) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+  def send_to_va_notify(message, notification_audit_record)
     event = NotificationEvent.find_by(event_type: message.template_name)
     email_template_id = event.email_template_id
     sms_template_id = event.sms_template_id

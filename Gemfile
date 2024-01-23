@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Layout/LineLength
+# rubocop:disable Metrics/LineLength
 source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
 # State machine
@@ -117,7 +117,7 @@ group :test, :development, :demo do
   gem "rspec-rails"
   # For CircleCI test metadata analysis
   gem "rspec_junit_formatter"
-  gem "rubocop", "= 0.83", require: false
+  gem "rubocop", "= 0.79", require: false
   gem "rubocop-performance"
   gem "rubocop-rails"
   gem "scss_lint", require: false
@@ -146,11 +146,11 @@ end
 
 group :test do
   gem "knapsack_pro", "~> 3.8"
-  gem "rspec-github", require: false
   # For retrying failed feature tests. Read more: https://github.com/NoRedInk/rspec-retry
   gem "rspec-retry"
   gem "webmock"
+  gem "rspec-github", require: false
 end
-# rubocop:enable Layout/LineLength
+# rubocop:enable Metrics/LineLength
 
 gem "json_schemer", "~> 0.2.16"

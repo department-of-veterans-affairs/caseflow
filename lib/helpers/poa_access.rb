@@ -32,8 +32,7 @@ module WarRoom
       # NOTE: The POA is updated in a before_save callback. It will pull in all data for the created POA
       BgsPowerOfAttorney.find_or_create_by_claimant_participant_id(@claimant_participant_id)
 
-      # Confirm fix by returning the POA by comparing the claimant_participant_id
-      # with the new bgs poa claimant_participant_id
+      # Confirm fix by returning the POA by comparing the claimant_participant_id with the new bgs poa claimant_participant_id
       legacy_appeal.bgs_power_of_attorney.claimant_participant_id == @claimant_participant_id
     end
 

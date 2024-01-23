@@ -38,7 +38,7 @@ class ChangeHearingRequestTypeTaskCancellationJob < CaseflowJob
   #
   # Params: none
   # Returns: nil
-  def close_open_change_hearing_request_type_tasks(tasks) # rubocop:disable Metrics/AbcSize
+  def close_open_change_hearing_request_type_tasks(tasks)
     Rails.logger.info("Attempting to remediate " +
                   open_change_hearing_request_type_tasks.count.to_s +
                   " Change Hearing Request Type Tasks")
@@ -48,9 +48,9 @@ class ChangeHearingRequestTypeTaskCancellationJob < CaseflowJob
         location = task&.appeal&.location_code.to_s
         vacols_id = task&.appeal&.vacols_id.to_s
         Rails.logger.info("Closing CHRT on Legacy Appeal: " +
-                      vacols_id +
+                      vacols_id.to_s +
                       " at location " +
-                      location)
+                      location.to_s)
         task&.update_from_params({ "status": "cancelled", "instructions": "" }, User.system_user)
         Rails.logger.info("Appeal:" + vacols_id + "CHRT closed")
       rescue StandardError => error

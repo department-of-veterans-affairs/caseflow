@@ -7,7 +7,7 @@
 # Most columns on EndProductEstablishment are intended to be immutable, representing the attributes of the
 # end product when it was created. Exceptions are `synced_status` and `last_synced_at`, used to record
 # the current status of the EP when the EndProductEstablishment is synced.
-# rubocop:disable Metrics/ClassLength
+
 class EndProductEstablishment < CaseflowRecord
   # Using macro-style definition. The locking scope will be TheClass
   # method and only one method can run at any given time.
@@ -551,7 +551,6 @@ class EndProductEstablishment < CaseflowRecord
     result
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
   def matches_end_product?(end_product)
     return true if ep_created? && reference_id == end_product.claim_id
     return false unless end_product.active? &&
@@ -562,7 +561,6 @@ class EndProductEstablishment < CaseflowRecord
     # Call it a match once we confirm that other EPE has the same claim ID
     EndProductEstablishment.find_by(reference_id: end_product.claim_id).nil?
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   def sync_source!
     return unless source&.respond_to?(:on_sync)
@@ -612,4 +610,3 @@ class EndProductEstablishment < CaseflowRecord
     BGSService.new.generate_tracked_items!(reference_id)
   end
 end
-# rubocop:enable Metrics/ClassLength

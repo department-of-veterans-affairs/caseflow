@@ -2,7 +2,6 @@
 
 class Fakes::VANotifyService < ExternalApi::VANotifyService
   class << self
-    # rubocop:disable  Metrics/ParameterLists
     def send_email_notifications(
       participant_id,
       notification_id,
@@ -28,7 +27,6 @@ class Fakes::VANotifyService < ExternalApi::VANotifyService
 
       fake_notification_response(sms_template_id)
     end
-    # rubocop:enable  Metrics/ParameterLists
 
     def get_status(notification_id)
       fake_status_response(notification_id)

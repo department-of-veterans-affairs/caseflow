@@ -244,7 +244,7 @@ class Fakes::BGSService
     get_veteran_record(vbms_id)
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/MethodLength
   def fetch_person_info(participant_id)
     veteran = Veteran.find_by(participant_id: participant_id)
     # This is a limited set of test data, more fields are available.
@@ -310,7 +310,7 @@ class Fakes::BGSService
       }
     end
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/MethodLength
 
   def station_conflict?(vbms_id, _veteran_participant_id)
     (self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
@@ -728,6 +728,9 @@ class Fakes::BGSService
   def default_power_of_attorney_record
     # generate random file number and participant id to prevent unique id collisions
     # with test data
+    file_number = generate_random_file_number
+    poa_participant_id = generate_random_file_number
+
     {
       file_number: "633792224",
       power_of_attorney:

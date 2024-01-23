@@ -37,7 +37,7 @@ class NoShowHearingTask < Task
   def available_actions(user)
     hearing_admin_actions = available_hearing_user_actions(user)
 
-    if (assigned_to&.== user) || task_is_assigned_to_users_organization?(user)
+    if (assigned_to &.== user) || task_is_assigned_to_users_organization?(user)
       [
         Constants.TASK_ACTIONS.RESCHEDULE_NO_SHOW_HEARING.to_h,
         Constants.TASK_ACTIONS.MARK_NO_SHOW_HEARING_COMPLETE.to_h,

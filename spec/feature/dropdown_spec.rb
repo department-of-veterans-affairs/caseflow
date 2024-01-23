@@ -9,7 +9,7 @@ RSpec.feature "Dropdown", :postgres do
     expect(page).to have_content("Sign Out")
 
     visit "dispatch/establish-claim"
-    find("a", text: "Menu").click
+    find("a", text: "Menu") .click
     expect(page).to have_content("Help")
   end
 end

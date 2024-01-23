@@ -4,7 +4,6 @@
 # DispatchMailer will:
 # - Generate emails from the templates in app/views/dispatch_mailer
 ##
-# rubocop:disable Rails/ApplicationMailer
 class DispatchMailer < ActionMailer::Base
   default from: "Board of Veterans' Appeals <BoardofVeteransAppealsHearings@messages.va.gov>"
   layout "dispatch_mailer"
@@ -24,4 +23,3 @@ class DispatchMailer < ActionMailer::Base
     @appeal.appellant_or_veteran_name
   end
 end
-# rubocop:enable Rails/ApplicationMailer

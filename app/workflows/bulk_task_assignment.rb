@@ -69,7 +69,7 @@ class BulkTaskAssignment
   end
 
   def task_type_is_valid
-    return true if task_type.constantize
+    return if task_type.constantize
   rescue NameError
     errors.add(:task_type, "#{task_type} is not a valid task type")
   end

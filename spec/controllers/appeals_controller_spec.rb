@@ -767,8 +767,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         create(:notification, appeals_id: legacy_appeal_without_claimant.vacols_id, appeals_type: legacy_appeals_type,
                               event_date: 6.days.ago, event_type: "Hearing scheduled", notification_type: "SMS",
                               email_notification_status: nil, sms_notification_status: "No Claimant Found"),
-        create(:notification, appeals_id: legacy_appeal_without_participant_id.vacols_id,
-                              appeals_type: legacy_appeals_type,
+        create(:notification, appeals_id: legacy_appeal_without_participant_id.vacols_id, appeals_type: legacy_appeals_type,
                               event_date: 6.days.ago, event_type: "Hearing scheduled", notification_type: "SMS",
                               email_notification_status: nil, sms_notification_status: "No Participant Id Found"),
         create(:notification, appeals_id: ama_appeal_without_claimant.uuid, appeals_type: ama_appeals_type,
@@ -805,8 +804,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
       context "when controller action #fetch_notification_list is made with a vacols_id that has no claimant" do
         subject do
-          get :fetch_notification_list, params: { appeals_id: legacy_appeal_without_claimant.vacols_id,
-                                                  format: request_format }
+          get :fetch_notification_list, params: { appeals_id: legacy_appeal_without_claimant.vacols_id, format: request_format }
         end
         it "should return zero notifications" do
           subject
@@ -826,8 +824,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
       context "when controller action #fetch_notification_list is made with a vacols_id that has no participant id" do
         subject do
-          get :fetch_notification_list, params: { appeals_id: legacy_appeal_without_participant_id.vacols_id,
-                                                  format: request_format }
+          get :fetch_notification_list, params: { appeals_id: legacy_appeal_without_participant_id.vacols_id, format: request_format }
         end
         it "should return zero notifications" do
           subject
@@ -887,8 +884,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
       context "when controller action #fetch_notification_list is made with a uuid that has no participant id" do
         subject do
-          get :fetch_notification_list, params: { appeals_id: ama_appeal_without_participant_id.uuid,
-                                                  format: request_format }
+          get :fetch_notification_list, params: { appeals_id: ama_appeal_without_participant_id.uuid, format: request_format }
         end
         it "should return zero notifications" do
           subject
@@ -906,8 +902,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         end
       end
 
-      context "when controller action #fetch_notification_list is called
-      with an appeals_id not in Notification Table" do
+      context "when controller action #fetch_notification_list is called with an appeals_id not in Notification Table" do
         subject do
           get :fetch_notification_list, params: { appeals_id: bad_appeals_id, format: request_format }
         end
@@ -950,8 +945,7 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         end
       end
 
-      context "when controller action #fetch_notification_list is called
-      with an appeals_id not in Notification Table" do
+      context "when controller action #fetch_notification_list is called with an appeals_id not in Notification Table" do
         subject do
           get :fetch_notification_list, params: { appeals_id: bad_appeals_id, format: request_format }
         end
