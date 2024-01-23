@@ -552,9 +552,9 @@ class AddIssuesPage extends React.Component {
             currentIssue ={this.props.intakeForms[this.props.formType].addedIssues[this.state.issueIndex]}
             legacyIssues={issues}
             appealIsLegacy={isLegacy}
-            mstIdentification={this.props.featureToggles.mst_identification}
-            pactIdentification={this.props.featureToggles.pact_identification}
-            justificationReason={this.props.featureToggles.justification_reason}
+            mstIdentification={this.props.featureToggles.mstIdentification}
+            pactIdentification={this.props.featureToggles.pactIdentification}
+            justificationReason={this.props.featureToggles.justificationReason}
             onCancel={() => {
               this.props.toggleEditIntakeIssueModal();
             }}

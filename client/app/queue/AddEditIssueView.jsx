@@ -230,6 +230,8 @@ class AddEditIssueView extends React.Component {
       deleteIssueModal,
       justificationFeatureToggle,
       legacyMstPactFeatureToggle,
+      mstFeatureToggle,
+      pactFeatureToggle,
       ...otherProps
     } = this.props;
 
@@ -363,7 +365,7 @@ class AddEditIssueView extends React.Component {
         onChange={(value) => this.updateIssue({ note: value })} />
       {legacyMstPactFeatureToggle && <label
         style={{ marginBottom: '1rem' }}>Select any special issues that apply</label>}
-      {legacyMstPactFeatureToggle && <Checkbox
+      {(legacyMstPactFeatureToggle && mstFeatureToggle) && <Checkbox
         name="MST"
         label="Military Sexual Trauma (MST)"
         defaultValue={issue.mst_status}
@@ -380,7 +382,7 @@ class AddEditIssueView extends React.Component {
           value={this.state.mstJustification}
           onChange={this.handleMstJustification} />
       }
-      {legacyMstPactFeatureToggle && <Checkbox
+      {(legacyMstPactFeatureToggle && pactFeatureToggle) && <Checkbox
         name="PACT"
         label="PACT Act"
         defaultValue={issue.pact_status}
@@ -435,6 +437,8 @@ AddEditIssueView.propTypes = {
   issues: PropTypes.object,
   justificationFeatureToggle: PropTypes.bool,
   legacyMstPactFeatureToggle: PropTypes.bool,
+  mstFeatureToggle: PropTypes.bool,
+  pactFeatureToggle: PropTypes.bool,
   requestDelete: PropTypes.func,
   requestSave: PropTypes.func,
   requestUpdate: PropTypes.func,

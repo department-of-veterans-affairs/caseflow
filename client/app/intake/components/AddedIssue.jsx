@@ -89,10 +89,10 @@ class AddedIssue extends React.PureComponent {
       cssKlasses: ['issue-desc']
     };
 
-    const mstFeatureToggle = featureToggles.mst_identification || featureToggles.mstIdentification;
-    const pactFeatureToggle = featureToggles.pact_identification || featureToggles.pactIdentification;
+    const mstFeatureToggle = featureToggles.mstIdentification;
+    const pactFeatureToggle = featureToggles.pactIdentification;
     // eslint-disable-next-line max-len
-    const legacyMstPactFeatureToggle = featureToggles.legacy_mst_pact_identification || featureToggles.legacyMstPactIdentification;
+    const legacyMstPactFeatureToggle = featureToggles.legacyMstPactIdentification;
 
     const vacolsIssue = legacyIssue(issue, legacyAppeals);
 
@@ -113,12 +113,14 @@ class AddedIssue extends React.PureComponent {
     }
 
     let specialIssuesMessage = 'None';
+    const showMstStatus = issue.mstChecked && mstFeatureToggle;
+    const showPactStatus = issue.pactChecked && pactFeatureToggle;
 
-    if (issue.mstChecked && issue.pactChecked) {
+    if (showMstStatus && showPactStatus) {
       specialIssuesMessage = `${COPY.MST_SHORT_LABEL}, ${COPY.PACT_SHORT_LABEL}`;
-    } else if (issue.mstChecked) {
+    } else if (showMstStatus) {
       specialIssuesMessage = COPY.MST_SHORT_LABEL;
-    } else if (issue.pactChecked) {
+    } else if (showPactStatus) {
       specialIssuesMessage = COPY.PACT_SHORT_LABEL;
     }
 
