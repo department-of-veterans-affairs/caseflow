@@ -66,7 +66,7 @@ const BatchSize = () => {
               {lever.description}
             </p>
           </div>
-          <div className={cx('lever-right', 'batch-lever-num-sec')}>
+          <div className={cx('lever-right', 'batch-lever-num-sec')} aria-label={`${lever.title} ${lever.description}`}>
             {isUserAcdAdmin ?
               <NumberField
                 name={lever.item}
@@ -78,6 +78,7 @@ const BatchSize = () => {
                 onChange={updateNumberFieldLever(lever)}
                 tabIndex={lever.is_disabled_in_ui ? -1 : null}
                 id={`${lever.item}-field`}
+                disabled={lever.is_disabled_in_ui}
               /> :
               <label className={lever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}>
                 {lever.value} {lever.unit}
