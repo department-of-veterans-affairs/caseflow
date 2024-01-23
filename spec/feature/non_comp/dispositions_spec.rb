@@ -301,7 +301,7 @@ feature "NonComp Dispositions Task Page", :postgres do
       end
 
       step "task history link should not exist" do
-        expect(page).to_not have_button("View History")
+        expect(page).to_not have_link("View History")
       end
 
       step "cancel returns back to business line" do
@@ -400,7 +400,7 @@ feature "NonComp Dispositions Task Page", :postgres do
 
       it "should display a view history link" do
         visit dispositions_url
-        expect(page).to have_button("View History")
+        expect(page).to have_link("View History")
       end
     end
     context "with no POA" do
