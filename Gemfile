@@ -82,6 +82,7 @@ gem "tzinfo", "1.2.10"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
+gem "webvtt-ruby"
 gem "ziptz"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
