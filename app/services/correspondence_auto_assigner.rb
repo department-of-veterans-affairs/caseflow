@@ -4,6 +4,7 @@ class CorrespondenceAutoAssigner
   def do_auto_assignment(current_user_id:)
     current_user = User.find(current_user_id)
 
+    correspondence_auto_assign_logger.begin_logging
     unassigned_correspondences_task_id_pairs.each do |id_pair|
       create_review_package_task(
         correspondence_id: id_pair[0],
@@ -11,6 +12,7 @@ class CorrespondenceAutoAssigner
         current_user: current_user
       )
     end
+    correspondence_auto_assign_logger.end_logging
   end
 
   private
@@ -26,6 +28,7 @@ class CorrespondenceAutoAssigner
   end
 
   def create_review_package_task(correspondence_id:, task_id:, current_user:)
+    correspondence_auto_assign_logger.log_single_attempt(correspondence_id)
     unassigned_review_package_task = ReviewPackageTask.find(task_id)
 
     task_params = {
@@ -40,5 +43,11 @@ class CorrespondenceAutoAssigner
 
     ReviewPackageTask.create_from_params(task_params, current_user)
     unassigned_review_package_task.update!(assigned_to: InboundOpsTeam.singleton, status: :on_hold)
+
+    correspondence_auto_assign_logger.record_success
+  end
+
+  def correspondence_auto_assign_logger
+    @correspondence_auto_assign_logger ||= CorrespondenceAutoAssignLogger.new
   end
 end
