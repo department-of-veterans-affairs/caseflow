@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ApiUtil from '../../util/ApiUtil';
-import { loadVetCorrespondence, loadCorrespondenceTasks } from './correspondenceReducer/correspondenceActions';
+import { loadCorrespondenceTasks } from './correspondenceReducer/correspondenceActions';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
@@ -19,15 +19,12 @@ import Alert from '../../components/Alert';
 
 class CorrespondenceCases extends React.PureComponent {
 
-  // grabs correspondences and loads into intakeCorrespondence redux store.
+  // now grabs tasks and loads into redux store
   getCorrespondenceTasks() {
-    return ApiUtil.get('/queue/correspondence/team?json').then((response) => {
-      // KiQuestion - This ApiUtil.get requires changing to correspondence/team since it's "technically another page"
+    return ApiUtil.get('/queue/correspondence/?json').then((response) => {
       const returnedObject = response.body;
-      // const vetCorrespondences = returnedObject.vetCorrespondences;
       const correspondenceTasks = returnedObject.correspondenceTasks;
 
-      // this.props.loadVetCorrespondence(vetCorrespondences);
       this.props.loadCorrespondenceTasks(correspondenceTasks);
     }).
       catch((err) => {
@@ -36,7 +33,7 @@ class CorrespondenceCases extends React.PureComponent {
       });
   }
 
-  // load veteran correspondence info on page load
+  // load task info on page load
   componentDidMount() {
     // Retry the request after a delay
     setTimeout(() => {
@@ -68,9 +65,9 @@ class CorrespondenceCases extends React.PureComponent {
             message={COPY.CORRESPONDENCE_MESSAGE_REMOVE_PACKAGE_BANNER} scrollOnAlert={false} />}
           <h1 {...css({ display: 'inline-block' })}>{COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES}</h1>
           <QueueOrganizationDropdown organizations={organizations} />
-          {this.props.vetCorrespondences &&
+          {this.props.correspondenceTasks &&
           <CorrespondenceTable
-            vetCorrespondences={this.props.vetCorrespondences}
+            correspondenceTasks={this.props.correspondenceTasks}
           />
           }
         </AppSegment>
@@ -81,8 +78,6 @@ class CorrespondenceCases extends React.PureComponent {
 
 CorrespondenceCases.propTypes = {
   organizations: PropTypes.array,
-  loadVetCorrespondence: PropTypes.func,
-  vetCorrespondences: PropTypes.array,
   loadCorrespondenceTasks: PropTypes.func,
   correspondenceTasks: PropTypes.array,
   currentAction: PropTypes.object,
@@ -90,7 +85,6 @@ CorrespondenceCases.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  vetCorrespondences: state.intakeCorrespondence.vetCorrespondences,
   correspondenceTasks: state.intakeCorrespondence.correspondenceTasks,
   currentAction: state.reviewPackage.lastAction,
   veteranInformation: state.reviewPackage.veteranInformation
@@ -98,7 +92,6 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    loadVetCorrespondence,
     loadCorrespondenceTasks,
   }, dispatch)
 );

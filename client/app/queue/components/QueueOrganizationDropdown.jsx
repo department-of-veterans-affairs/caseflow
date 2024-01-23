@@ -47,7 +47,6 @@ export default class QueueOrganizationDropdown extends React.Component {
 
       items = [...items, correspondenceItems];
     }
-    // KiQuestion - Add more options?  Remember something about it from original wireframes
 
     return <QueueSelectorDropdown items={items} />;
   }

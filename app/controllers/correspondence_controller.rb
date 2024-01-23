@@ -44,8 +44,6 @@ class CorrespondenceController < ApplicationController
       format.html { "correspondence_cases" }
       format.json do
         render json: { correspondenceTasks: user_correspondence_tasks }
-        # render json: { correspondenceTasks: all_correspondence_tasks }
-        # render json: { vetCorrespondences: veterans_with_correspondences }
       end
     end
   end
@@ -280,18 +278,10 @@ class CorrespondenceController < ApplicationController
 
   def all_correspondence_tasks
     @tasks = CorrespondenceTask.all
-    # veterans = Veteran.includes(:correspondences).where(correspondences: { id: Correspondence.select(:id) })
-    # veterans.map { |veteran| vet_info_serializer(veteran, veteran.correspondences.last) }
-    # @tasks = CorrespondenceTask.includes(:veteran, :correspondence)
-    # @tasks.map { |task| task_info_serializer(task) }
   end
 
   def user_correspondence_tasks
     @tasks = CorrespondenceTask.where(tasks: { assigned_to_id: current_user.id })
-    # tasks = CorrespondenceTask.includes(:correspondences).where(
-    #   correspondences: { assigned_to: Correspondence.select(current_user) }
-    # )
-    # tasks.map { |task| task_info_serializer(task, task.veterans.last, task.veterans.correspondences.last) }
   end
 
   def task_info_serializer(task)

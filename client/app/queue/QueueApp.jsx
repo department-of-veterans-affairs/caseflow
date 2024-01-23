@@ -680,7 +680,6 @@ class QueueApp extends React.PureComponent {
   );
 
   routedCorrespondenceTeam = () => (
-    // KiQuestion - New page required? Conditional logic on CorrespondenceCases page?
     <CorrespondenceCases {...this.props} />
   );
 
@@ -749,7 +748,6 @@ class QueueApp extends React.PureComponent {
               render={this.routedCorrespondenceCase}
             />
 
-            {/* KiQuestion - change render?  Update between two */}
             <PageRoute
               exact
               path="/queue/correspondence"
