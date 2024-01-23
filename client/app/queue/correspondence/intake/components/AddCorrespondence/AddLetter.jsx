@@ -16,18 +16,16 @@ import RadioField from '../../../../../components/RadioField';
 export const AddLetter = () => {
 
   const [letters, setLetters] = useState([]);
-  const [AddLetterButtonState, setAddLetterButtonState] = useState(true);
+  // const [AddLetterButtonState, setAddLetterButtonState] = useState(false);
 
   const addLetter = (index) => {
     setLetters([...letters, index]);
   };
 
-  const enableAddLeter = () => {
-    setAddLetterButtonState(true);
-  };
+  const removeLetter = (index) => {
+    const restLetters = letters.filter((letter) => letter !== index);
 
-  const disabledAddLetter = () => {
-    setAddLetterButtonState(false);
+    setLetters(restLetters);
   };
 
   const radioOptions = [
@@ -42,113 +40,119 @@ export const AddLetter = () => {
   return (
     <>
       { letters.map((letter) => (
-        <div style={{ width: '50%', display: 'inline-block' }}>
-          <NewLetter radioOptions={radioOptions} />
+        <div id={letter} style={{ width: '50%', display: 'inline-block' }} key={letter}>
+          <NewLetter radioOptions={radioOptions}
+            index={letter}
+            removeLetter={removeLetter}
+          />
         </div>
       )) }
 
-      {AddLetterButtonState &&
-        <div style={{ width: '80%', marginBottom: '30px' }}>
-
-          <Button
-            type="button"
-            name="addLetter"
-            className={['cf-left-side']}
-            disabled="false"
-            onClick={() => {
-              addLetter(letters.length + 1);
-            }}>
-          + Add letter
-          </Button>
-        </div>
-      }
+      <div style={{ width: '80%', marginBottom: '30px' }}>
+        <Button
+          type="button"
+          name="addLetter"
+          className={['cf-left-side']}
+          disabled= {!(letters.length < 3)}
+          onClick={() => {
+            addLetter(letters.length + 1);
+          }}>
+        + Add letter
+        </Button>
+      </div>
     </>
 
   );
 };
 
 AddLetter.propTypes = {
-  radioOptions: PropTypes.object,
+  radioOptions: PropTypes.array,
+  removeLetter: PropTypes.func,
+  index: PropTypes.number,
 };
 
-export const NewLetter = ({
-  radioOptions
-}) => (
+export const NewLetter = (props) => {
+  const radioOptions = props.radioOptions;
+  const index = props.index;
 
-  <div className="gray-border" style={
-    { display: 'inline-block', padding: '2rem 2rem', marginLeft: '3rem', marginBottom: '3rem', width: '90%' }
-  }>
-    <div className="response_letter_date">
-      <DateSelector
-        name="date-set"
-        label="Date sent"
-        // value={VADORDate}
-        // errorMessage={this.state.dateError}
-        // onChange={ }
-        type="date"
+  return (
+    <div className="gray-border" style={
+      { display: 'inline-block', padding: '2rem 2rem', marginLeft: '3rem', marginBottom: '3rem', width: '90%' }
+    }>
+      <div className="response_letter_date">
+        <DateSelector
+          name="date-set"
+          label="Date sent"
+          // value={VADORDate}
+          // errorMessage={this.state.dateError}
+          // onChange={ }
+          type="date"
+        />
+      </div>
+      <br />
+      <SearchableDropdown
+        name="response-letter-type"
+        label="Letter type"
+        placeholder="Select..."
+        styling={{ maxWidth: '100%' }}
+        // readOnly
+        // options={this.state.packageOptions}
+        // value={packageDocument}
+        // onChange={this.packageDocumentOnChange}
       />
+      <br />
+      <SearchableDropdown
+        name="response-letter-title"
+        label="Letter title"
+        placeholder="Select..."
+        readOnly
+        // options={this.state.packageOptions}
+        // value={packageDocument}
+        // onChange={this.packageDocumentOnChange}
+      />
+      <br />
+      <SearchableDropdown
+        name="response-letter-subcategory"
+        label="Letter subcategory"
+        placeholder="Select..."
+        readOnly
+        // options={this.state.packageOptions}
+        // value={packageDocument}
+        // onChange={this.packageDocumentOnChange}
+      />
+      <br />
+      <SearchableDropdown
+        name="response-letter-subcategory-reason"
+        label="Letter subcategory reason"
+        placeholder="Select..."
+        readOnly
+        // options={this.state.packageOptions}
+        // value={packageDocument}
+        // onChange={this.packageDocumentOnChange}
+      />
+      <br />
+      <RadioField
+        name="How long should the response window be for this response letter?"
+        options={radioOptions}
+        // onChange={onChange}
+      />
+      <br />
+      <Button
+        name="Remove"
+        styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
+        onClick={() => props.removeLetter(index)}
+        classNames={['cf-btn-link', 'cf-right-side']}
+      >
+        <i className="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Remove task
+      </Button>
     </div>
-    <br />
-    <SearchableDropdown
-      name="response-letter-type"
-      label="Letter type"
-      placeholder="Select..."
-      styling={{ maxWidth: '100%' }}
-      // readOnly
-      // options={this.state.packageOptions}
-      // value={packageDocument}
-      // onChange={this.packageDocumentOnChange}
-    />
-    <br />
-    <SearchableDropdown
-      name="response-letter-title"
-      label="Letter title"
-      placeholder="Select..."
-      readOnly
-      // options={this.state.packageOptions}
-      // value={packageDocument}
-      // onChange={this.packageDocumentOnChange}
-    />
-    <br />
-    <SearchableDropdown
-      name="response-letter-subcategory"
-      label="Letter subcategory"
-      placeholder="Select..."
-      readOnly
-      // options={this.state.packageOptions}
-      // value={packageDocument}
-      // onChange={this.packageDocumentOnChange}
-    />
-    <br />
-    <SearchableDropdown
-      name="response-letter-subcategory-reason"
-      label="Letter subcategory reason"
-      placeholder="Select..."
-      readOnly
-      // options={this.state.packageOptions}
-      // value={packageDocument}
-      // onChange={this.packageDocumentOnChange}
-    />
-    <br />
-    <RadioField
-      name="How long should the response window be for this response letter?"
-      options={radioOptions}
-      // onChange={onChange}
-    />
-    <br />
-    <Button
-      name="Remove"
-      styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
-      // onClick={() => () }
-      classNames={['cf-btn-link', 'cf-right-side']}
-    >
-      <i className="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Remove task
-    </Button>
-  </div>
-);
+  );
+};
 
 NewLetter.propTypes = {
-  radioOptions: PropTypes.object,
+  radioOptions: PropTypes.array.isRequired,
+  removeLetter: PropTypes.func.isRequired,
+  index: PropTypes.number.isRequired,
 };
 
 export default AddLetter;
