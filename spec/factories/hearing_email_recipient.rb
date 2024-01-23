@@ -7,6 +7,7 @@ FactoryBot.define do
     email_address { "test@email.com" }
     email_sent { false }
     timezone { nil }
+    initialize_with { type.constantize.new(attributes) }
 
     trait :initialized do
       email_sent { true }
