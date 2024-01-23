@@ -59,14 +59,14 @@ class CaseDistributionLever < ApplicationRecord
   end
 
   def validate_number_data_type
-    add_error_value_not_match_data_type if value.match(/\A[0-9]*\.?[0-9]+\z/).nil?
+    add_error_value_not_match_data_type if value && value.match(/\A[0-9]*\.?[0-9]+\z/).nil?
     unless INTEGER_LEVERS.include?(item) || FLOAT_LEVERS.include?(item)
       errors.add(:item, "is of data_type number but is not included in INTEGER_LEVERS or FLOAT_LEVERS")
     end
   end
 
   def validate_boolean_data_type
-      add_error_value_not_match_data_type if value.match(/\A(t|true|f|false)\z/i).nil?
+      add_error_value_not_match_data_type if value && value.match(/\A(t|true|f|false)\z/i).nil?
   end
 
   class << self
@@ -97,6 +97,32 @@ class CaseDistributionLever < ApplicationRecord
       errors.concat(add_audit_lever_entries(previous_levers, levers, current_user))
     end
 
+    def format_audit_lever_entries(audit_lever_entries_data, current_user)
+      formatted_audit_lever_entries = []
+
+      begin
+        audit_lever_entries_data.each do |entry_data|
+          entry_data = entry_data.transform_keys(&:to_s)
+          lever = CaseDistributionLever.find_by_title entry_data["lever_title"]
+
+          formatted_audit_lever_entries.push ({
+            user: current_user,
+            case_distribution_lever: lever,
+            user_name: current_user.css_id,
+            title: lever.title,
+            previous_value: entry_data["original_value"],
+            update_value: entry_data["current_value"],
+            created_at: entry_data["created_at"]
+
+          })
+        end
+      rescue Exception => error
+        return error
+      end
+
+      formatted_audit_lever_entries
+    end
+
     private
 
     def add_audit_lever_entries(previous_levers, levers, current_user)
@@ -120,31 +146,6 @@ class CaseDistributionLever < ApplicationRecord
       end
 
       []
-    end
-
-    def format_audit_lever_entries(audit_lever_entries_data)
-      formatted_audit_lever_entries = []
-
-      begin
-        audit_lever_entries_data.each do |entry_data|
-          lever = CaseDistributionLever.find_by_title entry_data["lever_title"]
-
-          formatted_audit_lever_entries.push ({
-            user: current_user,
-            case_distribution_lever: lever,
-            user_name: current_user.css_id,
-            title: lever.title,
-            previous_value: entry_data["original_value"],
-            update_value: entry_data["current_value"],
-            created_at: entry_data["created_at"]
-
-          })
-        end
-      rescue Exception => error
-        return error
-      end
-
-      formatted_audit_lever_entries
     end
   end
 end
