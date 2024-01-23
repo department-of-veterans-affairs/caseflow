@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_01_10_185623) do
+ActiveRecord::Schema.define(version: 2024_01_22_174056) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -623,6 +623,19 @@ ActiveRecord::Schema.define(version: 2024_01_10_185623) do
     t.datetime "updated_at", null: false
     t.index ["correspondence_id", "related_correspondence_id"], name: "index_correspondence_relations_on_correspondences", unique: true
     t.index ["related_correspondence_id", "correspondence_id"], name: "index_correspondence_relations_on_related_correspondences", unique: true
+  end
+
+  create_table "correspondence_response_letters", force: :cascade do |t|
+    t.integer "correspondence_id"
+    t.datetime "created_at", null: false
+    t.datetime "date_sent"
+    t.string "reason"
+    t.integer "response_window"
+    t.string "subcategory"
+    t.string "title"
+    t.string "type"
+    t.datetime "updated_at", null: false
+    t.integer "user_id"
   end
 
   create_table "correspondence_types", force: :cascade do |t|
