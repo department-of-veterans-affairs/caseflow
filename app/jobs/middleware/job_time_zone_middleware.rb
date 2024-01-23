@@ -7,7 +7,9 @@ class JobTimeZoneMiddleware
     current_tz = Time.zone.name
     if current_tz != "UTC"
       Rails.logger.info("#{job_class} current timezone is #{current_tz}")
-      Time.use_zone("UTC") { yield }
+    end
+    Time.use_zone("UTC") do
+      yield
     end
   end
 end
