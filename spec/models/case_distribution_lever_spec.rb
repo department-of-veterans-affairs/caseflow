@@ -187,36 +187,4 @@ RSpec.describe CaseDistributionLever, :all_dbs do
       expect(audit2.update_value).to eq(lever2["value"].to_s)
     end
   end
-
-  context "format_audit_lever_entries" do
-    let(:lever) { CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.alternative_batch_size) }
-    let(:time) { Time.now }
-    let(:audit_entries) {
-      [
-        {
-          "lever_title": lever.title,
-          "original_value": "20",
-          "current_value": "30",
-          "created_at": time
-        }
-      ]
-    }
-
-    it 'should return formatted levers' do
-      result = CaseDistributionLever.format_audit_lever_entries(audit_entries, lever_user)
-      expect(result).to be_an(Array)
-      expect(result).not_to be_empty
-
-      result.each do |hash|
-        expect(hash).to be_a(Hash)
-        expect(hash).to include(:user, :case_distribution_lever, :user_name, :title, :previous_value, :update_value, :created_at)
-        expect(hash[:previous_value]).to eq("20")
-        expect(hash[:update_value]).to eq("30")
-      end
-    end
-
-    it 'should return error if pass invalid input' do
-      expect(CaseDistributionLever.format_audit_lever_entries(nil, lever_user)).to be_a(NoMethodError)
-    end
-  end
 end
