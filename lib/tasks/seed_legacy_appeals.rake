@@ -4,8 +4,9 @@
 # to create without, run "bundle exec rake db:generate_legacy_appeals"
 namespace :db do
   desc "Generates a smattering of legacy appeals with VACOLS cases that have special issues assocaited with them"
-  task :generate_legacy_appeals, [:add_special_issues] => :environment do |_, args|
+  task :generate_legacy_appeals, [:add_special_issues, :user_id] => :environment do |_, args|
     ADD_SPECIAL_ISSUES = args.add_special_issues == "true"
+    USER_ID = args.user_id
     class LegacyAppealFactory
       class << self
         # Stamping out appeals like mufflers!
@@ -122,11 +123,15 @@ namespace :db do
         # veterans_with_250_appeals = %w[011899906 011899999]
       end
 
-      # request CSS ID for task assignment
-      STDOUT.puts("Enter the CSS ID of the user that you want to assign these appeals to")
-      STDOUT.puts("Hint: an Attorney User for demo env is BVASCASPER1, and UAT is TCASEY_JUDGE and CGRAHAM_JUDGE")
-      css_id = STDIN.gets.chomp.upcase
-      user = User.find_by_css_id(css_id)
+      # request CSS ID for task assignment if not given
+      if USER_ID.blank?
+        STDOUT.puts("Enter the CSS ID of the user that you want to assign these appeals to")
+        STDOUT.puts("Hint: an Attorney User for demo env is BVASCASPER1, and UAT is TCASEY_JUDGE and CGRAHAM_JUDGE")
+        css_id = STDIN.gets.chomp.upcase
+        user = User.find_by_css_id(css_id)
+      else
+        user = User.find_by_css_id(USER_ID)
+      end
 
       fail ActiveRecord::RecordNotFound unless user
 
