@@ -366,11 +366,11 @@ export const unknownDataTypeStaticLevers = [
 ];
 
 //Batch Lever with Higher Min value for testing errors 'out of bounds'
-export const outOfBoundsBatchLevers = [
+export const testingBatchLevers = [
   {
     "item": 'test-lever',
-    "title": 'Alternate Batch Size*',
-    "description": 'Sets case-distribution batch size for judges who do not have their own attorney teams.',
+    "title": 'Test Title Lever*',
+    "description": 'Test Description for Lever data outOfBoundsBatchLever.',
     "data_type": 'number',
     "value": 5,
     "unit": "cases",
@@ -381,6 +381,21 @@ export const outOfBoundsBatchLevers = [
     "algorithms_used": ["docket", "proportion"],
     "lever_group": "batch",
     "lever_group_order": 2000
-  }
+  },
+  {
+    "item": 'test-lever-disabled',
+    "title": 'Test Title Lever2*',
+    "description": 'Test Description for Lever data disabled-in-ui.',
+    "data_type": 'number',
+    "value": 5,
+    "unit": "cases",
+    "is_toggle_active": true,
+    "is_disabled_in_ui": true,
+    "min_value": 5,
+    "max_value": null,
+    "algorithms_used": ["docket", "proportion"],
+    "lever_group": "batch",
+    "lever_group_order": 2001
+  },
 ];
 /* END Outlier Test Data for Testing Coverage */

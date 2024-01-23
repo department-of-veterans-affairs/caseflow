@@ -1,14 +1,13 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, waitFor} from '@testing-library/react';
 import BatchSize from 'app/caseDistribution/components/BatchSize';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import rootReducer from 'app/caseDistribution/reducers/root';
 import thunk from 'redux-thunk';
-import { levers, outOfBoundsBatchLevers } from '../../../data/adminCaseDistributionLevers';
-import { loadLevers } from 'app/caseDistribution/reducers/levers/leversActions';
+import { levers, testingBatchLevers } from '../../../data/adminCaseDistributionLevers';
+import { loadLevers, setUserIsAcdAdmin} from 'app/caseDistribution/reducers/levers/leversActions';
 import { mount } from 'enzyme';
-import sinon from 'sinon';
 
 describe('Batch Size Lever', () => {
 
@@ -21,16 +20,14 @@ describe('Batch Size Lever', () => {
   });
 
   let batchSizeLevers = levers.filter((lever) => (lever.lever_group === 'batch'));
+  let batchSizeTestLever = batchSizeLevers[0];
+  let leversWithBatchLevers = { batch: batchSizeLevers };
 
-  it('renders the Batch Size Levers', () => {
+  it('renders the Batch Size Levers for Member Users', () => {
     const store = getStore();
 
-    let testLevers = {
-      batch: batchSizeLevers,
-    };
-
-    // Load all batch size levers
-    store.dispatch(loadLevers(testLevers));
+    store.dispatch(loadLevers(leversWithBatchLevers));
+    store.dispatch(setUserIsAcdAdmin(false));
 
     render(
       <Provider store={store}>
@@ -38,21 +35,42 @@ describe('Batch Size Lever', () => {
       </Provider>
     );
 
-    expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(batchSizeLevers[0].title);
-    expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(batchSizeLevers[0].description);
-    expect(document.querySelector('.active-lever > .lever-right')).toHaveTextContent(batchSizeLevers[0].value);
+    expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(batchSizeTestLever.title);
+    expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(batchSizeTestLever.description);
+    expect(document.querySelector('.active-lever > .lever-right')).toHaveTextContent(batchSizeTestLever.value);
   });
 
-  it('responds to bad change with error', () => {
-    const event = { target: { value: 2 } };
+  it('renders disabled in ui Batch Size levers', () => {
+    const store = getStore();
+
+    store.dispatch(loadLevers(leversWithBatchLevers));
+    store.dispatch(setUserIsAcdAdmin(false));
+
+    render(
+      <Provider store={store}>
+        <BatchSize />
+      </Provider>
+    );
+
+    expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(batchSizeTestLever.title);
+    expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(batchSizeTestLever.description);
+    expect(document.querySelector('.active-lever > .lever-right')).toHaveTextContent(batchSizeTestLever.value);
+  });
+
+  it('sets input to invalid for error and sets input to valid to remove error', () => {
+    const eventForError = { target: { value: 2 } };
+    const eventForValid = { target: { value: 10 } };
 
     const store = getStore();
 
-    let testLevers = {
-      batch: outOfBoundsBatchLevers,
+    let leversWithTestingBatchLevers = {
+      batch: testingBatchLevers,
     };
 
-    store.dispatch(loadLevers(testLevers));
+    let lever = testingBatchLevers[0];
+
+    store.dispatch(loadLevers(leversWithTestingBatchLevers));
+    store.dispatch(setUserIsAcdAdmin(true));
 
     let wrapper = mount(
       <Provider store={store}>
@@ -60,15 +78,23 @@ describe('Batch Size Lever', () => {
       </Provider>
     );
 
+    let inputField = wrapper.find('input[name="test-lever"]');
+
+    // Calls simulate change to set value outside of min/max range
+    waitFor(() => inputField.simulate('change', eventForError));
+
     wrapper.update();
 
-    console.debug(wrapper.debug());
+    waitFor(() => expect(inputField.prop('value').toBe(eventForError.target.value)));
+    waitFor(() => expect(inputField.prop('errorMessage').
+      toBe(`Please enter a value greater than or equal to ${ lever.min_value }`)));
 
-    wrapper.find('.lever-active').simulate('change', event);
+    // Calls simulate change to set value within min/max range
+    waitFor(() => inputField.simulate('change', eventForValid));
 
-    console.debug(wrapper.debug());
-    // expect(handleChangeSpy.calledOnce).toBeCalled();
-    expect(document.querySelector('.active-lever > .lever-right')).toHaveTextContent(outOfBoundsBatchLevers[0].value);
+    wrapper.update();
+
+    waitFor(() => expect(inputField.prop('value').toBe(eventForValid.target.value)));
+    waitFor(() => expect(inputField.prop('errorMessage').toBe('')));
   });
 });
-
