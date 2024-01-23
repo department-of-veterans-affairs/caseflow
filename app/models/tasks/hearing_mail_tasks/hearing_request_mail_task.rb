@@ -40,9 +40,9 @@ class HearingRequestMailTask < MailTask
     assigned_to.is_a?(MailTeam)
   end
 
-  # Purpose: Determines if there is a hearing with an open AssignHearingDispositionTask to postpone or withdraw
+  # Purpose: Determines if there is an open hearing
   # Params: None
-  # Return: The open hearing if one exists
+  # Return: The hearing if one exists
   def open_hearing
     @open_hearing ||= open_assign_hearing_disposition_task&.hearing
   end
@@ -51,7 +51,7 @@ class HearingRequestMailTask < MailTask
   # Params: None
   # Return: The hearing task
   def hearing_task
-    @hearing_task ||= open_assign_hearing_disposition_task&.hearing_task || active_schedule_hearing_task&.parent
+    @hearing_task ||= open_hearing&.hearing_task || active_schedule_hearing_task.parent
   end
 
   # Purpose: Postponement - When a hearing is postponed through the completion of a NoShowHearingTask,
@@ -84,16 +84,6 @@ class HearingRequestMailTask < MailTask
     end
   end
 
-  # Purpose: Associated appeal has an upcoming hearing with an open status
-  # Params: None
-  # Return: Returns a boolean if the appeal has an upcoming hearing
-  def hearing_scheduled_and_awaiting_disposition?
-    return false unless open_hearing
-
-    # Ensure associated hearing is not scheduled for the past
-    !open_hearing.scheduled_for_past?
-  end
-
   # Purpose: Gives the latest active hearing task
   # Params: None
   # Return: The latest active hearing task
@@ -112,6 +102,16 @@ class HearingRequestMailTask < MailTask
   # Return: The latest active assign hearing disposition task
   def open_assign_hearing_disposition_task
     @open_assign_hearing_disposition_task ||= appeal.tasks.of_type(ASSIGN_HEARING_DISPOSITION_TASKS).open&.first
+  end
+
+  # Purpose: Associated appeal has an upcoming hearing with an open status
+  # Params: None
+  # Return: Returns a boolean if the appeal has an upcoming hearing
+  def hearing_scheduled_and_awaiting_disposition?
+    return false unless open_hearing
+
+    # Ensure associated hearing is not scheduled for the past
+    !open_hearing.scheduled_for_past?
   end
 
   # Purpose: Sets the previous hearing's disposition
