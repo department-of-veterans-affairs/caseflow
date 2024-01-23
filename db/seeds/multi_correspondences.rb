@@ -32,134 +32,38 @@ module Seeds
       @cmp_packet_number += 10_000 while ::Correspondence.find_by(cmp_packet_number: @cmp_packet_number + 1)
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def create_multi_correspondences
-      veteran = create_veteran(first_name: "Adam", last_name: "West")
-      5.times do
-        appeal = create(
-          :appeal,
-          veteran_file_number: veteran.file_number
-        )
-        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-      end
-      5.times do
-        appeal = create(
-          :appeal,
-          veteran_file_number: veteran.file_number,
-          docket_type: Constants.AMA_DOCKETS.direct_review
-        )
-        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-      end
-      21.times do
-        corres = ::Correspondence.create!(
-          uuid: SecureRandom.uuid,
-          portal_entry_date: Time.zone.now,
-          source_type: "Mail",
-          package_document_type_id: (1..20).to_a.sample,
-          correspondence_type_id: 4,
-          cmp_queue_id: 1,
-          cmp_packet_number: @cmp_packet_number,
-          va_date_of_receipt: Time.zone.yesterday,
-          notes: "Notes from CMP - Multi Correspondence Seed",
-          assigned_by_id: 81,
-          updated_by_id: 81,
-          veteran_id: veteran.id,
-        )
-        CorrespondenceDocument.find_or_create_by(
-          document_file_number: veteran.file_number,
-          uuid: SecureRandom.uuid,
-          vbms_document_type_id: 1250,
-          document_type: 1250,
-          pages: 30,
-          correspondence_id: corres.id
-        )
-        @cmp_packet_number += 1
+      # Create 20 Correspondences with eFolderFailedUploadTask with a parent CorrespondenceIntakeTask
+      veteran = create_veteran(first_name: "John", last_name: "Doe")
+      appeal = create_appeal(veteran)
+
+      ptask = create_correspondence_intake(create_correspondence(appeal))
+
+      20.times do
+        corres = create_correspondence_with_intake_and_failed_upload_task(ptask, appeal)
       end
 
-      veteran = create_veteran(first_name: "Michael", last_name: "Keaton")
-      2.times do
-        appeal = create(
-          :appeal,
-          veteran_file_number: veteran.file_number
-        )
-        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-      end
-      5.times do
-        appeal = create(
-          :appeal,
-          veteran_file_number: veteran.file_number,
-          docket_type: Constants.AMA_DOCKETS.direct_review
-        )
-        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-      end
-      31.times do
-        corres = ::Correspondence.create!(
-          uuid: SecureRandom.uuid,
-          portal_entry_date: Time.zone.now,
-          source_type: "Mail",
-          package_document_type_id: (1..20).to_a.sample,
-          correspondence_type_id: 4,
-          cmp_queue_id: 1,
-          cmp_packet_number: @cmp_packet_number,
-          va_date_of_receipt: Time.zone.yesterday,
-          notes: "Notes from CMP - Multi Correspondence Seed",
-          assigned_by_id: 81,
-          updated_by_id: 81,
-          veteran_id: veteran.id,
-        )
-        CorrespondenceDocument.find_or_create_by(
-          document_file_number: veteran.file_number,
-          uuid: SecureRandom.uuid,
-          vbms_document_type_id: 1250,
-          document_type: 1250,
-          pages: 30,
-          correspondence_id: corres.id
-        )
-        @cmp_packet_number += 1
-      end
-
-      veteran = create_veteran(first_name: "Christian", last_name: "Bale")
-      1.times do
-        appeal = create(
-          :appeal,
-          veteran_file_number: veteran.file_number
-        )
-        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-      end
-      10.times do
-        appeal = create(
-          :appeal,
-          veteran_file_number: veteran.file_number,
-          docket_type: Constants.AMA_DOCKETS.direct_review
-        )
-        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-      end
-      101.times do
-        corres = ::Correspondence.create!(
-          uuid: SecureRandom.uuid,
-          portal_entry_date: Time.zone.now,
-          source_type: "Mail",
-          package_document_type_id: (1..20).to_a.sample,
-          correspondence_type_id: 4,
-          cmp_queue_id: 1,
-          cmp_packet_number: @cmp_packet_number,
-          va_date_of_receipt: Time.zone.yesterday,
-          notes: "Notes from CMP - Multi Correspondence Seed",
-          assigned_by_id: 81,
-          updated_by_id: 81,
-          veteran_id: veteran.id,
-        )
-        CorrespondenceDocument.find_or_create_by(
-          document_file_number: veteran.file_number,
-          uuid: SecureRandom.uuid,
-          vbms_document_type_id: 1250,
-          document_type: 1250,
-          pages: 30,
-          correspondence_id: corres.id
-        )
-        @cmp_packet_number += 1
-      end
+      # # Create 20 Correspondences with CorrespondenceIntakeTask with a status of in_progress
+      # 20.times do
+      #   corres = create_correspondence_with_intake_task
+      # end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
+    def create_correspondence_with_intake_and_failed_upload_task(ptask, appeal)
+
+      corres = create_correspondence(appeal)
+
+      create_efolderupload_failed_task(corres, ptask: ptask)
+
+      corres
+    end
+
+    def create_correspondence_with_intake_task(appeal)
+      corres = create_correspondence(appeal)
+
+      create_correspondence_intake(corres)
+
+      corres
+    end
   end
 end

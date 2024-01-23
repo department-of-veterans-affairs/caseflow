@@ -45,12 +45,16 @@ class CorrespondenceTask < Task
   private
 
   def status_is_valid_on_create
-    if type == "ReviewPackageTask" && status != Constants.TASK_STATUSES.unassigned
-      update!(status: :unassigned)
-    elsif type != "ReviewPackageTask" && status != Constants.TASK_STATUSES.assigned
-      fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
+    puts "DEBUG: type=#{type}, status=#{status}"
+    case type
+    when "ReviewPackageTask"
+      update!(status: :unassigned) if status != Constants.TASK_STATUSES.unassigned
+    when "CorrespondenceIntakeTask", "EfolderUploadFailedTask"
+      update!(status: :in_progress) if status != Constants.TASK_STATUSES.in_progress
+    else
+      fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type unless status == Constants.TASK_STATUSES.assigned
     end
-
+    puts "DEBUG: after update - type=#{type}, status=#{status}"
     true
   end
 
