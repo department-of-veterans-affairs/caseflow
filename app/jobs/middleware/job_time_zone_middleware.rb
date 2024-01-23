@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# This middleware ensures all jobs run in UTC.
+# This middleware ensures all async jobs run in UTC.
 class JobTimeZoneMiddleware
   def call(_worker, _queue, _msg, body)
     job_class = body["job_class"]
