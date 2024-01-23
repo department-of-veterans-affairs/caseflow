@@ -567,9 +567,7 @@ describe Docket, :all_dbs do
         create(:appeal,
                :with_post_intake_tasks,
                docket_type: Constants.AMA_DOCKETS.direct_review)
-      end.push(
-        create(:appeal, :with_post_intake_tasks, :with_vha_issue, docket_type: Constants.AMA_DOCKETS.direct_review)
-      )
+      end
     end
 
     let(:judge_user) { create(:user) }
@@ -578,11 +576,61 @@ describe Docket, :all_dbs do
     let!(:sct_org) { SpecialtyCaseTeam.singleton }
 
     context "nonpriority appeals" do
-      subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: false, limit: 15) }
+      subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: false, limit: 10) }
 
       it "creates distributed cases and judge tasks" do
         tasks = subject
 
+        expect(tasks.length).to eq(10)
+        expect(tasks.first.class).to eq(DistributedCase)
+        expect(distribution.distributed_cases.length).to eq(10)
+        expect(judge_user.reload.tasks.map(&:appeal)).to include(appeals.first)
+      end
+    end
+  end
+
+  context "distribute_appeals" do
+    let!(:appeals) do
+      [
+        (1..num_appeals_before).map do
+          create(:appeal,
+                 :with_post_intake_tasks,
+                 docket_type: docket_type)
+        end,
+        (1..num_vha_appeals).map do
+          create(:appeal, :with_post_intake_tasks, :with_vha_issue, docket_type: docket_type)
+        end,
+        (1..num_appeals_after).map do
+          create(:appeal,
+                 :with_post_intake_tasks,
+                 docket_type: docket_type)
+        end
+      ].flatten
+    end
+
+    let(:judge_user) { create(:user) }
+    let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
+    let!(:distribution) { Distribution.create!(judge: judge_user) }
+    let!(:sct_org) { SpecialtyCaseTeam.singleton }
+    let(:num_vha_appeals) { 5 }
+    let(:num_appeals_before) { 3 }
+    let(:num_appeals_after) { 10 }
+    let(:docket_type) { Constants.AMA_DOCKETS.direct_review }
+    let(:limit) { 5 }
+
+    context "nonpriority appeals" do
+      subject { DirectReviewDocket.new.distribute_appeals(distribution, priority: false, limit: limit) }
+
+      it "creates distributed cases and judge tasks" do
+        puts appeals.count
+        puts appeals.map(&:receipt_date).inspect
+        puts distribution.distributed_cases.count
+        tasks = subject
+
+        puts distribution.distributed_cases.count
+        puts distribution.distributed_cases.map { |dc| [dc.task_id, dc.sct_appeal] }.inspect
+
+        # We expect as many as the limit of appeals + the number of sct_appeals
         expect(tasks.length).to eq(10)
         expect(tasks.first.class).to eq(DistributedCase)
         expect(distribution.distributed_cases.length).to eq(10)
