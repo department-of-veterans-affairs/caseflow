@@ -28,5 +28,13 @@ FactoryBot.define do
       initialize_with { JudgeHearingEmailRecipient.new(attributes) }
       type { JudgeHearingEmailRecipient.name }
     end
+
+    trait :ama do
+      appeal
+    end
+
+    trait :legacy do
+      appeal { create(:legacy_appeal, vacols_case: create(:case)) }
+    end
   end
 end
