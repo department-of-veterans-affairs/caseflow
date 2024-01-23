@@ -111,9 +111,14 @@ namespace :db do
       end
 
       if Rails.env.development? || Rails.env.test?
-        vets = Veteran.first(5)
+        # grab 5 random veterans
+        vets = []
 
-        veterans_with_like_45_appeals = vets[0..12].pluck(:file_number)
+        (1..5).each do |_|
+          vets << Veteran.find(Random.new.rand(1..250))
+        end
+
+        veterans_with_like_45_appeals = vets[0..5].pluck(:file_number)
 
         # veterans_with_250_appeals = vets.last(3).pluck(:file_number)
 
