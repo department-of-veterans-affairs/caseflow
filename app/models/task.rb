@@ -963,7 +963,7 @@ class Task < CaseflowRecord
   end
 
   def status_is_valid_on_create
-    if status != Constants.TASK_STATUSES.assigned
+    unless [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.completed].include?(status)
       fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
     end
 

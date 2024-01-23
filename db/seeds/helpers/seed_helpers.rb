@@ -118,36 +118,26 @@ module SeedHelpers
     )
   end
 
-  def create_pending_tasks(correspondence, status:)
-    TasksNotRelatedToAppeal.create!(
+  def create_in_progress_root_task_and_completed_mail_task(correspondence, status:, parent_task:)
+    CavcCorrespondenceMailTask.create!(
+      parent_id: parent_task.id,
       appeal_id: correspondence.id,
       appeal_type: "Correspondence",
       status: status,
       assigned_to: MailTeamSupervisor.singleton
     )
-    create_completed_review_package_task(correspondence)
-    create_completed_correspondence_intake_task(correspondence)
-  end
-
-  def create_completed_review_package_task(correspondence)
-    create_review_package_task(correspondence, status: "completed")
-  end
-
-  def create_completed_correspondence_intake_task(correspondence)
-    CorrespondenceIntakeTask.create!(
+    ReviewPackageTask.create!(
+      parent_id: parent_task.id,
       appeal_id: correspondence.id,
       appeal_type: "Correspondence",
-      status: "completed",
+      status: status,
       assigned_to: MailTeamSupervisor.singleton
     )
-  end
-
-  def create_in_progress_root_task_and_completed_mail_task(correspondence)
-    create_correspondence_root_task(correspondence, status: "in_progress")
-    MailTask.create!(
+    CorrespondenceIntakeTask.create!(
+      parent_id: parent_task.id,
       appeal_id: correspondence.id,
       appeal_type: "Correspondence",
-      status: "completed",
+      status: status,
       assigned_to: MailTeamSupervisor.singleton
     )
   end
