@@ -7,7 +7,7 @@ RSpec.describe Api::Events::V1::DecisionReviewsController, type: :controller do
 
     context "with a valid token" do
       it "returns success response" do
-        request.headers["Authorization"] = api_key.key_string
+        request.headers["Authorization"] = "Token #{api_key.key_string}"
         post :decision_review_created
         expect(response).to have_http_status(:created)
       end
