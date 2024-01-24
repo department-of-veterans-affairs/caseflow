@@ -34,9 +34,9 @@ class CorrespondenceAutoAssigner
     if PackageDocumentType.find_by(name: "10182")&.id == package_document_type_id
       nod_mail_permission_check(user: current_user, task_params: task_params)
     else
+      assign_user_review_package_task(user: current_user, task_params: task_params)
       unassigned_review_package_task.update!(assigned_to: InboundOpsTeam.singleton, status: :on_hold)
     end
-    assign_user_review_package_task(user: current_user, task_params: task_params)
   end
 
   def build_task_params(task_id, correspondence_id, current_user)
