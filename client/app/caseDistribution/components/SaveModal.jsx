@@ -73,10 +73,13 @@ export const SaveModal = (props) => {
       isOpen
       onClose={() => setShowModal(false)}
       closeHandler={() => setShowModal(false)}
-      title={COPY.CASE_DISTRIBUTION_MODAL_TITLE}
-      confirmButton={<Button onClick={handleConfirmButton}>{COPY.MODAL_CONFIRM_BUTTON}</Button>}
-      cancelButton={<Button onClick={() => setShowModal(false)}>{COPY.MODAL_CANCEL_BUTTON}</Button>}
       className="updated-modal-styling"
+      title={COPY.CASE_DISTRIBUTION_MODAL_TITLE}
+      confirmButton={<Button id="save-modal-confirm" onClick={handleConfirmButton}>
+        {COPY.MODAL_CONFIRM_BUTTON}</Button>}
+
+      cancelButton={<Button id="save-modal-cancel" onClick={() => setShowModal(false)}>
+        {COPY.MODAL_CANCEL_BUTTON}</Button>}
     >
       <p>{COPY.CASE_DISTRIBUTION_MODAL_DESCRIPTION}</p>
       {leverList()}
