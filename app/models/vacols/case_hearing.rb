@@ -183,7 +183,7 @@ class VACOLS::CaseHearing < VACOLS::Record
   end
 
   def update_hearing!(hearing_info)
-    attrs = hearing_info.transform_keys { |key| COLUMN_NAMES[key] }
+    attrs = hearing_info.each_with_object({}) { |(k, v), result| result[COLUMN_NAMES[k]] = v }
     MetricsService.record("VACOLS: update_hearing! #{hearing_pkseq}",
                           service: :vacols,
                           name: "update_hearing") do

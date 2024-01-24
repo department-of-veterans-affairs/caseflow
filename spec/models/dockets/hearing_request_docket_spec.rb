@@ -51,6 +51,7 @@ describe HearingRequestDocket, :all_dbs do
 
         # This appeal should not be returned because it is now considered genpop
         outside_affinity = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge_outside_affinity
+
         tasks = subject
 
         distributed_appeals = distribution_judge.reload.tasks.map(&:appeal)

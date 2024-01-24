@@ -5,9 +5,6 @@ module AppealDecisionMailed
   extend AppellantNotification
   # rubocop:disable all
   @@template_name = "Appeal decision mailed"
-
-  CONTESTED_CLAIM = "#{@@template_name} (Contested claims)"
-  NON_CONTESTED_CLAIM = "#{@@template_name} (Non-contested claims)"
   # rubocop:enable all
 
   # Purpose: Adds VA Notify integration to the original method defined in app/models/decision_document.rb
@@ -21,11 +18,12 @@ module AppealDecisionMailed
       AppellantNotification.appeal_mapper(appeal.id, appeal.class.to_s, "decision_mailed")
       case appeal_type
       when "Appeal"
-        template = appeal.contested_claim? ? CONTESTED_CLAIM : NON_CONTESTED_CLAIM
+        template = appeal.contested_claim? ? "#{@@template_name} (Contested claims)" : "#{@@template_name} (Non-contested claims)"
+        AppellantNotification.notify_appellant(appeal, template)
       when "LegacyAppeal"
-        template = appeal.contested_claim ? CONTESTED_CLAIM : NON_CONTESTED_CLAIM
+        template = appeal.contested_claim ? "#{@@template_name} (Contested claims)" : "#{@@template_name} (Non-contested claims)"
+        AppellantNotification.notify_appellant(appeal, template)
       end
-      AppellantNotification.notify_appellant(appeal, template)
     end
     super_return_value
   end

@@ -7,7 +7,7 @@
 # - Notify requestor upon successful membership request submission
 # - Notify requestor upon change of status of membership request
 # - Notify admins upon successful membership request submission
-# rubocop:disable Rails/ApplicationMailer
+
 class MembershipRequestMailer < ActionMailer::Base
   helper MembershipRequestHelper
   default from: "VHA Benefit Appeals <vhabenefitappeals@messages.va.gov>"
@@ -57,4 +57,3 @@ class MembershipRequestMailer < ActionMailer::Base
     mail(to: @recipient&.email, subject: COPY::VHA_MEMBERSHIP_REQUEST_SUBJECT_LINE_REQUESTOR_DENIED)
   end
 end
-# rubocop:enable Rails/ApplicationMailer

@@ -16,7 +16,7 @@ class HearingEmailRecipient < CaseflowRecord
     :id, :timezone, :email_address, :type
   ].freeze
 
-  RECIPIENT_TITLES = RECIPIENT_ROLES.transform_values(&:capitalize).freeze
+  RECIPIENT_TITLES = RECIPIENT_ROLES.map { |key, role| [key, role.capitalize] }.to_h.freeze
 
   validates :email_address, presence: true, on: :create
   has_many :email_events, class_name: "SentHearingEmailEvent", foreign_key: :email_recipient_id

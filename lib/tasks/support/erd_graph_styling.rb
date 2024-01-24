@@ -8,7 +8,7 @@ module ErdGraphStyling
   # :reek:NestedIterator
   def style_nodes(graph)
     # Set node shape and border style (and occasionally color)
-    NODE_STYLES.each_value do |styling|
+    NODE_STYLES.values.each do |styling|
       styling[:node_names].each do |node_name|
         graph.get_node(node_name) do |node|
           styling[:attribs].each { |key, value| node[key] = value }

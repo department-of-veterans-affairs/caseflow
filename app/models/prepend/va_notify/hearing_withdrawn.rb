@@ -35,7 +35,6 @@ module HearingWithdrawn
   # Params: none
   #
   # Response: none
-  # rubocop:disable Metrics/AbcSize
   def update_appeal_states_on_hearing_withdrawn
     if is_a?(LegacyHearing)
       if VACOLS::CaseHearing.find_by(hearing_pkseq: vacols_id)&.hearing_disp == "C"
@@ -53,5 +52,4 @@ module HearingWithdrawn
       end
     end
   end
-  # rubocop:enable Metrics/AbcSize
 end

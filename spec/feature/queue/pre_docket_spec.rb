@@ -220,7 +220,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
 
           # Some quick data checks to verify that everything saved successfully
           expect(vha_document_search_task.reload.status).to eq Constants.TASK_STATUSES.completed
-          expect(appeal.tasks.last.parent.assigned_to).to eq bva_intake
+          expect(appeal.tasks.last.parent.assigned_to). to eq bva_intake
           expect(appeal.tasks.last.parent.status).to eq Constants.TASK_STATUSES.assigned
 
           # Navigate to the appeal that was just returned to board intake and verify the timeline
@@ -303,7 +303,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             format(COPY::BVA_INTAKE_RETURN_TO_CAREGIVER_CONFIRMATION_TITLE, appeal.veteran_full_name)
           )
 
-          expect(appeal.tasks.last.assigned_to).to eq vha_caregiver
+          expect(appeal.tasks.last.assigned_to). to eq vha_caregiver
         end
 
         step "BVA Intake user sees case in Ready for Review tab. They can docket appeal." do
@@ -726,7 +726,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
             format(COPY::BVA_INTAKE_RETURN_TO_CAMO_CONFIRMATION_TITLE, appeal.veteran_full_name)
           )
 
-          expect(appeal.tasks.last.assigned_to).to eq camo
+          expect(appeal.tasks.last.assigned_to). to eq camo
         end
 
         step "BVA Intake can docket an appeal" do
@@ -1256,7 +1256,7 @@ RSpec.feature "Pre-Docket intakes", :all_dbs do
         format(COPY::BVA_INTAKE_RETURN_TO_EMO_CONFIRMATION_TITLE, emo_task.appeal.veteran_full_name)
       )
 
-      expect(emo_task.appeal.tasks.last.assigned_to).to eq emo
+      expect(emo_task.appeal.tasks.last.assigned_to). to eq emo
     end
 
     it "BVA Intake's 'Docket appeal' modal contains correct org name" do

@@ -83,15 +83,13 @@ class InitialTasksFactory
     when "direct_review"
       parent_task = distribution_task
     end
-    unless parent_task.nil?
-      @send_initial_notification_letter ||= @appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
-                                            SendInitialNotificationLetterTask.create!(
-                                              appeal: @appeal,
-                                              parent: parent_task,
-                                              assigned_to: Organization.find_by_url("clerk-of-the-board"),
-                                              assigned_by: RequestStore[:current_user]
-                                            )
-    end
+    @send_initial_notification_letter ||= @appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
+                                          SendInitialNotificationLetterTask.create!(
+                                            appeal: @appeal,
+                                            parent: parent_task,
+                                            assigned_to: Organization.find_by_url("clerk-of-the-board"),
+                                            assigned_by: RequestStore[:current_user]
+                                          ) unless parent_task.nil?
   end
 
   def create_ihp_task

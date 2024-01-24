@@ -14,4 +14,5 @@ class WorkQueue::PriorlocSerializer
   attribute :exception_flag
   attribute :with_attorney?
   attribute :with_judge?
+
 end

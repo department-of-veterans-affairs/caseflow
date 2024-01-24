@@ -24,8 +24,8 @@ class UpdateAttorneyCaseReview
 
   private
 
-  attr_accessor :document_id
-  attr_reader :id, :user, :success
+  attr_reader :id, :document_id, :user, :success
+  attr_writer :document_id
 
   def case_review
     @case_review ||= AttorneyCaseReview.find_by(id: id)

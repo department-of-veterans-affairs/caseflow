@@ -603,7 +603,6 @@ def check_no_relationships_behavior
   expect(page).to_not have_content("What is the payee code for this claimant?")
 end
 
-# rubocop:disable Metrics/AbcSize
 def check_deceased_veteran_claimant(intake)
   visit "/intake"
 
@@ -642,7 +641,6 @@ def check_deceased_veteran_claimant(intake)
     expect(page).to_not have_content(COPY::DECEASED_CLAIMANT_TITLE)
   end
 end
-# rubocop:enable Metrics/AbcSize
 
 def check_deceased_veteran_cant_be_payee
   visit "/intake"

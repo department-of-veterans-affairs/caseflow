@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ModuleLength
 module HasHearingEmailRecipientsConcern
   extend ActiveSupport::Concern
 
@@ -69,7 +68,6 @@ module HasHearingEmailRecipientsConcern
       (representative_recipient&.email_address.nil? || representative_recipient&.email_sent)
   end
 
-  # rubocop:disable Metrics/MethodLength
   def create_or_update_recipients(type:, email_address:, timezone: nil, email_sent: false)
     # Reload the hearing first
     reload
@@ -101,7 +99,6 @@ module HasHearingEmailRecipientsConcern
 
     email_recipients.find_by(type: type.name)
   end
-  # rubocop:enable Metrics/MethodLength
 
   def veteran_email_address
     appellant_email_address
@@ -139,4 +136,3 @@ module HasHearingEmailRecipientsConcern
     events.each { |event| event.update!(email_recipient: recipient) }
   end
 end
-# rubocop:enable Metrics/ModuleLength

@@ -328,11 +328,10 @@ describe DecisionReview, :postgres do
     it "only returns active request issues" do
       review = build_stubbed(:appeal)
       active_request_issue = create(:request_issue, decision_review: review)
-
-      # Inactive request issue
-      create(:request_issue, closed_at: Time.zone.now, decision_review: review)
-      # Withdrawn request issue
-      create(
+      inactive_request_issue = create(
+        :request_issue, closed_at: Time.zone.now, decision_review: review
+      )
+      withdrawn_request_issue = create(
         :request_issue,
         closed_status: "withdrawn",
         closed_at: Time.zone.now,
@@ -346,16 +345,16 @@ describe DecisionReview, :postgres do
   describe "#withdrawn_request_issues" do
     it "only returns withdrawn request issues" do
       review = build_stubbed(:appeal)
-      # Active request issue
-      create(:request_issue, decision_review: review)
+      active_request_issue = create(:request_issue, decision_review: review)
       withdrawn_request_issue = create(
         :request_issue,
         closed_status: "withdrawn",
         closed_at: Time.zone.now,
         decision_review: review
       )
-      # Inactive request issue
-      create(:request_issue, closed_at: Time.zone.now, decision_review: review)
+      inactive_request_issue = create(
+        :request_issue, closed_at: Time.zone.now, decision_review: review
+      )
 
       expect(review.withdrawn_request_issues).to match_array([withdrawn_request_issue])
     end

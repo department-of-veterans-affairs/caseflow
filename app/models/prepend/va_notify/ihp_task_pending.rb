@@ -54,7 +54,7 @@ module IhpTaskPending
   def create_from_params(params, user)
     super_return_value = super
     task_array = []
-    super_return_value&.appeal&.tasks&.each { |task| task_array.push(task.class.to_s) }
+    super_return_value&.appeal.tasks.each { |task| task_array.push(task.class.to_s) }
     if super_return_value.class.to_s == "IhpColocatedTask" && task_array.include?("IhpColocatedTask")
       appeal = super_return_value.appeal
       MetricsService.record("Sending VSO IHP pending notification to VA Notify for #{appeal.class} "\

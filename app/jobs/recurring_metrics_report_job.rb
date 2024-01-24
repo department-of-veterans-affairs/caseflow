@@ -35,7 +35,7 @@ class RecurringMetricsReportJob < CaseflowJob
     []
   end
 
-  # rubocop:disable Layout/LineLength
+  # rubocop:disable Metrics/LineLength
   def build_report(appeals, async_stats, certification_metric)
     certification_paperless_metric = certification_metric.call[:paperless_metric]
     sc_stats = async_stats.stats[:supplemental_claims]
@@ -53,5 +53,5 @@ class RecurringMetricsReportJob < CaseflowJob
     report << async_stats.as_csv
     report.join("\n")
   end
-  # rubocop:enable Layout/LineLength
+  # rubocop:enable Metrics/LineLength
 end

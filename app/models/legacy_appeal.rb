@@ -112,7 +112,7 @@ class LegacyAppeal < CaseflowRecord
   end
 
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js 'specialIssue` value
-  # rubocop:disable Layout/LineLength
+  # rubocop:disable Metrics/LineLength
   SPECIAL_ISSUES = {
     contaminated_water_at_camp_lejeune: "Contaminated Water at Camp LeJeune",
     dic_death_or_accrued_benefits_united_states: "DIC - death, or accrued benefits - United States",
@@ -140,7 +140,7 @@ class LegacyAppeal < CaseflowRecord
     vocational_rehab: "Vocational Rehabilitation and Employment",
     waiver_of_overpayment: "Waiver of Overpayment"
   }.freeze
-  # rubocop:enable Layout/LineLength
+  # rubocop:enable Metrics/LineLength
 
   # Codes for Appeals Status API
   TYPE_CODES = {
@@ -350,7 +350,6 @@ class LegacyAppeal < CaseflowRecord
   ## BEGIN Hearing specific attributes and methods
 
   attr_writer :hearings
-
   def hearings
     @hearings ||= HearingRepository.hearings_for_appeal(vacols_id)
   end
@@ -382,7 +381,6 @@ class LegacyAppeal < CaseflowRecord
   ## END Hearing specific attributes and methods
 
   attr_writer :cavc_decisions
-
   def cavc_decisions
     @cavc_decisions ||= CAVCDecision.repository.cavc_decisions_by_appeal(vacols_id)
   end
@@ -646,7 +644,6 @@ class LegacyAppeal < CaseflowRecord
   end
 
   attr_writer :issues
-
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
   end

@@ -23,7 +23,7 @@ namespace :fixes do
 
     limit = args.limit&.to_i
 
-    limited = (limit&.> 0)
+    limited = (limit &.> 0)
 
     dry_run = args.dry_run&.to_s&.strip&.upcase != "FALSE"
     if dry_run && args.dry_run.to_i > 0

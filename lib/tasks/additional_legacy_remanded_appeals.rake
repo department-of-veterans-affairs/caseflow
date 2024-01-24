@@ -8,7 +8,7 @@ namespace :additional_legacy_remand_reasons do
   task generate_appeals_with_tasks: :environment do
     class LegacyAppealFactory
       class << self
-        # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity, Style/ConditionalAssignment
+        # rubocop:disable Metrics/MethodLength
         def stamp_out_legacy_appeals_for_attorney(num_appeals_to_create, file_number, user, docket_number, task_type)
           bfcurloc = VACOLS::Staff.find_by(sdomainid: user.css_id).slogid
 
@@ -27,10 +27,7 @@ namespace :additional_legacy_remand_reasons do
             if Rails.env.development? || Rails.env.test?
               key = VACOLS::Folder.maximum(:ticknum).next
             else
-              key = VACOLS::Folder.find_by_sql("SELECT max(to_number(ticknum)) as maxtick FROM FOLDER")
-                .first
-                .maxtick
-                .next
+              key = VACOLS::Folder.find_by_sql("SELECT max(to_number(ticknum)) as maxtick FROM FOLDER").first.maxtick.next
             end
 
             staff = VACOLS::Staff.find_by(sdomainid: user.css_id) # user for local/demo || UAT
@@ -61,7 +58,7 @@ namespace :additional_legacy_remand_reasons do
 
           build_the_cases_in_caseflow(cases, task_type, user)
         end
-        # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity, Style/ConditionalAssignment
+        # rubocop:enable Metrics/MethodLength
 
         def custom_folder_attributes(veteran, docket_number)
           {

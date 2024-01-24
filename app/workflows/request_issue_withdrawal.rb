@@ -21,7 +21,6 @@ class RequestIssueWithdrawal
   private
 
   attr_reader :user, :request_issues_update, :request_issues_data
-
   delegate :review, :withdrawn_request_issue_ids, to: :request_issues_update
 
   def fetch_withdrawn_issues

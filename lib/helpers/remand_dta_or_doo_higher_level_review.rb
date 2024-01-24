@@ -36,7 +36,6 @@ module WarRoom
     private
 
     # Grab qualifying HLRs from the specified report load
-    # rubocop:disable Metrics/MethodLength
     def get_hlrs(rep_load, conn)
       raw_sql = <<~SQL
         WITH oar_list as (SELECT epw."reference_id"        AS "reference_id",
@@ -99,7 +98,6 @@ module WarRoom
 
       conn.execute(raw_sql)
     end
-    # rubocop:enable Metrics/MethodLength
 
     # Method to remand supplemental claims
     def call_remand(ep_ref, _conn)
@@ -116,9 +114,7 @@ module WarRoom
     # Save Logs to S3 Bucket
     def store_logs_in_s3_bucket(report_load, env)
       # Set Client Resources for AWS
-      # rubocop:disable Layout/LineLength
       file_name = "ep_establishment_workaround/#{env}/remand_hlr_logs/remand_dta_or_doo_hlr_report_load_#{report_load}-#{Time.zone.now}"
-      # rubocop:enable Layout/LineLength
       S3Service.store_file("#{@folder_name}/#{file_name}", @logs)
     end
   end

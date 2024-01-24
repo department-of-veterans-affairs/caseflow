@@ -184,8 +184,8 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
       visit("/queue")
       visit("/queue/appeals/#{final_letter_task.appeal.external_id}")
       expect(page).to have_content("SendFinalNotificationLetterTask completed")
-    end
 
+    end
     it "Finalice the process, select Yes in the radio bottom option" do
       initial_letter_task.completed!
       post_initial_task.completed!
@@ -215,5 +215,6 @@ RSpec.feature "Send Final Notification Letter Tasks", :all_dbs do
       expect(page).to have_content("SendFinalNotificationLetterTask completed")
       expect(page).to have_content("Docket Switch")
     end
+
   end
 end

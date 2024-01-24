@@ -38,9 +38,7 @@ class WorkQueue::CavcRemandSerializer
 
   attribute :cavc_remands_appellant_substitution do |object|
     if object.cavc_remands_appellant_substitution
-      WorkQueue::CavcRemandsAppellantSubstitutionSerializer
-        .new(object.cavc_remands_appellant_substitution)
-        .serializable_hash[:data][:attributes]
+      WorkQueue::CavcRemandsAppellantSubstitutionSerializer.new(object.cavc_remands_appellant_substitution).serializable_hash[:data][:attributes]
     end
   end
 end

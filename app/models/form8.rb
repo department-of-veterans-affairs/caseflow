@@ -53,7 +53,9 @@ class Form8 < CaseflowRecord
     Form8.pdf_service.save_pdf_for!(self)
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/AbcSize
   def assign_attributes_from_appeal(appeal)
     ssoc_dates = appeal.ssoc_dates&.sort || []
     ssoc_required = appeal.ssoc_dates.present? ? "Required and furnished" : "Not required"
@@ -95,7 +97,9 @@ class Form8 < CaseflowRecord
       _initial_ssoc_required: ssoc_required
     )
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/AbcSize
 
   def update_certification_date
     update!(certification_date: Time.zone.now.to_date)

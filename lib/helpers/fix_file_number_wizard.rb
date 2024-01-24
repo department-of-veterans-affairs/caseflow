@@ -18,7 +18,6 @@ class FixFileNumberWizard
 
   class Collection
     attr_accessor :klass, :records, :column
-
     delegate :count, to: :records
 
     def initialize(klass, old_file_number)
