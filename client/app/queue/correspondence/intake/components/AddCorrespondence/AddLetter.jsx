@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 // import { connect } from 'react-redux';
 // import { bindActionCreators } from 'redux';
+import TextareaField from '../../../../../components/TextareaField';
 // import Checkbox from '../../../../../components/Checkbox';
 import Button from '../../../../../components/Button';
 import SearchableDropdown from 'app/components/SearchableDropdown';
@@ -18,7 +19,7 @@ export const AddLetter = (props) => {
 
   const [letters, setLetters] = useState([]);
   const [unrelatedTasksCanContinue, setUnrelatedTasksCanContinue] = useState(true);
-  // const [AddLetterButtonState, setAddLetterButtonState] = useState(false);
+  const [customResponseWindowState, setCustomResponseWindowState] = useState(false);
 
   const addLetter = (index) => {
     setLetters([...letters, index]);
@@ -28,6 +29,14 @@ export const AddLetter = (props) => {
     const restLetters = letters.filter((letter) => letter !== index);
 
     setLetters(restLetters);
+  };
+
+  const handleCustomWindowState = (currentOpt) => {
+    if (currentOpt === 'Other') {
+      setCustomResponseWindowState(true);
+    } else {
+      setCustomResponseWindowState(false);
+    }
   };
 
   useEffect(() => {
@@ -68,6 +77,8 @@ export const AddLetter = (props) => {
           <NewLetter radioOptions={radioOptions}
             index={letter}
             removeLetter={removeLetter}
+            customWindows={customResponseWindowState}
+            handleCustomWindowState = {handleCustomWindowState}
           />
         </div>
       )) }
@@ -94,6 +105,8 @@ AddLetter.propTypes = {
   removeLetter: PropTypes.func,
   index: PropTypes.number,
   onContinueStatusChange: PropTypes.func,
+  customResponseWindowState: PropTypes.bool,
+  handleCustomWindowState: PropTypes.func,
 };
 
 export const NewLetter = (props) => {
@@ -159,8 +172,16 @@ export const NewLetter = (props) => {
       <RadioField
         name="How long should the response window be for this response letter?"
         options={radioOptions}
-        // onChange={onChange}
+        onChange={(val) => props.handleCustomWindowState(val)}
       />
+      {props.customWindows &&
+        <TextareaField
+          name="content"
+          label="Provide context and instruction on this task"
+          // value={task.content}
+          // onChange={updateTaskContent}
+        />
+      }
       <br />
       <Button
         name="Remove"
@@ -178,6 +199,8 @@ NewLetter.propTypes = {
   radioOptions: PropTypes.array.isRequired,
   removeLetter: PropTypes.func.isRequired,
   index: PropTypes.number.isRequired,
+  handleCustomWindowState: PropTypes.func,
+  customWindows: PropTypes.bool
 };
 
 export default AddLetter;
