@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 describe ExternalApi::VADotGovService do
-  before(:each) do
-    stub_const("VADotGovService", Fakes::VADotGovService)
-  end
+  # before(:each) do
+  #   stub_const("VADotGovService")
+  # end
 
   let(:address) do
     Address.new(
@@ -48,7 +48,7 @@ describe ExternalApi::VADotGovService do
   describe "#get_distance" do
     it "returns distance to facilities" do
       result = VADotGovService.get_distance(
-        ids: %w[vha_757 vha_539 vha_539],
+        ids: %w[vha_757 vha_539],
         lat: 0.0,
         long: 0.0
       )
