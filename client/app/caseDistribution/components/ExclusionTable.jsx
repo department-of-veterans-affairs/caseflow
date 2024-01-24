@@ -24,24 +24,39 @@ const ExclusionTable = () => {
     }
   ];
 
+  const generateUniqueId = (leverItem, optionValue, index) => `${leverItem}-${optionValue}-${index}`;
+
   return (
     <div className="exclusion-table-container-styling">
       <table >
         <thead>
           <tr>
-            <th className="table-header-styling">{' '}</th>
-            <th className="table-header-styling">
+            <th className={cx('table-header-styling', (isUserAcdAdmin) ? '' :
+              'table-header-member-styling')} scope="column">{' '}</th>
+            <th className={cx('table-header-styling', (isUserAcdAdmin) ? '' :
+              'table-header-member-styling')} scope="column">
               {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_LEGACY_APPEALS_HEADER}
             </th>
-            <th className="table-header-styling">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_HEARINGS_HEADER}</th>
-            <th className="table-header-styling">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_DIRECT_HEADER}</th>
-            <th className="table-header-styling">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_EVIDENCE_HEADER}</th>
+            <th className={cx('table-header-styling', (isUserAcdAdmin) ? '' :
+              'table-header-member-styling')} scope="column">
+              {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_HEARINGS_HEADER}
+            </th>
+            <th className={cx('table-header-styling', (isUserAcdAdmin) ? '' :
+              'table-header-member-styling')} scope="column">
+              {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_DIRECT_HEADER}
+            </th>
+            <th className={cx('table-header-styling', (isUserAcdAdmin) ? '' :
+              'table-header-member-styling')} scope="column">
+              {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_AMA_EVIDENCE_HEADER}
+            </th>
           </tr>
         </thead>
         {isUserAcdAdmin ?
           <tbody>
             <tr>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
+              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-first-col-styling')}
+                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
+              >
                 <span>
                   <h4 className="exclusion-table-header-styling">
                     {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
@@ -53,45 +68,63 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
+              >
                 <span>
                   <RadioField
                     name=""
                     options={options}
                     vertical
+                    uniqueIdGenerator={(option, index) =>
+                      generateUniqueId(DISTRIBUTION.all_non_priority, option.value, index)}
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
+              >
                 <span>
                   <RadioField
                     name=""
                     options={options}
                     vertical
+                    uniqueIdGenerator={(option, index) =>
+                      generateUniqueId(DISTRIBUTION.all_non_priority, option.value, index)}
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
+              >
                 <span>
                   <RadioField
                     name=""
                     options={options}
                     vertical
+                    uniqueIdGenerator={(option, index) =>
+                      generateUniqueId(DISTRIBUTION.all_non_priority, option.value, index)}
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
+              >
                 <span>
                   <RadioField
                     name=""
                     options={options}
                     vertical
+                    uniqueIdGenerator={(option, index) =>
+                      generateUniqueId(DISTRIBUTION.all_non_priority, option.value, index)}
                   />
                 </span>
               </td>
             </tr>
             <tr>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
+              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-first-col-styling')}
+                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
+              >
                 <span>
                   <h4 className="exclusion-table-header-styling">
                     {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
@@ -103,39 +136,54 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}>
                 <span>
                   <RadioField
                     name=""
                     options={options}
                     vertical
+                    uniqueIdGenerator={(option, index) =>
+                      generateUniqueId(DISTRIBUTION.all_priority, option.value, index)}
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
+              >
                 <span>
                   <RadioField
                     name=""
                     options={options}
                     vertical
+                    uniqueIdGenerator={(option, index) =>
+                      generateUniqueId(DISTRIBUTION.all_priority, option.value, index)}
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
+              >
                 <span>
                   <RadioField
                     name=""
                     options={options}
                     vertical
+                    uniqueIdGenerator={(option, index) =>
+                      generateUniqueId(DISTRIBUTION.all_priority, option.value, index)}
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
+              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
+              >
                 <span>
                   <RadioField
                     name=""
                     options={options}
                     vertical
+                    uniqueIdGenerator={(option, index) =>
+                      generateUniqueId(DISTRIBUTION.all_priority, option.value, index)}
                   />
                 </span>
               </td>
@@ -144,45 +192,55 @@ const ExclusionTable = () => {
 
           <tbody>
             <tr>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
-                <h3>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}</h3>
+              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}>
+                <h3 aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}>
+                  {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}</h3>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
+              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}>
                 <label className="exclusion-table-member-view-styling">
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
+              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}>
                 <label className="exclusion-table-member-view-styling">
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
+              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}>
                 <label className="exclusion-table-member-view-styling">
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
+              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}>
                 <label className="exclusion-table-member-view-styling">
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label>
               </td>
             </tr>
+
             <tr>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
-                <h3>All Priority</h3>
+              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}>
+                <h3 aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}>
+                  {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}</h3>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
-                <label className="exclusion-table-member-view-styling">Off</label>
+              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}>
+                <label className="exclusion-table-member-view-styling">
+                  {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}</label>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
-                <label className="exclusion-table-member-view-styling">Off</label>
+              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}>
+                <label className="exclusion-table-member-view-styling">
+                  {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
+                </label>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
-                <label className="exclusion-table-member-view-styling">Off</label>
+              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}>
+                <label className="exclusion-table-member-view-styling">
+                  {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
+                </label>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}>
-                <label className="exclusion-table-member-view-styling">Off</label>
+              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}>
+                <label className="exclusion-table-member-view-styling">
+                  {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
+                </label>
               </td>
             </tr>
           </tbody> }

@@ -37,13 +37,13 @@ export const SaveModal = (props) => {
         <table>
           <tbody>
             <tr>
-              <th className={cx('modal-table-header-styling', 'modal-table-left-styling')}>
+              <th className={cx('modal-table-header-styling', 'modal-table-left-styling')} scope="column">
                 {COPY.CASE_DISTRIBUTION_LEVER_SAVE_BUTTON_DATA}
               </th>
-              <th className={cx('modal-table-header-styling', 'modal-table-right-styling')}>
+              <th className={cx('modal-table-header-styling', 'modal-table-right-styling')} scope="column">
                 {COPY.CASE_DISTRIBUTION_LEVER_HISTORY_PREV_VALUE}
               </th>
-              <th className={cx('modal-table-header-styling', 'modal-table-right-styling')}>
+              <th className={cx('modal-table-header-styling', 'modal-table-right-styling')} scope="column">
                 {COPY.CASE_DISTRIBUTION_LEVER_SAVE_BUTTON_VALUE}
               </th>
             </tr>
@@ -73,10 +73,13 @@ export const SaveModal = (props) => {
       isOpen
       onClose={() => setShowModal(false)}
       closeHandler={() => setShowModal(false)}
-      title={COPY.CASE_DISTRIBUTION_MODAL_TITLE}
-      confirmButton={<Button onClick={handleConfirmButton}>{COPY.MODAL_CONFIRM_BUTTON}</Button>}
-      cancelButton={<Button onClick={() => setShowModal(false)}>{COPY.MODAL_CANCEL_BUTTON}</Button>}
       className="updated-modal-styling"
+      title={COPY.CASE_DISTRIBUTION_MODAL_TITLE}
+      confirmButton={<Button id="save-modal-confirm" onClick={handleConfirmButton}>
+        {COPY.MODAL_CONFIRM_BUTTON}</Button>}
+
+      cancelButton={<Button id="save-modal-cancel" onClick={() => setShowModal(false)}>
+        {COPY.MODAL_CANCEL_BUTTON}</Button>}
     >
       <p>{COPY.CASE_DISTRIBUTION_MODAL_DESCRIPTION}</p>
       {leverList()}

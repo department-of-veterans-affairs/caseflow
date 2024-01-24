@@ -101,9 +101,14 @@ const DocketTimeGoals = () => {
               label={docketTimeGoalLever.unit}
               errorMessage={leverErrors(docketTimeGoalLever.item)}
               onChange={updateNumberFieldLever(docketTimeGoalLever)}
+              disabled={docketTimeGoalLever.is_disabled_in_ui}
             />
           </div>
-          <div className={cx('lever-right', 'docket-lever-right', 'docket-time-lever-num-sec')}>
+          <div
+            className={cx('lever-right', 'docket-lever-right', 'docket-time-lever-num-sec')}
+            aria-label={docketTimeGoalLever.title}
+            id={`${docketTimeGoalLever.item}-lever-middle`}
+          >
             <ToggleSwitch
               id={`toggle-switch-${distributionPriorLever.item}`}
               selected={distributionPriorLever.is_toggle_active}
@@ -122,6 +127,7 @@ const DocketTimeGoals = () => {
                 label={distributionPriorLever.unit}
                 errorMessage={leverErrors(distributionPriorLever.item)}
                 onChange={updateNumberFieldLever(distributionPriorLever)}
+                disabled={distributionPriorLever.is_disabled_in_ui}
               />
             </div>
           </div>
