@@ -52,8 +52,8 @@ class TaskPageUnconnected extends React.PureComponent {
       detailedTaskView = <Disposition handleSave={this.handleSave} />;
     }
 
-    const vhaAdmin = this.props.task.business_line === 'vha' && this.props.isBusinessLineAdmin;
-    const claimHistoryLink = vhaAdmin ?
+    const canViewHistoryLink = this.props.isBusinessLineAdmin && this.props.businessLineConfig.canGenerateClaimHistory;
+    const claimHistoryLink = canViewHistoryLink ?
       <div style={{ float: 'right' }}>
         <Link button="primary" to={`${task.id}/history`}>View History</Link>
       </div> :
@@ -119,7 +119,6 @@ TaskPageUnconnected.propTypes = {
     claimant: PropTypes.object,
     type: PropTypes.string,
     created_at: PropTypes.string,
-    business_line: PropTypes.string
   }),
   businessLine: PropTypes.string,
   decisionIssuesStatus: PropTypes.object,
@@ -129,7 +128,7 @@ TaskPageUnconnected.propTypes = {
     push: PropTypes.func
   }),
   businessLineUrl: PropTypes.string,
-  businessLineConfig: PropTypes.shape({ tabs: PropTypes.array }),
+  businessLineConfig: PropTypes.shape({ tabs: PropTypes.array, canGenerateClaimHistory: PropTypes.bool }),
   isBusinessLineAdmin: PropTypes.bool
 };
 
