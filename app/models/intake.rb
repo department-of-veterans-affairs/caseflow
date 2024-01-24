@@ -272,10 +272,9 @@ class Intake < CaseflowRecord
   def from_decision_review_created_event?
     if from_event?
       # retrieve the record and the event the record is tied to
-      record = EventRecord.find_by(backfill_record_id: id)
-      event = Event.find(record.event_id)
+      event = event_record.event
 
-      event.type == "DecisionReviewCreatedEvent"
+      event.type == DecisionReviewCreatedEvent.name
     else
       return false
     end
@@ -284,7 +283,7 @@ class Intake < CaseflowRecord
   # Check if this Intake is associated with any Event, regardless of type
   # check if this Intake exists in the Event Records table
   def from_event?
-    EventRecord.find_by(backfill_record_id: id).present?
+    event_record.present?
   end
 
   # Optionally implement this methods in subclass

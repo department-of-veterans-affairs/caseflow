@@ -7,7 +7,7 @@ describe EventRecord, :postgres do
     let(:veteran_file_number) { "64205050" }
     let!(:event1) { DecisionReviewCreatedEvent.create!(reference_id: "1") }
     let!(:intake) { Intake.create!(veteran_file_number: veteran_file_number, user: user) }
-    let!(:intake_event_record) { EventRecord.create!(event_id: event1.id, backfill_record: intake) }
+    let!(:intake_event_record) { EventRecord.create!(event: event1, backfill_record: intake) }
     it "Event Record backfill ID and type should match Intake ID and type" do
       expect(intake_event_record.backfill_record_type).to eq("Intake")
       expect(intake_event_record.backfill_record_id).to eq(intake.id)
@@ -22,11 +22,11 @@ describe EventRecord, :postgres do
     let!(:event2) { DecisionReviewCreatedEvent.create!(reference_id: "2") }
     # Intake
     let!(:intake) { Intake.create!(veteran_file_number: veteran_file_number, user: user) }
-    let!(:intake_event_record) { EventRecord.create!(event_id: event2.id, backfill_record: intake) }
+    let!(:intake_event_record) { EventRecord.create!(event: event2, backfill_record: intake) }
     # HLR
     let!(:higher_level_review) { HigherLevelReview.new(veteran_file_number: veteran_file_number) }
     let!(:higher_level_review_event_record) do
-      EventRecord.create!(event_id: event2.id, backfill_record: higher_level_review)
+      EventRecord.create!(event: event2, backfill_record: higher_level_review)
     end
     # SC, not tied to Event
     let!(:supplemental_claim) { SupplementalClaim.new(veteran_file_number: veteran_file_number) }
@@ -40,33 +40,33 @@ describe EventRecord, :postgres do
       )
     end
     let!(:end_product_establishment_event_record) do
-      EventRecord.create!(event_id: event2.id, backfill_record: end_product_establishment)
+      EventRecord.create!(event: event2, backfill_record: end_product_establishment)
     end
     # Claimant
     let!(:appeal) { create(:appeal, receipt_date: 1.year.ago) }
     let!(:claimant) { create(:claimant, decision_review: appeal) }
-    let!(:claimant_event_record) { EventRecord.create!(event_id: event2.id, backfill_record: claimant) }
+    let!(:claimant_event_record) { EventRecord.create!(event: event2, backfill_record: claimant) }
     # Veteran
     let!(:veteran) { Veteran.new(file_number: veteran_file_number) }
-    let!(:veteran_event_record) { EventRecord.create!(event_id: event2.id, backfill_record: veteran) }
+    let!(:veteran_event_record) { EventRecord.create!(event: event2, backfill_record: veteran) }
     # Person
     let!(:person) { create(:person, participant_id: "1129318238") }
-    let!(:person_event_record) { EventRecord.create!(event_id: event2.id, backfill_record: person) }
+    let!(:person_event_record) { EventRecord.create!(event: event2, backfill_record: person) }
     # Request Issue
     let!(:request_issue) { RequestIssue.new(benefit_type: "compensation", decision_review: higher_level_review) }
-    let!(:request_issue_event_record) { EventRecord.create!(event_id: event2.id, backfill_record: request_issue) }
+    let!(:request_issue_event_record) { EventRecord.create!(event: event2, backfill_record: request_issue) }
     # Legacy Issue
     let!(:legacy_issue) { LegacyIssue.new(request_issue_id: request_issue.id, vacols_id: "vacols111", vacols_sequence_id: 1) }
-    let!(:legacy_issue_event_record) { EventRecord.create!(event_id: event2.id, backfill_record: legacy_issue) }
+    let!(:legacy_issue_event_record) { EventRecord.create!(event: event2, backfill_record: legacy_issue) }
     # Legacy Issue Optin
     let!(:legacy_issue_optin) { LegacyIssueOptin.new(request_issue_id: request_issue.id) }
     let!(:legacy_issue_optin_event_record) do
-      EventRecord.create!(event_id: event2.id, backfill_record: legacy_issue_optin)
+      EventRecord.create!(event: event2, backfill_record: legacy_issue_optin)
     end
     # User
     let(:session) { { "user" => { "id" => "BrockPurdy", "station_id" => "310", "name" => "Brock Purdy" } } }
     let(:user) { User.from_session(session) }
-    let!(:user_event_record) { EventRecord.create!(event_id: event2.id, backfill_record: user) }
+    let!(:user_event_record) { EventRecord.create!(event: event2, backfill_record: user) }
     it "10 Event Records Backfilled ID and Type correctly match" do
       expect(higher_level_review_event_record.backfill_record_type).to eq("HigherLevelReview")
       expect(higher_level_review_event_record.backfill_record_id).to eq(higher_level_review.id)
