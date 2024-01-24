@@ -349,4 +349,55 @@ export const unknownDataTypeStaticLevers = [
     "lever_group_order": 0
   }
 ];
+
+export const docketDistributionPriorTestLevers = [
+  {
+    "item": "ama_hearings_start_distribution_prior_to_goals",
+    "title": 'AMA Hearings Start Distribution Prior to Goals',
+    "description": '',
+    "data_type": "combination",
+    "value": 770,
+    "unit": "days",
+    "options": [
+      {
+        "item": 'value',
+        "data_type": "boolean",
+        "value": true,
+        "text": 'This feature is turned on or off',
+        "unit": ''
+      }
+    ],
+    "is_toggle_active": false,
+    "is_disabled_in_ui": true,
+    "min_value": 0,
+    "max_value": 100,
+    "algorithms_used": ["proportion"],
+    "lever_group": "docket_distribution_prior",
+    "lever_group_order": 4000
+  },
+  {
+    "item": "ama_direct_review_start_distribution_prior_to_goals",
+    "title": 'AMA Direct Review Start Distribution Prior to Goals',
+    "description": '',
+    "data_type": "combination",
+    "value": 770,
+    "unit": "days",
+    "options": [
+      {
+        "item": 'value',
+        "data_type": "boolean",
+        "value": true,
+        "text": 'This feature is turned on or off',
+        "unit": ''
+      }
+    ],
+    "is_toggle_active": false,
+    "is_disabled_in_ui": true,
+    "min_value": 0,
+    "max_value": 100,
+    "algorithms_used": ["proportion"],
+    "lever_group": "docket_distribution_prior",
+    "lever_group_order": 4001
+  }
+];
 /* END Outlier Test Data for Testing Coverage */
