@@ -69,7 +69,8 @@ Rails.application.routes.draw do
 
     namespace :events do
       namespace :v1 do
-        post '/decision_review_created', to: 'decision_reviews#decision_review_created'
+        post '/decision_review_created', to: 'decision_review_created#decision_review_created'
+        post '/decision_review_created_error',  to: 'decision_review_created#decision_review_created_error'
       end
     end
 
