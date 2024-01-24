@@ -31,7 +31,7 @@ shared_examples "SpecialIssueList belongs_to polymorphic appeal" do
         end
 
         context "when eager loading with `includes`" do
-          subject { SpecialIssueList.ama.includes(:ama_appeal) }
+          subject { SpecialIssueList.ama.includes(:appeal) }
 
           let!(:_legacy_special_issue_list) { create(:special_issue_list, :legacy) }
 
@@ -46,7 +46,7 @@ shared_examples "SpecialIssueList belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.ama_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
@@ -54,7 +54,7 @@ shared_examples "SpecialIssueList belongs_to polymorphic appeal" do
         end
 
         context "when eager loading with `preload`" do
-          subject { SpecialIssueList.ama.preload(:ama_appeal) }
+          subject { SpecialIssueList.ama.preload(:appeal) }
 
           let!(:_legacy_special_issue_list) { create(:special_issue_list, :legacy) }
 
@@ -69,27 +69,10 @@ shared_examples "SpecialIssueList belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.ama_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
-          end
-        end
-
-        context "when called on an individual SpecialIssueList" do
-          subject { special_issue_list.ama_appeal }
-
-          context "when the SpecialIssueList is not associated with an AMA appeal" do
-            let(:special_issue_list) { create(:special_issue_list, :legacy) }
-
-            it { should be_nil }
-          end
-
-          context "when the SpecialIssueList is associated with an AMA appeal" do
-            let(:special_issue_list) { create(:special_issue_list, appeal: ama_appeal) }
-            let(:ama_appeal) { create(:appeal) }
-
-            it { should eq(ama_appeal) }
           end
         end
       end
@@ -116,7 +99,7 @@ shared_examples "SpecialIssueList belongs_to polymorphic appeal" do
         end
 
         context "when eager loading with `includes`" do
-          subject { SpecialIssueList.legacy.includes(:legacy_appeal) }
+          subject { SpecialIssueList.legacy.includes(:appeal) }
 
           let!(:_ama_special_issue_list) { create(:special_issue_list, :ama) }
 
@@ -131,7 +114,7 @@ shared_examples "SpecialIssueList belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.legacy_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
@@ -139,7 +122,7 @@ shared_examples "SpecialIssueList belongs_to polymorphic appeal" do
         end
 
         context "when eager loading with `preload`" do
-          subject { SpecialIssueList.legacy.preload(:legacy_appeal) }
+          subject { SpecialIssueList.legacy.preload(:appeal) }
 
           let!(:_ama_special_issue_list) { create(:special_issue_list, :ama) }
 
@@ -154,27 +137,10 @@ shared_examples "SpecialIssueList belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.legacy_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
-          end
-        end
-
-        context "when called on an individual SpecialIssueList" do
-          subject { special_issue_list.legacy_appeal }
-
-          context "when the SpecialIssueList is not associated with a Legacy appeal" do
-            let(:special_issue_list) { create(:special_issue_list, :ama) }
-
-            it { should be_nil }
-          end
-
-          context "when the SpecialIssueList is associated with a Legacy appeal" do
-            let(:special_issue_list) { create(:special_issue_list, appeal: legacy_appeal) }
-            let(:legacy_appeal) { create(:legacy_appeal) }
-
-            it { should eq(legacy_appeal) }
           end
         end
       end
