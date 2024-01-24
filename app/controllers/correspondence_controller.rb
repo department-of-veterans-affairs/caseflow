@@ -281,7 +281,7 @@ class CorrespondenceController < ApplicationController
     @tasks = CorrespondenceTask.all
   end
 
-  # Temporary method to return all CorrespondenceTasks
+  # Temporary method to return CorrespondenceTasks assigned to current_user
   def user_correspondence
     @tasks = CorrespondenceTask.where(tasks: { assigned_to_id: current_user.id })
   end

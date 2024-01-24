@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ApiUtil from '../../util/ApiUtil';
-import { loadCorrespondenceTasks } from './correspondenceReducer/correspondenceActions';
+import { loadCorrespondenceConfig } from './correspondenceReducer/correspondenceActions';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
@@ -20,12 +20,12 @@ import Alert from '../../components/Alert';
 class CorrespondenceCases extends React.PureComponent {
 
   // now grabs tasks and loads into redux store
-  getCorrespondenceTasks() {
+  getCorrespondenceConfig() {
     return ApiUtil.get('/queue/correspondence/?json').then((response) => {
       const returnedObject = response.body;
-      const correspondenceTasks = returnedObject.correspondenceTasks;
+      const correspondenceConfig = returnedObject.correspondenceConfig;
 
-      this.props.loadCorrespondenceTasks(correspondenceTasks);
+      this.props.loadCorrespondenceConfig(correspondenceConfig);
     }).
       catch((err) => {
         // allow HTTP errors to fall on the floor via the console.
@@ -37,7 +37,7 @@ class CorrespondenceCases extends React.PureComponent {
   componentDidMount() {
     // Retry the request after a delay
     setTimeout(() => {
-      this.getCorrespondenceTasks();
+      this.getCorrespondenceConfig();
     }, 1000);
   }
 
@@ -65,9 +65,9 @@ class CorrespondenceCases extends React.PureComponent {
             message={COPY.CORRESPONDENCE_MESSAGE_REMOVE_PACKAGE_BANNER} scrollOnAlert={false} />}
           <h1 {...css({ display: 'inline-block' })}>{COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES}</h1>
           <QueueOrganizationDropdown organizations={organizations} />
-          {this.props.correspondenceTasks &&
+          {this.props.correspondenceConfig &&
           <CorrespondenceTable
-            correspondenceTasks={this.props.correspondenceTasks}
+            correspondenceConfig={this.props.correspondenceConfig}
           />
           }
         </AppSegment>
@@ -78,21 +78,21 @@ class CorrespondenceCases extends React.PureComponent {
 
 CorrespondenceCases.propTypes = {
   organizations: PropTypes.array,
-  loadCorrespondenceTasks: PropTypes.func,
-  correspondenceTasks: PropTypes.array,
+  loadCorrespondenceConfig: PropTypes.func,
+  correspondenceConfig: PropTypes.array,
   currentAction: PropTypes.object,
   veteranInformation: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({
-  correspondenceTasks: state.intakeCorrespondence.correspondenceTasks,
+  correspondenceConfig: state.intakeCorrespondence.correspondenceConfig,
   currentAction: state.reviewPackage.lastAction,
   veteranInformation: state.reviewPackage.veteranInformation
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    loadCorrespondenceTasks,
+    loadCorrespondenceConfig,
   }, dispatch)
 );
 

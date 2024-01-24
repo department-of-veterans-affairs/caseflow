@@ -45,10 +45,10 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
       }
     });
 
-  case ACTIONS.LOAD_CORRESPONDENCE_TASKS:
+  case ACTIONS.LOAD_CORRESPONDENCE_CONFIG:
     return update(state, {
-      correspondenceTasks: {
-        $set: action.payload.correspondenceTasks
+      correspondenceConfig: {
+        $set: action.payload.correspondenceConfig
       }
     });
 

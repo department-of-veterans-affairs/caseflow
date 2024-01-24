@@ -47,7 +47,7 @@ class CorrespondenceTable extends React.Component {
       <QueueTable
         className="assign-correspondence-table"
         columns={columns}
-        rowObjects={this.props.correspondenceTasks}
+        rowObjects={this.props.correspondenceConfig}
         summary="scheduled-hearings-table"
         enablePagination
         tabPaginationOptions={tabPaginationOptions}
@@ -60,8 +60,8 @@ CorrespondenceTable.propTypes = {
   hearingScheduleColumns: PropTypes.array,
   hearingScheduleRows: PropTypes.array,
   onApply: PropTypes.func,
-  loadCorrespondenceTasks: PropTypes.func,
-  correspondenceTasks: PropTypes.array,
+  loadCorrespondenceConfig: PropTypes.func,
+  correspondenceConfig: PropTypes.array,
   history: PropTypes.object,
   user: PropTypes.shape({
     userCanBuildHearingSchedule: PropTypes.bool

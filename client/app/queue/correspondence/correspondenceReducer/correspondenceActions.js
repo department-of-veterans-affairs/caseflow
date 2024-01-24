@@ -40,12 +40,12 @@ export const loadVetCorrespondence = (vetCorrespondences) =>
     });
   };
 
-export const loadCorrespondenceTasks = (correspondenceTasks) =>
+export const loadCorrespondenceConfig = (correspondenceConfig) =>
   (dispatch) => {
     dispatch({
-      type: ACTIONS.LOAD_CORRESPONDENCE_TASKS,
+      type: ACTIONS.LOAD_CORRESPONDENCE_CONFIG,
       payload: {
-        correspondenceTasks
+        correspondenceConfig
       }
     });
   };
