@@ -349,4 +349,43 @@ export const unknownDataTypeStaticLevers = [
     "lever_group_order": 0
   }
 ];
+
+export const modalOriginalTestLevers = [
+  {
+    "item": "modal-test-combination-lever",
+    "title": "Lever 12",
+    "description": "This is the ninth lever. It is a radio data type with the default value of option_1. Therefore there should be a radio options displayed and option_1 is selected by default. If the option is text only the text is displayed, but if it is a different data type then the appropriate input and unit are displayed and the value stored. This lever is active so it should be in the active lever section",
+    "data_type": "combination",
+    "value": 50,
+    "unit": "Days",
+    "options": [
+        {
+        "item": "option_1",
+        "data_type": "boolean",
+        "value": false,
+        "text": "This feature is turned on or off",
+        "unit": ""
+        }
+    ],
+    "is_toggle_active": false,
+    "is_disabled_in_ui": true,
+    "lever_group": "docket_distribution_prior",
+    "lever_group_order": 11
+  },
+  {
+    "item": 'modal-test-number-lever',
+    "title": 'Alternate Batch Size*',
+    "description": 'Sets case-distribution batch size for judges who do not have their own attorney teams.',
+    "data_type": 'number',
+    "value": 15,
+    "unit": "cases",
+    "is_toggle_active": true,
+    "is_disabled_in_ui": false,
+    "min_value": 0,
+    "max_value": null,
+    "algorithms_used": ["docket", "proportion"],
+    "lever_group": "batch",
+    "lever_group_order": 2000
+  },
+];
 /* END Outlier Test Data for Testing Coverage */
