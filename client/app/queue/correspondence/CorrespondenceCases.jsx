@@ -23,7 +23,7 @@ class CorrespondenceCases extends React.PureComponent {
   getCorrespondenceConfig() {
     return ApiUtil.get('/queue/correspondence/?json').then((response) => {
       const returnedObject = response.body;
-      const correspondenceConfig = returnedObject.correspondenceConfig;
+      const correspondenceConfig = returnedObject.correspondence_config;
 
       this.props.loadCorrespondenceConfig(correspondenceConfig);
     }).
