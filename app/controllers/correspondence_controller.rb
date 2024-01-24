@@ -43,7 +43,7 @@ class CorrespondenceController < ApplicationController
     respond_to do |format|
       format.html { "correspondence_cases" }
       format.json do
-        render json: { correspondenceTasks: user_correspondence_tasks }
+        render json: { correspondence_config: user_correspondence}
       end
     end
   end
@@ -111,7 +111,7 @@ class CorrespondenceController < ApplicationController
       respond_to do |format|
         format.html { "correspondence_team" }
         format.json do
-          render json: { correspondenceTasks: all_correspondence_tasks }
+          render json: { correspondence_config: all_correspondence }
         end
       end
     else
@@ -276,14 +276,17 @@ class CorrespondenceController < ApplicationController
     veterans.map { |veteran| vet_info_serializer(veteran, veteran.correspondences.last) }
   end
 
-  def all_correspondence_tasks
+  # Temporary method to return all CorrespondenceTasks
+  def all_correspondence
     @tasks = CorrespondenceTask.all
   end
 
-  def user_correspondence_tasks
+  # Temporary method to return all CorrespondenceTasks
+  def user_correspondence
     @tasks = CorrespondenceTask.where(tasks: { assigned_to_id: current_user.id })
   end
 
+  # Temporary task info serializer
   def task_info_serializer(task)
     {
       taskType: task.type,
