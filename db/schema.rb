@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_01_10_185623) do
+ActiveRecord::Schema.define(version: 2024_01_22_174056) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -623,6 +623,19 @@ ActiveRecord::Schema.define(version: 2024_01_10_185623) do
     t.datetime "updated_at", null: false
     t.index ["correspondence_id", "related_correspondence_id"], name: "index_correspondence_relations_on_correspondences", unique: true
     t.index ["related_correspondence_id", "correspondence_id"], name: "index_correspondence_relations_on_related_correspondences", unique: true
+  end
+
+  create_table "correspondence_response_letters", force: :cascade do |t|
+    t.integer "correspondence_id", comment: "Foreign key on correspondences table"
+    t.datetime "created_at", null: false
+    t.datetime "date_sent", comment: "Date at the time of sending correspondence response letters"
+    t.string "reason", comment: "Reason for selecting the response letter"
+    t.integer "response_window", comment: "The response window selected for the correspondence response letter"
+    t.string "subcategory", comment: "The subcategory selected for the correspondence response letter "
+    t.string "title", null: false, comment: "Correspondence response letters title"
+    t.string "type", null: false, comment: "Correspondence response letter type"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", comment: "The user who has created correspondence response letter"
   end
 
   create_table "correspondence_types", force: :cascade do |t|
