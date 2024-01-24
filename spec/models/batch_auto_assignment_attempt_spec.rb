@@ -2,6 +2,7 @@
 
 describe BatchAutoAssignmentAttempt do
   describe "Associations" do
+    it { should belong_to(:user).required }
     it { should have_many(:individual_auto_assignment_attempts).dependent(:destroy) }
   end
 

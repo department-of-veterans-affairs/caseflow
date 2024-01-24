@@ -237,6 +237,8 @@ ActiveRecord::Schema.define(version: 2024_01_24_182959) do
     t.jsonb "statistics"
     t.string "status", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false, comment: "Foreign key to users table"
+    t.index ["user_id"], name: "index_baaa_on_user_id"
   end
 
   create_table "batch_processes", primary_key: "batch_id", id: :uuid, default: -> { "uuid_generate_v4()" }, comment: "A generalized table for batching and processing records within caseflow", force: :cascade do |t|
@@ -2266,6 +2268,7 @@ ActiveRecord::Schema.define(version: 2024_01_24_182959) do
   add_foreign_key "appellant_substitutions", "users", column: "created_by_id"
   add_foreign_key "attorney_case_reviews", "users", column: "attorney_id"
   add_foreign_key "attorney_case_reviews", "users", column: "reviewing_judge_id"
+  add_foreign_key "batch_auto_assignment_attempts", "users"
   add_foreign_key "board_grant_effectuations", "appeals"
   add_foreign_key "board_grant_effectuations", "decision_documents"
   add_foreign_key "board_grant_effectuations", "decision_issues", column: "granted_decision_issue_id"
