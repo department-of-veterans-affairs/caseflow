@@ -3,7 +3,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from 'app/components/Button';
 import COPY from '../../../COPY';
-import { revertLevers } from '../reducers/levers/leversActions';
+import { revertLevers, resetAllLeverErrors } from '../reducers/levers/leversActions';
 
 export const LeverCancelButton = () => {
   const theState = useSelector((state) => state);
@@ -11,6 +11,7 @@ export const LeverCancelButton = () => {
 
   const cancelButtonActions = () => {
     dispatch(revertLevers(theState));
+    dispatch(resetAllLeverErrors());
   };
 
   return (

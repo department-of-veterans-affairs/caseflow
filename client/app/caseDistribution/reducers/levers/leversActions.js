@@ -134,7 +134,7 @@ export const hideSuccessBanner = () =>
     });
   };
 
-  export const addLeverErrors = (errors) =>
+export const addLeverErrors = (errors) =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.ADD_LEVER_VALIDATION_ERRORS,
@@ -144,12 +144,19 @@ export const hideSuccessBanner = () =>
     });
   };
 
-  export const removeLeverErrors = (leverItem) =>
+export const removeLeverErrors = (leverItem) =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.REMOVE_LEVER_VALIDATION_ERRORS,
       payload: {
         leverItem
       }
+    });
+  };
+
+export const resetAllLeverErrors = () =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.RESET_ALL_VALIDATION_ERRORS
     });
   };
