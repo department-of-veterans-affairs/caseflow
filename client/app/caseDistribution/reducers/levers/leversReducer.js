@@ -109,14 +109,19 @@ const leversReducer = (state = initialState, action = {}) => {
       leversErrors: leverErrorMessageExists(state.leversErrors, action.payload.errors) ?
         state.leversErrors : [...state.leversErrors, ...action.payload.errors]
     };
-  case ACTIONS.REMOVE_LEVER_VALIDATION_ERRORS:
+  case ACTIONS.REMOVE_LEVER_VALIDATION_ERRORS: {
     const errorList = [...new Set(state.leversErrors.filter((error) => error.leverItem !== action.payload.leverItem))];
 
     return {
       ...state,
       leversErrors: errorList
     };
-
+  }
+  case ACTIONS.RESET_ALL_VALIDATION_ERRORS:
+    return {
+      ...state,
+      leversErrors: []
+    };
   default:
     return state;
   }

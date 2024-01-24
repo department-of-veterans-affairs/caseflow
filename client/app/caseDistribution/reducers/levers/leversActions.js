@@ -167,3 +167,10 @@ export const removeLeverErrors = (leverItem) =>
       }
     });
   };
+
+export const resetAllLeverErrors = () =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.RESET_ALL_VALIDATION_ERRORS
+    });
+  };
