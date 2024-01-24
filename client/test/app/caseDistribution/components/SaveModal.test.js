@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, waitFor } from '@testing-library/react';
+import { render, waitFor, fireEvent } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import SaveModal from '../../../../app/caseDistribution/components/SaveModal';
 import { createStore, applyMiddleware } from 'redux';
@@ -8,6 +8,7 @@ import thunk from 'redux-thunk';
 import { levers, testingBatchLevers } from '../../../data/adminCaseDistributionLevers';
 import { loadLevers, setUserIsAcdAdmin } from 'app/caseDistribution/reducers/levers/leversActions';
 import { mount } from 'enzyme';
+import COPY from '../../../../COPY';
 
 describe('Save Modal', () => {
 
@@ -22,17 +23,27 @@ describe('Save Modal', () => {
   let batchSizeLevers = levers.filter((lever) => (lever.lever_group === 'batch'));
   let leversWithBatchLevers = { batch: batchSizeLevers };
 
-  it('renders the Save Modal for Member Users', () => {
+  it('renders the Save Modal for Member Users', async () => {
     const store = getStore();
+
+    const setShowModal = jest.fn();
+
+    let handleConfirmButton = jest.fn();
 
     store.dispatch(loadLevers(leversWithBatchLevers));
     store.dispatch(setUserIsAcdAdmin(false));
 
-    render(
+    const { getByText } = render(
       <Provider store={store}>
-        <SaveModal />
+        <SaveModal setShowModal={setShowModal} handleConfirmButton={handleConfirmButton} />
       </Provider>
     );
-    expect(document.querySelector('#modal_id-title')).toBeNull();
+
+    fireEvent.click(getByText(COPY.MODAL_CONFIRM_BUTTON));
+
+    await waitFor(() => {});
+
+    expect(setShowModal).toHaveBeenCalledWith(false);
+    expect(handleConfirmButton).toHaveBeenCalled();
   });
 });
