@@ -42,6 +42,5 @@ RSpec.feature("The Correspondence Cases page") do
         )
       end
     end
-
   end
 end

@@ -73,6 +73,7 @@ class SeedDB
     call_and_log_seed_step Seeds::StaticTestCaseData
     call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
     call_and_log_seed_step Seeds::AutoTexts
+    call_and_log_seed_step Seeds::AutoAssign
   end
 end
 
