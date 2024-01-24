@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_01_18_184304) do
+ActiveRecord::Schema.define(version: 2024_01_24_182959) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -222,6 +222,21 @@ ActiveRecord::Schema.define(version: 2024_01_18_184304) do
     t.index ["appeal_id", "appeal_type"], name: "index_available_hearing_locations_on_appeal_id_and_appeal_type"
     t.index ["updated_at"], name: "index_available_hearing_locations_on_updated_at"
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
+  end
+
+  create_table "batch_auto_assignment_attempts", force: :cascade do |t|
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.jsonb "error_info"
+    t.datetime "errored_at"
+    t.integer "num_nod_packages_assigned"
+    t.integer "num_nod_packages_unassigned"
+    t.integer "num_packages_assigned"
+    t.integer "num_packages_unassigned"
+    t.datetime "started_at"
+    t.jsonb "statistics"
+    t.string "status", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "batch_processes", primary_key: "batch_id", id: :uuid, default: -> { "uuid_generate_v4()" }, comment: "A generalized table for batching and processing records within caseflow", force: :cascade do |t|
@@ -1136,6 +1151,23 @@ ActiveRecord::Schema.define(version: 2024_01_18_184304) do
     t.string "path", null: false, comment: "Path to the IHP in the VA V: drive"
     t.datetime "updated_at", null: false, comment: "Default created_at/updated_at timestamps"
     t.index ["appeal_id", "appeal_type", "organization_id"], name: "index_ihp_drafts_on_appeal_and_organization"
+  end
+
+  create_table "individual_auto_assignment_attempts", force: :cascade do |t|
+    t.bigint "batch_auto_assignment_attempt_id", null: false, comment: "Foreign key to batch_auto_assignment_attempts table"
+    t.datetime "completed_at"
+    t.bigint "correspondence_id", null: false, comment: "Foreign key to correspondences table"
+    t.datetime "created_at", null: false
+    t.datetime "errored_at"
+    t.boolean "nod", default: false, null: false
+    t.datetime "started_at"
+    t.jsonb "statistics"
+    t.string "status", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false, comment: "Foreign key to users table"
+    t.index ["batch_auto_assignment_attempt_id"], name: "index_iaaa_on_batch_auto_assignment_attempt_id"
+    t.index ["correspondence_id"], name: "index_iaaa_on_correspondence_id"
+    t.index ["user_id"], name: "index_iaaa_on_user_id"
   end
 
   create_table "intakes", id: :serial, comment: "Represents the intake of an form or request made by a veteran.", force: :cascade do |t|
@@ -2312,6 +2344,9 @@ ActiveRecord::Schema.define(version: 2024_01_18_184304) do
   add_foreign_key "hearings", "users", column: "judge_id"
   add_foreign_key "hearings", "users", column: "updated_by_id"
   add_foreign_key "ihp_drafts", "organizations"
+  add_foreign_key "individual_auto_assignment_attempts", "batch_auto_assignment_attempts"
+  add_foreign_key "individual_auto_assignment_attempts", "correspondences"
+  add_foreign_key "individual_auto_assignment_attempts", "users"
   add_foreign_key "intakes", "users"
   add_foreign_key "intakes", "veterans"
   add_foreign_key "job_notes", "users"
