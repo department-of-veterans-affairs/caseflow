@@ -46,7 +46,7 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
       return_to_name = task.is_a?(AttorneyTask) ? task.parent.assigned_to.full_name : task_assigner_name(task)
       {
         modal_title: COPY::CANCEL_TASK_MODAL_TITLE,
-        modal_body: format(COPY::CANCEL_TASK_MODAL_DETAIL, return_to_name),
+        modal_body: format_cancel_body(task, COPY::CANCEL_TASK_MODAL_DETAIL, return_to_name),
         message_title: format(COPY::CANCEL_TASK_CONFIRMATION, task.appeal.veteran_full_name),
         message_detail: format(COPY::MARK_TASK_COMPLETE_CONFIRMATION_DETAIL, return_to_name)
       }
@@ -110,6 +110,14 @@ class TaskActionRepository # rubocop:disable Metrics/ClassLength
           task.appeal.veteran_full_name
         )
       }
+    end
+
+    def format_cancel_body(task, text, name)
+      if task.is_a?(MailTask)
+        ""
+      else
+        format(text, name)
+      end
     end
 
     def assign_to_hearings_user_data(task, user = nil)
