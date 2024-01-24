@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CorrespondenceInProgressTasksTab < CorrespondenceQueueTab
   validate :assignee_is_user
 
@@ -20,9 +22,9 @@ class CorrespondenceInProgressTasksTab < CorrespondenceQueueTab
   def column_names
     [
       "Veteran Details",
-      "Package Document Type",
       "VA DOR",
-      "Days Waiting"
+      "Days Waiting",
+      "Notes"
     ]
   end
 end
