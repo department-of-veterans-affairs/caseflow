@@ -647,7 +647,6 @@ describe Docket, :all_dbs do
 
         before do
           # Force the distribution tasks to be assigned so it can be distributed
-          # TODO: See if :ready_for_distribution fixes this
           appeals.each do |appeal|
             appeal.tasks.of_type(:DistributionTask).first.assigned!
           end

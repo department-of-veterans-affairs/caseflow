@@ -105,7 +105,6 @@ class Docket
         distributed_case.rename_for_redistribution!
         new_dist_case = create_distribution_case_for_task(distribution, task, priority)
         # In a race condition for distributions, two JudgeAssignTasks will be created; this cancels the first one
-        # TODO: See if I need a cancel previous SCT assign task
         cancel_previous_judge_assign_task(task.appeal, distribution.judge.id)
         # Returns the new DistributedCase as expected by calling methods; case in elsif is implicitly returned
         new_dist_case
@@ -150,6 +149,7 @@ class Docket
     FeatureToggle.enabled?(:specialty_case_team_distribution, user: RequestStore.store[:current_user])
   end
 
+  # :reek:FeatureEnvy
   def create_distribution_case_for_task(distribution, task, priority)
     distribution.distributed_cases.create!(case_id: task.appeal.uuid,
                                            docket: docket_type,

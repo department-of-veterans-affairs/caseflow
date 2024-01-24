@@ -36,6 +36,7 @@ module DistributionConcern
   end
 
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  # :reek:FeatureEnvy
   def create_sct_appeals(appeals_args, limit)
     sct_predicates = [
       proc { |appeal| appeal.request_issues.any? { |issue| issue.benefit_type == "vha" } }

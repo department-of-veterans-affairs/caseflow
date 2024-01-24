@@ -548,8 +548,10 @@ FactoryBot.define do
         end
         assigned_to { SpecialtyCaseTeam.singleton }
         parent { appeal.root_task || create(:root_task, appeal: appeal) }
-        # TODO: Also create a distribution task unless it should be done from appeal
-        # Maybe should also give it request issues?
+
+        after(:create) do |task, _evaluator|
+          task.appeal.tasks.of_type(:DistributionTask).first.completed!
+        end
       end
 
       factory :assign_hearing_disposition_task, class: AssignHearingDispositionTask do

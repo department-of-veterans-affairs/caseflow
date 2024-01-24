@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# :reek:TooManyInstanceVariables
 class HearingRequestCaseDistributor
   include DistributionConcern
 
@@ -30,7 +31,6 @@ class HearingRequestCaseDistributor
         new_dist_case = create_distribution_case_for_task(task, genpop_value)
 
         # In a race condition for distributions, two JudgeAssignTasks will be created; this cancels the first one
-        # TODO: See if this needs to be done for SCT assign task as well?
         cancel_previous_judge_assign_task(task.appeal, distribution.judge.id)
         # Returns the new DistributedCase as expected by calling methods; case in elsif is implicitly returned
         new_dist_case
