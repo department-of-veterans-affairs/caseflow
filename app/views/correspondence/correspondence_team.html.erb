@@ -6,6 +6,7 @@
     userCssId: current_user.css_id,
     organizations: current_user.selectable_organizations.map {|o| o.slice(:name, :url)},
     caseSearchHomePage: case_search_home_page,
+    configUrl: "team?json",
     dropdownUrls: dropdown_urls,
     applicationUrls: application_urls,
     feedbackUrl: feedback_url,

@@ -21,9 +21,9 @@ class CorrespondenceCases extends React.PureComponent {
 
   // now grabs tasks and loads into redux store
   getCorrespondenceConfig() {
-    return ApiUtil.get('/queue/correspondence/?json').then((response) => {
+    return ApiUtil.get(this.props.configUrl).then((response) => {
       const returnedObject = response.body;
-      const correspondenceConfig = returnedObject.correspondenceConfig;
+      const correspondenceConfig = returnedObject.correspondence_config;
 
       this.props.loadCorrespondenceConfig(correspondenceConfig);
     }).
@@ -81,7 +81,8 @@ CorrespondenceCases.propTypes = {
   loadCorrespondenceConfig: PropTypes.func,
   correspondenceConfig: PropTypes.array,
   currentAction: PropTypes.object,
-  veteranInformation: PropTypes.object
+  veteranInformation: PropTypes.object,
+  configUrl: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
