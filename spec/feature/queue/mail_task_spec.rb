@@ -285,9 +285,7 @@ RSpec.feature "MailTasks", :postgres do
         if appeal.hearings.any?
           postpone_payload = AppellantNotification.create_payload(appeal, "Postponement of hearing")
             .to_json
-          using_wait_time(30) do
-            expect(SendNotificationJob).to receive(:perform_later).with(postpone_payload)
-          end
+          expect(SendNotificationJob).to receive(:perform_later).with(postpone_payload)
         end
         expect(SendNotificationJob).to receive(:perform_later).with(scheduled_payload)
       end

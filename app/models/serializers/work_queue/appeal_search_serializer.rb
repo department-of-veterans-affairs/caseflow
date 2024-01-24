@@ -139,8 +139,4 @@ class WorkQueue::AppealSearchSerializer
       WorkQueue::DocketSwitchSerializer.new(object.docket_switch).serializable_hash[:data][:attributes]
     end
   end
-
-  attribute :evidence_submission_task do |object|
-    object.tasks.find_by(type: "EvidenceSubmissionWindowTask", status: "assigned")
-  end
 end

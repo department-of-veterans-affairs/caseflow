@@ -113,17 +113,13 @@ class TeamManagementController < ApplicationController
   end
 
   def other_orgs
-    rejected_orgs = [
-      JudgeTeam,
-      DvcTeam,
-      Representative,
-      VhaProgramOffice,
-      VhaRegionalOffice,
-      EducationRpo,
-      MailTeamSupervisor
-    ]
     Organization.order(:name).reject do |org|
-      rejected_orgs.any? { |excluded_org| org.is_a?(excluded_org) }
+      org.is_a?(JudgeTeam) ||
+        org.is_a?(DvcTeam) ||
+        org.is_a?(Representative) ||
+        org.is_a?(VhaProgramOffice) ||
+        org.is_a?(VhaRegionalOffice) ||
+        org.is_a?(EducationRpo)
     end
   end
 

@@ -679,9 +679,7 @@ RSpec.feature "Case details", :all_dbs do
 
       scenario "access the appeal's case details" do
         reload_case_detail_page(appeal.external_id)
-        using_wait_time(30) do
-          expect(page).to have_content(COPY::DUPLICATE_PHONE_NUMBER_TITLE)
-        end
+        expect(page).to have_content(COPY::DUPLICATE_PHONE_NUMBER_TITLE)
 
         bgs.inaccessible_appeal_vbms_ids = []
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_veteran_info)

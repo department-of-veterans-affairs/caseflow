@@ -2290,6 +2290,7 @@ const hearingPostponementRequestMailTaskData = {
         value: 'modal/cancel_task',
         data: {
           modal_title: 'Cancel task',
+          modal_body: 'Cancelling this task will return it to Huan MailUser Tiryaki',
           message_title: 'Task for Isaiah Davis\'s case has been cancelled',
           message_detail: 'If you have made a mistake, please email Huan MailUser Tiryaki to manage any changes.'
         }
@@ -2855,21 +2856,6 @@ export const completeHearingWithdrawalRequestData = {
         id: '1563',
         externalId: '3f33fe39-dbd7-4cb6-b9dd-c0ead25949fe',
       },
-    },
-  },
-  ...uiData
-};
-
-export const cancelHearingPostponementRequestData = {
-  queue: {
-    amaTasks: {
-      ...hearingPostponementRequestMailTaskData
-    },
-    appeals: {
-      '2f316d14-7ae6-4255-8f83-e0489ad5005d': {
-        id: '1161',
-        externalId: '2f316d14-7ae6-4255-8f83-e0489ad5005d'
-      }
     },
   },
   ...uiData
