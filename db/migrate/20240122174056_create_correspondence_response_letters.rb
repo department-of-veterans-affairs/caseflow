@@ -1,4 +1,4 @@
-class CreateCorrespondenceResponseLetters < ActiveRecord::Migration[5.2]
+class CreateCorrespondenceResponseLetters < Caseflow::Migration
   def change
     create_table :correspondence_response_letters do |t|
       t.integer :correspondence_id
