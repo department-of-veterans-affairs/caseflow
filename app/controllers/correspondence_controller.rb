@@ -39,22 +39,11 @@ class CorrespondenceController < ApplicationController
     end
   end
 
-  # def correspondence_cases
-  #   respond_to do |format|
-  #     format.html { "correspondence_cases" }
-  #     format.json do
-  #       render json: { vetCorrespondences: veterans_with_correspondences }
-  #     end
-  #   end
-  # end
-
   def correspondence_cases
     respond_to do |format|
       format.html { "correspondence_cases" }
       format.json do
-        # json_file_path = "correspondence_cases_fixture.json"
-        # render json: { vetCorrespondences: JSON.parse(File.read(json_file_path)) }
-        render json: { queue_config: CorrespondenceConfig.new(assignee: current_user).to_hash }
+        render json: { vetCorrespondences: veterans_with_correspondences }
       end
     end
   end
