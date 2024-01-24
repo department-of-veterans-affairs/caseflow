@@ -38,7 +38,7 @@ shared_examples "HearingEmailRecipient belongs_to polymorphic appeal" do |hearin
         end
 
         context "when eager loading with `includes`" do
-          subject { hearing_email_recipient_subclass.ama.includes(:ama_appeal) }
+          subject { hearing_email_recipient_subclass.ama.includes(:appeal) }
 
           let!(:_legacy_hearing_email_recipient) do
             create(:hearing_email_recipient, :legacy, type: hearing_email_recipient_subclass.to_s)
@@ -57,7 +57,7 @@ shared_examples "HearingEmailRecipient belongs_to polymorphic appeal" do |hearin
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.ama_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
@@ -65,7 +65,7 @@ shared_examples "HearingEmailRecipient belongs_to polymorphic appeal" do |hearin
         end
 
         context "when eager loading with `preload`" do
-          subject { hearing_email_recipient_subclass.ama.preload(:ama_appeal) }
+          subject { hearing_email_recipient_subclass.ama.preload(:appeal) }
 
           let!(:_legacy_hearing_email_recipient) do
             create(:hearing_email_recipient, :legacy, type: hearing_email_recipient_subclass.to_s)
@@ -84,31 +84,10 @@ shared_examples "HearingEmailRecipient belongs_to polymorphic appeal" do |hearin
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.ama_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
-          end
-        end
-
-        context "when called on an individual HearingEmailRecipient" do
-          subject { hearing_email_recipient.ama_appeal }
-
-          context "when the HearingEmailRecipient is not associated with an AMA appeal" do
-            let(:hearing_email_recipient) do
-              create(:hearing_email_recipient, :legacy, type: hearing_email_recipient_subclass.to_s)
-            end
-
-            it { should be_nil }
-          end
-
-          context "when the HearingEmailRecipient is associated with an AMA appeal" do
-            let(:hearing_email_recipient) do
-              create(:hearing_email_recipient, type: hearing_email_recipient_subclass.to_s, appeal: ama_appeal)
-            end
-            let(:ama_appeal) { create(:appeal) }
-
-            it { should eq(ama_appeal) }
           end
         end
       end
@@ -141,7 +120,7 @@ shared_examples "HearingEmailRecipient belongs_to polymorphic appeal" do |hearin
         end
 
         context "when eager loading with `includes`" do
-          subject { hearing_email_recipient_subclass.legacy.includes(:legacy_appeal) }
+          subject { hearing_email_recipient_subclass.legacy.includes(:appeal) }
 
           let!(:_ama_hearing_email_recipient) do
             create(:hearing_email_recipient, :ama, type: hearing_email_recipient_subclass.to_s)
@@ -160,7 +139,7 @@ shared_examples "HearingEmailRecipient belongs_to polymorphic appeal" do |hearin
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.legacy_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
@@ -168,7 +147,7 @@ shared_examples "HearingEmailRecipient belongs_to polymorphic appeal" do |hearin
         end
 
         context "when eager loading with `preload`" do
-          subject { hearing_email_recipient_subclass.legacy.preload(:legacy_appeal) }
+          subject { hearing_email_recipient_subclass.legacy.preload(:appeal) }
 
           let!(:_ama_hearing_email_recipient) do
             create(:hearing_email_recipient, :ama, type: hearing_email_recipient_subclass.to_s)
@@ -187,31 +166,10 @@ shared_examples "HearingEmailRecipient belongs_to polymorphic appeal" do |hearin
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.legacy_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
-          end
-        end
-
-        context "when called on an individual HearingEmailRecipient" do
-          subject { hearing_email_recipient.legacy_appeal }
-
-          context "when the HearingEmailRecipient is not associated with a Legacy appeal" do
-            let(:hearing_email_recipient) do
-              create(:hearing_email_recipient, :ama, type: hearing_email_recipient_subclass.to_s)
-            end
-
-            it { should be_nil }
-          end
-
-          context "when the HearingEmailRecipient is associated with a Legacy appeal" do
-            let(:hearing_email_recipient) do
-              create(:hearing_email_recipient, type: hearing_email_recipient_subclass.to_s, appeal: legacy_appeal)
-            end
-            let(:legacy_appeal) { create(:legacy_appeal) }
-
-            it { should eq(legacy_appeal) }
           end
         end
       end
