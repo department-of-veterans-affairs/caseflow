@@ -1,0 +1,2 @@
+class CorrespondenceResponseLetter < CaseflowRecord
+end
