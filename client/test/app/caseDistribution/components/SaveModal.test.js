@@ -28,7 +28,9 @@ describe('Save Modal', () => {
 
     const setShowModal = jest.fn();
 
-    let handleConfirmButton = jest.fn();
+    let handleConfirmButton = jest.fn().mockImplementation(() => {
+      'Confirm';
+    });
 
     store.dispatch(loadLevers(leversWithBatchLevers));
     store.dispatch(setUserIsAcdAdmin(false));
@@ -42,6 +44,8 @@ describe('Save Modal', () => {
     fireEvent.click(getByText(COPY.MODAL_CONFIRM_BUTTON));
 
     await waitFor(() => {});
+
+    console.debug('setShowModal calls:', setShowModal.mock.calls);
 
     expect(setShowModal).toHaveBeenCalledWith(false);
     expect(handleConfirmButton).toHaveBeenCalled();
