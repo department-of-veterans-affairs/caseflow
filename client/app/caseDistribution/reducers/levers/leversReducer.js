@@ -11,12 +11,10 @@ import {
   leverErrorMessageExists
 } from '../../utils';
 
-// formattedHistory should be deleted.
 // Refactor where it is used before deletion
 export const initialState = {
   levers: {},
   backendLevers: [],
-  formattedHistory: {},
   historyList: [],
   changesOccurred: false,
   displayBanner: false,
@@ -35,6 +33,12 @@ const leversReducer = (state = initialState, action = {}) => {
       backendLevers: {
         $set: createUpdatedLeversWithValues(action.payload.levers),
       },
+    });
+  case ACTIONS.LOAD_HISTORY:
+    return update(state, {
+      historyList: {
+        $set: formatLeverHistory(action.payload.historyList)
+      }
     });
   case ACTIONS.SET_USER_IS_ACD_ADMIN:
     return update(state, {
@@ -82,7 +86,6 @@ const leversReducer = (state = initialState, action = {}) => {
     return {
       ...state,
       changesOccurred: false,
-      historyList: formatLeverHistory(action.payload.leverHistory),
       displayBanner: true,
       errors: action.payload.errors
     };
