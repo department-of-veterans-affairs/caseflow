@@ -317,6 +317,64 @@ describe HearingRequestDocket, :all_dbs do
         ).to eq 1
       end
     end
+
+    context "when the distribution contains Specialty Case Team appeals" do
+      before do
+        FeatureToggle.enable!(:specialty_case_team_distribution)
+      end
+      after do
+        FeatureToggle.disable!(:specialty_case_team_distribution)
+      end
+
+      subject do
+        HearingRequestDocket.new.distribute_appeals(distribution, priority: false, limit: limit, genpop: "any")
+      end
+
+      let(:limit) { 10 }
+
+      let!(:vha_appeals) do
+        (1..5).map { create_nonpriority_distributable_vha_hearing_appeal_not_tied_to_any_judge }
+      end
+
+      let!(:non_vha_appeals) do
+        (1..10).map { create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge }
+      end
+
+      it "does not fail, renames conflicting already distributed appeals, and distributes the legitimate appeals" do
+        # number_of_already_distributed_appeals = 1
+        # total_number_of_appeals = 10
+        # total_number_of_appeals.times { create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge }
+        # puts vha_appeals.inspect
+        # puts vha_appeals.map { |appeal| appeal.request_issues.first.benefit_type }.inspect
+        # previous_distribution_judge = create(:user, last_login_at: Time.zone.now)
+        # create(:staff, :judge_role, sdomainid: previous_distribution_judge.css_id)
+        # previous_distribution = Distribution.create!(judge: previous_distribution_judge)
+        # HearingRequestDocket.new.distribute_appeals(previous_distribution,
+        #                                             priority: false,
+        #                                             limit: number_of_already_distributed_appeals,
+        #                                             genpop: "any")
+        # distributed_appeals = DistributionTask.closed.take(number_of_already_distributed_appeals).map(&:appeal)
+        # distributed_appeals.each do |distributed_appeal|
+        #   DistributionTask.create!(appeal: distributed_appeal, parent: distributed_appeal.root_task)
+        # end
+
+        # expect(Raven).to receive(:capture_message).once
+
+        puts vha_appeals.map { |appeal| appeal.tasks.of_type(:DistributionTask).first.status }.inspect
+
+        subject
+
+        expect(DistributionTask.open.count).to eq(0)
+        distributed_cases = DistributedCase.where(distribution: distribution)
+        expect(distributed_cases.count).to eq(0)
+        # expect(
+        #   distributed_cases.where(case_id: distributed_appeals.map(&:uuid)).count
+        # ).to eq(number_of_already_distributed_appeals)
+        # expect(
+        #   DistributedCase.where("case_id LIKE ?", "#{distributed_appeals.first.uuid}-redistributed-%").count
+        # ).to eq 1
+      end
+    end
   end
 
   describe "#count" do
@@ -575,6 +633,16 @@ describe HearingRequestDocket, :all_dbs do
     appeal = create(:appeal,
                     :ready_for_distribution,
                     :denied_advance_on_docket,
+                    docket_type: Constants.AMA_DOCKETS.hearing)
+    create(:hearing, judge: nil, disposition: "held", appeal: appeal)
+    appeal
+  end
+
+  def create_nonpriority_distributable_vha_hearing_appeal_not_tied_to_any_judge
+    appeal = create(:appeal,
+                    :ready_for_distribution,
+                    :denied_advance_on_docket,
+                    :with_vha_issue,
                     docket_type: Constants.AMA_DOCKETS.hearing)
     create(:hearing, judge: nil, disposition: "held", appeal: appeal)
     appeal

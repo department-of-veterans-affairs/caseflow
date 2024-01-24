@@ -47,12 +47,25 @@ class HearingRequestDocket < Docket
     # setting genpop to "only_genpop" behind feature toggle as this module only processes AMA
     genpop = "only_genpop" if use_by_docket_date?
 
+    # TODO: Figure out how to feature toggle this somehow
+    query_args = { priority: priority, ready: true }
+    _, sct_appeals = create_sct_appeals(query_args, limit)
+
+    puts sct_appeals.count.inspect
+
+    # TODO: add in exlusion where clause for sct ids to the base relation
+    base_relation = base_relation.where("appeals.id NOT IN (?)", sct_appeals.pluck(:id))
     appeals = hearing_distribution_query(base_relation: base_relation, genpop: genpop, judge: distribution.judge).call
 
     appeals = self.class.limit_genpop_appeals(appeals, limit) if genpop.eql? "any"
 
+    puts "in hearing request_docket.rb"
+    puts "genpop should be any: #{genpop}"
+    puts appeals.map(&:count).inspect
+    puts sct_appeals.count
+
     HearingRequestCaseDistributor.new(
-      appeals: appeals, genpop: genpop, distribution: distribution, priority: priority
+      appeals: appeals, genpop: genpop, distribution: distribution, priority: priority, sct_appeals: sct_appeals
     ).call
   end
   # rubocop:enable Lint/UnusedMethodArgument

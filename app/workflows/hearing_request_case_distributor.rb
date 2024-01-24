@@ -3,8 +3,9 @@
 class HearingRequestCaseDistributor
   include DistributionConcern
 
-  def initialize(appeals:, genpop:, distribution:, priority:)
+  def initialize(appeals:, genpop:, distribution:, priority:, sct_appeals:)
     @appeals = appeals
+    @sct_appeals = sct_appeals
     @genpop = genpop
     @distribution = distribution
     @priority = priority
@@ -16,11 +17,26 @@ class HearingRequestCaseDistributor
     appeals_for_tasks = appeals_to_distribute.flatten.select { |obj| obj.is_a?(Appeal) }
     genpop_values = appeals_to_distribute.flatten.reject { |obj| obj.is_a?(Appeal) }
 
+    puts "in hearing request case distributor call method"
+    # puts genpop_values.inspect
+    puts sct_appeals.count
+    puts sct_appeals.map { |appeal| appeal.tasks.of_type(:DistributionTask).map(&:status) }.inspect
+
+    puts "appeal ids of sct and appeals_for_tasks"
+    puts sct_appeals.map(&:id).inspect
+    puts appeals_for_tasks.map(&:id).inspect
+
     # Creates JudgeAssignTasks for the appeals, then zip the genpop_values into the array for creating
     # the DistributedCases
-    tasks = assign_judge_tasks_for_appeals(appeals_for_tasks, @distribution.judge).zip(genpop_values)
+    tasks = assign_judge_tasks_for_appeals(appeals_for_tasks, distribution.judge).zip(genpop_values)
 
-    tasks.map do |task, genpop_value|
+    sct_tasks = assign_sct_tasks_for_appeals(sct_appeals).zip([true] * sct_appeals.count)
+
+    # puts sct_tasks.inspect
+
+    tasks_array = tasks + sct_tasks
+
+    tasks_array.map do |task, genpop_value|
       next if task.nil?
 
       # If a distributed case already exists for this appeal, alter the existing distributed case's case id.
@@ -32,7 +48,8 @@ class HearingRequestCaseDistributor
         new_dist_case = create_distribution_case_for_task(task, genpop_value)
 
         # In a race condition for distributions, two JudgeAssignTasks will be created; this cancels the first one
-        cancel_previous_judge_assign_task(task.appeal, @distribution.judge.id)
+        # TODO: See if this needs to be done for SCT assign task as well?
+        cancel_previous_judge_assign_task(task.appeal, distribution.judge.id)
         # Returns the new DistributedCase as expected by calling methods; case in elsif is implicitly returned
         new_dist_case
       elsif !distributed_case
@@ -43,7 +60,7 @@ class HearingRequestCaseDistributor
 
   private
 
-  attr_reader :appeals, :genpop, :distribution, :priority
+  attr_reader :appeals, :genpop, :distribution, :priority, :sct_appeals
 
   def appeals_to_distribute
     not_genpop_appeals.map { |appeal| [appeal, false] }.concat(only_genpop_appeals.map { |appeal| [appeal, true] })
@@ -57,7 +74,8 @@ class HearingRequestCaseDistributor
       ready_at: task.appeal.ready_for_distribution_at,
       task: task,
       genpop: genpop_value,
-      genpop_query: genpop
+      genpop_query: genpop,
+      sct_appeal: task.is_a?(SpecialtyCaseTeamAssignTask)
     )
   end
 

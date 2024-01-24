@@ -84,84 +84,59 @@ class Docket
     appeals = appeals(priority: priority, ready: true, genpop: genpop, judge: distribution.judge).limit(limit)
       .includes(:request_issues)
 
-    # TODO: Maybe expand this out so work with any possible benefit types or some selection criterion. Something like SCT_PREDICATES
-    # TODO: Add in the feature toggle :specialty_case_team_distribution to this
+    query_args = { priority: priority, ready: true, genpop: genpop, judge: distribution.judge }
 
-    sct_appeals = if FeatureToggle.enabled?(:specialty_case_team_distribution)
-                    sct_appeals = appeals.select { |appeal| appeal.request_issues.find { |issue| issue.benefit_type == "vha" } }
-                    appeals -= sct_appeals
-                    sct_appeals
-                  else
-                    []
-                  end
+    # stuff = create_sct_appeals(query_args, limit)
 
+    # puts stuff.map(&:count).inspect
+    # sct_predicates = [
+    #   proc { |appeal| appeal.request_issues.any? { |issue| issue.benefit_type == "vha" } }
+    # ]
 
+    # TODO: Maybe expand this out so work with any possible benefit types or some selection criterion.
+    # Something like SCT_PREDICATES
+    # sct_appeals = if FeatureToggle.enabled?(:specialty_case_team_distribution)
+    #                 sct_appeals = appeals.select do |appeal|
+    #                   appeal.request_issues.find do |issue|
+    #                     issue.benefit_type == "vha"
+    #                   end
+    #                 end
+    #                 appeals -= sct_appeals
+    #                 sct_appeals
+    #               else
+    #                 []
+    #               end
 
-    # puts appeals.map(&:id).inspect
-    # puts sct_appeals.map(&:id).inspect
-    # puts "limit: #{limit}"
+    # if sct_appeals.any?
+    #   loop do
+    #     inner_appeals = appeals(priority: priority, ready: true, genpop: genpop, judge: distribution.judge)
+    #       .limit(limit - appeals.count)
+    #       .includes(:request_issues)
+    #       .where("appeals.id NOT IN (?)", appeals.pluck(:id) + sct_appeals.pluck(:id))
 
-    if sct_appeals.any?
-      loop do
-        # puts "-------------------------------"
-        # puts "in da loop:"
+    #     break unless inner_appeals.exists?
 
-        # offset = appeals.count + sct_appeals.count
-        # puts "offset: #{offset}"
-        # puts "outer appeals count: #{appeals.count}"
-        # puts "calculated inner limit: #{limit - appeals.count}"
-        # TODO: This is non deterministic so offset doesn't work how I hoped it would.
-        inner_appeals = appeals(priority: priority, ready: true, genpop: genpop, judge: distribution.judge)
-          .limit(limit - appeals.count)
-          .includes(:request_issues)
-          .where("appeals.id NOT IN (?)", appeals.pluck(:id) + sct_appeals.pluck(:id))
+    #     inner_sct_appeals = inner_appeals.select do |appeal|
+    #       appeal.request_issues.find do |issue|
+    #         issue.benefit_type == "vha"
+    #       end
+    #     end
 
-        # puts inner_appeals.to_sql.inspect
-        # puts "inner appeal ids: #{inner_appeals.map(&:id).inspect}"
+    #     inner_appeals -= inner_sct_appeals
+    #     appeals += inner_appeals
+    #     sct_appeals += inner_sct_appeals
 
-        break unless inner_appeals.exists?
+    #     break if appeals.count >= limit
+    #   end
+    # end
 
-        inner_sct_appeals = inner_appeals.select do |appeal|
-          appeal.request_issues.find do |issue|
-            issue.benefit_type == "vha"
-          end
-        end
+    # TODO: feature toggle this
+    appeals, sct_appeals = create_sct_appeals(query_args, limit)
 
-        # puts inner_appeals.inspect
-
-        # puts inner_appeals.map(&:id).inspect
-        # puts "inner sct appeal ids: #{inner_sct_appeals.map(&:id).inspect}"
-
-        inner_appeals -= inner_sct_appeals
-
-        # puts inner_appeals.map(&:id).inspect
-        # puts "inner appeals count: #{inner_appeals.count}"
-        # puts "inner sct appeals count: #{inner_sct_appeals.count}"
-
-        appeals += inner_appeals
-        sct_appeals += inner_sct_appeals
-
-        # puts "outer appeals count end: #{appeals.count}"
-        # puts "outer sct_appeals count end: #{sct_appeals.count}"
-
-        break if appeals.count >= limit
-      end
-    end
-
-    # puts "before creating judge assign tasks"
-
-    # TODO: Getting the same appeal id at the end of the loop so it's wrong.
-    # puts appeals.map(&:id).inspect
-    # puts sct_appeals.map(&:id).inspect
-    # puts "appeals_count should be 5: #{appeals.count}"
     tasks = assign_judge_tasks_for_appeals(appeals, distribution.judge)
     sct_tasks = assign_sct_tasks_for_appeals(sct_appeals)
-    # puts "tasks count: #{tasks.count}"
-    # puts "sct_tasks.count: #{sct_tasks.count}"
     tasks_array = tasks + sct_tasks
-    # puts "tasks_array should be 8: #{tasks_array.count}"
     tasks_array.map do |task|
-      # puts "task_id: #{task&.id.inspect}"
       next if task.nil?
 
       # If a distributed case already exists for this appeal, alter the existing distributed case's case id.
@@ -222,6 +197,8 @@ class Docket
   def use_by_docket_date?
     FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
   end
+
+  # TODO: make a method for my sct_feature toggle here similar to how the use_by_docket_date? is setup
 
   module Scopes
     include DistributionScopes
