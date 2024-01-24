@@ -357,12 +357,18 @@ class AddIssuesPage extends React.Component {
     // at first when we select child / spouse as a claimant, intake.claimant = 'claimant_not_listed'
     // but when the AddIssues Page reload intake.claimant becomes equal to empty string,
     // due to which we have to include '' in the condition below.
-    const whichVHAPOATextToDisplay =
-      (['claimant_not_listed', ''].includes(intakeData.claimant)) ? COPY.VHA_NO_RECOGNIZED_POA : COPY.VHA_NO_POA;
+    const whichVHAPOATextToDisplay = () => {
+      if (intakeData?.unlistedClaimant?.poaForm === 'false') {
+        return COPY.VHA_NO_POA;
+      }
+
+      return (['claimant_not_listed', ''].includes(intakeData.claimant)) ?
+        COPY.VHA_NO_RECOGNIZED_POA : COPY.VHA_NO_POA;
+    };
 
     if (shouldAddPoAField) {
       const noPoaText =
-        intakeData.benefitType === 'vha' ? whichVHAPOATextToDisplay : COPY.ADD_CLAIMANT_CONFIRM_MODAL_NO_POA;
+        intakeData.benefitType === 'vha' ? whichVHAPOATextToDisplay() : COPY.ADD_CLAIMANT_CONFIRM_MODAL_NO_POA;
 
       fieldsForFormType = fieldsForFormType.concat({
         field: 'Claimant\'s POA',
