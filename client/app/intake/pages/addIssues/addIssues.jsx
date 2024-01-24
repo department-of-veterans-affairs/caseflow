@@ -358,7 +358,7 @@ class AddIssuesPage extends React.Component {
     // but when the AddIssues Page reload intake.claimant becomes equal to empty string,
     // due to which we have to include '' in the condition below.
     const whichVHAPOATextToDisplay = () => {
-      if (intakeData?.unlistedClaimant?.poaForm === 'false') {
+      if (intakeData?.unlistedClaimant?.poaForm === 'false' || intakeData?.claimantName !== '') {
         return COPY.VHA_NO_POA;
       }
 
