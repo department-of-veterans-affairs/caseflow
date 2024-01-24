@@ -751,7 +751,7 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path="/queue/correspondence"
-              title={`${PAGE_TITLES.CORRESPONDENCE_OWN_LIST}`}
+              title={`${PAGE_TITLES.YOUR_CORRESPONDENCE_TITLE}`}
               render={this.routedCorrespondenceCase}
             />
 
