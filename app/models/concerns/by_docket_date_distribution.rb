@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ModuleLength
 module ByDocketDateDistribution
   extend ActiveSupport::Concern
   include CaseDistribution
@@ -50,6 +49,7 @@ module ByDocketDateDistribution
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def ama_statistics
     priority_counts = { count: priority_count }
     nonpriority_counts = { count: nonpriority_count }
@@ -67,7 +67,11 @@ module ByDocketDateDistribution
     nonpriority_counts[:iterations] = @nonpriority_iterations
 
     settings = {}
-    feature_toggles = [:acd_disable_legacy_distributions, :acd_disable_nonpriority_distributions]
+    feature_toggles = [
+      :acd_disable_legacy_distributions,
+      :acd_disable_nonpriority_distributions,
+      :specialty_case_team_distribution
+    ]
     feature_toggles.each do |sym|
       settings[sym] = FeatureToggle.enabled?(sym, user: RequestStore.store[:current_user])
     end
@@ -78,17 +82,23 @@ module ByDocketDateDistribution
       priority_target: @push_priority_target || @request_priority_count,
       priority: priority_counts,
       nonpriority: nonpriority_counts,
+      sct_appeals: @appeals.count { |appeal| appeal.try(:sct_appeal) },
       algorithm: "by_docket_date",
       settings: settings
     }
   end
+  # rubocop:enable Metrics/MethodLength
 
   def num_oldest_priority_appeals_for_judge_by_docket(distribution, num)
     return {} unless num > 0
 
-    dockets
-      .flat_map { |sym, docket| docket.age_of_n_oldest_priority_appeals_available_to_judge(
-        distribution.judge, num).map { |age| [age, sym] } }
+    docket_appeals = dockets.flat_map do |sym, docket|
+      docket.age_of_n_oldest_priority_appeals_available_to_judge(
+        distribution.judge, num
+      ).map { |age| [age, sym] }
+    end
+
+    docket_appeals
       .sort_by { |age, _| age }
       .first(num)
       .group_by { |_, sym| sym }
@@ -98,9 +108,13 @@ module ByDocketDateDistribution
   def num_oldest_nonpriority_appeals_for_judge_by_docket(distribution, num)
     return {} unless num > 0
 
-    dockets
-      .flat_map { |sym, docket| docket.age_of_n_oldest_nonpriority_appeals_available_to_judge(
-        distribution.judge, num).map { |age| [age, sym] } }
+    docket_appeals = dockets.flat_map do |sym, docket|
+      docket.age_of_n_oldest_nonpriority_appeals_available_to_judge(
+        distribution.judge, num
+      ).map { |age| [age, sym] }
+    end
+
+    docket_appeals
       .sort_by { |age, _| age }
       .first(num)
       .group_by { |_, sym| sym }
