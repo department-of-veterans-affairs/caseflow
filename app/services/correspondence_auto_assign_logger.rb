@@ -10,7 +10,6 @@ class CorrespondenceAutoAssignLogger
 
   def begin_logging
     create_batch_assignment
-    Rails.logger.info("LOGGING started for BatchAutoAssignment ID:#{@batch_assignment_attempt.id}")
   end
 
   def end_logging
