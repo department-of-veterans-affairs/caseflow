@@ -32,11 +32,17 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   # Purpose: Determines the actions a user can take depending on their permissions and the state of the appeal
   # Params: user - The current user object
   # Return: The task actions array of objects
-  # :reek:UtilityFunction
   def available_actions(user)
     return [] unless user.in_hearing_admin_team?
 
-    TASK_ACTIONS
+    if active_schedule_hearing_task || hearing_scheduled_and_awaiting_disposition?
+      TASK_ACTIONS
+    else
+      [
+        Constants.TASK_ACTIONS.CHANGE_TASK_TYPE.to_h,
+        Constants.TASK_ACTIONS.CANCEL_TASK.to_h
+      ]
+    end
   end
 
   # Purpose: Updates the current state of the appeal
@@ -74,13 +80,25 @@ class HearingPostponementRequestMailTask < HearingRequestMailTask
   # Return: Returns the newly created tasks
   def update_hearing_and_create_tasks(after_disposition_update)
     multi_transaction do
-      if hearing_scheduled_and_awaiting_disposition?
+      # If hearing exists, postpone previous hearing and handle conference links
+
+      if open_hearing
         postpone_previous_hearing
         clean_up_virtual_hearing(open_hearing)
       end
-
       # Schedule hearing or create new ScheduleHearingTask depending on after disposition action
       reschedule_or_schedule_later(after_disposition_update)
+    end
+  end
+
+  # Purpose: Sets the previous hearing's disposition
+  # Params: None
+  # Return: Returns a boolean for if the hearing has been updated
+  def update_hearing(hearing_hash)
+    if open_hearing.is_a?(LegacyHearing)
+      open_hearing.update_caseflow_and_vacols(hearing_hash)
+    else
+      open_hearing.update(hearing_hash)
     end
   end
 
