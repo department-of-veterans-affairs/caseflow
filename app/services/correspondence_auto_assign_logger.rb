@@ -21,20 +21,19 @@ class CorrespondenceAutoAssignLogger
 
   def log_single_attempt(correspondence_id:)
     @total_attempts += 1
-    @current_assignment = SingleAutoAssignAttempt.create!
+    # Assign individual attempt here to @current_assignment
   end
 
   private
 
   def create_single_assignment
-    # Create method here for batch auto assignment
-    @batch_assignment_attempt = BatchAutoAssignment.create! if @batch_assignment_attempt.nil?
-    Rails.logger.info("LOGGING started for BatchAutoAssignment ID:#{@batch_assignment_attempt.id}")
+    # Create individual assignment attempt here
+    Rails.logger.info("IndividualAutoAssignmentAttempt created")
   end
 
   def create_batch_assignment
-    # Create method here for batch auto assignment
-    @batch_assignment_attempt = BatchAutoAssignment.create! if @batch_assignment_attempt.nil?
+    # Create batch_assignment here
+    Rails.logger.info("LOGGING started for BatchAutoAssignmentAttempt")
   end
 
   def record_failure
