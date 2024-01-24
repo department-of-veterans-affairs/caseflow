@@ -7,7 +7,7 @@ import { render, waitFor } from '@testing-library/react';
 
 import rootReducer from 'app/caseDistribution/reducers/root';
 import thunk from 'redux-thunk';
-import { docketDistributionPriorTestLevers } from '../../../data/adminCaseDistributionLevers';
+import { testingdocketDistributionPriorLevers } from '../../../data/adminCaseDistributionLevers';
 import { mount } from 'enzyme';
 
 describe('render Case Distribution App', () => {
@@ -20,7 +20,7 @@ describe('render Case Distribution App', () => {
     static: [],
     batch: [],
     affinity: [],
-    docket_distribution_prior: docketDistributionPriorTestLevers,
+    docket_distribution_prior: testingdocketDistributionPriorLevers,
     docket_time_goal: []
   };
 
