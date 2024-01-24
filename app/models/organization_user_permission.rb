@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class OrganizationUserPermission < CaseflowRecord
-  belongs_to :organizations_user, required: true
-  belongs_to :organization_permission, required: true
+  belongs_to :organizations_user, optional: false
+  belongs_to :organization_permission, optional: false
 
-  validates_presence_of :permitted
+  validates :permitted, inclusion: [true, false]
 end
