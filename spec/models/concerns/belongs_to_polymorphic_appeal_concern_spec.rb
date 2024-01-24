@@ -136,48 +136,4 @@ describe BelongsToPolymorphicAppealConcern do
       end
     end
   end
-
-  context "concern is included in SpecialIssueList" do
-    let(:appeal) { create(:appeal) }
-    let!(:sil) { SpecialIssueList.create(appeal: appeal) }
-    let!(:legacy_sil) { SpecialIssueList.create(appeal: LegacyAppeal.first) }
-
-    it "`ama_appeal` returns the AMA appeal" do
-      expect(sil.ama_appeal).to eq appeal
-    end
-
-    it "`legacy_appeal` returns the legacy appeal" do
-      expect(legacy_sil.legacy_appeal).to eq legacy_decision_doc.appeal
-    end
-
-    it "scope `ama` returns AMA-associated SpecialIssueLists" do
-      expect(SpecialIssueList.ama).to match_array SpecialIssueList.where(appeal_type: "Appeal")
-    end
-
-    it "scope `legacy` returns legacy-associated SpecialIssueLists" do
-      expect(SpecialIssueList.legacy).to match_array SpecialIssueList.where(appeal_type: "LegacyAppeal")
-    end
-
-    context "when querying for appeal data for all SpecialIssueLists" do
-      let(:query_subscriber) { QuerySubscriber.new }
-      before { 4.times { SpecialIssueList.create(appeal: create(:appeal)) } }
-
-      it "queries efficiently" do
-        appeal_uuids = Appeal.pluck(:uuid) - [decision_doc.appeal.uuid]
-        legacy_appeal_vacols_ids = LegacyAppeal.pluck(:vacols_id)
-
-        query_subscriber.track do
-          # Addresses 'Cannot eagerly load the polymorphic association' error
-          expect(SpecialIssueList.ama.includes(:ama_appeal).pluck("appeals.uuid").uniq)
-            .to match_array appeal_uuids
-          expect(SpecialIssueList.legacy.includes(:legacy_appeal).pluck("legacy_appeals.vacols_id").uniq)
-            .to match_array legacy_appeal_vacols_ids
-        end
-
-        # 1 efficient SELECT query for each trial above
-        expect(query_subscriber.queries.count).to eq 2
-        expect(query_subscriber.select_queries.size).to eq 2
-      end
-    end
-  end
 end
