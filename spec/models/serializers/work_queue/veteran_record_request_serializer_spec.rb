@@ -15,7 +15,6 @@ describe WorkQueue::VeteranRecordRequestSerializer, :postgres do
         type: :veteran_record_request,
         attributes: {
           has_poa: true,
-          not_listed_poa: false,
           claimant: { name: appeal.veteran_full_name, relationship: "self" },
           appeal: { id: appeal.uuid.to_s, isLegacyAppeal: false, issueCount: 0 },
           power_of_attorney: {

@@ -19,6 +19,8 @@ class UnrecognizedAppellant < CaseflowRecord
         AttorneyPowerOfAttorney.new(poa_participant_id)
       elsif unrecognized_power_of_attorney_id
         UnrecognizedPowerOfAttorney.new(unrecognized_power_of_attorney)
+      elsif not_listed_power_of_attorney_id
+        not_listed_power_of_attorney
       end
     end
   end

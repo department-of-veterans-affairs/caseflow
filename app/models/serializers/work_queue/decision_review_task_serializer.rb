@@ -54,10 +54,6 @@ class WorkQueue::DecisionReviewTaskSerializer
     decision_review(object).claimant&.power_of_attorney.present?
   end
 
-  attribute :not_listed_poa do |object|
-    decision_review(object).claimant&.unrecognized_appellant&.not_listed_power_of_attorney.present?
-  end
-
   attribute :claimant do |object|
     {
       name: claimant_name(object),
