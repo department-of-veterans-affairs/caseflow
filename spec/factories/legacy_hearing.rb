@@ -47,7 +47,7 @@ FactoryBot.define do
         )
       )
     end
-
+    scheduled_in_timezone { "America/New_York" }
     hearing_day_id { case_hearing.vdkey }
     vacols_id { case_hearing.hearing_pkseq }
     created_by do
