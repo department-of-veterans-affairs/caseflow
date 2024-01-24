@@ -52,6 +52,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
     end
     context "with no token" do
       it "returns unauthorized response" do
+        # Omitting Authorization header to simulate missing token
         post :decision_review_created_error
         expect(response).to have_http_status(:unauthorized)
       end
