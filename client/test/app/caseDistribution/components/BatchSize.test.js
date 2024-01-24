@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import rootReducer from 'app/caseDistribution/reducers/root';
 import thunk from 'redux-thunk';
-import { levers, testingBatchLevers } from '../../../data/adminCaseDistributionLevers';
+import { testingBatchLevers } from '../../../data/adminCaseDistributionLevers';
 import { loadLevers, setUserIsAcdAdmin} from 'app/caseDistribution/reducers/levers/leversActions';
 import { mount } from 'enzyme';
 
@@ -19,14 +19,13 @@ describe('Batch Size Lever', () => {
     jest.clearAllMocks();
   });
 
-  let batchSizeLevers = levers.filter((lever) => (lever.lever_group === 'batch'));
-  let batchSizeTestLever = batchSizeLevers[0];
-  let leversWithBatchLevers = { batch: batchSizeLevers };
+  let leversWithTestingBatchLevers = { batch: testingBatchLevers };
+  let lever = testingBatchLevers[0];
 
-  it('renders the Batch Size Levers for Member Users', () => {
+  it('renders Batch Size Levers for Member Users', () => {
     const store = getStore();
 
-    store.dispatch(loadLevers(leversWithBatchLevers));
+    store.dispatch(loadLevers(leversWithTestingBatchLevers));
     store.dispatch(setUserIsAcdAdmin(false));
 
     render(
@@ -34,17 +33,16 @@ describe('Batch Size Lever', () => {
         <BatchSize />
       </Provider>
     );
-
-    expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(batchSizeTestLever.title);
-    expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(batchSizeTestLever.description);
-    expect(document.querySelector('.active-lever > .lever-right')).toHaveTextContent(batchSizeTestLever.value);
+    expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(lever.title);
+    expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(lever.description);
+    expect(document.querySelector('.active-lever > .lever-right')).toHaveTextContent(lever.value);
   });
 
-  it('renders disabled in ui Batch Size levers', () => {
+  it('renders Batch Size Levers for Admin Users', () => {
     const store = getStore();
 
-    store.dispatch(loadLevers(leversWithBatchLevers));
-    store.dispatch(setUserIsAcdAdmin(false));
+    store.dispatch(loadLevers(leversWithTestingBatchLevers));
+    store.dispatch(setUserIsAcdAdmin(true));
 
     render(
       <Provider store={store}>
@@ -52,9 +50,9 @@ describe('Batch Size Lever', () => {
       </Provider>
     );
 
-    expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(batchSizeTestLever.title);
-    expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(batchSizeTestLever.description);
-    expect(document.querySelector('.active-lever > .lever-right')).toHaveTextContent(batchSizeTestLever.value);
+    expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(lever.title);
+    expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(lever.description);
+    expect(document.querySelector('.active-lever > .lever-right')).toHaveTextContent(lever.unit);
   });
 
   it('sets input to invalid for error and sets input to valid to remove error', () => {
@@ -62,12 +60,6 @@ describe('Batch Size Lever', () => {
     const eventForValid = { target: { value: 10 } };
 
     const store = getStore();
-
-    let leversWithTestingBatchLevers = {
-      batch: testingBatchLevers,
-    };
-
-    let lever = testingBatchLevers[0];
 
     store.dispatch(loadLevers(leversWithTestingBatchLevers));
     store.dispatch(setUserIsAcdAdmin(true));
