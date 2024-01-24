@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 describe Task, :all_dbs do
+  # @note Ideally, we would execute the following shared examples, "Task belongs_to polymorphic appeal", for each
+  #   subclass of Task. However, this has proven to be impractical due to the differences in validations across Task
+  #   subclasses and also their sheer number (120 as of this writing).
+  it_behaves_like "Task belongs_to polymorphic appeal"
+
   context "includes PrintsTaskTree concern" do
     describe ".structure" do
       let(:root_task) { create(:root_task) }
