@@ -53,7 +53,7 @@ describe HearingRequestDocket, :all_dbs do
         matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
 
         # This is the only one that is still considered tied (we want only non_genpop)
-        appeal = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
+        create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
 
         # This appeal should not be returned because it is now considered genpop
         outside_affinity = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge_outside_affinity
@@ -96,8 +96,8 @@ describe HearingRequestDocket, :all_dbs do
         matching_all_base_conditions_with_most_recent_held_hearing_tied_to_other_judge
 
         # appeals that should be returned
-        appeal = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
-        another = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
+        matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
+        matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
 
         tasks = subject
 
@@ -319,13 +319,6 @@ describe HearingRequestDocket, :all_dbs do
     end
 
     context "when the distribution contains Specialty Case Team appeals" do
-      before do
-        FeatureToggle.enable!(:specialty_case_team_distribution)
-      end
-      after do
-        FeatureToggle.disable!(:specialty_case_team_distribution)
-      end
-
       subject do
         HearingRequestDocket.new.distribute_appeals(distribution, priority: false, limit: limit, genpop: "any")
       end
@@ -340,39 +333,38 @@ describe HearingRequestDocket, :all_dbs do
         (1..10).map { create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge }
       end
 
-      it "does not fail, renames conflicting already distributed appeals, and distributes the legitimate appeals" do
-        # number_of_already_distributed_appeals = 1
-        # total_number_of_appeals = 10
-        # total_number_of_appeals.times { create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge }
-        # puts vha_appeals.inspect
-        # puts vha_appeals.map { |appeal| appeal.request_issues.first.benefit_type }.inspect
-        # previous_distribution_judge = create(:user, last_login_at: Time.zone.now)
-        # create(:staff, :judge_role, sdomainid: previous_distribution_judge.css_id)
-        # previous_distribution = Distribution.create!(judge: previous_distribution_judge)
-        # HearingRequestDocket.new.distribute_appeals(previous_distribution,
-        #                                             priority: false,
-        #                                             limit: number_of_already_distributed_appeals,
-        #                                             genpop: "any")
-        # distributed_appeals = DistributionTask.closed.take(number_of_already_distributed_appeals).map(&:appeal)
-        # distributed_appeals.each do |distributed_appeal|
-        #   DistributionTask.create!(appeal: distributed_appeal, parent: distributed_appeal.root_task)
-        # end
+      context "when specialty_case_team_distribution feature toggle is enabled" do
+        before do
+          FeatureToggle.enable!(:specialty_case_team_distribution)
+        end
+        after do
+          FeatureToggle.disable!(:specialty_case_team_distribution)
+        end
 
-        # expect(Raven).to receive(:capture_message).once
+        it "does not fail, renames conflicting already distributed appeals, and distributes the legitimate appeals" do
+          subject
 
-        puts vha_appeals.map { |appeal| appeal.tasks.of_type(:DistributionTask).first.status }.inspect
+          expect(DistributionTask.open.count).to eq(0)
+          distributed_cases = DistributedCase.where(distribution: distribution)
+          expect(distributed_cases.count).to eq(15)
+          expect(distributed_cases.count(&:sct_appeal)).to eq(5)
+        end
+      end
 
-        subject
+      context "when specialty_case_team_distribution feature toggle is disabled" do
+        before do
+          FeatureToggle.disable!(:specialty_case_team_distribution)
+        end
 
-        expect(DistributionTask.open.count).to eq(0)
-        distributed_cases = DistributedCase.where(distribution: distribution)
-        expect(distributed_cases.count).to eq(0)
-        # expect(
-        #   distributed_cases.where(case_id: distributed_appeals.map(&:uuid)).count
-        # ).to eq(number_of_already_distributed_appeals)
-        # expect(
-        #   DistributedCase.where("case_id LIKE ?", "#{distributed_appeals.first.uuid}-redistributed-%").count
-        # ).to eq 1
+        it "does not fail, renames conflicting already distributed appeals, and distributes the legitimate appeals" do
+          subject
+
+          # It should only distribute 10 appeals due to the limit so 5 should remain in the ready to distribute state
+          expect(DistributionTask.open.count).to eq(5)
+          distributed_cases = DistributedCase.where(distribution: distribution)
+          expect(distributed_cases.count).to eq(10)
+          expect(distributed_cases.count(&:sct_appeal)).to eq(0)
+        end
       end
     end
   end

@@ -12,31 +12,13 @@ class HearingRequestCaseDistributor
   end
 
   def call
-    # The DistributedCases model validates genpop and genpop_query for a hearing or legacy case. These methods
-    # will create one array for the appeals and one for their genpop values with matching indexes
-    appeals_for_tasks = appeals_to_distribute.flatten.select { |obj| obj.is_a?(Appeal) }
-    genpop_values = appeals_to_distribute.flatten.reject { |obj| obj.is_a?(Appeal) }
-
-    puts "in hearing request case distributor call method"
-    # puts genpop_values.inspect
-    puts sct_appeals.count
-    puts sct_appeals.map { |appeal| appeal.tasks.of_type(:DistributionTask).map(&:status) }.inspect
-
-    puts "appeal ids of sct and appeals_for_tasks"
-    puts sct_appeals.map(&:id).inspect
-    puts appeals_for_tasks.map(&:id).inspect
-
     # Creates JudgeAssignTasks for the appeals, then zip the genpop_values into the array for creating
     # the DistributedCases
     tasks = assign_judge_tasks_for_appeals(appeals_for_tasks, distribution.judge).zip(genpop_values)
 
-    sct_tasks = assign_sct_tasks_for_appeals(sct_appeals).zip([true] * sct_appeals.count)
+    sct_tasks = create_sct_tasks
 
-    # puts sct_tasks.inspect
-
-    tasks_array = tasks + sct_tasks
-
-    tasks_array.map do |task, genpop_value|
+    (tasks + sct_tasks).map do |task, genpop_value|
       next if task.nil?
 
       # If a distributed case already exists for this appeal, alter the existing distributed case's case id.
@@ -93,5 +75,23 @@ class HearingRequestCaseDistributor
     return appeals[1] if genpop == "any"
 
     []
+  end
+
+  # The DistributedCases model validates genpop and genpop_query for a hearing or legacy case. These methods
+  # will create one array for the appeals and one for their genpop values with matching indexes
+  def appeals_for_tasks
+    appeals_to_distribute.flatten.select { |obj| obj.is_a?(Appeal) }
+  end
+
+  def genpop_values
+    appeals_to_distribute.flatten.reject { |obj| obj.is_a?(Appeal) }
+  end
+
+  def create_sct_tasks
+    if FeatureToggle.enabled?(:specialty_case_team_distribution, user: RequestStore.store[:current_user])
+      assign_sct_tasks_for_appeals(sct_appeals).zip([true] * sct_appeals.count)
+    else
+      []
+    end
   end
 end

@@ -78,60 +78,16 @@ class Docket
     appeals(priority: true, ready: true).pluck(:uuid)
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Lint/UnusedMethodArgument, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/MethodLength, Lint/UnusedMethodArgument, Metrics/PerceivedComplexity
   # :reek:FeatureEnvy
   def distribute_appeals(distribution, priority: false, genpop: nil, limit: 1, style: "push")
-    appeals = appeals(priority: priority, ready: true, genpop: genpop, judge: distribution.judge).limit(limit)
-      .includes(:request_issues)
-
-    query_args = { priority: priority, ready: true, genpop: genpop, judge: distribution.judge }
-
-    # stuff = create_sct_appeals(query_args, limit)
-
-    # puts stuff.map(&:count).inspect
-    # sct_predicates = [
-    #   proc { |appeal| appeal.request_issues.any? { |issue| issue.benefit_type == "vha" } }
-    # ]
-
-    # TODO: Maybe expand this out so work with any possible benefit types or some selection criterion.
-    # Something like SCT_PREDICATES
-    # sct_appeals = if FeatureToggle.enabled?(:specialty_case_team_distribution)
-    #                 sct_appeals = appeals.select do |appeal|
-    #                   appeal.request_issues.find do |issue|
-    #                     issue.benefit_type == "vha"
-    #                   end
-    #                 end
-    #                 appeals -= sct_appeals
-    #                 sct_appeals
-    #               else
-    #                 []
-    #               end
-
-    # if sct_appeals.any?
-    #   loop do
-    #     inner_appeals = appeals(priority: priority, ready: true, genpop: genpop, judge: distribution.judge)
-    #       .limit(limit - appeals.count)
-    #       .includes(:request_issues)
-    #       .where("appeals.id NOT IN (?)", appeals.pluck(:id) + sct_appeals.pluck(:id))
-
-    #     break unless inner_appeals.exists?
-
-    #     inner_sct_appeals = inner_appeals.select do |appeal|
-    #       appeal.request_issues.find do |issue|
-    #         issue.benefit_type == "vha"
-    #       end
-    #     end
-
-    #     inner_appeals -= inner_sct_appeals
-    #     appeals += inner_appeals
-    #     sct_appeals += inner_sct_appeals
-
-    #     break if appeals.count >= limit
-    #   end
-    # end
-
-    # TODO: feature toggle this
-    appeals, sct_appeals = create_sct_appeals(query_args, limit)
+    if sct_distribution_enabled?
+      query_args = { priority: priority, ready: true, genpop: genpop, judge: distribution.judge }
+      appeals, sct_appeals = create_sct_appeals(query_args, limit)
+    else
+      appeals = appeals(priority: priority, ready: true, genpop: genpop, judge: distribution.judge).limit(limit)
+      sct_appeals = []
+    end
 
     tasks = assign_judge_tasks_for_appeals(appeals, distribution.judge)
     sct_tasks = assign_sct_tasks_for_appeals(sct_appeals)
@@ -145,28 +101,18 @@ class Docket
       if distributed_case && task.appeal.can_redistribute_appeal?
         distributed_case.flag_redistribution(task)
         distributed_case.rename_for_redistribution!
-        new_dist_case = distribution.distributed_cases.create!(case_id: task.appeal.uuid,
-                                                               docket: docket_type,
-                                                               priority: priority,
-                                                               ready_at: task.appeal.ready_for_distribution_at,
-                                                               task: task,
-                                                               sct_appeal: task.is_a?(SpecialtyCaseTeamAssignTask))
+        new_dist_case = create_distribution_case_for_task(distribution, task, priority)
         # In a race condition for distributions, two JudgeAssignTasks will be created; this cancels the first one
         # TODO: See if I need a cancel previous SCT assign task
         cancel_previous_judge_assign_task(task.appeal, distribution.judge.id)
         # Returns the new DistributedCase as expected by calling methods; case in elsif is implicitly returned
         new_dist_case
       elsif !distributed_case
-        distribution.distributed_cases.create!(case_id: task.appeal.uuid,
-                                               docket: docket_type,
-                                               priority: priority,
-                                               ready_at: task.appeal.ready_for_distribution_at,
-                                               task: task,
-                                               sct_appeal: task.is_a?(SpecialtyCaseTeamAssignTask))
+        create_distribution_case_for_task(distribution, task, priority)
       end
     end
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Lint/UnusedMethodArgument, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/MethodLength, Lint/UnusedMethodArgument, Metrics/PerceivedComplexity
 
   def self.nonpriority_decisions_per_year
     Appeal.extending(Scopes).nonpriority
@@ -198,7 +144,18 @@ class Docket
     FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
   end
 
-  # TODO: make a method for my sct_feature toggle here similar to how the use_by_docket_date? is setup
+  def sct_distribution_enabled?
+    FeatureToggle.enabled?(:specialty_case_team_distribution, user: RequestStore.store[:current_user])
+  end
+
+  def create_distribution_case_for_task(distribution, task, priority)
+    distribution.distributed_cases.create!(case_id: task.appeal.uuid,
+                                           docket: docket_type,
+                                           priority: priority,
+                                           ready_at: task.appeal.ready_for_distribution_at,
+                                           task: task,
+                                           sct_appeal: task.is_a?(SpecialtyCaseTeamAssignTask))
+  end
 
   module Scopes
     include DistributionScopes
