@@ -218,7 +218,7 @@ export const PAGE_TITLES = {
   COMPLETE_HEARING_WITHDRAWAL_REQUEST: 'Complete Hearing Withdrawal Request',
   REVIEW_PACKAGE: 'Review Package',
   CORRESPONDENCE_CASES_LIST: 'Correspondence Cases',
-  CORRESPONDENCE_OWN_LIST: 'Your Correspondence',
+  YOUR_CORRESPONDENCE_TITLE: 'Your Correspondence',
   CORRESPONDENCE_INTAKE: 'Correspondence Intake'
 };
 
