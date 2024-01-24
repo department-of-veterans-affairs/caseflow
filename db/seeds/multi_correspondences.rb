@@ -81,6 +81,17 @@ module Seeds
       5.times do
         corres = create_correspondence_with_canceled_root_task(appeal)
       end
+
+      mail_task_pid_for_cavc = pending_tab_cavc_mailtask(create_correspondence(appeal))
+      20.times do
+        corres = create_pending_tasks(mail_task_pid_for_cavc, appeal)
+      end
+
+      mail_task_pid_for_congressInterest = pending_tab_congress_interest_mailtask(create_correspondence(appeal))
+      20.times do
+        corres = create_pending_tasks(mail_task_pid_for_congressInterest, appeal)
+      end
+
     end
 
     def create_correspondence_with_intake_and_failed_upload_task(ptask, appeal)
@@ -144,6 +155,14 @@ module Seeds
       corres = create_correspondence(appeal)
 
       create_correspondence_root_task(corres, status: "cancelled")
+
+      corres
+    end
+
+    def create_pending_tasks(mail_task_parent, appeal)
+      corres = create_correspondence(appeal)
+
+      create_pending_tasks_for_tasks_not_related_to_appeal(corres, parent_task: mail_task_parent)
 
       corres
     end

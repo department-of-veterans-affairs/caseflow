@@ -141,4 +141,42 @@ module SeedHelpers
       assigned_to: MailTeamSupervisor.singleton
     )
   end
+
+  def pending_tab_cavc_mailtask(correspondence)
+    CavcCorrespondenceMailTask.create!(
+      appeal_id: correspondence.id,
+      appeal_type: "Correspondence",
+      status: Constants.TASK_STATUSES.assigned,
+      assigned_to: MailTeamSupervisor.singleton
+    )
+  end
+
+  def pending_tab_congress_interest_mailtask(correspondence)
+    CongressionalInterestMailTask.create!(
+      appeal_id: correspondence.id,
+      appeal_type: "Correspondence",
+      status: Constants.TASK_STATUSES.assigned,
+      assigned_to: MailTeamSupervisor.singleton
+    )
+  end
+
+  def create_pending_tasks_for_tasks_not_related_to_appeal(correspondence, parent_task:)
+    # Creating Completed ReviewPackageTask
+    review_package_task = ReviewPackageTask.create!(
+      parent_id: parent_task,
+      appeal_id: correspondence.id,
+      appeal_type: "Correspondence",
+      status: Constants.TASK_STATUSES.completed,
+      assigned_to: MailTeamSupervisor.singleton
+    )
+
+    # Creating Completed CorrespondenceIntakeTask
+    correspondence_intake_task = CorrespondenceIntakeTask.create!(
+      parent_id: parent_task,
+      appeal_id: correspondence.id,
+      appeal_type: "Correspondence",
+      status: Constants.TASK_STATUSES.completed,
+      assigned_to: MailTeamSupervisor.singleton
+    )
+  end
 end
