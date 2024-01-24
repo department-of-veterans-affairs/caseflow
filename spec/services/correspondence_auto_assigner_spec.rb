@@ -8,6 +8,12 @@ describe CorrespondenceAutoAssigner do
 
   let!(:correspondence) { create(:correspondence, :with_single_doc, veteran_id: veteran.id, uuid: SecureRandom.uuid) }
 
+  let(:mock_permission_checker) { instance_double(OrganizationUserPermissionChecker, can?: true) }
+
+    before do
+      allow(OrganizationUserPermissionChecker).to receive(:new).and_return(mock_permission_checker)
+    end
+
   describe "#do_auto_assignment" do
     it "successfully creates a ReviewPackageTask and updates the existing task" do
       expect do

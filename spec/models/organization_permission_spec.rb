@@ -13,8 +13,17 @@ describe OrganizationPermission do
   end
 
   describe "Validations" do
-    it { should validate_presence_of(:permission) }
     it { should validate_presence_of(:description) }
-    it { should validate_presence_of(:enabled) }
+
+    it { should allow_value(%w(true false)).for(:enabled) }
+    it { should_not allow_value(nil).for(:enabled) }
+
+    context "permission" do
+      it { should_not allow_value("bad_test").for(:permission) }
+
+      OrganizationPermission.valid_permission_names.each do |permission_name|
+        it { should allow_value(permission_name).for(:permission) }
+      end
+    end
   end
 end
