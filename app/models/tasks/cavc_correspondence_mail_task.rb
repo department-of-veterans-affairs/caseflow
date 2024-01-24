@@ -49,7 +49,7 @@ class CavcCorrespondenceMailTask < MailTask
   end
 
   def open_cavc_task
-    appeal.open_cavc_task
+    CavcTask.open.where(appeal_id: appeal.id).any?
   end
 
   def organization_task_actions

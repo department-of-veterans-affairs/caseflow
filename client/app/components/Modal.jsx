@@ -93,7 +93,6 @@ export default class Modal extends React.Component {
           disabled={object.disabled}
           key={i}
           id={this.buttonIdPrefix + i}
-          aria-label={object.name}
         />
       );
     });

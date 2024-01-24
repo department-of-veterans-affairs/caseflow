@@ -9,7 +9,7 @@ class ApplicationController < ApplicationBaseController
   before_action :set_raven_user
   before_action :verify_authentication
   before_action :set_paper_trail_whodunnit
-  before_action :deny_vso_access, except: [:unauthorized, :feedback, :under_construction]
+  before_action :deny_vso_access, except: [:unauthorized, :feedback]
   before_action :set_no_cache_headers
 
   rescue_from StandardError do |e|
