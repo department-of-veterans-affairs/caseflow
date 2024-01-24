@@ -57,7 +57,6 @@ class CorrespondenceAutoAssigner
       organization: InboundOpsTeam.singleton,
       user: user
     )
-
     ReviewPackageTask.create_from_params(task_params, current_user)
   end
 
