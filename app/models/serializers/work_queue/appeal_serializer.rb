@@ -320,4 +320,8 @@ class WorkQueue::AppealSerializer
       Constants.CAVC_DECISION_TYPES.settlement
     ]).count
   end
+
+  attribute :evidence_submission_task do |object|
+    object.tasks.find_by(type: "EvidenceSubmissionWindowTask", status: "assigned")
+  end
 end
