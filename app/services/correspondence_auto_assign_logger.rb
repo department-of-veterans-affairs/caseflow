@@ -19,8 +19,9 @@ class CorrespondenceAutoAssignLogger
     # Batch assignment update! method here
   end
 
-  def log_single_attempt(correspondence_id:)
+  def log_single_attempt
     @total_attempts += 1
+    create_single_assignment
     # Assign individual attempt here to @current_assignment
   end
 
