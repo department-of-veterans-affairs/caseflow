@@ -1,14 +1,12 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import LeverSaveButton from '../../../../app/caseDistribution/components/LeverSaveButton';
-import SaveModal from 'app/caseDistribution/components/SaveModal';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import rootReducer from 'app/caseDistribution/reducers/root';
+import * as leversSelectors from 'app/caseDistribution/reducers/levers/leversSelector';
 import thunk from 'redux-thunk';
-import * as changedLevers from 'app/caseDistribution/reducers/levers/leversSelector';
-import { modalOriginalTestLevers } from '../../../data/adminCaseDistributionLevers';
-import { loadLevers, setUserIsAcdAdmin } from 'app/caseDistribution/reducers/levers/leversActions';
+import { setUserIsAcdAdmin } from 'app/caseDistribution/reducers/levers/leversActions';
 
 describe('Lever Save Button', () => {
 
@@ -20,14 +18,9 @@ describe('Lever Save Button', () => {
     jest.clearAllMocks();
   });
 
-  // let leversOfModalOriginalTestLevers = { batch: modalOriginalTestLevers };
-
   it('renders Save Button for Admin Users', () => {
     const store = getStore();
 
-    // let setShowModal = jest.fn().mockImplementation((display) => display);
-
-    // store.dispatch(loadLevers(leversOfModalOriginalTestLevers));
     store.dispatch(setUserIsAcdAdmin(false));
 
     render(
@@ -38,32 +31,36 @@ describe('Lever Save Button', () => {
     expect(screen.getByText('Save')).toBeInTheDocument();
   });
 
-  // it('triggers the Save Button', async () => {
-  //   const store = getStore();
+  it('will be disabled initially', () => {
+    const store = getStore();
 
-  //   const setShowModal = jest.fn();
+    render(
+      <Provider store={store}>
+        <LeverSaveButton />
+      </Provider>
+    );
 
-  //   const changedLeversData = [
-  //     { title: 'Alternate Batch Size*',
-  //       backendValue: '50',
-  //       value: '15',
-  //       data_type: 'number' },
-  //   ];
+    expect(screen.getByText('Save')).toBeDisabled();
+  });
 
-  //   jest.spyOn(changedLevers, 'changedLevers').mockReturnValue(changedLeversData);
+  it('activates Save Button when conditions are met', () => {
+    const store = getStore();
 
-  //   store.dispatch(loadLevers(leversOfModalOriginalTestLevers));
-  //   store.dispatch(setUserIsAcdAdmin(false));
+    const changedLeversData = [
+      { title: 'Alternate Batch Size*',
+        backendValue: '50',
+        value: '15',
+        data_type: 'number' },
+    ];
 
-  //   render(
-  //     <Provider store={store}>
-  //       <SaveModal setShowModal={setShowModal} />
-  //     </Provider>
-  //   );
+    jest.spyOn(leversSelectors, 'hasChangedLevers').mockReturnValue(changedLeversData);
 
-  //   for (const leverData of changedLeversData) {
-  //     expect(screen.getByText(leverData.title)).toBeInTheDocument();
-  //     expect(screen.getByText(leverData.value)).toBeInTheDocument();
-  //   }
-  // });
+    render(
+      <Provider store={store}>
+        <LeverSaveButton />
+      </Provider>
+    );
+
+    expect(screen.getByText('Save')).not.toBeDisabled();
+  });
 });
