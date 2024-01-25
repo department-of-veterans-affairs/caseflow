@@ -113,7 +113,7 @@ describe('Static Lever', () => {
 
     for (const lever of staticNoType) {
       expect(document.getElementById(`${lever.title}-description`)).toHaveTextContent(lever.description);
-      expect(document.getElementById(`${lever.title}-value`)).toHaveTextContent('');
+      expect(document.getElementById(`${lever.title}-value`)).toHaveTextContent('test-unit-unknown-dt-static');
     }
   });
 });
