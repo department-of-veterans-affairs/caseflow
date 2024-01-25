@@ -34,6 +34,7 @@ class RequestIssue < CaseflowRecord
   has_many :hearing_issue_notes
   has_one :legacy_issue_optin
   has_many :legacy_issues
+  has_one :event_record, as: :backfill_record
   belongs_to :correction_request_issue, class_name: "RequestIssue", foreign_key: "corrected_by_request_issue_id"
   belongs_to :ineligible_due_to, class_name: "RequestIssue", foreign_key: "ineligible_due_to_id"
   belongs_to :contested_decision_issue, class_name: "DecisionIssue"
@@ -713,6 +714,11 @@ class RequestIssue < CaseflowRecord
     return true if untimely_exemption
 
     decision_date >= (receipt_date - Rating::ONE_YEAR_PLUS_DAYS)
+  end
+
+  def from_decision_review_created_event?
+    # refer back to the associated Intake to see if both objects came from DRCE
+    decision_review&.from_decision_review_created_event?
   end
 
   private

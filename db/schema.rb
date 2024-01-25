@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_10_18_115254) do
+ActiveRecord::Schema.define(version: 2024_01_16_211523) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -813,6 +813,24 @@ ActiveRecord::Schema.define(version: 2023_10_18_115254) do
     t.index ["end_product_establishment_id"], name: "index_end_product_updates_on_end_product_establishment_id"
     t.index ["original_decision_review_type", "original_decision_review_id"], name: "index_epupdates_on_decision_review_type_and_decision_review_id"
     t.index ["user_id"], name: "index_end_product_updates_on_user_id"
+  end
+
+  create_table "event_records", comment: "Stores records that are created or updated by an event from the Appeals-Consumer application.", force: :cascade do |t|
+    t.bigint "backfill_record_id", null: false
+    t.string "backfill_record_type", null: false
+    t.datetime "created_at", null: false, comment: "Automatic timestamp when row was created"
+    t.integer "event_id", null: false, comment: "ID of the Event that created or updated this record."
+    t.datetime "updated_at", null: false, comment: "Automatic timestamp whenever the record changes"
+    t.index ["backfill_record_type", "backfill_record_id"], name: "index_event_record_on_backfill_record"
+  end
+
+  create_table "events", comment: "Stores events from the Appeals-Consumer application that are processed by Caseflow", force: :cascade do |t|
+    t.datetime "completed_at", comment: "Timestamp of when event was successfully completed"
+    t.datetime "created_at", null: false, comment: "Automatic timestamp when row was created"
+    t.string "error", comment: "Error message captured during a failed event"
+    t.string "reference_id", null: false, comment: "Id of Event Record being referenced within the Appeals Consumer Application"
+    t.string "type", null: false, comment: "Type of Event (e.g. DecisionReviewCreatedEvent)"
+    t.datetime "updated_at", null: false, comment: "Automatic timestamp whenever the record changes"
   end
 
   create_table "form8s", id: :serial, force: :cascade do |t|

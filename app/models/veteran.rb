@@ -6,10 +6,12 @@
 #       VACOLS vet values (coming from Appeal#veteran_full_name, etc)
 class Veteran < CaseflowRecord
   include AssociatedBgsRecord
+  include EventConcern
 
   has_many :available_hearing_locations,
            foreign_key: :veteran_file_number,
            primary_key: :file_number, class_name: "AvailableHearingLocations"
+  has_one :event_record, as: :backfill_record
 
   bgs_attr_accessor :ptcpnt_id, :sex, :address_line1, :address_line2,
                     :address_line3, :city, :state, :country, :zip_code,
@@ -201,6 +203,7 @@ class Veteran < CaseflowRecord
 
     service.map { |service| service[:pay_grade] }.compact
   end
+
 
   alias zip zip_code
   alias address_line_1 address_line1

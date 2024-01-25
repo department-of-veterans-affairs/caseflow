@@ -3,9 +3,11 @@
 class Person < CaseflowRecord
   include AssociatedBgsRecord
   include BgsService
+  include EventConcern
 
   has_many :advance_on_docket_motions
   has_many :claimants, primary_key: :participant_id, foreign_key: :participant_id
+  has_one :event_record, as: :backfill_record
   validates :participant_id, presence: true
 
   CACHED_BGS_ATTRIBUTES = [
@@ -116,6 +118,7 @@ class Person < CaseflowRecord
 
     bgs_record.keys.any?
   end
+
 
   private
 

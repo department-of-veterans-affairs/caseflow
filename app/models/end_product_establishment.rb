@@ -20,6 +20,7 @@ class EndProductEstablishment < CaseflowRecord
   has_many :effectuations, class_name: "BoardGrantEffectuation"
   has_many :end_product_updates
   has_one :priority_end_product_sync_queue
+  has_one :event_record, as: :backfill_record
   belongs_to :vbms_ext_claim, foreign_key: "reference_id", primary_key: "claim_id", optional: true
 
   # :block  => 1    # Specify in seconds how long you want to wait for the lock to be released.
@@ -381,6 +382,11 @@ class EndProductEstablishment < CaseflowRecord
     else
       EndProduct::STATUSES.key("Pending")
     end
+  end
+
+  def from_decision_review_created_event?
+    # refer back to the associated Intake to see if both objects came from DRCE
+    source.intake.from_decision_review_created_event?
   end
 
   private

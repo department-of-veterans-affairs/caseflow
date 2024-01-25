@@ -2,10 +2,12 @@
 
 class Intake < CaseflowRecord
   class FormTypeNotSupported < StandardError; end
+  include EventConcern
 
   belongs_to :user
   belongs_to :veteran
   belongs_to :detail, polymorphic: true
+  has_one :event_record, as: :backfill_record
 
   COMPLETION_TIMEOUT = 5.minutes
   IN_PROGRESS_EXPIRES_AFTER = 1.day
@@ -266,6 +268,7 @@ class Intake < CaseflowRecord
   end
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
+
 
   # Optionally implement this methods in subclass
   def validate_detail_on_start
