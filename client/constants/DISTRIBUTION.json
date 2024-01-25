@@ -20,9 +20,17 @@
   "ama_direct_review_docket_time_goals": "ama_direct_review_docket_time_goals",
   "ama_evidence_submission_docket_time_goals": "ama_evidence_submission_docket_time_goals",
   "days_before_goal_due_for_distribution": "days_before_goal_due_for_distribution",
+  "all_priority_id": "all-priority",
+  "all_non_priority_id": "all-non-priority",
   "all_priority": "All Priority",
   "all_non_priority": "All Non-priority",
   "ama_hearings_section_title": "AMA Hearings",
   "ama_direct_review_section_title": "AMA Direct Review",
-  "ama_evidence_submission_section_title": "AMA Evidence Submission"
+  "ama_evidence_submission_section_title": "AMA Evidence Submission",
+  "legacy_appeals_id": "legacy-appeals",
+  "ama_hearings_appeals_id": "ama-hearings-appeals",
+  "ama_direct_review_appeals_id":  "ama-direct-review-appeals",
+  "ama_evidence_submission_appeals_id": "ama-evidence-submission-appeals"
 }
+
+

@@ -54,7 +54,8 @@ const ExclusionTable = () => {
         {isUserAcdAdmin ?
           <tbody>
             <tr>
-              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-first-col-styling')}
+              <td id={DISTRIBUTION.all_non_priority_id}
+                className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-first-col-styling')}
                 aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
               >
                 <span>
@@ -62,13 +63,14 @@ const ExclusionTable = () => {
                     {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
                   </h4>
                   <ToggleSwitch
-                    id = {DISTRIBUTION.all_non_priority}
+                    id = {DISTRIBUTION.all_non_priority_id + '-switch' }
                     selected = {false}
                     disabled
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+              <td id={DISTRIBUTION.all_non_priority_id + '-' + DISTRIBUTION.legacy_appeals_id}
+                className={cx('exclusion-table-styling', 'lever-disabled')}
                 aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
               >
                 <span>
@@ -81,7 +83,8 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+              <td id={DISTRIBUTION.all_non_priority_id + '-' + DISTRIBUTION.ama_hearings_appeals_id}
+                className={cx('exclusion-table-styling', 'lever-disabled')}
                 aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
               >
                 <span>
@@ -94,7 +97,8 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+              <td id={DISTRIBUTION.all_non_priority_id + '-' + DISTRIBUTION.ama_direct_review_appeals_id}
+                className={cx('exclusion-table-styling', 'lever-disabled')}
                 aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
               >
                 <span>
@@ -107,7 +111,8 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+              <td id={DISTRIBUTION.all_non_priority_id + '-' + DISTRIBUTION.ama_evidence_submission_appeals_id}
+                className={cx('exclusion-table-styling', 'lever-disabled')}
                 aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}
               >
                 <span>
@@ -122,7 +127,8 @@ const ExclusionTable = () => {
               </td>
             </tr>
             <tr>
-              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-first-col-styling')}
+              <td id={DISTRIBUTION.all_priority_id}
+                className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-first-col-styling')}
                 aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
               >
                 <span>
@@ -130,25 +136,14 @@ const ExclusionTable = () => {
                     {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
                   </h4>
                   <ToggleSwitch
-                    id = {DISTRIBUTION.all_priority}
+                    id = {DISTRIBUTION.all_priority_id + '-switch'}
                     selected = {false}
                     disabled
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}
-                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}>
-                <span>
-                  <RadioField
-                    name=""
-                    options={options}
-                    vertical
-                    uniqueIdGenerator={(option, index) =>
-                      generateUniqueId(DISTRIBUTION.all_priority, option.value, index)}
-                  />
-                </span>
-              </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+              <td id={DISTRIBUTION.all_priority_id + '-' + DISTRIBUTION.legacy_appeals_id}
+                className={cx('exclusion-table-styling', 'lever-disabled')}
                 aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
               >
                 <span>
@@ -161,7 +156,8 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+              <td id={DISTRIBUTION.all_priority_id + '-' + DISTRIBUTION.ama_hearings_appeals_id}
+                className={cx('exclusion-table-styling', 'lever-disabled')}
                 aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
               >
                 <span>
@@ -174,7 +170,22 @@ const ExclusionTable = () => {
                   />
                 </span>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled')}
+              <td id={DISTRIBUTION.all_priority_id + '-' + DISTRIBUTION.ama_direct_review_appeals_id}
+                className={cx('exclusion-table-styling', 'lever-disabled')}
+                aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
+              >
+                <span>
+                  <RadioField
+                    name=""
+                    options={options}
+                    vertical
+                    uniqueIdGenerator={(option, index) =>
+                      generateUniqueId(DISTRIBUTION.all_priority, option.value, index)}
+                  />
+                </span>
+              </td>
+              <td id={DISTRIBUTION.all_priority_id + '-' + DISTRIBUTION.ama_evidence_submission_appeals_id}
+                className={cx('exclusion-table-styling', 'lever-disabled')}
                 aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}
               >
                 <span>
@@ -192,26 +203,34 @@ const ExclusionTable = () => {
 
           <tbody>
             <tr>
-              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}>
+              <td id={DISTRIBUTION.all_non_priority_id} className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}>
                 <h3 aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}>
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_NON_PRIORITY}</h3>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}>
+              <td id={DISTRIBUTION.all_non_priority_id + '-' + DISTRIBUTION.legacy_appeals_id}
+                className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}
+              >
                 <label className="exclusion-table-member-view-styling">
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}>
+              <td id={DISTRIBUTION.all_non_priority_id + '-' + DISTRIBUTION.ama_hearings_appeals_id}
+                className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}
+              >
                 <label className="exclusion-table-member-view-styling">
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}>
+              <td id={DISTRIBUTION.all_non_priority_id + '-' + DISTRIBUTION.ama_direct_review_appeals_id}
+                className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}
+              >
                 <label className="exclusion-table-member-view-styling">
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}>
+              <td id={DISTRIBUTION.all_non_priority_id + '-' + DISTRIBUTION.ama_evidence_submission_appeals_id}
+                className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}
+              >
                 <label className="exclusion-table-member-view-styling">
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label>
@@ -219,25 +238,35 @@ const ExclusionTable = () => {
             </tr>
 
             <tr>
-              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}>
+              <td id={DISTRIBUTION.all_priority_id}
+                className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}
+              >
                 <h3 aria-label={COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}>
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_PRIORITY}</h3>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}>
+              <td id={DISTRIBUTION.all_priority_id + '-' + DISTRIBUTION.legacy_appeals_id}
+                className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}
+              >
                 <label className="exclusion-table-member-view-styling">
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}</label>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}>
+              <td id={DISTRIBUTION.all_priority_id + '-' + DISTRIBUTION.ama_hearings_appeals_id}
+                className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}
+              >
                 <label className="exclusion-table-member-view-styling">
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}>
+              <td id={DISTRIBUTION.all_priority_id + '-' + DISTRIBUTION.ama_direct_review_appeals_id}
+                className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}
+              >
                 <label className="exclusion-table-member-view-styling">
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label>
               </td>
-              <td className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}>
+              <td id={DISTRIBUTION.all_priority_id + '-' + DISTRIBUTION.ama_evidence_submission_appeals_id}
+                className={cx('exclusion-table-styling', 'lever-disabled', 'exclusion-table-member-styling')}
+              >
                 <label className="exclusion-table-member-view-styling">
                   {COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_OFF}
                 </label>
