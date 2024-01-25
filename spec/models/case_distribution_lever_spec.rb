@@ -186,5 +186,25 @@ RSpec.describe CaseDistributionLever, :all_dbs do
 
       expect(audit2.update_value).to eq(lever2["value"].to_s)
     end
+
+    it "should return standard error when pass invalid user" do
+      request_more_cases_minimum = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.request_more_cases_minimum)
+      minimum_legacy_proportion = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.minimum_legacy_proportion)
+
+      lever1 = {
+        "id" => request_more_cases_minimum.id,
+        "value" => "abc123"
+      }
+
+      lever2 = {
+        "id" => minimum_legacy_proportion.id,
+        "value" => 0.5
+      }
+        current_levers = [lever1, lever2]
+
+      errors = CaseDistributionLever.update_acd_levers(current_levers, nil)
+      expect(errors.size).to eq(2)
+      expect(errors.last.to_s).to include('ERROR:  null value in column "user_id" violates not-null constraint')
+    end
   end
 end
