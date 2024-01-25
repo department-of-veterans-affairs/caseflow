@@ -130,10 +130,12 @@ describe('Timezone', () => {
   });
 
   test('Dropdown displays correct times based on props time and roTimezone', () => {
-    const time = HEARING_TIME_OPTIONS[0].value;
+    const timeWithTimezone = HEARING_TIME_OPTIONS[0].value;
+    const splitTimeString = timeWithTimezone.search('AM');
+    const time = timeWithTimezone.slice(0, splitTimeString).trim() + ' am';
     const roTimezone = 'America/Los_Angeles';
-    const dateTime = moment.tz(time, 'HH:mm', roTimezone)
-    const roTzValueToLabelMapping = invert(TIMEZONES)
+    const dateTime = moment.tz(time, 'h:mm a', roTimezone);
+    const roTzValueToLabelMapping = invert(TIMEZONES);
 
     const tz = mount(
       <Timezone time={time} roTimezone={roTimezone} />
@@ -142,7 +144,7 @@ describe('Timezone', () => {
 
     dropdown.prop('options').map((opt) => {
       if (opt.value && opt.label && REGIONAL_OFFICE_TIMEZONES.includes(opt.value)) {
-        const label = `${roTzValueToLabelMapping[opt.value]} (${moment(dateTime, 'HH:mm').tz(opt.value).format('h:mm A')})`
+        const label = `${roTzValueToLabelMapping[opt.value]} (${moment(dateTime).tz(opt.value).format('h:mm A')})`
         expect(opt.label).toEqual(label)
       }
     })

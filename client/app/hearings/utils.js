@@ -21,7 +21,8 @@ import {
   sortBy,
   get,
   map,
-  isUndefined
+  isUndefined,
+  isNil
 } from 'lodash';
 
 import HEARING_ROOMS_LIST from 'constants/HEARING_ROOMS_LIST';
@@ -319,6 +320,12 @@ export const getFriendlyZoneName = (name) => {
  * @returns {string} -- The label of the timezone
  */
 export const zoneName = (time, name, format) => {
+  const getAmTime = time.search('AM');
+  const splitTimeString = getAmTime < 0 ? time.search('PM') : getAmTime;
+
+  const selectedTime = splitTimeString === -1 ? time : time.slice(0, splitTimeString + 2).trim();
+  const selectedTimeZone = splitTimeString === -1 ? null : time.slice(splitTimeString + 2).trim();
+
   // Default to using America/New_York
   const timezone = name ? getFriendlyZoneName(name) : COMMON_TIMEZONES[3];
 
@@ -327,6 +334,15 @@ export const zoneName = (time, name, format) => {
 
   // Set the label
   const label = format ? '' : zone;
+
+  if (selectedTimeZone !== null){
+    time = selectedTime;
+    const originTimeZone = selectedTimeZone === null ? timezone : TIMEZONES[selectedTimeZone];
+
+    // Return the value if it is not a valid time
+    return moment(selectedTime, 'h:mm A').isValid() ? `${moment.tz(selectedTime, 'h:mm a', originTimeZone).tz(timezone).
+    format(`h:mm A ${format || ''}`)}${label}` : selectedTime;
+  }
 
   // Return the value if it is not a valid time
   return moment(time, 'h:mm A').isValid() ? `${moment(time, 'h:mm a').tz(timezone).
@@ -369,9 +385,12 @@ export const hearingTimeOptsWithZone = (options, local) =>
     // can also be removed.
     moment.tz.setDefault();
 
+    const displayLocalTime = local && localTime !== time;
+    // For the Hearing Time dropdown, the value passed should include the AM/PM and timezone context
     return {
       ...item,
-      [label]: local && localTime !== time ? `${localTime} / ${time}` : time
+      ['value']: displayLocalTime ? `${localTime}` : time,
+      [label]: displayLocalTime ? `${localTime} / ${time}` : time
     };
   });
 
@@ -399,8 +418,21 @@ export const timezones = (time, roTimezone) => {
   // Get the list of Regional Office Timezones
   const ros = roTimezones();
 
+
+  if (!isNil(time)) {
+
+    const getAmTime = time.search('AM');
+    const splitTimeString = getAmTime < 0 ? time.search('PM') : getAmTime;
+
+    const selectedTime = splitTimeString === -1 ? time : time.slice(0,splitTimeString + 2).trim();
+    const selectedTimeZone = splitTimeString === -1 ? null : time.slice(splitTimeString + 2).trim();
+
+    time = selectedTime;
+    roTimezone = selectedTimeZone === null ? roTimezone : TIMEZONES[selectedTimeZone];
+  }
+
   // Convert the time into a date object with the RO timezone
-  const dateTime = moment.tz(time, 'HH:mm', roTimezone);
+  const dateTime = moment.tz(time, 'HH:mm A', roTimezone);
 
   // Map the available timeTIMEZONES to a select options object
   const unorderedOptions = Object.keys(TIMEZONES).map((zone) => {
