@@ -2,16 +2,18 @@
 
 class CorrespondenceAutoAssigner
   def do_auto_assignment(current_user_id:)
-    current_user = User.find(current_user_id)
+    @current_user = User.find(current_user_id)
 
+    correspondence_auto_assign_logger.begin_logging
     unassigned_correspondences_task_id_pairs.each do |id_pair|
       create_review_package_task(
         correspondence_id: id_pair[0],
         task_id: id_pair[1],
         package_document_type_id: id_pair[2],
-        current_user: current_user
+        current_user: @current_user
       )
     end
+    correspondence_auto_assign_logger.end_logging
   end
 
   private
@@ -27,6 +29,7 @@ class CorrespondenceAutoAssigner
   end
 
   def create_review_package_task(correspondence_id:, task_id:, package_document_type_id:, current_user:)
+    correspondence_auto_assign_logger.log_single_attempt(correspondence_id)
     unassigned_review_package_task = ReviewPackageTask.find(task_id)
 
     task_params = build_task_params(task_id, correspondence_id, current_user)
@@ -37,6 +40,7 @@ class CorrespondenceAutoAssigner
       assign_user_review_package_task(user: current_user, task_params: task_params)
     end
     unassigned_review_package_task.update!(assigned_to: InboundOpsTeam.singleton, status: :on_hold)
+    correspondence_auto_assign_logger.record_success
   end
 
   def build_task_params(task_id, correspondence_id, current_user)
@@ -57,6 +61,7 @@ class CorrespondenceAutoAssigner
       organization: InboundOpsTeam.singleton,
       user: user
     )
+
     ReviewPackageTask.create_from_params(task_params, current_user)
   end
 
@@ -72,5 +77,9 @@ class CorrespondenceAutoAssigner
 
   def permission_checker
     @permission_checker ||= OrganizationUserPermissionChecker.new
+  end
+
+  def correspondence_auto_assign_logger
+    @correspondence_auto_assign_logger ||= CorrespondenceAutoAssignLogger.new(@current_user)
   end
 end
