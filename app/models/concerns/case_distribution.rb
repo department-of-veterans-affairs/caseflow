@@ -21,7 +21,7 @@ module CaseDistribution
 
   def collect_appeals
     appeals = yield
-    @rem -= appeals.count
+    @rem -= appeals.count { |appeal| !appeal.sct_appeal }
     @appeals += appeals
     appeals
   end

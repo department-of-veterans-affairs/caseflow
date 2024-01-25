@@ -88,6 +88,7 @@ module AutomaticCaseDistribution
   end
 
   def ama_statistics
+    sct_appeals_counts = @appeals.count { |appeal| appeal.try(:sct_appeal) }
     {
       batch_size: @appeals.count,
       total_batch_size: total_batch_size,
@@ -100,7 +101,7 @@ module AutomaticCaseDistribution
       hearing_proportion: docket_proportions[:hearing],
       nonpriority_iterations: @nonpriority_iterations,
       algorithm: "proportions",
-      sct_appeals: @appeals.count { |appeal| appeal.try(:sct_appeal) }
+      sct_appeals: sct_appeals_counts
     }
   end
 

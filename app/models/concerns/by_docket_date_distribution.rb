@@ -66,6 +66,8 @@ module ByDocketDateDistribution
 
     nonpriority_counts[:iterations] = @nonpriority_iterations
 
+    sct_appeals_counts = @appeals.count { |appeal| appeal.try(:sct_appeal) }
+
     settings = {}
     feature_toggles = [
       :acd_disable_legacy_distributions,
@@ -82,7 +84,7 @@ module ByDocketDateDistribution
       priority_target: @push_priority_target || @request_priority_count,
       priority: priority_counts,
       nonpriority: nonpriority_counts,
-      sct_appeals: @appeals.count { |appeal| appeal.try(:sct_appeal) },
+      sct_appeals: sct_appeals_counts,
       algorithm: "by_docket_date",
       settings: settings
     }

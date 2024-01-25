@@ -49,7 +49,9 @@ class HearingRequestDocket < Docket
     if sct_distribution_enabled?
       query_args = { priority: priority, ready: true }
       _, sct_appeals = create_sct_appeals(query_args, limit)
-      base_relation = base_relation.where("appeals.id NOT IN (?)", sct_appeals.pluck(:id))
+      unless sct_appeals.empty?
+        base_relation = base_relation.where("appeals.id NOT IN (?)", sct_appeals.pluck(:id))
+      end
     else
       sct_appeals = []
     end

@@ -56,7 +56,7 @@ class Distribution < CaseflowRecord
   end
 
   def distributed_cases_count
-    (status == "completed") ? distributed_cases.count : 0
+    (status == "completed") ? distributed_cases.count { |distributed_case| !distributed_case.sct_appeal } : 0
   end
 
   def distributed_batch_size
