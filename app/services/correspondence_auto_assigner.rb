@@ -2,7 +2,7 @@
 
 class CorrespondenceAutoAssigner
   def do_auto_assignment(current_user_id:)
-    current_user = User.find(current_user_id)
+    @current_user = User.find(current_user_id)
 
     correspondence_auto_assign_logger.begin_logging
     unassigned_correspondences_task_id_pairs.each do |id_pair|
@@ -10,7 +10,7 @@ class CorrespondenceAutoAssigner
         correspondence_id: id_pair[0],
         task_id: id_pair[1],
         package_document_type_id: id_pair[2],
-        current_user: current_user
+        current_user: @current_user
       )
     end
     correspondence_auto_assign_logger.end_logging
@@ -61,7 +61,7 @@ class CorrespondenceAutoAssigner
       organization: InboundOpsTeam.singleton,
       user: user
     )
-    
+
     ReviewPackageTask.create_from_params(task_params, current_user)
   end
 
@@ -78,8 +78,8 @@ class CorrespondenceAutoAssigner
   def permission_checker
     @permission_checker ||= OrganizationUserPermissionChecker.new
   end
-  
-   def correspondence_auto_assign_logger
-    @correspondence_auto_assign_logger ||= CorrespondenceAutoAssignLogger.new
+
+  def correspondence_auto_assign_logger
+    @correspondence_auto_assign_logger ||= CorrespondenceAutoAssignLogger.new(@current_user)
   end
 end
