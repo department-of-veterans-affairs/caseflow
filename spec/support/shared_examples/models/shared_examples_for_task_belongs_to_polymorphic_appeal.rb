@@ -32,8 +32,8 @@ shared_examples "Task belongs_to polymorphic appeal" do
           end
         end
 
-        context "when eager loading with `includes`" do
-          subject { Task.ama.includes(:ama_appeal) }
+         context "when eager loading with `includes`" do
+          subject { Task.ama.includes(:appeal) }
 
           let!(:_legacy_task) { create(:task) }
 
@@ -48,7 +48,7 @@ shared_examples "Task belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.ama_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
@@ -56,7 +56,7 @@ shared_examples "Task belongs_to polymorphic appeal" do
         end
 
         context "when eager loading with `preload`" do
-          subject { Task.ama.preload(:ama_appeal) }
+          subject { Task.ama.preload(:appeal) }
 
           let!(:_legacy_task) { create(:task) }
 
@@ -71,27 +71,10 @@ shared_examples "Task belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.ama_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
-          end
-        end
-
-        context "when called on an individual Task" do
-          subject { task.ama_appeal }
-
-          context "when the Task is not associated with an AMA appeal" do
-            let(:task) { create(:task) }
-
-            it { should be_nil }
-          end
-
-          context "when the Task is associated with an AMA appeal" do
-            let(:task) { create(:ama_task, appeal: ama_appeal) }
-            let(:ama_appeal) { create(:appeal) }
-
-            it { should eq(ama_appeal) }
           end
         end
       end
@@ -118,7 +101,7 @@ shared_examples "Task belongs_to polymorphic appeal" do
         end
 
         context "when eager loading with `includes`" do
-          subject { Task.legacy.includes(:legacy_appeal) }
+          subject { Task.legacy.includes(:appeal) }
 
           let!(:_ama_task) { create(:ama_task) }
 
@@ -133,7 +116,7 @@ shared_examples "Task belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.legacy_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
@@ -141,7 +124,7 @@ shared_examples "Task belongs_to polymorphic appeal" do
         end
 
         context "when eager loading with `preload`" do
-          subject { Task.legacy.preload(:legacy_appeal) }
+          subject { Task.legacy.preload(:appeal) }
 
           let!(:_ama_task) { create(:ama_task) }
 
@@ -156,27 +139,10 @@ shared_examples "Task belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.legacy_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
-          end
-        end
-
-        context "when called on an individual Task" do
-          subject { task.legacy_appeal }
-
-          context "when the Task is not associated with a Legacy appeal" do
-            let(:task) { create(:ama_task) }
-
-            it { should be_nil }
-          end
-
-          context "when the Task is associated with a Legacy appeal" do
-            let(:task) { create(:task, appeal: legacy_appeal) }
-            let(:legacy_appeal) { create(:legacy_appeal) }
-
-            it { should eq(legacy_appeal) }
           end
         end
       end
@@ -205,7 +171,7 @@ shared_examples "Task belongs_to polymorphic appeal" do
         end
 
         context "when eager loading with `includes`" do
-          subject { Task.higher_level_review.includes(:higher_level_review) }
+          subject { Task.higher_level_review.includes(:appeal) }
 
           let!(:_ama_task) { create(:ama_task) }
 
@@ -220,7 +186,7 @@ shared_examples "Task belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.higher_level_review.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
@@ -228,7 +194,7 @@ shared_examples "Task belongs_to polymorphic appeal" do
         end
 
         context "when eager loading with `preload`" do
-          subject { Task.higher_level_review.preload(:higher_level_review) }
+          subject { Task.higher_level_review.preload(:appeal) }
 
           let!(:_ama_task) { create(:ama_task) }
 
@@ -243,27 +209,10 @@ shared_examples "Task belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.higher_level_review.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
-          end
-        end
-
-        context "when called on an individual Task" do
-          subject { task.higher_level_review }
-
-          context "when the Task is not associated with a HigherLevelReview" do
-            let(:task) { create(:ama_task) }
-
-            it { should be_nil }
-          end
-
-          context "when the Task is associated with a HigherLevelReview" do
-            let(:task) { create(:higher_level_review_task, appeal: higher_level_review) }
-            let(:higher_level_review) { create(:higher_level_review) }
-
-            it { should eq(higher_level_review) }
           end
         end
       end
@@ -292,7 +241,7 @@ shared_examples "Task belongs_to polymorphic appeal" do
         end
 
         context "when eager loading with `includes`" do
-          subject { Task.supplemental_claim.includes(:supplemental_claim) }
+          subject { Task.supplemental_claim.includes(:appeal) }
 
           let!(:_ama_task) { create(:ama_task) }
 
@@ -307,7 +256,7 @@ shared_examples "Task belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.supplemental_claim.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
@@ -315,7 +264,7 @@ shared_examples "Task belongs_to polymorphic appeal" do
         end
 
         context "when eager loading with `preload`" do
-          subject { Task.supplemental_claim.preload(:supplemental_claim) }
+          subject { Task.supplemental_claim.preload(:appeal) }
 
           let!(:_ama_task) { create(:ama_task) }
 
@@ -330,27 +279,10 @@ shared_examples "Task belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.supplemental_claim.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
-          end
-        end
-
-        context "when called on an individual Task" do
-          subject { task.supplemental_claim }
-
-          context "when the Task is not associated with a SupplementalClaim" do
-            let(:task) { create(:ama_task) }
-
-            it { should be_nil }
-          end
-
-          context "when the Task is associated with a SupplementalClaim" do
-            let(:task) { create(:supplemental_claim_task, appeal: supplemental_claim) }
-            let(:supplemental_claim) { create(:supplemental_claim) }
-
-            it { should eq(supplemental_claim) }
           end
         end
       end
