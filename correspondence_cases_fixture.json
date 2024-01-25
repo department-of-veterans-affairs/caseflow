@@ -44,7 +44,7 @@
         "allow_bulk_assign": false,
         "contains_legacy_tasks": false,
         "defaultSort": {
-          "sortColName": "typeColumn",
+          "sortColName": "VA DOR",
           "sortAscending": true
         },
         "tasks": [
@@ -532,7 +532,7 @@
         "allow_bulk_assign": false,
         "contains_legacy_tasks": false,
         "defaultSort": {
-          "sortColName": "typeColumn",
+          "sortColName": "VA DOR",
           "sortAscending": true
         },
         "tasks": [
@@ -1015,7 +1015,7 @@
         "allow_bulk_assign": false,
         "contains_legacy_tasks": false,
         "defaultSort": {
-          "sortColName": "typeColumn",
+          "sortColName": "VA DOR",
           "sortAscending": true
         },
         "tasks": [],
@@ -1072,7 +1072,7 @@
         "allow_bulk_assign": false,
         "contains_legacy_tasks": false,
         "defaultSort": {
-          "sortColName": "typeColumn",
+          "sortColName": "VA DOR",
           "sortAscending": true
         },
         "tasks": [],
@@ -1114,7 +1114,7 @@
         "allow_bulk_assign": false,
         "contains_legacy_tasks": false,
         "defaultSort": {
-          "sortColName": "typeColumn",
+          "sortColName": "VA DOR",
           "sortAscending": true
         },
         "tasks": [],
