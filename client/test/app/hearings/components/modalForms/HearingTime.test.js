@@ -42,9 +42,6 @@ describe('HearingTime', () => {
     // Run the test
     const hearingTime = mount(<HearingTime enableZone value={HEARING_TIME_OPTIONS[0].value} />);
 
-    //console.log(hearingTime.debug());
-
-
     // Assertions
     expect(hearingTime).toMatchSnapshot();
     expect(hearingTime.find('Select').prop('value').label).toContain(timezoneLabel);

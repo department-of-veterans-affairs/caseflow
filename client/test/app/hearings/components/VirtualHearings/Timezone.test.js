@@ -130,10 +130,12 @@ describe('Timezone', () => {
   });
 
   test('Dropdown displays correct times based on props time and roTimezone', () => {
-    const time = "08:15 am";//HEARING_TIME_OPTIONS[0].value;
+    const timeWithTimezone = HEARING_TIME_OPTIONS[0].value;
+    const splitTimeString = timeWithTimezone.search('AM');
+    const time = timeWithTimezone.slice(0, splitTimeString).trim() + ' am';
     const roTimezone = 'America/Los_Angeles';
-    const dateTime = moment.tz(time, 'h:mm a', roTimezone)
-    const roTzValueToLabelMapping = invert(TIMEZONES)
+    const dateTime = moment.tz(time, 'h:mm a', roTimezone);
+    const roTzValueToLabelMapping = invert(TIMEZONES);
 
     const tz = mount(
       <Timezone time={time} roTimezone={roTimezone} />

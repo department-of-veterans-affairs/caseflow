@@ -320,11 +320,11 @@ export const getFriendlyZoneName = (name) => {
  * @returns {string} -- The label of the timezone
  */
 export const zoneName = (time, name, format) => {
-  const getAmTime = time.search("AM");
-  const splitTimeString = getAmTime < 0 ? time.search("PM") : getAmTime;
+  const getAmTime = time.search('AM');
+  const splitTimeString = getAmTime < 0 ? time.search('PM') : getAmTime;
 
-  const selectedTime = splitTimeString == -1 ? time : time.slice(0,splitTimeString + 2).trim();
-  const selectedTimeZone = splitTimeString == -1 ? null : time.slice(splitTimeString + 2).trim();
+  const selectedTime = splitTimeString === -1 ? time : time.slice(0, splitTimeString + 2).trim();
+  const selectedTimeZone = splitTimeString === -1 ? null : time.slice(splitTimeString + 2).trim();
 
   // Default to using America/New_York
   const timezone = name ? getFriendlyZoneName(name) : COMMON_TIMEZONES[3];
@@ -340,8 +340,8 @@ export const zoneName = (time, name, format) => {
     const originTimeZone = selectedTimeZone === null ? timezone : TIMEZONES[selectedTimeZone];
 
     // Return the value if it is not a valid time
-    return moment(time, 'h:mm A').isValid() ? `${moment.tz(time, 'h:mm a', originTimeZone).tz(timezone).
-    format(`h:mm A ${format || ''}`)}${label}` : time;
+    return moment(selectedTime, 'h:mm A').isValid() ? `${moment.tz(selectedTime, 'h:mm a', originTimeZone).tz(timezone).
+    format(`h:mm A ${format || ''}`)}${label}` : selectedTime;
   }
 
   // Return the value if it is not a valid time

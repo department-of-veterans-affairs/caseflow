@@ -46328,7 +46328,7 @@ exports[`Timezone Dropdown displays correct times based on props time and roTime
   name="Timezone"
   readOnly={false}
   roTimezone="America/Los_Angeles"
-  time="08:15 am"
+  time="8:15 am"
   value={null}
 >
   <SearchableDropdown
