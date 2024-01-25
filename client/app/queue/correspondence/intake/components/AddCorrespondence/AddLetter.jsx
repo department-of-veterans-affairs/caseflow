@@ -9,6 +9,7 @@ import SearchableDropdown from 'app/components/SearchableDropdown';
 import DateSelector from 'app/components/DateSelector';
 import RadioField from '../../../../../components/RadioField';
 import { ADD_CORRESPONDENCE_LETTER_SELECTIONS } from '../../../../constants';
+import { formatDateStr } from '../../../../../util/DateUtil';
 // import ApiUtil from '../../../../../util/ApiUtil';
 
 // import {
@@ -100,6 +101,8 @@ export const NewLetter = (props) => {
   const [letterSub, setLetterSub] = useState();
   const [letterSubSelector, setLetterSubSelector] = useState([]);
   const [letterSubReason, setLetterSubReason] = useState();
+  const [date, setDate] = useState();
+  const currentDate = new Date();
 
   const letterTypesData = ADD_CORRESPONDENCE_LETTER_SELECTIONS.map((option) => ({ label: (option.letter_type),
     value: option.letter_type }));
@@ -117,7 +120,7 @@ export const NewLetter = (props) => {
     for (let i = 0; ADD_CORRESPONDENCE_LETTER_SELECTIONS.length; i++) {
       const option = ADD_CORRESPONDENCE_LETTER_SELECTIONS[i];
 
-      if (option.letter_type === letterTitle) {
+      if (option.letter_type === letterType) {
         setLetterTitleSelector(option.letter_titles.map((current) => ({
           label: (current.letter_title), value: current.letter_title
         })));
@@ -133,12 +136,18 @@ export const NewLetter = (props) => {
 
   const changeLetterTitle = (val) => {
     setLetterTitle(val);
-    letterTitlesData();
+    letterTitlesData(val);
   };
+
+  useEffect(() => {
+    if (letterType.length > 0) {
+      letterTitlesData();
+    }
+  }, [letterType]);
 
   const changeLetterType = (val) => {
     setLetterType(val);
-    letterTitlesData();
+    // letterTitlesData();
   };
 
   return (
@@ -149,7 +158,7 @@ export const NewLetter = (props) => {
         <DateSelector
           name="date-set"
           label="Date sent"
-          // value={VADORDate}
+          // value=
           // errorMessage={this.state.dateError}
           // onChange={ }
           type="date"
@@ -163,7 +172,7 @@ export const NewLetter = (props) => {
         styling={{ maxWidth: '100%' }}
         options={letterTypesData}
         value={letterType}
-        onChange={(val) => changeLetterTitle(val.value)}
+        onChange={(val) => changeLetterType(val.value)}
       />
       <br />
       <SearchableDropdown
@@ -173,15 +182,15 @@ export const NewLetter = (props) => {
         readOnly = {letterType.length === 0}
         options={letterTitleSelector}
         value={letterTitle}
-        onChange={(val) => changeLetterType(val.value)}
+        onChange={(val) => changeLetterTitle(val.value)}
       />
       <br />
       <SearchableDropdown
         name="response-letter-subcategory"
         label="Letter subcategory"
         placeholder="Select..."
-        // readOnly = {letterTitle.length === 0}
-        options={letterSubSelector[0]}
+        readOnly = {letterTitle.length === 0}
+        // options={letterSubSelector}
         // value={props.setLetterSubSelector}
         // onChange={this.packageDocumentOnChange}
       />
