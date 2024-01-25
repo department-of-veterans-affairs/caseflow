@@ -3,7 +3,7 @@
 class CorrespondenceConfig < QueueConfig
   def to_hash
     {
-      table_title: "Temporary table title",
+      table_title: table_title,
       active_tab: "Temporary active tab name",
       tasks_per_page: 15,
       use_task_pages_api: assignee.use_task_pages_api?,
@@ -35,5 +35,9 @@ class CorrespondenceConfig < QueueConfig
       is_collection: true,
       params: { columns: columns }
     ).serializable_hash[:data]
+  end
+
+  def table_title
+    assignee_is_org? ? "Correspondence cases" : "Your correspondence"
   end
 end

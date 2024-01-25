@@ -4,15 +4,15 @@ class CorrespondenceInProgressTasksTab < CorrespondenceQueueTab
   validate :assignee_is_user
 
   def label
-    "In Progress Title"
+    "In Progress"
   end
 
   def self.tab_name
-    "In Progress Name"
+    "correspondence_in_progress"
   end
 
   def description
-    "In Progress Description"
+    "Correspondence in progress that are assigned to you:"
   end
 
   def tasks
@@ -22,7 +22,9 @@ class CorrespondenceInProgressTasksTab < CorrespondenceQueueTab
   def column_names
     [
       "Veteran Details",
+      "CM Packet Number",
       "VA DOR",
+      "Tasks",
       "Days Waiting",
       "Notes"
     ]

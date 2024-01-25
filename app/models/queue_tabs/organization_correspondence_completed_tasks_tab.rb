@@ -4,15 +4,15 @@ class OrganizationCorrespondenceCompletedTasksTab < CorrespondenceQueueTab
   validate :assignee_is_organization
 
   def label
-    "Completed Title"
+    "Completed"
   end
 
   def self.tab_name
-    "Completed Name"
+    "correspondence_team_completed"
   end
 
   def description
-    "Completed Description"
+    "Completed correspondence:"
   end
 
   def tasks
@@ -22,8 +22,9 @@ class OrganizationCorrespondenceCompletedTasksTab < CorrespondenceQueueTab
   def column_names
     [
       "Veteran Details",
+      "CM Packet Number",
       "VA DOR",
-      "Days Waiting",
+      "Completion Date",
       "Notes"
     ]
   end

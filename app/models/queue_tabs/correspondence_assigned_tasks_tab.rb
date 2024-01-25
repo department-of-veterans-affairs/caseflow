@@ -4,15 +4,15 @@ class CorrespondenceAssignedTasksTab < CorrespondenceQueueTab
   validate :assignee_is_user
 
   def label
-    "Assigned Title"
+    "Assigned"
   end
 
   def self.tab_name
-    "Assigned Name"
+    "correspondence_assigned"
   end
 
   def description
-    "Assigned Description"
+    "Correspondence assigned to you:"
   end
 
   def tasks
@@ -22,6 +22,7 @@ class CorrespondenceAssignedTasksTab < CorrespondenceQueueTab
   def column_names
     [
       "Veteran Details",
+      "CM Packet Number",
       "VA DOR",
       "Days Waiting",
       "Notes"

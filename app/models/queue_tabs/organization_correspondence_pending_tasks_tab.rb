@@ -4,27 +4,34 @@ class OrganizationCorrespondencePendingTasksTab < CorrespondenceQueueTab
   validate :assignee_is_organization
 
   def label
-    "Pending Title"
+    "Pending"
   end
 
   def self.tab_name
-    "Pending Name"
+    "correspondence_pending"
   end
 
   def description
-    "Pending Description"
+    "Correspondence that is currently assigned to non-mail team users:"
   end
 
   def tasks
-    CorrespondenceTask.includes(*task_includes).where(assigned_to: assignee).where(status: "pending")
+    Task.none
+    # CorrespondenceTask
+    # .where(status: "on_hold")
+    # .find(
+    #   MailTask.active.where(appeal_type: "Correspondence").pluck(:parent_id)
+    # )
   end
 
   def column_names
     [
       "Veteran Details",
+      "CM Packet Number",
       "VA DOR",
       "Days Waiting",
-      "Notes"
+      "Tasks",
+      "Assigned To"
     ]
   end
 end

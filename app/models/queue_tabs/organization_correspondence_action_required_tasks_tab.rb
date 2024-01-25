@@ -4,15 +4,15 @@ class OrganizationCorrespondenceActionRequiredTasksTab < CorrespondenceQueueTab
   validate :assignee_is_organization
 
   def label
-    "Action required Title"
+    "Action Required"
   end
 
   def self.tab_name
-    "Action required Name"
+    "correspondence_action_required"
   end
 
   def description
-    "action required Description"
+    "Correspondence with pending requests:"
   end
 
   def tasks
@@ -22,8 +22,11 @@ class OrganizationCorrespondenceActionRequiredTasksTab < CorrespondenceQueueTab
   def column_names
     [
       "Veteran Details",
+      "CM Packet Number",
       "VA DOR",
       "Days Waiting",
+      "Assigned By",
+      "Action Type",
       "Notes"
     ]
   end
