@@ -7,19 +7,19 @@ module TaskBelongsToPolymorphicAppealConcern
     belongs_to :appeal, polymorphic: true
 
     belongs_to :ama_appeal,
-               -> { includes(:tasks).where(tasks: { appeal_type: "Appeal" }) },
+               -> { where(tasks: { appeal_type: "Appeal" }) },
                class_name: "Appeal", foreign_key: "appeal_id", optional: true
 
     belongs_to :legacy_appeal,
-               -> { includes(:tasks).where(tasks: { appeal_type: "LegacyAppeal" }) },
+               -> { where(tasks: { appeal_type: "LegacyAppeal" }) },
                class_name: "LegacyAppeal", foreign_key: "appeal_id", optional: true
 
     belongs_to :higher_level_review,
-               -> { includes(:tasks).where(tasks: { appeal_type: "HigherLevelReview" }) },
+               -> { where(tasks: { appeal_type: "HigherLevelReview" }) },
                class_name: "HigherLevelReview", foreign_key: "appeal_id", optional: true
 
     belongs_to :supplemental_claim,
-               -> { includes(:tasks).where(tasks: { appeal_type: "SupplementalClaim" }) },
+               -> { where(tasks: { appeal_type: "SupplementalClaim" }) },
                class_name: "SupplementalClaim", foreign_key: "appeal_id", optional: true
 
     scope :ama, -> { where(appeal_type: "Appeal") }
