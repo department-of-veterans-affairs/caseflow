@@ -8,6 +8,7 @@ import Button from '../../../../../components/Button';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import DateSelector from 'app/components/DateSelector';
 import RadioField from '../../../../../components/RadioField';
+import { ADD_CORRESPONDENCE_LETTER_SELECTIONS } from '../../../../constants';
 // import ApiUtil from '../../../../../util/ApiUtil';
 
 // import {
@@ -21,8 +22,41 @@ export const AddLetter = (props) => {
   const [unrelatedTasksCanContinue, setUnrelatedTasksCanContinue] = useState(true);
   const [customResponseWindowState, setCustomResponseWindowState] = useState(false);
 
+  const [letterType, setLetterType] = useState('');
+  const [letterTitle, setLetterTitle] = useState('');
+  const [letterTitleSelector, setLetterTitleSelector] = useState();
+  const [letterSub, setLetterSub] = useState();
+  const [letterSubSelector, setLetterSubSelector] = useState();
+  const [letterSubReason, setLetterSubReason] = useState();
+
+  const letterTypesData = ADD_CORRESPONDENCE_LETTER_SELECTIONS.map((option) => ({ label: (option.letter_type),
+    value: option.letter_type }));
+
+  const letterTitlesData = (currentType) => {
+    for (let i = 0; ADD_CORRESPONDENCE_LETTER_SELECTIONS.length; i++) {
+      const option = ADD_CORRESPONDENCE_LETTER_SELECTIONS[i];
+
+      if (option.letter_type === currentType) {
+        setLetterTitleSelector(option.letter_titles.map((current) => ({
+          label: (current.letter_title), value: current.letter_title
+        })));
+
+        setLetterSubSelector(option.letter_titles.map((current) => (
+          current.letter_subcategories.length && current.letter_subcategories.map((sub) => (
+            { label: (sub.subcategory), value: (sub.subcategory) })
+          )
+        )));
+      }
+    }
+  };
+
   const addLetter = (index) => {
     setLetters([...letters, index]);
+  };
+
+  const changeLetterTitle = (val) => {
+    setLetterType(val.value);
+    letterTitlesData(val.value);
   };
 
   const removeLetter = (index) => {
@@ -79,6 +113,17 @@ export const AddLetter = (props) => {
             removeLetter={removeLetter}
             customWindows={customResponseWindowState}
             handleCustomWindowState = {handleCustomWindowState}
+            letterType = {letterType}
+            setLetterType = {setLetterType}
+            letterTitle = {letterTitle}
+            setLetterTitle = {setLetterTitle}
+            letterTypesData = {letterTypesData}
+            letterTitlesData = {letterTitlesData}
+            changeLetterTitle = {changeLetterTitle}
+            letterTitleSelector = {letterTitleSelector}
+            letterSub = {letterSub}
+            setLetterSub = {setLetterSub}
+            setLetterSubSelector ={setLetterSubSelector}
           />
         </div>
       )) }
@@ -107,6 +152,11 @@ AddLetter.propTypes = {
   onContinueStatusChange: PropTypes.func,
   customResponseWindowState: PropTypes.bool,
   handleCustomWindowState: PropTypes.func,
+  letterTypesData: PropTypes.func,
+  letterTitlesData: PropTypes.func,
+  changeLetterTitle: PropTypes.func,
+  letterTitleSelector: PropTypes.object,
+  setLetterSub: PropTypes.func,
 };
 
 export const NewLetter = (props) => {
@@ -133,29 +183,28 @@ export const NewLetter = (props) => {
         label="Letter type"
         placeholder="Select..."
         styling={{ maxWidth: '100%' }}
-        // readOnly
-        // options={this.state.packageOptions}
-        // value={packageDocument}
-        // onChange={this.packageDocumentOnChange}
+        options={props.letterTypesData}
+        value={props.letterType}
+        onChange={(val) => props.changeLetterTitle(val)}
       />
       <br />
       <SearchableDropdown
         name="response-letter-title"
         label="Letter title"
         placeholder="Select..."
-        readOnly
-        // options={this.state.packageOptions}
-        // value={packageDocument}
-        // onChange={this.packageDocumentOnChange}
+        readOnly = {props.letterType.length === 0}
+        options={props.letterTitleSelector}
+        value={props.letterTitle}
+        onChange={(val) => props.setLetterTitle(val.value)}
       />
       <br />
       <SearchableDropdown
         name="response-letter-subcategory"
         label="Letter subcategory"
         placeholder="Select..."
-        readOnly
+        readOnly = {props.letterTitle.length === 0}
         // options={this.state.packageOptions}
-        // value={packageDocument}
+        // value={props.setLetterSubSelector}
         // onChange={this.packageDocumentOnChange}
       />
       <br />
@@ -165,7 +214,7 @@ export const NewLetter = (props) => {
         placeholder="Select..."
         readOnly
         // options={this.state.packageOptions}
-        // value={packageDocument}
+        // value={}
         // onChange={this.packageDocumentOnChange}
       />
       <br />
@@ -200,7 +249,17 @@ NewLetter.propTypes = {
   removeLetter: PropTypes.func.isRequired,
   index: PropTypes.number.isRequired,
   handleCustomWindowState: PropTypes.func,
-  customWindows: PropTypes.bool
+  customWindows: PropTypes.bool,
+  setLetterType: PropTypes.func,
+  letterType: PropTypes.string,
+  letterTitle: PropTypes.string,
+  setLetterTitle: PropTypes.func,
+  letterTypesData: PropTypes.func,
+  letterTitlesData: PropTypes.func,
+  changeLetterTitle: PropTypes.func,
+  letterTitleSelector: PropTypes.object,
+
+
 };
 
 export default AddLetter;
