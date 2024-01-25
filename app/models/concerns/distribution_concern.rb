@@ -46,7 +46,7 @@ module DistributionConcern
       .limit(limit)
       .includes(:request_issues)
 
-    sct_appeals = if FeatureToggle.enabled?(:specialty_case_team_distribution)
+    sct_appeals = if FeatureToggle.enabled?(:specialty_case_team_distribution, user: RequestStore.store[:current_user])
                     sct_appeals = appeals.select do |appeal|
                       sct_predicates.any? { |predicate| predicate.call(appeal) }
                     end
