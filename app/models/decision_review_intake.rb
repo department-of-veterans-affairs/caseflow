@@ -49,12 +49,11 @@ class DecisionReviewIntake < Intake
       payee_code: (need_payee_code? ? request_params[:payee_code] : nil)
     )
     if claimant&.unrecognized_claimant?
-      unless request_params[:benefit_type] == "vha"
-        claimant.save_unrecognized_details!(
-          request_params[:unlisted_claimant],
-          request_params[:poa]
-        )
-      end
+      claimant.save_unrecognized_details!(
+        request_params[:unlisted_claimant],
+        request_params[:poa],
+        request_params[:benefit_type]
+      )
     else
       update_person!
     end

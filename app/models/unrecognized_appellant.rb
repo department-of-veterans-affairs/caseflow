@@ -6,6 +6,7 @@ class UnrecognizedAppellant < CaseflowRecord
   belongs_to :claimant
   belongs_to :unrecognized_party_detail, dependent: :destroy
   belongs_to :unrecognized_power_of_attorney, class_name: "UnrecognizedPartyDetail", dependent: :destroy
+  belongs_to :not_listed_power_of_attorney, dependent: :destroy
 
   has_many :versions, class_name: "UnrecognizedAppellant", foreign_key: "current_version_id"
   belongs_to :current_version, class_name: "UnrecognizedAppellant"
@@ -18,6 +19,8 @@ class UnrecognizedAppellant < CaseflowRecord
         AttorneyPowerOfAttorney.new(poa_participant_id)
       elsif unrecognized_power_of_attorney_id
         UnrecognizedPowerOfAttorney.new(unrecognized_power_of_attorney)
+      elsif not_listed_power_of_attorney_id
+        not_listed_power_of_attorney
       end
     end
   end

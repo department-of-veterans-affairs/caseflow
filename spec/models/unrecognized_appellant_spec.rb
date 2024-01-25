@@ -2,9 +2,15 @@
 
 describe UnrecognizedAppellant do
   let(:poa_detail) { nil }
+  let(:not_listed_poa) { nil }
 
   describe "#power_of_attorney" do
-    let(:ua) { create(:unrecognized_appellant, unrecognized_power_of_attorney: poa_detail) }
+    let(:not_listed_poa) { create(:not_listed_power_of_attorney) }
+    let(:ua) do
+      create(:unrecognized_appellant, unrecognized_power_of_attorney: poa_detail,
+                                      not_listed_power_of_attorney: not_listed_poa)
+    end
+
     subject { ua.power_of_attorney }
 
     context "when there is an unrecognized POA" do
@@ -19,8 +25,12 @@ describe UnrecognizedAppellant do
       end
     end
 
-    context "when there is no POA" do
-      it { is_expected.to be_nil }
+    context "when there is no listed POA" do
+      let(:not_listed_poa) { create(:not_listed_power_of_attorney) }
+
+      it "returns a not listed POA object" do
+        expect(subject).to eq(not_listed_poa)
+      end
     end
   end
 
