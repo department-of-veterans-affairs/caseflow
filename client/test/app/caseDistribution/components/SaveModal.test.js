@@ -9,6 +9,7 @@ import thunk from 'redux-thunk';
 import * as changedLevers from 'app/caseDistribution/reducers/levers/leversSelector';
 import { modalOriginalTestLevers } from '../../../data/adminCaseDistributionLevers';
 import { loadLevers, setUserIsAcdAdmin } from 'app/caseDistribution/reducers/levers/leversActions';
+// import * as utils from 'app/caseDistribution/utils';
 
 describe('Save Modal', () => {
 
@@ -86,8 +87,10 @@ describe('Save Modal', () => {
         title: 'AOJ AOD Affinity Days',
         backendValue: '15',
         data_type: 'radio',
+        value: 'text',
         options: [
           {
+            item: 'text',
             value: '14',
             unit: 'days'
           }
@@ -97,6 +100,19 @@ describe('Save Modal', () => {
 
     jest.spyOn(changedLevers, 'changedLevers').mockReturnValue(changedLeversData);
 
+    jest.mock('app/caseDistribution/utils', () => ({
+      ...jest.requireActual('app/caseDistribution/utls'),
+      findOption: jest.fn((lever, value) => {
+        // Use the first lever from changedLeversData for mocking
+        return {
+          item: 'text',
+          value: '12',
+          title: 'Option 1'
+        };
+
+        // Provide a default return value if needed
+      }),
+    }));
     store.dispatch(loadLevers(leversOfModalOriginalTestLevers));
     store.dispatch(setUserIsAcdAdmin(false));
 

@@ -27,6 +27,8 @@ export const createUpdatedLeversWithValues = (levers) => {
         // Only add a new property for radio and combination data types as these have special handling logic
         // to retrieve value
         if (dataType === ACD_LEVERS.data_types.radio) {
+          console.debug('INSIDE UTILS TRYING TO FIGURE OUT WHY THIS IS NOT WOKING');
+          console.debug({lever, value: lever.value});
           additionalValues = {
             currentValue: findOption(lever, lever.value).value,
             backendValue: findOption(lever, lever.value).value,
