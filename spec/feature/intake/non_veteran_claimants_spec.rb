@@ -675,7 +675,7 @@ feature "Non-veteran claimants", :postgres do
         expect(page).to have_content "Add Issue"
       end
 
-      it "should display No Recognized POA when new attorney is added after claimant not listed is selected" do
+      it "should display No known POA when new attorney is added after claimant not listed is selected" do
         expect(page).to have_current_path("/intake/review_request")
         within_fieldset("Is the claimant someone other than the Veteran?") do
           find("label", text: "Yes", match: :prefer_exact).click
@@ -711,7 +711,7 @@ feature "Non-veteran claimants", :postgres do
         end
         expect(page).to have_current_path("/intake/add_issues")
         expect(page).to have_content("Add / Remove Issues")
-        expect(page).to have_content(COPY::VHA_NO_RECOGNIZED_POA)
+        expect(page).to have_content(COPY::VHA_NO_POA)
         expect(page).to have_content "Add Issue"
       end
     end
