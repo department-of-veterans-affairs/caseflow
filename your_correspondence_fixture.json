@@ -1,0 +1,1043 @@
+{
+  "correspondence_config": {
+    "table_title": "Your correspondence",
+    "active_tab": "correspondence_assigned",
+    "tasks_per_page": 15,
+    "use_task_pages_api": true,
+    "tabs": [
+      {
+        "label": "Assigned",
+        "name": "correspondence_assigned",
+        "description": "Correspondence assigned to you:",
+        "columns": [
+          {
+            "name": "Veteran Details",
+            "filterable": false,
+            "filter_options": []
+          },
+          {
+            "name": "CM Packet Number",
+            "filterable": false,
+            "filter_options": []
+          },
+          {
+            "name": "VA DOR",
+            "filterable": false,
+            "filter_options": []
+          },
+          {
+            "name": "Days Waiting",
+            "filterable": false,
+            "filter_options": []
+          },
+          {
+            "name": "Notes",
+            "filterable": false,
+            "filter_options": []
+          }
+        ],
+        "allow_bulk_assign": false,
+        "contains_legacy_tasks": false,
+        "defaultSort": {
+          "sortColName": "typeColumn",
+          "sortAscending": true
+        },
+        "tasks": [
+          {
+            "id": "15203",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Bob Smithgerlach (500000301)",
+              "notes": "This is a note from CMP.",
+              "cmp_packet_number": 1000000000,
+              "completion_date": "2024-01-18T13:38:32.183-05:00",
+              "days_waiting": 7,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Review Package Task",
+              "status": "completed",
+              "assigned_at": "2024-01-17T14:00:53.079-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              }
+            }
+          },
+          {
+            "id": "15275",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Bob Smithsporer (500000305)",
+              "notes": "This is a note from CMP.",
+              "cmp_packet_number": 1000000004,
+              "completion_date": "2024-01-24T21:25:23.246-05:00",
+              "days_waiting": 7,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Review Package Task",
+              "status": "completed",
+              "assigned_at": "2024-01-17T14:00:56.712-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              }
+            }
+          },
+          {
+            "id": "15383",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Bob Smithmann (500000311)",
+              "notes": "This is a note from CMP.",
+              "cmp_packet_number": 1000000010,
+              "completion_date": "2024-01-24T21:27:29.904-05:00",
+              "days_waiting": 7,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Review Package Task",
+              "status": "completed",
+              "assigned_at": "2024-01-17T14:01:01.864-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              }
+            }
+          },
+          {
+            "id": "15401",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Bob Smithchamplin (500000312)",
+              "notes": "This is a note from CMP.",
+              "cmp_packet_number": 1000000011,
+              "completion_date": "2024-01-24T21:28:06.732-05:00",
+              "days_waiting": 7,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Review Package Task",
+              "status": "completed",
+              "assigned_at": "2024-01-17T14:01:02.650-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              }
+            }
+          },
+          {
+            "id": "15419",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Bob Smithcruickshank (500000313)",
+              "notes": "This is a note from CMP.",
+              "cmp_packet_number": 1000000012,
+              "completion_date": "2024-01-24T21:24:42.848-05:00",
+              "days_waiting": 7,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Review Package Task",
+              "status": "completed",
+              "assigned_at": "2024-01-17T14:01:03.429-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              }
+            }
+          },
+          {
+            "id": "17686",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Michael Keaton (550000002)",
+              "notes": "Notes from CMP - Multi Correspondence Seed",
+              "cmp_packet_number": 2000000051,
+              "completion_date": "2024-01-18T15:04:52.389-05:00",
+              "days_waiting": 7,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Review Package Task",
+              "status": "completed",
+              "assigned_at": "2024-01-17T14:02:45.441-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              }
+            }
+          },
+          {
+            "id": "18012",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Christian Bale (550000003)",
+              "notes": "Notes from CMP - Multi Correspondence Seed",
+              "cmp_packet_number": 2000000152,
+              "completion_date": "2024-01-18T13:42:03.026-05:00",
+              "days_waiting": 7,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Review Package Task",
+              "status": "completed",
+              "assigned_at": "2024-01-17T14:02:53.987-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              }
+            }
+          },
+          {
+            "id": "18997",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Bob Smithmarquardt (551620002)",
+              "notes": "Notes from CMP - Multi Correspondence Seed",
+              "cmp_packet_number": 2724547,
+              "completion_date": "2024-01-18T13:37:46.370-05:00",
+              "days_waiting": 6,
+              "va_date_of_receipt": "2024-01-16T19:00:00.000-05:00",
+              "label": "Review Package Task",
+              "status": "completed",
+              "assigned_at": "2024-01-18T13:32:57.092-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              }
+            }
+          },
+          {
+            "id": "19023",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Bob Smithmarquardt (551620002)",
+              "notes": "Notes from CMP - Multi Correspondence Seed",
+              "cmp_packet_number": 2724547,
+              "completion_date": "2024-01-19T11:19:31.524-05:00",
+              "days_waiting": 6,
+              "va_date_of_receipt": "2024-01-16T19:00:00.000-05:00",
+              "label": "Correspondence Intake Task",
+              "status": "completed",
+              "assigned_at": "2024-01-18T13:37:46.352-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "Huan",
+                "last_name": "Tiryaki",
+                "css_id": "JOLLY_POSTMAN",
+                "pg_id": 85
+              }
+            }
+          },
+          {
+            "id": "19024",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Bob Smithgerlach (500000301)",
+              "notes": "This is a note from CMP.",
+              "cmp_packet_number": 1000000000,
+              "completion_date": "2024-01-24T15:17:51.894-05:00",
+              "days_waiting": 6,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Correspondence Intake Task",
+              "status": "completed",
+              "assigned_at": "2024-01-18T13:38:32.157-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "Huan",
+                "last_name": "Tiryaki",
+                "css_id": "JOLLY_POSTMAN",
+                "pg_id": 85
+              }
+            }
+          },
+          {
+            "id": "19025",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Christian Bale (550000003)",
+              "notes": "Notes from CMP - Multi Correspondence Seed",
+              "cmp_packet_number": 2000000152,
+              "completion_date": null,
+              "days_waiting": 6,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Correspondence Intake Task",
+              "status": "in_progress",
+              "assigned_at": "2024-01-18T13:42:03.009-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "Huan",
+                "last_name": "Tiryaki",
+                "css_id": "JOLLY_POSTMAN",
+                "pg_id": 85
+              }
+            }
+          },
+          {
+            "id": "19026",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Michael Keaton (550000002)",
+              "notes": "Notes from CMP - Multi Correspondence Seed",
+              "cmp_packet_number": 2000000051,
+              "completion_date": "2024-01-24T21:24:33.185-05:00",
+              "days_waiting": 6,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Correspondence Intake Task",
+              "status": "completed",
+              "assigned_at": "2024-01-18T15:04:52.366-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "Huan",
+                "last_name": "Tiryaki",
+                "css_id": "JOLLY_POSTMAN",
+                "pg_id": 85
+              }
+            }
+          },
+          {
+            "id": "19032",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Bob Smithcruickshank (500000313)",
+              "notes": "This is a note from CMP.",
+              "cmp_packet_number": 1000000012,
+              "completion_date": "2024-01-24T21:25:12.433-05:00",
+              "days_waiting": 0,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Correspondence Intake Task",
+              "status": "completed",
+              "assigned_at": "2024-01-24T21:24:42.833-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "Huan",
+                "last_name": "Tiryaki",
+                "css_id": "JOLLY_POSTMAN",
+                "pg_id": 85
+              }
+            }
+          },
+          {
+            "id": "19034",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Bob Smithsporer (500000305)",
+              "notes": "This is a note from CMP.",
+              "cmp_packet_number": 1000000004,
+              "completion_date": "2024-01-24T21:26:18.132-05:00",
+              "days_waiting": 0,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Correspondence Intake Task",
+              "status": "completed",
+              "assigned_at": "2024-01-24T21:25:23.232-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "Huan",
+                "last_name": "Tiryaki",
+                "css_id": "JOLLY_POSTMAN",
+                "pg_id": 85
+              }
+            }
+          },
+          {
+            "id": "19036",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Bob Smithmann (500000311)",
+              "notes": "This is a note from CMP.",
+              "cmp_packet_number": 1000000010,
+              "completion_date": null,
+              "days_waiting": 0,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Correspondence Intake Task",
+              "status": "on_hold",
+              "assigned_at": "2024-01-24T21:27:29.893-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "Huan",
+                "last_name": "Tiryaki",
+                "css_id": "JOLLY_POSTMAN",
+                "pg_id": 85
+              }
+            }
+          }
+        ],
+        "task_page_count": 2,
+        "total_task_count": 18,
+        "task_page_endpoint_base_path": "users/85/task_pages?tab=correspondence_assigned"
+      },
+      {
+        "label": "In Progress",
+        "name": "correspondence_in_progress",
+        "description": "Correspondence in progress that are assigned to you:",
+        "columns": [
+          {
+            "name": "Veteran Details",
+            "filterable": false,
+            "filter_options": []
+          },
+          {
+            "name": "CM Packet Number",
+            "filterable": false,
+            "filter_options": []
+          },
+          {
+            "name": "VA DOR",
+            "filterable": false,
+            "filter_options": []
+          },
+          {
+            "name": "Tasks",
+            "filterable": false,
+            "filter_options": []
+          },
+          {
+            "name": "Days Waiting",
+            "filterable": false,
+            "filter_options": []
+          },
+          {
+            "name": "Notes",
+            "filterable": false,
+            "filter_options": []
+          }
+        ],
+        "allow_bulk_assign": false,
+        "contains_legacy_tasks": false,
+        "defaultSort": {
+          "sortColName": "typeColumn",
+          "sortAscending": true
+        },
+        "tasks": [
+          {
+            "id": "19025",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Christian Bale (550000003)",
+              "notes": "Notes from CMP - Multi Correspondence Seed",
+              "cmp_packet_number": 2000000152,
+              "completion_date": null,
+              "days_waiting": 6,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Correspondence Intake Task",
+              "status": "in_progress",
+              "assigned_at": "2024-01-18T13:42:03.009-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "Huan",
+                "last_name": "Tiryaki",
+                "css_id": "JOLLY_POSTMAN",
+                "pg_id": 85
+              }
+            }
+          },
+          {
+            "id": "19037",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Bob Smithmann (500000311)",
+              "notes": "This is a note from CMP.",
+              "cmp_packet_number": 1000000010,
+              "completion_date": null,
+              "days_waiting": 0,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Efolder Upload Failed Task",
+              "status": "in_progress",
+              "assigned_at": "2024-01-24T21:27:48.323-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              }
+            }
+          },
+          {
+            "id": "19039",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Bob Smithchamplin (500000312)",
+              "notes": "This is a note from CMP.",
+              "cmp_packet_number": 1000000011,
+              "completion_date": null,
+              "days_waiting": 0,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Efolder Upload Failed Task",
+              "status": "in_progress",
+              "assigned_at": "2024-01-24T21:28:13.905-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              }
+            }
+          }
+        ],
+        "task_page_count": 1,
+        "total_task_count": 3,
+        "task_page_endpoint_base_path": "users/85/task_pages?tab=correspondence_in_progress"
+      },
+      {
+        "label": "Completed",
+        "name": "correspondence_completed",
+        "description": "Completed correspondence:",
+        "columns": [
+          {
+            "name": "Veteran Details",
+            "filterable": false,
+            "filter_options": []
+          },
+          {
+            "name": "CM Packet Number",
+            "filterable": false,
+            "filter_options": []
+          },
+          {
+            "name": "VA DOR",
+            "filterable": false,
+            "filter_options": []
+          },
+          {
+            "name": "Completion Date",
+            "filterable": false,
+            "filter_options": []
+          },
+          {
+            "name": "Notes",
+            "filterable": false,
+            "filter_options": []
+          }
+        ],
+        "allow_bulk_assign": false,
+        "contains_legacy_tasks": false,
+        "defaultSort": {
+          "sortColName": "typeColumn",
+          "sortAscending": true
+        },
+        "tasks": [
+          {
+            "id": "15203",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Bob Smithgerlach (500000301)",
+              "notes": "This is a note from CMP.",
+              "cmp_packet_number": 1000000000,
+              "completion_date": "2024-01-18T13:38:32.183-05:00",
+              "days_waiting": 7,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Review Package Task",
+              "status": "completed",
+              "assigned_at": "2024-01-17T14:00:53.079-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              }
+            }
+          },
+          {
+            "id": "15275",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Bob Smithsporer (500000305)",
+              "notes": "This is a note from CMP.",
+              "cmp_packet_number": 1000000004,
+              "completion_date": "2024-01-24T21:25:23.246-05:00",
+              "days_waiting": 7,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Review Package Task",
+              "status": "completed",
+              "assigned_at": "2024-01-17T14:00:56.712-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              }
+            }
+          },
+          {
+            "id": "15383",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Bob Smithmann (500000311)",
+              "notes": "This is a note from CMP.",
+              "cmp_packet_number": 1000000010,
+              "completion_date": "2024-01-24T21:27:29.904-05:00",
+              "days_waiting": 7,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Review Package Task",
+              "status": "completed",
+              "assigned_at": "2024-01-17T14:01:01.864-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              }
+            }
+          },
+          {
+            "id": "15401",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Bob Smithchamplin (500000312)",
+              "notes": "This is a note from CMP.",
+              "cmp_packet_number": 1000000011,
+              "completion_date": "2024-01-24T21:28:06.732-05:00",
+              "days_waiting": 7,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Review Package Task",
+              "status": "completed",
+              "assigned_at": "2024-01-17T14:01:02.650-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              }
+            }
+          },
+          {
+            "id": "15419",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Bob Smithcruickshank (500000313)",
+              "notes": "This is a note from CMP.",
+              "cmp_packet_number": 1000000012,
+              "completion_date": "2024-01-24T21:24:42.848-05:00",
+              "days_waiting": 7,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Review Package Task",
+              "status": "completed",
+              "assigned_at": "2024-01-17T14:01:03.429-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              }
+            }
+          },
+          {
+            "id": "17686",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Michael Keaton (550000002)",
+              "notes": "Notes from CMP - Multi Correspondence Seed",
+              "cmp_packet_number": 2000000051,
+              "completion_date": "2024-01-18T15:04:52.389-05:00",
+              "days_waiting": 7,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Review Package Task",
+              "status": "completed",
+              "assigned_at": "2024-01-17T14:02:45.441-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              }
+            }
+          },
+          {
+            "id": "18012",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Christian Bale (550000003)",
+              "notes": "Notes from CMP - Multi Correspondence Seed",
+              "cmp_packet_number": 2000000152,
+              "completion_date": "2024-01-18T13:42:03.026-05:00",
+              "days_waiting": 7,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Review Package Task",
+              "status": "completed",
+              "assigned_at": "2024-01-17T14:02:53.987-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              }
+            }
+          },
+          {
+            "id": "18997",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Bob Smithmarquardt (551620002)",
+              "notes": "Notes from CMP - Multi Correspondence Seed",
+              "cmp_packet_number": 2724547,
+              "completion_date": "2024-01-18T13:37:46.370-05:00",
+              "days_waiting": 6,
+              "va_date_of_receipt": "2024-01-16T19:00:00.000-05:00",
+              "label": "Review Package Task",
+              "status": "completed",
+              "assigned_at": "2024-01-18T13:32:57.092-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "",
+                "last_name": "",
+                "css_id": null,
+                "pg_id": null
+              }
+            }
+          },
+          {
+            "id": "19023",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Bob Smithmarquardt (551620002)",
+              "notes": "Notes from CMP - Multi Correspondence Seed",
+              "cmp_packet_number": 2724547,
+              "completion_date": "2024-01-19T11:19:31.524-05:00",
+              "days_waiting": 6,
+              "va_date_of_receipt": "2024-01-16T19:00:00.000-05:00",
+              "label": "Correspondence Intake Task",
+              "status": "completed",
+              "assigned_at": "2024-01-18T13:37:46.352-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "Huan",
+                "last_name": "Tiryaki",
+                "css_id": "JOLLY_POSTMAN",
+                "pg_id": 85
+              }
+            }
+          },
+          {
+            "id": "19024",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Bob Smithgerlach (500000301)",
+              "notes": "This is a note from CMP.",
+              "cmp_packet_number": 1000000000,
+              "completion_date": "2024-01-24T15:17:51.894-05:00",
+              "days_waiting": 6,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Correspondence Intake Task",
+              "status": "completed",
+              "assigned_at": "2024-01-18T13:38:32.157-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "Huan",
+                "last_name": "Tiryaki",
+                "css_id": "JOLLY_POSTMAN",
+                "pg_id": 85
+              }
+            }
+          },
+          {
+            "id": "19026",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Michael Keaton (550000002)",
+              "notes": "Notes from CMP - Multi Correspondence Seed",
+              "cmp_packet_number": 2000000051,
+              "completion_date": "2024-01-24T21:24:33.185-05:00",
+              "days_waiting": 6,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Correspondence Intake Task",
+              "status": "completed",
+              "assigned_at": "2024-01-18T15:04:52.366-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "Huan",
+                "last_name": "Tiryaki",
+                "css_id": "JOLLY_POSTMAN",
+                "pg_id": 85
+              }
+            }
+          },
+          {
+            "id": "19032",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Bob Smithcruickshank (500000313)",
+              "notes": "This is a note from CMP.",
+              "cmp_packet_number": 1000000012,
+              "completion_date": "2024-01-24T21:25:12.433-05:00",
+              "days_waiting": 0,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Correspondence Intake Task",
+              "status": "completed",
+              "assigned_at": "2024-01-24T21:24:42.833-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "Huan",
+                "last_name": "Tiryaki",
+                "css_id": "JOLLY_POSTMAN",
+                "pg_id": 85
+              }
+            }
+          },
+          {
+            "id": "19034",
+            "type": "correspondence_task_column",
+            "attributes": {
+              "instructions": [],
+              "veteran_details": "Bob Smithsporer (500000305)",
+              "notes": "This is a note from CMP.",
+              "cmp_packet_number": 1000000004,
+              "completion_date": "2024-01-24T21:26:18.132-05:00",
+              "days_waiting": 0,
+              "va_date_of_receipt": "2024-01-15T19:00:00.000-05:00",
+              "label": "Correspondence Intake Task",
+              "status": "completed",
+              "assigned_at": "2024-01-24T21:25:23.232-05:00",
+              "assigned_to": {
+                "css_id": "JOLLY_POSTMAN",
+                "is_organization": false,
+                "name": "JOLLY_POSTMAN",
+                "type": "User",
+                "id": 85
+              },
+              "assigned_by": {
+                "first_name": "Huan",
+                "last_name": "Tiryaki",
+                "css_id": "JOLLY_POSTMAN",
+                "pg_id": 85
+              }
+            }
+          }
+        ],
+        "task_page_count": 1,
+        "total_task_count": 13,
+        "task_page_endpoint_base_path": "users/85/task_pages?tab=correspondence_completed"
+      }
+    ]
+  }
+}
