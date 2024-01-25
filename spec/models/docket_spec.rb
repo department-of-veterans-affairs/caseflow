@@ -517,7 +517,8 @@ describe Docket, :all_dbs do
         docket: distributed_appeal.docket_type,
         priority: false,
         case_id: distributed_appeal.uuid,
-        task: distributed_appeal.tasks.of_type("DistributionTask").first
+        task: distributed_appeal.tasks.of_type("DistributionTask").first,
+        sct_appeal: false
       )
     end
     let!(:second_distribution_task) do

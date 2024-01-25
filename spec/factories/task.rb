@@ -544,7 +544,8 @@ FactoryBot.define do
         appeal do
           create(:appeal,
                  :with_vha_issue,
-                 :with_post_intake_tasks)
+                 :with_post_intake_tasks,
+                 :direct_review_docket)
         end
         assigned_to { SpecialtyCaseTeam.singleton }
         parent { appeal.root_task || create(:root_task, appeal: appeal) }
