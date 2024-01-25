@@ -43,7 +43,7 @@ class CorrespondenceController < ApplicationController
     respond_to do |format|
       format.html { "correspondence_cases" }
       format.json do
-        render json: { vetCorrespondences: veterans_with_correspondences }
+        render json: { correspondence_config: user_correspondence}
       end
     end
   end
@@ -104,6 +104,19 @@ class CorrespondenceController < ApplicationController
       reasonForRemovePackage: reason_remove
     }
     render({ json: response_json }, status: :ok)
+  end
+
+  def correspondence_team
+    if MailTeamSupervisor.singleton.user_has_access?(current_user)
+      respond_to do |format|
+        format.html { "correspondence_team" }
+        format.json do
+          render json: { correspondence_config: all_correspondence }
+        end
+      end
+    else
+      redirect_to "/unauthorized"
+    end
   end
 
   def update
@@ -261,6 +274,24 @@ class CorrespondenceController < ApplicationController
   def veterans_with_correspondences
     veterans = Veteran.includes(:correspondences).where(correspondences: { id: Correspondence.select(:id) })
     veterans.map { |veteran| vet_info_serializer(veteran, veteran.correspondences.last) }
+  end
+
+  # Temporary method to return all CorrespondenceTasks
+  def all_correspondence
+    @tasks = CorrespondenceTask.all
+  end
+
+  # Temporary method to return CorrespondenceTasks assigned to current_user
+  def user_correspondence
+    @tasks = CorrespondenceTask.where(tasks: { assigned_to_id: current_user.id })
+  end
+
+  # Temporary task info serializer
+  def task_info_serializer(task)
+    {
+      taskType: task.type,
+      taskId: task.id
+    }
   end
 
   def auto_texts

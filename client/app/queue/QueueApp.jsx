@@ -679,6 +679,10 @@ class QueueApp extends React.PureComponent {
     <CorrespondenceCases {...this.props} />
   );
 
+  routedCorrespondenceTeam = () => (
+    <CorrespondenceCases {...this.props} />
+  );
+
   routedCompleteHearingWithdrawalRequest = (props) => (
     <CompleteHearingWithdrawalRequestModal {...props.match.params} />
   );
@@ -739,8 +743,15 @@ class QueueApp extends React.PureComponent {
 
             <PageRoute
               exact
-              path="/queue/correspondence"
+              path="/queue/correspondence/team"
               title={`${PAGE_TITLES.CORRESPONDENCE_CASES_LIST}`}
+              render={this.routedCorrespondenceCase}
+            />
+
+            <PageRoute
+              exact
+              path="/queue/correspondence"
+              title={`${PAGE_TITLES.YOUR_CORRESPONDENCE_TITLE}`}
               render={this.routedCorrespondenceCase}
             />
 
