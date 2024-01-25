@@ -3,6 +3,7 @@
 class Person < CaseflowRecord
   include AssociatedBgsRecord
   include BgsService
+  include EventConcern
 
   has_many :advance_on_docket_motions
   has_many :claimants, primary_key: :participant_id, foreign_key: :participant_id
@@ -118,24 +119,6 @@ class Person < CaseflowRecord
     bgs_record.keys.any?
   end
 
-  # Check if this Person is associated with a DecisionReviewCreatedEvent
-  def from_decision_review_created_event?
-    if from_event?
-      # retrieve the record and the event the record is tied to
-      record = EventRecord.find_by(backfill_record_id: id)
-      event = Event.find(record.event_id)
-
-      event.type == "DecisionReviewCreatedEvent"
-    else
-      return false
-    end
-  end
-
-  # Check if this Person is associated with any Event, regardless of type
-  # check if this Person exists in the Event Records table
-  def from_event?
-    EventRecord.find_by(backfill_record_id: id).present?
-  end
 
   private
 
