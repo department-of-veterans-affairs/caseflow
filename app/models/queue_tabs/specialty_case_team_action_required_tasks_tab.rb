@@ -18,7 +18,7 @@ class SpecialtyCaseTeamActionRequiredTasksTab < QueueTab
   end
 
   def tasks
-    active_tasks
+    on_hold_tasks_with_children_attorney_task_cancelled
   end
 
   def column_names
