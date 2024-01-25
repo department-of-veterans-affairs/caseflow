@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`] = `
+<div>
+  <div
+    class="individual-claim-history"
+  >
+    <div
+      class="sc-bdfBwQ bDdaSe"
+    >
+       
+      <a
+        href="/10467"
+      >
+        <b>
+          <u>
+            &lt; Back to Decision Review
+          </u>
+        </b>
+      </a>
+    </div>
+    <div>
+      <section
+        class="cf-app-segment cf-app-segment--alt"
+      >
+        <div>
+          <h1>
+            Bob Smithgreen
+          </h1>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+`;
