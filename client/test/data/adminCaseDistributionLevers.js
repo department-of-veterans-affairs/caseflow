@@ -387,5 +387,29 @@ export const modalOriginalTestLevers = [
     "lever_group": "batch",
     "lever_group_order": 2000
   },
+  {
+    "item": 'modal-test-combination-lever',
+    "title": 'AOJ AOD Affinity Days',
+    "description": 'Sets the number of days legacy remand Returned appeals that are also AOD (and may or may not have been CAVC at one time) respect the affinity before distributing the appeal to any available jduge. Affects appeals with hearing held when the remanding judge is not the hearing judge, or any legacy AOD + AOD appeal with no hearing held (whether or not it had been CAVC at one time).',
+    "data_type": 'radio',
+    "value": 14,
+    "unit": "days",
+    "options": [
+      {
+        "item": 'value',
+        "data_type": "number",
+        "value": 14,
+        "text": "Attempt distribution to current judge for max of:",
+        "unit": "days"
+      },
+    ],
+    "is_toggle_active": false,
+    "is_disabled_in_ui": true,
+    "min_value": 0,
+    "max_value": 100,
+    "algorithms_used": ["proportion"],
+    "lever_group": "affinity",
+    "lever_group_order": 3005
+  },
 ];
 /* END Outlier Test Data for Testing Coverage */

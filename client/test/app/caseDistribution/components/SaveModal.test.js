@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import SaveModal from 'app/caseDistribution/components/SaveModal';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
@@ -40,7 +41,7 @@ describe('Save Modal', () => {
     expect(document.querySelector('#modal_id-title')).toHaveTextContent('Confirm Case Distribution Algorithm Changes');
   });
 
-  it('displays the changed levers', async () => {
+  it('displays the changed levers for Alternative Batch Size', async () => {
     const store = getStore();
 
     const setShowModal = jest.fn();
@@ -48,10 +49,12 @@ describe('Save Modal', () => {
     const handleConfirmButton = jest.fn();
 
     const changedLeversData = [
-      { title: 'Alternate Batch Size*',
+      {
+        title: 'Alternate Batch Size*',
         backendValue: '50',
         value: '15',
-        data_type: 'number' },
+        data_type: 'number'
+      },
     ];
 
     jest.spyOn(changedLevers, 'changedLevers').mockReturnValue(changedLeversData);
@@ -69,5 +72,66 @@ describe('Save Modal', () => {
       expect(screen.getByText(leverData.title)).toBeInTheDocument();
       expect(screen.getByText(leverData.value)).toBeInTheDocument();
     }
+  });
+
+  it('displays the changed levers for Affinity Days', async () => {
+    const store = getStore();
+
+    const setShowModal = jest.fn();
+
+    const handleConfirmButton = jest.fn();
+
+    const changedLeversData = [
+      {
+        title: 'AOJ AOD Affinity Days',
+        backendValue: '15',
+        data_type: 'radio',
+        options: [
+          {
+            value: '14',
+            unit: 'days'
+          }
+        ]
+      }
+    ];
+
+    jest.spyOn(changedLevers, 'changedLevers').mockReturnValue(changedLeversData);
+
+    store.dispatch(loadLevers(leversOfModalOriginalTestLevers));
+    store.dispatch(setUserIsAcdAdmin(false));
+
+    render(
+      <Provider store={store}>
+        <SaveModal setShowModal={setShowModal} handleConfirmButton={handleConfirmButton} />
+      </Provider>
+    );
+
+    for (const leverData of changedLeversData) {
+      expect(screen.getByText(leverData.title)).toBeInTheDocument();
+      expect(screen.getByText(leverData.options.value)).toBeInTheDocument();
+    }
+  });
+
+  it('closes the modal when cancel button is clicked', async () => {
+    const store = getStore();
+
+    const setShowModal = jest.fn();
+
+    store.dispatch(loadLevers(leversOfModalOriginalTestLevers));
+    store.dispatch(setUserIsAcdAdmin(false));
+
+    render(
+      <Provider store={store}>
+        <SaveModal
+          setShowModal={setShowModal}
+        />
+      </Provider>
+    );
+
+    const cancelButton = screen.getByText('Cancel');
+
+    userEvent.click(cancelButton);
+
+    expect(setShowModal).toHaveBeenCalledWith(false);
   });
 });
