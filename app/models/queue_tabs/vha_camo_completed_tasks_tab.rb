@@ -4,6 +4,7 @@ class VhaCamoCompletedTasksTab < QueueTab
   validate :assignee_is_organization
 
   attr_accessor :show_reader_link_column, :allow_bulk_assign
+
   delegate :column_names, to: :vha_camo
 
   def label
