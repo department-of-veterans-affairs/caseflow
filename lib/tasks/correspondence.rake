@@ -114,7 +114,7 @@ namespace :correspondence do
   task :create_correspondence, [:veteran_file_number] => :environment do |_, args|
     veteran = Veteran.find_by(file_number: args[:veteran_file_number].to_i)
 
-    20.times do |package_doc_id|
+    (1..20).each do |package_doc_id|
       corres = ::Correspondence.create!(
         uuid: SecureRandom.uuid,
         portal_entry_date: Time.zone.now,
