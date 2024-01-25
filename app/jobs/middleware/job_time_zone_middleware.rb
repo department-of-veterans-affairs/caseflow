@@ -2,6 +2,7 @@
 
 # This middleware ensures all async jobs run in UTC.
 class JobTimeZoneMiddleware
+  # :reek:LongParameterList
   def call(_worker, _queue, _msg, body)
     job_class = body["job_class"]
     current_tz = Time.zone.name
