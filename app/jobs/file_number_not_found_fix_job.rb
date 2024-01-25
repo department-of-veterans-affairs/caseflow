@@ -41,19 +41,21 @@ class FileNumberNotFoundFixJob < CaseflowJob
     @stuck_job_report_service.append_record_count(records_with_errors.count, error_text)
   end
 
-  def process_records(decision_doc)
-    veteran = decision_doc.appeal.veteran
-    bgs_file_number = fetch_file_number_from_bgs_service(veteran)
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # :reek:FeatureEnvy
 
-    # ensure that file number from bgs exists and is not already used
-    return unless bgs_file_number
+  def process_records(decision_doc)
+    veteran = decision_doc&.appeal&.veteran
+    bgs_file_number = fetch_file_number_from_bgs_service(veteran)
+    return if veteran.blank? || bgs_file_number.blank?
+
     # ensure that there is no duplicate veteran.
     return if Veteran.find_by(file_number: bgs_file_number).present?
 
     collections = FixfileNumberCollections.get_collections(veteran)
 
     # ensures that we have related collections else abort.
-    return if collections.map(&:count).sum == 0
+    return if collections.sum(&:count) == 0
 
     update_records!(collections, bgs_file_number, veteran)
     @stuck_job_report_service.append_single_record(decision_doc.class.name, decision_doc.id)
@@ -62,6 +64,8 @@ class FileNumberNotFoundFixJob < CaseflowJob
     @stuck_job_report_service.append_error(decision_doc.class.name, decision_doc.id, error)
     log_error(error)
   end
+
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def error_text
     "FILENUMBER does not exist"
