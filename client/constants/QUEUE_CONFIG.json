@@ -37,6 +37,9 @@
   "CAREGIVER_SUPPORT_COMPLETED_TASKS_TAB_NAME": "caregiver_support_completed",
 
   "COLUMNS": {
+    "ACTION_TYPE": {
+      "name": "actionType"
+    },
     "APPEAL_TYPE": {
       "filterable": true,
       "name": "typeColumn"
@@ -50,6 +53,9 @@
       "name": "detailsColumn",
       "sorting_table": "cached_appeal_attributes",
       "sorting_columns": ["veteran_name"]
+    },
+    "CHECKBOX_COLUMN": {
+      "name": "checkboxColumn"
     },
     "DAYS_ON_HOLD": {
       "name": "daysOnHoldColumn"
@@ -105,6 +111,15 @@
       "sorting_columns": [
         "issue_types"
       ]
+    },
+    "NOTES": {
+      "name": "notes"
+    },
+    "VA_DATE_OF_RECEIPT": {
+      "name": "vaDor"
+    },
+    "VETERAN_DETAILS": {
+      "name": "veteranDetails"
     },
     "VETERAN_PARTICIPANT_ID": {
       "name": "veteranParticipantIdColumn"

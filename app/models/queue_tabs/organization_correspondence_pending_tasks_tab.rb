@@ -26,12 +26,11 @@ class OrganizationCorrespondencePendingTasksTab < CorrespondenceQueueTab
 
   def column_names
     [
-      "Veteran Details",
-      "CM Packet Number",
-      "VA DOR",
-      "Days Waiting",
-      "Tasks",
-      "Assigned To"
+      Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
+      Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
     ]
   end
 end

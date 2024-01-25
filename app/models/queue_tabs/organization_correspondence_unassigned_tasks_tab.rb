@@ -21,12 +21,11 @@ class OrganizationCorrespondenceUnassignedTasksTab < CorrespondenceQueueTab
 
   def column_names
     [
-      "Select",
-      "Veteran Details",
-      "CM Packet Number",
-      "VA DOR",
-      "Days Waiting",
-      "Notes"
+      Constants.QUEUE_CONFIG.COLUMNS.CHECKBOX_COLUMN.name,
+      Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
+      Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
+      Constants.QUEUE_CONFIG.COLUMNS.NOTES.name
     ]
   end
 end

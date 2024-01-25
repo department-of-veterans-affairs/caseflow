@@ -21,11 +21,10 @@ class OrganizationCorrespondenceCompletedTasksTab < CorrespondenceQueueTab
 
   def column_names
     [
-      "Veteran Details",
-      "CM Packet Number",
-      "VA DOR",
-      "Completion Date",
-      "Notes"
+      Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
+      Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.NOTES.name
     ]
   end
 end
