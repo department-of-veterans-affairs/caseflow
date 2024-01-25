@@ -19,6 +19,8 @@ export default class NumberField extends React.Component {
       <TextField
         {...this.props}
         onChange={this.onChange}
+        aria-readonly={this.props.readOnly}
+        disabled={this.props.disabled}
       />
     </div>;
   }
@@ -48,8 +50,11 @@ NumberField.propTypes = {
   required: PropTypes.bool.isRequired,
   type: PropTypes.string,
   validationError: PropTypes.string,
+  title: PropTypes.string,
+  inputID: PropTypes.string,
   value: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.number
-  ])
+  ]),
+  disabled: PropTypes.bool
 };
