@@ -17,14 +17,21 @@ const H3Styled = ({ children, style }) => (
 );
 
 const SpanStyled = ({ children }) => (
-  <span style={{ fontWeight: 'normal', paddingRight: '10px', display: 'flex' }}>
+  <span
+    style={{
+      fontWeight: 'normal',
+      paddingRight: '10px',
+      display: 'flex',
+      marginLeft: '5px',
+    }}
+  >
     {children}
   </span>
 );
 
 const ConferenceRoom = ({ type, alias }) => (
   <H3Styled
-    style={{ width: type === 'PexipConferenceLink' ? '400px' : '540px' }}
+    style={{ width: type === 'PexipConferenceLink' ? '415px' : '550px' }}
   >
     {type === 'PexipConferenceLink' ?
       GUEST_LINK_LABELS.PEXIP_GUEST_CONFERENCE_ROOM :
@@ -37,6 +44,8 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
   const containerStyle = {
     marginLeft: '-40px',
     marginRight: '-40px',
+    marginTop: '20px',
+    marginBottom: '75px'
   };
 
   const roomInfoStyle = (index) => ({
@@ -45,6 +54,8 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
     display: 'flex',
     width: '100%',
     height: '50px',
+    marginBottom: '20px',
+    marginTop: '20px',
   });
 
   // Props needed for the copy text button component
@@ -101,7 +112,7 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
 
           return (
             <div key={index} style={roomInfoStyle(index)}>
-              <H3Styled style={{ width: '350px', marginLeft: '10px' }}>
+              <H3Styled style={{ width: '350px', marginLeft: '40px' }}>
                 {type === 'PexipConferenceLink' ?
                   GUEST_LINK_LABELS.PEXIP_GUEST_LINK_SECTION_LABEL :
                   GUEST_LINK_LABELS.WEBEX_GUEST_LINK_SECTION_LABEL}
@@ -114,7 +125,7 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
                 <SpanStyled>{linkGuestPin}</SpanStyled>
               </H3Styled>
 
-              <H3Styled style={{ marginRight: '10px' }}>
+              <H3Styled style={{ marginRight: '20px' }}>
                 <CopyTextButton {...CopyTextButtonProps} />
               </H3Styled>
             </div>
