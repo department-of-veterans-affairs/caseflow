@@ -60,6 +60,8 @@ class HearingRequestDocket < Docket
 
     appeals = self.class.limit_genpop_appeals(appeals, limit) if genpop.eql? "any"
 
+    appeals = self.class.limit_only_genpop_appeals(appeals, limit) if genpop.eql?("only_genpop") && limit
+
     HearingRequestCaseDistributor.new(
       appeals: appeals, genpop: genpop, distribution: distribution, priority: priority, sct_appeals: sct_appeals
     ).call
@@ -80,5 +82,12 @@ class HearingRequestDocket < Docket
     # limit here by filtering out the newest cases
     appeals_to_reject = appeals_array.flatten.sort_by(&:ready_for_distribution_at).drop(limit)
     appeals_array.map { |appeals| appeals - appeals_to_reject }
+  end
+
+  def self.limit_only_genpop_appeals(appeals_array, limit)
+    # genpop 'only_genpop' returns 2 arrays of the limited base relation. This means if we only request 2 cases, appeals is a
+    # 2x2 array containing 4 cases overall and we will end up distributing 4 cases rather than 2. Instead, reinstate the
+    # limit here by filtering out the newest cases
+    appeals_array.flatten.sort_by(&:receipt_date).first(limit)
   end
 end

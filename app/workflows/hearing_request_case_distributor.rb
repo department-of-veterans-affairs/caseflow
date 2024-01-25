@@ -12,6 +12,7 @@ class HearingRequestCaseDistributor
     @priority = priority
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def call
     # Creates JudgeAssignTasks for the appeals, then zip the genpop_values into the array for creating
     # the DistributedCases
@@ -39,6 +40,7 @@ class HearingRequestCaseDistributor
       end
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   private
 

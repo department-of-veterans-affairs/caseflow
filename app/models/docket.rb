@@ -63,11 +63,12 @@ class Docket
   end
 
   def age_of_oldest_priority_appeal
-    @age_of_oldest_priority_appeal ||= if use_by_docket_date?
-                                         appeals(priority: true, ready: true).limit(1).first&.receipt_date
-                                       else
-                                         appeals(priority: true, ready: true).limit(1).first&.ready_for_distribution_at
-                                       end
+    @age_of_oldest_priority_appeal ||=
+      if use_by_docket_date?
+        appeals(priority: true, ready: true).limit(1).first&.receipt_date
+      else
+        appeals(priority: true, ready: true).limit(1).first&.ready_for_distribution_at
+      end
   end
 
   def oldest_priority_appeal_days_waiting
