@@ -19,7 +19,7 @@ class SpecialtyCaseTeamCompletedTasksTab < QueueTab
   end
 
   def tasks
-    recently_completed_tasks
+    last_14_days_completed_tasks
   end
 
   def column_names
