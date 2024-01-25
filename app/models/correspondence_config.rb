@@ -4,7 +4,7 @@ class CorrespondenceConfig < QueueConfig
   def to_hash
     {
       table_title: table_title,
-      active_tab: "Temporary active tab name",
+      active_tab: default_active_tab,
       tasks_per_page: 15,
       use_task_pages_api: assignee.use_task_pages_api?,
       tabs: assignee.correspondence_queue_tabs.map { |tab| attach_tasks_to_tab(tab) }
@@ -37,7 +37,13 @@ class CorrespondenceConfig < QueueConfig
     ).serializable_hash[:data]
   end
 
+  private
+
   def table_title
     assignee_is_org? ? "Correspondence cases" : "Your correspondence"
+  end
+
+  def default_active_tab
+    assignee_is_org? ? "correspondence_unassigned" : "correspondence_assigned"
   end
 end
