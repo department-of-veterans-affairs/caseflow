@@ -29,7 +29,7 @@ RUN pwd && ls -lsa
 # Install VA Trusted Certificates
 RUN mkdir -p /usr/local/share/ca-certificates/va
 COPY docker-bin/ca-certs/*.crt /usr/local/share/ca-certificates/va/
-COPY docker-bin/ca-certs/*.cer /usr/local/share/ca-certificates/va/
+#COPY docker-bin/ca-certs/*.cer /usr/local/share/ca-certificates/va/
 RUN update-ca-certificates
 COPY docker-bin/ca-certs/cacert.pem /etc/ssl/certs/cacert.pem
 
