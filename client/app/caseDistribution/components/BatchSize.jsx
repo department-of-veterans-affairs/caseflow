@@ -47,8 +47,6 @@ const BatchSize = () => {
     dispatch(updateNumberLever(lever_group, item, event));
   };
 
-  batchLevers?.sort((leverA, leverB) => leverA.lever_group_order - leverB.lever_group_order);
-
   return (
     <div className="lever-content">
       <div className="lever-head">
