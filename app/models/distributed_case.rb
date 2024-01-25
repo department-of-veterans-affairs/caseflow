@@ -10,7 +10,7 @@ class DistributedCase < CaseflowRecord
   validates :task_id, presence: true, if: :ama_docket
   validates :docket_index, presence: true, if: :legacy_nonpriority
   validates :priority, inclusion: [true, false]
-  # validates :sct_appeal, inclusion: [true, false], if: :ama_docket
+  validates :sct_appeal, inclusion: [true, false], if: :ama_docket
 
   def rename_for_redistribution!
     ymd = Time.zone.today.strftime("%F")
