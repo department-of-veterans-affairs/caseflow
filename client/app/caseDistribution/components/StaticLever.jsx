@@ -4,8 +4,8 @@ import cx from 'classnames';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 
 const StaticLever = ({ lever }) => {
-  // Space between value and unit, removed for percentage values
-  let unitSeparator = ' ';
+  // Requires space between value and unit, false for percentage values
+  let requiredSeparator = true;
 
   const renderValue = () => {
     let leverValueString = '';
@@ -16,7 +16,7 @@ const StaticLever = ({ lever }) => {
 
       return leverValueString.charAt(0).toUpperCase() + leverValueString.slice(1);
     case ACD_LEVERS.data_types.number:
-      unitSeparator = '';
+      requiredSeparator = false;
 
       return `${(lever.value * 100).toFixed(0)}`;
     case ACD_LEVERS.data_types.radio:
@@ -41,7 +41,9 @@ const StaticLever = ({ lever }) => {
         </td>
         <td className={cx('cf-lead-paragraph', 'value-styling')} id={`${lever.title}-product`}>
           <span className="value-right-styling" id={`${lever.title}-value`}>{formattedValue}
-            <span id={`${lever.title}-unit`}>{unitSeparator}{lever.unit}</span>
+            <span className={requiredSeparator ? 'unit-with-separator' : null} id={cx(`${lever.title}-unit`)}>
+              {lever.unit}
+            </span>
           </span>
         </td>
       </tr>
