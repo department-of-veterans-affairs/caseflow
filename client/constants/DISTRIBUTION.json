@@ -24,5 +24,9 @@
   "all_non_priority": "All Non-priority",
   "ama_hearings_section_title": "AMA Hearings",
   "ama_direct_review_section_title": "AMA Direct Review",
-  "ama_evidence_submission_section_title": "AMA Evidence Submission"
+  "ama_evidence_submission_section_title": "AMA Evidence Submission",
+  "maximum_direct_review_proportion_title": "Maximum Direct Review Proportion",
+  "minimum_legacy_proportion_title": "Minimum Legacy Proportion",
+  "nod_adjustment_title": "NOD Adjustment",
+  "bust_backlog_title": "Priority Bust Backlog"
 }
