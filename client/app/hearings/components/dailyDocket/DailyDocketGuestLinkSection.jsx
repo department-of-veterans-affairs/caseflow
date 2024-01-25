@@ -1,14 +1,14 @@
-import React from "react";
-import PropTypes from "prop-types";
-import CopyTextButton from "../../../components/CopyTextButton";
-import { GUEST_LINK_LABELS } from "../../constants";
+import React from 'react';
+import PropTypes from 'prop-types';
+import CopyTextButton from '../../../components/CopyTextButton';
+import { GUEST_LINK_LABELS } from '../../constants';
 
 const H3Styled = ({ children, style }) => (
   <h3
     style={{
-      marginBottom: "0px",
-      display: "flex",
-      alignItems: "center",
+      marginBottom: '0px',
+      display: 'flex',
+      alignItems: 'center',
       ...style,
     }}
   >
@@ -19,10 +19,10 @@ const H3Styled = ({ children, style }) => (
 const SpanStyled = ({ children }) => (
   <span
     style={{
-      fontWeight: "normal",
-      paddingRight: "10px",
-      display: "flex",
-      marginLeft: "5px",
+      fontWeight: 'normal',
+      paddingRight: '10px',
+      display: 'flex',
+      marginLeft: '5px',
     }}
   >
     {children}
@@ -31,45 +31,45 @@ const SpanStyled = ({ children }) => (
 
 const ConferenceRoom = ({ type, alias }) => (
   <H3Styled
-    style={{ width: type === "PexipConferenceLink" ? "415px" : "550px" }}
+    style={{ width: type === 'PexipConferenceLink' ? '415px' : '550px' }}
   >
-    {type === "PexipConferenceLink"
-      ? GUEST_LINK_LABELS.PEXIP_GUEST_CONFERENCE_ROOM
-      : GUEST_LINK_LABELS.WEBEX_GUEST_CONFERENCE_ROOM}
-    <SpanStyled>{alias || "N/A"}</SpanStyled>
+    {type === 'PexipConferenceLink' ?
+      GUEST_LINK_LABELS.PEXIP_GUEST_CONFERENCE_ROOM :
+      GUEST_LINK_LABELS.WEBEX_GUEST_CONFERENCE_ROOM}
+    <SpanStyled>{alias || 'N/A'}</SpanStyled>
   </H3Styled>
 );
 
 export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
   const containerStyle = {
-    marginLeft: "-40px",
-    marginRight: "-40px",
+    marginLeft: '-40px',
+    marginRight: '-40px',
   };
 
   const roomInfoStyle = (index) => ({
-    backgroundColor: index === 0 ? "#f1f1f1" : "white",
-    justifyContent: "space-between",
-    display: "flex",
-    width: "100%",
-    height: "50px",
+    backgroundColor: index === 0 ? '#f1f1f1' : 'white',
+    justifyContent: 'space-between',
+    display: 'flex',
+    width: '100%',
+    height: '50px',
   });
 
   // Props needed for the copy text button component
   const CopyTextButtonProps = {
     text: GUEST_LINK_LABELS.COPY_GUEST_LINK,
     label: GUEST_LINK_LABELS.COPY_GUEST_LINK,
-    textToCopy: "",
+    textToCopy: '',
   };
 
   // Takes pin from guestLink
   // const usePinFromLink = () => guestLink?.match(/pin=\d+/)[0]?.split('=')[1];
   // Takes alias from guestLink
   const useAliasFromLink = (link) => {
-    if (link.type === "PexipConferenceLink") {
+    if (link.type === 'PexipConferenceLink') {
       return (
-        link.alias || link.guestLink?.match(/pin=\d+/)[0]?.split("=")[1] || null
+        link.alias || link.guestLink?.match(/pin=\d+/)[0]?.split('=')[1] || null
       );
-    } else if (link.type === "WebexConferenceLink") {
+    } else if (link.type === 'WebexConferenceLink') {
       const webexGuestLink = link.guestLink;
 
       return link.alias || webexGuestLink || null;
@@ -79,9 +79,9 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
   };
 
   const extractPin = (link) => {
-    if (link.type === "PexipConferenceLink") {
+    if (link.type === 'PexipConferenceLink') {
       return `${link.guestPin}#`;
-    } else if (link.type === "WebexConferenceLink") {
+    } else if (link.type === 'WebexConferenceLink') {
       return null;
     }
 
@@ -108,20 +108,20 @@ export const DailyDocketGuestLinkSection = ({ linkInfo }) => {
 
           return (
             <div key={index} style={roomInfoStyle(index)}>
-              <H3Styled style={{ width: "350px", marginLeft: "10px" }}>
-                {type === "PexipConferenceLink"
-                  ? GUEST_LINK_LABELS.PEXIP_GUEST_LINK_SECTION_LABEL
-                  : GUEST_LINK_LABELS.WEBEX_GUEST_LINK_SECTION_LABEL}
+              <H3Styled style={{ width: '350px', marginLeft: '10px' }}>
+                {type === 'PexipConferenceLink' ?
+                  GUEST_LINK_LABELS.PEXIP_GUEST_LINK_SECTION_LABEL :
+                  GUEST_LINK_LABELS.WEBEX_GUEST_LINK_SECTION_LABEL}
               </H3Styled>
 
               <ConferenceRoom type={type} alias={alias} />
 
-              <H3Styled style={{ width: "max-content", marginRight: "75px" }}>
-                {type === "PexipConferenceLink" && GUEST_LINK_LABELS.GUEST_PIN}
+              <H3Styled style={{ width: 'max-content', marginRight: '75px' }}>
+                {type === 'PexipConferenceLink' && GUEST_LINK_LABELS.GUEST_PIN}
                 <SpanStyled>{linkGuestPin}</SpanStyled>
               </H3Styled>
 
-              <H3Styled style={{ marginRight: "10px" }}>
+              <H3Styled style={{ marginRight: '10px' }}>
                 <CopyTextButton {...CopyTextButtonProps} />
               </H3Styled>
             </div>
