@@ -11,7 +11,6 @@ import {
 } from '../../../data/adminCaseDistributionLevers';
 import { loadLevers, setUserIsAcdAdmin } from 'app/caseDistribution/reducers/levers/leversActions';
 import { mount } from 'enzyme';
-import userEvent from '@testing-library/user-event';
 
 describe('Docket Time Goals Lever', () => {
 
@@ -102,23 +101,30 @@ describe('Docket Time Goals Lever', () => {
     waitFor(() => expect(inputField.prop('errorMessage').toBe('')));
   });
 
-  it('enabled and disables the toggle lever button', () => {
+  test('enabled and disables toggle lever button', () => {
     const store = getStore();
-
-    store.dispatch(loadLevers(levers));
-    store.dispatch(setUserIsAcdAdmin(true));
+    const toggleLeverSpy = jest.fn();
 
     const wrapper = mount(
       <Provider store={store}>
         <DocketTimeGoals />
       </Provider>);
 
-    let leverToggle = wrapper.find(`#toggle-switch-${testDistPriorLever.item} > .toggleButton`);
-
-    waitFor(() => userEvent.click(leverToggle));
+    store.dispatch(loadLevers(levers));
+    store.dispatch(setUserIsAcdAdmin(true));
 
     wrapper.update();
 
-    expect(wrapper).toBeDefined();
+    let leverToggle = wrapper.find(`#toggle-switch-${testDistPriorLever.item}`);
+
+    console.debug(leverToggle.first().simulate('click', true));
+
+    waitFor(() => leverToggle.first().simulate('click', true));
+
+    wrapper.update();
+
+    console.debug(leverToggle.debug());
+
+    expect(toggleLeverSpy).toHaveBeenCalled();
   });
 });
