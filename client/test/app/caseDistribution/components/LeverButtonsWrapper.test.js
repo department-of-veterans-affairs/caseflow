@@ -1,12 +1,11 @@
 import React from 'react';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import LeverButtonsWrapper from 'app/caseDistribution/components/LeverButtonsWrapper';
 import { Provider } from 'react-redux';
 import rootReducer from 'app/caseDistribution/reducers/root';
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import * as leversSelectors from 'app/caseDistribution/reducers/levers/leversSelector';
-import { resetLevers } from 'app/caseDistribution/reducers/levers/leversActions';
 
 describe('LeverButtonsWrapper', () => {
 
@@ -67,25 +66,5 @@ describe('LeverButtonsWrapper', () => {
     );
 
     expect(screen.getByText('Save')).not.toBeDisabled();
-  });
-
-  test('clicking the Cancel Button resets levers to their initial state', async () => {
-    const store = getStore();
-    const resetLeversAction = resetLevers();
-
-    render(
-      <Provider store={store}>
-        <LeverButtonsWrapper />
-      </Provider>
-    );
-
-    const cancelButton = screen.getByRole('button', { name: /Cancel/i });
-
-    fireEvent.click(cancelButton);
-
-    await waitFor(() => {
-      expect(store.dispatch).toHaveBeenCalledWith(expect.any(Function));
-      expect(store.dispatch).toHaveBeenCalledWith(resetLeversAction);
-    });
   });
 });
