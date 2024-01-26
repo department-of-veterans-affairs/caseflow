@@ -8,5 +8,13 @@ FactoryBot.define do
 
     document_version_reference_id { "{#{SecureRandom.uuid.upcase}}" }
     document_series_reference_id { "{#{SecureRandom.uuid.upcase}}" }
+
+    trait :ama do
+      appeal
+    end
+
+    trait :legacy do
+      appeal { create(:legacy_appeal, vacols_case: create(:case)) }
+    end
   end
 end
