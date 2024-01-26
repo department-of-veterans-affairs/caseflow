@@ -287,7 +287,7 @@ feature "Intake Add Issues Page", :all_dbs do
         visit "/intake"
         click_intake_continue
         expect(page).to have_current_path("/intake/add_issues")
-        expect(page).to have_content(COPY::ADD_CLAIMANT_CONFIRM_MODAL_NO_POA)
+        expect(page).to have_content(COPY::VHA_NO_POA)
       end
     end
   end

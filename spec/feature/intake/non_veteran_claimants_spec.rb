@@ -300,7 +300,7 @@ feature "Non-veteran claimants", :postgres do
 
       expect(page).to have_button("Continue to next step", disabled: false)
       click_button "Continue to next step"
-      expect(page).to have_content(COPY::ADD_CLAIMANT_CONFIRM_MODAL_NO_POA)
+      expect(page).to have_content(COPY::VHA_NO_POA)
       submit_confirmation_modal
 
       expect(page).to have_content("Darlyn Duck")
@@ -418,7 +418,7 @@ feature "Non-veteran claimants", :postgres do
 
         expect(page).to have_button("Continue to next step", disabled: false)
         click_button "Continue to next step"
-        expect(page).to have_content(COPY::ADD_CLAIMANT_CONFIRM_MODAL_NO_POA)
+        expect(page).to have_content(COPY::VHA_NO_POA)
         submit_confirmation_modal
 
         expect(page).to have_content("Darlyn Duck")
