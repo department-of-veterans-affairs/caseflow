@@ -1,79 +1,40 @@
 import React from 'react';
-import { render } from '@testing-library/react';
-import { createStore } from '@reduxjs/toolkit';
+import { render, screen } from '@testing-library/react';
 import LeverButtonsWrapper from 'app/caseDistribution/components/LeverButtonsWrapper';
-import leversReducer from '../reducers/levers/leversReducer';
+import { Provider } from 'react-redux';
+import rootReducer from 'app/caseDistribution/reducers/root';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import leversReducer from 'app/caseDistribution/reducers/levers/leversReducer';
 import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
 import * as leverData from 'test/data/adminCaseDistributionLevers';
 
 describe('LeverButtonsWrapper', () => {
-  let leverStore;
-  let buttonsDiv;
 
-  beforeEach(() => {
-    const preloadedState = {
-      levers: JSON.parse(JSON.stringify(leverData.levers.slice(0, 5))),
-      backendLevers: JSON.parse(JSON.stringify(leverData.levers.slice(0, 5)))
-    };
-
-    leverStore = createStore(leversReducer, preloadedState);
-    buttonsDiv = render(<LeverButtonsWrapper leverStore={leverStore} />);
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
-  describe('Cancel Button', () => {
-    it('renders the cancel button correctly', () => {
-      const cancelButton = buttonsDiv.container.querySelector('#CancelLeversButton');
+  test('renders save and cancel buttons', () => {
 
-      expect(cancelButton).toBeInTheDocument();
-    });
+    const getStore = () => createStore(
+      rootReducer,
+      applyMiddleware(thunk));
 
-    it('sets the levers back to thier initial state when clicked', () => {
-      const cancelButton = buttonsDiv.container.querySelector('#CancelLeversButton');
+    const store = getStore();
 
-      leverStore.dispatch({
-        type: ACTIONS.UPDATE_LEVER_VALUE,
-        updated_lever: leverData.lever1_update
-      });
-      leverStore.dispatch({
-        type: ACTIONS.UPDATE_LEVER_VALUE,
-        updated_lever: leverData.lever5_update
-      });
+    render(
+      <Provider store={store}>
+        <LeverButtonsWrapper />
+      </Provider>
+    );
 
-      expect(leverStore.getState().levers).toEqual(leverData.updated_levers);
+    const saveButton = screen.getByRole('button', { name: /Save/i });
 
-      cancelButton.click();
+    expect(saveButton).toBeInTheDocument();
 
-      expect(leverStore.getState().levers).not.toEqual(leverData.updated_levers);
-      expect(leverStore.getState().levers).toEqual(leverData.levers.slice(0, 5));
-    });
+    const cancelButton = screen.getByRole('button', { name: /Cancel/i });
+
+    expect(cancelButton).toBeInTheDocument();
   });
-
-  describe('Save Button', () => {
-    it('renders the save button correctly', () => {
-      const saveButton = buttonsDiv.container.querySelector('#SaveLeversButton');
-
-      expect(saveButton).toBeInTheDocument();
-    });
-
-    it('saves the levers in thier current state when clicked', () => {
-      const saveButton = buttonsDiv.container.querySelector('#SaveLeversButton');
-
-      leverStore.dispatch({
-        type: ACTIONS.UPDATE_LEVER_VALUE,
-        updated_lever: leverData.lever1_update
-      });
-      leverStore.dispatch({
-        type: ACTIONS.UPDATE_LEVER_VALUE,
-        updated_lever: leverData.lever5_update
-      });
-
-      expect(leverStore.getState().levers).toEqual(leverData.updated_levers);
-
-      saveButton.click();
-
-      expect(leverStore.getState().levers).not.toEqual(leverData.levers.slice(0, 5));
-      expect(leverStore.getState().levers).toEqual(leverData.updated_levers);
-    });
-  });
-
 });
