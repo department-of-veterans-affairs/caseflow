@@ -43,8 +43,7 @@ class CorrespondenceController < ApplicationController
     respond_to do |format|
       format.html { "correspondence_cases" }
       format.json do
-        # render json: {}
-        render json: { correspondence_config: JSON.parse(File.read("your_correspondence_fixture.json"))}
+        render json: { correspondence_config: user_correspondence}
       end
     end
   end
@@ -112,8 +111,7 @@ class CorrespondenceController < ApplicationController
       respond_to do |format|
         format.html { "correspondence_team" }
         format.json do
-
-          render json: { correspondence_config: JSON.parse(File.read("correspondence_cases_fixture.json")) }
+          render json: { correspondence_config: all_correspondence }
         end
       end
     else

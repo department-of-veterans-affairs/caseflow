@@ -128,7 +128,7 @@ export const HeaderRow = (props) => {
           // Set the aria props for this column header
           const sortProps = sorting ? { 'aria-sort': sortLabel } : {};
 
-          if ((!props.useTaskPagesApi || column.backendCanSort) && !column.getSortValue) {
+          if ((!props.useTaskPagesApi || column.backendCanSort) && column.getSortValue) {
             const topColor = sorting && !props.sortAscending ? COLORS.PRIMARY : COLORS.GREY_LIGHT;
             const botColor = sorting && props.sortAscending ? COLORS.PRIMARY : COLORS.GREY_LIGHT;
 
