@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe Seeds::CaseDitributionTestData do
-  let(:seed) { Seeds::CaseDitributionTestData.new }
+describe Seeds::CaseDistributionTestData do
+  let(:seed) { Seeds::CaseDistributionTestData.new }
 
   context "initial values" do
     it "are set properly for legacy inactive admin judge team file_number and participant id" do
