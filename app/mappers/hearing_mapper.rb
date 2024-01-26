@@ -87,7 +87,7 @@ module HearingMapper
       return "1" if type == :C
       return "2" if type == :T
       return "6" if type == :V
-      return "7" if type == :R # rubocop:disable Metrics/RedundantReturn
+      return "7" if type == :R
     end
 
     def representative_name_to_vacols_format(value)
