@@ -51,7 +51,7 @@ class ReceiveNotificationJob < CaseflowJob
   # - type - sms or email, used to update email/text notification status
   #
   # Returns: Updated model from update_audit_record
-  def compare_notification_audit_record(audit_record, email_address, phone_number, status, type)
+  def compare_notification_audit_record(audit_record, email_address, phone_number, status, type) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     status = status.capitalize
 
     if !email_address.nil? && audit_record.recipient_email != email_address
