@@ -12,7 +12,7 @@ const LeverHistory = () => {
 
   return (
     <div className="lever-history-styling">
-      <table>
+      <table id="lever-history-table">
         <tbody>
           <tr>
             <th className="lever-history-table-header-styling" scope="column">
@@ -33,7 +33,7 @@ const LeverHistory = () => {
           </tr>
         </tbody>
         <tbody>{leverHistoryTable.map((entry, index) =>
-          <tr key={index}>
+          <tr key={index} id={`lever-history-table-row-${index}`}>
             <td className="history-table-styling entry-created-at">{entry.created_at}</td>
             <td className="history-table-styling entry-user-id">{entry.user_css_id}</td>
             <td className="history-table-styling entry-titles">
@@ -47,7 +47,7 @@ const LeverHistory = () => {
             <td className="history-table-styling entry-previous-values">
               <ol>
                 {entry.previous_values.map((previousValue, idx) => {
-                  return <li key={previousValue}>
+                  return <li key={`${index}-${previousValue}-${idx}`}>
                     {previousValue}{' '}{entry.units[idx]}</li>;
                 })
                 }
@@ -56,7 +56,7 @@ const LeverHistory = () => {
             <td className="history-table-styling entry-updated-values">
               <ol>
                 {entry.updated_values.map((updatedValue, idx) => {
-                  return <li key={updatedValue}>
+                  return <li key={`${index}-${updatedValue}-${idx}`}>
                     {updatedValue}{' '}{entry.units[idx]}</li>;
                 })
                 }

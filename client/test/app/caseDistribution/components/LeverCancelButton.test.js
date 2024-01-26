@@ -41,7 +41,7 @@ describe('LeverCancelButton', () => {
     expect(getByText(COPY.CASE_DISTRIBUTION_LEVER_CANCEL_BUTTON)).toBeInTheDocument();
   });
 
-  it('dispatches the revertLevers action when clicked', async () => {
+  it('dispatches the resetLevers action when clicked', async () => {
     const { getByText } = render(
       <Provider store={store}>
         <LeverCancelButton />
@@ -55,7 +55,8 @@ describe('LeverCancelButton', () => {
 
     await waitFor(() => {
 
-      expect(dispatchMock).toHaveBeenCalledWith(expect.any(Function));});
+      expect(dispatchMock).toHaveBeenCalledWith(expect.any(Function));
+    });
   });
 });
 

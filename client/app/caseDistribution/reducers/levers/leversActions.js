@@ -31,7 +31,7 @@ export const loadHistory = (historyList) =>
     });
   };
 
-export const revertLevers = () => async (dispatch) => {
+export const resetLevers = () => async (dispatch) => {
   const resp = await ApiUtil.get('/case_distribution_levers/get_levers');
   const { levers } = resp.body;
 

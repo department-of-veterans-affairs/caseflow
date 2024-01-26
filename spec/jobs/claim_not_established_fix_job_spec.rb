@@ -28,6 +28,8 @@ describe ClaimNotEstablishedFixJob, :postgres do
 
   subject { described_class.new }
 
+  it_behaves_like "a Master Scheduler serializable object", ClaimNotEstablishedFixJob
+
   context "#claim_not_established" do
     context "when code and established_at are present on epe" do
       it "clears the error field when epe code is 030" do
