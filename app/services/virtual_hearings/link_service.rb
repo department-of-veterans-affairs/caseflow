@@ -46,7 +46,6 @@ class VirtualHearings::LinkService
     @conference_id
   end
 
-
   def link(pin)
     fail PINMustBePresentError if pin.blank?
 
