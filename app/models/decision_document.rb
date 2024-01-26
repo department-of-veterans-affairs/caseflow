@@ -43,11 +43,6 @@ class DecisionDocument < CaseflowRecord
 
   alias document_name pdf_name
 
-  def decision_issues
-    ama_decision_issues if appeal_type == "Appeal"
-    # LegacyAppeals do not have decision_issue records
-  end
-
   def document_type
     "BVA Decision"
   end
