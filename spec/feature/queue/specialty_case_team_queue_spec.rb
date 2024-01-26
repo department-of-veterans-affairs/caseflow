@@ -16,7 +16,24 @@ feature "SpecialtyCaseTeamQueue", :all_dbs do
       ]
     end
 
-    # create tasks here
+    let(:num_action_required_rows) { 1 }
+    let(:num_completed_rows) { 9 }
+
+    let!(:sct_action_required_childtask) { create(:sct_action_required_task) }
+    let!(:sct_completed_tasks) do
+      create_list(:sct_assign_task, num_completed_rows, :completed, assigned_to: sct_org)
+    end
+
+    # let!(:action_required_request_issues) do
+    #   [
+    #     create(:request_issue, :nonrating,
+    #            decision_review: sct_action_required_task.appeal,
+    #            nonrating_issue_category: "Caregiver | Other", benefit_type: "vha"),
+    #     create(:request_issue, :nonrating,
+    #            decision_review: sct_action_required_task.appeal,
+    #            nonrating_issue_category: "Beneficiary Travel", benefit_type: "vha")
+    #   ]
+    # end
 
     before do
       sct_org.add_user(sct_user)
@@ -31,12 +48,12 @@ feature "SpecialtyCaseTeamQueue", :all_dbs do
         test_tab.new(
           action_required_tab_text, column_heading_names,
           "Cases owned by the Specialty Case Team that require action:",
-          0
+          1
         ),
         test_tab.new(
           completed_tab_text, column_heading_names,
           "Cases owned by the Specialty Case Team that have been assigned to a SCT Attorney (last 14 days):",
-          0
+          9
         )
       ]
     end
@@ -47,6 +64,13 @@ feature "SpecialtyCaseTeamQueue", :all_dbs do
 
     scenario "Specialty Case Team Queue Loads" do
       expect(find("h1")).to have_content("Specialty Case Team cases")
+    end
+
+    scenario "issue types column" do
+      # scenario "Specialty Case Team action required tab displays multiple issue types ordered in ascending order and no duplicates" do
+
+      # end
+      expect(page).to have_content("Caregiver | Other ")
     end
   end
 end
