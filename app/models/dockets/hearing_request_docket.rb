@@ -41,12 +41,13 @@ class HearingRequestDocket < Docket
 
   # rubocop:disable Lint/UnusedMethodArgument
   def distribute_appeals(distribution, priority: false, genpop: "any", limit: 1, style: "push")
-    base_relation = appeals(priority: priority, ready: true).limit(limit)
+    query_args = { priority: priority, ready: true }
+    base_relation = appeals(query_args).limit(limit)
 
     # setting genpop to "only_genpop" behind feature toggle as this module only processes AMA
     genpop = "only_genpop" if use_by_docket_date?
 
-    sct_appeals = extract_sct_appeals(base_relation)
+    sct_appeals = extract_sct_appeals(query_args, limit)
 
     unless sct_appeals.empty?
       base_relation = base_relation.where("appeals.id NOT IN (?)", sct_appeals.pluck(:id))
@@ -89,7 +90,6 @@ class HearingRequestDocket < Docket
 
   def extract_sct_appeals(query_args, limit)
     if sct_distribution_enabled?
-      query_args = { priority: priority, ready: true }
       _, sct_appeals = create_sct_appeals(query_args, limit)
       sct_appeals
     else
