@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 // import { connect } from 'react-redux';
 // import { bindActionCreators } from 'redux';
-import TextareaField from '../../../../../components/TextareaField';
+import TextField from '../../../../../components/TextareaField';
 // import Checkbox from '../../../../../components/Checkbox';
 import Button from '../../../../../components/Button';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import DateSelector from 'app/components/DateSelector';
 import RadioField from '../../../../../components/RadioField';
 import { ADD_CORRESPONDENCE_LETTER_SELECTIONS } from '../../../../constants';
+import moment from 'moment';
 
 // import {
 //   setResponseLetters
@@ -99,37 +100,59 @@ export const NewLetter = (props) => {
   const [letterSub, setLetterSub] = useState('');
   const [letterSubSelector, setLetterSubSelector] = useState([]);
   const [letterSubReason, setLetterSubReason] = useState('');
-  const [date, setDate] = useState();
-  const currentDate = new Date();
+  const [subReason, setSubReason] = useState('');
+
+  const currentDate = moment.utc(new Date()).format('YYYY-MM-DD');
+  const [date, setDate] = useState(currentDate);
+  const [stateOptions, setStateOptions] = useState(true);
+
+  const radioOptions = [
+    { displayText: '65 days',
+      value: '65 days',
+      disabled: stateOptions },
+    { displayText: 'No response window',
+      value: 'No response window',
+      disabled: stateOptions },
+    { displayText: 'Custom',
+      value: 'Other',
+      disabled: stateOptions }
+  ];
+
+  const [valueOptions, setValueOptions] = useState(radioOptions);
+  const [responseWindows, setResponseWindows] = useState('');
 
   const letterTypesData = ADD_CORRESPONDENCE_LETTER_SELECTIONS.map((option) => ({ label: (option.letter_type),
     value: option.letter_type }));
 
-  const radioOptions = [
-    { displayText: '65 days',
-      value: '65' },
-    { displayText: 'No response window',
-      value: 'no_response' },
-    { displayText: 'Custom',
-      value: 'Other' }
-  ];
-
   const findSub = (option, aux) => {
     const subCate = [];
-    // let reason = {};
+    const listReason = [];
 
     for (let aux1 = 0; aux1 < option.letter_titles[aux].letter_subcategories.length; aux1++) {
       subCate.push({ label: option.letter_titles[aux].letter_subcategories[aux1].subcategory,
         value: option.letter_titles[aux].letter_subcategories[aux1].subcategory });
     }
-    setLetterSubSelector(subCate);
 
-    // for (let aux1 = 0; aux1 < option.letter_titles[aux].letter_subcategories.length; aux1++) {
-    //   if (letterSub === option.letter_titles[aux].letter_subcategories[aux1].subcategory) {
-    //     reason = option.letter_titles[aux].letter_subcategories[aux1].reasons.reasons.map((currentReason) =>
-    //       ({ label: currentReason, value: currentReason }));
-    //   }
-    //   setLetterSubReason(reason);
+    if (subCate.length === 0) {
+      setLetterSubSelector([{ label: 'N/A', value: 'N/A' }]);
+    } else {
+      setLetterSubSelector(subCate);
+    }
+
+    for (let aux1 = 0; aux1 < option.letter_titles[aux].letter_subcategories.length; aux1++) {
+      if (letterSub === option.letter_titles[aux].letter_subcategories[aux1].subcategory) {
+        option.letter_titles[aux].letter_subcategories[aux1].reasons.map((currentReason) =>
+          listReason.push({ label: currentReason, value: currentReason }));
+      }
+    }
+
+    if (listReason.length === 0) {
+      setLetterSubReason([{ label: 'N/A', value: 'N/A' }]);
+    } else {
+      setLetterSubReason(listReason);
+    }
+    // if ((letterSubReason.length === 0) || (letterSubReason[0].value === 'N/A')) {
+    //   setLetterSubReason([{ label: 'N/A', value: 'N/A' }]);
     // }
   };
 
@@ -144,28 +167,19 @@ export const NewLetter = (props) => {
 
         for (let aux = 0; aux < option.letter_titles.length; aux++) {
           if (option.letter_titles[aux].letter_title === letterTitle) {
+            // setResponseWindows(option.letter_titles[aux].response_window_option_default);
             findSub(option, aux);
           }
         }
-
-        // setLetterSubSelector(option.letter_titles.map((current) => (
-        //   (current.letter_title === letterTitle) &&
-        //     current.letter_subcategories.map((sub) => (
-        //       { label: sub.subcategory, value: sub.subcategory })
-        //     )
-        // )));
-
-        // setLetterSubReason(option.letter_titles.map((current) => (
-        //   current.letter_subcategories.map((reasons) => (
-        //     reasons.reasons.map((currentReason) => (
-        //       { label: currentReason, value: currentReason })
-        //     )
-        //   )
-        //   )
-        // )));
       }
     }
   };
+
+  useEffect(() => {
+    if (responseWindows.length === 0) {
+      letterTitlesData();
+    }
+  }, [responseWindows]);
 
   useEffect(() => {
     if (letterType.length > 0) {
@@ -175,7 +189,6 @@ export const NewLetter = (props) => {
 
   const changeLetterType = (val) => {
     setLetterType(val);
-    // letterTitlesData();
   };
 
   useEffect(() => {
@@ -186,7 +199,15 @@ export const NewLetter = (props) => {
 
   const changeLetterTitle = (val) => {
     setLetterTitle(val);
-    // letterTitlesData();
+
+    for (let i = 0; i < valueOptions.length; i++) {
+      const option = valueOptions;
+
+      if (responseWindows === option.displayText) {
+        setStateOptions(false);
+        option.disabled(stateOptions);
+      }
+    }
   };
 
   useEffect(() => {
@@ -197,7 +218,6 @@ export const NewLetter = (props) => {
 
   const changeLetterSubTitle = (val) => {
     setLetterSub(val);
-    // letterTitlesData();
   };
 
   return (
@@ -208,9 +228,8 @@ export const NewLetter = (props) => {
         <DateSelector
           name="date-set"
           label="Date sent"
-          // value=
-          // errorMessage={this.state.dateError}
-          // onChange={ }
+          value= {date}
+          onChange={(val) => setDate(val)}
           type="date"
         />
       </div>
@@ -241,7 +260,7 @@ export const NewLetter = (props) => {
         placeholder="Select..."
         readOnly = {letterTitle.length === 0}
         options={letterTitle.length && letterSubSelector}
-        value={letterSub}
+        value={letterSub.length}
         onChange={(val) => changeLetterSubTitle(val.value)}
       />
       <br />
@@ -251,19 +270,23 @@ export const NewLetter = (props) => {
         placeholder="Select..."
         readOnly = {letterSub.length === 0}
         options={letterSubReason}
-        // value={letterSubReason}
+        value={subReason}
         // onChange={this.packageDocumentOnChange}
       />
       <br />
       <RadioField
         name="How long should the response window be for this response letter?"
-        options={radioOptions}
+        options={valueOptions}
+        value = {responseWindows}
         onChange={(val) => props.handleCustomWindowState(val)}
+        // optionsStyling={{ marginTop: 0 }}
       />
-      {props.customWindows &&
-        <TextareaField
-          name="content"
+
+      { props.customWindows &&
+        <TextField
           label="Provide context and instruction on this task"
+          name="content"
+          // readOnly={props.isReadOnly}
           // value={task.content}
           // onChange={updateTaskContent}
         />
