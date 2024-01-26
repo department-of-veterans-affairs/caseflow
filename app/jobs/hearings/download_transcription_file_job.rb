@@ -6,37 +6,36 @@ require "open-uri"
 class DownloadTranscriptionFileJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
 
-  retry_on(StandardError, attempts: 10, wait: :exponentially_longer) do |job, exception|
-    Rails.logger.info("RETRY")
-  end
-
   # TO-DO: confirm priority
   queue_with_priority :low_priority
 
+  # retry_on(StandardError, attempts: 10, wait: :exponentially_longer) do |job, exception|
+  #   Rails.logger.info("RETRY")
+  # end
+
   # TO-DO: confirm arguments
-  def perform(temporary_link:, docket_number:, appeal: nil)
-    Rails.logger.info("START JOB")
+  def perform(download_link)
     ensure_current_user_is_set
     begin
-      download_to_tmp_location(temporary_link)
-      @transcription_file = create_transcription_file(docket_number: docket_number, appeal: appeal)
-      Rails.logger.info("FINISH JOB")
-    ensure
-      Rails.logger.info("CLEAN UP")
-      clean_up_tmp_location
+      Rails.logger.info("JOB START")
+      download_to_tmp_location(download_link)
+      # @transcription_file = create_transcription_file(docket_number: docket_number, appeal: appeal)
+    rescue StandardError
+      byebug
+      # clean_up_tmp_location
     end
   end
 
   private
 
-  def download_to_tmp_location(temporary_link)
-    URI.open(temporary_link) do |download|
-      parse_file_name(download)
+  def download_to_tmp_location(download_link)
+    URI.open(download_link) do |download|
+      parse_file_attributes(download)
       IO.copy_stream(download, tmp_location)
     end
   end
 
-  def parse_file_name(download)
+  def parse_file_attributes(download)
     @file_name = download.base_uri.to_s.split("/")[-1]
   end
 
