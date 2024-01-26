@@ -356,14 +356,13 @@ export const modalOriginalTestLevers = [
     "title": "Lever 12",
     "description": "This is the ninth lever. It is a radio data type with the default value of option_1. Therefore there should be a radio options displayed and option_1 is selected by default. If the option is text only the text is displayed, but if it is a different data type then the appropriate input and unit are displayed and the value stored. This lever is active so it should be in the active lever section",
     "data_type": "combination",
-    "value": 50,
+    "value": "option_1",
     "unit": "Days",
     "options": [
         {
         "item": "option_1",
-        "data_type": "boolean",
-        "value": false,
         "text": "This feature is turned on or off",
+        "value": 50,
         "unit": ""
         }
     ],
@@ -388,11 +387,11 @@ export const modalOriginalTestLevers = [
     "lever_group_order": 2000
   },
   {
-    "item": 'modal-test-combination-lever',
+    "item": 'modal-test-combination-lever-2',
     "title": 'AOJ AOD Affinity Days',
     "description": 'Sets the number of days legacy remand Returned appeals that are also AOD (and may or may not have been CAVC at one time) respect the affinity before distributing the appeal to any available jduge. Affects appeals with hearing held when the remanding judge is not the hearing judge, or any legacy AOD + AOD appeal with no hearing held (whether or not it had been CAVC at one time).',
     "data_type": 'radio',
-    "value": 14,
+    "value": "value",
     "unit": "days",
     "options": [
       {

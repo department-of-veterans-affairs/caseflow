@@ -5,7 +5,7 @@ import SaveModal from './SaveModal';
 import { saveLevers } from '../reducers/levers/leversActions';
 import { changedLevers, hasChangedLevers, hasNoLeverErrors } from '../reducers/levers/leversSelector';
 
-export const LeverSaveButton = () => {
+const LeverSaveButton = () => {
   const dispatch = useDispatch();
   const theState = useSelector((state) => state);
   const [showModal, setShowModal] = useState(false);

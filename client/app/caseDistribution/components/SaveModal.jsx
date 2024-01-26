@@ -50,13 +50,24 @@ export const SaveModal = (props) => {
           </tbody>
           <tbody>
             {updatedLevers.map((lever, index) => (
-              <tr key={index}>
+              <tr key={index} id={`${lever.item}-modal-row`}>
                 <React.Fragment>
-                  <td className={cx('modal-table-styling', 'modal-table-left-styling')}>{lever.title}</td>
-                  <td className={cx('modal-table-styling', 'modal-table-right-styling')}>
+                  <td
+                    id={`${lever.item}-title-in-modal`}
+                    className={cx('modal-table-styling', 'modal-table-left-styling')}
+                  >
+                    {lever.title}
+                  </td>
+                  <td
+                    id={`${lever.item}-previous-value`}
+                    className={cx('modal-table-styling', 'modal-table-right-styling')}
+                  >
                     {lever.backendValue}
                   </td>
-                  <td className={cx('modal-table-styling', 'modal-table-right-styling')}>
+                  <td
+                    id={`${lever.item}-new-value`}
+                    className={cx('modal-table-styling', 'modal-table-right-styling')}
+                  >
                     {leverValueDisplay(lever)}
                   </td>
                 </React.Fragment>
