@@ -83,7 +83,8 @@ const DocketTimeGoals = () => {
 
       return (
 
-        <div className={cx('active-lever')}
+        <div id={`${docketTimeGoalLever.item}-lever`}
+          className={cx('active-lever')}
           key={`${distributionPriorLever.item}-${index}`}
         >
           <div className={cx('lever-left', 'docket-lever-left')}>

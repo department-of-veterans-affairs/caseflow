@@ -112,6 +112,30 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     end
   end
 
+  describe "GET get_levers" do
+    it "redirects the user to the unauthorized page if they are not authorized" do
+      User.authenticate!(user: create(:user))
+      get "get_levers"
+
+      expect(response.status).to eq 302
+      expect(response.body).to match(/unauthorized/)
+    end
+
+    it "renders a page with the grouped levers and lever history" do
+      User.authenticate!(user: lever_user)
+      OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
+      get "get_levers"
+
+      expect(response.status).to eq 200
+      result = JSON.parse(response.body)
+      expect(result).to be_a(Hash)
+      expect(result.keys).to match_array(["levers", "lever_history"])
+      expect(result["levers"]).to be_a(Hash)
+      expect(result["levers"].keys).to match_array(["static", "batch", "affinity", "docket_distribution_prior", "docket_time_goal"])
+      expect(result["lever_history"]).to be_a(Array)
+    end
+  end
+
   describe "GET acd_lever_index with case-distribution-controls path", :type => :request do
     it "redirects the user to the unauthorized page if they are not authorized" do
       User.authenticate!(user: create(:user))
