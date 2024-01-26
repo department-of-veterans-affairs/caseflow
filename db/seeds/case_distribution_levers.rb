@@ -11,7 +11,7 @@ module Seeds
       [
         {
           item: Constants.DISTRIBUTION.maximum_direct_review_proportion,
-          title: 'Maximum Direct Review Proportion',
+          title: Constants.DISTRIBUTION.maximum_direct_review_proportion_title,
           description: "Sets the maximum number of direct reviews in relation to due direct review proportion to prevent a complete halt to work on other dockets should demand for direct reviews approach the Board's capacity.",
           data_type: Constants.ACD_LEVERS.data_types.number,
           value: 0.8,
@@ -26,7 +26,7 @@ module Seeds
         },
         {
           item: Constants.DISTRIBUTION.minimum_legacy_proportion,
-          title: 'Minimum Legacy Proportion',
+          title: Constants.DISTRIBUTION.minimum_legacy_proportion_title,
           description: 'Sets the minimum proportion of legacy appeals that will be distributed.',
           data_type: Constants.ACD_LEVERS.data_types.number,
           value: 0.2,
@@ -41,7 +41,7 @@ module Seeds
         },
         {
           item: Constants.DISTRIBUTION.nod_adjustment,
-          title: 'NOD Adjustment',
+          title: Constants.DISTRIBUTION.nod_adjustment_title,
           description: 'Applied for docket balancing reflecting the likelihood that NODs will advance to a Form 9.',
           data_type: Constants.ACD_LEVERS.data_types.number,
           value: 0.9,
@@ -56,7 +56,7 @@ module Seeds
         },
         {
           item: Constants.DISTRIBUTION.bust_backlog,
-          title: 'Priority Bust Backlog',
+          title: Constants.DISTRIBUTION.bust_backlog_title,
           description: 'Distribute legacy cases tied to a judge to the Board-provided limit of 30, regardless of the legacy docket range.',
           data_type: Constants.ACD_LEVERS.data_types.boolean,
           value: true,
@@ -114,7 +114,7 @@ module Seeds
         },
         {
           item: Constants.DISTRIBUTION.ama_hearing_case_affinity_days,
-          title: 'AMA Hearing Case Affinity Days',
+          title: Constants.DISTRIBUTION.ama_hearing_case_affinity_days_title,
           description: 'For non-priority AMA Hearing cases, sets the number of days an AMA Hearing Case is tied to the judge that held the hearing.',
           data_type: Constants.ACD_LEVERS.data_types.radio,
           value: 'value',
@@ -150,7 +150,7 @@ module Seeds
         },
         {
           item: Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days,
-          title: 'AMA Hearing Case AOD Affinity Days',
+          title: Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days_title,
           description: 'Sets the number of days an AMA Hearing appeal that is also AOD will respect the affinity to the most-recent hearing judge before distributing the appeal to any available judge.',
           data_type: Constants.ACD_LEVERS.data_types.radio,
           value: 'value',
@@ -188,7 +188,7 @@ module Seeds
         },
         {
           item: Constants.DISTRIBUTION.cavc_affinity_days,
-          title: 'CAVC Affinity Days*',
+          title: Constants.DISTRIBUTION.cavc_affinity_days_title,
           description: 'Sets the number of days a case returned from CAVC respects the affinity to the judge who authored a decision before distributing the appeal to any available judge. This does not include Legacy CAVC Remand Appeals with a hearing held.',
           data_type: Constants.ACD_LEVERS.data_types.radio,
           value: 'value',
@@ -222,7 +222,7 @@ module Seeds
         },
         {
           item: Constants.DISTRIBUTION.cavc_aod_affinity_days,
-          title: 'CAVC AOD Affinity Days',
+          title: Constants.DISTRIBUTION.cavc_aod_affinity_days_title,
           description: 'Sets the number of days appeals returned from CAVC that are also AOD respect the affinity to the deciding judge. This is not applicable for legacy apeals for which the deciding judge conducted the most recent hearing.',
           data_type: Constants.ACD_LEVERS.data_types.radio,
           value: 'value',
@@ -254,7 +254,7 @@ module Seeds
         },
         {
           item: Constants.DISTRIBUTION.aoj_affinity_days,
-          title: 'AOJ Affinity Days',
+          title: Constants.DISTRIBUTION.aoj_affinity_days_title,
           description: 'Sets the number of days an appeal respects the affinity to the deciding judge for Legacy AOJ Remand Returned appeals with no hearing held before distributing the appeal to any available judge.',
           data_type: Constants.ACD_LEVERS.data_types.radio,
           value: 'value',
@@ -292,7 +292,7 @@ module Seeds
         },
         {
           item: Constants.DISTRIBUTION.aoj_aod_affinity_days,
-          title: 'AOJ AOD Affinity Days',
+          title: Constants.DISTRIBUTION.aoj_aod_affinity_days_title,
           description: 'Sets the number of days legacy remand Returned appeals that are also AOD (and may or may not have been CAVC at one time) respect the affinity before distributing the appeal to any available jduge. Affects appeals with hearing held when the remanding judge is not the hearing judge, or any legacy AOD + AOD appeal with no hearing held (whether or not it had been CAVC at one time).',
           data_type: Constants.ACD_LEVERS.data_types.radio,
           value: 'value',
@@ -330,7 +330,7 @@ module Seeds
         },
         {
           item: Constants.DISTRIBUTION.aoj_cavc_affinity_days,
-          title: 'AOJ CAVC Affinity Days',
+          title: Constants.DISTRIBUTION.aoj_cavc_affinity_days_title,
           description: 'Sets the number of days AOJ appeals that were CAVC at some time respect the affinity before the appeal is distributed to any available judge. This applies to any AOJ + CAVC appeal with no hearing held, or those with a hearing held when the remanding judge is not the hearing judge.',
           data_type: Constants.ACD_LEVERS.data_types.radio,
           value: 'value',
