@@ -9,8 +9,6 @@ import SearchableDropdown from 'app/components/SearchableDropdown';
 import DateSelector from 'app/components/DateSelector';
 import RadioField from '../../../../../components/RadioField';
 import { ADD_CORRESPONDENCE_LETTER_SELECTIONS } from '../../../../constants';
-import { formatDateStr } from '../../../../../util/DateUtil';
-// import ApiUtil from '../../../../../util/ApiUtil';
 
 // import {
 //   setResponseLetters
@@ -98,9 +96,9 @@ export const NewLetter = (props) => {
   const [letterType, setLetterType] = useState('');
   const [letterTitle, setLetterTitle] = useState('');
   const [letterTitleSelector, setLetterTitleSelector] = useState();
-  const [letterSub, setLetterSub] = useState();
+  const [letterSub, setLetterSub] = useState('');
   const [letterSubSelector, setLetterSubSelector] = useState([]);
-  const [letterSubReason, setLetterSubReason] = useState();
+  const [letterSubReason, setLetterSubReason] = useState('');
   const [date, setDate] = useState();
   const currentDate = new Date();
 
@@ -116,27 +114,75 @@ export const NewLetter = (props) => {
       value: 'Other' }
   ];
 
+  const repared = (option, aux) => {
+    const subCate = [];
+
+    for (let aux1 = 0; aux1 < option.letter_titles[aux].letter_subcategories.length; aux1++) {
+      subCate.push({ label: option.letter_titles[aux].letter_subcategories[aux1].subcategory,
+        value: option.letter_titles[aux].letter_subcategories[aux1].subcategory });
+    }
+    setLetterSubSelector(subCate);
+  };
+
+  const selectReason = (option, aux) => {
+    const reason = [];
+
+    for (let aux1 = 0; aux1 < option.letter_titles[aux].letter_subcategories.length; aux1++) {
+      reason.push({ label: option.letter_titles[aux].letter_subcategories[aux1].subcategory,
+        value: option.letter_titles[aux].letter_subcategories[aux1].subcategory });
+    }
+    setLetterSubReason(reason);
+  };
+
+  const repared2 = (option, aux) => {
+    const subCate = [];
+
+    for (let aux1 = 0; aux1 < option.letter_titles[aux].letter_subcategories.length; aux1++) {
+      if (option.letter_titles[aux].letter_subcategories === letterSub) {
+        selectReason(option, aux, aux1);
+      }
+    }
+    setLetterSubSelector(subCate);
+  };
+
   const letterTitlesData = () => {
-    for (let i = 0; ADD_CORRESPONDENCE_LETTER_SELECTIONS.length; i++) {
+    for (let i = 0; i < ADD_CORRESPONDENCE_LETTER_SELECTIONS.length; i++) {
       const option = ADD_CORRESPONDENCE_LETTER_SELECTIONS[i];
 
       if (option.letter_type === letterType) {
         setLetterTitleSelector(option.letter_titles.map((current) => ({
-          label: (current.letter_title), value: current.letter_title
+          label: current.letter_title, value: current.letter_title
         })));
 
-        setLetterSubSelector(option.letter_titles.map((current) => (
-          current.letter_subcategories.length && current.letter_subcategories.map((sub) => (
-            { label: (sub.subcategory), value: (sub.subcategory) })
-          )
-        )));
+        for (let aux = 0; aux < option.letter_titles.length; aux++) {
+          if (option.letter_titles[aux].letter_title === letterTitle) {
+            repared(option, aux);
+          }
+        }
+
+        // setLetterSubSelector(option.letter_titles.map((current) => (
+        //   (current.letter_title === letterTitle) &&
+        //     current.letter_subcategories.map((sub) => (
+        //       { label: sub.subcategory, value: sub.subcategory })
+        //     )
+        // )));
+
+        // setLetterSubReason(option.letter_titles.map((current) => (
+        //   current.letter_subcategories.map((reasons) => (
+        //     reasons.reasons.map((currentReason) => (
+        //       { label: currentReason, value: currentReason })
+        //     )
+        //   )
+        //   )
+        // )));
+
+        for (let aux = 0; aux < option.letter_titles.length; aux++) {
+          if (option.letter_titles[aux].letter_title === letterTitle) {
+            repared2(option, aux);
+          }
+        }
       }
     }
-  };
-
-  const changeLetterTitle = (val) => {
-    setLetterTitle(val);
-    letterTitlesData(val);
   };
 
   useEffect(() => {
@@ -147,6 +193,28 @@ export const NewLetter = (props) => {
 
   const changeLetterType = (val) => {
     setLetterType(val);
+    // letterTitlesData();
+  };
+
+  useEffect(() => {
+    if (letterTitle.length > 0) {
+      letterTitlesData();
+    }
+  }, [letterTitle]);
+
+  const changeLetterTitle = (val) => {
+    setLetterTitle(val);
+    // letterTitlesData();
+  };
+
+  useEffect(() => {
+    if (letterSub.length > 0) {
+      letterTitlesData();
+    }
+  }, [letterSub]);
+
+  const changeLetterSubTitle = (val) => {
+    setLetterSub(val);
     // letterTitlesData();
   };
 
@@ -190,18 +258,18 @@ export const NewLetter = (props) => {
         label="Letter subcategory"
         placeholder="Select..."
         readOnly = {letterTitle.length === 0}
-        // options={letterSubSelector}
-        // value={props.setLetterSubSelector}
-        // onChange={this.packageDocumentOnChange}
+        options={letterTitle.length && letterSubSelector}
+        value={letterSub}
+        onChange={(val) => changeLetterSubTitle(val.value)}
       />
       <br />
       <SearchableDropdown
         name="response-letter-subcategory-reason"
         label="Letter subcategory reason"
         placeholder="Select..."
-        readOnly
-        // options={this.state.packageOptions}
-        // value={}
+        readOnly = {letterSub.length === 0}
+        options={letterSubReason}
+        value={letterSubReason}
         // onChange={this.packageDocumentOnChange}
       />
       <br />
@@ -238,6 +306,8 @@ NewLetter.propTypes = {
   customWindows: PropTypes.bool,
   setLetterType: PropTypes.func,
   letterType: PropTypes.string,
+  letterTitle: PropTypes.string,
+  setLetterTitle: PropTypes.func,
 };
 
 export default AddLetter;
