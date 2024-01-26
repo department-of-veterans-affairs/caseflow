@@ -21,6 +21,7 @@ export const SaveModal = (props) => {
 
     if (doesDatatypeRequireComplexLogic) {
       const selectedOption = findOption(lever, lever.value);
+
       const isSelectedOptionANumber = selectedOption.data_type === ACD_LEVERS.data_types.number;
 
       return isSelectedOptionANumber ? selectedOption.value : selectedOption.text;
@@ -50,13 +51,13 @@ export const SaveModal = (props) => {
           </tbody>
           <tbody>
             {updatedLevers.map((lever, index) => (
-              <tr key={index}>
+              <tr key={index} id={`${lever.item}-modal-row`}>
                 <React.Fragment>
-                  <td className={cx('modal-table-styling', 'modal-table-left-styling')}>{lever.title}</td>
-                  <td className={cx('modal-table-styling', 'modal-table-right-styling')}>
+                  <td id={`${lever.item}-title-in-modal`} className={cx('modal-table-styling', 'modal-table-left-styling')}>{lever.title}</td>
+                  <td id={`${lever.item}-previous-value`} className={cx('modal-table-styling', 'modal-table-right-styling')}>
                     {lever.backendValue}
                   </td>
-                  <td className={cx('modal-table-styling', 'modal-table-right-styling')}>
+                  <td id={`${lever.item}-new-value`} className={cx('modal-table-styling', 'modal-table-right-styling')}>
                     {leverValueDisplay(lever)}
                   </td>
                 </React.Fragment>
@@ -71,7 +72,6 @@ export const SaveModal = (props) => {
   return (
     <Modal
       isOpen
-      onClose={() => setShowModal(false)}
       closeHandler={() => setShowModal(false)}
       title={COPY.CASE_DISTRIBUTION_MODAL_TITLE}
       confirmButton={<Button onClick={handleConfirmButton}>{COPY.MODAL_CONFIRM_BUTTON}</Button>}
