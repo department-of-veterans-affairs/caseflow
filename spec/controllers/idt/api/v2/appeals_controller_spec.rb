@@ -371,7 +371,8 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
         end
       end
       it "efficiently queries and returns correct response" do
-        ActiveRecord::Base.logger = Logger.new(STDOUT)
+        # The following line causes all log output including SQL queries to logged and test results truncate in GHA
+        # ActiveRecord::Base.logger = Logger.new(STDOUT)
         controller_query_data = SqlTracker.track do
           get :appeal_documents, params: params
         end
