@@ -74,6 +74,7 @@ module Seeds
       BvaIntake.singleton.add_user(bva_intake_user)
 
       Functions.grant!("System Admin", users: User.all.pluck(:css_id))
+      create_vha_admins
       create_team_admin
       create_colocated_users
       create_transcription_team
@@ -116,6 +117,19 @@ module Seeds
       bva_intake_admin = User.create(css_id: "BVADWISE", station_id: 101, full_name: "Deborah BvaIntakeAdmin Wise")
       OrganizationsUser.make_user_admin(bva_intake_admin, BvaIntake.singleton)
       OrganizationsUser.make_user_admin(bva_intake_admin, CDAControlGroup.singleton)
+    end
+
+    def create_vha_admins
+      %w[VHAADMIN VHAADMIN2].each do |css_id|
+        vha_admin_user = User.create(
+          css_id: css_id,
+          station_id: 101,
+          full_name: css_id,
+          roles: ["System Admin", "Certify Appeal", "Mail Intake", "Admin Intake"]
+        )
+
+        OrganizationsUser.make_user_admin(vha_admin_user, VhaBusinessLine.singleton)
+      end
     end
 
     def create_team_admin
