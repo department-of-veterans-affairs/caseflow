@@ -550,23 +550,40 @@ export const prepareAppealForSearchStore = (appeals) => {
       distributedToJudge: appeal.attributes.distributed_to_a_judge,
       veteranFullName: appeal.attributes.veteran_full_name,
       veteranFileNumber: appeal.attributes.veteran_file_number,
+      isPaperCase: appeal.attributes.paper_case,
       vacateType: appeal.attributes.vacate_type,
     };
 
     return accumulator;
   }, {});
 
+
   const appealDetailsHash = appeals.reduce((accumulator, appeal) => {
     accumulator[appeal.attributes.external_id] = {
       hearings: prepareAppealHearingsForStore(appeal),
+      issues: prepareAppealIssuesForStore(appeal),
+      decisionIssues: appeal.attributes.decision_issues,
       appellantFullName: appeal.attributes.appellant_full_name,
+      appellantFirstName: appeal.attributes.appellant_first_name,
+      appellantMiddleName: appeal.attributes.appellant_middle_name,
+      appellantLastName: appeal.attributes.appellant_last_name,
+      appellantSuffix: appeal.attributes.appellant_suffix,
+      appellantDateOfBirth: appeal.attributes.appellant_date_of_birth,
+      appellantAddress: appeal.attributes.appellant_address,
+      appellantEmailAddress: appeal.attributes.appellant_email_address,
+      appellantPhoneNumber: appeal.attributes.appellant_phone_number,
       contestedClaim: appeal.attributes.contested_claim,
       assignedToLocation: appeal.attributes.assigned_to_location,
+      veteranGender: appeal.attributes.veteran_gender,
+      veteranAddress: appeal.attributes.veteran_address,
       veteranParticipantId: appeal.attributes.veteran_participant_id,
       externalId: appeal.attributes.external_id,
       status: appeal.attributes.status,
       decisionDate: appeal.attributes.decision_date,
       caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
+      availableHearingLocations: prepareAppealAvailableHearingLocationsForStore(
+        appeal
+      ),
       locationHistory: prepareLocationHistoryForStore(appeal),
     };
 

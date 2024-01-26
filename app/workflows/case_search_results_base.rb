@@ -90,7 +90,7 @@ class CaseSearchResultsBase
       ama_appeals, is_collection: true, params: { user: user }
     ).serializable_hash
 
-    legacy_hash = WorkQueue::LegacyAppealSearchSerializer.new(
+    legacy_hash = WorkQueue::LegacyAppealSerializer.new(
       legacy_appeals, is_collection: true, params: { user: user }
     ).serializable_hash
 

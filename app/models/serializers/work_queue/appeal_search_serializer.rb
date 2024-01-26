@@ -25,6 +25,25 @@ class WorkQueue::AppealSearchSerializer
 
   attribute :status
 
+  attribute :decision_issues do |object, params|
+    if params[:user].nil?
+      fail Caseflow::Error::MissingRequiredProperty, message: "Params[:user] is required"
+    end
+
+    decision_issues = AppealDecisionIssuesPolicy.new(appeal: object, user: params[:user]).visible_decision_issues
+    decision_issues.uniq.map do |issue|
+      {
+        id: issue.id,
+        disposition: issue.disposition,
+        description: issue.description,
+        benefit_type: issue.benefit_type,
+        remand_reasons: issue.remand_reasons,
+        diagnostic_code: issue.diagnostic_code,
+        request_issue_ids: issue.request_decision_issues.pluck(:request_issue_id)
+      }
+    end
+  end
+
   attribute(:hearings) do |object, params|
     # For substitution appeals after death dismissal, we need to show hearings from the source appeal
     # in addition to those on the new/target appeal; this avoids copying them to new appeal stream
@@ -53,6 +72,38 @@ class WorkQueue::AppealSearchSerializer
     object.claimant&.name
   end
 
+  attribute :appellant_first_name do |object|
+    object.claimant&.first_name
+  end
+
+  attribute :appellant_middle_name do |object|
+    object.claimant&.middle_name
+  end
+
+  attribute :appellant_last_name do |object|
+    object.claimant&.last_name
+  end
+
+  attribute :appellant_suffix do |object|
+    object.claimant&.suffix
+  end
+
+  attribute :appellant_date_of_birth do |object|
+    object.claimant&.date_of_birth
+  end
+
+  attribute :appellant_address do |object|
+    object.claimant&.address
+  end
+
+  attribute :appellant_phone_number do |object|
+    object.claimant&.unrecognized_claimant? ? object.claimant&.phone_number : nil
+  end
+
+  attribute :appellant_email_address do |object|
+    object.claimant&.email_address
+  end
+
   attribute :veteran_death_date
 
   attribute :veteran_file_number
@@ -60,6 +111,8 @@ class WorkQueue::AppealSearchSerializer
   attribute :veteran_full_name do |object|
     object.veteran ? object.veteran.name.formatted(:readable_full) : "Cannot locate"
   end
+
+  attribute(:available_hearing_locations) { |object| available_hearing_locations(object) }
 
   attribute :external_id, &:uuid
 
@@ -72,6 +125,10 @@ class WorkQueue::AppealSearchSerializer
   attribute :decision_date
   attribute :nod_date, &:receipt_date
   attribute :withdrawal_date
+
+  attribute :paper_case do
+    false
+  end
 
   attribute :caseflow_veteran_id do |object|
     object.veteran ? object.veteran.id : nil

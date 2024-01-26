@@ -49,6 +49,7 @@ class AppealsController < ApplicationController
     end
   end
 
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def fetch_notification_list
     appeals_id = params[:appeals_id]
     respond_to do |format|
@@ -63,9 +64,10 @@ class AppealsController < ApplicationController
         begin
           if !appeal.nil?
             pdf = PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal)
-            send_data pdf, filename: "Notification Report " + appeals_id + " " + date + ".pdf", type: "application/pdf", disposition: :attachment
+            pdf_file_name = "Notification Report " + appeals_id + " " + date + ".pdf"
+            send_data pdf, filename: pdf_file_name, type: "application/pdf", disposition: :attachment
           else
-            raise ActionController::RoutingError.new('Appeal Not Found')
+            fail ActionController::RoutingError, "Appeal Not Found"
           end
         rescue StandardError => error
           uuid = SecureRandom.uuid
@@ -75,13 +77,14 @@ class AppealsController < ApplicationController
         end
       end
       format.csv do
-        raise ActionController::ParameterMissing.new('Bad Format')
+        fail ActionController::ParameterMissing, "Bad Format"
       end
       format.html do
-        raise ActionController::ParameterMissing.new('Bad Format')
+        fail ActionController::ParameterMissing, "Bad Format"
       end
     end
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   def document_count
     doc_count = EFolderService.document_count(appeal.veteran_file_number, current_user)
@@ -291,13 +294,15 @@ class AppealsController < ApplicationController
     when "direct_review"
       parent_task = @appeal.tasks.find_by(type: "DistributionTask")
     end
-    @send_initial_notification_letter ||= @appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
-                                          SendInitialNotificationLetterTask.create!(
-                                            appeal: @appeal,
-                                            parent: parent_task,
-                                            assigned_to: Organization.find_by_url("clerk-of-the-board"),
-                                            assigned_by: RequestStore[:current_user]
-                                          ) unless parent_task.nil?
+    unless parent_task.nil?
+      @send_initial_notification_letter ||= @appeal.tasks.open.find_by(type: :SendInitialNotificationLetterTask) ||
+                                            SendInitialNotificationLetterTask.create!(
+                                              appeal: @appeal,
+                                              parent: parent_task,
+                                              assigned_to: Organization.find_by_url("clerk-of-the-board"),
+                                              assigned_by: RequestStore[:current_user]
+                                            )
+    end
   end
 
   def power_of_attorney_data
@@ -320,9 +325,15 @@ class AppealsController < ApplicationController
     # Retrieve notifications based on appeals_id, excluding statuses of 'No participant_id' & 'No claimant'
     @all_notifications = Notification.where(appeals_id: appeals_id)
     @allowed_notifications = @all_notifications.where(email_notification_status: nil)
-      .or(@all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))
+      .or(@all_notifications.where.not(
+            email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]
+          ))
       .merge(@all_notifications.where(sms_notification_status: nil)
-      .or(@all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"])))
+      .or(@all_notifications.where.not(sms_notification_status: [
+                                         "No Participant Id Found",
+                                         "No Claimant Found",
+                                         "No External Id"
+                                       ])))
     # If no notifications were found, return an empty array, else return serialized notifications
     if @allowed_notifications == []
       []
