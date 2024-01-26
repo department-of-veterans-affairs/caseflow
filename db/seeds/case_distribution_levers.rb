@@ -11,7 +11,7 @@ module Seeds
       [
         {
           item: Constants.DISTRIBUTION.maximum_direct_review_proportion,
-          title: 'Maximum Direct Review Proportion',
+          title: Constants.DISTRIBUTION.maximum_direct_review_proportion_title,
           description: "Sets the maximum number of direct reviews in relation to due direct review proportion to prevent a complete halt to work on other dockets should demand for direct reviews approach the Board's capacity.",
           data_type: Constants.ACD_LEVERS.data_types.number,
           value: 0.8,
@@ -26,7 +26,7 @@ module Seeds
         },
         {
           item: Constants.DISTRIBUTION.minimum_legacy_proportion,
-          title: 'Minimum Legacy Proportion',
+          title: Constants.DISTRIBUTION.minimum_legacy_proportion_title,
           description: 'Sets the minimum proportion of legacy appeals that will be distributed.',
           data_type: Constants.ACD_LEVERS.data_types.number,
           value: 0.2,
@@ -41,7 +41,7 @@ module Seeds
         },
         {
           item: Constants.DISTRIBUTION.nod_adjustment,
-          title: 'NOD Adjustment',
+          title: Constants.DISTRIBUTION.nod_adjustment_title,
           description: 'Applied for docket balancing reflecting the likelihood that NODs will advance to a Form 9.',
           data_type: Constants.ACD_LEVERS.data_types.number,
           value: 0.9,
@@ -56,7 +56,7 @@ module Seeds
         },
         {
           item: Constants.DISTRIBUTION.bust_backlog,
-          title: 'Priority Bust Backlog',
+          title: Constants.DISTRIBUTION.bust_backlog_title,
           description: 'Distribute legacy cases tied to a judge to the Board-provided limit of 30, regardless of the legacy docket range.',
           data_type: Constants.ACD_LEVERS.data_types.boolean,
           value: true,
