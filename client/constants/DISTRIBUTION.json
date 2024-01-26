@@ -31,5 +31,8 @@
   "cavc_aod_affinity_days_title": "CAVC AOD Affinity Days",
   "aoj_affinity_days_title": "AOJ Affinity Days",
   "aoj_aod_affinity_days_title": "AOJ AOD Affinity Days",
-  "aoj_cavc_affinity_days_title": "AOJ CAVC Affinity Days"
+  "aoj_cavc_affinity_days_title": "AOJ CAVC Affinity Days",
+  "alternative_batch_size_title": "Alternate Batch Size*",
+  "batch_size_per_attorney_title": "Batch Size Per Attorney*",
+  "request_more_cases_minimum_title": "Request More Cases Minimum*"
 }

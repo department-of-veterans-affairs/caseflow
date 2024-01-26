@@ -69,7 +69,7 @@ module Seeds
         },
         {
           item: Constants.DISTRIBUTION.alternative_batch_size,
-          title: 'Alternate Batch Size*',
+          title: Constants.DISTRIBUTION.alternative_batch_size_title,
           description: 'Sets case-distribution batch size for judges who do not have their own attorney teams.',
           data_type: Constants.ACD_LEVERS.data_types.number,
           value: 15,
@@ -84,7 +84,7 @@ module Seeds
         },
         {
           item: Constants.DISTRIBUTION.batch_size_per_attorney,
-          title: 'Batch Size Per Attorney*',
+          title: Constants.DISTRIBUTION.batch_size_per_attorney_title,
           description: 'Sets case-distribution batch size for judges with attorney teams. The value for this data element is per attorney.',
           data_type: Constants.ACD_LEVERS.data_types.number,
           value: 3,
@@ -99,7 +99,7 @@ module Seeds
         },
         {
           item: Constants.DISTRIBUTION.request_more_cases_minimum,
-          title: 'Request More Cases Minimum*',
+          title: Constants.DISTRIBUTION.request_more_cases_minimum_title,
           description: 'Sets the number of remaining cases a VLJ must have equal to or less than to request more cases. (The number entered is used as equal to or less than)',
           data_type: Constants.ACD_LEVERS.data_types.number,
           value: 8,
