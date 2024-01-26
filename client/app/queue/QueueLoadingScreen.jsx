@@ -15,7 +15,8 @@ import {
   fetchAllAttorneys,
   fetchVhaProgramOffices,
   fetchAmaTasksOfUser,
-  fetchCamoTasks
+  fetchCamoTasks,
+  fetchSpecialtyCaseTeamTasks
 } from './QueueActions';
 import { setUserId, setTargetUser } from './uiReducer/uiActions';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
@@ -27,13 +28,26 @@ class QueueLoadingScreen extends React.PureComponent {
       userId,
       userRole,
       type,
-      userIsCamoEmployee
+      userIsCamoEmployee,
+      userIsSCTCoordinator
     } = this.props;
 
     this.props.setUserId(userId);
 
+    console.log('in queue loading screen');
+    console.log(userIsSCTCoordinator);
+    console.log(userRole);
+    console.log(type);
+
+    // TODO: Hmm this is gross as well. I think this is what is fetching the camo tasks
     if (userIsCamoEmployee && type === 'assign') {
       return this.props.fetchCamoTasks(chosenUserId, userRole, type);
+    }
+
+    if (userIsSCTCoordinator && type === 'assign') {
+      console.log('I should be trying to fetch specialtyCaseTeamTasks');
+
+      return this.props.fetchSpecialtyCaseTeamTasks(chosenUserId, userRole, type);
     }
 
     return this.props.fetchAmaTasksOfUser(chosenUserId, userRole, type);
@@ -161,6 +175,7 @@ QueueLoadingScreen.propTypes = {
   fetchVhaProgramOffices: PropTypes.func,
   fetchAmaTasksOfUser: PropTypes.func,
   fetchCamoTasks: PropTypes.func,
+  fetchSpecialtyCaseTeamTasks: PropTypes.func,
   // `loadedUserId` is set by `setUserId`
   loadedUserId: PropTypes.number,
   loadAttorneys: PropTypes.bool,
@@ -180,7 +195,8 @@ QueueLoadingScreen.propTypes = {
   userCssId: PropTypes.string,
   userRole: PropTypes.string,
   loadJudgeData: PropTypes.bool,
-  userIsCamoEmployee: PropTypes.bool
+  userIsCamoEmployee: PropTypes.bool,
+  userIsSCTCoordinator: PropTypes.bool
 };
 
 const mapStateToProps = (state) => {
@@ -203,6 +219,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   fetchVhaProgramOffices,
   fetchAmaTasksOfUser,
   fetchCamoTasks,
+  fetchSpecialtyCaseTeamTasks,
   setUserId,
   setTargetUser
 }, dispatch);

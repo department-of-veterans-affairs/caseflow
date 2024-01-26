@@ -26,6 +26,9 @@ export const onReceiveQueue = (
   }
 });
 
+export const setQueueConfig = (config) => ({ type: ACTIONS.SET_QUEUE_CONFIG,
+  payload: { config } });
+
 export const onReceiveAppealDetails = (
   { appeals, appealDetails }
 ) => ({
@@ -744,11 +747,36 @@ export const fetchAmaTasksOfUser = (userId, userRole, type = null) => (dispatch)
     });
 };
 
+// TODO: This is what sets the CAMO tasks and camo org
 export const fetchCamoTasks = (userId) => (dispatch) => {
   const url = '/organizations/vha-camo/tasks';
 
   return ApiUtil.get(url).
     then((resp) => {
+      dispatch(setActiveOrganization(resp.body.id,
+        resp.body.type,
+        resp.body.organization_name,
+        resp.body.is_vso,
+        resp.body.user_can_bulk_assign));
+      dispatch(onReceiveQueue(extractAppealsAndAmaTasks(resp.body.queue_config.tabs[0].tasks)));
+      dispatch(setQueueConfig(resp.body.queue_config));
+    }).
+    catch((error) => {
+      dispatch(errorTasksAndAppealsOfAttorney({ attorneyId: userId, error }));
+      // rethrow error so that QueueLoadingScreen can catch and display error
+      throw error;
+    });
+};
+
+// TODO: This is gross
+export const fetchSpecialtyCaseTeamTasks = (userId) => (dispatch) => {
+  const url = '/organizations/specialty-case-team/tasks';
+
+  console.log(url);
+
+  return ApiUtil.get(url).
+    then((resp) => {
+      console.log(resp);
       dispatch(setActiveOrganization(resp.body.id,
         resp.body.type,
         resp.body.organization_name,
@@ -790,6 +818,3 @@ export const setAppealAod = (externalAppealId, granted) => ({
     granted
   }
 });
-
-export const setQueueConfig = (config) => ({ type: ACTIONS.SET_QUEUE_CONFIG,
-  payload: { config } });

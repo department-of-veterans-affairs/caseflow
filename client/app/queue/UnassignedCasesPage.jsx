@@ -19,7 +19,8 @@ import {
 import {
   judgeAssignTasksSelector,
   selectedTasksSelector,
-  camoAssignTasksSelector
+  camoAssignTasksSelector,
+  specialtyCaseTeamAssignTasksSelector
 } from './selectors';
 import Alert from '../components/Alert';
 import LoadingContainer from '../components/LoadingContainer';
@@ -43,7 +44,7 @@ class UnassignedCasesPage extends React.PureComponent {
   }
 
   render = () => {
-    const { userId, selectedTasks, success, error, userIsCamoEmployee } = this.props;
+    const { userId, selectedTasks, success, error, userIsCamoEmployee, userIsSCTCoordinator } = this.props;
     let assignWidget;
 
     if (userIsCamoEmployee) {
@@ -53,6 +54,7 @@ class UnassignedCasesPage extends React.PureComponent {
         onTaskAssignment={this.props.initialCamoAssignTasksToVhaProgramOffice}
         selectedTasks={selectedTasks}
         showRequestCasesButton />;
+      // TODO: I think this should work for SCT coordinators
     } else {
       assignWidget = <AssignToAttorneyWidget
         userId={userId}
@@ -70,6 +72,7 @@ class UnassignedCasesPage extends React.PureComponent {
         <React.Fragment>
           <div {...assignAndRequestStyling}>
             {assignWidget}
+            {/* TODO: This is so gross that we are relying on this employee check everywhere */}
             {!userIsCamoEmployee && <RequestDistributionButton userId={userId} />}
           </div>
           {this.props.distributionCompleteCasesLoading &&
@@ -88,7 +91,7 @@ class UnassignedCasesPage extends React.PureComponent {
               includeType
               includeDocketNumber
               includeIssueCount
-              {...(userIsCamoEmployee ? { includeIssueTypes: true } : {})}
+              {...((userIsCamoEmployee || userIsSCTCoordinator) ? { includeIssueTypes: true } : {})}
               includeDaysWaiting
               includeReaderLink
               includeNewDocsIcon
@@ -111,6 +114,7 @@ const mapStateToProps = (state, ownProps) => {
     },
     ui: {
       userIsCamoEmployee,
+      userIsSCTCoordinator,
       messages: {
         success,
         error
@@ -124,6 +128,15 @@ const mapStateToProps = (state, ownProps) => {
     taskSelector = camoAssignTasksSelector(state);
   }
 
+  // TODO: Figure out a better way to do this so it doesn't have to be hard coded. Also if a user if any of these things
+  // It will override a different one.
+  // See if we can make it based on activeOrganization somehow
+  if (userIsSCTCoordinator) {
+    taskSelector = specialtyCaseTeamAssignTasksSelector(state);
+  }
+
+  // TODO: queue config that is coming in to redux is also Vha Camo. It is the unassigned tab
+
   return {
     tasks: taskSelector,
     isTaskAssignedToUserSelected,
@@ -133,7 +146,8 @@ const mapStateToProps = (state, ownProps) => {
     selectedTasks: selectedTasksSelector(state, ownProps.userId),
     success,
     error,
-    userIsCamoEmployee
+    userIsCamoEmployee,
+    userIsSCTCoordinator
   };
 };
 
@@ -155,7 +169,8 @@ UnassignedCasesPage.propTypes = {
     title: PropTypes.string,
     detail: PropTypes.string
   }),
-  userIsCamoEmployee: PropTypes.bool
+  userIsCamoEmployee: PropTypes.bool,
+  userIsSCTCoordinator: PropTypes.bool
 };
 
 const mapDispatchToProps = (dispatch) =>

@@ -2,7 +2,7 @@ import Moment from 'moment';
 import { extendMoment } from 'moment-range';
 import { createSelector } from 'reselect';
 import { filter, find, keyBy, map, merge, orderBy, reduce } from 'lodash';
-import { taskIsActive, taskIsOnHold, getAllChildrenTasks, taskAttributesFromRawTask } from './utils';
+import { taskIsActive, taskIsOnHold, getAllChildrenTasks } from './utils';
 
 import TASK_STATUSES from '../../constants/TASK_STATUSES';
 
@@ -120,7 +120,7 @@ const tasksByAssigneeCssIdSelector = createSelector(
 
 const tasksByAssigneeOrgSelector = createSelector(
   [tasksWithAppealSelector, getActiveOrgId],
-  (tasks, orgId) => filter(tasks, (task) => task.assignedTo.id === orgId)
+  (tasks, orgId) => filter(tasks, (task) => (task.assignedTo.id === orgId && task.assignedTo.isOrganization))
 );
 
 export const legacyJudgeTasksAssignedToUser = createSelector(
@@ -231,6 +231,18 @@ export const camoAssignTasksSelector = createSelector(
       return (
         task.label === COPY.REVIEW_DOCUMENTATION_TASK_LABEL &&
         (task.status === TASK_STATUSES.in_progress || task.status === TASK_STATUSES.assigned)
+      );
+    })
+);
+
+export const specialtyCaseTeamAssignTasksSelector = createSelector(
+  [workTasksByAssigneeOrgSelector],
+  (tasks) =>
+    filter(tasks, (task) => {
+      return (
+        // TODO: Figure out if this is the right label
+        task.label === 'Assign' &&
+        (task.status === TASK_STATUSES.assigned)
       );
     })
 );
