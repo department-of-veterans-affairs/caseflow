@@ -11,6 +11,7 @@ import { css } from 'glamor';
 import CorrespondenceTable from './CorrespondenceTable';
 import QueueOrganizationDropdown from '../components/QueueOrganizationDropdown';
 import Alert from '../../components/Alert';
+import CorrespondenceTableBuilder from '../CorrespondenceTableBuilder';
 
 // import {
 //   initialAssignTasksToUser,
@@ -66,9 +67,8 @@ class CorrespondenceCases extends React.PureComponent {
           <h1 {...css({ display: 'inline-block' })}>{COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES}</h1>
           <QueueOrganizationDropdown organizations={organizations} />
           {this.props.correspondenceConfig &&
-          <CorrespondenceTable
-            correspondenceConfig={this.props.correspondenceConfig}
-          />
+          // <CorrespondenceTable />
+          <CorrespondenceTableBuilder/>
           }
         </AppSegment>
       </React.Fragment>
