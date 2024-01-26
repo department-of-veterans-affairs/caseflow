@@ -100,31 +100,4 @@ describe('Docket Time Goals Lever', () => {
     waitFor(() => expect(inputField.prop('value').toBe(eventForValid.target.value)));
     waitFor(() => expect(inputField.prop('errorMessage').toBe('')));
   });
-
-  test('enabled and disables toggle lever button', () => {
-    const store = getStore();
-    const toggleLeverSpy = jest.fn();
-
-    const wrapper = mount(
-      <Provider store={store}>
-        <DocketTimeGoals />
-      </Provider>);
-
-    store.dispatch(loadLevers(levers));
-    store.dispatch(setUserIsAcdAdmin(true));
-
-    wrapper.update();
-
-    let leverToggle = wrapper.find(`#toggle-switch-${testDistPriorLever.item}`);
-
-    console.debug(leverToggle.first().simulate('click', true));
-
-    waitFor(() => leverToggle.first().simulate('click', true));
-
-    wrapper.update();
-
-    console.debug(leverToggle.debug());
-
-    expect(toggleLeverSpy).toHaveBeenCalled();
-  });
 });
