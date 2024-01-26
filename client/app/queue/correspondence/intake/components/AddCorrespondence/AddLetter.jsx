@@ -167,14 +167,14 @@ export const NewLetter = (props) => {
         //     )
         // )));
 
-        // setLetterSubReason(option.letter_titles.map((current) => (
-        //   current.letter_subcategories.map((reasons) => (
-        //     reasons.reasons.map((currentReason) => (
-        //       { label: currentReason, value: currentReason })
-        //     )
-        //   )
-        //   )
-        // )));
+        setLetterSubReason(option.letter_titles.map((current) => (
+          current.letter_subcategories.map((reasons) => (
+            reasons.reasons.map((currentReason) => (
+              { label: currentReason, value: currentReason })
+            )
+          )
+          )
+        )));
 
         for (let aux = 0; aux < option.letter_titles.length; aux++) {
           if (option.letter_titles[aux].letter_title === letterTitle) {
