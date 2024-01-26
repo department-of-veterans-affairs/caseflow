@@ -46,4 +46,8 @@ class CorrespondenceConfig < QueueConfig
   def default_active_tab
     assignee_is_org? ? "correspondence_unassigned" : "correspondence_assigned"
   end
+
+  def default_sorting_column
+    "vaDor"
+  end
 end

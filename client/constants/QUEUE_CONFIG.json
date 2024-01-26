@@ -78,6 +78,9 @@
       "sorting_table": "tasks",
       "sorting_columns": ["assigned_at"]
     },
+    "DAYS_WAITING_CORRESPONDENCE": {
+      "name": "daysWaitingCorrespondence"
+    },
     "LAST_ACTION": {
       "name": "lastActionColumn"
     },

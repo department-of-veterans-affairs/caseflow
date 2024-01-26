@@ -3,6 +3,10 @@
 class WorkQueue::CorrespondenceTaskColumnSerializer
   include FastJsonapi::ObjectSerializer
 
+  attribute :unique_id do |object|
+    object.id.to_s
+  end
+
   attribute :instructions do |object|
     object.instructions
   end
