@@ -12,6 +12,7 @@ import {
   ADD_CLAIMANT_CONFIRM_MODAL_TITLE,
   ADD_CLAIMANT_CONFIRM_MODAL_DESCRIPTION,
   ADD_CLAIMANT_CONFIRM_MODAL_NO_POA,
+  VHA_NO_POA,
   ADD_CLAIMANT_CONFIRM_MODAL_LAST_NAME_ALERT,
   VHA_NO_RECOGNIZED_POA
 } from 'app/../COPY';
@@ -115,7 +116,7 @@ export const AddClaimantConfirmationModal = ({
           <strong>Claimant's POA</strong>
         </div>
         {shouldDisplayUnrecognizedBanner ? <div>{VHA_NO_RECOGNIZED_POA} </div> : null }
-        {!showPoa && <div>{ADD_CLAIMANT_CONFIRM_MODAL_NO_POA}</div>}
+        {!showPoa && <div>{VHA_NO_POA}</div>}
         {(showPoa && !shouldDisplayUnrecognizedBanner) ? <AddressBlock entity={poaEntity} /> : null }
       </section>
     </Modal>
