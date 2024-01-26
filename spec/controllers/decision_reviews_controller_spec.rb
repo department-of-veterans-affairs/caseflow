@@ -684,6 +684,50 @@ describe DecisionReviewsController, :postgres, type: :controller do
     end
   end
 
+  describe "#history" do
+    let(:task) { create(:higher_level_review_task) }
+    context "task is in VHA" do
+      let(:vha_org) { VhaBusinessLine.singleton }
+
+      context "and user is not an admin" do
+        before do
+          vha_org.add_user(user)
+        end
+
+        it "returns unauthorized" do
+          get :history, params: { task_id: task.id, decision_review_business_line_slug: vha_org.url }
+
+          expect(response.status).to eq 302
+          expect(response.body).to match(/unauthorized/)
+        end
+      end
+
+      context "and user is an admin" do
+        before do
+          OrganizationsUser.make_user_admin(user, vha_org)
+        end
+
+        it "should return task details" do
+          get :history, params: { task_id: task.id, decision_review_business_line_slug: vha_org.url }
+
+          expect(response.status).to eq 200
+        end
+      end
+    end
+
+    context "task is not in VHA" do
+      before do
+        non_comp_org.add_user(user)
+        OrganizationsUser.make_user_admin(user, non_comp_org)
+      end
+      it "returns unauthorized" do
+        get :history, params: { task_id: task.id, decision_review_business_line_slug: non_comp_org.url }
+
+        expect(response.status).to eq 302
+        expect(response.body).to match(/unauthorized/)
+      end
+    end
+  end
   describe "#generate_report" do
     let(:non_comp_org) { VhaBusinessLine.singleton }
 

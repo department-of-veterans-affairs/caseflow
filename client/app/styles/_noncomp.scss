@@ -259,3 +259,9 @@ $validation-error-color: #cd2026;
     text-align: center;
   }
 }
+
+.individual-claim-history {
+  .cf-app-segment:first-child {
+    margin-top: 0.9rem;
+  }
+}
