@@ -43,7 +43,7 @@ class CorrespondenceController < ApplicationController
     respond_to do |format|
       format.html { "correspondence_cases" }
       format.json do
-        render json: { correspondence_config: user_correspondence}
+        render json: { correspondence_config: CorrespondenceConfig.new(assignee: current_user)}
       end
     end
   end
@@ -111,7 +111,7 @@ class CorrespondenceController < ApplicationController
       respond_to do |format|
         format.html { "correspondence_team" }
         format.json do
-          render json: { correspondence_config: all_correspondence }
+          render json: { correspondence_config: CorrespondenceConfig.new(assignee: MailTeamSupervisor.singleton) }
         end
       end
     else
