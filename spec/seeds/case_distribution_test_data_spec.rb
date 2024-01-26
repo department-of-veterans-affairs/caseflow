@@ -28,7 +28,7 @@ describe Seeds::CaseDitributionTestData do
     end
 
     it "are set properly for incremented file_number and participant id" do
-      test_data_seed = Seeds::CaseDitributionTestData.new
+      test_data_seed = Seeds::CaseDistributionTestData.new
       expect(test_data_seed.instance_variable_get(:@legacy_inactive_admin_judge_team_file_number)).to eq 703_002_200
       expect(test_data_seed.instance_variable_get(:@legacy_inactive_admin_judge_team_participant_id)).to eq 713_002_000
       expect(test_data_seed.instance_variable_get(:@direct_review_file_number)).to eq 706_002_200
