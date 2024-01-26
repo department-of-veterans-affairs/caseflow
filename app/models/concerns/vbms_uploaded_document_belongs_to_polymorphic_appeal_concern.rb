@@ -7,11 +7,11 @@ module VbmsUploadedDocumentBelongsToPolymorphicAppealConcern
     belongs_to :appeal, polymorphic: true
 
     belongs_to :ama_appeal,
-               -> { includes(:vbms_uploaded_documents).where(vbms_uploaded_documents: { appeal_type: "Appeal" }) },
+               -> { where(vbms_uploaded_documents: { appeal_type: "Appeal" }) },
                class_name: "Appeal", foreign_key: "appeal_id", optional: true
 
     belongs_to :legacy_appeal,
-               -> { includes(:vbms_uploaded_documents).where(vbms_uploaded_documents: { appeal_type: "LegacyAppeal" }) },
+               -> { where(vbms_uploaded_documents: { appeal_type: "LegacyAppeal" }) },
                class_name: "LegacyAppeal", foreign_key: "appeal_id", optional: true
 
     scope :ama, -> { where(appeal_type: "Appeal") }

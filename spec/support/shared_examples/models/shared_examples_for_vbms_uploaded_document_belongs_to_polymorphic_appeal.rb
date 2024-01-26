@@ -33,7 +33,7 @@ shared_examples "VbmsUploadedDocument belongs_to polymorphic appeal" do
         end
 
         context "when eager loading with `includes`" do
-          subject { VbmsUploadedDocument.ama.includes(:ama_appeal) }
+          subject { VbmsUploadedDocument.ama.includes(:appeal) }
 
           let!(:_legacy_vbms_uploaded_document) { create(:vbms_uploaded_document, :legacy) }
 
@@ -48,7 +48,7 @@ shared_examples "VbmsUploadedDocument belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.ama_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
@@ -56,7 +56,7 @@ shared_examples "VbmsUploadedDocument belongs_to polymorphic appeal" do
         end
 
         context "when eager loading with `preload`" do
-          subject { VbmsUploadedDocument.ama.preload(:ama_appeal) }
+          subject { VbmsUploadedDocument.ama.preload(:appeal) }
 
           let!(:_legacy_vbms_uploaded_document) { create(:vbms_uploaded_document, :legacy) }
 
@@ -71,27 +71,10 @@ shared_examples "VbmsUploadedDocument belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.ama_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
-          end
-        end
-
-        context "when called on an individual VbmsUploadedDocument" do
-          subject { vbms_uploaded_document.ama_appeal }
-
-          context "when the VbmsUploadedDocument is not associated with an AMA appeal" do
-            let(:vbms_uploaded_document) { create(:vbms_uploaded_document, :legacy) }
-
-            it { should be_nil }
-          end
-
-          context "when the VbmsUploadedDocument is associated with an AMA appeal" do
-            let(:vbms_uploaded_document) { create(:vbms_uploaded_document, appeal: ama_appeal) }
-            let(:ama_appeal) { create(:appeal) }
-
-            it { should eq(ama_appeal) }
           end
         end
       end
@@ -120,7 +103,7 @@ shared_examples "VbmsUploadedDocument belongs_to polymorphic appeal" do
         end
 
         context "when eager loading with `includes`" do
-          subject { VbmsUploadedDocument.legacy.includes(:legacy_appeal) }
+          subject { VbmsUploadedDocument.legacy.includes(:appeal) }
 
           let!(:_ama_vbms_uploaded_document) { create(:vbms_uploaded_document, :ama) }
 
@@ -135,7 +118,7 @@ shared_examples "VbmsUploadedDocument belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.legacy_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
@@ -143,7 +126,7 @@ shared_examples "VbmsUploadedDocument belongs_to polymorphic appeal" do
         end
 
         context "when eager loading with `preload`" do
-          subject { VbmsUploadedDocument.legacy.preload(:legacy_appeal) }
+          subject { VbmsUploadedDocument.legacy.preload(:appeal) }
 
           let!(:_ama_vbms_uploaded_document) { create(:vbms_uploaded_document, :ama) }
 
@@ -158,27 +141,10 @@ shared_examples "VbmsUploadedDocument belongs_to polymorphic appeal" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.legacy_appeal.id } }
+                subscriber.track { subject.map { |record| record.appeal.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
-          end
-        end
-
-        context "when called on an individual VbmsUploadedDocument" do
-          subject { vbms_uploaded_document.legacy_appeal }
-
-          context "when the VbmsUploadedDocument is not associated with a Legacy appeal" do
-            let(:vbms_uploaded_document) { create(:vbms_uploaded_document, :ama) }
-
-            it { should be_nil }
-          end
-
-          context "when the VbmsUploadedDocument is associated with a Legacy appeal" do
-            let(:vbms_uploaded_document) { create(:vbms_uploaded_document, appeal: legacy_appeal) }
-            let(:legacy_appeal) { create(:legacy_appeal) }
-
-            it { should eq(legacy_appeal) }
           end
         end
       end
