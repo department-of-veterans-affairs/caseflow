@@ -360,6 +360,8 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     orgs = organizations.select(&:selectable_in_queue?)
     judge_team_judges = judge? ? [self] : []
     judge_team_judges |= administered_judge_teams.map(&:judge) if FeatureToggle.enabled?(:judge_admin_scm)
+    camo_team_users = camo_employee? ? [self] : []
+    sct_coordinator_users = specialty_case_team_coordinator? ? [self] : []
 
     judge_team_judges.each do |judge|
       orgs << {
@@ -379,6 +381,14 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       orgs << {
         name: "Assign SCT Appeals",
         url: "/queue/#{css_id}/assign?role=sct_coordinator"
+      }
+    end
+
+    # TODO: Gross
+    sct_coordinator_users.each do |user|
+      orgs << {
+        name: "Assign SCT Appeals",
+        url: "/queue/#{user.css_id}/assign?role=sct_coordinator"
       }
     end
 
