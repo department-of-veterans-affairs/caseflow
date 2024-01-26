@@ -140,7 +140,7 @@ class PostDecisionMotionUpdater
   end
 
   def task_class
-    @task_class ||= (task_type + "_task").classify.constantize
+    @task_class ||= "#{task_type}_task".classify.constantize
   end
 
   def task_type
