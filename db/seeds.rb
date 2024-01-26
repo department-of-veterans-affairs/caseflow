@@ -33,6 +33,7 @@ class SeedDB
     Rails.logger.debug(msg)
   end
 
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def seed
     RequestStore[:current_user] = User.system_user
     call_and_log_seed_step :clean_db
@@ -68,7 +69,9 @@ class SeedDB
     call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
     call_and_log_seed_step Seeds::RemandedAmaAppeals
     call_and_log_seed_step Seeds::RemandedLegacyAppeals
+    call_and_log_seed_step Seeds::BgsServiceRecordMaker
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 end
 
 SeedDB.new.seed

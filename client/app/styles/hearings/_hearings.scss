@@ -423,6 +423,11 @@ $form-width: 575px;
   width: 25px;
 }
 
+.badge-designation {
+  width: 85px;
+  align-content: center;
+}
+
 @media screen and (min-width: 1224px) and (max-width: 1680px) {
   .usa-width-three-fourths.assign-hearing-tabs {
     width: 70%;
