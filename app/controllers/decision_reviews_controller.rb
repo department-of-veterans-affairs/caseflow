@@ -7,6 +7,7 @@ class DecisionReviewsController < ApplicationController
   before_action :verify_access, :react_routed, :set_application
   before_action :verify_veteran_record_access, only: [:show]
   before_action :verify_business_line, only: [:index, :generate_report]
+  before_action :verify_task, only: [:show, :history, :update]
 
   delegate :incomplete_tasks,
            :incomplete_tasks_type_counts,
@@ -43,25 +44,24 @@ class DecisionReviewsController < ApplicationController
   end
 
   def show
-    if task
-      render "show"
-    else
-      render json: { error: "Task #{task_id} not found" }, status: :not_found
-    end
+    render "show"
+  end
+
+  def history
+    return requires_admin_access_redirect unless can_generate_claim_history? &&
+                                                 business_line.user_is_admin?(current_user)
+
+    render "show"
   end
 
   def update
-    if task
-      if task.complete_with_payload!(decision_issue_params, decision_date, current_user)
-        business_line.tasks.reload
-        render json: { task_filter_details: task_filter_details }, status: :ok
-      else
-        error = StandardError.new(task.error_code)
-        Raven.capture_exception(error, extra: { error_uuid: error_uuid })
-        render json: { error_uuid: error_uuid, error_code: task.error_code }, status: :bad_request
-      end
+    if task.complete_with_payload!(decision_issue_params, decision_date, current_user)
+      business_line.tasks.reload
+      render json: { task_filter_details: task_filter_details }, status: :ok
     else
-      render json: { error: "Task #{task_id} not found" }, status: :not_found
+      error = StandardError.new(task.error_code)
+      Raven.capture_exception(error, extra: { error_uuid: error_uuid })
+      render json: { error_uuid: error_uuid, error_code: task.error_code }, status: :bad_request
     end
   end
 
@@ -215,6 +215,12 @@ class DecisionReviewsController < ApplicationController
       render(Caseflow::Error::ActionForbiddenError.new(
         message: COPY::ACCESS_DENIED_TITLE
       ).serialize_response)
+    end
+  end
+
+  def verify_task
+    unless task&.is_a?(DecisionReviewTask)
+      render json: { error: "Task #{task_id} not found" }, status: :not_found
     end
   end
 
