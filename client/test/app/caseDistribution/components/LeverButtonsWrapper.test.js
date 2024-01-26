@@ -7,8 +7,6 @@ import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
 import * as leversSelectors from 'app/caseDistribution/reducers/levers/leversSelector';
 import { resetLevers } from 'app/caseDistribution/reducers/levers/leversActions';
-import fetchMock from 'jest-fetch-mock';
-
 
 describe('LeverButtonsWrapper', () => {
 
@@ -86,6 +84,7 @@ describe('LeverButtonsWrapper', () => {
     fireEvent.click(cancelButton);
 
     await waitFor(() => {
+      expect(store.dispatch).toHaveBeenCalledWith(expect.any(Function));
       expect(store.dispatch).toHaveBeenCalledWith(resetLeversAction);
     });
   });
