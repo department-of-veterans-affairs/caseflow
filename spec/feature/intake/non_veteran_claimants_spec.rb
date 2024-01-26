@@ -666,7 +666,6 @@ feature "Non-veteran claimants", :postgres do
           expect(page).to have_content(COPY::VHA_NO_POA)
           click_button "Confirm"
         end
-
       end
 
       it "should display No know POA when attorney if attorney is selected after claimant not listed is selected" do
