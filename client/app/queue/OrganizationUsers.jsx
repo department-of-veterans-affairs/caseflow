@@ -36,19 +36,18 @@ const buttonStyle = css({
   paddingRight: '1rem',
   display: 'inline-block'
 });
-const buttonContainerStyle = css({
-  borderBottom: '1rem solid gray',
-  borderWidth: '1px',
-  padding: '.5rem 7rem 2rem 0',
+const userContainerStyle = css({
+  borderBottom: '1px solid gray',
+  padding: '.5rem 0 2rem',
   display: 'flex',
-  justifyContent: 'space-between',
   flexWrap: 'wrap'
+});
+const buttonContainerStyle = css({
+  paddingBottom: '1rem',
+  minWidth: '44rem'
 });
 const listStyle = css({
   listStyle: 'none'
-});
-const radioContainerStyle = css({
-  padding: '-5rem 5rem 2rem 2rem',
 });
 
 export default class OrganizationUsers extends React.PureComponent {
@@ -277,14 +276,14 @@ export default class OrganizationUsers extends React.PureComponent {
               {(judgeTeam || dvcTeam) && admin ? (
                 <div {...topUserBorder} />
               ) : (
-                <div {...buttonContainerStyle}>
-                  <div>
+                <div {...userContainerStyle}>
+                  <div {...buttonContainerStyle}>
                     {judgeTeam || dvcTeam ? '' : this.adminButton(user, admin)}
                     {this.removeUserButton(user)}
                   </div>
                   {this.state.organizationName === 'Hearings Management' &&
                     conferenceSelectionVisibility && (
-                    <div {...radioContainerStyle}>
+                    <div>
                       <SelectConferenceTypeRadioField
                         key={`${user.id}-conference-selection`}
                         name={user.id}
