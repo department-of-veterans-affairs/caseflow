@@ -709,7 +709,7 @@ describe LegacyHearing, :all_dbs do
           type,
           hearing: hearing,
           email_address: email_address,
-          timezone: timezone,
+          timezone: timezone
         )
       end
 

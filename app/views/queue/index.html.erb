@@ -58,7 +58,8 @@
       cc_vacatur_visibility: FeatureToggle.enabled?(:cc_vacatur_visibility, user: current_user),
       conference_selection_visibility: (FeatureToggle.enabled?(:pexip_conference_service) &&
         FeatureToggle.enabled?(:webex_conference_service)),
-      additional_remand_reasons: FeatureToggle.enabled?(:additional_remand_reasons, user: current_user)
+      additional_remand_reasons: FeatureToggle.enabled?(:additional_remand_reasons, user: current_user),
+      acd_cases_tied_to_judges_no_longer_with_board: FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board, user: current_user)
     }
   }) %>
 <% end %>
