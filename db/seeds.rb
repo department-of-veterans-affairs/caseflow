@@ -11,7 +11,7 @@ class SeedDB
   def clean_db
     DatabaseCleaner.clean_with(:truncation)
     cm = CacheManager.new
-    CacheManager::BUCKETS.each_key { |bucket| cm.clear(bucket) }
+    CacheManager::BUCKETS.keys.each { |bucket| cm.clear(bucket) }
     Fakes::EndProductStore.new.clear!
     Fakes::RatingStore.new.clear!
     Fakes::VeteranStore.new.clear!
@@ -35,7 +35,7 @@ class SeedDB
 
   # rubocop:disable Metrics/MethodLength
   def seed
-    RequestStore[:current_user] = User.system_user
+    RequestStore[:current_user]=User.system_user
     call_and_log_seed_step :clean_db
 
     call_and_log_seed_step Seeds::Annotations

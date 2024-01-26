@@ -10,7 +10,7 @@ begin
   conn.close
 rescue ActiveRecord::NoDatabaseError => error
   if error.message.include?('database "caseflow_certification_development" does not exist')
-    STDOUT.puts "Database caseflow_certification_development does not exist; skipping make audit-remove"
+    puts "Database caseflow_certification_development does not exist; skipping make audit-remove"
   else
     raise error
   end
