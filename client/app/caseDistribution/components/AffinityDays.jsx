@@ -5,13 +5,14 @@ import NumberField from 'app/components/NumberField';
 import TextField from 'app/components/TextField';
 import COPY from '../../../COPY';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
-import { getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
+import { getUserIsAcdAdmin, getLeversByGroup } from '../reducers/levers/leversSelector';
+import { Constant } from '../constants';
 
 const AffinityDays = () => {
   const theState = useSelector((state) => state);
   const isUserAcdAdmin = getUserIsAcdAdmin(theState);
 
-  const storeLevers = useSelector((state) => state.caseDistributionLevers.levers.affinity);
+  const storeLevers = getLeversByGroup(theState, Constant.LEVERS, ACD_LEVERS.lever_groups.affinity);
   const [affinityLevers, setAffinityLevers] = useState(storeLevers);
 
   useEffect(() => {
@@ -107,8 +108,6 @@ const AffinityDays = () => {
       </div>
     );
   };
-
-  affinityLevers?.sort((leverA, leverB) => leverA.lever_group_order - leverB.lever_group_order);
 
   return (
     <div className="lever-content">

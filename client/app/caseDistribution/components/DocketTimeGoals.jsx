@@ -193,7 +193,6 @@ const DocketTimeGoals = () => {
       </div>
 
       {docketDistributionLevers?.
-        sort((leverA, leverB) => leverA.lever_group_order - leverB.lever_group_order).
         map((distributionPriorLever, index) => (renderDocketDistributionLever(distributionPriorLever, index)))
       }
     </div>
