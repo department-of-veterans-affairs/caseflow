@@ -32,134 +32,139 @@ module Seeds
       @cmp_packet_number += 10_000 while ::Correspondence.find_by(cmp_packet_number: @cmp_packet_number + 1)
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     def create_multi_correspondences
-      veteran = create_veteran(first_name: "Adam", last_name: "West")
-      5.times do
-        appeal = create(
-          :appeal,
-          veteran_file_number: veteran.file_number
-        )
-        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-      end
-      5.times do
-        appeal = create(
-          :appeal,
-          veteran_file_number: veteran.file_number,
-          docket_type: Constants.AMA_DOCKETS.direct_review
-        )
-        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-      end
-      21.times do
-        corres = ::Correspondence.create!(
-          uuid: SecureRandom.uuid,
-          portal_entry_date: Time.zone.now,
-          source_type: "Mail",
-          package_document_type_id: (1..20).to_a.sample,
-          correspondence_type_id: 4,
-          cmp_queue_id: 1,
-          cmp_packet_number: @cmp_packet_number,
-          va_date_of_receipt: Time.zone.yesterday,
-          notes: "Notes from CMP - Multi Correspondence Seed",
-          assigned_by_id: 81,
-          updated_by_id: 81,
-          veteran_id: veteran.id,
-        )
-        CorrespondenceDocument.find_or_create_by(
-          document_file_number: veteran.file_number,
-          uuid: SecureRandom.uuid,
-          vbms_document_type_id: 1250,
-          document_type: 1250,
-          pages: 30,
-          correspondence_id: corres.id
-        )
-        @cmp_packet_number += 1
+      # 20 Correspondences with eFolderFailedUploadTask with a parent CorrespondenceIntakeTask
+      veteran = create_veteran(first_name: "John", last_name: "Doe")
+      appeal = create_appeal(veteran)
+
+      ptask = create_correspondence_intake(create_correspondence(appeal))
+
+      # 20 Correspondences with eFolderFailedUploadTask with a parent CorrespondenceIntakeTask
+      20.times do
+        corres = create_correspondence_with_intake_and_failed_upload_task(ptask, appeal)
       end
 
-      veteran = create_veteran(first_name: "Michael", last_name: "Keaton")
-      2.times do
-        appeal = create(
-          :appeal,
-          veteran_file_number: veteran.file_number
-        )
-        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-      end
-      5.times do
-        appeal = create(
-          :appeal,
-          veteran_file_number: veteran.file_number,
-          docket_type: Constants.AMA_DOCKETS.direct_review
-        )
-        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
-      end
-      31.times do
-        corres = ::Correspondence.create!(
-          uuid: SecureRandom.uuid,
-          portal_entry_date: Time.zone.now,
-          source_type: "Mail",
-          package_document_type_id: (1..20).to_a.sample,
-          correspondence_type_id: 4,
-          cmp_queue_id: 1,
-          cmp_packet_number: @cmp_packet_number,
-          va_date_of_receipt: Time.zone.yesterday,
-          notes: "Notes from CMP - Multi Correspondence Seed",
-          assigned_by_id: 81,
-          updated_by_id: 81,
-          veteran_id: veteran.id,
-        )
-        CorrespondenceDocument.find_or_create_by(
-          document_file_number: veteran.file_number,
-          uuid: SecureRandom.uuid,
-          vbms_document_type_id: 1250,
-          document_type: 1250,
-          pages: 30,
-          correspondence_id: corres.id
-        )
-        @cmp_packet_number += 1
+      # 20 Correspondences with CorrespondenceIntakeTask with a status of in_progress
+      20.times do
+        corres = create_correspondence_with_intake_task(appeal)
       end
 
-      veteran = create_veteran(first_name: "Christian", last_name: "Bale")
-      1.times do
-        appeal = create(
-          :appeal,
-          veteran_file_number: veteran.file_number
-        )
-        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+      review_package_parent_task = create_review_package_task(create_correspondence(appeal), status: "on_hold")
+      # 20 Correspondences with eFolderFailedUploadTask with a parent ReviewPackageTask
+      20.times do
+        corres = create_correspondence_with_review_package_and_failed_upload_task(review_package_parent_task, appeal)
       end
+
+      # 20 Correspondences with the CorrespondenceRootTask with the status of completed
+      20.times do
+        corres = create_correspondence_with_completed_root_task(appeal)
+      end
+
+      # 20 Correspondences with ReviewPackageTask in progress
+      20.times do
+        corres = create_correspondence_with_review_package_task(appeal)
+      end
+
+      action_required_parent_task = create_review_package_task(create_correspondence(appeal), status: "on_hold")
+      # 20 Correspondences with the tasks for Action Required tab and an on_hold ReviewPackageTask as their parent
+      20.times do
+        corres = create_correspondence_with_action_required_tasks(action_required_parent_task, appeal)
+      end
+
+      parent_root_task =  create_correspondence_root_task(create_correspondence(appeal), status: "in_progress")
+      # 10 Correspondences with in-progress CorrespondenceRootTask and completed Mail Task
       10.times do
-        appeal = create(
-          :appeal,
-          veteran_file_number: veteran.file_number,
-          docket_type: Constants.AMA_DOCKETS.direct_review
-        )
-        InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
+        corres = create_correspondence_with_in_progress_root_task_and_completed_mail_task(appeal, parent_root_task)
       end
-      101.times do
-        corres = ::Correspondence.create!(
-          uuid: SecureRandom.uuid,
-          portal_entry_date: Time.zone.now,
-          source_type: "Mail",
-          package_document_type_id: (1..20).to_a.sample,
-          correspondence_type_id: 4,
-          cmp_queue_id: 1,
-          cmp_packet_number: @cmp_packet_number,
-          va_date_of_receipt: Time.zone.yesterday,
-          notes: "Notes from CMP - Multi Correspondence Seed",
-          assigned_by_id: 81,
-          updated_by_id: 81,
-          veteran_id: veteran.id,
-        )
-        CorrespondenceDocument.find_or_create_by(
-          document_file_number: veteran.file_number,
-          uuid: SecureRandom.uuid,
-          vbms_document_type_id: 1250,
-          document_type: 1250,
-          pages: 30,
-          correspondence_id: corres.id
-        )
-        @cmp_packet_number += 1
+
+      # 5 Correspondences with the CorrespondenceRootTask with the status of canceled
+      5.times do
+        corres = create_correspondence_with_canceled_root_task(appeal)
       end
+
+      mail_task_pid_for_cavc = pending_tab_cavc_mailtask(create_correspondence(appeal))
+      20.times do
+        corres = create_pending_tasks(mail_task_pid_for_cavc, appeal)
+      end
+
+      mail_task_pid_for_congressInterest = pending_tab_congress_interest_mailtask(create_correspondence(appeal))
+      20.times do
+        corres = create_pending_tasks(mail_task_pid_for_congressInterest, appeal)
+      end
+
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
+    def create_correspondence_with_intake_and_failed_upload_task(ptask, appeal)
+
+      corres = create_correspondence(appeal)
+
+      create_efolderupload_failed_task(corres, ptask: ptask)
+
+      corres
+    end
+
+    def create_correspondence_with_intake_task(appeal)
+      corres = create_correspondence(appeal)
+
+      create_correspondence_intake(corres)
+
+      corres
+    end
+
+    def create_correspondence_with_review_package_task(appeal)
+      corres = create_correspondence(appeal)
+
+      create_review_package_task(corres, status: "in_progress")
+
+      corres
+    end
+
+    def create_correspondence_with_review_package_and_failed_upload_task(review_package_parent_task, appeal)
+      corres = create_correspondence(appeal)
+
+      create_efolderupload_failed_task(corres, ptask: review_package_parent_task)
+
+      corres
+    end
+
+    def create_correspondence_with_completed_root_task(appeal)
+      corres = create_correspondence(appeal)
+
+      create_correspondence_root_task(corres, status: "completed")
+
+      corres
+    end
+
+    def create_correspondence_with_action_required_tasks(action_required_parent_task, appeal)
+      corres = create_correspondence(appeal)
+
+      create_action_required_tasks(corres, parent_task: action_required_parent_task, status: "assigned")
+
+      corres
+    end
+
+    def create_correspondence_with_in_progress_root_task_and_completed_mail_task(appeal, parent_root_task)
+      corres = create_correspondence(appeal)
+
+      create_in_progress_root_task_and_completed_mail_task(corres, parent_task: parent_root_task, status: "completed")
+
+      corres
+    end
+
+    def create_correspondence_with_canceled_root_task(appeal)
+      corres = create_correspondence(appeal)
+
+      create_correspondence_root_task(corres, status: "cancelled")
+
+      corres
+    end
+
+    def create_pending_tasks(mail_task_parent, appeal)
+      corres = create_correspondence(appeal)
+
+      create_pending_tasks_for_tasks_not_related_to_appeal(corres, parent_task: mail_task_parent)
+
+      corres
+    end
   end
 end
