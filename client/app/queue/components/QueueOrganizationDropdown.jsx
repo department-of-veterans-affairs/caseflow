@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
-
+// import { useLocation } from 'react-router-dom';
 import QueueSelectorDropdown from './QueueSelectorDropdown';
 import COPY from '../../../COPY';
 
@@ -36,16 +36,37 @@ export default class QueueOrganizationDropdown extends React.Component {
 
     let items = [queueItem, ...organizationItems];
 
-    if (organizations[0].name === 'Mail' || organizations[0].name === 'Mail Team Supervisor') {
+    if (organizations.map((nameArr) => nameArr.name).includes('Mail Team Superuser') || organizations.map((nameArr) => nameArr.name).includes('Mail Team Supervisor')) {
+      const orgHref = '/queue/correspondence/team';
+
+      correspondenceItems = {
+        key: (2).toString(),
+        href: orgHref,
+        label: sprintf(COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES) // "Correspondence Cases"
+      };
+
+      items = [...items, correspondenceItems];
+    }
+    if (organizations.map((nameArr) => nameArr.name).includes('Mail')) {
       const orgHref = '/queue/correspondence';
 
       correspondenceItems = {
         key: (2).toString(),
         href: orgHref,
-        label: sprintf(COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES)
+        label: sprintf(COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CORRESPONDENCE_LABEL) // "Your Correspondence"
       };
+      // This places the "Your Correspondence" option at the 2nd(1) index
+      const items1 = items.slice(0,1);
+      const items2 = items.slice(1);
 
-      items = [...items, correspondenceItems];
+      items = [...items1, correspondenceItems, ...items2];
+
+      // const browserLocation = useLocation();
+
+      // console.log(browserLocation);
+      // if (browserLocation === '/queue/correspondence/team') {
+      //   return <Redirect to= "/queue/correspondence" />;
+      // }
     }
 
     return <QueueSelectorDropdown items={items} />;
