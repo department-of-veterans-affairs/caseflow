@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/LineLength
+# rubocop:disable Layout/LineLength
 source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
 # State machine
@@ -66,7 +66,7 @@ gem "redis-namespace"
 gem "redis-rails", "~> 5.0.2"
 gem "request_store"
 gem "roo", "~> 2.7"
-gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "db228fc5ad63c9244bc60fdaef9c86e0248c5de1"
+gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "74416d74479b3eab9786d194ca8785c5496cdd74"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
@@ -117,7 +117,7 @@ group :test, :development, :demo do
   gem "rspec-rails"
   # For CircleCI test metadata analysis
   gem "rspec_junit_formatter"
-  gem "rubocop", "= 0.79", require: false
+  gem "rubocop", "= 0.83", require: false
   gem "rubocop-performance"
   gem "rubocop-rails"
   gem "scss_lint", require: false
@@ -146,12 +146,12 @@ end
 
 group :test do
   gem "knapsack_pro", "~> 3.8"
+  gem "rspec-github", require: false
   # For retrying failed feature tests. Read more: https://github.com/NoRedInk/rspec-retry
   gem "rspec-retry"
   gem "webmock"
-  gem "rspec-github", require: false
   gem "shoulda-matchers"
 end
-# rubocop:enable Metrics/LineLength
+# rubocop:enable Layout/LineLength
 
 gem "json_schemer", "~> 0.2.16"
