@@ -6,7 +6,6 @@
 class SameAppealSubstitutionTasksFactory
   include TasksFactoryConcern
 
-  # rubocop:disable Style/OptionalBooleanParameter
   def initialize(appeal, task_ids, created_by, task_params, skip_cancel_tasks = false)
     @appeal = appeal
     @task_ids = task_ids
@@ -157,5 +156,4 @@ class SameAppealSubstitutionTasksFactory
       )
     end
   end
-  # rubocop:enable Style/OptionalBooleanParameter
 end
