@@ -52,8 +52,15 @@ RSpec.feature "AMA Non-priority Distribution Goals by Docket Levers" do
       visit "case-distribution-controls"
       confirm_page_and_section_loaded
 
+      empty_error_message = "Please enter a value greater than or equal to 0"
+
       fill_in ama_direct_reviews_field, with: "ABC"
       expect(page).to have_field(ama_direct_reviews_field, with: '')
+      expect(find("##{ama_direct_reviews_field}-lever")).to have_content(empty_error_message)
+
+      fill_in ama_direct_reviews_field, with: "-1"
+      expect(page).to have_field(ama_direct_reviews_field, with: '1')
+      expect(find("##{ama_direct_reviews_field}-lever")).not_to have_content(empty_error_message)
     end
 
     scenario "changes the AMA Direct Review lever value to a valid input" do
