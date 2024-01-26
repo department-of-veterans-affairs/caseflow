@@ -422,15 +422,6 @@ class VACOLS::CaseDocket < VACOLS::Record
     connection.exec_query(fmtd_query).to_hash
   end
 
-  def self.ready_to_distribute_appeals
-    query = <<-SQL
-      #{SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19}
-    SQL
-
-    fmtd_query = sanitize_sql_array([query])
-    connection.exec_query(fmtd_query).to_hash
-  end
-
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
     fail(DocketNumberCentennialLoop, COPY::MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE) if Time.zone.now.year >= 2030
