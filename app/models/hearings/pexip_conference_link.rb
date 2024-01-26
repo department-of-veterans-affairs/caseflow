@@ -20,11 +20,14 @@ class PexipConferenceLink < ConferenceLink
     host_pin_long || self[:host_pin]
   end
 
+  # rubocop:disable Naming/MemoizedInstanceVariableName
   def host_link
-    "#{self.class.base_url}?join=1&media=&escalate=1&" \
+    @full_host_link ||= "#{self.class.base_url}?join=1&media=&escalate=1&" \
       "conference=#{alias_with_host}&" \
       "pin=#{host_pin}&role=host"
   end
+  # rubocop:enable Naming/MemoizedInstanceVariableName
+
 
   def guest_pin
     return guest_pin_long if !guest_pin_long.nil?
