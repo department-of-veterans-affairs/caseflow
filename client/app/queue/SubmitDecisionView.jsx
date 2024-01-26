@@ -17,6 +17,7 @@ import Alert from '../components/Alert';
 import JudgeSelectComponent from './JudgeSelectComponent';
 import InstructionalText from './InstructionalText';
 import { taskById } from './selectors';
+import BadgeArea from '../components/badges/BadgeArea';
 
 import {
   fullWidth,
@@ -174,6 +175,7 @@ class SubmitDecisionView extends React.PureComponent {
         <h1 className="cf-push-left" {...css(fullWidth, marginBottom(1))}>
           Submit {decisionTypeDisplay} for Review
         </h1>
+        <BadgeArea appeal={this.props.appeal} isHorizontal />
         <p className="cf-lead-paragraph" {...marginBottom(2)}>
           Complete the details below to submit this {decisionTypeDisplay} request for judge review.
         </p>
