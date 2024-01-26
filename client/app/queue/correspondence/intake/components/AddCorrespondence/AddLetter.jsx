@@ -151,9 +151,6 @@ export const NewLetter = (props) => {
     } else {
       setLetterSubReason(listReason);
     }
-    // if ((letterSubReason.length === 0) || (letterSubReason[0].value === 'N/A')) {
-    //   setLetterSubReason([{ label: 'N/A', value: 'N/A' }]);
-    // }
   };
 
   const letterTitlesData = () => {
