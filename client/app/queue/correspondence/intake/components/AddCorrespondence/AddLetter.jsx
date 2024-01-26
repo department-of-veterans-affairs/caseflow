@@ -114,35 +114,23 @@ export const NewLetter = (props) => {
       value: 'Other' }
   ];
 
-  const repared = (option, aux) => {
+  const findSub = (option, aux) => {
     const subCate = [];
+    // let reason = {};
 
     for (let aux1 = 0; aux1 < option.letter_titles[aux].letter_subcategories.length; aux1++) {
       subCate.push({ label: option.letter_titles[aux].letter_subcategories[aux1].subcategory,
         value: option.letter_titles[aux].letter_subcategories[aux1].subcategory });
     }
     setLetterSubSelector(subCate);
-  };
 
-  const selectReason = (option, aux) => {
-    const reason = [];
-
-    for (let aux1 = 0; aux1 < option.letter_titles[aux].letter_subcategories.length; aux1++) {
-      reason.push({ label: option.letter_titles[aux].letter_subcategories[aux1].subcategory,
-        value: option.letter_titles[aux].letter_subcategories[aux1].subcategory });
-    }
-    setLetterSubReason(reason);
-  };
-
-  const repared2 = (option, aux) => {
-    const subCate = [];
-
-    for (let aux1 = 0; aux1 < option.letter_titles[aux].letter_subcategories.length; aux1++) {
-      if (option.letter_titles[aux].letter_subcategories === letterSub) {
-        selectReason(option, aux, aux1);
-      }
-    }
-    setLetterSubSelector(subCate);
+    // for (let aux1 = 0; aux1 < option.letter_titles[aux].letter_subcategories.length; aux1++) {
+    //   if (letterSub === option.letter_titles[aux].letter_subcategories[aux1].subcategory) {
+    //     reason = option.letter_titles[aux].letter_subcategories[aux1].reasons.reasons.map((currentReason) =>
+    //       ({ label: currentReason, value: currentReason }));
+    //   }
+    //   setLetterSubReason(reason);
+    // }
   };
 
   const letterTitlesData = () => {
@@ -156,7 +144,7 @@ export const NewLetter = (props) => {
 
         for (let aux = 0; aux < option.letter_titles.length; aux++) {
           if (option.letter_titles[aux].letter_title === letterTitle) {
-            repared(option, aux);
+            findSub(option, aux);
           }
         }
 
@@ -167,20 +155,14 @@ export const NewLetter = (props) => {
         //     )
         // )));
 
-        setLetterSubReason(option.letter_titles.map((current) => (
-          current.letter_subcategories.map((reasons) => (
-            reasons.reasons.map((currentReason) => (
-              { label: currentReason, value: currentReason })
-            )
-          )
-          )
-        )));
-
-        for (let aux = 0; aux < option.letter_titles.length; aux++) {
-          if (option.letter_titles[aux].letter_title === letterTitle) {
-            repared2(option, aux);
-          }
-        }
+        // setLetterSubReason(option.letter_titles.map((current) => (
+        //   current.letter_subcategories.map((reasons) => (
+        //     reasons.reasons.map((currentReason) => (
+        //       { label: currentReason, value: currentReason })
+        //     )
+        //   )
+        //   )
+        // )));
       }
     }
   };
@@ -269,7 +251,7 @@ export const NewLetter = (props) => {
         placeholder="Select..."
         readOnly = {letterSub.length === 0}
         options={letterSubReason}
-        value={letterSubReason}
+        // value={letterSubReason}
         // onChange={this.packageDocumentOnChange}
       />
       <br />
