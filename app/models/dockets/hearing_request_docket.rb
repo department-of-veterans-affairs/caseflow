@@ -46,14 +46,10 @@ class HearingRequestDocket < Docket
     # setting genpop to "only_genpop" behind feature toggle as this module only processes AMA
     genpop = "only_genpop" if use_by_docket_date?
 
-    if sct_distribution_enabled?
-      query_args = { priority: priority, ready: true }
-      _, sct_appeals = create_sct_appeals(query_args, limit)
-      unless sct_appeals.empty?
-        base_relation = base_relation.where("appeals.id NOT IN (?)", sct_appeals.pluck(:id))
-      end
-    else
-      sct_appeals = []
+    sct_appeals = extract_sct_appeals(base_relation)
+
+    unless sct_appeals.empty?
+      base_relation = base_relation.where("appeals.id NOT IN (?)", sct_appeals.pluck(:id))
     end
 
     appeals = hearing_distribution_query(base_relation: base_relation, genpop: genpop, judge: distribution.judge).call
@@ -85,9 +81,19 @@ class HearingRequestDocket < Docket
   end
 
   def self.limit_only_genpop_appeals(appeals_array, limit)
-    # genpop 'only_genpop' returns 2 arrays of the limited base relation. This means if we only request 2 cases, appeals is a
-    # 2x2 array containing 4 cases overall and we will end up distributing 4 cases rather than 2. Instead, reinstate the
-    # limit here by filtering out the newest cases
+    # genpop 'only_genpop' returns 2 arrays of the limited base relation. This means if we only request 2 cases,
+    # appeals is a 2x2 array containing 4 cases overall and we will end up distributing 4 cases rather than 2.
+    # Instead, reinstate the limit here by filtering out the newest cases
     appeals_array.flatten.sort_by(&:receipt_date).first(limit)
+  end
+
+  def extract_sct_appeals(query_args, limit)
+    if sct_distribution_enabled?
+      query_args = { priority: priority, ready: true }
+      _, sct_appeals = create_sct_appeals(query_args, limit)
+      sct_appeals
+    else
+      []
+    end
   end
 end
