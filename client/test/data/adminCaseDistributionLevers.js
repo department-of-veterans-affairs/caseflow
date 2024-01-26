@@ -398,4 +398,165 @@ export const testingBatchLevers = [
     "lever_group_order": 2001
   },
 ];
+
+export const testingDocketDistributionPriorLevers = [
+  {
+    "item": 'ama_hearings_start_distribution_prior_to_goals',
+    "title": 'AMA Hearings Start Distribution Prior to Goals',
+    "description": '',
+    "data_type": 'combination',
+    "value": 770,
+    "unit": 'days',
+    "options": [
+      {
+        "item": 'value',
+        "data_type": 'boolean',
+        "value": true,
+        "text": 'This feature is turned on or off',
+        "unit": ''
+      }
+    ],
+    "is_toggle_active": false,
+    "is_disabled_in_ui": true,
+    "min_value": 0,
+    "max_value": 999,
+    "algorithms_used": ['proportion'],
+    "lever_group": 'docket_distribution_prior',
+    "lever_group_order": 4000
+  },
+  {
+    "item": 'ama_direct_review_start_distribution_prior_to_goals',
+    "title": 'AMA Direct Review Start Distribution Prior to Goals',
+    "description": '',
+    "data_type": 'combination',
+    "value": 365,
+    "unit": 'days',
+    "options": [
+      {
+        "item": 'value',
+        "data_type": 'boolean',
+        "value": true,
+        "text": 'This feature is turned on or off',
+        "unit": ''
+      }
+    ],
+    "is_toggle_active": true,
+    "is_disabled_in_ui": false,
+    "min_value": 0,
+    "max_value": 999,
+    "algorithms_used": ['proportion'],
+    "lever_group": 'docket_distribution_prior',
+    "lever_group_order": 4001
+  },
+];
+
+export const testingDocketTimeGoalsLevers = [
+  {
+    "item": "ama_hearings_docket_time_goals",
+    "title": 'AMA Hearings Docket Time Goals',
+    "data_type": "number",
+    "value": 365,
+    "unit": "days",
+    "is_toggle_active": false,
+    "is_disabled_in_ui": true,
+    "min_value": 0,
+    "max_value": 888,
+    "algorithms_used": ["docket"],
+    "lever_group": "docket_time_goal",
+    "lever_group_order": 4003
+  },
+  {
+    "item": "ama_direct_review_docket_time_goals",
+    "title": 'AMA Direct Review Docket Time Goals',
+    "data_type": "number",
+    "value": 365,
+    "unit": "days",
+    "is_toggle_active": false,
+    "is_disabled_in_ui": true,
+    "min_value": 0,
+    "max_value": 888,
+    "algorithms_used": ["docket"],
+    "lever_group": "docket_time_goal",
+    "lever_group_order": 4004
+  },
+];
+/* END Outlier Test Data for Testing Coverage */
+
+//Affinity days Lever with Higher Min value for testing errors 'out of bounds'
+export const testingAffinityDaysLevers = [
+  {
+    "item":"ama_hearing_case_affinity_days",
+    "title":"AMA Hearing Case Affinity Days",
+    "description":"For non-priority AMA Hearing cases, sets the number of days an AMA Hearing Case is tied to the judge that held the hearing.",
+    "data_type":"radio",
+    "value":"option_1",
+    "unit":"days",
+    "options":[
+      {
+        "item":"option_1",
+        "data_type":"number",
+        "value":0,
+        "text":"Attempt distribution to current judge for max of:",
+        "unit":"days",
+        "min_value":0,
+        "max_value":100
+      },
+      {
+        "item":"infinite",
+        "value":"infinite",
+        "text":"Always distribute to current judge"
+      },
+      {
+        "item":"omit",
+        "value":"omit",
+        "text":"Omit variable from distribution rules"
+      }
+    ],
+    "is_toggle_active":false,
+    "is_disabled_in_ui":true,
+    "min_value":0,
+    "max_value":100,
+    "algorithms_used":["docket"],
+    "lever_group":"affinity",
+    "lever_group_order":3000
+  },
+  {
+    "item":"ama_hearing_case_aod_affinity_days",
+    "title":"AMA Hearing Case AOD Affinity Days",
+    "description":"Sets the number of days an AMA Hearing appeal that is also AOD will respect the affinity to the most-recent hearing judge before distributing the appeal to any available judge.",
+    "data_type":"radio",
+    "value":"value",
+    "unit":"days",
+    "options":[
+      {
+        "item":"value",
+        "data_type":"number",
+        "value":0,
+        "text":"Attempt distribution to current judge for max of:",
+        "unit":"days"
+      },
+      {
+        "item":"infinite",
+        "data_type":"",
+        "value":"infinite",
+        "text":"Always distribute to current judge",
+        "unit":""
+      },
+      {
+        "item":"omit",
+        "data_type":"",
+        "value":"omit",
+        "text":"Omit variable from distribution rules",
+        "unit":""
+      }
+    ],
+    "is_toggle_active":false,
+    "is_disabled_in_ui":true,
+    "min_value":0,
+    "max_value":100,
+    "algorithms_used":["proportion"],
+    "lever_group":"affinity",
+    "lever_group_order":3001
+  }
+];
 /* END Outlier Test Data for Testing Coverage */
