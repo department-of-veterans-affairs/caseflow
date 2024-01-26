@@ -52,6 +52,7 @@ class HearingSerializer
   attribute :pact do |hearing|
     hearing.appeal.pact?
   end
+  attribute :conference_provider
   attribute :current_issue_count
   attribute :disposition
   attribute :disposition_editable
