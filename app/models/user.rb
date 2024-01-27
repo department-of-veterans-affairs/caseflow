@@ -323,7 +323,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def administered_teams
-    organizations_users.admin.map(&:organization).compact
+    organizations_users.includes(:organization).admin.map(&:organization).compact
   end
 
   def administered_judge_teams
