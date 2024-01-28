@@ -17,7 +17,7 @@ ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_12_2:$LD_LIBRARY_PATH" \
 # install oracle deps
 WORKDIR /opt/oracle/instantclient_12_2/
 COPY docker-bin/oracle_libs/* ./
-RUN ln -s libclntsh.so.12.1 libclntsh.so
+# RUN ln -s libclntsh.so.12.1 libclntsh.so
 
 WORKDIR /caseflow
 
