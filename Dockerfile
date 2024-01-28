@@ -53,6 +53,7 @@ RUN rm -rf /var/lib/apt/lists/*
 # Rake 13.0.1 is already installed, so we're uninstalling it and letting bundler install rake later.
 RUN gem install bundler:$(cat Gemfile.lock | tail -1 | tr -d " ") && gem uninstall -i /usr/local/lib/ruby/gems/2.7.0 rake
 RUN gem install libv8 -v '3.11.8.17' -- --with-system-v8
+RUN gem install ruby-oci8
 RUN bundle install && \
   cd client && \
   yarn install && \
