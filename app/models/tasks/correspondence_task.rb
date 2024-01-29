@@ -42,6 +42,15 @@ class CorrespondenceTask < Task
     )
   end
 
+  def correspondence
+    appeal
+  end
+
+  def task_url
+    "/under_construction"
+  end
+
+
   private
 
   def status_is_valid_on_create
