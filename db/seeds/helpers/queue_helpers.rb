@@ -23,7 +23,7 @@ module QueueHelpers
       portal_entry_date: Time.zone.now,
       source_type: "Mail",
       package_document_type_id: (1..20).to_a.sample,
-      correspondence_type_id: 4,
+      correspondence_type_id: CorrespondenceType.find_by_name("Congressional interest").id,
       cmp_queue_id: 1,
       cmp_packet_number: @cmp_packet_number,
       va_date_of_receipt: Time.zone.yesterday,
