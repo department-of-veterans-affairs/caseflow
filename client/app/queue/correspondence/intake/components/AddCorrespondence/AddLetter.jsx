@@ -119,7 +119,7 @@ export const NewLetter = (props) => {
   ];
 
   const [valueOptions, setValueOptions] = useState(radioOptions);
-  const [responseWindows, setResponseWindows] = useState('No response window');
+  const [responseWindows, setResponseWindows] = useState('');
 
   const letterTypesData = ADD_CORRESPONDENCE_LETTER_SELECTIONS.map((option) => ({ label: (option.letter_type),
     value: option.letter_type }));
@@ -175,6 +175,8 @@ export const NewLetter = (props) => {
         for (let aux = 0; aux < option.letter_titles.length; aux++) {
           if (option.letter_titles[aux].letter_title === letterTitle) {
             findSub(option, aux);
+          } else {
+            selectResponseWindows(option, aux);
           }
         }
       }
@@ -194,7 +196,9 @@ export const NewLetter = (props) => {
   }, [letterType]);
 
   const changeLetterType = (val) => {
+    setLetterTitle('');
     setLetterType(val);
+    setValueOptions(radioOptions);
     // resetResponseWindows();
   };
 
