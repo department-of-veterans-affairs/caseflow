@@ -9,6 +9,7 @@ class CorrespondenceResponseLettersController < ApplicationController
   end
 
   def correspondence_response_letter_params
-    params.require(:correspondence_response_letter).permit(:title, :date_sent, :letter_type, :subcategory, :reason, :response_window, :user_id)
+    params.require(:correspondence_response_letter).permit(:title, :date_sent, :letter_type, :subcategory, :reason,
+                                                           :response_window, :user_id)
   end
 end
