@@ -73,7 +73,7 @@ class UpdateDocumentInVbms
   end
 
   def s3_location
-    s3_bucket_by_doc_type + "/" + pdf_name
+    "#{s3_bucket_by_doc_type}/#{pdf_name}"
   end
 
   def output_location
