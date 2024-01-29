@@ -193,11 +193,11 @@ class AppealsController < ApplicationController
 
   private
 
-  # :reek:DuplicateMethodCall { allow_calls: ['result.extra'] }
+   # :reek:DuplicateMethodCall { allow_calls: ['result.extra'] }
   # :reek:FeatureEnvy
   def render_search_results_as_json(result)
     if result.success?
-      render json: result.extra[:search_results]
+      render json: result.extra[:case_search_results]
     else
       render json: result.to_h, status: result.extra[:status]
     end
