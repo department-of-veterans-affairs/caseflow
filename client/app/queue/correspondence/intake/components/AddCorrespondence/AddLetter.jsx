@@ -24,7 +24,7 @@ export const AddLetter = (props) => {
   };
 
   const [unrelatedTasksCanContinue, setUnrelatedTasksCanContinue] = useState(true);
-  const [customResponseWindowState, setCustomResponseWindowState] = useState(false);
+  // const [customResponseWindowState, setCustomResponseWindowState] = useState(false);
 
   const removeLetter = (index) => {
     const restLetters = letters.filter((letter) => letter !== index);
@@ -32,13 +32,13 @@ export const AddLetter = (props) => {
     setLetters(restLetters);
   };
 
-  const handleCustomWindowState = (currentOpt) => {
-    if (currentOpt === 'Other') {
-      setCustomResponseWindowState(true);
-    } else {
-      setCustomResponseWindowState(false);
-    }
-  };
+  // const handleCustomWindowState = (currentOpt) => {
+  //   if (currentOpt === 'Other') {
+  //     setCustomResponseWindowState(true);
+  //   } else {
+  //     setCustomResponseWindowState(false);
+  //   }
+  // };
 
   useEffect(() => {
     onContinueStatusChange(unrelatedTasksCanContinue);
@@ -59,8 +59,6 @@ export const AddLetter = (props) => {
           <NewLetter
             index={letter}
             removeLetter={removeLetter}
-            customWindows={customResponseWindowState}
-            handleCustomWindowState = {handleCustomWindowState}
           />
         </div>
       )) }
@@ -87,7 +85,7 @@ AddLetter.propTypes = {
   index: PropTypes.number,
   onContinueStatusChange: PropTypes.func,
   customResponseWindowState: PropTypes.bool,
-  handleCustomWindowState: PropTypes.func,
+  // handleCustomWindowState: PropTypes.func,
 };
 
 export const NewLetter = (props) => {
@@ -100,10 +98,13 @@ export const NewLetter = (props) => {
   const [letterSubSelector, setLetterSubSelector] = useState([]);
   const [letterSubReason, setLetterSubReason] = useState('');
   const [subReason, setSubReason] = useState('');
+  const [customResponseWindowState, setCustomResponseWindowState] = useState(false);
 
   const currentDate = moment.utc(new Date()).format('YYYY-MM-DD');
   const [date, setDate] = useState(currentDate);
   const [stateOptions, setStateOptions] = useState(true);
+
+  const [responseWindows, setResponseWindows] = useState('');
 
   const radioOptions = [
     { displayText: '65 days',
@@ -113,12 +114,21 @@ export const NewLetter = (props) => {
       value: 'No response window',
       disabled: stateOptions },
     { displayText: 'Custom',
-      value: 'Other',
+      value: 'Custom',
       disabled: stateOptions }
   ];
 
   const [valueOptions, setValueOptions] = useState(radioOptions);
-  const [responseWindows, setResponseWindows] = useState('');
+
+  const handleCustomWindowState = (currentOpt) => {
+    if (currentOpt === 'Custom') {
+      setResponseWindows(radioOptions[2].value);
+      setCustomResponseWindowState(true);
+      setValueOptions(valueOptions);
+    } else {
+      setCustomResponseWindowState(false);
+    }
+  };
 
   const letterTypesData = ADD_CORRESPONDENCE_LETTER_SELECTIONS.map((option) => ({ label: (option.letter_type),
     value: option.letter_type }));
@@ -200,6 +210,10 @@ export const NewLetter = (props) => {
       }
     }
   };
+
+  useEffect(() => {
+    setRadioValue();
+  }, [customResponseWindowState]);
 
   useEffect(() => {
     if (responseWindows.length > 0) {
@@ -301,11 +315,11 @@ export const NewLetter = (props) => {
         name="How long should the response window be for this response letter?"
         options={valueOptions}
         value = {responseWindows}
-        onChange={(val) => props.handleCustomWindowState(val)}
+        onChange={(val) => handleCustomWindowState(val)}
         // optionsStyling={{ marginTop: 0 }}
       />
 
-      { props.customWindows &&
+      { customResponseWindowState &&
         <TextField
           label="Number of days (Value must be between 0 and 65)"
           name="content"
@@ -331,8 +345,6 @@ export const NewLetter = (props) => {
 NewLetter.propTypes = {
   removeLetter: PropTypes.func.isRequired,
   index: PropTypes.number.isRequired,
-  handleCustomWindowState: PropTypes.func,
-  customWindows: PropTypes.bool,
   setLetterType: PropTypes.func,
   letterType: PropTypes.string,
   letterTitle: PropTypes.string,
