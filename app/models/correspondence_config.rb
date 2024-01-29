@@ -11,6 +11,8 @@ class CorrespondenceConfig < QueueConfig
     }
   end
 
+  private
+
   def attach_tasks_to_tab(tab)
     task_pager = CorrespondenceTaskPager.new(
       assignee: assignee,
@@ -28,7 +30,6 @@ class CorrespondenceConfig < QueueConfig
     )
   end
 
-
   def serialized_tasks_for_columns(tasks, columns)
     WorkQueue::CorrespondenceTaskColumnSerializer.new(
       tasks,
@@ -36,8 +37,6 @@ class CorrespondenceConfig < QueueConfig
       params: { columns: columns }
     ).serializable_hash[:data]
   end
-
-  private
 
   def table_title
     assignee_is_org? ? "Correspondence cases" : "Your correspondence"
