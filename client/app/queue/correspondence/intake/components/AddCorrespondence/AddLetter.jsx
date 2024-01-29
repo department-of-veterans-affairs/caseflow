@@ -119,14 +119,24 @@ export const NewLetter = (props) => {
   ];
 
   const [valueOptions, setValueOptions] = useState(radioOptions);
-  const [responseWindows, setResponseWindows] = useState('');
+  const [responseWindows, setResponseWindows] = useState('No response window');
 
   const letterTypesData = ADD_CORRESPONDENCE_LETTER_SELECTIONS.map((option) => ({ label: (option.letter_type),
     value: option.letter_type }));
 
+  const selectResponseWindows = (option, aux) => {
+    if (option.response_window_option_default) {
+      setResponseWindows(option.response_window_option_default);
+    } else {
+      setResponseWindows(option.letter_titles[aux].response_window_option_default);
+    }
+  };
+
   const findSub = (option, aux) => {
     const subCate = [];
     const listReason = [];
+
+    selectResponseWindows(option, aux);
 
     for (let aux1 = 0; aux1 < option.letter_titles[aux].letter_subcategories.length; aux1++) {
       subCate.push({ label: option.letter_titles[aux].letter_subcategories[aux1].subcategory,
@@ -164,13 +174,16 @@ export const NewLetter = (props) => {
 
         for (let aux = 0; aux < option.letter_titles.length; aux++) {
           if (option.letter_titles[aux].letter_title === letterTitle) {
-            // setResponseWindows(option.letter_titles[aux].response_window_option_default);
             findSub(option, aux);
           }
         }
       }
     }
   };
+
+  // useEffect(() => {
+  //   letterTitlesData();
+  // }, [stateOptions]);
 
   useEffect(() => {
     if (responseWindows.length === 0) {
@@ -186,6 +199,7 @@ export const NewLetter = (props) => {
 
   const changeLetterType = (val) => {
     setLetterType(val);
+    // resetResponseWindows();
   };
 
   useEffect(() => {
@@ -198,13 +212,17 @@ export const NewLetter = (props) => {
     setLetterTitle(val);
 
     for (let i = 0; i < valueOptions.length; i++) {
-      const option = valueOptions;
+      const option = valueOptions[i];
 
       if (responseWindows === option.displayText) {
         setStateOptions(false);
-        option.disabled(stateOptions);
+        option.disabled = false;
+      } else {
+        setStateOptions(true);
+        option.disabled = true;
       }
     }
+    setValueOptions(valueOptions);
   };
 
   useEffect(() => {
@@ -295,7 +313,7 @@ export const NewLetter = (props) => {
         onClick={() => props.removeLetter(index)}
         classNames={['cf-btn-link', 'cf-right-side']}
       >
-        <i className="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Remove task
+        <i className="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Remove letter
       </Button>
     </div>
   );
