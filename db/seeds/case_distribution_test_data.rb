@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Seeds
-  class CaseDitributionTestData < Base
+  class CaseDistributionTestData < Base
     def initialize
       initialize_legacy_inactive_admin_judge_team_file_number_and_participant_id
       initialize_direct_review_file_number_and_participant_id
