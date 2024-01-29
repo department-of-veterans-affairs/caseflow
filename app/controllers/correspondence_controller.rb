@@ -52,9 +52,6 @@ class CorrespondenceController < ApplicationController
     if MailTeamSupervisor.singleton.user_has_access?(current_user) ||
        BvaIntake.singleton.user_is_admin?(current_user) ||
        MailTeam.singleton.user_is_admin?(current_user)
-      # if current_user.organizations_users.where(admin: true, organization_id: BvaIntake.singleton.id).any? ||
-      # current_user.organizations_users.where(admin: true, organization_id: MailTeam.singleton.id).any? ||
-      # current_user.organizations.include?(MailTeamSupervisor.singleton)
       respond_to do |format|
         format.html { "correspondence_team" }
         format.json do
