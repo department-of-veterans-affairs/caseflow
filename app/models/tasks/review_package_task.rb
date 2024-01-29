@@ -16,4 +16,9 @@ class ReviewPackageTask < CorrespondenceTask
   def when_child_task_created(_child_task)
     true
   end
+
+  def task_url
+    "/queue/correspondence/#{self.correspondence.uuid}/review_package"
+  end
+
 end
