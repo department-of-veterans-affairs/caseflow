@@ -23,7 +23,7 @@ class OrganizationCorrespondenceActionRequiredTasksTab < CorrespondenceQueueTab
     [
       Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
       Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
-      Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
+      Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING_CORRESPONDENCE.name,
       Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNED_BY.name,
       Constants.QUEUE_CONFIG.COLUMNS.ACTION_TYPE.name,
       Constants.QUEUE_CONFIG.COLUMNS.NOTES.name
