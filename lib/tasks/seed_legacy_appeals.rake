@@ -4,8 +4,9 @@
 # to create without, run "bundle exec rake db:generate_legacy_appeals"
 namespace :db do
   desc "Generates a smattering of legacy appeals with VACOLS cases that have special issues assocaited with them"
-  task :generate_legacy_appeals, [:add_special_issues] => :environment do |_, args|
-    ADD_SPECIAL_ISSUES = args.add_special_issues == "true"
+  task :generate_legacy_appeals, [:add_special_issues, :user_id] => :environment do |_, args|
+    ADD_SPECIAL_ISSUES = args.add_special_issues.to_s == "true"
+    USER_ID = args.user_id
     class LegacyAppealFactory
       class << self
         # Stamping out appeals like mufflers!
@@ -110,9 +111,14 @@ namespace :db do
       end
 
       if Rails.env.development? || Rails.env.test?
-        vets = Veteran.first(5)
+        # grab 5 random veterans
+        vets = []
 
-        veterans_with_like_45_appeals = vets[0..12].pluck(:file_number)
+        (1..5).each do |_|
+          vets << Veteran.find(Random.new.rand(1..Veteran.count))
+        end
+
+        veterans_with_like_45_appeals = vets[0..5].pluck(:file_number)
 
         # veterans_with_250_appeals = vets.last(3).pluck(:file_number)
 
@@ -122,11 +128,15 @@ namespace :db do
         # veterans_with_250_appeals = %w[011899906 011899999]
       end
 
-      # request CSS ID for task assignment
-      STDOUT.puts("Enter the CSS ID of the user that you want to assign these appeals to")
-      STDOUT.puts("Hint: an Attorney User for demo env is BVASCASPER1, and UAT is TCASEY_JUDGE and CGRAHAM_JUDGE")
-      css_id = STDIN.gets.chomp.upcase
-      user = User.find_by_css_id(css_id)
+      # request CSS ID for task assignment if not given
+      if USER_ID.blank?
+        STDOUT.puts("Enter the CSS ID of the user that you want to assign these appeals to")
+        STDOUT.puts("Hint: an Attorney User for demo env is BVASCASPER1, and UAT is TCASEY_JUDGE and CGRAHAM_JUDGE")
+        css_id = STDIN.gets.chomp.upcase
+        user = User.find_by_css_id(css_id)
+      else
+        user = User.find_by_css_id(USER_ID)
+      end
 
       fail ActiveRecord::RecordNotFound unless user
 

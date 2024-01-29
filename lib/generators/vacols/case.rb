@@ -129,7 +129,10 @@ class Generators::Vacols::Case
 
       # Default to two issues
       case_issue_attrs = attrs[:case_issue_attrs].nil? ? [{}, {}] : attrs[:case_issue_attrs]
-      case_issue_attrs.each { |issue| issue[:isskey] = custom_case_attrs[:bfkey] }
+      case_issue_attrs.each_with_index do |issue, idx|
+        issue[:isskey] = custom_case_attrs[:bfkey]
+        issue[:issseq] = idx
+      end
       Generators::Vacols::CaseIssue.create(case_issue_attrs)
 
       # Default to zero hearings
