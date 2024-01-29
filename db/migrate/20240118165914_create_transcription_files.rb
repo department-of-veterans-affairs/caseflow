@@ -20,16 +20,15 @@ class CreateTranscriptionFiles < Caseflow::Migration
     end
 
     add_index :transcription_files,
-              [:appeal_id, :appeal_type, :docket_number, :file_name],
+              [:file_name, :docket_number, :appeal_id, :appeal_type],
               unique: true,
               name: "idx_transcription_files_on_file_name_and_docket_num_and_appeal"
     add_index :transcription_files,
               [:appeal_id, :appeal_type, :docket_number],
-              unique: true,
               name: "index_transcription_files_on_docket_number_and_appeal"
-    add_index :transcription_files, [:appeal_id, :appeal_type], unique: true
-    add_index :transcription_files, [:docket_number], unique: true
-    add_index :transcription_files, [:file_type], unique: true
+    add_index :transcription_files, [:appeal_id, :appeal_type]
+    add_index :transcription_files, [:docket_number]
+    add_index :transcription_files, [:file_type]
     add_index :transcription_files, [:aws_link], unique: true
   end
 end
