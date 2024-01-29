@@ -41,10 +41,30 @@ class CorrespondenceController < ApplicationController
 
   def correspondence_cases
     respond_to do |format|
-      format.html { "correspondence_cases" }
+      format.html { "your_correspondence" }
       format.json do
-        render json: { correspondence_config: user_correspondence}
+        render json: { correspondence_config: user_correspondence }
       end
+    end
+  end
+
+  def correspondence_team
+    if MailTeamSupervisor.singleton.user_has_access?(current_user) ||
+       BvaIntake.singleton.user_is_admin?(current_user) ||
+       MailTeam.singleton.user_is_admin?(current_user)
+      # if current_user.organizations_users.where(admin: true, organization_id: BvaIntake.singleton.id).any? ||
+      # current_user.organizations_users.where(admin: true, organization_id: MailTeam.singleton.id).any? ||
+      # current_user.organizations.include?(MailTeamSupervisor.singleton)
+      respond_to do |format|
+        format.html { "correspondence_team" }
+        format.json do
+          render json: { correspondence_config: all_correspondence }
+        end
+      end
+    elsif MailTeam.singleton.user_has_access?(current_user)
+      redirect_to "/queue/correspondence"
+    else
+      redirect_to "/unauthorized"
     end
   end
 
@@ -104,19 +124,6 @@ class CorrespondenceController < ApplicationController
       reasonForRemovePackage: reason_remove
     }
     render({ json: response_json }, status: :ok)
-  end
-
-  def correspondence_team
-    if MailTeamSupervisor.singleton.user_has_access?(current_user)
-      respond_to do |format|
-        format.html { "correspondence_team" }
-        format.json do
-          render json: { correspondence_config: all_correspondence }
-        end
-      end
-    else
-      redirect_to "/unauthorized"
-    end
   end
 
   def update
