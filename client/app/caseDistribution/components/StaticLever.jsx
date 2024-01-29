@@ -16,6 +16,8 @@ const StaticLever = ({ lever }) => {
 
       return leverValueString.charAt(0).toUpperCase() + leverValueString.slice(1);
     case ACD_LEVERS.data_types.number:
+      requiredSeparator = false;
+
       return `${(lever.value * 100).toFixed(0)}`;
     case ACD_LEVERS.data_types.radio:
       return lever.options.find((option) => option.value === lever.value)?.text;
