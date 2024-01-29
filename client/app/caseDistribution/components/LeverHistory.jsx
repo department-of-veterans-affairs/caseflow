@@ -12,7 +12,7 @@ const LeverHistory = () => {
 
   return (
     <div className="lever-history-styling">
-      <table>
+      <table id="lever-history-table">
         <tbody>
           <tr>
             <th className="lever-history-table-header-styling" scope="column">
@@ -33,7 +33,7 @@ const LeverHistory = () => {
           </tr>
         </tbody>
         <tbody>{leverHistoryTable.map((entry, index) =>
-          <tr key={index}>
+          <tr key={index} id={`lever-history-table-row-${index}`}>
             <td className="history-table-styling entry-created-at">{entry.created_at}</td>
             <td className="history-table-styling entry-user-id">{entry.user_css_id}</td>
             <td className="history-table-styling entry-titles">

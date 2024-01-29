@@ -68,8 +68,10 @@ const AffinityDays = () => {
       return (
         <div key={`${option.item}-${lever.item}-${index}`}>
           <div>
-            <label className={lever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}
-              htmlFor={`${lever.item}-${option.item}`}>
+            <label id={lever.item}
+              className={lever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}
+              htmlFor={`${lever.item}-${option.item}`}
+            >
               {`${option.text} ${option.data_type === ACD_LEVERS.data_types.number ?
                 `${option.value} ${option.unit}` : ''}`}
             </label>
@@ -128,7 +130,9 @@ const AffinityDays = () => {
             <strong>{lever.title}</strong>
             <p className="affinity-lever-text">{lever.description}</p>
           </div>
-          <div className={cx('lever-right', 'affinity-lever-num-sec')} >
+          <div id={lever.item}
+            className={cx('lever-right', 'affinity-lever-num-sec')}
+          >
             {lever.options.map((option) => (
               (isUserAcdAdmin) ? renderAdminInput(option, lever, index) : generateMemberViewLabel(option, lever, index)
             ))}

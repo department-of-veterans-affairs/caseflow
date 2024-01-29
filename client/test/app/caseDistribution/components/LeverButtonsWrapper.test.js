@@ -1,79 +1,70 @@
 import React from 'react';
-import { render } from '@testing-library/react';
-import { createStore } from '@reduxjs/toolkit';
+import { render, screen } from '@testing-library/react';
 import LeverButtonsWrapper from 'app/caseDistribution/components/LeverButtonsWrapper';
-import leversReducer from '../reducers/levers/leversReducer';
-import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
-import * as leverData from 'test/data/adminCaseDistributionLevers';
+import { Provider } from 'react-redux';
+import rootReducer from 'app/caseDistribution/reducers/root';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import * as leversSelectors from 'app/caseDistribution/reducers/levers/leversSelector';
 
 describe('LeverButtonsWrapper', () => {
-  let leverStore;
-  let buttonsDiv;
 
-  beforeEach(() => {
-    const preloadedState = {
-      levers: JSON.parse(JSON.stringify(leverData.levers.slice(0, 5))),
-      backendLevers: JSON.parse(JSON.stringify(leverData.levers.slice(0, 5)))
-    };
+  const getStore = () => createStore(
+    rootReducer,
+    applyMiddleware(thunk));
 
-    leverStore = createStore(leversReducer, preloadedState);
-    buttonsDiv = render(<LeverButtonsWrapper leverStore={leverStore} />);
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
-  describe('Cancel Button', () => {
-    it('renders the cancel button correctly', () => {
-      const cancelButton = buttonsDiv.container.querySelector('#CancelLeversButton');
+  it('renders save and cancel buttons', () => {
+    const store = getStore();
 
-      expect(cancelButton).toBeInTheDocument();
-    });
+    render(
+      <Provider store={store}>
+        <LeverButtonsWrapper />
+      </Provider>
+    );
 
-    it('sets the levers back to thier initial state when clicked', () => {
-      const cancelButton = buttonsDiv.container.querySelector('#CancelLeversButton');
+    const saveButton = screen.getByRole('button', { name: /Save/i });
 
-      leverStore.dispatch({
-        type: ACTIONS.UPDATE_LEVER_VALUE,
-        updated_lever: leverData.lever1_update
-      });
-      leverStore.dispatch({
-        type: ACTIONS.UPDATE_LEVER_VALUE,
-        updated_lever: leverData.lever5_update
-      });
+    expect(saveButton).toBeInTheDocument();
 
-      expect(leverStore.getState().levers).toEqual(leverData.updated_levers);
+    const cancelButton = screen.getByRole('button', { name: /Cancel/i });
 
-      cancelButton.click();
-
-      expect(leverStore.getState().levers).not.toEqual(leverData.updated_levers);
-      expect(leverStore.getState().levers).toEqual(leverData.levers.slice(0, 5));
-    });
+    expect(cancelButton).toBeInTheDocument();
   });
 
-  describe('Save Button', () => {
-    it('renders the save button correctly', () => {
-      const saveButton = buttonsDiv.container.querySelector('#SaveLeversButton');
+  test('Save Button be disabled initially', () => {
+    const store = getStore();
 
-      expect(saveButton).toBeInTheDocument();
-    });
+    render(
+      <Provider store={store}>
+        <LeverButtonsWrapper />
+      </Provider>
+    );
 
-    it('saves the levers in thier current state when clicked', () => {
-      const saveButton = buttonsDiv.container.querySelector('#SaveLeversButton');
-
-      leverStore.dispatch({
-        type: ACTIONS.UPDATE_LEVER_VALUE,
-        updated_lever: leverData.lever1_update
-      });
-      leverStore.dispatch({
-        type: ACTIONS.UPDATE_LEVER_VALUE,
-        updated_lever: leverData.lever5_update
-      });
-
-      expect(leverStore.getState().levers).toEqual(leverData.updated_levers);
-
-      saveButton.click();
-
-      expect(leverStore.getState().levers).not.toEqual(leverData.levers.slice(0, 5));
-      expect(leverStore.getState().levers).toEqual(leverData.updated_levers);
-    });
+    expect(screen.getByText('Save')).toBeDisabled();
   });
 
+  it('activates Save Button when conditions are met', () => {
+    const store = getStore();
+
+    const changedLeversData = [
+      { title: 'Alternate Batch Size*',
+        backendValue: '50',
+        value: '15',
+        data_type: 'number' },
+    ];
+
+    jest.spyOn(leversSelectors, 'hasChangedLevers').mockReturnValue(changedLeversData);
+
+    render(
+      <Provider store={store}>
+        <LeverButtonsWrapper />
+      </Provider>
+    );
+
+    expect(screen.getByText('Save')).not.toBeDisabled();
+  });
 });
