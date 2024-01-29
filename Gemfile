@@ -66,6 +66,7 @@ gem "redis-namespace"
 gem "redis-rails", "~> 5.0.2"
 gem "request_store"
 gem "roo", "~> 2.7"
+gem "rtf"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry

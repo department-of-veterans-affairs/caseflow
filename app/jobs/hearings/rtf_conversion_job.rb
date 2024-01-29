@@ -16,19 +16,48 @@ class Hearings::RTFConversionJob < CaseflowJob
   end
 
   def perform
-    retreive_files_from_s3(files_waiting_for_conversion)
-    raw_transcript(path)
+    vtt_file_paths = retreive_files_from_s3(files_waiting_for_conversion)
+    convert_and_upload_files(["app/jobs/hearings/Testing Transcription Enablement-20240125 1515-1.vtt"])
   end
 
   # Get transcription files waiting for file conversion
+  # Return the vtt files that haven't been converted yet
   def files_waiting_for_conversion
     TranscriptionFile.where(date_converted: nil)
   end
 
+  # Retrieve files from the s3 bucket
+  # files - array of files needing to be converted
+  # Return the list of newly made output paths
+  def retreive_files_from_s3(files)
+    paths = []
+    files.pluck(:file_name).each do |file|
+      s3_location = S3_FOLDER_NAME + "/" + file + ".vtt"
+      S3Service.fetch_file(s3_location, vtt_folder)
+      paths.push(vtt_folder)
+    end
+
+    paths
+  end
+
+  # Convert all the vtt files to rtf, upload to S3 and create records
+  # paths - all the file paths of retrieved vtt files
+  def convert_and_upload_files(paths)
+    paths.each do |path|
+      convert_to_rtf(path)
+    end
+  end
+
   # The temporary location of vtt files after fetching from S3
   # Return the location of the file
-  def output_location
+  def vtt_folder
     File.join(Rails.root, "tmp", "vtts", vtt_name)
+  end
+
+  # The temporary location of rtf files after fetching from S3
+  # Return the location of the file
+  def rtf_folder
+    File.join("tmp", "vtts", rtf_name)
   end
 
   # The name of the vtt file after fetching
@@ -37,42 +66,25 @@ class Hearings::RTFConversionJob < CaseflowJob
     Time.zone.now.strftime("%m_%d_%Y_%H_%M_%S") + ".vtt"
   end
 
-  def convert_and_upload_files(paths)
-    paths.each do |path|
-      convert_to_rtf(raw_transcript(path))
-    end
-  end
-
-  # Retrieve files from the s3 bucket
-  # Return the list of newly made output paths
-  def retreive_files_from_s3(files)
-    paths = []
-    files.pluck(:file_name).each do |file|
-      s3_location = S3_FOLDER_NAME + "/" + file + ".vtt"
-      S3Service.fetch_file(s3_location, output_location)
-      paths.push(output_location)
-    end
-
-    paths
-  end
-
-  # The raw transcript after parsing vtt
-  def raw_transcript(path)
-    webvtt = WebVTT.read(path)
-    webvtt
-    # webvtt.cues.each do |cue|
-    #   puts "identifier: #{cue.identifier}"
-    #   puts "Start: #{cue.start}"
-    #   puts "End: #{cue.end}"
-    #   puts "Style: #{cue.style.inspect}"
-    #   puts "Text: #{cue.text}"
-    #   puts "--"
-    # end
+  # The name of the rtf file after fetching
+  # Return the name of the rtf file
+  def rtf_name
+    Time.zone.now.strftime("%m_%d_%Y_%H_%M_%S") + ".rtf"
   end
 
   # Convert vtt file to rtf
   def convert_to_rtf(path)
-
+    vtt = WebVTT.read(path)
+    doc = RTF::Document.new(RTF::Font.new(RTF::Font::ROMAN, "Times New Roman"))
+    styles = RTF::ParagraphStyle.new
+    vtt.cues.each do |cue|
+      doc.paragraph(styles) do |style|
+        style.paragraph << cue.identifier
+        style.paragraph << cue.start.to_s + " --> " + cue.end.to_s
+        style.paragraph << cue.text
+      end
+    end
+    File.open(rtf_folder, "w") { |file| file.write(doc.to_rtf) }
   end
 
   # Create a transcription file record
