@@ -9,40 +9,44 @@ class DownloadTranscriptionFileJob < CaseflowJob
   # TO-DO: confirm priority
   queue_with_priority :low_priority
 
-  # retry_on(StandardError, attempts: 10, wait: :exponentially_longer) do |job, exception|
-  #   Rails.logger.info("RETRY")
-  # end
+  retry_on(StandardError, attempts: 10, wait: :exponentially_longer) do |job, exception|
+    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
+  end
 
-  # TO-DO: confirm arguments
-  def perform(download_link)
+  def perform(download_link:, file_name:)
     ensure_current_user_is_set
+    @file_name = file_name
+    @transcription_file = find_or_create_transcription_file
+
     begin
-      Rails.logger.info("JOB START")
-      download_to_tmp_location(download_link)
-      # @transcription_file = create_transcription_file(docket_number: docket_number, appeal: appeal)
-    rescue StandardError
+      download_to_tmp(download_link)
+      @transcription_file.update!(
+        file_status: Constants.TRANSCRIPTION_FILE_STATUSES.retrieval.success,
+        date_receipt_webex: Time.zone.now
+      )
+    ensure
       byebug
-      # clean_up_tmp_location
+      clean_up_tmp_location
     end
   end
 
   private
 
-  def download_to_tmp_location(download_link)
-    URI.open(download_link) do |download|
-      parse_file_attributes(download)
-      IO.copy_stream(download, tmp_location)
+  def download_to_tmp(download_link)
+    begin
+      URI.open(download_link) do |download|
+        # @file_name = parse_file_name
+        IO.copy_stream(download, tmp_location)
+      end
+    rescue OpenURI::HTTPError => error
+      @transcription_file.update!(file_status: Constants.TRANSCRIPTION_FILE_STATUSES.retrieval.failure)
+      raise error
     end
   end
 
-  def parse_file_attributes(download)
-    @file_name = download.base_uri.to_s.split("/")[-1]
-  end
-
-  # TO-DO: figure out how to parse file_type
-  def file_type
-    @file_name.split(".")[-1]
-  end
+  # def parse_file_name(download)
+  #   download.meta["content-disposition"].match(/filename=(\"?)(.+)\1;/)[2]
+  # end
 
   def tmp_location
     File.join(Rails.root, "tmp", "transcription_files", @file_name)
@@ -54,16 +58,43 @@ class DownloadTranscriptionFileJob < CaseflowJob
     File.delete(tmp_location)
   end
 
-  def create_transcription_file(docket_number:, appeal:)
-    TranscriptionFile.create!(
+  def file_type
+    @file_name.split(".")[-1]
+  end
+
+  def appeal
+    @appeal = parse_appeal if appeal_attributes_present?
+  end
+
+  def appeal_attributes_present?
+    @file_name.include?("Appeal")
+  end
+
+  def parse_appeal
+    appeal_id = @file_name.split("_")[1]
+    appeal_type = @file_name.split("_")[2]
+    appeal_type.constantize.find(appeal_id)
+  end
+
+  def docket_number
+    appeal&.docket_number || docket_number_from_hearing_day
+  end
+
+  # TO-DO: How to implement parsing docket number from hearing day?
+  def docket_number_from_hearing_day
+    byebug
+  end
+
+  def find_or_create_transcription_file
+    TranscriptionFile.find_or_create_by(
       file_name: @file_name,
-      file_type: file_type,
       docket_number: docket_number,
       appeal_id: appeal&.id,
-      appeal_type: appeal&.class&.name,
-      file_status: Constants.TRANSCRIPTION_FILE_STATUSES.retrieval.success,
-      date_receipt_webex: Time.zone.today,
-      created_by_id: RequestStore[:current_user]
-    )
+      appeal_type: appeal&.class&.name
+    ) do |file|
+      file.file_type = file_type
+      file.date_receipt_webex = Time.zone.today
+      file.created_by_id = RequestStore[:current_user]
+    end
   end
 end
