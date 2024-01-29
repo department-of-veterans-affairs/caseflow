@@ -118,8 +118,26 @@ LinkContainer.propTypes = {
 };
 
 export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, user }) => {
-  if (!isVirtual && !wasVirtual) {
+  if (!hearing?.conferenceProvider && !isVirtual && !wasVirtual) {
     return null;
+  } else if (hearing?.conferenceProvider && !isVirtual && !wasVirtual) {
+    return (
+      <div>
+        {hearing?.conferenceProvider && (
+          <LinkContainer
+            hearing={hearing}
+            isVirtual={isVirtual}
+            label={COPY.HC_VIRTUAL_HEARING_LINK_LABEL}
+            link={virtualHearing?.coHostHearingLink}
+            linkText={COPY.VLJ_VIRTUAL_HEARINGS_LINK_TEXT}
+            role="HC"
+            user={user}
+            virtualHearing={virtualHearing}
+            wasVirtual={wasVirtual}
+          />
+        )}
+      </div>
+    );
   }
 
   const showHostLink = virtualHearingRoleForUser(user, hearing) === VIRTUAL_HEARING_HOST;
@@ -139,7 +157,7 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
             virtualHearing={virtualHearing}
             wasVirtual={wasVirtual}
           />
-          {hearing.conferenceProvider === 'webex' && (
+          {hearing?.conferenceProvider && (
             <LinkContainer
               hearing={hearing}
               isVirtual={isVirtual}

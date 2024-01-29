@@ -10,7 +10,7 @@ import StringUtil from '../../../util/StringUtil';
 export const VirtualHearingFields = (
   { hearing, virtualHearing }
 ) => {
-  if (!hearing?.isVirtual && !hearing?.wasVirtual) {
+  if (!hearing?.conferenceProvider && !hearing?.isVirtual && !hearing?.wasVirtual) {
     return null;
   }
 
