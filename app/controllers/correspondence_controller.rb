@@ -61,7 +61,8 @@ class CorrespondenceController < ApplicationController
           render json: { correspondence_config: all_correspondence }
         end
       end
-    elsif MailTeam.singleton.user_has_access?(current_user)
+    elsif MailTeam.singleton.user_has_access?(current_user) ||
+          BvaIntake.singleton.user_has_access?(current_user)
       redirect_to "/queue/correspondence"
     else
       redirect_to "/unauthorized"
