@@ -38,7 +38,6 @@ module Seeds
       appeal = create_appeal(veteran)
 
       ptask = create_correspondence_intake(create_correspondence(appeal), status: "on_hold")
-      puts "ptask: #{ptask.id}"
 
       # 20 Correspondences with eFolderFailedUploadTask with a parent CorrespondenceIntakeTask
       20.times do

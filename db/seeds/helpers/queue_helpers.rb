@@ -135,40 +135,42 @@ module QueueHelpers
   end
 
   def pending_tab_cavc_mailtask(correspondence, status:)
-    cavct = CavcCorrespondenceMailTask.find_or_create_by!(
+    cavct = CavcCorrespondenceMailTask.create!(
       appeal_id: correspondence.id,
       appeal_type: "Correspondence",
-      assigned_to: CavcLitigationSupport.singleton
+      assigned_to: CavcLitigationSupport.singleton,
+      status: status
     )
-    cavct.update!(status: status)
+    cavct
   end
 
   def pending_tab_congress_interest_mailtask(correspondence, status:)
    cmt = CongressionalInterestMailTask.create!(
       appeal_id: correspondence.id,
       appeal_type: "Correspondence",
-      assigned_to: LitigationSupport.singleton
+      assigned_to: LitigationSupport.singleton,
+      status: status
     )
-    cmt.update!(status: status)
+    cmt
   end
 
   def create_pending_tasks_for_tasks_not_related_to_appeal(correspondence, parent_task:)
     # Creating Completed ReviewPackageTask
-    review_package_task = ReviewPackageTask.find_or_create_by(
-      parent_id: parent_task,
+    review_package_task = ReviewPackageTask.find_by(
       appeal_id: correspondence.id,
-      appeal_type: "Correspondence",
-      assigned_to: MailTeamSupervisor.singleton
+      assigned_to: MailTeamSupervisor.singleton,
+      appeal_type: "Correspondence"
     )
 
-    review_package_task.update(status: Constants.TASK_STATUSES.completed)
-
+    if review_package_task.present? && review_package_task.status != Constants.TASK_STATUSES.completed
+      review_package_task.update!(status: Constants.TASK_STATUSES.completed, parent_id: parent_task.id)
+    end
     # Creating Completed CorrespondenceIntakeTask
-    correspondence_intake_task = CorrespondenceIntakeTask.find_or_create_by!(
-      parent_id: parent_task,
+    correspondence_intake_task = CorrespondenceIntakeTask.create!(
+      parent_id: parent_task.id,
       appeal_id: correspondence.id,
-      appeal_type: "Correspondence",
-      assigned_to: MailTeamSupervisor.singleton
+      assigned_to: MailTeamSupervisor.singleton,
+      appeal_type: "Correspondence"
     )
     correspondence_intake_task.update!(status: Constants.TASK_STATUSES.completed)
   end
