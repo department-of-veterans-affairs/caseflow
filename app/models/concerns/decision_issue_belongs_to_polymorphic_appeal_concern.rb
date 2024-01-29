@@ -7,15 +7,15 @@ module DecisionIssueBelongsToPolymorphicAppealConcern
     belongs_to :decision_review, polymorphic: true
 
     belongs_to :ama_appeal,
-               -> { includes(:decision_issues).where(decision_issues: { decision_review_type: "Appeal" }) },
+               -> { where(decision_issues: { decision_review_type: "Appeal" }) },
                class_name: "Appeal", foreign_key: "decision_review_id", optional: true
 
     belongs_to :higher_level_review,
-               -> { includes(:decision_issues).where(decision_issues: { decision_review_type: "HigherLevelReview" }) },
+               -> { where(decision_issues: { decision_review_type: "HigherLevelReview" }) },
                class_name: "HigherLevelReview", foreign_key: "decision_review_id", optional: true
 
     belongs_to :supplemental_claim,
-               -> { includes(:decision_issues).where(decision_issues: { decision_review_type: "SupplementalClaim" }) },
+               -> { where(decision_issues: { decision_review_type: "SupplementalClaim" }) },
                class_name: "SupplementalClaim", foreign_key: "decision_review_id", optional: true
 
     scope :ama, -> { where(decision_review_type: "Appeal") }
