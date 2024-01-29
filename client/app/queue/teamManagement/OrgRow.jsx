@@ -205,7 +205,7 @@ export const OrgRow = React.memo((props) => {
           <span className="error" role="status"><i className="fa fa-times"></i> Error</span>
         )}
       </td>
-      <td>
+      <td colSpan={2}>
         {url && props.user_admin_path && (
           <Link to={props.user_admin_path}>
             <Button
