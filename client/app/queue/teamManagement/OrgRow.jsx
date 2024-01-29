@@ -22,7 +22,7 @@ const orgRowStyling = css({
 });
 
 const dropdownStyling = css({
-  width: '300px'
+  width: '225px'
 });
 
 const checkboxStyling = css({
