@@ -5,6 +5,7 @@ import { css } from 'glamor';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 
 import TextField from 'app/components/TextField';
+import Checkbox from '../../components/Checkbox';
 import Button from 'app/components/Button';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 
@@ -17,10 +18,15 @@ import {
 
 const orgRowStyling = css({
   '&:last_child': { textAlign: 'right' },
+  borderTop: '1px solid #d6d7d9'
 });
 
 const dropdownStyling = css({
   width: '300px'
+});
+
+const checkboxStyling = css({
+  width: '170px',
 });
 
 const statusIndicator = css({
@@ -61,6 +67,7 @@ export const OrgRow = React.memo((props) => {
   const [requestedCaseDistribution, setRequestedCaseDistribution] = useState(
     props.ama_only_request ? 'amaOnly' : 'all'
   );
+  const [excludeFromAffinityCases, setExcludeFromAffinityCases] = useState(props.exclude_judge_from_affinity_case);
 
   const handleUpdate = () => {
     const payload = {
@@ -84,6 +91,14 @@ export const OrgRow = React.memo((props) => {
     setRequestedCaseDistribution(value);
     const payload = {
       ama_only_request: ['amaOnly'].includes(value),
+    };
+
+    props.onUpdate?.(props.id, payload);
+  };
+  const handleExcludeFromAffinityCases = ({ value }) => {
+    setExcludeFromAffinityCases(value);
+    const payload = {
+      exclude_judge_from_affinity_case: value,
     };
 
     props.onUpdate?.(props.id, payload);
@@ -129,6 +144,17 @@ export const OrgRow = React.memo((props) => {
             />
           </td>
         </>
+      )}
+      {props.showExcludeFromAffinityToggles && (
+        <td className={checkboxStyling}>
+          <Checkbox
+            className={checkboxStyling}
+            label={<b>Exclude Judge</b>}
+            name={`excludeJudgeFromAffinityCases-${props.id}`}
+            value={excludeFromAffinityCases}
+            onChange={handleExcludeFromAffinityCases}
+          />
+        </td>
       )}
       {props.isRepresentative && (
         <td>
@@ -196,6 +222,7 @@ export const OrgRow = React.memo((props) => {
 OrgRow.defaultProps = {
   isRepresentative: false,
   showDistributionToggles: false,
+  showExcludeFromAffinityToggles: false
 };
 
 OrgRow.propTypes = {
@@ -203,11 +230,13 @@ OrgRow.propTypes = {
   ama_only_push: PropTypes.bool,
   ama_only_request: PropTypes.bool,
   current_user_can_toggle_priority_pushed_cases: PropTypes.bool,
+  exclude_judge_from_affinity_case: PropTypes.bool,
   id: PropTypes.number,
   name: PropTypes.string,
   participant_id: PropTypes.string,
   isRepresentative: PropTypes.bool,
   showDistributionToggles: PropTypes.bool,
+  showExcludeFromAffinityToggles: PropTypes.bool,
   url: PropTypes.string,
   user_admin_path: PropTypes.string,
   editableName: PropTypes.bool,
