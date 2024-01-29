@@ -181,9 +181,9 @@ export const NewLetter = (props) => {
     }
   };
 
-  // useEffect(() => {
-  //   letterTitlesData();
-  // }, [stateOptions]);
+  useEffect(() => {
+    setStateOptions(!stateOptions);
+  }, [stateOptions]);
 
   useEffect(() => {
     if (responseWindows.length === 0) {
