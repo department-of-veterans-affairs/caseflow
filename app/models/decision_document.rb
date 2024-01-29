@@ -21,8 +21,7 @@ class DecisionDocument < CaseflowRecord
   delegate :veteran, to: :appeal
   delegate :file_number, to: :veteran, prefix: true
 
-  include BelongsToPolymorphicAppealConcern
-  belongs_to_polymorphic_appeal :appeal
+  include DecisionDocumentBelongsToPolymorphicAppealConcern
 
   has_many :vbms_communication_packages, as: :document_mailable_via_pacman
 
