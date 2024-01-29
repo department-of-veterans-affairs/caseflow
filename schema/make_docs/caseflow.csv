@@ -1167,6 +1167,7 @@ request_issues,correction_type,string,,,,,,"EP 930 correction type. Allowed valu
 request_issues,covid_timeliness_exempt,boolean,,,,,,"If a veteran requests a timeliness exemption that is related to COVID-19, this is captured when adding a Request Issue and available for reporting."
 request_issues,created_at,datetime,,,,,,Automatic timestamp when row was created
 request_issues,decision_date,date,,,,,,"Either the rating issue's promulgation date, the decision issue's approx decision date or the decision date entered by the user (for nonrating and unidentified issues)"
+request_issues,decision_date_added_at,datetime,,,,,,Denotes when a decision date was added
 request_issues,decision_review_id,integer (8) FK,,,x,,x,ID of the decision review that this request issue belongs to
 request_issues,decision_review_type,string,,,,,x,Class name of the decision review that this request issue belongs to
 request_issues,decision_sync_attempted_at,datetime,,,,,,Async job processing last attempted timestamp
