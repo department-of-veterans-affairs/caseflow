@@ -41,7 +41,7 @@ describe ExternalApi::WebexService do
             "exp": virtual_hearing.hearing.scheduled_for.end_of_day.to_i
           },
           "aud": aud,
-          "numHost": 1,
+          "numHost": 2,
           "provideShortUrls": true,
           "verticalType": "gen"
         }
@@ -92,7 +92,7 @@ describe ExternalApi::WebexService do
             "exp": 0
           },
           "aud": aud,
-          "numHost": 1,
+          "numHost": 2,
           "provideShortUrls": true,
           "verticalType": "gen"
         }

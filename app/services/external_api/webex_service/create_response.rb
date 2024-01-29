@@ -13,6 +13,10 @@ class ExternalApi::WebexService::CreateResponse < ExternalApi::WebexService::Res
     "#{base_url}#{data.dig('host', 0, 'short')}"
   end
 
+  def co_host_link
+    "#{base_url}#{data.dig('host', 1, 'short')}"
+  end
+
   def guest_link
     "#{base_url}#{data.dig('guest', 0, 'short')}"
   end

@@ -162,6 +162,10 @@ class VirtualHearing < CaseflowRecord
   # hearings scheduled pre 1/2021 are held, to ensure that there is an accurate
   # historical record of the links that were used to hold the hearing. We will
   # refactor our handling of pre- and post-1/2021 links with CASEFLOW-1336.
+  def co_host_hearing_link
+    self[:co_host_hearing_link]
+  end
+
   def guest_link
     return guest_hearing_link if guest_hearing_link.present?
 

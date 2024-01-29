@@ -20,7 +20,7 @@ class ExternalApi::WebexService
         "exp": conferenced_item.exp
       },
       "aud": @aud,
-      "numHost": 1,
+      "numHost": 2,
       "provideShortUrls": true,
       "verticalType": "gen"
     }
@@ -39,7 +39,7 @@ class ExternalApi::WebexService
         "exp": 0
       },
       "aud": @aud,
-      "numHost": 1,
+      "numHost": 2,
       "provideShortUrls": true,
       "verticalType": "gen"
     }
