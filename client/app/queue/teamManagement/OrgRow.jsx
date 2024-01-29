@@ -17,8 +17,11 @@ import {
 } from 'app/../COPY';
 
 const orgRowStyling = css({
-  '&:last_child': { textAlign: 'right' },
   borderTop: '1px solid #d6d7d9'
+});
+
+const lastCellStyling = css({
+  textAlign: 'right',
 });
 
 const dropdownStyling = css({
@@ -205,7 +208,7 @@ export const OrgRow = React.memo((props) => {
           <span className="error" role="status"><i className="fa fa-times"></i> Error</span>
         )}
       </td>
-      <td colSpan={2}>
+      <td colSpan={2} {...lastCellStyling}>
         {url && props.user_admin_path && (
           <Link to={props.user_admin_path}>
             <Button

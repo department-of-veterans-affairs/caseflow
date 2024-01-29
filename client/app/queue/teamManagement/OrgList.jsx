@@ -53,7 +53,11 @@ export const OrgList = React.memo(
         {showExcludeFromAffinityToggles && (
           <tr {...labelRowStyling}>
             <td colSpan={7}>
-            *When the box is checked, the judge will  not receive appeals with which there is an existing affinity relationship. Any appeal with an affinity relationship to that judge will immediately be released for distribution to any judge once the appeal is ready to distribute. Appeals that are tied (e.g., legacy hearing) are unaffected by this value.
+            *When the box is checked, the judge will  not receive appeals with
+             which there is an existing affinity relationship. Any appeal with an affinity
+             relationship to that judge will immediately be released for distribution to any
+             judge once the appeal is ready to distribute. Appeals that are tied
+             (e.g., legacy hearing) are unaffected by this value.
             </td>
           </tr>
         )}
