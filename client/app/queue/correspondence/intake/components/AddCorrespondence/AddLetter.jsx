@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 // import { connect } from 'react-redux';
 // import { bindActionCreators } from 'redux';
-import TextField from '../../../../../components/TextareaField';
-// import Checkbox from '../../../../../components/Checkbox';
+import TextField from '../../../../../components/TextField';
 import Button from '../../../../../components/Button';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import DateSelector from 'app/components/DateSelector';
@@ -127,7 +126,7 @@ export const NewLetter = (props) => {
   const selectResponseWindows = (option, aux) => {
     if (option.response_window_option_default) {
       setResponseWindows(option.response_window_option_default);
-    } else {
+    } else if (option.letter_titles[aux].letter_title === letterTitle) {
       setResponseWindows(option.letter_titles[aux].response_window_option_default);
     }
   };
@@ -163,6 +162,25 @@ export const NewLetter = (props) => {
     }
   };
 
+  const setRadioValue = () => {
+    for (let i = 0; i < valueOptions.length; i++) {
+      const option = valueOptions[i];
+
+      if (responseWindows === option.displayText) {
+        setStateOptions(false);
+        option.disabled = false;
+        if (responseWindows === '65 days') {
+          valueOptions[2].disabled = false;
+          break;
+        }
+      } else {
+        setStateOptions(true);
+        option.disabled = true;
+      }
+    }
+    setValueOptions(valueOptions);
+  };
+
   const letterTitlesData = () => {
     for (let i = 0; i < ADD_CORRESPONDENCE_LETTER_SELECTIONS.length; i++) {
       const option = ADD_CORRESPONDENCE_LETTER_SELECTIONS[i];
@@ -186,6 +204,7 @@ export const NewLetter = (props) => {
   useEffect(() => {
     if (responseWindows.length > 0) {
       letterTitlesData();
+      setRadioValue();
     }
   }, [responseWindows]);
 
@@ -210,19 +229,8 @@ export const NewLetter = (props) => {
 
   const changeLetterTitle = (val) => {
     setLetterTitle(val);
+    setRadioValue();
 
-    for (let i = 0; i < valueOptions.length; i++) {
-      const option = valueOptions[i];
-
-      if (responseWindows === option.displayText) {
-        setStateOptions(false);
-        option.disabled = false;
-      } else {
-        setStateOptions(true);
-        option.disabled = true;
-      }
-    }
-    setValueOptions(valueOptions);
   };
 
   useEffect(() => {
@@ -299,8 +307,9 @@ export const NewLetter = (props) => {
 
       { props.customWindows &&
         <TextField
-          label="Provide context and instruction on this task"
+          label="Number of days (Value must be between 0 and 65)"
           name="content"
+          useAriaLabel
           // readOnly={props.isReadOnly}
           // value={task.content}
           // onChange={updateTaskContent}
