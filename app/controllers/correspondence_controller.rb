@@ -43,7 +43,7 @@ class CorrespondenceController < ApplicationController
     respond_to do |format|
       format.html { "your_correspondence" }
       format.json do
-        render json: { correspondence_config: user_correspondence }
+        render json: { correspondence_config: CorrespondenceConfig.new(assignee: current_user)}
       end
     end
   end
@@ -55,7 +55,7 @@ class CorrespondenceController < ApplicationController
       respond_to do |format|
         format.html { "correspondence_team" }
         format.json do
-          render json: { correspondence_config: all_correspondence }
+          render json: { correspondence_config: CorrespondenceConfig.new(assignee: MailTeamSupervisor.singleton) }
         end
       end
     elsif MailTeam.singleton.user_has_access?(current_user) ||
@@ -65,7 +65,7 @@ class CorrespondenceController < ApplicationController
       redirect_to "/unauthorized"
     end
   end
-
+  
   def review_package
     render "correspondence/review_package"
   end
@@ -279,24 +279,6 @@ class CorrespondenceController < ApplicationController
   def veterans_with_correspondences
     veterans = Veteran.includes(:correspondences).where(correspondences: { id: Correspondence.select(:id) })
     veterans.map { |veteran| vet_info_serializer(veteran, veteran.correspondences.last) }
-  end
-
-  # Temporary method to return all CorrespondenceTasks
-  def all_correspondence
-    @tasks = CorrespondenceTask.all
-  end
-
-  # Temporary method to return CorrespondenceTasks assigned to current_user
-  def user_correspondence
-    @tasks = CorrespondenceTask.where(tasks: { assigned_to_id: current_user.id })
-  end
-
-  # Temporary task info serializer
-  def task_info_serializer(task)
-    {
-      taskType: task.type,
-      taskId: task.id
-    }
   end
 
   def auto_texts

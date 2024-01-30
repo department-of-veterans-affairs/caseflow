@@ -42,6 +42,10 @@ class CorrespondenceTask < Task
     )
   end
 
+  def correspondence
+    appeal
+  end
+
   private
 
   def status_is_valid_on_create

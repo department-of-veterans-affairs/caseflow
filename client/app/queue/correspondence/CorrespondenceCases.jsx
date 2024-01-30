@@ -29,7 +29,7 @@ class CorrespondenceCases extends React.PureComponent {
     }).
       catch((err) => {
         // allow HTTP errors to fall on the floor via the console.
-        console.error(new Error(`Problem with GET /queue/correspondence?json ${err}`));
+        console.error(new Error(`Problem with GET ${this.props.configUrl} ${err}`));
       });
   }
 
