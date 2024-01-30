@@ -9,10 +9,16 @@ class DownloadTranscriptionFileJob < CaseflowJob
   # TO-DO: confirm priority
   queue_with_priority :low_priority
 
-  retry_on(StandardError, attempts: 3, wait: :exponentially_longer) do |job, exception|
-    byebug
+  class TranscriptionFileNameError < StandardError; end
+
+  retry_on(OpenURI::HTTPError, wait: :exponentially_longer) do |job, exception|
     Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
+
+    # Raven.capture_exception(exception, extra: extra)
+    # Email?
   end
+
+  discard_on(TranscriptionFileNameError)
 
   def perform(download_link:, file_name:)
     ensure_current_user_is_set
@@ -21,14 +27,7 @@ class DownloadTranscriptionFileJob < CaseflowJob
 
     begin
       download_to_tmp(download_link)
-      @transcription_file.update!(
-        file_status: Constants.TRANSCRIPTION_FILE_STATUSES.retrieval.success,
-        date_receipt_webex: Time.zone.now
-      )
-    rescue StandardError => error
-      #OpenURI::HTTPError ????
-      @transcription_file.update!(file_status: Constants.TRANSCRIPTION_FILE_STATUSES.retrieval.failure)
-      raise error
+      mark_download_successful
     ensure
       clean_up_tmp_location
     end
@@ -37,9 +36,14 @@ class DownloadTranscriptionFileJob < CaseflowJob
   private
 
   def download_to_tmp(download_link)
-    URI.open(download_link) do |download|
-      # @file_name = parse_file_name
-      IO.copy_stream(download, tmp_location)
+    begin
+      URI.open(download_link) do |download|
+        # @file_name = parse_file_name
+        IO.copy_stream(download, tmp_location)
+      end
+    rescue OpenURI::HTTPError => error
+      @transcription_file.update!(file_status: Constants.TRANSCRIPTION_FILE_STATUSES.retrieval.failure)
+      raise error
     end
   end
 
@@ -70,10 +74,14 @@ class DownloadTranscriptionFileJob < CaseflowJob
   end
 
   def parse_appeal
-    appeal_info = @file_name.split(".").first
-    appeal_id = appeal_info.split("_")[1]
-    appeal_type = appeal_info.split("_")[2]
-    appeal_type.constantize.find(appeal_id)
+    begin
+      appeal_info = @file_name.split(".").first
+      appeal_id = appeal_info.split("_")[1]
+      appeal_type = appeal_info.split("_")[2]
+      appeal_type.constantize.find(appeal_id)
+    rescue StandardError
+      raise TranscriptionFileNameError, "File name missing sufficient appeal/hearing details"
+    end
   end
 
   def docket_number
@@ -95,5 +103,12 @@ class DownloadTranscriptionFileJob < CaseflowJob
       file.file_type = file_type
       file.created_by_id = RequestStore[:current_user]
     end
+  end
+
+  def mark_download_successful
+    @transcription_file.update!(
+      file_status: Constants.TRANSCRIPTION_FILE_STATUSES.retrieval.success,
+      date_receipt_webex: Time.zone.now
+    )
   end
 end
