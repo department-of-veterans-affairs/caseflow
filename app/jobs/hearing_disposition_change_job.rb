@@ -23,7 +23,7 @@ class HearingDispositionChangeJob < CaseflowJob
 
     hearing_disposition_tasks.each do |task|
       # Skip task unless there is a hearing associated with the task and it was held more than a day ago.
-      next unless task&.hearing&.scheduled_for &.< 24.hours.ago
+      next unless task&.hearing&.scheduled_for&.< 24.hours.ago
 
       hearing_ids.push(task.hearing.id)
       label = update_task_by_hearing_disposition(task)

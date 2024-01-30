@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_12_14_201518) do
+ActiveRecord::Schema.define(version: 2024_01_10_185623) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -2254,6 +2254,11 @@ ActiveRecord::Schema.define(version: 2023_12_14_201518) do
   add_foreign_key "correspondence_intakes", "users"
   add_foreign_key "correspondence_relations", "correspondences"
   add_foreign_key "correspondence_relations", "correspondences", column: "related_correspondence_id"
+  add_foreign_key "correspondences", "correspondence_types"
+  add_foreign_key "correspondences", "package_document_types"
+  add_foreign_key "correspondences", "users", column: "assigned_by_id"
+  add_foreign_key "correspondences", "users", column: "updated_by_id"
+  add_foreign_key "correspondences", "veterans"
   add_foreign_key "correspondences_appeals", "appeals"
   add_foreign_key "correspondences_appeals", "correspondences"
   add_foreign_key "dispatch_tasks", "legacy_appeals", column: "appeal_id"
