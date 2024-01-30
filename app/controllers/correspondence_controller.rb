@@ -41,10 +41,28 @@ class CorrespondenceController < ApplicationController
 
   def correspondence_cases
     respond_to do |format|
-      format.html { "correspondence_cases" }
+      format.html { "your_correspondence" }
       format.json do
-        render json: { vetCorrespondences: veterans_with_correspondences }
+        render json: { correspondence_config: CorrespondenceConfig.new(assignee: current_user) }
       end
+    end
+  end
+
+  def correspondence_team
+    if MailTeamSupervisor.singleton.user_has_access?(current_user) ||
+       BvaIntake.singleton.user_is_admin?(current_user) ||
+       MailTeam.singleton.user_is_admin?(current_user)
+      respond_to do |format|
+        format.html { "correspondence_team" }
+        format.json do
+          render json: { correspondence_config: CorrespondenceConfig.new(assignee: MailTeamSupervisor.singleton) }
+        end
+      end
+    elsif MailTeam.singleton.user_has_access?(current_user) ||
+          BvaIntake.singleton.user_has_access?(current_user)
+      redirect_to "/queue/correspondence"
+    else
+      redirect_to "/unauthorized"
     end
   end
 
@@ -182,7 +200,7 @@ class CorrespondenceController < ApplicationController
       Rails.logger.error(error.full_message)
       data ||= demo_data
     end
-    data["documentTypes"].map { |document_type| { id: document_type["id"], name: document_type["description"] } }
+    data.map { |document_type| { id: document_type["id"], name: document_type["description"] } }
   end
 
   def demo_data
@@ -201,7 +219,9 @@ class CorrespondenceController < ApplicationController
 
   def verify_correspondence_access
     return true if MailTeamSupervisor.singleton.user_has_access?(current_user) ||
-                   MailTeam.singleton.user_has_access?(current_user)
+                   MailTeam.singleton.user_has_access?(current_user) ||
+                   BvaIntake.singleton.user_is_admin?(current_user) ||
+                   MailTeam.singleton.user_is_admin?(current_user)
 
     redirect_to "/unauthorized"
   end
