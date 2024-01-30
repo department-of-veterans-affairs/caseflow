@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CorrespondenceResponseLettersController < ApplicationController
   def create
     correspondence_response_letter = CorrespondenceResponseLetter.new(correspondence_response_letter_params)
