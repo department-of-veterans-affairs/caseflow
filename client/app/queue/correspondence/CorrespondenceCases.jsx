@@ -11,11 +11,6 @@ import CorrespondenceTable from './CorrespondenceTable';
 import QueueOrganizationDropdown from '../components/QueueOrganizationDropdown';
 import Alert from '../../components/Alert';
 
-// import {
-//   initialAssignTasksToUser,
-//   initialCamoAssignTasksToVhaProgramOffice
-// } from '../QueueActions';
-
 const CorrespondenceCases = (props) => {
   const organizations = props.organizations;
   const currentAction = useSelector((state) => state.reviewPackage.lastAction);
