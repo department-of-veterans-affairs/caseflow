@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import ApiUtil from '../../util/ApiUtil';
 import { loadCorrespondenceConfig } from './correspondenceReducer/correspondenceActions';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
@@ -24,23 +23,16 @@ const CorrespondenceCases = (props) => {
 
   const [vetName, setVetName] = useState('');
 
-  const getCorrespondenceConfig = () => {
-    return ApiUtil.get(configUrl)
-      .then((response) => {
-        const returnedObject = response.body;
-        const correspondenceConfig = returnedObject.correspondence_config;
-
-        dispatch(loadCorrespondenceConfig(correspondenceConfig));
-      })
-      .catch((err) => {
-        console.error(new Error(`Problem with GET ${configUrl} ${err}`));
-      });
-  };
+  useEffect(() => {
+    dispatch(loadCorrespondenceConfig(configUrl));
+  }, [dispatch, configUrl]);
 
   useEffect(() => {
     // Retry the request after a delay
     setTimeout(() => {
-      getCorrespondenceConfig();
+      if (configUrl) {
+        dispatch(loadCorrespondenceConfig(configUrl));
+      }
     }, 1000);
   }, [configUrl]);
 
@@ -56,7 +48,7 @@ const CorrespondenceCases = (props) => {
   return (
     <React.Fragment>
       <AppSegment filledBackground>
-        {Object.keys(veteranInformation).length > 0 &&
+      {(veteranInformation?.veteran_name?.first_name && veteranInformation?.veteran_name?.last_name) &&
           currentAction.action_type === 'DeleteReviewPackage' && (
             <Alert
               type="success"

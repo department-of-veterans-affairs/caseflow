@@ -1,4 +1,5 @@
 import { ACTIONS } from './correspondenceConstants';
+import ApiUtil from '../../../util/ApiUtil';
 
 export const loadCurrentCorrespondence = (currentCorrespondence) =>
   (dispatch) => {
@@ -40,14 +41,22 @@ export const loadVetCorrespondence = (vetCorrespondences) =>
     });
   };
 
-export const loadCorrespondenceConfig = (correspondenceConfig) =>
+export const loadCorrespondenceConfig = (configUrl) =>
   (dispatch) => {
-    dispatch({
-      type: ACTIONS.LOAD_CORRESPONDENCE_CONFIG,
-      payload: {
-        correspondenceConfig
-      }
-    });
+    ApiUtil.get(configUrl)
+      .then((response) => {
+        const returnedObject = response.body;
+        const correspondenceConfig = returnedObject.correspondence_config;
+        dispatch({
+          type: ACTIONS.LOAD_CORRESPONDENCE_CONFIG,
+          payload: {
+            correspondenceConfig
+          }
+        });
+      })
+      .catch((err) => {
+        console.error(new Error(`Problem with GET ${configUrl} ${err}`));
+      });
   };
 
 export const updateRadioValue = (value) =>
