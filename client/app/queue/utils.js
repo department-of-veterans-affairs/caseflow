@@ -565,6 +565,10 @@ export const prepareAppealForSearchStore = (appeals) => {
       veteranFullName: appeal.attributes.veteran_full_name,
       veteranFileNumber: appeal.attributes.veteran_file_number,
       isPaperCase: appeal.attributes.paper_case,
+      readableHearingRequestType:
+        appeal.attributes.readable_hearing_request_type,
+      readableOriginalHearingRequestType:
+        appeal.attributes.readable_original_hearing_request_type,
       vacateType: appeal.attributes.vacate_type,
     };
 
@@ -591,9 +595,13 @@ export const prepareAppealForSearchStore = (appeals) => {
       veteranGender: appeal.attributes.veteran_gender,
       veteranAddress: appeal.attributes.veteran_address,
       veteranParticipantId: appeal.attributes.veteran_participant_id,
+      closestRegionalOffice: appeal.attributes.closest_regional_office,
+      closestRegionalOfficeLabel:
+        appeal.attributes.closest_regional_office_label,
       externalId: appeal.attributes.external_id,
       status: appeal.attributes.status,
       decisionDate: appeal.attributes.decision_date,
+      regionalOffice: appeal.attributes.regional_office,
       caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
       availableHearingLocations: prepareAppealAvailableHearingLocationsForStore(
         appeal
