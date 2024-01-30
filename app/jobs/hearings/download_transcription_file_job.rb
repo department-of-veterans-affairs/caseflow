@@ -9,7 +9,8 @@ class DownloadTranscriptionFileJob < CaseflowJob
   # TO-DO: confirm priority
   queue_with_priority :low_priority
 
-  retry_on(StandardError, attempts: 10, wait: :exponentially_longer) do |job, exception|
+  retry_on(StandardError, attempts: 3, wait: :exponentially_longer) do |job, exception|
+    byebug
     Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
   end
 
@@ -24,8 +25,11 @@ class DownloadTranscriptionFileJob < CaseflowJob
         file_status: Constants.TRANSCRIPTION_FILE_STATUSES.retrieval.success,
         date_receipt_webex: Time.zone.now
       )
+    rescue StandardError => error
+      #OpenURI::HTTPError ????
+      @transcription_file.update!(file_status: Constants.TRANSCRIPTION_FILE_STATUSES.retrieval.failure)
+      raise error
     ensure
-      byebug
       clean_up_tmp_location
     end
   end
@@ -33,14 +37,9 @@ class DownloadTranscriptionFileJob < CaseflowJob
   private
 
   def download_to_tmp(download_link)
-    begin
-      URI.open(download_link) do |download|
-        # @file_name = parse_file_name
-        IO.copy_stream(download, tmp_location)
-      end
-    rescue OpenURI::HTTPError => error
-      @transcription_file.update!(file_status: Constants.TRANSCRIPTION_FILE_STATUSES.retrieval.failure)
-      raise error
+    URI.open(download_link) do |download|
+      # @file_name = parse_file_name
+      IO.copy_stream(download, tmp_location)
     end
   end
 
@@ -59,7 +58,7 @@ class DownloadTranscriptionFileJob < CaseflowJob
   end
 
   def file_type
-    @file_name.split(".")[-1]
+    @file_name.split(".").last
   end
 
   def appeal
@@ -71,8 +70,9 @@ class DownloadTranscriptionFileJob < CaseflowJob
   end
 
   def parse_appeal
-    appeal_id = @file_name.split("_")[1]
-    appeal_type = @file_name.split("_")[2]
+    appeal_info = @file_name.split(".").first
+    appeal_id = appeal_info.split("_")[1]
+    appeal_type = appeal_info.split("_")[2]
     appeal_type.constantize.find(appeal_id)
   end
 
@@ -93,7 +93,6 @@ class DownloadTranscriptionFileJob < CaseflowJob
       appeal_type: appeal&.class&.name
     ) do |file|
       file.file_type = file_type
-      file.date_receipt_webex = Time.zone.today
       file.created_by_id = RequestStore[:current_user]
     end
   end
