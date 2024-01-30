@@ -42,7 +42,6 @@ class DecisionReviewIntake < Intake
     # Existing claimant can be changed in any way, including their class type. Destroying and
     # re-creating ensures that associated records get cleaned up and the correct validations run.
     Claimant.find_by(decision_review: detail)&.destroy!
-
     claimant = claimant_class_name.constantize.create!(
       decision_review: detail,
       participant_id: participant_id,
