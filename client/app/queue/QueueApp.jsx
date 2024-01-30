@@ -97,6 +97,7 @@ import TASK_ACTIONS from '../../constants/TASK_ACTIONS';
 import TASK_STATUSES from '../../constants/TASK_STATUSES';
 import USER_ROLE_TYPES from '../../constants/USER_ROLE_TYPES';
 import DECISION_TYPES from '../../constants/APPEAL_DECISION_TYPES';
+import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 import { FlashAlerts } from '../nonComp/components/Alerts';
 
 import { PulacCerulloReminderModal } from './pulacCerullo/PulacCerulloReminderModal';
@@ -744,14 +745,14 @@ class QueueApp extends React.PureComponent {
             <PageRoute
               exact
               path="/queue/correspondence/team"
-              title={`${PAGE_TITLES.CORRESPONDENCE_CASES_LIST}`}
+              title={`${QUEUE_CONFIG.CORRESPONDENCE_ORG_TABLE_TITLE}`}
               render={this.routedCorrespondenceCase}
             />
 
             <PageRoute
               exact
               path="/queue/correspondence"
-              title={`${PAGE_TITLES.YOUR_CORRESPONDENCE_TITLE}`}
+              title={`${QUEUE_CONFIG.CORRESPONDENCE_USER_TABLE_TITLE}`}
               render={this.routedCorrespondenceCase}
             />
 
