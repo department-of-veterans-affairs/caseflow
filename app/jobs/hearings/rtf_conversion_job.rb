@@ -17,7 +17,7 @@ class Hearings::RTFConversionJob < CaseflowJob
 
   def perform
     vtt_file_paths = retreive_files_from_s3(files_waiting_for_conversion)
-    convert_and_upload_files(["app/jobs/hearings/Testing Transcription Enablement-20240125 1515-1.vtt"])
+    convert_and_upload_files(["app/jobs/hearings/Transcript_IC_Webex.vtt"])
   end
 
   # Get transcription files waiting for file conversion
@@ -76,6 +76,7 @@ class Hearings::RTFConversionJob < CaseflowJob
   def convert_to_rtf(path)
     vtt = WebVTT.read(path)
     doc = RTF::Document.new(RTF::Font.new(RTF::Font::ROMAN, "Times New Roman"))
+    transcript_info = create_header_page(vtt)
     styles = RTF::ParagraphStyle.new
     vtt.cues.each do |cue|
       doc.paragraph(styles) do |style|
@@ -84,7 +85,24 @@ class Hearings::RTFConversionJob < CaseflowJob
         style.paragraph << cue.text
       end
     end
-    File.open(rtf_folder, "w") { |file| file.write(doc.to_rtf) }
+    File.open('document.rtf', "w") { |file| file.write(doc.to_rtf) }
+  end
+
+  # Create header page
+  def create_header_page(transcript)
+    opening = transcript.cues[0]
+    judge = opening.identifier.scan(/[a-zA-Z]+/).join(" ")
+    veteran = /Veteran[^a]+([A-Z][a-z]+\s(?:[A-Z]\.\s)?[A-Z][A-Za-z]+)/.match(opening.text)
+    date = /[Tt]oday.+\s([A-Z][a-z]+ \d+\w{2},\s\d{4})/.match(opening.text)
+    representative = /represented\sby(\s|\sMs\.\s|\sMr\.\s|\sMrs\.\s)([A-Z][a-z]+\s(?:[A-Z]\.\s)?[A-Za-z]+)/
+      .match(opening.text)
+
+    {
+      judge: judge,
+      veteran: veteran && veteran[1] || "",
+      date: date && date[1] || "",
+      representative: representative && representative[2] || ""
+    }
   end
 
   # Create a transcription file record
