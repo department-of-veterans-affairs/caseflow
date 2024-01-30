@@ -18,7 +18,9 @@ class DownloadTranscriptionFileJob < CaseflowJob
     # Email?
   end
 
-  discard_on(TranscriptionFileNameError)
+  discard_on(TranscriptionFileNameError) do |job, exception|
+    Rails.logger.warn("Discarding #{job.class.name} (#{job.job_id})failed with error: #{exception}")
+  end
 
   def perform(download_link:, file_name:)
     ensure_current_user_is_set
@@ -34,6 +36,8 @@ class DownloadTranscriptionFileJob < CaseflowJob
   end
 
   private
+
+  attr_reader :file_name
 
   def download_to_tmp(download_link)
     begin
@@ -52,35 +56,43 @@ class DownloadTranscriptionFileJob < CaseflowJob
   # end
 
   def tmp_location
-    File.join(Rails.root, "tmp", "transcription_files", @file_name)
+    File.join(Rails.root, "tmp", "transcription_files", file_name)
   end
 
   def clean_up_tmp_location
-    return unless @file_name && File.exist?(tmp_location)
+    return unless file_name && File.exist?(tmp_location)
 
     File.delete(tmp_location)
   end
 
   def file_type
-    @file_name.split(".").last
+    file_name.split(".").last
+  end
+
+  VALID_FILE_TYPES = ["mp4", "vtt"].freeze
+
+  def file_type_invalid?
+    return unless VALID_FILE_TYPES.exclude?(file_type)
+
+    fail TranscriptionFileNameError, "Invalid file type"
   end
 
   def appeal
-    @appeal = parse_appeal if appeal_attributes_present?
+    @appeal ||= parse_appeal if appeal_attributes_present?
   end
 
   def appeal_attributes_present?
-    @file_name.include?("Appeal")
+    file_name.include?("Appeal")
   end
 
   def parse_appeal
     begin
-      appeal_info = @file_name.split(".").first
+      appeal_info = file_name.split(".").first
       appeal_id = appeal_info.split("_")[1]
       appeal_type = appeal_info.split("_")[2]
       appeal_type.constantize.find(appeal_id)
     rescue StandardError
-      raise TranscriptionFileNameError, "File name missing sufficient appeal/hearing details"
+      raise TranscriptionFileNameError, "File name missing sufficient appeal/hearing identifiers"
     end
   end
 
@@ -90,17 +102,17 @@ class DownloadTranscriptionFileJob < CaseflowJob
 
   # TO-DO: How to implement parsing docket number from hearing day?
   def docket_number_from_hearing_day
-    byebug
+    fail NotImplementedError
   end
 
   def find_or_create_transcription_file
     TranscriptionFile.find_or_create_by(
-      file_name: @file_name,
+      file_name: file_name,
       docket_number: docket_number,
       appeal_id: appeal&.id,
       appeal_type: appeal&.class&.name
     ) do |file|
-      file.file_type = file_type
+      file.file_type = file_type unless file_type_invalid?
       file.created_by_id = RequestStore[:current_user]
     end
   end
