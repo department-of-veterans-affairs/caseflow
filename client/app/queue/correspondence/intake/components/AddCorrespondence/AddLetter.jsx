@@ -95,6 +95,7 @@ export const NewLetter = (props) => {
   const [stateOptions, setStateOptions] = useState(true);
 
   const [responseWindows, setResponseWindows] = useState('');
+  const naValue = 'N/A';
 
   const radioOptions = [
     { displayText: '65 days',
@@ -111,7 +112,7 @@ export const NewLetter = (props) => {
   const [valueOptions, setValueOptions] = useState(radioOptions);
 
   const handleCustomWindowState = (currentOpt) => {
-    if (currentOpt === 'Custom') {
+    if (currentOpt === radioOptions[2].value) {
       setResponseWindows(radioOptions[2].value);
       setCustomResponseWindowState(true);
       setValueOptions(valueOptions);
@@ -132,7 +133,7 @@ export const NewLetter = (props) => {
     } else if (option.letter_titles[aux].letter_title === letterTitle) {
       setResponseWindows(option.letter_titles[aux].response_window_option_default);
     }
-    if (responseWindows !== 'Custom') {
+    if (responseWindows !== radioOptions[2].value) {
       setCustomResponseWindowState(false);
     }
   };
@@ -149,7 +150,7 @@ export const NewLetter = (props) => {
     }
 
     if (subCate.length === 0) {
-      setLetterSubSelector([{ label: 'N/A', value: 'N/A' }]);
+      setLetterSubSelector([{ label: naValue, value: naValue }]);
     } else {
       setLetterSubSelector(subCate);
     }
@@ -162,7 +163,7 @@ export const NewLetter = (props) => {
     }
 
     if (listReason.length === 0) {
-      setLetterSubReason([{ label: 'N/A', value: 'N/A' }]);
+      setLetterSubReason([{ label: naValue, value: naValue }]);
     } else {
       setLetterSubReason(listReason);
     }
@@ -215,7 +216,7 @@ export const NewLetter = (props) => {
 
   useEffect(() => {
     if (responseWindows.length > 0) {
-      if (responseWindows !== 'Custom') {
+      if (responseWindows !== radioOptions[2].value) {
         letterTitlesData();
       }
       setRadioValue();
