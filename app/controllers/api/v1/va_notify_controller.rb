@@ -20,7 +20,7 @@ class Api::V1::VaNotifyController < Api::ApplicationController
   def email_update
     redis.set("email_update:#{required_params[:id]}:#{required_params[:status]}", 0)
 
-    render json: { message: "Email notification successfully updated: ID " + required_params[:id] }
+    render json: { message: "Email notification successfully updated: ID #{required_params[:id]}" }
   end
 
   # Purpose: Finds and updates notification if type is SMS
@@ -31,7 +31,7 @@ class Api::V1::VaNotifyController < Api::ApplicationController
   def sms_update
     redis.set("sms_update:#{required_params[:id]}:#{required_params[:status]}", 0)
 
-    render json: { message: "SMS notification successfully updated: ID " + required_params[:id] }
+    render json: { message: "SMS notification successfully updated: ID #{required_params[:id]}" }
   end
 
   def required_params
