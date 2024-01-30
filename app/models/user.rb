@@ -415,6 +415,14 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     end
   end
 
+  def correspondence_queue_tabs
+    [
+      correspondence_assigned_tasks_tab,
+      correspondence_in_progress_tasks_tab,
+      correspondence_completed_tasks_tab
+    ]
+  end
+
   def self.default_active_tab
     Constants.QUEUE_CONFIG.INDIVIDUALLY_ASSIGNED_TASKS_TAB_NAME
   end
@@ -429,6 +437,18 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def completed_tasks_tab
     ::CompletedTasksTab.new(assignee: self, show_regional_office_column: show_regional_office_in_queue?)
+  end
+
+  def correspondence_assigned_tasks_tab
+    ::CorrespondenceAssignedTasksTab.new(assignee: self)
+  end
+
+  def correspondence_in_progress_tasks_tab
+    ::CorrespondenceInProgressTasksTab.new(assignee: self)
+  end
+
+  def correspondence_completed_tasks_tab
+    ::CorrespondenceCompletedTasksTab.new(assignee: self)
   end
 
   def can_edit_unrecognized_poa?

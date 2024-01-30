@@ -21,7 +21,7 @@ class CorrespondenceCases extends React.PureComponent {
 
   // grabs correspondences and loads into intakeCorrespondence redux store.
   getVeteransWithCorrespondence() {
-    return ApiUtil.get('/queue/correspondence?json').then((response) => {
+    return ApiUtil.get(this.props.configUrl).then((response) => {
       const returnedObject = response.body;
       const vetCorrespondences = returnedObject.vetCorrespondences;
 
@@ -29,7 +29,7 @@ class CorrespondenceCases extends React.PureComponent {
     }).
       catch((err) => {
         // allow HTTP errors to fall on the floor via the console.
-        console.error(new Error(`Problem with GET /queue/correspondence?json ${err}`));
+        console.error(new Error(`Problem with GET ${this.props.configUrl} ${err}`));
       });
   }
 
@@ -81,7 +81,8 @@ CorrespondenceCases.propTypes = {
   loadVetCorrespondence: PropTypes.func,
   vetCorrespondences: PropTypes.array,
   currentAction: PropTypes.object,
-  veteranInformation: PropTypes.object
+  veteranInformation: PropTypes.object,
+  configUrl: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
