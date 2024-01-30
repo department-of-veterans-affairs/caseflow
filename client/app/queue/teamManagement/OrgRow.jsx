@@ -191,7 +191,6 @@ export const OrgRow = React.memo((props) => {
           <Button
             name={TEAM_MANAGEMENT_UPDATE_ROW_BUTTON}
             id={`${props.id}`}
-            classNames={['usa-button-secondary']}
             onClick={handleUpdate}
           />
         </td>
