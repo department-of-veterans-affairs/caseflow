@@ -69,7 +69,7 @@ class DownloadTranscriptionFileJob < CaseflowJob
     file_name.split(".").last
   end
 
-  VALID_FILE_TYPES = ["mp4", "vtt"].freeze
+  VALID_FILE_TYPES = %w[mp4 vtt].freeze
 
   def file_type_invalid?
     return unless VALID_FILE_TYPES.exclude?(file_type)
