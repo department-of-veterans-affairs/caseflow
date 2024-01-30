@@ -76,27 +76,40 @@ class Hearings::RTFConversionJob < CaseflowJob
   def convert_to_rtf(path)
     vtt = WebVTT.read(path)
     doc = RTF::Document.new(RTF::Font.new(RTF::Font::ROMAN, "Times New Roman"))
-    transcript_info = create_header_page(vtt)
-    styles = RTF::ParagraphStyle.new
-    vtt.cues.each do |cue|
-      doc.paragraph(styles) do |style|
-        style.paragraph << cue.identifier
-        style.paragraph << cue.start.to_s + " --> " + cue.end.to_s
-        style.paragraph << cue.text
-      end
-    end
-    File.open('document.rtf', "w") { |file| file.write(doc.to_rtf) }
+    transcript_info = create_header_page(vtt, doc)
+    # byebug
+    # styles = RTF::ParagraphStyle.new
+    # vtt.cues.each do |cue|
+    #   doc.paragraph(styles) do |style|
+    #     style.paragraph << cue.identifier
+    #     style.paragraph << cue.start.to_s + " --> " + cue.end.to_s
+    #     style.paragraph << cue.text
+    #   end
+    # end
+    # File.open('document.rtf', "w") { |file| file.write(doc.to_rtf) }
   end
 
   # Create header page
-  def create_header_page(transcript)
+  def create_header_page(transcript, document)
     opening = transcript.cues[0]
     judge = opening.identifier.scan(/[a-zA-Z]+/).join(" ")
     veteran = /Veteran[^a]+([A-Z][a-z]+\s(?:[A-Z]\.\s)?[A-Z][A-Za-z]+)/.match(opening.text)
     date = /[Tt]oday.+\s([A-Z][a-z]+ \d+\w{2},\s\d{4})/.match(opening.text)
     representative = /represented\sby(\s|\sMs\.\s|\sMr\.\s|\sMrs\.\s)([A-Z][a-z]+\s(?:[A-Z]\.\s)?[A-Za-z]+)/
       .match(opening.text)
+    border_width = 40
+    document.table(2, 1, 8500) do |table|
+      table[0].border_width = border_width
+      table[1].border_width = border_width
+      table[1][0].foreground(RTF::Colour.new(255, 255, 255))
+      table[0].shading_colour = RTF::Colour.new(0, 0, 0)
+      table[0][0] << "Department of Veterans Affairs"
+    end
+    File.open('document.rtf', "w") { |file| file.write(document.to_rtf) }
 
+    # document.paragraph(styles) do |styles|
+    #   style.paragraph << "Department of Veterans Affairs"
+    # end
     {
       judge: judge,
       veteran: veteran && veteran[1] || "",
