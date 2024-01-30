@@ -158,42 +158,40 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
 
   describe "document_type_correspondence" do
     let(:document_types_response) do
-      {
-        "documentTypes" => [
-          {
-            "id" => 150,
+      [
+        {
+          "id" => 150,
+          "createDateTime" => "2011-12-09",
+          "modifiedDateTime" => "2023-07-30T21:04:14",
+          "name" => "L141",
+          "description" => "VA Form 21-8056",
+          "isUserUploadable" => true,
+          "is526" => false,
+          "documentCategory" => {
+            "id" => 70,
             "createDateTime" => "2011-12-09",
-            "modifiedDateTime" => "2023-07-30T21:04:14",
-            "name" => "L141",
-            "description" => "VA Form 21-8056",
-            "isUserUploadable" => true,
-            "is526" => false,
-            "documentCategory" => {
-              "id" => 70,
-              "createDateTime" => "2011-12-09",
-              "modifiedDateTime" => "2014-04-21T11:49:07",
-              "description" => "Correspondence",
-              "subDescription" => "Miscellaneous"
-            }
-          },
-          {
-            "id" => 152,
-            "createDateTime" => "2011-12-09",
-            "modifiedDateTime" => "2023-07-30T21:04:14",
-            "name" => "L143",
-            "description" => "VA Form 21-8358",
-            "isUserUploadable" => true,
-            "is526" => false,
-            "documentCategory" => {
-              "id" => 70,
-              "createDateTime" => "2011-12-09",
-              "modifiedDateTime" => "2014-04-21T11:49:07",
-              "description" => "Correspondence",
-              "subDescription" => "Miscellaneous"
-            }
+            "modifiedDateTime" => "2014-04-21T11:49:07",
+            "description" => "Correspondence",
+            "subDescription" => "Miscellaneous"
           }
-        ]
-      }
+        },
+        {
+          "id" => 152,
+          "createDateTime" => "2011-12-09",
+          "modifiedDateTime" => "2023-07-30T21:04:14",
+          "name" => "L143",
+          "description" => "VA Form 21-8358",
+          "isUserUploadable" => true,
+          "is526" => false,
+          "documentCategory" => {
+            "id" => 70,
+            "createDateTime" => "2011-12-09",
+            "modifiedDateTime" => "2014-04-21T11:49:07",
+            "description" => "Correspondence",
+            "subDescription" => "Miscellaneous"
+          }
+        }
+      ]
     end
 
     before do
