@@ -24,21 +24,12 @@ export const AddLetter = (props) => {
   };
 
   const [unrelatedTasksCanContinue, setUnrelatedTasksCanContinue] = useState(true);
-  // const [customResponseWindowState, setCustomResponseWindowState] = useState(false);
 
   const removeLetter = (index) => {
     const restLetters = letters.filter((letter) => letter !== index);
 
     setLetters(restLetters);
   };
-
-  // const handleCustomWindowState = (currentOpt) => {
-  //   if (currentOpt === 'Other') {
-  //     setCustomResponseWindowState(true);
-  //   } else {
-  //     setCustomResponseWindowState(false);
-  //   }
-  // };
 
   useEffect(() => {
     onContinueStatusChange(unrelatedTasksCanContinue);
@@ -85,7 +76,6 @@ AddLetter.propTypes = {
   index: PropTypes.number,
   onContinueStatusChange: PropTypes.func,
   customResponseWindowState: PropTypes.bool,
-  // handleCustomWindowState: PropTypes.func,
 };
 
 export const NewLetter = (props) => {
@@ -126,7 +116,10 @@ export const NewLetter = (props) => {
       setCustomResponseWindowState(true);
       setValueOptions(valueOptions);
     } else {
+      valueOptions[0].disabled = false;
+      setResponseWindows(radioOptions[0].value);
       setCustomResponseWindowState(false);
+      setValueOptions(valueOptions);
     }
   };
 
@@ -138,6 +131,9 @@ export const NewLetter = (props) => {
       setResponseWindows(option.response_window_option_default);
     } else if (option.letter_titles[aux].letter_title === letterTitle) {
       setResponseWindows(option.letter_titles[aux].response_window_option_default);
+    }
+    if (responseWindows !== 'Custom') {
+      setCustomResponseWindowState(false);
     }
   };
 
@@ -181,6 +177,8 @@ export const NewLetter = (props) => {
         option.disabled = false;
         if (responseWindows === '65 days') {
           valueOptions[2].disabled = false;
+          valueOptions[1].disabled = true;
+          // setResponseWindows(radioOptions[0].value);
           break;
         }
       } else {
@@ -217,7 +215,9 @@ export const NewLetter = (props) => {
 
   useEffect(() => {
     if (responseWindows.length > 0) {
-      letterTitlesData();
+      if (responseWindows !== 'Custom') {
+        letterTitlesData();
+      }
       setRadioValue();
     }
   }, [responseWindows]);
