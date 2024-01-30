@@ -39,14 +39,22 @@ class CorrespondenceConfig < QueueConfig
   end
 
   def table_title
-    assignee_is_org? ? "Correspondence cases" : "Your correspondence"
+    if assignee_is_org?
+      Constants.QUEUE_CONFIG.CORRESPONDENCE_ORG_TABLE_TITLE
+    else
+      Constants.QUEUE_CONFIG.CORRESPONDENCE_USER_TABLE_TITLE
+    end
   end
 
   def default_active_tab
-    assignee_is_org? ? "correspondence_unassigned" : "correspondence_assigned"
+    if assignee_is_org?
+      Constants.QUEUE_CONFIG.CORRESPONDENCE_UNASSIGNED_TASKS_TAB_NAME
+    else
+      Constants.QUEUE_CONFIG.CORRESPONDENCE_ASSIGNED_TASKS_TAB_NAME
+    end
   end
 
   def default_sorting_column
-    "vaDor"
+    Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name
   end
 end

@@ -63,6 +63,9 @@
   "CORRESPONDENCE_PENDING_TASKS_DESCRIPTION": "Correspondence that is currently assigned to non-mail team users:",
   "CORRESPONDENCE_UNASSIGNED_TASKS_DESCRIPTION": "Correspondence owned by the Mail team are unassigned to an individual:",
 
+  "CORRESPONDENCE_ORG_TABLE_TITLE": "Correspondence cases",
+  "CORRESPONDENCE_USER_TABLE_TITLE": "Your correspondence",
+
 
   "COLUMNS": {
     "ACTION_TYPE": {
