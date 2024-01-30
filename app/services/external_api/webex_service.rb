@@ -3,13 +3,15 @@
 require "json"
 
 class ExternalApi::WebexService
-  def initialize(host:, port:, aud:, apikey:, domain:, api_endpoint:)
+  def initialize(host:, port:, aud:, apikey:, domain:, api_endpoint:, from:, to:)
     @host = host
     @port = port
     @aud = aud
     @apikey = apikey
     @domain = domain
     @api_endpoint = api_endpoint
+    @from = from
+    @to = to
   end
 
   def create_conference(conferenced_item)
@@ -49,6 +51,11 @@ class ExternalApi::WebexService
     ExternalApi::WebexService::DeleteResponse.new(resp)
   end
 
+  def get_recordings_list
+    ExternalApi::WebexService::CreateResponse.new(resp)
+    return if resp.nil?
+  end
+
   private
 
   # :nocov:
@@ -59,6 +66,9 @@ class ExternalApi::WebexService
     request.read_timeout = 300
     request.body = body.to_json unless body.nil?
 
+    # We need a better way to change up request.query based on recordings and details
+    request.query = (method == :get) ? { "from": @from, "to": @to } : nil
+
     request.headers = { "Authorization": "Bearer #{@apikey}", "Content-Type": "application/json" }
 
     MetricsService.record(
@@ -66,7 +76,12 @@ class ExternalApi::WebexService
       service: :webex,
       name: @api_endpoint
     ) do
-      HTTPI.post(request)
+      case method
+      when :post
+        HTTPI.post(request)
+      when :get
+        HTTPI.get(request)
+      end
     end
   end
   # :nocov:
