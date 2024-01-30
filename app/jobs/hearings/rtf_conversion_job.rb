@@ -76,6 +76,8 @@ class Hearings::RTFConversionJob < CaseflowJob
   def convert_to_rtf(path)
     vtt = WebVTT.read(path)
     doc = RTF::Document.new(RTF::Font.new(RTF::Font::ROMAN, "Times New Roman"))
+    doc.style.left_margin = 1300
+    doc.style.right_margin = 1300
     transcript_info = create_header_page(vtt, doc)
     # byebug
     # styles = RTF::ParagraphStyle.new
@@ -98,12 +100,14 @@ class Hearings::RTFConversionJob < CaseflowJob
     representative = /represented\sby(\s|\sMs\.\s|\sMr\.\s|\sMrs\.\s)([A-Z][a-z]+\s(?:[A-Z]\.\s)?[A-Za-z]+)/
       .match(opening.text)
     border_width = 40
-    document.table(2, 1, 8500) do |table|
-      table[0].border_width = border_width
+    document.table(2, 1, 9200) do |table|
+      table.cell_margin = 30
+      header_row = table[0]
+      header_row.border_width = border_width
+      header_row.shading_colour = RTF::Colour.new(0, 0, 0)
       table[1].border_width = border_width
-      table[1][0].foreground(RTF::Colour.new(255, 255, 255))
-      table[0].shading_colour = RTF::Colour.new(0, 0, 0)
-      table[0][0] << "Department of Veterans Affairs"
+      header_row[0] << " Department of Veterans Affairs"
+      generate_header_info(table[1][0])
     end
     File.open('document.rtf', "w") { |file| file.write(document.to_rtf) }
 
@@ -116,6 +120,20 @@ class Hearings::RTFConversionJob < CaseflowJob
       date: date && date[1] || "",
       representative: representative && representative[2] || ""
     }
+  end
+
+  def generate_header_info(row)
+    row.line_break
+    row << "                                TRANSCRIPT OF HEARING"
+    row.line_break
+    row.line_break
+    row << "                                           BEFORE"
+    row.line_break
+    row.line_break
+    row << "                             BOARD OF VETERANS' APPEALS"
+    row.line_break
+    row.line_break
+    row << "                                 WASHINGTON, D.C. 20420"
   end
 
   # Create a transcription file record
