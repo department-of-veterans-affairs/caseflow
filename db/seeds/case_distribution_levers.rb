@@ -16,7 +16,6 @@ module Seeds
           data_type: Constants.ACD_LEVERS.data_types.number,
           value: 0.8,
           unit: '%',
-          is_toggle_active: false,
           is_disabled_in_ui: true,
           min_value: 0,
           max_value: nil,
@@ -31,7 +30,6 @@ module Seeds
           data_type: Constants.ACD_LEVERS.data_types.number,
           value: 0.2,
           unit: '%',
-          is_toggle_active: false,
           is_disabled_in_ui: true,
           min_value: 0,
           max_value: nil,
@@ -46,7 +44,6 @@ module Seeds
           data_type: Constants.ACD_LEVERS.data_types.number,
           value: 0.9,
           unit: '%',
-          is_toggle_active: false,
           is_disabled_in_ui: true,
           min_value: 0,
           max_value: nil,
@@ -61,7 +58,6 @@ module Seeds
           data_type: Constants.ACD_LEVERS.data_types.boolean,
           value: true,
           unit: '',
-          is_toggle_active: false,
           is_disabled_in_ui: true,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
           lever_group: Constants.ACD_LEVERS.lever_groups.static,
@@ -74,7 +70,6 @@ module Seeds
           data_type: Constants.ACD_LEVERS.data_types.number,
           value: 15,
           unit: Constants.ACD_LEVERS.cases,
-          is_toggle_active: true,
           is_disabled_in_ui: false,
           min_value: 0,
           max_value: nil,
@@ -89,7 +84,6 @@ module Seeds
           data_type: Constants.ACD_LEVERS.data_types.number,
           value: 3,
           unit: Constants.ACD_LEVERS.cases,
-          is_toggle_active: true,
           is_disabled_in_ui: false,
           min_value: 0,
           max_value: nil,
@@ -104,7 +98,6 @@ module Seeds
           data_type: Constants.ACD_LEVERS.data_types.number,
           value: 8,
           unit: Constants.ACD_LEVERS.cases,
-          is_toggle_active: true,
           is_disabled_in_ui: false,
           min_value: 0,
           max_value: nil,
@@ -140,8 +133,7 @@ module Seeds
               text: 'Omit variable from distribution rules',
             }
           ],
-          is_toggle_active: false,
-          is_disabled_in_ui: true,
+          is_disabled_in_ui: false,
           min_value: 0,
           max_value: 100,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
@@ -178,8 +170,7 @@ module Seeds
               unit: ''
             }
           ],
-          is_toggle_active: false,
-          is_disabled_in_ui: true,
+          is_disabled_in_ui: false,
           min_value: 0,
           max_value: 100,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
@@ -212,7 +203,6 @@ module Seeds
               text: 'Omit variable from distribution rules'
             }
           ],
-          is_toggle_active: false,
           is_disabled_in_ui: true,
           min_value: 0,
           max_value: 100,
@@ -246,7 +236,6 @@ module Seeds
               text: 'Omit variable from distribution rules',
             }
           ],
-          is_toggle_active: false,
           is_disabled_in_ui: true,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
           lever_group: Constants.ACD_LEVERS.lever_groups.affinity,
@@ -282,7 +271,6 @@ module Seeds
               unit: ''
             }
           ],
-          is_toggle_active: false,
           is_disabled_in_ui: true,
           min_value: 0,
           max_value: 100,
@@ -320,7 +308,6 @@ module Seeds
               unit: ''
             }
           ],
-          is_toggle_active: false,
           is_disabled_in_ui: true,
           min_value: 0,
           max_value: 100,
@@ -358,7 +345,6 @@ module Seeds
               unit: ''
             }
           ],
-          is_toggle_active: true,
           is_disabled_in_ui: true,
           min_value: 0,
           max_value: 100,
@@ -407,7 +393,7 @@ module Seeds
             }
           ],
           is_toggle_active: false,
-          is_disabled_in_ui: true,
+          is_disabled_in_ui: false,
           min_value: 0,
           max_value: nil,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
@@ -444,7 +430,6 @@ module Seeds
           data_type: Constants.ACD_LEVERS.data_types.number,
           value: 365,
           unit: Constants.ACD_LEVERS.days,
-          is_toggle_active: false,
           is_disabled_in_ui: true,
           min_value: 0,
           max_value: nil,
@@ -458,7 +443,6 @@ module Seeds
           data_type: Constants.ACD_LEVERS.data_types.number,
           value: 500,
           unit: Constants.ACD_LEVERS.days,
-          is_toggle_active: true,
           is_disabled_in_ui: false,
           min_value: 0,
           max_value: nil,
@@ -472,7 +456,6 @@ module Seeds
           data_type: Constants.ACD_LEVERS.data_types.number,
           value: 123,
           unit: Constants.ACD_LEVERS.days,
-          is_toggle_active: false,
           is_disabled_in_ui: true,
           min_value: 0,
           max_value: nil,
@@ -492,7 +475,7 @@ module Seeds
         data_type: lever[:data_type],
         value: lever[:value].to_s,
         unit: lever[:unit],
-        is_toggle_active: lever[:is_toggle_active] || false,
+        is_toggle_active: lever[:is_toggle_active] || nil,
         is_disabled_in_ui: lever[:is_disabled_in_ui] || false,
         min_value: lever[:min_value],
         max_value: lever[:max_value],

@@ -4,7 +4,7 @@ class CaseDistributionLever < ApplicationRecord
   validates :item, presence: true
   validates :title, presence: true
   validates :data_type, presence: true, inclusion: { in: Constants.ACD_LEVERS.data_types.to_h.values }
-  validates :is_toggle_active, inclusion: { in: [true, false] }
+  validates :is_toggle_active, inclusion: { in: [true, false, nil] }
   validates :is_disabled_in_ui, inclusion: { in: [true, false] }
   validate :value_matches_data_type
 
