@@ -247,7 +247,7 @@ RSpec.feature "MailTasks", :postgres do
     let(:email) { "test@caseflow.com" }
 
     shared_examples_for "scheduling a hearing" do
-      before do
+      def pre_steps # rubocop:disable Metrics/AbcSize
         perform_enqueued_jobs do
           FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
           page = appeal.is_a?(Appeal) ? "queue/appeals/#{appeal.uuid}" : "queue/appeals/#{appeal.vacols_id}"
@@ -277,6 +277,7 @@ RSpec.feature "MailTasks", :postgres do
       end
 
       it "gets scheduled" do
+        pre_steps
         expect(page).to have_content("You have successfully")
       end
 
@@ -288,6 +289,8 @@ RSpec.feature "MailTasks", :postgres do
           expect(SendNotificationJob).to receive(:perform_later).with(postpone_payload)
         end
         expect(SendNotificationJob).to receive(:perform_later).with(scheduled_payload)
+
+        pre_steps
       end
     end
 
