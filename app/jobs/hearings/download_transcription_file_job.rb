@@ -41,7 +41,7 @@ class DownloadTranscriptionFileJob < CaseflowJob
 
   def download_to_tmp(download_link)
     begin
-      URI.open(download_link) do |download|
+      URI().open(download_link) do |download|
         # @file_name = parse_file_name
         IO.copy_stream(download, tmp_location)
       end
