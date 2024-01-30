@@ -65,7 +65,8 @@ class AppealsController < ApplicationController
         begin
           if !appeal.nil?
             pdf = PdfExportService.create_and_save_pdf("notification_report_pdf_template", appeal)
-            send_data pdf, filename: "Notification Report " + appeals_id + " " + date + ".pdf", type: "application/pdf", disposition: :attachment
+            pdf_file_name = "Notification Report " + appeals_id + " " + date + ".pdf"
+            send_data pdf, filename: pdf_file_name, type: "application/pdf", disposition: :attachment
           else
             fail ActionController::RoutingError, "Appeal Not Found"
           end
@@ -565,9 +566,15 @@ class AppealsController < ApplicationController
     # Retrieve notifications based on appeals_id, excluding statuses of 'No participant_id' & 'No claimant'
     @all_notifications = Notification.where(appeals_id: appeals_id)
     @allowed_notifications = @all_notifications.where(email_notification_status: nil)
-      .or(@all_notifications.where.not(email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]))
+      .or(@all_notifications.where.not(
+            email_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"]
+          ))
       .merge(@all_notifications.where(sms_notification_status: nil)
-      .or(@all_notifications.where.not(sms_notification_status: ["No Participant Id Found", "No Claimant Found", "No External Id"])))
+      .or(@all_notifications.where.not(sms_notification_status: [
+                                         "No Participant Id Found",
+                                         "No Claimant Found",
+                                         "No External Id"
+                                       ])))
     # If no notifications were found, return an empty array, else return serialized notifications
     if @allowed_notifications == []
       []

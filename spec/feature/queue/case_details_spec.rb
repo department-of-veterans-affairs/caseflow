@@ -1129,7 +1129,10 @@ RSpec.feature "Case details", :all_dbs do
       }
     end
     let!(:rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
-    let!(:appeal_serializer) { WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash }
+    let!(:appeal_serializer) do
+      WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
+    end
+
     before do
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:split_appeal_workflow)
@@ -1155,7 +1158,10 @@ RSpec.feature "Case details", :all_dbs do
       }
     end
     let!(:rating_request_issue) { create(:request_issue, rating_request_issue_attributes) }
-    let!(:appeal_serializer) { WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash }
+    let!(:appeal_serializer) do
+      WorkQueue::AppealSerializer.new(appeal, params: { user: current_user }).serializable_hash
+    end
+
     before do
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:split_appeal_workflow)

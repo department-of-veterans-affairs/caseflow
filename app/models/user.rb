@@ -517,6 +517,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   class << self
     attr_writer :authentication_service
+
     delegate :authenticate_vacols, to: :authentication_service
 
     # Empty method used for testing purposes (required)
