@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import ApiUtil from '../../util/ApiUtil';
 import { loadVetCorrespondence } from './correspondenceReducer/correspondenceActions';
@@ -78,7 +78,8 @@ CorrespondenceCases.propTypes = {
   loadVetCorrespondence: PropTypes.func,
   vetCorrespondences: PropTypes.array,
   currentAction: PropTypes.object,
-  veteranInformation: PropTypes.object
+  veteranInformation: PropTypes.object,
+  configUrl: PropTypes.string
 };
 
 export default CorrespondenceCases;

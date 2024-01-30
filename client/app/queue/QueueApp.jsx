@@ -746,6 +746,13 @@ class QueueApp extends React.PureComponent {
 
             <PageRoute
               exact
+              path="/queue/correspondence/team"
+              title={`${PAGE_TITLES.CORRESPONDENCE_CASES_LIST}`}
+              render={this.routedCorrespondenceCase}
+            />
+
+            <PageRoute
+              exact
               path="/queue/:userId"
               title={`${this.queueName()}  | Caseflow`}
               render={this.routedQueueList}
