@@ -15,13 +15,20 @@ class DownloadTranscriptionFileJob < CaseflowJob
     Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
 
     # Raven.capture_exception(exception, extra: extra)
-    # Email?
+    # Send email to VA?
   end
 
   discard_on(TranscriptionFileNameError) do |job, exception|
     Rails.logger.warn("Discarding #{job.class.name} (#{job.job_id})failed with error: #{exception}")
   end
 
+  VALID_FILE_TYPES = %w[mp4 vtt].freeze
+
+  # Purpose: Downloads audio (mp4) or transcript (vtt) file from temporary download link provided by
+  #          GetRecordingDetailsJob
+  #
+  # Params: download_link - string, URI for temporary download link
+  #         file_name - string, to be parsed for appeal/hearing identifiers
   def perform(download_link:, file_name:)
     ensure_current_user_is_set
     @file_name = file_name
@@ -29,7 +36,6 @@ class DownloadTranscriptionFileJob < CaseflowJob
 
     begin
       download_to_tmp(download_link)
-      mark_download_successful
     ensure
       clean_up_tmp_location
     end
@@ -39,52 +45,74 @@ class DownloadTranscriptionFileJob < CaseflowJob
 
   attr_reader :file_name
 
-  def download_to_tmp(download_link)
+  # Purpose: Downloads audio (mp4) or transcript (vtt) file from temporary download link provided by
+  #          GetRecordingDetailsJob. Update file status of transcription file depending on download success/failure.
+  #
+  # Params: download_link - string, URI for temporary download link
+  #         file_name - string, to be parsed for appeal/hearing identifiers
+  #
+  # Returns: nil if successful, OpenURI::HTTPError if failure
+  def download_to_tmp(link)
     begin
-      URI().open(download_link) do |download|
-        # @file_name = parse_file_name
+      URI.open(link) do |download|
         IO.copy_stream(download, tmp_location)
       end
+      update_file_status_after_download(status: :success, date: Time.zone.now)
     rescue OpenURI::HTTPError => error
-      @transcription_file.update!(file_status: Constants.TRANSCRIPTION_FILE_STATUSES.retrieval.failure)
+      update_file_status_after_download(status: :failure)
       raise error
     end
   end
 
-  # def parse_file_name(download)
-  #   download.meta["content-disposition"].match(/filename=(\"?)(.+)\1;/)[2]
-  # end
-
+  # Purpose: Location of temporary file in tmp/transcription_files/<file_type> directory
+  #
+  # Returns: string, directory path
   def tmp_location
-    File.join(Rails.root, "tmp", "transcription_files", file_name)
+    File.join(Rails.root, "tmp", "transcription_files", file_type, file_name)
   end
 
+  # Purpose: Removes temporary file (if it exists) from tmp folder after job success/fails
+  #
+  # Returns: integer value of 1 if file deleted, nil if file not found
   def clean_up_tmp_location
     return unless file_name && File.exist?(tmp_location)
 
     File.delete(tmp_location)
   end
 
+  # Purpose: Either mp4 (audio) or vtt (transcript)
+  #
+  # Returns: string, file type
   def file_type
     file_name.split(".").last
   end
 
-  VALID_FILE_TYPES = %w[mp4 vtt].freeze
-
+  # Purpose: Determines if file type parsed from file name is valid
+  #
+  # Returns: boolean
   def file_type_invalid?
     return unless VALID_FILE_TYPES.exclude?(file_type)
 
     fail TranscriptionFileNameError, "Invalid file type"
   end
 
+  # Purpose: Appeal associated with the hearing for which the transcription was created
+  #
+  # Returns: Appeal object or nil
   def appeal
     @appeal ||= parse_appeal if appeal_attributes_present?
   end
 
+  # Purpose: Determines if file name includes sufficient identifiers to parse appeal
+  #
+  # Returns: boolean
   def appeal_attributes_present?
     file_name.include?("Appeal")
   end
 
+  # Purpose: Parses appeal details from identifiers present in file name
+  #
+  # Returns: Appeal object or error if appeal not able to be found
   def parse_appeal
     begin
       appeal_info = file_name.split(".").first
@@ -96,6 +124,9 @@ class DownloadTranscriptionFileJob < CaseflowJob
     end
   end
 
+  # Purpose: Docket number associated with the hearing for which the transcription was created
+  #
+  # Returns: string or error
   def docket_number
     appeal&.docket_number || docket_number_from_hearing_day
   end
@@ -105,6 +136,10 @@ class DownloadTranscriptionFileJob < CaseflowJob
     fail NotImplementedError
   end
 
+  # Purpose: If job previously failed and retry initiated, finds existing transcription file record. Otherewise, create
+  #          new record.
+  #
+  # Returns: TranscriptionFile object
   def find_or_create_transcription_file
     TranscriptionFile.find_or_create_by(
       file_name: file_name,
@@ -117,10 +152,14 @@ class DownloadTranscriptionFileJob < CaseflowJob
     end
   end
 
-  def mark_download_successful
+  # Purpose: Update sthe @transcription_file with success or failure status after download complets. If download
+  #          successful, update date_receipt_webex.
+  #
+  # Returns: TranscriptionFile object
+  def update_file_status_after_download(status:, date: nil)
     @transcription_file.update!(
-      file_status: Constants.TRANSCRIPTION_FILE_STATUSES.retrieval.success,
-      date_receipt_webex: Time.zone.now
+      file_status: Constants.TRANSCRIPTION_FILE_STATUSES.retrieval.send(status),
+      date_receipt_webex: date
     )
   end
 end
