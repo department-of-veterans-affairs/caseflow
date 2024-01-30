@@ -12,7 +12,7 @@ class WorkQueue::DecisionReviewChangeHistorySerializer
   attribute :readableEventType, &:readable_event_type
   attribute :claimantName, &:claimant_name
 
-  attribute :detail do |object|
+  attribute :details do |object|
     {
       benefitType: object.benefit_type,
       issueType: object.issue_type,
@@ -20,7 +20,7 @@ class WorkQueue::DecisionReviewChangeHistorySerializer
       decisionDate: object.decision_date,
       disposition: object.disposition,
       decisionDescription: object.decision_description,
-      withdrawlRequestDate: object.withdrawal_request_date
+      withdrawalRequestDate: object.withdrawal_request_date
     }
   end
 end

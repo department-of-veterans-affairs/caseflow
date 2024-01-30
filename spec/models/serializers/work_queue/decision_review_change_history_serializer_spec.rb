@@ -25,6 +25,7 @@ describe WorkQueue::DecisionReviewChangeHistorySerializer, :postgres do
            description: "seeded HLR in progress",
            number_of_claimants: 1)
   end
+
   let(:events) do
     ClaimHistoryService.new(vha_org, task_id: vha_task.id).build_events
   end
@@ -41,7 +42,7 @@ describe WorkQueue::DecisionReviewChangeHistorySerializer, :postgres do
           attributes: {
             claimType: "Higher-Level Review",
             claimantName: events[0].claimant_name,
-            detail:
+            details:
             {
               benefitType: "vha",
               decisionDate: "2023-09-25",
@@ -49,7 +50,7 @@ describe WorkQueue::DecisionReviewChangeHistorySerializer, :postgres do
               disposition: nil,
               issueDescription: "Veterans Health Administration seeded HLR in progress",
               issueType: "Other",
-              withdrawlRequestDate: nil
+              withdrawalRequestDate: nil
             },
             eventDate: events[0].event_date,
             eventType: :added_issue,
@@ -72,7 +73,7 @@ describe WorkQueue::DecisionReviewChangeHistorySerializer, :postgres do
               disposition: nil,
               issueDescription: nil,
               issueType: nil,
-              withdrawlRequestDate: nil
+              withdrawalRequestDate: nil
             },
             eventDate: events[1].event_date,
             eventType: :claim_creation,
