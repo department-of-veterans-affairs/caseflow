@@ -2,14 +2,14 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import ApiUtil from '../../util/ApiUtil';
-import { loadVetCorrespondence } from './correspondenceReducer/correspondenceActions';
+import { loadCorrespondenceConfig } from './correspondenceReducer/correspondenceActions';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
 import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
-import CorrespondenceTable from './CorrespondenceTable';
-import QueueOrganizationDropdown from '../components/QueueOrganizationDropdown';
+// import CorrespondenceTable from './CorrespondenceTable';
+// import QueueOrganizationDropdown from '../components/QueueOrganizationDropdown';
 import Alert from '../../components/Alert';
 
 // import {
@@ -19,13 +19,13 @@ import Alert from '../../components/Alert';
 
 class CorrespondenceCases extends React.PureComponent {
 
-  // grabs correspondences and loads into intakeCorrespondence redux store.
-  getVeteransWithCorrespondence() {
+  // now grabs tasks and loads into redux store
+  getCorrespondenceConfig() {
     return ApiUtil.get(this.props.configUrl).then((response) => {
       const returnedObject = response.body;
-      const vetCorrespondences = returnedObject.vetCorrespondences;
+      const correspondenceConfig = returnedObject.correspondence_config;
 
-      this.props.loadVetCorrespondence(vetCorrespondences);
+      this.props.loadCorrespondenceConfig(correspondenceConfig);
     }).
       catch((err) => {
         // allow HTTP errors to fall on the floor via the console.
@@ -33,17 +33,17 @@ class CorrespondenceCases extends React.PureComponent {
       });
   }
 
-  // load veteran correspondence info on page load
+  // load task info on page load
   componentDidMount() {
     // Retry the request after a delay
     setTimeout(() => {
-      this.getVeteransWithCorrespondence();
+      this.getCorrespondenceConfig();
     }, 1000);
   }
 
   render = () => {
     const {
-      organizations,
+      // organizations,
       currentAction,
       veteranInformation
 
@@ -64,12 +64,12 @@ class CorrespondenceCases extends React.PureComponent {
           <Alert type="success" title={sprintf(COPY.CORRESPONDENCE_TITLE_REMOVE_PACKAGE_BANNER, vetName)}
             message={COPY.CORRESPONDENCE_MESSAGE_REMOVE_PACKAGE_BANNER} scrollOnAlert={false} />}
           <h1 {...css({ display: 'inline-block' })}>{COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES}</h1>
-          <QueueOrganizationDropdown organizations={organizations} />
-          {this.props.vetCorrespondences &&
+          {/* <QueueOrganizationDropdown organizations={organizations} />
+          {this.props.correspondenceConfig &&
           <CorrespondenceTable
-            vetCorrespondences={this.props.vetCorrespondences}
+            correspondenceConfig={this.props.correspondenceConfig}
           />
-          }
+          } */}
         </AppSegment>
       </React.Fragment>
     );
@@ -78,22 +78,22 @@ class CorrespondenceCases extends React.PureComponent {
 
 CorrespondenceCases.propTypes = {
   organizations: PropTypes.array,
-  loadVetCorrespondence: PropTypes.func,
-  vetCorrespondences: PropTypes.array,
+  loadCorrespondenceConfig: PropTypes.func,
+  correspondenceConfig: PropTypes.object,
   currentAction: PropTypes.object,
   veteranInformation: PropTypes.object,
   configUrl: PropTypes.string
 };
 
 const mapStateToProps = (state) => ({
-  vetCorrespondences: state.intakeCorrespondence.vetCorrespondences,
+  correspondenceConfig: state.intakeCorrespondence.correspondenceConfig,
   currentAction: state.reviewPackage.lastAction,
   veteranInformation: state.reviewPackage.veteranInformation
 });
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    loadVetCorrespondence
+    loadCorrespondenceConfig,
   }, dispatch)
 );
 
