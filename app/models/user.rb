@@ -277,6 +277,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     member_of_organization?(VhaBusinessLine.singleton)
   end
 
+  # TODO: don't know if this should be admin or not?
   def specialty_case_team_coordinator?
     member_of_organization?(SpecialtyCaseTeam.singleton)
   end
@@ -359,8 +360,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     orgs = organizations.select(&:selectable_in_queue?)
     judge_team_judges = judge? ? [self] : []
     judge_team_judges |= administered_judge_teams.map(&:judge) if FeatureToggle.enabled?(:judge_admin_scm)
-    camo_team_users = camo_employee? ? [self] : []
-    sct_coordinator_users = specialty_case_team_coordinator? ? [self] : []
 
     judge_team_judges.each do |judge|
       orgs << {
@@ -369,18 +368,20 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       }
     end
 
-    camo_team_users.each do |user|
+    # Shouldn't this be admin??
+    if camo_employee?
       orgs << {
         name: "Assign VHA CAMO",
-        url: "/queue/#{user.css_id}/assign?role=camo"
+        url: "/queue/#{css_id}/assign?role=camo"
       }
     end
 
     # TODO: Gross
-    sct_coordinator_users.each do |user|
+    # This should maybe be admin as well?
+    if specialty_case_team_coordinator?
       orgs << {
         name: "Assign SCT Appeals",
-        url: "/queue/#{user.css_id}/assign?role=sct_coordinator"
+        url: "/queue/#{css_id}/assign?role=sct_coordinator"
       }
     end
 

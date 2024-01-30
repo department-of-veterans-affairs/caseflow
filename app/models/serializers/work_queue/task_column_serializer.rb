@@ -184,11 +184,11 @@ class WorkQueue::TaskColumnSerializer
       }
     else
       {
-        css_id: nil,
-        is_organization: nil,
-        name: nil,
-        type: nil,
-        id: nil
+        css_id: assignee.try(:css_id),
+        is_organization: assignee.is_a?(Organization),
+        name: assignee.is_a?(Organization) ? assignee.name : assignee.css_id,
+        type: assignee.class.name,
+        id: assignee.id
       }
     end
   end
@@ -371,9 +371,11 @@ class WorkQueue::TaskColumnSerializer
     nil
   end
 
-  attribute :appeal_type do
-    nil
-  end
+  # attribute :appeal_type do
+  #   nil
+  # end
+
+  attribute :appeal_type
 
   attribute :timeline_title do
     nil

@@ -6,7 +6,8 @@ import PropTypes from 'prop-types';
 import TaskTable from './components/TaskTable';
 import {
   initialAssignTasksToUser,
-  initialCamoAssignTasksToVhaProgramOffice
+  initialCamoAssignTasksToVhaProgramOffice,
+  initialSpecialtyCaseTeamAssignTasksToUser
 } from './QueueActions';
 import AssignToAttorneyWidget from './components/AssignToAttorneyWidget';
 import AssignToVhaProgramOfficeWidget from './components/AssignToVhaProgramOfficeWidget';
@@ -54,7 +55,12 @@ class UnassignedCasesPage extends React.PureComponent {
         onTaskAssignment={this.props.initialCamoAssignTasksToVhaProgramOffice}
         selectedTasks={selectedTasks}
         showRequestCasesButton />;
-      // TODO: I think this should work for SCT coordinators
+    } else if (userIsSCTCoordinator) {
+      assignWidget = <AssignToAttorneyWidget
+        userId={userId}
+        previousAssigneeId={userId}
+        onTaskAssignment={this.props.initialSpecialtyCaseTeamAssignTasksToUser}
+        selectedTasks={selectedTasks} />;
     } else {
       assignWidget = <AssignToAttorneyWidget
         userId={userId}
@@ -73,7 +79,7 @@ class UnassignedCasesPage extends React.PureComponent {
           <div {...assignAndRequestStyling}>
             {assignWidget}
             {/* TODO: This is so gross that we are relying on this employee check everywhere */}
-            {!userIsCamoEmployee && <RequestDistributionButton userId={userId} />}
+            {!userIsCamoEmployee && !userIsSCTCoordinator && <RequestDistributionButton userId={userId} />}
           </div>
           {this.props.distributionCompleteCasesLoading &&
             <div {...loadingContainerStyling}>
@@ -159,6 +165,7 @@ UnassignedCasesPage.propTypes = {
   distributionCompleteCasesLoading: PropTypes.bool,
   initialAssignTasksToUser: PropTypes.func,
   initialCamoAssignTasksToVhaProgramOffice: PropTypes.func,
+  initialSpecialtyCaseTeamAssignTasksToUser: PropTypes.func,
   resetSuccessMessages: PropTypes.func,
   resetErrorMessages: PropTypes.func,
   error: PropTypes.shape({
@@ -177,6 +184,7 @@ const mapDispatchToProps = (dispatch) =>
   bindActionCreators({
     initialAssignTasksToUser,
     initialCamoAssignTasksToVhaProgramOffice,
+    initialSpecialtyCaseTeamAssignTasksToUser,
     resetErrorMessages,
     resetSuccessMessages
   }, dispatch);

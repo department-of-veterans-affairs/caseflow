@@ -479,6 +479,62 @@ export const initialCamoAssignTasksToVhaProgramOffice = ({
       });
     });
 }));
+
+export const initialSpecialtyCaseTeamAssignTasksToUser = ({
+  tasks, assigneeId, previousAssigneeId, instructions
+}) => (dispatch) => {
+  const amaTasks = tasks.filter((oldTask) => oldTask.appealType === 'Appeal');
+
+  const amaParams = {
+    url: '/specialty_case_team_assign_tasks',
+    taskIds: amaTasks.map((oldTask) => oldTask.uniqueId),
+    requestParams: {
+      data: {
+        tasks: amaTasks.map((oldTask) => ({
+          external_id: oldTask.externalAppealId,
+          parent_id: oldTask.taskId,
+          assigned_to_id: assigneeId,
+          instructions
+        }))
+      }
+    }
+  };
+
+  console.log('inside my new function for assigning sct tasks');
+  console.log(tasks);
+  console.log(amaTasks);
+  console.log(amaParams);
+
+  // const paramsArray = amaParams.requestParams.data.tasks.length ? legacyParams.concat(amaParams) : legacyParams;
+
+  // TODO: fix this so you don't need to map anymore
+  return Promise.all([amaParams].map((params) => {
+    const { requestParams, url, taskIds } = params;
+
+    console.log('should be making a post request to this url');
+    console.log(url);
+
+    return ApiUtil.post(url, requestParams).
+      then((resp) => resp.body).
+      then((resp) => {
+        console.log(requestParams.data.tasks);
+        dispatchOldTasks(dispatch, requestParams.data.tasks, resp);
+
+        taskIds.forEach((taskId) => {
+          dispatch(setSelectionOfTaskOfUser({
+            userId: previousAssigneeId,
+            selected: false,
+            taskId
+          }));
+
+          dispatch(incrementTaskCountForAttorney({
+            id: assigneeId
+          }));
+        });
+      });
+  }));
+};
+
 export const initialAssignTasksToUser = ({
   tasks, assigneeId, previousAssigneeId, instructions
 }) => (dispatch) => {
@@ -514,6 +570,11 @@ export const initialAssignTasksToUser = ({
       }
     }
   }));
+
+  console.log('inside the queue action initialAssignTasksToUser');
+  console.log(tasks);
+  console.log(amaTasks);
+  console.log(amaParams);
 
   const paramsArray = amaParams.requestParams.data.tasks.length ? legacyParams.concat(amaParams) : legacyParams;
 

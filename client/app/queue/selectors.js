@@ -121,6 +121,8 @@ const tasksByAssigneeCssIdSelector = createSelector(
 const tasksByAssigneeOrgSelector = createSelector(
   [tasksWithAppealSelector, getActiveOrgId],
   // (tasks, orgId) => filter(tasks, (task) => (task.assignedTo.id === orgId && task.assignedTo.isOrganization))
+  // TODO: this won't work without changing the serializer because the SCT org does not have
+  // a column that needs assigned to
   (tasks, orgId) => filter(tasks, (task) => (task.assignedTo.id === orgId))
 );
 
@@ -241,8 +243,7 @@ export const specialtyCaseTeamAssignTasksSelector = createSelector(
   (tasks) =>
     filter(tasks, (task) => {
       return (
-        // TODO: Figure out if this is the right label
-        task.label === 'Assign' &&
+        task.label === COPY.SPECIALTY_CASE_TEAM_ASSIGN_TASK_LABEL &&
         (task.status === TASK_STATUSES.assigned)
       );
     })
