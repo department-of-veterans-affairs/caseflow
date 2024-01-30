@@ -8,8 +8,8 @@ import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
 import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
-import CorrespondenceTable from './CorrespondenceTable';
-import QueueOrganizationDropdown from '../components/QueueOrganizationDropdown';
+// import CorrespondenceTable from './CorrespondenceTable';
+// import QueueOrganizationDropdown from '../components/QueueOrganizationDropdown';
 import Alert from '../../components/Alert';
 
 // import {
@@ -43,7 +43,7 @@ class CorrespondenceCases extends React.PureComponent {
 
   render = () => {
     const {
-      organizations,
+      // organizations,
       currentAction,
       veteranInformation
 
@@ -64,12 +64,12 @@ class CorrespondenceCases extends React.PureComponent {
           <Alert type="success" title={sprintf(COPY.CORRESPONDENCE_TITLE_REMOVE_PACKAGE_BANNER, vetName)}
             message={COPY.CORRESPONDENCE_MESSAGE_REMOVE_PACKAGE_BANNER} scrollOnAlert={false} />}
           <h1 {...css({ display: 'inline-block' })}>{COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES}</h1>
-          <QueueOrganizationDropdown organizations={organizations} />
+          {/* <QueueOrganizationDropdown organizations={organizations} />
           {this.props.correspondenceConfig &&
           <CorrespondenceTable
             correspondenceConfig={this.props.correspondenceConfig}
           />
-          }
+          } */}
         </AppSegment>
       </React.Fragment>
     );
@@ -79,7 +79,7 @@ class CorrespondenceCases extends React.PureComponent {
 CorrespondenceCases.propTypes = {
   organizations: PropTypes.array,
   loadCorrespondenceConfig: PropTypes.func,
-  correspondenceConfig: PropTypes.array,
+  correspondenceConfig: PropTypes.object,
   currentAction: PropTypes.object,
   veteranInformation: PropTypes.object,
   configUrl: PropTypes.string

@@ -43,7 +43,7 @@ class CorrespondenceController < ApplicationController
     respond_to do |format|
       format.html { "your_correspondence" }
       format.json do
-        render json: { correspondence_config: CorrespondenceConfig.new(assignee: current_user)}
+        render json: { correspondence_config: CorrespondenceConfig.new(assignee: current_user) }
       end
     end
   end
@@ -65,7 +65,7 @@ class CorrespondenceController < ApplicationController
       redirect_to "/unauthorized"
     end
   end
-  
+
   def review_package
     render "correspondence/review_package"
   end
@@ -219,7 +219,9 @@ class CorrespondenceController < ApplicationController
 
   def verify_correspondence_access
     return true if MailTeamSupervisor.singleton.user_has_access?(current_user) ||
-                   MailTeam.singleton.user_has_access?(current_user)
+                   MailTeam.singleton.user_has_access?(current_user) ||
+                   BvaIntake.singleton.user_is_admin?(current_user) ||
+                   MailTeam.singleton.user_is_admin?(current_user)
 
     redirect_to "/unauthorized"
   end
