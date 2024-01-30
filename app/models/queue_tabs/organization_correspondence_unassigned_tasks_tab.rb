@@ -4,15 +4,15 @@ class OrganizationCorrespondenceUnassignedTasksTab < CorrespondenceQueueTab
   validate :assignee_is_organization
 
   def label
-    "Unassigned"
+    Constants.QUEUE_CONFIG.CORRESPONDENCE_UNASSIGNED_TASKS_LABEL
   end
 
   def self.tab_name
-    "correspondence_unassigned"
+    Constants.QUEUE_CONFIG.CORRESPONDENCE_UNASSIGNED_TASKS_TAB_NAME
   end
 
   def description
-    "Correspondence owned by the Mail team are unassigned to an individual:"
+    Constants.QUEUE_CONFIG.CORRESPONDENCE_UNASSIGNED_TASKS_DESCRIPTION
   end
 
   def tasks

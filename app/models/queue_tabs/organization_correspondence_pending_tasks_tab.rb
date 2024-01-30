@@ -4,15 +4,15 @@ class OrganizationCorrespondencePendingTasksTab < CorrespondenceQueueTab
   validate :assignee_is_organization
 
   def label
-    "Pending"
+    Constants.QUEUE_CONFIG.CORRESPONDENCE_PENDING_TASKS_LABEL
   end
 
   def self.tab_name
-    "correspondence_pending"
+    Constants.QUEUE_CONFIG.CORRESPONDENCE_PENDING_TASKS_TAB_NAME
   end
 
   def description
-    "Correspondence that is currently assigned to non-mail team users:"
+    Constants.QUEUE_CONFIG.CORRESPONDENCE_PENDING_TASKS_DESCRIPTION
   end
 
   def tasks

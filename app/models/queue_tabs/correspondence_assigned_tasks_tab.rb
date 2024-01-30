@@ -4,15 +4,15 @@ class CorrespondenceAssignedTasksTab < CorrespondenceQueueTab
   validate :assignee_is_user
 
   def label
-    "Assigned"
+    Constants.QUEUE_CONFIG.CORRESPONDENCE_ASSIGNED_TASKS_LABEL
   end
 
   def self.tab_name
-    "correspondence_assigned"
+    Constants.QUEUE_CONFIG.CORRESPONDENCE_ASSIGNED_TASKS_TAB_NAME
   end
 
   def description
-    "Correspondence assigned to you:"
+    Constants.QUEUE_CONFIG.CORRESPONDENCE_ASSIGNED_TASKS_DESCRIPTION
   end
 
   def tasks

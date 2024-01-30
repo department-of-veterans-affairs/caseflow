@@ -4,15 +4,15 @@ class CorrespondenceInProgressTasksTab < CorrespondenceQueueTab
   validate :assignee_is_user
 
   def label
-    "In Progress"
+    Constants.QUEUE_CONFIG.CORRESPONDENCE_IN_PROGRESS_TASKS_LABEL
   end
 
   def self.tab_name
-    "correspondence_in_progress"
+    Constants.QUEUE_CONFIG.CORRESPONDENCE_IN_PROGRESS_TASKS_TAB_NAME
   end
 
   def description
-    "Correspondence in progress that are assigned to you:"
+    Constants.QUEUE_CONFIG.CORRESPONDENCE_IN_PROGRESS_TASKS_DESCRIPTION
   end
 
   def tasks

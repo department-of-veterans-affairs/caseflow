@@ -4,15 +4,15 @@ class OrganizationCorrespondenceAssignedTasksTab < CorrespondenceQueueTab
   validate :assignee_is_organization
 
   def label
-    "Assigned"
+    Constants.QUEUE_CONFIG.CORRESPONDENCE_TEAM_ASSIGNED_TASKS_LABEL
   end
 
   def self.tab_name
-    "correspondence_team_assigned"
+    Constants.QUEUE_CONFIG.CORRESPONDENCE_TEAM_ASSIGNED_TASKS_TAB_NAME
   end
 
   def description
-    "Correspondence that is currently assigned to mail team users:"
+    Constants.QUEUE_CONFIG.CORRESPONDENCE_TEAM_ASSIGNED_TASKS_DESCRIPTION
   end
 
   def tasks

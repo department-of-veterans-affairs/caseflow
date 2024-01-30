@@ -4,15 +4,15 @@ class CorrespondenceCompletedTasksTab < CorrespondenceQueueTab
   validate :assignee_is_user
 
   def label
-    "Completed"
+    Constants.QUEUE_CONFIG.CORRESPONDENCE_COMPLETED_TASKS_LABEL
   end
 
   def self.tab_name
-    "correspondence_completed"
+    Constants.QUEUE_CONFIG.CORRESPONDENCE_COMPLETED_TASKS_TAB_NAME
   end
 
   def description
-    "Completed correspondence:"
+    Constants.QUEUE_CONFIG.CORRESPONDENCE_COMPLETED_TASKS_DESCRIPTION
   end
 
   def tasks

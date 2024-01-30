@@ -4,15 +4,15 @@ class OrganizationCorrespondenceActionRequiredTasksTab < CorrespondenceQueueTab
   validate :assignee_is_organization
 
   def label
-    "Action Required"
+    Constants.QUEUE_CONFIG.CORRESPONDENCE_ACTION_REQUIRED_TASKS_LABEL
   end
 
   def self.tab_name
-    "correspondence_action_required"
+    Constants.QUEUE_CONFIG.CORRESPONDENCE_ACTION_REQUIRED_TASKS_TAB_NAME
   end
 
   def description
-    "Correspondence with pending requests:"
+    Constants.QUEUE_CONFIG.CORRESPONDENCE_ACTION_REQUIRED_TASKS_DESCRIPTION
   end
 
   def tasks
