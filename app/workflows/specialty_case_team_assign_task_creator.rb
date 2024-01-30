@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class SCTAssignTaskCreator
+class SpecialtyCaseTeamAssignTaskCreator
   def initialize(appeal:, assigned_by_id:)
     @appeal = appeal
     @assigned_by_id = assigned_by_id
@@ -8,8 +8,8 @@ class SCTAssignTaskCreator
 
   def call
     # If an appeal does not have an open DistributionTask, then it has already been distributed by automatic
-    # case distribution and a new SCTAssignTask should not be created. This should only occur if two users
-    # request a distribution simultaneously. The check for LegacyAppeal was added for the Legacy DAS
+    # case distribution and a new SpecialtyCaseTeamAssignTask should not be created. This should only occur
+    # if two users request a distribution simultaneously. The check for LegacyAppeal was added for the Legacy DAS
     # deprecation code in app/workflows/das_deprecation/case_distribution
     return nil unless appeal.tasks.open.of_type(:DistributionTask).any? || appeal.is_a?(LegacyAppeal)
 

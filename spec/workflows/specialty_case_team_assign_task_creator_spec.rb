@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe SCTAssignTaskCreator do
+describe SpecialtyCaseTeamAssignTaskCreator do
   describe "#call" do
     let(:appeal) do
       create(:appeal, :with_post_intake_tasks, :with_vha_issue, docket_type: Constants.AMA_DOCKETS.direct_review)
@@ -8,7 +8,7 @@ describe SCTAssignTaskCreator do
 
     context "when an appeal does not have an open sct task" do
       let(:assigned_by_id) { 2 }
-      subject { SCTAssignTaskCreator.new(appeal: appeal, assigned_by_id: assigned_by_id).call }
+      subject { SpecialtyCaseTeamAssignTaskCreator.new(appeal: appeal, assigned_by_id: assigned_by_id).call }
 
       it "creates an sct assign task" do
         subject
