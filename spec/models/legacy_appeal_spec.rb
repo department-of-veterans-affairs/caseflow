@@ -2952,4 +2952,56 @@ describe LegacyAppeal, :all_dbs do
       end
     end
   end
+
+  describe "#veteran_has_appeals_in_vacols?(veteran_file_number)" do
+    subject { LegacyAppeal.veteran_has_appeals_in_vacols?(veteran_file_number) }
+
+    let!(:vacols_case) do
+      create(:case, bfcorlid: "123456789S")
+    end
+
+    context "fetch_appeals_by_file_number returns NoMethodError" do
+      before do
+        allow(LegacyAppeal).to receive(:fetch_appeals_by_file_number).and_raise(NoMethodError)
+      end
+
+      it "raises ActiveRecord::RecordNotFound error" do
+        expect { LegacyAppeal.veteran_has_appeals_in_vacols("1234567890") }.to raise_error(NoMethodError)
+      end
+    end
+
+    context "when appeals are returned from VACOLS for the given file_number" do
+      let(:veteran_file_number) { "123456789" }
+
+      it "returns true" do
+        expect(subject).to eq(true)
+      end
+    end
+
+    context "when appeals are NOT returned from VACOLS for the given file_number" do
+      let(:veteran_file_number) { "123456788" }
+
+      it "returns false" do
+        expect(subject).to eq(false)
+      end
+    end
+
+    context "when passed an invalid vbms id" do
+      context "length greater than 9" do
+        let(:veteran_file_number) { "1234567890" }
+
+        it "raises Caseflow::Error::InvalidFileNumber error" do
+          expect { subject }.to raise_error(Caseflow::Error::InvalidFileNumber)
+        end
+      end
+
+      context "length less than 3" do
+        let(:veteran_file_number) { "12" }
+
+        it "raises Caseflow::Error::InvalidFileNumber error" do
+          expect { subject }.to raise_error(Caseflow::Error::InvalidFileNumber)
+        end
+      end
+    end
+  end
 end

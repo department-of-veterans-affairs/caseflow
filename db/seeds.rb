@@ -63,6 +63,7 @@ class SeedDB
     call_and_log_seed_step Seeds::VbmsExtClaim
     call_and_log_seed_step Seeds::CasesTiedToJudgesNoLongerWithBoard
     call_and_log_seed_step Seeds::VhaChangeHistory
+    call_and_log_seed_step Seeds::AmaIntake
     # Always run this as last one
     call_and_log_seed_step Seeds::StaticTestCaseData
     call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData

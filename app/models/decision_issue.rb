@@ -30,7 +30,6 @@ class DecisionIssue < CaseflowRecord
   # NOTE: These are the string identifiers for remand dispositions returned from VBMS.
   #       The characters and encoding are precise so don't change these unless you
   #       know they match VBMS values.
-
   DIFFERENCE_OF_OPINION = "Difference of Opinion"
   DTA_ERROR = "DTA Error"
   DTA_ERROR_EXAM_MO = "DTA Error - Exam/MO"
