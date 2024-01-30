@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class WorkQueue::DecisionReviewChangeHistorySerializer
+class ChangeHistoryEventSerializer
   include FastJsonapi::ObjectSerializer
 
   set_id { SecureRandom.uuid }

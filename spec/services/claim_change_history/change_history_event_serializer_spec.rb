@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-require_relative "../../../../app/services/claim_change_history/claim_history_service.rb"
-require_relative "../../../../app/services/claim_change_history/claim_history_event.rb"
+require_relative "../../../app/services/claim_change_history/change_history_event_serializer.rb"
+require_relative "../../../app/services/claim_change_history/claim_history_service.rb"
+require_relative "../../../app/services/claim_change_history/claim_history_event.rb"
 
-describe WorkQueue::DecisionReviewChangeHistorySerializer, :postgres do
+describe ChangeHistoryEventSerializer do
   let(:expected_uuid) { "709ab60d-3c5f-48d8-ac55-dc6b8f4f85bf" }
   before do
     Timecop.freeze(Time.utc(2024, 1, 30, 12, 0, 0))
@@ -38,7 +39,7 @@ describe WorkQueue::DecisionReviewChangeHistorySerializer, :postgres do
       serializable_hash = [
         {
           id: expected_uuid,
-          type: :decision_review_change_history,
+          type: :change_history_event,
           attributes: {
             claimType: "Higher-Level Review",
             claimantName: events[0].claimant_name,
@@ -61,11 +62,11 @@ describe WorkQueue::DecisionReviewChangeHistorySerializer, :postgres do
         },
         {
           id: expected_uuid,
-          type: :decision_review_change_history,
+          type: :change_history_event,
           attributes: {
             claimType: "Higher-Level Review",
             claimantName: events[1].claimant_name,
-            detail:
+            details:
             {
               benefitType: "vha",
               decisionDate: nil,
