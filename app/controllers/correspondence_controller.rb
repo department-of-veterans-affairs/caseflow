@@ -200,7 +200,7 @@ class CorrespondenceController < ApplicationController
       Rails.logger.error(error.full_message)
       data ||= demo_data
     end
-    data["documentTypes"].map { |document_type| { id: document_type["id"], name: document_type["description"] } }
+    data.map { |document_type| { id: document_type["id"], name: document_type["description"] } }
   end
 
   def demo_data
