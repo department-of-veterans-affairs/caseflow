@@ -45,6 +45,13 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
       }
     });
 
+  case ACTIONS.LOAD_CORRESPONDENCE_CONFIG:
+    return update(state, {
+      correspondenceConfig: {
+        $set: action.payload.correspondenceConfig
+      }
+    });
+
   case ACTIONS.UPDATE_RADIO_VALUE:
     return update(state, {
       radioValue: {

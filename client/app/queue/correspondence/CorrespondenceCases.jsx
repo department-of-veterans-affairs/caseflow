@@ -1,52 +1,57 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import ApiUtil from '../../util/ApiUtil';
-import { loadVetCorrespondence } from './correspondenceReducer/correspondenceActions';
+import { loadCorrespondenceConfig } from './correspondenceReducer/correspondenceActions';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
 import { sprintf } from 'sprintf-js';
 import { css } from 'glamor';
-import CorrespondenceTable from './CorrespondenceTable';
-import QueueOrganizationDropdown from '../components/QueueOrganizationDropdown';
+// import CorrespondenceTable from './CorrespondenceTable';
+// import QueueOrganizationDropdown from '../components/QueueOrganizationDropdown';
 import Alert from '../../components/Alert';
 
+// import {
+//   initialAssignTasksToUser,
+//   initialCamoAssignTasksToVhaProgramOffice
+// } from '../QueueActions';
+
 const CorrespondenceCases = (props) => {
-  const organizations = props.organizations;
+  const dispatch = useDispatch();
+  const configUrl = props.configUrl;
   const currentAction = useSelector((state) => state.reviewPackage.lastAction);
   const veteranInformation = useSelector((state) => state.reviewPackage.veteranInformation);
-  const vetCorrespondences = useSelector((state) => state.intakeCorrespondence.vetCorrespondences);
 
-  const dispatch = useDispatch();
+  const [vetName, setVetName] = useState('');
 
-  // grabs correspondences and loads into intakeCorrespondence redux store.
-  const getVeteransWithCorrespondence = async () => {
-    try {
-      const response = await ApiUtil.get('/queue/correspondence?json');
-      const returnedObject = response.body;
-      const vetCorrespondences = returnedObject.vetCorrespondences;
+  const getCorrespondenceConfig = () => {
+    return ApiUtil.get(configUrl)
+      .then((response) => {
+        const returnedObject = response.body;
+        const correspondenceConfig = returnedObject.correspondence_config;
 
-      dispatch(loadVetCorrespondence(vetCorrespondences));
-    } catch (err) {
-      console.error(new Error(`Problem with GET /queue/correspondence?json ${err}`));
-    }
+        dispatch(loadCorrespondenceConfig(correspondenceConfig));
+      })
+      .catch((err) => {
+        console.error(new Error(`Problem with GET ${configUrl} ${err}`));
+      });
   };
 
-  // load veteran correspondence info on page load
   useEffect(() => {
     // Retry the request after a delay
-    const timer = setTimeout(() => {
-      getVeteransWithCorrespondence();
+    setTimeout(() => {
+      getCorrespondenceConfig();
     }, 1000);
+  }, [configUrl]);
 
-    return () => clearTimeout(timer);
-  }, []);
-
-  let vetName = '';
-
-  if (Object.keys(veteranInformation).length > 0) {
-    vetName = `${veteranInformation.veteran_name.first_name.trim()} ${veteranInformation.veteran_name.last_name.trim()}`;
-  }
+  useEffect(() => {
+    if (
+      veteranInformation?.veteran_name?.first_name &&
+      veteranInformation?.veteran_name?.last_name
+    ) {
+      setVetName(`${veteranInformation.veteran_name.first_name.trim()} ${veteranInformation.veteran_name.last_name.trim()}`);
+    }
+  }, [veteranInformation]);
 
   return (
     <React.Fragment>
@@ -60,9 +65,15 @@ const CorrespondenceCases = (props) => {
               scrollOnAlert={false}
             />
           )}
-        <h1 {...css({ display: 'inline-block' })}>{COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES}</h1>
-        <QueueOrganizationDropdown organizations={organizations} />
-        {vetCorrespondences && <CorrespondenceTable vetCorrespondences={vetCorrespondences} />}
+        <h1 {...css({ display: 'inline-block' })}>
+          {COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES}
+        </h1>
+          {/* <QueueOrganizationDropdown organizations={organizations} />
+          {this.props.correspondenceConfig &&
+          <CorrespondenceTable
+            correspondenceConfig={this.props.correspondenceConfig}
+          />
+          } */}
       </AppSegment>
     </React.Fragment>
   );
@@ -70,8 +81,8 @@ const CorrespondenceCases = (props) => {
 
 CorrespondenceCases.propTypes = {
   organizations: PropTypes.array,
-  loadVetCorrespondence: PropTypes.func,
-  vetCorrespondences: PropTypes.array,
+  loadCorrespondenceConfig: PropTypes.func,
+  correspondenceConfig: PropTypes.object,
   currentAction: PropTypes.object,
   veteranInformation: PropTypes.object,
   configUrl: PropTypes.string
