@@ -123,17 +123,12 @@ export const saveLevers = (levers) =>
 
         if (resp.body.status_code === 500) {
           dispatch({
-            type: ACTIONS.SAVE_LEVERS,
-            payload: {
-              errors: response.message,
-            }
-          });
-          dispatch({
             type: ACTIONS.SET_USER_IS_ACD_ADMIN,
             payload: {
               isUserAcdAdmin: response.user_is_an_acd_admin
             }
           });
+          throw new Error(response.message);
         } else {
           dispatch({
             type: ACTIONS.LOAD_LEVERS,
@@ -154,6 +149,14 @@ export const saveLevers = (levers) =>
             }
           });
         }
+      }).
+      catch((error) => {
+        dispatch({
+          type: ACTIONS.SAVE_LEVERS,
+          payload: {
+            errors: [error.message],
+          }
+        });
       });
   };
 
