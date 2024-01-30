@@ -4,8 +4,8 @@ class LegacyTasksController < ApplicationController
   include Errors
   include CssIdConcern
 
-  before_action :validate_user_id, only: [:index]
-  before_action :validate_user_role, only: [:index]
+  # before_action :validate_user_id, only: [:index]
+  # before_action :validate_user_role, only: [:index]
 
   ROLES = Constants::USER_ROLE_TYPES.keys.freeze
 
@@ -18,8 +18,9 @@ class LegacyTasksController < ApplicationController
   end
 
   def index
+    binding.pry
     return if needs_redirect?
-
+    # binding.pry
     respond_to do |format|
       format.html do
         render "queue/index"
