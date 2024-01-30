@@ -50,6 +50,12 @@
   }
 }
 
+.cf-app-segment {
+    div:last-child {
+      border-bottom: 0;
+    }
+}
+
 @keyframes slideDown {
   from {
     opacity: 0;
