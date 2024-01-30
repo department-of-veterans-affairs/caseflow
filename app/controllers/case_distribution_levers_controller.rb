@@ -2,6 +2,7 @@
 
 class CaseDistributionLeversController < ApplicationController
   before_action :verify_access
+  before_action :authorize_admin, only: [:update_levers]
 
   def acd_lever_index
     # acd_levers_for_store should replace the acd_levers value
@@ -21,7 +22,6 @@ class CaseDistributionLeversController < ApplicationController
 
   def update_levers
     redirect_to "/unauthorized" unless CDAControlGroup.singleton.user_is_admin?(current_user)
-
     errors = CaseDistributionLever.update_acd_levers(allowed_params[:current_levers], current_user)
 
     render json: {
@@ -31,7 +31,20 @@ class CaseDistributionLeversController < ApplicationController
     }
   end
 
+
   private
+
+  def authorize_admin
+    error = ["UNAUTHORIZED"]
+    
+    render json: {
+      status_code: 500,
+      message: error,
+      user_is_an_acd_admin: false,
+      lever_history: CaseDistributionAuditLeverEntry.lever_history,
+      levers: grouped_levers
+    } unless CDAControlGroup.singleton.user_is_admin?(current_user)
+  end
 
   def allowed_params
     params.permit(current_levers: [:id, :value])
