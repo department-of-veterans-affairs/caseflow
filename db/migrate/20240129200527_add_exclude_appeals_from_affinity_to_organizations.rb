@@ -3,7 +3,7 @@ class AddExcludeAppealsFromAffinityToOrganizations < Caseflow::Migration
     add_column :organizations,
       :exclude_appeals_from_affinity,
       :boolean,
-      default: false,
+      :default => false,
       comment: "Used to track whether a judge (team) should have their affinity appeals distributed to any available judge team even if the set amount of time has not elapsed."
   end
 
