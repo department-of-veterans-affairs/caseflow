@@ -1,4 +1,4 @@
-class AddExcludeAppealsFromAffinityToOrganizations < ActiveRecord::Migration[5.2]
+class AddExcludeAppealsFromAffinityToOrganizations < Caseflow::Migration
   def up
     add_column :organizations,
       :exclude_appeals_from_affinity,
