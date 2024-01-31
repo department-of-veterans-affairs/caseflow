@@ -35,7 +35,7 @@ shared_examples "SentHearingEmailEvent belongs_to polymorphic hearing" do
         end
 
         context "when eager loading with `includes`" do
-          subject { SentHearingEmailEvent.ama.includes(:ama_hearing) }
+          subject { SentHearingEmailEvent.ama.includes(:hearing) }
 
           let!(:_legacy_sent_hearing_email_event) { create(:sent_hearing_email_event, :legacy) }
 
@@ -50,7 +50,7 @@ shared_examples "SentHearingEmailEvent belongs_to polymorphic hearing" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.ama_hearing.id } }
+                subscriber.track { subject.map { |record| record.hearing.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
@@ -58,7 +58,7 @@ shared_examples "SentHearingEmailEvent belongs_to polymorphic hearing" do
         end
 
         context "when eager loading with `preload`" do
-          subject { SentHearingEmailEvent.ama.preload(:ama_hearing) }
+          subject { SentHearingEmailEvent.ama.preload(:hearing) }
 
           let!(:_legacy_sent_hearing_email_event) { create(:sent_hearing_email_event, :legacy) }
 
@@ -73,27 +73,10 @@ shared_examples "SentHearingEmailEvent belongs_to polymorphic hearing" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.ama_hearing.id } }
+                subscriber.track { subject.map { |record| record.hearing.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
-          end
-        end
-
-        context "when called on an individual SentHearingEmailEvent" do
-          subject { sent_hearing_email_event.ama_hearing }
-
-          context "when the SentHearingEmailEvent is not associated with an AMA hearing" do
-            let(:sent_hearing_email_event) { create(:sent_hearing_email_event, :legacy) }
-
-            it { should be_nil }
-          end
-
-          context "when the SentHearingEmailEvent is associated with an AMA hearing" do
-            let(:sent_hearing_email_event) { create(:sent_hearing_email_event, hearing: ama_hearing) }
-            let(:ama_hearing) { create(:hearing) }
-
-            it { should eq(ama_hearing) }
           end
         end
       end
@@ -124,7 +107,7 @@ shared_examples "SentHearingEmailEvent belongs_to polymorphic hearing" do
         end
 
         context "when eager loading with `includes`" do
-          subject { SentHearingEmailEvent.legacy.includes(:legacy_hearing) }
+          subject { SentHearingEmailEvent.legacy.includes(:hearing) }
 
           let!(:_ama_sent_hearing_email_event) { create(:sent_hearing_email_event, :ama) }
 
@@ -139,7 +122,7 @@ shared_examples "SentHearingEmailEvent belongs_to polymorphic hearing" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.legacy_hearing.id } }
+                subscriber.track { subject.map { |record| record.hearing.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
@@ -147,7 +130,7 @@ shared_examples "SentHearingEmailEvent belongs_to polymorphic hearing" do
         end
 
         context "when eager loading with `preload`" do
-          subject { SentHearingEmailEvent.legacy.preload(:legacy_hearing) }
+          subject { SentHearingEmailEvent.legacy.preload(:hearing) }
 
           let!(:_ama_sent_hearing_email_event) { create(:sent_hearing_email_event, :ama) }
 
@@ -162,27 +145,10 @@ shared_examples "SentHearingEmailEvent belongs_to polymorphic hearing" do
 
             it "prevents N+1 queries" do
               QuerySubscriber.new.tap do |subscriber|
-                subscriber.track { subject.map { |record| record.legacy_hearing.id } }
+                subscriber.track { subject.map { |record| record.hearing.id } }
                 expect(subscriber.queries.count).to eq 2
               end
             end
-          end
-        end
-
-        context "when called on an individual SentHearingEmailEvent" do
-          subject { sent_hearing_email_event.legacy_hearing }
-
-          context "when the SentHearingEmailEvent is not associated with a Legacy hearing" do
-            let(:sent_hearing_email_event) { create(:sent_hearing_email_event, :ama) }
-
-            it { should be_nil }
-          end
-
-          context "when the SentHearingEmailEvent is associated with a Legacy hearing" do
-            let(:sent_hearing_email_event) { create(:sent_hearing_email_event, hearing: legacy_hearing) }
-            let(:legacy_hearing) { create(:legacy_hearing) }
-
-            it { should eq(legacy_hearing) }
           end
         end
       end
