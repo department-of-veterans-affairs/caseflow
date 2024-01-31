@@ -34,7 +34,7 @@ export const SaveModal = (props) => {
 
     return (
       <div>
-        <table>
+        <table id='case-distribution-control-modal-table'>
           <tbody>
             <tr>
               <th className={cx('modal-table-header-styling', 'modal-table-left-styling')} scope="column">
@@ -50,7 +50,7 @@ export const SaveModal = (props) => {
           </tbody>
           <tbody>
             {updatedLevers.map((lever, index) => (
-              <tr key={index}>
+              <tr key={index} id={`case-distribution-control-modal-table-${index}`}>
                 <React.Fragment>
                   <td className={cx('modal-table-styling', 'modal-table-left-styling')}>{lever.title}</td>
                   <td className={cx('modal-table-styling', 'modal-table-right-styling')}>
