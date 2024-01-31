@@ -449,6 +449,39 @@ export const testingBatchLevers = [
   },
 ];
 
+export const testingBatchLeversUpdatedToSave = [
+  {
+    "item": 'test-lever',
+    "title": 'Test Title Lever*',
+    "description": 'Test Description',
+    "data_type": 'number',
+    "value": 24,
+    "unit": "cases",
+    "is_toggle_active": true,
+    "is_disabled_in_ui": false,
+    "min_value": 5,
+    "max_value": null,
+    "algorithms_used": ["docket", "proportion"],
+    "lever_group": "batch",
+    "lever_group_order": 2000
+  },
+  {
+    "item": 'test-lever-disabled',
+    "title": 'Test Title Lever2*',
+    "description": 'Test Description for Lever data disabled-in-ui.',
+    "data_type": 'number',
+    "value": 5,
+    "unit": "cases",
+    "is_toggle_active": true,
+    "is_disabled_in_ui": true,
+    "min_value": 5,
+    "max_value": null,
+    "algorithms_used": ["docket", "proportion"],
+    "lever_group": "batch",
+    "lever_group_order": 2001
+  },
+];
+
 export const testingDocketDistributionPriorLevers = [
   {
     "item": 'ama_hearings_start_distribution_prior_to_goals',
