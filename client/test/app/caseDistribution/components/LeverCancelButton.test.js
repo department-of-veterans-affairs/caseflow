@@ -54,7 +54,8 @@ describe('LeverCancelButton', () => {
     fireEvent.click(cancelButton);
 
     await waitFor(() => {
-
+      expect(dispatchMock).toHaveBeenCalledTimes(2);
+      expect(dispatchMock).toHaveBeenCalledWith(expect.any(Function));
       expect(dispatchMock).toHaveBeenCalledWith(expect.any(Function));
     });
   });
