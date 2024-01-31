@@ -21,15 +21,15 @@ class CorrespondenceIntakeTask < CorrespondenceTask
       child
     end
 
-    def task_url
-      "/queue/correspondence/#{self.correspondence.uuid}/intake"
-    end
-
 
     private
 
     def verify_current_user_can_create!(user)
       MailTeam.singleton.user_has_access?(user)
     end
+  end
+
+  def task_url
+    "/queue/correspondence/#{self.correspondence.uuid}/intake"
   end
 end
