@@ -15,8 +15,8 @@ require "digest"
 class ExternalApi::VADotGovService
   #'https://sandbox-api.va.gov/services/va_facilities/v1/facilities?facilityIds=vha_757%2Cvha_539'
   BASE_URL = "https://sandbox-api.va.gov/services/"
-  FACILITY_IDS_ENDPOINT = "va_facilities/v0/ids"
-  FACILITIES_ENDPOINT = "va_facilities/v0/facilities"
+  FACILITY_IDS_ENDPOINT = "va_facilities/v1/ids"
+  FACILITIES_ENDPOINT = "va_facilities/v1/facilities"
   ADDRESS_VALIDATION_ENDPOINT = "address_validation/v1/validate"
 
   class << self
@@ -35,7 +35,7 @@ class ExternalApi::VADotGovService
     def get_distance(lat:, long:, ids:)
       send_facilities_requests(
         ids: ids,
-        query: { lat: lat, long: long, ids: ids.join(",") }
+        query: { lat: lat, long: long, facilityIds: ids.join(",") }
       )
     end
 
@@ -51,7 +51,7 @@ class ExternalApi::VADotGovService
     def get_facility_data(ids:)
       send_facilities_requests(
         ids: ids,
-        query: { ids: ids.join(",") }
+        query: { facilityIds: ids.join(",") }
       )
     end
 
@@ -396,7 +396,7 @@ class ExternalApi::VADotGovService
       request.open_timeout = 30
       request.read_timeout = 30
       request.body = body.to_json unless body.nil?
-      request.headers = headers.merge(apikey: "")
+      request.headers = headers.merge(apikey: )
 
       # Rate limit requests to VA.gov veteran verification API. This is meant to be an aggressive,
       # temporary safety measure because it's more costly (in terms of computing resources) if we
