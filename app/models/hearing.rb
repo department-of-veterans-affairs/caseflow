@@ -187,8 +187,9 @@ class Hearing < CaseflowRecord
   end
 
   def daily_docket_conference_links
-    hearing_day = self.hearing_day
-    conference_links = hearing_day.conference_links if hearing_day
+    hearing = Hearing.find(id)
+    hearing_day = hearing.hearing_day
+    conference_links = hearing_day.conference_links
 
     conference_links
   end
