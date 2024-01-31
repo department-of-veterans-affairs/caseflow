@@ -76,12 +76,22 @@ class Hearings::RTFConversionJob < CaseflowJob
   def convert_to_rtf(path)
     vtt = WebVTT.read(path)
     doc = RTF::Document.new(RTF::Font.new(RTF::Font::ROMAN, "Times New Roman"))
+    doc.footer = RTF::FooterNode.new(doc, RTF::FooterNode::UNIVERSAL)
     doc.style.left_margin = 1300
     doc.style.right_margin = 1300
     doc = create_header_page(doc)
     doc.page_break
     doc = create_transcription_pages(vtt, doc)
-    File.open('document.rtf', "w") { |file| file.write(doc.to_rtf) }
+    doc.footer << "                                          Insert Veterans Last Name, First Name, MI, Claim No"
+    rtf = doc.to_rtf
+    .sub!("{\\footer \n                                          Insert Veterans Last Name, First Name, MI, Claim No}", "{\\footer\\pard\                                               \\chpgn             Veterans Last, First, MI, Claim No  \\par}")
+    # footers = doc.instance_variable_get("@footers").each_with_index.map do |footer, idx|
+    #   if footer
+    #     footer << "page #{idx + 1}"
+    #   end
+    # end
+    # doc.instance_variable_set("@footers", footers)
+    File.open('document.rtf', "w") { |file| file.write(rtf) }
   end
 
   # Create header page
@@ -192,5 +202,4 @@ class Hearings::RTFConversionJob < CaseflowJob
   def create_xls_file
 
   end
-
 end
