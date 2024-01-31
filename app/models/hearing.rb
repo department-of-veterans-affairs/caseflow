@@ -66,7 +66,7 @@ class Hearing < CaseflowRecord
            :decision_issues, :available_hearing_locations, :closest_regional_office, :advanced_on_docket?,
            to: :appeal
   delegate :external_id, to: :appeal, prefix: true
-  delegate :timezone, :name, to: :regional_office, prefix: true
+  delegate :name, to: :regional_office, prefix: true
 
   # ActiveRecord can interpret the associated hearing_day as null because acts_as_paranoid
   # allows us to soft-delete hearing_days by setting the deleted_at value.
@@ -218,6 +218,22 @@ class Hearing < CaseflowRecord
                          rescue RegionalOffice::NotFoundError
                            nil
                           end
+  end
+
+  def regional_office_timezone
+    ro = regional_office
+    hearing_day_timezone = ro.timezone.nil? ? CENTRAL_OFFICE_TIMEZONE : ro.timezone
+
+    if scheduled_in_timezone.nil?
+      ro_timezone = hearing_day_timezone
+    else
+      begin
+        ro_timezone = ActiveSupport::TimeZone.find_tzinfo(scheduled_in_timezone).name
+      rescue TZInfo::InvalidTimezoneIdentifier
+        ro_timezone = hearing_day_timezone
+      end
+    end
+    ro_timezone
   end
 
   def regional_office_key
