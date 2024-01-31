@@ -36,23 +36,6 @@ shared_examples "HearingEmailRecipient belongs_to polymorphic hearing" do |heari
             it { should contain_exactly(ama_hearing_email_recipient) }
           end
         end
-
-        context "when called on an individual HearingEmailRecipients" do
-          subject { hearing_email_recipient.ama_hearing }
-
-          context "when the HearingEmailRecipients is not associated with an AMA Hearing" do
-            let(:hearing_email_recipient) { create(:hearing_email_recipient, :legacy) }
-
-            it { should be_nil }
-          end
-
-          context "when the HearingEmailRecipients is associated with an AMA Hearing" do
-            let(:hearing_email_recipient) { create(:hearing_email_recipient, :ama, hearing: ama_hearing) }
-            let(:ama_hearing) { create(:hearing) }
-
-            it { should eq(ama_hearing) }
-          end
-        end
       end
 
       describe "legacy_hearing" do
@@ -79,23 +62,6 @@ shared_examples "HearingEmailRecipient belongs_to polymorphic hearing" do |heari
             end
 
             it { should contain_exactly(legacy_hearing_email_recipient) }
-          end
-        end
-
-        context "when called on an individual HearingEmailRecipients" do
-          subject { hearing_email_recipient.ama_hearing }
-
-          context "when the HearingEmailRecipient is not associated with an AMA Hearing" do
-            let(:hearing_email_recipient) { create(:hearing_email_recipient, :legacy) }
-
-            it { should be_nil }
-          end
-
-          context "when the HearingEmailRecipient is associated with an AMA Hearing" do
-            let(:hearing_email_recipient) { create(:hearing_email_recipient, :ama, hearing: ama_hearing) }
-            let(:ama_hearing) { create(:hearing) }
-
-            it { should eq(ama_hearing) }
           end
         end
       end
