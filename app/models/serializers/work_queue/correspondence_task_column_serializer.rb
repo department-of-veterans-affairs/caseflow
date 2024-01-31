@@ -48,6 +48,10 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
     object.assigned_at
   end
 
+  attribute :task_url do |object|
+    object.task_url
+  end
+
   attribute :assigned_to do |object|
     assignee = object.assigned_to
     {
