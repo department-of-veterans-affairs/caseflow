@@ -238,6 +238,46 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
 
       expect(JSON.parse(response.body)["errors"]).not_to be_empty
     end
-  end
 
+    it "returns an error when the user is not an admin" do
+      User.authenticate!(user: lever_user)
+
+      invalid_updated_lever_2 = {
+        id: lever2.id,
+        value: false,
+      }
+
+      save_params = {
+        current_levers: [lever1, invalid_updated_lever_2],
+      }
+
+      post "update_levers", params: save_params, as: :json
+
+      expect(response.status).to eq 200
+      expect(JSON.parse(response.body)["message"]).to eq(["UNAUTHORIZED"])
+      expect(JSON.parse(response.body)["user_is_an_acd_admin"]).to be_falsey
+    end
+
+    it "does not update any lever when the user is not an admin" do
+      User.authenticate!(user: lever_user)
+
+      invalid_updated_lever_2 = {
+        id: lever2.id,
+        value: false,
+      }
+
+      save_params = {
+        current_levers: [lever1, invalid_updated_lever_2],
+      }
+
+      post "update_levers", params: save_params, as: :json
+
+      not_updated_lever_2 = CaseDistributionLever.find(lever2.id)
+
+      expect(CaseDistributionLever.find(lever1.id).value).to eq("t")
+
+      expect(not_updated_lever_2.value).to_not eq("f")
+      expect(not_updated_lever_2.value).to eq("55")
+    end
+  end
 end
