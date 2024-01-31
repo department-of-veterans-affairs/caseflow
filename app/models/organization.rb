@@ -164,7 +164,8 @@ class Organization < CaseflowRecord
       participant_id: participant_id,
       type: type,
       url: url,
-      user_admin_path: user_admin_path
+      user_admin_path: user_admin_path,
+      exclude_appeals_from_affinity: exclude_appeals_from_affinity
     }
   end
 

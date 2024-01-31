@@ -50,10 +50,9 @@
   }
 }
 
-.cf-app-segment {
-    div:last-child {
-      border-bottom: 0;
-    }
+.cf-app-segment>div>div:last-child,
+.cf-app-segment ul>div:last-child {
+  border-bottom: 0;
 }
 
 @keyframes slideDown {

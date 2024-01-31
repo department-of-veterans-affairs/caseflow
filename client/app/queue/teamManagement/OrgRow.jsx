@@ -70,7 +70,7 @@ export const OrgRow = React.memo((props) => {
   const [requestedCaseDistribution, setRequestedCaseDistribution] = useState(
     props.ama_only_request ? 'amaOnly' : 'all'
   );
-  const [excludeFromAffinityCases, setExcludeFromAffinityCases] = useState(props.exclude_judge_from_affinity_case);
+  const [excludeFromAffinityCases, setExcludeFromAffinityCases] = useState(props.exclude_appeals_from_affinity);
 
   const handleUpdate = () => {
     const payload = {
@@ -98,10 +98,10 @@ export const OrgRow = React.memo((props) => {
 
     props.onUpdate?.(props.id, payload);
   };
-  const handleExcludeFromAffinityCases = ({ value }) => {
+  const handleExcludeFromAffinityCases = (value) => {
     setExcludeFromAffinityCases(value);
     const payload = {
-      exclude_judge_from_affinity_case: value,
+      exclude_appeals_from_affinity: value,
     };
 
     props.onUpdate?.(props.id, payload);
@@ -232,7 +232,7 @@ OrgRow.propTypes = {
   ama_only_push: PropTypes.bool,
   ama_only_request: PropTypes.bool,
   current_user_can_toggle_priority_pushed_cases: PropTypes.bool,
-  exclude_judge_from_affinity_case: PropTypes.bool,
+  exclude_appeals_from_affinity: PropTypes.bool,
   id: PropTypes.number,
   name: PropTypes.string,
   participant_id: PropTypes.string,
