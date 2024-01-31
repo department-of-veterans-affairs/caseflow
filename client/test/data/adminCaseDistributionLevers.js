@@ -575,13 +575,13 @@ export const testingAffinityDaysLevers = [
     "title":"AMA Hearing Case AOD Affinity Days",
     "description":"Sets the number of days an AMA Hearing appeal that is also AOD will respect the affinity to the most-recent hearing judge before distributing the appeal to any available judge.",
     "data_type":"radio",
-    "value":"value",
+    "value":"option_1",
     "unit":"days",
     "options":[
       {
-        "item":"value",
-        "data_type":"number",
-        "value":0,
+        "item":"option_1",
+        "data_type":"text",
+        "value":"test",
         "text":"Attempt distribution to current judge for max of:",
         "unit":"days"
       },
