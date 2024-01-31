@@ -1,50 +1,35 @@
 # frozen_string_literal: true
 
 describe CorrespondenceAutoAssigner do
-  subject(:described) { described_class.new }
+  subject(:described) { described_class.new(current_user_id: current_user.id) }
 
   let(:veteran) { create(:veteran) }
-  let(:current_user) { create(:intake_user) }
+  let(:current_user) { create(:user) }
 
-  let!(:correspondence) { create(:correspondence, :with_single_doc, veteran_id: veteran.id, uuid: SecureRandom.uuid) }
+  let!(:correspondence) { create(:correspondence, veteran_id: veteran.id) }
 
-  let(:mock_permission_checker) { instance_double(OrganizationUserPermissionChecker, can?: true) }
+  let(:mock_assignable_user_finder) { instance_double(AutoAssignableUserFinder) }
 
   before do
-    allow(OrganizationUserPermissionChecker).to receive(:new).and_return(mock_permission_checker)
+    allow(AutoAssignableUserFinder).to receive(:new).and_return(mock_assignable_user_finder)
   end
 
-  describe "#do_auto_assignment" do
-    it "successfully creates a ReviewPackageTask and updates the existing task" do
-      expect do
-        described.do_auto_assignment(current_user_id: current_user.id)
-      end.to change(ReviewPackageTask, :count)
+  describe "#perform" do
+    context "when assignable users exist" do
+      let(:intake_user) { create(:intake_user) }
+      let!(:org_user) { create(:organizations_user, organization: InboundOpsTeam.singleton, user: intake_user) }
 
-      created = ReviewPackageTask.last
-      expect(created.assigned_to).to eq(InboundOpsTeam.singleton)
-      expect(created.status).to eq("assigned")
-    end
-
-    context "when package_document_type_id matches '10182'" do
-      let(:package_document_type) { create(:package_document_type, name: "10182") }
-      let!(:correspondence) do
-        create(
-          :correspondence,
-          :with_single_doc,
-          veteran_id: veteran.id,
-          uuid: SecureRandom.uuid,
-          package_document_type_id: package_document_type.id
-        )
+      before do
+        expect(mock_assignable_user_finder).to receive(:assignable_users_exist?).and_return(true)
+        expect(mock_assignable_user_finder).to receive(:get_first_assignable_user).and_return(intake_user)
       end
 
-      it "calls nod_mail_permission_check with the correct parameters" do
-        expect do
-          described.do_auto_assignment(current_user_id: current_user.id)
-        end.to change(ReviewPackageTask, :count)
+      it "assigns review package tasks to assignable users" do
+        described.perform
 
-        created = ReviewPackageTask.last
-        expect(created.assigned_to).to eq(InboundOpsTeam.singleton)
-        expect(created.status).to eq("assigned")
+        task = ReviewPackageTask.last
+        expect(task.assigned_to).to eq(intake_user)
+        expect(task.status).to eq("assigned")
       end
     end
   end
