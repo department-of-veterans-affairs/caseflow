@@ -23,8 +23,5 @@ module HearingEmailRecipientBelongsToPolymorphicHearingConcern
       # `super()` will call the method created by the `belongs_to` above
       super() if hearing_type == "LegacyHearing"
     end
-
-    scope :ama, -> { where(hearing_type: "Hearing") }
-    scope :legacy, -> { where(hearing_type: "LegacyHearing") }
   end
 end
