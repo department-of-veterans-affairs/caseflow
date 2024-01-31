@@ -18,9 +18,7 @@ class LegacyTasksController < ApplicationController
   end
 
   def index
-    binding.pry
     return if needs_redirect?
-    # binding.pry
     respond_to do |format|
       format.html do
         render "queue/index"

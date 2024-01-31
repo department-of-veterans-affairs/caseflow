@@ -27,11 +27,7 @@ class Users::TaskPagesController < UsersController
   # }>
 
   def index
-
-    if params[:correspondence]
-      render json: correspondence_pagination_json
-    # else
-      # render json: pagination_json
+      render json: pagination_json
     end
   end
 

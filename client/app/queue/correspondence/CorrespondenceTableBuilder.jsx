@@ -164,6 +164,7 @@ const CorrespondenceTableBuilder = (props) => {
               config.use_task_pages_api && !tabConfig.contains_legacy_tasks
             }
             enablePagination
+            isCorrespondenceTable
           />
         </React.Fragment>
       ),

@@ -39,13 +39,6 @@ module TaskPaginationConcern
     )
   end
 
-  def correspondence_json_tasks(tasks)
-    WorkQueue::CorrespondenceTaskColumnSerializer.new(
-      tasks,
-      is_collection: true
-    ).serializable_hash[:data]
-  end
-
   def task_pager
     @task_pager ||= TaskPager.new(
       assignee: assignee,
@@ -54,8 +47,16 @@ module TaskPaginationConcern
       sort_order: params[Constants.QUEUE_CONFIG.SORT_DIRECTION_REQUEST_PARAM.to_sym],
       sort_by: params[Constants.QUEUE_CONFIG.SORT_COLUMN_REQUEST_PARAM.to_sym],
       filters: params[Constants.QUEUE_CONFIG.FILTER_COLUMN_REQUEST_PARAM.to_sym]
-    )
+      )
   end
+
+    def correspondence_json_tasks(tasks)
+      { data: WorkQueue::CorrespondenceTaskColumnSerializer.new(
+            tasks,
+            is_collection: true
+            ).serializable_hash[:data]
+      }
+    end
 
   def json_tasks(tasks)
     tasks = AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
