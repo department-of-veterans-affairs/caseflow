@@ -696,6 +696,7 @@ feature "Non-veteran claimants", :postgres do
         within("#add_claimant_modal") do
           expect(page).to have_content("Review and confirm claimant information")
           expect(page).to have_content(COPY::VHA_NO_POA)
+
           click_button "Confirm"
         end
         expect(page).to have_current_path("/intake/add_issues")
@@ -737,6 +738,7 @@ feature "Non-veteran claimants", :postgres do
         within("#add_claimant_modal") do
           expect(page).to have_content("Review and confirm claimant information")
           expect(page).to have_content(COPY::VHA_NO_POA)
+          
           click_button "Confirm"
         end
         expect(page).to have_current_path("/intake/add_issues")
