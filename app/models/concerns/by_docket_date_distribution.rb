@@ -87,6 +87,8 @@ module ByDocketDateDistribution
       algorithm: "by_docket_date",
       settings: settings
     }
+  rescue StandardError => error
+    "#{error.class}: #{error.message}, #{error.backtrace.first}"
   end
   # rubocop:enable Metrics/MethodLength
 
