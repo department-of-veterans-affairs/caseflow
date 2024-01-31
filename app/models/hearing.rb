@@ -186,6 +186,13 @@ class Hearing < CaseflowRecord
       .first
   end
 
+  def daily_docket_conference_links
+    hearing_day = self.hearing_day
+    conference_links = hearing_day.conference_links if hearing_day
+
+    conference_links
+  end
+
   def scheduled_for
     return nil unless hearing_day
 

@@ -25,6 +25,7 @@ class WebexConferenceLink < ConferenceLink
 
     update!(
       host_link: conference_response.host_link,
+      co_host_link: conference_response.co_host_link,
       guest_hearing_link: conference_response.guest_link
     )
   end
