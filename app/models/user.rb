@@ -331,6 +331,9 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     administered_teams.select { |team| team.is_a?(JudgeTeam) }
   end
 
+  # TODO: There has to be better way than this. This gets all judge teams?
+  # You can already get the orgs the user is a part of though. YOU don't need a subquery for all judge teams.
+  # It might be pretty fast though so probably not worth optimizing
   def non_administered_judge_teams
     organizations_users.non_admin.where(organization: JudgeTeam.all)
   end

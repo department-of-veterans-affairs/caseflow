@@ -12,8 +12,8 @@ import { hideErrorMessage,
   setActiveOrganization } from './uiReducer/uiActions';
 import ApiUtil from '../util/ApiUtil';
 import { getMinutesToMilliseconds } from '../util/DateUtil';
-import _ from 'lodash';
 import pluralize from 'pluralize';
+import { keyBy, pick } from 'lodash';
 
 export const onReceiveQueue = (
   { tasks, amaTasks, appeals }
@@ -67,7 +67,7 @@ export const onReceiveAmaTasks = (amaTasks) => ({
 
 export const fetchJudges = () => (dispatch) => {
   ApiUtil.get('/users?role=Judge').then((response) => {
-    const judges = _.keyBy(response.body.judges, 'id');
+    const judges = keyBy(response.body.judges, 'id');
 
     dispatch({
       type: ACTIONS.RECEIVE_JUDGE_DETAILS,
@@ -468,7 +468,7 @@ export const initialCamoAssignTasksToVhaProgramOffice = ({
       const receievedTasks = prepareAllTasksForStore(resp.tasks.data);
       const taskIds = tasks.map((task) => task.uniqueId);
 
-      dispatch(onReceiveTasks(_.pick(receievedTasks, ['tasks', 'amaTasks'])));
+      dispatch(onReceiveTasks(pick(receievedTasks, ['tasks', 'amaTasks'])));
 
       taskIds.forEach((taskId) => {
         dispatch(setSelectionOfTaskOfUser({
@@ -517,20 +517,41 @@ export const initialSpecialtyCaseTeamAssignTasksToUser = ({
     return ApiUtil.post(url, requestParams).
       then((resp) => resp.body).
       then((resp) => {
-        console.log(requestParams.data.tasks);
-        dispatchOldTasks(dispatch, requestParams.data.tasks, resp);
+        const receievedTasks = prepareAllTasksForStore(resp.tasks.data);
 
-        taskIds.forEach((taskId) => {
-          dispatch(setSelectionOfTaskOfUser({
-            userId: previousAssigneeId,
-            selected: false,
-            taskId
-          }));
+        // const taskIds = tasks.map((task) => task.uniqueId);
+        console.log('ama tasks and then received tasks');
+        console.log(amaTasks);
+        console.log(receievedTasks);
 
-          dispatch(incrementTaskCountForAttorney({
-            id: assigneeId
-          }));
-        });
+        dispatch(onReceiveTasks(pick(receievedTasks, ['tasks', 'amaTasks'])));
+
+        // taskIds.forEach((taskId) => {
+        //   dispatch(setSelectionOfTaskOfUser({
+        //     userId: previousAssigneeId,
+        //     selected: false,
+        //     taskId
+        //   }));
+        // });
+
+        // TODO: See if I still need this?
+        dispatch(incrementTaskCountForAttorney({
+          id: assigneeId
+        }));
+
+        // dispatchOldTasks(dispatch, requestParams.data.tasks, resp);
+
+        // taskIds.forEach((taskId) => {
+        //   dispatch(setSelectionOfTaskOfUser({
+        //     userId: previousAssigneeId,
+        //     selected: false,
+        //     taskId
+        //   }));
+
+        //   dispatch(incrementTaskCountForAttorney({
+        //     id: assigneeId
+        //   }));
+        // });
       });
   }));
 };
@@ -570,11 +591,6 @@ export const initialAssignTasksToUser = ({
       }
     }
   }));
-
-  console.log('inside the queue action initialAssignTasksToUser');
-  console.log(tasks);
-  console.log(amaTasks);
-  console.log(amaParams);
 
   const paramsArray = amaParams.requestParams.data.tasks.length ? legacyParams.concat(amaParams) : legacyParams;
 
@@ -672,7 +688,7 @@ export const legacyReassignToJudge = ({
     then((resp) => {
       const allTasks = prepareAllTasksForStore([resp.task.data]);
 
-      dispatch(onReceiveTasks(_.pick(allTasks, ['tasks', 'amaTasks'])));
+      dispatch(onReceiveTasks(pick(allTasks, ['tasks', 'amaTasks'])));
 
       dispatch(showSuccessMessage(successMessage));
 

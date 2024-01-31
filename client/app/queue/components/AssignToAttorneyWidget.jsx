@@ -197,7 +197,9 @@ export class AssignToAttorneyWidget extends React.PureComponent {
       savePending,
       highlightFormItems,
       isModal,
-      onCancel
+      onCancel,
+      hidePrimaryAssignDropdown,
+      secondaryAssignDropdownLabel
     } = this.props;
     const { instructions } = this.state;
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
@@ -205,6 +207,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
     const otherOpt = { label: COPY.ASSIGN_WIDGET_OTHER, value: OTHER };
     const judgeOpt = currentUser ? { label: currentUser.fullName, value: currentUser.id } : null;
     const options = [...attorneysOfJudge.map(optionFromAttorney), ...(judgeOpt ? [judgeOpt] : []), otherOpt];
+
     const selectedOption = options.find((option) => option.value === selectedAssignee);
     let optionsOther = [];
     let placeholderOther = COPY.ASSIGN_WIDGET_LOADING;
@@ -229,7 +232,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
     }
 
     const Widget = <React.Fragment>
-      <SearchableDropdown
+      {hidePrimaryAssignDropdown && <SearchableDropdown
         name={COPY.ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY}
         hideLabel
         searchable
@@ -239,13 +242,15 @@ export class AssignToAttorneyWidget extends React.PureComponent {
         onChange={(option) => option && this.props.setSelectedAssignee({ assigneeId: option.value })}
         value={selectedOption}
         styling={css({ width: '30rem' })} />
+      }
       {selectedAssignee === OTHER &&
         <React.Fragment>
           <div {...fullWidth} {...css({ marginBottom: '0' })} />
-          <p>{COPY.ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL}</p>
+          {!secondaryAssignDropdownLabel && <p>{COPY.ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL}</p>}
           <SearchableDropdown
             name={COPY.ASSIGN_WIDGET_DROPDOWN_NAME_SECONDARY}
-            hideLabel
+            hideLabel={!secondaryAssignDropdownLabel}
+            label={secondaryAssignDropdownLabel}
             searchable
             errorMessage={isModal && highlightFormItems && !selectedOptionOther ? 'Choose one' : null}
             options={optionsOther}
@@ -293,6 +298,8 @@ AssignToAttorneyWidget.propTypes = {
   resetSaveState: PropTypes.func,
   showSuccessMessage: PropTypes.func,
   isModal: PropTypes.bool,
+  hidePrimaryAssignDropdown: PropTypes.bool,
+  secondaryAssignDropdownLabel: PropTypes.string,
   showErrorMessage: PropTypes.func,
   resetSuccessMessages: PropTypes.func,
   resetErrorMessages: PropTypes.func,

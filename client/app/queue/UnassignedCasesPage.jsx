@@ -48,6 +48,7 @@ class UnassignedCasesPage extends React.PureComponent {
     const { userId, selectedTasks, success, error, userIsCamoEmployee, userIsSCTCoordinator } = this.props;
     let assignWidget;
 
+    // TODO: clean this up
     if (userIsCamoEmployee) {
       assignWidget = <AssignToVhaProgramOfficeWidget
         userId={userId}
@@ -60,7 +61,11 @@ class UnassignedCasesPage extends React.PureComponent {
         userId={userId}
         previousAssigneeId={userId}
         onTaskAssignment={this.props.initialSpecialtyCaseTeamAssignTasksToUser}
-        selectedTasks={selectedTasks} />;
+        selectedTasks={selectedTasks}
+        selectedAssignee="OTHER"
+        hidePrimaryDropdown
+        secondaryAssignDropdownLabel="Select an attorney"
+      />;
     } else {
       assignWidget = <AssignToAttorneyWidget
         userId={userId}
