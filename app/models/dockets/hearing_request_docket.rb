@@ -57,6 +57,8 @@ class HearingRequestDocket < Docket
 
     appeals = self.class.limit_genpop_appeals(appeals, limit) if genpop.eql? "any"
 
+    appeals = self.class.limit_only_genpop_appeals(appeals, limit) if genpop.eql?("only_genpop") && limit
+
     HearingRequestCaseDistributor.new(
       appeals: appeals, genpop: genpop, distribution: distribution, priority: priority, sct_appeals: sct_appeals
     ).call
