@@ -589,21 +589,19 @@ FactoryBot.define do
         parent { FactoryBotHelper.find_first_task_or_create(appeal, CavcTask) }
       end
 
-      factory :sct_action_required_task do
+      factory :sct_assign_task, class: SpecialtyCaseTeamAssignTask do
         appeal do
           create(:appeal,
                  :with_vha_issue,
-                 :with_post_intake_tasks)
+                 :with_post_intake_tasks,
+                 :direct_review_docket)
         end
         assigned_to { SpecialtyCaseTeam.singleton }
         parent { appeal.root_task || create(:root_task, appeal: appeal) }
-        child_attorney_task do
-          create(:ama_attorney_task,
-                 assigned_to: sct_org,
-                 parent: appeal.tasks.last)
+
+        after(:create) do |task, _evaluator|
+          task.appeal.tasks.of_type(:DistributionTask).first.completed!
         end
-        # child_attorney_task.update_columns(status: Constants.TASK_STATUSES.cancelled)
-        # child_attorney_task.parent.update_columns(status: Constants.TASK_STATUSES.on_hold)
       end
 
       factory :hearing_task, class: HearingTask do
