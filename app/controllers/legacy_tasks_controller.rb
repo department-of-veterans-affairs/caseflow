@@ -19,6 +19,7 @@ class LegacyTasksController < ApplicationController
 
   def index
     return if needs_redirect?
+
     respond_to do |format|
       format.html do
         render "queue/index"

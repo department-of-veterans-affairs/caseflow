@@ -48,9 +48,8 @@ class CorrespondenceTask < Task
 
   private
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def status_is_valid_on_create
-    puts "DEBUG: type=#{type}, status=#{status}"
-
     case type
     when "ReviewPackageTask"
       return Constants.TASK_STATUSES.on_hold if status != Constants.TASK_STATUSES.on_hold
@@ -61,10 +60,9 @@ class CorrespondenceTask < Task
     else
       fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type unless status == Constants.TASK_STATUSES.assigned
     end
-
-    puts "DEBUG: after update - type=#{type}, status=#{status}"
     true
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def assignee_status_is_valid_on_create
     if parent&.child_must_have_active_assignee? && assigned_to.is_a?(User) && !assigned_to.active?

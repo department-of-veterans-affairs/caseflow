@@ -26,7 +26,9 @@ class CorrespondenceConfig < QueueConfig
       tasks: serialized_tasks_for_columns(task_pager.paged_tasks, tab.column_names),
       task_page_count: task_pager.task_page_count,
       total_task_count: task_pager.total_task_count,
+      # rubocop: disable Layout/LineLength
       task_page_endpoint_base_path: "#{assignee_is_org? ? "organizations/#{assignee.id}/" : "correspondence/users/#{assignee.id}/"}#{endpoint}"
+      # rubocop: enable Layout/LineLength
     )
   end
 

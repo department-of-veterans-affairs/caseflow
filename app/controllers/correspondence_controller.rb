@@ -124,19 +124,6 @@ class CorrespondenceController < ApplicationController
     render({ json: response_json }, status: :ok)
   end
 
-  def correspondence_team
-    if MailTeamSupervisor.singleton.user_has_access?(current_user)
-      respond_to do |format|
-        format.html { "correspondence_team" }
-        format.json do
-          render json: { correspondence_config: CorrespondenceConfig.new(assignee: MailTeamSupervisor.singleton) }
-        end
-      end
-    else
-      redirect_to "/unauthorized"
-    end
-  end
-
   def update
     veteran = Veteran.find_by(file_number: veteran_params["file_number"])
     if veteran && correspondence.update(
