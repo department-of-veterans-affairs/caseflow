@@ -97,6 +97,8 @@ const DocketTimeGoals = () => {
             <NumberField
               name={docketTimeGoalLever.item}
               isInteger
+              useAriaLabel={!docketTimeGoalLever.is_disabled_in_ui}
+              ariaLabelText={docketTimeGoalLever.title}
               readOnly={docketTimeGoalLever.is_disabled_in_ui}
               value={docketTimeGoalLever.value}
               label={docketTimeGoalLever.unit}
@@ -122,6 +124,8 @@ const DocketTimeGoals = () => {
 
               <NumberField
                 name={`toggle-${distributionPriorLever.item}`}
+                useAriaLabel={!distributionPriorLever.is_disabled_in_ui}
+                ariaLabelText={distributionPriorLever.title}
                 isInteger
                 readOnly={distributionPriorLever.is_disabled_in_ui}
                 value={distributionPriorLever.value}
