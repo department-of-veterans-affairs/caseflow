@@ -58,7 +58,6 @@ class DownloadTranscriptionFileJob < CaseflowJob
       download_file_to_tmp(download_link)
       upload_file_to_s3
       # queue_transform_job
-      byebug
     ensure
       clean_up_tmp_location
     end
@@ -74,7 +73,7 @@ class DownloadTranscriptionFileJob < CaseflowJob
   # Params: download_link - string, URI for temporary download link
   #         file_name - string, to be parsed for appeal/hearing identifiers
   #
-  # Returns: nil if successful, OpenURI::HTTPError if failure
+  # Returns: Updated @transcription_file
   def download_file_to_tmp(link)
     begin
       URI.open(link) do |download|
@@ -94,6 +93,9 @@ class DownloadTranscriptionFileJob < CaseflowJob
     File.join(Rails.root, "tmp", "transcription_files", file_type, file_name)
   end
 
+  # Purpose: Downloads audio (mp4) or transcript (vtt) file from tmp directory to s3 location
+  #
+  # Returns: Updated @transcription_file
   def upload_file_to_s3
     begin
       S3Service.store_file(s3_bucket, tmp_location, :filepath)
@@ -104,22 +106,30 @@ class DownloadTranscriptionFileJob < CaseflowJob
     end
   end
 
+  # Purpose: Bucket name in s3 depending on if file type mp4 or vtt
+  #
+  # Returns: string, bucket name
   def s3_bucket
     S3_BUCKET_NAMES[file_type.to_sym]
   end
 
+  # Purpose: Location of successfully uploaded file in s3
+  #
+  # Returns: string, s3 filepath
   def s3_file_location
     s3_bucket + "/" + file_name
   end
 
+  # Purpose: Location of successfully uploaded file in s3
+  #
+  # Returns: string, s3 filepath
   def queue_transform_job
-    job = case file_type
-          when "mp4"
-            TransformMp4ToMp3Job
-          when "vtt"
-            TransformVttToRtfJob
-          end
-    job.perform(s3_file_location)
+    case file_type
+    when "mp4"
+      TransformMp4ToMp3Job.perform_later(s3_file_location)
+    when "vtt"
+      TransformVttToRtfJob.perform_later(s3_file_location)
+    end
   end
 
   # Purpose: Removes temporary file (if it exists) from tmp folder after job success/fails
