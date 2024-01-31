@@ -190,11 +190,6 @@ class QueueTab
     )
   end
 
-  def on_hold_tasks_with_children_attorney_task_cancelled
-    parent_ids = on_hold_task_children.where(type: AttorneyTask.name).cancelled.pluck(:parent_id)
-    Task.where(id: parent_ids)
-  end
-
   def post_initial_letter_tasks_on_hold
     on_hold_tasks.where(type: PostSendInitialNotificationLetterHoldingTask.name)
   end
