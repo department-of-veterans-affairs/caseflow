@@ -35,6 +35,7 @@ FactoryBot.define do
 
     trait :legacy do
       appeal { create(:legacy_appeal, vacols_case: create(:case)) }
+      hearing { create(:legacy_hearing, appeal: appeal) }
     end
   end
 end
