@@ -56,6 +56,7 @@ class CaseDistributionLever < ApplicationRecord
 
   def validate_options
     errors.add(:item, "is of #{data_type} and does not contain an options object") if options.nil?
+    errors.add(:item, "is of #{data_type} and does not contain a valid is_toggle_active value") if is_toggle_active.nil?
   end
 
   def validate_number_data_type

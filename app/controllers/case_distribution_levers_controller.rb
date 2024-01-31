@@ -34,7 +34,7 @@ class CaseDistributionLeversController < ApplicationController
   private
 
   def allowed_params
-    params.permit(current_levers: [:id, :value])
+    params.permit(current_levers: [:id, :value, :is_toggle_active])
   end
 
   def verify_access

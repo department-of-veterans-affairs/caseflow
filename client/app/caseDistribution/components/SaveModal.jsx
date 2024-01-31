@@ -15,18 +15,44 @@ export const SaveModal = (props) => {
 
   const theState = useSelector((state) => state);
 
-  const leverValueDisplay = (lever) => {
-    const doesDatatypeRequireComplexLogic = (lever.data_type === ACD_LEVERS.data_types.radio ||
-      lever.data_type === ACD_LEVERS.data_types.combination);
+  const combinationValue = (isToggleActive, value) => {
+    const toggleString = isToggleActive ? 'Active' : 'Inactive';
 
-    if (doesDatatypeRequireComplexLogic) {
+    return `${toggleString} - ${value}`;
+  };
+
+  const backendValueDisplay = (lever) => {
+    let value = lever.backendValue;
+
+    if (lever.data_type === ACD_LEVERS.data_types.radio) {
+      const selectedOption = findOption(lever, lever.backendValue);
+      const isSelectedOptionANumber = selectedOption.data_type === ACD_LEVERS.data_types.number;
+
+      return isSelectedOptionANumber ? selectedOption.value : selectedOption.text;
+    }
+
+    if (lever.data_type === ACD_LEVERS.data_types.combination) {
+      value = combinationValue(lever.backendIsToggleActive, lever.backendValue);
+    }
+
+    return <>{value}</>;
+  };
+
+  const leverValueDisplay = (lever) => {
+    let value = lever.value;
+
+    if (lever.data_type === ACD_LEVERS.data_types.radio) {
       const selectedOption = findOption(lever, lever.value);
       const isSelectedOptionANumber = selectedOption.data_type === ACD_LEVERS.data_types.number;
 
       return isSelectedOptionANumber ? selectedOption.value : selectedOption.text;
     }
 
-    return <strong>{lever.value}</strong>;
+    if (lever.data_type === ACD_LEVERS.data_types.combination) {
+      value = combinationValue(lever.is_toggle_active, lever.value);
+    }
+
+    return <strong>{value}</strong>;
   };
 
   const leverList = () => {
@@ -54,7 +80,7 @@ export const SaveModal = (props) => {
                 <React.Fragment>
                   <td className={cx('modal-table-styling', 'modal-table-left-styling')}>{lever.title}</td>
                   <td className={cx('modal-table-styling', 'modal-table-right-styling')}>
-                    {lever.backendValue}
+                    {backendValueDisplay(lever)}
                   </td>
                   <td className={cx('modal-table-styling', 'modal-table-right-styling')}>
                     {leverValueDisplay(lever)}

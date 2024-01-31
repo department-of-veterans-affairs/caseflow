@@ -2,8 +2,6 @@ import ACD_LEVERS from '../../constants/ACD_LEVERS';
 
 export const findOption = (lever, value) => lever.options.find((option) => option.item === value);
 
-export const createCombinationValue = (toggleValue, value) => `${toggleValue}-${value}`;
-
 /**
  * Add backendValue attributes to each lever
  * For radio and combination levers add currentValue
@@ -29,8 +27,8 @@ export const createUpdatedLeversWithValues = (levers) => {
           };
         } else if (dataType === ACD_LEVERS.data_types.combination) {
           additionalValues = {
-            currentValue: createCombinationValue(lever.is_toggle_active, lever.value),
-            backendValue: createCombinationValue(lever.is_toggle_active, lever.value)
+            backendValue: lever.value,
+            backendIsToggleActive: lever.is_toggle_active
           };
         }
 
@@ -100,16 +98,16 @@ export const formatLeverHistory = (leverHistoryList) => {
 
 export const validateLeverInput = (lever, value) => {
   const errors = [];
-  const { item, min_value, max_value, data_type } = lever;
+  const { min_value: minValue, max_value: maxValue } = lever;
 
   if (value === null || value === '') {
     errors.push({ leverItem: lever.item, message: ACD_LEVERS.validation_error_message.minimum_not_met });
   }
   if (parseFloat(value)) {
-    if (value < min_value) {
+    if (value < minValue) {
       errors.push({ leverItem: lever.item, message: ACD_LEVERS.validation_error_message.minimum_not_met });
     }
-    if (max_value && value > max_value) {
+    if (maxValue && value > maxValue) {
       errors.push({ leverItem: lever.item, message: ACD_LEVERS.validation_error_message.out_of_bounds });
     }
   }
@@ -124,3 +122,20 @@ export const leverErrorMessageExists = (existingErrors, newErrors) => {
     )
   );
 };
+
+/**
+ * if is_toggle_active was false then set to true and value was updated
+ *   return true
+ * if is_toggle_active was true, value was updated then is_toggle_active was set to false
+ *   return true
+ * if is_toggle_active didn't change, value was udpated
+ *   return true
+ * if neither value or is_toggle_active changed
+ *   return false
+ */
+export const hasCombinationLeverChanged = (lever) =>
+  (lever.backendIsToggleActive !== lever.is_toggle_active) ||
+  (lever.backendValue !== null &&
+  `${lever.value}` !== lever.backendValue);
+
+export const hasRadioLeverChanged = (lever) => false;
