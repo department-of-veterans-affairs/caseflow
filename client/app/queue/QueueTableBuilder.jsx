@@ -251,9 +251,9 @@ const QueueTableBuilder = (props) => {
   return <div className={rootStyles}>
     <h1 {...css({ display: 'inline-block' })}>{config.table_title}</h1>
     <QueueOrganizationDropdown
-      mailTeamUser={props.mailTeamUser}
-      mailSupervisor={props.mailSupervisor}
-      mailSuperUser={props.mailSuperUser}
+      isMailTeamUser={props.isMailTeamUser}
+      isMailSupervisor={props.isMailSupervisor}
+      isMailSuperUser={props.isMailSuperUser}
       organizations={props.organizations}
       featureToggles = {props.featureToggles}
     />
@@ -269,18 +269,18 @@ const mapStateToProps = (state) => {
   return {
     config: state.queue.queueConfig,
     organizations: state.ui.organizations,
-    mailTeamUser: state.ui.mailTeamUser,
-    mailSupervisor: state.ui.mailSupervisor,
-    mailSuperUser: state.ui.mailSuperUser,
+    isMailTeamUser: state.ui.isMailTeamUser,
+    isMailSupervisor: state.ui.isMailSupervisor,
+    isMailSuperUser: state.ui.isMailSuperUser,
     isVhaOrg: isActiveOrganizationVHA(state),
     userCanBulkAssign: state.ui.activeOrganization.userCanBulkAssign,
   };
 };
 
 QueueTableBuilder.propTypes = {
-  mailTeamUser: PropTypes.bool,
-  mailSupervisor: PropTypes.bool,
-  mailSuperUser: PropTypes.bool,
+  isMailTeamUser: PropTypes.bool,
+  isMailSupervisor: PropTypes.bool,
+  isMailSuperUser: PropTypes.bool,
   organizations: PropTypes.array,
   assignedTasks: PropTypes.array,
   config: PropTypes.shape({

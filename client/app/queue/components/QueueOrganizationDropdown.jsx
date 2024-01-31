@@ -9,9 +9,9 @@ import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 export default class QueueOrganizationDropdown extends React.Component {
   render = () => {
     const { organizations } = this.props;
-    const { mailTeamUser } = this.props;
-    const { mailSupervisor } = this.props;
-    const { mailSuperUser } = this.props;
+    const { isMailTeamUser } = this.props;
+    const { isMailSupervisor } = this.props;
+    const { isMailSuperUser } = this.props;
     const url = window.location.pathname.split('/');
     const location = url[url.length - 1];
     const queueHref = (location === 'queue') ? '#' : '/queue';
@@ -40,7 +40,7 @@ export default class QueueOrganizationDropdown extends React.Component {
 
     let items = [queueItem, ...organizationItems];
 
-    if (mailSuperUser === true || mailSupervisor === true) {
+    if (isMailSuperUser === true || isMailSupervisor === true) {
       const orgHref = '/queue/correspondence/team';
 
       correspondenceItems = {
@@ -51,7 +51,7 @@ export default class QueueOrganizationDropdown extends React.Component {
 
       items = [...items, correspondenceItems];
     }
-    if (mailTeamUser === true) {
+    if (isMailTeamUser === true) {
       const orgHref = '/queue/correspondence';
 
       correspondenceItems = {
@@ -78,9 +78,9 @@ export default class QueueOrganizationDropdown extends React.Component {
 }
 
 QueueOrganizationDropdown.propTypes = {
-  mailTeamUser: PropTypes.bool,
-  mailSupervisor: PropTypes.bool,
-  mailSuperUser: PropTypes.bool,
+  isMailTeamUser: PropTypes.bool,
+  isMailSupervisor: PropTypes.bool,
+  isMailSuperUser: PropTypes.bool,
   organizations: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired

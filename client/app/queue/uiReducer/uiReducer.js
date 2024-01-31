@@ -20,9 +20,9 @@ export const initialState = {
   userCssId: '',
   userInfo: null,
   organizations: [],
-  mailTeamUser: false,
-  mailSupervisor: false,
-  mailSuperUser: false,
+  isMailTeamUser: false,
+  isMailSupervisor: false,
+  isMailSuperUser: false,
   activeOrganization: {
     id: null,
     name: null,
@@ -254,20 +254,20 @@ const workQueueUiReducer = (state = initialState, action = {}) => {
     });
   case ACTIONS.SET_MAIL_TEAM_USER:
     return update(state, {
-      mailTeamUser: {
-        $set: action.payload.mailTeamUser
+      isMailTeamUser: {
+        $set: action.payload.isMailTeamUser
       }
     });
   case ACTIONS.SET_MAIL_SUPERVISOR:
     return update(state, {
-      mailSupervisor: {
-        $set: action.payload.mailSupervisor
+      isMailSupervisor: {
+        $set: action.payload.isMailSupervisor
       }
     });
   case ACTIONS.SET_MAIL_SUPER_USER:
     return update(state, {
-      mailSuperUser: {
-        $set: action.payload.mailSuperUser
+      isMailSuperUser: {
+        $set: action.payload.isMailSuperUser
       }
     });
   case ACTIONS.SET_ORGANIZATIONS:

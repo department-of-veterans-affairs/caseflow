@@ -96,15 +96,15 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   end
 
   def mail_team_user?
-    self.organizations.include?(MailTeam.singleton)
+    organizations.include?(MailTeam.singleton)
   end
 
   def mail_supervisor?
-    self.organizations.include?(MailTeamSupervisor.singleton)
+    organizations.include?(MailTeamSupervisor.singleton)
   end
 
   def mail_superuser?
-    self.organizations_users.where(admin: true, organization_id: MailTeam.singleton.id || BvaIntake.singleton.id).any?
+    organizations_users.where(admin: true, organization_id: MailTeam.singleton.id || BvaIntake.singleton.id).any?
   end
 
   def can_assign_hearing_schedule?
