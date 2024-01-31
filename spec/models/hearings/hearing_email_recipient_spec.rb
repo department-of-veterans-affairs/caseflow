@@ -6,6 +6,7 @@ describe HearingEmailRecipient do
   described_class.descendants.each do |hearing_email_recipient_subclass|
     context "#{hearing_email_recipient_subclass}" do
       it_behaves_like "HearingEmailRecipient belongs_to polymorphic appeal", hearing_email_recipient_subclass
+      it_behaves_like "HearingEmailRecipient belongs_to polymorphic hearing", hearing_email_recipient_subclass
     end
   end
 
