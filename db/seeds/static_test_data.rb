@@ -434,6 +434,8 @@ module Seeds
         :with_request_issues,
         issue_count: 1,
         receipt_date: 3.years.ago,
+        tied_judge: judge,
+        adding_user: User.find_by(css_id: 'BVATWARNER') || create(:hearings_coordinator),
         veteran: create_veteran
       )
 
