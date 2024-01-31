@@ -21,14 +21,13 @@ class CaseDistributionLeversController < ApplicationController
   end
 
   def update_levers
-    redirect_to "/unauthorized" unless CDAControlGroup.singleton.user_is_admin?(current_user)
-    errors = CaseDistributionLever.update_acd_levers(allowed_params[:current_levers], current_user)
+      errors = CaseDistributionLever.update_acd_levers(allowed_params[:current_levers], current_user)
 
-    render json: {
-      errors: errors,
-      lever_history: CaseDistributionAuditLeverEntry.lever_history,
-      levers: grouped_levers
-    }
+      render json: {
+        errors: errors,
+        lever_history: CaseDistributionAuditLeverEntry.lever_history,
+        levers: grouped_levers
+      }
   end
 
 
@@ -36,7 +35,7 @@ class CaseDistributionLeversController < ApplicationController
 
   def authorize_admin
     error = ["UNAUTHORIZED"]
-    
+
     render json: {
       status_code: 500,
       message: error,
