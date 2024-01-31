@@ -322,6 +322,7 @@ Rails.application.routes.draw do
     get '/appeals/:vacols_id/tasks/:task_id/schedule_veteran', to: 'queue#index' # Allow direct navigation from the Hearings App
     get '/appeals/:vacols_id/*all', to: redirect('/queue/appeals/%{vacols_id}')
     get 'correspondence/users/:user_id(*rest)', to: 'correspondence_task_pages#index'
+    get 'correspondence/organizations/:organization_id(*rest)', to: 'correspondence_task_pages#index'
     get '/:user_id(*rest)', to: 'legacy_tasks#index'
   end
   match '/explain/correspondence/:correspondence_uuid/:any' => 'explain#show', via: [:get]

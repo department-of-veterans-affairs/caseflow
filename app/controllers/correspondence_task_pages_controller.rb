@@ -8,6 +8,10 @@ class CorrespondenceTaskPagesController < ApplicationController
   end
 
   def assignee
-    User.find(params[:user_id])
+    if params[:user_id]
+      User.find(params[:user_id])
+    elsif params[:organization_id]
+      Organization.find(params[:organization_id])
+    end
   end
 end
