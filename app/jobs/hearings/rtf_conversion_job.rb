@@ -94,11 +94,14 @@ class Hearings::RTFConversionJob < CaseflowJob
   # Create header page
   def create_header_page(transcript, document)
     opening = transcript.cues[0]
-    judge = opening.identifier.scan(/[a-zA-Z]+/).join(" ")
-    veteran = /Veteran[^a]+([A-Z][a-z]+\s(?:[A-Z]\.\s)?[A-Z][A-Za-z]+)/.match(opening.text)
-    date = /[Tt]oday.+\s([A-Z][a-z]+ \d+\w{2},\s\d{4})/.match(opening.text)
-    representative = /represented\sby(\s|\sMs\.\s|\sMr\.\s|\sMrs\.\s)([A-Z][a-z]+\s(?:[A-Z]\.\s)?[A-Za-z]+)/
-      .match(opening.text)
+    transcript_info = {
+      judge: opening.identifier.scan(/[a-zA-Z]+/).join(" "),
+      veteran: (/Veteran[^a]+([A-Z][a-z]+\s(?:[A-Z]\.\s)?[A-Z][A-Za-z]+)/.match(opening.text) || ["", ""])[1],
+      date: (/[Tt]oday.+\s([A-Z][a-z]+ \d+\w{2},\s\d{4})/.match(opening.text) || ["", ""])[1],
+      file_number: /\d{9}[A-Z]/.match(opening.text),
+      representative: (/represented\sby(\s|\sMs\.\s|\sMr\.\s|\sMrs\.\s)([A-Z][a-z]+\s[A-Za-z]+)/
+      .match(opening.text) || ["", "", ""])[2]
+    }
     border_width = 40
     document.table(2, 1, 9200) do |table|
       table.cell_margin = 30
@@ -107,22 +110,12 @@ class Hearings::RTFConversionJob < CaseflowJob
       header_row.shading_colour = RTF::Colour.new(0, 0, 0)
       table[1].border_width = border_width
       header_row[0] << " Department of Veterans Affairs"
-      generate_header_info(table[1][0])
+      generate_header_info(table[1][0], transcript_info)
     end
     File.open('document.rtf', "w") { |file| file.write(document.to_rtf) }
-
-    # document.paragraph(styles) do |styles|
-    #   style.paragraph << "Department of Veterans Affairs"
-    # end
-    {
-      judge: judge,
-      veteran: veteran && veteran[1] || "",
-      date: date && date[1] || "",
-      representative: representative && representative[2] || ""
-    }
   end
 
-  def generate_header_info(row)
+  def generate_header_info(row, info)
     row.line_break
     row << "                                TRANSCRIPT OF HEARING"
     row.line_break
@@ -134,6 +127,64 @@ class Hearings::RTFConversionJob < CaseflowJob
     row.line_break
     row.line_break
     row << "                                 WASHINGTON, D.C. 20420"
+    row.line_break
+    row.line_break
+    row.line_break
+    row.line_break
+    row << "                            Video Conference at Insert City, State"
+    row.line_break
+    row.line_break
+    row.line_break
+    row.line_break
+    row << "  IN THE APPEAL OF           :       #{formatted_veteran_name(info[:veteran])}"
+    row.line_break
+    row << "                                           #{info[:file_number]}"
+    row.line_break
+    row.line_break
+    row.line_break
+    row.line_break
+    row.line_break
+    row << "  DATE                          :       #{info[:date]}"
+    row.line_break
+    row.line_break
+    row.line_break
+    row.line_break
+    row.line_break
+    row << "  REPRESENTED BY           :       #{info[:representative]}"
+    row.line_break
+    row << "                                          Insert Representative's Organization"
+    row.line_break
+    row.line_break
+    row.line_break
+    row.line_break
+    row.line_break
+    row << "  MEMBER OF BOARD           :    #{info[:judge]}, Judge"
+    row.line_break
+    row.line_break
+    row.line_break
+    row.line_break
+    row.line_break
+    row << "  WITNESSES                   :       Insert Full Name of witness, Appellant"
+    row.line_break
+    row << "                                            Insert Full Name of other witnesses, Witness"
+    row.line_break
+    row.line_break
+    row.line_break
+    row.line_break
+    row.line_break
+  end
+
+  # Format veteran name for transcript front page
+  # name - the veterans name
+  # return - the formatted name
+  def formatted_veteran_name(name)
+    arr = name.split(" ")
+    middle = ""
+    if arr.length > 2
+      middle = ", #{arr[1]}"
+      arr.delete_at(1)
+    end
+    arr.reverse.join(", ") + middle
   end
 
   # Create a transcription file record
