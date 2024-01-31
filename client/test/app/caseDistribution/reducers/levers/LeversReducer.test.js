@@ -13,24 +13,28 @@ import * as leverActions from 'app/caseDistribution/reducers/levers/leversAction
 
 describe('Lever reducer', () => {
 
-  // const getStore = () => redux.createStore(
-  //   rootReducer,
-  //   redux.applyMiddleware(thunk)
-  // );
+  const getStore = () => redux.createStore(
+    rootReducer,
+    redux.applyMiddleware(thunk)
+  );
 
-  // let leversLoadPayload = {
-  //   batch: testingBatchLevers,
-  //   docket_distribution_prior: testingDocketDistributionPriorLevers,
-  //   affinity: testingAffinityDaysLevers
-  // };
+  let leversLoadPayload = {
+    batch: testingBatchLevers,
+    docket_distribution_prior: testingDocketDistributionPriorLevers,
+    affinity: testingAffinityDaysLevers
+  };
 
-  // let leversSavePayload = {
-  //   batch: testingBatchLeversUpdatedToSave,
-  //   docket_distribution_prior: testingDocketDistributionPriorLevers,
-  //   affinity: testingAffinityDaysLevers
-  // };
+  let leversSavePayload = {
+    batch: testingBatchLeversUpdatedToSave,
+    docket_distribution_prior: testingDocketDistributionPriorLevers,
+    affinity: testingAffinityDaysLevers
+  };
 
-  it.skip('Calls Load Levers from LeversReducer', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('Calls Load Levers from LeversReducer', () => {
     let spyLoad = jest.spyOn(leverActions, 'loadLevers');
     const store = getStore();
 
@@ -45,7 +49,7 @@ describe('Lever reducer', () => {
     expect(spyLoad).toBeCalledWith(leversLoadPayload);
   });
 
-  it.skip('Calls Load History from LeversReducer', () => {
+  it('Calls Load History from LeversReducer', () => {
 
     let historyPayload = [
       {
@@ -73,7 +77,7 @@ describe('Lever reducer', () => {
     expect(spyHistory).toBeCalledWith(historyPayload);
   });
 
-  it.skip('Calls Update Text Lever from LeversReducer', () => {
+  it('Calls Update Text Lever from LeversReducer', () => {
 
     let spyUpdateText = jest.spyOn(leverActions, 'updateTextLever');
 
@@ -90,7 +94,7 @@ describe('Lever reducer', () => {
     expect(spyUpdateText).toBeCalledWith('batch', 'test-lever', 'testValue');
   });
 
-  it.skip('Calls Update Combination Lever from LeversReducer', () => {
+  it('Calls Update Combination Lever from LeversReducer', () => {
 
     let spyUpdateCombination = jest.spyOn(leverActions, 'updateCombinationLever');
 
@@ -117,7 +121,7 @@ describe('Lever reducer', () => {
     );
   });
 
-  it.skip('Calls Update Radio Lever from LeversReducer', () => {
+  it('Calls Update Radio Lever from LeversReducer', () => {
 
     let spyUpdateRadio = jest.spyOn(leverActions, 'updateRadioLever');
 
@@ -144,7 +148,7 @@ describe('Lever reducer', () => {
     );
   });
 
-  it.skip('Calls  Hide Success Banner from LeversReducer', () => {
+  it('Calls  Hide Success Banner from LeversReducer', () => {
 
     let spyHideBanner = jest.spyOn(leverActions, 'hideSuccessBanner');
 
@@ -152,7 +156,6 @@ describe('Lever reducer', () => {
 
     store.dispatch(leverActions.loadLevers(leversLoadPayload));
     store.dispatch(leverActions.hideSuccessBanner());
-    store.dispatch(leverActions.setUserIsAcdAdmin(true));
 
     render(
       <Provider store={store}>
@@ -162,24 +165,60 @@ describe('Lever reducer', () => {
     expect(spyHideBanner).toBeCalled();
   });
 
-  it.skip('Calls Add and Remove Lever Errors from LeversReducer', () => {
+  it('Calls Add and Remove Lever Errors from LeversReducer', () => {
 
     let spyAddLeverErrors = jest.spyOn(leverActions, 'addLeverErrors');
-    // let spyRemoveLeverErrors = jest.spyOn(leverActions, 'removeLeverErrors');
+    let spyRemoveLeverErrors = jest.spyOn(leverActions, 'removeLeverErrors');
 
     const store = getStore();
 
     store.dispatch(leverActions.loadLevers(leversLoadPayload));
-    store.dispatch(leverActions.addLeverErrors(["TEST ERROR"]));
-    // store.dispatch(leverActions.removeLeverErrors('test-lever'));
-    store.dispatch(leverActions.setUserIsAcdAdmin(true));
+    store.dispatch(leverActions.addLeverErrors(['TEST ERROR']));
+    store.dispatch(leverActions.removeLeverErrors('test-lever'));
 
     render(
       <Provider store={store}>
         <BatchSize />
       </Provider>
     );
-    expect(spyAddLeverErrors).toBeCalled();
-    // expect(spyRemoveLeverErrors).toBeCalled();
+    expect(spyAddLeverErrors).toBeCalledWith(['TEST ERROR']);
+    expect(spyRemoveLeverErrors).toBeCalledWith('test-lever');
+  });
+
+  it('Calls Reset All Lever Errors from LeversReducer', () => {
+
+    let spyAddLeverErrors = jest.spyOn(leverActions, 'addLeverErrors');
+    let spyResetErrors = jest.spyOn(leverActions, 'resetAllLeverErrors');
+
+    const store = getStore();
+
+    store.dispatch(leverActions.loadLevers(leversLoadPayload));
+    store.dispatch(leverActions.addLeverErrors(['TEST ERROR']));
+    store.dispatch(leverActions.resetAllLeverErrors());
+
+    render(
+      <Provider store={store}>
+        <BatchSize />
+      </Provider>
+    );
+    expect(spyAddLeverErrors).toBeCalledWith(['TEST ERROR']);
+    expect(spyResetErrors).toBeCalled();
+  });
+
+  it('Calls Reset Levers from LeversReducer', async () => {
+
+    let spyResetLevers = jest.spyOn(leverActions, 'resetLevers');
+
+    const store = getStore();
+
+    store.dispatch(leverActions.loadLevers(leversLoadPayload));
+    await store.dispatch(leverActions.resetLevers());
+
+    render(
+      <Provider store={store}>
+        <BatchSize />
+      </Provider>
+    );
+    expect(spyResetLevers).toBeCalled();
   });
 });
