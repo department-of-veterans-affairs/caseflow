@@ -286,24 +286,6 @@ class CorrespondenceController < ApplicationController
     veterans.map { |veteran| vet_info_serializer(veteran, veteran.correspondences.last) }
   end
 
-  # Temporary method to return all CorrespondenceTasks
-  def all_correspondence
-    @tasks = CorrespondenceTask.all
-  end
-
-  # Temporary method to return CorrespondenceTasks assigned to current_user
-  def user_correspondence
-    @tasks = CorrespondenceTask.where(tasks: { assigned_to_id: current_user.id })
-  end
-
-  # Temporary task info serializer
-  def task_info_serializer(task)
-    {
-      taskType: task.type,
-      taskId: task.id
-    }
-  end
-
   def auto_texts
     @auto_texts ||= AutoText.all.pluck(:name)
   end
