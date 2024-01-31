@@ -26,7 +26,8 @@ class CorrespondenceConfig < QueueConfig
       tasks: serialized_tasks_for_columns(task_pager.paged_tasks, tab.column_names),
       task_page_count: task_pager.task_page_count,
       total_task_count: task_pager.total_task_count,
-      task_page_endpoint_base_path: "#{assignee_is_org? ? "#{assignee.path}/" : "users/#{assignee.id}/"}#{endpoint}"
+      # http://localhost:3000/queue/users/72/task_pages?tab=correspondence_assigned&page=4
+      task_page_endpoint_base_path: "#{assignee_is_org? ? "#{assignee.path}/" : "users/#{assignee.id}/"}#{endpoint}&correspondence=true"
     )
   end
 

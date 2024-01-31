@@ -7,9 +7,7 @@ import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
 import { sprintf } from 'sprintf-js';
-import { css } from 'glamor';
-// import CorrespondenceTable from './CorrespondenceTable';
-// import QueueOrganizationDropdown from '../components/QueueOrganizationDropdown';
+import CorrespondenceTableBuilder from './CorrespondenceTableBuilder';
 import Alert from '../../components/Alert';
 
 // import {
@@ -63,13 +61,8 @@ class CorrespondenceCases extends React.PureComponent {
             currentAction.action_type === 'DeleteReviewPackage' &&
           <Alert type="success" title={sprintf(COPY.CORRESPONDENCE_TITLE_REMOVE_PACKAGE_BANNER, vetName)}
             message={COPY.CORRESPONDENCE_MESSAGE_REMOVE_PACKAGE_BANNER} scrollOnAlert={false} />}
-          <h1 {...css({ display: 'inline-block' })}>{COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES}</h1>
-          {/* <QueueOrganizationDropdown organizations={organizations} />
           {this.props.correspondenceConfig &&
-          <CorrespondenceTable
-            correspondenceConfig={this.props.correspondenceConfig}
-          />
-          } */}
+          <CorrespondenceTableBuilder />}
         </AppSegment>
       </React.Fragment>
     );

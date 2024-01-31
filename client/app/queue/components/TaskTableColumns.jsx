@@ -13,6 +13,7 @@ import ContinuousProgressBar from 'app/components/ContinuousProgressBar';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import IhpDaysWaitingTooltip from './IhpDaysWaitingTooltip';
 import TranscriptionTaskTooltip from './TranscriptionTaskTooltip';
+import Checkbox from '../../components/Checkbox';
 
 import { taskHasCompletedHold, hasDASRecord, collapseColumn, regionalOfficeCity, renderAppealType } from '../utils';
 import { DateString, daysSinceAssigned, daysSincePlacedOnHold } from '../../util/DateUtil';
@@ -219,6 +220,51 @@ export const assignedByColumn = () => {
     valueFunction: (task) =>
       task.assignedBy ? `${task.assignedBy.firstName} ${task.assignedBy.lastName}` : null,
     getSortValue: (task) => task.assignedBy ? task.assignedBy.lastName : null
+  };
+};
+
+export const veteranDetails = () => {
+  return {
+    header: 'Veteran Details',
+    valueFunction: (task) => task.veteranDetails
+  };
+};
+
+export const vaDor = () => {
+
+  return {
+    header: 'VA DOR',
+    valueFunction: (task) => {
+      return moment(task.vador).format('MM/DD/YYYY');
+    }
+  };
+};
+
+export const notes = () => {
+  return {
+    header: 'Notes',
+    valueFunction: (task) => task.notes
+  };
+};
+
+export const checkboxColumn = () => {
+  return {
+    header: 'Select',
+    valueFunction: (task) => task ? <Checkbox id={task.uniqueId} /> : ''
+  };
+};
+
+export const actionType = () => {
+  return {
+    header: 'Action Type',
+    valueFunction: (task) => task.actionType
+  };
+};
+
+export const daysWaitingCorrespondence = () => {
+  return {
+    header: 'Days Waiting',
+    valueFunction: (task) => task.daysWaiting
   };
 };
 
