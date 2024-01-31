@@ -43,7 +43,7 @@ printf "commit: `git rev-parse HEAD`\ndate: `git log -1 --format=%cd`" > config/
 
 credstash -t appeals-credstash get datadog.api.key > config/datadog.key
 
-cp /etc/pki/tls/certs/ca-bundle.crt docker-bin/ca-certs/cacert.pem
+cp /etc/ssl/certs/ca-certificates.crt docker-bin/ca-certs/cacert.pem
 
 # Build Docker
 echo -e "\tCreating Caseflow App Docker Image"
