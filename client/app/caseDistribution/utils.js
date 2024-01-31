@@ -49,12 +49,19 @@ export const createUpdatedLeversWithValues = (levers) => {
 
 export const formatTimestamp = (entry) => {
   const dateEntry = new Date(entry);
+  const timeEntry = {
+    hours: `0${dateEntry.getHours()}`.slice(-2),
+    minutes: `0${dateEntry.getMinutes()}`.slice(-2),
+    seconds: `0${dateEntry.getSeconds()}`.slice(-2),
+  };
+
   const formattedDate = `${dateEntry.toLocaleDateString('en-US', {
     weekday: 'short',
     year: 'numeric',
     month: 'short',
     day: 'numeric'
-  }) } ${dateEntry.getHours()}:${dateEntry.getMinutes()}:${dateEntry.getSeconds()}`;
+
+  }) } ${timeEntry.hours}:${timeEntry.minutes}:${timeEntry.seconds}`;
 
   return formattedDate;
 };
