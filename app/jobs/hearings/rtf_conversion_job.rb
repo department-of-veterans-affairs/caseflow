@@ -78,30 +78,14 @@ class Hearings::RTFConversionJob < CaseflowJob
     doc = RTF::Document.new(RTF::Font.new(RTF::Font::ROMAN, "Times New Roman"))
     doc.style.left_margin = 1300
     doc.style.right_margin = 1300
-    transcript_info = create_header_page(vtt, doc)
-    # byebug
-    # styles = RTF::ParagraphStyle.new
-    # vtt.cues.each do |cue|
-    #   doc.paragraph(styles) do |style|
-    #     style.paragraph << cue.identifier
-    #     style.paragraph << cue.start.to_s + " --> " + cue.end.to_s
-    #     style.paragraph << cue.text
-    #   end
-    # end
-    # File.open('document.rtf', "w") { |file| file.write(doc.to_rtf) }
+    doc = create_header_page(doc)
+    doc.page_break
+    doc = create_transcription_pages(vtt, doc)
+    File.open('document.rtf', "w") { |file| file.write(doc.to_rtf) }
   end
 
   # Create header page
-  def create_header_page(transcript, document)
-    # opening = transcript.cues[0]
-    transcript_info = {
-      judge: opening.identifier.scan(/[a-zA-Z]+/).join(" "),
-      veteran: /Veteran(.+is\s|\s)([A-Z][a-z]+\s(?:[A-Z]\.\s)?[A-Z][A-Za-z]+)/.match(opening.text) || ["", "", ""],
-      date: /[Tt]oday.+\s([A-Z][a-z]+ \d+\w{2},\s\d{4})/.match(opening.text) || ["", ""],
-      file_number: /\d{9}[A-Z]/.match(opening.text) || "",
-      representative: /represented.+by(\s|\sMs\.\s|\sMr\.\s|\sMrs\.\s)([A-Z][a-z]+\s[A-Za-z]+)/
-        .match(opening.text) || ["", "", ""]
-    }
+  def create_header_page(document)
     border_width = 40
     document.table(2, 1, 9200) do |table|
       table.cell_margin = 30
@@ -112,7 +96,27 @@ class Hearings::RTFConversionJob < CaseflowJob
       header_row[0] << " Department of Veterans Affairs"
       generate_header_info(table[1][0])
     end
-    File.open('document.rtf', "w") { |file| file.write(document.to_rtf) }
+
+    document
+  end
+
+  def create_transcription_pages(transcript, document)
+    styles = {}
+    styles["PS_CODE"] = RTF::ParagraphStyle.new
+    styles["CS_CODE"] = RTF::CharacterStyle.new
+    styles["PS_CODE"].line_spacing = false
+    styles["CS_CODE"].underline = true
+    transcript.cues.each do |cue|
+      document.paragraph(styles["PS_CODE"]) do |n1|
+        n1.apply(styles["CS_CODE"]) do |n2|
+          n2 << cue.identifier.scan(/[a-zA-Z]+/).join(" ").upcase
+        end
+        n1.paragraph << ": #{cue.text}"
+        n1.paragraph
+      end
+    end
+
+    document
   end
 
   def generate_header_info(row)
@@ -172,19 +176,6 @@ class Hearings::RTFConversionJob < CaseflowJob
     row.line_break
     row.line_break
     row.line_break
-  end
-
-  # Format veteran name for transcript front page
-  # name - the veterans name
-  # return - the formatted name
-  def formatted_veteran_name(name)
-    arr = name.split(" ")
-    middle = ""
-    if arr.length > 2
-      middle = ", #{arr[1]}"
-      arr.delete_at(1)
-    end
-    arr.reverse.join(", ") + middle
   end
 
   # Create a transcription file record
