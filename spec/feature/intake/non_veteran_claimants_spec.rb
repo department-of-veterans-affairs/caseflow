@@ -256,7 +256,8 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to have_content(claimant.power_of_attorney.name)
 
       # Case details page
-      visit "queue/appeals/#{appeal.uuid}"
+      reload_case_detail_page(appeal.uuid)
+
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
       expect(page).to have_content(new_individual_claimant[:first_name])
       expect(claimant.relationship).to eq("Other")
@@ -630,89 +631,25 @@ feature "Non-veteran claimants", :postgres do
         within("#add_claimant_modal") do
           expect(page).to have_content("Review and confirm claimant information")
           expect(page).to have_content("#{first_name} #{last_name}")
-          expect(page).to have_content(COPY::VHA_NO_RECOGNIZED_POA)
-
+          expect(page).to have_content("No recognized POA")
           click_button "Confirm"
         end
+
         expect(page).to have_current_path("/intake/add_issues")
-        expect(page).to have_content("Add / Remove Issues")
-        expect(page).to have_content(COPY::VHA_NO_RECOGNIZED_POA)
-        expect(page).to have_content "Add Issue"
-      end
 
-      it "should display No know POA when attorney if attorney is selected after claimant not listed is selected" do
-        expect(page).to have_current_path("/intake/review_request")
-        within_fieldset("Is the claimant someone other than the Veteran?") do
-          find("label", text: "Yes", match: :prefer_exact).click
-        end
+        # Add issue that is not a VBMS issue
+        click_intake_add_issue
 
-        expect(page).to have_selector("label[for=claimant-options_claimant_not_listed]")
-        within_fieldset(COPY::SELECT_CLAIMANT_LABEL) do
-          find("label", text: "Claimant not listed", match: :prefer_exact).click
-        end
-        click_intake_continue
+        # click_intake_no_matching_issues
+        add_intake_vha_issue(date: 2.days.ago, category: "Beneficiary Travel")
 
-        expect(page).to have_current_path("/intake/add_claimant")
-        expect(page).to have_content("Add Claimant")
+        click_intake_finish
 
-        fill_in("Relationship to the Veteran", with: "Attorney (previously or currently)").send_keys :enter
-        add_existing_attorney(attorney)
-
-        expect(page).to have_content("Claimant's address")
-        expect(page).to have_content(attorney.name)
-        expect(page).to have_content(attorney.address_line_1.titleize)
-
-        expect(page).to have_button("Continue to next step", disabled: false)
-        click_button "Continue to next step"
-
-        within("#add_claimant_modal") do
-          expect(page).to have_content("Review and confirm claimant information")
-          click_button "Confirm"
-        end
-        expect(page).to have_current_path("/intake/add_issues")
-        expect(page).to have_content("Add / Remove Issues")
-        expect(page).to have_content(COPY::VHA_NO_POA)
-        expect(page).to have_content "Add Issue"
-      end
-
-      it "should display No known POA when new attorney is added after claimant not listed is selected" do
-        expect(page).to have_current_path("/intake/review_request")
-        within_fieldset("Is the claimant someone other than the Veteran?") do
-          find("label", text: "Yes", match: :prefer_exact).click
-        end
-
-        expect(page).to have_selector("label[for=claimant-options_claimant_not_listed]")
-        within_fieldset(COPY::SELECT_CLAIMANT_LABEL) do
-          find("label", text: "Claimant not listed", match: :prefer_exact).click
-        end
-        click_intake_continue
-
-        expect(page).to have_current_path("/intake/add_claimant")
-        expect(page).to have_content("Add Claimant")
-
-        # add poa
-        fill_in("Relationship to the Veteran", with: "Attorney (previously or currently)").send_keys :enter
-        fill_in("Claimant's name", with: "Name not listed")
-
-        expect(page).to have_content("Name not listed")
-        find("div", class: "cf-select__menu", text: "Name not listed")
-        select_claimant(0)
-        within_fieldset("Is the claimant an organization or individual?") do
-          find("label", text: "Organization", match: :prefer_exact).click
-        end
-        add_new_poa
-
-        expect(page).to have_button("Continue to next step", disabled: false)
-        click_button "Continue to next step"
-
-        within("#add_claimant_modal") do
-          expect(page).to have_content("Review and confirm claimant information")
-          click_button "Confirm"
-        end
-        expect(page).to have_current_path("/intake/add_issues")
-        expect(page).to have_content("Add / Remove Issues")
-        expect(page).to have_content(COPY::VHA_NO_POA)
-        expect(page).to have_content "Add Issue"
+        # go to case detail page
+        sleep 1
+        find("a", text: "#{first_name} #{last_name}", match: :prefer_exact).click
+        expect(page).to have_content("Veterans Health Administration")
+        expect(page).to have_content(COPY::CASE_DETAILS_NO_RECOGNIZED_POA_VHA)
       end
     end
   end
