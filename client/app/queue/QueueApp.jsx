@@ -26,6 +26,9 @@ import {
   setUserIsCamoEmployee,
   setFeedbackUrl,
   setOrganizations,
+  setMailTeamUser,
+  setMailSupervisor,
+  setMailSuperUser
 } from './uiReducer/uiActions';
 
 import ScrollToTop from '../components/ScrollToTop';
@@ -129,6 +132,9 @@ class QueueApp extends React.PureComponent {
     this.props.setUserRole(this.props.userRole);
     this.props.setUserCssId(this.props.userCssId);
     this.props.setOrganizations(this.props.organizations);
+    this.props.setMailTeamUser(this.props.isMailTeamUser);
+    this.props.setMailSupervisor(this.props.isMailSupervisor);
+    this.props.setMailSuperUser(this.props.isMailSuperUser);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
     this.props.setUserIsCamoEmployee(this.props.userIsCamoEmployee);
     this.props.setFeedbackUrl(this.props.feedbackUrl);
@@ -1494,6 +1500,12 @@ QueueApp.propTypes = {
   setUserCssId: PropTypes.func,
   setUserId: PropTypes.func,
   setOrganizations: PropTypes.func,
+  setMailTeamUser: PropTypes.func,
+  setMailSupervisor: PropTypes.func,
+  setMailSuperUser: PropTypes.func,
+  isMailTeamUser: PropTypes.bool,
+  isMailSupervisor: PropTypes.bool,
+  isMailSuperUser: PropTypes.bool,
   organizations: PropTypes.array,
   setUserIsVsoEmployee: PropTypes.func,
   userIsVsoEmployee: PropTypes.bool,
@@ -1541,6 +1553,9 @@ const mapDispatchToProps = (dispatch) =>
       setUserIsCamoEmployee,
       setFeedbackUrl,
       setOrganizations,
+      setMailTeamUser,
+      setMailSupervisor,
+      setMailSuperUser,
     },
     dispatch
   );
