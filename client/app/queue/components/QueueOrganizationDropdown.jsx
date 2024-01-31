@@ -46,7 +46,7 @@ export default class QueueOrganizationDropdown extends React.Component {
       correspondenceItems = {
         key: (2).toString(),
         href: orgHref,
-        label: sprintf(QUEUE_CONFIG.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES) // "Correspondence Cases"
+        label: sprintf(QUEUE_CONFIG.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES)
       };
 
       items = [...items, correspondenceItems];
@@ -57,7 +57,7 @@ export default class QueueOrganizationDropdown extends React.Component {
       correspondenceItems = {
         key: (2).toString(),
         href: orgHref,
-        label: sprintf(QUEUE_CONFIG.CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CORRESPONDENCE_LABEL) // "Your Correspondence"
+        label: sprintf(QUEUE_CONFIG.CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CORRESPONDENCE_LABEL)
       };
       // This places the "Your Correspondence" option at the 2nd(1) index
       const items1 = items.slice(0, 1);

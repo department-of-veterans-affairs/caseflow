@@ -250,7 +250,13 @@ const QueueTableBuilder = (props) => {
 
   return <div className={rootStyles}>
     <h1 {...css({ display: 'inline-block' })}>{config.table_title}</h1>
-    <QueueOrganizationDropdown mailTeamUser={props.mailTeamUser} mailSupervisor={props.mailSupervisor} mailSuperUser={props.mailSuperUser} organizations={props.organizations} featureToggles = {props.featureToggles} />
+    <QueueOrganizationDropdown
+      mailTeamUser={props.mailTeamUser}
+      mailSupervisor={props.mailSupervisor}
+      mailSuperUser={props.mailSuperUser}
+      organizations={props.organizations}
+      featureToggles = {props.featureToggles}
+    />
     <TabWindow
       name="tasks-tabwindow"
       tabs={tabsFromConfig(config)}
