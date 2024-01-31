@@ -88,7 +88,8 @@ module ByDocketDateDistribution
       settings: settings
     }
   rescue StandardError => error
-    "#{error.class}: #{error.message}, #{error.backtrace.first}"
+    "Distribution successful, but there was an error generating statistics: \
+    #{error.class}: #{error.message}, #{error.backtrace.first}"
   end
   # rubocop:enable Metrics/MethodLength
 
