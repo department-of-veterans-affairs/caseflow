@@ -28,7 +28,6 @@ class Users::TaskPagesController < UsersController
 
   def index
       render json: pagination_json
-    end
   end
 
   private
