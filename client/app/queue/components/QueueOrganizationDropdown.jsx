@@ -4,10 +4,14 @@ import { sprintf } from 'sprintf-js';
 // import { useLocation } from 'react-router-dom';
 import QueueSelectorDropdown from './QueueSelectorDropdown';
 import COPY from '../../../COPY';
+import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 
 export default class QueueOrganizationDropdown extends React.Component {
   render = () => {
     const { organizations } = this.props;
+    const { mailTeamUser } = this.props;
+    const { mailSupervisor } = this.props;
+    const { mailSuperUser } = this.props;
     const url = window.location.pathname.split('/');
     const location = url[url.length - 1];
     const queueHref = (location === 'queue') ? '#' : '/queue';
@@ -36,27 +40,27 @@ export default class QueueOrganizationDropdown extends React.Component {
 
     let items = [queueItem, ...organizationItems];
 
-    if (organizations.map((nameArr) => nameArr.name).includes('Mail Team Superuser') || organizations.map((nameArr) => nameArr.name).includes('Mail Team Supervisor')) {
+    if (mailSuperUser === true || mailSupervisor === true) {
       const orgHref = '/queue/correspondence/team';
 
       correspondenceItems = {
         key: (2).toString(),
         href: orgHref,
-        label: sprintf(COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES) // "Correspondence Cases"
+        label: sprintf(QUEUE_CONFIG.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES) // "Correspondence Cases"
       };
 
       items = [...items, correspondenceItems];
     }
-    if (organizations.map((nameArr) => nameArr.name).includes('Mail')) {
+    if (mailTeamUser === true) {
       const orgHref = '/queue/correspondence';
 
       correspondenceItems = {
         key: (2).toString(),
         href: orgHref,
-        label: sprintf(COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CORRESPONDENCE_LABEL) // "Your Correspondence"
+        label: sprintf(QUEUE_CONFIG.CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CORRESPONDENCE_LABEL) // "Your Correspondence"
       };
       // This places the "Your Correspondence" option at the 2nd(1) index
-      const items1 = items.slice(0,1);
+      const items1 = items.slice(0, 1);
       const items2 = items.slice(1);
 
       items = [...items1, correspondenceItems, ...items2];
@@ -74,6 +78,9 @@ export default class QueueOrganizationDropdown extends React.Component {
 }
 
 QueueOrganizationDropdown.propTypes = {
+  mailTeamUser: PropTypes.bool,
+  mailSupervisor: PropTypes.bool,
+  mailSuperUser: PropTypes.bool,
   organizations: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired

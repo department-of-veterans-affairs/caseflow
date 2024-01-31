@@ -220,6 +220,21 @@ export const setOrganizations = (organizations) => ({
   payload: { organizations }
 });
 
+export const setMailTeamUser = (mailTeamUser) => ({
+  type: ACTIONS.SET_MAIL_TEAM_USER,
+  payload: { mailTeamUser }
+});
+
+export const setMailSupervisor = (mailSupervisor) => ({
+  type: ACTIONS.SET_MAIL_SUPERVISOR,
+  payload: { mailSupervisor }
+});
+
+export const setMailSuperUser = (mailSuperUser) => ({
+  type: ACTIONS.SET_MAIL_SUPER_USER,
+  payload: { mailSuperUser }
+});
+
 export const setActiveOrganization = (id, type, name, isVso, userCanBulkAssign) => ({
   type: ACTIONS.SET_ACTIVE_ORGANIZATION,
   payload: {
