@@ -1,0 +1,5 @@
+{
+  "CORRESPONDENCE_BASE": "/queue/correspondence",
+  "REVIEW_PACKAGE": "/review_package",
+  "INTAKE": "/intake"
+}
