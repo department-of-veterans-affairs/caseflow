@@ -23,7 +23,7 @@ class Hearings::RTFConversionJob < CaseflowJob
   # Get transcription files waiting for file conversion
   # Return the vtt files that haven't been converted yet
   def files_waiting_for_conversion
-    TranscriptionFile.where(date_converted: nil)
+    TranscriptionFile.where(date_converted: nil).where.not(aws_link: [nil, ""])
   end
 
   # Retrieve files from the s3 bucket
@@ -79,17 +79,22 @@ class Hearings::RTFConversionJob < CaseflowJob
     doc.footer = RTF::FooterNode.new(doc, RTF::FooterNode::UNIVERSAL)
     doc.style.left_margin = 1300
     doc.style.right_margin = 1300
-    doc = create_header_page(doc)
+    doc = create_cover_page(doc)
     doc.page_break
     doc = create_transcription_pages(vtt, doc)
-    doc.footer << "                                          Insert Veteran's Last Name, First Name, MI, Claim No"
-    rtf = doc.to_rtf
-      .sub!("{\\footer \n                                          Insert Veteran's Last Name, First Name, MI, Claim No}", "{\\footer\\pard\                                               \\chpgn             Veteran's Last, First, MI, Claim No  \\par}")
-    File.open('document.rtf', "w") { |file| file.write(rtf) }
+    doc = create_footer(doc)
+    File.open('document.rtf', "w") { |file| file.write(doc) }
   end
 
-  # Create header page
-  def create_header_page(document)
+  def create_footer(document)
+    document.footer << "Insert Veteran's Last Name, First Name, MI, Claim No"
+    rtf_footer =
+      "\\footer\\pard\\" + (" " * 47) + "\\chpgn" + (" " * 13) + "Veteran's Last, First, MI, Claim No\\par"
+    document.to_rtf.sub!(document.footer.to_rtf, "{#{rtf_footer}}")
+  end
+
+  # Create cover page
+  def create_cover_page(document)
     border_width = 40
     document.table(2, 1, 9200) do |table|
       table.cell_margin = 30
@@ -98,7 +103,7 @@ class Hearings::RTFConversionJob < CaseflowJob
       header_row.shading_colour = RTF::Colour.new(0, 0, 0)
       table[1].border_width = border_width
       header_row[0] << " Department of Veterans Affairs"
-      generate_header_info(table[1][0])
+      generate_cover_info(table[1][0])
     end
 
     document
@@ -142,7 +147,11 @@ class Hearings::RTFConversionJob < CaseflowJob
     formatted_transcript
   end
 
-  def generate_header_info(row)
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # Generates the template info for the cover page
+  # row - the table row that the info will be occupying in the doc
+  # return the modified cover doc
+  def generate_cover_info(row)
     row.line_break
     row << "                                TRANSCRIPT OF HEARING"
     row.line_break
@@ -200,6 +209,7 @@ class Hearings::RTFConversionJob < CaseflowJob
     row.line_break
     row.line_break
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   # Create a transcription file record
   def create_transcription_file(file_name, appeal_id, docket_number, date_converted, created_by_id, file_status)
