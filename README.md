@@ -136,6 +136,8 @@ See debugging steps as well as more information about FACOLS in our [wiki](https
 
 Review the [FACOLS documentation](docs/FACOLS.md) for details.
 
+With the release of MST/PACT, new columns were added to the ISSUES table in VACOLS/FACOLS to track MST and PACT special issue statues. This documentation has setup steps for [rebuilding FACOLS with the new columns](https://github.com/department-of-veterans-affairs/caseflow/wiki/Updating-FACOLS-with-MST-PACT-Table-changes)
+
 ## Monitoring  #######################################################
 We use NewRelic to monitor the app. By default, it's disabled locally. To enable it, do:
 
