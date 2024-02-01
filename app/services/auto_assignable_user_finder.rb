@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class AutoAssignableUserFinder
-  MAX_ASSIGNED_TASKS = 60
-
   # TODO: APPEALS-38551: Switch to working directly with DB records.
   # Correspondence auto-assignment can be triggered via multiple methods,
   # so a local cache of this data can easily become invalid. Thus, we need
@@ -66,6 +64,7 @@ HAVING COUNT(tasks.id) < 60;
 =end
   def assignable_users
     return @assignable_users if @assignable_users.present?
+    max_tasks = Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.max_assigned_tasks
 
     @assignable_users = []
     # TODO: APPEALS-38551: Filter such that only users with auto_assign == true are in this result set
