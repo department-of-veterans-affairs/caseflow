@@ -3,7 +3,7 @@
 require "helpers/association_wrapper.rb"
 
 ##
-# See BelongsToPolymorphicAppealConcern and BelongsToPolymorphicHearingConcern for uses of this module
+# See BelongsToPolymorphicHearingConcern for use of this module
 
 module BelongsToPolymorphicConcern
   extend ActiveSupport::Concern
