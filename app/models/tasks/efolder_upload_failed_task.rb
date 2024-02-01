@@ -4,9 +4,9 @@ class EfolderUploadFailedTask < ReviewPackageTask
 
   def task_url
     if self.parent.is_a?(ReviewPackageTask)
-      "/queue/correspondence/#{self.correspondence.uuid}/review_package"
+      Constants.CORRESPONDENCE_TASK_URL.REVIEW_PACKAGE_TASK_URL.sub("uuid", self.correspondence.uuid)
     elsif self.parent.is_a?(CorrespondenceIntakeTask)
-      "/queue/correspondence/#{self.correspondence.uuid}/intake"
+      Constants.CORRESPONDENCE_TASK_URL.INTAKE_TASK_URL.sub("uuid", self.correspondence.uuid)
     end
   end
 end

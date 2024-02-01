@@ -18,7 +18,7 @@ class ReviewPackageTask < CorrespondenceTask
   end
 
   def task_url
-    "/queue/correspondence/#{self.correspondence.uuid}/review_package"
+    Constants.CORRESPONDENCE_TASK_URL.REVIEW_PACKAGE_TASK_URL.sub("uuid", self.correspondence.uuid)
   end
 
 end
