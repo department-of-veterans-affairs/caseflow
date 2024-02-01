@@ -169,6 +169,7 @@ RSpec.feature "Team management page", :postgres do
       scenario "user can view and change Exclude from Affinity Appeals toggle" do
         visit("/team_management")
         expect(page).to have_content("Judge Teams")
+        expect(page).to have_content("*When the box is checked, the judge will not receive appeals with which there is an existing affinity relationship. Any appeal with an affinity relationship to that judge will immediately be released for distribution to any judge once the appeal is ready to distribute. Appeals that are tied (e.g., legacy hearing) are unaffected by this value.") # rubocop:disable Layout/LineLength
         expect(page).to have_field("excludeJudgeFromAffinityCases-#{judge_team.id}", visible: false, disabled: false)
 
         expect(judge_team.reload.exclude_appeals_from_affinity).to be false
@@ -235,6 +236,7 @@ RSpec.feature "Team management page", :postgres do
       scenario "user can toggle Exclude from Affinity Appeals" do
         visit("/team_management")
         expect(page).to have_content("Judge Teams")
+        expect(page).to have_content("*When the box is checked, the judge will not receive appeals with which there is an existing affinity relationship. Any appeal with an affinity relationship to that judge will immediately be released for distribution to any judge once the appeal is ready to distribute. Appeals that are tied (e.g., legacy hearing) are unaffected by this value.") # rubocop:disable Layout/LineLength
 
         # Should be false by default
         expect(judge_team.reload.exclude_appeals_from_affinity).to be false
