@@ -1,55 +1,178 @@
 # frozen_string_literal: true
 
 describe CorrespondenceAutoAssignLogger do
-  subject(:instance) { described_class.new(current_user) }
-  let(:veteran) { create(:veteran) }
+  subject(:described) { described_class.new(current_user) }
+
   let(:current_user) { create(:user) }
+  let(:assignee) { create(:user) }
 
-  let!(:correspondence) { create(:correspondence, :with_single_doc, veteran_id: veteran.id, uuid: SecureRandom.uuid) }
+  let!(:correspondence) { create(:correspondence) }
+  let(:task) { correspondence.review_package_tasks.first }
 
-  describe "#begin_logging" do
-    it "creates a BatchAutoAssignmentAttempt" do
+  describe "#begin" do
+    it "creates a BatchAutoAssignmentAttempt record" do
       expect do
-        instance.begin_logging
-      end.to change(BatchAutoAssignmentAttempt, :count)
+        described.begin
+      end.to change(BatchAutoAssignmentAttempt, :count).by(1)
+
+      batch = BatchAutoAssignmentAttempt.first
+      expect(batch.user).to eq(current_user)
+      expect(batch.status).to eq("started")
     end
   end
 
-  describe "#end_logging" do
-    it "updates a BatchAutoAssignmentAttempt with status" do
-      instance.begin_logging
+  describe "#end" do
+    it "completes the BatchAutoAssignmentAttempt record" do
       expect do
-        instance.end_logging(BatchAutoAssignmentAttempt::STATUS_STARTED)
-      end.to change(instance.batch_assignment.status).to(BatchAutoAssignmentAttempt::STATUS_STARTED)
+        described.begin
+        described.end
+      end.to change(BatchAutoAssignmentAttempt, :count).by(1)
+
+      batch = BatchAutoAssignmentAttempt.last
+      expect(batch.status).to eq("completed")
+      expect(batch.statistics["seconds_elapsed"]).to be > 0
     end
   end
 
-  describe "#log_single_attempt" do
-    it "creates an IndividualAutoAssignmentAttempt" do
+  describe "#error" do
+    it "completes the BatchAutoAssignmentAttempt record with an error state" do
       expect do
-        instance.log_single_attempt(user_id: current_user.id, correspondence_id: correspondence.id)
-      end.to change(IndividualAutoAssignmentAttempt, :count)
+        described.begin
+        described.error(msg: "Test error")
+      end.to change(BatchAutoAssignmentAttempt, :count).by(1)
+
+      batch = BatchAutoAssignmentAttempt.last
+      expect(batch.status).to eq("error")
+      expect(batch.error_info["message"]).to eq("Test error")
     end
   end
 
-  describe "#record_failure" do
-    it "increase failed attempts count" do
+  describe "#assigned" do
+    let(:assignee) { create(:user) }
+
+    before do
+      described.begin
+    end
+
+    it "creates an IndividualAutoAssignmentAttempt record with the results of the assignment" do
       expect do
-        instance.log_single_attempt(user_id: current_user.id, correspondence_id: correspondence.id)
-        instance.record_failure
-      end.to change { instance.failed_attempts_count }.by(1)
-        .and change { instance.failed_assignments.length }.by(1)
-        .and expect { instance.current_assignment }.to(nil)
+        described.assigned(task: task, started_at: Time.current, assigned_to: assignee)
+      end.to change(IndividualAutoAssignmentAttempt, :count).by(1)
+
+      result = IndividualAutoAssignmentAttempt.last
+      expect(result.status).to eq("completed")
+      expect(result.statistics["review_package_task_id"]).to eq(task.id)
     end
   end
 
-  describe "#record_success" do
-    it "increase failed attempts count" do
+  describe "#no_eligible_assignees" do
+    before do
+      described.begin
+    end
+
+    it "creates an IndividualAutoAssignmentAttempt record indicating no assignees" do
       expect do
-        instance.log_single_attempt(user_id: current_user.id, correspondence_id: correspondence.id)
-        instance.record_success
-      end.to change { instance.successful_assignments }.by(1)
-        .and change { instance.current_assignment }.to(nil)
+        described.no_eligible_assignees(task: task, started_at: Time.current)
+      end.to change(IndividualAutoAssignmentAttempt, :count).by(1)
+
+      result = IndividualAutoAssignmentAttempt.last
+      expect(result.status).to eq("error")
+      expect(result.statistics["review_package_task_id"]).to eq(task.id)
+      expect(result.statistics["result"]).to eq("No eligible assignees available")
+    end
+  end
+
+  describe "tracking assignments" do
+    let!(:nod_correspondence) { create(:correspondence, :nod) }
+    let(:nod_task) { nod_correspondence.review_package_tasks.first }
+
+    before do
+      described.begin
+    end
+
+    context "when there are eligible assignees" do
+      it "increments num_packages_assigned" do
+        described.assigned(task: task, started_at: Time.current, assigned_to: assignee)
+        described.end
+
+        batch = BatchAutoAssignmentAttempt.last
+        expect(batch.num_packages_assigned).to eq(1)
+        expect(batch.num_packages_unassigned).to eq(0)
+        expect(batch.num_nod_packages_assigned).to eq(0)
+        expect(batch.num_nod_packages_unassigned).to eq(0)
+      end
+
+      context "with NOD correspondence" do
+        it "increments num_nod_packages_assigned" do
+          described.assigned(task: nod_task, started_at: Time.current, assigned_to: assignee)
+          described.end
+
+          batch = BatchAutoAssignmentAttempt.last
+          expect(batch.num_packages_assigned).to eq(0)
+          expect(batch.num_packages_unassigned).to eq(0)
+          expect(batch.num_nod_packages_assigned).to eq(1)
+          expect(batch.num_nod_packages_unassigned).to eq(0)
+        end
+      end
+    end
+
+    context "when there are NO eligible assignees" do
+      it "increments num_packages_unassigned" do
+        described.no_eligible_assignees(task: task, started_at: Time.current)
+        described.end
+
+        batch = BatchAutoAssignmentAttempt.last
+        expect(batch.num_packages_assigned).to eq(0)
+        expect(batch.num_packages_unassigned).to eq(1)
+        expect(batch.num_nod_packages_assigned).to eq(0)
+        expect(batch.num_nod_packages_unassigned).to eq(0)
+      end
+
+      context "with NOD correspondence" do
+        it "increments num_nod_packages_unassigned" do
+          described.no_eligible_assignees(task: nod_task, started_at: Time.current)
+          described.end
+
+          batch = BatchAutoAssignmentAttempt.last
+          expect(batch.num_packages_assigned).to eq(0)
+          expect(batch.num_packages_unassigned).to eq(0)
+          expect(batch.num_nod_packages_assigned).to eq(0)
+          expect(batch.num_nod_packages_unassigned).to eq(1)
+        end
+      end
+    end
+
+    context "multiple assignments" do
+      it "correctly increments the number of assigned packages" do
+        num_packages_assigned = rand(1..10)
+        num_packages_unassigned = rand(1..10)
+        num_nod_packages_assigned = rand(1..10)
+        num_nod_packages_unassigned = rand(1..10)
+
+        num_packages_assigned.times do
+          described.assigned(task: task, started_at: Time.current, assigned_to: assignee)
+        end
+
+        num_packages_unassigned.times do
+          described.no_eligible_assignees(task: task, started_at: Time.current)
+        end
+
+        num_nod_packages_assigned.times do
+          described.assigned(task: nod_task, started_at: Time.current, assigned_to: assignee)
+        end
+
+        num_nod_packages_unassigned.times do
+          described.no_eligible_assignees(task: nod_task, started_at: Time.current)
+        end
+
+        described.end
+
+        batch = BatchAutoAssignmentAttempt.last
+        expect(batch.num_packages_assigned).to eq(num_packages_assigned)
+        expect(batch.num_packages_unassigned).to eq(num_packages_unassigned)
+        expect(batch.num_nod_packages_assigned).to eq(num_nod_packages_assigned)
+        expect(batch.num_nod_packages_unassigned).to eq(num_nod_packages_unassigned)
+      end
     end
   end
 end
