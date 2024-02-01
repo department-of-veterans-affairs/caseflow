@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# rubocop:disable Layout/LineLength
+# rubocop:disable Metrics/LineLength
 source ENV["GEM_SERVER_URL"] || "https://rubygems.org"
 
 # State machine
@@ -42,7 +42,7 @@ gem "paper_trail", "~> 12.0"
 # Used to speed up reporting
 gem "parallel"
 # soft delete gem
-gem "paranoia", "~> 2.2"
+gem "paranoia", "~> 2.4"
 # PDF Tools
 gem "pdf-forms"
 # Used in Caseflow Dispatch
@@ -56,17 +56,18 @@ gem "pg", platforms: :ruby
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
 gem "puma", "5.6.4"
 gem "rack", "~> 2.2.6.2"
-gem 'rails', "~> 6.1.4.1"
+gem "rails", "6.1.4.0"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
 gem "react_on_rails", "11.3.0"
 gem "redis-mutex"
 gem "redis-namespace"
+gem "redis-rails", "~> 5.0.2"
 gem "request_store"
 gem "roo", "~> 2.7"
 # Use SCSS for stylesheets
-gem "sass-rails", "~> 5.1.0"
+gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
 gem "sentry-raven"
 gem "shoryuken", "3.1.11"
@@ -85,7 +86,7 @@ gem "ziptz"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
-  gem "activerecord-oracle_enhanced-adapter", "~> 6.1.4"
+  gem "activerecord-oracle_enhanced-adapter", "~> 6.1.0"
   gem "ruby-oci8", "~> 2.2"
 end
 
@@ -98,7 +99,7 @@ group :test, :development, :demo do
   gem "capybara"
   gem "capybara-screenshot"
   gem "danger", "~> 6.2.2"
-  gem "database_cleaner-active_record"
+  gem "database_cleaner"
   gem "factory_bot_rails", "~> 5.2"
   gem "faker"
   gem "guard-rspec"
@@ -115,7 +116,7 @@ group :test, :development, :demo do
   gem "rspec-rails"
   # For CircleCI test metadata analysis
   gem "rspec_junit_formatter"
-  gem "rubocop", "= 0.83", require: false
+  gem "rubocop", "= 0.79", require: false
   gem "rubocop-performance"
   gem "rubocop-rails"
   gem "scss_lint", require: false
@@ -144,11 +145,11 @@ end
 
 group :test do
   gem "knapsack_pro", "~> 3.8"
-  gem "rspec-github", require: false
   # For retrying failed feature tests. Read more: https://github.com/NoRedInk/rspec-retry
   gem "rspec-retry"
   gem "webmock"
+  gem "rspec-github", require: false
 end
-# rubocop:enable Layout/LineLength
+# rubocop:enable Metrics/LineLength
 
 gem "json_schemer", "~> 0.2.16"
