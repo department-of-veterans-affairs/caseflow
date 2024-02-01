@@ -21,14 +21,17 @@ class CorrespondenceConfig < QueueConfig
       sort_order: tab.default_sorting_direction
     )
     endpoint = "task_pages?#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{tab.name}"
+    base_path = if assignee_is_org?
+                  "organizations/#{assignee.id}/"
+                else
+                  "correspondence/users/#{assignee.id}/}#{endpoint}"
+                end
 
     tab.to_hash.merge(
       tasks: serialized_tasks_for_columns(task_pager.paged_tasks, tab.column_names),
       task_page_count: task_pager.task_page_count,
       total_task_count: task_pager.total_task_count,
-      # rubocop: disable Layout/LineLength
-      task_page_endpoint_base_path: "#{assignee_is_org? ? "organizations/#{assignee.id}/" : "correspondence/users/#{assignee.id}/"}#{endpoint}"
-      # rubocop: enable Layout/LineLength
+      task_page_endpoint_base_path: base_path
     )
   end
 
