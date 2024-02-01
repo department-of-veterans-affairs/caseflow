@@ -38,6 +38,10 @@ class Correspondence < CaseflowRecord
     Task.where(appeal_id: id, appeal_type: type)
   end
 
+  def review_package_tasks
+    Task.where(appeal_id: id, appeal_type: type, type: ReviewPackageTask.name)
+  end
+
   def root_task
     Task.find_by(appeal_id: id, appeal_type: type, type: CorrespondenceRootTask.name)
   end

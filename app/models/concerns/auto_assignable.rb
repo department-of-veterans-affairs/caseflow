@@ -4,14 +4,10 @@ module AutoAssignable
   extend ActiveSupport::Concern
   include ActiveModel::Validations
 
-  STATUS_STARTED = "started"
-  STATUS_COMPLETED = "completed"
-  STATUS_ERROR = "error"
-
   VALID_STATUSES = [
-    STATUS_STARTED,
-    STATUS_COMPLETED,
-    STATUS_ERROR
+    Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.started,
+    Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.completed,
+    Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.error
   ]
 
   included do
