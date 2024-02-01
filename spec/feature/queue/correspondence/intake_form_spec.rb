@@ -48,11 +48,13 @@ RSpec.feature("The Correspondence Intake page") do
     end
 
     it "create response letter only 3 times" do
-      for i in 0 ..2
+      position = 0
+      [0, 1, 2].each do |aux|
+        position = aux
         click_on("+ Add letter")
         expect(page).to have_button("Continue", disabled: true)
       end
-      if (i == 2)
+      if position == 2
         expect(page).to have_button("Continue", disabled: true)
         expect(page).to have_button("+ Add letter", disabled: true)
       end
@@ -61,13 +63,15 @@ RSpec.feature("The Correspondence Intake page") do
     it "Create Response letter" do
       click_on("+ Add letter")
       expect(page).to have_field("Date sent")
-      # expect(page).to have_content(Date.today.strftime("%m/%d/%Y"))
+      mydate = page.all("#date-set")
+      expect(mydate[0].value == Time.zone.today.strftime("%Y-%m-%d"))
+
       page.should has_selector?("Letter type")
       page.should has_selector?("Letter title", visible: false)
       page.should has_selector?("Letter subcategory", visible: false)
       page.should has_selector?("Letter subcategory reason", visible: false)
 
-      radio_choices = page.all(".cf-form-radio-option > label",  visible:false)
+      radio_choices = page.all(".cf-form-radio-option > label", visible: false)
       expect(radio_choices[0]).to have_content("65 days")
       expect(radio_choices[1]).to have_content("No response window")
       expect(radio_choices[2]).to have_content("Custom")
@@ -75,27 +79,93 @@ RSpec.feature("The Correspondence Intake page") do
       expect(page).to have_button("Remove letter")
     end
 
-    it "Add values to response letter for No respondense windows" do
+    it "Add values to response letter for response window = No respondense windows" do
       click_on("+ Add letter")
 
       dropdowns = page.all(".cf-select__control")
       dropdowns[0].click
-      dropdowns[0].sibling(".cf-select__menu").find("div .cf-select__option", text: "Pre-docketing").click
+      dropdowns[0].sibling(".cf-select__menu").find(
+        "div .cf-select__option", text: "Pre-docketing"
+      ).click
       expect(page).to have_field("Letter title", readonly: false)
 
       dropdowns[1].click
-      dropdowns[1].sibling(".cf-select__menu").find("div .cf-select__option", text: "Intake 10182 Recv Needs AOJ Development").click
+      dropdowns[1].sibling(".cf-select__menu").find(
+        "div .cf-select__option", text: "Intake 10182 Recv Needs AOJ Development"
+      ).click
       expect(page).to have_field("Letter subcategory", readonly: false)
 
-      # radio_choices = page.all(".cf-form-radio-option > label")
-      # expect(radio_choices[1]).to have_content("No response window").checked? eq
+      radio_choices = page.all(".cf-form-radio-option> label.disabled", visible: true)
+      radio_choices.each do |opt|
+        opt.text != "No response window"
+      end
 
       dropdowns[2].click
-      dropdowns[2].sibling(".cf-select__menu").find("div .cf-select__option", text: "Issues(s) is VHA").click
+      dropdowns[2].sibling(".cf-select__menu").find(
+        "div .cf-select__option", text: "Issues(s) is VHA"
+      ).click
       expect(page).to have_field("Letter subcategory reason", readonly: false)
 
       dropdowns[3].click
       dropdowns[3].sibling(".cf-select__menu").find("div .cf-select__option", text: "N/A").click
+    end
+
+    it "Add values to response letter for response window =  65 day" do
+      click_on("+ Add letter")
+
+      dropdowns = page.all(".cf-select__control")
+      dropdowns[0].click
+      dropdowns[0].sibling(".cf-select__menu").find(
+        "div .cf-select__option", text: "General"
+      ).click
+      expect(page).to have_field("Letter title", readonly: false)
+
+      dropdowns[1].click
+      dropdowns[1].sibling(".cf-select__menu").find(
+        "div .cf-select__option", text: "Intake AMA Corrective App Receipt"
+      ).click
+      expect(page).to have_field("Letter subcategory", readonly: false)
+
+      radio_choices = page.all(".cf-form-radio-option> label.disabled", visible: true)
+
+      radio_choices.each do |opt|
+        opt.text == "No response window"
+      end
+
+      dropdowns[2].click
+      dropdowns[2].sibling(".cf-select__menu").find(
+        "div .cf-select__option", text: "N/A"
+      ).click
+      expect(page).to have_field("Letter subcategory reason", readonly: false)
+
+      dropdowns[3].click
+      dropdowns[3].sibling(".cf-select__menu").find(
+        "div .cf-select__option", text: "N/A"
+      ).click
+    end
+
+    it "Add values to response letter for response window =  Custom" do
+      click_on("+ Add letter")
+
+      dropdowns = page.all(".cf-select__control")
+      dropdowns[0].click
+      dropdowns[0].sibling(".cf-select__menu").find(
+        "div .cf-select__option", text: "General"
+      ).click
+      expect(page).to have_field("Letter title", readonly: false)
+
+      dropdowns[1].click
+      dropdowns[1].sibling(".cf-select__menu").find(
+        "div .cf-select__option", text: "Intake AMA Corrective App Receipt"
+      ).click
+      expect(page).to have_field("Letter subcategory", readonly: false)
+
+      radio_choices = page.all(".cf-form-radio-option> label")
+      radio_choices[2].click
+      page.has_field?("Number of days (Value must be between 0 and 65)")
+
+      radio_choices[0].click
+      page.has_no_field?("Number of days (Value must be between 0 and 65)")
     end
   end
 end
