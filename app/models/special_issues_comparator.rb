@@ -5,6 +5,7 @@
 
 class SpecialIssuesComparator
   attr_accessor :issue, :rating_special_issues, :bgs_client, :veteran_contentions, :linked_contentions
+
   def initialize(issue)
     @issue = issue
     @rating_special_issues = issue&.special_issues
