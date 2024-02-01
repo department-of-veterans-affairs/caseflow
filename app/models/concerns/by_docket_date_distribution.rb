@@ -86,6 +86,13 @@ module ByDocketDateDistribution
       algorithm: "by_docket_date",
       settings: settings
     }
+  rescue StandardError => error
+    # There always needs to be a batch_size value for a completed distribution, else the priority push job will error
+    {
+      batch_size: @appeals.count,
+      message: "Distribution successful, but there was an error generating statistics: \
+               #{error.class}: #{error.message}, #{error.backtrace.first}"
+    }
   end
   # rubocop:enable Metrics/MethodLength
 
