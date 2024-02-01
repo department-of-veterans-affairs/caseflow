@@ -118,8 +118,7 @@ export const IntakeRadioField = (props) => {
 
   // Creating MST and PACT checkboxes, along with a text input for justification of change
   const addMstPactCheckboxes = (option) => {
-    // eslint-disable-next-line
-    if (option.value === props.value) {
+    if (option.value === props.value) { // eslint-disable-line
       return (
         <React.Fragment>
           { renderMst && <div>
