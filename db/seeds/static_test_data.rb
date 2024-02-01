@@ -14,6 +14,7 @@ module Seeds
       cases_for_timely_calculations_on_das
       case_with_bad_decass_for_timeline_range_checks
       create_veterans_for_mpi_sfnod_updates
+      create_ama_case_open_dist_task_cannot_redistribute
     end
 
     private
@@ -416,6 +417,59 @@ module Seeds
         { stafkey: "1234567899", susrtyp: "VETERAN", ssalut: "", snamef: "HIENRIK", snamel: "TESTMAN", saddrst1: "1931 S Federal HWY", saddrcty: "Ft. Lauderdale ", saddrstt: "FL", saddrzip: "33316", stelh: "954-555-8671", sactive: "A", ssn: "764889132", sdob: "1978-01-01", sgender: "M" },
         { stafkey: "1234567898", susrtyp: "VETERAN", ssalut: "", snamef: "Johnathan", snamel: "Walker", saddrst1: "8849 Washington St", saddrcty: "Ft.Lauderdale", saddrstt: "FL", saddrzip: "33304", stelh: "745-555-5512", sactive: "A", ssn: "555164875", sdob: "1979-06-06", sgender: "M" }
       ]
+    end
+
+    # This will create a case where the DistributionTask is 'assigned' but has had JudgeAssignTasks created and
+    # acted on, for testing the fix in APPEALS-39368
+    def create_ama_case_open_dist_task_cannot_redistribute
+      judge = create(:user, :judge, :with_vacols_judge_record, full_name: "Judge Case CannotRedistribute")
+      dist = create(:distribution, :completed, judge: judge)
+
+      appeal = create(
+        :appeal,
+        :advanced_on_docket_due_to_motion,
+        :hearing_docket,
+        :with_post_intake_tasks,
+        :held_hearing_and_ready_to_distribute,
+        :with_request_issues,
+        issue_count: 1,
+        receipt_date: 3.years.ago,
+        tied_judge: judge,
+        adding_user: User.find_by(css_id: 'BVATWARNER') || create(:hearings_coordinator),
+        veteran: create_veteran
+      )
+
+      first_judge_assign_task = create(
+        :ama_judge_assign_task,
+        appeal_id: appeal.id,
+        appeal_type: appeal.class.name,
+        assigned_at: 2.days.ago,
+        assigned_to: dist.judge,
+        parent_id: appeal.root_task.id
+      )
+
+      create(
+        :ama_judge_decision_review_task,
+        appeal_id: appeal.id,
+        appeal_type: appeal.class.name,
+        assigned_at: 2.days.ago,
+        assigned_to: first_judge_assign_task.assigned_to,
+        parent_id: appeal.root_task.id
+      )
+
+      first_judge_assign_task.completed!
+
+      DistributedCase.create!(
+        distribution: dist,
+        case_id: appeal.uuid,
+        docket: appeal.docket_type,
+        priority: true,
+        ready_at: appeal.ready_for_distribution_at,
+        task_id: appeal.tasks.where(type: JudgeAssignTask.name).first.id,
+        genpop: true,
+        genpop_query: "only_genpop",
+        created_at: first_judge_assign_task.assigned_at
+      )
     end
   end
 end
