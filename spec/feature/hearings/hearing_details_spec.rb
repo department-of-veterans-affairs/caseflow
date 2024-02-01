@@ -16,7 +16,7 @@ RSpec.feature "Hearing Details", :all_dbs do
   let!(:vso_org) { create(:vso, name: "VSO", role: "VSO", participant_id: vso_participant_id) }
   let!(:vso_user) { create(:user, css_id: "BILLIE_VSO", roles: ["VSO"], email: "BILLIE@test.com") }
   let!(:coordinator) { create(:staff, sdept: "HRG", sactive: "A", snamef: "ABC", snamel: "EFG") }
-  let!(:vlj) { create(:staff, :judge_role, snamef: "HIJ", snamel: "LMNO") }
+  let!(:vlj) { create(:staff, svlj: "J", sactive: "A", snamef: "HIJ", snamel: "LMNO") }
   let!(:hearing) { create(:hearing, :with_tasks, regional_office: "C", scheduled_time: "12:00AM") }
   let(:expected_alert) { COPY::HEARING_UPDATE_SUCCESSFUL_TITLE % hearing.appeal.veteran.name }
   let(:virtual_hearing_alert) do
