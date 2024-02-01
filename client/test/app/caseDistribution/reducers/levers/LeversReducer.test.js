@@ -10,6 +10,7 @@ import { testingBatchLevers,
   testingAffinityDaysLevers } from '../../../../data/adminCaseDistributionLevers';
 import thunk from 'redux-thunk';
 import * as leverActions from 'app/caseDistribution/reducers/levers/leversActions';
+import ApiUtil from 'app/util/ApiUtil';
 
 describe('Lever reducer', () => {
 
@@ -208,6 +209,9 @@ describe('Lever reducer', () => {
   it('Calls Reset Levers from LeversReducer', async () => {
 
     let spyResetLevers = jest.spyOn(leverActions, 'resetLevers');
+    let spyResetAPICall = jest.spyOn(ApiUtil, 'get').mockReturnValue({
+      body: leversLoadPayload
+    });
 
     const store = getStore();
 
@@ -220,5 +224,6 @@ describe('Lever reducer', () => {
       </Provider>
     );
     expect(spyResetLevers).toBeCalled();
+    expect(spyResetAPICall).toBeCalled();
   });
 });
