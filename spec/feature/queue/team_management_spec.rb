@@ -165,6 +165,20 @@ RSpec.feature "Team management page", :postgres do
 
         expect(judge_team.reload.accepts_priority_pushed_cases).to be true
       end
+
+      scenario "user can view and change Exclude from Affinity Appeals toggle" do
+        visit("/team_management")
+        expect(page).to have_content("Judge Teams")
+        expect(page).to have_field("excludeJudgeFromAffinityCases-#{judge_team.id}", visible: false, disabled: false)
+
+        expect(judge_team.reload.exclude_appeals_from_affinity).to be false
+
+        find(".checkbox-wrapper-excludeJudgeFromAffinityCases-#{judge_team.id} .cf-form-checkbox").click
+
+        # Wait for save, then check that value has updated to true
+        expect(page).to have_content "Saved"
+        expect(judge_team.reload.exclude_appeals_from_affinity).to be true
+      end
     end
 
     context "when the user is a dvc" do
@@ -216,6 +230,21 @@ RSpec.feature "Team management page", :postgres do
         # Wait for save, then check that value has updated to true
         expect(page).to have_content "Saved"
         expect(judge_team.reload.ama_only_request).to be true
+      end
+
+      scenario "user can toggle Exclude from Affinity Appeals" do
+        visit("/team_management")
+        expect(page).to have_content("Judge Teams")
+
+        # Should be false by default
+        expect(judge_team.reload.exclude_appeals_from_affinity).to be false
+
+        expect(page).to have_field("excludeJudgeFromAffinityCases-#{judge_team.id}", visible: false, disabled: false)
+        find(".checkbox-wrapper-excludeJudgeFromAffinityCases-#{judge_team.id} .cf-form-checkbox").click
+
+        # Wait for save, then check that value has updated to true
+        expect(page).to have_content "Saved"
+        expect(judge_team.reload.exclude_appeals_from_affinity).to be true
       end
     end
   end
