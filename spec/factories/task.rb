@@ -540,6 +540,21 @@ FactoryBot.define do
       factory :ama_judge_assign_task, class: JudgeAssignTask do
       end
 
+      factory :sct_assign_task, class: SpecialtyCaseTeamAssignTask do
+        appeal do
+          create(:appeal,
+                 :with_vha_issue,
+                 :with_post_intake_tasks,
+                 :direct_review_docket)
+        end
+        assigned_to { SpecialtyCaseTeam.singleton }
+        parent { appeal.root_task || create(:root_task, appeal: appeal) }
+
+        after(:create) do |task, _evaluator|
+          task.appeal.tasks.of_type(:DistributionTask).first.completed!
+        end
+      end
+
       factory :assign_hearing_disposition_task, class: AssignHearingDispositionTask do
         assigned_to { Bva.singleton }
         parent { create(:hearing_task, appeal: appeal) }
@@ -587,21 +602,6 @@ FactoryBot.define do
       factory :cavc_remand_processed_letter_response_window_task, class: CavcRemandProcessedLetterResponseWindowTask do
         assigned_to { CavcLitigationSupport.singleton }
         parent { FactoryBotHelper.find_first_task_or_create(appeal, CavcTask) }
-      end
-
-      factory :sct_assign_task, class: SpecialtyCaseTeamAssignTask do
-        appeal do
-          create(:appeal,
-                 :with_vha_issue,
-                 :with_post_intake_tasks,
-                 :direct_review_docket)
-        end
-        assigned_to { SpecialtyCaseTeam.singleton }
-        parent { appeal.root_task || create(:root_task, appeal: appeal) }
-
-        after(:create) do |task, _evaluator|
-          task.appeal.tasks.of_type(:DistributionTask).first.completed!
-        end
       end
 
       factory :hearing_task, class: HearingTask do
