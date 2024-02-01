@@ -82,15 +82,9 @@ class Hearings::RTFConversionJob < CaseflowJob
     doc = create_header_page(doc)
     doc.page_break
     doc = create_transcription_pages(vtt, doc)
-    doc.footer << "                                          Insert Veterans Last Name, First Name, MI, Claim No"
+    doc.footer << "                                          Insert Veteran's Last Name, First Name, MI, Claim No"
     rtf = doc.to_rtf
-    .sub!("{\\footer \n                                          Insert Veterans Last Name, First Name, MI, Claim No}", "{\\footer\\pard\                                               \\chpgn             Veterans Last, First, MI, Claim No  \\par}")
-    # footers = doc.instance_variable_get("@footers").each_with_index.map do |footer, idx|
-    #   if footer
-    #     footer << "page #{idx + 1}"
-    #   end
-    # end
-    # doc.instance_variable_set("@footers", footers)
+      .sub!("{\\footer \n                                          Insert Veteran's Last Name, First Name, MI, Claim No}", "{\\footer\\pard\                                               \\chpgn             Veteran's Last, First, MI, Claim No  \\par}")
     File.open('document.rtf', "w") { |file| file.write(rtf) }
   end
 
@@ -116,17 +110,36 @@ class Hearings::RTFConversionJob < CaseflowJob
     styles["CS_CODE"] = RTF::CharacterStyle.new
     styles["PS_CODE"].line_spacing = false
     styles["CS_CODE"].underline = true
-    transcript.cues.each do |cue|
+    formatted_transcript(transcript).each do |cue|
       document.paragraph(styles["PS_CODE"]) do |n1|
         n1.apply(styles["CS_CODE"]) do |n2|
-          n2 << cue.identifier.scan(/[a-zA-Z]+/).join(" ").upcase
+          n2 << cue[:identifier].upcase
         end
-        n1.paragraph << ": #{cue.text}"
+        n1.paragraph << ": #{cue[:text]}"
         n1.paragraph
       end
     end
 
     document
+  end
+
+  def formatted_transcript(transcript)
+    formatted_transcript = []
+    prev_id = "<PLACEHOLDER> This is not anyones name"
+    formatted_index = -1
+    transcript.cues.each do |cue|
+      name = cue.identifier.scan(/[a-zA-Z]+/).join(" ")
+      if name.match?(/#{prev_id}/)
+        formatted_transcript[formatted_index][:text] += " " + cue.text
+      elsif cue.text.strip != ""
+        prev_id = name
+        cue.identifier = name
+        formatted_transcript.push(identifier: name, text: cue.text)
+        formatted_index += 1
+      end
+    end
+
+    formatted_transcript
   end
 
   def generate_header_info(row)
