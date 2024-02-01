@@ -9,22 +9,20 @@ import CorrespondenceTableBuilder from './CorrespondenceTableBuilder';
 import Alert from '../../components/Alert';
 import { css } from 'glamor';
 
-// import {
-//   initialAssignTasksToUser,
-//   initialCamoAssignTasksToVhaProgramOffice
-// } from '../QueueActions';
-
 const CorrespondenceCases = (props) => {
   const dispatch = useDispatch();
   const configUrl = props.configUrl;
+
   const currentAction = useSelector((state) => state.reviewPackage.lastAction);
   const veteranInformation = useSelector((state) => state.reviewPackage.veteranInformation);
 
   const [vetName, setVetName] = useState('');
 
-  // useEffect(() => {
-  //   dispatch(loadCorrespondenceConfig(configUrl));
-  // }, [dispatch, configUrl]);
+  useEffect(() => {
+    dispatch(loadCorrespondenceConfig(configUrl));
+  }, []);
+
+  const config = useSelector((state) => state.intakeCorrespondence.correspondenceConfig);
 
   useEffect(() => {
     // Retry the request after a delay
@@ -56,10 +54,8 @@ const CorrespondenceCases = (props) => {
             scrollOnAlert={false}
           />
         )}
-        <h1 {...css({ display: 'inline-block' })}>
-          {COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES}
-        </h1>
-        <CorrespondenceTableBuilder />
+        {config &&
+        <CorrespondenceTableBuilder />}
       </AppSegment>
     </React.Fragment>
   );
