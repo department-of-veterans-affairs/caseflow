@@ -13,9 +13,10 @@ describe('Lever reducer', () => {
     const preloadedState = {
       levers: JSON.parse(JSON.stringify(leverData.levers.slice(0,5))), //allows original leverData object to remain unchanged
       backendLevers: JSON.parse(JSON.stringify(leverData.levers.slice(0,5)))
-    }
+    };
+
     leverStore = createStore(leversReducer, preloadedState);
-  })
+  });
 
   describe('Initialize reducer', () => {
     it('creates a reducer with the initial state based on the levers passed in', () => {
