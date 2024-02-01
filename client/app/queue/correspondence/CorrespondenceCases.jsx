@@ -7,7 +7,6 @@ import COPY from '../../../COPY';
 import { sprintf } from 'sprintf-js';
 import CorrespondenceTableBuilder from './CorrespondenceTableBuilder';
 import Alert from '../../components/Alert';
-import { css } from 'glamor';
 
 const CorrespondenceCases = (props) => {
   const dispatch = useDispatch();
@@ -25,15 +24,6 @@ const CorrespondenceCases = (props) => {
   const config = useSelector((state) => state.intakeCorrespondence.correspondenceConfig);
 
   useEffect(() => {
-    // Retry the request after a delay
-    setTimeout(() => {
-      if (configUrl) {
-        dispatch(loadCorrespondenceConfig(configUrl));
-      }
-    }, 1000);
-  }, [configUrl]);
-
-  useEffect(() => {
     if (
       veteranInformation?.veteran_name?.first_name &&
       veteranInformation?.veteran_name?.last_name
@@ -43,7 +33,7 @@ const CorrespondenceCases = (props) => {
   }, [veteranInformation]);
 
   return (
-    <React.Fragment>
+    <>
       <AppSegment filledBackground>
         {(veteranInformation?.veteran_name?.first_name && veteranInformation?.veteran_name?.last_name) &&
           currentAction.action_type === 'DeleteReviewPackage' && (
@@ -57,7 +47,7 @@ const CorrespondenceCases = (props) => {
         {config &&
         <CorrespondenceTableBuilder />}
       </AppSegment>
-    </React.Fragment>
+    </>
   );
 };
 

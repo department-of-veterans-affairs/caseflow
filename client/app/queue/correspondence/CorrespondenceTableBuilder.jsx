@@ -138,7 +138,7 @@ const CorrespondenceTableBuilder = (props) => {
     return {
       label: sprintf(tabConfig.label, totalTaskCount),
       page: (
-        <React.Fragment>
+        <>
           <p className="cf-margin-top-0">
             {noCasesMessage || tabConfig.description}
           </p>
@@ -166,7 +166,7 @@ const CorrespondenceTableBuilder = (props) => {
             enablePagination
             isCorrespondenceTable
           />
-        </React.Fragment>
+        </>
       ),
     };
   };
