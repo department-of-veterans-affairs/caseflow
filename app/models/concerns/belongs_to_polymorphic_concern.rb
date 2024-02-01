@@ -2,9 +2,6 @@
 
 require "helpers/association_wrapper.rb"
 
-##
-# See BelongsToPolymorphicHearingConcern for use of this module
-
 module BelongsToPolymorphicConcern
   extend ActiveSupport::Concern
 
