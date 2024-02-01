@@ -42,6 +42,10 @@ class Correspondence < CaseflowRecord
     Task.find_by(appeal_id: id, appeal_type: type, type: CorrespondenceRootTask.name)
   end
 
+  def nod?
+    PackageDocumentType.nod == package_document_type
+  end
+
   # Methods below are included to allow Correspondences to render in explain page
 
   # Alias for cmp_packet_number

@@ -7,8 +7,6 @@ module Seeds
       create_auto_assign_users
     end
 
-    private
-
     def create_auto_assign_permissions
       OrganizationPermission.valid_permission_names.each do |permission|
         OrganizationPermission.find_or_create_by(permission: permission, organization: InboundOpsTeam.singleton) do |p|
