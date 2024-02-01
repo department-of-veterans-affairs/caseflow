@@ -71,7 +71,7 @@ class WorkQueue::AppealSerializer
         diagnostic_code: issue.diagnostic_code,
         request_issue_ids: issue.request_decision_issues.pluck(:request_issue_id),
         mst_status: FeatureToggle.enabled?(:mst_identification) ? issue.mst_status : false,
-        pact_status: FeatureToggle.enabled?(:pact_identification) ? issue.pact_status : false,
+        pact_status: FeatureToggle.enabled?(:pact_identification) ? issue.pact_status : false
       }
     end
   end

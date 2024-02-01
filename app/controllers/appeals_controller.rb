@@ -50,7 +50,7 @@ class AppealsController < ApplicationController
     end
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Layout/LineLength
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def fetch_notification_list
     appeals_id = params[:appeals_id]
     respond_to do |format|
@@ -85,7 +85,7 @@ class AppealsController < ApplicationController
       end
     end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength, Layout/LineLength
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def document_count
     doc_count = EFolderService.document_count(appeal.veteran_file_number, current_user)
@@ -561,7 +561,6 @@ class AppealsController < ApplicationController
   # Params: appeals_id (vacols_id OR uuid)
   #
   # Response: Returns an array of all retrieved notifications
-  # rubocop:disable Layout/LineLength
   def find_notifications_by_appeals_id(appeals_id)
     # Retrieve notifications based on appeals_id, excluding statuses of 'No participant_id' & 'No claimant'
     @all_notifications = Notification.where(appeals_id: appeals_id)
@@ -582,7 +581,6 @@ class AppealsController < ApplicationController
       WorkQueue::NotificationSerializer.new(@allowed_notifications).serializable_hash[:data]
     end
   end
-  # rubocop:enable Layout/LineLength
 
   # Notification report pdf template only accepts the Appeal or Legacy Appeal object
   # Finds appeal object using appeals id passed through url params
