@@ -377,6 +377,7 @@ class Appeal < DecisionReview
   # :reek:RepeatedConditionals
   # clone issues clones request_issues the user selected
   # and anydecision_issues/decision_request_issues tied to the request issue
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def clone_issues(parent_appeal, payload_params)
     # set request store to the user that split the appeal
     RequestStore[:current_user] = User.find_by_css_id payload_params[:user_css_id]
@@ -429,6 +430,7 @@ class Appeal < DecisionReview
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def clone_aod(parent_appeal)
     # find the appeal AOD
@@ -492,7 +494,7 @@ class Appeal < DecisionReview
     end
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def clone_task_tree(parent_appeal, user_css_id)
     # get the task tree from the parent
     parent_ordered_tasks = parent_appeal.tasks.order(:created_at)
@@ -527,7 +529,7 @@ class Appeal < DecisionReview
       break if parent_appeal.tasks.count == tasks.count
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   # clone_task is used for splitting an appeal, tie to css_id for split
   def clone_task(original_task, user_css_id)
