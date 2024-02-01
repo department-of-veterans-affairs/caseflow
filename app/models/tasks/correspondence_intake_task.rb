@@ -21,7 +21,6 @@ class CorrespondenceIntakeTask < CorrespondenceTask
       child
     end
 
-
     private
 
     def verify_current_user_can_create!(user)
