@@ -3,15 +3,13 @@
 require "json"
 
 class ExternalApi::WebexService
-  def initialize(host:, port:, aud:, apikey:, domain:, api_endpoint:, from:, to:)
+  def initialize(host:, port:, aud:, apikey:, domain:, api_endpoint:)
     @host = host
     @port = port
     @aud = aud
     @apikey = apikey
     @domain = domain
     @api_endpoint = api_endpoint
-    @from = from
-    @to = to
   end
 
   def create_conference(conferenced_item)
@@ -51,28 +49,27 @@ class ExternalApi::WebexService
     ExternalApi::WebexService::DeleteResponse.new(resp)
   end
 
-  def get_recordings_list
-    ExternalApi::WebexService::CreateResponse.new(resp)
+  def get_recordings_list(from, to)
+    resp = send_webex_request(from, to)
     return if resp.nil?
+
+    ExternalApi::WebexService::RecordingsListResponse.new(resp)
   end
 
   private
 
   # :nocov:
-  def send_webex_request(body = nil)
+  def send_webex_request(body = nil, query: {})
     url = "https://#{@host}#{@domain}#{@api_endpoint}"
     request = HTTPI::Request.new(url)
     request.open_timeout = 300
     request.read_timeout = 300
     request.body = body.to_json unless body.nil?
-
-    # We need a better way to change up request.query based on recordings and details
-    request.query = (method == :get) ? { "from": @from, "to": @to } : nil
-
+    request.query = query
     request.headers = { "Authorization": "Bearer #{@apikey}", "Content-Type": "application/json" }
 
     MetricsService.record(
-      "#{@host} POST request to #{url}",
+      "#{@host} #{method.to_s_upcase} request to #{url}",
       service: :webex,
       name: @api_endpoint
     ) do
