@@ -19,15 +19,32 @@ feature "SpecialtyCaseTeamQueue", :all_dbs do
     let(:num_action_required_rows) { 3 }
     let(:num_completed_rows) { 9 }
 
-    let!(:sct_action_required_task) do
+    let!(:sct_action_required_tasks) do
       create_list(:sct_assign_task, num_action_required_rows, :on_hold, assigned_to: sct_org)
     end
-
     let!(:sct_completed_tasks) do
       create_list(:sct_assign_task, num_completed_rows, :completed, assigned_to: sct_org)
     end
 
+    let!(:action_required_issues) do
+      [
+        create(:request_issue, :nonrating,
+               decision_review: sct_action_required_tasks.first.appeal,
+               nonrating_issue_category: "Medical and Dental Care Reimbursement", benefit_type: "vha"),
+        create(:request_issue, :nonrating,
+               decision_review: sct_action_required_tasks.first.appeal,
+               nonrating_issue_category: "Foreign Medical Program", benefit_type: "vha"),
+        create(:request_issue, :nonrating,
+               decision_review: sct_action_required_tasks.first.appeal,
+               nonrating_issue_category: "Beneficiary Travel", benefit_type: "vha"),
+        create(:request_issue, :nonrating,
+               decision_review: sct_action_required_tasks.first.appeal,
+               nonrating_issue_category: "Foreign Medical Program", benefit_type: "vha")
+      ]
+    end
+
     before do
+      FeatureToggle.enable!(:specialty_case_team_distribution)
       sct_org.add_user(sct_user)
       sct_user.reload
       visit "/organizations/#{sct_org.url}"
@@ -58,11 +75,12 @@ feature "SpecialtyCaseTeamQueue", :all_dbs do
       expect(find("h1")).to have_content("Specialty Case Team cases")
     end
 
-    scenario "issue types column" do
-      # scenario "SCT action required tab displays multiple issue types ordered in ascending order and no duplicates" do
-
-      # end
-      expect(page).to have_content("Caregiver | Other ")
+    context "issue types column" do
+      scenario "SCT action required tab displays multiple issue types ordered in ascending order and no duplicates" do
+        expect(page).to have_content(
+          /\nBeneficiary Travel\nCaregiver | Other\nForeign Medical Program\nMedical and Dental Care Reimbursement\n/
+        )
+      end
     end
   end
 end
