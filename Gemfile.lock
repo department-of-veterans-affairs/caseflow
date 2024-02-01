@@ -175,7 +175,7 @@ GEM
     brakeman (4.7.1)
     browser (5.3.1)
     builder (3.2.4)
-    bullet (6.0.1)
+    bullet (6.1.5)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11)
     bummr (0.5.0)

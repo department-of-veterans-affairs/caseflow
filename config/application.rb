@@ -66,9 +66,6 @@ module CaseflowCertification
     # Default (starting v5.2): true
     Rails.application.config.action_controller.default_protect_from_forgery = false
 
-    # Store boolean values in sqlite3 databases as 1 and 0 instead of 't' and 'f' after migrating old data.
-    # Default (starting v5.2): true
-    Rails.application.config.active_record.sqlite3.represent_boolean_as_integer = false
     # ==================================================================================================================
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
