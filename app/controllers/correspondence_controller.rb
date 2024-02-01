@@ -40,11 +40,32 @@ class CorrespondenceController < ApplicationController
   end
 
   def correspondence_cases
-    respond_to do |format|
-      format.html { "correspondence_cases" }
-      format.json do
-        render json: { correspondence_config: CorrespondenceConfig.new(assignee: current_user)}
+    if current_user.mail_supervisor?
+      redirect_to "/queue/correspondence/team"
+    elsif current_user.mail_superuser? || current_user.mail_team_user?
+      respond_to do |format|
+        format.html { "your_correspondence" }
+        format.json do
+          render json: { correspondence_config: CorrespondenceConfig.new(assignee: current_user) }
+        end
       end
+    else
+      redirect_to "/unauthorized"
+    end
+  end
+
+  def correspondence_team
+    if current_user.mail_superuser? || current_user.mail_supervisor?
+      respond_to do |format|
+        format.html { "correspondence_team" }
+        format.json do
+          render json: { correspondence_config: CorrespondenceConfig.new(assignee: MailTeamSupervisor.singleton) }
+        end
+      end
+    elsif current_user.mail_team_user?
+      redirect_to "/queue/correspondence"
+    else
+      redirect_to "/unauthorized"
     end
   end
 
@@ -104,19 +125,6 @@ class CorrespondenceController < ApplicationController
       reasonForRemovePackage: reason_remove
     }
     render({ json: response_json }, status: :ok)
-  end
-
-  def correspondence_team
-    if MailTeamSupervisor.singleton.user_has_access?(current_user)
-      respond_to do |format|
-        format.html { "correspondence_team" }
-        format.json do
-          render json: { correspondence_config: CorrespondenceConfig.new(assignee: MailTeamSupervisor.singleton) }
-        end
-      end
-    else
-      redirect_to "/unauthorized"
-    end
   end
 
   def update
@@ -214,7 +222,9 @@ class CorrespondenceController < ApplicationController
 
   def verify_correspondence_access
     return true if MailTeamSupervisor.singleton.user_has_access?(current_user) ||
-                   MailTeam.singleton.user_has_access?(current_user)
+                   MailTeam.singleton.user_has_access?(current_user) ||
+                   BvaIntake.singleton.user_is_admin?(current_user) ||
+                   MailTeam.singleton.user_is_admin?(current_user)
 
     redirect_to "/unauthorized"
   end

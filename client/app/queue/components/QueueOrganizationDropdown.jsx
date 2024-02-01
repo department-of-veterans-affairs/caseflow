@@ -1,13 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
-
+// import { useLocation } from 'react-router-dom';
 import QueueSelectorDropdown from './QueueSelectorDropdown';
 import COPY from '../../../COPY';
+import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 
 export default class QueueOrganizationDropdown extends React.Component {
   render = () => {
     const { organizations } = this.props;
+    const { isMailTeamUser } = this.props;
+    const { isMailSupervisor } = this.props;
+    const { isMailSuperUser } = this.props;
     const url = window.location.pathname.split('/');
     const location = url[url.length - 1];
     const queueHref = (location === 'queue') ? '#' : '/queue';
@@ -36,16 +40,37 @@ export default class QueueOrganizationDropdown extends React.Component {
 
     let items = [queueItem, ...organizationItems];
 
-    if (organizations[0].name === 'Mail' || organizations[0].name === 'Mail Team Supervisor') {
+    if (isMailSuperUser === true || isMailSupervisor === true) {
+      const orgHref = '/queue/correspondence/team';
+
+      correspondenceItems = {
+        key: (2).toString(),
+        href: orgHref,
+        label: sprintf(QUEUE_CONFIG.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES)
+      };
+
+      items = [...items, correspondenceItems];
+    }
+    if (isMailTeamUser === true) {
       const orgHref = '/queue/correspondence';
 
       correspondenceItems = {
         key: (2).toString(),
         href: orgHref,
-        label: sprintf(COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES)
+        label: sprintf(QUEUE_CONFIG.CASE_LIST_TABLE_QUEUE_DROPDOWN_OWN_CORRESPONDENCE_LABEL)
       };
+      // This places the "Your Correspondence" option at the 2nd(1) index
+      const items1 = items.slice(0, 1);
+      const items2 = items.slice(1);
 
-      items = [...items, correspondenceItems];
+      items = [...items1, correspondenceItems, ...items2];
+
+      // const browserLocation = useLocation();
+
+      // console.log(browserLocation);
+      // if (browserLocation === '/queue/correspondence/team') {
+      //   return <Redirect to= "/queue/correspondence" />;
+      // }
     }
 
     return <QueueSelectorDropdown items={items} />;
@@ -53,6 +78,9 @@ export default class QueueOrganizationDropdown extends React.Component {
 }
 
 QueueOrganizationDropdown.propTypes = {
+  isMailTeamUser: PropTypes.bool,
+  isMailSupervisor: PropTypes.bool,
+  isMailSuperUser: PropTypes.bool,
   organizations: PropTypes.arrayOf(PropTypes.shape({
     name: PropTypes.string.isRequired,
     url: PropTypes.string.isRequired

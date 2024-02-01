@@ -4,7 +4,7 @@ RSpec.feature("The Correspondence Cases page") do
   context "correspondece cases feature toggle" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeamSupervisor.singleton.add_user(current_user)
+      MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       @correspondence_uuid = "123456789"
     end
