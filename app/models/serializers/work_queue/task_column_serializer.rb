@@ -117,9 +117,10 @@ class WorkQueue::TaskColumnSerializer
   attribute :label do |object, params|
     columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]
 
-    if serialize_attribute?(params, columns)
-      object.label
-    end
+    # if serialize_attribute?(params, columns)
+    #   object.label
+    # end
+    object.label
   end
 
   attribute :placed_on_hold_at do |object, params|

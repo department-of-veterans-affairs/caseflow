@@ -7,19 +7,8 @@ class JudgeAssignTasksController < TasksController
       fail Caseflow::Error::ClosedTaskError
     end
 
-    puts "INSIDE CREATE in JUDGEASSIGNTASKSCONTROLLER"
-    puts user_role.inspect
-    puts "parent_task"
-    puts parent_task.inspect
-
-    puts "create params"
-    puts create_params.inspect
-
-
     queue_for_role = QueueForRole.new(user_role).create(user: current_user)
     tasks_to_return = (tasks + queue_for_role.tasks).uniq
-
-
 
     render json: { tasks: json_tasks(tasks_to_return) }
   end

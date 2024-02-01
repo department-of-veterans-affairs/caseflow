@@ -94,6 +94,7 @@ class UnassignedCasesPage extends React.PureComponent {
               </LoadingContainer>
             </div>
           }
+          {/* TODO: This is totally disconnected from the queue config columns which is bad */}
           {!this.props.distributionCompleteCasesLoading &&
             <TaskTable
               includeBadges
@@ -103,7 +104,8 @@ class UnassignedCasesPage extends React.PureComponent {
               includeDocketNumber
               includeIssueCount
               {...((userIsCamoEmployee || userIsSCTCoordinator) ? { includeIssueTypes: true } : {})}
-              includeDaysWaiting
+              // includeDaysWaiting
+              {...((userIsSCTCoordinator) ? { includeDaysWaiting: false } : { includeDaysWaiting: true })}
               includeReaderLink
               includeNewDocsIcon
               tasks={this.props.tasks}

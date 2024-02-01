@@ -32,7 +32,8 @@ class QueueTab
       columns: columns.map { |column| column.to_hash(tasks) },
       allow_bulk_assign: allow_bulk_assign?,
       contains_legacy_tasks: contains_legacy_tasks?,
-      defaultSort: default_sorting_hash
+      defaultSort: default_sorting_hash,
+      hide_from_queue_table_view: hide_from_queue_table_view
     }
   end
 
@@ -75,6 +76,12 @@ class QueueTab
   end
 
   def contains_legacy_tasks?
+    false
+  end
+
+  # TODO: I don't like this method name since hide_from_queue_table_view is used in a lot of places and it
+  # generally means hide from all queue table views. My usage is only going to affect QueueTableBuilder though
+  def hide_from_queue_table_view
     false
   end
 
