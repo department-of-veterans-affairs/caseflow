@@ -132,8 +132,8 @@ GEM
       activesupport (= 6.1.4.0)
     activerecord-import (1.0.2)
       activerecord (>= 3.2)
-    activerecord-oracle_enhanced-adapter (6.0.6)
-      activerecord (~> 6.0.0)
+    activerecord-oracle_enhanced-adapter (6.1.6)
+      activerecord (~> 6.1.0)
       ruby-plsql (>= 0.6.0)
     activestorage (6.1.4.0)
       actionpack (= 6.1.4.0)
@@ -237,7 +237,10 @@ GEM
       no_proxy_fix
       octokit (~> 4.7)
       terminal-table (~> 1)
-    database_cleaner (1.7.0)
+    database_cleaner-active_record (2.1.0)
+      activerecord (>= 5.a)
+      database_cleaner-core (~> 2.0.0)
+    database_cleaner-core (2.0.1)
     date (3.3.3)
     ddtrace (0.34.1)
       msgpack
@@ -749,7 +752,7 @@ PLATFORMS
 DEPENDENCIES
   aasm (= 4.11.0)
   activerecord-import
-  activerecord-oracle_enhanced-adapter (~> 6.0.0)
+  activerecord-oracle_enhanced-adapter (~> 6.1.0)
   acts_as_tree
   amoeba
   anbt-sql-formatter
@@ -769,7 +772,7 @@ DEPENDENCIES
   console_tree_renderer!
   countries
   danger (~> 6.2.2)
-  database_cleaner
+  database_cleaner-active_record
   ddtrace
   debase
   derailed_benchmarks
