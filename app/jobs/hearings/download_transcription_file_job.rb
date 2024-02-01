@@ -27,8 +27,7 @@ class DownloadTranscriptionFileJob < CaseflowJob
     }
     log_error(exception, extra)
 
-    # TO-DO
-    # send_error_email_to_va_ops(exception)
+    job.send_error_email_to_va_ops(exception)
   end
 
   retry_on(FileUploadError, wait: :exponentially_longer) do |job, exception|
@@ -43,15 +42,23 @@ class DownloadTranscriptionFileJob < CaseflowJob
     log_error(exception, extra)
   end
 
-  discard_on(FileNameError)
+  discard_on(FileNameError) do |_job, exception|
+    send_error_email_to_va_ops(exception)
+  end
 
   VALID_FILE_TYPES = %w[mp3 mp4 vtt].freeze
 
-  S3_BUCKET_NAMES = {
+  S3_SUB_BUCKET = "vaec-appeals-caseflow"
+
+  S3_SUBDIRECTORIES = {
     mp3: "transcript_audio",
     mp4: "transcript_audio",
     vtt: "transcript_raw"
   }.freeze
+
+  def initialize
+    @folder_name = (Rails.deploy_env == :prod) ? S3_SUB_BUCKET : "#{S3_SUB_BUCKET}-#{Rails.deploy_env}"
+  end
 
   # Purpose: Downloads audio (mp3), video (mp4), or transcript (vtt) file from temporary download link provided by
   #          GetRecordingDetailsJob
@@ -115,7 +122,7 @@ class DownloadTranscriptionFileJob < CaseflowJob
   # Returns: Updated @transcription_file
   def upload_file_to_s3
     begin
-      S3Service.store_file(s3_bucket, tmp_location, :filepath)
+      S3Service.store_file(s3_folder, tmp_location, :filepath)
       clean_up_tmp_location
       update_file_after_upload(status: :success, aws_link: s3_file_location, date: Time.zone.now)
       log_info(s3_success_message)
@@ -127,16 +134,16 @@ class DownloadTranscriptionFileJob < CaseflowJob
 
   # Purpose: Bucket name in s3 depending on if file type mp3, mp4, or vtt
   #
-  # Returns: string, bucket name
-  def s3_bucket
-    S3_BUCKET_NAMES[file_type.to_sym]
+  # Returns: string, folder name
+  def s3_folder
+    @folder_name + "/" + S3_SUBDIRECTORIES[file_type.to_sym]
   end
 
   # Purpose: Location of successfully uploaded file in s3
   #
   # Returns: string, s3 filepath
   def s3_file_location
-    s3_bucket + "/" + file_name
+    s3_folder + "/" + file_name
   end
 
   # Purpose: Builds on successful upload to S3
@@ -188,8 +195,9 @@ class DownloadTranscriptionFileJob < CaseflowJob
   def ensure_hearing_held
     return if hearing.held?
 
-    # TO-DO
-    # send_error_email_to_va_ops(HearingAssociationError.new("Hearing disposition not set to held"))
+    exception = HearingAssociationError.new("Hearing disposition not set to held")
+    Rails.logger.warn(exception)
+    send_error_email_to_va_ops(exception)
   end
 
   # Purpose: Appeal associated with the hearing for which the transcription was created
@@ -250,5 +258,11 @@ class DownloadTranscriptionFileJob < CaseflowJob
   # Purpose: Logging info messages to the console
   def log_info(message)
     Rails.logger.info(message)
+  end
+
+  # To Be Implemented
+  # Purpose: Sends email to Va Operations Team when download fails or hearing disposition not set to held
+  def send_error_email_to_va_ops(_error)
+    nil
   end
 end
