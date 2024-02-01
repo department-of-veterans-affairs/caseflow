@@ -29,6 +29,7 @@ class UpdateLegacyAttorneyCaseReview
   private
 
   attr_reader :id, :document_id, :user, :success
+
   delegate :work_product, to: :vacols_case_review
 
   def update_attorney_case_review

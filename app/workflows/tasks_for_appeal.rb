@@ -43,6 +43,7 @@ class TasksForAppeal
   # VSOs should be able to see the following:
   # NOD received, Distribution Date, Hearing Held, Dispatched, Substitution Granted, Substitution added,
   # and any tasks assigned to the user
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def tasks_visible_to_vso_employee
     appeal.tasks
       .includes(*task_includes)
@@ -52,6 +53,7 @@ class TasksForAppeal
         task.is_a?(DistributionTask)
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def tasks_actionable_to_vso_employee
     appeal.tasks

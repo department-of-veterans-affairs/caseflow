@@ -9,7 +9,6 @@ import COPY from '../../COPY';
 import { onReceiveAmaTasks } from './QueueActions';
 import SearchableDropdown from '../components/SearchableDropdown';
 import TextareaField from '../components/TextareaField';
-import EfolderUrlField from './components/EfolderUrlField';
 import { requestSave } from './uiReducer/uiActions';
 import { taskById, appealWithDetailSelector } from './selectors';
 import QueueFlowModal from './components/QueueFlowModal';
@@ -35,25 +34,15 @@ export class CreateMailTaskDialog extends React.Component {
     this.state = {
       selectedValue: null,
       instructions: '',
-      eFolderUrl: '',
-      eFolderUrlValid: false
     };
   }
 
-  validateForm = () => {
-    const instructionsAndValue = () => this.state.selectedValue !== null && this.state.instructions !== '';
-
-    if (this.isHearingRequestMailTask()) {
-      return instructionsAndValue() && this.state.eFolderUrlValid === true;
-    }
-
-    return instructionsAndValue();
-  }
+  validateForm = () => this.state.selectedValue !== null && this.state.instructions !== '';
 
   prependUrlToInstructions = () => {
 
     if (this.isHearingRequestMailTask()) {
-      return (`**LINK TO DOCUMENT:** \n ${this.state.eFolderUrl} \n\n **DETAILS:** \n ${this.state.instructions}`);
+      return (`**DETAILS:** \n ${this.state.instructions}`);
     }
 
     return this.state.instructions;
@@ -69,7 +58,7 @@ export class CreateMailTaskDialog extends React.Component {
             type: this.state.selectedValue,
             external_id: appeal.externalId,
             parent_id: task.taskId,
-            instructions: this.prependUrlToInstructions(),
+            instructions: this.prependUrlToInstructions()
           },
         ],
       },
@@ -130,14 +119,6 @@ export class CreateMailTaskDialog extends React.Component {
           options={this.taskActionData().options}
         />
         <br />
-        {
-          this.isHearingRequestMailTask() &&
-          <EfolderUrlField
-            appealId={this.props.appealId}
-            requestType={this.state.selectedValue}
-            onChange={(value, valid) => this.setState({ eFolderUrl: value, eFolderUrlValid: valid })}
-          />
-        }
         <TextareaField
           name={COPY.PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL}
           id="taskInstructions"
@@ -152,6 +133,8 @@ export class CreateMailTaskDialog extends React.Component {
 CreateMailTaskDialog.propTypes = {
   appeal: PropTypes.shape({
     externalId: PropTypes.string,
+    veteranParticipantId: PropTypes.string,
+    efolderLink: PropTypes.string
   }),
   appealId: PropTypes.string,
   history: PropTypes.shape({

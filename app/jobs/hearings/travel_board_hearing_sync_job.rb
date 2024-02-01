@@ -60,7 +60,7 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
   # Params: exclude_ids - A list of vacols ids that already exist in Caseflow
   #         limit - The max number of appeals to process
   # Return: All the newly created legacy appeals
-  def fetch_vacols_travel_board_appeals(limit)
+  def fetch_vacols_travel_board_appeals(limit) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     cases = VACOLS::Case
       .where(
         # Travel Board Hearing Request
@@ -76,8 +76,8 @@ class Hearings::TravelBoardHearingSyncJob < CaseflowJob
         # If there is not already a Legacy Appeal record tied to this case. Create one.
         if !LegacyAppeal.where(vacols_id: vacols_case.bfkey).exists?
           begin
-              missing_case = VACOLS::Case.where(bfkey: vacols_case.bfkey).includes(:folder, :correspondent, :case_issues).first
-              AppealRepository.build_appeal(missing_case, true)
+            missing_case = VACOLS::Case.where(bfkey: vacols_case.bfkey).includes(:folder, :correspondent, :case_issues).first
+            AppealRepository.build_appeal(missing_case, true)
           rescue StandardError => error
             log_error("#{error.class}: #{error.message} for vacols id:#{vacols_case.bfkey} on #{JOB_ATTR&.class} of ID:#{JOB_ATTR&.job_id}\n #{error.backtrace.join("\n")}")
             next

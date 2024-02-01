@@ -241,6 +241,7 @@ class SanitizedJsonImporter
 
   # Try to find record using unique indices on the corresponding table
   # :reek:FeatureEnvy
+  # rubocop:disable Metrics/CyclomaticComplexity
   def find_record_by_unique_index(klass, obj_hash)
     found_records = unique_indices_per_class(klass).map(&:columns).map do |fieldnames|
       next nil if fieldnames.is_a?(String) # occurs for custom indices like for User
@@ -261,6 +262,7 @@ class SanitizedJsonImporter
 
     fail "Found multiple records (#{found_records.size}) for #{klass.name}: #{found_records}"
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def find_existing_record(klass, obj_hash)
     @configuration.find_existing_record(klass, obj_hash, importer: self) ||

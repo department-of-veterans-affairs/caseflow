@@ -1,18 +1,23 @@
 import { ACTIONS, DECISION_ISSUE_UPDATE_STATUS } from '../constants';
 import { update } from '../../util/ReducerUtil';
+import { combineReducers } from 'redux';
+import orgUserReducer from '../actions/usersSlice';
+import changeHistoryReducer from '../actions/changeHistorySlice';
+import { timeFunction } from '../../util/PerfDebug';
 
 export const mapDataToInitialState = function(props = {}) {
   const { serverNonComp } = props;
 
-  let state = serverNonComp;
+  const state = {};
 
-  state.selectedTask = null;
-  state.decisionIssuesStatus = {};
+  state.nonComp = serverNonComp;
+  state.nonComp.selectedTask = null;
+  state.nonComp.decisionIssuesStatus = {};
 
   return state;
 };
 
-export const nonCompReducer = (state = mapDataToInitialState(), action) => {
+export const nonCompReducer = (state = mapDataToInitialState, action) => {
   switch (action.type) {
   case ACTIONS.TASK_UPDATE_DECISION_ISSUES_START:
     return update(state, {
@@ -90,4 +95,15 @@ export const nonCompReducer = (state = mapDataToInitialState(), action) => {
     return state;
   }
 };
+
+const combinedReducer = combineReducers({
+  nonComp: nonCompReducer,
+  orgUsers: orgUserReducer,
+  changeHistory: changeHistoryReducer
+});
+
+export default timeFunction(
+  combinedReducer,
+  (timeLabel, state, action) => `Action ${action.type} reducer time: ${timeLabel}`
+);
 

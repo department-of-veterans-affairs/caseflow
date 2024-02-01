@@ -4,19 +4,16 @@ module VaDotGovAddressValidator::Validations
   private
 
   # :nocov:
-  def map_country_code_to_state
-    case valid_address[:country_code]
+  def map_state_code_to_state_with_ro
+    case valid_address[:state_code]
     # Guam, American Samoa, Marshall Islands, Micronesia, Northern Mariana Islands, Palau
-    when "GQ", "AQ", "RM", "FM", "CQ", "PS"
+    when "GU", "AS", "MH", "FM", "MP", "PW"
       "HI"
-    # Philippine Islands
-    when "PH", "RP", "PI"
-      "PI"
-    # Puerto Rico, Vieques, U.S. Virgin Islands
-    when "VI", "VQ", "PR"
+    # U.S. Virgin Islands
+    when "VI"
       "PR"
-    when "US", "USA"
-      valid_address.dig(:state_code)
+    else
+      valid_address[:state_code]
     end
   end
   # :nocov:

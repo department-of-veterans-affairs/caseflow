@@ -94,9 +94,11 @@ class CheckTaskTree
 
     @errors << "Closed RootTask should not have open tasks" unless open_tasks_with_closed_root_task.blank?
 
+    # rubocop:disable Lint/SafeNavigationWithEmpty
     if active_tasks_with_open_root_task&.empty?
       @errors << "Open RootTask should have an active task assigned to the Board"
     end
+    # rubocop:enable Lint/SafeNavigationWithEmpty
 
     unless unexpected_child_tasks.blank?
       @errors << "Unexpected child task: #{unexpected_child_tasks.pluck(:type, :id)}"
@@ -190,7 +192,9 @@ class CheckTaskTree
     end.select(&:any?).flatten
   end
 
-  # `Organization.unscoped{TrackVeteranTask.includes(:assigned_to).reject{|task| task.assigned_to.is_a?(Representative)}}`
+  # `Organization.unscoped{
+  #   TrackVeteranTask.includes(:assigned_to).reject{|task| task.assigned_to.is_a?(Representative)}
+  # }`
   def track_veteran_task_assigned_to_non_representative
     Organization.unscoped do
       TrackVeteranTask.where(appeal: @appeal).reject { |task| task.assigned_to.is_a?(Representative) }
@@ -261,7 +265,7 @@ class CheckTaskTree
   # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-DR/freq-childparent.html
   # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-ES/freq-childparent.html
   # https://department-of-veterans-affairs.github.io/caseflow/task_trees/trees/docket-H/freq-childparent.html
-  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def expected_parent_task_hash
     @expected_parent_task_hash ||= {
       # task types expected under RootTask
@@ -317,7 +321,7 @@ class CheckTaskTree
       StatusInquiryMailTask.assigned_to_any_user => StatusInquiryMailTask.assigned_to_any_org
     }
   end
-  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def tasks_with_unexpected_parent_task
     expected_parent_task_hash.map do |child_task_query, parent_task_query|

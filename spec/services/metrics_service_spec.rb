@@ -78,8 +78,8 @@ describe MetricsService do
             },
             start: anything,
             end: anything,
-            duration: anything
-
+            duration: anything,
+            additional_info: anything
           },
           current_user
         )

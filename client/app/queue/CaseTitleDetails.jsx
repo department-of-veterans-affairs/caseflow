@@ -16,7 +16,6 @@ import {
 } from './selectors';
 import { PencilIcon } from '../components/icons/PencilIcon';
 import { ClockIcon } from '../components/icons/ClockIcon';
-import { ExternalLinkIcon } from 'app/components/icons/ExternalLinkIcon';
 import { renderLegacyAppealType } from './utils';
 import { requestPatch } from './uiReducer/uiActions';
 import Button from '../components/Button';
@@ -27,6 +26,7 @@ import Modal from '../components/Modal';
 import ReaderLink from './ReaderLink';
 import TextField from '../components/TextField';
 import { editAppeal } from './QueueActions';
+import EfolderLink from '../components/EfolderLink';
 
 const editButton = css({
   float: 'right',
@@ -140,7 +140,7 @@ export class CaseTitleDetails extends React.PureComponent {
     const showHearingRequestType = appeal?.docketName === 'hearing' ||
       (appeal?.docketName === 'legacy' && appeal?.readableHearingRequestType);
     const link = appeal.veteranParticipantId ?
-      appeal.efolderLink + '/veteran/' + appeal.veteranParticipantId :
+      `${appeal.efolderLink }/veteran/${ appeal.veteranParticipantId}` :
       appeal.efolderLink;
 
     return (
@@ -252,13 +252,7 @@ export class CaseTitleDetails extends React.PureComponent {
         )}
         {showEfolderLink && (
           <TitleDetailsSubheaderSection title={COPY.TASK_SNAPSHOT_ABOUT_BOX_EFOLDER_LINK}>
-
-            <a href={link} target="_blank" rel="noopener noreferrer">
-              {this.props.appeal.veteranParticipantId ? 'Open eFolder ' : 'Go to eFolder Search '}
-              <span {...css({ position: 'relative', top: '3px' })}>
-                <ExternalLinkIcon color={COLORS.FOCUS_OUTLINE} />
-              </span>
-            </a>
+            <EfolderLink url={link} veteranParticipantId={this.props.appeal.veteranParticipantId} />
           </TitleDetailsSubheaderSection>
         )}
       </TitleDetailsSubheader>

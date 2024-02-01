@@ -8,8 +8,10 @@ describe DtaScCreationFailedFixJob, :postgres do
   let!(:hlr) { create(:higher_level_review, veteran_file_number: veteran_file_number, establishment_error: dta_error) }
   let!(:sc) { create(:supplemental_claim, veteran_file_number: veteran_file_number, decision_review_remanded: hlr) }
 
+  it_behaves_like "a Master Scheduler serializable object", DtaScCreationFailedFixJob
+
   context "#dta_sc_creation_failed_fix" do
-    subject { described_class.new("higher_level_review", dta_error) }
+    subject { described_class.new }
 
     context "When SC has decision_review_remanded_id and decision_review_remanded_type" do
       it "clears the error field on related HLR" do

@@ -52,7 +52,7 @@ class DuplicateVeteranChecker
     check_by_duplicate_veteran_file_number(la.veteran.file_number)
   end
 
-  def run_remediation_by_vacols_id(vacols_id)
+  def run_remediation_by_vacols_id(_vacols_id)
     la = LegacyAppeal.find_by_vacols_id(legacy_appeal_vacols_id)
 
     if la.nil?
@@ -91,7 +91,7 @@ class DuplicateVeteranChecker
       fail Interrupt
     end
 
-    # Check if there in fact duplicate veterans. Can be duplicated with 
+    # Check if there in fact duplicate veterans. Can be duplicated with
     # same partipant id or ssn
     dupe_vets = Veteran.where("ssn = ? or participant_id = ?", v.ssn, v.participant_id)
 
@@ -110,7 +110,7 @@ class DuplicateVeteranChecker
       if other_v.file_number == old_file_number
         other_v = dupe_vets.last # First is duplicate veteran so get 2nd
       end
-      if other_v.file_number.empty? || other_v.file_number == old_file_number #if correct veteran has wrong file number
+      if other_v.file_number.empty? || other_v.file_number == old_file_number # if correct veteran has wrong file number
         puts("Both veterans have the same file_number or No file_number on the correct veteran. Aborting...")
         fail Interrupt
       elsif v.ssn.empty? && !other_v.ssn.empty?
@@ -128,7 +128,7 @@ class DuplicateVeteranChecker
     end
 
     duplicate_relations = ""
-    
+
     # Get the correct file number from a BGS call out
     file_number = BGSService.new.fetch_file_number_by_ssn(vet_ssn)
 
@@ -137,88 +137,88 @@ class DuplicateVeteranChecker
       fail Interrupt
     end
 
-    # The following code runs through all possible relations 
+    # The following code runs through all possible relations
     # to the duplicat evetran by file number or veteran id
     # collects all counts and displays all relations
     as = Appeal.where(veteran_file_number: old_file_number)
-    
+
     as_count = as.count
 
-    duplicate_relations += as_count.to_s + " Appeals\n"
+    duplicate_relations += "#{as_count} Appeals\n"
 
     las = LegacyAppeal.where(vbms_id: convert_file_number_to_legacy(old_file_number))
 
     las_count = las.count
 
-    duplicate_relations += las_count.to_s + " LegacyAppeals\n"
-    
+    duplicate_relations += "#{las_count} LegacyAppeals\n"
+
     ahls = AvailableHearingLocations.where(veteran_file_number: old_file_number)
-    
+
     ahls_count = ahls.count
 
-    duplicate_relations += ahls_count.to_s + " Avialable Hearing Locations\n"
-    
+    duplicate_relations += "#{ahls_count} Avialable Hearing Locations\n"
+
     bpoas = BgsPowerOfAttorney.where(file_number: old_file_number)
-    
+
     bpoas_count = bpoas.count
 
-    duplicate_relations += bpoas_count.to_s + " BgsPowerOfAAttorneys\n"
-    
+    duplicate_relations += "#{bpoas_count} BgsPowerOfAAttorneys\n"
+
     ds = Document.where(file_number: old_file_number)
-    
+
     ds_count = ds.count
 
-    duplicate_relations += ds_count.to_s + " Documents\n"
+    duplicate_relations += "#{ds_count} Documents\n"
 
     epes = EndProductEstablishment.where(veteran_file_number: old_file_number)
-    
+
     epes_count = epes.count
 
-    duplicate_relations += epes_count.to_s + " EndProductEstablishment\n"
+    duplicate_relations += "#{epes_count} EndProductEstablishment\n"
 
     f8s = Form8.where(file_number: convert_file_number_to_legacy(old_file_number))
-    
+
     f8s_count = f8s.count
 
-    duplicate_relations += f8s_count.to_s + " Form8\n"
-    
+    duplicate_relations += "#{f8s_count} Form8\n"
+
     hlrs = HigherLevelReview.where(veteran_file_number: old_file_number)
-    
+
     hlrs_count = hlrs.count
 
-    duplicate_relations += hlrs_count.to_s + " HigherLevelReview\n"
-    
+    duplicate_relations += "#{hlrs_count} HigherLevelReview\n"
+
     is_fn = Intake.where(veteran_file_number: old_file_number)
-    
+
     is_fn_count = is_fn.count
 
-    duplicate_relations += is_fn_count.to_s + " Intakes related by file number\n"
-    
+    duplicate_relations += "#{is_fn_count} Intakes related by file number\n"
+
     is_vi = Intake.where(veteran_id: v.id)
-    
+
     is_vi_count = is_vi.count
 
-    duplicate_relations += is_vi_count.to_s + " Intakes related by veteran id\n"
-    
+    duplicate_relations += "#{is_vi_count} Intakes related by veteran id\n"
+
     res = RampElection.where(veteran_file_number: old_file_number)
-    
+
     res_count = res.count
 
-    duplicate_relations += res_count.to_s + " RampElection\n"
-    
+    duplicate_relations += "#{res_count} RampElection\n"
+
     rrs = RampRefiling.where(veteran_file_number: old_file_number)
-    
+
     rrs_count = rrs.count
 
-    duplicate_relations += rrs_count.to_s + " RampRefiling\n"
-    
+    duplicate_relations += "#{rrs_count} RampRefiling\n"
+
     scs = SupplementalClaim.where(veteran_file_number: old_file_number)
-    
+
     scs_count = scs.count
 
-    duplicate_relations += scs_count.to_s + " SupplementalClaim\n"
+    duplicate_relations += "#{scs_count} SupplementalClaim\n"
 
-    puts("Duplicate Veteran Relations:\n" + duplicate_relations)
+    puts("Duplicate Veteran Relations:\n#{duplicate_relations}")
 
     # Get relationship list for correct veteran
 
@@ -228,81 +228,81 @@ class DuplicateVeteranChecker
 
     as2_count = as2.count
 
-    correct_relations += as2_count.to_s + " Appeals\n"
+    correct_relations += "#{as2_count} Appeals\n"
 
     las2 = LegacyAppeal.where(vbms_id: convert_file_number_to_legacy(file_number))
 
     las2_count = las2.count
 
-    correct_relations += las2_count.to_s + " LegacyAppeals\n"
+    correct_relations += "#{las2_count} LegacyAppeals\n"
 
     ahls2 = AvailableHearingLocations.where(veteran_file_number: file_number)
 
     ahls2_count = ahls2.count
 
-    correct_relations += ahls2_count.to_s + " Avialable Hearing Locations\n"
+    correct_relations += "#{ahls2_count} Avialable Hearing Locations\n"
 
     bpoas2 = BgsPowerOfAttorney.where(file_number: file_number)
 
     bpoas2_count = bpoas2.count
 
-    correct_relations += bpoas2_count.to_s + " BgsPowerOfAAttorneys\n"
+    correct_relations += "#{bpoas2_count} BgsPowerOfAAttorneys\n"
 
     ds2 = Document.where(file_number: file_number)
 
     ds2_count = ds2.count
 
-    correct_relations += ds2_count.to_s + " Documents\n"
+    correct_relations += "#{ds2_count} Documents\n"
 
     epes2 = EndProductEstablishment.where(veteran_file_number: file_number)
 
     epes2_count = epes2.count
 
-    correct_relations += epes2_count.to_s + " EndProductEstablishment\n"
+    correct_relations += "#{epes2_count} EndProductEstablishment\n"
 
     f8s2 = Form8.where(file_number: convert_file_number_to_legacy(file_number))
 
     f8s2_count = f8s2.count
 
-    correct_relations += f8s2_count.to_s + " Form8\n"
+    correct_relations += "#{f8s2_count} Form8\n"
 
     hlrs2 = HigherLevelReview.where(veteran_file_number: file_number)
 
     hlrs2_count = hlrs2.count
 
-    correct_relations += hlrs2_count.to_s + " HigherLevelReview\n"
+    correct_relations += "#{hlrs2_count} HigherLevelReview\n"
 
     is_fn2 = Intake.where(veteran_file_number: file_number)
 
     is_fn2_count = is_fn2.count
 
-    correct_relations += is_fn2_count.to_s + " Intakes related by file number\n"
+    correct_relations += "#{is_fn2_count} Intakes related by file number\n"
 
     is_vi2 = Intake.where(veteran_id: v.id)
 
     is_vi2_count = is_vi2.count
 
-    correct_relations += is_vi2_count.to_s + " Intakes related by veteran id\n"
+    correct_relations += "#{is_vi2_count} Intakes related by veteran id\n"
 
     res2 = RampElection.where(veteran_file_number: file_number)
 
     res2_count = res2.count
 
-    correct_relations += res2_count.to_s + " RampElection\n"
+    correct_relations += "#{res2_count} RampElection\n"
 
     rrs2 = RampRefiling.where(veteran_file_number: file_number)
 
     rrs2_count = rrs2.count
 
-    correct_relations += rrs2_count.to_s + " RampRefiling\n"
+    correct_relations += "#{rrs2_count} RampRefiling\n"
 
     scs2 = SupplementalClaim.where(veteran_file_number: file_number)
 
     scs2_count = scs2.count
 
-    correct_relations += scs2_count.to_s + " SupplementalClaim\n"
+    correct_relations += "#{scs2_count} SupplementalClaim\n"
 
-    puts("Correct Veteran Relations:\n" + correct_relations)
+    puts("Correct Veteran Relations:\n#{correct_relations}")
   end
 
   def run_remediation(duplicate_veteran_file_number)
@@ -327,7 +327,7 @@ class DuplicateVeteranChecker
       fail Interrupt
     end
 
-    # Check if there in fact duplicate veterans. Can be duplicated with 
+    # Check if there in fact duplicate veterans. Can be duplicated with
     # same partipant id or ssn
     dupe_vets = Veteran.where("ssn = ? or participant_id = ?", v.ssn, v.participant_id)
 
@@ -346,7 +346,7 @@ class DuplicateVeteranChecker
       if other_v.file_number == old_file_number
         other_v = dupe_vets.last # First is duplicate veteran so get 2nd
       end
-      if other_v.file_number.empty? || other_v.file_number == old_file_number #if correct veteran has wrong file number
+      if other_v.file_number.empty? || other_v.file_number == old_file_number # if correct veteran has wrong file number
         puts("Both veterans have the same file_number or No file_number on the correct veteran. Aborting...")
         fail Interrupt
       elsif v.ssn.empty? && !other_v.ssn.empty?
@@ -364,7 +364,7 @@ class DuplicateVeteranChecker
     end
 
     duplicate_relations = ""
-    
+
     # Get the correct file number from a BGS call out
     file_number = BGSService.new.fetch_file_number_by_ssn(vet_ssn)
 
@@ -373,88 +373,88 @@ class DuplicateVeteranChecker
       fail Interrupt
     end
 
-    # The following code runs through all possible relations 
+    # The following code runs through all possible relations
     # to the duplicat evetran by file number or veteran id
     # collects all counts and displays all relations
     as = Appeal.where(veteran_file_number: old_file_number)
-    
+
     as_count = as.count
 
-    duplicate_relations += as_count.to_s + " Appeals\n"
+    duplicate_relations += "#{as_count} Appeals\n"
 
     las = LegacyAppeal.where(vbms_id: convert_file_number_to_legacy(old_file_number))
 
     las_count = las.count
 
-    duplicate_relations += las_count.to_s + " LegacyAppeals\n"
-    
+    duplicate_relations += "#{las_count} LegacyAppeals\n"
+
     ahls = AvailableHearingLocations.where(veteran_file_number: old_file_number)
-    
+
     ahls_count = ahls.count
 
-    duplicate_relations += ahls_count.to_s + " Avialable Hearing Locations\n"
-    
+    duplicate_relations += "#{ahls_count} Avialable Hearing Locations\n"
+
     bpoas = BgsPowerOfAttorney.where(file_number: old_file_number)
-    
+
     bpoas_count = bpoas.count
 
-    duplicate_relations += bpoas_count.to_s + " BgsPowerOfAAttorneys\n"
-    
+    duplicate_relations += "#{bpoas_count} BgsPowerOfAAttorneys\n"
+
     ds = Document.where(file_number: old_file_number)
-    
+
     ds_count = ds.count
 
-    duplicate_relations += ds_count.to_s + " Documents\n"
+    duplicate_relations += "#{ds_count} Documents\n"
 
     epes = EndProductEstablishment.where(veteran_file_number: old_file_number)
-    
+
     epes_count = epes.count
 
-    duplicate_relations += epes_count.to_s + " EndProductEstablishment\n"
+    duplicate_relations += "#{epes_count} EndProductEstablishment\n"
 
     f8s = Form8.where(file_number: convert_file_number_to_legacy(old_file_number))
-    
+
     f8s_count = f8s.count
 
-    duplicate_relations += f8s_count.to_s + " Form8\n"
-    
+    duplicate_relations += "#{f8s_count} Form8\n"
+
     hlrs = HigherLevelReview.where(veteran_file_number: old_file_number)
-    
+
     hlrs_count = hlrs.count
 
-    duplicate_relations += hlrs_count.to_s + " HigherLevelReview\n"
-    
+    duplicate_relations += "#{hlrs_count} HigherLevelReview\n"
+
     is_fn = Intake.where(veteran_file_number: old_file_number)
-    
+
     is_fn_count = is_fn.count
 
-    duplicate_relations += is_fn_count.to_s + " Intakes related by file number\n"
-    
+    duplicate_relations += "#{is_fn_count} Intakes related by file number\n"
+
     is_vi = Intake.where(veteran_id: v.id)
-    
+
     is_vi_count = is_vi.count
 
-    duplicate_relations += is_vi_count.to_s + " Intakes related by veteran id\n"
-    
+    duplicate_relations += "#{is_vi_count} Intakes related by veteran id\n"
+
     res = RampElection.where(veteran_file_number: old_file_number)
-    
+
     res_count = res.count
 
-    duplicate_relations += res_count.to_s + " RampElection\n"
-    
+    duplicate_relations += "#{res_count} RampElection\n"
+
     rrs = RampRefiling.where(veteran_file_number: old_file_number)
-    
+
     rrs_count = rrs.count
 
-    duplicate_relations += rrs_count.to_s + " RampRefiling\n"
-    
+    duplicate_relations += "#{rrs_count} RampRefiling\n"
+
     scs = SupplementalClaim.where(veteran_file_number: old_file_number)
-    
+
     scs_count = scs.count
 
-    duplicate_relations += scs_count.to_s + " SupplementalClaim\n"
+    duplicate_relations += "#{scs_count} SupplementalClaim\n"
 
-    puts("Duplicate Veteran Relations:\n" + duplicate_relations)
+    puts("Duplicate Veteran Relations:\n#{duplicate_relations}")
 
     # Get relationship list for correct veteran
 
@@ -464,81 +464,81 @@ class DuplicateVeteranChecker
 
     as2_count = as2.count
 
-    correct_relations += as2_count.to_s + " Appeals\n"
+    correct_relations += "#{as2_count} Appeals\n"
 
     las2 = LegacyAppeal.where(vbms_id: convert_file_number_to_legacy(file_number))
 
     las2_count = las2.count
 
-    correct_relations += las2_count.to_s + " LegacyAppeals\n"
+    correct_relations += "#{las2_count} LegacyAppeals\n"
 
     ahls2 = AvailableHearingLocations.where(veteran_file_number: file_number)
 
     ahls2_count = ahls2.count
 
-    correct_relations += ahls2_count.to_s + " Avialable Hearing Locations\n"
+    correct_relations += "#{ahls2_count} Avialable Hearing Locations\n"
 
     bpoas2 = BgsPowerOfAttorney.where(file_number: file_number)
 
     bpoas2_count = bpoas2.count
 
-    correct_relations += bpoas2_count.to_s + " BgsPowerOfAAttorneys\n"
+    correct_relations += "#{bpoas2_count} BgsPowerOfAAttorneys\n"
 
     ds2 = Document.where(file_number: file_number)
 
     ds2_count = ds2.count
 
-    correct_relations += ds2_count.to_s + " Documents\n"
+    correct_relations += "#{ds2_count} Documents\n"
 
     epes2 = EndProductEstablishment.where(veteran_file_number: file_number)
 
     epes2_count = epes2.count
 
-    correct_relations += epes2_count.to_s + " EndProductEstablishment\n"
+    correct_relations += "#{epes2_count} EndProductEstablishment\n"
 
     f8s2 = Form8.where(file_number: convert_file_number_to_legacy(file_number))
 
     f8s2_count = f8s2.count
 
-    correct_relations += f8s2_count.to_s + " Form8\n"
+    correct_relations += "#{f8s2_count} Form8\n"
 
     hlrs2 = HigherLevelReview.where(veteran_file_number: file_number)
 
     hlrs2_count = hlrs2.count
 
-    correct_relations += hlrs2_count.to_s + " HigherLevelReview\n"
+    correct_relations += "#{hlrs2_count} HigherLevelReview\n"
 
     is_fn2 = Intake.where(veteran_file_number: file_number)
 
     is_fn2_count = is_fn2.count
 
-    correct_relations += is_fn2_count.to_s + " Intakes related by file number\n"
+    correct_relations += "#{is_fn2_count} Intakes related by file number\n"
 
     is_vi2 = Intake.where(veteran_id: v.id)
 
     is_vi2_count = is_vi2.count
 
-    correct_relations += is_vi2_count.to_s + " Intakes related by veteran id\n"
+    correct_relations += "#{is_vi2_count} Intakes related by veteran id\n"
 
     res2 = RampElection.where(veteran_file_number: file_number)
 
     res2_count = res2.count
 
-    correct_relations += res2_count.to_s + " RampElection\n"
+    correct_relations += "#{res2_count} RampElection\n"
 
     rrs2 = RampRefiling.where(veteran_file_number: file_number)
 
     rrs2_count = rrs2.count
 
-    correct_relations += rrs2_count.to_s + " RampRefiling\n"
+    correct_relations += "#{rrs2_count} RampRefiling\n"
 
     scs2 = SupplementalClaim.where(veteran_file_number: file_number)
 
     scs2_count = scs2.count
 
-    correct_relations += scs2_count.to_s + " SupplementalClaim\n"
+    correct_relations += "#{scs2_count} SupplementalClaim\n"
 
-    puts("Correct Veteran Relations:\n" + correct_relations)
+    puts("Correct Veteran Relations:\n#{correct_relations}")
 
     # migrate duplicate veteran relations to correct veteran
 
@@ -547,7 +547,7 @@ class DuplicateVeteranChecker
     as_update_count = as.update_all(veteran_file_number: file_number)
 
     if as_update_count != as_count
-      error_relations += "Expected " + as_count + " Appeals updated, but " + as_update_count + "were updated.\n" 
+      error_relations += "Expected #{as_count} Appeals updated, but #{as_update_count}were updated.\n"
     end
 
     vbms_id = LegacyAppeal.convert_file_number_to_vacols(file_number)
@@ -561,73 +561,76 @@ class DuplicateVeteranChecker
     las_update_count = las.update_all(vbms_id: vbms_id)
 
     if las_update_count != las_count
-      error_relations += "Expected " + las_count + " LegacyAppeals updated, but " + las_update_count + "were updated.\n" 
+      error_relations += "Expected #{las_count} LegacyAppeals updated, but #{las_update_count}were updated.\n"
     end
 
     ahls_update_count = ahls.update_all(veteran_file_number: file_number)
 
     if ahls_update_count != ahls_count
-      error_relations += "Expected " + ahls_count + " HearingLocations updated, but " + ahls_update_count + "were updated.\n" 
+      error_relations += "Expected #{ahls_count} HearingLocations updated, but #{ahls_update_count}were updated.\n"
     end
 
     bpoas_update_count = bpoas.update_all(file_number: file_number)
 
     if bpoas_update_count != bpoas_count
-      error_relations += "Expected " + bpoas_count + " BgsPowerOfAttorneys updated, but " + as_update_count + "were updated.\n" 
+      error_relations += "Expected #{bpoas_count} BgsPowerOfAttorneys updated, but #{as_update_count}were updated.\n"
     end
 
     ds_update_count = ds.update_all(file_number: file_number)
 
     if ds_update_count != ds_count
-      error_relations += "Expected " + ds_count + " Documents updated, but " + ds_update_count + "were updated.\n" 
+      error_relations += "Expected #{ds_count} Documents updated, but #{ds_update_count}were updated.\n"
     end
 
     epes_update_count = epes.update_all(veteran_file_number: file_number)
 
     if epes_update_count != epes_count
-      error_relations += "Expected " + epes_count + " EndProductEstablishments updated, but " + epes_update_count + "were updated\n" 
+      error_relations += "Expected #{epes_count} EndProductEstablishments updated, but #{epes_update_count}were updated\n"
     end
 
-    f8s_update_count  = f8s.update_all(file_number: vbms_id)
+    f8s_update_count = f8s.update_all(file_number: vbms_id)
 
     if f8s_update_count != f8s_count
-      error_relations += "Expected " + f8s_count + " Form8s updated, but " + f8s_update_count + "were updated.\n" 
+      error_relations += "Expected #{f8s_count} Form8s updated, but #{f8s_update_count}were updated.\n"
     end
 
     hlrs_update_count = hlrs.update_all(veteran_file_number: file_number)
 
     if hlrs_update_count != hlrs_count
-      error_relations += "Expected " + hlrs_count + " HigherLevelReviews updated, but " + hlrs_update_count + "were updated.\n" 
+      error_relations += "Expected #{hlrs_count} HigherLevelReviews updated, \
+      but #{hlrs_update_count}were updated.\n"
     end
 
     is_fn_update_count = is_fn.update_all(veteran_file_number: file_number)
 
     if is_fn_update_count != is_fn_count
-      error_relations += "Expected " + is_fn_count + " Intakes by file number updated, but " + is_fn_update_count + "were updated.\n" 
+      error_relations += "Expected #{is_fn_count} Intakes by file number updated, \
+      but #{is_fn_update_count}were updated.\n"
     end
 
     is_vi_update_count = is_vi.update_all(veteran_id: v2.id)
 
     if is_vi_update_count != is_vi_count
-      error_relations += "Expected " + is_vi_count + " Intakes by veteran id updated, but " + is_vi_update_count + "were updated.\n" 
+      error_relations += "Expected #{is_vi_count} Intakes by veteran idupdated, \
+       but #{is_vi_update_count}were updated.\n"
     end
 
     res_update_count = res.update_all(veteran_file_number: file_number)
 
     if res_update_count != res_count
-      error_relations += "Expected " + res_count + " RampElections updated, but " + res_update_count + "were updated.\n" 
+      error_relations += "Expected #{res_count} RampElections updated, but #{res_update_count}were updated.\n"
     end
 
     rrs_update_count = rrs.update_all(veteran_file_number: file_number)
 
     if rrs_update_count != rrs_count
-      error_relations += "Expected " + rrs_count + " RampRefilings updated, but " + rrs_update_count + "were updated.\n" 
+      error_relations += "Expected #{rrs_count} RampRefilings updated, but #{rrs_update_count}were updated.\n"
     end
 
     scs_update_count = scs.update_all(veteran_file_number: file_number)
 
     if scs_update_count != scs_count
-      error_relations += "Expected " + scs_count + " SupplimentalCliams updated, but " + scs_update_count + "were updated.\n" 
+      error_relations += "Expected #{scs_count} SupplimentalCliams updated, but #{scs_update_count}were updated.\n"
     end
 
     if !error_relations.empty?
@@ -640,24 +643,24 @@ class DuplicateVeteranChecker
     # Check if duplicate veteran relationships are all gone
     existing_relations = ""
     as = Appeal.where(veteran_file_number: old_file_number)
-  
+
     as_count = as.count
     if as_count != 0
-      existing_relations += as_count.to_s + " Appeal still exists.\n"
+      existing_relations += "#{as_count} Appeal still exists.\n"
     end
 
     las = LegacyAppeal.where(vbms_id: LegacyAppeal.convert_file_number_to_vacols(old_file_number))
 
     las_count = las.count
     if las_count != 0
-      existing_relations += as_count.to_s + " LegacyAppeal still exists.\n"
+      existing_relations += "#{as_count} LegacyAppeal still exists.\n"
     end
 
     ahls = AvailableHearingLocations.where(veteran_file_number: old_file_number)
 
     ahls_count = ahls.count
     if ahls_count != 0
-      existing_relations += ahls_count.to_s + " AvaialbelHearings still exists.\n"
+      existing_relations += "#{ahls_count} AvaialbelHearings still exists.\n"
     end
 
     bpoas = BgsPowerOfAttorney.where(file_number: old_file_number)
@@ -665,7 +668,7 @@ class DuplicateVeteranChecker
     bpoas_count = bpoas.count
 
     if bpoas_count != 0
-      existing_relations += bpoas_count.to_s + " BgsPowerOfAttorneys still exists.\n"
+      existing_relations += "#{bpoas_count} BgsPowerOfAttorneys still exists.\n"
     end
 
     ds = Document.where(file_number: old_file_number)
@@ -673,7 +676,7 @@ class DuplicateVeteranChecker
     ds_count = ds.count
 
     if ds_count != 0
-      existing_relations += ds_count.to_s + " Document still exists.\n"
+      existing_relations += "#{ds_count} Document still exists.\n"
     end
 
     epes = EndProductEstablishment.where(veteran_file_number: old_file_number)
@@ -681,7 +684,7 @@ class DuplicateVeteranChecker
     epes_count = epes.count
 
     if epes_count != 0
-      existing_relations += epes_count.to_s + " EndProductEstablishment still exists.\n"
+      existing_relations += "#{epes_count} EndProductEstablishment still exists.\n"
     end
 
     f8s = Form8.where(file_number: LegacyAppeal.convert_file_number_to_vacols(old_file_number))
@@ -689,7 +692,7 @@ class DuplicateVeteranChecker
     f8s_count = f8s.count
 
     if f8s_count != 0
-      existing_relations += f8s_count.to_s + " Form8 still exists.\n"
+      existing_relations += "#{f8s_count} Form8 still exists.\n"
     end
 
     hlrs = HigherLevelReview.where(veteran_file_number: old_file_number)
@@ -697,7 +700,7 @@ class DuplicateVeteranChecker
     hlrs_count = hlrs.count
 
     if hlrs_count != 0
-      existing_relations += hlrs_count.to_s + " HilerLevelReview still exists.\n"
+      existing_relations += "#{hlrs_count} HilerLevelReview still exists.\n"
     end
 
     is_fn = Intake.where(veteran_file_number: old_file_number)
@@ -705,7 +708,7 @@ class DuplicateVeteranChecker
     is_fn_count = is_fn.count
 
     if is_fn_count != 0
-      existing_relations += is_fn_count.to_s + " Intake by file_number still exists.\n"
+      existing_relations += "#{is_fn_count} Intake by file_number still exists.\n"
     end
 
     is_vi = Intake.where(veteran_id: v.id)
@@ -713,7 +716,7 @@ class DuplicateVeteranChecker
     is_vi_count = is_vi.count
 
     if is_vi_count != 0
-      existing_relations += is_vi_count.to_s + " intake by vet id still exists.\n"
+      existing_relations += "#{is_vi_count} intake by vet id still exists.\n"
     end
 
     res = RampElection.where(veteran_file_number: old_file_number)
@@ -721,7 +724,7 @@ class DuplicateVeteranChecker
     res_count = res.count
 
     if res_count != 0
-      existing_relations += res_count.to_s + " RampElection still exists.\n"
+      existing_relations += "#{res_count} RampElection still exists.\n"
     end
 
     rrs = RampRefiling.where(veteran_file_number: old_file_number)
@@ -729,7 +732,7 @@ class DuplicateVeteranChecker
     rrs_count = rrs.count
 
     if rrs_count != 0
-      existing_relations += rrs_count.to_s + " RampRefiling still exists.\n"
+      existing_relations += "#{rrs_count} RampRefiling still exists.\n"
     end
 
     scs = SupplementalClaim.where(veteran_file_number: old_file_number)
@@ -737,11 +740,11 @@ class DuplicateVeteranChecker
     scs_count = scs.count
 
     if scs_count != 0
-      existing_relations += scs_count.to_s + " SupplementalClaim still exists.\n"
+      existing_relations += "#{scs_count} SupplementalClaim still exists.\n"
     end
 
     if !existing_relations.empty?
-      puts("Duplicate veteran still has associated records. Can not delete untill resolved:\n" + existing_relations)
+      puts("Duplicate veteran still has associated records. Can not delete untill resolved:\n#{existing_relations}")
       fail Interrupt
     end
 
@@ -756,6 +759,6 @@ class DuplicateVeteranChecker
   private
 
   def convert_file_number_to_legacy(file_number)
-    return LegacyAppeal.convert_file_number_to_vacols(file_number)
+    LegacyAppeal.convert_file_number_to_vacols(file_number)
   end
 end

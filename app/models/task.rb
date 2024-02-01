@@ -441,7 +441,7 @@ class Task < CaseflowRecord
 
   def calculated_on_hold_duration
     timed_hold_task = active_child_timed_hold_task
-    (timed_hold_task&.timer_end_time&.to_date &.- timed_hold_task&.timer_start_time&.to_date)&.to_i
+    (timed_hold_task&.timer_end_time&.to_date&.- timed_hold_task&.timer_start_time&.to_date)&.to_i
   end
 
   def calculated_last_change_duration

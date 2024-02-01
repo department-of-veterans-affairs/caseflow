@@ -155,6 +155,7 @@ module AppealConcern
     FullName.new(veteran_first_name, veteran_middle_initial, veteran_last_name)
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength
   def timezone_identifier_for_address(addr)
     return if addr.blank?
 
@@ -196,5 +197,6 @@ module AppealConcern
       nil
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 end
 # rubocop:enable Metrics/ModuleLength

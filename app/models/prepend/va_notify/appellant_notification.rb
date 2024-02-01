@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 # Module containing Aspect Overrides to Classes used to Track Statuses for Appellant Notification
+# rubocop:disable Metrics/ModuleLength
 module AppellantNotification
   extend ActiveSupport::Concern
   class NoParticipantIdError < StandardError
@@ -24,45 +25,32 @@ module AppellantNotification
   end
 
   class NoAppealError < StandardError; end
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
   def self.handle_errors(appeal)
-    if !appeal.nil?
-      message_attributes = {}
-      message_attributes[:appeal_type] = appeal.class.to_s
-      message_attributes[:appeal_id] = (message_attributes[:appeal_type] == "Appeal") ? appeal.uuid : appeal.vacols_id
-      message_attributes[:participant_id] = appeal.claimant_participant_id
-      claimant =
-        if message_attributes[:appeal_type] == "Appeal"
-          appeal.claimant
-        elsif message_attributes[:appeal_type] == "LegacyAppeal"
-          veteran = Veteran.find_by(participant_id: message_attributes[:participant_id])
-          person = Person.find_by(participant_id: message_attributes[:participant_id])
-          appeal.appellant_is_not_veteran ? person : veteran
-        end
+    fail NoAppealError if appeal.nil?
+
+    message_attributes = {}
+    message_attributes[:appeal_type] = appeal.class.to_s
+    message_attributes[:appeal_id] = (appeal.class.to_s == "Appeal") ? appeal.uuid : appeal.vacols_id
+    message_attributes[:participant_id] = appeal.claimant_participant_id
+    claimant = get_claimant(appeal)
+
+    begin
       if claimant.nil?
-        begin
-          fail NoClaimantError, message_attributes[:appeal_id]
-        rescue StandardError => error
-          Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
-          message_attributes[:status] = error.status
-        end
+        fail NoClaimantError, message_attributes[:appeal_id]
       elsif message_attributes[:participant_id] == "" || message_attributes[:participant_id].nil?
-        begin
-          fail NoParticipantIdError, message_attributes[:appeal_id]
-        rescue StandardError => error
-          Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
-          message_attributes[:status] = error.status
-        end
+        fail NoParticipantIdError, message_attributes[:appeal_id]
       elsif appeal.veteran_appellant_deceased?
         message_attributes[:status] = "Failure Due to Deceased"
       else
         message_attributes[:status] = "Success"
       end
-    else
-      fail NoAppealError
+    rescue StandardError => error
+      Rails.logger.error("#{error.message}\n#{error.backtrace.join("\n")}")
+      message_attributes[:status] = error.status
     end
     message_attributes
   end
-
   # Public: Updates/creates appeal state based on event type
   #
   # appeal - appeal that was found in appeal_mapper
@@ -73,6 +61,9 @@ module AppellantNotification
   #  AppellantNotification.update_appeal_state(appeal, "hearing_postponed")
   #   # => A new appeal state is created if it doesn't exist
   #   or the existing appeal state is updated, then appeal_state.hearing_postponed becomes true
+
+  # rubocop:disable Metrics/AbcSize
+
   def self.update_appeal_state(appeal, event)
     appeal_type = appeal.class.to_s
     appeal_state = AppealState.find_by(appeal_id: appeal.id, appeal_type: appeal_type) ||
@@ -129,9 +120,11 @@ module AppellantNotification
     when "privacy_act_complete"
       # Only updates appeal state if ALL privacy act tasks are completed
       open_tasks = appeal.tasks.open
-      if open_tasks.where(type: FoiaColocatedTask.name).empty? && open_tasks.where(type: PrivacyActTask.name).empty? &&
+      if open_tasks.where(type: FoiaColocatedTask.name).empty? &&
+         open_tasks.where(type: PrivacyActTask.name).empty? &&
          open_tasks.where(type: HearingAdminActionFoiaPrivacyRequestTask.name).empty? &&
-         open_tasks.where(type: FoiaRequestMailTask.name).empty? && open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
+         open_tasks.where(type: FoiaRequestMailTask.name).empty? &&
+         open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
         appeal_state.update!(privacy_act_complete: true, privacy_act_pending: false)
       end
     when "privacy_act_cancelled"
@@ -139,12 +132,13 @@ module AppellantNotification
       open_tasks = appeal.tasks.open
       if open_tasks.where(type: FoiaColocatedTask.name).empty? && open_tasks.where(type: PrivacyActTask.name).empty? &&
          open_tasks.where(type: HearingAdminActionFoiaPrivacyRequestTask.name).empty? &&
-         open_tasks.where(type: FoiaRequestMailTask.name).empty? && open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
+         open_tasks.where(type: FoiaRequestMailTask.name).empty? &&
+         open_tasks.where(type: PrivacyActRequestMailTask.name).empty?
         appeal_state.update!(privacy_act_pending: false)
       end
     end
   end
-
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity,  Metrics/AbcSize
   # Public: Finds the appeal based on the id and type, then calls update_appeal_state to create/update appeal state
   #
   # appeal_id  - id of appeal
@@ -156,6 +150,7 @@ module AppellantNotification
   #  AppellantNotification.appeal_mapper(1, "Appeal", "hearing_postponed")
   #   # => A new appeal state is created if it doesn't exist
   #   or the existing appeal state is updated, then appeal_state.hearing_postponed becomes true
+
   def self.appeal_mapper(appeal_id, appeal_type, event)
     if appeal_type == "Appeal"
       appeal = Appeal.find_by(id: appeal_id)
@@ -167,7 +162,6 @@ module AppellantNotification
       Rails.logger.error("Appeal type not supported for " + event)
     end
   end
-
   # Purpose: Method to check appeal state for statuses and send out a notification based on
   # which statuses are turned on in the appeal state
   #
@@ -176,12 +170,40 @@ module AppellantNotification
   #         appeal_status (only used for quarterly notifications)
   #
   # Response: Create notification and return it to SendNotificationJob
+  # rubocop:disable Metrics/CyclomaticComplexity
+
   def self.notify_appellant(
     appeal,
     template_name,
     appeal_status = nil
   )
     msg_bdy = create_payload(appeal, template_name, appeal_status)
+    appeal_docketed_event_enabled = FeatureToggle.enabled?(:appeal_docketed_event)
+
+    return nil if template_name == "Appeal docketed" &&
+                  !appeal_docketed_event_enabled &&
+                  msg_bdy.appeal_type == "LegacyAppeal"
+
+    if template_name == "Appeal docketed" && appeal_docketed_event_enabled && msg_bdy.appeal_type == "LegacyAppeal"
+      Notification.create!(
+        appeals_id: msg_bdy.appeal_id,
+        appeals_type: msg_bdy.appeal_type,
+        event_type: template_name,
+        notification_type: notification_type,
+        participant_id: msg_bdy.participant_id,
+        event_date: Time.zone.today
+      )
+    end
+    SendNotificationJob.perform_later(msg_bdy.to_json)
+  end
+  # rubocop:enable Metrics/CyclomaticComplexity
+
+  def self.create_payload(appeal, template_name, appeal_status = nil)
+    message_attributes = AppellantNotification.handle_errors(appeal)
+    VANotifySendMessageTemplate.new(message_attributes, template_name, appeal_status)
+  end
+
+  def self.notification_type
     notification_type =
       if FeatureToggle.enabled?(:va_notify_email) && FeatureToggle.enabled?(:va_notify_sms)
         "Email and SMS"
@@ -192,26 +214,21 @@ module AppellantNotification
       else
         "None"
       end
-    # rubocop:disable Layout/LineLength
-    if template_name == "Appeal docketed" && FeatureToggle.enabled?(:appeal_docketed_event) && msg_bdy.appeal_type == "LegacyAppeal"
-      Notification.create!(
-        appeals_id: msg_bdy.appeal_id,
-        appeals_type: msg_bdy.appeal_type,
-        event_type: template_name,
-        notification_type: notification_type,
-        participant_id: msg_bdy.participant_id,
-        event_date: Time.zone.today
-      )
-      SendNotificationJob.perform_later(msg_bdy.to_json)
-    elsif template_name == "Appeal docketed" && !FeatureToggle.enabled?(:appeal_docketed_event) && msg_bdy.appeal_type == "LegacyAppeal"
-      nil
-    else SendNotificationJob.perform_later(msg_bdy.to_json)
-    end
-    # rubocop:enable Layout/LineLength
+    notification_type
   end
 
-  def self.create_payload(appeal, template_name, appeal_status = nil)
-    message_attributes = AppellantNotification.handle_errors(appeal)
-    VANotifySendMessageTemplate.new(message_attributes, template_name, appeal_status)
+  def self.get_claimant(appeal)
+    appeal_type = appeal.class.to_s
+    participant_id = appeal.claimant_participant_id
+    claimant =
+      if appeal_type == "Appeal"
+        appeal.claimant
+      elsif appeal_type == "LegacyAppeal"
+        veteran = Veteran.find_by(participant_id: participant_id)
+        person = Person.find_by(participant_id: participant_id)
+        appeal.appellant_is_not_veteran ? person : veteran
+      end
+    claimant
   end
 end
+# rubocop:enable Metrics/ModuleLength

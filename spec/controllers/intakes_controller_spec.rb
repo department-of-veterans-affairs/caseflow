@@ -234,7 +234,8 @@ RSpec.describe IntakesController, :postgres do
       resp = JSON.parse(response.body, symbolize_names: true)
       expect(resp).to eq [
         {
-          "address": {
+          "address":
+          {
             "address_line_1": "9999 MISSION ST",
             "address_line_2": "UBER",
             "address_line_3": "APT 2",
@@ -242,7 +243,7 @@ RSpec.describe IntakesController, :postgres do
             "country": "USA",
             "state": "CA",
             "zip": "94103"
-            },
+          },
           "name": "JOHN SMITH",
           "participant_id": "123"
         }

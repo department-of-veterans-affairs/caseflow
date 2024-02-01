@@ -28,5 +28,4 @@ class DirectReviewDocket < Docket
   def all_nonpriority
     docket_appeals.nonpriority
   end
-
 end

@@ -21,7 +21,6 @@ const NonCompTabsUnconnected = (props) => {
   };
 
   const isVhaBusinessLine = props.businessLineUrl === 'vha';
-
   const queryParams = new URLSearchParams(window.location.search);
   const currentTabName = queryParams.get(QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM) || 'in_progress';
   const defaultSortColumn = currentTabName === 'completed' ? 'completedDateColumn' : 'daysWaitingColumn';
@@ -87,7 +86,16 @@ const NonCompTabsUnconnected = (props) => {
     filter((key) => props.businessLineConfig.tabs.includes(key)).
     map((key) => ALL_TABS[key]);
 
+  const resetPageNumberOnTabChange = (value) => {
+    // If the user has selected a new tab then we should reset the pagination page to 0
+    // This is to prevent situations where Viewing 31-45 of 1 total gets displayed and blocks user navigation
+    if (value !== getTabByIndex) {
+      tabPaginationOptions.page = 0;
+    }
+  };
+
   return (<TabWindow
+    onChange={((value) => resetPageNumberOnTabChange(value))}
     name="tasks-organization-queue"
     tabs={tabs}
     defaultPage={props.currentTab || getTabByIndex}
@@ -112,11 +120,11 @@ NonCompTabsUnconnected.propTypes = {
 
 const NonCompTabs = connect(
   (state) => ({
-    currentTab: state.currentTab,
-    baseTasksUrl: state.baseTasksUrl,
-    taskFilterDetails: state.taskFilterDetails,
-    businessLineUrl: state.businessLineUrl,
-    businessLineConfig: state.businessLineConfig,
+    currentTab: state.nonComp.currentTab,
+    baseTasksUrl: state.nonComp.baseTasksUrl,
+    taskFilterDetails: state.nonComp.taskFilterDetails,
+    businessLineUrl: state.nonComp.businessLineUrl,
+    businessLineConfig: state.nonComp.businessLineConfig,
   })
 )(NonCompTabsUnconnected);
 

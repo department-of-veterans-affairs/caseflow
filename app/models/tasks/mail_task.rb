@@ -23,7 +23,8 @@ class MailTask < Task
   # This constant is more efficient than iterating through all mail tasks
   # and filtering out almost all of them since only HPR and HWR are approved for now
   LEGACY_MAIL_TASKS = [
-    { label: "Hearing postponement request", value: "HearingPostponementRequestMailTask" }
+    { label: "Hearing postponement request", value: "HearingPostponementRequestMailTask" },
+    { label: "Hearing withdrawal request", value: "HearingWithdrawalRequestMailTask" }
   ].freeze
 
   class << self

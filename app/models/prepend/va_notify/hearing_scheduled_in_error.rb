@@ -11,6 +11,7 @@ module HearingScheduledInError
   # Params: none
   #
   # Response: none
+  # rubocop:disable Metrics/AbcSize
   def update_appeal_states_on_hearing_scheduled_in_error
     if is_a?(LegacyHearing)
       if VACOLS::CaseHearing.find_by(hearing_pkseq: vacols_id)&.hearing_disp == "E"
@@ -28,4 +29,5 @@ module HearingScheduledInError
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize
 end

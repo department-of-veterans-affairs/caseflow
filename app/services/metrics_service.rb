@@ -119,7 +119,8 @@ class MetricsService
       sent_to_info: params[:sent_to_info],
       start: params[:start],
       end: params[:end],
-      duration: params[:duration]
+      duration: params[:duration],
+      additional_info: params[:additional_info]
     }
 
     metric = Metric.create_metric(caller || self, params, RequestStore[:current_user])

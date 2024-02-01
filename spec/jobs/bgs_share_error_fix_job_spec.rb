@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+# require 'rails_helper'
+# Rails.root.join("spec", "support", "shared_examples", "master_scheduler_interface_methods.rb")
+
 describe BgsShareErrorFixJob, :postgres do
   let(:share_error) { "BGS::ShareError" }
   let(:file_number) { "123456789" }
@@ -17,6 +20,8 @@ describe BgsShareErrorFixJob, :postgres do
   end
 
   subject { described_class.new }
+
+  it_behaves_like "a Master Scheduler serializable object", BgsShareErrorFixJob
 
   context "BGS::ShareError" do
     context "HLR" do

@@ -61,8 +61,8 @@ RSpec.configure do |config|
   # Allows us to use shorthand FactoryBot methods.
   config.include FactoryBot::Syntax::Methods
 
-  config.filter_run focus: true
-  config.run_all_when_everything_filtered = true
+  # allows test suite to only run tests tagged with :focus for specific testing
+  config.filter_run_when_matching :focus
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.

@@ -53,7 +53,9 @@ class BgsAddressService
   def fetch_bgs_record
     Rails.cache.fetch(cache_key, expires_in: 24.hours) do
       bgs.find_address_by_participant_id(participant_id)
-    rescue Savon::Error
+    rescue Savon::Error => error
+      Raven.capture_exception(error)
+      Rails.logger.warn("Failed to fetch address from BGS for participant id: #{participant_id}: #{error}")
       # If there is no address for this participant id then we get an error.
       # catch it and return an empty array
       nil
