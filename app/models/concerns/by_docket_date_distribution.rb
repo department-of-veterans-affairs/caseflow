@@ -28,10 +28,7 @@ module ByDocketDateDistribution
 
     unless FeatureToggle.enabled?(:acd_disable_nonpriority_distributions, user: RequestStore.store[:current_user])
       # Distribute the oldest nonpriority appeals from any docket if we haven't distributed {batch_size} appeals
-      # @nonpriority_iterations guards against an infinite loop if not enough cases are ready to distribute
-      until @rem <= 0 || @nonpriority_iterations >= batch_size
-        distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem)
-      end
+      distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem) until @rem <= 0
     end
     @appeals
   end
