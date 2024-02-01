@@ -48,35 +48,34 @@ class UnassignedCasesPage extends React.PureComponent {
     const { userId, selectedTasks, success, error, userIsCamoEmployee, userIsSCTCoordinator } = this.props;
     let assignWidget;
 
-    // TODO: clean this up
+    const commonAssignProps = {
+      userId,
+      previousAssigneeId: userId,
+      selectedTasks,
+    };
+
     if (userIsCamoEmployee) {
       assignWidget = <AssignToVhaProgramOfficeWidget
-        userId={userId}
-        previousAssigneeId={userId}
-        onTaskAssignment={this.props.initialCamoAssignTasksToVhaProgramOffice}
-        selectedTasks={selectedTasks}
-        showRequestCasesButton />;
+        {...commonAssignProps}
+        onTaskAssignment={this.props.initialCamoAssignTasksToVhaProgramOffice} />;
     } else if (userIsSCTCoordinator) {
       assignWidget = <AssignToAttorneyWidget
-        userId={userId}
-        previousAssigneeId={userId}
+        {...commonAssignProps}
         onTaskAssignment={this.props.initialSpecialtyCaseTeamAssignTasksToUser}
-        selectedTasks={selectedTasks}
         selectedAssignee="OTHER"
-        hidePrimaryDropdown
+        hidePrimaryAssignDropdown
         secondaryAssignDropdownLabel="Select an attorney"
       />;
     } else {
       assignWidget = <AssignToAttorneyWidget
-        userId={userId}
-        previousAssigneeId={userId}
-        onTaskAssignment={this.props.initialAssignTasksToUser}
-        selectedTasks={selectedTasks}
-        showRequestCasesButton />;
+        {...commonAssignProps}
+        onTaskAssignment={this.props.initialAssignTasksToUser} />;
     }
 
+    const HeadingTag = userIsSCTCoordinator ? 'h1' : 'h2';
+
     return <React.Fragment>
-      <h2 {...css({ display: 'inline-block' })}>{JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE}</h2>
+      <HeadingTag {...css({ display: 'inline-block' })}>{JUDGE_QUEUE_UNASSIGNED_CASES_PAGE_TITLE}</HeadingTag>
       {error && <Alert type="error" title={error.title} message={error.detail} scrollOnAlert={false} />}
       {success && <Alert type="success" title={success.title} message={success.detail} scrollOnAlert={false} />}
       <div {...assignSectionStyling}>

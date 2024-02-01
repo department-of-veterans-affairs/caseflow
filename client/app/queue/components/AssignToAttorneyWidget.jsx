@@ -231,8 +231,10 @@ export class AssignToAttorneyWidget extends React.PureComponent {
       selectedOptionOther = optionsOther.find((option) => option.value === selectedAssigneeSecondary);
     }
 
+    const otherDropdownWidth = hidePrimaryAssignDropdown ? '40rem' : '30rem';
+
     const Widget = <React.Fragment>
-      {hidePrimaryAssignDropdown && <SearchableDropdown
+      {!hidePrimaryAssignDropdown && <SearchableDropdown
         name={COPY.ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY}
         hideLabel
         searchable
@@ -245,7 +247,8 @@ export class AssignToAttorneyWidget extends React.PureComponent {
       }
       {selectedAssignee === OTHER &&
         <React.Fragment>
-          <div {...fullWidth} {...css({ marginBottom: '0' })} />
+          <div {...fullWidth} {...css({ marginBottom: '0' })}
+          />
           {!secondaryAssignDropdownLabel && <p>{COPY.ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL}</p>}
           <SearchableDropdown
             name={COPY.ASSIGN_WIDGET_DROPDOWN_NAME_SECONDARY}
@@ -257,7 +260,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
             placeholder={placeholderOther}
             onChange={(option) => option && this.props.setSelectedAssigneeSecondary({ assigneeId: option.value })}
             value={selectedOptionOther}
-            styling={css({ width: '30rem' })} />
+            styling={css({ width: otherDropdownWidth })} />
         </React.Fragment>}
       {isModal && <React.Fragment>
         <br />
@@ -276,7 +279,10 @@ export class AssignToAttorneyWidget extends React.PureComponent {
             casePlural: pluralize('case', selectedTasks.length) })}
         loading={savePending}
         loadingText={COPY.ASSIGN_WIDGET_LOADING}
-        styling={css({ margin: '1.5rem 0' })} /> }
+        styling={css({ margin: '1.5rem 0', ...(hidePrimaryAssignDropdown && { position: 'relative', top: '15px' }) })}
+      />
+      }
+      { hidePrimaryAssignDropdown && <div styling={css({ marginBottom: '40px' })} />}
     </React.Fragment>;
 
     return isModal ? <QueueFlowModal title={COPY.ASSIGN_TASK_TITLE}
