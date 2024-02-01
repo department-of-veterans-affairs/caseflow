@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_10_18_115254) do
+ActiveRecord::Schema.define(version: 2024_01_31_142027) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -635,6 +635,13 @@ ActiveRecord::Schema.define(version: 2023_10_18_115254) do
     t.index ["disposition"], name: "index_decision_issues_on_disposition"
     t.index ["rating_issue_reference_id"], name: "index_decision_issues_on_rating_issue_reference_id"
     t.index ["updated_at"], name: "index_decision_issues_on_updated_at"
+  end
+
+  create_table "decision_review_created_events", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.jsonb "info", default: {}
+    t.datetime "updated_at", null: false
+    t.index ["info"], name: "index_decision_review_created_events_on_info", using: :gin
   end
 
   create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
