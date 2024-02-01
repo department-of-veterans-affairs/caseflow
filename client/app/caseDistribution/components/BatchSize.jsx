@@ -71,6 +71,8 @@ const BatchSize = () => {
               <NumberField
                 name={`${lever.item}-field`}
                 label={lever.unit}
+                useAriaLabel={!lever.is_disabled_in_ui}
+                ariaLabelText={lever.title}
                 isInteger
                 readOnly={lever.is_disabled_in_ui}
                 value={lever.value}

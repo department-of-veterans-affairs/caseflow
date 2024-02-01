@@ -36,6 +36,8 @@ describe('Batch Size Lever', () => {
     expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(lever.title);
     expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(lever.description);
     expect(document.querySelector('.active-lever > .lever-right')).toHaveTextContent(lever.value);
+    expect(document.querySelector('.lever-right').getAttribute('aria-label')).
+      toBe(null);
   });
 
   it('renders Batch Size Levers for Admin Users', () => {
@@ -53,6 +55,8 @@ describe('Batch Size Lever', () => {
     expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(lever.title);
     expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(lever.description);
     expect(document.querySelector('.active-lever > .lever-right')).toHaveTextContent(lever.unit);
+    expect(document.querySelector('.lever-right').getAttribute('aria-label')).
+      toBe(null);
   });
 
   it('sets input to invalid for error and sets input to valid to remove error', () => {
