@@ -56,18 +56,17 @@ gem "pg", platforms: :ruby
 # Discussion: https://github.com/18F/college-choice/issues/597#issuecomment-139034834
 gem "puma", "5.6.4"
 gem "rack", "~> 2.2.6.2"
-gem "rails", "5.2.8.1"
+gem 'rails', "~> 6.1.4.1"
 # Used to colorize output for rake tasks
 gem "rainbow"
 # React
 gem "react_on_rails", "11.3.0"
 gem "redis-mutex"
 gem "redis-namespace"
-gem "redis-rails", "~> 5.0.2"
 gem "request_store"
 gem "roo", "~> 2.7"
 # Use SCSS for stylesheets
-gem "sass-rails", "~> 5.0"
+gem "sass-rails", "~> 5.1.0"
 # Error reporting to Sentry
 gem "sentry-raven"
 gem "shoryuken", "3.1.11"
@@ -78,7 +77,7 @@ gem "strong_migrations"
 gem "therubyracer", platforms: :ruby
 # print trees
 gem "tty-tree"
-gem "tzinfo", "1.2.10"
+gem "tzinfo", "2.0.1"
 # Use Uglifier as compressor for JavaScript assets
 gem "uglifier", ">= 1.3.0"
 gem "validates_email_format_of"
@@ -86,7 +85,7 @@ gem "ziptz"
 
 group :production, :staging, :ssh_forwarding, :development, :test do
   # Oracle DB
-  gem "activerecord-oracle_enhanced-adapter", "~> 5.2.0"
+  gem "activerecord-oracle_enhanced-adapter", "~> 6.1.4"
   gem "ruby-oci8", "~> 2.2"
 end
 
@@ -99,7 +98,7 @@ group :test, :development, :demo do
   gem "capybara"
   gem "capybara-screenshot"
   gem "danger", "~> 6.2.2"
-  gem "database_cleaner"
+  gem "database_cleaner-active_record"
   gem "factory_bot_rails", "~> 5.2"
   gem "faker"
   gem "guard-rspec"
