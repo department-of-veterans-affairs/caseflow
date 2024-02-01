@@ -36,12 +36,12 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   def slack_report # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     report = []
     if use_by_docket_date?
-      total_cases = @genpop_distributions.map(&:distributed_cases_count).sum
+      total_cases = @genpop_distributions.map(&:distributed_batch_size).sum
       report << "*Number of cases distributed*: " \
                 "#{total_cases}"
     else
-      tied_distributions_sum = @tied_distributions.map(&:distributed_cases_count).sum
-      genpop_distributions_sum = @genpop_distributions.map(&:distributed_cases_count).sum
+      tied_distributions_sum = @tied_distributions.map(&:distributed_batch_size).sum
+      genpop_distributions_sum = @genpop_distributions.map(&:distributed_batch_size).sum
       report << "*Number of cases tied to judges distributed*: " \
                 "#{tied_distributions_sum}"
       report << "*Number of general population cases distributed*: " \
