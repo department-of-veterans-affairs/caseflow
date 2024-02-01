@@ -123,7 +123,7 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
   } else if (hearing?.conferenceProvider && !isVirtual && !wasVirtual) {
     return (
       <div>
-        {hearing?.conferenceProvider && (
+        {(hearing.conferenceProvider === 'webex') && (
           <LinkContainer
             hearing={hearing}
             isVirtual={isVirtual}
@@ -157,7 +157,7 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
             virtualHearing={virtualHearing}
             wasVirtual={wasVirtual}
           />
-          {hearing?.conferenceProvider && (
+          {(hearing.conferenceProvider === 'webex') && (
             <LinkContainer
               hearing={hearing}
               isVirtual={isVirtual}

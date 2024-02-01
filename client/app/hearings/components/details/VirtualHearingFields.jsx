@@ -10,7 +10,7 @@ import StringUtil from '../../../util/StringUtil';
 export const VirtualHearingFields = (
   { hearing, virtualHearing }
 ) => {
-  if (!hearing?.conferenceProvider && !hearing?.isVirtual && !hearing?.wasVirtual) {
+  if ((hearing?.conferenceProvider !== 'webex') && !hearing?.isVirtual && !hearing?.wasVirtual) {
     return null;
   }
 
@@ -21,7 +21,7 @@ export const VirtualHearingFields = (
       header={`${hearing?.isVirtual ? 'Virtual ' : ''}Hearing Links`}
     >
       <div {...css({ marginTop: '1.5rem' })}>
-        <strong>{StringUtil.capitalizeFirst(hearing.conferenceProvider || 'Pexip')} hearing</strong>
+        <strong>{StringUtil.capitalizeFirst(hearing.conferenceProvider)} hearing</strong>
       </div>
       <HearingLinks
         user={user}
