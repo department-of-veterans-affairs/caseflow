@@ -18,6 +18,7 @@ module Seeds
     end
 
     # confirms the user CSS IDS are for valid users or skip
+    # :reek:UtilityFunction
     def generate_legacy_appeals
       USER_CSS_IDS.each do |id|
         next unless User.find_by_css_id(id)

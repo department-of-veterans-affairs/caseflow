@@ -175,7 +175,6 @@ feature "Attorney checkout flow", :all_dbs do
 
   # Adding a new issue to appeal
   context "AC 1.1 It passes the feature tests for adding a new issue appeal MST" do
-
     scenario "Adding a new issue with MST" do
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"
       visit "/appeals/#{appeal_vanilla_vet.uuid}/edit"

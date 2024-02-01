@@ -117,8 +117,8 @@ export const IntakeRadioField = (props) => {
   };
 
   // Creating MST and PACT checkboxes, along with a text input for justification of change
-  const maybeAddMstAndPactCheckboxes = (option) => {
-    if ((option.value === props.value) && userCanEditIntakeIssues) {
+  const addMstPactCheckboxes = (option) => {
+    if (option.value === props.value) {
       return (
         <React.Fragment>
           { renderMst && <div>
@@ -212,7 +212,7 @@ export const IntakeRadioField = (props) => {
             >
               {option.displayText || option.displayElem}
               {props.onChange}
-              {maybeAddMstAndPactCheckboxes(option)}
+              {userCanEditIntakeIssues ? addMstPactCheckboxes(option) : '' }
             </label>
             {option.help && <RadioFieldHelpText help={option.help} />}
           </div>

@@ -11,7 +11,7 @@ class SeedDB
   def clean_db
     DatabaseCleaner.clean_with(:truncation)
     cm = CacheManager.new
-    CacheManager::BUCKETS.keys.each { |bucket| cm.clear(bucket) }
+    CacheManager::BUCKETS.each_key { |bucket| cm.clear(bucket) }
     Fakes::EndProductStore.new.clear!
     Fakes::RatingStore.new.clear!
     Fakes::VeteranStore.new.clear!

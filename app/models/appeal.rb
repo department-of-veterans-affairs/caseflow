@@ -171,8 +171,7 @@ class Appeal < DecisionReview
     hearing_date = Hearing.find_by(appeal_id: id)
 
     if hearing_date.nil?
-      return nil
-
+      nil
     else
       hearing_date.hearing_day.scheduled_for
     end
@@ -375,7 +374,6 @@ class Appeal < DecisionReview
     dup_remand&.save
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   # :reek:RepeatedConditionals
   # clone issues clones request_issues the user selected
   # and anydecision_issues/decision_request_issues tied to the request issue
@@ -432,6 +430,7 @@ class Appeal < DecisionReview
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def clone_aod(parent_appeal)
     # find the appeal AOD
@@ -495,6 +494,7 @@ class Appeal < DecisionReview
     end
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def clone_task_tree(parent_appeal, user_css_id)
     # get the task tree from the parent
     parent_ordered_tasks = parent_appeal.tasks.order(:created_at)
@@ -529,9 +529,9 @@ class Appeal < DecisionReview
       break if parent_appeal.tasks.count == tasks.count
     end
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   # clone_task is used for splitting an appeal, tie to css_id for split
-
   def clone_task(original_task, user_css_id)
     # clone the task
     dup_task = original_task.amoeba_dup
