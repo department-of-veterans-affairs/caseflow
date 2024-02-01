@@ -19,9 +19,9 @@ class Hearings::RTFConversionJob < CaseflowJob
 
   def perform
     vtt_file_paths = retreive_files_from_s3(files_waiting_for_conversion)
-    vtt_file_paths = ["tmp/transcription_files/vtt/Transcript_IC_Webex.vtt"]
+    # vtt_file_paths = ["tmp/transcription_files/vtt/Transcript_IC_Webex.vtt"]
     convert_and_upload_files(vtt_file_paths)
-    # clean_up_tmp_folders
+    clean_up_tmp_folders
   end
 
   # Get transcription files waiting for file conversion
