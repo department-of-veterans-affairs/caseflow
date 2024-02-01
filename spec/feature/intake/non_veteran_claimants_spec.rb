@@ -256,8 +256,7 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to have_content(claimant.power_of_attorney.name)
 
       # Case details page
-      reload_case_detail_page(appeal.uuid)
-
+      visit "queue/appeals/#{appeal.uuid}"
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
       expect(page).to have_content(new_individual_claimant[:first_name])
       expect(claimant.relationship).to eq("Other")
@@ -738,7 +737,7 @@ feature "Non-veteran claimants", :postgres do
         within("#add_claimant_modal") do
           expect(page).to have_content("Review and confirm claimant information")
           expect(page).to have_content(COPY::VHA_NO_POA)
-          
+
           click_button "Confirm"
         end
         expect(page).to have_current_path("/intake/add_issues")
