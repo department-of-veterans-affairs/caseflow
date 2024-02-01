@@ -7,6 +7,7 @@ describe ExternalApi::WebexService do
   let(:apikey) { SecureRandom.uuid.to_s }
   let(:domain) { "gov.fake.com" }
   let(:api_endpoint) { "/api/v2/fake" }
+  let(:query) { nil }
 
   let(:webex_service) do
     ExternalApi::WebexService.new(
@@ -15,7 +16,8 @@ describe ExternalApi::WebexService do
       api_endpoint: api_endpoint,
       aud: aud,
       apikey: apikey,
-      port: port
+      port: port,
+      query: query
     )
   end
 
