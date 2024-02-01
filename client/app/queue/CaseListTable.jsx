@@ -82,12 +82,14 @@ class CaseListTable extends React.PureComponent {
       find(this.props.appeals, (appeal) => appeal.pact)
     );
 
+    const specialIssuesIdentified = anyAppealsHavePact || anyAppealsHaveMst;
+
     const badgeColumn = {
       valueFunction: (appeal) => <BadgeArea appeal={appeal} />
     };
 
     if (anyAppealsHaveHeldHearings || anyAppealsHaveOvertimeStatus ||
-        anyAppealsHaveFnod || anyAppealsAreContestedClaims || anyAppealsHaveMst || anyAppealsHavePact) {
+        anyAppealsHaveFnod || anyAppealsAreContestedClaims || specialIssuesIdentified) {
       columns.unshift(badgeColumn);
     }
 
