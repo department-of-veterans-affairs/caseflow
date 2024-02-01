@@ -7,6 +7,7 @@ import COPY from '../../../COPY';
 import { sprintf } from 'sprintf-js';
 import CorrespondenceTableBuilder from './CorrespondenceTableBuilder';
 import Alert from '../../components/Alert';
+import { css } from 'glamor';
 
 // import {
 //   initialAssignTasksToUser,
@@ -21,9 +22,9 @@ const CorrespondenceCases = (props) => {
 
   const [vetName, setVetName] = useState('');
 
-  useEffect(() => {
-    dispatch(loadCorrespondenceConfig(configUrl));
-  }, [dispatch, configUrl]);
+  // useEffect(() => {
+  //   dispatch(loadCorrespondenceConfig(configUrl));
+  // }, [dispatch, configUrl]);
 
   useEffect(() => {
     // Retry the request after a delay
@@ -46,20 +47,19 @@ const CorrespondenceCases = (props) => {
   return (
     <React.Fragment>
       <AppSegment filledBackground>
-      {(veteranInformation?.veteran_name?.first_name && veteranInformation?.veteran_name?.last_name) &&
+        {(veteranInformation?.veteran_name?.first_name && veteranInformation?.veteran_name?.last_name) &&
           currentAction.action_type === 'DeleteReviewPackage' && (
-            <Alert
-              type="success"
-              title={sprintf(COPY.CORRESPONDENCE_TITLE_REMOVE_PACKAGE_BANNER, vetName)}
-              message={COPY.CORRESPONDENCE_MESSAGE_REMOVE_PACKAGE_BANNER}
-              scrollOnAlert={false}
-            />
-          )}
+          <Alert
+            type="success"
+            title={sprintf(COPY.CORRESPONDENCE_TITLE_REMOVE_PACKAGE_BANNER, vetName)}
+            message={COPY.CORRESPONDENCE_MESSAGE_REMOVE_PACKAGE_BANNER}
+            scrollOnAlert={false}
+          />
+        )}
         <h1 {...css({ display: 'inline-block' })}>
           {COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES}
         </h1>
-          {this.props.correspondenceConfig &&
-          <CorrespondenceTableBuilder />}
+        <CorrespondenceTableBuilder />
       </AppSegment>
     </React.Fragment>
   );
