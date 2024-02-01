@@ -1,171 +1,18 @@
 /* eslint-disable func-style */
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-import ACD_LEVERS from '../../../constants/ACD_LEVERS';
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { getLeverHistoryTable } from '../reducers/levers/leversSelector';
 import COPY from '../../../COPY';
 
-const LeverHistory = (props) => {
-  const { historyData } = props;
-  const uniqueTimestamps = [];
+const LeverHistory = () => {
 
-  historyData.map((entry) => {
-    let findTimestamp = uniqueTimestamps.find((x) => x === entry.created_at);
+  const theState = useSelector((state) => state);
 
-    if (!findTimestamp) {
-      uniqueTimestamps.push(entry.created_at);
-    }
-
-    return null;
-  });
-
-  const getUnitsFromLever = (leverDataType, leverUnit) => {
-
-    const doesDatatypeRequireComplexLogic = (leverDataType === ACD_LEVERS.data_types.radio ||
-      leverDataType === ACD_LEVERS.data_types.combination);
-
-    if (doesDatatypeRequireComplexLogic) {
-      return '';
-    }
-
-    return leverUnit;
-
-  };
-
-  const getLeverTitlesAtTimestamp = (timestamp) => {
-
-    let titles = [];
-
-    historyData.forEach((entry) => {
-      let sameTimestamp = entry.created_at === timestamp;
-
-      if (sameTimestamp) {
-        titles.push(entry.lever_title);
-      }
-    });
-
-    return titles;
-  };
-
-  const getLeverUnitsAtTimestamp = (timestamp) => {
-    let units = [];
-
-    historyData.map((entry) => {
-      let sameTimestamp = entry.created_at === timestamp;
-
-      if (sameTimestamp) {
-        let unit = getUnitsFromLever(entry.lever_data_type, entry.lever_unit);
-
-        units.push(unit);
-      }
-
-      return null;
-    });
-
-    return units;
-  };
-
-  const getPreviousValuesAtTimestamp = (timestamp) => {
-
-    let previousValues = [];
-
-    historyData.map((entry) => {
-
-      let sameTimestamp = entry.created_at === timestamp;
-
-      if (sameTimestamp) {
-
-        previousValues.push(entry.previous_value);
-      }
-
-      return null;
-    });
-
-    return previousValues;
-  };
-
-  const getUpdatedValuesAtTimestamp = (timestamp) => {
-
-    let updatedValues = [];
-
-    historyData.map((entry) => {
-
-      let sameTimestamp = entry.created_at === timestamp;
-
-      if (sameTimestamp) {
-        updatedValues.push(entry.update_value);
-      }
-
-      return null;
-    });
-
-    return updatedValues;
-  };
-
-  const getUserAtTimestamp = (timestamp) => {
-
-    let user = '';
-
-    historyData.map((entry) => {
-
-      let sameTimestamp = entry.created_at === timestamp;
-
-      if (sameTimestamp) {
-        user = entry.user_css_id;
-      }
-
-      return null;
-    });
-
-    return user;
-  };
-
-  function formatTime(databaseDate) {
-    // Create a Date object from the database date string
-    const dateObject = new Date(databaseDate);
-    // Use toLocaleDateString() to get a localized date string for the United States
-    const options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
-    const datePart = dateObject.toLocaleDateString('en-US', options);
-    // Get hours, minutes, and seconds
-    const hours = dateObject.getHours();
-    const minutes = dateObject.getMinutes();
-    const seconds = dateObject.getSeconds();
-    // Format the date string
-    const formattedDate = `${datePart} ${hours}:${minutes}:${seconds}`;
-
-    return formattedDate;
-  }
-
-  const formatHistoryData = () => {
-
-    let formattedHistoryEntries = [];
-
-    let sortedTimestamps = uniqueTimestamps.reverse();
-
-    sortedTimestamps.map((time) => {
-      let historyEntry = {
-        created_at: formatTime(time),
-        user: getUserAtTimestamp(time),
-        titles: getLeverTitlesAtTimestamp(time),
-        previous_values: getPreviousValuesAtTimestamp(time),
-        updated_values: getUpdatedValuesAtTimestamp(time),
-        units: getLeverUnitsAtTimestamp(time)
-      };
-
-      return formattedHistoryEntries.push(historyEntry);
-    });
-
-    return formattedHistoryEntries;
-  };
-
-  useEffect(() => {
-    formatHistoryData();
-  }, [historyData]);
-
-  let history = formatHistoryData();
+  const leverHistoryTable = getLeverHistoryTable(theState);
 
   return (
     <div className="lever-history-styling">
-      <table>
+      <table id="lever-history-table">
         <tbody>
           <tr>
             <th className="lever-history-table-header-styling" scope="column">
@@ -185,11 +32,11 @@ const LeverHistory = (props) => {
             </th>
           </tr>
         </tbody>
-        <tbody>{history.map((entry, index) =>
-          <tr key={index}>
-            <td className="history-table-styling">{entry.created_at}</td>
-            <td className="history-table-styling">{entry.user}</td>
-            <td className="history-table-styling">
+        <tbody>{leverHistoryTable.map((entry, index) =>
+          <tr key={index} id={`lever-history-table-row-${index}`}>
+            <td className="history-table-styling entry-created-at">{entry.created_at}</td>
+            <td className="history-table-styling entry-user-id">{entry.user_css_id}</td>
+            <td className="history-table-styling entry-titles">
               <ol>
                 {entry.titles.map((title) => {
                   return <li key={title}>{title}</li>;
@@ -197,18 +44,20 @@ const LeverHistory = (props) => {
                 }
               </ol>
             </td>
-            <td className="history-table-styling">
+            <td className="history-table-styling entry-previous-values">
               <ol>
                 {entry.previous_values.map((previousValue, idx) => {
-                  return <li key={previousValue}>{previousValue}{' '}{entry.units[idx]}</li>;
+                  return <li key={`${index}-${previousValue}-${idx}`}>
+                    {previousValue}{' '}{entry.units[idx]}</li>;
                 })
                 }
               </ol>
             </td>
-            <td className="history-table-styling">
+            <td className="history-table-styling entry-updated-values">
               <ol>
                 {entry.updated_values.map((updatedValue, idx) => {
-                  return <li key={updatedValue}>{updatedValue}{' '}{entry.units[idx]}</li>;
+                  return <li key={`${index}-${updatedValue}-${idx}`}>
+                    {updatedValue}{' '}{entry.units[idx]}</li>;
                 })
                 }
               </ol>
@@ -218,11 +67,6 @@ const LeverHistory = (props) => {
       </table>
     </div>
   );
-};
-
-LeverHistory.propTypes = {
-  historyData: PropTypes.array,
-  leverStore: PropTypes.any,
 };
 
 export default LeverHistory;

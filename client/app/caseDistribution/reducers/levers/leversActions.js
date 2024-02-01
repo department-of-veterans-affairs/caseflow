@@ -21,15 +21,24 @@ export const loadLevers = (levers) =>
     });
   };
 
-export const revertLevers = () => async (dispatch) => {
+export const loadHistory = (historyList) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.LOAD_HISTORY,
+      payload: {
+        historyList
+      }
+    });
+  };
+
+export const resetLevers = () => async (dispatch) => {
   const resp = await ApiUtil.get('/case_distribution_levers/get_levers');
-  const { levers, history_list: historyList } = resp.body;
+  const { levers } = resp.body;
 
   dispatch({
     type: ACTIONS.LOAD_LEVERS,
     payload: {
       levers,
-      historyList,
     },
   });
 };
@@ -109,19 +118,43 @@ export const saveLevers = (levers) =>
     };
 
     return ApiUtil.post('/case_distribution_levers/update_levers', { data: postData }).
-      then((resp) => resp.body).
       then((resp) => {
-        dispatch({
-          type: ACTIONS.LOAD_LEVERS,
-          payload: {
-            levers: resp.levers,
-          }
-        });
+        const response = (resp.body);
+
+        if (resp.body.status_code === 500) {
+          dispatch({
+            type: ACTIONS.SET_USER_IS_ACD_ADMIN,
+            payload: {
+              isUserAcdAdmin: response.user_is_an_acd_admin
+            }
+          });
+          throw new Error(response.message);
+        } else {
+          dispatch({
+            type: ACTIONS.LOAD_LEVERS,
+            payload: {
+              levers: response.levers,
+            }
+          });
+          dispatch({
+            type: ACTIONS.SAVE_LEVERS,
+            payload: {
+              errors: response.errors,
+            }
+          });
+          dispatch({
+            type: ACTIONS.LOAD_HISTORY,
+            payload: {
+              historyList: response.lever_history
+            }
+          });
+        }
+      }).
+      catch((error) => {
         dispatch({
           type: ACTIONS.SAVE_LEVERS,
           payload: {
-            errors: resp.errors,
-            leverHistory: resp.lever_history
+            errors: [error.message],
           }
         });
       });
@@ -134,7 +167,7 @@ export const hideSuccessBanner = () =>
     });
   };
 
-  export const addLeverErrors = (errors) =>
+export const addLeverErrors = (errors) =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.ADD_LEVER_VALIDATION_ERRORS,
@@ -144,12 +177,19 @@ export const hideSuccessBanner = () =>
     });
   };
 
-  export const removeLeverErrors = (leverItem) =>
+export const removeLeverErrors = (leverItem) =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.REMOVE_LEVER_VALIDATION_ERRORS,
       payload: {
         leverItem
       }
+    });
+  };
+
+export const resetAllLeverErrors = () =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.RESET_ALL_VALIDATION_ERRORS
     });
   };

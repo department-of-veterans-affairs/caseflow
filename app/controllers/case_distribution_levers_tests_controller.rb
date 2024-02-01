@@ -7,7 +7,7 @@ class CaseDistributionLeversTestsController < ApplicationController
 
   def acd_lever_index_test
     @acd_levers = CaseDistributionLever.all
-    @acd_history = CaseDistributionAuditLeverEntry.includes(:user, :case_distribution_lever).past_year
+    @acd_history = CaseDistributionAuditLeverEntry.lever_history
 
     render "case_distribution_levers/test"
   end

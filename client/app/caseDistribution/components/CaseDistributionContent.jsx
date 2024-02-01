@@ -10,8 +10,6 @@ import {
 import COPY from '../../../COPY';
 
 const CaseDistributionContent = ({
-  levers,
-  formattedHistory,
   leverStore
 }) => {
 
@@ -43,7 +41,7 @@ const CaseDistributionContent = ({
           </h2>
           <div {...sectionSegmentStyling}>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_STATIC_LEVERS_DESCRIPTION}</p>
-            <StaticLeversWrapper leverList={levers.staticLevers} leverStore={leverStore} />
+            <StaticLeversWrapper />
           </div>
         </div>
 
@@ -56,7 +54,7 @@ const CaseDistributionContent = ({
           </h2>
           <div {...sectionSegmentStyling}>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_HISTORY_DESCRIPTION}</p>
-            <LeverHistory historyData={formattedHistory} leverStore={leverStore} />
+            <LeverHistory />
           </div>
         </div>
       </div>
@@ -66,7 +64,6 @@ const CaseDistributionContent = ({
 
 CaseDistributionContent.propTypes = {
   levers: PropTypes.object.isRequired,
-  formattedHistory: PropTypes.array.isRequired,
   leverStore: PropTypes.any.isRequired,
 };
 

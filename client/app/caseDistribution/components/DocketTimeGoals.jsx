@@ -83,7 +83,8 @@ const DocketTimeGoals = () => {
 
       return (
 
-        <div className={cx('active-lever')}
+        <div id={`${docketTimeGoalLever.item}-lever`}
+          className={cx('active-lever')}
           key={`${distributionPriorLever.item}-${index}`}
         >
           <div className={cx('lever-left', 'docket-lever-left')}>
@@ -101,6 +102,7 @@ const DocketTimeGoals = () => {
               label={docketTimeGoalLever.unit}
               errorMessage={leverErrors(docketTimeGoalLever.item)}
               onChange={updateNumberFieldLever(docketTimeGoalLever)}
+              disabled={docketTimeGoalLever.is_disabled_in_ui}
             />
           </div>
           <div
@@ -126,6 +128,7 @@ const DocketTimeGoals = () => {
                 label={distributionPriorLever.unit}
                 errorMessage={leverErrors(distributionPriorLever.item)}
                 onChange={updateNumberFieldLever(distributionPriorLever)}
+                disabled={distributionPriorLever.is_disabled_in_ui}
               />
             </div>
           </div>
@@ -191,7 +194,6 @@ const DocketTimeGoals = () => {
       </div>
 
       {docketDistributionLevers?.
-        toSorted((leverA, leverB) => leverA.lever_group_order - leverB.lever_group_order).
         map((distributionPriorLever, index) => (renderDocketDistributionLever(distributionPriorLever, index)))
       }
     </div>

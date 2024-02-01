@@ -1,90 +1,10 @@
-<h1 id='top'>Case Distribution Levers Dashboard</h1>
-<p>This page is for lower env use only and provides a convient place to review Case Distribution related data</p>
-<h2>Navigation</h2>
-<ul>
-  <li>
-    <%= link_to 'Case Distribution Levers', { anchor: 'levers'}, class: 'btn btn-primary' %>
-  </li>
-  <li>
-    <%= link_to 'Case Distribution Audit Levers', { anchor: 'audit'}, class: 'btn btn-primary' %>
-  </li>
-  <li>
-    <%= link_to 'Distribution Status', { anchor: 'distribution_status'}, class: 'btn btn-primary' %>
-  </li>
-</ul>
-<h2 id='levers'> Case Distribution Levers </h2>
-  <table id="case-table-description" class="usa-table-borderless undefined">
-    <thead>
-      <tr>
-        <td> ID </td>
-        <td> Title </td>
-        <td> Description </td>
-        <td> Data Type </td>
-        <td> Value </td>
-        <td> Options </td>
-        <td> Option Value </td>
-        <td> Active </td>
-        <td> Disabled </td>
-      </tr>
-    </thead>
-    <tbody>
-      <% @acd_levers.each do |lever| %>
-        <tr>
-          <td> <%= lever.id %> </td>
-          <td> <%= lever.title %> </td>
-          <td> <%= lever.description %> </td>
-          <td> <%= lever.data_type %> </td>
-          <td> <%= lever.value %> </td>
-          <td> <%= lever.options %> </td>
-          <% if lever.data_type == "radio" %>
-            <td> <%= lever.options.find { |option| option["item"] == lever.value }["value"] %> </td>
-          <% elsif lever.data_type == "combination" %>
-            <td> <%= lever.options.first["value"] %> </td>
-          <% else %>
-            <td> n/a </td>
-          <% end %>
-          <td> <%= lever.is_toggle_active %> </td>
-          <td> <%= lever.is_disabled_in_ui %> </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-<hr/>
-<h2 id='audit'> Case Distribution Audit Levers </h2>
-  <table>
-    <thead>
-      <tr>
-        <td> Lever ID </td>
-        <td> Lever Title </td>
-        <td> User ID </td>
-        <td> Created </td>
-        <td> Previous Value </td>
-        <td> Update Value </td>
-      </tr>
-    </thead>
-    <tbody>
-      <% @acd_history.each do |entry| %>
-        <tr>
-          <td> <%= entry.case_distribution_lever.id %> </td>
-          <td> <%= entry.case_distribution_lever.title %> </td>
-          <td> <%= entry.user.css_id %> </td>
-          <td> <%= entry.created_at %> </td>
-          <td> <%= entry.previous_value %> </td>
-          <td> <%= entry.update_value %> </td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-<hr/>
-<h2 id='distribution_status'>Distribution Status</h2>
-<ul>
-  <li>
-    <%= link_to 'Download Appeals Ready to Distribute CSV', appeals_ready_to_distribute_path(format: :csv), class: 'btn btn-primary' %>
-  </li>
-  <li>
-    <%= link_to 'Download Distributed Appeals CSV', appeals_distributed_path(format: :csv), class: 'btn btn-primary' %>
-  </li>
-</ul>
-
-<hr/>
-<%= link_to 'Back to Top', { anchor: 'top'}, class: 'btn btn-primary' %>
+<% content_for :full_page_content do %>
+  <%= react_component("CaseDistributionTest", props: {
+    userDisplayName: current_user.display_name,
+    dropdownUrls: dropdown_urls,
+    applicationUrls: application_urls,
+    feedbackUrl: feedback_url,
+    acdLevers: @acd_levers,
+    acdHistory: @acd_history
+  }) %>
+<% end %>

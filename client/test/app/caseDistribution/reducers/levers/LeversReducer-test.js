@@ -68,24 +68,24 @@ describe('Lever reducer', () => {
     // it('does not update the current levers when invalid value is entered', () => {});
   });
 
-  describe(ACTIONS.SAVE_LEVERS, () => {
+  describe(ACTIONS.LOAD_LEVERS, () => {
     it('returns the current state of the levers', () => {
       leverStore.dispatch({
         type: ACTIONS.UPDATE_LEVER_VALUE,
-        updated_lever:leverData.lever1_update
-      })
+        updated_lever: leverData.lever1_update
+      });
       leverStore.dispatch({
         type: ACTIONS.UPDATE_LEVER_VALUE,
         updated_lever: leverData.lever5_update
-      })
+      });
       leverStore.dispatch({
-        type: ACTIONS.SAVE_LEVERS,
-      })
+        type: ACTIONS.LOAD_LEVERS,
+      });
 
-      expect(leverStore.getState().levers).not.toEqual(leverData.levers.slice(0,5))
-      expect(leverStore.getState().levers).toEqual(leverData.updated_levers)
-      expect(leverStore.getState().backendLevers).toEqual(leverData.updated_levers)
-      expect(leverStore.getState().changesOccurred).toEqual(false)
+      expect(leverStore.getState().levers).not.toEqual(leverData.levers.slice(0, 5));
+      expect(leverStore.getState().levers).toEqual(leverData.updated_levers);
+      expect(leverStore.getState().backendLevers).toEqual(leverData.updated_levers);
+      expect(leverStore.getState().changesOccurred).toEqual(false);
     });
   });
 

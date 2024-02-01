@@ -4,25 +4,31 @@ import cx from 'classnames';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 
 const StaticLever = ({ lever }) => {
+  // Requires space between value and unit, false for percentage values
+  let requiredSeparator = true;
+
   const renderValue = () => {
+    let leverValueString = '';
+
     switch (lever.data_type) {
     case ACD_LEVERS.data_types.boolean:
-      return lever.value.toString();
+      leverValueString = lever.value.toString();
+
+      return leverValueString.charAt(0).toUpperCase() + leverValueString.slice(1);
     case ACD_LEVERS.data_types.number:
-      return `${lever.value} ${lever.unit}`;
+      requiredSeparator = false;
+
+      return `${(lever.value * 100).toFixed(0)}`;
     case ACD_LEVERS.data_types.radio:
       return lever.options.find((option) => option.value === lever.value)?.text;
     case ACD_LEVERS.data_types.combination:
-      return `${lever.value} ${lever.unit}`;
+      return `${lever.value}`;
     default:
       return null;
     }
   };
 
-  const valueWithUnit = renderValue();
-  const valueArray = valueWithUnit.split(' ');
-  const value = valueArray[0];
-  const unit = valueArray[1];
+  const formattedValue = renderValue();
 
   return (
     <tbody>
@@ -30,10 +36,15 @@ const StaticLever = ({ lever }) => {
         <td className="title-styling">{lever.title}</td>
       </tr>
       <tr>
-        <td className={cx('cf-lead-paragraph', 'description-styling')}>{lever.description}</td>
-        <td className={cx('cf-lead-paragraph', 'value-styling')}>
-          <span className="value-right-styling">{value} </span>
-          <span>{unit}</span>
+        <td className={cx('cf-lead-paragraph', 'description-styling')} id={`${lever.item}-description`}>
+          {lever.description}
+        </td>
+        <td className={cx('cf-lead-paragraph', 'value-styling')} id={`${lever.item}-product`}>
+          <span className="value-right-styling" id={`${lever.item}-value`}>{formattedValue}
+            <span className={requiredSeparator ? 'unit-with-separator' : null} id={cx(`${lever.item}-unit`)}>
+              {lever.unit}
+            </span>
+          </span>
         </td>
       </tr>
     </tbody>
@@ -42,6 +53,7 @@ const StaticLever = ({ lever }) => {
 
 StaticLever.propTypes = {
   lever: PropTypes.shape({
+    item: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     data_type: PropTypes.string.isRequired,

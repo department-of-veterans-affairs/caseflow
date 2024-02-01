@@ -1,37 +1,119 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import StaticLever from 'app/caseDistribution/components/StaticLever';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import rootReducer from 'app/caseDistribution/reducers/root';
+import thunk from 'redux-thunk';
+import { levers, unknownDataTypeStaticLevers } from '../../../data/adminCaseDistributionLevers';
 
-jest.mock('app/styles/caseDistribution/StaticLevers.module.scss', () => '');
-describe('StaticLever', () => {
-  const lever = {
-    title: 'Test Title',
-    description: 'Test Description',
-    data_type: 'number',
-    value: 10,
-    unit: 'Days',
-    is_toggle_active: true,
-    options: [],
-  };
+describe('Static Lever', () => {
 
-  it('renders the title', () => {
-    const wrapper = shallow(<StaticLever lever={lever} />);
+  const getStore = () => createStore(
+    rootReducer,
+    applyMiddleware(thunk));
 
-    expect(wrapper.find('td').at(0).
-      text()).toEqual('Test Title');
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
-  it('renders the description', () => {
-    const wrapper = shallow(<StaticLever lever={lever} />);
+  let staticNumber = levers.filter((lever) => (lever.lever_group === 'static' && lever.data_type === 'number'));
+  let staticBoolean = levers.filter((lever) => lever.lever_group === 'static' && lever.data_type === 'boolean');
+  let staticRadio = levers.filter((lever) => lever.lever_group === 'static' && lever.data_type === 'radio');
+  let staticCombination = levers.filter((lever) => lever.lever_group === 'static' && lever.data_type === 'combination');
+  let staticNoType = unknownDataTypeStaticLevers;
 
-    expect(wrapper.find('td').at(1).
-      text()).toEqual('Test Description');
+  it('renders the Static Lever with standard number value', () => {
+    const store = getStore();
+
+    render(
+      <Provider store={store}>
+        {staticNumber.map((lever) => (
+          <StaticLever key={lever.item} lever={lever} />
+        ))}
+      </Provider>
+    );
+
+    for (const lever of staticNumber) {
+      expect(document.getElementById(`${lever.title}-description`)).toHaveTextContent(lever.description);
+      expect(document.getElementById(`${lever.title}-value`)).toHaveTextContent(lever.value);
+      expect(document.getElementById(`${lever.title}-unit`)).toHaveTextContent(lever.unit);
+    }
   });
 
-  it('renders the value and unit', () => {
-    const wrapper = shallow(<StaticLever lever={lever} />);
+  it('renders the Static Lever with boolean value', () => {
+    const store = getStore();
 
-    expect(wrapper.find('td').at(2).
-      text()).toEqual('10 Days');
+    render(
+      <Provider store={store}>
+        {staticBoolean.map((lever) => (
+          <StaticLever key={lever.item} lever={lever} />
+        ))}
+      </Provider>
+    );
+
+    for (const lever of staticBoolean) {
+      let formattedValue = lever.value.toString();
+
+      formattedValue = formattedValue.charAt(0).toUpperCase() + formattedValue.slice(1);
+
+      expect(document.getElementById(`${lever.title}-description`)).toHaveTextContent(lever.description);
+      expect(document.getElementById(`${lever.title}-value`)).toHaveTextContent(formattedValue);
+    }
+  });
+
+  it('renders the Static Lever with Radio value', () => {
+    const store = getStore();
+
+    render(
+      <Provider store={store}>
+        {staticRadio.map((lever) => (
+          <StaticLever key={lever.item} lever={lever} />
+        ))}
+      </Provider>
+    );
+
+    for (const lever of staticRadio) {
+      let selectedOption = lever.options.find((option) => lever.value === option.item);
+
+      expect(document.getElementById(`${lever.title}-description`)).toHaveTextContent(lever.description);
+      expect(document.getElementById(`${lever.title}-value`)).toHaveTextContent(selectedOption.text);
+      expect(document.getElementById(`${lever.title}-unit`)).toHaveTextContent(lever.unit);
+    }
+  });
+
+  it('renders the Static Lever with Combination value', () => {
+    const store = getStore();
+
+    render(
+      <Provider store={store}>
+        {staticCombination.map((lever) => (
+          <StaticLever key={lever.item} lever={lever} />
+        ))}
+      </Provider>
+    );
+
+    for (const lever of staticCombination) {
+      expect(document.getElementById(`${lever.title}-description`)).toHaveTextContent(lever.description);
+      expect(document.getElementById(`${lever.title}-value`)).toHaveTextContent(lever.value);
+      expect(document.getElementById(`${lever.title}-unit`)).toHaveTextContent(lever.unit);
+    }
+  });
+
+  it('renders the Static Lever with uknown group lever value', () => {
+    const store = getStore();
+
+    render(
+      <Provider store={store}>
+        {staticNoType.map((lever) => (
+          <StaticLever key={lever.item} lever={lever} />
+        ))}
+      </Provider>
+    );
+
+    for (const lever of staticNoType) {
+      expect(document.getElementById(`${lever.title}-description`)).toHaveTextContent(lever.description);
+      expect(document.getElementById(`${lever.title}-value`)).toHaveTextContent('test-unit-unknown-dt-static');
+    }
   });
 });

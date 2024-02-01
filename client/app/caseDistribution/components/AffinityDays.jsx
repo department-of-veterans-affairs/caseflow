@@ -5,13 +5,14 @@ import NumberField from 'app/components/NumberField';
 import TextField from 'app/components/TextField';
 import COPY from '../../../COPY';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
-import { getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
+import { getUserIsAcdAdmin, getLeversByGroup } from '../reducers/levers/leversSelector';
+import { Constant } from '../constants';
 
 const AffinityDays = () => {
   const theState = useSelector((state) => state);
   const isUserAcdAdmin = getUserIsAcdAdmin(theState);
 
-  const storeLevers = useSelector((state) => state.caseDistributionLevers.levers.affinity);
+  const storeLevers = getLeversByGroup(theState, Constant.LEVERS, ACD_LEVERS.lever_groups.affinity);
   const [affinityLevers, setAffinityLevers] = useState(storeLevers);
 
   useEffect(() => {
@@ -37,6 +38,7 @@ const AffinityDays = () => {
           inputID={`${lever.item}-${option.value}-input`}
           useAriaLabel={useAriaLabel}
           tabIndex={tabIndex}
+          disabled={lever.is_disabled_in_ui}
         />
       );
     }
@@ -53,6 +55,7 @@ const AffinityDays = () => {
           inputID={`${lever.item}-${option.value}-input`}
           useAriaLabel={useAriaLabel}
           tabIndex={tabIndex}
+          disabled={lever.is_disabled_in_ui}
         />
       );
     }
@@ -65,8 +68,10 @@ const AffinityDays = () => {
       return (
         <div key={`${option.item}-${lever.item}-${index}`}>
           <div>
-            <label className={lever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}
-              htmlFor={`${lever.item}-${option.item}`}>
+            <label id={lever.item}
+              className={lever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}
+              htmlFor={`${lever.item}-${option.item}`}
+            >
               {`${option.text} ${option.data_type === ACD_LEVERS.data_types.number ?
                 `${option.value} ${option.unit}` : ''}`}
             </label>
@@ -106,8 +111,6 @@ const AffinityDays = () => {
     );
   };
 
-  affinityLevers?.sort((leverA, leverB) => leverA.lever_group_order - leverB.lever_group_order);
-
   return (
     <div className="lever-content">
       <div className="lever-head">
@@ -127,7 +130,9 @@ const AffinityDays = () => {
             <strong>{lever.title}</strong>
             <p className="affinity-lever-text">{lever.description}</p>
           </div>
-          <div className={cx('lever-right', 'affinity-lever-num-sec')} >
+          <div id={lever.item}
+            className={cx('lever-right', 'affinity-lever-num-sec')}
+          >
             {lever.options.map((option) => (
               (isUserAcdAdmin) ? renderAdminInput(option, lever, index) : generateMemberViewLabel(option, lever, index)
             ))}

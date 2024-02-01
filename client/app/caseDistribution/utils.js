@@ -47,44 +47,86 @@ export const createUpdatedLeversWithValues = (levers) => {
   return leversWithValues();
 };
 
+export const formatTimestamp = (entry) => {
+  const dateEntry = new Date(entry);
+  const timeEntry = {
+    hours: `0${dateEntry.getHours()}`.slice(-2),
+    minutes: `0${dateEntry.getMinutes()}`.slice(-2),
+    seconds: `0${dateEntry.getSeconds()}`.slice(-2),
+  };
+
+  const formattedDate = `${dateEntry.toLocaleDateString('en-US', {
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+
+  }) } ${timeEntry.hours}:${timeEntry.minutes}:${timeEntry.seconds}`;
+
+  return formattedDate;
+};
+
 export const formatLeverHistory = (leverHistoryList) => {
-  let formattedLeverHistory = [];
 
-  leverHistoryList.forEach((leverHistoryEntry) => {
+  if (!leverHistoryList) {
+    return [];
+  }
 
-    formattedLeverHistory.push(
-      {
-        user_name: leverHistoryEntry.user,
-        created_at: leverHistoryEntry.created_at,
-        lever_title: leverHistoryEntry.title,
-        original_value: leverHistoryEntry.original_value,
-        current_value: leverHistoryEntry.current_value
-      }
+  const formattedHistory = leverHistoryList.reduce((accumulator, entry) => {
+    const existingEntry = accumulator.find(
+      (item) => formatTimestamp(item.created_at) === formatTimestamp(entry.created_at) &&
+      item.user_css_id === entry.user_css_id
     );
-  });
 
-  return formattedLeverHistory;
+    if (existingEntry) {
+      existingEntry.titles.push(entry.lever_title);
+      existingEntry.previous_values.push(entry.previous_value);
+      existingEntry.updated_values.push(entry.update_value);
+      existingEntry.units.push(entry.lever_unit || 'null');
+    } else {
+      const newEntry = {
+        created_at: formatTimestamp(entry.created_at),
+        user_css_id: entry.user_css_id,
+        user_name: entry.user_name,
+        titles: [entry.lever_title],
+        previous_values: [entry.previous_value],
+        updated_values: [entry.update_value],
+        units: [entry.lever_unit || 'null'],
+      };
+
+      accumulator.push(newEntry);
+    }
+
+    return accumulator;
+  }, []);
+
+  let descendingFormattedHistory = formattedHistory.reverse();
+
+  return descendingFormattedHistory;
 };
 
 export const validateLeverInput = (lever, value) => {
-  const errors = []
+  const errors = [];
   const { item, min_value, max_value, data_type } = lever;
-    if (value === null || value === '') errors.push({leverItem: lever.item, message: ACD_LEVERS.validation_error_message.minimum_not_met })
-    if (parseFloat(value)) {
-      if (value < min_value) {
-        errors.push({leverItem: lever.item, message: ACD_LEVERS.validation_error_message.minimum_not_met })
-      }
-      if (max_value && value > max_value) {
-        errors.push({leverItem: lever.item, message: ACD_LEVERS.validation_error_message.out_of_bounds})
-      }
-    }
 
-    return errors
-}
+  if (value === null || value === '') {
+    errors.push({ leverItem: lever.item, message: ACD_LEVERS.validation_error_message.minimum_not_met });
+  }
+  if (parseFloat(value)) {
+    if (value < min_value) {
+      errors.push({ leverItem: lever.item, message: ACD_LEVERS.validation_error_message.minimum_not_met });
+    }
+    if (max_value && value > max_value) {
+      errors.push({ leverItem: lever.item, message: ACD_LEVERS.validation_error_message.out_of_bounds });
+    }
+  }
+
+  return errors;
+};
 
 export const leverErrorMessageExists = (existingErrors, newErrors) => {
-  return existingErrors.some(existingError =>
-    newErrors.every(newError =>
+  return existingErrors.some((existingError) =>
+    newErrors.every((newError) =>
       JSON.stringify(existingError) === JSON.stringify(newError)
     )
   );
