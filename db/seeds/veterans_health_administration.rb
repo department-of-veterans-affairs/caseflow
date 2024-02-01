@@ -30,6 +30,7 @@ module Seeds
       create_visn_org_teams!
       create_vha_camo
       create_vha_caregiver
+      create_specialty_case_team
       create_vha_program_office
       create_vha_visn_pre_docket_queue
       create_higher_level_reviews
@@ -95,6 +96,11 @@ module Seeds
       create_vha_caregiver_queue_assigned
       create_vha_caregiver_queue_in_progress
       create_vha_caregiver_queue_completed
+    end
+
+    def create_specialty_case_team
+      create_specialty_case_team_action_required
+      create_specialty_case_team_completed
     end
 
     def create_higher_level_reviews
@@ -189,6 +195,20 @@ module Seeds
     def create_vha_caregiver_queue_completed
       5.times do
         task = create(:vha_document_search_task, assigned_to: VhaCaregiverSupport.singleton)
+        task.completed!
+      end
+    end
+
+    def create_specialty_case_team_action_required
+      5.times do
+        task = create(:sct_assign_task, assigned_to:SpecialtyCaseTeam.singleton)
+        task.on_hold!
+      end
+    end
+
+    def create_specialty_case_team_completed
+      5.times do
+        task = create(:sct_assign_task, assigned_to:SpecialtyCaseTeam.singleton)
         task.completed!
       end
     end
