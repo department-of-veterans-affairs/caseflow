@@ -22,7 +22,7 @@ module CaseDistribution
   def collect_appeals
     appeals = yield
     appeals.compact!
-    @rem -= calculate_reduction(appeals)
+    @rem -= appeals.count
     @appeals += appeals
     appeals
   end
