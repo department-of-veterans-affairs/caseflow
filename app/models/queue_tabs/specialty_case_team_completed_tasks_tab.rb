@@ -5,8 +5,6 @@ class SpecialtyCaseTeamCompletedTasksTab < QueueTab
 
   attr_accessor :show_reader_link_column, :allow_bulk_assign
 
-  delegate :column_names, to: :specialty_case_team
-
   def label
     COPY::ORGANIZATIONAL_QUEUE_COMPLETED_TAB_TITLE
   end
