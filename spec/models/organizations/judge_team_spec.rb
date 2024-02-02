@@ -192,6 +192,18 @@ describe JudgeTeam, :postgres do
     end
   end
 
+  describe "feature feature_name activated" do
+    before { FeatureToggle.enable!(:feature_toggle) }
+    after { FeatureToggle.disable!(:feature_toggle) }
+
+    describe ".judges_with_exclude_appeals_from_affinity" do
+      subject { JudgeTeam.judges_with_exclude_appeals_from_affinity }
+
+      it "returns the ids of judges with exclude_appeals_from_affinity flag" do
+      end
+    end
+  end
+
   describe ".can_receive_task?" do
     it "returns false because judge teams should not have tasks assigned to them" do
       expect(JudgeTeam.create_for_judge(judge).can_receive_task?(nil)).to eq(false)
