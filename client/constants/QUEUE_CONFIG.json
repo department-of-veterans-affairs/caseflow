@@ -23,7 +23,8 @@
   "READY_FOR_REVIEW_TASKS_TAB_NAME": "readyForReviewTab",
   "VHA_PO_ON_HOLD_TASKS_TAB_NAME": "po_on_hold",
   "VHA_PO_COMPLETED_TASKS_TAB_NAME": "po_completed",
-  "SPECIALTY_CASE_TEAM_ACTION_REQUIRED_TASKS_TAB_NAME": "action_required",
+  "SPECIALTY_CASE_TEAM_ACTION_REQUIRED_TASKS_TAB_NAME": "sct_action_required",
+  "SPECIALTY_CASE_TEAM_COMPLETED_TASKS_TAB_NAME": "sct_completed",
 
   "EDUCATION_RPO_ASSIGNED_TASKS_TAB_NAME": "education_rpo_assigned",
   "EDUCATION_RPO_IN_PROGRESS_TASKS_TAB_NAME": "education_rpo_in_progress",

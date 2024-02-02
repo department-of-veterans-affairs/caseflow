@@ -10,7 +10,7 @@ class SpecialtyCaseTeamCompletedTasksTab < QueueTab
   end
 
   def self.tab_name
-    Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME
+    Constants.QUEUE_CONFIG.SPECIALTY_CASE_TEAM_COMPLETED_TASKS_TAB_NAME
   end
 
   def description
