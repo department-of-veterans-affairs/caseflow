@@ -244,7 +244,7 @@ export const specialtyCaseTeamAssignTasksSelector = createSelector(
     filter(tasks, (task) => {
       return (
         task.label === COPY.SPECIALTY_CASE_TEAM_ASSIGN_TASK_LABEL &&
-        (task.status === TASK_STATUSES.assigned)
+        (task.status === TASK_STATUSES.in_progress || TASK_STATUSES.assigned)
       );
     })
 );
