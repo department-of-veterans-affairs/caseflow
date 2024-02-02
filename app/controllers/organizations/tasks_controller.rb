@@ -5,7 +5,6 @@ class Organizations::TasksController < OrganizationsController
   before_action :verify_role_access, only: [:index]
 
   def index
-    puts "in index with params: #{params}"
     render json: {
       organization_name: organization.name,
       type: organization.type,

@@ -541,12 +541,13 @@ export const initialSpecialtyCaseTeamAssignTasksToUser = ({
 
         // dispatchOldTasks(dispatch, requestParams.data.tasks, resp);
 
-        // taskIds.forEach((taskId) => {
-        //   dispatch(setSelectionOfTaskOfUser({
-        //     userId: previousAssigneeId,
-        //     selected: false,
-        //     taskId
-        //   }));
+        taskIds.forEach((taskId) => {
+          dispatch(setSelectionOfTaskOfUser({
+            userId: previousAssigneeId,
+            selected: false,
+            taskId
+          }));
+        });
 
         //   dispatch(incrementTaskCountForAttorney({
         //     id: assigneeId
