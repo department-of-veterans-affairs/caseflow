@@ -519,6 +519,24 @@ export const initialSpecialtyCaseTeamAssignTasksToUser = ({
           selected: false,
           taskId
         }));
+<<<<<<< HEAD
+=======
+
+        // dispatchOldTasks(dispatch, requestParams.data.tasks, resp);
+
+        taskIds.forEach((taskId) => {
+          dispatch(setSelectionOfTaskOfUser({
+            userId: previousAssigneeId,
+            selected: false,
+            taskId
+          }));
+        });
+
+        //   dispatch(incrementTaskCountForAttorney({
+        //     id: assigneeId
+        //   }));
+        // });
+>>>>>>> bf9feedb80 (Added SCT task factory into this PR. Added a randomized vha issue trait to appeal for demoing. Created a bulk assign feature test for the SpecialtyCaseTeam organization.)
       });
     });
 };

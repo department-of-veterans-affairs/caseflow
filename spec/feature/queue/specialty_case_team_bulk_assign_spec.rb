@@ -50,6 +50,7 @@ RSpec.feature "SpecialtyCaseTeam bulk assignment to attorney", :all_dbs do
         expect(page).to have_content("Assign 0 cases")
         case_rows = page.find_all("tr[id^='table-row-']")
         expect(case_rows.length).to eq(tasks.length)
+<<<<<<< HEAD
 
         html_table_headings = all("th").map(&:text).reject(&:empty?).compact
         expect(html_table_headings).to eq(column_heading_names)
@@ -63,12 +64,32 @@ RSpec.feature "SpecialtyCaseTeam bulk assignment to attorney", :all_dbs do
       end
 
       step "assign button is disabled when an attorney/assignee isn't selected" do
+=======
+      end
+
+      step "page errors when cases aren't selected" do
+        safe_click ".cf-select"
+        click_dropdown(text: attorney.full_name)
+
+        click_on "Assign 0 cases"
+        expect(page).to have_content(COPY::ASSIGN_WIDGET_NO_TASK_TITLE)
+        expect(page).to have_content(COPY::ASSIGN_WIDGET_NO_TASK_DETAIL)
+      end
+
+      step "page errors when an attorney/assignee isn't selected" do
+>>>>>>> bf9feedb80 (Added SCT task factory into this PR. Added a randomized vha issue trait to appeal for demoing. Created a bulk assign feature test for the SpecialtyCaseTeam organization.)
         visit bulk_assign_url
         scroll_to(".usa-table-borderless")
         page.find(:css, "input[name='#{task_first.id}']", visible: false).execute_script("this.click()")
         page.find(:css, "input[name='#{task_last.id}']", visible: false).execute_script("this.click()")
 
+<<<<<<< HEAD
         expect(page).to have_button("Assign 2 cases", disabled: true)
+=======
+        click_on "Assign 2 cases"
+        expect(page).to have_content(COPY::ASSIGN_WIDGET_NO_ASSIGNEE_TITLE)
+        expect(page).to have_content(COPY::ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL)
+>>>>>>> bf9feedb80 (Added SCT task factory into this PR. Added a randomized vha issue trait to appeal for demoing. Created a bulk assign feature test for the SpecialtyCaseTeam organization.)
       end
 
       step "cases are assignable when an attorney/assignee and tasks are selected" do
@@ -76,7 +97,11 @@ RSpec.feature "SpecialtyCaseTeam bulk assignment to attorney", :all_dbs do
         click_dropdown(text: attorney.full_name)
 
         click_on "Assign 2 cases"
+<<<<<<< HEAD
         expect(page).to have_content("You have successfully assigned 2 cases to #{attorney.full_name}")
+=======
+        expect(page).to have_content("Assigned 2 tasks to #{attorney.full_name}")
+>>>>>>> bf9feedb80 (Added SCT task factory into this PR. Added a randomized vha issue trait to appeal for demoing. Created a bulk assign feature test for the SpecialtyCaseTeam organization.)
         # Check the button to make sure it reset back to 0
         expect(page).to have_content("Assign 0 cases")
         case_rows = page.find_all("tr[id^='table-row-']")

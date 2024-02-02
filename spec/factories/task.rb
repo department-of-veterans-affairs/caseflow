@@ -556,6 +556,7 @@ FactoryBot.define do
         after(:create) do |task, _evaluator|
           task.appeal.tasks.of_type(:DistributionTask).first.completed!
         end
+<<<<<<< HEAD
 
         trait :action_required do
           after(:create) do |task, _evaluator|
@@ -605,6 +606,8 @@ FactoryBot.define do
             judge.administered_judge_teams.first.add_user(attorney)
           end
         end
+=======
+>>>>>>> bf9feedb80 (Added SCT task factory into this PR. Added a randomized vha issue trait to appeal for demoing. Created a bulk assign feature test for the SpecialtyCaseTeam organization.)
       end
 
       factory :assign_hearing_disposition_task, class: AssignHearingDispositionTask do
