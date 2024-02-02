@@ -563,7 +563,6 @@ export const testingDocketTimeGoalsLevers = [
     "lever_group_order": 4004
   },
 ];
-/* END Outlier Test Data for Testing Coverage */
 
 //Affinity days Lever with Higher Min value for testing errors 'out of bounds'
 export const testingAffinityDaysLevers = [
@@ -642,4 +641,170 @@ export const testingAffinityDaysLevers = [
     "lever_group_order":3001
   }
 ];
-/* END Outlier Test Data for Testing Coverage */
+
+export const testingStaticLevers = [
+  {
+    id: 1,
+    algorithms_used: [
+      'proportion'
+    ],
+    control_group: null,
+    created_at: '2024-01-24T11:52:10.126-05:00',
+    data_type: 'number',
+    description: "Sets the maximum number of direct reviews in relation to due direct review proportion to prevent a complete halt to work on other dockets should demand for direct reviews approach the Board's capacity.",
+    is_disabled_in_ui: true,
+    is_toggle_active: false,
+    item: 'maximum_direct_review_proportion',
+    lever_group: 'static',
+    lever_group_order: 1000,
+    max_value: null,
+    min_value: 0,
+    options: null,
+    title: 'Maximum Direct Review Proportion',
+    unit: '%',
+    updated_at: '2024-01-24T11:52:10.126-05:00',
+    value: '0.8',
+    backendValue: '0.8'
+  },
+  {
+    id: 2,
+    algorithms_used: [
+      'proportion'
+    ],
+    control_group: null,
+    created_at: '2024-01-24T11:52:10.132-05:00',
+    data_type: 'number',
+    description: 'Sets the minimum proportion of legacy appeals that will be distributed.',
+    is_disabled_in_ui: true,
+    is_toggle_active: false,
+    item: 'minimum_legacy_proportion',
+    lever_group: 'static',
+    lever_group_order: 1001,
+    max_value: null,
+    min_value: 0,
+    options: null,
+    title: 'Minimum Legacy Proportion',
+    unit: '%',
+    updated_at: '2024-01-24T11:52:10.132-05:00',
+    value: '0.2',
+    backendValue: '0.2'
+  },
+  {
+    id: 3,
+    algorithms_used: [
+      'proportion'
+    ],
+    control_group: null,
+    created_at: '2024-01-24T11:52:10.137-05:00',
+    data_type: 'number',
+    description: 'Applied for docket balancing reflecting the likelihood that NODs will advance to a Form 9.',
+    is_disabled_in_ui: true,
+    is_toggle_active: false,
+    item: 'nod_adjustment',
+    lever_group: 'static',
+    lever_group_order: 1002,
+    max_value: null,
+    min_value: 0,
+    options: null,
+    title: 'NOD Adjustment',
+    unit: '%',
+    updated_at: '2024-01-24T11:52:10.137-05:00',
+    value: '0.9',
+    backendValue: '0.9'
+  },
+  {
+    id: 4,
+    algorithms_used: [
+      'proportion'
+    ],
+    control_group: null,
+    created_at: '2024-01-24T11:52:10.143-05:00',
+    data_type: 'boolean',
+    description: 'Distribute legacy cases tied to a judge to the Board-provided limit of 30, regardless of the legacy docket range.',
+    is_disabled_in_ui: true,
+    is_toggle_active: false,
+    item: 'bust_backlog',
+    lever_group: 'static',
+    lever_group_order: 1003,
+    max_value: null,
+    min_value: null,
+    options: null,
+    title: 'Priority Bust Backlog',
+    unit: '',
+    updated_at: '2024-01-24T11:52:10.143-05:00',
+    value: 'true',
+    backendValue: 'true'
+  }
+]
+
+export const testingTimeGoalLevers = [
+  {
+    id: 18,
+    algorithms_used: [
+      'docket'
+    ],
+    control_group: null,
+    created_at: '2024-01-24T11:52:10.216-05:00',
+    data_type: 'number',
+    description: null,
+    is_disabled_in_ui: true,
+    is_toggle_active: false,
+    item: 'ama_hearings_docket_time_goals',
+    lever_group: 'docket_time_goal',
+    lever_group_order: 4003,
+    max_value: null,
+    min_value: 0,
+    options: null,
+    title: 'AMA Hearings Docket Time Goals',
+    unit: 'days',
+    updated_at: '2024-01-24T11:52:10.216-05:00',
+    value: '365',
+    backendValue: '365'
+  },
+  {
+    id: 20,
+    algorithms_used: [
+      'proportion'
+    ],
+    control_group: null,
+    created_at: '2024-01-24T11:52:10.228-05:00',
+    data_type: 'number',
+    description: null,
+    is_disabled_in_ui: true,
+    is_toggle_active: false,
+    item: 'ama_evidence_submission_docket_time_goals',
+    lever_group: 'docket_time_goal',
+    lever_group_order: 4005,
+    max_value: null,
+    min_value: 0,
+    options: null,
+    title: 'AMA Evidence Submission Docket Time Goals',
+    unit: 'days',
+    updated_at: '2024-01-24T11:52:10.228-05:00',
+    value: '123',
+    backendValue: '123'
+  },
+  {
+    id: 19,
+    algorithms_used: [
+      'proportion'
+    ],
+    control_group: null,
+    created_at: '2024-01-24T11:52:10.222-05:00',
+    data_type: 'number',
+    description: null,
+    is_disabled_in_ui: false,
+    is_toggle_active: true,
+    item: 'ama_direct_review_docket_time_goals',
+    lever_group: 'docket_time_goal',
+    lever_group_order: 4004,
+    max_value: null,
+    min_value: 0,
+    options: null,
+    title: 'AMA Direct Review Docket Time Goals',
+    unit: 'days',
+    updated_at: '2024-01-25T23:30:33.484-05:00',
+    value: '50',
+    backendValue: '50'
+  }
+]

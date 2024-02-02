@@ -1,16 +1,41 @@
 import * as redux from 'redux';
 import React from 'react';
-import { render, waitFor } from '@testing-library/react';
+import leversReducer from 'app/caseDistribution/reducers/levers/leversReducer';
+import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
+import { render } from '@testing-library/react';
 import BatchSize from 'app/caseDistribution/components/BatchSize';
 import { Provider } from 'react-redux';
 import rootReducer from 'app/caseDistribution/reducers/root';
-import { testingBatchLevers,
-  testingBatchLeversUpdatedToSave,
+import {
+  testingBatchLevers,
   testingDocketDistributionPriorLevers,
-  testingAffinityDaysLevers } from '../../../../data/adminCaseDistributionLevers';
+  testingAffinityDaysLevers,
+  testingStaticLevers,
+  testingTimeGoalLevers
+} from '../../../../data/adminCaseDistributionLevers';
 import thunk from 'redux-thunk';
 import * as leverActions from 'app/caseDistribution/reducers/levers/leversActions';
 import ApiUtil from 'app/util/ApiUtil';
+
+jest.mock('app/caseDistribution/utils', () => ({
+  createUpdatedLeversWithValues: jest.fn(() => ({
+    static: testingStaticLevers,
+    batch: testingBatchLevers,
+    affinity: testingAffinityDaysLevers,
+    docket_distribution_prior: testingDocketDistributionPriorLevers,
+    docket_time_goal: testingTimeGoalLevers,
+  })),
+  leverErrorMessageExists: jest.fn(),
+  findOption: jest.fn(),
+  createCombinationValue: jest.fn(),
+  formatLeverHistory: jest.fn()
+}));
+
+jest.mock('app/caseDistribution/reducers/levers/LeversSelector', () => ({
+  ...jest.requireActual('app/caseDistribution/reducers/levers/LeversSelector'), // Keep other functions as they are
+  updateLeverGroup: jest.fn(),
+  createUpdatedRadioLever: jest.fn()
+}));
 
 describe('Lever reducer', () => {
 
@@ -21,12 +46,6 @@ describe('Lever reducer', () => {
 
   let leversLoadPayload = {
     batch: testingBatchLevers,
-    docket_distribution_prior: testingDocketDistributionPriorLevers,
-    affinity: testingAffinityDaysLevers
-  };
-
-  let leversSavePayload = {
-    batch: testingBatchLeversUpdatedToSave,
     docket_distribution_prior: testingDocketDistributionPriorLevers,
     affinity: testingAffinityDaysLevers
   };
@@ -225,5 +244,55 @@ describe('Lever reducer', () => {
     );
     expect(spyResetLevers).toBeCalled();
     expect(spyResetAPICall).toBeCalled();
+  });
+  it('should handle SAVE_LEVERS action', () => {
+    const initialState = {
+      // Define initialState here
+    };
+
+    const action = {
+      type: ACTIONS.SAVE_LEVERS,
+      payload: {
+        errors: ['error1', 'error2'] // Sample errors payload
+      }
+    };
+
+    const expectedState = {
+      ...initialState,
+      changesOccurred: false,
+      displayBanner: true,
+      errors: action.payload.errors
+    };
+
+    const newState = leversReducer(initialState, action);
+
+    expect(newState).toEqual(expectedState);
+  });
+
+  it('should handle REVERT_LEVERS action', () => {
+    const initialState = {
+      // Define initialState here
+      levers: {}, // Sample initial levers state
+      backendLevers: [{ item: 'item1' }, { item: 'item2' }], // Sample backendLevers state
+    };
+
+    const action = {
+      type: ACTIONS.REVERT_LEVERS,
+    };
+
+    const expectedState = {
+      ...initialState,
+      levers: {
+        static: testingStaticLevers,
+        batch: testingBatchLevers,
+        affinity: testingAffinityDaysLevers,
+        docket_distribution_prior: testingDocketDistributionPriorLevers,
+        docket_time_goal: testingTimeGoalLevers,
+      }
+    };
+
+    const newState = leversReducer(initialState, action);
+
+    expect(newState).toEqual(expectedState);
   });
 });
