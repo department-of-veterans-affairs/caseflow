@@ -35,7 +35,7 @@ class SeedDB
 
   # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def seed
-    RequestStore[:current_user] = User.system_user
+    RequestStore[:current_user]=User.system_user
     call_and_log_seed_step :clean_db
 
     call_and_log_seed_step Seeds::Annotations
