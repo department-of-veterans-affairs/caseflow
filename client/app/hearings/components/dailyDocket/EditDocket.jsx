@@ -112,6 +112,18 @@ export const EditDocket = (props) => {
     );
   };
 
+  const handleStartTimeChange = (value) => {
+    //Process the start time value to return the time without a timezone
+    const getAmTime = value.search('AM');
+    const splitTimeString = getAmTime < 0 ? value.search('PM') : getAmTime;
+    const selectedTime = splitTimeString === -1 ? value : value.slice(0,splitTimeString + 2).trim();
+
+    // Convert the value from '8:00 AM Eastern Time' to '8:00'
+    const finalValue = moment(selectedTime, 'h:mm a').format('HH:mm');
+
+    setFirstSlotTime(finalValue);
+  };
+
   const handleChange = (key) => (value) => {
     // If changing from Central to some other request type, regional office needs to be cleared for reselection
     if (key === 'requestType' && value?.value === HEARING_REQUEST_TYPES.central) {
@@ -218,7 +230,7 @@ export const EditDocket = (props) => {
                 label="Start Time of Slots"
                 enableZone
                 localZone="America/New_York"
-                onChange={setFirstSlotTime}
+                onChange={handleStartTimeChange}
                 value={firstSlotTime}
               />
               <div className="time-slot-preview-container">
@@ -226,7 +238,7 @@ export const EditDocket = (props) => {
                   {...props}
                   disableToggle
                   preview
-                  slotStartTime={`${props?.docket?.scheduledFor}T${firstSlotTime}:00-${zoneOffset}`}
+                  slotStartTime={`${props?.docket?.scheduledFor}T${firstSlotTime}:00${zoneOffset}`}
                   slotLength={fields?.slotLengthMinutes}
                   slotCount={numberOfSlots}
                   hearingDate={props?.docket?.scheduledFor}

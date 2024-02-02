@@ -220,10 +220,14 @@ class Hearing < CaseflowRecord
                           end
   end
 
+  # Returns timezone that the hearing is scheduled in
   def regional_office_timezone
     ro = regional_office
     hearing_day_timezone = ro.timezone.nil? ? CENTRAL_OFFICE_TIMEZONE : ro.timezone
 
+    # If there is not a scheduled_in_timezone value in the db,
+    # the timezone is calculated from the regional office associated with the hearing_day.
+    # Else the timezone is parsed from the db value
     if scheduled_in_timezone.nil?
       ro_timezone = hearing_day_timezone
     else
