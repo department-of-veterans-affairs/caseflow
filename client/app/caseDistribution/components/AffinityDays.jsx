@@ -7,6 +7,8 @@ import COPY from '../../../COPY';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import { getUserIsAcdAdmin, getLeversByGroup } from '../reducers/levers/leversSelector';
 import { Constant } from '../constants';
+import { dynamicallyAddAsterisk } from '../utils';
+
 
 const AffinityDays = () => {
   const theState = useSelector((state) => state);
@@ -127,8 +129,7 @@ const AffinityDays = () => {
           key={`${lever.item}-${index}`}
         >
           <div className="lever-left">
-            <strong>{lever.title}{lever.algorithms_used.includes(ACD_LEVERS.algorithms.proportion) &&
-                  lever.algorithms_used.includes(ACD_LEVERS.algorithms.docket)? '*' : ''}
+            <strong>{lever.title}{dynamicallyAddAsterisk(lever)}
             </strong>
             <p className="affinity-lever-text">{lever.description}</p>
           </div>

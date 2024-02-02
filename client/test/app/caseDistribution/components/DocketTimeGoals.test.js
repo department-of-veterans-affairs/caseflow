@@ -103,6 +103,7 @@ describe('Docket Time Goals Lever', () => {
   });
 
   it('dynamically renders * in the lever label', () => {
+    testDistPriorLever.algorithms_used = ["docket", "proportion"]
     testTimeGoalLever.algorithms_used = ["docket", "proportion"]
     let testTitle = sectionTitles[testDistPriorLever.item]
 

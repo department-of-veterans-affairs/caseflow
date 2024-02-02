@@ -8,7 +8,7 @@ import COPY from '../../../COPY';
 import { Constant, sectionTitles, docketTimeGoalPriorMappings } from '../constants';
 import { getLeversByGroup, getLeverErrors, getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
-import { validateLeverInput } from '../utils';
+import { validateLeverInput, dynamicallyAddAsterisk } from '../utils';
 
 const DocketTimeGoals = () => {
 
@@ -77,11 +77,7 @@ const DocketTimeGoals = () => {
   const renderDocketDistributionLever = (distributionPriorLever, index) => {
     let docketTimeGoalLever = docketTimeGoalLevers.find((lever) =>
       lever.item === docketTimeGoalPriorMappings[distributionPriorLever.item]);
-    const sectionTitle = sectionTitles[distributionPriorLever.item] + (
-        docketTimeGoalLever.algorithms_used.includes(ACD_LEVERS.algorithms.proportion) &&
-        docketTimeGoalLever.algorithms_used.includes(ACD_LEVERS.algorithms.docket)?
-        '*' : ''
-        )
+    const sectionTitle = sectionTitles[distributionPriorLever.item] + dynamicallyAddAsterisk(distributionPriorLever)
 
     if (isUserAcdAdmin) {
 

@@ -131,3 +131,8 @@ export const leverErrorMessageExists = (existingErrors, newErrors) => {
     )
   );
 };
+
+export const dynamicallyAddAsterisk = (lever) => {
+  return (lever.algorithms_used.includes(ACD_LEVERS.algorithms.proportion) &&
+    lever.algorithms_used.includes(ACD_LEVERS.algorithms.docket)? '*' : '')
+};
