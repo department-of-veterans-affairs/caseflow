@@ -77,11 +77,11 @@ export const NewLetter = (props) => {
 
   const [letterType, setLetterType] = useState('');
   const [letterTitle, setLetterTitle] = useState('');
-  const [letterTitleSelector, setLetterTitleSelector] = useState();
   const [letterSub, setLetterSub] = useState('');
-  const [letterSubSelector, setLetterSubSelector] = useState([]);
-  const [letterSubReason, setLetterSubReason] = useState('');
   const [subReason, setSubReason] = useState('');
+  const [letterTitleSelector, setLetterTitleSelector] = useState('');
+  const [letterSubSelector, setLetterSubSelector] = useState('');
+  const [letterSubReason, setLetterSubReason] = useState('');
   const [customResponseWindowState, setCustomResponseWindowState] = useState(false);
 
   const currentDate = moment.utc(new Date()).format('YYYY-MM-DD');
@@ -111,8 +111,7 @@ export const NewLetter = (props) => {
       setCustomResponseWindowState(true);
       setValueOptions(valueOptions);
     } else {
-      valueOptions[0].disabled = false;
-      setResponseWindows(radioOptions[0].value);
+      setResponseWindows(currentOpt);
       setCustomResponseWindowState(false);
       setValueOptions(valueOptions);
     }
@@ -126,9 +125,6 @@ export const NewLetter = (props) => {
       setResponseWindows(option.response_window_option_default);
     } else if (option.letter_titles[aux].letter_title === letterTitle) {
       setResponseWindows(option.letter_titles[aux].response_window_option_default);
-    }
-    if (responseWindows !== radioOptions[2].value) {
-      setCustomResponseWindowState(false);
     }
   };
 
@@ -163,24 +159,34 @@ export const NewLetter = (props) => {
     }
   };
 
-  const setRadioValue = () => {
-    for (let i = 0; i < valueOptions.length; i++) {
-      const option = valueOptions[i];
+  const findSubCategoryReason = (option) => {
+    for (let aux = 0; aux < option.letter_titles.length; aux++) {
+      if (option.letter_titles[aux].letter_title === letterTitle) {
+        findSub(option, aux);
+      } else {
+        selectResponseWindows(option, aux);
+      }
+    }
+  };
 
-      if (responseWindows === option.displayText) {
+  const activateWindowsOption = () => {
+    if (responseWindows.trim().length > 0) {
+      for (let i = 0; i < valueOptions.length; i++) {
+        const option = valueOptions[i];
+
         setStateOptions(false);
         option.disabled = false;
-        if (responseWindows === '65 days') {
-          valueOptions[2].disabled = false;
-          valueOptions[1].disabled = true;
-          break;
-        }
-      } else {
+      }
+      setValueOptions(valueOptions);
+    } else {
+      for (let i = 0; i < valueOptions.length; i++) {
+        const option = valueOptions[i];
+
         setStateOptions(true);
         option.disabled = true;
       }
+      setValueOptions(valueOptions);
     }
-    setValueOptions(valueOptions);
   };
 
   const letterTitlesData = () => {
@@ -192,28 +198,15 @@ export const NewLetter = (props) => {
           label: current.letter_title, value: current.letter_title
         })));
 
-        for (let aux = 0; aux < option.letter_titles.length; aux++) {
-          if (option.letter_titles[aux].letter_title === letterTitle) {
-            findSub(option, aux);
-          } else {
-            selectResponseWindows(option, aux);
-          }
+        if (letterTitle.length > 0) {
+          findSubCategoryReason(option);
         }
       }
     }
   };
 
   useEffect(() => {
-    setRadioValue();
-  }, [customResponseWindowState]);
-
-  useEffect(() => {
-    if (responseWindows.length > 0) {
-      if (responseWindows !== radioOptions[2].value) {
-        letterTitlesData();
-      }
-      setRadioValue();
-    }
+    activateWindowsOption();
   }, [responseWindows]);
 
   useEffect(() => {
@@ -224,27 +217,26 @@ export const NewLetter = (props) => {
 
   const changeLetterType = (val) => {
     setLetterTitle('');
+    setLetterSub('');
+    setSubReason('');
+    setResponseWindows('');
     setLetterType(val);
-    setValueOptions(radioOptions);
   };
 
   useEffect(() => {
     if (letterTitle.length > 0) {
       letterTitlesData();
+      if (responseWindows.length > 0) {
+        activateWindowsOption();
+      }
     }
   }, [letterTitle]);
 
   const changeLetterTitle = (val) => {
+    setLetterSub('');
+    setSubReason('');
     setLetterTitle(val);
-    setRadioValue();
-
   };
-
-  useEffect(() => {
-    if (letterSub.length > 0) {
-      letterTitlesData();
-    }
-  }, [letterSub]);
 
   const changeLetterSubTitle = (val) => {
     setLetterSub(val);
@@ -293,8 +285,8 @@ export const NewLetter = (props) => {
         label="Letter subcategory"
         placeholder="Select..."
         readOnly = {letterTitle.length === 0}
-        options={letterTitle.length && letterSubSelector}
-        value={letterSub.length}
+        options={letterSubSelector}
+        value={letterSub}
         onChange={(val) => changeLetterSubTitle(val.value)}
       />
       <br />
@@ -320,9 +312,6 @@ export const NewLetter = (props) => {
           label="Number of days (Value must be between 0 and 65)"
           name="content"
           useAriaLabel
-          // readOnly={props.isReadOnly}
-          // value={task.content}
-          // onChange={updateTaskContent}
         />
       }
       <br />
