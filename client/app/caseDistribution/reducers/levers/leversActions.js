@@ -118,24 +118,43 @@ export const saveLevers = (levers) =>
     };
 
     return ApiUtil.post('/case_distribution_levers/update_levers', { data: postData }).
-      then((resp) => resp.body).
       then((resp) => {
-        dispatch({
-          type: ACTIONS.LOAD_LEVERS,
-          payload: {
-            levers: resp.levers,
-          }
-        });
+        const response = (resp.body);
+
+        if (resp.body.status_code === 500) {
+          dispatch({
+            type: ACTIONS.SET_USER_IS_ACD_ADMIN,
+            payload: {
+              isUserAcdAdmin: response.user_is_an_acd_admin
+            }
+          });
+          throw new Error(response.message);
+        } else {
+          dispatch({
+            type: ACTIONS.LOAD_LEVERS,
+            payload: {
+              levers: response.levers,
+            }
+          });
+          dispatch({
+            type: ACTIONS.SAVE_LEVERS,
+            payload: {
+              errors: response.errors,
+            }
+          });
+          dispatch({
+            type: ACTIONS.LOAD_HISTORY,
+            payload: {
+              historyList: response.lever_history
+            }
+          });
+        }
+      }).
+      catch((error) => {
         dispatch({
           type: ACTIONS.SAVE_LEVERS,
           payload: {
-            errors: resp.errors,
-          }
-        });
-        dispatch({
-          type: ACTIONS.LOAD_HISTORY,
-          payload: {
-            historyList: resp.lever_history
+            errors: [error.message],
           }
         });
       });

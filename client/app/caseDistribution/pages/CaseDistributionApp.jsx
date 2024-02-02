@@ -21,10 +21,7 @@ class CaseDistributionApp extends React.PureComponent {
     return (
       <div>
         <div> {/* Wrapper*/}
-          <CaseDistributionContent
-            levers = {this.props.acd_levers}
-            leverStore={this.props.leverStore}
-          />
+          <CaseDistributionContent />
         </div>
       </div>
     );
@@ -33,14 +30,12 @@ class CaseDistributionApp extends React.PureComponent {
 }
 
 CaseDistributionApp.propTypes = {
-  acd_levers: PropTypes.object,
+  acdLeversForStore: PropTypes.object,
   acd_history: PropTypes.array,
   user_is_an_acd_admin: PropTypes.bool,
-  leverStore: PropTypes.any,
   loadLevers: PropTypes.func,
   loadHistory: PropTypes.func,
   setUserIsAcdAdmin: PropTypes.func,
-  acdLeversForStore: PropTypes.object
 };
 
 // eslint-disable-next-line no-unused-vars

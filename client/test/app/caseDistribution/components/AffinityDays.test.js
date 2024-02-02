@@ -129,4 +129,21 @@ describe('Affinity Days Lever', () => {
     waitFor(() => expect(logSpy).toHaveBeenCalledWith('not implemented'));
     waitFor(() => expect(inputField.prop('value').toBe(inputData.target.value)));
   });
+
+  it('dynamically renders * in the lever label', () => {
+    lever.algorithms_used = ["docket", "proportion"]
+
+    const store = getStore();
+
+    store.dispatch(loadLevers(leversWithTestingAffinityDaysLevers));
+    store.dispatch(setUserIsAcdAdmin(true));
+
+    let wrapper = mount(
+      <Provider store={store}>
+        <AffinityDays />
+      </Provider>
+    );
+
+    expect(wrapper.text()).toContain(lever.title + '*');
+  });
 });
