@@ -29,7 +29,8 @@ FactoryBot.define do
     created_by { adding_user }
     updated_by { adding_user }
     virtual_hearing { nil }
-    scheduled_in_timezone { "America/New_York" }
+
+    scheduled_in_timezone { regional_office_timezone }
 
     # this trait creates a realistic hearing task tree from a completed hearing, but if it needs to
     # be ready for distribution then the referring class must mark the transcription/evidence
@@ -47,7 +48,8 @@ FactoryBot.define do
         appeal.tasks.each { |task| task.update!(created_at: appeal.created_at, assigned_at: appeal.created_at) }
         create(:hearing_task_association,
                hearing: hearing,
-               hearing_task: hearing_task)
+               hearing_task: hearing_task,
+               hearing_task_id: hearing_task.id)
         appeal.tasks.find_by(type: :ScheduleHearingTask).completed!
         assign_hearing_disposition_task = create(:assign_hearing_disposition_task,
                                                  :completed,
