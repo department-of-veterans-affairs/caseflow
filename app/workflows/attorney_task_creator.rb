@@ -29,10 +29,9 @@ class AttorneyTaskCreator
 
   def tasks_from_specialty_case_team_assign_task
     # The judge assign task in this context is really a SpecialtyCaseTeamAssignTask
-    # TODO: Return an error if there is no assigned to id or something
     assigned_attorney = User.find(task_params[:assigned_to_id])
 
-    # TODO: this is trash
+    # Select a random judge from all of the attorney's judge teams
     attorney_judge = assigned_attorney.non_administered_judge_teams.map(&:organization).map(&:judge).sample
 
     judge_review_task = JudgeDecisionReviewTask.create!(

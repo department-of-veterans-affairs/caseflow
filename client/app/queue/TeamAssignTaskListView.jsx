@@ -138,7 +138,6 @@ const mapStateToProps = (state) => {
     taskSelector = camoAssignTasksSelector(state);
   }
 
-  // TODO: Not sure if I even need to do this since I might be hiding it from the page anyhow
   if (userIsSCTCoordinator) {
     taskSelector = specialtyCaseTeamAssignTasksSelector(state);
   }

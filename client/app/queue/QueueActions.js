@@ -500,61 +500,27 @@ export const initialSpecialtyCaseTeamAssignTasksToUser = ({
     }
   };
 
-  console.log('inside my new function for assigning sct tasks');
-  console.log(tasks);
-  console.log(amaTasks);
-  console.log(amaParams);
+  const { requestParams, url, taskIds } = amaParams;
 
-  // const paramsArray = amaParams.requestParams.data.tasks.length ? legacyParams.concat(amaParams) : legacyParams;
+  return ApiUtil.post(url, requestParams).
+    then((resp) => resp.body).
+    then((resp) => {
+      const receievedTasks = prepareAllTasksForStore(resp.tasks.data);
 
-  // TODO: fix this so you don't need to map anymore
-  return Promise.all([amaParams].map((params) => {
-    const { requestParams, url, taskIds } = params;
+      dispatch(onReceiveTasks(pick(receievedTasks, ['tasks', 'amaTasks'])));
 
-    console.log('should be making a post request to this url');
-    console.log(url);
+      dispatch(incrementTaskCountForAttorney({
+        id: assigneeId
+      }));
 
-    return ApiUtil.post(url, requestParams).
-      then((resp) => resp.body).
-      then((resp) => {
-        const receievedTasks = prepareAllTasksForStore(resp.tasks.data);
-
-        // const taskIds = tasks.map((task) => task.uniqueId);
-        console.log('ama tasks and then received tasks');
-        console.log(amaTasks);
-        console.log(receievedTasks);
-
-        dispatch(onReceiveTasks(pick(receievedTasks, ['tasks', 'amaTasks'])));
-
-        // taskIds.forEach((taskId) => {
-        //   dispatch(setSelectionOfTaskOfUser({
-        //     userId: previousAssigneeId,
-        //     selected: false,
-        //     taskId
-        //   }));
-        // });
-
-        // TODO: See if I still need this?
-        dispatch(incrementTaskCountForAttorney({
-          id: assigneeId
+      taskIds.forEach((taskId) => {
+        dispatch(setSelectionOfTaskOfUser({
+          userId: previousAssigneeId,
+          selected: false,
+          taskId
         }));
-
-        // dispatchOldTasks(dispatch, requestParams.data.tasks, resp);
-
-        taskIds.forEach((taskId) => {
-          dispatch(setSelectionOfTaskOfUser({
-            userId: previousAssigneeId,
-            selected: false,
-            taskId
-          }));
-        });
-
-        //   dispatch(incrementTaskCountForAttorney({
-        //     id: assigneeId
-        //   }));
-        // });
       });
-  }));
+    });
 };
 
 export const initialAssignTasksToUser = ({
@@ -825,7 +791,6 @@ export const fetchAmaTasksOfUser = (userId, userRole, type = null) => (dispatch)
     });
 };
 
-// TODO: This is what sets the CAMO tasks and camo org
 export const fetchCamoTasks = (userId) => (dispatch) => {
   const url = '/organizations/vha-camo/tasks';
 
@@ -846,15 +811,11 @@ export const fetchCamoTasks = (userId) => (dispatch) => {
     });
 };
 
-// TODO: This is gross
 export const fetchSpecialtyCaseTeamTasks = (userId) => (dispatch) => {
   const url = '/organizations/specialty-case-team/tasks';
 
-  console.log(url);
-
   return ApiUtil.get(url).
     then((resp) => {
-      console.log(resp);
       dispatch(setActiveOrganization(resp.body.id,
         resp.body.type,
         resp.body.organization_name,

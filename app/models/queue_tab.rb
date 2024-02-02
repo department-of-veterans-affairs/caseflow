@@ -79,8 +79,8 @@ class QueueTab
     false
   end
 
-  # TODO: I don't like this method name since hide_from_queue_table_view is used in a lot of places and it
-  # generally means hide from all queue table views. My usage is only going to affect QueueTableBuilder though
+  # Used to hide a specific tab from some pages in the App.
+  # The primary queue pages will not display a tab with this set to true
   def hide_from_queue_table_view
     false
   end

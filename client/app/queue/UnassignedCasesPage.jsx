@@ -82,7 +82,6 @@ class UnassignedCasesPage extends React.PureComponent {
         <React.Fragment>
           <div {...assignAndRequestStyling}>
             {assignWidget}
-            {/* TODO: This is so gross that we are relying on this employee check everywhere */}
             {!userIsCamoEmployee && !userIsSCTCoordinator && <RequestDistributionButton userId={userId} />}
           </div>
           {this.props.distributionCompleteCasesLoading &&
@@ -103,7 +102,6 @@ class UnassignedCasesPage extends React.PureComponent {
               includeDocketNumber
               includeIssueCount
               {...((userIsCamoEmployee || userIsSCTCoordinator) ? { includeIssueTypes: true } : {})}
-              // includeDaysWaiting
               {...((userIsSCTCoordinator) ? { includeDaysWaiting: false } : { includeDaysWaiting: true })}
               includeReaderLink
               includeNewDocsIcon
@@ -140,14 +138,9 @@ const mapStateToProps = (state, ownProps) => {
     taskSelector = camoAssignTasksSelector(state);
   }
 
-  // TODO: Figure out a better way to do this so it doesn't have to be hard coded. Also if a user if any of these things
-  // It will override a different one.
-  // See if we can make it based on activeOrganization somehow
   if (userIsSCTCoordinator) {
     taskSelector = specialtyCaseTeamAssignTasksSelector(state);
   }
-
-  // TODO: queue config that is coming in to redux is also Vha Camo. It is the unassigned tab
 
   return {
     tasks: taskSelector,

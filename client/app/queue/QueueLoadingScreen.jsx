@@ -34,19 +34,11 @@ class QueueLoadingScreen extends React.PureComponent {
 
     this.props.setUserId(userId);
 
-    console.log('in queue loading screen');
-    console.log(userIsSCTCoordinator);
-    console.log(userRole);
-    console.log(type);
-
-    // TODO: Hmm this is gross as well. I think this is what is fetching the camo tasks
     if (userIsCamoEmployee && type === 'assign') {
       return this.props.fetchCamoTasks(chosenUserId, userRole, type);
     }
 
     if (userIsSCTCoordinator && type === 'assign') {
-      console.log('I should be trying to fetch specialtyCaseTeamTasks');
-
       return this.props.fetchSpecialtyCaseTeamTasks(chosenUserId, userRole, type);
     }
 

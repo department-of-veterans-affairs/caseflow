@@ -115,12 +115,11 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :label do |object, params|
-    columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name, Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name]
 
-    # if serialize_attribute?(params, columns)
-    #   object.label
-    # end
-    object.label
+    if serialize_attribute?(params, columns)
+      object.label
+    end
   end
 
   attribute :placed_on_hold_at do |object, params|
@@ -171,7 +170,8 @@ class WorkQueue::TaskColumnSerializer
 
   attribute :assigned_to do |object, params|
     columns = [
-      Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name
+      Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name,
+      Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name
     ]
     assignee = object.assigned_to
 
@@ -184,13 +184,7 @@ class WorkQueue::TaskColumnSerializer
         id: assignee.id
       }
     else
-      {
-        css_id: assignee.try(:css_id),
-        is_organization: assignee.is_a?(Organization),
-        name: assignee.is_a?(Organization) ? assignee.name : assignee.css_id,
-        type: assignee.class.name,
-        id: assignee.id
-      }
+      {}
     end
   end
 
@@ -346,6 +340,8 @@ class WorkQueue::TaskColumnSerializer
     end
   end
 
+  attribute :appeal_type
+
   # UNUSED
 
   attribute :assignee_name do
@@ -371,12 +367,6 @@ class WorkQueue::TaskColumnSerializer
   attribute :closed_at do
     nil
   end
-
-  # attribute :appeal_type do
-  #   nil
-  # end
-
-  attribute :appeal_type
 
   attribute :timeline_title do
     nil

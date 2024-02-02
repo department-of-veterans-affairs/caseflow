@@ -331,9 +331,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     administered_teams.select { |team| team.is_a?(JudgeTeam) }
   end
 
-  # TODO: There has to be better way than this. This gets all judge teams?
-  # You can already get the orgs the user is a part of though. YOU don't need a subquery for all judge teams.
-  # It might be pretty fast though so probably not worth optimizing
   def non_administered_judge_teams
     organizations_users.non_admin.where(organization: JudgeTeam.all)
   end
@@ -359,6 +356,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     self.class.user_repository.user_info_for_idt(css_id)
   end
 
+  # rubocop:disable Metrics/MethodLength
   def selectable_organizations
     orgs = organizations.select(&:selectable_in_queue?)
     judge_team_judges = judge? ? [self] : []
@@ -371,7 +369,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       }
     end
 
-    # Shouldn't this be admin??
+    # TODO: Shouldn't this be admin??
     if camo_employee?
       orgs << {
         name: "Assign VHA CAMO",
@@ -379,8 +377,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       }
     end
 
-    # TODO: Gross
-    # This should maybe be admin as well?
+    # TODO: should maybe be admin as well?
     if specialty_case_team_coordinator?
       orgs << {
         name: "Assign SCT Appeals",
@@ -390,6 +387,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
     orgs
   end
+  # rubocop:enable Metrics/MethodLength
 
   def member_of_organization?(org)
     organizations.include?(org)
