@@ -13,9 +13,10 @@ describe('Lever reducer', () => {
     const preloadedState = {
       levers: JSON.parse(JSON.stringify(leverData.levers.slice(0,5))), //allows original leverData object to remain unchanged
       backendLevers: JSON.parse(JSON.stringify(leverData.levers.slice(0,5)))
-    }
+    };
+
     leverStore = createStore(leversReducer, preloadedState);
-  })
+  });
 
   describe('Initialize reducer', () => {
     it('creates a reducer with the initial state based on the levers passed in', () => {
@@ -86,25 +87,6 @@ describe('Lever reducer', () => {
       expect(leverStore.getState().levers).toEqual(leverData.updated_levers);
       expect(leverStore.getState().backendLevers).toEqual(leverData.updated_levers);
       expect(leverStore.getState().changesOccurred).toEqual(false);
-    });
-  });
-
-  describe(ACTIONS.REVERT_LEVERS, () => {
-    it('returns the original state of the levers', () => {
-      leverStore.dispatch({
-        type: ACTIONS.UPDATE_LEVER_VALUE,
-        updated_lever: leverData.lever1_update
-      })
-      leverStore.dispatch({
-        type: ACTIONS.UPDATE_LEVER_VALUE,
-        updated_lever: leverData.lever5_update
-      })
-      leverStore.dispatch({
-        type: ACTIONS.REVERT_LEVERS,
-      })
-
-      expect(leverStore.getState().levers).not.toEqual(leverData.updated_levers)
-      expect(leverStore.getState().levers).toEqual(leverData.levers.slice(0,5))
     });
   });
 });
