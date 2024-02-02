@@ -4,7 +4,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { css } from 'glamor';
 import { sprintf } from 'sprintf-js';
-
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 
 import ApiUtil from '../util/ApiUtil';
@@ -18,37 +17,44 @@ import LoadingDataDisplay from '../components/LoadingDataDisplay';
 import MembershipRequestTable from './MembershipRequestTable';
 import SelectConferenceTypeRadioField from './SelectConferenceTypeRadioField';
 
-const userStyle = css({
-  margin: '.5rem 0 .5rem',
-  padding: '.5rem 0 .5rem',
-  listStyle: 'none'
+const addDropdownStyle = css({
+  padding: '3rem 0 4rem'
 });
-const topUserStyle = css({
-  borderTop: '.1rem solid gray',
-  margin: '.5rem 0 .5rem',
-  padding: '1rem 0 .5rem',
-  listStyle: 'none'
+
+const instructionListStyle = css({
+  listStyle: 'none',
+  margin: '0 0 0 3rem',
+  padding: '1.5rem 0 2rem 0',
+  fontSize: '19px',
+  borderBottom: '.1rem solid black',
 });
-const topUserBorder = css({
-  borderBottom: '.1rem solid gray',
+
+const userListStyle = css({
+  margin: '0'
 });
-const buttonStyle = css({
-  paddingRight: '1rem',
-  display: 'inline-block'
-});
-const buttonContainerStyle = css({
-  borderBottom: '1rem solid gray',
-  borderWidth: '1px',
-  padding: '.5rem 7rem 2rem 0',
+
+const userListItemStyle = css({
   display: 'flex',
-  justifyContent: 'space-between',
-  flexWrap: 'wrap'
+  flexWrap: 'wrap',
+  borderTop: '.1rem solid black',
+  padding: '4rem 0 2rem',
+  margin: '0',
+  ':first-child': {
+    borderTop: 'none',
+  }
 });
-const listStyle = css({
-  listStyle: 'none'
+
+const titleButtonsStyle = css({
+  width: '60rem'
 });
-const radioContainerStyle = css({
-  padding: '-5rem 5rem 2rem 2rem',
+
+const radioButtonsStyle = css({
+  paddingBottom: '2rem'
+});
+
+const buttonStyle = css({
+  padding: '1rem 2.5rem 2rem 0',
+  display: 'inline-block'
 });
 
 export default class OrganizationUsers extends React.PureComponent {
@@ -250,89 +256,84 @@ export default class OrganizationUsers extends React.PureComponent {
   mainContent = () => {
     const judgeTeam = this.state.judgeTeam;
     const dvcTeam = this.state.dvcTeam;
-    const listOfUsers = this.state.organizationUsers.map((user, i) => {
+    const listOfUsers = this.state.organizationUsers.map((user) => {
       const { dvc, admin } = user.attributes;
-      const style = i === 0 ? topUserStyle : userStyle;
       const { conferenceSelectionVisibility } = this.props;
+      let altLabel = '';
+
+      if (judgeTeam && admin) {
+        altLabel = COPY.USER_MANAGEMENT_JUDGE_LABEL;
+      }
+      if (dvcTeam && dvc) {
+        altLabel = COPY.USER_MANAGEMENT_DVC_LABEL;
+      }
+      if (judgeTeam && !admin) {
+        altLabel = COPY.USER_MANAGEMENT_ATTORNEY_LABEL;
+      }
+      if ((judgeTeam || dvcTeam) && admin) {
+        altLabel = COPY.USER_MANAGEMENT_ADMIN_LABEL;
+      }
 
       return (
-        <React.Fragment key={user.id}>
-          <div>
-            <ul>
-              <li key={user.id} {...style}>
-                {this.formatName(user)}
-                {judgeTeam && admin && (
-                  <strong> ( {COPY.USER_MANAGEMENT_JUDGE_LABEL} )</strong>
-                )}
-                {dvcTeam && dvc && (
-                  <strong> ( {COPY.USER_MANAGEMENT_DVC_LABEL} )</strong>
-                )}
-                {judgeTeam && !admin && (
-                  <strong> ( {COPY.USER_MANAGEMENT_ATTORNEY_LABEL} )</strong>
-                )}
-                {(judgeTeam || dvcTeam) && admin && (
-                  <strong> ( {COPY.USER_MANAGEMENT_ADMIN_LABEL} )</strong>
-                )}
-              </li>
-              {(judgeTeam || dvcTeam) && admin ? (
-                <div {...topUserBorder} />
-              ) : (
-                <div {...buttonContainerStyle}>
-                  <div>
-                    {judgeTeam || dvcTeam ? '' : this.adminButton(user, admin)}
-                    {this.removeUserButton(user)}
-                  </div>
-                  {this.state.organizationName === 'Hearings Management' &&
+        <React.Fragment>
+          <li key={user.id} {...userListItemStyle}>
+            <div {...titleButtonsStyle}>
+              {this.formatName(user)}
+              {altLabel !== '' && (<div><strong>( {altLabel} )</strong></div>)}
+              <div>
+                {judgeTeam || dvcTeam ? '' : this.adminButton(user, admin)}
+                {this.removeUserButton(user)}
+              </div>
+            </div>
+            <div {...radioButtonsStyle}>
+              {this.state.organizationName === 'Hearings Management' &&
                     conferenceSelectionVisibility && (
-                    <div {...radioContainerStyle}>
-                      <SelectConferenceTypeRadioField
-                        key={`${user.id}-conference-selection`}
-                        name={user.id}
-                        conferenceProvider={
-                          user.attributes.conference_provider
-                        }
-                        organization={this.props.organization}
-                        user={user}
-                      />
-                    </div>
-                  )}
+                <div>
+                  <SelectConferenceTypeRadioField
+                    key={`${user.id}-conference-selection`}
+                    name={user.id}
+                    conferenceProvider={
+                      user.attributes.conference_provider
+                    }
+                    organization={this.props.organization}
+                    user={user}
+                  />
                 </div>
               )}
-            </ul>
-          </div>
+            </div>
+          </li>
         </React.Fragment>
       );
     });
 
     return <React.Fragment>
       <h2>{COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_LABEL}</h2>
-      <SearchableDropdown
-        name={COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_NAME}
-        hideLabel
-        searchable
-        clearOnSelect
-        readOnly={Boolean(this.state.addingUser)}
-        placeholder={
-          this.state.addingUser ?
+      <div {...addDropdownStyle}>
+        <SearchableDropdown
+          name={COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_NAME}
+          hideLabel
+          searchable
+          clearOnSelect
+          readOnly={Boolean(this.state.addingUser)}
+          placeholder={
+            this.state.addingUser ?
             `${COPY.USER_MANAGEMENT_ADD_USER_LOADING_MESSAGE} ${this.formatName(this.state.addingUser)}` :
-            COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT
-        }
-        noResultsText={COPY.TEAM_MANAGEMENT_DROPDOWN_LABEL}
-        value={null}
-        onChange={this.addUser}
-        async={this.asyncLoadUser} />
-      <br />
+              COPY.USER_MANAGEMENT_ADD_USER_TO_ORG_DROPDOWN_TEXT
+          }
+          noResultsText={COPY.TEAM_MANAGEMENT_DROPDOWN_LABEL}
+          value={null}
+          onChange={this.addUser}
+          async={this.asyncLoadUser} />
+      </div>
       <div>
-        <div>
-          <h2>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h2>
-          <ul {...listStyle}>
-            { (judgeTeam || dvcTeam) ? '' : <ul><li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li></ul> }
-            <ul><li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{ judgeTeam ?
-              COPY.USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION :
-              COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION }</li></ul>
-          </ul>
-        </div>
-        <ul>{listOfUsers}</ul>
+        <h3>{COPY.USER_MANAGEMENT_EDIT_USER_IN_ORG_LABEL}</h3>
+        <ul {...instructionListStyle}>
+          { (judgeTeam || dvcTeam) ? '' : <li><strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_HEADING}</strong>{COPY.USER_MANAGEMENT_ADMIN_RIGHTS_DESCRIPTION}</li> }
+          <li><strong>{COPY.USER_MANAGEMENT_REMOVE_USER_HEADING}</strong>{ judgeTeam ?
+            COPY.USER_MANAGEMENT_JUDGE_TEAM_REMOVE_USER_DESCRIPTION :
+            COPY.USER_MANAGEMENT_REMOVE_USER_DESCRIPTION }</li>
+        </ul>
+        <ul {...userListStyle}>{listOfUsers}</ul>
       </div>
     </React.Fragment>;
   }
