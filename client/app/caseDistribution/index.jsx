@@ -137,10 +137,8 @@ class CaseDistribution extends React.PureComponent {
                         return (
                           <CaseDistributionApp
                             acdLeversForStore={this.props.acdLeversForStore}
-                            acd_levers={leversList}
                             acd_history={this.props.acd_history}
                             user_is_an_acd_admin = {this.props.user_is_an_acd_admin}
-                            leverStore={leverStore}
                           />
                         );
                       }}
