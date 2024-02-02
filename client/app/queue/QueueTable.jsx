@@ -13,7 +13,7 @@ import Pagination from '../components/Pagination/Pagination';
 import { COLORS, LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import LoadingScreen from '../components/LoadingScreen';
-import { tasksWithAppealsFromRawTasks } from './utils';
+import { tasksWithAppealsFromRawTasks, tasksWithCorrespondenceFromRawTasks } from './utils';
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 import COPY from '../../COPY';
 
@@ -638,7 +638,9 @@ export default class QueueTable extends React.PureComponent {
           tasks: { data: tasks }
         } = response.body;
 
-        const preparedTasks = tasksWithAppealsFromRawTasks(tasks);
+        const preparedTasks = this.props.isCorrespondenceTable ?
+          tasksWithCorrespondenceFromRawTasks(tasks) :
+          tasksWithAppealsFromRawTasks(tasks);
 
         const preparedResponse = Object.assign(response.body, { tasks: preparedTasks });
 
@@ -843,6 +845,7 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   }),
   onHistoryUpdate: PropTypes.func,
   preserveFilter: PropTypes.bool,
+  isCorrespondenceTable: PropTypes.bool,
 };
 
 Row.propTypes.rowObjects = PropTypes.arrayOf(PropTypes.object);
