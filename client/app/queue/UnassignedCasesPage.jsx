@@ -104,10 +104,6 @@ class UnassignedCasesPage extends React.PureComponent {
               includeDocketNumber
               includeIssueCount
               {...((userIsCamoEmployee || userIsSCTCoordinator) ? { includeIssueTypes: true } : {})}
-<<<<<<< HEAD
-=======
-              // includeDaysWaiting
->>>>>>> dfe9fd4e30 (Added in the specialty case team queue tabs from APPEALS-35193 to preemptively test how it would intefere with bulk assign. Added the unassigned queue tab and a method to hide it from the queue via in order to give the SCT bulk assign page a tab that it could use as the basis for the page. Added a few more code comments and removed some old unused code.)
               {...((userIsSCTCoordinator) ? { includeDaysWaiting: false } : { includeDaysWaiting: true })}
               includeReaderLink
               includeNewDocsIcon
