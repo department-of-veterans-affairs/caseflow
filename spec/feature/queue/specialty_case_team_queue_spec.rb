@@ -20,10 +20,10 @@ feature "SpecialtyCaseTeamQueue", :all_dbs do
     let(:num_completed_rows) { 9 }
 
     let!(:sct_action_required_tasks) do
-      create_list(:sct_assign_task, num_action_required_rows, :on_hold, assigned_to: sct_org)
+      create_list(:sct_assign_task, num_action_required_rows, :on_hold)
     end
     let!(:sct_completed_tasks) do
-      create_list(:sct_assign_task, num_completed_rows, :completed, assigned_to: sct_org)
+      create_list(:sct_assign_task, num_completed_rows, :completed)
     end
 
     let!(:action_required_issues) do
