@@ -127,7 +127,9 @@ const AffinityDays = () => {
           key={`${lever.item}-${index}`}
         >
           <div className="lever-left">
-            <strong>{lever.title}</strong>
+            <strong>{lever.title}{lever.algorithms_used.includes(ACD_LEVERS.algorithms.proportion) &&
+                  lever.algorithms_used.includes(ACD_LEVERS.algorithms.docket)? '*' : ''}
+            </strong>
             <p className="affinity-lever-text">{lever.description}</p>
           </div>
           <div id={lever.item}

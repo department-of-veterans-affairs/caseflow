@@ -58,7 +58,8 @@ const BatchSize = () => {
         <div className="active-lever" key={`${lever.item}-${index}`}>
           <div className="lever-left">
             <strong className={lever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}>
-              {lever.title}
+              {lever.title}{lever.algorithms_used.includes(ACD_LEVERS.algorithms.proportion) &&
+                  lever.algorithms_used.includes(ACD_LEVERS.algorithms.docket)? '*' : ''}
             </strong>
             <p className={lever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}>
               {lever.description}

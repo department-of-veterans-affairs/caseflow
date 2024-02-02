@@ -11,6 +11,7 @@ import {
 } from '../../../data/adminCaseDistributionLevers';
 import { loadLevers, setUserIsAcdAdmin } from 'app/caseDistribution/reducers/levers/leversActions';
 import { mount } from 'enzyme';
+import { sectionTitles } from '../../../../app/caseDistribution/constants';
 
 describe('Docket Time Goals Lever', () => {
 
@@ -99,5 +100,22 @@ describe('Docket Time Goals Lever', () => {
 
     waitFor(() => expect(inputField.prop('value').toBe(eventForValid.target.value)));
     waitFor(() => expect(inputField.prop('errorMessage').toBe('')));
+  });
+
+  it('dynamically renders * in the lever label', () => {
+    testTimeGoalLever.algorithms_used = ["docket", "proportion"]
+    let testTitle = sectionTitles[testDistPriorLever.item]
+
+    const store = getStore();
+
+    store.dispatch(loadLevers(levers));
+    store.dispatch(setUserIsAcdAdmin(true));
+
+    const wrapper = mount(
+      <Provider store={store}>
+        <DocketTimeGoals />
+      </Provider>);
+
+    expect(wrapper.text()).toContain(testTitle + '*');
   });
 });

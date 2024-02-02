@@ -77,12 +77,15 @@ const DocketTimeGoals = () => {
   const renderDocketDistributionLever = (distributionPriorLever, index) => {
     let docketTimeGoalLever = docketTimeGoalLevers.find((lever) =>
       lever.item === docketTimeGoalPriorMappings[distributionPriorLever.item]);
-    const sectionTitle = sectionTitles[distributionPriorLever.item];
+    const sectionTitle = sectionTitles[distributionPriorLever.item] + (
+        docketTimeGoalLever.algorithms_used.includes(ACD_LEVERS.algorithms.proportion) &&
+        docketTimeGoalLever.algorithms_used.includes(ACD_LEVERS.algorithms.docket)?
+        '*' : ''
+        )
 
     if (isUserAcdAdmin) {
 
       return (
-
         <div id={`${docketTimeGoalLever.item}-lever`}
           className={cx('active-lever')}
           key={`${distributionPriorLever.item}-${index}`}
