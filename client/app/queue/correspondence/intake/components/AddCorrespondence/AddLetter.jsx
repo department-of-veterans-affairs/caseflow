@@ -69,7 +69,6 @@ AddLetter.propTypes = {
   removeLetter: PropTypes.func,
   index: PropTypes.number,
   onContinueStatusChange: PropTypes.func,
-  customResponseWindowState: PropTypes.bool,
 };
 
 export const NewLetter = (props) => {
@@ -82,6 +81,7 @@ export const NewLetter = (props) => {
   const [letterTitleSelector, setLetterTitleSelector] = useState('');
   const [letterSubSelector, setLetterSubSelector] = useState('');
   const [letterSubReason, setLetterSubReason] = useState('');
+  const [numberOfDays, setNumberOfDays] = useState();
   const [customResponseWindowState, setCustomResponseWindowState] = useState(false);
 
   const currentDate = moment.utc(new Date()).format('YYYY-MM-DD');
@@ -104,6 +104,12 @@ export const NewLetter = (props) => {
   ];
 
   const [valueOptions, setValueOptions] = useState(radioOptions);
+
+  const handleDays = (value) => {
+    if ((value > 0) && (value <= 65)) {
+      setNumberOfDays(value);
+    }
+  };
 
   const handleCustomWindowState = (currentOpt) => {
     if (currentOpt === radioOptions[2].value) {
@@ -312,6 +318,8 @@ export const NewLetter = (props) => {
           label="Number of days (Value must be between 0 and 65)"
           name="content"
           useAriaLabel
+          onChange={handleDays}
+          value={numberOfDays}
         />
       }
       <br />
