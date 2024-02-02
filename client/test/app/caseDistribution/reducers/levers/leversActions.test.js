@@ -1,7 +1,7 @@
 import * as actions from 'app/caseDistribution/reducers/levers/leversActions';
 import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
 import ApiUtil from 'app/util/ApiUtil';
-import { levers, historyList, formattedHistory, lever1_update, lever5_update, updated_levers } from '../../../../data/adminCaseDistributionLevers';
+import { levers, historyList } from '../../../../data/adminCaseDistributionLevers';
 
 // Mock ApiUtil
 jest.mock('app/util/ApiUtil', () => ({
