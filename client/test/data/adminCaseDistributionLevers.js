@@ -365,7 +365,7 @@ export const unknownDataTypeStaticLevers = [
   }
 ];
 
-export const testingdocketDistributionPriorLevers = [
+export const mockDocketDistributionPriorLevers = [
   {
     "item": "ama_hearings_start_distribution_prior_to_goals",
     "title": 'AMA Hearings Start Distribution Prior to Goals',
@@ -416,7 +416,7 @@ export const testingdocketDistributionPriorLevers = [
   }
 ]
 //Batch Lever with Higher Min value for testing errors 'out of bounds'
-export const testingBatchLevers = [
+export const mockBatchLevers = [
   {
     "item": 'test-lever',
     "title": 'Test Title Lever*',
@@ -482,58 +482,7 @@ export const testingBatchLeversUpdatedToSave = [
   },
 ];
 
-export const testingDocketDistributionPriorLevers = [
-  {
-    "item": 'ama_hearings_start_distribution_prior_to_goals',
-    "title": 'AMA Hearings Start Distribution Prior to Goals',
-    "description": '',
-    "data_type": 'combination',
-    "value": 770,
-    "unit": 'days',
-    "options": [
-      {
-        "item": 'value',
-        "data_type": 'boolean',
-        "value": true,
-        "text": 'This feature is turned on or off',
-        "unit": ''
-      }
-    ],
-    "is_toggle_active": false,
-    "is_disabled_in_ui": true,
-    "min_value": 0,
-    "max_value": 999,
-    "algorithms_used": ['proportion'],
-    "lever_group": 'docket_distribution_prior',
-    "lever_group_order": 4000
-  },
-  {
-    "item": 'ama_direct_review_start_distribution_prior_to_goals',
-    "title": 'AMA Direct Review Start Distribution Prior to Goals',
-    "description": '',
-    "data_type": 'combination',
-    "value": 365,
-    "unit": 'days',
-    "options": [
-      {
-        "item": 'value',
-        "data_type": 'boolean',
-        "value": true,
-        "text": 'This feature is turned on or off',
-        "unit": ''
-      }
-    ],
-    "is_toggle_active": true,
-    "is_disabled_in_ui": false,
-    "min_value": 0,
-    "max_value": 999,
-    "algorithms_used": ['proportion'],
-    "lever_group": 'docket_distribution_prior',
-    "lever_group_order": 4001
-  },
-];
-
-export const testingDocketTimeGoalsLevers = [
+export const mockDocketTimeGoalsLevers = [
   {
     "item": "ama_hearings_docket_time_goals",
     "title": 'AMA Hearings Docket Time Goals',
@@ -565,7 +514,7 @@ export const testingDocketTimeGoalsLevers = [
 ];
 
 //Affinity days Lever with Higher Min value for testing errors 'out of bounds'
-export const testingAffinityDaysLevers = [
+export const mockAffinityDaysLevers = [
   {
     "item":"ama_hearing_case_affinity_days",
     "title":"AMA Hearing Case Affinity Days",
@@ -642,7 +591,7 @@ export const testingAffinityDaysLevers = [
   }
 ];
 
-export const testingStaticLevers = [
+export const mockStaticLevers = [
   {
     id: 1,
     algorithms_used: [
@@ -737,74 +686,3 @@ export const testingStaticLevers = [
   }
 ]
 
-export const testingTimeGoalLevers = [
-  {
-    id: 18,
-    algorithms_used: [
-      'docket'
-    ],
-    control_group: null,
-    created_at: '2024-01-24T11:52:10.216-05:00',
-    data_type: 'number',
-    description: null,
-    is_disabled_in_ui: true,
-    is_toggle_active: false,
-    item: 'ama_hearings_docket_time_goals',
-    lever_group: 'docket_time_goal',
-    lever_group_order: 4003,
-    max_value: null,
-    min_value: 0,
-    options: null,
-    title: 'AMA Hearings Docket Time Goals',
-    unit: 'days',
-    updated_at: '2024-01-24T11:52:10.216-05:00',
-    value: '365',
-    backendValue: '365'
-  },
-  {
-    id: 20,
-    algorithms_used: [
-      'proportion'
-    ],
-    control_group: null,
-    created_at: '2024-01-24T11:52:10.228-05:00',
-    data_type: 'number',
-    description: null,
-    is_disabled_in_ui: true,
-    is_toggle_active: false,
-    item: 'ama_evidence_submission_docket_time_goals',
-    lever_group: 'docket_time_goal',
-    lever_group_order: 4005,
-    max_value: null,
-    min_value: 0,
-    options: null,
-    title: 'AMA Evidence Submission Docket Time Goals',
-    unit: 'days',
-    updated_at: '2024-01-24T11:52:10.228-05:00',
-    value: '123',
-    backendValue: '123'
-  },
-  {
-    id: 19,
-    algorithms_used: [
-      'proportion'
-    ],
-    control_group: null,
-    created_at: '2024-01-24T11:52:10.222-05:00',
-    data_type: 'number',
-    description: null,
-    is_disabled_in_ui: false,
-    is_toggle_active: true,
-    item: 'ama_direct_review_docket_time_goals',
-    lever_group: 'docket_time_goal',
-    lever_group_order: 4004,
-    max_value: null,
-    min_value: 0,
-    options: null,
-    title: 'AMA Direct Review Docket Time Goals',
-    unit: 'days',
-    updated_at: '2024-01-25T23:30:33.484-05:00',
-    value: '50',
-    backendValue: '50'
-  }
-]

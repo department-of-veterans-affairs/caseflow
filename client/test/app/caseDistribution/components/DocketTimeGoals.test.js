@@ -6,8 +6,8 @@ import { createStore, applyMiddleware } from 'redux';
 import rootReducer from 'app/caseDistribution/reducers/root';
 import thunk from 'redux-thunk';
 import {
-  testingDocketDistributionPriorLevers,
-  testingDocketTimeGoalsLevers
+  mockDocketDistributionPriorLevers,
+  mockDocketTimeGoalsLevers
 } from '../../../data/adminCaseDistributionLevers';
 import { loadLevers, setUserIsAcdAdmin } from 'app/caseDistribution/reducers/levers/leversActions';
 import { mount } from 'enzyme';
@@ -23,12 +23,12 @@ describe('Docket Time Goals Lever', () => {
   });
 
   let levers = {
-    docket_distribution_prior: testingDocketDistributionPriorLevers,
+    docket_distribution_prior: mockDocketDistributionPriorLevers,
 
-    docket_time_goal: testingDocketTimeGoalsLevers
+    docket_time_goal: mockDocketDistributionPriorLevers
   };
-  let testTimeGoalLever = testingDocketTimeGoalsLevers[0];
-  let testDistPriorLever = testingDocketDistributionPriorLevers[0];
+  let testTimeGoalLever = mockDocketDistributionPriorLevers[0];
+  let testDistPriorLever = mockDocketDistributionPriorLevers[0];
 
   it('renders Docket Time Goals Levers for Member Users', () => {
     const store = getStore();

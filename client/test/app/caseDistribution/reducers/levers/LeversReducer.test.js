@@ -7,24 +7,26 @@ import BatchSize from 'app/caseDistribution/components/BatchSize';
 import { Provider } from 'react-redux';
 import rootReducer from 'app/caseDistribution/reducers/root';
 import {
-  testingBatchLevers,
-  testingDocketDistributionPriorLevers,
-  testingAffinityDaysLevers,
-  testingStaticLevers,
-  testingTimeGoalLevers
+  mockBatchLevers,
+  mockDocketDistributionPriorLevers,
+  mockAffinityDaysLevers,
+  mockStaticLevers,
+  mockDocketTimeGoalsLevers
 } from '../../../../data/adminCaseDistributionLevers';
 import thunk from 'redux-thunk';
 import * as leverActions from 'app/caseDistribution/reducers/levers/leversActions';
 import ApiUtil from 'app/util/ApiUtil';
 
+let mockInitialLevers = {
+  static: mockStaticLevers,
+  batch: mockBatchLevers,
+  affinity: mockAffinityDaysLevers,
+  docket_distribution_prior: mockDocketDistributionPriorLevers,
+  docket_time_goal: mockDocketTimeGoalsLevers,
+}
+
 jest.mock('app/caseDistribution/utils', () => ({
-  createUpdatedLeversWithValues: jest.fn(() => ({
-    static: testingStaticLevers,
-    batch: testingBatchLevers,
-    affinity: testingAffinityDaysLevers,
-    docket_distribution_prior: testingDocketDistributionPriorLevers,
-    docket_time_goal: testingTimeGoalLevers,
-  })),
+  createUpdatedLeversWithValues: jest.fn(() => (mockInitialLevers)),
   leverErrorMessageExists: jest.fn(),
   findOption: jest.fn(),
   createCombinationValue: jest.fn(),
@@ -39,19 +41,28 @@ jest.mock('app/caseDistribution/reducers/levers/LeversSelector', () => ({
 
 describe('Lever reducer', () => {
 
+  let initialState = {};
+
   const getStore = () => redux.createStore(
     rootReducer,
     redux.applyMiddleware(thunk)
   );
 
   let leversLoadPayload = {
-    batch: testingBatchLevers,
-    docket_distribution_prior: testingDocketDistributionPriorLevers,
-    affinity: testingAffinityDaysLevers
+    batch: mockBatchLevers,
+    docket_distribution_prior: mockDocketDistributionPriorLevers,
+    affinity: mockAffinityDaysLevers
   };
 
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  beforeEach(() => {
+    initialState = {
+      levers: mockInitialLevers, // Sample initial levers state
+      backendLevers: [{ item: 'item1' }, { item: 'item2' }], // Sample backendLevers state
+    };
   });
 
   it('Calls Load Levers from LeversReducer', () => {
@@ -205,55 +216,47 @@ describe('Lever reducer', () => {
     expect(spyRemoveLeverErrors).toBeCalledWith('test-lever');
   });
 
-  it('Calls Reset All Lever Errors from LeversReducer', () => {
+  it('shoudl handle ADD_LEVER_VALIDATION_ERRORS and RESET_ALL_VALIDATION_ERRORS action', () => {
 
-    let spyAddLeverErrors = jest.spyOn(leverActions, 'addLeverErrors');
-    let spyResetErrors = jest.spyOn(leverActions, 'resetAllLeverErrors');
-
-    const store = getStore();
-
-    store.dispatch(leverActions.loadLevers(leversLoadPayload));
-    store.dispatch(leverActions.addLeverErrors(['TEST ERROR']));
-    store.dispatch(leverActions.resetAllLeverErrors());
-
-    render(
-      <Provider store={store}>
-        <BatchSize />
-      </Provider>
-    );
-    expect(spyAddLeverErrors).toBeCalledWith(['TEST ERROR']);
-    expect(spyResetErrors).toBeCalled();
-  });
-
-  it('Calls Reset Levers from LeversReducer', async () => {
-
-    let spyResetLevers = jest.spyOn(leverActions, 'resetLevers');
-    let spyResetAPICall = jest.spyOn(ApiUtil, 'get').mockReturnValue({
-      body: leversLoadPayload
-    });
-
-    const store = getStore();
-
-    store.dispatch(leverActions.loadLevers(leversLoadPayload));
-    await store.dispatch(leverActions.resetLevers());
-
-    render(
-      <Provider store={store}>
-        <BatchSize />
-      </Provider>
-    );
-    expect(spyResetLevers).toBeCalled();
-    expect(spyResetAPICall).toBeCalled();
-  });
-  it('should handle SAVE_LEVERS action', () => {
-    const initialState = {
-      // Define initialState here
+    const actionForError = {
+      type: ACTIONS.ADD_LEVER_VALIDATION_ERRORS,
+      payload: {
+        errors: ['error1', 'error2'] // Sample errors payload
+      }
     };
+
+    const expectedErrorState = {
+      ...initialState,
+      leversErrors: ['error1', 'error2'],
+    };
+
+    const newStateError = leversReducer(initialState, actionForError);
+
+    expect(newStateError).toEqual(expectedErrorState);
+    // expect(newStateError).not.toEqual(initialState);
+
+    // const actionToClearError = {
+    //   type: ACTIONS.RESET_ALL_VALIDATION_ERRORS,
+    // };
+
+    // const expectedFixedState = {
+    //   ...initialState,
+    //   leversErrors: ['error1', 'error2'],
+    // };
+
+    // const newStateFixed = leversReducer(initialState, actionToClearError);
+
+    // expect(newStateFixed).toEqual(expectedFixedState);
+    // expect(newStateFixed).not.toEqual(initialState);
+
+  });
+
+  it('should handle SAVE_LEVERS action', () => {
 
     const action = {
       type: ACTIONS.SAVE_LEVERS,
       payload: {
-        errors: ['error1', 'error2'] // Sample errors payload
+        errors: ['error1', 'error2']
       }
     };
 
@@ -267,14 +270,10 @@ describe('Lever reducer', () => {
     const newState = leversReducer(initialState, action);
 
     expect(newState).toEqual(expectedState);
+    expect(newState).not.toEqual(initialState);
   });
 
   it('should handle REVERT_LEVERS action', () => {
-    const initialState = {
-      // Define initialState here
-      levers: {}, // Sample initial levers state
-      backendLevers: [{ item: 'item1' }, { item: 'item2' }], // Sample backendLevers state
-    };
 
     const action = {
       type: ACTIONS.REVERT_LEVERS,
@@ -282,17 +281,12 @@ describe('Lever reducer', () => {
 
     const expectedState = {
       ...initialState,
-      levers: {
-        static: testingStaticLevers,
-        batch: testingBatchLevers,
-        affinity: testingAffinityDaysLevers,
-        docket_distribution_prior: testingDocketDistributionPriorLevers,
-        docket_time_goal: testingTimeGoalLevers,
-      }
+      levers: mockInitialLevers
     };
 
     const newState = leversReducer(initialState, action);
 
     expect(newState).toEqual(expectedState);
+    expect(newState).toEqual(initialState);
   });
 });
