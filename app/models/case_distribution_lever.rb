@@ -54,7 +54,7 @@ class CaseDistributionLever < ApplicationRecord
     when Constants.ACD_LEVERS.data_types.boolean
       validate_boolean_data_type
     when Constants.ACD_LEVERS.data_types.combination
-      validate_options
+      validate_combination_data_type
     end
   end
 
@@ -64,7 +64,6 @@ class CaseDistributionLever < ApplicationRecord
 
   def validate_options
     errors.add(:item, "is of #{data_type} and does not contain an options object") if options.nil?
-    errors.add(:item, "is of #{data_type} and does not contain a valid is_toggle_active value") if is_toggle_active.nil?
   end
 
   def validate_number_data_type
@@ -76,6 +75,11 @@ class CaseDistributionLever < ApplicationRecord
 
   def validate_boolean_data_type
       add_error_value_not_match_data_type if value&.match(/\A(t|true|f|false)\z/i).nil?
+  end
+
+  def validate_combination_data_type
+    errors.add(:item, "is of #{data_type} and does not contain a valid is_toggle_active value") if is_toggle_active.nil?
+    validate_options
   end
 
   # this matches what is displayed in frontend
