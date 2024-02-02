@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Metrics/ModuleLength
 module ByDocketDateDistribution
   extend ActiveSupport::Concern
   include CaseDistribution
@@ -50,6 +49,7 @@ module ByDocketDateDistribution
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
   def ama_statistics
     priority_counts = { count: priority_count }
     nonpriority_counts = { count: nonpriority_count }
@@ -89,6 +89,7 @@ module ByDocketDateDistribution
       settings: settings
     }
   end
+  # rubocop:enable Metrics/MethodLength
 
   def num_oldest_priority_appeals_for_judge_by_docket(distribution, num)
     return {} unless num > 0
