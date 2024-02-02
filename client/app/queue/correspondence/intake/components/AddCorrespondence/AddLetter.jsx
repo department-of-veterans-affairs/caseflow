@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-// import { connect } from 'react-redux';
-// import { bindActionCreators } from 'redux';
 import TextField from '../../../../../components/TextField';
 import Button from '../../../../../components/Button';
 import SearchableDropdown from 'app/components/SearchableDropdown';
@@ -9,10 +7,6 @@ import DateSelector from 'app/components/DateSelector';
 import RadioField from '../../../../../components/RadioField';
 import { ADD_CORRESPONDENCE_LETTER_SELECTIONS } from '../../../../constants';
 import moment from 'moment';
-
-// import {
-//   setResponseLetters
-// } from '../../../correspondenceReducer/correspondenceActions';
 
 export const AddLetter = (props) => {
   const onContinueStatusChange = props.onContinueStatusChange;
@@ -179,7 +173,6 @@ export const NewLetter = (props) => {
         if (responseWindows === '65 days') {
           valueOptions[2].disabled = false;
           valueOptions[1].disabled = true;
-          // setResponseWindows(radioOptions[0].value);
           break;
         }
       } else {
@@ -233,7 +226,6 @@ export const NewLetter = (props) => {
     setLetterTitle('');
     setLetterType(val);
     setValueOptions(radioOptions);
-    // resetResponseWindows();
   };
 
   useEffect(() => {
@@ -256,6 +248,10 @@ export const NewLetter = (props) => {
 
   const changeLetterSubTitle = (val) => {
     setLetterSub(val);
+  };
+
+  const changeSubReason = (val) => {
+    setSubReason(val);
   };
 
   return (
@@ -309,7 +305,7 @@ export const NewLetter = (props) => {
         readOnly = {letterSub.length === 0}
         options={letterSubReason}
         value={subReason}
-        // onChange={this.packageDocumentOnChange}
+        onChange={(val) => changeSubReason(val.value)}
       />
       <br />
       <RadioField
@@ -317,7 +313,6 @@ export const NewLetter = (props) => {
         options={valueOptions}
         value = {responseWindows}
         onChange={(val) => handleCustomWindowState(val)}
-        // optionsStyling={{ marginTop: 0 }}
       />
 
       { customResponseWindowState &&
