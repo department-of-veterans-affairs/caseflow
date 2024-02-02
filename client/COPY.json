@@ -464,6 +464,7 @@
   "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL": " Reassign tasks to a judge in the action dropdown",
   "ASSIGN_WIDGET_LOADING": "Loading...",
   "ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER": "Select a user",
+  "SCT_ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER": "Search or select",
   "VHA_ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER": "Select a Program Office",
   "ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY": "Assignee",
   "ASSIGN_WIDGET_DROPDOWN_NAME_SECONDARY": "Other assignee",

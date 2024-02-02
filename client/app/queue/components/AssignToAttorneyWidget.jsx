@@ -227,7 +227,8 @@ export class AssignToAttorneyWidget extends React.PureComponent {
     }
 
     if (optionsOther?.length) {
-      placeholderOther = COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER;
+      placeholderOther = hidePrimaryAssignDropdown ?
+        COPY.SCT_ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER : COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER;
       selectedOptionOther = optionsOther.find((option) => option.value === selectedAssigneeSecondary);
     }
 
