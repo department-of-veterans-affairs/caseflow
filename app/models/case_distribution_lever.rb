@@ -35,6 +35,14 @@ class CaseDistributionLever < ApplicationRecord
     end
   end
 
+  def history_value
+    if data_type == Constants.ACD_LEVERS.data_types.combination
+      combination_value
+    else
+      value
+    end
+  end
+
   private
 
   def value_matches_data_type
@@ -68,6 +76,13 @@ class CaseDistributionLever < ApplicationRecord
 
   def validate_boolean_data_type
       add_error_value_not_match_data_type if value&.match(/\A(t|true|f|false)\z/i).nil?
+  end
+
+  # this matches what is displayed in frontend
+  # see client/app/caseDistribution/components/SaveModal.jsx
+  def combination_value
+    toggle_string = is_toggle_active ? 'Active' : 'Inactive'
+    "#{toggle_string} - #{value}"
   end
 
   class << self
@@ -107,8 +122,8 @@ class CaseDistributionLever < ApplicationRecord
         entries.push ({
           user: current_user,
           case_distribution_lever: lever,
-          previous_value: previous_lever.value,
-          update_value: lever.value
+          previous_value: previous_lever.history_value,
+          update_value: lever.history_value
         })
       end
 
