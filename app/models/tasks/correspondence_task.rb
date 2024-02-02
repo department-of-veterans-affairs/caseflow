@@ -50,7 +50,6 @@ class CorrespondenceTask < Task
     "/under_construction"
   end
 
-
   private
 
   # rubocop:disable Metrics/CyclomaticComplexity
