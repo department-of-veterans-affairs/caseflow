@@ -21,23 +21,6 @@ describe QueueConfig, :postgres do
   describe ".new" do
     let(:arguments) { { assignee: assignee } }
 
-    let(:expected_tab_hash_keys) do
-      [
-        :label,
-        :name,
-        :description,
-        :columns,
-        :allow_bulk_assign,
-        :contains_legacy_tasks,
-        :tasks,
-        :task_page_count,
-        :total_task_count,
-        :task_page_endpoint_base_path,
-        :defaultSort,
-        :hide_from_queue_table_view
-      ]
-    end
-
     subject { QueueConfig.new(arguments) }
 
     context "when object is created with no arguments" do
