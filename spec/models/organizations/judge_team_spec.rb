@@ -192,14 +192,32 @@ describe JudgeTeam, :postgres do
     end
   end
 
-  describe "feature feature_name activated" do
-    before { FeatureToggle.enable!(:feature_toggle) }
-    after { FeatureToggle.disable!(:feature_toggle) }
+  describe ".judges_with_exclude_appeals_from_affinity" do
+    context "when there are no judge teams with exclude_appeals_from_affinity set to true" do
+      let(:judge) { create(:user) }
+      let(:user) { create(:user) }
+      let!(:judge_team) { create(:judge_team) }
+      before { populate_judge_team_for_testing(judge_team, judge, [create(:user), user]) }
 
-    describe ".judges_with_exclude_appeals_from_affinity" do
-      subject { JudgeTeam.judges_with_exclude_appeals_from_affinity }
+      it "returns nil as the default value for exclude_appeals_from_affinity is false" do
+        expect(JudgeTeam.judges_with_exclude_appeals_from_affinity).to eq([])
+        expect(judge_team.exclude_appeals_from_affinity).to be_falsey
+      end
+    end
 
-      it "returns the ids of judges with exclude_appeals_from_affinity flag" do
+    context "when there are judge teams with exclude_appeals_from_affinity set to true" do
+      let(:judge) { create(:user) }
+      let(:user) { create(:user) }
+      let!(:judge_team) { create(:judge_team) }
+      before do
+        populate_judge_team_for_testing(judge_team, judge, [create(:user), user])
+        judge_team.update!(exclude_appeals_from_affinity: true)
+      end
+
+      it "returns the admins judge id since their judge team is excluded from affinity" do
+        judge_team.reload
+        expect(JudgeTeam.judges_with_exclude_appeals_from_affinity).to eq([judge.id])
+        expect(judge_team.exclude_appeals_from_affinity).to be true
       end
     end
   end
