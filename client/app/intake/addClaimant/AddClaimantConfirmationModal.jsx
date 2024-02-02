@@ -70,7 +70,7 @@ export const AddClaimantConfirmationModal = ({
     },
   ];
 
-  const showPoa = poa && !isEmpty(poa);
+  const hasPoa = poa && !isEmpty(poa);
   const claimantEntity = useMemo(() => shapeAddressBlock(claimant), [claimant]);
   const poaEntity = useMemo(() => shapeAddressBlock(poa), [poa]);
   const isVhaBenefitType = benefitType === 'vha';
@@ -117,9 +117,9 @@ export const AddClaimantConfirmationModal = ({
           <strong>Claimant's POA</strong>
         </div>
         {shouldDisplayUnrecognizedBanner ? <div>{VHA_NO_RECOGNIZED_POA} </div> : null }
-        {(!showPoa && !isVhaBenefitType) ? <div>{ADD_CLAIMANT_CONFIRM_MODAL_NO_POA}</div> : null}
-        {(!showPoa && isVhaBenefitType) ? <div>{VHA_NO_POA}</div> : null}
-        {(showPoa && !shouldDisplayUnrecognizedBanner) ? <AddressBlock entity={poaEntity} /> : null }
+        {(!hasPoa && !isVhaBenefitType) ? <div>{ADD_CLAIMANT_CONFIRM_MODAL_NO_POA}</div> : null}
+        {(!hasPoa && isVhaBenefitType) ? <div>{VHA_NO_POA}</div> : null}
+        {(hasPoa && !shouldDisplayUnrecognizedBanner) ? <AddressBlock entity={poaEntity} /> : null }
       </section>
     </Modal>
   );

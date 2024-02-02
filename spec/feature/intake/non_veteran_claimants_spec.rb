@@ -640,7 +640,7 @@ feature "Non-veteran claimants", :postgres do
         expect(page).to have_content "Add Issue"
       end
 
-      it "should display No Know POA when child no VA form 21-22 is selected as a claimant" do
+      it "should display No Known POA when child no VA form 21-22 is selected as a claimant" do
         expect(page).to have_current_path("/intake/review_request")
         within_fieldset("Is the claimant someone other than the Veteran?") do
           find("label", text: "Yes", match: :prefer_exact).click
