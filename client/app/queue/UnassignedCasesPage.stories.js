@@ -113,11 +113,6 @@ const ReduxDecorator = (Story, options) => {
 
   state.ui.userCssId = 'TESTUSER';
 
-  // TODO: To make this work for sct I need new tasks data and new queue config data.
-  // I also need to stub attorneys like vhaProgramOffices and set it in the redux store
-  // I would need to switch on all of these things based on the args.userIsSCTEmployee and userIsCamoEmployee
-  // Active org might need to be switched too not sure.
-
   if (args.userIsSCTCoordinator) {
     state.ui.userIsSCTCoordinator = args.userIsSCTCoordinator;
     state.ui.activeOrganization = testSpecialtyCaseTeamOrg;
