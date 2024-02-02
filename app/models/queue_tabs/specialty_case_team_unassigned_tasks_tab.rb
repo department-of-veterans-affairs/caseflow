@@ -10,7 +10,7 @@ class SpecialtyCaseTeamUnassignedTasksTab < QueueTab
   end
 
   def self.tab_name
-    Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
+    Constants.QUEUE_CONFIG.SPECIALTY_CASE_TEAM_UNASSIGNED_TASKS_TAB_NAME
   end
 
   def description
