@@ -3,7 +3,6 @@ import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes'
 import ApiUtil from 'app/util/ApiUtil';
 import { levers, historyList } from '../../../../data/adminCaseDistributionLevers';
 
-// Mock ApiUtil
 jest.mock('app/util/ApiUtil', () => ({
   get: jest.fn(),
   post: jest.fn()
