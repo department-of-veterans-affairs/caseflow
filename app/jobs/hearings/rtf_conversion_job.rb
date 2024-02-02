@@ -7,11 +7,27 @@ require "rtf"
 class Hearings::RTFConversionJob < CaseflowJob
   queue_with_priority :low_priority
 
+  retry_on(StandardError, attempts: 5, wait: 5.seconds) do |job, exception|
+    error_msg = "#{job.class.name} (#{job.job_id}) failed with error: #{exception}"
+    Rails.logger.error(error_msg)
+    if job.executions == 5
+      error_uuid = SecureRandom.uuid
+      Raven.capture_exception(exception, extra: { error_uuid: error_uuid })
+      HearingTranscriptionMailer.vtt_to_rtf_conversion_error(error_msg)
+      tags = rtf_conversion_datadog_tags(exception, job.job_id)
+      DataDogService.increment_counter(metric_name: "rtf_conversion.failed", **tags)
+    end
+  end
+
+  after_perform do |job|
+    tags = rtf_conversion_datadog_tags(nil, job.job_id)
+    DataDogService.increment_counter(metric_name: "rtf_conversion.successful", **tags)
+  end
+
   # Sub folder name
   S3_SUB_BUCKET = "vaec-appeals-caseflow"
 
   def initialize
-    @logs = ["\nHearings::RTFConversion Log"]
     @folder = (Rails.deploy_env == :prod) ? S3_SUB_BUCKET : "#{S3_SUB_BUCKET}-#{Rails.deploy_env}"
     @upload_folder = @folder + "/transcript_text"
     super
@@ -22,6 +38,15 @@ class Hearings::RTFConversionJob < CaseflowJob
     # vtt_file_paths = ["tmp/transcription_files/vtt/Transcript_IC_Webex.vtt"]
     convert_and_upload_files(vtt_file_paths)
     clean_up_tmp_folders
+  end
+
+  # the metrics info for datadog
+  def rtf_conversion_datadog_tags(error, id)
+    {
+      app_name: Constants.DATADOG_METRICS.HEARINGS.APP_NAME,
+      metric_group: Constants.DATADOG_METRICS.HEARINGS.TRANSCRIPTIONS_GROUP_NAME,
+      attrs: { error_message: error&.message, job_id: id }
+    }
   end
 
   # Get transcription files waiting for file conversion
@@ -197,6 +222,9 @@ class Hearings::RTFConversionJob < CaseflowJob
     nil
   end
 
+  # streamlines adding line breaks
+  #     row - the current row in the document
+  #     count - amount of line breaks to add
   def insert_line_breaks(row, count)
     i = 0
     while i < count
