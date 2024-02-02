@@ -89,4 +89,21 @@ describe('Batch Size Lever', () => {
     waitFor(() => expect(inputField.prop('value').toBe(eventForValid.target.value)));
     waitFor(() => expect(inputField.prop('errorMessage').toBe('')));
   });
+
+  it('dynamically renders * in the lever label', () => {
+    lever.algorithms_used = ["docket", "proportion"]
+
+    const store = getStore();
+
+    store.dispatch(loadLevers(leversWithTestingBatchLevers));
+    store.dispatch(setUserIsAcdAdmin(true));
+
+    let wrapper = mount(
+      <Provider store={store}>
+        <BatchSize />
+      </Provider>
+    );
+
+    expect(wrapper.text()).toContain(lever.title + '*');
+  });
 });
