@@ -686,3 +686,26 @@ export const mockStaticLevers = [
   }
 ]
 
+export const mockReturnedOption = {
+  item: 'option_1',
+  data_type: 'number',
+  value: 0,
+  text: 'Attempt distribution to current judge for max of:',
+  unit: 'days',
+  min_value: 0,
+  max_value: 100
+};
+
+export const mockHistoryPayload = [
+  {
+    case_distribution_lever_id: 5,
+    created_at: '2024-01-12T16:48:35.422-05:00',
+    id: 27,
+    lever_data_type: 'number',
+    lever_title: 'Alternate Batch Size*',
+    lever_unit: 'cases',
+    previous_value: '15',
+    update_value: '70',
+    user_css_id: 'BVADWISE'
+  }
+];
