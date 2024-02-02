@@ -120,15 +120,13 @@ const tasksByAssigneeCssIdSelector = createSelector(
 
 const tasksByAssigneeOrgSelector = createSelector(
   [tasksWithAppealSelector, getActiveOrgId],
-  // (tasks, orgId) => filter(tasks, (task) => (task.assignedTo.id === orgId && task.assignedTo.isOrganization))
-  // TODO: this won't work without changing the serializer because the SCT org does not have
-  // a column that needs assigned to
-  (tasks, orgId) => filter(tasks, (task) => (task.assignedTo.id === orgId))
+  (tasks, orgId) => filter(tasks, (task) => (task.assignedTo.id === orgId && task.assignedTo.isOrganization))
 );
 
 export const legacyJudgeTasksAssignedToUser = createSelector(
   [tasksByAssigneeCssIdSelector],
-  (tasks) => filter(tasks, (task) => task.type === 'JudgeLegacyDecisionReviewTask' || task.type === 'JudgeLegacyAssignTask')
+  (tasks) => filter(tasks,
+    (task) => task.type === 'JudgeLegacyDecisionReviewTask' || task.type === 'JudgeLegacyAssignTask')
 );
 
 const workTasksByAssigneeCssIdSelector = createSelector(
@@ -183,12 +181,14 @@ export const distributionTasksForAppeal = createSelector(
 
 export const caseTimelineTasksForAppeal = createSelector(
   [getAllTasksForAppeal],
-  (tasks) => orderBy(filter(completeTasksSelector(tasks), (task) => !task.hideFromCaseTimeline), ['completedAt'], ['desc'])
+  (tasks) => orderBy(filter(completeTasksSelector(tasks),
+    (task) => !task.hideFromCaseTimeline), ['completedAt'], ['desc'])
 );
 
 export const taskSnapshotTasksForAppeal = createSelector(
   [getAllTasksForAppeal],
-  (tasks) => orderBy(filter(incompleteTasksSelector(tasks), (task) => !task.hideFromTaskSnapshot), ['createdAt'], ['desc'])
+  (tasks) => orderBy(filter(incompleteTasksSelector(tasks),
+    (task) => !task.hideFromTaskSnapshot), ['createdAt'], ['desc'])
 );
 
 const taskIsLegacyAttorneyJudgeTask = (task) => {

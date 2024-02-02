@@ -369,7 +369,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       }
     end
 
-    # TODO: Shouldn't this be admin??
     if camo_employee?
       orgs << {
         name: "Assign VHA CAMO",
@@ -377,7 +376,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
       }
     end
 
-    # TODO: should maybe be admin as well?
     if specialty_case_team_coordinator?
       orgs << {
         name: "Assign SCT Appeals",

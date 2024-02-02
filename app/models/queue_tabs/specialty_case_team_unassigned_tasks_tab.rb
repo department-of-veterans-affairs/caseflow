@@ -6,15 +6,15 @@ class SpecialtyCaseTeamUnassignedTasksTab < QueueTab
   attr_accessor :show_reader_link_column, :allow_bulk_assign
 
   def label
-    "COPY::ORGANIZATIONAL_QUEUE_COMPLETED_TAB_TITLE"
+    COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TAB_TITLE
   end
 
   def self.tab_name
-    "unassignedTab"
+    Constants.QUEUE_CONFIG.UNASSIGNED_TASKS_TAB_NAME
   end
 
   def description
-    "COPY::SPECIALTY_CASE_TEAM_QUEUE_PAGE_COMPLETED_TAB_DESCRIPTION"
+    format(COPY::ORGANIZATIONAL_QUEUE_PAGE_UNASSIGNED_TASKS_DESCRIPTION, assignee.name)
   end
 
   def tasks
@@ -25,10 +25,10 @@ class SpecialtyCaseTeamUnassignedTasksTab < QueueTab
     SpecialtyCaseTeam::COLUMN_NAMES
   end
 
-  # TODO: This only affects bulk assign on the standard queue tab view
-  # def allow_bulk_assign?
-  #   true
-  # end
+  # This only affects bulk assign on the standard queue tab view
+  def allow_bulk_assign?
+    true
+  end
 
   def hide_from_queue_table_view
     true
