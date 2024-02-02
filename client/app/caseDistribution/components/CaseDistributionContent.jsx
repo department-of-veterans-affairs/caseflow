@@ -2,16 +2,13 @@ import React from 'react';
 import StaticLeversWrapper from './StaticLeversWrapper';
 import InteractableLeverWrapper from './InteractableLeversWrapper';
 import LeverHistory from './LeverHistory';
-import PropTypes from 'prop-types';
 import {
   sectionSegmentStyling,
   sectionHeadingStyling,
   anchorJumpLinkStyling } from 'app/queue/StickyNavContentArea';
 import COPY from '../../../COPY';
 
-const CaseDistributionContent = ({
-  leverStore
-}) => {
+const CaseDistributionContent = () => {
 
   return (
     <div>
@@ -31,7 +28,7 @@ const CaseDistributionContent = ({
             <h2>{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_TITLE}</h2>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION}</p>
             <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_EXCLUSION_TABLE_DESCRIPTION_NOTE}</p>
-            <InteractableLeverWrapper leverStore={leverStore} />
+            <InteractableLeverWrapper />
           </div>
         </div>
 
@@ -60,11 +57,6 @@ const CaseDistributionContent = ({
       </div>
     </div>
   );
-};
-
-CaseDistributionContent.propTypes = {
-  levers: PropTypes.object.isRequired,
-  leverStore: PropTypes.any.isRequired,
 };
 
 export default CaseDistributionContent;
