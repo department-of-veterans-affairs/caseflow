@@ -106,7 +106,8 @@ describe QueueConfig, :postgres do
                 :task_page_count,
                 :total_task_count,
                 :task_page_endpoint_base_path,
-                :defaultSort
+                :defaultSort,
+                :hide_from_queue_table_view
               ]
             )
           end
@@ -183,7 +184,8 @@ describe QueueConfig, :postgres do
                 :task_page_count,
                 :total_task_count,
                 :task_page_endpoint_base_path,
-                :defaultSort
+                :defaultSort,
+                :hide_from_queue_table_view
               ]
             )
           end
@@ -225,7 +227,8 @@ describe QueueConfig, :postgres do
                 :task_page_count,
                 :total_task_count,
                 :task_page_endpoint_base_path,
-                :defaultSort
+                :defaultSort,
+                :hide_from_queue_table_view
               ]
             )
           end
