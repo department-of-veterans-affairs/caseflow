@@ -23,7 +23,9 @@ feature "SpecialtyCaseTeamQueue", :all_dbs do
       create_list(:sct_assign_task, num_action_required_rows, :on_hold)
     end
     let!(:sct_completed_tasks) do
-      create_list(:sct_assign_task, num_completed_rows, :completed)
+      tasks = create_list(:sct_assign_task, num_completed_rows, :completed)
+      tasks.last.closed_at = 1.week.ago
+      tasks.last.save
     end
 
     let!(:action_required_issues) do
