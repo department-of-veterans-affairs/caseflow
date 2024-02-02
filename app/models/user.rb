@@ -277,7 +277,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     member_of_organization?(VhaBusinessLine.singleton)
   end
 
-  # TODO: don't know if this should be admin or not?
   def specialty_case_team_coordinator?
     member_of_organization?(SpecialtyCaseTeam.singleton)
   end
