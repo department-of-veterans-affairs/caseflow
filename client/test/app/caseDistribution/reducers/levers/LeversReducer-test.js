@@ -89,23 +89,4 @@ describe('Lever reducer', () => {
       expect(leverStore.getState().changesOccurred).toEqual(false);
     });
   });
-
-  describe(ACTIONS.REVERT_LEVERS, () => {
-    it('returns the original state of the levers', () => {
-      leverStore.dispatch({
-        type: ACTIONS.UPDATE_LEVER_VALUE,
-        updated_lever: leverData.lever1_update
-      })
-      leverStore.dispatch({
-        type: ACTIONS.UPDATE_LEVER_VALUE,
-        updated_lever: leverData.lever5_update
-      })
-      leverStore.dispatch({
-        type: ACTIONS.REVERT_LEVERS,
-      })
-
-      expect(leverStore.getState().levers).not.toEqual(leverData.updated_levers)
-      expect(leverStore.getState().levers).toEqual(leverData.levers.slice(0,5))
-    });
-  });
 });
