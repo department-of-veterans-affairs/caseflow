@@ -345,6 +345,10 @@ class LegacyHearing < CaseflowRecord
     end
   end
 
+  def daily_docket_conference_links
+    hearing_day.conference_links
+  end
+
   class << self
     def venues
       RegionalOffice::CITIES.merge(RegionalOffice::SATELLITE_OFFICES)

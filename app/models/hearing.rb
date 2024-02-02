@@ -187,11 +187,7 @@ class Hearing < CaseflowRecord
   end
 
   def daily_docket_conference_links
-    hearing = Hearing.find(id)
-    hearing_day = hearing.hearing_day
-    conference_links = hearing_day.conference_links
-
-    conference_links
+    hearing_day.conference_links
   end
 
   def scheduled_for
