@@ -94,7 +94,6 @@ class UnassignedCasesPage extends React.PureComponent {
               </LoadingContainer>
             </div>
           }
-          {/* TODO: This is totally disconnected from the queue config columns which is bad */}
           {!this.props.distributionCompleteCasesLoading &&
             <TaskTable
               includeBadges
