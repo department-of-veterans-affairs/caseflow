@@ -24,11 +24,4 @@ class SpecialtyCaseTeamActionRequiredTasksTab < QueueTab
   def column_names
     SpecialtyCaseTeam::COLUMN_NAMES
   end
-
-  # private
-
-  # def on_hold_tasks_with_children_attorney_task_cancelled
-  #   parent_ids = on_hold_task_children.where(type: AttorneyTask.name).cancelled.pluck(:parent_id)
-  #   Task.where(id: parent_ids)
-  # end
 end
