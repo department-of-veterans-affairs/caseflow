@@ -50,7 +50,6 @@ module ByDocketDateDistribution
     end
   end
 
-  # rubocop:disable Metrics/MethodLength
   def ama_statistics
     priority_counts = { count: priority_count }
     nonpriority_counts = { count: nonpriority_count }
@@ -94,31 +93,6 @@ module ByDocketDateDistribution
       settings: settings
     }
   end
-  # rubocop:enable Metrics/MethodLength
-
-  def ama_distributed_cases_tied_to_ineligible_judges
-    @appeals.filter_map do |appeal|
-      appeal[:case_id] if HearingRequestDistributionQuery.ineligible_judges_id_cache
-        &.include?(hearing_judge_id(appeal))
-    end
-  end
-
-  def distributed_cases_tied_to_ineligible_judges
-    @appeals.filter_map do |appeal|
-      appeal[:case_id] if Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:sattyid)&.reject(&:blank?)
-        &.include?(hearing_judge_id(appeal))
-    end
-  end
-
-  def hearing_judge_id(appeal)
-    if appeal[:docket] == "legacy"
-      user_id = LegacyAppeal.find_by(vacols_id: appeal[:case_id])
-        &.hearings&.select(&:held?)&.max_by(&:scheduled_for)&.judge_id
-      VACOLS::Staff.find_by_sdomainid(User.find_by_id(user_id)&.css_id)&.sattyid
-    else
-      Appeal.find_by(uuid: appeal[:case_id])&.hearings&.select(&:held?)&.max_by(&:scheduled_for)&.judge_id
-    end
-  end
 
   def num_oldest_priority_appeals_for_judge_by_docket(distribution, num)
     return {} unless num > 0
@@ -150,4 +124,3 @@ module ByDocketDateDistribution
       .transform_values(&:count)
   end
 end
-# rubocop:enable Metrics/ModuleLength

@@ -191,13 +191,12 @@ FactoryBot.define do
     trait :held_hearing_and_ready_to_distribute do
       transient do
         adding_user { nil }
-        tied_judge { nil }
       end
 
       after(:create) do |appeal, evaluator|
         create(:hearing,
                :held,
-               judge: evaluator.tied_judge,
+               judge: nil,
                appeal: appeal,
                created_at: appeal.created_at,
                adding_user: evaluator.adding_user)
