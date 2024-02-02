@@ -75,6 +75,34 @@ export const prepareMostRecentlyHeldHearingForStore = (appealId, hearing) => {
   };
 };
 
+const correspondenceTaskAttributesFromRawTask = (task) => {
+  return {
+    uniqueId: task.attributes.unique_id,
+    instructions: task.attributes.instructions,
+    veteranDetails: task.attributes.veteran_details,
+    notes: task.attributes.notes,
+    closedAt: task.attributes.completion_date,
+    daysWaiting: task.attributes.days_waiting,
+    vaDor: task.attributes.va_date_of_receipt,
+    label: task.attributes.label,
+    status: task.attributes.status,
+    assignedAt: task.attributes.assigned_at,
+    assignedTo: {
+      cssId: task.attributes.assigned_to.css_id,
+      isOrganization: task.attributes.assigned_to.is_organization,
+      id: task.attributes.assigned_to.id,
+      type: task.attributes.assigned_to.type,
+      name: task.attributes.assigned_to.name,
+    },
+    assignedBy: {
+      firstName: task.attributes.assigned_by.first_name,
+      lastName: task.attributes.assigned_by.last_name,
+      cssId: task.attributes.assigned_by.css_id,
+      pgId: task.attributes.assigned_by.pg_id,
+    }
+  };
+};
+
 const taskAttributesFromRawTask = (task) => {
   const decisionPreparedBy = task.attributes.decision_prepared_by?.first_name ?
     {
@@ -227,6 +255,11 @@ export const tasksWithAppealsFromRawTasks = (tasks) =>
   tasks?.map((task) => ({
     ...taskAttributesFromRawTask(task),
     appeal: appealAttributesFromRawTask(task),
+  }));
+
+export const tasksWithCorrespondenceFromRawTasks = (tasks) =>
+  tasks?.map((task) => ({
+    ...correspondenceTaskAttributesFromRawTask(task)
   }));
 
 export const prepareLegacyTasksForStore = (tasks) => {

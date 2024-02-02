@@ -20,4 +20,12 @@ class CorrespondenceQueueTab < QueueTab
   def default_sorting_column
     CorrespondenceQueueColumn.from_name(Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name)
   end
+
+   # If you don't create your own tab name it will default to the tab defined in QueueTab
+   def self.from_name(tab_name)
+    tab = descendants.find { |subclass| subclass.tab_name == tab_name }
+    fail(Caseflow::Error::InvalidTaskTableTab, tab_name: tab_name) unless tab
+
+    tab
+  end
 end
