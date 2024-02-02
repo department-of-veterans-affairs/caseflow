@@ -132,6 +132,19 @@ export const updateLeverGroupForValue = (state, action) => {
   return updateLeverGroup(state, leverGroup, leverItem, updateLeverValue);
 };
 
+/**
+ * Used when updating the is_toggle_active of a lever
+ */
+export const updateLeverGroupForIsToggleActive = (state, action) => {
+  const { leverGroup, leverItem, toggleValue } = action.payload;
+
+  const updateLeverValue = (lever) => {
+    return { ...lever, is_toggle_active: toggleValue };
+  };
+
+  return updateLeverGroup(state, leverGroup, leverItem, updateLeverValue);
+};
+
 export const getLeverErrors = createSelector(
   [leverErrorList],
   (errors) => {
@@ -145,19 +158,6 @@ export const hasNoLeverErrors = createSelector(
     return count === 0;
   }
 );
-
-/**
- * Used when updating the is_toggle_active of a lever
- */
-export const updateLeverGroupForIsToggleActive = (state, action) => {
-  const { leverGroup, leverItem, toggleValue } = action.payload;
-
-  const updateLeverValue = (lever) => {
-    return { ...lever, is_toggle_active: toggleValue };
-  };
-
-  return updateLeverGroup(state, leverGroup, leverItem, updateLeverValue);
-};
 
 /**
  * Do not trust this code. It is untested

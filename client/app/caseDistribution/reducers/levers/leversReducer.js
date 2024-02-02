@@ -46,9 +46,7 @@ const leversReducer = (state = initialState, action = {}) => {
         $set: action.payload.isUserAcdAdmin
       }
     });
-  case ACTIONS.UPDATE_BOOLEAN_LEVER:
-  case ACTIONS.UPDATE_NUMBER_LEVER:
-  case ACTIONS.UPDATE_TEXT_LEVER: {
+  case ACTIONS.UPDATE_LEVER_VALUE: {
     const leverGroup = updateLeverGroupForValue(state, action);
 
     return {

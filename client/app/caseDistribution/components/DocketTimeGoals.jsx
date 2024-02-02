@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import cx from 'classnames';
 import {
-  updateNumberLever,
+  updateLeverValue,
   addLeverErrors,
   removeLeverErrors,
   updateLeverIsToggleActive
@@ -61,7 +61,7 @@ const DocketTimeGoals = () => {
     const { lever_group, item } = lever;
 
     handleValidation(lever, item, event);
-    dispatch(updateNumberLever(lever_group, item, event));
+    dispatch(updateLeverValue(lever_group, item, event));
   };
 
   const toggleLever = (lever) => () => {

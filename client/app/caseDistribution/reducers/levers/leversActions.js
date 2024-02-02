@@ -68,34 +68,10 @@ export const updateLeverIsToggleActive = (leverGroup, leverItem, toggleValue) =>
     });
   };
 
-export const updateBooleanLever = (leverGroup, leverItem, value) =>
+export const updateLeverValue = (leverGroup, leverItem, value) =>
   (dispatch) => {
     dispatch({
-      type: ACTIONS.UPDATE_BOOLEAN_LEVER,
-      payload: {
-        leverGroup,
-        leverItem,
-        value
-      }
-    });
-  };
-
-export const updateTextLever = (leverGroup, leverItem, value) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.UPDATE_TEXT_LEVER,
-      payload: {
-        leverGroup,
-        leverItem,
-        value
-      }
-    });
-  };
-
-export const updateNumberLever = (leverGroup, leverItem, value) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.UPDATE_NUMBER_LEVER,
+      type: ACTIONS.UPDATE_LEVER_VALUE,
       payload: {
         leverGroup,
         leverItem,
