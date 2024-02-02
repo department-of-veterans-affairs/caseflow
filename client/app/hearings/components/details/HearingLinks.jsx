@@ -118,17 +118,17 @@ LinkContainer.propTypes = {
 };
 
 export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, user }) => {
-  if (!hearing?.conferenceProvider && !isVirtual && !wasVirtual) {
+  if ((hearing.conferenceProvider === 'pexip') && !isVirtual && !wasVirtual) {
     return null;
-  } else if (hearing?.conferenceProvider && !isVirtual && !wasVirtual) {
+  } else if ((hearing.conferenceProvider === 'webex') && !isVirtual && !wasVirtual) {
     return (
-      <div>
+      <div {...hearingLinksContainer}>
         {(hearing.conferenceProvider === 'webex') && (
           <LinkContainer
             hearing={hearing}
             isVirtual={isVirtual}
             label={COPY.HC_VIRTUAL_HEARING_LINK_LABEL}
-            link={virtualHearing?.coHostHearingLink}
+            link={hearing.dailyDocketConferenceLinks[1].coHostLink}
             linkText={COPY.VLJ_VIRTUAL_HEARINGS_LINK_TEXT}
             role="HC"
             user={user}
