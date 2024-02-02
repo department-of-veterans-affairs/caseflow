@@ -21,38 +21,29 @@ export const SaveModal = (props) => {
     return `${toggleString} - ${value}`;
   };
 
-  const backendValueDisplay = (lever) => {
-    let value = lever.backendValue;
+  const changedLeverDisplayValue = (value, lever) => {
+    let displayValue = value;
 
     if (lever.data_type === ACD_LEVERS.data_types.radio) {
-      const selectedOption = findOption(lever, lever.backendValue);
+      const selectedOption = findOption(lever, value);
       const isSelectedOptionANumber = selectedOption.data_type === ACD_LEVERS.data_types.number;
 
       return isSelectedOptionANumber ? selectedOption.value : selectedOption.text;
     }
 
     if (lever.data_type === ACD_LEVERS.data_types.combination) {
-      value = combinationValue(lever.backendIsToggleActive, lever.backendValue);
+      displayValue = combinationValue(lever.backendIsToggleActive, lever.backendValue);
     }
 
-    return <>{value}</>;
+    return displayValue;
+  };
+
+  const backendValueDisplay = (lever) => {
+    return <>{changedLeverDisplayValue(lever.backendValue, lever)}</>;
   };
 
   const leverValueDisplay = (lever) => {
-    let value = lever.value;
-
-    if (lever.data_type === ACD_LEVERS.data_types.radio) {
-      const selectedOption = findOption(lever, lever.value);
-      const isSelectedOptionANumber = selectedOption.data_type === ACD_LEVERS.data_types.number;
-
-      return isSelectedOptionANumber ? selectedOption.value : selectedOption.text;
-    }
-
-    if (lever.data_type === ACD_LEVERS.data_types.combination) {
-      value = combinationValue(lever.is_toggle_active, lever.value);
-    }
-
-    return <strong>{value}</strong>;
+    return <strong>{changedLeverDisplayValue(lever.value, lever)}</strong>;
   };
 
   const leverList = () => {
