@@ -9,10 +9,10 @@ shared_examples "DecisionIssue belongs_to polymorphic appeal" do
         context "when used in `joins` query" do
           subject { DecisionIssue.joins(:ama_appeal) }
 
-          # Create records having different `decision_review_type` but the same `decision_review_id`. This will ensure the test fails in
-          # the case where the `joins` result contains duplicate entries for records having the same `decision_review_id` but
-          # different `decision_review_type`.
-          let(:shared_id) { 99999 }
+          # Create records having different `decision_review_type` but the same `decision_review_id`. This will ensure
+          # the test fails in  the case where the `joins` result contains duplicate entries for records having the same
+          # `decision_review_id` but different `decision_review_type`.
+          let(:shared_id) { 99_999 }
           let!(:_supplemental_claim_decision_issue) do
             create(:decision_issue, decision_review: create(:supplemental_claim, number_of_claimants: 0, id: shared_id))
           end
@@ -81,10 +81,10 @@ shared_examples "DecisionIssue belongs_to polymorphic appeal" do
         context "when used in `joins` query" do
           subject { DecisionIssue.joins(:higher_level_review) }
 
-          # Create records having different `decision_review_type` but the same `decision_review_id`. This will ensure the test fails in
-          # the case where the `joins` result contains duplicate entries for records having the same `decision_review_id` but
-          # different `decision_review_type`.
-          let(:shared_id) { 99999 }
+          # Create records having different `decision_review_type` but the same `decision_review_id`. This will ensure
+          # the test fails in  the case where the `joins` result contains duplicate entries for records having the same
+          # `decision_review_id` but different `decision_review_type`.
+          let(:shared_id) { 99_999 }
           let!(:_supplemental_claim_decision_issue) do
             create(:decision_issue, decision_review: create(:supplemental_claim, number_of_claimants: 0, id: shared_id))
           end
@@ -131,10 +131,10 @@ shared_examples "DecisionIssue belongs_to polymorphic appeal" do
         context "when used in `joins` query" do
           subject { DecisionIssue.joins(:supplemental_claim) }
 
-          # Create records having different `decision_review_type` but the same `decision_review_id`. This will ensure the test fails in
-          # the case where the `joins` result contains duplicate entries for records having the same `decision_review_id` but
-          # different `decision_review_type`.
-          let(:shared_id) { 99999 }
+          # Create records having different `decision_review_type` but the same `decision_review_id`. This will ensure
+          # the test fails in  the case where the `joins` result contains duplicate entries for records having the same
+          # `decision_review_id` but different `decision_review_type`.
+          let(:shared_id) { 99_999 }
           let!(:_ama_decision_issue) do
             create(:decision_issue, decision_review: create(:appeal, id: shared_id))
           end

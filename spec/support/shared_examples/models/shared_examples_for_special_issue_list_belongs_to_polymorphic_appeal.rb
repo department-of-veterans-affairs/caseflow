@@ -16,8 +16,10 @@ shared_examples "SpecialIssueList belongs_to polymorphic appeal" do
           # Create records having different `appeal_type` but the same `appeal_id`. This will ensure the test fails in
           # the case where the `joins` result contains duplicate entries for records having the same `appeal_id` but
           # different `appeal_type`.
-          let(:shared_id) { 99999 }
-          let!(:_legacy_special_issue_list) { create(:special_issue_list, appeal: create(:legacy_appeal, id: shared_id)) }
+          let(:shared_id) { 99_999 }
+          let!(:_legacy_special_issue_list) do
+            create(:special_issue_list, appeal: create(:legacy_appeal, id: shared_id))
+          end
 
           context "when there are no SpecialIssueLists with AMA appeals" do
             it { should be_none }
@@ -84,7 +86,7 @@ shared_examples "SpecialIssueList belongs_to polymorphic appeal" do
           # Create records having different `appeal_type` but the same `appeal_id`. This will ensure the test fails in
           # the case where the `joins` result contains duplicate entries for records having the same `appeal_id` but
           # different `appeal_type`.
-          let(:shared_id) { 99999 }
+          let(:shared_id) { 99_999 }
           let!(:_ama_special_issue_list) { create(:special_issue_list, appeal: create(:appeal, id: shared_id)) }
 
           context "when there are no SpecialIssueLists with Legacy appeals" do
@@ -92,7 +94,9 @@ shared_examples "SpecialIssueList belongs_to polymorphic appeal" do
           end
 
           context "when there are SpecialIssueLists with Legacy appeals" do
-            let!(:legacy_special_issue_list) { create(:special_issue_list, appeal: create(:legacy_appeal, id: shared_id)) }
+            let!(:legacy_special_issue_list) do
+              create(:special_issue_list, appeal: create(:legacy_appeal, id: shared_id))
+            end
 
             it { should contain_exactly(legacy_special_issue_list) }
           end
