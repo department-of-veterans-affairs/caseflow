@@ -16,7 +16,7 @@ shared_examples "DecisionDocument belongs_to polymorphic appeal" do
           # Create records having different `appeal_type` but the same `appeal_id`. This will ensure the test fails in
           # the case where the `joins` result contains duplicate entries for records having the same `appeal_id` but
           # different `appeal_type`.
-          let(:shared_id) { 99999 }
+          let(:shared_id) { 99_999 }
           let!(:_legacy_decision_document) do
             create(:decision_document, appeal: create(:legacy_appeal, vacols_case: create(:case), id: shared_id))
           end
@@ -86,7 +86,7 @@ shared_examples "DecisionDocument belongs_to polymorphic appeal" do
           # Create records having different `appeal_type` but the same `appeal_id`. This will ensure the test fails in
           # the case where the `joins` result contains duplicate entries for records having the same `appeal_id` but
           # different `appeal_type`.
-          let(:shared_id) { 99999 }
+          let(:shared_id) { 99_999 }
           let!(:_ama_decision_document) { create(:decision_document, appeal: create(:appeal, id: shared_id)) }
 
           context "when there are no DecisionDocument with Legacy appeals" do
