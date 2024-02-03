@@ -2,6 +2,8 @@
 
 require "query_subscriber"
 
+# rubocop:disable Layout/LineLength
+
 # @param claimant_subclass [Class] a subclass of `Claimant`
 shared_examples "Claimant belongs_to polymorphic appeal" do |claimant_subclass|
   context do
@@ -16,10 +18,10 @@ shared_examples "Claimant belongs_to polymorphic appeal" do |claimant_subclass|
         context "when used in `joins` query" do
           subject { claimant_subclass.joins(:ama_appeal) }
 
-          # Create records having different `decision_review_type` but the same `decision_review_id`. This will ensure the test fails in
-          # the case where the `joins` result contains duplicate entries for records having the same `decision_review_id` but
-          # different `decision_review_type`.
-          let(:shared_id) { 99999 }
+          # Create records having different `decision_review_type` but the same `decision_review_id`. This will ensure
+          # the test fails in the case where the `joins` result contains duplicate entries for records having the same
+          # `decision_review_id` but different `decision_review_type`.
+          let(:shared_id) { 99_999 }
           let!(:_legacy_claimant) do
             create(:claimant, type: claimant_subclass.to_s,
                               decision_review: create(:legacy_appeal, vacols_case: create(:case), id: shared_id))
@@ -90,10 +92,10 @@ shared_examples "Claimant belongs_to polymorphic appeal" do |claimant_subclass|
         context "when used in `joins` query" do
           subject { claimant_subclass.joins(:legacy_appeal) }
 
-          # Create records having different `decision_review_type` but the same `decision_review_id`. This will ensure the test fails in
-          # the case where the `joins` result contains duplicate entries for records having the same `decision_review_id` but
-          # different `decision_review_type`.
-          let(:shared_id) { 99999 }
+          # Create records having different `decision_review_type` but the same `decision_review_id`. This will ensure
+          # the test fails in the case where the `joins` result contains duplicate entries for records having the same
+          # `decision_review_id` but different `decision_review_type`.
+          let(:shared_id) { 99_999 }
           let!(:_ama_claimant) do
             create(:claimant, :ama, type: claimant_subclass.to_s,
                                     decision_review: create(:appeal, number_of_claimants: 0, id: shared_id))
@@ -164,10 +166,10 @@ shared_examples "Claimant belongs_to polymorphic appeal" do |claimant_subclass|
         context "when used in `joins` query" do
           subject { claimant_subclass.joins(:higher_level_review) }
 
-          # Create records having different `decision_review_type` but the same `decision_review_id`. This will ensure the test fails in
-          # the case where the `joins` result contains duplicate entries for records having the same `decision_review_id` but
-          # different `decision_review_type`.
-          let(:shared_id) { 99999 }
+          # Create records having different `decision_review_type` but the same `decision_review_id`. This will ensure
+          # the test fails in the case where the `joins` result contains duplicate entries for records having the same
+          # `decision_review_id` but different `decision_review_type`.
+          let(:shared_id) { 99_999 }
           let!(:_legacy_claimant) do
             create(:claimant, type: claimant_subclass.to_s,
                               decision_review: create(:legacy_appeal, vacols_case: create(:case), id: shared_id))
@@ -219,10 +221,10 @@ shared_examples "Claimant belongs_to polymorphic appeal" do |claimant_subclass|
         context "when used in `joins` query" do
           subject { claimant_subclass.joins(:supplemental_claim) }
 
-          # Create records having different `decision_review_type` but the same `decision_review_id`. This will ensure the test fails in
-          # the case where the `joins` result contains duplicate entries for records having the same `decision_review_id` but
-          # different `decision_review_type`.
-          let(:shared_id) { 99999 }
+          # Create records having different `decision_review_type` but the same `decision_review_id`. This will ensure
+          # the test fails in the case where the `joins` result contains duplicate entries for records having the same
+          # `decision_review_id` but different `decision_review_type`.
+          let(:shared_id) { 99_999 }
           let!(:_legacy_claimant) do
             create(:claimant, type: claimant_subclass.to_s,
                               decision_review: create(:legacy_appeal, vacols_case: create(:case), id: shared_id))
@@ -307,3 +309,4 @@ shared_examples "Claimant belongs_to polymorphic appeal" do |claimant_subclass|
     end
   end
 end
+# rubocop:enable Layout/LineLength

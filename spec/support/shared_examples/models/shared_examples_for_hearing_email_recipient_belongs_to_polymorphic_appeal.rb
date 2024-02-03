@@ -17,7 +17,7 @@ shared_examples "HearingEmailRecipient belongs_to polymorphic appeal" do |hearin
           # Create records having different `appeal_type` but the same `appeal_id`. This will ensure the test fails in
           # the case where the `joins` result contains duplicate entries for records having the same `appeal_id` but
           # different `appeal_type`.
-          let(:shared_id) { 99999 }
+          let(:shared_id) { 99_999 }
           let!(:_legacy_hearing_email_recipient) do
             create(:hearing_email_recipient, type: hearing_email_recipient_subclass.to_s,
                                              appeal: create(:legacy_appeal, id: shared_id))
@@ -99,7 +99,7 @@ shared_examples "HearingEmailRecipient belongs_to polymorphic appeal" do |hearin
           # Create records having different `appeal_type` but the same `appeal_id`. This will ensure the test fails in
           # the case where the `joins` result contains duplicate entries for records having the same `appeal_id` but
           # different `appeal_type`.
-          let(:shared_id) { 99999 }
+          let(:shared_id) { 99_999 }
           let!(:_ama_hearing_email_recipient) do
             create(:hearing_email_recipient, type: hearing_email_recipient_subclass.to_s,
                                              appeal: create(:appeal, id: shared_id))

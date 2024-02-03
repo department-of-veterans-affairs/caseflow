@@ -16,7 +16,7 @@ shared_examples "SentHearingEmailEvent belongs_to polymorphic hearing" do
           # Create records having different `hearing_type` but the same `hearing_id`. This will ensure the test fails in
           # the case where the `joins` result contains duplicate entries for records having the same `hearing_id` but
           # different `hearing_type`.
-          let(:shared_id) { 99999 }
+          let(:shared_id) { 99_999 }
           let!(:_legacy_sent_hearing_email_event) do
             create(:sent_hearing_email_event, hearing: create(:legacy_hearing, id: shared_id))
           end
@@ -88,7 +88,7 @@ shared_examples "SentHearingEmailEvent belongs_to polymorphic hearing" do
           # Create records having different `hearing_type` but the same `hearing_id`. This will ensure the test fails in
           # the case where the `joins` result contains duplicate entries for records having the same `hearing_id` but
           # different `hearing_type`.
-          let(:shared_id) { 99999 }
+          let(:shared_id) { 99_999 }
           let!(:_ama_sent_hearing_email_event) do
             create(:sent_hearing_email_event, hearing: create(:hearing, id: shared_id))
           end

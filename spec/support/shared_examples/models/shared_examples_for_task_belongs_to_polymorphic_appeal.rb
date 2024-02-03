@@ -2,6 +2,7 @@
 
 require "query_subscriber"
 
+# rubocop:disable Layout/LineLength
 shared_examples "Task belongs_to polymorphic appeal" do
   context do
     context "'appeal'-related associations" do
@@ -18,7 +19,7 @@ shared_examples "Task belongs_to polymorphic appeal" do
           # Create records having different `appeal_type` but the same `appeal_id`. This will ensure the test fails in
           # the case where the `joins` result contains duplicate entries for records having the same `appeal_id` but
           # different `appeal_type`.
-          let(:shared_id) { 99999 }
+          let(:shared_id) { 99_999 }
           let!(:_legacy_task) { create(:task, appeal: create(:legacy_appeal, id: shared_id)) }
 
           context "when there are no Tasks with AMA appeals" do
@@ -32,7 +33,7 @@ shared_examples "Task belongs_to polymorphic appeal" do
           end
         end
 
-         context "when eager loading with `includes`" do
+        context "when eager loading with `includes`" do
           subject { Task.ama.includes(:appeal) }
 
           let!(:_legacy_task) { create(:task) }
@@ -86,7 +87,7 @@ shared_examples "Task belongs_to polymorphic appeal" do
           # Create records having different `appeal_type` but the same `appeal_id`. This will ensure the test fails in
           # the case where the `joins` result contains duplicate entries for records having the same `appeal_id` but
           # different `appeal_type`.
-          let(:shared_id) { 99999 }
+          let(:shared_id) { 99_999 }
           let!(:_ama_task) { create(:ama_task, appeal: create(:appeal, id: shared_id)) }
 
           context "when there are no Tasks with Legacy appeals" do
@@ -154,7 +155,7 @@ shared_examples "Task belongs_to polymorphic appeal" do
           # Create records having different `appeal_type` but the same `appeal_id`. This will ensure the test fails in
           # the case where the `joins` result contains duplicate entries for records having the same `appeal_id` but
           # different `appeal_type`.
-          let(:shared_id) { 99999 }
+          let(:shared_id) { 99_999 }
           let!(:_ama_task) { create(:ama_task, appeal: create(:appeal, id: shared_id)) }
 
           context "when there are no Tasks with HigherLevelReviews" do
@@ -224,7 +225,7 @@ shared_examples "Task belongs_to polymorphic appeal" do
           # Create records having different `appeal_type` but the same `appeal_id`. This will ensure the test fails in
           # the case where the `joins` result contains duplicate entries for records having the same `appeal_id` but
           # different `appeal_type`.
-          let(:shared_id) { 99999 }
+          let(:shared_id) { 99_999 }
           let!(:_ama_task) { create(:ama_task, appeal: create(:appeal, id: shared_id)) }
 
           context "when there are no Tasks with SupplementalClaims" do
@@ -324,3 +325,4 @@ shared_examples "Task belongs_to polymorphic appeal" do
     end
   end
 end
+# rubocop:enable Layout/LineLength
