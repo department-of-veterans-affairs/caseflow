@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Layout/LineLength
 describe ChangeHearingRequestTypeTaskCancellationJob do
   describe "#perform" do
     subject(:perform) { described_class.new.perform }
@@ -24,13 +25,13 @@ describe ChangeHearingRequestTypeTaskCancellationJob do
     end
 
     context "when there are ChangeHearingRequestTypeTasks" do
-      let!(:chrt_assigned_with_ama_appeal) { create(:change_hearing_request_type_task, :assigned, appeal: ama_appeal ) }
-      let!(:chrt_assigned_with_legacy_appeal) { create(:change_hearing_request_type_task, :assigned, appeal: legacy_appeal ) }
-      let!(:chrt_in_progress_with_legacy_appeal) { create(:change_hearing_request_type_task, :in_progress, appeal: legacy_appeal ) }
-      let!(:chrt_on_hold_with_legacy_appeal) { create(:change_hearing_request_type_task, :on_hold, appeal: legacy_appeal ) }
-      let!(:chrt_completed_with_legacy_appeal) { create(:change_hearing_request_type_task, :completed, appeal: legacy_appeal ) }
-      let!(:chrt_cancelled_with_legacy_appeal) { create(:change_hearing_request_type_task, :cancelled, appeal: legacy_appeal ) }
-      let!(:non_chrt_assigned_with_legacy_appeal) { create(:task, :assigned, appeal: legacy_appeal ) }
+      let!(:chrt_assigned_with_ama_appeal) { create(:change_hearing_request_type_task, :assigned, appeal: ama_appeal) }
+      let!(:chrt_assigned_with_legacy_appeal) { create(:change_hearing_request_type_task, :assigned, appeal: legacy_appeal) }
+      let!(:chrt_in_progress_with_legacy_appeal) { create(:change_hearing_request_type_task, :in_progress, appeal: legacy_appeal) }
+      let!(:chrt_on_hold_with_legacy_appeal) { create(:change_hearing_request_type_task, :on_hold, appeal: legacy_appeal) }
+      let!(:chrt_completed_with_legacy_appeal) { create(:change_hearing_request_type_task, :completed, appeal: legacy_appeal) }
+      let!(:chrt_cancelled_with_legacy_appeal) { create(:change_hearing_request_type_task, :cancelled, appeal: legacy_appeal) }
+      let!(:non_chrt_assigned_with_legacy_appeal) { create(:task, :assigned, appeal: legacy_appeal) }
 
       let(:ama_appeal) { create(:appeal) }
       let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
@@ -41,6 +42,7 @@ describe ChangeHearingRequestTypeTaskCancellationJob do
       it "only updates open ChangeHearingRequestTypeTasks belonging to Legacy Appeals" do
         RSpec::Matchers.define_negated_matcher :not_change, :change
 
+        # rubocop:disable Lint/AmbiguousBlockAssociation
         expect { perform }
           .to change { chrt_assigned_with_legacy_appeal.reload.status }.to("cancelled")
           .and change { chrt_in_progress_with_legacy_appeal.reload.status }.to("cancelled")
@@ -49,6 +51,7 @@ describe ChangeHearingRequestTypeTaskCancellationJob do
           .and not_change { chrt_completed_with_legacy_appeal }
           .and not_change { chrt_cancelled_with_legacy_appeal }
           .and not_change { non_chrt_assigned_with_legacy_appeal }
+        # rubocop:enable Lint/AmbiguousBlockAssociation
       end
 
       it "appends appropriate logs to application logs" do
@@ -74,7 +77,7 @@ describe ChangeHearingRequestTypeTaskCancellationJob do
     end
 
     context "when an error occurs while updating a task" do
-      let!(:_task) { create(:change_hearing_request_type_task, :assigned, appeal: legacy_appeal ) }
+      let!(:_task) { create(:change_hearing_request_type_task, :assigned, appeal: legacy_appeal) }
 
       let(:legacy_appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
 
@@ -100,3 +103,4 @@ describe ChangeHearingRequestTypeTaskCancellationJob do
     end
   end
 end
+# rubocop:enable Layout/LineLength

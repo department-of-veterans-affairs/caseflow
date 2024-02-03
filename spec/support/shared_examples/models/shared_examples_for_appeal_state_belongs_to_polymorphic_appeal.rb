@@ -16,7 +16,7 @@ shared_examples "AppealState belongs_to polymorphic appeal" do
           # Create records having different `appeal_type` but the same `appeal_id`. This will ensure the test fails in
           # the case where the `joins` result contains duplicate entries for records having the same `appeal_id` but
           # different `appeal_type`.
-          let(:shared_id) { 99999 }
+          let(:shared_id) { 99_999 }
           let!(:_legacy_appeal_state) { create(:appeal_state, appeal: create(:legacy_appeal, id: shared_id)) }
 
           context "when there are no AppealStates with AMA appeals" do
@@ -84,7 +84,7 @@ shared_examples "AppealState belongs_to polymorphic appeal" do
           # Create records having different `appeal_type` but the same `appeal_id`. This will ensure the test fails in
           # the case where the `joins` result contains duplicate entries for records having the same `appeal_id` but
           # different `appeal_type`.
-          let(:shared_id) { 99999 }
+          let(:shared_id) { 99_999 }
           let!(:_ama_appeal_state) { create(:appeal_state, appeal: create(:appeal, id: shared_id)) }
 
           context "when there are no AppealStates with Legacy appeals" do
