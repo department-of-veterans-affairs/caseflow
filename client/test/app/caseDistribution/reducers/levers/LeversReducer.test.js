@@ -1,11 +1,5 @@
-import * as redux from 'redux';
-import React from 'react';
 import leversReducer from 'app/caseDistribution/reducers/levers/leversReducer';
 import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
-import { render } from '@testing-library/react';
-import BatchSize from 'app/caseDistribution/components/BatchSize';
-import { Provider } from 'react-redux';
-import rootReducer from 'app/caseDistribution/reducers/root';
 import {
   mockBatchLevers,
   mockDocketDistributionPriorLevers,
@@ -13,10 +7,11 @@ import {
   mockStaticLevers,
   mockDocketTimeGoalsLevers,
   mockHistoryPayload,
-  mockReturnedOption
+  mockReturnedOption,
+  mockTextLeverReturn,
+  mockDocketDistributionPriorLeversReturn,
+  mockmockAffinityDaysLeversReturn
 } from 'test/data/adminCaseDistributionLevers';
-import thunk from 'redux-thunk';
-import * as leverActions from 'app/caseDistribution/reducers/levers/leversActions';
 
 let mockInitialLevers = {
   static: mockStaticLevers,
@@ -30,7 +25,10 @@ jest.mock('app/caseDistribution/utils', () => ({
   createUpdatedLeversWithValues: jest.fn(() => (mockInitialLevers)),
   leverErrorMessageExists: jest.fn(),
   findOption: jest.fn(() => (mockReturnedOption)),
-  createCombinationValue: jest.fn(),
+  createCombinationValue: jest.fn(() => (40)),
+  createUpdatedCombinationLever: jest.fn(() => (mockDocketDistributionPriorLeversReturn)),
+  createUpdatedRadioLever: jest.fn(() => (mockmockAffinityDaysLeversReturn)),
+  createUpdatedLever: jest.fn(() => (mockTextLeverReturn)),
   formatLeverHistory: jest.fn(() => (mockHistoryPayload))
 }));
 
@@ -40,36 +38,29 @@ describe('Lever reducer', () => {
     levers: mockInitialLevers, // Sample initial levers state
     backendLevers: [{ item: 'item1' }, { item: 'item2' }], // Sample backendLevers state
     leversErrors: [],
-  };
-
-  const getStore = () => redux.createStore(
-    rootReducer,
-    redux.applyMiddleware(thunk)
-  );
-
-  let leversLoadPayload = {
-    batch: mockBatchLevers,
-    docket_distribution_prior: mockDocketDistributionPriorLevers,
-    affinity: mockAffinityDaysLevers
+    isUserAcdAdmin: false,
   };
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it.skip('Calls Load Levers from LeversReducer', () => {
-    let spyLoad = jest.spyOn(leverActions, 'loadLevers');
-    const store = getStore();
+  it('Should handle LOAD_LEVERS action', () => {
+    const action = {
+      type: ACTIONS.LOAD_LEVERS,
+      payload: {
+        levers: mockInitialLevers
+      }
+    };
 
-    store.dispatch(leverActions.loadLevers(leversLoadPayload));
-    store.dispatch(leverActions.setUserIsAcdAdmin(false));
+    const expectedState = {
+      ...initialState,
+      levers: mockInitialLevers
+    };
 
-    render(
-      <Provider store={store}>
-        <BatchSize />
-      </Provider>
-    );
-    expect(spyLoad).toBeCalledWith(leversLoadPayload);
+    const newState = leversReducer(initialState, action);
+
+    expect(newState).toEqual(expectedState);
   });
 
   it('Should handle LOAD_HISTORY action', () => {
@@ -92,73 +83,84 @@ describe('Lever reducer', () => {
     expect(newState).not.toEqual(initialState);
   });
 
-  it.skip('Calls Update Text Lever from LeversReducer', () => {
+  it('Should handle SET_USER_IS_ACD_ADMIN action', () => {
 
-    let spyUpdateText = jest.spyOn(leverActions, 'updateTextLever');
+    const action = {
+      type: ACTIONS.SET_USER_IS_ACD_ADMIN,
+      payload: {
+        isUserAcdAdmin: true
+      }
+    };
 
-    const store = getStore();
+    const expectedState = {
+      ...initialState,
+      isUserAcdAdmin: true
+    };
 
-    store.dispatch(leverActions.loadLevers(leversLoadPayload));
-    store.dispatch(leverActions.updateTextLever('batch', 'test-lever', 'testValue'));
+    const newState = leversReducer(initialState, action);
 
-    render(
-      <Provider store={store}>
-        <BatchSize />
-      </Provider>
-    );
-    expect(spyUpdateText).toBeCalledWith('batch', 'test-lever', 'testValue');
+    expect(newState).toEqual(expectedState);
+    expect(newState).not.toEqual(initialState);
   });
 
-  it.skip('Calls Update Combination Lever from LeversReducer', () => {
+  //Below Test seems to work correctly, but not sure how to format expected state to match new value
+  it.skip('should handle UPDATE_TEXT_LEVER action', () => {
+    const action = {
+      type: ACTIONS.UPDATE_TEXT_LEVER,
+      payload: {
+        leverGroup: 'batch',
+        leverItem: 'test-lever-text-type',
+        value: 78
+      }
+    };
 
-    let spyUpdateCombination = jest.spyOn(leverActions, 'updateCombinationLever');
+    const expectedState = {
+      ...initialState,
+      //Input here to check that value for test-lever-text-type is value of 78
+    };
 
-    const store = getStore();
+    const newState = leversReducer(initialState, action);
 
-    store.dispatch(leverActions.loadLevers(leversLoadPayload));
-    store.dispatch(leverActions.updateCombinationLever(
-      'docket_distribution_prior',
-      'ama_hearings_start_distribution_prior_to_goals',
-      '30',
-      false)
-    );
-
-    render(
-      <Provider store={store}>
-        <BatchSize />
-      </Provider>
-    );
-    expect(spyUpdateCombination).toBeCalledWith(
-      'docket_distribution_prior',
-      'ama_hearings_start_distribution_prior_to_goals',
-      '30',
-      false
-    );
+    expect(newState).toEqual(expectedState);
+    expect(newState).not.toEqual(initialState);
   });
 
-  it.skip('Should handle UPDATE_RADIO_LEVER action', () => {
+    //Below test seems to call the action correctly for coverage, not sure about expectedState value.
+  it.skip('should handle UPDATE_COMBINATION_LEVER action', () => {
+    const action = {
+      type: ACTIONS.UPDATE_COMBINATION_LEVER,
+      payload: {
+        leverGroup: 'docket_distribution_prior',
+        leverItem: 'ama_hearings_start_distribution_prior_to_goals',
+        value: 40
+      }
+    };
+
+    const expectedState = {
+      ...initialState,
+      //Input here to check that value for test-lever-text-type is value of 40
+    };
+
+    const newState = leversReducer(initialState, action);
+
+    expect(newState).toEqual(expectedState);
+    expect(newState).not.toEqual(initialState);
+  });
+
+  //Still needs to be completed
+  it.skip('should handle UPDATE_RADIO_LEVER action', () => {
     const action = {
       type: ACTIONS.UPDATE_RADIO_LEVER,
       payload: {
         leverGroup: 'affinity',
         leverItem: 'ama_hearing_case_affinity_days',
-        value: 'option_1',
-        optionValue: 89,
+        value: 80
       }
     };
 
-    let updatedLever = mockAffinityDaysLevers.filter((obj) => {
-      return obj.item === action.payload.leverItem;
-    });
-
     const expectedState = {
       ...initialState,
-      levers: {
-        affinity: {
-          ...mockAffinityDaysLevers,
-          updatedLever
-        }
-      },
+      //Input here to check that value for test-lever-text-type is value of 78
     };
 
     const newState = leversReducer(initialState, action);
@@ -185,7 +187,7 @@ describe('Lever reducer', () => {
     expect(newState).toEqual(expectedState);
   });
 
-  it.skip('should handle ADD_LEVER_VALIDATION_ERRORS and REMOVE_LEVER_VALIDATION_ERRORS action', () => {
+  it('should handle ADD_LEVER_VALIDATION_ERRORS and REMOVE_LEVER_VALIDATION_ERRORS action', () => {
 
     const actionForError = {
       type: ACTIONS.ADD_LEVER_VALIDATION_ERRORS,
