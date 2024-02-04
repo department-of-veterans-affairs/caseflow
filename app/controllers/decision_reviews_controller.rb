@@ -51,7 +51,21 @@ class DecisionReviewsController < ApplicationController
     return requires_admin_access_redirect unless can_generate_claim_history? &&
                                                  business_line.user_is_admin?(current_user)
 
-    render "show"
+    respond_to do |format|
+      format.html { render "show" }
+
+      format.json do
+        task_id = params[:task_id]
+
+        MetricsService.record("Generate individual claim history report for task #{task_id}",
+                              service: :ClaimHistoryService,
+                              name: "Change History Individual Event") do
+          events = create_change_history_individual_report(task_id)
+
+          render json: ChangeHistoryEventSerializer.new(events).serializable_hash[:data]
+        end
+      end
+    end
   end
 
   def update
@@ -289,6 +303,11 @@ class DecisionReviewsController < ApplicationController
       events = ClaimHistoryService.new(business_line, filter_params).build_events
       ChangeHistoryReporter.new(events, base_url, filter_params.to_h).as_csv
     end
+  end
+
+  def create_change_history_individual_report(task_id)
+    events = ClaimHistoryService.new(business_line, task_id: task_id).build_events
+    events
   end
 
   def create_metric_log
