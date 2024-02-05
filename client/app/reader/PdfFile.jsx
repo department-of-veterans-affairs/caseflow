@@ -221,6 +221,7 @@ export class PdfFile extends React.PureComponent {
         scale={this.props.scale}
         pdfDocument={this.props.pdfDocument}
         featureToggles={this.props.featureToggles}
+        measureTimeStartMs={performance.now()}
       />
     </div>;
   }
