@@ -13,8 +13,7 @@ require "digest"
 #   * VA.gov Veteran Address API:  https://developer.va.gov/explore/verification/docs/address_validation
 #
 class ExternalApi::VADotGovService
-  #'https://sandbox-api.va.gov/services/va_facilities/v1/facilities?facilityIds=vha_757%2Cvha_539'
-  BASE_URL = "https://sandbox-api.va.gov/services/"
+  BASE_URL = ENV["VA_DOT_GOV_API_URL"] || ""
   FACILITY_IDS_ENDPOINT = "va_facilities/v1/ids"
   FACILITIES_ENDPOINT = "va_facilities/v1/facilities"
   ADDRESS_VALIDATION_ENDPOINT = "address_validation/v1/validate"
@@ -396,7 +395,7 @@ class ExternalApi::VADotGovService
       request.open_timeout = 30
       request.read_timeout = 30
       request.body = body.to_json unless body.nil?
-      request.headers = headers.merge(apikey: "")
+      request.headers = headers.merge(apikey: ENV["VA_DOT_GOV_API_KEY"])
 
       # Rate limit requests to VA.gov veteran verification API. This is meant to be an aggressive,
       # temporary safety measure because it's more costly (in terms of computing resources) if we

@@ -26,7 +26,7 @@ class ExternalApi::VADotGovService::FacilitiesResponse < ExternalApi::VADotGovSe
   private
 
   def distances
-    if body[:meta].has_key?(:distances)
+    if body[:meta].key?(:distances)
       Hash[body[:meta][:distances].pluck(:id, :distance)]
     else
       []

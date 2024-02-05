@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 describe ExternalApi::VADotGovService do
-  # before(:each) do
-  #   stub_const("VADotGovService")
-  # end
+  before(:each) do
+    stub_const("VADotGovService")
+  end
 
   let(:address) do
     Address.new(
@@ -52,7 +52,6 @@ describe ExternalApi::VADotGovService do
         lat: 0.0,
         long: 0.0
       )
-      #      result = VADotGovService.get_distance(ids: %w[vha_757 vha_539],lat: 0.0,long: 0.0)
 
       expect(result.data.pluck(:facility_id)).to eq(%w[vha_757 vha_539])
       expect(result.error).to be_nil
@@ -63,7 +62,6 @@ describe ExternalApi::VADotGovService do
     it "returns facility data" do
       result = VADotGovService.get_facility_data(ids: %w[vha_757 vha_539])
 
-      #expect(result.data.pluck(:facility_id)).to eq(%w[vha_757 vha_539])
       expect(result.data.pluck(:facility_id)).to match_array(%w[vha_757 vha_539])
       expect(result.error).to be_nil
     end
