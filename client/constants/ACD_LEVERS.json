@@ -4,8 +4,6 @@
   "value": "value",
   "days": "days",
   "cases": "cases",
-  "SUCCESS": "SUCCESS",
-  "FAIL": "FAIL",
   "DUPLICATE": "DUPLICATE",
   "ERROR": "ERROR",
   "data_types": {
