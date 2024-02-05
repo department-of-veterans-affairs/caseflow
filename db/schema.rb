@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_01_16_211523) do
+ActiveRecord::Schema.define(version: 2024_02_05_154329) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -637,6 +637,13 @@ ActiveRecord::Schema.define(version: 2024_01_16_211523) do
     t.index ["updated_at"], name: "index_decision_issues_on_updated_at"
   end
 
+  create_table "decision_review_created_events", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.jsonb "info", default: {}
+    t.datetime "updated_at", null: false
+    t.index ["info"], name: "index_decision_review_created_events_on_info", using: :gin
+  end
+
   create_table "dispatch_tasks", id: :serial, force: :cascade do |t|
     t.string "aasm_state", comment: "Current task state: unprepared, unassigned, assigned, started, reviewed, completed"
     t.integer "appeal_id", null: false
@@ -828,9 +835,11 @@ ActiveRecord::Schema.define(version: 2024_01_16_211523) do
     t.datetime "completed_at", comment: "Timestamp of when event was successfully completed"
     t.datetime "created_at", null: false, comment: "Automatic timestamp when row was created"
     t.string "error", comment: "Error message captured during a failed event"
+    t.jsonb "info", default: {}
     t.string "reference_id", null: false, comment: "Id of Event Record being referenced within the Appeals Consumer Application"
     t.string "type", null: false, comment: "Type of Event (e.g. DecisionReviewCreatedEvent)"
     t.datetime "updated_at", null: false, comment: "Automatic timestamp whenever the record changes"
+    t.index ["info"], name: "index_events_on_info", using: :gin
   end
 
   create_table "form8s", id: :serial, force: :cascade do |t|
@@ -2155,6 +2164,7 @@ ActiveRecord::Schema.define(version: 2024_01_16_211523) do
   add_foreign_key "end_product_establishments", "users"
   add_foreign_key "end_product_updates", "end_product_establishments"
   add_foreign_key "end_product_updates", "users"
+  add_foreign_key "event_records", "events", name: "event_records_event_id_fk"
   add_foreign_key "hearing_appeal_stream_snapshots", "legacy_appeals", column: "appeal_id"
   add_foreign_key "hearing_appeal_stream_snapshots", "legacy_hearings", column: "hearing_id"
   add_foreign_key "hearing_days", "users", column: "created_by_id"
