@@ -1,1 +1,1 @@
-VADotGovService =  ExternalApi::VADotGovService
+VADotGovService = (ApplicationController.dependencies_faked? ? Fakes::VADotGovService : ExternalApi::VADotGovService)

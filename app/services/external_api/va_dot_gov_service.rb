@@ -396,7 +396,7 @@ class ExternalApi::VADotGovService
       request.open_timeout = 30
       request.read_timeout = 30
       request.body = body.to_json unless body.nil?
-      request.headers = headers.merge(apikey: )
+      request.headers = headers.merge(apikey: "")
 
       # Rate limit requests to VA.gov veteran verification API. This is meant to be an aggressive,
       # temporary safety measure because it's more costly (in terms of computing resources) if we
