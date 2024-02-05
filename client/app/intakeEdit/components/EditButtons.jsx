@@ -25,7 +25,8 @@ class SaveButtonUnconnected extends React.Component {
         issueChangeModal: false,
         unidentifiedIssueModal: false,
         reviewRemovedModal: false,
-        correctionIssueModal: false
+        correctionIssueModal: false,
+        moveToSctModal: false
       }
     };
   }
@@ -53,6 +54,10 @@ class SaveButtonUnconnected extends React.Component {
 
     if (this.props.state.addedIssues.filter((i) => i.correctionType).length > 0) {
       showModals.correctionIssueModal = true;
+    }
+
+    if (this.props.state.addedIssues.filter((i) => i.benefitType === 'vha').length > 0) {
+      showModals.moveToSctModal = true;
     }
 
     if (_.every(showModals, (modal) => modal === false)) {
@@ -191,6 +196,15 @@ class SaveButtonUnconnected extends React.Component {
         onClose={() => this.closeModal('correctionIssueModal')}
         onConfirm={() => this.confirmModal('correctionIssueModal')}>
         <p>{COPY.CORRECT_REQUEST_ISSUES_ESTABLISH_MODAL_TEXT}</p>
+      </SaveAlertConfirmModal>}
+
+      { this.state.showModals.moveToSctModal && <SaveAlertConfirmModal
+        title={COPY.VHA_MOVE_TO_SCT_MODAL_TITLE}
+        buttonText={COPY.MODAL_MOVE_BUTTON}
+        onClose={() => this.closeModal('moveToSctModal')}
+        onConfirm={() => this.confirmModal('moveToSctModal')}
+        buttonClassNames={['usa-button', 'confirm']}>
+        <p>{COPY.VHA_MOVE_TO_SCT_MODAL_BODY}</p>
       </SaveAlertConfirmModal>}
 
       <Button

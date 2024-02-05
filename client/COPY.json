@@ -528,6 +528,7 @@
   "MODAL_END_HOLD_BUTTON": "End hold",
   "MODAL_REMOVE_BUTTON": "Remove",
   "MODAL_SAVE_BUTTON": "Save",
+  "MODAL_MOVE_BUTTON": "Move",
   "BULK_ASSIGN_BUTTON_TEXT": "Assign Tasks",
   "BULK_ASSIGN_MODAL_TITLE": "Bulk Assign Tasks",
   "REGIONAL_OFFICE_REQUIRED_MESSAGE": "Please select a regional office",
@@ -1394,5 +1395,7 @@
   "REFRESH_POA": "Refresh POA",
   "POA_SUCCESSFULLY_REFRESH_MESSAGE": "Successfully refreshed. No power of attorney information was found at this time.",
   "POA_UPDATED_SUCCESSFULLY": "POA Updated Successfully",
-  "EMPLOYER_IDENTIFICATION_NUMBER": "Employer Identification Number"
+  "EMPLOYER_IDENTIFICATION_NUMBER": "Employer Identification Number",
+  "VHA_MOVE_TO_SCT_MODAL_TITLE": "Move appeal to SCT queue",
+  "VHA_MOVE_TO_SCT_MODAL_BODY": "One or more Specialty Case Team (SCT) issues have been added and the appeal will now be routed to the SCT queue."
 }
