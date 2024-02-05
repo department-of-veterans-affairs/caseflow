@@ -26,8 +26,9 @@ class CaseDistributionLever < ApplicationRecord
     #{Constants.DISTRIBUTION.nod_adjustment}
   )
 
+  # MAKE UPDATES FOR RADIO HERE
   def distribution_value
-    if self.data_type == Constants.ACD_LEVERS.data_types.radio
+    if radio_lever
       option = self.options.detect{|opt| opt['item'] == self.value}
       option['value'] if option && option.is_a?(Hash)
     else
@@ -36,11 +37,19 @@ class CaseDistributionLever < ApplicationRecord
   end
 
   def history_value
-    if data_type == Constants.ACD_LEVERS.data_types.combination
+    if combination_lever
       combination_value
     else
       value
     end
+  end
+
+  def combination_lever
+    data_type == Constants.ACD_LEVERS.data_types.combination
+  end
+
+  def radio_lever
+    data_type == Constants.ACD_LEVERS.data_types.radio
   end
 
   private
@@ -101,10 +110,18 @@ class CaseDistributionLever < ApplicationRecord
     end
 
     def update_acd_levers(current_levers, current_user)
+      # if lever is a radio update options object
+      current_levers.each do |lever|
+        next unless lever.radio_lever
+        # update options
+      end
+
       grouped_levers = current_levers.index_by { |lever| lever["id"] }
       previous_levers = CaseDistributionLever.where(id: grouped_levers.keys).index_by { |lever| lever["id"] }
       errors = []
       levers = []
+
+
 
       ActiveRecord::Base.transaction do
         levers = CaseDistributionLever.update(grouped_levers.keys, grouped_levers.values)
