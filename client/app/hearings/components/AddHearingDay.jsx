@@ -91,10 +91,10 @@ export const AddHearingDay = ({
   }, [selectedRequestType, selectedRegionalOffice, selectedHearingDay]);
 
   const handleStartTimeChange = (value) => {
-    //Process the start time value to return the time without a timezone
+    // Process the start time value to return the time without a timezone
     const getAmTime = value.search('AM');
     const splitTimeString = getAmTime < 0 ? value.search('PM') : getAmTime;
-    const selectedTime = splitTimeString === -1 ? value : value.slice(0,splitTimeString + 2).trim();
+    const selectedTime = splitTimeString === -1 ? value : value.slice(0, splitTimeString + 2).trim();
 
     // Convert the value from '8:00 AM Eastern Time' to '8:00'
     const finalValue = moment(selectedTime, 'h:mm a').format('HH:mm');

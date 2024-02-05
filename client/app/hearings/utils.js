@@ -335,7 +335,7 @@ export const zoneName = (time, name, format) => {
   // Set the label
   const label = format ? '' : zone;
 
-  if (selectedTimeZone){
+  if (selectedTimeZone && selectedTimeZone.length > 0){
     time = selectedTime;
     const originTimeZone = selectedTimeZone === null ? timezone : TIMEZONES[selectedTimeZone];
 
