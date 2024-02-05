@@ -29,7 +29,7 @@ class Events::DecisionReviewCreated
                          " processed. Please try again later.")
     rescue StandardError => e
       Rails.logger.error(e.message)
-      event.update!(error: e.message)
+      event&.update!(error: e.message)
       raise error
     end
 

@@ -6,11 +6,17 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
   describe "POST #decision_review_created" do
     let!(:current_user) { User.authenticate! }
     let(:api_key) { ApiKey.create!(consumer_name: "API TEST TOKEN") }
+    let!(:valid_params) do
+      {
+        event_id: "123",
+        claim_id: "9999"
+      }
+    end
 
     context "with a valid token" do
       it "returns success response" do
         request.headers["Authorization"] = "Token #{api_key.key_string}"
-        post :decision_review_created
+        post :decision_review_created, params: valid_params
         expect(response).to have_http_status(:created)
       end
     end
@@ -18,7 +24,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
     context "with an invalid token" do
       it "returns unauthorized response" do
         request.headers["Authorization"] = "invalid_token"
-        post :decision_review_created
+        post :decision_review_created, params: valid_params
         expect(response).to have_http_status(:unauthorized)
       end
     end
@@ -26,7 +32,7 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
     context "without a token" do
       it "returns unauthorized response" do
         # Omitting Authorization header to simulate missing token
-        post :decision_review_created
+        post :decision_review_created, params: valid_params
         expect(response).to have_http_status(:unauthorized)
       end
     end
