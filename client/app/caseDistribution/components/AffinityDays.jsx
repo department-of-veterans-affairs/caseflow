@@ -22,6 +22,20 @@ const AffinityDays = () => {
 
   const isOptionSelected = (lever, option) => lever.selectedOption === option.item;
 
+  const onChangeRadio = (lever, option) => (event) => {
+    console.log('onChangeRadio');
+    console.log(lever);
+    console.log(option);
+    console.log(event);
+  };
+
+  const onChangeField = (lever) => (event) => {
+    console.log('onChangeField');
+    console.log(lever);
+    console.log(event);
+  };
+
+
   const generateFields = (dataType, option, lever) => {
     const useAriaLabel = !lever.is_disabled_in_ui;
     const tabIndex = lever.is_disabled_in_ui ? -1 : 0;
@@ -34,11 +48,11 @@ const AffinityDays = () => {
           label={option.unit}
           isInteger
           readOnly={lever.is_disabled_in_ui ? true : !isOptionSelected(lever, option)}
-          value={option.value}
+          value={lever.value}
           errorMessage={option.errorMessage}
-          onChange={() => console.warn('not implemented')}
-          id={`${lever.item}-${option.value}`}
-          inputID={`${lever.item}-${option.value}-input`}
+          onChange={onChangeField(lever)}
+          id={`${lever.item}-${lever.value}`}
+          inputID={`${lever.item}-${lever.value}-input`}
           useAriaLabel={useAriaLabel}
           tabIndex={tabIndex}
           disabled={lever.is_disabled_in_ui}
@@ -52,10 +66,10 @@ const AffinityDays = () => {
           title={option.text}
           label={false}
           readOnly={lever.is_disabled_in_ui ? true : !isOptionSelected(lever, option)}
-          value={option.value}
-          onChange={() => console.warn('not implemented')}
-          id={`${lever.item}-${option.value}`}
-          inputID={`${lever.item}-${option.value}-input`}
+          value={lever.value}
+          onChange={onChangeField(lever)}
+          id={`${lever.item}-${lever.value}`}
+          inputID={`${lever.item}-${lever.value}-input`}
           useAriaLabel={useAriaLabel}
           tabIndex={tabIndex}
           disabled={lever.is_disabled_in_ui}
@@ -76,7 +90,7 @@ const AffinityDays = () => {
               htmlFor={`${lever.item}-${option.item}`}
             >
               {`${option.text} ${option.data_type === ACD_LEVERS.data_types.number ?
-                `${option.value} ${option.unit}` : ''}`}
+                `${lever.value} ${option.unit}` : ''}`}
             </label>
           </div>
         </div>
@@ -99,7 +113,7 @@ const AffinityDays = () => {
             disabled={lever.is_disabled_in_ui}
             id={`${lever.item}-${option.item}`}
             name={lever.item}
-            onChange={() => console.warn('not implemented')}
+            onChange={onChangeRadio(lever, option)}
           />
           <label htmlFor={`${lever.item}-${option.item}`}>
             {option.text}
