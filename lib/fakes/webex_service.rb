@@ -70,7 +70,7 @@ class Fakes::WebexService
   end
 
   # rubocop:disable Metrics/MethodLength
-  def self.fake_recordings_list_data
+  def fake_recordings_list_data
     {
       "items": [
         {

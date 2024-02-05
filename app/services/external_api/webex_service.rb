@@ -26,7 +26,9 @@ class ExternalApi::WebexService
       "verticalType": "gen"
     }
 
-    resp = send_webex_request(body)
+    method = "POST"
+
+    resp = send_webex_request(body, method)
     # resp = send_webex_request(body)
     return if resp.nil?
 
@@ -45,7 +47,10 @@ class ExternalApi::WebexService
       "provideShortUrls": true,
       "verticalType": "gen"
     }
-    resp = send_webex_request(body)
+
+    method = "POST"
+
+    resp = send_webex_request(body, method)
     # resp = send_webex_request(body: body)
     return if resp.nil?
 
@@ -53,7 +58,9 @@ class ExternalApi::WebexService
   end
 
   def get_recordings_list
-    resp = send_webex_request(method: :get)
+    body = nil
+    method = "GET"
+    resp = send_webex_request(body, method)
     return if resp.nil?
 
     ExternalApi::WebexService::RecordingsListResponse.new(resp)
@@ -62,9 +69,7 @@ class ExternalApi::WebexService
   private
 
   # :nocov:
-  def send_webex_request(body = nil)
-  # def send_webex_request(body: body, method: :post)
-
+  def send_webex_request(body, method)
     url = "https://#{@host}#{@domain}#{@api_endpoint}"
     request = HTTPI::Request.new(url)
     request.open_timeout = 300
@@ -74,14 +79,14 @@ class ExternalApi::WebexService
     request.headers = { "Authorization": "Bearer #{@apikey}", "Content-Type": "application/json" }
 
     MetricsService.record(
-      "#{@host} #{method.to_s_upcase} request to #{url}",
+      "#{@host} #{method} request to #{url}",
       service: :webex,
       name: @api_endpoint
     ) do
       case method
-      when :post
+      when "POST"
         HTTPI.post(request)
-      when :get
+      when "GET"
         HTTPI.get(request)
       end
     end

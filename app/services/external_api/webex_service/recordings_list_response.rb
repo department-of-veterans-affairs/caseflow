@@ -6,6 +6,6 @@ class ExternalApi::WebexService::RecordingsListResponse < ExternalApi::WebexServ
   end
 
   def ids
-    data[:items].pluck(:id)
+    data["items"].pluck("id")
   end
 end
