@@ -111,8 +111,12 @@ const NewLetter = (props) => {
   const [valueOptions, setValueOptions] = useState(radioOptions);
 
   const handleDays = (value) => {
-    if ((value > 0) && (value <= 65)) {
+    const currentNumber = value.trim();
+
+    if (currentNumber <= 64) {
       setNumberOfDays(value);
+    } else {
+      setNumberOfDays('');
     }
   };
 
@@ -330,7 +334,7 @@ const NewLetter = (props) => {
 
       { customResponseWindowState &&
         <TextField
-          label="Number of days (Value must be between 0 and 65)"
+          label="Number of days (Value must be between 1 and 64)"
           name="content"
           useAriaLabel
           onChange={handleDays}
