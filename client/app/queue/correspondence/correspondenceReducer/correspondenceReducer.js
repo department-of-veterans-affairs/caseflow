@@ -13,7 +13,7 @@ export const initialState = {
   currentCorrespondence: [],
   veteranInformation: [],
   waivedEvidenceTasks: [],
-  responseLetters: 0,
+  responseLetters: [],
 };
 
 export const intakeCorrespondenceReducer = (state = initialState, action = {}) => {

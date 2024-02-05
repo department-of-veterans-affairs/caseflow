@@ -7,6 +7,11 @@ import DateSelector from 'app/components/DateSelector';
 import RadioField from '../../../../../components/RadioField';
 import { ADD_CORRESPONDENCE_LETTER_SELECTIONS } from '../../../../constants';
 import moment from 'moment';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+ import {
+   setResponseLetters
+ } from '../../../correspondenceReducer/correspondenceActions';
 
 export const AddLetter = (props) => {
   const onContinueStatusChange = props.onContinueStatusChange;
@@ -71,7 +76,7 @@ AddLetter.propTypes = {
   onContinueStatusChange: PropTypes.func,
 };
 
-export const NewLetter = (props) => {
+const NewLetter = (props) => {
   const index = props.index;
 
   const [letterType, setLetterType] = useState('');
@@ -121,6 +126,16 @@ export const NewLetter = (props) => {
       setCustomResponseWindowState(false);
       setValueOptions(valueOptions);
     }
+    let letter = [{
+      title: letterTitle,
+      date_sent: date,
+      letter_type: letterType,
+      subcategory: letterSub,
+      reason: subReason,
+      response_window: responseWindows
+    }]
+    debugger;
+    setResponseLetters(letter)
   };
 
   const letterTypesData = ADD_CORRESPONDENCE_LETTER_SELECTIONS.map((option) => ({ label: (option.letter_type),
@@ -342,6 +357,16 @@ NewLetter.propTypes = {
   letterType: PropTypes.string,
   letterTitle: PropTypes.string,
   setLetterTitle: PropTypes.func,
+  setResponseLetters: PropTypes.func
 };
 
-export default AddLetter;
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    setResponseLetters
+  }, dispatch)
+);
+
+export default connect(
+  mapDispatchToProps
+)(NewLetter);
+
