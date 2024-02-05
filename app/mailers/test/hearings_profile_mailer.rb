@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Rails/ApplicationMailer
 class Test::HearingsProfileMailer < ActionMailer::Base
   default from: "Board of Veterans' Appeals <BoardofVeteransAppealsHearings@messages.va.gov>"
 
@@ -15,3 +16,4 @@ class Test::HearingsProfileMailer < ActionMailer::Base
     )
   end
 end
+# rubocop:enable Rails/ApplicationMailer
