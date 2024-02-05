@@ -5,8 +5,8 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import rootReducer from 'app/caseDistribution/reducers/root';
 import thunk from 'redux-thunk';
-import { testingAffinityDaysLevers } from '../../../data/adminCaseDistributionLevers';
-import { loadLevers, setUserIsAcdAdmin} from 'app/caseDistribution/reducers/levers/leversActions';
+import { mockAffinityDaysLevers } from '../../../data/adminCaseDistributionLevers';
+import { loadLevers, setUserIsAcdAdmin } from 'app/caseDistribution/reducers/levers/leversActions';
 import { mount } from 'enzyme';
 
 describe('Affinity Days Lever', () => {
@@ -19,8 +19,8 @@ describe('Affinity Days Lever', () => {
     jest.clearAllMocks();
   });
 
-  let leversWithTestingAffinityDaysLevers = { affinity: testingAffinityDaysLevers };
-  let lever = testingAffinityDaysLevers[0];
+  let leversWithTestingAffinityDaysLevers = { affinity: mockAffinityDaysLevers };
+  let lever = mockAffinityDaysLevers[0];
 
   it('renders Affinity Days Levers for Member Users', () => {
     const store = getStore();

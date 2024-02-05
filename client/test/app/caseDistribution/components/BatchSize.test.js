@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import rootReducer from 'app/caseDistribution/reducers/root';
 import thunk from 'redux-thunk';
-import { testingBatchLevers } from '../../../data/adminCaseDistributionLevers';
+import { mockBatchLevers } from '../../../data/adminCaseDistributionLevers';
 import { loadLevers, setUserIsAcdAdmin} from 'app/caseDistribution/reducers/levers/leversActions';
 import { mount } from 'enzyme';
 
@@ -19,8 +19,8 @@ describe('Batch Size Lever', () => {
     jest.clearAllMocks();
   });
 
-  let leversWithTestingBatchLevers = { batch: testingBatchLevers };
-  let lever = testingBatchLevers[0];
+  let leversWithTestingBatchLevers = { batch: mockBatchLevers };
+  let lever = mockBatchLevers[0];
 
   it('renders Batch Size Levers for Member Users', () => {
     const store = getStore();
