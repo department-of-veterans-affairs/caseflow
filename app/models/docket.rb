@@ -181,10 +181,12 @@ class Docket
 
     def genpop
       joins(with_assigned_distribution_task_sql)
+        .with_original_appeal_and_judge_task
         .where(
-          "appeals.stream_type != ? OR distribution_task.assigned_at <= ?",
+          "appeals.stream_type != ? OR distribution_task.assigned_at <= ? OR original_judge_task.assigned_to_id = ?",
           Constants.AMA_STREAM_TYPES.court_remand,
-          Constants.DISTRIBUTION.cavc_affinity_days.days.ago
+          Constants.DISTRIBUTION.cavc_affinity_days.days.ago,
+          JudgeTeam.judges_with_exclude_appeals_from_affinity
         )
     end
 
