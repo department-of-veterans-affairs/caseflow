@@ -121,6 +121,7 @@ module Seeds
               unit: Constants.ACD_LEVERS.days,
               min_value: 0,
               max_value: 100,
+              selected: true
             },
             {
               item: Constants.ACD_LEVERS.infinite,
@@ -153,7 +154,8 @@ module Seeds
               data_type: Constants.ACD_LEVERS.data_types.number,
               value: 0,
               text: 'Attempt distribution to current judge for max of:',
-              unit: Constants.ACD_LEVERS.days
+              unit: Constants.ACD_LEVERS.days,
+              selected: true
             },
             {
               item: Constants.ACD_LEVERS.infinite,
@@ -190,7 +192,8 @@ module Seeds
               data_type: Constants.ACD_LEVERS.data_types.number,
               value: 21,
               text: 'Attempt distribution to current judge for max of:',
-              unit: Constants.ACD_LEVERS.days
+              unit: Constants.ACD_LEVERS.days,
+              selected: true
             },
             {
               item: Constants.ACD_LEVERS.infinite,
@@ -223,7 +226,8 @@ module Seeds
               data_type: Constants.ACD_LEVERS.data_types.number,
               value: 21,
               text: 'Attempt distribution to current judge for max of:',
-              unit: Constants.ACD_LEVERS.days
+              unit: Constants.ACD_LEVERS.days,
+              selected: true
             },
             {
               item: Constants.ACD_LEVERS.infinite,
@@ -254,7 +258,8 @@ module Seeds
               data_type: Constants.ACD_LEVERS.data_types.number,
               value: 60,
               text: 'Attempt distribution to current judge for max of:',
-              unit: Constants.ACD_LEVERS.days
+              unit: Constants.ACD_LEVERS.days,
+              selected: true
             },
             {
               item: Constants.ACD_LEVERS.infinite,
@@ -291,7 +296,8 @@ module Seeds
               data_type: Constants.ACD_LEVERS.data_types.number,
               value: 14,
               text: 'Attempt distribution to current judge for max of:',
-              unit: Constants.ACD_LEVERS.days
+              unit: Constants.ACD_LEVERS.days,
+              selected: true
             },
             {
               item: Constants.ACD_LEVERS.infinite,
@@ -328,7 +334,8 @@ module Seeds
               data_type: Constants.ACD_LEVERS.data_types.number,
               value: 21,
               text: 'Attempt distribution to current judge for max of:',
-              unit: Constants.ACD_LEVERS.days
+              unit: Constants.ACD_LEVERS.days,
+              selected: true
             },
             {
               item: Constants.ACD_LEVERS.infinite,

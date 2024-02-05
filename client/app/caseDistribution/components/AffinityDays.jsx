@@ -9,7 +9,6 @@ import { getUserIsAcdAdmin, getLeversByGroup } from '../reducers/levers/leversSe
 import { Constant } from '../constants';
 import { dynamicallyAddAsterisk } from '../utils';
 
-
 const AffinityDays = () => {
   const theState = useSelector((state) => state);
   const isUserAcdAdmin = getUserIsAcdAdmin(theState);
@@ -20,6 +19,8 @@ const AffinityDays = () => {
   useEffect(() => {
     setAffinityLevers(storeLevers);
   }, [storeLevers]);
+
+  const isOptionSelected = (lever, option) => lever.selectedOption === option.item;
 
   const generateFields = (dataType, option, lever) => {
     const useAriaLabel = !lever.is_disabled_in_ui;
@@ -32,7 +33,7 @@ const AffinityDays = () => {
           title={option.text}
           label={option.unit}
           isInteger
-          readOnly={lever.is_disabled_in_ui ? true : (lever.value !== option.item)}
+          readOnly={lever.is_disabled_in_ui ? true : !isOptionSelected(lever, option)}
           value={option.value}
           errorMessage={option.errorMessage}
           onChange={() => console.warn('not implemented')}
@@ -50,7 +51,7 @@ const AffinityDays = () => {
           name={option.item}
           title={option.text}
           label={false}
-          readOnly={lever.is_disabled_in_ui ? true : (lever.value !== option.item)}
+          readOnly={lever.is_disabled_in_ui ? true : !isOptionSelected(lever, option)}
           value={option.value}
           onChange={() => console.warn('not implemented')}
           id={`${lever.item}-${option.value}`}
@@ -66,7 +67,7 @@ const AffinityDays = () => {
   };
 
   const generateMemberViewLabel = (option, lever, index) => {
-    if (lever.value === option.item) {
+    if (isOptionSelected(lever, option)) {
       return (
         <div key={`${option.item}-${lever.item}-${index}`}>
           <div>
@@ -86,13 +87,13 @@ const AffinityDays = () => {
   };
 
   const renderAdminInput = (option, lever, index) => {
-    const className = cx('combined-radio-input', (lever.value === option.item) ? '' : 'outline-radio-input');
+    const className = cx('combined-radio-input', (isOptionSelected(lever, option)) ? '' : 'outline-radio-input');
 
     return (
       <div key={`${lever.item}-${index}-${option.item}`}>
         <div>
           <input
-            checked={option.item === lever.value}
+            checked={option.item === lever.selectedOption}
             type={ACD_LEVERS.data_types.radio}
             value={option.item}
             disabled={lever.is_disabled_in_ui}
@@ -106,7 +107,7 @@ const AffinityDays = () => {
         </div>
         <div>
           <div className={className} aria-label={option.unit}>
-            {generateFields(option.data_type, option, lever, isUserAcdAdmin)}
+            {generateFields(option.data_type, option, lever)}
           </div>
         </div>
       </div>

@@ -1,6 +1,7 @@
 import ACD_LEVERS from '../../constants/ACD_LEVERS';
 
 export const findOption = (lever, value) => lever.options.find((option) => option.item === value);
+export const findSelectedOption = (lever) => lever.options.find((option) => option.selected);
 
 /**
  * Add backendValue attributes to each lever
@@ -22,8 +23,7 @@ export const createUpdatedLeversWithValues = (levers) => {
         // to retrieve value
         if (dataType === ACD_LEVERS.data_types.radio) {
           additionalValues = {
-            currentValue: findOption(lever, lever.value).value,
-            backendValue: findOption(lever, lever.value).value,
+            selectedOption: findSelectedOption(lever).item,
           };
         } else if (dataType === ACD_LEVERS.data_types.combination) {
           additionalValues = {
