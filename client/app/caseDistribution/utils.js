@@ -47,12 +47,19 @@ export const createUpdatedLeversWithValues = (levers) => {
 
 export const formatTimestamp = (entry) => {
   const dateEntry = new Date(entry);
+  const timeEntry = {
+    hours: `0${dateEntry.getHours()}`.slice(-2),
+    minutes: `0${dateEntry.getMinutes()}`.slice(-2),
+    seconds: `0${dateEntry.getSeconds()}`.slice(-2),
+  };
+
   const formattedDate = `${dateEntry.toLocaleDateString('en-US', {
     weekday: 'short',
     year: 'numeric',
     month: 'short',
     day: 'numeric'
-  }) } ${dateEntry.getHours()}:${dateEntry.getMinutes()}:${dateEntry.getSeconds()}`;
+
+  }) } ${timeEntry.hours}:${timeEntry.minutes}:${timeEntry.seconds}`;
 
   return formattedDate;
 };
@@ -123,6 +130,11 @@ export const leverErrorMessageExists = (existingErrors, newErrors) => {
   );
 };
 
+export const dynamicallyAddAsterisk = (lever) => {
+  return (lever.algorithms_used.includes(ACD_LEVERS.algorithms.proportion) &&
+    lever.algorithms_used.includes(ACD_LEVERS.algorithms.docket) ? '*' : '');
+};
+
 /**
  * if is_toggle_active was false then set to true and value was updated
  *   return true
@@ -139,3 +151,4 @@ export const hasCombinationLeverChanged = (lever) =>
   `${lever.value}` !== lever.backendValue);
 
 export const hasRadioLeverChanged = (lever) => false;
+

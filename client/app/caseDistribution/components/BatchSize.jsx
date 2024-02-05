@@ -7,7 +7,7 @@ import { getLeversByGroup, getLeverErrors, getUserIsAcdAdmin } from '../reducers
 import { updateLeverValue, addLeverErrors, removeLeverErrors } from '../reducers/levers/leversActions';
 import { Constant } from '../constants';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
-import { validateLeverInput } from '../utils';
+import { validateLeverInput, dynamicallyAddAsterisk } from '../utils';
 
 const BatchSize = () => {
   const theState = useSelector((state) => state);
@@ -58,7 +58,7 @@ const BatchSize = () => {
         <div className="active-lever" key={`${lever.item}-${index}`}>
           <div className="lever-left">
             <strong className={lever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}>
-              {lever.title}
+              {lever.title}{dynamicallyAddAsterisk(lever)}
             </strong>
             <p className={lever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}>
               {lever.description}
@@ -71,6 +71,8 @@ const BatchSize = () => {
               <NumberField
                 name={`${lever.item}-field`}
                 label={lever.unit}
+                useAriaLabel={!lever.is_disabled_in_ui}
+                ariaLabelText={lever.title}
                 isInteger
                 readOnly={lever.is_disabled_in_ui}
                 value={lever.value}

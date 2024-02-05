@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import rootReducer from 'app/caseDistribution/reducers/root';
 import thunk from 'redux-thunk';
-import { testingBatchLevers } from '../../../data/adminCaseDistributionLevers';
+import { mockBatchLevers } from '../../../data/adminCaseDistributionLevers';
 import { loadLevers, setUserIsAcdAdmin} from 'app/caseDistribution/reducers/levers/leversActions';
 import { mount } from 'enzyme';
 
@@ -19,8 +19,8 @@ describe('Batch Size Lever', () => {
     jest.clearAllMocks();
   });
 
-  let leversWithTestingBatchLevers = { batch: testingBatchLevers };
-  let lever = testingBatchLevers[0];
+  let leversWithTestingBatchLevers = { batch: mockBatchLevers };
+  let lever = mockBatchLevers[0];
 
   it('renders Batch Size Levers for Member Users', () => {
     const store = getStore();
@@ -36,6 +36,8 @@ describe('Batch Size Lever', () => {
     expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(lever.title);
     expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(lever.description);
     expect(document.querySelector('.active-lever > .lever-right')).toHaveTextContent(lever.value);
+    expect(document.querySelector('.lever-right').getAttribute('aria-label')).
+      toBe(null);
   });
 
   it('renders Batch Size Levers for Admin Users', () => {
@@ -53,6 +55,22 @@ describe('Batch Size Lever', () => {
     expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(lever.title);
     expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(lever.description);
     expect(document.querySelector('.active-lever > .lever-right')).toHaveTextContent(lever.unit);
+  });
+
+  it('renders aria text Levers for Admin Users', () => {
+    const store = getStore();
+
+    store.dispatch(loadLevers(leversWithTestingBatchLevers));
+    store.dispatch(setUserIsAcdAdmin(true));
+
+    const wrapper = mount(
+      <Provider store={store}>
+        <BatchSize />
+      </Provider>
+    );
+
+    expect(wrapper.find('NumberField').first().
+      prop('ariaLabelText')).toBe('Test Title Lever*');
   });
 
   it('sets input to invalid for error and sets input to valid to remove error', () => {
@@ -88,5 +106,22 @@ describe('Batch Size Lever', () => {
 
     waitFor(() => expect(inputField.prop('value').toBe(eventForValid.target.value)));
     waitFor(() => expect(inputField.prop('errorMessage').toBe('')));
+  });
+
+  it('dynamically renders * in the lever label', () => {
+    lever.algorithms_used = ["docket", "proportion"]
+
+    const store = getStore();
+
+    store.dispatch(loadLevers(leversWithTestingBatchLevers));
+    store.dispatch(setUserIsAcdAdmin(true));
+
+    let wrapper = mount(
+      <Provider store={store}>
+        <BatchSize />
+      </Provider>
+    );
+
+    expect(wrapper.text()).toContain(lever.title + '*');
   });
 });

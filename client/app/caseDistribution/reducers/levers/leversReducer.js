@@ -14,9 +14,7 @@ import {
 // Refactor where it is used before deletion
 export const initialState = {
   levers: {},
-  backendLevers: [],
   historyList: [],
-  changesOccurred: false,
   displayBanner: false,
   leversErrors: [],
   errors: [],
@@ -29,10 +27,7 @@ const leversReducer = (state = initialState, action = {}) => {
     return update(state, {
       levers: {
         $set: createUpdatedLeversWithValues(action.payload.levers),
-      },
-      backendLevers: {
-        $set: createUpdatedLeversWithValues(action.payload.levers),
-      },
+      }
     });
   case ACTIONS.LOAD_HISTORY:
     return update(state, {
@@ -83,15 +78,8 @@ const leversReducer = (state = initialState, action = {}) => {
   case ACTIONS.SAVE_LEVERS:
     return {
       ...state,
-      changesOccurred: false,
       displayBanner: true,
       errors: action.payload.errors
-    };
-
-  case ACTIONS.REVERT_LEVERS:
-    return {
-      ...state,
-      levers: createUpdatedLeversWithValues(state.backendLevers)
     };
 
   case ACTIONS.HIDE_BANNER:

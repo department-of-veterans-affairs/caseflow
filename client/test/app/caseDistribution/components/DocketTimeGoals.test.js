@@ -6,11 +6,12 @@ import { createStore, applyMiddleware } from 'redux';
 import rootReducer from 'app/caseDistribution/reducers/root';
 import thunk from 'redux-thunk';
 import {
-  testingDocketDistributionPriorLevers,
-  testingDocketTimeGoalsLevers
+  mockDocketDistributionPriorLevers,
+  mockDocketTimeGoalsLevers
 } from '../../../data/adminCaseDistributionLevers';
 import { loadLevers, setUserIsAcdAdmin } from 'app/caseDistribution/reducers/levers/leversActions';
 import { mount } from 'enzyme';
+import { sectionTitles } from '../../../../app/caseDistribution/constants';
 
 describe('Docket Time Goals Lever', () => {
 
@@ -23,12 +24,12 @@ describe('Docket Time Goals Lever', () => {
   });
 
   let levers = {
-    docket_distribution_prior: testingDocketDistributionPriorLevers,
+    docket_distribution_prior: mockDocketDistributionPriorLevers,
 
-    docket_time_goal: testingDocketTimeGoalsLevers
+    docket_time_goal: mockDocketDistributionPriorLevers
   };
-  let testTimeGoalLever = testingDocketTimeGoalsLevers[0];
-  let testDistPriorLever = testingDocketDistributionPriorLevers[0];
+  let testTimeGoalLever = mockDocketDistributionPriorLevers[0];
+  let testDistPriorLever = mockDocketDistributionPriorLevers[0];
 
   it('renders Docket Time Goals Levers for Member Users', () => {
     const store = getStore();
@@ -64,6 +65,9 @@ describe('Docket Time Goals Lever', () => {
 
     waitFor(() => expect(leverTimeGoal).toHaveTextContent(testTimeGoalLever.value));
     waitFor(() => expect(leverDistPrior).toHaveTextContent(testDistPriorLever.value));
+
+    expect(wrapper.find('NumberField').first().
+      prop('ariaLabelText')).toBe('AMA Hearings Docket Time Goals');
   });
 
   it('sets input of Time Goal Lever to invalid for error and sets input to valid to remove error', () => {
@@ -99,5 +103,23 @@ describe('Docket Time Goals Lever', () => {
 
     waitFor(() => expect(inputField.prop('value').toBe(eventForValid.target.value)));
     waitFor(() => expect(inputField.prop('errorMessage').toBe('')));
+  });
+
+  it('dynamically renders * in the lever label', () => {
+    testDistPriorLever.algorithms_used = ["docket", "proportion"]
+    testTimeGoalLever.algorithms_used = ["docket", "proportion"]
+    let testTitle = sectionTitles[testDistPriorLever.item]
+
+    const store = getStore();
+
+    store.dispatch(loadLevers(levers));
+    store.dispatch(setUserIsAcdAdmin(true));
+
+    const wrapper = mount(
+      <Provider store={store}>
+        <DocketTimeGoals />
+      </Provider>);
+
+    expect(wrapper.text()).toContain(testTitle + '*');
   });
 });

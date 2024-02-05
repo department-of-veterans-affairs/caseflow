@@ -14,6 +14,7 @@ export const TextField = (props) => {
   const handleBlur = (event) => props.onBlur?.(event.target.value);
 
   const {
+    ariaLabelText,
     errorMessage,
     className,
     label,
@@ -59,7 +60,7 @@ export const TextField = (props) => {
     />
   );
 
-  const ariaLabelObj = useAriaLabel ? { 'aria-label': name } : {};
+  const ariaLabelObj = useAriaLabel ? { 'aria-label': ariaLabelText || name } : {};
 
   // Transform `null` values to empty strings to avoid React warnings
   // We allow `undefined` as it indicates uncontrolled usage
@@ -198,6 +199,7 @@ TextField.propTypes = {
   onChange: PropTypes.func,
   onBlur: PropTypes.func,
   title: PropTypes.string,
+  ariaLabelText: PropTypes.string,
   onKeyPress: PropTypes.func,
   strongLabel: PropTypes.bool,
   maxLength: PropTypes.number,

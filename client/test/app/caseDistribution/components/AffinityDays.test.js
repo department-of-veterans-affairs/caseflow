@@ -5,8 +5,8 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import rootReducer from 'app/caseDistribution/reducers/root';
 import thunk from 'redux-thunk';
-import { testingAffinityDaysLevers } from '../../../data/adminCaseDistributionLevers';
-import { loadLevers, setUserIsAcdAdmin} from 'app/caseDistribution/reducers/levers/leversActions';
+import { mockAffinityDaysLevers } from '../../../data/adminCaseDistributionLevers';
+import { loadLevers, setUserIsAcdAdmin } from 'app/caseDistribution/reducers/levers/leversActions';
 import { mount } from 'enzyme';
 
 describe('Affinity Days Lever', () => {
@@ -19,8 +19,8 @@ describe('Affinity Days Lever', () => {
     jest.clearAllMocks();
   });
 
-  let leversWithTestingAffinityDaysLevers = { affinity: testingAffinityDaysLevers };
-  let lever = testingAffinityDaysLevers[0];
+  let leversWithTestingAffinityDaysLevers = { affinity: mockAffinityDaysLevers };
+  let lever = mockAffinityDaysLevers[0];
 
   it('renders Affinity Days Levers for Member Users', () => {
     const store = getStore();
@@ -61,6 +61,7 @@ describe('Affinity Days Lever', () => {
   it('sets input to invalid for error and sets input to valid to remove error', () => {
     const eventForError = { target: { value: 150 } };
     const eventForValid = { target: { value: 10 } };
+    const logSpy = jest.spyOn(console, 'log');
 
     const store = getStore();
 
@@ -95,7 +96,54 @@ describe('Affinity Days Lever', () => {
 
     wrapper.update();
 
+    waitFor(() => expect(logSpy).toHaveBeenCalledWith('not implemented'));
     waitFor(() => expect(inputField.prop('value').toBe(eventForValid.target.value)));
     waitFor(() => expect(inputField.prop('errorMessage').toBe('')));
+  });
+
+  it('should display the input text when radio option selected', () => {
+    const inputData = { target: { value: "test value" } };
+    const logSpy = jest.spyOn(console, 'log');
+    const store = getStore();
+
+    store.dispatch(loadLevers(leversWithTestingAffinityDaysLevers));
+    store.dispatch(setUserIsAcdAdmin(true));
+
+    let wrapper = mount(
+      <Provider store={store}>
+        <AffinityDays />
+      </Provider>
+    );
+
+    let radioOption = wrapper.find('input[id="ama_hearing_case_aod_affinity_days-option_1"]');
+
+    expect(radioOption.getDOMNode().checked).toEqual(true);
+
+    let inputField = wrapper.find('input[id="ama_hearing_case_aod_affinity_days-0-input"]');
+
+     // Calls simulate change to set value outside of min/max range
+    waitFor(() => inputField.simulate('change', inputData));
+
+    wrapper.update();
+
+    waitFor(() => expect(logSpy).toHaveBeenCalledWith('not implemented'));
+    waitFor(() => expect(inputField.prop('value').toBe(inputData.target.value)));
+  });
+
+  it('dynamically renders * in the lever label', () => {
+    lever.algorithms_used = ["docket", "proportion"]
+
+    const store = getStore();
+
+    store.dispatch(loadLevers(leversWithTestingAffinityDaysLevers));
+    store.dispatch(setUserIsAcdAdmin(true));
+
+    let wrapper = mount(
+      <Provider store={store}>
+        <AffinityDays />
+      </Provider>
+    );
+
+    expect(wrapper.text()).toContain(lever.title + '*');
   });
 });
