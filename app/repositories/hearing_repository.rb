@@ -44,7 +44,8 @@ class HearingRepository
         new_tz = ActiveSupport::TimeZone.find_tzinfo(tz_str)
       rescue TZInfo::InvalidTimezoneIdentifier => error
         Raven.capture_exception(error)
-        Rails.logger.info(error + ": Invalid timezone " + tz_str + " for hearing day")
+        Rails.logger.info(error.to_s + ": Invalid timezone " + tz_str + " for hearing day")
+        raise error
       end
       time_str + " " + new_tz.name
     end
@@ -64,7 +65,7 @@ class HearingRepository
           hearing_day: hearing_day,
           appeal: attrs[:appeal],
           scheduled_for: scheduled_for,
-          scheduled_in_timezone: attrs[:scheduled_time_string],
+          scheduled_in_timezone: fix_hearings_timezone(attrs[:scheduled_time_string]),
           hearing_location_attrs: attrs[:hearing_location_attrs],
           notes: attrs[:notes]
         )
