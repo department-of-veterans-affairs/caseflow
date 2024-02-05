@@ -2,85 +2,15 @@
 
 require "webvtt"
 require "rtf"
+require "csv"
 
-# Job for converting VTT transcription files to RTF
-class Hearings::RTFConversionJob < CaseflowJob
-  queue_with_priority :low_priority
+# Workflow for converting VTT transcription files to RTF
+class Hearings::TranscriptionTransformer
+  class FileConversionError < StandardError; end
 
-  retry_on(StandardError, attempts: 5, wait: 5.seconds) do |job, exception|
-    error_msg = "#{job.class.name} (#{job.job_id}) failed with error: #{exception}"
-    Rails.logger.error(error_msg)
-    if job.executions == 5
-      error_uuid = SecureRandom.uuid
-      Raven.capture_exception(exception, extra: { error_uuid: error_uuid })
-      HearingTranscriptionMailer.vtt_to_rtf_conversion_error(error_msg)
-      tags = rtf_conversion_datadog_tags(exception, job.job_id)
-      DataDogService.increment_counter(metric_name: "rtf_conversion.failed", **tags)
-    end
-  end
-
-  after_perform do |job|
-    tags = rtf_conversion_datadog_tags(nil, job.job_id)
-    DataDogService.increment_counter(metric_name: "rtf_conversion.successful", **tags)
-  end
-
-  # Sub folder name
-  S3_SUB_BUCKET = "vaec-appeals-caseflow"
-
-  def initialize
-    @folder = (Rails.deploy_env == :prod) ? S3_SUB_BUCKET : "#{S3_SUB_BUCKET}-#{Rails.deploy_env}"
-    @upload_folder = @folder + "/transcript_text"
-    super
-  end
-
-  def perform
-    vtt_file_paths = retreive_files_from_s3(files_waiting_for_conversion)
-    # vtt_file_paths = ["tmp/transcription_files/vtt/Transcript_IC_Webex.vtt"]
-    convert_and_upload_files(vtt_file_paths)
-    clean_up_tmp_folders
-  end
-
-  # the metrics info for datadog
-  def rtf_conversion_datadog_tags(error, id)
-    {
-      app_name: Constants.DATADOG_METRICS.HEARINGS.APP_NAME,
-      metric_group: Constants.DATADOG_METRICS.HEARINGS.TRANSCRIPTIONS_GROUP_NAME,
-      attrs: { error_message: error&.message, job_id: id }
-    }
-  end
-
-  # Get transcription files waiting for file conversion
-  # Returns the vtt files that haven't been converted yet
-  def files_waiting_for_conversion
-    TranscriptionFile.where(date_converted: nil).where.not(aws_link: [nil, ""])
-  end
-
-  # Retrieve files from the s3 bucket
-  # files - array of files needing to be converted
-  # Returns the list of newly made output paths
-  def retreive_files_from_s3(files)
-    paths = []
-    files.pluck(:aws_link).each do |link|
-      file_name = vtt_folder + "/" + vtt_name
-      S3Service.fetch_file(link, file_name)
-      paths.push(file_name)
-    end
-
-    paths
-  end
-
-  # Convert all the vtt files to rtf, upload to S3 and create records
-  # paths - all the file paths of retrieved vtt files
-  # Returns - the aws links the files were uploaded to
-  def convert_and_upload_files(paths)
-    aws_links = []
-    paths.each do |path|
-      rtf_path = convert_to_rtf(path)
-      link = upload_to_s3(rtf_path)
-      aws_links.push(link)
-    end
-
-    aws_links
+  def call(path)
+    path = "tmp/transcription_files/vtt/Transcript_IC_Webex.vtt"
+    convert_to_rtf(path)
   end
 
   # The temporary location of vtt files after fetching from S3
@@ -89,41 +19,43 @@ class Hearings::RTFConversionJob < CaseflowJob
     File.join(Rails.root, "tmp", "transcription_files", "vtt")
   end
 
-  # The temporary location of rtf files after fetching from S3
-  # Returns the location of the file
-  def rtf_folder
-    File.join("tmp", "transcription_files", "rtf")
-  end
-
-  # The name of the vtt file after fetching
-  # Returns the name of the vtt file
-  def vtt_name
-    Time.zone.now.strftime("%m_%d_%Y_%H_%M_%S_%L") + ".vtt"
-  end
-
-  # The name of the rtf file after fetching
-  # Returns the name of the rtf file
-  def rtf_name
-    Time.zone.now.strftime("%m_%d_%Y_%H_%M_%S_%L") + ".rtf"
-  end
-
-  # Convert vtt file to rtf
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  # Convert vtt file to rtf or csv if there is an error
   # path - the file path of the vtt file
   # Returns the file path of the newly converted file
   def convert_to_rtf(path)
-    vtt = WebVTT.read(path)
-    doc = RTF::Document.new(RTF::Font.new(RTF::Font::ROMAN, "Times New Roman"))
-    doc.footer = RTF::FooterNode.new(doc, RTF::FooterNode::UNIVERSAL)
-    doc.style.left_margin = 1300
-    doc.style.right_margin = 1300
-    create_cover_page(doc)
-    doc.page_break
-    create_transcription_pages(vtt, doc)
-    doc = create_footer(doc)
-    save_location = rtf_folder + "/" + rtf_name
-    File.open(save_location, "w") { |file| file.write(doc) }
-    save_location
+    save_paths = []
+    begin
+      vtt = WebVTT.read("ddsf")
+      doc = RTF::Document.new(RTF::Font.new(RTF::Font::ROMAN, "Times New Roman"))
+      doc.footer = RTF::FooterNode.new(doc, RTF::FooterNode::UNIVERSAL)
+      doc.style.left_margin = 1300
+      doc.style.right_margin = 1300
+      create_cover_page(doc)
+      doc.page_break
+      create_transcription_pages(vtt, doc)
+      doc = create_footer(doc)
+      save_location = path.gsub("vtt", "rtf")
+      File.open(save_location, "w") { |file| file.write(doc) }
+      save_paths.push(save_location)
+    rescue WebVTT => error
+      raise FileConversionError
+    rescue StandardError => error
+      timestamp = Time.zone.now.to_s.sub("\sUTC", "")
+      file_name = path.split("/").last
+      file_date = File.ctime(path).to_s.split(" ").first
+      error_file = path.gsub("vtt", "csv")
+      header = %w[file_name file_date section_timestamp error_encountered]
+      CSV.open(error_file, "w") do |writer|
+        writer << header
+        writer << [file_name, file_date, timestamp, error.to_s]
+      end
+      save_paths.push(error_file)
+    ensure
+      save_paths
+    end
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   # Create cover page
   # document - the document object
@@ -192,34 +124,6 @@ class Hearings::RTFConversionJob < CaseflowJob
     rtf_footer =
       "\\footer\\pard\\" + (" " * 47) + "\\chpgn" + (" " * 13) + "Veteran's Last, First, MI, Claim No\\par"
     document.to_rtf.sub!(document.footer.to_rtf, "{#{rtf_footer}}")
-  end
-
-  # Create a transcription file record
-  def create_transcription_file(file_name, appeal_id, docket_number, date_converted, created_by_id, file_status)
-
-  end
-
-  # Upload file to S3 bucket
-  # path - the file path of the rtf file
-  # Returns the aws link
-  def upload_to_s3(path)
-    upload_location = @upload_folder + "/" + path.sub(rtf_folder + "/", "")
-    S3Service.store_file(upload_location, path, :filepath)
-
-    upload_location
-  end
-
-  # Create an xls file for errors
-  def create_xls_file
-
-  end
-
-  # remove all vtt and rtfs
-  def clean_up_tmp_folders
-    FileUtils.rm_rf("#{vtt_folder}/.", secure: true)
-    FileUtils.rm_rf("#{rtf_folder}/.", secure: true)
-
-    nil
   end
 
   # streamlines adding line breaks
