@@ -1194,16 +1194,16 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
               >
                 <input
                   disabled=""
-                  id="hearingTime0_7:30 AM Central Time (US & Canada)"
+                  id="hearingTime0_8:30 AM Central Time (US & Canada)"
                   name="hearingTime0"
                   type="radio"
-                  value="7:30 AM Central Time (US & Canada)"
+                  value="8:30 AM Central Time (US & Canada)"
                 />
                 <label
                   class="disabled"
-                  for="hearingTime0_7:30 AM Central Time (US & Canada)"
+                  for="hearingTime0_8:30 AM Central Time (US & Canada)"
                 >
-                  7:30 AM Central Time (US & Canada) / 8:30 AM Eastern Time (US & Canada)
+                  8:30 AM Central Time (US & Canada) / 9:30 AM Eastern Time (US & Canada)
                 </label>
               </div>
               <div
@@ -1211,16 +1211,16 @@ exports[`DailyDocketRow renders correctly for non virtual, Transcriber  1`] = `
               >
                 <input
                   disabled=""
-                  id="hearingTime0_11:30 AM Central Time (US & Canada)"
+                  id="hearingTime0_12:30 PM Central Time (US & Canada)"
                   name="hearingTime0"
                   type="radio"
-                  value="11:30 AM Central Time (US & Canada)"
+                  value="12:30 PM Central Time (US & Canada)"
                 />
                 <label
                   class="disabled"
-                  for="hearingTime0_11:30 AM Central Time (US & Canada)"
+                  for="hearingTime0_12:30 PM Central Time (US & Canada)"
                 >
-                  11:30 AM Central Time (US & Canada) / 12:30 PM Eastern Time (US & Canada)
+                  12:30 PM Central Time (US & Canada) / 1:30 PM Eastern Time (US & Canada)
                 </label>
               </div>
               <div
@@ -1792,16 +1792,16 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
               >
                 <input
                   disabled=""
-                  id="hearingTime0_7:30 AM Central Time (US & Canada)"
+                  id="hearingTime0_8:30 AM Central Time (US & Canada)"
                   name="hearingTime0"
                   type="radio"
-                  value="7:30 AM Central Time (US & Canada)"
+                  value="8:30 AM Central Time (US & Canada)"
                 />
                 <label
                   class="disabled"
-                  for="hearingTime0_7:30 AM Central Time (US & Canada)"
+                  for="hearingTime0_8:30 AM Central Time (US & Canada)"
                 >
-                  7:30 AM Central Time (US & Canada) / 8:30 AM Eastern Time (US & Canada)
+                  8:30 AM Central Time (US & Canada) / 9:30 AM Eastern Time (US & Canada)
                 </label>
               </div>
               <div
@@ -1809,16 +1809,16 @@ exports[`DailyDocketRow renders correctly for non virtual, VSO  1`] = `
               >
                 <input
                   disabled=""
-                  id="hearingTime0_11:30 AM Central Time (US & Canada)"
+                  id="hearingTime0_12:30 PM Central Time (US & Canada)"
                   name="hearingTime0"
                   type="radio"
-                  value="11:30 AM Central Time (US & Canada)"
+                  value="12:30 PM Central Time (US & Canada)"
                 />
                 <label
                   class="disabled"
-                  for="hearingTime0_11:30 AM Central Time (US & Canada)"
+                  for="hearingTime0_12:30 PM Central Time (US & Canada)"
                 >
-                  11:30 AM Central Time (US & Canada) / 12:30 PM Eastern Time (US & Canada)
+                  12:30 PM Central Time (US & Canada) / 1:30 PM Eastern Time (US & Canada)
                 </label>
               </div>
               <div
@@ -3065,16 +3065,16 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
               >
                 <input
                   disabled=""
-                  id="hearingTime0_7:30 AM Central Time (US & Canada)"
+                  id="hearingTime0_8:30 AM Central Time (US & Canada)"
                   name="hearingTime0"
                   type="radio"
-                  value="7:30 AM Central Time (US & Canada)"
+                  value="8:30 AM Central Time (US & Canada)"
                 />
                 <label
                   class="disabled"
-                  for="hearingTime0_7:30 AM Central Time (US & Canada)"
+                  for="hearingTime0_8:30 AM Central Time (US & Canada)"
                 >
-                  7:30 AM Central Time (US & Canada) / 8:30 AM Eastern Time (US & Canada)
+                  8:30 AM Central Time (US & Canada) / 9:30 AM Eastern Time (US & Canada)
                 </label>
               </div>
               <div
@@ -3082,16 +3082,16 @@ exports[`DailyDocketRow renders correctly for non virtual, hearing cooridnator 1
               >
                 <input
                   disabled=""
-                  id="hearingTime0_11:30 AM Central Time (US & Canada)"
+                  id="hearingTime0_12:30 PM Central Time (US & Canada)"
                   name="hearingTime0"
                   type="radio"
-                  value="11:30 AM Central Time (US & Canada)"
+                  value="12:30 PM Central Time (US & Canada)"
                 />
                 <label
                   class="disabled"
-                  for="hearingTime0_11:30 AM Central Time (US & Canada)"
+                  for="hearingTime0_12:30 PM Central Time (US & Canada)"
                 >
-                  11:30 AM Central Time (US & Canada) / 12:30 PM Eastern Time (US & Canada)
+                  12:30 PM Central Time (US & Canada) / 1:30 PM Eastern Time (US & Canada)
                 </label>
               </div>
               <div
