@@ -32,7 +32,7 @@ class AutoAssignableUserFinder
     nil
   end
 
-  def auto_assign_nod
+  def auto_assign_nod(vbms_id)
     assignable_users.each do |user|
       next if !user.nod?
 
@@ -64,7 +64,9 @@ HAVING COUNT(tasks.id) < 60;
 =end
   def assignable_users
     return @assignable_users if @assignable_users.present?
-    max_tasks = Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.max_assigned_tasks
+
+    # TODO: APPEALS-38551: Use in query
+    # max_tasks = Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.max_assigned_tasks
 
     @assignable_users = []
     # TODO: APPEALS-38551: Filter such that only users with auto_assign == true are in this result set
