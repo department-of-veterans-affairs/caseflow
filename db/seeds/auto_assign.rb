@@ -48,10 +48,10 @@ module Seeds
 
     def create_inbound_ops_team_auto_assign_user
       users_info = [
-        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN1", full_name: "Alexandr Johnson" },
-        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN2", full_name: "Sopia Williams" },
-        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN3", full_name: "Etan Davis" },
-        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN4", full_name: "Olia Smith" }
+        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN1", full_name: "Ember Sky" },
+        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN2", full_name: "Aspen Ridge" },
+        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN3", full_name: "Clover Haven" },
+        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN4", full_name: "Blaze Hill" }
       ]
       users_info.map do |user_info|
         u = User.find_or_create_by(
