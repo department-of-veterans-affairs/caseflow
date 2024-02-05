@@ -2,7 +2,7 @@
 
 describe ExternalApi::VADotGovService do
   before(:each) do
-    stub_const("VADotGovService")
+    stub_const("VADotGovService", Fakes::VADotGovService)
   end
 
   let(:address) do
