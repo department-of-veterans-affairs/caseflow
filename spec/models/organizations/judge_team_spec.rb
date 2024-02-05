@@ -202,22 +202,33 @@ describe JudgeTeam, :postgres do
       it "returns nil as the default value for exclude_appeals_from_affinity is false" do
         expect(JudgeTeam.judges_with_exclude_appeals_from_affinity).to eq([])
         expect(judge_team.exclude_appeals_from_affinity).to be_falsey
+        expect(judge_team.status).to eq("active")
       end
     end
 
     context "when there are judge teams with exclude_appeals_from_affinity set to true" do
       let(:judge) { create(:user) }
+      let(:judge2) { create(:user) }
       let(:user) { create(:user) }
       let!(:judge_team) { create(:judge_team) }
+      let!(:judge_team2) { create(:judge_team) }
       before do
         populate_judge_team_for_testing(judge_team, judge, [create(:user), user])
+        populate_judge_team_for_testing(judge_team2, judge2, [create(:user), user])
         judge_team.update!(exclude_appeals_from_affinity: true)
+        judge_team2.update!(exclude_appeals_from_affinity: true, status: "inactive")
       end
 
-      it "returns the admins judge id since their judge team is excluded from affinity" do
+      it "returns the judge id of the active judge teams that are excluded from affinity" do
         judge_team.reload
-        expect(JudgeTeam.judges_with_exclude_appeals_from_affinity).to eq([judge.id])
         expect(judge_team.exclude_appeals_from_affinity).to be true
+        expect(judge_team.status).to eq("active")
+        expect(JudgeTeam.judges_with_exclude_appeals_from_affinity).to eq([judge.id])
+
+        judge_team2.reload
+        expect(judge_team2.exclude_appeals_from_affinity).to be true
+        expect(judge_team2.status).to eq("inactive")
+        expect(JudgeTeam.judges_with_exclude_appeals_from_affinity).to_not include(judge2.id)
       end
     end
   end
