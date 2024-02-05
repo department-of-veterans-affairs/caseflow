@@ -36,6 +36,8 @@ describe('Batch Size Lever', () => {
     expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(lever.title);
     expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(lever.description);
     expect(document.querySelector('.active-lever > .lever-right')).toHaveTextContent(lever.value);
+    expect(document.querySelector('.lever-right').getAttribute('aria-label')).
+      toBe(null);
   });
 
   it('renders Batch Size Levers for Admin Users', () => {
@@ -53,6 +55,22 @@ describe('Batch Size Lever', () => {
     expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(lever.title);
     expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(lever.description);
     expect(document.querySelector('.active-lever > .lever-right')).toHaveTextContent(lever.unit);
+  });
+
+  it('renders aria text Levers for Admin Users', () => {
+    const store = getStore();
+
+    store.dispatch(loadLevers(leversWithTestingBatchLevers));
+    store.dispatch(setUserIsAcdAdmin(true));
+
+    const wrapper = mount(
+      <Provider store={store}>
+        <BatchSize />
+      </Provider>
+    );
+
+    expect(wrapper.find('NumberField').first().
+      prop('ariaLabelText')).toBe('Test Title Lever*');
   });
 
   it('sets input to invalid for error and sets input to valid to remove error', () => {

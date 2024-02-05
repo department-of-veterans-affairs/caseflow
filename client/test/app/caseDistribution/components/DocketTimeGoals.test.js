@@ -65,6 +65,9 @@ describe('Docket Time Goals Lever', () => {
 
     waitFor(() => expect(leverTimeGoal).toHaveTextContent(testTimeGoalLever.value));
     waitFor(() => expect(leverDistPrior).toHaveTextContent(testDistPriorLever.value));
+
+    expect(wrapper.find('NumberField').first().
+      prop('ariaLabelText')).toBe('AMA Hearings Docket Time Goals');
   });
 
   it('sets input of Time Goal Lever to invalid for error and sets input to valid to remove error', () => {
