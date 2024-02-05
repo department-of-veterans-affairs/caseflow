@@ -49,7 +49,10 @@ const titleButtonsStyle = css({
 });
 
 const radioButtonsStyle = css({
-  paddingBottom: '2rem'
+  paddingBottom: '2rem',
+  '& legend': {
+    margin: '0'
+  }
 });
 
 const buttonStyle = css({
