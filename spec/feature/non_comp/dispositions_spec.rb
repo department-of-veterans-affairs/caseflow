@@ -419,7 +419,7 @@ feature "NonComp Dispositions Task Page", :postgres do
             claimant_type: :other_claimant_not_listed
           )
         end
-        let!(:in_progress_task) do
+        let(:in_progress_task) do
           create(:higher_level_review_task, :in_progress, appeal: decision_review, assigned_to: vha_org)
         end
         let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
@@ -441,7 +441,7 @@ feature "NonComp Dispositions Task Page", :postgres do
             claimant_type: :other_claimant_not_listed
           )
         end
-        let!(:in_progress_task) do
+        let(:in_progress_task) do
           create(:supplemental_claim_task, :in_progress, appeal: decision_review, assigned_to: vha_org)
         end
         let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
