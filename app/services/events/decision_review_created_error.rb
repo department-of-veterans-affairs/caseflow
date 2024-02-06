@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# DecisionReviewCreatedError Service. This handles the service error payload from the appeals-consumer.
+# Payload requires event_id, errored_claim_id, and the error_message within the request
+# This service also uses the RedisMutex.with_lock to make sure parallel transactions related to the claim_id
+# does not make database changes at the same time.
 class Events::DecisionReviewCreatedError
   # Using macro-style definition. The locking scope will be TheClass#method and only one method can run at any
   # given time.
