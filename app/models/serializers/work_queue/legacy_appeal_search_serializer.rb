@@ -61,6 +61,26 @@ class WorkQueue::LegacyAppealSearchSerializer
 
   attribute(:available_hearing_locations) { |object| available_hearing_locations(object) }
 
+  attribute :readable_hearing_request_type, &:readable_current_hearing_request_type
+
+  attribute :readable_original_hearing_request_type, &:readable_original_hearing_request_type
+
+  attribute :closest_regional_office
+
+  attribute :closest_regional_office_label
+
+  attribute :mst, &:mst?
+
+  attribute :pact, &:pact?
+
+  attribute :regional_office do |object|
+    {
+      key: object.regional_office&.key,
+      city: object.regional_office&.city,
+      state: object.regional_office&.state
+    }
+  end
+
   attribute :docket_name do
     "legacy"
   end
