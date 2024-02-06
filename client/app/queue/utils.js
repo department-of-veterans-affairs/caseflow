@@ -602,6 +602,7 @@ export const prepareAppealForSearchStore = (appeals) => {
       availableHearingLocations: prepareAppealAvailableHearingLocationsForStore(
         appeal
       ),
+      hasNotifications: appeal.attributes.has_notifications,
       locationHistory: prepareLocationHistoryForStore(appeal),
       mst: appeal.attributes.mst,
       pact: appeal.attributes.pact
