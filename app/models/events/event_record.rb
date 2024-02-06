@@ -6,8 +6,6 @@ class EventRecord < CaseflowRecord
 
   validate :valid_backfill_record
 
-  %w[403 404].include?(params[:status_code]) ? params[:status_code] : "500"
-
   def valid_backfill_record
     unless %w[
       Intake
