@@ -112,6 +112,10 @@ class WorkQueue::AppealSearchSerializer
     object.veteran ? object.veteran.name.formatted(:readable_full) : "Cannot locate"
   end
 
+  attribute :closest_regional_office
+
+  attribute :closest_regional_office_label
+
   attribute(:available_hearing_locations) { |object| available_hearing_locations(object) }
 
   attribute :external_id, &:uuid
@@ -130,9 +134,16 @@ class WorkQueue::AppealSearchSerializer
     false
   end
 
+  attribute :regional_office do
+  end
+
   attribute :caseflow_veteran_id do |object|
     object.veteran ? object.veteran.id : nil
   end
+
+  attribute :readable_hearing_request_type, &:readable_current_hearing_request_type
+
+  attribute :readable_original_hearing_request_type, &:readable_original_hearing_request_type
 
   attribute :docket_switch do |object|
     if object.docket_switch
