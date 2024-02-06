@@ -21,6 +21,8 @@ class TranscriptionFile < CaseflowRecord
   def convert_to_rtf
     return unless file_type == "vtt"
 
+    fail TranscriptionTransformer::FileConversionError, "TEST"
+
     File.open("tmp/transcription_files/rtf/200103-61110_2000005013_Hearing.rtf", "w")
     rtf_file = "tmp/transcription_files/rtf/200103-61110_2000005013_Hearing.rtf"
 

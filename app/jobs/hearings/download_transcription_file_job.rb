@@ -58,7 +58,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   #
   # Params: exception - Error object
   #         send_email - boolean, whether or not error should be emailed to VA Operations Team
-  def job.log_error(error)
+  def log_error(error)
     Rails.logger.error("#{self.class.name} failed with error: #{error}")
     extra = {
       application: self.class.name,
@@ -121,7 +121,6 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     hearing_type = identifiers.split("_")[2]
     hearing_type.constantize.find(hearing_id)
   rescue StandardError => error
-    send_error_email_to_va_ops(error)
     raise FileNameError, "Encountered error #{error} when attempting to parse hearing from file name '#{file_name}'"
   end
 
@@ -136,7 +135,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   #
   # Returns: string or error
   def docket_number
-    appeal&.docket_number
+    hearing.docket_number
   end
 
   # Purpose: Finds existing transcription file record if job previously failed and retry initiated. Otherewise, creates
