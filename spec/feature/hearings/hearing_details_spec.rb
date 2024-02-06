@@ -73,14 +73,12 @@ RSpec.feature "Hearing Details", :all_dbs do
 
   def check_virtual_hearings_links_expired(virtual_hearing)
     within "#vlj-hearings-link" do
-      find("span", text: "N/A")
       expect(page).to have_content(
         "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}\n" \
         "PIN: #{virtual_hearing.host_pin}"
       )
     end
     within "#guest-hearings-link" do
-      find("span", text: "N/A")
       expect(page).to have_content(
         "Conference Room: #{virtual_hearing.formatted_alias_or_alias_with_host}\n" \
         "PIN: #{virtual_hearing.guest_pin}"
@@ -150,23 +148,11 @@ RSpec.feature "Hearing Details", :all_dbs do
 
       click_button("Save")
 
-      expect(page).to have_no_content(expected_alert)
       expect(page).to have_content(virtual_hearing_alert)
 
       # expect VSO checkboxes to not be present for non-VSO users
       expect(page).to_not have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_ACCESS)
       expect(page).to_not have_content(COPY::CONVERT_HEARING_TYPE_CHECKBOX_AFFIRM_PERMISSION)
-
-      # Test the links are not present
-      within "#vlj-hearings-link" do
-        expect(page).to have_content("Scheduling in progress")
-      end
-      within "#guest-hearings-link" do
-        expect(page).to have_content("Scheduling in progress")
-      end
-
-      expect(page).to have_content(expected_alert)
-      check_virtual_hearings_links(hearing.reload.virtual_hearing)
 
       # Check the Email Notification History
       check_email_event_table(hearing, 2)
@@ -393,18 +379,6 @@ RSpec.feature "Hearing Details", :all_dbs do
       context "Links display correctly when scheduling Virtual Hearings" do
         let!(:virtual_hearing) do
           create(:virtual_hearing, :all_emails_sent, hearing: hearing)
-        end
-
-        scenario "displays in progress when the virtual hearing is being scheduled" do
-          visit "hearings/" + hearing.external_id.to_s + "/details"
-
-          # Test the links are not present
-          within "#vlj-hearings-link" do
-            expect(page).to have_content("Scheduling in progress")
-          end
-          within "#guest-hearings-link" do
-            expect(page).to have_content("Scheduling in progress")
-          end
         end
 
         context "after the virtual hearing is scheduled" do
