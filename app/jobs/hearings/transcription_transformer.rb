@@ -8,25 +8,25 @@ require "csv"
 class Hearings::TranscriptionTransformer
   class FileConversionError < StandardError; end
 
-  def call(path)
-    path = "tmp/transcription_files/vtt/Transcript_IC_Webex.vtt"
-    convert_to_rtf(path)
+  def initialize(vtt_path)
+    @vtt_path = vtt_path
+    @rtf_path = vtt_path.gsub("vtt", "rtf")
   end
 
-  # The temporary location of vtt files after fetching from S3
-  # Returns the location of the file
-  def vtt_folder
-    File.join(Rails.root, "tmp", "transcription_files", "vtt")
+  def call
+    return @rtf_path if File.exist?(@rtf_path)
+
+    convert_to_rtf(@vtt_path)
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  private
+
   # Convert vtt file to rtf or csv if there is an error
   # path - the file path of the vtt file
   # Returns the file path of the newly converted file
   def convert_to_rtf(path)
-    save_paths = []
     begin
-      vtt = WebVTT.read("ddsf")
+      vtt = WebVTT.read(path)
       doc = RTF::Document.new(RTF::Font.new(RTF::Font::ROMAN, "Times New Roman"))
       doc.footer = RTF::FooterNode.new(doc, RTF::FooterNode::UNIVERSAL)
       doc.style.left_margin = 1300
@@ -35,27 +35,12 @@ class Hearings::TranscriptionTransformer
       doc.page_break
       create_transcription_pages(vtt, doc)
       doc = create_footer(doc)
-      save_location = path.gsub("vtt", "rtf")
-      File.open(save_location, "w") { |file| file.write(doc) }
-      save_paths.push(save_location)
-    rescue WebVTT => error
+      File.open(@rtf_path, "w") { |file| file.write(doc) }
+      @rtf_path
+    rescue StandardError
       raise FileConversionError
-    rescue StandardError => error
-      timestamp = Time.zone.now.to_s.sub("\sUTC", "")
-      file_name = path.split("/").last
-      file_date = File.ctime(path).to_s.split(" ").first
-      error_file = path.gsub("vtt", "csv")
-      header = %w[file_name file_date section_timestamp error_encountered]
-      CSV.open(error_file, "w") do |writer|
-        writer << header
-        writer << [file_name, file_date, timestamp, error.to_s]
-      end
-      save_paths.push(error_file)
-    ensure
-      save_paths
     end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   # Create cover page
   # document - the document object
