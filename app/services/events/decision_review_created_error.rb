@@ -21,7 +21,7 @@ class Events::DecisionReviewCreatedError
         end
       end
     rescue RedisMutex::LockError
-      Rails.logger.error("Failed to acquire lock for Claim ID: #{reference_id}! This Event is being"\
+      Rails.logger.error("Failed to acquire lock for Claim ID: #{errored_claim_id}! This Event is being"\
                         " processed. Please try again later.")
     rescue StandardError => error
       Rails.logger.error(error.message)
