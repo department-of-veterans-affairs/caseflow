@@ -41,7 +41,8 @@ class SaveButtonUnconnected extends React.Component {
       moveToSctModal: false
     };
 
-    if (this.props.state.addedIssues.filter((i) => i.benefitType === 'vha').length > 0) {
+    if (this.props.state.addedIssues.filter((i) => i.benefitType === 'vha').length > 0 &&
+    this.props.originalIssues.filter((i) => i.benefitType === 'vha').length === 0) {
       showModals.moveToSctModal = true;
     }
 
@@ -127,6 +128,8 @@ class SaveButtonUnconnected extends React.Component {
       receiptDate,
       benefitType
     } = this.props;
+
+    console.log(this.props)
 
     const invalidVeteran = !veteranValid && (_.some(
       addedIssues, (issue) => VBMS_BENEFIT_TYPES.includes(issue.benefitType) || issue.ratingIssueReferenceId)

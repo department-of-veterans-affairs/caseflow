@@ -1253,6 +1253,8 @@ feature "Appeal Edit issues", :all_dbs do
 
       safe_click ".add-issue"
       safe_click "#button-submit-update"
+      expect(page).to have_content("Move appeal to SCT queue")
+      safe_click ".confirm"
       expect(appeal3.tasks.of_type(:SpecialtyCaseTeamAssignTask).present?).to be true
     end
   end
