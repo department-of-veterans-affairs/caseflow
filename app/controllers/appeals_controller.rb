@@ -24,7 +24,7 @@ class AppealsController < ApplicationController
         result = if docket_number?(case_search)
                    CaseSearchResultsForDocketNumber.new(
                      docket_number: case_search, user: current_user
-                   ).call
+                   ).search_call
                  else
                    CaseSearchResultsForVeteranFileNumber.new(
                      file_number_or_ssn: case_search, user: current_user
