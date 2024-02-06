@@ -17,7 +17,6 @@ class CorrespondenceQueueColumn < QueueColumn
 }.freeze
 
 def filter_options(tasks)
-  binding.pry
   filter_option_func = FILTER_OPTIONS[name]
   if filter_option_func
     send(filter_option_func, tasks)
