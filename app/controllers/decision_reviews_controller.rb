@@ -56,7 +56,6 @@ class DecisionReviewsController < ApplicationController
 
       format.json do
         task_id = params[:task_id]
-
         MetricsService.record("Generate individual claim history report for task #{task_id}",
                               service: :ClaimHistoryService,
                               name: "Change History Individual Event") do

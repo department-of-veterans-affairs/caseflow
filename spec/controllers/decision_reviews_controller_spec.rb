@@ -690,19 +690,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
       Timecop.travel(1.day.ago)
     end
 
-    let(:task) do
-      create(:higher_level_review,
-             :with_intake,
-             :without_decision_date,
-             :processed,
-             :update_assigned_at,
-             assigned_at: rand(1.year.ago..1.day.ago),
-             benefit_type: "vha",
-             claimant_type: :veteran_claimant,
-             issue_type: "other",
-             description: "with decision date added",
-             number_of_claimants: 1)
-    end
+    let(:task) { create(:higher_level_review_task) }
 
     context "task is in VHA" do
       let(:vha_org) { VhaBusinessLine.singleton }
@@ -725,20 +713,26 @@ describe DecisionReviewsController, :postgres, type: :controller do
           OrganizationsUser.make_user_admin(user, vha_org)
         end
 
+        let!(:task_event) do
+          create(:higher_level_review_vha_task_with_decision)
+        end
+
         it "should return task details" do
-          get :history, params: { task_id: task.id, decision_review_business_line_slug: vha_org.url },
+          get :history, params: { task_id: task_event.id, decision_review_business_line_slug: vha_org.url },
                         format: :json
+
           expect(response.status).to eq 200
+
           res = JSON.parse(response.body)
 
-          expect(res[0]["attributes"]["taskID"]).to eq 1
-          expect(res[0]["attributes"]["eventType"]).to eq "added_issue_without_decision_date"
+          expect(res[0]["attributes"]["taskID"]).to eq task_event.id
+          expect(res[0]["attributes"]["eventType"]).to eq "added_issue"
           expect(res[0]["attributes"]["claimType"]).to eq "Higher-Level Review"
-          expect(res[0]["attributes"]["readableEventType"]).to eq "Added issue - No decision date"
+          expect(res[0]["attributes"]["readableEventType"]).to eq "Added Issue"
           expect(res[1]["attributes"]["eventType"]).to eq "claim_creation"
           expect(res[1]["attributes"]["readableEventType"]).to eq "Claim created"
-          expect(res[2]["attributes"]["eventType"]).to eq "incomplete"
-          expect(res[2]["attributes"]["readableEventType"]).to eq "Claim status - Incomplete"
+          expect(res[2]["attributes"]["eventType"]).to eq "completed_disposition"
+          expect(res[2]["attributes"]["readableEventType"]).to eq "Completed disposition"
         end
       end
     end
