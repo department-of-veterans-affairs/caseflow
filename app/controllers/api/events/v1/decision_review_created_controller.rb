@@ -4,8 +4,11 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
   def decision_review_created
     consumer_event_id = drc_params[:event_id]
     claim_id = drc_params[:claim_id]
-    ::Events::DecisionReviewCreated.create(consumer_event_id, claim_id)
-    render json: { message: "Decision Review Created" }, status: :created
+    if ::Events::DecisionReviewCreated.create(consumer_event_id, claim_id)
+      render json: { message: "DecisionReviewCreatedEvent successfully processed and backfilled" }, status: :created
+    else
+      render json: { message: "DecisionReviewCreatedEvent backfill failed" }, status: :unprocessable_entity
+    end
   end
 
   def decision_review_created_error

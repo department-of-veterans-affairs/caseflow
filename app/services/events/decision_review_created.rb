@@ -24,6 +24,7 @@ class Events::DecisionReviewCreated
           # event.update!(completed_at: Time.now, error: nil)
         end
       end
+      true
     rescue RedisMutex::LockError
       Rails.logger.error("Failed to acquire lock for Claim ID: #{reference_id}! This Event is being"\
                          " processed. Please try again later.")
