@@ -1,8 +1,16 @@
 # frozen_string_literal: true
 
 class CorrespondenceQueueColumn < QueueColumn
-  # super
+  include ActiveModel::Model
+
+  validates :name
+
+  attr_accessor :filterable, :name
+
+  def initialize(args)
+  super
   @filterable ||= false
+  end
 
   def to_hash(tasks)
     {
@@ -13,7 +21,7 @@ class CorrespondenceQueueColumn < QueueColumn
   end
 
   FILTER_OPTIONS = {
-
+    # For future use
 }.freeze
 
 def filter_options(tasks)
