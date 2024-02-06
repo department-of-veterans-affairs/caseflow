@@ -21,15 +21,15 @@ class Hearings::GetWebexRecordingsListJob < CaseflowJob
   def perform
     ensure_current_user_is_set
 
-    get_recordings_list.each do |n|
+    get_recordings_list.ids.each do |n|
       get_recording_details(n)
     end
   end
 
-  private
+  # private
 
   def get_recordings_list
-    from = CGI.escape(Time.parse("#{Time.zone.today.strftime('%Y-%m-%d')}T23:59:59-05:00").iso8601)
+    from = CGI.escape(Time.parse("#{2.days.ago.strftime('%Y-%m-%d')}T23:59:59-05:00").iso8601)
     to = CGI.escape(Time.parse("#{1.day.ago.strftime('%Y-%m-%d')}T23:59:59-05:00").iso8601)
     query = { "from": from, "to": to }
 
