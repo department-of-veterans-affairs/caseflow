@@ -553,6 +553,54 @@ FactoryBot.define do
         after(:create) do |task, _evaluator|
           task.appeal.tasks.of_type(:DistributionTask).first.completed!
         end
+
+        trait :on_hold do
+          after(:create) do |task, _evaluator|
+            task.update(status: Constants.TASK_STATUSES.on_hold)
+            judge = create(:user, :judge, :with_vacols_judge_record)
+            attorney = create(:user, :with_vacols_attorney_record)
+            judge_review_task = JudgeDecisionReviewTask.create!(appeal: task.appeal, parent: task.parent,
+                                                                assigned_to: judge,
+                                                                assigned_at: 1.day.ago,
+                                                                started_at: Time.zone.now - 30.minutes,
+                                                                instructions: ["Retroactively created task."])
+            attorney_task = AttorneyTask.create!(appeal: task.appeal, parent: judge_review_task,
+                                                 assigned_by: judge,
+                                                 assigned_to: attorney,
+                                                 assigned_at: 6.hours.ago,
+                                                 started_at: Time.zone.now - 30.minutes,
+                                                 instructions: ["Retroactively created task."])
+
+            # Also add the attorney to the judge's judge team
+            judge.administered_judge_teams.first.add_user(attorney)
+
+            # Set the status of the two tasks to be cancelled to mimic the correct workflow
+            attorney_task.cancelled!
+            judge_review_task.cancelled!
+          end
+        end
+
+        trait :completed do
+          after(:create) do |task, _evaluator|
+            task.update(status: Constants.TASK_STATUSES.completed)
+            judge = create(:user, :judge, :with_vacols_judge_record)
+            attorney = create(:user, :with_vacols_attorney_record)
+            judge_review_task = JudgeDecisionReviewTask.create!(appeal: task.appeal, parent: task.parent,
+                                                                assigned_to: judge,
+                                                                assigned_at: 1.day.ago,
+                                                                started_at: Time.zone.now - 30.minutes,
+                                                                instructions: ["Retroactively created task."])
+            AttorneyTask.create!(appeal: task.appeal, parent: judge_review_task,
+                                 assigned_by: judge,
+                                 assigned_to: attorney,
+                                 assigned_at: 6.hours.ago,
+                                 started_at: Time.zone.now - 30.minutes,
+                                 instructions: ["Retroactively created task."])
+
+            # Also add the attorney to the judge's judge team
+            judge.administered_judge_teams.first.add_user(attorney)
+          end
+        end
       end
 
       factory :assign_hearing_disposition_task, class: AssignHearingDispositionTask do
