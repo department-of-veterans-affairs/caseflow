@@ -246,10 +246,16 @@ class ApplicationController < ApplicationBaseController
   end
 
   def case_search_home_page
-    return false if current_user.admin?
-    return false if current_user.organization_queue_user? || current_user.vso_employee?
-    return false if current_user.attorney_in_vacols? || current_user.judge_in_vacols?
-    return false if current_user.colocated_in_vacols?
+    invalid_user_types = [
+      current_user.admin?,
+      current_user.organization_queue_user?,
+      current_user.vso_employee?,
+      current_user.attorney_in_vacols?,
+      current_user.judge_in_vacols?,
+      current_user.colocated_in_vacols?
+    ]
+
+    return false if invalid_user_types.any?
 
     true
   end

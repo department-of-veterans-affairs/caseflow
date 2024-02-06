@@ -63,11 +63,11 @@ module Test::HearingsProfileHelper
     end
 
     def timezone_outside_eastern?(task)
-      !!(task.hearing&.regional_office&.timezone &.!= "America/New_York")
+      !!(task.hearing&.regional_office&.timezone&.!= "America/New_York")
     end
 
     def hearing_is_scheduled_after_time?(task)
-      task&.hearing&.scheduled_for &.> after
+      task&.hearing&.scheduled_for&.> after
     end
 
     def qualified_hearing?(task)

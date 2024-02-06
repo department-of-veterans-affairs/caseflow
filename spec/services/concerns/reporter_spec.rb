@@ -1,6 +1,6 @@
-require "rspec"
-
 # frozen_string_literal: true
+
+require "rspec"
 
 describe Reporter do
   class TestReporter

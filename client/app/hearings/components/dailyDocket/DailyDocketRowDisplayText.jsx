@@ -10,8 +10,11 @@ import { PowerOfAttorneyName } from 'app/queue/PowerOfAttorneyDetail';
 
 import FnodBadge from 'app/components/badges/FnodBadge/FnodBadge';
 import ContestedClaimBadge from 'app/components/badges/ContestedBadge/ContestedClaimBadge';
+import MstBadge from 'app/components/badges/MstBadge/MstBadge';
+import PactBadge from 'app/components/badges/PactBadge/PactBadge';
 import { tooltipListStyling } from 'app/components/badges/style';
 import { DateString } from 'app/util/DateUtil';
+import { badgeStyle } from './style';
 
 const hearingPropTypes = PropTypes.shape({
   appealExternalId: PropTypes.string,
@@ -80,6 +83,10 @@ const AppellantInformation = ({ hearing, userCanViewFnodBadgeInHearings }) => {
         </div>
       }
     />
+    <div {...badgeStyle} >
+      <MstBadge appeal={hearing} />
+      <PactBadge appeal={hearing} />
+    </div>
     <br /><br />
     {hearing.appellantAddressLine1}<br />
     {hearing.appellantCity ?

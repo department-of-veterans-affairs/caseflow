@@ -4,6 +4,8 @@ class WorkQueue::AppealSearchSerializer
   include FastJsonapi::ObjectSerializer
   extend Helpers::AppealHearingHelper
 
+  EXCLUDE_STATUS = ["No Participant Id Found", "No Claimant Found", "No External Id"].freeze
+
   set_type :appeal
 
   attribute :contested_claim, &:contested_claim?
@@ -112,6 +114,10 @@ class WorkQueue::AppealSearchSerializer
     object.veteran ? object.veteran.name.formatted(:readable_full) : "Cannot locate"
   end
 
+  attribute :closest_regional_office
+
+  attribute :closest_regional_office_label
+
   attribute(:available_hearing_locations) { |object| available_hearing_locations(object) }
 
   attribute :external_id, &:uuid
@@ -130,13 +136,43 @@ class WorkQueue::AppealSearchSerializer
     false
   end
 
+  attribute :regional_office do
+  end
+
   attribute :caseflow_veteran_id do |object|
     object.veteran ? object.veteran.id : nil
   end
+
+  attribute :attorney_case_rewrite_details do |object|
+    if FeatureToggle.enabled?(:overtime_revamp, user: RequestStore.store[:current_user])
+      {
+        note_from_attorney: object.latest_attorney_case_review&.note,
+        untimely_evidence: object.latest_attorney_case_review&.untimely_evidence
+      }
+    else
+      {
+        overtime: object.latest_attorney_case_review&.overtime,
+        note_from_attorney: object.latest_attorney_case_review&.note,
+        untimely_evidence: object.latest_attorney_case_review&.untimely_evidence
+      }
+    end
+  end
+
+  attribute :readable_hearing_request_type, &:readable_current_hearing_request_type
+
+  attribute :readable_original_hearing_request_type, &:readable_original_hearing_request_type
 
   attribute :docket_switch do |object|
     if object.docket_switch
       WorkQueue::DocketSwitchSerializer.new(object.docket_switch).serializable_hash[:data][:attributes]
     end
+  end
+
+  attribute :has_notifications do |object|
+    @all_notifications = Notification.where(appeals_id: object.uuid.to_s, appeals_type: "Appeal")
+    @allowed_notifications = @all_notifications.where(email_notification_status: nil)
+      .or(@all_notifications.where.not(email_notification_status: EXCLUDE_STATUS))
+      .merge(@all_notifications.where(sms_notification_status: nil)
+      .or(@all_notifications.where.not(sms_notification_status: EXCLUDE_STATUS))).any?
   end
 end

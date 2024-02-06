@@ -135,8 +135,9 @@ RSpec.feature "CAVC Dashboard", :all_dbs do
     it "user can add issues, edit dispsositions, and save changes" do
       issue_description = "Test Issue Description"
       Seeds::CavcDecisionReasonData.new.seed!
-
-      go_to_dashboard(cavc_remand.remand_appeal.uuid)
+      using_wait_time(8) do
+        go_to_dashboard(cavc_remand.remand_appeal.uuid)
+      end
 
       dropdowns = page.all("div.cf-select__placeholder", exact_text: "Select option")
 

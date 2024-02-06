@@ -59,10 +59,6 @@ class Distribution < CaseflowRecord
     (status == "completed") ? distributed_cases.count : 0
   end
 
-  def distributed_batch_size
-    statistics&.fetch("batch_size", 0) || 0
-  end
-
   private
 
   def mark_as_pending

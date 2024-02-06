@@ -15,6 +15,11 @@ describe JudgeDispatchReturnTask, :postgres do
     subject { judge_dispatch_task.available_actions(judge) }
 
     context "when judge dispatch return task is assigned to judge" do
+      before do
+        FeatureToggle.enable!(:mst_identification)
+        FeatureToggle.enable!(:pact_identification)
+      end
+
       let(:expected_actions) do
         [
           Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,

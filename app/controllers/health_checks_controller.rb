@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Rails/ApplicationController
 class HealthChecksController < ActionController::Base
   include TrackRequestId
   include CollectDataDogMetrics
@@ -23,3 +24,4 @@ class HealthChecksController < ActionController::Base
     { pending_migrations: migrations.any?, migrations: migrations }
   end
 end
+# rubocop:enable Rails/ApplicationController

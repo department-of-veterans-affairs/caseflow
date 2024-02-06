@@ -86,7 +86,7 @@ class Api::V3::DecisionReviews::IntakeError
 
   UNKNOWN_ERROR = [500, :unknown_error, "Unknown error"].freeze
 
-  KNOWN_ERRORS_BY_CODE = KNOWN_ERRORS.each_with_object({}) { |array, hash| hash[array.second] = array }
+  KNOWN_ERRORS_BY_CODE = KNOWN_ERRORS.index_by { |error_array| error_array[1] }
 
   attr_reader :status, :code, :title, :detail, :passed_in_object, :error_code
 

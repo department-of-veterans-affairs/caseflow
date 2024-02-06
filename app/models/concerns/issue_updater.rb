@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ModuleLength
 module IssueUpdater
   extend ActiveSupport::Concern
 
@@ -35,8 +36,11 @@ module IssueUpdater
 
   private
 
+  # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/AbcSize
+  # :reek:FeatureEnvy
   def create_decision_issues!
-    issues.each do |issue_attrs|
+    ordered_issues = issues.sort_by { |issue| issue[:request_issue_ids]&.first }
+    ordered_issues.each do |issue_attrs|
       request_issues = appeal.request_issues.active_or_withdrawn.where(id: issue_attrs[:request_issue_ids])
       next if request_issues.empty?
 
@@ -47,15 +51,27 @@ module IssueUpdater
         diagnostic_code: issue_attrs[:diagnostic_code].presence,
         participant_id: appeal.veteran.participant_id,
         decision_review: appeal,
-        caseflow_decision_date: appeal.decision_document&.decision_date
+        caseflow_decision_date: appeal.decision_document&.decision_date,
+        mst_status: issue_attrs[:mst_status],
+        pact_status: issue_attrs[:pact_status]
       )
 
       request_issues.each do |request_issue|
         RequestDecisionIssue.create!(decision_issue: decision_issue, request_issue: request_issue)
+
+        # compare the MST/PACT status of the orignial issue and decision to create task and record
+        next unless (request_issue.mst_status != decision_issue.mst_status &&
+          FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user])) ||
+                    (request_issue.pact_status != decision_issue.pact_status &&
+                      FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user]))
+
+        create_issue_update_task(request_issue, decision_issue)
       end
+
       create_remand_reasons(decision_issue, issue_attrs[:remand_reasons] || [])
     end
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/AbcSize
 
   def fail_if_not_all_request_issues_have_decision!
     unless appeal.every_request_issue_has_decision?
@@ -108,4 +124,77 @@ module IssueUpdater
       end
     end
   end
+
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  # :reek:FeatureEnvy
+  def create_issue_update_task(original_issue, decision_issue)
+    root_task = RootTask.find_or_create_by!(appeal: appeal)
+
+    # close out any tasks that might be open
+    open_issue_task = Task.where(
+      assigned_to: SpecialIssueEditTeam.singleton
+    ).where(status: "assigned").where(appeal: appeal)
+    open_issue_task[0].delete unless open_issue_task.empty?
+
+    task = IssuesUpdateTask.create!(
+      appeal: appeal,
+      parent: root_task,
+      assigned_to: SpecialIssueEditTeam.singleton,
+      assigned_by: RequestStore[:current_user],
+      completed_by: RequestStore[:current_user]
+    )
+
+    set = CaseTimelineInstructionSet.new(
+      change_type: "Edited Issue",
+      issue_category: task_text_helper(
+        [
+          original_issue.contested_issue_description,
+          original_issue.nonrating_issue_category,
+          original_issue.nonrating_issue_description
+        ]
+      ),
+      benefit_type: task_text_benefit_type(original_issue),
+      original_mst: original_issue.mst_status,
+      original_pact: original_issue.pact_status,
+      edit_mst: decision_issue.mst_status,
+      edit_pact: decision_issue.pact_status
+    )
+    task.format_instructions(set)
+
+    task.completed!
+
+    SpecialIssueChange.create!(
+      issue_id: original_issue.id,
+      appeal_id: appeal.id,
+      appeal_type: "Appeal",
+      task_id: task.id,
+      created_at: Time.zone.now.utc,
+      created_by_id: RequestStore[:current_user].id,
+      created_by_css_id: RequestStore[:current_user].css_id,
+      original_mst_status: original_issue.mst_status,
+      original_pact_status: original_issue.pact_status,
+      updated_mst_status: decision_issue.mst_status,
+      updated_pact_status: decision_issue.pact_status,
+      mst_from_vbms: original_issue&.vbms_mst_status,
+      pact_from_vbms: original_issue&.vbms_pact_status,
+      change_category: "Edited Decision Issue",
+      decision_issue_id: decision_issue.id
+    )
+  end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+
+  def task_text_benefit_type(issue)
+    issue.benefit_type ? issue.benefit_type.capitalize : ""
+  end
+
+  def task_text_helper(text_array)
+    if text_array.compact.length > 1
+      text_array.compact.join(" - ")
+    elsif text_array.compact.length == 1
+      text_array.join
+    else
+      "Description unavailable"
+    end
+  end
 end
+# rubocop:enable Metrics/ModuleLength

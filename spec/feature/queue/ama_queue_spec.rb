@@ -78,9 +78,17 @@ feature "AmaQueue", :all_dbs do
       create(:ama_judge_assign_task, assigned_to: judge_user, parent: root_task)
     end
 
+    # This task is for holding legacy appeals. The factory will create an attached legacy appeal.
+    # Attach an attorney task from :attorney task
+    let!(:legacy_appeal_task) do
+      build(:task, id: "1010", assigned_to: attorney_user, assigned_by_id: "3",
+                   assigned_to_id: "2", assigned_to_type: "User", type: "AttorneyTask", created_at: 5.days.ago)
+    end
+
     let(:poa_name) { "Test POA" }
     let(:veteran_participant_id) { "600085544" }
     let(:file_numbers) { Array.new(3) { Random.rand(999_999_999).to_s } }
+
     let!(:appeals) do
       [
         create(
@@ -135,6 +143,13 @@ feature "AmaQueue", :all_dbs do
             assigned_to: attorney_user,
             assigned_by: judge_user,
             appeal: appeals.third
+          ),
+          create(
+            :ama_attorney_task,
+            :in_progress,
+            assigned_to: attorney_user,
+            assigned_by: judge_user,
+            appeal: legacy_appeal_task.appeal
           )
         ]
       end
@@ -194,7 +209,6 @@ feature "AmaQueue", :all_dbs do
 
         find(".cf-select__control", text: "Select a type").click
         find("div", class: "cf-select__option", text: "Serious illness").click
-
         click_on "Submit"
 
         expect(page).to have_content("AOD status has been granted due to Serious illness")
@@ -203,6 +217,74 @@ feature "AmaQueue", :all_dbs do
 
         expect(motion.granted).to eq(true)
         expect(motion.reason).to eq(Constants.AOD_REASONS.serious_illness)
+      end
+
+      scenario "Appeal redirects to Draft Decisions page when 'Decision ready for review' is clicked." do
+        visit "/queue/appeals/#{appeals.first.uuid}"
+        # We reload the page because the page errors first load for some reason?
+        visit current_path
+
+        # pop the actions dropdown open and click the 'Decision ready for review' option.
+        find(".cf-select__control", text: "Select an action").click
+        click_dropdown(prompt: "Select an action", text: "Decision ready for review")
+
+        # Validate that the path changed to the expected location.
+        path_array = current_path.split("/")
+        expect(path_array[-1] == "dispositions")
+        expect(path_array[-2] == "draft_decision")
+      end
+
+      scenario "Appeal contains MST PACT labels in timeline." do
+        visit "/queue/appeals/#{appeals.first.uuid}"
+
+        # load in the timeline data
+        appeal = appeals[0]
+        iup = IssuesUpdateTask.create!(
+          appeal: appeal,
+          parent: appeal.root_task,
+          assigned_to: Organization.find_by_url("bva-intake"),
+          assigned_by: RequestStore[:current_user]
+        )
+        set = CaseTimelineInstructionSet.new(
+          change_type: "Edited Issue",
+          issue_category: "test category",
+          benefit_type: "benefit type",
+          original_mst: false,
+          original_pact: false,
+          edit_mst: true,
+          edit_pact: true,
+          mst_edit_reason: "MST reason",
+          pact_edit_reason: "PACT reason"
+        )
+        iup.format_instructions(set)
+        iup.completed!
+
+        # We reload the page because the page sometimes errors first load for some reason,
+        # also ensures that the timeline is refreshed with the current data.
+        visit current_path
+
+        click_on "View task instructions"
+
+        expect(page).to have_content("ORIGINAL")
+        expect(page).to have_content("Special Issues: None")
+        expect(page).to have_content("UPDATED")
+        expect(page).to have_content("Special Issues: MST, PACT")
+      end
+
+      scenario "Appeal redirects to special issues page when 'Decision ready for review' is clicked." do
+        visit "/queue/appeals/#{legacy_appeal_task.appeal.external_id}"
+
+        # We reload the page because the page sometimes errors first load for some reason?
+        visit current_path
+
+        # pop the actions dropdown open and click the 'Decision ready for review' option.
+        find(".cf-select__control", text: "Select an action").click
+        click_dropdown(prompt: "Select an action", text: "Decision ready for review")
+
+        # Validate that the path changed to the expected location.
+        path_array = current_path.split("/")
+        expect(path_array[-1] == "special_issues")
+        expect(path_array[-2] == "draft_decision")
       end
 
       context "when there is an error loading addresses" do
@@ -453,6 +535,9 @@ feature "AmaQueue", :all_dbs do
       judgeteam.add_user(attorney_user)
 
       User.authenticate!(user: judge_user)
+
+      FeatureToggle.enable!(:mst_identification)
+      FeatureToggle.enable!(:pact_identification)
     end
 
     def judge_assign_to_attorney
@@ -481,12 +566,6 @@ feature "AmaQueue", :all_dbs do
         click_on veteran_full_name
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
-
-        if !find("#no_special_issues", visible: false).checked?
-          find("label", text: "No Special Issues").click
-        end
-        click_on "Continue"
-        expect(page.has_no_content?("Select special issues")).to eq(true)
 
         expect(page).to have_content("Add decisions")
 
@@ -560,11 +639,6 @@ feature "AmaQueue", :all_dbs do
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-        if !find("#no_special_issues", visible: false).checked?
-          find("label", text: "No Special Issues").click
-        end
-        click_on "Continue"
-
         expect(page).to have_content("Add decisions")
         expect(page).to have_content("Allowed")
         expect(page).to have_content("Remanded")
@@ -609,11 +683,6 @@ feature "AmaQueue", :all_dbs do
         click_on veteran_full_name
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
-
-        if !find("#no_special_issues", visible: false).checked?
-          find("label", text: "No Special Issues").click
-        end
-        click_on "Continue"
 
         expect(page).to have_content("Add decisions")
 
@@ -683,11 +752,6 @@ feature "AmaQueue", :all_dbs do
         click_on veteran_full_name
 
         click_dropdown(prompt: "Select an action", text: "Decision ready for review")
-
-        if !find("#no_special_issues", visible: false).checked?
-          find("label", text: "No Special Issues").click
-        end
-        click_on "Continue"
 
         expect(page).to have_content("Add decisions")
         click_on "Continue"
@@ -791,11 +855,6 @@ feature "AmaQueue", :all_dbs do
 
           click_dropdown(prompt: "Select an action", text: "Decision ready for review")
 
-          if !find("#no_special_issues", visible: false).checked?
-            find("label", text: "No Special Issues").click
-          end
-          click_on "Continue"
-
           expect(page).to have_content("Add decisions")
 
           # Add a first decision issue
@@ -871,7 +930,11 @@ feature "AmaQueue", :all_dbs do
   it_behaves_like "Judge has a case to assign to an attorney"
 
   context "overtime_revamp feature enabled with different overtime values" do
-    before { FeatureToggle.enable!(:overtime_revamp) }
+    before do
+      FeatureToggle.enable!(:overtime_revamp)
+      FeatureToggle.enable!(:mst_identification)
+      FeatureToggle.enable!(:pact_identification)
+    end
     after { FeatureToggle.disable!(:overtime_revamp) }
     it_behaves_like "Judge has a case to assign to an attorney" do
       let(:overtime) { true }
@@ -897,6 +960,8 @@ feature "AmaQueue", :all_dbs do
     before do
       org.add_user(user)
       User.authenticate!(user: user)
+      FeatureToggle.enable!(:mst_identification)
+      FeatureToggle.enable!(:pact_identification)
     end
 
     it "successfully loads the individual queue " do

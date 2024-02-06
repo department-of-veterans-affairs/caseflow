@@ -10,7 +10,6 @@ class HearingRequestCaseDistributor
     @priority = priority
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def call
     # The DistributedCases model validates genpop and genpop_query for a hearing or legacy case. These methods
     # will create one array for the appeals and one for their genpop values with matching indexes
@@ -41,7 +40,6 @@ class HearingRequestCaseDistributor
       end
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   private
 
