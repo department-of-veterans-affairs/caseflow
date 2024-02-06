@@ -11,7 +11,7 @@ class SeedDB
   def clean_db
     DatabaseCleaner.clean_with(:truncation)
     cm = CacheManager.new
-    CacheManager::BUCKETS.keys.each { |bucket| cm.clear(bucket) }
+    CacheManager::BUCKETS.each_key { |bucket| cm.clear(bucket) }
     Fakes::EndProductStore.new.clear!
     Fakes::RatingStore.new.clear!
     Fakes::VeteranStore.new.clear!
@@ -33,6 +33,7 @@ class SeedDB
     Rails.logger.debug(msg)
   end
 
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def seed
     RequestStore[:current_user] = User.system_user
     call_and_log_seed_step :clean_db
@@ -63,12 +64,15 @@ class SeedDB
     call_and_log_seed_step Seeds::VbmsExtClaim
     call_and_log_seed_step Seeds::CasesTiedToJudgesNoLongerWithBoard
     call_and_log_seed_step Seeds::VhaChangeHistory
+    call_and_log_seed_step Seeds::BgsServiceRecordMaker
+    call_and_log_seed_step Seeds::MstPactLegacyCaseAppeals
     # Always run this as last one
     call_and_log_seed_step Seeds::StaticTestCaseData
     call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
     call_and_log_seed_step Seeds::RemandedAmaAppeals
     call_and_log_seed_step Seeds::RemandedLegacyAppeals
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 end
 
 SeedDB.new.seed
