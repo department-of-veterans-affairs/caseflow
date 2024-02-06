@@ -17,7 +17,9 @@ class Docket
 
     if ready
       scope = scope.ready_for_distribution
+
       scope = adjust_for_genpop(scope, genpop, judge) if judge.present? && !use_by_docket_date?
+      scope = adjust_for_affinity(scope, genpop, judge)
     end
 
     return scoped_for_priority(scope) if priority == true
@@ -127,6 +129,10 @@ class Docket
   # :reek:ControlParameter
   def adjust_for_genpop(scope, genpop, judge)
     (genpop == "not_genpop") ? scope.non_genpop_for_judge(judge) : scope.genpop
+  end
+
+  def adjust_for_affinity(scope, _genpop, judge)
+    scope.genpop.or(scope.non_genpop_for_judge(judge))
   end
 
   def scoped_for_priority(scope)
