@@ -66,7 +66,7 @@ gem "redis-namespace"
 gem "redis-rails", "~> 5.0.2"
 gem "request_store"
 gem "roo", "~> 2.7"
-gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "f3746431a3977a86e01e5c630d192dd665727ea4"
+gem "ruby_claim_evidence_api", git: "https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git", ref: "b030bdc1f9bea642f60c44dcbfbd0ed0c8f645f0"
 # Use SCSS for stylesheets
 gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
