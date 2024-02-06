@@ -1217,4 +1217,43 @@ feature "Appeal Edit issues", :all_dbs do
       end
     end
   end
+
+  context "when benefit type is initially non-vha" do
+    let!(:appeal3) do
+      create(:appeal,
+             :assigned_to_judge,
+             :completed_distribution_task,
+             veteran_file_number: veteran.file_number,
+             receipt_date: receipt_date,
+             docket_type: Constants.AMA_DOCKETS.direct_review)
+    end
+    let!(:request_issue) { create(:request_issue, decision_date: 5.months.ago, decision_review: appeal3) }
+    before do
+      BvaIntake.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:specialty_case_team_distribution)
+    end
+    after { FeatureToggle.disable!(:specialty_case_team_distribution) }
+
+    scenario "appeal moves to sct queue when vha issue is added" do
+      visit "/queue/appeals/#{appeal3.uuid}"
+      click_on "Correct issues"
+      click_remove_intake_issue_dropdown(1)
+      click_intake_add_issue
+      click_intake_no_matching_issues
+      fill_in "Benefit type", with: "Veterans Health Administration"
+      find("#issue-benefit-type").send_keys :enter
+      fill_in "Issue category", with: "Beneficiary Travel"
+      find("#issue-category").send_keys :enter
+      fill_in "Issue description", with: "I am a VHA issue"
+      fill_in "Decision date", with: 5.months.ago.mdY
+
+      radio_choices = page.all(".cf-form-radio-option > label")
+      radio_choices[1].click
+
+      safe_click ".add-issue"
+      safe_click "#button-submit-update"
+      expect(appeal3.tasks.of_type(:SpecialtyCaseTeamAssignTask).present?).to be true
+    end
+  end
 end
