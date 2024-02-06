@@ -17,6 +17,7 @@ class Docket
 
     if ready
       scope = scope.ready_for_distribution
+
       scope = adjust_for_genpop(scope, genpop, judge) if judge.present? && !use_by_docket_date?
       scope = adjust_for_affinity(scope, judge) if judge.present? && FeatureToggle.enabled?(:acd_exclude_from_affinity)
     end
