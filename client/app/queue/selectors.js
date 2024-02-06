@@ -330,6 +330,16 @@ export const isActiveOrganizationVHA = createSelector(
   (activeOrganizationType) => vhaOrgTypes.includes(activeOrganizationType)
 );
 
+export const isVhaCamoOrg = createSelector(
+  [getActiveOrgType],
+  (activeOrganizationType) => activeOrganizationType === 'VhaCamo'
+);
+
+export const isSpecialtyCaseTeamOrg = createSelector(
+  [getActiveOrgType],
+  (activeOrganizationType) => activeOrganizationType === 'SpecialtyCaseTeam'
+);
+
 // ***************** Non-memoized selectors *****************
 
 const getAttorney = (state, attorneyId) => {

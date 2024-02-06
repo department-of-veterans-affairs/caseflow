@@ -21,7 +21,9 @@ import {
   judgeAssignTasksSelector,
   selectedTasksSelector,
   camoAssignTasksSelector,
-  specialtyCaseTeamAssignTasksSelector
+  specialtyCaseTeamAssignTasksSelector,
+  isVhaCamoOrg,
+  isSpecialtyCaseTeamOrg
 } from './selectors';
 import Alert from '../components/Alert';
 import LoadingContainer from '../components/LoadingContainer';
@@ -133,11 +135,11 @@ const mapStateToProps = (state, ownProps) => {
 
   let taskSelector = judgeAssignTasksSelector(state);
 
-  if (userIsCamoEmployee) {
+  if (userIsCamoEmployee && isVhaCamoOrg(state)) {
     taskSelector = camoAssignTasksSelector(state);
   }
 
-  if (userIsSCTCoordinator) {
+  if (userIsSCTCoordinator && isSpecialtyCaseTeamOrg(state)) {
     taskSelector = specialtyCaseTeamAssignTasksSelector(state);
   }
 
@@ -150,8 +152,8 @@ const mapStateToProps = (state, ownProps) => {
     selectedTasks: selectedTasksSelector(state, ownProps.userId),
     success,
     error,
-    userIsCamoEmployee,
-    userIsSCTCoordinator
+    userIsCamoEmployee: isVhaCamoOrg(state),
+    userIsSCTCoordinator: isSpecialtyCaseTeamOrg(state)
   };
 };
 
@@ -175,7 +177,9 @@ UnassignedCasesPage.propTypes = {
     detail: PropTypes.string
   }),
   userIsCamoEmployee: PropTypes.bool,
-  userIsSCTCoordinator: PropTypes.bool
+  userIsSCTCoordinator: PropTypes.bool,
+  isVhaCamoOrg: PropTypes.bool,
+  isSpecialtyCaseTeamOrg: PropTypes.bool,
 };
 
 const mapDispatchToProps = (dispatch) =>

@@ -34,11 +34,15 @@ class QueueLoadingScreen extends React.PureComponent {
 
     this.props.setUserId(userId);
 
-    if (userIsCamoEmployee && type === 'assign') {
+    // Get the user role in the url params if this is an assign queue page
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const role = urlSearchParams.get('role');
+
+    if (role === 'camo' && userIsCamoEmployee && type === 'assign') {
       return this.props.fetchCamoTasks(chosenUserId, userRole, type);
     }
 
-    if (userIsSCTCoordinator && type === 'assign') {
+    if (role === 'sct_coordinator' && userIsSCTCoordinator && type === 'assign') {
       return this.props.fetchSpecialtyCaseTeamTasks(chosenUserId, userRole, type);
     }
 
