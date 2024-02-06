@@ -67,6 +67,9 @@ class SeedDB
     # Always run this as last one
     call_and_log_seed_step Seeds::StaticTestCaseData
     call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
+
+    Judge.list_all
+    Attorney.list_all
   end
 end
 
