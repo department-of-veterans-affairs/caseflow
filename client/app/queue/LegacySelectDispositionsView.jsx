@@ -121,8 +121,7 @@ class LegacySelectDispositionsView extends React.PureComponent {
       appeal,
       taskId,
       checkoutFlow,
-      appealId,
-      legacyMstPactFeatureToggle
+      appealId
     } = this.props;
 
     const columns = [{
@@ -134,7 +133,6 @@ class LegacySelectDispositionsView extends React.PureComponent {
         }}
         idxToDisplay={idx + 1}
         showDisposition={false}
-        legacyMstPactFeatureToggle={legacyMstPactFeatureToggle}
         stretchToFullWidth />
     }, {
       header: 'Dispositions',
@@ -219,8 +217,7 @@ LegacySelectDispositionsView.propTypes = {
   setDecisionOptions: PropTypes.func,
   startEditingAppealIssue: PropTypes.func,
   saveEditedAppealIssue: PropTypes.func,
-  hideSuccessMessage: PropTypes.func,
-  legacyMstPactFeatureToggle: PropTypes.bool
+  hideSuccessMessage: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => ({

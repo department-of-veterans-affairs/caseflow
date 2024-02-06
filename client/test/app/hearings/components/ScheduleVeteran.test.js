@@ -636,7 +636,6 @@ describe('ScheduleVeteran', () => {
             regionalOffice: virtualHearing.regionalOfficeKey,
             readableHearingRequestType: VIRTUAL_HEARING_LABEL,
           }}
-          appealId={legacyAppealForTravelBoard.externalId}
         />,
         {
           wrappingComponent: queueWrapper,

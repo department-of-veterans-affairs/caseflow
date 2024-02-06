@@ -6,6 +6,7 @@ feature "Intake Add Issues Page", :all_dbs do
   before do
     setup_intake_flags
   end
+
   let(:veteran_file_number) { "123412345" }
   let(:veteran) do
     Generators::Veteran.build(file_number: veteran_file_number, first_name: "Ed", last_name: "Merica")
@@ -18,13 +19,6 @@ feature "Intake Add Issues Page", :all_dbs do
                               last_name: "Attings",
                               participant_id: "44444444")
   end
-
-  let(:veteran_vbms_mst_pact) do
-    Generators::Veteran.build(file_number: "66666666",
-                              first_name: "Veeby",
-                              last_name: "Emmess")
-  end
-
   let!(:rating) do
     Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
@@ -49,10 +43,6 @@ feature "Intake Add Issues Page", :all_dbs do
     )
   end
 
-  let!(:vbms_rating) do
-    generate_rating_with_mst_pact(veteran_vbms_mst_pact)
-  end
-
   context "not service connected rating decision" do
     before { FeatureToggle.enable!(:contestable_rating_decisions) }
     after { FeatureToggle.disable!(:contestable_rating_decisions) }
@@ -68,16 +58,6 @@ feature "Intake Add Issues Page", :all_dbs do
       click_intake_add_issue
       add_intake_rating_issue(rating_decision_text)
       expect(page).to have_content("1. #{rating_decision_text}\nDecision date: #{promulgation_date.mdY}")
-    end
-
-    scenario "MST and PACT checkboxes DO NOT appear after selecting decision in higher level review" do
-      start_higher_level_review(veteran)
-      visit "/intake"
-      click_intake_continue
-      click_intake_add_issue
-      choose("rating-radio_0", allow_label_click: true)
-      expect(page).to have_no_content("Issue is related to Military Sexual Trauma (MST)")
-      expect(page).to have_no_content("Issue is related to PACT Act")
     end
   end
 
@@ -814,191 +794,5 @@ feature "Intake Add Issues Page", :all_dbs do
 
       expect(page).to_not have_content("Hearing type")
     end
-  end
-
-  context "for MST and PACT Act" do
-    # format date to be yesterday in month/day/year format
-    let!(:issue_date) do
-      Time.zone.yesterday.strftime("%m/%d/%Y")
-    end
-
-    before :each do
-      FeatureToggle.enable!(:mst_identification)
-      FeatureToggle.enable!(:pact_identification)
-      BvaIntake.singleton.add_user(current_user)
-      OrganizationsUser.find_by(user_id: current_user.id).update(admin: true)
-    end
-
-    after :each do
-      FeatureToggle.disable!(:mst_identification)
-      FeatureToggle.disable!(:pact_identification)
-      # FeatureToggle.disable!(:legacy_mst_pact_identification)
-    end
-
-    scenario "MST and PACT checkboxes appear after selecting decision" do
-      start_appeal(veteran)
-      visit "/intake"
-      click_intake_continue
-      click_intake_add_issue
-      choose("rating-radio_0", allow_label_click: true)
-      expect(page).to have_content("Issue is related to Military Sexual Trauma (MST)")
-      expect(page).to have_content("Issue is related to PACT Act")
-    end
-
-    scenario "MST and PACT checkboxes render a justification field when checked" do
-      FeatureToggle.enable!(:justification_reason)
-      start_appeal(veteran)
-      visit "/intake"
-      click_intake_continue
-      click_intake_add_issue
-      choose("rating-radio_0", allow_label_click: true)
-      expect(page).to have_content("Issue is related to Military Sexual Trauma (MST)")
-      expect(page).to have_content("Issue is related to PACT Act")
-      # check mst checkbox
-      find_by_id("MST", visible: false).check(allow_label_click: true)
-      expect(page).to have_content("Why was this change made?")
-      # uncheck mst checkbox
-      find_by_id("MST", visible: false).uncheck(allow_label_click: true)
-      expect(page).to_not have_content("Why was this change made?")
-      # check pact checbox
-      find_by_id("Pact", visible: false).check(allow_label_click: true)
-      expect(page).to have_content("Why was this change made?")
-      # uncheck pact checkbox
-      find_by_id("Pact", visible: false).uncheck(allow_label_click: true)
-      expect(page).to_not have_content("Why was this change made?")
-      FeatureToggle.disable!(:justification_reason)
-    end
-
-    scenario "MST designation added during AMA intake" do
-      start_appeal(veteran)
-      visit "/intake"
-      click_intake_continue
-      click_intake_add_issue
-      click_intake_no_matching_issues
-      find_by_id("mst-checkbox", visible: false).check(allow_label_click: true)
-      add_intake_nonrating_issue(date: issue_date)
-      click_on "Establish appeal"
-
-      appeal_id = Appeal.find_by(veteran_file_number: veteran.file_number).uuid
-      visit "/queue/appeals/#{appeal_id}"
-      # to prevent timeout
-      refresh
-      click_on "View task instructions"
-      expect(page).to have_content("Special Issues: MST")
-      expect(page).to have_no_content("Special Issues: PACT")
-    end
-
-    scenario "Pact designation added during AMA intake" do
-      start_appeal(veteran_no_ratings)
-      visit "/intake"
-      click_intake_continue
-      click_intake_add_issue
-      find_by_id("pact-checkbox", visible: false).check(allow_label_click: true)
-      add_intake_nonrating_issue(date: issue_date)
-      click_on "Establish appeal"
-
-      appeal_id = Appeal.find_by(veteran_file_number: veteran_no_ratings.file_number).uuid
-      visit "/queue/appeals/#{appeal_id}"
-      # to prevent timeout
-      visit current_path
-      click_on "View task instructions"
-
-      expect(page).to have_content("Special Issues: PACT")
-      expect(page).to have_no_content("Special Issues: MST")
-    end
-
-    scenario "MST and Pact designation added during AMA intake" do
-      start_appeal(veteran_no_ratings)
-      visit "/intake"
-      click_intake_continue
-      click_intake_add_issue
-      find_by_id("mst-checkbox", visible: false).check(allow_label_click: true)
-      find_by_id("pact-checkbox", visible: false).check(allow_label_click: true)
-      add_intake_nonrating_issue(date: issue_date)
-      click_on "Establish appeal"
-
-      appeal_id = Appeal.find_by(veteran_file_number: veteran_no_ratings.file_number).uuid
-      visit "/queue/appeals/#{appeal_id}"
-      # to prevent timeout
-      visit current_path
-      click_on "View task instructions"
-
-      expect(page).to have_content("Special Issues: MST, PACT")
-    end
-
-    # rubocop:disable Layout/LineLength
-    scenario "Intake appeal with MST contention from VBMS" do
-      start_appeal_with_mst_pact_from_vbms(veteran_vbms_mst_pact)
-      visit "/intake"
-      click_intake_continue
-      click_intake_add_issue
-      find_all("label", text: "Service connection is granted for PTSD at 10 percent, effective 10/11/2022.", minimum: 1).first.click
-      safe_click ".add-issue"
-
-      # vha modal check
-      radio_choices = page.all(".cf-form-radio-option > label")
-      radio_choices[1].click
-      click_on "Add this issue"
-
-      click_on "Establish appeal"
-      appeal_id = Appeal.find_by(veteran_file_number: veteran_vbms_mst_pact.file_number).uuid
-      visit "/queue/appeals/#{appeal_id}"
-      # to prevent timeout
-      refresh
-      click_on "View task instructions"
-      expect(page).to have_content("Service connection is granted for PTSD at 10 percent, effective 10/11/2022.")
-      expect(page).to have_content("Special Issues: MST")
-    end
-    # rubocop:enable Layout/LineLength
-
-    # rubocop:disable Layout/LineLength
-    scenario "Intake appeal with PACT contention from VBMS" do
-      start_appeal_with_mst_pact_from_vbms(veteran_vbms_mst_pact)
-      visit "/intake"
-      click_intake_continue
-      click_intake_add_issue
-      find_all("label", text: "Service connection is granted for AOOV at 10 percent, effective 10/11/2022.", minimum: 1).first.click
-      safe_click ".add-issue"
-
-      # vha modal check
-      radio_choices = page.all(".cf-form-radio-option > label")
-      radio_choices[1].click
-      click_on "Add this issue"
-
-      click_on "Establish appeal"
-      appeal_id = Appeal.find_by(veteran_file_number: veteran_vbms_mst_pact.file_number).uuid
-      visit "/queue/appeals/#{appeal_id}"
-      # to prevent timeout
-      refresh
-      click_on "View task instructions"
-      expect(page).to have_content("Service connection is granted for AOOV at 10 percent, effective 10/11/2022.")
-      expect(page).to have_content("Special Issues: PACT")
-    end
-    # rubocop:enable Layout/LineLength
-
-    # rubocop:disable Layout/LineLength
-    scenario "Intake appeal with MST and PACT contentions from VBMS" do
-      start_appeal_with_mst_pact_from_vbms(veteran_vbms_mst_pact)
-      visit "/intake"
-      click_intake_continue
-      click_intake_add_issue
-      find_all("label", text: "Service connection is granted for PTSD, AOOV at 10 percent, effective 10/11/2022.", minimum: 1).first.click
-      safe_click ".add-issue"
-
-      # vha modal check
-      radio_choices = page.all(".cf-form-radio-option > label")
-      radio_choices[1].click
-      click_on "Add this issue"
-
-      click_on "Establish appeal"
-      appeal_id = Appeal.find_by(veteran_file_number: veteran_vbms_mst_pact.file_number).uuid
-      visit "/queue/appeals/#{appeal_id}"
-      # to prevent timeout
-      refresh
-      click_on "View task instructions"
-      expect(page).to have_content("Service connection is granted for PTSD, AOOV at 10 percent, effective 10/11/2022.")
-      expect(page).to have_content("Special Issues: MST, PACT")
-    end
-    # rubocop:enable Layout/LineLength
   end
 end

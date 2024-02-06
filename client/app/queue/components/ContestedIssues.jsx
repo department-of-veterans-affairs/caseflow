@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types, import/extensions */
 import * as React from 'react';
 import { css } from 'glamor';
 import { COLORS } from '../../constants/AppConstants';
@@ -36,18 +35,6 @@ const noteDiv = css({
 const errorTextSpacing = css({
   margin: TEXT_INDENTATION
 });
-
-const specialIssuesFormatting = (mstStatus, pactStatus) => {
-  if (!mstStatus && !pactStatus) {
-    return 'None';
-  } else if (mstStatus && pactStatus) {
-    return 'MST, PACT';
-  } else if (mstStatus) {
-    return 'MST';
-  } else if (pactStatus) {
-    return 'PACT';
-  }
-};
 
 export default class ContestedIssues extends React.PureComponent {
   render = () => {
@@ -89,10 +76,6 @@ export default class ContestedIssues extends React.PureComponent {
           {issue.description}
           { issue.diagnostic_code &&
             <div>Diagnostic code: {issue.diagnostic_code}</div>
-          }
-          {
-            specialIssuesFormatting(issue.mst_status, issue.pact_status) &&
-            <div>Special Issues: {specialIssuesFormatting(issue.mst_status, issue.pact_status)}</div>
           }
           { issue.notes &&
             <div {...noteDiv} {...verticalSpaceDiv}>Note: "{issue.notes}"</div>

@@ -22,6 +22,7 @@ export const Checkbox = (props) => {
   } = props;
 
   const handleChange = (event) => onChange?.(event.target.checked, event);
+
   const wrapperClasses = classnames(`checkbox-wrapper-${name}`, {
     'cf-form-checkboxes': !unpadded,
     'usa-input-error': Boolean(errorMessage),

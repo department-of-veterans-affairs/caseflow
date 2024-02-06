@@ -10,8 +10,6 @@ import CopyTextButton from '../../../components/CopyTextButton';
 import * as DateUtil from '../../../util/DateUtil';
 import { dispositionLabel } from '../../utils';
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
-import MstBadge from '../../../components/badges/MstBadge/MstBadge';
-import PactBadge from '../../../components/badges/PactBadge/PactBadge';
 
 const headerContainerStyling = css({
   margin: '-2rem 0 0 0',
@@ -43,8 +41,7 @@ export const DetailsHeader = (
     scheduledFor,
     veteranFirstName,
     veteranLastName,
-    veteranFileNumber,
-    hearing
+    veteranFileNumber
   }
 ) => {
   const columns = [
@@ -95,10 +92,6 @@ export const DetailsHeader = (
         <div>
           Veteran ID: <CopyTextButton text={veteranFileNumber} label="Veteran ID" />
         </div>
-        <div style={{ display: 'inline-flex' }}>
-          <MstBadge appeal={hearing} />
-          <PactBadge appeal={hearing} />
-        </div>
       </div>
 
       <TitleDetailsSubheader columns={columns} />
@@ -119,6 +112,5 @@ DetailsHeader.propTypes = {
   scheduledFor: PropTypes.string,
   veteranFirstName: PropTypes.string,
   veteranLastName: PropTypes.string,
-  veteranFileNumber: PropTypes.string,
-  hearing: PropTypes.object
+  veteranFileNumber: PropTypes.string
 };
