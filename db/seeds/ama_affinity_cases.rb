@@ -154,14 +154,14 @@ module Seeds
     def create_case_ready_for_more_than_hearing_affinity_days(judge)
       # set system time and create the appeal
       Timecop.travel(4.years.ago)
-      appeal = FactoryBot.create(:appeal, :hearing_docket, :with_post_intake_tasks, veteran: create_veteran)
+      appeal = create(:appeal, :hearing_docket, :with_post_intake_tasks, veteran: create_veteran)
 
       # travel to when the hearing was held, then create the held hearing and post-hearing tasks:
       # add 91 days for the amount of time the post-hearing tasks are open and add 7 more to make the case ready
       # for more than the hearing affinity days value
       Timecop.return
       Timecop.travel((91 + Constants.DISTRIBUTION.hearing_case_affinity_days + 7).days.ago)
-      FactoryBot.create(:hearing, :held, appeal: appeal, judge: judge, adding_user: User.system_user)
+      create(:hearing, :held, appeal: appeal, judge: judge, adding_user: User.system_user)
 
       # travel to when the tasks will auto-complete and complete them
       Timecop.travel(91.days.from_now)
