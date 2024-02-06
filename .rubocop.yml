@@ -54,6 +54,7 @@ Rails/ActiveRecordOverride:
 Rails/Output:
   Exclude:
     - 'lib/**/*.rb'
+    - 'db/scripts/**/*'
 
 Rails/DynamicFindBy:
   Enabled: false
