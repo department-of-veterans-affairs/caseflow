@@ -18,7 +18,7 @@ module EventConcern
 
       event.type == DecisionReviewCreatedEvent.name
     else
-      return false
+      false
     end
   end
 end

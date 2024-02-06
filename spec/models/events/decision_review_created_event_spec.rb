@@ -30,8 +30,8 @@ RSpec.describe DecisionReviewCreatedEvent, type: :model do
 
   describe "event records association" do
     let!(:my_event) { create(:decision_review_created_event) }
-    let!(:intake) { create(:intake)}
-    let!(:event_record) {EventRecord.create!(event_id: my_event.id, backfill_record: intake)}
+    let!(:intake) { create(:intake) }
+    let!(:event_record) { EventRecord.create!(event_id: my_event.id, backfill_record: intake) }
     let(:veteran_file_number) { "64205050" }
     let!(:higher_level_review) { HigherLevelReview.new(veteran_file_number: veteran_file_number) }
     let!(:higher_level_review_event_record) do

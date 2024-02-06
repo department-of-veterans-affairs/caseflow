@@ -204,7 +204,6 @@ class Veteran < CaseflowRecord
     service.map { |service| service[:pay_grade] }.compact
   end
 
-
   alias zip zip_code
   alias address_line_1 address_line1
   alias address_line_2 address_line2

@@ -2,13 +2,13 @@
 
 class Events::DecisionReviewCreated
   include RedisMutex::Macro
-    # Default options for RedisMutex#with_lock
-    # :block  => 1    # Specify in seconds how long you want to wait for the lock to be released.
-    #                 # Specify 0 if you need non-blocking sematics and return false immediately. (default: 1)
-    # :sleep  => 0.1  # Specify in seconds how long the polling interval should be when :block is given.
-    #                 # It is NOT recommended to go below 0.01. (default: 0.1)
-    # :expire => 10   # Specify in seconds when the lock should be considered stale when something went wrong
-    #                 # with the one who held the lock and failed to unlock. (default: 10)
+  # Default options for RedisMutex#with_lock
+  # :block  => 1    # Specify in seconds how long you want to wait for the lock to be released.
+  #                 # Specify 0 if you need non-blocking sematics and return false immediately. (default: 1)
+  # :sleep  => 0.1  # Specify in seconds how long the polling interval should be when :block is given.
+  #                 # It is NOT recommended to go below 0.01. (default: 0.1)
+  # :expire => 10   # Specify in seconds when the lock should be considered stale when something went wrong
+  #                 # with the one who held the lock and failed to unlock. (default: 10)
 
   class << self
     def create(consumer_event_id, reference_id)

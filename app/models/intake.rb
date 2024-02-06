@@ -269,7 +269,6 @@ class Intake < CaseflowRecord
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
 
-
   # Optionally implement this methods in subclass
   def validate_detail_on_start
     true

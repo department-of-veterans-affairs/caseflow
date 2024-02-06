@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 describe EventRecord, :postgres do
-
   context "One Event with One Event Record with One Intake" do
     let(:user) { Generators::User.build }
     let(:veteran_file_number) { "64205050" }
@@ -80,7 +79,6 @@ describe EventRecord, :postgres do
       expect(end_product_establishment.event_record).to eq end_product_establishment_event_record
       expect(end_product_establishment.from_decision_review_created_event?).to eq(true)
 
-
       expect(claimant_event_record.backfill_record_type).to eq("Claimant")
       expect(claimant_event_record.backfill_record_id).to eq(claimant.id)
       expect(claimant.event_record).to eq claimant_event_record
@@ -133,5 +131,4 @@ describe EventRecord, :postgres do
       expect { attorney.event_record }.to raise_error(NoMethodError)
     end
   end
-
 end
