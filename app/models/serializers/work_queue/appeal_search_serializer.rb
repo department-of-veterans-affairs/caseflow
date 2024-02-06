@@ -150,12 +150,4 @@ class WorkQueue::AppealSearchSerializer
       WorkQueue::DocketSwitchSerializer.new(object.docket_switch).serializable_hash[:data][:attributes]
     end
   end
-
-  attribute :has_notifications do |object|
-    @all_notifications = Notification.where(appeals_id: object.uuid.to_s, appeals_type: "Appeal")
-    @allowed_notifications = @all_notifications.where(email_notification_status: nil)
-      .or(@all_notifications.where.not(email_notification_status: EXCLUDE_STATUS))
-      .merge(@all_notifications.where(sms_notification_status: nil)
-      .or(@all_notifications.where.not(sms_notification_status: EXCLUDE_STATUS))).any?
-  end
 end

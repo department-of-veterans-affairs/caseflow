@@ -564,8 +564,6 @@ export const prepareAppealForSearchStore = (appeals) => {
       readableOriginalHearingRequestType:
         appeal.attributes.readable_original_hearing_request_type,
       vacateType: appeal.attributes.vacate_type,
-      mst: appeal.attributes.mst,
-      pact: appeal.attributes.pact
     };
 
     return accumulator;
@@ -602,10 +600,7 @@ export const prepareAppealForSearchStore = (appeals) => {
       availableHearingLocations: prepareAppealAvailableHearingLocationsForStore(
         appeal
       ),
-      hasNotifications: appeal.attributes.has_notifications,
       locationHistory: prepareLocationHistoryForStore(appeal),
-      mst: appeal.attributes.mst,
-      pact: appeal.attributes.pact
     };
 
     return accumulator;

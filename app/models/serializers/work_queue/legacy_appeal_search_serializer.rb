@@ -61,26 +61,6 @@ class WorkQueue::LegacyAppealSearchSerializer
 
   attribute(:available_hearing_locations) { |object| available_hearing_locations(object) }
 
-  attribute :readable_hearing_request_type, &:readable_current_hearing_request_type
-
-  attribute :readable_original_hearing_request_type, &:readable_original_hearing_request_type
-
-  attribute :closest_regional_office
-
-  attribute :closest_regional_office_label
-
-  attribute :mst, &:mst?
-
-  attribute :pact, &:pact?
-
-  attribute :regional_office do |object|
-    {
-      key: object.regional_office&.key,
-      city: object.regional_office&.city,
-      state: object.regional_office&.state
-    }
-  end
-
   attribute :docket_name do
     "legacy"
   end
@@ -116,13 +96,5 @@ class WorkQueue::LegacyAppealSearchSerializer
 
   def self.latest_vacols_attorney_case_review(object)
     VACOLS::CaseAssignment.latest_task_for_appeal(object.vacols_id)
-  end
-
-  attribute :has_notifications do |object|
-    @all_notifications = Notification.where(appeals_id: object.vacols_id.to_s, appeals_type: "LegacyAppeal")
-    @allowed_notifications = @all_notifications.where(email_notification_status: nil)
-      .or(@all_notifications.where.not(email_notification_status: EXCLUDE_STATUS))
-      .merge(@all_notifications.where(sms_notification_status: nil)
-      .or(@all_notifications.where.not(sms_notification_status: EXCLUDE_STATUS))).any?
   end
 end
