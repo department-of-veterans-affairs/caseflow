@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class CorrespondenceQueueColumn < QueueColumn
-  super
+  # super
   @filterable ||= false
 
   def to_hash(tasks)
