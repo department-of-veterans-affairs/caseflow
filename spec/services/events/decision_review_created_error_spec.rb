@@ -13,6 +13,8 @@ describe Events::DecisionReviewCreatedError do
         new_event = Event.find_by(reference_id: "999")
         expect(new_event.reference_id).to eq(consumer_event_id)
         expect(new_event.error).to eq(error_message)
+        expect(new_event.info).to eq("errored_claim_id" => "8888")
+        expect(new_event.errored_claim_id).to eq(errored_claim_id)
       end
     end
     context "when lock acquisition fails" do

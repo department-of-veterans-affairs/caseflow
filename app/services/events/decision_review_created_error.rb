@@ -17,7 +17,7 @@ class Events::DecisionReviewCreatedError
       event = find_by_consumer_event_id_or_create(consumer_event_id)
       RedisMutex.with_lock("EndProductEstablishment:#{errored_claim_id}", block: 60, expire: 100) do
         ActiveRecord::Base.transaction do
-          event&.update!(error: error_message)
+          event&.update!(error: error_message, info: { "errored_claim_id" => errored_claim_id })
         end
       end
     rescue RedisMutex::LockError
