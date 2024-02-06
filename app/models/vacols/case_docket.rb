@@ -61,8 +61,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     on DIARYKEY = BFKEY
   "
 
-  SELECT_READY_APPEALS = "
-    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
+  FROM_READY_APPEALS = "
     from BRIEFF
     #{VACOLS::Case::JOIN_AOD}
     #{JOIN_MAIL_BLOCKS_DISTRIBUTION}
@@ -75,6 +74,17 @@ class VACOLS::CaseDocket < VACOLS::Record
       and BRIEFF.BFD19 is not null
       and MAIL_BLOCKS_DISTRIBUTION = 0
       and DIARY_BLOCKS_DISTRIBUTION = 0
+  "
+
+  SELECT_READY_APPEALS = "
+    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
+    #{FROM_READY_APPEALS}
+  "
+
+  # this version of the query should not be used during distribution it is only intended for reporting usage
+  SELECT_READY_APPEALS_ADDITIONAL_COLS = "
+    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD, BFCORKEY, BFCORLID
+    #{FROM_READY_APPEALS}
   "
 
   # Judges 000, 888, and 999 are not real judges, but rather VACOLS codes.
@@ -148,6 +158,26 @@ class VACOLS::CaseDocket < VACOLS::Record
       #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
       order by BFD19
     )
+  "
+
+  # this query should not be used during distribution it is only intended for reporting usage
+  SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19 = "
+    select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFDLOOUT, APPEALS.AOD, APPEALS.BFCORLID,
+      CORRES.SNAMEF, CORRES.SNAMEL, CORRES.SSN,
+      STAFF.SNAMEF as VLJ_NAMEF, STAFF.SNAMEL as VLJ_NAMEL,
+      case when APPEALS.BFAC = '7' then 1 else 0 end CAVC
+    from (
+      select BFKEY, BRIEFF.TINUM, BFD19, BFDLOOUT, BFAC, BFCORKEY, AOD, BFCORLID,
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+      from (
+        #{SELECT_READY_APPEALS_ADDITIONAL_COLS}
+      ) BRIEFF
+      #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+      order by BFD19
+    ) APPEALS
+    left join CORRES on APPEALS.BFCORKEY = CORRES.STAFKEY
+    left join STAFF on APPEALS.VLJ = STAFF.STAFKEY
+    order by BFD19
   "
 
   # rubocop:disable Metrics/MethodLength
@@ -370,6 +400,16 @@ class VACOLS::CaseDocket < VACOLS::Record
   end
 
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
+  def self.ready_to_distribute_appeals
+    query = <<-SQL
+      #{SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19}
+    SQL
+
+    fmtd_query = sanitize_sql_array([query])
+    connection.exec_query(fmtd_query).to_hash
+  end
+
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
     fail(DocketNumberCentennialLoop, COPY::MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE) if Time.zone.now.year >= 2030
 
