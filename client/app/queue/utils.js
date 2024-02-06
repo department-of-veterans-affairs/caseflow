@@ -563,9 +563,7 @@ export const prepareAppealForSearchStore = (appeals) => {
         appeal.attributes.readable_hearing_request_type,
       readableOriginalHearingRequestType:
         appeal.attributes.readable_original_hearing_request_type,
-      vacateType: appeal.attributes.vacate_type,
-      mst: appeal.attributes.mst,
-      pact: appeal.attributes.pact
+      vacateType: appeal.attributes.vacate_type
     };
 
     return accumulator;
@@ -599,13 +597,13 @@ export const prepareAppealForSearchStore = (appeals) => {
       decisionDate: appeal.attributes.decision_date,
       regionalOffice: appeal.attributes.regional_office,
       caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
+      attorneyCaseRewriteDetails:
+        appeal.attributes.attorney_case_rewrite_details,
       availableHearingLocations: prepareAppealAvailableHearingLocationsForStore(
         appeal
       ),
       hasNotifications: appeal.attributes.has_notifications,
       locationHistory: prepareLocationHistoryForStore(appeal),
-      mst: appeal.attributes.mst,
-      pact: appeal.attributes.pact
     };
 
     return accumulator;
