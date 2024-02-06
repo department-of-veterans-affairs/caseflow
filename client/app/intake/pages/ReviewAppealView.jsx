@@ -8,6 +8,7 @@ import { startCase } from 'lodash';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { ExternalLinkIcon } from '../../components/icons';
 import Alert from '../../components/Alert';
+import { useSelector } from 'react-redux';
 
 const styles = {
   mainTable: css({
@@ -88,6 +89,7 @@ const ReviewAppealView = (props) => {
   const originalHearingRequestType = startCase(props.appeal.original_hearing_request_type);
   const PARSE_INT_RADIX = 10;
   const hearingDayDate = props.hearingDayDate;
+  const specialtyCaseTeamFeatureToggle = useSelector((state) => state.featureToggles.specialtyCaseTeamDistribution);
   const currentValues = {
     reason,
     otherReason,
@@ -233,7 +235,7 @@ const ReviewAppealView = (props) => {
                   );
                 })}
               </ol>
-              {!originalHasSCTIssue && <SplitAppealNotice />}
+              {!originalHasSCTIssue && specialtyCaseTeamFeatureToggle && <SplitAppealNotice />}
             </td>
             <td>
               <ol>
@@ -248,7 +250,7 @@ const ReviewAppealView = (props) => {
                   );
                 })}
               </ol>
-              {!selectedHasSCTIssue && <SplitAppealNotice />}
+              {!selectedHasSCTIssue && specialtyCaseTeamFeatureToggle && <SplitAppealNotice />}
             </td>
           </tr>
         </table>

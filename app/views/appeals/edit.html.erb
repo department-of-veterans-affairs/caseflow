@@ -19,7 +19,8 @@
       covidTimelinessExemption: FeatureToggle.enabled?(:covid_timeliness_exemption, user: current_user),
       split_appeal_workflow: FeatureToggle.enabled?(:split_appeal_workflow, user: current_user),
       cc_appeal_workflow: FeatureToggle.enabled?(:cc_appeal_workflow, user: current_user),
-      vhaPreDocketAppeals: false
+      vhaPreDocketAppeals: false,
+      specialtyCaseTeamDistribution: FeatureToggle.enabled?(:specialty_case_team_distribution, user: current_user)
     }
   }) %>
 <% end %>
