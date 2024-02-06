@@ -4,6 +4,8 @@ class WorkQueue::AppealSearchSerializer
   include FastJsonapi::ObjectSerializer
   extend Helpers::AppealHearingHelper
 
+  EXCLUDE_STATUS = ["No Participant Id Found", "No Claimant Found", "No External Id"].freeze
+
   set_type :appeal
 
   attribute :contested_claim, &:contested_claim?
@@ -139,6 +141,21 @@ class WorkQueue::AppealSearchSerializer
 
   attribute :caseflow_veteran_id do |object|
     object.veteran ? object.veteran.id : nil
+  end
+
+  attribute :attorney_case_rewrite_details do |object|
+    if FeatureToggle.enabled?(:overtime_revamp, user: RequestStore.store[:current_user])
+      {
+        note_from_attorney: object.latest_attorney_case_review&.note,
+        untimely_evidence: object.latest_attorney_case_review&.untimely_evidence
+      }
+    else
+      {
+        overtime: object.latest_attorney_case_review&.overtime,
+        note_from_attorney: object.latest_attorney_case_review&.note,
+        untimely_evidence: object.latest_attorney_case_review&.untimely_evidence
+      }
+    end
   end
 
   attribute :readable_hearing_request_type, &:readable_current_hearing_request_type

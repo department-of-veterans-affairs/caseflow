@@ -597,6 +597,8 @@ export const prepareAppealForSearchStore = (appeals) => {
       decisionDate: appeal.attributes.decision_date,
       regionalOffice: appeal.attributes.regional_office,
       caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
+      attorneyCaseRewriteDetails:
+        appeal.attributes.attorney_case_rewrite_details,
       availableHearingLocations: prepareAppealAvailableHearingLocationsForStore(
         appeal
       ),
