@@ -151,6 +151,15 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     admin? || granted?("Admin Intake") || roles.include?("Admin Intake") || member_of_organization?(Bva.singleton)
   end
 
+  # editing logic for MST and PACT
+  def can_edit_intake_issues?
+    return false unless FeatureToggle.enabled?(:mst_identification) ||
+                        FeatureToggle.enabled?(:pact_identification) ||
+                        FeatureToggle.enabled?(:legacy_mst_pact_identification)
+
+    BvaIntake.singleton.admins.include?(self) || member_of_organization?(ClerkOfTheBoard.singleton)
+  end
+
   def can_view_overtime_status?
     (attorney_in_vacols? || judge_in_vacols?) && FeatureToggle.enabled?(:overtime_revamp, user: self)
   end
