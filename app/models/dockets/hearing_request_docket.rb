@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 class HearingRequestDocket < Docket
   def docket_type
     Constants.AMA_DOCKETS.hearing
@@ -50,6 +49,8 @@ class HearingRequestDocket < Docket
     appeals = hearing_distribution_query(base_relation: base_relation, genpop: genpop, judge: distribution.judge).call
 
     appeals = self.class.limit_genpop_appeals(appeals, limit) if genpop.eql? "any"
+
+    appeals = self.class.limit_only_genpop_appeals(appeals, limit) if genpop.eql?("only_genpop") && limit
 
     HearingRequestCaseDistributor.new(
       appeals: appeals, genpop: genpop, distribution: distribution, priority: priority

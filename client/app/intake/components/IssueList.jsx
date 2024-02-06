@@ -27,17 +27,23 @@ const nonEditableIssueStyling = css({
 });
 
 export default class IssuesList extends React.Component {
-  generateIssueActionOptions = (issue, userCanWithdrawIssues, isDtaError) => {
+  generateIssueActionOptions = (issue, userCanWithdrawIssues, userCanEditIntakeIssues, isDtaError, docketType) => {
     let options = [];
 
     if (issue.correctionType && issue.endProductCleared) {
       options.push({ displayText: 'Undo correction',
         value: 'undo_correction' });
-    } else if (issue.correctionType && !issue.examRequested) {
+    } else if (issue.correctionType && !issue.examRequested && docketType !== 'Legacy') {
       options.push(
         { displayText: 'Remove issue',
           value: 'remove' }
       );
+      if (userCanEditIntakeIssues) {
+        options.push(
+          { displayText: 'Edit issue',
+            value: 'edit' }
+        );
+      }
     } else if (issue.endProductCleared) {
       options.push({ displayText: 'Correct issue',
         value: 'correct' });
@@ -48,10 +54,18 @@ export default class IssuesList extends React.Component {
             value: 'withdraw' }
         );
       }
-      options.push(
-        { displayText: 'Remove issue',
-          value: 'remove' }
-      );
+      if (docketType !== 'Legacy') {
+        options.push(
+          { displayText: 'Remove issue',
+            value: 'remove' }
+        );
+      }
+      if (userCanEditIntakeIssues) {
+        options.push(
+          { displayText: 'Edit issue',
+            value: 'edit' }
+        );
+      }
     }
 
     const isIssueWithdrawn = issue.withdrawalDate || issue.withdrawalPending;
@@ -77,7 +91,9 @@ export default class IssuesList extends React.Component {
       onClickIssueAction,
       withdrawReview,
       userCanWithdrawIssues,
-      editPage
+      userCanEditIntakeIssues,
+      editPage,
+      featureToggles
     } = this.props;
 
     return <div className="issues">
@@ -93,7 +109,7 @@ export default class IssuesList extends React.Component {
             editableIssueProperties);
 
           const issueActionOptions = this.generateIssueActionOptions(
-            issue, userCanWithdrawIssues, intakeData.isDtaError
+            issue, userCanWithdrawIssues, userCanEditIntakeIssues, intakeData.isDtaError, intakeData.docketType
           );
 
           const isIssueWithdrawn = issue.withdrawalDate || issue.withdrawalPending;
@@ -113,6 +129,7 @@ export default class IssuesList extends React.Component {
                 requestIssues={intakeData.requestIssues}
                 legacyOptInApproved={intakeData.legacyOptInApproved}
                 legacyAppeals={intakeData.legacyAppeals}
+                featureToggles={featureToggles}
                 formType={formType} />
 
               { !issue.editable && <div className="issue-action">
@@ -120,7 +137,7 @@ export default class IssuesList extends React.Component {
               </div> }
 
               <div className="issue-action">
-                {editPage && issue.editable && !_.isEmpty(issueActionOptions) && <Dropdown
+                {editPage && !_.isEmpty(issueActionOptions) && <Dropdown
                   name={`issue-action-${issue.index}`}
                   label="Actions"
                   hideLabel
@@ -161,5 +178,7 @@ IssuesList.propTypes = {
   onClickIssueAction: PropTypes.func,
   withdrawReview: PropTypes.bool,
   userCanWithdrawIssues: PropTypes.bool,
-  editPage: PropTypes.bool
+  userCanEditIntakeIssues: PropTypes.bool,
+  editPage: PropTypes.bool,
+  featureToggles: PropTypes.object
 };
