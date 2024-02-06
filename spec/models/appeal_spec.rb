@@ -1512,6 +1512,19 @@ describe Appeal, :all_dbs do
     end
   end
 
+  describe "sct_appeal" do
+    let(:appeal) { create(:appeal, :with_vha_issue, :with_request_issues) }
+    let(:appeal_2) { create(:appeal, :with_request_issues ) }
+
+    it "should return true if appeal has vha issue" do
+      expect(appeal.sct_appeal?).to be true
+    end
+
+    it "should return false for appeal with no vha issue" do
+      expect(appeal_2.sct_appeal?).to be false
+    end
+  end
+
   describe "split_appeal" do
     let!(:regular_user) do
       create(:user, css_id: "APPEAL_USER")

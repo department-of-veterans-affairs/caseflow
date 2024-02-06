@@ -919,6 +919,10 @@ class Appeal < DecisionReview
     return true if relevant_tasks.all?(&:closed?)
   end
 
+  def sct_appeal?
+    request_issues.active.any? { |ri|  ri.benefit_type == "vha" }
+  end
+
   private
 
   def business_lines_needing_assignment

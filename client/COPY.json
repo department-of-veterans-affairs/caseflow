@@ -1397,5 +1397,6 @@
   "POA_UPDATED_SUCCESSFULLY": "POA Updated Successfully",
   "EMPLOYER_IDENTIFICATION_NUMBER": "Employer Identification Number",
   "VHA_MOVE_TO_SCT_MODAL_TITLE": "Move appeal to SCT queue",
-  "VHA_MOVE_TO_SCT_MODAL_BODY": "One or more Specialty Case Team (SCT) issues have been added and the appeal will now be routed to the SCT queue."
+  "VHA_MOVE_TO_SCT_MODAL_BODY": "One or more Specialty Case Team (SCT) issues have been added and the appeal will now be routed to the SCT queue.",
+  "SPECIALTY_CASE_TEAM_ASSIGN_TASK_LABEL": "Assign"
 }
