@@ -1362,6 +1362,7 @@
   "REVIEW_SPLIT_APPEAL_CREATE_SUBHEAD": "Case history, POA, and Veteran information will be deplicated on the new appeal.",
   "SPLIT_APPEAL_BANNER_SUCCESS_TITLE": "You have successfully split %(appellantName)s's appeal",
   "SPLIT_APPEAL_BANNER_SUCCESS_MESSAGE": "This new appeal stream has the same docket number and tasks as the original appeal.",
+  "SPLIT_APPEAL_SPECIALTY_CASE_TEAM_ISSUE_MESSAGE": "This appeal stream has no Specialty Case Team issues. Upon split, it will be routed to regular distribtion.",
   "TABLE_ORIGINAL_APPEAL": "Original Appeal Stream",
   "TABLE_NEW_APPEAL": "New Appeal Stream",
   "TABLE_VETERAN": "Veteran",

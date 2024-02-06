@@ -4,9 +4,10 @@ import PropTypes from 'prop-types';
 import { StateContext } from '../../intakeEdit/IntakeEditFrame';
 import { DateString } from '../../util/DateUtil';
 import { css } from 'glamor';
-import _ from 'lodash';
+import { startCase } from 'lodash';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import { ExternalLinkIcon } from '../../components/icons';
+import Alert from '../../components/Alert';
 
 const styles = {
   mainTable: css({
@@ -78,13 +79,13 @@ const ReviewAppealView = (props) => {
   const { serverIntake } = props;
   const requestIssues = serverIntake.requestIssues;
   const streamdocketNumber = props.appeal.stream_docket_number;
-  const reviewOpt = _.startCase(serverIntake?.docketType?.split('_').join(' '));
+  const reviewOpt = startCase(serverIntake?.docketType?.split('_').join(' '));
   const { selectedIssues, reason, otherReason } = useContext(StateContext);
   const veteran = serverIntake.veteran.name;
   const claimantName = props.serverIntake.claimantName;
   const hearings = props.hearings;
   const hearingsSize = hearings.length;
-  const originalHearingRequestType = _.startCase(props.appeal.original_hearing_request_type);
+  const originalHearingRequestType = startCase(props.appeal.original_hearing_request_type);
   const PARSE_INT_RADIX = 10;
   const hearingDayDate = props.hearingDayDate;
   const currentValues = {
@@ -120,6 +121,16 @@ const ReviewAppealView = (props) => {
 
     return selectOriginal;
   });
+
+  const hasSCTIssues = (issues) => {
+    return issues.some((issue) => {
+      return issue.benefit_type === 'vha';
+    });
+  };
+
+  const originalHasSCTIssue = hasSCTIssues(selectOriginal);
+
+  const selectedHasSCTIssue = hasSCTIssues(selectElement);
 
   return (
     <>
@@ -177,7 +188,7 @@ const ReviewAppealView = (props) => {
               ) &&
                 <>
                   <p><DateString date={hearingDayDate} dateFormat="MM/DD/YYYY" /></p>
-                  <p> { _.startCase(hearings[0].disposition) } </p>
+                  <p> { startCase(hearings[0].disposition) } </p>
                   <Link
                     rel="noopener"
                     target="_blank"
@@ -196,7 +207,7 @@ const ReviewAppealView = (props) => {
               ) &&
                 <>
                   <p><DateString date={hearingDayDate} dateFormat="MM/DD/YYYY" /></p>
-                  <p> { _.startCase(hearings[0].disposition) } </p>
+                  <p> { startCase(hearings[0].disposition) } </p>
                   <Link
                     rel="noopener"
                     target="_blank"
@@ -215,13 +226,14 @@ const ReviewAppealView = (props) => {
                   return (
                     <li>
                       <p><span className="text_info">{issue.description}</span></p>
-                      <p><span className="info">Benefit type:</span>  {_.startCase(issue.benefit_type)}</p>
+                      <p><span className="info">Benefit type:</span>  {startCase(issue.benefit_type)}</p>
                       <p><span className="info">Decision date:</span>
                         <DateString date={issue.approx_decision_date} dateFormat="MM/DD/YYYY" /></p>
                     </li>
                   );
                 })}
               </ol>
+              {!originalHasSCTIssue && <SplitAppealNotice />}
             </td>
             <td>
               <ol>
@@ -229,13 +241,14 @@ const ReviewAppealView = (props) => {
                   return (
                     <li>
                       <p><span className="text_info">{issue.description}</span></p>
-                      <p><span className="info">Benefit type:</span> {_.startCase(issue.benefit_type)}</p>
+                      <p><span className="info">Benefit type:</span> {startCase(issue.benefit_type)}</p>
                       <p><span className="info">Decision date:</span>
                         <DateString date={issue.approx_decision_date} dateFormat="MM/DD/YYYY" /></p>
                     </li>
                   );
                 })}
               </ol>
+              {!selectedHasSCTIssue && <SplitAppealNotice />}
             </td>
           </tr>
         </table>
@@ -244,6 +257,16 @@ const ReviewAppealView = (props) => {
   );
 };
 
+// Maybe move this stuff to it's own component? It's only used here but maybe
+// TODO: Scope this based on the feature toggle as well
+const messageStyling = css({
+  fontSize: '17px !important',
+});
+
+const SplitAppealNotice = () => (
+  <Alert type="info" messageStyling={messageStyling} message={COPY.SPLIT_APPEAL_SPECIALTY_CASE_TEAM_ISSUE_MESSAGE} />
+);
+
 ReviewAppealView.propTypes = {
   serverIntake: PropTypes.object,
   appeal: PropTypes.array,
@@ -251,3 +274,4 @@ ReviewAppealView.propTypes = {
   hearingDayDate: PropTypes.string,
 };
 export default (ReviewAppealView);
+
