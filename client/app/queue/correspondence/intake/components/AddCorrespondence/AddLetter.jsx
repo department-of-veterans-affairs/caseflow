@@ -12,6 +12,7 @@ import { bindActionCreators } from 'redux';
  import {
    setResponseLetters
  } from '../../../correspondenceReducer/correspondenceActions';
+import { useDispatch } from "react-redux";
 
 export const AddLetter = (props) => {
   const onContinueStatusChange = props.onContinueStatusChange;
@@ -95,6 +96,7 @@ const NewLetter = (props) => {
 
   const [responseWindows, setResponseWindows] = useState('');
   const naValue = 'N/A';
+  const dispatch = useDispatch();
 
   const radioOptions = [
     { displayText: '65 days',
@@ -138,8 +140,8 @@ const NewLetter = (props) => {
       reason: subReason,
       response_window: responseWindows
     }]
-    debugger;
-    setResponseLetters(letter)
+    console.log()
+    dispatch(setResponseLetters(letter));
   };
 
   const letterTypesData = ADD_CORRESPONDENCE_LETTER_SELECTIONS.map((option) => ({ label: (option.letter_type),
@@ -363,6 +365,10 @@ NewLetter.propTypes = {
   setLetterTitle: PropTypes.func,
   setResponseLetters: PropTypes.func
 };
+
+const mapStateToProps = (state) => ({
+  setResponseLetters: state.intakeCorrespondence.setResponseLetters
+});
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({

@@ -126,7 +126,6 @@ export const setWaivedEvidenceTasks = (task) => (dispatch) => {
 
 export const setResponseLetters = (responseLetters) =>
   (dispatch) => {
-    debugger;
     dispatch({
       type: ACTIONS.SET_RESPONSE_LETTERS,
       payload: {
