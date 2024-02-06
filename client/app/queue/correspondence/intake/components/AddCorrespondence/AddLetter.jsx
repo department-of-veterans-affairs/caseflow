@@ -220,6 +220,12 @@ export const NewLetter = (props) => {
   }, [responseWindows]);
 
   useEffect(() => {
+    if (letterSub.length > 0) {
+      letterTitlesData();
+    }
+  }, [letterSub]);
+
+  useEffect(() => {
     if (letterType.length > 0) {
       letterTitlesData();
     }
@@ -311,7 +317,8 @@ export const NewLetter = (props) => {
       />
       <br />
       <RadioField
-        name="How long should the response window be for this response letter?"
+        label="How long should the response window be for this response letter?"
+        name={`How long should the response window be for this response letter?-${index}`}
         options={valueOptions}
         value = {responseWindows}
         onChange={(val) => handleCustomWindowState(val)}
