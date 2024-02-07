@@ -121,11 +121,11 @@ class CaseDistributionLever < ApplicationRecord
       levers.filter(&:valid?).each do |lever|
         previous_lever = previous_levers[lever.id]
         entries.push({
-          user: current_user,
-          case_distribution_lever: lever,
-          previous_value: previous_lever.value,
-          update_value: lever.value
-        })
+                      user: current_user,
+                      case_distribution_lever: lever,
+                      previous_value: previous_lever.value,
+                      update_value: lever.value
+                    })
       end
 
       begin
