@@ -57,7 +57,7 @@ describe LegacyDocket do
       allow(LegacyAppeal.repository).to receive(:nod_count).and_return(1)
     end
 
-    it { is_expected.to eq(12.4) }
+    it { is_expected.to eq(12.9) }
   end
 
   context "#oldest_priority_appeals_days_waiting" do
@@ -317,6 +317,64 @@ describe LegacyDocket do
           .and_return(two_cases_as_hashes)
 
         expect(subject.size).to eq 2
+      end
+    end
+
+    describe "#not_genpop_priority_count" do
+      let(:legacy_docket) { LegacyDocket.new }
+
+      context "when there are non-genpop priority appeals" do
+        before do
+          allow(LegacyAppeal.repository).to receive(:not_genpop_priority_count).and_return(5)
+        end
+
+        it "returns the count of non-genpop priority appeals" do
+          expect(legacy_docket.not_genpop_priority_count).to eq(5)
+        end
+      end
+
+      context "when there are no non-genpop priority appeals" do
+        before do
+          allow(LegacyAppeal.repository).to receive(:not_genpop_priority_count).and_return(0)
+        end
+
+        it "returns zero" do
+          expect(legacy_docket.not_genpop_priority_count).to eq(0)
+        end
+      end
+    end
+
+    describe "#oldest_priority_appeal_days_waiting" do
+      context "when there is no oldest priority appeal" do
+        let(:legacy_docket) { LegacyDocket.new }
+
+        before do
+          allow(legacy_docket).to receive(:age_of_oldest_priority_appeal).and_return(nil)
+        end
+
+        it "returns zero" do
+          expect(legacy_docket.oldest_priority_appeal_days_waiting).to eq(0)
+        end
+      end
+
+      context "when there is an oldest priority appeal" do
+        let(:legacy_docket) { LegacyDocket.new }
+        let(:start_time) { Time.zone.local(2020, 1, 1) }
+        let(:number_of_days) { 10 }
+        let(:end_time) { start_time + number_of_days.days }
+
+        before do
+          allow(legacy_docket).to receive(:age_of_oldest_priority_appeal).and_return(start_time)
+          Timecop.freeze(end_time)
+        end
+
+        after do
+          Timecop.return
+        end
+
+        it "returns the age in days of the oldest priority appeal" do
+          expect(legacy_docket.oldest_priority_appeal_days_waiting).to eq(number_of_days)
+        end
       end
     end
   end
