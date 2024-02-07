@@ -2,24 +2,24 @@
 
 require "rails_helper"
 
-describe Hearings::TranscriptionTransformer do
+describe TranscriptionTransformer do
   describe "#call" do
     context "errors" do
       context "vtt doesn't exist" do
         let(:path) { "/this/does/not/exist" }
-        let(:transformer) { Hearings::TranscriptionTransformer.new(path) }
+        let(:transformer) { TranscriptionTransformer.new(path) }
 
         it "raises a HearingConversionError" do
-          expect { transformer.call }.to raise_error(Hearings::TranscriptionTransformer::FileConversionError)
+          expect { transformer.call }.to raise_error(TranscriptionTransformer::FileConversionError)
         end
       end
 
       context "file is malformed or unreadable" do
         let(:file_name) { ["foo", ".vtt"] }
         let(:file) { Tempfile.new(file_name) }
-        let(:transformer) { Hearings::TranscriptionTransformer.new(file.path) }
+        let(:transformer) { TranscriptionTransformer.new(file.path) }
         it "raises a HearingConversionError" do
-          expect { transformer.call }.to raise_error(Hearings::TranscriptionTransformer::FileConversionError)
+          expect { transformer.call }.to raise_error(TranscriptionTransformer::FileConversionError)
         end
       end
     end
@@ -27,7 +27,7 @@ describe Hearings::TranscriptionTransformer do
   describe "valid file path" do
     let(:file_name) { ["foo", ".vtt"] }
     let(:file) { Tempfile.new(file_name) }
-    let(:transformer) { Hearings::TranscriptionTransformer.new(file.path) }
+    let(:transformer) { TranscriptionTransformer.new(file.path) }
     let(:doc) { RTF::Document.new(RTF::Font.new(RTF::Font::ROMAN, "Times New Roman")) }
     let(:rtf_path) { file.path.gsub("vtt", "rtf") }
 
