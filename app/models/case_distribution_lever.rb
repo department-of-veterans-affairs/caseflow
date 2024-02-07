@@ -68,11 +68,11 @@ class CaseDistributionLever < ApplicationRecord
   end
 
   def validate_boolean_data_type
-      add_error_value_not_match_data_type if value&.match(/\A(t|true|f|false)\z/i).nil?
+    add_error_value_not_match_data_type if value&.match(/\A(t|true|f|false)\z/i).nil?
   end
 
   class << self
-    def respond_to_missing?(name, include_private)
+    def respond_to_missing?(name, _include_private)
       Constants.DISTRIBUTION.to_h.key?(name)
     end
 
@@ -121,11 +121,11 @@ class CaseDistributionLever < ApplicationRecord
       levers.filter(&:valid?).each do |lever|
         previous_lever = previous_levers[lever.id]
         entries.push({
-                      user: current_user,
-                      case_distribution_lever: lever,
-                      previous_value: previous_lever.value,
-                      update_value: lever.value
-                    })
+                        user: current_user,
+                        case_distribution_lever: lever,
+                        previous_value: previous_lever.value,
+                        update_value: lever.value
+                     })
       end
 
       begin

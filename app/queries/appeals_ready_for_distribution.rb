@@ -75,7 +75,7 @@ class AppealsReadyForDistribution
     appeals.map do |appeal|
       # This comes from the DistributionTask's assigned_at date
       ready_for_distribution_at = appeal.tasks
-        .filter {|task| task.class == DistributionTask && task.status == Constants.TASK_STATUSES.assigned }
+        .filter { |task| task.class == DistributionTask && task.status == Constants.TASK_STATUSES.assigned }
         .first&.assigned_at
 
       # only look for hearings that were held

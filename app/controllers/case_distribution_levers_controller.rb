@@ -21,28 +21,28 @@ class CaseDistributionLeversController < ApplicationController
   end
 
   def update_levers
-      errors = CaseDistributionLever.update_acd_levers(allowed_params[:current_levers], current_user)
+    errors = CaseDistributionLever.update_acd_levers(allowed_params[:current_levers], current_user)
 
-      render json: {
-        errors: errors,
-        lever_history: CaseDistributionAuditLeverEntry.lever_history,
-        levers: grouped_levers
-      }
+    render json: {
+      errors: errors,
+      lever_history: CaseDistributionAuditLeverEntry.lever_history,
+      levers: grouped_levers
+    }
   end
-
 
   private
 
   def authorize_admin
     error = ["UNAUTHORIZED"]
 
-    render json: {
+    resp = {
       status_code: 500,
       message: error,
       user_is_an_acd_admin: false,
       lever_history: CaseDistributionAuditLeverEntry.lever_history,
       levers: grouped_levers
-    } unless CDAControlGroup.singleton.user_is_admin?(current_user)
+    }
+    render json: resp unless CDAControlGroup.singleton.user_is_admin?(current_user)
   end
 
   def allowed_params
