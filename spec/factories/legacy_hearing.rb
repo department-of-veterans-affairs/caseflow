@@ -47,7 +47,11 @@ FactoryBot.define do
         )
       )
     end
-    scheduled_in_timezone { "America/New_York" }
+
+    after(:create) do |hearing, _evaluator|
+      hearing.update(scheduled_in_timezone: hearing.regional_office_timezone)
+    end
+
     hearing_day_id { case_hearing.vdkey }
     vacols_id { case_hearing.hearing_pkseq }
     created_by do
