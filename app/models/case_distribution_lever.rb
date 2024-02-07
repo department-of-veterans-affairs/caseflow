@@ -72,6 +72,10 @@ class CaseDistributionLever < ApplicationRecord
   end
 
   class << self
+    def respond_to_missing?(name, include_private)
+      Constants.DISTRIBUTION.to_h.key?(name)
+    end
+
      def method_missing(name, *args)
       if Constants.DISTRIBUTION.to_h.keys.include?(name)
         value = method_missing_value(name.to_s)
@@ -81,16 +85,6 @@ class CaseDistributionLever < ApplicationRecord
       else
         super
       end
-    end
-
-    def find_integer_lever(lever)
-      return 0 unless INTEGER_LEVERS.include?(lever)
-      CaseDistributionLever.find_by_item(lever).try(:distribution_value).to_i
-    end
-
-    def find_float_lever(lever)
-      return 0 unless FLOAT_LEVERS.include?(lever)
-      CaseDistributionLever.find_by_item(lever).try(:distribution_value).to_f
     end
 
     def update_acd_levers(current_levers, current_user)
