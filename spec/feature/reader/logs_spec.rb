@@ -30,7 +30,7 @@ RSpec.feature "Reader", :all_dbs do
     [
       Generators::Document.build(type: "BVA Decision", received_at: 7.days.ago),
       Generators::Document.build(type: "Form 9", vbms_document_id: 4, received_at: 5.days.ago),
-      Generators::Document.build(type: "NOD", received_at: 1.days.ago)
+      Generators::Document.build(type: "NOD", received_at: 1.day.ago)
     ]
   end
 
