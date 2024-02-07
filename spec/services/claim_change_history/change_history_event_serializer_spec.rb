@@ -18,7 +18,7 @@ describe ChangeHistoryEventSerializer do
            :with_issue_type,
            :processed,
            :update_assigned_at,
-           assigned_at: rand(1.year.ago..10.minutes.ago),
+           assigned_at: 1.day.ago,
            benefit_type: "vha",
            decision_date: 4.months.ago,
            claimant_type: :veteran_claimant,
@@ -27,7 +27,7 @@ describe ChangeHistoryEventSerializer do
            number_of_claimants: 1)
   end
 
-  let(:events) do
+  let!(:events) do
     ClaimHistoryService.new(vha_org, task_id: vha_task.id).build_events
   end
 
