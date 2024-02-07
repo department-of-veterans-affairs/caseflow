@@ -35,6 +35,10 @@ class CaseDistributionLever < ApplicationRecord
     end
   end
 
+  def cavc_affinity_days
+    find_integer_lever(Constants.DISTRIBUTION.cavc_affinity_days)
+  end
+
   private
 
   def value_matches_data_type

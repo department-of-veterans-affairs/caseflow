@@ -189,13 +189,11 @@ class Docket
         .where(
           "appeals.stream_type != ? OR distribution_task.assigned_at <= ?",
           Constants.AMA_STREAM_TYPES.court_remand,
-          cavc_affinity_days.days.ago
+          CaseDistributionLever.cavc_affinity_days.days.ago
         )
     end
 
-    def cavc_affinity_days
-      cavc_affinity_days_lever = CaseDistributionLever.find_integer_lever(Constants.DISTRIBUTION.cavc_affinity_days)
-    end
+
 
     def with_original_appeal_and_judge_task
       joins("LEFT JOIN cavc_remands ON cavc_remands.remand_appeal_id = appeals.id")
@@ -211,7 +209,7 @@ class Docket
     def non_genpop_for_judge(judge)
       joins(with_assigned_distribution_task_sql)
         .with_original_appeal_and_judge_task
-        .where("distribution_task.assigned_at > ?", cavc_affinity_days.days.ago)
+        .where("distribution_task.assigned_at > ?", CaseDistributionLever.cavc_affinity_days.days.ago)
         .where(original_judge_task: { assigned_to_id: judge.id })
     end
 
