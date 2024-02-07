@@ -21,7 +21,8 @@ class CorrespondenceQueueColumn < QueueColumn
   end
 
   FILTER_OPTIONS = {
-    # For future use
+    Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name => :filter_by_veteran_details
+
 }.freeze
 
 def filter_options(tasks)
@@ -36,4 +37,14 @@ def filter_options(tasks)
   end
 end
 
+private
+
+def filter_by_veteran_details(tasks)
+  tasks.map do |task|
+    appeal = task.appeal
+    {
+      name: task.appeal.veteran.name
+    }
+  end
+ end
 end

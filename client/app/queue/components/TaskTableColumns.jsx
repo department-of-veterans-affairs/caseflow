@@ -223,10 +223,20 @@ export const assignedByColumn = () => {
   };
 };
 
-export const veteranDetails = () => {
+export const veteranDetails = (tasks, filterOptions) => {
   return {
     header: 'Veteran Details',
-    valueFunction: (task) => task.veteranDetails
+    enableFilter: true,
+    tableData: tasks,
+    columnName: 'veteranDetails.name',
+    anyFiltersAreSet: true,
+    customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
+    filterOptions,
+    label: 'Filter by veteran',
+    valueName: 'veteranDetails.name',
+    valueFunction: (task) => task.veteranDetails,
+    backendCanSort: true,
+    getSortValue: (task) => task.veteranDetails
   };
 };
 
