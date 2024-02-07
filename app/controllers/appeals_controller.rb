@@ -260,18 +260,22 @@ class AppealsController < ApplicationController
     "You have successfully " + [added_issues, removed_issues, withdrawn_issues].compact.to_sentence + "."
   end
 
-  def appeal_moved_to_sct_message
-    first_name = request_issues_update.veteran.first_name
-    last_name = request_issues_update.veteran.last_name
-    file_number = request_issues_update.veteran.file_number
-    "The appeal for #{first_name} #{last_name} (ID: #{file_number}) has been moved to the SCT queue."
+  def flash_move_to_sct_success
+    flash[:custom] = {
+      title: COPY::MOVE_TO_SCT_BANNER_TITLE,
+      message: format(
+        COPY::MOVE_TO_SCT_BANNER_MESSAGE,
+        request_issues_update.veteran.first_name,
+        request_issues_update.veteran.last_name,
+        request_issues_update.veteran.file_number
+      )
+    }
   end
 
   def set_flash_success_message
-    if request_issues_update.review.sct_appeal? &&
-       request_issues_update.before_issues.none? { |ri| ri.benefit_type == "vha" }
+    if appeal.sct_appeal? && request_issues_update.before_issues.none?(&:sct_benefit_type?)
       # if original issues were not VHA related, then that means it will be moved to the SCT queue
-      return flash[:move_queue] = appeal_moved_to_sct_message
+      return flash_move_to_sct_success
     end
 
     flash[:edited] = if request_issues_update.after_issues.empty?

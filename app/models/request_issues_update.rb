@@ -31,7 +31,7 @@ class RequestIssuesUpdate < CaseflowRecord
         corrected_request_issue_ids: corrected_issues.map(&:id)
       )
       create_business_line_tasks! if added_issues.present?
-      move_to_sct_queue if FeatureToggle.enabled?(:specialty_case_team_distribution)
+      move_to_sct_queue if FeatureToggle.enabled?(:specialty_case_team_distribution, user: user)
       cancel_active_tasks
       submit_for_processing!
     end
@@ -96,13 +96,13 @@ class RequestIssuesUpdate < CaseflowRecord
   end
 
   def move_to_sct_queue
-    if review.sct_appeal? && review.tasks.of_type(:SpecialtyCaseTeamAssignTask).blank?
+    if review.try(:sct_appeal?) && review.tasks.of_type(:SpecialtyCaseTeamAssignTask).blank?
       remove_appeal_from_current_queue
       SpecialtyCaseTeamAssignTask.find_or_create_by(
         appeal: review,
         parent: review.root_task,
         assigned_to: SpecialtyCaseTeam.singleton,
-        assigned_by: RequestStore[:current_user]
+        assigned_by: user
       )
     end
   end

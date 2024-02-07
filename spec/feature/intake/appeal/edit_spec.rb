@@ -1223,7 +1223,7 @@ feature "Appeal Edit issues", :all_dbs do
       create(:appeal,
              :assigned_to_judge,
              :completed_distribution_task,
-             veteran_file_number: veteran.file_number,
+             veteran_file_number: create(:veteran).file_number,
              receipt_date: receipt_date,
              docket_type: Constants.AMA_DOCKETS.direct_review)
     end
@@ -1244,12 +1244,14 @@ feature "Appeal Edit issues", :all_dbs do
     end
     after { FeatureToggle.disable!(:specialty_case_team_distribution) }
 
+    # rubocop:disable Layout/LineLength
     scenario "appeal moves to sct queue when vha issue is added" do
       visit "/queue/appeals/#{appeal3.uuid}"
+      # refresh the page if the case hasn't finished processing the create/load yet
+      visit "/queue/appeals/#{appeal3.uuid}" if page.has_text? "Unable to load this case"
       click_on "Correct issues"
       click_remove_intake_issue_dropdown("Unknown Issue Category")
       click_intake_add_issue
-      click_intake_no_matching_issues
       fill_in "Benefit type", with: "Veterans Health Administration"
       find("#issue-benefit-type").send_keys :enter
       fill_in "Issue category", with: "Beneficiary Travel"
@@ -1266,6 +1268,7 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_button("Move")
       safe_click ".confirm"
       expect(page).to have_content("You have successfully updated issues on this appeal")
+      expect(page).to have_content("The appeal for #{appeal3.veteran.first_name} #{appeal3.veteran.last_name} (ID: #{appeal3.veteran.file_number}) has been moved to the SCT queue.")
       User.authenticate!(user: sct_user)
       visit "/organizations/specialty-case-team"
       fn = appeal3.veteran.first_name
@@ -1273,5 +1276,6 @@ feature "Appeal Edit issues", :all_dbs do
       file_num = appeal3.veteran.file_number
       expect(page).to have_content("#{fn} #{ln} (#{file_num})")
     end
+    # rubocop:enable Layout/LineLength
   end
 end
