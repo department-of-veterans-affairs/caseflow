@@ -48,8 +48,8 @@ RSpec.feature "Affinity Days Levers" do
       option_list = [omit, infinite, value]
 
 
-      for disabled_lever in disabled_lever_list do
-        for option in option_list do
+      disabled_lever_list.each do |disabled_lever|
+        option_list do |option|
           expect(find("##{disabled_lever}-#{option}", visible: false)).to be_disabled
         end
       end
