@@ -72,7 +72,7 @@ class CaseDistributionLever < ApplicationRecord
   class << self
 
     def respond_to_missing?(name, include_private)
-      # ...
+      Constants.DISTRIBUTION.to_h.key?(name)
     end
 
     def method_missing(name, *args)
