@@ -90,6 +90,8 @@ class Task < CaseflowRecord
 
   scope :recently_completed, -> { completed.where(closed_at: (Time.zone.now - 1.week)..Time.zone.now) }
 
+  scope :last_14_days_completed, -> { completed.where(closed_at: (Time.zone.now - 2.weeks)..Time.zone.now) }
+
   scope :incomplete_or_recently_completed, -> { open.or(recently_completed) }
 
   scope :of_type, ->(task_type) { where(type: task_type) }
