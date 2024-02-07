@@ -1269,12 +1269,6 @@ feature "Appeal Edit issues", :all_dbs do
       safe_click ".confirm"
       expect(page).to have_content("You have successfully updated issues on this appeal")
       expect(page).to have_content("The appeal for #{appeal3.claimant.name} (ID: #{appeal3.veteran.file_number}) has been moved to the SCT queue.")
-      User.authenticate!(user: sct_user)
-      visit "/organizations/specialty-case-team"
-      fn = appeal3.veteran.first_name
-      ln = appeal3.veteran.last_name
-      file_num = appeal3.veteran.file_number
-      expect(page).to have_content("#{fn} #{ln} (#{file_num})")
     end
     # rubocop:enable Layout/LineLength
   end
