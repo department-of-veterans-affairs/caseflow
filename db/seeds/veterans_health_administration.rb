@@ -195,18 +195,16 @@ module Seeds
     end
 
     def create_specialty_case_team_action_required
-      tasks = create_list(:specialty_case_team_assign_task, 5, :action_required) do |task|
-        task.tap do |t|
-          t.appeal.veteran.date_of_death = 2.weeks.ago
-        end
+      create_list(:specialty_case_team_assign_task, 5, :action_required).each do |task|
+        task.appeal.veteran.date_of_death = 2.weeks.ago
+        task.appeal.veteran.save
       end
     end
 
     def create_specialty_case_team_completed
-      tasks = create_list(:specialty_case_team_assign_task, 5, :completed) do |task|
-        task.tap do |t|
-          t.appeal.veteran.date_of_death = 2.weeks.ago
-        end
+      create_list(:specialty_case_team_assign_task, 5, :completed).each do |task|
+        task.appeal.veteran.date_of_death = 2.weeks.ago
+        task.appeal.veteran.save
       end
     end
 
