@@ -194,12 +194,26 @@ module Seeds
       end
     end
 
-    def create_specialty_case_team_tasks
-      create_specialty_case_team_assigned
+    def create_specialty_case_team_action_required
+      tasks = create_list(:specialty_case_team_assign_task, 5, :on_hold)
+      tasks.last.appeal.veteran.date_of_death = 2.weeks.ago
+      tasks.last.appeal.veteran.save
+    end
+
+    def create_specialty_case_team_completed
+      tasks = create_list(:specialty_case_team_assign_task, 5, :completed)
+      tasks.last.appeal.veteran.date_of_death = 2.weeks.ago
+      tasks.last.appeal.veteran.save
     end
 
     def create_specialty_case_team_assigned
-      5.times { create(:sct_assign_task) }
+      create_list(:specialty_case_team_assign_task, 5)
+    end
+
+    def create_specialty_case_team_tasks
+      create_specialty_case_team_action_required
+      create_specialty_case_team_completed
+      create_specialty_case_team_assigned
     end
 
     # :reek:FeatureEnvy
