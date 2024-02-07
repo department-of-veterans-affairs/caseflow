@@ -583,6 +583,7 @@ FactoryBot.define do
         trait :completed do
           after(:create) do |task, _evaluator|
             task.update(status: Constants.TASK_STATUSES.completed)
+            task.update(closed_at: Time.zone.now)
             judge = create(:user, :judge, :with_vacols_judge_record)
             attorney = create(:user, :with_vacols_attorney_record)
             judge_review_task = JudgeDecisionReviewTask.create!(appeal: task.appeal, parent: task.parent,
