@@ -70,7 +70,7 @@ const AffinityDays = () => {
       return (
         <div key={`${option.item}-${lever.item}-${index}`}>
           <div>
-            <label id={lever.item}
+            <label
               className={lever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}
               htmlFor={`${lever.item}-${option.item}`}
             >

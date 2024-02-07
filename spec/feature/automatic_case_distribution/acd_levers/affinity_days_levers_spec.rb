@@ -20,13 +20,13 @@ RSpec.feature "Affinity Days Levers" do
       visit "case-distribution-controls"
       confirm_page_and_section_loaded
 
-      expect(find("##{ama_hearing_case_affinity_days}")).to match_css('.lever-disabled')
-      expect(find("##{ama_hearing_case_aod_affinity_days}")).to match_css('.lever-disabled')
-      expect(find("##{cavc_affinity_days}")).to match_css('.lever-disabled')
-      expect(find("##{cavc_aod_affinity_days}")).to match_css('.lever-disabled')
-      expect(find("##{aoj_affinity_days}")).to match_css('.lever-disabled')
-      expect(find("##{aoj_aod_affinity_days}")).to match_css('.lever-disabled')
-      expect(find("##{aoj_cavc_affinity_days}")).to match_css('.lever-disabled')
+      expect(find("div[id=#{ama_hearing_case_affinity_days}]").find(:xpath, './..')).to match_css('.lever-disabled')
+      expect(find("div[id=#{ama_hearing_case_aod_affinity_days}]").find(:xpath, './..')).to match_css('.lever-disabled')
+      expect(find("div[id=#{cavc_aod_affinity_days}]").find(:xpath, './..')).to match_css('.lever-disabled')
+      expect(find("div[id=#{cavc_affinity_days}]").find(:xpath, './..')).to match_css('.lever-disabled')
+      expect(find("div[id=#{aoj_affinity_days}]").find(:xpath, './..')).to match_css('.lever-disabled')
+      expect(find("div[id=#{aoj_aod_affinity_days}]").find(:xpath, './..')).to match_css('.lever-disabled')
+      expect(find("div[id=#{aoj_cavc_affinity_days}]").find(:xpath, './..')).to match_css('.lever-disabled')
     end
   end
 
