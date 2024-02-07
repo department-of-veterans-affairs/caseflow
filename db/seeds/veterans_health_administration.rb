@@ -34,6 +34,7 @@ module Seeds
       create_vha_visn_pre_docket_queue
       create_higher_level_reviews
       create_supplemental_claims
+      create_specialty_case_team_tasks
       add_vha_user_to_be_vha_business_line_member
     end
 
@@ -191,6 +192,14 @@ module Seeds
         task = create(:vha_document_search_task, assigned_to: VhaCaregiverSupport.singleton)
         task.completed!
       end
+    end
+
+    def create_specialty_case_team_tasks
+      create_specialty_case_team_assigned
+    end
+
+    def create_specialty_case_team_assigned
+      5.times { create(:sct_assign_task) }
     end
 
     # :reek:FeatureEnvy

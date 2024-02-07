@@ -592,6 +592,7 @@ FactoryBot.define do
                nonrating_issue_description: "VHA - Caregiver ",
                decision_review: appeal,
                decision_date: 1.month.ago)
+        appeal.reload
       end
     end
 
