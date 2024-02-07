@@ -1263,7 +1263,8 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_content("Move appeal to SCT queue")
       expect(page).to have_button("Move")
       safe_click ".confirm"
-      expect(appeal3.tasks.of_type(:SpecialtyCaseTeamAssignTask).present?).to be true
+      sct_task = SpecialtyCaseTeamAssignTask.find_by(appeal_id: appeal3.id)
+      expect(sct_task).to be_present
       expect(page).to have_content("You have successfully updated issues on this appeal")
     end
   end
