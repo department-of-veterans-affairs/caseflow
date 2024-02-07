@@ -66,6 +66,7 @@ module QueueHelpers
       appeal_id: correspondence.id,
       assigned_to: MailTeamSupervisor.singleton,
       appeal_type: "Correspondence",
+      assigned_to: User.find_by(css_id: "JOLLY_POSTMAN")
     )
 
     review_package_task.update(status: status)
@@ -90,6 +91,7 @@ module QueueHelpers
       appeal_id: correspondence.id,
       assigned_to: MailTeamSupervisor.singleton,
       appeal_type: "Correspondence",
+      assigned_to: User.find_by(css_id: "JOLLY_POSTMAN")
     )
 
     root_task.update(status: status)
