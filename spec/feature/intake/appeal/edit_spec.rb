@@ -1227,7 +1227,14 @@ feature "Appeal Edit issues", :all_dbs do
              receipt_date: receipt_date,
              docket_type: Constants.AMA_DOCKETS.direct_review)
     end
-    let!(:request_issue) { create(:request_issue, decision_date: 5.months.ago, decision_review: appeal3) }
+    let!(:request_issue) do
+      create(:request_issue,
+             benefit_type: "compensation",
+             nonrating_issue_category: "Unknown Issue Category",
+             nonrating_issue_description: "non vha issue",
+             decision_date: 5.months.ago,
+             decision_review: appeal3)
+    end
     before do
       BvaIntake.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
@@ -1238,7 +1245,7 @@ feature "Appeal Edit issues", :all_dbs do
     scenario "appeal moves to sct queue when vha issue is added" do
       visit "/queue/appeals/#{appeal3.uuid}"
       click_on "Correct issues"
-      click_remove_intake_issue_dropdown(1)
+      click_remove_intake_issue_dropdown("Unknown Issue Category")
       click_intake_add_issue
       click_intake_no_matching_issues
       fill_in "Benefit type", with: "Veterans Health Administration"
@@ -1254,8 +1261,10 @@ feature "Appeal Edit issues", :all_dbs do
       safe_click ".add-issue"
       safe_click "#button-submit-update"
       expect(page).to have_content("Move appeal to SCT queue")
+      expect(page).to have_button("Move")
       safe_click ".confirm"
       expect(appeal3.tasks.of_type(:SpecialtyCaseTeamAssignTask).present?).to be true
+      expect(page).to have_content("You have successfully updated issues on this appeal")
     end
   end
 end
