@@ -34,7 +34,8 @@ module Seeds
 
     def create_queue_correspondences
       # 20 Correspondences with eFolderFailedUploadTask with a parent CorrespondenceIntakeTask
-      veteran = create_veteran(first_name: "John", last_name: "Doe")
+      # veteran = create_veteran(first_name: "John", last_name: "Doe")
+      veteran = create(:veteran)
       appeal = create_appeal(veteran)
 
       ptask = create_correspondence_intake(create_correspondence(appeal), status: "on_hold")
@@ -95,6 +96,8 @@ module Seeds
     def create_correspondence_with_intake_and_failed_upload_task(ptask, appeal)
 
       corres = create_correspondence(appeal)
+      corres.va_date_of_receipt = rand(1..10).days.ago
+      corres.save
 
       create_efolderupload_failed_task(corres, ptask: ptask)
 
@@ -103,6 +106,7 @@ module Seeds
 
     def create_correspondence_with_intake_task(appeal)
       corres = create_correspondence(appeal)
+      corres.va_date_of_receipt = 2.days.ago
 
       create_correspondence_intake(corres, status: "in_progress")
 
@@ -111,7 +115,7 @@ module Seeds
 
     def create_correspondence_with_review_package_task(appeal)
       corres = create_correspondence(appeal)
-
+      corres.va_date_of_receipt = 3.days.ago
       create_review_package_task(corres, status: "in_progress")
 
       corres
@@ -119,7 +123,7 @@ module Seeds
 
     def create_correspondence_with_review_package_and_failed_upload_task(appeal)
       corres = create_correspondence(appeal)
-
+      corres.va_date_of_receipt = 4.days.ago
       ptask = ReviewPackageTask.find_by(appeal_id: corres.id, type: ReviewPackageTask.name)
       create_efolderupload_failed_task(corres, ptask: ptask)
       ptask.update!(status: "on_hold")
@@ -129,7 +133,7 @@ module Seeds
 
     def create_correspondence_with_completed_root_task(appeal)
       corres = create_correspondence(appeal)
-
+      corres.va_date_of_receipt = 5.days.ago
       create_correspondence_root_task(corres, status: "completed")
 
       corres
@@ -137,7 +141,7 @@ module Seeds
 
     def create_correspondence_with_action_required_tasks(appeal)
       corres = create_correspondence(appeal)
-
+      corres.va_date_of_receipt = 6.days.ago
       review_package_task = ReviewPackageTask.find_by(appeal_id: corres.id, type: ReviewPackageTask.name)
 
       [ReassignPackageTask, RemovePackageTask, SplitPackageTask, MergePackageTask].each do |task_type|
@@ -162,7 +166,7 @@ module Seeds
 
     def create_correspondence_with_in_progress_root_task_and_completed_mail_task(appeal)
       corres = create_correspondence(appeal)
-
+      corres.va_date_of_receipt = 7.days.ago
       ptask = CorrespondenceRootTask.find_by(appeal_id: corres.id, type: CorrespondenceRootTask.name)
       create_in_progress_root_task_and_completed_mail_task(corres, parent_task: ptask, status: "completed")
       ptask.update!(status: "in_progress")
@@ -172,7 +176,7 @@ module Seeds
 
     def create_correspondence_with_canceled_root_task(appeal)
       corres = create_correspondence(appeal)
-
+      corres.va_date_of_receipt = 8.days.ago
       create_correspondence_root_task(corres, status: "cancelled")
 
       corres
@@ -180,7 +184,7 @@ module Seeds
 
     def create_pending_tasks(mail_task_parent, appeal)
       corres = create_correspondence(appeal)
-
+      corres.va_date_of_receipt = 9.days.ago
       create_pending_tasks_for_tasks_not_related_to_appeal(corres, parent_task: mail_task_parent)
 
       corres
