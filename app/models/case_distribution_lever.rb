@@ -76,15 +76,13 @@ class CaseDistributionLever < ApplicationRecord
       Constants.DISTRIBUTION.to_h.key?(name)
     end
 
-     def method_missing(name, *args)
-      if Constants.DISTRIBUTION.to_h.keys.include?(name)
+    def method_missing(name, *args)
+      if Constants.DISTRIBUTION.to_h.key?(name)
         value = method_missing_value(name.to_s)
         return value unless value.nil?
-
-        super
-      else
-        super
       end
+
+      super
     end
 
     def update_acd_levers(current_levers, current_user)
