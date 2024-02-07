@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
 class CorrespondenceQueueColumn < QueueColumn
+  include ActiveModel::Model
+
+  attr_accessor :filterable, :name
+
+  def initialize(args)
+  super
   @filterable ||= false
   end
 
@@ -38,4 +44,5 @@ def filter_by_veteran_details(tasks)
       name: task.appeal.veteran.name
     }
   end
+end
 end
