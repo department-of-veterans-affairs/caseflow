@@ -18,8 +18,7 @@ class Docket
     if ready
       scope = scope.ready_for_distribution
       scope = adjust_for_genpop(scope, genpop, judge) if judge.present? && !use_by_docket_date?
-      # {Adjusts Affinity for new ACD feature toggle. Feature Toggle must be added here}
-      scope = adjust_for_affinity(scope, judge)
+      scope = adjust_for_affinity(scope, judge) if judge.present? && FeatureToggle.enabled?(:acd_exclude_from_affinity)
     end
 
     return scoped_for_priority(scope) if priority == true
