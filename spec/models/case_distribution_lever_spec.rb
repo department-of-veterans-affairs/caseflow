@@ -97,24 +97,6 @@ RSpec.describe CaseDistributionLever, :all_dbs do
     end
   end
 
-  context "find_integer_lever" do
-    it "returns integer value for lever" do
-      lever = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.request_more_cases_minimum)
-
-      integer_value = CaseDistributionLever.find_integer_lever(Constants.DISTRIBUTION.request_more_cases_minimum)
-
-      expect(lever.value.to_i).to eq(integer_value)
-    end
-
-    it "returns float value for lever" do
-      lever = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.minimum_legacy_proportion)
-
-      float_value = CaseDistributionLever.find_float_lever(Constants.DISTRIBUTION.minimum_legacy_proportion)
-
-      expect(lever.value.to_f).to eq(float_value)
-    end
-  end
-
   context "distribution_value" do
     it "should return value from options value when radio data type lever object" do
       lever = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days)

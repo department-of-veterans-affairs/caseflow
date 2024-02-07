@@ -77,7 +77,7 @@ class DistributionsController < ApplicationController
       {
         "error": error,
         "title": "Cases in your queue are waiting to be assigned",
-        "detail": "Please ensure you have #{CaseDistributionLever.find_integer_lever(Constants.DISTRIBUTION.request_more_cases_minimum)} or fewer unassigned cases before requesting more."
+        "detail": "Please ensure you have #{CaseDistributionLever.request_more_cases_minimum} or fewer unassigned cases before requesting more."
       }
     when :unassigned_cases_waiting_too_long
       {
