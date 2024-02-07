@@ -69,7 +69,7 @@ class Hearings::ScheduleHearingTaskPager < TaskPager
     # show a docket line on the current page
     page_index = paged_tasks.size - 1
     paged_tasks.reverse_each do |task|
-      break if !!(task.appeal&.docket_range_date &.< docket_line_cutoff_date) || task.appeal&.aod?
+      break if !!(task.appeal&.docket_range_date&.< docket_line_cutoff_date) || task.appeal&.aod?
 
       page_index -= 1
     end
