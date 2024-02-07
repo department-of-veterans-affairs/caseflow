@@ -1514,7 +1514,7 @@ describe Appeal, :all_dbs do
 
   describe "sct_appeal" do
     let(:appeal) { create(:appeal, :with_vha_issue, :with_request_issues) }
-    let(:appeal_2) { create(:appeal, :with_request_issues ) }
+    let(:appeal_2) { create(:appeal, :with_request_issues) }
 
     it "should return true if appeal has vha issue" do
       expect(appeal.sct_appeal?).to be true
