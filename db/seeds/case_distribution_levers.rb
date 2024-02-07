@@ -7,6 +7,8 @@ module Seeds
       end
     end
 
+    private
+
     def levers
       [
         {
@@ -482,7 +484,6 @@ module Seeds
         },
       ]
     end
-    private
 
     def create_lever lever
       CaseDistributionLever.create(
