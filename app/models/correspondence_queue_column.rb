@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 class CorrespondenceQueueColumn < QueueColumn
-  # super
-  @filterable ||= false
+  attr_accessor :filterable
+
+  def initialize(*args)
+    super
+    @filterable ||= false
+  end
 
   def to_hash(tasks)
     {
@@ -13,6 +17,7 @@ class CorrespondenceQueueColumn < QueueColumn
   end
 
   FILTER_OPTIONS = {
+    Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name => :filter_by_veteran_details
 
 }.freeze
 
@@ -28,4 +33,14 @@ def filter_options(tasks)
   end
 end
 
+private
+
+def filter_by_veteran_details(tasks)
+  tasks.map do |task|
+    appeal = task.appeal
+    {
+      name: task.appeal.veteran.name
+    }
+  end
+ end
 end
