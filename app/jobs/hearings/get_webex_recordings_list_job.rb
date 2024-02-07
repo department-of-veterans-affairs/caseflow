@@ -10,12 +10,7 @@ class Hearings::GetWebexRecordingsListJob < CaseflowJob
   application_attr :hearing_schedule
 
   retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
-    extra = {
-      application: job.class.app_name.to_s,
-      hearing_id: job.hearing.id,
-      job_id: job.job_id
-    }
-    log_error(exception, extra)
+    job.log_error(exception)
   end
 
   def perform
@@ -25,6 +20,15 @@ class Hearings::GetWebexRecordingsListJob < CaseflowJob
     get_recordings_list.ids.each do |n|
       get_recording_details(n)
     end
+  end
+
+  def log_error(error)
+    Rails.logger.error("#{self.class.name} failed with error: #{error}")
+    extra = {
+      application: self.class.name,
+      job_id: job_id
+    }
+    Raven.capture_exception(error, extra: extra)
   end
 
   private
