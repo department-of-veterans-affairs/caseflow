@@ -15,7 +15,7 @@ class Events::DecisionReviewCreated
       return if event_exists_and_is_completed?(consumer_event_id)
 
       RedisMutex.with_lock("EndProductEstablishment:#{reference_id}", block: 60, expire: 100) do
-      # key => "EndProductEstablishment:reference_id" aka "claim ID"
+        # key => "EndProductEstablishment:reference_id" aka "claim ID"
         # Use the consumer_event_id to retrieve/create the Event object
         event = find_or_create_event(consumer_event_id)
 
@@ -28,9 +28,9 @@ class Events::DecisionReviewCreated
     rescue RedisMutex::LockError
       Rails.logger.error("Failed to acquire lock for Claim ID: #{reference_id}! This Event is being"\
                          " processed. Please try again later.")
-    rescue StandardError => e
-      Rails.logger.error(e.message)
-      event&.update!(error: e.message)
+    rescue StandardError => error
+      Rails.logger.error(error.message)
+      event&.update!(error: error.message)
       raise error
     end
 
@@ -43,7 +43,7 @@ class Events::DecisionReviewCreated
     # Check if there's already a CF Event that references that Appeals-Consumer EventID
     # We will update the existing Event instead of creating a new one
     def find_or_create_event(consumer_event_id)
-      Event.find_by(reference_id: consumer_event_id) || DecisionReviewCreatedEvent.create!(reference_id: consumer_event_id)
+      DecisionReviewCreatedEvent.find_or_create_by(reference_id: consumer_event_id)
     end
   end
 end
