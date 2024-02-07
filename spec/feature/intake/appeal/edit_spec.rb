@@ -1268,7 +1268,7 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_button("Move")
       safe_click ".confirm"
       expect(page).to have_content("You have successfully updated issues on this appeal")
-      expect(page).to have_content("The appeal for #{appeal3.veteran.first_name} #{appeal3.veteran.last_name} (ID: #{appeal3.veteran.file_number}) has been moved to the SCT queue.")
+      expect(page).to have_content("The appeal for #{appeal3.claimant.name} (ID: #{appeal3.veteran.file_number}) has been moved to the SCT queue.")
       User.authenticate!(user: sct_user)
       visit "/organizations/specialty-case-team"
       fn = appeal3.veteran.first_name

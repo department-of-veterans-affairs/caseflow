@@ -265,8 +265,7 @@ class AppealsController < ApplicationController
       title: COPY::MOVE_TO_SCT_BANNER_TITLE,
       message: format(
         COPY::MOVE_TO_SCT_BANNER_MESSAGE,
-        request_issues_update.veteran.first_name,
-        request_issues_update.veteran.last_name,
+        request_issues_update.claimant.name,
         request_issues_update.veteran.file_number
       )
     }
