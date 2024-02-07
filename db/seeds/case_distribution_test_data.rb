@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Seeds
-  class CaseDistributionTestData < Base
+  class CaseDistributionTestData < CaseDistributionBase
     def initialize
       initialize_legacy_inactive_admin_judge_team_file_number_and_participant_id
       initialize_direct_review_file_number_and_participant_id
@@ -76,19 +76,6 @@ module Seeds
         @ama_hearing_held_file_number += 2000
         @ama_hearing_held_participant_id += 2000
       end
-    end
-
-    def find_veteran(file_number)
-      Veteran.find_by(file_number: format("%<n>09d", n: file_number + 1))
-    end
-
-    # functions for finding/creating data for appeals
-    def create_veteran(options = {})
-      params = {
-        file_number: format("%<n>09d", n: options[:file_number]),
-        participant_id: format("%<n>09d", n: options[:participant_id])
-      }
-      create(:veteran, params.merge(options))
     end
 
     def find_or_create_tester_judge(css_id, full_name)
