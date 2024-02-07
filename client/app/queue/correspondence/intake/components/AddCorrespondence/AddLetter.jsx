@@ -7,12 +7,11 @@ import DateSelector from 'app/components/DateSelector';
 import RadioField from '../../../../../components/RadioField';
 import { ADD_CORRESPONDENCE_LETTER_SELECTIONS } from '../../../../constants';
 import moment from 'moment';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
- import {
-   setResponseLetters
- } from '../../../correspondenceReducer/correspondenceActions';
-import { useDispatch } from "react-redux";
+import {
+  setResponseLetters
+} from '../../../correspondenceReducer/correspondenceActions';
 
 export const AddLetter = (props) => {
   const onContinueStatusChange = props.onContinueStatusChange;
@@ -132,6 +131,7 @@ const NewLetter = (props) => {
     } else {
       setNumberOfDays('');
     }
+    dispatch(setResponseLetters([letterCard]));
   };
 
   const handleCustomWindowState = (currentOpt) => {
@@ -143,17 +143,8 @@ const NewLetter = (props) => {
       setResponseWindows(currentOpt);
       setCustomResponseWindowState(false);
       // setValueOptions(valueOptions);
+      dispatch(setResponseLetters([letterCard]));
     }
-    let letter = [{
-      title: letterTitle,
-      date_sent: date,
-      letter_type: letterType,
-      subcategory: letterSub,
-      reason: subReason,
-      response_window: responseWindows
-    }]
-    console.log()
-    dispatch(setResponseLetters(letter));
   };
 
   const letterTypesData = ADD_CORRESPONDENCE_LETTER_SELECTIONS.map((option) => ({ label: (option.letter_type),
@@ -435,13 +426,9 @@ NewLetter.propTypes = {
   letterType: PropTypes.string,
   letterTitle: PropTypes.string,
   setLetterTitle: PropTypes.func,
-  setResponseLetters: PropTypes.func
-  setUnrelatedTasksCanContinue: PropTypes.func,
+  setResponseLetters: PropTypes.func,
+  setUnrelatedTasksCanContinue: PropTypes.func
 };
-
-const mapStateToProps = (state) => ({
-  setResponseLetters: state.intakeCorrespondence.setResponseLetters
-});
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({

@@ -120,7 +120,7 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
   case ACTIONS.SET_RESPONSE_LETTERS:
     return update(state, {
       responseLetters: {
-        $set: [...action.payload.responseLetters]
+        $set: [...state.responseLetters, ...action.payload.responseLetters]
       }
     });
 

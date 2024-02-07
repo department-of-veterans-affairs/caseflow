@@ -28,7 +28,10 @@ const tableStyling = css({
 export const ConfirmCorrespondenceView = (props) => {
 
   const checkedMailTasks = props.mailTasks;
-  const relatedCorrespondences = useSelector((state) => state.intakeCorrespondence.relatedCorrespondences);
+  const intakeCorrespondence = useSelector((state) => state.intakeCorrespondence);
+  const relatedCorrespondences = intakeCorrespondence.relatedCorrespondences;
+  const responseLetters = intakeCorrespondence.responseLetters;
+
   let correspondenceTable = null;
   let mailTaskTable = null;
 
@@ -168,6 +171,47 @@ export const ConfirmCorrespondenceView = (props) => {
         If you need to make changes, please go back to the associated section.
       </p>
       <CorrespondenceDetailsTable />
+      <div>
+        <div className="corr-flex">
+          <h2 className="corr-h2">Response Letters</h2>
+          <div className="corr-autoleft">
+            <Button className="corr-button" linkStyling onClick={() => props.goToStep(1)}>
+              <span className="corr-icon"><PencilIcon /></span>
+              <span className="corr-sectionlink">Edit Section</span>
+            </Button>
+          </div>
+        </div>
+        <div {...css({ backgroundColor: COLORS.GREY_BACKGROUND })}>
+          <div {...css({ backgroundColor: COLORS.GREY_BACKGROUND, paddingTop: '20px', paddingBottom: '20px' })}>
+            <table className="correspondence-response-letters-table">
+              <tbody>
+                <tr>
+                  <th className="cf-txt-c"> Date Sent </th>
+                  <th className="cf-txt-c"> Letter Type </th>
+                  <th className="cf-txt-c"> Letter Title </th>
+                  <th className="cf-txt-c"> Letter Subcategory </th>
+                  <th className="cf-txt-c"> Letter Subcategory Reasons</th>
+                  <th className="cf-txt-c"> Response Window </th>
+                </tr>
+              </tbody>
+              { responseLetters?.map((responseLetter, index) => {
+                return (
+                  <tbody key={index}>
+                    <tr>
+                      <td> {responseLetter?.date} </td>
+                      <td> {responseLetter?.type} </td>
+                      <td> {responseLetter?.title} </td>
+                      <td> {responseLetter?.subType} </td>
+                      <td> {responseLetter?.reason} </td>
+                      <td> {responseLetter?.responseWindows} </td>
+                    </tr>
+                  </tbody>
+                );
+              })}
+            </table>
+          </div>
+        </div>
+      </div>
       <div>
         <div className="corr-flex">
           <h2 className="corr-h2">Associated Prior Mail</h2>
