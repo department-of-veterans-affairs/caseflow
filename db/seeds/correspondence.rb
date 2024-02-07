@@ -17,6 +17,7 @@ module Seeds
     def initial_id_values
       @file_number ||= 500_000_000
       @participant_id ||= 850_000_000
+      @sensitivity_level ||= 0
       while Veteran.find_by(file_number: format("%<n>09d", n: @file_number + 1))
         @file_number += 100
         @participant_id += 100
@@ -29,9 +30,11 @@ module Seeds
     def create_veteran(options = {})
       @file_number += 1
       @participant_id += 1
+      @sensitivity_level = (@sensitivity_level % 9) + 1
       params = {
         file_number: format("%<n>09d", n: @file_number),
-        participant_id: format("%<n>09d", n: @participant_id)
+        participant_id: format("%<n>09d", n: @participant_id),
+        sensitivity_level: @sensitivity_level.to_s
       }
       veteran = create(:veteran, params.merge(options))
       5.times do

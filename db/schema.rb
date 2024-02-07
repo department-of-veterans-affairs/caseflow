@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_01_24_182959) do
+ActiveRecord::Schema.define(version: 2024_02_07_193134) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1992,6 +1992,7 @@ ActiveRecord::Schema.define(version: 2024_01_24_182959) do
     t.datetime "last_login_at", comment: "The last time the user-agent (browser) provided session credentials; see User.from_session for precision"
     t.string "roles", array: true
     t.string "selected_regional_office"
+    t.string "sensitivity_level"
     t.string "station_id", null: false
     t.string "status", default: "active", comment: "Whether or not the user is an active user of caseflow"
     t.datetime "status_updated_at", comment: "When the user's status was last updated"
@@ -2159,6 +2160,7 @@ ActiveRecord::Schema.define(version: 2024_01_24_182959) do
     t.string "middle_name", comment: "PII. Veteran's middle name"
     t.string "name_suffix"
     t.string "participant_id"
+    t.string "sensitivity_level"
     t.string "ssn", comment: "PII. The cached Social Security Number"
     t.datetime "updated_at"
     t.index ["file_number"], name: "index_veterans_on_file_number", unique: true

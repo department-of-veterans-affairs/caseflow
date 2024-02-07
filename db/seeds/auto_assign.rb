@@ -10,6 +10,7 @@ module Seeds
       create_inbound_ops_team_supervisor
       create_mail_team_user
       create_mail_team_superuser
+      update_sensitivity_levels_for_inbound_ops_team
     end
 
     def create_auto_assign_permissions
@@ -48,13 +49,13 @@ module Seeds
 
     def create_inbound_ops_team_auto_assign_user
       users_info = [
-        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN1", full_name: "Ember Sky" },
-        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN2", full_name: "Aspen Ridge" },
-        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN3", full_name: "Clover Haven" },
-        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN4", full_name: "Blaze Hill" }
+        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN_A1", full_name: "Ember Sky" },
+        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN_A2", full_name: "Aspen Ridge" },
+        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN_A3", full_name: "Clover Haven" },
+        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN_A4", full_name: "Blaze Hill" }
       ]
       users_info.map do |user_info|
-        u = User.find_or_create_by(
+        u = User.find_or_create_by!(
           station_id: 101,
           css_id: user_info[:css_id],
           full_name: user_info[:full_name],
@@ -80,7 +81,7 @@ module Seeds
         { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_NP5", full_name: "Liam Miller" }
       ]
       users_info.map do |user_info|
-        u = User.find_or_create_by(
+        u = User.find_or_create_by!(
           station_id: 101,
           css_id: user_info[:css_id],
           full_name: user_info[:full_name],
@@ -97,7 +98,7 @@ module Seeds
         { css_id: "INBOUND_OPS_TEAM_ADMIN_USER_S3", full_name: "Elijah Turner" }
       ]
       users_info.map do |user_info|
-        u = User.find_or_create_by(
+        u = User.find_or_create_by!(
           station_id: 101,
           css_id: user_info[:css_id],
           full_name: user_info[:full_name],
@@ -115,7 +116,7 @@ module Seeds
         { css_id: "MAIL_TEAM_USER_U3", full_name: "Ocean Breeze" }
       ]
       users_info.map do |user_info|
-        u = User.find_or_create_by(
+        u = User.find_or_create_by!(
           station_id: 101,
           css_id: user_info[:css_id],
           full_name: user_info[:full_name],
@@ -132,7 +133,7 @@ module Seeds
         { css_id: "MAIL_TEAM_ADMIN3", full_name: "Luna Meadows" }
       ]
       users_info.map do |user_info|
-        u = User.find_or_create_by(
+        u = User.find_or_create_by!(
           station_id: 101,
           css_id: user_info[:css_id],
           full_name: user_info[:full_name],
@@ -140,6 +141,16 @@ module Seeds
         )
         MailTeam.singleton.add_user(u)
         OrganizationsUser.make_user_admin(u, MailTeam.singleton)
+      end
+    end
+
+    def update_sensitivity_levels_for_inbound_ops_team
+      eligible_users = InboundOpsTeam.singleton.users
+      sensitivity_level ||= 0
+
+      eligible_users.each do |user|
+        sensitivity_level = (sensitivity_level % 9) + 1
+        user.update(sensitivity_level: sensitivity_level.to_s)
       end
     end
   end
