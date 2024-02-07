@@ -193,8 +193,6 @@ class Docket
         )
     end
 
-
-
     def with_original_appeal_and_judge_task
       joins("LEFT JOIN cavc_remands ON cavc_remands.remand_appeal_id = appeals.id")
         .joins("LEFT JOIN appeals AS original_cavc_appeal ON original_cavc_appeal.id = cavc_remands.source_appeal_id")

@@ -35,10 +35,6 @@ class CaseDistributionLever < ApplicationRecord
     end
   end
 
-  def cavc_affinity_days
-    find_integer_lever(Constants.DISTRIBUTION.cavc_affinity_days)
-  end
-
   private
 
   def value_matches_data_type
@@ -82,6 +78,10 @@ class CaseDistributionLever < ApplicationRecord
     def find_float_lever(lever)
       return 0 unless FLOAT_LEVERS.include?(lever)
       CaseDistributionLever.find_by_item(lever).try(:distribution_value).to_f
+    end
+
+    def cavc_affinity_days
+      find_integer_lever(Constants.DISTRIBUTION.cavc_affinity_days)
     end
 
     def update_acd_levers(current_levers, current_user)
