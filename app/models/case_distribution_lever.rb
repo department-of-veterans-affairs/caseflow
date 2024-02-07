@@ -1,5 +1,6 @@
-class CaseDistributionLever < ApplicationRecord
+# frozen_string_literal: true
 
+class CaseDistributionLever < ApplicationRecord
   has_many :case_distribution_audit_lever_entries, dependent: :delete_all
   validates :item, presence: true
   validates :title, presence: true
@@ -70,7 +71,6 @@ class CaseDistributionLever < ApplicationRecord
   end
 
   class << self
-
      def method_missing(name, *args)
       if Constants.DISTRIBUTION.to_h.keys.include?(name)
         value = method_missing_value(name.to_s)
