@@ -211,7 +211,7 @@ class Docket
       joins(with_assigned_distribution_task_sql)
         .with_original_appeal_and_judge_task
         .where("distribution_task.assigned_at > ?", Constants.DISTRIBUTION.cavc_affinity_days.days.ago)
-        .where(original_judge_task: { assigned_to_id: judge.id })
+        .where(original_judge_task: { assigned_to_id: judge&.id })
     end
 
     def ordered_by_distribution_ready_date
