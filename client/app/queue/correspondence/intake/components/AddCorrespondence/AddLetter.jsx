@@ -88,17 +88,12 @@ export const NewLetter = (props) => {
     customValue: 0
   });
 
-  // const [letterType, setLetterType] = useState('');
-  // const [letterTitle, setLetterTitle] = useState('');
-  // const [letterSub, setLetterSub] = useState('');
-  // const [subReason, setSubReason] = useState('');
   const [letterTitleSelector, setLetterTitleSelector] = useState('');
   const [letterSubSelector, setLetterSubSelector] = useState('');
   const [letterSubReason, setLetterSubReason] = useState('');
   const [numberOfDays, setNumberOfDays] = useState();
   const [customResponseWindowState, setCustomResponseWindowState] = useState(false);
 
-  // const [date, setDate] = useState(currentDate);
   const [stateOptions, setStateOptions] = useState(true);
 
   const [responseWindows, setResponseWindows] = useState('');
@@ -132,11 +127,9 @@ export const NewLetter = (props) => {
     if (currentOpt === radioOptions[2].value) {
       setResponseWindows(radioOptions[2].value);
       setCustomResponseWindowState(true);
-      // setValueOptions(valueOptions);
     } else {
       setResponseWindows(currentOpt);
       setCustomResponseWindowState(false);
-      // setValueOptions(valueOptions);
     }
   };
 
@@ -156,13 +149,18 @@ export const NewLetter = (props) => {
   };
 
   const canContinue = () => {
-    for (const [value] of Object.entries(letterCard)) {
-      if (value.length < 0) {
-        return false;
+    const output = [];
+
+    for (const [key, value] of Object.entries(letterCard)) {
+      if ((value !== null) && (value !== '')) {
+        output.push(value);
       }
     }
+    if (output.length === 8) {
+      return true;
+    }
 
-    return true;
+    return false;
   };
 
   const findSub = (option, aux) => {
@@ -243,7 +241,7 @@ export const NewLetter = (props) => {
   };
 
   useEffect(() => {
-    if (canContinue) {
+    if (canContinue()) {
       setUnrelatedTasksCanContinue(true);
     } else {
       setUnrelatedTasksCanContinue(false);
@@ -251,11 +249,6 @@ export const NewLetter = (props) => {
   }, [letterCard]);
 
   useEffect(() => {
-    // if (responseWindows.length > 0) {
-    //   letterTitlesData();
-    //   setLetterCard({ ...letterCard,
-    //     responseWindows });
-    // }
     activateWindowsOption();
     setLetterCard({ ...letterCard,
       responseWindows });
@@ -281,10 +274,6 @@ export const NewLetter = (props) => {
       reason: '',
       responseWindows: ''
     });
-    // setLetterTitle('');
-    // setLetterSub('');
-    // setSubReason('');
-    // setLetterType(val);
   };
 
   useEffect(() => {
@@ -303,23 +292,18 @@ export const NewLetter = (props) => {
       reason: '',
       responseWindows: ''
     });
-    // setLetterSub('');
-    // setSubReason('');
-    // setLetterTitle(val);
   };
 
   const changeLetterSubTitle = (val) => {
     setLetterCard({ ...letterCard,
       subType: val
     });
-    // setLetterSub(val);
   };
 
   const changeSubReason = (val) => {
     setLetterCard({ ...letterCard,
       reason: val
     });
-    // setSubReason(val);
   };
 
   const changeDate = (val) => {
