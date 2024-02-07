@@ -194,18 +194,18 @@ module Seeds
       end
     end
 
+    # :reek:FeatureEnvy
     def create_specialty_case_team_action_required
-      create_list(:specialty_case_team_assign_task, 5, :action_required).each do |task|
-        task.appeal.veteran.date_of_death = 2.weeks.ago
-        task.appeal.veteran.save
-      end
+      tasks = create_list(:specialty_case_team_assign_task, 5, :action_required)
+      tasks.last.appeal.veteran.date_of_death = 2.weeks.ago
+      tasks.last.appeal.veteran.save
     end
 
+    # :reek:FeatureEnvy
     def create_specialty_case_team_completed
-      create_list(:specialty_case_team_assign_task, 5, :completed).each do |task|
-        task.appeal.veteran.date_of_death = 2.weeks.ago
-        task.appeal.veteran.save
-      end
+      tasks = create_list(:specialty_case_team_assign_task, 5, :completed)
+      tasks.last.appeal.veteran.date_of_death = 2.weeks.ago
+      tasks.last.appeal.veteran.save
     end
 
     def create_specialty_case_team_assigned
