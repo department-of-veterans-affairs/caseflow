@@ -13,6 +13,15 @@ const hearing = {
 };
 
 describe('HearingLinks', () => {
+  test('Matches snapshot with default props when passed in', () => {
+    const form = mount(
+      <HearingLinks />
+    );
+
+    expect(form).toMatchSnapshot();
+    expect(form.find(VirtualHearingLink)).toHaveLength(0);
+  });
+
   test('Matches snapshot when hearing is virtual, pexip, and in progress', () => {
     const form = mount(
       <HearingLinks
