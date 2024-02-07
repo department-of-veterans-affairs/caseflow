@@ -423,8 +423,8 @@ NewLetter.propTypes = {
   letterTitle: PropTypes.string,
   setLetterTitle: PropTypes.func,
   setResponseLetters: PropTypes.func,
-  setUnrelatedTasksCanContinue: PropTypes.func
-  onContinueStatusChange: PropTypes.func,
+  setUnrelatedTasksCanContinue: PropTypes.func,
+  onContinueStatusChange: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) => (
