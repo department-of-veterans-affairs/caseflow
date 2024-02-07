@@ -83,11 +83,6 @@ module Seeds
         create(:user, :judge, :with_vacols_judge_record, css_id: css_id, full_name: full_name)
     end
 
-    def find_or_create_inactive_judge(css_id, full_name)
-      User.find_by_css_id(css_id) ||
-        create(:user, :judge, :with_inactive_vacols_judge_record, css_id: css_id, full_name: full_name)
-    end
-
     def find_or_create_active_judge_with_only_sattyid(css_id, full_name)
       User.find_by_css_id(css_id) || create(:user, :with_vacols_record, css_id: css_id, full_name: full_name)
     end
