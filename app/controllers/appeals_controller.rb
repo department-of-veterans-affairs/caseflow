@@ -261,10 +261,10 @@ class AppealsController < ApplicationController
   end
 
   def appeal_moved_to_sct_message
-    fn = request_issues_update.veteran.first_name
-    ln = request_issues_update.veteran.last_name
+    first_name = request_issues_update.veteran.first_name
+    last_name = request_issues_update.veteran.last_name
     file_number = request_issues_update.veteran.file_number
-    "The appeal for #{fn} #{ln} (ID: #{file_number}) has been moved to the SCT queue."
+    "The appeal for #{first_name} #{last_name} (ID: #{file_number}) has been moved to the SCT queue."
   end
 
   def set_flash_success_message
