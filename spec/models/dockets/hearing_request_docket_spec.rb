@@ -316,6 +316,56 @@ describe HearingRequestDocket, :all_dbs do
         ).to eq 1
       end
     end
+
+    context "when the distribution contains Specialty Case Team appeals" do
+      subject do
+        HearingRequestDocket.new.distribute_appeals(distribution, priority: false, limit: limit, genpop: "any")
+      end
+
+      let(:limit) { 15 }
+
+      let!(:vha_appeals) do
+        (1..5).map { create_nonpriority_distributable_vha_hearing_appeal_not_tied_to_any_judge }
+      end
+
+      let!(:non_vha_appeals) do
+        (1..20).map { create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge }
+      end
+
+      context "when specialty_case_team_distribution feature toggle is enabled" do
+        before do
+          FeatureToggle.enable!(:specialty_case_team_distribution)
+        end
+        after do
+          FeatureToggle.disable!(:specialty_case_team_distribution)
+        end
+
+        it "does not fail, renames conflicting already distributed appeals, and distributes the legitimate appeals" do
+          subject
+
+          expect(DistributionTask.open.count).to eq(5)
+          distributed_cases = DistributedCase.where(distribution: distribution)
+          expect(distributed_cases.count).to eq(20)
+          expect(distributed_cases.count(&:sct_appeal)).to eq(5)
+        end
+      end
+
+      context "when specialty_case_team_distribution feature toggle is disabled" do
+        before do
+          FeatureToggle.disable!(:specialty_case_team_distribution)
+        end
+
+        it "does not fail, renames conflicting already distributed appeals, and distributes the legitimate appeals" do
+          subject
+
+          # It should only distribute 15 appeals due to the limit so 10 should remain in the ready to distribute state
+          expect(DistributionTask.open.count).to eq(10)
+          distributed_cases = DistributedCase.where(distribution: distribution)
+          expect(distributed_cases.count).to eq(15)
+          expect(distributed_cases.count(&:sct_appeal)).to eq(0)
+        end
+      end
+    end
   end
 
   describe "#count" do
@@ -574,6 +624,16 @@ describe HearingRequestDocket, :all_dbs do
     appeal = create(:appeal,
                     :ready_for_distribution,
                     :denied_advance_on_docket,
+                    docket_type: Constants.AMA_DOCKETS.hearing)
+    create(:hearing, judge: nil, disposition: "held", appeal: appeal)
+    appeal
+  end
+
+  def create_nonpriority_distributable_vha_hearing_appeal_not_tied_to_any_judge
+    appeal = create(:appeal,
+                    :ready_for_distribution,
+                    :denied_advance_on_docket,
+                    :with_vha_issue,
                     docket_type: Constants.AMA_DOCKETS.hearing)
     create(:hearing, judge: nil, disposition: "held", appeal: appeal)
     appeal
