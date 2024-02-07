@@ -15,6 +15,10 @@ class BatchAppealsForReaderQuery
     veteran_name: "Veteran"
   }.freeze
 
+  def self.generate_rows(record)
+    HEADERS.keys.map { |key| record[key] }
+  end
+
   def self.process
     # Convert results to CSV format
     CSV.generate(headers: true) do |csv|
@@ -23,7 +27,7 @@ class BatchAppealsForReaderQuery
 
       # Iterate through results and add each row to CSV
       distributed_appeals.each do |record|
-        csv << HEADERS.keys.map { |key| record[key] }
+        csv << generate_rows(record)
       end
     end
   end
