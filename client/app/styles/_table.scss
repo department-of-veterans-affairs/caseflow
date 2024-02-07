@@ -61,11 +61,13 @@
 }
 
 .correspondence-response-letters-table {
+  width: 100%;
   table {
     width: 100%;
   }
 
   th {
+    text-align: left;
     width: auto;
     font-weight: bold;
   }
