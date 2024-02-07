@@ -26,8 +26,6 @@ describe Hearings::DownloadTranscriptionFileJob do
 
     subject { described_class.new.perform(download_link: link, file_name: file_name) }
 
-    before { TranscriptionFile.count }
-
     after { File.delete(tmp_location) if File.exist?(tmp_location) }
 
     shared_examples "failed download from Webex" do
@@ -96,11 +94,6 @@ describe Hearings::DownloadTranscriptionFileJob do
         let(:rtf_tmp_location) { tmp_location.gsub("vtt", "rtf") }
         let(:rtf_transcription_file) { TranscriptionFile.find_by(file_name: rtf_file_name) }
         let(:rtf_s3_location) { folder_name + "/transcript_text/" + rtf_file_name }
-
-        before do
-          File.open(rtf_tmp_location, "w")
-          allow_any_instance_of(TranscriptionTransformer).to receive(:call).and_return(rtf_tmp_location)
-        end
 
         after { File.delete(rtf_tmp_location) if File.exist?(rtf_tmp_location) }
 

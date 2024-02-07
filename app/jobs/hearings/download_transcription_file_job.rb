@@ -18,22 +18,25 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   class FileDownloadError < StandardError; end
   class HearingAssociationError < StandardError; end
 
-  retry_on(FileDownloadError, wait: 5.seconds) do |job, exception|
+  retry_on(FileDownloadError, wait: 5.minutes) do |job, exception|
+    # TO IMPLEMENT: SEND EMAIL TO VA OPS TEAM
     job.log_error(exception)
   end
 
-  retry_on(UploadTranscriptionFileToS3::FileUploadError, wait: 5.seconds) do |job, exception|
+  retry_on(UploadTranscriptionFileToS3::FileUploadError, wait: :exponentially_longer) do |job, exception|
     job.transcription_file.clean_up_tmp_location
     job.log_error(exception)
   end
 
-  retry_on(TranscriptionTransformer::FileConversionError, wait: 5.seconds) do |job, exception|
+  retry_on(TranscriptionTransformer::FileConversionError, wait: 10.seconds) do |job, exception|
     job.build_csv_and_upload_to_s3(exception)
     job.transcription_file.clean_up_tmp_location
+    # TO IMPLEMENT: SEND EMAIL TO VA OPS TEAM
     job.log_error(exception)
   end
 
   discard_on(FileNameError) do |job, error|
+    # TO IMPLEMENT: SEND EMAIL TO VA OPS TEAM
     Rails.logger.error("#{job.class.name} (#{job.job_id}) discarded with error: #{error}")
   end
 
@@ -198,7 +201,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     msg = "Download of Webex transcription files initiated for hearing (docket ##{docket_number}) successful, " \
           "but hearing's disposition not set to held."
     Rails.logger.warn(HearingAssociationError.new(msg))
-    # TO BE IMPLEMENTED: Send email to Va Operations Team
+    # TO IMPLEMENT: SEND EMAIL TO VA OPS TEAM
   end
 
   # Purpose: Logs message

@@ -21,12 +21,9 @@ class TranscriptionFile < CaseflowRecord
   def convert_to_rtf
     return unless file_type == "vtt"
 
-    # File.open("tmp/transcription_files/rtf/200103-61110_2000005013_Hearing.rtf", "w")
-    # rtf_file = "tmp/transcription_files/rtf/200103-61110_2000005013_Hearing.rtf"
-
-    rtf_file = TranscriptionTransformer.new(tmp_location).call
+    rtf_file_path = TranscriptionTransformer.new(self).call
     update_conversion_status!(:success)
-    rtf_file
+    rtf_file_path
   rescue TranscriptionTransformer::FileConversionError => error
     update_conversion_status!(:failure)
     raise error, error.message
