@@ -5,7 +5,7 @@ require "rtf"
 require "csv"
 
 # Workflow for converting VTT transcription files to RTF
-class Hearings::TranscriptionTransformer
+class TranscriptionTransformer
   class FileConversionError < StandardError; end
 
   def initialize(vtt_path)
