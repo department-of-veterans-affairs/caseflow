@@ -42,14 +42,14 @@ describe Seeds::CaseDistributionTestData do
     it "creates test data for case distribution" do
       seed.seed!
 
-      #checking CaseDistributionlevers count
-      expect( CaseDistributionLever.count).to eq 20
+      # checking CaseDistributionlevers count
+      expect(CaseDistributionLever.count).to eq 20
 
       expect(Appeal.where(docket_type: "direct_review").count).to eq 38
-      expect(Appeal.where(docket_type: "direct_review").first.receipt_date).to eq (Time.zone.today - (20.years + 1.day))
+      expect(Appeal.where(docket_type: "direct_review").first.receipt_date).to eq(Time.zone.today - (20.years + 1.day))
 
       expect(Appeal.where(docket_type: "hearing").count).to eq 35
-      expect(Appeal.where(docket_type: "hearing").first.receipt_date).to eq (Time.zone.today - (20.years + 3.days))
+      expect(Appeal.where(docket_type: "hearing").first.receipt_date).to eq(Time.zone.today - (20.years + 3.days))
 
       expect(AppealState.where(appeal_type: "Appeal").count).to eq 73
       expect(Claimant.count).to eq 73
@@ -61,7 +61,7 @@ describe Seeds::CaseDistributionTestData do
       expect(User.find_by_css_id("BVAREDMAN").full_name).to eq "BVA Judge Redman"
       expect(User.find_by_css_id("BVABECKER").full_name).to eq "BVA Judge Becker"
 
-      #creates data for missing tester judges data
+      # creates data for missing tester judges data
       expect(User.find_by_css_id("BVAKEELING").full_name).to eq "BVA Judge Keeling"
       expect(User.find_by_css_id("BVACOTBJ").full_name).to eq "BVA ChairOfThe BoardJudge"
 
@@ -73,4 +73,3 @@ describe Seeds::CaseDistributionTestData do
     end
   end
 end
-

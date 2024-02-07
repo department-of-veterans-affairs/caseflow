@@ -72,7 +72,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     CaseDistributionAuditLeverEntrySerializer.new(old_audit_lever_entry).serializable_hash[:data][:attributes]
   end
 
-  let!(:levers) {Seeds::CaseDistributionLevers.levers + [lever1, lever2]}
+  let!(:levers) { Seeds::CaseDistributionLevers.levers + [lever1, lever2] }
 
   # rubocop:enable Layout/LineLength
 
@@ -146,9 +146,9 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       expect(response.status).to eq 200
       result = JSON.parse(response.body)
       expect(result).to be_a(Hash)
-      expect(result.keys).to match_array(%w[levers, lever_history])
+      expect(result.keys).to match_array(%w[levers lever_history])
       expect(result["levers"]).to be_a(Hash)
-      expect(result["levers"].keys).to match_array(%w[static, batch, affinity, docket_distribution_prior, docket_time_goal])
+      expect(result["levers"].keys).to match_array(%w[static batch affinity docket_distribution_prior docket_time_goal])
       expect(result["lever_history"]).to be_a(Array)
     end
   end

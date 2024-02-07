@@ -1,13 +1,15 @@
+# frozen_string_literal: true
+
 # spec/models/case_distribution_audit_lever_entry_spec.rb
 
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe CaseDistributionAuditLeverEntry, type: :model do
   let(:user) { create(:user) }
-  let!(:levers) {Seeds::CaseDistributionLevers.new.levers}
+  let!(:levers) { Seeds::CaseDistributionLevers.new.levers }
 
-  describe '.lever_history' do
-    it 'returns lever history for the past year' do
+  describe ".lever_history" do
+    it "returns lever history for the past year" do
       lever = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days)
       entries = [
         create(:case_distribution_audit_lever_entry, user: user, case_distribution_lever: lever, created_at: 13.months.ago),
@@ -33,7 +35,7 @@ RSpec.describe CaseDistributionAuditLeverEntry, type: :model do
 end
 
 def mock_serialize_audit_lever_entry(entry, lever, user)
-  return {
+  {
     id: entry.id,
     case_distribution_lever_id: lever.id,
     created_at: entry.created_at,
