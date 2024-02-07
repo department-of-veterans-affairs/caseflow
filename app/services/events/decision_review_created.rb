@@ -14,18 +14,25 @@ class Events::DecisionReviewCreated
     def create(consumer_event_id, reference_id)
       return if event_exists_and_is_completed?(consumer_event_id)
 
+      redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
+      # Use the consumer_event_id to retrieve/create the Event object
+      event = find_or_create_event(consumer_event_id)
+
+      # exit out if Key is already in Redis Cache
+      if redis.exists("RedisMutex:EndProductEstablishment:#{reference_id}")
+        fail Caseflow::Error::RedisLockFailed, message: "Key RedisMutex:EndProductEstablishment:#{reference_id} is already in the Redis Cache"
+      end
+
       RedisMutex.with_lock("EndProductEstablishment:#{reference_id}", block: 60, expire: 100) do
         # key => "EndProductEstablishment:reference_id" aka "claim ID"
-        # Use the consumer_event_id to retrieve/create the Event object
-        event = find_or_create_event(consumer_event_id)
 
-        ActiveRecord::Base.transaction do
-          # TODO: backfill models as needed, set Event.completed_at when finished
-          # event.update!(completed_at: Time.now, error: nil)
-        end
+        # ActiveRecord::Base.transaction do
+        #   # TODO: backfill models as needed, set Event.completed_at when finished
+        #   # event.update!(completed_at: Time.now, error: nil)
+        # end
       end
       true
-    rescue RedisMutex::LockError
+    rescue RedisMutex::LockError => error
       Rails.logger.error("Failed to acquire lock for Claim ID: #{reference_id}! This Event is being"\
                          " processed. Please try again later.")
     rescue StandardError => error
