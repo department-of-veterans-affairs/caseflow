@@ -20,10 +20,10 @@ feature "SpecialtyCaseTeamQueue", :all_dbs do
     let(:num_completed_rows) { 9 }
 
     let!(:sct_action_required_tasks) do
-      create_list(:sct_assign_task, num_action_required_rows, :on_hold)
+      create_list(:specialty_case_team_assign_task, num_action_required_rows, :on_hold)
     end
     let!(:sct_completed_tasks) do
-      tasks = create_list(:sct_assign_task, num_completed_rows, :completed)
+      tasks = create_list(:specialty_case_team_assign_task, num_completed_rows, :completed)
       tasks.last.closed_at = 13.days.ago
       tasks.last.save
     end

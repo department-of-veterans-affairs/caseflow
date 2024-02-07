@@ -30,11 +30,11 @@ module Seeds
       create_visn_org_teams!
       create_vha_camo
       create_vha_caregiver
-      create_specialty_case_team
       create_vha_program_office
       create_vha_visn_pre_docket_queue
       create_higher_level_reviews
       create_supplemental_claims
+      create_specialty_case_team_tasks
       add_vha_user_to_be_vha_business_line_member
     end
 
@@ -96,11 +96,6 @@ module Seeds
       create_vha_caregiver_queue_assigned
       create_vha_caregiver_queue_in_progress
       create_vha_caregiver_queue_completed
-    end
-
-    def create_specialty_case_team
-      create_specialty_case_team_action_required
-      create_specialty_case_team_completed
     end
 
     def create_higher_level_reviews
@@ -200,15 +195,25 @@ module Seeds
     end
 
     def create_specialty_case_team_action_required
-      tasks = create_list(:sct_assign_task, 5, :on_hold)
+      tasks = create_list(:specialty_case_team_assign_task, 5, :on_hold)
       tasks.last.appeal.veteran.date_of_death = 2.weeks.ago
       tasks.last.appeal.veteran.save
     end
 
     def create_specialty_case_team_completed
-      tasks = create_list(:sct_assign_task, 5, :completed)
+      tasks = create_list(:specialty_case_team_assign_task, 5, :completed)
       tasks.last.appeal.veteran.date_of_death = 2.weeks.ago
       tasks.last.appeal.veteran.save
+    end
+
+    def create_specialty_case_team_assigned
+      create_list(:specialty_case_team_assign_task, 5)
+    end
+
+    def create_specialty_case_team_tasks
+      create_specialty_case_team_action_required
+      create_specialty_case_team_completed
+      create_specialty_case_team_assigned
     end
 
     # :reek:FeatureEnvy
