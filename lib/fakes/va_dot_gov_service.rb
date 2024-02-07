@@ -9,12 +9,15 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
         data["id"] = id
         data
       end
-
-      distances = query[:facilityIds].split(",").map.with_index do |id, index|
-        {
-          id: id,
-          distance: index
-        }
+      unless (query[:lat].nil? and query[:long].nil?)
+        distances = query[:facilityIds].split(",").map.with_index do |id, index|
+          {
+            id: id,
+            distance: index
+          }
+        end
+      else
+        distances = []
       end
 
       fake_facilities = fake_facilities_data
