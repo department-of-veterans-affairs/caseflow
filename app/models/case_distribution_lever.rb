@@ -20,19 +20,20 @@ class CaseDistributionLever < ApplicationRecord
     #{Constants.DISTRIBUTION.cavc_affinity_days}
     #{Constants.DISTRIBUTION.ama_evidence_submission_docket_time_goals}
     #{Constants.DISTRIBUTION.ama_hearings_docket_time_goals}
-  )
+  ).freeze
+
   FLOAT_LEVERS = %W(
     #{Constants.DISTRIBUTION.maximum_direct_review_proportion}
     #{Constants.DISTRIBUTION.minimum_legacy_proportion}
     #{Constants.DISTRIBUTION.nod_adjustment}
-  )
+  ).freeze
 
   def distribution_value
-    if self.data_type == Constants.ACD_LEVERS.data_types.radio
-      option = self.options.detect{|opt| opt['item'] == self.value}
-      option['value'] if option && option.is_a?(Hash)
+    if data_type == Constants.ACD_LEVERS.data_types.radio
+      option = options.detect { |opt| opt["item"] == value }
+      option["value"] if option&.is_a?(Hash)
     else
-      self.value
+      value
     end
   end
 
@@ -127,7 +128,7 @@ class CaseDistributionLever < ApplicationRecord
       entries = []
       levers.filter(&:valid?).each do |lever|
         previous_lever = previous_levers[lever.id]
-        entries.push ({
+        entries.push({
           user: current_user,
           case_distribution_lever: lever,
           previous_value: previous_lever.value,
