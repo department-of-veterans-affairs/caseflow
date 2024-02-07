@@ -136,6 +136,10 @@ class QueueTab
     Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).recently_completed
   end
 
+  def last_14_days_completed_tasks
+    Task.includes(*task_includes).visible_in_queue_table_view.where(assigned_to: assignee).last_14_days_completed
+  end
+
   # Recently completed tasks that do not have younger sibling tasks
   # (tasks with the same parent task but have been created more recently) with the same assignee.
   def recently_completed_tasks_without_younger_siblings
