@@ -1,5 +1,1165 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`HearingLinks Matches snapshot when hearing is non-virtual, webex, and in progress 1`] = `
+<HearingLinks
+  hearing={
+    Object {
+      "scheduledForIsPast": false,
+    }
+  }
+  user={
+    Object {
+      "addressCity": "Washington",
+      "addressLine1": "123 Fake St.",
+      "addressState": "DC",
+      "addressZip": "20001",
+      "name": "John Smith",
+    }
+  }
+  virtualHearing={
+    Object {
+      "advanceOnDocketMotion": null,
+      "aod": null,
+      "appealExternalId": "679840002",
+      "appealId": 4,
+      "appellantAddressLine1": "9999 MISSION ST",
+      "appellantCity": "SAN FRANCISCO",
+      "appellantEmailAddress": "veteran@test.test",
+      "appellantFirstName": null,
+      "appellantIsNotVeteran": false,
+      "appellantLastName": null,
+      "appellantState": "CA",
+      "appellantTz": "America/Los_Angeles",
+      "appellantZip": "94103",
+      "availableHearingLocations": Object {},
+      "bvaPoc": null,
+      "centralOfficeTimeString": "12:30",
+      "claimantId": 4,
+      "closestRegionalOffice": null,
+      "conferenceProvider": "webex",
+      "currentIssueCount": 0,
+      "dailyDocketConferenceLinks": Object {
+        "0": Object {},
+        "1": Object {
+          "alias": null,
+          "aliasWithHost": null,
+          "coHostLink": "https://instant-usgov.webex.com/visit/wz17ys8",
+          "conferenceDeleted": false,
+          "conferenceId": null,
+          "guestHearingLink": "https://instant-usgov.webex.com/visit/47imtxx",
+          "guestPinLong": null,
+          "hearingDayId": 151,
+          "hostLink": "https://instant-usgov.webex.com/visit/hu1swd0",
+          "hostPin": null,
+          "id": 302,
+        },
+      },
+      "disposition": null,
+      "dispositionEditable": true,
+      "docketName": "legacy",
+      "docketNumber": "180000101",
+      "evidenceWindowWaived": false,
+      "externalId": "461985",
+      "hearingDayId": 151,
+      "id": 311,
+      "isVirtual": false,
+      "judge": Object {
+        "createdAt": "2024-02-01T09:35:56.848-05:00",
+        "cssId": "BVAAABSHIRE",
+        "displayName": "BVAAABSHIRE (VACO)",
+        "efolderDocumentsFetchedAt": null,
+        "email": null,
+        "fullName": "Aaron Judge_HearingsAndCases Abshire",
+        "id": 4,
+        "lastLoginAt": null,
+        "roles": Object {},
+        "selectedRegionalOffice": null,
+        "stationId": "101",
+        "status": "active",
+        "statusUpdatedAt": null,
+        "updatedAt": "2024-02-01T09:35:56.848-05:00",
+      },
+      "judgeId": 4,
+      "location": null,
+      "militaryService": "",
+      "notes": null,
+      "paperCase": false,
+      "prepped": null,
+      "readableLocation": "St. Petersburg regional office",
+      "readableRequestType": "Video",
+      "regionalOfficeKey": "R017",
+      "regionalOfficeName": "St. Petersburg regional office",
+      "regionalOfficeTimezone": "America/New_York",
+      "representative": "Clarence Darrow",
+      "representativeEmailAddress": "caseflow-rep@test.test",
+      "representativeName": null,
+      "representativeTz": "America/Los_Angeles",
+      "room": "9",
+      "scheduledFor": "2024-02-29T12:30:00.000-05:00",
+      "scheduledForIsPast": false,
+      "scheduledTimeString": "12:30",
+      "summary": null,
+      "transcriptRequested": null,
+      "transcription": Object {},
+      "veteranAge": 30,
+      "veteranEmailAddress": "test@test.test",
+      "veteranFileNumber": "100000100",
+      "veteranFirstName": "Dennis",
+      "veteranGender": "F",
+      "veteranLastName": "Bailey",
+      "wasVirtual": false,
+      "witness": null,
+    }
+  }
+>
+  <div
+    data-css-19plkw7=""
+    data-css-1fmltfu=""
+  >
+    <LinkContainer
+      hearing={
+        Object {
+          "scheduledForIsPast": false,
+        }
+      }
+      label="VLJ Link"
+      linkText="Start Hearing"
+      role="VLJ"
+      user={
+        Object {
+          "addressCity": "Washington",
+          "addressLine1": "123 Fake St.",
+          "addressState": "DC",
+          "addressZip": "20001",
+          "name": "John Smith",
+        }
+      }
+      virtualHearing={
+        Object {
+          "advanceOnDocketMotion": null,
+          "aod": null,
+          "appealExternalId": "679840002",
+          "appealId": 4,
+          "appellantAddressLine1": "9999 MISSION ST",
+          "appellantCity": "SAN FRANCISCO",
+          "appellantEmailAddress": "veteran@test.test",
+          "appellantFirstName": null,
+          "appellantIsNotVeteran": false,
+          "appellantLastName": null,
+          "appellantState": "CA",
+          "appellantTz": "America/Los_Angeles",
+          "appellantZip": "94103",
+          "availableHearingLocations": Object {},
+          "bvaPoc": null,
+          "centralOfficeTimeString": "12:30",
+          "claimantId": 4,
+          "closestRegionalOffice": null,
+          "conferenceProvider": "webex",
+          "currentIssueCount": 0,
+          "dailyDocketConferenceLinks": Object {
+            "0": Object {},
+            "1": Object {
+              "alias": null,
+              "aliasWithHost": null,
+              "coHostLink": "https://instant-usgov.webex.com/visit/wz17ys8",
+              "conferenceDeleted": false,
+              "conferenceId": null,
+              "guestHearingLink": "https://instant-usgov.webex.com/visit/47imtxx",
+              "guestPinLong": null,
+              "hearingDayId": 151,
+              "hostLink": "https://instant-usgov.webex.com/visit/hu1swd0",
+              "hostPin": null,
+              "id": 302,
+            },
+          },
+          "disposition": null,
+          "dispositionEditable": true,
+          "docketName": "legacy",
+          "docketNumber": "180000101",
+          "evidenceWindowWaived": false,
+          "externalId": "461985",
+          "hearingDayId": 151,
+          "id": 311,
+          "isVirtual": false,
+          "judge": Object {
+            "createdAt": "2024-02-01T09:35:56.848-05:00",
+            "cssId": "BVAAABSHIRE",
+            "displayName": "BVAAABSHIRE (VACO)",
+            "efolderDocumentsFetchedAt": null,
+            "email": null,
+            "fullName": "Aaron Judge_HearingsAndCases Abshire",
+            "id": 4,
+            "lastLoginAt": null,
+            "roles": Object {},
+            "selectedRegionalOffice": null,
+            "stationId": "101",
+            "status": "active",
+            "statusUpdatedAt": null,
+            "updatedAt": "2024-02-01T09:35:56.848-05:00",
+          },
+          "judgeId": 4,
+          "location": null,
+          "militaryService": "",
+          "notes": null,
+          "paperCase": false,
+          "prepped": null,
+          "readableLocation": "St. Petersburg regional office",
+          "readableRequestType": "Video",
+          "regionalOfficeKey": "R017",
+          "regionalOfficeName": "St. Petersburg regional office",
+          "regionalOfficeTimezone": "America/New_York",
+          "representative": "Clarence Darrow",
+          "representativeEmailAddress": "caseflow-rep@test.test",
+          "representativeName": null,
+          "representativeTz": "America/Los_Angeles",
+          "room": "9",
+          "scheduledFor": "2024-02-29T12:30:00.000-05:00",
+          "scheduledForIsPast": false,
+          "scheduledTimeString": "12:30",
+          "summary": null,
+          "transcriptRequested": null,
+          "transcription": Object {},
+          "veteranAge": 30,
+          "veteranEmailAddress": "test@test.test",
+          "veteranFileNumber": "100000100",
+          "veteranFirstName": "Dennis",
+          "veteranGender": "F",
+          "veteranLastName": "Bailey",
+          "wasVirtual": false,
+          "witness": null,
+        }
+      }
+    >
+      <div
+        data-css-tx10g=""
+        id="vlj-hearings-link"
+      >
+        <VirtualHearingLinkDetails
+          hearing={
+            Object {
+              "scheduledForIsPast": false,
+            }
+          }
+          label="Start Hearing"
+          role="VLJ"
+          user={
+            Object {
+              "addressCity": "Washington",
+              "addressLine1": "123 Fake St.",
+              "addressState": "DC",
+              "addressZip": "20001",
+              "name": "John Smith",
+            }
+          }
+          virtualHearing={
+            Object {
+              "advanceOnDocketMotion": null,
+              "aod": null,
+              "appealExternalId": "679840002",
+              "appealId": 4,
+              "appellantAddressLine1": "9999 MISSION ST",
+              "appellantCity": "SAN FRANCISCO",
+              "appellantEmailAddress": "veteran@test.test",
+              "appellantFirstName": null,
+              "appellantIsNotVeteran": false,
+              "appellantLastName": null,
+              "appellantState": "CA",
+              "appellantTz": "America/Los_Angeles",
+              "appellantZip": "94103",
+              "availableHearingLocations": Object {},
+              "bvaPoc": null,
+              "centralOfficeTimeString": "12:30",
+              "claimantId": 4,
+              "closestRegionalOffice": null,
+              "conferenceProvider": "webex",
+              "currentIssueCount": 0,
+              "dailyDocketConferenceLinks": Object {
+                "0": Object {},
+                "1": Object {
+                  "alias": null,
+                  "aliasWithHost": null,
+                  "coHostLink": "https://instant-usgov.webex.com/visit/wz17ys8",
+                  "conferenceDeleted": false,
+                  "conferenceId": null,
+                  "guestHearingLink": "https://instant-usgov.webex.com/visit/47imtxx",
+                  "guestPinLong": null,
+                  "hearingDayId": 151,
+                  "hostLink": "https://instant-usgov.webex.com/visit/hu1swd0",
+                  "hostPin": null,
+                  "id": 302,
+                },
+              },
+              "disposition": null,
+              "dispositionEditable": true,
+              "docketName": "legacy",
+              "docketNumber": "180000101",
+              "evidenceWindowWaived": false,
+              "externalId": "461985",
+              "hearingDayId": 151,
+              "id": 311,
+              "isVirtual": false,
+              "judge": Object {
+                "createdAt": "2024-02-01T09:35:56.848-05:00",
+                "cssId": "BVAAABSHIRE",
+                "displayName": "BVAAABSHIRE (VACO)",
+                "efolderDocumentsFetchedAt": null,
+                "email": null,
+                "fullName": "Aaron Judge_HearingsAndCases Abshire",
+                "id": 4,
+                "lastLoginAt": null,
+                "roles": Object {},
+                "selectedRegionalOffice": null,
+                "stationId": "101",
+                "status": "active",
+                "statusUpdatedAt": null,
+                "updatedAt": "2024-02-01T09:35:56.848-05:00",
+              },
+              "judgeId": 4,
+              "location": null,
+              "militaryService": "",
+              "notes": null,
+              "paperCase": false,
+              "prepped": null,
+              "readableLocation": "St. Petersburg regional office",
+              "readableRequestType": "Video",
+              "regionalOfficeKey": "R017",
+              "regionalOfficeName": "St. Petersburg regional office",
+              "regionalOfficeTimezone": "America/New_York",
+              "representative": "Clarence Darrow",
+              "representativeEmailAddress": "caseflow-rep@test.test",
+              "representativeName": null,
+              "representativeTz": "America/Los_Angeles",
+              "room": "9",
+              "scheduledFor": "2024-02-29T12:30:00.000-05:00",
+              "scheduledForIsPast": false,
+              "scheduledTimeString": "12:30",
+              "summary": null,
+              "transcriptRequested": null,
+              "transcription": Object {},
+              "veteranAge": 30,
+              "veteranEmailAddress": "test@test.test",
+              "veteranFileNumber": "100000100",
+              "veteranFirstName": "Dennis",
+              "veteranGender": "F",
+              "veteranLastName": "Bailey",
+              "wasVirtual": false,
+              "witness": null,
+            }
+          }
+        >
+          <VirtualHearingLink
+            hearing={
+              Object {
+                "scheduledForIsPast": false,
+              }
+            }
+            isVirtual={false}
+            label="Start Hearing"
+            newWindow={true}
+            showFullLink={false}
+            user={
+              Object {
+                "addressCity": "Washington",
+                "addressLine1": "123 Fake St.",
+                "addressState": "DC",
+                "addressZip": "20001",
+                "name": "John Smith",
+              }
+            }
+            virtualHearing={
+              Object {
+                "advanceOnDocketMotion": null,
+                "aod": null,
+                "appealExternalId": "679840002",
+                "appealId": 4,
+                "appellantAddressLine1": "9999 MISSION ST",
+                "appellantCity": "SAN FRANCISCO",
+                "appellantEmailAddress": "veteran@test.test",
+                "appellantFirstName": null,
+                "appellantIsNotVeteran": false,
+                "appellantLastName": null,
+                "appellantState": "CA",
+                "appellantTz": "America/Los_Angeles",
+                "appellantZip": "94103",
+                "availableHearingLocations": Object {},
+                "bvaPoc": null,
+                "centralOfficeTimeString": "12:30",
+                "claimantId": 4,
+                "closestRegionalOffice": null,
+                "conferenceProvider": "webex",
+                "currentIssueCount": 0,
+                "dailyDocketConferenceLinks": Object {
+                  "0": Object {},
+                  "1": Object {
+                    "alias": null,
+                    "aliasWithHost": null,
+                    "coHostLink": "https://instant-usgov.webex.com/visit/wz17ys8",
+                    "conferenceDeleted": false,
+                    "conferenceId": null,
+                    "guestHearingLink": "https://instant-usgov.webex.com/visit/47imtxx",
+                    "guestPinLong": null,
+                    "hearingDayId": 151,
+                    "hostLink": "https://instant-usgov.webex.com/visit/hu1swd0",
+                    "hostPin": null,
+                    "id": 302,
+                  },
+                },
+                "disposition": null,
+                "dispositionEditable": true,
+                "docketName": "legacy",
+                "docketNumber": "180000101",
+                "evidenceWindowWaived": false,
+                "externalId": "461985",
+                "hearingDayId": 151,
+                "id": 311,
+                "isVirtual": false,
+                "judge": Object {
+                  "createdAt": "2024-02-01T09:35:56.848-05:00",
+                  "cssId": "BVAAABSHIRE",
+                  "displayName": "BVAAABSHIRE (VACO)",
+                  "efolderDocumentsFetchedAt": null,
+                  "email": null,
+                  "fullName": "Aaron Judge_HearingsAndCases Abshire",
+                  "id": 4,
+                  "lastLoginAt": null,
+                  "roles": Object {},
+                  "selectedRegionalOffice": null,
+                  "stationId": "101",
+                  "status": "active",
+                  "statusUpdatedAt": null,
+                  "updatedAt": "2024-02-01T09:35:56.848-05:00",
+                },
+                "judgeId": 4,
+                "location": null,
+                "militaryService": "",
+                "notes": null,
+                "paperCase": false,
+                "prepped": null,
+                "readableLocation": "St. Petersburg regional office",
+                "readableRequestType": "Video",
+                "regionalOfficeKey": "R017",
+                "regionalOfficeName": "St. Petersburg regional office",
+                "regionalOfficeTimezone": "America/New_York",
+                "representative": "Clarence Darrow",
+                "representativeEmailAddress": "caseflow-rep@test.test",
+                "representativeName": null,
+                "representativeTz": "America/Los_Angeles",
+                "room": "9",
+                "scheduledFor": "2024-02-29T12:30:00.000-05:00",
+                "scheduledForIsPast": false,
+                "scheduledTimeString": "12:30",
+                "summary": null,
+                "transcriptRequested": null,
+                "transcription": Object {},
+                "veteranAge": 30,
+                "veteranEmailAddress": "test@test.test",
+                "veteranFileNumber": "100000100",
+                "veteranFirstName": "Dennis",
+                "veteranGender": "F",
+                "veteranLastName": "Bailey",
+                "wasVirtual": false,
+                "witness": null,
+              }
+            }
+          />
+          <div
+            className="helper-text"
+            data-css-1abghdv=""
+          />
+          <CopyTextButton
+            ariaLabel="Copy VLJ Link"
+            label=""
+            styling={Object {}}
+            text="Copy VLJ Link"
+            textToCopy={null}
+          >
+            <Tooltip
+              id="tooltip-Copy VLJ Link"
+              position="bottom"
+              text="Click to copy"
+            >
+              <CopyToClipboard
+                aria-describedby="tooltip-Copy VLJ Link"
+                aria-label=""
+                data-event="focus mouseenter"
+                data-event-off="mouseleave keydown"
+                data-for="tooltip-Copy VLJ Link"
+                data-tip={true}
+                tabIndex={0}
+                text="Copy VLJ Link"
+              >
+                <button
+                  aria-describedby="tooltip-Copy VLJ Link"
+                  aria-label=""
+                  className="cf-apppeal-id"
+                  data-css-p6dv0b=""
+                  data-event="focus mouseenter"
+                  data-event-off="mouseleave keydown"
+                  data-for="tooltip-Copy VLJ Link"
+                  data-tip={true}
+                  disabled={true}
+                  onClick={[Function]}
+                  tabIndex={0}
+                  type="submit"
+                >
+                  Copy VLJ Link
+                   
+                  <ClipboardIcon
+                    className=""
+                    color="#5b616b"
+                    size={17}
+                  >
+                    <svg
+                      className=""
+                      height={17}
+                      viewBox="0 0 21 21"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M13.346 2.578h-2.664v-1.29C10.682.585 10.08 0 9.35 0H6.66c-.728 0-1.33.584-1.33 1.29v1.288H2.663v2.577h10.682V2.578zm-4.02 0H6.66v-1.29h2.665v1.29zm6.685 3.89V3.234a.665.665 0 0 0-.678-.656H14v1.29h.68v2.576H6.66v9.046H1.333V3.867h.68v-1.29H.678a.665.665 0 0 0-.68.657v12.913c0 .365.302.656.68.656h6.006v3.867h9.35l3.996-3.867V6.468h-4.02zm0 12.378v-2.043h2.112l-2.11 2.043zm2.665-3.356H14.68v3.867H7.992v-11.6h10.682v7.733z"
+                        fill="#5b616b"
+                        fillRule="evenodd"
+                      />
+                    </svg>
+                  </ClipboardIcon>
+                </button>
+              </CopyToClipboard>
+              <span
+                data-css-as2zk0=""
+              >
+                <ReactTooltip
+                  className="cf-tooltip"
+                  clickable={false}
+                  effect="solid"
+                  id="tooltip-Copy VLJ Link"
+                  insecure={true}
+                  multiline={true}
+                  offset={Object {}}
+                  place="bottom"
+                  resizeHide={true}
+                  role="tooltip"
+                  wrapper="div"
+                >
+                  <div
+                    className="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+                    data-id="tooltip"
+                    id="tooltip-Copy VLJ Link"
+                    role="tooltip"
+                  >
+                    <style
+                      dangerouslySetInnerHTML={
+                        Object {
+                          "__html": "
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  ",
+                        }
+                      }
+                    />
+                    Click to copy
+                  </div>
+                </ReactTooltip>
+              </span>
+            </Tooltip>
+          </CopyTextButton>
+        </VirtualHearingLinkDetails>
+      </div>
+    </LinkContainer>
+    <LinkContainer
+      hearing={
+        Object {
+          "scheduledForIsPast": false,
+        }
+      }
+      label="Guest Link"
+      linkText="Join Hearing"
+      role="Guest"
+      user={
+        Object {
+          "addressCity": "Washington",
+          "addressLine1": "123 Fake St.",
+          "addressState": "DC",
+          "addressZip": "20001",
+          "name": "John Smith",
+        }
+      }
+      virtualHearing={
+        Object {
+          "advanceOnDocketMotion": null,
+          "aod": null,
+          "appealExternalId": "679840002",
+          "appealId": 4,
+          "appellantAddressLine1": "9999 MISSION ST",
+          "appellantCity": "SAN FRANCISCO",
+          "appellantEmailAddress": "veteran@test.test",
+          "appellantFirstName": null,
+          "appellantIsNotVeteran": false,
+          "appellantLastName": null,
+          "appellantState": "CA",
+          "appellantTz": "America/Los_Angeles",
+          "appellantZip": "94103",
+          "availableHearingLocations": Object {},
+          "bvaPoc": null,
+          "centralOfficeTimeString": "12:30",
+          "claimantId": 4,
+          "closestRegionalOffice": null,
+          "conferenceProvider": "webex",
+          "currentIssueCount": 0,
+          "dailyDocketConferenceLinks": Object {
+            "0": Object {},
+            "1": Object {
+              "alias": null,
+              "aliasWithHost": null,
+              "coHostLink": "https://instant-usgov.webex.com/visit/wz17ys8",
+              "conferenceDeleted": false,
+              "conferenceId": null,
+              "guestHearingLink": "https://instant-usgov.webex.com/visit/47imtxx",
+              "guestPinLong": null,
+              "hearingDayId": 151,
+              "hostLink": "https://instant-usgov.webex.com/visit/hu1swd0",
+              "hostPin": null,
+              "id": 302,
+            },
+          },
+          "disposition": null,
+          "dispositionEditable": true,
+          "docketName": "legacy",
+          "docketNumber": "180000101",
+          "evidenceWindowWaived": false,
+          "externalId": "461985",
+          "hearingDayId": 151,
+          "id": 311,
+          "isVirtual": false,
+          "judge": Object {
+            "createdAt": "2024-02-01T09:35:56.848-05:00",
+            "cssId": "BVAAABSHIRE",
+            "displayName": "BVAAABSHIRE (VACO)",
+            "efolderDocumentsFetchedAt": null,
+            "email": null,
+            "fullName": "Aaron Judge_HearingsAndCases Abshire",
+            "id": 4,
+            "lastLoginAt": null,
+            "roles": Object {},
+            "selectedRegionalOffice": null,
+            "stationId": "101",
+            "status": "active",
+            "statusUpdatedAt": null,
+            "updatedAt": "2024-02-01T09:35:56.848-05:00",
+          },
+          "judgeId": 4,
+          "location": null,
+          "militaryService": "",
+          "notes": null,
+          "paperCase": false,
+          "prepped": null,
+          "readableLocation": "St. Petersburg regional office",
+          "readableRequestType": "Video",
+          "regionalOfficeKey": "R017",
+          "regionalOfficeName": "St. Petersburg regional office",
+          "regionalOfficeTimezone": "America/New_York",
+          "representative": "Clarence Darrow",
+          "representativeEmailAddress": "caseflow-rep@test.test",
+          "representativeName": null,
+          "representativeTz": "America/Los_Angeles",
+          "room": "9",
+          "scheduledFor": "2024-02-29T12:30:00.000-05:00",
+          "scheduledForIsPast": false,
+          "scheduledTimeString": "12:30",
+          "summary": null,
+          "transcriptRequested": null,
+          "transcription": Object {},
+          "veteranAge": 30,
+          "veteranEmailAddress": "test@test.test",
+          "veteranFileNumber": "100000100",
+          "veteranFirstName": "Dennis",
+          "veteranGender": "F",
+          "veteranLastName": "Bailey",
+          "wasVirtual": false,
+          "witness": null,
+        }
+      }
+    >
+      <div
+        data-css-tx10g=""
+        id="guest-hearings-link"
+      >
+        <VirtualHearingLinkDetails
+          hearing={
+            Object {
+              "scheduledForIsPast": false,
+            }
+          }
+          label="Join Hearing"
+          role="Guest"
+          user={
+            Object {
+              "addressCity": "Washington",
+              "addressLine1": "123 Fake St.",
+              "addressState": "DC",
+              "addressZip": "20001",
+              "name": "John Smith",
+            }
+          }
+          virtualHearing={
+            Object {
+              "advanceOnDocketMotion": null,
+              "aod": null,
+              "appealExternalId": "679840002",
+              "appealId": 4,
+              "appellantAddressLine1": "9999 MISSION ST",
+              "appellantCity": "SAN FRANCISCO",
+              "appellantEmailAddress": "veteran@test.test",
+              "appellantFirstName": null,
+              "appellantIsNotVeteran": false,
+              "appellantLastName": null,
+              "appellantState": "CA",
+              "appellantTz": "America/Los_Angeles",
+              "appellantZip": "94103",
+              "availableHearingLocations": Object {},
+              "bvaPoc": null,
+              "centralOfficeTimeString": "12:30",
+              "claimantId": 4,
+              "closestRegionalOffice": null,
+              "conferenceProvider": "webex",
+              "currentIssueCount": 0,
+              "dailyDocketConferenceLinks": Object {
+                "0": Object {},
+                "1": Object {
+                  "alias": null,
+                  "aliasWithHost": null,
+                  "coHostLink": "https://instant-usgov.webex.com/visit/wz17ys8",
+                  "conferenceDeleted": false,
+                  "conferenceId": null,
+                  "guestHearingLink": "https://instant-usgov.webex.com/visit/47imtxx",
+                  "guestPinLong": null,
+                  "hearingDayId": 151,
+                  "hostLink": "https://instant-usgov.webex.com/visit/hu1swd0",
+                  "hostPin": null,
+                  "id": 302,
+                },
+              },
+              "disposition": null,
+              "dispositionEditable": true,
+              "docketName": "legacy",
+              "docketNumber": "180000101",
+              "evidenceWindowWaived": false,
+              "externalId": "461985",
+              "hearingDayId": 151,
+              "id": 311,
+              "isVirtual": false,
+              "judge": Object {
+                "createdAt": "2024-02-01T09:35:56.848-05:00",
+                "cssId": "BVAAABSHIRE",
+                "displayName": "BVAAABSHIRE (VACO)",
+                "efolderDocumentsFetchedAt": null,
+                "email": null,
+                "fullName": "Aaron Judge_HearingsAndCases Abshire",
+                "id": 4,
+                "lastLoginAt": null,
+                "roles": Object {},
+                "selectedRegionalOffice": null,
+                "stationId": "101",
+                "status": "active",
+                "statusUpdatedAt": null,
+                "updatedAt": "2024-02-01T09:35:56.848-05:00",
+              },
+              "judgeId": 4,
+              "location": null,
+              "militaryService": "",
+              "notes": null,
+              "paperCase": false,
+              "prepped": null,
+              "readableLocation": "St. Petersburg regional office",
+              "readableRequestType": "Video",
+              "regionalOfficeKey": "R017",
+              "regionalOfficeName": "St. Petersburg regional office",
+              "regionalOfficeTimezone": "America/New_York",
+              "representative": "Clarence Darrow",
+              "representativeEmailAddress": "caseflow-rep@test.test",
+              "representativeName": null,
+              "representativeTz": "America/Los_Angeles",
+              "room": "9",
+              "scheduledFor": "2024-02-29T12:30:00.000-05:00",
+              "scheduledForIsPast": false,
+              "scheduledTimeString": "12:30",
+              "summary": null,
+              "transcriptRequested": null,
+              "transcription": Object {},
+              "veteranAge": 30,
+              "veteranEmailAddress": "test@test.test",
+              "veteranFileNumber": "100000100",
+              "veteranFirstName": "Dennis",
+              "veteranGender": "F",
+              "veteranLastName": "Bailey",
+              "wasVirtual": false,
+              "witness": null,
+            }
+          }
+        >
+          <VirtualHearingLink
+            hearing={
+              Object {
+                "scheduledForIsPast": false,
+              }
+            }
+            isVirtual={false}
+            label="Join Hearing"
+            newWindow={true}
+            showFullLink={false}
+            user={
+              Object {
+                "addressCity": "Washington",
+                "addressLine1": "123 Fake St.",
+                "addressState": "DC",
+                "addressZip": "20001",
+                "name": "John Smith",
+              }
+            }
+            virtualHearing={
+              Object {
+                "advanceOnDocketMotion": null,
+                "aod": null,
+                "appealExternalId": "679840002",
+                "appealId": 4,
+                "appellantAddressLine1": "9999 MISSION ST",
+                "appellantCity": "SAN FRANCISCO",
+                "appellantEmailAddress": "veteran@test.test",
+                "appellantFirstName": null,
+                "appellantIsNotVeteran": false,
+                "appellantLastName": null,
+                "appellantState": "CA",
+                "appellantTz": "America/Los_Angeles",
+                "appellantZip": "94103",
+                "availableHearingLocations": Object {},
+                "bvaPoc": null,
+                "centralOfficeTimeString": "12:30",
+                "claimantId": 4,
+                "closestRegionalOffice": null,
+                "conferenceProvider": "webex",
+                "currentIssueCount": 0,
+                "dailyDocketConferenceLinks": Object {
+                  "0": Object {},
+                  "1": Object {
+                    "alias": null,
+                    "aliasWithHost": null,
+                    "coHostLink": "https://instant-usgov.webex.com/visit/wz17ys8",
+                    "conferenceDeleted": false,
+                    "conferenceId": null,
+                    "guestHearingLink": "https://instant-usgov.webex.com/visit/47imtxx",
+                    "guestPinLong": null,
+                    "hearingDayId": 151,
+                    "hostLink": "https://instant-usgov.webex.com/visit/hu1swd0",
+                    "hostPin": null,
+                    "id": 302,
+                  },
+                },
+                "disposition": null,
+                "dispositionEditable": true,
+                "docketName": "legacy",
+                "docketNumber": "180000101",
+                "evidenceWindowWaived": false,
+                "externalId": "461985",
+                "hearingDayId": 151,
+                "id": 311,
+                "isVirtual": false,
+                "judge": Object {
+                  "createdAt": "2024-02-01T09:35:56.848-05:00",
+                  "cssId": "BVAAABSHIRE",
+                  "displayName": "BVAAABSHIRE (VACO)",
+                  "efolderDocumentsFetchedAt": null,
+                  "email": null,
+                  "fullName": "Aaron Judge_HearingsAndCases Abshire",
+                  "id": 4,
+                  "lastLoginAt": null,
+                  "roles": Object {},
+                  "selectedRegionalOffice": null,
+                  "stationId": "101",
+                  "status": "active",
+                  "statusUpdatedAt": null,
+                  "updatedAt": "2024-02-01T09:35:56.848-05:00",
+                },
+                "judgeId": 4,
+                "location": null,
+                "militaryService": "",
+                "notes": null,
+                "paperCase": false,
+                "prepped": null,
+                "readableLocation": "St. Petersburg regional office",
+                "readableRequestType": "Video",
+                "regionalOfficeKey": "R017",
+                "regionalOfficeName": "St. Petersburg regional office",
+                "regionalOfficeTimezone": "America/New_York",
+                "representative": "Clarence Darrow",
+                "representativeEmailAddress": "caseflow-rep@test.test",
+                "representativeName": null,
+                "representativeTz": "America/Los_Angeles",
+                "room": "9",
+                "scheduledFor": "2024-02-29T12:30:00.000-05:00",
+                "scheduledForIsPast": false,
+                "scheduledTimeString": "12:30",
+                "summary": null,
+                "transcriptRequested": null,
+                "transcription": Object {},
+                "veteranAge": 30,
+                "veteranEmailAddress": "test@test.test",
+                "veteranFileNumber": "100000100",
+                "veteranFirstName": "Dennis",
+                "veteranGender": "F",
+                "veteranLastName": "Bailey",
+                "wasVirtual": false,
+                "witness": null,
+              }
+            }
+          />
+          <div
+            className="helper-text"
+            data-css-1abghdv=""
+          />
+          <CopyTextButton
+            ariaLabel="Copy Guest Link"
+            label=""
+            styling={Object {}}
+            text="Copy Guest Link"
+            textToCopy={null}
+          >
+            <Tooltip
+              id="tooltip-Copy Guest Link"
+              position="bottom"
+              text="Click to copy"
+            >
+              <CopyToClipboard
+                aria-describedby="tooltip-Copy Guest Link"
+                aria-label=""
+                data-event="focus mouseenter"
+                data-event-off="mouseleave keydown"
+                data-for="tooltip-Copy Guest Link"
+                data-tip={true}
+                tabIndex={0}
+                text="Copy Guest Link"
+              >
+                <button
+                  aria-describedby="tooltip-Copy Guest Link"
+                  aria-label=""
+                  className="cf-apppeal-id"
+                  data-css-p6dv0b=""
+                  data-event="focus mouseenter"
+                  data-event-off="mouseleave keydown"
+                  data-for="tooltip-Copy Guest Link"
+                  data-tip={true}
+                  disabled={true}
+                  onClick={[Function]}
+                  tabIndex={0}
+                  type="submit"
+                >
+                  Copy Guest Link
+                   
+                  <ClipboardIcon
+                    className=""
+                    color="#5b616b"
+                    size={17}
+                  >
+                    <svg
+                      className=""
+                      height={17}
+                      viewBox="0 0 21 21"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M13.346 2.578h-2.664v-1.29C10.682.585 10.08 0 9.35 0H6.66c-.728 0-1.33.584-1.33 1.29v1.288H2.663v2.577h10.682V2.578zm-4.02 0H6.66v-1.29h2.665v1.29zm6.685 3.89V3.234a.665.665 0 0 0-.678-.656H14v1.29h.68v2.576H6.66v9.046H1.333V3.867h.68v-1.29H.678a.665.665 0 0 0-.68.657v12.913c0 .365.302.656.68.656h6.006v3.867h9.35l3.996-3.867V6.468h-4.02zm0 12.378v-2.043h2.112l-2.11 2.043zm2.665-3.356H14.68v3.867H7.992v-11.6h10.682v7.733z"
+                        fill="#5b616b"
+                        fillRule="evenodd"
+                      />
+                    </svg>
+                  </ClipboardIcon>
+                </button>
+              </CopyToClipboard>
+              <span
+                data-css-1qgqh7a=""
+              >
+                <ReactTooltip
+                  className="cf-tooltip"
+                  clickable={false}
+                  effect="solid"
+                  id="tooltip-Copy Guest Link"
+                  insecure={true}
+                  multiline={true}
+                  offset={Object {}}
+                  place="bottom"
+                  resizeHide={true}
+                  role="tooltip"
+                  wrapper="div"
+                >
+                  <div
+                    className="__react_component_tooltip t00000000-0000-0000-0000-000000000000 place-bottom type-dark"
+                    data-id="tooltip"
+                    id="tooltip-Copy Guest Link"
+                    role="tooltip"
+                  >
+                    <style
+                      dangerouslySetInnerHTML={
+                        Object {
+                          "__html": "
+  	.t00000000-0000-0000-0000-000000000000 {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t00000000-0000-0000-0000-000000000000.place-top {
+        margin-top: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-bottom {
+        margin-top: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-left {
+        margin-left: -10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t00000000-0000-0000-0000-000000000000.place-right {
+        margin-left: 10px;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t00000000-0000-0000-0000-000000000000.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  ",
+                        }
+                      }
+                    />
+                    Click to copy
+                  </div>
+                </ReactTooltip>
+              </span>
+            </Tooltip>
+          </CopyTextButton>
+        </VirtualHearingLinkDetails>
+      </div>
+    </LinkContainer>
+  </div>
+</HearingLinks>
+`;
+
 exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in progress 1`] = `
 <HearingLinks
   hearing={

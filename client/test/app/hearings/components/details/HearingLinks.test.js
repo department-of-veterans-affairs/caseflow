@@ -61,7 +61,7 @@ describe('HearingLinks', () => {
     );
 
     expect(form).toMatchSnapshot();
-    expect(form.find('HearingLinks')).toHaveLength(3);
+    expect(form.find('VirtualHearingLinkDetails')).toHaveLength(3);
     expect(
       form.find('VirtualHearingLinkDetails').exists({ label: 'Join Hearing' })
     ).toBe(true);
@@ -70,13 +70,21 @@ describe('HearingLinks', () => {
     ).toBe(true);
   })
 
-  // test('Matches snapshot when hearing is non-virtual, webex, and in progress', () => {
-  //   const form = mount(
-  //     <HearingLinks
-  //       hearing={hearing}
-  //     />
-  //   )
-  // });
+  test('Matches snapshot when hearing is non-virtual, webex, and in progress', () => {
+    const form = mount(
+      <HearingLinks
+      hearing={hearing}
+      user={anyUser}
+      virtualHearing={nonVirtualWebexHearing}
+    />
+  );
+
+  expect(form).toMatchSnapshot();
+  expect(form.find('LinkContainer')).toHaveLength(1);
+  expect(
+    form.find('VirtualHearingLinkDetails').exists({ label: 'Start Hearing' })
+  ).toBe(true);
+})
 
   test('Only displays Guest Link when user is not a host', () => {
     const form = mount(
