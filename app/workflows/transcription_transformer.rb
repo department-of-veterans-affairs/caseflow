@@ -2,12 +2,9 @@
 
 require "webvtt"
 require "rtf"
-require "csv"
 
 # Workflow for converting VTT transcription files to RTF
 class TranscriptionTransformer
-  class FileConversionError < StandardError; end
-
   def initialize(vtt_path)
     @vtt_path = vtt_path
     @rtf_path = vtt_path.gsub("vtt", "rtf")
@@ -66,7 +63,7 @@ class TranscriptionTransformer
     styles = {}
     styles["PS_CODE"] = RTF::ParagraphStyle.new
     styles["CS_CODE"] = RTF::CharacterStyle.new
-    styles["PS_CODE"].line_spacing = false
+    styles["PS_CODE"].line_spacing = -1
     styles["CS_CODE"].underline = true
     format_transcript(transcript).each do |cue|
       document.paragraph(styles["PS_CODE"]) do |n1|
@@ -108,7 +105,7 @@ class TranscriptionTransformer
   def create_footer(document)
     document.footer << "Insert Veteran's Last Name, First Name, MI, Claim No"
     rtf_footer =
-      "\\footer\\pard\\" + (" " * 47) + "\\chpgn" + (" " * 13) + "Veteran's Last, First, MI, Claim No\\par"
+      "\\footer\\pard\\" + (" " * 47) + "\\chpgn" + (" " * 18) + "Veteran's Last, First, Claim No\\par"
     document.to_rtf.sub!(document.footer.to_rtf, "{#{rtf_footer}}")
   end
 
