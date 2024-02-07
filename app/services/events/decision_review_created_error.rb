@@ -24,7 +24,8 @@ class Events::DecisionReviewCreatedError
       redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
 
       if redis.exists("RedisMutex:EndProductEstablishment:#{errored_claim_id}")
-        fail Caseflow::Error::RedisLockFailed, message: "Key RedisMutex:EndProductEstablishment:#{errored_claim_id} is already in the Redis Cache"
+        fail Caseflow::Error::RedisLockFailed, message: "Key RedisMutex:EndProductEstablishment:#{errored_claim_id}
+         is already in the Redis Cache"
       end
 
       RedisMutex.with_lock("EndProductEstablishment:#{errored_claim_id}", block: 60, expire: 100) do
