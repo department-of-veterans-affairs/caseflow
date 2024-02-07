@@ -21,18 +21,25 @@ describe Events::DecisionReviewCreatedError do
       before do
         allow(RedisMutex).to receive(:with_lock).and_raise(RedisMutex::LockError)
       end
-
       it "logs the error message" do
         expect(Rails.logger).to receive(:error)
-          .with("Failed to acquire lock for Claim ID: #{errored_claim_id}! This Event is being"\
-                " processed. Please try again later.")
+          .with("LockError occurred: RedisMutex::LockError")
         subject
       end
     end
     context "when standard error is raised" do
       it "logs an error and raises if an standard error occurs" do
-        allow_any_instance_of(Event).to receive(:update!).and_raise(StandardError)
+        allow_any_instance_of(DecisionReviewCreatedEvent).to receive(:update!).and_raise(StandardError)
         expect { subject }.to raise_error(StandardError)
+      end
+    end
+    context "when Redis key exists" do
+      let!(:redis_lock_failed) { Caseflow::Error::RedisLockFailed }
+      it "logs error message that Redis key exists" do
+        redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
+        lock_key = "RedisMutex:EndProductEstablishment:#{errored_claim_id}"
+        redis.set(lock_key, "lock is set", nx: true, ex: 5.seconds)
+        expect { subject }.to raise_error(redis_lock_failed)
       end
     end
   end

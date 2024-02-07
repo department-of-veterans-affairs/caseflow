@@ -18,25 +18,26 @@ class Events::DecisionReviewCreatedError
   #                 # with the one who held the lock and failed to unlock. (default: 10)
   class << self
     def handle_service_error(consumer_event_id, errored_claim_id, error_message)
-      event = find_by_consumer_event_id_or_create(consumer_event_id)
+      # check if consumer_event_id Event.reference_id exist if not Create DecisionReviewCreated Event
+      event = DecisionReviewCreatedEvent.find_or_create_by(reference_id: consumer_event_id)
+
+      redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
+
+      if redis.exists("RedisMutex:EndProductEstablishment:#{errored_claim_id}")
+        fail Caseflow::Error::RedisLockFailed, message: "Key RedisMutex:EndProductEstablishment:#{errored_claim_id} is already in the Redis Cache"
+      end
+
       RedisMutex.with_lock("EndProductEstablishment:#{errored_claim_id}", block: 60, expire: 100) do
         ActiveRecord::Base.transaction do
           event&.update!(error: error_message, info: { "errored_claim_id" => errored_claim_id })
         end
       end
-    rescue RedisMutex::LockError
-      Rails.logger.error("Failed to acquire lock for Claim ID: #{errored_claim_id}! This Event is being"\
-                        " processed. Please try again later.")
+    rescue RedisMutex::LockError => error
+      Rails.logger.error("LockError occurred: #{error.message}")
     rescue StandardError => error
       Rails.logger.error(error.message)
       event&.update!(error: error.message)
       raise error
-    end
-
-    # check if consumer_event_id Event.reference_id exist if not Create DecisionReviewCreated Event
-    def find_by_consumer_event_id_or_create(consumer_event_id)
-      Event.find_by(reference_id: consumer_event_id) ||
-        DecisionReviewCreatedEvent.create!(reference_id: consumer_event_id)
     end
   end
 end

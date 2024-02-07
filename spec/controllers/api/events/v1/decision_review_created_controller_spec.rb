@@ -58,5 +58,23 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
         expect(response).to have_http_status(:unauthorized)
       end
     end
+    context "catches errors" do
+      it "raises a RedisLockFailed Error" do
+        allow(Events::DecisionReviewCreatedError).to receive(:handle_service_error)
+          .and_raise(Caseflow::Error::RedisLockFailed.new("Lock Failure"))
+        request.headers["Authorization"] = "Token #{api_key.key_string}"
+        post :decision_review_created_error, params: appeals_consumer_paylod
+        expect(response).to have_http_status(:conflict)
+        expect(response.body).to eq({ message: "Lock Failure" }.to_json)
+      end
+      it "raises a Standard Error" do
+        allow(Events::DecisionReviewCreatedError).to receive(:handle_service_error)
+          .and_raise(StandardError.new("Standard Failure"))
+        request.headers["Authorization"] = "Token #{api_key.key_string}"
+        post :decision_review_created_error, params: appeals_consumer_paylod
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to eq({ message: "Standard Failure" }.to_json)
+      end
+    end
   end
 end
