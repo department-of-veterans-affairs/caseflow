@@ -1,15 +1,13 @@
 module Seeds
   class CaseDistributionLevers < Base
     def seed!
-      levers.each do |lever|
+      CaseDistributionLevers.levers.each do |lever|
         next if CaseDistributionLever.find_by_item(lever[:item])
         create_lever lever
       end
     end
 
-    private
-
-    def levers
+    def self.levers
       [
         {
           item: Constants.DISTRIBUTION.maximum_direct_review_proportion,
@@ -484,6 +482,8 @@ module Seeds
         },
       ]
     end
+
+    private
 
     def create_lever lever
       CaseDistributionLever.create(

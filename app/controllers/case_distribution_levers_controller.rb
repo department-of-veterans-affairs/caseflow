@@ -16,7 +16,7 @@ class CaseDistributionLeversController < ApplicationController
     render "index"
   end
 
-  def get_levers
+  def levers
     render json: { levers: grouped_levers, lever_history: CaseDistributionAuditLeverEntry.lever_history }
   end
 

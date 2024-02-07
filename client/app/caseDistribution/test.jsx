@@ -141,7 +141,7 @@ class CaseDistributionTest extends React.PureComponent {
                               </tr>
                             </thead>
                             <tbody>
-                              {this.props.acdHistory.map((entry, i) => {
+                              {this.props.acdHistory.map((entry) => {
                                 return [
                                   <tr>
                                     <td> { entry.id } </td>

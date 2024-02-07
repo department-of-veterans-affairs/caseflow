@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
 class VACOLS::CaseDocket < VACOLS::Record
   # :nocov:
   self.table_name = "brieff"
@@ -553,3 +554,4 @@ class VACOLS::CaseDocket < VACOLS::Record
     end
   end
 end
+# rubocop:enable Metrics/ClassLength

@@ -105,7 +105,7 @@ class HearingRequestDistributionQuery
       joins(with_assigned_distribution_task_sql)
         .where(hearings: { disposition: "held", judge_id: judge.id })
         .where("distribution_task.assigned_at > ?",
-          CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
+               CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
     end
 
     def tied_to_ineligible_judge
