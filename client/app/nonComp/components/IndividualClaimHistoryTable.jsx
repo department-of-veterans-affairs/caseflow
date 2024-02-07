@@ -11,26 +11,36 @@ const IndividualClaimHistoryTable = () => {
   //   (state) => state.nonComp.task
   // );
 
+  const processDate = (date) => date;
+
+  const detailsFragment = (details) => {
+    return <React.Fragment>{details}</React.Fragment>;
+  };
+
   return <QueueTable
     id="individual_claim_history_table"
     columns={[
-      { columnName: 'dateAndTime', header: 'Date and Time', valueFunction: () => 'date format func' },
-      { columnName: 'user', header: 'User', valueName: 'user', enableFilter: true },
-      { columnName: 'activity', header: 'Activity', valueName: 'activity', enableFilter: true },
-      { columnName: 'details', header: 'Details', valueFunction: () => 'get and format details' },
+      { columnName: 'eventDate', header: 'Date and Time', valueFunction: (row) => processDate(row.eventDate) },
+      { columnName: 'eventUser', header: 'User', valueName: 'eventUser', enableFilter: true },
+      { columnName: 'eventType', header: 'Activity', valueName: 'eventType', enableFilter: true },
+      { columnName: 'details', header: 'Details', valueFunction: (row) => detailsFragment(row.details) },
     ]}
     rowObjects={[
       {
-        user: 'System',
-        activity: 'Claim closed'
+        eventDate: '07/05/23, 15:00',
+        eventUser: 'System',
+        eventType: 'Claim closed'
       },
       {
-        user: 'J. Dudifer',
-        activity: 'Completed disposition'
+        eventDate: '07/05/23, 15:00',
+        eventUser: 'J. Dudifer',
+        eventType: 'Completed disposition'
       },
       {
-        user: 'A. Duderino',
-        activity: 'Withdrew issue'
+        eventDate: '07/05/23, 15:00',
+        eventUser: 'A. Duderino',
+        eventType: 'Withdrew issue',
+        details: 'withdrew asdf lorem blabla'
       },
     ]}
     summary="Individual claim history"
