@@ -75,6 +75,7 @@ AddLetter.propTypes = {
   removeLetter: PropTypes.func,
   index: PropTypes.number,
   setUnrelatedTasksCanContinue: PropTypes.func,
+  onContinueStatusChange: PropTypes.func,
 };
 
 const currentDate = moment.utc(new Date()).format('YYYY-MM-DD');
@@ -89,20 +90,14 @@ const NewLetter = (props) => {
     subType: '',
     reason: '',
     responseWindows: '',
-    customValue: 0
+    customValue: ''
   });
 
-  // const [letterType, setLetterType] = useState('');
-  // const [letterTitle, setLetterTitle] = useState('');
-  // const [letterSub, setLetterSub] = useState('');
-  // const [subReason, setSubReason] = useState('');
   const [letterTitleSelector, setLetterTitleSelector] = useState('');
   const [letterSubSelector, setLetterSubSelector] = useState('');
   const [letterSubReason, setLetterSubReason] = useState('');
-  const [numberOfDays, setNumberOfDays] = useState();
   const [customResponseWindowState, setCustomResponseWindowState] = useState(false);
 
-  // const [date, setDate] = useState(currentDate);
   const [stateOptions, setStateOptions] = useState(true);
 
   const [responseWindows, setResponseWindows] = useState('');
@@ -127,9 +122,11 @@ const NewLetter = (props) => {
     const currentNumber = value.trim();
 
     if (currentNumber <= 64) {
-      setNumberOfDays(value);
+      setLetterCard({ ...letterCard,
+        customValue: value });
     } else {
-      setNumberOfDays('');
+      setLetterCard({ ...letterCard,
+        customValue: '' });
     }
     dispatch(setResponseLetters([letterCard]));
   };
@@ -138,11 +135,11 @@ const NewLetter = (props) => {
     if (currentOpt === radioOptions[2].value) {
       setResponseWindows(radioOptions[2].value);
       setCustomResponseWindowState(true);
-      // setValueOptions(valueOptions);
     } else {
       setResponseWindows(currentOpt);
       setCustomResponseWindowState(false);
-      // setValueOptions(valueOptions);
+      setLetterCard({ ...letterCard,
+        customValue: '' });
       dispatch(setResponseLetters([letterCard]));
     }
   };
@@ -163,13 +160,21 @@ const NewLetter = (props) => {
   };
 
   const canContinue = () => {
-    for (const [value] of Object.entries(letterCard)) {
-      if (value.length < 0) {
-        return false;
+    const output = [];
+
+    for (const [, value] of Object.entries(letterCard)) {
+      if ((value !== null) && (value !== '')) {
+        output.push(value);
       }
     }
 
-    return true;
+    if ((output.length === 7) && (output[6] !== 'Custom')) {
+      return true;
+    } else if (output.length === 8) {
+      return true;
+    }
+
+    return false;
   };
 
   const findSub = (option, aux) => {
@@ -250,7 +255,7 @@ const NewLetter = (props) => {
   };
 
   useEffect(() => {
-    if (canContinue) {
+    if (canContinue()) {
       setUnrelatedTasksCanContinue(true);
     } else {
       setUnrelatedTasksCanContinue(false);
@@ -258,11 +263,6 @@ const NewLetter = (props) => {
   }, [letterCard]);
 
   useEffect(() => {
-    // if (responseWindows.length > 0) {
-    //   letterTitlesData();
-    //   setLetterCard({ ...letterCard,
-    //     responseWindows });
-    // }
     activateWindowsOption();
     setLetterCard({ ...letterCard,
       responseWindows });
@@ -288,10 +288,6 @@ const NewLetter = (props) => {
       reason: '',
       responseWindows: ''
     });
-    // setLetterTitle('');
-    // setLetterSub('');
-    // setSubReason('');
-    // setLetterType(val);
   };
 
   useEffect(() => {
@@ -310,29 +306,29 @@ const NewLetter = (props) => {
       reason: '',
       responseWindows: ''
     });
-    // setLetterSub('');
-    // setSubReason('');
-    // setLetterTitle(val);
   };
 
   const changeLetterSubTitle = (val) => {
     setLetterCard({ ...letterCard,
-      subType: val
+      subType: val,
+      reason: ''
     });
-    // setLetterSub(val);
   };
 
   const changeSubReason = (val) => {
     setLetterCard({ ...letterCard,
       reason: val
     });
-    // setSubReason(val);
   };
 
   const changeDate = (val) => {
     setLetterCard({ ...letterCard,
       date: val
     });
+  };
+
+  const removeLetter = () => {
+    props.removeLetter(index);
   };
 
   return (
@@ -403,14 +399,14 @@ const NewLetter = (props) => {
           name="content"
           useAriaLabel
           onChange={handleDays}
-          value={numberOfDays}
+          value={letterCard.customValue}
         />
       }
       <br />
       <Button
         name="Remove"
         styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
-        onClick={() => props.removeLetter(index)}
+        onClick={() => removeLetter()}
         classNames={['cf-btn-link', 'cf-right-side']}
       >
         <i className="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Remove letter
@@ -428,6 +424,7 @@ NewLetter.propTypes = {
   setLetterTitle: PropTypes.func,
   setResponseLetters: PropTypes.func,
   setUnrelatedTasksCanContinue: PropTypes.func
+  onContinueStatusChange: PropTypes.func,
 };
 
 const mapDispatchToProps = (dispatch) => (
