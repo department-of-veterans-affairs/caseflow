@@ -223,17 +223,10 @@ export const assignedByColumn = () => {
   };
 };
 
-export const veteranDetails = (tasks, filterOptions) => {
+export const veteranDetails = () => {
   return {
     header: 'Veteran Details',
-    enableFilter: true,
-    tableData: tasks,
-    columnName: 'veteranDetails.name',
-    anyFiltersAreSet: true,
-    customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
-    filterOptions,
-    label: 'Filter by veteran',
-    valueName: 'veteranDetails.name',
+    name: QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
     valueFunction: (task) => task.veteranDetails,
     backendCanSort: true,
     getSortValue: (task) => task.veteranDetails
