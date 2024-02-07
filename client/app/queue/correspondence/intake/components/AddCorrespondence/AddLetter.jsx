@@ -70,6 +70,7 @@ AddLetter.propTypes = {
   removeLetter: PropTypes.func,
   index: PropTypes.number,
   setUnrelatedTasksCanContinue: PropTypes.func,
+  onContinueStatusChange: PropTypes.func,
 };
 
 const currentDate = moment.utc(new Date()).format('YYYY-MM-DD');
@@ -85,13 +86,12 @@ export const NewLetter = (props) => {
     subType: '',
     reason: '',
     responseWindows: '',
-    customValue: 0
+    customValue: ''
   });
 
   const [letterTitleSelector, setLetterTitleSelector] = useState('');
   const [letterSubSelector, setLetterSubSelector] = useState('');
   const [letterSubReason, setLetterSubReason] = useState('');
-  const [numberOfDays, setNumberOfDays] = useState();
   const [customResponseWindowState, setCustomResponseWindowState] = useState(false);
 
   const [stateOptions, setStateOptions] = useState(true);
@@ -117,9 +117,11 @@ export const NewLetter = (props) => {
     const currentNumber = value.trim();
 
     if (currentNumber <= 64) {
-      setNumberOfDays(value);
+      setLetterCard({ ...letterCard,
+        customValue: value });
     } else {
-      setNumberOfDays('');
+      setLetterCard({ ...letterCard,
+        customValue: '' });
     }
   };
 
@@ -130,6 +132,8 @@ export const NewLetter = (props) => {
     } else {
       setResponseWindows(currentOpt);
       setCustomResponseWindowState(false);
+      setLetterCard({ ...letterCard,
+        customValue: '' });
     }
   };
 
@@ -151,12 +155,15 @@ export const NewLetter = (props) => {
   const canContinue = () => {
     const output = [];
 
-    for (const [key, value] of Object.entries(letterCard)) {
+    for (const [, value] of Object.entries(letterCard)) {
       if ((value !== null) && (value !== '')) {
         output.push(value);
       }
     }
-    if (output.length === 8) {
+
+    if ((output.length === 7) && (output[6] !== 'Custom')) {
+      return true;
+    } else if (output.length === 8) {
       return true;
     }
 
@@ -296,7 +303,8 @@ export const NewLetter = (props) => {
 
   const changeLetterSubTitle = (val) => {
     setLetterCard({ ...letterCard,
-      subType: val
+      subType: val,
+      reason: ''
     });
   };
 
@@ -310,6 +318,10 @@ export const NewLetter = (props) => {
     setLetterCard({ ...letterCard,
       date: val
     });
+  };
+
+  const removeLetter = () => {
+    props.removeLetter(index);
   };
 
   return (
@@ -380,14 +392,14 @@ export const NewLetter = (props) => {
           name="content"
           useAriaLabel
           onChange={handleDays}
-          value={numberOfDays}
+          value={letterCard.customValue}
         />
       }
       <br />
       <Button
         name="Remove"
         styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
-        onClick={() => props.removeLetter(index)}
+        onClick={() => removeLetter()}
         classNames={['cf-btn-link', 'cf-right-side']}
       >
         <i className="fa fa-trash-o" aria-hidden="true"></i>&nbsp;Remove letter
@@ -404,6 +416,7 @@ NewLetter.propTypes = {
   letterTitle: PropTypes.string,
   setLetterTitle: PropTypes.func,
   setUnrelatedTasksCanContinue: PropTypes.func,
+  onContinueStatusChange: PropTypes.func,
 };
 
 export default AddLetter;
