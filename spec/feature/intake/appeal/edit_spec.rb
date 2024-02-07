@@ -1235,7 +1235,9 @@ feature "Appeal Edit issues", :all_dbs do
              decision_date: 5.months.ago,
              decision_review: appeal3)
     end
+    let(:sct_user) { create(:user) }
     before do
+      SpecialtyCaseTeam.singleton.add_user(sct_user)
       BvaIntake.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:specialty_case_team_distribution)
@@ -1263,9 +1265,13 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_content("Move appeal to SCT queue")
       expect(page).to have_button("Move")
       safe_click ".confirm"
-      sct_task = SpecialtyCaseTeamAssignTask.find_by(appeal_id: appeal3.id)
-      expect(sct_task).to be_present
       expect(page).to have_content("You have successfully updated issues on this appeal")
+      User.authenticate!(user: sct_user)
+      visit "/organizations/specialty-case-team"
+      fn = appeal3.veteran.first_name
+      ln = appeal3.veteran.last_name
+      file_num = appeal3.veteran.file_number
+      expect(page).to have_content("#{fn} #{ln} (#{file_num})")
     end
   end
 end
