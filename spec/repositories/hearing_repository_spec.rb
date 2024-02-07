@@ -57,10 +57,10 @@ describe HearingRepository, :all_dbs do
     it "slots hearing at correct time" do
       HearingRepository.slot_new_hearing(
         hearing_day_id: hearing_day.id,
-        scheduled_time_string: "09:00",
+        scheduled_time_string: "09:00 AM America/New_York",
         appeal: legacy_appeal
       )
-
+      byebug
       expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day.id)
         .hearing_date.to_datetime.in_time_zone("UTC").hour).to eq(9)
     end
@@ -84,7 +84,7 @@ describe HearingRepository, :all_dbs do
         expect do
           HearingRepository.slot_new_hearing(
             hearing_day_id: hearing_day.id,
-            scheduled_time_string: "9:30",
+            scheduled_time_string: "9:30 AM UTC",
             appeal: legacy_appeal
           )
         end.to raise_error(HearingRepository::HearingDayFull)
@@ -95,7 +95,7 @@ describe HearingRepository, :all_dbs do
           HearingRepository.slot_new_hearing(
             {
               hearing_day_id: hearing_day.id,
-              scheduled_time_string: "9:30",
+              scheduled_time_string: "9:30 AM UTC",
               appeal: legacy_appeal
             },
             override_full_hearing_day_validation: true

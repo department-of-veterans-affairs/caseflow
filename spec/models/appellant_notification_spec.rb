@@ -260,7 +260,7 @@ describe AppellantNotification do
           appeal: appeal_hearing,
           hearing_day_id: create(:hearing_day).id,
           hearing_location_attributes: {},
-          scheduled_time_string: "11:30am",
+          scheduled_time_string: "11:30 AM UTC",
           notes: "none"
         }
       end
