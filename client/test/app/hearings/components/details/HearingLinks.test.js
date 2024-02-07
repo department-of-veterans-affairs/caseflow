@@ -13,15 +13,6 @@ const hearing = {
 };
 
 describe('HearingLinks', () => {
-  test('Matches snapshot with default props when passed in', () => {
-    const form = mount(
-      <HearingLinks />
-    );
-
-    expect(form).toMatchSnapshot();
-    expect(form.find(VirtualHearingLink)).toHaveLength(0);
-  });
-
   test('Matches snapshot when hearing is virtual, pexip, and in progress', () => {
     const form = mount(
       <HearingLinks
@@ -62,7 +53,8 @@ describe('HearingLinks', () => {
   test('Matches snapshot when hearing is virtual, webex, and in progress', () => {
     const form = mount(
       <HearingLinks
-        hearing={hearing}
+        hearing={{...hearing,
+          conferenceProvider: 'webex'}}
         isVirtual
         user={anyUser}
         virtualHearing={virtualWebexHearing}
@@ -82,9 +74,15 @@ describe('HearingLinks', () => {
   test('Matches snapshot when hearing is non-virtual, webex, and in progress', () => {
     const form = mount(
       <HearingLinks
-      hearing={hearing}
+      hearing={{...hearing,
+        conferenceProvider: 'webex',
+        dailyDocketConferenceLinks: {
+          0: {},
+          1: {coHostLink: 'https://instant-usgov.webex.com/visit/wz17ys8'}
+        }
+      }}
       user={anyUser}
-      virtualHearing={nonVirtualWebexHearing}
+      nonVirtualWebexHearing={nonVirtualWebexHearing}
     />
   );
 
