@@ -195,7 +195,7 @@ module Seeds
     end
 
     def create_specialty_case_team_action_required
-      tasks = create_list(:specialty_case_team_assign_task, 5, :on_hold)
+      tasks = create_list(:specialty_case_team_assign_task, 5, :action_required)
       tasks.last.appeal.veteran.date_of_death = 2.weeks.ago
       tasks.last.appeal.veteran.save
     end

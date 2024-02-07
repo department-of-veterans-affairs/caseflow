@@ -18,7 +18,7 @@ class SpecialtyCaseTeamUnassignedTasksTab < QueueTab
   end
 
   def tasks
-    active_tasks
+    assigned_tasks
   end
 
   def column_names
