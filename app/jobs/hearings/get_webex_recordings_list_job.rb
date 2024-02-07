@@ -23,7 +23,7 @@ class Hearings::GetWebexRecordingsListJob < CaseflowJob
   end
 
   def log_error(error)
-    Rails.logger.error("#{self.class.name} failed with error: #{error}")
+    Rails.logger.error("Retrying #{self.class.name} because failed with error: #{error}")
     extra = {
       application: self.class.name,
       job_id: job_id
