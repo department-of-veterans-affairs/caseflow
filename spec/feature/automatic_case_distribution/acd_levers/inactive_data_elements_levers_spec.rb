@@ -12,22 +12,26 @@ RSpec.feature "Excluding Appeals by Docket Type and Priority from Automatic Case
   let(:nod_adjustment) {Constants.DISTRIBUTION.nod_adjustment}
   let(:bust_backlog) {Constants.DISTRIBUTION.bust_backlog}
 
+  def description_product_match
+    expect(find("##{maximum_direct_review_proportion}-description")).to match_css('.description-styling')
+    expect(find("##{maximum_direct_review_proportion}-product")).to match_css('.value-styling')
+
+    expect(find("##{minimum_legacy_proportion}-description")).to match_css('.description-styling')
+    expect(find("##{minimum_legacy_proportion}-product")).to match_css('.value-styling')
+
+    expect(find("##{nod_adjustment}-description")).to match_css('.description-styling')
+    expect(find("##{nod_adjustment}-product")).to match_css('.value-styling')
+
+    expect(find("##{bust_backlog}-description")).to match_css('.description-styling')
+    expect(find("##{bust_backlog}-product")).to match_css('.value-styling')
+  end
+
   context "user is in Case Distro Algorithm Control organization but not an admin" do
     scenario "visits the lever control page", type: :feature do
       visit "case-distribution-controls"
       confirm_page_and_section_loaded
 
-      expect(find("##{maximum_direct_review_proportion}-description")).to match_css('.description-styling')
-      expect(find("##{maximum_direct_review_proportion}-product")).to match_css('.value-styling')
-
-      expect(find("##{minimum_legacy_proportion}-description")).to match_css('.description-styling')
-      expect(find("##{minimum_legacy_proportion}-product")).to match_css('.value-styling')
-
-      expect(find("##{nod_adjustment}-description")).to match_css('.description-styling')
-      expect(find("##{nod_adjustment}-product")).to match_css('.value-styling')
-
-      expect(find("##{bust_backlog}-description")).to match_css('.description-styling')
-      expect(find("##{bust_backlog}-product")).to match_css('.value-styling')
+      description_product_match
     end
   end
 
@@ -40,17 +44,7 @@ RSpec.feature "Excluding Appeals by Docket Type and Priority from Automatic Case
       visit "case-distribution-controls"
       confirm_page_and_section_loaded
 
-      expect(find("##{maximum_direct_review_proportion}-description")).to match_css('.description-styling')
-      expect(find("##{maximum_direct_review_proportion}-product")).to match_css('.value-styling')
-
-      expect(find("##{minimum_legacy_proportion}-description")).to match_css('.description-styling')
-      expect(find("##{minimum_legacy_proportion}-product")).to match_css('.value-styling')
-
-      expect(find("##{nod_adjustment}-description")).to match_css('.description-styling')
-      expect(find("##{nod_adjustment}-product")).to match_css('.value-styling')
-
-      expect(find("##{bust_backlog}-description")).to match_css('.description-styling')
-      expect(find("##{bust_backlog}-product")).to match_css('.value-styling')
+      description_product_match
     end
 
     scenario "confirms the displayed values of the levers" do

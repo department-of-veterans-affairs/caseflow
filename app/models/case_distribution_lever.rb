@@ -80,6 +80,10 @@ class CaseDistributionLever < ApplicationRecord
       CaseDistributionLever.find_by_item(lever).try(:distribution_value).to_f
     end
 
+    def cavc_affinity_days
+      find_integer_lever(Constants.DISTRIBUTION.cavc_affinity_days)
+    end
+
     def update_acd_levers(current_levers, current_user)
       grouped_levers = current_levers.index_by { |lever| lever["id"] }
       previous_levers = CaseDistributionLever.where(id: grouped_levers.keys).index_by { |lever| lever["id"] }

@@ -46,10 +46,10 @@ describe Seeds::CaseDistributionTestData do
       expect( CaseDistributionLever.count).to eq 20
 
       expect(Appeal.where(docket_type: "direct_review").count).to eq 38
-      expect(Appeal.where(docket_type: "direct_review").first.receipt_date).to eq (Date.today - (20.years + 1.day))
+      expect(Appeal.where(docket_type: "direct_review").first.receipt_date).to eq (Time.zone.today - (20.years + 1.day))
 
       expect(Appeal.where(docket_type: "hearing").count).to eq 35
-      expect(Appeal.where(docket_type: "hearing").first.receipt_date).to eq (Date.today- (20.years + 3.days))
+      expect(Appeal.where(docket_type: "hearing").first.receipt_date).to eq (Time.zone.today - (20.years + 3.days))
 
       expect(AppealState.where(appeal_type: "Appeal").count).to eq 73
       expect(Claimant.count).to eq 73
