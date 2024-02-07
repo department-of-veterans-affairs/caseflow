@@ -20,13 +20,14 @@ class Hearings::GetWebexRecordingsListJob < CaseflowJob
 
   def perform
     ensure_current_user_is_set
+    fail Caseflow::Error::WebexApiError if !get_recordings_list.success?
 
     get_recordings_list.ids.each do |n|
       get_recording_details(n)
     end
   end
 
-  # private
+  private
 
   def get_recordings_list
     from = CGI.escape(Time.parse("#{2.days.ago.strftime('%Y-%m-%d')}T23:59:59-05:00").iso8601)
