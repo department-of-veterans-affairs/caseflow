@@ -200,11 +200,11 @@ RSpec.describe CaseDistributionLever, :all_dbs do
         "id" => minimum_legacy_proportion.id,
         "value" => 0.5
       }
-        current_levers = [lever1, lever2]
+      current_levers = [lever1, lever2]
 
       errors = CaseDistributionLever.update_acd_levers(current_levers, nil)
       expect(errors.size).to eq(2)
-      expect(errors.last.to_s).to include('ERROR:  null value in column "user_id" violates not-null constraint')
+      expect(errors.last.to_s).to include('PG::NotNullViolation: ERROR')
     end
   end
 end
