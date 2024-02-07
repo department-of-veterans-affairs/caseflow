@@ -70,6 +70,18 @@ class CaseDistributionLever < ApplicationRecord
   end
 
   class << self
+
+     def method_missing(name, *args)
+      if Constants.DISTRIBUTION.to_h.keys.include?(name)
+        value = method_missing_value(name.to_s)
+        return value unless value.nil?
+
+        super
+      else
+        super
+      end
+    end
+
     def find_integer_lever(lever)
       return 0 unless INTEGER_LEVERS.include?(lever)
       CaseDistributionLever.find_by_item(lever).try(:distribution_value).to_i
@@ -78,10 +90,6 @@ class CaseDistributionLever < ApplicationRecord
     def find_float_lever(lever)
       return 0 unless FLOAT_LEVERS.include?(lever)
       CaseDistributionLever.find_by_item(lever).try(:distribution_value).to_f
-    end
-
-    def cavc_affinity_days
-      find_integer_lever(Constants.DISTRIBUTION.cavc_affinity_days)
     end
 
     def update_acd_levers(current_levers, current_user)
@@ -102,6 +110,18 @@ class CaseDistributionLever < ApplicationRecord
     end
 
     private
+
+    def method_missing_value(name)
+      lever = find_by_item(name).try(:distribution_value)
+
+      if INTEGER_LEVERS.include?(name)
+        lever.to_i
+      elsif FLOAT_LEVERS.include?(name)
+        lever.to_f
+      else
+        lever
+      end
+    end
 
     def add_audit_lever_entries(previous_levers, levers, current_user)
       entries = []
