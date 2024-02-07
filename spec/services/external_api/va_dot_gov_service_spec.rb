@@ -54,6 +54,7 @@ describe ExternalApi::VADotGovService do
       )
 
       expect(result.data.pluck(:facility_id)).to eq(%w[vha_757 vha_539])
+      expect(result.body[:meta][:distances].pluck(:id, :distance)).to eq([["vha_757", 0], ["vha_539", 1]])
       expect(result.error).to be_nil
     end
   end
