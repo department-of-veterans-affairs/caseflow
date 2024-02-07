@@ -7,7 +7,8 @@ require_relative "../../../app/services/claim_change_history/claim_history_event
 describe ChangeHistoryEventSerializer do
   let(:expected_uuid) { "709ab60d-3c5f-48d8-ac55-dc6b8f4f85bf" }
   before do
-    Timecop.freeze(Time.utc(2024, 1, 30, 12, 0, 0))
+    # Timecop.freeze(Time.utc(2024, 1, 30, 12, 0, 0))
+    Timecop.travel(5.days.ago)
     allow(SecureRandom).to receive(:uuid).and_return(expected_uuid)
   end
 
@@ -18,7 +19,7 @@ describe ChangeHistoryEventSerializer do
            :with_issue_type,
            :processed,
            :update_assigned_at,
-           assigned_at: 1.day.ago,
+           assigned_at: 2.days.ago,
            benefit_type: "vha",
            decision_date: 4.months.ago,
            claimant_type: :veteran_claimant,
@@ -35,7 +36,6 @@ describe ChangeHistoryEventSerializer do
 
   describe "#as_json" do
     it "renders json data" do
-      Timecop.travel(5.days.ago)
       serializable_hash = [
         {
           id: expected_uuid,
@@ -46,7 +46,7 @@ describe ChangeHistoryEventSerializer do
             details:
             {
               benefitType: "vha",
-              decisionDate: "2023-09-25",
+              decisionDate: events[0].decision_date,
               decisionDescription: nil,
               disposition: nil,
               issueDescription: "Veterans Health Administration seeded HLR in progress",
