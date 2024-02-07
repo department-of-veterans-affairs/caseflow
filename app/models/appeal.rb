@@ -920,7 +920,7 @@ class Appeal < DecisionReview
   end
 
   def sct_appeal?
-    request_issues.active.any? { |ri|  ri.benefit_type == "vha" }
+    request_issues.active.any?(&:sct_benefit_type?)
   end
 
   private

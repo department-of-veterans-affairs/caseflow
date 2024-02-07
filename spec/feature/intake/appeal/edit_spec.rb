@@ -1244,7 +1244,6 @@ feature "Appeal Edit issues", :all_dbs do
     end
     after { FeatureToggle.disable!(:specialty_case_team_distribution) }
 
-    # rubocop:disable Layout/LineLength
     scenario "appeal moves to sct queue when vha issue is added" do
       visit "/queue/appeals/#{appeal3.uuid}"
       # refresh the page if the case hasn't finished processing the create/load yet
@@ -1268,8 +1267,10 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_button("Move")
       safe_click ".confirm"
       expect(page).to have_content("You have successfully updated issues on this appeal")
-      expect(page).to have_content("The appeal for #{appeal3.claimant.name} (ID: #{appeal3.veteran.file_number}) has been moved to the SCT queue.")
+      expect(page).to have_content(
+        "The appeal for #{appeal3.claimant.name} " \
+        "(ID: #{appeal3.veteran.file_number}) has been moved to the SCT queue."
+      )
     end
-    # rubocop:enable Layout/LineLength
   end
 end
