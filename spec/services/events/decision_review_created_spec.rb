@@ -2,8 +2,8 @@
 
 describe Events::DecisionReviewCreated do
   let!(:consumer_event_id) { "123" }
-  let!(:reference_id) {"2001"}
-  let!(:completed_event) { DecisionReviewCreatedEvent.create!(reference_id: "999", completed_at: Time.now) }
+  let!(:reference_id) { "2001" }
+  let!(:completed_event) { DecisionReviewCreatedEvent.create!(reference_id: "999", completed_at: Time.zone.now) }
 
   describe "#event_exists_and_is_completed?" do
     subject { described_class.event_exists_and_is_completed?(consumer_event_id) }
@@ -33,6 +33,18 @@ describe Events::DecisionReviewCreated do
         expect(Rails.logger).to receive(:error)
           .with("Failed to acquire lock for Claim ID: #{reference_id}! This Event is being"\
                 " processed. Please try again later.")
+        subject
+      end
+    end
+
+    context "when lock Key is already in the Redis Cache" do
+      before do
+        allow(RedisMutex).to receive(:with_lock).and_raise(Caseflow::Error::RedisLockFailed)
+      end
+
+      it "throws a RedisLockFailed error" do
+        expect(Rails.logger).to receive(:error)
+          .with("Key RedisMutex:EndProductEstablishment:#{reference_id} is already in the Redis Cache")
         subject
       end
     end

@@ -6,7 +6,7 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
     claim_id = drc_params[:claim_id]
     ::Events::DecisionReviewCreated.create(consumer_event_id, claim_id)
     render json: { message: "DecisionReviewCreatedEvent successfully processed and backfilled" }, status: :created
-  rescue CaseFlow::Error::RedisLockFailed => error
+  rescue Caseflow::Error::RedisLockFailed => error
     render json: { message: error.message }, status: :conflict
   rescue StandardError => error
     render json: { message: error.message }, status: :unprocessable_entity

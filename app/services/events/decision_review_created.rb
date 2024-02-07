@@ -31,7 +31,9 @@ class Events::DecisionReviewCreated
         #   # event.update!(completed_at: Time.now, error: nil)
         # end
       end
-      true
+    rescue Caseflow::Error::RedisLockFailed => error
+      Rails.logger.error("Key RedisMutex:EndProductEstablishment:#{reference_id} is already in the Redis Cache")
+      raise error
     rescue RedisMutex::LockError => error
       Rails.logger.error("Failed to acquire lock for Claim ID: #{reference_id}! This Event is being"\
                          " processed. Please try again later.")

@@ -17,7 +17,19 @@ RSpec.describe Api::Events::V1::DecisionReviewCreatedController, type: :controll
       it "returns success response" do
         request.headers["Authorization"] = "Token #{api_key.key_string}"
         post :decision_review_created, params: valid_params
-        expect(response).to have_http_status(:created)
+        expect(response).to have_http_status(:conflict)
+      end
+    end
+
+    context "when claim_id is already in Redis Cache" do
+      it "throws a Redis error and returns a 409 status" do
+        request.headers["Authorization"] = "Token #{api_key.key_string}"
+        redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
+        lock_key = "RedisMutex:EndProductEstablishment:9999"
+        redis.set(lock_key, "lock is set", nx: true, ex: 5.seconds)
+        post :decision_review_created, params: valid_params
+        expect(response).to have_http_status(:conflict)
+        redis.del(lock_key)
       end
     end
 
