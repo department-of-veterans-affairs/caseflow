@@ -313,6 +313,16 @@ export const getFriendlyZoneName = (name) => {
   return Object.keys(REGIONAL_OFFICE_ZONE_ALIASES).includes(name) ? REGIONAL_OFFICE_ZONE_ALIASES[name] : name;
 };
 
+export const splitSelectedTime = (time) => {
+  const getAmTime = time.search('AM');
+  const splitTimeString = getAmTime < 0 ? time.search('PM') : getAmTime;
+
+  const selectedTime = splitTimeString === -1 ? time : time.slice(0, splitTimeString + 2).trim();
+  const selectedTimeZone = splitTimeString === -1 ? null : time.slice(splitTimeString + 2).trim();
+
+  return [selectedTime, selectedTimeZone]
+}
+
 /**
  * Method to get the Timezone label of a Timezone value
  * @param {string} time -- The time to which the zone is being added
@@ -320,11 +330,7 @@ export const getFriendlyZoneName = (name) => {
  * @returns {string} -- The label of the timezone
  */
 export const zoneName = (time, name, format) => {
-  const getAmTime = time.search('AM');
-  const splitTimeString = getAmTime < 0 ? time.search('PM') : getAmTime;
-
-  const selectedTime = splitTimeString === -1 ? time : time.slice(0, splitTimeString + 2).trim();
-  const selectedTimeZone = splitTimeString === -1 ? null : time.slice(splitTimeString + 2).trim();
+  const [selectedTime, selectedTimeZone] = splitSelectedTime(time);
 
   // Default to using America/New_York
   const timezone = name ? getFriendlyZoneName(name) : COMMON_TIMEZONES[3];
@@ -335,7 +341,7 @@ export const zoneName = (time, name, format) => {
   // Set the label
   const label = format ? '' : zone;
 
-  if (selectedTimeZone && selectedTimeZone.length > 0){
+  if (selectedTimeZone && selectedTimeZone.length > 0) {
     time = selectedTime;
     const originTimeZone = selectedTimeZone === null ? timezone : TIMEZONES[selectedTimeZone];
 
