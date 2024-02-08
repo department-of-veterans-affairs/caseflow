@@ -81,9 +81,10 @@ VirtualHearingLinkDetails.propTypes = {
 };
 
 export const LinkContainer = (
-  { link, linkText, user, hearing, isVirtual, wasVirtual, virtualHearing, role }
+  { link, linkText, user, hearing, isVirtual, wasVirtual, virtualHearing, role, label }
 ) => (
   <div id={`${role.toLowerCase()}-hearings-link`} {...css({ marginTop: '1.5rem' })}>
+    <strong>{label}: </strong>
     <VirtualHearingLinkDetails
       label={linkText}
       user={user}
@@ -118,7 +119,7 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
     return null;
   } else if ((hearing.conferenceProvider === 'webex') && !isVirtual && !wasVirtual) {
     return (
-      <div {...hearingLinksContainer}>
+      <div {...rowThirds} {...hearingLinksContainer}>
         {showHostLink && (
           <LinkContainer
             hearing={hearing}

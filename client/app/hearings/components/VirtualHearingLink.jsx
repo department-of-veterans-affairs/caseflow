@@ -13,10 +13,19 @@ const VirtualHearingLink = ({
   newWindow,
   link,
   virtualHearing,
-  label
+  label,
+  hearing
 }) => {
   if (!isVirtual) {
-    return null;
+    return (
+      <Link href={hearing.dailyDocketConferenceLinks[1].coHostLink} target={newWindow ? '_blank' : '_self'}>
+        <strong>{label}</strong>
+        <span {...ICON_POSITION_FIX}>
+          &nbsp;
+          <ExternalLinkIcon color={COLORS.PRIMARY} />
+        </span>
+      </Link>
+    );
   }
 
   return (
