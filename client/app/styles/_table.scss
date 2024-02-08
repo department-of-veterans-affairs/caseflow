@@ -60,6 +60,37 @@
   }
 }
 
+.correspondence-response-letters-table {
+  width: 100%;
+  table {
+    width: 100%;
+  }
+
+  th {
+    text-align: left;
+    width: auto;
+    font-weight: bold;
+  }
+
+  tr,
+  th,
+  td {
+    position: relative;
+    border: none;
+    background-color: #f9f9f9;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      width: 95%;
+      left: 1%;
+      border-bottom: 1px solid $color-gray-lighter;
+
+    }
+  }
+}
+
 .cf-filter-option-row {
   margin: 0;
 
