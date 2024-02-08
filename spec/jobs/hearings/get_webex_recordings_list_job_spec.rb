@@ -23,8 +23,8 @@ describe Hearings::GetWebexRecordingsListJob, type: :job do
 
     it "retries and logs errors" do
       subject
+      expect(Rails.logger).to receive(:error).with(/Retrying/)
       perform_enqueued_jobs { described_class.perform_later }
-      expect(Rails.logger.error).to be(true)
     end
   end
 end

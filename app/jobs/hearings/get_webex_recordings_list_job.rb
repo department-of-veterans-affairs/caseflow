@@ -16,8 +16,6 @@ class Hearings::GetWebexRecordingsListJob < CaseflowJob
 
   def perform
     ensure_current_user_is_set
-    fail Caseflow::Error::WebexApiError if !get_recordings_list.success?
-
     get_recordings_list.ids.each do |n|
       get_recording_details(n)
     end
