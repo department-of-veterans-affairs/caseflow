@@ -1007,7 +1007,7 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         tt = TaskTimer.find_by(task_id: psi.id)
         expect(tt.nil?).to be false
         # expect the submitted at time to be the hold days, minus time it takes to create it
-        expect(tt.submitted_at).to be_within(1.second).of (tt.created_at + hold_days.days)
+        expect(tt.submitted_at).to be_within(1.second).of tt.created_at + hold_days.days
       end
     end
 
@@ -1100,8 +1100,8 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         )
       end
 
-      let (:taskTimer) { TaskTimer.find_by(task_id: post_initial_task.id) }
-      let (:dayOnHold) { ((taskTimer.updated_at - taskTimer.created_at).to_i / 1.day) }
+      let(:taskTimer) { TaskTimer.find_by(task_id: post_initial_task.id) }
+      let(:dayOnHold) { ((taskTimer.updated_at - taskTimer.created_at).to_i / 1.day) }
 
       # expected instructions are payload instructions plus the hold time
       let(:instructions) { "Completion instructions go here" }
@@ -1156,8 +1156,8 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         )
       end
 
-      let (:taskTimer) { TaskTimer.find_by(task_id: post_initial_task.id) }
-      let (:dayOnHold) { ((taskTimer.updated_at - taskTimer.created_at).to_i / 1.day) }
+      let(:taskTimer) { TaskTimer.find_by(task_id: post_initial_task.id) }
+      let(:dayOnHold) { ((taskTimer.updated_at - taskTimer.created_at).to_i / 1.day) }
 
       # expected instructions are payload instructions plus the hold time
       let(:instructions) { "Completion instructions go here" }

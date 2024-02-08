@@ -121,7 +121,7 @@ class ScheduleHearingTask < Task
 
     hearing_admin_actions = available_hearing_user_actions(user)
 
-    if (assigned_to &.== user) || HearingsManagement.singleton.user_has_access?(user)
+    if (assigned_to&.== user) || HearingsManagement.singleton.user_has_access?(user)
       schedule_hearing_action = if FeatureToggle.enabled?(:schedule_veteran_virtual_hearing, user: user)
                                   Constants.TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE
                                 else
