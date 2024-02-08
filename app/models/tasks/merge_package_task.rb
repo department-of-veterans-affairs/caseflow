@@ -1,4 +1,4 @@
 # frozen_string_literal: true
 
-class MergePackageTask < ReviewPackageTask
+class MergePackageTask < CorrespondenceTask
 end
