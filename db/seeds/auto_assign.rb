@@ -29,7 +29,7 @@ module Seeds
         { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_NOD4", full_name: "Olia Smith" }
       ]
       users_info.map do |user_info|
-        u = User.find_or_create_by(
+        u = User.find_or_create_by!(
           station_id: 101,
           css_id: user_info[:css_id],
           full_name: user_info[:full_name],
@@ -37,7 +37,7 @@ module Seeds
         )
         org_user = OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: u)
         receive_nod_mail = OrganizationPermission.find_by(permission: "receive_nod_mail")
-        OrganizationUserPermission.find_or_create_by(
+        OrganizationUserPermission.find_or_create_by!(
           organization_permission: receive_nod_mail,
           organizations_user: org_user
         ) do |op|
@@ -48,13 +48,13 @@ module Seeds
 
     def create_inbound_ops_team_auto_assign_user
       users_info = [
-        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN1", full_name: "Ember Sky" },
-        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN2", full_name: "Aspen Ridge" },
-        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN3", full_name: "Clover Haven" },
-        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN4", full_name: "Blaze Hill" }
+        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN_A1", full_name: "Ember Sky" },
+        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN_A2", full_name: "Aspen Ridge" },
+        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN_A3", full_name: "Clover Haven" },
+        { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_AUTO_ASSIGN_A4", full_name: "Blaze Hill" }
       ]
       users_info.map do |user_info|
-        u = User.find_or_create_by(
+        u = User.find_or_create_by!(
           station_id: 101,
           css_id: user_info[:css_id],
           full_name: user_info[:full_name],
@@ -62,7 +62,7 @@ module Seeds
         )
         org_user = OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: u)
         auto_assign = OrganizationPermission.find_by(permission: "auto_assign")
-        OrganizationUserPermission.find_or_create_by(
+        OrganizationUserPermission.find_or_create_by!(
           organization_permission: auto_assign,
           organizations_user: org_user
         ) do |op|
@@ -80,7 +80,7 @@ module Seeds
         { css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER_NP5", full_name: "Liam Miller" }
       ]
       users_info.map do |user_info|
-        u = User.find_or_create_by(
+        u = User.find_or_create_by!(
           station_id: 101,
           css_id: user_info[:css_id],
           full_name: user_info[:full_name],
@@ -97,7 +97,7 @@ module Seeds
         { css_id: "INBOUND_OPS_TEAM_ADMIN_USER_S3", full_name: "Elijah Turner" }
       ]
       users_info.map do |user_info|
-        u = User.find_or_create_by(
+        u = User.find_or_create_by!(
           station_id: 101,
           css_id: user_info[:css_id],
           full_name: user_info[:full_name],
@@ -115,7 +115,7 @@ module Seeds
         { css_id: "MAIL_TEAM_USER_U3", full_name: "Ocean Breeze" }
       ]
       users_info.map do |user_info|
-        u = User.find_or_create_by(
+        u = User.find_or_create_by!(
           station_id: 101,
           css_id: user_info[:css_id],
           full_name: user_info[:full_name],
@@ -132,7 +132,7 @@ module Seeds
         { css_id: "MAIL_TEAM_ADMIN3", full_name: "Luna Meadows" }
       ]
       users_info.map do |user_info|
-        u = User.find_or_create_by(
+        u = User.find_or_create_by!(
           station_id: 101,
           css_id: user_info[:css_id],
           full_name: user_info[:full_name],
