@@ -126,7 +126,8 @@ const AffinityDays = () => {
         </div>
       </div>
       {affinityLevers.map((lever, index) => (
-        <div className={cx('active-lever', lever.is_disabled_in_ui ? 'lever-disabled' : '')} id={`lever-wrapper-${lever.item}`}
+        <div className={cx('active-lever', lever.is_disabled_in_ui ? 'lever-disabled' : '')}
+          id={`lever-wrapper-${lever.item}`}
           key={`${lever.item}-${index}`}
         >
           <div className="lever-left">
