@@ -95,7 +95,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   def download_file_to_tmp(link)
     return if File.exist?(@transcription_file.tmp_location)
 
-    URI.open(link) do |download|
+    URI(link).open do |download|
       IO.copy_stream(download, @transcription_file.tmp_location)
     end
     @transcription_file.update_download_status!(:success)
