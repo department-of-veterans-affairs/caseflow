@@ -95,6 +95,11 @@ describe Hearings::DownloadTranscriptionFileJob do
         let(:rtf_transcription_file) { TranscriptionFile.find_by(file_name: rtf_file_name) }
         let(:rtf_s3_location) { folder_name + "/transcript_text/" + rtf_file_name }
 
+        before do
+          File.open(rtf_tmp_location, "w")
+          allow_any_instance_of(TranscriptionTransformer).to receive(:call).and_return(rtf_tmp_location)
+        end
+
         after { File.delete(rtf_tmp_location) if File.exist?(rtf_tmp_location) }
 
         it "creates two new TranscriptionFile records, one for vtt and one for rtf" do
