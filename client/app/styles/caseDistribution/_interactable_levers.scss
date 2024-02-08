@@ -1,31 +1,14 @@
-$border-color: #e4e2e0;
-$lever-disabled-color: #757575;
-
-$modal-border-color: #d6d7d9;
-$modal-table-color: #212121;
-
-$lever-alert-bg-color: #f1f1f1;
-$lever-alert-banner-color: #205493;
-
-$lever-alert-banner-hover-color: #112e51;
-$before-bg-color: #8b8b8b;
-
-$success-bg-color: #e7f4e4;
-$success-before-bg-color: #2e8540;
-
-$error-color: #f9dede;
-$error-before-bg-color: #e31c3d;
 
 .lever-container {
   width: 100%;
-  border: 1px solid $border-color;
+  border: 1px solid $color-gray-warm-light;
   border-radius: 4px;
   margin-top: 20px;
   display: inline-block;
 
   h4 {
     margin: 0;
-    background: $border-color;
+    background: $color-gray-warm-light;
     padding: 10px 20px;
   }
 
@@ -57,7 +40,7 @@ $error-before-bg-color: #e31c3d;
 .active-lever {
   width: 100%;
   padding: 15px 0;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid $color-gray-warm-light;
   box-sizing: border-box;
   font-size: 19px;
   line-height: 1.5em;
@@ -66,7 +49,7 @@ $error-before-bg-color: #e31c3d;
 
 .lever-head {
   width: 100%;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid $color-gray-warm-light;
   display: inline-block;
   padding-bottom: 15px;
 }
@@ -161,7 +144,7 @@ $error-before-bg-color: #e31c3d;
 
 .lever-disabled {
   opacity: 0.72;
-  color: $lever-disabled-color;
+  color: $color-gray;
 }
 
 .combined-radio-input {
@@ -211,8 +194,8 @@ $error-before-bg-color: #e31c3d;
   border-left: 0;
   border-right: 0;
   border-bottom: 0;
-  border-color: $modal-border-color;
-  color: $modal-table-color;
+  color-gray-warm-light: $color-gray-lighter;
+  color: $color-base;
   vertical-align: text-top;
   font-size: 16px;
   line-height: 1.3em/25px;
@@ -225,8 +208,8 @@ $error-before-bg-color: #e31c3d;
   border-right: 0;
   border-top: 0;
   padding-left: 0;
-  color: $modal-table-color;
-  border-color: $modal-border-color;
+  color: $color-base;
+  color-gray-warm-light: $color-gray-lighter;
   font-family: Source Sans Pro;
   font-weight: 700;
   font-size: 16px;
@@ -246,18 +229,18 @@ $error-before-bg-color: #e31c3d;
 }
 
 .disabled-text {
-  color: $modal-table-color;
+  color: $color-base;
   opacity: 100%;
 }
 
 .lever-active {
-  color: $modal-table-color;
+  color: $color-base;
   opacity: 100%;
   margin-top: 0;
 }
 
 .lever-alert-banner {
-  background-color: $lever-alert-bg-color;
+  background-color: $color-gray-lightest;
   background-position: 2rem 2rem;
   background-size: 5.2rem;
   padding-left: .75rem;
@@ -286,7 +269,7 @@ $error-before-bg-color: #e31c3d;
     &:focus,
 
     &:hover {
-      color: $lever-alert-banner-hover-color;
+      color: $color-primary-darkest;
     }
   }
 
@@ -297,7 +280,7 @@ $error-before-bg-color: #e31c3d;
   }
 
   &::before {
-    background-color: $before-bg-color;
+    background-color: $color-gray;
     content: '';
     height: 100%;
     left: 0;
@@ -334,11 +317,11 @@ $error-before-bg-color: #e31c3d;
   }
 
   &-success {
-    background-color: $success-bg-color;
+    background-color: $color-green-lightest;
     background-image: url('~uswds/src/img/alerts/success.svg');
 
     ::before {
-      background-color: $success-before-bg-color;
+      background-color: $color-green;
     }
 
     .leverAlertBanner-body {
@@ -347,11 +330,11 @@ $error-before-bg-color: #e31c3d;
   }
 
   &-error {
-    background-color: $error-color;
+    background-color: $color-secondary-lightest;
     background-image: url('~uswds/src/img/alerts/error.svg');
 
     ::before {
-      background-color: $error-before-bg-color;
+      background-color: $color-secondary;
     }
 
     .leverAlertBanner-body {
