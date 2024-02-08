@@ -65,11 +65,13 @@ const AffinityDays = () => {
   };
 
   const generateMemberViewLabel = (option, lever, index) => {
+    const affinityLabelId = `affinity-day-label-for-${lever.item}`;
+
     if (lever.value === option.item) {
       return (
         <div key={`${option.item}-${lever.item}-${index}`}>
           <div>
-            <label id={lever.item}
+            <label id={affinityLabelId}
               className={lever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}
               htmlFor={`${lever.item}-${option.item}`}
             >
@@ -125,6 +127,7 @@ const AffinityDays = () => {
       </div>
       {affinityLevers.map((lever, index) => (
         <div className={cx('active-lever', lever.is_disabled_in_ui ? 'lever-disabled' : '')}
+          id={`lever-wrapper-${lever.item}`}
           key={`${lever.item}-${index}`}
         >
           <div className="lever-left">
