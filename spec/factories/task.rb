@@ -554,9 +554,9 @@ FactoryBot.define do
           task.appeal.tasks.of_type(:DistributionTask).first.completed!
         end
 
-        trait :on_hold do
+        trait :action_required do
           after(:create) do |task, _evaluator|
-            task.update(status: Constants.TASK_STATUSES.on_hold)
+            task.update(status: Constants.TASK_STATUSES.in_progress)
             judge = create(:user, :judge, :with_vacols_judge_record)
             attorney = create(:user, :with_vacols_attorney_record)
             judge_review_task = JudgeDecisionReviewTask.create!(appeal: task.appeal, parent: task.parent,
@@ -600,6 +600,18 @@ FactoryBot.define do
 
             # Also add the attorney to the judge's judge team
             judge.administered_judge_teams.first.add_user(attorney)
+          end
+        end
+
+        trait :ready_for_split_appeal do
+          action_required
+
+          after(:create) do |task, _evaluator|
+            create(:request_issue,
+                   decision_review: task.appeal,
+                   nonrating_issue_category: "Testing split appeal",
+                   decision_date: 5.days.ago)
+            task.save
           end
         end
       end
