@@ -474,9 +474,11 @@ module Caseflow::Error
   class PacmanNotFoundError < PacmanApiError; end
   class PacmanInternalServerError < PacmanApiError; end
 
+  # Redis Lock errors
   class SyncLockFailed < StandardError
     def ignorable?
       true
     end
   end
+  class RedisLockFailed < StandardError; end
 end
