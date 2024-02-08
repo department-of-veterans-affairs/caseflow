@@ -20,7 +20,7 @@ class CaseDistributionApp extends React.PureComponent {
   render() {
     return (
       <div>
-        <div> {/* Wrapper*/}
+        <div>
           <CaseDistributionContent />
         </div>
       </div>

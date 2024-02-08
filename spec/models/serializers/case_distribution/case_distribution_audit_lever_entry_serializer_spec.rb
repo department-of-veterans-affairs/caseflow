@@ -2,23 +2,25 @@
 
 describe CaseDistributionAuditLeverEntrySerializer do
   let!(:lever_user) { create(:user) }
-  let!(:lever) {create(:case_distribution_lever,
-    item: "lever_1",
-    title: "lever 1",
-    description: "This is the first lever. It is a boolean with the default value of true. Therefore there should be a two radio buttons that display true and false as the example with true being the default option chosen. This lever is active so it should be in the active lever section",
-    data_type: "boolean",
-    value: true,
-    unit: "",
-    lever_group_order: "static"
-  )}
+  let!(:lever) do
+    create(:case_distribution_lever,
+           item: "lever_1",
+           title: "lever 1",
+           description: "This is the first lever. It is a boolean with the default value of true. Therefore there should be a two radio buttons that display true and false as the example with true being the default option chosen. This lever is active so it should be in the active lever section",
+           data_type: "boolean",
+           value: true,
+           unit: "",
+           lever_group_order: "static")
+  end
 
-  let!(:audit_lever_entry) {create(:case_distribution_audit_lever_entry,
-    user: lever_user,
-    created_at: "2023-07-01 10:10:01",
-    previous_value: 10,
-    update_value: 42,
-    case_distribution_lever: lever
-  )}
+  let!(:audit_lever_entry) do
+    create(:case_distribution_audit_lever_entry,
+           user: lever_user,
+           created_at: "2023-07-01 10:10:01",
+           previous_value: 10,
+           update_value: 42,
+           case_distribution_lever: lever)
+  end
 
   it "serializes a CaseDistributionAuditLeverEntry" do
     entry = described_class.new(audit_lever_entry).serializable_hash[:data][:attributes]

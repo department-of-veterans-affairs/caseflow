@@ -1,15 +1,17 @@
+# frozen_string_literal: true
+
 RSpec.describe CaseDistributionLever, :all_dbs do
-  let!(:levers) {Seeds::CaseDistributionLevers.new.levers}
+  let!(:levers) { Seeds::CaseDistributionLevers.new.levers }
   let!(:lever_user) { create(:user) }
 
-  describe 'validations' do
-    it 'requires a title' do
+  describe "validations" do
+    it "requires a title" do
       lever = described_class.new(title: nil)
       expect(lever).not_to be_valid
       expect(lever.errors[:title]).to include("can't be blank")
     end
 
-    it 'requires a item' do
+    it "requires a item" do
       lever = described_class.new(item: nil)
       expect(lever).not_to be_valid
       expect(lever.errors[:item]).to include("can't be blank")
@@ -18,12 +20,11 @@ RSpec.describe CaseDistributionLever, :all_dbs do
     it 'requires a boolean attribute values to be either "true" or "false"' do
       lever = described_class.new
       expect(lever).not_to be_valid
-      expect(lever.errors[:is_toggle_active]).to include('is not included in the list')
-      expect(lever.errors[:is_disabled_in_ui]).to include('is not included in the list')
+      expect(lever.errors[:is_toggle_active]).to include("is not included in the list")
+      expect(lever.errors[:is_disabled_in_ui]).to include("is not included in the list")
     end
 
     context "validates value matches data_type" do
-
       it "validates radio data_type" do
         lever = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days)
         valid = lever.update(options: nil)
@@ -79,47 +80,28 @@ RSpec.describe CaseDistributionLever, :all_dbs do
   end
 
   context "constants" do
-
     it "should match array of INTEGER Levers" do
-      expect(CaseDistributionLever::INTEGER_LEVERS).to match_array(["ama_direct_review_docket_time_goals",
-        "request_more_cases_minimum",
-        "alternative_batch_size",
-        "batch_size_per_attorney",
-        "days_before_goal_due_for_distribution",
-        "ama_hearing_case_affinity_days",
-        "cavc_affinity_days",
-        "ama_evidence_submission_docket_time_goals",
-        "ama_hearings_docket_time_goals"])
+      expect(CaseDistributionLever::INTEGER_LEVERS).to match_array(%w[ama_direct_review_docket_time_goals
+                                                                      request_more_cases_minimum
+                                                                      alternative_batch_size
+                                                                      batch_size_per_attorney
+                                                                      days_before_goal_due_for_distribution
+                                                                      ama_hearing_case_affinity_days
+                                                                      cavc_affinity_days
+                                                                      ama_evidence_submission_docket_time_goals
+                                                                      ama_hearings_docket_time_goals])
     end
 
     it "should match array of FLOAT Levers" do
-      expect(CaseDistributionLever::FLOAT_LEVERS).to match_array(["maximum_direct_review_proportion", "minimum_legacy_proportion", "nod_adjustment"])
-    end
-  end
-
-  context "find_integer_lever" do
-    it "returns integer value for lever" do
-      lever = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.request_more_cases_minimum)
-
-      integer_value = CaseDistributionLever.find_integer_lever(Constants.DISTRIBUTION.request_more_cases_minimum)
-
-      expect(lever.value.to_i).to eq(integer_value)
-    end
-
-    it "returns float value for lever" do
-      lever = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.minimum_legacy_proportion)
-
-      float_value = CaseDistributionLever.find_float_lever(Constants.DISTRIBUTION.minimum_legacy_proportion)
-
-      expect(lever.value.to_f).to eq(float_value)
+      expect(CaseDistributionLever::FLOAT_LEVERS).to match_array(%w[maximum_direct_review_proportion minimum_legacy_proportion nod_adjustment])
     end
   end
 
   context "distribution_value" do
     it "should return value from options value when radio data type lever object" do
       lever = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days)
-      option = lever.options.detect{|opt| opt['item'] == lever.value}
-      expect(lever.distribution_value).to eq(option['value'])
+      option = lever.options.detect { |opt| opt["item"] == lever.value }
+      expect(lever.distribution_value).to eq(option["value"])
     end
 
     it "should return value from lever object" do
@@ -204,7 +186,7 @@ RSpec.describe CaseDistributionLever, :all_dbs do
 
       errors = CaseDistributionLever.update_acd_levers(current_levers, nil)
       expect(errors.size).to eq(2)
-      expect(errors.last.to_s).to include('PG::NotNullViolation: ERROR')
+      expect(errors.last.to_s).to include("PG::NotNullViolation: ERROR")
     end
   end
 end

@@ -34,7 +34,7 @@ export const SaveModal = (props) => {
 
     return (
       <div>
-        <table id='case-distribution-control-modal-table'>
+        <table id="case-distribution-control-modal-table">
           <tbody>
             <tr>
               <th className={cx('modal-table-header-styling', 'modal-table-left-styling')} scope="column">

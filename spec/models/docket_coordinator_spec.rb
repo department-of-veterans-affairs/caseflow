@@ -79,8 +79,8 @@ describe DocketCoordinator do
       end
     end
 
-    let(:days_before_goal_due) { CaseDistributionLever.find_integer_lever(Constants.DISTRIBUTION.days_before_goal_due_for_distribution) }
-    let(:days_to_decision_goal) { CaseDistributionLever.find_integer_lever(Constants.DISTRIBUTION.ama_direct_review_docket_time_goals) }
+    let(:days_before_goal_due) { CaseDistributionLever.days_before_goal_due_for_distribution }
+    let(:days_to_decision_goal) { CaseDistributionLever.ama_direct_review_docket_time_goals }
 
     let!(:other_direct_review_cases) do
       (0...10).map do
@@ -126,14 +126,14 @@ describe DocketCoordinator do
 
     context "lever settings for minimum legacy and maximum direct review proportions" do
       it "do not sum to more than 1" do
-        expect(CaseDistributionLever.find_float_lever(Constants.DISTRIBUTION.minimum_legacy_proportion) +
-        CaseDistributionLever.find_float_lever(Constants.DISTRIBUTION.maximum_direct_review_proportion)).to be <= 1
+        expect(CaseDistributionLever.minimum_legacy_proportion +
+        CaseDistributionLever.maximum_direct_review_proportion).to be <= 1
       end
     end
 
     context "when there are due direct reviews" do
       it "uses the number of due direct reviews as a proportion of the docket margin net of priority" do
-        lever_value = CaseDistributionLever.find_float_lever(Constants.DISTRIBUTION.maximum_direct_review_proportion)
+        lever_value = CaseDistributionLever.maximum_direct_review_proportion
 
         expect(docket_coordinator.docket_proportions[:direct_review]).to be < lever_value
         expect(docket_coordinator.target_number_of_ama_hearings(2.years)).to eq(30)
@@ -170,7 +170,7 @@ describe DocketCoordinator do
 
         it "caps the percentage at the maximum" do
           expect(docket_coordinator.docket_proportions).to include(
-            direct_review: CaseDistributionLever.find_float_lever(Constants.DISTRIBUTION.maximum_direct_review_proportion)
+            direct_review: CaseDistributionLever.maximum_direct_review_proportion
           )
         end
 

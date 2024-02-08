@@ -34,7 +34,7 @@ Rails.application.routes.draw do
   resources :case_distribution_levers, only: [] do
     collection do
       post :update_levers
-      get :get_levers
+      get :levers
     end
   end
 
