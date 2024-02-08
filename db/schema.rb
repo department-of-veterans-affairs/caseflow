@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_11_07_173746) do
+ActiveRecord::Schema.define(version: 2024_01_18_165914) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1792,6 +1792,30 @@ ActiveRecord::Schema.define(version: 2023_11_07_173746) do
     t.integer "user_count"
     t.index ["date", "task_type"], name: "index_team_quotas_on_date_and_task_type", unique: true
     t.index ["updated_at"], name: "index_team_quotas_on_updated_at"
+  end
+
+  create_table "transcription_files", force: :cascade do |t|
+    t.bigint "appeal_id", comment: "ID of the appeal associated with this record"
+    t.string "appeal_type", comment: "Type of appeal associated with this record"
+    t.string "aws_link", comment: "Link to be used by HMB to download original or transformed file"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id", comment: "The user who created the transcription record"
+    t.date "date_converted", comment: "Timestamp when file was converted from vtt to rtf or mp4 to mp3"
+    t.datetime "date_receipt_webex", comment: "Timestamp when file was added to webex"
+    t.datetime "date_upload_aws", comment: "Timestamp when file was loaded to AWS"
+    t.datetime "date_upload_box", comment: "Timestamp when file was added to box"
+    t.string "docket_number", null: false, comment: "Docket number of associated appeal"
+    t.string "file_name", null: false, comment: "File name, with extension, of the transcription file migrated by caseflow"
+    t.string "file_status", comment: "Status of the file, could be one of nil, 'Successful retrieval (Webex), Failed retrieval (Webex), Sucessful conversion, Failed conversion, Successful upload (AWS), Failed upload (AWS)'"
+    t.string "file_type", null: false, comment: "One of mp4, vtt, mp3, rtf, pdf, xls"
+    t.datetime "updated_at", null: false
+    t.bigint "updated_by_id", comment: "The user who most recently updated the transcription file"
+    t.index ["appeal_id", "appeal_type", "docket_number"], name: "index_transcription_files_on_docket_number_and_appeal"
+    t.index ["appeal_id", "appeal_type"], name: "index_transcription_files_on_appeal_id_and_appeal_type"
+    t.index ["aws_link"], name: "index_transcription_files_on_aws_link", unique: true
+    t.index ["docket_number"], name: "index_transcription_files_on_docket_number"
+    t.index ["file_name", "docket_number", "appeal_id", "appeal_type"], name: "idx_transcription_files_on_file_name_and_docket_num_and_appeal", unique: true
+    t.index ["file_type"], name: "index_transcription_files_on_file_type"
   end
 
   create_table "transcriptions", force: :cascade do |t|

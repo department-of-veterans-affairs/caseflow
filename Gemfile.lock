@@ -584,6 +584,7 @@ GEM
     rspec-support (3.9.2)
     rspec_junit_formatter (0.4.1)
       rspec-core (>= 2, < 4, != 2.12.0)
+    rtf (0.3.3)
     rubocop (0.79.0)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
@@ -712,6 +713,7 @@ GEM
     websocket-driver (0.7.6)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
+    webvtt-ruby (0.4.0)
     xmldsig (0.3.2)
       nokogiri
     xmlenc (0.8.0)
@@ -808,6 +810,7 @@ DEPENDENCIES
   rspec-rails
   rspec-retry
   rspec_junit_formatter
+  rtf
   rubocop (= 0.79)
   rubocop-performance
   rubocop-rails
@@ -834,6 +837,7 @@ DEPENDENCIES
   validates_email_format_of
   webdrivers
   webmock
+  webvtt-ruby
   ziptz
 
 BUNDLED WITH
