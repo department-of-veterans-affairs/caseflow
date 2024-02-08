@@ -6,7 +6,7 @@ require "rails_helper"
 
 RSpec.describe CaseDistributionAuditLeverEntry, type: :model do
   let(:user) { create(:user) }
-  let!(:levers) { Seeds::CaseDistributionLevers.new.levers }
+  let!(:levers) { Seeds::CaseDistributionLevers.levers }
 
   describe ".lever_history" do
     it "returns lever history for the past year" do

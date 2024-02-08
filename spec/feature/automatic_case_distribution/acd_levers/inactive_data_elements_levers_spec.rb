@@ -76,7 +76,6 @@ RSpec.feature "Excluding Appeals by Docket Type and Priority from Automatic Case
   end
 end
 
-# rubocop:disable Metrics/AbcSize
 def confirm_page_and_section_loaded
   expect(page).to have_content(COPY::CASE_DISTRIBUTION_STATIC_LEVERS_TITLE)
   expect(page).to have_content(Constants.DISTRIBUTION.maximum_direct_review_proportion_title)
@@ -84,5 +83,3 @@ def confirm_page_and_section_loaded
   expect(page).to have_content(Constants.DISTRIBUTION.nod_adjustment_title)
   expect(page).to have_content(Constants.DISTRIBUTION.bust_backlog_title)
 end
-# rubocop:enable Metrics/AbcSize
-
