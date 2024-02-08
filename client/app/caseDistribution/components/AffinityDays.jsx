@@ -9,7 +9,6 @@ import { getUserIsAcdAdmin, getLeversByGroup } from '../reducers/levers/leversSe
 import { Constant } from '../constants';
 import { dynamicallyAddAsterisk } from '../utils';
 
-
 const AffinityDays = () => {
   const theState = useSelector((state) => state);
   const isUserAcdAdmin = getUserIsAcdAdmin(theState);
@@ -66,11 +65,13 @@ const AffinityDays = () => {
   };
 
   const generateMemberViewLabel = (option, lever, index) => {
+    const affinityLabelId = `affinity-day-label-for-${lever.item}`;
+
     if (lever.value === option.item) {
       return (
         <div key={`${option.item}-${lever.item}-${index}`}>
           <div>
-            <label
+            <label id={affinityLabelId}
               className={lever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}
               htmlFor={`${lever.item}-${option.item}`}
             >
@@ -125,7 +126,7 @@ const AffinityDays = () => {
         </div>
       </div>
       {affinityLevers.map((lever, index) => (
-        <div className={cx('active-lever', lever.is_disabled_in_ui ? 'lever-disabled' : '')}
+        <div className={cx('active-lever', lever.is_disabled_in_ui ? 'lever-disabled' : '')} id={`lever-wrapper-${lever.item}`}
           key={`${lever.item}-${index}`}
         >
           <div className="lever-left">
