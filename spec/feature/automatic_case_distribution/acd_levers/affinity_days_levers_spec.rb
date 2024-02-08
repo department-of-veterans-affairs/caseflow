@@ -7,20 +7,24 @@ RSpec.feature "Affinity Days Levers" do
     User.authenticate!(user: user)
   end
 
-  let(:ama_hearing_case_affinity_days) { Constants.DISTRIBUTION.ama_hearing_case_affinity_days }
-  let(:ama_hearing_case_aod_affinity_days) { Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days }
-  let(:cavc_affinity_days) { Constants.DISTRIBUTION.cavc_affinity_days }
-  let(:cavc_aod_affinity_days) { Constants.DISTRIBUTION.cavc_aod_affinity_days }
-  let(:aoj_affinity_days) { Constants.DISTRIBUTION.aoj_affinity_days }
-  let(:aoj_aod_affinity_days) { Constants.DISTRIBUTION.aoj_aod_affinity_days }
-  let(:aoj_cavc_affinity_days) { Constants.DISTRIBUTION.aoj_cavc_affinity_days }
+  let(:disabled_lever_list) do
+    [
+      Constants.DISTRIBUTION.ama_hearing_case_affinity_days,
+      Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days,
+      Constants.DISTRIBUTION.cavc_aod_affinity_days,
+      Constants.DISTRIBUTION.cavc_affinity_days,
+      Constants.DISTRIBUTION.aoj_affinity_days,
+      Constants.DISTRIBUTION.aoj_aod_affinity_days,
+      Constants.DISTRIBUTION.aoj_cavc_affinity_days
+    ]
+  end
 
   context "user is in Case Distro Algorithm Control organization but not an admin" do
     scenario "visits the lever control page", type: :feature do
       visit "case-distribution-controls"
       confirm_page_and_section_loaded
 
-      [ama_hearing_case_affinity_days, ama_hearing_case_aod_affinity_days, cavc_aod_affinity_days, cavc_affinity_days, aoj_affinity_days, aoj_aod_affinity_days, aoj_cavc_affinity_days].each do |item|
+      disabled_lever_list.each do |item|
         expect(find("#lever-wrapper-#{item}")).to match_css(".lever-disabled")
         expect(find("#affinity-day-label-for-#{item}")).to match_css(".lever-disabled")
       end
@@ -36,8 +40,6 @@ RSpec.feature "Affinity Days Levers" do
       visit "case-distribution-controls"
       confirm_page_and_section_loaded
 
-      disabled_lever_list = %w[ama_hearing_case_affinity_days ama_hearing_case_aod_affinity_days cavc_affinity_days
-                               cavc_aod_affinity_days aoj_affinity_days aoj_aod_affinity_days aoj_cavc_affinity_days]
       option_list = [Constants.ACD_LEVERS.omit, Constants.ACD_LEVERS.infinite, Constants.ACD_LEVERS.value]
 
       disabled_lever_list.each do |disabled_lever|
