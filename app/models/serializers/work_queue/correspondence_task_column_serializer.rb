@@ -7,7 +7,9 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
     object.id.to_s
   end
 
-  attribute :instructions
+  attribute :instructions do |object|
+    object.instructions
+  end
 
   attribute :veteran_details do |object|
     vet = Veteran.find(object.correspondence.veteran_id)
@@ -22,21 +24,29 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
     object.correspondence.cmp_packet_number
   end
 
-  attribute(:completion_date, &:closed_at)
+  attribute :completion_date do |object|
+    object.closed_at
+  end
 
-  attribute :days_waiting
+  attribute :days_waiting do |object|
+    object.days_waiting
+  end
 
   attribute :va_date_of_receipt do |object|
     object.correspondence.va_date_of_receipt
   end
 
-  attribute :label
+  attribute :label do |object|
+    object.label
+  end
 
-  attribute :status
+  attribute :status do |object|
+    object.status
+  end
 
-  attribute :assigned_at
-
-  attribute :task_url
+  attribute :assigned_at do |object|
+    object.assigned_at
+  end
 
   attribute :assigned_to do |object|
     assignee = object.assigned_to

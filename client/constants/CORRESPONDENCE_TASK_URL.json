@@ -1,4 +1,0 @@
-{
-  "INTAKE_TASK_URL": "/queue/correspondence/uuid/intake",
-  "REVIEW_PACKAGE_TASK_URL": "/queue/correspondence/uuid/review_package"
-}

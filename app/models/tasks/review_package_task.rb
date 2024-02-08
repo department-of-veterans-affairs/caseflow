@@ -16,8 +16,4 @@ class ReviewPackageTask < CorrespondenceTask
   def when_child_task_created(_child_task)
     true
   end
-
-  def task_url
-    Constants.CORRESPONDENCE_TASK_URL.REVIEW_PACKAGE_TASK_URL.sub("uuid", correspondence.uuid)
-  end
 end
