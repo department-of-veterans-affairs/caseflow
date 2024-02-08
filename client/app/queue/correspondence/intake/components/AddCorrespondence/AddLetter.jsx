@@ -440,4 +440,3 @@ export default connect(
   mapDispatchToProps
 )(NewLetter);
 
-export default AddLetter;

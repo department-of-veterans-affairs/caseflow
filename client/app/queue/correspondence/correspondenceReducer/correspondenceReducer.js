@@ -14,6 +14,7 @@ export const initialState = {
   veteranInformation: [],
   waivedEvidenceTasks: [],
   responseLetters: {}
+}
 
 export const intakeCorrespondenceReducer = (state = initialState, action = {}) => {
   switch (action.type) {
