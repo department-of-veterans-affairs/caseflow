@@ -209,7 +209,7 @@ export const ConfirmCorrespondenceView = (props) => {
                         {
                           responseLetter?.customValue === null ?
                            responseLetter?.responseWindows :
-                            responseLetter?.customValue
+                            `${responseLetter?.customValue } days`
                         }
                       </td>
                     </tr>
