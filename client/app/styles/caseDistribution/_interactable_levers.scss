@@ -194,7 +194,7 @@
   border-left: 0;
   border-right: 0;
   border-bottom: 0;
-  color-gray-warm-light: $color-gray-lighter;
+  border-color: $color-gray-lighter;
   color: $color-base;
   vertical-align: text-top;
   font-size: 16px;
@@ -209,7 +209,7 @@
   border-top: 0;
   padding-left: 0;
   color: $color-base;
-  color-gray-warm-light: $color-gray-lighter;
+  border-color: $color-gray-lighter;
   font-family: Source Sans Pro;
   font-weight: 700;
   font-size: 16px;
@@ -264,7 +264,7 @@
   }
 
   a {
-    color: $lever-alert-banner-color;
+    color: $color-primary-darker;
 
     &:focus,
 
