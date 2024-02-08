@@ -194,16 +194,24 @@ export const ConfirmCorrespondenceView = (props) => {
                   <th className="cf-txt-c"> Response Window </th>
                 </tr>
               </tbody>
-              { responseLetters?.map((responseLetter, index) => {
+              { Object.keys(responseLetters)?.map((indexValue) => {
+                const responseLetter = responseLetters[indexValue];
+
                 return (
-                  <tbody key={index}>
+                  <tbody key={indexValue}>
                     <tr>
                       <td> {responseLetter?.date} </td>
                       <td> {responseLetter?.type} </td>
                       <td> {responseLetter?.title} </td>
                       <td> {responseLetter?.subType} </td>
                       <td> {responseLetter?.reason} </td>
-                      <td> {responseLetter?.responseWindows} </td>
+                      <td>
+                        {
+                          responseLetter?.customValue === null ?
+                           responseLetter?.responseWindows :
+                            responseLetter?.customValue
+                        }
+                      </td>
                     </tr>
                   </tbody>
                 );

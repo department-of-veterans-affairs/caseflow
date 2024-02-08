@@ -81,6 +81,7 @@ AddLetter.propTypes = {
 const currentDate = moment.utc(new Date()).format('YYYY-MM-DD');
 const NewLetter = (props) => {
   const index = props.index;
+  const letterHash = {};
   const setUnrelatedTasksCanContinue = props.setUnrelatedTasksCanContinue;
   const [letterCard, setLetterCard] = useState({
     id: index,
@@ -90,7 +91,7 @@ const NewLetter = (props) => {
     subType: '',
     reason: '',
     responseWindows: '',
-    customValue: ''
+    customValue: null
   });
 
   const [letterTitleSelector, setLetterTitleSelector] = useState('');
@@ -119,16 +120,15 @@ const NewLetter = (props) => {
   const [valueOptions, setValueOptions] = useState(radioOptions);
 
   const handleDays = (value) => {
-    const currentNumber = value.trim();
+    const currentNumber = parseInt(value.trim(), 10);
 
     if (currentNumber <= 64) {
       setLetterCard({ ...letterCard,
-        customValue: value });
+        customValue: currentNumber });
     } else {
       setLetterCard({ ...letterCard,
-        customValue: '' });
+        customValue: null });
     }
-    dispatch(setResponseLetters([letterCard]));
   };
 
   const handleCustomWindowState = (currentOpt) => {
@@ -139,8 +139,7 @@ const NewLetter = (props) => {
       setResponseWindows(currentOpt);
       setCustomResponseWindowState(false);
       setLetterCard({ ...letterCard,
-        customValue: '' });
-      dispatch(setResponseLetters([letterCard]));
+        customValue: null });
     }
   };
 
@@ -256,6 +255,8 @@ const NewLetter = (props) => {
 
   useEffect(() => {
     if (canContinue()) {
+      letterHash[index] = letterCard;
+      dispatch(setResponseLetters(letterHash));
       setUnrelatedTasksCanContinue(true);
     } else {
       setUnrelatedTasksCanContinue(false);

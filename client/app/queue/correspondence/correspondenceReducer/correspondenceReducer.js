@@ -13,7 +13,7 @@ export const initialState = {
   currentCorrespondence: [],
   veteranInformation: [],
   waivedEvidenceTasks: [],
-  responseLetters: [],
+  responseLetters: {},
 };
 
 export const intakeCorrespondenceReducer = (state = initialState, action = {}) => {
@@ -120,7 +120,7 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
   case ACTIONS.SET_RESPONSE_LETTERS:
     return update(state, {
       responseLetters: {
-        $set: [...state.responseLetters, ...action.payload.responseLetters]
+        $merge: action.payload.responseLetters
       }
     });
 
