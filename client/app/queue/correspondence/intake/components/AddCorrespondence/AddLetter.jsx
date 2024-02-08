@@ -7,6 +7,11 @@ import DateSelector from 'app/components/DateSelector';
 import RadioField from '../../../../../components/RadioField';
 import { ADD_CORRESPONDENCE_LETTER_SELECTIONS } from '../../../../constants';
 import moment from 'moment';
+import { connect, useDispatch } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import {
+  setResponseLetters
+} from '../../../correspondenceReducer/correspondenceActions';
 
 export const AddLetter = (props) => {
   const onContinueStatusChange = props.onContinueStatusChange;
@@ -74,9 +79,9 @@ AddLetter.propTypes = {
 };
 
 const currentDate = moment.utc(new Date()).format('YYYY-MM-DD');
-
-export const NewLetter = (props) => {
+const NewLetter = (props) => {
   const index = props.index;
+  const letterHash = {};
   const setUnrelatedTasksCanContinue = props.setUnrelatedTasksCanContinue;
   const [letterCard, setLetterCard] = useState({
     id: index,
@@ -86,7 +91,7 @@ export const NewLetter = (props) => {
     subType: '',
     reason: '',
     responseWindows: '',
-    customValue: ''
+    customValue: null
   });
 
   const [letterTitleSelector, setLetterTitleSelector] = useState('');
@@ -98,6 +103,7 @@ export const NewLetter = (props) => {
 
   const [responseWindows, setResponseWindows] = useState('');
   const naValue = 'N/A';
+  const dispatch = useDispatch();
 
   const radioOptions = [
     { displayText: '65 days',
@@ -114,14 +120,14 @@ export const NewLetter = (props) => {
   const [valueOptions, setValueOptions] = useState(radioOptions);
 
   const handleDays = (value) => {
-    const currentNumber = value.trim();
+    const currentNumber = parseInt(value.trim(), 10);
 
     if (currentNumber <= 64) {
       setLetterCard({ ...letterCard,
-        customValue: value });
+        customValue: currentNumber });
     } else {
       setLetterCard({ ...letterCard,
-        customValue: '' });
+        customValue: null });
     }
   };
 
@@ -133,7 +139,7 @@ export const NewLetter = (props) => {
       setResponseWindows(currentOpt);
       setCustomResponseWindowState(false);
       setLetterCard({ ...letterCard,
-        customValue: '' });
+        customValue: null });
     }
   };
 
@@ -249,6 +255,8 @@ export const NewLetter = (props) => {
 
   useEffect(() => {
     if (canContinue()) {
+      letterHash[index] = letterCard;
+      dispatch(setResponseLetters(letterHash));
       setUnrelatedTasksCanContinue(true);
     } else {
       setUnrelatedTasksCanContinue(false);
@@ -415,8 +423,18 @@ NewLetter.propTypes = {
   letterType: PropTypes.string,
   letterTitle: PropTypes.string,
   setLetterTitle: PropTypes.func,
+  setResponseLetters: PropTypes.func,
   setUnrelatedTasksCanContinue: PropTypes.func,
-  onContinueStatusChange: PropTypes.func,
+  onContinueStatusChange: PropTypes.func
 };
 
-export default AddLetter;
+const mapDispatchToProps = (dispatch) => (
+  bindActionCreators({
+    setResponseLetters
+  }, dispatch)
+);
+
+export default connect(
+  mapDispatchToProps
+)(NewLetter);
+

@@ -7,7 +7,7 @@ import Checkbox from '../../../../../components/Checkbox';
 import RadioField from '../../../../../components/RadioField';
 import ApiUtil from '../../../../../util/ApiUtil';
 import CorrespondencePaginationWrapper from '../../../CorrespondencePaginationWrapper';
-import AddLetter from '../AddCorrespondence/AddLetter';
+import { AddLetter } from '../AddCorrespondence/AddLetter';
 import {
   loadCurrentCorrespondence,
   loadCorrespondences,

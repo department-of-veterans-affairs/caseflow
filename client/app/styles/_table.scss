@@ -1,3 +1,5 @@
+$letter-table-bg-color: #f9f9f9;
+
 .usa-table-borderless {
   width: 100%;
 
@@ -57,6 +59,38 @@
 
   td:first-child {
     padding-left: 1.5%;
+  }
+}
+
+.correspondence-response-letters-table {
+  width: 100%;
+
+  table {
+    width: 100%;
+  }
+
+  th {
+    text-align: left;
+    width: auto;
+    font-weight: bold;
+  }
+
+  tr,
+  th,
+  td {
+    position: relative;
+    border: none;
+    background-color: $letter-table-bg-color;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      width: 95%;
+      left: 1%;
+      border-bottom: 1px solid $color-gray-lighter;
+
+    }
   }
 }
 
