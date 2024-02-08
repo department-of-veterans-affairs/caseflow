@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# to create legacy remanded appeals with AMA Tasks added
+# to update ama remand reasons code for existing records in db
 # run "bundle exec rake ama_remand_reasons:update_code"
 
 namespace :ama_remand_reasons do
