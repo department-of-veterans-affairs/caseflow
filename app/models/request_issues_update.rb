@@ -110,7 +110,8 @@ class RequestIssuesUpdate < CaseflowRecord
   end
 
   def remove_appeal_from_current_queue
-    review.tasks.where.not(type: %w[RootTask DistributionTask]).find_each(&:cancel_task_and_child_subtasks)
+    review.tasks.reject { |task| %w[RootTask DistributionTask].include?(task.type) }
+      .each(&:cancel_task_and_child_subtasks)
   end
 
   private

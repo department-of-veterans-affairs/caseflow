@@ -41,8 +41,8 @@ class SaveButtonUnconnected extends React.Component {
       moveToSctModal: false
     };
 
-    if (this.props.state.addedIssues.some((i) => i.benefitType === 'vha' && i.isPreDocketNeeded === 'false') &&
-    !this.props.originalIssues.some((i) => i.benefitType === 'vha')) {
+    if (this.props.state.addedIssues.some((i) => i.benefitType === 'vha') &&
+    !this.props.originalIssues.some((i) => i.benefitType === 'vha') && this.props.hasDistributionTask) {
       showModals.moveToSctModal = true;
     }
 
@@ -248,6 +248,7 @@ SaveButtonUnconnected.propTypes = {
   benefitType: PropTypes.string,
   claimId: PropTypes.string,
   history: PropTypes.object,
+  hasDistributionTask: PropTypes.bool,
   state: PropTypes.shape({
     addedIssues: PropTypes.array
   })
@@ -266,6 +267,7 @@ const SaveButton = connect(
     processedInCaseflow: state.processedInCaseflow,
     withdrawalDate: state.withdrawalDate,
     receiptDate: state.receiptDate,
+    hasDistributionTask: state.hasDistributionTask,
     state
   }),
   (dispatch) => bindActionCreators({
