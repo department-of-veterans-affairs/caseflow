@@ -41,7 +41,7 @@ class SaveButtonUnconnected extends React.Component {
       moveToSctModal: false
     };
 
-    if (this.props.state.addedIssues.some((i) => i.benefitType === 'vha') &&
+    if (this.props.state.addedIssues.some((i) => i.benefitType === 'vha' && i.isPreDocketNeeded === 'false') &&
     !this.props.originalIssues.some((i) => i.benefitType === 'vha')) {
       showModals.moveToSctModal = true;
     }
