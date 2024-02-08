@@ -97,12 +97,4 @@ class WorkQueue::LegacyAppealSearchSerializer
   def self.latest_vacols_attorney_case_review(object)
     VACOLS::CaseAssignment.latest_task_for_appeal(object.vacols_id)
   end
-
-  attribute :has_notifications do |object|
-    @all_notifications = Notification.where(appeals_id: object.vacols_id.to_s, appeals_type: "LegacyAppeal")
-    @allowed_notifications = @all_notifications.where(email_notification_status: nil)
-      .or(@all_notifications.where.not(email_notification_status: EXCLUDE_STATUS))
-      .merge(@all_notifications.where(sms_notification_status: nil)
-      .or(@all_notifications.where.not(sms_notification_status: EXCLUDE_STATUS))).any?
-  end
 end
