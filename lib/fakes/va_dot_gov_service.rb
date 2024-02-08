@@ -9,16 +9,6 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
         data["id"] = id
         data
       end
-      if (query[:lat].present? && query[:long].present?)
-        distances = query[:facilityIds].split(",").map.with_index do |id, index|
-          {
-            id: id,
-            distance: index
-          }
-        end
-      else
-        distances = []
-      end
 
       fake_facilities = fake_facilities_data
       fake_facilities[:data] = facilities
@@ -36,6 +26,19 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
       end
     elsif endpoint == VADotGovService::FACILITY_IDS_ENDPOINT
       HTTPI::Response.new 200, {}, fake_facilities_ids_data.to_json
+    end
+  end
+
+  def distances
+    if query[:lat].present? && query[:long].present?
+      query[:facilityIds].split(",").map.with_index do |id, index|
+        {
+          id: id,
+          distance: index
+        }
+      end
+    else
+      []
     end
   end
 
