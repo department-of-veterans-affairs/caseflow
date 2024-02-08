@@ -14,6 +14,11 @@ import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import IhpDaysWaitingTooltip from './IhpDaysWaitingTooltip';
 import TranscriptionTaskTooltip from './TranscriptionTaskTooltip';
 import Checkbox from '../../components/Checkbox';
+import { useDispatch } from 'react-redux';
+import {
+  setShowReassignPackageModal,
+  setShowRemovePackageModal
+} from 'app/queue/correspondence/correspondenceReducer/correspondenceActions';
 
 import { taskHasCompletedHold, hasDASRecord, collapseColumn, regionalOfficeCity, renderAppealType } from '../utils';
 import { DateString, daysSinceAssigned, daysSincePlacedOnHold } from '../../util/DateUtil';
@@ -224,9 +229,27 @@ export const assignedByColumn = () => {
 };
 
 export const veteranDetails = () => {
+  const dispatch = useDispatch();
+
+  const showReassignPackageModal = () => {
+    dispatch(setShowReassignPackageModal(true));
+  };
+
+  const showRemovePackageModal = () => {
+    dispatch(setShowRemovePackageModal(true));
+  };
+
   return {
     header: 'Veteran Details',
-    valueFunction: (task) => task.veteranDetails
+    valueFunction: (task) => {
+      if (task.taskUrl === '/modal/reassign_package') {
+        return <a href="#" onClick={showReassignPackageModal}>{task.veteranDetails}</a>;
+      } else if (task.taskUrl === '/modal/remove_package') {
+        return <a href="#" onClick={showRemovePackageModal}>{task.veteranDetails}</a>;
+      }
+
+      return <a href={task.taskUrl}>{task.veteranDetails}</a>;
+    }
   };
 };
 
@@ -235,7 +258,7 @@ export const vaDor = () => {
   return {
     header: 'VA DOR',
     valueFunction: (task) => {
-      return moment(task.vador).format('MM/DD/YYYY');
+      return moment(task.vaDor).format('MM/DD/YYYY');
     }
   };
 };

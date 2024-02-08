@@ -13,6 +13,8 @@ export const initialState = {
   currentCorrespondence: [],
   veteranInformation: [],
   waivedEvidenceTasks: [],
+  showReassignPackageModal: false,
+  showRemovePackageModal: false,
 };
 
 export const intakeCorrespondenceReducer = (state = initialState, action = {}) => {
@@ -120,6 +122,20 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     return update(state, {
       waivedEvidenceTasks: {
         $set: [...action.payload.task]
+      }
+    });
+
+  case ACTIONS.SET_SHOW_REASSIGN_PACKAGE_MODAL:
+    return update(state, {
+      showReassignPackageModal: {
+        $set: action.payload.isVisible
+      }
+    });
+
+  case ACTIONS.SET_SHOW_REMOVE_PACKAGE_MODAL:
+    return update(state, {
+      showRemovePackageModal: {
+        $set: action.payload.isVisible
       }
     });
 
