@@ -3,7 +3,7 @@
 describe SpecialtyCaseTeamAssignTask do
   let(:user) { create(:user) }
   let(:org) { SpecialtyCaseTeam.singleton }
-  let(:sct_task) { create(:sct_assign_task) }
+  let(:sct_task) { create(:specialty_case_team_assign_task) }
   let(:expected_actions) do
     [
       Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
