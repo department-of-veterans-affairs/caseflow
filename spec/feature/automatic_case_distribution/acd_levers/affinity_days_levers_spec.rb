@@ -20,13 +20,10 @@ RSpec.feature "Affinity Days Levers" do
       visit "case-distribution-controls"
       confirm_page_and_section_loaded
 
-      expect(find("##{ama_hearing_case_affinity_days}")).to match_css(".lever-disabled")
-      expect(find("##{ama_hearing_case_aod_affinity_days}")).to match_css(".lever-disabled")
-      expect(find("##{cavc_affinity_days}")).to match_css(".lever-disabled")
-      expect(find("##{cavc_aod_affinity_days}")).to match_css(".lever-disabled")
-      expect(find("##{aoj_affinity_days}")).to match_css(".lever-disabled")
-      expect(find("##{aoj_aod_affinity_days}")).to match_css(".lever-disabled")
-      expect(find("##{aoj_cavc_affinity_days}")).to match_css(".lever-disabled")
+      [ama_hearing_case_affinity_days, ama_hearing_case_aod_affinity_days, cavc_aod_affinity_days, cavc_affinity_days, aoj_affinity_days, aoj_aod_affinity_days, aoj_cavc_affinity_days].each do |item|
+        expect(find("#lever-wrapper-#{item}")).to match_css(".lever-disabled")
+        expect(find("#affinity-day-label-for-#{item}")).to match_css(".lever-disabled")
+      end
     end
   end
 
