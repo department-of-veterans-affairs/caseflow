@@ -52,6 +52,10 @@ describe LegacyDocket do
     subject { docket.weight }
 
     before do
+      nod_lever = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.nod_adjustment)
+      nod_lever.value = 0.4
+      nod_lever.save!
+      
       allow(LegacyAppeal.repository).to receive(:docket_counts_by_priority_and_readiness)
         .and_return(counts_by_priority_and_readiness)
       allow(LegacyAppeal.repository).to receive(:nod_count).and_return(1)
