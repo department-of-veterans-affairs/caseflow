@@ -43,6 +43,7 @@ describe Events::DecisionReviewCreated do
         lock_key = "RedisMutex:EndProductEstablishment:#{reference_id}"
         redis.set(lock_key, "lock is set", nx: true, ex: 5.seconds)
         expect { subject }.to raise_error(Caseflow::Error::RedisLockFailed)
+        redis.del(lock_key)
       end
     end
 
