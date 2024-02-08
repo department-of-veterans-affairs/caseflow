@@ -44,7 +44,7 @@ module Seeds
           title: Constants.DISTRIBUTION.nod_adjustment_title,
           description: 'Applied for docket balancing reflecting the likelihood that NODs will advance to a Form 9.',
           data_type: Constants.ACD_LEVERS.data_types.number,
-          value: 0.9,
+          value: 0.4,
           unit: '%',
           is_toggle_active: false,
           is_disabled_in_ui: true,
