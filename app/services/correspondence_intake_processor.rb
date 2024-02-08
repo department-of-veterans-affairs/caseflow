@@ -52,17 +52,20 @@ class CorrespondenceIntakeProcessor
   end
 
   def create_response_letter(intake_params, correspondence_id)
-    binding.pry
-    intake_params[:response_letters]&.map do |data|
 
+    intake_params[:response_letters]&.map do |data|
       CorrespondenceResponseLetter.create!(
         correspondence_id: correspondence_id,
+        date_sent: data[:date],
+        title: data[:title],
+        subcategory: data[:subType],
+        reason: data[:reason],
+        response_window: data[:responseWindows]
+        letter_type: data[:type]
       )
     end
   end
 
-  # :title, :date_sent, :letter_type, :subcategory, :reason,
-  #                                                          :response_window, :user_id)
 
   def link_appeals_to_correspondence(intake_params, correspondence_id)
     intake_params[:related_appeal_ids]&.map do |appeal_id|
