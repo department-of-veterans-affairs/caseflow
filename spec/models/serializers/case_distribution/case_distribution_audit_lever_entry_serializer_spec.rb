@@ -2,6 +2,7 @@
 
 describe CaseDistributionAuditLeverEntrySerializer do
   let!(:lever_user) { create(:user) }
+  # rubocop:disable Layout/LineLength
   let!(:lever) do
     create(:case_distribution_lever,
            item: "lever_1",
@@ -12,6 +13,7 @@ describe CaseDistributionAuditLeverEntrySerializer do
            unit: "",
            lever_group_order: "static")
   end
+  # rubocop:enable Layout/LineLength
 
   let!(:audit_lever_entry) do
     create(:case_distribution_audit_lever_entry,

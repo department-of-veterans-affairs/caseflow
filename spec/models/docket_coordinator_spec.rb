@@ -194,7 +194,6 @@ describe DocketCoordinator do
           let(:nonpriority_legacy_count) { 15 }
 
           it "uses the maximum number possible" do
-            binding.pry
             expect(docket_coordinator.docket_proportions).to include(
               legacy: 0.1
             )

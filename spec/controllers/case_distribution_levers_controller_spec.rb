@@ -80,7 +80,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     CDAControlGroup.singleton.add_user(lever_user)
   end
 
-  describe "GET acd_lever_index", type: :request do
+  describe "GET acd-controls", type: :request do
     it "redirects the user to the unauthorized page if they are not authorized" do
       User.authenticate!(user: create(:user))
       get "/acd-controls"
@@ -89,7 +89,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       expect(response.body).to match(/unauthorized/)
     end
 
-    it "renders a page with the correct levers, lever history, and user admin status when user is allowed to view the page" do
+    it "renders correctly for non-admin user" do
       User.authenticate!(user: lever_user)
       get "/acd-controls"
 
@@ -108,7 +108,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       expect(request_user_is_an_admin).to be_falsey
     end
 
-    it "renders a page with the correct levers, lever history, and user admin status when user is an admin" do
+    it "renders correctly for an admin" do
       User.authenticate!(user: lever_user)
       OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
       get "/acd-controls"
@@ -153,7 +153,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     end
   end
 
-  describe "GET acd_lever_index with case-distribution-controls path", type: :request do
+  describe "GET case-distribution-controls", type: :request do
     it "redirects the user to the unauthorized page if they are not authorized" do
       User.authenticate!(user: create(:user))
       get "/case-distribution-controls"
@@ -162,7 +162,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       expect(response.body).to match(/unauthorized/)
     end
 
-    it "renders a page with the correct levers, lever history, and user admin status when user is allowed to view the page" do
+    it "renders correctly for non-admin user" do
       User.authenticate!(user: lever_user)
       get "/case-distribution-controls"
 
@@ -181,7 +181,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       expect(request_user_is_an_admin).to be_falsey
     end
 
-    it "renders a page with the correct levers, lever history, and user admin status when user is an admin" do
+    it "renders correctly for admin user" do
       User.authenticate!(user: lever_user)
       OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
       get "/case-distribution-controls"

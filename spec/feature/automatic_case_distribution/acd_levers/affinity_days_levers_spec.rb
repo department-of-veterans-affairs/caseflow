@@ -39,13 +39,9 @@ RSpec.feature "Affinity Days Levers" do
       visit "case-distribution-controls"
       confirm_page_and_section_loaded
 
-      omit = Constants.ACD_LEVERS.omit
-      infinite = Constants.ACD_LEVERS.infinite
-      value = Constants.ACD_LEVERS.value
-
-      disabled_lever_list = [ama_hearing_case_affinity_days, ama_hearing_case_aod_affinity_days, cavc_affinity_days,
+      disabled_lever_list = %w[ama_hearing_case_affinity_days, ama_hearing_case_aod_affinity_days, cavc_affinity_days,
                              cavc_aod_affinity_days, aoj_affinity_days, aoj_aod_affinity_days, aoj_cavc_affinity_days]
-      option_list = [omit, infinite, value]
+      option_list = [Constants.ACD_LEVERS.omit, Constants.ACD_LEVERS.infinite, Constants.ACD_LEVERS.value]
 
       disabled_lever_list.each do |disabled_lever|
         option_list do |option|
@@ -56,6 +52,7 @@ RSpec.feature "Affinity Days Levers" do
   end
 end
 
+# rubocop:disable Metrics/AbcSize
 def confirm_page_and_section_loaded
   expect(page).to have_content(COPY::CASE_DISTRIBUTION_AFFINITY_DAYS_H2_TITLE)
   expect(page).to have_content(Constants.DISTRIBUTION.ama_hearing_case_affinity_days_title)
@@ -66,3 +63,4 @@ def confirm_page_and_section_loaded
   expect(page).to have_content(Constants.DISTRIBUTION.aoj_aod_affinity_days_title)
   expect(page).to have_content(Constants.DISTRIBUTION.aoj_cavc_affinity_days_title)
 end
+# rubocop:enable Metrics/AbcSize

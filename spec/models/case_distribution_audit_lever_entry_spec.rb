@@ -12,10 +12,30 @@ RSpec.describe CaseDistributionAuditLeverEntry, type: :model do
     it "returns lever history for the past year" do
       lever = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days)
       entries = [
-        create(:case_distribution_audit_lever_entry, user: user, case_distribution_lever: lever, created_at: 13.months.ago),
-        create(:case_distribution_audit_lever_entry, user: user, case_distribution_lever: lever, created_at: 11.months.ago),
-        create(:case_distribution_audit_lever_entry, user: user, case_distribution_lever: lever, created_at: 2.years.ago),
-        create(:case_distribution_audit_lever_entry, user: user, case_distribution_lever: lever, created_at: 1.month.ago)
+        create(
+          :case_distribution_audit_lever_entry,
+          user: user,
+          case_distribution_lever: lever,
+          created_at: 13.months.ago
+        ),
+        create(
+          :case_distribution_audit_lever_entry,
+          user: user,
+          case_distribution_lever: lever,
+          created_at: 11.months.ago
+        ),
+        create(
+          :case_distribution_audit_lever_entry,
+          user: user,
+          case_distribution_lever: lever,
+          created_at: 2.years.ago
+        ),
+        create(
+          :case_distribution_audit_lever_entry,
+          user: user,
+          case_distribution_lever: lever,
+          created_at: 1.month.ago
+        )
 
       ]
 
