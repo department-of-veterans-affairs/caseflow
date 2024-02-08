@@ -47,6 +47,10 @@ class CorrespondenceTask < Task
     appeal
   end
 
+  def task_url
+    "/under_construction"
+  end
+
   private
 
   # rubocop:disable Metrics/CyclomaticComplexity
