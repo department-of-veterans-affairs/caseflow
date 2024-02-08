@@ -53,14 +53,21 @@ class CorrespondenceIntakeProcessor
 
   def create_response_letter(intake_params, correspondence_id)
 
+    current_value = null
     intake_params[:response_letters]&.map do |data|
+      if (data[:responseWindows] == 'Custom')
+        current_value = data[:customValue]
+      elseif (data[:responseWindows] == '65 days')
+        current_value = 65
+      end
+
       CorrespondenceResponseLetter.create!(
         correspondence_id: correspondence_id,
         date_sent: data[:date],
         title: data[:title],
         subcategory: data[:subType],
         reason: data[:reason],
-        response_window: data[:responseWindows]
+        response_window: current_value,
         letter_type: data[:type]
       )
     end
