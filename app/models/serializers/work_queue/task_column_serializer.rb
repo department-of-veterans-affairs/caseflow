@@ -184,7 +184,13 @@ class WorkQueue::TaskColumnSerializer
         id: assignee.id
       }
     else
-      {}
+      {
+        css_id: nil,
+        is_organization: nil,
+        name: nil,
+        type: nil,
+        id: nil
+      }
     end
   end
 
