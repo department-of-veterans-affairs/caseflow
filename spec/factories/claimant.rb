@@ -31,6 +31,12 @@ FactoryBot.define do
       end
     end
 
+    trait :with_unrecognized_appellant_not_listed_poa do
+      after(:create) do |claimant, _evaluator|
+        create(:unrecognized_appellant, :with_not_listed_power_of_attorney, claimant: claimant)
+      end
+    end
+
     trait :attorney do
       initialize_with { AttorneyClaimant.new(attributes) }
       type { AttorneyClaimant.name }
