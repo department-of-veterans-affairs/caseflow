@@ -31,8 +31,8 @@ class TranscriptionTransformer
       create_cover_page(doc)
       doc.page_break
       create_transcription_pages(vtt, doc)
-      doc = create_footer(doc)
-      File.open(@rtf_path, "w") { |file| file.write(doc) }
+      raw_doc = create_footer_and_spacing(doc)
+      File.open(@rtf_path, "w") { |file| file.write(raw_doc) }
       @rtf_path
     rescue StandardError
       raise FileConversionError
@@ -102,11 +102,13 @@ class TranscriptionTransformer
   # create the footer
   # document - the document object
   # returns the document with the footer
-  def create_footer(document)
+  def create_footer_and_spacing(document)
     document.footer << "Insert Veteran's Last Name, First Name, MI, Claim No"
     rtf_footer =
       "\\footer\\pard\\" + (" " * 47) + "\\chpgn" + (" " * 18) + "Veteran's Last, First, Claim No\\par"
+    rtf_spacing = "sl120\\slmult1"
     document.to_rtf.sub!(document.footer.to_rtf, "{#{rtf_footer}}")
+    document.to_rtf.gsub!("sl-1", rtf_spacing)
   end
 
   # streamlines adding line breaks
