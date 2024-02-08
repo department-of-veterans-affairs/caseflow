@@ -79,11 +79,7 @@ $letter-table-bg-color: #f9f9f9;
   td {
     position: relative;
     border: none;
-<<<<<<< HEAD
-    background-color: #f9f9f9;
-=======
     background-color: $letter-table-bg-color;
->>>>>>> feature/APPEALS-31542
 
     &::after {
       content: '';
