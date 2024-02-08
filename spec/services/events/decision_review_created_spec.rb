@@ -38,14 +38,11 @@ describe Events::DecisionReviewCreated do
     end
 
     context "when lock Key is already in the Redis Cache" do
-      before do
-        allow(RedisMutex).to receive(:with_lock).and_raise(Caseflow::Error::RedisLockFailed)
-      end
-
       it "throws a RedisLockFailed error" do
-        expect(Rails.logger).to receive(:error)
-          .with("Key RedisMutex:EndProductEstablishment:#{reference_id} is already in the Redis Cache")
-        subject
+        redis = Redis.new(url: Rails.application.secrets.redis_url_cache)
+        lock_key = "RedisMutex:EndProductEstablishment:#{reference_id}"
+        redis.set(lock_key, "lock is set", nx: true, ex: 5.seconds)
+        expect { subject }.to raise_error(Caseflow::Error::RedisLockFailed)
       end
     end
 
