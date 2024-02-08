@@ -35,9 +35,10 @@ describe('Static Lever', () => {
     );
 
     for (const lever of staticNumber) {
-      expect(document.getElementById(`${lever.title}-description`)).toHaveTextContent(lever.description);
-      expect(document.getElementById(`${lever.title}-value`)).toHaveTextContent(lever.value);
-      expect(document.getElementById(`${lever.title}-unit`)).toHaveTextContent(lever.unit);
+
+      expect(document.getElementById(`${lever.item}-description`)).toHaveTextContent(lever.description);
+      expect(document.getElementById(`${lever.item}-value`)).toHaveTextContent(lever.value);
+      expect(document.getElementById(`${lever.item}-unit`)).toHaveTextContent(lever.unit);
     }
   });
 
@@ -57,8 +58,8 @@ describe('Static Lever', () => {
 
       formattedValue = formattedValue.charAt(0).toUpperCase() + formattedValue.slice(1);
 
-      expect(document.getElementById(`${lever.title}-description`)).toHaveTextContent(lever.description);
-      expect(document.getElementById(`${lever.title}-value`)).toHaveTextContent(formattedValue);
+      expect(document.getElementById(`${lever.item}-description`)).toHaveTextContent(lever.description);
+      expect(document.getElementById(`${lever.item}-value`)).toHaveTextContent(formattedValue);
     }
   });
 
@@ -76,9 +77,9 @@ describe('Static Lever', () => {
     for (const lever of staticRadio) {
       let selectedOption = lever.options.find((option) => lever.value === option.item);
 
-      expect(document.getElementById(`${lever.title}-description`)).toHaveTextContent(lever.description);
-      expect(document.getElementById(`${lever.title}-value`)).toHaveTextContent(selectedOption.text);
-      expect(document.getElementById(`${lever.title}-unit`)).toHaveTextContent(lever.unit);
+      expect(document.getElementById(`${lever.item}-description`)).toHaveTextContent(lever.description);
+      expect(document.getElementById(`${lever.item}-value`)).toHaveTextContent(selectedOption.text);
+      expect(document.getElementById(`${lever.item}-unit`)).toHaveTextContent(lever.unit);
     }
   });
 
@@ -94,9 +95,9 @@ describe('Static Lever', () => {
     );
 
     for (const lever of staticCombination) {
-      expect(document.getElementById(`${lever.title}-description`)).toHaveTextContent(lever.description);
-      expect(document.getElementById(`${lever.title}-value`)).toHaveTextContent(lever.value);
-      expect(document.getElementById(`${lever.title}-unit`)).toHaveTextContent(lever.unit);
+      expect(document.getElementById(`${lever.item}-description`)).toHaveTextContent(lever.description);
+      expect(document.getElementById(`${lever.item}-value`)).toHaveTextContent(lever.value);
+      expect(document.getElementById(`${lever.item}-unit`)).toHaveTextContent(lever.unit);
     }
   });
 
@@ -112,8 +113,8 @@ describe('Static Lever', () => {
     );
 
     for (const lever of staticNoType) {
-      expect(document.getElementById(`${lever.title}-description`)).toHaveTextContent(lever.description);
-      expect(document.getElementById(`${lever.title}-value`)).toHaveTextContent('test-unit-unknown-dt-static');
+      expect(document.getElementById(`${lever.item}-description`)).toHaveTextContent(lever.description);
+      expect(document.getElementById(`${lever.item}-value`)).toHaveTextContent('test-unit-unknown-dt-static');
     }
   });
 });
