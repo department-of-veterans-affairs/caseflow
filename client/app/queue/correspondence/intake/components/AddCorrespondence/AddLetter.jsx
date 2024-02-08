@@ -13,6 +13,7 @@ import {
   setResponseLetters
 } from '../../../correspondenceReducer/correspondenceActions';
 
+
 export const AddLetter = (props) => {
   const onContinueStatusChange = props.onContinueStatusChange;
 
@@ -104,6 +105,7 @@ const NewLetter = (props) => {
   const [responseWindows, setResponseWindows] = useState('');
   const naValue = 'N/A';
   const dispatch = useDispatch();
+
 
   const radioOptions = [
     { displayText: '65 days',
@@ -438,3 +440,4 @@ export default connect(
   mapDispatchToProps
 )(NewLetter);
 
+export default AddLetter;
