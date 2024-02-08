@@ -36,6 +36,9 @@ Style/Documentation:
 Style/ClassAndModuleChildren:
   Enabled: false
 
+Style/PercentLiteralDelimiters:
+  Enabled: false
+
 Metrics/BlockLength:
   Enabled: false
 

@@ -1,20 +1,20 @@
 module Seeds
   class CaseDistributionLevers < Base
     def seed!
-      levers.each do |lever|
+      CaseDistributionLevers.levers.each do |lever|
         next if CaseDistributionLever.find_by_item(lever[:item])
         create_lever lever
       end
     end
 
-    def levers
+    def self.levers
       [
         {
           item: Constants.DISTRIBUTION.maximum_direct_review_proportion,
           title: Constants.DISTRIBUTION.maximum_direct_review_proportion_title,
           description: "Sets the maximum number of direct reviews in relation to due direct review proportion to prevent a complete halt to work on other dockets should demand for direct reviews approach the Board's capacity.",
           data_type: Constants.ACD_LEVERS.data_types.number,
-          value: 0.8,
+          value: 0.07,
           unit: '%',
           is_toggle_active: false,
           is_disabled_in_ui: true,
@@ -29,7 +29,7 @@ module Seeds
           title: Constants.DISTRIBUTION.minimum_legacy_proportion_title,
           description: 'Sets the minimum proportion of legacy appeals that will be distributed.',
           data_type: Constants.ACD_LEVERS.data_types.number,
-          value: 0.2,
+          value: 0.9,
           unit: '%',
           is_toggle_active: false,
           is_disabled_in_ui: true,
@@ -44,7 +44,7 @@ module Seeds
           title: Constants.DISTRIBUTION.nod_adjustment_title,
           description: 'Applied for docket balancing reflecting the likelihood that NODs will advance to a Form 9.',
           data_type: Constants.ACD_LEVERS.data_types.number,
-          value: 0.9,
+          value: 0.4,
           unit: '%',
           is_toggle_active: false,
           is_disabled_in_ui: true,
@@ -586,6 +586,7 @@ module Seeds
         },
       ]
     end
+
     private
 
     def create_lever lever

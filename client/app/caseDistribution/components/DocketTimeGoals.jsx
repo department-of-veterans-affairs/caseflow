@@ -77,7 +77,7 @@ const DocketTimeGoals = () => {
   const renderDocketDistributionLever = (distributionPriorLever, index) => {
     let docketTimeGoalLever = docketTimeGoalLevers.find((lever) =>
       lever.item === docketTimeGoalPriorMappings[distributionPriorLever.item]);
-    const sectionTitle = sectionTitles[distributionPriorLever.item] + dynamicallyAddAsterisk(distributionPriorLever)
+    const sectionTitle = sectionTitles[distributionPriorLever.item] + dynamicallyAddAsterisk(distributionPriorLever);
 
     if (isUserAcdAdmin) {
 
