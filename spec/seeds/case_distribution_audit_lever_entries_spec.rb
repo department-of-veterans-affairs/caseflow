@@ -12,8 +12,8 @@ describe Seeds::CaseDistributionAuditLeverEntries do
 
     it "creates audit entry for a lever" do
       expect { subject }.to_not raise_error
-      expect( CaseDistributionAuditLeverEntry.count).to eq(1)
-      expect( CaseDistributionAuditLeverEntry.first.update_value).to eq("20")
+      expect(CaseDistributionAuditLeverEntry.count).to eq(1)
+      expect(CaseDistributionAuditLeverEntry.first.update_value).to eq("20")
     end
   end
 end

@@ -284,6 +284,8 @@ directories:
       enabled: false
     TooManyInstanceVariables:
       enabled: false
+    DataClump:
+      enabled: false
 
 ### Excluding directories
 # Directories and files below will not be scanned at all

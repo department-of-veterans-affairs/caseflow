@@ -9,7 +9,6 @@ import { getUserIsAcdAdmin, getLeversByGroup } from '../reducers/levers/leversSe
 import { Constant } from '../constants';
 import { dynamicallyAddAsterisk } from '../utils';
 
-
 const AffinityDays = () => {
   const theState = useSelector((state) => state);
   const isUserAcdAdmin = getUserIsAcdAdmin(theState);
