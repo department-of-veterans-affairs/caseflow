@@ -246,10 +246,12 @@ export const vaDor = () => {
 export const notes = () => {
   return {
     header: 'Notes',
-    valueFunction: (task) => task.notes
+    name: QUEUE_CONFIG.COLUMNS.NOTES.name,
+    valueFunction: (task) => task.notes,
+    backendCanSort: true,
+    getSortValue: (task) => task.notes
   };
 };
-
 export const checkboxColumn = () => {
   return {
     header: 'Select',
