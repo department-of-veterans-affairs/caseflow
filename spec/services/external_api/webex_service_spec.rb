@@ -7,6 +7,7 @@ describe ExternalApi::WebexService do
   let(:apikey) { SecureRandom.uuid.to_s }
   let(:domain) { "gov.fake.com" }
   let(:api_endpoint) { "/api/v2/fake" }
+  let(:query) { nil }
 
   let(:webex_service) do
     ExternalApi::WebexService.new(
@@ -15,7 +16,8 @@ describe ExternalApi::WebexService do
       api_endpoint: api_endpoint,
       aud: aud,
       apikey: apikey,
-      port: port
+      port: port,
+      query: query
     )
   end
 
@@ -47,15 +49,17 @@ describe ExternalApi::WebexService do
         }
       end
 
+      let(:method) { "POST" }
+
       subject { webex_service.create_conference(virtual_hearing) }
 
       it "calls send_webex_request and passes the correct body" do
-        expect(webex_service).to receive(:send_webex_request).with(body)
+        expect(webex_service).to receive(:send_webex_request).with(body, method)
         subject
       end
 
       it "returns a successful instance of CreateResponse class" do
-        allow(webex_service).to receive(:send_webex_request).with(body).and_return(success_create_resp)
+        allow(webex_service).to receive(:send_webex_request).with(body, method).and_return(success_create_resp)
 
         expect(subject).to be_instance_of(ExternalApi::WebexService::CreateResponse)
         expect(subject.code).to eq(200)
@@ -63,7 +67,7 @@ describe ExternalApi::WebexService do
       end
 
       it "returns error response" do
-        allow(webex_service).to receive(:send_webex_request).with(body).and_return(error_create_resp)
+        allow(webex_service).to receive(:send_webex_request).with(body, method).and_return(error_create_resp)
 
         expect(subject.code).to eq(400)
         expect(subject.success?).to eq(false)
@@ -97,15 +101,17 @@ describe ExternalApi::WebexService do
           "verticalType": "gen"
         }
       end
+
+      let(:method) { "POST" }
       subject { webex_service.delete_conference(virtual_hearing) }
 
       it "calls send_webex_request and passes correct body" do
-        expect(webex_service).to receive(:send_webex_request).with(body)
+        expect(webex_service).to receive(:send_webex_request).with(body, method)
         subject
       end
 
       it "returns a successful instance of CreateResponse class" do
-        allow(webex_service).to receive(:send_webex_request).with(body).and_return(success_create_resp)
+        allow(webex_service).to receive(:send_webex_request).with(body, method).and_return(success_create_resp)
 
         expect(subject).to be_instance_of(ExternalApi::WebexService::DeleteResponse)
         expect(subject.code).to eq(200)
@@ -113,7 +119,7 @@ describe ExternalApi::WebexService do
       end
 
       it "returns error response" do
-        allow(webex_service).to receive(:send_webex_request).with(body).and_return(error_create_resp)
+        allow(webex_service).to receive(:send_webex_request).with(body, method).and_return(error_create_resp)
 
         expect(subject.code).to eq(400)
         expect(subject.success?).to eq(false)
@@ -129,6 +135,63 @@ describe ExternalApi::WebexService do
           expect(subject.code).to eq(200)
           expect(JSON.parse(subject.resp.body)["baseUrl"]).to eq("https://instant-usgov.webex.com/visit/")
           subject
+        end
+      end
+    end
+
+    describe "get recordings list" do
+      describe "get recording request" do
+        let(:query) do
+          from = CGI.escape(2.days.ago.in_time_zone("America/New_York").end_of_day.iso8601)
+          to = CGI.escape(1.day.ago.in_time_zone("America/New_York").end_of_day.iso8601)
+          { "from": from, "to": to }
+        end
+
+        let(:success_recordings_resp) do
+          HTTPI::Response.new(200, {}, {})
+        end
+
+        let(:error_recordings_resp) do
+          HTTPI::Response.new(400, {}, {})
+        end
+
+        let(:body) { nil }
+
+        let(:method) { "GET" }
+
+        subject { webex_service.get_recordings_list }
+
+        it "it calls send webex request with nil body and GET method" do
+          expect(webex_service).to receive(:send_webex_request).with(body, method)
+          subject
+        end
+
+        it "returns a successful instance of RecordingsListResponse class" do
+          allow(webex_service).to receive(:send_webex_request).with(body, method).and_return(success_create_resp)
+
+          expect(subject).to be_instance_of(ExternalApi::WebexService::RecordingsListResponse)
+          expect(subject.code).to eq(200)
+          expect(subject.success?).to eq(true)
+        end
+
+        it "returns recordings error response" do
+          allow(webex_service).to receive(:send_webex_request).with(body, method).and_return(error_create_resp)
+
+          expect(subject.code).to eq(400)
+          expect(subject.success?).to eq(false)
+          expect(subject.error).to eq(Caseflow::Error::WebexBadRequestError.new(code: 400))
+        end
+
+        describe "with fakes" do
+          let(:webex_service) do
+            Fakes::WebexService.new
+          end
+
+          it "gets a list of ids" do
+            expect(subject.code).to eq(200)
+            expect(subject.ids).to eq(%w[4f914b1dfe3c4d11a61730f18c0f5387 3324fb76946249cfa07fc30b3ccbf580 42b80117a2a74dcf9863bf06264f8075])
+            subject
+          end
         end
       end
     end

@@ -53,6 +53,103 @@ class Fakes::WebexService
     )
   end
 
+  def get_recordings_list
+    if error?
+      return ExternalApi::WebexService::RecordingsListResponse.new(
+        HTTPI::Response.new(@status_code, {}, error_response)
+      )
+    end
+
+    ExternalApi::WebexService::RecordingsListResponse.new(
+      HTTPI::Response.new(
+        200,
+        {},
+        fake_recordings_list_data.to_json
+      )
+    )
+  end
+
+  # rubocop:disable Metrics/MethodLength
+  def fake_recordings_list_data
+    {
+      "items": [
+        {
+          "id": "4f914b1dfe3c4d11a61730f18c0f5387",
+          "meetingId": "f91b6edce9864428af084977b7c68291_I_166641849979635652",
+          "scheduledMeetingId": "f91b6edce9864428af084977b7c68291_20200713T121500Z",
+          "meetingSeriesId": "f91b6edce9864428af084977b7c68291",
+          "topic": "200103-61110_2000061110_Appeal",
+          "createTime": "2020-07-13T17:11:35Z",
+          "timeRecorded": "2020-07-13T17:05:35Z",
+          "siteUrl": "site4-example.webex.com",
+          "downloadUrl": "https://site4-example.webex.com/site4/lsr.php?RCID=b91990e37417bda24986e46cf43345ab",
+          "playbackUrl": "https://site4-example.webex.com/site4/ldr.php?RCID=69201a61d1d94a84aca18817261d1a73",
+          "password": "BgJep@43",
+          "format": "ARF",
+          "serviceType": "MeetingCenter",
+          "durationSeconds": 18_416,
+          "sizeBytes": 168_103,
+          "shareToMe": false,
+          "integrationTags": [
+            "dbaeceebea5c4a63ac9d5ef1edfe36b9",
+            "85e1d6319aa94c0583a6891280e3437d",
+            "27226d1311b947f3a68d6bdf8e4e19a1"
+          ],
+          "status": "available"
+        },
+        {
+          "id": "3324fb76946249cfa07fc30b3ccbf580",
+          "meetingId": "f91b6edce9864428af084977b7c68291_I_166641849979635652",
+          "scheduledMeetingId": "f91b6edce9864428af084977b7c68291_20200713T121500Z",
+          "meetingSeriesId": "f91b6edce9864428af084977b7c68291",
+          "topic": "150000248290335_343_LegacyAppeal",
+          "createTime": "2020-07-13T17:11:34Z",
+          "timeRecorded": "2020-07-13T17:05:35Z",
+          "siteUrl": "site4-example.webex.com",
+          "downloadUrl": "https://site4-example.webex.com/site4/lsr.php?RCID=8a763939dec1fa26c565700d628fcb98",
+          "playbackUrl": "https://site4-example.webex.com/site4/ldr.php?RCID=b05e9c4f773745e7b88725cc97bc3161",
+          "password": "BgJep@43",
+          "format": "ARF",
+          "serviceType": "MeetingCenter",
+          "durationSeconds": 181_562,
+          "sizeBytes": 199_134,
+          "shareToMe": false,
+          "integrationTags": [
+            "dbaeceebea5c4a63ac9d5ef1edfe36b9",
+            "85e1d6319aa94c0583a6891280e3437d",
+            "27226d1311b947f3a68d6bdf8e4e19a1"
+          ],
+          "status": "available"
+        },
+        {
+          "id": "42b80117a2a74dcf9863bf06264f8075",
+          "meetingId": "f91b6edce9864428af084977b7c68291_I_166641849979635652",
+          "scheduledMeetingId": "f91b6edce9864428af084977b7c68291_20200713T121500Z",
+          "meetingSeriesId": "f91b6edce9864428af084977b7c68291",
+          "topic": "231207-1177_1177_Appeal",
+          "createTime": "2020-07-13T17:11:33Z",
+          "timeRecorded": "2020-07-13T17:05:35Z",
+          "siteUrl": "site4-example.webex.com",
+          "downloadUrl": "https://site4-example.webex.com/site4/lsr.php?RCID=0edd48adbb183e7da97884a0a984e877",
+          "playbackUrl": "https://site4-example.webex.com/site4/ldr.php?RCID=b64b28ebf70e4645954420c295a9fcad",
+          "password": "BgJep@4",
+          "format": "ARF",
+          "serviceType": "MeetingCenter",
+          "durationSeconds": 181_562,
+          "sizeBytes": 199_134,
+          "shareToMe": true,
+          "integrationTags": [
+            "dbaeceebea5c4a63ac9d5ef1edfe36b9",
+            "85e1d6319aa94c0583a6891280e3437d",
+            "27226d1311b947f3a68d6bdf8e4e19a1"
+          ],
+          "status": "available"
+        }
+      ]
+    }
+  end
+  # rubocop:enable Metrics/MethodLength
+
   private
 
   def build_meeting_response
