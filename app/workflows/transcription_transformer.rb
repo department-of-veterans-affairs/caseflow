@@ -108,8 +108,8 @@ class TranscriptionTransformer
     rtf_footer =
       "\\footer\\pard\\" + (" " * 47) + "\\chpgn" + (" " * 18) + "Veteran's Last, First, Claim No\\par"
     rtf_spacing = "sl120\\slmult1"
-    document.to_rtf.sub!(document.footer.to_rtf, "{#{rtf_footer}}")
-    document.to_rtf.gsub!("sl-1", rtf_spacing)
+    raw_rtf = document.to_rtf.sub(document.footer.to_rtf, "{#{rtf_footer}}")
+    raw_rtf.gsub("sl-1", rtf_spacing)
   end
 
   # streamlines adding line breaks
