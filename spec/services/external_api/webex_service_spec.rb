@@ -142,8 +142,8 @@ describe ExternalApi::WebexService do
     describe "get recordings list" do
       describe "get recording request" do
         let(:query) do
-          from = CGI.escape(Time.parse("#{Time.zone.today.strftime('%Y-%m-%d')}T23:59:59-05:00").iso8601)
-          to = CGI.escape(Time.parse("#{1.day.ago.strftime('%Y-%m-%d')}T23:59:59-05:00").iso8601)
+          from = CGI.escape(2.days.ago.in_time_zone("America/New_York").end_of_day.iso8601)
+          to = CGI.escape(1.day.ago.in_time_zone("America/New_York").end_of_day.iso8601)
           { "from": from, "to": to }
         end
 

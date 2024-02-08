@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-# This job will get a list of webex recordings made for hearings that have happened
-# within 24 hours from the time it is run as well as the details for those recordings
+# This job will retrieve a list of webex hearing recordings and details
+# in a 24 hours period from the previous day
 
 class Hearings::GetWebexRecordingsListJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
@@ -10,6 +10,7 @@ class Hearings::GetWebexRecordingsListJob < CaseflowJob
   application_attr :hearing_schedule
 
   retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
+    # TO IMPLEMENT: SEND EMAIL TO VA OPS TEAM
     job.log_error(exception)
   end
 
@@ -34,8 +35,8 @@ class Hearings::GetWebexRecordingsListJob < CaseflowJob
   private
 
   def get_recordings_list
-    from = CGI.escape(Time.parse("#{2.days.ago.strftime('%Y-%m-%d')}T23:59:59-05:00").iso8601)
-    to = CGI.escape(Time.parse("#{1.day.ago.strftime('%Y-%m-%d')}T23:59:59-05:00").iso8601)
+    from = CGI.escape(2.days.ago.in_time_zone("America/New_York").end_of_day.iso8601)
+    to = CGI.escape(1.day.ago.in_time_zone("America/New_York").end_of_day.iso8601)
     query = { "from": from, "to": to }
 
     WebexService.new(

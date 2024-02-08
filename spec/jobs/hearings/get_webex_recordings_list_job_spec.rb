@@ -3,8 +3,6 @@
 describe Hearings::GetWebexRecordingsListJob, type: :job do
   include ActiveJob::TestHelper
 
-  let(:current_user) { create(:user, roles: ["System Admin"]) }
-
   subject { described_class.perform_now }
 
   it "Returns the correct array of ids" do

@@ -29,7 +29,6 @@ class ExternalApi::WebexService
     method = "POST"
 
     resp = send_webex_request(body, method)
-    # resp = send_webex_request(body)
     return if resp.nil?
 
     ExternalApi::WebexService::CreateResponse.new(resp)
@@ -51,7 +50,6 @@ class ExternalApi::WebexService
     method = "POST"
 
     resp = send_webex_request(body, method)
-    # resp = send_webex_request(body: body)
     return if resp.nil?
 
     ExternalApi::WebexService::DeleteResponse.new(resp)
