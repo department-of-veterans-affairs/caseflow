@@ -28,6 +28,7 @@ class CorrespondenceIntakeProcessor
 
       create_correspondence_relations(intake_params, correspondence.id)
       link_appeals_to_correspondence(intake_params, correspondence.id)
+      create_response_letter(intake_params, correspondence.id)
       add_tasks_to_related_appeals(intake_params, current_user)
       complete_waived_evidence_submission_tasks(intake_params)
       create_tasks_not_related_to_appeals(intake_params, correspondence, current_user)
@@ -49,6 +50,19 @@ class CorrespondenceIntakeProcessor
       )
     end
   end
+
+  def create_response_letter(intake_params, correspondence_id)
+    binding.pry
+    intake_params[:response_letters]&.map do |data|
+
+      CorrespondenceResponseLetter.create!(
+        correspondence_id: correspondence_id,
+      )
+    end
+  end
+
+  # :title, :date_sent, :letter_type, :subcategory, :reason,
+  #                                                          :response_window, :user_id)
 
   def link_appeals_to_correspondence(intake_params, correspondence_id)
     intake_params[:related_appeal_ids]&.map do |appeal_id|

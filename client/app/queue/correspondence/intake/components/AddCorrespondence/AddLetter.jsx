@@ -320,6 +320,7 @@ const NewLetter = (props) => {
     setLetterCard({ ...letterCard,
       reason: val
     });
+    dispatch(setResponseLetters([letterCard]));
   };
 
   const changeDate = (val) => {
