@@ -28,7 +28,7 @@ module QueueHelpers
       correspondence_type_id: CorrespondenceType.all.sample&.id,
       cmp_queue_id: 1,
       cmp_packet_number: @cmp_packet_number,
-      va_date_of_receipt: Time.zone.yesterday,
+      va_date_of_receipt: rand(1.month.ago..1.day.ago),
       notes: "Notes from CMP - Queue Correspondence Seed",
       assigned_by_id: 81,
       updated_by_id: 81,
