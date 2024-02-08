@@ -11,13 +11,11 @@
   width: 20%;
 }
 
-$historytableheadercolor: $color-gray-lighter;
-
 .lever-history-table-header-styling {
   border-left: 0;
   border-right: 0;
   border-top: 0;
-  border-color: $historytableheadercolor;
+  border-color: $color-gray-lighter;
   font-family: Source Sans Pro;
   font-weight: 700;
   font-size: 19px;
