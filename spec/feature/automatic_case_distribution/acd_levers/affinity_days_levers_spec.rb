@@ -39,12 +39,12 @@ RSpec.feature "Affinity Days Levers" do
       visit "case-distribution-controls"
       confirm_page_and_section_loaded
 
-      disabled_lever_list = %w[ama_hearing_case_affinity_days, ama_hearing_case_aod_affinity_days, cavc_affinity_days,
-                             cavc_aod_affinity_days, aoj_affinity_days, aoj_aod_affinity_days, aoj_cavc_affinity_days]
+      disabled_lever_list = %w[ama_hearing_case_affinity_days ama_hearing_case_aod_affinity_days cavc_affinity_days
+                               cavc_aod_affinity_days aoj_affinity_days aoj_aod_affinity_days aoj_cavc_affinity_days]
       option_list = [Constants.ACD_LEVERS.omit, Constants.ACD_LEVERS.infinite, Constants.ACD_LEVERS.value]
 
       disabled_lever_list.each do |disabled_lever|
-        option_list do |option|
+        option_list.each do |option|
           expect(find("##{disabled_lever}-#{option}", visible: false)).to be_disabled
         end
       end
