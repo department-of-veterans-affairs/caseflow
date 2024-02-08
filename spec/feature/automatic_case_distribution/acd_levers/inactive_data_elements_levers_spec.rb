@@ -12,20 +12,6 @@ RSpec.feature "Excluding Appeals by Docket Type and Priority from Automatic Case
   let(:nod_adjustment) { Constants.DISTRIBUTION.nod_adjustment }
   let(:bust_backlog) { Constants.DISTRIBUTION.bust_backlog }
 
-  def description_product_match
-    expect(find("##{maximum_direct_review_proportion}-description")).to match_css(".description-styling")
-    expect(find("##{maximum_direct_review_proportion}-product")).to match_css(".value-styling")
-
-    expect(find("##{minimum_legacy_proportion}-description")).to match_css(".description-styling")
-    expect(find("##{minimum_legacy_proportion}-product")).to match_css(".value-styling")
-
-    expect(find("##{nod_adjustment}-description")).to match_css(".description-styling")
-    expect(find("##{nod_adjustment}-product")).to match_css(".value-styling")
-
-    expect(find("##{bust_backlog}-description")).to match_css(".description-styling")
-    expect(find("##{bust_backlog}-product")).to match_css(".value-styling")
-  end
-
   context "user is in Case Distro Algorithm Control organization but not an admin" do
     scenario "visits the lever control page", type: :feature do
       visit "case-distribution-controls"
@@ -76,6 +62,21 @@ RSpec.feature "Excluding Appeals by Docket Type and Priority from Automatic Case
   end
 end
 
+# rubocop:disable Metrics/AbcSize
+def description_product_match
+  expect(find("##{maximum_direct_review_proportion}-description")).to match_css(".description-styling")
+  expect(find("##{maximum_direct_review_proportion}-product")).to match_css(".value-styling")
+
+  expect(find("##{minimum_legacy_proportion}-description")).to match_css(".description-styling")
+  expect(find("##{minimum_legacy_proportion}-product")).to match_css(".value-styling")
+
+  expect(find("##{nod_adjustment}-description")).to match_css(".description-styling")
+  expect(find("##{nod_adjustment}-product")).to match_css(".value-styling")
+
+  expect(find("##{bust_backlog}-description")).to match_css(".description-styling")
+  expect(find("##{bust_backlog}-product")).to match_css(".value-styling")
+end
+
 def confirm_page_and_section_loaded
   expect(page).to have_content(COPY::CASE_DISTRIBUTION_STATIC_LEVERS_TITLE)
   expect(page).to have_content(Constants.DISTRIBUTION.maximum_direct_review_proportion_title)
@@ -83,3 +84,4 @@ def confirm_page_and_section_loaded
   expect(page).to have_content(Constants.DISTRIBUTION.nod_adjustment_title)
   expect(page).to have_content(Constants.DISTRIBUTION.bust_backlog_title)
 end
+# rubocop:enable Metrics/AbcSize
