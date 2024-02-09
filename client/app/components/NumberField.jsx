@@ -20,6 +20,7 @@ export default class NumberField extends React.Component {
         {...this.props}
         onChange={this.onChange}
         aria-readonly={this.props.readOnly}
+        ariaLabelText={this.props.ariaLabelText}
         disabled={this.props.disabled}
       />
     </div>;
@@ -44,6 +45,7 @@ NumberField.propTypes = {
       return new Error('If NumberField is not ReadOnly, then onChange must be defined');
     }
   },
+  ariaLabelText: PropTypes.string,
   placeholder: PropTypes.string,
   isInteger: PropTypes.bool,
   readOnly: PropTypes.bool,

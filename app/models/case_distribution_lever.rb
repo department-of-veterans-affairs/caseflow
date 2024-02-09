@@ -1,5 +1,6 @@
-class CaseDistributionLever < ApplicationRecord
+# frozen_string_literal: true
 
+class CaseDistributionLever < ApplicationRecord
   has_many :case_distribution_audit_lever_entries, dependent: :delete_all
   validates :item, presence: true
   validates :title, presence: true
@@ -19,19 +20,20 @@ class CaseDistributionLever < ApplicationRecord
     #{Constants.DISTRIBUTION.cavc_affinity_days}
     #{Constants.DISTRIBUTION.ama_evidence_submission_docket_time_goals}
     #{Constants.DISTRIBUTION.ama_hearings_docket_time_goals}
-  )
+  ).freeze
+
   FLOAT_LEVERS = %W(
     #{Constants.DISTRIBUTION.maximum_direct_review_proportion}
     #{Constants.DISTRIBUTION.minimum_legacy_proportion}
     #{Constants.DISTRIBUTION.nod_adjustment}
-  )
+  ).freeze
 
   def distribution_value
-    if self.data_type == Constants.ACD_LEVERS.data_types.radio
-      option = self.options.detect{|opt| opt['item'] == self.value}
-      option['value'] if option && option.is_a?(Hash)
+    if data_type == Constants.ACD_LEVERS.data_types.radio
+      option = options.detect { |opt| opt["item"] == value }
+      option["value"] if option&.is_a?(Hash)
     else
-      self.value
+      value
     end
   end
 
@@ -59,25 +61,28 @@ class CaseDistributionLever < ApplicationRecord
   end
 
   def validate_number_data_type
-    add_error_value_not_match_data_type if value.match(/\A[0-9]*\.?[0-9]+\z/).nil?
+    add_error_value_not_match_data_type if value&.match(/\A[0-9]*\.?[0-9]+\z/).nil?
     unless INTEGER_LEVERS.include?(item) || FLOAT_LEVERS.include?(item)
       errors.add(:item, "is of data_type number but is not included in INTEGER_LEVERS or FLOAT_LEVERS")
     end
   end
 
   def validate_boolean_data_type
-      add_error_value_not_match_data_type if value.match(/\A(t|true|f|false)\z/i).nil?
+    add_error_value_not_match_data_type if value&.match(/\A(t|true|f|false)\z/i).nil?
   end
 
   class << self
-    def find_integer_lever(lever)
-      return 0 unless INTEGER_LEVERS.include?(lever)
-      CaseDistributionLever.find_by_item(lever).try(:distribution_value).to_i
+    def respond_to_missing?(name, _include_private)
+      Constants.DISTRIBUTION.to_h.key?(name)
     end
 
-    def find_float_lever(lever)
-      return 0 unless FLOAT_LEVERS.include?(lever)
-      CaseDistributionLever.find_by_item(lever).try(:distribution_value).to_f
+    def method_missing(name, *args)
+      if Constants.DISTRIBUTION.to_h.key?(name)
+        value = method_missing_value(name.to_s)
+        return value unless value.nil?
+      end
+
+      super
     end
 
     def update_acd_levers(current_levers, current_user)
@@ -99,16 +104,28 @@ class CaseDistributionLever < ApplicationRecord
 
     private
 
+    def method_missing_value(name)
+      lever = find_by_item(name).try(:distribution_value)
+
+      if INTEGER_LEVERS.include?(name)
+        lever.to_i
+      elsif FLOAT_LEVERS.include?(name)
+        lever.to_f
+      else
+        lever
+      end
+    end
+
     def add_audit_lever_entries(previous_levers, levers, current_user)
       entries = []
       levers.filter(&:valid?).each do |lever|
         previous_lever = previous_levers[lever.id]
-        entries.push ({
-          user: current_user,
-          case_distribution_lever: lever,
-          previous_value: previous_lever.value,
-          update_value: lever.value
-        })
+        entries.push({
+                       user: current_user,
+                       case_distribution_lever: lever,
+                       previous_value: previous_lever.value,
+                       update_value: lever.value
+                     })
       end
 
       begin
@@ -120,31 +137,6 @@ class CaseDistributionLever < ApplicationRecord
       end
 
       []
-    end
-
-    def format_audit_lever_entries(audit_lever_entries_data)
-      formatted_audit_lever_entries = []
-
-      begin
-        audit_lever_entries_data.each do |entry_data|
-          lever = CaseDistributionLever.find_by_title entry_data["lever_title"]
-
-          formatted_audit_lever_entries.push ({
-            user: current_user,
-            case_distribution_lever: lever,
-            user_name: current_user.css_id,
-            title: lever.title,
-            previous_value: entry_data["original_value"],
-            update_value: entry_data["current_value"],
-            created_at: entry_data["created_at"]
-
-          })
-        end
-      rescue Exception => error
-        return error
-      end
-
-      formatted_audit_lever_entries
     end
   end
 end

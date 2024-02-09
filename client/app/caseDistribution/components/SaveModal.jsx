@@ -34,7 +34,7 @@ export const SaveModal = (props) => {
 
     return (
       <div>
-        <table>
+        <table id="case-distribution-control-modal-table">
           <tbody>
             <tr>
               <th className={cx('modal-table-header-styling', 'modal-table-left-styling')} scope="column">
@@ -50,7 +50,7 @@ export const SaveModal = (props) => {
           </tbody>
           <tbody>
             {updatedLevers.map((lever, index) => (
-              <tr key={index} id={`${lever.item}-modal-row`}>
+              <tr key={index} id={`case-distribution-control-modal-table-${index}`}>
                 <React.Fragment>
                   <td
                     id={`${lever.item}-title-in-modal`}
@@ -84,10 +84,13 @@ export const SaveModal = (props) => {
       isOpen
       onClose={() => setShowModal(false)}
       closeHandler={() => setShowModal(false)}
-      title={COPY.CASE_DISTRIBUTION_MODAL_TITLE}
-      confirmButton={<Button onClick={handleConfirmButton}>{COPY.MODAL_CONFIRM_BUTTON}</Button>}
-      cancelButton={<Button onClick={() => setShowModal(false)}>{COPY.MODAL_CANCEL_BUTTON}</Button>}
       className="updated-modal-styling"
+      title={COPY.CASE_DISTRIBUTION_MODAL_TITLE}
+      confirmButton={<Button id="save-modal-confirm" onClick={handleConfirmButton}>
+        {COPY.MODAL_CONFIRM_BUTTON}</Button>}
+
+      cancelButton={<Button id="save-modal-cancel" onClick={() => setShowModal(false)}>
+        {COPY.MODAL_CANCEL_BUTTON}</Button>}
     >
       <p>{COPY.CASE_DISTRIBUTION_MODAL_DESCRIPTION}</p>
       {leverList()}

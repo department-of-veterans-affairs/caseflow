@@ -7,7 +7,7 @@ import { getLeversByGroup, getLeverErrors, getUserIsAcdAdmin } from '../reducers
 import { updateNumberLever, addLeverErrors, removeLeverErrors } from '../reducers/levers/leversActions';
 import { Constant } from '../constants';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
-import { validateLeverInput } from '../utils';
+import { validateLeverInput, dynamicallyAddAsterisk } from '../utils';
 
 const BatchSize = () => {
   const theState = useSelector((state) => state);
@@ -47,8 +47,6 @@ const BatchSize = () => {
     dispatch(updateNumberLever(lever_group, item, event));
   };
 
-  batchLevers?.sort((leverA, leverB) => leverA.lever_group_order - leverB.lever_group_order);
-
   return (
     <div className="lever-content">
       <div className="lever-head">
@@ -60,17 +58,21 @@ const BatchSize = () => {
         <div className="active-lever" key={`${lever.item}-${index}`}>
           <div className="lever-left">
             <strong className={lever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}>
-              {lever.title}
+              {lever.title}{dynamicallyAddAsterisk(lever)}
             </strong>
             <p className={lever.is_disabled_in_ui ? 'lever-disabled' : 'lever-active'}>
               {lever.description}
             </p>
           </div>
-          <div className={cx('lever-right', 'batch-lever-num-sec')} aria-label={`${lever.title} ${lever.description}`}>
+          <div id={lever.item}
+            className={cx('lever-right', 'batch-lever-num-sec')} aria-label={`${lever.title} ${lever.description}`}
+          >
             {isUserAcdAdmin ?
               <NumberField
-                name={lever.item}
+                name={`${lever.item}-field`}
                 label={lever.unit}
+                useAriaLabel={!lever.is_disabled_in_ui}
+                ariaLabelText={lever.title}
                 isInteger
                 readOnly={lever.is_disabled_in_ui}
                 value={lever.value}

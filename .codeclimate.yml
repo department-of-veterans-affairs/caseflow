@@ -83,8 +83,8 @@ plugins:
     - 'app/mailers/dispatch_mailer.rb'
   rubocop:
     enabled: true
-    channel: rubocop-0-79
-  scss-lint:
+    channel: rubocop-0-83
+  stylelint:
     enabled: true
   grep:
     enabled: true
@@ -123,3 +123,5 @@ exclude_patterns:
   - 'app/assets/**/*'
   - 'client/test/data/camoQueueConfigData.js'
   - 'client/app/intake/components/mockData/issueListProps.js'
+  - 'db/seeds/*'
+

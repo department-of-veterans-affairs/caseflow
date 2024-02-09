@@ -1,53 +1,149 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import { render, waitFor} from '@testing-library/react';
 import AffinityDays from 'app/caseDistribution/components/AffinityDays';
-import { levers } from 'test/data/adminCaseDistributionLevers';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import rootReducer from 'app/caseDistribution/reducers/root';
+import thunk from 'redux-thunk';
+import { mockAffinityDaysLevers } from '../../../data/adminCaseDistributionLevers';
+import { loadLevers, setUserIsAcdAdmin } from 'app/caseDistribution/reducers/levers/leversActions';
+import { mount } from 'enzyme';
 
-jest.mock('app/styles/caseDistribution/_interactable_levers.scss', () => '');
-describe('AffinityDays Component', () => {
-  const mockLeverList = ['lever_9', 'lever_13'];
-  const mockLeverStore = {
-    getState: jest.fn(() => ({
-      levers
-    }))
-  };
-  let props;
-  let component;
+describe('Affinity Days Lever', () => {
 
-  beforeEach(() => {
-    props = {
-      leverList: mockLeverList,
-      leverStore: mockLeverStore
-    };
-    component = render(<AffinityDays {...props} />);
+  const getStore = () => createStore(
+    rootReducer,
+    applyMiddleware(thunk));
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
-  it('renders without crashing', () => {
-    expect(component).toBeTruthy();
+  let leversWithTestingAffinityDaysLevers = { affinity: mockAffinityDaysLevers };
+  let lever = mockAffinityDaysLevers[0];
+
+  it('renders Affinity Days Levers for Member Users', () => {
+    const store = getStore();
+
+    store.dispatch(loadLevers(leversWithTestingAffinityDaysLevers));
+    store.dispatch(setUserIsAcdAdmin(false));
+
+    render(
+      <Provider store={store}>
+        <AffinityDays />
+      </Provider>
+    );
+    const option = lever.options.find((opt) => opt.item === 'option_1');
+    const value = `${option.text} ${option.value} ${option.unit}`;
+
+    expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(lever.title);
+    expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(lever.description);
+    expect(document.querySelector('.active-lever > .lever-right')).toHaveTextContent(value);
   });
 
-  it('renders AffinityDays component correctly', () => {
-    expect(component.getByText('Affinity Days')).toBeInTheDocument();
+  it('renders Affinity Days Levers for Admin Users', () => {
+    const store = getStore();
+
+    store.dispatch(loadLevers(leversWithTestingAffinityDaysLevers));
+    store.dispatch(setUserIsAcdAdmin(true));
+
+    render(
+      <Provider store={store}>
+        <AffinityDays />
+      </Provider>
+    );
+
+    expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(lever.title);
+    expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(lever.description);
+    expect(document.querySelector('.active-lever > .lever-right')).toHaveTextContent(lever.unit);
   });
 
-  it('updates lever value on input change', () => {
-    const leverInput = component.container.querySelector('#option_2');
+  it('sets input to invalid for error and sets input to valid to remove error', () => {
+    const eventForError = { target: { value: 150 } };
+    const eventForValid = { target: { value: 10 } };
+    const logSpy = jest.spyOn(console, 'log');
 
-    fireEvent.change(leverInput, { target: { value: '65' } });
-    expect(leverInput.value).toBe('65');
-    const lever = mockLeverStore.getState().levers.find((le) => le.item === 'lever_9');
+    const store = getStore();
 
-    expect(lever.options.find((opt) => opt.item === 'option_2').value).toBe(65);
+    store.dispatch(loadLevers(leversWithTestingAffinityDaysLevers));
+    store.dispatch(setUserIsAcdAdmin(true));
+
+    let wrapper = mount(
+      <Provider store={store}>
+        <AffinityDays />
+      </Provider>
+    );
+
+    let radioOption = wrapper.find('input[id="ama_hearing_case_affinity_days-option_1"]');
+    let radioOption1 = wrapper.find('input[id="ama_hearing_case_affinity_days-infinite"]');
+
+    expect(radioOption.getDOMNode().checked).toEqual(true);
+    expect(radioOption1.getDOMNode().checked).toEqual(false);
+
+    let inputField = wrapper.find('input[id="ama_hearing_case_affinity_days-0-input"]');
+
+    // Calls simulate change to set value outside of min/max range
+    waitFor(() => inputField.simulate('change', eventForError));
+
+    wrapper.update();
+
+    waitFor(() => expect(inputField.prop('value').toBe(eventForError.target.value)));
+    waitFor(() => expect(inputField.prop('errorMessage').
+      toBe(`Please enter a value greater than or equal to ${ lever.min_value }`)));
+
+    // Calls simulate change to set value within min/max range
+    waitFor(() => inputField.simulate('change', eventForValid));
+
+    wrapper.update();
+
+    waitFor(() => expect(logSpy).toHaveBeenCalledWith('not implemented'));
+    waitFor(() => expect(inputField.prop('value').toBe(eventForValid.target.value)));
+    waitFor(() => expect(inputField.prop('errorMessage').toBe('')));
   });
 
-  it('switch radio input change', () => {
-    const readioInput1 = component.container.querySelector('#lever_9-option_1');
-    const readioInput2 = component.container.querySelector('#lever_9-option_2');
+  it('should display the input text when radio option selected', () => {
+    const inputData = { target: { value: "test value" } };
+    const logSpy = jest.spyOn(console, 'log');
+    const store = getStore();
 
-    expect(readioInput1.checked).toEqual(true);
-    expect(readioInput2.checked).toEqual(false);
-    fireEvent.click(readioInput2);
-    expect(readioInput2.checked).toEqual(true);
-    expect(readioInput1.checked).toEqual(false);
+    store.dispatch(loadLevers(leversWithTestingAffinityDaysLevers));
+    store.dispatch(setUserIsAcdAdmin(true));
+
+    let wrapper = mount(
+      <Provider store={store}>
+        <AffinityDays />
+      </Provider>
+    );
+
+    let radioOption = wrapper.find('input[id="ama_hearing_case_aod_affinity_days-option_1"]');
+
+    expect(radioOption.getDOMNode().checked).toEqual(true);
+
+    let inputField = wrapper.find('input[id="ama_hearing_case_aod_affinity_days-0-input"]');
+
+     // Calls simulate change to set value outside of min/max range
+    waitFor(() => inputField.simulate('change', inputData));
+
+    wrapper.update();
+
+    waitFor(() => expect(logSpy).toHaveBeenCalledWith('not implemented'));
+    waitFor(() => expect(inputField.prop('value').toBe(inputData.target.value)));
+  });
+
+  it('dynamically renders * in the lever label', () => {
+    lever.algorithms_used = ["docket", "proportion"]
+
+    const store = getStore();
+
+    store.dispatch(loadLevers(leversWithTestingAffinityDaysLevers));
+    store.dispatch(setUserIsAcdAdmin(true));
+
+    let wrapper = mount(
+      <Provider store={store}>
+        <AffinityDays />
+      </Provider>
+    );
+
+    expect(wrapper.text()).toContain(lever.title + '*');
   });
 });

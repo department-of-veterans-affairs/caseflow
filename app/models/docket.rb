@@ -8,6 +8,7 @@ class Docket
     fail Caseflow::Error::MustImplementInSubclass
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   # :reek:LongParameterList
   def appeals(priority: nil, genpop: nil, ready: nil, judge: nil)
     fail "'ready for distribution' value cannot be false" if ready == false
@@ -25,6 +26,7 @@ class Docket
 
     scope.order("appeals.receipt_date")
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def count(priority: nil, ready: nil)
     # The underlying scopes here all use `group_by` statements, so calling
@@ -66,11 +68,12 @@ class Docket
   end
 
   def age_of_oldest_priority_appeal
-    if use_by_docket_date?
-      @age_of_oldest_priority_appeal ||= appeals(priority: true, ready: true).limit(1).first&.receipt_date
-    else
-      @age_of_oldest_priority_appeal ||= appeals(priority: true, ready: true).limit(1).first&.ready_for_distribution_at
-    end
+    @age_of_oldest_priority_appeal ||=
+      if use_by_docket_date?
+        appeals(priority: true, ready: true).limit(1).first&.receipt_date
+      else
+        appeals(priority: true, ready: true).limit(1).first&.ready_for_distribution_at
+      end
   end
 
   def oldest_priority_appeal_days_waiting
@@ -186,12 +189,8 @@ class Docket
         .where(
           "appeals.stream_type != ? OR distribution_task.assigned_at <= ?",
           Constants.AMA_STREAM_TYPES.court_remand,
-          cavc_affinity_days.days.ago
+          CaseDistributionLever.cavc_affinity_days.days.ago
         )
-    end
-
-    def cavc_affinity_days
-      cavc_affinity_days_lever = CaseDistributionLever.find_integer_lever(Constants.DISTRIBUTION.cavc_affinity_days)
     end
 
     def with_original_appeal_and_judge_task
@@ -208,7 +207,7 @@ class Docket
     def non_genpop_for_judge(judge)
       joins(with_assigned_distribution_task_sql)
         .with_original_appeal_and_judge_task
-        .where("distribution_task.assigned_at > ?", cavc_affinity_days.days.ago)
+        .where("distribution_task.assigned_at > ?", CaseDistributionLever.cavc_affinity_days.days.ago)
         .where(original_judge_task: { assigned_to_id: judge.id })
     end
 
