@@ -31,7 +31,7 @@ Object {
                 stroke-width="1"
               >
                 <g
-                  fill="#0071bc"
+                  fill="#757575"
                   fill-rule="nonzero"
                 >
                   <g
@@ -81,7 +81,7 @@ Object {
               stroke-width="1"
             >
               <g
-                fill="#0071bc"
+                fill="#757575"
                 fill-rule="nonzero"
               >
                 <g
@@ -188,7 +188,7 @@ Object {
                 stroke-width="1"
               >
                 <g
-                  fill="#0071bc"
+                  fill="#757575"
                   fill-rule="nonzero"
                 >
                   <g
@@ -238,7 +238,7 @@ Object {
               stroke-width="1"
             >
               <g
-                fill="#0071bc"
+                fill="#757575"
                 fill-rule="nonzero"
               >
                 <g
@@ -342,7 +342,7 @@ exports[`StaticVirtualHearing renders correctly 1`] = `
             stroke-width="1"
           >
             <g
-              fill="#0071bc"
+              fill="#757575"
               fill-rule="nonzero"
             >
               <g

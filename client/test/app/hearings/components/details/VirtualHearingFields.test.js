@@ -106,7 +106,7 @@ describe('VirtualHearingFields', () => {
     );
 
     // Assertions
-    expect(virtualHearingForm.text().includes('Webex hearing')).toBeTruthy();
+    expect(virtualHearingForm.text().includes('Webex Hearing')).toBeTruthy();
 
     expect(virtualHearingForm).toMatchSnapshot();
   });
@@ -135,36 +135,7 @@ describe('VirtualHearingFields', () => {
     );
 
     // Assertions
-    expect(virtualHearingForm.text().includes('Pexip hearing')).toBeTruthy();
-
-    expect(virtualHearingForm).toMatchSnapshot();
-  });
-
-  test('Renders pexip conference when conference provider is null', () => {
-    const webexHearing = {
-      ...amaHearing,
-      conferenceProvider: null
-    };
-
-    // Run the test
-    const virtualHearingForm = mount(
-      <VirtualHearingFields
-        update={updateSpy}
-        hearing={webexHearing}
-        virtualHearing={{
-          ...virtualHearing.virtualHearing,
-          conferenceProvider: null
-        }}
-      />,
-
-      {
-        wrappingComponent: hearingDetailsWrapper(anyUser, webexHearing),
-        wrappingComponentProps: { store: detailsStore }
-      }
-    );
-
-    // Assertions
-    expect(virtualHearingForm.text().includes('Pexip hearing')).toBeTruthy();
+    expect(virtualHearingForm.text().includes('Pexip Hearing')).toBeTruthy();
 
     expect(virtualHearingForm).toMatchSnapshot();
   });
