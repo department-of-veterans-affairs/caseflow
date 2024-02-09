@@ -108,6 +108,7 @@ module Seeds
 
     def create_correspondence_with_review_package_and_failed_upload_task
       corres = create_correspondence
+      assign_review_package_task(corres, mail_team_user)
       parent_task = ReviewPackageTask.find_by(appeal_id: corres.id, type: ReviewPackageTask.name)
       create_efolderupload_failed_task(corres, parent_task)
     end
