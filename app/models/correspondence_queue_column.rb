@@ -19,7 +19,7 @@ class CorrespondenceQueueColumn < QueueColumn
   end
 
   FILTER_OPTIONS = {
-    Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name => :filter_by_veteran_details
+    Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name => :task_type_options
 
 }.freeze
 
@@ -37,12 +37,11 @@ end
 
 private
 
-def filter_by_veteran_details(tasks)
-  tasks.map do |task|
-    appeal = task.appeal
-    {
-      name: task.appeal.veteran.name
-    }
+def task_type_options(tasks)
+  tasks.group(:type).count.each_pair.map do |option, count|
+    label = self.class.format_option_label(Object.const_get(option).label, count)
+    self.class.filter_option_hash(option, label)
   end
 end
+
 end
