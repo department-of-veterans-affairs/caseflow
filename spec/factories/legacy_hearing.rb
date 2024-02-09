@@ -49,7 +49,7 @@ FactoryBot.define do
     end
 
     after(:create) do |hearing, _evaluator|
-      hearing.update(scheduled_in_timezone: hearing.regional_office_timezone)
+      hearing.update!(scheduled_in_timezone: hearing.regional_office_timezone)
     end
 
     hearing_day_id { case_hearing.vdkey }
