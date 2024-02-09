@@ -269,7 +269,10 @@ export const actionType = () => {
 export const daysWaitingCorrespondence = () => {
   return {
     header: 'Days Waiting',
-    valueFunction: (task) => task.daysWaiting
+    name: QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
+    valueFunction: (task) => task.daysWaiting,
+    backendCanSort: true,
+    getSortValue: (task) => task.daysWaiting
   };
 };
 
