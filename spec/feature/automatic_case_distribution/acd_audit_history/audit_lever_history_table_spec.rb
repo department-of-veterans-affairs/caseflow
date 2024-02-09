@@ -39,11 +39,12 @@ RSpec.feature "Audit Lever History Table" do
              case_distribution_lever: ama_direct_reviews_lever,
              previous_value: 15,
              update_value: 5)
-      sleep 1 # ensures a separate row for each entry
+
       create(:case_distribution_audit_lever_entry,
              case_distribution_lever: alternate_batch_size_lever,
              previous_value: 7,
-             update_value: 6)
+             update_value: 6,
+             created_at: Time.zone.now + 1.hour)
 
       visit "case-distribution-controls"
       confirm_page_and_section_loaded

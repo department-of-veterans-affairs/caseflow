@@ -39,9 +39,9 @@ RSpec.feature "AMA Non-priority Distribution Goals by Docket Levers" do
       visit "case-distribution-controls"
       confirm_page_and_section_loaded
 
-      expect(page).to have_field(ama_hearings_field.to_s, readonly: true)
-      expect(page).to have_field(ama_direct_reviews_field.to_s, readonly: false)
-      expect(page).to have_field(ama_evidence_submissions_field.to_s, readonly: true)
+      expect(page).to have_field(ama_hearings_field.to_s, disabled: true)
+      expect(page).to have_field(ama_direct_reviews_field.to_s)
+      expect(page).to have_field(ama_evidence_submissions_field.to_s, disabled: true)
 
       expect(page).to have_button("toggle-switch-#{ama_hearings}", disabled: true)
       expect(page).to have_button("toggle-switch-#{ama_direct_reviews}", disabled: true)
