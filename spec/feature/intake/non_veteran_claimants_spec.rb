@@ -667,6 +667,70 @@ feature "Non-veteran claimants", :postgres do
         end
       end
 
+      it "should display No Known POA when child no VA form 21-22 is selected as a claimant" do
+        expect(page).to have_current_path("/intake/review_request")
+        within_fieldset("Is the claimant someone other than the Veteran?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+        find("label", text: "Claimant not listed", match: :prefer_exact).click
+        click_intake_continue
+
+        # Add Claimant Page
+        fill_in("Relationship to the Veteran", with: "child").send_keys :enter
+        first_name = Faker::Name.first_name
+        last_name = Faker::Name.last_name
+        fill_in "First name", with: first_name
+        fill_in "Last name", with: last_name
+        within_fieldset("Do you have a VA Form 21-22 for this claimant?") do
+          find("label", text: "No", match: :prefer_exact).click
+        end
+        click_intake_continue
+
+        within("#add_claimant_modal") do
+          expect(page).to have_content("Review and confirm claimant information")
+          expect(page).to have_content("#{first_name} #{last_name}")
+          expect(page).to have_content(COPY::VHA_NO_POA)
+          click_button "Confirm"
+        end
+      end
+
+      it "should display No know POA when attorney if attorney is selected after claimant not listed is selected" do
+        expect(page).to have_current_path("/intake/review_request")
+        within_fieldset("Is the claimant someone other than the Veteran?") do
+          find("label", text: "Yes", match: :prefer_exact).click
+        end
+
+        expect(page).to have_selector("label[for=claimant-options_claimant_not_listed]")
+        within_fieldset(COPY::SELECT_CLAIMANT_LABEL) do
+          find("label", text: "Claimant not listed", match: :prefer_exact).click
+        end
+        click_intake_continue
+
+        expect(page).to have_current_path("/intake/add_claimant")
+        expect(page).to have_content("Add Claimant")
+
+        fill_in("Relationship to the Veteran", with: "Attorney (previously or currently)").send_keys :enter
+        add_existing_attorney(attorney)
+
+        expect(page).to have_content("Claimant's address")
+        expect(page).to have_content(attorney.name)
+        expect(page).to have_content(attorney.address_line_1.titleize)
+
+        expect(page).to have_button("Continue to next step", disabled: false)
+        click_button "Continue to next step"
+
+        within("#add_claimant_modal") do
+          expect(page).to have_content("Review and confirm claimant information")
+          expect(page).to have_content(COPY::VHA_NO_POA)
+
+          click_button "Confirm"
+        end
+        expect(page).to have_current_path("/intake/add_issues")
+        expect(page).to have_content("Add / Remove Issues")
+        expect(page).to have_content(COPY::VHA_NO_POA)
+        expect(page).to have_content "Add Issue"
+      end
+
       it "should display No known POA when new attorney is added after claimant not listed is selected" do
         expect(page).to have_current_path("/intake/review_request")
         within_fieldset("Is the claimant someone other than the Veteran?") do
@@ -699,6 +763,8 @@ feature "Non-veteran claimants", :postgres do
 
         within("#add_claimant_modal") do
           expect(page).to have_content("Review and confirm claimant information")
+          expect(page).to have_content(COPY::VHA_NO_POA)
+
           click_button "Confirm"
         end
         expect(page).to have_current_path("/intake/add_issues")
