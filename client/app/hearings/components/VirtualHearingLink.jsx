@@ -12,7 +12,6 @@ const VirtualHearingLink = ({
   isVirtual,
   newWindow,
   link,
-  // virtualHearing,
   label,
   hearing
 }) => {
