@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolkit/util/StyleConstants';
 import { css } from 'glamor';
 import { startCase } from 'lodash';
+import ReceiptDatePicker from '../components/ReceiptDatePicker';
 
 const dropdownFilterViewListStyle = css({
   margin: 0
@@ -43,6 +44,7 @@ class QueueDropdownFilter extends React.PureComponent {
       }}>
         {this.props.addClearFiltersRow &&
           <div className="cf-filter-option-row">
+            {this.props.isRecieptDateFilter && <ReceiptDatePicker />}
             <button className="cf-text-button" onClick={this.props.clearFilters}
               disabled={!this.props.isClearEnabled}>
               <div className="cf-clear-filter-button-wrapper">
