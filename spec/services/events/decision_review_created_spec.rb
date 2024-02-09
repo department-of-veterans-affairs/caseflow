@@ -21,8 +21,8 @@ describe Events::DecisionReviewCreated do
     end
   end
 
-  describe "#create" do
-    subject { described_class.create(consumer_event_id, reference_id) }
+  describe "#create!" do
+    subject { described_class.create!(consumer_event_id, reference_id) }
 
     context "when lock acquisition fails" do
       before do
