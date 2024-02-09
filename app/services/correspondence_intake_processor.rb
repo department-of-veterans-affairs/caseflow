@@ -52,12 +52,15 @@ class CorrespondenceIntakeProcessor
   end
 
   def create_response_letter(intake_params, correspondence_id)
+    current_user = RequestStore.store[:current_user] ||= User.system_user
 
-    current_value = null
     intake_params[:response_letters]&.map do |data|
+      current_value = nil
       if (data[:responseWindows] == 'Custom')
         current_value = data[:customValue]
-      elseif (data[:responseWindows] == '65 days')
+      end
+
+      if (data[:responseWindows] == '65 days')
         current_value = 65
       end
 
@@ -68,7 +71,8 @@ class CorrespondenceIntakeProcessor
         subcategory: data[:subType],
         reason: data[:reason],
         response_window: current_value,
-        letter_type: data[:type]
+        letter_type: data[:type],
+        user_id: current_user.id
       )
     end
   end

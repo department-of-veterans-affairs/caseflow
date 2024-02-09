@@ -24,10 +24,30 @@ export const AddLetter = (props) => {
 
   const [unrelatedTasksCanContinue, setUnrelatedTasksCanContinue] = useState(true);
 
-  const removeLetter = (index) => {
+  const canContinue = (letterCard) => {
+    const output = [];
+    const opts = ['65 days', 'No response window'];
+
+    for (const [, value] of Object.entries(letterCard)) {
+      if ((value !== null) && (value !== '')) {
+        output.push(value);
+      }
+    }
+
+    if ((output.length === 7) && (opts.includes(output[6]))) {
+      return true;
+    } else if (output.length === 8) {
+      return true;
+    }
+
+    return false;
+  };
+
+  const removeLetter = (index, letterCard) => {
     const restLetters = letters.filter((letter) => letter !== index);
 
     setLetters(restLetters);
+    canContinue(letterCard);
   };
 
   useEffect(() => {
@@ -35,11 +55,15 @@ export const AddLetter = (props) => {
   }, [unrelatedTasksCanContinue]);
 
   useEffect(() => {
+    // if canContinue() {
+    //   setUnrelatedTasksCanContinue(true);
+    // } else {
     if (letters.length > 0) {
       setUnrelatedTasksCanContinue(false);
     } else {
       setUnrelatedTasksCanContinue(true);
     }
+    // }
   }, [letters]);
 
   return (
@@ -335,7 +359,7 @@ const NewLetter = (props) => {
   };
 
   const removeLetter = () => {
-    props.removeLetter(index);
+    props.removeLetter(index, letterCard);
   };
 
   return (
