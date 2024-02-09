@@ -2469,7 +2469,8 @@ RSpec.feature "Case details", :all_dbs do
     before { FeatureToggle.disable!(:vso_virtual_opt_in) }
     after { FeatureToggle.enable!(:vso_virtual_opt_in) }
 
-    it "the Hearings section does not appear despite there being an unscheduled hearing associated with the appeal" do
+    it "the Hearings section does not appear despite
+      there being an unscheduled hearing associated with the appeal" do
       visit "/queue/appeals/#{schedule_hearing_task.appeal.uuid}"
 
       expect(page.has_no_content?("Hearings")).to eq(true)
