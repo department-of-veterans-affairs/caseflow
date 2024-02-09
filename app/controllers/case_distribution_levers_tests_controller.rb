@@ -27,7 +27,7 @@ class CaseDistributionLeversTestsController < ApplicationController
 
   def appeals_distributed
     # change this to the correct class
-    csv_data = BatchAppealsForReaderQuery.process
+    csv_data = AppealsDistributed.process
 
     # Get the current date and time for dynamic filename
     current_datetime = Time.zone.now.strftime("%Y%m%d-%H%M")
