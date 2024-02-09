@@ -48,11 +48,10 @@ describe('HearingTime', () => {
   });
 
   test('Matches snapshot when other time is not selected', () => {
-    const form = mount(<HearingTime value="12:30 PM Eastern Time (US & Canada)" />);
+    const form = mount(<HearingTime enableZone value="12:30 PM Eastern Time (US & Canada)" />);
 
     expect(form).toMatchSnapshot();
 
-    expect(form.exists('SearchableDropdown')).toBe(false);
     expect(form.find('input').exists({ checked: true, value: '12:30 PM Eastern Time (US & Canada)' })).toBe(
       true
     );
