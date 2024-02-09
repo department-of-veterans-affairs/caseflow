@@ -160,6 +160,7 @@ const NewLetter = (props) => {
 
   const canContinue = () => {
     const output = [];
+    const opts = ['65 days', 'No response window'];
 
     for (const [, value] of Object.entries(letterCard)) {
       if ((value !== null) && (value !== '')) {
@@ -167,7 +168,7 @@ const NewLetter = (props) => {
       }
     }
 
-    if ((output.length === 7) && (output[6] !== 'Custom')) {
+    if ((output.length === 7) && (opts.includes(output[6]))) {
       return true;
     } else if (output.length === 8) {
       return true;
@@ -289,6 +290,7 @@ const NewLetter = (props) => {
       reason: '',
       responseWindows: ''
     });
+    setCustomResponseWindowState(false);
   };
 
   useEffect(() => {
@@ -307,18 +309,22 @@ const NewLetter = (props) => {
       reason: '',
       responseWindows: ''
     });
+    setCustomResponseWindowState(false);
   };
 
   const changeLetterSubTitle = (val) => {
     setLetterCard({ ...letterCard,
       subType: val,
-      reason: ''
+      reason: '',
+      customValue: null
     });
+    setCustomResponseWindowState(false);
   };
 
   const changeSubReason = (val) => {
     setLetterCard({ ...letterCard,
-      reason: val
+      reason: val,
+      customValue: null
     });
   };
 
