@@ -209,7 +209,7 @@ class TableFilter extends React.PureComponent {
         {this.state.open &&
           <QueueDropdownFilter
             clearFilters={this.clearFilteredByList}
-            isReceiptDateFilter={this.props.isRecieptDateFilter}
+            isReceiptDateFilter={this.props.isReceiptDateFilter}
             name={valueName || columnName}
             isClearEnabled={anyFiltersAreSet}
             handleClose={this.toggleDropdown}
