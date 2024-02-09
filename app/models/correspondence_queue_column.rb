@@ -23,7 +23,7 @@ class CorrespondenceQueueColumn < QueueColumn
 
 }.freeze
 
-def filter_options(tasks)
+def self.filter_options(tasks)
   filter_option_func = FILTER_OPTIONS[name]
   if filter_option_func
     send(filter_option_func, tasks)
