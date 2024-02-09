@@ -29,7 +29,7 @@ class ChangeHearingRequestTypeTaskCancellationJob < CaseflowJob
   # Params: None
   # Returns: ActiveRecord::Relation of ChangeHearingRequestTypeTasks
   def open_change_hearing_request_type_tasks
-    ChangeHearingRequestTypeTask.open.includes(:legacy_appeal)
+    ChangeHearingRequestTypeTask.open.legacy.includes(:appeal)
   end
 
   # Description: Loops through the open ChangeHearingRequestTypeTaks from open_change_hearing_request_type_tasks

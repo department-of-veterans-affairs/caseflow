@@ -19,11 +19,11 @@ FactoryBot.define do
       sent_by { User.system_user }
     end
 
-    trait :with_hearing do
+    trait :ama do
       hearing { create(:hearing) }
     end
 
-    trait :with_legacy_hearing do
+    trait :legacy do
       hearing { create(:legacy_hearing) }
     end
 
