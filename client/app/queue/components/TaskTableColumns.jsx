@@ -243,12 +243,32 @@ export const veteranDetails = () => {
     header: 'Veteran Details',
     valueFunction: (task) => {
       if (task.taskUrl === '/modal/reassign_package') {
-        return <a href="#" onClick={showReassignPackageModal}>{task.veteranDetails}</a>;
+        return <a
+          href="#"
+          onClick={showReassignPackageModal}
+          aria-label={`${task.label } Link`}
+          id="task-link"
+        >
+          {task.veteranDetails}
+        </a>;
       } else if (task.taskUrl === '/modal/remove_package') {
-        return <a href="#" onClick={showRemovePackageModal}>{task.veteranDetails}</a>;
+        return <a
+          href="#"
+          onClick={showRemovePackageModal}
+          aria-label={`${task.label } Link`}
+          id="task-link"
+        >
+          {task.veteranDetails}
+        </a>;
       }
 
-      return <a href={task.taskUrl}>{task.veteranDetails}</a>;
+      return <a
+        href={task.taskUrl}
+        id="task-link"
+        aria-label={`${task.label } Link`}
+      >
+        {task.veteranDetails}
+      </a>;
     }
   };
 };
@@ -273,7 +293,7 @@ export const notes = () => {
 export const checkboxColumn = () => {
   return {
     header: 'Select',
-    valueFunction: (task) => task ? <Checkbox id={task.uniqueId} /> : ''
+    valueFunction: (task) => task ? <Checkbox id={task.uniqueId} ariaLabel={task.uniqueId} /> : ''
   };
 };
 
