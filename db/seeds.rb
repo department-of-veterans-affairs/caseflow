@@ -10,9 +10,7 @@ Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
 class SeedDB
   def clean_db
     byebug
-    DatabaseCleaner.clean_with(:truncation,
-                                pre_count: true,
-                                cache_tables: false)
+    DatabaseCleaner.clean_with(:truncation)
 
 
 

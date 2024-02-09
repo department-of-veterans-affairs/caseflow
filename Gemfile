@@ -100,7 +100,7 @@ group :test, :development, :demo do
   gem "capybara-screenshot"
   gem "danger", "~> 6.2.2"
   # gem "database_cleaner"
-  gem "database_cleaner-active_record"
+  gem "database_cleaner-active_record", "= 2.0.0"
   gem "factory_bot_rails", "~> 5.2"
   gem "faker"
   gem "guard-rspec"
