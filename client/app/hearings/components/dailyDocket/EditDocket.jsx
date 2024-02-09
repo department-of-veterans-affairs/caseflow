@@ -114,7 +114,7 @@ export const EditDocket = (props) => {
 
   const handleStartTimeChange = (value) => {
     // Process the start time value to return the time without a timezone
-    const [selectedTime, selectedTimeZone] = splitSelectedTime(value);
+    const selectedTime = splitSelectedTime(value)[0];
 
     // Convert the value from '8:00 AM Eastern Time' to '8:00'
     const finalValue = moment(selectedTime, 'h:mm a').format('HH:mm');
