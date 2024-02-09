@@ -230,7 +230,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, webex, and i
                    
                   <ExternalLinkIcon
                     className=""
-                    color="#0071bc"
+                    color="#757575"
                     size={20}
                   >
                     <svg
@@ -247,7 +247,7 @@ exports[`HearingLinks Matches snapshot when hearing is non-virtual, webex, and i
                         strokeWidth="1"
                       >
                         <g
-                          fill="#0071bc"
+                          fill="#757575"
                           fillRule="nonzero"
                         >
                           <g
@@ -597,7 +597,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
                    
                   <ExternalLinkIcon
                     className=""
-                    color="#0071bc"
+                    color="#757575"
                     size={20}
                   >
                     <svg
@@ -614,7 +614,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
                         strokeWidth="1"
                       >
                         <g
-                          fill="#0071bc"
+                          fill="#757575"
                           fillRule="nonzero"
                         >
                           <g
@@ -926,7 +926,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
                    
                   <ExternalLinkIcon
                     className=""
-                    color="#0071bc"
+                    color="#757575"
                     size={20}
                   >
                     <svg
@@ -943,7 +943,7 @@ exports[`HearingLinks Matches snapshot when hearing is virtual, pexip, and in pr
                         strokeWidth="1"
                       >
                         <g
-                          fill="#0071bc"
+                          fill="#757575"
                           fillRule="nonzero"
                         >
                           <g
@@ -3109,7 +3109,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                    
                   <ExternalLinkIcon
                     className=""
-                    color="#0071bc"
+                    color="#757575"
                     size={20}
                   >
                     <svg
@@ -3126,7 +3126,7 @@ exports[`HearingLinks Only displays Guest Link when user is not a host 1`] = `
                         strokeWidth="1"
                       >
                         <g
-                          fill="#0071bc"
+                          fill="#757575"
                           fillRule="nonzero"
                         >
                           <g
