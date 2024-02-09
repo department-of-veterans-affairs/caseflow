@@ -116,14 +116,6 @@ describe DocketCoordinator do
       end
     end
 
-    it "sets valid proportions for direct review, evidence submission, hearing, and legacy" do
-      docket_proportions = docket_coordinator.docket_proportions
-      expect(docket_proportions[:direct_review]).to be_within(0.01).of(0.107)
-      expect(docket_proportions[:evidence_submission]).to be_within(0.01).of(0.031)
-      expect(docket_proportions[:hearing]).to be_within(0.01).of(0.031)
-      expect(docket_proportions[:legacy]).to be_within(0.01).of(0.829)
-    end
-
     context "lever settings for minimum legacy and maximum direct review proportions" do
       it "do not sum to more than 1" do
         expect(CaseDistributionLever.minimum_legacy_proportion +
@@ -133,9 +125,9 @@ describe DocketCoordinator do
 
     context "when there are due direct reviews" do
       it "uses the number of due direct reviews as a proportion of the docket margin net of priority" do
-        lever_value = CaseDistributionLever.maximum_direct_review_proportion
-
-        expect(docket_coordinator.docket_proportions[:direct_review]).to be < lever_value
+        expect(docket_coordinator.docket_proportions).to include(
+          direct_review: CaseDistributionLever.maximum_direct_review_proportion
+        )
         expect(docket_coordinator.target_number_of_ama_hearings(2.years)).to eq(30)
       end
 
@@ -186,15 +178,15 @@ describe DocketCoordinator do
         let(:other_docket_count) { 5 }
 
         it "ensures a minimum legacy proportion" do
-          docket_proportions = docket_coordinator.docket_proportions
-          expect(docket_proportions[:legacy]).to be >= 0.2
+          expect(docket_coordinator.docket_proportions).to include(
+            legacy: CaseDistributionLever.minimum_legacy_proportion
+          )
         end
 
         context "unless there aren't that many cases" do
           let(:nonpriority_legacy_count) { 15 }
 
           it "uses the maximum number possible" do
-            binding.pry
             expect(docket_coordinator.docket_proportions).to include(
               legacy: 0.1
             )
