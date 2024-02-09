@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "database_cleaner"
+require "database_cleaner-active_record"
 
 # because db/seeds is not in the autoload path, we must load them explicitly here
 # base.rb needs to be loaded first because the other seeds inherit from it
@@ -9,7 +9,13 @@ Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
 
 class SeedDB
   def clean_db
-    DatabaseCleaner.clean_with(:truncation)
+    byebug
+    DatabaseCleaner.clean_with(:truncation,
+                                pre_count: true,
+                                cache_tables: false)
+
+
+
     cm = CacheManager.new
     CacheManager::BUCKETS.keys.each { |bucket| cm.clear(bucket) }
     Fakes::EndProductStore.new.clear!
