@@ -16,7 +16,10 @@ const VirtualHearingLink = ({
   hearing
 }) => {
   return (
-    <Link href={!isVirtual ? hearing.dailyDocketConferenceLinks[1].coHostLink : link} target={newWindow ? '_blank' : '_self'}>
+    <Link
+      href={!isVirtual ? hearing.dailyDocketConferenceLinks[1].coHostLink : link}
+      target={newWindow ? '_blank' : '_self'}
+    >
       <strong>{label}</strong>
       <span {...ICON_POSITION_FIX}>
         &nbsp;
@@ -43,7 +46,12 @@ VirtualHearingLink.propTypes = {
     aliasWithHost: PropTypes.string,
     jobCompleted: PropTypes.bool
   }).isRequired,
-  label: PropTypes.string
+  label: PropTypes.string,
+  hearing: PropTypes.shape({
+    dailyDocketConferenceLinks: PropTypes.shape({
+      coHostLink: PropTypes.string
+    })
+  })
 };
 
 VirtualHearingLink.defaultProps = {
