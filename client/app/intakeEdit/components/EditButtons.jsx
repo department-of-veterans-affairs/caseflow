@@ -42,7 +42,8 @@ class SaveButtonUnconnected extends React.Component {
     };
 
     if (this.props.state.addedIssues.some((i) => i.benefitType === 'vha') &&
-    !this.props.originalIssues.some((i) => i.benefitType === 'vha') && this.props.hasDistributionTask) {
+    !this.props.originalIssues.some((i) => i.benefitType === 'vha') &&
+    this.props.hasDistributionTask && this.props.specialtyCaseTeamDistribution) {
       showModals.moveToSctModal = true;
     }
 
@@ -91,6 +92,10 @@ class SaveButtonUnconnected extends React.Component {
   }
 
   showMoveToSctModal = () => {
+    if (!this.props.specialtyCaseTeamDistribution) {
+      return false;
+    }
+
     return this.state.showModals.moveToSctModal &&
       !this.state.showModals.reviewRemovedModal &&
       !this.state.showModals.issueChangeModal &&
@@ -249,6 +254,7 @@ SaveButtonUnconnected.propTypes = {
   claimId: PropTypes.string,
   history: PropTypes.object,
   hasDistributionTask: PropTypes.bool,
+  specialtyCaseTeamDistribution: PropTypes.bool,
   state: PropTypes.shape({
     addedIssues: PropTypes.array
   })
@@ -268,6 +274,7 @@ const SaveButton = connect(
     withdrawalDate: state.withdrawalDate,
     receiptDate: state.receiptDate,
     hasDistributionTask: state.hasDistributionTask,
+    specialtyCaseTeamDistribution: state.featureToggles.specialtyCaseTeamDistribution,
     state
   }),
   (dispatch) => bindActionCreators({
