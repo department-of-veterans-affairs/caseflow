@@ -28,6 +28,7 @@ class CorrespondenceIntakeProcessor
 
       create_correspondence_relations(intake_params, correspondence.id)
       link_appeals_to_correspondence(intake_params, correspondence.id)
+      create_response_letter(intake_params, correspondence.id)
       add_tasks_to_related_appeals(intake_params, current_user)
       complete_waived_evidence_submission_tasks(intake_params)
       create_tasks_not_related_to_appeals(intake_params, correspondence, current_user)
@@ -49,6 +50,33 @@ class CorrespondenceIntakeProcessor
       )
     end
   end
+
+  def create_response_letter(intake_params, correspondence_id)
+    current_user = RequestStore.store[:current_user] ||= User.system_user
+
+    intake_params[:response_letters]&.map do |data|
+      current_value = nil
+      if (data[:responseWindows] == 'Custom')
+        current_value = data[:customValue]
+      end
+
+      if (data[:responseWindows] == '65 days')
+        current_value = 65
+      end
+
+      CorrespondenceResponseLetter.create!(
+        correspondence_id: correspondence_id,
+        date_sent: data[:date],
+        title: data[:title],
+        subcategory: data[:subType],
+        reason: data[:reason],
+        response_window: current_value,
+        letter_type: data[:type],
+        user_id: current_user.id
+      )
+    end
+  end
+
 
   def link_appeals_to_correspondence(intake_params, correspondence_id)
     intake_params[:related_appeal_ids]&.map do |appeal_id|
