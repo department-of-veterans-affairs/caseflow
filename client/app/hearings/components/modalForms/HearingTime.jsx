@@ -9,6 +9,7 @@ import HEARING_TIME_RADIO_OPTIONS from '../../../../constants/HEARING_TIME_RADIO
 import RadioField from '../../../components/RadioField';
 import SearchableDropdown from '../../../components/SearchableDropdown';
 import { hearingTimeOptsWithZone } from '../../utils';
+import TIMEZONES from '../../../../constants/TIMEZONES';
 import { verticalAlign } from '../details/style';
 
 export const getAssignHearingTime = (time, day) => {
@@ -61,6 +62,13 @@ export const HearingTime = ({
   const timeOptions = enableZone ?
     hearingTimeOptsWithZone(basicTimeOptions, localZone || enableZone) :
     basicTimeOptions;
+
+  // Add timezone to previously selected value so the correct option is displayed
+  if(value && value.length > 0){
+    const timezone = Object.keys(TIMEZONES).find(key => TIMEZONES[key] === enableZone);
+    value = `${moment(value, 'h:mm A').format('h:mm A')} ${timezone}`;
+  }
+
   const isOther = _.isUndefined(
     _.find(timeOptions, (opt) => opt.value === value)
   );

@@ -60,7 +60,7 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
       expect(page).to have_content("No Show")
       expect(page).to have_content("This is a note about the hearing!")
       expect(find_field("Transcript Requested", visible: false)).to be_checked
-      expect(find_field("8:30", visible: false)).to be_checked
+      expect(find_field("8:30 AM Eastern Time (US & Canada)", visible: false)).to be_checked
     end
     scenario "User can see paper_case notification" do
       visit "hearings/schedule/docket/" + legacy_hearing.hearing_day.id.to_s
@@ -87,7 +87,7 @@ feature "Hearing Schedule Daily Docket for Build HearSched", :all_dbs do
       expect(page).to have_content("No Show")
       expect(page).to have_content("This is a note about the hearing!", wait: 10) # flake
       expect(find_field("Transcript Requested", visible: false)).to be_checked
-      expect(find_field("9:00 AM", visible: false)).to be_checked
+      expect(find_field("9:00 AM Eastern Time (US & Canada)", visible: false)).to be_checked
     end
   end
 
