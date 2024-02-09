@@ -238,7 +238,7 @@ export const vaDor = () => {
   return {
     header: 'VA DOR',
     valueFunction: (task) => {
-      return moment(task.vador).format('MM/DD/YYYY');
+      return moment(task.vaDor).format('MM/DD/YYYY');
     }
   };
 };
