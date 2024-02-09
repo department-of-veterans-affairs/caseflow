@@ -1997,4 +1997,64 @@ describe Task, :all_dbs do
       end
     end
   end
+
+  describe "Correspondence Tasks" do
+    context "Correspondence Intake Task" do
+      it "has a task_url" do
+        cit = create(:correspondence_intake_task)
+        expect(cit.task_url).to eq("/queue/correspondence/#{cit.correspondence.uuid}/intake")
+      end
+    end
+
+    context "Review Package Task" do
+      it "has a task_url" do
+        correspondence = create(:correspondence)
+        rpt = ReviewPackageTask.find_or_create_by(
+          appeal_id: correspondence.id,
+          assigned_to: MailTeamSupervisor.singleton,
+          appeal_type: "Correspondence"
+        )
+
+        expect(rpt.task_url).to eq("/queue/correspondence/#{correspondence.uuid}/review_package")
+      end
+    end
+
+    context "eFolder Upload Failed Task" do
+      it "has a review_package task_url if parent is review package task" do
+        correspondence = create(:correspondence)
+        rpt = ReviewPackageTask.find_or_create_by(
+          appeal_id: correspondence.id,
+          assigned_to: MailTeamSupervisor.singleton,
+          appeal_type: "Correspondence"
+        )
+
+        uft = EfolderUploadFailedTask.create(
+          appeal_id: correspondence.id,
+          assigned_to: MailTeamSupervisor.singleton,
+          appeal_type: "Correspondence",
+          parent_id: rpt.id
+        )
+
+        expect(uft.task_url).to eq("/queue/correspondence/#{correspondence.uuid}/review_package")
+      end
+
+      it "has an intake task_url if parent is correspondence intake task" do
+        correspondence = create(:correspondence)
+        cit = CorrespondenceIntakeTask.find_or_create_by(
+          appeal_id: correspondence.id,
+          assigned_to: MailTeamSupervisor.singleton,
+          appeal_type: "Correspondence"
+        )
+
+        uft = EfolderUploadFailedTask.create(
+          appeal_id: correspondence.id,
+          assigned_to: MailTeamSupervisor.singleton,
+          appeal_type: "Correspondence",
+          parent_id: cit.id
+        )
+
+        expect(uft.task_url).to eq("/queue/correspondence/#{correspondence.uuid}/intake")
+      end
+    end
+  end
 end
