@@ -7,10 +7,6 @@ import QueueTable from '../../queue/QueueTable';
 
 const IndividualClaimHistoryTable = () => {
 
-  // const task = useSelector(
-  //   (state) => state.nonComp.task
-  // );
-
   const processDate = (date) => date;
 
   const claimCreatedFragment = () => {
@@ -63,28 +59,40 @@ const IndividualClaimHistoryTable = () => {
   };
 
   const detailsFragment = (eventType, details) => {
+    let component = null;
+
     switch (eventType) {
     case 'Claim created':
-      return claimCreatedFragment();
+      component = claimCreatedFragment();
+      break;
     case 'Claim closed':
-      return claimClosedFragment(details);
+      component = claimClosedFragment(details);
+      break;
     case 'Completed disposition':
-      return completedDispositionFragment(details);
+      component = completedDispositionFragment(details);
+      break;
     case 'Claim status - In progress':
-      return claimInProgressFragment();
+      component = claimInProgressFragment();
+      break;
     case 'Claim status - Incomplete':
-      return claimIncompleteFragment();
+      component = claimIncompleteFragment();
+      break;
     case 'Added issue':
-      return addedIssueFragment(details);
+      component = addedIssueFragment(details);
+      break;
     case 'Added issue - No decision date':
-      return addedIssueFragment(details);
+      component = addedIssueFragment(details);
+      break;
     case 'Withdrew issue':
-      return withdrewIssueFragment(details);
+      component = withdrewIssueFragment(details);
+      break;
     default:
       return null;
     }
 
-    // return
+    return <p>
+      {component}
+    </p>;
   };
 
   const dummyData = [
@@ -176,15 +184,33 @@ const IndividualClaimHistoryTable = () => {
   return <QueueTable
     id="individual_claim_history_table"
     columns={[
-      { columnName: 'eventDate', header: 'Date and Time', valueFunction: (row) => processDate(row.eventDate) },
-      { columnName: 'eventUser', header: 'User', valueName: 'eventUser', enableFilter: true },
-      { columnName: 'eventType', header: 'Activity', valueName: 'readableEventType', enableFilter: true },
-      { columnName: 'details', header: 'Details', valueFunction: (row) => detailsFragment(row.readableEventType, row.details) },
+      { name: 'eventDate',
+        header: 'Date and Time',
+        valueFunction: (row) => processDate(row.eventDate),
+        getSortValue: (row) => processDate(row.eventDate) },
+      { name: 'eventUser',
+        columnName: 'eventUser',
+        header: 'User',
+        valueName: 'User',
+        valueFunction: (row) => row.eventUser,
+        enableFilter: true,
+        getSortValue: (row) => row.eventUser },
+      { columnName: 'readableEventType',
+        name: 'Activity',
+        header: 'Activity',
+        valueName: 'Activity',
+        valueFunction: (row) => row.readableEventType,
+        enableFilter: true,
+        getSortValue: (row) => row.readableEventType },
+      { name: 'details',
+        header: 'Details',
+        valueFunction: (row) => detailsFragment(row.readableEventType, row.details) },
     ]}
     rowObjects={dummyData}
     summary="Individual claim history"
     slowReRendersAreOk
-    enablePagination />;
+    enablePagination
+    useTaskPagesApi={false} />;
 
 };
 
