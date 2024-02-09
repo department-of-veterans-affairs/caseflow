@@ -371,7 +371,7 @@ export const mockDocketDistributionPriorLevers = [
     "title": 'AMA Hearings Start Distribution Prior to Goals',
     "description": '',
     "data_type": "combination",
-    "value": 770,
+    "value": 40,
     "unit": "days",
     "options": [
       {
@@ -801,19 +801,19 @@ export const mockCombinationReturn = {
   "lever_group_order": 4000
 };
 
-export const mockmockAffinityDaysLeversReturn = [
+export const mockAffinityDaysLeversReturn = [
   {
     "item":"ama_hearing_case_affinity_days",
     "title":"AMA Hearing Case Affinity Days",
     "description":"For non-priority AMA Hearing cases, sets the number of days an AMA Hearing Case is tied to the judge that held the hearing.",
     "data_type":"radio",
-    "value":"option_1",
+    "value":80,
     "unit":"days",
     "options":[
       {
         "item":"option_1",
         "data_type":"number",
-        "value":80,
+        "value":0,
         "text":"Attempt distribution to current judge for max of:",
         "unit":"days",
         "min_value":0,
