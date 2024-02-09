@@ -60,7 +60,6 @@ describe HearingRepository, :all_dbs do
         scheduled_time_string: "09:00 AM America/New_York",
         appeal: legacy_appeal
       )
-      byebug
       expect(VACOLS::CaseHearing.find_by(vdkey: hearing_day.id)
         .hearing_date.to_datetime.in_time_zone("UTC").hour).to eq(9)
     end
