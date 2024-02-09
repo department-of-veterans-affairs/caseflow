@@ -57,6 +57,10 @@ end
 # rubocop:enable Metrics/AbcSize
 
 describe JudgeCaseReview, :all_dbs do
+  it_behaves_like "JudgeCaseReview belongs_to polymorphic appeal" do
+    subject { create(:judge_case_review, :legacy) }
+  end
+
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end

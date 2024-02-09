@@ -2,6 +2,7 @@
 
 class JudgeCaseReview < CaseflowRecord
   include CaseReviewConcern
+  include JudgeCaseReviewBelongsToPolymorphicAppealConcern
   include HasAppealUpdatedSince
   include IssueUpdater
 
