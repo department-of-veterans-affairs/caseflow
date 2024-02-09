@@ -15,12 +15,12 @@
   ],
   "default": [
     {
-      "displayText": "8:30 AM Eastern Time (US & Canada)",
-      "value": "08:30"
+      "displayText": "8:30 AM",
+      "value": "8:30 AM"
     },
     {
-      "displayText": "12:30 PM Eastern Time (US & Canada)",
-      "value": "12:30 PM Eastern Time (US & Canada)"
+      "displayText": "12:30 PM",
+      "value": "12:30 PM"
     },
     {
       "displayText": "Other",
