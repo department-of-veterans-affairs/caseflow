@@ -4,10 +4,10 @@ import cx from 'classnames';
 import NumberField from 'app/components/NumberField';
 import COPY from '../../../COPY';
 import { getLeversByGroup, getLeverErrors, getUserIsAcdAdmin } from '../reducers/levers/leversSelector';
-import { updateNumberLever, addLeverErrors, removeLeverErrors } from '../reducers/levers/leversActions';
+import { updateNumberLever, validateLever } from '../reducers/levers/leversActions';
 import { Constant } from '../constants';
 import ACD_LEVERS from '../../../constants/ACD_LEVERS';
-import { validateLeverInput, dynamicallyAddAsterisk } from '../utils';
+import { dynamicallyAddAsterisk } from '../utils';
 
 const BatchSize = () => {
   const theState = useSelector((state) => state);
@@ -25,25 +25,11 @@ const BatchSize = () => {
     setBatchSizeLevers(batchLevers);
   }, [batchLevers]);
 
-  const handleValidation = (lever, leverItem, value) => {
-    const validationErrors = validateLeverInput(lever, value);
-    const errorExists = leverErrors(leverItem).length > 0;
-
-    if (validationErrors.length > 0 && !errorExists) {
-      dispatch(addLeverErrors(validationErrors));
-    }
-
-    if (validationErrors.length === 0 && errorExists) {
-      dispatch(removeLeverErrors(leverItem));
-    }
-
-  };
-
   const updateNumberFieldLever = (lever) => (event) => {
     // eslint-disable-next-line camelcase
     const { lever_group, item } = lever;
 
-    handleValidation(lever, item, event);
+    dispatch(validateLever(lever, item, event, leverErrors(item)));
     dispatch(updateNumberLever(lever_group, item, event));
   };
 

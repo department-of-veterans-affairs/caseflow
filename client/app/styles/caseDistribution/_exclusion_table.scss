@@ -1,9 +1,5 @@
-$exclusion-table-header-color: #d3d3d3;
-$border-color: #d6d7d9;
-$exclusion-background-color: #fff;
-
 .exclusion-table-header-styling {
-  color: $exclusion-table-header-color;
+  color: $color-gray-lighter;
   padding: 0;
   margin-top: 0;
   margin-bottom: 0;
@@ -17,11 +13,11 @@ $exclusion-background-color: #fff;
     margin-top: 0;
 
     tr {
-      border-bottom: 1px solid $border-color;
+      border-bottom: 1px solid $color-gray-lighter;
 
       th {
-        padding: 30px 30px;
-        background-color: $exclusion-background-color;
+        padding: 30px;
+        background-color: $color-white;
       }
     }
   }
@@ -33,7 +29,7 @@ $exclusion-background-color: #fff;
   padding: 0 30px;
   margin-top: 0;
   border: 0;
-  border-color: $border-color;
+  border-color: $color-gray-lighter;
   vertical-align: text-top;
   font-family: Source Sans Pro;
   font-weight: 400;

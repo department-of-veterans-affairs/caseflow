@@ -1,8 +1,22 @@
 # frozen_string_literal: true
 
 RSpec.describe CaseDistributionLever, :all_dbs do
-  let!(:levers) { Seeds::CaseDistributionLevers.new.levers }
+  let!(:levers) { Seeds::CaseDistributionLevers.levers }
   let!(:lever_user) { create(:user) }
+  let!(:integer_levers) do
+    %w[ama_direct_review_docket_time_goals
+       request_more_cases_minimum
+       alternative_batch_size
+       batch_size_per_attorney
+       days_before_goal_due_for_distribution
+       ama_hearing_case_affinity_days
+       cavc_affinity_days
+       ama_evidence_submission_docket_time_goals
+       ama_hearings_docket_time_goals]
+  end
+  let!(:float_levers) do
+    %w[maximum_direct_review_proportion minimum_legacy_proportion nod_adjustment]
+  end
 
   describe "validations" do
     it "requires a title" do
@@ -47,7 +61,9 @@ RSpec.describe CaseDistributionLever, :all_dbs do
       end
 
       it "validates combination data_type" do
-        lever = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearings_start_distribution_prior_to_goals)
+        lever = CaseDistributionLever.find_by_item(
+          Constants.DISTRIBUTION.ama_hearings_start_distribution_prior_to_goals
+        )
         valid = lever.update(options: nil)
 
         expect(valid).to be_falsey
@@ -67,33 +83,29 @@ RSpec.describe CaseDistributionLever, :all_dbs do
         case_distribution_lever.data_type = "number"
         case_distribution_lever.value = "invalid_number"
         case_distribution_lever.valid?
-        expect(case_distribution_lever.errors.full_messages).to include("Value does not match its data_type number. Value is invalid_number")
+        expect(case_distribution_lever.errors.full_messages).to include(
+          "Value does not match its data_type number. Value is invalid_number"
+        )
       end
 
       it "should return error when item is not included in constants" do
         case_distribution_lever.item = "invalid_item"
         case_distribution_lever.data_type = "number"
         case_distribution_lever.valid?
-        expect(case_distribution_lever.errors.full_messages).to include("Item is of data_type number but is not included in INTEGER_LEVERS or FLOAT_LEVERS")
+        expect(case_distribution_lever.errors.full_messages).to include(
+          "Item is of data_type number but is not included in INTEGER_LEVERS or FLOAT_LEVERS"
+        )
       end
     end
   end
 
   context "constants" do
     it "should match array of INTEGER Levers" do
-      expect(CaseDistributionLever::INTEGER_LEVERS).to match_array(%w[ama_direct_review_docket_time_goals
-                                                                      request_more_cases_minimum
-                                                                      alternative_batch_size
-                                                                      batch_size_per_attorney
-                                                                      days_before_goal_due_for_distribution
-                                                                      ama_hearing_case_affinity_days
-                                                                      cavc_affinity_days
-                                                                      ama_evidence_submission_docket_time_goals
-                                                                      ama_hearings_docket_time_goals])
+      expect(CaseDistributionLever::INTEGER_LEVERS).to match_array(integer_levers)
     end
 
     it "should match array of FLOAT Levers" do
-      expect(CaseDistributionLever::FLOAT_LEVERS).to match_array(%w[maximum_direct_review_proportion minimum_legacy_proportion nod_adjustment])
+      expect(CaseDistributionLever::FLOAT_LEVERS).to match_array(float_levers)
     end
   end
 
