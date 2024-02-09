@@ -119,7 +119,6 @@ class Person < CaseflowRecord
     bgs_record.keys.any?
   end
 
-
   private
 
   def fetch_bgs_record
