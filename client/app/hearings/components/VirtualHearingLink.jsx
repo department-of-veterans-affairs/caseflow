@@ -12,28 +12,16 @@ const VirtualHearingLink = ({
   isVirtual,
   newWindow,
   link,
-  virtualHearing,
+  // virtualHearing,
   label,
   hearing
 }) => {
-  if (!isVirtual) {
-    return (
-      <Link href={hearing.dailyDocketConferenceLinks[1].coHostLink} target={newWindow ? '_blank' : '_self'}>
-        <strong>{label}</strong>
-        <span {...ICON_POSITION_FIX}>
-          &nbsp;
-          <ExternalLinkIcon color={COLORS.PRIMARY} />
-        </span>
-      </Link>
-    );
-  }
-
   return (
-    <Link href={link} target={newWindow ? '_blank' : '_self'}>
+    <Link href={!isVirtual ? hearing.dailyDocketConferenceLinks[1].coHostLink : link} target={newWindow ? '_blank' : '_self'}>
       <strong>{label}</strong>
       <span {...ICON_POSITION_FIX}>
         &nbsp;
-        <ExternalLinkIcon color={virtualHearing.jobCompleted ? COLORS.PRIMARY : COLORS.GREY_MEDIUM} />
+        <ExternalLinkIcon color={hearing?.scheduledForIsPast ? COLORS.PRIMARY : COLORS.GREY_MEDIUM} />
       </span>
     </Link>
   );
