@@ -35,15 +35,11 @@ export const AddLetter = (props) => {
   }, [unrelatedTasksCanContinue]);
 
   useEffect(() => {
-    // if canContinue() {
-    //   setUnrelatedTasksCanContinue(true);
-    // } else {
     if (letters.length > 0) {
       setUnrelatedTasksCanContinue(false);
     } else {
       setUnrelatedTasksCanContinue(true);
     }
-    // }
   }, [letters]);
 
   return (
