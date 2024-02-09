@@ -36,7 +36,7 @@ describe HearingRepository, :all_dbs do
     subject { HearingRepository.fix_hearings_timezone(valid_tz) }
 
     it "returns the shortened timezone name" do
-      expect(subject).to eq("10:30 PM America/New_York")
+      expect(subject).to eq("America/New_York")
     end
     it "throws an error if the timezone is invalid" do
       expect do
@@ -122,12 +122,12 @@ describe HearingRepository, :all_dbs do
       it "shows up for AMA hearings" do
         HearingRepository.slot_new_hearing(ama_attrs)
 
-        expect(ama_appeal.hearings.last.scheduled_in_timezone).to eq("08:30 PM America/Chicago")
+        expect(ama_appeal.hearings.last.scheduled_in_timezone).to eq("America/Chicago")
       end
       it "shows up for legacy hearings" do
         HearingRepository.slot_new_hearing(legacy_attrs)
 
-        expect(legacy_appeal.hearings.last.scheduled_in_timezone).to eq("08:30 PM America/Chicago")
+        expect(legacy_appeal.hearings.last.scheduled_in_timezone).to eq("America/Chicago")
       end
     end
   end

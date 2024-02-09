@@ -38,16 +38,15 @@ class HearingRepository
 
     def fix_hearings_timezone(scheduled_time_string)
       time_str_split = scheduled_time_string.split(" ", 3)
-      time_str = time_str_split[0] + " " + time_str_split[1]
       tz_str = time_str_split[2]
       begin
         new_tz = ActiveSupport::TimeZone.find_tzinfo(tz_str)
       rescue TZInfo::InvalidTimezoneIdentifier => error
         Raven.capture_exception(error)
-        Rails.logger.info(error.to_s + ": Invalid timezone " + tz_str + " for hearing day")
+        Rails.logger.info("#{error}: Invalid timezone #{tz_str} for hearing day")
         raise error
       end
-      time_str + " " + new_tz.name
+      new_tz.name
     end
 
     # rubocop:disable Metrics/MethodLength
