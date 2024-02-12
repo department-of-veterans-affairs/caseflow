@@ -93,7 +93,7 @@ module WarRoom
         "Time: #{Time.zone.now}"\
         "#{error.backtrace}")
     ensure
-      upload_logs_to_aws_s3 logs
+      # upload_logs_to_aws_s3 logs
       logs
     end
     # rubocop:enable Metrics/MethodLength
@@ -133,7 +133,7 @@ module WarRoom
           FROM end_product_establishments epe
           WHERE epe.reference_id in (SELECT DISTINCT reference_id
                                    FROM ep_establishment_workaround
-                                   WHERE report_load = #{rep_load}
+                                   WHERE report_load = \"#{rep_load}\"
                                    )
         ),
         di_id_list as (
