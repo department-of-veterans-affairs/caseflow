@@ -20,7 +20,7 @@ module QueueHelpers
 
   def create_correspondence
     vet = create_veteran
-    correspondence = ::Correspondence.create!(
+    ::Correspondence.create!(
       uuid: SecureRandom.uuid,
       portal_entry_date: Time.zone.now,
       source_type: "Mail",
@@ -36,7 +36,6 @@ module QueueHelpers
     ).tap { @cmp_packet_number += 1 }
 
     # create_correspondence_document(correspondence, vet)
-    correspondence
   end
 
   def create_correspondence_document(correspondence, veteran)
@@ -52,8 +51,7 @@ module QueueHelpers
 
   def create_correspondence_intake(correspondence, user)
     parent = correspondence&.root_task
-    cit = CorrespondenceIntakeTask.create_from_params(parent, user)
-    cit
+    CorrespondenceIntakeTask.create_from_params(parent, user)
   end
 
   def assign_review_package_task(correspondence, user)
@@ -98,20 +96,19 @@ module QueueHelpers
   def create_cavc_mailtask(correspondence, user)
     process_correspondence(correspondence, user)
     assigned_by = CorrespondenceIntakeTask.find_by(appeal_id: correspondence.id).completed_by
-    cavct = CavcCorrespondenceMailTask.create!(
+    CavcCorrespondenceMailTask.create!(
       appeal_id: correspondence.id,
       appeal_type: "Correspondence",
       assigned_by: assigned_by,
       assigned_to: CavcLitigationSupport.singleton,
       status: Constants.TASK_STATUSES.assigned
     )
-    cavct
   end
 
   def create_congress_interest_mailtask(correspondence, user)
     process_correspondence(correspondence, user)
     assigned_by = CorrespondenceIntakeTask.find_by(appeal_id: correspondence.id).completed_by
-    cmt = CongressionalInterestMailTask.create!(
+    CongressionalInterestMailTask.create!(
       appeal_id: correspondence.id,
       appeal_type: "Correspondence",
       assigned_by: assigned_by,
@@ -119,7 +116,6 @@ module QueueHelpers
       status: Constants.TASK_STATUSES.assigned,
       parent_id: correspondence&.root_task&.id
     )
-    cmt
   end
 
   def process_correspondence(correspondence, user)
