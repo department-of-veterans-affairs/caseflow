@@ -44,7 +44,7 @@ class QueueDropdownFilter extends React.PureComponent {
       }}>
         {this.props.addClearFiltersRow &&
           <div className="cf-filter-option-row">
-            {this.props.isReceiptDateFilter && <ReceiptDatePicker />}
+            {this.props.isReceiptDateFilter && <ReceiptDatePicker setSelectedValue={this.props.setSelectedValue} />}
             <button className="cf-text-button" onClick={this.props.clearFilters}
               disabled={!this.props.isClearEnabled}>
               <div className="cf-clear-filter-button-wrapper">
