@@ -458,6 +458,7 @@
   "ASSIGN_WIDGET_NO_TASK_TITLE": "No tasks selected",
   "ASSIGN_WIDGET_NO_TASK_DETAIL": "Please select a task.",
   "ASSIGN_WIDGET_SUCCESS": "%(verb)s %(numCases)s %(casePlural)s to %(assignee)s",
+  "SPECIALTY_CASE_TEAM_ASSIGN_WIDGET_SUCCESS": "You have successfully assigned %(numCases)s %(casePlural)s to %(assignee)s",
   "ASSIGN_WIDGET_ASSIGNMENT_ERROR_TITLE": "Error assigning tasks",
   "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL": "Timeout Error while assigning tasks; please reload the page before proceeding.",
   "ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL_LINK": "Please assign tasks to an attorney from your assign page.",

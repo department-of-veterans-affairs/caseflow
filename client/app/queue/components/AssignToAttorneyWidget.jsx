@@ -148,17 +148,31 @@ export class AssignToAttorneyWidget extends React.PureComponent {
         instructions }).
       then(() => {
         const isReassign = selectedTasks[0].type === 'AttorneyTask';
+        const isSpecialtyCaseTeamAssignTask = selectedTasks[0]?.assignedTo?.type === 'SpecialtyCaseTeam';
 
-        this.props.resetAssignees();
+        let titleString = '';
 
-        return this.props.showSuccessMessage({
-          title: sprintf(COPY.ASSIGN_WIDGET_SUCCESS, {
+        if (isSpecialtyCaseTeamAssignTask) {
+          titleString = sprintf(COPY.SPECIALTY_CASE_TEAM_ASSIGN_WIDGET_SUCCESS, {
+            numCases: selectedTasks.length,
+            casePlural: pluralize('tasks', selectedTasks.length),
+            // eslint-disable-next-line camelcase
+            assignee: assignee.full_name
+          });
+        } else {
+          titleString = sprintf(COPY.ASSIGN_WIDGET_SUCCESS, {
             verb: isReassign ? 'Reassigned' : 'Assigned',
             numCases: selectedTasks.length,
             casePlural: pluralize('tasks', selectedTasks.length),
             // eslint-disable-next-line camelcase
             assignee: assignee.full_name
-          })
+          });
+        }
+
+        this.props.resetAssignees();
+
+        return this.props.showSuccessMessage({
+          title: titleString
         });
       }, (error) => {
         this.props.saveFailure();

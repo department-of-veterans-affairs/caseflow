@@ -77,7 +77,7 @@ RSpec.feature "SpecialtyCaseTeam bulk assignment to attorney", :all_dbs do
         click_dropdown(text: attorney.full_name)
 
         click_on "Assign 2 cases"
-        expect(page).to have_content("Assigned 2 tasks to #{attorney.full_name}")
+        expect(page).to have_content("You have successfully assigned 2 tasks to #{attorney.full_name}")
         # Check the button to make sure it reset back to 0
         expect(page).to have_content("Assign 0 cases")
         case_rows = page.find_all("tr[id^='table-row-']")
