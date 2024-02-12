@@ -9,11 +9,7 @@ Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
 
 class SeedDB
   def clean_db
-    byebug
     DatabaseCleaner.clean_with(:truncation)
-
-
-
     cm = CacheManager.new
     CacheManager::BUCKETS.keys.each { |bucket| cm.clear(bucket) }
     Fakes::EndProductStore.new.clear!
