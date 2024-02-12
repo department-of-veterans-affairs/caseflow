@@ -69,6 +69,22 @@ class Fakes::WebexService
     )
   end
 
+  def get_recording_details
+    if error?
+      return ExternalApi::WebexService::RecordingDetailsResponse.new(
+        HTTPI::Response.new(@status_code, {}, error_response)
+      )
+    end
+
+    ExternalApi::WebexService::RecordingDetailsResponse.new(
+      HTTPI::Response.new(
+        200,
+        {},
+        fake_recording_details_data.to_json
+      )
+    )
+  end
+
   # rubocop:disable Metrics/MethodLength
   def fake_recordings_list_data
     {
@@ -149,6 +165,39 @@ class Fakes::WebexService
     }
   end
   # rubocop:enable Metrics/MethodLength
+
+  def fake_recording_details_data
+    {
+      "id": "4f914b1dfe3c4d11a61730f18c0f5387",
+      "meetingId": "f91b6edce9864428af084977b7c68291_I_166641849979635652",
+      "scheduledMeetingId": "f91b6edce9864428af084977b7c68291_20200713T121500Z",
+      "meetingSeriesId": "f91b6edce9864428af084977b7c68291",
+      "topic": "Example Topic",
+      "createTime": "2020-07-13T17:11:35Z",
+      "timeRecorded": "2020-07-13T17:05:35Z",
+      "siteUrl": "site4-example.webex.com",
+      "downloadUrl": "https://site4-example.webex.com/site4/lsr.php?RCID=b91990e37417bda24986e46cf43345ab",
+      "playbackUrl": "https://site4-example.webex.com/site4/ldr.php?RCID=69201a61d1d94a84aca18817261d1a73",
+      "password": "BgJep@43",
+      "temporaryDirectDownloadLinks": {
+          "recordingDownloadLink": "https://site4-example.webex.com/nbr/MultiThreadDownloadServlet?siteid=2062842&recordid=305462&confid=137735449369118342&language=en_US&userid=3516472&serviceRecordID=305492&ticket=SDJTSwAAAIUBSHkvL6Z5ddyBim5%2FHcJYcvn6IoXNEyCE2mAYQ5BlBg%3D%3D&timestamp=1567125236465&islogin=yes&isprevent=no&ispwd=yes",
+          "audioDownloadLink": "https://site4-example.webex.com/nbr/downloadMedia.do?siteid=2062842&recordid=305462&confid=137735449369118342&language=en_US&userid=3516472&serviceRecordID=305492&ticket=SDJTSwAAAIXCIXsuBt%2BAgtK7WoQ2VhgeI608N4ZMIJ3vxQaQNZuLZA%3D%3D&timestamp=1567125236708&islogin=yes&isprevent=no&ispwd=yes&mediaType=1",
+          "transcriptDownloadLink": "https://site4-example.webex.com/nbr/downloadMedia.do?siteid=2062842&recordid=305462&confid=137735449369118342&language=en_US&userid=3516472&serviceRecordID=305492&ticket=SDJTSwAAAAJVUJDxeA08qKkF%2FlxlSkDxuEFPwgGT0XW1z21NhY%2BCvg%3D%3D&timestamp=1567125236866&islogin=yes&isprevent=no&ispwd=yes&mediaType=2",
+          "expiration": "2022-05-01T10:30:25Z"
+      },
+      "format": "ARF",
+      "serviceType": "MeetingCenter",
+      "durationSeconds": 18416,
+      "sizeBytes": 168103,
+      "shareToMe": false,
+      "integrationTags": [
+          "dbaeceebea5c4a63ac9d5ef1edfe36b9",
+          "85e1d6319aa94c0583a6891280e3437d",
+          "27226d1311b947f3a68d6bdf8e4e19a1"
+      ],
+      "status": "available"
+    }
+  end
 
   private
 

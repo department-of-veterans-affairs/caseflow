@@ -64,6 +64,15 @@ class ExternalApi::WebexService
     ExternalApi::WebexService::RecordingsListResponse.new(resp)
   end
 
+  def get_recordings_details
+    body = nil
+    method = "GET"
+    resp = send_webex_request(body, method)
+    return if resp.nil?
+
+    ExternalApi::WebexService::RecordingDetailsResponse.new(resp)
+  end
+
   private
 
   # :nocov:
