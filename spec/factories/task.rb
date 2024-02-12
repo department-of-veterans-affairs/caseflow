@@ -609,7 +609,7 @@ FactoryBot.define do
           after(:create) do |task, _evaluator|
             create(:request_issue,
                    decision_review: task.appeal,
-                   nonrating_issue_category: "Testing split appeal",
+                   nonrating_issue_category: "Military Retired Pay",
                    decision_date: 5.days.ago)
             task.save
           end
