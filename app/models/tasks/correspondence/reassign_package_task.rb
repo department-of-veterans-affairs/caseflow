@@ -1,4 +1,4 @@
 # frozen_string_literal: true
 
-class ReassignPackageTask < ReviewPackageTask
+class ReassignPackageTask < CorrespondenceTask
 end
