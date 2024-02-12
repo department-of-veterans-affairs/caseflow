@@ -39,11 +39,12 @@ RSpec.feature "Audit Lever History Table" do
              case_distribution_lever: ama_direct_reviews_lever,
              previous_value: 15,
              update_value: 5)
-      sleep 1 # ensures a separate row for each entry
+
       create(:case_distribution_audit_lever_entry,
              case_distribution_lever: alternate_batch_size_lever,
              previous_value: 7,
-             update_value: 6)
+             update_value: 6,
+             created_at: Time.zone.now + 1.hour)
 
       visit "case-distribution-controls"
       confirm_page_and_section_loaded
@@ -94,22 +95,22 @@ RSpec.feature "Audit Lever History Table" do
       visit "case-distribution-controls"
       confirm_page_and_section_loaded
 
-      expect(find("#lever-history-table")).not_to have_content("123 days")
-      expect(find("#lever-history-table")).not_to have_content("300 days")
+      expect(find("#lever-history-table").has_no_content?("123 days")).to eq(true)
+      expect(find("#lever-history-table").has_no_content?("300 days")).to eq(true)
 
       fill_in ama_direct_reviews_field, with: "123"
       click_save_button
       click_modal_confirm_button
 
-      expect(find("#lever-history-table")).to have_content("123 days")
-      expect(find("#lever-history-table")).not_to have_content("300 days")
+      expect(find("#lever-history-table").has_content?("123 days")).to eq(true)
+      expect(find("#lever-history-table").has_no_content?("300 days")).to eq(true)
 
       fill_in ama_direct_reviews_field, with: "300"
       click_save_button
       click_modal_confirm_button
 
-      expect(find("#lever-history-table")).to have_content("123 days")
-      expect(find("#lever-history-table")).to have_content("300 days")
+      expect(find("#lever-history-table").has_content?("123 days")).to eq(true)
+      expect(find("#lever-history-table").has_content?("300 days")).to eq(true)
     end
   end
 end

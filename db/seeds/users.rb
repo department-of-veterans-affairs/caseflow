@@ -109,8 +109,8 @@ module Seeds
     end
 
     def create_bvakkeeling
-      bvakkeling = User.create(css_id: "BVAKKEELING", station_id: 101, full_name: "Keith Judge_CaseToAssign_NoTeam Keeling")
-      CDAControlGroup.singleton.add_user(bvakkeling)
+      bvakkeeling = User.create(css_id: "BVAKKEELING", station_id: 101, full_name: "Keith Judge_CaseToAssign_NoTeam Keeling")
+      CDAControlGroup.singleton.add_user(bvakkeeling)
     end
 
     def create_bvadwise

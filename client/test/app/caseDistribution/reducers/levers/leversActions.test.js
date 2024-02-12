@@ -1,7 +1,8 @@
 import * as actions from 'app/caseDistribution/reducers/levers/leversActions';
 import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
 import ApiUtil from 'app/util/ApiUtil';
-import { levers, historyList } from '../../../../data/adminCaseDistributionLevers';
+import { alternativeBatchSize, levers, historyList } from '../../../../data/adminCaseDistributionLevers';
+import ACD_LEVERS from '../../../../../constants/ACD_LEVERS';
 
 jest.mock('app/util/ApiUtil', () => ({
   get: jest.fn(),
@@ -243,5 +244,32 @@ describe('levers actions', () => {
     actions.resetAllLeverErrors()(dispatch);
 
     expect(dispatch).toHaveBeenCalledWith(expectedAction);
+  });
+
+  it('should validate lever', () => {
+    const lever = alternativeBatchSize;
+    const dispatch = jest.fn();
+
+    actions.validateLever(lever, lever.item, lever.value, [])(dispatch);
+
+    expect(dispatch).not.toHaveBeenCalled();
+  });
+
+  it('should validate lever with validationErrors', () => {
+    const lever = alternativeBatchSize;
+    const dispatch = jest.fn();
+
+    actions.validateLever(lever, lever.item, -1, [])(dispatch);
+
+    expect(dispatch).toHaveBeenLastCalledWith(expect.any(Function));
+  });
+
+  it('should validate lever with leverErrors', () => {
+    const lever = alternativeBatchSize;
+    const dispatch = jest.fn();
+
+    actions.validateLever(lever, lever.item, lever.value, ['error'])(dispatch);
+
+    expect(dispatch).toHaveBeenLastCalledWith(expect.any(Function));
   });
 });
