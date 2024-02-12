@@ -19,6 +19,11 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   class FileDownloadError < StandardError; end
   class HearingAssociationError < StandardError; end
 
+  CONVERTED_FILE_TYPES = {
+    vtt: "rtf",
+    mp4: "mp3"
+  }.freeze
+
   retry_on(FileDownloadError, wait: 5.minutes) do |job, exception|
     # TO IMPLEMENT: SEND EMAIL TO VA OPS TEAM
     job.log_error(exception)
@@ -29,7 +34,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     job.log_error(exception)
   end
 
-  retry_on(TranscriptionTransformer::FileConversionError, wait: 10.seconds) do |job, exception|
+  retry_on(Caseflow::Error::FileConversionError, wait: 10.seconds) do |job, exception|
     job.build_csv_and_upload_to_s3(exception)
     job.transcription_file.clean_up_tmp_location
     # TO IMPLEMENT: SEND EMAIL TO VA OPS TEAM
@@ -44,7 +49,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   # Purpose: Downloads audio (mp3), video (mp4), or transcript (vtt) file from Webex temporary download link and
   #          uploads the file to corresponding S3 loccation. If file is vtt, kicks off conversion of vtt to rtf
   #          and uploads rtf file to S3.
-  def perform(download_link:, file_name:)
+  def perform(download_link:, file_name:, conversion_needed: false)
     ensure_current_user_is_set
     @file_name = file_name
     @transcription_file = find_or_create_transcription_file
@@ -52,7 +57,8 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
 
     download_file_to_tmp(download_link)
     @transcription_file.upload_to_s3 if @transcription_file.date_upload_aws.nil?
-    maybe_convert_vtt_to_rtf_and_upload_to_s3
+    convert_file_and_upload_to_s3 if raw_file_type == "vtt" || conversion_needed
+    byebug
     @transcription_file.clean_up_tmp_location
   end
 
@@ -99,10 +105,10 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     URI(link).open do |download|
       IO.copy_stream(download, @transcription_file.tmp_location)
     end
-    @transcription_file.update_download_status!(:success)
+    @transcription_file.update_status!(process: :retrieval, status: :success)
     log_info("File #{file_name} successfully downloaded from Webex. Uploading to S3...")
   rescue OpenURI::HTTPError => error
-    @transcription_file.update_download_status!(:failure)
+    @transcription_file.update_status!(process: :retrieval, status: :failure)
     @transcription_file.clean_up_tmp_location
     raise FileDownloadError, "Webex temporary download link responded with error: #{error}"
   end
@@ -164,18 +170,41 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     raise FileNameError, error
   end
 
-  # Purpose: If file is vtt, converts to rtf and uploads the rtf file to S3. If any errors, builds xls/csv file to
-  #          record error and uploads error file to S3.
-  def maybe_convert_vtt_to_rtf_and_upload_to_s3
-    return unless @transcription_file.file_type == "vtt"
+  # Purpose: File type of unconverted transcription file
+  #
+  # Returns: string, file type
+  def raw_file_type
+    @raw_file_type ||= @transcription_file.file_type
+  end
 
-    log_info("Converting file #{file_name} to rtf...")
-    rtf_file_path = @transcription_file.convert_to_rtf
-    file_name = rtf_file_path.split("/").last
-    rtf_file = find_or_create_transcription_file(file_name)
-    log_info("Successfully converted #{file_name} to rtf. Uploading to S3...")
-    rtf_file.upload_to_s3
-    rtf_file.clean_up_tmp_location
+  # Purpose: Converts raw transcription file, creates new record for converted transcription file, and uploads
+  #          converted file to S3
+  #
+  # Returns: integer value of 1 if tmp file deleted after successful upload
+  def convert_file_and_upload_to_s3
+    converted_file_type = CONVERTED_FILE_TYPES[raw_file_type.to_sym]
+
+    log_info("Converting file #{file_name} to #{converted_file_type}...")
+    output_path = convert_file
+    converted_file_name = output_path.split("/").last
+    converted_file = find_or_create_transcription_file(converted_file_name)
+
+    log_info("Successfully converted #{file_name} to #{converted_file_type}. Uploading to S3...")
+    converted_file.upload_to_s3
+    byebug
+    converted_file.clean_up_tmp_location
+  end
+
+  # Purpose: Converts transcription file to appropriate file type
+  #
+  # Returns: string, output path of successfully converted file
+  def convert_file
+    case raw_file_type
+    when "vtt"
+      @transcription_file.convert_to_rtf
+    when "mp4"
+      @transcription_file.convert_to_mp3
+    end
   end
 
   # Purpose: If retries of conversion of vtt to rtf fail, builds csv which captures error and details of vtt file

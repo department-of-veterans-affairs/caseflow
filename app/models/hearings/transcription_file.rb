@@ -10,6 +10,27 @@ class TranscriptionFile < CaseflowRecord
 
   validates :file_type, inclusion: { in: VALID_FILE_TYPES, message: "'%<value>s' is not valid" }
 
+  FILE_STATUSES = {
+    retrieval: {
+      success: "Successful retrieval (Webex)",
+      failure: "Failed retrieval (Webex)"
+    },
+    upload: {
+      success: "Successful upload (AWS)",
+      failure: "Failed upload (AWS)"
+    },
+    conversion: {
+      success: "Successful conversion",
+      failure: "Failed conversion"
+    }
+  }.freeze
+
+  DATE_FIELDS = {
+    retrieval: :date_receipt_webex,
+    upload: :date_upload_aws,
+    conversion: :date_converted
+  }.freeze
+
   # Purpose: Uploads transcription file to its corresponding location in S3
   def upload_to_s3
     UploadTranscriptionFileToS3.new(self).call
@@ -21,49 +42,47 @@ class TranscriptionFile < CaseflowRecord
   def convert_to_rtf
     return unless file_type == "vtt"
 
-    rtf_file_path = TranscriptionTransformer.new(self.tmp_location).call
-    update_conversion_status!(:success)
+    rtf_file_path = TranscriptionTransformer.new(tmp_location).call
+    update_status!(process: :conversion, status: :success)
     rtf_file_path
-  rescue TranscriptionTransformer::FileConversionError => error
-    update_conversion_status!(:failure)
+  rescue Caseflow::Error::FileConversionError => error
+    update_status!(process: :conversion, status: :failure)
     raise error, error.message
   end
 
-  # Purpose: Updates with success or failure status after download completes. If download
-  #          successful, updates date_receipt_webex.
+  # Purpose: Converts transcription file from mp4 to mp3 if necessary
   #
-  # Returns: TranscriptionFile object
-  def update_download_status!(status)
-    update!(
-      file_status: Constants.TRANSCRIPTION_FILE_STATUSES.retrieval.send(status),
-      date_receipt_webex: (status == :success) ? Time.zone.now : nil,
-      updated_by_id: RequestStore[:current_user].id
-    )
+  # Note: We expect Webex to return a downloadable mp3 file, in which case it's unnecessary to convert mp4 to mp3
+  #
+  # Returns: string, tmp location of mp3
+  def convert_to_mp3
+    return unless file_type == "mp4"
+
+    mp3_file_path = VideoToAudioFileConverter.new(tmp_location).call
+    update_status!(process: :conversion, status: :success)
+    mp3_file_path
+  rescue Caseflow::Error::FileConversionError => error
+    update_status!(process: :conversion, status: :failure)
+    raise error, error.message
   end
 
-  # Purpose: Updates with success or failure status after upload to s3 completes. If upload
-  #          successful, updates date_upload_aws and aws_link.
+  # Purpose: Updates statue of transcription file after completion of process. If process was success, updates
+  #          associated date field on record.
   #
-  # Returns: TranscriptionFile object
-  def update_upload_status!(status:, aws_link: nil)
-    update!(
-      file_status: Constants.TRANSCRIPTION_FILE_STATUSES.upload.send(status),
+  # Params: process - symbol, used to map process with associated file status and date field
+  #         status - symbol, either :success or :failure
+  #         aws_link - string, optional argument of AWS S3 location
+  #
+  # Returns: Updated transcription file record
+  def update_status!(process:, status:, aws_link: nil)
+    params = {
+      file_status: FILE_STATUSES[process][status],
       aws_link: aws_link,
-      date_upload_aws: (status == :success) ? Time.zone.now : nil,
       updated_by_id: RequestStore[:current_user].id
-    )
-  end
-
-  # Purpose: Updates with success or failure status after conversion from vtt to rtf completes. If download
-  #          successful, updates date_converted.
-  #
-  # Returns: TranscriptionFile object
-  def update_conversion_status!(status)
-    update!(
-      file_status: Constants.TRANSCRIPTION_FILE_STATUSES.conversion.send(status),
-      date_converted: (status == :success) ? Time.zone.now : nil,
-      updated_by_id: RequestStore[:current_user].id
-    )
+    }
+    date_field_to_update = DATE_FIELDS[process]
+    params[date_field_to_update] = Time.zone.now if status == :success
+    update!(params)
   end
 
   # Purpose: Location of temporary file in tmp/transcription_files/<file_type> folder
