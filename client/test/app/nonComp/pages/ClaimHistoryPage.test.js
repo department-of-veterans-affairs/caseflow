@@ -48,4 +48,34 @@ describe('ClaimHistoryPage renders correctly for Admin user', () => {
 
     expect(screen.getByText('< Back to Decision Review')).toBeInTheDocument();
   });
+
+  it('can sort by date and time', () => {
+    renderClaimHistoryPage(adminVhaProps);
+
+    expect(screen.getByLabelText('Sort by Date and Time')).toBeInTheDocument();
+  });
+
+  it('can sort by user', () => {
+    renderClaimHistoryPage(adminVhaProps);
+
+    expect(screen.getByLabelText('Sort by User')).toBeInTheDocument();
+  });
+
+  it('can sort by activity', () => {
+    renderClaimHistoryPage(adminVhaProps);
+
+    expect(screen.getByLabelText('Sort by Activity')).toBeInTheDocument();
+  });
+
+  it('can filter by user', () => {
+    renderClaimHistoryPage(adminVhaProps);
+
+    expect(screen.getByLabelText('Filter by User')).toBeInTheDocument();
+  });
+
+  it('can filter by activity', () => {
+    renderClaimHistoryPage(adminVhaProps);
+
+    expect(screen.getByLabelText('Filter by Activity')).toBeInTheDocument();
+  });
 });
