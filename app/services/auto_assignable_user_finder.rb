@@ -25,7 +25,7 @@ class AutoAssignableUserFinder
     assignable_users.each do |user|
       if sensitivity_checker.user_can_access?(vbms_id: vbms_id, user_to_check: user)
         # TODO: APPEALS-38551: Find not needed here
-        return User.find!(user.id)
+        return User.find(user.id)
       end
     end
 
@@ -38,7 +38,7 @@ class AutoAssignableUserFinder
 
       if sensitivity_checker.user_can_access?(vbms_id: vbms_id, user_to_check: user)
         # TODO: APPEALS-38551: Find not needed here
-        return User.find!(user.id)
+        return User.find(user.id)
       end
     end
 
