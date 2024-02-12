@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "open-uri"
-require "csv"
 
 # Downloads transcription file from Webex using temporary download link and uploads to S3
 # - Download link passed to this job from GetRecordingDetailsJob
@@ -175,22 +174,6 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     log_info("Successfully converted #{file_name} to rtf. Uploading to S3...")
     rtf_file.upload_to_s3
     rtf_file.clean_up_tmp_location
-  end
-
-  # Purpose: If retries of conversion of vtt to rtf fail, builds csv which captures error and details of vtt file
-  #
-  # Params: error - Error object
-  def build_csv_from_error(error)
-    return unless @transcription_file.file_type == "vtt"
-
-    timestamp = Time.zone.now.to_s.sub("\sUTC", "")
-    file_date = File.ctime(@transcription_file.tmp_location).to_s.split(" ").first
-    csv_tmp_location = @transcription_file.tmp_location.gsub("vtt", "csv")
-    header = %w[file_name file_date section_timestamp error_encountered]
-    CSV.open(csv_tmp_location, "w") do |writer|
-      writer << header
-      writer << [file_name, file_date, timestamp, error.to_s]
-    end
   end
 
   # Purpose: If disposition of associated hearing is not marked as held, sends email to VA Operations Team and
