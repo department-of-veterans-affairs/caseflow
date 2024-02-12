@@ -11,6 +11,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
 
   queue_with_priority :low_priority
+  application_attr :hearing_schedule
 
   attr_reader :file_name, :transcription_file
 
