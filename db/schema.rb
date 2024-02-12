@@ -617,6 +617,7 @@ ActiveRecord::Schema.define(version: 2024_02_12_195552) do
     t.string "name", null: false
     t.datetime "updated_at", null: false
     t.integer "value", null: false
+    t.index ["name"], name: "index_correspondence_auto_assignment_levers_on_name", unique: true
   end
 
   create_table "correspondence_documents", force: :cascade do |t|

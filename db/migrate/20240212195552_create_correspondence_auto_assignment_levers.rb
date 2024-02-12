@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateCorrespondenceAutoAssignmentLevers < ActiveRecord::Migration[5.2]
+class CreateCorrespondenceAutoAssignmentLevers < Caseflow::Migration
   def change
     create_table :correspondence_auto_assignment_levers do |t|
       t.string :name, null: false
@@ -10,5 +10,7 @@ class CreateCorrespondenceAutoAssignmentLevers < ActiveRecord::Migration[5.2]
 
       t.timestamps
     end
+
+    add_safe_index :correspondence_auto_assignment_levers, :name, unique: true
   end
 end
