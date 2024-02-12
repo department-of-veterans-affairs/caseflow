@@ -61,7 +61,6 @@ class SeedDB
     call_and_log_seed_step Seeds::Notifications
     call_and_log_seed_step Seeds::CavcDashboardData
     call_and_log_seed_step Seeds::VbmsExtClaim
-    call_and_log_seed_step Seeds::CasesTiedToJudgesNoLongerWithBoard
     call_and_log_seed_step Seeds::CorrespondenceTypes
     call_and_log_seed_step Seeds::PackageDocumentTypes
     call_and_log_seed_step Seeds::Correspondence
