@@ -1,8 +1,4 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import NonCompLayout from '../components/NonCompLayout';
-import Link from 'app/components/Link';
-import styled from 'styled-components';
 import QueueTable from '../../queue/QueueTable';
 import dummyData from 'test/data/nonComp/individualClaimHistoryData';
 

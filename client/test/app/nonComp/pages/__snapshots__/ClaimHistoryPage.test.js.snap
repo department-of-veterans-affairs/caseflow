@@ -60,6 +60,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                   role="row"
                 >
                   <th
+                    aria-sort="descending"
                     class=""
                     role="columnheader"
                     scope="col"
@@ -94,7 +95,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                               fill-rule="nonzero"
                             >
                               <g
-                                fill="#d6d7d9"
+                                fill="#0071bc"
                                 transform="translate(2.000000, 1.000000)"
                               >
                                 <g
@@ -363,92 +364,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                     role="gridcell"
                     tabindex="-1"
                   >
-                    07/05/23, 15:00
-                  </td>
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    System
-                  </td>
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    Claim closed
-                  </td>
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    <p>
-                      Claim closed.
-                      <br />
-                      <b>
-                        Claim decision date: 
-                      </b>
-                      07/05/23
-                    </p>
-                  </td>
-                </tr>
-                <tr
-                  class=""
-                  id="table-row-1"
-                  role="row"
-                >
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    07/05/23, 15:00
-                  </td>
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    System
-                  </td>
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    Claim created
-                  </td>
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    <p>
-                      Claim created
-                    </p>
-                  </td>
-                </tr>
-                <tr
-                  class=""
-                  id="table-row-2"
-                  role="row"
-                >
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    07/05/23, 15:00
+                    07/05/24, 15:00
                   </td>
                   <td
                     class=""
@@ -508,7 +424,47 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                 </tr>
                 <tr
                   class=""
-                  id="table-row-3"
+                  id="table-row-1"
+                  role="row"
+                >
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    07/05/23, 19:00
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    System
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    Claim created
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    <p>
+                      Claim created
+                    </p>
+                  </td>
+                </tr>
+                <tr
+                  class=""
+                  id="table-row-2"
                   role="row"
                 >
                   <td
@@ -548,7 +504,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                 </tr>
                 <tr
                   class=""
-                  id="table-row-4"
+                  id="table-row-3"
                   role="row"
                 >
                   <td
@@ -588,7 +544,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                 </tr>
                 <tr
                   class=""
-                  id="table-row-5"
+                  id="table-row-4"
                   role="row"
                 >
                   <td
@@ -647,7 +603,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                 </tr>
                 <tr
                   class=""
-                  id="table-row-6"
+                  id="table-row-5"
                   role="row"
                 >
                   <td
@@ -706,7 +662,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                 </tr>
                 <tr
                   class=""
-                  id="table-row-7"
+                  id="table-row-6"
                   role="row"
                 >
                   <td
@@ -765,6 +721,51 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                       </b>
                       07/05/23
                       <br />
+                    </p>
+                  </td>
+                </tr>
+                <tr
+                  class=""
+                  id="table-row-7"
+                  role="row"
+                >
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    07/05/21, 15:00
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    System
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    Claim closed
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    <p>
+                      Claim closed.
+                      <br />
+                      <b>
+                        Claim decision date: 
+                      </b>
+                      07/05/23
                     </p>
                   </td>
                 </tr>
