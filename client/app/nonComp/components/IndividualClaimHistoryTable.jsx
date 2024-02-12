@@ -102,7 +102,8 @@ const IndividualClaimHistoryTable = () => {
       { name: 'eventDate',
         header: 'Date and Time',
         valueFunction: (row) => processDate(row.eventDate),
-        getSortValue: (row) => processDate(row.eventDate) },
+        getSortValue: (row) => processDate(row.eventDate),
+      },
       { name: 'eventUser',
         columnName: 'eventUser',
         header: 'User',
@@ -127,7 +128,11 @@ const IndividualClaimHistoryTable = () => {
     summary="Individual claim history"
     slowReRendersAreOk
     enablePagination
-    useTaskPagesApi={false} />;
+    useTaskPagesApi={false}
+    defaultSort= {{
+      sortColName: 'eventDate',
+      sortAscending: false
+    }} />;
 
 };
 

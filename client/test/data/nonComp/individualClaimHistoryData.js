@@ -1,6 +1,6 @@
 export default [
   {
-    eventDate: '07/05/23, 15:00',
+    eventDate: '07/05/21, 15:00',
     eventUser: 'System',
     readableEventType: 'Claim closed',
     details: {
@@ -8,7 +8,7 @@ export default [
     }
   },
   {
-    eventDate: '07/05/23, 15:00',
+    eventDate: '07/05/23, 19:00',
     eventUser: 'System',
     readableEventType: 'Claim created',
     details: {
@@ -16,7 +16,7 @@ export default [
     }
   },
   {
-    eventDate: '07/05/23, 15:00',
+    eventDate: '07/05/24, 15:00',
     eventUser: 'J. Dudifer',
     readableEventType: 'Completed disposition',
     details: {
