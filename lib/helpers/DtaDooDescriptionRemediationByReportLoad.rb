@@ -93,7 +93,7 @@ module WarRoom
         "Time: #{Time.zone.now}"\
         "#{error.backtrace}")
     ensure
-      # upload_logs_to_aws_s3 logs
+      upload_logs_to_aws_s3 logs
       logs
     end
     # rubocop:enable Metrics/MethodLength
