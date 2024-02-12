@@ -209,25 +209,36 @@ describe DocketCoordinator do
   end
 
   shared_examples "correct priority count" do
+    FeatureToggle.enable!(:acd_distribute_by_docket_date)
     let(:judge) { create(:user, :with_vacols_judge_record) }
 
     let(:tied_legacy_case_count) { 5 }
     let(:genpop_legacy_case_count) { 4 }
-    let(:tied_ama_hearing_case_count) { 3 } if !FeatureToggle.enabled?(:acd_distribute_by_docket_date)
+    let(:tied_ama_hearing_case_count) do
+      !FeatureToggle.enabled?(:acd_distribute_by_docket_date) ? 3 : 0
+    end
     let(:genpop_ama_hearing_case_count) { 2 }
     let(:genpop_direct_case_count) { 2 }
     let(:genpop_evidence_case_count) { 2 }
 
     let(:genpop_priority_cases_count) do
-      genpop_legacy_case_count + genpop_ama_hearing_case_count + genpop_direct_case_count + genpop_evidence_case_count + tied_ama_hearing_case_count
+      [genpop_legacy_case_count,
+       genpop_ama_hearing_case_count,
+       genpop_direct_case_count,
+       genpop_evidence_case_count,
+       tied_ama_hearing_case_count].sum
     end
     let(:all_priority_cases_count) do
       genpop_priority_cases_count + tied_legacy_case_count
     end
 
     before do
-      tied_legacy_case_count.times { create(:case, :type_cavc_remand, :ready_for_distribution,
-        :tied_to_judge, tied_judge: judge) }
+      DatabaseCleaner.clean_with(:truncation, except: %w[notification_events vftypes issref])
+
+      tied_legacy_case_count.times do
+        create(:case, :type_cavc_remand, :ready_for_distribution,
+               :tied_to_judge, tied_judge: judge)
+      end
       genpop_legacy_case_count.times { create(:case, :type_cavc_remand, :ready_for_distribution) }
       tied_ama_hearing_case_count.times do
         create(
