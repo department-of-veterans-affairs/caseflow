@@ -18,6 +18,7 @@ class Docket
     if ready
       scope = scope.ready_for_distribution
       scope = adjust_for_genpop(scope, genpop, judge) if judge.present? && !use_by_docket_date?
+      scope = adjust_for_affinity(scope, judge) if judge.present? && FeatureToggle.enabled?(:acd_exclude_from_affinity)
     end
 
     return scoped_for_priority(scope) if priority == true
@@ -129,6 +130,10 @@ class Docket
     (genpop == "not_genpop") ? scope.non_genpop_for_judge(judge) : scope.genpop
   end
 
+  def adjust_for_affinity(scope, judge)
+    scope.genpop.or(scope.non_genpop_for_judge(judge))
+  end
+
   def scoped_for_priority(scope)
     if use_by_docket_date?
       scope.priority.order("appeals.receipt_date")
@@ -181,10 +186,12 @@ class Docket
 
     def genpop
       joins(with_assigned_distribution_task_sql)
+        .with_original_appeal_and_judge_task
         .where(
-          "appeals.stream_type != ? OR distribution_task.assigned_at <= ?",
+          "appeals.stream_type != ? OR distribution_task.assigned_at <= ? OR original_judge_task.assigned_to_id in (?)",
           Constants.AMA_STREAM_TYPES.court_remand,
-          Constants.DISTRIBUTION.cavc_affinity_days.days.ago
+          Constants.DISTRIBUTION.cavc_affinity_days.days.ago,
+          JudgeTeam.judges_with_exclude_appeals_from_affinity
         )
     end
 
@@ -203,7 +210,7 @@ class Docket
       joins(with_assigned_distribution_task_sql)
         .with_original_appeal_and_judge_task
         .where("distribution_task.assigned_at > ?", Constants.DISTRIBUTION.cavc_affinity_days.days.ago)
-        .where(original_judge_task: { assigned_to_id: judge.id })
+        .where(original_judge_task: { assigned_to_id: judge&.id })
     end
 
     def ordered_by_distribution_ready_date
