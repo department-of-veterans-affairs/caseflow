@@ -140,58 +140,112 @@ describe ExternalApi::WebexService do
     end
 
     describe "get recordings list" do
-      describe "get recording request" do
-        let(:query) do
-          from = CGI.escape(2.days.ago.in_time_zone("America/New_York").end_of_day.iso8601)
-          to = CGI.escape(1.day.ago.in_time_zone("America/New_York").end_of_day.iso8601)
-          { "from": from, "to": to }
+      let(:query) do
+        from = CGI.escape(2.days.ago.in_time_zone("America/New_York").end_of_day.iso8601)
+        to = CGI.escape(1.day.ago.in_time_zone("America/New_York").end_of_day.iso8601)
+        { "from": from, "to": to }
+      end
+
+      let(:success_recordings_resp) do
+        HTTPI::Response.new(200, {}, {})
+      end
+
+      let(:error_recordings_resp) do
+        HTTPI::Response.new(400, {}, {})
+      end
+
+      let(:body) { nil }
+
+      let(:method) { "GET" }
+
+      subject { webex_service.get_recordings_list }
+
+      it "it calls send webex request with nil body and GET method" do
+        expect(webex_service).to receive(:send_webex_request).with(body, method)
+        subject
+      end
+
+      it "returns a successful instance of RecordingsListResponse class" do
+        allow(webex_service).to receive(:send_webex_request).with(body, method).and_return(success_create_resp)
+
+        expect(subject).to be_instance_of(ExternalApi::WebexService::RecordingsListResponse)
+        expect(subject.code).to eq(200)
+        expect(subject.success?).to eq(true)
+      end
+
+      it "returns recordings error response" do
+        allow(webex_service).to receive(:send_webex_request).with(body, method).and_return(error_create_resp)
+
+        expect(subject.code).to eq(400)
+        expect(subject.success?).to eq(false)
+        expect(subject.error).to eq(Caseflow::Error::WebexBadRequestError.new(code: 400))
+      end
+
+      describe "with fakes" do
+        let(:webex_service) do
+          Fakes::WebexService.new
         end
 
-        let(:success_recordings_resp) do
-          HTTPI::Response.new(200, {}, {})
-        end
-
-        let(:error_recordings_resp) do
-          HTTPI::Response.new(400, {}, {})
-        end
-
-        let(:body) { nil }
-
-        let(:method) { "GET" }
-
-        subject { webex_service.get_recordings_list }
-
-        it "it calls send webex request with nil body and GET method" do
-          expect(webex_service).to receive(:send_webex_request).with(body, method)
+        it "gets a list of ids" do
+          expect(subject.code).to eq(200)
+          expect(subject.ids).to eq(%w[4f914b1dfe3c4d11a61730f18c0f5387 3324fb76946249cfa07fc30b3ccbf580 42b80117a2a74dcf9863bf06264f8075])
           subject
         end
+      end
+    end
 
-        it "returns a successful instance of RecordingsListResponse class" do
-          allow(webex_service).to receive(:send_webex_request).with(body, method).and_return(success_create_resp)
+    describe "get recording details" do
+      let(:query) do
+        id = "4f914b1dfe3c4d11a61730f18c0f5387"
+        { "id": id }
+      end
 
-          expect(subject).to be_instance_of(ExternalApi::WebexService::RecordingsListResponse)
+      let(:success_details_resp) do
+        HTTPI::Response.new(200, {}, {})
+      end
+
+      let(:error_details_resp) do
+        HTTPI::Response.new(400, {}, {})
+      end
+
+      let(:body) { nil }
+
+      let(:method) { "GET" }
+
+      subject { webex_service.get_recording_details }
+
+      it "it calls send webex request with nil body and GET method" do
+        expect(webex_service).to receive(:send_webex_request).with(body, method)
+        subject
+      end
+
+      it "returns a successful instance of RecordingDetailsResponse class" do
+        allow(webex_service).to receive(:send_webex_request).with(body, method).and_return(success_create_resp)
+
+        expect(subject).to be_instance_of(ExternalApi::WebexService::RecordingDetailsResponse)
+        expect(subject.code).to eq(200)
+        expect(subject.success?).to eq(true)
+      end
+
+      it "returns recording details error response" do
+        allow(webex_service).to receive(:send_webex_request).with(body, method).and_return(error_create_resp)
+
+        expect(subject.code).to eq(400)
+        expect(subject.success?).to eq(false)
+        expect(subject.error).to eq(Caseflow::Error::WebexBadRequestError.new(code: 400))
+      end
+
+      describe "with fakes" do
+        let(:webex_service) do
+          Fakes::WebexService.new
+        end
+
+        it "gets a list of ids" do
           expect(subject.code).to eq(200)
-          expect(subject.success?).to eq(true)
-        end
-
-        it "returns recordings error response" do
-          allow(webex_service).to receive(:send_webex_request).with(body, method).and_return(error_create_resp)
-
-          expect(subject.code).to eq(400)
-          expect(subject.success?).to eq(false)
-          expect(subject.error).to eq(Caseflow::Error::WebexBadRequestError.new(code: 400))
-        end
-
-        describe "with fakes" do
-          let(:webex_service) do
-            Fakes::WebexService.new
-          end
-
-          it "gets a list of ids" do
-            expect(subject.code).to eq(200)
-            expect(subject.ids).to eq(%w[4f914b1dfe3c4d11a61730f18c0f5387 3324fb76946249cfa07fc30b3ccbf580 42b80117a2a74dcf9863bf06264f8075])
-            subject
-          end
+          expect(subject.mp4_link).to eq("https://site4-example.webex.com/nbr/MultiThreadDownloadServlet?siteid=2062842&recordid=305462&confid=137735449369118342&language=en_US&userid=3516472&serviceRecordID=305492&ticket=SDJTSwAAAIUBSHkvL6Z5ddyBim5%2FHcJYcvn6IoXNEyCE2mAYQ5BlBg%3D%3D&timestamp=1567125236465&islogin=yes&isprevent=no&ispwd=yes")
+          expect(subject.vtt_link).to eq("https://site4-example.webex.com/nbr/downloadMedia.do?siteid=2062842&recordid=305462&confid=137735449369118342&language=en_US&userid=3516472&serviceRecordID=305492&ticket=SDJTSwAAAAJVUJDxeA08qKkF%2FlxlSkDxuEFPwgGT0XW1z21NhY%2BCvg%3D%3D&timestamp=1567125236866&islogin=yes&isprevent=no&ispwd=yes&mediaType=2")
+          expect(subject.mp3_link).to eq("https://site4-example.webex.com/nbr/downloadMedia.do?siteid=2062842&recordid=305462&confid=137735449369118342&language=en_US&userid=3516472&serviceRecordID=305492&ticket=SDJTSwAAAIXCIXsuBt%2BAgtK7WoQ2VhgeI608N4ZMIJ3vxQaQNZuLZA%3D%3D&timestamp=1567125236708&islogin=yes&isprevent=no&ispwd=yes&mediaType=1")
+          subject
         end
       end
     end

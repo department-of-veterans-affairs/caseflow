@@ -64,7 +64,7 @@ class ExternalApi::WebexService
     ExternalApi::WebexService::RecordingsListResponse.new(resp)
   end
 
-  def get_recordings_details
+  def get_recording_details
     body = nil
     method = "GET"
     resp = send_webex_request(body, method)

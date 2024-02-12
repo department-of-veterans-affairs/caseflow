@@ -106,10 +106,10 @@ class Fakes::WebexService
           "durationSeconds": 18_416,
           "sizeBytes": 168_103,
           "shareToMe": false,
-          "integrationTags": [
-            "dbaeceebea5c4a63ac9d5ef1edfe36b9",
-            "85e1d6319aa94c0583a6891280e3437d",
-            "27226d1311b947f3a68d6bdf8e4e19a1"
+          "integrationTags": %w[
+            dbaeceebea5c4a63ac9d5ef1edfe36b9
+            85e1d6319aa94c0583a6891280e3437d
+            27226d1311b947f3a68d6bdf8e4e19a1
           ],
           "status": "available"
         },
@@ -130,10 +130,10 @@ class Fakes::WebexService
           "durationSeconds": 181_562,
           "sizeBytes": 199_134,
           "shareToMe": false,
-          "integrationTags": [
-            "dbaeceebea5c4a63ac9d5ef1edfe36b9",
-            "85e1d6319aa94c0583a6891280e3437d",
-            "27226d1311b947f3a68d6bdf8e4e19a1"
+          "integrationTags": %w[
+            dbaeceebea5c4a63ac9d5ef1edfe36b9
+            85e1d6319aa94c0583a6891280e3437d
+            27226d1311b947f3a68d6bdf8e4e19a1
           ],
           "status": "available"
         },
@@ -154,17 +154,16 @@ class Fakes::WebexService
           "durationSeconds": 181_562,
           "sizeBytes": 199_134,
           "shareToMe": true,
-          "integrationTags": [
-            "dbaeceebea5c4a63ac9d5ef1edfe36b9",
-            "85e1d6319aa94c0583a6891280e3437d",
-            "27226d1311b947f3a68d6bdf8e4e19a1"
+          "integrationTags": %w[
+            dbaeceebea5c4a63ac9d5ef1edfe36b9
+            85e1d6319aa94c0583a6891280e3437d
+            27226d1311b947f3a68d6bdf8e4e19a1
           ],
           "status": "available"
         }
       ]
     }
   end
-  # rubocop:enable Metrics/MethodLength
 
   def fake_recording_details_data
     {
@@ -180,24 +179,25 @@ class Fakes::WebexService
       "playbackUrl": "https://site4-example.webex.com/site4/ldr.php?RCID=69201a61d1d94a84aca18817261d1a73",
       "password": "BgJep@43",
       "temporaryDirectDownloadLinks": {
-          "recordingDownloadLink": "https://site4-example.webex.com/nbr/MultiThreadDownloadServlet?siteid=2062842&recordid=305462&confid=137735449369118342&language=en_US&userid=3516472&serviceRecordID=305492&ticket=SDJTSwAAAIUBSHkvL6Z5ddyBim5%2FHcJYcvn6IoXNEyCE2mAYQ5BlBg%3D%3D&timestamp=1567125236465&islogin=yes&isprevent=no&ispwd=yes",
-          "audioDownloadLink": "https://site4-example.webex.com/nbr/downloadMedia.do?siteid=2062842&recordid=305462&confid=137735449369118342&language=en_US&userid=3516472&serviceRecordID=305492&ticket=SDJTSwAAAIXCIXsuBt%2BAgtK7WoQ2VhgeI608N4ZMIJ3vxQaQNZuLZA%3D%3D&timestamp=1567125236708&islogin=yes&isprevent=no&ispwd=yes&mediaType=1",
-          "transcriptDownloadLink": "https://site4-example.webex.com/nbr/downloadMedia.do?siteid=2062842&recordid=305462&confid=137735449369118342&language=en_US&userid=3516472&serviceRecordID=305492&ticket=SDJTSwAAAAJVUJDxeA08qKkF%2FlxlSkDxuEFPwgGT0XW1z21NhY%2BCvg%3D%3D&timestamp=1567125236866&islogin=yes&isprevent=no&ispwd=yes&mediaType=2",
-          "expiration": "2022-05-01T10:30:25Z"
+        "recordingDownloadLink": "https://site4-example.webex.com/nbr/MultiThreadDownloadServlet?siteid=2062842&recordid=305462&confid=137735449369118342&language=en_US&userid=3516472&serviceRecordID=305492&ticket=SDJTSwAAAIUBSHkvL6Z5ddyBim5%2FHcJYcvn6IoXNEyCE2mAYQ5BlBg%3D%3D&timestamp=1567125236465&islogin=yes&isprevent=no&ispwd=yes",
+        "audioDownloadLink": "https://site4-example.webex.com/nbr/downloadMedia.do?siteid=2062842&recordid=305462&confid=137735449369118342&language=en_US&userid=3516472&serviceRecordID=305492&ticket=SDJTSwAAAIXCIXsuBt%2BAgtK7WoQ2VhgeI608N4ZMIJ3vxQaQNZuLZA%3D%3D&timestamp=1567125236708&islogin=yes&isprevent=no&ispwd=yes&mediaType=1",
+        "transcriptDownloadLink": "https://site4-example.webex.com/nbr/downloadMedia.do?siteid=2062842&recordid=305462&confid=137735449369118342&language=en_US&userid=3516472&serviceRecordID=305492&ticket=SDJTSwAAAAJVUJDxeA08qKkF%2FlxlSkDxuEFPwgGT0XW1z21NhY%2BCvg%3D%3D&timestamp=1567125236866&islogin=yes&isprevent=no&ispwd=yes&mediaType=2",
+        "expiration": "2022-05-01T10:30:25Z"
       },
       "format": "ARF",
       "serviceType": "MeetingCenter",
-      "durationSeconds": 18416,
-      "sizeBytes": 168103,
+      "durationSeconds": 18_416,
+      "sizeBytes": 168_103,
       "shareToMe": false,
-      "integrationTags": [
-          "dbaeceebea5c4a63ac9d5ef1edfe36b9",
-          "85e1d6319aa94c0583a6891280e3437d",
-          "27226d1311b947f3a68d6bdf8e4e19a1"
+      "integrationTags": %w[
+        dbaeceebea5c4a63ac9d5ef1edfe36b9
+        85e1d6319aa94c0583a6891280e3437d
+        27226d1311b947f3a68d6bdf8e4e19a1
       ],
       "status": "available"
     }
   end
+  # rubocop:enable Metrics/MethodLength
 
   private
 
