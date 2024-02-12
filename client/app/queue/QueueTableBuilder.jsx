@@ -211,7 +211,9 @@ const QueueTableBuilder = (props) => {
       label: sprintf(tabConfig.label, totalTaskCount),
       page: (
         <React.Fragment>
-          {props.userCanBulkAssign && tabConfig.allow_bulk_assign && props.activeOrganization.type === 'InboundOpsTeam' && (
+          {props.userCanBulkAssign &&
+            tabConfig.allow_bulk_assign &&
+            props.activeOrganization.type === 'InboundOpsTeam' && (
             <BatchAutoAssignButton />
           )}
           <p className="cf-margin-top-0">
