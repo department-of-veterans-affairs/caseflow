@@ -30,7 +30,7 @@ class LegacyDocket < Docket
   end
 
   def weight
-    count(priority: false) + nod_count * CaseDistributionLever.find_float_lever(Constants.DISTRIBUTION.nod_adjustment)
+    count(priority: false) + nod_count * CaseDistributionLever.nod_adjustment
   end
 
   def ready_priority_appeal_ids

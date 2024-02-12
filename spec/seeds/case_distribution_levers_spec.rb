@@ -6,7 +6,7 @@ describe Seeds::CaseDistributionLevers do
 
     it "creates all kinds of levers" do
       expect { subject }.to_not raise_error
-      expect( CaseDistributionLever.count).to eq(described_class.new.levers.count)
+      expect(CaseDistributionLever.count).to eq(described_class.levers.count)
     end
   end
 end

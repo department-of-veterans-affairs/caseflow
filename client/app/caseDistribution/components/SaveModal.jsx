@@ -34,7 +34,7 @@ export const SaveModal = (props) => {
 
     return (
       <div>
-        <table id='case-distribution-control-modal-table'>
+        <table id="case-distribution-control-modal-table">
           <tbody>
             <tr>
               <th className={cx('modal-table-header-styling', 'modal-table-left-styling')} scope="column">
@@ -52,11 +52,22 @@ export const SaveModal = (props) => {
             {updatedLevers.map((lever, index) => (
               <tr key={index} id={`case-distribution-control-modal-table-${index}`}>
                 <React.Fragment>
-                  <td className={cx('modal-table-styling', 'modal-table-left-styling')}>{lever.title}</td>
-                  <td className={cx('modal-table-styling', 'modal-table-right-styling')}>
+                  <td
+                    id={`${lever.item}-title-in-modal`}
+                    className={cx('modal-table-styling', 'modal-table-left-styling')}
+                  >
+                    {lever.title}
+                  </td>
+                  <td
+                    id={`${lever.item}-previous-value`}
+                    className={cx('modal-table-styling', 'modal-table-right-styling')}
+                  >
                     {lever.backendValue}
                   </td>
-                  <td className={cx('modal-table-styling', 'modal-table-right-styling')}>
+                  <td
+                    id={`${lever.item}-new-value`}
+                    className={cx('modal-table-styling', 'modal-table-right-styling')}
+                  >
                     {leverValueDisplay(lever)}
                   </td>
                 </React.Fragment>
