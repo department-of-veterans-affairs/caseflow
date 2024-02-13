@@ -206,7 +206,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         expected_array = [ready_priority_bfkey, ready_priority_bfkey2]
         expect(distributed_cases.map(&:case_id)).to match_array expected_array
         # Ensure all docket types cases are distributed, including the 5 cavc evidence submission cases
-        expected_array2 = %w[legacy legacy]
+        expected_array2 = ["legacy", Constants.AMA_DOCKETS.hearing, "legacy", Constants.AMA_DOCKETS.hearing]
         expect(distributed_cases.map(&:docket)).to match_array expected_array2
         expect(distributed_cases.map(&:priority).uniq).to match_array [true]
         expect(distributed_cases.map(&:genpop).uniq).to match_array [false]
@@ -397,8 +397,8 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
   context ".slack_report" do
     let!(:job) { PushPriorityAppealsToJudgesJob.new }
     let(:previous_distributions) { to_judge_hash([4, 3, 2, 1, 0]) }
+    let!(:judge) { create(:user, :judge, :with_vacols_judge_record) }
     let!(:legacy_priority_case) do
-      judge = create(:user, :judge, :with_vacols_judge_record)
       create(
         :case,
         :aod,
@@ -451,11 +451,26 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       appeal.tasks.find_by(type: DistributionTask.name).update(assigned_at: 4.months.ago)
       appeal
     end
+    let!(:judge_assign_task) { create(:ama_judge_assign_task) }
 
     let(:distributed_cases) do
       (0...5).map do |count|
-        distribution = build(:distribution, statistics: { "batch_size" => count })
-        distribution.save(validate: false)
+        distribution = create(
+          :distribution,
+          :completed,
+          judge: judge,
+          statistics: { batch_size: count }
+        )
+        count.times do
+          DistributedCase.create!(
+            distribution: distribution,
+            task: judge_assign_task,
+            case_id: SecureRandom.uuid,
+            docket: Constants.AMA_DOCKETS.direct_review,
+            ready_at: Time.zone.now,
+            priority: true
+          )
+        end
         distribution
       end
     end

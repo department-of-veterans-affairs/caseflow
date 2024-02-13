@@ -36,9 +36,9 @@ describe('Static Lever', () => {
     );
 
     for (const lever of staticLevers) {
-      expect(document.getElementById(`${lever.title}-value`)).toHaveTextContent(lever.value);
-      expect(document.getElementById(`${lever.title}-description`)).toHaveTextContent(lever.description);
-      expect(document.getElementById(`${lever.title}-unit`)).toHaveTextContent(lever.unit);
+      expect(document.getElementById(`${lever.item}-value`)).toHaveTextContent(lever.value);
+      expect(document.getElementById(`${lever.item}-description`)).toHaveTextContent(lever.description);
+      expect(document.getElementById(`${lever.item}-unit`)).toHaveTextContent(lever.unit);
     }
   });
 });

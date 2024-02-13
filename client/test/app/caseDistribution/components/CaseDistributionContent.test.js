@@ -2,13 +2,11 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import CaseDistributionContent from 'app/caseDistribution/components/CaseDistributionContent';
 import { formattedLevers } from 'test/data/formattedCaseDistributionData';
-import { createStore } from 'redux';
+import { createStore, applyMiddleware} from 'redux';
 import leversReducer from 'app/caseDistribution/reducers/levers/leversReducer';
-
-jest.mock('app/styles/caseDistribution/_interactable_levers.scss', () => '');
-jest.mock('app/styles/caseDistribution/_static_levers.scss', () => '');
-jest.mock('app/styles/caseDistribution/_lever_history.scss', () => '');
-jest.mock('app/styles/caseDistribution/_exclusion_table.scss', () => '');
+import rootReducer from 'app/caseDistribution/reducers/root';
+import { Provider } from 'react-redux';
+import thunk from 'redux-thunk';
 
 describe('CaseDistributionContent', () => {
 
@@ -16,9 +14,17 @@ describe('CaseDistributionContent', () => {
     jest.clearAllMocks();
   });
 
+  const getStore = () => createStore(
+    rootReducer,
+    applyMiddleware(thunk));
+
+  const store = getStore();
+
   const setup = (testProps) =>
     render(
-      <CaseDistributionContent {...testProps} />
+      <Provider store={store}>
+        <CaseDistributionContent {...testProps} />
+      </Provider>
     );
 
   it('renders the "CaseDistributionContent Component" with the data imported', () => {
@@ -29,19 +35,16 @@ describe('CaseDistributionContent', () => {
 
     const leverStore = createStore(leversReducer, preloadedState);
 
-    let staticLevers = ['lever_1', 'lever_2'];
-    let batchSizeLevers = ['lever_5', 'lever_6'];
-    let affinityLevers = ['lever_9'];
-    let docketLevers = ['lever_15'];
-    let leversList = {
-      staticLevers,
-      affinityLevers,
-      batchSizeLevers,
-      docketLevers
+    let testLevers = {
+      static: [],
+      batch: [],
+      affinity: [],
+      docket_distribution_prior: [],
+      docket_time_goal: []
     };
 
     let testProps = {
-      levers: leversList,
+      levers: testLevers,
       saveChanges: {},
       leverStore,
       isAdmin: true
@@ -50,11 +53,11 @@ describe('CaseDistributionContent', () => {
     setup(testProps);
 
     expect(screen.getByText('Administration')).toBeInTheDocument();
-    expect(screen.getByText('Maximum Direct Review Proportion')).toBeInTheDocument();
-    expect(screen.getByText('Minimum Legacy Proportion')).toBeInTheDocument();
-    expect(screen.getByText('Batch Size Per Attorney*')).toBeInTheDocument();
-    expect(screen.getByText('AMA Hearing Case AOD Affinity Days')).toBeInTheDocument();
-    expect(screen.getByText('Fri Jul 07 10:49:07 2023')).toBeInTheDocument();
+    expect(screen.getByText('Case Distribution Algorithm Values')).toBeInTheDocument();
+    expect(screen.getByText('AMA Non-priority Distribution Goals by Docket')).toBeInTheDocument();
+    expect(screen.getByText('Active Data Elements')).toBeInTheDocument();
+    expect(screen.getByText('Inactive Data Elements')).toBeInTheDocument();
+    expect(screen.getByText('Case Distribution Algorithm Change History')).toBeInTheDocument();
   });
 
 });
