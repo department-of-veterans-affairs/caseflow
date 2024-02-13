@@ -22,9 +22,9 @@ class CorrespondenceConfig < QueueConfig
     )
     endpoint = "task_pages?#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{tab.name}"
     base_path = if assignee_is_org?
-                  "organizations/#{assignee.id}/"
+                  "organizations/#{assignee.id}/#{endpoint}"
                 else
-                  "correspondence/users/#{assignee.id}/}#{endpoint}"
+                  "correspondence/users/#{assignee.id}/#{endpoint}"
                 end
 
     tab.to_hash.merge(

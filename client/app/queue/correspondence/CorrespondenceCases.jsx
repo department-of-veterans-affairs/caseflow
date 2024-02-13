@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { loadCorrespondenceConfig } from './correspondenceReducer/correspondenceActions';
+import {
+  loadCorrespondenceConfig,
+  setShowReassignPackageModal,
+  setShowRemovePackageModal
+} from './correspondenceReducer/correspondenceActions';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
 import { sprintf } from 'sprintf-js';
 import CorrespondenceTableBuilder from './CorrespondenceTableBuilder';
 import Alert from '../../components/Alert';
+import Modal from 'app/components/Modal';
 
 const CorrespondenceCases = (props) => {
   const dispatch = useDispatch();
@@ -22,6 +27,16 @@ const CorrespondenceCases = (props) => {
   }, []);
 
   const config = useSelector((state) => state.intakeCorrespondence.correspondenceConfig);
+  const showReassignPackageModal = useSelector((state) => state.intakeCorrespondence.showReassignPackageModal);
+  const showRemovePackageModal = useSelector((state) => state.intakeCorrespondence.showRemovePackageModal);
+
+  const closeReassignPackageModal = () => {
+    dispatch(setShowReassignPackageModal(false));
+  };
+
+  const closeRemovePackageModal = () => {
+    dispatch(setShowRemovePackageModal(false));
+  };
 
   useEffect(() => {
     if (
@@ -47,6 +62,10 @@ const CorrespondenceCases = (props) => {
         )}
         {config &&
         <CorrespondenceTableBuilder />}
+        {showReassignPackageModal &&
+        <Modal title="Reassign Package Modal" closeHandler={closeReassignPackageModal} />}
+        {showRemovePackageModal &&
+        <Modal title="Remove Package Modal" closeHandler={closeRemovePackageModal} />}
       </AppSegment>
     </>
   );

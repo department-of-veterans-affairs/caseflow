@@ -1,4 +1,4 @@
 # frozen_string_literal: true
 
-class SplitPackageTask < ReviewPackageTask
+class SplitPackageTask < CorrespondenceTask
 end

@@ -146,3 +146,21 @@ export const setWaivedEvidenceTasks = (task) => (dispatch) => {
     }
   });
 };
+
+export const setShowReassignPackageModal = (isVisible) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SET_SHOW_REASSIGN_PACKAGE_MODAL,
+    payload: {
+      isVisible
+    }
+  });
+};
+
+export const setShowRemovePackageModal = (isVisible) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SET_SHOW_REMOVE_PACKAGE_MODAL,
+    payload: {
+      isVisible
+    }
+  });
+};
