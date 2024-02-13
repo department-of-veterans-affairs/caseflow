@@ -9,7 +9,7 @@ class ExternalApi::VADotGovService::FacilitiesResponse < ExternalApi::VADotGovSe
     return [] if body[:data].blank?
 
     facility_data = body[:data].map do |facility|
-      Facility.new(facility, distances[facility[:id].to_i]).format
+      Facility.new(facility, distances[facility[:id]]).format
     end
 
     facility_data.sort_by { |facility| facility[:distance] }
