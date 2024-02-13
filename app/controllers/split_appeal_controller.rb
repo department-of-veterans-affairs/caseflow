@@ -43,39 +43,70 @@ class SplitAppealController < ApplicationController
   end
 
   # TODO: Move this logic down into the appeals model somehow so it doesn't suck as much
+  # def sct_parsing(old_appeal, new_appeal)
+  #   # TODO: this should also be scoped to already distributed appeals
+  #   was_in_sct_queue = old_appeal.tasks.any? { |t| t.type == :SpecialtyCaseTeamAssignTask }
+
+  #   old_appeal_is_sct = old_appeal.sct_appeal?
+  #   new_appeal_is_sct = new_appeal.sct_appeal?
+  #   both_sct_appeals = old_appeal_is_sct && new_appeal_is_sct
+
+  #   # If both are SCT appeals then that means one is already in the sct queue and another is splitting
+  #   # and moving back to the sct queue. Assume new is always moving
+  #   if both_sct_appeals
+  #     # TODO: Verify that the old_appeal tasks actually stay in the same state because it's goofed up bad
+  #     # TODO: Should we cancel the judge tasks/attorney tasks at this point?
+  #     assign_appeal_to_the_specialty_case_team(new_appeal)
+
+  #   # If the old appeal is the one that is moving to SCT
+  #   # TODO: Need to check to see if it was already in SCT. However, this should only happen with old data because
+  #   # All sct appeals should be in the SCT queue for new data/distributions
+  #   elsif old_appeal_is_sct && was_in_sct_queue
+  #     # assign_appeal_to_the_specialty_case_team(old_appeal)
+  #     move_appeal_back_to_distribution(new_appeal)
+
+  #   # If the new appeal is the one that is moving to SCT
+  #   # TODO: This is not always the case one of the two was probably already in SCT?
+  #   elsif old_appeal_is_sct
+  #     assign_appeal_to_the_specialty_case_team(old_appeal)
+  #     move_appeal_back_to_distribution(new_appeal)
+  #   elsif new_appeal_is_sct && was_in_sct_queue
+  #     move_appeal_back_to_distribution(old_appeal)
+
+  #   elsif new_appeal_is_sct
+  #     assign_appeal_to_the_specialty_case_team(new_appeal)
+  #     move_appeal_back_to_distribution(old_appeal)
+  #   end
+  # end
+
   def sct_parsing(old_appeal, new_appeal)
-    # TODO: this should also be scoped to already distributed appeals
+    old_sct_appeal = old_appeal.sct_appeal?
+    new_sct_appeal = new_appeal.sct_appeal?
+    both_sct_appeals = old_sct_appeal && new_sct_appeal
     was_in_sct_queue = old_appeal.tasks.any? { |t| t.type == :SpecialtyCaseTeamAssignTask }
 
-    old_appeal_is_sct = old_appeal.sct_appeal?
-    new_appeal_is_sct = new_appeal.sct_appeal?
-
-    # If both are SCT appeals then that means one is already in the sct queue and another is splitting
-    # and moving back to the sct queue. Assume new is always moving
-    if old_appeal_is_sct && new_appeal_is_sct
-      # TODO: Verify that the old_appeal tasks actually stay in the same state because it's goofed up bad
-      # TODO: Should we cancel the judge tasks/attorney tasks at this point?
+    if both_sct_appeals
       assign_appeal_to_the_specialty_case_team(new_appeal)
+    elsif old_sct_appeal
+      handle_old_sct_appeal(new_appeal, old_appeal, was_in_sct_queue)
+    elsif new_sct_appeal
+      handle_new_sct_appeal(new_appeal, old_appeal, was_in_sct_queue)
+    end
+  end
 
-    # If the old appeal is the one that is moving to SCT
-    # TODO: Need to check to see if it was already in SCT. However, this should only happen with old data because
-    # All sct appeals should be in the SCT queue for new data/distributions
-    elsif old_appeal_is_sct && was_in_sct_queue
-      # assign_appeal_to_the_specialty_case_team(old_appeal)
-      move_appeal_back_to_distribution(new_appeal)
-
-    # If the new appeal is the one that is moving to SCT
-    # TODO: This is not always the case one of the two was probably already in SCT?
-    # If the old appeal was not in the sct queue then it needs to be moved there and it was an old appeal SCT existed
-    elsif old_appeal_is_sct
+  def handle_old_sct_appeal(old_appeal, new_appeal, was_in_sct_queue)
+    # If the old appeal was not in the sct queue, then it needs to be moved there and it was an old appeal before SCT
+    move_appeal_back_to_distribution(new_appeal)
+    unless was_in_sct_queue
       assign_appeal_to_the_specialty_case_team(old_appeal)
-      move_appeal_back_to_distribution(new_appeal)
-    elsif new_appeal_is_sct && was_in_sct_queue
-      move_appeal_back_to_distribution(new_appeal)
+    end
+  end
 
-    elsif new_appeal_is_sct
+  def handle_new_sct_appeal(old_appeal, new_appeal, was_in_sct_queue)
+    # If the old appeal was not in the sct queue, then it needs to be moved there and it was an old appeal before SCT
+    move_appeal_back_to_distribution(old_appeal)
+    unless was_in_sct_queue
       assign_appeal_to_the_specialty_case_team(new_appeal)
-      move_appeal_back_to_distribution(old_appeal)
     end
   end
 
