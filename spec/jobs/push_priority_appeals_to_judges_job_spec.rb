@@ -199,7 +199,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       it "should only distribute the ready priority cases tied to a judge" do
         expect(subject.count).to eq eligible_judges.count
         expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 2, 0, 0]
-        expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 2, 0, 0]
 
         # Ensure we only distributed the 2 ready legacy and hearing priority cases that are tied to a judge
         distributed_cases = DistributedCase.where(distribution: subject)
