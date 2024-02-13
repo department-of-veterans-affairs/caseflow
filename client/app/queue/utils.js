@@ -85,6 +85,7 @@ const correspondenceTaskAttributesFromRawTask = (task) => {
     daysWaiting: task.attributes.days_waiting,
     vaDor: task.attributes.va_date_of_receipt,
     label: task.attributes.label,
+    taskUrl: task.attributes.task_url,
     status: task.attributes.status,
     assignedAt: task.attributes.assigned_at,
     assignedTo: {

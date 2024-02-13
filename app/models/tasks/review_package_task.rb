@@ -18,6 +18,10 @@ class ReviewPackageTask < CorrespondenceTask
   end
 
   def task_url
-    Constants.CORRESPONDENCE_TASK_URL.REVIEW_PACKAGE_TASK_URL.sub("uuid", correspondence.uuid)
+    if closed?
+      "/under_construction"
+    else
+      Constants.CORRESPONDENCE_TASK_URL.REVIEW_PACKAGE_TASK_URL.sub("uuid", correspondence.uuid)
+    end
   end
 end
