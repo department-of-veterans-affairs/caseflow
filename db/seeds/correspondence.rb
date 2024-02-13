@@ -8,7 +8,8 @@ module Seeds
     end
 
     def seed!
-      create_correspondences
+      # commented out because if ran would break. This will need to be fixed
+      #create_correspondences
     end
 
     private
