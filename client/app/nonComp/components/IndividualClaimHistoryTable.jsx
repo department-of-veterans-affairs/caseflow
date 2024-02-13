@@ -27,6 +27,12 @@ const IndividualClaimHistoryTable = () => {
     </React.Fragment>;
   };
 
+  const CancelledTaskFragment = () => {
+    return <React.Fragment>
+      Claim closed.
+    </React.Fragment>;
+  };
+
   const AddedIssueFragment = (details) => {
     return <React.Fragment>
       <b>Benefit type: </b>{BENEFIT_TYPES[details.benefitType]}<br />
@@ -43,10 +49,16 @@ const IndividualClaimHistoryTable = () => {
     </React.Fragment>;
   };
 
+  const RemovedIssueFragment = (details) => {
+    return <React.Fragment>
+      <AddedIssueFragment {...details} />
+      <b>Removed issue date: </b>{formatDecisionDate(details.eventDate)}
+    </React.Fragment>;
+  };
   const WithdrewIssueFragment = (details) => {
     return <React.Fragment>
       <AddedIssueFragment {...details} />
-      <b>Withdrawal request date: </b>{details.withdrawalRequestDate}<br />
+      <b>Withdrawal request date: </b>{formatDecisionDate(details.withdrawalRequestDate)}<br />
     </React.Fragment>;
   };
 
@@ -60,6 +72,8 @@ const IndividualClaimHistoryTable = () => {
     let component = null;
 
     const { readableEventType, details } = row;
+
+    details.eventDate = row.eventDate;
 
     switch (readableEventType) {
     case 'Claim created':
@@ -88,6 +102,12 @@ const IndividualClaimHistoryTable = () => {
       break;
     case 'Withdrew issue':
       component = <WithdrewIssueFragment {...details} />;
+      break;
+    case 'Removed issue':
+      component = <RemovedIssueFragment {...details} />;
+      break;
+    case 'Cancelled task':
+      component = <CancelledTaskFragment />;
       break;
     default:
       return null;

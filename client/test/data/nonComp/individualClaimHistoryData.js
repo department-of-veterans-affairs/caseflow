@@ -106,4 +106,17 @@ export default [
       withdrawalRequestDate: '07/05/23',
     }
   },
+  {
+    id: uuidv4(),
+    eventDate: '07/05/23, 15:15',
+    eventUser: 'System',
+    readableEventType: 'Removed issue',
+    details: {
+      benefitType: 'vha',
+      issueType: 'Beneficiary Travel',
+      issueDescription: 'Any notes will display here',
+      decisionDate: '2023-06-23',
+      withdrawalRequestDate: '07/05/23',
+    }
+  },
 ];
