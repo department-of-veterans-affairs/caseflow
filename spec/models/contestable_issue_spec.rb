@@ -89,7 +89,9 @@ describe ContestableIssue, :postgres do
         titleOfActiveReview: nil,
         sourceReviewType: nil,
         timely: true,
-        latestIssuesInChain: [{ id: nil, approxDecisionDate: rating_decision.decision_date }]
+        latestIssuesInChain: [{ id: nil, approxDecisionDate: rating_decision.decision_date }],
+        mstAvailable: false,
+        pactAvailable: false
       )
     end
   end
@@ -123,7 +125,9 @@ describe ContestableIssue, :postgres do
         titleOfActiveReview: nil,
         sourceReviewType: nil,
         timely: true,
-        latestIssuesInChain: [{ id: nil, approxDecisionDate: promulgation_date }]
+        latestIssuesInChain: [{ id: nil, approxDecisionDate: promulgation_date }],
+        mstAvailable: false,
+        pactAvailable: false
       )
     end
 
@@ -144,7 +148,9 @@ describe ContestableIssue, :postgres do
           titleOfActiveReview: nil,
           sourceReviewType: nil,
           timely: false,
-          latestIssuesInChain: [{ id: nil, approxDecisionDate: promulgation_date }]
+          latestIssuesInChain: [{ id: nil, approxDecisionDate: promulgation_date }],
+          mstAvailable: false,
+          pactAvailable: false
         )
       end
     end
@@ -179,7 +185,9 @@ describe ContestableIssue, :postgres do
         titleOfActiveReview: nil,
         sourceReviewType: "Appeal",
         timely: true,
-        latestIssuesInChain: [{ id: decision_issue.id, approxDecisionDate: caseflow_decision_date }]
+        latestIssuesInChain: [{ id: decision_issue.id, approxDecisionDate: caseflow_decision_date }],
+        mstAvailable: false,
+        pactAvailable: false
       )
     end
 
@@ -200,7 +208,9 @@ describe ContestableIssue, :postgres do
           titleOfActiveReview: nil,
           sourceReviewType: "Appeal",
           timely: false,
-          latestIssuesInChain: [{ id: decision_issue.id, approxDecisionDate: caseflow_decision_date }]
+          latestIssuesInChain: [{ id: decision_issue.id, approxDecisionDate: caseflow_decision_date }],
+          mstAvailable: false,
+          pactAvailable: false
         )
       end
     end
