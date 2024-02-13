@@ -229,7 +229,7 @@ describe DocketCoordinator do
        tied_ama_hearing_case_count].sum
     end
     let(:all_priority_cases_count) do
-      genpop_priority_cases_count + tied_legacy_case_count
+      genpop_priority_cases_count + tied_legacy_case_count + tied_ama_hearing_case_count
     end
 
     before do
