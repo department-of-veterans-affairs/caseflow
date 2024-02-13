@@ -1,12 +1,11 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import CaseDetailsView from "../../../app/queue/CaseDetailsView";
+import CaseDetailsView from '../../../app/queue/CaseDetailsView';
 import { queueWrapper as Wrapper } from 'test/data/stores/queueStore';
 import { amaAppeal, legacyAppeal, powerOfAttorney } from '../../data/appeals';
 import COPY from '../../../COPY';
 
 const defaultProps = {
-  userCanScheduleVirtualHearings: true,
   userCanAccessReader: true,
   userCanEditUnrecognizedPOA: true,
   vsoVirtualOptIn: true,
@@ -86,15 +85,15 @@ describe('NotificationsLink', () => {
   describe('When there are\'not notifications', () => {
     // ama without notifications
     it('link does not appears with ama appeal', () => {
-      const {container} = renderCaseDetailsView(false, amaAppeal);
+      const { container } = renderCaseDetailsView(false, amaAppeal);
       const link = container.querySelector('#notification-link');
 
-      expect(link).toBeNull()
+      expect(link).toBeNull();
     // legacy without notifications
     });
 
     it('link does not appears with legacy appeal', () => {
-      const {container} = renderCaseDetailsView(false, legacyAppeal);
+      const { container } = renderCaseDetailsView(false, legacyAppeal);
       const link = container.querySelector('#notification-link');
 
       expect(link).toBeNull();

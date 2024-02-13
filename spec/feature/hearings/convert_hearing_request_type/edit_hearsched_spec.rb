@@ -76,7 +76,7 @@ RSpec.feature "Convert hearing request type" do
     end
 
     step "confirm schedule veteran task is actionable" do
-      click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.label)
+      click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.label)
     end
 
     step "cancel the step that starts the schedule workflow to test the next step" do
@@ -162,15 +162,7 @@ RSpec.feature "Convert hearing request type" do
         end
       end
 
-      context "with schedule veteran page feature toggle enabled" do
-        before do
-          FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
-        end
-
-        after do
-          FeatureToggle.disable!(:schedule_veteran_virtual_hearing)
-        end
-
+      context "with schedule veteran page feature toggle enabled (on by default)" do
         scenario "pre-selects virtual type on schedule veteran page" do
           visit "queue/appeals/#{legacy_appeal.vacols_id}"
 
@@ -181,7 +173,7 @@ RSpec.feature "Convert hearing request type" do
           end
 
           step "work schedule veteran task" do
-            click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.label)
+            click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.label)
           end
 
           step "confirm virtual type is selected" do
@@ -266,7 +258,7 @@ RSpec.feature "Convert hearing request type" do
           )
         end
 
-        click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.label)
+        click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.label)
         click_button("Cancel")
 
         expect(ChangeHearingRequestTypeTask.count).to eq(1)
@@ -315,7 +307,7 @@ RSpec.feature "Convert hearing request type" do
           )
         end
 
-        click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.label)
+        click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.label)
         click_button("Cancel")
 
         expect(ChangeHearingRequestTypeTask.count).to eq(1)
@@ -335,14 +327,6 @@ RSpec.feature "Convert hearing request type" do
     context "When not initially providing hearing participant emails and then later converting hearing to virtual" do
       let!(:hearing_day) do
         create(:hearing_day, :video, scheduled_for: Time.zone.today + 10.days, regional_office: "RO39")
-      end
-
-      before do
-        FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
-      end
-
-      after do
-        FeatureToggle.disable!(:schedule_veteran_virtual_hearing)
       end
 
       scenario do

@@ -249,7 +249,6 @@ RSpec.feature "MailTasks", :postgres do
     shared_examples_for "scheduling a hearing" do
       before do
         perform_enqueued_jobs do
-          FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
           page = appeal.is_a?(Appeal) ? "queue/appeals/#{appeal.uuid}" : "queue/appeals/#{appeal.vacols_id}"
           visit(page)
           within("tr", text: "TASK", match: :first) do
@@ -461,7 +460,6 @@ RSpec.feature "MailTasks", :postgres do
 
         context "send to schedule veteran list" do
           before :each do
-            FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
             page = "queue/appeals/#{appeal.uuid}"
             visit(page)
             within("tr", text: "TASK", match: :first) do
@@ -532,7 +530,6 @@ RSpec.feature "MailTasks", :postgres do
       context "ruling is denied" do
         let(:ruling) { "Denied" }
         before do
-          FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
           page = "queue/appeals/#{appeal.uuid}"
           visit(page)
           click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
