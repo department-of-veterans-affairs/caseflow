@@ -27,12 +27,6 @@ const IndividualClaimHistoryTable = () => {
     </React.Fragment>;
   };
 
-  const CancelledTaskFragment = () => {
-    return <React.Fragment>
-      Claim closed.
-    </React.Fragment>;
-  };
-
   const AddedIssueFragment = (details) => {
     return <React.Fragment>
       <b>Benefit type: </b>{BENEFIT_TYPES[details.benefitType]}<br />
@@ -118,9 +112,6 @@ const IndividualClaimHistoryTable = () => {
       break;
     case 'Removed issue':
       component = <RemovedIssueFragment {...details} />;
-      break;
-    case 'Cancelled task':
-      component = <CancelledTaskFragment />;
       break;
     default:
       return null;
