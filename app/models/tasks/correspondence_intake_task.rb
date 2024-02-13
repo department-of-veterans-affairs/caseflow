@@ -29,6 +29,6 @@ class CorrespondenceIntakeTask < CorrespondenceTask
   end
 
   def task_url
-    Constants.CORRESPONDENCE_TASK_URL.INTAKE_TASK_URL.sub("uuid", correspondence.uuid)
+    closed? ? "/under_construction" : Constants.CORRESPONDENCE_TASK_URL.INTAKE_TASK_URL.sub("uuid", correspondence.uuid)
   end
 end
