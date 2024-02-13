@@ -23,7 +23,7 @@ class CorrespondenceCompletedTasksTab < CorrespondenceQueueTab
 
     tasks_with_completed_children = CorrespondenceRootTask.where.not(status: Constants.TASK_STATUSES.completed)
       .filter do |task|
-        task.children.all?(&:completed?) && task.children.any? { |t| t.assigned_to == assignee }
+        task.children.all?(&:completed?) && task.children.any? { |child| child.assigned_to == assignee }
       end
       .pluck(:id)
 
