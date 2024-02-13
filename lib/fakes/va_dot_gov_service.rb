@@ -4,15 +4,13 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
   # rubocop:disable Metrics/MethodLength
   def self.send_va_dot_gov_request(endpoint:, query: {}, **args)
     if endpoint == VADotGovService::FACILITIES_ENDPOINT
-      facilities = query[:facilityIds].split(",").map do |id|
-        data = fake_facilities_data[:data][0]
-        data["id"] = id
-        data
+
+      if query[:lat].present? && query[:long].present?
+        fake_facilities = fake_facilities_data_with_distance
+      else
+        fake_facilities = fake_facilities_data_no_distance
       end
 
-      fake_facilities = fake_facilities_data
-      fake_facilities[:data] = facilities
-      fake_facilities[:meta][:distances] = distances(query)
       HTTPI::Response.new 200, {}, fake_facilities.to_json
     elsif endpoint == VADotGovService::ADDRESS_VALIDATION_ENDPOINT
       request_address_keys = args[:body][:requestAddress].keys
@@ -143,7 +141,7 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
     }
   end
 
-  def self.fake_facilities_data
+  def self.fake_facilities_data_with_distance
     # RO01
     {
       "data": [
@@ -230,12 +228,101 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
         "distances": [
           {
             "id": "vba_301",
-            "distance": 60.07
+            "distance": 5259.70
           }
         ]
       }
     }
   end
+
+  def self.fake_facilities_data_no_distance
+    # RO01
+    {
+      "data": [
+        {
+          "id": "vba_301",
+          "type": "va_facilities",
+          "attributes": {
+            "name": "Holdrege VA Clinic",
+            "facility_type": "va_health_facility",
+            "classification": "Primary Care CBOC",
+            "website": nil,
+            "lat": 40.4454392100001,
+            "long": -99.37959413,
+            "address": {
+              "mailing": {
+
+              },
+              "physical": {
+                "zip": "68949-1705",
+                "city": "Holdrege",
+                "state": "NE",
+                "address_1": "1118 Burlington Street",
+                "address_2": "",
+                "address_3": nil
+              }
+            },
+            "phone": {
+              "fax": "555-555-3775 x",
+              "main": "555-555-3760 x",
+              "pharmacy": "555-555-0827 x",
+              "after_hours": "555-555-5555 x",
+              "patient_advocate": "555-555-5555 x7933",
+              "mental_health_clinic": "555-555-5555",
+              "enrollment_coordinator": "555-555-5555 x"
+            },
+            "hours": {
+              "friday": "800AM-430PM",
+              "monday": "800AM-430PM",
+              "sunday": "-",
+              "tuesday": "800AM-430PM",
+              "saturday": "-",
+              "thursday": "800AM-430PM",
+              "wednesday": "800AM-430PM"
+            },
+            "services": {
+              "other": [
+                "Online Scheduling"
+              ],
+              "health": %w[
+                MentalHealthCare
+                PrimaryCare
+                Audiology
+                Cardiology
+              ],
+              "last_updated": "2019-01-02"
+            },
+            "satisfaction": {
+              "health": {
+
+              },
+              "effective_date": nil
+            },
+            "wait_times": {
+              "health": [],
+              "effective_date": "2018-12-24"
+            }
+          }
+        }
+      ],
+      "links": {
+        "self": "https://api.vets.gov/services/",
+        "first": "https://api.vets.gov/services/",
+        "prev": nil,
+        "next": nil,
+        "last": "https://api.vets.gov/services/"
+      },
+      "meta": {
+        "pagination": {
+          "current_page": 1,
+          "per_page": 30,
+          "total_pages": 77,
+          "total_entries": 2289
+        }
+      }
+    }
+  end
+
 
   def self.fake_facilities_ids_data
     {
