@@ -131,8 +131,8 @@ const ReviewAppealView = (props) => {
   };
 
   const originalHasSCTIssue = hasSCTIssues(selectOriginal);
-
   const selectedHasSCTIssue = hasSCTIssues(selectElement);
+  const atLeastOneHasSCTIssue = selectedHasSCTIssue || originalHasSCTIssue;
 
   return (
     <>
@@ -235,7 +235,7 @@ const ReviewAppealView = (props) => {
                   );
                 })}
               </ol>
-              {!originalHasSCTIssue && specialtyCaseTeamFeatureToggle && <SplitAppealNotice />}
+              {atLeastOneHasSCTIssue && !originalHasSCTIssue && specialtyCaseTeamFeatureToggle && <SplitAppealNotice />}
             </td>
             <td>
               <ol>
@@ -250,7 +250,7 @@ const ReviewAppealView = (props) => {
                   );
                 })}
               </ol>
-              {!selectedHasSCTIssue && specialtyCaseTeamFeatureToggle && <SplitAppealNotice />}
+              {atLeastOneHasSCTIssue && !selectedHasSCTIssue && specialtyCaseTeamFeatureToggle && <SplitAppealNotice />}
             </td>
           </tr>
         </table>
