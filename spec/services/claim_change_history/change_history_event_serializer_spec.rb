@@ -7,13 +7,12 @@ require_relative "../../../app/services/claim_change_history/claim_history_event
 describe ChangeHistoryEventSerializer do
   let(:expected_uuid) { "709ab60d-3c5f-48d8-ac55-dc6b8f4f85bf" }
   before do
-    # Timecop.freeze(Time.utc(2024, 1, 30, 12, 0, 0))
     Timecop.travel(5.days.ago)
     allow(SecureRandom).to receive(:uuid).and_return(expected_uuid)
   end
 
-  let(:vha_org) { VhaBusinessLine.singleton }
-  let(:vha_task) do
+  let!(:vha_org) { VhaBusinessLine.singleton }
+  let!(:vha_task) do
     create(:higher_level_review,
            :with_intake,
            :with_issue_type,
@@ -32,7 +31,7 @@ describe ChangeHistoryEventSerializer do
     ClaimHistoryService.new(vha_org, task_id: vha_task.id).build_events
   end
 
-  subject { described_class.new(events) }
+  subject { described_class.new(events).serializable_hash[:data] }
 
   describe "#as_json" do
     it "renders json data" do
@@ -84,7 +83,7 @@ describe ChangeHistoryEventSerializer do
           }
         }
       ]
-      expect(subject.serializable_hash[:data]).to eq(serializable_hash)
+      expect(subject).to eq(serializable_hash)
     end
   end
 end
