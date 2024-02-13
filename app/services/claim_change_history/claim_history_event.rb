@@ -411,7 +411,7 @@ class ClaimHistoryEvent
       completed: "Claim closed",
       claim_creation: "Claim created",
       completed_disposition: "Completed disposition",
-      added_issue: "Added Issue",
+      added_issue: "Added issue",
       added_issue_without_decision_date: "Added issue - No decision date",
       withdrew_issue: "Withdrew issue",
       removed_issue: "Removed issue",

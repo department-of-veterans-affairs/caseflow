@@ -98,7 +98,7 @@ const IndividualClaimHistoryTable = () => {
     case 'Completed disposition':
       component = <CompletedDispositionFragment {...details} />;
       break;
-    case 'Claim status - In progress':
+    case 'Claim status - In Progress':
       component = <ClaimInProgressFragment />;
       break;
     case 'Claim status - Incomplete':

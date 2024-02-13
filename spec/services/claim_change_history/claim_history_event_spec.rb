@@ -905,7 +905,7 @@ describe ClaimHistoryEvent do
           completed: "Claim closed",
           claim_creation: "Claim created",
           completed_disposition: "Completed disposition",
-          added_issue: "Added Issue",
+          added_issue: "Added issue",
           withdrew_issue: "Withdrew issue",
           removed_issue: "Removed issue",
           added_decision_date: "Added decision date"

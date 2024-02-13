@@ -37,7 +37,7 @@ export default [
     id: 'bd1e167e-e047-467b-b2fd-116d062a7e21',
     eventDate: '07/05/23, 15:00',
     eventUser: 'System',
-    readableEventType: 'Claim status - In progress',
+    readableEventType: 'Claim status - In Progress',
     details: {
       decisionDate: '2023-04-12'
     }
