@@ -20,7 +20,8 @@ class CorrespondenceQueueColumn < QueueColumn
 
   FILTER_OPTIONS = {
     Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name => :task_type_options,
-    Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name => :va_dor_options
+    Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name => :va_dor_options,
+    Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name => :task_type_options,
 
 }.freeze
 
