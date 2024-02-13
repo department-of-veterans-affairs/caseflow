@@ -85,7 +85,7 @@ RSpec.feature "Task Links on Your Correspondence and Correspondence Cases pages"
           expect(page).to have_content("Correspondence cases")
         end
 
-        it  "a modal appears on the screen" do
+        it "a modal appears on the screen" do
           expect(page).to have_css(".cf-modal-body")
         end
       end
@@ -109,7 +109,7 @@ RSpec.feature "Task Links on Your Correspondence and Correspondence Cases pages"
           expect(page).to have_content("Correspondence cases")
         end
 
-        it  "a modal appears on the screen" do
+        it "a modal appears on the screen" do
           expect(page).to have_css(".cf-modal-body")
         end
       end
