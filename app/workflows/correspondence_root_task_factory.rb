@@ -17,11 +17,21 @@ class CorrespondenceRootTaskFactory
   private
 
   def create_root!
+    @correspondence_task = CorrespondenceTask.find_or_create_by!(
+      appeal_id: @correspondence.id,
+      assigned_to: MailTeamSupervisor.singleton,
+      appeal_type: "Correspondence",
+      type: "CorrespondenceTask"
+    )
+
+    @correspondence_task.update(status: "on_hold")
+
     @root_task = CorrespondenceRootTask.find_or_create_by!(
       appeal_id: @correspondence.id,
       assigned_to: MailTeamSupervisor.singleton,
       appeal_type: "Correspondence",
-      type: CorrespondenceRootTask.name
+      parent_id: @correspondence_task.id,
+      type: "CorrespondenceRootTask"
     )
   end
 

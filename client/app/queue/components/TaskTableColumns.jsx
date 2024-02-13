@@ -241,35 +241,7 @@ export const veteranDetails = () => {
 
   return {
     header: 'Veteran Details',
-    valueFunction: (task) => {
-      if (task.taskUrl === '/modal/reassign_package') {
-        return <a
-          href="#"
-          onClick={showReassignPackageModal}
-          aria-label={`${task.label } Link`}
-          id="task-link"
-        >
-          {task.veteranDetails}
-        </a>;
-      } else if (task.taskUrl === '/modal/remove_package') {
-        return <a
-          href="#"
-          onClick={showRemovePackageModal}
-          aria-label={`${task.label } Link`}
-          id="task-link"
-        >
-          {task.veteranDetails}
-        </a>;
-      }
-
-      return <a
-        href={task.taskUrl}
-        id="task-link"
-        aria-label={`${task.label } Link`}
-      >
-        {task.veteranDetails}
-      </a>;
-    }
+    valueFunction: (task) => task.veteranDetails
   };
 };
 
@@ -286,10 +258,12 @@ export const vaDor = () => {
 export const notes = () => {
   return {
     header: 'Notes',
-    valueFunction: (task) => task.notes
+    name: QUEUE_CONFIG.COLUMNS.NOTES.name,
+    valueFunction: (task) => task.notes,
+    backendCanSort: true,
+    getSortValue: (task) => task.notes
   };
 };
-
 export const checkboxColumn = () => {
   return {
     header: 'Select',

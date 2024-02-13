@@ -38,6 +38,12 @@ module Seeds
     # rubocop:disable Metrics/MethodLength
     def create_queue_correspondences
       # 20 Correspondences with eFolderFailedUploadTask with a parent CorrespondenceIntakeTask
+      veteran = create_veteran(first_name: "John", last_name: "Doe")
+      appeal = create_appeal(veteran)
+
+      ptask = create_correspondence_intake(create_correspondence(appeal), status: "on_hold")
+
+      # 20 Correspondences with eFolderFailedUploadTask with a parent CorrespondenceIntakeTask
       20.times do
         create_correspondence_with_intake_and_failed_upload_task(
           create_correspondence_intake(create_correspondence, mail_team_user)
@@ -91,56 +97,98 @@ module Seeds
     end
     # rubocop:enable Metrics/MethodLength
 
-    def create_correspondence_with_intake_and_failed_upload_task(parent_task)
-      corres = create_correspondence
-      create_efolderupload_failed_task(corres, parent_task)
+    def create_correspondence_with_intake_and_failed_upload_task(ptask, appeal)
+
+      corres = create_correspondence(appeal)
+
+      create_efolderupload_failed_task(corres, ptask: ptask)
+
+      corres
     end
 
-    def create_correspondence_with_intake_task
-      corres = create_correspondence
-      create_correspondence_intake(corres, mail_team_user)
+    def create_correspondence_with_intake_task(appeal)
+      corres = create_correspondence(appeal)
+
+      create_correspondence_intake(corres, status: "in_progress")
+
+      corres
     end
 
-    def create_correspondence_with_review_package_task
-      corres = create_correspondence
-      assign_review_package_task(corres, mail_team_user)
+    def create_correspondence_with_review_package_task(appeal)
+      corres = create_correspondence(appeal)
+
+      create_review_package_task(corres, status: "in_progress")
+
+      corres
     end
 
-    def create_correspondence_with_review_package_and_failed_upload_task
-      corres = create_correspondence
-      assign_review_package_task(corres, mail_team_user)
-      parent_task = ReviewPackageTask.find_by(appeal_id: corres.id, type: ReviewPackageTask.name)
-      create_efolderupload_failed_task(corres, parent_task)
+    def create_correspondence_with_review_package_and_failed_upload_task(appeal)
+      corres = create_correspondence(appeal)
+
+      ptask = ReviewPackageTask.find_by(appeal_id: corres.id, type: ReviewPackageTask.name)
+      create_efolderupload_failed_task(corres, ptask: ptask)
+      ptask.update!(status: "on_hold")
+
+      corres
     end
 
-    def create_correspondence_with_completed_root_task
-      corres = create_correspondence
-      corres.root_task.update!(status: Constants.TASK_STATUSES.completed)
+    def create_correspondence_with_completed_root_task(appeal)
+      corres = create_correspondence(appeal)
+
+      create_correspondence_root_task(corres, status: "completed")
+
+      corres
     end
 
-    def create_correspondence_with_action_required_tasks
-      corres_array = (1..4).map { create_correspondence }
-      task_array = [ReassignPackageTask, RemovePackageTask, SplitPackageTask, MergePackageTask]
+    def create_correspondence_with_action_required_tasks(appeal)
+      corres = create_correspondence(appeal)
 
-      corres_array.each_with_index do |corres, index|
-        rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
-        task_array[index].create!(
-          parent_id: rpt.id,
-          appeal_id: corres.id,
-          appeal_type: "Correspondence",
-          assigned_to: MailTeamSupervisor.singleton
-        )
+      review_package_task = ReviewPackageTask.find_by(appeal_id: corres.id, type: ReviewPackageTask.name)
+
+      [ReassignPackageTask, RemovePackageTask, SplitPackageTask, MergePackageTask].each do |task_type|
+        check_and_create_action_required_task(corres, review_package_task, task_type)
+      end
+
+      review_package_task.update!(status: "on_hold")
+
+      corres
+
+    end
+
+    def check_and_create_action_required_task(corres, review_package_task, task_type)
+      existing_task = task_type.find_by(appeal_id: corres.id, parent_id: review_package_task.id)
+
+      if existing_task.present?
+        puts "Existing #{task_type.name} task. Only one #{task_type.name} task may be made at a time."
+      else
+        create_action_required_tasks(corres, parent_task: review_package_task, status: "assigned", task_type: task_type)
       end
     end
 
-    def create_correspondence_with_completed_mail_task
-      correspondence = create_correspondence
-      create_and_complete_mail_task(correspondence, mail_team_user)
+    def create_correspondence_with_in_progress_root_task_and_completed_mail_task(appeal)
+      corres = create_correspondence(appeal)
+
+      ptask = CorrespondenceRootTask.find_by(appeal_id: corres.id, type: CorrespondenceRootTask.name)
+      create_in_progress_root_task_and_completed_mail_task(corres, parent_task: ptask, status: "completed")
+      ptask.update!(status: "in_progress")
+
+      corres
     end
 
-    def create_correspondence_with_canceled_root_task
-      corres = create_correspondence
-      corres.root_task.update!(status: Constants.TASK_STATUSES.cancelled)
+    def create_correspondence_with_canceled_root_task(appeal)
+      corres = create_correspondence(appeal)
+
+      create_correspondence_root_task(corres, status: "cancelled")
+
+      corres
+    end
+
+    def create_pending_tasks(mail_task_parent, appeal)
+      corres = create_correspondence(appeal)
+
+      create_pending_tasks_for_tasks_not_related_to_appeal(corres, parent_task: mail_task_parent)
+
+      corres
     end
   end
 end

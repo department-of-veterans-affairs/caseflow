@@ -54,9 +54,15 @@ module QueueHelpers
     CorrespondenceIntakeTask.create_from_params(parent, user)
   end
 
-  def assign_review_package_task(correspondence, user)
-    review_package_task = ReviewPackageTask.find_by(appeal_id: correspondence.id)
-    review_package_task.update!(assigned_to: user, status: Constants.TASK_STATUSES.assigned)
+  def create_review_package_task(correspondence, status:)
+    review_package_task = ReviewPackageTask.find_or_create_by!(
+      appeal_id: correspondence.id,
+      assigned_to: MailTeamSupervisor.singleton,
+      appeal_type: "Correspondence",
+    )
+
+    review_package_task.update(status: status)
+    review_package_task
   end
 
   def create_efolderupload_failed_task(correspondence, parent)
@@ -64,9 +70,23 @@ module QueueHelpers
       parent_id: parent.id,
       appeal_id: correspondence.id,
       appeal_type: "Correspondence",
-      assigned_to: parent.assigned_to,
-      status: Constants.TASK_STATUSES.in_progress
+      assigned_to: MailTeamSupervisor.singleton
     )
+
+    euft.update!(status: Constants.TASK_STATUSES.in_progress)
+
+    euft
+  end
+
+  def create_correspondence_root_task(correspondence, status:)
+    root_task = CorrespondenceRootTask.find_or_create_by!(
+      appeal_id: correspondence.id,
+      assigned_to: MailTeamSupervisor.singleton,
+      appeal_type: "Correspondence",
+    )
+
+    root_task.update(status: status)
+    root_task
   end
 
   def create_action_required_tasks(correspondence, status:, parent_task:, task_type:)
