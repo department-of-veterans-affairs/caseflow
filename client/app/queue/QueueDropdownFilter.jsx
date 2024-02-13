@@ -53,7 +53,7 @@ class QueueDropdownFilter extends React.PureComponent {
             </button>
           </div>
         }
-        {React.cloneElement(React.Children.only(children), {
+        {!this.props.isReceiptDateFilter && React.cloneElement(React.Children.only(children), {
           dropdownFilterViewListStyle,
           dropdownFilterViewListItemStyle
         })}
