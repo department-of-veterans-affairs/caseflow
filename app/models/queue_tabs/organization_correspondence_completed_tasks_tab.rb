@@ -16,7 +16,10 @@ class OrganizationCorrespondenceCompletedTasksTab < CorrespondenceQueueTab
   end
 
   def tasks
-    completed_root_tasks = CorrespondenceRootTask.where(status: Constants.TASK_STATUSES.completed).pluck(:id)
+    completed_root_tasks = CorrespondenceRootTask.where(
+      status: Constants.TASK_STATUSES.completed,
+      assigned_to: assignee
+    ).pluck(:id)
 
     tasks_with_completed_children = CorrespondenceRootTask.where.not(status: Constants.TASK_STATUSES.completed)
       .filter do |task|
