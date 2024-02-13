@@ -2,6 +2,6 @@
 
 class ReassignPackageTask < CorrespondenceTask
   def task_url
-    "/modal/reassign_package"
+    Constants.CORRESPONDENCE_TASK_URL.REMOVE_PACKAGE_TASK_MODAL_URL
   end
 end
