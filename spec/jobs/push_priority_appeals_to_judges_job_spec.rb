@@ -199,7 +199,6 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
       it "should only distribute the ready priority cases tied to a judge" do
         expect(subject.count).to eq eligible_judges.count
         expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 2, 0, 0]
-        expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 2, 0, 0]
 
         # Ensure we only distributed the 2 ready legacy and hearing priority cases that are tied to a judge
         distributed_cases = DistributedCase.where(distribution: subject)
@@ -207,7 +206,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         expected_array = [ready_priority_bfkey, ready_priority_bfkey2, ready_priority_uuid, ready_priority_uuid2]
         expect(distributed_cases.map(&:case_id)).to match_array expected_array
         # Ensure all docket types cases are distributed, including the 5 cavc evidence submission cases
-        expected_array2 = %w[hearing hearing legacy legacy]
+        expected_array2 = [Constants.AMA_DOCKETS.hearing, Constants.AMA_DOCKETS.hearing, "legacy", "legacy"]
         expect(distributed_cases.map(&:docket)).to match_array expected_array2
         expect(distributed_cases.map(&:priority).uniq).to match_array [true]
         expect(distributed_cases.map(&:genpop).uniq).to match_array [false]
