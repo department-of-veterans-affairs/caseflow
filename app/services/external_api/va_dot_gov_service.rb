@@ -204,6 +204,7 @@ class ExternalApi::VADotGovService
     # Queries the VA.gov facilities API.
     #
     # @note Results are cached for 2 hours.
+    #   distances values in the meta field are only returned if a lat and long are provided.
     #
     # @param query [Hash] query parameters
     #
