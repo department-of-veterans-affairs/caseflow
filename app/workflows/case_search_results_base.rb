@@ -29,7 +29,7 @@ class CaseSearchResultsBase
     FormResponse.new(
       success: success,
       errors: errors.messages[:workflow],
-      extra: error_status_or_search_results
+      extra: error_status_or_case_search_results
     )
   end
 
@@ -120,6 +120,12 @@ class CaseSearchResultsBase
     return { status: status } unless success
 
     search_results
+  end
+
+  def error_status_or_case_search_results
+    return { status: status } unless success
+
+    case_search_results
   end
 
   def search_results
