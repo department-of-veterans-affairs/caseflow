@@ -165,10 +165,6 @@ describe ConferenceLink do
     end
 
     context "guest_pin_long property already has a pin as a value" do
-      before do
-        allow_any_instance_of(VirtualHearings::LinkService).to receive(:guest_pin).and_return("7470125694")
-      end
-
       it "Returns the guest_pin for the conference_link" do
         conference_link.guest_pin
         expect(conference_link.guest_pin_long).to eq("7470125694")
@@ -187,8 +183,6 @@ describe ConferenceLink do
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_PIN_KEY").and_return "mysecretkey"
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_HOST").and_return "example.va.gov"
       allow(ENV).to receive(:[]).with("VIRTUAL_HEARING_URL_PATH").and_return "/sample"
-      allow_any_instance_of(VirtualHearings::LinkService).to receive(:guest_pin).and_return("7470125694")
-      allow_any_instance_of(VirtualHearings::LinkService).to receive(:conference_id).and_return("0000001")
     end
 
     let(:hearing_day) { create(:hearing_day) }

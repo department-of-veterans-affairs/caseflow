@@ -25,7 +25,6 @@ class CorrespondenceTask < Task
       appeal_id: @correspondence.id,
       assigned_to: MailTeamSupervisor.singleton,
       appeal_type: "Correspondence",
-      parent_id: @correspondence_task.id,
       type: "CorrespondenceRootTask"
     )
     root_task.cancel_task_and_child_subtasks
