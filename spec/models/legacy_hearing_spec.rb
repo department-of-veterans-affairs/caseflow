@@ -397,6 +397,7 @@ describe LegacyHearing, :all_dbs do
           # orginally was expected to receive `update`, but with the addition of the
           # `scheduled_in_timezone` attr within the factory, we're now checking for the full method instead of
           # a call to `update!`
+          expect(legacy_hearing.hearing_day_id).to eq(legacy_hearing.hearing_day_vacols_id.to_i)
           expect(legacy_hearing).to receive(:hearing_day_id).at_least(:once)
           legacy_hearing.hearing_day
         end
