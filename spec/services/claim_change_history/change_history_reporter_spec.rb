@@ -173,7 +173,7 @@ describe ChangeHistoryReporter do
           "VACO (101)",
           "E. Thompson",
           added_issue_event.readable_event_date,
-          "Added Issue",
+          "Added issue",
           "CHAMPVA",
           "CHAMPVA issue description",
           added_issue_event.readable_decision_date,
