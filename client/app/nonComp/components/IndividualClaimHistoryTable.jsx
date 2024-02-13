@@ -38,12 +38,25 @@ const IndividualClaimHistoryTable = () => {
       <b>Benefit type: </b>{BENEFIT_TYPES[details.benefitType]}<br />
       <b>Issue type: </b>{details.issueType}<br />
       <b>Issue description: </b>{details.issueDescription}<br />
+    </React.Fragment>;
+  };
+
+  const AddedIssueWithDateFragment = (details) => {
+    return <React.Fragment>
+      <AddedIssueFragment {...details} />
       <b>Decision date: </b>{formatDecisionDate(details.decisionDate)}<br />
+    </React.Fragment>;
+  };
+
+  const AddedIssueWithNoDateFragment = (details) => {
+    return <React.Fragment>
+      <AddedIssueFragment {...details} />
+      <b>Decision date: </b>No decision date<br />
     </React.Fragment>;
   };
   const CompletedDispositionFragment = (details) => {
     return <React.Fragment>
-      <AddedIssueFragment {...details} />
+      <AddedIssueWithDateFragment {...details} />
       <b>Disposition: </b>{details.disposition}<br />
       <b>Decision description: </b>{details.decisionDescription}<br />
     </React.Fragment>;
@@ -51,20 +64,20 @@ const IndividualClaimHistoryTable = () => {
 
   const RemovedIssueFragment = (details) => {
     return <React.Fragment>
-      <AddedIssueFragment {...details} />
+      <AddedIssueWithDateFragment {...details} />
       <b>Removed issue date: </b>{formatDecisionDate(details.eventDate)}
     </React.Fragment>;
   };
   const WithdrewIssueFragment = (details) => {
     return <React.Fragment>
-      <AddedIssueFragment {...details} />
+      <AddedIssueWithDateFragment {...details} />
       <b>Withdrawal request date: </b>{formatDecisionDate(details.withdrawalRequestDate)}<br />
     </React.Fragment>;
   };
 
   const AddedDecisionDateFragment = (details) => {
     return <React.Fragment>
-      <AddedIssueFragment {...details} />
+      <AddedIssueWithDateFragment {...details} />
     </React.Fragment>;
   };
 
@@ -92,10 +105,10 @@ const IndividualClaimHistoryTable = () => {
       component = <ClaimIncompleteFragment />;
       break;
     case 'Added issue':
-      component = <AddedIssueFragment {...details} />;
+      component = <AddedIssueWithDateFragment {...details} />;
       break;
     case 'Added issue - No decision date':
-      component = <AddedIssueFragment {...details} />;
+      component = <AddedIssueWithNoDateFragment {...details} />;
       break;
     case 'Added decision date':
       component = <AddedDecisionDateFragment {...details} />;
