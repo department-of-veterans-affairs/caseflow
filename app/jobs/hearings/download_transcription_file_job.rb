@@ -171,7 +171,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
         log_info("Errors were found during conversion. Uploading csv to S3...")
       end
       file.upload_to_s3
-      # file.clean_up_tmp_location
+      file.clean_up_tmp_location
     end
   end
 
