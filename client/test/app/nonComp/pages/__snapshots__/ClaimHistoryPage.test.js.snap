@@ -355,7 +355,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
               >
                 <tr
                   class=""
-                  id="table-row-a45b257d-ffb4-4241-a3df-8827fb78b90c"
+                  id="table-row-e38c40e1-398c-4dfe-a9cd-239449c112c9"
                   role="row"
                 >
                   <td
@@ -424,7 +424,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                 </tr>
                 <tr
                   class=""
-                  id="table-row-738e76bd-1fbc-42c0-86bc-c153f7236846"
+                  id="table-row-8a805f1c-e35a-4a24-805e-b71505b04592"
                   role="row"
                 >
                   <td
@@ -464,7 +464,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                 </tr>
                 <tr
                   class=""
-                  id="table-row-465a11b0-0257-45a6-84a6-97ff5d7fb8a0"
+                  id="table-row-f1db03e8-156a-419f-9670-ba7554db391a"
                   role="row"
                 >
                   <td
@@ -527,7 +527,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                 </tr>
                 <tr
                   class=""
-                  id="table-row-ab795a8e-0b00-439d-8b88-0e3d5a4f79b6"
+                  id="table-row-bd1e167e-e047-467b-b2fd-116d062a7e21"
                   role="row"
                 >
                   <td
@@ -567,7 +567,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                 </tr>
                 <tr
                   class=""
-                  id="table-row-effbf72b-6354-4dba-b238-88b2ca250a2c"
+                  id="table-row-a70fb69a-7f92-4d02-b49c-ab7fd9510c1f"
                   role="row"
                 >
                   <td
@@ -607,7 +607,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                 </tr>
                 <tr
                   class=""
-                  id="table-row-dde44e3f-012a-440d-a276-bd200dc5fa21"
+                  id="table-row-7d872a15-935c-4fa9-b00e-7975b91a2680"
                   role="row"
                 >
                   <td
@@ -666,7 +666,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                 </tr>
                 <tr
                   class=""
-                  id="table-row-dd911991-9f89-40d0-8a4c-e3c008121af6"
+                  id="table-row-e1868f25-be4e-49a4-b7a5-debc04685822"
                   role="row"
                 >
                   <td
@@ -725,7 +725,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                 </tr>
                 <tr
                   class=""
-                  id="table-row-5f720a9f-6f45-4e12-be6f-83573d5a1d82"
+                  id="table-row-d9ee8cb9-ca80-4e90-a6ac-219377f97f74"
                   role="row"
                 >
                   <td
@@ -784,7 +784,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                 </tr>
                 <tr
                   class=""
-                  id="table-row-59124a83-2d2a-4f86-b7a1-f68ebc805aa1"
+                  id="table-row-8f65e8bb-c501-4896-a1a0-fff1a433fb51"
                   role="row"
                 >
                   <td
@@ -848,7 +848,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                 </tr>
                 <tr
                   class=""
-                  id="table-row-c0095b2a-a0a7-4ff0-a6b9-905aa27b0048"
+                  id="table-row-720e728b-3f15-4e44-91c9-abbc62ec8d90"
                   role="row"
                 >
                   <td
