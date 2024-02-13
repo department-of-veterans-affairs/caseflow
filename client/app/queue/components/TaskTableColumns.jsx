@@ -241,6 +241,8 @@ export const veteranDetails = () => {
 
   return {
     header: 'Veteran Details',
+    name: QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
+    backendCanSort: true,
     valueFunction: (task) => {
       if (task.taskUrl === '/modal/reassign_package') {
         return <a
@@ -269,7 +271,8 @@ export const veteranDetails = () => {
       >
         {task.veteranDetails}
       </a>;
-    }
+    },
+    getSortValue: (task) => task.veteranDetails
   };
 };
 
