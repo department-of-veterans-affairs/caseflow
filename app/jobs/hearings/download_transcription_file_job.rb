@@ -28,7 +28,6 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   end
 
   retry_on(TranscriptionTransformer::FileConversionError, wait: 10.seconds) do |job, exception|
-    job.build_csv_and_upload_to_s3(exception)
     job.transcription_file.clean_up_tmp_location
     # TO IMPLEMENT: SEND EMAIL TO VA OPS TEAM
     job.log_error(exception)
@@ -47,7 +46,6 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     @file_name = file_name
     @transcription_file = find_or_create_transcription_file
     ensure_hearing_held
-
     download_file_to_tmp(download_link)
     @transcription_file.upload_to_s3 if @transcription_file.date_upload_aws.nil?
     maybe_convert_vtt_to_rtf_and_upload_to_s3
@@ -69,17 +67,6 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
       job_id: job_id
     }
     Raven.capture_exception(error, extra: extra)
-  end
-
-  # Purpose: If retries of conversion of vtt to rtf fail, builds csv which captures error and details of vtt file.
-  #          Uploads csv file to S3.
-  #
-  # Params: exception - Error object
-  def build_csv_and_upload_to_s3(exception)
-    build_csv_from_error(exception)
-    csv_file = find_or_create_transcription_file(file_name.gsub("vtt", "csv"))
-    csv_file.upload_to_s3
-    csv_file.clean_up_tmp_location
   end
 
   private
@@ -167,13 +154,25 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   def maybe_convert_vtt_to_rtf_and_upload_to_s3
     return unless @transcription_file.file_type == "vtt"
 
+    hearing_info = {
+      judge: hearing.judge&.full_name,
+      appeal_id: hearing.appeal&.veteran_file_number,
+      date: hearing.scheduled_for
+    }
+
     log_info("Converting file #{file_name} to rtf...")
-    rtf_file_path = @transcription_file.convert_to_rtf
-    file_name = rtf_file_path.split("/").last
-    rtf_file = find_or_create_transcription_file(file_name)
-    log_info("Successfully converted #{file_name} to rtf. Uploading to S3...")
-    rtf_file.upload_to_s3
-    rtf_file.clean_up_tmp_location
+    file_paths = @transcription_file.convert_to_rtf(hearing_info)
+    file_paths.each do |path|
+      file_name = path.split("/").last
+      file = find_or_create_transcription_file(file_name)
+      if path.match?("rtf")
+        log_info("Successfully converted #{file_name} to rtf. Uploading to S3...")
+      else
+        log_info("Errors were found during conversion. Uploading csv to S3...")
+      end
+      file.upload_to_s3
+      # file.clean_up_tmp_location
+    end
   end
 
   # Purpose: If disposition of associated hearing is not marked as held, sends email to VA Operations Team and

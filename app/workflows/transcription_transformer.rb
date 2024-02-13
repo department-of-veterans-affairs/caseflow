@@ -8,16 +8,17 @@ require "csv"
 class TranscriptionTransformer
   class FileConversionError < StandardError; end
 
-  def initialize(vtt_path)
+  def initialize(vtt_path, hearing_info)
     @vtt_path = vtt_path
-    @rtf_path = vtt_path.gsub("vtt", "rtf")
-    @inaudible_count = 0
+    @error_count = 0
+    @hearing_info = hearing_info
+    @length = 0
   end
 
   def call
-    # return @rtf_path if File.exist?(@rtf_path)
-
-    convert_to_rtf(@vtt_path)
+    paths = [convert_to_rtf(@vtt_path)]
+    paths.push(build_csv(@vtt_path, @error_count, @length, @hearing_info)) if @error_count > 0
+    paths
   end
 
   private
@@ -26,9 +27,12 @@ class TranscriptionTransformer
   # Params: path - the file path of the vtt file
   # Returns the file path of the newly converted file
   def convert_to_rtf(path)
+    rtf_path = path.gsub("vtt", "rtf")
+    return rtf_path if File.exist?(rtf_path)
+
     begin
-      paths = []
       vtt = WebVTT.read(path)
+      @length = vtt.actual_total_length
       doc = RTF::Document.new(RTF::Font.new(RTF::Font::ROMAN, "Times New Roman"))
       doc.footer = RTF::FooterNode.new(doc, RTF::FooterNode::UNIVERSAL)
       doc.style.left_margin = 1300
@@ -37,11 +41,8 @@ class TranscriptionTransformer
       doc.page_break
       create_transcription_pages(vtt, doc)
       raw_doc = create_footer_and_spacing(doc)
-      File.open(@rtf_path, "w") { |file| file.write(raw_doc) }
-      paths.push(@rtf_path)
-      paths.push(build_csv(@inaudible_count, vtt.actual_total_length)) if @inaudible_count > 0
-
-      paths
+      File.open(rtf_path, "w") { |file| file.write(raw_doc) }
+      rtf_path
     rescue StandardError
       raise FileConversionError
     end
@@ -96,7 +97,7 @@ class TranscriptionTransformer
       identifier = cue.identifier&.strip&.scan(/[a-zA-Z]+/)&.join(" ") || ""
       name = (identifier == "") ? "Unknown" : identifier
       if cue.text == ""
-        @inaudibles += 1
+        @error_count += 1
         text = "[INAUDIBLE]"
       else text = cue.text
       end
@@ -139,16 +140,21 @@ class TranscriptionTransformer
   # Builds csv which captures error and details of vtt file
   # Params: count - count of how many inaudibles were found
   #         length - total length of meeting
+  #         hearing_info - object containing info about the hearing
   # Returns the created csv
-  def build_csv(count, length)
-    timestamp = Time.zone.now.to_s.sub("\sUTC", "")
-    file_date = File.ctime(@transcription_file.tmp_location).to_s.split(" ").first
-    csv_tmp_location = @transcription_file.tmp_location.gsub("vtt", "csv")
-    header = %w[file_name file_date section_timestamp error_encountered]
-    CSV.open(csv_tmp_location, "w") do |writer|
+  def build_csv(path, count, length, hearing_info)
+    csv_path = path.gsub("vtt", "csv")
+    return csv_path if File.exist?(csv_path)
+
+    filename = csv_path.split("/").last.sub(".csv", "")
+    header = %w[length appeal_id hearing_date judge issues filename]
+    length_string = "#{(length / 3600).floor}:#{(length / 60 % 60).floor}:#{(length % 60).floor}"
+    CSV.open(csv_path, "w") do |writer|
       writer << header
-      writer << [file_name, file_date, timestamp, error.to_s]
+      writer << [length_string, hearing_info[:appeal_id], hearing_info[:date].strftime("%m/%d/%Y"),
+                 hearing_info[:judge].upcase, "#{count} inaudible", filename]
     end
+    csv_path
   end
 
   # rubocop:disable Metrics/MethodLength

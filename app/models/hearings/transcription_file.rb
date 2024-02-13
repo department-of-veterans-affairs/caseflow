@@ -18,10 +18,10 @@ class TranscriptionFile < CaseflowRecord
   # Purpose: Converts transcription file from vtt to rtf
   #
   # Returns: string, tmp location of rtf (or xls/csv file if error)
-  def convert_to_rtf
+  def convert_to_rtf(hearing_info)
     return unless file_type == "vtt"
 
-    rtf_file_path = TranscriptionTransformer.new(self.tmp_location).call
+    rtf_file_path = TranscriptionTransformer.new(tmp_location, hearing_info).call
     update_conversion_status!(:success)
     rtf_file_path
   rescue TranscriptionTransformer::FileConversionError => error
