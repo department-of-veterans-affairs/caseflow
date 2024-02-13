@@ -139,6 +139,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
     end
 
     it "renders a page with the grouped levers and lever history" do
+      lever_keys = %w[static batch affinity docket_distribution_prior docket_time_goal docket_levers]
       User.authenticate!(user: lever_user)
       OrganizationsUser.make_user_admin(lever_user, CDAControlGroup.singleton)
       get "levers"
@@ -148,7 +149,7 @@ RSpec.describe CaseDistributionLeversController, :all_dbs, type: :controller do
       expect(result).to be_a(Hash)
       expect(result.keys).to match_array(%w[levers lever_history])
       expect(result["levers"]).to be_a(Hash)
-      expect(result["levers"].keys).to match_array(%w[static batch affinity docket_distribution_prior docket_time_goal])
+      expect(result["levers"].keys).to match_array(lever_keys)
       expect(result["lever_history"]).to be_a(Array)
     end
   end

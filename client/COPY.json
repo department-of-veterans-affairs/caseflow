@@ -1396,7 +1396,7 @@
   "POA_UPDATED_SUCCESSFULLY": "POA Updated Successfully",
   "EMPLOYER_IDENTIFICATION_NUMBER": "Employer Identification Number",
   "CASE_DISTRIBUTION_TITLE": "Case Distribution Algorithm Values",
-  "CASE_DISTRIBUTION_ALGORITHM_DESCRIPTION": "The Case Distribution Algorithm determines how cases are assigned to VLJs and their teams.  Current algorithm is \"By Docket Date.\"",
+  "CASE_DISTRIBUTION_ALGORITHM_DESCRIPTION": "The Case Distribution Algorithm determines how cases are assigned to VLJs and their teams.  Current algorithm is \"Strict Docket Date.\"",
   "CASE_DISTRIBUTION_ACTIVE_LEVERS_TITLE": "Active Data Elements",
   "CASE_DISTRIBUTION_ACTIVE_LEVERS_DESCRIPTION": "You may make changes to the Case Distribution algorithm values based on the data elements below.  Changes will be applied to the next case distribution event unless subsequent confirmed changes are made to the same variable.",
   "CASE_DISTRIBUTION_STATIC_LEVERS_TITLE": "Inactive Data Elements",
