@@ -22,7 +22,7 @@ describe Hearings::DownloadTranscriptionFileJob do
         csv: "transcript_text"
       }
     end
-    let(:s3_location) { folder_name + "/" + s3_sub_folders[file_type.to_sym] + "/" + file_name }
+    let(:s3_location) { "#{folder_name}/#{s3_sub_folders[file_type.to_sym]}/#{file_name}" }
 
     subject { described_class.new.perform(download_link: link, file_name: file_name) }
 
@@ -31,6 +31,12 @@ describe Hearings::DownloadTranscriptionFileJob do
     after { File.delete(tmp_location) if File.exist?(tmp_location) }
 
     shared_examples "all file types" do
+      it "saves downloaded file to correct tmp sub-directory" do
+        allow_any_instance_of(TranscriptionFile).to receive(:clean_up_tmp_location).and_return("hi")
+        subject
+        expect(File.exist?(tmp_location)).to be true
+      end
+
       it "updates date_upload_aws of TranscriptionFile record" do
         subject
         expect(transcription_file.date_upload_aws).to_not be_nil
@@ -66,22 +72,56 @@ describe Hearings::DownloadTranscriptionFileJob do
       end
     end
 
+    shared_examples "mp4 or mp3" do
+      it "creates new TranscriptionFile record" do
+        expect { subject }.to change(TranscriptionFile, :count).by(1)
+        expect(transcription_file.file_type).to eq(file_type)
+      end
+
+      it "updates date_receipt_webex of TranscriptionFile record" do
+        subject
+        expect(transcription_file.date_receipt_webex).to_not be_nil
+      end
+
+      include_examples "all file types"
+    end
+
+    shared_context "convertible file" do
+      let(:converted_file_name) { file_name.gsub(file_type, conversion_type) }
+      let(:converted_tmp_location) { tmp_location.gsub(file_type, conversion_type) }
+      let(:converted_transcription_file) { TranscriptionFile.find_by(file_name: converted_file_name) }
+      let(:converted_s3_location) { "#{folder_name}/#{s3_sub_folders[conversion_type.to_sym]}/#{converted_file_name}" }
+
+      after { File.delete(converted_tmp_location) if File.exist?(converted_tmp_location) }
+
+      it "creates two new TranscriptionFile records" do
+        expect { subject }.to change(TranscriptionFile, :count).by(2)
+        expect(transcription_file.file_type).to eq(file_type)
+        expect(converted_transcription_file.file_type).to eq(conversion_type)
+      end
+
+      it "updates date_receipt_webex of TranscriptionFile record" do
+        subject
+        expect(transcription_file.date_receipt_webex).to_not be_nil
+      end
+
+      include_examples "all file types"
+    end
+
+    shared_context "converted file" do
+      let(:transcription_file) { converted_transcription_file }
+      let(:file_status) { TranscriptionFile::FILE_STATUSES[:upload][:success] }
+      let(:s3_location) { converted_s3_location }
+
+      include_examples "all file types"
+    end
+
     context "mp3 file" do
       let(:file_type) { "mp3" }
       let(:file_status) { TranscriptionFile::FILE_STATUSES[:upload][:success] }
 
       context "successful download from Webex and upload to S3" do
-        it "creates new TranscriptionFile record" do
-          expect { subject }.to change(TranscriptionFile, :count).by(1)
-          expect(transcription_file.file_type).to eq(file_type)
-        end
-
-        it "updates date_receipt_webex of TranscriptionFile record" do
-          subject
-          expect(transcription_file.date_receipt_webex).to_not be_nil
-        end
-
-        include_examples "all file types"
+        include_examples "mp4 or mp3"
       end
 
       context "conversion request unnecessarily supplied to job" do
@@ -107,17 +147,7 @@ describe Hearings::DownloadTranscriptionFileJob do
       let(:file_status) { TranscriptionFile::FILE_STATUSES[:upload][:success] }
 
       context "successful download from Webex and upload to S3" do
-        it "creates new TranscriptionFile record" do
-          expect { subject }.to change(TranscriptionFile, :count).by(1)
-          expect(transcription_file.file_type).to eq(file_type)
-        end
-
-        it "updates date_receipt_webex of TranscriptionFile record" do
-          subject
-          expect(transcription_file.date_receipt_webex).to_not be_nil
-        end
-
-        include_examples "all file types"
+        include_examples "mp4 or mp3"
       end
 
       context "failed download from Webex" do
@@ -127,81 +157,39 @@ describe Hearings::DownloadTranscriptionFileJob do
       end
 
       context "succesful conversion to mp3 if necessary" do
+        let(:conversion_type) { "mp3" }
+        let(:file_status) { TranscriptionFile::FILE_STATUSES[:conversion][:success] }
+
         subject { described_class.new.perform(download_link: link, file_name: file_name, conversion_needed: true) }
 
-        let(:file_type) { "mp4" }
-        let(:file_status) { TranscriptionFile::FILE_STATUSES[:conversion][:success] }
-        let(:mp3_file_name) { file_name.gsub("mp4", "mp3") }
-        let(:mp3_tmp_location) { tmp_location.gsub("mp4", "mp3") }
-        let(:mp3_transcription_file) { TranscriptionFile.find_by(file_name: mp3_file_name) }
-        let(:mp3_s3_location) { folder_name + "/transcript_audio/" + mp3_file_name }
-
         before do
-          File.open(mp3_tmp_location, "w")
-          allow_any_instance_of(VideoToAudioFileConverter).to receive(:call).and_return(mp3_tmp_location)
+          File.open(converted_tmp_location, "w")
+          allow_any_instance_of(VideoToAudioFileConverter).to receive(:call).and_return(converted_tmp_location)
         end
 
-        after { File.delete(mp3_tmp_location) if File.exist?(mp3_tmp_location) }
-
-        it "creates two new TranscriptionFile records, one for mp4 and one for mp3" do
-          expect { subject }.to change(TranscriptionFile, :count).by(2)
-          expect(transcription_file.file_type).to eq("mp4")
-          expect(mp3_transcription_file.file_type).to eq("mp3")
-        end
-
-        it "updates date_receipt_webex of TranscriptionFile record" do
-          subject
-          expect(transcription_file.date_receipt_webex).to_not be_nil
-        end
-
-        include_examples "all file types"
+        include_context "convertible file"
 
         context "mp3 file" do
-          let(:transcription_file) { mp3_transcription_file }
-          let(:file_status) { TranscriptionFile::FILE_STATUSES[:upload][:success] }
-          let(:s3_location) { mp3_s3_location }
-
-          include_examples "all file types"
+          include_context "converted file"
         end
       end
     end
 
     context "vtt file" do
       let(:file_type) { "vtt" }
+      let(:conversion_type) { "rtf" }
+      let(:file_status) { TranscriptionFile::FILE_STATUSES[:conversion][:success] }
 
       context "successful download from Webex, upload to S3, and conversion to rtf" do
-        let(:file_status) { TranscriptionFile::FILE_STATUSES[:conversion][:success] }
-        let(:rtf_file_name) { file_name.gsub("vtt", "rtf") }
-        let(:rtf_tmp_location) { tmp_location.gsub("vtt", "rtf") }
-        let(:rtf_transcription_file) { TranscriptionFile.find_by(file_name: rtf_file_name) }
-        let(:rtf_s3_location) { folder_name + "/transcript_text/" + rtf_file_name }
-
         before do
-          File.open(rtf_tmp_location, "w")
-          allow_any_instance_of(TranscriptionTransformer).to receive(:call).and_return(rtf_tmp_location)
+          File.open(converted_tmp_location, "w")
+          allow_any_instance_of(TranscriptionTransformer).to receive(:call).and_return(converted_tmp_location)
         end
 
-        after { File.delete(rtf_tmp_location) if File.exist?(rtf_tmp_location) }
-
-        it "creates two new TranscriptionFile records, one for vtt and one for rtf" do
-          expect { subject }.to change(TranscriptionFile, :count).by(2)
-          expect(transcription_file.file_type).to eq("vtt")
-          expect(rtf_transcription_file.file_type).to eq("rtf")
-        end
-
-        it "updates date_receipt_webex of TranscriptionFile record" do
-          subject
-          expect(transcription_file.date_receipt_webex).to_not be_nil
-        end
-
-        include_examples "all file types"
+        include_context "convertible file"
 
         context "rtf file" do
-          let(:transcription_file) { rtf_transcription_file }
-          let(:file_status) { TranscriptionFile::FILE_STATUSES[:upload][:success] }
-          let(:s3_location) { rtf_s3_location }
-
-          include_examples "all file types"
+          include_context "converted file"
         end
       end
 
@@ -211,12 +199,9 @@ describe Hearings::DownloadTranscriptionFileJob do
         include_examples "failed download from Webex"
       end
 
-      context "failed conversion of vtt to rtf" do
+      context "failed conversion to rtf" do
+        let(:conversion_type) { "csv" }
         let(:file_status) { TranscriptionFile::FILE_STATUSES[:conversion][:failure] }
-        let(:csv_file_name) { file_name.gsub("vtt", "csv") }
-        let(:csv_tmp_location) { tmp_location.gsub("vtt", "csv") }
-        let(:csv_transcription_file) { TranscriptionFile.find_by(file_name: csv_file_name) }
-        let(:csv_s3_location) { folder_name + "/transcript_text/" + csv_file_name }
 
         subject do
           perform_enqueued_jobs { described_class.perform_later(download_link: link, file_name: file_name) }
@@ -227,16 +212,7 @@ describe Hearings::DownloadTranscriptionFileJob do
             .and_raise(Caseflow::Error::FileConversionError)
         end
 
-        it "creates two new TranscriptionFile records, one for vtt and one for csv" do
-          expect { subject }.to change(TranscriptionFile, :count).by(2)
-          expect(transcription_file.file_type).to eq("vtt")
-          expect(csv_transcription_file.file_type).to eq("csv")
-        end
-
-        it "updates date_receipt_webex of TranscriptionFile record" do
-          subject
-          expect(transcription_file.date_receipt_webex).to_not be_nil
-        end
+        include_context "convertible file"
 
         it "does not update date_converted of TranscriptionFile record" do
           subject
@@ -246,11 +222,7 @@ describe Hearings::DownloadTranscriptionFileJob do
         include_examples "all file types"
 
         context "csv file" do
-          let(:transcription_file) { csv_transcription_file }
-          let(:file_status) { TranscriptionFile::FILE_STATUSES[:upload][:success] }
-          let(:s3_location) { csv_s3_location }
-
-          include_examples "all file types"
+          include_context "converted file"
         end
       end
     end
