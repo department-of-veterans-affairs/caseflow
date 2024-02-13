@@ -7,19 +7,20 @@ const IndividualClaimHistoryTable = () => {
   const processDate = (date) => date;
 
   const formatDecisionDate = (date) => (new Date(date).toLocaleDateString());
-  const claimCreatedFragment = () => {
+
+  const ClaimCreatedFragment = () => {
     return <React.Fragment>Claim created.</React.Fragment>;
   };
 
-  const claimInProgressFragment = () => {
+  const ClaimInProgressFragment = () => {
     return <React.Fragment>Claim can be processed.</React.Fragment>;
   };
 
-  const claimIncompleteFragment = () => {
+  const ClaimIncompleteFragment = () => {
     return <React.Fragment>Claim cannot be processed until decision date is entered.</React.Fragment>;
   };
 
-  const claimClosedFragment = (details) => {
+  const ClaimClosedFragment = (details) => {
     return <React.Fragment>
       Claim closed.<br />
       <b>Claim decision date: </b>{formatDecisionDate(details.decisionDate)}
@@ -34,7 +35,7 @@ const IndividualClaimHistoryTable = () => {
       <b>Decision date: </b>{formatDecisionDate(details.decisionDate)}<br />
     </React.Fragment>;
   };
-  const completedDispositionFragment = (details) => {
+  const CompletedDispositionFragment = (details) => {
     return <React.Fragment>
       <AddedIssueFragment {...details} />
       <b>Disposition: </b>{details.disposition}<br />
@@ -42,36 +43,39 @@ const IndividualClaimHistoryTable = () => {
     </React.Fragment>;
   };
 
-  const withdrewIssueFragment = (details) => {
+  const WithdrewIssueFragment = (details) => {
     return <React.Fragment>
       <AddedIssueFragment {...details} />
       <b>Withdrawal request date: </b>{details.withdrawalRequestDate}<br />
     </React.Fragment>;
   };
 
-  const addedDecisionDateFragment = (details) => {
+  const AddedDecisionDateFragment = (details) => {
     return <React.Fragment>
       <AddedIssueFragment {...details} />
     </React.Fragment>;
   };
-  const detailsFragment = (eventType, details) => {
+
+  const DetailsFragment = (row) => {
     let component = null;
 
-    switch (eventType) {
+    const { readableEventType, details } = row;
+
+    switch (readableEventType) {
     case 'Claim created':
-      component = claimCreatedFragment();
+      component = <ClaimCreatedFragment />;
       break;
     case 'Claim closed':
-      component = claimClosedFragment(details);
+      component = <ClaimClosedFragment {...details} />;
       break;
     case 'Completed disposition':
-      component = completedDispositionFragment(details);
+      component = <CompletedDispositionFragment {...details} />;
       break;
     case 'Claim status - In progress':
-      component = claimInProgressFragment();
+      component = <ClaimInProgressFragment />;
       break;
     case 'Claim status - Incomplete':
-      component = claimIncompleteFragment();
+      component = <ClaimIncompleteFragment />;
       break;
     case 'Added issue':
       component = <AddedIssueFragment {...details} />;
@@ -80,10 +84,10 @@ const IndividualClaimHistoryTable = () => {
       component = <AddedIssueFragment {...details} />;
       break;
     case 'Added decision date':
-      component = addedDecisionDateFragment(details);
+      component = <AddedDecisionDateFragment {...details} />;
       break;
     case 'Withdrew issue':
-      component = withdrewIssueFragment(details);
+      component = <WithdrewIssueFragment {...details} />;
       break;
     default:
       return null;
@@ -94,37 +98,43 @@ const IndividualClaimHistoryTable = () => {
     </p>;
   };
 
+  const columns = [
+    { name: 'eventDate',
+      header: 'Date and Time',
+      valueFunction: (row) => processDate(row.eventDate),
+      getSortValue: (row) => processDate(row.eventDate),
+    },
+    { name: 'eventUser',
+      columnName: 'eventUser',
+      header: 'User',
+      valueName: 'User',
+      valueFunction: (row) => row.eventUser,
+      enableFilter: true,
+      tableData: dummyData,
+      anyFiltersAreSet: true,
+      label: 'Filter by User',
+      getSortValue: (row) => row.eventUser },
+    { columnName: 'readableEventType',
+      name: 'Activity',
+      header: 'Activity',
+      valueName: 'Activity',
+      valueFunction: (row) => row.readableEventType,
+      enableFilter: true,
+      tableData: dummyData,
+      anyFiltersAreSet: true,
+      label: 'Filter by Activity',
+      getSortValue: (row) => row.readableEventType },
+    { name: 'details',
+      header: 'Details',
+      valueFunction: (row) => <DetailsFragment {...row} /> },
+  ];
+
   return <QueueTable
     id="individual_claim_history_table"
-    columns={[
-      { name: 'eventDate',
-        header: 'Date and Time',
-        valueFunction: (row) => processDate(row.eventDate),
-        getSortValue: (row) => processDate(row.eventDate),
-      },
-      { name: 'eventUser',
-        columnName: 'eventUser',
-        header: 'User',
-        valueName: 'User',
-        valueFunction: (row) => row.eventUser,
-        enableFilter: true,
-        label: 'Filter by User',
-        getSortValue: (row) => row.eventUser },
-      { columnName: 'readableEventType',
-        name: 'Activity',
-        header: 'Activity',
-        valueName: 'Activity',
-        valueFunction: (row) => row.readableEventType,
-        enableFilter: true,
-        label: 'Filter by Activity',
-        getSortValue: (row) => row.readableEventType },
-      { name: 'details',
-        header: 'Details',
-        valueFunction: (row) => detailsFragment(row.readableEventType, row.details) },
-    ]}
+    columns={columns}
     rowObjects={dummyData}
     summary="Individual claim history"
-    slowReRendersAreOk
+    getKeyForRow={(_rowNumber, event) => event.id}
     enablePagination
     useTaskPagesApi={false}
     defaultSort= {{

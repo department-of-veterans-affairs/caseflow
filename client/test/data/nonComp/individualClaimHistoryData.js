@@ -1,5 +1,8 @@
+import { v4 as uuidv4 } from 'uuid';
+
 export default [
   {
+    id: uuidv4(),
     eventDate: '07/05/21, 15:00',
     eventUser: 'System',
     readableEventType: 'Claim closed',
@@ -8,6 +11,7 @@ export default [
     }
   },
   {
+    id: uuidv4(),
     eventDate: '07/05/23, 19:00',
     eventUser: 'System',
     readableEventType: 'Claim created',
@@ -16,6 +20,7 @@ export default [
     }
   },
   {
+    id: uuidv4(),
     eventDate: '07/05/24, 15:00',
     eventUser: 'J. Dudifer',
     readableEventType: 'Completed disposition',
@@ -29,6 +34,7 @@ export default [
     }
   },
   {
+    id: uuidv4(),
     eventDate: '07/05/23, 15:00',
     eventUser: 'System',
     readableEventType: 'Claim status - In progress',
@@ -37,6 +43,7 @@ export default [
     }
   },
   {
+    id: uuidv4(),
     eventDate: '07/05/23, 15:00',
     eventUser: 'System',
     readableEventType: 'Claim status - Incomplete',
@@ -45,6 +52,7 @@ export default [
     }
   },
   {
+    id: uuidv4(),
     eventDate: '07/05/23, 15:00',
     eventUser: 'System',
     readableEventType: 'Added issue',
@@ -58,6 +66,7 @@ export default [
     }
   },
   {
+    id: uuidv4(),
     eventDate: '07/05/23, 15:00',
     eventUser: 'System',
     readableEventType: 'Added decision date',
@@ -71,6 +80,7 @@ export default [
     }
   },
   {
+    id: uuidv4(),
     eventDate: '07/05/23, 15:00',
     eventUser: 'System',
     readableEventType: 'Added issue - No decision date',
@@ -84,6 +94,7 @@ export default [
     }
   },
   {
+    id: uuidv4(),
     eventDate: '07/05/23, 15:00',
     eventUser: 'System',
     readableEventType: 'Withdrew issue',
