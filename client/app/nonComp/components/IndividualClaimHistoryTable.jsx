@@ -7,7 +7,7 @@ const IndividualClaimHistoryTable = () => {
   const processDate = (date) => date;
 
   const claimCreatedFragment = () => {
-    return <React.Fragment>Claim created</React.Fragment>;
+    return <React.Fragment>Claim created.</React.Fragment>;
   };
 
   const claimInProgressFragment = () => {
