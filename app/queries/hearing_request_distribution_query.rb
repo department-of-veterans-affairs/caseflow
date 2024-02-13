@@ -26,6 +26,10 @@ class HearingRequestDistributionQuery
     [not_genpop_appeals, only_genpop_appeals] if genpop == "any"
   end
 
+  def self.ineligible_judges_id_cache
+    Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:id)&.reject(&:blank?) || []
+  end
+
   private
 
   attr_reader :base_relation, :genpop, :judge
@@ -38,7 +42,7 @@ class HearingRequestDistributionQuery
     no_hearings_or_no_held_hearings = with_no_hearings.or(with_no_held_hearings)
 
     # returning early as most_recent_held_hearings_not_tied_to_any_judge is redundant
-    if @use_by_docket_date
+    if @use_by_docket_date && !FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
       return [
         with_held_hearings,
         no_hearings_or_no_held_hearings
@@ -50,6 +54,7 @@ class HearingRequestDistributionQuery
     [
       most_recent_held_hearings_not_tied_to_any_judge,
       most_recent_held_hearings_exceeding_affinity_threshold,
+      most_recent_held_hearings_tied_to_ineligible_judge,
       no_hearings_or_no_held_hearings
     ].flatten.uniq
   end
@@ -74,6 +79,10 @@ class HearingRequestDistributionQuery
     base_relation.most_recent_hearings.with_held_hearings
   end
 
+  def most_recent_held_hearings_tied_to_ineligible_judge
+    base_relation.most_recent_hearings.tied_to_ineligible_judge
+  end
+
   module Scopes
     include DistributionScopes
     def most_recent_hearings
@@ -96,6 +105,11 @@ class HearingRequestDistributionQuery
       joins(with_assigned_distribution_task_sql)
         .where(hearings: { disposition: "held", judge_id: judge.id })
         .where("distribution_task.assigned_at > ?", Constants::DISTRIBUTION["hearing_case_affinity_days"].days.ago)
+    end
+
+    def tied_to_ineligible_judge
+      where(hearings: { disposition: "held", judge_id: HearingRequestDistributionQuery.ineligible_judges_id_cache })
+        .where("1 = ?", FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ? 1 : 0)
     end
 
     # If an appeal has exceeded the affinity, it should be returned to genpop.
