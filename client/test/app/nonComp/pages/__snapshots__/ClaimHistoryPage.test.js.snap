@@ -36,7 +36,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
               <div
                 class="cf-pagination-summary"
               >
-                Viewing 1-8 of 8 total
+                Viewing 1-10 of 10 total
               </div>
               <div
                 class="cf-pagination-pages"
@@ -355,7 +355,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
               >
                 <tr
                   class=""
-                  id="table-row-0"
+                  id="table-row-a45b257d-ffb4-4241-a3df-8827fb78b90c"
                   role="row"
                 >
                   <td
@@ -407,7 +407,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                       <b>
                         Decision date: 
                       </b>
-                      05/31/2023
+                      5/30/2023
                       <br />
                       <b>
                         Disposition: 
@@ -424,7 +424,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                 </tr>
                 <tr
                   class=""
-                  id="table-row-1"
+                  id="table-row-738e76bd-1fbc-42c0-86bc-c153f7236846"
                   role="row"
                 >
                   <td
@@ -458,13 +458,76 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                     tabindex="-1"
                   >
                     <p>
-                      Claim created
+                      Claim created.
                     </p>
                   </td>
                 </tr>
                 <tr
                   class=""
-                  id="table-row-2"
+                  id="table-row-465a11b0-0257-45a6-84a6-97ff5d7fb8a0"
+                  role="row"
+                >
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    07/05/23, 15:15
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    System
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    Removed issue
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    <p>
+                      <b>
+                        Benefit type: 
+                      </b>
+                      Veterans Health Administration
+                      <br />
+                      <b>
+                        Issue type: 
+                      </b>
+                      Beneficiary Travel
+                      <br />
+                      <b>
+                        Issue description: 
+                      </b>
+                      Any notes will display here
+                      <br />
+                      <b>
+                        Decision date: 
+                      </b>
+                      6/22/2023
+                      <br />
+                      <b>
+                        Removed issue date: 
+                      </b>
+                      7/5/2023
+                    </p>
+                  </td>
+                </tr>
+                <tr
+                  class=""
+                  id="table-row-ab795a8e-0b00-439d-8b88-0e3d5a4f79b6"
                   role="row"
                 >
                   <td
@@ -504,7 +567,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                 </tr>
                 <tr
                   class=""
-                  id="table-row-3"
+                  id="table-row-effbf72b-6354-4dba-b238-88b2ca250a2c"
                   role="row"
                 >
                   <td
@@ -544,7 +607,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                 </tr>
                 <tr
                   class=""
-                  id="table-row-4"
+                  id="table-row-dde44e3f-012a-440d-a276-bd200dc5fa21"
                   role="row"
                 >
                   <td
@@ -596,14 +659,73 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                       <b>
                         Decision date: 
                       </b>
-                      05/31/2023
+                      5/30/2023
                       <br />
                     </p>
                   </td>
                 </tr>
                 <tr
                   class=""
-                  id="table-row-5"
+                  id="table-row-dd911991-9f89-40d0-8a4c-e3c008121af6"
+                  role="row"
+                >
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    07/05/23, 15:00
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    System
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    Added decision date
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    <p>
+                      <b>
+                        Benefit type: 
+                      </b>
+                      Veterans Health Administration
+                      <br />
+                      <b>
+                        Issue type: 
+                      </b>
+                      Beneficiary Travel
+                      <br />
+                      <b>
+                        Issue description: 
+                      </b>
+                      Any notes will display here
+                      <br />
+                      <b>
+                        Decision date: 
+                      </b>
+                      5/30/2023
+                      <br />
+                    </p>
+                  </td>
+                </tr>
+                <tr
+                  class=""
+                  id="table-row-5f720a9f-6f45-4e12-be6f-83573d5a1d82"
                   role="row"
                 >
                   <td
@@ -655,14 +777,14 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                       <b>
                         Decision date: 
                       </b>
-                      
+                      No decision date
                       <br />
                     </p>
                   </td>
                 </tr>
                 <tr
                   class=""
-                  id="table-row-6"
+                  id="table-row-59124a83-2d2a-4f86-b7a1-f68ebc805aa1"
                   role="row"
                 >
                   <td
@@ -714,19 +836,19 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                       <b>
                         Decision date: 
                       </b>
-                      07/04/23
+                      6/22/2023
                       <br />
                       <b>
                         Withdrawal request date: 
                       </b>
-                      07/05/23
+                      7/5/2023
                       <br />
                     </p>
                   </td>
                 </tr>
                 <tr
                   class=""
-                  id="table-row-7"
+                  id="table-row-c0095b2a-a0a7-4ff0-a6b9-905aa27b0048"
                   role="row"
                 >
                   <td
@@ -765,7 +887,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                       <b>
                         Claim decision date: 
                       </b>
-                      07/05/23
+                      9/11/2023
                     </p>
                   </td>
                 </tr>
@@ -778,7 +900,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
               <div
                 class="cf-pagination-summary"
               >
-                Viewing 1-8 of 8 total
+                Viewing 1-10 of 10 total
               </div>
               <div
                 class="cf-pagination-pages"
