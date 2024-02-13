@@ -45,29 +45,31 @@ class SplitAppealController < ApplicationController
   # TODO: Move this logic down into the appeals model somehow so it doesn't suck as much
   def sct_parsing(old_appeal, new_appeal)
     # TODO: this should also be scoped to already distributed appeals
-    # check both appeals for sct appeal tasks
-    # TODO: The same thing should happen for both the old and new appeal
-    # if old_appeal.sct_appeal?
-    #   # old_appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).first
-    #   old_sct_task = old_appeal.tasks.find { |t| t.type == :SpecialtyCaseTeamAssignTask }
-    # end
-
     was_in_sct_queue = old_appeal.tasks.any? { |t| t.type == :SpecialtyCaseTeamAssignTask }
 
-    if new_appeal.sct_appeal?
-      # New appeal is an sct appeal so move it to the SCT queue
-      # Probably find or create an SCT task and assign it to the SCT queue
-      sct_task = new_appeal.tasks.find { |t| t.type == :SpecialtyCaseTeamAssignTask }
-      sct_task&.cancelled!
-      # Move the distribution stuff down to the elsif block
-      # Possibly cancel the judge tasks in both blocks
-      distribution_task = new_appeal.tasks.find { |t| t.type :DistributionTask }
-      distribution_task.update(status: "assigned", assigned_to: Bva.singleton, assigned_by: current_user)
-      distribution_task.save
-    elsif was_in_sct_queue && !new_appeal.sct_appeal?
-      # It is not an SCT appeal, but it is splitting off from one so send it back to distribution
+    # if both are SCT appeals then that means one is already in the sct queue and another is splitting
+    # and moving back to the sct queue. Assume new is always moving
+    if old_appeal.sct_appeal? && new_appeal.sct_appeal?
+      assign_appeal_to_the_specialty_case_team(new_appeal)
 
+      # TODO: Verify that the old_appeal tasks actually stay in the same state because it's goofed up bad
+      # TODO: Should we cancel the judge tasks/attorney tasks at this point?
+      void
+
+    # If the old appeal is the one that is moving to SCT
+    # TODO: Need to check to see if it was already in SCT. However, this should only happen with old data because
+    # All sct appeals should be in the SCT queue for new data/distributions
+    elsif old_appeal.sct_appeal?
+      assign_appeal_to_the_specialty_case_team(old_appeal)
+      move_appeal_back_to_distribution(new_appeal)
+
+    # If the new appeal is the one that is moving to SCT
+    # TODO: This is not always the case one of the two was probably already in SCT?
+    elsif new_appeal.sct_appeal?
+      assign_appeal_to_the_specialty_case_team(new_appeal)
+      move_appeal_back_to_distribution(old_appeal)
     end
+
     # Just make sure everything is saved up and reloaded at the end
     old_appeal.save
     new_appeal.save
@@ -79,8 +81,7 @@ class SplitAppealController < ApplicationController
   def move_appeal_back_to_distribution(appeal)
     # Reopen the Distribution task
     distribution_task = appeal.tasks.find { |task| task.type == :DistributionTask }
-    distribution_task.update(status: "assigned", assigned_to: Bva.singleton, assigned_by: current_user)
-    distribution_task.save
+    distribution_task.update!(status: "assigned", assigned_to: Bva.singleton, assigned_by: current_user)
 
     # Cancel any open Judge, Attorney, or SpecialtyCaseTeam tasks
     cancelled_task_types = %w[SpecialtyCaseTeamAssignTask JudgeDecisionReviewTask JudgeAssignTask AttorneyTask]
@@ -96,7 +97,8 @@ class SplitAppealController < ApplicationController
       appeal: appeal,
       parent: appeal.root_task,
       assigned_to: SpecialtyCaseTeam.singleton,
-      assigned_by: current_user
+      assigned_by: current_user,
+      status: Constants.TASK_STATUSES.assigned
     )
     appeal.reload
     appeal
