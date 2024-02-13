@@ -136,7 +136,7 @@ RSpec.feature "Postpone hearing" do
         expect(page).to_not have_content("Finding hearing locations", wait: 30)
         click_dropdown(name: "appealHearingLocation", index: 0)
         click_dropdown(name: "hearingDate", index: 0)
-        find(".cf-form-radio-option", text: "8:30 am").click
+        find(".cf-form-radio-option", text: "8:30 AM").click
         click_button("Submit")
 
         expect(page).to have_content("You have successfully assigned")
@@ -162,7 +162,7 @@ RSpec.feature "Postpone hearing" do
         expect(page).to_not have_content("Finding hearing locations", wait: 30)
         click_dropdown(name: "appealHearingLocation", index: 0)
         click_dropdown(name: "hearingDate", index: 0)
-        find(".cf-form-radio-option", text: "8:30 am").click
+        find(".cf-form-radio-option", text: "8:30 AM").click
         click_button("Submit")
 
         expect(page).to have_content("You have successfully assigned")
