@@ -725,14 +725,17 @@ describe DecisionReviewsController, :postgres, type: :controller do
 
           res = JSON.parse(response.body)
 
-          expect(res[0]["attributes"]["taskID"]).to eq task_event.id
-          expect(res[0]["attributes"]["eventType"]).to eq "added_issue"
-          expect(res[0]["attributes"]["claimType"]).to eq "Higher-Level Review"
-          expect(res[0]["attributes"]["readableEventType"]).to eq "Added Issue"
-          expect(res[1]["attributes"]["eventType"]).to eq "claim_creation"
-          expect(res[1]["attributes"]["readableEventType"]).to eq "Claim created"
-          expect(res[2]["attributes"]["eventType"]).to eq "completed_disposition"
-          expect(res[2]["attributes"]["readableEventType"]).to eq "Completed disposition"
+          expected_events = [
+            { "taskID" => task_event.id, "eventType" => "added_issue", "claimType" => "Higher-Level Review",
+              "readableEventType" => "Added Issue" },
+            { "eventType" => "claim_creation", "readableEventType" => "Claim created" },
+            { "eventType" => "completed_disposition", "readableEventType" => "Completed disposition" }
+          ]
+          expected_events.each_with_index do |expected_attributes, index|
+            expected_attributes.each do |key, value|
+              expect(res[index]["attributes"][key]).to eq value
+            end
+          end
         end
       end
     end

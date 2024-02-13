@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import NonCompLayout from '../components/NonCompLayout';
 import Link from 'app/components/Link';
 import styled from 'styled-components';
-import { getIndividiualHistory } from '../actions/changeHistorySlice';
+import { fetchIndividualHistory } from '../actions/changeHistorySlice';
 
 const LinkDiv = styled.div`
   display: inline-block;
@@ -12,12 +12,12 @@ const LinkDiv = styled.div`
 
 const ClaimHistoryPage = () => {
   const dispatch = useDispatch();
-  const businessLineUrl = useSelector((state) => state.nonComp.businessLineUrl);
-  const task = useSelector((state) => state.nonComp.task);
+  const { businessLineUrl, task } = useSelector((state) => state.nonComp);
+
   const events = useSelector((state) => state.changeHistory.events);
 
   useEffect(() => {
-    dispatch(getIndividiualHistory({ organizationUrl: businessLineUrl, taskId: task.id }));
+    dispatch(fetchIndividualHistory({ organizationUrl: businessLineUrl, taskId: task.id }));
   }, []);
 
   const returnLink = `../${task.id}`;

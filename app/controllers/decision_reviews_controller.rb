@@ -59,7 +59,7 @@ class DecisionReviewsController < ApplicationController
         MetricsService.record("Generate individual claim history report for task #{task_id}",
                               service: :ClaimHistoryService,
                               name: "Change History Individual Event") do
-          events = create_change_history_individual_report(task_id)
+          events = ClaimHistoryService.new(business_line, task_id: task_id).build_events
 
           render json: ChangeHistoryEventSerializer.new(events).serializable_hash[:data]
         end
@@ -302,11 +302,6 @@ class DecisionReviewsController < ApplicationController
       events = ClaimHistoryService.new(business_line, filter_params).build_events
       ChangeHistoryReporter.new(events, base_url, filter_params.to_h).as_csv
     end
-  end
-
-  def create_change_history_individual_report(task_id)
-    events = ClaimHistoryService.new(business_line, task_id: task_id).build_events
-    events
   end
 
   def create_metric_log
