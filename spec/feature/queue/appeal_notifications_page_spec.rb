@@ -138,6 +138,7 @@ RSpec.feature "Notifications View" do
         # by event type
         filter = page.find("path", class: "unselected-filter-icon-inner-1", match: :first)
         filter.click
+        sleep 1
         filter_option = page.find("li", class: "cf-filter-option-row", text: "Appeal docketed")
         filter_option.click
         table = page.find("tbody")
