@@ -25,21 +25,15 @@ class TranscriptionFile < CaseflowRecord
     }
   }.freeze
 
-  DATE_FIELDS = {
-    retrieval: :date_receipt_webex,
-    upload: :date_upload_aws,
-    conversion: :date_converted
-  }.freeze
-
   # Purpose: Uploads transcription file to its corresponding location in S3
-  def upload_to_s3
+  def upload_to_s3!
     UploadTranscriptionFileToS3.new(self).call
   end
 
   # Purpose: Converts transcription file from vtt to rtf
   #
   # Returns: string, tmp location of rtf (or xls/csv file if error)
-  def convert_to_rtf
+  def convert_to_rtf!
     return unless file_type == "vtt"
 
     rtf_file_path = TranscriptionTransformer.new(tmp_location).call
@@ -55,7 +49,7 @@ class TranscriptionFile < CaseflowRecord
   # Note: We expect Webex to return a downloadable mp3 file, in which case it's unnecessary to convert mp4 to mp3
   #
   # Returns: string, tmp location of mp3
-  def convert_to_mp3
+  def convert_to_mp3!
     return unless file_type == "mp4"
 
     mp3_file_path = VideoToAudioFileConverter.new(tmp_location).call
@@ -66,6 +60,13 @@ class TranscriptionFile < CaseflowRecord
     raise error, error.message
   end
 
+  # Purpose: Maps file handling process with associated field to update
+  DATE_FIELDS = {
+    retrieval: :date_receipt_webex,
+    upload: :date_upload_aws,
+    conversion: :date_converted
+  }.freeze
+
   # Purpose: Updates statue of transcription file after completion of process. If process was success, updates
   #          associated date field on record.
   #
@@ -74,14 +75,13 @@ class TranscriptionFile < CaseflowRecord
   #         aws_link - string, optional argument of AWS S3 location
   #
   # Returns: Updated transcription file record
-  def update_status!(process:, status:, aws_link: nil)
+  def update_status!(process:, status:, upload_link: nil)
     params = {
       file_status: FILE_STATUSES[process][status],
-      aws_link: aws_link,
-      updated_by_id: RequestStore[:current_user].id
+      updated_by_id: RequestStore[:current_user].id,
     }
-    date_field_to_update = DATE_FIELDS[process]
-    params[date_field_to_update] = Time.zone.now if status == :success
+    params[:aws_link] = upload_link if upload_link
+    params[DATE_FIELDS[process]] = Time.zone.now if status == :success
     update!(params)
   end
 
