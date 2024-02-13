@@ -19,21 +19,10 @@ class CorrespondenceQueueColumn < QueueColumn
   end
 
   FILTER_OPTIONS = {
-    Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name => :task_type_options
+    Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name => :task_type_options,
+    Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name => :va_dor_options
 
 }.freeze
-
-def self.filter_options(tasks)
-  filter_option_func = FILTER_OPTIONS[name]
-  if filter_option_func
-    send(filter_option_func, tasks)
-  else
-    fail(
-      Caseflow::Error::MustImplementInSubclass,
-      "Filterable tasks must have an associated function to collect filter options"
-    )
-  end
-end
 
 private
 
@@ -42,6 +31,11 @@ def task_type_options(tasks)
     label = self.class.format_option_label(Object.const_get(option).label, count)
     self.class.filter_option_hash(option, label)
   end
+end
+
+def va_dor_options(tasks)
+  # {test:'test'}
+  {}
 end
 
 end

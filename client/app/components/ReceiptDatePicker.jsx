@@ -49,7 +49,7 @@ const RecieptDatePicker = (props) => {
   };
   const updateDateOption = (value) => {
     setDateOption(value.value);
-    props.setSelectedValue("testVal", "recieptDate");
+    props.setSelectedValue("testVal", "vaDor");
   };
 
   return <>

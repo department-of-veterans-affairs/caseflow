@@ -233,17 +233,33 @@ export const veteranDetails = () => {
   };
 };
 
-export const vaDor = () => {
+export const vaDor = (tasks, filterOptions) => {
 
+  /*
+  header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
+    enableFilter: true,
+    tableData: tasks,
+    columnName: 'label',
+    anyFiltersAreSet: true,
+    customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
+    filterOptions,
+    label: 'Filter by task',
+    valueName: 'label',
+    */
   return {
     header: 'VA DOR',
-    tableData: [],
-    columnName: 'recieptDate',
+    // tableData: tasks,
+    filterOptions: [],
+    columnName: QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
+    anyFiltersAreSet: true,
     // valueName: 'recieptDate',
-    name: 'recieptDate',
+    name: 'vaDor',
+    // valueName: 'vaDor',
+    label:'test',
     backendCanSort: true,
     enableFilter: true,
-    filterOptions: [],
+    filterable: true,
     valueFunction: (task) => {
       return moment(task.vaDor).format('MM/DD/YYYY');
     }
