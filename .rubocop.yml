@@ -27,6 +27,8 @@ Style/StringLiterals:
 
 Style/FrozenStringLiteralComment:
   Enabled: true
+  Exclude:
+    - 'client/constants/*'
 
 Style/Documentation:
   Enabled: false
