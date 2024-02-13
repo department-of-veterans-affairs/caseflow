@@ -58,7 +58,7 @@ describe ChangeHistoryEventSerializer do
           eventType: :added_issue,
           eventUser: "L. Roth",
           readableEventType: "Added Issue",
-          taskID: 1
+          taskID: vha_task.id
         }
       },
       {
@@ -81,7 +81,7 @@ describe ChangeHistoryEventSerializer do
           eventType: :claim_creation,
           eventUser: "L. Roth",
           readableEventType: "Claim created",
-          taskID: 1
+          taskID: vha_task.id
         }
       }
     ]
