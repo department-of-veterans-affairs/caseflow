@@ -171,6 +171,7 @@ export const HeaderRow = (props) => {
                 filterOptionsFromApi={props.useTaskPagesApi && column.filterOptions}
                 updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
                 filteredByList={props.filteredByList}
+                isReceiptDateFilter={column.header === 'VA DOR'}
               />
             );
           }
@@ -769,6 +770,7 @@ export default class QueueTable extends React.PureComponent {
           updateFilteredByList={this.updateFilteredByList}
           filteredByList={this.state.filteredByList}
           useTaskPagesApi={useTaskPagesApi}
+          isRecieptDateFilter={this.props.isRecieptDateFilter}
           {...this.state}
         />
         <BodyRows

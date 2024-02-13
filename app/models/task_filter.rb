@@ -119,7 +119,6 @@ class TaskFilter
 
   def filtered_tasks
     return tasks if where_clause.empty?
-
     tasks.with_assignees.with_cached_appeals.where(*where_clause)
   end
 
@@ -131,6 +130,7 @@ class TaskFilter
   #   ["TranslationTask"]
   # ]
   def where_clause
+    # binding.pry
     return [] if filter_params.empty?
 
     filters = filter_params.map(&QueueFilterParameter.method(:from_string))

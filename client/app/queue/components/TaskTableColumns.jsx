@@ -226,14 +226,40 @@ export const assignedByColumn = () => {
 export const veteranDetails = () => {
   return {
     header: 'Veteran Details',
-    valueFunction: (task) => task.veteranDetails
+    name: QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
+    valueFunction: (task) => task.veteranDetails,
+    backendCanSort: true,
+    getSortValue: (task) => task.veteranDetails
   };
 };
 
-export const vaDor = () => {
+export const vaDor = (tasks, filterOptions) => {
 
+  /*
+  header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
+    enableFilter: true,
+    tableData: tasks,
+    columnName: 'label',
+    anyFiltersAreSet: true,
+    customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
+    filterOptions,
+    label: 'Filter by task',
+    valueName: 'label',
+    */
   return {
     header: 'VA DOR',
+    // tableData: tasks,
+    filterOptions: [],
+    columnName: QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
+    anyFiltersAreSet: true,
+    // valueName: 'recieptDate',
+    name: 'vaDor',
+    // valueName: 'vaDor',
+    label:'test',
+    backendCanSort: true,
+    enableFilter: true,
+    filterable: true,
     valueFunction: (task) => {
       return moment(task.vaDor).format('MM/DD/YYYY');
     }
@@ -243,10 +269,12 @@ export const vaDor = () => {
 export const notes = () => {
   return {
     header: 'Notes',
-    valueFunction: (task) => task.notes
+    name: QUEUE_CONFIG.COLUMNS.NOTES.name,
+    valueFunction: (task) => task.notes,
+    backendCanSort: true,
+    getSortValue: (task) => task.notes
   };
 };
-
 export const checkboxColumn = () => {
   return {
     header: 'Select',
@@ -264,7 +292,10 @@ export const actionType = () => {
 export const daysWaitingCorrespondence = () => {
   return {
     header: 'Days Waiting',
-    valueFunction: (task) => task.daysWaiting
+    name: QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
+    valueFunction: (task) => task.daysWaiting,
+    backendCanSort: true,
+    getSortValue: (task) => task.daysWaiting
   };
 };
 
