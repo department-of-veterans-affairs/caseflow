@@ -199,6 +199,33 @@ describe HearingRequestDocket, :all_dbs do
         expect(distribution_judge.reload.tasks.map(&:appeal))
           .to match_array(expected_result)
       end
+
+      context 'when acd_exclude_from_affinity flag is enabled' do
+        before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
+
+        subject do
+          HearingRequestDocket.new.distribute_appeals(distribution, priority: false, limit: 10, genpop: "any")
+        end
+
+        it "distributes exclude appeals from affinity judge " do
+          # will be included
+          tied = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
+          not_tied = create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
+          no_held_hearings = non_priority_with_no_held_hearings
+          no_hearings = non_priority_with_no_hearings
+          outside_affinity = create_nonpriority_distributable_hearing_appeal_tied_to_other_judge_outside_affinity
+          exclude_appeal_from_affinity_judge = most_recent_held_hearing_tied_to_exclude_appeals_from_affinity_judge
+
+          expected_result = [tied, not_tied, no_held_hearings, no_hearings, outside_affinity, exclude_appeal_from_affinity_judge]
+
+          tasks = subject
+
+          appeal_ids = tasks.map(&:case_id)
+          expect(appeal_ids).to match_array(expected_result.map(&:uuid))
+          expect(distribution.distributed_cases.length).to eq(expected_result.length)
+          expect(distribution_judge.reload.tasks.map(&:appeal)).to match_array(expected_result)
+        end
+      end
     end
 
     context "priority appeals and only_genpop" do
@@ -522,6 +549,18 @@ describe HearingRequestDocket, :all_dbs do
     appeal
   end
 
+  def most_recent_held_hearing_tied_to_exclude_appeals_from_affinity_judge
+    appeal = create(:appeal,
+                    :ready_for_distribution,
+                    :denied_advance_on_docket,
+                    docket_type: Constants.AMA_DOCKETS.hearing)
+
+    most_recent_hearing_day = create(:hearing_day, scheduled_for: 1.day.ago)
+    hearing = create(:hearing, judge: judge_team_with_exclude_appeals_from_affinity, disposition: "held", appeal: appeal, hearing_day: most_recent_hearing_day)
+
+    appeal
+  end
+
   def create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge_outside_affinity
     num_days = Constants.DISTRIBUTION.hearing_case_affinity_days + 1
     days_ago = Time.zone.now.days_ago(num_days)
@@ -662,6 +701,14 @@ describe HearingRequestDocket, :all_dbs do
   def judge_with_team
     active_judge = create(:user, last_login_at: Time.zone.now)
     JudgeTeam.create_for_judge(active_judge)
+    active_judge
+  end
+
+  def judge_team_with_exclude_appeals_from_affinity
+    active_judge = create(:user, last_login_at: Time.zone.now)
+    judge_team = JudgeTeam.create_for_judge(active_judge)
+    judge_team.update(exclude_appeals_from_affinity: true)
+
     active_judge
   end
 end
