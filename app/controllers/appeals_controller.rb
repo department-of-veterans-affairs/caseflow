@@ -197,7 +197,7 @@ class AppealsController < ApplicationController
   # :reek:FeatureEnvy
   def render_search_results_as_json(result)
     if result.success?
-      render json: result.extra[:search_results]
+      render json: result.extra[:case_search_results]
     else
       render json: result.to_h, status: result.extra[:status]
     end
