@@ -4,7 +4,7 @@ export default [
     eventUser: 'System',
     readableEventType: 'Claim closed',
     details: {
-      decisionDate: '07/05/23'
+      decisionDate: '2023-09-12'
     }
   },
   {
@@ -12,7 +12,7 @@ export default [
     eventUser: 'System',
     readableEventType: 'Claim created',
     details: {
-      decisionDate: '07/05/23'
+      decisionDate: '2023-07-05'
     }
   },
   {
@@ -20,10 +20,10 @@ export default [
     eventUser: 'J. Dudifer',
     readableEventType: 'Completed disposition',
     details: {
-      benefitType: 'Veterans Health Administration',
+      benefitType: 'vha',
       issueType: 'Beneficiary Travel',
       issueDescription: 'Any notes will display here',
-      decisionDate: '05/31/2023',
+      decisionDate: '2023-05-31',
       disposition: 'Granted',
       decisionDescription: 'Any notes from decision will display here'
     }
@@ -33,7 +33,7 @@ export default [
     eventUser: 'System',
     readableEventType: 'Claim status - In progress',
     details: {
-      decisionDate: '07/05/23'
+      decisionDate: '2023-04-12'
     }
   },
   {
@@ -49,10 +49,23 @@ export default [
     eventUser: 'System',
     readableEventType: 'Added issue',
     details: {
-      benefitType: 'Veterans Health Administration',
+      benefitType: 'vha',
       issueType: 'Beneficiary Travel',
       issueDescription: 'Any notes will display here',
-      decisionDate: '05/31/2023',
+      decisionDate: '2023-05-31',
+      disposition: 'Granted',
+      decisionDescription: 'Any notes from decision will display here'
+    }
+  },
+  {
+    eventDate: '07/05/23, 15:00',
+    eventUser: 'System',
+    readableEventType: 'Added decision date',
+    details: {
+      benefitType: 'vha',
+      issueType: 'Beneficiary Travel',
+      issueDescription: 'Any notes will display here',
+      decisionDate: '2023-05-31',
       disposition: 'Granted',
       decisionDescription: 'Any notes from decision will display here'
     }
@@ -62,7 +75,7 @@ export default [
     eventUser: 'System',
     readableEventType: 'Added issue - No decision date',
     details: {
-      benefitType: 'Veterans Health Administration',
+      benefitType: 'vha',
       issueType: 'Beneficiary Travel',
       issueDescription: 'Any notes will display here',
       decisionDate: '',
@@ -75,10 +88,10 @@ export default [
     eventUser: 'System',
     readableEventType: 'Withdrew issue',
     details: {
-      benefitType: 'Veterans Health Administration',
+      benefitType: 'vha',
       issueType: 'Beneficiary Travel',
       issueDescription: 'Any notes will display here',
-      decisionDate: '07/04/23',
+      decisionDate: '2023-06-23',
       withdrawalRequestDate: '07/05/23',
     }
   },

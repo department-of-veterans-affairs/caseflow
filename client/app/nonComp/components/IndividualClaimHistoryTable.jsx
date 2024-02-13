@@ -1,11 +1,12 @@
 import React from 'react';
 import QueueTable from '../../queue/QueueTable';
 import dummyData from 'test/data/nonComp/individualClaimHistoryData';
-
+import BENEFIT_TYPES from 'constants/BENEFIT_TYPES';
 const IndividualClaimHistoryTable = () => {
 
   const processDate = (date) => date;
 
+  const formatDecisionDate = (date) => (new Date(date).toLocaleDateString());
   const claimCreatedFragment = () => {
     return <React.Fragment>Claim created.</React.Fragment>;
   };
@@ -21,40 +22,38 @@ const IndividualClaimHistoryTable = () => {
   const claimClosedFragment = (details) => {
     return <React.Fragment>
       Claim closed.<br />
-      <b>Claim decision date: </b>{details.decisionDate}
+      <b>Claim decision date: </b>{formatDecisionDate(details.decisionDate)}
     </React.Fragment>;
   };
 
-  const completedDispositionFragment = (details) => {
+  const AddedIssueFragment = (details) => {
     return <React.Fragment>
-      <b>Benefit type: </b>{details.benefitType}<br />
+      <b>Benefit type: </b>{BENEFIT_TYPES[details.benefitType]}<br />
       <b>Issue type: </b>{details.issueType}<br />
       <b>Issue description: </b>{details.issueDescription}<br />
-      <b>Decision date: </b>{details.decisionDate}<br />
+      <b>Decision date: </b>{formatDecisionDate(details.decisionDate)}<br />
+    </React.Fragment>;
+  };
+  const completedDispositionFragment = (details) => {
+    return <React.Fragment>
+      <AddedIssueFragment {...details} />
       <b>Disposition: </b>{details.disposition}<br />
       <b>Decision description: </b>{details.decisionDescription}<br />
     </React.Fragment>;
   };
 
-  const addedIssueFragment = (details) => {
-    return <React.Fragment>
-      <b>Benefit type: </b>{details.benefitType}<br />
-      <b>Issue type: </b>{details.issueType}<br />
-      <b>Issue description: </b>{details.issueDescription}<br />
-      <b>Decision date: </b>{details.decisionDate}<br />
-    </React.Fragment>;
-  };
-
   const withdrewIssueFragment = (details) => {
     return <React.Fragment>
-      <b>Benefit type: </b>{details.benefitType}<br />
-      <b>Issue type: </b>{details.issueType}<br />
-      <b>Issue description: </b>{details.issueDescription}<br />
-      <b>Decision date: </b>{details.decisionDate}<br />
+      <AddedIssueFragment {...details} />
       <b>Withdrawal request date: </b>{details.withdrawalRequestDate}<br />
     </React.Fragment>;
   };
 
+  const addedDecisionDateFragment = (details) => {
+    return <React.Fragment>
+      <AddedIssueFragment {...details} />
+    </React.Fragment>;
+  };
   const detailsFragment = (eventType, details) => {
     let component = null;
 
@@ -75,10 +74,13 @@ const IndividualClaimHistoryTable = () => {
       component = claimIncompleteFragment();
       break;
     case 'Added issue':
-      component = addedIssueFragment(details);
+      component = <AddedIssueFragment {...details} />;
       break;
     case 'Added issue - No decision date':
-      component = addedIssueFragment(details);
+      component = <AddedIssueFragment {...details} />;
+      break;
+    case 'Added decision date':
+      component = addedDecisionDateFragment(details);
       break;
     case 'Withdrew issue':
       component = withdrewIssueFragment(details);
