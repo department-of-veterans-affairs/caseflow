@@ -552,7 +552,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                     role="gridcell"
                     tabindex="-1"
                   >
-                    Claim status - In progress
+                    Claim status - In Progress
                   </td>
                   <td
                     class=""
