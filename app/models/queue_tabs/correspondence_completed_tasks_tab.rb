@@ -16,7 +16,14 @@ class CorrespondenceCompletedTasksTab < CorrespondenceQueueTab
   end
 
   def tasks
-    CorrespondenceTask.where(assigned_to: assignee).recently_completed
+    completed_root_tasks = CorrespondenceRootTask.where(status: Constants.TASK_STATUSES.completed, assigned_to: assignee).pluck(:id)
+
+    tasks_with_completed_children = CorrespondenceRootTask.where.not(status: Constants.TASK_STATUSES.completed).filter do |task|
+      task.children.all?(&:completed?) && task.children.any? { |task| task.assigned_to == assignee }
+    end
+    .pluck(:id)
+
+    CorrespondenceTask.where(id: completed_root_tasks + tasks_with_completed_children).recently_completed
   end
 
   def column_names
