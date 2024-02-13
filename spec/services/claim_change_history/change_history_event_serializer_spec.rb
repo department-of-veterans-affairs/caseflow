@@ -11,20 +11,25 @@ describe ChangeHistoryEventSerializer do
     allow(SecureRandom).to receive(:uuid).and_return(expected_uuid)
   end
 
+  after do
+    Timecop.return
+  end
+
   let!(:vha_org) { VhaBusinessLine.singleton }
   let!(:vha_task) do
-    create(:higher_level_review,
-           :with_intake,
-           :with_issue_type,
-           :processed,
-           :update_assigned_at,
-           assigned_at: 2.days.ago,
-           benefit_type: "vha",
-           decision_date: 4.months.ago,
-           claimant_type: :veteran_claimant,
-           issue_type: "Other",
-           description: "seeded HLR in progress",
-           number_of_claimants: 1)
+    hlr = create(:higher_level_review,
+                 :with_intake,
+                 :with_issue_type,
+                 :processed,
+                 :update_assigned_at,
+                 assigned_at: 2.days.ago,
+                 benefit_type: "vha",
+                 decision_date: 4.months.ago,
+                 claimant_type: :veteran_claimant,
+                 issue_type: "Other",
+                 description: "seeded HLR in progress",
+                 number_of_claimants: 1)
+    hlr.tasks.first
   end
 
   let!(:events) do
