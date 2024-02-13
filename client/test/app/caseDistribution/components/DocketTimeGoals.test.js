@@ -25,10 +25,9 @@ describe('Docket Time Goals Lever', () => {
 
   let levers = {
     docket_distribution_prior: mockDocketDistributionPriorLevers,
-
-    docket_time_goal: mockDocketDistributionPriorLevers
+    docket_time_goal: mockDocketTimeGoalsLevers
   };
-  let testTimeGoalLever = mockDocketDistributionPriorLevers[0];
+  let testTimeGoalLever = mockDocketTimeGoalsLevers[0];
   let testDistPriorLever = mockDocketDistributionPriorLevers[0];
 
   it('renders Docket Time Goals Levers for Member Users', () => {
@@ -106,9 +105,9 @@ describe('Docket Time Goals Lever', () => {
   });
 
   it('dynamically renders * in the lever label', () => {
-    testDistPriorLever.algorithms_used = ["docket", "proportion"]
-    testTimeGoalLever.algorithms_used = ["docket", "proportion"]
-    let testTitle = sectionTitles[testDistPriorLever.item]
+    testDistPriorLever.algorithms_used = ['docket', 'proportion'];
+    testTimeGoalLever.algorithms_used = ['docket', 'proportion'];
+    let testTitle = sectionTitles[testDistPriorLever.item];
 
     const store = getStore();
 
@@ -120,6 +119,6 @@ describe('Docket Time Goals Lever', () => {
         <DocketTimeGoals />
       </Provider>);
 
-    expect(wrapper.text()).toContain(testTitle + '*');
+    expect(wrapper.text()).toContain(`${testTitle }*`);
   });
 });

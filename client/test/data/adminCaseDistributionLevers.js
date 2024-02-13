@@ -285,74 +285,6 @@ export const formattedHistory = [
 /* Reducer Test Data */
 export const historyList = formattedHistory;
 
-export const lever1_update = {
-  item: 'lever_1',
-  title: 'Lever 1',
-  description: 'This is the first lever. It is a boolean with the default value of true. Therefore there should be a two radio buttons that display true and false as the example with true being the default option chosen. This lever is active so it should be in the active lever section',
-  data_type: 'boolean',
-  value: false,
-  unit: '',
-  is_toggle_active: true
-};
-
-export const lever5_update = {
-  item: 'lever_5',
-  title: 'Lever 5',
-  description: "This is the fifth lever. It is a number data type with the default value of 42. Therefore there should be a number input that displays 42 and 'days' as the unit. This lever is active so it should be in the active lever section",
-  data_type: 'number',
-  value: 90,
-  unit: 'days',
-  is_toggle_active: true
-};
-
-export const updated_levers = [
-  {
-    item: 'lever_1',
-    title: 'Lever 1',
-    description: 'This is the first lever. It is a boolean with the default value of true. Therefore there should be a two radio buttons that display true and false as the example with true being the default option chosen. This lever is active so it should be in the active lever section',
-    data_type: 'boolean',
-    value: false,
-    unit: '',
-    is_toggle_active: true
-  },
-  {
-    item: 'lever_2',
-    title: 'Lever 2',
-    description: 'This is the second lever. It is a boolean with the default value of false. Therefore there should be a two radio buttons that display true and false as the example with false being the default option chosen. This lever is active so it should be in the active lever section',
-    data_type: 'boolean',
-    value: false,
-    unit: '',
-    is_toggle_active: true
-  },
-  {
-    item: 'lever_3',
-    title: 'Lever 3',
-    description: 'This is the third lever. It is a boolean with the default value of true. Therefore there should be a two radio buttons that display true and false as the example with true being the default option chosen. This lever is inactive so it should be in the inactive lever section',
-    data_type: 'boolean',
-    value: true,
-    unit: '',
-    is_toggle_active: false
-  },
-  {
-    item: 'lever_4',
-    title: 'Lever 4',
-    description: 'This is the fourth lever. It is a boolean with the default value of false. Therefore there should be a two radio buttons that display true and false as the example with false being the default option chosen. This lever is inactive so it should be in the inactive lever section',
-    data_type: 'boolean',
-    value: false,
-    unit: '',
-    is_toggle_active: true
-  },
-  {
-    item: 'lever_5',
-    title: 'Lever 5',
-    description: "This is the fifth lever. It is a number data type with the default value of 42. Therefore there should be a number input that displays 42 and 'days' as the unit. This lever is active so it should be in the active lever section",
-    data_type: 'number',
-    value: 90,
-    unit: 'Days',
-    is_toggle_active: true
-  }
-];
-
 /* END Reducer Test Data */
 
 /* Outlier Test Data for Testing Coverage */
@@ -377,7 +309,7 @@ export const mockDocketDistributionPriorLevers = [
     title: 'AMA Hearings Start Distribution Prior to Goals',
     description: '',
     data_type: 'combination',
-    value: 770,
+    value: 40,
     unit: 'days',
     options: [
       {
@@ -797,6 +729,7 @@ export const mockCombinationReturn = {
       unit: ''
     }
   ],
+  // eslint-disable-next-line no-undefined
   is_toggle_active: undefined,
   is_disabled_in_ui: true,
   min_value: 0,
@@ -806,19 +739,19 @@ export const mockCombinationReturn = {
   lever_group_order: 4000
 };
 
-export const mockmockAffinityDaysLeversReturn = [
+export const mockAffinityDaysLeversReturn = [
   {
     item: 'ama_hearing_case_affinity_days',
     title: 'AMA Hearing Case Affinity Days',
     description: 'For non-priority AMA Hearing cases, sets the number of days an AMA Hearing Case is tied to the judge that held the hearing.',
     data_type: 'radio',
-    value: 'option_1',
+    value: 80,
     unit: 'days',
     options: [
       {
         item: 'option_1',
         data_type: 'number',
-        value: 80,
+        value: 0,
         text: 'Attempt distribution to current judge for max of:',
         unit: 'days',
         min_value: 0,

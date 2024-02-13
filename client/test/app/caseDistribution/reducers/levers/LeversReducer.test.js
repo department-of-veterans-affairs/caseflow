@@ -1,3 +1,4 @@
+/* eslint-disable line-comment-position */
 import leversReducer from 'app/caseDistribution/reducers/levers/leversReducer';
 import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
 import {
@@ -7,10 +8,8 @@ import {
   mockStaticLevers,
   mockDocketTimeGoalsLevers,
   mockHistoryPayload,
-  mockReturnedOption,
   mockTextLeverReturn,
   mockDocketDistributionPriorLeversReturn,
-  mockmockAffinityDaysLeversReturn
 } from 'test/data/adminCaseDistributionLevers';
 
 let mockInitialLevers = {
@@ -22,12 +21,11 @@ let mockInitialLevers = {
 };
 
 jest.mock('app/caseDistribution/utils', () => ({
+  ...jest.requireActual('app/caseDistribution/utils'),
   createUpdatedLeversWithValues: jest.fn(() => (mockInitialLevers)),
   leverErrorMessageExists: jest.fn(),
-  findOption: jest.fn(() => (mockReturnedOption)),
   createCombinationValue: jest.fn(() => (40)),
   createUpdatedCombinationLever: jest.fn(() => (mockDocketDistributionPriorLeversReturn)),
-  createUpdatedRadioLever: jest.fn(() => (mockmockAffinityDaysLeversReturn)),
   createUpdatedLever: jest.fn(() => (mockTextLeverReturn)),
   formatLeverHistory: jest.fn(() => (mockHistoryPayload))
 }));
@@ -103,7 +101,6 @@ describe('Lever reducer', () => {
     expect(newState).not.toEqual(initialState);
   });
 
-  // Below Test seems to work correctly, but not sure how to format expected state to match new value
   it('should handle UPDATE_TEXT_LEVER action', () => {
     const action = {
       type: ACTIONS.UPDATE_TEXT_LEVER,
@@ -142,7 +139,6 @@ describe('Lever reducer', () => {
     expect(newState).not.toEqual(initialState);
   });
 
-  // Below test seems to call the action correctly for coverage, not sure about expectedState value.
   it('should handle UPDATE_COMBINATION_LEVER action', () => {
     const action = {
       type: ACTIONS.UPDATE_COMBINATION_LEVER,
@@ -180,20 +176,19 @@ describe('Lever reducer', () => {
     const newState = leversReducer(initialState, action);
 
     expect(newState).toEqual(expectedState);
-    // expect(newState).not.toEqual(initialState);
+    expect(newState).not.toEqual(initialState);
   });
 
   // this should be correct, but the code needs to be updated first
   // right now the value is 'option_1', and there's a currentValue is undefined
-
   it('should handle UPDATE_RADIO_LEVER action', () => {
     const action = {
       type: ACTIONS.UPDATE_RADIO_LEVER,
       payload: {
         leverGroup: 'affinity',
         leverItem: 'ama_hearing_case_affinity_days',
-        value: 80,
-        currentValue: 80
+        value: 'option_1',
+        optionValue: 80
       }
     };
 
@@ -202,7 +197,7 @@ describe('Lever reducer', () => {
       if (lever.item === 'ama_hearing_case_affinity_days') {
         return {
           ...lever,
-          value: 80
+          currentValue: 80
         };
       }
 
@@ -248,6 +243,7 @@ describe('Lever reducer', () => {
     const actionForError = {
       type: ACTIONS.ADD_LEVER_VALIDATION_ERRORS,
       payload: {
+        // Sample errors payload
         errors: ['error1', 'error2'] // Sample errors payload
       }
     };
