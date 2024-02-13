@@ -317,6 +317,10 @@ class RequestIssue < CaseflowRecord
     benefit_type == "vha" && predocket_needed?
   end
 
+  def sct_benefit_type?
+    benefit_type == "vha"
+  end
+
   def description
     return edited_description if edited_description.present?
     return contested_issue_description if contested_issue_description

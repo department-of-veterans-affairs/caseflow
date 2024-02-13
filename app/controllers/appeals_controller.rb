@@ -260,7 +260,26 @@ class AppealsController < ApplicationController
     "You have successfully " + [added_issues, removed_issues, withdrawn_issues].compact.to_sentence + "."
   end
 
+  def flash_move_to_sct_success
+    flash[:custom] = {
+      title: COPY::MOVE_TO_SCT_BANNER_TITLE,
+      message: format(
+        COPY::MOVE_TO_SCT_BANNER_MESSAGE,
+        request_issues_update.review.claimant.name,
+        request_issues_update.veteran.file_number
+      )
+    }
+  end
+
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def set_flash_success_message
+    # if original issues were not VHA related, then that means it will be moved to the SCT queue
+    if appeal.sct_appeal? && request_issues_update.before_issues.none?(&:sct_benefit_type?) &&
+       request_issues_update.review.tasks.of_type(:DistributionTask).exists? &&
+       FeatureToggle.enabled?(:specialty_case_team_distribution)
+      return flash_move_to_sct_success
+    end
+
     flash[:edited] = if request_issues_update.after_issues.empty?
                        review_removed_message
                      elsif (request_issues_update.after_issues - request_issues_update.withdrawn_issues).empty?
@@ -269,6 +288,7 @@ class AppealsController < ApplicationController
                        review_edited_message
                      end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def render_access_error
     render(Caseflow::Error::ActionForbiddenError.new(
