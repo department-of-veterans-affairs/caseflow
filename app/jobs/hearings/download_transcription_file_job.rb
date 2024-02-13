@@ -15,14 +15,14 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
 
   attr_reader :file_name, :transcription_file
 
-  class FileNameError < StandardError; end
-  class FileDownloadError < StandardError; end
-  class HearingAssociationError < StandardError; end
-
-  CONVERTED_FILE_TYPES = {
+  CONVERSION_MAP = {
     vtt: "rtf",
     mp4: "mp3"
   }.freeze
+
+  class FileNameError < StandardError; end
+  class FileDownloadError < StandardError; end
+  class HearingAssociationError < StandardError; end
 
   retry_on(FileDownloadError, wait: 5.minutes) do |job, exception|
     # TO IMPLEMENT: SEND EMAIL TO VA OPS TEAM
@@ -35,7 +35,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   end
 
   retry_on(Caseflow::Error::FileConversionError, wait: 10.seconds) do |job, exception|
-    job.build_csv_and_upload_to_s3(exception)
+    job.build_csv_and_upload_to_s3!(exception)
     job.transcription_file.clean_up_tmp_location
     # TO IMPLEMENT: SEND EMAIL TO VA OPS TEAM
     job.log_error(exception)
@@ -52,13 +52,13 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   def perform(download_link:, file_name:, conversion_needed: false)
     ensure_current_user_is_set
     @file_name = file_name
+    @conversion_needed = conversion_needed
     @transcription_file = find_or_create_transcription_file
     ensure_hearing_held
 
-    download_file_to_tmp(download_link)
-    @transcription_file.upload_to_s3 if @transcription_file.date_upload_aws.nil?
-    convert_file_and_upload_to_s3 if raw_file_type == "vtt" || conversion_needed
-    byebug
+    download_file_to_tmp!(download_link)
+    @transcription_file.upload_to_s3! if @transcription_file.date_upload_aws.nil?
+    convert_file_and_upload_to_s3! if conversion_request_valid?
     @transcription_file.clean_up_tmp_location
   end
 
@@ -83,10 +83,10 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   #          Uploads csv file to S3.
   #
   # Params: exception - Error object
-  def build_csv_and_upload_to_s3(exception)
+  def build_csv_and_upload_to_s3!(exception)
     build_csv_from_error(exception)
     csv_file = find_or_create_transcription_file(file_name.gsub("vtt", "csv"))
-    csv_file.upload_to_s3
+    csv_file.upload_to_s3!
     csv_file.clean_up_tmp_location
   end
 
@@ -99,7 +99,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   #         file_name - string, to be parsed for appeal/hearing identifiers
   #
   # Returns: Updated @transcription_file
-  def download_file_to_tmp(link)
+  def download_file_to_tmp!(link)
     return if File.exist?(@transcription_file.tmp_location)
 
     URI(link).open do |download|
@@ -170,28 +170,40 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     raise FileNameError, error
   end
 
-  # Purpose: File type of unconverted transcription file
+  # Purpose: File type of transcription_file
   #
   # Returns: string, file type
   def raw_file_type
     @raw_file_type ||= @transcription_file.file_type
   end
 
+  # Purpose: File type of transcription_file after conversion, if conversion necessary
+  #
+  # Returns: string, file type or nil
+  def conversion_type
+    @conversion_type ||= (CONVERSION_MAP || {})[raw_file_type.to_sym]
+  end
+
+  # Purpose: Determines if job should proceed with conversion and prevents accidental conversion request of
+  #          unconvertible file type
+  #
+  # Returns: boolean
+  def conversion_request_valid?
+    raw_file_type == "vtt" || (@conversion_needed && conversion_type.present?)
+  end
+
   # Purpose: Converts raw transcription file, creates new record for converted transcription file, and uploads
   #          converted file to S3
   #
   # Returns: integer value of 1 if tmp file deleted after successful upload
-  def convert_file_and_upload_to_s3
-    converted_file_type = CONVERTED_FILE_TYPES[raw_file_type.to_sym]
-
-    log_info("Converting file #{file_name} to #{converted_file_type}...")
+  def convert_file_and_upload_to_s3!
+    log_info("Converting file #{file_name} to #{conversion_type}...")
     output_path = convert_file
     converted_file_name = output_path.split("/").last
     converted_file = find_or_create_transcription_file(converted_file_name)
 
-    log_info("Successfully converted #{file_name} to #{converted_file_type}. Uploading to S3...")
-    converted_file.upload_to_s3
-    byebug
+    log_info("Successfully converted #{file_name} to #{conversion_type}. Uploading to S3...")
+    converted_file.upload_to_s3!
     converted_file.clean_up_tmp_location
   end
 
@@ -201,9 +213,9 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   def convert_file
     case raw_file_type
     when "vtt"
-      @transcription_file.convert_to_rtf
+      @transcription_file.convert_to_rtf!
     when "mp4"
-      @transcription_file.convert_to_mp3
+      @transcription_file.convert_to_mp3!
     end
   end
 
@@ -211,7 +223,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   #
   # Params: error - Error object
   def build_csv_from_error(error)
-    return unless @transcription_file.file_type == "vtt"
+    return unless raw_file_type == "vtt"
 
     timestamp = Time.zone.now.to_s.sub("\sUTC", "")
     file_date = File.ctime(@transcription_file.tmp_location).to_s.split(" ").first
