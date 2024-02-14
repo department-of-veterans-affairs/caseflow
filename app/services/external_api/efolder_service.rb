@@ -121,7 +121,6 @@ class ExternalApi::EfolderService
     Rails.application.config.efolder_key.to_s
   end
 
-  # rubocop:disable Metrics/MethodLength
   def self.send_efolder_request(endpoint, user, headers = {}, method: :get)
     DBService.release_db_connections
 
@@ -147,5 +146,4 @@ class ExternalApi::EfolderService
       end
     end
   end
-  # rubocop:enable Metrics/MethodLength
 end

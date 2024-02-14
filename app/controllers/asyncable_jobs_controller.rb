@@ -45,7 +45,6 @@ class AsyncableJobsController < ApplicationController
     render json: job_note.serialize
   end
 
-  # rubocop:disable Lint/RescueException
   def start_job
     # start job asynchronously as given by the job_type post param
     job = SCHEDULED_JOBS[allowed_params[:job_type]]
@@ -59,15 +58,14 @@ class AsyncableJobsController < ApplicationController
       else
         job.perform_now
       end
-    rescue Exception => error
+    rescue Exception => e
       verb = allowed_params[:run_async] ? "Scheduling" : "Manual run"
-      Rails.logger.error "#{verb} of #{allowed_params[:job_type]} failed : #{error.message}"
+      Rails.logger.error "#{verb} of #{allowed_params[:job_type]} failed : #{e.message}"
       success = false
     end
 
     render json: { success: success }, status: :ok
   end
-  # rubocop:enable Lint/RescueException
 
   private
 

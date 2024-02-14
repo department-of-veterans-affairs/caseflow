@@ -28,7 +28,6 @@ class ExternalApi::VADotGovService::Response
 
   private
 
-  # rubocop:disable Metrics/MethodLength
   def response_error
     return if code == 200
 
@@ -55,5 +54,4 @@ class ExternalApi::VADotGovService::Response
       )
     end
   end
-  # rubocop:enable Metrics/MethodLength
 end

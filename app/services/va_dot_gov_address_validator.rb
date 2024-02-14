@@ -12,7 +12,6 @@ class VaDotGovAddressValidator
   include VaDotGovAddressValidator::Validations
 
   attr_reader :appeal
-
   delegate :address, to: :appeal
 
   # The logic for these statuses is determined in `VaDotGovAddressValidator::ErrorHandler`.

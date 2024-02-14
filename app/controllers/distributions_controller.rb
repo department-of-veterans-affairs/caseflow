@@ -65,7 +65,6 @@ class DistributionsController < ApplicationController
     }, status: :forbidden
   end
 
-  # rubocop:disable Metrics/MethodLength
   def json_error(error)
     case error
     when :not_judge
@@ -101,7 +100,6 @@ class DistributionsController < ApplicationController
       }
     end
   end
-  # rubocop:enable Metrics/MethodLength
 
   def pending_distributions
     Distribution.pending_for_judge(judge)

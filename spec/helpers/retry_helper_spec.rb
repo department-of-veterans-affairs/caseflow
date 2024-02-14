@@ -4,7 +4,6 @@ class TestClass
   include RetryHelper
 
   attr_accessor :limit, :call_count, :fail_on_counts
-
   def initialize(limit, fail_on_counts)
     @call_count = 0
     @limit = limit
