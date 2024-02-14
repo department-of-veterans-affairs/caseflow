@@ -185,7 +185,7 @@ RSpec.feature("The Correspondence Review Package page") do
     end
 
     it "before editing the review package general details" do
-      expect(correspondence.tasks.find_by_type("ReviewPackageTask").status).to eq("assigned")
+      expect(correspondence.tasks.find_by_type("ReviewPackageTask").status).to eq("unassigned")
     end
 
     it "after editing the review package general details" do
