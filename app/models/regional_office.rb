@@ -181,7 +181,7 @@ class RegionalOffice
     def facility_ids
       ids = []
 
-      CITIES.values.each do |city|
+      CITIES.each_value do |city|
         ids << city[:facility_locator_id] if city[:facility_locator_id].present?
         ids += city[:alternate_locations] if city[:alternate_locations].present?
       end

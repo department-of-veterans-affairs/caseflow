@@ -74,6 +74,7 @@ class DecisionDocument < CaseflowRecord
     end
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def process!(mail_package)
     return if processed?
 
@@ -101,6 +102,7 @@ class DecisionDocument < CaseflowRecord
     update_error!(error.to_s)
     raise error
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   # Used by EndProductEstablishment to determine what modifier to use for the effectuation EPs
   def valid_modifiers
