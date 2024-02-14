@@ -4,6 +4,7 @@ describe HearingMailer do
   let(:nyc_ro_eastern) { "RO06" }
   let(:oakland_ro_pacific) { "RO43" }
   let(:regional_office) { nyc_ro_eastern }
+  let(:regional_office_timezone) { Constants::REGIONAL_OFFICE_INFORMATION[regional_office]["timezone"] }
   let(:hearing_day) do
     create(
       :hearing_day,
@@ -48,7 +49,8 @@ describe HearingMailer do
       create(
         :hearing,
         appeal: appeal,
-        scheduled_time: "8:30AM",
+        scheduled_time: "8:30 AM",
+        scheduled_in_timezone: regional_office_timezone,
         hearing_day: hearing_day,
         regional_office: regional_office
       )
@@ -61,7 +63,8 @@ describe HearingMailer do
       create(
         :hearing,
         appeal: appeal,
-        scheduled_time: "8:30AM",
+        scheduled_time: "8:30 AM",
+        scheduled_in_timezone: "America/Chicago",
         hearing_day: central_hearing_day
       )
     end
