@@ -159,8 +159,10 @@ const httpMethods = {
 
     console.log('process.env testing start');
     console.log(`REACT_APP_ENV_TEST = ${ process.env.REACT_APP_ENV_TEST }`);
-    console.log(`NODE_ENV = ${ process.env.NODE_ENV }`);
+    console.log(`NLS_LANG = ${ process.env.NLS_LANG }`);
     console.log(`DEPLOY_ENV = ${ process.env.DEPLOY_ENV }`);
+    console.log(`REACT_APP_ENV_DEPLOY_ENV = ${ process.env.REACT_APP_ENV_DEPLOY_ENV }`);
+    console.log(`REACT_APP_ENV_DEPLOY_ENV_CLIENT = ${ process.env.REACT_APP_ENV_DEPLOY_ENV_CLIENT }`);
     console.log('process.env testing end');
 
     options.t0 = performance.now();
