@@ -913,7 +913,8 @@ class Appeal < DecisionReview
   def can_redistribute_appeal?
     relevant_tasks = tasks.reject do |task|
       task.is_a?(TrackVeteranTask) || task.is_a?(RootTask) ||
-        task.is_a?(JudgeAssignTask) || task.is_a?(DistributionTask)
+        task.is_a?(JudgeAssignTask) || task.is_a?(DistributionTask) ||
+        task.is_a?(EvidenceOrArgumentMailTask)
     end
     return false if relevant_tasks.any?(&:open?)
     return true if relevant_tasks.all?(&:closed?)
