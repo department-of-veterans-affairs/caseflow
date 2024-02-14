@@ -7,6 +7,7 @@ class VANotifySendMessageTemplate
   # message_attributes is a hash containing strings of participant_id, appeal_id, appeal_type, status,
   # & appeal_status (only used for quarterly notifications)
   attr_reader :participant_id, :template_name, :appeal_id, :appeal_type, :status, :appeal_status
+
   def initialize(message_attributes, template_name, appeal_status = nil)
     @participant_id = message_attributes[:participant_id]
     @template_name = template_name
