@@ -11,6 +11,7 @@ ENV LD_LIBRARY_PATH="/opt/oracle/instantclient_12_2:$LD_LIBRARY_PATH" \
     LANG="AMERICAN_AMERICA.US7ASCII" \
     RAILS_ENV="development" \
     DEPLOY_ENV="demo" \
+    REACT_APP_DEPLOY_ENV="demo" \
     PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH" \
     NODE_OPTIONS="--max-old-space-size=8192" \
     SSL_CERT_FILE="/etc/ssl/certs/cacert.pem"
@@ -70,4 +71,4 @@ RUN bundle install && \
 # Run the app
 ENTRYPOINT ["/bin/bash", "-c", "/caseflow/docker-bin/startup.sh"]
 
- 
+

@@ -20,9 +20,9 @@
     "build": "webpack --config webpack.config.js",
     "build:test": "NODE_ENV=test yarn run build",
     "build:production": "NODE_ENV=production yarn run build",
-    "build:demo": "NODE_ENV=production REACT_APP_ENV_TEST=demo yarn run build && yarn run build:storybook",
+    "build:demo": "NODE_ENV=production yarn run build && yarn run build:storybook",
     "dev:clear-build": "rm ../app/assets/javascripts/*webpack* || true",
-    "dev": "yarn run dev:clear-build && REACT_APP_ENV_TEST=local NODE_ENV=development yarn run build -w",
+    "dev": "yarn run dev:clear-build && NODE_ENV=development yarn run build -w",
     "dev:hot": "webpack-dev-server",
     "storybook": "start-storybook -p 6006",
     "build:storybook": "build-storybook -o ../public/storybook"
