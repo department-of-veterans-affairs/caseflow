@@ -559,11 +559,7 @@ export const prepareAppealForSearchStore = (appeals) => {
       veteranFullName: appeal.attributes.veteran_full_name,
       veteranFileNumber: appeal.attributes.veteran_file_number,
       isPaperCase: appeal.attributes.paper_case,
-      readableHearingRequestType:
-        appeal.attributes.readable_hearing_request_type,
-      readableOriginalHearingRequestType:
-        appeal.attributes.readable_original_hearing_request_type,
-      vacateType: appeal.attributes.vacate_type
+      vacateType: appeal.attributes.vacate_type,
     };
 
     return accumulator;
@@ -580,19 +576,22 @@ export const prepareAppealForSearchStore = (appeals) => {
       appellantMiddleName: appeal.attributes.appellant_middle_name,
       appellantLastName: appeal.attributes.appellant_last_name,
       appellantSuffix: appeal.attributes.appellant_suffix,
+      appellantDateOfBirth: appeal.attributes.appellant_date_of_birth,
+      appellantAddress: appeal.attributes.appellant_address,
+      appellantEmailAddress: appeal.attributes.appellant_email_address,
+      appellantPhoneNumber: appeal.attributes.appellant_phone_number,
       contestedClaim: appeal.attributes.contested_claim,
       assignedToLocation: appeal.attributes.assigned_to_location,
       veteranGender: appeal.attributes.veteran_gender,
       veteranAddress: appeal.attributes.veteran_address,
       veteranParticipantId: appeal.attributes.veteran_participant_id,
-      closestRegionalOffice: appeal.attributes.closest_regional_office,
-      closestRegionalOfficeLabel:
-        appeal.attributes.closest_regional_office_label,
       externalId: appeal.attributes.external_id,
       status: appeal.attributes.status,
       decisionDate: appeal.attributes.decision_date,
-      regionalOffice: appeal.attributes.regional_office,
       caseflowVeteranId: appeal.attributes.caseflow_veteran_id,
+      availableHearingLocations: prepareAppealAvailableHearingLocationsForStore(
+        appeal
+      ),
       locationHistory: prepareLocationHistoryForStore(appeal),
     };
 
