@@ -406,7 +406,7 @@ class ClaimHistoryEvent
 
   def readable_event_type
     {
-      in_progress: "Claim status - In Progress",
+      in_progress: "Claim status - In progress",
       incomplete: "Claim status - Incomplete",
       completed: "Claim closed",
       claim_creation: "Claim created",

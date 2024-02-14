@@ -210,7 +210,7 @@ describe ChangeHistoryReporter do
           "",
           "System",
           in_progress_status_event.readable_event_date,
-          "Claim status - In Progress",
+          "Claim status - In progress",
           nil,
           "Claim can be processed.",
           nil

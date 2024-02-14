@@ -900,7 +900,7 @@ describe ClaimHistoryEvent do
 
         # Copy of the hash from claim_history_event.rb
         event_types = {
-          in_progress: "Claim status - In Progress",
+          in_progress: "Claim status - In progress",
           incomplete: "Claim status - Incomplete",
           completed: "Claim closed",
           claim_creation: "Claim created",

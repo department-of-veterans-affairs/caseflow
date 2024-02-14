@@ -14,7 +14,9 @@ const ALTERNATE_COLUMN_NAMES = {
   vlj: 'VLJ',
   label: 'Tasks',
   suggestedLocation: 'Suggested Location',
-  hearingLocation: 'Hearing Location'
+  hearingLocation: 'Hearing Location',
+  readableEventType: 'Actvitity',
+  eventUser: 'User'
 };
 
 const FilterSummary = ({ filteredByList, clearFilteredByList }) => {

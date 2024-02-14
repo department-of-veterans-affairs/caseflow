@@ -6,7 +6,13 @@ const IndividualClaimHistoryTable = () => {
 
   const processDate = (date) => date;
 
-  const formatDecisionDate = (date) => (new Date(date).toLocaleDateString());
+  const formatDecisionDate = (date) => {
+    if (date) {
+      return new Date(date).toLocaleDateString();
+    }
+
+    return 'No decision date';
+  };
 
   const ClaimCreatedFragment = () => {
     return <React.Fragment>Claim created.</React.Fragment>;
@@ -92,7 +98,7 @@ const IndividualClaimHistoryTable = () => {
     case 'Completed disposition':
       component = <CompletedDispositionFragment {...details} />;
       break;
-    case 'Claim status - In Progress':
+    case 'Claim status - In progress':
       component = <ClaimInProgressFragment />;
       break;
     case 'Claim status - Incomplete':
@@ -137,6 +143,7 @@ const IndividualClaimHistoryTable = () => {
       tableData: dummyData,
       anyFiltersAreSet: true,
       label: 'Filter by User',
+      enableFilterTextTransform: false,
       getSortValue: (row) => row.eventUser },
     { columnName: 'readableEventType',
       name: 'Activity',
@@ -144,6 +151,7 @@ const IndividualClaimHistoryTable = () => {
       valueName: 'Activity',
       valueFunction: (row) => row.readableEventType,
       enableFilter: true,
+      enableFilterTextTransform: false,
       tableData: dummyData,
       anyFiltersAreSet: true,
       label: 'Filter by Activity',
@@ -164,7 +172,8 @@ const IndividualClaimHistoryTable = () => {
     defaultSort= {{
       sortColName: 'eventDate',
       sortAscending: false
-    }} />;
+    }}
+    className="claim-history-table-border-fix" />;
 
 };
 

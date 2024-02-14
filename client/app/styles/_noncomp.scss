@@ -265,3 +265,7 @@ $validation-error-color: #cd2026;
     margin-top: 0.9rem;
   }
 }
+
+.claim-history-table-border-fix td {
+  border-top-style: none;
+}
