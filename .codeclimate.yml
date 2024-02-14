@@ -83,7 +83,7 @@ plugins:
     - 'app/mailers/dispatch_mailer.rb'
   rubocop:
     enabled: true
-    channel: rubocop-0-83
+    channel: rubocop-0-79
   stylelint:
     enabled: true
   grep:
