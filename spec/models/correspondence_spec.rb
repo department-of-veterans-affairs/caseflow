@@ -40,7 +40,7 @@ RSpec.describe Correspondence, type: :model do
 
       rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id)
       expect(rpt.appeal_id).to eq(correspondence.id)
-      expect(rpt.status).to eq("unassigned")
+      expect(rpt.status).to eq("assigned")
       expect(rpt.type).to eq("ReviewPackageTask")
       expect(rpt.parent_id).to eq(crt.id)
       expect(rpt.assigned_to).to eq(MailTeamSupervisor.singleton)
