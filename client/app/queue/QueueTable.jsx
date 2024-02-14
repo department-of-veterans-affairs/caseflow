@@ -172,6 +172,7 @@ export const HeaderRow = (props) => {
                 updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
                 filteredByList={props.filteredByList}
                 isReceiptDateFilter={column.header === 'VA DOR'}
+                isDateCompletedFilter={column.header === 'Date Completed'}
               />
             );
           }
