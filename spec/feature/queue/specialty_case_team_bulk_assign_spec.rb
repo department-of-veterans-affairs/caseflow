@@ -50,26 +50,25 @@ RSpec.feature "SpecialtyCaseTeam bulk assignment to attorney", :all_dbs do
         expect(page).to have_content("Assign 0 cases")
         case_rows = page.find_all("tr[id^='table-row-']")
         expect(case_rows.length).to eq(tasks.length)
+
+        html_table_headings = all("th").map(&:text).reject(&:empty?).compact
+        expect(html_table_headings).to eq(column_heading_names)
       end
 
-      step "page errors when cases aren't selected" do
+      step "assign button is disabled when cases aren't selected" do
         safe_click ".cf-select"
         click_dropdown(text: attorney.full_name)
 
-        click_on "Assign 0 cases"
-        expect(page).to have_content(COPY::ASSIGN_WIDGET_NO_TASK_TITLE)
-        expect(page).to have_content(COPY::ASSIGN_WIDGET_NO_TASK_DETAIL)
+        expect(page).to have_button("Assign 0 cases", disabled: true)
       end
 
-      step "page errors when an attorney/assignee isn't selected" do
+      step "assign button is disabled when an attorney/assignee isn't selected" do
         visit bulk_assign_url
         scroll_to(".usa-table-borderless")
         page.find(:css, "input[name='#{task_first.id}']", visible: false).execute_script("this.click()")
         page.find(:css, "input[name='#{task_last.id}']", visible: false).execute_script("this.click()")
 
-        click_on "Assign 2 cases"
-        expect(page).to have_content(COPY::ASSIGN_WIDGET_NO_ASSIGNEE_TITLE)
-        expect(page).to have_content(COPY::ASSIGN_WIDGET_NO_ASSIGNEE_DETAIL)
+        expect(page).to have_button("Assign 2 cases", disabled: true)
       end
 
       step "cases are assignable when an attorney/assignee and tasks are selected" do
@@ -77,7 +76,7 @@ RSpec.feature "SpecialtyCaseTeam bulk assignment to attorney", :all_dbs do
         click_dropdown(text: attorney.full_name)
 
         click_on "Assign 2 cases"
-        expect(page).to have_content("You have successfully assigned 2 tasks to #{attorney.full_name}")
+        expect(page).to have_content("You have successfully assigned 2 cases to #{attorney.full_name}")
         # Check the button to make sure it reset back to 0
         expect(page).to have_content("Assign 0 cases")
         case_rows = page.find_all("tr[id^='table-row-']")

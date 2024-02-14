@@ -155,7 +155,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
         if (isSpecialtyCaseTeamAssignTask) {
           titleString = sprintf(COPY.SPECIALTY_CASE_TEAM_ASSIGN_WIDGET_SUCCESS, {
             numCases: selectedTasks.length,
-            casePlural: pluralize('tasks', selectedTasks.length),
+            casePlural: pluralize('cases', selectedTasks.length),
             // eslint-disable-next-line camelcase
             assignee: assignee.full_name
           });
@@ -243,10 +243,11 @@ export class AssignToAttorneyWidget extends React.PureComponent {
     if (optionsOther?.length) {
       placeholderOther = hidePrimaryAssignDropdown ?
         COPY.SCT_ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER : COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER;
-      selectedOptionOther = optionsOther.find((option) => option.value === selectedAssigneeSecondary);
+      selectedOptionOther = optionsOther.find((option) => option.value === selectedAssigneeSecondary) || null;
     }
 
     const otherDropdownWidth = hidePrimaryAssignDropdown ? '40rem' : '30rem';
+    const isButtonDisabled = hidePrimaryAssignDropdown && (selectedTasks.length === 0 || !selectedOptionOther);
 
     const Widget = <React.Fragment>
       {!hidePrimaryAssignDropdown && <SearchableDropdown
@@ -288,6 +289,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
       </React.Fragment> }
       {!isModal && <Button
         onClick={this.submit}
+        disabled={isButtonDisabled}
         name={sprintf(
           COPY.ASSIGN_WIDGET_BUTTON_TEXT,
           { numCases: selectedTasks.length,
