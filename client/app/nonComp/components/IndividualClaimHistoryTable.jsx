@@ -6,7 +6,15 @@ import { formatDateStr } from 'app/util/DateUtil';
 
 const IndividualClaimHistoryTable = () => {
 
-  const processDate = (date) => date;
+  const processEventDate = (date) => {
+    return new Date(date).toLocaleString('en-US', {
+      hour12: false,
+      day: '2-digit',
+      year: 'numeric',
+      month: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit' });
+  };
 
   const formatDecisionDate = (date) => {
     if (date) {
@@ -133,8 +141,8 @@ const IndividualClaimHistoryTable = () => {
   const columns = [
     { name: 'eventDate',
       header: 'Date and Time',
-      valueFunction: (row) => processDate(row.eventDate),
-      getSortValue: (row) => processDate(row.eventDate),
+      valueFunction: (row) => processEventDate(row.eventDate),
+      getSortValue: (row) => new Date(row.eventDate),
     },
     { name: 'eventUser',
       columnName: 'eventUser',
