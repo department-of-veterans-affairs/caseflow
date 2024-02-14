@@ -11,8 +11,8 @@ describe ChangeHistoryEventSerializer do
     allow(SecureRandom).to receive(:uuid).and_return(expected_uuid)
   end
 
-  let(:vha_org) { VhaBusinessLine.singleton }
-  let(:vha_task) do
+  let!(:vha_org) { VhaBusinessLine.singleton }
+  let!(:vha_task) do
     create(:higher_level_review,
            :with_intake,
            :with_issue_type,
@@ -27,11 +27,11 @@ describe ChangeHistoryEventSerializer do
            number_of_claimants: 1)
   end
 
-  let(:events) do
+  let!(:events) do
     ClaimHistoryService.new(vha_org, task_id: vha_task.id).build_events
   end
 
-  subject { described_class.new(events) }
+  subject { described_class.new(events).serializable_hash[:data] }
 
   describe "#as_json" do
     it "renders json data" do
@@ -84,7 +84,7 @@ describe ChangeHistoryEventSerializer do
           }
         }
       ]
-      expect(subject.serializable_hash[:data]).to eq(serializable_hash)
+      expect(subject).to eq(serializable_hash)
     end
   end
 end
