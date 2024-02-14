@@ -3,11 +3,13 @@
 require "rails_helper"
 
 describe TranscriptionTransformer do
+  let(:hearing) { create(:hearing) }
+
   describe "#call" do
     context "errors" do
       context "vtt doesn't exist" do
         let(:path) { "/this/does/not/exist" }
-        let(:transformer) { TranscriptionTransformer.new(path) }
+        let(:transformer) { TranscriptionTransformer.new(path, hearing) }
 
         it "raises a HearingConversionError" do
           expect { transformer.call }.to raise_error(TranscriptionTransformer::FileConversionError)
@@ -17,19 +19,23 @@ describe TranscriptionTransformer do
       context "file is malformed or unreadable" do
         let(:file_name) { ["foo", ".vtt"] }
         let(:file) { Tempfile.new(file_name) }
-        let(:transformer) { TranscriptionTransformer.new(file.path) }
+        let(:transformer) { TranscriptionTransformer.new(file.path, hearing) }
         it "raises a HearingConversionError" do
           expect { transformer.call }.to raise_error(TranscriptionTransformer::FileConversionError)
         end
       end
     end
   end
-  describe "valid file path" do
+  describe "successful conversion" do
     let(:file_name) { ["foo", ".vtt"] }
     let(:file) { Tempfile.new(file_name) }
-    let(:transformer) { TranscriptionTransformer.new(file.path) }
+    let(:transformer) { TranscriptionTransformer.new(file.path, hearing) }
     let(:doc) { RTF::Document.new(RTF::Font.new(RTF::Font::ROMAN, "Times New Roman")) }
     let(:rtf_path) { file.path.gsub("vtt", "rtf") }
+
+    before do
+      allow_any_instance_of(TranscriptionTransformer).to receive(:convert_to_rtf).and_return([rtf_path])
+    end
 
     it "returns the file path of rtf" do
       allow(WebVTT).to receive(:read).and_return(file)

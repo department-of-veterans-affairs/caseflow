@@ -97,7 +97,7 @@ describe Hearings::DownloadTranscriptionFileJob do
 
         before do
           File.open(rtf_tmp_location, "w")
-          allow_any_instance_of(TranscriptionTransformer).to receive(:call).and_return(rtf_tmp_location)
+          allow_any_instance_of(TranscriptionTransformer).to receive(:call).and_return([rtf_tmp_location])
         end
 
         after { File.delete(rtf_tmp_location) if File.exist?(rtf_tmp_location) }
@@ -139,7 +139,10 @@ describe Hearings::DownloadTranscriptionFileJob do
         include_examples "failed download from Webex"
       end
 
-      context "failed conversion of vtt to rtf" do
+      context "create csv if errors are found" do
+        let(:rtf_file_name) { file_name.gsub("vtt", "rtf") }
+        let(:rtf_tmp_location) { tmp_location.gsub("vtt", "rtf") }
+        let(:rtf_transcription_file) { TranscriptionFile.find_by(file_name: rtf_file_name) }
         let(:csv_file_name) { file_name.gsub("vtt", "csv") }
         let(:csv_tmp_location) { tmp_location.gsub("vtt", "csv") }
         let(:csv_transcription_file) { TranscriptionFile.find_by(file_name: csv_file_name) }
@@ -150,13 +153,15 @@ describe Hearings::DownloadTranscriptionFileJob do
         end
 
         before do
+          File.open(rtf_tmp_location, "w")
+          File.open(csv_tmp_location, "w")
           allow_any_instance_of(TranscriptionTransformer).to receive(:call)
-            .and_raise(TranscriptionTransformer::FileConversionError)
+            .and_return([rtf_tmp_location, csv_tmp_location])
         end
 
         it "creates two new TranscriptionFile records, one for vtt and one for csv" do
-          expect { subject }.to change(TranscriptionFile, :count).by(2)
-          expect(transcription_file.file_type).to eq("vtt")
+          expect { subject }.to change(TranscriptionFile, :count).by(3)
+          expect(rtf_transcription_file.file_type).to eq("rtf")
           expect(csv_transcription_file.file_type).to eq("csv")
         end
 
@@ -169,13 +174,13 @@ describe Hearings::DownloadTranscriptionFileJob do
 
         it "updates file_status of vtt TranscriptionFile record, leaves date_converted nil" do
           subject
-          expect(transcription_file.date_converted).to be_nil
-          expect(transcription_file.file_status).to eq(Constants.TRANSCRIPTION_FILE_STATUSES.conversion.failure)
+          expect(transcription_file.date_converted).to eq(Time.zone.today)
+          expect(transcription_file.file_status).to eq(Constants.TRANSCRIPTION_FILE_STATUSES.conversion.success)
         end
 
         it "updates date_upload_aws and file_status of csv TranscriptionFile record" do
           subject
-          expect(csv_transcription_file.date_upload_aws).to_not be_nil
+          expect(csv_transcription_file.date_upload_aws).to_not eq(nil)
           expect(csv_transcription_file.file_status).to eq(Constants.TRANSCRIPTION_FILE_STATUSES.upload.success)
         end
 
