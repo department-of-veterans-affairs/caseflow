@@ -94,10 +94,13 @@ export const ACTIONS = {
 // Labels for guest link
 export const GUEST_LINK_LABELS = {
   COPY_GUEST_LINK: 'Copy Guest Link',
-  GUEST_LINK_SECTION_LABEL: 'Guest links for non-virtual hearings',
-  GUEST_CONFERENCE_ROOM: 'Conference Room',
-  GUEST_PIN: 'PIN',
-}
+  PEXIP_GUEST_LINK_SECTION_LABEL: 'Pexip Guest link for non-virtual hearings',
+  WEBEX_GUEST_LINK_SECTION_LABEL: 'Webex Guest link for non-virtual hearings',
+  PEXIP_GUEST_CONFERENCE_ROOM: 'Conference Room:',
+  WEBEX_GUEST_CONFERENCE_ROOM: 'URL:',
+  GUEST_CONFERENCE_ROOM: 'Conference Room:',
+  GUEST_PIN: 'PIN:',
+};
 
 export const SPREADSHEET_TYPES = {
   RoSchedulePeriod: {

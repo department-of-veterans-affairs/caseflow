@@ -15,4 +15,5 @@ class VirtualHearingSerializer
   attribute :host_link, &:host_link
   attribute :guest_link, &:guest_link
   attribute :job_completed, &:job_completed?
+  attribute :conference_provider
 end

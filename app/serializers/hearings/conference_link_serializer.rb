@@ -7,4 +7,6 @@ class ConferenceLinkSerializer
   attribute :alias, &:alias_with_host
   attribute :guest_pin, &:guest_pin
   attribute :guest_link, &:guest_link
+  attribute :type
+  attribute :conference_provider
 end

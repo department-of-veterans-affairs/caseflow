@@ -187,6 +187,18 @@ describe HearingMailer do
     end
   end
 
+  shared_context "test link for a webex conference" do
+    let!(:virtual_hearing) do
+      create(:virtual_hearing).tap do |vh|
+        vh.meeting_type.update!(service_name: "webex")
+      end
+    end
+
+    it "Webex test link appears" do
+      expect(subject.html_part.body).to include("https://instant-usgov.webex.com/mediatest")
+    end
+  end
+
   shared_examples "appellant virtual reminder intro" do
     it "displays virtual hearing reminder email intro" do
       expect(subject.body).to include("You're scheduled for a hearing with a " \
@@ -647,6 +659,8 @@ describe HearingMailer do
               "pin=#{virtual_hearing.guest_pin}&role=guest"
             )
           end
+
+          include_context "test link for a webex conference"
         end
 
         context "regional office is in eastern timezone" do
@@ -726,6 +740,8 @@ describe HearingMailer do
               "pin=#{virtual_hearing.guest_pin}&role=guest"
             )
           end
+
+          include_context "test link for a webex conference"
         end
 
         context "regional office is in eastern timezone" do
@@ -1206,6 +1222,8 @@ describe HearingMailer do
               "pin=#{virtual_hearing.guest_pin}&role=guest"
             )
           end
+
+          include_context "test link for a webex conference"
         end
 
         context "regional office is in eastern timezone" do

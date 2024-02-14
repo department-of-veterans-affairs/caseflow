@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class VirtualHearings::ConferenceJob < ApplicationJob
-  include VirtualHearings::PexipClient
+  include VirtualHearings::ConferenceClient
 
   private
 
