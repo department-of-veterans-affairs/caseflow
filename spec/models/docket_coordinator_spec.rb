@@ -225,19 +225,21 @@ describe DocketCoordinator do
       [genpop_legacy_case_count,
        genpop_ama_hearing_case_count,
        genpop_direct_case_count,
-       genpop_evidence_case_count,
-       tied_ama_hearing_case_count].sum
+       genpop_evidence_case_count].sum
     end
     let(:all_priority_cases_count) do
       genpop_priority_cases_count + tied_legacy_case_count + tied_ama_hearing_case_count
     end
 
     before do
-      DatabaseCleaner.clean_with(:truncation, except: %w[notification_events vftypes issref])
-
       tied_legacy_case_count.times do
-        create(:case, :type_cavc_remand, :ready_for_distribution,
-               :tied_to_judge, tied_judge: judge)
+        create(
+          :case,
+          :type_cavc_remand,
+          :ready_for_distribution,
+          :tied_to_judge,
+          tied_judge: judge
+        )
       end
       genpop_legacy_case_count.times { create(:case, :type_cavc_remand, :ready_for_distribution) }
       tied_ama_hearing_case_count.times do
