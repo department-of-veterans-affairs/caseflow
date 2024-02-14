@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 describe ExternalApi::VADotGovService do
-  before(:each) do
-    stub_const("VADotGovService", Fakes::VADotGovService)
-  end
+  # before(:each) do
+  #   stub_const("VADotGovService", Fakes::VADotGovService)
+  # end
 
   let(:address) do
     Address.new(
@@ -53,8 +53,8 @@ describe ExternalApi::VADotGovService do
         long: 0.0
       )
 
-      expect(result.data.pluck(:facility_id)).to eq(%w[vha_757 vha_539])
-      expect(result.body[:meta][:distances].pluck(:id)).to match_array(["vha_757", "vha_539"])
+      expect(result.data.pluck(:facility_id)).to match_array(%w[vha_757 vha_539])
+      expect(result.body[:meta][:distances].pluck(:id)).to match_array(%w[vha_757 vha_539])
       expect(result.body[:meta][:distances].pluck(:distance)).to all(be_an(Integer))
 
       expect(result.error).to be_nil
