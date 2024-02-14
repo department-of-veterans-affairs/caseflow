@@ -77,7 +77,6 @@ const CorrespondenceTableBuilder = (props) => {
 
   const createColumnObject = (column, config, tasks) => {
 
-    const { requireDasRecord } = props;
     const filterOptions = filterValuesForColumn(column);
     const functionForColumn = {
       [QUEUE_CONFIG.COLUMNS.DAYS_WAITING_CORRESPONDENCE.name]: daysWaitingCorrespondence(),
@@ -205,7 +204,6 @@ CorrespondenceTableBuilder.propTypes = {
     table_title: PropTypes.string,
     active_tab_index: PropTypes.number,
   }),
-  requireDasRecord: PropTypes.bool,
   userCanBulkAssign: PropTypes.bool,
   isVhaOrg: PropTypes.bool,
   featureToggles: PropTypes.object
