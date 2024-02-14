@@ -2,13 +2,15 @@ import React from 'react';
 import QueueTable from '../../queue/QueueTable';
 import dummyData from 'test/data/nonComp/individualClaimHistoryData';
 import BENEFIT_TYPES from 'constants/BENEFIT_TYPES';
+import { formatDateStr } from 'app/util/DateUtil';
+
 const IndividualClaimHistoryTable = () => {
 
   const processDate = (date) => date;
 
   const formatDecisionDate = (date) => {
     if (date) {
-      return new Date(date).toLocaleDateString();
+      return formatDateStr(date);
     }
 
     return 'No decision date';
