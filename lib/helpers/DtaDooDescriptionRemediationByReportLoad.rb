@@ -133,7 +133,7 @@ module WarRoom
           FROM end_product_establishments epe
           WHERE epe.reference_id in (SELECT DISTINCT reference_id
                                    FROM ep_establishment_workaround
-                                   WHERE report_load = \"#{rep_load}\"
+                                   WHERE report_load = CAST(#{rep_load} AS varchar)
                                    )
         ),
         di_id_list as (
