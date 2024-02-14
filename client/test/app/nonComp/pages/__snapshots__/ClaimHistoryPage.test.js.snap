@@ -45,7 +45,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
             <table
               aria-describedby="case-table-description"
               aria-label="Appeals"
-              class="usa-table-borderless undefined"
+              class="usa-table-borderless claim-history-table-border-fix"
               id="individual_claim_history_table"
               role="grid"
             >
@@ -355,6 +355,155 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
               >
                 <tr
                   class=""
+                  id="table-row-8f65e8bb-c501-4896-a1a0-fff1a433fb51"
+                  role="row"
+                >
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    12/13/2024, 13:00
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    System
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    Withdrew issue
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    <p>
+                      <b>
+                        Benefit type: 
+                      </b>
+                      Veterans Health Administration
+                      <br />
+                      <b>
+                        Issue type: 
+                      </b>
+                      Beneficiary Travel
+                      <br />
+                      <b>
+                        Issue description: 
+                      </b>
+                      Any notes will display here
+                      <br />
+                      <b>
+                        Decision date: 
+                      </b>
+                      06/23/2023
+                      <br />
+                      <b>
+                        Withdrawal request date: 
+                      </b>
+                      05/23/2007
+                      <br />
+                    </p>
+                  </td>
+                </tr>
+                <tr
+                  class=""
+                  id="table-row-720e728b-3f15-4e44-91c9-abbc62ec8d90"
+                  role="row"
+                >
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    12/16/2023, 13:00
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    System
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    Claim closed
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    <p>
+                      Claim closed.
+                      <br />
+                      <b>
+                        Claim decision date: 
+                      </b>
+                      09/12/2023
+                    </p>
+                  </td>
+                </tr>
+                <tr
+                  class=""
+                  id="table-row-8a805f1c-e35a-4a24-805e-b71505b04592"
+                  role="row"
+                >
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    12/16/2023, 11:00
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    System
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    Claim created
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    <p>
+                      Claim created.
+                    </p>
+                  </td>
+                </tr>
+                <tr
+                  class=""
                   id="table-row-e38c40e1-398c-4dfe-a9cd-239449c112c9"
                   role="row"
                 >
@@ -364,7 +513,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                     role="gridcell"
                     tabindex="-1"
                   >
-                    07/05/24, 15:00
+                    12/13/2023, 13:00
                   </td>
                   <td
                     class=""
@@ -407,7 +556,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                       <b>
                         Decision date: 
                       </b>
-                      5/30/2023
+                      05/31/2023
                       <br />
                       <b>
                         Disposition: 
@@ -424,109 +573,6 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                 </tr>
                 <tr
                   class=""
-                  id="table-row-8a805f1c-e35a-4a24-805e-b71505b04592"
-                  role="row"
-                >
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    07/05/23, 19:00
-                  </td>
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    System
-                  </td>
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    Claim created
-                  </td>
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    <p>
-                      Claim created.
-                    </p>
-                  </td>
-                </tr>
-                <tr
-                  class=""
-                  id="table-row-f1db03e8-156a-419f-9670-ba7554db391a"
-                  role="row"
-                >
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    07/05/23, 15:15
-                  </td>
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    System
-                  </td>
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    Removed issue
-                  </td>
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    <p>
-                      <b>
-                        Benefit type: 
-                      </b>
-                      Veterans Health Administration
-                      <br />
-                      <b>
-                        Issue type: 
-                      </b>
-                      Beneficiary Travel
-                      <br />
-                      <b>
-                        Issue description: 
-                      </b>
-                      Any notes will display here
-                      <br />
-                      <b>
-                        Decision date: 
-                      </b>
-                      6/22/2023
-                      <br />
-                      <b>
-                        Removed issue date: 
-                      </b>
-                      7/5/2023
-                    </p>
-                  </td>
-                </tr>
-                <tr
-                  class=""
                   id="table-row-bd1e167e-e047-467b-b2fd-116d062a7e21"
                   role="row"
                 >
@@ -536,7 +582,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                     role="gridcell"
                     tabindex="-1"
                   >
-                    07/05/23, 15:00
+                    12/13/2023, 13:00
                   </td>
                   <td
                     class=""
@@ -552,7 +598,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                     role="gridcell"
                     tabindex="-1"
                   >
-                    Claim status - In Progress
+                    Claim status - In progress
                   </td>
                   <td
                     class=""
@@ -576,7 +622,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                     role="gridcell"
                     tabindex="-1"
                   >
-                    07/05/23, 15:00
+                    12/13/2023, 13:00
                   </td>
                   <td
                     class=""
@@ -616,7 +662,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                     role="gridcell"
                     tabindex="-1"
                   >
-                    07/05/23, 15:00
+                    12/13/2023, 13:00
                   </td>
                   <td
                     class=""
@@ -659,7 +705,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                       <b>
                         Decision date: 
                       </b>
-                      5/30/2023
+                      05/31/2023
                       <br />
                     </p>
                   </td>
@@ -675,7 +721,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                     role="gridcell"
                     tabindex="-1"
                   >
-                    07/05/23, 15:00
+                    12/13/2023, 13:00
                   </td>
                   <td
                     class=""
@@ -718,7 +764,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                       <b>
                         Decision date: 
                       </b>
-                      5/30/2023
+                      05/31/2023
                       <br />
                     </p>
                   </td>
@@ -734,7 +780,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                     role="gridcell"
                     tabindex="-1"
                   >
-                    07/05/23, 15:00
+                    12/13/2023, 13:00
                   </td>
                   <td
                     class=""
@@ -784,7 +830,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                 </tr>
                 <tr
                   class=""
-                  id="table-row-8f65e8bb-c501-4896-a1a0-fff1a433fb51"
+                  id="table-row-f1db03e8-156a-419f-9670-ba7554db391a"
                   role="row"
                 >
                   <td
@@ -793,7 +839,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                     role="gridcell"
                     tabindex="-1"
                   >
-                    07/05/23, 15:00
+                    08/13/2023, 14:15
                   </td>
                   <td
                     class=""
@@ -809,7 +855,7 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                     role="gridcell"
                     tabindex="-1"
                   >
-                    Withdrew issue
+                    Removed issue
                   </td>
                   <td
                     class=""
@@ -836,58 +882,12 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                       <b>
                         Decision date: 
                       </b>
-                      6/22/2023
+                      06/23/2023
                       <br />
                       <b>
-                        Withdrawal request date: 
+                        Removed issue date: 
                       </b>
-                      7/5/2023
-                      <br />
-                    </p>
-                  </td>
-                </tr>
-                <tr
-                  class=""
-                  id="table-row-720e728b-3f15-4e44-91c9-abbc62ec8d90"
-                  role="row"
-                >
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    07/05/21, 15:00
-                  </td>
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    System
-                  </td>
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    Claim closed
-                  </td>
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    <p>
-                      Claim closed.
-                      <br />
-                      <b>
-                        Claim decision date: 
-                      </b>
-                      9/11/2023
+                      08/13/2023
                     </p>
                   </td>
                 </tr>
