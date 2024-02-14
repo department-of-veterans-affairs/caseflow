@@ -100,6 +100,7 @@ class TaskFilter
         "cached_appeal_attributes.suggested_hearing_location",
       Constants.QUEUE_CONFIG.HEARING_REQUEST_TYPE_COLUMN_NAME => "cached_appeal_attributes.hearing_request_type",
       Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name => "cached_appeal_attributes.issue_types"
+      #
     }.freeze
 
     def table_column_from_name(column_name)

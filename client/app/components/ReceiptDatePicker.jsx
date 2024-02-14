@@ -37,21 +37,17 @@ const RecieptDatePicker = (props) => {
     );
     case receiptDateFilterStates.AFTER: return (
       <div>
-        <DateSelector label="From" type="date" />
+        <DateSelector onChange={(value) => handleDateChange(value)} label="From" type="date" />
       </div>
     );
     case receiptDateFilterStates.ON: return (
       <div>
-        <DateSelector label="On" type="date" />
+        <DateSelector onChange={(value) => handleDateChange(value)} label="On" type="date" />
       </div>
     );
 
     default:
     }
-  };
-  const updateDateOption = (value) => {
-    setDateOption(value.value);
-    props.setSelectedValue("testVal", "vaDor");
   };
 
   return <>

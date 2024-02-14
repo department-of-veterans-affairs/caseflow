@@ -37,11 +37,13 @@ class QueueColumn
     Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name => :regional_office_options,
     Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name => :task_type_options,
     Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name => :assignee_options,
-    Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name => :issue_type_options
+    Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name => :issue_type_options,
+
   }.freeze
 
   def filter_options(tasks)
     filter_option_func = self.class::FILTER_OPTIONS[name]
+    # binding.pry
     if filter_option_func
       send(filter_option_func, tasks)
     else
