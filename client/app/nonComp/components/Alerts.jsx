@@ -57,6 +57,8 @@ export class FlashAlerts extends React.PureComponent {
         flashMsg = <Alert key={idx} title="Error" type="error" lowerMargin>{flash[1]}</Alert>;
       } else if (flash[0] === 'edited') {
         flashMsg = <Alert key={idx} title="Edit Completed" type="success" lowerMargin>{flash[1]}</Alert>;
+      } else if (flash[0] === 'custom') {
+        flashMsg = <Alert key={idx} title={flash[1].title} type="success" lowerMargin>{flash[1].message}</Alert>;
       } else if (flash[0] === 'show_vha_org_join_info') {
         flashMsg = <VhaJoinOrgAlert />;
       }
