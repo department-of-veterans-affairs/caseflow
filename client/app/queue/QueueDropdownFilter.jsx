@@ -19,13 +19,22 @@ const dropdownFilterViewListItemStyle = css(
   }
 );
 
+//    props.setSelectedValue("testVal", "vaDor");
+
+
+
 class QueueDropdownFilter extends React.PureComponent {
   constructor() {
     super();
     this.state = {
-      rootElemWidth: null
+      rootElemWidth: null,
+      recieptDateState: -1
     };
   }
+
+  setRecieptDateState = (value) => {
+    this.setState({ recieptDateState: value.value });
+  };
 
   render() {
     const { children, name } = this.props;
@@ -44,7 +53,8 @@ class QueueDropdownFilter extends React.PureComponent {
       }}>
         {this.props.addClearFiltersRow &&
           <div className="cf-filter-option-row">
-            {this.props.isReceiptDateFilter && <ReceiptDatePicker setSelectedValue={this.props.setSelectedValue} />}
+            {this.props.isReceiptDateFilter && <ReceiptDatePicker setSelectedValue={this.props.setSelectedValue}
+              onChangeMethod={this.setRecieptDateState} receiptDateState={this.state.recieptDateState}/>}
             <button className="cf-text-button" onClick={this.props.clearFilters}
               disabled={!this.props.isClearEnabled}>
               <div className="cf-clear-filter-button-wrapper">

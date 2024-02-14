@@ -291,15 +291,15 @@ export const vaDor = (tasks, filterOptions) => {
     header: 'VA DOR',
     // tableData: tasks,
     filterOptions: [],
-    columnName: QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
-    anyFiltersAreSet: true,
+    columnName: 'vaDor',
+    // anyFiltersAreSet: true,
     // valueName: 'recieptDate',
     name: 'vaDor',
     // valueName: 'vaDor',
-    label:'test',
-    backendCanSort: true,
-    enableFilter: true,
-    filterable: true,
+    // label:'test',
+    // backendCanSort: true,
+    // enableFilter: true,
+    // filterable: true,
     valueFunction: (task) => {
       return moment(task.vaDor).format('MM/DD/YYYY');
     }
