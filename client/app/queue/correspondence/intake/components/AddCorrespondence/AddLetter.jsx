@@ -172,7 +172,7 @@ const NewLetter = (props) => {
   const handleDays = (value) => {
     const currentNumber = parseInt(value.trim(), 10);
 
-    if (currentNumber <= 64) {
+    if ((currentNumber >= 1) && (currentNumber <= 64)) {
       setLetterCard({ ...letterCard,
         customValue: currentNumber });
     } else {
