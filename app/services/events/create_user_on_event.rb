@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+# Service Class that will be utilized by Events::DecisionReviewCreated to create a new User
+# when an Event is received and that specific User does not already exist in Caseflow
 class Events::CreateUserOnEvent
   class << self
     def handle_user_creation_on_event(event, css_id, station_id)
