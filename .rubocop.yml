@@ -4,17 +4,13 @@ require:
 
 AllCops:
   Exclude:
-    - 'db/migrate/*'
-    - 'db/schema.rb'
-    - 'db/etl/migrate/*'
-    - 'db/etl/schema.rb'
+    - 'db/**/*'
     - 'config/**/*'
     - 'script/**/*'
     - 'vendor/**/*'
     - './.simplecov'
     - 'client/node_modules/**/*'
     - 'app/mappers/zip_code_to_lat_lng_mapper.rb'
-    - 'db/seeds/*'
   TargetRailsVersion: 5.1
   TargetRubyVersion: 2.5
   UseCache: true
@@ -58,6 +54,7 @@ Rails/ActiveRecordOverride:
 Rails/Output:
   Exclude:
     - 'lib/**/*.rb'
+    - 'db/scripts/**/*'
 
 Rails/DynamicFindBy:
   Enabled: false

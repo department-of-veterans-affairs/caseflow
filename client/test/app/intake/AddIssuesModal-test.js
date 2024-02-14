@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React from 'react';
 import { mount } from 'enzyme';
 
@@ -7,10 +8,11 @@ import { sample1 } from './testData';
 describe('AddIssuesModal', () => {
   const formType = 'higher_level_review';
   const intakeData = sample1.intakeData;
+  const featureToggles = { mstIdentification: true };
 
   describe('renders', () => {
     it('renders button text', () => {
-      const wrapper = mount(<AddIssuesModal formType={formType} intakeData={intakeData} onSkip={() => null} />);
+      const wrapper = mount(<AddIssuesModal featureToggles={featureToggles} formType={formType} intakeData={intakeData} onSkip={() => null} />);
 
       const cancelBtn = wrapper.find('.cf-modal-controls .close-modal');
       const skipBtn = wrapper.find('.cf-modal-controls .no-matching-issues');
@@ -23,7 +25,7 @@ describe('AddIssuesModal', () => {
       wrapper.setProps({
         cancelText: 'cancel',
         skipText: 'skip',
-        submitText: 'submit'
+        submitText: 'submit',
       });
 
       expect(cancelBtn.text()).toBe('cancel');
@@ -32,7 +34,7 @@ describe('AddIssuesModal', () => {
     });
 
     it('skip button only with onSkip prop', () => {
-      const wrapper = mount(<AddIssuesModal formType={formType} intakeData={intakeData} />);
+      const wrapper = mount(<AddIssuesModal featureToggles={featureToggles} formType={formType} intakeData={intakeData} />);
 
       expect(wrapper.find('.cf-modal-controls .no-matching-issues').exists()).toBe(false);
 
@@ -41,7 +43,7 @@ describe('AddIssuesModal', () => {
     });
 
     it('disables button when nothing selected', () => {
-      const wrapper = mount(<AddIssuesModal formType={formType} intakeData={intakeData} />);
+      const wrapper = mount(<AddIssuesModal featureToggles={featureToggles} formType={formType} intakeData={intakeData} />);
 
       const submitBtn = wrapper.find('.cf-modal-controls .add-issue');
 
