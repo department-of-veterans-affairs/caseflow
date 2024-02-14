@@ -7,13 +7,15 @@ require_relative "../../../app/services/claim_change_history/claim_history_event
 describe ChangeHistoryEventSerializer do
   let(:expected_uuid) { "709ab60d-3c5f-48d8-ac55-dc6b8f4f85bf" }
   before do
-    Timecop.freeze(Time.utc(2024, 1, 30, 12, 0, 0))
+    Timecop.travel(5.days.ago)
     allow(SecureRandom).to receive(:uuid).and_return(expected_uuid)
   end
 
+  after { Timecop.return }
+
   let!(:vha_org) { VhaBusinessLine.singleton }
   let!(:vha_task) do
-    create(:higher_level_review,
+    hlr = create(:higher_level_review,
            :with_intake,
            :with_issue_type,
            :processed,
@@ -25,6 +27,7 @@ describe ChangeHistoryEventSerializer do
            issue_type: "Other",
            description: "seeded HLR in progress",
            number_of_claimants: 1)
+    hlr.tasks.first
   end
 
   let!(:events) do
@@ -33,57 +36,59 @@ describe ChangeHistoryEventSerializer do
 
   subject { described_class.new(events).serializable_hash[:data] }
 
+  let(:serializable_hash) do
+    [
+      {
+        id: expected_uuid,
+        type: :change_history_event,
+        attributes: {
+          claimType: "Higher-Level Review",
+          claimantName: events[0].claimant_name,
+          details:
+          {
+            benefitType: "vha",
+            decisionDate: "2023-09-25",
+            decisionDescription: nil,
+            disposition: nil,
+            issueDescription: "Veterans Health Administration seeded HLR in progress",
+            issueType: "Other",
+            withdrawalRequestDate: nil
+          },
+          eventDate: events[0].event_date,
+          eventType: :added_issue,
+          eventUser: "L. Roth",
+          readableEventType: "Added Issue",
+          taskID: 1
+        }
+      },
+      {
+        id: expected_uuid,
+        type: :change_history_event,
+        attributes: {
+          claimType: "Higher-Level Review",
+          claimantName: events[1].claimant_name,
+          details:
+          {
+            benefitType: "vha",
+            decisionDate: nil,
+            decisionDescription: nil,
+            disposition: nil,
+            issueDescription: nil,
+            issueType: nil,
+            withdrawalRequestDate: nil
+          },
+          eventDate: events[1].event_date,
+          eventType: :claim_creation,
+          eventUser: "L. Roth",
+          readableEventType: "Claim created",
+          taskID: 1
+        }
+      }
+    ]
+  end
+
   describe "#as_json" do
     it "renders json data" do
-      Timecop.travel(5.days.ago)
-      serializable_hash = [
-        {
-          id: expected_uuid,
-          type: :change_history_event,
-          attributes: {
-            claimType: "Higher-Level Review",
-            claimantName: events[0].claimant_name,
-            details:
-            {
-              benefitType: "vha",
-              decisionDate: "2023-09-25",
-              decisionDescription: nil,
-              disposition: nil,
-              issueDescription: "Veterans Health Administration seeded HLR in progress",
-              issueType: "Other",
-              withdrawalRequestDate: nil
-            },
-            eventDate: events[0].event_date,
-            eventType: :added_issue,
-            eventUser: "L. Roth",
-            readableEventType: "Added Issue",
-            taskID: 1
-          }
-        },
-        {
-          id: expected_uuid,
-          type: :change_history_event,
-          attributes: {
-            claimType: "Higher-Level Review",
-            claimantName: events[1].claimant_name,
-            details:
-            {
-              benefitType: "vha",
-              decisionDate: nil,
-              decisionDescription: nil,
-              disposition: nil,
-              issueDescription: nil,
-              issueType: nil,
-              withdrawalRequestDate: nil
-            },
-            eventDate: events[1].event_date,
-            eventType: :claim_creation,
-            eventUser: "L. Roth",
-            readableEventType: "Claim created",
-            taskID: 1
-          }
-        }
-      ]
       expect(subject).to eq(serializable_hash)
     end
   end
