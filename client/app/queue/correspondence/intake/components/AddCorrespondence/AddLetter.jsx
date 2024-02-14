@@ -7,7 +7,7 @@ import DateSelector from 'app/components/DateSelector';
 import RadioField from '../../../../../components/RadioField';
 import { ADD_CORRESPONDENCE_LETTER_SELECTIONS } from '../../../../constants';
 import moment from 'moment';
-import { connect, useDispatch } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
   setResponseLetters
@@ -16,7 +16,9 @@ import {
 export const AddLetter = (props) => {
   const onContinueStatusChange = props.onContinueStatusChange;
 
-  const [letters, setLetters] = useState([]);
+  let responseLetters = useSelector((state) => state.intakeCorrespondence.responseLetters)
+
+  const [letters, setLetters] = useState(Object.keys(responseLetters));
 
   const addLetter = (index) => {
     setLetters([...letters, index]);
@@ -45,18 +47,19 @@ export const AddLetter = (props) => {
     }
     // }
   }, [letters]);
-
   return (
     <>
-      { letters.map((letter) => (
+      {letters.map((letter) => {
+        return (
         <div id={letter} style={{ width: '50%', display: 'inline-block' }} key={letter}>
           <NewLetter
             index={letter}
             removeLetter={removeLetter}
             setUnrelatedTasksCanContinue= {setUnrelatedTasksCanContinue}
+            currentLetter = { responseLetters && responseLetters[letter] }
           />
         </div>
-      )) }
+      )})}
 
       <div style={{ width: '80%', marginBottom: '30px' }}>
         <Button
@@ -85,17 +88,19 @@ AddLetter.propTypes = {
 const currentDate = moment.utc(new Date()).format('YYYY-MM-DD');
 const NewLetter = (props) => {
   const index = props.index;
+  const currentLetter = props.currentLetter
   const letterHash = {};
   const setUnrelatedTasksCanContinue = props.setUnrelatedTasksCanContinue;
+  let displayLetter = (currentLetter !== undefined)
   const [letterCard, setLetterCard] = useState({
     id: index,
     date: currentDate,
-    type: '',
-    title: '',
-    subType: '',
-    reason: '',
-    responseWindows: '',
-    customValue: null
+    type: displayLetter ? currentLetter.type : '',
+    title: displayLetter ? currentLetter.title : '',
+    subType: displayLetter ? currentLetter.subType : '',
+    reason: displayLetter ? currentLetter.reason : '',
+    responseWindows: displayLetter ? currentLetter.responseWindows : '',
+    customValue: displayLetter ? currentLetter.customValue : ''
   });
 
   const [letterTitleSelector, setLetterTitleSelector] = useState('');
@@ -105,7 +110,7 @@ const NewLetter = (props) => {
 
   const [stateOptions, setStateOptions] = useState(true);
 
-  const [responseWindows, setResponseWindows] = useState('');
+  const [responseWindows, setResponseWindows] = useState(displayLetter ? currentLetter.responseWindows : '');
   const naValue = 'N/A';
   const dispatch = useDispatch();
 
