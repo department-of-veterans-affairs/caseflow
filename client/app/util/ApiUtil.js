@@ -8,10 +8,13 @@ import { timeFunctionPromise } from '../util/PerfDebug';
 import moment from 'moment';
 
 export const STANDARD_API_TIMEOUT_MILLISECONDS = 60 * 1000;
+export const DEMO_API_TIMEOUT_MILLISECONDS = 2 * 60 * 1000;
 export const RESPONSE_COMPLETE_LIMIT_MILLISECONDS = 5 * 60 * 1000;
+// eslint-disable-next-line no-process-env
+export const onDemo = ['development', 'demo'].includes(process.env.NODE_ENV);
 
 const defaultTimeoutSettings = {
-  response: STANDARD_API_TIMEOUT_MILLISECONDS,
+  response: onDemo ? DEMO_API_TIMEOUT_MILLISECONDS : STANDARD_API_TIMEOUT_MILLISECONDS,
   deadline: RESPONSE_COMPLETE_LIMIT_MILLISECONDS
 };
 
@@ -153,6 +156,12 @@ const httpMethods = {
 
   get(url, options = {}) {
     const timeoutSettings = Object.assign({}, defaultTimeoutSettings, _.get(options, 'timeout', {}));
+
+    console.log('process.env testing start');
+    console.log(`REACT_APP_ENV_TEST = ${ process.env.REACT_APP_ENV_TEST }`);
+    console.log(`NODE_ENV = ${ process.env.NODE_ENV }`);
+    console.log(`DEPLOY_ENV = ${ process.env.DEPLOY_ENV }`);
+    console.log('process.env testing end');
 
     options.t0 = performance.now();
     options.start = moment().format();
