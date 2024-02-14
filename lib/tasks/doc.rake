@@ -211,7 +211,9 @@ namespace :doc do
     #     -datamodel caseflow-schema org.postgresql.Driver \
     #     jdbc:postgresql://localhost:5432/caseflow_certification_development postgres postgres
     # Append the file created by this method to 'caseflow-schema/association.csv' created by Jailer:
-    #   cat $YOUR_PATH/caseflow/docs/schema/caseflow-jailer_polymorphic_associations.csv >> caseflow-schema/association.csv
+    # rubocop:disable Layout/LineLength
+    # cat $YOUR_PATH/caseflow/docs/schema/caseflow-jailer_polymorphic_associations.csv >> caseflow-schema/association.csv
+    # rubocop:enable Layout/LineLength
     # Then create the html pages:
     #   echo "Caseflow schema; 1600000000000" >> caseflow-schema/modelname.csv
     #   sh jailer.sh render-datamodel -datamodel caseflow-schema
