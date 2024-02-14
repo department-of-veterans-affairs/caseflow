@@ -19,5 +19,3 @@ class Events::CreateUserOnEvent
     end
   end
 end
-
-# user = User.create(css_id: "TEST", station_id: "1", status: Constants.USER_STATUSES.inactive)
