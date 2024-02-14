@@ -2072,39 +2072,44 @@ describe Task, :all_dbs do
         expect(reassign_pt).to be_a(ReassignPackageTask)
 
         # creation fails due to pre-existing package action task
-        expect { RemovePackageTask.create!(
-          parent_id: parent_task&.id,
-          appeal_id: correspondence&.id,
-          appeal_type: "Correspondence",
-          assigned_to: MailTeamSupervisor.singleton
-        ) }.to raise_error(Caseflow::Error::MultipleOpenTasksOfSameTypeError)
+        expect do
+          RemovePackageTask.create!(
+            parent_id: parent_task&.id,
+            appeal_id: correspondence&.id,
+            appeal_type: "Correspondence",
+            assigned_to: MailTeamSupervisor.singleton
+          )
+        end.to raise_error(Caseflow::Error::MultipleOpenTasksOfSameTypeError)
 
         # creation fails due to pre-existing package action task
-        expect { SplitPackageTask.create!(
-          parent_id: parent_task&.id,
-          appeal_id: correspondence&.id,
-          appeal_type: "Correspondence",
-          assigned_to: MailTeamSupervisor.singleton
-        ) }.to raise_error(Caseflow::Error::MultipleOpenTasksOfSameTypeError)
+        expect do
+          SplitPackageTask.create!(
+            parent_id: parent_task&.id,
+            appeal_id: correspondence&.id,
+            appeal_type: "Correspondence",
+            assigned_to: MailTeamSupervisor.singleton
+          )
+        end.to raise_error(Caseflow::Error::MultipleOpenTasksOfSameTypeError)
 
         # creation fails due to pre-existing package action task
-        expect { MergePackageTask.create!(
-          parent_id: parent_task&.id,
-          appeal_id: correspondence&.id,
-          appeal_type: "Correspondence",
-          assigned_to: MailTeamSupervisor.singleton
-        ) }.to raise_error(Caseflow::Error::MultipleOpenTasksOfSameTypeError)
+        expect do
+          MergePackageTask.create!(
+            parent_id: parent_task&.id,
+            appeal_id: correspondence&.id,
+            appeal_type: "Correspondence",
+            assigned_to: MailTeamSupervisor.singleton
+          )
+        end.to raise_error(Caseflow::Error::MultipleOpenTasksOfSameTypeError)
 
         reassign_pt.update!(status: Constants.TASK_STATUSES.completed)
 
         # creation ok due to pre-existing package action task status update
         expect(RemovePackageTask.create!(
-          parent_id: parent_task&.id,
-          appeal_id: correspondence&.id,
-          appeal_type: "Correspondence",
-          assigned_to: MailTeamSupervisor.singleton
-        )).to be_a(RemovePackageTask)
-
+                 parent_id: parent_task&.id,
+                 appeal_id: correspondence&.id,
+                 appeal_type: "Correspondence",
+                 assigned_to: MailTeamSupervisor.singleton
+               )).to be_a(RemovePackageTask)
       end
     end
   end
