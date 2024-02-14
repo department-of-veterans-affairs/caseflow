@@ -28,7 +28,10 @@ module ByDocketDateDistribution
 
     unless FeatureToggle.enabled?(:acd_disable_nonpriority_distributions, user: RequestStore.store[:current_user])
       # Distribute the oldest nonpriority appeals from any docket if we haven't distributed {batch_size} appeals
-      distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem) until @rem <= 0
+      # @nonpriority_iterations guards against an infinite loop if not enough cases are ready to distribute
+      until @rem <= 0 || @nonpriority_iterations >= batch_size
+        distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem)
+      end
     end
     @appeals
   end
@@ -85,6 +88,13 @@ module ByDocketDateDistribution
       },
       algorithm: "by_docket_date",
       settings: settings
+    }
+  rescue StandardError => error
+    # There always needs to be a batch_size value for a completed distribution, else the priority push job will error
+    {
+      batch_size: @appeals.count,
+      message: "Distribution successful, but there was an error generating statistics: \
+               #{error.class}: #{error.message}, #{error.backtrace.first}"
     }
   end
   # rubocop:enable Metrics/MethodLength
