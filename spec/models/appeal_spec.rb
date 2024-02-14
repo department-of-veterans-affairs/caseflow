@@ -578,7 +578,7 @@ describe Appeal, :all_dbs do
       end
     end
 
-    context "when there is a granted advance_on_docket, the claimant is an AttorneyClaimant and aod_based_on_age is false" do
+    context "when there is a granted aod, claimant is an AttorneyClaimant and aod_based_on_age is false" do
       let(:appeal) { create(:appeal, :advanced_on_docket_granted_attorney_claimant) }
 
       it "returns true" do
