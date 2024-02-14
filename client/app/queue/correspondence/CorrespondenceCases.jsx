@@ -40,17 +40,18 @@ const CorrespondenceCases = (props) => {
 
   useEffect(() => {
     if (
-      veteranInformation?.veteran_name?.first_name &&
-      veteranInformation?.veteran_name?.last_name
+      veteranInformation?.veteranName?.firstName &&
+      veteranInformation?.veteranName?.lastName
     ) {
-      setVetName(`${veteranInformation.veteran_name.first_name.trim()} ${veteranInformation.veteran_name.last_name.trim()}`);
+      setVetName(
+        `${veteranInformation.veteranName.firstName.trim()} ${veteranInformation.veteranName.lastName.trim()}`);
     }
   }, [veteranInformation]);
 
   return (
     <>
       <AppSegment filledBackground>
-        {(veteranInformation?.veteran_name?.first_name && veteranInformation?.veteran_name?.last_name) &&
+        {(veteranInformation?.veteranName?.firstName && veteranInformation?.veteranName?.lastName) &&
           currentAction.action_type === 'DeleteReviewPackage' && (
           <Alert
             type="success"

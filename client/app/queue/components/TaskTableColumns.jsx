@@ -318,6 +318,7 @@ export const notes = () => {
 export const checkboxColumn = () => {
   return {
     header: 'Select',
+    name: QUEUE_CONFIG.COLUMNS.CHECKBOX_COLUMN,
     valueFunction: (task) => task ? <Checkbox id={task.uniqueId} ariaLabel={task.uniqueId} /> : ''
   };
 };
