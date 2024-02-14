@@ -11,7 +11,7 @@ export const STANDARD_API_TIMEOUT_MILLISECONDS = 60 * 1000;
 export const DEMO_API_TIMEOUT_MILLISECONDS = 2 * 60 * 1000;
 export const RESPONSE_COMPLETE_LIMIT_MILLISECONDS = 5 * 60 * 1000;
 // eslint-disable-next-line no-process-env
-export const onDemo = process.env.REACT_APP_DEPLOY_ENV === 'demo';
+export const onDemo = process.env.DEPLOY_ENV === 'demo';
 
 const defaultTimeoutSettings = {
   response: onDemo ? DEMO_API_TIMEOUT_MILLISECONDS : STANDARD_API_TIMEOUT_MILLISECONDS,
@@ -158,7 +158,7 @@ const httpMethods = {
     const timeoutSettings = Object.assign({}, defaultTimeoutSettings, _.get(options, 'timeout', {}));
 
     console.log('process.env testing start');
-    console.log(`REACT_APP_DEPLOY_ENV = ${ process.env.REACT_APP_DEPLOY_ENV }`);
+    console.log(`DEPLOY_ENV = ${ process.env.DEPLOY_ENV }`);
     console.log('process.env testing end');
 
     options.t0 = performance.now();
