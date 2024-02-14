@@ -9,6 +9,20 @@ RSpec.describe SplitAppealController, type: :controller do
       FeatureToggle.enable!(:split_appeal_workflow)
     end
 
+    let(:split_reason) { "Include a motion for CUE with respect to a prior Board decision" }
+    let(:split_other_reason) { "" }
+    let(:appeal_split_issues) { [request_issue.id.to_s] }
+
+    let(:valid_params) do
+      {
+        appeal_id: appeal.id,
+        appeal_split_issues: appeal_split_issues,
+        split_reason: split_reason,
+        split_other_reason: split_other_reason,
+        user_css_id: ssc_user.css_id
+      }
+    end
+
     context "with valid parameters create a appeal with 3 request issues" do
       let(:root_task) { RootTask.find(create(:root_task).id) }
       let(:request_issue) { create(:request_issue, benefit_type: benefit_type1) }
@@ -24,15 +38,7 @@ RSpec.describe SplitAppealController, type: :controller do
         )
       end
 
-      let(:valid_params) do
-        {
-          appeal_id: appeal.id,
-          appeal_split_issues: [request_issue.id.to_s, request_issue2.id.to_s],
-          split_reason: "Include a motion for CUE with respect to a prior Board decision",
-          split_other_reason: "",
-          user_css_id: ssc_user.css_id
-        }
-      end
+      let(:appeal_split_issues) { [request_issue.id.to_s, request_issue2.id.to_s] }
 
       it "creates a new split appeal" do
         post :split_appeal, params: valid_params
@@ -100,15 +106,9 @@ RSpec.describe SplitAppealController, type: :controller do
           request_issues: [request_issue, request_issue2, request_issue3]
         )
       end
-      let(:valid_params) do
-        {
-          appeal_id: appeal.id,
-          appeal_split_issues: [request_issue.id.to_s],
-          split_reason: "Other",
-          split_other_reason: "Some Other Reason",
-          user_css_id: ssc_user.css_id
-        }
-      end
+
+      let(:split_reason) { "Other" }
+      let(:split_other_reason) { "Some Other Reason" }
 
       it "creates a new split appeal" do
         post :split_appeal, params: valid_params
@@ -184,15 +184,7 @@ RSpec.describe SplitAppealController, type: :controller do
         )
       end
 
-      let(:valid_params) do
-        {
-          appeal_id: appeal.id,
-          appeal_split_issues: [request_issue.id.to_s, request_issue2.id.to_s],
-          split_reason: "Include a motion for CUE with respect to a prior Board decision",
-          split_other_reason: "",
-          user_css_id: ssc_user.css_id
-        }
-      end
+      let(:appeal_split_issues) { [request_issue.id.to_s, request_issue2.id.to_s] }
 
       it "throws an error that the issue has already been split" do
         expect { post :split_appeal, params: valid_params }.to raise_error(Appeal::IssueAlreadyDuplicated)
@@ -207,15 +199,7 @@ RSpec.describe SplitAppealController, type: :controller do
       let(:request_issue2) { create(:request_issue, benefit_type: benefit_type1) }
       let(:root_task) { RootTask.find(create(:root_task).id) }
       let(:appeal) { create(:appeal, tasks: [root_task], request_issues: [request_issue, request_issue2]) }
-      let(:valid_params) do
-        {
-          appeal_id: appeal.id,
-          appeal_split_issues: [request_issue.id.to_s],
-          split_reason: "Include a motion for CUE with respect to a prior Board decision",
-          split_other_reason: "",
-          user_css_id: ssc_user.css_id
-        }
-      end
+
       it "maintains the same relations as the original appeal" do
         post :split_appeal, params: valid_params
         dup_appeal = Appeal.last
@@ -250,15 +234,7 @@ RSpec.describe SplitAppealController, type: :controller do
           create(:case_hearing, vdkey: hearing_day.id)
         end
       end
-      let(:valid_params) do
-        {
-          appeal_id: appeal.id,
-          appeal_split_issues: [request_issue.id.to_s],
-          split_reason: "Include a motion for CUE with respect to a prior Board decision",
-          split_other_reason: "",
-          user_css_id: ssc_user.css_id
-        }
-      end
+
       it "creates the split appeal despite the hearing_day being full" do
         hearing_day.reload
         post :split_appeal, params: valid_params
@@ -274,6 +250,15 @@ RSpec.describe SplitAppealController, type: :controller do
         expect(original_appeal.hearings[0]).equal? dup_appeal.hearings[0]
         expect(original_appeal.hearings[0].hearing_day.id).equal? dup_appeal.hearings[0].hearing_day.id
       end
+    end
+
+    context "with an appeal that has specialty case team issues" do
+      before do
+        FeatureToggle.enable!(:specialty_case_team_distribution)
+      end
+
+      # create appeal
+      # create request issues
     end
   end
 end
