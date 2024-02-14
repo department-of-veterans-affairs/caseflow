@@ -1,6 +1,7 @@
 const webpack = require('webpack');
 const path = require('path');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 const devBuild = process.env.NODE_ENV !== 'production'; // eslint-disable-line no-process-env
 const testBuild = process.env.NODE_ENV === 'test'; // eslint-disable-line no-process-env
@@ -18,6 +19,7 @@ const config = {
     new webpack.EnvironmentPlugin({ NODE_ENV: 'development' }),
     devBuild && new webpack.HotModuleReplacementPlugin(),
     devBuild && !testBuild && new ReactRefreshWebpackPlugin(),
+    new Dotenv()
   ].filter(Boolean),
   devServer: {
     headers: {
