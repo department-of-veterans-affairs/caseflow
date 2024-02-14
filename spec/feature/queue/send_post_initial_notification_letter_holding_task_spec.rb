@@ -54,7 +54,8 @@ RSpec.feature "Send Post Initial Notification Letter Holding Tasks", :all_dbs do
       expect(page).to have_content(Constants.TASK_ACTIONS.PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING.label)
     end
 
-    it "resend initial notification action creates initial notification task and completes the post initial notification holding task" do
+    it "resend initial notification action" \
+    "creates initial notification task and completes the post initial notification holding task" do
       initial_letter_task.completed!
       visit("/queue")
       visit("/queue/appeals/#{post_letter_task.appeal.external_id}")
@@ -73,7 +74,11 @@ RSpec.feature "Send Post Initial Notification Letter Holding Tasks", :all_dbs do
       # expect success
       assert page.has_content?("Post Send Initial Notification Letter Holding task completed")
       expect(page.current_path).to eq("/organizations/clerk-of-the-board")
-      appeal_initial_letter_holding_task = root_task.appeal.tasks.reload.find_by(type: "PostSendInitialNotificationLetterHoldingTask")
+      appeal_initial_letter_holding_task = root_task
+        .appeal
+        .tasks
+        .reload
+        .find_by(type: "PostSendInitialNotificationLetterHoldingTask")
       expect(appeal_initial_letter_holding_task.status).to eq("completed")
     end
 
@@ -125,7 +130,11 @@ RSpec.feature "Send Post Initial Notification Letter Holding Tasks", :all_dbs do
       # expect success
       expect(page).to have_content(format(COPY::PROCEED_FINAL_NOTIFICATION_LETTER_POST_HOLDING_TASK_SUCCESS))
       expect(page.current_path).to eq("/organizations/clerk-of-the-board")
-      appeal_initial_letter_holding_task = root_task.appeal.tasks.reload.find_by(type: "PostSendInitialNotificationLetterHoldingTask")
+      appeal_initial_letter_holding_task = root_task
+        .appeal
+        .tasks
+        .reload
+        .find_by(type: "PostSendInitialNotificationLetterHoldingTask")
       expect(appeal_initial_letter_holding_task.status).to eq("completed")
     end
   end

@@ -99,6 +99,7 @@ class AppealSeries < CaseflowRecord
     "#{marquee_issue_description}#{comma} and #{issue_count} #{'other'.pluralize(issue_count)}"
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def fetch_status
     case latest_appeal.status
     when "Advance"
@@ -116,7 +117,7 @@ class AppealSeries < CaseflowRecord
     end
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/MethodLength
   def fetch_details_for_status
     case status
     when :scheduled_hearing
@@ -158,7 +159,7 @@ class AppealSeries < CaseflowRecord
       {}
     end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 
   private
 
@@ -194,6 +195,7 @@ class AppealSeries < CaseflowRecord
     end
   end
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def disambiguate_status_advance
     if latest_appeal.certification_date
       return :scheduled_hearing if latest_appeal.hearing_scheduled?
@@ -230,6 +232,7 @@ class AppealSeries < CaseflowRecord
     end
   end
 
+  # rubocop:disable  Metrics/MethodLength
   def disambiguate_status_complete
     case latest_appeal.disposition
     when "Allowed", "Denied"
@@ -255,6 +258,7 @@ class AppealSeries < CaseflowRecord
       :other_close
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/MethodLength
 
   def disambiguate_status_remand
     post_decision_ssocs = latest_appeal.ssoc_dates&.select { |ssoc| ssoc > latest_appeal.decision_date }

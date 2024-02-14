@@ -66,7 +66,7 @@ class Hearing < CaseflowRecord
            :decision_issues, :available_hearing_locations, :closest_regional_office, :advanced_on_docket?,
            to: :appeal
   delegate :external_id, to: :appeal, prefix: true
-  delegate :timezone, :name, to: :regional_office, prefix: true
+  delegate :name, to: :regional_office, prefix: true
 
   # ActiveRecord can interpret the associated hearing_day as null because acts_as_paranoid
   # allows us to soft-delete hearing_days by setting the deleted_at value.
@@ -190,38 +190,14 @@ class Hearing < CaseflowRecord
 
     # returns the date and time a hearing is scheduled for in the regional office's
     # time zone
-    #
-    # When a hearing is scheduled, we save the hearing time to the scheduled_time
-    # field. The time is converted to UTC upon save *relative to the timezone of
-    # the user who saved it*, not relative to the timezone of the RO where the
-    # veteran will attend the hearing. For example, if a user in New York
-    # schedules an 8:30am hearing for a veteran in Los Angeles, the time will be
-    # saved as 13:30 (with the eastern time -5 offset added) rather than 16:30
-    # (with the pacific time -8 offset added).
-    #
-    # The offset will *always* be +5 for a user in the eastern time zone,
-    # regardless of when the hearing is scheduled, because Rails associates a
-    # date of 01 Jan 2000 with the time whenever it's read from the database.
-    # Because that date did not fall during daylight savings time, the conversion
-    # remains the same no matter what time of year it's done.
-    #
-    # So when we need to display the time the hearing is scheduled for, we have
-    # to explicitly convert it to the time zone of the person who scheduled it,
-    # then assemble and return a TimeWithZone object cast to the regional
-    # office's time zone.
+    scheduled_time_in_utc = scheduled_time.utc
 
-    updated_by_timezone = updated_by&.timezone || Time.zone.name
-    scheduled_time_in_updated_by_timezone = scheduled_time.utc.in_time_zone(updated_by_timezone)
+    utc_day = "#{hearing_day.scheduled_for.year}-#{hearing_day.scheduled_for.month}-#{hearing_day.scheduled_for.day}"
+    utc_time = "#{scheduled_time_in_utc.hour}:#{scheduled_time_in_utc.min}:#{scheduled_time_in_utc.sec} UTC"
+    utc_time_string = "#{utc_day} #{utc_time}"
 
     Time.use_zone(regional_office_timezone) do
-      Time.zone.local(
-        hearing_day.scheduled_for.year,
-        hearing_day.scheduled_for.month,
-        hearing_day.scheduled_for.day,
-        scheduled_time_in_updated_by_timezone.hour,
-        scheduled_time_in_updated_by_timezone.min,
-        scheduled_time_in_updated_by_timezone.sec
-      )
+      Time.zone.parse(utc_time_string)
     end
   end
 
@@ -238,10 +214,30 @@ class Hearing < CaseflowRecord
 
   def regional_office
     @regional_office ||= begin
-                            RegionalOffice.find!(regional_office_key)
-                         rescue RegionalOffice::NotFoundError
-                           nil
-                          end
+      RegionalOffice.find!(regional_office_key)
+    rescue RegionalOffice::NotFoundError
+      nil
+    end
+  end
+
+  # Returns timezone that the hearing is scheduled in
+  def regional_office_timezone
+    ro = regional_office
+    hearing_day_timezone = (ro.nil? || ro.timezone.nil?) ? HearingTimeService::CENTRAL_OFFICE_TIMEZONE : ro.timezone
+
+    # If there is not a scheduled_in_timezone value in the db,
+    # the timezone is calculated from the regional office associated with the hearing_day.
+    # Else the timezone is parsed from the db value
+    if scheduled_in_timezone.nil?
+      ro_timezone = hearing_day_timezone
+    else
+      begin
+        ro_timezone = ActiveSupport::TimeZone.find_tzinfo(scheduled_in_timezone).name
+      rescue TZInfo::InvalidTimezoneIdentifier
+        ro_timezone = hearing_day_timezone
+      end
+    end
+    ro_timezone
   end
 
   def regional_office_key

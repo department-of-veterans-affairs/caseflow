@@ -11,6 +11,7 @@
 # - Generate email subjects based on the type of email.
 # - Create the calendar invites that get attached to the emails.
 ##
+# rubocop:disable Rails/ApplicationMailer
 class HearingMailer < ActionMailer::Base
   default from: "Board of Veterans' Appeals <BoardofVeteransAppealsHearings@messages.va.gov>"
   layout "hearing_mailer"
@@ -175,3 +176,4 @@ class HearingMailer < ActionMailer::Base
     email_recipient_info.title == HearingEmailRecipient::RECIPIENT_TITLES[:judge]
   end
 end
+# rubocop:enable Rails/ApplicationMailer
