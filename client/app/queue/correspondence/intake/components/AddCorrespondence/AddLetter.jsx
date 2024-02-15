@@ -391,7 +391,7 @@ const NewLetter = (props) => {
 
   return (
     <div className="gray-border" style={
-      { display: 'inline-block', padding: '2rem 2rem', marginLeft: '3rem', marginBottom: '3rem', width: '90%' }
+      { display: 'inline-block', padding: '2rem 2rem', marginBottom: '3rem', width: '95%' }
     }>
       <div className="response_letter_date">
         <DateSelector
