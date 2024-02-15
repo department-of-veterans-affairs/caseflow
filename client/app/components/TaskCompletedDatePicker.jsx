@@ -17,23 +17,24 @@ const TaskCompletedDatePicker = (props) => {
 
     switch (props.taskCompletedDateState) {
     case taskCompletedDateFilterStates.BETWEEN: return (
-      <div>
-        <DateSelector onChange={props.handleTaskCompletedDateChange} label="from" type="date" />
-        <DateSelector onChange={props.handleTaskCompletedSecondaryDateChange} label="to" type="date" />
+      <div style={{ margin: '5% 5%' }}>
+        <DateSelector onChange={props.handleTaskCompletedDateChange} label="From" type="date" />
+        <DateSelector onChange={props.handleTaskCompletedSecondaryDateChange} label="To" type="date" />
       </div>);
     case taskCompletedDateFilterStates.BEFORE: return (
-      <div>
+      <div style={{ margin: '5% 5%' }}>
         <DateSelector onChange={(value) => props.handleTaskCompletedDateChange(value)} label="To" type="date" />
       </div>
     );
     case taskCompletedDateFilterStates.AFTER: return (
-      <div>
-        <DateSelector onChange={(value) => props.handleTaskCompletedDateChange(value)} label="From" type="date" />
+      <div style={{ margin: '5% 5%' }}>
+        <DateSelector onChange={(value) => props.handleTaskCompletedDateChange(value)} type="date" />
       </div>
     );
     case taskCompletedDateFilterStates.ON: return (
-      <div>
-        <DateSelector onChange={(value) => props.handleTaskCompletedDateChange(value)} label="On" type="date" />
+      <div style={{ margin: '5% 5%' }}>
+        <div style={{ marginTop: '5%' }}>Date Completed:</div>
+        <DateSelector onChange={(value) => props.handleTaskCompletedDateChange(value)} type="date" />
       </div>
     );
 
@@ -41,15 +42,21 @@ const TaskCompletedDatePicker = (props) => {
     }
   };
 
-  return <>
-    <ReactSelectDropdown
-      label="Date filter parameters"
-      options={dateDropdownMap}
-      onChangeMethod={props.onChangeMethod} />
-    {getDatePickerElements()}
-    <Button onClick={props.handleTaskCompletedApplyFilter}>Apply filter</Button>
+  return <div id="dropdown">
+    <div style={{ marginLeft: '5%', marginRight: '5%' }}>
+      <ReactSelectDropdown
+        label="Date filter parameters"
+        options={dateDropdownMap}
+        onChangeMethod={props.onChangeMethod} />
+    </div>
 
-  </>;
+    <div style={{ width: '100%', margin: 'auto' }}>
+      {getDatePickerElements()}
+    </div>
+    <div style={{ margin: '10px 20px', display: 'flex', justifyContent: 'end', width: '190px' }}>
+      <Button onClick={props.handleTaskCompletedApplyFilter}>Apply filter</Button>
+    </div>
+  </div>;
 };
 
 TaskCompletedDatePicker.propTypes = {

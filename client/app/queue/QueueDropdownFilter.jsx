@@ -120,28 +120,6 @@ class QueueDropdownFilter extends React.PureComponent {
       }}>
         {this.props.addClearFiltersRow &&
           <div className="cf-filter-option-row">
-            {this.props.isReceiptDateFilter && <ReceiptDatePicker
-              handleDateChange={this.handleDateChange}
-              handleSecondaryDateChange={this.handleSecondaryDateChange}
-              setSelectedValue={this.props.setSelectedValue}
-              handleApplyFilter={this.handleApplyFilter}
-              onChangeMethod={this.setreceiptDateState}
-              receiptDateState={this.state.receiptDateState}
-              receiptDateValues={this.state.receiptDateValues}
-              receiptDateFilterStates={receiptDateFilterStates}
-            /> }
-            {this.props.isTaskCompletedDateFilter && <TaskCompletedDatePicker
-              handleTaskCompletedDateChange={this.handleTaskCompletedDateChange}
-              handleTaskCompletedSecondaryDateChange={this.handleTaskCompletedSecondaryDateChange}
-              setSelectedValue={this.props.setSelectedValue}
-              handleTaskCompletedApplyFilter={this.handleTaskCompletedApplyFilter}
-              onChangeMethod={this.setTaskCompletedDateState}
-              taskCompletedDateState={this.state.taskCompletedDateState}
-              taskCompletedDateValues={this.state.taskCompletedDateValues}
-              taskCompletedDateFilterStates={taskCompletedDateFilterStates}
-            />
-
-            }
             <button className="cf-text-button" onClick={this.props.clearFilters}
               disabled={!this.props.isClearEnabled}>
               <div className="cf-clear-filter-button-wrapper">
@@ -150,11 +128,33 @@ class QueueDropdownFilter extends React.PureComponent {
             </button>
           </div>
         }
+        {this.props.isReceiptDateFilter && <ReceiptDatePicker
+          handleDateChange={this.handleDateChange}
+          handleSecondaryDateChange={this.handleSecondaryDateChange}
+          setSelectedValue={this.props.setSelectedValue}
+          handleApplyFilter={this.handleApplyFilter}
+          onChangeMethod={this.setreceiptDateState}
+          receiptDateState={this.state.receiptDateState}
+          receiptDateValues={this.state.receiptDateValues}
+          receiptDateFilterStates={receiptDateFilterStates}
+        />}
+        {this.props.isTaskCompletedDateFilter && <TaskCompletedDatePicker
+          handleTaskCompletedDateChange={this.handleTaskCompletedDateChange}
+          handleTaskCompletedSecondaryDateChange={this.handleTaskCompletedSecondaryDateChange}
+          setSelectedValue={this.props.setSelectedValue}
+          handleTaskCompletedApplyFilter={this.handleTaskCompletedApplyFilter}
+          onChangeMethod={this.setTaskCompletedDateState}
+          taskCompletedDateState={this.state.taskCompletedDateState}
+          taskCompletedDateValues={this.state.taskCompletedDateValues}
+          taskCompletedDateFilterStates={taskCompletedDateFilterStates}
+        />
+
+        }
         {!(this.props.isReceiptDateFilter || this.props.isTaskCompletedDateFilter) &&
-        React.cloneElement(React.Children.only(children), {
-          dropdownFilterViewListStyle,
-          dropdownFilterViewListItemStyle
-        })}
+          React.cloneElement(React.Children.only(children), {
+            dropdownFilterViewListStyle,
+            dropdownFilterViewListItemStyle
+          })}
       </div>
     </div>;
   }

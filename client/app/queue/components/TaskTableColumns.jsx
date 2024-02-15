@@ -21,7 +21,7 @@ import {
 } from 'app/queue/correspondence/correspondenceReducer/correspondenceActions';
 
 import { taskHasCompletedHold, hasDASRecord, collapseColumn, regionalOfficeCity, renderAppealType } from '../utils';
-import { DateString, daysSinceAssigned, daysSincePlacedOnHold } from '../../util/DateUtil';
+import { daysSinceAssigned, daysSincePlacedOnHold } from '../../util/DateUtil';
 
 import COPY from '../../../COPY';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
@@ -282,7 +282,7 @@ export const vaDor = () => {
   return {
     header: 'VA DOR',
     filterOptions: [],
-    columnName: 'vaDor',
+    columnName: 'Receipt Date',
     name: 'vaDor',
     valueFunction: (task) => {
       return moment(task.vaDor).format('MM/DD/YYYY');
