@@ -1,5 +1,5 @@
 digraph subclasses {
-	graph [bb="0,0,1778.1,6703.5",
+	graph [bb="0,0,1778.1,6856.5",
 		rankdir=LR,
 		splines=line
 	];
@@ -189,6 +189,15 @@ digraph subclasses {
 		];
 	Task -> TrackVeteranTask	[color="#000099",
 		style=dotted];
+	MailTask	[color="#000099",
+		fillcolor="#00ff00",
+		fontcolor="#000099",
+		label=MailTask,
+		shape=record,
+		style=filled,
+		];
+	Task -> MailTask	[color="#000099",
+		style=dotted];
 	PulacCerulloTask	[fillcolor="#00ff00",
 		label=PulacCerulloTask,
 		style=filled,
@@ -251,15 +260,6 @@ digraph subclasses {
 		style=filled,
 		];
 	Task -> ScheduleHearingTask	[color="#000099",
-		style=dotted];
-	MailTask	[color="#000099",
-		fillcolor="#00ff00",
-		fontcolor="#000099",
-		label=MailTask,
-		shape=record,
-		style=filled,
-		];
-	Task -> MailTask	[color="#000099",
 		style=dotted];
 	NoShowHearingTask	[fillcolor="#00ff00",
 		label=NoShowHearingTask,
@@ -582,12 +582,6 @@ digraph subclasses {
 		];
 	ColocatedTask -> PreRoutingColocatedTask	[color="#000099",
 		style=dotted];
-	ChangeHearingDispositionTask	[fillcolor="#00ff00",
-		label=ChangeHearingDispositionTask,
-		style=filled,
-		];
-	AssignHearingDispositionTask -> ChangeHearingDispositionTask	[color="#000099",
-		style=dotted];
 	AddressChangeMailTask	[fillcolor="#00ff00",
 		label=AddressChangeMailTask,
 		style=filled,
@@ -599,6 +593,12 @@ digraph subclasses {
 		style=filled,
 		];
 	MailTask -> AodMotionMailTask	[color="#000099",
+		style=dotted];
+	AppealWithdrawalMailTask	[fillcolor="#00ff00",
+		label=AppealWithdrawalMailTask,
+		style=filled,
+		];
+	MailTask -> AppealWithdrawalMailTask	[color="#000099",
 		style=dotted];
 	CavcCorrespondenceMailTask	[fillcolor="#00ff00",
 		label=CavcCorrespondenceMailTask,
@@ -635,12 +635,6 @@ digraph subclasses {
 		style=filled,
 		];
 	MailTask -> DocketSwitchMailTask	[color="#000099",
-		style=dotted];
-	EvidenceOrArgumentMailTask	[fillcolor="#00ff00",
-		label=EvidenceOrArgumentMailTask,
-		style=filled,
-		];
-	MailTask -> EvidenceOrArgumentMailTask	[color="#000099",
 		style=dotted];
 	ExtensionRequestMailTask	[fillcolor="#00ff00",
 		label=ExtensionRequestMailTask,
@@ -708,11 +702,11 @@ digraph subclasses {
 		];
 	MailTask -> VacateMotionMailTask	[color="#000099",
 		style=dotted];
-	AppealWithdrawalMailTask	[fillcolor="#00ff00",
-		label=AppealWithdrawalMailTask,
+	EvidenceOrArgumentMailTask	[fillcolor="#00ff00",
+		label=EvidenceOrArgumentMailTask,
 		style=filled,
 		];
-	MailTask -> AppealWithdrawalMailTask	[color="#000099",
+	MailTask -> EvidenceOrArgumentMailTask	[color="#000099",
 		style=dotted];
 	HearingRequestMailTask	[color="#000099",
 		fillcolor="#00ff00",
@@ -722,6 +716,12 @@ digraph subclasses {
 		style=filled,
 		];
 	MailTask -> HearingRequestMailTask	[color="#000099",
+		style=dotted];
+	ChangeHearingDispositionTask	[fillcolor="#00ff00",
+		label=ChangeHearingDispositionTask,
+		style=filled,
+		];
+	AssignHearingDispositionTask -> ChangeHearingDispositionTask	[color="#000099",
 		style=dotted];
 	AttorneyRewriteTask	[fillcolor="#00ff00",
 		label=AttorneyRewriteTask,
