@@ -281,7 +281,7 @@ export const vaDor = () => {
   return {
     header: 'VA DOR',
     filterOptions: [],
-    columnName: 'vaDor',
+    columnName: 'Receipt Date',
     name: 'vaDor',
     valueFunction: (task) => {
       return moment(task.vaDor).format('MM/DD/YYYY');
