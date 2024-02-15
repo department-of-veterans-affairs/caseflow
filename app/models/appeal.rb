@@ -911,6 +911,10 @@ class Appeal < DecisionReview
 
   # :reek:FeatureEnvy
   def can_redistribute_appeal?
+    # These tasks are irrelevant because: TrackVeteranTask - Always open for VSO/representative to see case
+    # RootTask - Always open, JudgeAssignTask - The first of these will be canceled as part of redistribution,
+    # DistributionTask - Will be open until distribution is complete,
+    # EvidenceOrArgumentMailTask - created as child of RootTask and doesn't stop DistributionTask from being assigned
     relevant_tasks = tasks.reject do |task|
       task.is_a?(TrackVeteranTask) || task.is_a?(RootTask) ||
         task.is_a?(JudgeAssignTask) || task.is_a?(DistributionTask) ||
