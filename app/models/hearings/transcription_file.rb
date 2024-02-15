@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class TranscriptionFile < CaseflowRecord
-  include BelongsToPolymorphicAppealConcern
-  belongs_to_polymorphic_appeal :appeal
+  include BelongsToPolymorphicHearingConcern
+  belongs_to_polymorphic_hearing :hearing
+
   belongs_to :transcription
   belongs_to :docket
 
