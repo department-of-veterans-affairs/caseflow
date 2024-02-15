@@ -11,7 +11,7 @@ const dateDropdownMap = [
   { value: 3, label: 'On this date' }
 ];
 
-const RecieptDatePicker = (props) => {
+const receiptDatePicker = (props) => {
   const getDatePickerElements = () => {
     const receiptDateFilterStates = props.receiptDateFilterStates;
 
@@ -52,7 +52,7 @@ const RecieptDatePicker = (props) => {
   </>;
 };
 
-RecieptDatePicker.propTypes = {
+receiptDatePicker.propTypes = {
   receiptDateFilterStates: PropTypes.object,
   receiptDateState: PropTypes.number,
   handleApplyFilter: PropTypes.func.isRequired,
@@ -73,4 +73,4 @@ RecieptDatePicker.propTypes = {
   customPlaceholder: PropTypes.string
 };
 
-export default RecieptDatePicker;
+export default receiptDatePicker;

@@ -34,14 +34,14 @@ class QueueDropdownFilter extends React.PureComponent {
     super();
     this.state = {
       rootElemWidth: null,
-      recieptDateState: -1,
+      receiptDateState: -1,
       receiptDatePrimaryValue: '',
       receiptDateSecondaryValue: ''
     };
   }
 
-  setRecieptDateState = (value) => {
-    this.setState({ recieptDateState: value.value });
+  setreceiptDateState = (value) => {
+    this.setState({ receiptDateState: value.value });
   };
 
   handleDateChange = (value) => {
@@ -54,15 +54,15 @@ class QueueDropdownFilter extends React.PureComponent {
   }
 
   handleApplyFilter = () => {
-    if (this.state.recieptDateState === 0) {
+    if (this.state.receiptDateState === 0) {
       this.props.setSelectedValue(
         [
-          this.state.recieptDateState,
+          this.state.receiptDateState,
           this.state.receiptDatePrimaryValue,
           this.state.receiptDateSecondaryValue
         ], 'vaDor');
     } else {
-      this.props.setSelectedValue([this.state.recieptDateState, this.state.receiptDatePrimaryValue], 'vaDor');
+      this.props.setSelectedValue([this.state.receiptDateState, this.state.receiptDatePrimaryValue], 'vaDor');
     }
 
   }
@@ -89,9 +89,9 @@ class QueueDropdownFilter extends React.PureComponent {
               handleSecondaryDateChange={this.handleSecondaryDateChange}
               setSelectedValue={this.props.setSelectedValue}
               handleApplyFilter={this.handleApplyFilter}
-              onChangeMethod={this.setRecieptDateState}
-              receiptDateState={this.state.recieptDateState}
-              recieptDateValues={this.state.recieptDateValues}
+              onChangeMethod={this.setreceiptDateState}
+              receiptDateState={this.state.receiptDateState}
+              receiptDateValues={this.state.receiptDateValues}
               receiptDateFilterStates={receiptDateFilterStates}
             />}
             <button className="cf-text-button" onClick={this.props.clearFilters}
@@ -138,6 +138,8 @@ QueueDropdownFilter.propTypes = {
   handleClose: PropTypes.func,
   addClearFiltersRow: PropTypes.bool,
   name: PropTypes.string,
+  setSelectedValue: PropTypes.func.isRequired,
+  isReceiptDateFilter: PropTypes.func.isRequired
 };
 
 export default QueueDropdownFilter;
