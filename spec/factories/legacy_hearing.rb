@@ -52,7 +52,8 @@ FactoryBot.define do
       hearing.update(
         scheduled_in_timezone: Constants::REGIONAL_OFFICE_INFORMATION.dig(
           evaluator.regional_office, "timezone"
-        ) || "America/New_York" )
+        ) || "America/New_York"
+      )
     end
 
     hearing_day_id { case_hearing.vdkey }
