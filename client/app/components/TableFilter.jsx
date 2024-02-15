@@ -211,7 +211,7 @@ class TableFilter extends React.PureComponent {
           <QueueDropdownFilter
             clearFilters={this.clearFilteredByList}
             isReceiptDateFilter={this.props.isReceiptDateFilter}
-            isDateCompletedFilter={this.props.isDateCompletedFilter}
+            isTaskCompletedDateFilter={this.props.isTaskCompletedDateFilter}
             name={valueName || columnName}
             isClearEnabled={anyFiltersAreSet}
             handleClose={this.toggleDropdown}

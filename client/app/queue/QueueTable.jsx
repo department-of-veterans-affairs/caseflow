@@ -172,7 +172,7 @@ export const HeaderRow = (props) => {
                 updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
                 filteredByList={props.filteredByList}
                 isReceiptDateFilter={column.header === 'VA DOR'}
-                isDateCompletedFilter={column.header === 'Date Completed'}
+                isTaskCompletedDateFilter={column.header === 'Date Completed'}
               />
             );
           }
@@ -772,7 +772,7 @@ export default class QueueTable extends React.PureComponent {
           filteredByList={this.state.filteredByList}
           useTaskPagesApi={useTaskPagesApi}
           isRecieptDateFilter={this.props.isRecieptDateFilter}
-          isDateCompletedFilter={this.props.isDateCompletedFilter}
+          isTaskCompletedDateFilter={this.props.isTaskCompletedDateFilter}
           {...this.state}
         />
         <BodyRows

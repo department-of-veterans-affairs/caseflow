@@ -28,7 +28,13 @@ const receiptDateFilterStates = {
   ON: 3
 };
 
-//    props.setSelectedValue("testVal", "vaDor");
+const taskCompletedDateFilterStates = {
+  UNINITIALIZED: '',
+  BETWEEN: 0,
+  BEFORE: 1,
+  AFTER: 2,
+  ON: 3
+};
 
 class QueueDropdownFilter extends React.PureComponent {
   constructor() {
@@ -37,7 +43,10 @@ class QueueDropdownFilter extends React.PureComponent {
       rootElemWidth: null,
       recieptDateState: -1,
       receiptDatePrimaryValue: '',
-      receiptDateSecondaryValue: ''
+      receiptDateSecondaryValue: '',
+      taskCompletedDateState: -1,
+      taskCompletedDatePrimaryValue: '',
+      taskCompletedDateSecondaryValue: ''
     };
   }
 
@@ -53,9 +62,17 @@ class QueueDropdownFilter extends React.PureComponent {
     this.setState({ receiptDatePrimaryValue: value });
   }
 
+  handleTaskCompletedDateChange = (value) => {
+    this.setState({ taskCompletedDatePrimaryValue: value });
+  }
+
   // Used when the between dates option is selected to store the second date.
   handleSecondaryDateChange = (value) => {
     this.setState({ receiptDateSecondaryValue: value });
+  }
+
+  handleTaskCompletedSecondaryDateChange = (value) => {
+    this.setState({ taskCompletedDateSecondaryValue: value });
   }
 
   handleApplyFilter = () => {
@@ -72,6 +89,19 @@ class QueueDropdownFilter extends React.PureComponent {
       this.props.setSelectedValue([this.state.recieptDateState, this.statereceiptDatePrimaryValue], 'vaDor');
     }
 
+  }
+
+  handleTaskCompletedApplyFilter = () => {
+    if (this.state.taskCompletedDateState === 0) {
+      this.props.setSelectedValue(
+        [
+          this.state.taskCompletedDateState,
+          this.state.taskCompletedDatePrimaryValue,
+          this.state.taskCompletedDateSecondaryValue
+        ], 'completedDateColumn');
+    } else {
+      this.props.setSelectedValue([this.state.taskCompletedDateState, this.state.taskCompletedDatePrimaryValue], 'completedDateColumn');
+    }
   }
 
   render() {
@@ -100,7 +130,19 @@ class QueueDropdownFilter extends React.PureComponent {
               receiptDateState={this.state.recieptDateState}
               recieptDateValues={this.state.recieptDateValues}
               receiptDateFilterStates={receiptDateFilterStates}
-            />}
+            /> }
+            {this.props.isTaskCompletedDateFilter && <TaskCompletedDatePicker
+              handleDateChange={this.handleTaskCompletedDateChange}
+              handleSecondaryDateChange={this.handleTaskCompletedSecondaryDateChange}
+              setSelectedValue={this.props.setSelectedValue}
+              handleApplyFilter={this.handleTaskCompletedApplyFilter}
+              onChangeMethod={this.setTaskCompletedDateState}
+              taskCompletedDateState={this.state.taskCompletedDateState}
+              taskCompletedDateValues={this.state.taskCompletedDateState}
+              taskCompletedDateFilterStates={taskCompletedDateFilterStates}
+            />
+
+            }
             <button className="cf-text-button" onClick={this.props.clearFilters}
               disabled={!this.props.isClearEnabled}>
               <div className="cf-clear-filter-button-wrapper">
@@ -109,7 +151,7 @@ class QueueDropdownFilter extends React.PureComponent {
             </button>
           </div>
         }
-        {!this.props.isReceiptDateFilter && React.cloneElement(React.Children.only(children), {
+        {!(this.props.isReceiptDateFilter || this.props.isTaskCompletedDateFilter) && React.cloneElement(React.Children.only(children), {
           dropdownFilterViewListStyle,
           dropdownFilterViewListItemStyle
         })}
