@@ -10,6 +10,7 @@ import RadioField from '../../../components/RadioField';
 import COPY from '../../../../COPY';
 import Modal from '../../../components/Modal';
 import Button from '../../../components/Button';
+import { Redirect } from 'react-router-dom';
 
 class RemovePackageModal extends React.Component {
 
@@ -104,8 +105,7 @@ class RemovePackageModal extends React.Component {
     ];
 
     if (this.state.updateCancelSuccess) {
-      window.location.href = '/queue/correspondence';
-
+      return <Redirect to="/queue/correspondence" />;
     }
 
     return (

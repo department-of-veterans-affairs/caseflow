@@ -71,8 +71,7 @@ RSpec.feature("The Correspondence Review Package page") do
           status: Constants.TASK_STATUSES.assigned,
           type: "RemovePackageTask"
         }
-        mail_team_org.add_user(mail_team_user)
-        RemovePackageTask.create_from_params(task_params, mail_team_user)
+        ReviewPackageTask.create_from_params(task_params, mail_team_supervisor_user)
         review_package_task.update!(assigned_to: MailTeamSupervisor.singleton, status: :on_hold)
         visit "/queue/correspondence/#{correspondence.uuid}/review_package"
       end
