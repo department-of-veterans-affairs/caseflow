@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import ReactSelectDropdown from '../../../client/app/components/ReactSelectDropdown';
 import DateSelector from './DateSelector';
 import Button from './Button';
@@ -11,32 +12,28 @@ const dateDropdownMap = [
 ];
 
 const TaskCompletedDatePicker = (props) => {
-  const [dateOption, setDateOption] = useState(-1);
-  const handleDateChange = (value) => {
-    setDateOption(value);
-  };
   const getDatePickerElements = () => {
     const taskCompletedDateFilterStates = props.taskCompletedDateFilterStates;
 
     switch (props.taskCompletedDateState) {
     case taskCompletedDateFilterStates.BETWEEN: return (
       <div>
-        <DateSelector onChange={props.handleDateChange} label="from" type="date" />
-        <DateSelector onChange={props.handleSecondaryDateChange} label="to" type="date" />
+        <DateSelector onChange={props.handleTaskCompletedDateChange} label="from" type="date" />
+        <DateSelector onChange={props.handleTaskCompletedSecondaryDateChange} label="to" type="date" />
       </div>);
     case taskCompletedDateFilterStates.BEFORE: return (
       <div>
-        <DateSelector onChange={(value) => handleDateChange(value)} label="To" type="date" />
+        <DateSelector onChange={(value) => props.handleTaskCompletedDateChange(value)} label="To" type="date" />
       </div>
     );
     case taskCompletedDateFilterStates.AFTER: return (
       <div>
-        <DateSelector onChange={(value) => handleDateChange(value)} label="From" type="date" />
+        <DateSelector onChange={(value) => props.handleTaskCompletedDateChange(value)} label="From" type="date" />
       </div>
     );
     case taskCompletedDateFilterStates.ON: return (
       <div>
-        <DateSelector onChange={(value) => handleDateChange(value)} label="On" type="date" />
+        <DateSelector onChange={(value) => props.handleTaskCompletedDateChange(value)} label="On" type="date" />
       </div>
     );
 
@@ -45,11 +42,35 @@ const TaskCompletedDatePicker = (props) => {
   };
 
   return <>
-    <ReactSelectDropdown label="Date filter parameters" options={dateDropdownMap} onChangeMethod={props.onChangeMethod} />
+    <ReactSelectDropdown
+      label="Date filter parameters"
+      options={dateDropdownMap}
+      onChangeMethod={props.onChangeMethod} />
     {getDatePickerElements()}
-    <Button onClick={props.handleApplyFilter}>Apply filter</Button>
+    <Button onClick={props.handleTaskCompletedApplyFilter}>Apply filter</Button>
 
   </>;
+};
+
+TaskCompletedDatePicker.propTypes = {
+  taskCompletedDateFilterStates: PropTypes.object,
+  taskCompletedDateState: PropTypes.number,
+  handleTaskCompletedApplyFilter: PropTypes.func.isRequired,
+  handleTaskCompletedDateChange: PropTypes.func.isRequired,
+  handleTaskCompletedSecondaryDateChange: PropTypes.func.isRequired,
+  onChange: PropTypes.func,
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      displayText: PropTypes.string,
+    })
+  ),
+  defaultValue: PropTypes.object,
+  label: PropTypes.string,
+  onChangeMethod: PropTypes.func,
+  className: PropTypes.string,
+  disabled: PropTypes.bool,
+  customPlaceholder: PropTypes.string
 };
 
 export default TaskCompletedDatePicker;

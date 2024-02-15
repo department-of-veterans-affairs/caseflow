@@ -136,7 +136,7 @@ class QueueDropdownFilter extends React.PureComponent {
               handleApplyFilter={this.handleTaskCompletedApplyFilter}
               onChangeMethod={this.setTaskCompletedDateState}
               taskCompletedDateState={this.state.taskCompletedDateState}
-              taskCompletedDateValues={this.state.taskCompletedDateState}
+              taskCompletedDateValues={this.state.taskCompletedDateValues}
               taskCompletedDateFilterStates={taskCompletedDateFilterStates}
             />
 
