@@ -84,7 +84,16 @@ class QueueDropdownFilter extends React.PureComponent {
       }}>
         {this.props.addClearFiltersRow &&
           <div className="cf-filter-option-row">
-            {this.props.isReceiptDateFilter && <ReceiptDatePicker
+            <button className="cf-text-button" onClick={this.props.clearFilters}
+              disabled={!this.props.isClearEnabled}>
+              <div className="cf-clear-filter-button-wrapper">
+                Clear {displayName} filter
+              </div>
+            </button>
+
+          </div>
+        }
+        {this.props.isReceiptDateFilter && <ReceiptDatePicker
               handleDateChange={this.handleDateChange}
               handleSecondaryDateChange={this.handleSecondaryDateChange}
               setSelectedValue={this.props.setSelectedValue}
@@ -94,14 +103,6 @@ class QueueDropdownFilter extends React.PureComponent {
               receiptDateValues={this.state.receiptDateValues}
               receiptDateFilterStates={receiptDateFilterStates}
             />}
-            <button className="cf-text-button" onClick={this.props.clearFilters}
-              disabled={!this.props.isClearEnabled}>
-              <div className="cf-clear-filter-button-wrapper">
-                Clear {displayName} filter
-              </div>
-            </button>
-          </div>
-        }
         {!this.props.isReceiptDateFilter && React.cloneElement(React.Children.only(children), {
           dropdownFilterViewListStyle,
           dropdownFilterViewListItemStyle
