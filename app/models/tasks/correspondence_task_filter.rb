@@ -5,15 +5,12 @@ class CorrespondenceTaskFilter < TaskFilter
     date_type = date_info.split(",")[0]
     first_date = date_info.split(",")[1]
     second_date = date_info.split(",")[2]
-    puts "info is here" * 5000
-    puts Time.zone.parse(first_date)
-    puts Time.zone.parse(second_date)
-    case date_type
     # case map
     # 0 between these dates
     # 1 before this date
     # 2 after this date
     # 3 on this date
+    case date_type
     when "0"
       tasks.joins(:appeal)
         .where(

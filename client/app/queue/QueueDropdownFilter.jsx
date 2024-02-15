@@ -41,7 +41,7 @@ class QueueDropdownFilter extends React.PureComponent {
     super();
     this.state = {
       rootElemWidth: null,
-      recieptDateState: -1,
+      receiptDateState: -1,
       receiptDatePrimaryValue: '',
       receiptDateSecondaryValue: '',
       taskCompletedDateState: -1,
@@ -50,8 +50,8 @@ class QueueDropdownFilter extends React.PureComponent {
     };
   }
 
-  setRecieptDateState = (value) => {
-    this.setState({ recieptDateState: value.value });
+  setreceiptDateState = (value) => {
+    this.setState({ receiptDateState: value.value });
   };
 
   setTaskCompletedDateState = (value) => {
@@ -76,17 +76,15 @@ class QueueDropdownFilter extends React.PureComponent {
   }
 
   handleApplyFilter = () => {
-    console.log('executed!')
-    if (this.state.recieptDateState === 0) {
-      console.log("executing 0")
+    if (this.state.receiptDateState === 0) {
       this.props.setSelectedValue(
         [
-          this.state.recieptDateState,
+          this.state.receiptDateState,
           this.state.receiptDatePrimaryValue,
           this.state.receiptDateSecondaryValue
         ], 'vaDor');
     } else {
-      this.props.setSelectedValue([this.state.recieptDateState, this.statereceiptDatePrimaryValue], 'vaDor');
+      this.props.setSelectedValue([this.state.receiptDateState, this.state.receiptDatePrimaryValue], 'vaDor');
     }
 
   }
@@ -126,9 +124,9 @@ class QueueDropdownFilter extends React.PureComponent {
               handleSecondaryDateChange={this.handleSecondaryDateChange}
               setSelectedValue={this.props.setSelectedValue}
               handleApplyFilter={this.handleApplyFilter}
-              onChangeMethod={this.setRecieptDateState}
-              receiptDateState={this.state.recieptDateState}
-              recieptDateValues={this.state.recieptDateValues}
+              onChangeMethod={this.setreceiptDateState}
+              receiptDateState={this.state.receiptDateState}
+              receiptDateValues={this.state.receiptDateValues}
               receiptDateFilterStates={receiptDateFilterStates}
             /> }
             {this.props.isTaskCompletedDateFilter && <TaskCompletedDatePicker
@@ -187,6 +185,8 @@ QueueDropdownFilter.propTypes = {
   handleClose: PropTypes.func,
   addClearFiltersRow: PropTypes.bool,
   name: PropTypes.string,
+  setSelectedValue: PropTypes.func.isRequired,
+  isReceiptDateFilter: PropTypes.func.isRequired
 };
 
 export default QueueDropdownFilter;

@@ -242,7 +242,10 @@ export const veteranDetails = () => {
   return {
     header: 'Veteran Details',
     name: QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
+    label: 'Veteran Details',
+    enableFilter: true,
     backendCanSort: true,
+    getSortValue: (task) => task.veteranDetails,
     valueFunction: (task) => {
       if (task.taskUrl === '/modal/reassign_package') {
         return <a
@@ -276,33 +279,12 @@ export const veteranDetails = () => {
   };
 };
 
-export const vaDor = (tasks, filterOptions) => {
-
-  /*
-  header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
-    name: QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
-    enableFilter: true,
-    tableData: tasks,
-    columnName: 'label',
-    anyFiltersAreSet: true,
-    customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
-    filterOptions,
-    label: 'Filter by task',
-    valueName: 'label',
-    */
+export const vaDor = () => {
   return {
     header: 'VA DOR',
-    // tableData: tasks,
     filterOptions: [],
     columnName: 'vaDor',
-    // anyFiltersAreSet: true,
-    // valueName: 'recieptDate',
     name: 'vaDor',
-    // valueName: 'vaDor',
-    // label:'test',
-    // backendCanSort: true,
-    // enableFilter: true,
-    // filterable: true,
     valueFunction: (task) => {
       return moment(task.vaDor).format('MM/DD/YYYY');
     }

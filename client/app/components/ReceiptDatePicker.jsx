@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import ReactSelectDropdown from '../../../client/app/components/ReactSelectDropdown';
 import DateSelector from './DateSelector';
 import Button from './Button';
@@ -10,11 +11,7 @@ const dateDropdownMap = [
   { value: 3, label: 'On this date' }
 ];
 
-const RecieptDatePicker = (props) => {
-  const [dateOption, setDateOption] = useState(-1);
-  const handleDateChange = (value) => {
-    setDateOption(value);
-  };
+const receiptDatePicker = (props) => {
   const getDatePickerElements = () => {
     const receiptDateFilterStates = props.receiptDateFilterStates;
 
@@ -26,17 +23,17 @@ const RecieptDatePicker = (props) => {
       </div>);
     case receiptDateFilterStates.BEFORE: return (
       <div>
-        <DateSelector onChange={(value) => handleDateChange(value)} label="To" type="date" />
+        <DateSelector onChange={(value) => props.handleDateChange(value)} label="To" type="date" />
       </div>
     );
     case receiptDateFilterStates.AFTER: return (
       <div>
-        <DateSelector onChange={(value) => handleDateChange(value)} label="From" type="date" />
+        <DateSelector onChange={(value) => props.handleDateChange(value)} label="From" type="date" />
       </div>
     );
     case receiptDateFilterStates.ON: return (
       <div>
-        <DateSelector onChange={(value) => handleDateChange(value)} label="On" type="date" />
+        <DateSelector onChange={(value) => props.handleDateChange(value)} label="On" type="date" />
       </div>
     );
 
@@ -45,12 +42,35 @@ const RecieptDatePicker = (props) => {
   };
 
   return <>
-    <ReactSelectDropdown label="Date filter parameters" options={dateDropdownMap} onChangeMethod={props.onChangeMethod} />
+    <ReactSelectDropdown
+      label="Date filter parameters"
+      options={dateDropdownMap}
+      onChangeMethod={props.onChangeMethod} />
     {getDatePickerElements()}
-    {/* <Button onClick={() => props.setSelectedValue([props.receiptDateState, dateOption], 'vaDor')}>Apply filter</Button> */}
     <Button onClick={props.handleApplyFilter}>Apply filter</Button>
 
   </>;
 };
 
-export default RecieptDatePicker;
+receiptDatePicker.propTypes = {
+  receiptDateFilterStates: PropTypes.object,
+  receiptDateState: PropTypes.number,
+  handleApplyFilter: PropTypes.func.isRequired,
+  handleDateChange: PropTypes.func.isRequired,
+  handleSecondaryDateChange: PropTypes.func.isRequired,
+  onChange: PropTypes.func,
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      displayText: PropTypes.string,
+    })
+  ),
+  defaultValue: PropTypes.object,
+  label: PropTypes.string,
+  onChangeMethod: PropTypes.func,
+  className: PropTypes.string,
+  disabled: PropTypes.bool,
+  customPlaceholder: PropTypes.string
+};
+
+export default receiptDatePicker;
