@@ -153,8 +153,8 @@ class TranscriptionTransformer
     length_string = "#{(length / 3600).floor}:#{(length / 60 % 60).floor}:#{(length % 60).floor}"
     CSV.open(path, "w") do |writer|
       writer << header
-      writer << [length_string, hearing_info[:appeal_id], hearing_info[:date].strftime("%m/%d/%Y"),
-                 hearing_info[:judge].upcase, "#{count} inaudible", filename]
+      writer << [length_string, hearing_info[:appeal_id], hearing_info[:date]&.strftime("%m/%d/%Y"),
+                 hearing_info[:judge]&.upcase, "#{count} inaudible", filename]
     end
     path
   end
