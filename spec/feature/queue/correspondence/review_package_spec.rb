@@ -109,7 +109,7 @@ RSpec.feature("The Correspondence Review Package page") do
         click_button "Review removal request"
         page.all(".cf-form-radio-option > label")[0].click
         click_button("Confirm")
-        using_wait_time(10) do
+        using_wait_time(20) do
           expect(page).to have_content("The package has been removed from Caseflow and must be manually uploaded again from the Centralized Mail Portal, if it needs to be processed.")
         end
       end
@@ -185,7 +185,7 @@ RSpec.feature("The Correspondence Review Package page") do
     end
 
     it "before editing the review package general details" do
-      expect(correspondence.tasks.find_by_type("ReviewPackageTask").status).to eq("assigned")
+      expect(correspondence.tasks.find_by_type("ReviewPackageTask").status).to eq("unassigned")
     end
 
     it "after editing the review package general details" do

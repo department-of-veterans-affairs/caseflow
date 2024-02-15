@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import { setFileNumberSearch, doFileNumberSearch } from '../../../intake/actions/intake';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { useHistory } from 'react-router';
 import PackageActionModal from '../modals/PackageActionModal';
 import ReviewPackageNotificationBanner from './ReviewPackageNotificationBanner';
 import {
@@ -42,7 +41,6 @@ export const CorrespondenceReviewPackage = (props) => {
   // {  title: ,  message: ,  bannerType: }
   const [bannerInformation, setBannerInformation] = useState(null);
 
-  const history = useHistory();
   const fetchData = async () => {
     const correspondence = props;
 
