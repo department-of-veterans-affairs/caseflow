@@ -44,7 +44,7 @@ RSpec.feature "Audit Lever History Table" do
              case_distribution_lever: alternate_batch_size_lever,
              previous_value: 7,
              update_value: 6,
-             created_at: Time.zone.now + 1.hour)
+             created_at: Time.zone.now - 1.minute)
 
       visit "case-distribution-controls"
       confirm_page_and_section_loaded

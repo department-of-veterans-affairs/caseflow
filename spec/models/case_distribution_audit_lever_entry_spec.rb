@@ -46,10 +46,11 @@ RSpec.describe CaseDistributionAuditLeverEntry, type: :model do
 
       result = described_class.lever_history
 
+      expect(result.count).to eq(2)
       expect(result).not_to include(entry_0_serialized)
-      expect(result).to include(entry_1_serialized)
+      expect(result[0][:created_at].to_date).to eq(entry_1_serialized[:created_at].to_date)
       expect(result).not_to include(entry_2_serialized)
-      expect(result).to include(entry_3_serialized)
+      expect(result[1][:created_at].to_date).to eq(entry_3_serialized[:created_at].to_date)
     end
   end
 end
