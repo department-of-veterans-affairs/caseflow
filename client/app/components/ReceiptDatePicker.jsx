@@ -10,25 +10,19 @@ const dateDropdownMap = [
   { value: 3, label: 'On this date' }
 ];
 
-const receiptDateFilterStates = {
-  UNINITIALIZED: '',
-  BETWEEN: 0,
-  BEFORE: 1,
-  AFTER: 2,
-  ON: 3
-};
-
 const RecieptDatePicker = (props) => {
   const [dateOption, setDateOption] = useState(-1);
   const handleDateChange = (value) => {
     setDateOption(value);
-  }
+  };
   const getDatePickerElements = () => {
+    const receiptDateFilterStates = props.receiptDateFilterStates;
+
     switch (props.receiptDateState) {
     case receiptDateFilterStates.BETWEEN: return (
       <div>
-        <DateSelector label="from" type="date" />
-        <DateSelector label="to" type="date" />
+        <DateSelector onChange={props.handleDateChange} label="from" type="date" />
+        <DateSelector onChange={props.handleSecondaryDateChange} label="to" type="date" />
       </div>);
     case receiptDateFilterStates.BEFORE: return (
       <div>
@@ -51,9 +45,11 @@ const RecieptDatePicker = (props) => {
   };
 
   return <>
-    <ReactSelectDropdown label={'Date filter parameters'} options={dateDropdownMap} onChangeMethod={props.onChangeMethod} />
+    <ReactSelectDropdown label="Date filter parameters" options={dateDropdownMap} onChangeMethod={props.onChangeMethod} />
     {getDatePickerElements()}
-    <Button onClick={() => props.setSelectedValue([props.receiptDateState, dateOption], "vaDor")}>Apply filter</Button>
+    {/* <Button onClick={() => props.setSelectedValue([props.receiptDateState, dateOption], 'vaDor')}>Apply filter</Button> */}
+    <Button onClick={props.handleApplyFilter}>Apply filter</Button>
+
   </>;
 };
 

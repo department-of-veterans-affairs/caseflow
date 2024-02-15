@@ -19,22 +19,55 @@ const dropdownFilterViewListItemStyle = css(
   }
 );
 
+const receiptDateFilterStates = {
+  UNINITIALIZED: '',
+  BETWEEN: 0,
+  BEFORE: 1,
+  AFTER: 2,
+  ON: 3
+};
+
 //    props.setSelectedValue("testVal", "vaDor");
-
-
 
 class QueueDropdownFilter extends React.PureComponent {
   constructor() {
     super();
     this.state = {
       rootElemWidth: null,
-      recieptDateState: -1
+      recieptDateState: -1,
+      receiptDatePrimaryValue: '',
+      receiptDateSecondaryValue: ''
     };
   }
 
   setRecieptDateState = (value) => {
     this.setState({ recieptDateState: value.value });
   };
+
+  handleDateChange = (value) => {
+    this.setState({ receiptDatePrimaryValue: value });
+  }
+
+  // Used when the between dates option is selected to store the second date.
+  handleSecondaryDateChange = (value) => {
+    this.setState({ receiptDateSecondaryValue: value });
+  }
+
+  handleApplyFilter = () => {
+    console.log('executed!')
+    if (this.state.recieptDateState === 0) {
+      console.log("executing 0")
+      this.props.setSelectedValue(
+        [
+          this.state.recieptDateState,
+          this.state.receiptDatePrimaryValue,
+          this.state.receiptDateSecondaryValue
+        ], 'vaDor');
+    } else {
+      this.props.setSelectedValue([this.state.recieptDateState, this.statereceiptDatePrimaryValue], 'vaDor');
+    }
+
+  }
 
   render() {
     const { children, name } = this.props;
@@ -53,8 +86,16 @@ class QueueDropdownFilter extends React.PureComponent {
       }}>
         {this.props.addClearFiltersRow &&
           <div className="cf-filter-option-row">
-            {this.props.isReceiptDateFilter && <ReceiptDatePicker setSelectedValue={this.props.setSelectedValue}
-              onChangeMethod={this.setRecieptDateState} receiptDateState={this.state.recieptDateState}/>}
+            {this.props.isReceiptDateFilter && <ReceiptDatePicker
+              handleDateChange={this.handleDateChange}
+              handleSecondaryDateChange={this.handleSecondaryDateChange}
+              setSelectedValue={this.props.setSelectedValue}
+              handleApplyFilter={this.handleApplyFilter}
+              onChangeMethod={this.setRecieptDateState}
+              receiptDateState={this.state.recieptDateState}
+              recieptDateValues={this.state.recieptDateValues}
+              receiptDateFilterStates={receiptDateFilterStates}
+            />}
             <button className="cf-text-button" onClick={this.props.clearFilters}
               disabled={!this.props.isClearEnabled}>
               <div className="cf-clear-filter-button-wrapper">
