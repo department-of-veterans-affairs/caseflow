@@ -228,7 +228,7 @@ export const assignedByColumn = () => {
   };
 };
 
-export const veteranDetails = (tasks) => {
+export const veteranDetails = () => {
   const dispatch = useDispatch();
 
   const showReassignPackageModal = () => {
@@ -277,7 +277,7 @@ export const veteranDetails = (tasks) => {
   };
 };
 
-export const vaDor = (tasks, filterOptions) => {
+export const vaDor = () => {
   return {
     header: 'VA DOR',
     filterOptions: [],

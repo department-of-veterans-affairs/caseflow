@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import ReactSelectDropdown from '../../../client/app/components/ReactSelectDropdown';
 import DateSelector from './DateSelector';
 import Button from './Button';
@@ -11,10 +12,6 @@ const dateDropdownMap = [
 ];
 
 const RecieptDatePicker = (props) => {
-  const [dateOption, setDateOption] = useState(-1);
-  const handleDateChange = (value) => {
-    setDateOption(value);
-  };
   const getDatePickerElements = () => {
     const receiptDateFilterStates = props.receiptDateFilterStates;
 
@@ -45,11 +42,35 @@ const RecieptDatePicker = (props) => {
   };
 
   return <>
-    <ReactSelectDropdown label="Date filter parameters" options={dateDropdownMap} onChangeMethod={props.onChangeMethod} />
+    <ReactSelectDropdown
+      label="Date filter parameters"
+      options={dateDropdownMap}
+      onChangeMethod={props.onChangeMethod} />
     {getDatePickerElements()}
     <Button onClick={props.handleApplyFilter}>Apply filter</Button>
 
   </>;
+};
+
+RecieptDatePicker.propTypes = {
+  receiptDateFilterStates: PropTypes.object,
+  receiptDateState: PropTypes.number,
+  handleApplyFilter: PropTypes.func.isRequired,
+  handleDateChange: PropTypes.func.isRequired,
+  handleSecondaryDateChange: PropTypes.func.isRequired,
+  onChange: PropTypes.func,
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      displayText: PropTypes.string,
+    })
+  ),
+  defaultValue: PropTypes.object,
+  label: PropTypes.string,
+  onChangeMethod: PropTypes.func,
+  className: PropTypes.string,
+  disabled: PropTypes.bool,
+  customPlaceholder: PropTypes.string
 };
 
 export default RecieptDatePicker;
