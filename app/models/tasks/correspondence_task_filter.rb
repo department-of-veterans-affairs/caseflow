@@ -2,18 +2,22 @@ class CorrespondenceTaskFilter < TaskFilter
 
   def filter_by_va_dor(date_info)
 
-    #0 between
-    #1  (before this date)
-    #2  (after this date)
-    #3 on
     date_type = date_info.split(",")[0]
     first_date = date_info.split(",")[1]
     second_date = date_info.split(",")[2]
+    puts "info is here" * 5000
+    puts Time.zone.parse(first_date)
+    puts Time.zone.parse(second_date)
     case date_type
+    # case map
+    # 0 between these dates
+    # 1 before this date
+    # 2 after this date
+    # 3 on this date
     when "0"
       tasks.joins(:appeal)
         .where(
-          "correspondences.va_date_of_receipt < ? AND correspondence.va_date_of_receipt > ?",
+          "correspondences.va_date_of_receipt > ? AND correspondences.va_date_of_receipt < ?",
           Time.zone.parse(first_date),
           Time.zone.parse(second_date)
         )
@@ -22,7 +26,6 @@ class CorrespondenceTaskFilter < TaskFilter
     when "2"
       tasks.joins(:appeal).where("correspondences.va_date_of_receipt > ?", Time.zone.parse(first_date))
     when "3"
-      # binding.pry
       tasks.joins(:appeal).where("DATE(correspondences.va_date_of_receipt) = (?)", Time.zone.parse(first_date))
     end
   end
