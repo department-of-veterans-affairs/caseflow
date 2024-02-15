@@ -11,6 +11,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
 
   queue_with_priority :low_priority
+  application_attr :hearing_schedule
 
   attr_reader :file_name, :transcription_file
 
@@ -29,7 +30,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   end
 
   retry_on(TranscriptionTransformer::FileConversionError, wait: 10.seconds) do |job, exception|
-    job.build_csv_and_upload_to_s3(exception)
+    job.build_csv_and_upload_to_s3!(exception)
     job.transcription_file.clean_up_tmp_location
     # TO IMPLEMENT: SEND EMAIL TO VA OPS TEAM
     job.log_error(exception)
@@ -49,9 +50,9 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     @transcription_file = find_or_create_transcription_file
     ensure_hearing_held
 
-    download_file_to_tmp(download_link)
-    @transcription_file.upload_to_s3 if @transcription_file.date_upload_aws.nil?
-    maybe_convert_vtt_to_rtf_and_upload_to_s3
+    download_file_to_tmp!(download_link)
+    @transcription_file.upload_to_s3! if @transcription_file.date_upload_aws.nil?
+    convert_to_rtf_and_upload_to_s3! if @transcription_file.file_type == "vtt"
     @transcription_file.clean_up_tmp_location
   end
 
@@ -76,10 +77,10 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   #          Uploads csv file to S3.
   #
   # Params: exception - Error object
-  def build_csv_and_upload_to_s3(exception)
+  def build_csv_and_upload_to_s3!(exception)
     build_csv_from_error(exception)
     csv_file = find_or_create_transcription_file(file_name.gsub("vtt", "csv"))
-    csv_file.upload_to_s3
+    csv_file.upload_to_s3!
     csv_file.clean_up_tmp_location
   end
 
@@ -92,16 +93,16 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   #         file_name - string, to be parsed for appeal/hearing identifiers
   #
   # Returns: Updated @transcription_file
-  def download_file_to_tmp(link)
+  def download_file_to_tmp!(link)
     return if File.exist?(@transcription_file.tmp_location)
 
     URI(link).open do |download|
       IO.copy_stream(download, @transcription_file.tmp_location)
     end
-    @transcription_file.update_download_status!(:success)
+    @transcription_file.update_status!(process: :retrieval, status: :success)
     log_info("File #{file_name} successfully downloaded from Webex. Uploading to S3...")
   rescue OpenURI::HTTPError => error
-    @transcription_file.update_download_status!(:failure)
+    @transcription_file.update_status!(process: :retrieval, status: :failure)
     @transcription_file.clean_up_tmp_location
     raise FileDownloadError, "Webex temporary download link responded with error: #{error}"
   end
@@ -163,17 +164,18 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     raise FileNameError, error
   end
 
-  # Purpose: If file is vtt, converts to rtf and uploads the rtf file to S3. If any errors, builds xls/csv file to
-  #          record error and uploads error file to S3.
-  def maybe_convert_vtt_to_rtf_and_upload_to_s3
-    return unless @transcription_file.file_type == "vtt"
-
+  # Purpose: Converts vtt to rtf, creates new record for converted transcription file, and uploads
+  #          converted file to S3
+  #
+  # Returns: integer value of 1 if tmp file deleted after successful upload
+  def convert_to_rtf_and_upload_to_s3!
     log_info("Converting file #{file_name} to rtf...")
-    rtf_file_path = @transcription_file.convert_to_rtf
+    rtf_file_path = @transcription_file.convert_to_rtf!
     file_name = rtf_file_path.split("/").last
     rtf_file = find_or_create_transcription_file(file_name)
+
     log_info("Successfully converted #{file_name} to rtf. Uploading to S3...")
-    rtf_file.upload_to_s3
+    rtf_file.upload_to_s3!
     rtf_file.clean_up_tmp_location
   end
 
