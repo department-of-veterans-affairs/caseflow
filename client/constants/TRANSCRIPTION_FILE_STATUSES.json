@@ -3,12 +3,12 @@
     "success": "Successful retrieval (Webex)",
     "failure": "Failed retrieval (Webex)"
   },
-  "conversion": {
-    "success": "Successful conversion",
-    "failure": "Failed conversion"
-  },
   "upload": {
     "success": "Successful upload (AWS)",
     "failure": "Failed upload (AWS)"
+  },
+  "conversion": {
+    "success": "Successful conversion",
+    "failure": "Failed conversion"
   }
 }
