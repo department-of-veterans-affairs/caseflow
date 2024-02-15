@@ -154,7 +154,6 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   def maybe_convert_vtt_to_rtf_and_upload_to_s3
     return unless @transcription_file.file_type == "vtt"
 
-
     hearing_info = {
       judge: hearing.judge&.full_name,
       appeal_id: hearing.appeal&.veteran_file_number,

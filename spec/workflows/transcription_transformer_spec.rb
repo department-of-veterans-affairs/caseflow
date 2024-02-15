@@ -5,6 +5,10 @@ require "rails_helper"
 describe TranscriptionTransformer do
   let(:hearing_info) { { date: Time.zone.today, judge: "John Smith", appeal_id: "100000001" } }
   let(:subject) { transformer.call }
+  let(:file_name) { ["foo", ".vtt"] }
+  let(:file) { Tempfile.new(file_name) }
+  let(:rtf_path) { file.path.gsub("vtt", "rtf") }
+  let(:csv_path) { file.path.gsub("vtt", "csv") }
 
   describe "#call" do
     context "errors" do
@@ -28,12 +32,27 @@ describe TranscriptionTransformer do
     end
   end
 
+  context "file already exists" do
+    let(:transformer) { TranscriptionTransformer.new(file.path, hearing_info) }
+    before do
+      File.open(rtf_path, "w")
+    end
+
+    it "will only return the existing rtf path without processing" do
+      expect(WebVTT).to_not receive(:read)
+      expect(subject).to eq([rtf_path])
+    end
+
+    it "will only return the existing csv path without processing" do
+      File.open(csv_path, "w")
+      expect(transformer).to_not receive(:build_csv)
+      expect(subject).to eq([rtf_path, csv_path])
+    end
+  end
+
   describe "successful conversion" do
-    let(:file_name) { ["foo", ".vtt"] }
-    let(:file) { Tempfile.new(file_name) }
     let(:transformer) { TranscriptionTransformer.new(file.path, hearing_info) }
     let(:doc) { RTF::Document.new(RTF::Font.new(RTF::Font::ROMAN, "Times New Roman")) }
-    let(:rtf_path) { file.path.gsub("vtt", "rtf") }
 
     before do
       allow_any_instance_of(TranscriptionTransformer).to receive(:convert_to_rtf).and_return(rtf_path)
@@ -46,8 +65,6 @@ describe TranscriptionTransformer do
     end
 
     describe "csv creation" do
-      let(:csv_path) { file.path.gsub("vtt", "csv") }
-
       it "will not create csv if no errors detected" do
         expect(transformer).to_not receive(:build_csv)
         expect(subject).to eq([rtf_path])

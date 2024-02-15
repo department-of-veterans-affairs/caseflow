@@ -17,7 +17,12 @@ class TranscriptionTransformer
 
   def call
     paths = [convert_to_rtf(@vtt_path)]
-    paths.push(build_csv(@vtt_path, @error_count, @length, @hearing_info)) if @error_count > 0
+    csv_path = @vtt_path.gsub("vtt", "csv")
+    if File.exist?(csv_path)
+      paths.push(csv_path)
+    elsif @error_count > 0
+      paths.push(build_csv(csv_path, @error_count, @length, @hearing_info))
+    end
     paths
   end
 
@@ -143,18 +148,15 @@ class TranscriptionTransformer
   #         hearing_info - object containing info about the hearing
   # Returns the created csv
   def build_csv(path, count, length, hearing_info)
-    csv_path = path.gsub("vtt", "csv")
-    return csv_path if File.exist?(csv_path)
-
-    filename = csv_path.split("/").last.sub(".csv", "")
+    filename = path.split("/").last.sub(".csv", "")
     header = %w[length appeal_id hearing_date judge issues filename]
     length_string = "#{(length / 3600).floor}:#{(length / 60 % 60).floor}:#{(length % 60).floor}"
-    CSV.open(csv_path, "w") do |writer|
+    CSV.open(path, "w") do |writer|
       writer << header
       writer << [length_string, hearing_info[:appeal_id], hearing_info[:date].strftime("%m/%d/%Y"),
                  hearing_info[:judge].upcase, "#{count} inaudible", filename]
     end
-    csv_path
+    path
   end
 
   # rubocop:disable Metrics/MethodLength
