@@ -196,8 +196,8 @@ export const ConfirmCorrespondenceView = (props) => {
               </tbody>
               { Object.keys(responseLetters)?.map((indexValue) => {
                 const responseLetter = responseLetters[indexValue];
-                let responseDate = new Date(responseLetter?.date);
-                
+                const responseDate = new Date(responseLetter?.date);
+
                 return (
                   <tbody key={indexValue}>
                     <tr>

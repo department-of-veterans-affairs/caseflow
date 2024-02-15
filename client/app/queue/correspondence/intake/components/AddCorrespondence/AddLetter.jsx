@@ -16,7 +16,7 @@ import {
 export const AddLetter = (props) => {
   const onContinueStatusChange = props.onContinueStatusChange;
 
-  let responseLetters = useSelector((state) => state.intakeCorrespondence.responseLetters)
+  const responseLetters = useSelector((state) => state.intakeCorrespondence.responseLetters);
 
   const [letters, setLetters] = useState(Object.keys(responseLetters));
 
@@ -37,29 +37,27 @@ export const AddLetter = (props) => {
   }, [unrelatedTasksCanContinue]);
 
   useEffect(() => {
-    // if canContinue() {
-    //   setUnrelatedTasksCanContinue(true);
-    // } else {
     if (letters.length > 0) {
       setUnrelatedTasksCanContinue(false);
     } else {
       setUnrelatedTasksCanContinue(true);
     }
-    // }
   }, [letters]);
+
   return (
     <>
       {letters.map((letter) => {
         return (
-        <div id={letter} style={{ width: '50%', display: 'inline-block' }} key={letter}>
-          <NewLetter
-            index={letter}
-            removeLetter={removeLetter}
-            setUnrelatedTasksCanContinue= {setUnrelatedTasksCanContinue}
-            currentLetter = { responseLetters && responseLetters[letter] }
-          />
-        </div>
-      )})}
+          <div id={letter} style={{ width: '50%', display: 'inline-block' }} key={letter}>
+            <NewLetter
+              index={letter}
+              removeLetter={removeLetter}
+              setUnrelatedTasksCanContinue= {setUnrelatedTasksCanContinue}
+              currentLetter = {responseLetters && responseLetters[letter]}
+            />
+          </div>
+        );
+      })}
 
       <div style={{ width: '80%', marginBottom: '30px' }}>
         <Button
@@ -74,7 +72,6 @@ export const AddLetter = (props) => {
         </Button>
       </div>
     </>
-
   );
 };
 
@@ -84,14 +81,13 @@ AddLetter.propTypes = {
   setUnrelatedTasksCanContinue: PropTypes.func,
   onContinueStatusChange: PropTypes.func,
 };
-
 const currentDate = moment.utc(new Date()).format('YYYY-MM-DD');
 const NewLetter = (props) => {
   const index = props.index;
-  const currentLetter = props.currentLetter
+  const currentLetter = props.currentLetter;
   const letterHash = {};
   const setUnrelatedTasksCanContinue = props.setUnrelatedTasksCanContinue;
-  const displayLetter = (currentLetter !== undefined)
+  const displayLetter = (typeof currentLetter !== 'undefined');
   const [letterCard, setLetterCard] = useState({
     id: index,
     date: currentDate,
@@ -102,11 +98,10 @@ const NewLetter = (props) => {
     responseWindows: displayLetter ? currentLetter.responseWindows : '',
     customValue: displayLetter ? currentLetter.customValue : ''
   });
-
   const [letterTitleSelector, setLetterTitleSelector] = useState('');
   const [letterSubSelector, setLetterSubSelector] = useState('');
   const [letterSubReason, setLetterSubReason] = useState('');
-  let customResponseVal = (displayLetter && currentLetter?.customValue > 0) ? true : false
+  const customResponseVal = Boolean(displayLetter && currentLetter?.customValue > 0);
   const [customResponseWindowState, setCustomResponseWindowState] = useState(customResponseVal);
 
   const [stateOptions, setStateOptions] = useState(true);
@@ -158,8 +153,11 @@ const NewLetter = (props) => {
 
   const selectResponseWindows = (option, aux) => {
     if (option.response_window_option_default) {
-      let responseWindowsValue = displayLetter ? currentLetter.responseWindows : option.response_window_option_default 
+      let responseWindowsValue = option.response_window_option_default;
 
+      if (displayLetter) {
+        responseWindowsValue = currentLetter.responseWindows;
+      }
       setLetterCard({ ...letterCard,
         responseWindows: responseWindowsValue });
       setResponseWindows(responseWindowsValue);
@@ -411,7 +409,6 @@ const NewLetter = (props) => {
         value = {responseWindows}
         onChange={(val) => handleCustomWindowState(val)}
       />
-
       { customResponseWindowState &&
         <TextField
           label="Number of days (Value must be between 1 and 64)"
@@ -443,7 +440,8 @@ NewLetter.propTypes = {
   setLetterTitle: PropTypes.func,
   setResponseLetters: PropTypes.func,
   setUnrelatedTasksCanContinue: PropTypes.func,
-  onContinueStatusChange: PropTypes.func
+  onContinueStatusChange: PropTypes.func,
+  currentLetter: PropTypes.func
 };
 
 const mapDispatchToProps = (dispatch) => (
