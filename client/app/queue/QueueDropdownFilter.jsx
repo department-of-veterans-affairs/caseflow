@@ -4,7 +4,7 @@ import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import { css } from 'glamor';
 import { startCase } from 'lodash';
 import ReceiptDatePicker from '../components/ReceiptDatePicker';
-import TaskCompletedDatePicker from '../components/taskCompletedDatePicker';
+import TaskCompletedDatePicker from '../components/TaskCompletedDatePicker';
 
 const dropdownFilterViewListStyle = css({
   margin: 0
@@ -98,7 +98,8 @@ class QueueDropdownFilter extends React.PureComponent {
           this.state.taskCompletedDateSecondaryValue
         ], 'completedDateColumn');
     } else {
-      this.props.setSelectedValue([this.state.taskCompletedDateState, this.state.taskCompletedDatePrimaryValue], 'completedDateColumn');
+      this.props.setSelectedValue([this.state.taskCompletedDateState, this.state.taskCompletedDatePrimaryValue],
+        'completedDateColumn');
     }
   }
 
@@ -149,7 +150,8 @@ class QueueDropdownFilter extends React.PureComponent {
             </button>
           </div>
         }
-        {!(this.props.isReceiptDateFilter || this.props.isTaskCompletedDateFilter) && React.cloneElement(React.Children.only(children), {
+        {!(this.props.isReceiptDateFilter || this.props.isTaskCompletedDateFilter) &&
+        React.cloneElement(React.Children.only(children), {
           dropdownFilterViewListStyle,
           dropdownFilterViewListItemStyle
         })}

@@ -275,7 +275,6 @@ export const veteranDetails = () => {
         {task.veteranDetails}
       </a>;
     },
-    getSortValue: (task) => task.veteranDetails
   };
 };
 

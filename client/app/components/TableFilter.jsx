@@ -234,6 +234,7 @@ TableFilter.defaultProps = {
 
 TableFilter.propTypes = {
   isReceiptDateFilter: PropTypes.bool,
+  isTaskCompletedDateFilter: PropTypes.bool,
   enableFilter: PropTypes.bool,
   enableFilterTextTransform: PropTypes.bool,
   getFilterIconRef: PropTypes.func,

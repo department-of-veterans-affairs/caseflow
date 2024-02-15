@@ -850,7 +850,8 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   onHistoryUpdate: PropTypes.func,
   preserveFilter: PropTypes.bool,
   isCorrespondenceTable: PropTypes.bool,
-  isReceiptDateFilter: PropTypes.bool.isRequired
+  isReceiptDateFilter: PropTypes.bool.isRequired,
+  isTaskCompletedDateFilter: PropTypes.bool.isRequired
 };
 
 Row.propTypes.rowObjects = PropTypes.arrayOf(PropTypes.object);
