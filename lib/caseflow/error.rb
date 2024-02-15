@@ -487,6 +487,4 @@ module Caseflow::Error
       true
     end
   end
-
-  class FileConversionError < StandardError; end
 end

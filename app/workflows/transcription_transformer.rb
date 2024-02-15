@@ -5,6 +5,8 @@ require "rtf"
 
 # Workflow for converting VTT transcription files to RTF
 class TranscriptionTransformer
+  class FileConversionError < StandardError; end
+
   def initialize(vtt_path)
     @vtt_path = vtt_path
     @rtf_path = vtt_path.gsub("vtt", "rtf")
@@ -35,9 +37,9 @@ class TranscriptionTransformer
       File.open(@rtf_path, "w") { |file| file.write(raw_doc) }
       @rtf_path
     rescue StandardError
-      raise Caseflow::Error::FileConversionError
+      raise FileConversionError
     end
-end
+  end
 
   # Create cover page
   # document - the document object

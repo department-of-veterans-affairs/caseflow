@@ -15,11 +15,6 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
 
   attr_reader :file_name, :transcription_file
 
-  CONVERSION_MAP = {
-    vtt: "rtf",
-    mp4: "mp3"
-  }.freeze
-
   class FileNameError < StandardError; end
   class FileDownloadError < StandardError; end
   class HearingAssociationError < StandardError; end
@@ -34,7 +29,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     job.log_error(exception)
   end
 
-  retry_on(Caseflow::Error::FileConversionError, wait: 10.seconds) do |job, exception|
+  retry_on(TranscriptionTransformer::FileConversionError, wait: 10.seconds) do |job, exception|
     job.build_csv_and_upload_to_s3!(exception)
     job.transcription_file.clean_up_tmp_location
     # TO IMPLEMENT: SEND EMAIL TO VA OPS TEAM
@@ -49,16 +44,15 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   # Purpose: Downloads audio (mp3), video (mp4), or transcript (vtt) file from Webex temporary download link and
   #          uploads the file to corresponding S3 loccation. If file is vtt, kicks off conversion of vtt to rtf
   #          and uploads rtf file to S3.
-  def perform(download_link:, file_name:, conversion_needed: false)
+  def perform(download_link:, file_name:)
     ensure_current_user_is_set
     @file_name = file_name
-    @conversion_needed = conversion_needed
     @transcription_file = find_or_create_transcription_file
     ensure_hearing_held
 
     download_file_to_tmp!(download_link)
     @transcription_file.upload_to_s3! if @transcription_file.date_upload_aws.nil?
-    convert_file_and_upload_to_s3! if conversion_request_valid?
+    convert_to_rtf_and_upload_to_s3! if raw_file_type == "vtt"
     @transcription_file.clean_up_tmp_location
   end
 
@@ -177,46 +171,19 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     @raw_file_type ||= @transcription_file.file_type
   end
 
-  # Purpose: File type of transcription_file after conversion, if conversion necessary
-  #
-  # Returns: string, file type or nil
-  def conversion_type
-    @conversion_type ||= (CONVERSION_MAP || {})[raw_file_type.to_sym]
-  end
-
-  # Purpose: Determines if job should proceed with conversion and prevents accidental conversion request of
-  #          unconvertible file type
-  #
-  # Returns: boolean
-  def conversion_request_valid?
-    raw_file_type == "vtt" || (@conversion_needed && conversion_type.present?)
-  end
-
-  # Purpose: Converts raw transcription file, creates new record for converted transcription file, and uploads
+  # Purpose: Converts vtt to rtf, creates new record for converted transcription file, and uploads
   #          converted file to S3
   #
   # Returns: integer value of 1 if tmp file deleted after successful upload
-  def convert_file_and_upload_to_s3!
-    log_info("Converting file #{file_name} to #{conversion_type}...")
-    output_path = convert_file
-    converted_file_name = output_path.split("/").last
-    converted_file = find_or_create_transcription_file(converted_file_name)
+  def convert_to_rtf_and_upload_to_s3!
+    log_info("Converting file #{file_name} to rtf...")
+    rtf_file_path = @transcription_file.convert_to_rtf!
+    file_name = rtf_file_path.split("/").last
+    rtf_file = find_or_create_transcription_file(file_name)
 
-    log_info("Successfully converted #{file_name} to #{conversion_type}. Uploading to S3...")
-    converted_file.upload_to_s3!
-    converted_file.clean_up_tmp_location
-  end
-
-  # Purpose: Converts transcription file to appropriate file type
-  #
-  # Returns: string, output path of successfully converted file
-  def convert_file
-    case raw_file_type
-    when "vtt"
-      @transcription_file.convert_to_rtf!
-    when "mp4"
-      @transcription_file.convert_to_mp3!
-    end
+    log_info("Successfully converted #{file_name} to rtf. Uploading to S3...")
+    rtf_file.upload_to_s3!
+    rtf_file.clean_up_tmp_location
   end
 
   # Purpose: If retries of conversion of vtt to rtf fail, builds csv which captures error and details of vtt file

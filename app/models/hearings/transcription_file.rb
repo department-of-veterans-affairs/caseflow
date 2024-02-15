@@ -39,23 +39,7 @@ class TranscriptionFile < CaseflowRecord
     rtf_file_path = TranscriptionTransformer.new(tmp_location).call
     update_status!(process: :conversion, status: :success)
     rtf_file_path
-  rescue Caseflow::Error::FileConversionError => error
-    update_status!(process: :conversion, status: :failure)
-    raise error, error.message
-  end
-
-  # Purpose: Converts transcription file from mp4 to mp3 if necessary
-  #
-  # Note: We expect Webex to return a downloadable mp3 file, in which case it's unnecessary to convert mp4 to mp3
-  #
-  # Returns: string, tmp location of mp3
-  def convert_to_mp3!
-    return unless file_type == "mp4"
-
-    mp3_file_path = VideoToAudioFileConverter.new(tmp_location).call
-    update_status!(process: :conversion, status: :success)
-    mp3_file_path
-  rescue Caseflow::Error::FileConversionError => error
+  rescue TranscriptionTransformer::FileConversionError => error
     update_status!(process: :conversion, status: :failure)
     raise error, error.message
   end
@@ -78,7 +62,7 @@ class TranscriptionFile < CaseflowRecord
   def update_status!(process:, status:, upload_link: nil)
     params = {
       file_status: FILE_STATUSES[process][status],
-      updated_by_id: RequestStore[:current_user].id,
+      updated_by_id: RequestStore[:current_user].id
     }
     params[:aws_link] = upload_link if upload_link
     params[DATE_FIELDS[process]] = Time.zone.now if status == :success

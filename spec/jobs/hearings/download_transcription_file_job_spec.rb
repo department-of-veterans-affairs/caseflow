@@ -72,18 +72,31 @@ describe Hearings::DownloadTranscriptionFileJob do
       end
     end
 
-    shared_examples "mp4 or mp3" do
-      it "creates new TranscriptionFile record" do
-        expect { subject }.to change(TranscriptionFile, :count).by(1)
-        expect(transcription_file.file_type).to eq(file_type)
-      end
+    %w[mp4 mp3].each do |file_type|
+      context "#{file_type} file" do
+        let(:file_type) { file_type }
+        let(:file_status) { TranscriptionFile::FILE_STATUSES[:upload][:success] }
 
-      it "updates date_receipt_webex of TranscriptionFile record" do
-        subject
-        expect(transcription_file.date_receipt_webex).to_not be_nil
-      end
+        context "successful download from Webex and upload to S3" do
+          it "creates new TranscriptionFile record" do
+            expect { subject }.to change(TranscriptionFile, :count).by(1)
+            expect(transcription_file.file_type).to eq(file_type)
+          end
 
-      include_examples "all file types"
+          it "updates date_receipt_webex of TranscriptionFile record" do
+            subject
+            expect(transcription_file.date_receipt_webex).to_not be_nil
+          end
+
+          include_examples "all file types"
+        end
+
+        context "failed download from Webex" do
+          let(:link) { "https://picsum.photos/broken" }
+
+          include_examples "failed download from Webex"
+        end
+      end
     end
 
     shared_context "convertible file" do
@@ -114,65 +127,6 @@ describe Hearings::DownloadTranscriptionFileJob do
       let(:s3_location) { converted_s3_location }
 
       include_examples "all file types"
-    end
-
-    context "mp3 file" do
-      let(:file_type) { "mp3" }
-      let(:file_status) { TranscriptionFile::FILE_STATUSES[:upload][:success] }
-
-      context "successful download from Webex and upload to S3" do
-        include_examples "mp4 or mp3"
-      end
-
-      context "conversion request unnecessarily supplied to job" do
-        let(:download_job) { described_class.new }
-
-        it "ignores conversion request and successfully uploads mp3 to S3" do
-          expect(download_job).to_not receive(:convert_file)
-          download_job.perform(download_link: link, file_name: file_name, conversion_needed: true)
-          expect(transcription_file.file_status).to eq(file_status)
-          expect(transcription_file.date_converted).to be_nil
-        end
-      end
-
-      context "failed download from Webex" do
-        let(:link) { "https://picsum.photos/broken" }
-
-        include_examples "failed download from Webex"
-      end
-    end
-
-    context "mp4 file" do
-      let(:file_type) { "mp4" }
-      let(:file_status) { TranscriptionFile::FILE_STATUSES[:upload][:success] }
-
-      context "successful download from Webex and upload to S3" do
-        include_examples "mp4 or mp3"
-      end
-
-      context "failed download from Webex" do
-        let(:link) { "https://picsum.photos/broken" }
-
-        include_examples "failed download from Webex"
-      end
-
-      context "succesful conversion to mp3 if necessary" do
-        let(:conversion_type) { "mp3" }
-        let(:file_status) { TranscriptionFile::FILE_STATUSES[:conversion][:success] }
-
-        subject { described_class.new.perform(download_link: link, file_name: file_name, conversion_needed: true) }
-
-        before do
-          File.open(converted_tmp_location, "w")
-          allow_any_instance_of(VideoToAudioFileConverter).to receive(:call).and_return(converted_tmp_location)
-        end
-
-        include_context "convertible file"
-
-        context "mp3 file" do
-          include_context "converted file"
-        end
-      end
     end
 
     context "vtt file" do
@@ -209,7 +163,7 @@ describe Hearings::DownloadTranscriptionFileJob do
 
         before do
           allow_any_instance_of(TranscriptionTransformer).to receive(:call)
-            .and_raise(Caseflow::Error::FileConversionError)
+            .and_raise(TranscriptionTransformer::FileConversionError)
         end
 
         include_context "convertible file"
