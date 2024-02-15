@@ -102,7 +102,7 @@ export const CorrespondenceReviewPackage = (props) => {
     if (disableButton) {
       setShowModal(!showModal);
     } else {
-      history.push('/queue/correspondence');
+      location.href = '/queue/correspondence';
     }
   };
 
@@ -111,7 +111,7 @@ export const CorrespondenceReviewPackage = (props) => {
   };
 
   const handleReview = () => {
-    history.push('/queue/correspondence');
+    location.href = '/queue/correspondence';
   };
 
   const isEditableDataChanged = () => {

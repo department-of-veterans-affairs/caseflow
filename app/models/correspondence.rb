@@ -53,4 +53,8 @@ class Correspondence < CaseflowRecord
   def docket_name
     package_document_type.name
   end
+
+  def veteran_full_name
+    veteran.name
+  end
 end
