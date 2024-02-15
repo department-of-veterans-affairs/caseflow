@@ -245,6 +245,7 @@ describe ExternalApi::WebexService do
           expect(subject.mp4_link).to eq("https://site4-example.webex.com/nbr/MultiThreadDownloadServlet?siteid=2062842&recordid=305462&confid=137735449369118342&language=en_US&userid=3516472&serviceRecordID=305492&ticket=SDJTSwAAAIUBSHkvL6Z5ddyBim5%2FHcJYcvn6IoXNEyCE2mAYQ5BlBg%3D%3D&timestamp=1567125236465&islogin=yes&isprevent=no&ispwd=yes")
           expect(subject.vtt_link).to eq("https://site4-example.webex.com/nbr/downloadMedia.do?siteid=2062842&recordid=305462&confid=137735449369118342&language=en_US&userid=3516472&serviceRecordID=305492&ticket=SDJTSwAAAAJVUJDxeA08qKkF%2FlxlSkDxuEFPwgGT0XW1z21NhY%2BCvg%3D%3D&timestamp=1567125236866&islogin=yes&isprevent=no&ispwd=yes&mediaType=2")
           expect(subject.mp3_link).to eq("https://site4-example.webex.com/nbr/downloadMedia.do?siteid=2062842&recordid=305462&confid=137735449369118342&language=en_US&userid=3516472&serviceRecordID=305492&ticket=SDJTSwAAAIXCIXsuBt%2BAgtK7WoQ2VhgeI608N4ZMIJ3vxQaQNZuLZA%3D%3D&timestamp=1567125236708&islogin=yes&isprevent=no&ispwd=yes&mediaType=1")
+          expect(subject.topic).to eq("Virtual Visit - 200103-61110_2000061110_Appeal-20240213 1712-1")
           subject
         end
       end

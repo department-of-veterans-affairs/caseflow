@@ -49,6 +49,6 @@ class Hearings::GetWebexRecordingsListJob < CaseflowJob
   end
 
   def get_recording_details(id)
-    nil
+    Hearings::GetWebexRecordingsDetailsJob.new(id)
   end
 end

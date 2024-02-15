@@ -171,7 +171,7 @@ class Fakes::WebexService
       "meetingId": "f91b6edce9864428af084977b7c68291_I_166641849979635652",
       "scheduledMeetingId": "f91b6edce9864428af084977b7c68291_20200713T121500Z",
       "meetingSeriesId": "f91b6edce9864428af084977b7c68291",
-      "topic": "Example Topic",
+      "topic": "Virtual Visit - 200103-61110_2000061110_Appeal-20240213 1712-1",
       "createTime": "2020-07-13T17:11:35Z",
       "timeRecorded": "2020-07-13T17:05:35Z",
       "siteUrl": "site4-example.webex.com",

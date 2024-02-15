@@ -16,4 +16,8 @@ class ExternalApi::WebexService::RecordingDetailsResponse < ExternalApi::WebexSe
   def mp3_link
     data["temporaryDirectDownloadLinks"]["audioDownloadLink"]
   end
+
+  def topic
+    data["topic"]
+  end
 end
