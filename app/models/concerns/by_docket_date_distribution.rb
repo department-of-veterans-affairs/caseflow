@@ -7,6 +7,12 @@ module ByDocketDateDistribution
 
   private
 
+  # Allow for more than one attempt at distributing nonpriority appeals. allowing a large number of retries
+  # will cause VACOLS timeouts to occur because the entire distribution event is wrapped in a transaction and won't
+  # commit those rows until all nonpriority iteration attempts are complete. some of the queries to retrieve appeals
+  # can take several seconds which makes the entire process take several minutes if we allow too many iterations
+  MAX_NONPRIORITY_ITERATIONS = 2
+
   def priority_push_distribution(limit)
     @push_priority_target = limit
     @rem = 0
@@ -29,7 +35,7 @@ module ByDocketDateDistribution
     unless FeatureToggle.enabled?(:acd_disable_nonpriority_distributions, user: RequestStore.store[:current_user])
       # Distribute the oldest nonpriority appeals from any docket if we haven't distributed {batch_size} appeals
       # @nonpriority_iterations guards against an infinite loop if not enough cases are ready to distribute
-      until @rem <= 0 || @nonpriority_iterations >= batch_size
+      until @rem <= 0 || @nonpriority_iterations >= MAX_NONPRIORITY_ITERATIONS
         distribute_nonpriority_appeals_from_all_dockets_by_age_to_limit(@rem)
       end
     end
