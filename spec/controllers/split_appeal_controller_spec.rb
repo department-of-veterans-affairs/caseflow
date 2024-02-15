@@ -252,13 +252,191 @@ RSpec.describe SplitAppealController, type: :controller do
       end
     end
 
-    context "with an appeal that has specialty case team issues" do
+    context "with appeals that have specialty case team issues" do
       before do
         FeatureToggle.enable!(:specialty_case_team_distribution)
       end
 
-      # create appeal
-      # create request issues
+      context "when the SCT issue is left on the original appeal stream" do
+        let(:request_issue) { create(:request_issue, benefit_type: "compensation") }
+        let(:request_issue2) { create(:request_issue, benefit_type: "vha") }
+        let(:root_task) { RootTask.find(create(:root_task).id) }
+        let(:distribution_task) { create(:distribution_task, parent: root_task) }
+        let(:appeal) do
+          create(:appeal, tasks: [root_task, distribution_task], request_issues: [request_issue, request_issue2])
+        end
+
+        it "creates a new split appeal that is sent back to distribution" do
+          post :split_appeal, params: valid_params
+          expect(response.status).to eq 201
+          dup_appeal = Appeal.last
+          expect(appeal.request_issues.active.count).to eq(1)
+          expect(dup_appeal.request_issues.active.count).to eq(1)
+          expect(appeal.sct_appeal?).to eq(true)
+          expect(dup_appeal.sct_appeal?).to eq(false)
+
+          # New appeal's distribution task should be assigned
+          expect(dup_appeal.tasks.of_type(:DistributionTask).first.status).to eq("assigned")
+          expect(dup_appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).count).to eq(0)
+          expect(dup_appeal.can_redistribute_appeal?).to eq(true)
+
+          # Original appeal's distribution task should remain unchanged
+          expect(appeal.tasks.of_type(:DistributionTask).first.status).to eq("on_hold")
+          sct_task = appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).first
+          expect(appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).count).to eq(1)
+          expect(sct_task.status).to eq("assigned")
+          expect(sct_task.assigned_to).to eq(SpecialtyCaseTeam.singleton)
+        end
+      end
+
+      context "when the SCT issue is on the new appeal stream" do
+        let(:request_issue) { create(:request_issue, benefit_type: "vha") }
+        let(:request_issue2) { create(:request_issue, benefit_type: "compensation") }
+        let(:root_task) { RootTask.find(create(:root_task).id) }
+        let(:distribution_task) { create(:distribution_task, parent: root_task) }
+        let(:appeal) do
+          create(:appeal, tasks: [root_task, distribution_task], request_issues: [request_issue, request_issue2])
+        end
+
+        it "creates a new split appeal that is assigned to the Specialty Case Team Organization" do
+          post :split_appeal, params: valid_params
+          expect(response.status).to eq 201
+          dup_appeal = Appeal.last
+          expect(appeal.request_issues.active.count).to eq(1)
+          expect(dup_appeal.request_issues.active.count).to eq(1)
+          expect(appeal.sct_appeal?).to eq(false)
+          expect(dup_appeal.sct_appeal?).to eq(true)
+
+          # old appeal's distribution task should be assigned since it should be sent back to distribution
+          expect(appeal.tasks.of_type(:DistributionTask).first.status).to eq("assigned")
+          expect(appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).count).to eq(0)
+          expect(appeal.can_redistribute_appeal?).to eq(true)
+
+          # new appeal's distribution task should remain unchanged
+          expect(dup_appeal.tasks.of_type(:DistributionTask).first.status).to eq("on_hold")
+          sct_task = dup_appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).first
+          expect(dup_appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).count).to eq(1)
+          expect(sct_task.status).to eq("assigned")
+          expect(sct_task.assigned_to).to eq(SpecialtyCaseTeam.singleton)
+        end
+      end
+
+      context "when the appeal is already assigned to the Specialty Case Team Organization before split" do
+        let!(:root_task) { RootTask.find(create(:root_task, appeal: appeal).id) }
+        let!(:distribution_task) { create(:distribution_task, parent: root_task, appeal: appeal) }
+        let!(:appeal) do
+          create(:appeal, request_issues: [request_issue, request_issue2])
+        end
+        let!(:specialty_case_team_assign_task) do
+          create(:specialty_case_team_assign_task, :action_required, parent: root_task, appeal: appeal)
+        end
+
+        context "when the SCT issue is on the new appeal stream" do
+          let(:request_issue) { create(:request_issue, benefit_type: "vha") }
+          let(:request_issue2) { create(:request_issue, benefit_type: "compensation") }
+
+          it "creates a new split appeal that is still assigned to the Specialty Case Team Organization" do
+            post :split_appeal, params: valid_params
+            expect(response.status).to eq 201
+            dup_appeal = Appeal.last
+            expect(appeal.request_issues.active.count).to eq(1)
+            expect(dup_appeal.request_issues.active.count).to eq(1)
+            expect(appeal.sct_appeal?).to eq(false)
+            expect(dup_appeal.sct_appeal?).to eq(true)
+
+            # old appeal's distribution task should be assigned since it should be sent back to distribution
+            expect(appeal.tasks.of_type(:DistributionTask).first.status).to eq("assigned")
+            expect(appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).count).to eq(1)
+            expect(appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).first.status).to eq("cancelled")
+            expect(appeal.can_redistribute_appeal?).to eq(true)
+            # Verify that the old appeal's judge task and attorney task remain in their cancelled state
+            expect(appeal.tasks.of_type(:AttorneyTask).first.status).to eq("cancelled")
+            expect(appeal.tasks.of_type(:JudgeDecisionReviewTask).first.status).to eq("cancelled")
+
+            # new appeal's distribution task should remain unchanged
+            expect(dup_appeal.tasks.of_type(:DistributionTask).first.status).to eq("completed")
+            sct_task = dup_appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).first
+            expect(dup_appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).count).to eq(1)
+            expect(sct_task.status).to eq("in_progress")
+            expect(sct_task.assigned_to).to eq(SpecialtyCaseTeam.singleton)
+
+            # Verify that the new appeal's judge task and attorney task remain in their cancelled state
+            expect(dup_appeal.tasks.of_type(:AttorneyTask).first.status).to eq("cancelled")
+            expect(dup_appeal.tasks.of_type(:JudgeDecisionReviewTask).first.status).to eq("cancelled")
+          end
+        end
+
+        context "when the SCT issue is on the original appeal stream" do
+          let(:request_issue) { create(:request_issue, benefit_type: "compensation") }
+          let(:request_issue2) { create(:request_issue, benefit_type: "vha") }
+
+          it "creates a new split appeal that is sent back to distribution" do
+            post :split_appeal, params: valid_params
+            expect(response.status).to eq 201
+            dup_appeal = Appeal.last
+            expect(appeal.request_issues.active.count).to eq(1)
+            expect(dup_appeal.request_issues.active.count).to eq(1)
+            expect(appeal.sct_appeal?).to eq(true)
+            expect(dup_appeal.sct_appeal?).to eq(false)
+
+            # new appeal's distribution task should be assigned since it should be sent back to distribution
+            expect(dup_appeal.tasks.of_type(:DistributionTask).first.status).to eq("assigned")
+            expect(dup_appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).count).to eq(1)
+            expect(dup_appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).first.status).to eq("cancelled")
+            expect(dup_appeal.can_redistribute_appeal?).to eq(true)
+            # Verify that the old appeal's judge task and attorney task remain in their cancelled state
+            expect(dup_appeal.tasks.of_type(:AttorneyTask).first.status).to eq("cancelled")
+            expect(dup_appeal.tasks.of_type(:JudgeDecisionReviewTask).first.status).to eq("cancelled")
+
+            # original appeal's distribution task should remain unchanged
+            expect(appeal.tasks.of_type(:DistributionTask).first.status).to eq("completed")
+            sct_task = appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).first
+            expect(appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).count).to eq(1)
+            expect(sct_task.status).to eq("in_progress")
+            expect(sct_task.assigned_to).to eq(SpecialtyCaseTeam.singleton)
+
+            # Verify that the original appeal's judge task and attorney task remain in their cancelled state
+            expect(appeal.tasks.of_type(:AttorneyTask).first.status).to eq("cancelled")
+            expect(appeal.tasks.of_type(:JudgeDecisionReviewTask).first.status).to eq("cancelled")
+          end
+        end
+
+        context "when there is an SCT issue on the original appeal stream and new appeal stream" do
+          let(:request_issue) { create(:request_issue, benefit_type: "vha") }
+          let(:request_issue2) { create(:request_issue, benefit_type: "vha") }
+
+          it "creates a new split appeal that remains in the same state as the old appeal" do
+            post :split_appeal, params: valid_params
+            expect(response.status).to eq 201
+            dup_appeal = Appeal.last
+            expect(appeal.request_issues.active.count).to eq(1)
+            expect(dup_appeal.request_issues.active.count).to eq(1)
+            expect(appeal.sct_appeal?).to eq(true)
+            expect(dup_appeal.sct_appeal?).to eq(true)
+
+            # new appeal's distribution task should remain the same
+            expect(dup_appeal.tasks.of_type(:DistributionTask).first.status).to eq("completed")
+            expect(dup_appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).count).to eq(1)
+            expect(dup_appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).first.status).to eq("in_progress")
+            expect(dup_appeal.can_redistribute_appeal?).to eq(false)
+            # Verify that the old appeal's judge task and attorney task remain in their cancelled state
+            expect(dup_appeal.tasks.of_type(:AttorneyTask).first.status).to eq("cancelled")
+            expect(dup_appeal.tasks.of_type(:JudgeDecisionReviewTask).first.status).to eq("cancelled")
+
+            # original appeal's distribution task should remain unchanged
+            expect(appeal.tasks.of_type(:DistributionTask).first.status).to eq("completed")
+            sct_task = appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).first
+            expect(appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).count).to eq(1)
+            expect(sct_task.status).to eq("in_progress")
+            expect(sct_task.assigned_to).to eq(SpecialtyCaseTeam.singleton)
+            expect(appeal.can_redistribute_appeal?).to eq(false)
+
+            # Verify that the original appeal's judge task and attorney task remain in their cancelled state
+            expect(appeal.tasks.of_type(:AttorneyTask).first.status).to eq("cancelled")
+            expect(appeal.tasks.of_type(:JudgeDecisionReviewTask).first.status).to eq("cancelled")
+          end
+        end
+      end
     end
   end
 end
