@@ -157,10 +157,6 @@ const httpMethods = {
   get(url, options = {}) {
     const timeoutSettings = Object.assign({}, defaultTimeoutSettings, _.get(options, 'timeout', {}));
 
-    console.log('process.env testing start');
-    console.log(`DEPLOY_ENV = ${ process.env.DEPLOY_ENV }`);
-    console.log('process.env testing end');
-
     options.t0 = performance.now();
     options.start = moment().format();
 

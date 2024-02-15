@@ -19,7 +19,7 @@ const config = {
     new webpack.EnvironmentPlugin({ NODE_ENV: 'development' }),
     devBuild && new webpack.HotModuleReplacementPlugin(),
     devBuild && !testBuild && new ReactRefreshWebpackPlugin(),
-    // See https://www.npmjs.com/package/dotenv-webpack#properties
+    // See https://github.com/mrsteele/dotenv-webpack/blob/master/README.md#properties
     new Dotenv({
       systemvars: true,
     })
