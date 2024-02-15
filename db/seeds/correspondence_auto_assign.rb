@@ -36,7 +36,7 @@ module Seeds
           roles: ["Mail Intake"]
         )
         org_user = OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: u)
-        receive_nod_mail = OrganizationPermission.find_by(permission: "receive_nod_mail")
+        receive_nod_mail = OrganizationPermission.find_by(organization: InboundOpsTeam.singleton, permission: "receive_nod_mail")
         OrganizationUserPermission.find_or_create_by!(
           organization_permission: receive_nod_mail,
           organizations_user: org_user
@@ -61,7 +61,7 @@ module Seeds
           roles: ["Mail Intake"]
         )
         org_user = OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: u)
-        auto_assign = OrganizationPermission.find_by(permission: "auto_assign")
+        auto_assign = OrganizationPermission.find_by(organization: InboundOpsTeam.singleton, permission: "auto_assign")
         OrganizationUserPermission.find_or_create_by!(
           organization_permission: auto_assign,
           organizations_user: org_user
