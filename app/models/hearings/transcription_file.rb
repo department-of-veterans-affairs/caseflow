@@ -10,21 +10,6 @@ class TranscriptionFile < CaseflowRecord
 
   validates :file_type, inclusion: { in: VALID_FILE_TYPES, message: "'%<value>s' is not valid" }
 
-  FILE_STATUSES = {
-    retrieval: {
-      success: "Successful retrieval (Webex)",
-      failure: "Failed retrieval (Webex)"
-    },
-    upload: {
-      success: "Successful upload (AWS)",
-      failure: "Failed upload (AWS)"
-    },
-    conversion: {
-      success: "Successful conversion",
-      failure: "Failed conversion"
-    }
-  }.freeze
-
   # Purpose: Uploads transcription file to its corresponding location in S3
   def upload_to_s3!
     UploadTranscriptionFileToS3.new(self).call
@@ -61,7 +46,7 @@ class TranscriptionFile < CaseflowRecord
   # Returns: Updated transcription file record
   def update_status!(process:, status:, upload_link: nil)
     params = {
-      file_status: FILE_STATUSES[process][status],
+      file_status: Constants.TRANSCRIPTION_FILE_STATUSES.send(process).send(status),
       updated_by_id: RequestStore[:current_user].id
     }
     params[:aws_link] = upload_link if upload_link

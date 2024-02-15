@@ -26,8 +26,6 @@ describe Hearings::DownloadTranscriptionFileJob do
 
     subject { described_class.new.perform(download_link: link, file_name: file_name) }
 
-    before { TranscriptionFile }
-
     after { File.delete(tmp_location) if File.exist?(tmp_location) }
 
     shared_examples "all file types" do
@@ -62,7 +60,7 @@ describe Hearings::DownloadTranscriptionFileJob do
       it "updates file_status of TranscriptionFile record, leaves date_receipt_webex nil" do
         expect { subject }.to raise_error(Hearings::DownloadTranscriptionFileJob::FileDownloadError)
         expect(transcription_file.date_receipt_webex).to be_nil
-        expect(transcription_file.file_status).to eq(TranscriptionFile::FILE_STATUSES[:retrieval][:failure])
+        expect(transcription_file.file_status).to eq(Constants.TRANSCRIPTION_FILE_STATUSES.retrieval.failure)
       end
 
       it "doesn't queue upload to AWS" do
@@ -75,7 +73,7 @@ describe Hearings::DownloadTranscriptionFileJob do
     %w[mp4 mp3].each do |file_type|
       context "#{file_type} file" do
         let(:file_type) { file_type }
-        let(:file_status) { TranscriptionFile::FILE_STATUSES[:upload][:success] }
+        let(:file_status) { Constants.TRANSCRIPTION_FILE_STATUSES.upload.success }
 
         context "successful download from Webex and upload to S3" do
           it "creates new TranscriptionFile record" do
@@ -123,7 +121,7 @@ describe Hearings::DownloadTranscriptionFileJob do
 
     shared_context "converted file" do
       let(:transcription_file) { converted_transcription_file }
-      let(:file_status) { TranscriptionFile::FILE_STATUSES[:upload][:success] }
+      let(:file_status) { Constants.TRANSCRIPTION_FILE_STATUSES.upload.success }
       let(:s3_location) { converted_s3_location }
 
       include_examples "all file types"
@@ -132,7 +130,7 @@ describe Hearings::DownloadTranscriptionFileJob do
     context "vtt file" do
       let(:file_type) { "vtt" }
       let(:conversion_type) { "rtf" }
-      let(:file_status) { TranscriptionFile::FILE_STATUSES[:conversion][:success] }
+      let(:file_status) { Constants.TRANSCRIPTION_FILE_STATUSES.conversion.success }
 
       context "successful download from Webex, upload to S3, and conversion to rtf" do
         before do
@@ -155,7 +153,7 @@ describe Hearings::DownloadTranscriptionFileJob do
 
       context "failed conversion to rtf" do
         let(:conversion_type) { "csv" }
-        let(:file_status) { TranscriptionFile::FILE_STATUSES[:conversion][:failure] }
+        let(:file_status) { Constants.TRANSCRIPTION_FILE_STATUSES.conversion.failure }
 
         subject do
           perform_enqueued_jobs { described_class.perform_later(download_link: link, file_name: file_name) }
