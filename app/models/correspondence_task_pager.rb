@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class CorrespondenceTaskPager < TaskPager
-
   def filtered_tasks
     CorrespondenceTaskFilter.new(filter_params: filters, tasks: tasks_for_tab).filtered_tasks
   end
