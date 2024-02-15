@@ -3,8 +3,8 @@ class CreateTranscriptionFiles < Caseflow::Migration
     create_table :transcription_files do |t|
       t.string :file_name, null: false, comment: "File name, with extension, of the transcription file migrated by caseflow"
       t.string :file_type, null: false, comment: "One of mp4, vtt, mp3, rtf, pdf, xls"
-      t.bigint :hearing_id, comment: "ID of the hearing associated with this record"
-      t.string :hearing_type, comment: "Type of hearing associated with this record"
+      t.bigint :hearing_id, null: false, comment: "ID of the hearing associated with this record"
+      t.string :hearing_type, null: false, comment: "Type of hearing associated with this record"
       t.string :docket_number, null: false, comment: "Docket number of associated hearing"
       t.string :file_status, comment: "Status of the file, could be one of nil, 'Successful retrieval (Webex), Failed retrieval (Webex), Sucessful conversion, Failed conversion, Successful upload (AWS), Failed upload (AWS)'"
       t.string :aws_link, comment: "Link to be used by HMB to download original or transformed file"

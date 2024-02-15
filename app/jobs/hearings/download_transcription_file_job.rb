@@ -90,7 +90,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   #          GetRecordingDetailsJob. Update file status of transcription file depending on download success/failure.
   #
   # Params: download_link - string, URI for temporary download link
-  #         file_name - string, to be parsed for appeal/hearing identifiers
+  #         file_name - string, to be parsed for hearing identifiers
   #
   # Returns: Updated @transcription_file
   def download_file_to_tmp!(link)
@@ -128,13 +128,6 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     raise FileNameError, "Encountered error #{error} when attempting to parse hearing from file name '#{file_name}'"
   end
 
-  # Purpose: Appeal associated with the hearing for which the transcription was created
-  #
-  # Returns: Appeal object
-  def appeal
-    @appeal ||= hearing.appeal
-  end
-
   # Purpose: Docket number associated with the hearing for which the transcription was created
   #
   # Returns: string or error
@@ -152,8 +145,8 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   def find_or_create_transcription_file(file_name_arg = file_name)
     TranscriptionFile.find_or_create_by(
       file_name: file_name_arg,
-      appeal_id: appeal&.id,
-      appeal_type: appeal&.class&.name,
+      hearing_id: hearing.id,
+      hearing_type: hearing.class.name,
       docket_number: docket_number
     ) do |file|
       file.file_type = file_name_arg.split(".").last
