@@ -7,7 +7,7 @@ describe CorrespondenceAutoAssignLogger do
   let(:assignee) { create(:user) }
 
   let!(:correspondence) { create(:correspondence) }
-  let(:task) { correspondence.review_package_tasks.first }
+  let(:task) { correspondence.review_package_task }
 
   describe "#begin" do
     it "creates a BatchAutoAssignmentAttempt record" do
@@ -84,7 +84,7 @@ describe CorrespondenceAutoAssignLogger do
 
   describe "tracking assignments" do
     let!(:nod_correspondence) { create(:correspondence, :nod) }
-    let(:nod_task) { nod_correspondence.review_package_tasks.first }
+    let(:nod_task) { nod_correspondence.review_package_task }
 
     before do
       described.begin

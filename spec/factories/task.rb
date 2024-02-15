@@ -620,6 +620,15 @@ FactoryBot.define do
       factory :review_package_task, class: ReviewPackageTask do
       end
 
+      factory :merge_package_task, class: MergePackageTask do
+      end
+
+      factory :reassign_package_task, class: ReassignPackageTask do
+      end
+
+      factory :split_package_task, class: SplitPackageTask do
+      end
+
       factory :efolder_upload_failed_task, class: EfolderUploadFailedTask do
       end
 

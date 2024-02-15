@@ -23,5 +23,13 @@ class OrganizationPermission < CaseflowRecord
     def valid_permission_names
       Constants.ORGANIZATION_PERMISSIONS.to_h.values
     end
+
+    def auto_assign(organization)
+      find_by(organization: organization, permission: Constants.ORGANIZATION_PERMISSIONS.auto_assign)
+    end
+
+    def receive_nod_mail(organization)
+      find_by(organization: organization, permission: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail)
+    end
   end
 end
