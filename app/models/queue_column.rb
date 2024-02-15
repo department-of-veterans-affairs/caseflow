@@ -37,8 +37,7 @@ class QueueColumn
     Constants.QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name => :regional_office_options,
     Constants.QUEUE_CONFIG.COLUMNS.TASK_TYPE.name => :task_type_options,
     Constants.QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name => :assignee_options,
-    Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name => :issue_type_options,
-
+    Constants.QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name => :issue_type_options
   }.freeze
 
   def filter_options(tasks)
@@ -70,8 +69,8 @@ class QueueColumn
 
   private
 
-  def va_dor_options(tasks)
-    {}
+  def va_dor_options
+    nil
   end
 
   def case_type_options(tasks)

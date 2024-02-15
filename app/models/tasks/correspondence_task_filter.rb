@@ -1,7 +1,7 @@
+# frozen_string_literal: true
+
 class CorrespondenceTaskFilter < TaskFilter
-
   def filter_by_va_dor(date_info)
-
     date_type = date_info.split(",")[0]
     first_date = date_info.split(",")[1]
     second_date = date_info.split(",")[2]
