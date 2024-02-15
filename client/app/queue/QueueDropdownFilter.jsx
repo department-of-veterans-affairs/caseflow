@@ -54,9 +54,7 @@ class QueueDropdownFilter extends React.PureComponent {
   }
 
   handleApplyFilter = () => {
-    console.log('executed!')
     if (this.state.recieptDateState === 0) {
-      console.log("executing 0")
       this.props.setSelectedValue(
         [
           this.state.recieptDateState,
@@ -64,7 +62,7 @@ class QueueDropdownFilter extends React.PureComponent {
           this.state.receiptDateSecondaryValue
         ], 'vaDor');
     } else {
-      this.props.setSelectedValue([this.state.recieptDateState, this.statereceiptDatePrimaryValue], 'vaDor');
+      this.props.setSelectedValue([this.state.recieptDateState, this.state.receiptDatePrimaryValue], 'vaDor');
     }
 
   }

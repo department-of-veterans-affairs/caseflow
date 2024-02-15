@@ -26,17 +26,17 @@ const RecieptDatePicker = (props) => {
       </div>);
     case receiptDateFilterStates.BEFORE: return (
       <div>
-        <DateSelector onChange={(value) => handleDateChange(value)} label="To" type="date" />
+        <DateSelector onChange={(value) => props.handleDateChange(value)} label="To" type="date" />
       </div>
     );
     case receiptDateFilterStates.AFTER: return (
       <div>
-        <DateSelector onChange={(value) => handleDateChange(value)} label="From" type="date" />
+        <DateSelector onChange={(value) => props.handleDateChange(value)} label="From" type="date" />
       </div>
     );
     case receiptDateFilterStates.ON: return (
       <div>
-        <DateSelector onChange={(value) => handleDateChange(value)} label="On" type="date" />
+        <DateSelector onChange={(value) => props.handleDateChange(value)} label="On" type="date" />
       </div>
     );
 
@@ -47,7 +47,6 @@ const RecieptDatePicker = (props) => {
   return <>
     <ReactSelectDropdown label="Date filter parameters" options={dateDropdownMap} onChangeMethod={props.onChangeMethod} />
     {getDatePickerElements()}
-    {/* <Button onClick={() => props.setSelectedValue([props.receiptDateState, dateOption], 'vaDor')}>Apply filter</Button> */}
     <Button onClick={props.handleApplyFilter}>Apply filter</Button>
 
   </>;
