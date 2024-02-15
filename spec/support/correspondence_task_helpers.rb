@@ -21,12 +21,4 @@ module CorrespondenceTaskHelpers
       status: Constants.TASK_STATUSES.in_progress
     )
   end
-
-  def process_correspondence(correspondence, user)
-    rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id)
-    rpt.update!(status: Constants.TASK_STATUSES.completed, completed_by_id: user.id)
-
-    cit = CorrespondenceIntakeTask.create_from_params(correspondence&.root_task, user)
-    cit.update!(status: Constants.TASK_STATUSES.completed, completed_by_id: user.id)
-  end
 end

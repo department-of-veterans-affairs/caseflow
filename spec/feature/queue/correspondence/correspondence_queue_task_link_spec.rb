@@ -2,6 +2,7 @@
 
 RSpec.feature "Task Links on Your Correspondence and Correspondence Cases pages" do
   include CorrespondenceTaskHelpers
+  include QueueHelpers
 
   describe "When a user clicks a task link in veterans details column" do
     let(:current_user) { create(:user) }
