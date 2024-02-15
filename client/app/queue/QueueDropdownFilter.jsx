@@ -4,6 +4,7 @@ import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import { css } from 'glamor';
 import { startCase } from 'lodash';
 import ReceiptDatePicker from '../components/ReceiptDatePicker';
+import TaskCompletedDatePicker from '../components/taskCompletedDatePicker';
 
 const dropdownFilterViewListStyle = css({
   margin: 0
@@ -32,6 +33,10 @@ class QueueDropdownFilter extends React.PureComponent {
     this.setState({ recieptDateState: value.value });
   };
 
+  setTaskCompletedDateState = (value) => {
+    this.setState({ taskCompletedDateState: value.value });
+  };
+
   render() {
     const { children, name } = this.props;
 
@@ -50,7 +55,10 @@ class QueueDropdownFilter extends React.PureComponent {
         {this.props.addClearFiltersRow &&
           <div className="cf-filter-option-row">
           {this.props.isReceiptDateFilter && <ReceiptDatePicker setSelectedValue={this.props.setSelectedValue}
-              onChangeMethod={this.setRecieptDateState} receiptDateState={this.state.recieptDateState}/>}
+              onChangeMethod={this.setRecieptDateState} receiptDateState={this.state.recieptDateState}/> ||
+            this.props.isDateCompletedFilter && <TaskCompletedDatePicker setSelectedValue={this.props.setSelectedValue}
+              onChangeMethod={this.setTaskCompletedDateState} taskCompletedDateState={this.state.taskCompletedDateState}/>
+          }
             <button className="cf-text-button" onClick={this.props.clearFilters}
               disabled={!this.props.isClearEnabled}>
               <div className="cf-clear-filter-button-wrapper">
@@ -59,7 +67,7 @@ class QueueDropdownFilter extends React.PureComponent {
             </button>
           </div>
         }
-        {!this.props.isReceiptDateFilter && React.cloneElement(React.Children.only(children), {
+        {!(this.props.isReceiptDateFilter || this.props.isDateCompletedFilter) && React.cloneElement(React.Children.only(children), {
           dropdownFilterViewListStyle,
           dropdownFilterViewListItemStyle
         })}

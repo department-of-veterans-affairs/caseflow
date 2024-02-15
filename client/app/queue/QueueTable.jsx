@@ -772,6 +772,7 @@ export default class QueueTable extends React.PureComponent {
           filteredByList={this.state.filteredByList}
           useTaskPagesApi={useTaskPagesApi}
           isRecieptDateFilter={this.props.isRecieptDateFilter}
+          isDateCompletedFilter={this.props.isDateCompletedFilter}
           {...this.state}
         />
         <BodyRows
