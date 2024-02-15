@@ -167,7 +167,8 @@ export class AssignToAttorneyWidget extends React.PureComponent {
 
         errorDetail = error?.response?.body?.errors[0]?.detail;
 
-        if (errorDetail === null) {
+        // eslint-disable-next-line no-undefined
+        if (errorDetail === null || errorDetail === undefined) {
           if (this.props.isModal && userId) {
             errorDetail =
             <React.Fragment>
