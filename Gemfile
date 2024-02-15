@@ -72,7 +72,6 @@ gem "sass-rails", "~> 5.0"
 # Error reporting to Sentry
 gem "sentry-raven"
 gem "shoryuken", "3.1.11"
-gem "streamio-ffmpeg"
 gem "stringex", require: false
 # catch problematic migrations at development/test time
 gem "strong_migrations"
