@@ -43,8 +43,11 @@ class HearingRequestDocket < Docket
   def distribute_appeals(distribution, priority: false, genpop: "any", limit: 1, style: "push")
     base_relation = appeals(priority: priority, ready: true).limit(limit)
 
-    # setting genpop to "only_genpop" behind feature toggle as this module only processes AMA
-    genpop = "only_genpop" if use_by_docket_date?
+    # setting genpop to "only_genpop" behind feature toggle as this module only processes AMA.
+    # sets genpop to "any" behind acd_exclude_from_affinity feature toggle to ensure all cases are considered.
+    if use_by_docket_date?
+      genpop = FeatureToggle.enabled?(:acd_exclude_from_affinity) ? "any" : "only_genpop"
+    end
 
     appeals = hearing_distribution_query(base_relation: base_relation, genpop: genpop, judge: distribution.judge).call
 
