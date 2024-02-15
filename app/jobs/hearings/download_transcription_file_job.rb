@@ -52,7 +52,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
 
     download_file_to_tmp!(download_link)
     @transcription_file.upload_to_s3! if @transcription_file.date_upload_aws.nil?
-    convert_to_rtf_and_upload_to_s3! if raw_file_type == "vtt"
+    convert_to_rtf_and_upload_to_s3! if @transcription_file.file_type == "vtt"
     @transcription_file.clean_up_tmp_location
   end
 
@@ -164,13 +164,6 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     raise FileNameError, error
   end
 
-  # Purpose: File type of transcription_file
-  #
-  # Returns: string, file type
-  def raw_file_type
-    @raw_file_type ||= @transcription_file.file_type
-  end
-
   # Purpose: Converts vtt to rtf, creates new record for converted transcription file, and uploads
   #          converted file to S3
   #
@@ -190,7 +183,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   #
   # Params: error - Error object
   def build_csv_from_error(error)
-    return unless raw_file_type == "vtt"
+    return unless @transcription_file.file_type == "vtt"
 
     timestamp = Time.zone.now.to_s.sub("\sUTC", "")
     file_date = File.ctime(@transcription_file.tmp_location).to_s.split(" ").first
