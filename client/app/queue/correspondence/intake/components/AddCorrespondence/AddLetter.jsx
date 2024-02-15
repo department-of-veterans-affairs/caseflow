@@ -91,7 +91,7 @@ const NewLetter = (props) => {
   const currentLetter = props.currentLetter
   const letterHash = {};
   const setUnrelatedTasksCanContinue = props.setUnrelatedTasksCanContinue;
-  let displayLetter = (currentLetter !== undefined)
+  const displayLetter = (currentLetter !== undefined)
   const [letterCard, setLetterCard] = useState({
     id: index,
     date: currentDate,
@@ -106,7 +106,8 @@ const NewLetter = (props) => {
   const [letterTitleSelector, setLetterTitleSelector] = useState('');
   const [letterSubSelector, setLetterSubSelector] = useState('');
   const [letterSubReason, setLetterSubReason] = useState('');
-  const [customResponseWindowState, setCustomResponseWindowState] = useState(false);
+  let customResponseVal = (displayLetter && currentLetter?.customValue > 0) ? true : false
+  const [customResponseWindowState, setCustomResponseWindowState] = useState(customResponseVal);
 
   const [stateOptions, setStateOptions] = useState(true);
 
@@ -157,9 +158,11 @@ const NewLetter = (props) => {
 
   const selectResponseWindows = (option, aux) => {
     if (option.response_window_option_default) {
+      let responseWindowsValue = displayLetter ? currentLetter.responseWindows : option.response_window_option_default 
+
       setLetterCard({ ...letterCard,
-        responseWindows: option.response_window_option_default });
-      setResponseWindows(option.response_window_option_default);
+        responseWindows: responseWindowsValue });
+      setResponseWindows(responseWindowsValue);
     } else if (option.letter_titles[aux].letter_title === letterCard.title) {
       setLetterCard({ ...letterCard,
         responseWindows: option.letter_titles[aux].response_window_option_default });

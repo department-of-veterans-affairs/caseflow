@@ -196,11 +196,12 @@ export const ConfirmCorrespondenceView = (props) => {
               </tbody>
               { Object.keys(responseLetters)?.map((indexValue) => {
                 const responseLetter = responseLetters[indexValue];
-
+                let responseDate = new Date(responseLetter?.date);
+                
                 return (
                   <tbody key={indexValue}>
                     <tr>
-                      <td> {responseLetter?.date} </td>
+                      <td> {responseDate?.toLocaleDateString('en-US')} </td>
                       <td> {responseLetter?.type} </td>
                       <td> {responseLetter?.title} </td>
                       <td> {responseLetter?.subType} </td>
