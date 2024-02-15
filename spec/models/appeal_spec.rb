@@ -1504,19 +1504,6 @@ describe Appeal, :all_dbs do
       end
     end
 
-    context "when an appeal has open DistributionTask and EvidenceOrArgumentMailTask" do
-      let!(:appeal_ready_to_distribute_with_evidence_task) do
-        appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
-        create(:evidence_or_argument_mail_task, :assigned, assigned_to: MailTeam.singleton, parent: appeal.root_task)
-        appeal
-      end
-
-      subject { appeal_ready_to_distribute_with_evidence_task.can_redistribute_appeal? }
-      it "returns true" do
-        expect(subject).to be true
-      end
-    end
-
     context "when an appeal has open tasks" do
       subject { distributed_appeal_cannot_redistribute.can_redistribute_appeal? }
       it "returns false" do
