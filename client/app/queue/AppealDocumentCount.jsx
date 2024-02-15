@@ -25,7 +25,10 @@ class AppealDocumentCount extends React.PureComponent {
       return;
     }
 
-    if (docCountForAppeal && docCountForAppeal.docCountText) {
+    if (docCountForAppeal && (docCountForAppeal.docCountText || docCountForAppeal.docCountText === 0)) {
+
+    // if (docCountForAppeal && docCountForAppeal.docCountText) {
+      console.count('return if docCountText');
       return;
     }
 
@@ -47,9 +50,13 @@ class AppealDocumentCount extends React.PureComponent {
 
           return;
         }
+        this.props.setAppealDocCount(this.props.externalId, docCount, true);
+      }, (response) => {
+        if (response.status === 403) {
+          this.props.setAppealDocCount(this.props.externalId, 0, false);
 
-        this.props.setAppealDocCount(this.props.externalId, docCount);
-      }, () => {
+          return;
+        }
         this.props.errorFetchingDocumentCount(this.props.externalId);
       });
     };
@@ -80,7 +87,8 @@ AppealDocumentCount.propTypes = {
   docCountForAppeal: PropTypes.shape({
     docCountText: PropTypes.number,
     loading: PropTypes.bool,
-    error: PropTypes.bool
+    error: PropTypes.bool,
+    isVeteranAccessible: PropTypes.bool
   }),
   errorFetchingDocumentCount: PropTypes.func,
   externalId: PropTypes.string,
@@ -101,7 +109,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   loadAppealDocCount,
   setAppealDocCount,
-  errorFetchingDocumentCount
+  errorFetchingDocumentCount,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppealDocumentCount);

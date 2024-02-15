@@ -1,10 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import querystring from 'querystring';
+import { connect } from 'react-redux';
 
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
+import Badge from '../components/badges/Badge';
 
 import { TASK_ACTIONS } from './constants';
+import { COLORS } from 'app/constants/AppConstants';
 
 import AppealDocumentCount from './AppealDocumentCount';
 import { css } from 'glamor';
@@ -13,7 +16,12 @@ const documentCountSizeStyling = css({
   fontSize: '.9em'
 });
 
-export default class ReaderLink extends React.PureComponent {
+const badgeStyling = css({
+  display: 'inline-block',
+});
+
+class ReaderLink extends React.PureComponent {
+
   readerLinkAnalytics = () => {
     window.analyticsEvent(this.props.analyticsSource, TASK_ACTIONS.QUEUE_TO_READER);
   }
@@ -28,6 +36,17 @@ export default class ReaderLink extends React.PureComponent {
       docCountBelowLink
     } = this.props;
     const linkProps = {};
+
+    const veteranInaccessibleTooltip = (appeal) => {
+      return <Badge
+        name="inaccessible"
+        displayName="!"
+        color={COLORS.GOLD_LIGHTER}
+        tooltipText="<Inaccessible veteran text>"
+        id={`inaccess-${appeal.id}`}
+        ariaLabel="inaccessible vet"
+      />;
+    }
 
     if (redirectUrl) {
       const queryParams = {
@@ -45,8 +64,10 @@ export default class ReaderLink extends React.PureComponent {
     }
 
     return <React.Fragment>
-      <Link href="#" {...linkProps} onClick={this.readerLinkAnalytics}>
+      <Link disabled={!this.props.isVeteranAccessible} href="#" {...linkProps} onClick={this.readerLinkAnalytics}>
           View { docCountWithinLink && <AppealDocumentCount appeal={appeal} /> } docs</Link>
+    { !this.props.isVeteranAccessible && <span {...badgeStyling}>{ veteranInaccessibleTooltip(appeal) }</span> }
+
       { docCountBelowLink &&
             <div {...documentCountSizeStyling}>
               <AppealDocumentCount loadingText appeal={appeal} />
@@ -65,11 +86,23 @@ ReaderLink.propTypes = {
   redirectUrl: PropTypes.string,
   taskType: PropTypes.string,
   appealId: PropTypes.string.isRequired,
-  newDocsIcon: PropTypes.bool
+  newDocsIcon: PropTypes.bool,
+  isVeteranAccessible: PropTypes.bool
 };
 
 ReaderLink.defaultProps = {
   docCountWithinLink: false,
   docCountBelowLink: false,
-  task: null
+  task: null,
+  isVeteranAccessible: false
 };
+
+const mapStateToProps = (state, ownProps) => {
+  const externalId = ownProps.appeal.externalId;
+
+  return {
+    isVeteranAccessible: state.queue.docCountForAppeal[externalId]?.isVeteranAccessible || false
+  };
+};
+
+export default connect(mapStateToProps)(ReaderLink);

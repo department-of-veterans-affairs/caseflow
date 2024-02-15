@@ -297,7 +297,8 @@ const setAppealDocCount = (state, action) => {
       [action.payload.appealId]: {
         $set: {
           docCountText: action.payload.docCountText,
-          loading: false
+          loading: false,
+          isVeteranAccessible: action.payload.isVeteranAccessible
         }
       }
     }

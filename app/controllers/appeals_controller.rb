@@ -87,6 +87,9 @@ class AppealsController < ApplicationController
   # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   def document_count
+    rand_bool = [true, false].sample
+    fail Caseflow::Error::EfolderAccessForbidden.new(code: 403, message: "This efolder contains sensitive") if rand_bool
+
     doc_count = EFolderService.document_count(appeal.veteran_file_number, current_user)
     status = (doc_count == ::ExternalApi::EfolderService::DOCUMENT_COUNT_DEFERRED) ? 202 : 200
     render json: { document_count: doc_count }, status: status
