@@ -9,16 +9,16 @@ class AttorneyClaimant < Claimant
 
   delegate :name, to: :bgs_attorney
 
-  def advanced_on_docket?(_appeal)
-    false
+  def advanced_on_docket?(appeal)
+    advanced_on_docket_motion_granted?(appeal)
   end
 
   def advanced_on_docket_based_on_age?
     false
   end
 
-  def advanced_on_docket_motion_granted?(_appeal)
-    false
+  def advanced_on_docket_motion_granted?(appeal)
+    AdvanceOnDocketMotion.granted.for_appeal(appeal).any?
   end
 
   def relationship
