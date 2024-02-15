@@ -90,7 +90,7 @@ class LegacyHearing < CaseflowRecord
            allow_nil: true
   delegate :external_id, to: :appeal, prefix: true
 
-  delegate :timezone, :name, to: :regional_office, prefix: true, allow_nil: true
+  delegate :timezone, :name, to: :regional_office, prefix: true
 
   before_create :assign_created_by_user
 
