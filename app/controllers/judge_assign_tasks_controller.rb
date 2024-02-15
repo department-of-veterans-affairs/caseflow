@@ -11,6 +11,10 @@ class JudgeAssignTasksController < TasksController
     tasks_to_return = (tasks + queue_for_role.tasks).uniq
 
     render json: { tasks: json_tasks(tasks_to_return) }
+  rescue ActiveRecord::RecordInvalid => error
+    invalid_record_error(error.record)
+  rescue Caseflow::Error::MailRoutingError => error
+    render(error.serialize_response)
   end
 
   private
