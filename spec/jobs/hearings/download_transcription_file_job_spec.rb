@@ -167,7 +167,6 @@ describe Hearings::DownloadTranscriptionFileJob do
 
         it "updates date_upload_aws of vtt TranscriptionFile record" do
           subject
-          byebug
           expect(transcription_file.date_upload_aws).to_not be_nil
         end
 
