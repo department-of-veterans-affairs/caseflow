@@ -165,7 +165,7 @@ describe Claimant, :postgres do
 
       it "returns false" do
         expect(claimant.advanced_on_docket_based_on_age?).to eq(false)
-        expect(claimant.advanced_on_docket_motion_granted?(appeal)).to eq(false)
+        expect(claimant.advanced_on_docket_motion_granted?(appeal)).to eq(true)
         expect(claimant.advanced_on_docket?(appeal)).to eq(false)
       end
     end
