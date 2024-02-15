@@ -73,6 +73,10 @@ class QueueColumn
     nil
   end
 
+  def date_completed_options
+    nil
+  end
+
   def case_type_options(tasks)
     options = tasks.with_cached_appeals.group(:case_type).count.each_pair.map do |option, count|
       label = self.class.format_option_label(option, count)

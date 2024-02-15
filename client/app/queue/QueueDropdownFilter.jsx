@@ -130,10 +130,10 @@ class QueueDropdownFilter extends React.PureComponent {
               receiptDateFilterStates={receiptDateFilterStates}
             /> }
             {this.props.isTaskCompletedDateFilter && <TaskCompletedDatePicker
-              handleDateChange={this.handleTaskCompletedDateChange}
-              handleSecondaryDateChange={this.handleTaskCompletedSecondaryDateChange}
+              handleTaskCompletedDateChange={this.handleTaskCompletedDateChange}
+              handleTaskCompletedSecondaryDateChange={this.handleTaskCompletedSecondaryDateChange}
               setSelectedValue={this.props.setSelectedValue}
-              handleApplyFilter={this.handleTaskCompletedApplyFilter}
+              handleTaskCompletedApplyFilter={this.handleTaskCompletedApplyFilter}
               onChangeMethod={this.setTaskCompletedDateState}
               taskCompletedDateState={this.state.taskCompletedDateState}
               taskCompletedDateValues={this.state.taskCompletedDateValues}
@@ -186,7 +186,8 @@ QueueDropdownFilter.propTypes = {
   addClearFiltersRow: PropTypes.bool,
   name: PropTypes.string,
   setSelectedValue: PropTypes.func.isRequired,
-  isReceiptDateFilter: PropTypes.func.isRequired
+  isReceiptDateFilter: PropTypes.func.isRequired,
+  isTaskCompletedDateFilter: PropTypes.func.isRequired
 };
 
 export default QueueDropdownFilter;
