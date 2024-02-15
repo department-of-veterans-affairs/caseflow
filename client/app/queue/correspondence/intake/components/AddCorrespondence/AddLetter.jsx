@@ -82,7 +82,7 @@ AddLetter.propTypes = {
   onContinueStatusChange: PropTypes.func,
 };
 
-const currentDate = moment.utc(new Date()).format('YYYY-MM-DD');
+const currentDate = moment(new Date()).format('YYYY-MM-DD');
 const NewLetter = (props) => {
   const index = props.index;
   const letterHash = {};
