@@ -165,14 +165,18 @@ export class AssignToAttorneyWidget extends React.PureComponent {
 
         let errorDetail;
 
-        try {
-          errorDetail = error.response.body.errors[0].detail;
-        } catch (ex) {
-          errorDetail = this.props.isModal && userId ?
+        errorDetail = error?.response?.body?.errors[0]?.detail;
+
+        if (errorDetail === null) {
+          if (this.props.isModal && userId) {
+            errorDetail =
             <React.Fragment>
               <Link to={`/queue/${userId}/assign`}>{COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL_LINK}</Link>
               {COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL_MODAL}
-            </React.Fragment> : COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL;
+            </React.Fragment>;
+          } else {
+            errorDetail = COPY.ASSIGN_WIDGET_ASSIGNMENT_ERROR_DETAIL;
+          }
         }
 
         return this.props.showErrorMessage({
