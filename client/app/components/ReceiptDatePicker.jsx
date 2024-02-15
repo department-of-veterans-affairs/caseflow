@@ -12,28 +12,41 @@ const dateDropdownMap = [
 ];
 
 const receiptDatePicker = (props) => {
+
   const getDatePickerElements = () => {
     const receiptDateFilterStates = props.receiptDateFilterStates;
 
     switch (props.receiptDateState) {
     case receiptDateFilterStates.BETWEEN: return (
-      <div>
-        <DateSelector onChange={props.handleDateChange} label="from" type="date" />
-        <DateSelector onChange={props.handleSecondaryDateChange} label="to" type="date" />
+      <div style={{ marginLeft: '5%', marginRight: '5%' }}>
+        <DateSelector
+          onChange={props.handleDateChange}
+          label="From"
+          type="date" />
+        <DateSelector
+          onChange={props.handleSecondaryDateChange}
+          label="To"
+          type="date" />
       </div>);
     case receiptDateFilterStates.BEFORE: return (
-      <div>
-        <DateSelector onChange={(value) => props.handleDateChange(value)} label="To" type="date" />
+      <div style={{ marginLeft: '5%', marginRight: '5%' }}>
+        <DateSelector
+          onChange={(value) => props.handleDateChange(value)}
+          type="date" />
       </div>
     );
     case receiptDateFilterStates.AFTER: return (
-      <div>
-        <DateSelector onChange={(value) => props.handleDateChange(value)} label="From" type="date" />
+      <div style={{ marginLeft: '5%', marginRight: '5%' }}>
+        <DateSelector
+          onChange={(value) => props.handleDateChange(value)}
+          type="date" />
       </div>
     );
     case receiptDateFilterStates.ON: return (
-      <div>
-        <DateSelector onChange={(value) => props.handleDateChange(value)} label="On" type="date" />
+      <div style={{ marginLeft: '5%', marginRight: '5%' }}>
+        <DateSelector
+          onChange={(value) => props.handleDateChange(value)}
+          type="date" />
       </div>
     );
 
@@ -41,15 +54,25 @@ const receiptDatePicker = (props) => {
     }
   };
 
-  return <>
-    <ReactSelectDropdown
-      label="Date filter parameters"
-      options={dateDropdownMap}
-      onChangeMethod={props.onChangeMethod} />
-    {getDatePickerElements()}
-    <Button onClick={props.handleApplyFilter}>Apply filter</Button>
+  return <div id="dropdown">
+    <div style={{ marginLeft: '5%', marginRight: '5%' }}>
+      <ReactSelectDropdown
+        label="Date filter parameters"
+        options={dateDropdownMap}
+        onChangeMethod={props.onChangeMethod}
+      />
+    </div>
+    <div style={{ width: '100%', margin: 'auto' }}>
+      {getDatePickerElements()}
+    </div>
 
-  </>;
+    <div style={{ display: 'flex', margin: '10px 0px', justifyContent: 'center', width: '190px' }}>
+      <Button classNames={['']} onClick={props.handleApplyFilter}>
+        <span>Apply Filter</span>
+      </Button>
+    </div>
+
+  </div>;
 };
 
 receiptDatePicker.propTypes = {

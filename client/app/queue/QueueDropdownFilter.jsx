@@ -90,19 +90,18 @@ class QueueDropdownFilter extends React.PureComponent {
                 Clear {displayName} filter
               </div>
             </button>
-
           </div>
         }
         {this.props.isReceiptDateFilter && <ReceiptDatePicker
-              handleDateChange={this.handleDateChange}
-              handleSecondaryDateChange={this.handleSecondaryDateChange}
-              setSelectedValue={this.props.setSelectedValue}
-              handleApplyFilter={this.handleApplyFilter}
-              onChangeMethod={this.setreceiptDateState}
-              receiptDateState={this.state.receiptDateState}
-              receiptDateValues={this.state.receiptDateValues}
-              receiptDateFilterStates={receiptDateFilterStates}
-            />}
+          handleDateChange={this.handleDateChange}
+          handleSecondaryDateChange={this.handleSecondaryDateChange}
+          setSelectedValue={this.props.setSelectedValue}
+          handleApplyFilter={this.handleApplyFilter}
+          onChangeMethod={this.setreceiptDateState}
+          receiptDateState={this.state.receiptDateState}
+          receiptDateValues={this.state.receiptDateValues}
+          receiptDateFilterStates={receiptDateFilterStates}
+        />}
         {!this.props.isReceiptDateFilter && React.cloneElement(React.Children.only(children), {
           dropdownFilterViewListStyle,
           dropdownFilterViewListItemStyle
