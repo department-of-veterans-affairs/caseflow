@@ -214,10 +214,10 @@ class Hearing < CaseflowRecord
 
   def regional_office
     @regional_office ||= begin
-      RegionalOffice.find!(regional_office_key)
-    rescue RegionalOffice::NotFoundError
-      nil
-    end
+                           RegionalOffice.find!(regional_office_key)
+                         rescue RegionalOffice::NotFoundError
+                           nil
+                         end
   end
 
   # Returns timezone that the hearing is scheduled in
