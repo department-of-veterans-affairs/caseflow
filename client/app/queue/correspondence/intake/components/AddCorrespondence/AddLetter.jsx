@@ -17,6 +17,7 @@ export const AddLetter = (props) => {
   const onContinueStatusChange = props.onContinueStatusChange;
 
   const [letters, setLetters] = useState([]);
+  const [dataLetter, setDataLetter] = useState([]);
 
   const addLetter = (index) => {
     setLetters([...letters, index]);
@@ -24,10 +25,37 @@ export const AddLetter = (props) => {
 
   const [unrelatedTasksCanContinue, setUnrelatedTasksCanContinue] = useState(true);
 
+  const canContinue = (currentLetters) => {
+    const output = [];
+    const opts = ['65 days', 'No response window'];
+
+    for (const [, value] of Object.entries(currentLetters)) {
+      if ((value !== null) && (value !== '')) {
+        output.push(value);
+      }
+    }
+
+    if ((output.length === 7) && (opts.includes(output[6]))) {
+      return true;
+    } else if (output.length === 8) {
+      return true;
+    }
+
+    return false;
+  };
+
+  const taskUpdatedCallback = (updatedTask) => {
+    const filtered = dataLetter.filter((cdl) => cdl.id !== updatedTask.id);
+
+    setDataLetter([...filtered, updatedTask]);
+  };
+
   const removeLetter = (index) => {
     const restLetters = letters.filter((letter) => letter !== index);
+    const dls = dataLetter.filter((dl) => dl.id !== index);
 
     setLetters(restLetters);
+    setDataLetter(dls);
   };
 
   useEffect(() => {
@@ -35,16 +63,29 @@ export const AddLetter = (props) => {
   }, [unrelatedTasksCanContinue]);
 
   useEffect(() => {
-    // if canContinue() {
-    //   setUnrelatedTasksCanContinue(true);
-    // } else {
     if (letters.length > 0) {
       setUnrelatedTasksCanContinue(false);
     } else {
       setUnrelatedTasksCanContinue(true);
     }
-    // }
   }, [letters]);
+
+  useEffect(() => {
+    if ((dataLetter.length > 0) && letters.length === dataLetter.length) {
+      for (let i = 0; i < dataLetter.length; i++) {
+        if (canContinue(dataLetter[i])) {
+          setUnrelatedTasksCanContinue(true);
+        } else {
+          setUnrelatedTasksCanContinue(false);
+        }
+      }
+    } else if (letters.length === 0) {
+      setUnrelatedTasksCanContinue(true);
+    } else {
+      setUnrelatedTasksCanContinue(false);
+    }
+
+  }, [dataLetter]);
 
   return (
     <>
@@ -53,6 +94,7 @@ export const AddLetter = (props) => {
           <NewLetter
             index={letter}
             removeLetter={removeLetter}
+            taskUpdatedCallback={taskUpdatedCallback}
             setUnrelatedTasksCanContinue= {setUnrelatedTasksCanContinue}
           />
         </div>
@@ -65,7 +107,11 @@ export const AddLetter = (props) => {
           className={['cf-left-side']}
           disabled= {!(letters.length < 3)}
           onClick={() => {
-            addLetter(letters.length + 1);
+            if (letters.length > 0) {
+              addLetter(letters[letters.length - 1] + 1);
+            } else {
+              addLetter(letters.length + 1);
+            }
           }}>
         + Add letter
         </Button>
@@ -126,7 +172,7 @@ const NewLetter = (props) => {
   const handleDays = (value) => {
     const currentNumber = parseInt(value.trim(), 10);
 
-    if (currentNumber <= 64) {
+    if ((currentNumber >= 1) && (currentNumber <= 64)) {
       setLetterCard({ ...letterCard,
         customValue: currentNumber });
     } else {
@@ -263,6 +309,7 @@ const NewLetter = (props) => {
       letterHash[index] = letterCard;
       dispatch(setResponseLetters(letterHash));
       setUnrelatedTasksCanContinue(true);
+      props.taskUpdatedCallback(letterCard);
     } else {
       setUnrelatedTasksCanContinue(false);
     }
@@ -435,6 +482,7 @@ NewLetter.propTypes = {
   setLetterTitle: PropTypes.func,
   setResponseLetters: PropTypes.func,
   setUnrelatedTasksCanContinue: PropTypes.func,
+  taskUpdatedCallback: PropTypes.func,
   onContinueStatusChange: PropTypes.func
 };
 
