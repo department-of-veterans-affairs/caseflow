@@ -21,6 +21,18 @@ class CaseSearchResultsBase
     )
   end
 
+  def search_call
+    @success = valid?
+
+    case_search_results if success
+
+    FormResponse.new(
+      success: success,
+      errors: errors.messages[:workflow],
+      extra: error_status_or_case_search_results
+    )
+  end
+
   protected
 
   attr_reader :status, :user
@@ -71,6 +83,20 @@ class CaseSearchResultsBase
     ama_hash[:data].concat(legacy_hash[:data])
   end
 
+  def search_page_json_appeals(appeals)
+    ama_appeals, legacy_appeals = appeals.partition { |appeal| appeal.is_a?(Appeal) }
+
+    ama_hash = WorkQueue::AppealSearchSerializer.new(
+      ama_appeals, is_collection: true, params: { user: user }
+    ).serializable_hash
+
+    legacy_hash = WorkQueue::LegacyAppealSerializer.new(
+      legacy_appeals, is_collection: true, params: { user: user }
+    ).serializable_hash
+
+    ama_hash[:data].concat(legacy_hash[:data])
+  end
+
   private
 
   attr_reader :success
@@ -96,10 +122,25 @@ class CaseSearchResultsBase
     search_results
   end
 
+  def error_status_or_case_search_results
+    return { status: status } unless success
+
+    case_search_results
+  end
+
   def search_results
     @search_results ||= {
       search_results: {
         appeals: json_appeals(appeals),
+        claim_reviews: claim_reviews.map(&:search_table_ui_hash)
+      }
+    }
+  end
+
+  def case_search_results
+    @case_search_results ||= {
+      case_search_results: {
+        appeals: search_page_json_appeals(appeals),
         claim_reviews: claim_reviews.map(&:search_table_ui_hash)
       }
     }
