@@ -241,6 +241,10 @@ export const veteranDetails = () => {
 
   return {
     header: 'Veteran Details',
+    label: 'Veteran Details',
+    name: QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
+    backendCanSort: true,
+    getSortValue: (task) => task.veteranDetails,
     valueFunction: (task) => {
       if (task.taskUrl === '/modal/reassign_package') {
         return <a
@@ -301,13 +305,19 @@ export const checkboxColumn = () => {
 export const actionType = () => {
   return {
     header: 'Action Type',
-    valueFunction: (task) => task.actionType
+    name: QUEUE_CONFIG.COLUMNS.ACTION_TYPE.name,
+    backendCanSort: true,
+    getSortValue: (task) => task.label,
+    valueFunction: (task) => task.label.split(' ')[0]
   };
 };
 
 export const daysWaitingCorrespondence = () => {
   return {
     header: 'Days Waiting',
+    name: QUEUE_CONFIG.COLUMNS.DAYS_WAITING_CORRESPONDENCE.name,
+    backendCanSort: true,
+    getSortValue: (task) => task.daysWaiting,
     valueFunction: (task) => task.daysWaiting
   };
 };
