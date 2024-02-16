@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_01_06_021307) do
+
+ActiveRecord::Schema.define(version: 2024_02_15_212016) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1054,6 +1055,7 @@ ActiveRecord::Schema.define(version: 2024_01_06_021307) do
     t.bigint "updated_by_id", comment: "The ID of the user who most recently updated the Hearing"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.string "witness", comment: "Witness/Observer present during hearing"
+    t.index ["appeal_id"], name: "index_hearings_on_appeal_id"
     t.index ["created_by_id"], name: "index_hearings_on_created_by_id"
     t.index ["disposition"], name: "index_hearings_on_disposition"
     t.index ["updated_at"], name: "index_hearings_on_updated_at"
