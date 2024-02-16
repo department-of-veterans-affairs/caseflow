@@ -223,6 +223,28 @@ class Issue
     }
   end
 
+  def vbms_attributes
+    {
+      id: id,
+      notice_of_disagreement_date: appeal.nod_date,
+      legacy_appeal_status: appeal.status,
+      legacy_appeal_soc_date: appeal.soc_date,
+      legacy_appeal_ssoc_dates: appeal.ssoc_dates,
+      legacy_appeal_eligible_for_opt_in: appeal.eligible_for_opt_in?(receipt_date: Time.zone.today),
+      legacy_appeal_eligible_for_soc_opt_in_with_exemption: appeal.eligible_for_opt_in?(
+        receipt_date: Time.zone.today, covid_flag: true
+      ),
+      vacols_id: id,
+      vacols_sequence_id: vacols_sequence_id,
+      eligible_for_soc_opt_in: eligible_for_opt_in?,
+      eligible_for_soc_opt_in_with_exemption: eligible_for_opt_in?(covid_flag: true),
+      description: friendly_description,
+      disposition: disposition,
+      close_date: close_date,
+      note: note
+    }
+  end
+
   attr_writer :remand_reasons
 
   def remand_reasons
