@@ -48,6 +48,10 @@ export const getUndecidedIssues = (issues) =>
   });
 
 export const mostRecentHeldHearingForAppeal = (appeal) => {
+  if (appeal.hearings === undefined) {
+    return null;
+  }
+
   const hearings = appeal.hearings.
     filter((hearing) => hearing.disposition === HEARING_DISPOSITION_TYPES.held).
     sort((h1, h2) => (h1.date < h2.date ? 1 : -1));
@@ -444,7 +448,9 @@ export const prepareAppealForStore = (appeals) => {
       vacateType: appeal.attributes.vacate_type,
       cavcRemandsWithDashboard: appeal.attributes.cavc_remands_with_dashboard,
       mst: appeal.attributes.mst,
-      pact: appeal.attributes.pact
+      pact: appeal.attributes.pact,
+      evidenceSubmissionTask: appeal.attributes.evidence_submission_task,
+      hasEvidenceSubmissionTask: appeal.attributes.evidence_submission_task !== null,
     };
 
     return accumulator;
