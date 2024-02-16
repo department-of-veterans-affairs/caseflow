@@ -73,7 +73,9 @@
 
   "COLUMNS": {
     "ACTION_TYPE": {
-      "name": "actionType"
+      "name": "actionType",
+      "sorting_table": "tasks",
+      "sorting_columns": ["type"]
     },
     "APPEAL_TYPE": {
       "filterable": true,
@@ -114,7 +116,9 @@
       "sorting_columns": ["assigned_at"]
     },
     "DAYS_WAITING_CORRESPONDENCE": {
-      "name": "daysWaitingCorrespondence"
+      "name": "daysWaitingCorrespondence",
+      "sorting_table": "tasks",
+      "sorting_columns": ["assigned_at"]
     },
     "LAST_ACTION": {
       "name": "lastActionColumn"
