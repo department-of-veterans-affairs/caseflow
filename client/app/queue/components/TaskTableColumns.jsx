@@ -283,7 +283,9 @@ export const vaDor = () => {
     header: 'VA DOR',
     filterOptions: [],
     columnName: 'Receipt Date',
-    name: 'vaDor',
+    backendCanSort: true,
+    getSortValue: (task) => task.vaDor,
+    name: QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
     valueFunction: (task) => {
       return moment(task.vaDor).format('MM/DD/YYYY');
     }
