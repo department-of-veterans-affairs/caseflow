@@ -62,6 +62,93 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
     end
   end
 
+  describe "correspondence_cases" do
+    before do
+      get correspondence_path, as: :json
+    end
+
+    it "returns 200 status" do
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "returns json in the expected shape" do
+      data = JSON.parse(response.body, symbolize_names: true)
+      expect(data[:correspondence_config][:table_title]).to be_a(String)
+      expect(data[:correspondence_config]).to be_a(Hash)
+      expect(data[:correspondence_config][:active_tab]).to be_a(String)
+      expect(data[:correspondence_config][:tasks_per_page]).to be_a(Integer)
+      expect(data[:correspondence_config][:use_task_pages_api?]).to eq(nil).or be_a(TrueClass || FalseClass)
+      expect(data[:correspondence_config][:tabs]).to be_a(Array)
+
+      data[:correspondence_config][:tabs].each do |tab|
+        expect(tab[:label]).to be_a(String)
+        expect(tab[:name]).to be_a(String)
+        expect(tab[:description]).to be_a(String)
+        expect(tab[:columns]).to be_a(Array)
+        expect(tab[:defaultSort]).to be_a(Hash)
+        expect(tab[:tasks]).to be_a(Array)
+
+        tab[:tasks]&.each do |task|
+          expect(task[:attributes]).to be_a(Hash)
+          expect(task[:attributes][:unique_id]).to be_a(String)
+          expect(task[:attributes][:instructions]).to be_a(Array)
+          expect(task[:attributes][:veteran_details]).to be_a(String)
+          expect(task[:attributes][:completion_date]).to eq(nil).or be_a(String)
+          expect(task[:attributes][:days_waiting]).to be_a(Integer)
+          expect(task[:attributes][:va_date_of_receipt]).to be_a(String)
+          expect(task[:attributes][:label]).to be_a(String)
+          expect(task[:attributes][:status]).to be_a(String)
+          expect(task[:attributes][:assigned_to]).to be_a(Hash)
+          expect(task[:attributes][:assigned_by]).to be_a(Hash)
+        end
+      end
+    end
+  end
+
+  describe "correspondence_team" do
+    before do
+      MailTeamSupervisor.singleton.add_user(current_user)
+      get correspondence_team_path, as: :json
+    end
+
+    it "returns 200 status" do
+      expect(response).to have_http_status(:ok)
+    end
+
+    it "returns json in the expected shape" do
+      data = JSON.parse(response.body, symbolize_names: true)
+      expect(data[:correspondence_config][:table_title]).to be_a(String)
+      expect(data[:correspondence_config]).to be_a(Hash)
+      expect(data[:correspondence_config][:active_tab]).to be_a(String)
+      expect(data[:correspondence_config][:tasks_per_page]).to be_a(Integer)
+      expect(data[:correspondence_config][:use_task_pages_api?]).to eq(nil).or be_a(TrueClass || FalseClass)
+      expect(data[:correspondence_config][:tabs]).to be_a(Array)
+
+      data[:correspondence_config][:tabs].each do |tab|
+        expect(tab[:label]).to be_a(String)
+        expect(tab[:name]).to be_a(String)
+        expect(tab[:description]).to be_a(String)
+        expect(tab[:columns]).to be_a(Array)
+        expect(tab[:defaultSort]).to be_a(Hash)
+        expect(tab[:tasks]).to be_a(Array)
+
+        tab[:tasks]&.each do |task|
+          expect(task[:attributes]).to be_a(Hash)
+          expect(task[:attributes][:unique_id]).to be_a(String)
+          expect(task[:attributes][:instructions]).to be_a(Array)
+          expect(task[:attributes][:veteran_details]).to be_a(String)
+          expect(task[:attributes][:completion_date]).to eq(nil).or be_a(String)
+          expect(task[:attributes][:days_waiting]).to be_a(Integer)
+          expect(task[:attributes][:va_date_of_receipt]).to be_a(String)
+          expect(task[:attributes][:label]).to be_a(String)
+          expect(task[:attributes][:status]).to be_a(String)
+          expect(task[:attributes][:assigned_to]).to be_a(Hash)
+          expect(task[:attributes][:assigned_by]).to be_a(Hash)
+        end
+      end
+    end
+  end
+
   describe "#process_intake" do
     context "tasks_not_related_to_appeal" do
       shared_examples "successful unrelated task creation" do |klass_name, assignee|

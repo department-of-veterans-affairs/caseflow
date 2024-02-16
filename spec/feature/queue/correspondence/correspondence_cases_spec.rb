@@ -5,6 +5,7 @@ RSpec.feature("The Correspondence Cases page") do
     let(:current_user) { create(:user) }
     before :each do
       InboundOpsTeam.singleton.add_user(current_user)
+      MailTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       @correspondence_uuid = "123456789"
     end

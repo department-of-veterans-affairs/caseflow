@@ -13,6 +13,12 @@ import ContinuousProgressBar from 'app/components/ContinuousProgressBar';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import IhpDaysWaitingTooltip from './IhpDaysWaitingTooltip';
 import TranscriptionTaskTooltip from './TranscriptionTaskTooltip';
+import Checkbox from '../../components/Checkbox';
+import { useDispatch } from 'react-redux';
+import {
+  setShowReassignPackageModal,
+  setShowRemovePackageModal
+} from 'app/queue/correspondence/correspondenceReducer/correspondenceActions';
 
 import { taskHasCompletedHold, hasDASRecord, collapseColumn, regionalOfficeCity, renderAppealType } from '../utils';
 import { DateString, daysSinceAssigned, daysSincePlacedOnHold } from '../../util/DateUtil';
@@ -219,6 +225,90 @@ export const assignedByColumn = () => {
     valueFunction: (task) =>
       task.assignedBy ? `${task.assignedBy.firstName} ${task.assignedBy.lastName}` : null,
     getSortValue: (task) => task.assignedBy ? task.assignedBy.lastName : null
+  };
+};
+
+export const veteranDetails = () => {
+  const dispatch = useDispatch();
+
+  const showReassignPackageModal = () => {
+    dispatch(setShowReassignPackageModal(true));
+  };
+
+  const showRemovePackageModal = () => {
+    dispatch(setShowRemovePackageModal(true));
+  };
+
+  return {
+    header: 'Veteran Details',
+    valueFunction: (task) => {
+      if (task.taskUrl === '/modal/reassign_package') {
+        return <a
+          href="#"
+          onClick={showReassignPackageModal}
+          aria-label={`${task.label } Link`}
+          id="task-link"
+        >
+          {task.veteranDetails}
+        </a>;
+      } else if (task.taskUrl === '/modal/remove_package') {
+        return <a
+          href="#"
+          onClick={showRemovePackageModal}
+          aria-label={`${task.label } Link`}
+          id="task-link"
+        >
+          {task.veteranDetails}
+        </a>;
+      }
+
+      return <a
+        href={task.taskUrl}
+        id="task-link"
+        aria-label={`${task.label } Link`}
+      >
+        {task.veteranDetails}
+      </a>;
+    }
+  };
+};
+
+export const vaDor = () => {
+
+  return {
+    header: 'VA DOR',
+    valueFunction: (task) => {
+      return moment(task.vaDor).format('MM/DD/YYYY');
+    }
+  };
+};
+
+export const notes = () => {
+  return {
+    header: 'Notes',
+    valueFunction: (task) => task.notes
+  };
+};
+
+export const checkboxColumn = () => {
+  return {
+    header: 'Select',
+    name: QUEUE_CONFIG.COLUMNS.CHECKBOX_COLUMN,
+    valueFunction: (task) => task ? <Checkbox id={task.uniqueId} ariaLabel={task.uniqueId} /> : ''
+  };
+};
+
+export const actionType = () => {
+  return {
+    header: 'Action Type',
+    valueFunction: (task) => task.actionType
+  };
+};
+
+export const daysWaitingCorrespondence = () => {
+  return {
+    header: 'Days Waiting',
+    valueFunction: (task) => task.daysWaiting
   };
 };
 

@@ -1,4 +1,5 @@
 import { ACTIONS } from './correspondenceConstants';
+import ApiUtil from '../../../util/ApiUtil';
 
 export const loadCurrentCorrespondence = (currentCorrespondence) =>
   (dispatch) => {
@@ -38,6 +39,28 @@ export const loadVetCorrespondence = (vetCorrespondences) =>
         vetCorrespondences
       }
     });
+  };
+
+export const loadCorrespondenceConfig = (configUrl) =>
+  (dispatch) => {
+    ApiUtil.get(configUrl).then(
+      (response) => {
+        const returnedObject = response.body;
+        const correspondenceConfig = returnedObject.correspondence_config;
+
+        dispatch(
+          {
+            type: ACTIONS.LOAD_CORRESPONDENCE_CONFIG,
+            payload: {
+              correspondenceConfig
+            }
+          });
+
+      }).
+      catch(
+        (err) => {
+          console.error(new Error(`Problem with GET ${configUrl} ${err}`));
+        });
   };
 
 export const updateRadioValue = (value) =>
@@ -133,3 +156,21 @@ export const setResponseLetters = (responseLetters) =>
       }
     });
   };
+
+export const setShowReassignPackageModal = (isVisible) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SET_SHOW_REASSIGN_PACKAGE_MODAL,
+    payload: {
+      isVisible
+    }
+  });
+};
+
+export const setShowRemovePackageModal = (isVisible) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SET_SHOW_REMOVE_PACKAGE_MODAL,
+    payload: {
+      isVisible
+    }
+  });
+};

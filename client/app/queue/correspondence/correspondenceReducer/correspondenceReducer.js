@@ -14,6 +14,8 @@ export const initialState = {
   veteranInformation: [],
   waivedEvidenceTasks: [],
   responseLetters: [],
+  showReassignPackageModal: false,
+  showRemovePackageModal: false,
 };
 
 export const intakeCorrespondenceReducer = (state = initialState, action = {}) => {
@@ -43,6 +45,13 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     return update(state, {
       vetCorrespondences: {
         $set: action.payload.vetCorrespondences
+      }
+    });
+
+  case ACTIONS.LOAD_CORRESPONDENCE_CONFIG:
+    return update(state, {
+      correspondenceConfig: {
+        $set: action.payload.correspondenceConfig
       }
     });
 
@@ -121,6 +130,20 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     return update(state, {
       responseLetters: {
         $merge: action.payload.responseLetters
+      }
+    });
+
+  case ACTIONS.SET_SHOW_REASSIGN_PACKAGE_MODAL:
+    return update(state, {
+      showReassignPackageModal: {
+        $set: action.payload.isVisible
+      }
+    });
+
+  case ACTIONS.SET_SHOW_REMOVE_PACKAGE_MODAL:
+    return update(state, {
+      showRemovePackageModal: {
+        $set: action.payload.isVisible
       }
     });
 

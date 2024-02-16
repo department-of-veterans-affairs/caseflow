@@ -5,44 +5,29 @@ import { sprintf } from 'sprintf-js';
 import { connect } from 'react-redux';
 import querystring from 'querystring';
 
-import BulkAssignButton from './components/BulkAssignButton';
-import QueueTable from './QueueTable';
-import TabWindow from '../components/TabWindow';
+import BulkAssignButton from '../components/BulkAssignButton';
+import QueueTable from '../QueueTable';
+import TabWindow from '../../components/TabWindow';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
-import QueueOrganizationDropdown from './components/QueueOrganizationDropdown';
+import QueueOrganizationDropdown from '../components/QueueOrganizationDropdown';
 import {
+  actionType,
   assignedToColumn,
   assignedByColumn,
-  badgesColumn,
-  boardIntakeColumn,
-  completedToNameColumn,
-  daysOnHoldColumn,
-  daysSinceLastActionColumn,
-  daysSinceIntakeColumn,
-  receiptDateColumn,
-  daysWaitingColumn,
-  detailsColumn,
-  docketNumberColumn,
-  documentIdColumn,
-  lastActionColumn,
-  issueCountColumn,
-  issueTypesColumn,
-  readerLinkColumn,
-  readerLinkColumnWithNewDocsIcon,
-  regionalOfficeColumn,
+  checkboxColumn,
+  daysWaitingCorrespondence,
+  notes,
   taskColumn,
-  taskOwnerColumn,
   taskCompletedDateColumn,
-  typeColumn,
-  vamcOwnerColumn
-} from './components/TaskTableColumns';
-import { tasksWithAppealsFromRawTasks } from './utils';
+  vaDor,
+  veteranDetails
+} from '../components/TaskTableColumns';
+import { tasksWithCorrespondenceFromRawTasks } from '../utils';
 
-import COPY from '../../COPY';
-import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
+import COPY from '../../../COPY';
+import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 import { css } from 'glamor';
-import { isActiveOrganizationVHA } from '../queue/selectors';
-import BatchAutoAssignButton from './correspondence/component/BatchAutoAssignButton';
+import { isActiveOrganizationVHA } from '../selectors';
 
 const rootStyles = css({
   '.usa-alert + &': {
@@ -56,7 +41,7 @@ const rootStyles = css({
  * - @assignedTasks {array[object]} array of task objects to appear in the assigned tab
  **/
 
-const QueueTableBuilder = (props) => {
+const CorrespondenceTableBuilder = (props) => {
   const paginationOptions = () => querystring.parse(window.location.search.slice(1));
   const [storedPaginationOptions, setStoredPaginationOptions] = useState(
     querystring.parse(window.location.search.slice(1))
@@ -92,79 +77,21 @@ const QueueTableBuilder = (props) => {
 
   const createColumnObject = (column, config, tasks) => {
 
-    const { requireDasRecord } = props;
     const filterOptions = filterValuesForColumn(column);
     const functionForColumn = {
-      [QUEUE_CONFIG.COLUMNS.APPEAL_TYPE.name]: typeColumn(
-        tasks,
-        filterOptions,
-        requireDasRecord
-      ),
-      [QUEUE_CONFIG.COLUMNS.BADGES.name]: badgesColumn(tasks),
-      [QUEUE_CONFIG.COLUMNS.CASE_DETAILS_LINK.name]: detailsColumn(
-        tasks,
-        requireDasRecord,
-        config.userRole
-      ),
-      [QUEUE_CONFIG.COLUMNS.DAYS_ON_HOLD.name]: daysOnHoldColumn(
-        requireDasRecord
-      ),
-      [QUEUE_CONFIG.COLUMNS.DAYS_SINCE_LAST_ACTION.name]: daysSinceLastActionColumn(
-        requireDasRecord
-      ),
-      [QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name]: daysWaitingColumn(
-        requireDasRecord
-      ),
-      [QUEUE_CONFIG.COLUMNS.DOCKET_NUMBER.name]: docketNumberColumn(
-        tasks,
-        filterOptions,
-        requireDasRecord
-      ),
-      [QUEUE_CONFIG.COLUMNS.DOCUMENT_COUNT_READER_LINK.name]: readerLinkColumn(
-        requireDasRecord,
-        true
-      ),
-      [QUEUE_CONFIG.COLUMNS.DOCUMENT_ID.name]: documentIdColumn(),
-      [QUEUE_CONFIG.COLUMNS.ISSUE_COUNT.name]: issueCountColumn(
-        tasks,
-        filterOptions,
-        requireDasRecord
-      ),
-      [QUEUE_CONFIG.COLUMNS.ISSUE_TYPES.name]: issueTypesColumn(
-        tasks,
-        filterOptions,
-        requireDasRecord
-      ),
-      [QUEUE_CONFIG.COLUMNS.READER_LINK_WITH_NEW_DOCS_ICON.
-        name]: readerLinkColumnWithNewDocsIcon(requireDasRecord),
-      [QUEUE_CONFIG.COLUMNS.REGIONAL_OFFICE.name]: regionalOfficeColumn(
-        tasks,
-        filterOptions
-      ),
+      [QUEUE_CONFIG.COLUMNS.DAYS_WAITING_CORRESPONDENCE.name]: daysWaitingCorrespondence(),
       [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name]: assignedToColumn(
         tasks,
         filterOptions
       ),
-      [QUEUE_CONFIG.COLUMNS.BOARD_INTAKE.name]: boardIntakeColumn(
-        filterOptions
-      ),
-      [QUEUE_CONFIG.COLUMNS.LAST_ACTION.name]: lastActionColumn(
-        tasks,
-        filterOptions
-      ),
-      [QUEUE_CONFIG.COLUMNS.TASK_OWNER.name]: taskOwnerColumn(
-        filterOptions
-      ),
-      [QUEUE_CONFIG.COLUMNS.VAMC_OWNER.name]: vamcOwnerColumn(
-        tasks,
-        filterOptions
-      ),
-      [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNER.name]: completedToNameColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNED_BY.name]: assignedByColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name]: taskCompletedDateColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, filterOptions),
-      [QUEUE_CONFIG.COLUMNS.DAYS_SINCE_INTAKE.name]: daysSinceIntakeColumn(requireDasRecord),
-      [QUEUE_CONFIG.COLUMNS.RECEIPT_DATE_INTAKE.name]: receiptDateColumn(),
+      [QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name]: veteranDetails(),
+      [QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name]: vaDor(),
+      [QUEUE_CONFIG.COLUMNS.NOTES.name]: notes(),
+      [QUEUE_CONFIG.COLUMNS.CHECKBOX_COLUMN.name]: checkboxColumn(),
+      [QUEUE_CONFIG.COLUMNS.ACTION_TYPE.name]: actionType(),
     };
 
     return functionForColumn[column.name];
@@ -177,7 +104,7 @@ const QueueTableBuilder = (props) => {
 
   const taskTableTabFactory = (tabConfig, config) => {
     const savedPaginationOptions = storedPaginationOptions;
-    const tasks = tasksWithAppealsFromRawTasks(tabConfig.tasks);
+    const tasks = tasksWithCorrespondenceFromRawTasks(tabConfig.tasks);
     let totalTaskCount = tabConfig.total_task_count;
     let noCasesMessage;
 
@@ -210,12 +137,7 @@ const QueueTableBuilder = (props) => {
     return {
       label: sprintf(tabConfig.label, totalTaskCount),
       page: (
-        <React.Fragment>
-          {props.userCanBulkAssign &&
-            tabConfig.allow_bulk_assign &&
-            props.activeOrganization.type === 'InboundOpsTeam' && (
-            <BatchAutoAssignButton />
-          )}
+        <>
           <p className="cf-margin-top-0">
             {noCasesMessage || tabConfig.description}
           </p>
@@ -241,8 +163,9 @@ const QueueTableBuilder = (props) => {
               config.use_task_pages_api && !tabConfig.contains_legacy_tasks
             }
             enablePagination
+            isCorrespondenceTable
           />
-        </React.Fragment>
+        </>
       ),
     };
   };
@@ -256,13 +179,7 @@ const QueueTableBuilder = (props) => {
 
   return <div className={rootStyles}>
     <h1 {...css({ display: 'inline-block' })}>{config.table_title}</h1>
-    <QueueOrganizationDropdown
-      isMailTeamUser={props.isMailTeamUser}
-      isMailSupervisor={props.isMailSupervisor}
-      isMailSuperUser={props.isMailSuperUser}
-      organizations={props.organizations}
-      featureToggles = {props.featureToggles}
-    />
+    <QueueOrganizationDropdown organizations={props.organizations} featureToggles = {props.featureToggles} />
     <TabWindow
       name="tasks-tabwindow"
       tabs={tabsFromConfig(config)}
@@ -273,38 +190,23 @@ const QueueTableBuilder = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    config: state.queue.queueConfig,
+    config: state.intakeCorrespondence.correspondenceConfig,
     organizations: state.ui.organizations,
-    isMailTeamUser: state.ui.isMailTeamUser,
-    isMailSupervisor: state.ui.isMailSupervisor,
-    isMailSuperUser: state.ui.isMailSuperUser,
     isVhaOrg: isActiveOrganizationVHA(state),
     userCanBulkAssign: state.ui.activeOrganization.userCanBulkAssign,
-    activeOrganization: state.ui.activeOrganization
   };
 };
 
-QueueTableBuilder.propTypes = {
-  isMailTeamUser: PropTypes.bool,
-  isMailSupervisor: PropTypes.bool,
-  isMailSuperUser: PropTypes.bool,
+CorrespondenceTableBuilder.propTypes = {
   organizations: PropTypes.array,
   assignedTasks: PropTypes.array,
   config: PropTypes.shape({
     table_title: PropTypes.string,
     active_tab_index: PropTypes.number,
   }),
-  requireDasRecord: PropTypes.bool,
   userCanBulkAssign: PropTypes.bool,
   isVhaOrg: PropTypes.bool,
-  featureToggles: PropTypes.object,
-  activeOrganization: PropTypes.shape({
-    id: PropTypes.number,
-    name: PropTypes.string,
-    isVso: PropTypes.bool,
-    userCanBulkAssign: PropTypes.bool,
-    type: PropTypes.string
-  })
+  featureToggles: PropTypes.object
 };
 
-export default connect(mapStateToProps)(QueueTableBuilder);
+export default connect(mapStateToProps)(CorrespondenceTableBuilder);

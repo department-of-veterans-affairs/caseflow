@@ -1,92 +1,83 @@
-
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import ApiUtil from '../../util/ApiUtil';
-import { loadVetCorrespondence } from './correspondenceReducer/correspondenceActions';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  loadCorrespondenceConfig,
+  setShowReassignPackageModal,
+  setShowRemovePackageModal
+} from './correspondenceReducer/correspondenceActions';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import PropTypes from 'prop-types';
 import COPY from '../../../COPY';
 import { sprintf } from 'sprintf-js';
-import { css } from 'glamor';
-import CorrespondenceTable from './CorrespondenceTable';
-import QueueOrganizationDropdown from '../components/QueueOrganizationDropdown';
+import CorrespondenceTableBuilder from './CorrespondenceTableBuilder';
 import Alert from '../../components/Alert';
+import Modal from 'app/components/Modal';
 
-export const CorrespondenceCases = (props) => {
-  const {
-    organizations,
-    currentAction,
-    veteranInformation,
-    vetCorrespondences,
-  } = props;
+const CorrespondenceCases = (props) => {
+  const dispatch = useDispatch();
+  const configUrl = props.configUrl;
+
+  const currentAction = useSelector((state) => state.reviewPackage.lastAction);
+  const veteranInformation = useSelector((state) => state.reviewPackage.veteranInformation);
+
+  const [vetName, setVetName] = useState('');
 
   useEffect(() => {
-    // grabs correspondences and loads into intakeCorrespondence redux store.
-    const getVeteransWithCorrespondence = async () => {
-      return ApiUtil.get('/queue/correspondence?json').then((response) => {
-        const returnedObject = response.body;
-
-        props.loadVetCorrespondence(returnedObject.vetCorrespondences);
-      }).
-        catch((err) => {
-          // allow HTTP errors to fall on the floor via the console.
-          console.error(new Error(`Problem with GET /queue/correspondence?json ${err}`));
-        });
-    };
-
-    getVeteransWithCorrespondence();
+    dispatch(loadCorrespondenceConfig(configUrl));
   }, []);
 
-  let vetName = '';
+  const config = useSelector((state) => state.intakeCorrespondence.correspondenceConfig);
+  const showReassignPackageModal = useSelector((state) => state.intakeCorrespondence.showReassignPackageModal);
+  const showRemovePackageModal = useSelector((state) => state.intakeCorrespondence.showRemovePackageModal);
 
-  if (Object.keys(veteranInformation).length > 0) {
-    vetName = `${veteranInformation.veteran_name.first_name.trim()} ${
-        veteranInformation.veteran_name.last_name.trim()}`;
-  }
+  const closeReassignPackageModal = () => {
+    dispatch(setShowReassignPackageModal(false));
+  };
+
+  const closeRemovePackageModal = () => {
+    dispatch(setShowRemovePackageModal(false));
+  };
+
+  useEffect(() => {
+    if (
+      veteranInformation?.veteranName?.firstName &&
+      veteranInformation?.veteranName?.lastName
+    ) {
+      setVetName(
+        `${veteranInformation.veteranName.firstName.trim()} ${veteranInformation.veteranName.lastName.trim()}`);
+    }
+  }, [veteranInformation]);
 
   return (
-    <AppSegment filledBackground>
-      {(Object.keys(veteranInformation).length > 0) &&
-        currentAction.action_type === 'DeleteReviewPackage' &&
-        <Alert
-          type="success"
-          title={sprintf(COPY.CORRESPONDENCE_TITLE_REMOVE_PACKAGE_BANNER, vetName)}
-          message={COPY.CORRESPONDENCE_MESSAGE_REMOVE_PACKAGE_BANNER} scrollOnAlert={false}
-        />
-      }
-      <h1 {...css({ display: 'inline-block' })}>{COPY.CASE_LIST_TABLE_QUEUE_DROPDOWN_CORRESPONDENCE_CASES}</h1>
-      <QueueOrganizationDropdown organizations={organizations} />
-      {vetCorrespondences &&
-        <CorrespondenceTable
-          vetCorrespondences={vetCorrespondences}
-        />
-      }
-    </AppSegment>
+    <>
+      <AppSegment filledBackground>
+        {(veteranInformation?.veteranName?.firstName && veteranInformation?.veteranName?.lastName) &&
+          currentAction.action_type === 'DeleteReviewPackage' && (
+          <Alert
+            type="success"
+            title={sprintf(COPY.CORRESPONDENCE_TITLE_REMOVE_PACKAGE_BANNER, vetName)}
+            message={COPY.CORRESPONDENCE_MESSAGE_REMOVE_PACKAGE_BANNER}
+            scrollOnAlert={false}
+          />
+        )}
+        {config &&
+        <CorrespondenceTableBuilder />}
+        {showReassignPackageModal &&
+        <Modal title="Reassign Package Modal" closeHandler={closeReassignPackageModal} />}
+        {showRemovePackageModal &&
+        <Modal title="Remove Package Modal" closeHandler={closeRemovePackageModal} />}
+      </AppSegment>
+    </>
   );
 };
 
 CorrespondenceCases.propTypes = {
   organizations: PropTypes.array,
-  loadVetCorrespondence: PropTypes.func,
-  vetCorrespondences: PropTypes.array,
+  loadCorrespondenceConfig: PropTypes.func,
+  correspondenceConfig: PropTypes.object,
   currentAction: PropTypes.object,
-  veteranInformation: PropTypes.object
+  veteranInformation: PropTypes.object,
+  configUrl: PropTypes.string
 };
 
-const mapStateToProps = (state) => ({
-  vetCorrespondences: state.intakeCorrespondence.vetCorrespondences,
-  currentAction: state.reviewPackage.lastAction,
-  veteranInformation: state.reviewPackage.veteranInformation
-});
-
-const mapDispatchToProps = (dispatch) => (
-  bindActionCreators({
-    loadVetCorrespondence
-  }, dispatch)
-);
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CorrespondenceCases);
+export default CorrespondenceCases;

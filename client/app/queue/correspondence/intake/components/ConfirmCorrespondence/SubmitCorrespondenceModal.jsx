@@ -26,7 +26,7 @@ export const SubmitCorrespondenceModal = ({ setSubmitCorrespondenceModalVisible,
 
   const handleRouting = (status) => {
     if (status === 201) {
-      window.location.href = '/queue/correspondence';
+      window.location.href = '/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc';
     } else {
       setErrorBannerVisible(true);
       onCancel();
