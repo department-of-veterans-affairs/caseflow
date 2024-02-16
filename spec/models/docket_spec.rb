@@ -649,9 +649,9 @@ describe Docket, :all_dbs do
         let(:docket_type) { Constants.AMA_DOCKETS.evidence_submission }
 
         before do
-          # Force the distribution tasks to be assigned so it can be distributed
+          # Complete the EvidenceSubmissionWindowTask to move the appeals to be ready to distribute
           appeals.each do |appeal|
-            appeal.tasks.of_type(:DistributionTask).first.assigned!
+            appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.completed!
           end
         end
 
