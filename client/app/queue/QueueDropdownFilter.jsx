@@ -79,6 +79,14 @@ class QueueDropdownFilter extends React.PureComponent {
     return true;
   }
 
+  clearAllFilters = () => {
+    this.setreceiptDateState(-1);
+    this.setState({ receiptDatePrimaryValue: '' });
+    this.setState({ receiptDateSecondaryValue: '' });
+    this.props.clearFilters();
+
+  }
+
   render() {
     const { children, name } = this.props;
 
@@ -95,8 +103,8 @@ class QueueDropdownFilter extends React.PureComponent {
         this.rootElem = rootElem;
       }}>
         {this.props.addClearFiltersRow &&
-          <div className="cf-filter-option-row">
-            <button className="cf-text-button" onClick={this.props.clearFilters}
+          <div className="cf-filter-option-row" onClick={this.clearAllFilters}>
+            <button className="cf-text-button"
               disabled={!this.props.isClearEnabled}>
               <div className="cf-clear-filter-button-wrapper">
                 Clear {displayName} filter
