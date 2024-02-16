@@ -5,14 +5,17 @@ class RetryDecisionReviewProcesses
     def retry
       logs = ["RetryDecisionReviewProcesses Log"]
 
-      (supplemental_claims + higher_level_reviews + request_issue_updates).each do |instance|
+      puts "Total error count: #{all_records.count}"
+      all_records.each do |instance|
         error_field = instance.is_a?(RequestIssuesUpdate) ? :error : :establishment_error
         error = instance[error_field]
         DecisionReviewProcessJob.perform_now(instance)
         instance.reload
         # if the error field is now empty, we succeeded. we should log it
         if instance[error_field].nil?
-          logs << format_log(instance, error)
+          log = format_log(instance, error)
+          puts "\n\n\n" + log + "\n\n\n"
+          logs << log
         end
       end
 
@@ -40,6 +43,10 @@ class RetryDecisionReviewProcesses
       nil
     end
 
+    def all_records
+      supplemental_claims + higher_level_reviews + request_issue_updates
+    end
+
     def supplemental_claims
       SupplementalClaim.where.not(establishment_error: nil)
     end
@@ -49,7 +56,7 @@ class RetryDecisionReviewProcesses
     end
 
     def request_issue_updates
-      RequestIssuesUpdate.where.not(error: nil)
+      RequestIssuesUpdate.where.not(error: nil).where(canceled_at: nil)
     end
 
     def file_name
@@ -58,7 +65,7 @@ class RetryDecisionReviewProcesses
 
     def folder_name
       folder = "data-remediation-output"
-      Rails.deploy_env == :prod ? folder : "#{folder}-#{Rails.deploy_env}"
+      (Rails.deploy_env == :prod) ? folder : "#{folder}-#{Rails.deploy_env}"
     end
 
     def upload_logs(logs)
@@ -88,15 +95,16 @@ class RetryDecisionReviewProcesses
         "No payee code",
         "No space left on device",
         "OCI8 was already closed",
-        "No resources currently available in pool wbcdd_M8 to allocate to applications, please increase the size of the "\
-          "pool and retry",
+        "No resources currently available in pool wbcdd_M8 to allocate to applications, please increase the size of "\
+          "the pool and retry",
         "Rating::NilRatingProfileListError",
         "Error 404--Not Found",
         "status_code=408, body=stream timeout",
         "VBMS is currently unavailable",
         "Benefit Type, Payee code or EP Code is not valid.",
         "bip.icpdataservice.icp.sys.error",
-        "Cannot establish claim for Veteran who does not have both a Corporate and BIRLS record. Record found: Corporate",
+        "Cannot establish claim for Veteran who does not have both a Corporate and BIRLS record. Record found: "\
+          "Corporate",
         ["Tried to create an open work item for a claim (claim ID = ", ") in a non-active state"],
         "MessageException thrown in",
         "MISSING_REQUIRED_FIELD",
