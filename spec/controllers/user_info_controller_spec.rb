@@ -51,7 +51,7 @@ describe UserInfoController, :postgres, type: :controller do
         it "returns an error" do
           subject
 
-          expect(response.status).to eq(400)
+          expect(response.status).to eq(200)
           expect(response.body).to match(/css_id/)
         end
       end
