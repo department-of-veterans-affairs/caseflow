@@ -491,7 +491,7 @@ NewLetter.propTypes = {
   setLetterTitle: PropTypes.func,
   setResponseLetters: PropTypes.func,
   setUnrelatedTasksCanContinue: PropTypes.func,
-  currentLetter: PropTypes.func
+  currentLetter: PropTypes.func,
   taskUpdatedCallback: PropTypes.func,
   onContinueStatusChange: PropTypes.func
 };

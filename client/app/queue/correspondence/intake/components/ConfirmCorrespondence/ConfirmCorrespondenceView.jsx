@@ -201,7 +201,8 @@ export const ConfirmCorrespondenceView = (props) => {
                 return (
                   <tbody key={indexValue}>
                     <tr>
-                      <td> {responseDate?.toLocaleDateString('en-US')} </td>
+                      <td> {responseDate?.toLocaleDateString('en-US', {
+                        month: '2-digit', day: '2-digit', year: 'numeric' })} </td>
                       <td> {responseLetter?.type} </td>
                       <td> {responseLetter?.title} </td>
                       <td> {responseLetter?.subType} </td>
