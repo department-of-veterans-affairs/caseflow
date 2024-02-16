@@ -11,6 +11,7 @@ FactoryBot.define do
                regional_office: regional_office,
                request_type: regional_office.nil? ? "C" : "V")
       end
+      adding_user { nil }
     end
 
     hearing_location do
@@ -51,7 +52,8 @@ FactoryBot.define do
     hearing_day_id { case_hearing.vdkey }
     vacols_id { case_hearing.hearing_pkseq }
     created_by do
-      User.find_by_css_id("ID_FACT_LEGACYHEARING") ||
+      adding_user ||
+        User.find_by_css_id("ID_FACT_LEGACYHEARING") ||
         create(:user, css_id: "ID_FACT_LEGACYHEARING", full_name: "Joe LegacyHearingFactory User")
     end
     updated_by do
