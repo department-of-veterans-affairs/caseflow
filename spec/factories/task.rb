@@ -522,6 +522,9 @@ FactoryBot.define do
         end
       end
 
+      factory :evidence_or_argument_mail_task, class: EvidenceOrArgumentMailTask do
+      end
+
       factory :pulac_cerullo_task, class: PulacCerulloTask do
       end
 
