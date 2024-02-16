@@ -259,8 +259,6 @@ const ReviewAppealView = (props) => {
   );
 };
 
-// Maybe move this stuff to it's own component? It's only used here but maybe
-// TODO: Scope this based on the feature toggle as well
 const messageStyling = css({
   fontSize: '17px !important',
 });
