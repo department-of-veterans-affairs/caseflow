@@ -80,10 +80,12 @@ export class PdfFile extends React.PureComponent {
 
     return ApiUtil.get(this.props.file, requestOptions).
       then((resp) => {
+        const documentSource = resp && resp.header ? resp.header['x-document-source'] : '';
         const metricData = {
-          message: `Getting PDF document: "${this.props.file}"`,
+          message: `Getting PDF document: "${this.props.file}" from "${documentSource}"`,
           type: 'performance',
           product: 'reader',
+          additionalInfo: JSON.stringify({ source: `"${documentSource}"` }),
           data: documentData,
         };
 

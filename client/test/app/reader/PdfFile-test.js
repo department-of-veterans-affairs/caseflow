@@ -5,12 +5,12 @@ import { documents } from '../../data/documents';
 import ApiUtil from '../../../app/util/ApiUtil';
 import { storeMetrics, recordAsyncMetrics } from '../../../app/util/Metrics';
 
-ApiUtil.get = jest.fn().mockResolvedValue(() => new Promise((resolve) => resolve({ body: {} })));
+ApiUtil.get = jest.fn().mockResolvedValue(() => new Promise((resolve) => resolve({ body: {}, header: { 'x-document-source': 'VBMS' } })));
 
 jest.mock('../../../app/util/ApiUtil');
 jest.mock('../../../app/util/Metrics', () => ({
-  storeMetrics: jest.fn(),
-  recordAsyncMetrics: jest.fn(),
+  storeMetrics: jest.fn().mockResolvedValue(),
+  recordAsyncMetrics: jest.fn().mockResolvedValue(),
 }));
 jest.mock('pdfjs-dist', () => ({
   getDocument: jest.fn().mockResolvedValue(),
@@ -29,8 +29,9 @@ const metricArgs = (featureValue) => {
         file: '/document/1/pdf'
       },
       // eslint-disable-next-line no-useless-escape
-      message: 'Getting PDF document: \"/document/1/pdf\"',
+      message: 'Getting PDF document: \"/document/1/pdf\" from \"\"',
       product: 'reader',
+      additionalInfo: '{\"source\":\"\\\"\\\"\"}',
       type: 'performance'
     },
     featureValue,
