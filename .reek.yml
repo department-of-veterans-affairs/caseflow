@@ -279,6 +279,13 @@ directories:
   "app/mailers":
     InstanceVariableAssumption:
       enabled: false
+  "db/seeds":
+    InstanceVariableAssumption:
+      enabled: false
+    TooManyInstanceVariables:
+      enabled: false
+    DataClump:
+      enabled: false
 
 ### Excluding directories
 # Directories and files below will not be scanned at all

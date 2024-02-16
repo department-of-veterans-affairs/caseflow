@@ -13,6 +13,7 @@ class TimezoneService
   # There were multiple timezones for an address.
   class AmbiguousTimezoneError < StandardError
     attr_accessor :country_code
+
     def initialize(args)
       @country_code = args[:country_code]
     end

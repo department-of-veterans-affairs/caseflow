@@ -36,6 +36,11 @@ class Docket
     appeals(priority: priority, ready: ready).ids.size
   end
 
+  # currently this is used for reporting needs
+  def ready_to_distribute_appeals
+    docket_appeals.active.ready_for_distribution
+  end
+
   def genpop_priority_count
     # By default all cases are considered genpop. This can be overridden for specific dockets
     # For evidence submission and direct review docket, all appeals are genpop;
@@ -184,7 +189,7 @@ class Docket
         .where(
           "appeals.stream_type != ? OR distribution_task.assigned_at <= ?",
           Constants.AMA_STREAM_TYPES.court_remand,
-          Constants.DISTRIBUTION.cavc_affinity_days.days.ago
+          CaseDistributionLever.cavc_affinity_days.days.ago
         )
     end
 
@@ -202,7 +207,7 @@ class Docket
     def non_genpop_for_judge(judge)
       joins(with_assigned_distribution_task_sql)
         .with_original_appeal_and_judge_task
-        .where("distribution_task.assigned_at > ?", Constants.DISTRIBUTION.cavc_affinity_days.days.ago)
+        .where("distribution_task.assigned_at > ?", CaseDistributionLever.cavc_affinity_days.days.ago)
         .where(original_judge_task: { assigned_to_id: judge.id })
     end
 

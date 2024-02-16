@@ -556,6 +556,7 @@ exports[`OrgRow with VSO renders correctly 1`] = `
         >
           <input
             aria-label="URL-1"
+            aria-readonly="false"
             class="cf-form-textinput"
             id="URL-1"
             name="URL-1"

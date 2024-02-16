@@ -59,6 +59,10 @@ class Organization < CaseflowRecord
     false
   end
 
+  def users_can_view_levers?
+    false
+  end
+
   def show_regional_office_in_queue?
     false
   end

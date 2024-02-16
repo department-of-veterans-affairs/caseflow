@@ -848,6 +848,14 @@ class AppealRepository
       end
     end
 
+    def ready_to_distribute_appeals
+      MetricsService.record("VACOLS: ready_to_distribute_appeals",
+                            name: "ready_to_distribute_appeals",
+                            service: :vacols) do
+        VACOLS::CaseDocket.ready_to_distribute_appeals
+      end
+    end
+
     private
 
     # NOTE: this should be called within a transaction where you are closing an appeal
