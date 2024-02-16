@@ -7,7 +7,6 @@ class SpecialtyCaseTeamSplitAppealHandler
   attr_reader :new_appeal
 
   def initialize(old_appeal, new_appeal)
-    # super
     @old_appeal = old_appeal
     @new_appeal = new_appeal
   end
@@ -20,8 +19,7 @@ class SpecialtyCaseTeamSplitAppealHandler
     both_sct_appeals = old_sct_appeal && new_sct_appeal
 
     if both_sct_appeals
-      # We only need something here if we are cancelling the judge/attorney tasks. Otherwise a standard clone works
-      # assign_appeal_to_the_specialty_case_team(new_appeal)
+      # We only need something here if we are cancelling the judge/attorney tasks. Otherwise a standard split works
     elsif old_sct_appeal
       handle_old_sct_appeal
     elsif new_sct_appeal
@@ -52,36 +50,26 @@ class SpecialtyCaseTeamSplitAppealHandler
   end
 
   def move_appeal_back_to_distribution(appeal)
-    # Reopen the Distribution task
-    distribution_task = appeal.tasks.find { |task| task.type == DistributionTask.name }
-    distribution_task.update!(status: "assigned", assigned_to: Bva.singleton, assigned_by: current_user)
-
-    # Cancel any open Judge, Attorney, or SpecialtyCaseTeam tasks
-    cancelled_task_types = %w[SpecialtyCaseTeamAssignTask JudgeDecisionReviewTask JudgeAssignTask AttorneyTask]
-    appeal.tasks.select { |task| cancelled_task_types.include?(task.type) }.each(&:cancel_task_and_child_subtasks)
-    appeal.reload
-    appeal
+    reopen_distribution_task(appeal)
+    appeal.remove_from_current_queue!
   end
 
-  # TODO: This should be the same as Jonathan's method. Use the same way in both places
   def assign_appeal_to_the_specialty_case_team(appeal)
-    remove_appeal_from_current_queue(appeal)
-    SpecialtyCaseTeamAssignTask.find_or_create_by(
+    appeal.remove_from_current_queue!
+    create_new_specialty_case_team_assign_task(appeal)
+  end
+
+  def create_new_specialty_case_team_assign_task(appeal)
+    sct_task = SpecialtyCaseTeamAssignTask.find_or_create_by(
       appeal: appeal,
       parent: appeal.root_task,
-      assigned_to: SpecialtyCaseTeam.singleton,
-      assigned_by: current_user,
-      status: Constants.TASK_STATUSES.assigned
+      assigned_to: SpecialtyCaseTeam.singleton
     )
-    appeal.reload
-    appeal
+    sct_task.update!(assigned_by: current_user, status: Constants.TASK_STATUSES.assigned)
   end
 
-  # TODO: This should definitely be moved to the appeal model
-  # TODO: Verify that this does not do bad things like cancelling tasks that are not supposed to be cancelled
-  # Like open Hearing tasks or open mail tasks that might not be dependent on what queue the appeal is in
-  def remove_appeal_from_current_queue(appeal)
-    appeal.tasks.reject { |task| %w[RootTask DistributionTask].include?(task.type) }
-      .each(&:cancel_task_and_child_subtasks)
+  def reopen_distribution_task(appeal)
+    distribution_task = appeal.tasks.find { |task| task.type == DistributionTask.name }
+    distribution_task.update!(status: "assigned", assigned_to: Bva.singleton, assigned_by: current_user)
   end
 end

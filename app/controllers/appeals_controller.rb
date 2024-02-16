@@ -275,8 +275,7 @@ class AppealsController < ApplicationController
   def set_flash_success_message
     # if original issues were not VHA related, then that means it will be moved to the SCT queue
     if appeal.sct_appeal? && request_issues_update.before_issues.none?(&:sct_benefit_type?) &&
-       request_issues_update.review.tasks.of_type(:DistributionTask).exists? &&
-       FeatureToggle.enabled?(:specialty_case_team_distribution)
+       appeal.has_distribution_task? && FeatureToggle.enabled?(:specialty_case_team_distribution)
       return flash_move_to_sct_success
     end
 

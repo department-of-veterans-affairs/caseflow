@@ -99,7 +99,7 @@ class RequestIssuesUpdate < CaseflowRecord
     # If appeal has VHA issue, not in the SCT Queue and not PreDocketed, then move to the SCT Queue
     if review.try(:sct_appeal?) && review.tasks.of_type(:SpecialtyCaseTeamAssignTask).blank? &&
        review.tasks.of_type(:DistributionTask).exists?
-      remove_appeal_from_current_queue
+      review.remove_from_current_queue!
       SpecialtyCaseTeamAssignTask.find_or_create_by(
         appeal: review,
         parent: review.root_task,
@@ -107,11 +107,6 @@ class RequestIssuesUpdate < CaseflowRecord
         assigned_by: user
       )
     end
-  end
-
-  def remove_appeal_from_current_queue
-    review.tasks.reject { |task| %w[RootTask DistributionTask].include?(task.type) }
-      .each(&:cancel_task_and_child_subtasks)
   end
 
   private
