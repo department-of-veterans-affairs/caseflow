@@ -28,24 +28,19 @@ class CorrespondenceTaskFilter < TaskFilter
   end
 
   def filter_by_date(date_info)
-   date_type = date_info.split(",")[0]
-   first_date = date_info.split(",")[1]
-   second_date = date_info.split(",")[2]
-   case date_type
-   when "0"
-     tasks
-     .where(
-         "closed_at > ? AND closed_at < ?",
-         Time.zone.parse(first_date),
-         Time.zone.parse(second_date)
-       )
-   when "1"
-     tasks.where("closed_at < ?", Time.zone.parse(first_date))
-   when "2"
-     tasks.where("closed_at > ?", Time.zone.parse(first_date))
-   when "3"
-     tasks.where("DATE(closed_at) = (?)", Time.zone.parse(first_date))
-   end
+    date_type = date_info.split(",")[0]
+    first_date = date_info.split(",")[1]
+    second_date = date_info.split(",")[2]
+    case date_type
+    when "0"
+      tasks.where("closed_at > ? AND closed_at < ?", Time.zone.parse(first_date), Time.zone.parse(second_date))
+    when "1"
+      tasks.where("closed_at < ?", Time.zone.parse(first_date))
+    when "2"
+      tasks.where("closed_at > ?", Time.zone.parse(first_date))
+    when "3"
+      tasks.where("DATE(closed_at) = (?)", Time.zone.parse(first_date))
+    end
   end
 
   def filtered_tasks
