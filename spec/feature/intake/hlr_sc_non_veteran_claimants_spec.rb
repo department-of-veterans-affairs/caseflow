@@ -228,7 +228,7 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
       expect(page).to have_content("Review and confirm claimant information")
       expect(page).to have_content(claimant_name)
       if !has_poa
-        expect(page).to have_content("Intake does not have a Form 21-22")
+        expect(page).to have_content(COPY::ADD_CLAIMANT_CONFIRM_MODAL_NO_POA)
       end
     end
   end
@@ -238,7 +238,7 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
       expect(page).to have_content("Review and confirm claimant information")
       expect(page).to have_content(new_organization_claimant[:organization_name])
       if !has_poa
-        expect(page).to have_content("Intake does not have a Form 21-22")
+        expect(page).to have_content(COPY::ADD_CLAIMANT_CONFIRM_MODAL_NO_POA)
       end
     end
   end
@@ -356,7 +356,7 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
           add_new_individual_claimant
           click_button "Continue to next step"
           expect(page).to have_content("Review and confirm claimant information")
-          expect(page).to have_content("Intake does not have a Form 21-22")
+          expect(page).to have_content(COPY::ADD_CLAIMANT_CONFIRM_MODAL_NO_POA)
           click_button "Confirm"
           verify_individual_claimant_on_add_issues
         end
@@ -371,7 +371,7 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
           add_new_organization_claimant
           click_button "Continue to next step"
           expect(page).to have_content("Review and confirm claimant information")
-          expect(page).to have_content("Intake does not have a Form 21-22")
+          expect(page).to have_content(COPY::ADD_CLAIMANT_CONFIRM_MODAL_NO_POA)
           click_button "Confirm"
           verify_organization_claimant_on_add_issues
         end
@@ -393,7 +393,7 @@ feature "Higher-Level Review and Supplemental Claims Unlisted Claimants", :all_d
           expect(page).to have_content("Review and confirm claimant information")
           match_string = attorney.address[:address_line_1]
           expect(page.text).to match(%r{#{match_string}}i)
-          expect(page).to have_content("Intake does not have a Form 21-22")
+          expect(page).to have_content(COPY::ADD_CLAIMANT_CONFIRM_MODAL_NO_POA)
           click_button "Confirm"
           expect(page).to have_content("Add / Remove Issues")
           expect(page).to have_content("#{attorney.name}, Attorney")
