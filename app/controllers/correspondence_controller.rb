@@ -2,6 +2,8 @@
 
 # :reek:RepeatedConditional
 class CorrespondenceController < ApplicationController
+  include RunAsyncable
+
   before_action :verify_correspondence_access
   before_action :verify_feature_toggle
   before_action :correspondence
@@ -95,7 +97,7 @@ class CorrespondenceController < ApplicationController
       correspondence: correspondence,
       package_document_type: correspondence&.package_document_type,
       general_information: general_information,
-      user_can_edit_vador: MailTeamSupervisor.singleton.user_has_access?(current_user),
+      user_can_edit_vador: InboundOpsTeam.singleton.user_has_access?(current_user),
       correspondence_documents: corres_docs.map do |doc|
         WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
       end,
@@ -173,6 +175,14 @@ class CorrespondenceController < ApplicationController
     end
   end
 
+  def auto_assign_correspondences
+    job_args = {
+      current_user_id: current_user.id
+    }
+
+    perform_later_or_now(AutoAssignCorrespondenceJob, job_args)
+  end
+
   private
 
   # :reek:FeatureEnvy
@@ -201,7 +211,7 @@ class CorrespondenceController < ApplicationController
   end
 
   def verify_correspondence_access
-    return true if MailTeamSupervisor.singleton.user_has_access?(current_user) ||
+    return true if InboundOpsTeam.singleton.user_has_access?(current_user) ||
                    MailTeam.singleton.user_has_access?(current_user)
 
     redirect_to "/unauthorized"

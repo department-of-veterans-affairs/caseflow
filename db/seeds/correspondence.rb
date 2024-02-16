@@ -5,6 +5,7 @@ module Seeds
   class Correspondence < Base
     def initialize
       initial_id_values
+      RequestStore[:current_user] = User.find_by_css_id("BVADWISE")
     end
 
     def seed!
@@ -34,7 +35,7 @@ module Seeds
       }
       veteran = create(:veteran, params.merge(options))
       5.times do
-        appeal = create(:appeal, veteran_file_number: veteran.file_number)
+        appeal = create(:appeal, veteran: veteran)
         InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
       end
       veteran
@@ -53,11 +54,11 @@ module Seeds
           correspondence_type_id: 8,
           cmp_queue_id: 1,
           cmp_packet_number: @cmp_packet_number,
-          va_date_of_receipt: Time.zone.yesterday,
+          va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "This is a note from CMP.",
           assigned_by_id: 81,
           updated_by_id: 81,
-          veteran_id: veteran.id,
+          veteran_id: veteran.id
         )
         create_multiple_docs(corres, veteran)
         @cmp_packet_number += 1
@@ -73,7 +74,7 @@ module Seeds
           correspondence_type_id: 8,
           cmp_queue_id: 1,
           cmp_packet_number: @cmp_packet_number,
-          va_date_of_receipt: Time.zone.yesterday,
+          va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "This is a note from CMP.",
           assigned_by_id: 81,
           updated_by_id: 81,
@@ -100,7 +101,7 @@ module Seeds
           correspondence_type_id: corres_type_id,
           cmp_queue_id: 1,
           cmp_packet_number: @cmp_packet_number,
-          va_date_of_receipt: Time.zone.yesterday,
+          va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "This is a note from CMP.",
           assigned_by_id: 81,
           updated_by_id: 81,
@@ -127,7 +128,7 @@ module Seeds
           correspondence_type_id: 8,
           cmp_queue_id: cmp_queue_id,
           cmp_packet_number: @cmp_packet_number,
-          va_date_of_receipt: Time.zone.yesterday,
+          va_date_of_receipt: Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday),
           notes: "This is a note from CMP.",
           assigned_by_id: 81,
           updated_by_id: 81,

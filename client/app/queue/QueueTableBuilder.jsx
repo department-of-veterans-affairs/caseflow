@@ -42,6 +42,7 @@ import COPY from '../../COPY';
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 import { css } from 'glamor';
 import { isActiveOrganizationVHA } from '../queue/selectors';
+import BatchAutoAssignButton from './correspondence/component/BatchAutoAssignButton';
 
 const rootStyles = css({
   '.usa-alert + &': {
@@ -210,6 +211,11 @@ const QueueTableBuilder = (props) => {
       label: sprintf(tabConfig.label, totalTaskCount),
       page: (
         <React.Fragment>
+          {props.userCanBulkAssign &&
+            tabConfig.allow_bulk_assign &&
+            props.activeOrganization.type === 'InboundOpsTeam' && (
+            <BatchAutoAssignButton />
+          )}
           <p className="cf-margin-top-0">
             {noCasesMessage || tabConfig.description}
           </p>
@@ -265,6 +271,7 @@ const mapStateToProps = (state) => {
     organizations: state.ui.organizations,
     isVhaOrg: isActiveOrganizationVHA(state),
     userCanBulkAssign: state.ui.activeOrganization.userCanBulkAssign,
+    activeOrganization: state.ui.activeOrganization
   };
 };
 
@@ -278,7 +285,14 @@ QueueTableBuilder.propTypes = {
   requireDasRecord: PropTypes.bool,
   userCanBulkAssign: PropTypes.bool,
   isVhaOrg: PropTypes.bool,
-  featureToggles: PropTypes.object
+  featureToggles: PropTypes.object,
+  activeOrganization: PropTypes.shape({
+    id: PropTypes.number,
+    name: PropTypes.string,
+    isVso: PropTypes.bool,
+    userCanBulkAssign: PropTypes.bool,
+    type: PropTypes.string
+  })
 };
 
 export default connect(mapStateToProps)(QueueTableBuilder);
