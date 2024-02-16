@@ -596,15 +596,17 @@ describe Docket, :all_dbs do
         (1..num_appeals_before).map do
           create(:appeal,
                  :with_post_intake_tasks,
-                 docket_type: docket_type)
+                 docket_type: docket_type,
+                 receipt_date: 5.days.ago)
         end,
         (1..num_vha_appeals).map do
-          create(:appeal, :with_post_intake_tasks, :with_vha_issue, docket_type: docket_type)
+          create(:appeal, :with_post_intake_tasks, :with_vha_issue, docket_type: docket_type, receipt_date: 3.days.ago)
         end,
         (1..num_appeals_after).map do
           create(:appeal,
                  :with_post_intake_tasks,
-                 docket_type: docket_type)
+                 docket_type: docket_type,
+                 receipt_date: 2.days.ago)
         end
       ].flatten
     end
