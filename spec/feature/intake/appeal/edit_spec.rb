@@ -569,7 +569,7 @@ feature "Appeal Edit issues", :all_dbs do
     let!(:organization) { SupervisorySeniorCouncil.singleton }
     let!(:current_user) { create(:user, roles: ["Mail Intake"]) }
     let!(:organization_user) { OrganizationsUser.make_user_admin(current_user, organization) }
-    let(:request_issue_1) do
+    let!(:request_issue_1) do
       create(:request_issue,
              id: 22,
              decision_review: appeal2,
@@ -581,7 +581,7 @@ feature "Appeal Edit issues", :all_dbs do
              benefit_type: "Education")
     end
 
-    let(:request_issue_2) do
+    let!(:request_issue_2) do
       create(:request_issue,
              id: 25,
              decision_review: appeal2,
@@ -593,102 +593,82 @@ feature "Appeal Edit issues", :all_dbs do
              benefit_type: "Education")
     end
 
-    scenario "the split appeal button shows and leads to create_split page" do
-      # add issues to the appeal
-      appeal2.request_issues << request_issue_1
-      appeal2.request_issues << request_issue_2
-
+    before do
+      # Login with the user
       User.authenticate!(user: current_user)
       FeatureToggle.enable!(:split_appeal_workflow)
-      visit "appeals/#{appeal2.uuid}/edit/"
+    end
 
-      expect(page).to have_button("Split appeal")
-      # clicking the button takes the user to the next page
-      click_button("Split appeal")
-
-      expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/create_split")
-
+    after do
       FeatureToggle.disable!(:split_appeal_workflow)
     end
 
-    scenario "The SSC user navigates to the split appeal page" do
-      # add issues to the appeal
-      appeal2.request_issues << request_issue_1
-      appeal2.request_issues << request_issue_2
+    scenario "Split appeal page behavior" do
+      step "SSC user navigates to the split appeal page" do
+        visit "appeals/#{appeal2.uuid}/edit/"
 
-      User.authenticate!(user: current_user)
-      visit("/appeals/#{appeal2.uuid}/edit/create_split")
-      # expect issue descritions to display
-      expect(page).to have_content("PTSD denied")
-      expect(page).to have_content("Other Issue Description")
-      # expect the select bar, cancel button, and continue button to show
-      expect(page).to have_content("Select...")
-      expect(page).to have_content("Cancel")
-      # expect the continue button to be disabled
-      expect(page).to have_button("Continue", disabled: true)
+        expect(page).to have_button("Split appeal")
+        # clicking the button takes the user to the next page
+        click_button("Split appeal")
+
+        expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/create_split")
+      end
+
+      step "The split appeal page contains the appropriate information" do
+        expect(page).to have_content("PTSD denied")
+        expect(page).to have_content("Other Issue Description")
+
+        # expect the select bar, cancel button, and continue button to show
+        expect(page).to have_content("Select...")
+        expect(page).to have_content("Cancel")
+
+        # expect the continue button to be disabled
+        expect(page).to have_button("Continue", disabled: true)
+
+        # The cancel button goes back to the edit page
+        click_button("Cancel")
+        expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
+      end
+
+      step "If no issues and no reason are selected on the split appeal page, the Continue button is disabled" do
+        visit("/appeals/#{appeal2.uuid}/edit/create_split")
+
+        # expect issue descriptions to display
+        expect(page).to have_content("PTSD denied")
+        expect(page).to have_content("Other Issue Description")
+        expect(page).to have_content("Select...")
+        expect(page).to have_button("Continue", disabled: true)
+      end
+
+      step "If a reason is selected the button remains disabled" do
+        find(:css, ".cf-select").select_option
+        find(:css, ".cf-select__menu").click
+        expect(page).to have_button("Continue", disabled: true)
+      end
+
+      step "If an issue is selected and then de-selected the Continue button behaves correctly" do
+        find("label", text: "PTSD denied").click
+        expect(page).to have_button("Continue", disabled: false)
+        find("label", text: "PTSD denied").click
+        expect(page).to have_button("Continue", disabled: true)
+      end
+
+      step "If all issues are selected on the split appeal page, the Continue button is disabled" do
+        find("label", text: "PTSD denied").click
+        find("label", text: "Other Issue Description").click
+
+        expect(page).to have_button("Continue", disabled: true)
+      end
+
+      step "The SSC user navigates to the split appeal page to review page" do
+        find("label", text: "PTSD denied").click
+        click_button("Continue")
+        expect(page).to have_content("Reason for new appeal stream:")
+        expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/review_split")
+      end
     end
 
-    scenario "The cancel button goes back to the edit page when clicked" do
-      # add issues to the appeal
-      appeal2.request_issues << request_issue_1
-      appeal2.request_issues << request_issue_2
-
-      User.authenticate!(user: current_user)
-      visit("/appeals/#{appeal2.uuid}/edit/create_split")
-
-      # click the cancel link and go to queue page
-      click_button("Cancel")
-      expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
-    end
-
-    scenario "If no issues are selected on the split appeal page, the Continue button is disabled" do
-      User.authenticate!(user: current_user)
-      visit("/appeals/#{appeal.uuid}/edit/create_split")
-
-      # expect issue descritions to display
-      expect(page).to have_content("PTSD denied")
-      expect(page).to have_content("Military Retired Pay - nonrating description")
-      find("label", text: "PTSD denied").click
-      expect(page).to have_content("Select...")
-      expect(page).to have_button("Continue", disabled: true)
-    end
-
-    scenario "If no issues are selected after de-selecting an issue, the Continue button is disabled" do
-      User.authenticate!(user: current_user)
-      visit("/appeals/#{appeal.uuid}/edit/create_split")
-
-      # expect issue descritions to display
-      expect(page).to have_content("PTSD denied")
-      expect(page).to have_content("Military Retired Pay - nonrating description")
-      find("label", text: "PTSD denied").click
-      find("label", text: "PTSD denied").click
-      expect(page).to have_content("Select...")
-      expect(page).to have_button("Continue", disabled: true)
-    end
-
-    scenario "If all issues are selected on the split appeal page, the Continue button is disabled" do
-      User.authenticate!(user: current_user)
-      visit("/appeals/#{appeal.uuid}/edit/create_split")
-
-      # expect issue descritions to display
-      expect(page).to have_content("PTSD denied")
-      expect(page).to have_content("Military Retired Pay - nonrating description")
-      # click checkboxes
-      find("label", text: "PTSD denied").click
-      find("label", text: "Military Retired Pay - nonrating description").click
-      expect(page).to have_content("Select...")
-      find(:css, ".cf-select").select_option
-      find(:css, ".cf-select__menu").click
-      expect(page).to have_button("Continue", disabled: true)
-    end
-
-    # rubocop:disable Metrics/AbcSize
     def skill_form(appeal)
-      # add issues to the appeal
-      appeal.request_issues << request_issue_1
-      appeal.request_issues << request_issue_2
-
-      User.authenticate!(user: current_user)
       visit("/appeals/#{appeal.uuid}/edit/create_split")
 
       # expect issue descritions to display
@@ -701,9 +681,8 @@ feature "Appeal Edit issues", :all_dbs do
       find(:css, ".cf-select__menu").click
 
       click_button("Continue")
-      expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/review_split")
+      expect(page).to have_current_path("/appeals/#{appeal.uuid}/edit/review_split")
     end
-    # rubocop:enable Metrics/AbcSize
 
     def wait_for_ajax
       max_time = Capybara::Helpers.monotonic_time + Capybara.default_max_wait_time
@@ -732,12 +711,7 @@ feature "Appeal Edit issues", :all_dbs do
                           )
     end
 
-    scenario "The SSC user navigates to the split appeal page to review page" do
-      skill_form(appeal2)
-    end
-
     scenario "When the user accesses the review_split page, the page renders as expected" do
-      # add issues to the appeal
       skill_form(appeal2)
 
       expect(page).to have_table("review_table")
