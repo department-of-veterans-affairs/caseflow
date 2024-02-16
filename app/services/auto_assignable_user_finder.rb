@@ -1,11 +1,7 @@
 # frozen_string_literal: true
 
 class AutoAssignableUserFinder
-  # TODO: APPEALS-38551: Switch to working directly with DB records.
-  # Correspondence auto-assignment can be triggered via multiple methods,
-  # so a local cache of this data can easily become invalid. Thus, we need
-  # to work with the DB as our source of truth at every step
-  AssignableUser = Struct.new(:id, :last_assigned_date, :num_assigned, :nod?, keyword_init: true)
+  AssignableUser = Struct.new(:user_obj, :last_assigned_date, :num_assigned, :nod?, keyword_init: true)
 
   def assignable_users_exist?
     assignable_users.count.positive?
@@ -23,9 +19,8 @@ class AutoAssignableUserFinder
     return auto_assign_nod(vbms_id) if correspondence.nod?
 
     assignable_users.each do |user|
-      if sensitivity_checker.user_can_access?(vbms_id: vbms_id, user_to_check: user)
-        # TODO: APPEALS-38551: Find not needed here
-        return User.find(user.id)
+      if sensitivity_checker.user_can_access?(vbms_id: vbms_id, user_to_check: user.user_obj)
+        return user.user_obj
       end
     end
 
@@ -36,59 +31,91 @@ class AutoAssignableUserFinder
     assignable_users.each do |user|
       next if !user.nod?
 
-      if sensitivity_checker.user_can_access?(vbms_id: vbms_id, user_to_check: user)
-        # TODO: APPEALS-38551: Find not needed here
-        return User.find(user.id)
+      if sensitivity_checker.user_can_access?(vbms_id: vbms_id, user_to_check: user.user_obj)
+        return user.user_obj
       end
     end
 
     nil
   end
 
-  # TODO: APPEALS-38551: Stub; complete in ticket
-  # SQL query to get started with; note that you'll need queries for various user types
-  # Helpful: http://www.scuttle.io/
-=begin
-SELECT users.id,
-  COUNT(tasks.id) AS num_assigned
-FROM users
-  INNER JOIN tasks ON tasks.assigned_to_id  = users.id
-WHERE
-  tasks.assigned_to_type = 'User'
-  AND
-  tasks.appeal_type = 'Correspondence'
-  AND
-  tasks.type = 'ReviewPackageTask'
-GROUP BY users.id
-HAVING COUNT(tasks.id) < 60;
-=end
   def assignable_users
-    return @assignable_users if @assignable_users.present?
+    users = []
 
-    # TODO: APPEALS-38551: Use in query
-    # max_tasks = Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.max_assigned_tasks
+    find_users.each do |user|
+      num_assigned = num_assigned_user_tasks(user)
 
-    @assignable_users = []
-    # TODO: APPEALS-38551: Filter such that only users with auto_assign == true are in this result set
-    # Need to join to organization_user_permissions
-    eligible = InboundOpsTeam.singleton.users.includes(:tasks)
+      next if num_assigned >= CorrespondenceAutoAssignmentLever.max_capacity
 
-    eligible.each do |user|
-      # TODO: APPEALS-38551: Remove this struct and switch to working directly with DB records
-      assignable = AssignableUser.new(
-        id: user.id,
-        last_assigned_date: Time.zone.now,
-        num_assigned: user.tasks.count,
-        nod?: true
+      nod_eligible = permission_checker.can?(
+        permission_name: Constants.ORGANIZATION_PERMISSIONS.receive_nod_mail,
+        organization: InboundOpsTeam.singleton,
+        user: user
       )
 
-      @assignable_users.push(assignable)
+      assignable = AssignableUser.new(
+        user_obj: user,
+        last_assigned_date: user_review_package_tasks(user).maximum(:assigned_at),
+        num_assigned: num_assigned,
+        nod?: nod_eligible
+      )
+
+      users.push(assignable)
     end
 
-    @assignable_users
+    sorted_assignable_users(users)
+  end
+
+  def sorted_assignable_users(users)
+    users.sort do |a, b|
+      if a.num_assigned == b.num_assigned
+        a.last_assigned_date <=> b.last_assigned_date
+      else
+        a.num_assigned <=> b.num_assigned
+      end
+    end
+  end
+
+  def num_assigned_user_tasks(user)
+    count = user_review_package_tasks(user).count
+
+    super_users = InboundOpsTeam.super_users
+    if super_users.include?(user)
+      count += ((MergePackageTask.count + ReassignPackageTask.count + SplitPackageTask.count) / super_users.count).round
+    end
+
+    count
+  end
+
+  def user_review_package_tasks(user)
+    user.tasks.where(
+      type: ReviewPackageTask.name,
+      status: [
+        Constants.TASK_STATUSES.assigned,
+        Constants.TASK_STATUSES.in_progress,
+        Constants.TASK_STATUSES.on_hold
+      ]
+    )
+  end
+
+  def find_users
+    # Do NOT use manual caching here!!!
+    # Other processes may update data, so always use the DB as the source of truth and let Rails handle any caching
+    InboundOpsTeam.singleton.users.includes(:tasks, :organization_user_permissions)
+      .where(
+        organization_user_permissions: {
+          organization_permission: OrganizationPermission.auto_assign(InboundOpsTeam.singleton),
+          permitted: true
+        }
+      )
+      .references(:tasks, :organization_user_permissions)
   end
 
   def sensitivity_checker
     @sensitivity_checker ||= ExternalApi::BGSService.new
+  end
+
+  def permission_checker
+    @permission_checker ||= OrganizationUserPermissionChecker.new
   end
 end
