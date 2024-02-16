@@ -67,7 +67,7 @@ const receiptDatePicker = (props) => {
     </div>
 
     <div style={{ display: 'flex', margin: '10px 0px', justifyContent: 'center', width: '190px' }}>
-      <Button classNames={['']} onClick={props.handleApplyFilter}>
+      <Button disabled={props.isApplyButtonEnabled} onClick={props.handleApplyFilter}>
         <span>Apply Filter</span>
       </Button>
     </div>
@@ -81,6 +81,7 @@ receiptDatePicker.propTypes = {
   handleApplyFilter: PropTypes.func.isRequired,
   handleDateChange: PropTypes.func.isRequired,
   handleSecondaryDateChange: PropTypes.func.isRequired,
+  isApplyButtonEnabled: PropTypes.bool.isRequired,
   onChange: PropTypes.func,
   options: PropTypes.arrayOf(
     PropTypes.shape({

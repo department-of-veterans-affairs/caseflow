@@ -64,7 +64,19 @@ class QueueDropdownFilter extends React.PureComponent {
     } else {
       this.props.setSelectedValue([this.state.receiptDateState, this.state.receiptDatePrimaryValue], 'vaDor');
     }
+  }
 
+  isApplyButtonEnabled = () => {
+    if (this.state.receiptDateState >= 1 && this.state.receiptDatePrimaryValue !== '') {
+      return false;
+    }
+    if (this.state.receiptDateState === 0 &&
+      this.state.receiptDatePrimaryValue.length > 0 &&
+      this.state.receiptDateSecondaryValue.length > 0) {
+      return false;
+    }
+
+    return true;
   }
 
   render() {
@@ -101,6 +113,9 @@ class QueueDropdownFilter extends React.PureComponent {
           receiptDateState={this.state.receiptDateState}
           receiptDateValues={this.state.receiptDateValues}
           receiptDateFilterStates={receiptDateFilterStates}
+          // isApplyButtonEnabled={this.isApplyButtonEnabled}
+          isApplyButtonEnabled={this.isApplyButtonEnabled()}
+
         />}
         {!this.props.isReceiptDateFilter && React.cloneElement(React.Children.only(children), {
           dropdownFilterViewListStyle,
