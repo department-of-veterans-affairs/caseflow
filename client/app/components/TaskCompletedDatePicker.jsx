@@ -55,8 +55,7 @@ const TaskCompletedDatePicker = (props) => {
     );
     case taskCompletedDateFilterStates.ON: return (
       <div style={{ margin: '5% 5%' }}>
-        <div style={{ marginTop: '5%' }}>Date Completed:</div>
-        <DateSelector onChange={handleDateChange} type="date" />
+        <DateSelector onChange={handleDateChange} label="Date Completed" type="date" />
       </div>
     );
 
