@@ -8,6 +8,17 @@ class CorrespondenceTask < Task
   validate :status_is_valid_on_create, on: :create
   validate :assignee_status_is_valid_on_create, on: :create
 
+  scope :package_action_tasks, -> { where(type: package_action_task_names) }
+
+  def self.package_action_task_names
+    [
+      ReassignPackageTask.name,
+      RemovePackageTask.name,
+      SplitPackageTask.name,
+      MergePackageTask.name
+    ]
+  end
+
   def verify_org_task_unique
     if Task.where(
       appeal_id: appeal_id,
@@ -19,6 +30,14 @@ class CorrespondenceTask < Task
         task_type: self.class.name,
         assignee_type: assigned_to.class.name
       )
+    end
+  end
+
+  def verify_no_other_open_package_action_task_on_correspondence
+    return true unless package_action_task?
+
+    if CorrespondenceTask.package_action_tasks.open.where(appeal_id: appeal_id).any?
+      fail Caseflow::Error::MultipleOpenTasksOfSameTypeError, task_type: "package action task"
     end
   end
 
@@ -76,5 +95,9 @@ class CorrespondenceTask < Task
     end
 
     true
+  end
+
+  def package_action_task?
+    self.class.package_action_task_names.include?(self.class.name)
   end
 end
