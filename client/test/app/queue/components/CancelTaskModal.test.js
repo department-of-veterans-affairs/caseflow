@@ -19,7 +19,8 @@ import {
   rpoToBvaIntakeData,
   vhaPOToCAMOData,
   visnData,
-  postData
+  postData,
+  cancelHearingPostponementRequestData
 } from '../../../data/queue/taskActionModals/taskActionModalData';
 
 let requestPatchSpy;
@@ -179,6 +180,17 @@ describe('Whenever VISN user returns an appeal to Program Office', () => {
     expect(getReceivedInstructions()).toBe(
       `##### REASON FOR RETURN:\n${additionalContextText}`
     );
+  });
+});
+
+describe('A mail task gets cancelled', () => {
+  const taskType = 'HearingPostponementRequestMailTask';
+  const returnText = screen.queryByText('Cancelling this task will return it to Huan MailUser Tiryaki');
+
+  test('cancel task modal does not have text indicating that it will return to another user', () => {
+    renderCancelTaskModal(TASK_ACTIONS.CANCEL_TASK.value, cancelHearingPostponementRequestData, taskType);
+
+    expect(returnText).toBeNull();
   });
 });
 
