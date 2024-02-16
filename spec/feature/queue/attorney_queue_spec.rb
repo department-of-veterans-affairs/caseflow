@@ -162,4 +162,41 @@ RSpec.feature "Attorney queue", :all_dbs do
       end
     end
   end
+
+  describe "returning to sct queue action process" do
+    let(:sct_task) { create(:specialty_case_team_assign_task, :completed) }
+    let(:appeal) { sct_task.appeal }
+    let(:attorney) { appeal.tasks.of_type(:AttorneyTask).first.assigned_to }
+    let(:sct_user) { create(:user) }
+    let(:sct_org) { SpecialtyCaseTeam.singleton }
+
+    before { sct_org.add_user(sct_user) }
+
+    it "attorney can view sct appeal in queue and return it back to sct queue" do
+      step "shows the sct appeal in the attorney's queue" do
+        visit "/queue"
+        expect(page).to have_content(appeal.veteran_full_name)
+      end
+
+      step "start the return to sct queue process" do
+        visit "/queue/appeals/#{appeal.uuid}"
+        click_dropdown(text: Constants.TASK_ACTIONS.CANCEL_TASK_AND_RETURN_TO_SCT_QUEUE.label)
+        expect(page).to have_content(COPY::RETURN_TO_SCT_MODAL_TITLE)
+        expect(page).to have_content(COPY::RETURN_TO_SCT_MODAL_BODY)
+        expect(page).to have_button(COPY::MODAL_RETURN_BUTTON, disabled: true)
+
+        fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: "Return this case to SCT please.")
+        expect(page).to have_button(COPY::MODAL_RETURN_BUTTON, disabled: false)
+        find("button", text: COPY::MODAL_RETURN_BUTTON).click
+        expect(page).to have_content(format(COPY::RETURN_TO_SCT_SUCCESS_BANNER_TITLE, appeal.claimant.name))
+        expect(page).to have_content(COPY::RETURN_TO_SCT_SUCCESS_BANNER_DETAIL)
+      end
+
+      step "the returned appeal shows in the sct queue action required tab" do
+        User.authenticate!(user: sct_user)
+        visit "/organizations/#{sct_org.url}"
+        expect(page).to have_content("#{appeal.claimant.name} (#{appeal.veteran_file_number})")
+      end
+    end
+  end
 end

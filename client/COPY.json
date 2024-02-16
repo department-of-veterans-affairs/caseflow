@@ -1405,5 +1405,9 @@
   "MOVE_TO_SCT_MODAL_BODY": "One or more Specialty Case Team (SCT) issues have been added and the appeal will now be routed to the SCT queue.",
   "MOVE_TO_SCT_BANNER_TITLE": "You have successfully updated issues on this appeal",
   "MOVE_TO_SCT_BANNER_MESSAGE": "The appeal for %s (ID: %s) has been moved to the SCT queue.",
-  "SPECIALTY_CASE_TEAM_ASSIGN_TASK_LABEL": "Assign"
+  "SPECIALTY_CASE_TEAM_ASSIGN_TASK_LABEL": "Assign",
+  "RETURN_TO_SCT_MODAL_TITLE": "Return to Specialty Case Team (SCT)",
+  "RETURN_TO_SCT_MODAL_BODY": "Returning this case to SCT will cancel the current task and remove the case from your queue.",
+  "RETURN_TO_SCT_SUCCESS_BANNER_TITLE": "You have successfully returned %s's case to the SCT Queue",
+  "RETURN_TO_SCT_SUCCESS_BANNER_DETAIL": "If you have made a mistake, please email SCT Coordinator to manage any changes."
 }

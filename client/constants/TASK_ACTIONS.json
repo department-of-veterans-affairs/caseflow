@@ -538,5 +538,10 @@
     "label": "Mark as complete and withdraw",
     "value": "modal/complete_and_withdraw",
     "func": "withdraw_hearing_data"
+  },
+  "CANCEL_TASK_AND_RETURN_TO_SCT_QUEUE": {
+    "label": "Cancel task and return to Specialty Case Team",
+    "value": "modal/cancel_task_and_return_to_sct",
+    "func": "cancel_task_and_return_to_sct_action"
   }
 }

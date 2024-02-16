@@ -455,6 +455,10 @@ class QueueApp extends React.PureComponent {
     <InProgressTaskModal {...props.match.params} />
   );
 
+  routedReturnToSctModal = (props) => (
+    <CancelTaskModal {...props.match.params} />
+  );
+
   routedUpdateTaskAndAssignRegionalOfficeModal = (updateStatusTo) => (
     props
   ) => (
@@ -1354,6 +1358,13 @@ class QueueApp extends React.PureComponent {
                 }`}
               title={`${PAGE_TITLES.CONVERT_HEARING_TO_VIRTUAL} | Caseflow`}
               render={this.routedChangeHearingRequestTypeToVirtual}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CANCEL_TASK_AND_RETURN_TO_SCT_QUEUE.value
+                }`}
+              title={'Return to SCT | Caseflow'}
+              render={this.routedReturnToSctModal}
             />
             <PageRoute
               exact
