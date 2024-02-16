@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import ReactSelectDropdown from '../../../client/app/components/ReactSelectDropdown';
 import DateSelector from './DateSelector';
@@ -12,29 +12,52 @@ const dateDropdownMap = [
 ];
 
 const TaskCompletedDatePicker = (props) => {
+  const [isDateSelected, setDateSelected] = useState(false);
+  const [isSecondaryDateSelected, setSecondaryDateSelected] = useState(false);
+
+  const handleDateChange = (value) => {
+    props.handleTaskCompletedDateChange(value);
+    setDateSelected(Boolean(value));
+  };
+
+  const handleSecondaryDateChange = (value) => {
+    props.handleTaskCompletedSecondaryDateChange(value);
+    setSecondaryDateSelected(Boolean(value));
+  };
+
+  const handleApplyFilter = (value) => {
+    props.handleTaskCompletedApplyFilter();
+  };
+
+  const taskCompletedDateFilterStates = props.taskCompletedDateFilterStates;
+  const isApplyFilterButtonDisabled =
+    props.taskCompletedDateState === taskCompletedDateFilterStates.BETWEEN ?
+      !(isDateSelected && isSecondaryDateSelected) :
+      !isDateSelected;
+
   const getDatePickerElements = () => {
     const taskCompletedDateFilterStates = props.taskCompletedDateFilterStates;
 
     switch (props.taskCompletedDateState) {
     case taskCompletedDateFilterStates.BETWEEN: return (
       <div style={{ margin: '5% 5%' }}>
-        <DateSelector onChange={props.handleTaskCompletedDateChange} label="From" type="date" />
-        <DateSelector onChange={props.handleTaskCompletedSecondaryDateChange} label="To" type="date" />
+        <DateSelector onChange={handleDateChange} label="From" type="date" />
+        <DateSelector onChange={handleSecondaryDateChange} label="To" type="date" />
       </div>);
     case taskCompletedDateFilterStates.BEFORE: return (
       <div style={{ margin: '5% 5%' }}>
-        <DateSelector onChange={(value) => props.handleTaskCompletedDateChange(value)} label="To" type="date" />
+        <DateSelector onChange={handleDateChange} label="To" type="date" />
       </div>
     );
     case taskCompletedDateFilterStates.AFTER: return (
       <div style={{ margin: '5% 5%' }}>
-        <DateSelector onChange={(value) => props.handleTaskCompletedDateChange(value)} type="date" />
+        <DateSelector onChange={handleDateChange} type="date" />
       </div>
     );
     case taskCompletedDateFilterStates.ON: return (
       <div style={{ margin: '5% 5%' }}>
         <div style={{ marginTop: '5%' }}>Date Completed:</div>
-        <DateSelector onChange={(value) => props.handleTaskCompletedDateChange(value)} type="date" />
+        <DateSelector onChange={handleDateChange} type="date" />
       </div>
     );
 
@@ -54,7 +77,7 @@ const TaskCompletedDatePicker = (props) => {
       {getDatePickerElements()}
     </div>
     <div style={{ margin: '10px 20px', display: 'flex', justifyContent: 'end', width: '190px' }}>
-      <Button onClick={props.handleTaskCompletedApplyFilter}>Apply filter</Button>
+      <Button onClick={handleApplyFilter} disabled={isApplyFilterButtonDisabled}>Apply filter</Button>
     </div>
   </div>;
 };
