@@ -20,7 +20,7 @@ describe HearingTimeService, :all_dbs do
   context "with a legacy hearing and a hearing scheduled for 12:00pm PT" do
     include_context "legacy_hearing"
 
-    let!(:hearing) { create(:hearing, regional_office: "RO43", scheduled_time: "12:00") }
+    let!(:hearing) { create(:hearing, regional_office: "RO43", scheduled_time: "12:00 PM Pacific Time (US & Canada)") }
 
     describe "#build_params_with_time" do
       let!(:params) do

@@ -303,4 +303,66 @@ describe Hearing, :postgres do
       expect(hearing.aod?).to eq(false)
     end
   end
+
+  context "regional_office_timezone" do
+    subject { hearing.regional_office_timezone }
+
+    context "When the hearing's RO is nil" do
+      let(:hearing) do
+        create(:hearing).tap { |hear| hear.hearing_day.update!(regional_office: nil) }
+      end
+
+      it "returns the CENTRAL_OFFICE_TIMEZONE" do
+        is_expected.to eq "America/New_York"
+      end
+    end
+
+    context "When the hearing's RO's time zone is nil" do
+      let(:hearing) { create(:hearing) }
+
+      before do
+        allow_any_instance_of(RegionalOffice).to receive(:timezone).and_return(nil)
+      end
+
+      it "returns the CENTRAL_OFFICE_TIMEZONE" do
+        is_expected.to eq "America/New_York"
+      end
+    end
+
+    context "When the hearing's scheduled_in_timezone is nil" do
+      let(:hearing) do
+        create(:hearing, scheduled_in_timezone: nil, regional_office: "RO82")
+      end
+
+      it "returns the RO's timezone associated with the hearing day/docket" do
+        is_expected.to eq "America/Chicago"
+      end
+    end
+
+    context "When the hearing's scheduled_in_timezone is invalid" do
+      let(:hearing) { create(:hearing, scheduled_in_timezone: "Mars/Olympus_Mons") }
+
+      it "raises an error and defaults to the RO timezone" do
+        expect(ActiveSupport::TimeZone)
+          .to receive(:find_tzinfo)
+          .with("Mars/Olympus_Mons")
+          .and_raise(TZInfo::InvalidTimezoneIdentifier)
+
+        # Although an exception is encounted, it should be handled and not raised up the stack
+        expect { subject }.not_to raise_error(TZInfo::InvalidTimezoneIdentifier)
+
+        is_expected.to eq "America/New_York"
+      end
+    end
+
+    context "When the hearing's scheduled_in_timezone is valid and differs from RO" do
+      let(:hearing) do
+        create(:hearing, scheduled_in_timezone: "America/Los_Angeles", regional_office: "RO82")
+      end
+
+      it "returns scheduled_in_timezone instead of RO's timezone" do
+        is_expected.to eq "America/Los_Angeles"
+      end
+    end
+  end
 end
