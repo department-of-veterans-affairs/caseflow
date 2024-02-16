@@ -25,7 +25,7 @@ const TaskCompletedDatePicker = (props) => {
     setSecondaryDateSelected(Boolean(value));
   };
 
-  const handleApplyFilter = (value) => {
+  const handleApplyFilter = () => {
     props.handleTaskCompletedApplyFilter();
   };
 
@@ -36,7 +36,6 @@ const TaskCompletedDatePicker = (props) => {
       !isDateSelected;
 
   const getDatePickerElements = () => {
-    const taskCompletedDateFilterStates = props.taskCompletedDateFilterStates;
 
     switch (props.taskCompletedDateState) {
     case taskCompletedDateFilterStates.BETWEEN: return (
