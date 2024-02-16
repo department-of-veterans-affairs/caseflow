@@ -26,9 +26,6 @@ class AppealDocumentCount extends React.PureComponent {
     }
 
     if (docCountForAppeal && (docCountForAppeal.docCountText || docCountForAppeal.docCountText === 0)) {
-
-    // if (docCountForAppeal && docCountForAppeal.docCountText) {
-      console.count('return if docCountText');
       return;
     }
 

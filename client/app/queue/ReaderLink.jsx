@@ -66,7 +66,7 @@ class ReaderLink extends React.PureComponent {
     return <React.Fragment>
       <Link disabled={!this.props.isVeteranAccessible} href="#" {...linkProps} onClick={this.readerLinkAnalytics}>
           View { docCountWithinLink && <AppealDocumentCount appeal={appeal} /> } docs</Link>
-    { !this.props.isVeteranAccessible && <span {...badgeStyling}>{ veteranInaccessibleTooltip(appeal) }</span> }
+      { !this.props.isVeteranAccessible && <span {...badgeStyling}>{ veteranInaccessibleTooltip(appeal) }</span> }
 
       { docCountBelowLink &&
             <div {...documentCountSizeStyling}>
