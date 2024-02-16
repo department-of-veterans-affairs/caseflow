@@ -171,8 +171,8 @@ export const HeaderRow = (props) => {
                 filterOptionsFromApi={props.useTaskPagesApi && column.filterOptions}
                 updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
                 filteredByList={props.filteredByList}
-                isReceiptDateFilter={column.header === 'VA DOR'}
-                isTaskCompletedDateFilter={column.header === 'Date Completed'}
+                isReceiptDateFilter={column.name === QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name}
+                isTaskCompletedDateFilter={column.name === QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name}
               />
             );
           }
@@ -771,8 +771,6 @@ export default class QueueTable extends React.PureComponent {
           updateFilteredByList={this.updateFilteredByList}
           filteredByList={this.state.filteredByList}
           useTaskPagesApi={useTaskPagesApi}
-          isreceiptDateFilter={this.props.isReceiptDateFilter}
-          isTaskCompletedDateFilter={this.props.isTaskCompletedDateFilter}
           {...this.state}
         />
         <BodyRows
@@ -849,9 +847,7 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   }),
   onHistoryUpdate: PropTypes.func,
   preserveFilter: PropTypes.bool,
-  isCorrespondenceTable: PropTypes.bool,
-  isReceiptDateFilter: PropTypes.bool.isRequired,
-  isTaskCompletedDateFilter: PropTypes.bool.isRequired
+  isCorrespondenceTable: PropTypes.bool
 };
 
 Row.propTypes.rowObjects = PropTypes.arrayOf(PropTypes.object);

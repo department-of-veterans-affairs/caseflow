@@ -154,8 +154,7 @@
       "name": "notes"
     },
     "VA_DATE_OF_RECEIPT": {
-      "name": "vaDor",
-      "filterable": true
+      "name": "vaDor"
     },
     "VETERAN_DETAILS": {
       "name": "veteranDetails"

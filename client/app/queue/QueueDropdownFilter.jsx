@@ -161,7 +161,6 @@ class QueueDropdownFilter extends React.PureComponent {
           receiptDateValues={this.state.receiptDateValues}
           receiptDateFilterStates={receiptDateFilterStates}
           isApplyButtonEnabled={this.isApplyButtonEnabled()}
-
         />}
         {this.props.isTaskCompletedDateFilter && <TaskCompletedDatePicker
           handleTaskCompletedDateChange={this.handleTaskCompletedDateChange}
