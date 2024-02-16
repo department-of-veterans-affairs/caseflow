@@ -579,6 +579,19 @@ describe Appeal, :all_dbs do
     end
   end
 
+  context "when there is a granted aod, claimant is an AttorneyClaimant and aod_based_on_age is false" do
+    let(:appeal) { create(:appeal, :advanced_on_docket_granted_attorney_claimant) }
+
+    it "returns true" do
+      expect(appeal.advanced_on_docket?).to eq(true)
+      expect(appeal.aod_based_on_age).to eq(false)
+    end
+
+    it "does not return nil" do
+      expect(appeal.advanced_on_docket?).not_to eq(nil)
+    end
+  end
+
   context "#find_appeal_by_uuid_or_find_or_create_legacy_appeal_by_vacols_id" do
     context "with a uuid (AMA appeal id)" do
       let(:veteran_file_number) { "64205050" }
