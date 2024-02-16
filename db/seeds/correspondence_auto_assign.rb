@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Seeds
-  class AutoAssign < Base
+  class CorrespondenceAutoAssign < Base
     def seed!
       create_auto_assign_permissions
       create_inbound_ops_team_nod_user
@@ -10,7 +10,6 @@ module Seeds
       create_inbound_ops_team_supervisor
       create_mail_team_user
       create_mail_team_superuser
-      create_auto_assign_levers
     end
 
     def create_auto_assign_permissions
@@ -37,7 +36,7 @@ module Seeds
           roles: ["Mail Intake"]
         )
         org_user = OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: u)
-        receive_nod_mail = OrganizationPermission.find_by(permission: "receive_nod_mail")
+        receive_nod_mail = OrganizationPermission.find_by(organization: InboundOpsTeam.singleton, permission: "receive_nod_mail")
         OrganizationUserPermission.find_or_create_by!(
           organization_permission: receive_nod_mail,
           organizations_user: org_user
@@ -62,7 +61,7 @@ module Seeds
           roles: ["Mail Intake"]
         )
         org_user = OrganizationsUser.find_or_create_by!(organization: InboundOpsTeam.singleton, user: u)
-        auto_assign = OrganizationPermission.find_by(permission: "auto_assign")
+        auto_assign = OrganizationPermission.find_by(organization: InboundOpsTeam.singleton, permission: "auto_assign")
         OrganizationUserPermission.find_or_create_by!(
           organization_permission: auto_assign,
           organizations_user: org_user
@@ -141,16 +140,6 @@ module Seeds
         )
         MailTeam.singleton.add_user(u)
         OrganizationsUser.make_user_admin(u, MailTeam.singleton)
-      end
-    end
-
-    def create_auto_assign_levers
-      CorrespondenceAutoAssignmentLever.find_or_create_by(name: "capacity") do |l|
-        l.description = <<~EOS
-          Any Mail Team User or Mail Superuser with equal to or more than this amount will be excluded from Auto-assign
-        EOS
-        l.value = Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.max_assigned_tasks
-        l.enabled = true
       end
     end
   end
