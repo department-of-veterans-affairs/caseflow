@@ -21,6 +21,7 @@ module CaseDistribution
 
   def collect_appeals
     appeals = yield
+    appeals.compact!
     @rem -=
       if FeatureToggle.enabled?(:specialty_case_team_distribution, user: RequestStore.store[:current_user])
         appeals.count { |appeal| !appeal.sct_appeal }
