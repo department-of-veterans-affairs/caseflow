@@ -20,6 +20,17 @@ export const loadCorrespondences = (correspondences) =>
       }
     });
   };
+//likely need a change from correspondences
+export const loadSavedIntake = (correspondences) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.LOAD_SAVED_INTAKE,
+      payload: {
+        correspondences
+        //need a payload
+      }
+    });
+  };
 
 export const loadVeteranInformation = (veteranInformation) =>
   (dispatch) => {

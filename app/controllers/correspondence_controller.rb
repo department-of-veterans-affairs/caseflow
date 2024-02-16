@@ -15,7 +15,8 @@ class CorrespondenceController < ApplicationController
         render json: {
           currentCorrespondence: current_correspondence,
           correspondence: correspondence_load,
-          veteranInformation: veteran_information
+          veteranInformation: veteran_information,
+          savedIntakeStore: saved_intake_store
         }
       end
     end
@@ -37,6 +38,13 @@ class CorrespondenceController < ApplicationController
     else
       render(json: intake.errors.full_messages, status: :unprocessable_entity) && return
     end
+  end
+
+  # If correspondence intake was started, json data from the database will need to be loaded into the page when user returns to intake
+  def saved_intake_store
+    intake = CorrespondenceIntake.find_by(user: current_user, correspondence: current_correspondence)
+    if intake "...blah blah blah"
+
   end
 
   def correspondence_cases
