@@ -27,7 +27,7 @@ module CaseDistribution
     appeals
   end
 
-  def decrement_remaining_appeals_counter
+  def decrement_remaining_appeals_counter(appeals)
     @rem -=
       if FeatureToggle.enabled?(:specialty_case_team_distribution, user: RequestStore.store[:current_user])
         appeals.count { |appeal| !appeal.sct_appeal }
