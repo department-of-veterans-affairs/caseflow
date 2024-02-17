@@ -554,11 +554,16 @@ FactoryBot.define do
           task.appeal.tasks.of_type(:DistributionTask).first.completed!
         end
 
-        trait :on_hold do
-          after(:create) do |task, _evaluator|
+        transient do
+          associated_judge { nil }
+          associated_attorney { nil }
+        end
+
+        trait :action_required do
+          after(:create) do |task, evaluator|
             task.update(status: Constants.TASK_STATUSES.on_hold)
-            judge = create(:user, :judge, :with_vacols_judge_record)
-            attorney = create(:user, :with_vacols_attorney_record)
+            judge = evaluator.associated_judge || create(:user, :judge, :with_vacols_judge_record)
+            attorney = evaluator.associated_attorney || create(:user, :with_vacols_attorney_record)
             judge_review_task = JudgeDecisionReviewTask.create!(appeal: task.appeal, parent: task.parent,
                                                                 assigned_to: judge,
                                                                 assigned_at: 1.day.ago,
@@ -581,11 +586,11 @@ FactoryBot.define do
         end
 
         trait :completed do
-          after(:create) do |task, _evaluator|
+          after(:create) do |task, evaluator|
             task.update(status: Constants.TASK_STATUSES.completed)
             task.update(closed_at: Time.zone.now)
-            judge = create(:user, :judge, :with_vacols_judge_record)
-            attorney = create(:user, :with_vacols_attorney_record)
+            judge = evaluator.associated_judge || create(:user, :judge, :with_vacols_judge_record)
+            attorney = evaluator.associated_attorney || create(:user, :with_vacols_attorney_record)
             judge_review_task = JudgeDecisionReviewTask.create!(appeal: task.appeal, parent: task.parent,
                                                                 assigned_to: judge,
                                                                 assigned_at: 1.day.ago,
