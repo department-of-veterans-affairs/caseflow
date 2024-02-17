@@ -351,8 +351,8 @@ class Appeal < DecisionReview
     dup_remand&.save
   end
 
-  # clone issues clones request_issues the user selected
-  # and anydecision_issues/decision_request_issues tied to the request issue
+  # Clone issues and request_issues that the user selected
+  # Also clone any decision_issues/decision_request_issues tied to the request issue
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def clone_issues(parent_appeal, payload_params)
     # set request store to the user that split the appeal
@@ -424,6 +424,13 @@ class Appeal < DecisionReview
   def clone_issue(issue)
     dup_issue = issue.amoeba_dup
     dup_issue.decision_review_id = id
+
+    # If the original issue has a contention reference id, it has to be removed because it's a unique index
+    if issue.contention_reference_id
+      # Do an update to avoid callbacks?
+      issue.update_column(:contention_reference_id, nil)
+    end
+
     dup_issue.save
     dup_issue
   end

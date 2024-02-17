@@ -684,52 +684,61 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_current_path("/appeals/#{appeal.uuid}/edit/review_split")
     end
 
-    scenario "When the user accesses the review_split page, the page renders as expected" do
-      skill_form(appeal2)
+    # scenario "When the user accesses the review_split page, the page renders as expected" do
+    scenario "Review split page behavior" do
+      step "When the user accesses the review_split page, the page renders as expected" do
+        skill_form(appeal2)
 
-      expect(page).to have_table("review_table")
-      expect(page).to have_content("Cancel")
-      expect(page).to have_button("Back")
-      expect(page).to have_button("Split appeal")
-      expect(page).to have_content("Reason for new appeal stream:")
-    end
+        expect(page).to have_table("review_table")
+        expect(page).to have_content("Cancel")
+        expect(page).to have_button("Back")
+        expect(page).to have_button("Split appeal")
+        expect(page).to have_content("Reason for new appeal stream:")
+        expect(appeal2.docket_type).not_to have_content("hearing")
 
-    scenario "on the review_split page, the back button takes the user back" do
-      skill_form(appeal2)
-
-      click_button("Back")
-      expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/create_split")
-    end
-
-    scenario "on the review_split page, the cancel button takes the user to queue" do
-      skill_form(appeal2)
-
-      click_button("Cancel")
-      expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
-    end
-
-    scenario "on the review_split page, testing appellant and vetera" do
-      skill_form(appeal2)
-      row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
-      row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
-      expect(row2_1).to eq("Veteran")
-      if expect(appeal2.veteran_is_not_claimant).to be(false)
-        expect(row3_1).to eq("Docket Number")
-      else
-        expect(row3_1).to eq("Appellant")
+        # Verify table information
+        row2_1 = page.find(:xpath, ".//table/tr[2]/td[1]/em").text
+        row3_1 = page.find(:xpath, ".//table/tr[3]/td[1]/em").text
+        expect(row2_1).to eq("Veteran")
+        if expect(appeal2.veteran_is_not_claimant).to be(false)
+          expect(row3_1).to eq("Docket Number")
+        else
+          expect(row3_1).to eq("Appellant")
+        end
       end
-    end
 
-    scenario "on the review_split page, appeal type is no hearing" do
-      skill_form(appeal2)
-      expect(appeal2.docket_type).not_to have_content("hearing")
-    end
+      step "the back button takes the user back" do
+        click_button("Back")
+        expect(page).to have_content("Create new appeal stream")
+        expect(page).to have_current_path("/appeals/#{appeal2.uuid}/edit/create_split")
+      end
 
-    scenario "on the review_split page, the Split appeal button takes the user to queue" do
-      skill_form(appeal2)
+      step "the cancel button takes the user back to the appeal case details page" do
+        skill_form(appeal2)
+        expect(page).to have_button("Split appeal")
+        click_button("Cancel")
+        expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}")
+      end
 
-      click_button("Split appeal")
-      expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}", ignore_query: true)
+      step "the Split appeal button splits appeal and takes the user back to the original appeal case details page" do
+        skill_form(appeal2)
+
+        click_button("Split appeal")
+        expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}", ignore_query: true)
+
+        # Verify the success banner
+        expect(page).to have_content("You have successfully split #{appeal2.claimant.name}'s appeal")
+        expect(page).to have_content(COPY::SPLIT_APPEAL_BANNER_SUCCESS_MESSAGE)
+
+        # Verify the spit appeal information
+        appeal2.reload
+        split_record = SplitCorrelationTable.last
+        new_appeal = Appeal.find(split_record.appeal_id)
+        expect(split_record.original_appeal_id).to eq(appeal2.id)
+        expect(new_appeal.request_issues.first.contested_issue_description).to eq("PTSD denied")
+        expect(appeal2.request_issues.active.count).to eq(1)
+        expect(new_appeal.docket_number).to eq(appeal2.docket_number)
+      end
     end
   end
 
