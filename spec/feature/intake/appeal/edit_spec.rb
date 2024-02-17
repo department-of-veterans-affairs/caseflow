@@ -684,6 +684,23 @@ feature "Appeal Edit issues", :all_dbs do
       expect(page).to have_current_path("/appeals/#{appeal.uuid}/edit/review_split")
     end
 
+    def specialty_case_team_split_form(appeal)
+      visit("/appeals/#{appeal.uuid}/edit/create_split")
+
+      # expect issue descritions to display
+      expect(page).to have_content("PTSD denied")
+      expect(page).to have_content("Other Issue Description")
+      expect(page).to have_content("CHAMPVA Split Issue")
+      find("label", text: "CHAMPVA Split Issue").click
+      expect(page).to have_content("Select...")
+
+      find(:css, ".cf-select").select_option
+      find(:css, ".cf-select__menu").click
+
+      click_button("Continue")
+      expect(page).to have_current_path("/appeals/#{appeal.uuid}/edit/review_split")
+    end
+
     # scenario "When the user accesses the review_split page, the page renders as expected" do
     scenario "Review split page behavior" do
       step "When the user accesses the review_split page, the page renders as expected" do
@@ -738,6 +755,95 @@ feature "Appeal Edit issues", :all_dbs do
         expect(new_appeal.request_issues.first.contested_issue_description).to eq("PTSD denied")
         expect(appeal2.request_issues.active.count).to eq(1)
         expect(new_appeal.docket_number).to eq(appeal2.docket_number)
+      end
+    end
+
+    context "When splitting appeals with Specialty Case Team issues" do
+      let!(:request_issue_3) do
+        create(:request_issue,
+               id: 28,
+               decision_review: appeal2,
+               decision_date: profile_date,
+               benefit_type: "vha",
+               nonrating_issue_category: "CHAMPVA",
+               nonrating_issue_description: "CHAMPVA Split Issue")
+      end
+
+      context "With feature toggle enabled" do
+        before do
+          FeatureToggle.enable!(:specialty_case_team_distribution)
+        end
+        after do
+          FeatureToggle.disable!(:specialty_case_team_distribution)
+        end
+
+        scenario "Split appeal with Vha issue" do
+          step "The split appeal should progress through to the review split page" do
+            specialty_case_team_split_form(appeal2)
+          end
+
+          step "the banner should be on the page indicating that it is a specialty case team issue" do
+            expect(page).to have_content(COPY::SPLIT_APPEAL_SPECIALTY_CASE_TEAM_ISSUE_MESSAGE)
+          end
+
+          step "The appeal should be split succesfully and user should be redirected back to the case details page" do
+            click_button("Split appeal")
+            expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}", ignore_query: true)
+
+            # Verify the success banner
+            expect(page).to have_content("You have successfully split #{appeal2.claimant.name}'s appeal")
+            expect(page).to have_content(COPY::SPLIT_APPEAL_BANNER_SUCCESS_MESSAGE)
+
+            # Verify the spit appeal information
+            appeal2.reload
+            split_record = SplitCorrelationTable.last
+            new_appeal = Appeal.find(split_record.appeal_id)
+            expect(split_record.original_appeal_id).to eq(appeal2.id)
+            expect(new_appeal.request_issues.first.nonrating_issue_category).to eq("CHAMPVA")
+            expect(appeal2.request_issues.active.count).to eq(2)
+            expect(new_appeal.request_issues.active.count).to eq(1)
+            expect(new_appeal.docket_number).to eq(appeal2.docket_number)
+
+            # The new appeal should have an assigned SCT task
+            sct_task = new_appeal.tasks.find { |task| task.type == SpecialtyCaseTeamAssignTask.name }
+            expect(sct_task.status).to eq(Constants.TASK_STATUSES.assigned)
+          end
+        end
+      end
+
+      context "With sct feature toggle disabled" do
+        scenario "Split appeal with Vha issue" do
+          step "The split appeal should progress through to the review split page" do
+            specialty_case_team_split_form(appeal2)
+          end
+
+          step "the sct banner should not be on the page indicating that it is a specialty case team issue" do
+            expect(page).to_not have_content(COPY::SPLIT_APPEAL_SPECIALTY_CASE_TEAM_ISSUE_MESSAGE)
+          end
+
+          step "The appeal should be split succesfully and user should be redirected back to the case details page" do
+            click_button("Split appeal")
+            expect(page).to have_current_path("/queue/appeals/#{appeal2.uuid}", ignore_query: true)
+
+            # Verify the success banner
+            expect(page).to have_content("You have successfully split #{appeal2.claimant.name}'s appeal")
+            expect(page).to have_content(COPY::SPLIT_APPEAL_BANNER_SUCCESS_MESSAGE)
+
+            # Verify the spit appeal information
+            appeal2.reload
+            split_record = SplitCorrelationTable.last
+            new_appeal = Appeal.find(split_record.appeal_id)
+            expect(split_record.original_appeal_id).to eq(appeal2.id)
+            expect(new_appeal.request_issues.first.nonrating_issue_category).to eq("CHAMPVA")
+            expect(appeal2.request_issues.active.count).to eq(2)
+            expect(new_appeal.request_issues.active.count).to eq(1)
+            expect(new_appeal.docket_number).to eq(appeal2.docket_number)
+
+            # The new appeal should not have an assigned SCT task
+            sct_task = new_appeal.tasks.find { |task| task.type == SpecialtyCaseTeamAssignTask.name }
+            expect(sct_task).to eq(nil)
+          end
+        end
       end
     end
   end
