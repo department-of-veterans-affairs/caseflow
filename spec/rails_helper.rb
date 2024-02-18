@@ -74,6 +74,7 @@ RSpec.configure do |config|
 
   config.before(:each) do
     @spec_time_zone = Time.zone
+    Seeds::CaseDistributionLevers.new.seed!
   end
 
   config.after(:each) do
