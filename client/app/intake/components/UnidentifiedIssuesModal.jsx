@@ -126,26 +126,6 @@ class UnidentifiedIssuesModal extends React.Component {
     );
   }
 
-  getCheckbox() {
-    return (
-      <React.Fragment>
-        <p>Please look for a record of the prior decision matching the description
-    and decision date of the issue that was submitted by the veteran.</p>
-        <br />
-        <p>If found, please check below that it is verified. Use the prior decision's information
-        to enter the description and decision date. Update the notes with information on the record,
-        such as the location, ID, or document title.
-        </p>
-        <Checkbox
-          label={<strong>Verify record of prior decision</strong>}
-          name="verify_prior_record"
-          value={this.state.verifiedUnidentifiedIssue}
-          onChange={this.onCheckboxChange}
-        />
-      </React.Fragment>
-    );
-  }
-
   render() {
     const { intakeData, onCancel } = this.props;
 

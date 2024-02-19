@@ -11,6 +11,7 @@ import { escapeRegExp } from 'utils/reader/format';
  * @param {string} searchQuery -- The Query being used to filter
  * @returns {array} -- The list of comment rows for the table
  */
+/*
 export const commentRows = (documents, annotationsPerDocument, searchQuery = '') => {
   // Group the Annotations
   const groupedAnnotations = annotationsPerDocument.map((notes) =>
@@ -43,6 +44,7 @@ export const commentRows = (documents, annotationsPerDocument, searchQuery = '')
   );
 };
 
+*/
 /**
  * Method to scroll the DOM to focus the comment details
  * @param {Object} comment -- The comment to focus

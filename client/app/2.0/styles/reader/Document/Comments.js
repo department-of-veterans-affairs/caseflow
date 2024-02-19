@@ -19,10 +19,10 @@ export const selectionStyles = css({
   }
 });
 
-export const textLayerStyles = (dimensions, scale) => ({
-  width: `${dimensions.width}px`,
-  height: `${dimensions.height}px`,
-  transform: `scale(${scale})`,
-  transformOrigin: 'left top',
-  opacity: 1,
-});
+// export const textLayerStyles = (dimensions, scale) => ({
+//   width: `${dimensions.width}px`,
+//   height: `${dimensions.height}px`,
+//   transform: `scale(${scale})`,
+//   transformOrigin: 'left top',
+//   opacity: 1,
+// });
