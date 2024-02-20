@@ -5,10 +5,12 @@
 class SpecialtyCaseTeamSplitAppealHandler
   attr_reader :old_appeal
   attr_reader :new_appeal
+  attr_reader :current_user
 
-  def initialize(old_appeal, new_appeal)
+  def initialize(old_appeal, new_appeal, current_user)
     @old_appeal = old_appeal
     @new_appeal = new_appeal
+    @current_user = current_user
   end
 
   def handle_split_sct_appeals
@@ -53,12 +55,19 @@ class SpecialtyCaseTeamSplitAppealHandler
 
   def move_appeal_back_to_distribution(appeal)
     reopen_distribution_task(appeal)
+    # TODO: Shouldn't remove from current_queue do this??? But cancel_task_and_child subtasks doesn't cancel the task
+    # it is called on despite the method name implying it would
     appeal.remove_from_current_queue!
+    remove_from_specialty_case_team(appeal)
   end
 
   def assign_appeal_to_the_specialty_case_team(appeal)
     appeal.remove_from_current_queue!
     create_new_specialty_case_team_assign_task(appeal)
+  end
+
+  def remove_from_specialty_case_team(appeal)
+    appeal.tasks.find { |task| task.type == SpecialtyCaseTeamAssignTask.name }&.cancelled!
   end
 
   def create_new_specialty_case_team_assign_task(appeal)
