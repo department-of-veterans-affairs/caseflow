@@ -89,17 +89,18 @@ export const AddLetter = (props) => {
 
   return (
     <>
-      { letters.map((letter) => (
-        <div id={letter} style={{ width: '50%', display: 'inline-block' }} key={letter}>
-          <NewLetter
-            index={letter}
-            removeLetter={removeLetter}
-            taskUpdatedCallback={taskUpdatedCallback}
-            setUnrelatedTasksCanContinue= {setUnrelatedTasksCanContinue}
-          />
-        </div>
-      )) }
-
+      <div className="myletters" style={{width: '100%', display: 'inline-block' }}>
+        { letters.map((letter) => (
+          <div id={letter} style={{ width: '50%', float: 'left', height: '840px' }} key={letter}>
+            <NewLetter
+              index={letter}
+              removeLetter={removeLetter}
+              taskUpdatedCallback={taskUpdatedCallback}
+              setUnrelatedTasksCanContinue= {setUnrelatedTasksCanContinue}
+            />
+          </div>
+        )) }
+      </div>
       <div style={{ width: '80%', marginBottom: '30px' }}>
         <Button
           type="button"
