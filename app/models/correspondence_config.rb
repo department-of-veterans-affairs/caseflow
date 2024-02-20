@@ -6,7 +6,7 @@ class CorrespondenceConfig < QueueConfig
       table_title: table_title,
       active_tab: default_active_tab,
       tasks_per_page: 15,
-      use_task_pages_api: assignee.use_task_pages_api?,
+      use_task_pages_api: true,
       tabs: assignee.correspondence_queue_tabs.map { |tab| attach_tasks_to_tab(tab) }
     }
   end
