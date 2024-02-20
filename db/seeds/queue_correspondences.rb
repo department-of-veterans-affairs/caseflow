@@ -128,7 +128,7 @@ module Seeds
           appeal_id: corres.id,
           appeal_type: "Correspondence",
           assigned_to: MailTeamSupervisor.singleton,
-          assigned_by: rpt.assigned_to
+          assigned_by_id: rpt.assigned_to_id
         )
       end
     end
