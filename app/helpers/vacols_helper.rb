@@ -20,8 +20,9 @@ module VacolsHelper
   def self.format_datetime_with_utc_timezone(input_datetime)
     return if input_datetime.nil?
 
-    value = input_datetime.in_time_zone(VACOLS_DEFAULT_TIMEZONE)
-    Time.utc(value.year, value.month, value.day, value.hour, value.min, value.sec)
+    # value = input_datetime.in_time_zone(VACOLS_DEFAULT_TIMEZONE)
+    # Time.utc(value.year, value.month, value.day, value.hour, value.min, value.sec)
+    input_datetime.in_time_zone("UTC")
   end
 
   # dates in VACOLS are incorrectly recorded as UTC.

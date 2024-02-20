@@ -28,16 +28,11 @@ class HearingTimeService
       remove_time_string_params(update_params).merge(scheduled_time: update_params[:scheduled_time_string])
     end
 
-    def legacy_formatted_scheduled_for(scheduled_for:, scheduled_time_string:)
-      # Parse the scheduled_time_string as a UTC time
-      scheduled_time_in_utc = Time.zone.parse(scheduled_time_string).utc
-
+    def legacy_formatted_scheduled_for(scheduled_for:, scheduled_time_string:, scheduled_in_timezone:)
       time = scheduled_for.to_datetime
-      Time.use_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE) do
-        Time.zone.parse(
-          "#{time.year}-#{time.month}-#{time.day} #{scheduled_time_in_utc.hour}:#{scheduled_time_in_utc.min} UTC"
-        )
-      end
+      time_and_date_string = "#{time.year}-#{time.month}-#{time.day} #{scheduled_time_string}"
+      est_time_string = time_and_date_string.in_time_zone(scheduled_in_timezone)
+      est_time_string.in_time_zone(VacolsHelper::VACOLS_DEFAULT_TIMEZONE)
     end
 
     def time_to_string(time)
