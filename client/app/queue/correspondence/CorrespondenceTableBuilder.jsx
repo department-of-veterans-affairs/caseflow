@@ -80,13 +80,10 @@ const CorrespondenceTableBuilder = (props) => {
     const filterOptions = filterValuesForColumn(column);
     const functionForColumn = {
       [QUEUE_CONFIG.COLUMNS.DAYS_WAITING_CORRESPONDENCE.name]: daysWaitingCorrespondence(),
-      [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name]: assignedToColumn(
-        tasks,
-        filterOptions
-      ),
+      [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNEE.name]: assignedToColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_ASSIGNED_BY.name]: assignedByColumn(),
       [QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name]: taskCompletedDateColumn(),
-      [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(tasks, filterOptions),
+      [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(),
       [QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name]: veteranDetails(),
       [QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name]: vaDor(tasks, filterOptions),
       [QUEUE_CONFIG.COLUMNS.NOTES.name]: notes(),
