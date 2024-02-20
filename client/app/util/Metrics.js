@@ -41,13 +41,14 @@ const checkUuid = (uniqueId, data, message, type) => {
  * Product is which area of Caseflow did the metric come from: queue, hearings, intake, vha, case_distribution, reader
  *
  */
-export const storeMetrics = (uniqueId, data, { message, type = 'log', product, start, end, duration }) => {
+export const storeMetrics = (uniqueId, data, { message, type = 'log', product, start, end, duration }, sessionId = null) => {
   const metricType = ['log', 'error', 'performance'].includes(type) ? type : 'log';
   const productArea = product ? product : 'caseflow';
 
   const postData = {
     metric: {
       uuid: uniqueId,
+      session_id: sessionId,
       name: `caseflow.client.${productArea}.${metricType}`,
       message: metricMessage(uniqueId, data, message),
       type: metricType,
@@ -63,7 +64,7 @@ export const storeMetrics = (uniqueId, data, { message, type = 'log', product, s
   postMetricLogs(postData);
 };
 
-export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 'log', product },
+export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 'log', product, sessionId = null },
   saveMetrics = true) => {
 
   let id = checkUuid(uniqueId, data, message, type);
@@ -89,7 +90,7 @@ export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 
       name
     };
 
-    storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration });
+    storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration }, sessionId);
   }
 
   return result;
@@ -100,7 +101,7 @@ export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 
  *
  * Might need to split into async and promise versions if issues
  */
-export const recordAsyncMetrics = async (promise, { uniqueId, data, message, type = 'log', product },
+export const recordAsyncMetrics = async (promise, { uniqueId, data, message, type = 'log', product, sessionId = null },
   saveMetrics = true) => {
 
   let id = checkUuid(uniqueId, data, message, type);
@@ -127,7 +128,7 @@ export const recordAsyncMetrics = async (promise, { uniqueId, data, message, typ
       name
     };
 
-    storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration });
+    storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration }, sessionId);
   }
 
   return result;
