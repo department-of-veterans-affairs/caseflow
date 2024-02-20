@@ -278,9 +278,15 @@ export const veteranDetails = () => {
 };
 
 export const vaDor = () => {
-
   return {
     header: 'VA DOR',
+    filterOptions: [],
+    columnName: 'Receipt Date',
+    backendCanSort: true,
+    enableFilter: true,
+    getSortValue: (task) => task.vaDor,
+    name: QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
+    label: QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
     valueFunction: (task) => {
       return moment(task.vaDor).format('MM/DD/YYYY');
     }
@@ -290,10 +296,12 @@ export const vaDor = () => {
 export const notes = () => {
   return {
     header: 'Notes',
-    valueFunction: (task) => task.notes
+    name: QUEUE_CONFIG.COLUMNS.NOTES.name,
+    valueFunction: (task) => task.notes,
+    backendCanSort: true,
+    getSortValue: (task) => task.notes
   };
 };
-
 export const checkboxColumn = () => {
   return {
     header: 'Select',

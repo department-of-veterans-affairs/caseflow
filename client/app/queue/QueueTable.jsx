@@ -171,6 +171,7 @@ export const HeaderRow = (props) => {
                 filterOptionsFromApi={props.useTaskPagesApi && column.filterOptions}
                 updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
                 filteredByList={props.filteredByList}
+                isReceiptDateFilter={column.name === QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name}
               />
             );
           }
@@ -845,7 +846,7 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   }),
   onHistoryUpdate: PropTypes.func,
   preserveFilter: PropTypes.bool,
-  isCorrespondenceTable: PropTypes.bool,
+  isCorrespondenceTable: PropTypes.bool
 };
 
 Row.propTypes.rowObjects = PropTypes.arrayOf(PropTypes.object);
