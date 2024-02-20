@@ -5,6 +5,7 @@ require Rails.root.join("app", "services", "claim_change_history", "change_histo
 require Rails.root.join("app", "services", "claim_change_history", "claim_history_service.rb")
 require Rails.root.join("app", "services", "claim_change_history", "change_history_filter_parser.rb")
 require Rails.root.join("app", "services", "claim_change_history", "claim_history_event.rb")
+require Rails.root.join("app", "services", "claim_change_history", "change_history_event_serializer.rb")
 
 describe DecisionReviewsController, :postgres, type: :controller do
   before do
@@ -685,7 +686,12 @@ describe DecisionReviewsController, :postgres, type: :controller do
   end
 
   describe "#history" do
+    before do
+      Timecop.travel(1.day.ago)
+    end
+
     let(:task) { create(:higher_level_review_task) }
+
     context "task is in VHA" do
       let(:vha_org) { VhaBusinessLine.singleton }
 
@@ -707,10 +713,29 @@ describe DecisionReviewsController, :postgres, type: :controller do
           OrganizationsUser.make_user_admin(user, vha_org)
         end
 
+        let!(:task_event) do
+          create(:higher_level_review_vha_task_with_decision)
+        end
+
         it "should return task details" do
-          get :history, params: { task_id: task.id, decision_review_business_line_slug: vha_org.url }
+          get :history, params: { task_id: task_event.id, decision_review_business_line_slug: vha_org.url },
+                        format: :json
 
           expect(response.status).to eq 200
+
+          res = JSON.parse(response.body)
+
+          expected_events = [
+            { "taskID" => task_event.id, "eventType" => "added_issue", "claimType" => "Higher-Level Review",
+              "readableEventType" => "Added Issue" },
+            { "eventType" => "claim_creation", "readableEventType" => "Claim created" },
+            { "eventType" => "completed_disposition", "readableEventType" => "Completed disposition" }
+          ]
+          expected_events.each_with_index do |expected_attributes, index|
+            expected_attributes.each do |key, value|
+              expect(res[index]["attributes"][key]).to eq value
+            end
+          end
         end
       end
     end
