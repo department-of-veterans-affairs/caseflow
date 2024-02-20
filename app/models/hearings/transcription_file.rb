@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
 class TranscriptionFile < CaseflowRecord
-  include BelongsToPolymorphicAppealConcern
-  belongs_to_polymorphic_appeal :appeal
+  include BelongsToPolymorphicHearingConcern
+  belongs_to_polymorphic_hearing :hearing
+
   belongs_to :transcription
   belongs_to :docket
 
@@ -11,59 +12,52 @@ class TranscriptionFile < CaseflowRecord
   validates :file_type, inclusion: { in: VALID_FILE_TYPES, message: "'%<value>s' is not valid" }
 
   # Purpose: Uploads transcription file to its corresponding location in S3
-  def upload_to_s3
+  def upload_to_s3!
     UploadTranscriptionFileToS3.new(self).call
   end
 
   # Purpose: Converts transcription file from vtt to rtf
   #
   # Returns: string, tmp location of rtf (or xls/csv file if error)
-  def convert_to_rtf(hearing_info)
+  def convert_to_rtf!
     return unless file_type == "vtt"
 
+    hearing_info = {
+      judge: hearing.judge&.full_name,
+      appeal_id: hearing.appeal&.veteran_file_number,
+      date: hearing.scheduled_time
+    }
     rtf_file_path = TranscriptionTransformer.new(tmp_location, hearing_info).call
-    update_conversion_status!(:success)
+    update_status!(process: :conversion, status: :success)
     rtf_file_path
   rescue TranscriptionTransformer::FileConversionError => error
-    update_conversion_status!(:failure)
+    update_status!(process: :conversion, status: :failure)
     raise error, error.message
   end
 
-  # Purpose: Updates with success or failure status after download completes. If download
-  #          successful, updates date_receipt_webex.
-  #
-  # Returns: TranscriptionFile object
-  def update_download_status!(status)
-    update!(
-      file_status: Constants.TRANSCRIPTION_FILE_STATUSES.retrieval.send(status),
-      date_receipt_webex: (status == :success) ? Time.zone.now : nil,
-      updated_by_id: RequestStore[:current_user].id
-    )
-  end
+  # Purpose: Maps file handling process with associated field to update
+  DATE_FIELDS = {
+    retrieval: :date_receipt_webex,
+    upload: :date_upload_aws,
+    conversion: :date_converted
+  }.freeze
 
-  # Purpose: Updates with success or failure status after upload to s3 completes. If upload
-  #          successful, updates date_upload_aws and aws_link.
+  # Purpose: Updates statue of transcription file after completion of process. If process was success, updates
+  #          associated date field on record.
   #
-  # Returns: TranscriptionFile object
-  def update_upload_status!(status:, aws_link: nil)
-    update!(
-      file_status: Constants.TRANSCRIPTION_FILE_STATUSES.upload.send(status),
-      aws_link: aws_link,
-      date_upload_aws: (status == :success) ? Time.zone.now : nil,
-      updated_by_id: RequestStore[:current_user].id
-    )
-  end
-
-  # Purpose: Updates with success or failure status after conversion from vtt to rtf completes. If download
-  #          successful, updates date_converted.
+  # Params: process - symbol, used to map process with associated file status and date field
+  #         status - symbol, either :success or :failure
+  #         aws_link - string, optional argument of AWS S3 location
   #
-  # Returns: TranscriptionFile object
-  def update_conversion_status!(status)
-    update!(
-      file_status: Constants.TRANSCRIPTION_FILE_STATUSES.conversion.send(status),
-      date_converted: (status == :success) ? Time.zone.now : nil,
+  # Returns: Updated transcription file record
+  def update_status!(process:, status:, upload_link: nil)
+    params = {
+      file_status: Constants.TRANSCRIPTION_FILE_STATUSES.send(process).send(status),
       updated_by_id: RequestStore[:current_user].id
-    )
+    }
+    params[:aws_link] = upload_link if upload_link
+    params[DATE_FIELDS[process]] = Time.zone.now if status == :success
+    update!(params)
   end
 
   # Purpose: Location of temporary file in tmp/transcription_files/<file_type> folder
