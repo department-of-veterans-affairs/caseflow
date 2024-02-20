@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
 class VACOLS::CaseDocket < VACOLS::Record
   # :nocov:
   self.table_name = "brieff"
@@ -61,8 +62,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     on DIARYKEY = BFKEY
   "
 
-  SELECT_READY_APPEALS = "
-    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
+  FROM_READY_APPEALS = "
     from BRIEFF
     #{VACOLS::Case::JOIN_AOD}
     #{JOIN_MAIL_BLOCKS_DISTRIBUTION}
@@ -75,6 +75,17 @@ class VACOLS::CaseDocket < VACOLS::Record
       and BRIEFF.BFD19 is not null
       and MAIL_BLOCKS_DISTRIBUTION = 0
       and DIARY_BLOCKS_DISTRIBUTION = 0
+  "
+
+  SELECT_READY_APPEALS = "
+    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD
+    #{FROM_READY_APPEALS}
+  "
+
+  # this version of the query should not be used during distribution it is only intended for reporting usage
+  SELECT_READY_APPEALS_ADDITIONAL_COLS = "
+    select BFKEY, BFD19, BFDLOOUT, BFMPRO, BFCURLOC, BFAC, BFHINES, TINUM, TITRNUM, AOD, BFCORKEY, BFCORLID
+    #{FROM_READY_APPEALS}
   "
 
   # Judges 000, 888, and 999 are not real judges, but rather VACOLS codes.
@@ -148,6 +159,26 @@ class VACOLS::CaseDocket < VACOLS::Record
       #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
       order by BFD19
     )
+  "
+
+  # this query should not be used during distribution it is only intended for reporting usage
+  SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19 = "
+    select APPEALS.BFKEY, APPEALS.TINUM, APPEALS.BFD19, APPEALS.BFDLOOUT, APPEALS.AOD, APPEALS.BFCORLID,
+      CORRES.SNAMEF, CORRES.SNAMEL, CORRES.SSN,
+      STAFF.SNAMEF as VLJ_NAMEF, STAFF.SNAMEL as VLJ_NAMEL,
+      case when APPEALS.BFAC = '7' then 1 else 0 end CAVC
+    from (
+      select BFKEY, BRIEFF.TINUM, BFD19, BFDLOOUT, BFAC, BFCORKEY, AOD, BFCORLID,
+        case when BFHINES is null or BFHINES <> 'GP' then VLJ_HEARINGS.VLJ end VLJ
+      from (
+        #{SELECT_READY_APPEALS_ADDITIONAL_COLS}
+      ) BRIEFF
+      #{JOIN_ASSOCIATED_VLJS_BY_HEARINGS}
+      order by BFD19
+    ) APPEALS
+    left join CORRES on APPEALS.BFCORKEY = CORRES.STAFKEY
+    left join STAFF on APPEALS.VLJ = STAFF.STAFKEY
+    order by BFD19
   "
 
   # rubocop:disable Metrics/MethodLength
@@ -289,11 +320,15 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
-      where (VLJ = ? or VLJ is null)
+      where (VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
       and rownum <= ?
     SQL
 
-    fmtd_query = sanitize_sql_array([query, judge.vacols_attorney_id, num])
+    fmtd_query = sanitize_sql_array([
+                                      query,
+                                      judge.vacols_attorney_id,
+                                      num
+                                    ])
 
     appeals = conn.exec_query(fmtd_query).to_hash
     appeals.map { |appeal| appeal["bfd19"] }
@@ -304,11 +339,15 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     query = <<-SQL
       #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
-      where (VLJ = ? or VLJ is null)
+      where (VLJ = ? or #{ineligible_judges_sattyid_cache} or VLJ is null)
       and rownum <= ?
     SQL
 
-    fmtd_query = sanitize_sql_array([query, judge.vacols_attorney_id, num])
+    fmtd_query = sanitize_sql_array([
+                                      query,
+                                      judge.vacols_attorney_id,
+                                      num
+                                    ])
 
     appeals = conn.exec_query(fmtd_query).to_hash
     appeals.map { |appeal| appeal["bfd19"] }
@@ -348,20 +387,26 @@ class VACOLS::CaseDocket < VACOLS::Record
   def self.priority_hearing_cases_for_judge_count(judge)
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS}
-      where (VLJ = ?)
+      where (VLJ = ? or #{ineligible_judges_sattyid_cache})
     SQL
 
-    fmtd_query = sanitize_sql_array([query, judge.vacols_attorney_id])
+    fmtd_query = sanitize_sql_array([
+                                      query,
+                                      judge.vacols_attorney_id
+                                    ])
     connection.exec_query(fmtd_query).count
   end
 
   def self.nonpriority_hearing_cases_for_judge_count(judge)
     query = <<-SQL
       #{SELECT_NONPRIORITY_APPEALS}
-      where (VLJ = ?)
+      where (VLJ = ? or #{ineligible_judges_sattyid_cache})
     SQL
 
-    fmtd_query = sanitize_sql_array([query, judge.vacols_attorney_id])
+    fmtd_query = sanitize_sql_array([
+                                      query,
+                                      judge.vacols_attorney_id
+                                    ])
     connection.exec_query(fmtd_query).count
   end
 
@@ -369,14 +414,23 @@ class VACOLS::CaseDocket < VACOLS::Record
     connection.exec_query(SELECT_PRIORITY_APPEALS).to_hash.map { |appeal| appeal["bfkey"] }
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
+  def self.ready_to_distribute_appeals
+    query = <<-SQL
+      #{SELECT_READY_TO_DISTRIBUTE_APPEALS_ORDER_BY_BFD19}
+    SQL
+
+    fmtd_query = sanitize_sql_array([query])
+    connection.exec_query(fmtd_query).to_hash
+  end
+
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
   def self.distribute_nonpriority_appeals(judge, genpop, range, limit, bust_backlog, dry_run = false)
     fail(DocketNumberCentennialLoop, COPY::MAX_LEGACY_DOCKET_NUMBER_ERROR_MESSAGE) if Time.zone.now.year >= 2030
 
     if use_by_docket_date?
       query = <<-SQL
         #{SELECT_NONPRIORITY_APPEALS_ORDER_BY_BFD19}
-        where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
+        where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
         and (DOCKET_INDEX <= ? or 1 = ?)
         and rownum <= ?
       SQL
@@ -396,7 +450,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
       query = <<-SQL
         #{SELECT_NONPRIORITY_APPEALS}
-        where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
+        where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
         and (DOCKET_INDEX <= ? or 1 = ?)
         and rownum <= ?
       SQL
@@ -414,22 +468,22 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     distribute_appeals(fmtd_query, judge, dry_run)
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists
 
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
-    if use_by_docket_date?
-      query = <<-SQL
-        #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
-        where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
-        and (rownum <= ? or 1 = ?)
-      SQL
-    else
-      query = <<-SQL
-        #{SELECT_PRIORITY_APPEALS}
-        where ((VLJ = ? and 1 = ?) or (VLJ is null and 1 = ?))
-        and (rownum <= ? or 1 = ?)
-      SQL
-    end
+    query = if use_by_docket_date?
+              <<-SQL
+                #{SELECT_PRIORITY_APPEALS_ORDER_BY_BFD19}
+                where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
+                and (rownum <= ? or 1 = ?)
+              SQL
+            else
+              <<-SQL
+                #{SELECT_PRIORITY_APPEALS}
+                where (((VLJ = ? or #{ineligible_judges_sattyid_cache}) and 1 = ?) or (VLJ is null and 1 = ?))
+                and (rownum <= ? or 1 = ?)
+              SQL
+            end
 
     fmtd_query = sanitize_sql_array([
                                       query,
@@ -442,6 +496,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     distribute_appeals(fmtd_query, judge, dry_run)
   end
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
 
   # :nocov:
 
@@ -472,4 +527,34 @@ class VACOLS::CaseDocket < VACOLS::Record
   def self.use_by_docket_date?
     FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
   end
+
+  # rubocop:disable Metrics/MethodLength
+  def self.ineligible_judges_sattyid_cache
+    if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) &&
+       !Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:sattyid)&.reject(&:blank?).blank?
+      list = Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:sattyid)&.reject(&:blank?)
+      split_lists = {}
+      num_of_lists = (list.size.to_f / 999).ceil
+
+      num_of_lists.times do |num|
+        split_lists[num] = []
+        999.times do
+          split_lists[num] << list.shift
+        end
+        split_lists[num].compact!
+      end
+
+      vljs_strings = split_lists.flat_map do |k, v|
+        base = "(#{v.join(', ')})"
+        base += " or VLJ in " unless k == split_lists.keys.last
+        base
+      end
+
+      "VLJ in #{vljs_strings.join}"
+    else
+      "VLJ = 'false'"
+    end
+  end
+  # rubocop:enable Metrics/MethodLength
 end
+# rubocop:enable Metrics/ClassLength

@@ -34,7 +34,7 @@ class SeedDB
   end
 
   def seed
-    RequestStore[:current_user]=User.system_user
+    RequestStore[:current_user] = User.system_user
     call_and_log_seed_step :clean_db
 
     call_and_log_seed_step Seeds::Annotations
@@ -43,6 +43,7 @@ class SeedDB
     call_and_log_seed_step Seeds::BusinessLineOrg
     call_and_log_seed_step Seeds::Users
     call_and_log_seed_step Seeds::NotificationEvents
+    call_and_log_seed_step Seeds::CaseDistributionLevers
     # End of required to exist dependencies
     call_and_log_seed_step Seeds::Tasks
     call_and_log_seed_step Seeds::Hearings
@@ -56,17 +57,28 @@ class SeedDB
     call_and_log_seed_step Seeds::VeteransHealthAdministration
     call_and_log_seed_step Seeds::MTV
     call_and_log_seed_step Seeds::Education
+    # Case Distribution Seed Data
+    # Creates 300+ priority cases ready for distribution
+    # Warning a number are not setup correctly so cannot be used beyond
+    # just distributing
     call_and_log_seed_step Seeds::PriorityDistributions
     call_and_log_seed_step Seeds::TestCaseData
+    call_and_log_seed_step Seeds::CaseDistributionAuditLeverEntries
+    # End of Case Distribution Seed Data
     call_and_log_seed_step Seeds::Notifications
     call_and_log_seed_step Seeds::CavcDashboardData
     call_and_log_seed_step Seeds::VbmsExtClaim
-    call_and_log_seed_step Seeds::RemandedAmaAppeals
-    call_and_log_seed_step Seeds::RemandedLegacyAppeals
+    call_and_log_seed_step Seeds::CasesTiedToJudgesNoLongerWithBoard
     call_and_log_seed_step Seeds::VhaChangeHistory
     # Always run this as last one
     call_and_log_seed_step Seeds::StaticTestCaseData
     call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
+    call_and_log_seed_step Seeds::RemandedAmaAppeals
+    call_and_log_seed_step Seeds::RemandedLegacyAppeals
+    call_and_log_seed_step Seeds::PopulateCaseflowFromVacols
+
+    Judge.list_all
+    Attorney.list_all
   end
 end
 
