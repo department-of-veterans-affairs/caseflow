@@ -654,6 +654,7 @@
   "ASSIGN_TO_USER_DROPDOWN": "Select a user",
   "ASSIGN_TO_TEAM_DROPDOWN": "Select a team",
   "ASSIGN_TASK_TITLE": "Assign task",
+  "ASSIGN_TASK_BUTTON": "Assign task",
   "ASSIGN_TASK_TO_TITLE": "Assign task to %s",
   "NOTIFY_OGC_OF": "Notify OGC of %s",
   "PULAC_CERULLO_MODAL_TITLE": "Notify Litigation Support of Possible Conflict of Jurisdiction",
@@ -1405,5 +1406,6 @@
   "MOVE_TO_SCT_MODAL_BODY": "One or more Specialty Case Team (SCT) issues have been added and the appeal will now be routed to the SCT queue.",
   "MOVE_TO_SCT_BANNER_TITLE": "You have successfully updated issues on this appeal",
   "MOVE_TO_SCT_BANNER_MESSAGE": "The appeal for %s (ID: %s) has been moved to the SCT queue.",
-  "SPECIALTY_CASE_TEAM_ASSIGN_TASK_LABEL": "Assign"
+  "SPECIALTY_CASE_TEAM_ASSIGN_TASK_LABEL": "Assign",
+  "SPECIALTY_CASE_TEAM_ASSIGN_DROPDOWN_LABEL": "Select an attorney"
 }
