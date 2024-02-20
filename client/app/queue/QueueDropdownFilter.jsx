@@ -121,7 +121,6 @@ class QueueDropdownFilter extends React.PureComponent {
           receiptDateState={this.state.receiptDateState}
           receiptDateValues={this.state.receiptDateValues}
           receiptDateFilterStates={receiptDateFilterStates}
-          // isApplyButtonEnabled={this.isApplyButtonEnabled}
           isApplyButtonEnabled={this.isApplyButtonEnabled()}
         />}
         {!this.props.isReceiptDateFilter && React.cloneElement(React.Children.only(children), {
