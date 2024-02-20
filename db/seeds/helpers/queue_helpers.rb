@@ -29,13 +29,11 @@ module QueueHelpers
       cmp_queue_id: 1,
       cmp_packet_number: @cmp_packet_number,
       va_date_of_receipt: rand(1.month.ago..1.day.ago),
-      notes: "Notes from CMP - Queue Correspondence Seed",
+      notes: "Notes from CMP - Queue Correspondence Seed".split(" ").shuffle.join,
       assigned_by_id: 81,
       updated_by_id: 81,
       veteran_id: vet.id
     ).tap { @cmp_packet_number += 1 }
-
-    # create_correspondence_document(correspondence, vet)
   end
 
   def create_correspondence_document(correspondence, veteran)
