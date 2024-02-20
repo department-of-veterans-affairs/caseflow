@@ -20,9 +20,9 @@ describe SpecialtyCaseTeamAssignTask do
     end
   end
 
-  describe ".additional_available_actions" do
-    it "returns additional available actions" do
-      expect(sct_task.additional_available_actions(user)).to eq(expected_actions)
+  describe ".available_actions" do
+    it "returns available actions" do
+      expect(sct_task.available_actions(user)).to eq(expected_actions)
     end
   end
 end
