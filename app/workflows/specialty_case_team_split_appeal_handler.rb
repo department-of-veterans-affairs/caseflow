@@ -55,8 +55,6 @@ class SpecialtyCaseTeamSplitAppealHandler
 
   def move_appeal_back_to_distribution(appeal)
     reopen_distribution_task(appeal)
-    # TODO: Shouldn't remove from current_queue do this??? But cancel_task_and_child subtasks doesn't cancel the task
-    # it is called on despite the method name implying it would
     appeal.remove_from_current_queue!
     remove_from_specialty_case_team(appeal)
   end

@@ -421,6 +421,7 @@ class Appeal < DecisionReview
     )
   end
 
+  # :reek:FeatureEnvy
   def clone_issue(issue)
     dup_issue = issue.amoeba_dup
     dup_issue.decision_review_id = id
@@ -938,8 +939,6 @@ class Appeal < DecisionReview
     tasks.of_type(:DistributionTask).exists?
   end
 
-  # TODO: Verify that this does not do bad things like cancelling tasks that are not supposed to be cancelled
-  # Like open Hearing tasks or open mail tasks that might not be dependent on what queue the appeal is in
   def remove_from_current_queue!
     tasks.reject { |task| %w[RootTask DistributionTask].include?(task.type) }
       .each(&:cancel_task_and_child_subtasks)
