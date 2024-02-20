@@ -20,7 +20,7 @@ class CaseDistributionIneligibleJudges
         caseflow_user = User.find_by_css_id(hash[:sdomainid])
         next hash unless caseflow_user
 
-        hash.merge!({ id: caseflow_user.id, css_id: caseflow_user.css_id })
+        hash.merge!(id: caseflow_user.id, css_id: caseflow_user.css_id)
       end
     end
 
@@ -29,7 +29,7 @@ class CaseDistributionIneligibleJudges
         vacols_staff = VACOLS::Staff.find_by(sdomainid: hash[:css_id])
         next hash unless vacols_staff
 
-        hash.merge!({ sattyid: vacols_staff.sattyid, sdomainid: vacols_staff.sdomainid, svlj: vacols_staff.svlj })
+        hash.merge!(sattyid: vacols_staff.sattyid, sdomainid: vacols_staff.sdomainid, svlj: vacols_staff.svlj)
       end
     end
   end

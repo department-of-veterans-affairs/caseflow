@@ -422,6 +422,7 @@ module Seeds
 
     # This will create a case where the DistributionTask is 'assigned' but has had JudgeAssignTasks created and
     # acted on, for testing the fix in APPEALS-39368
+    # :reek:FeatureEnvy
     def create_ama_case_open_dist_task_cannot_redistribute
       judge = create(:user, :judge, :with_vacols_judge_record, full_name: "Judge Case CannotRedistribute")
       dist = create(:distribution, :completed, judge: judge)

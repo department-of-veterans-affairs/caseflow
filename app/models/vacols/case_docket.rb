@@ -502,9 +502,9 @@ class VACOLS::CaseDocket < VACOLS::Record
         split_lists[num].compact!
       end
 
-      vljs_strings = split_lists.flat_map do |k, v|
-        base = "(#{v.join(', ')})"
-        base += " or VLJ in " unless k == split_lists.keys.last
+      vljs_strings = split_lists.flat_map do |key, value|
+        base = "(#{value.join(', ')})"
+        base += " or VLJ in " unless key == split_lists.keys.last
         base
       end
 
