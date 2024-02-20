@@ -44,7 +44,6 @@ class HearingRequestDocket < Docket
     base_relation = appeals(priority: priority, ready: true).limit(limit)
 
     # setting genpop to "only_genpop" behind feature toggle as this module only processes AMA.
-    # sets genpop to "any" behind acd_exclude_from_affinity feature toggle to ensure all cases are considered.
     genpop = "only_genpop" if use_by_docket_date?
 
     appeals = hearing_distribution_query(base_relation: base_relation, genpop: genpop, judge: distribution.judge).call
