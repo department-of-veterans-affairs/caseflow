@@ -73,7 +73,7 @@ class QueueColumn
   end
 
   def date_completed_options
-    nil
+    {}
   end
 
   def case_type_options(tasks)
