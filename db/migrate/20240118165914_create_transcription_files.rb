@@ -10,7 +10,7 @@ class CreateTranscriptionFiles < Caseflow::Migration
       t.string :aws_link, comment: "Link to be used by HMB to download original or transformed file"
 
       t.datetime :date_receipt_webex, comment: "Timestamp when file was added to webex"
-      t.datetime :date_converted, comment: "Timestamp when file was converted from vtt to rtf or mp4 to mp3"
+      t.datetime :date_converted, comment: "Timestamp when file was converted from vtt to rtf"
       t.datetime :date_upload_box, comment: "Timestamp when file was added to box"
       t.datetime :date_upload_aws, comment: "Timestamp when file was loaded to AWS"
 
