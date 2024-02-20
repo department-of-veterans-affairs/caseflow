@@ -278,19 +278,6 @@ export const veteranDetails = () => {
   };
 };
 
-/*
-    header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
-    name: QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
-    enableFilter: true,
-    tableData: tasks,
-    columnName: 'label',
-    anyFiltersAreSet: true,
-    customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
-    filterOptions,
-    label: 'Filter by task',
-    valueName: 'label',
-*/
-
 export const vaDor = () => {
   return {
     header: 'VA DOR',
