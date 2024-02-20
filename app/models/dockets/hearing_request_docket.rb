@@ -21,9 +21,9 @@ class HearingRequestDocket < Docket
 
   # this method needs to have the same name as the method in legacy_docket.rb for by_docket_date_distribution,
   # but the judge that is passed in isn't relevant here
-  def age_of_n_oldest_nonpriority_appeals_available_to_judge(_judge, num)
+  def age_of_n_oldest_nonpriority_appeals_available_to_judge(judge, num)
     hearing_distribution_query(
-      base_relation: ready_nonpriority_appeals.limit(num), genpop: "only_genpop"
+      base_relation: ready_nonpriority_appeals.limit(num), genpop: "only_genpop", judge: judge
     ).call.map(&:receipt_date)
   end
 
@@ -33,9 +33,9 @@ class HearingRequestDocket < Docket
     hearing_distribution_query(base_relation: ready_priority_appeals, genpop: "only_genpop").call.count
   end
 
-  def age_of_n_oldest_priority_appeals_available_to_judge(_judge, num)
+  def age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
     hearing_distribution_query(
-      base_relation: ready_priority_appeals.limit(num), genpop: "only_genpop"
+      base_relation: ready_priority_appeals.limit(num), genpop: "only_genpop", judge: judge
     ).call.map(&:receipt_date)
   end
 
@@ -45,9 +45,7 @@ class HearingRequestDocket < Docket
 
     # setting genpop to "only_genpop" behind feature toggle as this module only processes AMA.
     # sets genpop to "any" behind acd_exclude_from_affinity feature toggle to ensure all cases are considered.
-    if use_by_docket_date?
-      genpop = FeatureToggle.enabled?(:acd_exclude_from_affinity) ? "any" : "only_genpop"
-    end
+    genpop = "only_genpop" if use_by_docket_date?
 
     appeals = hearing_distribution_query(base_relation: base_relation, genpop: genpop, judge: distribution.judge).call
 
