@@ -3,15 +3,13 @@
 class AutoAssignCorrespondenceJob < CaseflowJob
   queue_with_priority :low_priority
 
-  def perform(current_user_id:)
-    correspondence_auto_assigner(current_user_id).perform
+  def perform(current_user_id:, batch_auto_assignment_attempt_id:)
+    CorrespondenceAutoAssigner.new(
+      current_user_id: current_user_id,
+      batch_auto_assignment_attempt_id: batch_auto_assignment_attempt_id
+    ).perform
   rescue StandardError => error
-    log_error(error)
-  end
-
-  private
-
-  def correspondence_auto_assigner(current_user_id)
-    @correspondence_auto_assigner ||= CorrespondenceAutoAssigner.new(current_user_id: current_user_id)
+    error_uuid = SecureRandom.uuid
+    log_error(error, extra: { error_uuid: error_uuid })
   end
 end

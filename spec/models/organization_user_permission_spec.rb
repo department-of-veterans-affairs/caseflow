@@ -7,7 +7,7 @@ describe OrganizationUserPermission do
   end
 
   describe "Validations" do
-    it { should allow_value(%w(true false)).for(:permitted) }
+    it { should allow_value(%w[true false]).for(:permitted) }
     it { should_not allow_value(nil).for(:permitted) }
   end
 end

@@ -1,8 +1,14 @@
 # frozen_string_literal: true
 
 describe CorrespondenceAutoAssigner do
-  subject(:described) { described_class.new(current_user_id: current_user.id) }
+  subject(:described) do
+    described_class.new(
+      current_user_id: current_user.id,
+      batch_auto_assignment_attempt_id: batch_auto_assignment_attempt.id
+    )
+  end
 
+  let(:batch_auto_assignment_attempt) { create(:batch_auto_assignment_attempt, user_id: current_user.id) }
   let(:veteran) { create(:veteran) }
   let(:current_user) { create(:user) }
 

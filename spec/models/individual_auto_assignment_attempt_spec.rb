@@ -8,7 +8,7 @@ describe IndividualAutoAssignmentAttempt do
   end
 
   describe "Validations" do
-    it { should allow_value(%w(true false)).for(:nod) }
+    it { should allow_value(%w[true false]).for(:nod) }
     it { should_not allow_value(nil).for(:nod) }
 
     IndividualAutoAssignmentAttempt::VALID_STATUSES.each do |status_name|

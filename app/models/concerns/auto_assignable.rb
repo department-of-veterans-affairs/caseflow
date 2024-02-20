@@ -8,7 +8,7 @@ module AutoAssignable
     Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.started,
     Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.completed,
     Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.error
-  ]
+  ].freeze
 
   included do
     validates :status, inclusion: { in: VALID_STATUSES }

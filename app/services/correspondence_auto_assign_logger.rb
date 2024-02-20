@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
+# :reek:FeatureEnvy
 class CorrespondenceAutoAssignLogger
-  def initialize(current_user)
+  def initialize(current_user, batch)
     @current_user = current_user
+    @batch = batch
   end
 
   def begin
-    @batch = BatchAutoAssignmentAttempt.create!(
-      user: @current_user,
+    @batch.update!(
       started_at: Time.current,
       status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.started,
       num_nod_packages_assigned: 0,
@@ -115,6 +116,7 @@ class CorrespondenceAutoAssignLogger
     attempt.save!
   end
 
+  # :reek:ControlParameter
   def seconds_elapsed(record:, status:)
     if status == Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.completed
       record.completed_at - record.started_at

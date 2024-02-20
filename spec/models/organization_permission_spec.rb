@@ -14,8 +14,7 @@ describe OrganizationPermission do
 
   describe "Validations" do
     it { should validate_presence_of(:description) }
-
-    it { should allow_value(%w(true false)).for(:enabled) }
+    it { should allow_value(%w[true false]).for(:enabled) }
     it { should_not allow_value(nil).for(:enabled) }
 
     context "permission" do

@@ -187,6 +187,7 @@ describe AutoAssignableUserFinder do
       end
 
       it "does not allow access for users without the correct sensitivity level" do
+        allow_any_instance_of(BGSService).to receive(:user_can_access?).and_return(nil)
         expect(described.get_first_assignable_user(correspondence: correspondence)).to be nil
       end
     end

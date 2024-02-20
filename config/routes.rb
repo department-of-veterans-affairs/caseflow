@@ -298,6 +298,7 @@ Rails.application.routes.draw do
     get '/', to: 'queue#index'
     get '/correspondence', to: 'correspondence#correspondence_cases'
     get '/correspondence/auto_assign_correspondences', to: 'correspondence#auto_assign_correspondences'
+    get '/correspondence/:batch_auto_assignment_attempt_id/auto_assign_status', to: 'correspondence#auto_assign_status'
     get '/correspondence/:correspondence_uuid/intake', to: 'correspondence#intake', as: :queue_correspondence_intake
     post '/correspondence/:correspondence_uuid/current_step', to: 'correspondence#current_step', as: :queue_correspondence_intake_current_step
     post '/correspondence/:correspondence_uuid/correspondence_intake_task', to: 'correspondence_tasks#create_correspondence_intake_task'
