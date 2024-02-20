@@ -182,16 +182,17 @@ class CorrespondenceController < ApplicationController
         user: current_user,
         status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.started
       )
-    end
+      job_args = {
+        current_user_id: current_user.id,
+        batch_auto_assignment_attempt_id: batch.id
+      }
 
-    job_args = {
-      current_user_id: current_user.id,
-      batch_auto_assignment_attempt_id: batch.id
-    }
-
-    begin
-      perform_later_or_now(AutoAssignCorrespondenceJob, job_args)
-    ensure
+      begin
+        perform_later_or_now(AutoAssignCorrespondenceJob, job_args)
+      ensure
+        render json: { batch_auto_assignment_attempt_id: batch.id }, status: :ok
+      end
+    else
       render json: { batch_auto_assignment_attempt_id: batch.id }, status: :ok
     end
   end
