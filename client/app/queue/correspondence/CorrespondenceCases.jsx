@@ -12,6 +12,7 @@ import { sprintf } from 'sprintf-js';
 import CorrespondenceTableBuilder from './CorrespondenceTableBuilder';
 import Alert from '../../components/Alert';
 import Modal from 'app/components/Modal';
+import Button from '../../components/Button';
 
 const CorrespondenceCases = (props) => {
   const dispatch = useDispatch();
@@ -63,9 +64,17 @@ const CorrespondenceCases = (props) => {
         {config &&
         <CorrespondenceTableBuilder />}
         {showReassignPackageModal &&
-        <Modal title="Reassign Package Modal" closeHandler={closeReassignPackageModal} />}
+        <Modal
+          title="Review Request"
+          closeHandler={closeReassignPackageModal}
+          cancelButton={<Button linkStyling onClick={closeReassignPackageModal}>Cancel</Button>}
+        />}
         {showRemovePackageModal &&
-        <Modal title="Remove Package Modal" closeHandler={closeRemovePackageModal} />}
+        <Modal
+          title="Review Request"
+          closeHandler={closeRemovePackageModal}
+          cancelButton={<Button linkStyling onClick={closeRemovePackageModal}>Cancel</Button>}
+        />}
       </AppSegment>
     </>
   );
