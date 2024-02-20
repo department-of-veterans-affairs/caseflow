@@ -47,7 +47,6 @@ class DtaScCreationFailedFixJob < CaseflowJob
   end
 
   # Methods for remdiating HLRs with errors
-
   def loop_through_and_process_records_for_hlrs_with_errors
     hlrs_with_errors.each do |hlr|
       begin
