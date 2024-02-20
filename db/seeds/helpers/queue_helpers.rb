@@ -52,9 +52,22 @@ module QueueHelpers
     CorrespondenceIntakeTask.create_from_params(parent, user)
   end
 
+<<<<<<<<< Temporary merge branch 1
+  def create_review_package_task(correspondence, status:)
+    review_package_task = ReviewPackageTask.find_or_create_by!(
+      appeal_id: correspondence.id,
+      assigned_to: MailTeamSupervisor.singleton,
+      appeal_type: "Correspondence",
+      assigned_to: User.find_by(css_id: "JOLLY_POSTMAN")
+    )
+
+    review_package_task.update(status: status)
+    review_package_task
+=========
   def assign_review_package_task(correspondence, user)
     review_package_task = ReviewPackageTask.find_by(appeal_id: correspondence.id)
     review_package_task.update!(assigned_to: user, status: Constants.TASK_STATUSES.assigned)
+>>>>>>>>> Temporary merge branch 2
   end
 
   def create_efolderupload_failed_task(correspondence, parent)
@@ -62,9 +75,27 @@ module QueueHelpers
       parent_id: parent.id,
       appeal_id: correspondence.id,
       appeal_type: "Correspondence",
-      assigned_to: parent.assigned_to,
-      status: Constants.TASK_STATUSES.in_progress
+      assigned_to: MailTeamSupervisor.singleton
     )
+<<<<<<<<< Temporary merge branch 1
+
+    euft.update!(status: Constants.TASK_STATUSES.in_progress)
+
+    euft
+  end
+
+  def create_correspondence_root_task(correspondence, status:)
+    root_task = CorrespondenceRootTask.find_or_create_by!(
+      appeal_id: correspondence.id,
+      assigned_to: MailTeamSupervisor.singleton,
+      appeal_type: "Correspondence",
+      assigned_to: User.find_by(css_id: "JOLLY_POSTMAN")
+    )
+
+    root_task.update(status: status)
+    root_task
+=========
+>>>>>>>>> Temporary merge branch 2
   end
 
   def create_action_required_tasks(correspondence, status:, parent_task:, task_type:)
