@@ -54,7 +54,7 @@ FactoryBot.define do
       end
 
       if evaluator.user
-        existing_staff_record = VACOLS::Staff.judge.find_by_sdomainid(evaluator.user.css_id)
+        existing_staff_record = VACOLS::Staff.find_by_sdomainid(evaluator.user.css_id)
         staff_record = existing_staff_record || create(:staff, :attorney_judge_role, user: evaluator.user)
         hearing.board_member = staff_record.sattyid
       end
