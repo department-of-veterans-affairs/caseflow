@@ -12,7 +12,7 @@ class RetryDecisionReviewProcesses
         DecisionReviewProcessJob.perform_now(instance)
         instance.reload
         # if the error field is now empty, we succeeded. we should log it
-        if instance[error_field].nil?
+        if instance[error_field].nil? # rubocop:disable Style/Next
           log = format_log(instance, error)
           puts "\n\n\n" + log + "\n\n\n"
           logs << log
@@ -48,11 +48,11 @@ class RetryDecisionReviewProcesses
     end
 
     def supplemental_claims
-      SupplementalClaim.where.not(establishment_error: nil)
+      SupplementalClaim.where.not(establishment_error: nil).where(establishment_canceled_at: nil)
     end
 
     def higher_level_reviews
-      HigherLevelReview.where.not(establishment_error: nil)
+      HigherLevelReview.where.not(establishment_error: nil).where(establishment_canceled_at: nil)
     end
 
     def request_issue_updates
