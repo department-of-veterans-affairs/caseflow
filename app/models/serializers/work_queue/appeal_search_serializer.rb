@@ -58,19 +58,13 @@ class WorkQueue::AppealSearchSerializer
 
   attribute :withdrawn, &:withdrawn?
 
+  attribute :removed, &:removed?
+
   attribute :overtime, &:overtime?
 
   attribute :veteran_appellant_deceased, &:veteran_appellant_deceased?
 
-  attribute :assigned_to_location do |object, params|
-    if object&.status&.status == :distributed_to_judge
-      if params[:user]&.judge? || params[:user]&.attorney? || User.list_hearing_coordinators.include?(params[:user])
-        object.assigned_to_location
-      end
-    else
-      object.assigned_to_location
-    end
-  end
+  attribute :assigned_to_location
 
   attribute :distributed_to_a_judge, &:distributed_to_a_judge?
 
@@ -94,6 +88,22 @@ class WorkQueue::AppealSearchSerializer
     object.claimant&.suffix
   end
 
+  attribute :appellant_date_of_birth do |object|
+    object.claimant&.date_of_birth
+  end
+
+  attribute :appellant_address do |object|
+    object.claimant&.address
+  end
+
+  attribute :appellant_phone_number do |object|
+    object.claimant&.unrecognized_claimant? ? object.claimant&.phone_number : nil
+  end
+
+  attribute :appellant_email_address do |object|
+    object.claimant&.email_address
+  end
+
   attribute :veteran_death_date
 
   attribute :veteran_file_number
@@ -102,9 +112,7 @@ class WorkQueue::AppealSearchSerializer
     object.veteran ? object.veteran.name.formatted(:readable_full) : "Cannot locate"
   end
 
-  attribute :closest_regional_office
-
-  attribute :closest_regional_office_label
+  attribute(:available_hearing_locations) { |object| available_hearing_locations(object) }
 
   attribute :external_id, &:uuid
 
@@ -122,14 +130,13 @@ class WorkQueue::AppealSearchSerializer
     false
   end
 
-  attribute :regional_office do
-  end
-
   attribute :caseflow_veteran_id do |object|
     object.veteran ? object.veteran.id : nil
   end
 
-  attribute :readable_hearing_request_type, &:readable_current_hearing_request_type
-
-  attribute :readable_original_hearing_request_type, &:readable_original_hearing_request_type
+  attribute :docket_switch do |object|
+    if object.docket_switch
+      WorkQueue::DocketSwitchSerializer.new(object.docket_switch).serializable_hash[:data][:attributes]
+    end
+  end
 end
