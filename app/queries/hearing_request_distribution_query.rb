@@ -105,7 +105,7 @@ class HearingRequestDistributionQuery
       joins(with_assigned_distribution_task_sql)
         .where(hearings: { disposition: "held", judge_id: judge.id })
         .where("distribution_task.assigned_at > ?",
-          CaseDistributionLever.find_integer_lever(Constants.DISTRIBUTION.ama_hearing_case_affinity_days).days.ago)
+               CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
     end
 
     def tied_to_ineligible_judge
@@ -117,8 +117,7 @@ class HearingRequestDistributionQuery
     def exceeding_affinity_threshold
       joins(with_assigned_distribution_task_sql)
         .where(hearings: { disposition: "held" })
-        .where("distribution_task.assigned_at <= ?",
-          CaseDistributionLever.find_integer_lever(Constants.DISTRIBUTION.ama_hearing_case_affinity_days).days.ago)
+        .where("distribution_task.assigned_at <= ?", CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
     end
 
     # Historical note: We formerly had not_tied_to_any_active_judge until CASEFLOW-1928,

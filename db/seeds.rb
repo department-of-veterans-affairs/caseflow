@@ -75,6 +75,10 @@ class SeedDB
     call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
     call_and_log_seed_step Seeds::RemandedAmaAppeals
     call_and_log_seed_step Seeds::RemandedLegacyAppeals
+    call_and_log_seed_step Seeds::PopulateCaseflowFromVacols
+
+    Judge.list_all
+    Attorney.list_all
   end
 end
 

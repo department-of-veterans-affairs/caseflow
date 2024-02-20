@@ -11,8 +11,12 @@ export const createUpdatedLeversWithValues = (levers) => {
   const leverGroups = Object.keys(levers);
 
   const leversWithValues = () => {
+    if (leverGroups.length === 1 && !levers[leverGroups[0]]) {
+      return [];
+    }
+
     return leverGroups.reduce((updatedLevers, leverGroup) => {
-      updatedLevers[leverGroup] = levers[leverGroup].map((lever) => {
+      updatedLevers[leverGroup] = levers[leverGroup]?.map((lever) => {
         let additionalValues = {
           backendValue: lever.value
         };

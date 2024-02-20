@@ -14,6 +14,10 @@ class AppealsReadyForDistribution
     veteran_name: "Veteran"
   }.freeze
 
+  def self.generate_rows(record)
+    HEADERS.keys.map { |key| record[key] }
+  end
+
   def self.process
     # Convert results to CSV format
 
@@ -23,7 +27,7 @@ class AppealsReadyForDistribution
 
       # Iterate through results and add each row to CSV
       ready_appeals.each do |record|
-        csv << HEADERS.keys.map { |key| record[key] }
+        csv << generate_rows(record)
       end
     end
   end
@@ -71,7 +75,7 @@ class AppealsReadyForDistribution
     appeals.map do |appeal|
       # This comes from the DistributionTask's assigned_at date
       ready_for_distribution_at = appeal.tasks
-        .filter {|task| task.class == DistributionTask && task.status == Constants.TASK_STATUSES.assigned }
+        .filter { |task| task.class == DistributionTask && task.status == Constants.TASK_STATUSES.assigned }
         .first&.assigned_at
 
       # only look for hearings that were held

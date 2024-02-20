@@ -59,10 +59,6 @@ class Distribution < CaseflowRecord
     (status == "completed") ? distributed_cases.count : 0
   end
 
-  def distributed_batch_size
-    statistics&.fetch("batch_size", 0) || 0
-  end
-
   private
 
   def mark_as_pending
@@ -100,9 +96,9 @@ class Distribution < CaseflowRecord
   end
 
   def judge_has_eight_or_fewer_unassigned_cases
-    return false if judge_tasks.length > CaseDistributionLever.find_integer_lever(Constants.DISTRIBUTION.request_more_cases_minimum)
+    return false if judge_tasks.length > CaseDistributionLever.request_more_cases_minimum
 
-    judge_tasks.length + judge_legacy_tasks.length <= CaseDistributionLever.find_integer_lever(Constants.DISTRIBUTION.request_more_cases_minimum)
+    judge_tasks.length + judge_legacy_tasks.length <= CaseDistributionLever.request_more_cases_minimum
   end
 
   def judge_cases_waiting_longer_than_thirty_days
@@ -126,9 +122,9 @@ class Distribution < CaseflowRecord
   def batch_size
     team_batch_size = JudgeTeam.for_judge(judge)&.attorneys&.size
 
-    return CaseDistributionLever.find_integer_lever(Constants.DISTRIBUTION.alternative_batch_size) if team_batch_size.nil? || team_batch_size == 0
+    return CaseDistributionLever.alternative_batch_size if team_batch_size.nil? || team_batch_size == 0
 
-    team_batch_size * CaseDistributionLever.find_integer_lever(Constants.DISTRIBUTION.batch_size_per_attorney)
+    team_batch_size * CaseDistributionLever.batch_size_per_attorney
   end
 
   def error_statistics(error)

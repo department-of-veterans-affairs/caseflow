@@ -1156,7 +1156,7 @@ describe Appeal, :all_dbs do
       it "sets target decision date" do
         subject.set_target_decision_date!
         expect(subject.target_decision_date).to eq(
-          subject.receipt_date + CaseDistributionLever.find_integer_lever(Constants.DISTRIBUTION.ama_direct_review_docket_time_goals).days
+          subject.receipt_date + CaseDistributionLever.ama_direct_review_docket_time_goals.days
         )
       end
     end
@@ -1500,6 +1500,19 @@ describe Appeal, :all_dbs do
     context "when an appeal has no open tasks other than RootTask or TrackVeteranTask" do
       subject { distributed_appeal_can_redistribute.can_redistribute_appeal? }
       it "returns true " do
+        expect(subject).to be true
+      end
+    end
+
+    context "when an appeal has open DistributionTask and EvidenceOrArgumentMailTask" do
+      let!(:appeal_ready_to_distribute_with_evidence_task) do
+        appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
+        create(:evidence_or_argument_mail_task, :assigned, assigned_to: MailTeam.singleton, parent: appeal.root_task)
+        appeal
+      end
+
+      subject { appeal_ready_to_distribute_with_evidence_task.can_redistribute_appeal? }
+      it "returns true" do
         expect(subject).to be true
       end
     end

@@ -7,26 +7,27 @@ RSpec.feature "Affinity Days Levers" do
     User.authenticate!(user: user)
   end
 
-  let(:ama_hearing_case_affinity_days) {Constants.DISTRIBUTION.ama_hearing_case_affinity_days}
-  let(:ama_hearing_case_aod_affinity_days) {Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days}
-  let(:cavc_affinity_days) {Constants.DISTRIBUTION.cavc_affinity_days}
-  let(:cavc_aod_affinity_days) {Constants.DISTRIBUTION.cavc_aod_affinity_days}
-  let(:aoj_affinity_days) {Constants.DISTRIBUTION.aoj_affinity_days}
-  let(:aoj_aod_affinity_days) {Constants.DISTRIBUTION.aoj_aod_affinity_days}
-  let(:aoj_cavc_affinity_days) {Constants.DISTRIBUTION.aoj_cavc_affinity_days}
+  let(:disabled_lever_list) do
+    [
+      Constants.DISTRIBUTION.ama_hearing_case_affinity_days,
+      Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days,
+      Constants.DISTRIBUTION.cavc_aod_affinity_days,
+      Constants.DISTRIBUTION.cavc_affinity_days,
+      Constants.DISTRIBUTION.aoj_affinity_days,
+      Constants.DISTRIBUTION.aoj_aod_affinity_days,
+      Constants.DISTRIBUTION.aoj_cavc_affinity_days
+    ]
+  end
 
   context "user is in Case Distro Algorithm Control organization but not an admin" do
     scenario "visits the lever control page", type: :feature do
       visit "case-distribution-controls"
       confirm_page_and_section_loaded
 
-      expect(find("##{ama_hearing_case_affinity_days}")).to match_css('.lever-disabled')
-      expect(find("##{ama_hearing_case_aod_affinity_days}")).to match_css('.lever-disabled')
-      expect(find("##{cavc_affinity_days}")).to match_css('.lever-disabled')
-      expect(find("##{cavc_aod_affinity_days}")).to match_css('.lever-disabled')
-      expect(find("##{aoj_affinity_days}")).to match_css('.lever-disabled')
-      expect(find("##{aoj_aod_affinity_days}")).to match_css('.lever-disabled')
-      expect(find("##{aoj_cavc_affinity_days}")).to match_css('.lever-disabled')
+      disabled_lever_list.each do |item|
+        expect(find("#lever-wrapper-#{item}")).to match_css(".lever-disabled")
+        expect(find("#affinity-day-label-for-#{item}")).to match_css(".lever-disabled")
+      end
     end
   end
 
@@ -39,17 +40,10 @@ RSpec.feature "Affinity Days Levers" do
       visit "case-distribution-controls"
       confirm_page_and_section_loaded
 
-      omit = Constants.ACD_LEVERS.omit
-      infinite = Constants.ACD_LEVERS.infinite
-      value = Constants.ACD_LEVERS.value
+      option_list = [Constants.ACD_LEVERS.omit, Constants.ACD_LEVERS.infinite, Constants.ACD_LEVERS.value]
 
-      disabled_lever_list = [ama_hearing_case_affinity_days, ama_hearing_case_aod_affinity_days, cavc_affinity_days,
-        cavc_aod_affinity_days, aoj_affinity_days, aoj_aod_affinity_days, aoj_cavc_affinity_days]
-      option_list = [omit, infinite, value]
-
-
-      for disabled_lever in disabled_lever_list do
-        for option in option_list do
+      disabled_lever_list.each do |disabled_lever|
+        option_list.each do |option|
           expect(find("##{disabled_lever}-#{option}", visible: false)).to be_disabled
         end
       end
@@ -57,6 +51,7 @@ RSpec.feature "Affinity Days Levers" do
   end
 end
 
+# rubocop:disable Metrics/AbcSize
 def confirm_page_and_section_loaded
   expect(page).to have_content(COPY::CASE_DISTRIBUTION_AFFINITY_DAYS_H2_TITLE)
   expect(page).to have_content(Constants.DISTRIBUTION.ama_hearing_case_affinity_days_title)
@@ -67,3 +62,4 @@ def confirm_page_and_section_loaded
   expect(page).to have_content(Constants.DISTRIBUTION.aoj_aod_affinity_days_title)
   expect(page).to have_content(Constants.DISTRIBUTION.aoj_cavc_affinity_days_title)
 end
+# rubocop:enable Metrics/AbcSize

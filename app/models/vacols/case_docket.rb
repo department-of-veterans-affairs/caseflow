@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Metrics/ClassLength
 class VACOLS::CaseDocket < VACOLS::Record
   # :nocov:
   self.table_name = "brieff"
@@ -468,6 +469,7 @@ class VACOLS::CaseDocket < VACOLS::Record
     distribute_appeals(fmtd_query, judge, dry_run)
   end
 
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/ParameterLists, Metrics/MethodLength
   def self.distribute_priority_appeals(judge, genpop, limit, dry_run = false)
     query = if use_by_docket_date?
               <<-SQL
@@ -526,7 +528,8 @@ class VACOLS::CaseDocket < VACOLS::Record
     FeatureToggle.enabled?(:acd_distribute_by_docket_date, user: RequestStore.store[:current_user])
   end
 
-  def self.ineligible_judges_sattyid_cache # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/MethodLength
+  def self.ineligible_judges_sattyid_cache
     if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) &&
        !Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:sattyid)&.reject(&:blank?).blank?
       list = Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:sattyid)&.reject(&:blank?)
@@ -552,4 +555,6 @@ class VACOLS::CaseDocket < VACOLS::Record
       "VLJ = 'false'"
     end
   end
+  # rubocop:enable Metrics/MethodLength
 end
+# rubocop:enable Metrics/ClassLength

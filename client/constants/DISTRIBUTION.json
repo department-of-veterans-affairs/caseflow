@@ -38,5 +38,21 @@
   "aoj_cavc_affinity_days_title": "AOJ CAVC Affinity Days",
   "alternative_batch_size_title": "Alternate Batch Size",
   "batch_size_per_attorney_title": "Batch Size Per Attorney",
-  "request_more_cases_minimum_title": "Request More Cases Minimum"
+  "request_more_cases_minimum_title": "Request More Cases Minimum",
+  "disable_legacy_priority": "ACD Disable Legacy Priority" ,
+  "disable_legacy_priority_title": "ACD Disable Legacy Priority",
+  "disable_legacy_non_priority": "ACD Disable Legacy Non-priority" ,
+  "disable_legacy_non_priority_title": "ACD Disable Legacy Non-priority",
+  "disable_ama_non_priority_hearing": "ACD Disable AMA Non-Priority Hearing" ,
+  "disable_ama_non_priority_hearing_title": "ACD Disable AMA Non-Priority Hearing",
+  "disable_ama_non_priority_direct_review": "ACD Disable AMA Non-Priority Direct Review" ,
+  "disable_ama_non_priority_direct_review_title": "ACD Disable AMA Non-Priority Direct Review",
+  "disable_ama_non_priority_evidence_sub": "ACD Disable AMA Non-Priority Evidence Submission" ,
+  "disable_ama_non_priority_evidence_sub_title": "ACD Disable AMA Non-Priority Evidence Submission",
+  "disable_ama_priority_hearing": "ACD Disable AMA Priority Hearing" ,
+  "disable_ama_priority_hearing_title": "ACD Disable AMA Priority Hearing",
+  "disable_ama_priority_direct_review": "ACD Disable AMA Priority Direct Review" ,
+  "disable_ama_priority_direct_review_title": "ACD Disable AMA Priority Direct Review",
+  "disable_ama_priority_evidence_sub": "ACD Disable AMA Priority Evidence Submission" ,
+  "disable_ama_priority_evidence_sub_title": "ACD Disable AMA Priority Evidence Submission"
 }

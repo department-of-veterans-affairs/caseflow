@@ -22,4 +22,10 @@ describe CDAControlGroup do
       expect(CDAControlGroup.singleton.users_can_view_levers?).to eq(true)
     end
   end
+
+  describe "can_receive_task?" do
+    it "should always be false" do
+      expect(CDAControlGroup.singleton.can_receive_task?("some_task")).to eq(false)
+    end
+  end
 end

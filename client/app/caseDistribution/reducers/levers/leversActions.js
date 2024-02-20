@@ -1,5 +1,6 @@
 import { ACTIONS } from './leversActionTypes';
 import ApiUtil from '../../../util/ApiUtil';
+import { validateLeverInput } from '../../utils';
 
 export const setUserIsAcdAdmin = (isUserAcdAdmin) =>
   (dispatch) => {
@@ -32,7 +33,7 @@ export const loadHistory = (historyList) =>
   };
 
 export const resetLevers = () => async (dispatch) => {
-  const resp = await ApiUtil.get('/case_distribution_levers/get_levers');
+  const resp = await ApiUtil.get('/case_distribution_levers/levers');
   const { levers } = resp.body;
 
   dispatch({
@@ -169,3 +170,17 @@ export const resetAllLeverErrors = () =>
       type: ACTIONS.RESET_ALL_VALIDATION_ERRORS
     });
   };
+
+export const validateLever = (lever, leverItem, value, leverErrors) => (dispatch) => {
+  const validationErrors = validateLeverInput(lever, value);
+  const errorExists = leverErrors.length > 0;
+
+  if (validationErrors.length > 0 && !errorExists) {
+    dispatch(addLeverErrors(validationErrors));
+  }
+
+  if (validationErrors.length === 0 && errorExists) {
+    dispatch(removeLeverErrors(leverItem));
+  }
+
+};

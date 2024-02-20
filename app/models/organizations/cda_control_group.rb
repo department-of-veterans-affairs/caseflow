@@ -13,4 +13,8 @@ class CDAControlGroup < Organization
   def users_can_view_levers?
     true
   end
+
+  def can_receive_task?(_task)
+    false
+  end
 end

@@ -1,20 +1,20 @@
 module Seeds
   class CaseDistributionLevers < Base
     def seed!
-      levers.each do |lever|
+      CaseDistributionLevers.levers.each do |lever|
         next if CaseDistributionLever.find_by_item(lever[:item])
         create_lever lever
       end
     end
 
-    def levers
+    def self.levers
       [
         {
           item: Constants.DISTRIBUTION.maximum_direct_review_proportion,
           title: Constants.DISTRIBUTION.maximum_direct_review_proportion_title,
           description: "Sets the maximum number of direct reviews in relation to due direct review proportion to prevent a complete halt to work on other dockets should demand for direct reviews approach the Board's capacity.",
           data_type: Constants.ACD_LEVERS.data_types.number,
-          value: 0.8,
+          value: 0.07,
           unit: '%',
           is_disabled_in_ui: true,
           min_value: 0,
@@ -28,7 +28,7 @@ module Seeds
           title: Constants.DISTRIBUTION.minimum_legacy_proportion_title,
           description: 'Sets the minimum proportion of legacy appeals that will be distributed.',
           data_type: Constants.ACD_LEVERS.data_types.number,
-          value: 0.2,
+          value: 0.9,
           unit: '%',
           is_disabled_in_ui: true,
           min_value: 0,
@@ -42,7 +42,7 @@ module Seeds
           title: Constants.DISTRIBUTION.nod_adjustment_title,
           description: 'Applied for docket balancing reflecting the likelihood that NODs will advance to a Form 9.',
           data_type: Constants.ACD_LEVERS.data_types.number,
-          value: 0.9,
+          value: 0.4,
           unit: '%',
           is_disabled_in_ui: true,
           min_value: 0,
@@ -116,7 +116,7 @@ module Seeds
             {
               item: 'value',
               data_type: Constants.ACD_LEVERS.data_types.number,
-              value: 0,
+              value: 60,
               text: 'Attempt distribution to current judge for max of:',
               unit: Constants.ACD_LEVERS.days,
               min_value: 0,
@@ -152,7 +152,7 @@ module Seeds
             {
               item: 'value',
               data_type: Constants.ACD_LEVERS.data_types.number,
-              value: 0,
+              value: 14,
               text: 'Attempt distribution to current judge for max of:',
               unit: Constants.ACD_LEVERS.days,
               selected: true
@@ -175,7 +175,7 @@ module Seeds
           is_disabled_in_ui: false,
           min_value: 0,
           max_value: 100,
-          algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
+          algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
           lever_group: Constants.ACD_LEVERS.lever_groups.affinity,
           lever_group_order: 3001
         },
@@ -224,7 +224,7 @@ module Seeds
             {
               item: 'value',
               data_type: Constants.ACD_LEVERS.data_types.number,
-              value: 21,
+              value: 14,
               text: 'Attempt distribution to current judge for max of:',
               unit: Constants.ACD_LEVERS.days,
               selected: true
@@ -279,7 +279,7 @@ module Seeds
           is_disabled_in_ui: true,
           min_value: 0,
           max_value: 100,
-          algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
+          algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
           lever_group: Constants.ACD_LEVERS.lever_groups.affinity,
           lever_group_order: 3004
         },
@@ -317,7 +317,7 @@ module Seeds
           is_disabled_in_ui: true,
           min_value: 0,
           max_value: 100,
-          algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
+          algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
           lever_group: Constants.ACD_LEVERS.lever_groups.affinity,
           lever_group_order: 3005
         },
@@ -364,7 +364,7 @@ module Seeds
           title: 'AMA Hearings Start Distribution Prior to Goals',
           description: '',
           data_type: Constants.ACD_LEVERS.data_types.combination,
-          value: 770,
+          value: 60,
           unit: Constants.ACD_LEVERS.days,
           options: [
             {
@@ -379,7 +379,7 @@ module Seeds
           is_disabled_in_ui: true,
           min_value: 0,
           max_value: nil,
-          algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
+          algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
           lever_group: Constants.ACD_LEVERS.lever_groups.docket_distribution_prior,
           lever_group_order: 4000
         },
@@ -412,7 +412,7 @@ module Seeds
           title: 'AMA Evidence Submission Start Distribution Prior to Goals',
           description: '',
           data_type: Constants.ACD_LEVERS.data_types.combination,
-          value: 550,
+          value: 60,
           unit: Constants.ACD_LEVERS.days,
           options: [
             {
@@ -427,7 +427,7 @@ module Seeds
           is_disabled_in_ui: true,
           min_value: 0,
           max_value: nil,
-          algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
+          algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
           lever_group: Constants.ACD_LEVERS.lever_groups.docket_distribution_prior,
           lever_group_order: 4002
         },
@@ -435,7 +435,7 @@ module Seeds
           item: Constants.DISTRIBUTION.ama_hearings_docket_time_goals,
           title: 'AMA Hearings Docket Time Goals',
           data_type: Constants.ACD_LEVERS.data_types.number,
-          value: 365,
+          value: 730,
           unit: Constants.ACD_LEVERS.days,
           is_disabled_in_ui: true,
           min_value: 0,
@@ -448,12 +448,12 @@ module Seeds
           item: Constants.DISTRIBUTION.ama_direct_review_docket_time_goals,
           title: 'AMA Direct Review Docket Time Goals',
           data_type: Constants.ACD_LEVERS.data_types.number,
-          value: 500,
+          value: 365,
           unit: Constants.ACD_LEVERS.days,
           is_disabled_in_ui: false,
           min_value: 0,
           max_value: nil,
-          algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
+          algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
           lever_group: Constants.ACD_LEVERS.lever_groups.docket_time_goal,
           lever_group_order: 4004
         },
@@ -461,17 +461,122 @@ module Seeds
           item: Constants.DISTRIBUTION.ama_evidence_submission_docket_time_goals,
           title: 'AMA Evidence Submission Docket Time Goals',
           data_type: Constants.ACD_LEVERS.data_types.number,
-          value: 123,
+          value: 550,
           unit: Constants.ACD_LEVERS.days,
           is_disabled_in_ui: true,
           min_value: 0,
           max_value: nil,
-          algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
+          algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
           lever_group: Constants.ACD_LEVERS.lever_groups.docket_time_goal,
           lever_group_order: 4005
         },
+        {
+          item: Constants.DISTRIBUTION.disable_legacy_priority,
+          title: Constants.DISTRIBUTION.disable_legacy_priority_title,
+          description: '',
+          data_type: Constants.ACD_LEVERS.data_types.boolean,
+          value: false,
+          unit: '',
+          is_toggle_active: false,
+          is_disabled_in_ui: true,
+          algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
+          lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
+          lever_group_order: 10
+        },
+        {
+          item: Constants.DISTRIBUTION.disable_legacy_non_priority,
+          title: Constants.DISTRIBUTION.disable_legacy_non_priority_title,
+          description: '',
+          data_type: Constants.ACD_LEVERS.data_types.boolean,
+          value: false,
+          unit: '',
+          is_toggle_active: false,
+          is_disabled_in_ui: true,
+          algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
+          lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
+          lever_group_order: 101
+        },
+        {
+          item: Constants.DISTRIBUTION.disable_ama_non_priority_hearing,
+          title: Constants.DISTRIBUTION.disable_ama_non_priority_hearing_title,
+          description: '',
+          data_type: Constants.ACD_LEVERS.data_types.boolean,
+          value: false,
+          unit: '',
+          is_toggle_active: false,
+          is_disabled_in_ui: true,
+          algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
+          lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
+          lever_group_order: 102
+        },
+        {
+          item: Constants.DISTRIBUTION.disable_ama_non_priority_direct_review,
+          title: Constants.DISTRIBUTION.disable_ama_non_priority_direct_review_title,
+          description: '',
+          data_type: Constants.ACD_LEVERS.data_types.boolean,
+          value: false,
+          unit: '',
+          is_toggle_active: false,
+          is_disabled_in_ui: true,
+          algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
+          lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
+          lever_group_order: 103
+        },
+        {
+          item: Constants.DISTRIBUTION.disable_ama_non_priority_evidence_sub,
+          title: Constants.DISTRIBUTION.disable_ama_non_priority_evidence_sub_title,
+          description: '',
+          data_type: Constants.ACD_LEVERS.data_types.boolean,
+          value: false,
+          unit: '',
+          is_toggle_active: false,
+          is_disabled_in_ui: true,
+          algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
+          lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
+          lever_group_order: 104
+        },
+        {
+          item: Constants.DISTRIBUTION.disable_ama_priority_hearing,
+          title: Constants.DISTRIBUTION.disable_ama_priority_hearing_title,
+          description: '',
+          data_type: Constants.ACD_LEVERS.data_types.boolean,
+          value: false,
+          unit: '',
+          is_toggle_active: false,
+          is_disabled_in_ui: true,
+          algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
+          lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
+          lever_group_order: 105
+        },
+        {
+          item: Constants.DISTRIBUTION.disable_ama_priority_direct_review,
+          title: Constants.DISTRIBUTION.disable_ama_priority_direct_review_title,
+          description: '',
+          data_type: Constants.ACD_LEVERS.data_types.boolean,
+          value: false,
+          unit: '',
+          is_toggle_active: false,
+          is_disabled_in_ui: true,
+          algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
+          lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
+          lever_group_order: 106
+        },
+        {
+          item: Constants.DISTRIBUTION.disable_ama_priority_evidence_sub,
+          title: Constants.DISTRIBUTION.disable_ama_priority_evidence_sub_title,
+          description: '',
+          data_type: Constants.ACD_LEVERS.data_types.boolean,
+          value: false,
+          unit: '',
+          is_toggle_active: false,
+          is_disabled_in_ui: true,
+          algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
+          lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
+          lever_group_order: 107
+        },
       ]
     end
+
     private
 
     def create_lever lever

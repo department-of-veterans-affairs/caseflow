@@ -4,8 +4,6 @@
   "value": "value",
   "days": "days",
   "cases": "cases",
-  "SUCCESS": "SUCCESS",
-  "FAIL": "FAIL",
   "DUPLICATE": "DUPLICATE",
   "ERROR": "ERROR",
   "data_types": {
@@ -24,7 +22,8 @@
     "batch": "batch",
     "affinity": "affinity",
     "docket_distribution_prior": "docket_distribution_prior",
-    "docket_time_goal": "docket_time_goal"
+    "docket_time_goal": "docket_time_goal",
+    "docket_levers": "docket_levers"
   },
   "validation_error_message": {
     "minimum_not_met": "Please enter a value greater than or equal to 0",

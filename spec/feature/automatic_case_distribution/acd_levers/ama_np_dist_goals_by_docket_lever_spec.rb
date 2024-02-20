@@ -7,13 +7,13 @@ RSpec.feature "AMA Non-priority Distribution Goals by Docket Levers" do
     User.authenticate!(user: user)
   end
 
-  let(:ama_hearings) {Constants.DISTRIBUTION.ama_hearings_start_distribution_prior_to_goals}
-  let(:ama_direct_reviews) {Constants.DISTRIBUTION.ama_direct_review_start_distribution_prior_to_goals}
-  let(:ama_evidence_submissions) {Constants.DISTRIBUTION.ama_evidence_submission_start_distribution_prior_to_goals}
+  let(:ama_hearings) { Constants.DISTRIBUTION.ama_hearings_start_distribution_prior_to_goals }
+  let(:ama_direct_reviews) { Constants.DISTRIBUTION.ama_direct_review_start_distribution_prior_to_goals }
+  let(:ama_evidence_submissions) { Constants.DISTRIBUTION.ama_evidence_submission_start_distribution_prior_to_goals }
 
-  let(:ama_hearings_field) {Constants.DISTRIBUTION.ama_hearings_docket_time_goals}
-  let(:ama_direct_reviews_field) {Constants.DISTRIBUTION.ama_direct_review_docket_time_goals}
-  let(:ama_evidence_submissions_field) {Constants.DISTRIBUTION.ama_evidence_submission_docket_time_goals}
+  let(:ama_hearings_field) { Constants.DISTRIBUTION.ama_hearings_docket_time_goals }
+  let(:ama_direct_reviews_field) { Constants.DISTRIBUTION.ama_direct_review_docket_time_goals }
+  let(:ama_evidence_submissions_field) { Constants.DISTRIBUTION.ama_evidence_submission_docket_time_goals }
 
   context "user is in Case Distro Algorithm Control organization but not an admin" do
     scenario "visits the lever control page", type: :feature do
@@ -39,9 +39,9 @@ RSpec.feature "AMA Non-priority Distribution Goals by Docket Levers" do
       visit "case-distribution-controls"
       confirm_page_and_section_loaded
 
-      expect(page).to have_field("#{ama_hearings_field}", readonly: true)
-      expect(page).to have_field("#{ama_direct_reviews_field}", readonly: false)
-      expect(page).to have_field("#{ama_evidence_submissions_field}", readonly: true)
+      expect(page).to have_field(ama_hearings_field.to_s, disabled: true)
+      expect(page).to have_field(ama_direct_reviews_field.to_s)
+      expect(page).to have_field(ama_evidence_submissions_field.to_s, disabled: true)
 
       expect(page).to have_button("toggle-switch-#{ama_hearings}", disabled: true)
       expect(page).to have_button("toggle-switch-#{ama_direct_reviews}", disabled: true)
@@ -55,12 +55,12 @@ RSpec.feature "AMA Non-priority Distribution Goals by Docket Levers" do
       empty_error_message = "Please enter a value greater than or equal to 0"
 
       fill_in ama_direct_reviews_field, with: "ABC"
-      expect(page).to have_field(ama_direct_reviews_field, with: '')
+      expect(page).to have_field(ama_direct_reviews_field, with: "")
       expect(find("##{ama_direct_reviews_field}-lever")).to have_content(empty_error_message)
 
       fill_in ama_direct_reviews_field, with: "-1"
-      expect(page).to have_field(ama_direct_reviews_field, with: '1')
-      expect(find("##{ama_direct_reviews_field}-lever")).not_to have_content(empty_error_message)
+      expect(page).to have_field(ama_direct_reviews_field, with: "1")
+      expect(find("##{ama_direct_reviews_field}-lever").has_no_content?(empty_error_message)).to eq(true)
     end
 
     scenario "changes the AMA Direct Review lever value to a valid input" do
@@ -68,7 +68,7 @@ RSpec.feature "AMA Non-priority Distribution Goals by Docket Levers" do
       confirm_page_and_section_loaded
 
       fill_in ama_direct_reviews_field, with: "365"
-      expect(page).to have_field(ama_direct_reviews_field, with: '365')
+      expect(page).to have_field(ama_direct_reviews_field, with: "365")
     end
   end
 end
