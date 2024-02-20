@@ -140,7 +140,7 @@ const NewLetter = (props) => {
   const displayLetter = (typeof currentLetter !== 'undefined');
   const [letterCard, setLetterCard] = useState({
     id: index,
-    date: currentDate,
+    date: displayLetter ? currentLetter.date : currentDate,
     type: displayLetter ? currentLetter.type : '',
     title: displayLetter ? currentLetter.title : '',
     subType: displayLetter ? currentLetter.subType : '',
@@ -202,12 +202,15 @@ const NewLetter = (props) => {
     value: option.letter_type }));
 
   const selectResponseWindows = (option, aux) => {
-    if (option.response_window_option_default) {
-      let responseWindowsValue = option.response_window_option_default;
+    if (displayLetter) {
+      const responseWindowsValue = currentLetter.responseWindows;
 
-      if (displayLetter) {
-        responseWindowsValue = currentLetter.responseWindows;
-      }
+      setLetterCard({ ...letterCard,
+        responseWindows: responseWindowsValue });
+      setResponseWindows(responseWindowsValue);
+    } else if (option.response_window_option_default) {
+      const responseWindowsValue = option.response_window_option_default;
+
       setLetterCard({ ...letterCard,
         responseWindows: responseWindowsValue });
       setResponseWindows(responseWindowsValue);
@@ -351,7 +354,6 @@ const NewLetter = (props) => {
       reason: '',
       responseWindows: ''
     });
-    setCustomResponseWindowState(false);
   };
 
   useEffect(() => {
@@ -365,27 +367,19 @@ const NewLetter = (props) => {
 
   const changeLetterTitle = (val) => {
     setLetterCard({ ...letterCard,
-      title: val,
-      subType: '',
-      reason: '',
-      responseWindows: ''
+      title: val
     });
-    setCustomResponseWindowState(false);
   };
 
   const changeLetterSubTitle = (val) => {
     setLetterCard({ ...letterCard,
-      subType: val,
-      reason: '',
-      customValue: null
+      subType: val
     });
-    setCustomResponseWindowState(false);
   };
 
   const changeSubReason = (val) => {
     setLetterCard({ ...letterCard,
-      reason: val,
-      customValue: null
+      reason: val
     });
   };
 
