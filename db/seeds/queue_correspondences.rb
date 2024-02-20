@@ -224,7 +224,6 @@ module Seeds
       create_pending_tasks_for_tasks_not_related_to_appeal(corres, parent_task: mail_task_parent)
 
       corres
-=========
     def create_correspondence_with_completed_mail_task
       correspondence = create_correspondence
       create_and_complete_mail_task(correspondence, mail_team_user)
@@ -233,7 +232,6 @@ module Seeds
     def create_correspondence_with_canceled_root_task
       corres = create_correspondence
       corres.root_task.update!(status: Constants.TASK_STATUSES.cancelled)
->>>>>>>>> Temporary merge branch 2
     end
   end
 end
