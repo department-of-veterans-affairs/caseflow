@@ -16,6 +16,8 @@ class AutoAssignableUserFinder
     run_auto_assign_algorithm(correspondence, vbms_id)
   end
 
+  private
+
   def run_auto_assign_algorithm(correspondence, vbms_id)
     return auto_assign_nod(vbms_id) if correspondence.nod?
 
@@ -66,8 +68,6 @@ class AutoAssignableUserFinder
 
     sorted_assignable_users(users)
   end
-
-  private
 
   # :reek:UncommunicativeVariableName
   def sorted_assignable_users(users)
