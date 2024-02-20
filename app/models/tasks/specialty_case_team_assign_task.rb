@@ -16,12 +16,14 @@ class SpecialtyCaseTeamAssignTask < Task
   validate :only_open_task_of_type, on: :create,
                                     unless: :skip_check_for_only_open_task_of_type
 
-  def additional_available_actions(user)
-    if assigned_to.user_has_access?(user)
-      [Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h]
-    else
-      []
-    end
+  SPECIALTY_CASE_TEAM_TASK_ACTIONS = [
+    Constants.TASK_ACTIONS.ASSIGN_TO_ATTORNEY.to_h
+  ].freeze
+
+  def available_actions(user)
+    return [] unless assigned_to.user_has_access?(user)
+
+    SPECIALTY_CASE_TEAM_TASK_ACTIONS
   end
 
   def self.label
