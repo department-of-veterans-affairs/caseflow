@@ -18,16 +18,15 @@ class OrganizationCorrespondenceActionRequiredTasksTab < CorrespondenceQueueTab
   def tasks
     if RequestStore[:current_user].mail_supervisor?
       CorrespondenceTask
+      .package_action_tasks
       .includes(*task_includes)
-      .where(
-        type: [SplitPackageTask.name, ReassignPackageTask.name, RemovePackageTask.name, MergePackageTask.name]
-      )
       .where(assigned_to: assignee)
       .active
     else
       CorrespondenceTask
       .includes(*task_includes)
-      .where(type: [SplitPackageTask.name, ReassignPackageTask.name, MergePackageTask.name])
+      .package_action_tasks
+      .where.not(type: RemovePackageTask.name)
       .where(assigned_to: assignee)
       .active
     end
