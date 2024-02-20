@@ -45,6 +45,8 @@ class CorrespondenceController < ApplicationController
     intake = CorrespondenceIntake.find_by(user: current_user, correspondence: current_correspondence)
     if intake "...blah blah blah"
 
+    end
+
   end
 
   def correspondence_cases
