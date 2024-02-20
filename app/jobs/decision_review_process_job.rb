@@ -27,8 +27,10 @@ class DecisionReviewProcessJob < CaseflowJob
       if ok_to_ping_sentry?
         capture_exception(error: error)
       else
+        error.define_singleton_method(:ignorable?) { true }
         Rails.logger.error(error)
       end
+      raise
     end
 
     RequestStore.store[:current_user] = current_user
