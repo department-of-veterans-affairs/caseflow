@@ -15,7 +15,7 @@ class VirtualHearings::LinkService
     @conference_id = conference_id
   end
 
-  def get_conference_id
+  def get_conference_id # rubocop:disable Naming/AccessorMethodName
     conference_id
   end
 

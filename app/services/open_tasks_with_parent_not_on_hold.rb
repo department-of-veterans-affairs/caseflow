@@ -23,7 +23,9 @@ class OpenTasksWithParentNotOnHold < DataIntegrityChecker
 
   ONGOING_INVESTIGATIONS = %(
     To investigate, query for open tasks with specific parent type and status; for example:
-      HearingTask.open.joins(:parent).includes(:parent).where(parents_tasks: { type: "DistributionTask", status: :assigned })
+      HearingTask.open.joins(:parent)
+      .includes(:parent)
+      .where(parents_tasks: { type: "DistributionTask", status: :assigned })
     For LegacyAppeals, confirm with the Board before modifying tasks.
     For InformalHearingPresentationTask, https://vajira.max.gov/browse/CASEFLOW-2499
     For HearingTask with a parent assigned DistributionTask, https://dsva.slack.com/archives/C3EAF3Q15/p1633041954109500

@@ -146,7 +146,12 @@ class Idt::Api::V2::AppealsController < Idt::Api::V1::BaseController
   end
 
   def load_tags_by_doc_id
+    # rubocop:disable Style/HashTransformValues
+    # Disabling this cop instead of modifying because map isn't transforming values, it is creating a new hash
+    # where the document_ids are the keys and an empty Set[] is the value
     tags_by_doc_id = Hash[document_ids.map { |key, _| [key, Set[]] }]
+    # rubocop:enable Style/HashTransformValues
+
     Tag.includes(:documents_tags).where(documents_tags: { document_id: document_ids }).each do |tag|
       # tag.documents_tags returns extraneous documents outside document_ids, so
       # only capture tags associated with docs associated with document_ids
