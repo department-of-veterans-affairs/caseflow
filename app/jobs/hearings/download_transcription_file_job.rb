@@ -150,13 +150,14 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   # Returns: integer value of 1 if tmp file deleted after successful upload
   def convert_to_rtf_and_upload_to_s3!
     log_info("Converting file #{file_name} to rtf...")
-    rtf_file_path = @transcription_file.convert_to_rtf!
-    file_name = rtf_file_path.split("/").last
-    rtf_file = find_or_create_transcription_file(file_name)
-
-    log_info("Successfully converted #{file_name} to rtf. Uploading to S3...")
-    rtf_file.upload_to_s3!
-    rtf_file.clean_up_tmp_location
+    file_paths = @transcription_file.convert_to_rtf!
+    file_paths.each do |file_path|
+      output_file_name = file_path.split("/").last
+      output_file = find_or_create_transcription_file(output_file_name)
+      log_info("Successfully converted #{file_name} to rtf. Uploading #{output_file.file_type} to S3...")
+      output_file.upload_to_s3!
+      output_file.clean_up_tmp_location
+    end
   end
 
   # Purpose: If disposition of associated hearing is not marked as held, sends email to VA Operations Team and

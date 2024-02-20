@@ -27,9 +27,9 @@ class TranscriptionFile < CaseflowRecord
       appeal_id: hearing.appeal&.veteran_file_number,
       date: hearing.scheduled_time
     }
-    rtf_file_path = TranscriptionTransformer.new(tmp_location, hearing_info).call
+    file_paths = TranscriptionTransformer.new(tmp_location, hearing_info).call
     update_status!(process: :conversion, status: :success)
-    rtf_file_path
+    file_paths
   rescue TranscriptionTransformer::FileConversionError => error
     update_status!(process: :conversion, status: :failure)
     raise error, error.message
