@@ -29,13 +29,11 @@ module QueueHelpers
       cmp_queue_id: 1,
       cmp_packet_number: @cmp_packet_number,
       va_date_of_receipt: rand(1.month.ago..1.day.ago),
-      notes: "Notes from CMP - Queue Correspondence Seed",
+      notes: "Notes from CMP - Queue Correspondence Seed".split(" ").shuffle.join,
       assigned_by_id: 81,
       updated_by_id: 81,
       veteran_id: vet.id
     ).tap { @cmp_packet_number += 1 }
-
-    # create_correspondence_document(correspondence, vet)
   end
 
   def create_correspondence_document(correspondence, veteran)
@@ -54,15 +52,22 @@ module QueueHelpers
     CorrespondenceIntakeTask.create_from_params(parent, user)
   end
 
+<<<<<<<<< Temporary merge branch 1
   def create_review_package_task(correspondence, status:)
     review_package_task = ReviewPackageTask.find_or_create_by!(
       appeal_id: correspondence.id,
       assigned_to: MailTeamSupervisor.singleton,
       appeal_type: "Correspondence",
+      assigned_to: User.find_by(css_id: "JOLLY_POSTMAN")
     )
 
     review_package_task.update(status: status)
     review_package_task
+=========
+  def assign_review_package_task(correspondence, user)
+    review_package_task = ReviewPackageTask.find_by(appeal_id: correspondence.id)
+    review_package_task.update!(assigned_to: user, status: Constants.TASK_STATUSES.assigned)
+>>>>>>>>> Temporary merge branch 2
   end
 
   def create_efolderupload_failed_task(correspondence, parent)
@@ -72,6 +77,7 @@ module QueueHelpers
       appeal_type: "Correspondence",
       assigned_to: MailTeamSupervisor.singleton
     )
+<<<<<<<<< Temporary merge branch 1
 
     euft.update!(status: Constants.TASK_STATUSES.in_progress)
 
@@ -83,10 +89,13 @@ module QueueHelpers
       appeal_id: correspondence.id,
       assigned_to: MailTeamSupervisor.singleton,
       appeal_type: "Correspondence",
+      assigned_to: User.find_by(css_id: "JOLLY_POSTMAN")
     )
 
     root_task.update(status: status)
     root_task
+=========
+>>>>>>>>> Temporary merge branch 2
   end
 
   def create_action_required_tasks(correspondence, status:, parent_task:, task_type:)

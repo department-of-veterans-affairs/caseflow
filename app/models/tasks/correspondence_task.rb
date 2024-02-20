@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 class CorrespondenceTask < Task
+  self.abstract_class = true
   before_create :verify_org_task_unique
+  belongs_to :appeal, class_name: "Correspondence", foreign_key: :appeal_id
   validate :status_is_valid_on_create, on: :create
   validate :assignee_status_is_valid_on_create, on: :create
 

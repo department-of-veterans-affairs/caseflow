@@ -241,14 +241,66 @@ export const veteranDetails = () => {
 
   return {
     header: 'Veteran Details',
-    valueFunction: (task) => task.veteranDetails
+    label: 'Veteran Details',
+    // enableFilter: true,
+    name: QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
+    backendCanSort: true,
+    getSortValue: (task) => task.veteranDetails,
+    valueFunction: (task) => {
+      if (task.taskUrl === '/modal/reassign_package') {
+        return <a
+          href="#"
+          onClick={showReassignPackageModal}
+          aria-label={`${task.label } Link`}
+          id="task-link"
+        >
+          {task.veteranDetails}
+        </a>;
+      } else if (task.taskUrl === '/modal/remove_package') {
+        return <a
+          href="#"
+          onClick={showRemovePackageModal}
+          aria-label={`${task.label } Link`}
+          id="task-link"
+        >
+          {task.veteranDetails}
+        </a>;
+      }
+
+      return <a
+        href={task.taskUrl}
+        id="task-link"
+        aria-label={`${task.label } Link`}
+      >
+        {task.veteranDetails}
+      </a>;
+    }
   };
 };
 
-export const vaDor = () => {
+/*
+    header: COPY.CASE_LIST_TABLE_TASKS_COLUMN_TITLE,
+    name: QUEUE_CONFIG.COLUMNS.TASK_TYPE.name,
+    enableFilter: true,
+    tableData: tasks,
+    columnName: 'label',
+    anyFiltersAreSet: true,
+    customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
+    filterOptions,
+    label: 'Filter by task',
+    valueName: 'label',
+*/
 
+export const vaDor = () => {
   return {
     header: 'VA DOR',
+    filterOptions: [],
+    columnName: 'Receipt Date',
+    backendCanSort: true,
+    enableFilter: true,
+    getSortValue: (task) => task.vaDor,
+    name: QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
+    label: QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
     valueFunction: (task) => {
       return moment(task.vaDor).format('MM/DD/YYYY');
     }
@@ -282,7 +334,10 @@ export const actionType = () => {
 export const daysWaitingCorrespondence = () => {
   return {
     header: 'Days Waiting',
-    valueFunction: (task) => task.daysWaiting
+    name: QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
+    valueFunction: (task) => task.daysWaiting,
+    backendCanSort: true,
+    getSortValue: (task) => task.daysWaiting
   };
 };
 
