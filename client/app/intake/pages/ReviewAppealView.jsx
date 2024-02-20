@@ -124,14 +124,14 @@ const ReviewAppealView = (props) => {
     return selectOriginal;
   });
 
-  const hasSCTIssues = (issues) => {
+  const hasSpecialtyCaseTeamIssues = (issues) => {
     return issues.some((issue) => {
       return issue.benefit_type === 'vha';
     });
   };
 
-  const originalHasSCTIssue = hasSCTIssues(selectOriginal);
-  const selectedHasSCTIssue = hasSCTIssues(selectElement);
+  const originalHasSCTIssue = hasSpecialtyCaseTeamIssues(selectOriginal);
+  const selectedHasSCTIssue = hasSpecialtyCaseTeamIssues(selectElement);
   const atLeastOneHasSCTIssue = selectedHasSCTIssue || originalHasSCTIssue;
 
   return (

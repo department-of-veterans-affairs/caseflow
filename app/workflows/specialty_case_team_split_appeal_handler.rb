@@ -30,7 +30,8 @@ class SpecialtyCaseTeamSplitAppealHandler
   private
 
   def handle_old_sct_appeal
-    # If the old appeal was not in the sct queue, then it needs to be moved there and it was an old appeal before SCT
+    # If the old appeal was not in the sct queue, then the new appeal needs to be moved there
+    # The appeal was created before the SpecialtyCaseTeam was created or before the issue type was added to SCT.
     move_appeal_back_to_distribution(new_appeal)
     unless was_already_in_sct_queue?
       assign_appeal_to_the_specialty_case_team(old_appeal)
@@ -38,7 +39,8 @@ class SpecialtyCaseTeamSplitAppealHandler
   end
 
   def handle_new_sct_appeal
-    # If the old appeal was not in the sct queue, then it needs to be moved there and it was an old appeal before SCT
+    # If the old appeal was not in the sct queue, then the old appeal needs to be moved there
+    # The appeal was created before the SpecialtyCaseTeam was created or before the issue type was added to SCT.
     move_appeal_back_to_distribution(old_appeal)
     unless was_already_in_sct_queue?
       assign_appeal_to_the_specialty_case_team(new_appeal)
