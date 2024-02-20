@@ -42,7 +42,6 @@ class QueueColumn
 
   def filter_options(tasks)
     filter_option_func = self.class::FILTER_OPTIONS[name]
-    # binding.pry
     if filter_option_func
       send(filter_option_func, tasks)
     else
@@ -70,7 +69,7 @@ class QueueColumn
   private
 
   def va_dor_options
-    nil
+    {}
   end
 
   def case_type_options(tasks)
