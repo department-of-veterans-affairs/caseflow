@@ -281,9 +281,7 @@ class VirtualHearing < CaseflowRecord
 
   # :reek:FeatureEnvy
   def subject_for_conference
-    appeal = hearing.appeal
-
-    "#{appeal.docket_number}_#{appeal.id}_#{appeal.class}"
+    "#{hearing.docket_number}_#{hearing.id}_#{hearing.class}"
   end
 
   def nbf
