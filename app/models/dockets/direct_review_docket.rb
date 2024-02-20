@@ -6,12 +6,14 @@ class DirectReviewDocket < Docket
   end
 
   def due_count
-    if Constants.DISTRIBUTION.days_before_goal_due_for_distribution.nil?
-      appeal_ids = appeals(priority: false, ready: true)
-    else
-      appeal_ids = appeals(priority: false, ready: true)
-        .where("target_decision_date <= ?", Constants.DISTRIBUTION.days_before_goal_due_for_distribution.days.from_now)
-    end
+    days_before_goal_due_for_distribution = CaseDistributionLever.days_before_goal_due_for_distribution
+    appeal_ids = if days_before_goal_due_for_distribution > 0
+                   appeals(priority: false, ready: true)
+                     .where("target_decision_date <= ?", days_before_goal_due_for_distribution.days.from_now)
+                 else
+                   appeals(priority: false, ready: true)
+                 end
+
     Appeal.where(id: appeal_ids).count
   end
 
