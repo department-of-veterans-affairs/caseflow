@@ -34,9 +34,7 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     });
   //will need to update all of the state for intakeCorrespondence
   case ACTIONS.LOAD_SAVED_INTAKE:
-    return update(state, {
-      $set: action.payload
-    });
+    return action.payload.savedStore;
 
   case ACTIONS.LOAD_VETERAN_INFORMATION:
     return update(state, {

@@ -44,9 +44,10 @@ class CorrespondenceController < ApplicationController
   # If correspondence intake was started, json data from the database will need to be loaded into the page when user returns to intake
   def saved_intake_store
     intake = CorrespondenceIntake.find_by(user: current_user, correspondence: current_correspondence)
-    @current_step = intake.current_step
-    @redux_store = intake.redux_store
-
+    if !intake.nil?
+      @current_step = intake.current_step
+      @redux_store = intake.redux_store
+    end
   end
 
   def correspondence_cases

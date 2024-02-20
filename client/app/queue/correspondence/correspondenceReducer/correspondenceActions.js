@@ -20,14 +20,13 @@ export const loadCorrespondences = (correspondences) =>
       }
     });
   };
-//likely need a change from correspondences
-export const loadSavedIntake = (correspondences) =>
+
+export const loadSavedIntake = (savedStore) =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.LOAD_SAVED_INTAKE,
       payload: {
-        correspondences
-        //need a payload
+        savedStore
       }
     });
   };

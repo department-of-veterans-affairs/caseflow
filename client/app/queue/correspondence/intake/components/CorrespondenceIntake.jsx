@@ -6,7 +6,7 @@ import AddCorrespondenceView from './AddCorrespondence/AddCorrespondenceView';
 import { AddTasksAppealsView } from './TasksAppeals/AddTasksAppealsView';
 import { connect, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setUnrelatedTasks } from '../../correspondenceReducer/correspondenceActions';
+import { loadSavedIntake, setUnrelatedTasks } from '../../correspondenceReducer/correspondenceActions';
 import { useHistory } from 'react-router-dom';
 import { ConfirmCorrespondenceView } from './ConfirmCorrespondence/ConfirmCorrespondenceView';
 import { SubmitCorrespondenceModal } from './ConfirmCorrespondence/SubmitCorrespondenceModal';
@@ -34,7 +34,7 @@ const progressBarSections = [
 
 export const CorrespondenceIntake = (props) => {
   const intakeCorrespondence = useSelector((state) => state.intakeCorrespondence);
-  const [currentStep, setCurrentStep] = useState(props.currentStep);
+  const [currentStep, setCurrentStep] = useState(props.currentStep || 1);
   const [isContinueEnabled, setContinueEnabled] = useState(true);
   const [addTasksVisible, setAddTasksVisible] = useState(false);
   const [submitCorrespondenceModalVisible, setSubmitCorrespondenceModalVisible] = useState(false);
@@ -93,9 +93,9 @@ export const CorrespondenceIntake = (props) => {
       );
   }, [currentStep]);
 
-  // useEffect(() => {
-  //   setUnrelatedTasks(props.reduxStore);
-  // }, []);
+  useEffect(() => {
+    props.loadSavedIntake(props.reduxStore);
+  }, []);
 
   return <div>
     { errorBannerVisible &&
@@ -125,6 +125,7 @@ export const CorrespondenceIntake = (props) => {
         onContinueStatusChange={handleContinueStatusChange}
         autoTexts={props.autoTexts}
         veteranInformation={props.veteranInformation}
+        reduxStore={props.reduxStore}
       />
     }
     {currentStep === 3 &&
@@ -193,6 +194,7 @@ CorrespondenceIntake.propTypes = {
   autoTexts: PropTypes.arrayOf(PropTypes.string),
   currentStep: PropTypes.number,
   reduxStore: PropTypes.object,
+  loadSavedIntake: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({
@@ -204,7 +206,8 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    setUnrelatedTasks
+    setUnrelatedTasks,
+    loadSavedIntake
   }, dispatch)
 );
 
