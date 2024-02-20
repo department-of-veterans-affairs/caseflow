@@ -81,6 +81,7 @@ plugins:
     - 'db/migrate/*'
     - 'app/jobs/dispatch_email_job.rb'
     - 'app/mailers/dispatch_mailer.rb'
+    - 'db/seeds/cases_tied_to_judges_no_longer_with_board.rb'
   rubocop:
     enabled: true
     channel: rubocop-0-79

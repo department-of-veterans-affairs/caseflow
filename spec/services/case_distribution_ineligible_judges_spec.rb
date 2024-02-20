@@ -19,9 +19,9 @@ describe CaseDistributionIneligibleJudges, :postgres do
           { sattyid: inactive_judge_staff.sattyid,
             sdomainid: inactive_judge_staff.sdomainid,
             svlj: inactive_judge_staff.svlj },
-          { sattyid: non_judge_with_sattyid.sattyid,
-            sdomainid: non_judge_with_sattyid.sdomainid,
-            svlj: non_judge_with_sattyid.svlj }
+          sattyid: non_judge_with_sattyid.sattyid,
+          sdomainid: non_judge_with_sattyid.sdomainid,
+          svlj: non_judge_with_sattyid.svlj
         )
         expect(result.size).to eq(2)
       end
@@ -35,9 +35,9 @@ describe CaseDistributionIneligibleJudges, :postgres do
             svlj: inactive_judge_staff.svlj,
             id: inactive_judge_caseflow_record.id,
             css_id: inactive_judge_caseflow_record.css_id },
-          { sattyid: non_judge_with_sattyid.sattyid,
-            sdomainid: non_judge_with_sattyid.sdomainid,
-            svlj: non_judge_with_sattyid.svlj }
+          sattyid: non_judge_with_sattyid.sattyid,
+          sdomainid: non_judge_with_sattyid.sdomainid,
+          svlj: non_judge_with_sattyid.svlj
         )
         expect(result.size).to eq(2)
       end
@@ -57,9 +57,9 @@ describe CaseDistributionIneligibleJudges, :postgres do
 
         expect(result).to contain_exactly(
           { id: inactive_user.id, css_id: inactive_user.css_id },
-          { id: inactive_user_no_vacols_record.id, css_id: inactive_user_no_vacols_record.css_id }
+          id: inactive_user_no_vacols_record.id, css_id: inactive_user_no_vacols_record.css_id
         )
-        expect(result).not_to include({ id: active_user.id, css_id: active_user.css_id })
+        expect(result).not_to include(id: active_user.id, css_id: active_user.css_id)
         expect(result.size).to eq(2)
       end
 
@@ -72,8 +72,8 @@ describe CaseDistributionIneligibleJudges, :postgres do
             sattyid: inactive_user_vacols_record.sattyid,
             sdomainid: inactive_user_vacols_record.sdomainid,
             svlj: inactive_user_vacols_record.svlj },
-          { id: inactive_user_no_vacols_record.id,
-            css_id: inactive_user_no_vacols_record.css_id }
+          id: inactive_user_no_vacols_record.id,
+          css_id: inactive_user_no_vacols_record.css_id
         )
         expect(result.size).to eq(2)
       end
