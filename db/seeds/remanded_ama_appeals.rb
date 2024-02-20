@@ -76,7 +76,7 @@ module Seeds
         "no_medical_examination",
         "inadequate_medical_examination",
         "no_medical_opinion",
-        "inadequate_opinion",
+        "inadequate_medical_opinion",
         "advisory_medical_opinion",
         "inextricably_intertwined",
         "error",

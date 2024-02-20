@@ -2,7 +2,7 @@
 
 module Seeds
   class CasesTiedToJudgesNoLongerWithBoard < Base
-    APPEALS_LIMIT = 50
+    APPEALS_LIMIT = 10
 
     def initialize
       initialize_inactive_cf_user_and_inactive_admin_judge_team_file_number_and_participant_id
