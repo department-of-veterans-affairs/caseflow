@@ -27,11 +27,18 @@ class CorrespondenceTaskFilter < TaskFilter
     end
   end
 
+  def filter_by_task(task_type)
+    tasks.where("type = (?)", task_type)
+  end
+
   def filtered_tasks
     filter_params.each do |filter_param|
       value_hash = Rack::Utils.parse_nested_query(filter_param).deep_symbolize_keys
       if value_hash[:col] == "vaDor"
         @tasks = filter_by_va_dor(value_hash[:val])
+      end
+      if value_hash[:col] == "taskColumn"
+        @tasks = filter_by_task(value_hash[:val])
       end
     end
     @tasks

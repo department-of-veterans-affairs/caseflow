@@ -213,5 +213,14 @@ RSpec.feature("The Correspondence Cases page") do
       find(".cf-submit").click
       expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
     end
+
+    it "uses uses task filter correctly" do
+      FeatureToggle.enable!(:correspondence_queue)
+      FeatureToggle.enable!(:user_queue_pagination)
+      visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
+      all(".unselected-filter-icon")[1].click
+      find("label", text: "Review Package Task (1)").click
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+    end
   end
 end
