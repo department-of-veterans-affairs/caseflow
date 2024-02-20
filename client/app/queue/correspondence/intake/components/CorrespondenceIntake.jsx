@@ -34,7 +34,7 @@ const progressBarSections = [
 
 export const CorrespondenceIntake = (props) => {
   const intakeCorrespondence = useSelector((state) => state.intakeCorrespondence);
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(props.currentStep);
   const [isContinueEnabled, setContinueEnabled] = useState(true);
   const [addTasksVisible, setAddTasksVisible] = useState(false);
   const [submitCorrespondenceModalVisible, setSubmitCorrespondenceModalVisible] = useState(false);
@@ -92,6 +92,10 @@ export const CorrespondenceIntake = (props) => {
         }
       );
   }, [currentStep]);
+
+  // useEffect(() => {
+  //   setUnrelatedTasks(props.reduxStore);
+  // }, []);
 
   return <div>
     { errorBannerVisible &&
@@ -186,7 +190,9 @@ CorrespondenceIntake.propTypes = {
   unrelatedTasks: PropTypes.arrayOf(Object),
   setUnrelatedTasks: PropTypes.func,
   mailTasks: PropTypes.arrayOf(PropTypes.string),
-  autoTexts: PropTypes.arrayOf(PropTypes.string)
+  autoTexts: PropTypes.arrayOf(PropTypes.string),
+  currentStep: PropTypes.number,
+  reduxStore: PropTypes.object,
 };
 
 const mapStateToProps = (state) => ({

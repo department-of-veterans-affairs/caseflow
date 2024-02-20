@@ -12,6 +12,8 @@
       correspondence_queue: FeatureToggle.enabled?(:correspondence_queue, user: current_user)
     },
     correspondence: @correspondence,
+    currentStep: @current_step,
+    reduxStore: @redux_store,
     autoTexts: @auto_texts,
     veteranInformation: @veteran_information
   }) %>
