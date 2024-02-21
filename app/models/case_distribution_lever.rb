@@ -30,7 +30,7 @@ class CaseDistributionLever < ApplicationRecord
 
   # MAKE UPDATES FOR RADIO HERE
   def distribution_value
-    if data_type == Constants.ACD_LEVERS.data_types.radio
+    if radio_lever
       option = options.detect { |opt| opt["item"] == value }
       option["value"] if option&.is_a?(Hash)
     else
