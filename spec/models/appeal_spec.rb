@@ -1504,7 +1504,7 @@ describe Appeal, :all_dbs do
       end
     end
 
-    context "when an appeal has open DistributionTask and EvidenceOrArgumentMailTask" do
+    context "when an appeal has open DistributionTask and non-blocking MailTask subclass" do
       let!(:appeal_ready_to_distribute_with_evidence_task) do
         appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
         create(:evidence_or_argument_mail_task, :assigned, assigned_to: MailTeam.singleton, parent: appeal.root_task)
@@ -1514,6 +1514,36 @@ describe Appeal, :all_dbs do
       subject { appeal_ready_to_distribute_with_evidence_task.can_redistribute_appeal? }
       it "returns true" do
         expect(subject).to be true
+      end
+    end
+
+    context "when an appeal has on_hold DistributionTask and correct blocking MailTask tree" do
+      let!(:appeal_not_ready_to_distribute_with_correct_blocking_task_tree) do
+        appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
+        create(:congressional_interest_mail_task, :assigned, assigned_to: MailTeam.singleton,
+               parent: appeal.tasks.find_by(type: DistributionTask.name))
+        appeal
+      end
+
+      subject { appeal_not_ready_to_distribute_with_correct_blocking_task_tree.reload.can_redistribute_appeal? }
+      it "returns true" do
+        expect(subject).to be false
+      end
+    end
+
+    # this shouldn't happen as blocking MailTasks should be a child of DistributionTask if it is not closed,
+    # but this is the easiest way to test whether blocking MailTasks are picked up in the method's checks
+    context "when an appeal has incorrectly open DistributionTask and blocking MailTask" do
+      let!(:appeal_ready_to_distribute_with_incorrect_blocking_task_tree) do
+        appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
+        create(:congressional_interest_mail_task, :assigned, assigned_to: MailTeam.singleton,
+               parent: appeal.root_task)
+        appeal
+      end
+
+      subject { appeal_ready_to_distribute_with_incorrect_blocking_task_tree.reload.can_redistribute_appeal? }
+      it "returns true" do
+        expect(subject).to be false
       end
     end
 
