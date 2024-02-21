@@ -1360,7 +1360,7 @@ class QueueApp extends React.PureComponent {
               exact
               path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CANCEL_TASK_AND_RETURN_TO_SCT_QUEUE.value
                 }`}
-              title={'Return to SCT | Caseflow'}
+              title="Return to SCT | Caseflow"
               render={this.routedReturnToSctModal}
             />
             <PageRoute
