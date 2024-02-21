@@ -427,9 +427,8 @@ class Appeal < DecisionReview
     dup_issue.decision_review_id = id
 
     # If the original issue has a contention reference id, it has to be removed because it's a unique index
-    if issue.contention_reference_id
-      # Do an update to avoid callbacks?
-      issue.update_column(:contention_reference_id, nil)
+    if issue.respond_to?(:contention_reference_id) && issue.contention_reference_id
+      issue.update!(contention_reference_id: nil)
     end
 
     dup_issue.save
@@ -525,7 +524,6 @@ class Appeal < DecisionReview
 
     # set the status to assigned as placeholder
     dup_task.status = "assigned"
-    # dup_task.update_column(:status, original_task.status)
 
     # set the appeal split process to true for the task
     dup_task.appeal.appeal_split_process = true
@@ -534,7 +532,6 @@ class Appeal < DecisionReview
     dup_task.save
 
     # set the status to the correct status
-    # dup_task.status = original_task.status
     dup_task.update_column(:status, original_task.status)
 
     # set request store to the user that split the appeal
