@@ -78,8 +78,7 @@ class ExternalApi::VBMSService
 
   def self.initialize_upload_veteran(veteran_file_number, uploadable_document)
     content_hash = Digest::SHA1.hexdigest(File.read(uploadable_document.pdf_location))
-    filename = (uploadable_document.document_name.presence ||
-      SecureRandom.uuid + File.basename(uploadable_document.pdf_location))
+    filename = uploadable_document.document_name.presence || SecureRandom.uuid + File.basename(uploadable_document.pdf_location)
     request = VBMS::Requests::InitializeUpload.new(
       content_hash: content_hash,
       filename: filename,

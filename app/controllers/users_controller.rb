@@ -49,7 +49,7 @@ class UsersController < ApplicationController
     params[:css_id]
   end
 
-  def filter_by_role # rubocop:disable Metrics/CyclomaticComplexity
+  def filter_by_role
     finder = UserFinder.new(role: params[:role])
     users = finder.users
 

@@ -2,6 +2,8 @@
 
 require "rspec"
 
+# frozen_string_literal: true
+
 describe Reporter do
   class TestReporter
     include Reporter
