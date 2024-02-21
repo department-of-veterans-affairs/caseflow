@@ -31,7 +31,7 @@ class RequestIssuesUpdate < CaseflowRecord
         corrected_request_issue_ids: corrected_issues.map(&:id)
       )
       create_business_line_tasks! if added_issues.present?
-      move_to_sct_queue if FeatureToggle.enabled?(:specialty_case_team_distribution, user: user)
+      handle_sct_issue_updates if FeatureToggle.enabled?(:specialty_case_team_distribution, user: user)
       cancel_active_tasks
       submit_for_processing!
     end
@@ -110,12 +110,31 @@ class RequestIssuesUpdate < CaseflowRecord
   end
 
   def move_to_distribution
-    # If an appeal has an SCT issue, is in the SCT queue and is not PreDocketed, then move it back to distribution
-    if review.try(:sct_appeal?) && review.tasks.of_type(:SpecialtyCaseTeamAssignTask).blank? &&
+    # If an appeal does not have an SCT issue, it was in the SCT queue, and is not PreDocketed,
+    # then move it back to distribution
+    if review.try(:sct_appeal?).blank? && review.tasks.of_type(:SpecialtyCaseTeamAssignTask).present? &&
        review.has_distribution_task?
       # TODO: This is not good enough for me. Copy what is done in the SCT split appeals handler
       remove_appeal_from_current_queue
+      remove_from_specialty_case_team
+      reopen_distribution_task
     end
+  end
+
+  def handle_sct_issue_updates
+    move_to_sct_queue
+    move_to_distribution
+  end
+
+  # TODO: Cancel task and child subtasks should do this???????
+  def remove_from_specialty_case_team
+    review.tasks.find { |task| task.type == SpecialtyCaseTeamAssignTask.name }&.cancelled!
+  end
+
+  # TODO: Move this to appeal and use it in both places
+  def reopen_distribution_task(appeal)
+    distribution_task = appeal.tasks.find { |task| task.type == DistributionTask.name }
+    distribution_task.update!(status: "assigned", assigned_to: Bva.singleton, assigned_by: current_user)
   end
 
   def remove_appeal_from_current_queue
