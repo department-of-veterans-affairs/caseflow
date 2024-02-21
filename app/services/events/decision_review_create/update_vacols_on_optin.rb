@@ -8,6 +8,8 @@ module Events::DecisionReviewCreate::UpdateVacolsOnOptin
     if decision_review.legacy_opt_in_approved
       LegacyOptinManager.new(decision_review: decision_review).process!
     end
-    # catch the error that is produced
+  # catch the error that is produced
+  rescue StandardError => error
+    raise error
   end
 end

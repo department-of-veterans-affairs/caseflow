@@ -9,7 +9,7 @@ describe Events::DecisionReviewCreate::UpdateVacolsOnOptin do
   let!(:vacols_issue3) { create(:case_issue, :compensation, issseq: 3) }
   let!(:vacols_case) do
     create(:case, :status_active, bfcurloc: "77", bfkey: "DRCTEST",
-           case_issues: [vacols_issue1, vacols_issue2, vacols_issue3])
+                                  case_issues: [vacols_issue1, vacols_issue2, vacols_issue3])
   end
 
   let!(:event1) { DecisionReviewCreatedEvent.create!(reference_id: "1") }
@@ -19,18 +19,33 @@ describe Events::DecisionReviewCreate::UpdateVacolsOnOptin do
     EventRecord.create!(event: event1, backfill_record: higher_level_review)
   end
   # Event Record Request Issue
-  let!(:request_issue1) { RequestIssue.new(benefit_type: "compensation", decision_review: higher_level_review, vacols_id: "DRCTEST", vacols_sequence_id: 1) }
+  let!(:request_issue1) do
+    RequestIssue.new(benefit_type: "compensation", decision_review: higher_level_review, vacols_id: "DRCTEST",
+                     vacols_sequence_id: 1)
+  end
   let!(:request_issue_event_record1) { EventRecord.create!(event: event1, backfill_record: request_issue1) }
-  let!(:request_issue2) { RequestIssue.new(benefit_type: "compensation", decision_review: higher_level_review, vacols_id: "DRCTEST", vacols_sequence_id: 2) }
+  let!(:request_issue2) do
+    RequestIssue.new(benefit_type: "compensation", decision_review: higher_level_review,
+                     vacols_id: "DRCTEST", vacols_sequence_id: 2)
+  end
   let!(:request_issue_event_record2) { EventRecord.create!(event: event1, backfill_record: request_issue2) }
-  let!(:request_issue3) { RequestIssue.new(benefit_type: "compensation", decision_review: higher_level_review, vacols_id: "DRCTEST", vacols_sequence_id: 3) }
+  let!(:request_issue3) do
+    RequestIssue.new(benefit_type: "compensation", decision_review: higher_level_review, vacols_id: "DRCTEST",\
+                     vacols_sequence_id: 3)
+  end
   let!(:request_issue_event_record3) { EventRecord.create!(event: event1, backfill_record: request_issue3) }
   # Legacy Issue
-  let!(:legacy_issue1) { LegacyIssue.new(request_issue_id: request_issue1.id, vacols_id: "DRCTEST", vacols_sequence_id: 1) }
+  let!(:legacy_issue1) do
+    LegacyIssue.new(request_issue_id: request_issue1.id, vacols_id: "DRCTEST", vacols_sequence_id: 1)
+  end
   let!(:legacy_issue_event_record1) { EventRecord.create!(event: event1, backfill_record: legacy_issue1) }
-  let!(:legacy_issue2) { LegacyIssue.new(request_issue_id: request_issue2.id, vacols_id: "DRCTEST", vacols_sequence_id: 2) }
+  let!(:legacy_issue2) do
+    LegacyIssue.new(request_issue_id: request_issue2.id, vacols_id: "DRCTEST", vacols_sequence_id: 2)
+  end
   let!(:legacy_issue_event_record2) { EventRecord.create!(event: event1, backfill_record: legacy_issue2) }
-  let!(:legacy_issue3) { LegacyIssue.new(request_issue_id: request_issue3.id, vacols_id: "DRCTEST", vacols_sequence_id: 3) }
+  let!(:legacy_issue3) do
+    LegacyIssue.new(request_issue_id: request_issue3.id, vacols_id: "DRCTEST", vacols_sequence_id: 3)
+  end
   let!(:legacy_issue_event_record3) { EventRecord.create!(event: event1, backfill_record: legacy_issue3) }
   # Legacy Issue Optin
   let!(:legacy_issue_optin1) { LegacyIssueOptin.new(request_issue_id: request_issue1.id) }
@@ -65,6 +80,10 @@ describe Events::DecisionReviewCreate::UpdateVacolsOnOptin do
       expect(vacols_issue("DRCTEST", 2).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
       expect(vacols_issue("DRCTEST", 3).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
       expect(vacols_case.reload).to be_closed
+    end
+    it "logs an error and raises if an standard error occurs" do
+      allow(Events::DecisionReviewCreate::UpdateVacolsOnOptin).to receive(:perform!).and_raise(StandardError)
+      expect { subject }.to raise_error(StandardError)
     end
   end
 end
