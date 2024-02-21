@@ -2,16 +2,15 @@ module Seeds
   class CaseDistributionLevers < Base
     def seed!
       CaseDistributionLevers.levers.each do |lever|
-        next if CaseDistributionLever.find_by_item(lever[:item])
-        lever = create_lever(lever)
-        puts lever.errors.full_messages unless lever.valid?
+        existing_lever = CaseDistributionLever.find_by_item(lever[:item])
+        if existing_lever.present? && lever_updated?(lever, existing_lever)
+          update_lever(lever, existing_lever)
+        else
+          create_lever(lever)
+        end
       end
 
-      levers = CaseDistributionLevers.levers.map{ |lever| lever[:item] }
-      existing_levers = CaseDistributionLever.all.map(&:item)
-
-      puts "#{CaseDistributionLever.count} levers exist"
-      puts "Missing #{levers - existing_levers}" if levers.length != existing_levers.length
+      validate_levers_creation
     end
 
     def self.levers
@@ -578,8 +577,8 @@ module Seeds
 
     private
 
-    def create_lever lever
-      CaseDistributionLever.create(
+    def create_lever(lever)
+      lever = CaseDistributionLever.create(
         item: lever[:item],
         title: lever[:title],
         description: lever[:description],
@@ -596,6 +595,52 @@ module Seeds
         lever_group: lever[:lever_group],
         lever_group_order: lever[:lever_group_order]
       )
+
+      puts lever.errors.full_messages unless lever.valid?
+    end
+
+    # For properties missing those were intentionally ignored so that they would not
+    # be easy to change using this seed data script.
+    #
+    # The reason being is the properties will either be modified by users, changing them would break the application,
+    # or is a JSON object with a complex structure that should be carefully changed
+    def update_lever(lever, existing_lever)
+      lever.update(
+        title: lever[:title],
+        description: lever[:description],
+        is_disabled_in_ui: lever[:is_disabled_in_ui],
+        unit: lever[:unit],
+        min_value: lever[:min_value],
+        max_value: lever[:max_value],
+        algorithms_used: lever[:algorithms_used],
+        control_group: lever[:control_group],
+        lever_group_order: lever[:lever_group_order]
+      )
+    end
+
+    # For properties missing those were intentionally ignored so that they would not
+    # be easy to change using this seed data script.
+    #
+    # The reason being is the properties will either be modified by users, changing them would break the application,
+    # or is a JSON object with a complex structure that should be carefully changed
+    def lever_updated?(lever, existing_lever)
+      existing_lever.title != lever[:title] ||
+      existing_lever.description != lever[:description] ||
+      existing_lever.is_disabled_in_ui != lever[:is_disabled_in_ui] ||
+      existing_lever.unit != lever[:unit] ||
+      existing_lever.min_value != lever[:min_value] ||
+      existing_lever.max_value != lever[:max_value] ||
+      existing_lever.algorithms_used != lever[:algorithms_used] ||
+      existing_lever.control_group != lever[:control_group] ||
+      existing_lever.lever_group_order != lever[:lever_group_order]
+    end
+
+    def validate_levers_creation
+      levers = CaseDistributionLevers.levers.map{ |lever| lever[:item] }
+      existing_levers = CaseDistributionLever.all.map(&:item)
+
+      puts "#{CaseDistributionLever.count} levers exist"
+      puts "Levers not created #{levers - existing_levers}" if levers.length != existing_levers.length
     end
   end
 end
