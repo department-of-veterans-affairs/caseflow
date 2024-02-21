@@ -30,8 +30,6 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
     params.permit(:event_id, :errored_claim_id, :error)
   end
 
-  private
-
   def drc_params
     params.permit(:event_id, :claim_id)
   end

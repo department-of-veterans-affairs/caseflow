@@ -42,7 +42,7 @@ class Events::DecisionReviewCreated
     rescue StandardError => error
       Rails.logger.error(error.message)
       event = Event.find_by(reference_id: consumer_event_id)
-      event&.update!(error: error.message)
+      event&.update!(error: error.message, info: { "failed_claim_id" => reference_id })
       raise error
     end
 

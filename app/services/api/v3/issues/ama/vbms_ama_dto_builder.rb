@@ -21,7 +21,7 @@ class Api::V3::Issues::Ama::VbmsAmaDtoBuilder
 
   def total_request_issue_count
     RequestIssue.where(veteran_participant_id: @veteran_participant_id)
-      .where(benefit_type: %w[compensation pension fiduciary])
+      .where(benefit_type: %w[compensation pension])
       .count
   end
 
@@ -29,7 +29,7 @@ class Api::V3::Issues::Ama::VbmsAmaDtoBuilder
     serialized_data = Api::V3::Issues::Ama::RequestIssueSerializer.new(
       RequestIssue.includes(:decision_issues, :decision_review)
       .where(veteran_participant_id: @veteran_participant_id)
-      .where(benefit_type: %w[compensation pension fiduciary])
+      .where(benefit_type: %w[compensation pension])
       .page(page).per(per_page)
     ).serializable_hash[:data]
 

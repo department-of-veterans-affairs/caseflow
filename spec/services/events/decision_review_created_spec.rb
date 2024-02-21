@@ -4,6 +4,7 @@ describe Events::DecisionReviewCreated do
   let!(:consumer_event_id) { "123" }
   let!(:reference_id) { "2001" }
   let!(:completed_event) { DecisionReviewCreatedEvent.create!(reference_id: "999", completed_at: Time.zone.now) }
+  let!(:event) { instance_double(Event) }
 
   describe "#event_exists_and_is_completed?" do
     subject { described_class.event_exists_and_is_completed?(consumer_event_id) }
@@ -51,6 +52,23 @@ describe Events::DecisionReviewCreated do
       it "should create a new Event instance" do
         subject
         expect(Event.where(reference_id: consumer_event_id).exists?).to eq(true)
+      end
+    end
+
+    context 'when a StandardError occurs' do
+      let(:error_message) { 'StandardError message' }
+
+      before do
+        allow(DecisionReviewCreatedEvent).to receive(:create).and_raise(StandardError, error_message)
+        allow(Event).to receive(:find_by).and_return(event)
+        allow(event).to receive(:update!)
+      end
+
+      it 'logs the error and updates the event' do
+        expect(Rails.logger).to receive(:error).with(error_message)
+        expect(event).to receive(:update!).with(error: error_message, info: { "failed_claim_id" => reference_id })
+
+        expect { subject.create!(consumer_event_id, reference_id) }.to raise_error(StandardError)
       end
     end
   end
