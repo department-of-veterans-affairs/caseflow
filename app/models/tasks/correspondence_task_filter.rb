@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class CorrespondenceTaskFilter < TaskFilter
-
   def filter_by_va_dor(date_info)
     date_type, first_date, second_date = date_info.split(",")
 
@@ -33,9 +32,8 @@ class CorrespondenceTaskFilter < TaskFilter
   end
 
   def filtered_tasks
-    va_dor_params = filter_params.select { |param| param.include?('col=vaDor') }
-    task_column_params = filter_params.select { |param| param.include?('col=completedDateColumn') }
-
+    va_dor_params = filter_params.select { |param| param.include?("col=vaDor") }
+    task_column_params = filter_params.select { |param| param.include?("col=completedDateColumn") }
     va_dor_params.each do |param|
       value_hash = Rack::Utils.parse_nested_query(param).deep_symbolize_keys
       @tasks = filter_by_va_dor(value_hash[:val])
@@ -52,10 +50,11 @@ class CorrespondenceTaskFilter < TaskFilter
   private
 
   def filter_between_dates(start_date, end_date)
-    tasks.joins(:appeal)
-         .where("correspondences.va_date_of_receipt > ? AND correspondences.va_date_of_receipt < ?",
-                Time.zone.parse(start_date),
-                Time.zone.parse(end_date))
+    tasks.joins(:appeal).where(
+      "correspondences.va_date_of_receipt > ? AND correspondences.va_date_of_receipt < ?",
+      Time.zone.parse(start_date),
+      Time.zone.parse(end_date)
+    )
   end
 
   def filter_before_date(date)
