@@ -69,7 +69,7 @@ class QueueColumn
   private
 
   def va_dor_options
-    nil
+    {}
   end
 
   def date_completed_options
