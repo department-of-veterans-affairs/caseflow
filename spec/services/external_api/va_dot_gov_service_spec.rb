@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 describe ExternalApi::VADotGovService do
-    before(:each) do
-     stub_const("VADotGovService", Fakes::VADotGovService)
+  before(:each) do
+    stub_const("VADotGovService", Fakes::VADotGovService)
   end
 
   let(:address) do
