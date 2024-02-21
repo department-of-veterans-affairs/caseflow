@@ -13,6 +13,7 @@ import {
   setNewAppealRelatedTasks,
   setTaskRelatedAppealIds,
   setWaivedEvidenceTasks
+  // loadSavedIntake
 } from '../../../correspondenceReducer/correspondenceActions';
 
 const RELATED_NO = '0';
@@ -26,6 +27,8 @@ const existingAppealAnswer = [
 ];
 
 export const AddAppealRelatedTaskView = (props) => {
+  // const storedUnrelatedTasks = props.reduxStore.unrelatedTasks;
+  // const storedAppealTasks = props.reduxStore.newAppealRelatedTasks;
   const appeals = useSelector((state) => state.intakeCorrespondence.fetchedAppeals);
   const [taskRelatedAppeals, setTaskRelatedAppeals] =
     useState(useSelector((state) => state.intakeCorrespondence.taskRelatedAppealIds));
@@ -39,6 +42,7 @@ export const AddAppealRelatedTaskView = (props) => {
   const [currentAppealPage, setCurrentAppealPage] = useState(1);
   const [tableUpdateTrigger, setTableUpdateTrigger] = useState(1);
 
+  // console.log(JSON.stringify(storedAppealTasks));
   const dispatch = useDispatch();
 
   const appealById = (appealId) => {
@@ -53,6 +57,10 @@ export const AddAppealRelatedTaskView = (props) => {
   useEffect(() => {
     dispatch(setTaskRelatedAppealIds(taskRelatedAppeals));
   }, [taskRelatedAppeals]);
+
+  // useEffect(() => {
+  //   loadSavedIntake(props.reduxStore);
+  // }, []);
 
   useEffect(() => {
     // Creates an array of Task IDs then sorts them so that the highest ID is the last in the array.
@@ -215,7 +223,8 @@ AddAppealRelatedTaskView.propTypes = {
   filterUnavailableTaskTypeOptions: PropTypes.func.isRequired,
   allTaskTypeOptions: PropTypes.array.isRequired,
   autoTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
-  veteranInformation: PropTypes.object.isRequired
+  veteranInformation: PropTypes.object.isRequired,
+  reduxStore: PropTypes.object
 };
 
 export default AddAppealRelatedTaskView;
