@@ -27,7 +27,12 @@ FactoryBot.define do
       end
 
       after(:create) do |correspondence, evaluator|
-        create(:correspondence_intake_task, appeal: correspondence, assigned_to: evaluator.assigned_to)
+        create(
+          :correspondence_intake_task,
+          appeal: correspondence,
+          assigned_to: evaluator.assigned_to,
+          appeal_type: "Correspondence"
+        )
       end
     end
   end
