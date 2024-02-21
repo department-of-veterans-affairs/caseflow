@@ -154,7 +154,7 @@ module CorrespondenceHelpers
   def seed_autotext_table
     require Rails.root.join("db/seeds/base.rb").to_s
     Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
-    Seeds::AutoTexts.new.seed!
+    Seeds::CorrespondenceAutoTexts.new.seed!
   end
   # rubocop:enable Metrics/ModuleLength
 end
