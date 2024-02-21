@@ -1,16 +1,21 @@
 module Seeds
   class CaseDistributionLevers < Base
+    # Creates new levers and updates existing levers
+    # For existing levers it does not update every field, there is a separate but DANGEROUS operation for that
     def seed!
+      updated_levers = []
+
       CaseDistributionLevers.levers.each do |lever|
         existing_lever = CaseDistributionLever.find_by_item(lever[:item])
-        if existing_lever.present? && lever_updated?(lever, existing_lever)
-          update_lever(lever, existing_lever)
+        if existing_lever.present?
+          updated_levers << update_lever(lever, existing_lever)
         else
           create_lever(lever)
         end
       end
 
       validate_levers_creation
+      puts "#{updated_levers.count} levers updated: #{updated_levers}" if updated_levers.count > 0
     end
 
     def self.levers
@@ -575,6 +580,28 @@ module Seeds
       ]
     end
 
+    # DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER
+    #
+    # This is a DANGEROUS OPERATION and only should be done when a lever needs to be completely updated
+    #
+    # Can pass in a Constants.ACD_LEVERS.data_types or a lever's item value
+    #
+    # If passing in Constants.ACD_LEVERS.data_types it will fully update all levers with that data_type
+    #
+    # DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER
+    def self.full_update(item)
+      levers_to_update = []
+      if Constants.ACD_LEVERS.data_types.to_h.values.include?(item)
+        levers_to_update = levers.filter { |lever| lever[:data_type] == item}
+      else
+        levers_to_update = levers.filter { |lever| lever[:item] == item}
+      end
+
+      levers_to_update.each do |lever|
+        full_update_lever(lever)
+      end
+    end
+
     private
 
     def create_lever(lever)
@@ -596,7 +623,9 @@ module Seeds
         lever_group_order: lever[:lever_group_order]
       )
 
+      puts "*********************************************"
       puts lever.errors.full_messages unless lever.valid?
+      puts "*********************************************"
     end
 
     # For properties missing those were intentionally ignored so that they would not
@@ -605,9 +634,12 @@ module Seeds
     # The reason being is the properties will either be modified by users, changing them would break the application,
     # or is a JSON object with a complex structure that should be carefully changed
     def update_lever(lever, existing_lever)
-      lever.update(
+      return unless lever_updated?(lever, existing_lever)
+
+      existing_lever.update(
         title: lever[:title],
         description: lever[:description],
+        is_toggle_active: lever[:is_toggle_active],
         is_disabled_in_ui: lever[:is_disabled_in_ui],
         unit: lever[:unit],
         min_value: lever[:min_value],
@@ -616,6 +648,8 @@ module Seeds
         control_group: lever[:control_group],
         lever_group_order: lever[:lever_group_order]
       )
+
+      existing_lever.item if existing_lever.valid?
     end
 
     # For properties missing those were intentionally ignored so that they would not
@@ -641,6 +675,37 @@ module Seeds
 
       puts "#{CaseDistributionLever.count} levers exist"
       puts "Levers not created #{levers - existing_levers}" if levers.length != existing_levers.length
+    end
+
+
+    # Doesn't update item
+    #
+    # Updates all fields of a lever
+    #
+    # This is a DANGEROUS OPERATION and only should be used when a lever needs to be completely updated
+    def full_update_lever(lever)
+      existing_lever = CaseDistributionLever.find_by_item(item)
+
+      existing_lever.update(
+        title: lever[:title],
+        description: lever[:description],
+        data_type: lever[:data_type],
+        value: lever[:value].to_s,
+        unit: lever[:unit],
+        is_toggle_active: lever[:is_toggle_active],
+        is_disabled_in_ui: lever[:is_disabled_in_ui] || false,
+        min_value: lever[:min_value],
+        max_value: lever[:max_value],
+        algorithms_used: lever[:algorithms_used],
+        options: lever[:options],
+        control_group: lever[:control_group],
+        lever_group: lever[:lever_group],
+        lever_group_order: lever[:lever_group_order]
+      )
+
+      puts "*********************************************"
+      puts existing_lever.errors.full_messages unless existing_lever.valid?
+      puts "*********************************************"
     end
   end
 end
