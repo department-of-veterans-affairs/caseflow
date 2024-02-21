@@ -1525,7 +1525,7 @@ describe Appeal, :all_dbs do
     end
   end
 
-  describe "sct_appeal" do
+  describe "sct_appeal?" do
     let(:appeal) { create(:appeal, :with_vha_issue, :with_request_issues) }
     let(:appeal_2) { create(:appeal, :with_request_issues) }
 
@@ -1535,6 +1535,19 @@ describe Appeal, :all_dbs do
 
     it "should return false for appeal with no vha issue" do
       expect(appeal_2.sct_appeal?).to be false
+    end
+  end
+
+  describe "has_distribution_task?" do
+    let(:appeal) { create(:appeal, :ready_for_distribution) }
+    let(:appeal_2) { create(:appeal) }
+
+    it "should return true if appeal has a distribution task" do
+      expect(appeal.has_distribution_task?).to be true
+    end
+
+    it "should return false for appeal does not have a distribution task" do
+      expect(appeal_2.has_distribution_task?).to be false
     end
   end
 

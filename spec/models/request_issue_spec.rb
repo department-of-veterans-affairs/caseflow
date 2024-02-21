@@ -2353,4 +2353,17 @@ describe RequestIssue, :all_dbs do
       expect(subject.decision_date_added_at).to eq(subject.created_at)
     end
   end
+
+  context "#sct_benefit_type?" do
+    let(:request_issue) { create(:request_issue, benefit_type: "vha", decision_date: 4.days.ago) }
+    let(:request_issue2) { create(:request_issue, decision_date: 4.days.ago) }
+
+    it "should return true if the benefit type is a sct benefit type" do
+      expect(request_issue.sct_benefit_type?).to eq(true)
+    end
+
+    it "should return false if the benefit type is not a sct benefit type" do
+      expect(request_issue2.sct_benefit_type?).to eq(false)
+    end
+  end
 end
