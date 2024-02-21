@@ -115,9 +115,9 @@ class RequestIssuesUpdate < CaseflowRecord
     if review.try(:sct_appeal?).blank? && review.tasks.of_type(:SpecialtyCaseTeamAssignTask).present? &&
        review.has_distribution_task?
       # TODO: This is not good enough for me. Copy what is done in the SCT split appeals handler
-      remove_appeal_from_current_queue
+      review.remove_from_current_queue!
       remove_from_specialty_case_team
-      reopen_distribution_task
+      review.reopen_distribution_task(user)
     end
   end
 
@@ -127,20 +127,23 @@ class RequestIssuesUpdate < CaseflowRecord
   end
 
   # TODO: Cancel task and child subtasks should do this???????
+  # It currently relies on the tasks having children and the callback taking care of it.
+  # It does not actually cancel the task
   def remove_from_specialty_case_team
     review.tasks.find { |task| task.type == SpecialtyCaseTeamAssignTask.name }&.cancelled!
   end
 
   # TODO: Move this to appeal and use it in both places
-  def reopen_distribution_task(appeal)
-    distribution_task = appeal.tasks.find { |task| task.type == DistributionTask.name }
-    distribution_task.update!(status: "assigned", assigned_to: Bva.singleton, assigned_by: current_user)
-  end
+  # def reopen_distribution_task(appeal)
+  #   distribution_task = appeal.tasks.find { |task| task.type == DistributionTask.name }
+  #   distribution_task.update!(status: "assigned", assigned_to: Bva.singleton, assigned_by: current_user)
+  # end
 
-  def remove_appeal_from_current_queue
-    review.tasks.reject { |task| %w[RootTask DistributionTask].include?(task.type) }
-      .each(&:cancel_task_and_child_subtasks)
-  end
+  # TODO: This does not really work...
+  # def remove_appeal_from_current_queue
+  #   review.tasks.reject { |task| %w[RootTask DistributionTask].include?(task.type) }
+  #     .each(&:cancel_task_and_child_subtasks)
+  # end
 
   private
 

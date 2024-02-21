@@ -1538,6 +1538,23 @@ describe Appeal, :all_dbs do
     end
   end
 
+  describe "reopen_distribution_task" do
+    let!(:appeal) { create(:appeal, :ready_for_distribution) }
+    let!(:user) { create(:user) }
+
+    before do
+      appeal.tasks.find { |task| task.is_a?(DistributionTask) }.completed!
+      appeal.reload
+    end
+
+    it "should reopen the distribution task on the appeal and set the assigned by on the task to the user" do
+      expect(appeal.ready_for_distribution?).to eq(false)
+      appeal.reopen_distribution_task!(user)
+      expect(appeal.tasks.find { |task| task.is_a?(DistributionTask) }.assigned_by).to eq(user)
+      expect(appeal.ready_for_distribution?).to eq(true)
+    end
+  end
+
   describe "split_appeal" do
     let!(:regular_user) do
       create(:user, css_id: "APPEAL_USER")

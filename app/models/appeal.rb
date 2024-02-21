@@ -932,6 +932,17 @@ class Appeal < DecisionReview
     tasks.of_type(:DistributionTask).exists?
   end
 
+  def remove_from_current_queue!
+    tasks.reject { |task| %w[RootTask DistributionTask].include?(task.type) }
+      .each(&:cancel_task_and_child_subtasks)
+  end
+
+  # TODO: Move this to appeal and use it in both places
+  def reopen_distribution_task!(user)
+    distribution_task = tasks.find { |task| task.type == DistributionTask.name }
+    distribution_task.update!(status: "assigned", assigned_to: Bva.singleton, assigned_by: user)
+  end
+
   private
 
   def business_lines_needing_assignment
