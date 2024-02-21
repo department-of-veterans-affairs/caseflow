@@ -3,6 +3,7 @@
 class OrganizationCorrespondenceUnassignedTasksTab < CorrespondenceQueueTab
   validate :assignee_is_organization
 
+  # :reek:UtilityFunction
   def label
     Constants.QUEUE_CONFIG.CORRESPONDENCE_UNASSIGNED_TASKS_LABEL
   end
@@ -11,6 +12,7 @@ class OrganizationCorrespondenceUnassignedTasksTab < CorrespondenceQueueTab
     Constants.QUEUE_CONFIG.CORRESPONDENCE_UNASSIGNED_TASKS_TAB_NAME
   end
 
+  # :reek:UtilityFunction
   def description
     Constants.QUEUE_CONFIG.CORRESPONDENCE_UNASSIGNED_TASKS_DESCRIPTION
   end
@@ -19,6 +21,7 @@ class OrganizationCorrespondenceUnassignedTasksTab < CorrespondenceQueueTab
     CorrespondenceTask.where(assigned_to: assignee, status: "unassigned")
   end
 
+  # :reek:UtilityFunction
   def column_names
     [
       Constants.QUEUE_CONFIG.COLUMNS.CHECKBOX_COLUMN.name,

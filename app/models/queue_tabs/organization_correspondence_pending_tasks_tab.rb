@@ -3,6 +3,7 @@
 class OrganizationCorrespondencePendingTasksTab < CorrespondenceQueueTab
   validate :assignee_is_organization
 
+  # :reek:UtilityFunction
   def label
     Constants.QUEUE_CONFIG.CORRESPONDENCE_PENDING_TASKS_LABEL
   end
@@ -11,10 +12,12 @@ class OrganizationCorrespondencePendingTasksTab < CorrespondenceQueueTab
     Constants.QUEUE_CONFIG.CORRESPONDENCE_PENDING_TASKS_TAB_NAME
   end
 
+  # :reek:UtilityFunction
   def description
     Constants.QUEUE_CONFIG.CORRESPONDENCE_PENDING_TASKS_DESCRIPTION
   end
 
+  # :reek:UtilityFunction
   def tasks
     Task.none
     # CorrespondenceTask
@@ -24,6 +27,7 @@ class OrganizationCorrespondencePendingTasksTab < CorrespondenceQueueTab
     # )
   end
 
+  # :reek:UtilityFunction
   def column_names
     [
       Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,

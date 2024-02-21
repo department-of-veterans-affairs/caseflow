@@ -38,6 +38,7 @@ module QueueHelpers
     # create_correspondence_document(correspondence, vet)
   end
 
+  # :reek:UtilityFunction
   def create_correspondence_document(correspondence, veteran)
     CorrespondenceDocument.find_or_create_by!(
       document_file_number: veteran.file_number,
@@ -49,16 +50,19 @@ module QueueHelpers
     )
   end
 
+  # :reek:UtilityFunction
   def create_correspondence_intake(correspondence, user)
     parent = correspondence&.root_task
     CorrespondenceIntakeTask.create_from_params(parent, user)
   end
 
+  # :reek:UtilityFunction
   def assign_review_package_task(correspondence, user)
     review_package_task = ReviewPackageTask.find_by(appeal_id: correspondence.id)
     review_package_task.update!(assigned_to: user, status: Constants.TASK_STATUSES.assigned)
   end
 
+  # :reek:UtilityFunction
   def create_efolderupload_failed_task(correspondence, parent)
     EfolderUploadFailedTask.create!(
       parent_id: parent.id,
@@ -69,6 +73,7 @@ module QueueHelpers
     )
   end
 
+  # :reek:UtilityFunction
   def create_action_required_tasks(correspondence, status:, parent_task:, task_type:)
     task_type.create!(
       parent_id: parent_task.id,
@@ -79,6 +84,7 @@ module QueueHelpers
     )
   end
 
+  # :reek:FeatureEnvy
   def create_and_complete_mail_task(correspondence, user)
     process_correspondence(correspondence, user)
     assigned_by = CorrespondenceIntakeTask.find_by(appeal_id: correspondence.id).completed_by
@@ -93,6 +99,7 @@ module QueueHelpers
     cavct
   end
 
+  # :reek:FeatureEnvy
   def create_cavc_mailtask(correspondence, user)
     process_correspondence(correspondence, user)
     assigned_by = CorrespondenceIntakeTask.find_by(appeal_id: correspondence.id).completed_by
@@ -104,7 +111,7 @@ module QueueHelpers
       status: Constants.TASK_STATUSES.assigned
     )
   end
-
+  # :reek:FeatureEnvy
   def create_congress_interest_mailtask(correspondence, user)
     process_correspondence(correspondence, user)
     assigned_by = CorrespondenceIntakeTask.find_by(appeal_id: correspondence.id).completed_by
@@ -118,6 +125,7 @@ module QueueHelpers
     )
   end
 
+  # :reek:UtilityFunction
   def process_correspondence(correspondence, user)
     rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id)
     rpt.update!(status: Constants.TASK_STATUSES.completed, completed_by_id: user.id)

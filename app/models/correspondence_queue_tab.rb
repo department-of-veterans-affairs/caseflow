@@ -17,6 +17,7 @@ class CorrespondenceQueueTab < QueueTab
     ]
   end
 
+  # :reek:UtilityFunction
   def default_sorting_column
     CorrespondenceQueueColumn.from_name(Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name)
   end
