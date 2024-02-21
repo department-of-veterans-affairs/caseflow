@@ -2001,12 +2001,13 @@ describe Task, :all_dbs do
   describe "Correspondence Tasks" do
     context "Correspondence Intake Task" do
       it "has a task_url" do
+        correspondence = create(:correspondence)
         cit = create(
           :correspondence_intake_task,
-          appeal: create(:correspondence),
-        appeal_type: "Correspondence")
-      # assigned_to: create(:user))
-
+          appeal: correspondence,
+          appeal_type: Correspondence.name,
+          assigned_to: create(:user)
+        )
         expect(cit.task_url).to eq("/queue/correspondence/#{cit.correspondence.uuid}/intake")
       end
     end
