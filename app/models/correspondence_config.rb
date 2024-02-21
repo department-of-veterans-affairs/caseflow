@@ -1,6 +1,21 @@
 # frozen_string_literal: true
 
-class CorrespondenceConfig < QueueConfig
+class CorrespondenceConfig
+  include ActiveModel::Model
+
+  attr_accessor :assignee
+
+  def initialize(args)
+    super
+
+    if !assignee&.is_a?(Organization) && !assignee&.is_a?(User)
+      fail(
+        Caseflow::Error::MissingRequiredProperty,
+        message: "assignee property must be an instance of Organization or User"
+      )
+    end
+  end
+
   def to_hash
     {
       table_title: table_title,
@@ -13,6 +28,11 @@ class CorrespondenceConfig < QueueConfig
 
   private
 
+  def assignee_is_org?
+    assignee.is_a?(Organization)
+  end
+
+  # :reek:FeatureEnvy
   def attach_tasks_to_tab(tab)
     task_pager = CorrespondenceTaskPager.new(
       assignee: assignee,
