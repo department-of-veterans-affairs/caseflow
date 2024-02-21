@@ -4,7 +4,6 @@ RSpec.feature("The Correspondence Cases page") do
   include CorrespondenceTaskHelpers
   # alias this to avoid the method name collision
   alias_method :create_efolderupload_task, :create_efolderupload_failed_task
-  include QueueHelpers
 
   context "correspondece cases feature toggle" do
     let(:current_user) { create(:user) }
@@ -47,24 +46,27 @@ RSpec.feature("The Correspondence Cases page") do
       20.times do
         correspondence = create(:correspondence)
         parent_task = create_correspondence_intake(correspondence, current_user)
-        create_efolderupload_task(correspondence, parent_task, user: current_user)
+        create_efolderupload_task(correspondence, parent_task)
       end
       # Used to mock a single task to compare task sorting
       EfolderUploadFailedTask.first.update!(type: "ReviewPackageTask")
-      EfolderUploadFailedTask.first.correspondence.update!(va_date_of_receipt: Date.new(2000, 10, 10))
-      EfolderUploadFailedTask.last.correspondence.update!(va_date_of_receipt: Date.new(2024, 10, 10))
+      EfolderUploadFailedTask.first.correspondence.update!(
+        va_date_of_receipt: Date.new(2000, 10, 10),
+        updated_by_id: current_user.id
+      )
+      EfolderUploadFailedTask.last.correspondence.update!(
+        va_date_of_receipt: Date.new(2024, 10, 10),
+        updated_by_id: current_user.id
+      )
+      FeatureToggle.enable!(:correspondence_queue)
     end
 
     it "successfully loads the in progress tab" do
-      FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       expect(page).to have_content("Correspondence in progress")
     end
 
     it "uses veteran details sort correctly." do
-      FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       # put page in the sorted A-Z state
       find("[aria-label='Sort by Veteran Details']").click
@@ -81,8 +83,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses VA DOR sort correctly." do
-      FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       # put page in the sorted A-Z state
       find("[aria-label='Sort by VA DOR']").click
@@ -99,8 +99,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses tasks sort correctly." do
-      FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       # put page in the sorted A-Z state
       find("[aria-label='Sort by Tasks']").click
@@ -117,8 +115,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses days waiting sort correctly" do
-      FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       # put page in the sorted A-Z state
       find("[aria-label='Sort by Days Waiting']").click
@@ -135,8 +131,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses notes sort correctly" do
-      FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       # put page in the sorted A-Z state
       find("[aria-label='Sort by Notes']").click
@@ -153,8 +147,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses receipt date between filter correctly" do
-      FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       all(".unselected-filter-icon")[0].click
       find_by_id("reactSelectContainer").click
@@ -166,8 +158,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses receipt date between filter correctly" do
-      FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       all(".unselected-filter-icon")[0].click
       find_by_id("reactSelectContainer").click
@@ -179,8 +169,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses receipt date before filter correctly" do
-      FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       all(".unselected-filter-icon")[0].click
       find_by_id("reactSelectContainer").click
@@ -191,8 +179,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses receipt date after filter correctly" do
-      FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       all(".unselected-filter-icon")[0].click
       find_by_id("reactSelectContainer").click
@@ -203,8 +189,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses receipt date on filter correctly" do
-      FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       all(".unselected-filter-icon")[0].click
       find_by_id("reactSelectContainer").click
@@ -215,8 +199,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses uses task filter correctly" do
-      FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       all(".unselected-filter-icon")[1].click
       find("label", text: "Review Package Task (1)").click
@@ -257,16 +239,15 @@ RSpec.feature("The Correspondence Cases page") do
         va_date_of_receipt: Date.new(2050, 10, 10),
         updated_by_id: current_user.id
       )
+      FeatureToggle.enable!(:correspondence_queue)
     end
 
     it "successfully loads the action required tab" do
-      FeatureToggle.enable!(:correspondence_queue)
       visit "/queue/correspondence/team?tab=correspondence_action_required"
       expect(page).to have_content("Correspondence with pending requests:")
     end
 
     it "uses veteran details sort correctly." do
-      FeatureToggle.enable!(:correspondence_queue)
       visit "/queue/correspondence/team?tab=correspondence_action_required"
       # put page in the sorted A-Z state
       find("[aria-label='Sort by Veteran Details']").click
@@ -283,7 +264,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses VA DOR sort correctly." do
-      FeatureToggle.enable!(:correspondence_queue)
       visit "/queue/correspondence/team?tab=correspondence_action_required"
       # put page in the sorted A-Z state
       find("[aria-label='Sort by VA DOR']").click
@@ -300,7 +280,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses action type sort correctly." do
-      FeatureToggle.enable!(:correspondence_queue)
       visit "/queue/correspondence/team?tab=correspondence_action_required"
       # put page in the sorted A-Z state
       find("[aria-label='Sort by Action Type']").click
@@ -317,7 +296,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses days waiting sort correctly" do
-      FeatureToggle.enable!(:correspondence_queue)
       visit "/queue/correspondence/team?tab=correspondence_action_required"
       # put page in the sorted A-Z state
       find("[aria-label='Sort by Days Waiting']").click
@@ -334,7 +312,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses notes sort correctly" do
-      FeatureToggle.enable!(:correspondence_queue)
       visit "/queue/correspondence/team?tab=correspondence_action_required"
       # put page in the sorted A-Z state
       find("[aria-label='Sort by Notes']").click
@@ -351,7 +328,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses receipt date between filter correctly" do
-      FeatureToggle.enable!(:correspondence_queue)
       visit "/queue/correspondence/team?tab=correspondence_action_required"
       all(".unselected-filter-icon")[0].click
       find_by_id("reactSelectContainer").click
@@ -363,7 +339,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses receipt date between filter correctly" do
-      FeatureToggle.enable!(:correspondence_queue)
       visit "/queue/correspondence/team?tab=correspondence_action_required"
       all(".unselected-filter-icon")[0].click
       find_by_id("reactSelectContainer").click
@@ -375,7 +350,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses receipt date before filter correctly" do
-      FeatureToggle.enable!(:correspondence_queue)
       visit "/queue/correspondence/team?tab=correspondence_action_required"
       all(".unselected-filter-icon")[0].click
       find_by_id("reactSelectContainer").click
@@ -386,7 +360,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses receipt date after filter correctly" do
-      FeatureToggle.enable!(:correspondence_queue)
       visit "/queue/correspondence/team?tab=correspondence_action_required"
       all(".unselected-filter-icon")[0].click
       find_by_id("reactSelectContainer").click
@@ -397,7 +370,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses receipt date on filter correctly" do
-      FeatureToggle.enable!(:correspondence_queue)
       visit "/queue/correspondence/team?tab=correspondence_action_required"
       all(".unselected-filter-icon")[0].click
       find_by_id("reactSelectContainer").click
