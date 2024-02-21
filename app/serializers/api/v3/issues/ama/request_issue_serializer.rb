@@ -41,7 +41,9 @@ class Api::V3::Issues::Ama::RequestIssueSerializer
   attribute :failed_claims do |object|
     claim_id = object&.end_product_establishment&.reference_id
     if claim_id
-      Event.find_by(reference_id: claim_id)&.error
+      Event.where(reference_id: claim_id).map(&:error)
+    else
+      []
     end
   end
 
