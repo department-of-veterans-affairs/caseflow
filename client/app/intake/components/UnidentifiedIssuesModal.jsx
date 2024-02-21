@@ -5,7 +5,6 @@ import Modal from '../../components/Modal';
 import TextField from '../../components/TextField';
 import DateSelector from '../../components/DateSelector';
 import { validateDateNotInFuture, isTimely } from '../util/issues';
-import Checkbox from '../../components/Checkbox';
 import { generateSkipButton } from '../util/buttonUtils';
 
 class UnidentifiedIssuesModal extends React.Component {
