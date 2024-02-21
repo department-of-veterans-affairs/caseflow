@@ -157,17 +157,6 @@ RSpec.feature("The Correspondence Cases page") do
       expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
     end
 
-    it "uses receipt date between filter correctly" do
-      visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
-      all(".unselected-filter-icon")[0].click
-      find_by_id("reactSelectContainer").click
-      find_by_id("react-select-2-option-0").click
-      all("div.input-container > input")[0].fill_in(with: "10/09/2000")
-      all("div.input-container > input")[1].fill_in(with: "10/11/2000")
-      find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
-    end
-
     it "uses receipt date before filter correctly" do
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       all(".unselected-filter-icon")[0].click
@@ -325,17 +314,6 @@ RSpec.feature("The Correspondence Cases page") do
       # return to Z-A, compare details again
       find("[aria-label='Sort by Notes']").click
       expect(find("tbody > tr:nth-child(1) > td:nth-child(5)").text == second_note)
-    end
-
-    it "uses receipt date between filter correctly" do
-      visit "/queue/correspondence/team?tab=correspondence_action_required"
-      all(".unselected-filter-icon")[0].click
-      find_by_id("reactSelectContainer").click
-      find_by_id("react-select-2-option-0").click
-      all("div.input-container > input")[0].fill_in(with: "10/09/2000")
-      all("div.input-container > input")[1].fill_in(with: "10/11/2000")
-      find(".cf-submit").click
-      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
     end
 
     it "uses receipt date between filter correctly" do
