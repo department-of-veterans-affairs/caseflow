@@ -103,7 +103,7 @@ class TranscriptionTransformer
       name = (identifier == "") ? "Unknown" : identifier
       if cue.text == ""
         @error_count += 1
-        text = "[INAUDIBLE]"
+        text = "[...]"
       else text = cue.text
       end
       if name.match?(/#{prev_id}/)
