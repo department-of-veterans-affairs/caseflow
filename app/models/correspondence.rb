@@ -4,7 +4,6 @@
 # Serves as a collection of all data related to Correspondence workflow
 class Correspondence < CaseflowRecord
   validates :correspondence_type_id, presence: true
-  validates :package_document_type_id, presence: true
   validates :updated_by_id, presence: true, on: :update
   validates :veteran_id, presence: true
 
