@@ -384,7 +384,7 @@ RSpec.feature("The Correspondence Cases page") do
       expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
     end
 
-    it "uses uses task filter correctly" do
+    it "uses task filter correctly" do
       FeatureToggle.enable!(:correspondence_queue)
       FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence/team?tab=correspondence_team_assigned&page=1&sort_by=vaDor&order=asc"
