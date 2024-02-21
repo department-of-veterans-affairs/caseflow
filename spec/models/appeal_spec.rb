@@ -1520,8 +1520,7 @@ describe Appeal, :all_dbs do
     context "when an appeal has on_hold DistributionTask and correct blocking MailTask tree" do
       let!(:appeal_not_ready_to_distribute_with_correct_blocking_task_tree) do
         appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
-        create(:congressional_interest_mail_task, :assigned, assigned_to: MailTeam.singleton,
-               parent: appeal.tasks.find_by(type: DistributionTask.name))
+        create(:congressional_interest_mail_task, :assigned, parent: appeal.tasks.find_by(type: DistributionTask.name))
         appeal
       end
 
@@ -1536,8 +1535,7 @@ describe Appeal, :all_dbs do
     context "when an appeal has incorrectly open DistributionTask and blocking MailTask" do
       let!(:appeal_ready_to_distribute_with_incorrect_blocking_task_tree) do
         appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
-        create(:congressional_interest_mail_task, :assigned, assigned_to: MailTeam.singleton,
-               parent: appeal.root_task)
+        create(:congressional_interest_mail_task, :assigned, parent: appeal.root_task)
         appeal
       end
 
