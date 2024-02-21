@@ -15,6 +15,7 @@ module Seeds
       end
 
       validate_levers_creation
+      updated_levers.compact!
       puts "#{updated_levers.count} levers updated: #{updated_levers}" if updated_levers.count > 0
     end
 
@@ -660,6 +661,7 @@ module Seeds
     def lever_updated?(lever, existing_lever)
       existing_lever.title != lever[:title] ||
       existing_lever.description != lever[:description] ||
+      existing_lever.is_toggle_active != lever[:is_toggle_active] ||
       existing_lever.is_disabled_in_ui != lever[:is_disabled_in_ui] ||
       existing_lever.unit != lever[:unit] ||
       existing_lever.min_value != lever[:min_value] ||
@@ -678,11 +680,15 @@ module Seeds
     end
 
 
+    # DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER
+    #
     # Doesn't update item
     #
     # Updates all fields of a lever
     #
     # This is a DANGEROUS OPERATION and only should be used when a lever needs to be completely updated
+    #
+    # DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER DANGER
     def full_update_lever(lever)
       existing_lever = CaseDistributionLever.find_by_item(item)
 
