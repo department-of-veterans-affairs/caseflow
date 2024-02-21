@@ -99,7 +99,7 @@ class RequestIssuesUpdate < CaseflowRecord
     # If appeal has VHA issue, not in the SCT Queue and not PreDocketed, then move to the SCT Queue
     if review.try(:sct_appeal?) && review.tasks.of_type(:SpecialtyCaseTeamAssignTask).blank? &&
        review.tasks.of_type(:DistributionTask).exists?
-      remove_appeal_from_current_queue
+      review.remove_from_current_queue!
       SpecialtyCaseTeamAssignTask.find_or_create_by(
         appeal: review,
         parent: review.root_task,
@@ -112,12 +112,12 @@ class RequestIssuesUpdate < CaseflowRecord
   def move_to_distribution
     # If an appeal does not have an SCT issue, it was in the SCT queue, and is not PreDocketed,
     # then move it back to distribution
-    if review.try(:sct_appeal?).blank? && review.tasks.of_type(:SpecialtyCaseTeamAssignTask).present? &&
+    if review.try(:sct_appeal?) == false && review.tasks.of_type(:SpecialtyCaseTeamAssignTask).present? &&
        review.has_distribution_task?
       # TODO: This is not good enough for me. Copy what is done in the SCT split appeals handler
       review.remove_from_current_queue!
       remove_from_specialty_case_team
-      review.reopen_distribution_task(user)
+      review.reopen_distribution_task!(user)
     end
   end
 
@@ -130,7 +130,7 @@ class RequestIssuesUpdate < CaseflowRecord
   # It currently relies on the tasks having children and the callback taking care of it.
   # It does not actually cancel the task
   def remove_from_specialty_case_team
-    review.tasks.find { |task| task.type == SpecialtyCaseTeamAssignTask.name }&.cancelled!
+    review.tasks.find { |task| task.type == SpecialtyCaseTeamAssignTask.name }.cancelled!
   end
 
   # TODO: Move this to appeal and use it in both places
