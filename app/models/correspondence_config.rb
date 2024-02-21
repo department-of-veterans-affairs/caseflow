@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# :reek:Attribute
 class CorrespondenceConfig
   include ActiveModel::Model
 
