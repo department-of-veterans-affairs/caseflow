@@ -175,11 +175,36 @@ class CorrespondenceController < ApplicationController
   end
 
   def auto_assign_correspondences
-    job_args = {
-      current_user_id: current_user.id
-    }
+    batch = existing_batch_auto_assignment_attempt
 
-    perform_later_or_now(AutoAssignCorrespondenceJob, job_args)
+    if batch.nil?
+      batch = BatchAutoAssignmentAttempt.create!(
+        user: current_user,
+        status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.started
+      )
+      job_args = {
+        current_user_id: current_user.id,
+        batch_auto_assignment_attempt_id: batch.id
+      }
+
+      begin
+        perform_later_or_now(AutoAssignCorrespondenceJob, job_args)
+      ensure
+        render json: { batch_auto_assignment_attempt_id: batch.id }, status: :ok
+      end
+    else
+      render json: { batch_auto_assignment_attempt_id: batch.id }, status: :ok
+    end
+  end
+
+  def auto_assign_status
+    batch = BatchAutoAssignmentAttempt.find_by!(user: current_user, id: params["batch_auto_assignment_attempt_id"])
+    status_details = {
+      error_message: batch.error_info,
+      status: batch.status,
+      number_assigned: batch.num_packages_assigned
+    }
+    render json: status_details, status: :ok
   end
 
   private
@@ -313,5 +338,12 @@ class CorrespondenceController < ApplicationController
   def upload_documents_to_claim_evidence
     rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id, type: ReviewPackageTask.name)
     correspondence_documents_efolder_uploader.upload_documents_to_claim_evidence(correspondence, current_user, rpt)
+  end
+
+  def existing_batch_auto_assignment_attempt
+    @existing_batch_auto_assignment_attempt ||= BatchAutoAssignmentAttempt.find_by(
+      user: current_user,
+      status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.started
+    )
   end
 end

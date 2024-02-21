@@ -81,3 +81,36 @@ export const setReasonRemovePackage = (reasonForRemove) =>
       }
     });
   };
+
+export const setBatchAutoAssignmentAttemptId = (batchId) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_BATCH_AUTO_ASSIGN_ATTEMPT_ID,
+      payload: {
+        batchId
+      }
+    });
+  };
+
+export const setAutoAssignmentAlertBanner = (bannerDetails) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_AUTO_ASSIGN_BANNER,
+      payload: {
+        title: bannerDetails.title,
+        message: bannerDetails.message,
+        type: bannerDetails.type
+      }
+    });
+  };
+
+export const setAutoAssignButtonDisabled = (isButtonDisabled) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_AUTO_ASSIGN_BUTTON_DISABLED,
+      payload: {
+        isButtonDisabled
+      }
+    });
+  };
+

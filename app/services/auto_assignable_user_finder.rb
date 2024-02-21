@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
+# :reek:FeatureEnvy
 class AutoAssignableUserFinder
   AssignableUser = Struct.new(:user_obj, :last_assigned_date, :num_assigned, :nod?, keyword_init: true)
 
   def assignable_users_exist?
+    return false if FeatureToggle.enabled?(:auto_assign_banner_max_queue) && !Rails.env.production?
+
     assignable_users.count.positive?
   end
 
@@ -66,6 +69,7 @@ class AutoAssignableUserFinder
     sorted_assignable_users(users)
   end
 
+  # :reek:UncommunicativeVariableName
   def sorted_assignable_users(users)
     users.sort do |a, b|
       if a.num_assigned == b.num_assigned
@@ -112,7 +116,16 @@ class AutoAssignableUserFinder
   end
 
   def sensitivity_checker
-    @sensitivity_checker ||= ExternalApi::BGSService.new
+    return @sensitivity_checker if @sensitivity_checker.present?
+
+    @sensitivity_checker = BGSService.new
+
+    # TODO: Create seed data for this, add vbms_id here
+    # if !Rails.env.production
+    #   BGSService.mark_veteran_not_accessible()
+    # end
+
+    @sensitivity_checker
   end
 
   def permission_checker

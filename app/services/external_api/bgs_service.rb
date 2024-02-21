@@ -277,8 +277,8 @@ class ExternalApi::BGSService
   #
   # We cache at 2 levels: the boolean check per user, and the veteran record itself.
   # The veteran record is so that subsequent calls to fetch_veteran_info can read from cache.
-  def can_access?(vbms_id, user_to_check: nil)
-    user_can_access?(vbms_id: vbms_id, user_to_check: current_user)
+  def can_access?(vbms_id, user_to_check: current_user)
+    user_can_access?(vbms_id: vbms_id, user_to_check: user_to_check)
   end
 
   def user_can_access?(vbms_id:, user_to_check:)

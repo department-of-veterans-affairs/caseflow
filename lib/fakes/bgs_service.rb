@@ -316,11 +316,15 @@ class Fakes::BGSService
     (self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
   end
 
-  def can_access?(vbms_id)
+  def can_access?(vbms_id, user_to_check: current_user)
+    user_can_access?(vbms_id: vbms_id, user_to_check: user_to_check)
+  end
+
+  def user_can_access?(vbms_id:, user_to_check:)
     is_accessible = !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
 
-    if current_user
-      Rails.cache.fetch(can_access_cache_key(current_user, vbms_id), expires_in: 1.minute) do
+    if user_to_check
+      Rails.cache.fetch(can_access_cache_key(user_to_check, vbms_id), expires_in: 1.minute) do
         is_accessible
       end
     else

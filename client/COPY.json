@@ -1436,5 +1436,10 @@
   "ASSOCIATED_WITH_CLAIMS_FOLDER_MAIL_TASK_LABEL": "Associated with claims folder",
   "VACOLS_UPDATED_MAIL_TASK_LABEL": "VACOLS updated",
   "SENT_TO_ROJ_MAIL_TASK_LABEL": "Sent to ROJ",
-  "AUTO_ASSIGN_CORRESPONDENCES_BUTTON": "Auto assign correspondences"
+  "AUTO_ASSIGN_CORRESPONDENCES_BUTTON": "Auto assign correspondences",
+  "BAAA_NO_UNASSIGNED_CORRESPONDENCE": "There are no correspondences available for assignment",
+  "BAAA_USERS_MAX_QUEUE_REACHED": "Queues have reached maximum capacity for all team members",
+  "BAAA_SUCCESS_MESSAGE": "Team members were assigned correspondences based on auto-assignment rules",
+  "BAAA_FAILED_TITLE": "Auto-assignment for correspondence has failed",
+  "BAAA_ERROR_MESSAGE": "Please try again at a later time or contact the Help Desk"
 }
