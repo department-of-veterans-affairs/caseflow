@@ -109,6 +109,15 @@ class RequestIssuesUpdate < CaseflowRecord
     end
   end
 
+  def move_to_distribution
+    # If an appeal has an SCT issue, is in the SCT queue and is not PreDocketed, then move it back to distribution
+    if review.try(:sct_appeal?) && review.tasks.of_type(:SpecialtyCaseTeamAssignTask).blank? &&
+       review.has_distribution_task?
+      # TODO: This is not good enough for me. Copy what is done in the SCT split appeals handler
+      remove_appeal_from_current_queue
+    end
+  end
+
   def remove_appeal_from_current_queue
     review.tasks.reject { |task| %w[RootTask DistributionTask].include?(task.type) }
       .each(&:cancel_task_and_child_subtasks)

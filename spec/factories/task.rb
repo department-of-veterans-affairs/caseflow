@@ -559,7 +559,7 @@ FactoryBot.define do
 
         trait :on_hold do
           after(:create) do |task, _evaluator|
-            task.update(status: Constants.TASK_STATUSES.on_hold)
+            task.update(status: Constants.TASK_STATUSES.in_progress)
             judge = create(:user, :judge, :with_vacols_judge_record)
             attorney = create(:user, :with_vacols_attorney_record)
             judge_review_task = JudgeDecisionReviewTask.create!(appeal: task.appeal, parent: task.parent,

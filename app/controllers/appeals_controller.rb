@@ -260,24 +260,47 @@ class AppealsController < ApplicationController
     "You have successfully " + [added_issues, removed_issues, withdrawn_issues].compact.to_sentence + "."
   end
 
-  def flash_move_to_sct_success
+  # TODO: Update this to use appeal.veteran_file_number and appeal.claimant.name
+  def set_flash_move_to_sct_success_message
     flash[:custom] = {
-      title: COPY::MOVE_TO_SCT_BANNER_TITLE,
+      title: COPY::MOVE_TO_GENERIC_BANNER_SUCCESS_MESSAGE,
       message: format(
         COPY::MOVE_TO_SCT_BANNER_MESSAGE,
         request_issues_update.review.claimant.name,
-        request_issues_update.veteran.file_number
+        request_issues_update.veteran.file_number,
+        "SCT queue"
       )
     }
   end
 
+  def set_flash_move_to_distribution_success_message
+    flash[:custom] = {
+      title: COPY::MOVE_TO_SCT_BANNER_TITLE,
+      message: format(
+        COPY::MOVE_TO_GENERIC_BANNER_SUCCESS_MESSAGE,
+        appeal.claimant.name,
+        appeal.veteran_file_number,
+        "regular distribution pool"
+      )
+    }
+  end
+
+  # TODO: Refactor this to fix these code climate issues instead of disabling them
   # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def set_flash_success_message
     # if original issues were not VHA related, then that means it will be moved to the SCT queue
     if appeal.sct_appeal? && request_issues_update.before_issues.none?(&:sct_benefit_type?) &&
        request_issues_update.review.tasks.of_type(:DistributionTask).exists? &&
        FeatureToggle.enabled?(:specialty_case_team_distribution)
-      return flash_move_to_sct_success
+      return set_flash_move_to_sct_success_message
+    end
+
+    # If the request_issues before had sct issue but now the after issues don't then show the message
+    if request_issues_update.before_issues.any?(&:sct_benefit_type?) &&
+       request_issues_update.after_issues.none?(&:sct_benefit_type?) &&
+       appeal.has_distribution_task? &&
+       feature_enabled?(:specialty_case_team_distribution)
+      return set_flash_move_to_distribution_success_message
     end
 
     flash[:edited] = if request_issues_update.after_issues.empty?

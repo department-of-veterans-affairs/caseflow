@@ -26,7 +26,8 @@ class SaveButtonUnconnected extends React.Component {
         unidentifiedIssueModal: false,
         reviewRemovedModal: false,
         correctionIssueModal: false,
-        moveToSctModal: false
+        moveToSctModal: false,
+        moveToDistributionModal: false
       }
     };
   }
@@ -38,13 +39,24 @@ class SaveButtonUnconnected extends React.Component {
       unidentifiedIssueModal: false,
       reviewRemovedModal: false,
       correctionIssueModal: false,
-      moveToSctModal: false
+      moveToSctModal: false,
+      moveToDistributionModal: false
     };
 
-    if (this.props.state.addedIssues.some((i) => i.benefitType === 'vha') &&
-    !this.props.originalIssues.some((i) => i.benefitType === 'vha') &&
+    // TODO: Maybe pass this up from the backend so it will make future checks in the front end more DRY
+    const specialtyCaseTeamBenefitTypes = ['vha'];
+
+    // TODO: Refactor this to pull these two checks into booleans that can be negated and named better
+    if (this.props.state.addedIssues.some((i) => specialtyCaseTeamBenefitTypes.includes(i.benefitType)) &&
+    !this.props.originalIssues.some((i) => specialtyCaseTeamBenefitTypes.includes(i.benefitType)) &&
     this.props.hasDistributionTask && this.props.specialtyCaseTeamDistribution) {
       showModals.moveToSctModal = true;
+    }
+
+    if (!this.props.state.addedIssues.some((i) => specialtyCaseTeamBenefitTypes.includes(i.benefitType)) &&
+    this.props.originalIssues.some((i) => specialtyCaseTeamBenefitTypes.includes(i.benefitType)) &&
+    this.props.hasDistributionTask && this.props.specialtyCaseTeamDistribution) {
+      showModals.moveToDistributionModal = true;
     }
 
     if (this.state.originalIssueNumber !== this.props.state.addedIssues.length) {
@@ -101,6 +113,19 @@ class SaveButtonUnconnected extends React.Component {
       !this.state.showModals.issueChangeModal &&
       !this.state.showModals.unidentifiedIssueModal &&
       !this.state.showModals.correctionIssueModal;
+  }
+
+  showMoveToDistributionModal = () => {
+    if (!this.props.specialtyCaseTeamDistribution) {
+      return false;
+    }
+
+    return this.state.showModals.moveToDistributionModal &&
+      !this.state.showModals.reviewRemovedModal &&
+      !this.state.showModals.issueChangeModal &&
+      !this.state.showModals.unidentifiedIssueModal &&
+      !this.state.showModals.correctionIssueModal &&
+      !this.state.showModals.moveToSctModal;
   }
 
   confirmModal = (modalToClose) => {
@@ -221,6 +246,15 @@ class SaveButtonUnconnected extends React.Component {
         onConfirm={() => this.confirmModal('moveToSctModal')}
         buttonClassNames={['usa-button', 'confirm']}>
         <p>{COPY.MOVE_TO_SCT_MODAL_BODY}</p>
+      </SaveAlertConfirmModal>}
+
+      { this.showMoveToDistributionModal() && <SaveAlertConfirmModal
+        title={COPY.MOVE_TO_DISTRIBUTION_MODAL_TITLE}
+        buttonText={COPY.MODAL_MOVE_BUTTON}
+        onClose={() => this.closeModal('moveToDistributionModal')}
+        onConfirm={() => this.confirmModal('moveToDistributionModal')}
+        buttonClassNames={['usa-button', 'confirm']}>
+        <p>{COPY.MOVE_TO_DISTRIBUTION_MODAL_BODY}</p>
       </SaveAlertConfirmModal>}
 
       <Button
