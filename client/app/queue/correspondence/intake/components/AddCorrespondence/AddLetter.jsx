@@ -56,6 +56,7 @@ export const AddLetter = (props) => {
   const removeLetter = (index) => {
     const restLetters = letters.filter((letter) => letter !== index);
     const dls = dataLetter.filter((dl) => dl.id !== index);
+    
     setLetters(restLetters);
     setDataLetter(dls);
   };
@@ -389,7 +390,7 @@ const NewLetter = (props) => {
   };
 
   const removeLetter = () => {
-    dispatch(removeResponseLetters(index))
+    dispatch(removeResponseLetters(index));
     props.removeLetter(index);
   };
 
