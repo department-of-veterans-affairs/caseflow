@@ -10,7 +10,7 @@ import moment from 'moment';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
-  setResponseLetters
+  setResponseLetters, removeResponseLetters
 } from '../../../correspondenceReducer/correspondenceActions';
 
 export const AddLetter = (props) => {
@@ -56,7 +56,6 @@ export const AddLetter = (props) => {
   const removeLetter = (index) => {
     const restLetters = letters.filter((letter) => letter !== index);
     const dls = dataLetter.filter((dl) => dl.id !== index);
-
     setLetters(restLetters);
     setDataLetter(dls);
   };
@@ -390,6 +389,7 @@ const NewLetter = (props) => {
   };
 
   const removeLetter = () => {
+    dispatch(removeResponseLetters(index))
     props.removeLetter(index);
   };
 
@@ -484,6 +484,7 @@ NewLetter.propTypes = {
   letterTitle: PropTypes.string,
   setLetterTitle: PropTypes.func,
   setResponseLetters: PropTypes.func,
+  removeResponseLetters: PropTypes.func,
   setUnrelatedTasksCanContinue: PropTypes.func,
   currentLetter: PropTypes.func,
   taskUpdatedCallback: PropTypes.func,

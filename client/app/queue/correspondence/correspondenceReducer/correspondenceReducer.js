@@ -124,6 +124,15 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
       }
     });
 
+  case ACTIONS.REMOVE_RESPONSE_LETTERS:
+    const newResponseLetters = state.responseLetters
+    delete newResponseLetters[action.payload.index]
+    return update(state, {
+      responseLetters: {
+        $set: newResponseLetters
+      }
+    });
+
   default:
     return state;
   }
