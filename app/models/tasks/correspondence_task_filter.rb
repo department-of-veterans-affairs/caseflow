@@ -21,20 +21,18 @@ class CorrespondenceTaskFilter < TaskFilter
   end
 
   def filtered_tasks
-    va_dor_params = filter_params.select { |param| param.include?('col=vaDor') }
-    task_column_params = filter_params.select { |param| param.include?('col=taskColumn') }
-
+    va_dor_params = filter_params.select { |param| param.include?("col=vaDor") }
+    task_column_params = filter_params.select { |param| param.include?("col=taskColumn") }
+    filtered_tasks = []
     va_dor_params.each do |param|
       value_hash = Rack::Utils.parse_nested_query(param).deep_symbolize_keys
-      @tasks = filter_by_va_dor(value_hash[:val])
+      filtered_tasks += filter_by_va_dor(value_hash[:val])
     end
-
     task_column_params.each do |param|
       value_hash = Rack::Utils.parse_nested_query(param).deep_symbolize_keys
-      @tasks = filter_by_task(value_hash[:val])
+      filtered_tasks += filter_by_task(value_hash[:val])
     end
-
-    @tasks
+    filtered_tasks
   end
 
   private
