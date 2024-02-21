@@ -131,7 +131,6 @@ class TaskFilter
   #   ["TranslationTask"]
   # ]
   def where_clause
-    # binding.pry
     return [] if filter_params.empty?
 
     filters = filter_params.map(&QueueFilterParameter.method(:from_string))

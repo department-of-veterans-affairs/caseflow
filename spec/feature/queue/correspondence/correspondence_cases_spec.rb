@@ -61,7 +61,6 @@ RSpec.feature("The Correspondence Cases page") do
       FeatureToggle.enable!(:correspondence_queue)
       FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
-      binding.pry
       expect(page).to have_content("Correspondence in progress")
     end
 
