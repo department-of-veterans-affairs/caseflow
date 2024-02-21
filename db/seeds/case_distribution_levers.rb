@@ -3,8 +3,15 @@ module Seeds
     def seed!
       CaseDistributionLevers.levers.each do |lever|
         next if CaseDistributionLever.find_by_item(lever[:item])
-        create_lever lever
+        lever = create_lever(lever)
+        puts lever.errors.full_messages unless lever.valid?
       end
+
+      levers = CaseDistributionLevers.levers.map{ |lever| lever[:item] }
+      existing_levers = CaseDistributionLever.all.map(&:item)
+
+      puts "#{CaseDistributionLever.count} levers exist"
+      puts "Missing #{levers - existing_levers}" if levers.length != existing_levers.length
     end
 
     def self.levers
@@ -477,7 +484,6 @@ module Seeds
           data_type: Constants.ACD_LEVERS.data_types.boolean,
           value: false,
           unit: '',
-          is_toggle_active: false,
           is_disabled_in_ui: true,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
           lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
@@ -490,7 +496,6 @@ module Seeds
           data_type: Constants.ACD_LEVERS.data_types.boolean,
           value: false,
           unit: '',
-          is_toggle_active: false,
           is_disabled_in_ui: true,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
           lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
@@ -503,7 +508,6 @@ module Seeds
           data_type: Constants.ACD_LEVERS.data_types.boolean,
           value: false,
           unit: '',
-          is_toggle_active: false,
           is_disabled_in_ui: true,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
           lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
@@ -516,7 +520,6 @@ module Seeds
           data_type: Constants.ACD_LEVERS.data_types.boolean,
           value: false,
           unit: '',
-          is_toggle_active: false,
           is_disabled_in_ui: true,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
           lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
@@ -529,7 +532,6 @@ module Seeds
           data_type: Constants.ACD_LEVERS.data_types.boolean,
           value: false,
           unit: '',
-          is_toggle_active: false,
           is_disabled_in_ui: true,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
           lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
@@ -542,7 +544,6 @@ module Seeds
           data_type: Constants.ACD_LEVERS.data_types.boolean,
           value: false,
           unit: '',
-          is_toggle_active: false,
           is_disabled_in_ui: true,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
           lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
@@ -555,7 +556,6 @@ module Seeds
           data_type: Constants.ACD_LEVERS.data_types.boolean,
           value: false,
           unit: '',
-          is_toggle_active: false,
           is_disabled_in_ui: true,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
           lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
@@ -568,7 +568,6 @@ module Seeds
           data_type: Constants.ACD_LEVERS.data_types.boolean,
           value: false,
           unit: '',
-          is_toggle_active: false,
           is_disabled_in_ui: true,
           algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
           lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
@@ -587,7 +586,7 @@ module Seeds
         data_type: lever[:data_type],
         value: lever[:value].to_s,
         unit: lever[:unit],
-        is_toggle_active: lever[:is_toggle_active] || nil,
+        is_toggle_active: lever[:is_toggle_active],
         is_disabled_in_ui: lever[:is_disabled_in_ui] || false,
         min_value: lever[:min_value],
         max_value: lever[:max_value],
