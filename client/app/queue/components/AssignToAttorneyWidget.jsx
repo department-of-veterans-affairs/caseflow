@@ -148,17 +148,31 @@ export class AssignToAttorneyWidget extends React.PureComponent {
         instructions }).
       then(() => {
         const isReassign = selectedTasks[0].type === 'AttorneyTask';
+        const isSpecialtyCaseTeamAssignTask = selectedTasks[0]?.assignedTo?.type === 'SpecialtyCaseTeam';
 
-        this.props.resetAssignees();
+        let titleString = '';
 
-        return this.props.showSuccessMessage({
-          title: sprintf(COPY.ASSIGN_WIDGET_SUCCESS, {
+        if (isSpecialtyCaseTeamAssignTask) {
+          titleString = sprintf(COPY.SPECIALTY_CASE_TEAM_ASSIGN_WIDGET_SUCCESS, {
+            numCases: selectedTasks.length,
+            casePlural: pluralize('cases', selectedTasks.length),
+            // eslint-disable-next-line camelcase
+            assignee: assignee.full_name
+          });
+        } else {
+          titleString = sprintf(COPY.ASSIGN_WIDGET_SUCCESS, {
             verb: isReassign ? 'Reassigned' : 'Assigned',
             numCases: selectedTasks.length,
             casePlural: pluralize('tasks', selectedTasks.length),
             // eslint-disable-next-line camelcase
             assignee: assignee.full_name
-          })
+          });
+        }
+
+        this.props.resetAssignees();
+
+        return this.props.showSuccessMessage({
+          title: titleString
         });
       }, (error) => {
         this.props.saveFailure();
@@ -197,7 +211,9 @@ export class AssignToAttorneyWidget extends React.PureComponent {
       savePending,
       highlightFormItems,
       isModal,
-      onCancel
+      onCancel,
+      hidePrimaryAssignDropdown,
+      secondaryAssignDropdownLabel
     } = this.props;
     const { instructions } = this.state;
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
@@ -205,6 +221,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
     const otherOpt = { label: COPY.ASSIGN_WIDGET_OTHER, value: OTHER };
     const judgeOpt = currentUser ? { label: currentUser.fullName, value: currentUser.id } : null;
     const options = [...attorneysOfJudge.map(optionFromAttorney), ...(judgeOpt ? [judgeOpt] : []), otherOpt];
+
     const selectedOption = options.find((option) => option.value === selectedAssignee);
     let optionsOther = [];
     let placeholderOther = COPY.ASSIGN_WIDGET_LOADING;
@@ -224,12 +241,16 @@ export class AssignToAttorneyWidget extends React.PureComponent {
     }
 
     if (optionsOther?.length) {
-      placeholderOther = COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER;
-      selectedOptionOther = optionsOther.find((option) => option.value === selectedAssigneeSecondary);
+      placeholderOther = hidePrimaryAssignDropdown ?
+        COPY.SCT_ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER : COPY.ASSIGN_WIDGET_DROPDOWN_PLACEHOLDER;
+      selectedOptionOther = optionsOther.find((option) => option.value === selectedAssigneeSecondary) || null;
     }
 
+    const otherDropdownWidth = hidePrimaryAssignDropdown ? '40rem' : '30rem';
+    const isButtonDisabled = hidePrimaryAssignDropdown && (selectedTasks.length === 0 || !selectedOptionOther);
+
     const Widget = <React.Fragment>
-      <SearchableDropdown
+      {!hidePrimaryAssignDropdown && <SearchableDropdown
         name={COPY.ASSIGN_WIDGET_DROPDOWN_NAME_PRIMARY}
         hideLabel
         searchable
@@ -239,20 +260,23 @@ export class AssignToAttorneyWidget extends React.PureComponent {
         onChange={(option) => option && this.props.setSelectedAssignee({ assigneeId: option.value })}
         value={selectedOption}
         styling={css({ width: '30rem' })} />
+      }
       {selectedAssignee === OTHER &&
         <React.Fragment>
-          <div {...fullWidth} {...css({ marginBottom: '0' })} />
-          <p>{COPY.ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL}</p>
+          <div {...fullWidth} {...css({ marginBottom: '0' })}
+          />
+          {!secondaryAssignDropdownLabel && <p>{COPY.ASSIGN_WIDGET_DROPDOWN_SECONDARY_LABEL}</p>}
           <SearchableDropdown
             name={COPY.ASSIGN_WIDGET_DROPDOWN_NAME_SECONDARY}
-            hideLabel
+            hideLabel={!secondaryAssignDropdownLabel}
+            label={secondaryAssignDropdownLabel}
             searchable
             errorMessage={isModal && highlightFormItems && !selectedOptionOther ? 'Choose one' : null}
             options={optionsOther}
             placeholder={placeholderOther}
             onChange={(option) => option && this.props.setSelectedAssigneeSecondary({ assigneeId: option.value })}
             value={selectedOptionOther}
-            styling={css({ width: '30rem' })} />
+            styling={css({ width: otherDropdownWidth })} />
         </React.Fragment>}
       {isModal && <React.Fragment>
         <br />
@@ -265,13 +289,17 @@ export class AssignToAttorneyWidget extends React.PureComponent {
       </React.Fragment> }
       {!isModal && <Button
         onClick={this.submit}
+        disabled={isButtonDisabled}
         name={sprintf(
           COPY.ASSIGN_WIDGET_BUTTON_TEXT,
           { numCases: selectedTasks.length,
             casePlural: pluralize('case', selectedTasks.length) })}
         loading={savePending}
         loadingText={COPY.ASSIGN_WIDGET_LOADING}
-        styling={css({ margin: '1.5rem 0' })} /> }
+        styling={css({ margin: '1.5rem 0', ...(hidePrimaryAssignDropdown && { position: 'relative', top: '15px' }) })}
+      />
+      }
+      { hidePrimaryAssignDropdown && <div styling={css({ marginBottom: '40px' })} />}
     </React.Fragment>;
 
     return isModal ? <QueueFlowModal title={COPY.ASSIGN_TASK_TITLE}
@@ -293,6 +321,8 @@ AssignToAttorneyWidget.propTypes = {
   resetSaveState: PropTypes.func,
   showSuccessMessage: PropTypes.func,
   isModal: PropTypes.bool,
+  hidePrimaryAssignDropdown: PropTypes.bool,
+  secondaryAssignDropdownLabel: PropTypes.string,
   showErrorMessage: PropTypes.func,
   resetSuccessMessages: PropTypes.func,
   resetErrorMessages: PropTypes.func,

@@ -18,7 +18,7 @@ class SpecialtyCaseTeamActionRequiredTasksTab < QueueTab
   end
 
   def tasks
-    on_hold_tasks
+    in_progress_tasks
   end
 
   def column_names

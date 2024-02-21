@@ -597,6 +597,17 @@ FactoryBot.define do
       end
     end
 
+    trait :with_randomized_vha_issue do
+      after(:create) do |appeal|
+        create(:request_issue,
+               benefit_type: "vha",
+               nonrating_issue_category: Constants::ISSUE_CATEGORIES["vha"].sample,
+               nonrating_issue_description: "VHA - Issue ",
+               decision_review: appeal,
+               decision_date: 1.month.ago)
+      end
+    end
+
     trait :decision_issue_with_future_date do
       description = "Service connection for pain disorder"
       notes = "Pain disorder notes"

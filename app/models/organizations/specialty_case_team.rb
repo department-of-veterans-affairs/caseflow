@@ -17,9 +17,14 @@ class SpecialtyCaseTeam < Organization
 
   def queue_tabs
     [
+      unassigned_tasks_tab,
       action_required_tasks_tab,
       completed_tasks_tab
     ]
+  end
+
+  def unassigned_tasks_tab
+    ::SpecialtyCaseTeamUnassignedTasksTab.new(assignee: self)
   end
 
   def action_required_tasks_tab

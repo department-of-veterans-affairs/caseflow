@@ -251,6 +251,11 @@ export const setUserIsCamoEmployee = (userIsCamoEmployee) => ({
   payload: { userIsCamoEmployee }
 });
 
+export const setUserIsSCTCoordinator = (userIsSCTCoordinator) => ({
+  type: ACTIONS.SET_USER_IS_SCT_COORDINATOR,
+  payload: { userIsSCTCoordinator }
+});
+
 export const setFeedbackUrl = (feedbackUrl) => ({
   type: ACTIONS.SET_FEEDBACK_URL,
   payload: { feedbackUrl }

@@ -19,7 +19,7 @@ class AttorneyTask < Task
   validate :assigned_to_role_is_valid, if: :will_save_change_to_assigned_to_id?
 
   def available_actions(user)
-    atty_return_action = if appeal.sct_appeal?
+    atty_return_action = if appeal.try(:sct_appeal?)
                            Constants.TASK_ACTIONS.CANCEL_TASK_AND_RETURN_TO_SCT_QUEUE.to_h
                          else
                            Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h

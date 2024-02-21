@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 # Task assigned to the Specialty Case Team organization from which one of the SCT Coordinators will assign the
-# associated appeal to one of their attorneys by creating a task (an AttorneyTask but not any of its subclasses)
-# to draft a decision on the appeal.
+# associated appeal to one of their attorneys by creating a couple of tasks (a JudgeDecisionReviewTask
+# and an AttorneyTask) to draft a decision on the appeal.
+#
 # Task is created as a result of case distribution.
 # Task should always have a RootTask as its parent.
-# Task can one or more AttorneyTask children, or no child tasks at all.
-# An open task will result in the case appearing in the Specialty Case Team bulk Assign View.
+# An active task will result in the case appearing in the Specialty Case Team bulk Assign View.
 #
 # Expected parent task: RootTask
 #
-# Expected child task: AttorneyTask
+# Expected child task: None
 
 class SpecialtyCaseTeamAssignTask < Task
   validate :only_open_task_of_type, on: :create,
