@@ -27,8 +27,10 @@ class Events::DecisionReviewCreated
         event = find_or_create_event(consumer_event_id)
 
         # ActiveRecord::Base.transaction do
-        #   # TODO: backfill models as needed, set Event.completed_at when finished
-        #   # event.update!(completed_at: Time.now, error: nil)
+          # TODO: backfill models as needed, set Event.completed_at when finished
+          # Note: createdByStation == station_id, createdByUsername == css_id
+          # Events::CreateUserOnEvent.handle_user_creation_on_event(event, css_id, station_id)
+          # event.update!(completed_at: Time.now, error: nil)
         # end
       end
     rescue Caseflow::Error::RedisLockFailed => error

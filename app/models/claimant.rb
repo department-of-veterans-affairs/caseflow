@@ -16,9 +16,11 @@ class Claimant < CaseflowRecord
   }, dependent: :destroy
   has_one :event_record, as: :backfill_record
 
+  # rubocop:disable Rails/UniqueValidationWithoutIndex
   validates :participant_id,
             uniqueness: { scope: [:decision_review_id, :decision_review_type],
                           on: :create }
+  # rubocop:enable Rails/UniqueValidationWithoutIndex
 
   delegate :advanced_on_docket?,
            :advanced_on_docket_based_on_age?,

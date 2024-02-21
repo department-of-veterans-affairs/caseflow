@@ -31,6 +31,8 @@ Style/StringLiterals:
 
 Style/FrozenStringLiteralComment:
   Enabled: true
+  Exclude:
+    - 'client/constants/*'
 
 Style/Documentation:
   Enabled: false
@@ -98,19 +100,31 @@ Metrics/MethodLength:
   Max: 20
   Exclude:
     - app/jobs/middleware/job_sentry_scope_middleware.rb
+    - lib/helpers/unrecognized_appellant.rb
+    - lib/helpers/duplicate_veteran_checker.rb
+    - lib/helpers/report_load_end_product_sync.rb
+    - lib/helpers/claim_label_change.rb
     - "spec/**/*"
 
 Metrics/ClassLength:
   Max: 400
+  Exclude:
+    - lib/helpers/duplicate_veteran_checker.rb
 
 Metrics/AbcSize:
   Max: 30
   Exclude:
     - app/jobs/virtual_hearings/create_conference_job.rb
+    - lib/helpers/duplicate_veteran_checker.rb
 
 Metrics/CyclomaticComplexity:
   Exclude:
     - app/services/virtual_hearings/resend_virtual_hearing_emails_service.rb
+    - lib/helpers/duplicate_veteran_checker.rb
+
+Metrics/PerceivedComplexity:
+  Exclude:
+    - lib/helpers/duplicate_veteran_checker.rb
 
 Style/DoubleNegation:
   Enabled: false
@@ -152,6 +166,21 @@ Style/FormatStringToken:
   Enabled: true
   EnforcedStyle: annotated
 
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
+
+Style/ExponentialNotation:
+  Enabled: true
+
+Style/SlicingWithRange:
+  Enabled: true
+
 Naming/FileName:
   Enabled: false
 
@@ -172,8 +201,24 @@ Lint/UnusedMethodArgument:
   Exclude:
     - 'lib/fakes/*.rb'
 
+Lint/RaiseException:
+  Enabled: true
+
+Lint/StructNewOverride:
+  Enabled: true
+
 Layout/LineLength:
   Max: 120
+  Exclude:
+    - lib/helpers/duplicate_veteran_checker.rb
+    - lib/helpers/report_load_end_product_sync.rb
+
 
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
+
+Layout/EmptyLinesAroundAttributeAccessor:
+  Enabled: true
+
+Layout/SpaceAroundMethodCallOperator:
+  Enabled: true

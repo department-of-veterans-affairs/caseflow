@@ -54,6 +54,7 @@ class Fakes::VBMSService
     @hold_request = false
   end
 
+  # rubocop:disable  Metrics/CyclomaticComplexity
   def self.fetch_document_file(document)
     path =
       case document.vbms_document_id.to_i
@@ -74,6 +75,7 @@ class Fakes::VBMSService
       end
     IO.binread(path)
   end
+  # rubocop:enable  Metrics/CyclomaticComplexity
 
   def self.document_count(veteran_file_number, _user = nil)
     docs = (document_records || {})[veteran_file_number] || @documents || []
