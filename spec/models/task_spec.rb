@@ -2001,7 +2001,13 @@ describe Task, :all_dbs do
   describe "Correspondence Tasks" do
     context "Correspondence Intake Task" do
       it "has a task_url" do
-        cit = create(:correspondence_intake_task)
+        correspondence = create(:correspondence)
+        cit = create(
+          :correspondence_intake_task,
+          appeal: correspondence,
+          appeal_type: Correspondence.name,
+          assigned_to: create(:user)
+        )
         expect(cit.task_url).to eq("/queue/correspondence/#{cit.correspondence.uuid}/intake")
       end
     end
@@ -2011,8 +2017,8 @@ describe Task, :all_dbs do
         correspondence = create(:correspondence)
         rpt = ReviewPackageTask.find_or_create_by(
           appeal_id: correspondence.id,
-          assigned_to: MailTeamSupervisor.singleton,
-          appeal_type: "Correspondence"
+          appeal_type: "Correspondence",
+          assigned_to: create(:user)
         )
 
         expect(rpt.task_url).to eq("/queue/correspondence/#{correspondence.uuid}/review_package")

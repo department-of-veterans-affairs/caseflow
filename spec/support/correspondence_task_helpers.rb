@@ -17,7 +17,7 @@ module CorrespondenceTaskHelpers
       parent_id: parent.id,
       appeal_id: correspondence.id,
       appeal_type: "Correspondence",
-      assigned_to: parent.assigned_to,
+      assigned_to: create(:user),
       status: Constants.TASK_STATUSES.in_progress
     )
   end

@@ -2,9 +2,7 @@
 
 class CorrespondenceQueueTab < QueueTab
   def columns
-    column_names.map do |column_name|
-      CorrespondenceQueueColumn.new(name: column_name)
-    end
+    column_names.map { |column_name| CorrespondenceQueueColumn.from_name(column_name) }
   end
 
   def task_includes
@@ -21,8 +19,8 @@ class CorrespondenceQueueTab < QueueTab
     CorrespondenceQueueColumn.from_name(Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name)
   end
 
-   # If you don't create your own tab name it will default to the tab defined in QueueTab
-   def self.from_name(tab_name)
+  # If you don't create your own tab name it will default to the tab defined in QueueTab
+  def self.from_name(tab_name)
     tab = descendants.find { |subclass| subclass.tab_name == tab_name }
     fail(Caseflow::Error::InvalidTaskTableTab, tab_name: tab_name) unless tab
 
