@@ -4,7 +4,7 @@ describe Hearings::DownloadTranscriptionFileJob do
   include ActiveJob::TestHelper
 
   describe "#perform" do
-    let(:link) { "https://random.imagecdn.app/500/150" }
+    let(:link) { "https://picsum.photos/200" }
     let(:hearing) { create(:hearing) }
     let(:docket_number) { hearing.docket_number }
     let(:file_name) { "#{docket_number}_#{hearing.id}_#{hearing.class}.#{file_type}" }
