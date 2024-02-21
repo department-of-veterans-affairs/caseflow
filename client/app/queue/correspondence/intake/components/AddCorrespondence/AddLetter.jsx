@@ -102,6 +102,7 @@ export const AddLetter = (props) => {
               removeLetter={removeLetter}
               taskUpdatedCallback={taskUpdatedCallback}
               setUnrelatedTasksCanContinue= {setUnrelatedTasksCanContinue}
+              currentLetter = {responseLetters && responseLetters[letter]}
             />
           </div>
         )) }
