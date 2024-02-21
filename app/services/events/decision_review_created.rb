@@ -62,8 +62,5 @@ class Events::DecisionReviewCreated
       DecisionReviewCreatedEvent.find_or_create_by(reference_id: consumer_event_id)
     end
 
-    # check if SOC/SSOC opt in
-    # check if claim_review.legacy_opt_in_approved: true and vacols_id and vacols_sequence_id is present
-
   end
 end
