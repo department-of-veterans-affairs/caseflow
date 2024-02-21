@@ -200,7 +200,7 @@ describe HearingRequestDocket, :all_dbs do
           .to match_array(expected_result)
       end
 
-      context 'when acd_exclude_from_affinity flag is enabled' do
+      context "when acd_exclude_from_affinity flag is enabled" do
         before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
 
         subject do
@@ -216,7 +216,8 @@ describe HearingRequestDocket, :all_dbs do
           outside_affinity = create_nonpriority_distributable_hearing_appeal_tied_to_other_judge_outside_affinity
           exclude_appeal_from_affinity_judge = most_recent_held_hearing_tied_to_exclude_appeals_from_affinity_judge
 
-          expected_result = [tied, not_tied, no_held_hearings, no_hearings, outside_affinity, exclude_appeal_from_affinity_judge]
+          expected_result = [tied, not_tied, no_held_hearings, no_hearings, outside_affinity,
+                             exclude_appeal_from_affinity_judge]
 
           tasks = subject
 
@@ -242,6 +243,40 @@ describe HearingRequestDocket, :all_dbs do
         no_hearings = matching_all_base_conditions_with_no_hearings
 
         expected_result = [outside_affinity, no_held_hearings, no_hearings]
+
+        # won't be included
+        create_appeals_that_should_not_be_returned_by_query
+        create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
+        create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
+
+        tasks = subject
+
+        expect(tasks.length).to eq(expected_result.length)
+        expect(tasks.first.class).to eq(DistributedCase)
+        expect(tasks.first.genpop).to eq true
+        expect(tasks.first.genpop_query).to eq "only_genpop"
+        expect(distribution.distributed_cases.length).to eq(expected_result.length)
+        expect(distribution_judge.reload.tasks.map(&:appeal))
+          .to match_array(expected_result)
+      end
+    end
+
+    context "priority appeals and only_genpop with exclude judge from affinity" do
+      subject do
+        FeatureToggle.enable!(:acd_exclude_from_affinity)
+        HearingRequestDocket.new.distribute_appeals(
+          distribution, priority: true, limit: 10, genpop: "only_genpop"
+        )
+      end
+
+      it "only distributes priority, distributable, hearing docket, genpop cases with judge exclude from affinity" do
+        # will be included
+        outside_affinity = matching_all_base_conditions_with_most_recent_held_hearing_outside_affinity
+        no_held_hearings = matching_all_base_conditions_with_no_held_hearings
+        no_hearings = matching_all_base_conditions_with_no_hearings
+        exclude_judge_affinity = most_recent_held_hearing_with_exclude_judge_from_affinity
+
+        expected_result = [outside_affinity, no_held_hearings, no_hearings, exclude_judge_affinity]
 
         # won't be included
         create_appeals_that_should_not_be_returned_by_query
@@ -493,6 +528,23 @@ describe HearingRequestDocket, :all_dbs do
     appeal
   end
 
+  def most_recent_held_hearing_with_exclude_judge_from_affinity
+    most_recent = create(:hearing_day, scheduled_for: 2.days.ago)
+    appeal = create(:appeal,
+                    :ready_for_distribution,
+                    :advanced_on_docket_due_to_motion,
+                    docket_type: Constants.AMA_DOCKETS.hearing)
+    hearing = create(:hearing,
+                     judge: nil,
+                     disposition: "held",
+                     appeal: appeal,
+                     transcript_sent_date: 1.day.ago,
+                     hearing_day: most_recent)
+    hearing.update(judge: judge_team_with_exclude_appeals_from_affinity)
+
+    appeal
+  end
+
   def create_priority_distributable_hearing_appeal_not_tied_to_any_judge
     appeal = create(:appeal,
                     :ready_for_distribution,
@@ -556,7 +608,8 @@ describe HearingRequestDocket, :all_dbs do
                     docket_type: Constants.AMA_DOCKETS.hearing)
 
     most_recent_hearing_day = create(:hearing_day, scheduled_for: 1.day.ago)
-    hearing = create(:hearing, judge: judge_team_with_exclude_appeals_from_affinity, disposition: "held", appeal: appeal, hearing_day: most_recent_hearing_day)
+    create(:hearing, judge: judge_team_with_exclude_appeals_from_affinity, disposition: "held", appeal: appeal,
+                     hearing_day: most_recent_hearing_day)
 
     appeal
   end
