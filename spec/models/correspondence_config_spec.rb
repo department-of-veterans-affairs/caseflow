@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe CorrespondenceConfig, :postgres do
+  before do
+    RequestStore[:current_user] = user
+  end
+
   describe ".to_hash" do
     let(:assignee) { create(:organization) }
     let(:user) { create(:user) }
