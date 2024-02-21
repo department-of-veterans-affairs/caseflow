@@ -16,7 +16,7 @@ TMP_RSPEC_XML_REPORT = "tmp/rspec_#{CI_NODE}.xml"
 FINAL_RSPEC_XML_REPORT = "rspec_final_results_#{CI_NODE}.xml"
 
 KnapsackPro::Adapters::RSpecAdapter.bind
-#Was for GHA XML Report that is no longer being generated Lines 13-24
+# Was for GHA XML Report that is no longer being generated Lines 13-24
 KnapsackPro::Hooks::Queue.after_subset_queue do |_queue_id, _subset_queue_id|
   if File.exist?(TMP_RSPEC_XML_REPORT)
     FileUtils.mv(TMP_RSPEC_XML_REPORT, FINAL_RSPEC_XML_REPORT)
@@ -109,6 +109,14 @@ end
 RSpec::Matchers.define :excluding do |expected|
   match do |actual|
     !actual.include?(expected)
+  end
+end
+
+# configuration for "shoulda-matchers" gem
+Shoulda::Matchers.configure do |config|
+  config.integrate do |with|
+    with.test_framework :rspec
+    with.library :rails
   end
 end
 
