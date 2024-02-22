@@ -33,7 +33,7 @@ class Events::DecisionReviewCreated
           # Events::CreateUserOnEvent.handle_user_creation_on_event(event, css_id, station_id)
           # Note: decision_review arg can either be a HLR or SC object. perform! will only run if
           # decision_review.legacy_opt_in_approved is true
-          # Events::DecisionReviewCreate::UpdateVacolsOnOptin.perform!(decision_review)
+          # Events::DecisionReviewCreate::UpdateVacolsOnOptin.process!(decision_review)
           # event.update!(completed_at: Time.now, error: nil)
         # end
       end
