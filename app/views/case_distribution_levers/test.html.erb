@@ -1,0 +1,10 @@
+<% content_for :full_page_content do %>
+  <%= react_component("CaseDistributionTest", props: {
+    userDisplayName: current_user.display_name,
+    dropdownUrls: dropdown_urls,
+    applicationUrls: application_urls,
+    feedbackUrl: feedback_url,
+    acdLevers: @acd_levers,
+    acdHistory: @acd_history
+  }) %>
+<% end %>

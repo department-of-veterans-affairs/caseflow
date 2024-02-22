@@ -5,6 +5,7 @@
 # to report on a user's activity.
 class UserReporter
   attr_reader :user_ids
+
   cattr_accessor :models_with_user_id
 
   def initialize(css_id)

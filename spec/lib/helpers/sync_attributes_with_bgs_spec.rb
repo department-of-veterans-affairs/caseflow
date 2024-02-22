@@ -9,7 +9,7 @@ describe SyncAttributesWithBGS::VeteranCacheUpdater do
     let(:file_number) { "dummy-file-number" }
 
     it "sets RequestStore current_user" do
-      expect { run_by_file_number }.to change { RequestStore[:current_user] } .from(nil).to(User.system_user)
+      expect { run_by_file_number }.to change { RequestStore[:current_user] }.from(nil).to(User.system_user)
     end
 
     it "attempts to find veteran by file_number" do
@@ -49,7 +49,7 @@ describe SyncAttributesWithBGS::PersonCacheUpdater do
     let(:participant_id) { "12345678" }
 
     it "sets RequestStore current_user" do
-      expect { run_by_participant_id }.to change { RequestStore[:current_user] } .from(nil).to(User.system_user)
+      expect { run_by_participant_id }.to change { RequestStore[:current_user] }.from(nil).to(User.system_user)
     end
 
     it "attempts to find person by participant_id" do

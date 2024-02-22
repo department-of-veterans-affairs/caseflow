@@ -386,19 +386,19 @@ exports[`IssueRemandReasonsForm AMA renders correctly by default 1`] = `
             </div>
           </div>
           <div
-            class="checkbox-wrapper-issue-1-inadequate_opinion"
+            class="checkbox-wrapper-issue-1-inadequate_medical_opinion"
           >
             <div
               class="cf-form-checkbox"
             >
               <input
-                aria-label="issue-1-inadequate_opinion"
-                id="issue-1-inadequate_opinion"
-                name="issue-1-inadequate_opinion"
+                aria-label="issue-1-inadequate_medical_opinion"
+                id="issue-1-inadequate_medical_opinion"
+                name="issue-1-inadequate_medical_opinion"
                 type="checkbox"
               />
               <label
-                for="issue-1-inadequate_opinion"
+                for="issue-1-inadequate_medical_opinion"
               >
                 <span
                   class=""

@@ -16,7 +16,7 @@ TMP_RSPEC_XML_REPORT = "tmp/rspec_#{CI_NODE}.xml"
 FINAL_RSPEC_XML_REPORT = "rspec_final_results_#{CI_NODE}.xml"
 
 KnapsackPro::Adapters::RSpecAdapter.bind
-#Was for GHA XML Report that is no longer being generated Lines 13-24
+# Was for GHA XML Report that is no longer being generated Lines 13-24
 KnapsackPro::Hooks::Queue.after_subset_queue do |_queue_id, _subset_queue_id|
   if File.exist?(TMP_RSPEC_XML_REPORT)
     FileUtils.mv(TMP_RSPEC_XML_REPORT, FINAL_RSPEC_XML_REPORT)
@@ -74,6 +74,7 @@ RSpec.configure do |config|
 
   config.before(:each) do
     @spec_time_zone = Time.zone
+    Seeds::CaseDistributionLevers.new.seed!
   end
 
   config.after(:each) do
