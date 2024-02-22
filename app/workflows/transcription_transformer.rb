@@ -2,30 +2,44 @@
 
 require "webvtt"
 require "rtf"
+require "csv"
 
 # Workflow for converting VTT transcription files to RTF
 class TranscriptionTransformer
   class FileConversionError < StandardError; end
 
-  def initialize(vtt_path)
+  def initialize(vtt_path, hearing_info)
     @vtt_path = vtt_path
-    @rtf_path = vtt_path.gsub("vtt", "rtf")
+    @error_count = 0
+    @hearing_info = hearing_info
+    @length = 0
   end
 
   def call
-    return @rtf_path if File.exist?(@rtf_path)
-
-    convert_to_rtf(@vtt_path)
+    paths = [convert_to_rtf(@vtt_path)]
+    csv_path = @vtt_path.gsub("vtt", "csv")
+    if File.exist?(csv_path)
+      paths.push(csv_path)
+    elsif @error_count > 0
+      paths.push(build_csv(csv_path, @error_count, @length, @hearing_info))
+    end
+    paths
   end
 
   private
 
   # Convert vtt file to rtf or csv if there is an error
-  # path - the file path of the vtt file
+  # Params: path - the file path of the vtt file
   # Returns the file path of the newly converted file
   def convert_to_rtf(path)
+    rtf_path = path.gsub("vtt", "rtf")
+    return rtf_path if File.exist?(rtf_path)
+
     begin
+      converted_file = File.open(path, "r") { |io| io.read.encode("UTF-8", invalid: :replace, replace: "...") }
+      File.open(path, "w") { |file| file.write(converted_file) }
       vtt = WebVTT.read(path)
+      @length = vtt.actual_total_length
       doc = RTF::Document.new(RTF::Font.new(RTF::Font::ROMAN, "Times New Roman"))
       doc.footer = RTF::FooterNode.new(doc, RTF::FooterNode::UNIVERSAL)
       doc.style.left_margin = 1300
@@ -34,15 +48,15 @@ class TranscriptionTransformer
       doc.page_break
       create_transcription_pages(vtt, doc)
       raw_doc = create_footer_and_spacing(doc)
-      File.open(@rtf_path, "w") { |file| file.write(raw_doc) }
-      @rtf_path
+      File.open(rtf_path, "w") { |file| file.write(raw_doc) }
+      rtf_path
     rescue StandardError
       raise FileConversionError
     end
   end
 
   # Create cover page
-  # document - the document object
+  # Params: document - the document object
   # Returns the document with the cover page
   def create_cover_page(document)
     border_width = 40
@@ -58,8 +72,9 @@ class TranscriptionTransformer
   end
 
   # Create the text pages on the file
-  #     transcript - the original vtt file
-  #     document - the document object
+  # Params:
+  #       transcript - the original vtt file
+  #       document - the document object
   # Returns the document with the transcription pages
   def create_transcription_pages(transcript, document)
     styles = {}
@@ -79,30 +94,27 @@ class TranscriptionTransformer
   end
 
   # Format the transcript by consolidating speakers who talk multiple times in a row
-  # transcript - the original vtt file
+  # Params: transcript - the original vtt file
   # Returns the compressed transcript
   def format_transcript(transcript)
     compressed_transcript = []
     prev_id = "<PLACEHOLDER> This is not anyones name."
     index = -1
     transcript.cues.each do |cue|
-      identifier = cue.identifier.strip.scan(/[a-zA-Z]+/).join(" ")
+      identifier = cue.identifier&.strip&.scan(/[a-zA-Z]+/)&.join(" ") || ""
       name = (identifier == "") ? "Unknown" : identifier
-      if name.match?(/#{prev_id}/)
-        compressed_transcript[index][:text] += " " + cue.text
-      elsif cue.text.strip != ""
-        prev_id = name
-        cue.identifier = name
-        compressed_transcript.push(identifier: name, text: cue.text)
-        index += 1
-      end
+      original_text = cue.text
+      @error_count += original_text.scan("[...]").size
+      prev_id = name
+      compressed_transcript.push(identifier: name, text: original_text)
+      index += 1
     end
 
     compressed_transcript
   end
 
   # create the footer
-  # document - the document object
+  # Params: document - the document object
   # returns the document with the footer
   def create_footer_and_spacing(document)
     document.footer << "Insert Veteran's Last Name, First Name, MI, Claim No"
@@ -114,8 +126,9 @@ class TranscriptionTransformer
   end
 
   # streamlines adding line breaks
-  #     row - the current row in the document
-  #     count - amount of line breaks to add
+  # Params:
+  #       row - the current row in the document
+  #       count - amount of line breaks to add
   def insert_line_breaks(row, count)
     i = 0
     while i < count
@@ -124,9 +137,26 @@ class TranscriptionTransformer
     end
   end
 
+  # Builds csv which captures error and details of vtt file
+  # Params: count - count of how many inaudibles were found
+  #         length - total length of meeting
+  #         hearing_info - object containing info about the hearing
+  # Returns the created csv
+  def build_csv(path, count, length, hearing_info)
+    filename = path.split("/").last.sub(".csv", "")
+    header = %w[length appeal_id hearing_date judge issues filename]
+    length_string = "#{(length / 3600).floor}:#{(length / 60 % 60).floor}:#{(length % 60).floor}"
+    CSV.open(path, "w") do |writer|
+      writer << header
+      writer << [length_string, hearing_info[:appeal_id], hearing_info[:date]&.strftime("%m/%d/%Y"),
+                 hearing_info[:judge]&.upcase, "#{count} inaudible", filename]
+    end
+    path
+  end
+
   # rubocop:disable Metrics/MethodLength
   # Generates the template info for the cover page
-  # row - the table row that the info will be occupying in the doc
+  # Params: row - the table row that the info will be occupying in the doc
   # return the modified cover doc
   def generate_cover_info(row)
     insert_line_breaks(row, 1)

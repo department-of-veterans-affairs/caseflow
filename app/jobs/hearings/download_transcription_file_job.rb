@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require "open-uri"
-require "csv"
 
 # Downloads transcription file from Webex using temporary download link and uploads to S3
 # - Download link passed to this job from GetRecordingDetailsJob
@@ -30,7 +29,6 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   end
 
   retry_on(TranscriptionTransformer::FileConversionError, wait: 10.seconds) do |job, exception|
-    job.build_csv_and_upload_to_s3!(exception)
     job.transcription_file.clean_up_tmp_location
     # TO IMPLEMENT: SEND EMAIL TO VA OPS TEAM
     job.log_error(exception)
@@ -71,17 +69,6 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
       job_id: job_id
     }
     Raven.capture_exception(error, extra: extra)
-  end
-
-  # Purpose: If retries of conversion of vtt to rtf fail, builds csv which captures error and details of vtt file.
-  #          Uploads csv file to S3.
-  #
-  # Params: exception - Error object
-  def build_csv_and_upload_to_s3!(exception)
-    build_csv_from_error(exception)
-    csv_file = find_or_create_transcription_file(file_name.gsub("vtt", "csv"))
-    csv_file.upload_to_s3!
-    csv_file.clean_up_tmp_location
   end
 
   private
@@ -143,7 +130,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   #
   # Returns: TranscriptionFile object
   def find_or_create_transcription_file(file_name_arg = file_name)
-    TranscriptionFile.find_or_create_by(
+    Hearings::TranscriptionFile.find_or_create_by(
       file_name: file_name_arg,
       hearing_id: hearing.id,
       hearing_type: hearing.class.name,
@@ -163,28 +150,13 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   # Returns: integer value of 1 if tmp file deleted after successful upload
   def convert_to_rtf_and_upload_to_s3!
     log_info("Converting file #{file_name} to rtf...")
-    rtf_file_path = @transcription_file.convert_to_rtf!
-    file_name = rtf_file_path.split("/").last
-    rtf_file = find_or_create_transcription_file(file_name)
-
-    log_info("Successfully converted #{file_name} to rtf. Uploading to S3...")
-    rtf_file.upload_to_s3!
-    rtf_file.clean_up_tmp_location
-  end
-
-  # Purpose: If retries of conversion of vtt to rtf fail, builds csv which captures error and details of vtt file
-  #
-  # Params: error - Error object
-  def build_csv_from_error(error)
-    return unless @transcription_file.file_type == "vtt"
-
-    timestamp = Time.zone.now.to_s.sub("\sUTC", "")
-    file_date = File.ctime(@transcription_file.tmp_location).to_s.split(" ").first
-    csv_tmp_location = @transcription_file.tmp_location.gsub("vtt", "csv")
-    header = %w[file_name file_date section_timestamp error_encountered]
-    CSV.open(csv_tmp_location, "w") do |writer|
-      writer << header
-      writer << [file_name, file_date, timestamp, error.to_s]
+    file_paths = @transcription_file.convert_to_rtf!
+    file_paths.each do |file_path|
+      output_file_name = file_path.split("/").last
+      output_file = find_or_create_transcription_file(output_file_name)
+      log_info("Successfully converted #{file_name} to rtf. Uploading #{output_file.file_type} to S3...")
+      output_file.upload_to_s3!
+      output_file.clean_up_tmp_location
     end
   end
 
