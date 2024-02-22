@@ -21,6 +21,7 @@ class TaskSorter
     fail(Caseflow::Error::MissingRequiredProperty, message: errors.full_messages.join(", ")) unless valid?
   end
 
+  # rubocop:disable Metrics/AbcSize
   def sorted_tasks
     return tasks unless tasks.any?
 
@@ -37,6 +38,7 @@ class TaskSorter
       tasks.with_assignees.with_assigners.with_cached_appeals.order(order_clause)
     end
   end
+  # rubocop:enable Metrics/AbcSize
 
   private
 

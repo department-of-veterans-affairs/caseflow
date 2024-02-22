@@ -241,9 +241,8 @@ export const veteranDetails = () => {
 
   return {
     header: 'Veteran Details',
-    name: QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
     label: 'Veteran Details',
-    // enableFilter: true,
+    name: QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
     backendCanSort: true,
     getSortValue: (task) => task.veteranDetails,
     valueFunction: (task) => {

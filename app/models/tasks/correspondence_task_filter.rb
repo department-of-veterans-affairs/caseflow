@@ -31,6 +31,10 @@ class CorrespondenceTaskFilter < TaskFilter
     end
   end
 
+  def filter_by_task(task_type)
+    tasks.where("type = (?)", task_type)
+  end
+
   def filtered_tasks
     va_dor_params = filter_params.select { |param| param.include?("col=vaDor") }
     task_column_params = filter_params.select { |param| param.include?("col=completedDateColumn") }
@@ -51,11 +55,10 @@ class CorrespondenceTaskFilter < TaskFilter
   private
 
   def filter_between_dates(start_date, end_date)
-    tasks.joins(:appeal).where(
-      "correspondences.va_date_of_receipt > ? AND correspondences.va_date_of_receipt < ?",
-      Time.zone.parse(start_date),
-      Time.zone.parse(end_date)
-    )
+    tasks.joins(:appeal)
+      .where("correspondences.va_date_of_receipt > ? AND correspondences.va_date_of_receipt < ?",
+             Time.zone.parse(start_date),
+             Time.zone.parse(end_date))
   end
 
   def filter_before_date(date)
