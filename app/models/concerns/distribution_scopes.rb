@@ -58,7 +58,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       .where(
         "appeals.stream_type != ? OR distribution_task.assigned_at <= ? OR original_judge_task.assigned_to_id in (?)",
         Constants.AMA_STREAM_TYPES.court_remand,
-        Constants.DISTRIBUTION.cavc_affinity_days.days.ago,
+        CaseDistributionLever.cavc_affinity_days.days.ago,
         JudgeTeam.judges_with_exclude_appeals_from_affinity
       )
   end
@@ -77,7 +77,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   def non_genpop_for_judge(judge)
     joins(with_assigned_distribution_task_sql)
       .with_original_appeal_and_judge_task
-      .where("distribution_task.assigned_at > ?", Constants.DISTRIBUTION.cavc_affinity_days.days.ago)
+      .where("distribution_task.assigned_at > ?", CaseDistributionLever.cavc_affinity_days.days.ago)
       .where(original_judge_task: { assigned_to_id: judge&.id })
   end
 
@@ -117,7 +117,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   def tied_to_distribution_judge(judge)
     joins(with_assigned_distribution_task_sql)
       .where(hearings: { disposition: "held", judge_id: judge.id })
-      .where("distribution_task.assigned_at > ?", Constants::DISTRIBUTION["hearing_case_affinity_days"].days.ago)
+      .where("distribution_task.assigned_at > ?", CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
   end
 
   def tied_to_ineligible_judge
@@ -125,11 +125,16 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       .where("1 = ?", FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ? 1 : 0)
   end
 
+  def tied_to_judges_with_exclude_appeals_from_affinity
+    where(hearings: { disposition: "held", judge_id: JudgeTeam.judges_with_exclude_appeals_from_affinity })
+      .where("1 = ?", FeatureToggle.enabled?(:acd_exclude_from_affinity) ? 1 : 0)
+  end
+
   # If an appeal has exceeded the affinity, it should be returned to genpop.
   def exceeding_affinity_threshold
     joins(with_assigned_distribution_task_sql)
       .where(hearings: { disposition: "held" })
-      .where("distribution_task.assigned_at <= ?", Constants::DISTRIBUTION["hearing_case_affinity_days"].days.ago)
+      .where("distribution_task.assigned_at <= ?", CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
   end
 
   # Historical note: We formerly had not_tied_to_any_active_judge until CASEFLOW-1928,

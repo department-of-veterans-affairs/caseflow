@@ -112,7 +112,7 @@ describe ByDocketDateDistribution, :all_dbs do
 
       # @nonpriority_iterations is limited to 10 in the by_docket_date_distribution file
       expect(by_docket_date_distribution_module.instance_variable_get(:@nonpriority_iterations))
-        .to eq @new_acd.batch_size
+        .to eq 2
       expect(return_array.empty?).to be true
     end
   end

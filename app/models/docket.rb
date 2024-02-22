@@ -9,7 +9,7 @@ class Docket
     fail Caseflow::Error::MustImplementInSubclass
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   # :reek:LongParameterList
   def appeals(priority: nil, genpop: nil, ready: nil, judge: nil)
     fail "'ready for distribution' value cannot be false" if ready == false
@@ -28,7 +28,7 @@ class Docket
 
     scope.order("appeals.receipt_date")
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def count(priority: nil, ready: nil)
     # The underlying scopes here all use `group_by` statements, so calling
@@ -36,6 +36,11 @@ class Docket
     # can pluck the ids and ask for the size of the resulting array.
     # See the docs for ActiveRecord::Calculations
     appeals(priority: priority, ready: ready).ids.size
+  end
+
+  # currently this is used for reporting needs
+  def ready_to_distribute_appeals
+    docket_appeals.active.ready_for_distribution
   end
 
   def genpop_priority_count
