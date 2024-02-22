@@ -25,6 +25,8 @@ class Appeal < DecisionReview
   has_many :email_recipients, class_name: "HearingEmailRecipient"
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
   has_many :vbms_uploaded_documents, as: :appeal
+  has_many :correspondences_appeals
+  has_many :correspondences, through: :correspondences_appeals
 
   # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents, as: :appeal
@@ -254,6 +256,28 @@ class Appeal < DecisionReview
     end
   end
 
+  # :reek:RepeatedConditionals
+  # decision issue status overrules request issues/special issue list for both mst and pact
+  def mst?
+    return false unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user])
+
+    return decision_issues.any?(&:mst_status) unless decision_issues.empty?
+
+    request_issues.active.any?(&:mst_status) ||
+      (special_issue_list &&
+        special_issue_list.created_at < "2023-06-01".to_date &&
+        special_issue_list.military_sexual_trauma)
+  end
+
+  # :reek:RepeatedConditionals
+  def pact?
+    return false unless FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
+
+    return decision_issues.any?(&:pact_status) unless decision_issues.empty?
+
+    request_issues.active.any?(&:pact_status)
+  end
+
   # Returns the most directly responsible party for an appeal when it is at the Board,
   # mirroring Legacy Appeals' location code in VACOLS
   def assigned_to_location
@@ -280,6 +304,7 @@ class Appeal < DecisionReview
     AppealStatusApiDecorator.new(self)
   end
 
+  # :reek:RepeatedConditionals
   def active_request_issues_or_decision_issues
     decision_issues.empty? ? active_request_issues : fetch_all_decision_issues
   end
@@ -351,6 +376,7 @@ class Appeal < DecisionReview
     dup_remand&.save
   end
 
+  # :reek:RepeatedConditionals
   # clone issues clones request_issues the user selected
   # and anydecision_issues/decision_request_issues tied to the request issue
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
@@ -470,7 +496,7 @@ class Appeal < DecisionReview
     end
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def clone_task_tree(parent_appeal, user_css_id)
     # get the task tree from the parent
     parent_ordered_tasks = parent_appeal.tasks.order(:created_at)
@@ -505,9 +531,9 @@ class Appeal < DecisionReview
       break if parent_appeal.tasks.count == tasks.count
     end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
-  # clone_task is used for splitting an appeal, tie to css_id for split
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
+  # clone_task is used for splitting an appeal, tie to css_id for split
   def clone_task(original_task, user_css_id)
     # clone the task
     dup_task = original_task.amoeba_dup
@@ -628,7 +654,7 @@ class Appeal < DecisionReview
     conditionally_set_aod_based_on_age
     # One of the AOD motion reasons is 'age'. Keep interrogation of any motions separate from `aod_based_on_age`,
     # which reflects `claimant.advanced_on_docket_based_on_age?`.
-    aod_based_on_age || claimant&.advanced_on_docket_motion_granted?(self)
+    aod_based_on_age || AdvanceOnDocketMotion.granted.for_appeal(self).any?
   end
 
   # Prefer aod? over aod going forward, as this function returns a boolean
@@ -806,7 +832,7 @@ class Appeal < DecisionReview
 
   def set_target_decision_date!
     if direct_review_docket?
-      update!(target_decision_date: receipt_date + Constants.DISTRIBUTION.direct_docket_time_goal.days)
+      update!(target_decision_date: receipt_date + CaseDistributionLever.ama_direct_review_docket_time_goals.days)
     end
   end
 
@@ -922,6 +948,14 @@ class Appeal < DecisionReview
     end
     return false if relevant_tasks.any?(&:open?)
     return true if relevant_tasks.all?(&:closed?)
+  end
+
+  def is_legacy?
+    false
+  end
+
+  def open_cavc_task
+    CavcTask.open.where(appeal_id: self.id).any?
   end
 
   private

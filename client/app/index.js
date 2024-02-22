@@ -43,6 +43,7 @@ import Error403 from 'app/errors/Error403';
 import Unauthorized from 'app/containers/Unauthorized';
 import OutOfService from 'app/containers/OutOfService';
 import Feedback from 'app/containers/Feedback';
+import UnderConstruction from 'app/containers/UnderConstruction';
 import Login from 'app/login';
 import TestUsers from 'app/test/TestUsers';
 import TestData from 'app/test/TestData';
@@ -57,6 +58,8 @@ import Inbox from 'app/inbox';
 import Explain from 'app/explain';
 import MPISearch from 'app/mpi/MPISearch';
 import Admin from 'app/admin';
+import CaseDistribution from 'app/caseDistribution';
+import CaseDistributionTest from 'app/caseDistribution/test';
 import uuid from 'uuid';
 
 const COMPONENTS = {
@@ -80,6 +83,7 @@ const COMPONENTS = {
   OutOfService,
   Unauthorized,
   Feedback,
+  UnderConstruction,
   Hearings,
   PerformanceDegradationBanner,
   Help,
@@ -91,7 +95,9 @@ const COMPONENTS = {
   Inbox,
   Explain,
   MPISearch,
-  Admin
+  Admin,
+  CaseDistribution,
+  CaseDistributionTest
 };
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
@@ -175,7 +181,8 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
         './2.0/router',
         './explain/index',
         './mpi/MPISearch',
-        './admin/index'
+        './admin/index',
+        './caseDistribution/index'
       ],
       () => renderApp(component)
     );

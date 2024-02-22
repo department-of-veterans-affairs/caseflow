@@ -9,7 +9,7 @@ class ApplicationController < ApplicationBaseController
   before_action :set_raven_user
   before_action :verify_authentication
   before_action :set_paper_trail_whodunnit
-  before_action :deny_vso_access, except: [:unauthorized, :feedback]
+  before_action :deny_vso_access, except: [:unauthorized, :feedback, :under_construction]
   before_action :set_no_cache_headers
 
   rescue_from StandardError do |e|
@@ -153,6 +153,14 @@ class ApplicationController < ApplicationBaseController
     }
   end
 
+  def case_distribution_url
+    {
+      title: "Case Distribution Controls",
+      link: "/case-distribution-controls",
+      sort_order: 6
+    }
+  end
+
   def hearing_application_url
     {
       title: "Hearings",
@@ -204,6 +212,8 @@ class ApplicationController < ApplicationBaseController
     admin_urls = []
     admin_urls.concat(manage_teams_menu_items) if current_user&.administered_teams&.any?
     admin_urls.push(manage_users_menu_item) if current_user&.can_view_user_management?
+    admin_urls.push(case_distribution_url) if current_user&.organizations&.any?(&:users_can_view_levers?)
+
     if current_user&.can_view_team_management? || current_user&.can_view_judge_team_management?
       admin_urls.unshift(manage_all_teams_menu_item)
     end

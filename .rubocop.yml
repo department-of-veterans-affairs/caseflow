@@ -4,10 +4,7 @@ require:
 
 AllCops:
   Exclude:
-    - 'db/migrate/*'
-    - 'db/schema.rb'
-    - 'db/etl/migrate/*'
-    - 'db/etl/schema.rb'
+    - 'db/**/*'
     - 'config/**/*'
     - 'script/**/*'
     - 'vendor/**/*'
@@ -15,8 +12,8 @@ AllCops:
     - 'client/node_modules/**/*'
     - 'app/mappers/zip_code_to_lat_lng_mapper.rb'
     - 'db/seeds/*'
-  TargetRailsVersion: 5.1
-  TargetRubyVersion: 2.5
+  TargetRailsVersion: 5.2.8.2
+  TargetRubyVersion: 2.7.3
   UseCache: true
 
 Bundler/OrderedGems:
@@ -38,6 +35,9 @@ Style/Documentation:
   Enabled: false
 
 Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/PercentLiteralDelimiters:
   Enabled: false
 
 Metrics/BlockLength:

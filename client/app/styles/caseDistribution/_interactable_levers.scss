@@ -1,0 +1,352 @@
+
+.lever-container {
+  width: 100%;
+  border: 1px solid $color-gray-warm-light;
+  border-radius: 4px;
+  margin-top: 20px;
+  display: inline-block;
+
+  h4 {
+    margin: 0;
+    background: $color-gray-warm-light;
+    padding: 10px 20px;
+  }
+
+  strong {
+    font-size: 19px;
+    line-height: 1.5em;
+    margin-bottom: 5px;
+    margin-top: 5px;
+  }
+}
+
+.lever-content {
+  width: 100%;
+  padding-top: 20px;
+  padding-bottom: 0;
+  box-sizing: border-box;
+}
+
+.lever-top {
+  p {
+    margin: 10px 0;
+    font-size: 19px;
+    line-height: 1.5em;
+    margin-bottom: 5px;
+    margin-top: 5px;
+  }
+}
+
+.active-lever {
+  width: 100%;
+  padding: 15px 0;
+  border-bottom: 1px solid $color-gray-warm-light;
+  box-sizing: border-box;
+  font-size: 19px;
+  line-height: 1.5em;
+  margin-bottom: 5px;
+}
+
+.lever-head {
+  width: 100%;
+  border-bottom: 1px solid $color-gray-warm-light;
+  display: inline-block;
+  padding-bottom: 15px;
+}
+
+.lever-left {
+  width: 70%;
+  display: inline-block;
+  margin-right: 30px;
+  font-size: 19px;
+  line-height: 1.5em;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  vertical-align: middle;
+}
+
+.affinity-lever-text {
+  margin: 0;
+}
+
+.lever-right {
+  width: 25%;
+  vertical-align: middle;
+  display: inline-block;
+  margin-bottom: 5px;
+  margin-top: 3px;
+
+  input {
+    width: 70px;
+    height: 45px;
+    margin-right: 10px;
+    display: inline-block;
+    text-align: right;
+    font-size: 19px;
+    line-height: 1.5em;
+    margin-bottom: 5px;
+    margin-top: 5px;
+  }
+}
+
+.lever-unit {
+  width: auto;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+.docker-lever-table {
+  margin-top: 20px;
+}
+
+.docket-lever-left {
+  vertical-align: middle;
+  width: 36%;
+  margin-right: 0;
+}
+
+.lever-middle {
+  width: 36%;
+  display: inline-block;
+  vertical-align: middle;
+
+  input {
+    width: 65px;
+    height: 45px;
+    margin-right: 10px;
+    display: inline-block;
+    text-align: right;
+    font-size: 19px;
+    line-height: 1.5em;
+    margin-bottom: 12px;
+    margin-top: 12px;
+  }
+
+  label {
+    margin-right: 10px;
+    display: inline-block;
+    text-align: right;
+    font-size: 19px;
+    line-height: 1.5em;
+    margin-bottom: 12px;
+    margin-top: 12px;
+  }
+}
+
+.docket-lever-right {
+  vertical-align: middle;
+
+  button {
+    vertical-align: middle;
+    display: inline-block;
+  }
+}
+
+.lever-disabled {
+  opacity: 0.72;
+  color: $color-gray;
+}
+
+.combined-radio-input {
+  input {
+    width: 70px;
+    height: 45px;
+    margin-right: 10px;
+    font-size: 19px;
+    line-height: 1.5em;
+    display: inline-block;
+    text-align: right;
+    margin-left: 28px;
+    margin-bottom: 10px;
+  }
+}
+
+.outline-radio-input {
+  input {
+    outline: none;
+  }
+}
+
+.toggle-input-hide {
+  display: none;
+}
+
+.toggle-switch-input {
+  width: auto;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.footer-styling {
+  margin: 0;
+  padding-top: 20px;
+}
+
+.number-field-input {
+  font-size: 19px;
+  line-height: 1.5em;
+  margin-bottom: 5px;
+  vertical-align: middle;
+}
+
+.modal-table-styling {
+  padding: 18px 0;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  border-color: $color-gray-lighter;
+  color: $color-base;
+  vertical-align: text-top;
+  font-size: 16px;
+  line-height: 1.3em/25px;
+  width: 20%;
+}
+
+
+.modal-table-header-styling {
+  border-left: 0;
+  border-right: 0;
+  border-top: 0;
+  padding-left: 0;
+  color: $color-base;
+  border-color: $color-gray-lighter;
+  font-family: Source Sans Pro;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.3em/25px;
+}
+
+.modal-table-left-styling {
+  width: 60%;
+}
+
+.modal-table-right-styling {
+  width: 20%;
+}
+
+.updated-modal-styling>div>div {
+  padding-bottom: 0;
+}
+
+.disabled-text {
+  color: $color-base;
+  opacity: 100%;
+}
+
+.lever-active {
+  color: $color-base;
+  opacity: 100%;
+  margin-top: 0;
+}
+
+.lever-alert-banner {
+  background-color: $color-gray-lightest;
+  background-position: 2rem 2rem;
+  background-size: 5.2rem;
+  padding-left: .75rem;
+  padding-top: 1em;
+  padding-bottom: 0.02rem;
+  position: relative;
+  margin-top: 1.5em;
+  align-items: center;
+  text-align: left;
+
+  h3 {
+    font-size: 24px;
+    margin-bottom: 0.1rem;
+    padding-left: 3em;
+  }
+
+  p {
+    font-size: 17px;
+    margin-top: .1rem;
+    padding-left: 4.25em;
+  }
+
+  a {
+    color: $color-primary-darker;
+
+    &:focus,
+
+    &:hover {
+      color: $color-primary-darkest;
+    }
+  }
+
+  ul {
+    margin-bottom: 0;
+    margin-top: 1rem;
+    padding-left: 1rem;
+  }
+
+  &::before {
+    background-color: $color-gray;
+    content: '';
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 1rem;
+  }
+
+  &-icon {
+    display: flex;
+    align-items: center;
+    padding-right: 1rem;
+  }
+
+  &-body {
+    display: table-cell;
+    vertical-align: top;
+  }
+
+  &-heading {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+
+  &-text {
+    font-family: 'Source Sans Pro', 'Helvetica Neue', 'Helvetica', 'Roboto', 'Arial', sans-serif;
+    margin-bottom: 0;
+    margin-top: 0;
+
+    &:only-child {
+      margin-bottom: 1rem;
+      padding-top: 0.5rem;
+    }
+  }
+
+  &-success {
+    background-color: $color-green-lightest;
+    background-image: url('~uswds/src/img/alerts/success.svg');
+
+    ::before {
+      background-color: $color-green;
+    }
+
+    .leverAlertBanner-body {
+      padding-left: 5rem;
+    }
+  }
+
+  &-error {
+    background-color: $color-secondary-lightest;
+    background-image: url('~uswds/src/img/alerts/error.svg');
+
+    ::before {
+      background-color: $color-secondary;
+    }
+
+    .leverAlertBanner-body {
+      padding-left: 5rem;
+    }
+  }
+
+  &-no_icon {
+    background-image: none;
+  }
+
+  &-paragraph {
+    width: 66ch;
+  }
+}
