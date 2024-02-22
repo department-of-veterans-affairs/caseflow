@@ -13,7 +13,8 @@ export const pageMetricData = [
   },
   message: 'Storing PDF page',
   product: 'reader',
-  type: 'performance'
+  type: 'performance',
+  sessionId: '123456'
   },
   true
 ];

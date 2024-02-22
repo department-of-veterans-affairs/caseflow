@@ -38,7 +38,6 @@ export class PdfPage extends React.PureComponent {
     this.measureTimeStartMs = null;
   }
 
-
   getPageContainerRef = (pageContainer) => (this.pageContainer = pageContainer);
 
   getCanvasRef = (canvas) => (this.canvas = canvas);
@@ -221,6 +220,7 @@ export class PdfPage extends React.PureComponent {
           numPagesInDoc: this.props.pdfDocument.numPages,
           prefetchDisabled: this.props.featureToggles.prefetchDisabled
         },
+        sessionId: this.props.metricsIdentifier
       };
 
       const pageAndTextFeatureToggle = this.props.featureToggles.metricsPdfStorePages;
