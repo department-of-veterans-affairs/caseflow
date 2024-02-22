@@ -94,9 +94,7 @@ feature "SpecialtyCaseTeamQueue", :all_dbs do
         create(:user, :judge, :with_vacols_judge_record, full_name: "Judge Dredd")
       end
 
-      let(:sct_assign_task) { sct_action_required_tasks.first }
-
-      let(:appeal) { sct_assign_task.appeal }
+      let(:appeal) { sct_action_required_tasks.first.appeal }
 
       let(:case_details_page_url) { "/queue/appeals/#{appeal.uuid}" }
 
