@@ -10,7 +10,7 @@ class ExternalApi::WebexService::RecordingDetailsResponse < ExternalApi::WebexSe
   end
 
   def vtt_link
-    data["temporaryDirectDownloadLinks"]["transcriptDownloadLink"]
+    data["temporaryDirectDownloadLinks"]["transcriptionDownloadLink"]
   end
 
   def mp3_link

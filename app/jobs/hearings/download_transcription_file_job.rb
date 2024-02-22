@@ -48,7 +48,6 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     @file_name = file_name
     @transcription_file = find_or_create_transcription_file
     ensure_hearing_held
-
     download_file_to_tmp(download_link)
     @transcription_file.upload_to_s3 if @transcription_file.date_upload_aws.nil?
     maybe_convert_vtt_to_rtf_and_upload_to_s3
@@ -94,7 +93,6 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   # Returns: Updated @transcription_file
   def download_file_to_tmp(link)
     return if File.exist?(@transcription_file.tmp_location)
-
     URI(link).open do |download|
       IO.copy_stream(download, @transcription_file.tmp_location)
     end
@@ -121,7 +119,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   def parse_hearing
     identifiers = file_name.split(".").first
     hearing_id = identifiers.split("_")[1]
-    hearing_type = identifiers.split("_")[2]
+    hearing_type = identifiers.split("_").last.split("-").first
     hearing_type.constantize.find(hearing_id)
   rescue StandardError => error
     raise FileNameError, "Encountered error #{error} when attempting to parse hearing from file name '#{file_name}'"

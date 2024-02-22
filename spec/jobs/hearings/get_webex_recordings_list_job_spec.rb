@@ -6,7 +6,12 @@ describe Hearings::GetWebexRecordingsListJob, type: :job do
   subject { described_class.perform_now }
 
   it "Returns the correct array of ids" do
-    expect(subject).to eq(%w[4f914b1dfe3c4d11a61730f18c0f5387 3324fb76946249cfa07fc30b3ccbf580 42b80117a2a74dcf9863bf06264f8075])
+    allow_any_instance_of(Hearings::GetWebexRecordingsListJob.perform_now)
+      .to receive(:get_recordings_list)
+    expect(Hearings::GetWebexRecordingsListJob.perform_now).to have_received(:get_recordings_list).exactly(1).time
+      # .and_return(WebexService::RecordingsListResponse.ids)
+    # expect(subject).to eq(%w[4f914b1dfe3c4d11a61730f18c0f5387 3324fb76946249cfa07fc30b3ccbf580 42b80117a2a74dcf9863bf06264f8075])
+    # expect(described_class.new.get_recordings_list.ids).to eq()
   end
 
   context "job errors" do

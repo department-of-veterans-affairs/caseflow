@@ -19,18 +19,17 @@ class Hearings::GetWebexRecordingsDetailsJob < CaseflowJob
     ensure_current_user_is_set
     topic = get_recording_details(id).topic
 
-    # How can I dry this up
     mp4_link = get_recording_details(id).mp4_link
     mp4_file_name = create_file_name(topic, "mp4")
-    Hearings::DownloadTranscriptionFileJob.new(mp4_link, mp4_file_name)
+    Hearings::DownloadTranscriptionFileJob.new.perform(download_link: mp4_link, file_name: mp4_file_name)
 
     vtt_link = get_recording_details(id).vtt_link
     vtt_file_name = create_file_name(topic, "vtt")
-    Hearings::DownloadTranscriptionFileJob.new(vtt_link, vtt_file_name)
+    Hearings::DownloadTranscriptionFileJob.new.perform(download_link: vtt_link, file_name: vtt_file_name)
 
     mp3_link = get_recording_details(id).mp3_link
     mp3_file_name = create_file_name(topic, "mp3")
-    Hearings::DownloadTranscriptionFileJob.new(mp3_link, mp3_file_name)
+    Hearings::DownloadTranscriptionFileJob.new.perform(download_link: mp3_link, file_name: mp3_file_name)
   end
 
   def log_error(error)
@@ -59,7 +58,12 @@ class Hearings::GetWebexRecordingsDetailsJob < CaseflowJob
   end
 
   def create_file_name(topic, extension)
-    subject = topic.scan(/\d*-\d*_\d*_[A-Za-z]+?(?=-)/).first
+    type = topic.scan(/[A-Za-z]+?(?=-)/).first
+    subject = if type == "Hearing"
+                topic.scan(/\d*-\d*_\d*_[A-Za-z]+?(?=-)/).first
+              else
+                topic.scan(/\d*_\d*_[A-Za-z]+?(?=-)/).first
+              end
     counter = topic.split("-").last
     "#{subject}-#{counter}.#{extension}"
   end

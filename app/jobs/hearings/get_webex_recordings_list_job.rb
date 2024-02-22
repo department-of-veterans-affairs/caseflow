@@ -17,7 +17,7 @@ class Hearings::GetWebexRecordingsListJob < CaseflowJob
   def perform
     ensure_current_user_is_set
     get_recordings_list.ids.each do |n|
-      get_recording_details(n)
+      Hearings::GetWebexRecordingsDetailsJob.new.perform(id: n)
     end
   end
 
@@ -46,9 +46,5 @@ class Hearings::GetWebexRecordingsListJob < CaseflowJob
       api_endpoint: ENV["WEBEX_API_MAIN"],
       query: query
     ).get_recordings_list
-  end
-
-  def get_recording_details(id)
-    Hearings::GetWebexRecordingsDetailsJob.new(id)
   end
 end
