@@ -261,48 +261,54 @@ class AppealsController < ApplicationController
   end
 
   # TODO: Update this to use appeal.veteran_file_number and appeal.claimant.name
+  # TODO: Claimant name might not be correct since everything on case details shows veteran name including
+  # The queue table case details column. It's a bit unfortunate.
   def set_flash_move_to_sct_success_message
-    flash[:custom] = {
-      title: COPY::MOVE_TO_GENERIC_BANNER_SUCCESS_MESSAGE,
-      message: format(
-        COPY::MOVE_TO_SCT_BANNER_MESSAGE,
-        request_issues_update.review.claimant.name,
-        request_issues_update.veteran.file_number,
-        "SCT queue"
-      )
-    }
+    # If original issues were not SCT related, then that means it will be moved to the SCT queue
+    if appeal.sct_appeal? && request_issues_update.before_issues.none?(&:sct_benefit_type?) &&
+       request_issues_update.review.tasks.of_type(:DistributionTask).exists? &&
+       feature_enabled?(:specialty_case_team_distribution)
+      flash[:custom] = {
+        title: COPY::MOVE_TO_GENERIC_BANNER_SUCCESS_MESSAGE,
+        message: format(
+          COPY::MOVE_TO_SCT_BANNER_MESSAGE,
+          request_issues_update.review.claimant.name,
+          request_issues_update.veteran.file_number,
+          "SCT queue"
+        )
+      }
+    end
   end
 
   def set_flash_move_to_distribution_success_message
-    flash[:custom] = {
-      title: COPY::MOVE_TO_SCT_BANNER_TITLE,
-      message: format(
-        COPY::MOVE_TO_GENERIC_BANNER_SUCCESS_MESSAGE,
-        appeal.claimant.name,
-        appeal.veteran_file_number,
-        "regular distribution pool"
-      )
-    }
-  end
-
-  # TODO: Refactor this to fix these code climate issues instead of disabling them
-  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-  def set_flash_success_message
-    # if original issues were not VHA related, then that means it will be moved to the SCT queue
-    if appeal.sct_appeal? && request_issues_update.before_issues.none?(&:sct_benefit_type?) &&
-       request_issues_update.review.tasks.of_type(:DistributionTask).exists? &&
-       FeatureToggle.enabled?(:specialty_case_team_distribution)
-      return set_flash_move_to_sct_success_message
-    end
-
-    # If the request_issues before had sct issue but now the after issues don't then show the message
+    # If the before issues had an SCT issue but the after issues don't then the appeal is moving to distribution
     if request_issues_update.before_issues.any?(&:sct_benefit_type?) &&
        request_issues_update.after_issues.none?(&:sct_benefit_type?) &&
-       appeal.has_distribution_task? &&
-       feature_enabled?(:specialty_case_team_distribution)
-      return set_flash_move_to_distribution_success_message
+       appeal.has_distribution_task? && feature_enabled?(:specialty_case_team_distribution)
+      flash[:custom] = {
+        title: COPY::MOVE_TO_SCT_BANNER_TITLE,
+        message: format(
+          COPY::MOVE_TO_GENERIC_BANNER_SUCCESS_MESSAGE,
+          appeal.claimant.name,
+          appeal.veteran_file_number,
+          "regular distribution pool"
+        )
+      }
     end
+  end
 
+  def set_flash_success_message
+    set_flash_specialty_case_team_message
+
+    set_flash_edit_message unless flash[:custom]
+  end
+
+  def set_flash_specialty_case_team_message
+    set_flash_move_to_sct_success_message
+    set_flash_move_to_distribution_success_message
+  end
+
+  def set_flash_edit_message
     flash[:edited] = if request_issues_update.after_issues.empty?
                        review_removed_message
                      elsif (request_issues_update.after_issues - request_issues_update.withdrawn_issues).empty?
@@ -311,7 +317,6 @@ class AppealsController < ApplicationController
                        review_edited_message
                      end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def render_access_error
     render(Caseflow::Error::ActionForbiddenError.new(

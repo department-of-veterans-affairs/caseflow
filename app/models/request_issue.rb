@@ -318,7 +318,7 @@ class RequestIssue < CaseflowRecord
   end
 
   def sct_benefit_type?
-    benefit_type == "vha"
+    Constants::SPECIALTY_CASE_TEAM_BENEFIT_TYPES.key?(benefit_type)
   end
 
   def description

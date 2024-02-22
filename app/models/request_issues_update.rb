@@ -128,22 +128,10 @@ class RequestIssuesUpdate < CaseflowRecord
 
   # TODO: Cancel task and child subtasks should do this???????
   # It currently relies on the tasks having children and the callback taking care of it.
-  # It does not actually cancel the task
+  # It does not actually cancel the task if the task has no children. Also sometimes relies on on_hold status
   def remove_from_specialty_case_team
     review.tasks.find { |task| task.type == SpecialtyCaseTeamAssignTask.name }.cancelled!
   end
-
-  # TODO: Move this to appeal and use it in both places
-  # def reopen_distribution_task(appeal)
-  #   distribution_task = appeal.tasks.find { |task| task.type == DistributionTask.name }
-  #   distribution_task.update!(status: "assigned", assigned_to: Bva.singleton, assigned_by: current_user)
-  # end
-
-  # TODO: This does not really work...
-  # def remove_appeal_from_current_queue
-  #   review.tasks.reject { |task| %w[RootTask DistributionTask].include?(task.type) }
-  #     .each(&:cancel_task_and_child_subtasks)
-  # end
 
   private
 

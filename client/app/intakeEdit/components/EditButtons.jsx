@@ -14,6 +14,7 @@ import { REQUEST_STATE, VBMS_BENEFIT_TYPES } from '../../intake/constants';
 import SaveAlertConfirmModal from './SaveAlertConfirmModal';
 import COPY from '../../../COPY';
 import { sprintf } from 'sprintf-js';
+import SPECIALTY_CASE_TEAM_BENEFIT_TYPES from 'constants/SPECIALTY_CASE_TEAM_BENEFIT_TYPES';
 
 class SaveButtonUnconnected extends React.Component {
   constructor(props) {
@@ -34,6 +35,7 @@ class SaveButtonUnconnected extends React.Component {
 
   validate = () => {
     // do validation and show modals
+
     let showModals = {
       issueChangeModal: false,
       unidentifiedIssueModal: false,
@@ -43,19 +45,20 @@ class SaveButtonUnconnected extends React.Component {
       moveToDistributionModal: false
     };
 
-    // TODO: Maybe pass this up from the backend so it will make future checks in the front end more DRY
-    const specialtyCaseTeamBenefitTypes = ['vha'];
+    // Specialty Case Team (SCT) logic for movement of appeals based on additional and removal of SCT request issues
+    const specialtyCaseTeamBenefitTypes = Object.keys(SPECIALTY_CASE_TEAM_BENEFIT_TYPES);
+    const addedIssuesHasSCTIssue = this.props.state.addedIssues.some((i) =>
+      specialtyCaseTeamBenefitTypes.includes(i.benefitType));
+    const originalIssuesHasSCTIssue = this.props.originalIssues.some((i) =>
+      specialtyCaseTeamBenefitTypes.includes(i.benefitType));
+    const hasDistributionTaskAndSCTFeatureToggle = this.props.hasDistributionTask &&
+     this.props.specialtyCaseTeamDistribution;
 
-    // TODO: Refactor this to pull these two checks into booleans that can be negated and named better
-    if (this.props.state.addedIssues.some((i) => specialtyCaseTeamBenefitTypes.includes(i.benefitType)) &&
-    !this.props.originalIssues.some((i) => specialtyCaseTeamBenefitTypes.includes(i.benefitType)) &&
-    this.props.hasDistributionTask && this.props.specialtyCaseTeamDistribution) {
+    if (addedIssuesHasSCTIssue && !originalIssuesHasSCTIssue && hasDistributionTaskAndSCTFeatureToggle) {
       showModals.moveToSctModal = true;
     }
 
-    if (!this.props.state.addedIssues.some((i) => specialtyCaseTeamBenefitTypes.includes(i.benefitType)) &&
-    this.props.originalIssues.some((i) => specialtyCaseTeamBenefitTypes.includes(i.benefitType)) &&
-    this.props.hasDistributionTask && this.props.specialtyCaseTeamDistribution) {
+    if (!addedIssuesHasSCTIssue && originalIssuesHasSCTIssue && hasDistributionTaskAndSCTFeatureToggle) {
       showModals.moveToDistributionModal = true;
     }
 
