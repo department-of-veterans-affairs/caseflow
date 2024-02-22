@@ -38,7 +38,7 @@ RSpec.feature("The Correspondence Review Package page") do
   context "Review package form shell" do
     before :each do
       FeatureToggle.enable!(:correspondence_queue)
-      MailTeamSupervisor.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       visit "/queue/correspondence/#{correspondence.uuid}/review_package"
     end
@@ -133,10 +133,10 @@ RSpec.feature("The Correspondence Review Package page") do
     end
   end
 
-  context "Checking VADOR field is enable for Mail Supervisor" do
+  context "Checking VADOR field is enable for InboundOpsTeam" do
     before do
       FeatureToggle.enable!(:correspondence_queue)
-      MailTeamSupervisor.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
       visit "/queue/correspondence/#{correspondence.uuid}/review_package"
     end

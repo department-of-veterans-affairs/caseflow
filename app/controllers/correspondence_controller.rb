@@ -2,6 +2,8 @@
 
 # :reek:RepeatedConditional
 class CorrespondenceController < ApplicationController
+  include RunAsyncable
+
   before_action :verify_correspondence_access
   before_action :verify_feature_toggle
   before_action :correspondence
@@ -95,7 +97,7 @@ class CorrespondenceController < ApplicationController
       correspondence: correspondence,
       package_document_type: correspondence&.package_document_type,
       general_information: general_information,
-      user_can_edit_vador: MailTeamSupervisor.singleton.user_has_access?(current_user),
+      user_can_edit_vador: InboundOpsTeam.singleton.user_has_access?(current_user),
       correspondence_documents: corres_docs.map do |doc|
         WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
       end,
@@ -173,6 +175,39 @@ class CorrespondenceController < ApplicationController
     end
   end
 
+  def auto_assign_correspondences
+    batch = existing_batch_auto_assignment_attempt
+
+    if batch.nil?
+      batch = BatchAutoAssignmentAttempt.create!(
+        user: current_user,
+        status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.started
+      )
+      job_args = {
+        current_user_id: current_user.id,
+        batch_auto_assignment_attempt_id: batch.id
+      }
+
+      begin
+        perform_later_or_now(AutoAssignCorrespondenceJob, job_args)
+      ensure
+        render json: { batch_auto_assignment_attempt_id: batch.id }, status: :ok
+      end
+    else
+      render json: { batch_auto_assignment_attempt_id: batch.id }, status: :ok
+    end
+  end
+
+  def auto_assign_status
+    batch = BatchAutoAssignmentAttempt.find_by!(user: current_user, id: params["batch_auto_assignment_attempt_id"])
+    status_details = {
+      error_message: batch.error_info,
+      status: batch.status,
+      number_assigned: batch.num_packages_assigned
+    }
+    render json: status_details, status: :ok
+  end
+
   private
 
   # :reek:FeatureEnvy
@@ -201,7 +236,7 @@ class CorrespondenceController < ApplicationController
   end
 
   def verify_correspondence_access
-    return true if MailTeamSupervisor.singleton.user_has_access?(current_user) ||
+    return true if InboundOpsTeam.singleton.user_has_access?(current_user) ||
                    MailTeam.singleton.user_has_access?(current_user)
 
     redirect_to "/unauthorized"
@@ -304,5 +339,12 @@ class CorrespondenceController < ApplicationController
   def upload_documents_to_claim_evidence
     rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id, type: ReviewPackageTask.name)
     correspondence_documents_efolder_uploader.upload_documents_to_claim_evidence(correspondence, current_user, rpt)
+  end
+
+  def existing_batch_auto_assignment_attempt
+    @existing_batch_auto_assignment_attempt ||= BatchAutoAssignmentAttempt.find_by(
+      user: current_user,
+      status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.started
+    )
   end
 end

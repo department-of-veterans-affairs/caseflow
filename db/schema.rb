@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_01_25_112635) do
+ActiveRecord::Schema.define(version: 2024_02_12_195552) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -222,6 +222,23 @@ ActiveRecord::Schema.define(version: 2024_01_25_112635) do
     t.index ["appeal_id", "appeal_type"], name: "index_available_hearing_locations_on_appeal_id_and_appeal_type"
     t.index ["updated_at"], name: "index_available_hearing_locations_on_updated_at"
     t.index ["veteran_file_number"], name: "index_available_hearing_locations_on_veteran_file_number"
+  end
+
+  create_table "batch_auto_assignment_attempts", force: :cascade do |t|
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.jsonb "error_info"
+    t.datetime "errored_at"
+    t.integer "num_nod_packages_assigned"
+    t.integer "num_nod_packages_unassigned"
+    t.integer "num_packages_assigned"
+    t.integer "num_packages_unassigned"
+    t.datetime "started_at"
+    t.jsonb "statistics"
+    t.string "status", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false, comment: "Foreign key to users table"
+    t.index ["user_id"], name: "index_baaa_on_user_id"
   end
 
   create_table "batch_processes", primary_key: "batch_id", id: :uuid, default: -> { "uuid_generate_v4()" }, comment: "A generalized table for batching and processing records within caseflow", force: :cascade do |t|
@@ -591,6 +608,16 @@ ActiveRecord::Schema.define(version: 2024_01_25_112635) do
     t.index ["created_by_id"], name: "index_created_by_id"
     t.index ["hearing_day_id"], name: "index_conference_links_on_hearing_day_id"
     t.index ["updated_by_id"], name: "index_updated_by_id"
+  end
+
+  create_table "correspondence_auto_assignment_levers", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.text "description", null: false
+    t.boolean "enabled", default: false, null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.integer "value", null: false
+    t.index ["name"], name: "index_correspondence_auto_assignment_levers_on_name", unique: true
   end
 
   create_table "correspondence_documents", force: :cascade do |t|
@@ -1151,6 +1178,23 @@ ActiveRecord::Schema.define(version: 2024_01_25_112635) do
     t.index ["appeal_id", "appeal_type", "organization_id"], name: "index_ihp_drafts_on_appeal_and_organization"
   end
 
+  create_table "individual_auto_assignment_attempts", force: :cascade do |t|
+    t.bigint "batch_auto_assignment_attempt_id", null: false, comment: "Foreign key to batch_auto_assignment_attempts table"
+    t.datetime "completed_at"
+    t.bigint "correspondence_id", null: false, comment: "Foreign key to correspondences table"
+    t.datetime "created_at", null: false
+    t.datetime "errored_at"
+    t.boolean "nod", default: false, null: false
+    t.datetime "started_at"
+    t.jsonb "statistics"
+    t.string "status", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false, comment: "Foreign key to users table"
+    t.index ["batch_auto_assignment_attempt_id"], name: "index_iaaa_on_batch_auto_assignment_attempt_id"
+    t.index ["correspondence_id"], name: "index_iaaa_on_correspondence_id"
+    t.index ["user_id"], name: "index_iaaa_on_user_id"
+  end
+
   create_table "intakes", id: :serial, comment: "Represents the intake of an form or request made by a veteran.", force: :cascade do |t|
     t.string "cancel_other", comment: "Notes added if a user canceled an intake for any reason other than the stock set of options."
     t.string "cancel_reason", comment: "The reason the intake was canceled. Could have been manually canceled by a user, or automatic."
@@ -1428,6 +1472,28 @@ ActiveRecord::Schema.define(version: 2024_01_25_112635) do
     t.index ["participant_id"], name: "index_participant_id"
     t.index ["sms_notification_external_id"], name: "index_notifications_on_sms_notification_external_id"
     t.index ["sms_notification_status"], name: "index_notifications_on_sms_notification_status"
+  end
+
+  create_table "organization_permissions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "description", null: false, comment: "UX display value"
+    t.boolean "enabled", default: false, null: false, comment: "Whether permission is enabled or disabled"
+    t.bigint "organization_id", null: false, comment: "Foreign key to organizations table"
+    t.bigint "parent_permission_id", comment: "Foreign key to self"
+    t.string "permission", null: false, comment: "Developer friendly value"
+    t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_organization_permissions_on_organization_id"
+    t.index ["parent_permission_id"], name: "index_organization_permissions_on_parent_permission_id"
+  end
+
+  create_table "organization_user_permissions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "organization_permission_id", null: false, comment: "Foreign key to organization_permission table"
+    t.bigint "organizations_user_id", null: false, comment: "Foreign key to organizations_user table"
+    t.boolean "permitted", default: false, null: false, comment: "Whether or not the organization_user has the given permission enabled"
+    t.datetime "updated_at", null: false
+    t.index ["organization_permission_id"], name: "index_on_organization_permission_id"
+    t.index ["organizations_user_id"], name: "index_organization_user_permissions_on_organizations_user_id"
   end
 
   create_table "organizations", force: :cascade do |t|
@@ -2225,6 +2291,7 @@ ActiveRecord::Schema.define(version: 2024_01_25_112635) do
   add_foreign_key "appellant_substitutions", "users", column: "created_by_id"
   add_foreign_key "attorney_case_reviews", "users", column: "attorney_id"
   add_foreign_key "attorney_case_reviews", "users", column: "reviewing_judge_id"
+  add_foreign_key "batch_auto_assignment_attempts", "users"
   add_foreign_key "board_grant_effectuations", "appeals"
   add_foreign_key "board_grant_effectuations", "decision_documents"
   add_foreign_key "board_grant_effectuations", "decision_issues", column: "granted_decision_issue_id"
@@ -2303,6 +2370,9 @@ ActiveRecord::Schema.define(version: 2024_01_25_112635) do
   add_foreign_key "hearings", "users", column: "judge_id"
   add_foreign_key "hearings", "users", column: "updated_by_id"
   add_foreign_key "ihp_drafts", "organizations"
+  add_foreign_key "individual_auto_assignment_attempts", "batch_auto_assignment_attempts"
+  add_foreign_key "individual_auto_assignment_attempts", "correspondences"
+  add_foreign_key "individual_auto_assignment_attempts", "users"
   add_foreign_key "intakes", "users"
   add_foreign_key "intakes", "veterans"
   add_foreign_key "job_notes", "users"
@@ -2327,6 +2397,10 @@ ActiveRecord::Schema.define(version: 2024_01_25_112635) do
   add_foreign_key "nod_date_updates", "users"
   add_foreign_key "non_availabilities", "schedule_periods"
   add_foreign_key "notifications", "notification_events", column: "event_type", primary_key: "event_type"
+  add_foreign_key "organization_permissions", "organization_permissions", column: "parent_permission_id"
+  add_foreign_key "organization_permissions", "organizations"
+  add_foreign_key "organization_user_permissions", "organization_permissions"
+  add_foreign_key "organization_user_permissions", "organizations_users"
   add_foreign_key "organizations_users", "organizations"
   add_foreign_key "organizations_users", "users"
   add_foreign_key "post_decision_motions", "appeals"

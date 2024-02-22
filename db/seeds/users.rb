@@ -83,7 +83,7 @@ module Seeds
       create_lit_support_user
       create_oai_team_user
       create_occ_team_user
-      create_mail_team_supervisor_user
+      create_inbound_ops_team_user
       create_cavc_lit_support_user
       create_pulac_cerullo_user
       create_mail_team_user
@@ -355,13 +355,13 @@ module Seeds
       OaiTeam.singleton.add_user(u)
     end
 
-    def create_mail_team_supervisor_user
-      u = User.create!(station_id: 101, css_id: "MAIL_TEAM_SUPERVISOR_ADMIN_USER", full_name: "Jon MailTeam Snow Admin")
-      MailTeamSupervisor.singleton.add_user(u)
-      OrganizationsUser.make_user_admin(u, MailTeamSupervisor.singleton)
-      u = User.create!(station_id: 101, css_id: "MAIL_TEAM_SUPERVISOR_MAIL_INTAKE_USER",
+    def create_inbound_ops_team_user
+      u = User.create!(station_id: 101, css_id: "INBOUND_OPS_TEAM_ADMIN_USER", full_name: "Jon MailTeam Snow Admin")
+      InboundOpsTeam.singleton.add_user(u)
+      OrganizationsUser.make_user_admin(u, InboundOpsTeam.singleton)
+      u = User.create!(station_id: 101, css_id: "INBOUND_OPS_TEAM_MAIL_INTAKE_USER",
                        full_name: "Jon MailTeam Snow Mail Intake", roles: ["Mail Intake"])
-      MailTeamSupervisor.singleton.add_user(u)
+      InboundOpsTeam.singleton.add_user(u)
     end
 
     def create_cavc_lit_support_user
