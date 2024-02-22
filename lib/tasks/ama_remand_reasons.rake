@@ -12,13 +12,4 @@ namespace :ama_remand_reasons do
     end
     puts "Completed ama remand reason code update #{Time.current}"
   end
-
-  desc "rollback ama remand reasons code for existing records in db"
-  task rollback_code: :environment do
-    puts "Started ama remand reason code rollback #{Time.current}"
-    RemandReason.where(code: "inadequate_medical_opinion").in_batches do |batch|
-      batch.update_all(code: "inadequate_opinion")
-    end
-    puts "Completed ama remand reason code rollback #{Time.current}"
-  end
 end
