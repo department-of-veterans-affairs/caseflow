@@ -11,7 +11,12 @@ class HearingRequestDistributionQuery
   def call
     return not_genpop_appeals if genpop == "not_genpop"
 
-    return only_genpop_appeals if genpop == "only_genpop"
+    if genpop == "only_genpop"
+      return [not_genpop_appeals, only_genpop_appeals].flatten if FeatureToggle.enabled?(:acd_exclude_from_affinity) &&
+                                                                  judge.present?
+
+      return only_genpop_appeals
+    end
 
     # We are returning an array of arrays in order to process the
     # "not_genpop_appeals" separately from the "only_genpop_appeals" in
@@ -42,7 +47,9 @@ class HearingRequestDistributionQuery
     no_hearings_or_no_held_hearings = with_no_hearings.or(with_no_held_hearings)
 
     # returning early as most_recent_held_hearings_not_tied_to_any_judge is redundant
-    if @use_by_docket_date && !FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
+    if @use_by_docket_date &&
+       !(FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ||
+        FeatureToggle.enabled?(:acd_exclude_from_affinity))
       return [
         with_held_hearings,
         no_hearings_or_no_held_hearings
@@ -55,7 +62,8 @@ class HearingRequestDistributionQuery
       most_recent_held_hearings_not_tied_to_any_judge,
       most_recent_held_hearings_exceeding_affinity_threshold,
       most_recent_held_hearings_tied_to_ineligible_judge,
-      no_hearings_or_no_held_hearings
+      no_hearings_or_no_held_hearings,
+      most_recent_held_hearings_tied_to_judges_with_exclude_appeals_from_affinity
     ].flatten.uniq
   end
 
@@ -81,6 +89,10 @@ class HearingRequestDistributionQuery
 
   def most_recent_held_hearings_tied_to_ineligible_judge
     base_relation.most_recent_hearings.tied_to_ineligible_judge
+  end
+
+  def most_recent_held_hearings_tied_to_judges_with_exclude_appeals_from_affinity
+    base_relation.most_recent_hearings.tied_to_judges_with_exclude_appeals_from_affinity
   end
 
   module Scopes
@@ -110,6 +122,11 @@ class HearingRequestDistributionQuery
     def tied_to_ineligible_judge
       where(hearings: { disposition: "held", judge_id: HearingRequestDistributionQuery.ineligible_judges_id_cache })
         .where("1 = ?", FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ? 1 : 0)
+    end
+
+    def tied_to_judges_with_exclude_appeals_from_affinity
+      where(hearings: { disposition: "held", judge_id: JudgeTeam.judges_with_exclude_appeals_from_affinity })
+        .where("1 = ?", FeatureToggle.enabled?(:acd_exclude_from_affinity) ? 1 : 0)
     end
 
     # If an appeal has exceeded the affinity, it should be returned to genpop.
