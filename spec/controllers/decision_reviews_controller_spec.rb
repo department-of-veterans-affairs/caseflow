@@ -727,7 +727,7 @@ describe DecisionReviewsController, :postgres, type: :controller do
 
           expected_events = [
             { "taskID" => task_event.id, "eventType" => "added_issue", "claimType" => "Higher-Level Review",
-              "readableEventType" => "Added Issue" },
+              "readableEventType" => "Added issue" },
             { "eventType" => "claim_creation", "readableEventType" => "Claim created" },
             { "eventType" => "completed_disposition", "readableEventType" => "Completed disposition" }
           ]

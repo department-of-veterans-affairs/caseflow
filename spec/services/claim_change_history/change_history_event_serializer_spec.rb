@@ -57,7 +57,7 @@ describe ChangeHistoryEventSerializer do
           eventDate: events[0].event_date,
           eventType: :added_issue,
           eventUser: "L. Roth",
-          readableEventType: "Added Issue",
+          readableEventType: "Added issue",
           taskID: vha_task.id
         }
       },
