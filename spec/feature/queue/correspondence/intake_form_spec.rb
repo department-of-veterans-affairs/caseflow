@@ -97,7 +97,7 @@ RSpec.feature("The Correspondence Intake page") do
 
       radio_choices = page.all(".cf-form-radio-option> label.disabled", visible: true)
       radio_choices.each do |opt|
-        opt.text != "No response window"
+        opt.text.not_eq("No response window")
       end
 
       dropdowns[2].click
@@ -129,7 +129,7 @@ RSpec.feature("The Correspondence Intake page") do
       radio_choices = page.all(".cf-form-radio-option> label.disabled", visible: true)
 
       radio_choices.each do |opt|
-        opt.text == "No response window"
+        opt.text.to_eq("No response window")
       end
 
       dropdowns[2].click

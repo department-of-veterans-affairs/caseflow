@@ -56,11 +56,11 @@ class CorrespondenceIntakeProcessor
 
     intake_params[:response_letters]&.map do |data|
       current_value = nil
-      if (data[:responseWindows] == 'Custom')
+      if data[:responseWindows] == "Custom"
         current_value = data[:customValue]
       end
 
-      if (data[:responseWindows] == '65 days')
+      if data[:responseWindows] == "65 days"
         current_value = 65
       end
 
@@ -76,7 +76,6 @@ class CorrespondenceIntakeProcessor
       )
     end
   end
-
 
   def link_appeals_to_correspondence(intake_params, correspondence_id)
     intake_params[:related_appeal_ids]&.map do |appeal_id|
