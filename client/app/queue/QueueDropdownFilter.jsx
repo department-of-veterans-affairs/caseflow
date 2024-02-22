@@ -27,7 +27,6 @@ const receiptDateFilterStates = {
   ON: 3
 };
 
-
 class QueueDropdownFilter extends React.PureComponent {
   constructor() {
     super();
