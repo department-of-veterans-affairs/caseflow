@@ -42,9 +42,11 @@ export class PdfFile extends React.PureComponent {
     this.clientWidth = 0;
     this.currentPage = 0;
     this.columnCount = 1;
+    this.metricIdentifier = null;
   }
 
   componentDidMount = () => {
+    this.metricIdentifier = uuid.v4();
 
     let requestOptions = {
       cache: true,
@@ -138,7 +140,8 @@ export class PdfFile extends React.PureComponent {
               type: 'error',
               product: 'browser',
               prefetchDisabled: this.props.featureToggles.prefetchDisabled
-            }
+            },
+            this.metricIdentifier
           );
         }
 
@@ -169,7 +172,8 @@ export class PdfFile extends React.PureComponent {
         message: `Getting PDF document: "${file}"`,
         type: 'error',
         product: 'reader'
-      });
+      },
+      this.metricIdentifier);
     }
 
     throw reason;
@@ -202,6 +206,8 @@ export class PdfFile extends React.PureComponent {
       this.pdfDocument.destroy();
       this.props.clearPdfDocument(this.props.file, this.pdfDocument);
     }
+
+    this.metricIdentifier = null;
   }
 
   getPage = ({ rowIndex, columnIndex, style, isVisible }) => {
@@ -221,6 +227,7 @@ export class PdfFile extends React.PureComponent {
         scale={this.props.scale}
         pdfDocument={this.props.pdfDocument}
         featureToggles={this.props.featureToggles}
+        metricsIdentifier={this.metricIdentifier}
       />
     </div>;
   }

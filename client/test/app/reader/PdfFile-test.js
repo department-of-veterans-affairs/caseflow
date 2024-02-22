@@ -49,7 +49,8 @@ const storeMetricsError = {
     message: expect.stringMatching(/^([a-zA-Z0-9-.'&:/ ])*$/),
     product: 'browser',
     type: 'error'
-  }
+  },
+  sessionId: expect.stringMatching(/^([a-zA-Z0-9-.'&])*$/)
 };
 
 describe('PdfFile', () => {
@@ -135,7 +136,10 @@ describe('PdfFile', () => {
       });
 
       it('calls storeMetrics in catch block', () => {
-        expect(storeMetrics).toBeCalledWith(storeMetricsError.uuid, storeMetricsError.data, storeMetricsError.info);
+        expect(storeMetrics).toBeCalledWith(storeMetricsError.uuid,
+          storeMetricsError.data,
+          storeMetricsError.info,
+          storeMetricsError.sessionId);
       });
     });
   });

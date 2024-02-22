@@ -157,10 +157,6 @@ export class PdfPage extends React.PureComponent {
   };
 
   componentDidUpdate = (prevProps) => {
-    if (this.props.isPageVisible && !prevProps.isPageVisible) {
-      this.measureTimeStartMs = performance.now();
-    }
-
     if (prevProps.scale !== this.props.scale && this.page) {
       this.drawPage(this.page);
     }
@@ -224,6 +220,7 @@ export class PdfPage extends React.PureComponent {
           numPagesInDoc: this.props.pdfDocument.numPages,
           prefetchDisabled: this.props.featureToggles.prefetchDisabled
         },
+        sessionId: this.props.metricsIdentifier
       };
 
       const pageAndTextFeatureToggle = this.props.featureToggles.metricsPdfStorePages;
@@ -243,8 +240,9 @@ export class PdfPage extends React.PureComponent {
             documentId: this.props.documentId,
             pageIndex: this.props.pageIndex,
             numPagesInDoc: this.props.pdfDocument.numPages,
-            prefetchDisabled: this.props.featureToggles.prefetchDisabled
+            prefetchDisabled: this.props.featureToggles.prefetchDisabled,
           },
+          sessionId: this.props.metricsIdentifier
         };
 
         const readerRenderText = {
@@ -260,6 +258,7 @@ export class PdfPage extends React.PureComponent {
             numPagesInDoc: this.props.pdfDocument.numPages,
             prefetchDisabled: this.props.featureToggles.prefetchDisabled
           },
+          sessionId: this.props.metricsIdentifier
         };
 
         const textResult = recordAsyncMetrics(this.getText(page), textMetricData, pageAndTextFeatureToggle);
@@ -286,7 +285,8 @@ export class PdfPage extends React.PureComponent {
                 type: 'performance',
                 product: 'reader',
                 duration: this.measureTimeStartMs ? performance.now() - this.measureTimeStartMs : 0
-              }
+              },
+              this.props.metricsIdentifier,
             );
           }
         });
@@ -308,7 +308,8 @@ export class PdfPage extends React.PureComponent {
             { message,
               type: 'error',
               product: 'browser',
-            }
+            },
+            this.props.metricsIdentifier
           );
         }
       });
@@ -416,6 +417,7 @@ PdfPage.propTypes = {
   matchesPerPage: PropTypes.shape({
     length: PropTypes.any
   }),
+  metricsIdentifier: PropTypes.string,
   page: PropTypes.shape({
     cleanup: PropTypes.func
   }),
