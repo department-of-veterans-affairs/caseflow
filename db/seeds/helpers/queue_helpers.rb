@@ -73,17 +73,6 @@ module QueueHelpers
     )
   end
 
-  # :reek:UtilityFunction
-  def create_action_required_tasks(correspondence, status:, parent_task:, task_type:)
-    task_type.create!(
-      parent_id: parent_task.id,
-      appeal_id: correspondence.id,
-      appeal_type: "Correspondence",
-      status: status,
-      assigned_to: MailTeamSupervisor.singleton
-    )
-  end
-
   # :reek:FeatureEnvy
   def create_and_complete_mail_task(correspondence, user)
     process_correspondence(correspondence, user)
