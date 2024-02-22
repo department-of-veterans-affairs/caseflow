@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+# :reek:DataClump
 # rubocop:disable Metrics/ModuleLength
 module QueueHelpers
   def create_veteran(options = {})
@@ -36,18 +36,6 @@ module QueueHelpers
     ).tap { @cmp_packet_number += 1 }
 
     # create_correspondence_document(correspondence, vet)
-  end
-
-  # :reek:UtilityFunction
-  def create_correspondence_document(correspondence, veteran)
-    CorrespondenceDocument.find_or_create_by!(
-      document_file_number: veteran.file_number,
-      uuid: SecureRandom.uuid,
-      vbms_document_type_id: 1250,
-      document_type: 1250,
-      pages: 30,
-      correspondence_id: correspondence.id
-    )
   end
 
   # :reek:UtilityFunction

@@ -118,6 +118,7 @@ module Seeds
       corres.root_task.update!(status: Constants.TASK_STATUSES.completed)
     end
 
+    # :reek:FeatureEnvy
     def create_correspondence_with_action_required_tasks
       corres_array = (1..4).map { create_correspondence }
       task_array = [ReassignPackageTask, RemovePackageTask, SplitPackageTask, MergePackageTask]
