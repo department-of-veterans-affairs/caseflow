@@ -6,6 +6,8 @@ import { connect } from 'react-redux';
 import querystring from 'querystring';
 
 import Button from '../../components/Button';
+import SearchableDropdown from '../../components/SearchableDropdown';
+import Button from '../../components/Button';
 import QueueTable from '../QueueTable';
 import TabWindow from '../../components/TabWindow';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -87,6 +89,7 @@ const CorrespondenceTableBuilder = (props) => {
       [QUEUE_CONFIG.COLUMNS.TASK_TYPE.name]: taskColumn(),
       [QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name]: veteranDetails(),
       [QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name]: vaDor(tasks, filterOptions),
+      [QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name]: vaDor(tasks, filterOptions),
       [QUEUE_CONFIG.COLUMNS.NOTES.name]: notes(),
       [QUEUE_CONFIG.COLUMNS.CHECKBOX_COLUMN.name]: checkboxColumn(),
       [QUEUE_CONFIG.COLUMNS.ACTION_TYPE.name]: actionType(),
@@ -136,6 +139,38 @@ const CorrespondenceTableBuilder = (props) => {
       label: sprintf(tabConfig.label, totalTaskCount),
       page: (
         <>
+          {(tabConfig.name === 'correspondence_unassigned' || tabConfig.name === 'correspondence_team_assigned') &&
+            <>
+              <p className="cf-margin-bottom-0rem">Assign to mail team user</p>
+              <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <SearchableDropdown
+                  className="cf-dropdown"
+                  name="Assign to mail team user"
+                  hideLabel
+                  styling={{ width: '200px', marginRight: '2rem' }}
+                  dropdownStyling={{ width: '200px' }}
+                />
+                {tabConfig.name === 'correspondence_unassigned' &&
+              <>
+                <Button
+                  name="Assign"
+                />
+                <span style={{ marginLeft: 'auto' }}>
+                  <Button
+                    name="Auto assign correspondence"
+                  />
+                </span>
+              </>
+                }
+                {tabConfig.name === 'correspondence_team_assigned' &&
+            <Button
+              name="Reassign"
+            />
+                }
+              </div>
+              <hr></hr>
+            </>
+          }
           {(tabConfig.name === 'correspondence_unassigned' || tabConfig.name === 'correspondence_team_assigned') &&
             <>
               <p className="cf-margin-bottom-0rem">Assign to mail team user</p>

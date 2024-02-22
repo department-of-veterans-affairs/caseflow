@@ -242,7 +242,6 @@ export const veteranDetails = () => {
   return {
     header: 'Veteran Details',
     label: 'Veteran Details',
-    // enableFilter: true,
     name: QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
     backendCanSort: true,
     getSortValue: (task) => task.veteranDetails,
@@ -327,17 +326,17 @@ export const checkboxColumn = () => {
 export const actionType = () => {
   return {
     header: 'Action Type',
-    valueFunction: (task) => task.actionType
+    name: QUEUE_CONFIG.COLUMNS.ACTION_TYPE.name,
+    backendCanSort: true,
+    getSortValue: (task) => task.label,
+    valueFunction: (task) => task.label.split(' ')[0]
   };
 };
 
 export const daysWaitingCorrespondence = () => {
   return {
     header: 'Days Waiting',
-    name: QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
-    valueFunction: (task) => task.daysWaiting,
-    backendCanSort: true,
-    getSortValue: (task) => task.daysWaiting
+    valueFunction: (task) => task.daysWaiting
   };
 };
 

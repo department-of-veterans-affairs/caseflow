@@ -19,16 +19,6 @@ const dropdownFilterViewListItemStyle = css(
   }
 );
 
-const receiptDateFilterStates = {
-  UNINITIALIZED: '',
-  BETWEEN: 0,
-  BEFORE: 1,
-  AFTER: 2,
-  ON: 3
-};
-
-//    props.setSelectedValue("testVal", "vaDor");
-
 class QueueDropdownFilter extends React.PureComponent {
   constructor() {
     super();

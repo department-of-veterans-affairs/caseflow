@@ -16,7 +16,7 @@ class OrganizationCorrespondenceUnassignedTasksTab < CorrespondenceQueueTab
   end
 
   def tasks
-    CorrespondenceTask.where(assigned_to: assignee, status: "unassigned")
+    CorrespondenceTask.includes(*task_includes).where(assigned_to: assignee, status: "unassigned")
   end
 
   def column_names
