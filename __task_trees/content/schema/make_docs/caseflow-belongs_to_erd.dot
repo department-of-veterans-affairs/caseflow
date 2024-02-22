@@ -1,5 +1,5 @@
 digraph belongs_to_erd {
-	graph [bb="0,0,3520.9,4324",
+	graph [bb="0,0,3520.9,4456",
 		rankdir=LR
 	];
 	node [label="\N"];
@@ -408,6 +408,25 @@ digraph belongs_to_erd {
 		];
 	OrganizationsUser -> Organization	[label=organization,
 		];
+	RampReview	[color="#000099",
+		fillcolor="#cc99ff",
+		fontcolor="#000099",
+		label="RampReview|RampElection,\nRampRefiling",
+		shape=record,
+		style=filled,
+		];
+	RampElection	[fillcolor="#cc99ff",
+		label="RampElection\n(associated with: User)",
+		style=filled,
+		];
+	RampReview -> RampElection	[color="#000099",
+		style=dotted];
+	RampRefiling	[fillcolor="#cc99ff",
+		label="RampRefiling\n(associated with: User)",
+		style=filled,
+		];
+	RampReview -> RampRefiling	[color="#000099",
+		style=dotted];
 	AdvanceOnDocketMotion	[
 		label="AdvanceOnDocketMotion\n(associated with: User)",
 		];
@@ -686,31 +705,12 @@ digraph belongs_to_erd {
 		];
 	PriorityEndProductSyncQueue -> BatchProcess	[label=batch_process,
 		];
-	RampElection	[fillcolor="#cc99ff",
-		label="RampElection\n(associated with: User)",
-		style=filled,
-		];
 	RampClosedAppeal	[fillcolor="#cc99ff",
 		label=RampClosedAppeal,
 		style=filled,
 		];
 	RampClosedAppeal -> RampElection	[label=ramp_election,
 		];
-	RampReview	[color="#000099",
-		fillcolor="#cc99ff",
-		fontcolor="#000099",
-		label="RampReview|RampElection,\nRampRefiling",
-		shape=record,
-		style=filled,
-		];
-	RampReview -> RampElection	[color="#000099",
-		style=dotted];
-	RampRefiling	[fillcolor="#cc99ff",
-		label="RampRefiling\n(associated with: User)",
-		style=filled,
-		];
-	RampReview -> RampRefiling	[color="#000099",
-		style=dotted];
 	RampElectionRollback	[fillcolor="#cc99ff",
 		label="RampElectionRollback\n(associated with: User)",
 		style=filled,

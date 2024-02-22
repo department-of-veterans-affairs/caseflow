@@ -1,5 +1,5 @@
 digraph subclasses {
-	graph [bb="0,0,1778.1,6856.5",
+	graph [bb="0,0,1778.1,6911.5",
 		rankdir=LR,
 		splines=line
 	];
@@ -1027,6 +1027,12 @@ digraph subclasses {
 		];
 	Organization -> CavcLitigationSupport	[color="#000099",
 		style=dotted];
+	CDAControlGroup	[fillcolor="#d9d9ff",
+		label=CDAControlGroup,
+		style=filled,
+		];
+	Organization -> CDAControlGroup	[color="#000099",
+		style=dotted];
 	ClerkOfTheBoard	[fillcolor="#d9d9ff",
 		label=ClerkOfTheBoard,
 		style=filled,
@@ -1174,6 +1180,25 @@ digraph subclasses {
 		];
 	BusinessLine -> VhaBusinessLine	[color="#000099",
 		style=dotted];
+	RampReview	[color="#000099",
+		fillcolor="#cc99ff",
+		fontcolor="#000099",
+		label=RampReview,
+		shape=record,
+		style=filled,
+		];
+	RampElection	[fillcolor="#cc99ff",
+		label=RampElection,
+		style=filled,
+		];
+	RampReview -> RampElection	[color="#000099",
+		style=dotted];
+	RampRefiling	[fillcolor="#cc99ff",
+		label=RampRefiling,
+		style=filled,
+		];
+	RampReview -> RampRefiling	[color="#000099",
+		style=dotted];
 	BatchProcess	[color="#000099",
 		fontcolor="#000099",
 		label=BatchProcess,
@@ -1203,25 +1228,6 @@ digraph subclasses {
 		style=filled,
 		];
 	SchedulePeriod -> RoSchedulePeriod	[color="#000099",
-		style=dotted];
-	RampReview	[color="#000099",
-		fillcolor="#cc99ff",
-		fontcolor="#000099",
-		label=RampReview,
-		shape=record,
-		style=filled,
-		];
-	RampElection	[fillcolor="#cc99ff",
-		label=RampElection,
-		style=filled,
-		];
-	RampReview -> RampElection	[color="#000099",
-		style=dotted];
-	RampRefiling	[fillcolor="#cc99ff",
-		label=RampRefiling,
-		style=filled,
-		];
-	RampReview -> RampRefiling	[color="#000099",
 		style=dotted];
 	PreRoutingFoiaColocatedTask	[fillcolor="#00ff00",
 		label=PreRoutingFoiaColocatedTask,

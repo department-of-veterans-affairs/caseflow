@@ -1,5 +1,5 @@
 digraph belongs_to_erd_subclasses {
-	graph [bb="0,0,4979.9,5164",
+	graph [bb="0,0,4979.9,5199",
 		rankdir=LR
 	];
 	node [label="\N"];
@@ -568,6 +568,12 @@ digraph belongs_to_erd_subclasses {
 		];
 	Organization -> CavcLitigationSupport	[color="#000099",
 		style=dotted];
+	CDAControlGroup	[fillcolor="#d9d9ff",
+		label=CDAControlGroup,
+		style=filled,
+		];
+	Organization -> CDAControlGroup	[color="#000099",
+		style=dotted];
 	ClerkOfTheBoard	[fillcolor="#d9d9ff",
 		label=ClerkOfTheBoard,
 		style=filled,
@@ -702,6 +708,25 @@ digraph belongs_to_erd_subclasses {
 		];
 	OrganizationsUser -> Organization	[label=organization,
 		];
+	RampReview	[color="#000099",
+		fillcolor="#cc99ff",
+		fontcolor="#000099",
+		label="RampReview|RampElection,\nRampRefiling",
+		shape=record,
+		style=filled,
+		];
+	RampElection	[fillcolor="#cc99ff",
+		label="RampElection\n(associated with: User)",
+		style=filled,
+		];
+	RampReview -> RampElection	[color="#000099",
+		style=dotted];
+	RampRefiling	[fillcolor="#cc99ff",
+		label="RampRefiling\n(associated with: User)",
+		style=filled,
+		];
+	RampReview -> RampRefiling	[color="#000099",
+		style=dotted];
 	AdvanceOnDocketMotion	[
 		label="AdvanceOnDocketMotion\n(associated with: User)",
 		];
@@ -988,31 +1013,12 @@ digraph belongs_to_erd_subclasses {
 		];
 	BatchProcess -> PriorityEpSyncBatchProcess	[color="#000099",
 		style=dotted];
-	RampElection	[fillcolor="#cc99ff",
-		label="RampElection\n(associated with: User)",
-		style=filled,
-		];
 	RampClosedAppeal	[fillcolor="#cc99ff",
 		label=RampClosedAppeal,
 		style=filled,
 		];
 	RampClosedAppeal -> RampElection	[label=ramp_election,
 		];
-	RampReview	[color="#000099",
-		fillcolor="#cc99ff",
-		fontcolor="#000099",
-		label="RampReview|RampElection,\nRampRefiling",
-		shape=record,
-		style=filled,
-		];
-	RampReview -> RampElection	[color="#000099",
-		style=dotted];
-	RampRefiling	[fillcolor="#cc99ff",
-		label="RampRefiling\n(associated with: User)",
-		style=filled,
-		];
-	RampReview -> RampRefiling	[color="#000099",
-		style=dotted];
 	RampElectionRollback	[fillcolor="#cc99ff",
 		label="RampElectionRollback\n(associated with: User)",
 		style=filled,
