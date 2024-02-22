@@ -48,6 +48,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
     @file_name = file_name
     @transcription_file = find_or_create_transcription_file
     ensure_hearing_held
+
     download_file_to_tmp(download_link)
     @transcription_file.upload_to_s3 if @transcription_file.date_upload_aws.nil?
     maybe_convert_vtt_to_rtf_and_upload_to_s3
@@ -93,6 +94,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   # Returns: Updated @transcription_file
   def download_file_to_tmp(link)
     return if File.exist?(@transcription_file.tmp_location)
+
     URI(link).open do |download|
       IO.copy_stream(download, @transcription_file.tmp_location)
     end
@@ -147,7 +149,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   #
   # Returns: TranscriptionFile object
   def find_or_create_transcription_file(file_name_arg = file_name)
-    TranscriptionFile.find_or_create_by(
+    Hearings::TranscriptionFile.find_or_create_by(
       file_name: file_name_arg,
       appeal_id: appeal&.id,
       appeal_type: appeal&.class&.name,
