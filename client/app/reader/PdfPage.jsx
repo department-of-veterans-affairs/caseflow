@@ -35,7 +35,7 @@ export class PdfPage extends React.PureComponent {
     this.isDrawing = false;
     this.renderTask = null;
     this.marks = [];
-    this.measureTimeStartMs = props.measureTimeStartMs;
+    this.measureTimeStartMs = null;
   }
 
   getPageContainerRef = (pageContainer) => (this.pageContainer = pageContainer);
@@ -157,7 +157,7 @@ export class PdfPage extends React.PureComponent {
   };
 
   componentDidUpdate = (prevProps) => {
-    if (!this.measureTimeStartMs && this.props.isPageVisible && !prevProps.isPageVisible) {
+    if (this.props.isPageVisible && !prevProps.isPageVisible) {
       this.measureTimeStartMs = performance.now();
     }
 
@@ -274,14 +274,10 @@ export class PdfPage extends React.PureComponent {
             overscan: this.props.windowingOverscan,
             documentType: this.props.documentType,
             pageCount: this.props.pdfDocument.numPages,
-            pageIndex: this.props.pageIndex,
-            prefetchDisabled: this.props.featureToggles.prefetchDisabled,
-            start: this.measureTimeStartMs,
-            end: performance.now()
+            prefetchDisabled: this.props.featureToggles.prefetchDisabled
           };
 
-          // Waits for all the pages before storing metric
-          if (this.props.featureToggles.pdfPageRenderTimeInMs && this.props.pageIndex === 0) {
+          if (this.props.featureToggles.pdfPageRenderTimeInMs) {
             storeMetrics(
               this.props.documentId,
               data,
@@ -289,9 +285,7 @@ export class PdfPage extends React.PureComponent {
                 message: 'pdf_page_render_time_in_ms',
                 type: 'performance',
                 product: 'reader',
-                start: new Date(performance.timeOrigin + data.start),
-                end: new Date(performance.timeOrigin + data.end),
-                duration: data.start ? data.end - data.start : 0
+                duration: this.measureTimeStartMs ? performance.now() - this.measureTimeStartMs : 0
               }
             );
           }
@@ -439,8 +433,7 @@ PdfPage.propTypes = {
   setDocScrollPosition: PropTypes.func,
   setSearchIndexToHighlight: PropTypes.func,
   windowingOverscan: PropTypes.string,
-  featureToggles: PropTypes.object,
-  measureTimeStartMs: PropTypes.number
+  featureToggles: PropTypes.object
 };
 
 const mapDispatchToProps = (dispatch) => ({

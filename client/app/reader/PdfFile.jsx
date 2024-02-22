@@ -27,7 +27,6 @@ import uuid from 'uuid';
 import { storeMetrics, recordAsyncMetrics } from '../util/Metrics';
 
 PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-let pdfPageRenderTimeInMsStart = null;
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -81,7 +80,6 @@ export class PdfFile extends React.PureComponent {
 
     return ApiUtil.get(this.props.file, requestOptions).
       then((resp) => {
-        pdfPageRenderTimeInMsStart = performance.now();
         const metricData = {
           message: `Getting PDF document: "${this.props.file}"`,
           type: 'performance',
@@ -223,7 +221,6 @@ export class PdfFile extends React.PureComponent {
         scale={this.props.scale}
         pdfDocument={this.props.pdfDocument}
         featureToggles={this.props.featureToggles}
-        measureTimeStartMs={pdfPageRenderTimeInMsStart}
       />
     </div>;
   }
