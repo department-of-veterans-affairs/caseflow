@@ -21,29 +21,29 @@ class CorrespondenceTaskFilter < TaskFilter
   end
 
   def filtered_tasks
-    va_dor_params = filter_params.select { |param| param.include?('col=vaDor') }
-    task_column_params = filter_params.select { |param| param.include?('col=taskColumn') }
-
+    va_dor_params = filter_params.select { |param| param.include?("col=vaDor") }
+    task_column_params = filter_params.select { |param| param.include?("col=completedDateColumn") }
+    result = tasks.all # Assuming Task is the name of your ActiveRecord model
     va_dor_params.each do |param|
       value_hash = Rack::Utils.parse_nested_query(param).deep_symbolize_keys
-      @tasks = filter_by_va_dor(value_hash[:val])
+      result = result.merge(filter_by_va_dor(value_hash[:val]))
     end
 
     task_column_params.each do |param|
       value_hash = Rack::Utils.parse_nested_query(param).deep_symbolize_keys
-      @tasks = filter_by_task(value_hash[:val])
+      result = result.merge(filter_by_date(value_hash[:val]))
     end
 
-    @tasks
+    result
   end
 
   private
 
   def filter_between_dates(start_date, end_date)
     tasks.joins(:appeal)
-         .where("correspondences.va_date_of_receipt > ? AND correspondences.va_date_of_receipt < ?",
-                Time.zone.parse(start_date),
-                Time.zone.parse(end_date))
+      .where("correspondences.va_date_of_receipt > ? AND correspondences.va_date_of_receipt < ?",
+             Time.zone.parse(start_date),
+             Time.zone.parse(end_date))
   end
 
   def filter_before_date(date)

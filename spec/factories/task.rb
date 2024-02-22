@@ -616,6 +616,7 @@ FactoryBot.define do
       end
 
       factory :correspondence_intake_task, class: CorrespondenceIntakeTask do
+        appeal_type { "Correspondence" }
       end
 
       factory :efolder_upload_failed_task, class: EfolderUploadFailedTask do

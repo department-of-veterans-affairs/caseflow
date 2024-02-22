@@ -47,12 +47,14 @@ RSpec.feature("The Correspondence Cases page") do
       20.times do
         correspondence = create(:correspondence)
         parent_task = create_correspondence_intake(correspondence, current_user)
-        create_efolderupload_task(correspondence, parent_task, user: current_user)
+        task = create_efolderupload_task(correspondence, parent_task)
+        task.correspondence.updated_by_id = current_user.id
+        task.update!(assigned_to_id: current_user.id)
       end
       # Used to mock a single task to compare task sorting
       EfolderUploadFailedTask.first.update!(type: "ReviewPackageTask")
-      EfolderUploadFailedTask.first.correspondence.update!(va_date_of_receipt: Date.new(2000, 10, 10))
-      EfolderUploadFailedTask.last.correspondence.update!(va_date_of_receipt: Date.new(2024, 10, 10))
+      EfolderUploadFailedTask.first.correspondence.update!(va_date_of_receipt: Date.new(2000, 10, 10), updated_by_id: 1)
+      EfolderUploadFailedTask.last.correspondence.update!(va_date_of_receipt: Date.new(2024, 10, 10), updated_by_id: 1)
     end
 
     it "successfully loads the in progress tab" do
