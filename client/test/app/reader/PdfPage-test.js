@@ -51,9 +51,7 @@ describe('PdfPage', () => {
       expect(recordAsyncMetrics).toHaveBeenCalledWith(...pageMetricData);
       expect(recordAsyncMetrics).toHaveBeenCalledWith(...pageMetricData);
       expect(recordMetrics).toHaveBeenCalledWith(...recordMetricsArgs);
-      if (pdfPageRenderTimeInMsEnabled().instance().props.pageIndex === 0) {
-        expect(storeMetrics).toHaveBeenCalledWith(...storeMetricsData);
-      }
+      expect(storeMetrics).toHaveBeenCalledWith(...storeMetricsData);
     });
   });
 
