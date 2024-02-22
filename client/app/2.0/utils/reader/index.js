@@ -1,10 +1,3 @@
-/**
- * Helper Method to update the focus of the Documents Table
- * @param {element} lastReadRef -- React ref to the current Last Read Indicator
- * @param {element} tbodyRef -- React ref to the current Table Body
- * this method is never used anywhere else in code.
-
-*/
 export * from 'utils/reader/format';
 export * from 'utils/reader/search';
 export * from 'utils/reader/pdf';
