@@ -49,9 +49,7 @@ export const AddLetter = (props) => {
   };
 
   const taskUpdatedCallback = (updatedTask) => {
-    const filtered = dataLetter.filter((cdl) => cdl.id !== updatedTask.id);
-
-    setDataLetter([...filtered, updatedTask]);
+    setDataLetter((prevDataLetter) => [...prevDataLetter.filter((cdl) => cdl.id !== updatedTask.id), updatedTask]);
   };
 
   const removeLetter = (index) => {
@@ -93,7 +91,7 @@ export const AddLetter = (props) => {
 
   return (
     <>
-    
+
       <div className="myletters" style={{width: '100%', display: 'inline-block' }}>
         { letters.map((letter) => (
           <div id={letter} style={{ width: '50%', float: 'left', height: '840px' }} key={letter}>
