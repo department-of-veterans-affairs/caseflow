@@ -211,6 +211,7 @@ class TableFilter extends React.PureComponent {
           <QueueDropdownFilter
             clearFilters={this.clearFilteredByList}
             isReceiptDateFilter={this.props.isReceiptDateFilter}
+            isTaskCompletedDateFilter={this.props.isTaskCompletedDateFilter}
             name={valueName || columnName}
             isClearEnabled={anyFiltersAreSet}
             handleClose={this.toggleDropdown}
@@ -233,6 +234,7 @@ TableFilter.defaultProps = {
 
 TableFilter.propTypes = {
   isReceiptDateFilter: PropTypes.bool,
+  isTaskCompletedDateFilter: PropTypes.bool,
   enableFilter: PropTypes.bool,
   enableFilterTextTransform: PropTypes.bool,
   getFilterIconRef: PropTypes.func,
