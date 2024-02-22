@@ -57,8 +57,6 @@ import Inbox from 'app/inbox';
 import Explain from 'app/explain';
 import MPISearch from 'app/mpi/MPISearch';
 import Admin from 'app/admin';
-import CaseDistribution from 'app/caseDistribution';
-import CaseDistributionTest from 'app/caseDistribution/test';
 import uuid from 'uuid';
 
 const COMPONENTS = {
@@ -93,9 +91,7 @@ const COMPONENTS = {
   Inbox,
   Explain,
   MPISearch,
-  Admin,
-  CaseDistribution,
-  CaseDistributionTest
+  Admin
 };
 
 const componentWrapper = (component) => (props, railsContext, domNodeId) => {
@@ -179,8 +175,7 @@ const componentWrapper = (component) => (props, railsContext, domNodeId) => {
         './2.0/router',
         './explain/index',
         './mpi/MPISearch',
-        './admin/index',
-        './caseDistribution/index'
+        './admin/index'
       ],
       () => renderApp(component)
     );
