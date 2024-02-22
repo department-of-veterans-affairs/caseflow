@@ -14,7 +14,6 @@ import TASK_STATUSES from '../../../constants/TASK_STATUSES';
 import { setScheduledHearing } from '../../components/common/actions';
 
 import RadioField from '../../components/RadioField';
-import AssignHearingForm from '../../hearings/components/modalForms/AssignHearingForm';
 import ScheduleHearingLaterWithAdminActionForm
   from '../../hearings/components/modalForms/ScheduleHearingLaterWithAdminActionForm';
 
@@ -73,9 +72,7 @@ class PostponeHearingModal extends React.Component {
   };
 
   validateForm = () => {
-    if (this.state.afterDispositionUpdateAction === ACTIONS.RESCHEDULE && !this.props.userCanScheduleVirtualHearings) {
-      return this.validateRescheduleValues();
-    } else if (this.state.afterDispositionUpdateAction === ACTIONS.SCHEDULE_LATER_WITH_ADMIN_ACTION) {
+    if (this.state.afterDispositionUpdateAction === ACTIONS.SCHEDULE_LATER_WITH_ADMIN_ACTION) {
       return this.validateScheduleLaterValues();
     }
 
@@ -170,11 +167,11 @@ class PostponeHearingModal extends React.Component {
   };
 
   submit = () => {
-    const { userCanScheduleVirtualHearings, appeal, task } = this.props;
+    const { appeal, task } = this.props;
     const taskData = taskActionData(this.props);
 
     // Determine whether to redirect to the ful page schedule veteran flow
-    if (this.state.afterDispositionUpdateAction === ACTIONS.RESCHEDULE && userCanScheduleVirtualHearings) {
+    if (this.state.afterDispositionUpdateAction === ACTIONS.RESCHEDULE) {
       // Change the disposition in the store
       this.props.setScheduledHearing({
         action: ACTIONS.RESCHEDULE,
@@ -219,12 +216,8 @@ class PostponeHearingModal extends React.Component {
   };
 
   render = () => {
-    const { appeal, userCanScheduleVirtualHearings } = this.props;
     const { afterDispositionUpdateAction, showErrorMessages } = this.state;
     const taskData = taskActionData(this.props);
-
-    // Determine which Hearing form to render
-    const hearingModal = afterDispositionUpdateAction === ACTIONS.RESCHEDULE && !userCanScheduleVirtualHearings;
 
     return (
       <QueueFlowModal
@@ -244,13 +237,6 @@ class PostponeHearingModal extends React.Component {
           value={afterDispositionUpdateAction}
         />
 
-        {hearingModal && (
-          <AssignHearingForm
-            initialRegionalOffice={appeal.closestRegionalOffice}
-            showErrorMessages={showErrorMessages}
-            appeal={appeal}
-          />
-        )}
         {afterDispositionUpdateAction ===
           ACTIONS.SCHEDULE_LATER_WITH_ADMIN_ACTION && (
           <ScheduleHearingLaterWithAdminActionForm
@@ -298,8 +284,7 @@ PostponeHearingModal.propTypes = {
   showErrorMessage: PropTypes.func,
   task: PropTypes.shape({
     taskId: PropTypes.string,
-  }),
-  userCanScheduleVirtualHearings: PropTypes.bool
+  })
 };
 
 const mapStateToProps = (state, ownProps) => ({

@@ -1,12 +1,12 @@
 {
   "central": [
     {
-      "displayText": "9:00 AM Eastern Time (US & Canada)",
-      "value": "09:00 AM Eastern Time (US & Canada)"
+      "displayText": "9:00 AM",
+      "value": "09:00 AM"
     },
     {
-      "displayText": "1:00 PM Eastern Time (US & Canada)",
-      "value": "1:00 PM Eastern Time (US & Canada)"
+      "displayText": "1:00 PM",
+      "value": "1:00 PM"
     },
     {
       "displayText": "Other",

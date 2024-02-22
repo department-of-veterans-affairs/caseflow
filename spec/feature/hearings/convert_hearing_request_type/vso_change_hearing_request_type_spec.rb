@@ -3,7 +3,6 @@
 RSpec.feature "Convert hearing request type" do
   before do
     FeatureToggle.enable!(:vso_virtual_opt_in)
-    FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
     HearingsManagement.singleton.add_user(hearing_coord)
     vso.add_user(vso_user)
 
@@ -12,10 +11,7 @@ RSpec.feature "Convert hearing request type" do
     )
   end
 
-  after do
-    FeatureToggle.disable!(:vso_virtual_opt_in)
-    FeatureToggle.disable!(:schedule_veteran_virtual_hearing)
-  end
+  after { FeatureToggle.disable!(:vso_virtual_opt_in) }
 
   let!(:hearing_day) { create(:hearing_day, :video, scheduled_for: Time.zone.today + 14.days, regional_office: "RO63") }
   let!(:hearing_day2) { create(:hearing_day, :video, scheduled_for: Time.zone.today + 7.days, regional_office: "RO63") }
@@ -259,7 +255,7 @@ RSpec.feature "Convert hearing request type" do
           step "select from dropdown" do
             User.authenticate!(user: hearing_coord)
             visit "queue/appeals/#{appeal.uuid}"
-            click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.label)
+            click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.label)
           end
 
           step "fill in form" do
@@ -288,7 +284,7 @@ RSpec.feature "Convert hearing request type" do
           step "select from dropdown" do
             User.authenticate!(user: hearing_coord)
             visit "queue/appeals/#{appeal.uuid}"
-            click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.label)
+            click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.label)
           end
 
           step "fill in form" do
