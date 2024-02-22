@@ -39,9 +39,7 @@ export const AddLetter = (props) => {
   };
 
   const taskUpdatedCallback = (updatedTask) => {
-    const filtered = dataLetter.filter((cdl) => cdl.id !== updatedTask.id);
-
-    setDataLetter([...filtered, updatedTask]);
+    setDataLetter((prevDataLetter) => [...prevDataLetter.filter((cdl) => cdl.id !== updatedTask.id), updatedTask]);
   };
 
   const removeLetter = (index) => {

@@ -197,7 +197,7 @@ class AddCorrespondenceView extends React.Component {
       <div className="gray-border" style={{ marginBottom: '2rem', padding: '3rem 4rem' }}>
         <h1 style={{ marginBottom: '20px' }}>Add Related Correspondence</h1>
         <p style={{ marginTop: '0px' }}>Add any related correspondence to the mail package that is in progress.</p>
-        <h2 style={{ margin: '30px auto 20px auto' }}>Response Letter</h2>
+        <h2 style={{ margin: '0px', padding: '0px' }}>Response Letter</h2>
         {/* add letter here */}
         <AddLetter
           onContinueStatusChange={this.props.onContinueStatusChange}
