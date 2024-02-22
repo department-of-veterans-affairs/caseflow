@@ -42,7 +42,6 @@ class QueueColumn
 
   def filter_options(tasks)
     filter_option_func = self.class::FILTER_OPTIONS[name]
-    # binding.pry
     if filter_option_func
       send(filter_option_func, tasks)
     else

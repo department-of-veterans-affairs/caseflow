@@ -65,13 +65,13 @@ const CorrespondenceCases = (props) => {
         <CorrespondenceTableBuilder />}
         {showReassignPackageModal &&
         <Modal
-          title="Review Request"
+          title={COPY.CORRESPONDENCE_CASES_REASSIGN_PACKAGE_MODAL_TITLE}
           closeHandler={closeReassignPackageModal}
           cancelButton={<Button linkStyling onClick={closeReassignPackageModal}>Cancel</Button>}
         />}
         {showRemovePackageModal &&
         <Modal
-          title="Review Request"
+          title={COPY.CORRESPONDENCE_CASES_REMOVE_PACKAGE_MODAL_TITLE}
           closeHandler={closeRemovePackageModal}
           cancelButton={<Button linkStyling onClick={closeRemovePackageModal}>Cancel</Button>}
         />}
