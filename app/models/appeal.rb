@@ -427,7 +427,7 @@ class Appeal < DecisionReview
     dup_issue.decision_review_id = id
 
     # If the original issue has a contention reference id, it has to be removed because it's a unique index
-    if issue.respond_to?(:contention_reference_id) && issue.contention_reference_id
+    if issue.try(:contention_reference_id)
       issue.update!(contention_reference_id: nil)
     end
 
