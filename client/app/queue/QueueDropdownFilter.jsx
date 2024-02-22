@@ -4,6 +4,7 @@ import { COLORS } from '@department-of-veterans-affairs/caseflow-frontend-toolki
 import { css } from 'glamor';
 import { startCase } from 'lodash';
 import ReceiptDatePicker from '../components/ReceiptDatePicker';
+import TaskCompletedDatePicker from '../components/TaskCompletedDatePicker';
 
 const dropdownFilterViewListStyle = css({
   margin: 0
@@ -27,6 +28,14 @@ const receiptDateFilterStates = {
   ON: 3
 };
 
+const taskCompletedDateFilterStates = {
+  UNINITIALIZED: '',
+  BETWEEN: 0,
+  BEFORE: 1,
+  AFTER: 2,
+  ON: 3
+};
+
 class QueueDropdownFilter extends React.PureComponent {
   constructor() {
     super();
@@ -34,7 +43,10 @@ class QueueDropdownFilter extends React.PureComponent {
       rootElemWidth: null,
       receiptDateState: -1,
       receiptDatePrimaryValue: '',
-      receiptDateSecondaryValue: ''
+      receiptDateSecondaryValue: '',
+      taskCompletedDateState: -1,
+      taskCompletedDatePrimaryValue: '',
+      taskCompletedDateSecondaryValue: ''
     };
   }
 
@@ -42,13 +54,25 @@ class QueueDropdownFilter extends React.PureComponent {
     this.setState({ receiptDateState: value.value });
   };
 
+  setTaskCompletedDateState = (value) => {
+    this.setState({ taskCompletedDateState: value.value });
+  };
+
   handleDateChange = (value) => {
     this.setState({ receiptDatePrimaryValue: value });
+  }
+
+  handleTaskCompletedDateChange = (value) => {
+    this.setState({ taskCompletedDatePrimaryValue: value });
   }
 
   // Used when the between dates option is selected to store the second date.
   handleSecondaryDateChange = (value) => {
     this.setState({ receiptDateSecondaryValue: value });
+  }
+
+  handleTaskCompletedSecondaryDateChange = (value) => {
+    this.setState({ taskCompletedDateSecondaryValue: value });
   }
 
   handleApplyFilter = () => {
@@ -81,8 +105,25 @@ class QueueDropdownFilter extends React.PureComponent {
     this.setreceiptDateState(-1);
     this.setState({ receiptDatePrimaryValue: '' });
     this.setState({ receiptDateSecondaryValue: '' });
+    this.setTaskCompletedDateState(-1);
+    this.setState({ taskCompletedDatePrimaryValue: '' });
+    this.setState({ taskCompletedDateSecondaryValue: '' });
     this.props.clearFilters();
 
+  }
+
+  handleTaskCompletedApplyFilter = () => {
+    if (this.state.taskCompletedDateState === 0) {
+      this.props.setSelectedValue(
+        [
+          this.state.taskCompletedDateState,
+          this.state.taskCompletedDatePrimaryValue,
+          this.state.taskCompletedDateSecondaryValue
+        ], 'completedDateColumn');
+    } else {
+      this.props.setSelectedValue([this.state.taskCompletedDateState, this.state.taskCompletedDatePrimaryValue],
+        'completedDateColumn');
+    }
   }
 
   render() {
@@ -121,10 +162,23 @@ class QueueDropdownFilter extends React.PureComponent {
           receiptDateFilterStates={receiptDateFilterStates}
           isApplyButtonEnabled={this.isApplyButtonEnabled()}
         />}
-        {!this.props.isReceiptDateFilter && React.cloneElement(React.Children.only(children), {
-          dropdownFilterViewListStyle,
-          dropdownFilterViewListItemStyle
-        })}
+        {this.props.isTaskCompletedDateFilter && <TaskCompletedDatePicker
+          handleTaskCompletedDateChange={this.handleTaskCompletedDateChange}
+          handleTaskCompletedSecondaryDateChange={this.handleTaskCompletedSecondaryDateChange}
+          setSelectedValue={this.props.setSelectedValue}
+          handleTaskCompletedApplyFilter={this.handleTaskCompletedApplyFilter}
+          onChangeMethod={this.setTaskCompletedDateState}
+          taskCompletedDateState={this.state.taskCompletedDateState}
+          taskCompletedDateValues={this.state.taskCompletedDateValues}
+          taskCompletedDateFilterStates={taskCompletedDateFilterStates}
+        />
+
+        }
+        {!(this.props.isReceiptDateFilter || this.props.isTaskCompletedDateFilter) &&
+          React.cloneElement(React.Children.only(children), {
+            dropdownFilterViewListStyle,
+            dropdownFilterViewListItemStyle
+          })}
       </div>
     </div>;
   }
@@ -158,7 +212,8 @@ QueueDropdownFilter.propTypes = {
   addClearFiltersRow: PropTypes.bool,
   name: PropTypes.string,
   setSelectedValue: PropTypes.func.isRequired,
-  isReceiptDateFilter: PropTypes.func.isRequired
+  isReceiptDateFilter: PropTypes.func.isRequired,
+  isTaskCompletedDateFilter: PropTypes.func.isRequired
 };
 
 export default QueueDropdownFilter;

@@ -12,14 +12,19 @@ module CorrespondenceTaskHelpers
     review_package_task.update!(assigned_to: user, status: Constants.TASK_STATUSES.assigned)
   end
 
-  def create_efolderupload_failed_task(correspondence, parent)
+  def create_efolderupload_failed_task(correspondence, parent, user:)
+    correspondence.update!(
+      va_date_of_receipt: rand(1.month.ago..1.day.ago),
+      notes: "ABCDEFG".split("").shuffle.join,
+      updated_by_id: user.id
+    )
     EfolderUploadFailedTask.create!(
       parent_id: parent.id,
       appeal_id: correspondence.id,
       appeal_type: "Correspondence",
       assigned_to: parent.assigned_to,
       status: Constants.TASK_STATUSES.in_progress
-    )
+    ).update!(assigned_at: rand(1.month.ago..1.day.ago))
   end
 
   def process_correspondence(correspondence, user)

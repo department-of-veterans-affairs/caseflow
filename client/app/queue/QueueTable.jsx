@@ -172,6 +172,7 @@ export const HeaderRow = (props) => {
                 updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
                 filteredByList={props.filteredByList}
                 isReceiptDateFilter={column.name === QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name}
+                isTaskCompletedDateFilter={column.name === QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name}
               />
             );
           }
