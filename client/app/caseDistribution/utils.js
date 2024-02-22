@@ -2,6 +2,8 @@ import ACD_LEVERS from '../../constants/ACD_LEVERS';
 
 export const findOption = (lever, value) => lever.options.find((option) => option.item === value);
 export const findSelectedOption = (lever) => lever.options.find((option) => option.selected);
+export const findValueOption = (lever) => findOption(lever, ACD_LEVERS.value);
+export const radioValueOptionSelected = (item) => ACD_LEVERS.value === item;
 
 /**
  * Add backendValue attributes to each lever
@@ -23,15 +25,21 @@ export const createUpdatedLeversWithValues = (levers) => {
 
         const dataType = lever.data_type;
 
-        // Only add a new property for radio and combination data types as these have special handling logic
+        // Only add a new properties for radio and combination data types as these have special handling logic
         // to retrieve value
         if (dataType === ACD_LEVERS.data_types.radio) {
+          const selectedOption = findSelectedOption(lever).item;
+          const valueOptionValue = radioValueOptionSelected(selectedOption) ?
+            lever.value : findValueOption(lever).value;
+
           additionalValues = {
-            selectedOption: findSelectedOption(lever).item,
+            ...additionalValues,
+            selectedOption,
+            valueOptionValue,
           };
         } else if (dataType === ACD_LEVERS.data_types.combination) {
           additionalValues = {
-            backendValue: lever.value,
+            ...additionalValues,
             backendIsToggleActive: lever.is_toggle_active
           };
         }
@@ -119,7 +127,9 @@ export const validateLeverInput = (lever, value) => {
       errors.push({ leverItem: lever.item, message: ACD_LEVERS.validation_error_message.minimum_not_met });
     }
     if (maxValue && value > maxValue) {
-      errors.push({ leverItem: lever.item, message: ACD_LEVERS.validation_error_message.out_of_bounds });
+      const message = ACD_LEVERS.validation_error_message.out_of_bounds.replace('%s', maxValue);
+
+      errors.push({ leverItem: lever.item, message });
     }
   }
 

@@ -1,6 +1,11 @@
 import { createSelector } from 'reselect';
 import ACD_LEVERS from '../../../../constants/ACD_LEVERS';
-import { findOption, hasCombinationLeverChanged } from '../../utils';
+import {
+  findOption,
+  hasCombinationLeverChanged,
+  radioValueOptionSelected,
+  findValueOption
+} from '../../utils';
 
 const sortLevers = (leverA, leverB) => leverA.lever_group_order - leverB.lever_group_order;
 
@@ -160,18 +165,36 @@ export const hasNoLeverErrors = createSelector(
 );
 
 /**
- * Do not trust this code. It is untested
- * WILL NEED UPDATING WHEN RADIO AND COMBINATION LEVERS ARE EDITABLE
+ * If value is the selected Radio option
+ *   Update lever.value to optionValue passed in
+ *   Set valueOptionValue to value passed in
+ *
+ * If omit or infinite is the selected Radio option
+ *   Update lever.value to the value passed in
+ *   Set valueOptionValue to value in value's option
  */
 export const createUpdatedRadioLever = (state, action) => {
   const { leverGroup, leverItem, value, optionValue } = action.payload;
 
   const updateLeverValue = (lever) => {
     const selectedOption = findOption(lever, value);
+    const isValueOption = radioValueOptionSelected(value);
+    const valueOptionValue = isValueOption ?
+      optionValue : findValueOption(lever).value;
+    const leverValue = isValueOption ? optionValue : value;
+
+    // Set all options to not selected
+    lever.options.forEach((option) => option.selected = false);
 
     selectedOption.value = optionValue;
+    selectedOption.selected = true;
 
-    return { ...lever, currentValue: optionValue };
+    return {
+      ...lever,
+      value: leverValue,
+      selectedOption: value,
+      valueOptionValue
+    };
   };
 
   return updateLeverGroup(state, leverGroup, leverItem, updateLeverValue);

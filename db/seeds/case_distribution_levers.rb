@@ -209,7 +209,7 @@ module Seeds
             title: Constants.DISTRIBUTION.ama_hearing_case_affinity_days_title,
             description: "For non-priority AMA Hearing cases, sets the number of days an AMA Hearing Case is tied to the judge that held the hearing.",
             data_type: Constants.ACD_LEVERS.data_types.radio,
-            value: "0",
+            value: "60",
             unit: Constants.ACD_LEVERS.days,
             options: [
               {
@@ -245,7 +245,7 @@ module Seeds
             title: Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days_title,
             description: "Sets the number of days an AMA Hearing appeal that is also AOD will respect the affinity to the most-recent hearing judge before distributing the appeal to any available judge.",
             data_type: Constants.ACD_LEVERS.data_types.radio,
-            value: "0",
+            value: "14",
             unit: Constants.ACD_LEVERS.days,
             options: [
               {
@@ -283,7 +283,7 @@ module Seeds
             title: Constants.DISTRIBUTION.cavc_affinity_days_title,
             description: "Sets the number of days a case returned from CAVC respects the affinity to the judge who authored a decision before distributing the appeal to any available judge. This does not include Legacy CAVC Remand Appeals with a hearing held.",
             data_type: Constants.ACD_LEVERS.data_types.radio,
-            value: "0",
+            value: "21",
             unit: Constants.ACD_LEVERS.days,
             options: [
               {
@@ -317,7 +317,7 @@ module Seeds
             title: Constants.DISTRIBUTION.cavc_aod_affinity_days_title,
             description: "Sets the number of days appeals returned from CAVC that are also AOD respect the affinity to the deciding judge. This is not applicable for legacy apeals for which the deciding judge conducted the most recent hearing.",
             data_type: Constants.ACD_LEVERS.data_types.radio,
-            value: "21",
+            value: "14",
             unit: Constants.ACD_LEVERS.days,
             options: [
               {
@@ -349,7 +349,7 @@ module Seeds
             title: Constants.DISTRIBUTION.aoj_affinity_days_title,
             description: "Sets the number of days an appeal respects the affinity to the deciding judge for Legacy AOJ Remand Returned appeals with no hearing held before distributing the appeal to any available judge.",
             data_type: Constants.ACD_LEVERS.data_types.radio,
-            value: "0",
+            value: "60",
             unit: Constants.ACD_LEVERS.days,
             options: [
               {
