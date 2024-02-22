@@ -1,6 +1,7 @@
 # frozen_string_literal: true
+
 # :reek:DataClump
-# rubocop:disable Metrics/ModuleLength
+
 module QueueHelpers
   def create_veteran(options = {})
     @file_number += 1
@@ -112,4 +113,3 @@ module QueueHelpers
     cit.update!(status: Constants.TASK_STATUSES.completed, completed_by_id: user.id)
   end
 end
-# rubocop:enable Metrics/ModuleLength
