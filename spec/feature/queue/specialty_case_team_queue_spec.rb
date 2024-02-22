@@ -94,24 +94,30 @@ feature "SpecialtyCaseTeamQueue", :all_dbs do
         create(:user, :judge, :with_vacols_judge_record, full_name: "Judge Dredd")
       end
 
-      let!(:extra_attorneys) do
-        create_list(:user, 5, :with_vacols_attorney_record)
-      end
+      let(:sct_assign_task) { sct_action_required_tasks.first }
 
-      let(:appeal) { sct_action_required_tasks.first.appeal }
+      let(:appeal) { sct_assign_task.appeal }
 
       let(:case_details_page_url) { "/queue/appeals/#{appeal.uuid}" }
+
+      before do
+        judge.administered_judge_teams.first.add_user(attorney)
+        judge.save
+      end
 
       scenario "Assign to Attorney" do
         visit case_details_page_url
         expect(page).to have_content("Currently active tasks")
         page.find(".cf-select")
         click_dropdown(text: "Assign to attorney")
-        expect(page).to have_content("Assign task")
-        page.find(".cf-select__placeholder", text: "Search or select").click
-        click_dropdown(text: attorney.full_name)
-        page.find("#taskInstructions").set("This is a test")
-        safe_click "#Assign-task-button-id-1"
+        within ".cf-modal" do
+          expect(page).to have_content("Assign task")
+          page.find(".cf-select__placeholder", text: "Search or select").click
+          click_dropdown(text: attorney.full_name)
+          page.find("#taskInstructions").set("This is a test")
+          safe_click "#Assign-task-button-id-1"
+        end
+        expect(page).to have_content("You have successfully assigned 1 case to")
       end
     end
   end
