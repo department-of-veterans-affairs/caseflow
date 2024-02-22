@@ -2017,8 +2017,8 @@ describe Task, :all_dbs do
         correspondence = create(:correspondence)
         rpt = ReviewPackageTask.find_or_create_by(
           appeal_id: correspondence.id,
-          appeal_type: "Correspondence",
-          assigned_to: create(:user)
+          assigned_to: MailTeamSupervisor.singleton,
+          appeal_type: Correspondence.name
         )
 
         expect(rpt.task_url).to eq("/queue/correspondence/#{correspondence.uuid}/review_package")
@@ -2031,13 +2031,13 @@ describe Task, :all_dbs do
         rpt = ReviewPackageTask.find_or_create_by(
           appeal_id: correspondence.id,
           assigned_to: MailTeamSupervisor.singleton,
-          appeal_type: "Correspondence"
+          appeal_type: Correspondence.name
         )
 
         uft = EfolderUploadFailedTask.create(
           appeal_id: correspondence.id,
           assigned_to: MailTeamSupervisor.singleton,
-          appeal_type: "Correspondence",
+          appeal_type: Correspondence.name,
           parent_id: rpt.id
         )
 
@@ -2049,13 +2049,13 @@ describe Task, :all_dbs do
         cit = CorrespondenceIntakeTask.find_or_create_by(
           appeal_id: correspondence.id,
           assigned_to: MailTeamSupervisor.singleton,
-          appeal_type: "Correspondence"
+          appeal_type: Correspondence.name
         )
 
         uft = EfolderUploadFailedTask.create(
           appeal_id: correspondence.id,
           assigned_to: MailTeamSupervisor.singleton,
-          appeal_type: "Correspondence",
+          appeal_type: Correspondence.name,
           parent_id: cit.id
         )
 
@@ -2070,7 +2070,7 @@ describe Task, :all_dbs do
         reassign_pt = ReassignPackageTask.create!(
           parent_id: parent_task&.id,
           appeal_id: correspondence&.id,
-          appeal_type: "Correspondence",
+          appeal_type: Correspondence.name,
           assigned_to: MailTeamSupervisor.singleton
         )
 
@@ -2082,7 +2082,7 @@ describe Task, :all_dbs do
           RemovePackageTask.create!(
             parent_id: parent_task&.id,
             appeal_id: correspondence&.id,
-            appeal_type: "Correspondence",
+            appeal_type: Correspondence.name,
             assigned_to: MailTeamSupervisor.singleton
           )
         end.to raise_error(Caseflow::Error::MultipleOpenTasksOfSameTypeError)
@@ -2092,7 +2092,7 @@ describe Task, :all_dbs do
           SplitPackageTask.create!(
             parent_id: parent_task&.id,
             appeal_id: correspondence&.id,
-            appeal_type: "Correspondence",
+            appeal_type: Correspondence.name,
             assigned_to: MailTeamSupervisor.singleton
           )
         end.to raise_error(Caseflow::Error::MultipleOpenTasksOfSameTypeError)
@@ -2102,7 +2102,7 @@ describe Task, :all_dbs do
           MergePackageTask.create!(
             parent_id: parent_task&.id,
             appeal_id: correspondence&.id,
-            appeal_type: "Correspondence",
+            appeal_type: Correspondence.name,
             assigned_to: MailTeamSupervisor.singleton
           )
         end.to raise_error(Caseflow::Error::MultipleOpenTasksOfSameTypeError)
@@ -2113,7 +2113,7 @@ describe Task, :all_dbs do
         expect(RemovePackageTask.create!(
                  parent_id: parent_task&.id,
                  appeal_id: correspondence&.id,
-                 appeal_type: "Correspondence",
+                 appeal_type: Correspondence.name,
                  assigned_to: MailTeamSupervisor.singleton
                )).to be_a(RemovePackageTask)
       end

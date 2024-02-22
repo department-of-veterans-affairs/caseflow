@@ -4,7 +4,6 @@ RSpec.feature("The Correspondence Cases page") do
   include CorrespondenceTaskHelpers
   # alias this to avoid the method name collision
   alias_method :create_efolderupload_task, :create_efolderupload_failed_task
-  include QueueHelpers
 
   context "correspondece cases feature toggle" do
     let(:current_user) { create(:user) }
@@ -47,26 +46,27 @@ RSpec.feature("The Correspondence Cases page") do
       20.times do
         correspondence = create(:correspondence)
         parent_task = create_correspondence_intake(correspondence, current_user)
-        task = create_efolderupload_task(correspondence, parent_task)
-        task.correspondence.updated_by_id = current_user.id
-        task.update!(assigned_to_id: current_user.id)
+        create_efolderupload_task(correspondence, parent_task)
       end
       # Used to mock a single task to compare task sorting
       EfolderUploadFailedTask.first.update!(type: "ReviewPackageTask")
-      EfolderUploadFailedTask.first.correspondence.update!(va_date_of_receipt: Date.new(2000, 10, 10), updated_by_id: 1)
-      EfolderUploadFailedTask.last.correspondence.update!(va_date_of_receipt: Date.new(2024, 10, 10), updated_by_id: 1)
+      EfolderUploadFailedTask.first.correspondence.update!(
+        va_date_of_receipt: Date.new(2000, 10, 10),
+        updated_by_id: current_user.id
+      )
+      EfolderUploadFailedTask.last.correspondence.update!(
+        va_date_of_receipt: Date.new(2024, 10, 10),
+        updated_by_id: current_user.id
+      )
+      FeatureToggle.enable!(:correspondence_queue)
     end
 
     it "successfully loads the in progress tab" do
-      FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       expect(page).to have_content("Correspondence in progress")
     end
 
     it "uses veteran details sort correctly." do
-      FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       # put page in the sorted A-Z state
       find("[aria-label='Sort by Veteran Details']").click
@@ -83,8 +83,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses VA DOR sort correctly." do
-      FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       # put page in the sorted A-Z state
       find("[aria-label='Sort by VA DOR']").click
@@ -101,8 +99,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses tasks sort correctly." do
-      FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       # put page in the sorted A-Z state
       find("[aria-label='Sort by Tasks']").click
@@ -119,8 +115,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses days waiting sort correctly" do
-      FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       # put page in the sorted A-Z state
       find("[aria-label='Sort by Days Waiting']").click
@@ -137,8 +131,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses notes sort correctly" do
-      FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       # put page in the sorted A-Z state
       find("[aria-label='Sort by Notes']").click
@@ -155,8 +147,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses receipt date between filter correctly" do
-      FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       all(".unselected-filter-icon")[0].click
       find_by_id("reactSelectContainer").click
@@ -168,8 +158,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses receipt date before filter correctly" do
-      FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       all(".unselected-filter-icon")[0].click
       find_by_id("reactSelectContainer").click
@@ -180,8 +168,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses receipt date after filter correctly" do
-      FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       all(".unselected-filter-icon")[0].click
       find_by_id("reactSelectContainer").click
@@ -192,8 +178,6 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
     it "uses receipt date on filter correctly" do
-      FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       all(".unselected-filter-icon")[0].click
       find_by_id("reactSelectContainer").click
@@ -203,9 +187,7 @@ RSpec.feature("The Correspondence Cases page") do
       expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
     end
 
-    it "uses task filter correctly" do
-      FeatureToggle.enable!(:correspondence_queue)
-      FeatureToggle.enable!(:user_queue_pagination)
+    it "uses uses task filter correctly" do
       visit "/queue/correspondence?tab=correspondence_in_progress&page=1&sort_by=vaDor&order=asc"
       all(".unselected-filter-icon")[1].click
       find("label", text: "Review Package Task (1)").click
@@ -215,7 +197,6 @@ RSpec.feature("The Correspondence Cases page") do
 
   context "correspondence tasks completed tab" do
     let(:current_user) { create(:user) }
-
     before :each do
       MailTeamSupervisor.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
@@ -310,8 +291,8 @@ RSpec.feature("The Correspondence Cases page") do
 
       find("#reactSelectContainer").click
       find("#react-select-2-option-2").click
-      current_date = Time.zone.today
-      after_date = current_date.strftime("%m/%d/%Y")
+      current_date = Time.zone.yesterday
+      after_date = (current_date + 1).strftime("%m/%d/%Y")
       all("div.input-container > input")[0].fill_in(with: after_date)
       expect(page).to have_button("Apply filter", disabled: false)
       find(".cf-submit").click
@@ -356,6 +337,168 @@ RSpec.feature("The Correspondence Cases page") do
       find("[aria-label='Sort by Notes']").click
       notes = all("tbody > tr > td:nth-child(4)").map(&:text)
       expect(notes).to eq(notes.sort)
+    end
+  end
+
+  context "correspondence cases action required tab" do
+    let(:current_user) { create(:user) }
+    before :each do
+      MailTeamSupervisor.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+    end
+    before do
+      Timecop.freeze(Time.zone.local(2020, 5, 15))
+      5.times do
+        corres_array = (1..4).map { create(:correspondence) }
+        task_array = [ReassignPackageTask, RemovePackageTask, SplitPackageTask, MergePackageTask]
+
+        corres_array.each_with_index do |corres, index|
+          rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
+          task_array[index].create!(
+            parent_id: rpt.id,
+            appeal_id: corres.id,
+            appeal_type: "Correspondence",
+            assigned_to: MailTeamSupervisor.singleton,
+            assigned_by_id: rpt.assigned_to_id
+          )
+        end
+      end
+       # Used to mock a single task to compare task sorting
+       ReassignPackageTask.first.correspondence.update!(
+        va_date_of_receipt: Date.new(2000, 10, 10),
+        updated_by_id: current_user.id
+      )
+       ReassignPackageTask.last.correspondence.update!(
+        va_date_of_receipt: Date.new(2050, 10, 10),
+        updated_by_id: current_user.id
+      )
+      FeatureToggle.enable!(:correspondence_queue)
+    end
+
+    it "successfully loads the action required tab" do
+      visit "/queue/correspondence/team?tab=correspondence_action_required"
+      expect(page).to have_content("Correspondence with pending requests:")
+    end
+
+    it "uses veteran details sort correctly." do
+      visit "/queue/correspondence/team?tab=correspondence_action_required"
+      # put page in the sorted A-Z state
+      find("[aria-label='Sort by Veteran Details']").click
+      first_vet_info = page.all("#task-link")[0].text
+      # put page in the sorted Z-A state
+      find("[aria-label='Sort by Veteran Details']").click
+      last_vet_info = page.all("#task-link")[0].text
+      # return to A-Z, compare veteran details
+      find("[aria-label='Sort by Veteran Details']").click
+      expect(page.all("#task-link")[0].text == first_vet_info)
+      # return to Z-A, compare details again
+      find("[aria-label='Sort by Veteran Details']").click
+      expect(page.all("#task-link")[0].text == last_vet_info)
+    end
+
+    it "uses VA DOR sort correctly." do
+      visit "/queue/correspondence/team?tab=correspondence_action_required"
+      # put page in the sorted A-Z state
+      find("[aria-label='Sort by VA DOR']").click
+      first_date = find("tbody > tr:nth-child(1) > td:nth-child(2)")
+      # put page in the sorted Z-A state
+      find("[aria-label='Sort by VA DOR']").click
+      last_date = find("tbody > tr:nth-child(1) > td:nth-child(2)")
+      # return to A-Z, compare veteran details
+      find("[aria-label='Sort by VA DOR']").click
+      expect(find("tbody > tr:nth-child(1) > td:nth-child(2)").text == first_date)
+      # return to Z-A, compare details again
+      find("[aria-label='Sort by VA DOR']").click
+      expect(find("tbody > tr:nth-child(1) > td:nth-child(2)").text == last_date)
+    end
+
+    it "uses action type sort correctly." do
+      visit "/queue/correspondence/team?tab=correspondence_action_required"
+      # put page in the sorted A-Z state
+      find("[aria-label='Sort by Action Type']").click
+      first_task_type = find("tbody > tr:nth-child(1) > td:nth-child(3)").text
+      # put page in the sorted Z-A state
+      find("[aria-label='Sort by Action Type']").click
+      second_task_type = find("tbody > tr:nth-child(1) > td:nth-child(3)").text
+      # return to A-Z, compare veteran details
+      find("[aria-label='Sort by Action Type']").click
+      expect(find("tbody > tr:nth-child(1) > td:nth-child(3)").text == first_task_type)
+      # return to Z-A, compare details again
+      find("[aria-label='Sort by Action Type']").click
+      expect(find("tbody > tr:nth-child(1) > td:nth-child(3)").text == second_task_type)
+    end
+
+    it "uses days waiting sort correctly" do
+      visit "/queue/correspondence/team?tab=correspondence_action_required"
+      # put page in the sorted A-Z state
+      find("[aria-label='Sort by Days Waiting']").click
+      first_day_amount = find("tbody > tr:nth-child(1) > td:nth-child(4)").text
+      # put page in the sorted Z-A state
+      find("[aria-label='Sort by Days Waiting']").click
+      second_day_amount = find("tbody > tr:nth-child(1) > td:nth-child(4)").text
+      # return to A-Z, compare veteran details
+      find("[aria-label='Sort by Days Waiting']").click
+      expect(find("tbody > tr:nth-child(1) > td:nth-child(4)").text == first_day_amount)
+      # return to Z-A, compare details again
+      find("[aria-label='Sort by Days Waiting']").click
+      expect(find("tbody > tr:nth-child(1) > td:nth-child(4)").text == second_day_amount)
+    end
+
+    it "uses notes sort correctly" do
+      visit "/queue/correspondence/team?tab=correspondence_action_required"
+      # put page in the sorted A-Z state
+      find("[aria-label='Sort by Notes']").click
+      first_note = find("tbody > tr:nth-child(1) > td:nth-child(5)").text
+      # put page in the sorted Z-A state
+      find("[aria-label='Sort by Notes']").click
+      second_note = find("tbody > tr:nth-child(1) > td:nth-child(5)").text
+      # return to A-Z, compare veteran details
+      find("[aria-label='Sort by Notes']").click
+      expect(find("tbody > tr:nth-child(1) > td:nth-child(5)").text == first_note)
+      # return to Z-A, compare details again
+      find("[aria-label='Sort by Notes']").click
+      expect(find("tbody > tr:nth-child(1) > td:nth-child(5)").text == second_note)
+    end
+
+    it "uses receipt date between filter correctly" do
+      visit "/queue/correspondence/team?tab=correspondence_action_required"
+      all(".unselected-filter-icon")[0].click
+      find_by_id("reactSelectContainer").click
+      find_by_id("react-select-2-option-0").click
+      all("div.input-container > input")[0].fill_in(with: "10/09/2000")
+      all("div.input-container > input")[1].fill_in(with: "10/11/2000")
+      find(".cf-submit").click
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+    end
+
+    it "uses receipt date before filter correctly" do
+      visit "/queue/correspondence/team?tab=correspondence_action_required"
+      all(".unselected-filter-icon")[0].click
+      find_by_id("reactSelectContainer").click
+      find_by_id("react-select-2-option-1").click
+      all("div.input-container > input")[0].fill_in(with: "10/01/2001")
+      find(".cf-submit").click
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+    end
+
+    it "uses receipt date after filter correctly" do
+      visit "/queue/correspondence/team?tab=correspondence_action_required"
+      all(".unselected-filter-icon")[0].click
+      find_by_id("reactSelectContainer").click
+      find_by_id("react-select-2-option-2").click
+      all("div.input-container > input")[0].fill_in(with: "10/01/2024")
+      find(".cf-submit").click
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+    end
+
+    it "uses receipt date on filter correctly" do
+      visit "/queue/correspondence/team?tab=correspondence_action_required"
+      all(".unselected-filter-icon")[0].click
+      find_by_id("reactSelectContainer").click
+      find_by_id("react-select-2-option-3").click
+      all("div.input-container > input")[0].fill_in(with: "10/10/2000")
+      find(".cf-submit").click
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
     end
   end
 end
