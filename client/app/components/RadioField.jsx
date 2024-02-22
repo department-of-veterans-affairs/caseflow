@@ -6,8 +6,6 @@ import RequiredIndicator from './RequiredIndicator';
 import StringUtil from '../util/StringUtil';
 import Tooltip from './Tooltip';
 
-import ACD_LEVERS from '../../constants/ACD_LEVERS';
-
 import { helpText } from './RadioField.module.scss';
 
 const RadioFieldHelpText = ({ help, className }) => {
@@ -113,7 +111,7 @@ export const RadioField = (props) => {
             <input
               name={name}
               onChange={handleChange}
-              type={ACD_LEVERS.data_types.radio}
+              type="radio"
               id={`${idPart}_${option.value}`}
               value={option.value}
               // eslint-disable-next-line no-undefined
