@@ -20,7 +20,7 @@ class BgsAddressService
     def fetch_cached_addresses(participant_ids)
       keys = participant_ids.map { |id| cache_key_for_participant_id(id) }
       addresses = Rails.cache.read_multi(*keys)
-      Hash[addresses.map { |k, v| [participant_id_from_cache_key(k), v] }]
+      addresses.transform_keys { |k| participant_id_from_cache_key(k) }
     end
   end
 
