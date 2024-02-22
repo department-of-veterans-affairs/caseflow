@@ -73,12 +73,12 @@ feature "SpecialtyCaseTeamQueue", :all_dbs do
 
     include_examples "Standard Queue feature tests"
 
-    context "issue types column" do
-      # scenario "Specialty Case Team Queue Loads" do
-      # end
+    context "Specialty Case Team Queue Loads correctly" do
+      scenario "Specialty Case Team Queue Loads" do
+        expect(find("h1")).to have_content("Specialty Case Team cases")
+      end
 
       scenario "SCT action required tab displays multiple issue types ordered in ascending order and no duplicates" do
-        expect(find("h1")).to have_content("Specialty Case Team cases")
         expect(page).to have_content(
           /\nBeneficiary Travel\nCaregiver | Other\nForeign Medical Program\nMedical and Dental Care Reimbursement\n/
         )
