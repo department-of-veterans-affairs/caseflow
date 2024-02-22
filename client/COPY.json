@@ -1434,6 +1434,8 @@
   "CORRESPONDENCE_READONLY_BANNER_HEADER": "This package has a pending request",
   "CORRESPONDENCE_READONLY_BANNER_MESSAGE": "Any further actions cannot be made on this package until a supervisor or superuser reviews the request.",
   "ASSOCIATED_WITH_CLAIMS_FOLDER_MAIL_TASK_LABEL": "Associated with claims folder",
+  "CORRESPONDENCE_CASES_REMOVE_PACKAGE_MODAL_TITLE": "Review request",
+  "CORRESPONDENCE_CASES_REASSIGN_PACKAGE_MODAL_TITLE": "Review request",
   "VACOLS_UPDATED_MAIL_TASK_LABEL": "VACOLS updated",
   "SENT_TO_ROJ_MAIL_TASK_LABEL": "Sent to ROJ"
 }

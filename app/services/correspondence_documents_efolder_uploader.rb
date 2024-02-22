@@ -48,7 +48,7 @@ class CorrespondenceDocumentsEfolderUploader
       ExternalApi::ClaimEvidenceService.upload_document(
         doc.pdf_location,
         corresondence_veteran(correspondence).file_number,
-        doc.claim_evidence_upload_json
+        doc.claim_evidence_upload_hash
       )
     end
   end

@@ -15,7 +15,8 @@ class CorrespondenceDocument < CaseflowRecord
   end
   # :nocov:
 
-  def claim_evidence_upload_json
+  # contentName, providerData: {contentSource:, documentTypeId:, dateVaReceivedDocument:} are required fields
+  def claim_evidence_upload_hash
     {
       contentName: pdf_name,
       providerData: {
@@ -28,6 +29,6 @@ class CorrespondenceDocument < CaseflowRecord
         dateVaReceivedDocument: correspondence.va_date_of_receipt.strftime("%Y-%m-%d"),
         actionable: true
       }
-    }.to_json
+    }
   end
 end

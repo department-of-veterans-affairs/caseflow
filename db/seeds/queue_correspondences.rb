@@ -39,9 +39,7 @@ module Seeds
     def create_queue_correspondences
       # 20 Correspondences with eFolderFailedUploadTask with a parent CorrespondenceIntakeTask
       20.times do
-        create_correspondence_with_intake_and_failed_upload_task(
-          create_correspondence_intake(create_correspondence, mail_team_user)
-        )
+        create_correspondence_with_intake_and_failed_upload_task
       end
 
       # 20 Correspondences with CorrespondenceIntakeTask with a status of in_progress
@@ -91,8 +89,9 @@ module Seeds
     end
     # rubocop:enable Metrics/MethodLength
 
-    def create_correspondence_with_intake_and_failed_upload_task(parent_task)
+    def create_correspondence_with_intake_and_failed_upload_task
       corres = create_correspondence
+      parent_task = create_correspondence_intake(corres, mail_team_user)
       create_efolderupload_failed_task(corres, parent_task)
     end
 
@@ -129,7 +128,8 @@ module Seeds
           parent_id: rpt.id,
           appeal_id: corres.id,
           appeal_type: "Correspondence",
-          assigned_to: MailTeamSupervisor.singleton
+          assigned_to: MailTeamSupervisor.singleton,
+          assigned_by_id: rpt.assigned_to_id
         )
       end
     end

@@ -2,9 +2,7 @@
 
 class CorrespondenceQueueTab < QueueTab
   def columns
-    column_names.map do |column_name|
-      CorrespondenceQueueColumn.new(name: column_name)
-    end
+    column_names.map { |column_name| CorrespondenceQueueColumn.from_name(column_name) }
   end
 
   def task_includes

@@ -2001,7 +2001,13 @@ describe Task, :all_dbs do
   describe "Correspondence Tasks" do
     context "Correspondence Intake Task" do
       it "has a task_url" do
-        cit = create(:correspondence_intake_task)
+        correspondence = create(:correspondence)
+        cit = create(
+          :correspondence_intake_task,
+          appeal: correspondence,
+          appeal_type: Correspondence.name,
+          assigned_to: create(:user)
+        )
         expect(cit.task_url).to eq("/queue/correspondence/#{cit.correspondence.uuid}/intake")
       end
     end
@@ -2012,7 +2018,7 @@ describe Task, :all_dbs do
         rpt = ReviewPackageTask.find_or_create_by(
           appeal_id: correspondence.id,
           assigned_to: MailTeamSupervisor.singleton,
-          appeal_type: "Correspondence"
+          appeal_type: Correspondence.name
         )
 
         expect(rpt.task_url).to eq("/queue/correspondence/#{correspondence.uuid}/review_package")
@@ -2025,13 +2031,13 @@ describe Task, :all_dbs do
         rpt = ReviewPackageTask.find_or_create_by(
           appeal_id: correspondence.id,
           assigned_to: MailTeamSupervisor.singleton,
-          appeal_type: "Correspondence"
+          appeal_type: Correspondence.name
         )
 
         uft = EfolderUploadFailedTask.create(
           appeal_id: correspondence.id,
           assigned_to: MailTeamSupervisor.singleton,
-          appeal_type: "Correspondence",
+          appeal_type: Correspondence.name,
           parent_id: rpt.id
         )
 
@@ -2043,17 +2049,73 @@ describe Task, :all_dbs do
         cit = CorrespondenceIntakeTask.find_or_create_by(
           appeal_id: correspondence.id,
           assigned_to: MailTeamSupervisor.singleton,
-          appeal_type: "Correspondence"
+          appeal_type: Correspondence.name
         )
 
         uft = EfolderUploadFailedTask.create(
           appeal_id: correspondence.id,
           assigned_to: MailTeamSupervisor.singleton,
-          appeal_type: "Correspondence",
+          appeal_type: Correspondence.name,
           parent_id: cit.id
         )
 
         expect(uft.task_url).to eq("/queue/correspondence/#{correspondence.uuid}/intake")
+      end
+    end
+
+    context "package action tasks" do
+      it "verifies no other open package action task on correspondence before creation" do
+        correspondence = create(:correspondence)
+        parent_task = ReviewPackageTask.find_by(appeal_id: correspondence.id)
+        reassign_pt = ReassignPackageTask.create!(
+          parent_id: parent_task&.id,
+          appeal_id: correspondence&.id,
+          appeal_type: Correspondence.name,
+          assigned_to: MailTeamSupervisor.singleton
+        )
+
+        # creation ok with no pre-existing package action task
+        expect(reassign_pt).to be_a(ReassignPackageTask)
+
+        # creation fails due to pre-existing package action task
+        expect do
+          RemovePackageTask.create!(
+            parent_id: parent_task&.id,
+            appeal_id: correspondence&.id,
+            appeal_type: Correspondence.name,
+            assigned_to: MailTeamSupervisor.singleton
+          )
+        end.to raise_error(Caseflow::Error::MultipleOpenTasksOfSameTypeError)
+
+        # creation fails due to pre-existing package action task
+        expect do
+          SplitPackageTask.create!(
+            parent_id: parent_task&.id,
+            appeal_id: correspondence&.id,
+            appeal_type: Correspondence.name,
+            assigned_to: MailTeamSupervisor.singleton
+          )
+        end.to raise_error(Caseflow::Error::MultipleOpenTasksOfSameTypeError)
+
+        # creation fails due to pre-existing package action task
+        expect do
+          MergePackageTask.create!(
+            parent_id: parent_task&.id,
+            appeal_id: correspondence&.id,
+            appeal_type: Correspondence.name,
+            assigned_to: MailTeamSupervisor.singleton
+          )
+        end.to raise_error(Caseflow::Error::MultipleOpenTasksOfSameTypeError)
+
+        reassign_pt.update!(status: Constants.TASK_STATUSES.completed)
+
+        # creation ok due to pre-existing package action task status update
+        expect(RemovePackageTask.create!(
+                 parent_id: parent_task&.id,
+                 appeal_id: correspondence&.id,
+                 appeal_type: Correspondence.name,
+                 assigned_to: MailTeamSupervisor.singleton
+               )).to be_a(RemovePackageTask)
       end
     end
   end

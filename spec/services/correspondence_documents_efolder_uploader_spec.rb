@@ -15,7 +15,7 @@ describe CorrespondenceDocumentsEfolderUploader do
 
         expect(FeatureToggle).to receive(:enabled?).with(:ce_api_demo_toggle).and_return(true)
         expect(ExternalApi::ClaimEvidenceService).to receive(:upload_document)
-          .with(doc.pdf_location, veteran.file_number, doc.claim_evidence_upload_json).once
+          .with(doc.pdf_location, veteran.file_number, doc.claim_evidence_upload_hash).once
       end
 
       it "succeeds and does not create any EfolderUploadFailedTask tasks" do
@@ -52,8 +52,7 @@ describe CorrespondenceDocumentsEfolderUploader do
       end
 
       context "with existing EfolderUploadFailedTask" do
-        let!(:existing_failed_task) { create(:efolder_upload_failed_task, appeal: correspondence) }
-
+        let!(:existing_failed_task) { create(:efolder_upload_failed_task, appeal: correspondence, appeal_type: "Correspondence") }
         it "does not create a new EfolderUploadFailedTask if one already exists" do
           expect do
             described.upload_documents_to_claim_evidence(correspondence, current_user, parent_task)
