@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
 RSpec.feature "Remove hearing scheduled in error" do
-  before { FeatureToggle.enable!(:schedule_veteran_virtual_hearing) }
-  after { FeatureToggle.disable!(:schedule_veteran_virtual_hearing) }
-
   let!(:current_user) do
     user = create(:user, css_id: "BVASYELLOW", roles: ["Edit HearSched"])
     HearingsManagement.singleton.add_user(user)

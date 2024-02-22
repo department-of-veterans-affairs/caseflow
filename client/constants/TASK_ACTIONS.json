@@ -308,11 +308,6 @@
     "value": "modal/send_colocated_task",
     "func": "send_colocated_task"
   },
-  "SCHEDULE_VETERAN": {
-    "label": "Schedule Veteran",
-    "value": "modal/schedule_veteran",
-    "func": "schedule_veteran_data"
-  },
   "SCHEDULE_VETERAN_V2_PAGE": {
     "label": "Schedule Veteran",
     "value": "schedule_veteran",

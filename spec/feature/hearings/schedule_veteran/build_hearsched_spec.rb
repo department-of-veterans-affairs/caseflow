@@ -62,7 +62,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         click_link appellant_appeal_link_text
         expect(page).not_to have_content("loading to VACOLS.", wait: 30)
         expect(page).to have_content("Currently active tasks", wait: 30)
-        click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
+        click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.to_h[:label])
         expect(page).to have_content("Time")
       end
     end
@@ -114,7 +114,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         appeal_link.click
         expect(page).not_to have_content("loading to VACOLS.", wait: 30)
         expect(page).to have_content("Currently active tasks", wait: 30)
-        click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
+        click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.to_h[:label])
         expect(page).to have_content("Time")
       end
     end
@@ -301,11 +301,9 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
         select_hearing_time("9:00")
 
-        if FeatureToggle.enabled?(:schedule_veteran_virtual_hearing)
-          # Fill in Unscheduled Notes
-          expect(page).to have_content(unscheduled_notes)
-          fill_in "Notes", with: fill_in_unscheduled_notes
-        end
+        # Fill in Unscheduled Notes
+        expect(page).to have_content(unscheduled_notes)
+        fill_in "Notes", with: fill_in_unscheduled_notes
 
         if FeatureToggle.enabled?(:collect_video_and_central_emails)
           # Ensure the new email notification label is visible
@@ -334,11 +332,9 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         expect(page).to have_content("There are no schedulable veterans")
         expect(VACOLS::CaseHearing.first.folder_nr).to eq vacols_case.bfkey
 
-        if FeatureToggle.enabled?(:schedule_veteran_virtual_hearing)
-          # Ensure new hearing has the unscheduled notes
-          expect(VACOLS::CaseHearing.first.notes1).to eq fill_in_unscheduled_notes
-          expect(LegacyHearing.last.notes).to eq(fill_in_unscheduled_notes)
-        end
+        # Ensure new hearing has the unscheduled notes
+        expect(VACOLS::CaseHearing.first.notes1).to eq fill_in_unscheduled_notes
+        expect(LegacyHearing.last.notes).to eq(fill_in_unscheduled_notes)
 
         if FeatureToggle.enabled?(:collect_video_and_central_emails)
           expect(LegacyHearing.last.email_recipients.count).to eq(2)
@@ -372,11 +368,9 @@ RSpec.feature "Schedule Veteran For A Hearing" do
           name: "hearingDate"
         )
 
-        if FeatureToggle.enabled?(:schedule_veteran_virtual_hearing)
-          # Fill in Unscheduled Notes
-          expect(page).to have_content(unscheduled_notes)
-          fill_in "Notes", with: fill_in_unscheduled_notes
-        end
+        # Fill in Unscheduled Notes
+        expect(page).to have_content(unscheduled_notes)
+        fill_in "Notes", with: fill_in_unscheduled_notes
 
         if FeatureToggle.enabled?(:collect_video_and_central_emails)
           # Ensure the new email notification label is visible
@@ -405,11 +399,9 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         expect(page).to have_content("There are no schedulable veterans")
         expect(VACOLS::CaseHearing.first.folder_nr).to eq vacols_case.bfkey
 
-        if FeatureToggle.enabled?(:schedule_veteran_virtual_hearing)
-          # Ensure new hearing has the unscheduled notes
-          expect(VACOLS::CaseHearing.first.notes1).to eq fill_in_unscheduled_notes
-          expect(LegacyHearing.last.notes).to eq(fill_in_unscheduled_notes)
-        end
+        # Ensure new hearing has the unscheduled notes
+        expect(VACOLS::CaseHearing.first.notes1).to eq fill_in_unscheduled_notes
+        expect(LegacyHearing.last.notes).to eq(fill_in_unscheduled_notes)
 
         if FeatureToggle.enabled?(:collect_video_and_central_emails)
           expect(LegacyHearing.last.email_recipients.count).to eq(2)
@@ -438,7 +430,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
         scenario "Schedule Veteran for video error" do
           visit "queue/appeals/#{appeal.vacols_id}"
-          click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
+          click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.to_h[:label])
           expect(page).to have_css(
             ".usa-alert-error",
             text: "Service is temporarily unavailable, please try again later."
@@ -639,7 +631,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         click_button("AMA Veterans Waiting", exact: true)
 
         click_on "Bob"
-        click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
+        click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.to_h[:label])
         click_dropdown({ text: "Denver" }, find(".dropdown-regionalOffice"))
         click_dropdown(name: "hearingDate", index: 0)
 
@@ -889,7 +881,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     shared_examples "withdraw a hearing" do
       def schedule_hearing(appeal_link)
         visit appeal_link
-        click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN.to_h[:label])
+        click_dropdown(text: Constants.TASK_ACTIONS.SCHEDULE_VETERAN_V2_PAGE.to_h[:label])
         click_dropdown(name: "appealHearingLocation", text: "Holdrege, NE (VHA) 0 miles away")
 
         room_label = HearingRooms.find!(hearing_day.room)&.label
@@ -1053,12 +1045,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
         FeatureToggle.disable!(:enable_hearing_time_slots)
       end
 
-      context "with schedule direct to video/virtual feature enabled" do
-        # Ensure the feature flag is enabled before testing
-        before do
-          FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
-        end
-
+      context "with schedule direct to video/virtual feature enabled (on by default)" do
         it_behaves_like "scheduling a central hearing"
 
         it_behaves_like "scheduling a video hearing"
@@ -1081,10 +1068,7 @@ RSpec.feature "Schedule Veteran For A Hearing" do
 
     context "with enable_time_slots feature enabled" do
       # Ensure the feature flag is enabled before testing
-      before do
-        FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
-        FeatureToggle.enable!(:enable_hearing_time_slots)
-      end
+      before { FeatureToggle.enable!(:enable_hearing_time_slots) }
 
       # These are the only feature tests that create 'R' virtual
       # hearing days and should show timeslots
@@ -1116,7 +1100,6 @@ RSpec.feature "Schedule Veteran For A Hearing" do
     context "with collect_video_and_central_emails enabled" do
       # Ensure the feature flag is enabled before testing
       before do
-        FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
         FeatureToggle.enable!(:collect_video_and_central_emails)
         FeatureToggle.enable!(:enable_hearing_time_slots)
       end

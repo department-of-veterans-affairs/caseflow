@@ -155,7 +155,6 @@ NotificationsView.propTypes = {
   success: PropTypes.object,
   userCanAccessReader: PropTypes.bool,
   veteranCaseListIsVisible: PropTypes.bool,
-  userCanScheduleVirtualHearings: PropTypes.bool,
   userCanEditUnrecognizedPOA: PropTypes.bool,
   scheduledHearingId: PropTypes.string,
   pollHearing: PropTypes.bool,

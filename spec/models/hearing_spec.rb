@@ -349,7 +349,7 @@ describe Hearing, :postgres do
           .and_raise(TZInfo::InvalidTimezoneIdentifier)
 
         # Although an exception is encounted, it should be handled and not raised up the stack
-        expect {subject}.not_to raise_error(TZInfo::InvalidTimezoneIdentifier)
+        expect { subject }.not_to raise_error(TZInfo::InvalidTimezoneIdentifier)
 
         is_expected.to eq "America/New_York"
       end

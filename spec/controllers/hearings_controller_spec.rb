@@ -498,7 +498,9 @@ RSpec.describe HearingsController, type: :controller do
   end
 
   describe "#show" do
-    let!(:hearing) { create(:hearing, :with_tasks, scheduled_time: "8:30 AM", scheduled_in_timezone: "Pacific Time (US & Canada)") }
+    let!(:hearing) do
+      create(:hearing, :with_tasks, scheduled_time: "8:30 AM", scheduled_in_timezone: "Pacific Time (US & Canada)")
+    end
     let(:expected_time_zone) { "America/New_York" }
     # for "America/New_York", "-04:00" or "-05:00" depending on daylight savings time
     let(:utc_offset) do
