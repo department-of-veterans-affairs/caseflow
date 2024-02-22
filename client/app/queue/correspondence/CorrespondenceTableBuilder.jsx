@@ -5,7 +5,8 @@ import { sprintf } from 'sprintf-js';
 import { connect } from 'react-redux';
 import querystring from 'querystring';
 
-import BulkAssignButton from '../components/BulkAssignButton';
+import Button from '../../components/Button';
+import SearchableDropdown from '../../components/SearchableDropdown';
 import QueueTable from '../QueueTable';
 import TabWindow from '../../components/TabWindow';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -138,12 +139,41 @@ const CorrespondenceTableBuilder = (props) => {
       label: sprintf(tabConfig.label, totalTaskCount),
       page: (
         <>
+          {(tabConfig.name === 'correspondence_unassigned' || tabConfig.name === 'correspondence_team_assigned') &&
+            <>
+              <p className="cf-margin-bottom-0rem">Assign to mail team user</p>
+              <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <SearchableDropdown
+                  className="cf-dropdown"
+                  name="Assign to mail team user"
+                  hideLabel
+                  styling={{ width: '200px', marginRight: '2rem' }}
+                  dropdownStyling={{ width: '200px' }}
+                />
+                {tabConfig.name === 'correspondence_unassigned' &&
+              <>
+                <Button
+                  name="Assign"
+                />
+                <span style={{ marginLeft: 'auto' }}>
+                  <Button
+                    name="Auto assign correspondence"
+                  />
+                </span>
+              </>
+                }
+                {tabConfig.name === 'correspondence_team_assigned' &&
+            <Button
+              name="Reassign"
+            />
+                }
+              </div>
+              <hr></hr>
+            </>
+          }
           <p className="cf-margin-top-0">
             {noCasesMessage || tabConfig.description}
           </p>
-          {props.userCanBulkAssign && tabConfig.allow_bulk_assign && (
-            <BulkAssignButton />
-          )}
           <QueueTable
             key={tabConfig.name}
             columns={columnsFromConfig(config, tabConfig, tasks)}

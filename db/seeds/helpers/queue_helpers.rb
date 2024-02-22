@@ -40,13 +40,19 @@ module QueueHelpers
   # :reek:UtilityFunction
   def create_correspondence_intake(correspondence, user)
     parent = correspondence&.root_task
-    CorrespondenceIntakeTask.create_from_params(parent, user)
+    cit = CorrespondenceIntakeTask.create_from_params(parent, user)
+    randomize_days_waiting_value(cit)
+    cit
   end
 
   # :reek:UtilityFunction
   def assign_review_package_task(correspondence, user)
     review_package_task = ReviewPackageTask.find_by(appeal_id: correspondence.id)
-    review_package_task.update!(assigned_to: user, status: Constants.TASK_STATUSES.assigned)
+    review_package_task.update!(
+      assigned_to: user,
+      status: Constants.TASK_STATUSES.assigned,
+      assigned_at: rand(1.month.ago..1.day.ago)
+    )
   end
 
   # :reek:UtilityFunction
@@ -109,5 +115,9 @@ module QueueHelpers
 
     cit = CorrespondenceIntakeTask.create_from_params(correspondence&.root_task, user)
     cit.update!(status: Constants.TASK_STATUSES.completed, completed_by_id: user.id)
+  end
+
+  def randomize_days_waiting_value(task)
+    task.update(assigned_at: rand(1.month.ago..1.day.ago))
   end
 end
