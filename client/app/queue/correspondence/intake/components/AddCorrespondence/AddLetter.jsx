@@ -93,8 +93,7 @@ export const AddLetter = (props) => {
 
   return (
     <>
-    
-      <div className="myletters" style={{width: '100%', display: 'inline-block' }}>
+      <div className="myletters" style={{ width: '100%', display: 'inline-block' }}>
         { letters.map((letter) => (
           <div id={letter} style={{ width: '50%', float: 'left', height: '840px' }} key={letter}>
             <NewLetter
