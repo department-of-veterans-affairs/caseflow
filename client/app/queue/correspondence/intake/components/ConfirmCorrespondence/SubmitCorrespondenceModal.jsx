@@ -17,7 +17,13 @@ export const SubmitCorrespondenceModal = ({ setSubmitCorrespondenceModalVisible,
   const tasksRelatedToAppeal = useSelector((state) => state.intakeCorrespondence.newAppealRelatedTasks);
   const tasksNotRelatedToAppeal = useSelector((state) => state.intakeCorrespondence.unrelatedTasks);
   const mailTasks = useSelector((state) => state.intakeCorrespondence.mailTasks);
-  const responseLetters = useSelector((state) => state.intakeCorrespondence.responseLetters);
+  const responseLettersHash = useSelector((state) => state.intakeCorrespondence.responseLetters);
+  let responseLetters = [];
+
+  if (responseLettersHash && Object.values(responseLettersHash).length > 0) {
+    responseLetters = Object.values(responseLettersHash);
+  }
+
   const [loading, setLoading] = useState(false);
 
   const onCancel = () => {

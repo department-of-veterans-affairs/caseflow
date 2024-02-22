@@ -196,18 +196,20 @@ export const ConfirmCorrespondenceView = (props) => {
               </tbody>
               { Object.keys(responseLetters)?.map((indexValue) => {
                 const responseLetter = responseLetters[indexValue];
+                const responseDate = new Date(responseLetter?.date);
 
                 return (
                   <tbody key={indexValue}>
                     <tr>
-                      <td> {responseLetter?.date} </td>
+                      <td> {responseDate?.toLocaleDateString('en-US', {
+                        month: '2-digit', day: '2-digit', year: 'numeric' })} </td>
                       <td> {responseLetter?.type} </td>
                       <td> {responseLetter?.title} </td>
                       <td> {responseLetter?.subType} </td>
                       <td> {responseLetter?.reason} </td>
                       <td>
                         {
-                          responseLetter?.customValue === null ?
+                          (responseLetter?.customValue === '' || responseLetter?.customValue === null) ?
                            responseLetter?.responseWindows :
                             `${responseLetter?.customValue } days`
                         }

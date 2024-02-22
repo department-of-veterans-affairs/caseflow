@@ -8,16 +8,19 @@ import DateSelector from 'app/components/DateSelector';
 import RadioField from '../../../../../components/RadioField';
 import { ADD_CORRESPONDENCE_LETTER_SELECTIONS } from '../../../../constants';
 import moment from 'moment';
-import { connect, useDispatch } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
-  setResponseLetters
+  setResponseLetters, removeResponseLetters
 } from '../../../correspondenceReducer/correspondenceActions';
 
 export const AddLetter = (props) => {
   const onContinueStatusChange = props.onContinueStatusChange;
 
-  const [letters, setLetters] = useState([]);
+  const responseLetters = useSelector((state) => state.intakeCorrespondence.responseLetters);
+
+  const [letters, setLetters] = useState(Object.keys(responseLetters));
+
   const [dataLetter, setDataLetter] = useState([]);
 
   const addLetter = (index) => {
@@ -90,6 +93,7 @@ export const AddLetter = (props) => {
 
   return (
     <>
+    
       <div className="myletters" style={{width: '100%', display: 'inline-block' }}>
         { letters.map((letter) => (
           <div id={letter} style={{ width: '50%', float: 'left', height: '840px' }} key={letter}>
@@ -98,10 +102,12 @@ export const AddLetter = (props) => {
               removeLetter={removeLetter}
               taskUpdatedCallback={taskUpdatedCallback}
               setUnrelatedTasksCanContinue= {setUnrelatedTasksCanContinue}
+              currentLetter = {responseLetters && responseLetters[letter]}
             />
           </div>
         )) }
       </div>
+
       <div style={{ width: '80%', marginBottom: '30px' }}>
         <Button
           type="button"
@@ -119,7 +125,6 @@ export const AddLetter = (props) => {
         </Button>
       </div>
     </>
-
   );
 };
 
@@ -133,27 +138,29 @@ AddLetter.propTypes = {
 const currentDate = moment(new Date()).format('YYYY-MM-DD');
 const NewLetter = (props) => {
   const index = props.index;
+  const currentLetter = props.currentLetter;
   const letterHash = {};
   const setUnrelatedTasksCanContinue = props.setUnrelatedTasksCanContinue;
+  const displayLetter = (typeof currentLetter !== 'undefined');
   const [letterCard, setLetterCard] = useState({
     id: index,
-    date: currentDate,
-    type: '',
-    title: '',
-    subType: '',
-    reason: '',
-    responseWindows: '',
-    customValue: null
+    date: displayLetter ? currentLetter.date : currentDate,
+    type: displayLetter ? currentLetter.type : '',
+    title: displayLetter ? currentLetter.title : '',
+    subType: displayLetter ? currentLetter.subType : '',
+    reason: displayLetter ? currentLetter.reason : '',
+    responseWindows: displayLetter ? currentLetter.responseWindows : '',
+    customValue: displayLetter ? currentLetter.customValue : ''
   });
-
   const [letterTitleSelector, setLetterTitleSelector] = useState('');
   const [letterSubSelector, setLetterSubSelector] = useState('');
   const [letterSubReason, setLetterSubReason] = useState('');
-  const [customResponseWindowState, setCustomResponseWindowState] = useState(false);
+  const customResponseVal = Boolean(displayLetter && currentLetter?.customValue > 0);
+  const [customResponseWindowState, setCustomResponseWindowState] = useState(customResponseVal);
 
   const [stateOptions, setStateOptions] = useState(true);
 
-  const [responseWindows, setResponseWindows] = useState('');
+  const [responseWindows, setResponseWindows] = useState(displayLetter ? currentLetter.responseWindows : '');
   const naValue = 'N/A';
   const dispatch = useDispatch();
 
@@ -199,10 +206,18 @@ const NewLetter = (props) => {
     value: option.letter_type }));
 
   const selectResponseWindows = (option, aux) => {
-    if (option.response_window_option_default) {
+    if (displayLetter) {
+      const responseWindowsValue = currentLetter.responseWindows;
+
       setLetterCard({ ...letterCard,
-        responseWindows: option.response_window_option_default });
-      setResponseWindows(option.response_window_option_default);
+        responseWindows: responseWindowsValue });
+      setResponseWindows(responseWindowsValue);
+    } else if (option.response_window_option_default) {
+      const responseWindowsValue = option.response_window_option_default;
+
+      setLetterCard({ ...letterCard,
+        responseWindows: responseWindowsValue });
+      setResponseWindows(responseWindowsValue);
     } else if (option.letter_titles[aux].letter_title === letterCard.title) {
       setLetterCard({ ...letterCard,
         responseWindows: option.letter_titles[aux].response_window_option_default });
@@ -343,7 +358,6 @@ const NewLetter = (props) => {
       reason: '',
       responseWindows: ''
     });
-    setCustomResponseWindowState(false);
   };
 
   useEffect(() => {
@@ -357,27 +371,19 @@ const NewLetter = (props) => {
 
   const changeLetterTitle = (val) => {
     setLetterCard({ ...letterCard,
-      title: val,
-      subType: '',
-      reason: '',
-      responseWindows: ''
+      title: val
     });
-    setCustomResponseWindowState(false);
   };
 
   const changeLetterSubTitle = (val) => {
     setLetterCard({ ...letterCard,
-      subType: val,
-      reason: '',
-      customValue: null
+      subType: val
     });
-    setCustomResponseWindowState(false);
   };
 
   const changeSubReason = (val) => {
     setLetterCard({ ...letterCard,
-      reason: val,
-      customValue: null
+      reason: val
     });
   };
 
@@ -388,6 +394,7 @@ const NewLetter = (props) => {
   };
 
   const removeLetter = () => {
+    dispatch(removeResponseLetters(index));
     props.removeLetter(index);
   };
 
@@ -468,7 +475,6 @@ const NewLetter = (props) => {
         value = {responseWindows}
         onChange={(val) => handleCustomWindowState(val)}
       />
-
       { customResponseWindowState &&
         <TextField
           label="Number of days (Value must be between 1 and 64)"
@@ -500,7 +506,9 @@ NewLetter.propTypes = {
   letterTitle: PropTypes.string,
   setLetterTitle: PropTypes.func,
   setResponseLetters: PropTypes.func,
+  removeResponseLetters: PropTypes.func,
   setUnrelatedTasksCanContinue: PropTypes.func,
+  currentLetter: PropTypes.func,
   taskUpdatedCallback: PropTypes.func,
   onContinueStatusChange: PropTypes.func
 };

@@ -133,3 +133,13 @@ export const setResponseLetters = (responseLetters) =>
       }
     });
   };
+
+export const removeResponseLetters = (index) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.REMOVE_RESPONSE_LETTERS,
+      payload: {
+        index
+      }
+    });
+  };
