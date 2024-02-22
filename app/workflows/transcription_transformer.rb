@@ -36,6 +36,8 @@ class TranscriptionTransformer
     return rtf_path if File.exist?(rtf_path)
 
     begin
+      converted_file = File.open(path, "r") { |io| io.read.encode("UTF-8", invalid: :replace, replace: "...") }
+      File.open(path, "w") { |file| file.write(converted_file) }
       vtt = WebVTT.read(path)
       @length = vtt.actual_total_length
       doc = RTF::Document.new(RTF::Font.new(RTF::Font::ROMAN, "Times New Roman"))
@@ -101,18 +103,11 @@ class TranscriptionTransformer
     transcript.cues.each do |cue|
       identifier = cue.identifier&.strip&.scan(/[a-zA-Z]+/)&.join(" ") || ""
       name = (identifier == "") ? "Unknown" : identifier
-      if cue.text == ""
-        @error_count += 1
-        text = "[...]"
-      else text = cue.text
-      end
-      if name.match?(/#{prev_id}/)
-        compressed_transcript[index][:text] += " " + text
-      else
-        prev_id = name
-        compressed_transcript.push(identifier: name, text: text)
-        index += 1
-      end
+      original_text = cue.text
+      @error_count += original_text.scan("[...]").size
+      prev_id = name
+      compressed_transcript.push(identifier: name, text: original_text)
+      index += 1
     end
 
     compressed_transcript
