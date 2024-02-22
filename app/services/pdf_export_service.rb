@@ -31,7 +31,7 @@ class PdfExportService
       end
       # create new pdfkit object from template
       kit = PDFKit.new(template, page_size: "Letter", margin_top: "0.25in", margin_bottom: "0.25in",
-                       margin_left: "0.25in", margin_right: "0.25in")
+                                 margin_left: "0.25in", margin_right: "0.25in")
       # add CSS styling
       stylesheet_name = "app/assets/stylesheets/" + template_name + ".css"
       if File.exist?(stylesheet_name)
