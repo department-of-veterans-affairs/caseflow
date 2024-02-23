@@ -57,47 +57,22 @@ export const updateRadioLever = (leverGroup, leverItem, value, optionValue = nul
     });
   };
 
-export const updateCombinationLever = (leverGroup, leverItem, value, toggleValue = false) =>
+export const updateLeverIsToggleActive = (leverGroup, leverItem, toggleValue) =>
   (dispatch) => {
     dispatch({
-      type: ACTIONS.UPDATE_COMBINATION_LEVER,
+      type: ACTIONS.UPDATE_LEVER_IS_TOGGLE_ACTIVE,
       payload: {
         leverGroup,
         leverItem,
-        value,
         toggleValue
       }
     });
   };
 
-export const updateBooleanLever = (leverGroup, leverItem, value) =>
+export const updateLeverValue = (leverGroup, leverItem, value) =>
   (dispatch) => {
     dispatch({
-      type: ACTIONS.UPDATE_BOOLEAN_LEVER,
-      payload: {
-        leverGroup,
-        leverItem,
-        value
-      }
-    });
-  };
-
-export const updateTextLever = (leverGroup, leverItem, value) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.UPDATE_TEXT_LEVER,
-      payload: {
-        leverGroup,
-        leverItem,
-        value
-      }
-    });
-  };
-
-export const updateNumberLever = (leverGroup, leverItem, value) =>
-  (dispatch) => {
-    dispatch({
-      type: ACTIONS.UPDATE_NUMBER_LEVER,
+      type: ACTIONS.UPDATE_LEVER_VALUE,
       payload: {
         leverGroup,
         leverItem,
@@ -108,10 +83,11 @@ export const updateNumberLever = (leverGroup, leverItem, value) =>
 
 export const saveLevers = (levers) =>
   (dispatch) => {
-    const changedValues = Object.values(levers).flat().
+    const changedValues = levers.
       map((lever) => ({
         id: lever.id,
-        value: lever.value
+        value: lever.value,
+        is_toggle_active: lever.is_toggle_active
       }));
 
     const postData = {
