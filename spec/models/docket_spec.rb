@@ -402,8 +402,10 @@ describe Docket, :all_dbs do
         let(:second_judge) { create(:user, :judge, :with_vacols_judge_record) }
         let(:second_distribution) { Distribution.create!(judge: second_judge) }
 
+        let(:cavc_affinity_days) { CaseDistributionLever.cavc_affinity_days }
+
         before do
-          cavc_distribution_task.update!(assigned_at: (Constants.DISTRIBUTION.cavc_affinity_days + 1).days.ago)
+          cavc_distribution_task.update!(assigned_at: (cavc_affinity_days + 1).days.ago)
         end
 
         context "when genpop: not_genpop is set" do
@@ -596,15 +598,17 @@ describe Docket, :all_dbs do
         (1..num_appeals_before).map do
           create(:appeal,
                  :with_post_intake_tasks,
-                 docket_type: docket_type)
+                 docket_type: docket_type,
+                 receipt_date: 5.days.ago)
         end,
         (1..num_vha_appeals).map do
-          create(:appeal, :with_post_intake_tasks, :with_vha_issue, docket_type: docket_type)
+          create(:appeal, :with_post_intake_tasks, :with_vha_issue, docket_type: docket_type, receipt_date: 3.days.ago)
         end,
         (1..num_appeals_after).map do
           create(:appeal,
                  :with_post_intake_tasks,
-                 docket_type: docket_type)
+                 docket_type: docket_type,
+                 receipt_date: 2.days.ago)
         end
       ].flatten
     end
@@ -647,9 +651,9 @@ describe Docket, :all_dbs do
         let(:docket_type) { Constants.AMA_DOCKETS.evidence_submission }
 
         before do
-          # Force the distribution tasks to be assigned so it can be distributed
+          # Complete the EvidenceSubmissionWindowTask to move the appeals to be ready to distribute
           appeals.each do |appeal|
-            appeal.tasks.of_type(:DistributionTask).first.assigned!
+            appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.completed!
           end
         end
 
