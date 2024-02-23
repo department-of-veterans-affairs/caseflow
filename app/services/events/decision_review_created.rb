@@ -2,6 +2,7 @@
 
 class Events::DecisionReviewCreated
   include RedisMutex::Macro
+  include Events::DecisionReviewCreate::UpdateVacolsOnOptin
   # Default options for RedisMutex#with_lock
   # :block  => 1    # Specify in seconds how long you want to wait for the lock to be released.
   #                 # Specify 0 if you need non-blocking sematics and return false immediately. (default: 1)
@@ -30,6 +31,9 @@ class Events::DecisionReviewCreated
           # TODO: backfill models as needed, set Event.completed_at when finished
           # Note: createdByStation == station_id, createdByUsername == css_id
           # Events::CreateUserOnEvent.handle_user_creation_on_event(event, css_id, station_id)
+          # Note: decision_review arg can either be a HLR or SC object. process! will only run if
+          # decision_review.legacy_opt_in_approved is true
+          # Events::DecisionReviewCreate::UpdateVacolsOnOptin.process!(decision_review)
           # event.update!(completed_at: Time.now, error: nil)
         # end
       end
@@ -59,5 +63,6 @@ class Events::DecisionReviewCreated
     def find_or_create_event(consumer_event_id)
       DecisionReviewCreatedEvent.find_or_create_by(reference_id: consumer_event_id)
     end
+
   end
 end

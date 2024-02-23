@@ -481,4 +481,7 @@ module Caseflow::Error
     end
   end
   class RedisLockFailed < StandardError; end
+
+  # Event Decision Review Create Errors
+  class DecisionReviewCreateVacolsOnOptinError < StandardError; end
 end
