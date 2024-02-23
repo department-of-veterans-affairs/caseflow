@@ -96,7 +96,7 @@ class CaseDistributionLever < ApplicationRecord
   # this matches what is displayed in frontend
   # see client/app/caseDistribution/components/SaveModal.jsx
   def combination_value
-    toggle_string = is_toggle_active ? 'Active' : 'Inactive'
+    toggle_string = is_toggle_active ? "Active" : "Inactive"
     "#{toggle_string} - #{value}"
   end
 
@@ -115,18 +115,19 @@ class CaseDistributionLever < ApplicationRecord
     end
 
     def update_acd_levers(current_levers, current_user)
-      # if lever is a radio update options object
-      current_levers.each do |lever|
-        next unless lever.radio_lever
-        # update options
-      end
-
       grouped_levers = current_levers.index_by { |lever| lever["id"] }
       previous_levers = CaseDistributionLever.where(id: grouped_levers.keys).index_by { |lever| lever["id"] }
       errors = []
       levers = []
 
+      # if lever is a radio update options object
+      grouped_levers.each_pair do |lever_id, lever|
+        previous_lever = previous_levers[lever_id]
+        next unless previous_lever.radio_lever
 
+        # update options
+        update_radio_options(lever, previous_lever.options)
+      end
 
       ActiveRecord::Base.transaction do
         levers = CaseDistributionLever.update(grouped_levers.keys, grouped_levers.values)
@@ -174,6 +175,26 @@ class CaseDistributionLever < ApplicationRecord
       end
 
       []
+    end
+
+    # Modified by reference the lever and options objects and then add
+    # lever["options"] so that CaseDistributionLever.update updates the options field
+    def update_radio_options(lever, options)
+      selected_option = if [Constants.ACD_LEVERS.omit, Constants.ACD_LEVERS.infinite].include?(lever["value"])
+                          lever["value"]
+                        else
+                          Constants.ACD_LEVERS.value
+                        end
+
+      options.each do |option|
+        option["selected"] = option["item"] == selected_option
+
+        if option["selected"] && option["item"] == Constants.ACD_LEVERS.value
+          option["value"] = lever["value"].to_i
+        end
+      end
+
+      lever["options"] = options
     end
   end
 end
