@@ -17,19 +17,17 @@ class Hearings::GetWebexRecordingsDetailsJob < CaseflowJob
 
   def perform(id:)
     ensure_current_user_is_set
-    topic = get_recording_details(id).topic
+    data = get_recording_details(id)
+    topic = data.topic
 
-    mp4_link = get_recording_details(id).mp4_link
-    mp4_file_name = create_file_name(topic, "mp4")
-    Hearings::DownloadTranscriptionFileJob.new.perform(download_link: mp4_link, file_name: mp4_file_name)
+    mp4_link = data.mp4_link
+    send_file(topic, "mp4", mp4_link)
 
-    vtt_link = get_recording_details(id).vtt_link
-    vtt_file_name = create_file_name(topic, "vtt")
-    Hearings::DownloadTranscriptionFileJob.new.perform(download_link: vtt_link, file_name: vtt_file_name)
+    vtt_link = data.vtt_link
+    send_file(topic, "vtt", vtt_link)
 
-    mp3_link = get_recording_details(id).mp3_link
-    mp3_file_name = create_file_name(topic, "mp3")
-    Hearings::DownloadTranscriptionFileJob.new.perform(download_link: mp3_link, file_name: mp3_file_name)
+    mp3_link = data.mp3_link
+    send_file(topic, "mp3", mp3_link)
   end
 
   def log_error(error)
@@ -66,5 +64,10 @@ class Hearings::GetWebexRecordingsDetailsJob < CaseflowJob
               end
     counter = topic.split("-").last
     "#{subject}-#{counter}.#{extension}"
+  end
+
+  def send_file(topic, extension, link)
+    file_name = create_file_name(topic, extension)
+    Hearings::DownloadTranscriptionFileJob.new.perform(download_link: link, file_name: file_name)
   end
 end
