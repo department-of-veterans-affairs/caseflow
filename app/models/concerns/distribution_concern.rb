@@ -41,6 +41,10 @@ module DistributionConcern
     appeal.tasks.of_type(:JudgeAssignTask).where.not(assigned_to_id: judge_id).update(status: :cancelled)
   end
 
+  def slack_url
+    ENV["SLACK_DISPATCH_ALERT_URL"]
+  end
+
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   # :reek:FeatureEnvy
   def create_sct_appeals(appeals_args, limit)
