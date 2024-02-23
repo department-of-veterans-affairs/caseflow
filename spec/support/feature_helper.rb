@@ -93,11 +93,6 @@ module FeatureHelper
     have_xpath("//title[contains(.,'#{title}')]", visible: false)
   end
 
-  def hang
-    puts "Hanging the test indefinitely so you can debug in the browser."
-    sleep(10_000)
-  end
-
   # reload the case detail page if an load error is detected
   def reload_case_detail_page(uuid)
     visit "/queue/appeals/#{uuid}"
