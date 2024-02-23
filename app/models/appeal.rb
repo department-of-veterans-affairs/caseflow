@@ -808,7 +808,7 @@ class Appeal < DecisionReview
 
   def set_target_decision_date!
     if direct_review_docket?
-      update!(target_decision_date: receipt_date + Constants.DISTRIBUTION.direct_docket_time_goal.days)
+      update!(target_decision_date: receipt_date + CaseDistributionLever.ama_direct_review_docket_time_goals.days)
     end
   end
 
@@ -913,9 +913,14 @@ class Appeal < DecisionReview
 
   # :reek:FeatureEnvy
   def can_redistribute_appeal?
+    # These tasks are irrelevant because: TrackVeteranTask - Always open for VSO/representative to see case
+    # RootTask - Always open, JudgeAssignTask - The first of these will be canceled as part of redistribution,
+    # DistributionTask - Will be open until distribution is complete,
+    # MailTask nonblocking subclasses - created as child of RootTask and shouldn't stop appeals from distribution
     relevant_tasks = tasks.reject do |task|
       task.is_a?(TrackVeteranTask) || task.is_a?(RootTask) ||
-        task.is_a?(JudgeAssignTask) || task.is_a?(DistributionTask)
+        task.is_a?(JudgeAssignTask) || task.is_a?(DistributionTask) ||
+        (task.is_a?(MailTask) && !MailTask.subclasses.filter(&:blocking?).map(&:name).include?(task.class.name))
     end
     return false if relevant_tasks.any?(&:open?)
     return true if relevant_tasks.all?(&:closed?)

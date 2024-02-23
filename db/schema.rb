@@ -349,6 +349,36 @@ ActiveRecord::Schema.define(version: 2024_01_10_185350) do
     t.index ["updated_at"], name: "index_cached_user_attributes_on_updated_at"
   end
 
+  create_table "case_distribution_audit_lever_entries", comment: "A generalized table for Case Distribution audit lever records within caseflow", force: :cascade do |t|
+    t.bigint "case_distribution_lever_id", null: false, comment: "Indicates the Case Distriubution levers id"
+    t.datetime "created_at", default: -> { "CURRENT_TIMESTAMP" }, null: false
+    t.string "previous_value", comment: "Indicates the previous value of the column"
+    t.string "update_value", comment: "Indicates the updated value of the column"
+    t.bigint "user_id", null: false, comment: "Indicates the id of the user who perfomed the action"
+    t.index ["case_distribution_lever_id"], name: "index_cd_audit_lever_entries_on_cd_lever_id"
+    t.index ["user_id"], name: "index_case_distribution_audit_lever_entries_on_user_id"
+  end
+
+  create_table "case_distribution_levers", comment: "A generalized table for Case Distribution lever records within caseflow", force: :cascade do |t|
+    t.json "algorithms_used", comment: "stores an array of which algorithms the lever is used in. There are some UI niceties that are implemented to indicate which algorithm is used."
+    t.json "control_group", comment: "supports the exclusion table that has toggles that control multiple levers"
+    t.datetime "created_at", null: false
+    t.string "data_type", null: false, comment: "Indicates which type of record either BOOLEAN/RADIO/COMBO"
+    t.text "description", comment: "Indicates the description of the Lever"
+    t.boolean "is_disabled_in_ui", null: false, comment: "Determines behavior in the controls page"
+    t.boolean "is_toggle_active", null: false, comment: "used for the docket time goals, otherwise it is true and unused"
+    t.string "item", null: false, comment: "Is unique value to identify the Case Distribution lever"
+    t.string "lever_group", default: "", null: false, comment: "Case Distribution lever grouping"
+    t.integer "lever_group_order", null: false, comment: "determines the order that the lever appears in each section of inputs, and the order in the history table"
+    t.integer "max_value", comment: "Set max value for the input"
+    t.integer "min_value", comment: "Set min value for the input"
+    t.json "options", comment: "stores the options when the data type is radio or combination, it stores the value used by scripts when there is a number input present"
+    t.string "title", null: false, comment: "Indicates the Lever title"
+    t.string "unit", comment: "Indicates the type of data like Cases or Days"
+    t.datetime "updated_at", null: false
+    t.string "value", null: false, comment: "Indicates the value based in the data type wither string/number"
+  end
+
   create_table "caseflow_stuck_records", comment: "This is a polymorphic table consisting of records that have repeatedly errored out of the syncing process. Currently, the only records on this table come from the PriorityEndProductSyncQueue table.", force: :cascade do |t|
     t.datetime "determined_stuck_at", null: false, comment: "The date/time at which the record in question was determined to be stuck."
     t.string "error_messages", default: [], comment: "Array of Error Message(s) containing Batch ID and specific error if a failure occurs", array: true
@@ -2216,6 +2246,8 @@ ActiveRecord::Schema.define(version: 2024_01_10_185350) do
   add_foreign_key "board_grant_effectuations", "decision_documents"
   add_foreign_key "board_grant_effectuations", "decision_issues", column: "granted_decision_issue_id"
   add_foreign_key "board_grant_effectuations", "end_product_establishments"
+  add_foreign_key "case_distribution_audit_lever_entries", "case_distribution_levers"
+  add_foreign_key "case_distribution_audit_lever_entries", "users"
   add_foreign_key "cavc_dashboard_dispositions", "cavc_dashboards"
   add_foreign_key "cavc_dashboard_dispositions", "users", column: "created_by_id", name: "cavc_dashboard_dispositions_created_by_id_fk"
   add_foreign_key "cavc_dashboard_dispositions", "users", column: "updated_by_id", name: "cavc_dashboard_dispositions_updated_by_id_fk"

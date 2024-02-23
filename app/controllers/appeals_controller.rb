@@ -24,11 +24,11 @@ class AppealsController < ApplicationController
         result = if docket_number?(case_search)
                    CaseSearchResultsForDocketNumber.new(
                      docket_number: case_search, user: current_user
-                   ).call
+                   ).search_call
                  else
                    CaseSearchResultsForVeteranFileNumber.new(
                      file_number_or_ssn: case_search, user: current_user
-                   ).call
+                   ).search_call
                  end
 
         render_search_results_as_json(result)
@@ -42,7 +42,7 @@ class AppealsController < ApplicationController
       format.json do
         result = CaseSearchResultsForCaseflowVeteranId.new(
           caseflow_veteran_ids: params[:veteran_ids]&.split(","), user: current_user
-        ).call
+        ).search_call
 
         render_search_results_as_json(result)
       end
@@ -202,7 +202,7 @@ class AppealsController < ApplicationController
   # :reek:FeatureEnvy
   def render_search_results_as_json(result)
     if result.success?
-      render json: result.extra[:search_results]
+      render json: result.extra[:case_search_results]
     else
       render json: result.to_h, status: result.extra[:status]
     end
