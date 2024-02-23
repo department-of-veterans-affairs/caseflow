@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-# This seed creates ~100 appeals which have an affinity to a judge based on levers in DISTRIBUTION.json,
+# This seed creates ~100 appeals which have an affinity to a judge based case distribution algorithm levers,
 # and ~100 appeals which are similar but fall just outside of the affinity day levers and will be distributed
 # to any judge. Used primarily in testing APPEALS-36998 and other ACD feature work
 module Seeds
@@ -88,7 +88,7 @@ module Seeds
       # return system time back to now, then go to desired date where appeal will be ready for distribution
       # using [].max with 0 will ensure that if the lever is set to 0 we won't go into the future
       Timecop.return
-      Timecop.travel([(Constants.DISTRIBUTION.cavc_affinity_days - 7), 0].max.days.ago)
+      Timecop.travel([(CaseDistributionLever.cavc_affinity_days - 7), 0].max.days.ago)
 
       # complete the CAVC task and make the appeal ready to distribute
       remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
@@ -122,7 +122,7 @@ module Seeds
 
       # return system time back to now, then go to desired date where appeal will be ready for distribution
       Timecop.return
-      Timecop.travel((Constants.DISTRIBUTION.cavc_affinity_days + 7).days.ago)
+      Timecop.travel((CaseDistributionLever.cavc_affinity_days + 7).days.ago)
 
       # complete the CAVC task and make the appeal ready to distribute
       remand.remand_appeal.tasks.where(type: SendCavcRemandProcessedLetterTask.name).first.completed!
@@ -139,7 +139,7 @@ module Seeds
       # add 91 days for the amount of time the post-hearing tasks are open and remove 7 to make the case ready
       # for less than the hearing affinity days value
       Timecop.return
-      Timecop.travel((91 + Constants.DISTRIBUTION.hearing_case_affinity_days - 7).days.ago)
+      Timecop.travel((91 + CaseDistributionLever.ama_hearing_case_affinity_days - 7).days.ago)
       create(:hearing, :held, appeal: appeal, judge: judge, adding_user: User.system_user)
 
       # travel to when the tasks will auto-complete and complete them
@@ -160,7 +160,7 @@ module Seeds
       # add 91 days for the amount of time the post-hearing tasks are open and add 7 more to make the case ready
       # for more than the hearing affinity days value
       Timecop.return
-      Timecop.travel((91 + Constants.DISTRIBUTION.hearing_case_affinity_days + 7).days.ago)
+      Timecop.travel((91 + CaseDistributionLever.ama_hearing_case_affinity_days + 7).days.ago)
       create(:hearing, :held, appeal: appeal, judge: judge, adding_user: User.system_user)
 
       # travel to when the tasks will auto-complete and complete them
