@@ -159,7 +159,7 @@ CancelTaskModal.propTypes = {
   requestPatch: PropTypes.func,
   task: PropTypes.shape({
     appeal: PropTypes.shape({
-      hasSctTask: PropTypes.bool
+      hasSctAssignTask: PropTypes.bool
     }),
     assignedTo: PropTypes.shape({
       type: PropTypes.string
