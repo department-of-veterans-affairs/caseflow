@@ -557,7 +557,7 @@ FactoryBot.define do
           task.appeal.tasks.of_type(:DistributionTask).first.completed!
         end
 
-        trait :on_hold do
+        trait :action_required do
           after(:create) do |task, _evaluator|
             task.update(status: Constants.TASK_STATUSES.in_progress)
             judge = create(:user, :judge, :with_vacols_judge_record)
@@ -566,13 +566,13 @@ FactoryBot.define do
                                                                 assigned_to: judge,
                                                                 assigned_at: 1.day.ago,
                                                                 started_at: Time.zone.now - 30.minutes,
-                                                                instructions: ["Retroactively created task."])
+                                                                instructions: ["SCT judge decision cancelled."])
             attorney_task = AttorneyTask.create!(appeal: task.appeal, parent: judge_review_task,
                                                  assigned_by: judge,
                                                  assigned_to: attorney,
                                                  assigned_at: 6.hours.ago,
                                                  started_at: Time.zone.now - 30.minutes,
-                                                 instructions: ["Retroactively created task."])
+                                                 instructions: ["SCT attorney cancelled."])
 
             # Also add the attorney to the judge's judge team
             judge.administered_judge_teams.first.add_user(attorney)
@@ -593,13 +593,13 @@ FactoryBot.define do
                                                                 assigned_to: judge,
                                                                 assigned_at: 1.day.ago,
                                                                 started_at: Time.zone.now - 30.minutes,
-                                                                instructions: ["Retroactively created task."])
+                                                                instructions: ["SCT judge on hold."])
             AttorneyTask.create!(appeal: task.appeal, parent: judge_review_task,
                                  assigned_by: judge,
                                  assigned_to: attorney,
                                  assigned_at: 6.hours.ago,
                                  started_at: Time.zone.now - 30.minutes,
-                                 instructions: ["Retroactively created task."])
+                                 instructions: ["SCT attorney assigned."])
 
             # Also add the attorney to the judge's judge team
             judge.administered_judge_teams.first.add_user(attorney)
