@@ -45,7 +45,11 @@ class SaveButtonUnconnected extends React.Component {
       moveToDistributionModal: false
     };
 
+    // TODO: Removal might also need an existing SCT task check, because it could have a VHA issue
+    // but not be in the SCT queue if it was distributed before the Specialty Case Team was created
     // Specialty Case Team (SCT) logic for movement of appeals based on additional and removal of SCT request issues
+    // TODO: Do these modals still display if there are no active issues remaining on the issue? They shouldn't.
+    // Verify that this works for withdrawing issues as well?
     const specialtyCaseTeamBenefitTypes = Object.keys(SPECIALTY_CASE_TEAM_BENEFIT_TYPES);
     const addedIssuesHasSCTIssue = this.props.state.addedIssues.some((i) =>
       specialtyCaseTeamBenefitTypes.includes(i.benefitType));
