@@ -29,21 +29,31 @@ class CaseDistributionLever < ApplicationRecord
   ).freeze
 
   def history_value
-    if combination_lever
+    if combination_lever?
       combination_value
-    elsif radio_lever
+    elsif radio_lever?
       radio_value
     else
       value
     end
   end
 
-  def combination_lever
+  def combination_lever?
     data_type == Constants.ACD_LEVERS.data_types.combination
   end
 
-  def radio_lever
+  def radio_lever?
     data_type == Constants.ACD_LEVERS.data_types.radio
+  end
+
+  def omit?
+    return false unless radio_lever?
+    value == Constants.ACD_LEVERS.omit
+  end
+
+  def infinite?
+    return false unless radio_lever?
+    value == Constants.ACD_LEVERS.infinite
   end
 
   private
@@ -129,7 +139,7 @@ class CaseDistributionLever < ApplicationRecord
       # if lever is a radio update options object
       grouped_levers.each_pair do |lever_id, lever|
         previous_lever = previous_levers[lever_id]
-        next unless previous_lever.radio_lever
+        next unless previous_lever.radio_lever?
 
         # update options
         update_radio_options(lever, previous_lever.options)
