@@ -9,6 +9,7 @@ import ConfirmTasksNotRelatedToAnAppeal from './ConfirmTasksNotRelatedToAnAppeal
 import Table from '../../../../../components/Table';
 import ConfirmTasksRelatedToAnAppeal from './ConfirmTasksRelatedToAnAppeal';
 import { COLORS } from '../../../../../constants/AppConstants';
+import { formatDateStr } from 'app/util/DateUtil';
 
 const bodyStyling = css({
   '& > tr > td': {
@@ -196,13 +197,12 @@ export const ConfirmCorrespondenceView = (props) => {
               </tbody>
               { Object.keys(responseLetters)?.map((indexValue) => {
                 const responseLetter = responseLetters[indexValue];
-                const responseDate = new Date(responseLetter?.date);
+                const responseDate = new Date(responseLetter?.date).toISOString();
 
                 return (
                   <tbody key={indexValue}>
                     <tr>
-                      <td> {responseDate?.toLocaleDateString('en-US', {
-                        month: '2-digit', day: '2-digit', year: 'numeric' })} </td>
+                      <td> {formatDateStr(responseDate)} </td>
                       <td> {responseLetter?.type} </td>
                       <td> {responseLetter?.title} </td>
                       <td> {responseLetter?.subType} </td>
