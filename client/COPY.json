@@ -1407,7 +1407,7 @@
   "MOVE_TO_SCT_BANNER_TITLE": "You have successfully updated issues on this appeal",
   "MOVE_TO_SCT_BANNER_MESSAGE": "The appeal for %s (ID: %s) has been moved to the SCT queue.",
   "SPECIALTY_CASE_TEAM_ASSIGN_TASK_LABEL": "Assign",
-  "SPECIALTY_CASE_TEAM_ASSIGN_DROPDOWN_LABEL": "Select an attorney"
+  "SPECIALTY_CASE_TEAM_ASSIGN_DROPDOWN_LABEL": "Select an attorney",
   "EMPLOYER_IDENTIFICATION_NUMBER": "Employer Identification Number",
   "CASE_DISTRIBUTION_TITLE": "Case Distribution Algorithm Values",
   "CASE_DISTRIBUTION_ALGORITHM_DESCRIPTION": "The Case Distribution Algorithm determines how cases are assigned to VLJs and their teams.  Current algorithm is \"Docket Date.\"",
