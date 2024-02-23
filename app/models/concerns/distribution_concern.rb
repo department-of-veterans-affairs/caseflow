@@ -45,7 +45,7 @@ module DistributionConcern
     ENV["SLACK_DISPATCH_ALERT_URL"]
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:disable Metrics/MethodLength
   # :reek:FeatureEnvy
   def create_sct_appeals(appeals_args, limit)
     appeals = appeals(appeals_args)
