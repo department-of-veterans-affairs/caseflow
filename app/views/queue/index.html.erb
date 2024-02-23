@@ -61,7 +61,8 @@
       metricsBrowserError: FeatureToggle.enabled?(:metrics_browser_error, user: current_user),
       cc_vacatur_visibility: FeatureToggle.enabled?(:cc_vacatur_visibility, user: current_user),
       additional_remand_reasons: FeatureToggle.enabled?(:additional_remand_reasons, user: current_user),
-      acd_cases_tied_to_judges_no_longer_with_board: FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board, user: current_user)
+      acd_cases_tied_to_judges_no_longer_with_board: FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board, user: current_user),
+      admin_case_distribution: FeatureToggle.enabled?(:admin_case_distribution, user: current_user)
     }
   }) %>
 <% end %>

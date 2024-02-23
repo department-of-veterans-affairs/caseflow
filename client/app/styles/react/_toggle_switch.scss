@@ -1,0 +1,56 @@
+.toggleButton {
+  width: auto;
+  border: none;
+  padding: 2px;
+  height: 25px;
+  border-radius: 5px;
+  box-sizing: border-box;
+
+  &:has(.switchOff) {
+    background: $color-primary;
+  }
+
+  &:has(.switchOn) {
+    background: $color-green;
+  }
+
+  &:has(.switchDisabled) {
+    background: $color-gray-lighter;
+  }
+
+  :not(:focus) {
+    outline: none;
+  }
+}
+
+.toggleButtonText {
+  font-weight: 700;
+  min-width: 40px;
+  text-align: center;
+  color: $color-white;
+  text-transform: uppercase;
+  line-height: 21px;
+}
+
+.switchOn {
+  float: left;
+  background: $color-green;
+}
+
+.switchOff {
+  float: right;
+  background: $color-primary;
+}
+
+.switchDisabled {
+  background: $color-gray-lighter;
+}
+
+.toggleButtonSpace {
+  border-radius: 4px;
+  width: 21px;
+  height: 21px;
+  display: inline-block;
+  background: $color-white;
+  color: $color-white;
+}
