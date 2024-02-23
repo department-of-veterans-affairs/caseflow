@@ -1435,7 +1435,7 @@
   "CORRESPONDENCE_READONLY_BANNER_MESSAGE": "Any further actions cannot be made on this package until a supervisor or superuser reviews the request.",
   "ASSOCIATED_WITH_CLAIMS_FOLDER_MAIL_TASK_LABEL": "Associated with claims folder",
   "VACOLS_UPDATED_MAIL_TASK_LABEL": "VACOLS updated",
-  "SENT_TO_ROJ_MAIL_TASK_LABEL": "Sent to ROJ"
+  "SENT_TO_ROJ_MAIL_TASK_LABEL": "Sent to ROJ",
   "CASE_DISTRIBUTION_TITLE": "Case Distribution Algorithm Values",
   "CASE_DISTRIBUTION_ALGORITHM_DESCRIPTION": "The Case Distribution Algorithm determines how cases are assigned to VLJs and their teams.  Current algorithm is \"Docket Date.\"",
   "CASE_DISTRIBUTION_ACTIVE_LEVERS_TITLE": "Active Data Elements",
