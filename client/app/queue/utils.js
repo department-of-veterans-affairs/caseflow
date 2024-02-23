@@ -513,6 +513,7 @@ export const prepareAppealForStore = (appeals) => {
       remandJudgeName: appeal.attributes.remand_judge_name,
       hasNotifications: appeal.attributes.has_notifications,
       locationHistory: prepareLocationHistoryForStore(appeal),
+      hasSctAssignTask: appeal.attributes.has_sct_assign_task,
     };
 
     return accumulator;

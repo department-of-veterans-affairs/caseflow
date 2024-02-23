@@ -918,6 +918,10 @@ class LegacyAppeal < CaseflowRecord
     veteran_is_not_claimant ? person_for_appellant&.participant_id : veteran&.participant_id
   end
 
+  def sct_appeal?
+    false
+  end
+
   private
 
   def soc_eligible_for_opt_in?(receipt_date:, covid_flag: false)

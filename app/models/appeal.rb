@@ -925,7 +925,7 @@ class Appeal < DecisionReview
   end
 
   def sct_appeal?
-    request_issues.active.any?(&:sct_benefit_type?)
+    request_issues.active.any?(&:sct_benefit_type?) && tasks.of_type(:SpecialtyCaseTeamAssignTask).exists?
   end
 
   def has_distribution_task?
