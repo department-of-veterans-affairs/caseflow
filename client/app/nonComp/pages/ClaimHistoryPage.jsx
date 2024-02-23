@@ -23,14 +23,11 @@ const ClaimHistoryPage = () => {
 
   const returnLink = `../${task.id}`;
 
-  // eslint-disable-next-line no-console
-  console.log(events);
-
   return <div className="individual-claim-history">
     <LinkDiv> <Link to={returnLink}><b><u>&lt; Back to Decision Review</u></b></Link></LinkDiv>
     <NonCompLayout>
       <h1>{task.claimant.name}</h1>
-      <IndividualClaimHistoryTable />
+      <IndividualClaimHistoryTable claimRows={events} />
     </NonCompLayout>
   </div>;
 };

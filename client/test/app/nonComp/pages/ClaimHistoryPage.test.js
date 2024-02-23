@@ -2,29 +2,38 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { axe } from 'jest-axe';
 import { MemoryRouter as Router } from 'react-router-dom';
-import ReduxBase from 'app/components/ReduxBase';
 import ClaimHistoryPage from 'app/nonComp/pages/ClaimHistoryPage';
-import CombinedNonCompReducer, { mapDataToInitialState } from 'app/nonComp/reducers';
+import CombinedNonCompReducer from 'app/nonComp/reducers';
+import { Provider } from 'react-redux';
+import { applyMiddleware, createStore, compose } from 'redux';
+import thunk from 'redux-thunk';
+import ApiUtil from 'app/util/ApiUtil';
 
-import { completeTaskPageData } from '../../../data/queue/nonCompTaskPage/nonCompTaskPageData';
+import individualClaimHistoryData from '../../../data/nonComp/individualClaimHistoryData';
+const renderClaimHistoryPage = (storeValues = individualClaimHistoryData) => {
 
-const adminVhaProps = { ...completeTaskPageData };
-
-const renderClaimHistoryPage = (storeValues = {}) => {
-  const initialState = mapDataToInitialState(storeValues);
+  const store = createStore(
+    CombinedNonCompReducer,
+    storeValues,
+    compose(applyMiddleware(thunk))
+  );
 
   return render(
-    <ReduxBase initialState={initialState} reducer={CombinedNonCompReducer} >
+    <Provider store={store} >
       <Router>
         <ClaimHistoryPage />
       </Router>
-    </ReduxBase>
+    </Provider>
   );
 };
 
 describe('ClaimHistoryPage renders correctly for Admin user', () => {
+  beforeEach(() => {
+    ApiUtil.get = jest.fn().mockResolvedValue({ body: [] });
+  });
+
   it('passes a11y testing', async () => {
-    const { container } = renderClaimHistoryPage(adminVhaProps);
+    const { container } = renderClaimHistoryPage();
 
     const results = await axe(container);
 
@@ -32,49 +41,49 @@ describe('ClaimHistoryPage renders correctly for Admin user', () => {
   });
 
   it('renders correctly', () => {
-    const { container } = renderClaimHistoryPage(adminVhaProps);
+    const { container } = renderClaimHistoryPage();
 
     expect(container).toMatchSnapshot();
   });
 
   it('displays the claimant\'s name', () => {
-    renderClaimHistoryPage(adminVhaProps);
+    renderClaimHistoryPage();
 
-    expect(screen.getByText(adminVhaProps.serverNonComp.task.claimant.name)).toBeInTheDocument();
+    expect(screen.getByText(individualClaimHistoryData.nonComp.task.claimant.name)).toBeInTheDocument();
   });
 
   it('displays the back link', () => {
-    renderClaimHistoryPage(adminVhaProps);
+    renderClaimHistoryPage();
 
     expect(screen.getByText('< Back to Decision Review')).toBeInTheDocument();
   });
 
   it('can sort by date and time', () => {
-    renderClaimHistoryPage(adminVhaProps);
+    renderClaimHistoryPage();
 
     expect(screen.getByLabelText('Sort by Date and Time')).toBeInTheDocument();
   });
 
   it('can sort by user', () => {
-    renderClaimHistoryPage(adminVhaProps);
+    renderClaimHistoryPage();
 
     expect(screen.getByLabelText('Sort by User')).toBeInTheDocument();
   });
 
   it('can sort by activity', () => {
-    renderClaimHistoryPage(adminVhaProps);
+    renderClaimHistoryPage();
 
     expect(screen.getByLabelText('Sort by Activity')).toBeInTheDocument();
   });
 
   it('can filter by user', () => {
-    renderClaimHistoryPage(adminVhaProps);
+    renderClaimHistoryPage();
 
     expect(screen.getByLabelText('Filter by User')).toBeInTheDocument();
   });
 
   it('can filter by activity', () => {
-    renderClaimHistoryPage(adminVhaProps);
+    renderClaimHistoryPage();
 
     expect(screen.getByLabelText('Filter by Activity')).toBeInTheDocument();
   });
