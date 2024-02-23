@@ -37,7 +37,7 @@ RSpec.feature "List Schedule for Hearing Prep", :all_dbs do
 
     context "Hearing day assigned to different judge with one legacy hearing assigned to judge" do
       let!(:hearing_day) { create(:hearing_day) }
-      let!(:vacols_staff) { create(:staff, :judge_role, user: current_user) }
+      let!(:vacols_staff) { create(:staff, user: current_user) }
       let!(:case_hearing) { create(:case_hearing, vdkey: hearing_day.id, board_member: vacols_staff.sattyid) }
 
       scenario "Correct hearing days are displayed" do

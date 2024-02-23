@@ -596,17 +596,15 @@ describe Docket, :all_dbs do
         (1..num_appeals_before).map do
           create(:appeal,
                  :with_post_intake_tasks,
-                 docket_type: docket_type,
-                 receipt_date: 5.days.ago)
+                 docket_type: docket_type)
         end,
         (1..num_vha_appeals).map do
-          create(:appeal, :with_post_intake_tasks, :with_vha_issue, docket_type: docket_type, receipt_date: 3.days.ago)
+          create(:appeal, :with_post_intake_tasks, :with_vha_issue, docket_type: docket_type)
         end,
         (1..num_appeals_after).map do
           create(:appeal,
                  :with_post_intake_tasks,
-                 docket_type: docket_type,
-                 receipt_date: 2.days.ago)
+                 docket_type: docket_type)
         end
       ].flatten
     end
@@ -649,9 +647,9 @@ describe Docket, :all_dbs do
         let(:docket_type) { Constants.AMA_DOCKETS.evidence_submission }
 
         before do
-          # Complete the EvidenceSubmissionWindowTask to move the appeals to be ready to distribute
+          # Force the distribution tasks to be assigned so it can be distributed
           appeals.each do |appeal|
-            appeal.tasks.of_type(:EvidenceSubmissionWindowTask).first.completed!
+            appeal.tasks.of_type(:DistributionTask).first.assigned!
           end
         end
 

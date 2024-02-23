@@ -14,7 +14,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
   let(:team_attorneys) { [attorney_one, attorney_two] }
 
   let!(:scm_user) { create(:user, full_name: "Rosalie SCM Dunkle") }
-  let!(:scm_staff) { create(:staff, :scm_role, user: scm_user) }
+  let!(:scm_staff) { create(:staff, user: scm_user) }
   let(:current_user) { scm_user }
 
   before do
