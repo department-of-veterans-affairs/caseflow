@@ -98,7 +98,8 @@ export const TeamManagement = React.memo(({
                 <Button name={TEAM_MANAGEMENT_ADD_JUDGE_BUTTON} onClick={handleAddJudgeTeam} />
               </span>
             </OrgHeader>
-            <OrgList orgs={judgeTeams} statuses={statuses} showDistributionToggles onUpdate={handleOrgUpdate} />
+            <OrgList orgs={judgeTeams} statuses={statuses} showDistributionToggles
+              showExcludeFromAffinityToggles onUpdate={handleOrgUpdate} />
           </OrgSection> }
 
           { vsos && <OrgSection>
