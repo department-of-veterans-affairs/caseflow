@@ -217,7 +217,7 @@ class VACOLS::CaseDocket < VACOLS::Record
   def self.genpop_priority_count
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS}
-      where VLJ is null
+      where VLJ is null or #{ineligible_judges_sattyid_cache}
     SQL
 
     connection.exec_query(query).to_hash.count
@@ -306,7 +306,7 @@ class VACOLS::CaseDocket < VACOLS::Record
 
     query = <<-SQL
       #{SELECT_PRIORITY_APPEALS}
-      where VLJ is null and rownum <= ?
+      where (VLJ is null or #{ineligible_judges_sattyid_cache}) and rownum <= ?
     SQL
 
     fmtd_query = sanitize_sql_array([query, num])
