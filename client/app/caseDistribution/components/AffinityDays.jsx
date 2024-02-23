@@ -117,7 +117,7 @@ const AffinityDays = () => {
       <div key={`${lever.item}-${index}-${option.item}`}>
         <div>
           <input
-            checked={option.item === lever.selectedOption}
+            checked={isOptionSelected(lever, option)}
             type={ACD_LEVERS.data_types.radio}
             value={option.item}
             disabled={lever.is_disabled_in_ui}
