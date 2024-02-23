@@ -32,7 +32,8 @@ class QueueTab
       columns: columns.map { |column| column.to_hash(tasks) },
       allow_bulk_assign: allow_bulk_assign?,
       contains_legacy_tasks: contains_legacy_tasks?,
-      defaultSort: default_sorting_hash
+      defaultSort: default_sorting_hash,
+      hide_from_queue_table_view: hide_from_queue_table_view
     }
   end
 
@@ -75,6 +76,12 @@ class QueueTab
   end
 
   def contains_legacy_tasks?
+    false
+  end
+
+  # Used to hide a specific tab from some pages in the App.
+  # The primary queue pages will not display a tab with this set to true
+  def hide_from_queue_table_view
     false
   end
 

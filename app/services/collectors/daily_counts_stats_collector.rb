@@ -93,6 +93,6 @@ class Collectors::DailyCountsStatsCollector
   end
 
   def count_groups(array, &block)
-    array.group_by(&block).map { |key, items| [key, items.count] }.to_h
+    array.group_by(&block).transform_values(&:count)
   end
 end

@@ -19,6 +19,6 @@ class ExternalApi::VADotGovService::FacilitiesIdsResponse < ExternalApi::VADotGo
   def missing_facility_ids
     return [] if all_ids_present?
 
-    @ids.select { |id| !data.include?(id) }
+    @ids.reject { |id| data.include?(id) }
   end
 end
