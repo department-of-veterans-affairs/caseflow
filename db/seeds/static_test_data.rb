@@ -468,9 +468,9 @@ module Seeds
         ready_at: appeal.ready_for_distribution_at,
         task_id: appeal.tasks.where(type: JudgeAssignTask.name).first.id,
         genpop: true,
-        sct_appeal: false,
         genpop_query: "only_genpop",
-        created_at: first_judge_assign_task.assigned_at
+        created_at: first_judge_assign_task.assigned_at,
+        sct_appeal: false
       )
     end
 
