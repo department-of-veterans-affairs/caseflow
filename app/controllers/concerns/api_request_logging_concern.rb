@@ -12,7 +12,7 @@ module ApiRequestLoggingConcern
           "endpoint: " + request.fullpath.to_s + "\n" \
           "payload: " + params.to_s + "\n" \
           "method: " + request.method.to_s + "\n" \
-          "request_time: " + Time.now.to_s
+          "request_time: " + Time.zone.now.to_s
 
     Rails.logger.info(log)
   end

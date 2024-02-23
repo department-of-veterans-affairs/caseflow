@@ -27,6 +27,8 @@ module CaseDistribution
       else
         appeals.count
       end
+    appeals.compact!
+    @rem -= appeals.count
     @appeals += appeals
     appeals
   end
