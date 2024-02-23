@@ -1,89 +1,36 @@
 # frozen_string_literal: true
 
 describe Events::DecisionReviewCreate::UpdateVacolsOnOptin do
-  let(:user) { Generators::User.build }
-  let(:veteran_file_number) { "64205050" }
-  # mock VACOLS issue and cases
-  let!(:vacols_issue1) { create(:case_issue, :compensation, issseq: 1) }
-  let!(:vacols_issue2) { create(:case_issue, :compensation, issseq: 2) }
-  let!(:vacols_issue3) { create(:case_issue, :compensation, issseq: 3) }
-  let!(:vacols_case) do
-    create(:case, :status_active, bfcurloc: "77", bfkey: "DRCTEST",
-                                  case_issues: [vacols_issue1, vacols_issue2, vacols_issue3])
-  end
-
-  let!(:event1) { DecisionReviewCreatedEvent.create!(reference_id: "1") }
-  # HLR
-  let!(:higher_level_review) { create(:higher_level_review, veteran_file_number: veteran_file_number) }
-  let!(:higher_level_review_event_record) do
-    EventRecord.create!(event: event1, backfill_record: higher_level_review)
-  end
-  # Event Record Request Issue
-  let!(:request_issue1) do
-    RequestIssue.new(benefit_type: "compensation", decision_review: higher_level_review, vacols_id: "DRCTEST",
-                     vacols_sequence_id: 1)
-  end
-  let!(:request_issue_event_record1) { EventRecord.create!(event: event1, backfill_record: request_issue1) }
-  let!(:request_issue2) do
-    RequestIssue.new(benefit_type: "compensation", decision_review: higher_level_review,
-                     vacols_id: "DRCTEST", vacols_sequence_id: 2)
-  end
-  let!(:request_issue_event_record2) { EventRecord.create!(event: event1, backfill_record: request_issue2) }
-  let!(:request_issue3) do
-    RequestIssue.new(benefit_type: "compensation", decision_review: higher_level_review, vacols_id: "DRCTEST",\
-                     vacols_sequence_id: 3)
-  end
-  let!(:request_issue_event_record3) { EventRecord.create!(event: event1, backfill_record: request_issue3) }
-  # Legacy Issue
-  let!(:legacy_issue1) do
-    LegacyIssue.new(request_issue_id: request_issue1.id, vacols_id: "DRCTEST", vacols_sequence_id: 1)
-  end
-  let!(:legacy_issue_event_record1) { EventRecord.create!(event: event1, backfill_record: legacy_issue1) }
-  let!(:legacy_issue2) do
-    LegacyIssue.new(request_issue_id: request_issue2.id, vacols_id: "DRCTEST", vacols_sequence_id: 2)
-  end
-  let!(:legacy_issue_event_record2) { EventRecord.create!(event: event1, backfill_record: legacy_issue2) }
-  let!(:legacy_issue3) do
-    LegacyIssue.new(request_issue_id: request_issue3.id, vacols_id: "DRCTEST", vacols_sequence_id: 3)
-  end
-  let!(:legacy_issue_event_record3) { EventRecord.create!(event: event1, backfill_record: legacy_issue3) }
-  # Legacy Issue Optin
-  let!(:legacy_issue_optin1) { LegacyIssueOptin.new(request_issue_id: request_issue1.id) }
-  let!(:legacy_issue_optin_event_record1) do
-    EventRecord.create!(event: event1, backfill_record: legacy_issue_optin1)
-  end
-  let!(:legacy_issue_optin2) { LegacyIssueOptin.new(request_issue_id: request_issue2.id) }
-  let!(:legacy_issue_optin_event_record2) do
-    EventRecord.create!(event: event1, backfill_record: legacy_issue_optin2)
-  end
-  let!(:legacy_issue_optin3) { LegacyIssueOptin.new(request_issue_id: request_issue3.id) }
-  let!(:legacy_issue_optin_event_record3) do
-    EventRecord.create!(event: event1, backfill_record: legacy_issue_optin3)
-  end
-  def vacols_issue(vacols_id, vacols_sequence_id)
-    # Use this instead of reload for VACOLS issues, because reload mutates the issseq
-    VACOLS::CaseIssue.find_by(isskey: vacols_id, issseq: vacols_sequence_id)
-  end
-  subject { Events::DecisionReviewCreate::UpdateVacolsOnOptin.perform!(higher_level_review) }
-  context "#perform!" do
-    before do
-      RequestStore.store[:current_user] = user
+  context "Events::DecisionReviewCreate::UpdateVacolsOnOptin.process" do
+    # Setup a mock decision_review object with necessary properties
+    let!(:legacy_decision_review) { double("DecisionReview", legacy_opt_in_approved: true) }
+    describe "when legacy_opt_in_approved is true" do
+      it "calls process on LegacyOptinManager" do
+        # Setup a mock LegacyOptinManager and expect peform! to be called
+        legacy_optin_manager_double = double("LegacyOptinManager")
+        expect(LegacyOptinManager).to receive(:new)
+          .with(decision_review: legacy_decision_review)
+          .and_return(legacy_optin_manager_double)
+        expect(legacy_optin_manager_double).to receive(:process!)
+        # Call the method under test
+        described_class.process!(legacy_decision_review)
+      end
     end
-    it "Does not run perform if SOC/SSOC is not approved" do
-      subject
-      expect(subject).to be_nil
+    describe "when legacy_opt_in_approved is false" do
+      it "does not call process! on " do
+        # Setup a mock decision_review object with necessary properties
+        decision_review_double = double("DecisionReview", legacy_opt_in_approved: false)
+        expect(described_class.process!(decision_review_double)).to be_nil
+      end
     end
-    it "Updates VACOLS ISSUE Dispostition Code" do
-      higher_level_review.update!(legacy_opt_in_approved: true)
-      subject
-      expect(vacols_issue("DRCTEST", 1).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
-      expect(vacols_issue("DRCTEST", 2).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
-      expect(vacols_issue("DRCTEST", 3).issdc).to eq(LegacyIssueOptin::VACOLS_DISPOSITION_CODE)
-      expect(vacols_case.reload).to be_closed
-    end
-    it "logs an error and raises if an standard error occurs" do
-      allow(Events::DecisionReviewCreate::UpdateVacolsOnOptin).to receive(:perform!).and_raise(StandardError)
-      expect { subject }.to raise_error(StandardError)
+    describe "when an error occurs" do
+      it "logs an error and raises if an standard error occurs" do
+        allow(Events::DecisionReviewCreate::UpdateVacolsOnOptin).to receive(:process!)
+          .and_raise(Caseflow::Error::DecisionReviewCreateVacolsOnOptinError)
+        expect { described_class.process!(legacy_decision_review) }.to raise_error(
+          Caseflow::Error::DecisionReviewCreateVacolsOnOptinError
+        )
+      end
     end
   end
 end
