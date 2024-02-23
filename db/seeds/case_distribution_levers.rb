@@ -219,7 +219,7 @@ module Seeds
                 text: "Attempt distribution to current judge for max of:",
                 unit: Constants.ACD_LEVERS.days,
                 min_value: 0,
-                max_value: 100,
+                max_value: 999,
                 selected: true
               },
               {
@@ -235,7 +235,7 @@ module Seeds
             ],
             is_disabled_in_ui: false,
             min_value: 0,
-            max_value: 100,
+            max_value: 999,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.affinity,
             lever_group_order: 3000
@@ -273,7 +273,7 @@ module Seeds
             ],
             is_disabled_in_ui: false,
             min_value: 0,
-            max_value: 100,
+            max_value: 999,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.affinity,
             lever_group_order: 3001
@@ -307,7 +307,7 @@ module Seeds
             ],
             is_disabled_in_ui: true,
             min_value: 0,
-            max_value: 100,
+            max_value: 999,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket, Constants.ACD_LEVERS.algorithms.proportion],
             lever_group: Constants.ACD_LEVERS.lever_groups.affinity,
             lever_group_order: 3002
@@ -377,7 +377,7 @@ module Seeds
             ],
             is_disabled_in_ui: true,
             min_value: 0,
-            max_value: 100,
+            max_value: 999,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.affinity,
             lever_group_order: 3004
@@ -415,7 +415,7 @@ module Seeds
             ],
             is_disabled_in_ui: true,
             min_value: 0,
-            max_value: 100,
+            max_value: 999,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.affinity,
             lever_group_order: 3005
@@ -453,7 +453,7 @@ module Seeds
             ],
             is_disabled_in_ui: true,
             min_value: 0,
-            max_value: 100,
+            max_value: 999,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.affinity,
             lever_group_order: 3006
