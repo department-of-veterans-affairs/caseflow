@@ -104,6 +104,27 @@ describe Api::V3::Issues::Ama::VeteransController, :postgres, type: :request do
             end
           end
 
+          context "when a veteran is found - has request issues" do
+            let(:vet) { create(:veteran) }
+            let!(:request_issues) do
+              [
+                create(:request_issue, :with_associated_decision_issue, veteran_participant_id: vet.participant_id),
+                create(:request_issue, :with_associated_decision_issue, decision_date: Time.zone.now, veteran_participant_id: vet.participant_id)
+              ]
+            end
+
+            it "should return request issues array" do
+              get(
+                "/api/v3/issues/ama/find_by_veteran/#{vet.participant_id}",
+                headers: authorization_header
+              )
+              response_hash = JSON.parse(response.body)
+              expect(response).to have_http_status(200)
+              expect(response_hash["request_issues"].empty?).to eq false
+              expect(response_hash["request_issues"][0]["claim_errors"]).to eq []
+            end
+          end
+
           context "when a veteran has a legacy appeal" do
             context "when a veteran has multiple request issues with multiple decision issues" do
               let_it_be(:vet) { create(:veteran, file_number: "123456789") }

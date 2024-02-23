@@ -10,4 +10,10 @@ class Event < CaseflowRecord
   def completed?
     completed_at?
   end
+
+  def self.find_errors_by_claim_id(claim_id)
+    with_errored_claim_id
+      .where("info ->> 'errored_claim_id' = ?", claim_id)
+      .pluck(:error)
+  end
 end
