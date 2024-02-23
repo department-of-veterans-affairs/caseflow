@@ -75,9 +75,9 @@ class HearingRequestDocket < Docket
   end
 
   def self.limit_only_genpop_appeals(appeals_array, limit)
-    # genpop 'only_genpop' returns 2 arrays of the limited base relation. This means if we only request 2 cases, appeals is a
-    # 2x2 array containing 4 cases overall and we will end up distributing 4 cases rather than 2. Instead, reinstate the
-    # limit here by filtering out the newest cases
+    # genpop 'only_genpop' returns 2 arrays of the limited base relation. This means if we only request 2 cases,
+    # appeals is a 2x2 array containing 4 cases overall and we will end up distributing 4 cases rather than 2.
+    # Instead, reinstate the limit here by filtering out the newest cases
     appeals_array.flatten.sort_by(&:receipt_date).first(limit)
   end
 end
