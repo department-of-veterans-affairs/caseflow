@@ -121,7 +121,7 @@ describe Api::V3::Issues::Ama::VeteransController, :postgres, type: :request do
               response_hash = JSON.parse(response.body)
               expect(response).to have_http_status(200)
               expect(response_hash["request_issues"].empty?).to eq false
-              expect(response_hash["request_issues"][0]["failed_claims"]).to eq []
+              expect(response_hash["request_issues"][0]["claim_errors"]).to eq []
             end
           end
 
