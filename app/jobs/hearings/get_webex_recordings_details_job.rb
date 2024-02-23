@@ -56,18 +56,13 @@ class Hearings::GetWebexRecordingsDetailsJob < CaseflowJob
   end
 
   def create_file_name(topic, extension)
-    type = topic.scan(/[A-Za-z]+?(?=-)/).first
-    subject = if type == "Hearing"
-                topic.scan(/\d*-\d*_\d*_[A-Za-z]+?(?=-)/).first
-              else
-                topic.scan(/\d*_\d*_[A-Za-z]+?(?=-)/).first
-              end
+    subject = topic.split("-").second.lstrip
     counter = topic.split("-").last
     "#{subject}-#{counter}.#{extension}"
   end
 
   def send_file(topic, extension, link)
     file_name = create_file_name(topic, extension)
-    Hearings::DownloadTranscriptionFileJob.new.perform(download_link: link, file_name: file_name)
+    Hearings::DownloadTranscriptionFileJob.perform_later(download_link: link, file_name: file_name)
   end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Hearings::TranscriptionFile < CaseflowRecord
+class TranscriptionFile < CaseflowRecord
   include BelongsToPolymorphicHearingConcern
   belongs_to_polymorphic_hearing :hearing
 
@@ -25,7 +25,7 @@ class Hearings::TranscriptionFile < CaseflowRecord
     hearing_info = {
       judge: hearing.judge&.full_name,
       appeal_id: hearing.appeal&.veteran_file_number,
-      date: hearing.scheduled_time
+      date: hearing.scheduled_for
     }
     file_paths = TranscriptionTransformer.new(tmp_location, hearing_info).call
     update_status!(process: :conversion, status: :success)

@@ -17,7 +17,7 @@ class Hearings::GetWebexRecordingsListJob < CaseflowJob
   def perform
     ensure_current_user_is_set
     get_recordings_list.ids.each do |n|
-      Hearings::GetWebexRecordingsDetailsJob.new.perform(id: n)
+      Hearings::GetWebexRecordingsDetailsJob.perform_later(id: n)
     end
   end
 
