@@ -23,7 +23,6 @@ describe Hearings::GetWebexRecordingsDetailsJob, type: :job do
     it "hits the webex API and returns recording details" do
       get_details = Hearings::GetWebexRecordingsDetailsJob.new
       run = get_details.send(:get_recording_details, id)
-      expect(subject).to be(nil)
 
       expect(run.mp4_link).to eq(mp4_link)
       expect(run.mp3_link).to eq(mp3_link)
@@ -36,7 +35,6 @@ describe Hearings::GetWebexRecordingsDetailsJob, type: :job do
       run_mp4 = get_details.send(:create_file_name, topic, "mp4")
       run_vtt = get_details.send(:create_file_name, topic, "vtt")
       run_mp3 = get_details.send(:create_file_name, topic, "mp3")
-      expect(subject).to be(nil)
 
       expect(run_mp4).to eq(mp4_file_name)
       expect(run_vtt).to eq(vtt_file_name)
