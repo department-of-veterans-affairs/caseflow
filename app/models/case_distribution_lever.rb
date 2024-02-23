@@ -41,6 +41,8 @@ class CaseDistributionLever < ApplicationRecord
   def history_value
     if combination_lever
       combination_value
+    elsif radio_lever
+      radio_value
     else
       value
     end
@@ -98,6 +100,20 @@ class CaseDistributionLever < ApplicationRecord
   def combination_value
     toggle_string = is_toggle_active ? "Active" : "Inactive"
     "#{toggle_string} - #{value}"
+  end
+
+  def option(item)
+    options&.find{ |option| option["item"] == item } || {}
+  end
+
+  # this matches what is displayed in frontend
+  # see client/app/caseDistribution/components/SaveModal.jsx
+  def radio_value
+    return option(value)["text"] if [Constants.ACD_LEVERS.omit, Constants.ACD_LEVERS.infinite].include?(value.to_s)
+
+    selected_option = option(Constants.ACD_LEVERS.value)
+
+    "#{selected_option["text"]} #{value.to_s} #{selected_option["unit"]}"
   end
 
   class << self
