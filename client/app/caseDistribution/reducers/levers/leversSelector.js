@@ -165,6 +165,11 @@ export const hasNoLeverErrors = createSelector(
 );
 
 /**
+ * Used when updating the a radio lever
+ * Pass in the selected option and a value if the selected option is value
+ *
+ * This will break if a Radio lever has more than one option that has an input
+ *
  * If value is the selected Radio option
  *   Update lever.value to optionValue passed in
  *   Set valueOptionValue to value passed in
@@ -173,14 +178,13 @@ export const hasNoLeverErrors = createSelector(
  *   Update lever.value to the value passed in
  *   Set valueOptionValue to value in value's option
  */
-export const createUpdatedRadioLever = (state, action) => {
+export const updateLeverGroupForRadioLever = (state, action) => {
   const { leverGroup, leverItem, value, optionValue } = action.payload;
 
   const updateLeverValue = (lever) => {
     const selectedOption = findOption(lever, value);
     const isValueOption = radioValueOptionSelected(value);
-    const valueOptionValue = isValueOption ?
-      optionValue : findValueOption(lever).value;
+    const valueOptionValue = isValueOption ? optionValue : findValueOption(lever).value;
     const leverValue = isValueOption ? optionValue : value;
 
     // Set all options to not selected

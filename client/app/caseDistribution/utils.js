@@ -19,13 +19,16 @@ export const createUpdatedLeversWithValues = (levers) => {
 
     return leverGroups.reduce((updatedLevers, leverGroup) => {
       updatedLevers[leverGroup] = levers[leverGroup]?.map((lever) => {
+        // All levers should have a backendValue added as this is used for the following
+        // - showing the user what value was in the SaveModal
+        // - checking if the lever has changed and Save button should be enabled
         let additionalValues = {
           backendValue: lever.value
         };
 
         const dataType = lever.data_type;
 
-        // Only add a new properties for radio and combination data types as these have special handling logic
+        // Add new properties for radio and combination data types as these have special handling logic
         // to retrieve value
         if (dataType === ACD_LEVERS.data_types.radio) {
           const selectedOption = findSelectedOption(lever).item;

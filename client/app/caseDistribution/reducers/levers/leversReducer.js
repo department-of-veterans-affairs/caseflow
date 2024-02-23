@@ -2,7 +2,7 @@ import { ACTIONS } from '../levers/leversActionTypes';
 import { update } from '../../../util/ReducerUtil';
 import {
   updateLeverGroupForValue,
-  createUpdatedRadioLever,
+  updateLeverGroupForRadioLever,
   updateLeverGroupForIsToggleActive
 } from './leversSelector';
 import {
@@ -64,7 +64,7 @@ const leversReducer = (state = initialState, action = {}) => {
     };
   }
   case ACTIONS.UPDATE_RADIO_LEVER: {
-    const leverGroup = createUpdatedRadioLever(state, action);
+    const leverGroup = updateLeverGroupForRadioLever(state, action);
 
     return {
       ...state,

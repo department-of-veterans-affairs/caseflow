@@ -23,10 +23,10 @@ export const SaveModal = (props) => {
 
   /**
    * If omit or infinite
-   *   Go get the text to display
+   *  Return the text for the option
    *
    * If value
-   *   Go get the value and text to display
+   *  Return the text, value, and unit for the option
    */
   const radioValue = (lever, value) => {
     if ([ACD_LEVERS.omit, ACD_LEVERS.infinite].includes(value)) {

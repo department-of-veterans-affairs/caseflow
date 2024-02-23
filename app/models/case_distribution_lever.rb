@@ -28,16 +28,6 @@ class CaseDistributionLever < ApplicationRecord
     #{Constants.DISTRIBUTION.nod_adjustment}
   ).freeze
 
-  # MAKE UPDATES FOR RADIO HERE
-  def distribution_value
-    if radio_lever
-      option = options.detect { |opt| opt["item"] == value }
-      option["value"] if option&.is_a?(Hash)
-    else
-      value
-    end
-  end
-
   def history_value
     if combination_lever
       combination_value
@@ -159,7 +149,7 @@ class CaseDistributionLever < ApplicationRecord
     private
 
     def method_missing_value(name)
-      lever = find_by_item(name).try(:distribution_value)
+      lever = find_by_item(name).try(:value)
 
       if INTEGER_LEVERS.include?(name)
         lever.to_i
