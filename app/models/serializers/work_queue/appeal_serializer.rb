@@ -323,5 +323,7 @@ class WorkQueue::AppealSerializer
     ]).count
   end
 
-  attribute :has_sct_assign_task, &:sct_appeal?
+  attribute :has_sct_assign_task do |object|
+    object.tasks.of_type(:SpecialtyCaseTeamAssignTask).completed.exists?
+  end
 end

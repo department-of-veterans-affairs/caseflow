@@ -18,8 +18,9 @@ class AttorneyTask < Task
   validate :assigned_by_role_is_valid, if: :will_save_change_to_assigned_by_id?
   validate :assigned_to_role_is_valid, if: :will_save_change_to_assigned_to_id?
 
+  # rubocop:disable Metrics/AbcSize
   def available_actions(user)
-    atty_return_action = if appeal.sct_appeal?
+    atty_return_action = if appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).completed.exists?
                            Constants.TASK_ACTIONS.CANCEL_TASK_AND_RETURN_TO_SCT_QUEUE.to_h
                          else
                            Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
@@ -38,6 +39,7 @@ class AttorneyTask < Task
 
     actions_based_on_assignment(user, atty_actions, movement_actions)
   end
+  # rubocop:enable Metrics/AbcSize
 
   def actions_based_on_assignment(user, atty_actions, movement_actions)
     if self_assigned?(user)
