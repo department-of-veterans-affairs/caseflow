@@ -18,7 +18,8 @@ module VirtualHearings::ConferenceClient
         aud: ENV["WEBEX_ORGANIZATION"],
         apikey: ENV["WEBEX_BOTTOKEN"],
         domain: ENV["WEBEX_DOMAIN_IC"],
-        api_endpoint: ENV["WEBEX_API_IC"]
+        api_endpoint: ENV["WEBEX_API_IC"],
+        query: nil
       )
     else
       msg = "Conference Provider for the Virtual Hearing Not Found"

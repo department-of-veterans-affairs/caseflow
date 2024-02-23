@@ -91,11 +91,13 @@ describe VirtualHearings::CreateConferenceJob do
     end
 
     it "creates a conference", :aggregate_failures do
+      allow(VirtualHearings::SequenceConferenceId).to receive(:next).and_return "0000001"
+
       subject.perform_now
 
       virtual_hearing.reload
       expect(virtual_hearing.status).to eq(:active)
-      expect(virtual_hearing.alias_with_host).to eq("BVA0000002@#{URL_HOST}")
+      expect(virtual_hearing.alias_with_host).to eq("BVA0000001@#{URL_HOST}")
       expect(virtual_hearing.host_pin.to_s.length).to eq(7)
       expect(virtual_hearing.guest_pin.to_s.length).to eq(10)
     end

@@ -442,26 +442,24 @@ describe VirtualHearing do
     end
     let(:virtual_hearing) { create(:virtual_hearing, hearing: hearing) }
 
+    shared_examples "subject for conference" do
+      it "returns the expected meeting conference details" do
+        is_expected.to eq("#{hearing.docket_number}_#{hearing.id}_#{hearing.class.name}")
+      end
+    end
+
     context "For an AMA Hearing" do
       let(:hearing) { create(:hearing, hearing_day: hearing_day) }
       subject { virtual_hearing.subject_for_conference }
 
-      it "returns the expected meeting conference details" do
-        is_expected.to eq(
-          "#{hearing.appeal.docket_number}_#{hearing.appeal.id}_#{hearing.appeal.class.name}"
-        )
-      end
+      include_examples "subject for conference"
     end
 
     context "For a Legacy Hearing" do
       let(:hearing) { create(:legacy_hearing, hearing_day: hearing_day) }
       subject { virtual_hearing.subject_for_conference }
 
-      it "returns the expected meeting conference details" do
-        is_expected.to eq(
-          "#{hearing.appeal.docket_number}_#{hearing.appeal.id}_LegacyAppeal"
-        )
-      end
+      include_examples "subject for conference"
     end
 
     context "nbf and exp" do
