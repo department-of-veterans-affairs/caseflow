@@ -63,6 +63,31 @@ export const loadCorrespondenceConfig = (configUrl) =>
         });
   };
 
+  export const loadMailTeamUsers = (mailTeamUsers) =>
+  (dispatch) => {
+    ApiUtil.get('/queue/correspondence/mail_team_users').then(
+      (response) => {
+        const returnedObject = response.body;
+        const mailTeamUsers = returnedObject.mail_team_users;
+        console.log("returnedObject", mailTeamUsers);
+
+        dispatch(
+          {
+            type: ACTIONS.LOAD_MAIL_TEAM_USERS,
+            payload: {
+              mailTeamUsers: mailTeamUsers.map((user) => {
+                return user.css_id;
+              })
+            }
+          });
+
+      }).
+      catch(
+        (err) => {
+          console.error(new Error(`Problem with GET ${mailTeamUsers} ${err}`));
+        });
+  };
+
 export const updateRadioValue = (value) =>
   (dispatch) => {
     dispatch({

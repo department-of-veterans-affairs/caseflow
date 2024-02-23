@@ -54,6 +54,13 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
       }
     });
 
+  case ACTIONS.LOAD_MAIL_TEAM_USERS:
+    return update(state, {
+      mailTeamUsers: {
+        $set: action.payload.mailTeamUsers
+      }
+    });
+
   case ACTIONS.UPDATE_RADIO_VALUE:
     return update(state, {
       radioValue: {

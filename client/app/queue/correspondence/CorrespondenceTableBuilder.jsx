@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
@@ -23,6 +24,10 @@ import {
   vaDor,
   veteranDetails
 } from '../components/TaskTableColumns';
+
+import {
+  loadMailTeamUsers
+} from './correspondenceReducer/correspondenceActions';
 import { tasksWithCorrespondenceFromRawTasks } from '../utils';
 
 import COPY from '../../../COPY';
@@ -43,15 +48,24 @@ const rootStyles = css({
  **/
 
 const CorrespondenceTableBuilder = (props) => {
+  const dispatch = useDispatch();
+  const mailTeamUsers = useSelector((state) => state.intakeCorrespondence.mailTeamUsers);
+  console.log("mailTeamUsers", mailTeamUsers);
   const paginationOptions = () => querystring.parse(window.location.search.slice(1));
   const [storedPaginationOptions, setStoredPaginationOptions] = useState(
     querystring.parse(window.location.search.slice(1))
   );
 
+
+
   // Causes one additional rerender of the QueueTables/tabs but prevents saved pagination behavior
   // e.g. clearing filter in a tab, then swapping tabs, then swapping back and the filter will still be applied
   useEffect(() => {
     setStoredPaginationOptions({});
+  }, []);
+
+  useEffect(() => {
+    dispatch(loadMailTeamUsers(mailTeamUsers));
   }, []);
 
   const calculateActiveTabIndex = (config) => {
@@ -149,6 +163,7 @@ const CorrespondenceTableBuilder = (props) => {
                   hideLabel
                   styling={{ width: '200px', marginRight: '2rem' }}
                   dropdownStyling={{ width: '200px' }}
+                  options={mailTeamUsers}
                 />
                 {tabConfig.name === 'correspondence_unassigned' &&
               <>
@@ -236,7 +251,8 @@ CorrespondenceTableBuilder.propTypes = {
   }),
   userCanBulkAssign: PropTypes.bool,
   isVhaOrg: PropTypes.bool,
-  featureToggles: PropTypes.object
+  featureToggles: PropTypes.object,
+  mailTeamUsers: PropTypes.array,
 };
 
 export default connect(mapStateToProps)(CorrespondenceTableBuilder);

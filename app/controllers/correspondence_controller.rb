@@ -54,6 +54,15 @@ class CorrespondenceController < ApplicationController
     end
   end
 
+  def mail_team_users
+    mail_team_users = User.mail_team_users
+    respond_to do |format|
+      format.json do
+        render json: { mail_team_users: mail_team_users }
+      end
+    end
+  end
+
   def correspondence_team
     if current_user.mail_superuser? || current_user.mail_supervisor?
       respond_to do |format|
