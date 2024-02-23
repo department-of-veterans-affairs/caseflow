@@ -109,7 +109,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   def parse_hearing
     identifiers = file_name.split(".").first
     hearing_id = identifiers.split("_")[1]
-    hearing_type = identifiers.split("_")[2]
+    hearing_type = identifiers.split("_").last.split("-").first
     hearing_type.constantize.find(hearing_id)
   rescue StandardError => error
     raise FileNameError, "Encountered error #{error} when attempting to parse hearing from file name '#{file_name}'"
@@ -130,7 +130,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   #
   # Returns: TranscriptionFile object
   def find_or_create_transcription_file(file_name_arg = file_name)
-    Hearings::TranscriptionFile.find_or_create_by(
+    TranscriptionFile.find_or_create_by(
       file_name: file_name_arg,
       hearing_id: hearing.id,
       hearing_type: hearing.class.name,

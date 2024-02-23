@@ -69,6 +69,22 @@ class Fakes::WebexService
     )
   end
 
+  def get_recording_details
+    if error?
+      return ExternalApi::WebexService::RecordingDetailsResponse.new(
+        HTTPI::Response.new(@status_code, {}, error_response)
+      )
+    end
+
+    ExternalApi::WebexService::RecordingDetailsResponse.new(
+      HTTPI::Response.new(
+        200,
+        {},
+        fake_recording_details_data.to_json
+      )
+    )
+  end
+
   # rubocop:disable Metrics/MethodLength
   def fake_recordings_list_data
     {
@@ -78,7 +94,7 @@ class Fakes::WebexService
           "meetingId": "f91b6edce9864428af084977b7c68291_I_166641849979635652",
           "scheduledMeetingId": "f91b6edce9864428af084977b7c68291_20200713T121500Z",
           "meetingSeriesId": "f91b6edce9864428af084977b7c68291",
-          "topic": "200103-61110_2000061110_Appeal",
+          "topic": "200103-61110_2000061110_Hearing",
           "createTime": "2020-07-13T17:11:35Z",
           "timeRecorded": "2020-07-13T17:05:35Z",
           "siteUrl": "site4-example.webex.com",
@@ -90,10 +106,10 @@ class Fakes::WebexService
           "durationSeconds": 18_416,
           "sizeBytes": 168_103,
           "shareToMe": false,
-          "integrationTags": [
-            "dbaeceebea5c4a63ac9d5ef1edfe36b9",
-            "85e1d6319aa94c0583a6891280e3437d",
-            "27226d1311b947f3a68d6bdf8e4e19a1"
+          "integrationTags": %w[
+            dbaeceebea5c4a63ac9d5ef1edfe36b9
+            85e1d6319aa94c0583a6891280e3437d
+            27226d1311b947f3a68d6bdf8e4e19a1
           ],
           "status": "available"
         },
@@ -102,7 +118,7 @@ class Fakes::WebexService
           "meetingId": "f91b6edce9864428af084977b7c68291_I_166641849979635652",
           "scheduledMeetingId": "f91b6edce9864428af084977b7c68291_20200713T121500Z",
           "meetingSeriesId": "f91b6edce9864428af084977b7c68291",
-          "topic": "150000248290335_343_LegacyAppeal",
+          "topic": "150000248290336_302_LegacyHearing",
           "createTime": "2020-07-13T17:11:34Z",
           "timeRecorded": "2020-07-13T17:05:35Z",
           "siteUrl": "site4-example.webex.com",
@@ -114,10 +130,10 @@ class Fakes::WebexService
           "durationSeconds": 181_562,
           "sizeBytes": 199_134,
           "shareToMe": false,
-          "integrationTags": [
-            "dbaeceebea5c4a63ac9d5ef1edfe36b9",
-            "85e1d6319aa94c0583a6891280e3437d",
-            "27226d1311b947f3a68d6bdf8e4e19a1"
+          "integrationTags": %w[
+            dbaeceebea5c4a63ac9d5ef1edfe36b9
+            85e1d6319aa94c0583a6891280e3437d
+            27226d1311b947f3a68d6bdf8e4e19a1
           ],
           "status": "available"
         },
@@ -126,7 +142,7 @@ class Fakes::WebexService
           "meetingId": "f91b6edce9864428af084977b7c68291_I_166641849979635652",
           "scheduledMeetingId": "f91b6edce9864428af084977b7c68291_20200713T121500Z",
           "meetingSeriesId": "f91b6edce9864428af084977b7c68291",
-          "topic": "231207-1177_1177_Appeal",
+          "topic": "231207-1177_1177_Hearing",
           "createTime": "2020-07-13T17:11:33Z",
           "timeRecorded": "2020-07-13T17:05:35Z",
           "siteUrl": "site4-example.webex.com",
@@ -138,14 +154,47 @@ class Fakes::WebexService
           "durationSeconds": 181_562,
           "sizeBytes": 199_134,
           "shareToMe": true,
-          "integrationTags": [
-            "dbaeceebea5c4a63ac9d5ef1edfe36b9",
-            "85e1d6319aa94c0583a6891280e3437d",
-            "27226d1311b947f3a68d6bdf8e4e19a1"
+          "integrationTags": %w[
+            dbaeceebea5c4a63ac9d5ef1edfe36b9
+            85e1d6319aa94c0583a6891280e3437d
+            27226d1311b947f3a68d6bdf8e4e19a1
           ],
           "status": "available"
         }
       ]
+    }
+  end
+
+  def fake_recording_details_data
+    {
+      "id": "4f914b1dfe3c4d11a61730f18c0f5387",
+      "meetingId": "f91b6edce9864428af084977b7c68291_I_166641849979635652",
+      "scheduledMeetingId": "f91b6edce9864428af084977b7c68291_20200713T121500Z",
+      "meetingSeriesId": "f91b6edce9864428af084977b7c68291",
+      "topic": "Virtual Visit - 180000304_1_LegacyHearing-20240213 1712-1",
+      "createTime": "2020-07-13T17:11:35Z",
+      "timeRecorded": "2020-07-13T17:05:35Z",
+      "siteUrl": "site4-example.webex.com",
+      "downloadUrl": "https://site4-example.webex.com/site4/lsr.php?RCID=b91990e37417bda24986e46cf43345ab",
+      "playbackUrl": "https://site4-example.webex.com/site4/ldr.php?RCID=69201a61d1d94a84aca18817261d1a73",
+      "password": "BgJep@43",
+      "temporaryDirectDownloadLinks": {
+        "recordingDownloadLink": "https://www.learningcontainer.com/mp4-sample-video-files-download/#",
+        "audioDownloadLink": "https://freetestdata.com/audio-files/mp3/",
+        "transcriptionDownloadLink": "https://www.capsubservices.com/assets/downloads/web/WebVTT.vtt",
+        "expiration": "2022-05-01T10:30:25Z"
+      },
+      "format": "ARF",
+      "serviceType": "MeetingCenter",
+      "durationSeconds": 18_416,
+      "sizeBytes": 168_103,
+      "shareToMe": false,
+      "integrationTags": %w[
+        dbaeceebea5c4a63ac9d5ef1edfe36b9
+        85e1d6319aa94c0583a6891280e3437d
+        27226d1311b947f3a68d6bdf8e4e19a1
+      ],
+      "status": "available"
     }
   end
   # rubocop:enable Metrics/MethodLength
