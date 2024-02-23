@@ -27,7 +27,7 @@ const ClaimHistoryPage = () => {
     <LinkDiv> <Link to={returnLink}><b><u>&lt; Back to Decision Review</u></b></Link></LinkDiv>
     <NonCompLayout>
       <h1>{task.claimant.name}</h1>
-      <IndividualClaimHistoryTable claimRows={events} />
+      <IndividualClaimHistoryTable eventRows={events} />
     </NonCompLayout>
   </div>;
 };

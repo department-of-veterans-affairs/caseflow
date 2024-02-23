@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 const IndividualClaimHistoryTable = (props) => {
 
-  const { claimRows } = props;
+  const { eventRows } = props;
 
   const processEventDate = (date) => {
     return new Date(date).toLocaleString('en-US', {
@@ -152,7 +152,7 @@ const IndividualClaimHistoryTable = (props) => {
       valueName: 'User',
       valueFunction: (row) => row.eventUser,
       enableFilter: true,
-      tableData: claimRows,
+      tableData: eventRows,
       anyFiltersAreSet: true,
       label: 'Filter by User',
       enableFilterTextTransform: false,
@@ -164,7 +164,7 @@ const IndividualClaimHistoryTable = (props) => {
       valueFunction: (row) => row.readableEventType,
       enableFilter: true,
       enableFilterTextTransform: false,
-      tableData: claimRows,
+      tableData: eventRows,
       anyFiltersAreSet: true,
       label: 'Filter by Activity',
       getSortValue: (row) => row.readableEventType },
@@ -176,7 +176,7 @@ const IndividualClaimHistoryTable = (props) => {
   return <QueueTable
     id="individual_claim_history_table"
     columns={columns}
-    rowObjects={claimRows}
+    rowObjects={eventRows}
     summary="Individual claim history"
     getKeyForRow={(_rowNumber, event) => event.id}
     enablePagination
@@ -190,7 +190,7 @@ const IndividualClaimHistoryTable = (props) => {
 };
 
 IndividualClaimHistoryTable.propTypes = {
-  claimRows: PropTypes.array
+  eventRows: PropTypes.array
 };
 
 export default IndividualClaimHistoryTable;
