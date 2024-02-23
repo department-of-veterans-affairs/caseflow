@@ -164,5 +164,5 @@ export const hasCombinationLeverChanged = (lever) =>
   (lever.backendValue !== null &&
   `${lever.value}` !== lever.backendValue);
 
-export const hasRadioLeverChanged = (lever) => false;
+export const hasLeverValueChanged = (lever) => lever.backendValue !== null && `${lever.value}` !== lever.backendValue;
 

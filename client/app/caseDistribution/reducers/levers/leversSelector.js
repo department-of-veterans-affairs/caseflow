@@ -4,7 +4,8 @@ import {
   findOption,
   hasCombinationLeverChanged,
   radioValueOptionSelected,
-  findValueOption
+  findValueOption,
+  hasLeverValueChanged
 } from '../../utils';
 
 const sortLevers = (leverA, leverB) => leverA.lever_group_order - leverB.lever_group_order;
@@ -60,34 +61,33 @@ const getCombinationLevers = (state) => {
 
 const getRadioLevers = (state) => {
   return getLeversAsArray(state).filter((lever) =>
-    lever.data_type === ACD_LEVERS.data_types.combination
+    lever.data_type === ACD_LEVERS.data_types.radio
   );
 };
 
 /**
  * Determine which levers have changed
  *
- * For radio levers compare
+ * For radio levers compare if value has changed
  *
  * For combination levers compare if either is_toggle_active or value has changed
  *
- * For lever data types compare if value has changed
+ * For simple lever data types compare if value has changed
  */
 export const changedLevers = createSelector(
   [getSimpleLevers, getCombinationLevers, getRadioLevers],
   (simpleLevers, combinationLevers, radioLevers) => {
-    const changedSimpleLevers = simpleLevers.
-      filter((lever) =>
-        lever.backendValue !== null &&
-        `${lever.value}` !== lever.backendValue
-      );
+    const changedSimpleLevers = simpleLevers.filter((lever) =>
+      hasLeverValueChanged(lever)
+    );
 
     const changedCombinationLevers = combinationLevers.filter((lever) =>
       hasCombinationLeverChanged(lever)
     );
 
+    // Keeping separated in case there is a need to add additional checks
     const changedRadioLevers = radioLevers.filter((lever) =>
-      hasCombinationLeverChanged(lever)
+      hasLeverValueChanged(lever)
     );
 
     return changedSimpleLevers.concat(changedCombinationLevers, changedRadioLevers).
