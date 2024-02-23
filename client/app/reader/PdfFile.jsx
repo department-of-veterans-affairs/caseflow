@@ -79,7 +79,6 @@ export class PdfFile extends React.PureComponent {
       documentType: this.props.documentType,
       file: this.props.file,
       prefetchDisabled: this.props.featureToggles.prefetchDisabled,
-      sessionId: this.metricIdentifier
     };
 
     return ApiUtil.get(this.props.file, requestOptions).
@@ -112,7 +111,7 @@ export class PdfFile extends React.PureComponent {
         }
 
         return recordAsyncMetrics(this.loadingTask.promise, metricData,
-          this.props.featureToggles.metricsRecordPDFJSGetDocument);
+          this.props.featureToggles.metricsRecordPDFJSGetDocument, this.metricIdentifier);
 
       }, (reason) => this.onRejected(reason, 'getDocument')).
       then((pdfDocument) => {

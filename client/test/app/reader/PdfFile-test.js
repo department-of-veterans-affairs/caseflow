@@ -34,6 +34,7 @@ const metricArgs = (featureValue) => {
       type: 'performance'
     },
     featureValue,
+    expect.stringMatching(/^([a-zA-Z0-9-.'&])*$/)
   ];
 };
 
@@ -91,7 +92,7 @@ describe('PdfFile', () => {
       });
 
       it('calls recordAsyncMetrics but will not save a metric', () => {
-        expect(recordAsyncMetrics).toBeCalledWith(metricArgs()[0], metricArgs()[1], metricArgs(false)[2]);
+        expect(recordAsyncMetrics).toBeCalledWith(metricArgs()[0], metricArgs()[1], metricArgs(false)[2], metricArgs()[3]);
       });
 
       it('does not call storeMetrics in catch block', () => {
@@ -132,7 +133,7 @@ describe('PdfFile', () => {
       });
 
       it('calls recordAsyncMetrics and will save a metric', () => {
-        expect(recordAsyncMetrics).toBeCalledWith(metricArgs()[0], metricArgs()[1], metricArgs(true)[2]);
+        expect(recordAsyncMetrics).toBeCalledWith(metricArgs()[0], metricArgs()[1], metricArgs(true)[2], metricArgs()[3]);
       });
 
       it('calls storeMetrics in catch block', () => {
