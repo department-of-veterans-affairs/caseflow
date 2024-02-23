@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TranscriptionFile < CaseflowRecord
+class Hearings::TranscriptionFile < CaseflowRecord
   include BelongsToPolymorphicHearingConcern
   belongs_to_polymorphic_hearing :hearing
 
