@@ -80,14 +80,16 @@ export class PdfFile extends React.PureComponent {
 
     return ApiUtil.get(this.props.file, requestOptions).
       then((resp) => {
-        const documentSource = resp && resp.header ? resp.header['x-document-source'] : '';
         const metricData = {
-          message: `Getting PDF document: "${this.props.file}" from "${documentSource}"`,
+          message: `Getting PDF document: "${this.props.file}"`,
           type: 'performance',
           product: 'reader',
-          additionalInfo: JSON.stringify({ source: `"${documentSource}"` }),
           data: documentData,
         };
+
+        if (resp && resp.header && resp.header['x-document-source']) {
+          metricData.additionalInfo = JSON.stringify({ source: `"${resp.header['x-document-source']}"` });
+        }
 
         /* The feature toggle reader_get_document_logging adds the progress of the file being loaded in console */
         if (this.props.featureToggles.readerGetDocumentLogging) {
