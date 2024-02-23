@@ -9,7 +9,7 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
   describe "GET legacy_tasks/xxx" do
     let(:user) { create(:user) }
     before do
-      create(:staff, role, user: user)
+      create(:staff, role, sdomainid: user.css_id)
       User.authenticate!(user: user)
     end
 
@@ -62,7 +62,7 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
   context "GET :user_id/assign" do
     let(:user) { create(:user) }
     before do
-      create(:staff, :judge_role, user: user)
+      create(:staff, sdomainid: user.css_id)
       User.authenticate!(user: user)
     end
 
@@ -104,8 +104,8 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case)) }
     before do
       User.stub = user
-      @staff_user = create(:staff, role, user: user)
-      create(:staff, :attorney_role, user: attorney)
+      @staff_user = create(:staff, role, sdomainid: user.css_id)
+      create(:staff, :attorney_role, sdomainid: attorney.css_id)
     end
 
     context "when current user is an attorney" do
@@ -198,8 +198,7 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
           post :create, params: { tasks: params }
           expect(response.status).to eq 400
           body = JSON.parse(response.body)
-          expect(body["errors"].first["detail"])
-            .to match(/That case has already been assigned. Please refresh the page to update your queue./)
+          expect(body["errors"].first["detail"]).to match(/That case has already been assigned. Please refresh the page to update your queue./)
         end
       end
 
@@ -263,8 +262,8 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
     let(:user) { create(:user) }
     before do
       User.stub = user
-      @staff_user = create(:staff, role, user: user)
-      create(:staff, :attorney_role, user: attorney)
+      @staff_user = create(:staff, role, sdomainid: user.css_id)
+      create(:staff, :attorney_role, sdomainid: attorney.css_id)
     end
 
     context "when current user is an attorney" do
@@ -432,8 +431,8 @@ RSpec.describe LegacyTasksController, :all_dbs, type: :controller do
   describe "POST legacy_tasks/assign_to_judge" do
     let(:assigning_judge) { create(:user) }
     let(:assignee_judge) { create(:user) }
-    let(:assigning_judge_staff) { create(:staff, :judge_role, user: assigning_judge) }
-    let!(:assignee_judge_staff) { create(:staff, :judge_role, user: assignee_judge) }
+    let(:assigning_judge_staff) { create(:staff, :judge_role, sdomainid: assigning_judge.css_id) }
+    let!(:assignee_judge_staff) { create(:staff, :judge_role, sdomainid: assignee_judge.css_id) }
     let(:appeal) { create(:legacy_appeal, vacols_case: create(:case, staff: assigning_judge_staff)) }
     let(:params) { { "appeal_id": appeal.id, "assigned_to_id": assignee_judge.id } }
 
