@@ -137,10 +137,13 @@ group :development do
   gem "dotenv-rails"
   gem "fasterer", require: false
   gem "foreman"
+  gem "memory_profiler"
   gem "meta_request"
+  gem "rack-mini-profiler", require: false
   gem "ruby-debug-ide"
   gem "ruby-prof", "~> 1.4"
   gem "solargraph"
+  gem "stackprof"
 end
 
 group :test do
