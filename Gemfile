@@ -111,6 +111,7 @@ group :test, :development, :demo do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem "pry-byebug", "~> 3.9"
   gem "rails-erd"
+  gem "rails-perftest"
   gem "rb-readline"
   gem "rspec"
   gem "rspec-rails"

@@ -507,6 +507,7 @@ GEM
     rails-html-sanitizer (1.6.0)
       loofah (~> 2.21)
       nokogiri (~> 1.14)
+    rails-perftest (0.0.7)
     railties (5.2.8.1)
       actionpack (= 5.2.8.1)
       activesupport (= 5.2.8.1)
@@ -800,6 +801,7 @@ DEPENDENCIES
   rack-mini-profiler
   rails (= 5.2.8.1)
   rails-erd
+  rails-perftest
   rainbow
   rb-readline
   react_on_rails (= 11.3.0)
