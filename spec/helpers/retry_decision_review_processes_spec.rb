@@ -7,8 +7,11 @@ describe RetryDecisionReviewProcesses do
     Timecop.freeze(Time.utc(2015, 1, 1, 12, 0, 0))
   end
 
-  let(:subject) { RetryDecisionReviewProcesses.retry }
-  let(:file_name) { "data-remediation-output-test/retry_decision_review_process_job-log-2015-01-01 07:00:00 -0500" }
+  let(:subject) { RetryDecisionReviewProcesses.new.retry }
+  let(:file_name) do
+    "data-remediation-output-test/retry_decision_review_process_job-logs/retry_decision_review_process_job-log-"\
+      "2015-01-01 07:00:00 -0500"
+  end
   let(:supplemental_claim_1) do
     create :supplemental_claim, establishment_error: "
       Finds error that has a variable in it
