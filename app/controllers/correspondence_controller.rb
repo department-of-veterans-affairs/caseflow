@@ -46,7 +46,7 @@ class CorrespondenceController < ApplicationController
       respond_to do |format|
         format.html { "your_correspondence" }
         format.json do
-          render json: { correspondence_config: CorrespondenceConfig.create(assignee: current_user) }
+          render json: { correspondence_config: CorrespondenceConfig.new(assignee: current_user) }
         end
       end
     else
@@ -59,7 +59,7 @@ class CorrespondenceController < ApplicationController
       respond_to do |format|
         format.html { "correspondence_team" }
         format.json do
-          render json: { correspondence_config: CorrespondenceConfig.create(assignee: MailTeamSupervisor.singleton) }
+          render json: { correspondence_config: CorrespondenceConfig.new(assignee: MailTeamSupervisor.singleton) }
         end
       end
     elsif current_user.mail_team_user?

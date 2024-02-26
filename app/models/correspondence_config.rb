@@ -6,10 +6,14 @@ class CorrespondenceConfig
 
   attr_accessor :assignee
 
-  def create(args)
-    case assignee
-    when Organzation then OrgCorrespondenceConfig.new(args)
-    when User then UserCorrespondenceConfig.new(args)
+  def initialize(args)
+    super
+
+    if !assignee&.is_a?(Organization) && !assignee&.is_a?(User)
+      fail(
+        Caseflow::Error::MissingRequiredProperty,
+        message: "assignee property must be an instance of Organization or User"
+      )
     end
   end
 
@@ -25,17 +29,6 @@ class CorrespondenceConfig
 
   private
 
-  def initialize(args)
-    super
-
-    if !assignee&.is_a?(Organization) && !assignee&.is_a?(User)
-      fail(
-        Caseflow::Error::MissingRequiredProperty,
-        message: "assignee property must be an instance of Organization or User"
-      )
-    end
-  end
-
   def assignee_is_org?
     assignee.is_a?(Organization)
   end
@@ -48,12 +41,18 @@ class CorrespondenceConfig
       sort_by: tab.default_sorting_column.name,
       sort_order: tab.default_sorting_direction
     )
+    endpoint = "task_pages?#{Constants.QUEUE_CONFIG.TAB_NAME_REQUEST_PARAM}=#{tab.name}"
+    base_path = if assignee_is_org?
+                  "organizations/#{assignee.id}/#{endpoint}"
+                else
+                  "correspondence/users/#{assignee.id}/#{endpoint}"
+                end
 
     tab.to_hash.merge(
       tasks: serialized_tasks_for_columns(task_pager.paged_tasks, tab.column_names),
       task_page_count: task_pager.task_page_count,
       total_task_count: task_pager.total_task_count,
-      task_page_endpoint_base_path: base_path(tab)
+      task_page_endpoint_base_path: base_path
     )
   end
 
@@ -63,6 +62,22 @@ class CorrespondenceConfig
       is_collection: true,
       params: { columns: columns }
     ).serializable_hash[:data]
+  end
+
+  def table_title
+    if assignee_is_org?
+      Constants.QUEUE_CONFIG.CORRESPONDENCE_ORG_TABLE_TITLE
+    else
+      Constants.QUEUE_CONFIG.CORRESPONDENCE_USER_TABLE_TITLE
+    end
+  end
+
+  def default_active_tab
+    if assignee_is_org?
+      Constants.QUEUE_CONFIG.CORRESPONDENCE_UNASSIGNED_TASKS_TAB_NAME
+    else
+      Constants.QUEUE_CONFIG.CORRESPONDENCE_ASSIGNED_TASKS_TAB_NAME
+    end
   end
 
   def default_sorting_column
