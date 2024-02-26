@@ -146,7 +146,7 @@ class AttorneyTask < Task
   end
 
   def attorney_cancel_action
-    if appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).completed.exists?
+    if ama? && appeal.has_completed_sct_assign_task?
       Constants.TASK_ACTIONS.CANCEL_TASK_AND_RETURN_TO_SCT_QUEUE.to_h
     else
       Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
