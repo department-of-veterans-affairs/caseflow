@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 class HearingRequestDistributionQuery
+  include DistributionScopes
+
   def initialize(base_relation:, genpop:, judge: nil, use_by_docket_date: false)
-    @base_relation = base_relation.extending(Scopes)
+    @base_relation = base_relation.extending(DistributionScopes)
     @genpop = genpop
     @judge = judge
     @use_by_docket_date = use_by_docket_date
@@ -11,7 +13,12 @@ class HearingRequestDistributionQuery
   def call
     return not_genpop_appeals if genpop == "not_genpop"
 
-    return only_genpop_appeals if genpop == "only_genpop"
+    if genpop == "only_genpop"
+      return [not_genpop_appeals, only_genpop_appeals].flatten if FeatureToggle.enabled?(:acd_exclude_from_affinity) &&
+                                                                  judge.present?
+
+      return only_genpop_appeals
+    end
 
     # We are returning an array of arrays in order to process the
     # "not_genpop_appeals" separately from the "only_genpop_appeals" in
@@ -42,7 +49,9 @@ class HearingRequestDistributionQuery
     no_hearings_or_no_held_hearings = with_no_hearings.or(with_no_held_hearings)
 
     # returning early as most_recent_held_hearings_not_tied_to_any_judge is redundant
-    if @use_by_docket_date && !FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
+    if @use_by_docket_date &&
+       !(FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ||
+        FeatureToggle.enabled?(:acd_exclude_from_affinity))
       return [
         with_held_hearings,
         no_hearings_or_no_held_hearings
@@ -55,7 +64,8 @@ class HearingRequestDistributionQuery
       most_recent_held_hearings_not_tied_to_any_judge,
       most_recent_held_hearings_exceeding_affinity_threshold,
       most_recent_held_hearings_tied_to_ineligible_judge,
-      no_hearings_or_no_held_hearings
+      no_hearings_or_no_held_hearings,
+      most_recent_held_hearings_tied_to_judges_with_exclude_appeals_from_affinity
     ].flatten.uniq
   end
 
@@ -83,59 +93,7 @@ class HearingRequestDistributionQuery
     base_relation.most_recent_hearings.tied_to_ineligible_judge
   end
 
-  module Scopes
-    include DistributionScopes
-    def most_recent_hearings
-      query = <<-SQL
-        INNER JOIN
-        (SELECT h.appeal_id, max(hd.scheduled_for) as latest_scheduled_for
-        FROM hearings h
-        JOIN hearing_days hd on h.hearing_day_id = hd.id
-        GROUP BY
-        h.appeal_id
-        ) as latest_date_by_appeal
-        ON appeals.id = latest_date_by_appeal.appeal_id
-        AND hearing_days.scheduled_for = latest_date_by_appeal.latest_scheduled_for
-      SQL
-
-      joins(query, hearings: :hearing_day)
-    end
-
-    def tied_to_distribution_judge(judge)
-      joins(with_assigned_distribution_task_sql)
-        .where(hearings: { disposition: "held", judge_id: judge.id })
-        .where("distribution_task.assigned_at > ?",
-               CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
-    end
-
-    def tied_to_ineligible_judge
-      where(hearings: { disposition: "held", judge_id: HearingRequestDistributionQuery.ineligible_judges_id_cache })
-        .where("1 = ?", FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ? 1 : 0)
-    end
-
-    # If an appeal has exceeded the affinity, it should be returned to genpop.
-    def exceeding_affinity_threshold
-      joins(with_assigned_distribution_task_sql)
-        .where(hearings: { disposition: "held" })
-        .where("distribution_task.assigned_at <= ?", CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
-    end
-
-    # Historical note: We formerly had not_tied_to_any_active_judge until CASEFLOW-1928,
-    # when that distinction became irrelevant because cases become genpop after 30 days anyway.
-    def not_tied_to_any_judge
-      where(hearings: { disposition: "held", judge_id: nil })
-    end
-
-    def with_no_hearings
-      left_joins(:hearings).where(hearings: { id: nil })
-    end
-
-    def with_no_held_hearings
-      left_joins(:hearings).where.not(hearings: { disposition: "held" })
-    end
-
-    def with_held_hearings
-      where(hearings: { disposition: "held" })
-    end
+  def most_recent_held_hearings_tied_to_judges_with_exclude_appeals_from_affinity
+    base_relation.most_recent_hearings.tied_to_judges_with_exclude_appeals_from_affinity
   end
 end
