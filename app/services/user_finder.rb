@@ -24,6 +24,7 @@ class UserFinder
 
   attr_reader :css_id, :name, :role, :organization
 
+  # rubocop:disable Metrics/CyclomaticComplexity
   def users_matching_role
     return [] if role.blank?
 
@@ -42,6 +43,7 @@ class UserFinder
       []
     end
   end
+  # rubocop:enable Metrics/CyclomaticComplexity
 
   def users_matching_css_id
     return [] if css_id.blank?
