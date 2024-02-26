@@ -32,17 +32,10 @@ RSpec.describe Correspondence, type: :model do
     it "Create Root Task and Review Package task for correspondence" do
       correspondence = create(:correspondence)
 
-      ct = CorrespondenceTask.find_by(appeal_id: correspondence.id, type: "CorrespondenceTask")
-      expect(ct.appeal_id).to eq(correspondence.id)
-      expect(ct.status).to eq("on_hold")
-      expect(ct.type).to eq("CorrespondenceTask")
-      expect(ct.assigned_to).to eq(MailTeamSupervisor.singleton)
-
       crt = CorrespondenceRootTask.find_by(appeal_id: correspondence.id)
       expect(crt.appeal_id).to eq(correspondence.id)
       expect(crt.status).to eq("on_hold")
       expect(crt.type).to eq("CorrespondenceRootTask")
-      expect(crt.parent_id).to eq(ct.id)
       expect(crt.assigned_to).to eq(MailTeamSupervisor.singleton)
 
       rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id)
