@@ -63,6 +63,23 @@ class CorrespondenceController < ApplicationController
     end
   end
 
+  def assign_tasks
+    mail_team_user_id = User.find_by(css_id: params[:mailTeamUser])&.id
+    task_ids = params[:taskIds]
+
+    unless mail_team_user_id && task_ids
+      render json: { error: "Invalid parameters" }, status: :unprocessable_entity
+      return
+    end
+
+    tasks = Task.where(id: task_ids)
+
+    tasks.each do |task|
+      task.update(assigned_to_id: mail_team_user_id, assigned_to_type: "User")
+    end
+
+    render json: {}, status: :ok
+  end
   def correspondence_team
     if current_user.mail_superuser? || current_user.mail_supervisor?
       @mail_team_users = User.mail_team_users.pluck(:css_id)

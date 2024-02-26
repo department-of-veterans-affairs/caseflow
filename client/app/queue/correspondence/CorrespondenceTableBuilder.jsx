@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
 
 import querystring from 'querystring';
-
+import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import QueueTable from '../QueueTable';
@@ -54,8 +54,8 @@ const buildMailUserData = (data) => {
 }
 
 const CorrespondenceTableBuilder = (props) => {
-  const dispatch = useDispatch();
-  const mailTeamUsers = useSelector((state) => state.intakeCorrespondence.mailTeamUsers);
+  const [selectedMailTeamUser, setSelectedMailTeamUser] = useState(null);
+  const selectedTasks = useSelector(state => state.intakeCorrespondence.selectedTasks);
 
   const paginationOptions = () => querystring.parse(window.location.search.slice(1));
   const [storedPaginationOptions, setStoredPaginationOptions] = useState(
@@ -68,7 +68,34 @@ const CorrespondenceTableBuilder = (props) => {
     setStoredPaginationOptions({});
   }, []);
 
+  const handleMailTeamUserChange = (selectedUser) => {
+    setSelectedMailTeamUser(selectedUser);
+  };
 
+  const handleAssignButtonClick = () => {
+    // Logic to handle assigning tasks to the selected mail team user
+    if (selectedMailTeamUser && selectedTasks) {
+      console.log('Assigning tasks to selected mail team user', selectedMailTeamUser.value, selectedTasks);
+      const mailTeamUser = selectedMailTeamUser.value;
+      const taskIds = selectedTasks.map((task) => task);
+      const data = {
+        mailTeamUser: mailTeamUser,
+        taskIds: taskIds
+      };
+
+      ApiUtil.post(`/queue/correspondence/assign_tasks`, { data: data }).
+      then((response) => {
+        const { body } = response;
+        if (body.status === 'ok') {
+
+        }
+      }).
+      catch((error) => {
+        console.error(error);
+      });
+
+    }
+  };
 
   const calculateActiveTabIndex = (config) => {
     const tabNames = config.tabs.map((tab) => {
@@ -166,11 +193,13 @@ const CorrespondenceTableBuilder = (props) => {
                   styling={{ width: '200px', marginRight: '2rem' }}
                   dropdownStyling={{ width: '200px' }}
                   options={buildMailUserData(props.mailTeamUsers)}
+                  onChange={handleMailTeamUserChange}
                 />
                 {tabConfig.name === 'correspondence_unassigned' &&
               <>
                 <Button
                   name="Assign"
+                  onClick={handleAssignButtonClick}
                 />
                 <span style={{ marginLeft: 'auto' }}>
                   <Button
@@ -255,6 +284,7 @@ CorrespondenceTableBuilder.propTypes = {
   isVhaOrg: PropTypes.bool,
   featureToggles: PropTypes.object,
   mailTeamUsers: PropTypes.array,
+  selectedTasks: PropTypes.array,
 };
 
 export default connect(mapStateToProps)(CorrespondenceTableBuilder);
