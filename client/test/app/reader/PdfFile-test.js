@@ -24,7 +24,6 @@ const metricArgs = (featureValue, documentSource) => {
     // eslint-disable-next-line no-undefined
     undefined,
     {
-      additionalInfo: documentSource,
       data:
       {
         documentId: 1,
@@ -35,6 +34,7 @@ const metricArgs = (featureValue, documentSource) => {
       // eslint-disable-next-line no-useless-escape
       message: 'Getting PDF document: \"/document/1/pdf\"',
       product: 'reader',
+      additionalInfo: documentSource,
       type: 'performance'
     },
     featureValue,
@@ -135,7 +135,7 @@ describe('PdfFile', () => {
       });
 
       it('calls recordAsyncMetrics and will save a metric', () => {
-        expect(recordAsyncMetrics).toBeCalledWith(metricArgs()[0], metricArgs(null, mockedResponse.header['x-document-source'])[1], metricArgs(true)[2]);
+        expect(recordAsyncMetrics).toBeCalledWith(metricArgs()[0], metricArgs()[1], metricArgs(true)[2]);
       });
 
       it('calls storeMetrics in catch block', () => {
