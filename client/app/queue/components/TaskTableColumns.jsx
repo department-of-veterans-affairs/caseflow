@@ -14,10 +14,11 @@ import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import IhpDaysWaitingTooltip from './IhpDaysWaitingTooltip';
 import TranscriptionTaskTooltip from './TranscriptionTaskTooltip';
 import Checkbox from '../../components/Checkbox';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   setShowReassignPackageModal,
-  setShowRemovePackageModal
+  setShowRemovePackageModal,
+  setSelectedTasks
 } from 'app/queue/correspondence/correspondenceReducer/correspondenceActions';
 
 import { taskHasCompletedHold, hasDASRecord, collapseColumn, regionalOfficeCity, renderAppealType } from '../utils';
@@ -303,10 +304,46 @@ export const notes = () => {
   };
 };
 export const checkboxColumn = () => {
+  const dispatch = useDispatch();
+
+  const currentlySelectedTasks = useSelector((state) => state.intakeCorrespondence.selectedTasks);
+
+  const toggleChange = (value) => {
+    const indexOfTask = currentlySelectedTasks.indexOf(value);
+
+    const newSelectedTasks = currentlySelectedTasks;
+
+    if (indexOfTask === -1) {
+
+      newSelectedTasks.push(value);
+      dispatch(setSelectedTasks(newSelectedTasks));
+    } else {
+      newSelectedTasks.splice(indexOfTask, 1);
+      dispatch(setSelectedTasks(newSelectedTasks));
+    }
+
+  };
+
   return {
     header: 'Select',
+    checked: true,
     name: QUEUE_CONFIG.COLUMNS.CHECKBOX_COLUMN,
-    valueFunction: (task) => task ? <Checkbox id={task.uniqueId} ariaLabel={task.uniqueId} /> : ''
+    valueFunction: (task) => {
+
+      if (task) {
+        return <Checkbox
+          id={task.uniqueId}
+          value={Boolean(currentlySelectedTasks.includes(task.uniqueId))}
+          name={task.uniqueId}
+          hideLabel
+          onChange={() => toggleChange(task.uniqueId)}
+        />;
+      }
+
+      return null; // or any other valid JSX element
+
+    }
+
   };
 };
 

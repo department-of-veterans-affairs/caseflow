@@ -25,9 +25,6 @@ import {
   veteranDetails
 } from '../components/TaskTableColumns';
 
-import {
-  loadMailTeamUsers
-} from './correspondenceReducer/correspondenceActions';
 import { tasksWithCorrespondenceFromRawTasks } from '../utils';
 
 import COPY from '../../../COPY';
@@ -71,9 +68,7 @@ const CorrespondenceTableBuilder = (props) => {
     setStoredPaginationOptions({});
   }, []);
 
-  useEffect(() => {
-    dispatch(loadMailTeamUsers(mailTeamUsers));
-  }, []);
+
 
   const calculateActiveTabIndex = (config) => {
     const tabNames = config.tabs.map((tab) => {

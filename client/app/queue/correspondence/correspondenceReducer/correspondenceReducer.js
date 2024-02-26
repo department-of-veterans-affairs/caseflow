@@ -8,6 +8,7 @@ export const initialState = {
   correspondences: [],
   radioValue: '0',
   relatedCorrespondences: [],
+  selectedTasks: [],
   mailTasks: [],
   unrelatedTasks: [],
   currentCorrespondence: [],
@@ -87,6 +88,14 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     return update(state, {
       relatedCorrespondences: {
         $set: []
+      }
+    });
+
+    // fix this to use the actual value for set
+  case ACTIONS.SET_SELECTED_TASKS:
+    return update(state, {
+      selectedTasks: {
+        $set: [...action.payload.values]
       }
     });
 
