@@ -65,6 +65,7 @@ class CorrespondenceController < ApplicationController
 
   def correspondence_team
     if current_user.mail_superuser? || current_user.mail_supervisor?
+      @mail_team_users = User.mail_team_users.pluck(:css_id)
       respond_to do |format|
         format.html { "correspondence_team" }
         format.json do

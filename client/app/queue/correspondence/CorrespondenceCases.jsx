@@ -6,7 +6,7 @@ import {
   setShowRemovePackageModal
 } from './correspondenceReducer/correspondenceActions';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
-import PropTypes from 'prop-types';
+import PropTypes, { string } from 'prop-types';
 import COPY from '../../../COPY';
 import { sprintf } from 'sprintf-js';
 import CorrespondenceTableBuilder from './CorrespondenceTableBuilder';
@@ -62,7 +62,7 @@ const CorrespondenceCases = (props) => {
           />
         )}
         {config &&
-        <CorrespondenceTableBuilder />}
+        <CorrespondenceTableBuilder mailTeamUsers={props.mailTeamUsers} />}
         {showReassignPackageModal &&
         <Modal
           title={COPY.CORRESPONDENCE_CASES_REASSIGN_PACKAGE_MODAL_TITLE}
@@ -86,7 +86,8 @@ CorrespondenceCases.propTypes = {
   correspondenceConfig: PropTypes.object,
   currentAction: PropTypes.object,
   veteranInformation: PropTypes.object,
-  configUrl: PropTypes.string
+  configUrl: PropTypes.string,
+  mailTeamUsers: PropTypes.arrayOf(string)
 };
 
 export default CorrespondenceCases;

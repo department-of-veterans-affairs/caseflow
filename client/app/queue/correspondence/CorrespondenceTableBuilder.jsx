@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, connect } from 'react-redux';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
-import { connect } from 'react-redux';
+
 import querystring from 'querystring';
 
 import Button from '../../components/Button';
@@ -47,16 +47,23 @@ const rootStyles = css({
  * - @assignedTasks {array[object]} array of task objects to appear in the assigned tab
  **/
 
+const buildMailUserData = (data) => {
+  return data.map((user) => {
+    return {
+      value: user,
+      label: user
+    };
+  })
+}
+
 const CorrespondenceTableBuilder = (props) => {
   const dispatch = useDispatch();
   const mailTeamUsers = useSelector((state) => state.intakeCorrespondence.mailTeamUsers);
-  console.log("mailTeamUsers", mailTeamUsers);
+
   const paginationOptions = () => querystring.parse(window.location.search.slice(1));
   const [storedPaginationOptions, setStoredPaginationOptions] = useState(
     querystring.parse(window.location.search.slice(1))
   );
-
-
 
   // Causes one additional rerender of the QueueTables/tabs but prevents saved pagination behavior
   // e.g. clearing filter in a tab, then swapping tabs, then swapping back and the filter will still be applied
@@ -163,7 +170,7 @@ const CorrespondenceTableBuilder = (props) => {
                   hideLabel
                   styling={{ width: '200px', marginRight: '2rem' }}
                   dropdownStyling={{ width: '200px' }}
-                  options={mailTeamUsers}
+                  options={buildMailUserData(props.mailTeamUsers)}
                 />
                 {tabConfig.name === 'correspondence_unassigned' &&
               <>
