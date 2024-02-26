@@ -707,8 +707,8 @@ ActiveRecord::Schema.define(version: 2024_02_26_135119) do
   create_table "distribution_stats", comment: "A database table to store a snapshot of variables used during a case distribution event", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "distribution_id", comment: "ID of the associated Distribution"
-    t.json "levers", comment: "Indicates the options which contain json formatted data"
-    t.json "statistics", comment: "Indicates the algorithms used"
+    t.json "levers", comment: "Indicates a snapshot of lever values and is_toggle_active for a distribution"
+    t.json "statistics", comment: "Indicates a snapshot of variables used during the distribution"
     t.datetime "updated_at", null: false
     t.index ["distribution_id"], name: "index_distribution_stats_on_distribution_id"
   end
