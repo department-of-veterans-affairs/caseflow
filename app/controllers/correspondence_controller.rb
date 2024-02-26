@@ -78,7 +78,15 @@ class CorrespondenceController < ApplicationController
       task.update(assigned_to_id: mail_team_user_id, assigned_to_type: "User")
     end
 
-    render json: {}, status: :ok
+    if tasks.empty?
+      render json: { status: 'error', message: 'No tasks found' }, status: :unprocessable_entity
+    else
+      render json: {
+        status: 'success',
+        css_id: mail_team_user.css_id,
+        message: "You have successfully assigned #{tasks.count} Correspondence to #{mail_team_user.name}"
+      }
+    end
   end
   def correspondence_team
     if current_user.mail_superuser? || current_user.mail_supervisor?
