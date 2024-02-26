@@ -4,7 +4,9 @@ class StuckAppealsChecker < DataIntegrityChecker
   def call
     return if stuck_appeals.count == 0 && appeals_maybe_not_closed.count == 0
 
+    # rubocop:disable Layout/LineLength
     add_to_report "To resolve, see https://github.com/department-of-veterans-affairs/caseflow/wiki/Resolving-Background-Job-Alerts#stuckappealschecker\n"
+    # rubocop:enable Layout/LineLength
 
     build_report_no_active_task
     add_to_report ""
