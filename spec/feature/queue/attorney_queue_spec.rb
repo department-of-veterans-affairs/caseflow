@@ -195,7 +195,7 @@ RSpec.feature "Attorney queue", :all_dbs do
       step "the returned appeal shows in the sct queue action required tab" do
         User.authenticate!(user: sct_user)
         visit "/organizations/#{sct_org.url}"
-        expect(page).to have_content("#{appeal.claimant.name} (#{appeal.veteran_file_number})")
+        expect(page).to have_content("#{appeal.veteran_full_name} (#{appeal.veteran_file_number})")
       end
     end
   end

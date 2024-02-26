@@ -18,18 +18,12 @@ class AttorneyTask < Task
   validate :assigned_by_role_is_valid, if: :will_save_change_to_assigned_by_id?
   validate :assigned_to_role_is_valid, if: :will_save_change_to_assigned_to_id?
 
-  # rubocop:disable Metrics/AbcSize
   def available_actions(user)
-    atty_return_action = if appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).completed.exists?
-                           Constants.TASK_ACTIONS.CANCEL_TASK_AND_RETURN_TO_SCT_QUEUE.to_h
-                         else
-                           Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
-                         end
     atty_actions = [
       (Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h if ama? && appeal.vacate?),
       Constants.TASK_ACTIONS.REVIEW_DECISION_DRAFT.to_h,
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-      atty_return_action
+      attorney_cancel_action
     ].compact
 
     movement_actions = [
@@ -39,7 +33,6 @@ class AttorneyTask < Task
 
     actions_based_on_assignment(user, atty_actions, movement_actions)
   end
-  # rubocop:enable Metrics/AbcSize
 
   def actions_based_on_assignment(user, atty_actions, movement_actions)
     if self_assigned?(user)
@@ -150,5 +143,13 @@ class AttorneyTask < Task
     sct_task = SpecialtyCaseTeamAssignTask.find_by(appeal: appeal)
     sct_task.update!(status: Constants.TASK_STATUSES.in_progress)
     sct_task
+  end
+
+  def attorney_cancel_action
+    if appeal.tasks.of_type(:SpecialtyCaseTeamAssignTask).completed.exists?
+      Constants.TASK_ACTIONS.CANCEL_TASK_AND_RETURN_TO_SCT_QUEUE.to_h
+    else
+      Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
+    end
   end
 end
