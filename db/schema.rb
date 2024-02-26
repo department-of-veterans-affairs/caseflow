@@ -706,11 +706,11 @@ ActiveRecord::Schema.define(version: 2024_02_26_135119) do
 
   create_table "distribution_stats", comment: "A database table to store a snapshot of variables used during a case distribution event", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.bigint "distributions_id", comment: "ID of the associated Distribution"
+    t.bigint "distribution_id", comment: "ID of the associated Distribution"
     t.json "levers", comment: "Indicates the options which contain json formatted data"
     t.json "statistics", comment: "Indicates the algorithms used"
     t.datetime "updated_at", null: false
-    t.index ["distributions_id"], name: "index_distribution_stats_on_distributions_id"
+    t.index ["distribution_id"], name: "index_distribution_stats_on_distribution_id"
   end
 
   create_table "distributions", force: :cascade do |t|
@@ -2168,7 +2168,7 @@ ActiveRecord::Schema.define(version: 2024_02_26_135119) do
   add_foreign_key "dispatch_tasks", "users"
   add_foreign_key "distributed_cases", "distributions"
   add_foreign_key "distributed_cases", "tasks"
-  add_foreign_key "distribution_stats", "distributions", column: "distributions_id"
+  add_foreign_key "distribution_stats", "distributions"
   add_foreign_key "distributions", "users", column: "judge_id"
   add_foreign_key "docket_switches", "appeals", column: "new_docket_stream_id"
   add_foreign_key "docket_switches", "appeals", column: "old_docket_stream_id"

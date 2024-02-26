@@ -1,7 +1,7 @@
 class CreateDistributionStats < Caseflow::Migration
   def change
     create_table :distribution_stats, comment: "A database table to store a snapshot of variables used during a case distribution event" do |t|
-      t.references :distributions, foreign_key: true, comment: "ID of the associated Distribution", index: true
+      t.references :distribution, foreign_key: true, comment: "ID of the associated Distribution", index: true
       t.json :statistics, null: true, comment:"Indicates the algorithms used"
       t.json :levers, null: true, comment:"Indicates the options which contain json formatted data"
       t.timestamps

@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class Distribution < CaseflowRecord
+class DistributionStats < CaseflowRecord
   belongs_to :distribution
 end

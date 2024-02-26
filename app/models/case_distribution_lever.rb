@@ -104,14 +104,20 @@ class CaseDistributionLever < ApplicationRecord
       errors.concat(add_audit_lever_entries(previous_levers, levers, current_user))
     end
 
+    # Map active levers (enabled in UI) into a hash object
+    # Hash object has better formatting than an array when looking values in rails console
     def snapshot
-      CaseDistributionLever.active.map do |lever|
-        {
+      snapshot_hash = {}
+
+      CaseDistributionLever.active.each_with_object(snapshot_hash) do |lever, s_hash|
+        s_hash[lever.item] = {
           item: lever.item,
           value: lever.value,
           is_toggle_active: lever.is_toggle_active
         }
       end
+
+      snapshot_hash
     end
 
     private

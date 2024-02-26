@@ -69,7 +69,6 @@ class Distribution < CaseflowRecord
   end
 
   def validate_user_is_judge
-    binding.pry
     errors.add(:judge, :not_judge) unless judge.judge_in_vacols?
   end
 
