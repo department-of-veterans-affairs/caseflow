@@ -839,7 +839,7 @@ module IntakeHelpers
     )
   end
 
-  def generate_rating_with_old_decisions(veteran, receipt_date)
+  def generate_rating_with_old_decisions(veteran)
     Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
       promulgation_date: Constants::DATES["AMA_ACTIVATION"].to_date - 5.days,
