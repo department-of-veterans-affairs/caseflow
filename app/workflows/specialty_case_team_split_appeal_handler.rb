@@ -79,6 +79,8 @@ class SpecialtyCaseTeamSplitAppealHandler
 
   def reopen_distribution_task(appeal)
     distribution_task = appeal.tasks.find { |task| task.type == DistributionTask.name }
-    distribution_task.update!(status: "assigned", assigned_to: Bva.singleton, assigned_by: current_user)
+    distribution_task.update!(status: Constants.TASK_STATUSES.assigned,
+                              assigned_to: Bva.singleton,
+                              assigned_by: current_user)
   end
 end
