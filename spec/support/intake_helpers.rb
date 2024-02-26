@@ -260,6 +260,10 @@ module IntakeHelpers
     safe_click ".add-issue"
   end
 
+  def get_claim_id(claim_review)
+    EndProductEstablishment.find_by(source: claim_review).reference_id
+  end
+
   def select_intake_nonrating_benefit_type(benefit_type)
     if page.has_css?("#issue-benefit-type", wait: 0)
       fill_in "Benefit type", with: benefit_type
