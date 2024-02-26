@@ -10,7 +10,7 @@ class CorrespondenceQueueColumn < QueueColumn
     @filterable ||= false
   end
 
-  def to_hash(_tasks)
+  def to_hash(tasks)
     {
       name: name,
       filterable: filterable,

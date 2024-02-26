@@ -93,7 +93,6 @@ module QueueHelpers
       status: Constants.TASK_STATUSES.assigned
     )
   end
-
   # :reek:FeatureEnvy
   def create_congress_interest_mailtask(correspondence, user)
     process_correspondence(correspondence, user)
