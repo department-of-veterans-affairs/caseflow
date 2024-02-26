@@ -33,6 +33,8 @@ class CaseDistributionLever < ApplicationRecord
       combination_value
     elsif radio_lever?
       radio_value
+    elsif unit.present?
+      "#{value.to_s} #{unit}"
     else
       value
     end
@@ -99,7 +101,7 @@ class CaseDistributionLever < ApplicationRecord
   # see client/app/caseDistribution/components/SaveModal.jsx
   def combination_value
     toggle_string = is_toggle_active ? "Active" : "Inactive"
-    "#{toggle_string} - #{value}"
+    "#{toggle_string} - #{value} #{unit}"
   end
 
   def option(item)

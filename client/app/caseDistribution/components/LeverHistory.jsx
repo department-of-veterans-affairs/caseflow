@@ -46,20 +46,16 @@ const LeverHistory = () => {
             </td>
             <td className="history-table-styling entry-previous-values">
               <ol>
-                {entry.previous_values.map((previousValue, idx) => {
-                  return <li key={`${index}-${previousValue}-${idx}`}>
-                    {previousValue}{' '}{entry.units[idx]}</li>;
-                })
-                }
+                {entry.previous_values.map((previousValue, idx) =>
+                  <li key={`${index}-${previousValue}-${idx}`}>{previousValue}</li>
+                )}
               </ol>
             </td>
             <td className="history-table-styling entry-updated-values">
               <ol>
-                {entry.updated_values.map((updatedValue, idx) => {
-                  return <li key={`${index}-${updatedValue}-${idx}`}>
-                    {updatedValue}{' '}{entry.units[idx]}</li>;
-                })
-                }
+                {entry.updated_values.map((updatedValue, idx) =>
+                  <li key={`${index}-${updatedValue}-${idx}`}>{updatedValue}</li>
+                )}
               </ol>
             </td>
           </tr>)}
