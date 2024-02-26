@@ -10,6 +10,7 @@ class Distribution < CaseflowRecord
 
   has_many :distributed_cases
   belongs_to :judge, class_name: "User"
+  has_one :distribution_stats
 
   validates :judge, presence: true
   validate :validate_user_is_judge, on: :create
@@ -42,7 +43,9 @@ class Distribution < CaseflowRecord
 
       priority_push? ? priority_push_distribution(limit) : requested_distribution
 
-      update!(status: "completed", completed_at: Time.zone.now, statistics: ama_statistics)
+      update!(status: "completed", completed_at: Time.zone.now, statistics: "See related row in distribution_stats")
+
+      record_stats
     end
   rescue StandardError => error
     # DO NOT use update! because we want to avoid validations and saving any cached associations.
@@ -66,6 +69,7 @@ class Distribution < CaseflowRecord
   end
 
   def validate_user_is_judge
+    binding.pry
     errors.add(:judge, :not_judge) unless judge.judge_in_vacols?
   end
 
@@ -131,5 +135,12 @@ class Distribution < CaseflowRecord
     {
       error: error&.full_message
     }
+  end
+
+  def record_stats
+    create_distribution_stats!(
+      statistics: ama_statistics,
+      levers: CaseDistributionLever.snapshot
+    )
   end
 end

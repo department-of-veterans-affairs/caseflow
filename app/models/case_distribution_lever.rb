@@ -9,6 +9,8 @@ class CaseDistributionLever < ApplicationRecord
   validates :is_disabled_in_ui, inclusion: { in: [true, false] }
   validate :value_matches_data_type
 
+  scope :active, -> { where(is_disabled_in_ui: false)}
+
   self.table_name = "case_distribution_levers"
   INTEGER_LEVERS = %W(
     #{Constants.DISTRIBUTION.ama_direct_review_docket_time_goals}
@@ -100,6 +102,16 @@ class CaseDistributionLever < ApplicationRecord
       end
 
       errors.concat(add_audit_lever_entries(previous_levers, levers, current_user))
+    end
+
+    def snapshot
+      CaseDistributionLever.active.map do |lever|
+        {
+          item: lever.item,
+          value: lever.value,
+          is_toggle_active: lever.is_toggle_active
+        }
+      end
     end
 
     private
