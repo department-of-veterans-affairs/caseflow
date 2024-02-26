@@ -85,7 +85,8 @@ const CancelTaskModal = (props) => {
   if ([
     'AssessDocumentationTask',
     'EducationAssessDocumentationTask',
-    'HearingPostponementRequestMailTask'
+    'HearingPostponementRequestMailTask',
+    'HearingWithdrawalRequestMailTask'
   ].includes(task?.type)) {
     modalProps.submitButtonClassNames = ['usa-button'];
     modalProps.submitDisabled = !validateForm();

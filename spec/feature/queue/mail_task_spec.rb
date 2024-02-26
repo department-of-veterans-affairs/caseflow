@@ -148,68 +148,66 @@ RSpec.feature "MailTasks", :postgres do
 
   shared_examples_for "task reassignments" do
     context "assigning to new team" do
-      it "submit button starts out disabled" do
-        visit("queue/appeals/#{appeal.uuid}")
-        within("tr", text: "TASK", match: :first) do
-          click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                         text: Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.label,
-                         match: :first)
-        end
-        modal = find(".cf-modal-body")
-        expect(modal).to have_button("Submit", disabled: true)
-      end
-
-      it "assigns to new team" do
+      it "behavior of the task when assigning it to a new team" do
         page = "queue/appeals/#{appeal.uuid}"
-        visit(page)
-        within("tr", text: "TASK", match: :first) do
-          click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                         text: Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.label,
-                         match: :first)
+
+        step "submit button starts out disabled" do
+          visit(page)
+          within("tr", text: "TASK", match: :first) do
+            click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                           text: Constants.TASK_ACTIONS.ASSIGN_TO_TEAM.label,
+                           match: :first)
+          end
+          modal = find(".cf-modal-body")
+          expect(modal).to have_button("Submit", disabled: true)
         end
-        find(".cf-select__control", text: "Select a team", match: :first).click
-        find(".cf-select__option", text: "BVA Intake").click
-        fill_in("taskInstructions", with: "instructions")
-        click_button("Submit")
-        new_task = appeal.tasks.last
-        visit(page)
-        most_recent_task = find("tr", text: "TASK", match: :first)
-        expect(most_recent_task).to have_content("ASSIGNED ON\n#{new_task.assigned_at.strftime('%m/%d/%Y')}")
-        expect(most_recent_task).to have_content("ASSIGNED TO\nBVA Intake")
+
+        step "assigns to new team" do
+          find(".cf-select__control", text: "Select a team", match: :first).click
+          find(".cf-select__option", text: "BVA Intake").click
+          fill_in("taskInstructions", with: "instructions")
+          click_button("Submit")
+          new_task = appeal.tasks.last
+          visit(page)
+          most_recent_task = find("tr", text: "TASK", match: :first)
+          expect(most_recent_task).to have_content("ASSIGNED ON\n#{new_task.assigned_at.strftime('%m/%d/%Y')}")
+          expect(most_recent_task).to have_content("ASSIGNED TO\nBVA Intake")
+        end
       end
     end
 
     context "assigning to person" do
-      it "submit button starts out disabled" do
-        visit("queue/appeals/#{appeal.uuid}")
-        within("tr", text: "TASK", match: :first) do
-          click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                         text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label,
-                         match: :first)
-        end
-        modal = find(".cf-modal-body")
-        expect(modal).to have_button("Submit", disabled: true)
+      let(:new_user) { User.create!(css_id: "NEW_USER", full_name: "John Smith", station_id: "101") }
+
+      before do
+        HearingAdmin.singleton.add_user(new_user)
       end
 
-      it "assigns to person" do
-        new_user = User.create!(css_id: "NEW_USER", full_name: "John Smith", station_id: "101")
-        HearingAdmin.singleton.add_user(new_user)
+      it "behavior of the task when assigning it to a person" do
         page = "queue/appeals/#{appeal.uuid}"
-        visit(page)
-        within("tr", text: "TASK", match: :first) do
-          click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                         text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label,
-                         match: :first)
+
+        step "submit button starts out disabled" do
+          visit(page)
+          within("tr", text: "TASK", match: :first) do
+            click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                           text: Constants.TASK_ACTIONS.ASSIGN_TO_PERSON.label,
+                           match: :first)
+          end
+          modal = find(".cf-modal-body")
+          expect(modal).to have_button("Submit", disabled: true)
         end
-        find(".cf-select__control", text: User.current_user.full_name).click
-        find(".cf-select__option", text: new_user.full_name).click
-        fill_in("taskInstructions", with: "instructions")
-        click_button("Submit")
-        new_task = appeal.tasks.last
-        visit(page)
-        most_recent_task = find("tr", text: "TASK", match: :first)
-        expect(most_recent_task).to have_content("ASSIGNED ON\n#{new_task.assigned_at.strftime('%m/%d/%Y')}")
-        expect(most_recent_task).to have_content("ASSIGNED TO\n#{new_user.css_id}")
+
+        step "assigns to person" do
+          find(".cf-select__control", text: User.current_user.full_name).click
+          find(".cf-select__option", text: new_user.full_name).click
+          fill_in("taskInstructions", with: "instructions")
+          click_button("Submit")
+          new_task = appeal.tasks.last
+          visit(page)
+          most_recent_task = find("tr", text: "TASK", match: :first)
+          expect(most_recent_task).to have_content("ASSIGNED ON\n#{new_task.assigned_at.strftime('%m/%d/%Y')}")
+          expect(most_recent_task).to have_content("ASSIGNED TO\n#{new_user.css_id}")
+        end
       end
     end
   end
@@ -248,138 +246,121 @@ RSpec.feature "MailTasks", :postgres do
 
     shared_examples_for "scheduling a hearing" do
       before do
-        perform_enqueued_jobs do
-          FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
-          page = appeal.is_a?(Appeal) ? "queue/appeals/#{appeal.uuid}" : "queue/appeals/#{appeal.vacols_id}"
-          visit(page)
-          within("tr", text: "TASK", match: :first) do
-            click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                           text: Constants.TASK_ACTIONS.COMPLETE_AND_POSTPONE.label,
-                           match: :first)
-          end
-          find(".cf-form-radio-option", text: ruling).click
-          fill_in("rulingDateSelector", with: ruling_date)
-          find(:css, ".cf-form-radio-option label", text: "Reschedule immediately").click
-          fill_in("instructionsField", with: instructions)
-          click_button("Mark as complete")
-
-          within(:css, ".dropdown-hearingType") { click_dropdown(text: "Virtual") }
-          within(:css, ".dropdown-regionalOffice") { click_dropdown(text: "Denver, CO") }
-          within(:css, ".dropdown-hearingDate") { click_dropdown(index: 0) }
-          find("label", text: "12:30 PM Mountain Time (US & Canada) / 2:30 PM Eastern Time (US & Canada)").click
-          if has_css?("[id='Appellant Email (for these notifications only)']")
-            fill_in("Appellant Email (for these notifications only)", with: email)
-          else
-            fill_in("Veteran Email (for these notifications only)", with: email)
-          end
-          click_button("Schedule")
+        FeatureToggle.enable!(:schedule_veteran_virtual_hearing)
+        page = appeal.is_a?(Appeal) ? "queue/appeals/#{appeal.uuid}" : "queue/appeals/#{appeal.vacols_id}"
+        visit(page)
+        within("tr", text: "TASK", match: :first) do
+          click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                         text: Constants.TASK_ACTIONS.COMPLETE_AND_POSTPONE.label,
+                         match: :first)
         end
+        find(".cf-form-radio-option", text: ruling).click
+        fill_in("rulingDateSelector", with: ruling_date)
+        find(:css, ".cf-form-radio-option label", text: "Reschedule immediately").click
+        fill_in("instructionsField", with: instructions)
+        click_button("Mark as complete")
+
+        within(:css, ".dropdown-hearingType") { click_dropdown(text: "Virtual") }
+        within(:css, ".dropdown-regionalOffice") { click_dropdown(text: "Denver, CO") }
+        within(:css, ".dropdown-hearingDate") { click_dropdown(index: 0) }
+        find("label", text: "12:30 PM Mountain Time (US & Canada) / 2:30 PM Eastern Time (US & Canada)").click
+        if has_css?("[id='Appellant Email (for these notifications only)']")
+          fill_in("Appellant Email (for these notifications only)", with: email)
+        else
+          fill_in("Veteran Email (for these notifications only)", with: email)
+        end
+        click_button("Schedule")
       end
 
       it "gets scheduled" do
-        expect(page).to have_content("You have successfully")
-      end
-
-      it "sends proper notifications" do
-        scheduled_payload = AppellantNotification.create_payload(appeal, "Hearing scheduled").to_json
-        if appeal.hearings.any?
-          postpone_payload = AppellantNotification.create_payload(appeal, "Postponement of hearing")
-            .to_json
-          expect(SendNotificationJob).to receive(:perform_later).with(postpone_payload)
+        step "Displays success message" do
+          expect(page).to have_content("You have successfully")
         end
-        expect(SendNotificationJob).to receive(:perform_later).with(scheduled_payload)
+
+        step "sends proper notifications" do
+          appeal.reload
+          scheduled_payload = AppellantNotification.create_payload(appeal, "Hearing scheduled").to_json
+          postpone_payload = AppellantNotification.create_payload(appeal, "Postponement of hearing").to_json
+          jobs = ActiveJob::Base.queue_adapter.enqueued_jobs
+            .select { |job| job[:job] == SendNotificationJob }
+
+          expect(jobs).to be_an(Array)
+          if appeal.hearings.any? { |hearing| hearing.disposition == Constants.HEARING_DISPOSITION_TYPES.postponed }
+            expect(jobs.length).to eq(2)
+            expect(jobs.map { |job| job[:args][0] }).to include(postpone_payload)
+            expect(jobs.map { |job| job[:args][0] }).to include(scheduled_payload)
+
+          else
+            expect(jobs.length).to eq(1)
+            expect(jobs[0][:args][0]).to eq(scheduled_payload)
+          end
+        end
       end
     end
 
     context "task actions" do
       include_examples "task reassignments"
       context "changing task type" do
-        it "submit button starts out disabled" do
-          visit("queue/appeals/#{appeal.uuid}")
-          within("tr", text: "TASK", match: :first) do
-            click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                           text: COPY::CHANGE_TASK_TYPE_SUBHEAD,
-                           match: :first)
+        it "change task type behavior" do
+          step "submit button starts out disabled" do
+            visit("queue/appeals/#{appeal.uuid}")
+            within("tr", text: "TASK", match: :first) do
+              click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                             text: COPY::CHANGE_TASK_TYPE_SUBHEAD,
+                             match: :first)
+            end
+            modal = find(".cf-modal-body")
+            expect(modal).to have_button("Change task type", disabled: true)
           end
-          modal = find(".cf-modal-body")
-          expect(modal).to have_button("Change task type", disabled: true)
-        end
 
-        it "current tasks should have new task" do
-          visit("queue/appeals/#{appeal.uuid}")
-          within("tr", text: "TASK", match: :first) do
-            click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                           text: COPY::CHANGE_TASK_TYPE_SUBHEAD,
-                           match: :first)
+          step "current tasks should have new task" do
+            click_dropdown(prompt: "Select an action type", text: "Change of address")
+            fill_in("Provide instructions and context for this change:", with: "instructions")
+            click_button("Change task type")
+            new_task = appeal.tasks.last
+            most_recent_task = find("tr", text: "TASK", match: :first)
+            expect(most_recent_task).to have_content("ASSIGNED ON\n#{new_task.assigned_at.strftime('%m/%d/%Y')}")
+            expect(most_recent_task).to have_content("TASK\nChange of address")
           end
-          click_dropdown(prompt: "Select an action type", text: "Change of address")
-          fill_in("Provide instructions and context for this change:", with: "instructions")
-          click_button("Change task type")
-          new_task = appeal.tasks.last
-          most_recent_task = find("tr", text: "TASK", match: :first)
-          expect(most_recent_task).to have_content("ASSIGNED ON\n#{new_task.assigned_at.strftime('%m/%d/%Y')}")
-          expect(most_recent_task).to have_content("TASK\nChange of address")
-        end
 
-        it "case timeline should cancel old task" do
-          visit("queue/appeals/#{appeal.uuid}")
-          within("tr", text: "TASK", match: :first) do
-            click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                           text: COPY::CHANGE_TASK_TYPE_SUBHEAD,
-                           match: :first)
+          step "case timeline should cancel old task" do
+            first_task_item = find("#case-timeline-table tr:nth-child(2)")
+            expect(first_task_item).to have_content("CANCELLED ON\n#{hpr_task.updated_at.strftime('%m/%d/%Y')}")
+            expect(first_task_item).to have_content("HearingPostponementRequestMailTask cancelled")
+            expect(first_task_item).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
           end
-          click_dropdown(prompt: "Select an action type", text: "Change of address")
-          fill_in("Provide instructions and context for this change:", with: "instructions")
-          click_button("Change task type")
-          first_task_item = find("#case-timeline-table tr:nth-child(2)")
-          expect(first_task_item).to have_content("CANCELLED ON\n#{hpr_task.updated_at.strftime('%m/%d/%Y')}")
-          expect(first_task_item).to have_content("HearingPostponementRequestMailTask cancelled")
-          expect(first_task_item).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
         end
       end
 
       context "cancelling task" do
-        it "submit button starts out disabled" do
-          visit("queue/appeals/#{hpr_task.appeal.uuid}")
-          within("tr", text: "TASK", match: :first) do
-            click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                           text: Constants.TASK_ACTIONS.CANCEL_TASK.label,
-                           match: :first)
-          end
-          modal = find(".cf-modal-body")
-          expect(modal).to have_button("Submit", disabled: true)
-        end
+        it "cancel task behavior" do
+          page = "queue/appeals/#{hpr_task.appeal.uuid}"
 
-        it "should remove HearingPostponementRequestTask from current tasks" do
-          page = "queue/appeals/#{appeal.uuid}"
-          visit(page)
-          within("tr", text: "TASK", match: :first) do
-            click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                           text: Constants.TASK_ACTIONS.CANCEL_TASK.label,
-                           match: :first)
+          step "submit button starts out disabled" do
+            visit(page)
+            within("tr", text: "TASK", match: :first) do
+              click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                             text: Constants.TASK_ACTIONS.CANCEL_TASK.label,
+                             match: :first)
+            end
+            modal = find(".cf-modal-body")
+            expect(modal).to have_button("Submit", disabled: true)
           end
-          fill_in("taskInstructions", with: "instructions")
-          click_button("Submit")
-          visit(page)
-          most_recent_task = find("tr", text: "TASK", match: :first)
-          expect(most_recent_task).to have_content("TASK\nAll hearing-related tasks")
-        end
 
-        it "case timeline should cancel task" do
-          page = "queue/appeals/#{appeal.uuid}"
-          visit(page)
-          within("tr", text: "TASK", match: :first) do
-            click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                           text: Constants.TASK_ACTIONS.CANCEL_TASK.label,
-                           match: :first)
+          step "should remove HearingPostponementRequestTask from current tasks" do
+            fill_in("taskInstructions", with: "instructions")
+            click_button("Submit")
+            visit(page)
+            most_recent_task = find("tr", text: "TASK", match: :first)
+            expect(most_recent_task).to have_content("TASK\nAll hearing-related tasks")
           end
-          fill_in("taskInstructions", with: "instructions")
-          click_button("Submit")
-          visit(page)
-          first_task_item = find("#case-timeline-table tr:nth-child(2)")
-          expect(first_task_item).to have_content("CANCELLED ON\n#{hpr_task.updated_at.strftime('%m/%d/%Y')}")
-          expect(first_task_item).to have_content("HearingPostponementRequestMailTask cancelled")
-          expect(first_task_item).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
+
+          step "case timeline should cancel task" do
+            first_task_item = find("#case-timeline-table tr:nth-child(2)")
+            expect(first_task_item).to have_content("CANCELLED ON\n#{hpr_task.updated_at.strftime('%m/%d/%Y')}")
+            expect(first_task_item).to have_content("HearingPostponementRequestMailTask cancelled")
+            expect(first_task_item).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
+          end
         end
       end
     end
@@ -388,18 +369,20 @@ RSpec.feature "MailTasks", :postgres do
       let(:ruling_date) { "08/15/2023" }
 
       shared_examples "whether granted or denied" do
-        it "completes HearingPostponementRequestMailTask on Case Timeline" do
-          mail_task = find("#case-timeline-table tr:nth-child(2)")
-          expect(mail_task).to have_content("COMPLETED ON\n#{hpr_task.updated_at.strftime('%m/%d/%Y')}")
-          expect(mail_task).to have_content("HearingPostponementRequestMailTask completed")
-        end
+        it "shows correct the correct Case Timeline" do
+          step "completes HearingPostponementRequestMailTask on Case Timeline" do
+            mail_task = find("#case-timeline-table tr:nth-child(2)")
+            expect(mail_task).to have_content("COMPLETED ON\n#{hpr_task.updated_at.strftime('%m/%d/%Y')}")
+            expect(mail_task).to have_content("HearingPostponementRequestMailTask completed")
+          end
 
-        it "updates instructions of HearingPostponementRequestMailTask on Case Timeline" do
-          find(:css, "#case-timeline-table .cf-btn-link", text: "View task instructions", match: :first).click
-          instructions_div = find("div", class: "task-instructions")
-          expect(instructions_div).to have_content("Motion to postpone #{ruling.upcase}")
-          expect(instructions_div).to have_content("DATE OF RULING\n#{ruling_date}")
-          expect(instructions_div).to have_content("DETAILS\n#{instructions}")
+          step "updates instructions of HearingPostponementRequestMailTask on Case Timeline" do
+            find(:css, "#case-timeline-table .cf-btn-link", text: "View task instructions", match: :first).click
+            instructions_div = find("div", class: "task-instructions")
+            expect(instructions_div).to have_content("Motion to postpone #{ruling.upcase}")
+            expect(instructions_div).to have_content("DATE OF RULING\n#{ruling_date}")
+            expect(instructions_div).to have_content("DETAILS\n#{instructions}")
+          end
         end
       end
 
@@ -477,20 +460,22 @@ RSpec.feature "MailTasks", :postgres do
           end
 
           shared_examples "whether hearing is scheduled or unscheduled" do
-            it "creates new ScheduleHearing task under Task Actions" do
-              appeal
-              new_task = appeal.tasks.last
-              most_recent_task = find("tr", text: "TASK", match: :first)
-              expect(most_recent_task).to have_content("ASSIGNED ON\n#{new_task.assigned_at.strftime('%m/%d/%Y')}")
-              expect(most_recent_task).to have_content("TASK\nSchedule hearing")
-            end
+            it "creates new Schedule task and cancels Hearing Task" do
+              step "creates new ScheduleHearing task under Task Actions" do
+                appeal
+                new_task = appeal.tasks.last
+                most_recent_task = find("tr", text: "TASK", match: :first)
+                expect(most_recent_task).to have_content("ASSIGNED ON\n#{new_task.assigned_at.strftime('%m/%d/%Y')}")
+                expect(most_recent_task).to have_content("TASK\nSchedule hearing")
+              end
 
-            it "cancels Hearing task on Case Timeline" do
-              hearing_task = find("#case-timeline-table tr:nth-child(3)")
+              step "cancels Hearing task on Case Timeline" do
+                hearing_task = find("#case-timeline-table tr:nth-child(3)")
 
-              expect(hearing_task).to have_content("CANCELLED ON\n#{hpr_task.updated_at.strftime('%m/%d/%Y')}")
-              expect(hearing_task).to have_content("HearingTask cancelled")
-              expect(hearing_task).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
+                expect(hearing_task).to have_content("CANCELLED ON\n#{hpr_task.updated_at.strftime('%m/%d/%Y')}")
+                expect(hearing_task).to have_content("HearingTask cancelled")
+                expect(hearing_task).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
+              end
             end
           end
 
@@ -549,6 +534,7 @@ RSpec.feature "MailTasks", :postgres do
         before do
           HearingAdmin.singleton.add_user(User.current_user)
         end
+
         let(:appeal) { hwr_task.appeal }
         let(:hwr_task) do
           create(:hearing_withdrawal_request_mail_task,
@@ -581,92 +567,66 @@ RSpec.feature "MailTasks", :postgres do
         context "task actions" do
           include_examples "task reassignments"
           context "changing task type" do
-            it "submit button starts out disabled" do
-              visit("queue/appeals/#{appeal.uuid}")
-              within("tr", text: "TASK", match: :first) do
-                click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                               text: COPY::CHANGE_TASK_TYPE_SUBHEAD,
-                               match: :first)
+            it "changing task type behavior" do
+              step "submit button starts out disabled" do
+                visit("queue/appeals/#{appeal.uuid}")
+                within("tr", text: "TASK", match: :first) do
+                  click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                                 text: COPY::CHANGE_TASK_TYPE_SUBHEAD,
+                                 match: :first)
+                end
+                modal = find(".cf-modal-body")
+                expect(modal).to have_button("Change task type", disabled: true)
               end
-              modal = find(".cf-modal-body")
-              expect(modal).to have_button("Change task type", disabled: true)
-            end
 
-            it "current tasks should have new task" do
-              visit("queue/appeals/#{appeal.uuid}")
-              within("tr", text: "TASK", match: :first) do
-                click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                               text: COPY::CHANGE_TASK_TYPE_SUBHEAD,
-                               match: :first)
+              step "current tasks should have new task" do
+                click_dropdown(prompt: "Select an action type", text: "Change of address")
+                fill_in("Provide instructions and context for this change:", with: "instructions")
+                click_button("Change task type")
+                new_task = appeal.tasks.last
+                most_recent_task = find("tr", text: "TASK", match: :first)
+                expect(most_recent_task).to have_content("ASSIGNED ON\n#{new_task.assigned_at.strftime('%m/%d/%Y')}")
+                expect(most_recent_task).to have_content("TASK\nChange of address")
               end
-              click_dropdown(prompt: "Select an action type", text: "Change of address")
-              fill_in("Provide instructions and context for this change:", with: "instructions")
-              click_button("Change task type")
-              new_task = appeal.tasks.last
-              most_recent_task = find("tr", text: "TASK", match: :first)
-              expect(most_recent_task).to have_content("ASSIGNED ON\n#{new_task.assigned_at.strftime('%m/%d/%Y')}")
-              expect(most_recent_task).to have_content("TASK\nChange of address")
-            end
 
-            it "case timeline should cancel old task" do
-              visit("queue/appeals/#{appeal.uuid}")
-              within("tr", text: "TASK", match: :first) do
-                click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                               text: COPY::CHANGE_TASK_TYPE_SUBHEAD,
-                               match: :first)
+              step "case timeline should cancel old task" do
+                first_task_item = find("#case-timeline-table tr:nth-child(2)")
+                expect(first_task_item).to have_content("CANCELLED ON\n#{hwr_task.updated_at.strftime('%m/%d/%Y')}")
+                expect(first_task_item).to have_content("HearingWithdrawalRequestMailTask cancelled")
+                expect(first_task_item).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
               end
-              click_dropdown(prompt: "Select an action type", text: "Change of address")
-              fill_in("Provide instructions and context for this change:", with: "instructions")
-              click_button("Change task type")
-              first_task_item = find("#case-timeline-table tr:nth-child(2)")
-              expect(first_task_item).to have_content("CANCELLED ON\n#{hpr_task.updated_at.strftime('%m/%d/%Y')}")
-              expect(first_task_item).to have_content("HearingWithdrawalRequestMailTask cancelled")
-              expect(first_task_item).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
             end
           end
 
           context "cancelling task" do
-            it "submit button starts out disabled" do
-              visit("queue/appeals/#{hpr_task.appeal.uuid}")
-              within("tr", text: "TASK", match: :first) do
-                click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                               text: Constants.TASK_ACTIONS.CANCEL_TASK.label,
-                               match: :first)
-              end
-              modal = find(".cf-modal-body")
-              expect(modal).to have_button("Submit", disabled: true)
-            end
-
-            it "should remove HearingWithdrawalRequestTask from current tasks" do
+            it "cancel task behavior" do
               page = "queue/appeals/#{appeal.uuid}"
-              visit(page)
-              within("tr", text: "TASK", match: :first) do
-                click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                               text: Constants.TASK_ACTIONS.CANCEL_TASK.label,
-                               match: :first)
-              end
-              fill_in("taskInstructions", with: "instructions")
-              click_button("Submit")
-              visit(page)
-              most_recent_task = find("tr", text: "TASK", match: :first)
-              expect(most_recent_task).to have_content("TASK\nAll hearing-related tasks")
-            end
 
-            it "case timeline should cancel task" do
-              page = "queue/appeals/#{appeal.uuid}"
-              visit(page)
-              within("tr", text: "TASK", match: :first) do
-                click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-                               text: Constants.TASK_ACTIONS.CANCEL_TASK.label,
-                               match: :first)
+              step "submit button starts out disabled" do
+                visit(page)
+                within("tr", text: "TASK", match: :first) do
+                  click_dropdown(prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+                                 text: Constants.TASK_ACTIONS.CANCEL_TASK.label,
+                                 match: :first)
+                end
+                modal = find(".cf-modal-body")
+                expect(modal).to have_button("Submit", disabled: true)
               end
-              fill_in("taskInstructions", with: "instructions")
-              click_button("Submit")
-              visit(page)
-              first_task_item = find("#case-timeline-table tr:nth-child(2)")
-              expect(first_task_item).to have_content("CANCELLED ON\n#{hpr_task.updated_at.strftime('%m/%d/%Y')}")
-              expect(first_task_item).to have_content("HearingWithdrawalRequestMailTask cancelled")
-              expect(first_task_item).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
+
+              step "should remove HearingWithdrawalRequestTask from current tasks" do
+                fill_in("taskInstructions", with: "instructions")
+                click_button("Submit")
+                visit(page)
+                most_recent_task = find("tr", text: "TASK", match: :first)
+                expect(most_recent_task).to have_content("TASK\nAll hearing-related tasks")
+              end
+
+              step "case timeline should cancel task" do
+                first_task_item = find("#case-timeline-table tr:nth-child(2)")
+                expect(first_task_item).to have_content("CANCELLED ON\n#{hwr_task.updated_at.strftime('%m/%d/%Y')}")
+                expect(first_task_item).to have_content("HearingWithdrawalRequestMailTask cancelled")
+                expect(first_task_item).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
+              end
             end
           end
         end
@@ -705,40 +665,44 @@ RSpec.feature "MailTasks", :postgres do
           visit(page)
         end
 
-        it "completes HearingWithdrawalRequestMailTask on Case Timeline" do
-          mail_task = find("#case-timeline-table tr:nth-child(2)")
-          expect(mail_task).to have_content("COMPLETED ON\n#{date_completed}")
-          expect(mail_task).to have_content("HearingWithdrawalRequestMailTask completed")
-        end
+        it "Completes the HearingWithdrawalRequestMailTask, updates instructions, and cancels the HearingTask" do
+          step "completes HearingWithdrawalRequestMailTask on Case Timeline" do
+            mail_task = find("#case-timeline-table tr:nth-child(2)")
+            expect(mail_task).to have_content("COMPLETED ON\n#{date_completed}")
+            expect(mail_task).to have_content("HearingWithdrawalRequestMailTask completed")
+          end
 
-        it "updates instructions of HearingWithdrawalRequestMailTask on Case Timeline" do
-          find(:css, "#case-timeline-table .cf-btn-link", text: "View task instructions", match: :first).click
-          instructions_div = find("div", class: "task-instructions")
-          expect(instructions_div).to have_content("Mark as complete and withdraw hearing:")
-          expect(instructions_div).to have_content("DETAILS\n#{instructions}")
-        end
+          step "updates instructions of HearingWithdrawalRequestMailTask on Case Timeline" do
+            find(:css, "#case-timeline-table .cf-btn-link", text: "View task instructions", match: :first).click
+            instructions_div = find("div", class: "task-instructions")
+            expect(instructions_div).to have_content("Mark as complete and withdraw hearing:")
+            expect(instructions_div).to have_content("DETAILS\n#{instructions}")
+          end
 
-        it "cancels HearingTask on Case Timeline" do
-          hearing_task = find("#case-timeline-table tr:nth-child(3)")
-          expect(hearing_task).to have_content("CANCELLED ON\n#{date_completed}")
-          expect(hearing_task).to have_content("HearingTask cancelled")
-          expect(hearing_task).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
+          step "cancels HearingTask on Case Timeline" do
+            hearing_task = find("#case-timeline-table tr:nth-child(3)")
+            expect(hearing_task).to have_content("CANCELLED ON\n#{date_completed}")
+            expect(hearing_task).to have_content("HearingTask cancelled")
+            expect(hearing_task).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
+          end
         end
       end
 
       shared_examples "hearing scheduled" do
         include_examples "whether hearing is schedueld or unscheduled"
 
-        it "marks hearing disposition as cancelled" do
-          hearing = within(:css, "#hearing-details") { find(:css, ".cf-bare-list ul:nth-child(2)") }
-          expect(hearing).to have_content("Disposition: Cancelled")
-        end
+        it "marks hearing disposition as canclled and cancels AssignHearingDispositionTask on the Case Timeline" do
+          step "marks hearing disposition as cancelled" do
+            hearing = within(:css, "#hearing-details") { find(:css, ".cf-bare-list ul:nth-child(2)") }
+            expect(hearing).to have_content("Disposition: Cancelled")
+          end
 
-        it "cancels AssignHearingDispositionTask on Case Timeline" do
-          disposition_task = find("#case-timeline-table tr:nth-child(4)")
-          expect(disposition_task).to have_content("CANCELLED ON\n#{date_completed}")
-          expect(disposition_task).to have_content("AssignHearingDispositionTask cancelled")
-          expect(disposition_task).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
+          step "cancels AssignHearingDispositionTask on Case Timeline" do
+            disposition_task = find("#case-timeline-table tr:nth-child(4)")
+            expect(disposition_task).to have_content("CANCELLED ON\n#{date_completed}")
+            expect(disposition_task).to have_content("AssignHearingDispositionTask cancelled")
+            expect(disposition_task).to have_content("CANCELLED BY\n#{User.current_user.css_id}")
+          end
         end
       end
 
