@@ -5,19 +5,21 @@ import { documents } from '../../data/documents';
 import ApiUtil from '../../../app/util/ApiUtil';
 import { storeMetrics, recordAsyncMetrics } from '../../../app/util/Metrics';
 
-ApiUtil.get = jest.fn().mockResolvedValue(() => new Promise((resolve) => resolve({ body: {} })));
+const mockedResponse = { body: {}, header: { 'x-document-source': 'VBMS' } };
+
+ApiUtil.get = jest.fn().mockResolvedValue(() => new Promise((resolve) => resolve(mockedResponse)));
 
 jest.mock('../../../app/util/ApiUtil');
 jest.mock('../../../app/util/Metrics', () => ({
-  storeMetrics: jest.fn(),
-  recordAsyncMetrics: jest.fn(),
+  storeMetrics: jest.fn().mockResolvedValue(),
+  recordAsyncMetrics: jest.fn().mockResolvedValue(),
 }));
 jest.mock('pdfjs-dist', () => ({
   getDocument: jest.fn().mockResolvedValue(),
   GlobalWorkerOptions: jest.fn().mockResolvedValue(),
 }));
 
-const metricArgs = (featureValue) => {
+const metricArgs = (featureValue, documentSource) => {
   return [
     // eslint-disable-next-line no-undefined
     undefined,
@@ -26,11 +28,13 @@ const metricArgs = (featureValue) => {
       {
         documentId: 1,
         documentType: 'test',
-        file: '/document/1/pdf'
+        file: '/document/1/pdf',
+        prefetchDisabled: undefined
       },
       // eslint-disable-next-line no-useless-escape
       message: 'Getting PDF document: \"/document/1/pdf\"',
       product: 'reader',
+      additionalInfo: documentSource,
       type: 'performance'
     },
     featureValue,
