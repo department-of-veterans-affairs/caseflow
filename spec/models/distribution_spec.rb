@@ -151,7 +151,7 @@ describe Distribution, :all_dbs do
         .with(status: :started, started_at: Time.zone.now)
         .exactly(1).times
       expect(new_distribution).to receive(:update!)
-        .with(status: "completed", completed_at: Time.zone.now, statistics: statistics)
+        .with(status: "completed", completed_at: Time.zone.now, statistics: "See related row in distribution_stats")
         .exactly(1).times
 
       new_distribution.distribute!

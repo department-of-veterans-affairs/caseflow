@@ -111,7 +111,6 @@ class CaseDistributionLever < ApplicationRecord
 
       CaseDistributionLever.active.each_with_object(snapshot_hash) do |lever, s_hash|
         s_hash[lever.item] = {
-          item: lever.item,
           value: lever.value,
           is_toggle_active: lever.is_toggle_active
         }
