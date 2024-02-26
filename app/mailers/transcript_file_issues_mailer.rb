@@ -9,7 +9,7 @@ class TranscriptFileIssuesMailer < ActionMailer::Base
   def send_issue_details(details)
     @details = details
     @subject = "File #{details[:action]} Error - #{details[:provider]} #{details[:docket_number]}"
-    mail(subject: @subject) do |format|
+    mail(subject: @subject, to: @to, from: @from) do |format|
       format.html { render "_transcript_file_issues" }
     end
   end
