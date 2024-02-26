@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class CorrespondenceTask < Task
+  self.abstract_class = true
+
   before_create :verify_org_task_unique
   validate :status_is_valid_on_create, on: :create
   validate :assignee_status_is_valid_on_create, on: :create
@@ -24,7 +26,6 @@ class CorrespondenceTask < Task
       appeal_id: @correspondence.id,
       assigned_to: MailTeamSupervisor.singleton,
       appeal_type: "Correspondence",
-      parent_id: @correspondence_task.id,
       type: "CorrespondenceRootTask"
     )
     root_task.cancel_task_and_child_subtasks
