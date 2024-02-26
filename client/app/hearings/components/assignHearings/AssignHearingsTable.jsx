@@ -23,6 +23,8 @@ import ApiUtil from '../../../util/ApiUtil';
 import LinkToAppeal from './LinkToAppeal';
 import QUEUE_CONFIG from '../../../../constants/QUEUE_CONFIG';
 import QueueTable from '../../../queue/QueueTable';
+import MstBadge from '../../../components/badges/MstBadge/MstBadge';
+import PactBadge from '../../../components/badges/PactBadge/PactBadge';
 
 const TASKS_ENDPOINT = '/hearings/schedule_hearing_tasks';
 const COLUMNS_ENDPOINT = '/hearings/schedule_hearing_tasks_columns';
@@ -36,7 +38,10 @@ export default class AssignHearingsTable extends React.PureComponent {
       showNoVeteransToAssignError: false,
       colsFromApi: null,
       amaDocketLineIndex: null,
-      rowOffset: 0
+      rowOffset: 0,
+      mstIdentification: this.mstIdentification,
+      pactIdentification: this.pactIdentification,
+      legacyMstPactIdentification: this.legacyMstPactIdentification
     };
   }
 
@@ -90,14 +95,37 @@ export default class AssignHearingsTable extends React.PureComponent {
   /*
    * Gets the list of columns to populate the QueueTable with.
    */
+
   getColumns = () => {
-    const { selectedRegionalOffice, selectedHearingDay } = this.props;
+    const { selectedRegionalOffice,
+      selectedHearingDay,
+      mstIdentification,
+      pactIdentification,
+      legacyMstPactIdentification } = this.props;
 
     const { colsFromApi } = this.state;
 
     if (_.isNil(selectedHearingDay) || _.isNil(colsFromApi)) {
       return [];
     }
+
+    let mstPactBadgeColumn =
+    {
+      header: '',
+      align: 'left',
+      cellClass: 'badge-designation',
+      valueFunction: (row) => (
+        <span
+          style={{ display: 'flex' }}>
+          <div
+            className ="badge-designation"
+            style={{ flexDirection: 'column', marginLeft: '-1rem' }}>
+            <MstBadge appeal={row.appeal} />
+            <PactBadge appeal={row.appeal} />
+          </div>
+        </span>
+      )
+    };
 
     const columns = [
       {
@@ -200,6 +228,10 @@ export default class AssignHearingsTable extends React.PureComponent {
       }
     ];
 
+    if (mstIdentification || pactIdentification || legacyMstPactIdentification) {
+      columns.splice(1, 0, mstPactBadgeColumn);
+    }
+
     return columns;
   }
 
@@ -289,5 +321,8 @@ AssignHearingsTable.propTypes = {
   // Selected Regional Office Key
   selectedRegionalOffice: PropTypes.string,
 
-  tabName: PropTypes.string
+  tabName: PropTypes.string,
+  mstIdentification: PropTypes.bool,
+  pactIdentification: PropTypes.bool,
+  legacyMstPactIdentification: PropTypes.bool
 };
