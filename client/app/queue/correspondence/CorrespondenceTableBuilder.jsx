@@ -55,6 +55,7 @@ const buildMailUserData = (data) => {
 
 const CorrespondenceTableBuilder = (props) => {
   const [selectedMailTeamUser, setSelectedMailTeamUser] = useState(null);
+  const [isAnyCheckboxSelected, setIsAnyCheckboxSelected] = useState(false);
   const selectedTasks = useSelector(state => state.intakeCorrespondence.selectedTasks);
 
   const paginationOptions = () => querystring.parse(window.location.search.slice(1));
@@ -72,9 +73,13 @@ const CorrespondenceTableBuilder = (props) => {
     setSelectedMailTeamUser(selectedUser);
   };
 
+  const handleCheckboxChange = (isChecked) => {
+    setIsAnyCheckboxSelected(isChecked);
+  };
+
   const handleAssignButtonClick = () => {
     // Logic to handle assigning tasks to the selected mail team user
-    if (selectedMailTeamUser && selectedTasks) {
+    if (selectedMailTeamUser && selectedTasks && isAnyCheckboxSelected) {
       console.log('Assigning tasks to selected mail team user', selectedMailTeamUser.value, selectedTasks);
       const mailTeamUser = selectedMailTeamUser.value;
       const taskIds = selectedTasks.map((task) => task);
@@ -137,7 +142,7 @@ const CorrespondenceTableBuilder = (props) => {
       [QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name]: veteranDetails(),
       [QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name]: vaDor(tasks, filterOptions),
       [QUEUE_CONFIG.COLUMNS.NOTES.name]: notes(),
-      [QUEUE_CONFIG.COLUMNS.CHECKBOX_COLUMN.name]: checkboxColumn(),
+      [QUEUE_CONFIG.COLUMNS.CHECKBOX_COLUMN.name]: checkboxColumn(handleCheckboxChange),
       [QUEUE_CONFIG.COLUMNS.ACTION_TYPE.name]: actionType(),
     };
 
@@ -203,6 +208,7 @@ const CorrespondenceTableBuilder = (props) => {
                 <Button
                   name="Assign"
                   onClick={handleAssignButtonClick}
+                  disabled={!isAnyCheckboxSelected}
                 />
                 <span style={{ marginLeft: 'auto' }}>
                   <Button

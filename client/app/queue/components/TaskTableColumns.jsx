@@ -303,7 +303,7 @@ export const notes = () => {
     getSortValue: (task) => task.notes
   };
 };
-export const checkboxColumn = () => {
+export const checkboxColumn = (handleCheckboxChange) => {
   const dispatch = useDispatch();
 
   const currentlySelectedTasks = useSelector((state) => state.intakeCorrespondence.selectedTasks);
@@ -314,13 +314,14 @@ export const checkboxColumn = () => {
     const newSelectedTasks = currentlySelectedTasks;
 
     if (indexOfTask === -1) {
-
       newSelectedTasks.push(value);
-      dispatch(setSelectedTasks(newSelectedTasks));
     } else {
       newSelectedTasks.splice(indexOfTask, 1);
-      dispatch(setSelectedTasks(newSelectedTasks));
     }
+
+    dispatch(setSelectedTasks(newSelectedTasks));
+
+    handleCheckboxChange(newSelectedTasks.length > 0);
 
   };
 
