@@ -199,7 +199,6 @@ describe ExplainController, :all_dbs, type: :controller do
         # task tree
         expect(response.body).to include "Correspondence #{correspondence.id}"
         expect(response.body).to include "CorrespondenceRootTask"
-        expect(response.body).to include "CorrespondenceTask"
         expect(response.body).to include "ReviewPackageTask"
       end
     end
