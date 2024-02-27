@@ -157,8 +157,9 @@ RSpec.feature("Correspondence Intake submission") do
         find_by_id("waiveReason").fill_in with: "test waive note"
         click_button("Continue")
         find(".cf-pdf-external-link-icon").click
+        page.switch_to_window(page.windows.last)
         using_wait_time(wait_time) do
-          page.switch_to_window(page.windows.last)
+          refresh
           expect(page).to have_content("Evidence Submission Window Task")
         end
         page.switch_to_window(page.windows.first)

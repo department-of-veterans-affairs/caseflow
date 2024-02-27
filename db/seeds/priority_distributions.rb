@@ -6,6 +6,10 @@
 # RequestStore[:current_user] = User.system_user
 # Dir[Rails.root.join("db/seeds/*.rb")].sort.each { |f| require f }
 # Seeds::PriorityDistributions.new.seed!
+#
+# Creates 300+ priority cases ready for distribution
+# Warning a number are not setup correctly so cannot be used beyond
+# just distributing
 
 module Seeds
   class PriorityDistributions < Base # rubocop:disable Metrics/ClassLength
