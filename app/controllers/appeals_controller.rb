@@ -266,14 +266,13 @@ class AppealsController < ApplicationController
   def set_flash_move_to_sct_success_message
     # If original issues were not SCT related, then that means it will be moved to the SCT queue
     if appeal.sct_appeal? && request_issues_update.before_issues.none?(&:sct_benefit_type?) &&
-       request_issues_update.review.tasks.of_type(:DistributionTask).exists? &&
-       feature_enabled?(:specialty_case_team_distribution)
+       appeal.has_distribution_task? && feature_enabled?(:specialty_case_team_distribution)
       flash[:custom] = {
-        title: COPY::MOVE_TO_GENERIC_BANNER_SUCCESS_MESSAGE,
+        title: COPY::MOVE_TO_SCT_BANNER_TITLE,
         message: format(
-          COPY::MOVE_TO_SCT_BANNER_MESSAGE,
-          request_issues_update.review.claimant.name,
-          request_issues_update.veteran.file_number,
+          COPY::MOVE_TO_GENERIC_BANNER_SUCCESS_MESSAGE,
+          appeal.veteran_full_name,
+          appeal.veteran_file_number,
           "SCT queue"
         )
       }
@@ -289,7 +288,7 @@ class AppealsController < ApplicationController
         title: COPY::MOVE_TO_SCT_BANNER_TITLE,
         message: format(
           COPY::MOVE_TO_GENERIC_BANNER_SUCCESS_MESSAGE,
-          appeal.claimant.name,
+          appeal.veteran_full_name,
           appeal.veteran_file_number,
           "regular distribution pool"
         )

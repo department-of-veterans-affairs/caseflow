@@ -1338,6 +1338,7 @@ feature "Appeal Edit issues", :all_dbs do
 
       # Verify task tree status
       appeal3.reload
+      appeal3.tasks.reload
       appeal3.request_issues.reload
       distribution_task = appeal3.tasks.find { |task| task.is_a?(DistributionTask) }
       expect(distribution_task.assigned_by).to eq(current_user)
