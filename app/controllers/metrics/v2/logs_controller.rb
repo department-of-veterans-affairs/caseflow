@@ -35,6 +35,6 @@ class Metrics::V2::LogsController < ApplicationController
                                    :start,
                                    :end,
                                    :duration,
-                                   :session_id)
+                                   :event_id)
   end
 end

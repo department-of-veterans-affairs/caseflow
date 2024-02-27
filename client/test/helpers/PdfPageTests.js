@@ -14,7 +14,7 @@ export const pageMetricData = [
   message: 'Storing PDF page',
   product: 'reader',
   type: 'performance',
-  sessionId: '123456'
+  eventId: '123456'
   },
   true
 ];
@@ -76,7 +76,7 @@ export const recordMetricsArgs = [
   product: 'reader',
   type: 'performance',
   uuid: '1234',
-  sessionId: '123456'
+  eventId: '123456'
   },
   true
 ];

@@ -224,7 +224,7 @@ export class PdfPage extends React.PureComponent {
           numPagesInDoc: this.props.pdfDocument.numPages,
           prefetchDisabled: this.props.featureToggles.prefetchDisabled
         },
-        sessionId: this.props.metricsIdentifier
+        eventId: this.props.metricsIdentifier
       };
 
       const pageAndTextFeatureToggle = this.props.featureToggles.metricsPdfStorePages;
@@ -246,7 +246,7 @@ export class PdfPage extends React.PureComponent {
             numPagesInDoc: this.props.pdfDocument.numPages,
             prefetchDisabled: this.props.featureToggles.prefetchDisabled,
           },
-          sessionId: this.props.metricsIdentifier
+          eventId: this.props.metricsIdentifier
         };
 
         const readerRenderText = {
@@ -262,7 +262,7 @@ export class PdfPage extends React.PureComponent {
             numPagesInDoc: this.props.pdfDocument.numPages,
             prefetchDisabled: this.props.featureToggles.prefetchDisabled
           },
-          sessionId: this.props.metricsIdentifier
+          eventId: this.props.metricsIdentifier
         };
 
         const textResult = recordAsyncMetrics(this.getText(page), textMetricData, pageAndTextFeatureToggle);

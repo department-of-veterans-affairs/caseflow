@@ -49,14 +49,14 @@ export const storeMetrics = (uniqueId, data, {
   end,
   duration,
   additionalInfo
-}, sessionId = null) => {
+}, eventId = null) => {
   const metricType = ['log', 'error', 'performance'].includes(type) ? type : 'log';
   const productArea = product ? product : 'caseflow';
 
   const postData = {
     metric: {
       uuid: uniqueId,
-      session_id: sessionId,
+      event_id: eventId,
       name: `caseflow.client.${productArea}.${metricType}`,
       message: metricMessage(uniqueId, data, message),
       type: metricType,
@@ -73,7 +73,7 @@ export const storeMetrics = (uniqueId, data, {
   postMetricLogs(postData);
 };
 
-export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 'log', product, sessionId = null },
+export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 'log', product, eventId = null },
   saveMetrics = true) => {
 
   let id = checkUuid(uniqueId, data, message, type);
@@ -99,7 +99,7 @@ export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 
       name
     };
 
-    storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration }, sessionId);
+    storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration }, eventId);
   }
 
   return result;
@@ -110,7 +110,7 @@ export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 
  *
  * Might need to split into async and promise versions if issues
  */
-export const recordAsyncMetrics = async (promise, { uniqueId, data, message, type = 'log', product, sessionId = null, additionalInfo },
+export const recordAsyncMetrics = async (promise, { uniqueId, data, message, type = 'log', product, eventId = null, additionalInfo },
   saveMetrics = true) => {
 
   let id = checkUuid(uniqueId, data, message, type);
@@ -137,7 +137,7 @@ export const recordAsyncMetrics = async (promise, { uniqueId, data, message, typ
       name
     };
 
-    storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration, additionalInfo }, sessionId);
+    storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration, additionalInfo }, eventId);
   }
 
   return result;
