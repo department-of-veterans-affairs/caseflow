@@ -56,6 +56,7 @@ const buildMailUserData = (data) => {
 const CorrespondenceTableBuilder = (props) => {
   const [selectedMailTeamUser, setSelectedMailTeamUser] = useState(null);
   const [isAnyCheckboxSelected, setIsAnyCheckboxSelected] = useState(false);
+  const [isDropdownItemSelected, setIsDropdownItemSelected] = useState(false);
   const selectedTasks = useSelector(state => state.intakeCorrespondence.selectedTasks);
 
   const paginationOptions = () => querystring.parse(window.location.search.slice(1));
@@ -71,6 +72,7 @@ const CorrespondenceTableBuilder = (props) => {
 
   const handleMailTeamUserChange = (selectedUser) => {
     setSelectedMailTeamUser(selectedUser);
+    setIsDropdownItemSelected(!!selectedUser);
   };
 
   const handleCheckboxChange = (isChecked) => {
@@ -79,7 +81,7 @@ const CorrespondenceTableBuilder = (props) => {
 
   const handleAssignButtonClick = () => {
     // Logic to handle assigning tasks to the selected mail team user
-    if (selectedMailTeamUser && selectedTasks && isAnyCheckboxSelected) {
+    if (selectedMailTeamUser && isDropdownItemSelected && isAnyCheckboxSelected) {
       console.log('Assigning tasks to selected mail team user', selectedMailTeamUser.value, selectedTasks);
       const mailTeamUser = selectedMailTeamUser.value;
       const taskIds = selectedTasks.map((task) => task);
@@ -101,7 +103,6 @@ const CorrespondenceTableBuilder = (props) => {
       catch((error) => {
         console.error(error);
       });
-
     }
   };
 
@@ -208,7 +209,7 @@ const CorrespondenceTableBuilder = (props) => {
                 <Button
                   name="Assign"
                   onClick={handleAssignButtonClick}
-                  disabled={!isAnyCheckboxSelected}
+                  disabled={!isDropdownItemSelected || !isAnyCheckboxSelected}
                 />
                 <span style={{ marginLeft: 'auto' }}>
                   <Button
