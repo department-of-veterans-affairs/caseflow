@@ -17,33 +17,22 @@ class CorrespondenceRootTaskFactory
   private
 
   def create_root!
-    @correspondence_task = CorrespondenceTask.find_or_create_by!(
+      @root_task = CorrespondenceRootTask.find_or_create_by!(
       appeal_id: @correspondence.id,
       assigned_to: MailTeamSupervisor.singleton,
-      appeal_type: "Correspondence",
-      type: "CorrespondenceTask"
+      appeal_type: Correspondence.name
     )
 
-    @correspondence_task.update(status: "on_hold")
-
-    @root_task = CorrespondenceRootTask.find_or_create_by!(
-      appeal_id: @correspondence.id,
-      assigned_to: MailTeamSupervisor.singleton,
-      appeal_type: "Correspondence",
-      parent_id: @correspondence_task.id,
-      type: "CorrespondenceRootTask"
-    )
-
-    @root_task.update(status: "on_hold")
+    @root_task.update(status: Constants.TASK_STATUSES.on_hold)
   end
 
   def create_subtasks!
     @review_package_task = ReviewPackageTask.find_or_create_by!(
       appeal_id: @correspondence.id,
       assigned_to: MailTeamSupervisor.singleton,
-      appeal_type: "Correspondence",
+      appeal_type: Correspondence.name,
       parent_id: @root_task.id,
-      type: "ReviewPackageTask"
+      type: ReviewPackageTask.name
     )
   end
 end
