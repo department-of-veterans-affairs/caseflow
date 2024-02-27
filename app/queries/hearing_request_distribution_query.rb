@@ -51,7 +51,8 @@ class HearingRequestDistributionQuery
     # returning early as most_recent_held_hearings_not_tied_to_any_judge is redundant
     if @use_by_docket_date &&
        !(FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ||
-        FeatureToggle.enabled?(:acd_exclude_from_affinity))
+        FeatureToggle.enabled?(:acd_exclude_from_affinity)) ||
+        (CaseDistributionLever.ama_hearing_case_affinity_days == "omit")
       return [
         with_held_hearings,
         no_hearings_or_no_held_hearings
