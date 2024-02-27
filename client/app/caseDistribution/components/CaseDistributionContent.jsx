@@ -1,5 +1,6 @@
 import React from 'react';
 import Alert from '../../components/Alert';
+import Link from 'app/components/Link';
 import StaticLeversWrapper from './StaticLeversWrapper';
 import InteractableLeverWrapper from './InteractableLeversWrapper';
 import LeverHistory from './LeverHistory';
@@ -23,11 +24,11 @@ const CaseDistributionContent = () => {
         <h2>{COPY.CASE_DISTRIBUTION_TITLE}</h2>
         <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_ALGORITHM_DESCRIPTION}</p>
 
-        <div className="cf-sg-alert-slim">
+        <p className="cf-sg-alert-slim cf-case-distribution-page-alert">
           <Alert type="info">
-            {COPY.CASE_DISTRIBUTION_INFO_BANNER_DETAIL}
+            You may remove individual judges from Affinity Case Distribution within the setting on the <Link to="team_management" target="_blank">Caseflow Team Management page</Link>.
           </Alert>
-        </div>
+        </p>
 
         <div className="active-data-content" id="active-data-elements">  {/* Container for Active Levers*/}
           <h2 {...sectionHeadingStyling}>

@@ -1415,7 +1415,6 @@
   "CASE_DISTRIBUTION_MODAL_DESCRIPTION": "Please confirm the following changes to the Case Distribution algorithm below. Once saved, these changes will apply to the next case distribution event.",
   "CASE_DISTRIBUTION_SUCCESS_BANNER_TITLE": "You have successfully updated the Case Distribution Algorithm",
   "CASE_DISTRIBUTION_SUCCESS_BANNER_DETAIL": "Your changes will apply to the next Case Distribution event.",
-  "CASE_DISTRIBUTION_INFO_BANNER_DETAIL": "You may remove individual judges from Affinity Case Distribution within the setting on the Caseflow Team Management page",
   "CASE_DISTRIBUTION_FAILURE_BANNER_TITLE": "Case Distribution Algorithm updates have failed.",
   "CASE_DISTRIBUTION_FAILURE_BANNER_DETAIL": "Please contact the Caseflow team via the VA Enterprise Service Desk at 855-673-4357 or by creating a ticket via YourIT.",
   "CASE_DISTRIBUTION_EXCLUSION_TABLE_TITLE": "Excluding Appeals by Docket Type and Priority from Automatic Case Distribution",
