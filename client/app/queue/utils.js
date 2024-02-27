@@ -595,7 +595,9 @@ export const prepareAppealForSearchStore = (appeals) => {
         appeal.attributes.readable_hearing_request_type,
       readableOriginalHearingRequestType:
         appeal.attributes.readable_original_hearing_request_type,
-      vacateType: appeal.attributes.vacate_type
+      vacateType: appeal.attributes.vacate_type,
+      evidenceSubmissionTask: appeal.attributes.evidence_submission_task,
+      hasEvidenceSubmissionTask: appeal.attributes.evidence_submission_task !== null,
     };
 
     return accumulator;
