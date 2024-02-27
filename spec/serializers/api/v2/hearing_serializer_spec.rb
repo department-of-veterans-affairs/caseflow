@@ -1,6 +1,7 @@
 # frozen_string_literal: true
+require "#{Rails.root}/app/serializers/api/v2/hearing_serializer.rb"
 
-describe Api::V2::HearingSerializer do
+describe V2::HearingSerializer do
   let(:hearing_day) do
     build(
       :hearing_day,
@@ -10,7 +11,7 @@ describe Api::V2::HearingSerializer do
   end
 
   subject do
-    Api::V2::HearingSerializer.new(hearing).serializable_hash[:data][:attributes]
+    V2::HearingSerializer.new(hearing).serializable_hash[:data][:attributes]
   end
 
   context "hearing with no location" do

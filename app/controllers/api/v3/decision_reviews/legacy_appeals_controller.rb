@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require "#{Rails.root}/app/serializers/api/v3/legacy_appeal_serializer.rb"
+
 
 class Api::V3::DecisionReviews::LegacyAppealsController < Api::V3::BaseController
   include ApiV3FeatureToggleConcern
@@ -80,6 +82,6 @@ class Api::V3::DecisionReviews::LegacyAppealsController < Api::V3::BaseControlle
   end
 
   def serialized_legacy_appeals
-    Api::V3::LegacyAppealSerializer.new(opt_in_eligible_appeals, is_collection: true).serializable_hash
+    V3::LegacyAppealSerializer.new(opt_in_eligible_appeals, is_collection: true).serializable_hash
   end
 end

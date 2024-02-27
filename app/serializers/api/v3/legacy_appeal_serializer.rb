@@ -1,6 +1,7 @@
 # frozen_string_literal: true
+require "#{Rails.root}/app/serializers/api/v3/legacy_related_issue_serializer.rb"
 
-class Api::V3::LegacyAppealSerializer
+class V3::LegacyAppealSerializer
   include FastJsonapi::ObjectSerializer
 
   set_key_transform :camel_lower
@@ -8,7 +9,7 @@ class Api::V3::LegacyAppealSerializer
 
   attribute :issues do |object|
     object.issues.map do |issue|
-      Api::V3::LegacyRelatedIssueSerializer.new(issue).serializable_hash[:data][:attributes]
+      V3::LegacyRelatedIssueSerializer.new(issue).serializable_hash[:data][:attributes]
     end
   end
 

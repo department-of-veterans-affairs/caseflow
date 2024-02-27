@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "#{Rails.root}/app/serializers/api/v2/hearing_serializer.rb"
 
 class Api::V2::HearingsController < Api::ApplicationController
   def show
@@ -13,7 +14,7 @@ class Api::V2::HearingsController < Api::ApplicationController
     rescue ActiveRecord::RecordNotFound
       return hearing_day_not_found
     end
-    hash_serialized = Api::V2::HearingSerializer.new(
+    hash_serialized = V2::HearingSerializer.new(
       hearings.select { |hearing| hearing.hearing_location.present? && hearing.disposition.nil? }, is_collection: true
     ).serializable_hash[:data]
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Api::V3::VeteranSerializer
+class V3::VeteranSerializer
   include FastJsonapi::ObjectSerializer
   set_key_transform :camel_lower
 
