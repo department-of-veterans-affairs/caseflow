@@ -76,7 +76,7 @@ class CorrespondenceController < ApplicationController
     if tasks.empty?
       render json: { status: 'error', message: 'No tasks found' }, status: :unprocessable_entity
     else
-      tasks.update_all(assigned_to_id: mail_team_user.id, assigned_to_type: "User")
+      tasks.update_all(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "assigned")
 
       render json: {
         status: 'success',
