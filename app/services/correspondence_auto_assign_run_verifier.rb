@@ -57,8 +57,8 @@ class CorrespondenceAutoAssignRunVerifier
     last_assignment = IndividualAutoAssignmentAttempt.last
 
     # Safe to move forward if we haven't seen any assignment attempts for the past X minutes
-    return true if last_assignment&.completed_at.present? &&
-                   ((Time.current - last_assignment.completed_at)/60) < min_minutes_elapsed_individual_attempt
+    return true if last_assignment&.created_at.present? &&
+                   ((Time.current - last_assignment.created_at)/60) < min_minutes_elapsed_individual_attempt
 
     # Safe to move forward if the last batch was started more than Y minutes ago
     BatchAutoAssignmentAttempt

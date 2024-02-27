@@ -10,7 +10,7 @@ describe CorrespondenceAutoAssignRunVerifier do
       create(
         :batch_auto_assignment_attempt,
         user: current_user,
-        completed_at: (described.min_minutes_elapsed_batch_attempt + 1).minutes.ago
+        started_at: (described.min_minutes_elapsed_batch_attempt + 1).minutes.ago
       )
     end
 
@@ -19,7 +19,7 @@ describe CorrespondenceAutoAssignRunVerifier do
         :batch_auto_assignment_attempt,
         user: current_user,
         status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.completed,
-        completed_at: (described.min_minutes_elapsed_batch_attempt - 1).minutes.ago
+        started_at: (described.min_minutes_elapsed_batch_attempt - 1).minutes.ago
       )
     end
 
@@ -29,7 +29,7 @@ describe CorrespondenceAutoAssignRunVerifier do
           create(
             :individual_auto_assignment_attempt,
             batch_auto_assignment_attempt: valid_batch,
-            completed_at: (described.min_minutes_elapsed_individual_attempt + 1).minutes.ago
+            created_at: (described.min_minutes_elapsed_individual_attempt + 1).minutes.ago
           )
         end
 
@@ -84,7 +84,7 @@ describe CorrespondenceAutoAssignRunVerifier do
             create(
               :individual_auto_assignment_attempt,
               batch_auto_assignment_attempt: valid_batch,
-              completed_at: 1.minutes.ago
+              created_at: 1.minutes.ago
             )
           end
 
@@ -106,7 +106,7 @@ describe CorrespondenceAutoAssignRunVerifier do
             create(
               :batch_auto_assignment_attempt,
               user: current_user,
-              completed_at: (described.min_minutes_elapsed_batch_attempt - 1).minutes.ago
+              started_at: (described.min_minutes_elapsed_batch_attempt - 1).minutes.ago
             )
           end
 
