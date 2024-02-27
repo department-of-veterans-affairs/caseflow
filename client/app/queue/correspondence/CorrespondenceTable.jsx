@@ -22,16 +22,6 @@ class CorrespondenceTable extends React.Component {
         )
       },
       {
-        name: 'packageDocumentType',
-        header: 'Package Document Type ',
-        align: 'left',
-        valueName: 'packageDocumentType',
-        enableFilter: true,
-        label: 'package-document-type-filter',
-        getSortValue: (row) => row.packageDocumentType,
-        backendCanSort: true
-      },
-      {
         name: 'cmPacketNumber',
         header: 'CM Packet Number ',
         align: 'left',
