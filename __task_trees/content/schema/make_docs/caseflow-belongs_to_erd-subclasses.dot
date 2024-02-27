@@ -1,5 +1,5 @@
 digraph belongs_to_erd_subclasses {
-	graph [bb="0,0,4979.9,5199",
+	graph [bb="0,0,4979.9,5212",
 		rankdir=LR
 	];
 	node [label="\N"];
@@ -207,7 +207,7 @@ digraph belongs_to_erd_subclasses {
 	Task	[color="#0000ff",
 		fillcolor="#00ff00",
 		fontcolor="#0000ff",
-		label="Task|(120 tasks)",
+		label="Task|(122 tasks)",
 		shape=record,
 		style=filled,
 		];
@@ -657,6 +657,12 @@ digraph belongs_to_erd_subclasses {
 		style=filled,
 		];
 	Organization -> SpecialCaseMovementTeam	[color="#000099",
+		style=dotted];
+	SpecialIssueEditTeam	[fillcolor="#d9d9ff",
+		label=SpecialIssueEditTeam,
+		style=filled,
+		];
+	Organization -> SpecialIssueEditTeam	[color="#000099",
 		style=dotted];
 	SupervisorySeniorCouncil	[fillcolor="#d9d9ff",
 		label=SupervisorySeniorCouncil,

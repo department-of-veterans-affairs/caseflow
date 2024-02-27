@@ -1,5 +1,5 @@
 digraph subclasses {
-	graph [bb="0,0,1778.1,6911.5",
+	graph [bb="0,0,1778.1,7060.5",
 		rankdir=LR,
 		splines=line
 	];
@@ -390,11 +390,23 @@ digraph subclasses {
 		];
 	Task -> EngineeringTask	[color="#000099",
 		style=dotted];
+	EstablishmentTask	[fillcolor="#00ff00",
+		label=EstablishmentTask,
+		style=filled,
+		];
+	Task -> EstablishmentTask	[color="#000099",
+		style=dotted];
 	InsufficientInformationTask	[fillcolor="#00ff00",
 		label=InsufficientInformationTask,
 		style=filled,
 		];
 	Task -> InsufficientInformationTask	[color="#000099",
+		style=dotted];
+	IssuesUpdateTask	[fillcolor="#00ff00",
+		label=IssuesUpdateTask,
+		style=filled,
+		];
+	Task -> IssuesUpdateTask	[color="#000099",
 		style=dotted];
 	LetterTask	[color="#000099",
 		fillcolor="#00ff00",
@@ -1116,6 +1128,12 @@ digraph subclasses {
 		style=filled,
 		];
 	Organization -> SpecialCaseMovementTeam	[color="#000099",
+		style=dotted];
+	SpecialIssueEditTeam	[fillcolor="#d9d9ff",
+		label=SpecialIssueEditTeam,
+		style=filled,
+		];
+	Organization -> SpecialIssueEditTeam	[color="#000099",
 		style=dotted];
 	SupervisorySeniorCouncil	[fillcolor="#d9d9ff",
 		label=SupervisorySeniorCouncil,
