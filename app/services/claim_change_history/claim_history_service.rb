@@ -36,6 +36,8 @@ class ClaimHistoryService
       process_request_issue_update_events(change_data)
       process_request_issue_events(change_data)
       process_decision_issue_and_task_events(change_data)
+      # Attempt to process task events again in case there were no decision issues. It won't trigger if already done.
+      process_task_events(change_data)
     end
 
     # Compact and sort in place to reduce garbage collection

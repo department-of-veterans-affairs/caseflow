@@ -50,6 +50,7 @@ describe ChangeHistoryEventSerializer do
             decisionDate: events[0].decision_date,
             decisionDescription: nil,
             disposition: nil,
+            dispositionDate: nil,
             issueDescription: "Veterans Health Administration seeded HLR in progress",
             issueType: "Other",
             withdrawalRequestDate: nil
@@ -73,6 +74,7 @@ describe ChangeHistoryEventSerializer do
             decisionDate: nil,
             decisionDescription: nil,
             disposition: nil,
+            dispositionDate: nil,
             issueDescription: nil,
             issueType: nil,
             withdrawalRequestDate: nil
