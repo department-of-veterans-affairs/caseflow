@@ -86,8 +86,11 @@ const CorrespondenceTableBuilder = (props) => {
       ApiUtil.post(`/queue/correspondence/assign_tasks`, { data: data }).
       then((response) => {
         const { body } = response;
-        if (body.status === 'ok') {
-
+        if (body.status === 'success') {
+          let newUrl = window.location.href
+          newUrl += newUrl.includes("?") ? `&user=${mailTeamUser}&taskIds=${taskIds}` : '?user=${mailTeamUser}&taskIds=${taskIds}'
+          console.log(newUrl);
+          window.location.href = newUrl
         }
       }).
       catch((error) => {
