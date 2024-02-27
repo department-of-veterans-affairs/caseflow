@@ -3,6 +3,7 @@
 FactoryBot.define do
   factory :distribution do
     association :judge, factory: :user
+    association :distribution_stats, factory: :distribution_stats
 
     trait :completed do
       after(:create) do |distribution|
