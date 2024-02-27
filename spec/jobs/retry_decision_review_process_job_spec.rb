@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe RetryDecisionReviewProcessJob, :postres do
+describe RetryDecisionReviewProcessJob do
   subject { described_class.new }
   let!(:supplemental_claims) { create_list(:supplemental_claim, 3, establishment_error: "SomeError") }
 
