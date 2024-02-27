@@ -411,12 +411,12 @@ class ClaimHistoryEvent
 
   def readable_event_type
     {
-      in_progress: "Claim status - In Progress",
+      in_progress: "Claim status - In progress",
       incomplete: "Claim status - Incomplete",
       completed: "Claim closed",
       claim_creation: "Claim created",
       completed_disposition: "Completed disposition",
-      added_issue: "Added Issue",
+      added_issue: "Added issue",
       added_issue_without_decision_date: "Added issue - No decision date",
       withdrew_issue: "Withdrew issue",
       removed_issue: "Removed issue",

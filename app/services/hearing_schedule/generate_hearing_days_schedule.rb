@@ -274,9 +274,9 @@ class HearingSchedule::GenerateHearingDaysSchedule
       #   "RO01": {[1, 2021]=> {Tue, 05 Jan 2021=>[], Fri, 29 Jan 2021=>[],...}},
       #    ...
       # }
-      @ros[ro_key][:allocated_dates] = monthly_available_dates.map do |month, available_dates|
-        [month, dates_sorted_and_formatted(available_dates)]
-      end.to_h
+      @ros[ro_key][:allocated_dates] = monthly_available_dates.transform_values do |available_dates|
+        dates_sorted_and_formatted(available_dates)
+      end
     end
   end
 
