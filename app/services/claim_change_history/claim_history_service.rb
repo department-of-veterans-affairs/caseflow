@@ -35,8 +35,7 @@ class ClaimHistoryService
     all_data.entries.each do |change_data|
       process_request_issue_update_events(change_data)
       process_request_issue_events(change_data)
-      process_task_events(change_data)
-      process_decision_issue_events(change_data)
+      process_decision_issue_and_task_events(change_data)
     end
 
     # Compact and sort in place to reduce garbage collection
@@ -206,12 +205,16 @@ class ClaimHistoryService
     end
   end
 
-  def process_decision_issue_events(change_data)
+  def process_decision_issue_and_task_events(change_data)
     decision_issue_id = change_data["decision_issue_id"]
 
     if decision_issue_id && !@processed_decision_issue_ids.include?(decision_issue_id)
       @processed_decision_issue_ids.add(decision_issue_id)
       save_events(ClaimHistoryEvent.create_completed_disposition_event(change_data))
+
+      # Status events sometimes need disposition information so make sure it lines up
+      # with a decision issue row in the database
+      process_task_events(change_data)
     end
   end
 

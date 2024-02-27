@@ -41,7 +41,7 @@ const IndividualClaimHistoryTable = (props) => {
   const ClaimClosedFragment = (details) => {
     return <React.Fragment>
       Claim closed.<br />
-      <b>Claim decision date: </b>{formatDecisionDate(details.decisionDate)}
+      <b>Claim decision date: </b>{formatDecisionDate(details.dispositionDate)}
     </React.Fragment>;
   };
 
