@@ -89,10 +89,21 @@ class CorrespondenceController < ApplicationController
   def correspondence_team
     if current_user.mail_superuser? || current_user.mail_supervisor?
       @mail_team_users = User.mail_team_users.pluck(:css_id)
+      @mail_team_user = User.find_by(css_id: params[:user]) if params[:user].present?
+      @task_ids = params[:taskIds] if params[:taskIds].present?
       respond_to do |format|
-        format.html { "correspondence_team" }
+        format.html do
+          @display_banner = params[:user].present? && params[:taskIds].present?
+          render "correspondence_team"
+        end
         format.json do
-          render json: { correspondence_config: CorrespondenceConfig.new(assignee: MailTeamSupervisor.singleton) }
+          render json: {
+            correspondence_config: CorrespondenceConfig.new(assignee: MailTeamSupervisor.singleton),
+            display_banner: @display_banner,
+            mail_team_user: @mail_team_user,
+            task_ids: @task_ids
+
+          }
         end
       end
     elsif current_user.mail_team_user?

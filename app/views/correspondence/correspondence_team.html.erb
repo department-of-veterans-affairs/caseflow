@@ -12,6 +12,9 @@
     configUrl: '/queue/correspondence/team?json',
     flash: flash,
     mailTeamUsers: @mail_team_users,
+    displayBanner: @display_banner,
+    mailTeamUser: @mail_team_user,
+    taskIds: @task_ids,
     featureToggles: {
       correspondence_queue: FeatureToggle.enabled?(:correspondence_queue, user: current_user)
     }

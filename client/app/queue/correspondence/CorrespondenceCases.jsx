@@ -30,6 +30,8 @@ const CorrespondenceCases = (props) => {
   const config = useSelector((state) => state.intakeCorrespondence.correspondenceConfig);
   const showReassignPackageModal = useSelector((state) => state.intakeCorrespondence.showReassignPackageModal);
   const showRemovePackageModal = useSelector((state) => state.intakeCorrespondence.showRemovePackageModal);
+  const taskIdsArray = props.taskIds.split(',');
+   const taskCount = taskIdsArray.length;
 
   const closeReassignPackageModal = () => {
     dispatch(setShowReassignPackageModal(false));
@@ -61,6 +63,14 @@ const CorrespondenceCases = (props) => {
             scrollOnAlert={false}
           />
         )}
+        {props.displayBanner && (
+          <Alert
+            type="success"
+            title={sprintf(`You have successfully assigned ${taskCount} Correspondence to ${props.mailTeamUser.css_id}.`)}
+            message={`Please go to your individual queue to see any self assigned correspondence.`}
+            scrollOnAlert={false}
+          />
+        )}
         {config &&
         <CorrespondenceTableBuilder mailTeamUsers={props.mailTeamUsers} />}
         {showReassignPackageModal &&
@@ -87,7 +97,11 @@ CorrespondenceCases.propTypes = {
   currentAction: PropTypes.object,
   veteranInformation: PropTypes.object,
   configUrl: PropTypes.string,
-  mailTeamUsers: PropTypes.arrayOf(string)
+  mailTeamUsers: PropTypes.arrayOf(string),
+  displayBanner: PropTypes.bool,
+  mailTeamUser: PropTypes.string,
+  taskIds: PropTypes.arrayOf(string),
+
 };
 
 export default CorrespondenceCases;
