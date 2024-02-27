@@ -149,6 +149,7 @@ module Seeds
     def create_correspondence_with_completed_root_task
       corres = create_correspondence
       corres.root_task.update!(status: Constants.TASK_STATUSES.completed)
+      corres.root_task.update!(closed_at: rand(1.month.ago..1.day.ago))
     end
 
     def create_correspondence_with_action_required_tasks
