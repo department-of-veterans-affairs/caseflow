@@ -45,22 +45,32 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
   end
 
+
   def ready_for_distribution
     joins(:tasks)
-      .group("appeals.id")
-      .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) >= ?",
-              DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
+    .group("appeals.id")
+    .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) >= ?",
+    DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
   end
 
   def genpop
     joins(with_assigned_distribution_task_sql)
-      .with_original_appeal_and_judge_task
-      .where(
-        "appeals.stream_type != ? OR distribution_task.assigned_at <= ? OR original_judge_task.assigned_to_id in (?)",
-        Constants.AMA_STREAM_TYPES.court_remand,
-        CaseDistributionLever.cavc_affinity_days.days.ago,
-        JudgeTeam.judges_with_exclude_appeals_from_affinity
+    .with_original_appeal_and_judge_task
+    .where(
+      "appeals.stream_type != ? OR distribution_task.assigned_at <= ? OR original_judge_task.assigned_to_id in (?)",
+      Constants.AMA_STREAM_TYPES.court_remand,
+      CaseDistributionLever.cavc_affinity_days.days.ago,
+      JudgeTeam.judges_with_exclude_appeals_from_affinity
       )
+    end
+
+  def ama_aod_hearing_original_appeals
+    joins(:tasks)
+      .where("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.hearing)
+      .where("tasks.type = ?", "DistributionTask")
+      .where("tasks.status = ?", Constants.TASK_STATUSES.assigned)
+      .where("tasks.assigned_at > ?", CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
+      .where.not("appeals.id IN (?)", IneligibleJudge.pluck(:appeal_id))
   end
 
   def with_original_appeal_and_judge_task
