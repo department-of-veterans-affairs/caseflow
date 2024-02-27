@@ -32,7 +32,7 @@ class CorrespondenceAutoAssigner
   rescue StandardError => error
     error_uuid = SecureRandom.uuid
     Raven.capture_exception(error, extra: { error_uuid: error_uuid })
-    logger.error(msg: COPY::BAAA_ERROR_MESSAGE + " (Error code:#{error_uuid})", extras: { error_uuid: error_uuid })
+    logger.error(msg: COPY::BAAA_ERROR_MESSAGE + " (Error code:#{error_uuid})")
   end
 
   private
