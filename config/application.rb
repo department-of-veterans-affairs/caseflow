@@ -53,7 +53,7 @@ module CaseflowCertification
     # Make `form_with` generate non-remote forms.
     # Default as of 5.1: true
     # Default as of 6.1: false
-    Rails.application.config.action_view.form_with_generates_remote_forms = false
+    config.action_view.form_with_generates_remote_forms = false
 
     # ------------------------------------------------------------------------------------------------------------------
     # Rails 5.2 default overrides
@@ -67,20 +67,20 @@ module CaseflowCertification
     #
     # Existing cookies will be converted on read then written with the new scheme.
     # Default as of 5.2: true
-    Rails.application.config.action_dispatch.use_authenticated_cookie_encryption = false
+    config.action_dispatch.use_authenticated_cookie_encryption = false
     #
     # Use AES-256-GCM authenticated encryption as default cipher for encrypting messages
     # instead of AES-256-CBC, when use_authenticated_message_encryption is set to true.
     # Default as of 5.2: true
-    Rails.application.config.active_support.use_authenticated_message_encryption = false
+    config.active_support.use_authenticated_message_encryption = false
 
     # Add default protection from forgery to ActionController::Base instead of in ApplicationController.
     # Default as of 5.2: true
-    Rails.application.config.action_controller.default_protect_from_forgery = false
+    config.action_controller.default_protect_from_forgery = false
 
     # Store boolean values in sqlite3 databases as 1 and 0 instead of 't' and 'f' after migrating old data.
     # Default as of 5.2: true
-    Rails.application.config.active_record.sqlite3.represent_boolean_as_integer = false
+    config.active_record.sqlite3.represent_boolean_as_integer = false
 
     # ==================================================================================================================
 
