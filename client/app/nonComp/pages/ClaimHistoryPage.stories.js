@@ -1,21 +1,31 @@
 import React from 'react';
-import ReduxBase from 'app/components/ReduxBase';
-import { nonCompReducer, mapDataToInitialState } from '../reducers';
+import CombinedNonCompReducer from '../reducers';
+import { Provider } from 'react-redux';
+import { applyMiddleware, createStore, compose } from 'redux';
+import { MemoryRouter as Router } from 'react-router-dom';
+
+import thunk from 'redux-thunk';
 
 import ClaimHistoryPage from './ClaimHistoryPage';
 
-import {
-  completeTaskPageData
-} from '../../../test/data/queue/nonCompTaskPage/nonCompTaskPageData';
+import individualClaimHistoryData from 'test/data/nonComp/individualClaimHistoryData';
 
 const ReduxDecorator = (Story, options) => {
   const props = {
     ...options.args.data
   };
 
-  return <ReduxBase reducer={nonCompReducer} initialState={mapDataToInitialState(props)}>
-    <Story />
-  </ReduxBase>;
+  const store = createStore(
+    CombinedNonCompReducer,
+    props,
+    compose(applyMiddleware(thunk))
+  );
+
+  return <Provider store={store} >
+    <Router>
+      <Story />
+    </Router>
+  </Provider>;
 };
 
 export default {
@@ -45,7 +55,7 @@ ClaimHistoryPageTemplate.story = {
 
 ClaimHistoryPageTemplate.args = {
   data: {
-    ...completeTaskPageData
+    ...individualClaimHistoryData
   }
 };
 
