@@ -90,20 +90,29 @@ class CorrespondenceController < ApplicationController
     if current_user.mail_superuser? || current_user.mail_supervisor?
       @mail_team_users = User.mail_team_users.pluck(:css_id)
       @mail_team_user = User.find_by(css_id: params[:user]) if params[:user].present?
-      @task_ids = params[:taskIds] if params[:taskIds].present?
+      @task_ids = params[:taskIds]&.split(',') if params[:taskIds].present?
+
       respond_to do |format|
         format.html do
-          @display_banner = params[:user].present? && params[:taskIds].present?
+          if @mail_team_user && @task_ids.present?
+            set_banner_params(@mail_team_user, @task_ids.count)
+          end
           render "correspondence_team"
         end
         format.json do
-          render json: {
-            correspondence_config: CorrespondenceConfig.new(assignee: MailTeamSupervisor.singleton),
-            display_banner: @display_banner,
-            mail_team_user: @mail_team_user,
-            task_ids: @task_ids
-
-          }
+          if @mail_team_user && @task_ids.present?
+            set_banner_params(@mail_team_user, @task_ids&.count)
+            render json: {
+              correspondence_config: CorrespondenceConfig.new(assignee: MailTeamSupervisor.singleton),
+              response_type: @response_type,
+              response_header: @response_header,
+              response_message: @response_message
+            }
+          else
+            render json: {
+              correspondence_config: CorrespondenceConfig.new(assignee: MailTeamSupervisor.singleton)
+            }
+          end
         end
       end
     elsif current_user.mail_team_user?
@@ -112,6 +121,22 @@ class CorrespondenceController < ApplicationController
       redirect_to "/unauthorized"
     end
   end
+
+
+  def set_banner_params(user, task_count)
+    unless user.can_view_edit_nod_date?
+      @response_type = "error"
+      @response_header = "Correspondence assignment to #{user.css_id} has failed"
+      @response_message = "NOD permissions is currently disabled for this user"
+      return
+    end
+
+    # No errors, give the user the success banner
+    @response_type = "success"
+    @response_header = "You have successfully assigned #{task_count} Correspondence to #{user.css_id}."
+    @response_message = "Please go to your individual queue to see any self-assigned correspondence."
+  end
+
 
   def review_package
     render "correspondence/review_package"

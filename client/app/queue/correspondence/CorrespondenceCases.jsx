@@ -53,6 +53,14 @@ const CorrespondenceCases = (props) => {
 
   return (
     <>
+      {props.responseType && (
+        <Alert
+          type={props.responseType}
+          title={props.responseHeader}
+          message={props.responseMessage}
+          scrollOnAlert={false}
+        />
+      )}
       <AppSegment filledBackground>
         {(veteranInformation?.veteranName?.firstName && veteranInformation?.veteranName?.lastName) &&
           currentAction.action_type === 'DeleteReviewPackage' && (
@@ -60,14 +68,6 @@ const CorrespondenceCases = (props) => {
             type="success"
             title={sprintf(COPY.CORRESPONDENCE_TITLE_REMOVE_PACKAGE_BANNER, vetName)}
             message={COPY.CORRESPONDENCE_MESSAGE_REMOVE_PACKAGE_BANNER}
-            scrollOnAlert={false}
-          />
-        )}
-        {props.displayBanner && (
-          <Alert
-            type="success"
-            title={sprintf(`You have successfully assigned ${taskCount} Correspondence to ${props.mailTeamUser.css_id}.`)}
-            message={`Please go to your individual queue to see any self assigned correspondence.`}
             scrollOnAlert={false}
           />
         )}
@@ -98,9 +98,9 @@ CorrespondenceCases.propTypes = {
   veteranInformation: PropTypes.object,
   configUrl: PropTypes.string,
   mailTeamUsers: PropTypes.arrayOf(string),
-  displayBanner: PropTypes.bool,
-  mailTeamUser: PropTypes.string,
-  taskIds: PropTypes.arrayOf(string),
+  responseType: PropTypes.string,
+  responseHeader: PropTypes.string,
+  responseMessage: PropTypes.string
 
 };
 
