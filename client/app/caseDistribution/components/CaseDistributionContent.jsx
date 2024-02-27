@@ -1,4 +1,5 @@
 import React from 'react';
+import Alert from '../../components/Alert';
 import StaticLeversWrapper from './StaticLeversWrapper';
 import InteractableLeverWrapper from './InteractableLeversWrapper';
 import LeverHistory from './LeverHistory';
@@ -10,6 +11,10 @@ import COPY from '../../../COPY';
 
 const CaseDistributionContent = () => {
 
+  // let message = COPY.CASE_DISTRIBUTION_INFO_BANNER_DETAIL;
+  // let type = 'info';
+  // let icon = true;
+
   return (
     <div>
       <h1>{COPY.CASE_DISTRIBUTION_CONTENT_TITLE_H1_TITLE}</h1>
@@ -17,6 +22,12 @@ const CaseDistributionContent = () => {
       <div> {/* Main Content Wrapper*/}
         <h2>{COPY.CASE_DISTRIBUTION_TITLE}</h2>
         <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_ALGORITHM_DESCRIPTION}</p>
+
+        <div className="cf-sg-alert-slim">
+          <Alert type="info">
+            {COPY.CASE_DISTRIBUTION_INFO_BANNER_DETAIL}
+          </Alert>
+        </div>
 
         <div className="active-data-content" id="active-data-elements">  {/* Container for Active Levers*/}
           <h2 {...sectionHeadingStyling}>
