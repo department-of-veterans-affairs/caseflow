@@ -729,6 +729,13 @@ RSpec.feature("The Correspondence Cases page") do
       expect(find("tbody > tr:nth-child(1) > td:nth-child(2)").text == last_date)
     end
 
+    it "use tasks filter correctly" do
+      visit "/queue/correspondence/team?tab=correspondence_team_assigned"
+      find("[aria-label='Filter by task']").click
+      find("label", text: "Merge Package Task (5)").click
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+    end
+
     it "uses days waiting sort correctly" do
       visit "/queue/correspondence/team?tab=correspondence_team_assigned"
       # put page in the sorted A-Z state
