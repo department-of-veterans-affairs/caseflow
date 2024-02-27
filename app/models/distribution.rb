@@ -45,16 +45,19 @@ class Distribution < CaseflowRecord
 
       update!(status: "completed", completed_at: Time.zone.now, statistics: "See related row in distribution_stats")
 
-      record_stats
+      record_stats(ama_statistics)
     end
   rescue StandardError => error
     # DO NOT use update! because we want to avoid validations and saving any cached associations.
     # Prevent prod database from getting Stacktraces as this is debugging information
     if Rails.deploy_env?(:prod)
       update_columns(status: "error", errored_at: Time.zone.now)
+      record_stats({})
     else
       update_columns(status: "error", errored_at: Time.zone.now, statistics: error_statistics(error))
+      record_stats(error_statistics(error))
     end
+
     raise error
   end
 
@@ -136,9 +139,9 @@ class Distribution < CaseflowRecord
     }
   end
 
-  def record_stats
+  def record_stats(stats)
     create_distribution_stats!(
-      statistics: ama_statistics,
+      statistics: stats,
       levers: CaseDistributionLever.snapshot
     )
   end
