@@ -11,7 +11,7 @@ export const pageMetricData = [
     numPagesInDoc: 1,
     pageIndex: 1
   },
-  message: 'Storing PDF page',
+  message: 'Storing PDF page 2',
   product: 'reader',
   type: 'performance'
   },
