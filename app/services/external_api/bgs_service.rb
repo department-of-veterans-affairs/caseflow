@@ -3,7 +3,6 @@
 require "bgs"
 
 # Thin interface to all things BGS
-# rubocop:disable Metrics/ClassLength
 class ExternalApi::BGSService
   include PowerOfAttorneyMapper
   include AddressMapper
@@ -325,11 +324,6 @@ class ExternalApi::BGSService
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
     DBService.release_db_connections
 
-    DataDogService.increment_counter(
-      metric_group: "mst_pact_group",
-      metric_name: "bgs_service.fetch_ratings_in_range_called",
-      app_name: RequestStore[:application]
-    )
     start_date, end_date = formatted_start_and_end_dates(start_date, end_date)
 
     MetricsService.record("BGS: fetch ratings in range: \
@@ -348,12 +342,6 @@ class ExternalApi::BGSService
 
   def fetch_rating_profile(participant_id:, profile_date:)
     DBService.release_db_connections
-
-    DataDogService.increment_counter(
-      metric_group: "mst_pact_group",
-      metric_name: "bgs_service.fetch_rating_profile_called",
-      app_name: RequestStore[:application]
-    )
 
     MetricsService.record("BGS: fetch rating profile: \
                            participant_id = #{participant_id}, \
@@ -463,23 +451,6 @@ class ExternalApi::BGSService
     end
   end
 
-  def find_contentions_by_participant_id(participant_id)
-    return [] unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) ||
-                     FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
-
-    # find contention info in cache; if not there, call to BGS and cache it
-    Rails.cache.fetch("find_contentions_by_participant_id_#{participant_id}", expires_in: 24.hours) do
-      DBService.release_db_connections
-      MetricsService.record("BGS: find contentions for veteran by participant_id #{participant_id}",
-                            service: :bgs,
-                            name: "contention.find_contention_by_participant_id") do
-        client.contention.find_contention_by_participant_id(participant_id)
-      rescue BGS::ShareError
-        []
-      end
-    end
-  end
-
   def find_current_rating_profile_by_ptcpnt_id(participant_id)
     DBService.release_db_connections
     MetricsService.record("BGS: find current rating profile for veteran by participant_id #{participant_id}",
@@ -544,4 +515,3 @@ class ExternalApi::BGSService
   end
   # :nocov:
 end
-# rubocop:enable Metrics/ClassLength

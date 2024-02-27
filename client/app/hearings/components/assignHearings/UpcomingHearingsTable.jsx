@@ -10,11 +10,7 @@ import { LOGO_COLORS } from '../../../constants/AppConstants';
 import { AssignHearingsList } from './AssignHearingsList';
 import LoadingScreen from '../../../components/LoadingScreen';
 
-export const UpcomingHearingsTable = ({ selectedHearingDay,
-  selectedRegionalOffice,
-  mstIdentification,
-  pactIdentification,
-  legacyMstPactIdentification }) => {
+export const UpcomingHearingsTable = ({ selectedHearingDay, selectedRegionalOffice }) => {
   const [loading, setLoading] = useState(false);
   const [hearings, setHearings] = useState({});
 
@@ -51,9 +47,6 @@ export const UpcomingHearingsTable = ({ selectedHearingDay,
         hearings={Object.values(hearings)}
         hearingDay={selectedHearingDay}
         regionalOffice={selectedRegionalOffice}
-        mstIdentification={mstIdentification}
-        pactIdentification={pactIdentification}
-        legacyMstPactIdentification={legacyMstPactIdentification}
       />
     </div>
   );
@@ -67,9 +60,6 @@ UpcomingHearingsTable.propTypes = {
 
   // Selected Regional Office Key
   selectedRegionalOffice: PropTypes.string,
-  mstIdentification: PropTypes.bool,
-  pactIdentification: PropTypes.bool,
-  legacyMstPactIdentification: PropTypes.bool
 };
 
 export default UpcomingHearingsTable;

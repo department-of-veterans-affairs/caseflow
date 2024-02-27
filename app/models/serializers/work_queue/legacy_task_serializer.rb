@@ -64,14 +64,6 @@ class WorkQueue::LegacyTaskSerializer
     object.appeal.overtime?
   end
 
-  attribute :mst do |object|
-    object.appeal.mst?
-  end
-
-  attribute :pact do |object|
-    object.appeal.pact?
-  end
-
   attribute :veteran_appellant_deceased do |object|
     object.appeal.veteran_appellant_deceased?
   end

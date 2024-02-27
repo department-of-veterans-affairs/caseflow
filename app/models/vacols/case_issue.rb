@@ -27,9 +27,7 @@ class VACOLS::CaseIssue < VACOLS::Record
       level_2: isslev2,
       level_3: isslev3,
       vacols_id: isskey,
-      note: issdesc,
-      mst_status: issmst,
-      pact_status: isspact
+      note: issdesc
     }
   end
 
@@ -57,8 +55,6 @@ class VACOLS::CaseIssue < VACOLS::Record
         ISSUES.ISSLEV1,
         ISSUES.ISSLEV2,
         ISSUES.ISSLEV3,
-        ISSUES.ISSMST,
-        ISSUES.ISSPACT,
         ISSREF.PROG_DESC ISSPROG_LABEL,
         ISSREF.ISS_DESC ISSCODE_LABEL,
         case when ISSUES.ISSLEV1 is not null then

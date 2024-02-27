@@ -18,5 +18,4 @@ class Intake::RatingIssueSerializer
   attribute :rba_contentions_data
   attribute :reference_id
   attribute :subject_text
-  attribute :special_issues
 end

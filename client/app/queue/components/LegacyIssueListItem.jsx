@@ -25,21 +25,6 @@ const leftAlignTd = css({
   paddingRight: 0
 });
 
-const specialIssuesFormatting = (props) => {
-  const mstStatus = props.mst_status;
-  const pactStatus = props.pact_status;
-
-  if (!mstStatus && !pactStatus) {
-    return 'None';
-  } else if (mstStatus && pactStatus) {
-    return 'MST and PACT';
-  } else if (mstStatus) {
-    return 'MST';
-  } else if (pactStatus) {
-    return 'PACT';
-  }
-};
-
 export const dispositionLabelForDescription = (disposition) => {
   // Use the disposition description from constants in order to get the proper capitalization.
   return disposition ? `${disposition} - ${VACOLS_DISPOSITIONS_BY_ID[disposition]}` : null;
@@ -105,8 +90,7 @@ export default class LegacyIssueListItem extends React.PureComponent {
         note
       },
       issuesOnly,
-      showDisposition,
-      legacyMstPactFeatureToggle
+      showDisposition
     } = this.props;
     let issueContent = <span />;
 
@@ -123,9 +107,6 @@ export default class LegacyIssueListItem extends React.PureComponent {
         <div {...noteMarginTop}>
           <span {...boldText}>Note:</span> {note}
         </div>
-        {legacyMstPactFeatureToggle && <div {...noteMarginTop}>
-          <span {...boldText}>Special Issues: </span> {specialIssuesFormatting(issue)}
-        </div>}
       </React.Fragment>;
     }
 
@@ -145,8 +126,7 @@ LegacyIssueListItem.propTypes = {
   issue: PropTypes.object.isRequired,
   issuesOnly: PropTypes.bool,
   idx: PropTypes.number.isRequired,
-  showDisposition: PropTypes.bool,
-  legacyMstPactFeatureToggle: PropTypes.bool
+  showDisposition: PropTypes.bool
 };
 
 LegacyIssueListItem.defaultProps = {

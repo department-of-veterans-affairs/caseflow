@@ -34,10 +34,7 @@ export default class AssignHearingsTabs extends React.PureComponent {
       selectedHearingDay,
       selectedRegionalOffice,
       room,
-      defaultTabIndex,
-      mstIdentification,
-      pactIdentification,
-      legacyMstPactIdentification
+      defaultTabIndex
     } = this.props;
 
     const availableSlots = Math.max(
@@ -48,7 +45,7 @@ export default class AssignHearingsTabs extends React.PureComponent {
       <div className="usa-width-three-fourths assign-hearing-tabs">
         {!_.isNil(selectedHearingDay) &&
           <h1>
-            {`${moment(selectedHearingDay.scheduledFor).format('ddd M/DD/YYYY')}
+            {`${moment(selectedHearingDay.scheduledFor).format('ddd M/DD/YYYY')}  
               ${room ?? ''} (${availableSlots} slots remaining)`}
           </h1>
         }
@@ -62,9 +59,6 @@ export default class AssignHearingsTabs extends React.PureComponent {
               page: <UpcomingHearingsTable
                 selectedRegionalOffice={selectedRegionalOffice}
                 selectedHearingDay={selectedHearingDay}
-                mstIdentification={mstIdentification}
-                pactIdentification={pactIdentification}
-                legacyMstPactIdentification={legacyMstPactIdentification}
               />
             },
             {
@@ -75,9 +69,6 @@ export default class AssignHearingsTabs extends React.PureComponent {
                 tabName={QUEUE_CONFIG.LEGACY_ASSIGN_HEARINGS_TAB_NAME}
                 key={QUEUE_CONFIG.LEGACY_ASSIGN_HEARINGS_TAB_NAME}
                 clicked={this.state && this.state.clickedTab === 1}
-                mstIdentification={mstIdentification}
-                pactIdentification={pactIdentification}
-                legacyMstPactIdentification={legacyMstPactIdentification}
               />
             },
             {
@@ -88,9 +79,6 @@ export default class AssignHearingsTabs extends React.PureComponent {
                 tabName={QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME}
                 key={QUEUE_CONFIG.AMA_ASSIGN_HEARINGS_TAB_NAME}
                 clicked={this.state && this.state.clickedTab === 2}
-                mstIdentification={mstIdentification}
-                pactIdentification={pactIdentification}
-                legacyMstPactIdentification={legacyMstPactIdentification}
               />
             }
           ]}
@@ -116,10 +104,7 @@ AssignHearingsTabs.propTypes = {
   // Selected Regional Office Key
   selectedRegionalOffice: PropTypes.string,
 
-  room: PropTypes.string,
-  mstIdentification: PropTypes.bool,
-  pactIdentification: PropTypes.bool,
-  legacyMstPactIdentification: PropTypes.bool
+  room: PropTypes.string
 };
 
 AssignHearingsTabs.defaultProps = {

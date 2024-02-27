@@ -187,9 +187,7 @@ class DecisionIssue < CaseflowRecord
       nonrating_issue_category: nonrating_issue_category,
       benefit_type: benefit_type,
       decision_date: caseflow_decision_date,
-      veteran_participant_id: decision_review.veteran.participant_id,
-      mst_status: mst_status,
-      pact_status: pact_status
+      veteran_participant_id: decision_review.veteran.participant_id
     )
   end
 

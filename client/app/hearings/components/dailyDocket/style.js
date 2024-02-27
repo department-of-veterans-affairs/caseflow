@@ -35,8 +35,3 @@ export const inputSpacing = css({
     marginTop: '25px'
   }
 });
-
-export const badgeStyle = css({
-  display: 'flex',
-  justifyContent: 'left'
-});

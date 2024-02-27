@@ -33,8 +33,7 @@ class SeedDB
     Rails.logger.debug(msg)
   end
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-  def seed
+  def seed # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     RequestStore[:current_user] = User.system_user
     call_and_log_seed_step :clean_db
 
@@ -71,8 +70,6 @@ class SeedDB
     call_and_log_seed_step Seeds::VbmsExtClaim
     call_and_log_seed_step Seeds::CasesTiedToJudgesNoLongerWithBoard
     call_and_log_seed_step Seeds::VhaChangeHistory
-    call_and_log_seed_step Seeds::BgsServiceRecordMaker
-    call_and_log_seed_step Seeds::MstPactLegacyCaseAppeals
     # Always run this as last one
     call_and_log_seed_step Seeds::StaticTestCaseData
     call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
@@ -83,7 +80,6 @@ class SeedDB
     Judge.list_all
     Attorney.list_all
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 end
 
 SeedDB.new.seed

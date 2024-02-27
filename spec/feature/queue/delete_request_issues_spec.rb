@@ -43,15 +43,13 @@ feature "correcting issues", :postgres do
   end
 
   context "deleting a request issue that has a decision issue shared with another request issue" do
-    before do
-      FeatureToggle.enable!(:mst_identification)
-      FeatureToggle.enable!(:pact_identification)
-    end
     it "deletes the request issue but not the shared decision issue" do
       appeal = appeal_with_shared_decision_issues
       create_judge_decision_review_task_for(appeal)
       visit_appeals_page_as_judge(appeal)
       click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
+      find("label", text: "No Special Issues").click
+      click_on "Continue"
       expect(page).to have_content "Added to 2 issues"
       expect(page).to have_content "decision with id 1"
       expect(page).to have_content "decision with id 2"
@@ -69,7 +67,10 @@ feature "correcting issues", :postgres do
       expect(page).to_not have_content "Added to 2 issues"
       expect(page).to_not have_content "decision with id 2"
       click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
-
+      if !find("#no_special_issues", visible: false).checked?
+        find("label", text: "No Special Issues").click
+      end
+      click_on "Continue"
       expect(page).to have_content "decision with id 1"
       expect(page).to have_content "another shared decision issue"
     end

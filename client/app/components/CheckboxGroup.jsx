@@ -83,8 +83,7 @@ CheckboxGroup.propTypes = {
       label: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.node
-      ]),
-      requiresJustification: PropTypes.bool
+      ])
     })
   ).isRequired,
   onChange: PropTypes.func.isRequired,
@@ -96,5 +95,5 @@ CheckboxGroup.propTypes = {
   getCheckbox: PropTypes.func,
   styling: PropTypes.object,
   strongLabel: PropTypes.bool,
-  disableAll: PropTypes.bool,
+  disableAll: PropTypes.bool
 };
