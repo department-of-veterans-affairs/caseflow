@@ -10,6 +10,7 @@ describe AddHearingIdAndHearingTypeToConferenceLinks do
   let(:migration_paths) { Rails.root.join("db/migrate") }
   let(:test_version) { 20240226140103 }
   let(:previous_version) { 20240130191529 }
+  let(:conference_link) { create(:webex_conference_link) }
 
   describe "up" do
     before :each do
@@ -38,6 +39,8 @@ describe AddHearingIdAndHearingTypeToConferenceLinks do
 
     it "updates hearing_day_id column to be nullable" do
       expect { subject }.to change { column("hearing_day_id").null }.from(false).to(true)
+      expect(conference_link.hearing_day).to be_nil
+      expect(conference_link.valid?).to be true
     end
   end
 
@@ -66,6 +69,12 @@ describe AddHearingIdAndHearingTypeToConferenceLinks do
 
     it "reverts hearing_day_id column to be non-nullable" do
       expect { subject }.to change { column("hearing_day_id").null }.from(true).to(false)
+      expect { conference_link }.to raise_error do |error|
+        expect(error.class).to be(ActiveRecord::NotNullViolation)
+        expect(error.message).to include(
+          "null value in column \"hearing_day_id\" of relation \"conference_links\" violates not-null constraint"
+        )
+      end
     end
   end
 end
