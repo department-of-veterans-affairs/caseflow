@@ -168,10 +168,9 @@ class PushPriorityAppealsToJudgesJob < CaseflowJob
   # Produces a hash of judge_id and the number of cases distributed to them in the last month
   def priority_distributions_this_month_for_all_judges
     @priority_distributions_this_month_for_all_judges ||= priority_distributions_this_month
-      .joins(:distribution_stats)
-      .pluck(:judge_id, "distribution_stats.statistics")
+      .pluck(:judge_id, :statistics)
       .group_by(&:first)
-      .transform_values { |arr| arr.flat_map(&:last).compact.map { |stats| stats["batch_size"] }.sum }
+      .transform_values { |arr| arr.flat_map(&:last).map { |stats| stats["batch_size"] }.sum }
   end
 
   def priority_distributions_this_month

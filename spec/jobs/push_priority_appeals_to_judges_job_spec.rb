@@ -198,7 +198,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
       it "should only distribute the ready priority cases tied to a judge" do
         expect(subject.count).to eq eligible_judges.count
-        expect(subject.map { |dist| dist.distribution_stats.statistics["batch_size"] }).to match_array [2, 2, 0, 0]
+        expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [2, 2, 0, 0]
 
         # Ensure we only distributed the 2 ready legacy and hearing priority cases that are tied to a judge
         distributed_cases = DistributedCase.where(distribution: subject)
@@ -224,7 +224,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
 
       it "should only distribute the ready priority cases tied to a judge" do
         expect(subject.count).to eq eligible_judges.count
-        expect(subject.map { |dist| dist.distribution_stats.statistics["batch_size"] }).to match_array [3, 1, 0, 0]
+        expect(subject.map { |dist| dist.statistics["batch_size"] }).to match_array [3, 1, 0, 0]
 
         # Ensure we only distributed the 2 ready legacy and hearing priority cases that are tied to a judge
         distributed_cases = DistributedCase.where(distribution: subject)
@@ -337,7 +337,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         judges.each_with_index do |judge, i|
           target_distributions = priority_target - judge_distributions_this_month[i]
           distribution = subject.detect { |dist| dist.judge_id == judge.id }
-          expect(distribution.distribution_stats.statistics["batch_size"]).to eq target_distributions
+          expect(distribution.statistics["batch_size"]).to eq target_distributions
           distributed_cases = DistributedCase.where(distribution: distribution)
           expect(distributed_cases.count).to eq target_distributions
         end
@@ -375,7 +375,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
         judges.each_with_index do |judge, i|
           target_distributions = priority_target - judge_distributions_this_month[i]
           distribution = subject.detect { |dist| dist.judge_id == judge.id }
-          expect(distribution.distribution_stats.statistics["batch_size"]).to eq target_distributions
+          expect(distribution.statistics["batch_size"]).to eq target_distributions
           distributed_cases = DistributedCase.where(distribution: distribution)
           expect(distributed_cases.count).to eq target_distributions
         end
@@ -459,11 +459,7 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
           :distribution,
           :completed,
           judge: judge,
-        )
-        create(
-          :distribution_stats,
-          statistics: { batch_size: count },
-          distribution: distribution
+          statistics: { batch_size: count }
         )
         count.times do
           DistributedCase.create!(
@@ -1026,87 +1022,63 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
     let(:batch_size) { 20 }
     let!(:judge_with_no_priority_distributions) do
       create(:user, :judge, :with_vacols_judge_record) do |judge|
-        distribution = create(
+        create(
           :distribution,
           judge: judge,
           priority_push: false,
           completed_at: 1.day.ago,
+          statistics: { "batch_size": batch_size }
         ).tap { |distribution| distribution.update!(status: :completed) }
-        create(
-          :distribution_stats,
-          statistics: { "batch_size": batch_size },
-          distribution: distribution
-        )
       end
     end
     let!(:judge_with_no_recent_distributions) do
       create(:user, :judge, :with_vacols_judge_record) do |judge|
-        distribution = create(
+        create(
           :distribution,
           judge: judge,
           priority_push: true,
           completed_at: 41.days.ago,
+          statistics: { "batch_size": batch_size }
         ).tap { |distribution| distribution.update!(status: :completed) }
-        create(
-          :distribution_stats,
-          statistics: { "batch_size": batch_size },
-          distribution: distribution
-        )
       end
     end
     let!(:judge_with_no_completed_distributions) do
       create(:user, :judge, :with_vacols_judge_record) do |judge|
-        distribution = create(
+        create(
           :distribution,
           judge: judge,
           priority_push: true,
-        )
-        create(
-          :distribution_stats,
-          statistics: { "batch_size": batch_size },
-          distribution: distribution
+          statistics: { "batch_size": batch_size }
         )
       end
     end
     let!(:judge_with_a_valid_distribution) do
       create(:user, :judge, :with_vacols_judge_record) do |judge|
-        distribution = create(
+        create(
           :distribution,
           judge: judge,
           priority_push: true,
           completed_at: 1.day.ago,
+          statistics: { "batch_size": batch_size }
         ).tap { |distribution| distribution.update!(status: :completed) }
-        create(
-          :distribution_stats,
-          statistics: { "batch_size": batch_size },
-          distribution: distribution
-        )
       end
     end
     let!(:judge_with_multiple_valid_distributions) do
       create(:user, :judge, :with_vacols_judge_record) do |judge|
-        distribution = create(
+        create(
           :distribution,
           judge: judge,
           priority_push: true,
           completed_at: 1.day.ago,
+          statistics: { "batch_size": batch_size }
         ).tap { |distribution| distribution.update!(status: :completed) }
         create(
-          :distribution_stats,
-          statistics: { "batch_size": batch_size },
-          distribution: distribution
-        )
-        distribution = create(
           :distribution,
           judge: judge,
           priority_push: true,
           completed_at: 1.day.ago,
+          statistics: { "batch_size": batch_size }
         ).tap { |distribution| distribution.update!(status: :completed) }
-        create(
-          :distribution_stats,
-          statistics: { "batch_size": batch_size },
-          distribution: distribution
-        )
       end
     end
 
@@ -1122,65 +1094,36 @@ describe PushPriorityAppealsToJudgesJob, :all_dbs do
   end
 
   context ".priority_distributions_this_month" do
-    let(:batch_size) { 20 }
     let!(:non_priority_distribution) do
-      distribution = create(
+      create(
         :distribution,
         judge: create(:user, :with_vacols_judge_record),
         priority_push: false,
         completed_at: 1.day.ago
       ).tap { |distribution| distribution.update!(status: :completed) }
-      create(
-        :distribution_stats,
-        statistics: { "batch_size": batch_size },
-        distribution: distribution
-      )
-
-      distribution
     end
     let!(:pending_priority_distribution) do
-      distribution = create(
+      create(
         :distribution,
         judge: create(:user, :with_vacols_judge_record),
         priority_push: true
       )
-      create(
-        :distribution_stats,
-        statistics: { "batch_size": batch_size },
-        distribution: distribution
-      )
-
-      distribution
     end
     let!(:older_priority_distribution) do
-      distribution = create(
+      create(
         :distribution,
         judge: create(:user, :with_vacols_judge_record),
         priority_push: true,
         completed_at: 41.days.ago
       ).tap { |distribution| distribution.update!(status: :completed) }
-      create(
-        :distribution_stats,
-        statistics: { "batch_size": batch_size },
-        distribution: distribution
-      )
-
-      distribution
     end
     let!(:recent_completed_priority_distribution) do
-      distribution = create(
+      create(
         :distribution,
         judge: create(:user, :with_vacols_judge_record),
         priority_push: true,
         completed_at: 1.day.ago
       ).tap { |distribution| distribution.update!(status: :completed) }
-      create(
-        :distribution_stats,
-        statistics: { "batch_size": batch_size },
-        distribution: distribution
-      )
-
-      distribution
     end
 
     subject { PushPriorityAppealsToJudgesJob.new.priority_distributions_this_month }
