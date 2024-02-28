@@ -63,45 +63,26 @@ class CorrespondenceController < ApplicationController
     end
   end
 
-  def assign_tasks
-    # mail_team_user = User.find_by(css_id: params[:mailTeamUser])
-
-    # unless mail_team_user.present? && params[:taskIds].present?
-    #   render json: { error: "Invalid parameters" }, status: :unprocessable_entity
-    #   return
-    # end
-
-    # tasks = Task.where(id: params[:taskIds])
-
-    # if tasks.empty?
-    #   render json: { status: 'error', message: 'No tasks found' }, status: :unprocessable_entity
-    # else
-      # tasks.update_all(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "assigned")
-
-      # render json: {
-      #   status: 'success',
-      #   css_id: mail_team_user.css_id,
-      #   message: "You have successfully assigned #{tasks.count} Correspondence to #{mail_team_user.css_id}"
-      # }
-    # end
-  end
-
   def correspondence_team
     if current_user.mail_superuser? || current_user.mail_supervisor?
       @mail_team_users = User.mail_team_users.pluck(:css_id)
-      @mail_team_user = User.find_by(css_id: params[:user]) if params[:user].present?
-      @task_ids = params[:taskIds]&.split(',') if params[:taskIds].present?
+      mail_team_user = User.find_by(css_id: params[:user]) if params[:user].present?
+      task_ids = params[:taskIds]&.split(",") if params[:taskIds].present?
 
       respond_to do |format|
         format.html do
-          if @mail_team_user && @task_ids.present?
-            set_banner_params(@mail_team_user, @task_ids.count)
+          if mail_team_user && task_ids.present?
+            set_banner_params(mail_team_user, task_ids.count)
+            unless @response_type != "success"
+              tasks = Task.where(id: task_ids)
+              tasks.update_all(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "assigned")
+            end
           end
           render "correspondence_team"
         end
         format.json do
-          if @mail_team_user && @task_ids.present?
-            set_banner_params(@mail_team_user, @task_ids&.count)
+          if mail_team_user && task_ids.present?
+            set_banner_params(mail_team_user, task_ids&.count)
           else
             render json: {
               correspondence_config: CorrespondenceConfig.new(assignee: MailTeamSupervisor.singleton)
@@ -116,7 +97,6 @@ class CorrespondenceController < ApplicationController
     end
   end
 
-
   def set_banner_params(user, task_count)
     unless user.can_view_edit_nod_date?
       @response_type = "error"
@@ -130,7 +110,6 @@ class CorrespondenceController < ApplicationController
     @response_header = "You have successfully assigned #{task_count} Correspondence to #{user.css_id}."
     @response_message = "Please go to your individual queue to see any self-assigned correspondence."
   end
-
 
   def review_package
     render "correspondence/review_package"
