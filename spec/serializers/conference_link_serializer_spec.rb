@@ -11,6 +11,7 @@ describe ConferenceLinkSerializer, :all_dbs do
   end
 
   let(:hearing_day) { create(:hearing_day) }
+  let(:hearing) { create(:hearing) }
 
   shared_examples "Serialized conferenced link attributes meet expectations" do
     it "calling serializable_hash gets result" do
@@ -40,7 +41,7 @@ describe ConferenceLinkSerializer, :all_dbs do
     end
 
     context "With a Webex conference link" do
-      let(:conference_link) { create(:webex_conference_link, hearing_day: hearing_day) }
+      let(:conference_link) { create(:webex_conference_link, hearing: hearing) }
 
       include_examples "Serialized conferenced link attributes meet expectations"
     end

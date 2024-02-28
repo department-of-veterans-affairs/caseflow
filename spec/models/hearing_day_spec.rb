@@ -582,52 +582,6 @@ describe HearingDay, :all_dbs do
         expect(subject).to eq []
       end
     end
-
-    context "Only the Webex service is disabled" do
-      before { FeatureToggle.enable!(:webex_conference_service) }
-
-      it "Only the Webex conference link is generated whenever requested" do
-        expect(subject).to eq []
-      end
-    end
-  end
-
-  context "#subject_for_conference" do
-    include_context "Enable both conference services"
-
-    let(:assigned_date) { "Sep 21, 2023" }
-    let(:id) { 2_000_006_656 }
-    let(:expected_date_parsed) { Date.parse(assigned_date) }
-    let(:hearing_day) do
-      build(
-        :hearing_day,
-        scheduled_for: expected_date_parsed,
-        id: id
-      )
-    end
-
-    subject { hearing_day.subject_for_conference }
-
-    it "returns the expected meeting conference details" do
-      expected_date = "09 21, 2023"
-      is_expected.to eq("#{hearing_day.id}_#{expected_date}")
-    end
-
-    context "nbf and exp" do
-      subject { hearing_day.nbf }
-
-      it "returns correct nbf" do
-        expect subject == 1_695_254_400
-      end
-
-      before do
-        subject { hearing_day.exp }
-      end
-
-      it "returns correct exp" do
-        expect subject == 1_695_340_799
-      end
-    end
   end
 
   context "hearing day in the future, conference link doesnt exist" do
@@ -650,9 +604,9 @@ describe HearingDay, :all_dbs do
         FeatureToggle.enable!(:webex_conference_service)
       end
 
-      it "Both conference links are created whenever requested" do
+      it "Only pexip conference links are created for the entire hearing day requested" do
         expect(subject.pluck(:type)).to match_array(
-          [PexipConferenceLink.name, WebexConferenceLink.name]
+          [PexipConferenceLink.name]
         )
       end
     end
@@ -668,14 +622,6 @@ describe HearingDay, :all_dbs do
 
       it "Only the Pexip conference link is generated whenever requested" do
         expect(subject.pluck(:type)).to match_array [PexipConferenceLink.name]
-      end
-    end
-
-    context "Only the Webex service is disabled" do
-      before { FeatureToggle.enable!(:webex_conference_service) }
-
-      it "Only the Webex conference link is generated whenever requested" do
-        expect(subject.pluck(:type)).to match_array [WebexConferenceLink.name]
       end
     end
   end

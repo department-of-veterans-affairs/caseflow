@@ -13,6 +13,7 @@ class ConferenceLink < CaseflowRecord
   after_create :generate_conference_information
 
   belongs_to :hearing_day
+  belongs_to :hearing
   belongs_to :created_by, class_name: "User"
 
   alias_attribute :alias_name, :alias
