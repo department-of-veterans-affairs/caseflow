@@ -10,8 +10,13 @@ class Hearings::CreateNonVirtualConferenceJob < CaseflowJob
   attr_reader :hearing
 
   class IncompleteError < StandardError; end
-  class HearingRequestCancelled < StandardError; end
+  class HearingRequestCancelledError < StandardError; end
   class HearingNotCreatedError < StandardError; end
+  class LinksAlreadyExistError < StandardError; end
+  class HearingIsVirtualError < StandardError; end
+  class HearingIsPexipError < StandardError; end
+  class HearingAlreadyHeldError < StandardError; end
+  class HearingPostponedError < StandardError; end
   class LinkGenerationFailed < StandardError; end
 
   discard_on(LinkGenerationFailed) do |job, _exception|
@@ -20,7 +25,7 @@ class Hearings::CreateNonVirtualConferenceJob < CaseflowJob
     )
   end
 
-  discard_on(HearingRequestCancelled) do |job, _exception|
+  discard_on(HearingRequestCancelledError) do |job, _exception|
     Rails.logger.warn(
       "Discarding #{job.class.name} (#{job.job_id}) because virtual hearing request was cancelled"
     )
@@ -48,36 +53,26 @@ class Hearings::CreateNonVirtualConferenceJob < CaseflowJob
   end
 
   def perform(hearing:)
-    # job also determines if the hearing creates conference based on that (tests guest/host link present)
-    # hearing.guest_link.nil? <== only able to do after Jeff's migrations are in
-    # test type of hearing (non-virtual = travel video central) hearing.guest_link.nil?
-    # hearing.readable_request_type (works for legacy hearings too)
-    # if hearing.determine_service_name == "webex"
     ensure_current_user_is_set
-    response = create_conference(hearing)
-    hearing.update(
-      host_hearing_link: response.host_link,
-      co_host_hearing_link: response.co_host_link,
-      guest_hearing_link: response.guest_link
+    ensure_hearing(hearing)
+
+    WebexConferenceLink.find_or_create_by!(
+      hearing_id: hearing.id,
+      hearing_type: hearing.readable_request_type,
+      hearing: hearing,
+      created_by: hearing.created_by
     )
   end
 
   private
 
-  def create_conference(hearing)
-    WebexService.new(
-      host: ENV["WEBEX_HOST_IC"],
-      port: ENV["WEBEX_PORT"],
-      aud: ENV["WEBEX_ORGANIZATION"],
-      apikey: ENV["WEBEX_BOTTOKEN"],
-      domain: ENV["WEBEX_DOMAIN_IC"],
-      api_endpoint: ENV["WEBEX_API_IC"],
-      query: nil
-    ).create_conference(hearing)
-  end
-
   def ensure_hearing(hearing)
     fail HearingNotCreatedError if hearing.nil?
-    fail HearingRequestCancelled if hearing.cancelled?
+    fail HearingRequestCancelledError if hearing.cancelled?
+    fail HearingPostponedError if hearing.disposition == "postponed"
+    fail LinksAlreadyExistError if !ConferenceLink.find_by(hearing_id: hearing.id).nil?
+    fail HearingIsVirtualError if hearing.readable_request_type == "Virtual"
+    fail HearingIsPexipError if hearing.determine_service_name == "webex"
+    fail HearingAlreadyHeldError if hearing.dispostition == "held"
   end
 end

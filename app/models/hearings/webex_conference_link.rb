@@ -21,12 +21,14 @@ class WebexConferenceLink < ConferenceLink
       apikey: ENV["WEBEX_BOTTOKEN"],
       domain: ENV["WEBEX_DOMAIN_IC"],
       api_endpoint: ENV["WEBEX_API_IC"]
-    ).create_conference(hearing_day)
+    ).create_conference(hearing)
 
     update!(
       host_link: conference_response.host_link,
       co_host_link: conference_response.co_host_link,
-      guest_hearing_link: conference_response.guest_link
+      guest_hearing_link: conference_response.guest_link,
+      # hearing_id: hearing.id,
+      # hearing_type: hearing.readable_request_type
     )
   end
 end

@@ -311,13 +311,13 @@ class HearingDay < CaseflowRecord
           created_by: created_by
         )
       end
-
-      if FeatureToggle.enabled?(:webex_conference_service)
-        links << WebexConferenceLink.find_or_create_by!(
-          hearing_day: self,
-          created_by: created_by
-        )
-      end
+      # Remove for new functionality
+      # if FeatureToggle.enabled?(:webex_conference_service)
+      #   links << WebexConferenceLink.find_or_create_by!(
+      #     hearing_day: self,
+      #     created_by: created_by
+      #   )
+      # end
     end
   end
 
