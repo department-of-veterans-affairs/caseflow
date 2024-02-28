@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class CorrespondenceTask < Task
+  belongs_to :correspondence, foreign_type: "Correspondence", foreign_key: "appeal_id"
   self.abstract_class = true
 
   before_create :verify_org_task_unique
@@ -43,7 +44,7 @@ class CorrespondenceTask < Task
   def remove_package
     root_task = CorrespondenceRootTask.find_by!(
       appeal_id: @correspondence.id,
-      assigned_to: MailTeamSupervisor.singleton,
+      assigned_to: InboundOpsTeam.singleton,
       appeal_type: "Correspondence",
       type: "CorrespondenceRootTask"
     )
