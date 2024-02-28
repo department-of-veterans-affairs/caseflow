@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe Events::DecisionReviewCreate::UpdateVacolsOnOptin do
-  context "Events::DecisionReviewCreate::UpdateVacolsOnOptin.process" do
+describe Events::DecisionReviewCreated::UpdateVacolsOnOptin do
+  context "Events::DecisionReviewCreated::UpdateVacolsOnOptin.process" do
     # Setup a mock decision_review object with necessary properties
     let!(:legacy_decision_review) { double("DecisionReview", legacy_opt_in_approved: true) }
     describe "when legacy_opt_in_approved is true" do

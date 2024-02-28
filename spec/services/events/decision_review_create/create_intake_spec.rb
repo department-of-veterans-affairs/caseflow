@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe Events::DecisionReviewCreate::CreateIntake do
-  context "Events::DecisionReviewCreate::CreateIntake.process!" do
+describe Events::DecisionReviewCreated::CreateIntake do
+  context "Events::DecisionReviewCreated::CreateIntake.process!" do
     let(:event_double) { double("Event") }
     let(:user_double) { double("User") }
     let(:veteran_double) { double("Veteran", file_number: "DCR02272024") }
