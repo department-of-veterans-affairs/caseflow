@@ -127,10 +127,14 @@ class ClaimHistoryService
       "before" => [nil, @filters[:timing][:start_date]],
       "after" => [@filters[:timing][:start_date], nil],
       "between" => [@filters[:timing][:start_date], @filters[:timing][:end_date]],
-      "last_7_days" => [Time.zone.today - 6, Time.zone.today],
-      "last_30_days" => [Time.zone.today - 29, Time.zone.today],
-      "last_365_days" => [Time.zone.today - 364, Time.zone.today]
+      "last_7_days" => [Time.zone.today - 6, today_with_1_day_buffer],
+      "last_30_days" => [Time.zone.today - 29, today_with_1_day_buffer],
+      "last_365_days" => [Time.zone.today - 364, today_with_1_day_buffer]
     }[@filters[:timing][:range]]
+  end
+
+  def today_with_1_day_buffer
+    Time.zone.today + 1.day
   end
 
   # Date helpers for filtering
