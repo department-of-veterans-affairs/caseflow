@@ -103,7 +103,7 @@ class ExplainController < ApplicationController
   def legacy_tasks_as_text
     return nil unless legacy_appeal?
 
-    tasks = LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id)
+    tasks = LegacyWorkQueue.tasks_by_appeal_id(appeal.vacols_id, current_user)
     tasks.map do |task|
       "#{task.class.name}, "\
       "\n  assigned_by: #{task.assigned_by&.inspect} #{task.assigned_by&.sdomainid}, "\

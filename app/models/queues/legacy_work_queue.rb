@@ -8,9 +8,9 @@ class LegacyWorkQueue
       tasks_from_vacols_tasks(vacols_tasks, user)
     end
 
-    def tasks_by_appeal_id(appeal_id)
+    def tasks_by_appeal_id(appeal_id, user)
       vacols_tasks = repository.tasks_for_appeal(appeal_id)
-      tasks_from_vacols_tasks(vacols_tasks)
+      tasks_from_vacols_tasks(vacols_tasks, user)
     end
 
     def repository
@@ -35,12 +35,17 @@ class LegacyWorkQueue
           task_class = JudgeLegacyTask
         end
 
+        if user&.can_act_on_behalf_of_judges?
+          task_class = AssignLegacyTask
+        end
+
         task_class.from_vacols(task, appeal, user)
       end
     end
 
     def validate_or_create_user(user, css_id)
-      if css_id && (css_id == user&.css_id) && (user&.station_id == User::BOARD_STATION_ID)
+      if (css_id && (css_id == user&.css_id) && (user&.station_id == User::BOARD_STATION_ID)) ||
+         user&.can_act_on_behalf_of_judges?
         user
       elsif css_id
         User.find_by_css_id_or_create_with_default_station_id(css_id)

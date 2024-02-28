@@ -12,7 +12,8 @@ class JudgeLegacyDecisionReviewTask < JudgeLegacyTask
 
     [
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-      review_action
+      review_action,
+      Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.to_h
     ]
   end
 
