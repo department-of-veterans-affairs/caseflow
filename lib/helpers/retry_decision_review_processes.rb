@@ -6,7 +6,8 @@ class RetryDecisionReviewProcesses
   end
 
   def retry
-    logs = ["RetryDecisionReviewProcesses Log"]
+    success_logs = ["RetryDecisionReviewProcesses Success Log"]
+    new_error_logs = ["RetryDecisionReviewProcesses New Error Log"]
     puts "Total error count: #{all_records.count}" if @manual
     all_records.each do |instance|
       error_field = instance.is_a?(RequestIssuesUpdate) ? :error : :establishment_error
@@ -14,15 +15,22 @@ class RetryDecisionReviewProcesses
       DecisionReviewProcessJob.perform_now(instance)
       instance.reload
       # if the error field is now empty, we succeeded. we should log it
-      if instance[error_field].nil? # rubocop:disable Style/Next
+      if instance[error_field].nil?
         log = format_log(instance, error)
-        puts "\n\n\n" + log + "\n\n\n" if @manual
-        logs << log
+        puts "\n\n\nSuccess\n" + log + "\n\n\n" if @manual
+        success_logs << log
+      # if the error field has changed, let's log that too
+      elsif instance[error_field] != error
+        log = format_log(instance, instance[error_field])
+        puts "\n\n\nNew Error\n" + log + "\n\n\n" if @manual
+        new_error_logs << log
       end
     end
 
-    logs << "No successful remediations" if logs.length == 1
-    upload_logs(logs)
+    success_logs << "No successful remediations" if success_logs.length == 1
+    new_error_logs << "No new errors" if new_error_logs.length == 1
+    upload_logs(success_logs, "success")
+    upload_logs(new_error_logs, "new_errors")
   end
 
   def all_records
@@ -35,7 +43,7 @@ class RetryDecisionReviewProcesses
     error_title = known_error(error)
     error_title = error.split[0] if error_title.nil?
 
-    "Remediated #{instance.class.name}: #{instance.id} #{error_title}"
+    "#{instance.class.name}: #{instance.id} #{error_title}"
   end
 
   def known_error(error)
@@ -61,8 +69,8 @@ class RetryDecisionReviewProcesses
     RequestIssuesUpdate.where.not(error: nil).where(canceled_at: nil)
   end
 
-  def file_name
-    "retry_decision_review_process_job-logs/retry_decision_review_process_job-log-#{Time.zone.now}"
+  def file_name(type)
+    "retry_decision_review_process_job-logs/retry_decision_review_process_job_#{type}-log-#{Time.zone.now}"
   end
 
   def folder_name
@@ -70,8 +78,8 @@ class RetryDecisionReviewProcesses
     (Rails.deploy_env == :prod) ? folder : "#{folder}-#{Rails.deploy_env}"
   end
 
-  def upload_logs(logs)
-    S3Service.store_file("#{folder_name}/#{file_name}", logs.join("\n"))
+  def upload_logs(logs, type)
+    S3Service.store_file("#{folder_name}/#{file_name(type)}", logs.join("\n"))
   end
 
   KNOWN_ERRORS =
