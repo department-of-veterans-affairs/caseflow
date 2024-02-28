@@ -248,6 +248,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
 
     const otherDropdownWidth = hidePrimaryAssignDropdown ? '40rem' : '30rem';
     const isButtonDisabled = hidePrimaryAssignDropdown && (selectedTasks.length === 0 || !selectedOptionOther);
+    const isModalButtonDisabled = hidePrimaryAssignDropdown && (instructions.length <= 0);
 
     const Widget = <React.Fragment>
       {!hidePrimaryAssignDropdown && <SearchableDropdown
@@ -302,8 +303,14 @@ export class AssignToAttorneyWidget extends React.PureComponent {
       { hidePrimaryAssignDropdown && <div styling={css({ marginBottom: '40px' })} />}
     </React.Fragment>;
 
-    return isModal ? <QueueFlowModal title={COPY.ASSIGN_TASK_TITLE}
-      submit={this.submit} validateForm={this.validateForm} onCancel={onCancel}>
+    return isModal ? <QueueFlowModal
+      title={COPY.ASSIGN_TASK_TITLE}
+      submit={this.submit}
+      validateForm={this.validateForm}
+      onCancel={onCancel}
+      submitDisabled={isModalButtonDisabled}
+      button={COPY.ASSIGN_TASK_BUTTON}
+    >
       {Widget}
     </QueueFlowModal> : Widget;
   }
