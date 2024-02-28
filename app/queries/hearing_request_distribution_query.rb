@@ -55,7 +55,7 @@ class HearingRequestDistributionQuery
     end
 
     no_hearings_or_no_held_hearings = with_no_hearings.or(with_no_held_hearings)
-  
+
     # returning early as most_recent_held_hearings_not_tied_to_any_judge is redundant
     if @use_by_docket_date &&
        !(FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ||
@@ -77,29 +77,7 @@ class HearingRequestDistributionQuery
       most_recent_held_hearings_tied_to_judges_with_exclude_appeals_from_affinity
     ].flatten.uniq
   end
-
-   no_hearings_or_no_held_hearings = with_no_hearings.or(with_no_held_hearings)
-
-    # returning early as most_recent_held_hearings_not_tied_to_any_judge is redundant
-    if @use_by_docket_date &&
-       !(FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ||
-        FeatureToggle.enabled?(:acd_exclude_from_affinity))
-      return [
-        with_held_hearings,
-        no_hearings_or_no_held_hearings
-      ].flatten.uniq
-    end
-
-    # We are combining two queries using an array because using `or` doesn't work
-    # due to incompatibilities between the two queries.
-    [
-      most_recent_held_hearings_not_tied_to_any_judge,
-      most_recent_held_hearings_exceeding_affinity_threshold,
-      most_recent_held_hearings_ama_aod_hearing_original_appeals,
-      most_recent_held_hearings_tied_to_ineligible_judge,
-      no_hearings_or_no_held_hearings,
-      most_recent_held_hearings_tied_to_judges_with_exclude_appeals_from_affinity
-    ].flatten.uniq
+  
   # ama_aod_hearing_original_appeals
   def most_recent_held_hearings_exceeding_affinity_threshold
     base_relation.most_recent_hearings.exceeding_affinity_threshold
