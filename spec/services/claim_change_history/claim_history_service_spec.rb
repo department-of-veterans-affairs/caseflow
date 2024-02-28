@@ -197,8 +197,10 @@ describe ClaimHistoryService do
         issue.update(created_at: Time.zone.now - 90.days)
         events = subject
 
-        # expect the first event to be the one with the fudged far-in-the-past date
-        expect(events.first.event_type).to eq(:completed_disposition)
+        # expect the first event to always be claim creation
+        expect(events.first.event_type).to eq(:claim_creation)
+        # expect the second event to be the one with the fudged far-in-the-past date
+        expect(events.second.event_type).to eq(:completed_disposition)
       end
     end
 
@@ -663,7 +665,7 @@ describe ClaimHistoryService do
         it "should only return the last event for each task" do
           subject
           expected_event_types = [
-            :completed_disposition,
+            :completed,
             :in_progress
           ]
           expect(service_instance.events.map(&:event_type)).to contain_exactly(*expected_event_types)

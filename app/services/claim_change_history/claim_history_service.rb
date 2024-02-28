@@ -45,9 +45,9 @@ class ClaimHistoryService
     @events.sort_by! do |event|
       [
         event.task_id,
-        event.event_date,
         event.event_type == :claim_creation ? 0 : 1,
-        event.event_type == :completed ? 1 : 0
+        event.event_type == :completed ? 1 : 0,
+        event.event_date
       ]
     end
 
