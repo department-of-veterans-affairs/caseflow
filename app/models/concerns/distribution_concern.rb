@@ -5,6 +5,7 @@ module DistributionConcern
 
   private
 
+  # :reek:UnusedParameters
   def assign_judge_tasks_for_appeals(appeals, judge)
     appeals.map do |appeal|
       # If an appeal does not have an open DistributionTask, then it has already been distributed by automatic
