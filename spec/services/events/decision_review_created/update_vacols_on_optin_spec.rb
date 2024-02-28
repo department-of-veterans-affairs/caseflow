@@ -25,7 +25,7 @@ describe Events::DecisionReviewCreated::UpdateVacolsOnOptin do
     end
     describe "when an error occurs" do
       it "logs an error and raises if an standard error occurs" do
-        allow(Events::DecisionReviewCreate::UpdateVacolsOnOptin).to receive(:process!)
+        allow(described_class).to receive(:process!)
           .and_raise(Caseflow::Error::DecisionReviewCreateVacolsOnOptinError)
         expect { described_class.process!(legacy_decision_review) }.to raise_error(
           Caseflow::Error::DecisionReviewCreateVacolsOnOptinError
