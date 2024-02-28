@@ -50,14 +50,14 @@ const buildMailUserData = (data) => {
       value: user,
       label: user
     };
-  })
-}
+  });
+};
 
 const CorrespondenceTableBuilder = (props) => {
   const [selectedMailTeamUser, setSelectedMailTeamUser] = useState(null);
   const [isAnyCheckboxSelected, setIsAnyCheckboxSelected] = useState(false);
   const [isDropdownItemSelected, setIsDropdownItemSelected] = useState(false);
-  const selectedTasks = useSelector(state => state.intakeCorrespondence.selectedTasks);
+  const selectedTasks = useSelector((state) => state.intakeCorrespondence.selectedTasks);
 
   const paginationOptions = () => querystring.parse(window.location.search.slice(1));
   const [storedPaginationOptions, setStoredPaginationOptions] = useState(
@@ -72,7 +72,7 @@ const CorrespondenceTableBuilder = (props) => {
 
   const handleMailTeamUserChange = (selectedUser) => {
     setSelectedMailTeamUser(selectedUser);
-    setIsDropdownItemSelected(!!selectedUser);
+    setIsDropdownItemSelected(Boolean(selectedUser));
   };
 
   const handleCheckboxChange = (isChecked) => {
@@ -82,27 +82,13 @@ const CorrespondenceTableBuilder = (props) => {
   const handleAssignButtonClick = () => {
     // Logic to handle assigning tasks to the selected mail team user
     if (selectedMailTeamUser && isDropdownItemSelected && isAnyCheckboxSelected) {
-      console.log('Assigning tasks to selected mail team user', selectedMailTeamUser.value, selectedTasks);
       const mailTeamUser = selectedMailTeamUser.value;
       const taskIds = selectedTasks.map((task) => task);
-      const data = {
-        mailTeamUser: mailTeamUser,
-        taskIds: taskIds
-      };
+      let newUrl = window.location.href;
 
-      ApiUtil.post(`/queue/correspondence/assign_tasks`, { data: data }).
-      then((response) => {
-        const { body } = response;
-        if (body.status === 'success') {
-          let newUrl = window.location.href
-          newUrl += newUrl.includes("?") ? `&user=${mailTeamUser}&taskIds=${taskIds}` : '?user=${mailTeamUser}&taskIds=${taskIds}'
-          console.log(newUrl);
-          window.location.href = newUrl
-        }
-      }).
-      catch((error) => {
-        console.error(error);
-      });
+      newUrl += newUrl.includes('?') ? `&user=${mailTeamUser}&taskIds=${taskIds}` :
+        `?user=${mailTeamUser}&taskIds=${taskIds}`;
+      window.location.href = newUrl;
     }
   };
 

@@ -64,26 +64,26 @@ class CorrespondenceController < ApplicationController
   end
 
   def assign_tasks
-    mail_team_user = User.find_by(css_id: params[:mailTeamUser])
+    # mail_team_user = User.find_by(css_id: params[:mailTeamUser])
 
-    unless mail_team_user.present? && params[:taskIds].present?
-      render json: { error: "Invalid parameters" }, status: :unprocessable_entity
-      return
-    end
+    # unless mail_team_user.present? && params[:taskIds].present?
+    #   render json: { error: "Invalid parameters" }, status: :unprocessable_entity
+    #   return
+    # end
 
-    tasks = Task.where(id: params[:taskIds])
+    # tasks = Task.where(id: params[:taskIds])
 
-    if tasks.empty?
-      render json: { status: 'error', message: 'No tasks found' }, status: :unprocessable_entity
-    else
-      tasks.update_all(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "assigned")
+    # if tasks.empty?
+    #   render json: { status: 'error', message: 'No tasks found' }, status: :unprocessable_entity
+    # else
+      # tasks.update_all(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "assigned")
 
-      render json: {
-        status: 'success',
-        css_id: mail_team_user.css_id,
-        message: "You have successfully assigned #{tasks.count} Correspondence to #{mail_team_user.css_id}"
-      }
-    end
+      # render json: {
+      #   status: 'success',
+      #   css_id: mail_team_user.css_id,
+      #   message: "You have successfully assigned #{tasks.count} Correspondence to #{mail_team_user.css_id}"
+      # }
+    # end
   end
 
   def correspondence_team
@@ -102,12 +102,6 @@ class CorrespondenceController < ApplicationController
         format.json do
           if @mail_team_user && @task_ids.present?
             set_banner_params(@mail_team_user, @task_ids&.count)
-            render json: {
-              correspondence_config: CorrespondenceConfig.new(assignee: MailTeamSupervisor.singleton),
-              response_type: @response_type,
-              response_header: @response_header,
-              response_message: @response_message
-            }
           else
             render json: {
               correspondence_config: CorrespondenceConfig.new(assignee: MailTeamSupervisor.singleton)
