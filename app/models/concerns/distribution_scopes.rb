@@ -64,14 +64,12 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       )
     end
 
+    # this method takes care of when aod affinity day has a value
   def ama_aod_hearing_original_appeals
-    joins(:tasks)
-      .where("appeals.stream_type = ?", Constants.AMA_STREAM_TYPES.hearing)
-      .where("tasks.type = ?", "DistributionTask")
-      .where("tasks.status = ?", Constants.TASK_STATUSES.assigned)
-      .where("tasks.assigned_at > ?", CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
-      .where.not("appeals.id IN (?)", IneligibleJudge.pluck(:appeal_id))
+    joins(with_assigned_distribution_task_sql)
+    .where("advance_on_docket_motions.created_at > ?", CaseDistributionLever.ama_hearing_case_aod_affinity_days)
   end
+
 
   def with_original_appeal_and_judge_task
     joins("LEFT JOIN cavc_remands ON cavc_remands.remand_appeal_id = appeals.id")
@@ -132,6 +130,11 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
 
   def tied_to_ineligible_judge
     where(hearings: { disposition: "held", judge_id: HearingRequestDistributionQuery.ineligible_judges_id_cache })
+      .where("1 = ?", FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ? 1 : 0)
+  end
+
+  def not_tied_to_ineligible_judge
+    where.not(hearings: { disposition: "held", judge_id: HearingRequestDistributionQuery.ineligible_judges_id_cache })
       .where("1 = ?", FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ? 1 : 0)
   end
 
