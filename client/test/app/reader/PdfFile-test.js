@@ -29,16 +29,16 @@ const metricArgs = (featureValue, documentSource) => {
         documentId: 1,
         documentType: 'test',
         file: '/document/1/pdf',
-        prefetchDisabled: undefined
+        prefetchDisabled: undefined,
       },
       // eslint-disable-next-line no-useless-escape
       message: 'Getting PDF document: \"/document/1/pdf\"',
       product: 'reader',
       additionalInfo: documentSource,
-      type: 'performance'
+      type: 'performance',
+      eventId: expect.stringMatching(/^([a-zA-Z0-9-.'&])*$/)
     },
     featureValue,
-    expect.stringMatching(/^([a-zA-Z0-9-.'&])*$/)
   ];
 };
 
@@ -96,7 +96,7 @@ describe('PdfFile', () => {
       });
 
       it('calls recordAsyncMetrics but will not save a metric', () => {
-        expect(recordAsyncMetrics).toBeCalledWith(metricArgs()[0], metricArgs()[1], metricArgs(false)[2], metricArgs()[3]);
+        expect(recordAsyncMetrics).toBeCalledWith(metricArgs()[0], metricArgs()[1], metricArgs(false)[2]);
       });
 
       it('does not call storeMetrics in catch block', () => {
@@ -137,7 +137,7 @@ describe('PdfFile', () => {
       });
 
       it('calls recordAsyncMetrics and will save a metric', () => {
-        expect(recordAsyncMetrics).toBeCalledWith(metricArgs()[0], metricArgs()[1], metricArgs(true)[2], metricArgs()[3]);
+        expect(recordAsyncMetrics).toBeCalledWith(metricArgs()[0], metricArgs()[1], metricArgs(true)[2]);
       });
 
       it('calls storeMetrics in catch block', () => {

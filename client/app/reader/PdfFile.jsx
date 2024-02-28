@@ -47,8 +47,6 @@ export class PdfFile extends React.PureComponent {
   }
 
   componentDidMount = () => {
-    this.metricIdentifier = uuid.v4();
-
     let requestOptions = {
       cache: true,
       withCredentials: true,
@@ -74,6 +72,8 @@ export class PdfFile extends React.PureComponent {
   getDocument = (requestOptions) => {
     const logId = uuid.v4();
 
+    this.metricIdentifier = uuid.v4();
+
     const documentData = {
       documentId: this.props.documentId,
       documentType: this.props.documentType,
@@ -89,6 +89,7 @@ export class PdfFile extends React.PureComponent {
           type: 'performance',
           product: 'reader',
           data: documentData,
+          eventId: this.metricIdentifier,
         };
 
         if (resp && resp.header && resp.header['x-document-source']) {
@@ -114,8 +115,10 @@ export class PdfFile extends React.PureComponent {
           this.loadingTask = PDFJS.getDocument({ data: resp.body });
         }
 
+        console.log(`EVENTID: ${this.metricIdentifier}`);
+
         return recordAsyncMetrics(this.loadingTask.promise, metricData,
-          this.props.featureToggles.metricsRecordPDFJSGetDocument, this.metricIdentifier);
+          this.props.featureToggles.metricsRecordPDFJSGetDocument);
 
       }, (reason) => this.onRejected(reason, 'getDocument')).
       then((pdfDocument) => {
