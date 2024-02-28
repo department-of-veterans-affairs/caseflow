@@ -47,18 +47,18 @@ describe ChangeHistoryEventSerializer do
           details:
           {
             benefitType: "vha",
-            decisionDate: events[0].decision_date,
+            decisionDate: nil,
             decisionDescription: nil,
             disposition: nil,
             dispositionDate: nil,
-            issueDescription: "Veterans Health Administration seeded HLR in progress",
-            issueType: "Other",
+            issueDescription: nil,
+            issueType: nil,
             withdrawalRequestDate: nil
           },
           eventDate: events[0].event_date,
-          eventType: :added_issue,
+          eventType: :claim_creation,
           eventUser: "L. Roth",
-          readableEventType: "Added issue",
+          readableEventType: "Claim created",
           taskID: vha_task.id
         }
       },
@@ -71,18 +71,18 @@ describe ChangeHistoryEventSerializer do
           details:
           {
             benefitType: "vha",
-            decisionDate: nil,
+            decisionDate: events[1].decision_date,
             decisionDescription: nil,
             disposition: nil,
             dispositionDate: nil,
-            issueDescription: nil,
-            issueType: nil,
+            issueDescription: "Veterans Health Administration seeded HLR in progress",
+            issueType: "Other",
             withdrawalRequestDate: nil
           },
           eventDate: events[1].event_date,
-          eventType: :claim_creation,
+          eventType: :added_issue,
           eventUser: "L. Roth",
-          readableEventType: "Claim created",
+          readableEventType: "Added issue",
           taskID: vha_task.id
         }
       }
