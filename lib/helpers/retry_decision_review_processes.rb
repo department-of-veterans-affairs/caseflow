@@ -5,7 +5,7 @@ class RetryDecisionReviewProcesses
     @manual = manual
   end
 
-  def retry
+  def retry # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     success_logs = ["RetryDecisionReviewProcesses Success Log"]
     new_error_logs = ["RetryDecisionReviewProcesses New Error Log"]
     puts "Total error count: #{all_records.count}" if @manual
@@ -17,12 +17,12 @@ class RetryDecisionReviewProcesses
       # if the error field is now empty, we succeeded. we should log it
       if instance[error_field].nil?
         log = format_log(instance, error)
-        puts "\n\n\nSuccess\n" + log + "\n\n\n" if @manual
+        puts "\n\n\nSuccess\n#{log}\n\n\n" if @manual
         success_logs << log
       # if the error field has changed, let's log that too
       elsif instance[error_field] != error
         log = format_log(instance, instance[error_field])
-        puts "\n\n\nNew Error\n" + log + "\n\n\n" if @manual
+        puts "\n\n\nNew Error\n#{log}\n\n\n" if @manual
         new_error_logs << log
       end
     end
