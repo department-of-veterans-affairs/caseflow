@@ -42,7 +42,14 @@ class ClaimHistoryService
 
     # Compact and sort in place to reduce garbage collection
     @events.compact!
-    @events.sort_by! { |event| [event.task_id, event.event_date] }
+    @events.sort_by! do |event|
+      [
+        event.task_id,
+        event.event_date,
+        event.event_type == :claim_creation ? 0 : 1,
+        event.event_type == :completed ? 1 : 0
+      ]
+    end
 
     # This currently relies on the events being sorted before hand
     filter_events_for_last_action_taken!
