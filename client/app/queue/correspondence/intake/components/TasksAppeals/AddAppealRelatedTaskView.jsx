@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import CaseListTable from '../../../../CaseListTable';
 import ApiUtil from '../../../../../util/ApiUtil';
-import { prepareAppealForStore } from '../../../../utils';
+import { prepareAppealForSearchStore } from '../../../../utils';
 import LoadingContainer from '../../../../../components/LoadingContainer';
 import { COLORS, LOGO_COLORS } from '../../../../../constants/AppConstants';
 import RadioField from '../../../../../components/RadioField';
@@ -122,7 +122,7 @@ export const AddAppealRelatedTaskView = (props) => {
 
       ApiUtil.get('/appeals', { headers: { 'case-search': veteranFileNumber } }).
         then((appealResponse) => {
-          const appealsForStore = prepareAppealForStore(appealResponse.body.appeals);
+          const appealsForStore = prepareAppealForSearchStore(appealResponse.body.appeals);
 
           const appealArr = Object.values(appealsForStore.appeals).sort((first, second) => first.id - second.id);
 

@@ -56,7 +56,6 @@ class ContestableIssueGenerator
     issues.map { |rating_issue| ContestableIssue.from_rating_issue(rating_issue, review) }
   end
 
-  # rubocop:disable Metrics/CyclomaticComplexity
   def from_rating_decisions
     return [] unless receipt_date
 
@@ -71,7 +70,6 @@ class ContestableIssueGenerator
       .select { |rating_decision| rating_decision.profile_date && rating_decision.profile_date.to_date <= receipt_date }
       .map { |rating_decision| ContestableIssue.from_rating_decision(rating_decision, review) }
   end
-  # rubocop:enable Metrics/CyclomaticComplexity
 
   def rating_issues
     rating_hash_deserialize(from: :issues, to: RatingIssue)
