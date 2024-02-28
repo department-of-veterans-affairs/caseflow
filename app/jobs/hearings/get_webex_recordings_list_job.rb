@@ -10,7 +10,21 @@ class Hearings::GetWebexRecordingsListJob < CaseflowJob
   application_attr :hearing_schedule
 
   retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
-    # TO IMPLEMENT: SEND EMAIL TO VA OPS TEAM
+    from = 2.days.ago.in_time_zone("America/New_York").end_of_day
+    to = 1.day.ago.in_time_zone("America/New_York").end_of_day
+    query = "?from=#{CGI.escape(from.iso8601)}?to=#{CGI.escape(to.iso8601)}"
+    details = {
+      action: "retrieve",
+      filetype: "vtt",
+      direction: "from",
+      provider: "Webex",
+      error: exception,
+      api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}#{query}",
+      response: { status: exception.code, message: exception.message }.to_json,
+      docket_number: "N/A",
+      times: "From: #{from}, To: #{to}"
+    }
+    TranscriptFileIssuesMailer.webex_recording_list_issues(details)
     job.log_error(exception)
   end
 
