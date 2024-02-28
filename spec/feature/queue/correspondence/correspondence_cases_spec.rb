@@ -662,28 +662,33 @@ RSpec.feature("The Correspondence Cases page") do
 
     before do
       Timecop.freeze(Time.zone.local(2020, 5, 15))
-      5.times do
-        corres_array = (1..4).map { create(:correspondence) }
-        task_array = [ReassignPackageTask, RemovePackageTask, SplitPackageTask, MergePackageTask]
+      (1..10).map { create(:correspondence, :with_correspondence_intake_task) }
+      10.times do
+        review_correspondence = create(:correspondence)
+        rpt = ReviewPackageTask.find_by(appeal_id: review_correspondence.id)
+        rpt.update!(assigned_to: current_user, status: "assigned")
+        rpt.save!
+      end
+      10.times do
+        corr = create(:correspondence)
 
-        corres_array.each_with_index do |corres, index|
-          rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
-          task_array[index].create!(
-            parent_id: rpt.id,
-            appeal_id: corres.id,
-            appeal_type: "Correspondence",
-            assigned_to: MailTeamSupervisor.singleton,
-            assigned_by_id: rpt.assigned_to_id
-          )
-        end
+        rpt = ReviewPackageTask.find_by(appeal_id: corr.id)
+
+        EfolderUploadFailedTask.create!(
+          parent_id: rpt.id,
+          appeal_id: corr.id,
+          appeal_type: "Correspondence",
+          assigned_to: current_user,
+          assigned_by_id: rpt.assigned_to_id
+        )
       end
 
       # Used to mock a single task to compare task sorting
-      ReassignPackageTask.first.correspondence.update!(
+      EfolderUploadFailedTask.first.correspondence.update!(
         va_date_of_receipt: Date.new(2000, 10, 10),
         updated_by_id: current_user.id
       )
-      ReassignPackageTask.last.correspondence.update!(
+      EfolderUploadFailedTask.last.correspondence.update!(
         va_date_of_receipt: Date.new(2050, 10, 10),
         updated_by_id: current_user.id
       )
@@ -732,7 +737,7 @@ RSpec.feature("The Correspondence Cases page") do
     it "use tasks filter correctly" do
       visit "/queue/correspondence/team?tab=correspondence_team_assigned"
       find("[aria-label='Filter by task']").click
-      find("label", text: "Merge Package Task (5)").click
+      find("label", text: "Correspondence Intake Task (10)").click
       expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
     end
 
