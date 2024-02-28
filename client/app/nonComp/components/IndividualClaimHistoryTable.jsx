@@ -140,11 +140,26 @@ const IndividualClaimHistoryTable = (props) => {
     </p>;
   };
 
+  const dateSort = (row) => {
+    // cheat the dates for claim created and claim closed
+    let date = new Date(row.eventDate);
+
+    if (row.readableEventType === 'Claim created') {
+      date.setDate(date.getDate() - 1);
+    }
+
+    if (row.readableEventType === 'Claim closed') {
+      date.setDate(date.getDate() + 1);
+    }
+
+    return date;
+  };
+
   const columns = [
     { name: 'eventDate',
       header: 'Date and Time',
       valueFunction: (row) => processEventDate(row.eventDate),
-      getSortValue: (row) => new Date(row.eventDate),
+      getSortValue: (row) => dateSort(row),
     },
     { name: 'eventUser',
       columnName: 'eventUser',
