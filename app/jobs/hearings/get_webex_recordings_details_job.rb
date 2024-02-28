@@ -10,12 +10,26 @@ class Hearings::GetWebexRecordingsDetailsJob < CaseflowJob
   application_attr :hearing_schedule
   attr_reader :id
 
+  # rubocop:disable Layout/LineLength
   retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
-    # TO IMPLEMENT: SEND EMAIL TO VA OPS TEAM
+    details = {
+      action: "retrieve",
+      filetype: "vtt",
+      direction: "from",
+      provider: "Webex",
+      error: error,
+      api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}/#{job.arguments&.first&.[](:id)}",
+      response: { status: exception.code, message: exception.message }.to_json,
+      docket_number: job.arguments&.first&.[](:docket_number),
+      appeal_id: Appeal.find_by(stream_docket_number: job.arguments&.first&.[](:file_name))
+    }
+    TranscriptFileIssuesMailer.send_issue_details(details)
     job.log_error(exception)
   end
+  # rubocop:enable Layout/LineLength
 
-  def perform(id:)
+  # rubocop:disable Lint/UnusedMethodArgument
+  def perform(id:, file_name:)
     ensure_current_user_is_set
     data = get_recording_details(id)
     topic = data.topic
@@ -29,6 +43,7 @@ class Hearings::GetWebexRecordingsDetailsJob < CaseflowJob
     mp3_link = data.mp3_link
     send_file(topic, "mp3", mp3_link)
   end
+  # rubocop:enable Lint/UnusedMethodArgument
 
   def log_error(error)
     Rails.logger.error("Retrying #{self.class.name} because failed with error: #{error}")
