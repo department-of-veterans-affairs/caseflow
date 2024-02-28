@@ -73,15 +73,49 @@ feature "SpecialtyCaseTeamQueue", :all_dbs do
 
     include_examples "Standard Queue feature tests"
 
-    scenario "Specialty Case Team Queue Loads" do
-      expect(find("h1")).to have_content("Specialty Case Team cases")
-    end
+    context "Specialty Case Team Queue Loads correctly" do
+      scenario "Specialty Case Team Queue Loads" do
+        expect(find("h1")).to have_content("Specialty Case Team cases")
+      end
 
-    context "issue types column" do
       scenario "SCT action required tab displays multiple issue types ordered in ascending order and no duplicates" do
         expect(page).to have_content(
           /\nBeneficiary Travel\nCaregiver | Other\nForeign Medical Program\nMedical and Dental Care Reimbursement\n/
         )
+      end
+    end
+
+    context "Task Actions" do
+      let!(:attorney) do
+        create(:user, :with_vacols_attorney_record, full_name: "Saul Goodman")
+      end
+
+      let(:judge) do
+        create(:user, :judge, :with_vacols_judge_record, full_name: "Judge Dredd")
+      end
+
+      let(:appeal) { sct_action_required_tasks.first.appeal }
+
+      let(:case_details_page_url) { "/queue/appeals/#{appeal.uuid}" }
+
+      before do
+        judge.administered_judge_teams.first.add_user(attorney)
+        judge.save
+      end
+
+      scenario "Assign to Attorney" do
+        visit case_details_page_url
+        expect(page).to have_content("Currently active tasks")
+        page.find(".cf-select")
+        click_dropdown(text: "Assign to attorney")
+        within ".cf-modal" do
+          expect(page).to have_content("Assign task")
+          page.find(".cf-select__placeholder", text: "Search or select").click
+          click_dropdown(text: attorney.full_name)
+          page.find("#taskInstructions").set("This is a test")
+          safe_click "#Assign-task-button-id-1"
+        end
+        expect(page).to have_content("You have successfully assigned 1 case to")
       end
     end
   end
