@@ -15,12 +15,16 @@
       Caseflow attempted to <%= @details[:action] %> a <%= @details[:filetype] %> file <%= @details[:direction] %> <%= @details[:provider] %> and received a fatal error.
 
       Docket Number: <%= @details[:docket_number] %>
+      <a href="<%= @case_link %>">Case Details</a>
 
       API Call: <%= @details[:api_call] %>
       Response: <%= @details[:response] %>
-      <%= @details[:identifier_type] %>: <%= @details[:identifier] %>
 
-      Please investigate this issue further to ensure continued communication between Caseflow and <%= @details[:provider] %>. Direct any questions to OITAppealsHelpDesk@va.gov.
+      <% if @details[:error_type] == 'TranscriptionTransformer::FileConversionError' %>
+        Please investigate this issue further to ensure continued communication between Caseflow and <%= @details[:provider] %>. Direct any questions to OITAppealsHelpDesk@va.gov.
+      <% else %>
+        Please investigate this issue further to ensure continued communication with Caseflow. Direct any questions to OITAppealsHelpDesk@va.gov.
+      <% end %>
     </p>
   </body>
 </html>
