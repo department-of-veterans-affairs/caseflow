@@ -696,46 +696,6 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                 </tr>
                 <tr
                   class=""
-                  id="table-row-1b5dc8c8-c1ea-4596-a51c-73cc8ecd45b5"
-                  role="row"
-                >
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    12/09/2023, 17:59
-                  </td>
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    L. Roth
-                  </td>
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    Claim created
-                  </td>
-                  <td
-                    class=""
-                    colspan="1"
-                    role="gridcell"
-                    tabindex="-1"
-                  >
-                    <p>
-                      Claim created.
-                    </p>
-                  </td>
-                </tr>
-                <tr
-                  class=""
                   id="table-row-93b5cb42-136d-44a3-9e96-b18eb0397291"
                   role="row"
                 >
@@ -771,6 +731,46 @@ exports[`ClaimHistoryPage renders correctly for Admin user renders correctly 1`]
                   >
                     <p>
                       Claim cannot be processed until decision date is entered.
+                    </p>
+                  </td>
+                </tr>
+                <tr
+                  class=""
+                  id="table-row-1b5dc8c8-c1ea-4596-a51c-73cc8ecd45b5"
+                  role="row"
+                >
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    12/09/2023, 17:59
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    L. Roth
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    Claim created
+                  </td>
+                  <td
+                    class=""
+                    colspan="1"
+                    role="gridcell"
+                    tabindex="-1"
+                  >
+                    <p>
+                      Claim created.
                     </p>
                   </td>
                 </tr>
