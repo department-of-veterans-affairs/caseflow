@@ -23,7 +23,7 @@ describe PtcpntPersnIdDepntOrgFix, :postgres do
   #   )
   # end
   # let(:incorrect_person) { create(:person, participant_id: "incorrect_pid") }
-  let!(:correct_person) { create(:person, participant_id: correct_pid, ssn: veteran_file_number) }
+  let(:correct_person) { create(:person, participant_id: correct_pid, ssn: veteran_file_number) }
   let!(:supplemental_claim) do
     create(
       :supplemental_claim,
@@ -91,40 +91,36 @@ describe PtcpntPersnIdDepntOrgFix, :postgres do
     end
 
     describe '#handle_person_and_claimant_records' do
-      it 'handles person and claimant records' do
-        incorrect_person_record = supplemental_claim.claimant.person
-        # binding.pry
-        # Mocking the claimants array for incorrect_person_record
-        allow(incorrect_person_record).to receive(:claimants).and_return([])
-
+      it 'handles person records' do
+        correct_person
         expect {
           subject.handle_person_and_claimant_records(correct_pid, supplemental_claim)
         }.to change { Person.count }.by(-1) # Expect one person to be destroyed
-
-        # binding.pry
-        # You can add more expectations based on your specific logic
-        # expect(sc.claimant.payee_code).to eq("00")
       end
 
-      context "handles person and claimant records when correct person not found" do
-        it 'handles person and claimant records when correct person not found' do
-          incorrect_person_record = supplemental_claim.claimant.person
-          correct_person = nil
-          # correct_person.reload
-
-binding.pry
-          subject.start_processing_records
-binding.pry
-
-          # expect {
-          #   subject.handle_person_and_claimant_records(correct_pid, supplemental_claim)
-          # }.not_to change { Person.count } # Expect no person to be destroyed
-
-          # You can add more expectations based on your specific logic
-          # expect(sc.claimant.payee_code).to eq("00")
-        end
-
+      it 'updates supplemental_claim to the correct claimant' do
+        correct_person
+        subject.handle_person_and_claimant_records(correct_pid, supplemental_claim)
+        supplemental_claim.reload
+        expect(supplemental_claim.claimant.participant_id).to eq(correct_pid)
       end
+
+      it 'updates supplemental_claim to the correct person' do
+        correct_person
+        subject.handle_person_and_claimant_records(correct_pid, supplemental_claim)
+        supplemental_claim.reload
+        expect(supplemental_claim.claimant.person.participant_id).to eq(correct_pid)
+      end
+
+      it 'handles person and claimant records when correct person not found' do
+        allow(subject).to receive(:get_correct_person).with(correct_pid).and_return(nil)
+          expect {
+            subject.handle_person_and_claimant_records(correct_pid, supplemental_claim)
+          }.not_to change { Person.count } # Expect no person to be destroyed
+      end
+
+
+
     end
 
     # context "Claimant record" do
