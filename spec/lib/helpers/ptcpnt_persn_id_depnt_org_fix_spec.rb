@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 require "helpers/ptcpnt_persn_id_depnt_org_fix"
 
@@ -14,15 +15,6 @@ describe PtcpntPersnIdDepntOrgFix, :postgres do
       type: "VeteranClaimant", payee_code: "00"
     )
   end
-  # let!(:incorrect_person_record) do
-  #   create(
-  #     participant_id: "incorrect_pid",
-  #     claimants: [
-  #       claimant
-  #     ]
-  #   )
-  # end
-  # let(:incorrect_person) { create(:person, participant_id: "incorrect_pid") }
   let(:correct_person) { create(:person, participant_id: correct_pid, ssn: veteran_file_number) }
   let!(:supplemental_claim) do
     create(
@@ -55,7 +47,13 @@ describe PtcpntPersnIdDepntOrgFix, :postgres do
       end
 
       it "logs to the stuck_job_report_service" do
-        expect(subject.instance_variable_get(:@stuck_job_report_service).logs).to receive(:push).with(/Error retrieving participant ID for veteran file number #{veteran_file_number}: Simulated BGS error/).at_least(:once)
+        logs = subject.instance_variable_get(:@stuck_job_report_service).logs
+        message_1 = "Error retrieving participant ID for veteran file "
+        message_2 = "number #{veteran_file_number}: Simulated BGS error"
+        error_message = message_1 + message_2
+
+        expect(logs).to receive(:push).with(error_message).at_least(:once)
+
         subject.retrieve_correct_pid(veteran_file_number)
       end
     end
@@ -99,12 +97,14 @@ describe PtcpntPersnIdDepntOrgFix, :postgres do
     end
 
     context "EndProductEstablishment record" do
-      let!(:epe) { create(
-        :end_product_establishment,
-        claimant_participant_id: "incorrect_pid",
-        source_id: supplemental_claim.id,
-        source_type: "SupplementalClaim"
-        ) }
+      let!(:epe) do
+        create(
+          :end_product_establishment,
+          claimant_participant_id: "incorrect_pid",
+          source_id: supplemental_claim.id,
+          source_type: "SupplementalClaim"
+        )
+      end
 
       it "correctly identifies and processes records with incorrect participant_id for EndProductEstablishment" do
         subject.start_processing_records
@@ -113,12 +113,14 @@ describe PtcpntPersnIdDepntOrgFix, :postgres do
     end
 
     context "EndProductEstablishment record" do
-      let!(:epe) { create(
-        :end_product_establishment,
-        claimant_participant_id: "incorrect_pid",
-        source_id: supplemental_claim.id,
-        source_type: "SupplementalClaim"
-        ) }
+      let!(:epe) do
+        create(
+          :end_product_establishment,
+          claimant_participant_id: "incorrect_pid",
+          source_id: supplemental_claim.id,
+          source_type: "SupplementalClaim"
+        )
+      end
 
       it "correctly identifies and processes records with incorrect participant_id for EndProductEstablishment" do
         subject.start_processing_records
@@ -144,43 +146,42 @@ describe PtcpntPersnIdDepntOrgFix, :postgres do
       end
     end
 
-
-    describe '#handle_person_and_claimant_records' do
-      it 'handles person records' do
+    describe "#handle_person_and_claimant_records" do
+      it "handles person records" do
         correct_person
-        expect {
+        expect do
           subject.handle_person_and_claimant_records(correct_pid, supplemental_claim)
-        }.to change { Person.count }.by(-1) # Expect one person to be destroyed
+        end.to change { Person.count }.by(-1) # Expect one person to be destroyed
       end
 
-      it 'updates supplemental_claim to the correct claimant' do
+      it "updates supplemental_claim to the correct claimant" do
         correct_person
         subject.handle_person_and_claimant_records(correct_pid, supplemental_claim)
         supplemental_claim.reload
         expect(supplemental_claim.claimant.participant_id).to eq(correct_pid)
       end
 
-      it 'updates supplemental_claim to the correct person' do
+      it "updates supplemental_claim to the correct person" do
         correct_person
         subject.handle_person_and_claimant_records(correct_pid, supplemental_claim)
         supplemental_claim.reload
         expect(supplemental_claim.claimant.person.participant_id).to eq(correct_pid)
       end
 
-      it 'handles person and claimant records when correct person not found' do
+      it "handles person and claimant records when correct person not found" do
         allow(subject).to receive(:get_correct_person).with(correct_pid).and_return(nil)
-          expect {
-            subject.handle_person_and_claimant_records(correct_pid, supplemental_claim)
-          }.not_to change { Person.count } # Expect no person to be destroyed
+        expect do
+          subject.handle_person_and_claimant_records(correct_pid, supplemental_claim)
+        end.not_to(change { Person.count }) # Expect no person to be destroyed
       end
 
-      it 'updates incorrect person when correct person not found' do
+      it "updates incorrect person when correct person not found" do
         allow(subject).to receive(:get_correct_person).with(correct_pid).and_return(nil)
         subject.start_processing_records
         expect(supplemental_claim.claimant.person.reload.participant_id).to eq(correct_pid)
       end
 
-      it 'updates payee_code if not 00' do
+      it "updates payee_code if not 00" do
         allow(subject).to receive(:get_correct_person).with(correct_pid).and_return(nil)
         supplemental_claim.claimant.payee_code = nil
         subject.start_processing_records

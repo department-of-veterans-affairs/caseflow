@@ -28,27 +28,27 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
     # count of records with errors before fix
     @stuck_job_report_service.append_record_count(error_records.count, ERROR_TEXT)
 
-    error_records.each do |sc|
-      incorrect_pid = sc.claimant.participant_id
+    error_records.each do |supp_claim|
+      incorrect_pid = supp_claim.claimant.participant_id
       # check that claimant type is VeteranClaimant
-      next unless sc.claimant.type == "VeteranClaimant"
+      next unless supp_claim.claimant.type == "VeteranClaimant"
 
-      veteran_file_number = sc.veteran.file_number
+      veteran_file_number = supp_claim.veteran.file_number
       correct_pid = retrieve_correct_pid(veteran_file_number)
 
-      handle_person_and_claimant_records(correct_pid, sc)
+      handle_person_and_claimant_records(correct_pid, supp_claim)
       retrieve_records_to_fix(correct_pid, incorrect_pid)
 
-      #Re-run job after fixing broken records
-      re_run_job(sc)
+      # Re-run job after fixing broken records
+      re_run_job(supp_claim)
     end
     # record count with errors after fix
     @stuck_job_report_service.append_record_count(error_records.count, ERROR_TEXT)
   end
 
-  def handle_person_and_claimant_records(correct_pid, sc)
+  def handle_person_and_claimant_records(correct_pid, supp_claim)
     correct_person_record = get_correct_person(correct_pid)
-    incorrect_person_record = sc.claimant.person
+    incorrect_person_record = supp_claim.claimant.person
 
     ActiveRecord::Base.transaction do
       if correct_person_record.present?
@@ -57,20 +57,22 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
 
         claimants_array_to_be_moved_to << claimants_array_to_remove_claimants_from
 
-        #Reset the Incorrect Person's Claimant's array before destroying Incorrect Person record
-        claimants_array_to_remove_claimants_from = []
+        # Reset the Incorrect Person's Claimant's array before destroying the Incorrect Person record
+        incorrect_person_record.claimants.clear
+
+        incorrect_person_record.save!
         incorrect_person_record.destroy!
       else
         incorrect_person_record.update(participant_id: correct_pid)
       end
 
-      if sc.claimant.payee_code != "00"
-        sc.claimant.update(payee_code: "00")
+      if supp_claim.claimant.payee_code != "00"
+        supp_claim.claimant.update(payee_code: "00")
       end
 
     rescue StandardError => error
       log_error(error)
-      @stuck_job_report_service.append_error(sc.class.name, sc.id, error)
+      @stuck_job_report_service.append_error(supp_claim.class.name, supp_claim.id, error)
     end
   end
 
@@ -91,8 +93,6 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
 
   def retrieve_records_to_fix(correct_pid, incorrect_pid)
     incorrectly_associated_records = []
-    # correct_person_record = Person.find_by(participant_id: correct_pid)
-    # incorrect_person_record = Person.find_by(participant_id: incorrect_pid)
 
     iterate_through_associations_with_bad_pid(incorrect_pid, incorrectly_associated_records)
 
@@ -101,11 +101,11 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
     end
   end
 
-  def re_run_job(sc)
+  def re_run_job(supp_claim)
     begin
-      DecisionReviewProcessJob.perform_now(sc)
+      DecisionReviewProcessJob.perform_now(supp_claim)
     rescue StandardError => error
-      @stuck_job_report_service.append_error(sc.class.name, sc.id, error)
+      @stuck_job_report_service.append_error(supp_claim.class.name, supp_claim.id, error)
       log_error(error)
     end
   end
