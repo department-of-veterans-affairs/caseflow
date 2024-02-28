@@ -12,6 +12,10 @@ describe AddHearingIdAndHearingTypeToConferenceLinks do
   let(:previous_version) { 20240130191529 }
   let(:conference_link) { create(:webex_conference_link) }
 
+  before :each do
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
   describe "up" do
     before :each do
       ActiveRecord::MigrationContext.new(migration_paths).migrate(previous_version)

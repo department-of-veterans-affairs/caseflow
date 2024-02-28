@@ -13,6 +13,10 @@ describe AddIndexToConferenceLinks do
   let(:test_version) { 20240226201012 }
   let(:previous_version) { 20240226140103 }
 
+  before :each do
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
   describe "up" do
     before :each do
       ActiveRecord::MigrationContext.new(migration_paths).migrate(previous_version)
@@ -26,6 +30,22 @@ describe AddIndexToConferenceLinks do
 
     it "adds index on hearing_id and hearing_type to conference_links table" do
       expect { subject }.to change { hearing_index.present? }.from(false).to(true)
+    end
+  end
+
+  describe "down" do
+    before :each do
+      ActiveRecord::MigrationContext.new(migration_paths).migrate(test_version)
+      ConferenceLink.reset_column_information
+    end
+
+    subject do
+      ActiveRecord::MigrationContext.new(migration_paths).migrate(previous_version)
+      ConferenceLink.reset_column_information
+    end
+
+    it "adds index on hearing_id and hearing_type to conference_links table" do
+      expect { subject }.to change { hearing_index.present? }.from(true).to(false)
     end
   end
 end
