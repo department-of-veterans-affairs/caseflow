@@ -16,7 +16,7 @@ class OrganizationCorrespondenceAssignedTasksTab < CorrespondenceQueueTab
   end
 
   def tasks
-    CorrespondenceTask.includes(*task_includes).active.where.not(type: CorrespondenceRootTask.name)
+    CorrespondenceTask.includes(*task_includes).active.where.not(assigned_to: MailTeam.singleton)
   end
 
   def column_names
