@@ -98,6 +98,52 @@ describe PtcpntPersnIdDepntOrgFix, :postgres do
       end
     end
 
+    context "EndProductEstablishment record" do
+      let!(:epe) { create(
+        :end_product_establishment,
+        claimant_participant_id: "incorrect_pid",
+        source_id: supplemental_claim.id,
+        source_type: "SupplementalClaim"
+        ) }
+
+      it "correctly identifies and processes records with incorrect participant_id for EndProductEstablishment" do
+        subject.start_processing_records
+        expect(epe.reload.claimant_participant_id).to eq(correct_pid)
+      end
+    end
+
+    context "EndProductEstablishment record" do
+      let!(:epe) { create(
+        :end_product_establishment,
+        claimant_participant_id: "incorrect_pid",
+        source_id: supplemental_claim.id,
+        source_type: "SupplementalClaim"
+        ) }
+
+      it "correctly identifies and processes records with incorrect participant_id for EndProductEstablishment" do
+        subject.start_processing_records
+        expect(epe.reload.claimant_participant_id).to eq(correct_pid)
+      end
+    end
+
+    context "Organization record" do
+      let!(:organization) { create(:organization, participant_id: incorrect_pid) }
+
+      it "correctly identifies and processes records with incorrect participant_id for Organization" do
+        subject.start_processing_records
+        expect(organization.reload.participant_id).to eq(correct_pid)
+      end
+    end
+
+    context "RequestIssue record" do
+      let!(:request_issue) { create(:request_issue, veteran_participant_id: incorrect_pid) }
+
+      it "correctly identifies and processes records with incorrect participant_id for RequestIssue" do
+        subject.start_processing_records
+        expect(request_issue.reload.veteran_participant_id).to eq(correct_pid)
+      end
+    end
+
 
     describe '#handle_person_and_claimant_records' do
       it 'handles person records' do
