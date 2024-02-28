@@ -46,7 +46,7 @@ RSpec.feature("The Correspondence Cases page") do
       20.times do
         correspondence = create(:correspondence)
         parent_task = create_correspondence_intake(correspondence, current_user)
-        create_efolderupload_task(correspondence, parent_task, user:current_user)
+        create_efolderupload_task(correspondence, parent_task, user: current_user)
       end
       # Used to mock a single task to compare task sorting
       EfolderUploadFailedTask.first.update!(type: "ReviewPackageTask")
@@ -363,12 +363,12 @@ RSpec.feature("The Correspondence Cases page") do
           )
         end
       end
-       # Used to mock a single task to compare task sorting
-       ReassignPackageTask.first.correspondence.update!(
+      # Used to mock a single task to compare task sorting
+      ReassignPackageTask.first.correspondence.update!(
         va_date_of_receipt: Date.new(2000, 10, 10),
         updated_by_id: current_user.id
       )
-       ReassignPackageTask.last.correspondence.update!(
+      ReassignPackageTask.last.correspondence.update!(
         va_date_of_receipt: Date.new(2050, 10, 10),
         updated_by_id: current_user.id
       )
