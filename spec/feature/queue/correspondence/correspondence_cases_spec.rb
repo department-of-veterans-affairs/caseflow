@@ -22,7 +22,7 @@ RSpec.feature("The Correspondence Cases page") do
     it "routes to correspondence cases if feature toggle is enabled" do
       FeatureToggle.enable!(:correspondence_queue)
       visit "/queue/correspondence"
-      expect(page).to have_current_path("/queue/correspondence")
+      expect(page).to have_current_path(%r{/queue/correspondence})
     end
   end
 
@@ -727,6 +727,13 @@ RSpec.feature("The Correspondence Cases page") do
       # return to Z-A, compare details again
       find("[aria-label='Sort by VA DOR']").click
       expect(find("tbody > tr:nth-child(1) > td:nth-child(2)").text == last_date)
+    end
+
+    it "use tasks filter correctly" do
+      visit "/queue/correspondence/team?tab=correspondence_team_assigned"
+      find("[aria-label='Filter by task']").click
+      find("label", text: "Merge Package Task (5)").click
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
     end
 
     it "uses days waiting sort correctly" do
