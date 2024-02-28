@@ -9,7 +9,11 @@ class CorrespondenceController < ApplicationController
   before_action :veteran_information
 
   def intake
-    saved_intake_store
+    intake = CorrespondenceIntake.find_by(user: current_user, correspondence: current_correspondence)
+    if !intake.nil?
+      saved_intake_store(intake)
+    end
+
     respond_to do |format|
       format.html { return render "correspondence/intake" }
       format.json do
@@ -42,12 +46,10 @@ class CorrespondenceController < ApplicationController
   end
 
   # If correspondence intake was started, json data from the database will need to be loaded into the page when user returns to intake
-  def saved_intake_store
-    intake = CorrespondenceIntake.find_by(user: current_user, correspondence: current_correspondence)
-    if !intake.nil?
-      @current_step = intake.current_step
-      @redux_store = intake.redux_store
-    end
+  def saved_intake_store(intake)
+    # @current_step = 3
+    @current_step = intake.current_step
+    @redux_store = intake.redux_store
   end
 
   def correspondence_cases
