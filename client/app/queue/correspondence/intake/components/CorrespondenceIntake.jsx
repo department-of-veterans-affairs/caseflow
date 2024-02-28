@@ -94,7 +94,13 @@ export const CorrespondenceIntake = (props) => {
   }, [currentStep]);
 
   useEffect(() => {
-    props.loadSavedIntake(props.reduxStore);
+    // let intake = { CorrespondenceIntake.find_by(user: current_user, correspondence: current_correspondence) };
+    // if (!intake.nil?)
+    //   saved_intake_store(intake);
+    // if (currentStep > 1) {
+      props.loadSavedIntake(props.reduxStore);
+    // }
+    // props.loadSavedIntake(props.reduxStore);
   }, []);
 
   return <div>
@@ -125,7 +131,7 @@ export const CorrespondenceIntake = (props) => {
         onContinueStatusChange={handleContinueStatusChange}
         autoTexts={props.autoTexts}
         veteranInformation={props.veteranInformation}
-        reduxStore={props.reduxStore}
+        // reduxStore={props.reduxStore}
       />
     }
     {currentStep === 3 &&
