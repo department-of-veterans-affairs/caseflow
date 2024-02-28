@@ -32,7 +32,7 @@ const AutoAssignAlertBanner = (props) => {
         message: response.error_message.message,
       };
 
-      if (response.error_message.error_uuid) {
+      if (response.error_message.message.includes(COPY.BAAA_ERROR_MESSAGE)) {
         bannerPayload.type = 'error';
       } else {
         bannerPayload.type = 'info';
