@@ -494,6 +494,7 @@ class Appeal < DecisionReview
     end
   end
 
+
   # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def clone_task_tree(parent_appeal, user_css_id)
     # get the task tree from the parent
