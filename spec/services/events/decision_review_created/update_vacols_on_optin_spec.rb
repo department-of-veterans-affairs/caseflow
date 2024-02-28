@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe Events::DecisionReviewCreate::UpdateVacolsOnOptin do
-  context "Events::DecisionReviewCreate::UpdateVacolsOnOptin.process" do
+describe Events::DecisionReviewCreated::UpdateVacolsOnOptin do
+  context "Events::DecisionReviewCreated::UpdateVacolsOnOptin.process" do
     # Setup a mock decision_review object with necessary properties
     let!(:legacy_decision_review) { double("DecisionReview", legacy_opt_in_approved: true) }
     describe "when legacy_opt_in_approved is true" do
@@ -25,7 +25,7 @@ describe Events::DecisionReviewCreate::UpdateVacolsOnOptin do
     end
     describe "when an error occurs" do
       it "logs an error and raises if an standard error occurs" do
-        allow(Events::DecisionReviewCreate::UpdateVacolsOnOptin).to receive(:process!)
+        allow(described_class).to receive(:process!)
           .and_raise(Caseflow::Error::DecisionReviewCreateVacolsOnOptinError)
         expect { described_class.process!(legacy_decision_review) }.to raise_error(
           Caseflow::Error::DecisionReviewCreateVacolsOnOptinError
