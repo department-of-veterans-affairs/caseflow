@@ -1,9 +1,22 @@
 # frozen_string_literal: true
 
 class CorrespondenceTask < Task
+  self.abstract_class = true
+
   before_create :verify_org_task_unique
   validate :status_is_valid_on_create, on: :create
   validate :assignee_status_is_valid_on_create, on: :create
+
+  scope :package_action_tasks, -> { where(type: package_action_task_names) }
+
+  def self.package_action_task_names
+    [
+      ReassignPackageTask.name,
+      RemovePackageTask.name,
+      SplitPackageTask.name,
+      MergePackageTask.name
+    ]
+  end
 
   def verify_org_task_unique
     if Task.where(
@@ -19,12 +32,19 @@ class CorrespondenceTask < Task
     end
   end
 
+  def verify_no_other_open_package_action_task_on_correspondence
+    return true unless package_action_task?
+
+    if CorrespondenceTask.package_action_tasks.open.where(appeal_id: appeal_id).any?
+      fail Caseflow::Error::MultipleOpenTasksOfSameTypeError, task_type: "package action task"
+    end
+  end
+
   def remove_package
     root_task = CorrespondenceRootTask.find_by!(
       appeal_id: @correspondence.id,
       assigned_to: MailTeamSupervisor.singleton,
       appeal_type: "Correspondence",
-      parent_id: @correspondence_task.id,
       type: "CorrespondenceRootTask"
     )
     root_task.cancel_task_and_child_subtasks
@@ -60,5 +80,9 @@ class CorrespondenceTask < Task
     end
 
     true
+  end
+
+  def package_action_task?
+    self.class.package_action_task_names.include?(self.class.name)
   end
 end
