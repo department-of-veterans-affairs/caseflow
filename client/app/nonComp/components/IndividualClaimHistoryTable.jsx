@@ -141,15 +141,16 @@ const IndividualClaimHistoryTable = (props) => {
   };
 
   const dateSort = (row) => {
-    // cheat the dates for claim created and claim closed
     let date = new Date(row.eventDate);
 
-    if (row.readableEventType === 'Claim created') {
-      date.setDate(date.getDate() - 1);
-    }
+    // cheat the dates for claim created and claim closed
+    const eventOrder = {
+      'Claim created': -Infinity,
+      'Claim closed': Infinity,
+    };
 
-    if (row.readableEventType === 'Claim closed') {
-      date.setDate(date.getDate() + 1);
+    if (row.readableEventType in eventOrder) {
+      return eventOrder[row.readableEventType];
     }
 
     return date;
