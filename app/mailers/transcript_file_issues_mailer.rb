@@ -6,8 +6,9 @@ class TranscriptFileIssuesMailer < ActionMailer::Base
   default cc: "OITAppealsHelpDesk@va.gov"
   layout "transcript_file_issues"
 
-  def send_issue_details(details)
+  def send_issue_details(details, case_link)
     @details = details
+    @case_link = case_link
     @subject = "File #{details[:action]} Error - #{details[:provider]} #{details[:docket_number]}"
     mail(subject: @subject) do |format|
       format.html { render "_transcript_file_issues" }
