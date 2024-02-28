@@ -43,20 +43,15 @@ class Distribution < CaseflowRecord
 
       priority_push? ? priority_push_distribution(limit) : requested_distribution
 
-      update!(status: "completed", completed_at: Time.zone.now, statistics: "See related row in distribution_stats")
+      ama_stats = ama_statistics
 
-      record_stats(ama_statistics)
+      # need to store batch_size in the statistics column for use within the PushPriorityAppealsToJudgesJob
+      update!(status: "completed", completed_at: Time.zone.now, statistics: completed_statistics(ama_stats))
+
+      record_distribution_stats(ama_stats)
     end
   rescue StandardError => error
-    # DO NOT use update! because we want to avoid validations and saving any cached associations.
-    # Prevent prod database from getting Stacktraces as this is debugging information
-    if Rails.deploy_env?(:prod)
-      update_columns(status: "error", errored_at: Time.zone.now)
-      record_stats({})
-    else
-      update_columns(status: "error", errored_at: Time.zone.now, statistics: error_statistics(error))
-      record_stats(error_statistics(error))
-    end
+    process_error(error)
 
     raise error
   end
@@ -139,7 +134,27 @@ class Distribution < CaseflowRecord
     }
   end
 
-  def record_stats(stats)
+  def process_error(error)
+    # DO NOT use update! because we want to avoid validations and saving any cached associations.
+    # Prevent prod database from getting Stacktraces as this is debugging information
+    if Rails.deploy_env?(:prod)
+      update_columns(status: "error", errored_at: Time.zone.now)
+      record_distribution_stats({})
+    else
+      update_columns(status: "error", errored_at: Time.zone.now, statistics: error_statistics(error))
+      record_distribution_stats(error_statistics(error))
+    end
+  end
+
+  # need to store batch_size in the statistics column for use within the PushPriorityAppealsToJudgesJob
+  def completed_statistics(stats)
+    {
+      batch_size: stats[:batch_size],
+      info: "See related row in distribution_stats for additional stats"
+    }
+  end
+
+  def record_distribution_stats(stats)
     create_distribution_stats!(
       statistics: stats,
       levers: CaseDistributionLever.snapshot
