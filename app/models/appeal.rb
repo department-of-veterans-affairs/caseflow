@@ -937,7 +937,6 @@ class Appeal < DecisionReview
       .each(&:cancel_task_and_child_subtasks)
   end
 
-  # TODO: Move this to appeal and use it in both places
   def reopen_distribution_task!(user)
     distribution_task = tasks.find { |task| task.type == DistributionTask.name }
     distribution_task.update!(status: "assigned", assigned_to: Bva.singleton, assigned_by: user)

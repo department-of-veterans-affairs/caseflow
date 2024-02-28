@@ -260,9 +260,6 @@ class AppealsController < ApplicationController
     "You have successfully " + [added_issues, removed_issues, withdrawn_issues].compact.to_sentence + "."
   end
 
-  # TODO: Update this to use appeal.veteran_file_number and appeal.claimant.name
-  # TODO: Claimant name might not be correct since everything on case details shows veteran name including
-  # The queue table case details column. It's a bit unfortunate.
   def set_flash_move_to_sct_success_message
     # If original issues were not SCT related, then that means it will be moved to the SCT queue
     if appeal.sct_appeal? && request_issues_update.before_issues.none?(&:sct_benefit_type?) &&
