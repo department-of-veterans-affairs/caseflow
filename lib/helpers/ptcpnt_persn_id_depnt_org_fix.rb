@@ -47,9 +47,9 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
   end
 
   def handle_person_and_claimant_records(correct_pid, sc)
-    correct_person_record = Person.find_by(participant_id: correct_pid)
+    correct_person_record = get_correct_person(correct_pid)
     incorrect_person_record = sc.claimant.person
-    binding.pry
+
     ActiveRecord::Base.transaction do
       if correct_person_record.present?
         claimants_array_to_be_moved_to = correct_person_record.claimants
@@ -61,17 +61,25 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
         claimants_array_to_remove_claimants_from = []
         incorrect_person_record.destroy!
       else
+        # binding.pry
         incorrect_person_record.update(participant_id: correct_pid)
+        puts "Validation errors: #{incorrect_person_record.errors.full_messages}"
       end
+      # binding.pry
 
       if sc.claimant.payee_code != "00"
         sc.claimant.update(payee_code: "00")
       end
+      # binding.pry
 
     rescue StandardError => error
       log_error(error)
-      @stuck_job_report_service.append_error(record.class.name, record.id, error)
+      @stuck_job_report_service.append_error(sc.class.name, sc.id, error)
     end
+  end
+
+  def get_correct_person(correct_pid)
+    Person.find_by(participant_id: correct_pid)
   end
 
   def retrieve_correct_pid(veteran_file_number)
@@ -87,7 +95,6 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
 
   def retrieve_records_to_fix(correct_pid, incorrect_pid)
     incorrectly_associated_records = []
-    # binding.pry
     # correct_person_record = Person.find_by(participant_id: correct_pid)
     # incorrect_person_record = Person.find_by(participant_id: incorrect_pid)
 
@@ -155,7 +162,7 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
   # def update_person_record(record, correct_person_record, correct_pid, incorrect_person_record)
   #   ActiveRecord::Base.transaction do
   #     if correct_person_record.present?
-  #       binding.pry
+
   #       incorrect_person_record.destroy!
   #     else
   #       # incorrect_person_record.update(partipcipant_id: correct_pid)
