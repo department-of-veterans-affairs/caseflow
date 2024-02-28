@@ -106,7 +106,7 @@ export const formatLeverHistory = (leverHistoryList) => {
         previousValues: [entry.previous_value],
         updatedValues: [entry.update_value],
         units: [entry.lever_unit || 'null'],
-        leverDataType: entry.lever_data_type
+        leverDataType: [entry.lever_data_type]
       };
 
       accumulator.push(newEntry);

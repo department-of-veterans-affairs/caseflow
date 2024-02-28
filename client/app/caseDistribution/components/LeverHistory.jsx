@@ -12,7 +12,7 @@ const LeverHistory = () => {
 
   const displayValue = (value, entry, idx) => {
     if (entry.leverDataType === ACD_LEVERS.data_types.radio &&
-          (value.toLowerCase().includes('always') || value.toLowerCase().includes('omit'))) {
+          (value.toLowerCase().includes('infinite') || value.toLowerCase().includes('omit'))) {
       return `${value}`;
     }
 
