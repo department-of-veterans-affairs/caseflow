@@ -655,6 +655,19 @@ ActiveRecord::Schema.define(version: 2024_02_15_212016) do
     t.index ["related_correspondence_id", "correspondence_id"], name: "index_correspondence_relations_on_related_correspondences", unique: true
   end
 
+  create_table "correspondence_response_letters", force: :cascade do |t|
+    t.integer "correspondence_id", comment: "Foreign key on correspondences table"
+    t.datetime "created_at", null: false
+    t.datetime "date_sent", comment: "Date at the time of sending correspondence response letters"
+    t.string "letter_type", null: false, comment: "Correspondence response letter type"
+    t.string "reason", comment: "Reason for selecting the response letter"
+    t.integer "response_window", comment: "The response window selected for the correspondence response letter"
+    t.string "subcategory", comment: "The subcategory selected for the correspondence response letter "
+    t.string "title", null: false, comment: "Correspondence response letters title"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", comment: "The user who has created correspondence response letter"
+  end
+
   create_table "correspondence_types", force: :cascade do |t|
     t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false

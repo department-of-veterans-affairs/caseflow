@@ -15,7 +15,8 @@ class CorrespondenceController < ApplicationController
         render json: {
           currentCorrespondence: current_correspondence,
           correspondence: correspondence_load,
-          veteranInformation: veteran_information
+          veteranInformation: veteran_information,
+          responseLetters: 0
         }
       end
     end
