@@ -34,9 +34,9 @@ class Events::DecisionReviewCreated
           # Events::CreateUserOnEvent.handle_user_creation_on_event(event, css_id, station_id)
           # Note: decision_review arg can either be a HLR or SC object. process! will only run if
           # decision_review.legacy_opt_in_approved is true
-          # Events::DecisionReviewCreate::UpdateVacolsOnOptin.process!(decision_review)
+          # Events::DecisionReviewCreated::UpdateVacolsOnOptin.process!(decision_review)
           # Note: event, user, and veteran need to be before this call.
-          # Events::DecisionReviewCreate::CreateIntake.process!(event, user, veteran)
+          # Events::DecisionReviewCreated::CreateIntake.process!(event, user, veteran)
           # event.update!(completed_at: Time.now, error: nil)
         # end
       end
