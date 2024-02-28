@@ -256,6 +256,28 @@ class Appeal < DecisionReview
     end
   end
 
+  # :reek:RepeatedConditionals
+  # decision issue status overrules request issues/special issue list for both mst and pact
+  def mst?
+    return false unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user])
+
+    return decision_issues.any?(&:mst_status) unless decision_issues.empty?
+
+    request_issues.active.any?(&:mst_status) ||
+      (special_issue_list &&
+        special_issue_list.created_at < "2023-06-01".to_date &&
+        special_issue_list.military_sexual_trauma)
+  end
+
+  # :reek:RepeatedConditionals
+  def pact?
+    return false unless FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
+
+    return decision_issues.any?(&:pact_status) unless decision_issues.empty?
+
+    request_issues.active.any?(&:pact_status)
+  end
+
   # Returns the most directly responsible party for an appeal when it is at the Board,
   # mirroring Legacy Appeals' location code in VACOLS
   def assigned_to_location
@@ -282,6 +304,7 @@ class Appeal < DecisionReview
     AppealStatusApiDecorator.new(self)
   end
 
+  # :reek:RepeatedConditionals
   def active_request_issues_or_decision_issues
     decision_issues.empty? ? active_request_issues : fetch_all_decision_issues
   end
@@ -353,6 +376,7 @@ class Appeal < DecisionReview
     dup_remand&.save
   end
 
+  # :reek:RepeatedConditionals
   # clone issues clones request_issues the user selected
   # and anydecision_issues/decision_request_issues tied to the request issue
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
@@ -472,7 +496,7 @@ class Appeal < DecisionReview
     end
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def clone_task_tree(parent_appeal, user_css_id)
     # get the task tree from the parent
     parent_ordered_tasks = parent_appeal.tasks.order(:created_at)
@@ -507,9 +531,9 @@ class Appeal < DecisionReview
       break if parent_appeal.tasks.count == tasks.count
     end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
-  # clone_task is used for splitting an appeal, tie to css_id for split
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
+  # clone_task is used for splitting an appeal, tie to css_id for split
   def clone_task(original_task, user_css_id)
     # clone the task
     dup_task = original_task.amoeba_dup
@@ -808,7 +832,7 @@ class Appeal < DecisionReview
 
   def set_target_decision_date!
     if direct_review_docket?
-      update!(target_decision_date: receipt_date + Constants.DISTRIBUTION.direct_docket_time_goal.days)
+      update!(target_decision_date: receipt_date + CaseDistributionLever.ama_direct_review_docket_time_goals.days)
     end
   end
 
@@ -913,9 +937,14 @@ class Appeal < DecisionReview
 
   # :reek:FeatureEnvy
   def can_redistribute_appeal?
+    # These tasks are irrelevant because: TrackVeteranTask - Always open for VSO/representative to see case
+    # RootTask - Always open, JudgeAssignTask - The first of these will be canceled as part of redistribution,
+    # DistributionTask - Will be open until distribution is complete,
+    # MailTask nonblocking subclasses - created as child of RootTask and shouldn't stop appeals from distribution
     relevant_tasks = tasks.reject do |task|
       task.is_a?(TrackVeteranTask) || task.is_a?(RootTask) ||
-        task.is_a?(JudgeAssignTask) || task.is_a?(DistributionTask)
+        task.is_a?(JudgeAssignTask) || task.is_a?(DistributionTask) ||
+        (task.is_a?(MailTask) && !MailTask.subclasses.filter(&:blocking?).map(&:name).include?(task.class.name))
     end
     return false if relevant_tasks.any?(&:open?)
     return true if relevant_tasks.all?(&:closed?)
@@ -923,6 +952,10 @@ class Appeal < DecisionReview
 
   def open_cavc_task
     CavcTask.open.where(appeal_id: self.id).any?
+  end
+
+  def is_legacy?
+    false
   end
 
   private

@@ -29,13 +29,11 @@ module QueueHelpers
       cmp_queue_id: 1,
       cmp_packet_number: @cmp_packet_number,
       va_date_of_receipt: rand(1.month.ago..1.day.ago),
-      notes: "Notes from CMP - Queue Correspondence Seed",
+      notes: "Notes from CMP - Queue Correspondence Seed".split(" ").shuffle.join,
       assigned_by_id: 81,
       updated_by_id: 81,
       veteran_id: vet.id
     ).tap { @cmp_packet_number += 1 }
-
-    # create_correspondence_document(correspondence, vet)
   end
 
   def create_correspondence_document(correspondence, veteran)
@@ -51,22 +49,30 @@ module QueueHelpers
 
   def create_correspondence_intake(correspondence, user)
     parent = correspondence&.root_task
-    CorrespondenceIntakeTask.create_from_params(parent, user)
+    complete_task(ReviewPackageTask.find_by(appeal_id: correspondence.id), user.id)
+    cit = CorrespondenceIntakeTask.create_from_params(parent, user)
+    randomize_days_waiting_value(cit)
+    cit
   end
 
   def assign_review_package_task(correspondence, user)
     review_package_task = ReviewPackageTask.find_by(appeal_id: correspondence.id)
-    review_package_task.update!(assigned_to: user, status: Constants.TASK_STATUSES.assigned)
+    review_package_task.update!(
+      assigned_to: user,
+      status: Constants.TASK_STATUSES.assigned,
+      assigned_at: rand(1.month.ago..1.day.ago)
+    )
   end
 
   def create_efolderupload_failed_task(correspondence, parent)
-    EfolderUploadFailedTask.create!(
+    euft = EfolderUploadFailedTask.create!(
       parent_id: parent.id,
       appeal_id: correspondence.id,
       appeal_type: "Correspondence",
       assigned_to: parent.assigned_to,
       status: Constants.TASK_STATUSES.in_progress
     )
+    randomize_days_waiting_value(euft)
   end
 
   def create_action_required_tasks(correspondence, status:, parent_task:, task_type:)
@@ -118,12 +124,20 @@ module QueueHelpers
     )
   end
 
+  def complete_task(task, user_id)
+    task.update!(status: Constants.TASK_STATUSES.completed, completed_by_id: user_id)
+  end
+
   def process_correspondence(correspondence, user)
     rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id)
     rpt.update!(status: Constants.TASK_STATUSES.completed, completed_by_id: user.id)
 
     cit = CorrespondenceIntakeTask.create_from_params(correspondence&.root_task, user)
     cit.update!(status: Constants.TASK_STATUSES.completed, completed_by_id: user.id)
+  end
+
+  def randomize_days_waiting_value(task)
+    task.update(assigned_at: rand(1.month.ago..1.day.ago))
   end
 end
 # rubocop:enable Metrics/ModuleLength

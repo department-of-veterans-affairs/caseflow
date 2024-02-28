@@ -48,21 +48,25 @@ describe ExternalApi::VADotGovService do
   describe "#get_distance" do
     it "returns distance to facilities" do
       result = VADotGovService.get_distance(
-        ids: %w[vha_757 vha_539 vha_539],
+        ids: %w[vha_757 vha_539],
         lat: 0.0,
         long: 0.0
       )
 
-      expect(result.data.pluck(:facility_id)).to eq(%w[vha_757 vha_539 vha_539])
+      expect(result.data.pluck(:facility_id)).to match_array(%w[vha_757 vha_539])
+      expect(result.body[:meta][:distances].pluck(:id)).to match_array(%w[vha_757 vha_539])
+      expect(result.body[:meta][:distances].pluck(:distance)).to all(be_an(Integer))
+
       expect(result.error).to be_nil
     end
   end
 
   describe "#get_facility_data" do
     it "returns facility data" do
-      result = VADotGovService.get_facility_data(ids: %w[vha_757 vha_539 vha_539])
+      result = VADotGovService.get_facility_data(ids: %w[vha_757 vha_539])
 
-      expect(result.data.pluck(:facility_id)).to eq(%w[vha_757 vha_539 vha_539])
+      expect(result.data.pluck(:facility_id)).to match_array(%w[vha_757 vha_539])
+      expect(result.body[:meta][:distances].pluck(:id, :distance)).to be_empty
       expect(result.error).to be_nil
     end
   end

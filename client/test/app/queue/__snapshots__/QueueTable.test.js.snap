@@ -399,6 +399,9 @@ exports[`QueueTable HeaderRow Can filter when using task pages API and column ha
           filterOptions={Array []}
           filterOptionsFromApi={Array []}
           header="Third"
+          isReceiptDateFilter={false}
+          isTaskCompletedDateFilter={false}
+
           tableData={
             Array [
               Object {

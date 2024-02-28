@@ -400,6 +400,7 @@ FactoryBot.define do
       # > overridden parameters in the instance variable @overrides.
       # It's a clean solution that doesn't require updating tests or adding a new transient attribute.
       appeal { @overrides[:parent] ? @overrides[:parent].appeal : create(:appeal) }
+      appeal_type { appeal.class.name }
 
       before :create do |task, _eval|
         task.update(type: task.class.name)
@@ -522,6 +523,9 @@ FactoryBot.define do
         end
       end
 
+      factory :evidence_or_argument_mail_task, class: EvidenceOrArgumentMailTask do
+      end
+
       factory :pulac_cerullo_task, class: PulacCerulloTask do
       end
 
@@ -615,6 +619,7 @@ FactoryBot.define do
       end
 
       factory :correspondence_intake_task, class: CorrespondenceIntakeTask do
+        appeal_type { Correspondence.name }
       end
 
       factory :efolder_upload_failed_task, class: EfolderUploadFailedTask do

@@ -16,7 +16,7 @@ class OrganizationCorrespondenceAssignedTasksTab < CorrespondenceQueueTab
   end
 
   def tasks
-    CorrespondenceTask.includes(*task_includes).where(assigned_to: assignee).assigned
+    CorrespondenceTask.includes(*task_includes).active.where.not(assigned_to_type: "Organization")
   end
 
   def column_names
