@@ -113,7 +113,7 @@ class CaseDistributionLever < ApplicationRecord
 
     selected_option = option(Constants.ACD_LEVERS.value)
 
-    "#{selected_option["text"]} #{value.to_s} #{selected_option["unit"]}"
+    "#{selected_option["text"]} #{value.to_s}"
   end
 
   class << self
