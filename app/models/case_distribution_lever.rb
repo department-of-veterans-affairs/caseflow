@@ -9,7 +9,7 @@ class CaseDistributionLever < ApplicationRecord
   validates :is_disabled_in_ui, inclusion: { in: [true, false] }
   validate :value_matches_data_type
 
-  scope :active, -> { where(is_disabled_in_ui: false)}
+  scope :active, -> { where(is_disabled_in_ui: false) }
 
   self.table_name = "case_distribution_levers"
   INTEGER_LEVERS = %W(
