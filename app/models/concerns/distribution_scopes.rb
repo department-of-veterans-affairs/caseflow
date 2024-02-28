@@ -132,16 +132,9 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
 
   # If an appeal has exceeded the affinity, it should be returned to genpop.
   def exceeding_affinity_threshold
-    query = joins(with_assigned_distribution_task_sql)
+    joins(with_assigned_distribution_task_sql)
       .where(hearings: { disposition: "held" })
-    ama_hearing_case_affinity_days_lever(query)
-  end
-
-  def ama_hearing_case_affinity_days_lever(query)
-    lever_value = CaseDistributionLever.ama_hearing_case_affinity_days
-    return [] if lever_value == "infinite"
-
-    query.where("distribution_task.assigned_at <= ?", lever_value.days.ago)
+      .where("distribution_task.assigned_at <= ?", CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
   end
 
   # Historical note: We formerly had not_tied_to_any_active_judge until CASEFLOW-1928,
@@ -160,5 +153,16 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
 
   def with_held_hearings
     where(hearings: { disposition: "held" })
+  end
+
+  def lever_omitted?(lever)
+    CaseDistributionLever.send(lever) == "omit"
+  end
+
+  def lever_enabled?(lever)
+    lever_value = CaseDistributionLever.send(lever)
+    return false if lever_value == "omit" || lever_value == "infinite"
+
+    true
   end
 end
