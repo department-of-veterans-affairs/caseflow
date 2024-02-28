@@ -61,16 +61,12 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
         claimants_array_to_remove_claimants_from = []
         incorrect_person_record.destroy!
       else
-        # binding.pry
         incorrect_person_record.update(participant_id: correct_pid)
-        puts "Validation errors: #{incorrect_person_record.errors.full_messages}"
       end
-      # binding.pry
 
       if sc.claimant.payee_code != "00"
         sc.claimant.update(payee_code: "00")
       end
-      # binding.pry
 
     rescue StandardError => error
       log_error(error)
@@ -139,43 +135,9 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
     end
   end
 
-  # def discern_record(record, correct_person_record, correct_pid, incorrect_person_record)
-  #   case record.class.name
-  #   when "VeteranClaimant"
-  #     process_veteran_claimant_record(record, correct_pid)
-  #   when "Person"
-  #     update_person_record(record, correct_person_record, correct_pid, incorrect_person_record)
-  #   else
-  #     process_participant_id_record(record, correct_person_record)
-  #   end
-  # end
-
-  # def process_veteran_claimant_record(record, correct_pid)
-  #   ActiveRecord::Base.transaction do
-  #     record.update(participant_id: correct_pid, payee_code: "00")
-  #   rescue StandardError => error
-  #     log_error(error)
-  #     @stuck_job_report_service.append_error(record.class.name, record.id, error)
-  #   end
-  # end
-
-  # def update_person_record(record, correct_person_record, correct_pid, incorrect_person_record)
-  #   ActiveRecord::Base.transaction do
-  #     if correct_person_record.present?
-
-  #       incorrect_person_record.destroy!
-  #     else
-  #       # incorrect_person_record.update(partipcipant_id: correct_pid)
-  #     end
-  #   rescue StandardError => error
-  #     log_error(error)
-  #     @stuck_job_report_service.append_error(record.class.name, record.id, error)
-  #   end
-  # end
-
   def process_participant_id_record(record, correct_pid)
     ActiveRecord::Base.transaction do
-      record.update(particpant_id: correct_pid)
+      record.update(participant_id: correct_pid)
     rescue StandardError => error
       log_error(error)
       @stuck_job_report_service.append_error(record.class.name, record.id, error)

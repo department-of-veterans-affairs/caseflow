@@ -73,6 +73,14 @@ describe PtcpntPersnIdDepntOrgFix, :postgres do
     end
   end
 
+  describe "Claimant is not VeteranClaimant" do
+    it "does NOT remediate the record" do
+      supplemental_claim.claimant.update(type: "DependentClaimant")
+      subject.start_processing_records
+      expect(supplemental_claim.reload.establishment_error).to eq(error_text)
+    end
+  end
+
   describe "Association Processing" do
     before do
       # Stub BGSService to simulate an error response
@@ -89,6 +97,7 @@ describe PtcpntPersnIdDepntOrgFix, :postgres do
         expect(bgs_power_of_attorney.reload.claimant_participant_id).to eq(correct_pid)
       end
     end
+
 
     describe '#handle_person_and_claimant_records' do
       it 'handles person records' do
@@ -119,37 +128,18 @@ describe PtcpntPersnIdDepntOrgFix, :postgres do
           }.not_to change { Person.count } # Expect no person to be destroyed
       end
 
+      it 'updates incorrect person when correct person not found' do
+        allow(subject).to receive(:get_correct_person).with(correct_pid).and_return(nil)
+        subject.start_processing_records
+        expect(supplemental_claim.claimant.person.reload.participant_id).to eq(correct_pid)
+      end
 
-
+      it 'updates payee_code if not 00' do
+        allow(subject).to receive(:get_correct_person).with(correct_pid).and_return(nil)
+        supplemental_claim.claimant.payee_code = nil
+        subject.start_processing_records
+        expect(supplemental_claim.claimant.payee_code).to eq("00")
+      end
     end
-
-    # context "Claimant record" do
-    #   context "On PID and payee_code" do
-    #     it "correctly updates participant ID" do
-    #       binding.pry
-    #       subject.start_processing_records
-    #       binding.pry
-    #       expect(claimant.reload.participant_id).to eq(correct_pid)
-    #     end
-
-    #     it "correctly updates payee_code" do
-    #       claimant.update(payee_code: nil)
-    #       subject.start_processing_records
-    #       expect(claimant.reload.payee_code).to eq("00")
-    #     end
-    #   end
-    # end
-
-    # context "Person record" do
-    #   context "Correct Person exists" do
-    #     it "detroys the incorrect Person record" do
-    #       # binding.pry
-    #       subject.start_processing_records
-    #       # expect { incorrect_person_record.destroy! }.to change { Person.count }.by(-1)
-    #     end
-    #   end
-    # end
-
-    # Add more examples for other associations
   end
 end
