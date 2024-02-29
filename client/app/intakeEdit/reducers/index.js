@@ -12,7 +12,9 @@ export const mapDataToInitialState = function(props = {}) {
     claimId,
     featureToggles,
     userCanWithdrawIssues,
+    userCanEditIntakeIssues,
     userCanSplitAppeal,
+    isLegacy ,
     hasDistributionTask
   } = props;
 
@@ -35,7 +37,9 @@ export const mapDataToInitialState = function(props = {}) {
     claimId,
     featureToggles,
     userCanWithdrawIssues,
+    userCanEditIntakeIssues,
     userCanSplitAppeal,
+    isLegacy,
     addDecisionDateModalVisible: false,
     addIssuesModalVisible: false,
     nonRatingRequestIssueModalVisible: false,
