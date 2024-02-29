@@ -22,6 +22,22 @@ Rails.application.routes.draw do
 
   resources :certification_cancellations, only: [:show, :create]
 
+  constraints(lambda { |request| Rails.env.demo? || Rails.env.test? || Rails.env.development? }) do
+    get 'acd-controls', :to => 'case_distribution_levers#acd_lever_index'
+    get 'acd-controls/test', :to => 'case_distribution_levers_tests#acd_lever_index_test'
+    get 'appeals-ready-to-distribute', to: 'case_distribution_levers_tests#appeals_ready_to_distribute'
+    get 'appeals-distributed', to: 'case_distribution_levers_tests#appeals_distributed'
+  end
+
+  get 'case-distribution-controls', :to => 'case_distribution_levers#acd_lever_index'
+
+  resources :case_distribution_levers, only: [] do
+    collection do
+      post :update_levers
+      get :levers
+    end
+  end
+
   namespace :api do
     namespace :v1 do
       resources :appeals, only: :index
@@ -257,6 +273,7 @@ Rails.application.routes.draw do
   resources :decision_reviews, param: :business_line_slug do
     resources :tasks, controller: :decision_reviews, param: :task_id, only: [:show, :update] do
       member do
+        get :history
         get :power_of_attorney
         patch :update_power_of_attorney
       end

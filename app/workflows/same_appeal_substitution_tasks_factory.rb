@@ -127,8 +127,8 @@ class SameAppealSubstitutionTasksFactory
 
   def reopen_decision_tasks
     if @appeal.tasks.of_type(:AttorneyTask).open.empty? &&
-       @appeal.tasks.of_type(:JudgeDecisionReviewTask).open.empty?
-      copy_task(last_cancelled_attorney_task) if last_cancelled_attorney_task
+       @appeal.tasks.of_type(:JudgeDecisionReviewTask).open.empty? && last_cancelled_attorney_task
+      copy_task(last_cancelled_attorney_task)
     end
   end
 

@@ -32,11 +32,13 @@ class ConferenceLink < CaseflowRecord
     host_pin_long || self[:host_pin]
   end
 
+  # rubocop:disable Naming/MemoizedInstanceVariableName
   def host_link
     @full_host_link ||= "#{ConferenceLink.base_url}?join=1&media=&escalate=1&" \
     "conference=#{alias_with_host}&" \
     "pin=#{host_pin}&role=host"
   end
+  # rubocop:enable Naming/MemoizedInstanceVariableName
 
   def guest_pin
     return guest_pin_long if !guest_pin_long.nil?
@@ -76,8 +78,8 @@ class ConferenceLink < CaseflowRecord
         guest_pin_long: link_service.guest_pin
       )
     rescue VirtualHearings::LinkService::PINKeyMissingError,
-      VirtualHearings::LinkService::URLHostMissingError,
-      VirtualHearings::LinkService::URLPathMissingError => error
+           VirtualHearings::LinkService::URLHostMissingError,
+           VirtualHearings::LinkService::URLPathMissingError => error
       Raven.capture_exception(error: error)
       raise error
     end
