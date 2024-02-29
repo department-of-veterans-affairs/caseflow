@@ -132,12 +132,6 @@ module Seeds
       cit.update!(status: Constants.TASK_STATUSES.in_progress)
     end
 
-    def create_correspondence_with_completed_intake_task(user)
-      corres = create_correspondence
-      cit = create_correspondence_intake(corres, user)
-      cit.update!(status: Constants.TASK_STATUSES.completed)
-    end
-
     def create_correspondence_with_unassigned_review_package_task
       corres = create_correspondence
       # vary days waiting to be able to test column sorting
