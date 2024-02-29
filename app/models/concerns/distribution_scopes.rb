@@ -159,7 +159,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
     CaseDistributionLever.send(lever) == "omit"
   end
 
-  def lever_enabled?(lever)
+  def case_affinity_days_lever_value_is_selected?(lever)
     lever_value = CaseDistributionLever.send(lever)
     return false if lever_value == "omit" || lever_value == "infinite"
 
