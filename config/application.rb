@@ -108,9 +108,6 @@ module CaseflowCertification
     # Default as of 6.0: false
     config.action_dispatch.return_only_media_type_on_content_type = true
 
-    # Return false instead of self when enqueuing is aborted from a callback.
-    # config.active_job.return_false_on_aborted_enqueue = true
-
     # Send Active Storage analysis and purge jobs to dedicated queues.
     # config.active_storage.queues.analysis = :active_storage_analysis
     # config.active_storage.queues.purge    = :active_storage_purge
