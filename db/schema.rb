@@ -1298,7 +1298,6 @@ ActiveRecord::Schema.define(version: 2024_02_27_154315) do
     t.json "relevant_tables_info", comment: "Store information to tie metric to database table(s)"
     t.string "sent_to", comment: "Which system metric was sent to: Datadog, Rails Console, Javascript Console, etc ", array: true
     t.json "sent_to_info", comment: "Additional information for which system metric was sent to"
-    t.uuid "session_id"
     t.datetime "start", comment: "When metric recording started"
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false, comment: "The ID of the user who generated metric."
