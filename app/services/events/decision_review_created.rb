@@ -4,7 +4,6 @@ class Events::DecisionReviewCreated
   include RedisMutex::Macro
   include Events::DecisionReviewCreated::UpdateVacolsOnOptin
   include Events::DecisionReviewCreated::CreateIntake
-  include Events::CreateVeteranOnEvent
   # Default options for RedisMutex#with_lock
   # :block  => 1    # Specify in seconds how long you want to wait for the lock to be released.
   #                 # Specify 0 if you need non-blocking sematics and return false immediately. (default: 1)

@@ -31,6 +31,16 @@ describe Events::CreateVeteranOnEvent do
         backfilled_veteran = subject.create_backfill_veteran(event, headers, non_cf_veteran)
 
         expect(backfilled_veteran.ssn).to eq headers["X-VA-Vet-SSN"]
+        expect(backfilled_veteran.file_number).to eq headers["X-VA-File-Number"]
+        expect(backfilled_veteran.first_name).to eq headers["X-VA-Vet-First-Name"]
+        expect(backfilled_veteran.last_name).to eq headers["X-VA-Vet-Last-Name"]
+        expect(backfilled_veteran.middle_name).to eq headers["X-VA-Vet-Middle-Name"]
+
+        expect(backfilled_veteran.participant_id).to eq non_cf_veteran.participant_id
+        # expect(backfilled_veteran.bgs_last_synced_at).to eq non_cf_veteran.bgs_last_synced_at
+
+        expect(EventRecord.count).to eq 1
+
       end
     end
 
