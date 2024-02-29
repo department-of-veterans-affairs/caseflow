@@ -484,7 +484,7 @@ class AppealsController < ApplicationController
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-  # rubocop:disable Layout/LineLength
+  # rubocop:disable Layout/LineLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def set_flash_success_message
     # updated flash message to show mst/pact message if mst/pact changes (not to legacy)
     return set_flash_mst_edit_message if mst_pact_changes? &&
@@ -499,7 +499,7 @@ class AppealsController < ApplicationController
 
     set_flash_edit_message
   end
-  # rubocop:enable Layout/LineLength
+  # rubocop:enable Layout/LineLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   # create success message with added and removed issues
   def set_flash_mst_edit_message
@@ -526,7 +526,6 @@ class AppealsController < ApplicationController
                        review_edited_message
                      end
   end
-  # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   def render_access_error
     render(Caseflow::Error::ActionForbiddenError.new(

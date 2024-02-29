@@ -16,7 +16,7 @@ class RequestIssuesUpdate < CaseflowRecord
   delegate :withdrawn_issues, to: :withdrawal
   delegate :corrected_issues, :correction_issues, to: :correction
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
   def perform!
     return false unless validate_before_perform
     return false if processed?
@@ -47,7 +47,7 @@ class RequestIssuesUpdate < CaseflowRecord
 
     true
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
 
   def process_job
     if run_async?
