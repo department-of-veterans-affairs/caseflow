@@ -83,6 +83,7 @@ class HearingRequestDistributionQuery
     base_relation.most_recent_hearings.exceeding_affinity_threshold
   end
 
+    # ama_aod_hearing_original_appeals
   def most_recent_held_hearings_ama_aod_hearing_original_appeals
     base_relation.most_recent_hearings.ama_aod_hearing_original_appeals.not_tied_to_ineligible_judge
   end
