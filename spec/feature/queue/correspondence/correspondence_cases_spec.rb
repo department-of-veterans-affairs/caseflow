@@ -22,7 +22,7 @@ RSpec.feature("The Correspondence Cases page") do
     it "routes to correspondence cases if feature toggle is enabled" do
       FeatureToggle.enable!(:correspondence_queue)
       visit "/queue/correspondence"
-      expect(page).to have_current_path(%r{/queue/correspondence})
+      expect(page).to have_current_path("/queue/correspondence")
     end
   end
 
