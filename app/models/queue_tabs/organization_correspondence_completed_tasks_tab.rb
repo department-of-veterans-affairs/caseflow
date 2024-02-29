@@ -28,7 +28,7 @@ class OrganizationCorrespondenceCompletedTasksTab < CorrespondenceQueueTab
     end.pluck(:id)
 
     CorrespondenceTask.includes(*task_includes)
-      .where(id: completed_root_tasks + tasks_with_completed_children).recently_completed
+      .where(id: completed_root_tasks + tasks_with_completed_children)
   end
 
   def column_names
