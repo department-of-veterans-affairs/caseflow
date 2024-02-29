@@ -154,4 +154,15 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   def with_held_hearings
     where(hearings: { disposition: "held" })
   end
+
+  def lever_omitted?(lever)
+    CaseDistributionLever.send(lever) == "omit"
+  end
+
+  def case_affinity_days_lever_value_is_selected?(lever)
+    lever_value = CaseDistributionLever.send(lever)
+    return false if lever_value == "omit" || lever_value == "infinite"
+
+    true
+  end
 end
