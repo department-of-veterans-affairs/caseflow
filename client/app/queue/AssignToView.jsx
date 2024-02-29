@@ -156,7 +156,8 @@ class AssignToView extends React.Component {
     if (isLegacyReassignToJudge) {
       return this.props.legacyReassignToJudge({
         tasks: [task],
-        assigneeId: this.state.selectedValue
+        assigneeId: this.state.selectedValue,
+        instructions: this.state.instructions
       }, successMsg);
     }
 

@@ -91,10 +91,24 @@ class LegacyTasksController < ApplicationController
     }
   end
 
-  def assign_to_judge
+  def assign_to_judge # rubocop:disable Metrics/MethodLength
     # If the user being assigned to is a judge, do not create a DECASS record, just
     # update the location to the assigned judge.
-    QueueRepository.update_location_to_judge(appeal.vacols_id, assigned_to)
+    CaseflowRecord.multi_transaction do
+      QueueRepository.update_location_to_judge(appeal.vacols_id, assigned_to)
+      LegacyAppealAssignTrackingTask.create!(
+        appeal: appeal,
+        assigned_at: Time.zone.now,
+        assigned_by: current_user,
+        assigned_to: assigned_to,
+        status: "completed",
+        closed_at: Time.zone.now,
+        completed_by_id: current_user.id,
+        # the task model is expecting instructions to be in an array
+        instructions: ["Assigning case to judge", legacy_task_params[:instructions]],
+        parent_id: nil
+      )
+    end
 
     # Remove overtime status of an appeal when reassigning to a judge
     appeal.overtime = false if appeal.overtime?
@@ -154,7 +168,7 @@ class LegacyTasksController < ApplicationController
 
   def legacy_task_params
     task_params = params.require("tasks")
-      .permit(:appeal_id)
+      .permit(:appeal_id, :assigned_to_id, :instructions)
       .merge(assigned_by: current_user)
       .merge(assigned_to: User.find_by(id: params[:tasks][:assigned_to_id]))
 
