@@ -729,12 +729,14 @@ describe DecisionReviewsController, :postgres, type: :controller do
             { "taskID" => task_event.id, "eventType" => "added_issue", "claimType" => "Higher-Level Review",
               "readableEventType" => "Added issue" },
             { "eventType" => "claim_creation", "readableEventType" => "Claim created" },
+            { "eventType" => "in_progress", "readableEventType" => "Claim status - In progress" },
             { "eventType" => "completed_disposition", "readableEventType" => "Completed disposition" }
           ]
-          expected_events.each_with_index do |expected_attributes, index|
-            expected_attributes.each do |key, value|
-              expect(res[index]["attributes"][key]).to eq value
-            end
+
+          expected_events.each do |expected_attributes|
+            expect(res).to include(
+              a_hash_including("attributes" => a_hash_including(expected_attributes))
+            )
           end
         end
       end

@@ -245,7 +245,8 @@ FactoryBot.define do
                decision_review: hlr,
                request_issues: hlr.request_issues,
                benefit_type: hlr.benefit_type,
-               disposition: "Granted")
+               disposition: "Granted",
+               caseflow_decision_date: 5.days.ago.to_date)
       end
     end
 

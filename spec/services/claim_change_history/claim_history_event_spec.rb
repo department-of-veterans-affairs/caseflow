@@ -47,7 +47,8 @@ describe ClaimHistoryEvent do
       "event_user_name" => change_data_event_user_name,
       "event_date" => change_data_event_date,
       "task_versions" => version_changes,
-      "days_waiting" => 25
+      "days_waiting" => 25,
+      "task_closed_at" => "2023-10-19 22:47:16.233187"
     }
   end
 
@@ -99,7 +100,7 @@ describe ClaimHistoryEvent do
       decision_date: nil,
       decision_description: nil,
       disposition: nil,
-      disposition_date: nil,
+      disposition_date: "2023-10-19",
       event_date: nil,
       event_type: event_type,
       event_user_css_id: nil,
@@ -117,7 +118,7 @@ describe ClaimHistoryEvent do
 
   let(:intake_event_data) do
     {
-      event_date: change_data["intake_completed_at"],
+      event_date: date_string_to_iso8601(change_data["intake_completed_at"]),
       event_user_name: change_data["intake_user_name"],
       user_facility: change_data["intake_user_station_id"],
       event_user_css_id: change_data["intake_user_css_id"]
@@ -126,7 +127,7 @@ describe ClaimHistoryEvent do
 
   let(:update_event_data) do
     {
-      event_date: change_data["request_issue_created_at"],
+      event_date: date_string_to_iso8601(change_data["request_issue_created_at"]),
       event_user_name: change_data["update_user_name"],
       user_facility: change_data["update_user_station_id"],
       event_user_css_id: change_data["update_user_css_id"]
@@ -173,7 +174,7 @@ describe ClaimHistoryEvent do
       context "with dispostion" do
         let(:new_event_data) do
           {
-            event_date: change_data["decision_created_at"],
+            event_date: date_string_to_iso8601(change_data["decision_created_at"]),
             event_user_name: change_data["decision_user_name"],
             user_facility: change_data["decision_user_station_id"],
             event_user_css_id: change_data["decision_user_css_id"]
@@ -381,7 +382,7 @@ describe ClaimHistoryEvent do
           event = subject[0]
           expect(event.event_type).to eq(:in_progress)
           expect(event.event_user_name).to eq("System")
-          expect(event.event_date).to eq(change_data["intake_completed_at"])
+          expect(event.event_date).to eq(date_string_to_iso8601(change_data["intake_completed_at"]))
         end
       end
 
@@ -395,10 +396,10 @@ describe ClaimHistoryEvent do
           expect(events.count).to eq(2)
           expect(events[0].event_type).to eq(:in_progress)
           expect(events[0].event_user_name).to eq("System")
-          expect(events[0].event_date).to eq(change_data["intake_completed_at"])
+          expect(events[0].event_date).to eq(date_string_to_iso8601(change_data["intake_completed_at"]))
           expect(events[1].event_type).to eq(:cancelled)
           expect(events[1].event_user_name).to eq("System")
-          expect(events[1].event_date).to eq(change_data["task_completed_at"])
+          expect(events[1].event_date).to eq(date_string_to_iso8601(change_data["task_closed_at"]))
         end
       end
     end
@@ -428,7 +429,7 @@ describe ClaimHistoryEvent do
         it "should create an added_decision_date event" do
           event = subject[0]
           expect(event.event_type).to eq(:added_decision_date)
-          expect(event.event_date).to eq(change_data["request_issue_update_time"])
+          expect(event.event_date).to eq(date_string_to_iso8601(change_data["request_issue_update_time"]))
           expect(event.event_user_name).to eq(change_data["update_user_name"])
           expect(event.event_user_css_id).to eq(change_data["update_user_css_id"])
           expect(event.decision_date).to eq(request_issue.decision_date)
@@ -445,7 +446,7 @@ describe ClaimHistoryEvent do
         it "should create an added_decision_date event without a database fetch" do
           event = subject[0]
           expect(event.event_type).to eq(:added_decision_date)
-          expect(event.event_date).to eq(change_data["request_issue_update_time"])
+          expect(event.event_date).to eq(date_string_to_iso8601(change_data["request_issue_update_time"]))
           expect(event.event_user_name).to eq(change_data["update_user_name"])
           expect(event.event_user_css_id).to eq(change_data["update_user_css_id"])
           expect(event.decision_date).to eq(change_data["decision_date"])
@@ -461,7 +462,7 @@ describe ClaimHistoryEvent do
         it "should create a :withdrew_issue event" do
           event = subject[0]
           expect(event.event_type).to eq(:withdrew_issue)
-          expect(event.event_date).to eq(change_data["request_issue_update_time"])
+          expect(event.event_date).to eq(date_string_to_iso8601(change_data["request_issue_update_time"]))
           expect(event.event_user_name).to eq(change_data["update_user_name"])
           expect(event.event_user_css_id).to eq(change_data["update_user_css_id"])
           expect(event.decision_date).to eq(request_issue.decision_date)
@@ -479,7 +480,7 @@ describe ClaimHistoryEvent do
         it "should create a :removed_issue event" do
           event = subject[0]
           expect(event.event_type).to eq(:removed_issue)
-          expect(event.event_date).to eq(change_data["request_issue_update_time"])
+          expect(event.event_date).to eq(date_string_to_iso8601(change_data["request_issue_update_time"]))
           expect(event.event_user_name).to eq(change_data["update_user_name"])
           expect(event.event_user_css_id).to eq(change_data["update_user_css_id"])
           expect(event.decision_date).to eq(request_issue.decision_date)
@@ -625,7 +626,7 @@ describe ClaimHistoryEvent do
           expect(subject.event_user_css_id).to eq("NEWUSER")
           expect(subject.event_user_name).to eq("Update Fetch")
           expect(subject.user_facility).to eq("103")
-          expect(subject.event_date).to eq(request_issue_created_at)
+          expect(subject.event_date).to eq(date_string_to_iso8601(request_issue_created_at))
         end
       end
     end
@@ -1126,5 +1127,9 @@ describe ClaimHistoryEvent do
     attribute_value_pairs.each do |attribute, expected_value|
       expect(object_instance.send(attribute)).to eq(expected_value)
     end
+  end
+
+  def date_string_to_iso8601(date_string)
+    DateTime.parse(date_string).iso8601
   end
 end
