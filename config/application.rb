@@ -13,6 +13,7 @@ module CaseflowCertification
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 5.2
+    config.autoloader = :classic
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
@@ -92,17 +93,20 @@ module CaseflowCertification
     # ------------------------------------------------------------------------------------------------------------------
 
     # Don't force requests from old versions of IE to be UTF-8 encoded.
-    # config.action_view.default_enforce_utf8 = false
+    # Default as of 6.0: false
+    config.action_view.default_enforce_utf8 = true
 
     # Embed purpose and expiry metadata inside signed and encrypted
     # cookies for increased security.
     #
     # This option is not backwards compatible with earlier Rails versions.
     # It's best enabled when your entire app is migrated and stable on 6.0.
-    # config.action_dispatch.use_cookies_with_metadata = true
+    # Default as of 6.0: true
+    config.action_dispatch.use_cookies_with_metadata = false
 
     # Change the return value of `ActionDispatch::Response#content_type` to Content-Type header without modification.
-    # config.action_dispatch.return_only_media_type_on_content_type = false
+    # Default as of 6.0: false
+    config.action_dispatch.return_only_media_type_on_content_type = true
 
     # Return false instead of self when enqueuing is aborted from a callback.
     # config.active_job.return_false_on_aborted_enqueue = true
@@ -122,12 +126,14 @@ module CaseflowCertification
     # If you send mail in the background, job workers need to have a copy of
     # MailDeliveryJob to ensure all delivery jobs are processed properly.
     # Make sure your entire app is migrated and stable on 6.0 before using this setting.
-    # config.action_mailer.delivery_job = "ActionMailer::MailDeliveryJob"
+    # Default as of 6.0: "ActionMailer::MailDeliveryJob"
+    config.action_mailer.delivery_job = nil
 
     # Enable the same cache key to be reused when the object being cached of type
     # `ActiveRecord::Relation` changes by moving the volatile information (max updated at and count)
     # of the relation's cache key into the cache version to support recycling cache key.
-    # config.active_record.collection_cache_versioning = true
+    # Default as of 6.0: true
+    config.active_record.collection_cache_versioning = false
 
     # ==================================================================================================================
 
