@@ -54,6 +54,7 @@ class HearingRequestDistributionQuery
       appeals_to_return << most_recent_held_hearings_ama_aod_hearing_original_appeals
     end
 
+    appeals_to_return = []
     no_hearings_or_no_held_hearings = with_no_hearings.or(with_no_held_hearings)
 
     # returning early as most_recent_held_hearings_not_tied_to_any_judge is redundant
@@ -66,19 +67,18 @@ class HearingRequestDistributionQuery
       ].flatten.uniq
     end
 
+    appeals_to_return << with_held_hearings if lever_omitted?("ama_hearing_case_affinity_days")
+
     # We are combining two queries using an array because using `or` doesn't work
     # due to incompatibilities between the two queries.
-    [
-      most_recent_held_hearings_not_tied_to_any_judge,
-      most_recent_held_hearings_exceeding_affinity_threshold,
-      most_recent_held_hearings_ama_aod_hearing_original_appeals,
-      most_recent_held_hearings_tied_to_ineligible_judge,
-      no_hearings_or_no_held_hearings,
-      most_recent_held_hearings_tied_to_judges_with_exclude_appeals_from_affinity
-    ].flatten.uniq
+    appeals_to_return << most_recent_held_hearings_not_tied_to_any_judge
+    appeals_to_return << most_recent_held_hearings_exceeding_affinity_threshold if case_affinity_days_lever_value_is_selected?("ama_hearing_case_affinity_days") # rubocop:disable Layout/LineLength
+    appeals_to_return << most_recent_held_hearings_tied_to_ineligible_judge
+    appeals_to_return << no_hearings_or_no_held_hearings
+    appeals_to_return << most_recent_held_hearings_tied_to_judges_with_exclude_appeals_from_affinity
+    appeals_to_return.flatten.uniq
   end
-  
-  # ama_aod_hearing_original_appeals
+
   def most_recent_held_hearings_exceeding_affinity_threshold
     base_relation.most_recent_hearings.exceeding_affinity_threshold
   end
