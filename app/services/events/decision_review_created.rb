@@ -2,7 +2,8 @@
 
 class Events::DecisionReviewCreated
   include RedisMutex::Macro
-  include Events::DecisionReviewCreate::UpdateVacolsOnOptin
+  include Events::DecisionReviewCreated::UpdateVacolsOnOptin
+  include Events::DecisionReviewCreated::CreateIntake
   include Events::CreateVeteranOnEvent
   # Default options for RedisMutex#with_lock
   # :block  => 1    # Specify in seconds how long you want to wait for the lock to be released.
@@ -40,7 +41,6 @@ class Events::DecisionReviewCreated
           # Note: decision_review arg can either be a HLR or SC object. process! will only run if
           # decision_review.legacy_opt_in_approved is true
           # Events::DecisionReviewCreate::UpdateVacolsOnOptin.process!(decision_review)
-
           # event.update!(completed_at: Time.now, error: nil)
         # end
       end
