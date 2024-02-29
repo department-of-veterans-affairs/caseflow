@@ -41,6 +41,11 @@ module Seeds
 
     # rubocop:disable Metrics/MethodLength
     def create_queue_correspondences
+      # 20 Correspondences with unassigned ReviewPackageTask
+      20.times do
+        create_correspondence_with_unassigned_review_package_task
+      end
+
       # 20 Correspondences with eFolderFailedUploadTask with a parent CorrespondenceIntakeTask
       20.times do
         create_correspondence_with_intake_and_failed_upload_task(mail_team_user)
@@ -127,6 +132,13 @@ module Seeds
       cit.update!(status: Constants.TASK_STATUSES.in_progress)
     end
 
+    def create_correspondence_with_unassigned_review_package_task
+      corres = create_correspondence
+      # vary days waiting to be able to test column sorting
+      rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
+      rpt.update(assigned_at: corres.va_date_of_receipt)
+    end
+
     def create_correspondence_with_review_package_task(user)
       corres = create_correspondence
       assign_review_package_task(corres, user)
@@ -149,6 +161,7 @@ module Seeds
     def create_correspondence_with_completed_root_task
       corres = create_correspondence
       corres.root_task.update!(status: Constants.TASK_STATUSES.completed)
+      corres.root_task.update!(closed_at: rand(1.month.ago..1.day.ago))
     end
 
     def create_correspondence_with_action_required_tasks
@@ -157,13 +170,15 @@ module Seeds
 
       corres_array.each_with_index do |corres, index|
         rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
-        task_array[index].create!(
+        rpt.update(assigned_to_id: mail_team_superuser.id) if index.even?
+        pat = task_array[index].create!(
           parent_id: rpt.id,
           appeal_id: corres.id,
           appeal_type: "Correspondence",
           assigned_to: MailTeamSupervisor.singleton,
           assigned_by_id: rpt.assigned_to_id
         )
+        pat.update(assigned_at: corres.va_date_of_receipt)
       end
     end
 
