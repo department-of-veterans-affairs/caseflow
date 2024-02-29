@@ -6,6 +6,8 @@ class TranscriptFileIssuesMailer < ActionMailer::Base
   default cc: "OITAppealsHelpDesk@va.gov"
   layout "transcript_file_issues"
 
+  # Sends the correct variable data to the template based on environment. Kicks
+  # off the template to the above recipients
   def send_issue_details(details, appeal_id)
     @details = details
     @case_link = case Rails.deploy_env
@@ -24,6 +26,7 @@ class TranscriptFileIssuesMailer < ActionMailer::Base
     end
   end
 
+  # Handles specifically the transcript recording list issues 
   def webex_recording_list_issues(details)
     @details = details
     @subject = "File #{details[:action]} Error - #{details[:provider]}"
