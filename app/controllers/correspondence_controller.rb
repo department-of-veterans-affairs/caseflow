@@ -99,7 +99,7 @@ class CorrespondenceController < ApplicationController
 
   def set_banner_params(user, task_count)
     unless user.tasks.length < 60
-      @response_type = "warning"
+      @response_type = "info"
       @response_header = "Correspondence reassignment to #{user.css_id} has failed"
       @response_message = "Queue volume has reached maximum capacity for this user."
       return
