@@ -43,7 +43,7 @@ export class PdfFile extends React.PureComponent {
     this.clientWidth = 0;
     this.currentPage = 0;
     this.columnCount = 1;
-    this.metricIdentifier = null;
+    this.metricsIdentifier = null;
   }
 
   componentDidMount = () => {
@@ -72,7 +72,7 @@ export class PdfFile extends React.PureComponent {
   getDocument = (requestOptions) => {
     const logId = uuid.v4();
 
-    this.metricIdentifier = uuid.v4();
+    this.metricsIdentifier = uuid.v4();
 
     const documentData = {
       documentId: this.props.documentId,
@@ -89,7 +89,7 @@ export class PdfFile extends React.PureComponent {
           type: 'performance',
           product: 'reader',
           data: documentData,
-          eventId: this.metricIdentifier,
+          eventId: this.metricsIdentifier,
         };
 
         if (resp && resp.header && resp.header['x-document-source']) {
@@ -148,7 +148,7 @@ export class PdfFile extends React.PureComponent {
               product: 'browser',
               prefetchDisabled: this.props.featureToggles.prefetchDisabled
             },
-            this.metricIdentifier
+            this.metricsIdentifier
           );
         }
 
@@ -180,7 +180,7 @@ export class PdfFile extends React.PureComponent {
         type: 'error',
         product: 'reader'
       },
-      this.metricIdentifier);
+      this.metricsIdentifier);
     }
 
     throw reason;
@@ -214,7 +214,7 @@ export class PdfFile extends React.PureComponent {
       this.props.clearPdfDocument(this.props.file, this.pdfDocument);
     }
 
-    this.metricIdentifier = null;
+    this.metricsIdentifier = null;
   }
 
   getPage = ({ rowIndex, columnIndex, style, isVisible }) => {
@@ -235,7 +235,7 @@ export class PdfFile extends React.PureComponent {
         pdfDocument={this.props.pdfDocument}
         featureToggles={this.props.featureToggles}
         measureTimeStartMs={pdfPageRenderTimeInMsStart}
-        metricsIdentifier={this.metricIdentifier}
+        metricsIdentifier={this.metricsIdentifier}
       />
     </div>;
   }
