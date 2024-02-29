@@ -11,6 +11,7 @@ class OrganizationCorrespondenceCompletedTasksTab < CorrespondenceQueueTab
   def self.tab_name
     Constants.QUEUE_CONFIG.CORRESPONDENCE_TEAM_COMPLETED_TASKS_TAB_NAME
   end
+
   # :reek:UtilityFunction
   def description
     Constants.QUEUE_CONFIG.CORRESPONDENCE_TEAM_COMPLETED_TASKS_DESCRIPTION
