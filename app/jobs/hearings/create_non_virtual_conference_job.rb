@@ -12,18 +12,16 @@ class Hearings::CreateNonVirtualConferenceJob < CaseflowJob
   class IncompleteError < StandardError; end
   class HearingRequestCancelledError < StandardError; end
   class HearingNotCreatedError < StandardError; end
-  class LinksAlreadyExistError < StandardError; end
-  class HearingIsVirtualError < StandardError; end
   class HearingIsPexipError < StandardError; end
   class HearingAlreadyHeldError < StandardError; end
   class HearingPostponedError < StandardError; end
-  class LinkGenerationFailed < StandardError; end
+  # class LinkGenerationFailed < StandardError; end
 
-  discard_on(LinkGenerationFailed) do |job, _exception|
-    Rails.logger.warn(
-      "Discarding #{job.class.name} (#{job.job_id}) because links could not be generated"
-    )
-  end
+  # discard_on(LinkGenerationFailed) do |job, _exception|
+  #   Rails.logger.warn(
+  #     "Discarding #{job.class.name} (#{job.job_id}) because links could not be generated"
+  #   )
+  # end
 
   discard_on(HearingRequestCancelledError) do |job, _exception|
     Rails.logger.warn(
@@ -70,9 +68,7 @@ class Hearings::CreateNonVirtualConferenceJob < CaseflowJob
     fail HearingNotCreatedError if hearing.nil?
     fail HearingRequestCancelledError if hearing.cancelled?
     fail HearingPostponedError if hearing.disposition == "postponed"
-    fail LinksAlreadyExistError if !ConferenceLink.find_by(hearing_id: hearing.id).nil?
-    fail HearingIsVirtualError if hearing.readable_request_type == "Virtual"
     fail HearingIsPexipError if hearing.determine_service_name == "webex"
-    fail HearingAlreadyHeldError if hearing.dispostition == "held"
+    fail HearingAlreadyHeldError if hearing.disposition == "held"
   end
 end
