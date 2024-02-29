@@ -341,7 +341,8 @@ export const checkboxColumn = (handleCheckboxChange) => {
         />;
       }
 
-      return null; // or any other valid JSX element
+      return null;
+      // or any other valid JSX element
 
     }
 

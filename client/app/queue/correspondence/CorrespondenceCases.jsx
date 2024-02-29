@@ -30,8 +30,6 @@ const CorrespondenceCases = (props) => {
   const config = useSelector((state) => state.intakeCorrespondence.correspondenceConfig);
   const showReassignPackageModal = useSelector((state) => state.intakeCorrespondence.showReassignPackageModal);
   const showRemovePackageModal = useSelector((state) => state.intakeCorrespondence.showRemovePackageModal);
-  const taskIdsArray = props.taskIds ? (Array.isArray(props.taskIds) ? props.taskIds : props.taskIds.split(',')) : [];
-  const taskCount = taskIdsArray.length;
 
   const closeReassignPackageModal = () => {
     dispatch(setShowReassignPackageModal(false));
@@ -100,7 +98,8 @@ CorrespondenceCases.propTypes = {
   mailTeamUsers: PropTypes.arrayOf(string),
   responseType: PropTypes.string,
   responseHeader: PropTypes.string,
-  responseMessage: PropTypes.string
+  responseMessage: PropTypes.string,
+  taskIds: PropTypes.array
 
 };
 

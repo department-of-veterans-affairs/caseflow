@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector, connect } from 'react-redux';
+import { useSelector, connect } from 'react-redux';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
-
 import querystring from 'querystring';
-import ApiUtil from '../../util/ApiUtil';
 import Button from '../../components/Button';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import QueueTable from '../QueueTable';

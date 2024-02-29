@@ -65,50 +65,12 @@ class CorrespondenceController < ApplicationController
 
   def correspondence_team
     if current_user.mail_superuser? || current_user.mail_supervisor?
-      @mail_team_users = User.mail_team_users.pluck(:css_id)
-      mail_team_user = User.find_by(css_id: params[:user]) if params[:user].present?
-      task_ids = params[:taskIds]&.split(",") if params[:taskIds].present?
-
-      respond_to do |format|
-        format.html do
-          if mail_team_user && task_ids.present?
-            set_banner_params(mail_team_user, task_ids.count)
-            unless @response_type != "success"
-              tasks = Task.where(id: task_ids)
-              tasks.update_all(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "assigned")
-            end
-          end
-          render "correspondence_team"
-        end
-        format.json do
-          if mail_team_user && task_ids.present?
-            set_banner_params(mail_team_user, task_ids&.count)
-          else
-            render json: {
-              correspondence_config: CorrespondenceConfig.new(assignee: MailTeamSupervisor.singleton)
-            }
-          end
-        end
-      end
+      handle_mail_superuser_or_supervisor
     elsif current_user.mail_team_user?
       redirect_to "/queue/correspondence"
     else
       redirect_to "/unauthorized"
     end
-  end
-
-  def set_banner_params(user, task_count)
-    unless user.tasks.length < 60
-      @response_type = "info"
-      @response_header = "Correspondence reassignment to #{user.css_id} has failed"
-      @response_message = "Queue volume has reached maximum capacity for this user."
-      return
-    end
-
-    # No errors, give the user the success banner
-    @response_type = "success"
-    @response_header = "You have successfully assigned #{task_count} Correspondence to #{user.css_id}."
-    @response_message = "Please go to your individual queue to see any self-assigned correspondence."
   end
 
   def review_package
@@ -236,6 +198,54 @@ class CorrespondenceController < ApplicationController
   end
 
   private
+
+  def handle_mail_superuser_or_supervisor
+    @mail_team_users = User.mail_team_users.pluck(:css_id)
+    mail_team_user = User.find_by(css_id: params[:user]) if params[:user].present?
+    task_ids = params[:taskIds]&.split(",") if params[:taskIds].present?
+
+    respond_to do |format|
+      format.html { handle_html_response(mail_team_user, task_ids) }
+      format.json { handle_json_response(mail_team_user, task_ids) }
+    end
+  end
+
+  def handle_html_response(mail_team_user, task_ids)
+    if mail_team_user && task_ids.present?
+      set_banner_params(mail_team_user, task_ids.count)
+      update_tasks(mail_team_user, task_ids)
+    end
+    render "correspondence_team"
+  end
+
+  def handle_json_response(mail_team_user, task_ids)
+    if mail_team_user && task_ids.present?
+      set_banner_params(mail_team_user, task_ids&.count)
+    else
+      render json: { correspondence_config: CorrespondenceConfig.new(assignee: MailTeamSupervisor.singleton) }
+    end
+  end
+
+  def update_tasks(mail_team_user, task_ids)
+    return unless @response_type == "success"
+
+    tasks = Task.where(id: task_ids)
+    tasks.update_all(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "assigned")
+  end
+
+  def set_banner_params(user, task_count)
+    unless user.tasks.length < 60
+      @response_type = "info"
+      @response_header = "Correspondence reassignment to #{user.css_id} has failed"
+      @response_message = "Queue volume has reached maximum capacity for this user."
+      return
+    end
+
+    # No errors, give the user the success banner
+    @response_type = "success"
+    @response_header = "You have successfully assigned #{task_count} Correspondence to #{user.css_id}."
+    @response_message = "Please go to your individual queue to see any self-assigned correspondence."
+  end
 
   # :reek:FeatureEnvy
   def vbms_document_types

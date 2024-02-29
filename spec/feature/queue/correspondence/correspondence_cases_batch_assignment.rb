@@ -58,7 +58,7 @@ RSpec.feature("The Correspondence Cases page") do
 
     before do
       Timecop.freeze(Time.zone.local(2020, 5, 15))
-      20.times do
+      40.times do
         correspondence = create(:correspondence)
         parent_task = create_correspondence_intake(correspondence, target_user)
         create_efolderupload_task(correspondence, parent_task, user: target_user)
@@ -109,7 +109,8 @@ RSpec.feature("The Correspondence Cases page") do
       ')
       expect(page).to have_button("Assign", disabled: false)
       find_by_id("button-Assign").click
+      expect(page).to have_content("Correspondence assignment to #{target_user.css_id} has failed")
+      expect(page).to have_content("Queue volume has reached maximum capacity for this user.")
     end
   end
-
 end
