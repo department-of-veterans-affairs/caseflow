@@ -26,7 +26,11 @@ class ExternalApi::VADotGovService::FacilitiesResponse < ExternalApi::VADotGovSe
   private
 
   def distances
-    Hash[body[:meta][:distances].pluck(:id, :distance)]
+    if body[:meta].key?(:distances)
+      Hash[body[:meta][:distances].pluck(:id, :distance)]
+    else
+      []
+    end
   end
 
   class Facility
