@@ -98,13 +98,6 @@ class CorrespondenceController < ApplicationController
   end
 
   def set_banner_params(user, task_count)
-    unless user.can_view_edit_nod_date?
-      @response_type = "error"
-      @response_header = "Correspondence assignment to #{user.css_id} has failed"
-      @response_message = "NOD permissions is currently disabled for this user."
-      return
-    end
-
     unless user.tasks.length >= 60
       @response_type = "warning"
       @response_header = "Correspondence reassignment to #{user.css_id} has failed"
