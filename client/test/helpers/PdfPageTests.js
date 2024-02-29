@@ -11,7 +11,7 @@ export const pageMetricData = [
     numPagesInDoc: 1,
     pageIndex: 1
   },
-  message: 'Storing PDF page',
+  message: 'Storing PDF page 2',
   product: 'reader',
   type: 'performance',
   eventId: '123456'
@@ -72,7 +72,7 @@ export const recordMetricsArgs = [
     numPagesInDoc: 1,
     pageIndex: 1
   },
-  message: 'PDFJS rendering text layer',
+  message: 'Rendering PDF page 2 text',
   product: 'reader',
   type: 'performance',
   uuid: '1234',
