@@ -5,6 +5,7 @@ RSpec.feature("The Correspondence Cases page") do
     let(:current_user) { create(:user) }
     before :each do
       MailTeamSupervisor.singleton.add_user(current_user)
+      ClerkOfTheBoard.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
     let(:organization) { MailTeam.singleton }
@@ -19,6 +20,7 @@ RSpec.feature("The Correspondence Cases page") do
     before do
       organization.add_user(cob_user)
       cob_user.reload
+      FeatureToggle.enable!(:edit_nod_date)
     end
 
     before do
