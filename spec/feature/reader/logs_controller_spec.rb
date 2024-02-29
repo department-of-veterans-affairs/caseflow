@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.feature 'Metrics::V2::LogsController', type: :feature do
+RSpec.feature "Metrics::V2::LogsController", type: :feature do
   before do
     FeatureToggle.enable!(:metrics_monitoring)
     Fakes::Initializer.load!
@@ -38,7 +38,6 @@ RSpec.feature 'Metrics::V2::LogsController', type: :feature do
       FeatureToggle.enable!(:metrics_get_pdfjs_doc)
       expect(Metric.any?).to be false # There are no metrics
       Capybara.default_max_wait_time = 5 # seconds
-
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
 
