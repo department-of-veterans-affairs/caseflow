@@ -51,6 +51,7 @@ module QueueHelpers
   # :reek:UtilityFunction
   def create_correspondence_intake(correspondence, user)
     parent = correspondence&.root_task
+    complete_task(ReviewPackageTask.find_by(appeal_id: correspondence.id), user.id)
     cit = CorrespondenceIntakeTask.create_from_params(parent, user)
     randomize_days_waiting_value(cit)
     cit
@@ -67,17 +68,20 @@ module QueueHelpers
   end
 
   # :reek:UtilityFunction
+  # :reek:FeatureEnvy
   def create_efolderupload_failed_task(correspondence, parent)
-    EfolderUploadFailedTask.create!(
+    euft = EfolderUploadFailedTask.create!(
       parent_id: parent.id,
       appeal_id: correspondence.id,
       appeal_type: "Correspondence",
       assigned_to: parent.assigned_to,
       status: Constants.TASK_STATUSES.in_progress
     )
+    randomize_days_waiting_value(euft)
   end
 
   # :reek:UtilityFunction
+  # :reek:LongParameterList
   def create_action_required_tasks(correspondence, status:, parent_task:, task_type:)
     task_type.create!(
       parent_id: parent_task.id,
@@ -127,6 +131,11 @@ module QueueHelpers
       status: Constants.TASK_STATUSES.assigned,
       parent_id: correspondence&.root_task&.id
     )
+  end
+
+  # :reek:UtilityFunction
+  def complete_task(task, user_id)
+    task.update!(status: Constants.TASK_STATUSES.completed, completed_by_id: user_id)
   end
 
   # :reek:UtilityFunction
