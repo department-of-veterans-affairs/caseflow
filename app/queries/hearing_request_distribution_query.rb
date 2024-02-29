@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rubocop:disable Layout/LineLength
 
 class HearingRequestDistributionQuery
   include DistributionScopes
@@ -71,7 +72,8 @@ class HearingRequestDistributionQuery
 
     # Include most_recent_held_hearings_ama_aod_hearing_original_appeals
     # if case_distribution_lever is not infinite or omit
-    appeals_to_return << most_recent_held_hearings_ama_aod_hearing_original_appeals if case_affinity_days_lever_value_is_selected?("ama_hearing_case_aod_affinity_days")
+    appeals_to_return << most_recent_held_hearings_ama_aod_hearing_original_appeals if case_affinity_days_lever_value_is_selected?("ama_hearing_case_aod_affinity_days") # rubocop:disable Layout/LineLength
+    appeals_to_return << most_recent_held_hearings_always_ama_aod_hearing_original_appeals if lever_infinite?("ama_hearing_case_aod_affinity_days")
     appeals_to_return.flatten.uniq
   end
 
@@ -82,6 +84,10 @@ class HearingRequestDistributionQuery
     # ama_aod_hearing_original_appeals
   def most_recent_held_hearings_ama_aod_hearing_original_appeals
     base_relation.most_recent_hearings.ama_aod_hearing_original_appeals.not_tied_to_ineligible_judge
+  end
+
+  def most_recent_held_hearings_always_ama_aod_hearing_original_appeals
+    base_relation.most_recent_hearings.always_ama_aod_hearing_original_appeals.not_tied_to_ineligible_judge
   end
 
   def most_recent_held_hearings_not_tied_to_any_judge

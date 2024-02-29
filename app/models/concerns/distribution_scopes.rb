@@ -64,12 +64,17 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       )
     end
 
-    # this method takes care of when aod affinity day has a value
+  # this method takes care of when aod affinity day has a value
   def ama_aod_hearing_original_appeals
     joins(with_assigned_distribution_task_sql)
-      .where("advance_on_docket_motions.created_at > ?", CaseDistributionLever.ama_hearing_case_aod_affinity_days.days.ago)
+      .where("advance_on_docket_motions.created_at > ?", CaseDistributionLever.ama_hearing_case_aod_affinity_days.to_i.days.ago)
   end
 
+  # this method takes care of when aod affinity day always affinitized
+  def always_ama_aod_hearing_original_appeals
+    joins(with_assigned_distribution_task_sql)
+      .where("advance_on_docket_motions.created_at > ?", 200.years.ago)
+  end
 
   def with_original_appeal_and_judge_task
     joins("LEFT JOIN cavc_remands ON cavc_remands.remand_appeal_id = appeals.id")
@@ -170,6 +175,10 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
 
   def lever_omitted?(lever)
     CaseDistributionLever.send(lever) == "omit"
+  end
+
+  def lever_infinite?(lever)
+    CaseDistributionLever.send(lever) == "infinite"
   end
 
   def case_affinity_days_lever_value_is_selected?(lever)
