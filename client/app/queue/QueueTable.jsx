@@ -688,7 +688,7 @@ export default class QueueTable extends React.PureComponent {
         const endpointUrl = this.requestUrl();
         const responseFromCache = this.state.cachedResponses[endpointUrl];
 
-        if (responseFromCache) {
+        if (responseFromCache && this.state.currentPage) {
           numberOfPages = responseFromCache.task_page_count;
           totalTaskCount = responseFromCache.total_task_count;
         }
