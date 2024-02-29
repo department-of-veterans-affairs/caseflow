@@ -11,6 +11,7 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   has_many :annotations
   has_many :tasks, as: :assigned_to
   has_many :organizations_users, dependent: :destroy
+  has_many :organization_user_permissions, through: :organizations_users, dependent: :destroy
   has_many :organizations, through: :organizations_users
   has_many :membership_requests, foreign_key: :requestor_id
   has_many :decided_membership_requests, class_name: "MembershipRequest", foreign_key: :decider_id
@@ -95,6 +96,11 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     can_any_of_these_roles?(["Build HearSched", "Edit HearSched", "RO ViewHearSched", "VSO", "Hearing Prep"])
   end
 
+  def inbound_ops_team_superuser?
+    member_of_organization?(InboundOpsTeam.singleton) &&
+      (administered_teams.include?(BvaIntake.singleton) || administered_teams.include?(MailTeam.singleton))
+  end
+
   def can_assign_hearing_schedule?
     can_any_of_these_roles?(["Edit HearSched", "Build HearSched"])
   end
@@ -149,6 +155,15 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def administer_org_users?
     admin? || granted?("Admin Intake") || roles.include?("Admin Intake") || member_of_organization?(Bva.singleton)
+  end
+
+  # editing logic for MST and PACT
+  def can_edit_intake_issues?
+    return false unless FeatureToggle.enabled?(:mst_identification) ||
+                        FeatureToggle.enabled?(:pact_identification) ||
+                        FeatureToggle.enabled?(:legacy_mst_pact_identification)
+
+    BvaIntake.singleton.admins.include?(self) || member_of_organization?(ClerkOfTheBoard.singleton)
   end
 
   def can_view_overtime_status?

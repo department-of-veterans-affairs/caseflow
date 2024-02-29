@@ -33,18 +33,21 @@ class SeedDB
     Rails.logger.debug(msg)
   end
 
-  def seed # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  def seed
     RequestStore[:current_user] = User.system_user
     call_and_log_seed_step :clean_db
 
     call_and_log_seed_step Seeds::Annotations
     call_and_log_seed_step Seeds::Tags
+
     # These must be ran before others
     call_and_log_seed_step Seeds::BusinessLineOrg
     call_and_log_seed_step Seeds::Users
     call_and_log_seed_step Seeds::NotificationEvents
     call_and_log_seed_step Seeds::CaseDistributionLevers
     # End of required to exist dependencies
+
     call_and_log_seed_step Seeds::Tasks
     call_and_log_seed_step Seeds::Hearings
     call_and_log_seed_step Seeds::Intake
@@ -68,8 +71,20 @@ class SeedDB
     call_and_log_seed_step Seeds::Notifications
     call_and_log_seed_step Seeds::CavcDashboardData
     call_and_log_seed_step Seeds::VbmsExtClaim
+    call_and_log_seed_step Seeds::CorrespondenceTypes
+    call_and_log_seed_step Seeds::PackageDocumentTypes
+    call_and_log_seed_step Seeds::Correspondence
+    call_and_log_seed_step Seeds::MultiCorrespondences
+    call_and_log_seed_step Seeds::VbmsDocumentTypes
     call_and_log_seed_step Seeds::CasesTiedToJudgesNoLongerWithBoard
     call_and_log_seed_step Seeds::VhaChangeHistory
+    call_and_log_seed_step Seeds::BgsServiceRecordMaker
+    call_and_log_seed_step Seeds::MstPactLegacyCaseAppeals
+    call_and_log_seed_step Seeds::AmaIntake
+    call_and_log_seed_step Seeds::CorrespondenceAutoTexts
+    call_and_log_seed_step Seeds::CorrespondenceAutoAssignmentLevers
+    call_and_log_seed_step Seeds::CorrespondenceAutoAssign
+
     # Always run this as last one
     call_and_log_seed_step Seeds::StaticTestCaseData
     call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
@@ -80,6 +95,7 @@ class SeedDB
     Judge.list_all
     Attorney.list_all
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 end
 
 SeedDB.new.seed
