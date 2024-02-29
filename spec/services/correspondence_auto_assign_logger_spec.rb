@@ -3,9 +3,9 @@
 describe CorrespondenceAutoAssignLogger do
   subject(:described) { described_class.new(current_user, batch_auto_assignment_attempt) }
 
-  let(:batch_auto_assignment_attempt) { create(:batch_auto_assignment_attempt, user_id: current_user.id) }
   let(:current_user) { create(:user) }
   let(:assignee) { create(:user) }
+  let(:batch_auto_assignment_attempt) { create(:batch_auto_assignment_attempt, user: current_user) }
 
   let!(:correspondence) { create(:correspondence) }
   let(:task) { correspondence.review_package_task }

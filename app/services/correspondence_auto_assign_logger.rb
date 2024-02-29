@@ -3,12 +3,12 @@
 # :reek:FeatureEnvy
 class CorrespondenceAutoAssignLogger
   def initialize(current_user, batch)
-    @current_user = current_user
-    @batch = batch
+    self.current_user = current_user
+    self.batch = batch
   end
 
   def begin
-    @batch.update!(
+    batch.update!(
       started_at: Time.current,
       status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.started,
       num_nod_packages_assigned: 0,
@@ -19,7 +19,7 @@ class CorrespondenceAutoAssignLogger
   end
 
   def end
-    @batch.assign_attributes(
+    batch.assign_attributes(
       status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.completed,
       completed_at: Time.current
     )
@@ -28,7 +28,7 @@ class CorrespondenceAutoAssignLogger
   end
 
   def error(msg:)
-    @batch.assign_attributes(
+    batch.assign_attributes(
       status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.error,
       error_info: { message: msg },
       errored_at: Time.current
@@ -50,9 +50,9 @@ class CorrespondenceAutoAssignLogger
     )
 
     if correspondence.nod?
-      @batch.num_nod_packages_assigned += 1
+      batch.num_nod_packages_assigned += 1
     else
-      @batch.num_packages_assigned += 1
+      batch.num_packages_assigned += 1
     end
 
     save_attempt_statistics(
@@ -75,9 +75,9 @@ class CorrespondenceAutoAssignLogger
     )
 
     if correspondence.nod?
-      @batch.num_nod_packages_unassigned += 1
+      batch.num_nod_packages_unassigned += 1
     else
-      @batch.num_packages_unassigned += 1
+      batch.num_packages_unassigned += 1
     end
 
     save_attempt_statistics(
@@ -89,20 +89,22 @@ class CorrespondenceAutoAssignLogger
 
   private
 
+  attr_accessor :batch, :current_user
+
   def individual_auto_assignment_attempt
     IndividualAutoAssignmentAttempt.new(
-      batch_auto_assignment_attempt: @batch,
-      user: @current_user
+      batch_auto_assignment_attempt: batch,
+      user: current_user
     )
   end
 
   def save_run_statistics
     stats = {
-      seconds_elapsed: seconds_elapsed(record: @batch, status: @batch.status)
+      seconds_elapsed: seconds_elapsed(record: batch, status: batch.status)
     }
 
-    @batch.statistics = stats
-    @batch.save!
+    batch.statistics = stats
+    batch.save!
   end
 
   def save_attempt_statistics(attempt:, task:, result:)
