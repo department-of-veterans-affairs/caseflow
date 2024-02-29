@@ -66,11 +66,36 @@ RSpec.feature("The Correspondence Cases page") do
       expect(page).to have_selector(".cf-select__input")
       all(".cf-select__input").first.click
       find_by_id("react-select-2-option-0").click
-      page.all(".cf-form-checkbox")[0..2].each { |cb| cb.set(true) }
+      page.execute_script('
+        document.querySelectorAll(".cf-form-checkbox input[type=\'checkbox\']").forEach((checkbox, index) => {
+          if (index < 3) {
+            checkbox.click();
+          }
+        });
+      ')
       expect(page).to have_button("Assign", disabled: false)
       find_by_id("button-Assign").click
       expect(page).to have_content("Correspondence assignment to #{mail_user.css_id} has failed")
       expect(page).to have_content("NOD permissions is currently disabled for this user")
+    end
+
+    it "Verify the dropdown box with cob user batch assignment" do
+      visit "/queue/correspondence/team?tab=correspondence_unassigned"
+      expect(page).to have_content("Assign to mail team user")
+      expect(page).to have_button("Assign", disabled: true)
+      expect(page).to have_selector(".cf-select__input")
+      all(".cf-select__input").first.click
+      find_by_id("react-select-2-option-1").click
+      page.execute_script('
+        document.querySelectorAll(".cf-form-checkbox input[type=\'checkbox\']").forEach((checkbox, index) => {
+          if (index < 3) {
+            checkbox.click();
+          }
+        });
+      ')
+      expect(page).to have_button("Assign", disabled: false)
+      find_by_id("button-Assign").click
+
     end
   end
 
