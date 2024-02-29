@@ -12,18 +12,19 @@ class Hearings::GetWebexRecordingsDetailsJob < CaseflowJob
 
   # rubocop:disable Layout/LineLength
   retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
+    docket_number = job.arguments&.first&.[](:docket_number)
+    appeal_id = Appeal.find_by(stream_docket_number: docket_number)&.uuid || VACOLS::Folder.find_by(tinum: docket_number)&.ticknum
     details = {
       action: "retrieve",
       filetype: "vtt",
       direction: "from",
       provider: "Webex",
-      error: error,
+      error: exception,
       api_call: "GET #{ENV['WEBEX_HOST_MAIN']}#{ENV['WEBEX_DOMAIN_MAIN']}#{ENV['WEBEX_API_MAIN']}/#{job.arguments&.first&.[](:id)}",
       response: { status: exception.code, message: exception.message }.to_json,
-      docket_number: job.arguments&.first&.[](:docket_number),
-      appeal_id: Appeal.find_by(stream_docket_number: job.arguments&.first&.[](:file_name))
+      docket_number: docket_number
     }
-    TranscriptFileIssuesMailer.send_issue_details(details)
+    TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
     job.log_error(exception)
   end
   # rubocop:enable Layout/LineLength
