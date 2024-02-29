@@ -53,7 +53,6 @@ export const storeMetrics = (uniqueId, data, {
   const metricType = ['log', 'error', 'performance'].includes(type) ? type : 'log';
   const productArea = product ? product : 'caseflow';
 
-  console.log(`EVENTID STORE: ${eventId}`);
   const postData = {
     metric: {
       uuid: uniqueId,
@@ -115,8 +114,6 @@ export const recordAsyncMetrics = async (promise, { uniqueId, data, message, typ
   saveMetrics = true) => {
 
   let id = checkUuid(uniqueId, data, message, type);
-
-  console.log(`EVENTID ASYNC: ${eventId}`);
 
   const t0 = performance.now();
   const start = Date.now();

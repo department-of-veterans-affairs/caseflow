@@ -115,8 +115,6 @@ export class PdfFile extends React.PureComponent {
           this.loadingTask = PDFJS.getDocument({ data: resp.body });
         }
 
-        console.log(`EVENTID: ${this.metricIdentifier}`);
-
         return recordAsyncMetrics(this.loadingTask.promise, metricData,
           this.props.featureToggles.metricsRecordPDFJSGetDocument);
 
