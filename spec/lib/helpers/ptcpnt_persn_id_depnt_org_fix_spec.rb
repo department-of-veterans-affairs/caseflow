@@ -153,20 +153,20 @@ describe PtcpntPersnIdDepntOrgFix, :postgres do
       end
 
       it "handles person and claimant records when correct person not found" do
-        allow(subject).to receive(:get_correct_person).with(correct_pid).and_return(nil)
+        allow(PtcpntPersnIdDepntOrgFix).to receive(:get_correct_person).with(correct_pid).and_return(nil)
         expect do
           subject.handle_person_and_claimant_records(correct_pid, supplemental_claim)
         end.not_to(change { Person.count }) # Expect no person to be destroyed
       end
 
       it "updates incorrect person when correct person not found" do
-        allow(subject).to receive(:get_correct_person).with(correct_pid).and_return(nil)
+        allow(PtcpntPersnIdDepntOrgFix).to receive(:get_correct_person).with(correct_pid).and_return(nil)
         subject.start_processing_records
         expect(supplemental_claim.claimant.person.reload.participant_id).to eq(correct_pid)
       end
 
       it "updates payee_code if not 00" do
-        allow(subject).to receive(:get_correct_person).with(correct_pid).and_return(nil)
+        allow(PtcpntPersnIdDepntOrgFix).to receive(:get_correct_person).with(correct_pid).and_return(nil)
         supplemental_claim.claimant.payee_code = nil
         subject.start_processing_records
         expect(supplemental_claim.claimant.payee_code).to eq("00")

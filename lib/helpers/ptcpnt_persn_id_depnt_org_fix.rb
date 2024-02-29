@@ -22,13 +22,17 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
     @stuck_job_report_service = stuck_job_report_service
   end
 
+  def class_self
+    PtcpntPersnIdDepntOrgFix
+  end
+
   def start_processing_records
-    return if error_records.blank?
+    return if class_self.error_records.blank?
 
     # count of records with errors before fix
-    @stuck_job_report_service.append_record_count(error_records.count, ERROR_TEXT)
+    @stuck_job_report_service.append_record_count(class_self.error_records.count, ERROR_TEXT)
 
-    error_records.each do |supp_claim|
+    class_self.error_records.each do |supp_claim|
       incorrect_pid = supp_claim.claimant.participant_id
       # check that claimant type is VeteranClaimant
       next unless supp_claim.claimant.type == "VeteranClaimant"
@@ -43,11 +47,12 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
       re_run_job(supp_claim)
     end
     # record count with errors after fix
-    @stuck_job_report_service.append_record_count(error_records.count, ERROR_TEXT)
+    @stuck_job_report_service.append_record_count(class_self.error_records.count, ERROR_TEXT)
   end
 
   def handle_person_and_claimant_records(correct_pid, supp_claim)
-    correct_person_record = get_correct_person(correct_pid)
+    correct_person_record = class_self.get_correct_person(correct_pid)
+
     incorrect_person_record = supp_claim.claimant.person
 
     ActiveRecord::Base.transaction do
@@ -65,7 +70,7 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
     end
   end
 
-  def get_correct_person(correct_pid)
+  def self.get_correct_person(correct_pid)
     Person.find_by(participant_id: correct_pid)
   end
 
@@ -83,7 +88,7 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
   def retrieve_records_to_fix(correct_pid, incorrect_pid)
     incorrectly_associated_records = []
 
-    iterate_through_associations_with_bad_pid(incorrect_pid, incorrectly_associated_records)
+    class_self.iterate_through_associations_with_bad_pid(incorrect_pid, incorrectly_associated_records)
 
     incorrectly_associated_records.each do |record|
       fix_record(record, correct_pid)
@@ -99,7 +104,7 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
     end
   end
 
-  def iterate_through_associations_with_bad_pid(incorrect_pid, incorrectly_associated_records)
+  def self.iterate_through_associations_with_bad_pid(incorrect_pid, incorrectly_associated_records)
     ASSOCIATIONS.each do |ass|
       if ass.attribute_names.include?("participant_id")
         records = ass.where(participant_id: incorrect_pid)
@@ -115,6 +120,12 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
     end
   end
 
+  def self.error_records
+    SupplementalClaim.where("establishment_error ILIKE ?", "%#{ERROR_TEXT}%")
+  end
+
+  private
+
   def fix_record(record, correct_pid)
     if record.attribute_names.include?("participant_id")
       process_participant_id_record(record, correct_pid)
@@ -124,12 +135,6 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
       process_veteran_participant_id_record(record, correct_pid)
     end
   end
-
-  def self.error_records
-    SupplementalClaim.where("establishment_error ILIKE ?", "%#{ERROR_TEXT}%")
-  end
-
-  private
 
   def move_claimants_to_correct_person(correct_person, incorrect_person)
     correct_person.claimants << incorrect_person.claimants
