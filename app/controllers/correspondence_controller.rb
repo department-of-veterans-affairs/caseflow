@@ -10,6 +10,7 @@ class CorrespondenceController < ApplicationController
 
   def intake
     intake = CorrespondenceIntake.find_by(user: current_user, correspondence: current_correspondence)
+    binding.pry
     if !intake.nil?
       saved_intake_store(intake)
     end
