@@ -20,6 +20,7 @@ class ChangeHistoryEventSerializer
       decisionDate: object.decision_date,
       disposition: object.disposition,
       decisionDescription: object.decision_description,
+      dispositionDate: object.disposition_date,
       withdrawalRequestDate: object.withdrawal_request_date
     }
   end

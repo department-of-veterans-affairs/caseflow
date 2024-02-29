@@ -284,7 +284,7 @@ class ClaimHistoryEvent
 
     def retrieve_issue_update_data(change_data)
       # This DB fetch is gross, but thankfully it should happen very rarely
-      task = Task.includes(appeal: :request_issues_updates).where(id: change_data["task_id"]).first
+      task = Task.includes(appeal: { request_issues_updates: :user }).where(id: change_data["task_id"]).first
       issue_update = task.appeal.request_issues_updates.find do |update|
         (update.after_request_issue_ids - update.before_request_issue_ids).include?(change_data["request_issue_id"])
       end
@@ -305,8 +305,15 @@ class ClaimHistoryEvent
       return false unless first_date && second_date
 
       # Less variables for less garbage collection since this method is used a lot
-      ((DateTime.iso8601(first_date.tr(" ", "T")) -
-        DateTime.iso8601(second_date.tr(" ", "T"))).abs * 24 * 60 * 60).to_f < time_in_seconds
+      ((parse_date(first_date) - parse_date(second_date)).abs * 24 * 60 * 60).to_f < time_in_seconds
+    end
+
+    def parse_date(date_string)
+      if date_string.include?("T") || date_string.include?("Z")
+        DateTime.iso8601(date_string)
+      else
+        DateTime.strptime(date_string, "%Y-%m-%d %H:%M:%S.%N")
+      end
     end
 
     def handle_hookless_cancelled_status_events(versions, change_data)
@@ -480,9 +487,10 @@ class ClaimHistoryEvent
   def parse_disposition_attributes(change_data)
     if event_can_contain_disposition?
       @disposition = change_data["disposition"]
-      @disposition_date = change_data["caseflow_decision_date"]
       @decision_description = change_data["decision_description"]
     end
+    # The disposition date is also used for the completed status event on the HistoryPage UI
+    @disposition_date = change_data["caseflow_decision_date"]
   end
 
   def parse_event_attributes(change_data)
@@ -494,11 +502,18 @@ class ClaimHistoryEvent
 
   def standardize_event_date
     # Try to keep all the dates consistent as a iso8601 string if possible
-    @event_date = if event_date.is_a?(String)
-                    event_date
-                  else
-                    event_date&.iso8601
-                  end
+    @event_date =
+      if event_date.is_a?(String)
+        if event_date.include?("T") || event_date.include?("Z")
+          # Assume it is in Iso8601 already so just return it
+          event_date
+        else
+          # Assume UTC string so convert it to iso8601
+          DateTime.strptime(event_date, "%Y-%m-%d %H:%M:%S.%N").iso8601
+        end
+      else
+        event_date&.iso8601
+      end
   end
 
   ############ CSV and Serializer Helpers ############
