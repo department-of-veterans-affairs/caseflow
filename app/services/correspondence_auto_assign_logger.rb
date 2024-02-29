@@ -44,12 +44,12 @@ class CorrespondenceAutoAssignLogger
     attempt.assign_attributes(
       correspondence: correspondence,
       completed_at: Time.current,
-      nod: correspondence.nod?,
+      nod: correspondence.nod,
       status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.completed,
       started_at: started_at
     )
 
-    if correspondence.nod?
+    if correspondence.nod
       @batch.num_nod_packages_assigned += 1
     else
       @batch.num_packages_assigned += 1
@@ -69,12 +69,12 @@ class CorrespondenceAutoAssignLogger
     attempt.assign_attributes(
       correspondence: correspondence,
       errored_at: Time.current,
-      nod: correspondence.nod?,
+      nod: correspondence.nod,
       status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.error,
       started_at: started_at
     )
 
-    if correspondence.nod?
+    if correspondence.nod
       @batch.num_nod_packages_unassigned += 1
     else
       @batch.num_packages_unassigned += 1
