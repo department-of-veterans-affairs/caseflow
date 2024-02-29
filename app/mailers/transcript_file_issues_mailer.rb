@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TranscriptFileIssuesMailer < ApplicationMailer
+class TranscriptFileIssuesMailer < ActionMailer::Base
   default from: "Board of Veterans' Appeals <BoardofVeteransAppealsHearings@messages.va.gov>"
   default to: "BVAHearingTeam@VA.gov"
   default cc: "OITAppealsHelpDesk@va.gov"
