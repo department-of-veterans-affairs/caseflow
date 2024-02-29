@@ -499,7 +499,7 @@ module Seeds
               }
             ],
             is_toggle_active: false,
-            is_disabled_in_ui: false,
+            is_disabled_in_ui: true,
             min_value: 0,
             max_value: nil,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
