@@ -120,21 +120,16 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
     end
   end
 
+  def fix_record(record, correct_pid)
+    attribute_name = determine_attribute_name(record)
+    process_record(record, attribute_name, correct_pid)
+  end
+
   def self.error_records
     SupplementalClaim.where("establishment_error ILIKE ?", "%#{ERROR_TEXT}%")
   end
 
   private
-
-  def fix_record(record, correct_pid)
-    if record.attribute_names.include?("participant_id")
-      process_participant_id_record(record, correct_pid)
-    elsif record.attribute_names.include?("claimant_participant_id")
-      process_claimant_participant_id_record(record, correct_pid)
-    elsif record.attribute_names.include?("veteran_participant_id")
-      process_veteran_participant_id_record(record, correct_pid)
-    end
-  end
 
   def move_claimants_to_correct_person(correct_person, incorrect_person)
     correct_person.claimants << incorrect_person.claimants
@@ -159,25 +154,15 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
     @stuck_job_report_service.append_error(record.class.name, record.id, error)
   end
 
-  def process_participant_id_record(record, correct_pid)
-    ActiveRecord::Base.transaction do
-      record.update(participant_id: correct_pid)
-    rescue StandardError => error
-      handle_error(error, record)
+  def determine_attribute_name(record)
+    record.attribute_names.find do |attribute_name|
+      %w[participant_id claimant_participant_id veteran_participant_id].include?(attribute_name)
     end
   end
 
-  def process_claimant_participant_id_record(record, correct_pid)
+  def process_record(record, attribute_name, correct_pid)
     ActiveRecord::Base.transaction do
-      record.update(claimant_participant_id: correct_pid)
-    rescue StandardError => error
-      handle_error(error, record)
-    end
-  end
-
-  def process_veteran_participant_id_record(record, correct_pid)
-    ActiveRecord::Base.transaction do
-      record.update(veteran_participant_id: correct_pid)
+      record.update(attribute_name => correct_pid)
     rescue StandardError => error
       handle_error(error, record)
     end
