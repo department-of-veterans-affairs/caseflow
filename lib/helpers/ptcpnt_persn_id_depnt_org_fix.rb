@@ -125,7 +125,7 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
     end
   end
 
-  def error_records
+  def self.error_records
     SupplementalClaim.where("establishment_error ILIKE ?", "%#{ERROR_TEXT}%")
   end
 

@@ -49,7 +49,7 @@ class PtcpntPersnIdDepntOrgFixJob < CaseflowJob
   end
 
   def records_with_errors
-    fix_instance.error_records
+    fix_instance.class.error_records
   end
 
   def log_processing_time
