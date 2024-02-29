@@ -1,10 +1,12 @@
 import React from 'react';
 import QueueTable from '../../queue/QueueTable';
-import dummyData from 'test/data/nonComp/individualClaimHistoryData';
 import BENEFIT_TYPES from 'constants/BENEFIT_TYPES';
 import { formatDateStr } from 'app/util/DateUtil';
+import PropTypes from 'prop-types';
 
-const IndividualClaimHistoryTable = () => {
+const IndividualClaimHistoryTable = (props) => {
+
+  const { eventRows } = props;
 
   const processEventDate = (date) => {
     return new Date(date).toLocaleString('en-US', {
@@ -39,7 +41,7 @@ const IndividualClaimHistoryTable = () => {
   const ClaimClosedFragment = (details) => {
     return <React.Fragment>
       Claim closed.<br />
-      <b>Claim decision date: </b>{formatDecisionDate(details.decisionDate)}
+      <b>Claim decision date: </b>{formatDecisionDate(details.dispositionDate)}
     </React.Fragment>;
   };
 
@@ -96,17 +98,17 @@ const IndividualClaimHistoryTable = () => {
 
     const { readableEventType, details } = row;
 
-    details.eventDate = row.eventDate;
+    const detailsExtended = { ...details, eventDate: row.eventDate };
 
     switch (readableEventType) {
     case 'Claim created':
       component = <ClaimCreatedFragment />;
       break;
     case 'Claim closed':
-      component = <ClaimClosedFragment {...details} />;
+      component = <ClaimClosedFragment {...detailsExtended} />;
       break;
     case 'Completed disposition':
-      component = <CompletedDispositionFragment {...details} />;
+      component = <CompletedDispositionFragment {...detailsExtended} />;
       break;
     case 'Claim status - In progress':
       component = <ClaimInProgressFragment />;
@@ -115,19 +117,19 @@ const IndividualClaimHistoryTable = () => {
       component = <ClaimIncompleteFragment />;
       break;
     case 'Added issue':
-      component = <AddedIssueWithDateFragment {...details} />;
+      component = <AddedIssueWithDateFragment {...detailsExtended} />;
       break;
     case 'Added issue - No decision date':
-      component = <AddedIssueWithNoDateFragment {...details} />;
+      component = <AddedIssueWithNoDateFragment {...detailsExtended} />;
       break;
     case 'Added decision date':
-      component = <AddedDecisionDateFragment {...details} />;
+      component = <AddedDecisionDateFragment {...detailsExtended} />;
       break;
     case 'Withdrew issue':
-      component = <WithdrewIssueFragment {...details} />;
+      component = <WithdrewIssueFragment {...detailsExtended} />;
       break;
     case 'Removed issue':
-      component = <RemovedIssueFragment {...details} />;
+      component = <RemovedIssueFragment {...detailsExtended} />;
       break;
     default:
       return null;
@@ -138,11 +140,27 @@ const IndividualClaimHistoryTable = () => {
     </p>;
   };
 
+  const dateSort = (row) => {
+    let date = new Date(row.eventDate);
+
+    // cheat the dates for claim created and claim closed
+    const eventOrder = {
+      'Claim created': -Infinity,
+      'Claim closed': Infinity,
+    };
+
+    if (row.readableEventType in eventOrder) {
+      return eventOrder[row.readableEventType];
+    }
+
+    return date;
+  };
+
   const columns = [
     { name: 'eventDate',
       header: 'Date and Time',
       valueFunction: (row) => processEventDate(row.eventDate),
-      getSortValue: (row) => new Date(row.eventDate),
+      getSortValue: (row) => dateSort(row),
     },
     { name: 'eventUser',
       columnName: 'eventUser',
@@ -150,7 +168,7 @@ const IndividualClaimHistoryTable = () => {
       valueName: 'User',
       valueFunction: (row) => row.eventUser,
       enableFilter: true,
-      tableData: dummyData,
+      tableData: eventRows,
       anyFiltersAreSet: true,
       label: 'Filter by User',
       enableFilterTextTransform: false,
@@ -162,7 +180,7 @@ const IndividualClaimHistoryTable = () => {
       valueFunction: (row) => row.readableEventType,
       enableFilter: true,
       enableFilterTextTransform: false,
-      tableData: dummyData,
+      tableData: eventRows,
       anyFiltersAreSet: true,
       label: 'Filter by Activity',
       getSortValue: (row) => row.readableEventType },
@@ -174,7 +192,7 @@ const IndividualClaimHistoryTable = () => {
   return <QueueTable
     id="individual_claim_history_table"
     columns={columns}
-    rowObjects={dummyData}
+    rowObjects={eventRows}
     summary="Individual claim history"
     getKeyForRow={(_rowNumber, event) => event.id}
     enablePagination
@@ -185,6 +203,10 @@ const IndividualClaimHistoryTable = () => {
     }}
     className="claim-history-table-border-fix" />;
 
+};
+
+IndividualClaimHistoryTable.propTypes = {
+  eventRows: PropTypes.array
 };
 
 export default IndividualClaimHistoryTable;
