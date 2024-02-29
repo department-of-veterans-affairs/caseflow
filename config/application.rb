@@ -59,6 +59,11 @@ module CaseflowCertification
     # Rails 5.2 default overrides
     # ------------------------------------------------------------------------------------------------------------------
 
+    # Make Active Record use stable #cache_key alongside new #cache_version method.
+    # This is needed for recyclable cache keys.
+    # Default as of 5.2: true
+    config.active_record.cache_versioning = false
+
     # Use AES-256-GCM authenticated encryption for encrypted cookies.
     # Also, embed cookie expiry in signed or encrypted cookies for increased security.
     #
