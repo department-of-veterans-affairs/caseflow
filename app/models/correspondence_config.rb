@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# :reek:RepeatedConditional
 
 class CorrespondenceConfig < QueueConfig
   def to_hash
@@ -13,6 +14,7 @@ class CorrespondenceConfig < QueueConfig
 
   private
 
+  # :reek:FeatureEnvy
   def attach_tasks_to_tab(tab)
     task_pager = CorrespondenceTaskPager.new(
       assignee: assignee,
