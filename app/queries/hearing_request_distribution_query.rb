@@ -71,8 +71,7 @@ class HearingRequestDistributionQuery
 
     # Include most_recent_held_hearings_ama_aod_hearing_original_appeals
     # if case_distribution_lever is not infinite or omit
-    appeals_to_return << most_recent_held_hearings_ama_aod_hearing_original_appeals if !case_distribution_lever.infinite?
-    appeals_to_return << most_recent_held_hearings_ama_aod_hearing_original_appeals if !case_distribution_lever.omit?
+    appeals_to_return << most_recent_held_hearings_ama_aod_hearing_original_appeals if case_affinity_days_lever_value_is_selected?("ama_hearing_case_aod_affinity_days")
     appeals_to_return.flatten.uniq
   end
 

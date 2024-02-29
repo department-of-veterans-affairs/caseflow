@@ -67,7 +67,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
     # this method takes care of when aod affinity day has a value
   def ama_aod_hearing_original_appeals
     joins(with_assigned_distribution_task_sql)
-    .where("advance_on_docket_motions.created_at > ?", CaseDistributionLever.ama_hearing_case_aod_affinity_days)
+      .where("advance_on_docket_motions.created_at > ?", CaseDistributionLever.ama_hearing_case_aod_affinity_days.days.ago)
   end
 
 
