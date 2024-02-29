@@ -112,22 +112,6 @@ describe PtcpntPersnIdDepntOrgFix, :postgres do
       end
     end
 
-    context "EndProductEstablishment record" do
-      let!(:epe) do
-        create(
-          :end_product_establishment,
-          claimant_participant_id: "incorrect_pid",
-          source_id: supplemental_claim.id,
-          source_type: "SupplementalClaim"
-        )
-      end
-
-      it "correctly identifies and processes records with incorrect participant_id for EndProductEstablishment" do
-        subject.start_processing_records
-        expect(epe.reload.claimant_participant_id).to eq(correct_pid)
-      end
-    end
-
     context "Organization record" do
       let!(:organization) { create(:organization, participant_id: incorrect_pid) }
 

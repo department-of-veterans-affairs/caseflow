@@ -135,6 +135,12 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
     end
   end
 
+  def error_records
+    SupplementalClaim.where("establishment_error ILIKE ?", "%#{ERROR_TEXT}%")
+  end
+
+  private
+
   def process_participant_id_record(record, correct_pid)
     ActiveRecord::Base.transaction do
       record.update(participant_id: correct_pid)
@@ -160,9 +166,5 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
       log_error(error)
       @stuck_job_report_service.append_error(record.class.name, record.id, error)
     end
-  end
-
-  def error_records
-    SupplementalClaim.where("establishment_error ILIKE ?", "%#{ERROR_TEXT}%")
   end
 end
