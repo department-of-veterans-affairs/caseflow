@@ -39,7 +39,7 @@ RSpec.describe TranscriptFileIssuesMailer, type: :mailer do
     it "assigns @case_link for demo environment" do
       allow(Rails).to receive(:deploy_env).and_return(:demo)
       mail = described_class.send_issue_details(details, appeal_id).deliver_now
-      expect(mail.body.encoded).to match("https://caseflowdemo.com/queue/appeals/#{appeal_id}")
+      expect(mail.body.encoded).to match("https://demo.appeals.va.gov/appeals/#{appeal_id}")
     end
 
     it "assigns @case_link for staging environment" do
