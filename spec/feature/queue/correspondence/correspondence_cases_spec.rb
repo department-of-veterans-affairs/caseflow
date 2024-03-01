@@ -814,4 +814,51 @@ RSpec.feature("The Correspondence Cases page") do
       expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
     end
   end
+
+  context "Your Correspondence assigned tab" do
+    let(:current_user) { create(:user) }
+    before :each do
+      MailTeamSupervisor.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+    end
+
+    before do
+      Timecop.freeze(Time.zone.local(2020, 5, 15))
+      (1..10).map { create(:correspondence, :with_correspondence_intake_task) }
+      10.times do
+        review_correspondence = create(:correspondence)
+        rpt = ReviewPackageTask.find_by(appeal_id: review_correspondence.id)
+        rpt.update!(assigned_to: current_user, status: "assigned")
+        rpt.save!
+      end
+      10.times do
+        corr = create(:correspondence)
+
+        rpt = ReviewPackageTask.find_by(appeal_id: corr.id)
+
+        EfolderUploadFailedTask.create!(
+          parent_id: rpt.id,
+          appeal_id: corr.id,
+          appeal_type: "Correspondence",
+          assigned_to: current_user,
+          assigned_by_id: rpt.assigned_to_id
+        )
+      end
+
+      # Used to mock a single task to compare task sorting
+      EfolderUploadFailedTask.first.correspondence.update!(
+        va_date_of_receipt: Date.new(2000, 10, 10),
+        updated_by_id: current_user.id
+      )
+      EfolderUploadFailedTask.last.correspondence.update!(
+        va_date_of_receipt: Date.new(2050, 10, 10),
+        updated_by_id: current_user.id
+      )
+      FeatureToggle.enable!(:correspondence_queue)
+    end
+
+    it "successfully loads the assigned tab" do
+      visit "/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc"
+    end
+  end
 end
