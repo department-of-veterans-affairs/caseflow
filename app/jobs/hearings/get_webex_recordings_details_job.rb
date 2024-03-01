@@ -29,8 +29,7 @@ class Hearings::GetWebexRecordingsDetailsJob < CaseflowJob
   end
   # rubocop:enable Layout/LineLength
 
-  # rubocop:disable Lint/UnusedMethodArgument
-  def perform(id:, file_name:)
+  def perform(id:)
     ensure_current_user_is_set
     data = get_recording_details(id)
     topic = data.topic
@@ -44,7 +43,6 @@ class Hearings::GetWebexRecordingsDetailsJob < CaseflowJob
     mp3_link = data.mp3_link
     send_file(topic, "mp3", mp3_link)
   end
-  # rubocop:enable Lint/UnusedMethodArgument
 
   def log_error(error)
     Rails.logger.error("Retrying #{self.class.name} because failed with error: #{error}")
