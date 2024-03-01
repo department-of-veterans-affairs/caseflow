@@ -484,20 +484,37 @@ class AppealsController < ApplicationController
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
-  # updated flash message to show mst/pact message if mst/pact changes (not to legacy)
-  # rubocop:disable Layout/LineLength
+  # rubocop:disable Layout/LineLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def set_flash_success_message
+    # updated flash message to show mst/pact message if mst/pact changes (not to legacy)
     return set_flash_mst_edit_message if mst_pact_changes? &&
                                          (FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) ||
                                          FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user]))
 
+    # if original issues were not VHA related, then that means it will be moved to the SCT queue
+    return flash_move_to_sct_success if appeal.sct_appeal? &&
+                                        FeatureToggle.enabled?(:specialty_case_team_distribution) &&
+                                        request_issues_update.before_issues.none?(&:sct_benefit_type?) &&
+                                        request_issues_update.review.tasks.of_type(:DistributionTask).exists?
+
     set_flash_edit_message
   end
-  # rubocop:enable Layout/LineLength
+  # rubocop:enable Layout/LineLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   # create success message with added and removed issues
   def set_flash_mst_edit_message
     flash[:mst_pact_edited] = mst_and_pact_edited_issues
+  end
+
+  def flash_move_to_sct_success
+    flash[:custom] = {
+      title: COPY::MOVE_TO_SCT_BANNER_TITLE,
+      message: format(
+        COPY::MOVE_TO_SCT_BANNER_MESSAGE,
+        request_issues_update.review.claimant.name,
+        request_issues_update.veteran.file_number
+      )
+    }
   end
 
   def set_flash_edit_message

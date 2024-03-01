@@ -27,6 +27,14 @@ module CaseDistribution
     appeals
   end
 
+  def calculate_reduction(appeals)
+    if FeatureToggle.enabled?(:specialty_case_team_distribution, user: RequestStore.store[:current_user])
+      appeals.count { |appeal| !appeal.sct_appeal }
+    else
+      appeals.count
+    end
+  end
+
   def priority_target
     proportion = [priority_count.to_f / total_batch_size, 1.0].reject(&:nan?).min
     (proportion * batch_size).ceil

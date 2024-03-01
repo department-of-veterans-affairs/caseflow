@@ -952,6 +952,14 @@ class Appeal < DecisionReview
     false
   end
 
+  def sct_appeal?
+    request_issues.active.any?(&:sct_benefit_type?)
+  end
+
+  def has_distribution_task?
+    tasks.of_type(:DistributionTask).exists?
+  end
+
   private
 
   def business_lines_needing_assignment

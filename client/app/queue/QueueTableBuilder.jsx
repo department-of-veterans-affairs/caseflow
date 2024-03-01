@@ -242,9 +242,11 @@ const QueueTableBuilder = (props) => {
   };
 
   const tabsFromConfig = (config) =>
-    (config.tabs || []).map((tabConfig) =>
-      taskTableTabFactory(tabConfig, config)
-    );
+    (config.tabs || []).
+      filter((tabConfig) => !tabConfig.hide_from_queue_table_view).
+      map((tabConfig) =>
+        taskTableTabFactory(tabConfig, config)
+      );
 
   const config = queueConfig();
 

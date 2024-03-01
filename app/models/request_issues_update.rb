@@ -16,7 +16,7 @@ class RequestIssuesUpdate < CaseflowRecord
   delegate :withdrawn_issues, to: :withdrawal
   delegate :corrected_issues, :correction_issues, to: :correction
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
   def perform!
     return false unless validate_before_perform
     return false if processed?
@@ -38,6 +38,7 @@ class RequestIssuesUpdate < CaseflowRecord
         create_mst_pact_issue_update_tasks
       end
       create_business_line_tasks! if added_issues.present?
+      move_to_sct_queue if FeatureToggle.enabled?(:specialty_case_team_distribution, user: user)
       cancel_active_tasks
       submit_for_processing!
     end
@@ -46,7 +47,7 @@ class RequestIssuesUpdate < CaseflowRecord
 
     true
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
 
   def process_job
     if run_async?
@@ -109,6 +110,25 @@ class RequestIssuesUpdate < CaseflowRecord
   def all_updated_issues
     added_issues + removed_issues + withdrawn_issues + edited_issues +
       correction_issues + mst_edited_issues + pact_edited_issues
+  end
+
+  def move_to_sct_queue
+    # If appeal has VHA issue, not in the SCT Queue and not PreDocketed, then move to the SCT Queue
+    if review.try(:sct_appeal?) && review.tasks.of_type(:SpecialtyCaseTeamAssignTask).blank? &&
+       review.tasks.of_type(:DistributionTask).exists?
+      remove_appeal_from_current_queue
+      SpecialtyCaseTeamAssignTask.find_or_create_by(
+        appeal: review,
+        parent: review.root_task,
+        assigned_to: SpecialtyCaseTeam.singleton,
+        assigned_by: user
+      )
+    end
+  end
+
+  def remove_appeal_from_current_queue
+    review.tasks.reject { |task| %w[RootTask DistributionTask].include?(task.type) }
+      .each(&:cancel_task_and_child_subtasks)
   end
 
   private

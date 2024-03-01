@@ -59,7 +59,7 @@ module ByDocketDateDistribution
     end
   end
 
-  # rubocop:disable Metrics/MethodLength
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def ama_statistics
     priority_counts = { count: priority_count }
     nonpriority_counts = { count: nonpriority_count }
@@ -76,8 +76,14 @@ module ByDocketDateDistribution
 
     nonpriority_counts[:iterations] = @nonpriority_iterations
 
+    sct_appeals_counts = @appeals.count { |appeal| appeal.try(:sct_appeal) }
+
     settings = {}
-    feature_toggles = [:acd_disable_legacy_distributions, :acd_disable_nonpriority_distributions]
+    feature_toggles = [
+      :acd_disable_legacy_distributions,
+      :acd_disable_nonpriority_distributions,
+      :specialty_case_team_distribution
+    ]
     feature_toggles.each do |sym|
       settings[sym] = FeatureToggle.enabled?(sym, user: RequestStore.store[:current_user])
     end
@@ -88,6 +94,7 @@ module ByDocketDateDistribution
       priority_target: @push_priority_target || @request_priority_count,
       priority: priority_counts,
       nonpriority: nonpriority_counts,
+      sct_appeals: sct_appeals_counts,
       distributed_cases_tied_to_ineligible_judges: {
         ama: ama_distributed_cases_tied_to_ineligible_judges,
         legacy: distributed_cases_tied_to_ineligible_judges
@@ -103,7 +110,7 @@ module ByDocketDateDistribution
                #{error.class}: #{error.message}, #{error.backtrace.first}"
     }
   end
-  # rubocop:enable Metrics/MethodLength
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   def ama_distributed_cases_tied_to_ineligible_judges
     @appeals.filter_map do |appeal|

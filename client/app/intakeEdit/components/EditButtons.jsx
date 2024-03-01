@@ -25,7 +25,8 @@ class SaveButtonUnconnected extends React.Component {
         issueChangeModal: false,
         unidentifiedIssueModal: false,
         reviewRemovedModal: false,
-        correctionIssueModal: false
+        correctionIssueModal: false,
+        moveToSctModal: false
       }
     };
   }
@@ -36,8 +37,15 @@ class SaveButtonUnconnected extends React.Component {
       issueChangeModal: false,
       unidentifiedIssueModal: false,
       reviewRemovedModal: false,
-      correctionIssueModal: false
+      correctionIssueModal: false,
+      moveToSctModal: false
     };
+
+    if (this.props.state.addedIssues.some((i) => i.benefitType === 'vha') &&
+    !this.props.originalIssues.some((i) => i.benefitType === 'vha') &&
+    this.props.hasDistributionTask && this.props.specialtyCaseTeamDistribution) {
+      showModals.moveToSctModal = true;
+    }
 
     if (this.state.originalIssueNumber !== this.props.state.addedIssues.length) {
       if (this.props.state.addedIssues.length === 0) {
@@ -79,7 +87,20 @@ class SaveButtonUnconnected extends React.Component {
     return this.state.showModals.correctionIssueModal &&
       !this.state.showModals.reviewRemovedModal &&
       !this.state.showModals.issueChangeModal &&
-      !this.state.showModals.unidentifiedIssueModal;
+      !this.state.showModals.unidentifiedIssueModal &&
+      !this.state.showModals.moveToSctModal;
+  }
+
+  showMoveToSctModal = () => {
+    if (!this.props.specialtyCaseTeamDistribution) {
+      return false;
+    }
+
+    return this.state.showModals.moveToSctModal &&
+      !this.state.showModals.reviewRemovedModal &&
+      !this.state.showModals.issueChangeModal &&
+      !this.state.showModals.unidentifiedIssueModal &&
+      !this.state.showModals.correctionIssueModal;
   }
 
   confirmModal = (modalToClose) => {
@@ -193,6 +214,15 @@ class SaveButtonUnconnected extends React.Component {
         <p>{COPY.CORRECT_REQUEST_ISSUES_ESTABLISH_MODAL_TEXT}</p>
       </SaveAlertConfirmModal>}
 
+      { this.showMoveToSctModal() && <SaveAlertConfirmModal
+        title={COPY.MOVE_TO_SCT_MODAL_TITLE}
+        buttonText={COPY.MODAL_MOVE_BUTTON}
+        onClose={() => this.closeModal('moveToSctModal')}
+        onConfirm={() => this.confirmModal('moveToSctModal')}
+        buttonClassNames={['usa-button', 'confirm']}>
+        <p>{COPY.MOVE_TO_SCT_MODAL_BODY}</p>
+      </SaveAlertConfirmModal>}
+
       <Button
         name="submit-update"
         onClick={this.validate}
@@ -223,6 +253,8 @@ SaveButtonUnconnected.propTypes = {
   benefitType: PropTypes.string,
   claimId: PropTypes.string,
   history: PropTypes.object,
+  hasDistributionTask: PropTypes.bool,
+  specialtyCaseTeamDistribution: PropTypes.bool,
   state: PropTypes.shape({
     addedIssues: PropTypes.array
   })
@@ -241,6 +273,8 @@ const SaveButton = connect(
     processedInCaseflow: state.processedInCaseflow,
     withdrawalDate: state.withdrawalDate,
     receiptDate: state.receiptDate,
+    hasDistributionTask: state.hasDistributionTask,
+    specialtyCaseTeamDistribution: state.featureToggles.specialtyCaseTeamDistribution,
     state
   }),
   (dispatch) => bindActionCreators({

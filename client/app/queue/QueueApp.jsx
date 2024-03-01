@@ -22,6 +22,7 @@ import {
   setUserCssId,
   setUserIsVsoEmployee,
   setUserIsCamoEmployee,
+  setUserIsSCTCoordinator,
   setFeedbackUrl,
   setOrganizations,
 } from './uiReducer/uiActions';
@@ -125,6 +126,7 @@ class QueueApp extends React.PureComponent {
     this.props.setOrganizations(this.props.organizations);
     this.props.setUserIsVsoEmployee(this.props.userIsVsoEmployee);
     this.props.setUserIsCamoEmployee(this.props.userIsCamoEmployee);
+    this.props.setUserIsSCTCoordinator(this.props.userIsSCTCoordinator);
     this.props.setFeedbackUrl(this.props.feedbackUrl);
     if (
       this.props.hasCaseDetailsRole &&
@@ -680,13 +682,14 @@ class QueueApp extends React.PureComponent {
       'Review Cases';
 
   propsForQueueLoadingScreen = () => {
-    const { userId, userCssId, userRole, userIsCamoEmployee } = this.props;
+    const { userId, userCssId, userRole, userIsCamoEmployee, userIsSCTCoordinator } = this.props;
 
     return {
       userId,
       userCssId,
       userRole,
-      userIsCamoEmployee
+      userIsCamoEmployee,
+      userIsSCTCoordinator
     };
   };
 
@@ -1453,6 +1456,8 @@ QueueApp.propTypes = {
   userIsVsoEmployee: PropTypes.bool,
   setUserIsCamoEmployee: PropTypes.func,
   userIsCamoEmployee: PropTypes.bool,
+  setUserIsSCTCoordinator: PropTypes.func,
+  userIsSCTCoordinator: PropTypes.bool,
   setFeedbackUrl: PropTypes.func,
   hasCaseDetailsRole: PropTypes.bool,
   caseSearchHomePage: PropTypes.bool,
@@ -1490,6 +1495,7 @@ const mapDispatchToProps = (dispatch) =>
       setUserCssId,
       setUserIsVsoEmployee,
       setUserIsCamoEmployee,
+      setUserIsSCTCoordinator,
       setFeedbackUrl,
       setOrganizations,
     },
