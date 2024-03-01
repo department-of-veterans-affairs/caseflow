@@ -45,17 +45,14 @@ class SaveButtonUnconnected extends React.Component {
       moveToDistributionModal: false
     };
 
-    // TODO: Removal might also need an existing SCT task check, because it could have a VHA issue
-    // but not be in the SCT queue if it was distributed before the Specialty Case Team was created
-
     // TODO: Move this object.keys check to the split appeals jsx file
     // Check for other jsx files that check for sct issues
     // Specialty Case Team (SCT) logic for movement of appeals based on additional and removal of SCT request issues
     const specialtyCaseTeamBenefitTypes = Object.keys(SPECIALTY_CASE_TEAM_BENEFIT_TYPES);
-    const addedIssuesHasSCTIssue = this.props.state.addedIssues.some((i) =>
-      specialtyCaseTeamBenefitTypes.includes(i.benefitType));
-    const originalIssuesHasSCTIssue = this.props.originalIssues.some((i) =>
-      specialtyCaseTeamBenefitTypes.includes(i.benefitType));
+    const addedIssuesHasSCTIssue = this.props.state.addedIssues.some((issue) =>
+      specialtyCaseTeamBenefitTypes.includes(issue.benefitType));
+    const originalIssuesHasSCTIssue = this.props.originalIssues.some((issue) =>
+      specialtyCaseTeamBenefitTypes.includes(issue.benefitType));
     const hasDistributionTaskAndSCTFeatureToggle = this.props.hasDistributionTask &&
      this.props.specialtyCaseTeamDistribution;
 
@@ -63,7 +60,8 @@ class SaveButtonUnconnected extends React.Component {
       showModals.moveToSctModal = true;
     }
 
-    if (!addedIssuesHasSCTIssue && originalIssuesHasSCTIssue && hasDistributionTaskAndSCTFeatureToggle) {
+    if (!addedIssuesHasSCTIssue && originalIssuesHasSCTIssue && hasDistributionTaskAndSCTFeatureToggle &&
+        this.props.hasSpecialtyCaseTeamAssignTask) {
       showModals.moveToDistributionModal = true;
     }
 
@@ -296,6 +294,7 @@ SaveButtonUnconnected.propTypes = {
   claimId: PropTypes.string,
   history: PropTypes.object,
   hasDistributionTask: PropTypes.bool,
+  hasSpecialtyCaseTeamAssignTask: PropTypes.bool,
   specialtyCaseTeamDistribution: PropTypes.bool,
   state: PropTypes.shape({
     addedIssues: PropTypes.array
@@ -316,6 +315,7 @@ const SaveButton = connect(
     withdrawalDate: state.withdrawalDate,
     receiptDate: state.receiptDate,
     hasDistributionTask: state.hasDistributionTask,
+    hasSpecialtyCaseTeamAssignTask: state.hasSpecialtyCaseTeamAssignTask,
     specialtyCaseTeamDistribution: state.featureToggles.specialtyCaseTeamDistribution,
     state
   }),

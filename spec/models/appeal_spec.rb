@@ -1693,6 +1693,19 @@ describe Appeal, :all_dbs do
     end
   end
 
+  describe "has_specialty_case_team_assign_task?" do
+    let(:appeal) { create(:appeal, :with_vha_issue) }
+    let(:appeal_2) { create(:specialty_case_team_assign_task).appeal }
+
+    it "should return true if appeal has a specialty case team assign task" do
+      expect(appeal_2.has_specialty_case_team_assign_task?).to be true
+    end
+
+    it "should return false for appeal without a specialty case team assign task" do
+      expect(appeal.has_specialty_case_team_assign_task?).to be false
+    end
+  end
+
   describe "split_appeal" do
     let!(:regular_user) do
       create(:user, css_id: "APPEAL_USER")

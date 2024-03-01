@@ -960,6 +960,10 @@ class Appeal < DecisionReview
     tasks.of_type(:DistributionTask).exists?
   end
 
+  def has_specialty_case_team_assign_task?
+    tasks.any? { |task| task.is_a?(SpecialtyCaseTeamAssignTask) }
+  end
+
   def remove_from_current_queue!
     tasks.reject { |task| %w[RootTask DistributionTask].include?(task.type) }
       .each(&:cancel_task_and_child_subtasks)
