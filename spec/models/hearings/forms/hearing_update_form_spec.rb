@@ -6,7 +6,11 @@ describe HearingUpdateForm, :all_dbs do
     let(:nyc_ro_eastern) { "RO06" }
     let(:video_type) { HearingDay::REQUEST_TYPES[:video] }
     let(:hearing_day) { create(:hearing_day, regional_office: nyc_ro_eastern, request_type: video_type) }
-    let!(:hearing) { create(:hearing, hearing_day: hearing_day) }
+    let!(:hearing) do
+      create(:hearing, hearing_day: hearing_day).tap do |hearing|
+        hearing.meeting_type.update(service_name: "webex")
+      end
+    end
     let(:params) do
       {
         hearing: hearing.reload,
@@ -27,6 +31,16 @@ describe HearingUpdateForm, :all_dbs do
     end
 
     subject { HearingUpdateForm.new(params) }
+
+    context "non virtual hearing" do
+      before do
+        subject { HearingUpdateForm.new(hearing: hearing) }
+      end
+      it "adds to conference link table" do
+        subject.update
+        # expect(subject).to eq("hello")
+      end
+    end
 
     context "updating a virtual hearing" do
       context "that is initialized and all emails have been sent" do

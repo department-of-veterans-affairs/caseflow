@@ -27,9 +27,6 @@ class WebexConferenceLink < ConferenceLink
       host_link: conference_response.host_link,
       co_host_link: conference_response.co_host_link,
       guest_hearing_link: conference_response.guest_link
-      # We probably will use these when creating new link not here
-      # hearing_id: hearing.id,
-      # hearing_type: hearing.readable_request_type
     )
   end
 end
