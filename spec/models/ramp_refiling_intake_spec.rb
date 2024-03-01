@@ -345,7 +345,6 @@ describe RampRefilingIntake, :postgres do
         )
       end
 
-      let(:claim_id1) { EndProductEstablishment.find_by(source: ramp_election1).reference_id }
       let(:claim_id2) { EndProductEstablishment.find_by(source: ramp_election2).reference_id }
 
       context "the EP associated with original RampElection is closed" do

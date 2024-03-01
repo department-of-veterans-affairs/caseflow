@@ -182,7 +182,6 @@ describe TaskFilter, :all_dbs do
 
     context "when filtering by regional office" do
       let(:tasks_per_city) { 3 }
-      let(:number_of_regional_office_cities) { 5 }
       let(:regional_office_cities) do
         ["Washington", "Digital Service HQ", "Washington", "Boston", "Togus"]
       end
