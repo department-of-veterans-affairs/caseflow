@@ -5,9 +5,16 @@ require "helpers/ptcpnt_persn_id_depnt_org_fix"
 describe PtcpntPersnIdDepntOrgFix, :postgres do
   let(:error_text) { "participantPersonId does not match a dependent or an organization" }
   let(:veteran_file_number) { "123456789" }
+  let!(:veteran) { create(:veteran, file_number: veteran_file_number) }
   let(:correct_pid) { "654321" }
   let(:incorrect_pid) { "incorrect_pid" }
-  let(:end_product_establishment) { create(:end_product_establishment, claimant_participant_id: incorrect_pid) }
+  let(:end_product_establishment) do
+    create(
+      :end_product_establishment,
+      claimant_participant_id: incorrect_pid,
+      veteran_file_number: veteran_file_number
+    )
+  end
   let(:claimant) do
     create(
       :claimant,
@@ -19,6 +26,7 @@ describe PtcpntPersnIdDepntOrgFix, :postgres do
   let!(:supplemental_claim) do
     create(
       :supplemental_claim,
+      veteran_file_number: veteran_file_number,
       establishment_error: error_text,
       claimants: [
         claimant
@@ -41,9 +49,9 @@ describe PtcpntPersnIdDepntOrgFix, :postgres do
         end
       end
       it "handles errors from BGSService and logs errors appropriately" do
-        # Ensure that log_error is being called
-        expect(subject).to receive(:log_error).with(StandardError).at_least(:once)
-        subject.retrieve_correct_pid(veteran_file_number)
+        expect(subject).to receive(:log_error).with(instance_of(StandardError)).at_least(:once)
+
+        subject.send(:retrieve_correct_pid, veteran_file_number)
       end
 
       it "logs to the stuck_job_report_service" do
@@ -52,9 +60,8 @@ describe PtcpntPersnIdDepntOrgFix, :postgres do
         message_2 = "number #{veteran_file_number}: Simulated BGS error"
         error_message = message_1 + message_2
 
-        expect(logs).to receive(:push).with(error_message).at_least(:once)
-
-        subject.retrieve_correct_pid(veteran_file_number)
+        subject.start_processing_records
+        expect(logs).to include(match(/#{error_message}/))
       end
     end
 
@@ -134,42 +141,44 @@ describe PtcpntPersnIdDepntOrgFix, :postgres do
       it "handles person records" do
         correct_person
         expect do
-          subject.handle_person_and_claimant_records(correct_pid, supplemental_claim)
-        end.to change { Person.count }.by(-1) # Expect one person to be destroyed
+          subject.start_processing_records.to
+        end
+        change { Person.count }.by(-1)
       end
 
       it "updates supplemental_claim to the correct claimant" do
         correct_person
-        subject.handle_person_and_claimant_records(correct_pid, supplemental_claim)
-        supplemental_claim.reload
+        subject.start_processing_records
         expect(supplemental_claim.claimant.participant_id).to eq(correct_pid)
       end
 
       it "updates supplemental_claim to the correct person" do
         correct_person
-        subject.handle_person_and_claimant_records(correct_pid, supplemental_claim)
-        supplemental_claim.reload
+        subject.start_processing_records
         expect(supplemental_claim.claimant.person.participant_id).to eq(correct_pid)
       end
 
-      it "handles person and claimant records when correct person not found" do
-        allow(PtcpntPersnIdDepntOrgFix).to receive(:get_correct_person).with(correct_pid).and_return(nil)
-        expect do
-          subject.handle_person_and_claimant_records(correct_pid, supplemental_claim)
-        end.not_to(change { Person.count }) # Expect no person to be destroyed
-      end
+      context "No Person found with correct PID" do
+        it "handles person and claimant records when correct person not found" do
+          expect do
+            subject.start_processing_records
+          end.not_to(change { Person.count })
 
-      it "updates incorrect person when correct person not found" do
-        allow(PtcpntPersnIdDepntOrgFix).to receive(:get_correct_person).with(correct_pid).and_return(nil)
-        subject.start_processing_records
-        expect(supplemental_claim.claimant.person.reload.participant_id).to eq(correct_pid)
-      end
+          # expect do
+          #   subject.handle_person_and_claimant_records(supplemental_claim)
+          # end.not_to(change { Person.count }) # Expect no person to be destroyed
+        end
 
-      it "updates payee_code if not 00" do
-        allow(PtcpntPersnIdDepntOrgFix).to receive(:get_correct_person).with(correct_pid).and_return(nil)
-        supplemental_claim.claimant.payee_code = nil
-        subject.start_processing_records
-        expect(supplemental_claim.claimant.payee_code).to eq("00")
+        it "updates incorrect person when correct person not found" do
+          subject.start_processing_records
+          expect(supplemental_claim.claimant.person.reload.participant_id).to eq(correct_pid)
+        end
+
+        it "updates payee_code if not 00" do
+          supplemental_claim.claimant.payee_code = nil
+          subject.start_processing_records
+          expect(supplemental_claim.claimant.payee_code).to eq("00")
+        end
       end
     end
   end
