@@ -7,6 +7,7 @@ class CorrespondenceController < ApplicationController
   before_action :correspondence
   before_action :auto_texts
   before_action :veteran_information
+  MAX_QUEUED_ITEMS = 60
 
   def intake
     respond_to do |format|
@@ -252,19 +253,19 @@ class CorrespondenceController < ApplicationController
     case tab
     when "correspondence_unassigned"
       {
-        header: (user.tasks.length < 60) ? success_header_unassigned : failure_header_unassigned,
-        message: (user.tasks.length < 60) ? success_message : failure_message
+        header: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_header_unassigned : failure_header_unassigned,
+        message: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_message : failure_message
       }
     when "correspondence_team_assigned"
       {
-        header: (user.tasks.length < 60) ? success_header_assigned : failure_header_assigned,
-        message: (user.tasks.length < 60) ? success_message : failure_message
+        header: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_header_assigned : failure_header_assigned,
+        message: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_message : failure_message
       }
     end
   end
 
   def response_type(user)
-    @response_type = (user.tasks.length < 60) ? "success" : "info"
+    @response_type = (user.tasks.length < MAX_QUEUED_ITEMS) ? "success" : "info"
   end
 
   # :reek:FeatureEnvy
