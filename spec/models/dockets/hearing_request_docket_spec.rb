@@ -330,13 +330,11 @@ describe HearingRequestDocket, :all_dbs do
 
     it "distributes for 90 days, 3 years, 200 years" do
       # won't be included
-      create_priority_distributable_hearing_appeal_not_tied_to_any_judge
-      matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
-      create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
+      
+      appeal_200_years = create_nonpriority_distributable_appeal_not_tied_to_judge_200_years
       # will be included
       appeal_90_days = create_nonpriority_distributable_appeal_not_tied_to_judge_90_days
       appeal_3_years = create_nonpriority_distributable_appeal_not_tied_to_judge_3_years
-      appeal_200_years = create_nonpriority_distributable_appeal_not_tied_to_judge_200_years
 
       expected_result = [appeal_90_days, appeal_3_years] # 200 years not expected to distribute
 
