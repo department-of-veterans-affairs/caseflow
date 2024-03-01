@@ -13,7 +13,8 @@ import {
 
 import {
   initialAssignTasksToUser,
-  reassignTasksToUser
+  reassignTasksToUser,
+  initialSpecialtyCaseTeamAssignTasksToUser
 } from './QueueActions';
 
 class AssignToAttorneyModalView extends React.PureComponent {
@@ -21,39 +22,49 @@ class AssignToAttorneyModalView extends React.PureComponent {
     { tasks, assigneeId, instructions }
   ) => {
     const previousAssigneeId = tasks[0].assignedTo.id.toString();
-
-    if ([COPY.JUDGE_ASSIGN_TASK_LABEL, COPY.JUDGE_QUALITY_REVIEW_TASK_LABEL].includes(tasks[0].label)) {
-      return this.props.initialAssignTasksToUser({
-        tasks,
-        assigneeId,
-        previousAssigneeId,
-        instructions
-      });
-    }
-
-    return this.props.reassignTasksToUser({
+    const commonProps = {
       tasks,
       assigneeId,
       previousAssigneeId,
       instructions
-    });
+    };
+
+    if (tasks[0].type === 'SpecialtyCaseTeamAssignTask') {
+      return this.props.initialSpecialtyCaseTeamAssignTasksToUser({ ...commonProps });
+    }
+
+    if ([COPY.JUDGE_ASSIGN_TASK_LABEL, COPY.JUDGE_QUALITY_REVIEW_TASK_LABEL].includes(tasks[0].label)) {
+      return this.props.initialAssignTasksToUser({ ...commonProps });
+    }
+
+    return this.props.reassignTasksToUser({ ...commonProps });
   }
 
   render = () => {
     const { task, userId, match } = this.props;
     const previousAssigneeId = task ? task.assignedTo.id.toString() : null;
+    const sctModalProps = task.type === 'SpecialtyCaseTeamAssignTask' ?
+      {
+        selectedAssignee: 'OTHER',
+        hidePrimaryAssignDropdown: true,
+        secondaryAssignDropdownLabel: COPY.SPECIALTY_CASE_TEAM_ASSIGN_DROPDOWN_LABEL
+      } : {};
 
     if (!previousAssigneeId) {
       return null;
     }
 
-    return <AssignToAttorneyWidgetModal
-      isModal
-      match={match}
-      userId={userId}
-      onTaskAssignment={this.handleAssignment}
-      previousAssigneeId={previousAssigneeId}
-      selectedTasks={[task]} />;
+    return <>
+      <AssignToAttorneyWidgetModal
+        isModal
+        match={match}
+        userId={userId}
+        onTaskAssignment={this.handleAssignment}
+        previousAssigneeId={previousAssigneeId}
+        selectedTasks={[task]}
+        {...sctModalProps}
+      />
+    </>;
   }
 }
 
@@ -61,12 +72,14 @@ AssignToAttorneyModalView.propTypes = {
   task: PropTypes.shape({
     assignedTo: PropTypes.shape({
       id: PropTypes.number
-    })
+    }),
+    type: PropTypes.string
   }),
   userId: PropTypes.string,
   match: PropTypes.object,
   initialAssignTasksToUser: PropTypes.func,
-  reassignTasksToUser: PropTypes.func
+  reassignTasksToUser: PropTypes.func,
+  initialSpecialtyCaseTeamAssignTasksToUser: PropTypes.func
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -77,7 +90,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   initialAssignTasksToUser,
-  reassignTasksToUser
+  reassignTasksToUser,
+  initialSpecialtyCaseTeamAssignTasksToUser
 }, dispatch);
 
 export default (connect(
