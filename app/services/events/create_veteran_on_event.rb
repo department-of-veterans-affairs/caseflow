@@ -26,7 +26,7 @@ class Events::CreateVeteranOnEvent
         last_name: headers["X-VA-Vet-Last-Name"],
         middle_name: headers["X-VA-Vet-Middle-Name"],
         participant_id: veteran.participant_id,
-        bgs_last_synced_at: veteran.bgs_last_synced_at,
+        bgs_last_synced_at: convert_milliseconds_to_datetime(veteran.bgs_last_synced_at),
         name_suffix: veteran.name_suffix.presence,
         date_of_death: veteran.date_of_death.presence
       )
@@ -47,6 +47,10 @@ class Events::CreateVeteranOnEvent
 
     def veteran_file_number(headers)
       @veteran_file_number ||= headers["X-VA-File-Number"].presence
+    end
+
+    def convert_milliseconds_to_datetime(milliseconds)
+      Time.at(milliseconds / 1000).to_datetime
     end
   end
 end

@@ -37,10 +37,12 @@ describe Events::CreateVeteranOnEvent do
         expect(backfilled_veteran.middle_name).to eq headers["X-VA-Vet-Middle-Name"]
 
         expect(backfilled_veteran.participant_id).to eq non_cf_veteran.participant_id
-        # expect(backfilled_veteran.bgs_last_synced_at).to eq non_cf_veteran.bgs_last_synced_at
+        expect(backfilled_veteran.bgs_last_synced_at).to eq convert_milliseconds_to_datetime(non_cf_veteran.bgs_last_synced_at)
 
         expect(EventRecord.count).to eq 1
+        event_record = EventRecord.first
 
+        expect(event_record.backfill_record).to eq (backfilled_veteran)
       end
     end
 
@@ -52,6 +54,10 @@ describe Events::CreateVeteranOnEvent do
         "X-VA-Vet-Last-Name" => "Smith",
         "X-VA-Vet-Middle-Name" => "Alexander"
       }
+    end
+
+    def convert_milliseconds_to_datetime(milliseconds)
+      Time.at(milliseconds / 1000).to_datetime
     end
   end
 end
