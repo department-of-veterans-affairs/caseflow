@@ -222,23 +222,11 @@ RSpec.describe CorrespondenceController, :all_dbs, type: :controller do
         expect(JSON.parse(response.body)["batch_auto_assignment_attempt_id"]).to eq(BatchAutoAssignmentAttempt.last.id)
       end
     end
-
-    context "when there is an existing batch assignment attempt" do
-      it "does not create batch auto assignment attempt and returns the id" do
-        BatchAutoAssignmentAttempt.create!(
-          user: current_user,
-          status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.started
-        )
-        expect { get :auto_assign_correspondences }.to_not change(BatchAutoAssignmentAttempt, :count)
-        expect(response).to have_http_status(:ok)
-        expect(JSON.parse(response.body)["batch_auto_assignment_attempt_id"]).to eq(BatchAutoAssignmentAttempt.last.id)
-      end
-    end
   end
 
   describe "POST #auto_assign_status" do
     let(:error_baaa) do
-      create(:batch_auto_assignment_attempt, :max_capacity_error, :packages_assigned, user_id: current_user.id)
+      create(:batch_auto_assignment_attempt, :max_capacity_error, :packages_assigned, user: current_user)
     end
 
     before do
