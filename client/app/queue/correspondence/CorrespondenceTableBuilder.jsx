@@ -205,6 +205,8 @@ const CorrespondenceTableBuilder = (props) => {
                 {tabConfig.name === 'correspondence_team_assigned' &&
             <Button
               name="Reassign"
+              onClick={handleAssignButtonClick}
+              disabled={!isDropdownItemSelected || !isAnyCheckboxSelected}
             />
                 }
               </div>
