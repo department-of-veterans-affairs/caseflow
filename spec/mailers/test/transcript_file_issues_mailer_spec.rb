@@ -81,11 +81,6 @@ RSpec.describe TranscriptFileIssuesMailer, type: :mailer do
     it "assigns @details" do
       expect(mail.body.encoded).to match(details[:action])
       expect(mail.body.encoded).to match(details[:provider])
-    end
-
-    it "assigns @details" do
-      expect(mail.body.encoded).to match(details[:action])
-      expect(mail.body.encoded).to match(details[:provider])
       expect(mail.body.encoded).to match(details[:docket_number])
     end
 

@@ -24,9 +24,9 @@
       Response: <%= @details[:response] %>
 
       <% if @details[:error] == TranscriptionTransformer::FileConversionError %>
-         Please investigate this issue further to ensure continued communication with Caseflow. Direct any questions to OITAppealsHelpDesk@va.gov.
+          Please investigate this issue further to ensure continued communication with Caseflow. Direct any questions to OITAppealsHelpDesk@va.gov.
       <% else %>
-         Please investigate this issue further to ensure continued communication between Caseflow and <%= @details[:provider] %>. Direct any questions to OITAppealsHelpDesk@va.gov.
+          Please investigate this issue further to ensure continued communication between Caseflow and <%= @details[:provider] %>. Direct any questions to OITAppealsHelpDesk@va.gov.
       <% end %>
     </p>
   </body>
