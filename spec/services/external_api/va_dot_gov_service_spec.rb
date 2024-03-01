@@ -40,6 +40,7 @@ describe ExternalApi::VADotGovService do
       expect(result.error).to be_nil
       expect(result.data).to_not be_nil
       expect(message_keys).to_not include("InvalidRequestStreetAddress")
+      expect(body["address"]).to include("addressLine1", "addressLine2", "addressLine3")
     end
   end
 
@@ -53,6 +54,7 @@ describe ExternalApi::VADotGovService do
       expect(result.error).to be_nil
       expect(result.data).to_not be_nil
       expect(message_keys).to_not include("InvalidRequestState")
+      expect(body["address"]).to include("stateProvince")
     end
   end
 
@@ -66,6 +68,7 @@ describe ExternalApi::VADotGovService do
       expect(result.error).to be_nil
       expect(result.data).to_not be_nil
       expect(message_keys).to_not include("InvalidRequestCountry")
+      expect(body["address"]).to include("country")
     end
   end
 
@@ -79,6 +82,7 @@ describe ExternalApi::VADotGovService do
       expect(result.error).to be_nil
       expect(result.data).to_not be_nil
       expect(message_keys).to_not include("InvalidRequestPostalCode")
+      expect(body["address"]).to include("zipCode5")
     end
   end
 
