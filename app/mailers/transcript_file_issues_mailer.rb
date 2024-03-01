@@ -12,7 +12,7 @@ class TranscriptFileIssuesMailer < ActionMailer::Base
     @details = details
     @case_link = case Rails.deploy_env
                  when :demo
-                   "https://caseflowdemo.com/queue/appeals/#{appeal_id}"
+                   "https://demo.appeals.va.gov/appeals/#{appeal_id}"
                  when :staging
                    "https://appeals.cf.uat.ds.va.gov/queue/appeals/#{appeal_id}"
                  when :prod, :prodtest, :preprod
@@ -26,7 +26,7 @@ class TranscriptFileIssuesMailer < ActionMailer::Base
     end
   end
 
-  # Handles specifically the transcript recording list issues 
+  # Handles specifically the transcript recording list issues
   def webex_recording_list_issues(details)
     @details = details
     @subject = "File #{details[:action]} Error - #{details[:provider]}"
