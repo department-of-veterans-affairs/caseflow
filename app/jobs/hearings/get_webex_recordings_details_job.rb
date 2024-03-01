@@ -29,7 +29,7 @@ class Hearings::GetWebexRecordingsDetailsJob < CaseflowJob
   end
   # rubocop:enable Layout/LineLength
 
-  def perform(id:)
+  def perform(id:, file_name:)
     ensure_current_user_is_set
     data = get_recording_details(id)
     topic = data.topic
