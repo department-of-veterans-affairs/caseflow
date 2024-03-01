@@ -4,7 +4,7 @@ RSpec.feature("The Correspondence Cases page") do
   include CorrespondenceTaskHelpers
   # alias this to avoid the method name collision
   alias_method :create_efolderupload_task, :create_efolderupload_failed_task
-  context "correspondence cases unassigned tab" do
+  context "correspondence batch assignment cases for assigned and unassigned tabs" do
     let(:current_user) { create(:user) }
     before :each do
       MailTeamSupervisor.singleton.add_user(current_user)
@@ -69,7 +69,7 @@ RSpec.feature("The Correspondence Cases page") do
       visit "/queue/correspondence/team?tab=correspondence_unassigned"
       expect(page).to have_content("Correspondence owned by the Mail team are unassigned to an individual:")
       expect(page).to have_content("Assign to mail team user")
-      expect(page).to have_button("Assign")
+      expect(page).to have_button("Assign", disabled: true)
       expect(page).to have_button("Auto assign correspondence")
     end
 
@@ -110,6 +110,53 @@ RSpec.feature("The Correspondence Cases page") do
       expect(page).to have_button("Assign", disabled: false)
       find_by_id("button-Assign").click
       expect(page).to have_content("Correspondence assignment to #{target_user.css_id} has failed")
+      expect(page).to have_content("Queue volume has reached maximum capacity for this user.")
+    end
+
+    it "successfully loads the assigned tab" do
+      visit "/queue/correspondence/team?tab=correspondence_team_assigned"
+      expect(page).to have_content("Correspondence that is currently assigned to mail team users:")
+      expect(page).to have_content("Assign to mail team user")
+      expect(page).to have_button("Reassign", disabled: true)
+    end
+
+    it "Verify the mail team user batch reassignment with Reassign button" do
+      visit "/queue/correspondence/team?tab=correspondence_team_assigned"
+      expect(page).to have_content("Assign to mail team user")
+      expect(page).to have_button("Reassign", disabled: true)
+      expect(page).to have_selector(".cf-select__input")
+      all(".cf-select__input").first.click
+      find_by_id("react-select-2-option-0").click
+      page.execute_script('
+        document.querySelectorAll(".cf-form-checkbox input[type=\'checkbox\']").forEach((checkbox, index) => {
+          if (index < 3) {
+            checkbox.click();
+          }
+        });
+      ')
+      expect(page).to have_button("Reassign", disabled: false)
+      find_by_id("button-Reassign").click
+      expect(page).to have_content("You have successfully reassigned 3 Correspondence to #{mail_user.css_id}.")
+      expect(page).to have_content("Please go to your individual queue to see any self-assigned correspondence.")
+    end
+
+    it "Verify the mail team user batch reassignment with reassign button with queue limit" do
+      visit "/queue/correspondence/team?tab=correspondence_team_assigned"
+      expect(page).to have_content("Assign to mail team user")
+      expect(page).to have_button("Reassign", disabled: true)
+      expect(page).to have_selector(".cf-select__input")
+      all(".cf-select__input").first.click
+      find_by_id("react-select-2-option-1").click
+      page.execute_script('
+        document.querySelectorAll(".cf-form-checkbox input[type=\'checkbox\']").forEach((checkbox, index) => {
+          if (index < 3) {
+            checkbox.click();
+          }
+        });
+      ')
+      expect(page).to have_button("Reassign", disabled: false)
+      find_by_id("button-Reassign").click
+      expect(page).to have_content("Correspondence reassignment to #{target_user.css_id} has failed")
       expect(page).to have_content("Queue volume has reached maximum capacity for this user.")
     end
   end
