@@ -16,12 +16,7 @@ class OrganizationCorrespondencePendingTasksTab < CorrespondenceQueueTab
   end
 
   def tasks
-    Task.none
-    # CorrespondenceTask
-    # .where(status: "on_hold")
-    # .find(
-    #   MailTask.active.where(appeal_type: "Correspondence").pluck(:parent_id)
-    # )
+    CorrespondenceTask.tasks_not_related_to_appeal.includes(*task_includes).active
   end
 
   def column_names
