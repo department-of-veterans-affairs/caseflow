@@ -18,9 +18,9 @@ class TranscriptFileIssuesMailer < ActionMailer::Base
                  when :prod
                    "https://appeals.cf.ds.va.gov/queue/appeals/#{appeal_id}"
                  when :prodtest
-                   "https://appeals.cf.ds.va.gov/queue/appeals/#{appeal_id}"
+                   "https://appeals.cf.prodtest.ds.va.gov/queue/appeals/#{appeal_id}"
                  when :preprod
-                   "https://appeals.cf.ds.va.gov/queue/appeals/#{appeal_id}"
+                   "https://appeals.cf.preprod.ds.va.gov/queue/appeals/#{appeal_id}"
                  else
                    "localhost:3000/queue/appeals/#{appeal_id}"
                  end
