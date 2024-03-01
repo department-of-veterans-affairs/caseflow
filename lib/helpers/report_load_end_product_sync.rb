@@ -3,8 +3,7 @@
 module WarRoom
   # Purpose: to find and sync EPs in Caseflow with VBMS
   class ReportLoadEndProductSync
-
-    require 'csv'
+    require "csv"
     S3_BUCKET_NAME = "ep-priority-sync"
 
     # Currently, out of sync EPs are tracked in OAR report loads that are sent over and then
@@ -29,14 +28,14 @@ module WarRoom
     # The next two methods are part of the APPEALS-22696 initiative to priority sync
     # all EPs in Caseflow with VBMS
     # The following method is priority syncing cleared EPs
-    def run_for_cleared_eps(batch_limit, env)
+    def run_for_cleared_eps(batch_limit)
       RequestStore[:current_user] = User.system_user
       conn = ActiveRecord::Base.connection
 
       @error_log = []
       @run_log = []
 
-      error_ids = get_error_ids(env)
+      error_ids = get_error_ids
 
       eps_queried = get_cleared_eps(batch_limit, error_ids, conn)
       eps_queried.each do |x|
@@ -53,14 +52,14 @@ module WarRoom
     end
 
     # Priority sync for cancelled EPs
-    def run_for_cancelled_eps(batch_limit, env)
+    def run_for_cancelled_eps(batch_limit)
       RequestStore[:current_user] = User.system_user
       conn = ActiveRecord::Base.connection
 
       @error_log = []
       @run_log = []
 
-      error_ids = get_error_ids(env)
+      error_ids = get_error_ids
 
       eps_queried = get_cancelled_eps(batch_limit, error_ids, conn)
       eps_queried.each do |x|
@@ -75,7 +74,6 @@ module WarRoom
 
       conn.close
     end
-
 
     private
 
@@ -106,8 +104,7 @@ module WarRoom
         conn.raw_connection.exec_params("UPDATE ep_establishment_workaround SET synced_status = $1,
                             last_synced_at = $2, sync_duration = $3, prev_sync_status = $4 where reference_id = $5
                             AND report_load = $6", [original_ep.synced_status, Time.zone.now, elapsed_time.to_i,
-                            sync_before, ep_ref, rep_load])
-
+                                                    sync_before, ep_ref, rep_load])
       rescue StandardError => error
         end_time = Time.now.to_f
         elapsed_time = (end_time - start_time) * 1000
@@ -115,11 +112,10 @@ module WarRoom
         conn.raw_connection.exec_params("UPDATE ep_establishment_workaround SET synced_error = $1,
                             synced_status = $2, last_synced_at = $3, sync_duration = $4, prev_sync_status = $5
                             where reference_id = $6 AND report_load = $7", [error.message,
-                            original_ep&.synced_status ? original_ep.synced_status : nil, Time.zone.now, elapsed_time.to_i,
-                            sync_before, ep_ref, rep_load])
+                                                                            original_ep&.synced_status ? original_ep.synced_status : nil, Time.zone.now, elapsed_time.to_i,
+                                                                            sync_before, ep_ref, rep_load])
       end
     end
-
 
     ####################################################################
     #
@@ -128,19 +124,25 @@ module WarRoom
     ####################################################################
 
     # Grab txt file of previously errored EP reference ids from s3 and return as an array
-    def get_error_ids(env)
-      # Set Client Resources for AWS
-      Aws.config.update(region: "us-gov-west-1")
-      s3client = Aws::S3::Client.new
-      key_name = "ep_establishment_workaround/#{env}/ep_priority_sync/error_ids.txt"
+    def get_error_ids # rubocop:disable Naming/AccessorMethodName
+      error_txt = S3Service.fetch_content(S3_BUCKET_NAME + "/error_ids.txt")
+      error_txt.delete("\r").split("\n").map { |obj| obj[1...-1] }
+    end
 
-      filepath = s3client.get_object(bucket:'appeals-dbas', key:key_name)
-      filepath.body.read.gsub("\r","").split("\n").map{ |obj| obj[1...-1] }
+    # Method to log errors to S3 error_ids txt file in real time in case of
+    # sync failure mid batch processing
+    # S3 does not support appending or modifying files in any way so the current txt file
+    # of errors has to be pulled and stored locally, modified locally, and then re-uploaded
+    def realtime_log_error_to_s3(reference_id)
+      error_txt = S3Service.fetch_content(S3_BUCKET_NAME + "/error_ids.txt")
+      error_txt << "\r\n"
+      error_txt << '"' + reference_id.to_s + '"'
+      S3Service.store_file(S3_BUCKET_NAME + "/error_ids.txt", error_txt)
     end
 
     # Grab cleared EPs that are out of sync
     def get_cleared_eps(batch_limit, error_ids, conn)
-      error_ids = error_ids.map { |s| "'#{s}'" }.join(', ')
+      error_ids = error_ids.map { |s| "'#{s}'" }.join(", ")
 
       raw_sql = <<~SQL
         SELECT
@@ -170,7 +172,7 @@ module WarRoom
 
     # Grab cancelled EPs that are out of sync
     def get_cancelled_eps(batch_limit, error_ids, conn)
-      error_ids = error_ids.map { |s| "'#{s}'" }.join(', ')
+      error_ids = error_ids.map { |s| "'#{s}'" }.join(", ")
 
       raw_sql = <<~SQL
         SELECT
@@ -200,7 +202,7 @@ module WarRoom
 
     # Method to priority sync with VBMS
     # Also adds data to log files
-    def call_priority_sync(ep_ref, conn)
+    def call_priority_sync(ep_ref, _conn)
       begin
         epe = EndProductEstablishment.find_by(reference_id: ep_ref)
         sync_status_before = epe.synced_status
@@ -228,6 +230,7 @@ module WarRoom
           prev_synced_status: sync_status_before,
           error: error.message
         )
+        realtime_log_error_to_s3(epe.reference_id)
       end
     end
 
@@ -242,13 +245,13 @@ module WarRoom
           error
         ]
         input_data.each do |data|
-            csv << [
-              data.reference_id,
-              data.last_synced_at,
-              data.synced_status,
-              data.prev_synced_status,
-              data.error
-            ].flatten
+          csv << [
+            data.reference_id,
+            data.last_synced_at,
+            data.synced_status,
+            data.prev_synced_status,
+            data.error
+          ].flatten
         end
       end
     end

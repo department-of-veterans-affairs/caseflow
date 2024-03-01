@@ -10,7 +10,9 @@ class PollDocketedLegacyAppealsJob < CaseflowJob
     JOB_ATTR = job
   end
 
-  LEGACY_DOCKETED = "INNER JOIN priorloc ON brieff.bfkey = priorloc.lockey WHERE brieff.bfac IN ('1','3','7') AND locstto = '01' AND trunc(locdout) = trunc(sysdate)"
+  LEGACY_DOCKETED = "INNER JOIN priorloc ON \
+  brieff.bfkey = priorloc.lockey WHERE \
+  brieff.bfac IN ('1','3','7') AND locstto = '01' AND trunc(locdout) = trunc(sysdate)"
 
   def perform
     RequestStore.store[:current_user] = User.system_user
@@ -32,7 +34,7 @@ class PollDocketedLegacyAppealsJob < CaseflowJob
   # Return: an array of vacols ids
   def filter_duplicate_legacy_notifications(vacols_ids)
     duplicate_ids = Notification.where(appeals_id: vacols_ids).pluck(:appeals_id)
-    Rails.logger.info("Filtering for ids that already had appeal docketed notifications sent already, found #{duplicate_ids.count} duplicate ids")
+    Rails.logger.info("Filtering for ids that already had appeal docketed notifications sent already, found #{duplicate_ids.count} duplicate ids") # rubocop:disable  Layout/LineLength
     vacols_ids.reject { |id| duplicate_ids.include?(id) }
   end
 
@@ -45,7 +47,7 @@ class PollDocketedLegacyAppealsJob < CaseflowJob
     vacols_ids.each do |vacols_id|
       begin
         AppellantNotification.notify_appellant(LegacyAppeal.find_by_vacols_id(vacols_id), "Appeal docketed")
-      rescue Exception => ex 
+      rescue Exception => ex
         Rails.logger.error("#{ex.class}: #{ex.message} for vacols id:#{vacols_id} on #{JOB_ATTR.class} of ID:#{JOB_ATTR.job_id}\n #{ex.backtrace.join("\n")}")
         next
       end

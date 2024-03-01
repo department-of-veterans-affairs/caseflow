@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import TextField from '../components/TextField';
 import ValidatorsUtil from '../util/ValidatorsUtil';
@@ -7,6 +7,8 @@ import COPY from '../../COPY';
 const DEFAULT_TEXT = 'mm/dd/yyyy';
 
 export const DateSelector = (props) => {
+  const [dateError, setDateError] = useState(null);
+
   const { dateValidator, futureDate } = ValidatorsUtil;
 
   const {
@@ -21,6 +23,8 @@ export const DateSelector = (props) => {
     value,
     dateErrorMessage,
     noFutureDates = false,
+    inputStyling,
+    validateDate,
     ...passthroughProps
   } = props;
 
@@ -42,6 +46,13 @@ export const DateSelector = (props) => {
     return null;
   };
 
+  useEffect(() => {
+    const errorMsg = dateValidationError(value);
+
+    setDateError(errorMsg);
+    validateDate?.(value !== '' && errorMsg === null);
+  }, [value]);
+
   let max = '9999-12-31';
 
   if (noFutureDates) {
@@ -57,13 +68,14 @@ export const DateSelector = (props) => {
       readOnly={readOnly}
       type={type}
       value={value}
-      validationError={dateValidationError(value)}
+      validationError={dateError}
       onChange={onChange}
       placeholder={DEFAULT_TEXT}
       required={required}
       {...passthroughProps}
       max={max}
       dateErrorMessage={dateErrorMessage}
+      inputStyling={inputStyling}
     />
   );
 };
@@ -74,7 +86,7 @@ DateSelector.propTypes = {
    * The initial value of the `input` element; use for uncontrolled components where not using `value` prop
    */
   defaultValue: PropTypes.string,
-
+  inputStyling: PropTypes.object,
   dateErrorMessage: PropTypes.string,
 
   /**
@@ -133,12 +145,17 @@ DateSelector.propTypes = {
   /**
    * The value of the `input` element; required for a controlled component
    */
-  value: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
 
   /**
    * Disables future dates from being selected or entered
    */
-  noFutureDates: PropTypes.bool
+  noFutureDates: PropTypes.bool,
+
+  /**
+   * Disables form submission if date is empty or invalid
+   */
+  validateDate: PropTypes.func
 };
 
 export default DateSelector;

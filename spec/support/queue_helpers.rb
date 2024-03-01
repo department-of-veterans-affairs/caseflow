@@ -9,6 +9,10 @@ module QueueHelpers
     mtv_const.DISPOSITION_TEXT.to_h
   end
 
+  def disposition_timeline_text
+    mtv_const.DISPOSITION_TIMELINE_TEXT.to_h
+  end
+
   def recommendation_text
     mtv_const.DISPOSITION_RECOMMENDATIONS.to_h
   end
@@ -32,14 +36,26 @@ module QueueHelpers
   end
 
   def format_mtv_judge_instructions(notes:, disposition:, vacate_type: nil, hyperlink: nil)
-    parts = ["I am proceeding with a #{disposition_text[disposition.to_sym]}."]
+    parts = ["**Motion To Vacate:**  \n#{disposition_timeline_text[disposition.to_sym]}\n"]
 
-    parts += case disposition
-             when "granted", "partial"
-               ["This will be a #{vacate_types[vacate_type.to_sym]}", notes]
-             else
-               [notes, "\nHere is the hyperlink to the signed denial document", hyperlink]
-             end
+    case disposition
+    when "granted", "partially_granted"
+      parts += ["**Type:**  "]
+      parts += ["#{vacate_types[vacate_type.to_sym]}\n"]
+      if !notes.empty?
+        parts += ["**Detail:**  "]
+        parts += ["#{notes}\n"]
+      end
+    when "denied", "dismissed"
+      if !notes.empty?
+        parts += ["**Detail:**  "]
+        parts += ["#{notes}\n"]
+      end
+      if hyperlink.present?
+        parts += ["**Hyperlink:**  "]
+        parts += ["#{hyperlink}\n"]
+      end
+    end
 
     parts.join("\n")
   end

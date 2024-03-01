@@ -252,6 +252,7 @@ detectors:
       - Reporter#percent
       - SanitizedJsonConfiguration
       - ScheduleHearingTaskPager#sorted_tasks
+      - UpdatePOAConcern
       - VBMSCaseflowLogger#log
       - LegacyDocket
   UnusedParameters:
@@ -277,6 +278,13 @@ directories:
       enabled: false
   "app/mailers":
     InstanceVariableAssumption:
+      enabled: false
+  "db/seeds":
+    InstanceVariableAssumption:
+      enabled: false
+    TooManyInstanceVariables:
+      enabled: false
+    DataClump:
       enabled: false
 
 ### Excluding directories

@@ -9,7 +9,6 @@ require "securerandom"
 
 # rubocop:disable Metrics/ClassLength
 class Appeal < DecisionReview
-  include AppealConcern
   include BeaamAppealConcern
   include BgsService
   include Taskable
@@ -61,16 +60,6 @@ class Appeal < DecisionReview
            :available_hearing_locations,
            :email_address,
            :country, to: :veteran, prefix: true
-
-  delegate :power_of_attorney, to: :claimant
-  delegate :representative_name,
-           :representative_type,
-           :representative_address,
-           :representative_email_address,
-           :poa_last_synced_at,
-           :update_cached_attributes!,
-           :save_with_updated_bgs_record!,
-           to: :power_of_attorney, allow_nil: true
 
   enum stream_type: {
     Constants.AMA_STREAM_TYPES.original.to_sym => Constants.AMA_STREAM_TYPES.original,
@@ -173,9 +162,7 @@ class Appeal < DecisionReview
         sm_claim.uuid = SecureRandom.uuid
 
         # make sure uuid doesn't exist in the database (by some chance)
-        while SupplementalClaim.find_by(uuid: sm_claim.uuid).nil? == false
-          sm_claim.uuid = SecureRandom.uuid
-        end
+        sm_claim.uuid = SecureRandom.uuid while SupplementalClaim.find_by(uuid: sm_claim.uuid).nil? == false
       end
     })
   end
@@ -184,10 +171,9 @@ class Appeal < DecisionReview
     hearing_date = Hearing.find_by(appeal_id: id)
 
     if hearing_date.nil?
-      return nil
-
+      nil
     else
-      return hearing_date.hearing_day.scheduled_for
+      hearing_date.hearing_day.scheduled_for
     end
   end
 
@@ -262,8 +248,32 @@ class Appeal < DecisionReview
     category_substrings = %w[Contested Apportionment]
 
     request_issues.active.any? do |request_issue|
-      category_substrings.any? { |substring| self.request_issues.active.include?(request_issue) && request_issue.nonrating_issue_category&.include?(substring) }
+      category_substrings.any? do |substring|
+        request_issues.active.include?(request_issue) && request_issue.nonrating_issue_category&.include?(substring)
+      end
     end
+  end
+
+  # :reek:RepeatedConditionals
+  # decision issue status overrules request issues/special issue list for both mst and pact
+  def mst?
+    return false unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user])
+
+    return decision_issues.any?(&:mst_status) unless decision_issues.empty?
+
+    request_issues.active.any?(&:mst_status) ||
+      (special_issue_list &&
+        special_issue_list.created_at < "2023-06-01".to_date &&
+        special_issue_list.military_sexual_trauma)
+  end
+
+  # :reek:RepeatedConditionals
+  def pact?
+    return false unless FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
+
+    return decision_issues.any?(&:pact_status) unless decision_issues.empty?
+
+    request_issues.active.any?(&:pact_status)
   end
 
   # Returns the most directly responsible party for an appeal when it is at the Board,
@@ -292,6 +302,7 @@ class Appeal < DecisionReview
     AppealStatusApiDecorator.new(self)
   end
 
+  # :reek:RepeatedConditionals
   def active_request_issues_or_decision_issues
     decision_issues.empty? ? active_request_issues : fetch_all_decision_issues
   end
@@ -363,8 +374,10 @@ class Appeal < DecisionReview
     dup_remand&.save
   end
 
+  # :reek:RepeatedConditionals
   # clone issues clones request_issues the user selected
   # and anydecision_issues/decision_request_issues tied to the request issue
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def clone_issues(parent_appeal, payload_params)
     # set request store to the user that split the appeal
     RequestStore[:current_user] = User.find_by_css_id payload_params[:user_css_id]
@@ -417,6 +430,7 @@ class Appeal < DecisionReview
       end
     end
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def clone_aod(parent_appeal)
     # find the appeal AOD
@@ -480,6 +494,7 @@ class Appeal < DecisionReview
     end
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def clone_task_tree(parent_appeal, user_css_id)
     # get the task tree from the parent
     parent_ordered_tasks = parent_appeal.tasks.order(:created_at)
@@ -514,6 +529,7 @@ class Appeal < DecisionReview
       break if parent_appeal.tasks.count == tasks.count
     end
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
   # clone_task is used for splitting an appeal, tie to css_id for split
   def clone_task(original_task, user_css_id)
@@ -769,10 +785,6 @@ class Appeal < DecisionReview
     issues_report
   end
 
-  def bgs_power_of_attorney
-    claimant&.is_a?(BgsRelatedClaimant) ? power_of_attorney : nil
-  end
-
   # Note: Currently Caseflow only supports one claimant per decision review
   def power_of_attorneys
     claimants.map(&:power_of_attorney).compact
@@ -818,7 +830,7 @@ class Appeal < DecisionReview
 
   def set_target_decision_date!
     if direct_review_docket?
-      update!(target_decision_date: receipt_date + Constants.DISTRIBUTION.direct_docket_time_goal.days)
+      update!(target_decision_date: receipt_date + CaseDistributionLever.ama_direct_review_docket_time_goals.days)
     end
   end
 
@@ -923,12 +935,21 @@ class Appeal < DecisionReview
 
   # :reek:FeatureEnvy
   def can_redistribute_appeal?
+    # These tasks are irrelevant because: TrackVeteranTask - Always open for VSO/representative to see case
+    # RootTask - Always open, JudgeAssignTask - The first of these will be canceled as part of redistribution,
+    # DistributionTask - Will be open until distribution is complete,
+    # MailTask nonblocking subclasses - created as child of RootTask and shouldn't stop appeals from distribution
     relevant_tasks = tasks.reject do |task|
       task.is_a?(TrackVeteranTask) || task.is_a?(RootTask) ||
-        task.is_a?(JudgeAssignTask) || task.is_a?(DistributionTask)
+        task.is_a?(JudgeAssignTask) || task.is_a?(DistributionTask) ||
+        (task.is_a?(MailTask) && !MailTask.subclasses.filter(&:blocking?).map(&:name).include?(task.class.name))
     end
     return false if relevant_tasks.any?(&:open?)
     return true if relevant_tasks.all?(&:closed?)
+  end
+
+  def is_legacy?
+    false
   end
 
   private

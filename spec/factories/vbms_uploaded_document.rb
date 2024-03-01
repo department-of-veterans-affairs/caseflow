@@ -6,6 +6,9 @@ FactoryBot.define do
     document_type { "Status Letter" }
     appeal { create(:appeal) }
 
+    document_version_reference_id { "{#{SecureRandom.uuid.upcase}}" }
+    document_series_reference_id { "{#{SecureRandom.uuid.upcase}}" }
+
     trait :for_legacy_appeal do
       appeal { create(:legacy_appeal, vacols_case: create(:case)) }
     end

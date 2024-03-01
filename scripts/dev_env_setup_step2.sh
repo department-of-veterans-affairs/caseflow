@@ -46,11 +46,7 @@ ln -s Makefile.example Makefile
 
 echo "
 ===================================
-You must do the following manually:
-
-AWS access is needed starting at this point.
-If you need to get AWS access, follow these instructions:
-   https://github.com/department-of-veterans-affairs/appeals-deployment/wiki/New-Hires
+Congratulations
 "
 
 echo 'Finish the manual set up from "Database environment setup":

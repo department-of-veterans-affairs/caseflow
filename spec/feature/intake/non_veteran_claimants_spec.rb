@@ -85,6 +85,8 @@ feature "Non-veteran claimants", :postgres do
       within_fieldset("Is the claimant an organization or individual?") do
         find("label", text: "Organization", match: :prefer_exact).click
       end
+
+      expect(page).to have_no_content(COPY::EMPLOYER_IDENTIFICATION_NUMBER)
       fill_in "Organization name", with: "Attorney's Law Firm"
       fill_in "Street address 1", with: "1234 Justice St."
       fill_in "City", with: "Anytown"
@@ -254,7 +256,8 @@ feature "Non-veteran claimants", :postgres do
       expect(page).to have_content(claimant.power_of_attorney.name)
 
       # Case details page
-      visit "queue/appeals/#{appeal.uuid}"
+      reload_case_detail_page(appeal.uuid)
+
       expect(page).to have_current_path("/queue/appeals/#{appeal.uuid}")
       expect(page).to have_content(new_individual_claimant[:first_name])
       expect(claimant.relationship).to eq("Other")

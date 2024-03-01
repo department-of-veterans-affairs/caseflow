@@ -47,7 +47,7 @@ describe AppealConcern do
         address_line_1: Faker::Address.street_address,
         city: Faker::Address.city,
         country: country,
-        zip: Faker::Number.number(digits: 4).to_s
+        zip: nil
       )
     end
     let(:model) { TestAppellantAddressClass.new(appellant_address: address_obj) }
@@ -73,9 +73,10 @@ describe AppealConcern do
           attrs: {
             country_code: "AU"
           }
-        )
+        ).once
 
-        expect(subject).to be_nil
+        timezone = subject
+        expect(timezone).to be_nil
       end
     end
   end
