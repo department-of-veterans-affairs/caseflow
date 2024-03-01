@@ -860,5 +860,37 @@ RSpec.feature("The Correspondence Cases page") do
     it "successfully loads the assigned tab" do
       visit "/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc"
     end
+
+    it "uses VA DOR sort correctly." do
+      visit "/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc"
+      # put page in the sorted A-Z state
+      find("[aria-label='Sort by VA DOR']").click
+      first_date = find("tbody > tr:nth-child(1) > td:nth-child(2)")
+      # put page in the sorted Z-A state
+      find("[aria-label='Sort by VA DOR']").click
+      last_date = find("tbody > tr:nth-child(1) > td:nth-child(2)")
+      # return to A-Z, compare veteran details
+      find("[aria-label='Sort by VA DOR']").click
+      expect(find("tbody > tr:nth-child(1) > td:nth-child(2)").text == first_date)
+      # return to Z-A, compare details again
+      find("[aria-label='Sort by VA DOR']").click
+      expect(find("tbody > tr:nth-child(1) > td:nth-child(2)").text == last_date)
+    end
+
+    it "uses notes sort correctly" do
+      visit "/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc"
+      # put page in the sorted A-Z state
+      find("[aria-label='Sort by Notes']").click
+      first_note = find("tbody > tr:nth-child(1) > td:nth-child(5)").text
+      # put page in the sorted Z-A state
+      find("[aria-label='Sort by Notes']").click
+      second_note = find("tbody > tr:nth-child(1) > td:nth-child(5)").text
+      # return to A-Z, compare veteran details
+      find("[aria-label='Sort by Notes']").click
+      expect(find("tbody > tr:nth-child(1) > td:nth-child(5)").text == first_note)
+      # return to Z-A, compare details again
+      find("[aria-label='Sort by Notes']").click
+      expect(find("tbody > tr:nth-child(1) > td:nth-child(5)").text == second_note)
+    end
   end
 end
