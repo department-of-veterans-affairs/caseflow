@@ -30,6 +30,59 @@ describe ExternalApi::VADotGovService do
     end
   end
 
+  describe "#validate_street_address" do
+    it "returns validated street address" do
+      result = VADotGovService.validate_address(address)
+
+      body = JSON.parse(result.response.body)
+      message_keys = body["messages"].pluck("key")
+
+      expect(result.error).to be_nil
+      expect(result.data).to_not be_nil
+      expect(message_keys).to_not include("InvalidRequestStreetAddress")
+    end
+  end
+
+  describe "#validate_address_state" do
+    it "returns validated state in the address" do
+      result = VADotGovService.validate_address(address)
+
+      body = JSON.parse(result.response.body)
+      message_keys = body["messages"].pluck("key")
+
+      expect(result.error).to be_nil
+      expect(result.data).to_not be_nil
+      expect(message_keys).to_not include("InvalidRequestState")
+    end
+  end
+
+  describe "#validate_address_country" do
+    it "returns validated country in the address" do
+      result = VADotGovService.validate_address(address)
+
+      body = JSON.parse(result.response.body)
+      message_keys = body["messages"].pluck("key")
+
+      expect(result.error).to be_nil
+      expect(result.data).to_not be_nil
+      expect(message_keys).to_not include("InvalidRequestCountry")
+    end
+  end
+
+  describe "#validate_presence_of_zip_code" do
+    it "returns validated presence of zip code in address" do
+      result = VADotGovService.validate_address(address)
+
+      body = JSON.parse(result.response.body)
+      message_keys = body["messages"].pluck("key")
+
+      expect(result.error).to be_nil
+      expect(result.data).to_not be_nil
+      expect(message_keys).to_not include("InvalidRequestPostalCode")
+    end
+  end
+
+
   describe "#validate_zip_code" do
     it "returns invalid full address with valid geographic coordinates" do
       result = VADotGovService.validate_zip_code(address)
