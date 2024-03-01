@@ -32,12 +32,18 @@ class CorrespondenceTaskFilter < TaskFilter
   end
 
   def filter_by_task(task_type)
+    # binding.pry
     tasks.where("type = (?)", task_type)
   end
 
   def filtered_tasks
     va_dor_params = filter_params.select { |param| param.include?("col=vaDor") }
     task_column_params = filter_params.select { |param| param.include?("col=taskColumn") }
+    unless task_column_params == []
+      task_column_params[0].slice!("col=taskColumn&val=")[0]
+      task_column_params = task_column_params[0].split("|")
+    end
+
     result = tasks.all # Assuming Task is the name of your ActiveRecord model
     va_dor_params.each do |param|
       value_hash = Rack::Utils.parse_nested_query(param).deep_symbolize_keys
@@ -45,8 +51,8 @@ class CorrespondenceTaskFilter < TaskFilter
     end
 
     task_column_params.each do |param|
-      value_hash = Rack::Utils.parse_nested_query(param).deep_symbolize_keys
-      result = result.merge(filter_by_task(value_hash[:val]))
+      result = result.merge(filter_by_task(param))
+      binding.pry
     end
 
     result
