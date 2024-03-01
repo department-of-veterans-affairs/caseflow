@@ -207,11 +207,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   # Purpose: Get either the uuid or vacols id of the associated appeal
   # Returns: The uuid/vacols_id of the appeal
   def appeal_id
-    if hearing.is_a?(Hearing)
-      hearing.appeal.uuid
-    else
-      hearing.appeal.vacols_id
-    end
+    hearing.external_id
   end
   # rubocop:enable Metrics/ParameterLists
 end
