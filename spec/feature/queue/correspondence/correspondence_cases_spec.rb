@@ -699,7 +699,7 @@ RSpec.feature("The Correspondence Cases page") do
       visit "/queue/correspondence/team?tab=correspondence_team_assigned"
       expect(page).to have_content("Correspondence that is currently assigned to mail team users:")
       expect(page).to have_content("Assign to mail team user")
-      expect(page).to have_button("Reassign")
+      expect(page).to have_button("Reassign", disabled: true)
     end
 
     it "uses veteran details sort correctly." do
