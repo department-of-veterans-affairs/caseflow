@@ -22,56 +22,78 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
     @stuck_job_report_service = stuck_job_report_service
   end
 
-  def class_self
-    PtcpntPersnIdDepntOrgFix
-  end
-
   def start_processing_records
-    return if class_self.error_records.blank?
+    return if self.class.error_records.blank?
 
     # count of records with errors before fix
-    @stuck_job_report_service.append_record_count(class_self.error_records.count, ERROR_TEXT)
+    @stuck_job_report_service.append_record_count(self.class.error_records.count, ERROR_TEXT)
 
-    class_self.error_records.each do |supp_claim|
+    self.class.error_records.each do |supp_claim|
       incorrect_pid = supp_claim.claimant.participant_id
       # check that claimant type is VeteranClaimant
       next unless supp_claim.claimant.type == "VeteranClaimant"
 
       veteran_file_number = supp_claim.veteran.file_number
-      correct_pid = retrieve_correct_pid(veteran_file_number)
+      @correct_pid = retrieve_correct_pid(veteran_file_number)
 
-      handle_person_and_claimant_records(correct_pid, supp_claim)
-      retrieve_records_to_fix(correct_pid, incorrect_pid)
+      handle_person_and_claimant_records(supp_claim)
+      retrieve_records_to_fix(incorrect_pid)
 
+      @stuck_job_report_service.append_single_record(supp_claim.class.name, supp_claim.id)
       # Re-run job after fixing broken records
       re_run_job(supp_claim)
     end
     # record count with errors after fix
-    @stuck_job_report_service.append_record_count(class_self.error_records.count, ERROR_TEXT)
+    @stuck_job_report_service.append_record_count(self.class.error_records.count, ERROR_TEXT)
   end
 
-  def handle_person_and_claimant_records(correct_pid, supp_claim)
-    correct_person_record = class_self.get_correct_person(correct_pid)
+  class << self
+    # def get_correct_person(correct_pid)
+    #   Person.find_by(participant_id: correct_pid)
+    # end
 
+    def iterate_through_associations_with_bad_pid(incorrect_pid, incorrectly_associated_records)
+      ASSOCIATIONS.each do |ass|
+        if ass.attribute_names.include?("participant_id")
+          records = ass.where(participant_id: incorrect_pid)
+          incorrectly_associated_records.push(*records)
+
+        elsif ass.attribute_names.include?("claimant_participant_id")
+          records = ass.where(claimant_participant_id: incorrect_pid)
+          incorrectly_associated_records.push(*records)
+        elsif ass.attribute_names.include?("veteran_participant_id")
+          records = ass.where(veteran_participant_id: incorrect_pid)
+          incorrectly_associated_records.push(*records)
+        end
+      end
+    end
+
+    def error_records
+      SupplementalClaim.where("establishment_error ILIKE ?", "%#{ERROR_TEXT}%")
+    end
+end
+
+  private
+
+  def correct_person
+    Person.find_by(participant_id: @correct_pid)
+  end
+
+  def handle_person_and_claimant_records(supp_claim)
     incorrect_person_record = supp_claim.claimant.person
 
     ActiveRecord::Base.transaction do
-      if correct_person_record.present?
-        move_claimants_to_correct_person(correct_person_record, incorrect_person_record)
+      if correct_person.present?
+        move_claimants_to_correct_person(correct_person, incorrect_person_record)
         destroy_incorrect_person_record(incorrect_person_record)
-        # binding.pry
       else
-        update_incorrect_person_record_participant_id(incorrect_person_record, correct_pid)
+        update_incorrect_person_record_participant_id(incorrect_person_record)
       end
 
       update_claimant_payee_code(supp_claim.claimant, "00")
     rescue StandardError => error
       handle_error(error, supp_claim)
     end
-  end
-
-  def self.get_correct_person(correct_pid)
-    Person.find_by(participant_id: correct_pid)
   end
 
   def retrieve_correct_pid(veteran_file_number)
@@ -85,13 +107,13 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
     end
   end
 
-  def retrieve_records_to_fix(correct_pid, incorrect_pid)
+  def retrieve_records_to_fix(incorrect_pid)
     incorrectly_associated_records = []
 
-    class_self.iterate_through_associations_with_bad_pid(incorrect_pid, incorrectly_associated_records)
+    self.class.iterate_through_associations_with_bad_pid(incorrect_pid, incorrectly_associated_records)
 
     incorrectly_associated_records.each do |record|
-      fix_record(record, correct_pid)
+      fix_record(record)
     end
   end
 
@@ -104,32 +126,10 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
     end
   end
 
-  def self.iterate_through_associations_with_bad_pid(incorrect_pid, incorrectly_associated_records)
-    ASSOCIATIONS.each do |ass|
-      if ass.attribute_names.include?("participant_id")
-        records = ass.where(participant_id: incorrect_pid)
-        incorrectly_associated_records.push(*records)
-
-      elsif ass.attribute_names.include?("claimant_participant_id")
-        records = ass.where(claimant_participant_id: incorrect_pid)
-        incorrectly_associated_records.push(*records)
-      elsif ass.attribute_names.include?("veteran_participant_id")
-        records = ass.where(veteran_participant_id: incorrect_pid)
-        incorrectly_associated_records.push(*records)
-      end
-    end
-  end
-
-  def fix_record(record, correct_pid)
+  def fix_record(record)
     attribute_name = determine_attribute_name(record)
-    process_record(record, attribute_name, correct_pid)
+    process_record(record, attribute_name)
   end
-
-  def self.error_records
-    SupplementalClaim.where("establishment_error ILIKE ?", "%#{ERROR_TEXT}%")
-  end
-
-  private
 
   def move_claimants_to_correct_person(correct_person, incorrect_person)
     correct_person.claimants << incorrect_person.claimants
@@ -141,8 +141,8 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
     incorrect_person.destroy!
   end
 
-  def update_incorrect_person_record_participant_id(incorrect_person, new_participant_id)
-    incorrect_person.update(participant_id: new_participant_id)
+  def update_incorrect_person_record_participant_id(incorrect_person)
+    incorrect_person.update(participant_id: @correct_pid)
   end
 
   def update_claimant_payee_code(claimant, new_payee_code)
@@ -160,9 +160,9 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
     end
   end
 
-  def process_record(record, attribute_name, correct_pid)
+  def process_record(record, attribute_name)
     ActiveRecord::Base.transaction do
-      record.update(attribute_name => correct_pid)
+      record.update(attribute_name => @correct_pid)
     rescue StandardError => error
       handle_error(error, record)
     end
