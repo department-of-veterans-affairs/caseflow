@@ -13,6 +13,7 @@ class Task < CaseflowRecord
   has_paper_trail on: [:update, :destroy]
   acts_as_tree
 
+
   include PrintsTaskTree
   include TaskExtensionForHearings
   include HasAppealUpdatedSince
