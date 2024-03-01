@@ -12,7 +12,7 @@ class Hearings::GetWebexRecordingsDetailsJob < CaseflowJob
 
   # rubocop:disable Layout/LineLength
   retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
-    docket_number = job.arguments&.first&.[](:docket_number)
+    docket_number = job.arguments&.first&.[](:file_name)&.split("_")&.first
     appeal_id = Appeal.find_by(stream_docket_number: docket_number)&.uuid || VACOLS::Folder.find_by(tinum: docket_number)&.ticknum
     details = {
       action: "retrieve",
