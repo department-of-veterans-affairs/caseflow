@@ -974,6 +974,12 @@ class Appeal < DecisionReview
     distribution_task.update!(status: "assigned", assigned_to: Bva.singleton, assigned_by: user)
   end
 
+  def has_completed_sct_assign_task?
+    tasks.any? do |task|
+      task.is_a?(SpecialtyCaseTeamAssignTask) && task.completed?
+    end
+  end
+
   private
 
   def business_lines_needing_assignment
