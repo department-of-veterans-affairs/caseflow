@@ -1440,7 +1440,6 @@ feature "Appeal Edit issues", :all_dbs do
       SpecialtyCaseTeamAssignTask.create!(appeal: appeal3,
                                           parent: appeal3.root_task,
                                           assigned_to: SpecialtyCaseTeam.singleton)
-      appeal3.reload
     end
 
     after { FeatureToggle.disable!(:specialty_case_team_distribution) }
@@ -1451,7 +1450,6 @@ feature "Appeal Edit issues", :all_dbs do
       visit "/queue/appeals/#{appeal3.uuid}" if page.has_text? "Unable to load this case"
       click_on "Correct issues"
       click_remove_intake_issue_dropdown("CHAMPVA")
-      # click_edit_submit
       click_edit_submit_and_confirm
 
       expect(page).to have_content(COPY::MOVE_TO_DISTRIBUTION_MODAL_TITLE)

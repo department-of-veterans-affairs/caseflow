@@ -45,6 +45,7 @@ class SaveButtonUnconnected extends React.Component {
       moveToDistributionModal: false
     };
 
+    // TODO: Might move distributionTask and specialtyCaseTeamAssignTask check into appeal serverIntake props
     // TODO: Move this object.keys check to the split appeals jsx file
     // Check for other jsx files that check for sct issues
     // Specialty Case Team (SCT) logic for movement of appeals based on additional and removal of SCT request issues

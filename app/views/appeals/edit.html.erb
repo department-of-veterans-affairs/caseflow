@@ -15,7 +15,7 @@
     serverIntake: appeal.ui_hash,
     claimId: url_appeal_uuid,
     hasDistributionTask: appeal.has_distribution_task?,
-    hasSpecialtyCaseTeamTask: appeal.has_specialty_case_team_assign_task?,
+    hasSpecialtyCaseTeamAssignTask: appeal.try(:has_specialty_case_team_assign_task?),
     isLegacy: appeal.is_legacy?,
     featureToggles: {
       useAmaActivationDate: FeatureToggle.enabled?(:use_ama_activation_date, user: current_user),

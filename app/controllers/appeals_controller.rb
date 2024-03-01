@@ -156,7 +156,7 @@ class AppealsController < ApplicationController
   def edit
     # only AMA appeals may call /edit
     # this was removed for MST/PACT initiative to edit MST/PACT for legacy issues
-    return not_found if appeal.is_a?(LegacyAppeal) && feature_enabled?(:legacy_mst_pact_identification)
+    return not_found if appeal.is_a?(LegacyAppeal) && !feature_enabled?(:legacy_mst_pact_identification)
   end
 
   helper_method :appeal, :url_appeal_uuid
@@ -502,7 +502,8 @@ class AppealsController < ApplicationController
     # If the before issues had an SCT issue but the after issues don't then the appeal is moving to distribution
     if request_issues_update.before_issues.any?(&:sct_benefit_type?) &&
        request_issues_update.after_issues.none?(&:sct_benefit_type?) &&
-       appeal.has_distribution_task? && feature_enabled?(:specialty_case_team_distribution)
+       appeal.has_distribution_task? && appeal.has_specialty_case_team_assign_task? &&
+       feature_enabled?(:specialty_case_team_distribution)
       flash[:custom] = {
         title: COPY::MOVE_TO_SCT_BANNER_TITLE,
         message: format(
