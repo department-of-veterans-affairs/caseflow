@@ -326,7 +326,31 @@ describe HearingRequestDocket, :all_dbs do
         expect(distribution_judge.reload.tasks.map(&:appeal))
           .to match_array(expected_result)
       end
+
+
+    it "distributes for 90 days, 3 years, 200 years" do
+      # won't be included
+      create_priority_distributable_hearing_appeal_not_tied_to_any_judge
+      matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
+      create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
+      # will be included
+      appeal_90_days = create_nonpriority_distributable_appeal_not_tied_to_judge_90_days
+      appeal_3_years = create_nonpriority_distributable_appeal_not_tied_to_judge_3_years
+      appeal_200_years = create_nonpriority_distributable_appeal_not_tied_to_judge_200_years
+
+      expected_result = [appeal_90_days, appeal_3_years] # 200 years not expected to distribute
+
+      tasks = subject
+
+      expect(tasks.length).to eq(expected_result.length)
+      expect(tasks.first.class).to eq(DistributedCase)
+      expect(tasks.map(&:genpop).uniq).to eq [true]
+      expect(tasks.map(&:genpop_query).uniq).to eq ["only_genpop"]
+      expect(distribution.distributed_cases.length).to eq(expected_result.length)
+      expect(distribution_judge.reload.tasks.map(&:appeal))
+        .to match_array(expected_result)
     end
+  end
 
     context "when an appeal already has a distribution" do
       subject do
@@ -656,6 +680,45 @@ describe HearingRequestDocket, :all_dbs do
                     :denied_advance_on_docket,
                     docket_type: Constants.AMA_DOCKETS.hearing)
     create(:hearing, judge: nil, disposition: "held", appeal: appeal)
+    appeal
+  end
+
+  def create_nonpriority_distributable_appeal_not_tied_to_judge_90_days
+    Timecop.travel(90.days.ago)
+    appeal = create(:appeal,
+                    :ready_for_distribution,
+                    :denied_advance_on_docket,
+                    docket_type: Constants.AMA_DOCKETS.hearing)
+
+    create(:hearing, judge: nil, disposition: "held", appeal: appeal)
+
+    Timecop.return
+    appeal
+  end
+
+  def create_nonpriority_distributable_appeal_not_tied_to_judge_3_years
+    Timecop.travel(3.years.ago)
+    appeal = create(:appeal,
+                    :ready_for_distribution,
+                    :denied_advance_on_docket,
+                    docket_type: Constants.AMA_DOCKETS.hearing)
+
+    create(:hearing, judge: nil, disposition: "held", appeal: appeal)
+
+    Timecop.return
+    appeal
+  end
+
+  def create_nonpriority_distributable_appeal_not_tied_to_judge_200_years
+    Timecop.travel(200.years.ago)
+    appeal = create(:appeal,
+                    :ready_for_distribution,
+                    :denied_advance_on_docket,
+                    docket_type: Constants.AMA_DOCKETS.hearing)
+
+    create(:hearing, judge: nil, disposition: "held", appeal: appeal)
+
+    Timecop.return
     appeal
   end
 
