@@ -88,7 +88,7 @@ module QueueHelpers
   def create_and_complete_mail_task(correspondence, user)
     process_correspondence(correspondence, user)
     assigned_by = CorrespondenceIntakeTask.find_by(appeal_id: correspondence.id).completed_by
-    cavct = CavcCorrespondenceMailTask.find_or_create_by!(
+    cavct = CavcCorrespondenceCorrespondenceTask.find_or_create_by!(
       parent_id: correspondence&.root_task&.id,
       appeal_id: correspondence.id,
       appeal_type: "Correspondence",
@@ -102,19 +102,21 @@ module QueueHelpers
   def create_cavc_mailtask(correspondence, user)
     process_correspondence(correspondence, user)
     assigned_by = CorrespondenceIntakeTask.find_by(appeal_id: correspondence.id).completed_by
-    CavcCorrespondenceMailTask.create!(
+    task = CavcCorrespondenceCorrespondenceTask.create!(
       appeal_id: correspondence.id,
       appeal_type: "Correspondence",
       assigned_by: assigned_by,
       assigned_to: CavcLitigationSupport.singleton,
       status: Constants.TASK_STATUSES.assigned
     )
+    randomize_days_waiting_value(task)
+    task
   end
 
   def create_congress_interest_mailtask(correspondence, user)
     process_correspondence(correspondence, user)
     assigned_by = CorrespondenceIntakeTask.find_by(appeal_id: correspondence.id).completed_by
-    CongressionalInterestMailTask.create!(
+    task = CongressionalInterestCorrespondenceTask.create!(
       appeal_id: correspondence.id,
       appeal_type: "Correspondence",
       assigned_by: assigned_by,
@@ -122,6 +124,8 @@ module QueueHelpers
       status: Constants.TASK_STATUSES.assigned,
       parent_id: correspondence&.root_task&.id
     )
+    randomize_days_waiting_value(task)
+    task
   end
 
   def complete_task(task, user_id)
