@@ -959,15 +959,7 @@ class LegacyAppeal < CaseflowRecord
   def is_legacy?
     true
   end
-
-  def distributed?
-    false
-  end
   # rubocop:enable Naming/PredicateName
-
-  def sct_appeal?
-    false
-  end
 
   private
 
