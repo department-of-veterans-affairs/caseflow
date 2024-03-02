@@ -2,9 +2,7 @@
 import { memoize } from 'lodash';
 
 // Local Dependencies
-import { getQueryParams } from 'app/util/QueryParamsUtil';
 import { CATEGORIES } from 'store/constants/reader';
-import { setCategoryFilter } from 'store/reader/documentList';
 
 /**
  * Method to change to Single Document Mode
@@ -20,13 +18,6 @@ export const singleDocumentMode = memoize(() =>
 export const showPdf = (history, vacolsId) => (documents, docId) =>
   documents[docId] && history.push(`/${vacolsId}/documents/${docId}`);
 
-/**
- * Method to initialize the category Filters
- * @param {array} categories -- The list of categories available
- * @param {string} search -- The Query Search from the URL bar
- * @param {function} dispatch -- The Redux Dispatcher
- * code not used anywhere else.
-*/
 /**
  * Helper Method to return the Annotation ID
  * @param {Object} annotation -- The ID and TempID of the annotation
