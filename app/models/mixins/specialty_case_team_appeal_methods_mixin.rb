@@ -23,13 +23,12 @@ module SpecialtyCaseTeamMethods
     distribution_task.update!(status: "assigned", assigned_to: Bva.singleton, assigned_by: user)
   end
 
+  # :reek:FeatureEnvy
   def completed_specialty_case_team_assign_task?
-    tasks.any? do |task|
-      task.is_a?(SpecialtyCaseTeamAssignTask) && task.completed?
-    end
+    tasks.completed?.any? { |task| task.is_a?(SpecialtyCaseTeamAssignTask) && task.completed? }
   end
 
   def remove_from_specialty_case_team!
-    review.tasks.find { |task| task.is_a?(SpecialtyCaseTeamAssignTask) }.cancelled!
+    tasks.find { |task| task.is_a?(SpecialtyCaseTeamAssignTask) }.cancelled!
   end
 end
