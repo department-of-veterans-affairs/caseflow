@@ -114,8 +114,8 @@ class RequestIssuesUpdate < CaseflowRecord
 
   def move_to_sct_queue
     # If appeal has VHA issue, not in the SCT Queue and not PreDocketed, then move to the SCT Queue
-    if review.is_a?(Appeal) && review.sct_appeal? && review.has_specialty_case_team_assign_task? &&
-       review.has_distribution_task?
+    if review.is_a?(Appeal) && review.sct_appeal? && review.completed_specialty_case_team_assign_task? &&
+       review.distributed?
       # Cancel open queue tasks and create a specialty case team assign task to direct it to the SCT org
       review.remove_from_current_queue!
       SpecialtyCaseTeamAssignTask.find_or_create_by(
@@ -130,8 +130,8 @@ class RequestIssuesUpdate < CaseflowRecord
   def move_to_distribution
     # If an appeal does not have an SCT issue, it was in the SCT queue, and is not PreDocketed,
     # then move it back to distribution
-    if review.is_a?(Appeal) && !review.sct_appeal? && review.has_specialty_case_team_assign_task? &&
-       review.has_distribution_task?
+    if review.is_a?(Appeal) && !review.sct_appeal? && review.completed_specialty_case_team_assign_task? &&
+       review.distributed?
       review.remove_from_current_queue!
       remove_from_specialty_case_team
       review.reopen_distribution_task!(user)

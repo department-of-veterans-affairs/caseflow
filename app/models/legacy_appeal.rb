@@ -960,7 +960,7 @@ class LegacyAppeal < CaseflowRecord
     true
   end
 
-  def has_distribution_task?
+  def distributed?
     false
   end
   # rubocop:enable Naming/PredicateName
