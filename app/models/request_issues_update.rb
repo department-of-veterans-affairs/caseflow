@@ -16,7 +16,7 @@ class RequestIssuesUpdate < CaseflowRecord
   delegate :withdrawn_issues, to: :withdrawal
   delegate :corrected_issues, :correction_issues, to: :correction
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def perform!
     return false unless validate_before_perform
     return false if processed?
@@ -38,7 +38,7 @@ class RequestIssuesUpdate < CaseflowRecord
         create_mst_pact_issue_update_tasks
       end
       create_business_line_tasks! if added_issues.present?
-      handle_sct_issue_updates if FeatureToggle.enabled?(:specialty_case_team_distribution, user: user)
+      handle_sct_issue_updates
       cancel_active_tasks
       submit_for_processing!
     end
@@ -47,7 +47,7 @@ class RequestIssuesUpdate < CaseflowRecord
 
     true
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   def process_job
     if run_async?
@@ -114,7 +114,7 @@ class RequestIssuesUpdate < CaseflowRecord
 
   def move_to_sct_queue
     # If appeal has VHA issue, not in the SCT Queue and not PreDocketed, then move to the SCT Queue
-    if review.is_a?(Appeal) && review.sct_appeal? && review.completed_specialty_case_team_assign_task? &&
+    if review.sct_appeal? && review.completed_specialty_case_team_assign_task? &&
        review.distributed?
       # Cancel open queue tasks and create a specialty case team assign task to direct it to the SCT org
       review.remove_from_current_queue!
@@ -130,24 +130,19 @@ class RequestIssuesUpdate < CaseflowRecord
   def move_to_distribution
     # If an appeal does not have an SCT issue, it was in the SCT queue, and is not PreDocketed,
     # then move it back to distribution
-    if review.is_a?(Appeal) && !review.sct_appeal? && review.completed_specialty_case_team_assign_task? &&
+    if !review.sct_appeal? && review.completed_specialty_case_team_assign_task? &&
        review.distributed?
       review.remove_from_current_queue!
-      remove_from_specialty_case_team
+      review.remove_from_specialty_case_team!
       review.reopen_distribution_task!(user)
     end
   end
 
   def handle_sct_issue_updates
-    move_to_sct_queue
-    move_to_distribution
-  end
-
-  # TODO: Cancel task and child subtasks should do this???????
-  # It currently relies on the tasks having children and the callback taking care of it.
-  # It does not actually cancel the task if the task has no children. Also sometimes relies on on_hold status
-  def remove_from_specialty_case_team
-    review.tasks.find { |task| task.type == SpecialtyCaseTeamAssignTask.name }.cancelled!
+    if FeatureToggle.enabled?(:specialty_case_team_distribution, user: user) && review.is_a?(Appeal)
+      move_to_sct_queue
+      move_to_distribution
+    end
   end
 
   private

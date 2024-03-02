@@ -28,4 +28,8 @@ module SpecialtyCaseTeamMethods
       task.is_a?(SpecialtyCaseTeamAssignTask) && task.completed?
     end
   end
+
+  def remove_from_specialty_case_team!
+    review.tasks.find { |task| task.is_a?(SpecialtyCaseTeamAssignTask) }.cancelled!
+  end
 end
