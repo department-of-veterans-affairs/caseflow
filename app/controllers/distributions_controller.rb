@@ -65,6 +65,7 @@ class DistributionsController < ApplicationController
     }, status: :forbidden
   end
 
+  # rubocop:disable Metrics/MethodLength
   def json_error(error)
     case error
     when :not_judge
@@ -74,11 +75,13 @@ class DistributionsController < ApplicationController
         "detail": "In order to request a distribution, you must be listed as a judge in VACOLS."
       }
     when :too_many_unassigned_cases
+      # rubocop:disable Layout/LineLength
       {
         "error": error,
         "title": "Cases in your queue are waiting to be assigned",
-        "detail": "Please ensure you have eight or fewer unassigned cases before requesting more."
+        "detail": "Please ensure you have #{CaseDistributionLever.request_more_cases_minimum} or fewer unassigned cases before requesting more."
       }
+      # rubocop:enable Layout/LineLength
     when :unassigned_cases_waiting_too_long
       {
         "error": error,
@@ -100,6 +103,7 @@ class DistributionsController < ApplicationController
       }
     end
   end
+  # rubocop:enable Metrics/MethodLength
 
   def pending_distributions
     Distribution.pending_for_judge(judge)
