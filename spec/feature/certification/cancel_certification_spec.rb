@@ -11,10 +11,6 @@ RSpec.feature "Cancel certification", :all_dbs do
     create(:case_with_ssoc)
   end
 
-  let(:vacols_case_mismatched) do
-    create(:case_with_ssoc, bfd19: 2.months.ago)
-  end
-
   let(:default_user) do
     create(:default_user, roles: ["Certify Appeal", "CertificationV2"])
   end
