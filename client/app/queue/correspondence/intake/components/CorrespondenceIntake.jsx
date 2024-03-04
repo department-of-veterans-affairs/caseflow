@@ -94,13 +94,11 @@ export const CorrespondenceIntake = (props) => {
   }, [currentStep]);
 
   useEffect(() => {
-    // let intake = { CorrespondenceIntake.find_by(user: current_user, correspondence: current_correspondence) };
-    // if (!intake.nil?)
-    //   saved_intake_store(intake);
-    // if (currentStep > 1) {
+    // load previous correspondence intake from database (if any)
+    if (props.reduxStore !== null) {
+      setCurrentStep(3);
       props.loadSavedIntake(props.reduxStore);
-    // }
-    // props.loadSavedIntake(props.reduxStore);
+    }
   }, []);
 
   return <div>
@@ -131,7 +129,6 @@ export const CorrespondenceIntake = (props) => {
         onContinueStatusChange={handleContinueStatusChange}
         autoTexts={props.autoTexts}
         veteranInformation={props.veteranInformation}
-        // reduxStore={props.reduxStore}
       />
     }
     {currentStep === 3 &&
@@ -200,7 +197,7 @@ CorrespondenceIntake.propTypes = {
   autoTexts: PropTypes.arrayOf(PropTypes.string),
   currentStep: PropTypes.number,
   reduxStore: PropTypes.object,
-  loadSavedIntake: PropTypes.func,
+  loadSavedIntake: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
