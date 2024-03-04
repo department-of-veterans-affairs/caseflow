@@ -62,6 +62,8 @@ const CorrespondenceTableBuilder = (props) => {
     querystring.parse(window.location.search.slice(1))
   );
 
+  const isMailTeamSupervisor = props.organizations.find((org) => org.name === 'Mail Team Supervisor');
+
   // Causes one additional rerender of the QueueTables/tabs but prevents saved pagination behavior
   // e.g. clearing filter in a tab, then swapping tabs, then swapping back and the filter will still be applied
   useEffect(() => {
@@ -90,7 +92,7 @@ const CorrespondenceTableBuilder = (props) => {
     }
   };
 
-  const calculateActiveTabIndex = (config) => {
+  const calcActiveTabIndex = (config) => {
     const tabNames = config.tabs.map((tab) => {
       return tab.name;
     });
@@ -104,7 +106,7 @@ const CorrespondenceTableBuilder = (props) => {
   const queueConfig = () => {
     const { config } = props;
 
-    config.active_tab_index = calculateActiveTabIndex(config);
+    config.active_tab_index = calcActiveTabIndex(config);
 
     return config;
   };
@@ -175,7 +177,8 @@ const CorrespondenceTableBuilder = (props) => {
       label: sprintf(tabConfig.label, totalTaskCount),
       page: (
         <>
-          {(tabConfig.name === 'correspondence_unassigned' || tabConfig.name === 'correspondence_team_assigned') &&
+          {isMailTeamSupervisor &&
+            (tabConfig.name === 'correspondence_unassigned' || tabConfig.name === 'correspondence_team_assigned') &&
             <>
               <p className="cf-margin-bottom-0rem">Assign to mail team user</p>
               <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -198,9 +201,9 @@ const CorrespondenceTableBuilder = (props) => {
                 <span style={{ marginLeft: 'auto' }}>
                   <Button
                     name="Auto assign correspondence"
-                  />
-                </span>
-              </>
+                    />
+                  </span>
+                </>
                 }
                 {tabConfig.name === 'correspondence_team_assigned' &&
             <Button
