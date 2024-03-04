@@ -20,6 +20,7 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
 
   def initialize(stuck_job_report_service)
     @stuck_job_report_service = stuck_job_report_service
+    @correct_pid = nil
   end
 
   def start_processing_records
@@ -48,10 +49,6 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
   end
 
   class << self
-    # def get_correct_person(correct_pid)
-    #   Person.find_by(participant_id: correct_pid)
-    # end
-
     def iterate_through_associations_with_bad_pid(incorrect_pid, incorrectly_associated_records)
       ASSOCIATIONS.each do |ass|
         if ass.attribute_names.include?("participant_id")
@@ -66,10 +63,12 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
           incorrectly_associated_records.push(*records)
         end
       end
+      # Return the updated array
+      incorrectly_associated_records
     end
 
     def error_records
-      SupplementalClaim.where("establishment_error ILIKE ?", "%#{ERROR_TEXT}%")
+      SupplementalClaim.where("establishment_error ILIKE ?", "%#{ERROR_TEXT}%").where(establishment_canceled_at: nil)
     end
 end
 
@@ -108,9 +107,7 @@ end
   end
 
   def retrieve_records_to_fix(incorrect_pid)
-    incorrectly_associated_records = []
-
-    self.class.iterate_through_associations_with_bad_pid(incorrect_pid, incorrectly_associated_records)
+    incorrectly_associated_records = self.class.iterate_through_associations_with_bad_pid(incorrect_pid, [])
 
     incorrectly_associated_records.each do |record|
       fix_record(record)
