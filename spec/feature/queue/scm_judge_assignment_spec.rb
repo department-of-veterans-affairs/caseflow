@@ -143,9 +143,9 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_dropdown(prompt: "Select a user", text: judge_two.full_name)
           instructions = "#{judge_one.full_name} is on leave. Please take over this case"
           fill_in("taskInstructions", with: instructions)
-          safe_click "#Assign-task-button-id-1"
+          click_on COPY::MODAL_SUBMIT_BUTTON
 
-          expect(page).to have_content("Task reassigned to #{judge_two.full_name}")
+          expect(page).to have_content("Task reassigned to #{judge_two.full_name}", wait: 10)
 
           visit "/queue/appeals/#{appeal.external_id}"
           expect(page).to have_content("ASSIGNED TO\n#{judge_two.css_id}")
@@ -161,12 +161,12 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_dropdown(prompt: "Select a user", text: attorney_one.full_name)
           instructions = "#{judge_one.full_name} is on leave. Please draft a decision for this case"
           fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: instructions)
-          safe_click "#Assign-task-button-id-1"
+          click_on COPY::ASSIGN_TASK_BUTTON
 
-          expect(page).to have_content("Assigned 1 task to #{attorney_one.full_name}")
+          expect(page).to have_content("Assigned 1 task to #{attorney_one.full_name}", wait: 10)
 
           visit "/queue/appeals/#{appeal.external_id}"
-          expect(page).to have_content("ASSIGNED TO\n#{attorney_one.css_id}")
+          expect(page).to have_content("ASSIGNED TO\n#{attorney_one.css_id}", wait: 10)
           expect(page).to have_content("ASSIGNED BY\n#{assigner_name}")
           expect(page).to have_content("TASK\n#{AttorneyTask.label}")
           expect(page).to have_content("TASK\n#{JudgeDecisionReviewTask.label}")
@@ -179,9 +179,9 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_dropdown(propmt: "Select an action...", text: "Assign to attorney")
           click_dropdown(prompt: "Select a user", text: "Other")
           click_dropdown(prompt: "Select a user", text: attorney_two.full_name)
-          safe_click "#Assign-task-button-id-1"
+          click_on COPY::ASSIGN_TASK_BUTTON
 
-          expect(page).to have_content("Reassigned 1 task to #{attorney_two.full_name}")
+          expect(page).to have_content("Reassigned 1 task to #{attorney_two.full_name}", wait: 10)
 
           visit "/queue/appeals/#{appeal.external_id}"
           active_tasks_section = page.find("#currently-active-tasks")
@@ -194,9 +194,9 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_dropdown(propmt: "Select an action...", text: "Cancel task")
           expect(page).to have_content(format(COPY::CANCEL_TASK_MODAL_DETAIL, judge_two.full_name))
           fill_in "taskInstructions", with: "Sending back to judge to be reassigned"
-          safe_click "#Assign-task-button-id-1"
+          click_on COPY::MODAL_SUBMIT_BUTTON
           expect(page).to have_content(
-            "Task for #{appeal.veteran.first_name} #{appeal.veteran.last_name}'s case has been cancelled"
+            "Task for #{appeal.veteran.first_name} #{appeal.veteran.last_name}'s case has been cancelled", wait: 10
           )
 
           visit "/queue/appeals/#{appeal.external_id}"
@@ -214,9 +214,9 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_dropdown(propmt: "Select an action...", text: "Re-assign to a judge")
           click_dropdown(prompt: "Select a user", text: judge_two.full_name)
           fill_in("taskInstructions", with: "#{judge_one.full_name} is on leave. Please take over this case")
-          safe_click "#Assign-task-button-id-1"
+          click_on COPY::MODAL_SUBMIT_BUTTON
 
-          expect(page).to have_content("Task reassigned to #{judge_two.full_name}")
+          expect(page).to have_content("Task reassigned to #{judge_two.full_name}", wait: 10)
 
           visit "/queue/appeals/#{review_appeal.external_id}"
           expect(page).to have_content("ASSIGNED TO\n#{judge_two.css_id}")
@@ -234,9 +234,9 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_dropdown(propmt: "Select an action...", text: "Re-assign to a judge")
           click_dropdown(prompt: "Select a user", text: judge_two.full_name)
           fill_in("taskInstructions", with: "#{judge_one.full_name} is on leave. Please take over this case")
-          safe_click "#Assign-task-button-id-1"
+          click_on COPY::MODAL_SUBMIT_BUTTON
 
-          expect(page).to have_content("Task reassigned to #{judge_two.full_name}")
+          expect(page).to have_content("Task reassigned to #{judge_two.full_name}", wait: 10)
 
           visit "/queue/appeals/#{legacy_appeal.external_id}"
           expect(page).to have_content("ASSIGNED TO\n#{judge_two.vacols_uniq_id}")
@@ -251,9 +251,9 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           click_dropdown(prompt: "Select a user", text: attorney_one.full_name)
           instructions = "#{judge_one.full_name} is on leave. Please draft a decision for this case"
           fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: instructions)
-          safe_click "#Assign-task-button-id-1"
+          click_on COPY::ASSIGN_TASK_BUTTON
 
-          expect(page).to have_content("Assigned 1 task to #{attorney_one.full_name}")
+          expect(page).to have_content("Assigned 1 task to #{attorney_one.full_name}", wait: 10)
 
           visit "/queue/appeals/#{legacy_appeal.external_id}"
           expect(page).to have_content("ASSIGNED TO\n#{attorney_one.vacols_uniq_id}")
