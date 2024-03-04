@@ -23,7 +23,7 @@ class TranscriptFileIssuesMailer < ActionMailer::Base
                    "localhost:3000/queue/appeals/#{appeal_id}"
                  end
     @subject = "File #{details[:action]} Error - #{details[:provider]} #{details[:docket_number]}"
-    mail(subject: @subject) do |format|
+    mail(subject: @subject, to: to_email_address, cc: cc_email_address) do |format|
       format.html { render "layouts/transcript_file_issues" }
     end
   end

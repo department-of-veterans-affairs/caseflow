@@ -19,7 +19,7 @@ RSpec.describe TranscriptFileIssuesMailer, type: :mailer do
     end
 
     it "renders the receiver email" do
-      expect(mail.to).to eq(["BVAHearingTeam@VA.gov"])
+      expect(mail.to).to eq(["BID_Appeals_UAT@bah.com"])
     end
 
     it "renders the sender email" do
@@ -71,7 +71,21 @@ RSpec.describe TranscriptFileIssuesMailer, type: :mailer do
     end
 
     it "renders the receiver email" do
+      expect(mail.to).to eq(["BID_Appeals_UAT@bah.com"])
+    end
+
+    it "assigns to email address for prod environment" do
+      allow(Rails).to receive(:deploy_env).and_return(:prod)
       expect(mail.to).to eq(["BVAHearingTeam@VA.gov"])
+    end
+
+    it "assigns cc email address for non prod environment" do
+      expect(mail.cc).to eq(nil)
+    end
+
+    it "assigns cc email address for prod environment" do
+      allow(Rails).to receive(:deploy_env).and_return(:prod)
+      expect(mail.cc).to eq(["OITAppealsHelpDesk@va.gov"])
     end
 
     it "renders the sender email" do
