@@ -57,11 +57,11 @@ class CorrespondenceTaskFilter < TaskFilter
   end
 
   def filter_by_task(task_types)
-    # used to store the results of each task query
-    collection = nil
+    # Initialize collection to an empty scope
+    collection = Task.none
     task_types.each do |task_type|
       t = tasks.where(type: task_type)
-      collection = collection.nil? ? tasks.merge(t) : collection.or(tasks.merge(t))
+      collection = collection.or(t)
     end
     collection
   end
