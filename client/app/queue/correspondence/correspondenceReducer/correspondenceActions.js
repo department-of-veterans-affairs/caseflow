@@ -88,6 +88,14 @@ export const clearCheckboxState = () =>
     });
   };
 
+export const setSelectedTasks = (values) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_SELECTED_TASKS,
+      payload: { values }
+    });
+  };
+
 export const setTaskRelatedAppealIds = (appealIds) =>
   (dispatch) => {
     dispatch({

@@ -7,6 +7,7 @@ class CorrespondenceController < ApplicationController
   before_action :correspondence
   before_action :auto_texts
   before_action :veteran_information
+  MAX_QUEUED_ITEMS = 60
 
   def intake
     respond_to do |format|
@@ -54,14 +55,18 @@ class CorrespondenceController < ApplicationController
     end
   end
 
+  def mail_team_users
+    mail_team_users = User.mail_team_users
+    respond_to do |format|
+      format.json do
+        render json: { mail_team_users: mail_team_users }
+      end
+    end
+  end
+
   def correspondence_team
     if current_user.mail_superuser? || current_user.mail_supervisor?
-      respond_to do |format|
-        format.html { "correspondence_team" }
-        format.json do
-          render json: { correspondence_config: CorrespondenceConfig.new(assignee: MailTeamSupervisor.singleton) }
-        end
-      end
+      handle_mail_superuser_or_supervisor
     elsif current_user.mail_team_user?
       redirect_to "/queue/correspondence"
     else
@@ -194,6 +199,74 @@ class CorrespondenceController < ApplicationController
   end
 
   private
+
+  def handle_mail_superuser_or_supervisor
+    @mail_team_users = User.mail_team_users.pluck(:css_id)
+    mail_team_user = User.find_by(css_id: params[:user]) if params[:user].present?
+    task_ids = params[:taskIds]&.split(",") if params[:taskIds].present?
+    tab = params[:tab] if params[:tab].present?
+
+    respond_to do |format|
+      format.html { handle_html_response(mail_team_user, task_ids, tab) }
+      format.json { handle_json_response(mail_team_user, task_ids, tab) }
+    end
+  end
+
+  def handle_html_response(mail_team_user, task_ids, tab)
+    if mail_team_user && task_ids.present?
+      set_banner_params(mail_team_user, task_ids.count, tab)
+      update_tasks(mail_team_user, task_ids)
+    end
+    render "correspondence_team"
+  end
+
+  def handle_json_response(mail_team_user, task_ids, tab)
+    if mail_team_user && task_ids.present?
+      set_banner_params(mail_team_user, task_ids&.count, tab)
+    else
+      render json: { correspondence_config: CorrespondenceConfig.new(assignee: MailTeamSupervisor.singleton) }
+    end
+  end
+
+  def update_tasks(mail_team_user, task_ids)
+    return unless @response_type == "success"
+
+    tasks = Task.where(id: task_ids)
+    tasks.update_all(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "assigned")
+  end
+
+  def set_banner_params(user, task_count, tab)
+    template = message_template(user, task_count, tab)
+    response_type(user)
+    @response_header = template[:header]
+    @response_message = template[:message]
+  end
+
+  def message_template(user, task_count, tab)
+    success_header_unassigned = "You have successfully assigned #{task_count} Correspondence to #{user.css_id}."
+    success_header_assigned = "You have successfully reassigned #{task_count} Correspondence to #{user.css_id}."
+    success_message = "Please go to your individual queue to see any self-assigned correspondence."
+    failure_header_unassigned = "Correspondence assignment to #{user.css_id} has failed"
+    failure_header_assigned = "Correspondence reassignment to #{user.css_id} has failed"
+    failure_message = "Queue volume has reached maximum capacity for this user."
+
+    case tab
+    when "correspondence_unassigned"
+      {
+        header: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_header_unassigned : failure_header_unassigned,
+        message: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_message : failure_message
+      }
+    when "correspondence_team_assigned"
+      {
+        header: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_header_assigned : failure_header_assigned,
+        message: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_message : failure_message
+      }
+    end
+  end
+
+  def response_type(user)
+    @response_type = (user.tasks.length < MAX_QUEUED_ITEMS) ? "success" : "warning"
+  end
 
   # :reek:FeatureEnvy
   def vbms_document_types

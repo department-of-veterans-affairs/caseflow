@@ -71,7 +71,7 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
       expect(response).to have_http_status(:ok)
     end
 
-    it "returns json in the expected shape" do
+    it "returns json in the expected shape for correspondence_cases" do
       data = JSON.parse(response.body, symbolize_names: true)
       expect(data[:correspondence_config][:table_title]).to be_a(String)
       expect(data[:correspondence_config]).to be_a(Hash)
@@ -115,7 +115,7 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
       expect(response).to have_http_status(:ok)
     end
 
-    it "returns json in the expected shape" do
+    it "returns json in the expected shape correspondence_team" do
       data = JSON.parse(response.body, symbolize_names: true)
       expect(data[:correspondence_config][:table_title]).to be_a(String)
       expect(data[:correspondence_config]).to be_a(Hash)
