@@ -265,7 +265,7 @@ class CorrespondenceController < ApplicationController
   end
 
   def response_type(user)
-    @response_type = (user.tasks.length < MAX_QUEUED_ITEMS) ? "success" : "info"
+    @response_type = (user.tasks.length < MAX_QUEUED_ITEMS) ? "success" : "warning"
   end
 
   # :reek:FeatureEnvy
