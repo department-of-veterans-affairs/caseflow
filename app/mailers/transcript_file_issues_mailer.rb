@@ -2,8 +2,6 @@
 
 class TranscriptFileIssuesMailer < ActionMailer::Base
   default from: "Board of Veterans' Appeals <BoardofVeteransAppealsHearings@messages.va.gov>"
-  default to: "BVAHearingTeam@VA.gov"
-  default cc: "OITAppealsHelpDesk@va.gov"
   layout "transcript_file_issues"
 
   # Sends the correct variable data to the template based on environment. Kicks
@@ -34,8 +32,20 @@ class TranscriptFileIssuesMailer < ActionMailer::Base
   def webex_recording_list_issues(details)
     @details = details
     @subject = "File #{details[:action]} Error - #{details[:provider]}"
-    mail(subject: @subject) do |format|
+    mail(subject: @subject, to: to_email_address, cc: cc_email_address) do |format|
       format.html { render "layouts/transcript_file_issues" }
     end
+  end
+
+  # The email address to send mail to
+  def to_email_address
+    return "BVAHearingTeam@VA.gov" if Rails.deploy_env == :prod
+
+    "BID_Appeals_UAT@bah.com"
+  end
+
+  # The email address to cc
+  def cc_email_address
+    "OITAppealsHelpDesk@va.gov" if Rails.deploy_env == :prod
   end
 end
