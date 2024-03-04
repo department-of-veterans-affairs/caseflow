@@ -9,10 +9,10 @@ class CorrespondenceController < ApplicationController
   before_action :veteran_information
 
   def intake
-    intake = CorrespondenceIntake.find_by(user: current_user, correspondence: current_correspondence)
-    if !intake.nil?
-      saved_intake_store(intake)
-    end
+    # If correspondence intake was started, json data from the database will
+    # need to be loaded into the page when user returns to intake
+    @redux_store ||= CorrespondenceIntake.find_by(user: current_user,
+                                                  correspondence: current_correspondence)&.redux_store
 
     respond_to do |format|
       format.html { return render "correspondence/intake" }
@@ -21,7 +21,6 @@ class CorrespondenceController < ApplicationController
           currentCorrespondence: current_correspondence,
           correspondence: correspondence_load,
           veteranInformation: veteran_information
-          # savedIntakeStore: saved_intake_store
         }
       end
     end
@@ -43,13 +42,6 @@ class CorrespondenceController < ApplicationController
     else
       render(json: intake.errors.full_messages, status: :unprocessable_entity) && return
     end
-  end
-
-  # If correspondence intake was started, json data from the database will need to be loaded into the page when user returns to intake
-  def saved_intake_store(intake)
-    # @current_step = 3
-    @current_step = intake.current_step
-    @redux_store = intake.redux_store
   end
 
   def correspondence_cases
