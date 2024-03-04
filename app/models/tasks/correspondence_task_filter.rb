@@ -31,9 +31,34 @@ class CorrespondenceTaskFilter < TaskFilter
     end
   end
 
-  def filter_by_task(task_type)
+  # def filter_by_task(task_type, results)
+  #   t = Task.where(type: task_type)
+  #   binding.pry
+  #   t
+  # end
+
+  # def filter_by_task(task_types, items)
+  #   collection = nil
+  #   task_types.each do |task_type|
+  #     t = Task.where(type: task_type)
+  #     binding.pry
+  #     items.merge(t)
+  #     collection = collection.nil? ? items.merge(t) : collection + items.merge(t)
+  #   end
+  #   collection
+  # end
+
+  def filter_by_task(task_types, items)
+    collection = nil
+    task_types.each do |task_type|
+      t = items.where(type: task_type)
+      items.merge(t)
+      # collection = collection.nil? ? items.merge(t) : collection + items.merge(t)
+      collection = collection.nil? ? items.merge(t) : collection.or(items.merge(t))
+
+    end
     # binding.pry
-    tasks.where("type = (?)", task_type)
+    collection
   end
 
   def filtered_tasks
@@ -50,11 +75,9 @@ class CorrespondenceTaskFilter < TaskFilter
       result = result.merge(filter_by_va_dor(value_hash[:val]))
     end
 
-    task_column_params.each do |param|
-      result = result.merge(filter_by_task(param))
-      binding.pry
+    result = task_column_params.length > 0 ? result.merge(filter_by_task(task_column_params, result)) : result
+    unless task_column_params.length == 0
     end
-
     result
   end
 
