@@ -131,9 +131,9 @@ describe ExternalApi::VADotGovService do
     it "returns facility attributes" do
       result = VADotGovService.get_facility_data(ids: %w[vha_757 vha_539])
 
-      parse = result.body.find{ |i| i["data"].key?("attributes")}
-      expect(parse).to be_present
-      #expect(result.body[:data]).to include("id", "type", "attributes", "name", "facilityType", "classification")
+      #parse = result.body.find{ |i| i["data"].key?("attributes")}
+      #expect(parse).to be_present
+      expect(result.body[:data].pluck("attributes")).to include("id", "type", "attributes", "name", "facilityType", "classification")
     end
   end
 
