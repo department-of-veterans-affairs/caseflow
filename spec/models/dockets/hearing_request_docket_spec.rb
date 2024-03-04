@@ -242,34 +242,72 @@ describe HearingRequestDocket, :all_dbs do
         appeal_30_days = create_aod_value_appeal(30)
         appeal_200_days = create_aod_value_appeal(200)
         puts "value is 12"
-        CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update_attributes(value: "12")
-
+        CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update(value: "12")
 
         expected_result = [appeal_90_days, appeal_30_days, appeal_200_days]
 
-        tasks = subject
-        puts tasks.to_json
+        # {tasks = subject}
+        hrd = HearingRequestDocket.new
+        hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
+                                                   genpop: "only_genpop")
+        result = hrdq.most_recent_held_hearings_ama_aod_hearing_original_appeals
 
-        expect(tasks.length).to eq(expected_result.length)
+        expect(result.length).to eq(expected_result.length)
       end
 
       it "returns aod affinity based on 35 value" do
         # Given the ama_hearing_case_aod_affinity_days returns a number, we expect aod appeals older than 90 days
         appeal_90_days = create_aod_value_appeal(90)
-        appeal_30_days = create_aod_value_appeal(30)
         appeal_200_days = create_aod_value_appeal(200)
-        CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update_attributes(value: "35")
-
+        create_aod_value_appeal(30)
+        CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update(value: "35")
 
         expected_result = [appeal_90_days, appeal_200_days]
 
-        tasks = subject
-        puts tasks.to_json
+        hrd = HearingRequestDocket.new
+        hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
+                                                   genpop: "only_genpop")
+        results = hrdq.most_recent_held_hearings_ama_aod_hearing_original_appeals
 
-        expect(tasks.length).to eq(expected_result.length)
+        expect(results.length).to eq(expected_result.length)
       end
 
+      it "returns aod affinity based on 100 value" do
+        # Given the ama_hearing_case_aod_affinity_days returns a number, we expect aod appeals older than 90 days
+        appeal_200_days = create_aod_value_appeal(200)
+        create_aod_value_appeal(90)
+        create_aod_value_appeal(30)
+        CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update(value: "100")
 
+        expected_result = [appeal_200_days]
+
+        hrd = HearingRequestDocket.new
+        hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
+                                                   genpop: "only_genpop")
+        results = hrdq.most_recent_held_hearings_ama_aod_hearing_original_appeals
+
+        expect(results.length).to eq(expected_result.length)
+      end
+
+      it "returns aod affinity based on infinite value" do
+        # Given the ama_hearing_case_aod_affinity_days returns a number, we expect aod appeals older than 90 days
+        appeal_90_days = create_aod_value_appeal(90)
+        appeal_30_days = create_aod_value_appeal(30)
+        appeal_200_days = create_aod_value_appeal(200)
+        appeal_3_days = create_aod_value_appeal(3)
+        puts "value is infinite"
+        CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update(value: "infinite")
+
+        expected_result = [appeal_90_days, appeal_30_days, appeal_200_days, appeal_3_days]
+
+        # {tasks = subject}
+        hrd = HearingRequestDocket.new
+        hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
+                                                   genpop: "only_genpop")
+        result = hrdq.most_recent_held_hearings_always_ama_aod_hearing_original_appeals
+
+        expect(result.length).to eq(expected_result.length)
+      end
 
       it "only distributes priority, distributable, hearing docket, genpop cases" do
         # will be included
@@ -361,7 +399,7 @@ describe HearingRequestDocket, :all_dbs do
         expect(distribution_judge.reload.tasks.map(&:appeal))
           .to match_array(expected_result)
       end
-  end
+    end
 
     context "when an appeal already has a distribution" do
       subject do

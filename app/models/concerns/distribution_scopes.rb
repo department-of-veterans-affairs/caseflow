@@ -45,29 +45,28 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       .joins("LEFT OUTER JOIN advance_on_docket_motions on advance_on_docket_motions.person_id = people.id")
   end
 
-
   def ready_for_distribution
     joins(:tasks)
-    .group("appeals.id")
-    .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) >= ?",
-    DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
+      .group("appeals.id")
+      .having("count(case when tasks.type = ? and tasks.status = ? then 1 end) >= ?",
+              DistributionTask.name, Constants.TASK_STATUSES.assigned, 1)
   end
 
   def genpop
     joins(with_assigned_distribution_task_sql)
-    .with_original_appeal_and_judge_task
-    .where(
-      "appeals.stream_type != ? OR distribution_task.assigned_at <= ? OR original_judge_task.assigned_to_id in (?)",
-      Constants.AMA_STREAM_TYPES.court_remand,
-      CaseDistributionLever.cavc_affinity_days.days.ago,
-      JudgeTeam.judges_with_exclude_appeals_from_affinity
+      .with_original_appeal_and_judge_task
+      .where(
+        "appeals.stream_type != ? OR distribution_task.assigned_at <= ? OR original_judge_task.assigned_to_id in (?)",
+        Constants.AMA_STREAM_TYPES.court_remand,
+        CaseDistributionLever.cavc_affinity_days.days.ago,
+        JudgeTeam.judges_with_exclude_appeals_from_affinity
       )
-    end
+  end
 
   # this method takes care of when aod affinity day has a value
   def ama_aod_hearing_original_appeals
     joins(with_assigned_distribution_task_sql)
-      .where("advance_on_docket_motions.created_at > ?", CaseDistributionLever.ama_hearing_case_aod_affinity_days.to_i.days.ago)
+      .where("advance_on_docket_motions.created_at < ?", CaseDistributionLever.ama_hearing_case_aod_affinity_days.to_i.days.ago)
   end
 
   # this method takes care of when aod affinity day always affinitized
@@ -140,7 +139,6 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
 
   def not_tied_to_ineligible_judge
     where.not(hearings: { disposition: "held", judge_id: HearingRequestDistributionQuery.ineligible_judges_id_cache })
-      .where("1 = ?", FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ? 1 : 0)
   end
 
   def tied_to_judges_with_exclude_appeals_from_affinity

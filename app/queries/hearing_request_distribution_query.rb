@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 # rubocop:disable Layout/LineLength
 
 class HearingRequestDistributionQuery
@@ -38,7 +39,7 @@ class HearingRequestDistributionQuery
     Rails.cache.fetch("case_distribution_ineligible_judges")&.pluck(:id)&.reject(&:blank?) || []
   end
 
-  private
+  # {}private
 
   attr_reader :base_relation, :genpop, :judge
 
@@ -52,8 +53,8 @@ class HearingRequestDistributionQuery
 
     # returning early as most_recent_held_hearings_not_tied_to_any_judge is redundant
     if @use_by_docket_date &&
-      !(FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ||
-      FeatureToggle.enabled?(:acd_exclude_from_affinity))
+       !(FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ||
+       FeatureToggle.enabled?(:acd_exclude_from_affinity))
       return [
         with_held_hearings,
         no_hearings_or_no_held_hearings
@@ -81,27 +82,22 @@ class HearingRequestDistributionQuery
     base_relation.most_recent_hearings.exceeding_affinity_threshold
   end
 
-    # ama_aod_hearing_original_appeals
+  # ama_aod_hearing_original_appeals
   def most_recent_held_hearings_ama_aod_hearing_original_appeals
-    binding.pry
-    base_relation.most_recent_hearings.ama_aod_hearing_original_appeals.not_tied_to_ineligible_judge
+    base_relation.most_recent_hearings.ama_aod_hearing_original_appeals # {}.not_tied_to_ineligible_judge
   end
 
   def most_recent_held_hearings_always_ama_aod_hearing_original_appeals
-    base_relation.most_recent_hearings.always_ama_aod_hearing_original_appeals.not_tied_to_ineligible_judge
+    base_relation.most_recent_hearings.always_ama_aod_hearing_original_appeals # {}.not_tied_to_ineligible_judge
   end
 
   def most_recent_held_hearings_not_tied_to_any_judge
     base_relation.most_recent_hearings.not_tied_to_any_judge
   end
 
-  def with_no_hearings
-    base_relation.with_no_hearings
-  end
+  delegate :with_no_hearings, to: :base_relation
 
-  def with_no_held_hearings
-    base_relation.with_no_held_hearings
-  end
+  delegate :with_no_held_hearings, to: :base_relation
 
   def with_held_hearings
     base_relation.most_recent_hearings.with_held_hearings
