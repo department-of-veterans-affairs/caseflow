@@ -17,7 +17,7 @@ class CorrespondenceRootTaskFactory
   private
 
   def create_root!
-      @root_task = CorrespondenceRootTask.find_or_create_by!(
+    @root_task = CorrespondenceRootTask.find_or_create_by!(
       appeal_id: @correspondence.id,
       assigned_to: MailTeamSupervisor.singleton,
       appeal_type: Correspondence.name
