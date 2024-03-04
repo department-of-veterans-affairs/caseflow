@@ -1,30 +1,32 @@
 # frozen_string_literal: true
 
-#:reek:RepeatedConditional
 class RetryDecisionReviewProcesses
-  #:reek:BooleanParameter
-  def initialize(manual: false)
-    @manual = manual
+  def initialize(report_service: nil)
+    @report_service = report_service
   end
 
+  # :reek:FeatureEnvy
   def retry # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     success_logs = ["RetryDecisionReviewProcesses Success Log"]
     new_error_logs = ["RetryDecisionReviewProcesses New Error Log"]
-    puts "Total error count: #{all_records.count}" if @manual
     all_records.each do |instance|
       error_field = instance.is_a?(RequestIssuesUpdate) ? :error : :establishment_error
       error = instance[error_field]
-      DecisionReviewProcessJob.perform_now(instance)
+      begin
+        DecisionReviewProcessJob.perform_now(instance)
+      rescue StandardError => error
+        @report_service&.append_error(instance.class.name, instance.id, error)
+        next
+      end
+
       instance.reload
       # if the error field is now empty, we succeeded. we should log it
       if instance[error_field].nil?
         log = format_log(instance, error)
-        puts "\n\n\nSuccess\n#{log}\n\n\n" if @manual
         success_logs << log
       # if the error field has changed, let's log that too
       elsif instance[error_field] != error
         log = format_log(instance, instance[error_field])
-        puts "\n\n\nNew Error\n#{log}\n\n\n" if @manual
         new_error_logs << log
       end
     end
