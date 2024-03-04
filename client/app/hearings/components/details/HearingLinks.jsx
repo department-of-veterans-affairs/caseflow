@@ -125,7 +125,8 @@ export const HearingLinks = ({ hearing, virtualHearing, isVirtual, wasVirtual, u
             hearing={hearing}
             isVirtual={isVirtual}
             label={COPY.HC_VIRTUAL_HEARING_LINK_LABEL}
-            link={hearing.dailyDocketConferenceLinks[1].coHostLink}
+            // TODO: update here for non virtual hearing links
+            link={null}
             linkText={COPY.VLJ_VIRTUAL_HEARINGS_LINK_TEXT}
             role="HC"
             user={user}
