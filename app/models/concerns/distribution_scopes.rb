@@ -73,7 +73,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   # this method takes care of when aod affinity day always affinitized
   def always_ama_aod_hearing_original_appeals
     joins(with_assigned_distribution_task_sql)
-      .where("advance_on_docket_motions.created_at > ?", 200.years.ago)
+      .where("advance_on_docket_motions.person_id IS NOT NULL")
   end
 
   def with_original_appeal_and_judge_task
@@ -177,12 +177,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
     CaseDistributionLever.send(lever) == "omit"
   end
 
-  def lever_infinite?(lever)
-    CaseDistributionLever.send(lever) == "infinite"
-  end
-
-  def case_affinity_days_lever_value_is_selected?(lever)
-    lever_value = CaseDistributionLever.send(lever)
+  def case_affinity_days_lever_value_is_selected?(lever_value)
     return false if lever_value == "omit" || lever_value == "infinite"
 
     true
