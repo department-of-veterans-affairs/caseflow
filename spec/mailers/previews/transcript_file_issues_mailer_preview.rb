@@ -20,7 +20,7 @@ class TranscriptFileIssuesMailerPreview < ActionMailer::Preview
       },
       error: "some error"
     }
-    appeal_id = "APPEAL_ID"
+    appeal_id = "772f677a-b5fd-45f0-b74d-ecdd15da0730"
     TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
   end
 
