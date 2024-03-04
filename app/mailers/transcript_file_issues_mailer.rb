@@ -11,7 +11,7 @@ class TranscriptFileIssuesMailer < ActionMailer::Base
     @case_link = case Rails.deploy_env
                  when :demo
                    "https://demo.appeals.va.gov/appeals/#{appeal_id}"
-                 when :staging
+                 when :uat
                    "https://appeals.cf.uat.ds.va.gov/queue/appeals/#{appeal_id}"
                  when :prod
                    "https://appeals.cf.ds.va.gov/queue/appeals/#{appeal_id}"
@@ -41,8 +41,8 @@ class TranscriptFileIssuesMailer < ActionMailer::Base
   def to_email_address
     case Rails.deploy_env
     when :demo, :development, :test
-      "Caseflow@test.com"
-    when :staging
+      ""
+    when :uat
       "BID_Appeals_UAT@bah.com"
     when :prod
       "BVAHearingTeam@VA.gov"
