@@ -15,7 +15,8 @@ describe RetryDecisionReviewProcesses do
     end
   end
 
-  let(:subject) { RetryDecisionReviewProcesses.new.retry }
+  let(:stuck_job_report_service) { StuckJobReportService.new }
+  let(:subject) { RetryDecisionReviewProcesses.new(report_service: stuck_job_report_service).retry }
   let(:success_file_name) do
     "data-remediation-output-test/retry_decision_review_process_job-logs/"\
       "retry_decision_review_process_job_success-log-2015-01-01 07:00:00 -0500"
@@ -88,6 +89,26 @@ describe RetryDecisionReviewProcesses do
 
       it_behaves_like "#retry logs to S3"
     end
+  end
+
+  context "instances with exceptions" do
+    before do
+      allow(DecisionReviewProcessJob).to receive(:perform_now).and_raise(ActiveRecord::RecordNotUnique)
+    end
+
+    let!(:supplemental_claim_1) do
+      create :supplemental_claim, establishment_error: "
+        Finds error that has a variable in it
+        Transaction timed out after 10000 seconds
+      "
+    end
+
+    it do
+      subject
+      expect(stuck_job_report_service.logs.last).to include("ActiveRecord::RecordNotUnique")
+    end
+
+    it_behaves_like "#retry logs to S3"
   end
 
   describe "with nothing to log" do

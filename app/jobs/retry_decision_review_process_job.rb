@@ -49,6 +49,6 @@ class RetryDecisionReviewProcessJob < CaseflowJob
   private
 
   def retry_instance
-    @retry_instance ||= RetryDecisionReviewProcesses.new
+    @retry_instance ||= RetryDecisionReviewProcesses.new(report_service: @stuck_job_report_service)
   end
 end
