@@ -540,7 +540,6 @@ describe EstablishClaim, :all_dbs do
     end
 
     context "when not complete" do
-
       it { is_expected.to eq([]) }
     end
   end
