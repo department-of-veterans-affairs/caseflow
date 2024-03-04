@@ -6,7 +6,7 @@ module SpecialtyCaseTeamMethodsMixin
   end
 
   def distributed?
-    tasks.any? { |task| task.is_a?(SpecialtyCaseTeamAssignTask) }
+    tasks.any? { |task| task.is_a?(DistributionTask) }
   end
 
   def specialty_case_team_assign_task?
@@ -19,7 +19,7 @@ module SpecialtyCaseTeamMethodsMixin
   end
 
   def reopen_distribution_task!(user)
-    distribution_task = tasks.find { |task| task.type == DistributionTask.name }
+    distribution_task = tasks.find { |task| task.is_a?(DistributionTask) }
     distribution_task.update!(status: "assigned", assigned_to: Bva.singleton, assigned_by: user)
   end
 

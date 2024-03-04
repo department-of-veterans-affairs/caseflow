@@ -1428,7 +1428,6 @@ feature "Appeal Edit issues", :all_dbs do
              decision_date: 5.months.ago,
              decision_review: appeal3)
     end
-    let(:sct_user) { create(:user) }
 
     before do
       SpecialtyCaseTeam.singleton.add_user(current_user)
