@@ -86,7 +86,6 @@ describe ExternalApi::VADotGovService do
     end
   end
 
-
   describe "#validate_zip_code" do
     it "returns invalid full address with valid geographic coordinates" do
       result = VADotGovService.validate_zip_code(address)
@@ -125,6 +124,16 @@ describe ExternalApi::VADotGovService do
       expect(result.data.pluck(:facility_id)).to match_array(%w[vha_757 vha_539])
       expect(result.body[:meta][:distances].pluck(:id, :distance)).to be_empty
       expect(result.error).to be_nil
+    end
+  end
+
+  describe "#check_facilities_attributes" do
+    it "returns facility attributes" do
+      result = VADotGovService.get_facility_data(ids: %w[vha_757 vha_539])
+
+      parse = result.body.find{ |i| i["data"].key?("attributes")}
+      expect(parse).to be_present
+      #expect(result.body[:data]).to include("id", "type", "attributes", "name", "facilityType", "classification")
     end
   end
 
