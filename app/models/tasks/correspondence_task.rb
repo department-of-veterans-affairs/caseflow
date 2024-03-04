@@ -8,6 +8,7 @@ class CorrespondenceTask < Task
   validate :assignee_status_is_valid_on_create, on: :create
 
   scope :package_action_tasks, -> { where(type: package_action_task_names) }
+  scope :tasks_not_related_to_appeal, -> { where(type: tasks_not_related_to_appeal_names) }
 
   def self.package_action_task_names
     [
@@ -15,6 +16,20 @@ class CorrespondenceTask < Task
       RemovePackageTask.name,
       SplitPackageTask.name,
       MergePackageTask.name
+    ]
+  end
+
+  def self.tasks_not_related_to_appeal_names
+    [
+      DeathCertificateCorrespondenceTask.name,
+      FoiaRequestCorrespondenceTask.name,
+      StatusInquiryCorrespondenceTask.name,
+      OtherMotionCorrespondenceTask.name,
+      PrivacyComplaintCorrespondenceTask.name,
+      PowerOfAttorneyRelatedCorrespondenceTask.name,
+      CavcCorrespondenceCorrespondenceTask.name,
+      CongressionalInterestCorrespondenceTask.name,
+      PrivacyActRequestCorrespondenceTask.name
     ]
   end
 
