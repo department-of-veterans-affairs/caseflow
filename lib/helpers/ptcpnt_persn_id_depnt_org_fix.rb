@@ -20,7 +20,6 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
 
   def initialize(stuck_job_report_service)
     @stuck_job_report_service = stuck_job_report_service
-    @correct_pid = nil
   end
 
   def start_processing_records
@@ -35,7 +34,7 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
       next unless supp_claim.claimant.type == "VeteranClaimant"
 
       veteran_file_number = supp_claim.veteran.file_number
-      @correct_pid = retrieve_correct_pid(veteran_file_number)
+      @correct_pid ||= retrieve_correct_pid(veteran_file_number)
 
       handle_person_and_claimant_records(supp_claim)
       retrieve_records_to_fix(incorrect_pid)

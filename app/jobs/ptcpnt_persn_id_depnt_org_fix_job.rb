@@ -7,8 +7,6 @@ class PtcpntPersnIdDepntOrgFixJob < CaseflowJob
 
   def initialize
     @stuck_job_report_service = StuckJobReportService.new
-    @start_time = nil
-    @end_time = nil
     super
   end
 
@@ -38,7 +36,7 @@ class PtcpntPersnIdDepntOrgFixJob < CaseflowJob
   end
 
   def log_processing_time
-    (@end_time && @start_time) ? @end_time - @start_time : 0
+    (end_time && start_time) ? end_time - start_time : 0
   end
 
   def start_time
