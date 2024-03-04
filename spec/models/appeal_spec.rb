@@ -1695,7 +1695,7 @@ describe Appeal, :all_dbs do
 
   describe "completed_specialty_case_team_assign_task?" do
     let(:appeal) { create(:appeal, :with_vha_issue) }
-    let(:appeal_2) { create(:specialty_case_team_assign_task).appeal }
+    let(:appeal_2) { create(:specialty_case_team_assign_task, :completed).appeal }
 
     it "should return true if appeal has a specialty case team assign task" do
       expect(appeal_2.completed_specialty_case_team_assign_task?).to be true

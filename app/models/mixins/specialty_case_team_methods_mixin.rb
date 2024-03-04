@@ -25,7 +25,7 @@ module SpecialtyCaseTeamMethodsMixin
 
   # :reek:FeatureEnvy
   def completed_specialty_case_team_assign_task?
-    tasks.completed?.any? { |task| task.is_a?(SpecialtyCaseTeamAssignTask) && task.completed? }
+    tasks.any? { |task| task.is_a?(SpecialtyCaseTeamAssignTask) && task.completed? }
   end
 
   def remove_from_specialty_case_team!
