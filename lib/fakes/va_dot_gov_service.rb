@@ -152,7 +152,7 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
           "type": "va_facilities",
           "attributes": {
             "name": "Holdrege VA Clinic",
-            "facility_type": "va_health_facility",
+            "facilityType": "va_health_facility",
             "classification": "Primary Care CBOC",
             "website": nil,
             "lat": 40.4454392100001,
@@ -165,9 +165,9 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
                 "zip": "68949-1705",
                 "city": "Holdrege",
                 "state": "NE",
-                "address_1": "1118 Burlington Street",
-                "address_2": "",
-                "address_3": nil
+                "address1": "1118 Burlington Street",
+                "address2": "",
+                "address3": nil
               }
             },
             "phone": {
