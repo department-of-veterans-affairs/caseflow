@@ -554,6 +554,24 @@ feature "AmaQueue", :all_dbs do
       expect(page).to have_content("Assigned 1 task to #{attorney_user.full_name}")
     end
 
+    def judge_return_to_attorney
+      User.authenticate!(user: judge_user)
+      visit "/queue"
+
+      click_on veteran_full_name
+
+      click_dropdown(
+        prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
+        text: Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.label
+      )
+      expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
+      fill_in "taskInstructions", with: "Please fix this"
+
+      click_button COPY::MODAL_SUBMIT_BUTTON
+
+      expect(page).to have_content("Task assigned to #{attorney_user.full_name}")
+    end
+
     it "judge can return report to attorney for corrections" do
       step "judge reviews case and assigns a task to an attorney" do
         judge_assign_to_attorney
@@ -615,21 +633,7 @@ feature "AmaQueue", :all_dbs do
       end
 
       step "judge returns case to attorney for corrections" do
-        User.authenticate!(user: judge_user)
-        visit "/queue"
-
-        click_on veteran_full_name
-
-        click_dropdown(
-          prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-          text: Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.label
-        )
-        expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
-        fill_in "taskInstructions", with: "Please fix this"
-
-        click_button COPY::MODAL_SUBMIT_BUTTON
-
-        expect(page).to have_content("Task assigned to #{attorney_user.full_name}")
+        judge_return_to_attorney
       end
 
       step "attorney corrects case and returns it to the judge" do
@@ -729,21 +733,7 @@ feature "AmaQueue", :all_dbs do
       end
 
       step "judge returns case to attorney for corrections" do
-        User.authenticate!(user: judge_user)
-        visit "/queue"
-
-        click_on veteran_full_name
-
-        click_dropdown(
-          prompt: COPY::TASK_ACTION_DROPDOWN_BOX_LABEL,
-          text: Constants.TASK_ACTIONS.JUDGE_RETURN_TO_ATTORNEY.label
-        )
-        expect(dropdown_selected_value(find(".cf-modal-body"))).to eq attorney_user.full_name
-        fill_in "taskInstructions", with: "Please fix this"
-
-        click_button COPY::MODAL_SUBMIT_BUTTON
-
-        expect(page).to have_content("Task assigned to #{attorney_user.full_name}")
+        judge_return_to_attorney
       end
 
       step "attorney corrects case and returns it to the judge" do
