@@ -163,10 +163,6 @@ describe PtcpntPersnIdDepntOrgFix, :postgres do
           expect do
             subject.start_processing_records
           end.not_to(change { Person.count })
-
-          # expect do
-          #   subject.handle_person_and_claimant_records(supplemental_claim)
-          # end.not_to(change { Person.count }) # Expect no person to be destroyed
         end
 
         it "updates incorrect person when correct person not found" do
