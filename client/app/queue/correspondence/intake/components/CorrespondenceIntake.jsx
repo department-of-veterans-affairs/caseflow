@@ -6,7 +6,7 @@ import AddCorrespondenceView from './AddCorrespondence/AddCorrespondenceView';
 import { AddTasksAppealsView } from './TasksAppeals/AddTasksAppealsView';
 import { connect, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { loadSavedIntake, setUnrelatedTasks } from '../../correspondenceReducer/correspondenceActions';
+import { loadSavedIntake, setUnrelatedTasks, saveCurrentIntake } from '../../correspondenceReducer/correspondenceActions';
 import { useHistory } from 'react-router-dom';
 import { ConfirmCorrespondenceView } from './ConfirmCorrespondence/ConfirmCorrespondenceView';
 import { SubmitCorrespondenceModal } from './ConfirmCorrespondence/SubmitCorrespondenceModal';
@@ -48,6 +48,12 @@ export const CorrespondenceIntake = (props) => {
   const handleCheckboxChange = (isSelected) => {
     setContinueEnabled(isSelected);
   };
+
+  const handleCancel = () => {
+    props.saveCurrentIntake(intakeCorrespondence);
+    // Redirect the user to the previous page
+    history.goBack();
+  }
 
   const nextStep = () => {
     if (currentStep < 3) {
@@ -98,6 +104,7 @@ export const CorrespondenceIntake = (props) => {
     if (props.reduxStore !== null) {
       setCurrentStep(3);
       props.loadSavedIntake(props.reduxStore);
+      props.saveCurrentIntake(props.reduxStore);
     }
   }, []);
 
@@ -148,7 +155,8 @@ export const CorrespondenceIntake = (props) => {
           name="Cancel"
           styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
           href="/queue/correspondence"
-          classNames={['cf-btn-link', 'cf-left-side']} />
+          classNames={['cf-btn-link', 'cf-left-side']}
+          onClick={handleCancel} />
       </a>
       {currentStep < 3 &&
       <Button
@@ -210,7 +218,8 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
     setUnrelatedTasks,
-    loadSavedIntake
+    loadSavedIntake,
+    saveCurrentIntake
   }, dispatch)
 );
 
