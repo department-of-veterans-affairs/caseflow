@@ -237,10 +237,25 @@ describe HearingRequestDocket, :all_dbs do
       end
 
       it "returns aod affinity based on value" do
-        CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update_attributes(value: "89")
-        appeal_90_days = create_nonpriority_distributable_appeal_not_tied_to_judge_90_days
+        # goal: if the ama_hearing_case_aod_affinity_days has a value
+        # then appeals that are older than the value are returned to genpop
+
+        CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update_attributes(value: "45")
+        appeal_90_days = create_aod_value_appeal(90)
+        appeal_45_days = create_aod_value_appeal(45)
 
         expected_result = [appeal_90_days]
+
+        tasks = subject
+
+        expect(tasks.length).to eq(expected_result.length)
+      end
+      it "Always returns if it is an aod appeal" do
+        CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update_attributes(value: "infinite")
+        appeal_90_days = create_aod_value_appeal(90)
+        appeal_45_days = create_aod_value_appeal(45)
+
+        expected_result = [appeal_90_days, appeal_45_days]
 
         tasks = subject
 
@@ -690,6 +705,23 @@ describe HearingRequestDocket, :all_dbs do
                     :denied_advance_on_docket,
                     docket_type: Constants.AMA_DOCKETS.hearing)
     create(:hearing, judge: nil, disposition: "held", appeal: appeal)
+    appeal
+  end
+
+  def create_aod_value_appeal(value)
+    Timecop.travel(value.days.ago)
+    appeal = create(:appeal,
+                    :ready_for_distribution,
+                    :advanced_on_docket_due_to_motion,
+                    docket_type: Constants.AMA_DOCKETS.hearing
+    )
+    most_recent = create(:hearing_day, scheduled_for: 1.day.ago)
+    hearing = create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: most_recent)
+    hearing.update(judge: judge_with_team)
+
+    not_tied = create(:hearing_day, scheduled_for: 2.days.ago)
+    create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: not_tied)
+    Timecop.return
     appeal
   end
 
