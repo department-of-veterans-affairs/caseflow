@@ -105,6 +105,16 @@ describe ByDocketDateDistribution, :all_dbs do
       return_array = @new_acd.send :requested_distribution
       expect(return_array.count).to eq(@new_acd.batch_size)
     end
+
+    it "will limit to 10 nonpriority iterations if not enough cases exist to reach the batch size" do
+      by_docket_date_distribution_module = @new_acd
+      return_array = by_docket_date_distribution_module.send :requested_distribution
+
+      # @nonpriority_iterations is limited to 10 in the by_docket_date_distribution file
+      expect(by_docket_date_distribution_module.instance_variable_get(:@nonpriority_iterations))
+        .to eq 2
+      expect(return_array.empty?).to be true
+    end
   end
 
   context "#num_oldest_priority_appeals_for_judge_by_docket" do
@@ -154,7 +164,8 @@ describe ByDocketDateDistribution, :all_dbs do
         .with(@new_acd.judge, @new_acd.batch_size)
         .and_return(add_dates_to_date_array(@new_acd.batch_size))
 
-      expect_any_instance_of(EvidenceSubmissionDocket).to receive(:age_of_n_oldest_nonpriority_appeals_available_to_judge)
+      expect_any_instance_of(EvidenceSubmissionDocket)
+        .to receive(:age_of_n_oldest_nonpriority_appeals_available_to_judge)
         .with(@new_acd.judge, @new_acd.batch_size)
         .and_return(add_dates_to_date_array(@new_acd.batch_size))
 

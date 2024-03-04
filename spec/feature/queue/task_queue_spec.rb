@@ -318,6 +318,7 @@ feature "Task queue", :all_dbs do
       User.authenticate!(user: mail_user)
     end
 
+    # rubocop:disable Metrics/AbcSize
     def validate_pulac_cerullo_tasks_created(task_class, label)
       visit "/queue/appeals/#{appeal.uuid}"
       find("button", text: COPY::TASK_SNAPSHOT_ADD_NEW_TASK_LABEL).click
@@ -358,6 +359,7 @@ feature "Task queue", :all_dbs do
       expect(page).to have_content("Assigned (1)")
       expect(page).to have_content(appeal.veteran_file_number)
     end
+    # rubocop:enable Metrics/AbcSize
 
     context "when we are a member of the mail team and a root task exists for the appeal" do
       let!(:root_task) { create(:root_task) }
@@ -971,6 +973,8 @@ feature "Task queue", :all_dbs do
       before do
         # force objects above to reload to ensure the visit doesn't fail to load them
         judge_task.reload
+        FeatureToggle.enable!(:mst_identification)
+        FeatureToggle.enable!(:pact_identification)
 
         # Add a user to the Colocated team so the task assignment will suceed.
         Colocated.singleton.add_user(create(:user))

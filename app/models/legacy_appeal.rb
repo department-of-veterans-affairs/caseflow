@@ -112,7 +112,7 @@ class LegacyAppeal < CaseflowRecord
   end
 
   # Note: If any of the names here are changed, they must also be changed in SpecialIssues.js 'specialIssue` value
-  # rubocop:disable Metrics/LineLength
+  # rubocop:disable Layout/LineLength
   SPECIAL_ISSUES = {
     contaminated_water_at_camp_lejeune: "Contaminated Water at Camp LeJeune",
     dic_death_or_accrued_benefits_united_states: "DIC - death, or accrued benefits - United States",
@@ -140,7 +140,7 @@ class LegacyAppeal < CaseflowRecord
     vocational_rehab: "Vocational Rehabilitation and Employment",
     waiver_of_overpayment: "Waiver of Overpayment"
   }.freeze
-  # rubocop:enable Metrics/LineLength
+  # rubocop:enable Layout/LineLength
 
   # Codes for Appeals Status API
   TYPE_CODES = {
@@ -350,6 +350,7 @@ class LegacyAppeal < CaseflowRecord
   ## BEGIN Hearing specific attributes and methods
 
   attr_writer :hearings
+
   def hearings
     @hearings ||= HearingRepository.hearings_for_appeal(vacols_id)
   end
@@ -381,6 +382,7 @@ class LegacyAppeal < CaseflowRecord
   ## END Hearing specific attributes and methods
 
   attr_writer :cavc_decisions
+
   def cavc_decisions
     @cavc_decisions ||= CAVCDecision.repository.cavc_decisions_by_appeal(vacols_id)
   end
@@ -630,6 +632,23 @@ class LegacyAppeal < CaseflowRecord
     end
   end
 
+  def mst?
+    return false unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user]) &&
+                        FeatureToggle.enabled?(:legacy_mst_pact_identification, user: RequestStore[:current_user])
+
+    issues.any?(&:mst_status) ||
+      (special_issue_list &&
+        special_issue_list.created_at < "2023-06-01".to_date &&
+        special_issue_list.military_sexual_trauma)
+  end
+
+  def pact?
+    return false unless FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user]) &&
+                        FeatureToggle.enabled?(:legacy_mst_pact_identification, user: RequestStore[:current_user])
+
+    issues.any?(&:pact_status)
+  end
+
   def documents_with_type(*types)
     @documents_by_type ||= {}
     types.reduce([]) do |accumulator, type|
@@ -644,6 +663,7 @@ class LegacyAppeal < CaseflowRecord
   end
 
   attr_writer :issues
+
   def issues
     @issues ||= self.class.repository.issues(vacols_id)
   end
@@ -914,6 +934,28 @@ class LegacyAppeal < CaseflowRecord
   def claimant_participant_id
     veteran_is_not_claimant ? person_for_appellant&.participant_id : veteran&.participant_id
   end
+
+  # :reek:FeatureEnvy
+  def hearing_day_if_schedueled
+    hearing_date = Hearing.find_by(appeal_id: id)
+
+    if hearing_date.nil?
+      nil
+
+    else
+      hearing_date.hearing_day.scheduled_for
+    end
+  end
+
+  def ui_hash
+    Intake::LegacyAppealSerializer.new(self).serializable_hash[:data][:attributes]
+  end
+
+  # rubocop:disable Naming/PredicateName
+  def is_legacy?
+    true
+  end
+  # rubocop:enable Naming/PredicateName
 
   private
 

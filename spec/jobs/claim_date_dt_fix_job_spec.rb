@@ -20,13 +20,15 @@ describe ClaimDateDtFixJob, :postres do
                                        uploaded_to_vbms_at: 7.days.ago)
   end
 
+  it_behaves_like "a Master Scheduler serializable object", ClaimDateDtFixJob
+
   context "when error, processed_at and uploaded_to_vbms_at are populated" do
     it "clears the error field" do
-      expect(subject.decision_docs_with_errors.count).to eq(3)
+      expect(subject.records_with_errors.count).to eq(3)
       subject.perform
 
       expect(decision_doc_with_error.reload.error).to be_nil
-      expect(subject.decision_docs_with_errors.count).to eq(0)
+      expect(subject.records_with_errors.count).to eq(0)
     end
   end
 

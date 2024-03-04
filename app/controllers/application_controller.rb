@@ -153,6 +153,14 @@ class ApplicationController < ApplicationBaseController
     }
   end
 
+  def case_distribution_url
+    {
+      title: "Case Distribution Controls",
+      link: "/case-distribution-controls",
+      sort_order: 6
+    }
+  end
+
   def hearing_application_url
     {
       title: "Hearings",
@@ -204,6 +212,8 @@ class ApplicationController < ApplicationBaseController
     admin_urls = []
     admin_urls.concat(manage_teams_menu_items) if current_user&.administered_teams&.any?
     admin_urls.push(manage_users_menu_item) if current_user&.can_view_user_management?
+    admin_urls.push(case_distribution_url) if current_user&.organizations&.any?(&:users_can_view_levers?)
+
     if current_user&.can_view_team_management? || current_user&.can_view_judge_team_management?
       admin_urls.unshift(manage_all_teams_menu_item)
     end
@@ -246,10 +256,16 @@ class ApplicationController < ApplicationBaseController
   end
 
   def case_search_home_page
-    return false if current_user.admin?
-    return false if current_user.organization_queue_user? || current_user.vso_employee?
-    return false if current_user.attorney_in_vacols? || current_user.judge_in_vacols?
-    return false if current_user.colocated_in_vacols?
+    invalid_user_types = [
+      current_user.admin?,
+      current_user.organization_queue_user?,
+      current_user.vso_employee?,
+      current_user.attorney_in_vacols?,
+      current_user.judge_in_vacols?,
+      current_user.colocated_in_vacols?
+    ]
+
+    return false if invalid_user_types.any?
 
     true
   end

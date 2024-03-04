@@ -1,39 +1,65 @@
 # frozen_string_literal: true
 
+require_relative "../../lib/helpers/master_scheduler_interface.rb"
 class PageRequestedByUserFixJob < CaseflowJob
-  ERROR_TEXT = "Page requested by the user is unavailable"
+  include MasterSchedulerInterface
 
   def initialize
     @stuck_job_report_service = StuckJobReportService.new
+    @start_time = nil
+    @end_time = nil
     super
   end
 
   def perform
-    clear_bge_errors if bges_with_errors.present?
+    start_time
+    return if records_with_errors.blank?
+
+    @stuck_job_report_service.append_record_count(records_with_errors.count, error_text)
+
+    loop_through_and_call_process_records
+
+    @stuck_job_report_service.append_record_count(records_with_errors.count, error_text)
+    @stuck_job_report_service.write_log_report(error_text)
+    end_time
+    log_processing_time
+  end
+
+  def error_text
+    "Page requested by the user is unavailable"
   end
 
   # :reek:FeatureEnvy
-  def resolve_error_on_records(object_type)
+  def loop_through_and_call_process_records
+    records_with_errors.each do |bge|
+      next if bge.end_product_establishment.nil? || bge.end_product_establishment.established_at.blank?
+
+      @stuck_job_report_service.append_single_record(bge.class.name, bge.id)
+      process_records(bge)
+    end
+  end
+
+  # :reek:FeatureEnvy
+  def process_records(object_type)
     object_type.clear_error!
   rescue StandardError => error
     log_error(error)
     @stuck_job_report_service.append_errors(object_type.class.name, object_type.id, error)
   end
 
-  def clear_bge_errors
-    @stuck_job_report_service.append_record_count(bges_with_errors.count, ERROR_TEXT)
-
-    bges_with_errors.each do |bge|
-      next if bge.end_product_establishment.nil? || bge.end_product_establishment.established_at.blank?
-
-      @stuck_job_report_service.append_single_record(bge.class.name, bge.id)
-      resolve_error_on_records(bge)
-    end
-    @stuck_job_report_service.append_record_count(bges_with_errors.count, ERROR_TEXT)
-    @stuck_job_report_service.write_log_report(ERROR_TEXT)
+  def records_with_errors
+    BoardGrantEffectuation.where("decision_sync_error ILIKE?", "%#{error_text}%")
   end
 
-  def bges_with_errors
-    BoardGrantEffectuation.where("decision_sync_error ILIKE?", "%#{ERROR_TEXT}%")
+  def log_processing_time
+    (@end_time && @start_time) ? @end_time - @start_time : 0
+  end
+
+  def start_time
+    @start_time ||= Time.zone.now
+  end
+
+  def end_time
+    @end_time ||= Time.zone.now
   end
 end

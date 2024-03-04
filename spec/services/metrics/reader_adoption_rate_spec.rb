@@ -9,7 +9,9 @@ describe Metrics::ReaderAdoptionRate do
   subject { Metrics::ReaderAdoptionRate.new(date_range).call }
 
   context "when some decisions were made outside the date range" do
-    shared_examples "decisions made using Reader" do |descr, ama_reader_cnt, ama_non_reader_cnt, legacy_reader_cnt, legacy_non_reader_cnt, rate|
+    shared_examples "decisions made using Reader" do
+      # rubocop:disable Metrics/ParameterLists
+      |descr, ama_reader_cnt, ama_non_reader_cnt, legacy_reader_cnt, legacy_non_reader_cnt, rate|
       context "when the environment is set up properly" do
         before do
           # Create some number of AMA appeals decisions with Reader views outside of the date range.
@@ -44,6 +46,7 @@ describe Metrics::ReaderAdoptionRate do
           expect(subject).to eq(rate)
         end
       end
+      # rubocop:enable Metrics/ParameterLists
     end
 
     include_examples "decisions made using Reader", "no decisions made using Reader", 0, 3, 0, 1, 0
