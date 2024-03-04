@@ -22,6 +22,7 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
     @stuck_job_report_service = stuck_job_report_service
   end
 
+  # :reek:InstanceVariableAssumption
   def start_processing_records
     return if self.class.error_records.blank?
 
