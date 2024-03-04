@@ -91,7 +91,7 @@ class CorrespondenceIntakeProcessor
         appeal_type: Correspondence.name,
         parent_id: correspondence.root_task.id,
         assigned_to: class_for_assigned_to(data[:assigned_to]).singleton,
-        instructions: data[:content]
+        instructions: data[:content].is_a?(Array) ? data[:content] : [data[:content]]
       )
     end
   end
