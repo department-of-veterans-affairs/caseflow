@@ -49,10 +49,10 @@ export const CorrespondenceReviewPackage = (props) => {
     // When a remove package task is active and pending review, the page is read-only
     const isPageReadOnly = (tasks) => {
       const assignedRemoveTask = tasks.find((task) => task.status === 'assigned' && task.type === 'RemovePackageTask');
-      const isMailTeamSupervisor = correspondence.organizations.find((org) => org.name === 'Mail Team Supervisor');
+      const isInboundOpsTeam = correspondence.organizations.find((org) => org.name === 'Inbound Ops Team');
 
       // Return true if a removePackageTask that is currently assigned is found, else false
-      return (typeof assignedRemoveTask !== 'undefined') && isMailTeamSupervisor;
+      return (typeof assignedRemoveTask !== 'undefined') && isInboundOpsTeam;
     };
 
     try {
