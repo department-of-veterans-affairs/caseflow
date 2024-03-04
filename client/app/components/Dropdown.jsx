@@ -36,7 +36,7 @@ export default class Dropdown extends React.Component {
         {label || name} {required && <span className="cf-required">Required</span>}
       </label>
       {errorMessage && <span className="usa-input-error-message" tabIndex={0}>{errorMessage}</span>}
-      <select value={value} onChange={this.onChange} id={name} disabled={readOnly}>
+      <select value={value} aria-label="select dropdown" onChange={this.onChange} id={name} disabled={readOnly}>
         { defaultText && <option defaultValue hidden>{defaultText}</option>}
         {options.map((option, index) =>
           <option

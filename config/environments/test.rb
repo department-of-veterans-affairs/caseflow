@@ -90,6 +90,10 @@ Rails.application.configure do
   ENV["BATCH_PROCESS_ERROR_DELAY"] ||= "3" # In number of hours
   ENV["BATCH_PROCESS_MAX_ERRORS_BEFORE_STUCK"] ||= "3" # When record errors for X time, it's declared stuck
 
+  # RequestIssue paginates_per offset (vbms intake)
+  ENV["REQUEST_ISSUE_PAGINATION_OFFSET"] ||= "10"
+  ENV["REQUEST_ISSUE_DEFAULT_UPPER_BOUND_PER_PAGE"] ||= "50"
+
   config.active_job.queue_adapter = :test
 
   # Disable SqlTracker from creating tmp/sql_tracker-*.json files -- https://github.com/steventen/sql_tracker/pull/10

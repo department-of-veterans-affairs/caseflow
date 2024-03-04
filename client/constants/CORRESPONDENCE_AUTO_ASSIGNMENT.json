@@ -1,0 +1,8 @@
+{
+  "max_assigned_tasks": 60,
+  "statuses": {
+    "started": "started",
+    "completed": "completed",
+    "error": "error"
+  }
+}

@@ -93,6 +93,11 @@ Rails.application.configure do
   ENV["BATCH_PROCESS_ERROR_DELAY"] ||= "12" # In number of hours
   ENV["BATCH_PROCESS_MAX_ERRORS_BEFORE_STUCK"] ||= "3" # When record errors for X time, it's declared stuck
 
+  # RequestIssue paginates_per offset (vbms intake)
+  ENV["REQUEST_ISSUE_PAGINATION_OFFSET"] ||= "10"
+  ENV["REQUEST_ISSUE_DEFAULT_UPPER_BOUND_PER_PAGE"] ||= "50"
+
+
   # Setup S3
   config.s3_enabled = ENV["AWS_BUCKET_NAME"].present?
   config.s3_bucket_name = ENV["AWS_BUCKET_NAME"]

@@ -8,6 +8,7 @@ import QueueTableBuilder from './QueueTableBuilder';
 import Alert from '../components/Alert';
 import AppSegment from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/AppSegment';
 import { clearCaseSelectSearch } from '../reader/CaseSelect/CaseSelectActions';
+import AutoAssignAlertBanner from './correspondence/component/AutoAssignAlertBanner';
 
 const containerStyles = css({
   position: 'relative'
@@ -23,12 +24,13 @@ class OrganizationQueue extends React.PureComponent {
   }
 
   render = () => {
-    const { success } = this.props;
+    const { success, featureToggles } = this.props;
 
     return <React.Fragment>
       {success && <Alert styling={alertPaddingStyles} type="success" title={success.title} message={success.detail} />}
+      {featureToggles.correspondence_queue && <AutoAssignAlertBanner />}
       <AppSegment filledBackground styling={containerStyles}>
-        <QueueTableBuilder />
+        <QueueTableBuilder featureToggles={featureToggles} />
       </AppSegment>
     </React.Fragment>;
   };
@@ -36,7 +38,8 @@ class OrganizationQueue extends React.PureComponent {
 
 OrganizationQueue.propTypes = {
   clearCaseSelectSearch: PropTypes.func,
-  success: PropTypes.object
+  success: PropTypes.object,
+  featureToggles: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({ success: state.ui.messages.success });
