@@ -46,7 +46,7 @@ RSpec.feature("The Correspondence Cases page") do
       20.times do
         correspondence = create(:correspondence)
         parent_task = create_correspondence_intake(correspondence, current_user)
-        create_efolderupload_task(correspondence, parent_task, user:current_user)
+        create_efolderupload_task(correspondence, parent_task, user: current_user)
       end
       # Used to mock a single task to compare task sorting
       EfolderUploadFailedTask.first.update!(type: "ReviewPackageTask")
@@ -356,19 +356,19 @@ RSpec.feature("The Correspondence Cases page") do
           rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
           task_array[index].create!(
             parent_id: rpt.id,
-            appeal_id: corres.id,
             appeal_type: "Correspondence",
+            appeal_id: corres.id,
             assigned_to: MailTeamSupervisor.singleton,
             assigned_by_id: rpt.assigned_to_id
           )
         end
       end
-       # Used to mock a single task to compare task sorting
-       ReassignPackageTask.first.correspondence.update!(
+      # Used to mock a single task to compare task sorting
+      ReassignPackageTask.first.correspondence.update!(
         va_date_of_receipt: Date.new(2000, 10, 10),
         updated_by_id: current_user.id
       )
-       ReassignPackageTask.last.correspondence.update!(
+      ReassignPackageTask.last.correspondence.update!(
         va_date_of_receipt: Date.new(2050, 10, 10),
         updated_by_id: current_user.id
       )
@@ -519,9 +519,9 @@ RSpec.feature("The Correspondence Cases page") do
           rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
           task_array[index].create!(
             parent_id: rpt.id,
-            appeal_id: corres.id,
             appeal_type: "Correspondence",
             assigned_to: MailTeamSupervisor.singleton,
+            appeal_id: corres.id,
             assigned_by_id: rpt.assigned_to_id
           )
         end

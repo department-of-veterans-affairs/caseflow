@@ -56,7 +56,7 @@ const CorrespondenceTableBuilder = (props) => {
     setStoredPaginationOptions({});
   }, []);
 
-  const calculateActiveTabIndex = (config) => {
+  const calcActiveTabIndex = (config) => {
     const tabNames = config.tabs.map((tab) => {
       return tab.name;
     });
@@ -70,7 +70,7 @@ const CorrespondenceTableBuilder = (props) => {
   const queueConfig = () => {
     const { config } = props;
 
-    config.active_tab_index = calculateActiveTabIndex(config);
+    config.active_tab_index = calcActiveTabIndex(config);
 
     return config;
   };

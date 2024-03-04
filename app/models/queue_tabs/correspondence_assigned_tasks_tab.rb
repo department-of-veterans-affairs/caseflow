@@ -3,6 +3,7 @@
 class CorrespondenceAssignedTasksTab < CorrespondenceQueueTab
   validate :assignee_is_user
 
+  # :reek:UtilityFunction
   def label
     Constants.QUEUE_CONFIG.CORRESPONDENCE_ASSIGNED_TASKS_LABEL
   end
@@ -11,6 +12,7 @@ class CorrespondenceAssignedTasksTab < CorrespondenceQueueTab
     Constants.QUEUE_CONFIG.CORRESPONDENCE_ASSIGNED_TASKS_TAB_NAME
   end
 
+  # :reek:UtilityFunction
   def description
     Constants.QUEUE_CONFIG.CORRESPONDENCE_ASSIGNED_TASKS_DESCRIPTION
   end
@@ -19,6 +21,7 @@ class CorrespondenceAssignedTasksTab < CorrespondenceQueueTab
     CorrespondenceTask.where(assigned_to_id: assignee.id)
   end
 
+  # :reek:UtilityFunction
   def column_names
     [
       Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
