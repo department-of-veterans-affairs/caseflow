@@ -157,6 +157,72 @@ describe InitialTasksFactory, :postgres do
             end
           end
         end
+
+        context "related to MST/PACT work" do
+          before do
+            FeatureToggle.enable!(:mst_identification)
+            FeatureToggle.enable!(:pact_identification)
+            FeatureToggle.enable!(:legacy_mst_pact_identification)
+            BvaIntake.singleton.add_user(intake_user)
+            User.authenticate!(user: intake_user)
+          end
+          after do
+            FeatureToggle.disable!(:mst_identification)
+            FeatureToggle.disable!(:pact_identification)
+            FeatureToggle.disable!(:legacy_mst_pact_identification)
+          end
+
+          let(:intake_user) { create(:user, css_id: "BVADWISE", station_id: "101") }
+          let(:docket_type) { Constants.AMA_DOCKETS.direct_review }
+          let(:appeal_with_mst_pact_issues) do
+            create(
+              :appeal,
+              docket_type: docket_type,
+              request_issues: build_list(
+                :request_issue, 4,
+                benefit_type: "compensation",
+                nonrating_issue_category: "Unknown Issue Category",
+                decision_date: "2023-04-28",
+                mst_status: true,
+                pact_status: true
+              ),
+              claimants: [
+                create(:claimant, participant_id: participant_id_with_pva)
+              ],
+              number_of_claimants: 1
+            )
+          end
+
+          let(:appeal_with_no_mst_or_pact_issues) do
+            create(
+              :appeal,
+              docket_type: docket_type,
+              request_issues: build_list(
+                :request_issue, 1,
+                benefit_type: "compensation",
+                nonrating_issue_category: "Unknown Issue Category",
+                decision_date: "2023-04-28",
+                mst_status: false,
+                pact_status: false
+              ),
+              claimants: [
+                create(:claimant, participant_id: participant_id_with_pva)
+              ],
+              number_of_claimants: 1
+            )
+          end
+
+          it "creates an EstablishmentTask when mst/pact is on an issue" do
+            InitialTasksFactory.new(appeal_with_mst_pact_issues).create_root_and_sub_tasks!
+            expect(appeal_with_mst_pact_issues.tasks.map(&:type)).to include("EstablishmentTask")
+            expect(appeal_with_mst_pact_issues.tasks.count { |task| task.is_a?(EstablishmentTask) }).to eq(1)
+          end
+
+          it "does not create an EstablishmentTask when mst/pact is not on an issue" do
+            InitialTasksFactory.new(appeal_with_no_mst_or_pact_issues).create_root_and_sub_tasks!
+            expect(appeal_with_no_mst_or_pact_issues.tasks.count { |task| task.is_a?(EstablishmentTask) }).to eq(0)
+          end
+        end
       end
 
       context "when it has multiple ihp-writing vsos" do
