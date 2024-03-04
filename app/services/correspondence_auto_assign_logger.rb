@@ -50,7 +50,7 @@ class CorrespondenceAutoAssignLogger
     )
 
     if correspondence.nod
-      @batch.num_nod_packages_assigned += 1
+      batch.num_nod_packages_assigned += 1
     else
       batch.num_packages_assigned += 1
     end
@@ -73,9 +73,9 @@ class CorrespondenceAutoAssignLogger
       status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.error,
       started_at: started_at
     )
-    
+
     if correspondence.nod
-      @batch.num_nod_packages_unassigned += 1
+      batch.num_nod_packages_unassigned += 1
     else
       batch.num_packages_unassigned += 1
     end
