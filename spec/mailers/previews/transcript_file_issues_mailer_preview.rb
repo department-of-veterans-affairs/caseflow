@@ -6,7 +6,7 @@
 class TranscriptFileIssuesMailerPreview < ActionMailer::Preview
   def send_issue_details
     details = {
-      action: "ACTION",
+      action: "convert",
       filetype: "VTT",
       direction: "Download",
       provider: "Webex",
@@ -26,7 +26,7 @@ class TranscriptFileIssuesMailerPreview < ActionMailer::Preview
 
   def webex_recording_list_issues
     details = {
-      action: "ACTION",
+      action: "convert",
       provider: "webex"
     }
     TranscriptFileIssuesMailer.webex_recording_list_issues(details)
