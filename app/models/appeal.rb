@@ -950,12 +950,12 @@ class Appeal < DecisionReview
     return true if relevant_tasks.all?(&:closed?)
   end
 
-  def is_legacy?
-    false
-  end
-
   def open_cavc_task
     CavcTask.open.where(appeal_id: self.id).any?
+  end
+
+  def is_legacy?
+    false
   end
 
   private
