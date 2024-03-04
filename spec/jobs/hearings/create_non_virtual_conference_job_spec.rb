@@ -2,49 +2,42 @@
 
 describe Hearings::CreateNonVirtualConferenceJob, type: :job do
   include ActiveJob::TestHelper
+  let(:nyc_ro_eastern) { "RO06" }
+  let(:video_type) { HearingDay::REQUEST_TYPES[:video] }
+  let(:hearing_day) { create(:hearing_day, regional_office: nyc_ro_eastern, request_type: video_type) }
+  let!(:hearing) do
+    create(:hearing, hearing_day: hearing_day).tap do |hearing|
+      hearing.meeting_type.update(service_name: "webex")
+    end
+  end
 
-  # context "#subject_for_conference" do
-  #   include_context "Enable both conference services"
+  subject { described_class.perform_now(hearing: hearing) }
 
-  #   let(:assigned_date) { "Sep 21, 2023" }
-  #   let(:id) { 2_000_006_656 }
-  #   let(:expected_date_parsed) { Date.parse(assigned_date) }
-  #   let(:hearing_day) do
-  #     build(
-  #       :hearing_day,
-  #       scheduled_for: expected_date_parsed,
-  #       id: id
-  #     )
-  #   end
+  context "Non Virtual Hearing" do
+    it "creates a conference for the hearing" do
+      subject
+      conference_link = ConferenceLink.find_by(hearing_id: hearing.id)
+      expect(conference_link.hearing_id).to eq(hearing.id)
+    end
+  end
 
-  #   subject { hearing_day.subject_for_conference }
+  context "job errors" do
+    before do
+      allow_any_instance_of(WebexService)
+        .to receive(:create_conference)
+        .with(hearing)
+        .and_raise(Caseflow::Error::WebexApiError.new(code: 400, message: "Fake Error"))
+    end
 
-  #   it "returns the expected meeting conference details" do
-  #     expected_date = "09 21, 2023"
-  #     is_expected.to eq("#{hearing_day.id}_#{expected_date}")
-  #   end
+    it "Successfully catches errors and adds to retry queue" do
+      subject
+      expect(enqueued_jobs.size).to eq(1)
+    end
 
-  #   context "nbf and exp" do
-  #     subject { hearing_day.nbf }
-
-  #     it "returns correct nbf" do
-  #       expect subject == 1_695_254_400
-  #     end
-
-  #     before do
-  #       subject { hearing_day.exp }
-  #     end
-
-  #     it "returns correct exp" do
-  #       expect subject == 1_695_340_799
-  #     end
-  #   end
-  # end
-  # Remove for new functionality (From hearing day)
-  # if FeatureToggle.enabled?(:webex_conference_service)
-  #   links << WebexConferenceLink.find_or_create_by!(
-  #     hearing_day: self,
-  #     created_by: created_by
-  #   )
-  # end
+    it "retries and logs errors" do
+      subject
+      expect(Rails.logger).to receive(:error).with(/Retrying/)
+      perform_enqueued_jobs { described_class.perform_later(hearing: hearing) }
+    end
+  end
 end

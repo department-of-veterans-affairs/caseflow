@@ -30,17 +30,17 @@ describe HearingUpdateForm, :all_dbs do
       allow(create_conference_job).to receive(:perform_now) # and do nothing
     end
 
-    subject { HearingUpdateForm.new(params) }
-
     context "non virtual hearing" do
-      before do
-        subject { HearingUpdateForm.new(hearing: hearing) }
-      end
+      subject { HearingUpdateForm.new(hearing: hearing) }
       it "adds to conference link table" do
         subject.update
-        # expect(subject).to eq("hello")
+        conference_link = ConferenceLink.find_by(hearing_id: hearing.id)
+        expect(conference_link).should_not be_nil
+        expect(conference_link.hearing_id).to eq(hearing.id)
       end
     end
+
+    subject { HearingUpdateForm.new(params) }
 
     context "updating a virtual hearing" do
       context "that is initialized and all emails have been sent" do

@@ -10,16 +10,8 @@ class Hearings::CreateNonVirtualConferenceJob < CaseflowJob
   attr_reader :hearing
 
   # Retry if Webex returns an invalid response.
-  retry_on(Caseflow::Error::WebexApiError, attempts: 10, wait: :exponentially_longer) do |job, exception|
-    Rails.logger.error("#{job.class.name} (#{job.job_id}) failed with error: #{exception}")
-
-    kwargs = job.arguments.first
-    extra = {
-      application: job.class.app_name.to_s,
-      hearing_id: kwargs[:hearing_id],
-    }
-
-    Raven.capture_exception(exception, extra: extra)
+  retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
+    job.log_error(exception)
   end
 
   def perform(hearing:)
@@ -30,5 +22,14 @@ class Hearings::CreateNonVirtualConferenceJob < CaseflowJob
       hearing: hearing,
       created_by: hearing.created_by
     )
+  end
+
+  def log_error(error)
+    Rails.logger.error("Retrying #{self.class.name} because failed with error: #{error}")
+    extra = {
+      application: self.class.name,
+      job_id: job_id
+    }
+    Raven.capture_exception(error, extra: extra)
   end
 end
