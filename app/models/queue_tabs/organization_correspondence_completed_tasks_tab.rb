@@ -3,6 +3,7 @@
 class OrganizationCorrespondenceCompletedTasksTab < CorrespondenceQueueTab
   validate :assignee_is_organization
 
+  # :reek:UtilityFunction
   def label
     Constants.QUEUE_CONFIG.CORRESPONDENCE_TEAM_COMPLETED_TASKS_LABEL
   end
@@ -11,6 +12,7 @@ class OrganizationCorrespondenceCompletedTasksTab < CorrespondenceQueueTab
     Constants.QUEUE_CONFIG.CORRESPONDENCE_TEAM_COMPLETED_TASKS_TAB_NAME
   end
 
+  # :reek:UtilityFunction
   def description
     Constants.QUEUE_CONFIG.CORRESPONDENCE_TEAM_COMPLETED_TASKS_DESCRIPTION
   end
@@ -31,6 +33,7 @@ class OrganizationCorrespondenceCompletedTasksTab < CorrespondenceQueueTab
       .where(id: completed_root_tasks + tasks_with_completed_children).recently_completed
   end
 
+  # :reek:UtilityFunction
   def column_names
     [
       Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
