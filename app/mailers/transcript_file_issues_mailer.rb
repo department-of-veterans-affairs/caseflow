@@ -39,9 +39,14 @@ class TranscriptFileIssuesMailer < ActionMailer::Base
 
   # The email address to send mail to
   def to_email_address
-    return "BVAHearingTeam@VA.gov" if Rails.deploy_env == :prod
-
-    "BID_Appeals_UAT@bah.com"
+    case Rails.deploy_env
+    when :demo, :development, :test
+      "Caseflow@test.com"
+    when :staging
+      "BID_Appeals_UAT@bah.com"
+    when :prod
+      "BVAHearingTeam@VA.gov"
+    end
   end
 
   # The email address to cc

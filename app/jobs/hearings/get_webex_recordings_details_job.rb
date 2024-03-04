@@ -14,11 +14,11 @@ class Hearings::GetWebexRecordingsDetailsJob < CaseflowJob
   retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
     file_name = job.arguments&.first&.[](:file_name)
     docket_number, hearing_id, class_name = file_name.split("_")
-    appeal_id = if class_name == "Hearing"
-                  Hearing.find_by(id: hearing_id).appeal.uuid
-                else
-                  LegacyHearing.find_by(id: hearing_id).appeal.vacols_id
-                end
+    hearing = if class_name == "Hearing"
+                Hearing.find_by(id: hearing_id)
+              else
+                LegacyHearing.find_by(id: hearing_id)
+              end
     details = {
       action: "retrieve",
       filetype: "vtt",
@@ -29,7 +29,7 @@ class Hearings::GetWebexRecordingsDetailsJob < CaseflowJob
       response: { status: exception.code, message: exception.message }.to_json,
       docket_number: docket_number
     }
-    TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
+    TranscriptFileIssuesMailer.send_issue_details(details, hearing.appeal.external_id)
     job.log_error(exception)
   end
   # rubocop:enable Layout/LineLength
