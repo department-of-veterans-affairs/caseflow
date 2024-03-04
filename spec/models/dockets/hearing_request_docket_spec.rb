@@ -236,6 +236,18 @@ describe HearingRequestDocket, :all_dbs do
         )
       end
 
+      it "returns aod affinity based on value" do
+        CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update_attributes(value: "89")
+        appeal_90_days = create_nonpriority_distributable_appeal_not_tied_to_judge_90_days
+
+        expected_result = [appeal_90_days]
+
+        tasks = subject
+
+        expect(tasks.length).to eq(expected_result.length)
+      end
+
+
       it "only distributes priority, distributable, hearing docket, genpop cases" do
         # will be included
         outside_affinity = matching_all_base_conditions_with_most_recent_held_hearing_outside_affinity
@@ -330,7 +342,7 @@ describe HearingRequestDocket, :all_dbs do
 
     it "distributes for 90 days, 3 years, 200 years" do
       # won't be included
-      
+
       appeal_200_years = create_nonpriority_distributable_appeal_not_tied_to_judge_200_years
       # will be included
       appeal_90_days = create_nonpriority_distributable_appeal_not_tied_to_judge_90_days
