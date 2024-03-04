@@ -13,9 +13,8 @@ class Hearings::GetWebexRecordingsDetailsJob < CaseflowJob
   # rubocop:disable Layout/LineLength
   retry_on(Caseflow::Error::WebexApiError, wait: :exponentially_longer) do |job, exception|
     file_name = job.arguments&.first&.[](:file_name)
-    docket_number = file_name.split("_")&.first
-    hearing_id = file_name.split("_")&.second
-    appeal_id = if Appeal.exists?(stream_docket_number: docket_number)
+    docket_number, hearing_id, class_name = file_name.split("_")
+    appeal_id = if class_name == "Hearing"
                   Hearing.find_by(id: hearing_id).appeal.uuid
                 else
                   LegacyHearing.find_by(id: hearing_id).appeal.vacols_id
