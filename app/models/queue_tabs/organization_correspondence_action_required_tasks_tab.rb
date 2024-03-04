@@ -3,6 +3,7 @@
 class OrganizationCorrespondenceActionRequiredTasksTab < CorrespondenceQueueTab
   validate :assignee_is_organization
 
+  # :reek:UtilityFunction
   def label
     Constants.QUEUE_CONFIG.CORRESPONDENCE_ACTION_REQUIRED_TASKS_LABEL
   end
@@ -11,6 +12,7 @@ class OrganizationCorrespondenceActionRequiredTasksTab < CorrespondenceQueueTab
     Constants.QUEUE_CONFIG.CORRESPONDENCE_ACTION_REQUIRED_TASKS_TAB_NAME
   end
 
+  # :reek:UtilityFunction
   def description
     Constants.QUEUE_CONFIG.CORRESPONDENCE_ACTION_REQUIRED_TASKS_DESCRIPTION
   end
@@ -19,12 +21,13 @@ class OrganizationCorrespondenceActionRequiredTasksTab < CorrespondenceQueueTab
     tasks = CorrespondenceTask.includes(*task_includes).package_action_tasks
 
     tasks = if RequestStore[:current_user].mail_supervisor?
-      tasks.where(assigned_to: assignee).active
-    else
-      tasks.where.not(type: RemovePackageTask.name).where(assigned_to: assignee).active
-    end
+              tasks.where(assigned_to: assignee).active
+            else
+              tasks.where.not(type: RemovePackageTask.name).where(assigned_to: assignee).active
+            end
   end
 
+  # :reek:UtilityFunction
   def column_names
     [
       Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,

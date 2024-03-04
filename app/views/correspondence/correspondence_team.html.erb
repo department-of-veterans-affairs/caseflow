@@ -11,6 +11,10 @@
     feedbackUrl: feedback_url,
     configUrl: '/queue/correspondence/team?json',
     flash: flash,
+    mailTeamUsers: @mail_team_users,
+    responseType: @response_type,
+    responseHeader: @response_header,
+    responseMessage: @response_message,
     featureToggles: {
       correspondence_queue: FeatureToggle.enabled?(:correspondence_queue, user: current_user)
     }
