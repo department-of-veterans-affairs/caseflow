@@ -19,7 +19,7 @@ RSpec.describe TranscriptFileIssuesMailer, type: :mailer do
     end
 
     it "renders the receiver email" do
-      expect(mail.to).to eq(["BID_Appeals_UAT@bah.com"])
+      expect(mail.to).to eq(["Caseflow@test.com"])
     end
 
     it "renders the sender email" do
@@ -71,7 +71,7 @@ RSpec.describe TranscriptFileIssuesMailer, type: :mailer do
     end
 
     it "renders the receiver email" do
-      expect(mail.to).to eq(["BID_Appeals_UAT@bah.com"])
+      expect(mail.to).to eq(["Caseflow@test.com"])
     end
 
     it "assigns to email address for prod environment" do
