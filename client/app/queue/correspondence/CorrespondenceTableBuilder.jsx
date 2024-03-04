@@ -48,6 +48,8 @@ const CorrespondenceTableBuilder = (props) => {
     querystring.parse(window.location.search.slice(1))
   );
 
+  const isMailTeamSupervisor = props.organizations.find((org) => org.name === 'Mail Team Supervisor');
+
   // Causes one additional rerender of the QueueTables/tabs but prevents saved pagination behavior
   // e.g. clearing filter in a tab, then swapping tabs, then swapping back and the filter will still be applied
   useEffect(() => {
@@ -139,37 +141,38 @@ const CorrespondenceTableBuilder = (props) => {
       label: sprintf(tabConfig.label, totalTaskCount),
       page: (
         <>
-          {(tabConfig.name === 'correspondence_unassigned' || tabConfig.name === 'correspondence_team_assigned') &&
-            <>
-              <p className="cf-margin-bottom-0rem">Assign to mail team user</p>
-              <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <SearchableDropdown
-                  className="cf-dropdown"
-                  name="Assign to mail team user"
-                  hideLabel
-                  styling={{ width: '200px', marginRight: '2rem' }}
-                  dropdownStyling={{ width: '200px' }}
-                />
-                {tabConfig.name === 'correspondence_unassigned' &&
+          {isMailTeamSupervisor &&
+            (tabConfig.name === 'correspondence_unassigned' || tabConfig.name === 'correspondence_team_assigned') &&
               <>
-                <Button
-                  name="Assign"
-                />
-                <span style={{ marginLeft: 'auto' }}>
-                  <Button
-                    name="Auto assign correspondence"
+                <p className="cf-margin-bottom-0rem">Assign to mail team user</p>
+                <div style={{ display: 'flex', flexDirection: 'row' }}>
+                  <SearchableDropdown
+                    className="cf-dropdown"
+                    name="Assign to mail team user"
+                    hideLabel
+                    styling={{ width: '200px', marginRight: '2rem' }}
+                    dropdownStyling={{ width: '200px' }}
                   />
-                </span>
+                  {tabConfig.name === 'correspondence_unassigned' &&
+                <>
+                  <Button
+                    name="Assign"
+                  />
+                  <span style={{ marginLeft: 'auto' }}>
+                    <Button
+                      name="Auto assign correspondence"
+                    />
+                  </span>
+                </>
+                  }
+                  {tabConfig.name === 'correspondence_team_assigned' &&
+              <Button
+                name="Reassign"
+              />
+                  }
+                </div>
+                <hr></hr>
               </>
-                }
-                {tabConfig.name === 'correspondence_team_assigned' &&
-            <Button
-              name="Reassign"
-            />
-                }
-              </div>
-              <hr></hr>
-            </>
           }
           <p className="cf-margin-top-0">
             {noCasesMessage || tabConfig.description}
