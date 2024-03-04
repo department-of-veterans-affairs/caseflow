@@ -17,7 +17,7 @@ class Appeal < DecisionReview
   include AppealAvailableHearingLocations
   include HearingRequestTypeConcern
   include AppealNotificationReportConcern
-  include SpecialtyCaseTeamMethods
+  include SpecialtyCaseTeamMethodsMixin
   prepend AppealDocketed
 
   has_many :appeal_views, as: :appeal

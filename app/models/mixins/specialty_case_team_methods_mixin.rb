@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module SpecialtyCaseTeamMethods
+module SpecialtyCaseTeamMethodsMixin
   def sct_appeal?
     request_issues.active.any?(&:sct_benefit_type?)
   end
