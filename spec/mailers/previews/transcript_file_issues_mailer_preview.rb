@@ -32,4 +32,3 @@ class TranscriptFileIssuesMailerPreview < ActionMailer::Preview
     TranscriptFileIssuesMailer.webex_recording_list_issues(details)
   end
 end
-
