@@ -46,6 +46,7 @@ class PtcpntPersnIdDepntOrgFix < CaseflowJob
     end
     # record count with errors after fix
     @stuck_job_report_service.append_record_count(self.class.error_records.count, ERROR_TEXT)
+    @stuck_job_report_service.write_log_report(ERROR_TEXT)
   end
 
   class << self
