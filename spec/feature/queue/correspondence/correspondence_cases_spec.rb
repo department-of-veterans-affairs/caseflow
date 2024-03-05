@@ -22,7 +22,7 @@ RSpec.feature("The Correspondence Cases page") do
     it "routes to correspondence cases if feature toggle is enabled" do
       FeatureToggle.enable!(:correspondence_queue)
       visit "/queue/correspondence"
-      expect(page).to have_current_path(%r{/queue/correspondence})
+      expect(page).to have_current_path("/queue/correspondence")
     end
   end
 
@@ -46,7 +46,7 @@ RSpec.feature("The Correspondence Cases page") do
       20.times do
         correspondence = create(:correspondence)
         parent_task = create_correspondence_intake(correspondence, current_user)
-        create_efolderupload_task(correspondence, parent_task, user:current_user)
+        create_efolderupload_task(correspondence, parent_task, user: current_user)
       end
       # Used to mock a single task to compare task sorting
       EfolderUploadFailedTask.first.update!(type: "ReviewPackageTask")
@@ -356,19 +356,19 @@ RSpec.feature("The Correspondence Cases page") do
           rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
           task_array[index].create!(
             parent_id: rpt.id,
-            appeal_id: corres.id,
             appeal_type: "Correspondence",
+            appeal_id: corres.id,
             assigned_to: MailTeamSupervisor.singleton,
             assigned_by_id: rpt.assigned_to_id
           )
         end
       end
-       # Used to mock a single task to compare task sorting
-       ReassignPackageTask.first.correspondence.update!(
+      # Used to mock a single task to compare task sorting
+      ReassignPackageTask.first.correspondence.update!(
         va_date_of_receipt: Date.new(2000, 10, 10),
         updated_by_id: current_user.id
       )
-       ReassignPackageTask.last.correspondence.update!(
+      ReassignPackageTask.last.correspondence.update!(
         va_date_of_receipt: Date.new(2050, 10, 10),
         updated_by_id: current_user.id
       )
@@ -519,9 +519,9 @@ RSpec.feature("The Correspondence Cases page") do
           rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
           task_array[index].create!(
             parent_id: rpt.id,
-            appeal_id: corres.id,
             appeal_type: "Correspondence",
             assigned_to: MailTeamSupervisor.singleton,
+            appeal_id: corres.id,
             assigned_by_id: rpt.assigned_to_id
           )
         end
@@ -699,7 +699,7 @@ RSpec.feature("The Correspondence Cases page") do
       visit "/queue/correspondence/team?tab=correspondence_team_assigned"
       expect(page).to have_content("Correspondence that is currently assigned to mail team users:")
       expect(page).to have_content("Assign to mail team user")
-      expect(page).to have_button("Reassign")
+      expect(page).to have_button("Reassign", disabled: true)
     end
 
     it "uses veteran details sort correctly." do
@@ -815,6 +815,85 @@ RSpec.feature("The Correspondence Cases page") do
     end
   end
 
+  context "Your Correspondence assigned tab" do
+    let(:current_user) { create(:user) }
+    before :each do
+      MailTeamSupervisor.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+    end
+
+    before do
+      Timecop.freeze(Time.zone.local(2020, 5, 15))
+      (1..10).map { create(:correspondence, :with_correspondence_intake_task) }
+      10.times do
+        review_correspondence = create(:correspondence)
+        rpt = ReviewPackageTask.find_by(appeal_id: review_correspondence.id)
+        rpt.update!(assigned_to: current_user, status: "assigned")
+        rpt.save!
+      end
+      10.times do
+        corr = create(:correspondence)
+
+        rpt = ReviewPackageTask.find_by(appeal_id: corr.id)
+
+        EfolderUploadFailedTask.create!(
+          parent_id: rpt.id,
+          appeal_id: corr.id,
+          appeal_type: "Correspondence",
+          assigned_to: current_user,
+          assigned_by_id: rpt.assigned_to_id
+        )
+      end
+
+      # Used to mock a single task to compare task sorting
+      EfolderUploadFailedTask.first.correspondence.update!(
+        va_date_of_receipt: Date.new(2000, 10, 10),
+        updated_by_id: current_user.id
+      )
+      EfolderUploadFailedTask.last.correspondence.update!(
+        va_date_of_receipt: Date.new(2050, 10, 10),
+        updated_by_id: current_user.id
+      )
+      FeatureToggle.enable!(:correspondence_queue)
+    end
+
+    it "successfully loads the assigned tab" do
+      visit "/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc"
+    end
+
+    it "uses VA DOR sort correctly." do
+      visit "/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc"
+      # put page in the sorted A-Z state
+      find("[aria-label='Sort by VA DOR']").click
+      first_date = find("tbody > tr:nth-child(1) > td:nth-child(2)")
+      # put page in the sorted Z-A state
+      find("[aria-label='Sort by VA DOR']").click
+      last_date = find("tbody > tr:nth-child(1) > td:nth-child(2)")
+      # return to A-Z, compare veteran details
+      find("[aria-label='Sort by VA DOR']").click
+      expect(find("tbody > tr:nth-child(1) > td:nth-child(2)").text == first_date)
+      # return to Z-A, compare details again
+      find("[aria-label='Sort by VA DOR']").click
+      expect(find("tbody > tr:nth-child(1) > td:nth-child(2)").text == last_date)
+    end
+
+    it "uses notes sort correctly" do
+      visit "/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc"
+      # put page in the sorted A-Z state
+      find("[aria-label='Sort by Notes']").click
+      first_note = find("tbody > tr:nth-child(1) > td:nth-child(5)").text
+      # put page in the sorted Z-A state
+      find("[aria-label='Sort by Notes']").click
+      second_note = find("tbody > tr:nth-child(1) > td:nth-child(5)").text
+      # return to A-Z, compare veteran details
+      find("[aria-label='Sort by Notes']").click
+      expect(find("tbody > tr:nth-child(1) > td:nth-child(5)").text == first_note)
+      # return to Z-A, compare details again
+      find("[aria-label='Sort by Notes']").click
+      expect(find("tbody > tr:nth-child(1) > td:nth-child(5)").text == second_note)
+    end
+  end
+
   context "correspondence cases pending tab" do
     let(:current_user) { create(:user) }
     before :each do
@@ -832,7 +911,6 @@ RSpec.feature("The Correspondence Cases page") do
                       PrivacyActRequestCorrespondenceTask]
 
         corres_array.each_with_index do |corres, index|
-          rpt = CavcCorrespondenceCorrespondenceTask.find_by(appeal_id: corres.id)
           task_array[index].create!(
             appeal_id: corres.id,
             appeal_type: "Correspondence",
