@@ -85,6 +85,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       )
   end
 
+  # docket.rb
   # Within the first 21 days, the appeal should be distributed only to the issuing judge.
   def non_genpop_for_judge(judge)
     joins(with_assigned_distribution_task_sql)
@@ -135,10 +136,6 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   def tied_to_ineligible_judge
     where(hearings: { disposition: "held", judge_id: HearingRequestDistributionQuery.ineligible_judges_id_cache })
       .where("1 = ?", FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ? 1 : 0)
-  end
-
-  def not_tied_to_ineligible_judge
-    where.not(hearings: { disposition: "held", judge_id: HearingRequestDistributionQuery.ineligible_judges_id_cache })
   end
 
   def tied_to_judges_with_exclude_appeals_from_affinity

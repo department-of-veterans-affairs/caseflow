@@ -43,8 +43,21 @@ class HearingRequestDistributionQuery
 
   attr_reader :base_relation, :genpop, :judge
 
+  # use nongenpop appeals as the base
   def not_genpop_appeals
-    base_relation.most_recent_hearings.tied_to_distribution_judge(judge)
+    base = base_relation.most_recent_hearings.tied_to_distribution_judge(judge)
+    appeals_to_return = []
+
+    # handling ama. omit means that we ignore the lever
+    appeals_to_return << base.exceeding_affinity_threshold if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days) # rubocop:disable Layout/LineLength
+
+
+    # handling aod. omit means that we ignore the lever
+    appeals_to_return << base.ama_aod_hearing_original_appeals if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_aod_affinity_days) # rubocop:disable Layout/LineLength
+    appeals_to_return << base.always_ama_aod_hearing_original_appeals if CaseDistributionLever.ama_hearing_case_aod_affinity_days == "infinite"
+
+    appeals_to_return.flatten.uniq
+
   end
 
   def only_genpop_appeals
@@ -66,33 +79,15 @@ class HearingRequestDistributionQuery
     # We are combining two queries using an array because using `or` doesn't work
     # due to incompatibilities between the two queries.
     appeals_to_return << most_recent_held_hearings_not_tied_to_any_judge
-    appeals_to_return << most_recent_held_hearings_exceeding_affinity_threshold if case_affinity_days_lever_value_is_selected?("ama_hearing_case_affinity_days") # rubocop:disable Layout/LineLength
     appeals_to_return << most_recent_held_hearings_tied_to_ineligible_judge
     appeals_to_return << no_hearings_or_no_held_hearings
     appeals_to_return << most_recent_held_hearings_tied_to_judges_with_exclude_appeals_from_affinity
 
-    # Include most_recent_held_hearings_ama_aod_hearing_original_appeals
-    # if case_distribution_lever is not infinite or omit
-    appeals_to_return << most_recent_held_hearings_ama_aod_hearing_original_appeals if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_aod_affinity_days) # rubocop:disable Layout/LineLength
-    appeals_to_return << most_recent_held_hearings_always_ama_aod_hearing_original_appeals if CaseDistributionLever.ama_hearing_case_aod_affinity_days == "infinite"
     appeals_to_return.flatten.uniq
   end
 
   def most_recent_held_hearings_exceeding_affinity_threshold
     base_relation.most_recent_hearings.exceeding_affinity_threshold
-  end
-
-  # ama_aod_hearing_original_appeals
-  def most_recent_held_hearings_ama_aod_hearing_original_appeals
-    if HearingRequestDistributionQuery.ineligible_judges_id_cache == nil || HearingRequestDistributionQuery.ineligible_judges_id_cache.length == 0
-      base_relation.most_recent_hearings.ama_aod_hearing_original_appeals
-    else
-      base_relation.most_recent_hearings.ama_aod_hearing_original_appeals.not_tied_to_ineligible_judge
-    end
-  end
-
-  def most_recent_held_hearings_always_ama_aod_hearing_original_appeals
-    base_relation.most_recent_hearings.always_ama_aod_hearing_original_appeals # {}.not_tied_to_ineligible_judge
   end
 
   def most_recent_held_hearings_not_tied_to_any_judge
