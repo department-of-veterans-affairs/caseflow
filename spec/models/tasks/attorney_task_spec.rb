@@ -138,6 +138,25 @@ describe AttorneyTask, :all_dbs do
       expect(subject).to eq(expected_actions)
     end
 
+    context "when the appeal is sct related" do
+      let(:sct_task) { create(:specialty_case_team_assign_task, :completed) }
+      let(:appeal) { sct_task.appeal }
+      let(:root_task) { appeal.root_task }
+      let(:parent) { appeal.tasks.of_type(:JudgeDecisionReviewTask).first }
+      let(:task) { appeal.tasks.of_type(:AttorneyTask).first }
+      let(:user) { task.assigned_to }
+
+      it "includes actions to submit decision draft, create admin action, and return to sct task" do
+        expected_actions = [
+          Constants.TASK_ACTIONS.REVIEW_DECISION_DRAFT.to_h,
+          Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
+          Constants.TASK_ACTIONS.CANCEL_TASK_AND_RETURN_TO_SCT_QUEUE.to_h
+        ]
+
+        expect(subject).to eq(expected_actions)
+      end
+    end
+
     context "when the current user is the assigning judge" do
       let(:user) { assigning_judge }
 
@@ -222,6 +241,30 @@ describe AttorneyTask, :all_dbs do
         expect(tasks.third.type).to eq JudgeAssignTask.name
         expect(tasks.third.status).to eq Constants.TASK_STATUSES.assigned
         expect(tasks.third.assigned_to).to eq judge
+      end
+
+      context "when attorney task is assigned from sct" do
+        let(:sct_task) { create(:specialty_case_team_assign_task, :completed) }
+        let(:appeal) { sct_task.appeal }
+        let(:root_task) { appeal.root_task }
+        let(:parent) { appeal.tasks.of_type(:JudgeDecisionReviewTask).first }
+        let(:attorney_task) { appeal.tasks.of_type(:AttorneyTask).first }
+
+        it "calls send_back_to_sct_queue!" do
+          tasks = subject
+
+          expect(tasks.first.type).to eq AttorneyTask.name
+          expect(tasks.first.status).to eq Constants.TASK_STATUSES.cancelled
+          expect(tasks.first.closed_at).to_not be nil
+
+          expect(tasks.second.type).to eq JudgeDecisionReviewTask.name
+          expect(tasks.second.status).to eq Constants.TASK_STATUSES.cancelled
+          expect(tasks.second.closed_at).to_not be nil
+
+          expect(tasks.third.type).to eq SpecialtyCaseTeamAssignTask.name
+          expect(tasks.third.status).to eq Constants.TASK_STATUSES.in_progress
+          expect(tasks.third.assigned_to).to eq SpecialtyCaseTeam.singleton
+        end
       end
 
       context "when the task is an attorney task subtype" do

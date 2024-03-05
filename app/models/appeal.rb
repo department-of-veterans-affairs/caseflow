@@ -960,6 +960,12 @@ class Appeal < DecisionReview
     tasks.of_type(:DistributionTask).exists?
   end
 
+  def has_completed_sct_assign_task?
+    tasks.any? do |task|
+      task.is_a?(SpecialtyCaseTeamAssignTask) && task.completed?
+    end
+  end
+
   private
 
   def business_lines_needing_assignment
