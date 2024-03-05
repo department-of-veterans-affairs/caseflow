@@ -137,21 +137,10 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       .where("distribution_task.assigned_at <= ?", CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
   end
 
-  def always_ama_hearing_original_appeals
-    joins(with_assigned_distribution_task_sql)
-      .where(hearings: { disposition: "held" })
-      .where("distribution_task.assigned_at <= ?", 0.days.ago)
-  end
-
   # Historical note: We formerly had not_tied_to_any_active_judge until CASEFLOW-1928,
   # when that distinction became irrelevant because cases become genpop after 30 days anyway.
   def not_tied_to_any_judge
     where(hearings: { disposition: "held", judge_id: nil })
-  end
-
-  def not_tied_to_ineligible_judge
-    where.not(hearings: { disposition: "held", judge_id: HearingRequestDistributionQuery.ineligible_judges_id_cache })
-      .where("1 = ?", FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ? 1 : 0)
   end
 
   def with_no_hearings
@@ -166,12 +155,16 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
     where(hearings: { disposition: "held" })
   end
 
+  def case_distribution_lever(lever)
+    CaseDistributionLever.find_by(item: lever)
+  end
+
   def lever_omitted?(lever)
-    CaseDistributionLever.send(lever) == "omit"
+    case_distribution_lever(lever).omit?
   end
 
   def lever_infinite?(lever)
-    CaseDistributionLever.send(lever) == "infinite"
+    case_distribution_lever(lever).infinite?
   end
 
   def case_affinity_days_lever_value_is_selected?(lever)

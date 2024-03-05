@@ -78,7 +78,7 @@ class HearingRequestDistributionQuery
   end
 
   def most_recent_held_hearings_always_ama_hearing_original_appeals
-    base_relation.most_recent_hearings.always_ama_hearing_original_appeals.not_tied_to_ineligible_judge
+    base_relation.most_recent_hearings.with_held_hearings
   end
 
   def most_recent_held_hearings_not_tied_to_any_judge
