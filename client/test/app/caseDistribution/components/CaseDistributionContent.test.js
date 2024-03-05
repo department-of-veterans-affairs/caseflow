@@ -48,14 +48,14 @@ describe('CaseDistributionContent', () => {
       saveChanges: {},
       leverStore,
       isAdmin: true,
-      loadAcdExcludeFromAffinity: true,
+      acdExcludeFromAffinity: true,
     };
 
     setup(testProps);
 
     expect(screen.getByText('Administration')).toBeInTheDocument();
     expect(screen.getByText('Case Distribution Algorithm Values')).toBeInTheDocument();
-    expect(screen.getByText('You may remove individual judges from Affinity Case Distribution')).toBeInTheDocument();
+    expect(screen.getByText('You may remove individual judges from Affinity Case Distribution within the setting on the Caseflow Team Management page.')).toBeInTheDocument();
     expect(screen.getByText('AMA Non-priority Distribution Goals by Docket')).toBeInTheDocument();
     expect(screen.getByText('Active Data Elements')).toBeInTheDocument();
     expect(screen.getByText('Inactive Data Elements')).toBeInTheDocument();
@@ -83,14 +83,14 @@ describe('CaseDistributionContent', () => {
       saveChanges: {},
       leverStore,
       isAdmin: true,
-      loadAcdExcludeFromAffinity: false,
+      acdExcludeFromAffinity: false,
     };
 
     setup(testProps);
 
     expect(screen.getByText('Administration')).toBeInTheDocument();
-    expect(screen.getByText('Case Distribution Algorithm Values')).toNotBeInTheDocument();
-    expect(screen.getByText('You may remove individual judges from Affinity Case Distribution')).toBeInTheDocument();
+    expect(screen.getByText('Case Distribution Algorithm Values')).toBeInTheDocument();
+    expect(screen.queryByText('You may remove individual judges from Affinity Case Distribution within the setting on the Caseflow Team Management page.')).not.toBeInTheDocument();
     expect(screen.getByText('AMA Non-priority Distribution Goals by Docket')).toBeInTheDocument();
     expect(screen.getByText('Active Data Elements')).toBeInTheDocument();
     expect(screen.getByText('Inactive Data Elements')).toBeInTheDocument();

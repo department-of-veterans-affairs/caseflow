@@ -1,6 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Alert from '../../components/Alert';
 import StaticLeversWrapper from './StaticLeversWrapper';
 import InteractableLeverWrapper from './InteractableLeversWrapper';
@@ -9,9 +8,13 @@ import {
   sectionSegmentStyling,
   sectionHeadingStyling,
   anchorJumpLinkStyling } from 'app/queue/StickyNavContentArea';
-import COPY from '../../../COPY';
 
-const CaseDistributionContent = ({ loadAcdExcludeFromAffinity }) => {
+import COPY from '../../../COPY';
+import { getExcludeFromAffinityStatus } from '../reducers/levers/leversSelector';
+
+const CaseDistributionContent = () => {
+  const theState = useSelector((state) => state);
+  const excludeFromAffinityCasesToggle = getExcludeFromAffinityStatus(theState);
 
   return (
     <div>
@@ -21,7 +24,7 @@ const CaseDistributionContent = ({ loadAcdExcludeFromAffinity }) => {
         <h2>{COPY.CASE_DISTRIBUTION_TITLE}</h2>
         <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_ALGORITHM_DESCRIPTION}</p>
 
-        {loadAcdExcludeFromAffinity && (<p>
+        {excludeFromAffinityCasesToggle && (<p>
           <Alert type="info">
             {COPY.CASE_DISTRIBUTION_INFO_ALERT_MESSAGE}
           </Alert>
@@ -68,14 +71,4 @@ const CaseDistributionContent = ({ loadAcdExcludeFromAffinity }) => {
   );
 };
 
-CaseDistributionContent.propTypes = {
-  acdExcludeFromAffinity: PropTypes.bool,
-};
-
-// eslint-disable-next-line no-unused-vars
-const mapStateToProps = (state) => ({
-});
-
-export default connect(
-  mapStateToProps
-)(CaseDistributionContent);
+export default CaseDistributionContent;

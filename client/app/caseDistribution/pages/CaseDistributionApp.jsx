@@ -23,7 +23,7 @@ class CaseDistributionApp extends React.PureComponent {
     return (
       <div>
         <div>
-          <CaseDistributionContent loadAcdExcludeFromAffinity />
+          <CaseDistributionContent />
         </div>
       </div>
     );

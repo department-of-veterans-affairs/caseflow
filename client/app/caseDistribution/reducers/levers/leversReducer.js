@@ -18,7 +18,8 @@ export const initialState = {
   displayBanner: false,
   leversErrors: [],
   errors: [],
-  isUserAcdAdmin: false
+  isUserAcdAdmin: false,
+  acdExcludeFromAffinity: false
 };
 
 const leversReducer = (state = initialState, action = {}) => {
@@ -41,6 +42,12 @@ const leversReducer = (state = initialState, action = {}) => {
         $set: action.payload.isUserAcdAdmin
       }
     });
+  case ACTIONS.SET_ACD_EXCLUDE_FROM_AFFINITY:
+    return update(state, {
+      acdExcludeFromAffinity: {
+        $set: action.payload.acdExcludeFromAffinity
+      }
+    })
   case ACTIONS.UPDATE_BOOLEAN_LEVER:
   case ACTIONS.UPDATE_NUMBER_LEVER:
   case ACTIONS.UPDATE_TEXT_LEVER: {
