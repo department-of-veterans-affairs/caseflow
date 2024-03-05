@@ -254,6 +254,28 @@ class Appeal < DecisionReview
     end
   end
 
+  # :reek:RepeatedConditionals
+  # decision issue status overrules request issues/special issue list for both mst and pact
+  def mst?
+    return false unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user])
+
+    return decision_issues.any?(&:mst_status) unless decision_issues.empty?
+
+    request_issues.active.any?(&:mst_status) ||
+      (special_issue_list &&
+        special_issue_list.created_at < "2023-06-01".to_date &&
+        special_issue_list.military_sexual_trauma)
+  end
+
+  # :reek:RepeatedConditionals
+  def pact?
+    return false unless FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
+
+    return decision_issues.any?(&:pact_status) unless decision_issues.empty?
+
+    request_issues.active.any?(&:pact_status)
+  end
+
   # Returns the most directly responsible party for an appeal when it is at the Board,
   # mirroring Legacy Appeals' location code in VACOLS
   def assigned_to_location
@@ -280,6 +302,7 @@ class Appeal < DecisionReview
     AppealStatusApiDecorator.new(self)
   end
 
+  # :reek:RepeatedConditionals
   def active_request_issues_or_decision_issues
     decision_issues.empty? ? active_request_issues : fetch_all_decision_issues
   end
@@ -353,6 +376,7 @@ class Appeal < DecisionReview
 
   # Clone issues and request_issues that the user selected
   # Also clone any decision_issues/decision_request_issues tied to the request issue
+  # :reek:RepeatedConditionals
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def clone_issues(parent_appeal, payload_params)
     # set request store to the user that split the appeal
@@ -477,7 +501,7 @@ class Appeal < DecisionReview
     end
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def clone_task_tree(parent_appeal, user_css_id)
     # get the task tree from the parent
     parent_ordered_tasks = parent_appeal.tasks.order(:created_at)
@@ -512,9 +536,9 @@ class Appeal < DecisionReview
       break if parent_appeal.tasks.count == tasks.count
     end
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
-  # clone_task is used for splitting an appeal, tie to css_id for split
+  # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
+  # clone_task is used for splitting an appeal, tie to css_id for split
   def clone_task(original_task, user_css_id)
     # clone the task
     dup_task = original_task.amoeba_dup
@@ -928,6 +952,10 @@ class Appeal < DecisionReview
     return true if relevant_tasks.all?(&:closed?)
   end
 
+  def is_legacy?
+    false
+  end
+
   def sct_appeal?
     request_issues.active.any?(&:sct_benefit_type?)
   end
@@ -939,6 +967,12 @@ class Appeal < DecisionReview
   def remove_from_current_queue!
     tasks.reject { |task| %w[RootTask DistributionTask].include?(task.type) }
       .each(&:cancel_task_and_child_subtasks)
+  end
+
+  def has_completed_sct_assign_task?
+    tasks.any? do |task|
+      task.is_a?(SpecialtyCaseTeamAssignTask) && task.completed?
+    end
   end
 
   private

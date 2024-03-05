@@ -1,5 +1,4 @@
-/* eslint-disable max-lines */
-/* eslint-disable max-len */
+/* eslint-disable max-lines, max-len */
 
 import querystring from 'querystring';
 import React from 'react';
@@ -222,6 +221,10 @@ class QueueApp extends React.PureComponent {
       appealId={props.match.params.appealId}
       taskId={props.match.params.taskId}
       checkoutFlow={props.match.params.checkoutFlow}
+      justificationFeatureToggle={this.props.featureToggles.justificationReason}
+      mstFeatureToggle={this.props.featureToggles.mstIdentification}
+      pactFeatureToggle={this.props.featureToggles.pactIdentification}
+      legacyMstPactFeatureToggle={this.props.featureToggles.legacyMstPactIdentification}
     />
   );
 
@@ -233,6 +236,8 @@ class QueueApp extends React.PureComponent {
         <SelectSpecialIssuesView
           appealId={appealId}
           taskId={taskId}
+          legacyMstIdentification={this.props.featureToggles.legacyMstPactIdentification}
+          mstIdentification={this.props.featureToggles.mstIdentification}
           prevStep={`/queue/appeals/${appealId}`}
           nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
         />
@@ -247,6 +252,10 @@ class QueueApp extends React.PureComponent {
       <AddEditIssueView
         nextStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
         prevStep={`/queue/appeals/${appealId}/tasks/${taskId}/${checkoutFlow}/dispositions`}
+        justificationFeatureToggle={this.props.featureToggles.justificationReason}
+        legacyMstPactFeatureToggle={this.props.featureToggles.legacyMstPactIdentification}
+        mstFeatureToggle={this.props.featureToggles.mstIdentification}
+        pactFeatureToggle={this.props.featureToggles.pactIdentification}
         {...props.match.params}
       />
     );
@@ -453,6 +462,10 @@ class QueueApp extends React.PureComponent {
 
   routedMarkTaskInProgressModal = (props) => (
     <InProgressTaskModal {...props.match.params} />
+  );
+
+  routedReturnToSctModal = (props) => (
+    <CancelTaskModal {...props.match.params} />
   );
 
   routedUpdateTaskAndAssignRegionalOfficeModal = (updateStatusTo) => (
@@ -1354,6 +1367,13 @@ class QueueApp extends React.PureComponent {
                 }`}
               title={`${PAGE_TITLES.CONVERT_HEARING_TO_VIRTUAL} | Caseflow`}
               render={this.routedChangeHearingRequestTypeToVirtual}
+            />
+            <PageRoute
+              exact
+              path={`/queue/appeals/:appealId/tasks/:taskId/${TASK_ACTIONS.CANCEL_TASK_AND_RETURN_TO_SCT_QUEUE.value
+                }`}
+              title="Return to SCT | Caseflow"
+              render={this.routedReturnToSctModal}
             />
             <PageRoute
               exact
