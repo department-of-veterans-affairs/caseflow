@@ -11,7 +11,6 @@ import {
 } from './AssignHearingsFields';
 import { NoVeteransToAssignMessage } from './Messages';
 import VeteranDetail from '../../../queue/VeteranDetail';
-import { PowerOfAttorneyName } from '../../../queue/PowerOfAttorneyDetail';
 import { docketCutoffLineStyle } from './AssignHearingsDocketLine';
 import {
   encodeQueryParams,
@@ -215,11 +214,6 @@ export default class AssignHearingsTable extends React.PureComponent {
         header: 'Power of Attorney (POA)',
         valueName: 'powerOfAttorneyName',
         columnName: 'Power of Attorney',
-        valueFunction: (row) => (
-          <PowerOfAttorneyName
-            appealId = {row.externalAppealId}
-          />
-        ),
         align: 'left',
         label: 'Filter by Power of Attorney',
         enableFilter: true,
