@@ -437,7 +437,7 @@ class ExternalApi::VADotGovService
             city: address.city,
             zipCode5: address.zip,
             zipCode4: address.zip4,
-            international_postal_code: address.international_postal_code,
+            internationalPostalCode: address.international_postal_code,
             stateProvince: { name: address.state_name, code: address.state },
             requestCountry: { countryName: address.country_name, countryCode: address.country },
             addressPOU: address.address_pou
