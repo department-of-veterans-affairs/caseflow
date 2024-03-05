@@ -230,27 +230,27 @@ class ExternalApi::VADotGovService
     #             "zip": "20422-0001",
     #             "city": "Washington",
     #             "state": "DC",
-    #             "address_1": "50 Irving Street, Northwest",
-    #             "address_2": "string",
-    #             "address_3": "string"
+    #             "address1": "50 Irving Street, Northwest",
+    #             "address2": "string",
+    #             "address3": "string"
     #           },
     #           "physical": {
     #             "zip": "20422-0001",
     #             "city": "Washington",
     #             "state": "DC",
-    #             "address_1": "50 Irving Street, Northwest",
-    #             "address_2": "string",
-    #             "address_3": "string"
+    #             "address1": "50 Irving Street, Northwest",
+    #             "address2": "string",
+    #             "address3": "string"
     #           }
     #         },
     #         "phone": {
     #           "fax": "202-555-1212",
     #           "main": "202-555-1212",
     #           "pharmacy": "202-555-1212",
-    #           "after_hours": "202-555-1212",
-    #           "patient_advocate": "202-555-1212",
-    #           "mental_health_clinic": "202-555-1212",
-    #           "enrollment_coordinator": "202-555-1212"
+    #           "afterHours": "202-555-1212",
+    #           "patientAdvocate": "202-555-1212",
+    #           "mentalHealthClinic": "202-555-1212",
+    #           "enrollmentCoordinator": "202-555-1212"
     #         },
     #         "hours": {
     #           "monday": "9AM-5PM",
@@ -271,23 +271,23 @@ class ExternalApi::VADotGovService
     #           "benefits": [
     #             "ApplyingForBenefits"
     #           ],
-    #           "last_updated": "2018-01-01"
+    #           "lastUpdated": "2018-01-01"
     #         },
     #         "satisfaction": {
     #           "health": {
-    #             "primary_care_urgent": 0.85,
-    #             "primary_care_routine": 0.85,
-    #             "specialty_care_urgent": 0.85,
-    #             "specialty_care_routine": 0.85
+    #             "primaryCareUrgent": 0.85,
+    #             "primaryCareRoutine": 0.85,
+    #             "specialtyCareUrgent": 0.85,
+    #             "specialtyCareRoutine": 0.85
     #           },
-    #           "effective_date": "2018-01-01"
+    #           "effectiveDate": "2018-01-01"
     #         },
     #         "mobile": false,
     #         "visn": "20",
-    #         "facility_type": "va_benefits_facility",
+    #         "facilityType": "va_benefits_facility",
     #         "lat": 38.9311137,
     #         "long": -77.0109110499999,
-    #         "wait_times": {
+    #         "waitTimes": {
     #           "health": [
     #             {
     #               "service": "Audiology",
@@ -295,12 +295,12 @@ class ExternalApi::VADotGovService
     #               "established": 5
     #             }
     #           ],
-    #           "effective_date": "2018-01-01"
+    #           "effectiveDate": "2018-01-01"
     #         },
-    #         "active_status": "A",
-    #         "operating_status": {
+    #         "activeStatus": "A",
+    #         "operatingStatus": {
     #           "code": "NORMAL",
-    #           "additional_info": "string"
+    #           "additionalInfo": "string"
     #         }
     #       }
     #     }
@@ -315,10 +315,10 @@ class ExternalApi::VADotGovService
     #   },
     #   "meta": {
     #     "pagination": {
-    #       "current_page": 1,
-    #       "per_page": 10,
-    #       "total_pages": 217,
-    #       "total_entries": 2162
+    #       "currentPage": 1,
+    #       "perPage": 10,
+    #       "totalPages": 217,
+    #       "totalEntries": 2162
     #     },
     #     "distances": [
     #       {
@@ -358,7 +358,7 @@ class ExternalApi::VADotGovService
       response = nil
 
       until remaining_ids.empty? || response.try(:next?) == false || response.try(:success?) == false
-        response = send_facilities_request(query: query.merge(page: page, per_page: 200)).merge(response)
+        response = send_facilities_request(query: query.merge(page: page, perPage: 200)).merge(response)
 
         remaining_ids -= response.data.pluck(:facility_id)
 
