@@ -20,7 +20,7 @@ module SpecialtyCaseTeamMethodsMixin
 
   def reopen_distribution_task!(user)
     distribution_task = tasks.find { |task| task.is_a?(DistributionTask) }
-    distribution_task.update!(status: "assigned", assigned_to: Bva.singleton, assigned_by: user)
+    distribution_task.update!(status: Constants.TASK_STATUSES.assigned, assigned_to: Bva.singleton, assigned_by: user)
   end
 
   # :reek:FeatureEnvy
@@ -29,6 +29,12 @@ module SpecialtyCaseTeamMethodsMixin
   end
 
   def remove_from_specialty_case_team!
-    tasks.find { |task| task.is_a?(SpecialtyCaseTeamAssignTask) }.cancelled!
+    tasks.find { |task| task.is_a?(SpecialtyCaseTeamAssignTask) }&.cancelled!
+  end
+
+  def move_sct_appeal_back_to_distribution!(user)
+    reopen_distribution_task!(user)
+    remove_from_current_queue!
+    remove_from_specialty_case_team!
   end
 end
