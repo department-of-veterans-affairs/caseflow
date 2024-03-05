@@ -43,6 +43,7 @@ export class PdfFile extends React.PureComponent {
     this.clientWidth = 0;
     this.currentPage = 0;
     this.columnCount = 1;
+    this.scrollTimer = null;
   }
 
   componentDidMount = () => {
@@ -432,6 +433,37 @@ export class PdfFile extends React.PureComponent {
       });
 
       this.onPageChange(minIndex, clientHeight);
+
+      if (this.scrollTimer) {
+        clearTimeout(this.scrollTimer);
+      }
+
+      this.scrollTimer = setTimeout(() => {
+        const scrollStart = performance.now();
+
+        const data = {
+          overscan: this.props.windowingOverscan,
+          documentType: this.props.documentType,
+          pageCount: this.props.pdfDocument.numPages,
+          pageIndex: this.props.pageIndex,
+          prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+          start: scrollStart,
+          end: performance.now()
+        };
+
+        storeMetrics(
+          this.props.documentId,
+          data,
+          {
+            message: `User scroll event to position ${this.scrollLeft}, ${this.scrollTop}`,
+            type: 'performance',
+            product: 'reader',
+            start: new Date(performance.timeOrigin + data.start),
+            end: new Date(performance.timeOrigin + data.end),
+            duration: data.start ? data.end - data.start : 0
+          }
+        );
+      }, 300);
     }
   }
 
@@ -596,6 +628,7 @@ PdfFile.propTypes = {
   onPageChange: PropTypes.func,
   onScrollToComment: PropTypes.func,
   pageDimensions: PropTypes.func,
+  pageIndex: PropTypes.number,
   pdfDocument: PropTypes.object,
   resetJumpToPage: PropTypes.func,
   rotation: PropTypes.number,
