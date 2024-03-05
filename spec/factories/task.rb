@@ -610,6 +610,18 @@ FactoryBot.define do
             judge.administered_judge_teams.first.add_user(attorney)
           end
         end
+
+        trait :ready_for_split_appeal do
+          action_required
+
+          after(:create) do |task, _evaluator|
+            create(:request_issue,
+                   decision_review: task.appeal,
+                   nonrating_issue_category: "Military Retired Pay",
+                   decision_date: 5.days.ago)
+            task.save
+          end
+        end
       end
 
       factory :assign_hearing_disposition_task, class: AssignHearingDispositionTask do
