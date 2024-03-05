@@ -113,7 +113,7 @@ feature "SpecialtyCaseTeamQueue", :all_dbs do
           page.find(".cf-select__placeholder", text: "Search or select").click
           click_dropdown(text: attorney.full_name)
           page.find("#taskInstructions").set("This is a test")
-          safe_click "#Assign-task-button-id-1"
+          click_button COPY::ASSIGN_TASK_BUTTON
         end
         expect(page).to have_content("You have successfully assigned 1 case to")
       end
