@@ -1456,6 +1456,7 @@
   "BAAA_USERS_MAX_QUEUE_REACHED": "Queues have reached maximum capacity for all team members",
   "BAAA_SUCCESS_MESSAGE": "Team members were assigned correspondences based on auto-assignment rules",
   "BAAA_FAILED_TITLE": "Auto-assignment for correspondence has failed",
+  "BAAA_UNSUCCESSFUL_TITLE": "Auto-assignment for correspondence could not be completed",
   "BAAA_ERROR_MESSAGE": "Please try again at a later time or contact the Help Desk",
   "CASE_DISTRIBUTION_TITLE": "Case Distribution Algorithm Values",
   "CASE_DISTRIBUTION_ALGORITHM_DESCRIPTION": "The Case Distribution Algorithm determines how cases are assigned to VLJs and their teams.  Current algorithm is \"Docket Date.\"",
