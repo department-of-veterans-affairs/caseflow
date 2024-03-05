@@ -433,4 +433,6 @@ Rails.application.routes.draw do
   get "admin/veteran_extract", to: "admin#veteran_extract"
   get "/mpi", to: "mpi#index"
   post "/mpi/search", to: "mpi#search"
+
+  get "/test_credentials", to: "test_credentials#index"
 end
