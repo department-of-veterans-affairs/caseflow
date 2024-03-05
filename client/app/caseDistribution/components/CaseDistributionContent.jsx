@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import Alert from '../../components/Alert';
 import StaticLeversWrapper from './StaticLeversWrapper';
 import InteractableLeverWrapper from './InteractableLeversWrapper';
@@ -9,7 +11,7 @@ import {
   anchorJumpLinkStyling } from 'app/queue/StickyNavContentArea';
 import COPY from '../../../COPY';
 
-const CaseDistributionContent = () => {
+const CaseDistributionContent = ({ loadAcdExcludeFromAffinity }) => {
 
   return (
     <div>
@@ -19,11 +21,11 @@ const CaseDistributionContent = () => {
         <h2>{COPY.CASE_DISTRIBUTION_TITLE}</h2>
         <p className="cf-lead-paragraph">{COPY.CASE_DISTRIBUTION_ALGORITHM_DESCRIPTION}</p>
 
-        <p>
+        {loadAcdExcludeFromAffinity && (<p>
           <Alert type="info">
             {COPY.CASE_DISTRIBUTION_INFO_ALERT_MESSAGE}
           </Alert>
-        </p>
+        </p>)}
 
         <div className="active-data-content" id="active-data-elements">  {/* Container for Active Levers*/}
           <h2 {...sectionHeadingStyling}>
@@ -66,4 +68,14 @@ const CaseDistributionContent = () => {
   );
 };
 
-export default CaseDistributionContent;
+CaseDistributionContent.propTypes = {
+  acdExcludeFromAffinity: PropTypes.bool,
+};
+
+// eslint-disable-next-line no-unused-vars
+const mapStateToProps = (state) => ({
+});
+
+export default connect(
+  mapStateToProps
+)(CaseDistributionContent);
