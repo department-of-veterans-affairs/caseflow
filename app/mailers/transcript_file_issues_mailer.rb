@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# rubocop:disable Rails/ApplicationMailer
 class TranscriptFileIssuesMailer < ActionMailer::Base
   default from: "Board of Veterans' Appeals <BoardofVeteransAppealsHearings@messages.va.gov>"
   layout "transcript_file_issues"
@@ -54,3 +55,5 @@ class TranscriptFileIssuesMailer < ActionMailer::Base
     "OITAppealsHelpDesk@va.gov" if Rails.deploy_env == :prod
   end
 end
+
+# rubocop:enable Rails/ApplicationMailer
