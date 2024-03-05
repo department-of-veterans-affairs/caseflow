@@ -47,9 +47,9 @@ class ExternalApi::VADotGovService::FacilitiesResponse < ExternalApi::VADotGovSe
 
     def address
       @address ||= Address.new(
-        address_line_1: physical_address[:address_1],
-        address_line_2: physical_address[:address_2],
-        address_line_3: physical_address[:address_3],
+        address_line_1: physical_address[:address1],
+        address_line_2: physical_address[:address2],
+        address_line_3: physical_address[:address3],
         city: physical_address[:city],
         state: physical_address[:state],
         zip: physical_address[:zip]
@@ -61,7 +61,7 @@ class ExternalApi::VADotGovService::FacilitiesResponse < ExternalApi::VADotGovSe
         facility_id: facility[:id],
         type: facility[:type],
         distance: distance,
-        facility_type: attrs[:facility_type],
+        facility_type: attrs[:facilityType],
         name: attrs[:name],
         classification: attrs[:classification],
         lat: attrs[:lat],
