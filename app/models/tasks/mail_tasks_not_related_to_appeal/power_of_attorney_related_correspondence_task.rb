@@ -1,4 +1,4 @@
 # frozen_string_literal: true
 
-class PowerOfAttorneyRelatedCorrespondenceTask < CorrespondenceTask
+class PowerOfAttorneyRelatedCorrespondenceTask < CorrespondenceMailTask
 end

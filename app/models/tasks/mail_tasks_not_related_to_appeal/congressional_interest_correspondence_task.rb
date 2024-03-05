@@ -1,4 +1,4 @@
 # frozen_string_literal: true
 
-class CongressionalInterestCorrespondenceTask < CorrespondenceTask
+class CongressionalInterestCorrespondenceTask < CorrespondenceMailTask
 end

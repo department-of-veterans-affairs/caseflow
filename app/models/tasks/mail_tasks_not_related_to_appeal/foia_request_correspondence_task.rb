@@ -1,4 +1,4 @@
 # frozen_string_literal: true
 
-class FoiaRequestCorrespondenceTask < CorrespondenceTask
+class FoiaRequestCorrespondenceTask < CorrespondenceMailTask
 end

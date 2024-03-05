@@ -1,4 +1,4 @@
 # frozen_string_literal: true
 
-class StatusInquiryCorrespondenceTask < CorrespondenceTask
+class StatusInquiryCorrespondenceTask < CorrespondenceMailTask
 end
