@@ -150,6 +150,12 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       .where("distribution_task.assigned_at <= ?", CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
   end
 
+  def always_ama_affinity_threshold
+    joins(with_assigned_distribution_task_sql)
+      .where(hearings: { disposition: "held" })
+      .where("distribution_task.assigned_at IS NOT NULL")
+  end
+
   # Historical note: We formerly had not_tied_to_any_active_judge until CASEFLOW-1928,
   # when that distinction became irrelevant because cases become genpop after 30 days anyway.
   def not_tied_to_any_judge
