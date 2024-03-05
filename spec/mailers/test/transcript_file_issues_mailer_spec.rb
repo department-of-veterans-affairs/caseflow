@@ -43,7 +43,7 @@ RSpec.describe TranscriptFileIssuesMailer, type: :mailer do
     end
 
     it "assigns @case_link for staging environment" do
-      allow(Rails).to receive(:deploy_env).and_return(:staging)
+      allow(Rails).to receive(:deploy_env).and_return(:uat)
       mail = described_class.send_issue_details(details, appeal_id).deliver_now
       expect(mail.body.encoded).to match("https://appeals.cf.uat.ds.va.gov/queue/appeals/#{appeal_id}")
     end
@@ -100,6 +100,7 @@ RSpec.describe TranscriptFileIssuesMailer, type: :mailer do
 
     it "does not assign @case_link if times is present" do
       details[:times] = "10:00 AM"
+      mail = described_class.webex_recording_list_issues(details).deliver_now
       expect(mail.body.encoded).not_to match("localhost:3000/queue/appeals/#{appeal_id}")
     end
 

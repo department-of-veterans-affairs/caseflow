@@ -42,7 +42,7 @@ class TranscriptFileIssuesMailer < ActionMailer::Base
   def to_email_address
     case Rails.deploy_env
     when :demo, :development, :test
-      ""
+      "Caseflow@test.com"
     when :uat
       "BID_Appeals_UAT@bah.com"
     when :prod
