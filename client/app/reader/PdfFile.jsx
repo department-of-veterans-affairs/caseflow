@@ -43,10 +43,10 @@ export class PdfFile extends React.PureComponent {
     this.clientWidth = 0;
     this.currentPage = 0;
     this.columnCount = 1;
+    this.metricIdentifier = null;
   }
 
   componentDidMount = () => {
-
     let requestOptions = {
       cache: true,
       withCredentials: true,
@@ -72,11 +72,13 @@ export class PdfFile extends React.PureComponent {
   getDocument = (requestOptions) => {
     const logId = uuid.v4();
 
+    this.metricIdentifier = uuid.v4();
+
     const documentData = {
       documentId: this.props.documentId,
       documentType: this.props.documentType,
       file: this.props.file,
-      prefetchDisabled: this.props.featureToggles.prefetchDisabled
+      prefetchDisabled: this.props.featureToggles.prefetchDisabled,
     };
 
     return ApiUtil.get(this.props.file, requestOptions).
@@ -87,7 +89,12 @@ export class PdfFile extends React.PureComponent {
           type: 'performance',
           product: 'reader',
           data: documentData,
+          eventId: this.metricIdentifier,
         };
+
+        if (resp && resp.header && resp.header['x-document-source']) {
+          metricData.additionalInfo = JSON.stringify({ source: `"${resp.header['x-document-source']}"` });
+        }
 
         /* The feature toggle reader_get_document_logging adds the progress of the file being loaded in console */
         if (this.props.featureToggles.readerGetDocumentLogging) {
@@ -140,7 +147,8 @@ export class PdfFile extends React.PureComponent {
               type: 'error',
               product: 'browser',
               prefetchDisabled: this.props.featureToggles.prefetchDisabled
-            }
+            },
+            this.metricIdentifier
           );
         }
 
@@ -171,7 +179,8 @@ export class PdfFile extends React.PureComponent {
         message: `Getting PDF document: "${file}"`,
         type: 'error',
         product: 'reader'
-      });
+      },
+      this.metricIdentifier);
     }
 
     throw reason;
@@ -204,6 +213,8 @@ export class PdfFile extends React.PureComponent {
       this.pdfDocument.destroy();
       this.props.clearPdfDocument(this.props.file, this.pdfDocument);
     }
+
+    this.metricIdentifier = null;
   }
 
   getPage = ({ rowIndex, columnIndex, style, isVisible }) => {
@@ -224,6 +235,7 @@ export class PdfFile extends React.PureComponent {
         pdfDocument={this.props.pdfDocument}
         featureToggles={this.props.featureToggles}
         measureTimeStartMs={pdfPageRenderTimeInMsStart}
+        metricsIdentifier={this.metricIdentifier}
       />
     </div>;
   }

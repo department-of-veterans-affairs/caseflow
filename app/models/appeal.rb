@@ -25,6 +25,8 @@ class Appeal < DecisionReview
   has_many :email_recipients, class_name: "HearingEmailRecipient"
   has_many :available_hearing_locations, as: :appeal, class_name: "AvailableHearingLocations"
   has_many :vbms_uploaded_documents, as: :appeal
+  has_many :correspondences_appeals
+  has_many :correspondences, through: :correspondences_appeals
 
   # decision_documents is effectively a has_one until post decisional motions are supported
   has_many :decision_documents, as: :appeal
@@ -652,7 +654,7 @@ class Appeal < DecisionReview
     conditionally_set_aod_based_on_age
     # One of the AOD motion reasons is 'age'. Keep interrogation of any motions separate from `aod_based_on_age`,
     # which reflects `claimant.advanced_on_docket_based_on_age?`.
-    aod_based_on_age || claimant&.advanced_on_docket_motion_granted?(self)
+    aod_based_on_age || AdvanceOnDocketMotion.granted.for_appeal(self).any?
   end
 
   # Prefer aod? over aod going forward, as this function returns a boolean
@@ -946,6 +948,10 @@ class Appeal < DecisionReview
     end
     return false if relevant_tasks.any?(&:open?)
     return true if relevant_tasks.all?(&:closed?)
+  end
+
+  def open_cavc_task
+    CavcTask.open.where(appeal_id: self.id).any?
   end
 
   def is_legacy?
