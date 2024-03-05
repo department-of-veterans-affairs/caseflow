@@ -4,15 +4,22 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
   # rubocop:disable Metrics/MethodLength
   def self.send_va_dot_gov_request(endpoint:, query: {}, **args)
     if endpoint == VADotGovService::FACILITIES_ENDPOINT
-      facilities = query[:facilityIds].split(",").map do |id|
+      facilities = query[:ids].split(",").map do |id|
         data = fake_facilities_data[:data][0]
         data["id"] = id
         data
       end
 
+      distances = query[:ids].split(",").map.with_index do |id, index|
+        {
+          id: id,
+          distance: index
+        }
+      end
+
       fake_facilities = fake_facilities_data
       fake_facilities[:data] = facilities
-      fake_facilities[:meta][:distances] = distances(query)
+      fake_facilities[:meta][:distances] = distances
       HTTPI::Response.new 200, {}, fake_facilities.to_json
     elsif endpoint == VADotGovService::ADDRESS_VALIDATION_ENDPOINT
       request_address_keys = args[:body][:requestAddress].keys
@@ -26,19 +33,6 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
       end
     elsif endpoint == VADotGovService::FACILITY_IDS_ENDPOINT
       HTTPI::Response.new 200, {}, fake_facilities_ids_data.to_json
-    end
-  end
-
-  def self.distances(query)
-    if query[:lat].present? && query[:long].present?
-      query[:facilityIds].split(",").map.with_index do |id, index|
-        {
-          id: id,
-          distance: index
-        }
-      end
-    else
-      []
     end
   end
 
