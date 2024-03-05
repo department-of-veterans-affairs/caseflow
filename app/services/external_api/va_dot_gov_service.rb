@@ -475,9 +475,9 @@ class ExternalApi::VADotGovService
     #         }
     #     ],
     #     "links": {
-    #         "self": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities?facilityIds=vha_688&lat=0.0&long=0.0&page=1&per_page=10",
-    #         "first": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities?facilityIds=vha_688&lat=0.0&long=0.0&page=1&per_page=10",
-    #         "last": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities?facilityIds=vha_688&lat=0.0&long=0.0&page=1&per_page=10"
+    #         "self": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities?facilityIds=vha_688",
+    #         "first": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities?facilityIds=vha_688",
+    #         "last": "https://sandbox-api.va.gov/services/va_facilities/v1/facilities?facilityIds=vha_688"
     #     },
     #     "meta": {
     #         "pagination": {
