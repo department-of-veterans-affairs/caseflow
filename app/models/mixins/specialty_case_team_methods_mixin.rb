@@ -32,7 +32,7 @@ module SpecialtyCaseTeamMethodsMixin
     tasks.find { |task| task.is_a?(SpecialtyCaseTeamAssignTask) }&.cancelled!
   end
 
-  def move_sct_appeal_back_to_distribution!(user)
+  def move_appeal_back_to_distribution!(user)
     reopen_distribution_task!(user)
     remove_from_current_queue!
     remove_from_specialty_case_team!
