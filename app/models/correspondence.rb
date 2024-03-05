@@ -11,11 +11,11 @@ class Correspondence < CaseflowRecord
   include PrintsTaskTree
   include AppealableCorrespondence
 
-  has_many :correspondence_documents
-  has_many :correspondence_intakes
-  has_many :correspondences_appeals
+  has_many :correspondence_documents, dependent: :destroy
+  has_many :correspondence_intakes, dependent: :destroy
+  has_many :correspondences_appeals, dependent: :destroy
   has_many :appeals, through: :correspondences_appeals
-  has_many :correspondence_relations
+  has_many :correspondence_relations, dependent: :destroy
   has_many :related_correspondences, through: :correspondence_relations, dependent: :destroy
   belongs_to :correspondence_type
   belongs_to :package_document_type
