@@ -177,8 +177,8 @@ class WorkQueue::TaskColumnSerializer
     if serialize_attribute?(params, columns)
       {
         css_id: assignee.try(:css_id),
-        is_organization: assignee.is_a?(Organization),
         name: assignee.is_a?(Organization) ? assignee.name : assignee.css_id,
+        is_organization: assignee.is_a?(Organization),
         type: assignee.class.name,
         id: assignee.id
       }
@@ -262,6 +262,22 @@ class WorkQueue::TaskColumnSerializer
 
     if serialize_attribute?(params, columns)
       object.appeal.try(:contested_claim?)
+    end
+  end
+
+  attribute :mst do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.BADGES.name]
+
+    if serialize_attribute?(params, columns)
+      object.appeal.try(:mst?)
+    end
+  end
+
+  attribute :pact do |object, params|
+    columns = [Constants.QUEUE_CONFIG.COLUMNS.BADGES.name]
+
+    if serialize_attribute?(params, columns)
+      object.appeal.try(:pact?)
     end
   end
 

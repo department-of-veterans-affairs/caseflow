@@ -21,6 +21,8 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   # Alternative: where("roles @> ARRAY[?]::varchar[]", role)
   scope :with_role, ->(role) { where("? = ANY(roles)", role) }
+  scope :mail_team_users, -> { joins(:organizations).where(organizations: { type: MailTeam.name }) }
+
 
   BOARD_STATION_ID = "101"
   LAST_LOGIN_PRECISION = 5.minutes
@@ -161,6 +163,15 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
 
   def administer_org_users?
     admin? || granted?("Admin Intake") || roles.include?("Admin Intake") || member_of_organization?(Bva.singleton)
+  end
+
+  # editing logic for MST and PACT
+  def can_edit_intake_issues?
+    return false unless FeatureToggle.enabled?(:mst_identification) ||
+                        FeatureToggle.enabled?(:pact_identification) ||
+                        FeatureToggle.enabled?(:legacy_mst_pact_identification)
+
+    BvaIntake.singleton.admins.include?(self) || member_of_organization?(ClerkOfTheBoard.singleton)
   end
 
   def can_view_overtime_status?
