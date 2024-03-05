@@ -30,6 +30,62 @@ describe ExternalApi::VADotGovService do
     end
   end
 
+  describe "#validate_street_address" do
+    it "returns validated street address" do
+      result = VADotGovService.validate_address(address)
+
+      body = JSON.parse(result.response.body)
+      message_keys = body["messages"].pluck("key")
+
+      expect(result.error).to be_nil
+      expect(result.data).to_not be_nil
+      expect(message_keys).to_not include("InvalidRequestStreetAddress")
+      expect(body["address"]).to include("addressLine1", "addressLine2", "addressLine3")
+    end
+  end
+
+  describe "#validate_address_state" do
+    it "returns validated state in the address" do
+      result = VADotGovService.validate_address(address)
+
+      body = JSON.parse(result.response.body)
+      message_keys = body["messages"].pluck("key")
+
+      expect(result.error).to be_nil
+      expect(result.data).to_not be_nil
+      expect(message_keys).to_not include("InvalidRequestState")
+      expect(body["address"]).to include("stateProvince")
+    end
+  end
+
+  describe "#validate_address_country" do
+    it "returns validated country in the address" do
+      result = VADotGovService.validate_address(address)
+
+      body = JSON.parse(result.response.body)
+      message_keys = body["messages"].pluck("key")
+
+      expect(result.error).to be_nil
+      expect(result.data).to_not be_nil
+      expect(message_keys).to_not include("InvalidRequestCountry")
+      expect(body["address"]).to include("country")
+    end
+  end
+
+  describe "#validate_presence_of_zip_code" do
+    it "returns validated presence of zip code in address" do
+      result = VADotGovService.validate_address(address)
+
+      body = JSON.parse(result.response.body)
+      message_keys = body["messages"].pluck("key")
+
+      expect(result.error).to be_nil
+      expect(result.data).to_not be_nil
+      expect(message_keys).to_not include("InvalidRequestPostalCode")
+      expect(body["address"]).to include("zipCode5")
+    end
+  end
+
   describe "#validate_zip_code" do
     it "returns invalid full address with valid geographic coordinates" do
       result = VADotGovService.validate_zip_code(address)
@@ -68,6 +124,16 @@ describe ExternalApi::VADotGovService do
       expect(result.data.pluck(:facility_id)).to match_array(%w[vha_757 vha_539])
       expect(result.body[:meta][:distances].pluck(:id, :distance)).to be_empty
       expect(result.error).to be_nil
+    end
+  end
+
+  describe "#check_facilities_attributes" do
+    it "returns facility attributes" do
+      result = VADotGovService.get_facility_data(ids: %w[vha_757 vha_539])
+
+      expect(result.body[:data].first.keys).to include(:id, :type, :attributes)
+      expect(result.body[:data].pluck(:attributes).first.keys).to include(:name, :facilityType, :classification)
+      expect(result.body[:data].pluck(:attributes).pluck(:address).pluck(:physical).first.keys).to include(:zip, :city, :state, :address1)
     end
   end
 
