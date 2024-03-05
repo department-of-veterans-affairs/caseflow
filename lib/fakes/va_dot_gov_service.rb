@@ -174,10 +174,10 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
               "fax": "555-555-3775 x",
               "main": "555-555-3760 x",
               "pharmacy": "555-555-0827 x",
-              "after_hours": "555-555-5555 x",
-              "patient_advocate": "555-555-5555 x7933",
-              "mental_health_clinic": "555-555-5555",
-              "enrollment_coordinator": "555-555-5555 x"
+              "afterHours": "555-555-5555 x",
+              "patientAdvocate": "555-555-5555 x7933",
+              "mentalHealthClinic": "555-555-5555",
+              "enrollmentCoordinator": "555-555-5555 x"
             },
             "hours": {
               "friday": "800AM-430PM",
@@ -198,17 +198,17 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
                 Audiology
                 Cardiology
               ],
-              "last_updated": "2019-01-02"
+              "lastUpdated": "2019-01-02"
             },
             "satisfaction": {
               "health": {
 
               },
-              "effective_date": nil
+              "effectiveDate": nil
             },
-            "wait_times": {
+            "waitTimes": {
               "health": [],
-              "effective_date": "2018-12-24"
+              "effectiveDate": "2018-12-24"
             }
           }
         }
@@ -222,10 +222,10 @@ class Fakes::VADotGovService < ExternalApi::VADotGovService
       },
       "meta": {
         "pagination": {
-          "current_page": 1,
-          "per_page": 30,
-          "total_pages": 77,
-          "total_entries": 2289
+          "currentPage": 1,
+          "perPage": 30,
+          "totalPages": 77,
+          "totalEntries": 2289
         },
         "distances": [
           {
