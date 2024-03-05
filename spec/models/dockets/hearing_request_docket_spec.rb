@@ -250,7 +250,7 @@ describe HearingRequestDocket, :all_dbs do
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                    genpop: "only_genpop")
-        result = hrdq.most_recent_held_hearings_ama_aod_hearing_original_appeals
+        result = hrdq.send(:most_recent_held_hearings_ama_aod_hearing_original_appeals)
 
         expect(result.length).to eq(expected_result.length)
       end
@@ -267,9 +267,10 @@ describe HearingRequestDocket, :all_dbs do
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                    genpop: "only_genpop")
-        results = hrdq.most_recent_held_hearings_ama_aod_hearing_original_appeals
+        result = hrdq.send(:most_recent_held_hearings_ama_aod_hearing_original_appeals)
 
-        expect(results.length).to eq(expected_result.length)
+
+        expect(result.length).to eq(expected_result.length)
       end
 
       it "returns aod affinity based on 100 value" do
@@ -284,9 +285,9 @@ describe HearingRequestDocket, :all_dbs do
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                    genpop: "only_genpop")
-        results = hrdq.most_recent_held_hearings_ama_aod_hearing_original_appeals
+        result = hrdq.send(:most_recent_held_hearings_ama_aod_hearing_original_appeals)
 
-        expect(results.length).to eq(expected_result.length)
+        expect(result.length).to eq(expected_result.length)
       end
 
       it "returns aod affinity based on infinite value" do
@@ -304,7 +305,7 @@ describe HearingRequestDocket, :all_dbs do
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                    genpop: "only_genpop")
-        result = hrdq.most_recent_held_hearings_always_ama_aod_hearing_original_appeals
+        result = hrdq.send(:most_recent_held_hearings_always_ama_aod_hearing_original_appeals)
 
         expect(result.length).to eq(expected_result.length)
       end
