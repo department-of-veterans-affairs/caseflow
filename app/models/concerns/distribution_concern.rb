@@ -45,21 +45,15 @@ module DistributionConcern
     ENV["SLACK_DISPATCH_ALERT_URL"]
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:disable Metrics/MethodLength
   # :reek:FeatureEnvy
   def create_sct_appeals(appeals_args, limit)
-    sct_predicates = [
-      proc { |appeal| appeal.request_issues.any? { |issue| issue.benefit_type == "vha" } }
-    ].freeze
-
     appeals = appeals(appeals_args)
       .limit(limit)
       .includes(:request_issues)
 
     sct_appeals = if FeatureToggle.enabled?(:specialty_case_team_distribution, user: RequestStore.store[:current_user])
-                    sct_appeals = appeals.select do |appeal|
-                      sct_predicates.any? { |predicate| predicate.call(appeal) }
-                    end
+                    sct_appeals = appeals.select(&:sct_appeal?)
                     appeals -= sct_appeals
                     sct_appeals
                   else
@@ -75,10 +69,7 @@ module DistributionConcern
 
         break unless inner_appeals.exists?
 
-        inner_sct_appeals = inner_appeals.select do |appeal|
-          sct_predicates.any? { |predicate| predicate.call(appeal) }
-        end
-
+        inner_sct_appeals = inner_appeals.select(&:sct_appeal?)
         inner_appeals -= inner_sct_appeals
         appeals += inner_appeals
         sct_appeals += inner_sct_appeals
@@ -89,5 +80,5 @@ module DistributionConcern
 
     [appeals, sct_appeals]
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:enable Metrics/MethodLength
 end

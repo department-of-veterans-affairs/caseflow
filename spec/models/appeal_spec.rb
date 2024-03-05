@@ -1663,7 +1663,7 @@ describe Appeal, :all_dbs do
     end
   end
 
-  describe "sct_appeal" do
+  describe "sct_appeal?" do
     let(:appeal) { create(:appeal, :with_vha_issue, :with_request_issues) }
     let(:appeal_2) { create(:appeal, :with_request_issues) }
 
@@ -1703,6 +1703,19 @@ describe Appeal, :all_dbs do
 
     it "should return false for appeal without a specialty case team assign task" do
       expect(appeal.completed_specialty_case_team_assign_task?).to be false
+    end
+  end
+
+  describe "distributed?" do
+    let(:appeal) { create(:appeal, :ready_for_distribution) }
+    let(:appeal_2) { create(:appeal) }
+
+    it "should return true if appeal has a distribution task" do
+      expect(appeal.distributed?).to be true
+    end
+
+    it "should return false for appeal does not have a distribution task" do
+      expect(appeal_2.distributed?).to be false
     end
   end
 
