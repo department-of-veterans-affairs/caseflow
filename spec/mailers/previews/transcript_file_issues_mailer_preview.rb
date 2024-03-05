@@ -11,7 +11,7 @@ class TranscriptFileIssuesMailerPreview < ActionMailer::Preview
       direction: "Download",
       provider: "Webex",
       docket_number: "123456",
-      times: "TIME_OR_LINK",
+      times: nil,
       api_call: "www.webext.test.com",
       response: {
         thing1key: "thing1value",
@@ -32,3 +32,4 @@ class TranscriptFileIssuesMailerPreview < ActionMailer::Preview
     TranscriptFileIssuesMailer.webex_recording_list_issues(details)
   end
 end
+
