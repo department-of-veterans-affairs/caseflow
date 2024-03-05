@@ -224,7 +224,7 @@ class CorrespondenceController < ApplicationController
     if mail_team_user && task_ids.present?
       set_banner_params(mail_team_user, task_ids&.count, tab)
     else
-      render json: { correspondence_config: CorrespondenceConfig.new(assignee: MailTeamSupervisor.singleton) }
+      render json: { correspondence_config: CorrespondenceConfig.new(assignee: InboundOpsTeam.singleton) }
     end
   end
 

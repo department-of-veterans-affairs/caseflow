@@ -107,7 +107,7 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
 
   describe "correspondence_team" do
     before do
-      MailTeamSupervisor.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       get correspondence_team_path, as: :json
     end
 
