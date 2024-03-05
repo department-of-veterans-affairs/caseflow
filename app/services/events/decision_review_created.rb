@@ -35,7 +35,7 @@ class Events::DecisionReviewCreated
           # Events::CreateUserOnEvent.handle_user_creation_on_event(event, css_id, station_id)
 
           # Create the Veteran. PII Info is stored in the headers
-          # Events::CreateVeteranOnEvent.handle_veteran_creation_on_event(event, headers, veteran)
+          # vet = Events::CreateVeteranOnEvent.handle_veteran_creation_on_event(event, headers, vbms_veteran)
 
           # Note: decision_review arg can either be a HLR or SC object. process! will only run if
           # decision_review.legacy_opt_in_approved is true

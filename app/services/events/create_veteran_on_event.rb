@@ -4,9 +4,9 @@
 # when an Event is received and that specific Veteran does not already exist in Caseflow
 class Events::CreateVeteranOnEvent
   class << self
-    def handle_veteran_creation_on_event(event, headers, veteran)
+    def handle_veteran_creation_on_event(event, headers, vbms_veteran)
       unless veteran_exist?(veteran_ssn(headers))
-        create_backfill_veteran(event, headers)
+        create_backfill_veteran(event, headers, vbms_veteran)
       else
         # return existing Veteran
         Veteran.find_by(ssn: veteran_ssn(headers))
@@ -17,7 +17,7 @@ class Events::CreateVeteranOnEvent
       Veteran.where(ssn: veteran_ssn).exists?
     end
 
-    def create_backfill_veteran(event, headers, veteran)
+    def create_backfill_veteran(event, headers, vbms_veteran)
       # Create Veteran without calling BGS
       vet = Veteran.create!(
         file_number: headers["X-VA-File-Number"],
@@ -25,10 +25,10 @@ class Events::CreateVeteranOnEvent
         first_name: headers["X-VA-Vet-First-Name"],
         last_name: headers["X-VA-Vet-Last-Name"],
         middle_name: headers["X-VA-Vet-Middle-Name"],
-        participant_id: veteran.participant_id,
+        participant_id: vbms_veteran.participant_id,
         bgs_last_synced_at: convert_milliseconds_to_datetime(veteran.bgs_last_synced_at),
-        name_suffix: veteran.name_suffix.presence,
-        date_of_death: veteran.date_of_death.presence
+        name_suffix: vbms_veteran.name_suffix.presence,
+        date_of_death: vbms_veteran.date_of_death.presence
       )
 
       # Update the CF cache
