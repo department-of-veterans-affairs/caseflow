@@ -1343,12 +1343,12 @@
       "timezone" : "America/Chicago"
    },
    "vha_740GA" : {
-      "address_1" : "2601 Veteran Drive",
+      "address_1" : "2106 Treasure Hills Boulevard",
       "address_2" : null,
       "address_3" : null,
       "city" : "Harlingen",
       "state" : "TX",
-      "zip" : "78550",
+      "zip" : "78550-8736",
       "timezone" : "America/Chicago"
    },
    "vha_740GB" : {
