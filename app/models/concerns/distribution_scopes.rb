@@ -172,4 +172,9 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
 
     true
   end
+
+  def always_tied_to_distribution_judge(judge)
+    joins(with_assigned_distribution_task_sql)
+      .where(hearings: { disposition: "held", judge_id: judge.id })
+  end
 end
