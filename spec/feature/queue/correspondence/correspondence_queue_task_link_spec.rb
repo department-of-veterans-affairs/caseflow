@@ -74,9 +74,9 @@ RSpec.feature "Task Links on Your Correspondence and Correspondence Cases pages"
             parent_id: parent_task&.id,
             appeal_id: correspondence&.id,
             appeal_type: "Correspondence",
-            assigned_to: MailTeamSupervisor.singleton
+            assigned_to: InboundOpsTeam.singleton
           )
-          MailTeamSupervisor.singleton.add_user(current_user)
+          InboundOpsTeam.singleton.add_user(current_user)
           visit "/queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
           find_all("#task-link").last.click
         end
@@ -98,9 +98,9 @@ RSpec.feature "Task Links on Your Correspondence and Correspondence Cases pages"
             parent_id: parent_task&.id,
             appeal_id: correspondence&.id,
             appeal_type: "Correspondence",
-            assigned_to: MailTeamSupervisor.singleton
+            assigned_to: InboundOpsTeam.singleton
           )
-          MailTeamSupervisor.singleton.add_user(current_user)
+          InboundOpsTeam.singleton.add_user(current_user)
           visit "/queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
           find_all("#task-link").last.click
         end

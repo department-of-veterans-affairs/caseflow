@@ -7,7 +7,7 @@ RSpec.feature("The Correspondence Cases page") do
   context "correspondence batch assignment cases for assigned and unassigned tabs" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeamSupervisor.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
     let(:organization) { MailTeam.singleton }
@@ -38,7 +38,7 @@ RSpec.feature("The Correspondence Cases page") do
             parent_id: rpt.id,
             appeal_id: corres.id,
             appeal_type: "Correspondence",
-            assigned_to: MailTeamSupervisor.singleton,
+            assigned_to: InboundOpsTeam.singleton,
             assigned_by_id: rpt.assigned_to_id
           )
         end
