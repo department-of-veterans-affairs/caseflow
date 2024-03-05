@@ -258,7 +258,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       click_dropdown(text: Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.label)
       click_dropdown(prompt: "Select a user", text: judge_two.full_name)
       fill_in("taskInstructions", with: "Test")
-      click_button COPY::ASSIGN_TASK_BUTTON
+      click_button COPY::MODAL_SUBMIT_BUTTON
 
       expect(page).to have_content("Task reassigned to #{judge_two.full_name}")
 
@@ -305,7 +305,7 @@ RSpec.feature "Judge assignment to attorney and judge", :all_dbs do
       click_dropdown(text: Constants.TASK_ACTIONS.REASSIGN_TO_JUDGE.label)
       click_dropdown(prompt: "Select a user", text: judge_two.full_name)
       fill_in("taskInstructions", with: "Test")
-      click_button COPY::ASSIGN_TASK_BUTTON
+      click_button COPY::MODAL_SUBMIT_BUTTON
 
       click_on("Switch views")
       click_on(format(COPY::JUDGE_ASSIGN_DROPDOWN_LINK_LABEL, judge_one.css_id))
