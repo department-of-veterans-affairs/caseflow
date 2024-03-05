@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector, connect } from 'react-redux';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
-import { connect } from 'react-redux';
 import querystring from 'querystring';
-
 import Button from '../../components/Button';
 import SearchableDropdown from '../../components/SearchableDropdown';
 import QueueTable from '../QueueTable';
@@ -23,6 +22,7 @@ import {
   vaDor,
   veteranDetails
 } from '../components/TaskTableColumns';
+
 import { tasksWithCorrespondenceFromRawTasks } from '../utils';
 
 import COPY from '../../../COPY';
@@ -42,11 +42,27 @@ const rootStyles = css({
  * - @assignedTasks {array[object]} array of task objects to appear in the assigned tab
  **/
 
+const buildMailUserData = (data) => {
+  return data.map((user) => {
+    return {
+      value: user,
+      label: user
+    };
+  });
+};
+
 const CorrespondenceTableBuilder = (props) => {
+  const [selectedMailTeamUser, setSelectedMailTeamUser] = useState(null);
+  const [isAnyCheckboxSelected, setIsAnyCheckboxSelected] = useState(false);
+  const [isDropdownItemSelected, setIsDropdownItemSelected] = useState(false);
+  const selectedTasks = useSelector((state) => state.intakeCorrespondence.selectedTasks);
+
   const paginationOptions = () => querystring.parse(window.location.search.slice(1));
   const [storedPaginationOptions, setStoredPaginationOptions] = useState(
     querystring.parse(window.location.search.slice(1))
   );
+
+  const isMailTeamSupervisor = props.organizations.find((org) => org.name === 'Mail Team Supervisor');
 
   // Causes one additional rerender of the QueueTables/tabs but prevents saved pagination behavior
   // e.g. clearing filter in a tab, then swapping tabs, then swapping back and the filter will still be applied
@@ -54,7 +70,29 @@ const CorrespondenceTableBuilder = (props) => {
     setStoredPaginationOptions({});
   }, []);
 
-  const calculateActiveTabIndex = (config) => {
+  const handleMailTeamUserChange = (selectedUser) => {
+    setSelectedMailTeamUser(selectedUser);
+    setIsDropdownItemSelected(Boolean(selectedUser));
+  };
+
+  const handleCheckboxChange = (isChecked) => {
+    setIsAnyCheckboxSelected(isChecked);
+  };
+
+  const handleAssignButtonClick = () => {
+    // Logic to handle assigning tasks to the selected mail team user
+    if (selectedMailTeamUser && isDropdownItemSelected && isAnyCheckboxSelected) {
+      const mailTeamUser = selectedMailTeamUser.value;
+      const taskIds = selectedTasks.map((task) => task);
+      let newUrl = window.location.href;
+
+      newUrl += newUrl.includes('?') ? `&user=${mailTeamUser}&taskIds=${taskIds}` :
+        `?user=${mailTeamUser}&taskIds=${taskIds}`;
+      window.location.href = newUrl;
+    }
+  };
+
+  const calcActiveTabIndex = (config) => {
     const tabNames = config.tabs.map((tab) => {
       return tab.name;
     });
@@ -68,7 +106,7 @@ const CorrespondenceTableBuilder = (props) => {
   const queueConfig = () => {
     const { config } = props;
 
-    config.active_tab_index = calculateActiveTabIndex(config);
+    config.active_tab_index = calcActiveTabIndex(config);
 
     return config;
   };
@@ -88,7 +126,7 @@ const CorrespondenceTableBuilder = (props) => {
       [QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name]: veteranDetails(),
       [QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name]: vaDor(tasks, filterOptions),
       [QUEUE_CONFIG.COLUMNS.NOTES.name]: notes(),
-      [QUEUE_CONFIG.COLUMNS.CHECKBOX_COLUMN.name]: checkboxColumn(),
+      [QUEUE_CONFIG.COLUMNS.CHECKBOX_COLUMN.name]: checkboxColumn(handleCheckboxChange),
       [QUEUE_CONFIG.COLUMNS.ACTION_TYPE.name]: actionType(),
     };
 
@@ -136,7 +174,8 @@ const CorrespondenceTableBuilder = (props) => {
       label: sprintf(tabConfig.label, totalTaskCount),
       page: (
         <>
-          {(tabConfig.name === 'correspondence_unassigned' || tabConfig.name === 'correspondence_team_assigned') &&
+          {isMailTeamSupervisor &&
+            (tabConfig.name === 'correspondence_unassigned' || tabConfig.name === 'correspondence_team_assigned') &&
             <>
               <p className="cf-margin-bottom-0rem">Assign to mail team user</p>
               <div style={{ display: 'flex', flexDirection: 'row' }}>
@@ -146,22 +185,28 @@ const CorrespondenceTableBuilder = (props) => {
                   hideLabel
                   styling={{ width: '200px', marginRight: '2rem' }}
                   dropdownStyling={{ width: '200px' }}
+                  options={buildMailUserData(props.mailTeamUsers)}
+                  onChange={handleMailTeamUserChange}
                 />
                 {tabConfig.name === 'correspondence_unassigned' &&
               <>
                 <Button
                   name="Assign"
+                  onClick={handleAssignButtonClick}
+                  disabled={!isDropdownItemSelected || !isAnyCheckboxSelected}
                 />
                 <span style={{ marginLeft: 'auto' }}>
                   <Button
                     name="Auto assign correspondence"
-                  />
-                </span>
-              </>
+                    />
+                  </span>
+                </>
                 }
                 {tabConfig.name === 'correspondence_team_assigned' &&
             <Button
               name="Reassign"
+              onClick={handleAssignButtonClick}
+              disabled={!isDropdownItemSelected || !isAnyCheckboxSelected}
             />
                 }
               </div>
@@ -233,7 +278,9 @@ CorrespondenceTableBuilder.propTypes = {
   }),
   userCanBulkAssign: PropTypes.bool,
   isVhaOrg: PropTypes.bool,
-  featureToggles: PropTypes.object
+  featureToggles: PropTypes.object,
+  mailTeamUsers: PropTypes.array,
+  selectedTasks: PropTypes.array,
 };
 
 export default connect(mapStateToProps)(CorrespondenceTableBuilder);
