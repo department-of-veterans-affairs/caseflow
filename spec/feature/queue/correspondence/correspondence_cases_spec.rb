@@ -198,7 +198,7 @@ RSpec.feature("The Correspondence Cases page") do
   context "correspondence tasks completed tab" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeamSupervisor.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
 
@@ -343,7 +343,7 @@ RSpec.feature("The Correspondence Cases page") do
   context "correspondence cases action required tab" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeamSupervisor.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
     before do
@@ -358,7 +358,7 @@ RSpec.feature("The Correspondence Cases page") do
             parent_id: rpt.id,
             appeal_type: "Correspondence",
             appeal_id: corres.id,
-            assigned_to: MailTeamSupervisor.singleton,
+            assigned_to: InboundOpsTeam.singleton,
             assigned_by_id: rpt.assigned_to_id
           )
         end
@@ -505,7 +505,7 @@ RSpec.feature("The Correspondence Cases page") do
   context "correspondence cases unassigned tab" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeamSupervisor.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
 
@@ -520,7 +520,7 @@ RSpec.feature("The Correspondence Cases page") do
           task_array[index].create!(
             parent_id: rpt.id,
             appeal_type: "Correspondence",
-            assigned_to: MailTeamSupervisor.singleton,
+            assigned_to: InboundOpsTeam.singleton,
             appeal_id: corres.id,
             assigned_by_id: rpt.assigned_to_id
           )
@@ -656,7 +656,7 @@ RSpec.feature("The Correspondence Cases page") do
   context "correspondence cases assigned tab" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeamSupervisor.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
 
@@ -818,7 +818,7 @@ RSpec.feature("The Correspondence Cases page") do
   context "Your Correspondence assigned tab" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeamSupervisor.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
 
