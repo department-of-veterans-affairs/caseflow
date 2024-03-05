@@ -78,6 +78,10 @@ class CorrespondenceAutoAssigner
       self.batch = run_verifier.verified_batch
       self.current_user = run_verifier.verified_user
     else
+      logger.fail_run_validation(
+        batch_auto_assignment_attempt_id: batch_auto_assignment_attempt_id,
+        msg: run_verifier.err_msg
+      )
       fail run_verifier.err_msg
     end
   end
