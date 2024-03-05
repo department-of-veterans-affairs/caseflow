@@ -56,7 +56,7 @@ class TestCredentialsController < ApplicationController
     end
   end
 
-  # Only allow for routes to be interacted with in non-production environments
+  # Private: Only allow for routes to be interacted with in non-production environments
   def check_environment
     return render status: :not_found if Rails.env.production?
   end
