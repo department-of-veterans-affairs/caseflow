@@ -40,7 +40,7 @@ class CorrespondenceAutoAssignLogger
   def fail_run_validation(batch_auto_assignment_attempt_id:, msg:)
     failed_batch = BatchAutoAssignmentAttempt.find(batch_auto_assignment_attempt_id)
 
-    return unless failed_batch.present?
+    return if failed_batch.blank?
 
     failed_batch.update!(
       status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.error,
