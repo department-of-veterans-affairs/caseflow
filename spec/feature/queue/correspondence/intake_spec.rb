@@ -72,7 +72,7 @@ RSpec.feature("The Correspondence Intake page") do
 
     it "successfully navigates on cancel link click" do
       click_on("button-Cancel")
-      expect(page).to have_current_path("/queue/correspondence")
+      expect(page).to have_current_path("/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc")
     end
 
     it "successfully advances to the second step" do
@@ -360,12 +360,12 @@ RSpec.feature("The Correspondence Intake page") do
         correspondence = create(:correspondence)
         parent_task = create_correspondence_intake(correspondence, current_user)
         create_efolderupload_task(correspondence, parent_task, user: current_user)
-        @last_correspondence_uuid = Correspondence.last.uuid
+        @last_correspondence_uuid = EfolderUploadFailedTask.first.correspondence.uuid
       end
       puts "Last correspondence UUID: #{@last_correspondence_uuid}"
 
       # Used to mock a single task to compare task sorting
-      EfolderUploadFailedTask.first.update!(type: "ReviewPackageTask")
+      EfolderUploadFailedTask.first.update!(type: "CorrespondenceIntakeTask")
       EfolderUploadFailedTask.first.correspondence.update!(
         va_date_of_receipt: Date.new(2000, 10, 10),
         updated_by_id: current_user.id
