@@ -30,13 +30,16 @@ class Events::DecisionReviewCreated
 
         # ActiveRecord::Base.transaction do
           # TODO: backfill models as needed, set Event.completed_at when finished
+
           # Note: createdByStation == station_id, createdByUsername == css_id
           # Events::CreateUserOnEvent.handle_user_creation_on_event(event, css_id, station_id)
+
+          # Create the Veteran. PII Info is stored in the headers
+          # vet = Events::CreateVeteranOnEvent.handle_veteran_creation_on_event(event, headers, vbms_veteran)
+
           # Note: decision_review arg can either be a HLR or SC object. process! will only run if
           # decision_review.legacy_opt_in_approved is true
-          # Events::DecisionReviewCreated::UpdateVacolsOnOptin.process!(decision_review)
-          # Note: event, user, and veteran need to be before this call.
-          # Events::DecisionReviewCreated::CreateIntake.process!(event, user, veteran)
+          # Events::DecisionReviewCreate::UpdateVacolsOnOptin.process!(decision_review)
           # event.update!(completed_at: Time.now, error: nil)
         # end
       end
