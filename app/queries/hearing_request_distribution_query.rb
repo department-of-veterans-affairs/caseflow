@@ -45,17 +45,26 @@ class HearingRequestDistributionQuery
 
   # use nongenpop appeals as the base
   def not_genpop_appeals
-    appeals_to_return = []
-    # handling ama. omit means that we ignore the lever
-    appeals_to_return << ama_affinity_hearing_value_appeals if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days) # rubocop:disable Layout/LineLength
-    appeals_to_return << ama_affinity_hearing_infinite_appeals if CaseDistributionLever.ama_hearing_case_affinity_days == "infinite"
+    base_query = base_relation.most_recent_hearings.tied_to_distribution_judge(judge)
+    additional_filters = []
+    puts "ENTERED NOT_GENPOP_APPEALS #####"
+    # handling AMA Hearing Case Affinity Days
+    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days)
+      additional_filters << ama_affinity_hearing_value_appeals
+    elsif CaseDistributionLever.ama_hearing_case_affinity_days == "infinite"
+      additional_filters << ama_affinity_hearing_infinite_appeals
+    end
 
+    # handling AOD AMA Hearing Case AOD Affinity Days
+    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
+      additional_filters << aod_hearing_value_appeals
+    elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == "infinite"
+      additional_filters << aod_hearing_infinite_appeals
+    end
 
-    # handling aod. omit means that we ignore the lever
-    appeals_to_return << aod_hearing_value_appeals if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_aod_affinity_days) # rubocop:disable Layout/LineLength
-    appeals_to_return << aod_hearing_infinite_appeals if CaseDistributionLever.ama_hearing_case_aod_affinity_days == "infinite"
+    result = base_query + additional_filters
 
-    appeals_to_return.flatten.uniq
+    result.flatten.uniq
 
   end
 
