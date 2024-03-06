@@ -19,7 +19,9 @@ class OrganizationCorrespondencePendingTasksTab < CorrespondenceQueueTab
 
   # :reek:UtilityFunction
   def tasks
-    CorrespondenceTask.tasks_not_related_to_appeal.includes(*task_includes).active
+    Task.none
+    # CorrespondenceMailTask.includes(*task_includes).active
+    # CorrespondenceMailTask.tasks_not_related_to_appeal.includes(*task_includes).active
   end
 
   # :reek:UtilityFunction

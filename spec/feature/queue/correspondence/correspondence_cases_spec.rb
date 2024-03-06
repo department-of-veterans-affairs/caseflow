@@ -897,7 +897,7 @@ RSpec.feature("The Correspondence Cases page") do
   context "correspondence cases pending tab" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeamSupervisor.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
 
@@ -914,7 +914,7 @@ RSpec.feature("The Correspondence Cases page") do
           task_array[index].create!(
             appeal_id: corres.id,
             appeal_type: "Correspondence",
-            assigned_to: MailTeamSupervisor.singleton
+            assigned_to: InboundOpsTeam.singleton
           )
         end
       end
