@@ -48,7 +48,7 @@ class AssignToAttorneyModalView extends React.PureComponent {
         selectedAssignee: 'OTHER',
         hidePrimaryAssignDropdown: true,
         secondaryAssignDropdownLabel: COPY.SPECIALTY_CASE_TEAM_ASSIGN_DROPDOWN_LABEL,
-        pathAfterSubmit: '/organizations/specialty-case-team?tab=sct_action_required'
+        pathAfterSubmit: '/organizations/specialty-case-team'
       } : {};
 
     if (!previousAssigneeId) {
