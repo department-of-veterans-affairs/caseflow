@@ -1,4 +1,5 @@
 import { ACTIONS } from './correspondenceConstants';
+import ApiUtil from '../../../util/ApiUtil';
 
 export const loadCurrentCorrespondence = (currentCorrespondence) =>
   (dispatch) => {
@@ -40,6 +41,28 @@ export const loadVetCorrespondence = (vetCorrespondences) =>
     });
   };
 
+export const loadCorrespondenceConfig = (configUrl) =>
+  (dispatch) => {
+    ApiUtil.get(configUrl).then(
+      (response) => {
+        const returnedObject = response.body;
+        const correspondenceConfig = returnedObject.correspondence_config;
+
+        dispatch(
+          {
+            type: ACTIONS.LOAD_CORRESPONDENCE_CONFIG,
+            payload: {
+              correspondenceConfig
+            }
+          });
+
+      }).
+      catch(
+        (err) => {
+          console.error(new Error(`Problem with GET ${configUrl} ${err}`));
+        });
+  };
+
 export const updateRadioValue = (value) =>
   (dispatch) => {
     dispatch({
@@ -62,6 +85,14 @@ export const clearCheckboxState = () =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.CLEAR_CHECKBOX_STATE,
+    });
+  };
+
+export const setSelectedTasks = (values) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_SELECTED_TASKS,
+      payload: { values }
     });
   };
 
@@ -120,6 +151,24 @@ export const setWaivedEvidenceTasks = (task) => (dispatch) => {
     type: ACTIONS.SET_WAIVED_EVIDENCE_TASKS,
     payload: {
       task
+    }
+  });
+};
+
+export const setShowReassignPackageModal = (isVisible) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SET_SHOW_REASSIGN_PACKAGE_MODAL,
+    payload: {
+      isVisible
+    }
+  });
+};
+
+export const setShowRemovePackageModal = (isVisible) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SET_SHOW_REMOVE_PACKAGE_MODAL,
+    payload: {
+      isVisible
     }
   });
 };

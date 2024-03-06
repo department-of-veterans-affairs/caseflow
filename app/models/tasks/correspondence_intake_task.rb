@@ -27,4 +27,8 @@ class CorrespondenceIntakeTask < CorrespondenceTask
       MailTeam.singleton.user_has_access?(user)
     end
   end
+
+  def task_url
+    closed? ? "/under_construction" : Constants.CORRESPONDENCE_TASK_URL.INTAKE_TASK_URL.sub("uuid", correspondence.uuid)
+  end
 end

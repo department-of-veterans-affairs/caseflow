@@ -13,9 +13,16 @@ import ContinuousProgressBar from 'app/components/ContinuousProgressBar';
 import OnHoldLabel, { numDaysOnHold } from './OnHoldLabel';
 import IhpDaysWaitingTooltip from './IhpDaysWaitingTooltip';
 import TranscriptionTaskTooltip from './TranscriptionTaskTooltip';
+import Checkbox from '../../components/Checkbox';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setShowReassignPackageModal,
+  setShowRemovePackageModal,
+  setSelectedTasks
+} from 'app/queue/correspondence/correspondenceReducer/correspondenceActions';
 
 import { taskHasCompletedHold, hasDASRecord, collapseColumn, regionalOfficeCity, renderAppealType } from '../utils';
-import { DateString, daysSinceAssigned, daysSincePlacedOnHold } from '../../util/DateUtil';
+import { daysSinceAssigned, daysSincePlacedOnHold } from '../../util/DateUtil';
 
 import COPY from '../../../COPY';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
@@ -219,6 +226,147 @@ export const assignedByColumn = () => {
     valueFunction: (task) =>
       task.assignedBy ? `${task.assignedBy.firstName} ${task.assignedBy.lastName}` : null,
     getSortValue: (task) => task.assignedBy ? task.assignedBy.lastName : null
+  };
+};
+
+export const veteranDetails = () => {
+  const dispatch = useDispatch();
+
+  const showReassignPackageModal = () => {
+    dispatch(setShowReassignPackageModal(true));
+  };
+
+  const showRemovePackageModal = () => {
+    dispatch(setShowRemovePackageModal(true));
+  };
+
+  return {
+    header: 'Veteran Details',
+    label: 'Veteran Details',
+    name: QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,
+    backendCanSort: true,
+    getSortValue: (task) => task.veteranDetails,
+    valueFunction: (task) => {
+      if (task.taskUrl === '/modal/reassign_package') {
+        return <a
+          href="#"
+          onClick={showReassignPackageModal}
+          aria-label={`${task.label } Link`}
+          id="task-link"
+        >
+          {task.veteranDetails}
+        </a>;
+      } else if (task.taskUrl === '/modal/remove_package') {
+        return <a
+          href="#"
+          onClick={showRemovePackageModal}
+          aria-label={`${task.label } Link`}
+          id="task-link"
+        >
+          {task.veteranDetails}
+        </a>;
+      }
+
+      return <a
+        href={task.taskUrl}
+        id="task-link"
+        aria-label={`${task.label } Link`}
+      >
+        {task.veteranDetails}
+      </a>;
+    },
+  };
+};
+
+export const vaDor = () => {
+  return {
+    header: 'VA DOR',
+    filterOptions: [],
+    columnName: 'Receipt Date',
+    backendCanSort: true,
+    enableFilter: true,
+    getSortValue: (task) => task.vaDor,
+    name: QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
+    label: QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name,
+    valueFunction: (task) => {
+      return moment(task.vaDor).format('MM/DD/YYYY');
+    }
+  };
+};
+
+export const notes = () => {
+  return {
+    header: 'Notes',
+    name: QUEUE_CONFIG.COLUMNS.NOTES.name,
+    valueFunction: (task) => task.notes,
+    backendCanSort: true,
+    getSortValue: (task) => task.notes
+  };
+};
+export const checkboxColumn = (handleCheckboxChange) => {
+  const dispatch = useDispatch();
+
+  const currentlySelectedTasks = useSelector((state) => state.intakeCorrespondence.selectedTasks);
+
+  const toggleChange = (value) => {
+    const indexOfTask = currentlySelectedTasks.indexOf(value);
+
+    const newSelectedTasks = currentlySelectedTasks;
+
+    if (indexOfTask === -1) {
+      newSelectedTasks.push(value);
+    } else {
+      newSelectedTasks.splice(indexOfTask, 1);
+    }
+
+    dispatch(setSelectedTasks(newSelectedTasks));
+
+    handleCheckboxChange(newSelectedTasks.length > 0);
+
+  };
+
+  return {
+    header: 'Select',
+    checked: true,
+    name: QUEUE_CONFIG.COLUMNS.CHECKBOX_COLUMN,
+    valueFunction: (task) => {
+
+      if (task) {
+        return <Checkbox
+          id={task.uniqueId}
+          value={Boolean(currentlySelectedTasks.includes(task.uniqueId))}
+          name={task.uniqueId}
+          hideLabel
+          onChange={() => toggleChange(task.uniqueId)}
+        />;
+      }
+
+      return null;
+      // or any other valid JSX element
+
+    }
+
+  };
+};
+
+export const actionType = () => {
+  return {
+    header: 'Action Type',
+    name: QUEUE_CONFIG.COLUMNS.ACTION_TYPE.name,
+    backendCanSort: true,
+    getSortValue: (task) => task.label,
+    valueFunction: (task) => task.label.split(' ')[0]
+  };
+};
+
+export const daysWaitingCorrespondence = () => {
+  return {
+    header: 'Days Waiting',
+    name: QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name,
+    enableFilter: true,
+    backendCanSort: true,
+    getSortValue: (task) => task.daysWaiting,
+    valueFunction: (task) => task.daysWaiting
   };
 };
 
@@ -457,8 +605,18 @@ export const taskCompletedDateColumn = () => {
   return {
     header: COPY.CASE_LIST_TABLE_COMPLETED_ON_DATE_COLUMN_TITLE,
     name: QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name,
-    valueFunction: (task) => task.closedAt ? <DateString date={task.closedAt} /> : null,
+    filterOptions: [],
+    valueName: 'Date Completed',
+    customFilterLabels: CO_LOCATED_ADMIN_ACTIONS,
+    label: 'Filter by date completed',
+    columnName: QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name,
+    anyFiltersAreSet: true,
     backendCanSort: true,
+    enableFilter: true,
+    filterable: true,
+    valueFunction: (task) => {
+      return moment(task.closedAt).format('MM/DD/YYYY');
+    },
     getSortValue: (task) => task.closedAt ? new Date(task.closedAt) : null
   };
 };
