@@ -80,7 +80,7 @@ class CorrespondenceIntakeProcessor
     end
   end
 
-  def create_tasks_not_related_to_appeals(intake_params, correspondence, current_user)
+  def create_tasks_not_related_to_appeals(intake_params, correspondence)
     unrelated_task_data = intake_params[:tasks_not_related_to_appeal]
 
     return if unrelated_task_data.blank? || !unrelated_task_data.length
