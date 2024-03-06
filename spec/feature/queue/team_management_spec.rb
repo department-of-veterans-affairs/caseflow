@@ -185,7 +185,7 @@ RSpec.feature "Team management page", :postgres do
       context "when acd_exclude_from_affinity toggle is off" do
         before { FeatureToggle.disable!(:acd_exclude_from_affinity) }
 
-        scenario "user can view and change Exclude from Affinity Appeals toggle" do
+        scenario "user cannot view or change Exclude from Affinity Appeals toggle" do
           visit("/team_management")
           expect(page).to have_content("Judge Teams")
           expect(page).not_to have_content("*When the box is checked, the judge will not receive appeals with which there is an existing affinity relationship. Any appeal with an affinity relationship to that judge will immediately be released for distribution to any judge once the appeal is ready to distribute. Appeals that are tied (e.g., legacy hearing) are unaffected by this value.")
@@ -266,7 +266,7 @@ RSpec.feature "Team management page", :postgres do
       context "when acd_exclude_from_affinity toggle is off" do
         before { FeatureToggle.disable!(:acd_exclude_from_affinity) }
 
-        scenario "user can view and change Exclude from Affinity Appeals toggle" do
+        scenario "user cannot view or change Exclude from Affinity Appeals toggle" do
           visit("/team_management")
           expect(page).to have_content("Judge Teams")
           expect(page).not_to have_content("*When the box is checked, the judge will not receive appeals with which there is an existing affinity relationship. Any appeal with an affinity relationship to that judge will immediately be released for distribution to any judge once the appeal is ready to distribute. Appeals that are tied (e.g., legacy hearing) are unaffected by this value.")
