@@ -7,12 +7,11 @@ module Events
     end
 
     def call
-      epe = EndProductEstablishment.find_by(reference_id: event.reference_id)
+      epe = EndProductEstablishment.find_by(reference_id: @event.reference_id)
       veteran = epe.veteran
 
-      if veteran.person.claimants
-        veteran.person.claimants.first.id
-        # Logic for when veteran is also a claimant
+      if veteran.person.claimants.any?
+        veteran.person.claimants.last.id
       else
         veteran_claimant = VeteranClaimant.create!(
           decision_review: epe.source,
@@ -20,6 +19,7 @@ module Events
           payee_code: epe.payee_code,
           decision_review_type: epe.source_type
         )
+        event.update!(info: { "created_veteran_claimant" => veteran_claimant.id })
         veteran_claimant.id
       end
     end
