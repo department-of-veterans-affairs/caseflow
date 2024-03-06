@@ -253,6 +253,7 @@ RSpec.feature "SCM Team access to judge movement features", :all_dbs do
           fill_in(COPY::PROVIDE_INSTRUCTIONS_AND_CONTEXT_LABEL, with: instructions)
           click_on COPY::ASSIGN_TASK_BUTTON
 
+          expect(current_path).to eq("/queue")
           expect(page).to have_content("Assigned 1 task to #{attorney_one.full_name}")
 
           visit "/queue/appeals/#{legacy_appeal.external_id}"
