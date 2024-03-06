@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import Alert from '../../components/Alert';
+import Link from '../../components/Link';
 import StaticLeversWrapper from './StaticLeversWrapper';
 import InteractableLeverWrapper from './InteractableLeversWrapper';
 import LeverHistory from './LeverHistory';
@@ -26,7 +27,7 @@ const CaseDistributionContent = () => {
 
         {excludeFromAffinityCasesToggle && (<p>
           <Alert type="info">
-            {COPY.CASE_DISTRIBUTION_INFO_ALERT_MESSAGE}
+            You may remove individual judges from Affinity Case Distribution within the setting on the <Link to="team_management" target="_blank">Caseflow Team Management page</Link>.
           </Alert>
         </p>)}
 
