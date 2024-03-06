@@ -186,7 +186,16 @@ class CorrespondenceIntakeProcessor
       "PrivacyComplaintMailTask": PrivacyComplaintMailTask.name,
       "ReconsiderationMotionMailTask": ReconsiderationMotionMailTask.name,
       "ReturnedUndeliverableCorrespondenceMailTask": ReturnedUndeliverableCorrespondenceMailTask.name,
-      "StatusInquiryMailTask": StatusInquiryMailTask.name
+      "StatusInquiryMailTask": StatusInquiryMailTask.name,
+      "DeathCertificateCorrespondenceTask": DeathCertificateCorrespondenceTask.name,
+      "FoiaRequestCorrespondenceTask": FoiaRequestCorrespondenceTask.name,
+      "StatusInquiryCorrespondenceTask": StatusInquiryCorrespondenceTask.name,
+      "OtherMotionCorrespondenceTask": OtherMotionCorrespondenceTask.name,
+      "PrivacyComplaintCorrespondenceTask": PrivacyComplaintCorrespondenceTask.name,
+      "PowerOfAttorneyRelatedCorrespondenceTask": PowerOfAttorneyRelatedCorrespondenceTask.name,
+      "CavcCorrespondenceCorrespondenceTask": CavcCorrespondenceCorrespondenceTask.name,
+      "CongressionalInterestCorrespondenceTask": CongressionalInterestCorrespondenceTask.name,
+      "PrivacyActRequestCorrespondenceTask": PrivacyActRequestCorrespondenceTask.name
     }.with_indifferent_access
 
     task_types[task_type]&.constantize
