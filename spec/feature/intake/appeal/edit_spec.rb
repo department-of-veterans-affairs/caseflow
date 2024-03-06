@@ -1433,9 +1433,7 @@ feature "Appeal Edit issues", :all_dbs do
     after { FeatureToggle.disable!(:specialty_case_team_distribution) }
 
     scenario "appeal moves to sct queue when vha issue is added" do
-      visit "/queue/appeals/#{appeal3.uuid}"
-      # refresh the page if the case hasn't finished processing the create/load yet
-      visit "/queue/appeals/#{appeal3.uuid}" if page.has_text? "Unable to load this case"
+      reload_case_detail_page(appeal3.uuid)
       click_on "Correct issues"
       click_remove_intake_issue_dropdown("Unknown Issue Category")
       click_intake_add_issue
@@ -1503,9 +1501,7 @@ feature "Appeal Edit issues", :all_dbs do
     after { FeatureToggle.disable!(:specialty_case_team_distribution) }
 
     scenario "appeal moves back to distribution when all SCT issues are removed" do
-      visit "/queue/appeals/#{appeal3.uuid}"
-      # refresh the page if the case hasn't finished processing the create/load yet
-      visit "/queue/appeals/#{appeal3.uuid}" if page.has_text? "Unable to load this case"
+      reload_case_detail_page(appeal3.uuid)
       click_on "Correct issues"
       click_remove_intake_issue_dropdown("CHAMPVA")
       click_edit_submit_and_confirm
