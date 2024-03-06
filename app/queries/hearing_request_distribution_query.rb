@@ -47,7 +47,7 @@ class HearingRequestDistributionQuery
   def not_genpop_appeals
     base_query = base_relation.most_recent_hearings.tied_to_distribution_judge(judge)
     additional_filters = []
-    puts "ENTERED NOT_GENPOP_APPEALS #####"
+
     # handling AMA Hearing Case Affinity Days
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days)
       additional_filters << ama_affinity_hearing_value_appeals
