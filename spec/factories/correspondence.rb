@@ -16,6 +16,10 @@ FactoryBot.define do
     veteran
     package_document_type
 
+    trait :nod do
+      nod { true }
+    end
+
     trait :with_single_doc do
       after(:create) do |correspondence|
         create(:correspondence_document, correspondence: correspondence)
