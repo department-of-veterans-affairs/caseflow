@@ -5,7 +5,7 @@ class AutoAssignableUserFinder
   AssignableUser = Struct.new(:user_obj, :last_assigned_date, :num_assigned, :nod?, keyword_init: true)
 
   def assignable_users_exist?
-    return false if FeatureToggle.enabled?(:auto_assign_banner_max_queue) && !Rails.env.production?
+    return false if FeatureToggle.enabled?(:auto_assign_banner_max_queue)
 
     assignable_users.count.positive?
   end

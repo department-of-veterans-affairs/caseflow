@@ -61,7 +61,7 @@ class CorrespondenceAutoAssigner
   end
 
   def unassigned_review_package_tasks
-    return [] if !Rails.env.production? && FeatureToggle.enabled?(:auto_assign_banner_no_rpt)
+    return [] if FeatureToggle.enabled?(:auto_assign_banner_no_rpt)
 
     ReviewPackageTask
       .where(status: Constants.TASK_STATUSES.unassigned)

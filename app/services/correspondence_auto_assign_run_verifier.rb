@@ -20,7 +20,7 @@ class CorrespondenceAutoAssignRunVerifier
   private
 
   def verify_feature_toggles
-    if !Rails.env.production? && FeatureToggle.enabled?(:auto_assign_banner_failure)
+    if FeatureToggle.enabled?(:auto_assign_banner_failure)
       self.err_msg = "#{COPY::BAAA_ERROR_MESSAGE} (failure triggered via feature toggle)"
       return false
     end
