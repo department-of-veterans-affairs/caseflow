@@ -213,7 +213,8 @@ export class AssignToAttorneyWidget extends React.PureComponent {
       isModal,
       onCancel,
       hidePrimaryAssignDropdown,
-      secondaryAssignDropdownLabel
+      secondaryAssignDropdownLabel,
+      pathAfterSubmit
     } = this.props;
     const { instructions } = this.state;
     const optionFromAttorney = (attorney) => ({ label: attorney.full_name,
@@ -309,6 +310,7 @@ export class AssignToAttorneyWidget extends React.PureComponent {
       onCancel={onCancel}
       submitDisabled={isModalButtonDisabled}
       button={COPY.ASSIGN_TASK_BUTTON}
+      pathAfterSubmit={pathAfterSubmit}
     >
       {Widget}
     </QueueFlowModal> : Widget;
@@ -348,6 +350,7 @@ AssignToAttorneyWidget.propTypes = {
   resetAssignees: PropTypes.func,
   saveFailure: PropTypes.func,
   onCancel: PropTypes.func,
+  pathAfterSubmit: PropTypes.string
 };
 
 const AssignToAttorneyWidgetContainer = (props) => {
