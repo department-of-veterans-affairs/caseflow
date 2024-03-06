@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-class MailTeamSupervisor < Organization
+class InboundOpsTeam < Organization
   def self.singleton
-    MailTeamSupervisor.first ||
-      MailTeamSupervisor.create(name: "Mail Team Supervisor", url: "mail-team-supervisor")
+    InboundOpsTeam.first ||
+      InboundOpsTeam.create(name: "Inbound Ops Team", url: "inbound-ops-team")
   end
 
   # :reek:UtilityFunction

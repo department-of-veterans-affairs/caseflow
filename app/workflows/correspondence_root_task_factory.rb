@@ -19,7 +19,7 @@ class CorrespondenceRootTaskFactory
   def create_root!
     @root_task = CorrespondenceRootTask.find_or_create_by!(
       appeal_id: @correspondence.id,
-      assigned_to: MailTeamSupervisor.singleton,
+      assigned_to: InboundOpsTeam.singleton,
       appeal_type: Correspondence.name
     )
 
@@ -29,7 +29,7 @@ class CorrespondenceRootTaskFactory
   def create_subtasks!
     @review_package_task = ReviewPackageTask.find_or_create_by!(
       appeal_id: @correspondence.id,
-      assigned_to: MailTeamSupervisor.singleton,
+      assigned_to: InboundOpsTeam.singleton,
       appeal_type: Correspondence.name,
       parent_id: @root_task.id,
       type: ReviewPackageTask.name

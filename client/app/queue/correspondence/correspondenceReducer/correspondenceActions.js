@@ -31,6 +31,22 @@ export const loadSavedIntake = (savedStore) =>
     });
   };
 
+  export const saveCurrentIntake = (currentIntake) =>
+  (dispatch) => {
+    // Save the current intake data to local storage or session storage
+    sessionStorage.setItem('currentIntake', JSON.stringify(currentIntake));
+
+    console.log('Current intake data saved to session:', currentIntake);
+
+    // Dispatch an action to update the Redux store with the current intake data
+    dispatch({
+      type: ACTIONS.SAVE_CURRENT_INTAKE,
+      payload: {
+        currentIntake
+      }
+    });
+  };
+
 export const loadVeteranInformation = (veteranInformation) =>
   (dispatch) => {
     dispatch({
