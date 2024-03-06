@@ -244,7 +244,7 @@ describe HearingRequestDocket, :all_dbs do
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                     genpop: "only_genpop", judge: judge)
-        result = hrdq.send(:aod_hearing_value_appeals)
+        result = hrdq.send(:aod_hearing_infinite_appeals)
 
         expect(result.length).to eq(expected_result.length)
       end
@@ -262,7 +262,7 @@ describe HearingRequestDocket, :all_dbs do
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                     genpop: "only_genpop", judge: judge)
-        result = hrdq.send(:aod_hearing_value_appeals)
+        result = hrdq.send(:aod_hearing_infinite_appeals)
 
         expect(result.length).to eq(expected_result.length)
       end
@@ -280,7 +280,7 @@ describe HearingRequestDocket, :all_dbs do
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                     genpop: "only_genpop", judge: judge)
-        result = hrdq.send(:aod_hearing_value_appeals)
+        result = hrdq.send(:aod_hearing_infinite_appeals)
 
         expect(result.length).to eq(expected_result.length)
       end
@@ -308,7 +308,7 @@ describe HearingRequestDocket, :all_dbs do
     end
 
 
-    context "ama hearing case levers" do
+    context "ama hearing case levers genpop" do
       it "returns ama affinity based on 12 value" do
         # Given the ama_hearing_case_ama_affinity_days returns a number, we expect ama appeals older than 90 days
         judge = create(:user, station_id: User::BOARD_STATION_ID)
@@ -323,56 +323,120 @@ describe HearingRequestDocket, :all_dbs do
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                    genpop: "only_genpop", judge: judge)
-        result = hrdq.send(:ama_affinity_hearing_value_appeals)
+        result = hrdq.send(:ama_affinity_hearing_appeals_genpop_value)
 
         expect(result.length).to eq(expected_result.length)
       end
 
-      it "returns aod affinity based on 35 value" do
-        # Given the ama_hearing_case_aod_affinity_days returns a number, we expect aod appeals older than 90 days
+      it "returns ama affinity based on 35 value" do
+        # Given the ama_hearing_case_aod_affinity_days returns a number, we expect ama appeals older than 90 days
         judge = create(:user, station_id: User::BOARD_STATION_ID)
         appeal_90_days = create_aod_value_appeal(90, judge)
         appeal_200_days = create_aod_value_appeal(200, judge)
         create_aod_value_appeal(30, judge)
-        CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update(value: "35")
+        CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update(value: "35")
 
         expected_result = [appeal_90_days, appeal_200_days]
 
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                    genpop: "only_genpop", judge: judge)
-        result = hrdq.send(:aod_hearing_value_appeals)
+        result = hrdq.send(:ama_affinity_hearing_appeals_genpop_value)
 
         expect(result.length).to eq(expected_result.length)
       end
 
-      it "returns aod affinity based on 100 value" do
-        # Given the ama_hearing_case_aod_affinity_days returns a number, we expect aod appeals older than 90 days
+      it "returns ama affinity based on 100 value" do
+        # Given the ama_hearing_case_affinity_days returns a number, we expect ama appeals older than 90 days
         judge = create(:user, station_id: User::BOARD_STATION_ID)
         appeal_200_days = create_aod_value_appeal(200, judge)
         create_aod_value_appeal(90, judge)
         create_aod_value_appeal(30, judge)
-        CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update(value: "100")
+        CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update(value: "100")
 
         expected_result = [appeal_200_days]
 
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                    genpop: "only_genpop", judge: judge)
-        result = hrdq.send(:aod_hearing_value_appeals)
+        result = hrdq.send(:ama_affinity_hearing_appeals_genpop_value)
+
+        expect(result.length).to eq(expected_result.length)
+      end
+    end
+
+    context "ama hearing case levers not genpop" do
+      it "returns ama affinity based on 12 value" do
+        # Given the ama_hearing_case_ama_affinity_days returns a number, we expect ama appeals older than 90 days
+        judge = create(:user, station_id: User::BOARD_STATION_ID)
+        #not expected
+        create_aod_value_appeal(90, judge)
+        create_aod_value_appeal(30, judge)
+        create_aod_value_appeal(200, judge)
+        #expected
+        appeal_10_days = create_aod_value_appeal(10, judge)
+        puts "value is 12"
+        CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update(value: "12")
+
+        expected_result = [appeal_10_days]
+
+        hrd = HearingRequestDocket.new
+        hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
+                                                   genpop: "only_genpop", judge: judge)
+        result = hrdq.send(:ama_affinity_hearing_value_appeals)
 
         expect(result.length).to eq(expected_result.length)
       end
 
-      it "returns aod affinity based on infinite value" do
-        # Given the ama_hearing_case_aod_affinity_days returns a number, we expect aod appeals older than 90 days
+      it "returns ama affinity based on 35 value" do
+        judge = create(:user, station_id: User::BOARD_STATION_ID)
+        #not expected
+        create_aod_value_appeal(90, judge)
+        create_aod_value_appeal(200, judge)
+        #expected
+        appeal_10_days = create_aod_value_appeal(10, judge)
+        appeal_30_days = create_aod_value_appeal(30, judge)
+        CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update(value: "35")
+
+        expected_result = [appeal_10_days, appeal_30_days]
+
+        hrd = HearingRequestDocket.new
+        hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
+                                                   genpop: "only_genpop", judge: judge)
+        result = hrdq.send(:ama_affinity_hearing_value_appeals)
+
+        expect(result.length).to eq(expected_result.length)
+      end
+
+      it "returns ama affinity based on 100 value" do
+        judge = create(:user, station_id: User::BOARD_STATION_ID)
+        #not expected
+        create_aod_value_appeal(200, judge)
+        #expected
+        appeal_10_days = create_aod_value_appeal(10, judge)
+        appeal_30_days = create_aod_value_appeal(30, judge)
+        appeal_90_days = create_aod_value_appeal(90, judge)
+        CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update(value: "100")
+
+        expected_result = [appeal_10_days, appeal_30_days, appeal_90_days]
+
+        hrd = HearingRequestDocket.new
+        hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
+                                                   genpop: "only_genpop", judge: judge)
+        result = hrdq.send(:ama_affinity_hearing_value_appeals)
+
+        expect(result.length).to eq(expected_result.length)
+      end
+
+      it "returns ama affinity based on infinite value" do
+        # Given the ama_hearing_case_affinity_days returns a number, we expect ama appeals older than 90 days
         judge = create(:user, station_id: User::BOARD_STATION_ID)
         appeal_90_days = create_aod_value_appeal(90, judge)
         appeal_30_days = create_aod_value_appeal(30, judge)
         appeal_200_days = create_aod_value_appeal(200, judge)
         appeal_3_days = create_aod_value_appeal(3, judge)
         puts "value is infinite"
-        CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update(value: "infinite")
+        CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update(value: "infinite")
 
         expected_result = [appeal_90_days, appeal_30_days, appeal_200_days, appeal_3_days]
 
@@ -380,7 +444,7 @@ describe HearingRequestDocket, :all_dbs do
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                    genpop: "only_genpop", judge: judge)
-        result = hrdq.send(:aod_hearing_infinite_appeals)
+        result = hrdq.send(:ama_affinity_hearing_infinite_appeals)
 
         expect(result.length).to eq(expected_result.length)
       end

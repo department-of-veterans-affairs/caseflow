@@ -144,10 +144,16 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   end
 
   # If an appeal has exceeded the affinity, it should be returned to genpop.
-  def exceeding_affinity_threshold
+  def expired_ama_affinity_cases
     joins(with_assigned_distribution_task_sql)
       .where(hearings: { disposition: "held" })
       .where("distribution_task.assigned_at <= ?", CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
+  end
+
+  def affinitized_ama_affinity_cases
+    joins(with_assigned_distribution_task_sql)
+      .where(hearings: { disposition: "held" })
+      .where("distribution_task.assigned_at > ?", CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
   end
 
   def always_ama_affinity_threshold

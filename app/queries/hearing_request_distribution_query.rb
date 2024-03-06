@@ -82,6 +82,7 @@ class HearingRequestDistributionQuery
     appeals_to_return << most_recent_held_hearings_tied_to_ineligible_judge
     appeals_to_return << no_hearings_or_no_held_hearings
     appeals_to_return << most_recent_held_hearings_tied_to_judges_with_exclude_appeals_from_affinity
+    appeals_to_return << ama_affinity_hearing_appeals_genpop_value if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days) # rubocop:disable Layout/LineLength
 
     appeals_to_return.flatten.uniq
   end
@@ -99,11 +100,15 @@ class HearingRequestDistributionQuery
   end
 
   def ama_affinity_hearing_value_appeals
-    not_genpop_base.exceeding_affinity_threshold
+    not_genpop_base.affinitized_ama_affinity_cases
   end
 
   def ama_affinity_hearing_infinite_appeals
     not_genpop_base.always_ama_affinity_threshold
+  end
+
+  def ama_affinity_hearing_appeals_genpop_value
+    base_relation.most_recent_hearings.expired_ama_affinity_cases
   end
 
   def most_recent_held_hearings_always_ama_aod_hearing_original_appeals

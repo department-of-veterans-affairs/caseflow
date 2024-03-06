@@ -162,9 +162,9 @@ class CaseDistributionLever < ApplicationRecord
       lever = find_by_item(name).try(:value)
 
       if INTEGER_LEVERS.include?(name)
-        lever.to_i
+        Integer(lever) rescue false ? lever.to_i : lever
       elsif FLOAT_LEVERS.include?(name)
-        lever.to_f
+        Float(lever) rescue false ? lever.to_f : lever
       else
         lever
       end
