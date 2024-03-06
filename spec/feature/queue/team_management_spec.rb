@@ -167,6 +167,7 @@ RSpec.feature "Team management page", :postgres do
         expect(judge_team.reload.accepts_priority_pushed_cases).to be true
       end
 
+      # rubocop:disable Layout/LineLength
       scenario "user can view and change Exclude from Affinity Appeals toggle" do
         visit("/team_management")
         expect(page).to have_content("Judge Teams")
@@ -194,6 +195,7 @@ RSpec.feature "Team management page", :postgres do
         end
       end
     end
+    # rubocop:enable Layout/LineLength
 
     context "when the user is a dvc" do
       before do
@@ -247,6 +249,7 @@ RSpec.feature "Team management page", :postgres do
         expect(judge_team.reload.ama_only_request).to be true
       end
 
+      # rubocop:disable Layout/LineLength
       scenario "user can toggle Exclude from Affinity Appeals" do
         visit("/team_management")
         expect(page).to have_content("Judge Teams")
@@ -274,6 +277,7 @@ RSpec.feature "Team management page", :postgres do
           expect(page).not_to have_content("Exclude Judge")
         end
       end
+      # rubocop:enable Layout/LineLength
     end
   end
 end
