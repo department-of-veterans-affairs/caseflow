@@ -27,7 +27,8 @@ const CaseDistributionContent = () => {
 
         {excludeFromAffinityCasesToggle && (<p>
           <Alert type="info">
-            You may remove individual judges from Affinity Case Distribution within the setting on the <Link to="team_management" target="_blank">Caseflow Team Management page</Link>.
+            You may remove individual judges from Affinity Case Distribution within the setting on the&nbsp;
+            <Link to="team_management" target="_blank">Caseflow Team Management page</Link>.
           </Alert>
         </p>)}
 
