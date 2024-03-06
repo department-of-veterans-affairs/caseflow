@@ -2,55 +2,55 @@
   "unrelatedToAppeal": [
     {
       "value": {
-        "klass": "CavcCorrespondenceMailTask",
+        "klass": "CavcCorrespondenceCorrespondenceTask",
         "assigned_to": "CavcLitigationSupport"
         },
       "label": "CAVC Correspondence"
     }, {
       "value": {
-        "klass": "CongressionalInterestMailTask",
+        "klass": "CongressionalInterestCorrespondenceTask",
         "assigned_to": "LitigationSupport"
         },
       "label": "Congressional Interest"
     }, {
       "value": {
-        "klass": "DeathCertificateMailTask",
+        "klass": "DeathCertificateCorrespondenceTask",
         "assigned_to": "Colocated"
         },
       "label": "Death Certificate"
     }, {
       "value": {
-        "klass": "FoiaRequestMailTask",
+        "klass": "FoiaRequestCorrespondenceTask",
         "assigned_to": "PrivacyTeam"
         },
       "label": "FOIA Request"
     }, {
       "value": {
-        "klass": "OtherMotionMailTask",
+        "klass": "OtherMotionCorrespondenceTask",
         "assigned_to": "LitigationSupport"
         },
       "label": "Other Motion"
     }, {
       "value": {
-        "klass": "PowerOfAttorneyRelatedMailTask",
+        "klass": "PowerOfAttorneyRelatedCorrespondenceTask",
         "assigned_to": "HearingAdmin"
         },
       "label": "Power Of Attorney-Related"
     }, {
       "value": {
-        "klass": "PrivacyActRequestMailTask",
+        "klass": "PrivacyActRequestCorrespondenceTask",
         "assigned_to": "PrivacyTeam"
         },
       "label": "Privacy Act Request"
     }, {
       "value": {
-        "klass": "PrivacyComplaintMailTask",
+        "klass": "PrivacyComplaintCorrespondenceTask",
         "assigned_to": "PrivacyTeam"
         },
       "label": "Privacy Complaint"
     }, {
       "value": {
-        "klass": "StatusInquiryMailTask",
+        "klass": "StatusInquiryCorrespondenceTask",
         "assigned_to": "LitigationSupport"
         },
       "label": "Status Inquiry"
