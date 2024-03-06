@@ -11,8 +11,8 @@ const LeverHistory = () => {
   const leverHistoryTable = getLeverHistoryTable(theState);
 
   const displayValue = (value, entry, idx) => {
-    if (entry.leverDataType === ACD_LEVERS.data_types.radio &&
-          (value.toLowerCase().includes('infinite') || value.toLowerCase().includes('omit'))) {
+    if (entry.leverDataType[idx] === ACD_LEVERS.data_types.radio &&
+          (value.toLowerCase().includes('always') || value.toLowerCase().includes('omit'))) {
       return `${value}`;
     }
 
