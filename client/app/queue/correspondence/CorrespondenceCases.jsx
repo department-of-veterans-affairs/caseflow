@@ -70,7 +70,10 @@ const CorrespondenceCases = (props) => {
           />
         )}
         {config &&
-        <CorrespondenceTableBuilder mailTeamUsers={props.mailTeamUsers} />}
+        <CorrespondenceTableBuilder
+          mailTeamUsers={props.mailTeamUsers}
+          isSuperuser={props.isSuperuser}
+          isSupervisor={props.isSupervisor} />}
         {showReassignPackageModal &&
         <Modal
           title={COPY.CORRESPONDENCE_CASES_REASSIGN_PACKAGE_MODAL_TITLE}
@@ -99,7 +102,9 @@ CorrespondenceCases.propTypes = {
   responseType: PropTypes.string,
   responseHeader: PropTypes.string,
   responseMessage: PropTypes.string,
-  taskIds: PropTypes.array
+  taskIds: PropTypes.array,
+  isSuperuser: PropTypes.bool,
+  isSupervisor: PropTypes.bool
 
 };
 
