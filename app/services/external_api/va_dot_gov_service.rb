@@ -14,8 +14,8 @@ require "digest"
 #
 class ExternalApi::VADotGovService
   BASE_URL = ENV["VA_DOT_GOV_API_URL"] || ""
-  FACILITY_IDS_ENDPOINT = "va_facilities/v0/ids"
-  FACILITIES_ENDPOINT = "va_facilities/v0/facilities"
+  FACILITY_IDS_ENDPOINT = "va_facilities/v1/ids"
+  FACILITIES_ENDPOINT = "va_facilities/v1/facilities"
   ADDRESS_VALIDATION_ENDPOINT = "address_validation/v1/validate"
 
   class << self
@@ -34,7 +34,7 @@ class ExternalApi::VADotGovService
     def get_distance(lat:, long:, ids:)
       send_facilities_requests(
         ids: ids,
-        query: { lat: lat, long: long, ids: ids.join(",") }
+        query: { lat: lat, long: long, facilityIds: ids.join(",") }
       )
     end
 
@@ -50,7 +50,7 @@ class ExternalApi::VADotGovService
     def get_facility_data(ids:)
       send_facilities_requests(
         ids: ids,
-        query: { ids: ids.join(",") }
+        query: { facilityIds: ids.join(",") }
       )
     end
 
@@ -204,6 +204,7 @@ class ExternalApi::VADotGovService
     # Queries the VA.gov facilities API.
     #
     # @note Results are cached for 2 hours.
+    #   distances values in the meta field are only returned if a lat and long are provided.
     #
     # @param query [Hash] query parameters
     #

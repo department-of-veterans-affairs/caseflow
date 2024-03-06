@@ -19,7 +19,7 @@ class CorrespondenceTasksController < TasksController
       task_params = {
         parent_id: review_package_task.id,
         instructions: params[:instructions],
-        assigned_to: MailTeamSupervisor.singleton,
+        assigned_to: InboundOpsTeam.singleton,
         appeal_id: params[:correspondence_id],
         appeal_type: "Correspondence",
         status: Constants.TASK_STATUSES.assigned,
@@ -27,7 +27,7 @@ class CorrespondenceTasksController < TasksController
       }
 
       ReviewPackageTask.create_from_params(task_params, current_user)
-      review_package_task.update!(assigned_to: MailTeamSupervisor.singleton, status: :on_hold)
+      review_package_task.update!(assigned_to: InboundOpsTeam.singleton, status: :on_hold)
       render json: { status: :ok }
     end
   end
@@ -59,7 +59,7 @@ class CorrespondenceTasksController < TasksController
   def remove_package
     root_task = CorrespondenceRootTask.find_by!(
       appeal_id: params[:id],
-      assigned_to: MailTeamSupervisor.singleton,
+      assigned_to: InboundOpsTeam.singleton,
       appeal_type: "Correspondence",
       type: "CorrespondenceRootTask"
     )
