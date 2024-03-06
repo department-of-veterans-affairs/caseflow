@@ -3,7 +3,6 @@
 class OrganizationCompletedTasksTab < QueueTab
   validate :assignee_is_organization
 
-  # :reek:UtilityFunction
   def label
     COPY::QUEUE_PAGE_COMPLETE_TAB_TITLE
   end
@@ -12,7 +11,6 @@ class OrganizationCompletedTasksTab < QueueTab
     Constants.QUEUE_CONFIG.COMPLETED_TASKS_TAB_NAME
   end
 
-  # :reek:UtilityFunction
   def description
     COPY::QUEUE_PAGE_COMPLETE_LAST_SEVEN_DAYS_TASKS_DESCRIPTION
   end
@@ -21,7 +19,6 @@ class OrganizationCompletedTasksTab < QueueTab
     recently_completed_tasks
   end
 
-  # :reek:UtilityFunction
   # rubocop:disable Metrics/AbcSize
   def column_names
     [

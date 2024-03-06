@@ -77,12 +77,4 @@ class CavcCorrespondenceMailTask < MailTask
   def assigned_to_cavc_lit_team_member
     CavcLitigationSupport.singleton.users.include?(assigned_to)
   end
-
-  def status_is_valid_on_create
-    unless [Constants.TASK_STATUSES.assigned, Constants.TASK_STATUSES.completed].include?(status)
-      fail Caseflow::Error::InvalidStatusOnTaskCreate, task_type: type
-    end
-
-    true
-  end
 end
