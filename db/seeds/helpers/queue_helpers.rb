@@ -36,6 +36,7 @@ module QueueHelpers
     ).tap { @cmp_packet_number += 1 }
   end
 
+  # :reek:UtilityFunction
   def create_correspondence_document(correspondence, veteran)
     CorrespondenceDocument.find_or_create_by!(
       document_file_number: veteran.file_number,
@@ -47,6 +48,7 @@ module QueueHelpers
     )
   end
 
+  # :reek:UtilityFunction
   def create_correspondence_intake(correspondence, user)
     parent = correspondence&.root_task
     complete_task(ReviewPackageTask.find_by(appeal_id: correspondence.id), user.id)
@@ -55,6 +57,7 @@ module QueueHelpers
     cit
   end
 
+  # :reek:UtilityFunction
   def assign_review_package_task(correspondence, user)
     review_package_task = ReviewPackageTask.find_by(appeal_id: correspondence.id)
     review_package_task.update!(
@@ -64,6 +67,8 @@ module QueueHelpers
     )
   end
 
+  # :reek:UtilityFunction
+  # :reek:FeatureEnvy
   def create_efolderupload_failed_task(correspondence, parent)
     euft = EfolderUploadFailedTask.create!(
       parent_id: parent.id,
@@ -75,16 +80,19 @@ module QueueHelpers
     randomize_days_waiting_value(euft)
   end
 
+  # :reek:UtilityFunction
+  # :reek:LongParameterList
   def create_action_required_tasks(correspondence, status:, parent_task:, task_type:)
     task_type.create!(
       parent_id: parent_task.id,
       appeal_id: correspondence.id,
       appeal_type: "Correspondence",
       status: status,
-      assigned_to: MailTeamSupervisor.singleton
+      assigned_to: InboundOpsTeam.singleton
     )
   end
 
+  # :reek:FeatureEnvy
   def create_and_complete_mail_task(correspondence, user)
     process_correspondence(correspondence, user)
     assigned_by = CorrespondenceIntakeTask.find_by(appeal_id: correspondence.id).completed_by
@@ -93,12 +101,13 @@ module QueueHelpers
       appeal_id: correspondence.id,
       appeal_type: "Correspondence",
       assigned_by: assigned_by,
-      assigned_to: MailTeamSupervisor.singleton
+      assigned_to: InboundOpsTeam.singleton
     )
     cavct.update!(status: Constants.TASK_STATUSES.completed)
     cavct
   end
 
+  # :reek:FeatureEnvy
   def create_cavc_mailtask(correspondence, user)
     process_correspondence(correspondence, user)
     assigned_by = CorrespondenceIntakeTask.find_by(appeal_id: correspondence.id).completed_by
@@ -110,7 +119,7 @@ module QueueHelpers
       status: Constants.TASK_STATUSES.assigned
     )
   end
-
+  # :reek:FeatureEnvy
   def create_congress_interest_mailtask(correspondence, user)
     process_correspondence(correspondence, user)
     assigned_by = CorrespondenceIntakeTask.find_by(appeal_id: correspondence.id).completed_by
@@ -124,10 +133,12 @@ module QueueHelpers
     )
   end
 
+  # :reek:UtilityFunction
   def complete_task(task, user_id)
     task.update!(status: Constants.TASK_STATUSES.completed, completed_by_id: user_id)
   end
 
+  # :reek:UtilityFunction
   def process_correspondence(correspondence, user)
     rpt = ReviewPackageTask.find_by(appeal_id: correspondence.id)
     rpt.update!(status: Constants.TASK_STATUSES.completed, completed_by_id: user.id)
@@ -140,4 +151,3 @@ module QueueHelpers
     task.update(assigned_at: rand(1.month.ago..1.day.ago))
   end
 end
-# rubocop:enable Metrics/ModuleLength
