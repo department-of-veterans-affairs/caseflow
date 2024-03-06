@@ -36,7 +36,6 @@ class BaseHearingUpdateForm
     email_sent_updates!
 
     start_async_job if start_async_job?
-    start_non_virtual_hearing_job if start_non_virtual_hearing_job?
 
     add_virtual_hearing_alert if show_virtual_hearing_progress_alerts?
   end
@@ -148,17 +147,6 @@ class BaseHearingUpdateForm
     }
 
     perform_later_or_now(VirtualHearings::CreateConferenceJob, job_args)
-  end
-
-  def start_non_virtual_hearing_job?
-    hearing.disposition.nil? &&
-      hearing.conference_provider == "webex" &&
-      hearing.virtual_hearing.nil? &&
-      ConferenceLink.find_by(hearing_id: hearing.id).nil?
-  end
-
-  def start_non_virtual_hearing_job
-    perform_later_or_now(Hearings::CreateNonVirtualConferenceJob, hearing: hearing)
   end
 
   def updates_requiring_email?
