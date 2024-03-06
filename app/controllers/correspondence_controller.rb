@@ -120,7 +120,7 @@ class CorrespondenceController < ApplicationController
       correspondence: correspondence,
       package_document_type: correspondence&.package_document_type,
       general_information: general_information,
-      user_can_edit_vador: MailTeamSupervisor.singleton.user_has_access?(current_user),
+      user_can_edit_vador: InboundOpsTeam.singleton.user_has_access?(current_user),
       correspondence_documents: corres_docs.map do |doc|
         WorkQueue::CorrespondenceDocumentSerializer.new(doc).serializable_hash[:data][:attributes]
       end,
@@ -224,7 +224,7 @@ class CorrespondenceController < ApplicationController
     if mail_team_user && task_ids.present?
       set_banner_params(mail_team_user, task_ids&.count, tab)
     else
-      render json: { correspondence_config: CorrespondenceConfig.new(assignee: MailTeamSupervisor.singleton) }
+      render json: { correspondence_config: CorrespondenceConfig.new(assignee: InboundOpsTeam.singleton) }
     end
   end
 
@@ -294,7 +294,7 @@ class CorrespondenceController < ApplicationController
   end
 
   def verify_correspondence_access
-    return true if MailTeamSupervisor.singleton.user_has_access?(current_user) ||
+    return true if InboundOpsTeam.singleton.user_has_access?(current_user) ||
                    MailTeam.singleton.user_has_access?(current_user) ||
                    BvaIntake.singleton.user_is_admin?(current_user) ||
                    MailTeam.singleton.user_is_admin?(current_user)
