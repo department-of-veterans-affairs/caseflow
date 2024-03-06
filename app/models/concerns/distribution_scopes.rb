@@ -63,6 +63,18 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       )
   end
 
+  # this method takes care of when aod affinity day has a value
+  def ama_aod_hearing_original_appeals
+    joins(with_assigned_distribution_task_sql)
+      .where("advance_on_docket_motions.created_at < ?", CaseDistributionLever.ama_hearing_case_aod_affinity_days.to_i.days.ago)
+  end
+
+  # this method takes care of when aod affinity day always affinitized
+  def always_ama_aod_hearing_original_appeals
+    joins(with_assigned_distribution_task_sql)
+      .where("advance_on_docket_motions.person_id IS NOT NULL")
+  end
+
   def with_original_appeal_and_judge_task
     joins("LEFT JOIN cavc_remands ON cavc_remands.remand_appeal_id = appeals.id")
       .joins("LEFT JOIN appeals AS original_cavc_appeal ON original_cavc_appeal.id = cavc_remands.source_appeal_id")
@@ -73,6 +85,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       )
   end
 
+  # docket.rb
   # Within the first 21 days, the appeal should be distributed only to the issuing judge.
   def non_genpop_for_judge(judge)
     joins(with_assigned_distribution_task_sql)
@@ -117,7 +130,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   def tied_to_distribution_judge(judge)
     joins(with_assigned_distribution_task_sql)
       .where(hearings: { disposition: "held", judge_id: judge.id })
-      .where("distribution_task.assigned_at > ?", CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
+      # .where("distribution_task.assigned_at > ?", CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
   end
 
   def tied_to_ineligible_judge
@@ -159,8 +172,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
     CaseDistributionLever.send(lever) == "omit"
   end
 
-  def case_affinity_days_lever_value_is_selected?(lever)
-    lever_value = CaseDistributionLever.send(lever)
+  def case_affinity_days_lever_value_is_selected?(lever_value)
     return false if lever_value == "omit" || lever_value == "infinite"
 
     true
