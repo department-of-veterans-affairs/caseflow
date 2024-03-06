@@ -79,7 +79,7 @@ describe('AutoAssignAlertBanner', () => {
     );
 
     await waitFor(() => {
-      expect(getByText(COPY.BAAA_FAILED_TITLE)).toBeInTheDocument();
+      expect(getByText(COPY.BAAA_UNSUCCESSFUL_TITLE)).toBeInTheDocument();
     });
 
   });

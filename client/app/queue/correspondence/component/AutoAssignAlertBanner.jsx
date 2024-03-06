@@ -28,14 +28,15 @@ const AutoAssignAlertBanner = (props) => {
   const handleBatchAutoAssignmentBanner = async (response) => {
     if (response.status === CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.error) {
       const bannerPayload = {
-        title: COPY.BAAA_FAILED_TITLE,
-        message: response.error_message.message,
+        message: response.error_message.message
       };
 
       if (response.error_message.message.includes(COPY.BAAA_ERROR_MESSAGE)) {
         bannerPayload.type = 'error';
+        bannerPayload.title = COPY.BAAA_FAILED_TITLE;
       } else {
-        bannerPayload.type = 'info';
+        bannerPayload.type = 'warning';
+        bannerPayload.title = COPY.BAAA_UNSUCCESSFUL_TITLE;
       }
 
       props.setAutoAssignmentAlertBanner(bannerPayload);
