@@ -14,6 +14,7 @@ export const initialState = {
   veteranInformation: [],
   waivedEvidenceTasks: [],
   responseLetters: {},
+  correspondenceInformation: {}
 };
 
 export const intakeCorrespondenceReducer = (state = initialState, action = {}) => {
@@ -29,6 +30,13 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     return update(state, {
       correspondences: {
         $set: action.payload.correspondences
+      }
+    });
+
+  case ACTIONS.LOAD_CORRESPONDENCE_INFORMATION:
+    return update(state, {
+      correspondenceInformation: {
+        $set: action.payload.correspondenceInformation
       }
     });
 

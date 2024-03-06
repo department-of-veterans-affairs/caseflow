@@ -12,6 +12,7 @@ import {
   loadCurrentCorrespondence,
   loadCorrespondences,
   loadVeteranInformation,
+  loadCorrespondenceInformation,
   updateRadioValue,
   saveCheckboxState,
   clearCheckboxState,
@@ -46,6 +47,7 @@ class AddCorrespondenceView extends React.Component {
       this.props.loadCurrentCorrespondence(currentCorrespondence);
       this.props.loadCorrespondences(correspondences);
       this.props.loadVeteranInformation(veteranInformation);
+      this.props.loadCorrespondenceInformation(returnedObject.correspondenceInformation);
     }).
       catch((err) => {
         // allow HTTP errors to fall on the floor via the console.
@@ -240,6 +242,7 @@ AddCorrespondenceView.propTypes = {
   featureToggles: PropTypes.object,
   correspondenceUuid: PropTypes.string,
   loadVeteranInformation: PropTypes.func,
+  loadCorrespondenceInformation: PropTypes.func,
   loadCurrentCorrespondence: PropTypes.func,
   loadCorrespondences: PropTypes.func,
   updateRadioValue: PropTypes.func,
@@ -257,6 +260,7 @@ AddCorrespondenceView.propTypes = {
 const mapStateToProps = (state) => ({
   currentCorrespondence: state.intakeCorrespondence.currentCorrespondence,
   veteranInformation: state.intakeCorrespondence.veteranInformation,
+  correspondenceInformation: state.intakeCorrespondence.correspondenceInformation,
   correspondences: state.intakeCorrespondence.correspondences,
   radioValue: state.intakeCorrespondence.radioValue,
   checkboxes: state.intakeCorrespondence.relatedCorrespondences,
@@ -268,6 +272,7 @@ const mapDispatchToProps = (dispatch) => (
     loadCurrentCorrespondence,
     loadCorrespondences,
     loadVeteranInformation,
+    loadCorrespondenceInformation,
     updateRadioValue,
     saveCheckboxState,
     clearCheckboxState,
