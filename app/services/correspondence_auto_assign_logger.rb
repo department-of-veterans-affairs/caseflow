@@ -3,12 +3,12 @@
 # :reek:FeatureEnvy
 class CorrespondenceAutoAssignLogger
   def initialize(current_user, batch)
-    @current_user = current_user
-    @batch = batch
+    self.current_user = current_user
+    self.batch = batch
   end
 
   def begin
-    @batch.update!(
+    batch.update!(
       started_at: Time.current,
       status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.started,
       num_nod_packages_assigned: 0,
@@ -19,7 +19,7 @@ class CorrespondenceAutoAssignLogger
   end
 
   def end
-    @batch.assign_attributes(
+    batch.assign_attributes(
       status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.completed,
       completed_at: Time.current
     )
@@ -28,13 +28,25 @@ class CorrespondenceAutoAssignLogger
   end
 
   def error(msg:)
-    @batch.assign_attributes(
+    batch.assign_attributes(
       status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.error,
       error_info: { message: msg },
       errored_at: Time.current
     )
 
     save_run_statistics
+  end
+
+  def fail_run_validation(batch_auto_assignment_attempt_id:, msg:)
+    failed_batch = BatchAutoAssignmentAttempt.find(batch_auto_assignment_attempt_id)
+
+    return if failed_batch.blank?
+
+    failed_batch.update!(
+      status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.error,
+      error_info: { message: msg },
+      errored_at: Time.current
+    )
   end
 
   def assigned(task:, started_at:, assigned_to:)
@@ -44,15 +56,15 @@ class CorrespondenceAutoAssignLogger
     attempt.assign_attributes(
       correspondence: correspondence,
       completed_at: Time.current,
-      nod: correspondence.nod?,
+      nod: correspondence.nod,
       status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.completed,
       started_at: started_at
     )
 
-    if correspondence.nod?
-      @batch.num_nod_packages_assigned += 1
+    if correspondence.nod
+      batch.num_nod_packages_assigned += 1
     else
-      @batch.num_packages_assigned += 1
+      batch.num_packages_assigned += 1
     end
 
     save_attempt_statistics(
@@ -69,15 +81,15 @@ class CorrespondenceAutoAssignLogger
     attempt.assign_attributes(
       correspondence: correspondence,
       errored_at: Time.current,
-      nod: correspondence.nod?,
+      nod: correspondence.nod,
       status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.error,
       started_at: started_at
     )
 
-    if correspondence.nod?
-      @batch.num_nod_packages_unassigned += 1
+    if correspondence.nod
+      batch.num_nod_packages_unassigned += 1
     else
-      @batch.num_packages_unassigned += 1
+      batch.num_packages_unassigned += 1
     end
 
     save_attempt_statistics(
@@ -89,20 +101,22 @@ class CorrespondenceAutoAssignLogger
 
   private
 
+  attr_accessor :batch, :current_user
+
   def individual_auto_assignment_attempt
     IndividualAutoAssignmentAttempt.new(
-      batch_auto_assignment_attempt: @batch,
-      user: @current_user
+      batch_auto_assignment_attempt: batch,
+      user: current_user
     )
   end
 
   def save_run_statistics
     stats = {
-      seconds_elapsed: seconds_elapsed(record: @batch, status: @batch.status)
+      seconds_elapsed: seconds_elapsed(record: batch, status: batch.status)
     }
 
-    @batch.statistics = stats
-    @batch.save!
+    batch.statistics = stats
+    batch.save!
   end
 
   def save_attempt_statistics(attempt:, task:, result:)
