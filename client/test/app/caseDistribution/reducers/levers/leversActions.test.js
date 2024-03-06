@@ -2,7 +2,6 @@ import * as actions from 'app/caseDistribution/reducers/levers/leversActions';
 import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
 import ApiUtil from 'app/util/ApiUtil';
 import { alternativeBatchSize, levers, historyList } from '../../../../data/adminCaseDistributionLevers';
-import ACD_LEVERS from '../../../../../constants/ACD_LEVERS';
 
 jest.mock('app/util/ApiUtil', () => ({
   get: jest.fn(),
@@ -20,6 +19,20 @@ describe('levers actions', () => {
     const dispatch = jest.fn();
 
     actions.setUserIsAcdAdmin(isUserAcdAdmin)(dispatch);
+
+    expect(dispatch).toHaveBeenCalledWith(expectedAction);
+  });
+
+  it('should create an action to set exclude from affinity', () => {
+    const acdExcludeFromAffinity = true;
+    const expectedAction = {
+      type: ACTIONS.SET_ACD_EXCLUDE_FROM_AFFINITY,
+      payload: { acdExcludeFromAffinity }
+    };
+
+    const dispatch = jest.fn();
+
+    actions.loadAcdExcludeFromAffinity(acdExcludeFromAffinity)(dispatch);
 
     expect(dispatch).toHaveBeenCalledWith(expectedAction);
   });
