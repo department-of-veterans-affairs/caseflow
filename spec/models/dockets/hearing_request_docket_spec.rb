@@ -227,6 +227,33 @@ describe HearingRequestDocket, :all_dbs do
           expect(distribution_judge.reload.tasks.map(&:appeal)).to match_array(expected_result)
         end
       end
+
+      context "with ama_hearing_case_affinity_days lever with infinite" do
+        before { CaseDistributionLever.find_by(item: "ama_hearing_case_affinity_days").update(value: "infinite") }
+
+        subject do
+          HearingRequestDocket.new.distribute_appeals(distribution, priority: false, limit: 10, genpop: "any")
+        end
+
+        it "always distributes cases with tied to current judge and with no hearing or no held hearings" do
+          # will be included
+          tied = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
+          not_tied = create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
+          no_held_hearings = non_priority_with_no_held_hearings
+          no_hearings = non_priority_with_no_hearings
+          # Won't include
+          tied_to_other_judge = create_nonpriority_distributable_hearing_appeal_tied_to_other_judge_outside_affinity
+
+          expected_result = [tied, not_tied, no_held_hearings, no_hearings]
+
+          tasks = subject
+          appeal_ids = tasks.map(&:case_id)
+          expect(appeal_ids).to match_array(expected_result.map(&:uuid))
+          expect(distribution.distributed_cases.length).to eq(expected_result.length)
+          expect(distribution_judge.reload.tasks.map(&:appeal)).to match_array(expected_result)
+          expect(appeal_ids).not_to include(tied_to_other_judge.uuid)
+        end
+      end
     end
 
     context "priority appeals and only_genpop" do
@@ -347,35 +374,6 @@ describe HearingRequestDocket, :all_dbs do
           expect(tasks.first.genpop_query).to eq "only_genpop"
           expect(distribution.distributed_cases.length).to eq(expected_result.length)
           expect(distribution_judge.reload.tasks.map(&:appeal)).to match_array(expected_result)
-        end
-      end
-
-      context "with ama_hearing_case_affinity_days lever with infinite" do
-        before do
-          CaseDistributionLever.find_by(item: "ama_hearing_case_affinity_days").update(value: "infinite")
-        end
-
-        it "always distributes cases with tied to current judge and with no hearing or no held hearings" do
-          # will be included
-          no_held_hearings = matching_all_base_conditions_with_no_held_hearings
-          no_hearings = matching_all_base_conditions_with_no_hearings
-          # Ignore within affinity window case
-          hearing_with_tied_to_judge = with_most_recent_held_hearing_within_affinity(distribution_judge)
-
-          # Won't include
-          hearing_with_tied_to_other_judge = most_recent_held_hearing_with_exclude_judge_from_affinity
-
-          expected_result = [no_held_hearings, no_hearings, hearing_with_tied_to_judge]
-
-          tasks = subject
-
-          expect(tasks.length).to eq(expected_result.length)
-          expect(tasks.first.class).to eq(DistributedCase)
-          expect(tasks.first.genpop).to eq true
-          expect(tasks.first.genpop_query).to eq "only_genpop"
-          expect(distribution.distributed_cases.length).to eq(expected_result.length)
-          expect(distribution_judge.reload.tasks.map(&:appeal)).to match_array(expected_result)
-          expect(tasks.map(&:case_id)).not_to include(hearing_with_tied_to_other_judge.uuid)
         end
       end
     end

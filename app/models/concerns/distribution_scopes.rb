@@ -115,9 +115,14 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   end
 
   def tied_to_distribution_judge(judge)
-    joins(with_assigned_distribution_task_sql)
+    query = joins(with_assigned_distribution_task_sql)
       .where(hearings: { disposition: "held", judge_id: judge.id })
-      .where("distribution_task.assigned_at > ?", CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
+    if case_affinity_days_lever_value_is_selected?("ama_hearing_case_affinity_days")
+      return query.where("distribution_task.assigned_at > ?", CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
+    end
+    return query if lever_infinite?("ama_hearing_case_affinity_days")
+
+    []
   end
 
   def tied_to_ineligible_judge
@@ -171,10 +176,5 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
     return false if lever_omitted?(lever) || lever_infinite?(lever)
 
     true
-  end
-
-  def always_tied_to_distribution_judge(judge)
-    joins(with_assigned_distribution_task_sql)
-      .where(hearings: { disposition: "held", judge_id: judge.id })
   end
 end

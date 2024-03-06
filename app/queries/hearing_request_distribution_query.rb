@@ -65,7 +65,6 @@ class HearingRequestDistributionQuery
     # due to incompatibilities between the two queries.
     appeals_to_return << most_recent_held_hearings_not_tied_to_any_judge
     appeals_to_return << most_recent_held_hearings_exceeding_affinity_threshold if case_affinity_days_lever_value_is_selected?("ama_hearing_case_affinity_days") # rubocop:disable Layout/LineLength
-    appeals_to_return << most_recent_held_hearings_always_ama_hearing_original_appeals if lever_infinite?("ama_hearing_case_affinity_days") # rubocop:disable Layout/LineLength
     appeals_to_return << most_recent_held_hearings_tied_to_ineligible_judge
     appeals_to_return << no_hearings_or_no_held_hearings
     appeals_to_return << most_recent_held_hearings_tied_to_judges_with_exclude_appeals_from_affinity
@@ -75,10 +74,6 @@ class HearingRequestDistributionQuery
 
   def most_recent_held_hearings_exceeding_affinity_threshold
     base_relation.most_recent_hearings.exceeding_affinity_threshold
-  end
-
-  def most_recent_held_hearings_always_ama_hearing_original_appeals
-    with_held_hearings.always_tied_to_distribution_judge(judge)
   end
 
   def most_recent_held_hearings_not_tied_to_any_judge
