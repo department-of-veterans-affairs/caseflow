@@ -72,12 +72,12 @@ class HearingRequestDistributionQuery
     # instead of several small ones. this may be beneficial because of the inefficient joins for the most recently
     # held hearing
     base_relation_with_joined_most_recent_hearings_and_dist_task
-      .not_tied_to_any_judge
-      .or(base_relation_with_joined_most_recent_hearings_and_dist_task.exceeding_affinity_threshold)
+      .exceeding_affinity_threshold
       .or(base_relation_with_joined_most_recent_hearings_and_dist_task.tied_to_ineligible_judge)
-      .or(base_relation_with_joined_most_recent_hearings_and_dist_task.with_no_hearings)
-      .or(base_relation_with_joined_most_recent_hearings_and_dist_task.with_no_held_hearings)
       .or(base_relation_with_joined_most_recent_hearings_and_dist_task.tied_to_judges_with_exclude_appeals_from_affinity)
+      .or(base_relation_with_joined_most_recent_hearings_and_dist_task.not_tied_to_any_judge)
+      .or(base_relation_with_joined_most_recent_hearings_and_dist_task.with_no_held_hearings)
+      .or(base_relation_with_joined_most_recent_hearings_and_dist_task.with_no_hearings)
   end
 
   def base_relation_with_joined_most_recent_hearings_and_dist_task
