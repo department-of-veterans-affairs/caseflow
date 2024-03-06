@@ -47,7 +47,7 @@ const leversReducer = (state = initialState, action = {}) => {
       acdExcludeFromAffinity: {
         $set: action.payload.acdExcludeFromAffinity
       }
-    })
+    });
   case ACTIONS.UPDATE_BOOLEAN_LEVER:
   case ACTIONS.UPDATE_NUMBER_LEVER:
   case ACTIONS.UPDATE_TEXT_LEVER: {

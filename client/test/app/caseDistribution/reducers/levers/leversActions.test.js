@@ -2,7 +2,6 @@ import * as actions from 'app/caseDistribution/reducers/levers/leversActions';
 import { ACTIONS } from 'app/caseDistribution/reducers/levers/leversActionTypes';
 import ApiUtil from 'app/util/ApiUtil';
 import { alternativeBatchSize, levers, historyList } from '../../../../data/adminCaseDistributionLevers';
-import ACD_LEVERS from '../../../../../constants/ACD_LEVERS';
 
 jest.mock('app/util/ApiUtil', () => ({
   get: jest.fn(),

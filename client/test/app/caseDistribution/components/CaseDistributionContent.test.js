@@ -75,7 +75,9 @@ describe('CaseDistributionContent', () => {
       </BrowserRouter>
     );
 
-    expect(screen.getByText('may remove individual judges from Affinity Case Distribution', {exact: false})).toBeInTheDocument();
+    expect(
+      screen.getByText('may remove individual judges from Affinity Case Distribution', { exact: false })
+    ).toBeInTheDocument();
   });
 
   it('renders the "CaseDistributionContent Component" without the exclude from affinity banner enabled', () => {
