@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_02_12_195552) do
+ActiveRecord::Schema.define(version: 2024_02_29_165212) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -695,6 +695,7 @@ ActiveRecord::Schema.define(version: 2024_02_12_195552) do
     t.integer "cmp_queue_id", comment: "Foreign key to CMP queues table"
     t.integer "correspondence_type_id", comment: "Foreign key for correspondence_types table"
     t.datetime "created_at", null: false, comment: "Standard created_at/updated_at timestamps"
+    t.boolean "nod", default: false, null: false, comment: "NOD (Notice of Disagreement)"
     t.text "notes", comment: "Comes from CMP; can be updated by user"
     t.integer "package_document_type_id", comment: "Represents entire CMP package document type"
     t.datetime "portal_entry_date", comment: "Time when correspondence is created in Caseflow"

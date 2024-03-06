@@ -19,7 +19,7 @@ class AutoAssignableUserFinder
   private
 
   def run_auto_assign_algorithm(correspondence, vbms_id)
-    return auto_assign_nod(vbms_id) if correspondence.nod?
+    return auto_assign_nod(vbms_id) if correspondence.nod
 
     assignable_users.each do |user|
       if sensitivity_checker.user_can_access?(vbms_id: vbms_id, user_to_check: user.user_obj)
