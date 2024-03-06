@@ -4,8 +4,10 @@ import CaseDistributionContent from 'app/caseDistribution/components/CaseDistrib
 import { formattedLevers } from 'test/data/formattedCaseDistributionData';
 import { createStore, applyMiddleware } from 'redux';
 import leversReducer from 'app/caseDistribution/reducers/levers/leversReducer';
+import { loadAcdExcludeFromAffinity } from 'app/caseDistribution/reducers/levers/leversActions';
 import rootReducer from 'app/caseDistribution/reducers/root';
 import { Provider } from 'react-redux';
+import { BrowserRouter } from 'react-router-dom';
 import thunk from 'redux-thunk';
 
 describe('CaseDistributionContent', () => {
@@ -22,9 +24,11 @@ describe('CaseDistributionContent', () => {
 
   const setup = (testProps) =>
     render(
-      <Provider store={store}>
-        <CaseDistributionContent {...testProps} />
-      </Provider>
+      <BrowserRouter>
+        <Provider store={store}>
+          <CaseDistributionContent {...testProps} />
+        </Provider>
+      </BrowserRouter>
     );
 
   it('renders the "CaseDistributionContent Component" with the data imported', () => {
@@ -32,7 +36,6 @@ describe('CaseDistributionContent', () => {
       levers: JSON.parse(JSON.stringify(formattedLevers)),
       backendLevers: JSON.parse(JSON.stringify(formattedLevers))
     };
-
     const leverStore = createStore(leversReducer, preloadedState);
 
     let testLevers = {
@@ -47,54 +50,47 @@ describe('CaseDistributionContent', () => {
       levers: testLevers,
       saveChanges: {},
       leverStore,
-      isAdmin: true,
-      acdExcludeFromAffinity: true,
+      isAdmin: true
     };
 
     setup(testProps);
 
     expect(screen.getByText('Administration')).toBeInTheDocument();
     expect(screen.getByText('Case Distribution Algorithm Values')).toBeInTheDocument();
-    expect(screen.getByText('You may remove individual judges from Affinity Case Distribution within the setting on the Caseflow Team Management page.')).toBeInTheDocument();
     expect(screen.getByText('AMA Non-priority Distribution Goals by Docket')).toBeInTheDocument();
     expect(screen.getByText('Active Data Elements')).toBeInTheDocument();
     expect(screen.getByText('Inactive Data Elements')).toBeInTheDocument();
     expect(screen.getByText('Case Distribution Algorithm Change History')).toBeInTheDocument();
   });
 
-  it('renders the "CaseDistributionContent Component" without the banner (acd_affinity_exclusion off)', () => {
-    const preloadedState = {
-      levers: JSON.parse(JSON.stringify(formattedLevers)),
-      backendLevers: JSON.parse(JSON.stringify(formattedLevers))
-    };
+  it('renders the "CaseDistributionContent Component" with the exclude from affinity banner enabled', () => {
 
-    const leverStore = createStore(leversReducer, preloadedState);
+    store.dispatch(loadAcdExcludeFromAffinity(true));
 
-    let testLevers = {
-      static: [],
-      batch: [],
-      affinity: [],
-      docket_distribution_prior: [],
-      docket_time_goal: []
-    };
+    render(
+      <BrowserRouter>
+        <Provider store={store}>
+          <CaseDistributionContent />
+        </Provider>
+      </BrowserRouter>
+    );
 
-    let testProps = {
-      levers: testLevers,
-      saveChanges: {},
-      leverStore,
-      isAdmin: true,
-      acdExcludeFromAffinity: false,
-    };
+    expect(screen.getByText('may remove individual judges from Affinity Case Distribution', {exact: false})).toBeInTheDocument();
+  });
 
-    setup(testProps);
+  it('renders the "CaseDistributionContent Component" without the exclude from affinity banner enabled', () => {
 
-    expect(screen.getByText('Administration')).toBeInTheDocument();
-    expect(screen.getByText('Case Distribution Algorithm Values')).toBeInTheDocument();
-    expect(screen.queryByText('You may remove individual judges from Affinity Case Distribution within the setting on the Caseflow Team Management page.')).not.toBeInTheDocument();
-    expect(screen.getByText('AMA Non-priority Distribution Goals by Docket')).toBeInTheDocument();
-    expect(screen.getByText('Active Data Elements')).toBeInTheDocument();
-    expect(screen.getByText('Inactive Data Elements')).toBeInTheDocument();
-    expect(screen.getByText('Case Distribution Algorithm Change History')).toBeInTheDocument();
+    store.dispatch(loadAcdExcludeFromAffinity(false));
+
+    render(
+      <BrowserRouter>
+        <Provider store={store}>
+          <CaseDistributionContent />
+        </Provider>
+      </BrowserRouter>
+    );
+
+    expect(screen.queryByText('may remove individual judges from Affinity Case Distribution')).not.toBeInTheDocument();
   });
 
 });
