@@ -78,7 +78,7 @@ describe AutoAssignableUserFinder do
 
       context "with NOD correspondence" do
         let!(:correspondence_nod) do
-          create(:correspondence, package_document_type: create(:package_document_type, :nod), veteran_id: veteran.id)
+          create(:correspondence, :nod, veteran_id: veteran.id)
         end
         let!(:user_1) { create(:correspondence_auto_assignable_user) }
         let!(:user_2) { create(:correspondence_auto_assignable_user) }
@@ -124,7 +124,7 @@ describe AutoAssignableUserFinder do
       context "with NOD correspondence" do
         let!(:nod_user) { create(:correspondence_auto_assignable_user, :nod_enabled) }
         let!(:correspondence_nod) do
-          create(:correspondence, package_document_type: create(:package_document_type, :nod), veteran_id: veteran.id)
+          create(:correspondence, :nod, veteran_id: veteran.id)
         end
 
         before do
