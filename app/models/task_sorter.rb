@@ -34,6 +34,8 @@ class TaskSorter
       tasks.joins(:appeal).order(notes: sort_order.to_sym)
     when Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name
       tasks.joins(:appeal).order(va_date_of_receipt: sort_order.to_sym)
+    when Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name
+      tasks.joins(:appeal).order(assigned_at: sort_order.to_sym)
     else
       tasks.with_assignees.with_assigners.with_cached_appeals.order(order_clause)
     end

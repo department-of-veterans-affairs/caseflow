@@ -88,7 +88,7 @@ module QueueHelpers
       appeal_id: correspondence.id,
       appeal_type: "Correspondence",
       status: status,
-      assigned_to: MailTeamSupervisor.singleton
+      assigned_to: InboundOpsTeam.singleton
     )
   end
 
@@ -101,7 +101,7 @@ module QueueHelpers
       appeal_id: correspondence.id,
       appeal_type: "Correspondence",
       assigned_by: assigned_by,
-      assigned_to: MailTeamSupervisor.singleton
+      assigned_to: InboundOpsTeam.singleton
     )
     cavct.update!(status: Constants.TASK_STATUSES.completed)
     cavct

@@ -62,7 +62,7 @@ const CorrespondenceTableBuilder = (props) => {
     querystring.parse(window.location.search.slice(1))
   );
 
-  const isMailTeamSupervisor = props.organizations.find((org) => org.name === 'Mail Team Supervisor');
+  const isInboundOpsTeam = props.organizations.find((org) => org.name === 'Inbound Ops Team');
 
   // Causes one additional rerender of the QueueTables/tabs but prevents saved pagination behavior
   // e.g. clearing filter in a tab, then swapping tabs, then swapping back and the filter will still be applied
@@ -174,7 +174,7 @@ const CorrespondenceTableBuilder = (props) => {
       label: sprintf(tabConfig.label, totalTaskCount),
       page: (
         <>
-          {isMailTeamSupervisor &&
+          {isInboundOpsTeam &&
             (tabConfig.name === 'correspondence_unassigned' || tabConfig.name === 'correspondence_team_assigned') &&
             <>
               <p className="cf-margin-bottom-0rem">Assign to mail team user</p>
