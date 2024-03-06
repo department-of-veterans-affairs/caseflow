@@ -6,7 +6,11 @@ import AddCorrespondenceView from './AddCorrespondence/AddCorrespondenceView';
 import { AddTasksAppealsView } from './TasksAppeals/AddTasksAppealsView';
 import { connect, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { loadSavedIntake, setUnrelatedTasks, saveCurrentIntake } from '../../correspondenceReducer/correspondenceActions';
+import {
+  loadSavedIntake,
+  setUnrelatedTasks,
+  saveCurrentIntake,
+} from '../../correspondenceReducer/correspondenceActions';
 import { useHistory } from 'react-router-dom';
 import { ConfirmCorrespondenceView } from './ConfirmCorrespondence/ConfirmCorrespondenceView';
 import { SubmitCorrespondenceModal } from './ConfirmCorrespondence/SubmitCorrespondenceModal';
@@ -53,7 +57,7 @@ export const CorrespondenceIntake = (props) => {
     props.saveCurrentIntake(intakeCorrespondence);
     // Redirect the user to the previous page
     history.goBack();
-  }
+  };
 
   const nextStep = () => {
     if (currentStep < 3) {
@@ -205,7 +209,8 @@ CorrespondenceIntake.propTypes = {
   autoTexts: PropTypes.arrayOf(PropTypes.string),
   currentStep: PropTypes.number,
   reduxStore: PropTypes.object,
-  loadSavedIntake: PropTypes.func
+  loadSavedIntake: PropTypes.func,
+  saveCurrentIntake: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({

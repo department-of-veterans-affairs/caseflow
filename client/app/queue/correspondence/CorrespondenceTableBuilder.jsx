@@ -201,9 +201,9 @@ const CorrespondenceTableBuilder = (props) => {
                 <span style={{ marginLeft: 'auto' }}>
                   <Button
                     name="Auto assign correspondence"
-                    />
-                  </span>
-                </>
+                  />
+                </span>
+              </>
                 }
                 {tabConfig.name === 'correspondence_team_assigned' &&
             <Button

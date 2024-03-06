@@ -54,7 +54,6 @@ export const AddAppealRelatedTaskView = (props) => {
     dispatch(setTaskRelatedAppealIds(taskRelatedAppeals));
   }, [taskRelatedAppeals]);
 
-
   useEffect(() => {
     // Creates an array of Task IDs then sorts them so that the highest ID is the last in the array.
     const existingIds = [...newTasks.map((task) => task.id)].sort((task1, task2) => task1 - task2);
