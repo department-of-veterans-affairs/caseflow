@@ -128,9 +128,9 @@ const ReviewAppealView = (props) => {
   // Specialty Case Team (SCT) logic for movement of appeals based on splitting appeals with SCT request issues
   const specialtyCaseTeamBenefitTypes = Object.keys(SPECIALTY_CASE_TEAM_BENEFIT_TYPES);
   const originalHasSCTIssue = selectOriginal.some((issue) =>
-    specialtyCaseTeamBenefitTypes.includes(issue.benefitType));
+    specialtyCaseTeamBenefitTypes.includes(issue.benefit_type));
   const selectedHasSCTIssue = selectElement.some((issue) =>
-    specialtyCaseTeamBenefitTypes.includes(issue.benefitType));
+    specialtyCaseTeamBenefitTypes.includes(issue.benefit_type));
   const atLeastOneHasSCTIssue = selectedHasSCTIssue || originalHasSCTIssue;
 
   return (
