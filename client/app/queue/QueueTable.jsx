@@ -13,7 +13,7 @@ import Pagination from '../components/Pagination/Pagination';
 import { COLORS, LOGO_COLORS } from '../constants/AppConstants';
 import ApiUtil from '../util/ApiUtil';
 import LoadingScreen from '../components/LoadingScreen';
-import { tasksWithAppealsFromRawTasks, tasksWithCorrespondenceFromRawTasks } from './utils';
+import { tasksWithAppealsFromRawTasks } from './utils';
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 import COPY from '../../COPY';
 
@@ -171,8 +171,6 @@ export const HeaderRow = (props) => {
                 filterOptionsFromApi={props.useTaskPagesApi && column.filterOptions}
                 updateFilters={(newFilters) => props.updateFilteredByList(newFilters)}
                 filteredByList={props.filteredByList}
-                isReceiptDateFilter={column.name === QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name}
-                isTaskCompletedDateFilter={column.name === QUEUE_CONFIG.COLUMNS.TASK_CLOSED_DATE.name}
               />
             );
           }
@@ -640,9 +638,7 @@ export default class QueueTable extends React.PureComponent {
           tasks: { data: tasks }
         } = response.body;
 
-        const preparedTasks = this.props.isCorrespondenceTable ?
-          tasksWithCorrespondenceFromRawTasks(tasks) :
-          tasksWithAppealsFromRawTasks(tasks);
+        const preparedTasks = tasksWithAppealsFromRawTasks(tasks);
 
         const preparedResponse = Object.assign(response.body, { tasks: preparedTasks });
 
@@ -847,7 +843,6 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   }),
   onHistoryUpdate: PropTypes.func,
   preserveFilter: PropTypes.bool,
-  isCorrespondenceTable: PropTypes.bool
 };
 
 Row.propTypes.rowObjects = PropTypes.arrayOf(PropTypes.object);

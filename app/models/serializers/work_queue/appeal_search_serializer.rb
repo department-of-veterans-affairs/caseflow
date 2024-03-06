@@ -138,7 +138,6 @@ class WorkQueue::AppealSearchSerializer
   attribute :evidence_submission_task do |object|
     object.tasks.find_by(type: "EvidenceSubmissionWindowTask", status: "assigned")
   end
-
   attribute :readable_hearing_request_type, &:readable_current_hearing_request_type
 
   attribute :readable_original_hearing_request_type, &:readable_original_hearing_request_type

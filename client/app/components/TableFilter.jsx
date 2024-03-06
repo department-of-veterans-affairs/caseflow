@@ -153,7 +153,6 @@ class TableFilter extends React.PureComponent {
     let newFilteredByList = _.clone(filteredByList);
 
     newFilteredByList[columnName] = newFilters;
-
     this.props.updateFilters(newFilteredByList);
     this.toggleDropdown();
   }
@@ -210,14 +209,10 @@ class TableFilter extends React.PureComponent {
         {this.state.open &&
           <QueueDropdownFilter
             clearFilters={this.clearFilteredByList}
-            isReceiptDateFilter={this.props.isReceiptDateFilter}
-            isTaskCompletedDateFilter={this.props.isTaskCompletedDateFilter}
             name={valueName || columnName}
             isClearEnabled={anyFiltersAreSet}
             handleClose={this.toggleDropdown}
-            setSelectedValue={(value) => this.updateSelectedFilter(value, columnName)}
             addClearFiltersRow>
-
             <FilterOption
               options={filterOptions}
               setSelectedValue={(value) => this.updateSelectedFilter(value, columnName)} />
@@ -233,8 +228,6 @@ TableFilter.defaultProps = {
 };
 
 TableFilter.propTypes = {
-  isReceiptDateFilter: PropTypes.bool,
-  isTaskCompletedDateFilter: PropTypes.bool,
   enableFilter: PropTypes.bool,
   enableFilterTextTransform: PropTypes.bool,
   getFilterIconRef: PropTypes.func,

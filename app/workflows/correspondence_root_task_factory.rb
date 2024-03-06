@@ -34,7 +34,5 @@ class CorrespondenceRootTaskFactory
       parent_id: @root_task.id,
       type: ReviewPackageTask.name
     )
-
-    @review_package_task.update!(status: Constants.TASK_STATUSES.unassigned)
   end
 end
