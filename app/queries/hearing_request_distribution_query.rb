@@ -46,7 +46,6 @@ class HearingRequestDistributionQuery
   # use nongenpop appeals as the base
   def not_genpop_appeals
     appeals_to_return = []
-
     # handling ama. omit means that we ignore the lever
     appeals_to_return << ama_affinity_hearing_value_appeals if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days) # rubocop:disable Layout/LineLength
     appeals_to_return << ama_affinity_hearing_infinite_appeals if CaseDistributionLever.ama_hearing_case_affinity_days == "infinite"
@@ -73,8 +72,8 @@ class HearingRequestDistributionQuery
         no_hearings_or_no_held_hearings
       ].flatten.uniq
     end
-
-    appeals_to_return << with_held_hearings if lever_omitted?("ama_hearing_case_affinity_days")
+    should_return_with_held_hearings = CaseDistributionLever.ama_hearing_case_affinity_days == "omit" && CaseDistributionLever.ama_hearing_case_aod_affinity_days == "omit"
+    appeals_to_return << with_held_hearings if should_return_with_held_hearings
 
     # We are combining two queries using an array because using `or` doesn't work
     # due to incompatibilities between the two queries.
@@ -104,7 +103,7 @@ class HearingRequestDistributionQuery
   end
 
   def ama_affinity_hearing_infinite_appeals
-    not_genpop_base.always_ama_affinity_threshold
+    not_genpop_base
   end
 
   def ama_affinity_hearing_appeals_genpop_value

@@ -246,7 +246,12 @@ describe HearingRequestDocket, :all_dbs do
                                                     genpop: "only_genpop", judge: judge)
         result = hrdq.send(:aod_hearing_infinite_appeals)
 
+        result_created_dates = result.map {|x| x.created_at.to_date}
+
         expect(result.length).to eq(expected_result.length)
+        expect(result_created_dates).to include(appeal_30_days.created_at.to_date)
+        expect(result_created_dates).to include(appeal_90_days.created_at.to_date)
+        expect(result_created_dates).to include(appeal_200_days.created_at.to_date)
       end
 
       it "returns aod affinity based on 35 value" do
@@ -262,9 +267,12 @@ describe HearingRequestDocket, :all_dbs do
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                     genpop: "only_genpop", judge: judge)
-        result = hrdq.send(:aod_hearing_infinite_appeals)
+        result = hrdq.send(:aod_hearing_value_appeals)
+        result_created_dates = result.map {|x| x.created_at.to_date}
 
         expect(result.length).to eq(expected_result.length)
+        expect(result_created_dates).to include(appeal_90_days.created_at.to_date)
+        expect(result_created_dates).to include(appeal_200_days.created_at.to_date)
       end
 
       it "returns aod affinity based on 100 value" do
@@ -280,9 +288,11 @@ describe HearingRequestDocket, :all_dbs do
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                     genpop: "only_genpop", judge: judge)
-        result = hrdq.send(:aod_hearing_infinite_appeals)
+        result = hrdq.send(:aod_hearing_value_appeals)
+        result_created_dates = result.map {|x| x.created_at.to_date}
 
         expect(result.length).to eq(expected_result.length)
+        expect(result_created_dates).to include(appeal_200_days.created_at.to_date)
       end
 
       it "returns aod affinity based on infinite value" do
@@ -302,8 +312,13 @@ describe HearingRequestDocket, :all_dbs do
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                     genpop: "only_genpop", judge: judge)
         result = hrdq.send(:aod_hearing_infinite_appeals)
+        result_created_dates = result.map { |x| x.created_at.to_date }
 
         expect(result.length).to eq(expected_result.length)
+        expect(result_created_dates).to include(appeal_3_days.created_at.to_date)
+        expect(result_created_dates).to include(appeal_30_days.created_at.to_date)
+        expect(result_created_dates).to include(appeal_90_days.created_at.to_date)
+        expect(result_created_dates).to include(appeal_200_days.created_at.to_date)
       end
     end
 
@@ -324,8 +339,12 @@ describe HearingRequestDocket, :all_dbs do
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                    genpop: "only_genpop", judge: judge)
         result = hrdq.send(:ama_affinity_hearing_appeals_genpop_value)
+        result_created_dates = result.map {|x| x.created_at.to_date}
 
         expect(result.length).to eq(expected_result.length)
+        expect(result_created_dates).to include(appeal_30_days.created_at.to_date)
+        expect(result_created_dates).to include(appeal_90_days.created_at.to_date)
+        expect(result_created_dates).to include(appeal_200_days.created_at.to_date)
       end
 
       it "returns ama affinity based on 35 value" do
@@ -342,8 +361,11 @@ describe HearingRequestDocket, :all_dbs do
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                    genpop: "only_genpop", judge: judge)
         result = hrdq.send(:ama_affinity_hearing_appeals_genpop_value)
+        result_created_dates = result.map {|x| x.created_at.to_date}
 
         expect(result.length).to eq(expected_result.length)
+        expect(result_created_dates).to include(appeal_90_days.created_at.to_date)
+        expect(result_created_dates).to include(appeal_200_days.created_at.to_date)
       end
 
       it "returns ama affinity based on 100 value" do
@@ -360,8 +382,10 @@ describe HearingRequestDocket, :all_dbs do
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                    genpop: "only_genpop", judge: judge)
         result = hrdq.send(:ama_affinity_hearing_appeals_genpop_value)
+        result_created_dates = result.map {|x| x.created_at.to_date}
 
         expect(result.length).to eq(expected_result.length)
+        expect(result_created_dates).to include(appeal_200_days.created_at.to_date)
       end
     end
 
@@ -369,11 +393,11 @@ describe HearingRequestDocket, :all_dbs do
       it "returns ama affinity based on 12 value" do
         # Given the ama_hearing_case_ama_affinity_days returns a number, we expect ama appeals older than 90 days
         judge = create(:user, station_id: User::BOARD_STATION_ID)
-        #not expected
+        # not expected
         create_aod_value_appeal(90, judge)
         create_aod_value_appeal(30, judge)
         create_aod_value_appeal(200, judge)
-        #expected
+        # expected
         appeal_10_days = create_aod_value_appeal(10, judge)
         puts "value is 12"
         CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update(value: "12")
@@ -384,16 +408,18 @@ describe HearingRequestDocket, :all_dbs do
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                    genpop: "only_genpop", judge: judge)
         result = hrdq.send(:ama_affinity_hearing_value_appeals)
+        result_created_dates = result.map {|x| x.created_at.to_date}
 
         expect(result.length).to eq(expected_result.length)
+        expect(result_created_dates).to include(appeal_10_days.created_at.to_date)
       end
 
       it "returns ama affinity based on 35 value" do
         judge = create(:user, station_id: User::BOARD_STATION_ID)
-        #not expected
+        # not expected
         create_aod_value_appeal(90, judge)
         create_aod_value_appeal(200, judge)
-        #expected
+        # expected
         appeal_10_days = create_aod_value_appeal(10, judge)
         appeal_30_days = create_aod_value_appeal(30, judge)
         CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update(value: "35")
@@ -404,15 +430,18 @@ describe HearingRequestDocket, :all_dbs do
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                    genpop: "only_genpop", judge: judge)
         result = hrdq.send(:ama_affinity_hearing_value_appeals)
+        result_created_dates = result.map {|x| x.created_at.to_date}
 
         expect(result.length).to eq(expected_result.length)
+        expect(result_created_dates).to include(appeal_10_days.created_at.to_date)
+        expect(result_created_dates).to include(appeal_30_days.created_at.to_date)
       end
 
       it "returns ama affinity based on 100 value" do
         judge = create(:user, station_id: User::BOARD_STATION_ID)
-        #not expected
+        # not expected
         create_aod_value_appeal(200, judge)
-        #expected
+        # expected
         appeal_10_days = create_aod_value_appeal(10, judge)
         appeal_30_days = create_aod_value_appeal(30, judge)
         appeal_90_days = create_aod_value_appeal(90, judge)
@@ -424,8 +453,12 @@ describe HearingRequestDocket, :all_dbs do
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                    genpop: "only_genpop", judge: judge)
         result = hrdq.send(:ama_affinity_hearing_value_appeals)
+        result_created_dates = result.map {|x| x.created_at.to_date}
 
         expect(result.length).to eq(expected_result.length)
+        expect(result_created_dates).to include(appeal_10_days.created_at.to_date)
+        expect(result_created_dates).to include(appeal_30_days.created_at.to_date)
+        expect(result_created_dates).to include(appeal_90_days.created_at.to_date)
       end
 
       it "returns ama affinity based on infinite value" do
@@ -445,8 +478,13 @@ describe HearingRequestDocket, :all_dbs do
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                    genpop: "only_genpop", judge: judge)
         result = hrdq.send(:ama_affinity_hearing_infinite_appeals)
+        result_created_dates = result.map {|x| x.created_at.to_date}
 
         expect(result.length).to eq(expected_result.length)
+        expect(result_created_dates).to include(appeal_3_days.created_at.to_date)
+        expect(result_created_dates).to include(appeal_30_days.created_at.to_date)
+        expect(result_created_dates).to include(appeal_90_days.created_at.to_date)
+        expect(result_created_dates).to include(appeal_200_days.created_at.to_date)
       end
     end
 
