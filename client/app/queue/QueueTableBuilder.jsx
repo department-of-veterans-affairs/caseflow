@@ -68,7 +68,7 @@ const QueueTableBuilder = (props) => {
   }, []);
 
   const calculateActiveTabIndex = (config) => {
-    const tabNames = config.tabs.map((tab) => {
+    const tabNames = config.tabs.filter((tab) => !tab.hide_from_queue_table_view).map((tab) => {
       return tab.name;
     });
 
