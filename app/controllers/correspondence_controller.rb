@@ -11,7 +11,7 @@ class CorrespondenceController < ApplicationController
 
   def intake
     # If correspondence intake was started, json data from the database will
-    # need to be loaded into the page when user returns to intake
+    # be loaded into the page when user returns to intake
     @redux_store ||= CorrespondenceIntake.find_by(user: current_user,
                                                   correspondence: current_correspondence)&.redux_store
 
