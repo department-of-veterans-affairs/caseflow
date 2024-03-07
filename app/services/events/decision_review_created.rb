@@ -40,7 +40,6 @@ class Events::DecisionReviewCreated
           # Note: event, user, and veteran need to be before this call.
           # Events::DecisionReviewCreated::CreateIntake.process!(event, user, veteran)
           # event.update!(completed_at: Time.now, error: nil)
-          # Events::CreateClaimantOnEvent.process(event)
         # end
       end
     rescue Caseflow::Error::RedisLockFailed => error
