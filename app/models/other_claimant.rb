@@ -30,20 +30,16 @@ class OtherClaimant < Claimant
     unrecognized_appellant&.relationship&.titleize || "Other"
   end
 
-  # :reek:FeatureEnvy
-  def save_unrecognized_details!(params, poa_params, benefit_type)
+  def save_unrecognized_details!(params, poa_params)
     poa_form = params.delete(:poa_form)
     params.delete(:listed_attorney)
     appellant = create_appellant!(params)
+
     if poa_form
       poa_participant_id = poa_params&.delete(:listed_attorney)&.dig(:value)
-      not_listed_poa = poa_participant_id == "not_listed"
-      vha_benefit_type = benefit_type == "vha"
 
-      if !not_listed_poa
+      if poa_participant_id != "not_listed"
         appellant.update!(poa_participant_id: poa_participant_id)
-      elsif not_listed_poa && vha_benefit_type
-        appellant.update!(not_listed_power_of_attorney: NotListedPowerOfAttorney.create!)
       else
         poa_params.permit!
         appellant.update!(unrecognized_power_of_attorney: create_party_detail!(poa_params))
