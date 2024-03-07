@@ -121,23 +121,38 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   end
 
   def tied_to_ineligible_judge
-    if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
-      where(hearings: { disposition: "held", judge_id: HearingRequestDistributionQuery.ineligible_judges_id_cache })
-    else
-      where("1=1")
-    end
+    where(hearings: { disposition: "held", judge_id: HearingRequestDistributionQuery.ineligible_judges_id_cache })
   end
 
   def tied_to_judges_with_exclude_appeals_from_affinity
-    return unless FeatureToggle.enabled?(:acd_exclude_from_affinity)
-
     where(hearings: { disposition: "held", judge_id: JudgeTeam.judges_with_exclude_appeals_from_affinity })
   end
+
+  # below 3 methods were modified for the first iteration (chaining .or() with no option for feature toggle in the HRDQ file)
+  # def tied_to_ineligible_judge
+  #   if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
+  #     where(hearings: { disposition: "held", judge_id: HearingRequestDistributionQuery.ineligible_judges_id_cache })
+  #   else
+  #     where("1=1")
+  #   end
+  # end
+
+  # def tied_to_judges_with_exclude_appeals_from_affinity
+  #   return unless FeatureToggle.enabled?(:acd_exclude_from_affinity)
+
+  #   where(hearings: { disposition: "held", judge_id: JudgeTeam.judges_with_exclude_appeals_from_affinity })
+  # end
+
+  # If an appeal has exceeded the affinity, it should be returned to genpop.
+  # def exceeding_affinity_threshold
+  #   where(hearings: { disposition: "held" })
+  #     .where.not(hearings: { judge_id: @judge&.id })
+  #     .where("distribution_task.assigned_at <= ?", CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
+  # end
 
   # If an appeal has exceeded the affinity, it should be returned to genpop.
   def exceeding_affinity_threshold
     where(hearings: { disposition: "held" })
-      .where.not(hearings: { judge_id: @judge&.id })
       .where("distribution_task.assigned_at <= ?", CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
   end
 
