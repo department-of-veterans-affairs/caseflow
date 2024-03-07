@@ -42,8 +42,10 @@ class Events::DecisionReviewCreated
           # decision_review.legacy_opt_in_approved is true
           # Events::DecisionReviewCreate::UpdateVacolsOnOptin.process!(decision_review)
 
+          # claimant = Events::CreateClaimantOnEvent.process!(event, claim_review, claimant, veteran)
+
           # Note: event, user, and veteran need to be before this call.
-          # Events::DecisionReviewCreated::CreateIntake.process!(event, user, veteran)
+          # intake = Events::DecisionReviewCreated::CreateIntake.process!(event, user, veteran)
 
           # event.update!(completed_at: Time.now, error: nil)
         # end
