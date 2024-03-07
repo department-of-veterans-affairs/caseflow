@@ -6,12 +6,15 @@ import AddCorrespondenceView from './AddCorrespondence/AddCorrespondenceView';
 import { AddTasksAppealsView } from './TasksAppeals/AddTasksAppealsView';
 import { connect, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { setUnrelatedTasks } from '../../correspondenceReducer/correspondenceActions';
+import {
+  loadSavedIntake,
+  setUnrelatedTasks,
+  saveCurrentIntake,
+} from '../../correspondenceReducer/correspondenceActions';
 import { useHistory } from 'react-router-dom';
 import { ConfirmCorrespondenceView } from './ConfirmCorrespondence/ConfirmCorrespondenceView';
 import { SubmitCorrespondenceModal } from './ConfirmCorrespondence/SubmitCorrespondenceModal';
 import Alert from 'app/components/Alert';
-import ApiUtil from '../../../../util/ApiUtil';
 import {
   CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TITLE,
   CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TEXT
@@ -41,12 +44,25 @@ export const CorrespondenceIntake = (props) => {
   const [errorBannerVisible, setErrorBannerVisible] = useState(false);
   const history = useHistory();
 
+  const exportStoredata = {
+    correspondence_uuid: props.correspondence_uuid,
+    current_step: currentStep,
+    redux_store: intakeCorrespondence
+  };
+
   const handleContinueStatusChange = (isEnabled) => {
     setContinueEnabled(isEnabled);
   };
 
   const handleCheckboxChange = (isSelected) => {
     setContinueEnabled(isSelected);
+  };
+
+  const handleCancel = () => {
+    // Redirect the user to the previous page
+    // then needed to allow POST to complete first
+    props.saveCurrentIntake(intakeCorrespondence, exportStoredata).
+      then(history.goBack());
   };
 
   const nextStep = () => {
@@ -77,21 +93,16 @@ export const CorrespondenceIntake = (props) => {
   );
 
   useEffect(() => {
-    const data = {
-      correspondence_uuid: props.correspondence_uuid,
-      current_step: currentStep,
-      redux_store: intakeCorrespondence
-    };
-
-    ApiUtil.post(`/queue/correspondence/${props.correspondence_uuid}/current_step`, { data }).
-      then(
-        (response) => {
-          if (!response.ok) {
-            console.error(response);
-          }
-        }
-      );
+    props.saveCurrentIntake(intakeCorrespondence, exportStoredata);
   }, [currentStep]);
+
+  useEffect(() => {
+    // load previous correspondence intake from database (if any)
+    if (props.reduxStore !== null) {
+      setCurrentStep(3);
+      props.loadSavedIntake(props.reduxStore);
+    }
+  }, []);
 
   return <div>
     { errorBannerVisible &&
@@ -140,7 +151,8 @@ export const CorrespondenceIntake = (props) => {
           name="Cancel"
           styling={{ style: { paddingLeft: '0rem', paddingRight: '0rem' } }}
           href="/queue/correspondence"
-          classNames={['cf-btn-link', 'cf-left-side']} />
+          classNames={['cf-btn-link', 'cf-left-side']}
+          onClick={handleCancel} />
       </a>
       {currentStep < 3 &&
       <Button
@@ -186,7 +198,10 @@ CorrespondenceIntake.propTypes = {
   unrelatedTasks: PropTypes.arrayOf(Object),
   setUnrelatedTasks: PropTypes.func,
   mailTasks: PropTypes.arrayOf(PropTypes.string),
-  autoTexts: PropTypes.arrayOf(PropTypes.string)
+  autoTexts: PropTypes.arrayOf(PropTypes.string),
+  reduxStore: PropTypes.object,
+  loadSavedIntake: PropTypes.func,
+  saveCurrentIntake: PropTypes.func
 };
 
 const mapStateToProps = (state) => ({
@@ -198,7 +213,9 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => (
   bindActionCreators({
-    setUnrelatedTasks
+    setUnrelatedTasks,
+    loadSavedIntake,
+    saveCurrentIntake
   }, dispatch)
 );
 
