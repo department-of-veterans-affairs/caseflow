@@ -46,26 +46,22 @@ class HearingRequestDistributionQuery
   # use nongenpop appeals as the base
   def not_genpop_appeals
     base_query = base_relation.most_recent_hearings.tied_to_distribution_judge(judge)
-    additional_filters = []
 
     # handling AMA Hearing Case Affinity Days
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days)
-      additional_filters << ama_affinity_hearing_value_appeals
-    elsif CaseDistributionLever.ama_hearing_case_affinity_days == "infinite"
-      additional_filters << ama_affinity_hearing_infinite_appeals
+      base_query = base_query.affinitized_ama_affinity_cases
+    # elsif CaseDistributionLever.ama_hearing_case_affinity_days == "infinite"
+    #   base_query = base_query.merge(ama_affinity_hearing_infinite_appeals)
     end
 
     # handling AOD AMA Hearing Case AOD Affinity Days
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
-      additional_filters << aod_hearing_value_appeals
+      base_query = base_query.ama_aod_hearing_original_appeals
     elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == "infinite"
-      additional_filters << aod_hearing_infinite_appeals
+      base_query = base_query.always_ama_aod_hearing_original_appeals
     end
 
-    result = base_query + additional_filters
-
-    result.flatten.uniq
-
+    base_query.uniq
   end
 
   def only_genpop_appeals
@@ -100,16 +96,16 @@ class HearingRequestDistributionQuery
   end
 
   def aod_hearing_value_appeals
-    not_genpop_base.ama_aod_hearing_original_appeals
+    base_query.ama_aod_hearing_original_appeals
   end
 
   def aod_hearing_infinite_appeals
-    not_genpop_base.always_ama_aod_hearing_original_appeals
+    always_ama_aod_hearing_original_appeals
   end
 
-  def ama_affinity_hearing_value_appeals
-    not_genpop_base.affinitized_ama_affinity_cases
-  end
+  # def ama_affinity_hearing_value_appeals(base_query)
+  #   base_query.affinitized_ama_affinity_cases
+  # end
 
   def ama_affinity_hearing_infinite_appeals
     not_genpop_base
