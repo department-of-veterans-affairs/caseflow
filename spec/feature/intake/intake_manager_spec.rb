@@ -10,8 +10,6 @@ RSpec.feature "Intake Manager Page", :postgres do
       User.authenticate!(roles: ["Admin Intake"])
     end
 
-    let(:date_mdY) { Time.zone.yesterday.mdY }
-
     scenario "Has access to intake manager page", :aggregate_failures do
       visit "/intake/manager"
       expect(page).to have_content("Intake Stats per User")
