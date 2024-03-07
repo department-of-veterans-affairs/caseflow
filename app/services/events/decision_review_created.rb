@@ -43,7 +43,7 @@ class Events::DecisionReviewCreated
           # event.update!(completed_at: Time.now, error: nil)
 
           # Note: will need to pass an event and a hash of attributes(5) to CreateClaimantOnEvent
-          # claimant_attributes = {is_veteran_claimant: is_veteran_claimant, name_suffix: name_suffix,
+          # claimant_attributes = {veteran_is_not_claimant: veteran_is_not_claimant, name_suffix: name_suffix,
           # type: type, payee_code: payee_code, participant_id: participant_id}
           # Events::CreateClaimantOnEvent.process(event: event, claimant_attributes: claimant_attributes)
         # end
