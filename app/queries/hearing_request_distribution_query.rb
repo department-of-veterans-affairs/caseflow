@@ -79,8 +79,8 @@ class HearingRequestDistributionQuery
         )
       end
 
-    # return result if result.length === 0
     result = result.or(base_relation_with_joined_most_recent_hearings_and_dist_task.not_tied_to_any_judge)
+    # this needs to be refactored and the joins shape is different becuase with_no_held_hearings uses an alias
     # result = result.or(base_relation_with_joined_most_recent_hearings_and_dist_task.with_no_held_hearings)
 
     # the base result is doing an inner join with hearings so it isn't retrieving any appeals that have no hearings
@@ -103,10 +103,6 @@ class HearingRequestDistributionQuery
   def aod_hearing_infinite_appeals
     always_ama_aod_hearing_original_appeals
   end
-
-  # def ama_affinity_hearing_value_appeals(base_query)
-  #   base_query.affinitized_ama_affinity_cases
-  # end
 
   def ama_affinity_hearing_infinite_appeals
     not_genpop_base

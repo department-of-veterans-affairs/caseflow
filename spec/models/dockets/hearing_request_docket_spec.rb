@@ -20,15 +20,11 @@ describe HearingRequestDocket, :all_dbs do
 
       # base conditions = priority, distributable, hearing docket
       judge = create(:user, station_id: User::BOARD_STATION_ID)
-        appeal_90_days = create_aod_value_appeal(90, judge)
-      #   appeal_30_days = create_aod_value_appeal(30, judge)
-      #   appeal_200_days = create_aod_value_appeal(200, judge)
+      appeal_90_days = create_aod_value_appeal(90, judge)
 
-        # CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update(value: '12')
       first_appeal = matching_all_base_conditions_with_no_hearings
       second_appeal = matching_all_base_conditions_with_no_held_hearings
       third_appeal = matching_all_base_conditions_with_most_recent_hearing_tied_to_other_judge_but_not_held
-      # fourth_appeal = create_nonpriority_distributable_appeal_not_tied_to_judge_90_days
 
       result = [appeal_90_days, first_appeal, second_appeal, third_appeal]
         .map(&:ready_for_distribution_at).map(&:to_s)
@@ -920,19 +916,6 @@ describe HearingRequestDocket, :all_dbs do
                     :denied_advance_on_docket,
                     docket_type: Constants.AMA_DOCKETS.hearing)
     create(:hearing, judge: nil, disposition: "held", appeal: appeal)
-    appeal
-  end
-
-  def create_nonpriority_distributable_appeal_not_tied_to_judge_90_days
-    Timecop.travel(100.days.ago)
-    appeal = create(:appeal,
-                    :ready_for_distribution,
-                    :denied_advance_on_docket,
-                    docket_type: Constants.AMA_DOCKETS.hearing)
-
-    create(:hearing, judge: nil, disposition: "held", appeal: appeal)
-
-    Timecop.return
     appeal
   end
 
