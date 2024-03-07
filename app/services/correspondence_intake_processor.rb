@@ -86,12 +86,12 @@ class CorrespondenceIntakeProcessor
     return if unrelated_task_data.blank? || !unrelated_task_data.length
 
     unrelated_task_data.map do |data|
-      class_for_data(data).create!(
-        appeal_id: correspondence.id,
-        appeal_type: Correspondence.name,
-        parent_id: correspondence.root_task.id,
-        assigned_to: class_for_assigned_to(data[:assigned_to]).singleton,
-        instructions: data[:content]
+      class_for_data(data).create_from_params(
+        {
+          parent_id: correspondence.root_task.id,
+          assigned_to: class_for_assigned_to(data[:assigned_to]).singleton,
+          instructions: data[:content]
+        }, current_user
       )
     end
   end
