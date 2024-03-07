@@ -329,9 +329,10 @@ class AppealsController < ApplicationController
     message << create_mst_pact_message_for_new_and_removed_issues(removed_issues, "removed") unless removed_issues.empty?
 
     # add in the Specialty Case Team messages, if any
-    if feature_enabled?(:specialty_case_team_distribution)
+    if !appeal.is_legacy? && feature_enabled?(:specialty_case_team_distribution) && appeal.distributed?
       if request_issues_update.before_issues.any?(&:sct_benefit_type?) &&
-         (request_issues_update.after_issues - request_issues_update.withdrawn_issues).none?(&:sct_benefit_type?)
+         (request_issues_update.after_issues - request_issues_update.withdrawn_issues).none?(&:sct_benefit_type?) &&
+         appeal.specialty_case_team_assign_task?
         message << move_to_distribution_success_message
       end
 
