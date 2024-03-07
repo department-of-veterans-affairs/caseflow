@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+    <style>
+      p { margin-top: 5px;
+          margin-bottom: 5px;}
+    </style>
+  </head>
+  <body>
+    <p>
+      <p>Attn:</p>
+      <br>
+      <p>Caseflow attempted to <%= @details[:action] %> a <%= @details[:filetype] %> file <%= @details[:direction] %> <%= @details[:provider] %> and received a fatal error.</p>
+        <br>
+      Docket Number: <%= @details[:docket_number] %>
+        <br>
+        <% if @details[:times].present? %>
+          <%= @details[:times] %>
+        <% else %>
+          <a href="<%= @case_link %>">Case Details</a>
+        <% end %>
+        <br>
+        <br>
+      <p>API Call: <%= @details[:api_call] %>
+      <br>
+      Response: <%= @details[:response] %></p>
+      <br>
+
+      <% if @details[:error] == TranscriptionTransformer::FileConversionError %>
+          Please investigate this issue further to ensure continued communication with Caseflow. Direct any questions to OITAppealsHelpDesk@va.gov.
+      <% else %>
+          Please investigate this issue further to ensure continued communication between Caseflow and <%= @details[:provider] %>. Direct any questions to OITAppealsHelpDesk@va.gov.
+      <% end %>
+    </p>
+  </body>
+</html>
