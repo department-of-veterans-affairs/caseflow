@@ -20,7 +20,6 @@ RSpec.describe Idt::Api::V1::VeteransController, :all_dbs, type: :controller do
                          first_name: "Bob", last_name: "Smith", name_suffix: "II", sex: "M")
       end
       let(:power_of_attorney) { PowerOfAttorney.new(file_number: file_number) }
-      let(:power_of_attorney_address) { power_of_attorney.bgs_representative_address }
 
       let(:veteran_hash) do
         {
