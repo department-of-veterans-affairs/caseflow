@@ -107,7 +107,7 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
 
   describe "correspondence_team" do
     before do
-      MailTeamSupervisor.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       get correspondence_team_path, as: :json
     end
 
@@ -181,15 +181,15 @@ RSpec.describe "Correspondence Requests", :all_dbs, type: :request do
       end
 
       unrelated_task_types = {
-        "CavcCorrespondenceMailTask": "CavcLitigationSupport",
-        "CongressionalInterestMailTask": "LitigationSupport",
-        "DeathCertificateMailTask": "Colocated",
-        "FoiaRequestMailTask": "PrivacyTeam",
-        "OtherMotionMailTask": "LitigationSupport",
-        "PowerOfAttorneyRelatedMailTask": "HearingAdmin",
-        "PrivacyActRequestMailTask": "PrivacyTeam",
-        "PrivacyComplaintMailTask": "PrivacyTeam",
-        "StatusInquiryMailTask": "LitigationSupport"
+        "CavcCorrespondenceCorrespondenceTask": "CavcLitigationSupport",
+        "CongressionalInterestCorrespondenceTask": "LitigationSupport",
+        "DeathCertificateCorrespondenceTask": "Colocated",
+        "FoiaRequestCorrespondenceTask": "PrivacyTeam",
+        "OtherMotionCorrespondenceTask": "LitigationSupport",
+        "PowerOfAttorneyRelatedCorrespondenceTask": "HearingAdmin",
+        "PrivacyActRequestCorrespondenceTask": "PrivacyTeam",
+        "PrivacyComplaintCorrespondenceTask": "PrivacyTeam",
+        "StatusInquiryCorrespondenceTask": "LitigationSupport"
       }
 
       unrelated_task_types.each do |klass_name, assignee|
