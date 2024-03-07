@@ -2,6 +2,7 @@
 
 RSpec.feature "CAVC Dashboard", :all_dbs do
   let(:legacy_appeal) { create(:legacy_appeal, :with_veteran, vacols_case: create(:case)) }
+  let(:non_cavc_appeal) { create(:appeal, :direct_review_docket) }
   let(:cavc_remand) { create(:cavc_remand) }
   let(:authorized_user) { create(:user) }
   let(:unauthorized_user) { create(:user) }

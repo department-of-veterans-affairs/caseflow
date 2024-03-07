@@ -25,6 +25,14 @@ RSpec.feature "Send Post Initial Notification Letter Holding Tasks", :all_dbs do
     )
   end
 
+  let(:post_task_timer) do
+    TimedHoldTask.create_from_parent(
+      post_letter_task,
+      days_on_hold: days_on_hold,
+      instructions: "45 Days Hold Period"
+    )
+  end
+
   before do
     cob_team.add_user(user)
     User.authenticate!(user: user)
