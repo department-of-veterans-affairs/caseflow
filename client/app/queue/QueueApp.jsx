@@ -1538,7 +1538,6 @@ QueueApp.propTypes = {
   correspondence: PropTypes.object,
   autoTexts: PropTypes.array,
   veteranInformation: PropTypes.object,
-  currentStep: PropTypes.number,
   reduxStore: PropTypes.object,
 };
 
