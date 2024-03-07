@@ -28,8 +28,6 @@ class Events::DecisionReviewCreated
         # Use the consumer_event_id to retrieve/create the Event object
         event = find_or_create_event(consumer_event_id)
 
-        # Call CreateClaimantOnEvent service class
-
         # ActiveRecord::Base.transaction do
           # TODO: backfill models as needed, set Event.completed_at when finished
 
