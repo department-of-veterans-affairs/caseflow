@@ -203,7 +203,6 @@ describe ScheduleHearingTask, :all_dbs do
 
         it "converts hearing to virtual hearing", :aggregate_failures do
           expect(subject.count).to eq(2)
-
           expect(Hearing.count).to eq(1)
           expect(Hearing.first.virtual_hearing).not_to eq(nil)
           expect(Hearing.first.virtual?).to eq(true)
