@@ -113,8 +113,10 @@ feature "SpecialtyCaseTeamQueue", :all_dbs do
           page.find("#taskInstructions").set("This is a test")
           click_button COPY::ASSIGN_TASK_BUTTON
         end
-        expect(current_path).to eq("/organizations/specialty-case-team")
+
+        expect(page).to have_content("Specialty Case Team cases")
         expect(page).to have_content("You have successfully assigned 1 case to")
+        expect(current_path).to eq("/organizations/specialty-case-team")
       end
     end
   end
