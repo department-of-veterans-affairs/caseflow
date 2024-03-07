@@ -31,12 +31,10 @@ export const loadSavedIntake = (savedStore) =>
     });
   };
 
-  export const saveCurrentIntake = (currentIntake) =>
+export const saveCurrentIntake = (currentIntake, data) =>
   (dispatch) => {
     // Save the current intake data to local storage or session storage
     sessionStorage.setItem('currentIntake', JSON.stringify(currentIntake));
-
-    console.log('Current intake data saved to session:', currentIntake);
 
     // Dispatch an action to update the Redux store with the current intake data
     dispatch({
@@ -45,6 +43,15 @@ export const loadSavedIntake = (savedStore) =>
         currentIntake
       }
     });
+
+    ApiUtil.post(`/queue/correspondence/${data.correspondence_uuid}/current_step`, { data }).
+      then(
+        (response) => {
+          if (!response.ok) {
+            console.error(response);
+          }
+        }
+      );
   };
 
 export const loadVeteranInformation = (veteranInformation) =>

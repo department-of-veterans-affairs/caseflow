@@ -15,7 +15,6 @@ import { useHistory } from 'react-router-dom';
 import { ConfirmCorrespondenceView } from './ConfirmCorrespondence/ConfirmCorrespondenceView';
 import { SubmitCorrespondenceModal } from './ConfirmCorrespondence/SubmitCorrespondenceModal';
 import Alert from 'app/components/Alert';
-import ApiUtil from '../../../../util/ApiUtil';
 import {
   CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TITLE,
   CORRESPONDENCE_INTAKE_FORM_ERROR_BANNER_TEXT
@@ -93,14 +92,7 @@ export const CorrespondenceIntake = (props) => {
       redux_store: intakeCorrespondence
     };
 
-    ApiUtil.post(`/queue/correspondence/${props.correspondence_uuid}/current_step`, { data }).
-      then(
-        (response) => {
-          if (!response.ok) {
-            console.error(response);
-          }
-        }
-      );
+    props.saveCurrentIntake(data);
   }, [currentStep]);
 
   useEffect(() => {
@@ -108,7 +100,6 @@ export const CorrespondenceIntake = (props) => {
     if (props.reduxStore !== null) {
       setCurrentStep(3);
       props.loadSavedIntake(props.reduxStore);
-      props.saveCurrentIntake(props.reduxStore);
     }
   }, []);
 
