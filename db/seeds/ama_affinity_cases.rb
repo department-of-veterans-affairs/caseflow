@@ -40,11 +40,11 @@ module Seeds
 
     def find_or_create_active_cda_admin_judge(css_id, full_name)
       User.find_by_css_id(css_id) ||
-        create(:user, :judge, :admin_intake_role, :cda_control_admin,:bva_intake_admin css_id: css_id, full_name: full_name)
+        create(:user, :judge, :admin_intake_role, :cda_control_admin, :bva_intake_admin, :team_admin, css_id: css_id, full_name: full_name)
     end
 
     def create_cda_admin_user
-      judge = find_or_create_active_cda_admin_judge("QAACDPlus","QA_Admin ACD_CF TM_Mgmt_Intake")
+      judge = find_or_create_active_cda_admin_judge("QAACDPlus1","QA_Admin1 ACD_CF TM_Mgmt_Intake")
       judge_team = JudgeTeam.for_judge(judge)
       user = User.find_by_css_id("BVASCASPER1")
       judge_team.add_user(user)

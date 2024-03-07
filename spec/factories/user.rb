@@ -126,6 +126,15 @@ FactoryBot.define do
       end
     end
 
+    trait :team_admin do
+      after(:create) do |user|
+        existing_sysadmins = Functions.details_for("System Admin")[:granted] || []
+        Functions.grant!("System Admin", users: existing_sysadmins + [user.css_id])
+        Bva.singleton.add_user(user)
+        OrganizationsUser.make_user_admin(user, Bva.singleton)
+      end
+    end
+
     after(:create) do |user, evaluator|
       if evaluator.vacols_uniq_id
         create(:staff, slogid: evaluator.vacols_uniq_id, user: user)
