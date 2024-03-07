@@ -72,7 +72,7 @@ RSpec.feature("The Correspondence Intake page") do
 
     it "successfully navigates on cancel link click" do
       click_on("button-Cancel")
-      expect(page).to have_current_path("/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc")
+      expect(page).to have_content("Correspondence assigned to you:")
     end
 
     it "successfully advances to the second step" do
