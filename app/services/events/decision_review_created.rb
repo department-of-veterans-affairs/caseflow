@@ -29,8 +29,6 @@ class Events::DecisionReviewCreated
         event = find_or_create_event(consumer_event_id)
 
         # Call CreateClaimantOnEvent service class
-        claimant_service = Events::CreateClaimantOnEvent.new(event)
-        claimant_service.call
 
         # ActiveRecord::Base.transaction do
           # TODO: backfill models as needed, set Event.completed_at when finished
@@ -42,6 +40,7 @@ class Events::DecisionReviewCreated
           # Note: event, user, and veteran need to be before this call.
           # Events::DecisionReviewCreated::CreateIntake.process!(event, user, veteran)
           # event.update!(completed_at: Time.now, error: nil)
+          # Events::CreateClaimantOnEvent.process(event)
         # end
       end
     rescue Caseflow::Error::RedisLockFailed => error
