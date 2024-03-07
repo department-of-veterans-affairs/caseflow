@@ -37,12 +37,18 @@ const progressBarSections = [
 
 export const CorrespondenceIntake = (props) => {
   const intakeCorrespondence = useSelector((state) => state.intakeCorrespondence);
-  const [currentStep, setCurrentStep] = useState(props.currentStep || 1);
+  const [currentStep, setCurrentStep] = useState(1);
   const [isContinueEnabled, setContinueEnabled] = useState(true);
   const [addTasksVisible, setAddTasksVisible] = useState(false);
   const [submitCorrespondenceModalVisible, setSubmitCorrespondenceModalVisible] = useState(false);
   const [errorBannerVisible, setErrorBannerVisible] = useState(false);
   const history = useHistory();
+
+  const exportStoredata = {
+    correspondence_uuid: props.correspondence_uuid,
+    current_step: currentStep,
+    redux_store: intakeCorrespondence
+  };
 
   const handleContinueStatusChange = (isEnabled) => {
     setContinueEnabled(isEnabled);
@@ -53,9 +59,10 @@ export const CorrespondenceIntake = (props) => {
   };
 
   const handleCancel = () => {
-    props.saveCurrentIntake(intakeCorrespondence);
     // Redirect the user to the previous page
-    history.goBack();
+    // then needed to allow POST to complete first
+    props.saveCurrentIntake(intakeCorrespondence, exportStoredata).
+      then(history.goBack());
   };
 
   const nextStep = () => {
@@ -86,13 +93,7 @@ export const CorrespondenceIntake = (props) => {
   );
 
   useEffect(() => {
-    const data = {
-      correspondence_uuid: props.correspondence_uuid,
-      current_step: currentStep,
-      redux_store: intakeCorrespondence
-    };
-
-    props.saveCurrentIntake(intakeCorrespondence, data);
+    props.saveCurrentIntake(intakeCorrespondence, exportStoredata);
   }, [currentStep]);
 
   useEffect(() => {

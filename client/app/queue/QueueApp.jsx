@@ -688,7 +688,7 @@ class QueueApp extends React.PureComponent {
   );
 
   routedCorrespondenceIntake = (props) => (
-    <CorrespondenceIntake currentStep={this.props.currentStep} reduxStore={this.props.reduxStore} autoTexts={this.props.autoTexts} {...props.match.params} veteranInformation={this.props.veteranInformation} />
+    <CorrespondenceIntake reduxStore={this.props.reduxStore} autoTexts={this.props.autoTexts} {...props.match.params} veteranInformation={this.props.veteranInformation} />
   );
 
   routedCorrespondenceCase = () => (
@@ -1538,8 +1538,7 @@ QueueApp.propTypes = {
   correspondence: PropTypes.object,
   autoTexts: PropTypes.array,
   veteranInformation: PropTypes.object,
-  currentStep: PropTypes.number,
-  reduxStore: PropTypes.object,
+  reduxStore: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({
