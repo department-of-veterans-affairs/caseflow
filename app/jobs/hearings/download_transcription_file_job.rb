@@ -19,7 +19,8 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   class HearingAssociationError < StandardError; end
 
   retry_on(FileDownloadError, wait: 5.minutes) do |job, exception|
-    # TO IMPLEMENT: SEND EMAIL TO VA OPS TEAM
+    details = build_error_details("retrieve", "vtt", "from", "Webex", "download_file_to_tmp!", exception)
+    TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
     job.log_error(exception)
   end
 
@@ -30,12 +31,14 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
 
   retry_on(TranscriptionTransformer::FileConversionError, wait: 10.seconds) do |job, exception|
     job.transcription_file.clean_up_tmp_location
-    # TO IMPLEMENT: SEND EMAIL TO VA OPS TEAM
+    details = build_error_details("convert", "vtt", "to", "rtf", "convert_to_rtf_and_upload_to_s3!", exception)
+    TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
     job.log_error(exception)
   end
 
   discard_on(FileNameError) do |job, error|
-    # TO IMPLEMENT: SEND EMAIL TO VA OPS TEAM
+    details = build_error_details("retrieve", "vtt", "from", "Webex", "parse_hearing", error)
+    TranscriptFileIssuesMailer.send_issue_details(details, appeal_id)
     Rails.logger.error("#{job.class.name} (#{job.job_id}) discarded with error: #{error}")
   end
 
@@ -177,4 +180,34 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   def log_info(message)
     Rails.logger.info(message)
   end
+
+  # rubocop:disable Metrics/ParameterLists
+  # Purpose: Builds object detailing error for mail template
+  # Params:
+  #         action - string, the action that the job was doing
+  #         filetype - string, the filetype that was getting worked on
+  #         direction - string, either to/from in relative to provider
+  #         provider - string, either the destination or starting point
+  #         call - string, the method call where the error occured
+  #         error - Exception - the error that was raised
+  #
+  # Returns: The hash for details on the error
+  def build_error_details(action, filetype, direction, provider, call, error)
+    {
+      action: action,
+      filetype: filetype,
+      direction: direction,
+      provider: provider,
+      error: error,
+      docket_number: hearing.docket_number,
+      api_call: call
+    }
+  end
+
+  # Purpose: Get either the uuid or vacols id of the associated appeal
+  # Returns: The uuid/vacols_id of the appeal
+  def appeal_id
+    hearing.appeal.external_id
+  end
+  # rubocop:enable Metrics/ParameterLists
 end

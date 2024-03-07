@@ -10,8 +10,10 @@ describe Hearings::GetWebexRecordingsDetailsJob, type: :job do
   let(:mp4_file_name) { "180000304_1_LegacyHearing-1.mp4" }
   let(:vtt_file_name) { "180000304_1_LegacyHearing-1.vtt" }
   let(:mp3_file_name) { "180000304_1_LegacyHearing-1.mp3" }
+  let(:hearing) { create(:hearing) }
+  let(:file_name) { "#{hearing.docket_number}_#{hearing.id}_#{hearing.class}" }
 
-  subject { described_class.perform_now(id: id) }
+  subject { described_class.perform_now(id: id, file_name: file_name) }
 
   context "method testing" do
     before do
@@ -57,7 +59,7 @@ describe Hearings::GetWebexRecordingsDetailsJob, type: :job do
     it "retries and logs errors" do
       subject
       expect(Rails.logger).to receive(:error).with(/Retrying/)
-      perform_enqueued_jobs { described_class.perform_later(id: id) }
+      perform_enqueued_jobs { described_class.perform_later(id: id, file_name: file_name) }
     end
   end
 end
