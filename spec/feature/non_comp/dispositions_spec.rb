@@ -407,6 +407,52 @@ feature "NonComp Dispositions Task Page", :postgres do
         expect(page).to have_content(COPY::CASE_DETAILS_UNRECOGNIZED_POA_VHA)
       end
     end
+
+    context "with a not listed POA" do
+      context "for a higher level review" do
+        let(:decision_review) do
+          create(
+            :higher_level_review,
+            veteran_file_number: veteran.file_number,
+            benefit_type: vha_org.url,
+            veteran_is_not_claimant: true,
+            claimant_type: :other_claimant_not_listed
+          )
+        end
+        let(:in_progress_task) do
+          create(:higher_level_review_task, :in_progress, appeal: decision_review, assigned_to: vha_org)
+        end
+        let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
+
+        it "should display the VHA-specific text" do
+          visit dispositions_url
+          expect(page).to have_content("Veterans Health Administration")
+          expect(page).to have_content(COPY::CASE_DETAILS_NO_RECOGNIZED_POA_VHA)
+        end
+      end
+
+      context "for supplemental claim" do
+        let(:decision_review) do
+          create(
+            :supplemental_claim,
+            veteran_file_number: veteran.file_number,
+            benefit_type: vha_org.url,
+            veteran_is_not_claimant: true,
+            claimant_type: :other_claimant_not_listed
+          )
+        end
+        let(:in_progress_task) do
+          create(:supplemental_claim_task, :in_progress, appeal: decision_review, assigned_to: vha_org)
+        end
+        let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
+
+        it "should display the VHA-specific text" do
+          visit dispositions_url
+          expect(page).to have_content("Veterans Health Administration")
+          expect(page).to have_content(COPY::CASE_DETAILS_NO_RECOGNIZED_POA_VHA)
+        end
+      end
+    end
   end
 
   def enable_feature_flag_and_redirect_to_disposition
