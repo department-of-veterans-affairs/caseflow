@@ -13,9 +13,9 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
   end
 
   def decision_review_created_error
-    event_id = dcr_error_params[:event_id]
-    errored_claim_id = dcr_error_params[:errored_claim_id]
-    error_message = dcr_error_params[:error]
+    event_id = drc_error_params[:event_id]
+    errored_claim_id = drc_error_params[:errored_claim_id]
+    error_message = drc_error_params[:error]
     ::Events::DecisionReviewCreatedError.handle_service_error(event_id, errored_claim_id, error_message)
     render json: { message: "Decision Review Created Error Saved in Caseflow" }, status: :created
   rescue Caseflow::Error::RedisLockFailed => error
@@ -26,7 +26,7 @@ class Api::Events::V1::DecisionReviewCreatedController < Api::ApplicationControl
 
   private
 
-  def dcr_error_params
+  def drc_error_params
     params.permit(:event_id, :errored_claim_id, :error)
   end
 
