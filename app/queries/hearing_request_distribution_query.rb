@@ -98,7 +98,10 @@ class HearingRequestDistributionQuery
     #   .or(base_relation_with_joined_most_recent_hearings_and_dist_task.with_no_hearings)
 
     # test which should allow us to merge scopes in based on whether the feature toggle is true
-    result = base_relation_with_joined_most_recent_hearings_and_dist_task.exceeding_affinity_threshold
+
+    result = case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days) ?
+      base_relation_with_joined_most_recent_hearings_and_dist_task.expired_ama_affinity_cases :
+      base_relation_with_joined_most_recent_hearings_and_dist_task
 
     if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
       result = result.or(base_relation_with_joined_most_recent_hearings_and_dist_task.tied_to_ineligible_judge)
