@@ -133,12 +133,14 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   end
 
   def tied_to_ineligible_judge
-    where(hearings: { disposition: "held", judge_id: HearingRequestDistributionQuery.ineligible_judges_id_cache })
+    joins(with_assigned_distribution_task_sql)
+      .where(hearings: { disposition: "held", judge_id: HearingRequestDistributionQuery.ineligible_judges_id_cache })
       .where("1 = ?", FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board) ? 1 : 0)
   end
 
   def tied_to_judges_with_exclude_appeals_from_affinity
-    where(hearings: { disposition: "held", judge_id: JudgeTeam.judges_with_exclude_appeals_from_affinity })
+    joins(with_assigned_distribution_task_sql)
+      .where(hearings: { disposition: "held", judge_id: JudgeTeam.judges_with_exclude_appeals_from_affinity })
       .where("1 = ?", FeatureToggle.enabled?(:acd_exclude_from_affinity) ? 1 : 0)
   end
 
@@ -155,7 +157,8 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   end
 
   def affinitized_ama_affinity_cases
-    where("distribution_task.assigned_at > ?", CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
+    joins(with_assigned_distribution_task_sql)
+      .where("distribution_task.assigned_at > ?", CaseDistributionLever.ama_hearing_case_affinity_days.days.ago)
   end
 
   def always_ama_affinity_threshold
@@ -165,7 +168,8 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   # Historical note: We formerly had not_tied_to_any_active_judge until CASEFLOW-1928,
   # when that distinction became irrelevant because cases become genpop after 30 days anyway.
   def not_tied_to_any_judge
-    where(hearings: { disposition: "held", judge_id: nil })
+    joins(with_assigned_distribution_task_sql)
+      .where(hearings: { disposition: "held", judge_id: nil })
   end
 
   def with_no_hearings
@@ -173,7 +177,8 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   end
 
   def with_no_held_hearings
-    left_joins(:hearings).where.not(hearings: { disposition: "held" })
+    joins(with_assigned_distribution_task_sql)
+      .left_joins(:hearings).where.not(hearings: { disposition: "held" })
   end
 
   def with_held_hearings

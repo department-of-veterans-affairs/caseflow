@@ -841,9 +841,9 @@ describe HearingRequestDocket, :all_dbs do
     # Artificially set the `assigned_at` of DistributionTask so it's in the past
     DistributionTask.find_by(appeal: appeal).update!(assigned_at: days_ago)
 
-    puts "THIS IS THE EXPECTED RETURNED APPEAL"
-    puts appeal.attributes
-    puts "!!!!!!!!!!!!!!!!!!!!!"
+    # puts "THIS IS THE EXPECTED RETURNED APPEAL"
+    # puts appeal.attributes
+    # puts "!!!!!!!!!!!!!!!!!!!!!"
     appeal
   end
 
@@ -877,9 +877,9 @@ describe HearingRequestDocket, :all_dbs do
     # Artificially set the `assigned_at` of DistributionTask so it's in the past
     DistributionTask.find_by(appeal: appeal).update!(assigned_at: days_ago)
 
-    puts "WHAT ABOUT THIS ONE!?!?"
-    puts appeal
-    puts "??????????????????"
+    # puts "WHAT ABOUT THIS ONE!?!?"
+    # puts appeal
+    # puts "??????????????????"
     appeal
   end
 

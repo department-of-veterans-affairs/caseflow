@@ -19,7 +19,7 @@ class HearingRequestDistributionQuery
       return [not_genpop_appeals, only_genpop_appeals].flatten if FeatureToggle.enabled?(:acd_exclude_from_affinity) &&
                                                                   judge.present?
 
-      return only_genpop_appeals
+      return [only_genpop_appeals]
     end
 
     # We are returning an array of arrays in order to process the
@@ -32,7 +32,7 @@ class HearingRequestDistributionQuery
     # verify that the algorithm is correct. For example, if we found a
     # DistributedCase with `genpop_query` set to "not_genpop", but its `genpop`
     # field was set to `true`, that would indicate a bug.
-    [not_genpop_appeals, only_genpop_appeals].flatten if genpop == "any"
+    [not_genpop_appeals, only_genpop_appeals] if genpop == "any"
   end
 
   def self.ineligible_judges_id_cache
@@ -55,16 +55,15 @@ class HearingRequestDistributionQuery
 
     # handling AOD AMA Hearing Case AOD Affinity Days
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
-      base_query = base_query.or(ama_aod_hearing_original_appeals)
+      base_query = base_query.joins(with_assigned_distribution_task_sql).or(base_query.ama_aod_hearing_original_appeals)
     elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == "infinite"
-      base_query = base_query.or(always_ama_aod_hearing_original_appeals)
+      base_query = base_query.joins(with_assigned_distribution_task_sql).or(base_query.always_ama_aod_hearing_original_appeals)
     end
 
     base_query.uniq
   end
 
   def only_genpop_appeals
-
     result = case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days) ?
       base_relation_with_joined_most_recent_hearings_and_dist_task.expired_ama_affinity_cases :
       base_relation_with_joined_most_recent_hearings_and_dist_task.always_ama_affinity_cases
@@ -79,10 +78,10 @@ class HearingRequestDistributionQuery
         base_relation_with_joined_most_recent_hearings_and_dist_task.tied_to_judges_with_exclude_appeals_from_affinity
       )
     end
-    binding.pry
+    # binding.pry
     return result if result.length === 0
     result = result.or(base_relation_with_joined_most_recent_hearings_and_dist_task.not_tied_to_any_judge)
-    result = result.or(base_relation_with_joined_most_recent_hearings_and_dist_task.with_no_held_hearings)
+    # result = result.or(base_relation_with_joined_most_recent_hearings_and_dist_task.with_no_held_hearings)
 
     # the base result is doing an inner join with hearings so it isn't retrieving any appeals that have no hearings
     # yet, so we add with_no_hearings to retrieve those appeals and flatten the array before returning
@@ -92,7 +91,6 @@ class HearingRequestDistributionQuery
   def base_relation_with_joined_most_recent_hearings_and_dist_task
     base_relation.joins(with_assigned_distribution_task_sql).most_recent_hearings
   end
-
 
   def not_genpop_base
     base_relation.most_recent_hearings.tied_to_distribution_judge(judge)
