@@ -626,8 +626,12 @@ describe HearingRequestDocket, :all_dbs do
     end
 
     context "age_of_n_oldest_priority_appeals_available_to_judge" do
+      before do
+        FeatureToggle.enable!(:acd_exclude_from_affinity)
+      end
+
       let(:judge_user) { create(:user) }
-      subject { HearingRequestDocket.new.age_of_n_oldest_priority_appeals_available_to_judge(:judge_user, 3) }
+      subject { HearingRequestDocket.new.age_of_n_oldest_priority_appeals_available_to_judge(judge_user, 3) }
 
       it "returns the receipt_date field of the oldest hearing priority appeals ready for distribution" do
         appeal = create_priority_distributable_hearing_appeal_not_tied_to_any_judge

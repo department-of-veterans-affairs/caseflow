@@ -16,10 +16,10 @@ class HearingRequestDistributionQuery
     return not_genpop_appeals if genpop == "not_genpop"
 
     if genpop == "only_genpop"
-      return [not_genpop_appeals, only_genpop_appeals].flatten if FeatureToggle.enabled?(:acd_exclude_from_affinity) &&
+      return [not_genpop_appeals, only_genpop_appeals] if FeatureToggle.enabled?(:acd_exclude_from_affinity) &&
                                                                   judge.present?
 
-      return [only_genpop_appeals]
+      return only_genpop_appeals
     end
 
     # We are returning an array of arrays in order to process the
