@@ -271,6 +271,12 @@ feature "NonComp Report Page", :postgres do
     end
   end
 
+  # Example usage: add_facility_condition_with_values(["VACO"])
+  def add_facility_condition_with_values(values)
+    add_condition("Facility")
+    fill_in_multi_select_condition(values, "Facility Type", ".facility")
+  end
+
   def add_personnel_condition_with_values(values)
     add_condition("Personnel")
     fill_in_multi_select_condition(values, "VHA team members", ".personnel")
@@ -289,6 +295,11 @@ feature "NonComp Report Page", :postgres do
   def add_issue_disposition_with_values(values)
     add_condition("Issue Disposition")
     fill_in_multi_select_condition(values, "Issue Disposition", ".issue-dispositions")
+  end
+
+  def add_issue_type_with_values(values)
+    add_condition("Issue Type")
+    fill_in_multi_select_condition(values, "Issue Type", "issue-types")
   end
 
   def clear_filters
