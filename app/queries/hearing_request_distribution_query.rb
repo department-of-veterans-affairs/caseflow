@@ -94,9 +94,9 @@ class HearingRequestDistributionQuery
 
     result = result.or(base_relation_with_joined_most_recent_hearings_and_dist_task.not_tied_to_any_judge)
     result = result.or(base_relation_with_joined_most_recent_hearings_and_dist_task.with_no_held_hearings)
-    result = result.or(base_relation_with_joined_most_recent_hearings_and_dist_task.with_no_hearings)
+    no_hearings_result = with_no_hearings
 
-    result
+    [result, no_hearings_result].flatten.uniq
   end
 
   def base_relation_with_joined_most_recent_hearings_and_dist_task

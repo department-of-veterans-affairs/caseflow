@@ -163,7 +163,8 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   end
 
   def with_no_hearings
-    where(hearings: { id: nil })
+    left_outer_joins(:hearings)
+      .where(hearings: { id: nil })
   end
 
   def with_no_held_hearings
