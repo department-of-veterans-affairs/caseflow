@@ -14,7 +14,6 @@ class HearingRequestDistributionQuery
 
   def call
     return not_genpop_appeals if genpop == "not_genpop"
-
     if genpop == "only_genpop"
       return [not_genpop_appeals, only_genpop_appeals] if FeatureToggle.enabled?(:acd_exclude_from_affinity) &&
                                                                   judge.present?
@@ -66,8 +65,8 @@ class HearingRequestDistributionQuery
 
   def only_genpop_appeals
     result = case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days) ?
-      base_relation_with_joined_most_recent_hearings_and_dist_task.expired_ama_affinity_cases :
-      base_relation_with_joined_most_recent_hearings_and_dist_task.always_ama_affinity_cases
+    base_relation_with_joined_most_recent_hearings_and_dist_task.expired_ama_affinity_cases :
+    base_relation_with_joined_most_recent_hearings_and_dist_task.always_ama_affinity_cases
 
 
     if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
@@ -77,16 +76,16 @@ class HearingRequestDistributionQuery
     if FeatureToggle.enabled?(:acd_exclude_from_affinity)
       result = result.or(
         base_relation_with_joined_most_recent_hearings_and_dist_task.tied_to_judges_with_exclude_appeals_from_affinity
-      )
-    end
-    # binding.pry
-    return result if result.length === 0
+        )
+      end
+
+    # return result if result.length === 0
     result = result.or(base_relation_with_joined_most_recent_hearings_and_dist_task.not_tied_to_any_judge)
     # result = result.or(base_relation_with_joined_most_recent_hearings_and_dist_task.with_no_held_hearings)
 
     # the base result is doing an inner join with hearings so it isn't retrieving any appeals that have no hearings
     # yet, so we add with_no_hearings to retrieve those appeals and flatten the array before returning
-    [result, with_no_hearings].flatten.uniq
+    [result, with_no_hearings, with_no_held_hearings].flatten.uniq
   end
 
   def base_relation_with_joined_most_recent_hearings_and_dist_task

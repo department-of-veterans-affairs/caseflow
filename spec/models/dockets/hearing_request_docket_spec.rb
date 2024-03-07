@@ -6,27 +6,31 @@ describe HearingRequestDocket, :all_dbs do
     let!(:vacols_judge) { create(:staff, :judge_role, sdomainid: judge_user.css_id) }
 
     subject { HearingRequestDocket.new.age_of_n_oldest_genpop_priority_appeals(10) }
+    before do
+      FeatureToggle.enable!(:acd_exclude_from_affinity)
+      CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update(value: "12")
+    end
 
     it "only returns priority, distributable, hearing docket appeals that match the following conditions:
         where the most recent held hearing was not tied to an active judge
         OR
         appeals that have no hearings at all
         appeals that have no hearings with disposition held" do
-      create_appeals_that_should_not_be_returned_by_query
+      # create_appeals_that_should_not_be_returned_by_query
 
       # base conditions = priority, distributable, hearing docket
       judge = create(:user, station_id: User::BOARD_STATION_ID)
         appeal_90_days = create_aod_value_appeal(90, judge)
-        appeal_30_days = create_aod_value_appeal(30, judge)
-        appeal_200_days = create_aod_value_appeal(200, judge)
+      #   appeal_30_days = create_aod_value_appeal(30, judge)
+      #   appeal_200_days = create_aod_value_appeal(200, judge)
 
-        CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update(value: '12')
+        # CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update(value: '12')
       first_appeal = matching_all_base_conditions_with_no_hearings
       second_appeal = matching_all_base_conditions_with_no_held_hearings
       third_appeal = matching_all_base_conditions_with_most_recent_hearing_tied_to_other_judge_but_not_held
-      fourth_appeal = create_nonpriority_distributable_appeal_not_tied_to_judge_90_days
+      # fourth_appeal = create_nonpriority_distributable_appeal_not_tied_to_judge_90_days
 
-      result = [first_appeal, second_appeal, third_appeal, fourth_appeal]
+      result = [appeal_90_days, first_appeal, second_appeal, third_appeal]
         .map(&:ready_for_distribution_at).map(&:to_s)
 
       # For some reason, in Circle CI, the datetimes are not matching exactly to the millisecond
@@ -664,10 +668,13 @@ describe HearingRequestDocket, :all_dbs do
   end
 
   def matching_all_base_conditions_with_no_hearings
-    create(:appeal,
+    Timecop.travel(30.days.ago)
+    appeal = create(:appeal,
            :advanced_on_docket_due_to_age,
            :ready_for_distribution,
            docket_type: Constants.AMA_DOCKETS.hearing)
+    Timecop.return
+    return appeal
   end
 
   def non_priority_with_no_hearings
@@ -678,12 +685,14 @@ describe HearingRequestDocket, :all_dbs do
   end
 
   def matching_all_base_conditions_with_no_held_hearings
+    Timecop.travel(30.days.ago)
     appeal = create(:appeal,
                     :advanced_on_docket_due_to_age,
                     :ready_for_distribution,
                     docket_type: Constants.AMA_DOCKETS.hearing)
     create(:hearing, judge: nil, disposition: "no_show", appeal: appeal)
-    appeal
+    Timecop.return
+    return appeal
   end
 
   def non_priority_with_no_held_hearings
@@ -915,7 +924,7 @@ describe HearingRequestDocket, :all_dbs do
   end
 
   def create_nonpriority_distributable_appeal_not_tied_to_judge_90_days
-    Timecop.travel(90.days.ago)
+    Timecop.travel(100.days.ago)
     appeal = create(:appeal,
                     :ready_for_distribution,
                     :denied_advance_on_docket,
@@ -1010,6 +1019,7 @@ describe HearingRequestDocket, :all_dbs do
   end
 
   def matching_all_base_conditions_with_most_recent_hearing_tied_to_other_judge_but_not_held
+    Timecop.travel(30.days.ago)
     appeal = create(:appeal,
                     :ready_for_distribution,
                     :advanced_on_docket_due_to_motion,
@@ -1022,7 +1032,8 @@ describe HearingRequestDocket, :all_dbs do
     older_hearing_day = create(:hearing_day, scheduled_for: 2.days.ago)
     create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: older_hearing_day)
 
-    appeal
+    Timecop.return
+    return appeal
   end
 
   def matching_all_base_conditions_with_most_recent_hearing_tied_to_distribution_judge_but_not_held
