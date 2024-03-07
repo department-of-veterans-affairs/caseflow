@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_01_06_021307) do
+ActiveRecord::Schema.define(version: 2024_01_17_161251) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1342,6 +1342,11 @@ ActiveRecord::Schema.define(version: 2024_01_06_021307) do
     t.index ["updated_at"], name: "index_non_availabilities_on_updated_at"
   end
 
+  create_table "not_listed_power_of_attorneys", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "notification_events", primary_key: "event_type", id: :string, comment: "Type of Event", force: :cascade do |t|
     t.uuid "email_template_id", null: false, comment: "Staging Email Template UUID"
     t.uuid "sms_template_id", null: false, comment: "Staging SMS Template UUID"
@@ -1864,6 +1869,7 @@ ActiveRecord::Schema.define(version: 2024_01_06_021307) do
     t.datetime "created_at", null: false
     t.bigint "created_by_id", null: false, comment: "The user that created this version of the unrecognized appellant"
     t.bigint "current_version_id", comment: "The current version for this unrecognized appellant"
+    t.bigint "not_listed_power_of_attorney_id"
     t.string "poa_participant_id", comment: "Identifier of the appellant's POA, if they have a CorpDB participant_id"
     t.string "relationship", null: false, comment: "Relationship to veteran. Allowed values: attorney, child, spouse, other, or healthcare_provider."
     t.bigint "unrecognized_party_detail_id", comment: "Contact details"
@@ -2267,6 +2273,7 @@ ActiveRecord::Schema.define(version: 2024_01_06_021307) do
   add_foreign_key "tasks", "users", column: "cancelled_by_id"
   add_foreign_key "transcriptions", "hearings"
   add_foreign_key "unrecognized_appellants", "claimants"
+  add_foreign_key "unrecognized_appellants", "not_listed_power_of_attorneys"
   add_foreign_key "unrecognized_appellants", "unrecognized_appellants", column: "current_version_id"
   add_foreign_key "unrecognized_appellants", "unrecognized_party_details"
   add_foreign_key "unrecognized_appellants", "unrecognized_party_details", column: "unrecognized_power_of_attorney_id"
