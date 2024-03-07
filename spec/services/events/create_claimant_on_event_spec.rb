@@ -6,7 +6,8 @@ RSpec.describe Events::CreateClaimantOnEvent do
         name_suffix: "name_suffix",
         participant_id: "participant_id_value",
         payee_code: "payee_code_value",
-        type: "type_value"
+        type: "type_value",
+        is_veteran_claimant: true
       }
     end
 
@@ -30,9 +31,10 @@ RSpec.describe Events::CreateClaimantOnEvent do
           name_suffix: claimant_attributes[:name_suffix],
           participant_id: claimant_attributes[:participant_id],
           payee_code: claimant_attributes[:payee_code],
-          type: claimant_attributes[:source_type]
+          type: claimant_attributes[:type]
         ).and_return(claimant)
 
+        claimant_attributes[:is_veteran_claimant] = false
         expect(EventRecord).to receive(:create!).with(event: event, backfill_record: claimant)
 
         result = described_class.process(event: event, claimant_attributes: claimant_attributes)
