@@ -94,9 +94,10 @@ class HearingRequestDistributionQuery
 
     result = result.or(base_relation_with_joined_most_recent_hearings_and_dist_task.not_tied_to_any_judge)
     result = result.or(base_relation_with_joined_most_recent_hearings_and_dist_task.with_no_held_hearings)
-    no_hearings_result = with_no_hearings
 
-    [result, no_hearings_result].flatten.uniq
+    # the base result is doing an inner join with hearings so it isn't retrieving any appeals that have no hearings
+    # yet, so we add with_no_hearings to retrieve those appeals and flatten the array before returning
+    [result, with_no_hearings].flatten.uniq
   end
 
   def base_relation_with_joined_most_recent_hearings_and_dist_task
