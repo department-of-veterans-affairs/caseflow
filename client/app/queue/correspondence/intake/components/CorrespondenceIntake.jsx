@@ -92,7 +92,7 @@ export const CorrespondenceIntake = (props) => {
       redux_store: intakeCorrespondence
     };
 
-    props.saveCurrentIntake(data);
+    props.saveCurrentIntake(intakeCorrespondence, data);
   }, [currentStep]);
 
   useEffect(() => {
