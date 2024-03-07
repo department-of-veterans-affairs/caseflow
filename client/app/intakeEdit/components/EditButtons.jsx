@@ -48,7 +48,7 @@ class SaveButtonUnconnected extends React.Component {
     // Specialty Case Team (SCT) logic for movement of appeals based on additional and removal of SCT request issues
     const specialtyCaseTeamBenefitTypes = Object.keys(SPECIALTY_CASE_TEAM_BENEFIT_TYPES);
     const addedIssuesHasSCTIssue = this.props.state.addedIssues.some((issue) =>
-      specialtyCaseTeamBenefitTypes.includes(issue.benefitType));
+      specialtyCaseTeamBenefitTypes.includes(issue.benefitType) && !issue.withdrawalPending);
     const originalIssuesHasSCTIssue = this.props.originalIssues.some((issue) =>
       specialtyCaseTeamBenefitTypes.includes(issue.benefitType));
     const hasDistributionTaskAndSCTFeatureToggle = this.props.hasDistributionTask &&

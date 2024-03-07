@@ -501,7 +501,7 @@ class AppealsController < ApplicationController
   def set_flash_move_to_distribution_success_message
     # If the before issues had an SCT issue but the after issues don't then the appeal is moving to distribution
     if request_issues_update.before_issues.any?(&:sct_benefit_type?) &&
-       request_issues_update.after_issues.none?(&:sct_benefit_type?) &&
+       (request_issues_update.after_issues - request_issues_update.withdrawn_issues).none?(&:sct_benefit_type?) &&
        appeal.distributed? && appeal.specialty_case_team_assign_task? &&
        feature_enabled?(:specialty_case_team_distribution)
       flash[:custom] = {
