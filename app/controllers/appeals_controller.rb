@@ -328,6 +328,18 @@ class AppealsController < ApplicationController
     message << create_mst_pact_message_for_new_and_removed_issues(new_issues, "added") unless new_issues.empty?
     message << create_mst_pact_message_for_new_and_removed_issues(removed_issues, "removed") unless removed_issues.empty?
 
+    # add in the Specialty Case Team messages, if any
+    if feature_enabled?(:specialty_case_team_distribution)
+      if request_issues_update.before_issues.any?(&:sct_benefit_type?) &&
+         (request_issues_update.after_issues - request_issues_update.withdrawn_issues).none?(&:sct_benefit_type?)
+        message << move_to_distribution_success_message
+      end
+
+      if appeal.sct_appeal? && request_issues_update.before_issues.none?(&:sct_benefit_type?)
+        message << move_to_specialty_case_team_success_message
+      end
+    end
+
     message.flatten
   end
   # rubocop:enable Layout/LineLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Metrics/MethodLength
@@ -488,12 +500,7 @@ class AppealsController < ApplicationController
        appeal.distributed? && feature_enabled?(:specialty_case_team_distribution)
       flash[:custom] = {
         title: COPY::MOVE_TO_SCT_BANNER_TITLE,
-        message: format(
-          COPY::MOVE_TO_GENERIC_BANNER_SUCCESS_MESSAGE,
-          appeal.veteran_full_name,
-          appeal.veteran_file_number,
-          "SCT queue"
-        )
+        message: move_to_specialty_case_team_success_message
       }
     end
   end
@@ -506,14 +513,27 @@ class AppealsController < ApplicationController
        feature_enabled?(:specialty_case_team_distribution)
       flash[:custom] = {
         title: COPY::MOVE_TO_SCT_BANNER_TITLE,
-        message: format(
-          COPY::MOVE_TO_GENERIC_BANNER_SUCCESS_MESSAGE,
-          appeal.veteran_full_name,
-          appeal.veteran_file_number,
-          "regular distribution pool"
-        )
+        message: move_to_distribution_success_message
       }
     end
+  end
+
+  def move_to_distribution_success_message
+    format(
+      COPY::MOVE_TO_GENERIC_BANNER_SUCCESS_MESSAGE,
+      appeal.veteran_full_name,
+      appeal.veteran_file_number,
+      "regular distribution pool"
+    )
+  end
+
+  def move_to_specialty_case_team_success_message
+    format(
+      COPY::MOVE_TO_GENERIC_BANNER_SUCCESS_MESSAGE,
+      appeal.veteran_full_name,
+      appeal.veteran_file_number,
+      "SCT queue"
+    )
   end
 
   def set_flash_success_message
