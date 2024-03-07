@@ -199,7 +199,6 @@ CorrespondenceIntake.propTypes = {
   setUnrelatedTasks: PropTypes.func,
   mailTasks: PropTypes.arrayOf(PropTypes.string),
   autoTexts: PropTypes.arrayOf(PropTypes.string),
-  currentStep: PropTypes.number,
   reduxStore: PropTypes.object,
   loadSavedIntake: PropTypes.func,
   saveCurrentIntake: PropTypes.func
