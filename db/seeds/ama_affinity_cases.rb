@@ -11,6 +11,7 @@ module Seeds
     end
 
     def seed!
+      create_cda_admin_user
       create_cavc_affinity_cases
       create_hearing_affinity_cases
     end
@@ -35,6 +36,18 @@ module Seeds
         file_number: format("%<n>09d", n: @file_number),
         participant_id: format("%<n>09d", n: @participant_id)
       )
+    end
+
+    def find_or_create_active_cda_admin_judge(css_id, full_name)
+      User.find_by_css_id(css_id) ||
+        create(:user, :judge, :admin_intake_role, :cda_control_admin,:bva_intake_admin css_id: css_id, full_name: full_name)
+    end
+
+    def create_cda_admin_user
+      judge = find_or_create_active_cda_admin_judge("QAACDPlus","QA_Admin ACD_CF TM_Mgmt_Intake")
+      judge_team = JudgeTeam.for_judge(judge)
+      user = User.find_by_css_id("BVASCASPER1")
+      judge_team.add_user(user)
     end
 
     def create_cavc_affinity_cases

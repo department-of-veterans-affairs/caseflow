@@ -47,6 +47,10 @@ FactoryBot.define do
       roles { ["VSO"] }
     end
 
+    trait :admin_intake_role do
+      roles { ["Mail Intake", "Admin Intake"] }
+    end
+
     trait :judge do
       with_judge_team
       roles { ["Hearing Prep"] }
@@ -106,6 +110,19 @@ FactoryBot.define do
     trait :vlj_support_user do
       after(:create) do |user|
         Colocated.singleton.add_user(user)
+      end
+    end
+
+    trait :cda_control_admin do
+      after(:create) do |user|
+        CDAControlGroup.singleton.add_user(user)
+        OrganizationsUser.make_user_admin(user, CDAControlGroup.singleton)
+      end
+    end
+
+    trait :bva_intake_admin do
+      after(:create) do |user|
+        OrganizationsUser.make_user_admin(user, BvaIntake.singleton)
       end
     end
 
