@@ -702,7 +702,7 @@ global_admin_logins,target_css_id,string,,,,,,
 global_admin_logins,target_station_id,string,,,,,,
 global_admin_logins,updated_at,datetime,,,,,x,
 hearings,,,,,,,,
-hearings,appeal_id,integer ∗ FK,x,,x,,,Appeal ID; use as FK to appeals
+hearings,appeal_id,integer ∗ FK,x,,x,,x,Appeal ID; use as FK to appeals
 hearings,bva_poc,string,,,,,,Hearing coordinator full name
 hearings,created_at,datetime,,,,,,Automatic timestamp when row was created.
 hearings,created_by_id,integer (8) FK,,,x,,x,The ID of the user who created the Hearing
@@ -1005,6 +1005,10 @@ non_availabilities,object_identifier,string ∗,x,,,,,
 non_availabilities,schedule_period_id,integer (8) ∗ FK,x,,x,,x,
 non_availabilities,type,string ∗,x,,,,,
 non_availabilities,updated_at,datetime ∗,x,,,,x,
+not_listed_power_of_attorneys,,,,,,,,
+not_listed_power_of_attorneys,created_at,datetime ∗,x,,,,,
+not_listed_power_of_attorneys,id,integer (8) PK,x,x,,,,
+not_listed_power_of_attorneys,updated_at,datetime ∗,x,,,,,
 notifications,,,,,,,,
 notifications,appeals_id,string ∗,x,,,,x,ID of the Appeal
 notifications,appeals_type,string ∗,x,,,,x,Type of Appeal
@@ -1187,6 +1191,7 @@ request_issues,is_predocket_needed,boolean,,,,,,Indicates whether or not an issu
 request_issues,is_unidentified,boolean,,,,,,"Indicates whether a Request Issue is unidentified, meaning it wasn't found in the list of contestable issues, and is not a new nonrating issue. Contentions for unidentified issues are created on a rating End Product if processed in VBMS but without the issue description, and someone is required to edit it in Caseflow before proceeding with the decision."
 request_issues,mst_status,boolean,,,,,,Indicates if issue is related to Military Sexual Trauma (MST)
 request_issues,mst_status_update_reason_notes,text,,,,,,The reason for why Request Issue is Military Sexual Trauma (MST)
+request_issues,nonrating_issue_bgs_id,string,,,,,,"If the contested issue is a nonrating issue, this is the nonrating issue's reference id. Will be nil if this request issue contests a decision issue."
 request_issues,nonrating_issue_category,string,,,,,,The category selected for nonrating request issues. These vary by business line.
 request_issues,nonrating_issue_description,string,,,,,,The user entered description if the issue is a nonrating issue
 request_issues,notes,text,,,,,,"Notes added by the Claims Assistant when adding request issues. This may be used to capture handwritten notes on the form, or other comments the CA wants to capture."
@@ -1417,6 +1422,7 @@ unrecognized_appellants,created_at,datetime ∗,x,,,,,
 unrecognized_appellants,created_by_id,integer (8) ∗ FK,x,,x,,,The user that created this version of the unrecognized appellant
 unrecognized_appellants,current_version_id,integer (8) FK,,,x,,,The current version for this unrecognized appellant
 unrecognized_appellants,id,integer (8) PK,x,x,,,,
+unrecognized_appellants,not_listed_power_of_attorney_id,integer (8) FK,,,x,,,
 unrecognized_appellants,poa_participant_id,string,,,,,,"Identifier of the appellant's POA, if they have a CorpDB participant_id"
 unrecognized_appellants,relationship,string ∗,x,,,,,"Relationship to veteran. Allowed values: attorney, child, spouse, other, or healthcare_provider."
 unrecognized_appellants,unrecognized_party_detail_id,integer (8) FK,,,x,,x,Contact details

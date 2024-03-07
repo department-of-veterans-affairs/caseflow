@@ -1,5 +1,5 @@
 digraph belongs_to_erd {
-	graph [bb="0,0,3520.9,4456",
+	graph [bb="0,0,3520.9,4500",
 		rankdir=LR
 	];
 	node [label="\N"];
@@ -746,6 +746,11 @@ digraph belongs_to_erd {
 	UnrecognizedAppellant -> UnrecognizedPartyDetail	[label=unrecognized_party_detail,
 		];
 	UnrecognizedAppellant -> UnrecognizedPartyDetail	[label=unrecognized_power_of_attorney,
+		];
+	NotListedPowerOfAttorney	[
+		label=NotListedPowerOfAttorney,
+		];
+	UnrecognizedAppellant -> NotListedPowerOfAttorney	[label=not_listed_power_of_attorney,
 		];
 	UserQuota	[
 		label="UserQuota\n(associated with: User)",
