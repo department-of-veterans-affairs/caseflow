@@ -434,5 +434,7 @@ Rails.application.routes.draw do
   get "/mpi", to: "mpi#index"
   post "/mpi/search", to: "mpi#search"
 
-  get "/test_credentials", to: "test_credentials#index"
+  unless Rails.deploy_env == :production
+    get "/test_credentials", to: "test_credentials#index"
+  end
 end

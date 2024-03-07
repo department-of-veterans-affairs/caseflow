@@ -30,17 +30,25 @@ class TestCredentialsController < ApplicationController
   def set_current_user
     user = User.find_or_create_by(css_id: LOAD_TESTING_USER, station_id: 101)
 
-    Functions.grant!("Global Admin", users: [LOAD_TESTING_USER])
     Functions.grant!("System Admin", users: [LOAD_TESTING_USER])
 
     session["user"] = user.to_session_hash
     session[:regional_office] = user.users_regional_office
   end
 
+  # Private: Deletes  the load testing API key if it already exists to prevent conflicts
+  def ensure_key_does_not_exist_already
+    ApiKey.find_by(consumer_name: "Load Testing Client")&.delete
+  end
+
   # Private: Returns an API key if one has already been generated for load testing.
   # If one is not available then one will be generated and persisted to the cache.
   def generate_api_key
-    Rails.cache.fetch(API_KEY_CACHE_KEY) { ApiKey.create(consumer_name: "Load Testing Client").key_string }
+    Rails.cache.fetch(API_KEY_CACHE_KEY) do
+      ensure_key_does_not_exist_already
+
+      ApiKey.create(consumer_name: "Load Testing Client").key_string
+    end
   end
 
   # Private: Returns an IDT token if one has already been generated for load testing.
@@ -59,6 +67,6 @@ class TestCredentialsController < ApplicationController
 
   # Private: Only allow for routes to be interacted with in non-production environments
   def check_environment
-    return render status: :not_found if Rails.env.production?
+    return render status: :not_found if Rails.deploy_env == :production
   end
 end
