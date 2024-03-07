@@ -1538,7 +1538,7 @@ QueueApp.propTypes = {
   correspondence: PropTypes.object,
   autoTexts: PropTypes.array,
   veteranInformation: PropTypes.object,
-  reduxStore: PropTypes.object,
+  reduxStore: PropTypes.object
 };
 
 const mapStateToProps = (state) => ({

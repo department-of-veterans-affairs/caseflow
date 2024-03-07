@@ -32,8 +32,8 @@ export const loadSavedIntake = (savedStore) =>
   };
 
 export const saveCurrentIntake = (currentIntake, data) => (dispatch) => {
-  ApiUtil.post(`/queue/correspondence/${data.correspondence_uuid}/current_step`, { data })
-    .then((response) => {
+  ApiUtil.post(`/queue/correspondence/${data.correspondence_uuid}/current_step`, { data }).
+    then((response) => {
       if (!response.ok) {
         console.error(response);
       }
@@ -44,8 +44,8 @@ export const saveCurrentIntake = (currentIntake, data) => (dispatch) => {
           currentIntake
         }
       });
-    })
-    .catch((err) => {
+    }).
+    catch((err) => {
       console.error(new Error(`Problem with GET ${currentIntake} ${err}`));
     });
 };
