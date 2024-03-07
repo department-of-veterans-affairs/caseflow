@@ -22,7 +22,7 @@ class Task < CaseflowRecord
   belongs_to :cancelled_by, class_name: "User"
   belongs_to :completed_by, class_name: "User"
 
-  include TaskBelongsToPolymorphicAppealConcern
+  # include TaskBelongsToPolymorphicAppealConcern
 
   has_many :attorney_case_reviews, dependent: :destroy
   has_many :task_timers, dependent: :destroy

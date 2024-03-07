@@ -18,7 +18,7 @@ class DecisionIssue < CaseflowRecord
   has_many :request_issues, through: :request_decision_issues
   has_many :remand_reasons, dependent: :destroy
 
-  include DecisionIssueBelongsToPolymorphicAppealConcern
+  # include DecisionIssueBelongsToPolymorphicAppealConcern
 
   has_one :effectuation, class_name: "BoardGrantEffectuation", foreign_key: :granted_decision_issue_id
   has_many :contesting_request_issues, class_name: "RequestIssue", foreign_key: "contested_decision_issue_id"

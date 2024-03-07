@@ -3,5 +3,5 @@
 class SpecialIssueList < CaseflowRecord
   include HasAppealUpdatedSince
 
-  include SpecialIssueListBelongsToPolymorphicAppealConcern
+  # include SpecialIssueListBelongsToPolymorphicAppealConcern
 end

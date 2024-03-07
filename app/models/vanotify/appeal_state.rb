@@ -2,5 +2,5 @@
 
 class AppealState < CaseflowRecord
   include HasAppealUpdatedSince
-  include AppealStateBelongsToPolymorphicAppealConcern
+  # include AppealStateBelongsToPolymorphicAppealConcern
 end

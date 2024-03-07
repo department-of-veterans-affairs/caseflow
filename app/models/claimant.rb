@@ -7,7 +7,7 @@
 class Claimant < CaseflowRecord
   include HasDecisionReviewUpdatedSince
 
-  include ClaimantBelongsToPolymorphicAppealConcern
+  # include ClaimantBelongsToPolymorphicAppealConcern
 
   belongs_to :person, primary_key: :participant_id, foreign_key: :participant_id
   has_one :unrecognized_appellant, lambda { |claimant|
