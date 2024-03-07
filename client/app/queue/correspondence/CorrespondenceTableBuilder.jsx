@@ -62,8 +62,6 @@ const CorrespondenceTableBuilder = (props) => {
     querystring.parse(window.location.search.slice(1))
   );
 
-  const isInboundOpsTeam = props.organizations.find((org) => org.name === 'Inbound Ops Team');
-
   // Causes one additional rerender of the QueueTables/tabs but prevents saved pagination behavior
   // e.g. clearing filter in a tab, then swapping tabs, then swapping back and the filter will still be applied
   useEffect(() => {
@@ -164,6 +162,46 @@ const CorrespondenceTableBuilder = (props) => {
     // Setup default sorting.
     const defaultSort = {};
 
+    const getBulkAssignArea = () => {
+      return (<>
+        <p className="cf-margin-bottom-0rem">Assign to mail team user</p>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <SearchableDropdown
+            className="cf-dropdown"
+            name="Assign to mail team user"
+            hideLabel
+            styling={{ width: '200px', marginRight: '2rem' }}
+            dropdownStyling={{ width: '200px' }}
+            options={buildMailUserData(props.mailTeamUsers)}
+            onChange={handleMailTeamUserChange}
+          />
+          {tabConfig.name === 'correspondence_unassigned' &&
+              <>
+                <Button
+                  name="Assign"
+                  onClick={handleAssignButtonClick}
+                  disabled={!isDropdownItemSelected || !isAnyCheckboxSelected}
+                />
+                <span style={{ marginLeft: 'auto' }}>
+                  <Button
+                    name="Auto assign correspondence"
+                  />
+                </span>
+              </>
+          }
+          {tabConfig.name === 'correspondence_team_assigned' &&
+            <Button
+              name="Reassign"
+              onClick={handleAssignButtonClick}
+              disabled={!isDropdownItemSelected || !isAnyCheckboxSelected}
+            />
+          }
+        </div>
+        <hr></hr>
+      </>);
+
+    };
+
     // If there is no sort by column in the pagination options, then use the tab config default sort
     // eslint-disable-next-line camelcase
     if (!savedPaginationOptions?.sort_by) {
@@ -174,44 +212,20 @@ const CorrespondenceTableBuilder = (props) => {
       label: sprintf(tabConfig.label, totalTaskCount),
       page: (
         <>
-          {isInboundOpsTeam &&
+          {/* this setup should prevent a double render of the bulk assign area if a
+          user is a superuser and also a supervisor */}
+          {(props.isSupervisor || (props.isSupervisor && props.isSuperuser)) &&
             (tabConfig.name === 'correspondence_unassigned' || tabConfig.name === 'correspondence_team_assigned') &&
             <>
-              <p className="cf-margin-bottom-0rem">Assign to mail team user</p>
-              <div style={{ display: 'flex', flexDirection: 'row' }}>
-                <SearchableDropdown
-                  className="cf-dropdown"
-                  name="Assign to mail team user"
-                  hideLabel
-                  styling={{ width: '200px', marginRight: '2rem' }}
-                  dropdownStyling={{ width: '200px' }}
-                  options={buildMailUserData(props.mailTeamUsers)}
-                  onChange={handleMailTeamUserChange}
-                />
-                {tabConfig.name === 'correspondence_unassigned' &&
-              <>
-                <Button
-                  name="Assign"
-                  onClick={handleAssignButtonClick}
-                  disabled={!isDropdownItemSelected || !isAnyCheckboxSelected}
-                />
-                <span style={{ marginLeft: 'auto' }}>
-                  <Button
-                    name="Auto assign correspondence"
-                    />
-                  </span>
-                </>
-                }
-                {tabConfig.name === 'correspondence_team_assigned' &&
-            <Button
-              name="Reassign"
-              onClick={handleAssignButtonClick}
-              disabled={!isDropdownItemSelected || !isAnyCheckboxSelected}
-            />
-                }
-              </div>
-              <hr></hr>
+              {getBulkAssignArea()}
             </>
+          }
+          {
+            (props.isSuperuser && !props.isSupervisor && tabConfig.name === 'correspondence_team_assigned') &&
+          <>
+            {getBulkAssignArea()}
+          </>
+
           }
           <p className="cf-margin-top-0">
             {noCasesMessage || tabConfig.description}
@@ -281,6 +295,9 @@ CorrespondenceTableBuilder.propTypes = {
   featureToggles: PropTypes.object,
   mailTeamUsers: PropTypes.array,
   selectedTasks: PropTypes.array,
+  isSuperuser: PropTypes.bool,
+  isSupervisor: PropTypes.bool
+
 };
 
 export default connect(mapStateToProps)(CorrespondenceTableBuilder);
