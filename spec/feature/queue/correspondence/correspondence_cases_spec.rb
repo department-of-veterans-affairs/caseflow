@@ -46,7 +46,7 @@ RSpec.feature("The Correspondence Cases page") do
       20.times do
         correspondence = create(:correspondence)
         parent_task = create_correspondence_intake(correspondence, current_user)
-        create_efolderupload_task(correspondence, parent_task, user:current_user)
+        create_efolderupload_task(correspondence, parent_task, user: current_user)
       end
       # Used to mock a single task to compare task sorting
       EfolderUploadFailedTask.first.update!(type: "ReviewPackageTask")
@@ -198,7 +198,7 @@ RSpec.feature("The Correspondence Cases page") do
   context "correspondence tasks completed tab" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeamSupervisor.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
 
@@ -343,7 +343,7 @@ RSpec.feature("The Correspondence Cases page") do
   context "correspondence cases action required tab" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeamSupervisor.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
     before do
@@ -356,19 +356,19 @@ RSpec.feature("The Correspondence Cases page") do
           rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
           task_array[index].create!(
             parent_id: rpt.id,
-            appeal_id: corres.id,
             appeal_type: "Correspondence",
-            assigned_to: MailTeamSupervisor.singleton,
+            appeal_id: corres.id,
+            assigned_to: InboundOpsTeam.singleton,
             assigned_by_id: rpt.assigned_to_id
           )
         end
       end
-       # Used to mock a single task to compare task sorting
-       ReassignPackageTask.first.correspondence.update!(
+      # Used to mock a single task to compare task sorting
+      ReassignPackageTask.first.correspondence.update!(
         va_date_of_receipt: Date.new(2000, 10, 10),
         updated_by_id: current_user.id
       )
-       ReassignPackageTask.last.correspondence.update!(
+      ReassignPackageTask.last.correspondence.update!(
         va_date_of_receipt: Date.new(2050, 10, 10),
         updated_by_id: current_user.id
       )
@@ -505,7 +505,7 @@ RSpec.feature("The Correspondence Cases page") do
   context "correspondence cases unassigned tab" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeamSupervisor.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
 
@@ -519,9 +519,9 @@ RSpec.feature("The Correspondence Cases page") do
           rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
           task_array[index].create!(
             parent_id: rpt.id,
-            appeal_id: corres.id,
             appeal_type: "Correspondence",
-            assigned_to: MailTeamSupervisor.singleton,
+            assigned_to: InboundOpsTeam.singleton,
+            appeal_id: corres.id,
             assigned_by_id: rpt.assigned_to_id
           )
         end
@@ -656,7 +656,7 @@ RSpec.feature("The Correspondence Cases page") do
   context "correspondence cases assigned tab" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeamSupervisor.singleton.add_user(current_user)
+      InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
 
@@ -699,7 +699,7 @@ RSpec.feature("The Correspondence Cases page") do
       visit "/queue/correspondence/team?tab=correspondence_team_assigned"
       expect(page).to have_content("Correspondence that is currently assigned to mail team users:")
       expect(page).to have_content("Assign to mail team user")
-      expect(page).to have_button("Reassign")
+      expect(page).to have_button("Reassign", disabled: true)
     end
 
     it "uses veteran details sort correctly." do
@@ -818,7 +818,6 @@ RSpec.feature("The Correspondence Cases page") do
   context "Your Correspondence assigned tab" do
     let(:current_user) { create(:user) }
     before :each do
-      MailTeamSupervisor.singleton.add_user(current_user)
       InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
     end
@@ -894,6 +893,7 @@ RSpec.feature("The Correspondence Cases page") do
       expect(find("tbody > tr:nth-child(1) > td:nth-child(5)").text == second_note)
     end
   end
+
   context "Your Correspondence completed tab" do
     let(:current_user) { create(:user) }
     before :each do

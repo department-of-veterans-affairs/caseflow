@@ -3,6 +3,7 @@
 class CorrespondenceInProgressTasksTab < CorrespondenceQueueTab
   validate :assignee_is_user
 
+  # :reek:UtilityFunction
   def label
     Constants.QUEUE_CONFIG.CORRESPONDENCE_IN_PROGRESS_TASKS_LABEL
   end
@@ -11,14 +12,18 @@ class CorrespondenceInProgressTasksTab < CorrespondenceQueueTab
     Constants.QUEUE_CONFIG.CORRESPONDENCE_IN_PROGRESS_TASKS_TAB_NAME
   end
 
+  # :reek:UtilityFunction
   def description
     Constants.QUEUE_CONFIG.CORRESPONDENCE_IN_PROGRESS_TASKS_DESCRIPTION
   end
 
   def tasks
-    CorrespondenceTask.where(assigned_to: assignee).in_progress
+    CorrespondenceTask.where(assigned_to: assignee)
+      .where.not(type: "EfolderUploadFailedTask")
+      .where(status: ["in_progress", "on_hold"]).in_progress
   end
 
+  # :reek:UtilityFunction
   def column_names
     [
       Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,

@@ -25,6 +25,9 @@ class TaskSorter
   def sorted_tasks
     return tasks unless tasks.any?
 
+    # used for when the logic on the sorting needs to be reversed
+    reverse_sort_order = sort_order == "asc" ? "desc" : "asc"
+
     # Always join to the CachedAppeal and users tables because we sometimes need it, joining does not slow down the
     # application, and conditional logic to only join sometimes adds unnecessary complexity.
     case column.name
@@ -34,6 +37,8 @@ class TaskSorter
       tasks.joins(:appeal).order(notes: sort_order.to_sym)
     when Constants.QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name
       tasks.joins(:appeal).order(va_date_of_receipt: sort_order.to_sym)
+    when Constants.QUEUE_CONFIG.COLUMNS.DAYS_WAITING.name
+      tasks.joins(:appeal).order(assigned_at: reverse_sort_order.to_sym)
     else
       tasks.with_assignees.with_assigners.with_cached_appeals.order(order_clause)
     end

@@ -3,6 +3,7 @@
 class CorrespondenceCompletedTasksTab < CorrespondenceQueueTab
   validate :assignee_is_user
 
+  # :reek:UtilityFunction
   def label
     Constants.QUEUE_CONFIG.CORRESPONDENCE_COMPLETED_TASKS_LABEL
   end
@@ -11,6 +12,7 @@ class CorrespondenceCompletedTasksTab < CorrespondenceQueueTab
     Constants.QUEUE_CONFIG.CORRESPONDENCE_COMPLETED_TASKS_TAB_NAME
   end
 
+  # :reek:UtilityFunction
   def description
     Constants.QUEUE_CONFIG.CORRESPONDENCE_COMPLETED_TASKS_DESCRIPTION
   end
@@ -29,9 +31,10 @@ class CorrespondenceCompletedTasksTab < CorrespondenceQueueTab
       .pluck(:id)
 
     CorrespondenceTask.includes(*task_includes)
-      .where(id: completed_root_tasks + tasks_with_completed_children).recently_completed
+      .where(id: completed_root_tasks + tasks_with_completed_children)
   end
 
+  # :reek:UtilityFunction
   def column_names
     [
       Constants.QUEUE_CONFIG.COLUMNS.VETERAN_DETAILS.name,

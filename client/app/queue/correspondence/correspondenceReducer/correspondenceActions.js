@@ -21,6 +21,35 @@ export const loadCorrespondences = (correspondences) =>
     });
   };
 
+export const loadSavedIntake = (savedStore) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.LOAD_SAVED_INTAKE,
+      payload: {
+        savedStore
+      }
+    });
+  };
+
+export const saveCurrentIntake = (currentIntake, data) => (dispatch) => {
+  ApiUtil.post(`/queue/correspondence/${data.correspondence_uuid}/current_step`, { data }).
+    then((response) => {
+      if (!response.ok) {
+        console.error(response);
+      }
+
+      dispatch({
+        type: ACTIONS.SAVE_CURRENT_INTAKE,
+        payload: {
+          currentIntake
+        }
+      });
+    }).
+    catch((err) => {
+      console.error(new Error(`Problem with GET ${currentIntake} ${err}`));
+    });
+};
+
 export const loadVeteranInformation = (veteranInformation) =>
   (dispatch) => {
     dispatch({
@@ -85,6 +114,14 @@ export const clearCheckboxState = () =>
   (dispatch) => {
     dispatch({
       type: ACTIONS.CLEAR_CHECKBOX_STATE,
+    });
+  };
+
+export const setSelectedTasks = (values) =>
+  (dispatch) => {
+    dispatch({
+      type: ACTIONS.SET_SELECTED_TASKS,
+      payload: { values }
     });
   };
 

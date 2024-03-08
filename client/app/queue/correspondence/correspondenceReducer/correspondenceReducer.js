@@ -8,6 +8,7 @@ export const initialState = {
   correspondences: [],
   radioValue: '0',
   relatedCorrespondences: [],
+  selectedTasks: [],
   mailTasks: [],
   unrelatedTasks: [],
   currentCorrespondence: [],
@@ -33,6 +34,12 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
       }
     });
 
+  case ACTIONS.LOAD_SAVED_INTAKE:
+    return action.payload.savedStore;
+
+  case ACTIONS.SAVE_CURRENT_INTAKE:
+    return action.payload.currentIntake;
+
   case ACTIONS.LOAD_VETERAN_INFORMATION:
     return update(state, {
       veteranInformation: {
@@ -51,6 +58,13 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     return update(state, {
       correspondenceConfig: {
         $set: action.payload.correspondenceConfig
+      }
+    });
+
+  case ACTIONS.LOAD_MAIL_TEAM_USERS:
+    return update(state, {
+      mailTeamUsers: {
+        $set: action.payload.mailTeamUsers
       }
     });
 
@@ -80,6 +94,14 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     return update(state, {
       relatedCorrespondences: {
         $set: []
+      }
+    });
+
+    // fix this to use the actual value for set
+  case ACTIONS.SET_SELECTED_TASKS:
+    return update(state, {
+      selectedTasks: {
+        $set: [...action.payload.values]
       }
     });
 
