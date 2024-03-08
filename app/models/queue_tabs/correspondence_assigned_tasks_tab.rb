@@ -16,7 +16,7 @@ class CorrespondenceAssignedTasksTab < CorrespondenceQueueTab
   end
 
   def tasks
-    CorrespondenceTask.where(assigned_to_id: assignee.id)
+    ReviewPackageTask.includes(*task_includes).where(assigned_to: assignee, status: Constants.TASK_STATUSES.assigned)
   end
 
   def column_names
