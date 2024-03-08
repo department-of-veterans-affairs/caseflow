@@ -1,19 +1,12 @@
 # frozen_string_literal: true
 
-# :reek:InstanceVariableAssumption
 class CorrespondenceAutoAssigner
-  def initialize(current_user_id:, batch_auto_assignment_attempt_id:)
-    @current_user = User.find(current_user_id)
-    @batch = BatchAutoAssignmentAttempt.find_by(user: @current_user, id: batch_auto_assignment_attempt_id)
-  end
+  def perform(current_user_id:, batch_auto_assignment_attempt_id:)
+    # Don't catch these exceptions here so that if we're being called by a job
+    # the job will auto-retry with exponential back-off
+    validate_run!(current_user_id, batch_auto_assignment_attempt_id)
 
-  def perform
     logger.begin
-
-    # Manual error trigger for testing purposes
-    if FeatureToggle.enabled?(:auto_assign_banner_failure) && !Rails.env.production?
-      fail StandardError
-    end
 
     if !unassigned_review_package_tasks.count.positive?
       logger.error(msg: COPY::BAAA_NO_UNASSIGNED_CORRESPONDENCE)
@@ -25,17 +18,22 @@ class CorrespondenceAutoAssigner
       return
     end
 
-    unassigned_review_package_tasks.each do |task|
-      assign(task)
+    begin
+      unassigned_review_package_tasks.each do |task|
+        assign(task)
+      end
+
+      logger.end
+    rescue StandardError => error
+      error_uuid = SecureRandom.uuid
+      Raven.capture_exception(error, extra: { error_uuid: error_uuid })
+      logger.error(msg: "#{COPY::BAAA_ERROR_MESSAGE} (Error code: #{error_uuid})")
     end
-    logger.end
-  rescue StandardError => error
-    error_uuid = SecureRandom.uuid
-    Raven.capture_exception(error, extra: { error_uuid: error_uuid })
-    logger.error(msg: COPY::BAAA_ERROR_MESSAGE + " (Error code:#{error_uuid})")
   end
 
   private
+
+  attr_accessor :batch, :current_user
 
   def assign(task)
     started_at = Time.current
@@ -56,38 +54,47 @@ class CorrespondenceAutoAssigner
     task.update!(
       assigned_to: user,
       assigned_at: Time.current,
-      assigned_by: @current_user,
+      assigned_by: current_user,
       assigned_to_type: User.name,
       status: Constants.TASK_STATUSES.assigned
     )
   end
 
   def unassigned_review_package_tasks
-    return @unassigned_review_package_tasks if @unassigned_review_package_tasks.present?
+    return [] if FeatureToggle.enabled?(:auto_assign_banner_no_rpt)
 
-    tasks = ReviewPackageTask
-      .where(status: "unassigned")
+    ReviewPackageTask
+      .where(status: Constants.TASK_STATUSES.unassigned)
       .includes(:correspondence)
       .references(:correspondence)
       .merge(Correspondence.order(va_date_of_receipt: :desc))
+  end
 
-    # Jobs run synchronously in testing and development environments - limit to 10 to prevent timeouts
-    tasks = if !Rails.env.production?
-              if FeatureToggle.enabled?(:auto_assign_banner_no_rpt)
-                []
-              else
-                tasks.limit(10)
-              end
-            end
-
-    @unassigned_review_package_tasks = tasks
+  def validate_run!(current_user_id, batch_auto_assignment_attempt_id)
+    if run_verifier.can_run_auto_assign?(
+      current_user_id: current_user_id,
+      batch_auto_assignment_attempt_id: batch_auto_assignment_attempt_id
+    )
+      self.batch = run_verifier.verified_batch
+      self.current_user = run_verifier.verified_user
+    else
+      logger.fail_run_validation(
+        batch_auto_assignment_attempt_id: batch_auto_assignment_attempt_id,
+        msg: run_verifier.err_msg
+      )
+      fail run_verifier.err_msg
+    end
   end
 
   def logger
-    @logger ||= CorrespondenceAutoAssignLogger.new(@current_user, @batch)
+    @logger ||= CorrespondenceAutoAssignLogger.new(current_user, batch)
   end
 
   def assignable_user_finder
     @assignable_user_finder ||= AutoAssignableUserFinder.new
+  end
+
+  def run_verifier
+    @run_verifier ||= CorrespondenceAutoAssignRunVerifier.new
   end
 end

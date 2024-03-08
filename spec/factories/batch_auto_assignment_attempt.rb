@@ -6,7 +6,8 @@ FactoryBot.define do
     started_at { 12.hours.ago }
     updated_at { 12.hours.ago }
     status { Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.started }
-    user_id { User.first.id || create(:user).id }
+
+    association :user, factory: :user
 
     trait :packages_assigned do
       num_nod_packages_assigned { 5 }

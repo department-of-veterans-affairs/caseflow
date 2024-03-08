@@ -4,5 +4,9 @@
     "started": "started",
     "completed": "completed",
     "error": "error"
+  },
+  "timing": {
+    "min_minutes_elapsed_batch_attempt": 5,
+    "min_minutes_elapsed_individual_attempt": 2
   }
 }
