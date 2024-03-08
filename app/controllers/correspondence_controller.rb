@@ -15,7 +15,9 @@ class CorrespondenceController < ApplicationController
         render json: {
           currentCorrespondence: current_correspondence,
           correspondence: correspondence_load,
-          veteranInformation: veteran_information
+          correspondenceInformation: correspondence_information,
+          veteranInformation: veteran_information,
+          responseLetters: 0
         }
       end
     end
@@ -250,6 +252,12 @@ class CorrespondenceController < ApplicationController
 
   def correspondence_load
     Correspondence.where(veteran_id: veteran_by_correspondence.id).where.not(uuid: params[:correspondence_uuid])
+  end
+
+  def correspondence_information
+    return nil if correspondence&.correspondence_type_id.blank?
+
+    @correspondence_information ||= CorrespondenceType.find_by(id: correspondence&.correspondence_type_id)
   end
 
   def veteran_by_correspondence
