@@ -77,6 +77,8 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
     push('/add_issues');
   };
 
+  const benefitType = intakeData?.benefitType;
+
   const onSubmit = (formData) => {
     if (formData.firstName) {
       formData.partyType = 'individual';
@@ -147,6 +149,7 @@ export const AddClaimantPage = ({ onAttorneySearch = fetchAttorneys, featureTogg
             onCancel={toggleConfirm}
             onConfirm={handleConfirm}
             claimant={claimant}
+            benefitType={benefitType}
           />
         )}
       </IntakeLayout>
