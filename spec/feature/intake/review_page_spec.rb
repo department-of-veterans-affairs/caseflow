@@ -417,26 +417,6 @@ feature "Intake Review Page", :postgres do
           expect(page).to have_content("#{attorney.name}, Attorney")
         end
 
-        # rubocop: disable Metrics/AbcSize
-        def add_unlisted_claimant(notes)
-          click_button("+ Add Claimant")
-          expect(page).to have_content("Claimant not listed")
-          expect(page).to have_button("Add this claimant", disabled: true)
-          find("label[for=notListed]").click
-          expect(page).to have_content("Notes e.g.")
-          expect(page).to have_button("Add this claimant", disabled: true)
-
-          fill_in "Notes e.g.", with: notes
-          expect(page).to have_button("Add this claimant", disabled: false)
-          click_button "Add this claimant"
-          expect(page).to_not have_selector("#add_claimant_modal")
-          expect(page).to have_content("Claimant not listed, Attorney")
-          expect(page).to have_content(notes)
-          # unlisted claimant has empty ID for radio value
-          expect(find("input", id: "claimant-options_", visible: false).checked?).to eq(true)
-        end
-        # rubocop: enable Metrics/AbcSize
-
         def claimant_search(search)
           find(".dropdown-claimant").fill_in "claimant", with: search
         end

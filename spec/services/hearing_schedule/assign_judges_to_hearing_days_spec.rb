@@ -43,8 +43,6 @@ describe HearingSchedule::AssignJudgesToHearingDays do
         css_id: judge2_css_id
       )
     end
-    let(:vacols_staff_one) { VACOLS::Staff.find_by(sdomainid: judge1.css_id) }
-    let(:vacols_staff_two) { VACOLS::Staff.find_by(sdomainid: judge2.css_id) }
 
     let!(:hd1) { create(:hearing_day, judge: judge1) }
     let!(:hd2) { create(:hearing_day, judge: judge1) }
