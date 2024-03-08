@@ -19,12 +19,7 @@ class OrganizationCorrespondencePendingTasksTab < CorrespondenceQueueTab
 
   # :reek:UtilityFunction
   def tasks
-    Task.none
-    # CorrespondenceTask
-    # .where(status: "on_hold")
-    # .find(
-    #   MailTask.active.where(appeal_type: "Correspondence").pluck(:parent_id)
-    # )
+    CorrespondenceMailTask.includes(*task_includes).active
   end
 
   # :reek:UtilityFunction
