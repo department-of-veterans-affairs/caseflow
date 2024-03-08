@@ -1,44 +1,47 @@
+# frozen_string_literal: true
+
 RSpec.describe Events::CreateClaimantOnEvent do
-  describe ".process" do
-    let(:event) { double("Event", reference_id: 1) }
-    let(:claimant_attributes) do
-      {
-        name_suffix: "name_suffix",
-        participant_id: "participant_id_value",
-        payee_code: "payee_code_value",
-        type: "type_value",
-        veteran_is_not_claimant: true
+  let!(:event) { double("Event", reference_id: 1) }
+  let(:vbms_claimant) do
+    {
+      "claim_review" => {
+        "veteran_is_not_claimant" => true
+      },
+      "claimant" => {
+        "name_suffix" => "Jr.",
+        "participant_id" => "12345",
+        "payee_code" => "01",
+        "type" => "individual"
       }
-    end
+    }
+  end
 
-    context "when is_not_veteran_claimant is false" do
-      it "returns the event reference id" do
-        claimant_attributes[:veteran_is_not_claimant] = false
-        result = described_class.process(event: event, claimant_attributes: claimant_attributes)
-        expect(result).to eq(event.reference_id)
-      end
-    end
-
-    context "when is_veteran_claimant is false" do
-      let(:claimant) { instance_double(Claimant, id: 1) }
-
-      before do
-        allow(Claimant).to receive(:find_or_create_by!).and_return(claimant)
-        allow(EventRecord).to receive(:create!)
-      end
-
+  describe ".process" do
+    context "when veteran is not the claimant" do
       it "creates a new claimant and returns its id" do
         expect(Claimant).to receive(:find_or_create_by!).with(
-          name_suffix: claimant_attributes[:name_suffix],
-          participant_id: claimant_attributes[:participant_id],
-          payee_code: claimant_attributes[:payee_code],
-          type: claimant_attributes[:type]
-        ).and_return(claimant)
+          name_suffix: "Jr.",
+          participant_id: "12345",
+          payee_code: "01",
+          type: "individual"
+        ).and_return(double("Claimant", id: 123))
 
-        expect(EventRecord).to receive(:create!).with(event: event, backfill_record: claimant)
+        expect(EventRecord).to receive(:create!).with(
+          event: event,
+          backfill_record: anything
+        )
 
-        result = described_class.process(event: event, claimant_attributes: claimant_attributes)
-        expect(result).to eq(claimant.id)
+        expect(described_class.process(event: event, vbms_claimant: vbms_claimant)).to eq(123)
+      end
+
+      it "does not create a new claimant if veteran is the claimant" do
+        vbms_claimant["claim_review"]["veteran_is_not_claimant"] = false
+
+        expect(Claimant).not_to receive(:find_or_create_by!)
+
+        expect(EventRecord).not_to receive(:create!)
+
+        expect(described_class.process(event: event, vbms_claimant: vbms_claimant)).to be_nil
       end
     end
   end

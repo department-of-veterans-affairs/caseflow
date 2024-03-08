@@ -42,10 +42,9 @@ class Events::DecisionReviewCreated
           # Events::DecisionReviewCreate::UpdateVacolsOnOptin.process!(decision_review)
           # event.update!(completed_at: Time.now, error: nil)
 
-          # Note: will need to pass an event and a hash of attributes(5) to CreateClaimantOnEvent
-          # claimant_attributes = {veteran_is_not_claimant: veteran_is_not_claimant, name_suffix: name_suffix,
-          # type: type, payee_code: payee_code, participant_id: participant_id}
-          # Events::CreateClaimantOnEvent.process(event: event, claimant_attributes: claimant_attributes)
+          # Note: will need to pass an event and a hash of attributes(6) to CreateClaimantOnEvent
+          # claimant_attributes =
+          # Events::CreateClaimantOnEvent.process(event: event, vbms_claimant: vbms_claimant)
         # end
       end
     rescue Caseflow::Error::RedisLockFailed => error
