@@ -74,7 +74,7 @@ const AddTaskView = (props) => {
 
   const objectForSelectedTaskType = () => {
     return props.allTaskTypeOptions.find((option) => {
-      return option.value === task.type;
+      return option.value.assigned_to === task.type.assigned_to;
     });
   };
 
