@@ -20,10 +20,10 @@ RSpec.describe Events::CreateClaimantOnEvent do
         allow(vbms_claimant.claim_review).to receive(:veteran_is_not_claimant).and_return(true)
 
         expect {
-          described_class.process(event: event, vbms_claimant: vbms_claimant, decision_review: decision_review)
+          described_class.process!(event: event, vbms_claimant: vbms_claimant, decision_review: decision_review)
         }.to change { EventRecord.count }.by(1).and change { Claimant.count }.by(1)
 
-        expect(described_class.process(event: event, vbms_claimant: vbms_claimant, decision_review: decision_review)).to eq(1)
+        expect(described_class.process!(event: event, vbms_claimant: vbms_claimant, decision_review: decision_review)).to eq(Claimant.last)
       end
 
       it "does not create a new claimant if veteran is the claimant" do
@@ -33,7 +33,7 @@ RSpec.describe Events::CreateClaimantOnEvent do
 
         expect(EventRecord).not_to receive(:create!)
 
-        expect(described_class.process(event: event, vbms_claimant: vbms_claimant, decision_review: decision_review)).to be_nil
+        expect(described_class.process!(event: event, vbms_claimant: vbms_claimant, decision_review: decision_review)).to be_nil
       end
     end
   end

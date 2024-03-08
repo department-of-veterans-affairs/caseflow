@@ -2,7 +2,7 @@
 
 class Events::CreateClaimantOnEvent
   class << self
-    def process(event:, vbms_claimant:, decision_review:)
+    def process!(event:, vbms_claimant:, decision_review:)
       if vbms_claimant.claim_review.veteran_is_not_claimant
         claimant = Claimant.find_or_create_by!(
           decision_review: decision_review,
@@ -10,7 +10,7 @@ class Events::CreateClaimantOnEvent
           payee_code: vbms_claimant.claimant.payee_code
         )
         EventRecord.create!(event: event, backfill_record: claimant)
-        claimant.id
+        claimant
       end
     end
   end
