@@ -5,6 +5,7 @@ require Rails.root.join("app", "services", "claim_change_history", "change_histo
 require Rails.root.join("app", "services", "claim_change_history", "claim_history_service.rb")
 require Rails.root.join("app", "services", "claim_change_history", "change_history_filter_parser.rb")
 require Rails.root.join("app", "services", "claim_change_history", "claim_history_event.rb")
+require Rails.root.join("app", "services", "claim_change_history", "change_history_event_serializer.rb")
 
 describe DecisionReviewsController, :postgres, type: :controller do
   before do
@@ -684,6 +685,76 @@ describe DecisionReviewsController, :postgres, type: :controller do
     end
   end
 
+  describe "#history" do
+    before do
+      Timecop.travel(1.day.ago)
+    end
+
+    let(:task) { create(:higher_level_review_task) }
+
+    context "task is in VHA" do
+      let(:vha_org) { VhaBusinessLine.singleton }
+
+      context "and user is not an admin" do
+        before do
+          vha_org.add_user(user)
+        end
+
+        it "returns unauthorized" do
+          get :history, params: { task_id: task.id, decision_review_business_line_slug: vha_org.url }
+
+          expect(response.status).to eq 302
+          expect(response.body).to match(/unauthorized/)
+        end
+      end
+
+      context "and user is an admin" do
+        before do
+          OrganizationsUser.make_user_admin(user, vha_org)
+        end
+
+        let!(:task_event) do
+          create(:higher_level_review_vha_task_with_decision)
+        end
+
+        it "should return task details" do
+          get :history, params: { task_id: task_event.id, decision_review_business_line_slug: vha_org.url },
+                        format: :json
+
+          expect(response.status).to eq 200
+
+          res = JSON.parse(response.body)
+
+          expected_events = [
+            { "taskID" => task_event.id, "eventType" => "added_issue", "claimType" => "Higher-Level Review",
+              "readableEventType" => "Added issue" },
+            { "eventType" => "claim_creation", "readableEventType" => "Claim created" },
+            { "eventType" => "in_progress", "readableEventType" => "Claim status - In progress" },
+            { "eventType" => "completed_disposition", "readableEventType" => "Completed disposition" }
+          ]
+
+          expected_events.each do |expected_attributes|
+            expect(res).to include(
+              a_hash_including("attributes" => a_hash_including(expected_attributes))
+            )
+          end
+        end
+      end
+    end
+
+    context "task is not in VHA" do
+      before do
+        non_comp_org.add_user(user)
+        OrganizationsUser.make_user_admin(user, non_comp_org)
+      end
+      it "returns unauthorized" do
+        get :history, params: { task_id: task.id, decision_review_business_line_slug: non_comp_org.url }
+
+        expect(response.status).to eq 302
+        expect(response.body).to match(/unauthorized/)
+      end
+    end
+  end
   describe "#generate_report" do
     let(:non_comp_org) { VhaBusinessLine.singleton }
 
