@@ -115,8 +115,7 @@ const CorrespondenceCases = (props) => {
           <p>PLACEHOLDER USER JUSTIFICATION</p>
           <div>
             <RadioField
-              // crashes without a name. populates unwanted text with a name.
-              name="no"
+              name="actionRequiredRadioField"
               label="Choose whether to approve the request for removal or reject it."
               options={actionRequiredOptions}
               onChange={(val) => setSelectedRequestChoice(val)}
@@ -124,7 +123,7 @@ const CorrespondenceCases = (props) => {
               optionsStyling={{ width: '180px' }}
             />
           </div>
-          {selectedRequestChoice === "reject" &&
+          {selectedRequestChoice === 'reject' &&
           <TextareaField name="Provide a reason for rejection" />}
         </Modal>}
         {showRemovePackageModal &&
