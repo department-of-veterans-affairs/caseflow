@@ -6591,6 +6591,7 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
                         className="input-container"
                       >
                         <input
+                          aria-readonly={false}
                           className={
                             Array [
                               "cf-form-textinput",
@@ -6648,6 +6649,7 @@ exports[`EmailConfirmationModal Matches snapshot with default props 1`] = `
                         className="input-container"
                       >
                         <input
+                          aria-readonly={false}
                           className={
                             Array [
                               "cf-form-textinput",

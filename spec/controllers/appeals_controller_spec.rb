@@ -767,7 +767,8 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         create(:notification, appeals_id: legacy_appeal_without_claimant.vacols_id, appeals_type: legacy_appeals_type,
                               event_date: 6.days.ago, event_type: "Hearing scheduled", notification_type: "SMS",
                               email_notification_status: nil, sms_notification_status: "No Claimant Found"),
-        create(:notification, appeals_id: legacy_appeal_without_participant_id.vacols_id, appeals_type: legacy_appeals_type,
+        create(:notification, appeals_id: legacy_appeal_without_participant_id.vacols_id,
+                              appeals_type: legacy_appeals_type,
                               event_date: 6.days.ago, event_type: "Hearing scheduled", notification_type: "SMS",
                               email_notification_status: nil, sms_notification_status: "No Participant Id Found"),
         create(:notification, appeals_id: ama_appeal_without_claimant.uuid, appeals_type: ama_appeals_type,
@@ -804,7 +805,8 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
       context "when controller action #fetch_notification_list is made with a vacols_id that has no claimant" do
         subject do
-          get :fetch_notification_list, params: { appeals_id: legacy_appeal_without_claimant.vacols_id, format: request_format }
+          get :fetch_notification_list, params: { appeals_id: legacy_appeal_without_claimant.vacols_id,
+                                                  format: request_format }
         end
         it "should return zero notifications" do
           subject
@@ -824,7 +826,8 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
       context "when controller action #fetch_notification_list is made with a vacols_id that has no participant id" do
         subject do
-          get :fetch_notification_list, params: { appeals_id: legacy_appeal_without_participant_id.vacols_id, format: request_format }
+          get :fetch_notification_list, params: { appeals_id: legacy_appeal_without_participant_id.vacols_id,
+                                                  format: request_format }
         end
         it "should return zero notifications" do
           subject
@@ -884,7 +887,8 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
 
       context "when controller action #fetch_notification_list is made with a uuid that has no participant id" do
         subject do
-          get :fetch_notification_list, params: { appeals_id: ama_appeal_without_participant_id.uuid, format: request_format }
+          get :fetch_notification_list, params: { appeals_id: ama_appeal_without_participant_id.uuid,
+                                                  format: request_format }
         end
         it "should return zero notifications" do
           subject
@@ -902,7 +906,8 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         end
       end
 
-      context "when controller action #fetch_notification_list is called with an appeals_id not in Notification Table" do
+      context "when controller action #fetch_notification_list is called
+      with an appeals_id not in Notification Table" do
         subject do
           get :fetch_notification_list, params: { appeals_id: bad_appeals_id, format: request_format }
         end
@@ -945,7 +950,8 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
         end
       end
 
-      context "when controller action #fetch_notification_list is called with an appeals_id not in Notification Table" do
+      context "when controller action #fetch_notification_list is called
+      with an appeals_id not in Notification Table" do
         subject do
           get :fetch_notification_list, params: { appeals_id: bad_appeals_id, format: request_format }
         end
@@ -984,6 +990,67 @@ RSpec.describe AppealsController, :all_dbs, type: :controller do
           expect(error).to be_a(ActionController::ParameterMissing)
           expect(error.to_s).to include("Bad Format")
         end
+      end
+    end
+  end
+
+  describe "POST update" do
+    context "AMA Appeal" do
+      before do
+        User.authenticate!(roles: ["System Admin"])
+        Fakes::Initializer.load!
+      end
+
+      let(:ssn) { Generators::Random.unique_ssn }
+      let(:options) { { format: :html, appeal_id: appeal_url_identifier } }
+      let(:appeal) { create(:appeal, veteran_file_number: ssn) }
+      let(:appeal_url_identifier) { appeal.is_a?(LegacyAppeal) ? appeal.vacols_id : appeal.uuid }
+      let!(:request_issue1) { create(:request_issue, decision_review: appeal) }
+      let(:request_issue2) { create(:request_issue, decision_review: appeal) }
+      let(:request_issue3) { create(:request_issue, decision_review: appeal) }
+      let(:request_issue4) { create(:request_issue, decision_review: appeal) }
+      let(:organization) { create(:organization) }
+
+      subject do
+        post :update, params: {
+          request_issues: [
+            {
+              request_issue_id: request_issue4.id,
+              mst_status: true,
+              mst_status_update_reason_notes: "MST reason note",
+              pact_status_update_reason_notes: ""
+            },
+            {
+              request_issue_id: request_issue3.id,
+              pact_status: true,
+              mst_status_update_reason_notes: "",
+              pact_status_update_reason_notes: "PACT reason note"
+            },
+            {
+              request_issue_id: request_issue2.id,
+              mst_status: true,
+              pact_status: true,
+              mst_status_update_reason_notes: "MST note",
+              pact_status_update_reason_notes: "Pact note"
+            },
+            {
+              request_issue_id: request_issue1.id,
+              mst_status_update_reason_notes: "",
+              pact_status_update_reason_notes: ""
+            }
+          ],
+          controller: "appeals",
+          action: "update",
+          appeal_id: appeal.id
+        }
+      end
+
+      it "responds with a 200 status" do
+        allow_any_instance_of(AppealsController).to receive(:appeal).and_return(appeal)
+        allow(Organization).to receive(:find_by_url).and_return(organization)
+
+        subject
+        expect(response).to be_successful
       end
     end
   end

@@ -2,13 +2,20 @@
 
 module WarRoom
   def self.user
+    # rubocop:disable Style/ClassVars
     @@user ||= OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
+    # rubocop:enable Style/ClassVars
   end
 
   class Outcode
     def ama_run(uuid_pass_in)
       # set current user
-      RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
+      RequestStore[:current_user] = OpenStruct.new(
+        ip_address: "127.0.0.1",
+        station_id: "283",
+        css_id: "CSFLOW",
+        regional_office: "DSUSER"
+      )
 
       uuid = uuid_pass_in
       # set appeal parameter
@@ -22,16 +29,18 @@ module WarRoom
       # view task tree
       appeal.treee
 
-      # set decision document variable
-      dd = appeal.decision_document
-
       FixFileNumberWizard.run(appeal: appeal)
-      #need to do y or q
+      # need to do y or q
     end
 
     def legacy_run(vacols_id)
       # set current user
-      RequestStore[:current_user] = OpenStruct.new(ip_address: "127.0.0.1", station_id: "283", css_id: "CSFLOW", regional_office: "DSUSER")
+      RequestStore[:current_user] = OpenStruct.new(
+        ip_address: "127.0.0.1",
+        station_id: "283",
+        css_id: "CSFLOW",
+        regional_office: "DSUSER"
+      )
 
       # set appeal parameter
       appeal = LegacyAppeal.find_by_vacols_id(vacols_id)
@@ -45,7 +54,7 @@ module WarRoom
       appeal.treee
 
       FixFileNumberWizard.run(appeal: appeal)
-      #need to do y or q
+      # need to do y or q
     end
   end
 

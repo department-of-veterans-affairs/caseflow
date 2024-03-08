@@ -183,6 +183,7 @@ class AssignHearingDispositionTask < Task
     end
   end
 
+  # rubocop:disable Metrics/ParameterLists
   def reschedule(
     hearing_day_id:,
     scheduled_time_string:,
@@ -209,6 +210,7 @@ class AssignHearingDispositionTask < Task
       [new_hearing_task, self.class.create_assign_hearing_disposition_task!(appeal, new_hearing_task, new_hearing)]
     end
   end
+  # rubocop:enable Metrics/ParameterLists
 
   def mark_hearing_cancelled
     multi_transaction do

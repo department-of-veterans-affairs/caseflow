@@ -385,7 +385,8 @@ feature "Supplemental Claim Intake", :all_dbs do
 
     VeteranClaimant.create!(
       decision_review: supplemental_claim,
-      participant_id: test_veteran.participant_id
+      participant_id: test_veteran.participant_id,
+      payee_code: "11"
     )
 
     supplemental_claim.start_review!
@@ -443,7 +444,7 @@ feature "Supplemental Claim Intake", :all_dbs do
     let(:active_epe) { create(:end_product_establishment, :active) }
 
     let!(:timely_ratings) { generate_timely_rating(veteran, receipt_date, duplicate_reference_id) }
-    let!(:rating_with_old_decisions) { generate_rating_with_old_decisions(veteran, receipt_date) }
+    let!(:rating_with_old_decisions) { generate_rating_with_old_decisions(veteran) }
     let(:old_rating_decision_text) { "Bone (Right arm broken) is denied." }
     let!(:untimely_rating_from_ramp) do
       generate_untimely_rating_from_ramp(veteran, receipt_date, old_reference_id, with_associated_claims: true)

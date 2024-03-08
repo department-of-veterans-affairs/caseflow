@@ -42,8 +42,6 @@ SCHEDULED_JOBS = {
     "warm_bgs_caches_job" => WarmBgsCachesJob,
     "va_notify_status_update_job" => VANotifyStatusUpdateJob,
     "poll_docketed_legacy_appeals_job" => PollDocketedLegacyAppealsJob,
-    "fetch_all_active_ama_appeals_job" => FetchAllActiveAmaAppealsJob,
-    "fetch_all_active_legacy_appeals_job" => FetchAllActiveLegacyAppealsJob,
     "retrieve_and_cache_reader_documents_job" => RetrieveAndCacheReaderDocumentsJob,
     "travel_board_hearing_sync_job" => Hearings::TravelBoardHearingSyncJob,
     "ama_notification_efolder_sync_job" => AmaNotificationEfolderSyncJob,
@@ -53,5 +51,6 @@ SCHEDULED_JOBS = {
     "contention_not_found_remediation_job" => ContentionNotFoundRemediationJob,
     "process_notification_status_updates_job" => ProcessNotificationStatusUpdatesJob,
     "stuck_job_scheduler_job" => StuckJobSchedulerJob,
-    "get_webex_recordings_list_job" => Hearings::GetWebexRecordingsListJob
+    "get_webex_recordings_list_job" => Hearings::GetWebexRecordingsListJob,
+    "ineligible_judges_job" => IneligibleJudgesJob
 }.freeze

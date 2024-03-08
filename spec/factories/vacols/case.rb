@@ -213,7 +213,12 @@ FactoryBot.define do
       end
 
       after(:create) do |vacols_case, evaluator|
-        VACOLS::Folder.find_by(tinum: evaluator.docket_number).update!(titrnum: "123456789S")
+        if evaluator.correspondent&.ssn
+          VACOLS::Folder.find_by(tinum: evaluator.docket_number).update!(titrnum: evaluator.correspondent.ssn)
+        else
+          VACOLS::Folder.find_by(tinum: evaluator.docket_number).update!(titrnum: "123456789S")
+        end
+
         create(
           :case_hearing,
           :disposition_held,

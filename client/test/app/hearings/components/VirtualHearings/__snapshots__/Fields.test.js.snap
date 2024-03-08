@@ -16274,6 +16274,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                     className="input-container"
                   >
                     <input
+                      aria-readonly={false}
                       className={
                         Array [
                           "cf-form-textinput cf-inline-field",
@@ -32469,6 +32470,7 @@ exports[`Fields Display timezone and divider for Central 1`] = `
                     className="input-container"
                   >
                     <input
+                      aria-readonly={false}
                       className={
                         Array [
                           "cf-form-textinput cf-inline-field",
@@ -48777,6 +48779,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                     className="input-container"
                   >
                     <input
+                      aria-readonly={false}
                       className={
                         Array [
                           "cf-form-textinput cf-inline-field",
@@ -64972,6 +64975,7 @@ exports[`Fields Display timezone and divider for Video 1`] = `
                     className="input-container"
                   >
                     <input
+                      aria-readonly={false}
                       className={
                         Array [
                           "cf-form-textinput cf-inline-field",

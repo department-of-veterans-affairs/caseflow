@@ -14,7 +14,6 @@ class QuarterlyMetricsReportJob < RecurringMetricsReportJob
 
   private
 
-  # rubocop:disable Metrics/LineLength
   def additional_metrics
     hearings_show_rate = Metrics::HearingsShowRate.new(Metrics::DateRange.new(start_date, end_date))
     ep_creation_rate = Metrics::NonDenialDecisions.new(Metrics::DateRange.new(start_date, end_date))
@@ -25,5 +24,4 @@ class QuarterlyMetricsReportJob < RecurringMetricsReportJob
       "Mean time to recovery: See the 'Quarterly OIT Report' tab of the 'Caseflow Incident Stats' Google Sheet (https://docs.google.com/spreadsheets/d/1OAx_eRhwTaEM9aMx7eGg4KMR3Jgx5wYvsVBypHsZq5Q/edit#gid=593310513)"
     ]
   end
-  # rubocop:enable Metrics/LineLength
 end
