@@ -13,7 +13,6 @@ RSpec.feature "Quality Review workflow", :all_dbs do
     let!(:veteran) { create(:veteran, first_name: veteran_first_name, last_name: veteran_last_name) }
 
     let(:qr_user_name) { "QR User" }
-    let(:qr_user_name_short) { "Q. User" }
     let!(:qr_user) { create(:user, roles: ["Reader"], full_name: qr_user_name) }
 
     let(:attorney_user) { create(:user, station_id: User::BOARD_STATION_ID, full_name: "Nicole Apple") }
