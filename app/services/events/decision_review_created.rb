@@ -42,8 +42,7 @@ class Events::DecisionReviewCreated
           # Events::DecisionReviewCreate::UpdateVacolsOnOptin.process!(decision_review)
           # event.update!(completed_at: Time.now, error: nil)
 
-          # Note: will need to pass an event and a hash of attributes(6) to CreateClaimantOnEvent
-          # claimant_attributes =
+          # Note: Create the Claimant, parsed schema info passed through vbms_claimant
           # Events::CreateClaimantOnEvent.process(event: event, vbms_claimant: vbms_claimant)
         # end
       end
