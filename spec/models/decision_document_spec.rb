@@ -370,6 +370,13 @@ describe DecisionDocument, :postgres do
         subject
         expect(decision_document.reload.error).to be_nil
       end
+
+      it "catches error and does not clear" do
+        epe.update(source_id: decision_document.id, source_type: "DecisionDocument")
+        allow_any_instance_of(EndProductEstablishment).to receive(:establish!).and_raise(StandardError, "Some error")
+        subject
+        expect(decision_document.error).to eq("Some error")
+      end
     end
   end
 end
