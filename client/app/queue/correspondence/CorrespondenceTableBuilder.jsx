@@ -10,6 +10,7 @@ import QueueTable from '../QueueTable';
 import TabWindow from '../../components/TabWindow';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
 import QueueOrganizationDropdown from '../components/QueueOrganizationDropdown';
+import SearchBar from '../../components/SearchBar';
 import {
   actionType,
   assignedToColumn,
@@ -29,6 +30,7 @@ import COPY from '../../../COPY';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 import { css } from 'glamor';
 import { isActiveOrganizationVHA } from '../selectors';
+import ApiUtil from '../../util/ApiUtil';
 
 const rootStyles = css({
   '.usa-alert + &': {
@@ -55,6 +57,7 @@ const CorrespondenceTableBuilder = (props) => {
   const [selectedMailTeamUser, setSelectedMailTeamUser] = useState(null);
   const [isAnyCheckboxSelected, setIsAnyCheckboxSelected] = useState(false);
   const [isDropdownItemSelected, setIsDropdownItemSelected] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
   const selectedTasks = useSelector((state) => state.intakeCorrespondence.selectedTasks);
 
   const paginationOptions = () => querystring.parse(window.location.search.slice(1));
@@ -99,6 +102,28 @@ const CorrespondenceTableBuilder = (props) => {
     const index = _.indexOf(tabNames, activeTab);
 
     return index === -1 ? 0 : index;
+  };
+
+  const handleSearchChange = (value) => {
+    setSearchValue(value);
+  };
+
+  const handleSearchRecord = (value) => {
+    ApiUtil.post(
+      `/queue/correspondence/search`,
+      { data: { query: value } }
+    ).
+      then(() => {
+        // no op
+      }).
+      catch((error) => {
+        // we don't care reporting via Raven.
+        console.error(error);
+      });
+  };
+
+  const handleClearSearch = () => {
+    setSearchValue('');
   };
 
   const queueConfig = () => {
@@ -230,9 +255,24 @@ const CorrespondenceTableBuilder = (props) => {
           </>
 
           }
-          <p className="cf-margin-top-0">
-            {noCasesMessage || tabConfig.description}
-          </p>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <p className="cf-margin-top-0" style={{ float: 'left' }}>
+              {noCasesMessage || tabConfig.description}
+            </p>
+            <div className="cf-noncomp-search" style={{ marginLeft: 'auto' }}>
+              <SearchBar
+                id="searchBar"
+                size="small"
+                title="Filter table by any of its columns"
+                isSearchAhead
+                placeholder="Type to filter..."
+                onChange={handleSearchChange}
+                recordSearch={handleSearchRecord}
+                onClearSearch={handleClearSearch}
+                value={searchValue}
+              />
+            </div>
+          </div>
           <QueueTable
             key={tabConfig.name}
             columns={columnsFromConfig(config, tabConfig, tasks)}
@@ -253,6 +293,7 @@ const CorrespondenceTableBuilder = (props) => {
             }
             enablePagination
             isCorrespondenceTable
+            searchValue={searchValue}
           />
         </>
       ),

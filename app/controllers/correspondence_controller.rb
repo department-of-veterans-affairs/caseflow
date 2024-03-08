@@ -40,6 +40,14 @@ class CorrespondenceController < ApplicationController
     end
   end
 
+  def search
+    query = params[:query]
+
+    @search_results = Correspondence.where("notes LIKE ?", "%#{query}%")
+
+    render json: @search_results
+  end
+
   def correspondence_cases
     if current_user.mail_supervisor?
       redirect_to "/queue/correspondence/team"
