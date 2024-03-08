@@ -13,6 +13,8 @@ import CorrespondenceTableBuilder from './CorrespondenceTableBuilder';
 import Alert from '../../components/Alert';
 import Modal from 'app/components/Modal';
 import Button from '../../components/Button';
+import RadioField from '../../components/RadioField';
+import TextareaField from '../../components/TextareaField';
 
 const CorrespondenceCases = (props) => {
   const dispatch = useDispatch();
@@ -22,6 +24,7 @@ const CorrespondenceCases = (props) => {
   const veteranInformation = useSelector((state) => state.reviewPackage.veteranInformation);
 
   const [vetName, setVetName] = useState('');
+  const [selectedRequestChoice, setSelectedRequestChoice] = useState("")
 
   useEffect(() => {
     dispatch(loadCorrespondenceConfig(configUrl));
@@ -30,6 +33,34 @@ const CorrespondenceCases = (props) => {
   const config = useSelector((state) => state.intakeCorrespondence.correspondenceConfig);
   const showReassignPackageModal = useSelector((state) => state.intakeCorrespondence.showReassignPackageModal);
   const showRemovePackageModal = useSelector((state) => state.intakeCorrespondence.showRemovePackageModal);
+
+  const actionRequiredOptions = [
+    { displayText: 'Approve request', value: 'approve' },
+    { displayText: 'Reject request', value: 'reject' }
+  ];
+
+  const reviewRequestButtons = [
+    {
+      classNames: ['cf-modal-link', 'cf-btn-link'],
+      name: 'Cancel',
+      onClick: () => dispatch(setShowReassignPackageModal(false)),
+      disabled: false
+    },
+    {
+      id: '#confirm-button',
+      classNames: ['usa-button', 'usa-button-primary', 'cf-margin-left-2rem'],
+      name: 'Confirm',
+      onClick: () => console.log('confirm clicked'),
+      disabled: false
+    },
+    {
+      id: '#view-package-button',
+      classNames: ['usa-button', 'usa-button-secondary'],
+      name: 'View package',
+      onClick: () => console.log('view package clicked'),
+      disabled: false
+    }
+  ];
 
   const closeReassignPackageModal = () => {
     dispatch(setShowReassignPackageModal(false));
@@ -78,14 +109,31 @@ const CorrespondenceCases = (props) => {
         <Modal
           title={COPY.CORRESPONDENCE_CASES_REASSIGN_PACKAGE_MODAL_TITLE}
           closeHandler={closeReassignPackageModal}
-          cancelButton={<Button linkStyling onClick={closeReassignPackageModal}>Cancel</Button>}
-        />}
+          buttons={reviewRequestButtons}
+        >
+          <b>Reason for removal:</b>
+          <p>PLACEHOLDER USER JUSTIFICATION</p>
+          <div>
+            <RadioField
+              // crashes without a name. populates unwanted text with a name.
+              name="no"
+              label="Choose whether to approve the request for removal or reject it."
+              options={actionRequiredOptions}
+              onChange={(val) => setSelectedRequestChoice(val)}
+              value={selectedRequestChoice}
+              optionsStyling={{width: '180px'}}
+            />
+          </div>
+          <TextareaField name='Provide a reason for rejection' />
+        </Modal>}
         {showRemovePackageModal &&
         <Modal
           title={COPY.CORRESPONDENCE_CASES_REMOVE_PACKAGE_MODAL_TITLE}
           closeHandler={closeRemovePackageModal}
           cancelButton={<Button linkStyling onClick={closeRemovePackageModal}>Cancel</Button>}
-        />}
+        >
+          <p>awooooga</p>
+        </Modal>}
       </AppSegment>
     </>
   );
