@@ -10,6 +10,11 @@ class CorrespondenceController < ApplicationController
   MAX_QUEUED_ITEMS = 60
 
   def intake
+    # If correspondence intake was started, json data from the database will
+    # be loaded into the page when user returns to intake
+    @redux_store ||= CorrespondenceIntake.find_by(user: current_user,
+                                                  correspondence: current_correspondence)&.redux_store
+
     respond_to do |format|
       format.html { return render "correspondence/intake" }
       format.json do
@@ -202,6 +207,8 @@ class CorrespondenceController < ApplicationController
 
   def handle_mail_superuser_or_supervisor
     @mail_team_users = User.mail_team_users.pluck(:css_id)
+    @is_superuser = current_user.mail_superuser?
+    @is_supervisor = current_user.mail_supervisor?
     mail_team_user = User.find_by(css_id: params[:user]) if params[:user].present?
     task_ids = params[:taskIds]&.split(",") if params[:taskIds].present?
     tab = params[:tab] if params[:tab].present?

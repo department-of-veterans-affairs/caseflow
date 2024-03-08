@@ -156,24 +156,15 @@ RSpec.feature("Correspondence Intake submission") do
         find("label", text: "Waive Evidence Window").click
         find_by_id("waiveReason").fill_in with: "test waive note"
         click_button("Continue")
-        find(".cf-pdf-external-link-icon").click
-        page.switch_to_window(page.windows.last)
-        using_wait_time(wait_time) do
-          refresh
-          expect(page).to have_content("Evidence Submission Window Task")
-        end
-        page.switch_to_window(page.windows.first)
+
         click_button("Submit")
         click_button("Confirm")
         using_wait_time(wait_time) do
           expect(page).to have_content("You have successfully submitted a correspondence record")
         end
-        page.switch_to_window(page.windows.last)
-        refresh
-        using_wait_time(wait_time) do
-          page.switch_to_window(page.windows.last)
-          expect(page).to have_no_content("Evidence Submission Window Task")
-        end
+
+        eswt = EvidenceSubmissionWindowTask.find_by(appeal_id: CorrespondencesAppeal.first.appeal_id)
+        expect(eswt.status).to eq("completed")
       end
     end
   end
