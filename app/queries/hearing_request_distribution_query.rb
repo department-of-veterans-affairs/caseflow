@@ -97,11 +97,11 @@ class HearingRequestDistributionQuery
   end
 
   def aod_hearing_value_appeals
-    base_query.ama_aod_hearing_original_appeals
+    base_relation.ama_aod_hearing_original_appeals
   end
 
   def aod_hearing_infinite_appeals
-    always_ama_aod_hearing_original_appeals
+    base_relation.always_ama_aod_hearing_original_appeals
   end
 
   def ama_affinity_hearing_infinite_appeals
