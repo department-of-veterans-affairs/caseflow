@@ -41,6 +41,9 @@ class Events::DecisionReviewCreated
           # decision_review.legacy_opt_in_approved is true
           # Events::DecisionReviewCreate::UpdateVacolsOnOptin.process!(decision_review)
           # event.update!(completed_at: Time.now, error: nil)
+
+          # Note: Create the Claimant, parsed schema info passed through vbms_claimant
+          # Events::CreateClaimantOnEvent.process(event: event, vbms_claimant: vbms_claimant)
         # end
       end
     rescue Caseflow::Error::RedisLockFailed => error
