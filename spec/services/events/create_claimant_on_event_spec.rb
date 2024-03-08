@@ -1,24 +1,24 @@
 # frozen_string_literal: true
 
 RSpec.describe Events::CreateClaimantOnEvent do
-  let!(:event) { double("Event", reference_id: 1) }
+  let(:event) { double("Event", reference_id: 1) }
   let(:vbms_claimant) do
-    {
-      "claim_review" => {
-        "veteran_is_not_claimant" => true
-      },
-      "claimant" => {
-        "name_suffix" => "Jr.",
-        "participant_id" => "12345",
-        "payee_code" => "01",
-        "type" => "individual"
-      }
-    }
+    instance_double("VbmsClaimant",
+      claim_review: double("ClaimReview"),
+      claimant: double("Claimant",
+        name_suffix: "Jr.",
+        participant_id: "12345",
+        payee_code: "01",
+        type: "individual"
+      )
+    )
   end
 
   describe ".process" do
     context "when veteran is not the claimant" do
       it "creates a new claimant and returns its id" do
+        allow(vbms_claimant.claim_review).to receive(:veteran_is_not_claimant).and_return(true)
+
         expect(Claimant).to receive(:find_or_create_by!).with(
           name_suffix: "Jr.",
           participant_id: "12345",
@@ -35,7 +35,7 @@ RSpec.describe Events::CreateClaimantOnEvent do
       end
 
       it "does not create a new claimant if veteran is the claimant" do
-        vbms_claimant["claim_review"]["veteran_is_not_claimant"] = false
+        allow(vbms_claimant.claim_review).to receive(:veteran_is_not_claimant).and_return(false)
 
         expect(Claimant).not_to receive(:find_or_create_by!)
 

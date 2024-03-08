@@ -3,12 +3,12 @@
 class Events::CreateClaimantOnEvent
   class << self
     def process(event:, vbms_claimant:)
-      if vbms_claimant["claim_review"]["veteran_is_not_claimant"]
+      if vbms_claimant.claim_review.veteran_is_not_claimant
         claimant = Claimant.find_or_create_by!(
-          name_suffix: vbms_claimant["claimant"]["name_suffix"],
-          participant_id: vbms_claimant["claimant"]["participant_id"],
-          payee_code: vbms_claimant["claimant"]["payee_code"],
-          type: vbms_claimant["claimant"]["type"]
+          name_suffix: vbms_claimant.claimant.name_suffix,
+          participant_id: vbms_claimant.claimant.participant_id,
+          payee_code: vbms_claimant.claimant.payee_code,
+          type: vbms_claimant.claimant.type
         )
         EventRecord.create!(event: event, backfill_record: claimant)
         claimant.id
