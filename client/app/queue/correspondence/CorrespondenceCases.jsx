@@ -24,7 +24,7 @@ const CorrespondenceCases = (props) => {
   const veteranInformation = useSelector((state) => state.reviewPackage.veteranInformation);
 
   const [vetName, setVetName] = useState('');
-  const [selectedRequestChoice, setSelectedRequestChoice] = useState("")
+  const [selectedRequestChoice, setSelectedRequestChoice] = useState('');
 
   useEffect(() => {
     dispatch(loadCorrespondenceConfig(configUrl));
@@ -121,19 +121,18 @@ const CorrespondenceCases = (props) => {
               options={actionRequiredOptions}
               onChange={(val) => setSelectedRequestChoice(val)}
               value={selectedRequestChoice}
-              optionsStyling={{width: '180px'}}
+              optionsStyling={{ width: '180px' }}
             />
           </div>
-          <TextareaField name='Provide a reason for rejection' />
+          {selectedRequestChoice === "reject" &&
+          <TextareaField name="Provide a reason for rejection" />}
         </Modal>}
         {showRemovePackageModal &&
         <Modal
           title={COPY.CORRESPONDENCE_CASES_REMOVE_PACKAGE_MODAL_TITLE}
           closeHandler={closeRemovePackageModal}
           cancelButton={<Button linkStyling onClick={closeRemovePackageModal}>Cancel</Button>}
-        >
-          <p>awooooga</p>
-        </Modal>}
+        />}
       </AppSegment>
     </>
   );
