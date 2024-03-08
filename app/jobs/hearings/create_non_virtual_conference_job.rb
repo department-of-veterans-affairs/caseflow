@@ -23,13 +23,4 @@ class Hearings::CreateNonVirtualConferenceJob < CaseflowJob
       created_by: hearing.created_by
     )
   end
-
-  def log_error(error)
-    Rails.logger.error("Retrying #{self.class.name} because failed with error: #{error}")
-    extra = {
-      application: self.class.name,
-      job_id: job_id
-    }
-    Raven.capture_exception(error, extra: extra)
-  end
 end

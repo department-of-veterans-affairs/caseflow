@@ -198,8 +198,8 @@ class ScheduleHearingTask < Task
       # Create and assign the hearing now that it has been scheduled
       created_tasks << AssignHearingDispositionTask.create_assign_hearing_disposition_task!(appeal, parent, hearing)
 
-      # Creates the one to one webex conference room for a non virtual hearing
-      create_non_virtual_conference
+      # Starts the process to create the one to one webex conference room for a non virtual hearing
+      maybe_create_non_virtual_conference
 
     # The only other option is to cancel the schedule hearing task
     elsif params[:status] == Constants.TASK_STATUSES.cancelled
@@ -288,7 +288,7 @@ class ScheduleHearingTask < Task
   end
 
   # Complexity of create schedule hearing task was too large - had to break out
-  def create_non_virtual_conference
+  def maybe_create_non_virtual_conference
     start_non_virtual_hearing_job if start_non_virtual_hearing_job?
   end
 end
