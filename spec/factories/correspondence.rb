@@ -7,13 +7,18 @@ FactoryBot.define do
     source_type { "Mail" }
     cmp_queue_id { 1 }
     cmp_packet_number { rand(1_000_000_000..9_999_999_999) }
-    va_date_of_receipt { Time.zone.yesterday }
+    va_date_of_receipt { Faker::Date.between(from: 90.days.ago, to: Time.zone.yesterday) }
     notes { "This is a note from CMP." }
+    nod { false }
     assigned_by factory: :user
 
     correspondence_type
     veteran
     package_document_type
+
+    trait :nod do
+      nod { true }
+    end
 
     trait :with_single_doc do
       after(:create) do |correspondence|
