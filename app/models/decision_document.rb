@@ -76,7 +76,8 @@ class DecisionDocument < CaseflowRecord
 
   # rubocop:disable Metrics/CyclomaticComplexity
   def process!(mail_package)
-    return if processed?
+    # return if processed?
+    return if valid_processed
 
     fail NotYetSubmitted unless submitted_and_ready?
 
@@ -98,6 +99,7 @@ class DecisionDocument < CaseflowRecord
     send_outcode_email(appeal)
 
     processed!
+    clear_error!
   rescue StandardError => error
     update_error!(error.to_s)
     raise error
@@ -220,5 +222,15 @@ class DecisionDocument < CaseflowRecord
   def log_info(info_message)
     uuid = SecureRandom.uuid
     Rails.logger.info(info_message + " ID: " + uuid)
+  end
+
+  def valid_processed
+    if processed? && self.uploaded_to_vbms_at.present?
+      if self.end_product_establishments.present?
+        epes = self.end_product_establishments
+        epes.each { |epe| epe.establish! }
+      end
+      clear_error!
+    end
   end
 end
