@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 RSpec.describe Events::CreateClaimantOnEvent do
-  let(:event) { double("Event", reference_id: 1) }
+  let!(:event) { DecisionReviewCreatedEvent.create!(reference_id: "1") }
+  let(:decision_review) { create(:higher_level_review, veteran_file_number: create(:veteran).file_number) }
   let(:vbms_claimant) do
     instance_double("VbmsClaimant",
       claim_review: double("ClaimReview"),
       claimant: double("Claimant",
-        name_suffix: "Jr.",
         participant_id: "12345",
         payee_code: "01",
         type: "individual"
@@ -19,19 +19,11 @@ RSpec.describe Events::CreateClaimantOnEvent do
       it "creates a new claimant and returns its id" do
         allow(vbms_claimant.claim_review).to receive(:veteran_is_not_claimant).and_return(true)
 
-        expect(Claimant).to receive(:find_or_create_by!).with(
-          name_suffix: "Jr.",
-          participant_id: "12345",
-          payee_code: "01",
-          type: "individual"
-        ).and_return(double("Claimant", id: 123))
+        expect {
+          described_class.process(event: event, vbms_claimant: vbms_claimant, decision_review: decision_review)
+        }.to change { EventRecord.count }.by(1).and change { Claimant.count }.by(1)
 
-        expect(EventRecord).to receive(:create!).with(
-          event: event,
-          backfill_record: anything
-        )
-
-        expect(described_class.process(event: event, vbms_claimant: vbms_claimant)).to eq(123)
+        expect(described_class.process(event: event, vbms_claimant: vbms_claimant, decision_review: decision_review)).to eq(1)
       end
 
       it "does not create a new claimant if veteran is the claimant" do
@@ -41,7 +33,7 @@ RSpec.describe Events::CreateClaimantOnEvent do
 
         expect(EventRecord).not_to receive(:create!)
 
-        expect(described_class.process(event: event, vbms_claimant: vbms_claimant)).to be_nil
+        expect(described_class.process(event: event, vbms_claimant: vbms_claimant, decision_review: decision_review)).to be_nil
       end
     end
   end
