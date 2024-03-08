@@ -81,7 +81,7 @@ const correspondenceTaskAttributesFromRawTask = (task) => {
     instructions: task.attributes.instructions,
     veteranDetails: task.attributes.veteran_details,
     notes: task.attributes.notes,
-    closedAt: task.attributes.completion_date,
+    closedAt: task.attributes.closed_at,
     daysWaiting: task.attributes.days_waiting,
     vaDor: task.attributes.va_date_of_receipt,
     label: task.attributes.label,
