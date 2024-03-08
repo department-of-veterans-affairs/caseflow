@@ -326,4 +326,15 @@ describe Hearing, :postgres do
       expect(hearing.daily_docket_conference_links).to eq(conference_links)
     end
   end
+
+  context "correct subject nbf and exp" do
+    let(:hearing_day) { create(:hearing_day) }
+    let(:hearing) { create(:hearing, hearing_day: hearing_day) }
+
+    it "sub nbf and exp are correct" do
+      expect(hearing.subject_for_conference).to eq("#{hearing.docket_number}_#{hearing.id}_#{hearing.class}")
+      expect(hearing.nbf).to eq(hearing.scheduled_for.beginning_of_day.to_i)
+      expect(hearing.exp).to eq(hearing.scheduled_for.end_of_day.to_i)
+    end
+  end
 end

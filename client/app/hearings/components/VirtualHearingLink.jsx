@@ -17,7 +17,8 @@ const VirtualHearingLink = ({
 }) => {
   return (
     <Link
-      href={isVirtual ? link : hearing.dailyDocketConferenceLinks[1].coHostLink}
+      // TODO: Update null for non virtual hearing link
+      href={isVirtual ? link : null}
       target={newWindow ? '_blank' : '_self'}
     >
       <strong>{label}</strong>
