@@ -22,7 +22,7 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
     object.correspondence.cmp_packet_number
   end
 
-  attribute(:completion_date, &:closed_at)
+  attribute :closed_at
 
   attribute :days_waiting
 
