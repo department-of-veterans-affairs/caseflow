@@ -284,7 +284,7 @@ export class PdfPage extends React.PureComponent {
           };
 
           // Waits for all the pages before storing metric
-          if (this.props.featureToggles.pdfPageRenderTimeInMs && this.props.pageIndex === 0) {
+          if (this.props.featureToggles.pdfPageRenderTimeInMs && this.props.pdfDocument.numPages > 0) {
             storeMetrics(
               this.props.documentId,
               data,

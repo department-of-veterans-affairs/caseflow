@@ -44,6 +44,7 @@ export class PdfFile extends React.PureComponent {
     this.currentPage = 0;
     this.columnCount = 1;
     this.metricIdentifier = null;
+    this.scrollTimer = null;
   }
 
   componentDidMount = () => {
@@ -94,6 +95,7 @@ export class PdfFile extends React.PureComponent {
 
         if (resp && resp.header && resp.header['x-document-source']) {
           metricData.additionalInfo = JSON.stringify({ source: `"${resp.header['x-document-source']}"` });
+
         }
 
         /* The feature toggle reader_get_document_logging adds the progress of the file being loaded in console */
@@ -212,6 +214,9 @@ export class PdfFile extends React.PureComponent {
     if (this.pdfDocument) {
       this.pdfDocument.destroy();
       this.props.clearPdfDocument(this.props.file, this.pdfDocument);
+    }
+    if (this.scrollTimer) {
+      clearTimeout(this.scrollTimer);
     }
 
     this.metricIdentifier = null;
@@ -444,6 +449,40 @@ export class PdfFile extends React.PureComponent {
       });
 
       this.onPageChange(minIndex, clientHeight);
+
+      if (this.scrollTimer) {
+        clearTimeout(this.scrollTimer);
+      }
+
+      this.scrollTimer = setTimeout(() => {
+        const scrollStart = performance.now();
+
+        const data = {
+          overscan: this.props.windowingOverscan,
+          documentType: this.props.documentType,
+          pageCount: this.props.pdfDocument.numPages,
+          pageIndex: this.pageIndex,
+          prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+          start: scrollStart,
+          end: performance.now()
+        };
+
+        storeMetrics(
+          this.props.documentId,
+          data,
+          {
+            message: `Scroll to position ${this.scrollLeft}, ${this.scrollTop}`,
+            type: 'performance',
+            product: 'reader',
+            start: new Date(performance.timeOrigin + data.start),
+            end: new Date(performance.timeOrigin + data.end),
+            duration: data.start ? data.end - data.start : 0
+          },
+          this.metricIdentifier,
+        );
+        console.log(`Metrics ==== ONSCROLL Scroll to position ${this.scrollLeft}, ${this.scrollTop}} --- ${this.metricIdentifier}`);
+
+      }, 300);
     }
   }
 
