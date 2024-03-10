@@ -35,7 +35,6 @@ RSpec.feature "Reader", :all_dbs do
   let(:metric_double) { class_double(Metric) }
 
   context "Capture the 5 Reader Metrics for one page document" do
-
     let(:documents) do
       [
         Generators::Document.create(
@@ -79,6 +78,52 @@ RSpec.feature "Reader", :all_dbs do
       ).exactly(:once)
 
       page.visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+    end
+  end
+
+  context "Capture the 5 Reader Metrics for two page document" do
+    let(:documents) do
+      [
+        Generators::Document.create(
+          filename: "My BVA Decision",
+          type: "BVA Decision",
+          received_at: 7.days.ago,
+          vbms_document_id: 6
+        )
+      ]
+    end
+    scenario "capture 'Getting PDF document' metric once and other metrics twice (one for each page)" do
+      expect(metric_double).to receive(:metric_get_pdf_doc).with(
+        anything,
+        hash_including(message: metric_render_pdf_page_time),
+        anything
+      ).exactly(:once)
+
+      expect(metric_double).to receive(:metric_store_pdf_page).with(
+        anything,
+        hash_including(message: metric_get_doc),
+        anything
+      ).exactly(:twice)
+
+      expect(metric_double).to receive(:metric_store_pdf_page_text).with(
+        anything,
+        hash_including(message: metric_get_pdfjs_doc),
+        anything
+      ).exactly(:twice)
+
+      expect(metric_double).to receive(:metric_render_pdf_page_text).with(
+        anything,
+        hash_including(message: metric_render_time),
+        anything
+      ).exactly(:twice)
+
+      expect(metric_double).to receive(:metric_render_pdf_page_time).with(
+        anything,
+        hash_including(message: metric_render_text),
+        anything
+      ).exactly(:twice)
+
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
     end
   end
 end
