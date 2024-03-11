@@ -39,6 +39,15 @@ const CorrespondenceCases = (props) => {
     });
   };
 
+  const confirmButtonDisabled = () => {
+    console.log('disable logic executed');
+    if (selectedRequestChoice === 'approve' && selectedMailTeamUser === '') {
+      return true;
+    }
+
+    return false;
+  };
+
   // console.log(buildMailUserData(props.))
 
   const approveElement = (<div style={{ width: '28vw' }}>
@@ -78,7 +87,7 @@ const CorrespondenceCases = (props) => {
       classNames: ['usa-button', 'usa-button-primary', 'cf-margin-left-2rem'],
       name: 'Confirm',
       onClick: () => console.log('confirm clicked'),
-      disabled: false
+      disabled: confirmButtonDisabled()
     },
     {
       id: '#view-package-button',
