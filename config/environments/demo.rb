@@ -97,6 +97,9 @@ Rails.application.configure do
   ENV["REQUEST_ISSUE_PAGINATION_OFFSET"] ||= "10"
   ENV["REQUEST_ISSUE_DEFAULT_UPPER_BOUND_PER_PAGE"] ||= "50"
 
+  # Dynatrace variables
+  ENV["STATSD_ADDR"] ||= "http://localhost:18125"
+  ENV["STATSD_IMPLEMENTATION"] ||= "statsd"
 
   # Setup S3
   config.s3_enabled = ENV["AWS_BUCKET_NAME"].present?
