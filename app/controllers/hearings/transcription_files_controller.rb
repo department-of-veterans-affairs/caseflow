@@ -12,4 +12,15 @@ class TranscriptionFilesController < ApplicationController
   def create
     nil
   end
+
+  def download_transcription_file
+    respond_to do |format|
+      format.any(:vtt, :mp3, :mp4, :csv) do |_|
+        render json: {
+          message: "Route working, showing hearing of id: #{params[:hearing_id]}",
+          status: 200
+        }
+      end
+    end
+  end
 end
