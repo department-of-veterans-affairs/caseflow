@@ -226,17 +226,17 @@ class DecisionDocument < CaseflowRecord
 
   def valid_processed
     begin
-      if processed? && self.uploaded_to_vbms_at.present?
-        if self.end_product_establishments.present?
-          epes = self.end_product_establishments
-          epes.each { |epe| epe.establish! }
+      if processed? && uploaded_to_vbms_at.present?
+        if end_product_establishments.present?
+          epes = end_product_establishments
+          epes.each(&:establish!)
         end
         clear_error!
-        return true  # Indicate success
+        true # Indicate success
       end
     rescue StandardError => error
-      self.update(error: error.message)
-      return false  # Indicate failure
+      update(error: error.message)
+      false # Indicate failure
     end
   end
 end

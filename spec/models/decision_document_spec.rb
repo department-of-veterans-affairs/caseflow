@@ -353,8 +353,8 @@ describe DecisionDocument, :postgres do
     end
 
     context "when document has already been processed" do
-      let(:uploaded_to_vbms_at) { 1.hours.ago }
-      let(:processed_at) { 1.hours.ago }
+      let(:uploaded_to_vbms_at) { 1.hour.ago }
+      let(:processed_at) { 1.hour.ago }
       let(:epe) { create(:end_product_establishment) }
       before do
         decision_document.update(error: "Some error")
