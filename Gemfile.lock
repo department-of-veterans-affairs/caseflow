@@ -197,7 +197,7 @@ GEM
     colored2 (3.1.2)
     colorize (0.8.1)
     concurrent-ruby (1.2.2)
-    connection_pool (2.2.3)
+    connection_pool (2.4.1)
     cork (0.3.0)
       colored2 (~> 3.1)
     countries (3.0.1)
