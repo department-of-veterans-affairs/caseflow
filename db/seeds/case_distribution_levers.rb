@@ -664,7 +664,18 @@ module Seeds
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion, Constants.ACD_LEVERS.algorithms.docket],
             lever_group: Constants.ACD_LEVERS.lever_groups.docket_levers,
             lever_group_order: 107
-          }
+          },
+          {
+            item: Constants.DISTRIBUTION.days_before_goal_due_for_distribution,
+            title: Constants.DISTRIBUTION.days_before_goal_due_for_distribution,
+            description: "",
+            data_type: Constants.ACD_LEVERS.data_types.number,
+            value: nil,
+            unit: "days",
+            min_value: 0,
+            max_value: nil,
+            algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
+          },
         ]
       end
 
