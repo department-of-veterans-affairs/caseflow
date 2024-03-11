@@ -162,6 +162,51 @@ module IntakeHelpers
 
     [appeal, intake]
   end
+
+  def start_appeal_with_mst_pact_from_vbms(
+    test_veteran,
+    receipt_date: 1.day.ago,
+    claim_participant_id: nil,
+    legacy_opt_in_approved: false,
+    no_claimant: false,
+    intake_user: User.authenticate!(roles: ["Admin Intake"]),
+    docket_type: Constants.AMA_DOCKETS.direct_review,
+    original_hearing_request_type: nil
+  )
+
+    appeal = Appeal.create!(
+      veteran_file_number: test_veteran.file_number,
+      receipt_date: receipt_date,
+      docket_type: docket_type,
+      original_hearing_request_type: original_hearing_request_type,
+      legacy_opt_in_approved: legacy_opt_in_approved,
+      veteran_is_not_claimant: claim_participant_id.present?,
+      filed_by_va_gov: false
+    )
+
+    intake = AppealIntake.create!(
+      veteran_file_number: test_veteran.file_number,
+      user: intake_user,
+      started_at: 5.minutes.ago,
+      detail: appeal
+    )
+
+    BvaIntake.singleton.add_user(intake.user)
+
+    unless no_claimant
+      stub_valid_address
+      participant_id = claim_participant_id || test_veteran.participant_id
+      claimant_class = claim_participant_id.present? ? DependentClaimant : VeteranClaimant
+      claimant_class.create!(
+        decision_review: appeal,
+        participant_id: participant_id
+      )
+    end
+
+    appeal.start_review!
+
+    [appeal, intake]
+  end
   # rubocop: enable Metrics/ParameterLists
 
   def start_claim_review(
@@ -839,23 +884,107 @@ module IntakeHelpers
     )
   end
 
-  def generate_rating_with_old_decisions(veteran, receipt_date)
+  def generate_rating_with_old_decisions(veteran)
     Generators::PromulgatedRating.build(
       participant_id: veteran.participant_id,
-      promulgation_date: receipt_date - 5.years,
-      profile_date: receipt_date - 5.years,
+      promulgation_date: Constants::DATES["AMA_ACTIVATION"].to_date - 5.days,
+      profile_date: Constants::DATES["AMA_ACTIVATION"].to_date - 5.days,
       issues: [
         { reference_id: "9876", decision_text: "Left hand broken" }
       ],
       decisions: [
         {
           rating_issue_reference_id: nil,
-          original_denial_date: receipt_date - 5.years - 3.days,
+          original_denial_date: Constants::DATES["AMA_ACTIVATION"].to_date - 3.days,
           diagnostic_text: "Right arm broken",
           diagnostic_type: "Bone",
           disability_id: "123",
-          disability_date: receipt_date - 5.years - 2.days,
+          disability_date: Constants::DATES["AMA_ACTIVATION"].to_date - 2.days,
           type_name: "Not Service Connected"
+        }
+      ]
+    )
+  end
+
+  def generate_rating_with_mst_pact(veteran)
+    Generators::PromulgatedRating.build(
+      participant_id: veteran.participant_id,
+      promulgation_date: Date.new(2022, 10, 11),
+      profile_date: Date.new(2022, 10, 11),
+      issues: [
+        {
+          decision_text: "Service connection is granted for PTSD at 10 percent, effective 10/11/2022.",
+          dis_sn: "1224780"
+        },
+        {
+          decision_text: "Service connection is granted for AOOV at 10 percent, effective 10/11/2022.",
+          dis_sn: "1224781"
+        },
+        {
+          decision_text: "Service connection is granted for PTSD, AOOV at 10 percent, effective 10/11/2022.",
+          dis_sn: "1224782"
+        },
+        {
+          decision_text: "Service connection is denied for right knee condition."
+        }
+      ],
+      disabilities: [
+        {
+          name: "Disability 1",
+          parent_name: "CP_RBA_PRFIL2",
+          dis_dt: "Wed, 29 Mar 2023 10:28:11 -0500",
+          dis_sn: "1224780",
+          prfl_dt: "Wed, 29 Mar 2023 10:26:14 -0500",
+          ptcpnt_id_a: veteran.participant_id,
+          disability_special_issues: [
+            {
+              spis_basis_tc: "PTSD/10",
+              spis_basis_tn: "Sexual Trauma/Assault",
+              spis_tc: "PTSD/3",
+              spis_tn: "PTSD - Personal Trauma",
+              dis_sn: "1224780"
+            }
+          ]
+        },
+        {
+          name: "Disablilty 2",
+          dis_dt: "Wed, 29 Mar 2023 11:28:11 -0500",
+          dis_sn: "1224781",
+          prfl_dt: "Wed, 29 Mar 2023 11:26:14 -0500",
+          ptcpnt_id_a: veteran.participant_id,
+          disability_special_issues: [
+            {
+              spis_basis_tc: "AO/14",
+              spis_basis_tn: "Peripheral Neuropathy",
+              spis_tc: "AOOV",
+              spis_tn: "Agent Orange - outside Vietnam or unknown",
+              dis_sn: "1224781"
+            }
+          ]
+        },
+        {
+          name: "Disability",
+          parent_name: "CP_RBA_PRFIL2",
+          dis_dt: "Wed, 29 Mar 2023 12:28:11 -0500",
+          dis_sn: "1224782",
+          prfl_dt: "Wed, 29 Mar 2023 12:26:14 -0500",
+          ptcpnt_id_a: veteran.participant_id,
+          disability_special_issues: [
+            {
+              spis_basis_tc: "PTSD/10",
+              spis_basis_tn: "Sexual Trauma/Assault",
+              spis_tc: "PTSD/3",
+              spis_tn: "PTSD - Personal Trauma",
+              dis_sn: "1224782"
+            },
+            {
+              spis_basis_tc: "AO/14",
+              spis_basis_tn: "Peripheral Neuropathy",
+              spis_tc: "AOOV",
+              spis_tn: "Agent Orange - outside Vietnam or unknown",
+              dis_sn: "1224782"
+            }
+          ]
         }
       ]
     )
