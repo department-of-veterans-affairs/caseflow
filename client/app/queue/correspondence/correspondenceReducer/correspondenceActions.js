@@ -201,3 +201,12 @@ export const setShowRemovePackageModal = (isVisible) => (dispatch) => {
     }
   });
 };
+
+export const setSelectedVeteranDetails = (selectedVeteranDetails) => (dispatch) => {
+  dispatch({
+    type: ACTIONS.SET_SELECTED_VETERAN_DETAILS,
+    payload: {
+      selectedVeteranDetails
+    }
+  });
+};

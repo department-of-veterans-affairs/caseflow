@@ -14,6 +14,7 @@ export const initialState = {
   currentCorrespondence: [],
   veteranInformation: [],
   waivedEvidenceTasks: [],
+  selectedVeteranDetails: {},
   showReassignPackageModal: false,
   showRemovePackageModal: false,
 };
@@ -158,6 +159,13 @@ export const intakeCorrespondenceReducer = (state = initialState, action = {}) =
     return update(state, {
       showRemovePackageModal: {
         $set: action.payload.isVisible
+      }
+    });
+
+  case ACTIONS.SET_SELECTED_VETERAN_DETAILS:
+    return update(state, {
+      selectedVeteranDetails: {
+        $set: action.payload.selectedVeteranDetails
       }
     });
 
