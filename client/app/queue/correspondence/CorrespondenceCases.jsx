@@ -15,6 +15,9 @@ import Modal from 'app/components/Modal';
 import Button from '../../components/Button';
 import RadioField from '../../components/RadioField';
 import TextareaField from '../../components/TextareaField';
+import StyleGuideRadioField from '../../containers/StyleGuide/StyleGuideRadioField';
+import RadioFieldWithChildren from '../../components/RadioFieldWithChildren';
+import ReactSelectDropdown from '../../components/ReactSelectDropdown';
 
 const CorrespondenceCases = (props) => {
   const dispatch = useDispatch();
@@ -24,7 +27,28 @@ const CorrespondenceCases = (props) => {
   const veteranInformation = useSelector((state) => state.reviewPackage.veteranInformation);
 
   const [vetName, setVetName] = useState('');
+  const [selectedMailTeamUser, setSelectedMailTeamUser] = useState('');
   const [selectedRequestChoice, setSelectedRequestChoice] = useState('');
+
+  const buildMailUserData = (data) => {
+    return data.map((user) => {
+      return {
+        value: user,
+        label: user
+      };
+    });
+  };
+
+  // console.log(buildMailUserData(props.))
+
+  const approveElement = (<div style={{ width: '28vw' }}>
+    <ReactSelectDropdown
+      className="cf-margin-left-2rem img"
+      label="Assign to person"
+      onChangeMethod={(val) => setSelectedMailTeamUser(val.value)}
+      options={buildMailUserData(props.mailTeamUsers)}
+    />
+  </div>);
 
   useEffect(() => {
     dispatch(loadCorrespondenceConfig(configUrl));
@@ -35,7 +59,10 @@ const CorrespondenceCases = (props) => {
   const showRemovePackageModal = useSelector((state) => state.intakeCorrespondence.showRemovePackageModal);
 
   const actionRequiredOptions = [
-    { displayText: 'Approve request', value: 'approve' },
+    { displayText: 'Approve request',
+      value: 'approve',
+      element: approveElement,
+      displayElement: selectedRequestChoice === 'approve' },
     { displayText: 'Reject request', value: 'reject' }
   ];
 
@@ -111,11 +138,12 @@ const CorrespondenceCases = (props) => {
           closeHandler={closeReassignPackageModal}
           buttons={reviewRequestButtons}
         >
-          <b>Reason for removal:</b>
+          <b>Reason for reassignment:</b>
           <p>PLACEHOLDER USER JUSTIFICATION</p>
           <div>
-            <RadioField
+            <RadioFieldWithChildren
               name="actionRequiredRadioField"
+              id="vertical-radio"
               label="Choose whether to approve the request for removal or reject it."
               options={actionRequiredOptions}
               onChange={(val) => setSelectedRequestChoice(val)}
@@ -123,8 +151,6 @@ const CorrespondenceCases = (props) => {
               optionsStyling={{ width: '180px' }}
             />
           </div>
-          {selectedRequestChoice === 'reject' &&
-          <TextareaField name="Provide a reason for rejection" />}
         </Modal>}
         {showRemovePackageModal &&
         <Modal
