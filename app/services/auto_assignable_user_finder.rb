@@ -105,14 +105,14 @@ class AutoAssignableUserFinder
   def find_users
     # Do NOT use manual caching here!!!
     # Other processes may update data, so always use the DB as the source of truth and let Rails handle any caching
-    InboundOpsTeam.singleton.users.includes(:tasks, :organization_user_permissions)
+    InboundOpsTeam.singleton.users.includes(:tasks, :organizations, :organization_user_permissions)
       .where(
         organization_user_permissions: {
           organization_permission: OrganizationPermission.auto_assign(InboundOpsTeam.singleton),
           permitted: true
         }
       )
-      .references(:tasks, :organization_user_permissions)
+      .references(:tasks, :organizations, :organization_user_permissions)
   end
 
   def sensitivity_checker

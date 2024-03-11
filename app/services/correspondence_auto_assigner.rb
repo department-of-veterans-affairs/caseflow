@@ -65,8 +65,9 @@ class CorrespondenceAutoAssigner
 
     ReviewPackageTask
       .where(status: Constants.TASK_STATUSES.unassigned)
-      .includes(:correspondence)
-      .references(:correspondence)
+      .preload(:appeal, :assigned_by, :assigned_to, :parent)
+      .includes(:correspondence, correspondence: :veteran)
+      .references(:correspondence, correspondence: :veteran)
       .merge(Correspondence.order(va_date_of_receipt: :desc))
   end
 
