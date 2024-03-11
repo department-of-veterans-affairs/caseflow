@@ -9,7 +9,7 @@ class CaseDistributionLever < ApplicationRecord
   validates :is_disabled_in_ui, inclusion: { in: [true, false] }
   validate :value_matches_data_type
 
-  scope :active, -> { where(is_disabled_in_ui: false) }
+  scope :enabled_in_ui, -> { where(is_disabled_in_ui: false) }
 
   self.table_name = "case_distribution_levers"
   INTEGER_LEVERS = %W(
@@ -109,7 +109,7 @@ class CaseDistributionLever < ApplicationRecord
     def snapshot
       snapshot_hash = {}
 
-      CaseDistributionLever.active.each_with_object(snapshot_hash) do |lever, s_hash|
+      CaseDistributionLever.all.each_with_object(snapshot_hash) do |lever, s_hash|
         s_hash[lever.item] = {
           value: lever.value,
           is_toggle_active: lever.is_toggle_active
