@@ -236,6 +236,31 @@ describe HearingRequestDocket, :all_dbs do
           expect(distribution_judge.reload.tasks.map(&:appeal)).to match_array(expected_result)
         end
       end
+      describe "#expired_ama_affinity_cases" do
+    it "returns appeals with expired AMA affinity" do
+      judge = create(:user, station_id: User::BOARD_STATION_ID)
+      # Create appeals that meet the conditions for expired AMA affinity
+      appeal_1 = create_aod_value_appeal(90, judge)
+      appeal_2 = create_aod_value_appeal(60, judge)
+      CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update(value: "45")
+
+      # Call the method being tested
+      hrd = HearingRequestDocket.new
+      hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
+                                                  genpop: "only_genpop",
+                                                  judge: judge
+                                                )
+      base_relation = hrdq.send(:base_relation_with_joined_most_recent_hearings_and_dist_task)
+
+
+      result = base_relation.expired_ama_affinity_cases
+
+      # Check that the appeals with expired AMA affinity are returned
+      expect(result).to include(appeal_1)
+      expect(result).to include(appeal_2)
+      expect(result.length).to eq(2)
+    end
+  end
     end
 
     # context "priority aod appeals and only_genpop" do
