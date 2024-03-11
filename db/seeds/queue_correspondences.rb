@@ -63,33 +63,33 @@ module Seeds
 
       # 20 Correspondences with eFolderFailedUploadTask with a parent ReviewPackageTask
       20.times do
-        create_correspondence_with_review_package_and_failed_upload_task(user)
+        create_correspondence_with_review_package_and_failed_upload_task(user, veteran)
       end
 
       # 20 Correspondences with the CorrespondenceRootTask with the status of completed
       20.times do
-        create_correspondence_with_completed_root_task
+        create_correspondence_with_completed_root_task(user, veteran)
       end
 
       # 20 Correspondences with ReviewPackageTask in progress
       20.times do
-        create_correspondence_with_review_package_task(user)
+        create_correspondence_with_review_package_task(user, veteran)
       end
 
       # 20 Correspondences with the tasks for Action Required tab and an on_hold ReviewPackageTask as their parent
       5.times do
         # below method creates 4 correspondence records
-        create_correspondence_with_action_required_tasks
+        create_correspondence_with_action_required_tasks(user, veteran)
       end
 
       # 10 Correspondences with in-progress CorrespondenceRootTask and completed Mail Task
       10.times do
-        create_correspondence_with_completed_mail_task(user)
+        create_correspondence_with_completed_mail_task(user, veteran)
       end
 
       # 5 Correspondences with the CorrespondenceRootTask with the status of canceled
       5.times do
-        create_correspondence_with_canceled_root_task
+        create_correspondence_with_canceled_root_task(user, veteran)
       end
 
       # 20 Correspondences with the tasks for CAVC and Congress Interest
@@ -102,11 +102,11 @@ module Seeds
       end
 
       10.times do
-        create_correspondence_with_in_progress_review_package_task(user)
+        create_correspondence_with_in_progress_review_package_task(user, veteran)
       end
 
       10.times do
-        create_correspondence_with_in_progress_intake_task(user)
+        create_correspondence_with_in_progress_intake_task(user, veteran)
       end
     end
     # rubocop:enable Metrics/MethodLength
@@ -122,8 +122,8 @@ module Seeds
       create_correspondence_intake(corres, user)
     end
 
-    def create_correspondence_with_in_progress_intake_task(user)
-      corres = create_correspondence
+    def create_correspondence_with_in_progress_intake_task(user, veteran = {})
+      corres = create_correspondence(user, veteran)
       cit = create_correspondence_intake(corres, user)
       cit.update!(status: Constants.TASK_STATUSES.in_progress)
     end
@@ -135,38 +135,38 @@ module Seeds
       rpt.update(assigned_at: corres.va_date_of_receipt)
     end
 
-    def create_correspondence_with_review_package_task(user)
-      corres = create_correspondence
+    def create_correspondence_with_review_package_task(user, veteran = {})
+      corres = create_correspondence(user, veteran)
       assign_review_package_task(corres, user)
     end
 
-    def create_correspondence_with_in_progress_review_package_task(user)
-      corres = create_correspondence
+    def create_correspondence_with_in_progress_review_package_task(user, veteran = {})
+      corres = create_correspondence(user, veteran)
       assign_review_package_task(corres, user)
       rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
       rpt.update!(status: Constants.TASK_STATUSES.in_progress)
     end
 
-    def create_correspondence_with_review_package_and_failed_upload_task(user)
-      corres = create_correspondence
+    def create_correspondence_with_review_package_and_failed_upload_task(user, veteran = {})
+      corres = create_correspondence(user, veteran)
       assign_review_package_task(corres, user)
       parent_task = ReviewPackageTask.find_by(appeal_id: corres.id, type: ReviewPackageTask.name)
       create_efolderupload_failed_task(corres, parent_task)
     end
 
-    def create_correspondence_with_completed_root_task
-      corres = create_correspondence
+    def create_correspondence_with_completed_root_task(user = {}, veteran = {})
+      corres = create_correspondence(user, veteran)
       corres.root_task.update!(status: Constants.TASK_STATUSES.completed)
       corres.root_task.update!(closed_at: rand(1.month.ago..1.day.ago))
     end
 
-    def create_correspondence_with_action_required_tasks
-      corres_array = (1..4).map { create_correspondence }
+    def create_correspondence_with_action_required_tasks(user = {}, veteran = {})
+      corres_array = (1..4).map { create_correspondence(user, veteran) }
       task_array = [ReassignPackageTask, RemovePackageTask, SplitPackageTask, MergePackageTask]
 
       corres_array.each_with_index do |corres, index|
         rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
-        rpt.update(assigned_to_id: mail_team_superuser.id) if index.even?
+        rpt.update(assigned_to_id: InboundOpsTeam.singleton.users.first.id) if index.even?
         pat = task_array[index].create!(
           parent_id: rpt.id,
           appeal_id: corres.id,
@@ -178,13 +178,13 @@ module Seeds
       end
     end
 
-    def create_correspondence_with_completed_mail_task(user)
-      correspondence = create_correspondence
+    def create_correspondence_with_completed_mail_task(user, veteran = {})
+      correspondence = create_correspondence(user, veteran)
       create_and_complete_mail_task(correspondence, user)
     end
 
-    def create_correspondence_with_canceled_root_task
-      corres = create_correspondence
+    def create_correspondence_with_canceled_root_task(user, veteran = {})
+      corres = create_correspondence(user, veteran)
       corres.root_task.update!(status: Constants.TASK_STATUSES.cancelled)
     end
   end
