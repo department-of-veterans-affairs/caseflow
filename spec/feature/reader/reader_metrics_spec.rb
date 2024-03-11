@@ -157,7 +157,7 @@ RSpec.feature "Reader", :all_dbs, type: :feature do
 
       event_id = Metric.where(metric_message: metric_render_pdf_page_time).last.event_id
       scroll_event_id = Metric.where(metric_message: metric_scroll).last.event_id
-      expect(event_id).to eql(scroll_event_id)
+      expect(event_id).to eq(scroll_event_id)
     end
 
     scenario "capture scroll event metric when user scrolls 5 times" do
