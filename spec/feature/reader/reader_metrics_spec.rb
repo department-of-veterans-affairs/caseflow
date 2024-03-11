@@ -1,6 +1,16 @@
 # frozen_string_literal: true
 
-RSpec.feature "Reader", :all_dbs do
+def nil_in_db(metric_msg)
+  db_result = Metric.where(metric_message: metric_msg)&.last
+  expect(db_result).to be_nil
+end
+
+def exists_in_db(metric_msg)
+  db_result = Metric.where(metric_message: metric_msg)
+  expect(db_result.count).to eq(1)
+end
+
+RSpec.feature "Reader", :all_dbs, type: :feature do
   before do
     Fakes::Initializer.load!
     FeatureToggle.enable!(:metrics_monitoring)
@@ -24,17 +34,14 @@ RSpec.feature "Reader", :all_dbs do
     )
   end
 
-
   let(:metric_get_pdf_doc) { "Getting PDF document: \"/document/#{documents.first.id}/pdf\"" }
-
   let(:metric_store_pdf_page) { "Storing PDF page #{page_number}" }
   let(:metric_store_pdf_page_text) { "Storing PDF page #{page_number} text" }
   let(:metric_render_pdf_page_text) { "Rendering PDF page #{page_number} text" }
   let(:metric_render_pdf_page_time) { "pdf_page_render_time_in_ms" }
 
-  let(:metric_double) { class_double(Metric) }
-
   context "Capture the 5 Reader Metrics for one page document" do
+    let(:page_number) { 1 }
     let(:documents) do
       [
         Generators::Document.create(
@@ -47,41 +54,27 @@ RSpec.feature "Reader", :all_dbs do
     end
 
     scenario "capture each metric once" do
-      expect(metric_double).to receive(:metric_get_pdf_doc).with(
-        anything,
-        hash_including(message: metric_render_pdf_page_time),
-        anything
-      ).exactly(:once)
+      nil_in_db(metric_get_pdf_doc)
+      nil_in_db(metric_render_pdf_page_time)
+      nil_in_db(metric_store_pdf_page)
+      nil_in_db(metric_store_pdf_page_text)
+      nil_in_db(metric_render_pdf_page_text)
 
-      expect(metric_double).to receive(:metric_store_pdf_page).with(
-        anything,
-        hash_including(message: metric_get_doc),
-        anything
-      ).exactly(:once)
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
 
-      expect(metric_double).to receive(:metric_store_pdf_page_text).with(
-        anything,
-        hash_including(message: metric_get_pdfjs_doc),
-        anything
-      ).exactly(:once)
+      exists_in_db(metric_get_pdf_doc)
+      exists_in_db(metric_render_pdf_page_time)
+      exists_in_db(metric_store_pdf_page)
+      exists_in_db(metric_store_pdf_page_text)
+      exists_in_db(metric_render_pdf_page_text)
 
-      expect(metric_double).to receive(:metric_render_pdf_page_text).with(
-        anything,
-        hash_including(message: metric_render_time),
-        anything
-      ).exactly(:once)
-
-      expect(metric_double).to receive(:metric_render_pdf_page_time).with(
-        anything,
-        hash_including(message: metric_render_text),
-        anything
-      ).exactly(:once)
-
-      page.visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+      event_id = Metric.where(metric_message: metric_render_pdf_page_time).last.event_id
+      expect(Metric.where(event_id: event_id).count).to eq(5)
     end
   end
 
   context "Capture the 5 Reader Metrics for two page document" do
+    let(:page_number) { 2 }
     let(:documents) do
       [
         Generators::Document.create(
@@ -92,38 +85,29 @@ RSpec.feature "Reader", :all_dbs do
         )
       ]
     end
+
     scenario "capture 'Getting PDF document' metric once and other metrics twice (one for each page)" do
-      expect(metric_double).to receive(:metric_get_pdf_doc).with(
-        anything,
-        hash_including(message: metric_render_pdf_page_time),
-        anything
-      ).exactly(:once)
-
-      expect(metric_double).to receive(:metric_store_pdf_page).with(
-        anything,
-        hash_including(message: metric_get_doc),
-        anything
-      ).exactly(:twice)
-
-      expect(metric_double).to receive(:metric_store_pdf_page_text).with(
-        anything,
-        hash_including(message: metric_get_pdfjs_doc),
-        anything
-      ).exactly(:twice)
-
-      expect(metric_double).to receive(:metric_render_pdf_page_text).with(
-        anything,
-        hash_including(message: metric_render_time),
-        anything
-      ).exactly(:twice)
-
-      expect(metric_double).to receive(:metric_render_pdf_page_time).with(
-        anything,
-        hash_including(message: metric_render_text),
-        anything
-      ).exactly(:twice)
+      nil_in_db(metric_get_pdf_doc)
+      nil_in_db(metric_render_pdf_page_time)
+      nil_in_db(metric_store_pdf_page)
+      nil_in_db(metric_store_pdf_page_text)
+      nil_in_db(metric_render_pdf_page_text)
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+      sleep 10
+
+      exists_in_db(metric_get_pdf_doc)
+
+      db_result = Metric.where(metric_message: metric_render_pdf_page_time)
+      expect(db_result.count).to eq(2)
+      expect(db_result.first.event_id).to be_eql(db_result.second.event_id)
+
+      exists_in_db(metric_store_pdf_page)
+      exists_in_db(metric_store_pdf_page_text)
+      exists_in_db(metric_render_pdf_page_text)
+
+      event_id = db_result.first.event_id
+      expect(Metric.where(event_id: event_id).count).to eq(9)
     end
   end
 end

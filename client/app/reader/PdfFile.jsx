@@ -480,8 +480,6 @@ export class PdfFile extends React.PureComponent {
           },
           this.metricIdentifier,
         );
-        console.log(`Metrics ==== ONSCROLL Scroll to position ${this.scrollLeft}, ${this.scrollTop}} --- ${this.metricIdentifier}`);
-
       }, 300);
     }
   }
