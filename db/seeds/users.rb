@@ -506,6 +506,7 @@ module Seeds
       OrganizationsUser.make_user_admin(qa_admin, CDAControlGroup.singleton)
 
       #{BVA Intake Admin}
+      BvaIntake.singleton.add_user(qa_admin)
       OrganizationsUser.make_user_admin(qa_admin, BvaIntake.singleton)
 
       #{BVA Org Admin}

@@ -122,6 +122,7 @@ FactoryBot.define do
 
     trait :bva_intake_admin do
       after(:create) do |user|
+        BvaIntake.singleton.add_user(user)
         OrganizationsUser.make_user_admin(user, BvaIntake.singleton)
       end
     end
