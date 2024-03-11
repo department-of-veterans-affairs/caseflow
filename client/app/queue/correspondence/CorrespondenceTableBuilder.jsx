@@ -21,7 +21,8 @@ import {
   taskColumn,
   taskCompletedDateColumn,
   vaDor,
-  veteranDetails
+  veteranDetails,
+  searchQuery
 } from '../components/TaskTableColumns';
 
 import { tasksWithCorrespondenceFromRawTasks } from '../utils';
@@ -106,20 +107,7 @@ const CorrespondenceTableBuilder = (props) => {
 
   const handleSearchChange = (value) => {
     setSearchValue(value);
-  };
 
-  const handleSearchRecord = (value) => {
-    ApiUtil.post(
-      `/queue/correspondence/search`,
-      { data: { query: value } }
-    ).
-      then(() => {
-        // no op
-      }).
-      catch((error) => {
-        // we don't care reporting via Raven.
-        console.error(error);
-      });
   };
 
   const handleClearSearch = () => {
@@ -137,7 +125,7 @@ const CorrespondenceTableBuilder = (props) => {
   const filterValuesForColumn = (column) =>
     column && column.filterable && column.filter_options;
 
-  const createColumnObject = (column, config, tasks) => {
+  const createColumnObject = (column, config, tasks, searchValue) => {
 
     const filterOptions = filterValuesForColumn(column);
     const functionForColumn = {
@@ -151,6 +139,7 @@ const CorrespondenceTableBuilder = (props) => {
       [QUEUE_CONFIG.COLUMNS.NOTES.name]: notes(),
       [QUEUE_CONFIG.COLUMNS.CHECKBOX_COLUMN.name]: checkboxColumn(handleCheckboxChange),
       [QUEUE_CONFIG.COLUMNS.ACTION_TYPE.name]: actionType(),
+      [QUEUE_CONFIG.COLUMNS.SEARCH_QUERY.name]: searchQuery(searchValue),
     };
 
     return functionForColumn[column.name];
@@ -158,7 +147,7 @@ const CorrespondenceTableBuilder = (props) => {
 
   const columnsFromConfig = (config, tabConfig, tasks) =>
     (tabConfig.columns || []).map((column) =>
-      createColumnObject(column, config, tasks)
+      createColumnObject(column, config, tasks, searchValue)
     );
 
   const taskTableTabFactory = (tabConfig, config) => {
@@ -264,7 +253,6 @@ const CorrespondenceTableBuilder = (props) => {
                 isSearchAhead
                 placeholder="Type to filter..."
                 onChange={handleSearchChange}
-                recordSearch={handleSearchRecord}
                 onClearSearch={handleClearSearch}
                 value={searchValue}
               />

@@ -94,6 +94,9 @@
     "CHECKBOX_COLUMN": {
       "name": "checkboxColumn"
     },
+    "SEARCH_QUERY": {
+      "name": "searchQueryColumn"
+    },
     "DAYS_ON_HOLD": {
       "name": "daysOnHoldColumn"
     },
