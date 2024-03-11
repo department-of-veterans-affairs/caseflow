@@ -10,6 +10,11 @@ def exists_in_db(metric_msg)
   expect(db_result.count).to eq(1)
 end
 
+def scroll_event(pos_x, pos_y)
+  page.find(".ReactVirtualized__Grid").scroll_to(pos_x, pos_y)
+  sleep 5
+end
+
 RSpec.feature "Reader", :all_dbs, type: :feature do
   before do
     Fakes::Initializer.load!
@@ -25,6 +30,10 @@ RSpec.feature "Reader", :all_dbs, type: :feature do
     Generators::Vacols::Staff.create(stafkey: "SCASPER1", sdomainid: "BVASCASPER1", slogid: "SCASPER1")
 
     User.authenticate!(roles: ["Reader"])
+  end
+
+  after(:each) do
+    page.driver.quit
   end
 
   let(:appeal) do
@@ -61,6 +70,7 @@ RSpec.feature "Reader", :all_dbs, type: :feature do
       nil_in_db(metric_render_pdf_page_text)
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+      sleep 5
 
       exists_in_db(metric_get_pdf_doc)
       exists_in_db(metric_render_pdf_page_time)
@@ -94,7 +104,7 @@ RSpec.feature "Reader", :all_dbs, type: :feature do
       nil_in_db(metric_render_pdf_page_text)
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
-      sleep 10
+      sleep 5
 
       exists_in_db(metric_get_pdf_doc)
 
@@ -108,6 +118,62 @@ RSpec.feature "Reader", :all_dbs, type: :feature do
 
       event_id = db_result.first.event_id
       expect(Metric.where(event_id: event_id).count).to eq(9)
+    end
+  end
+
+  context "Capture scroll event metric" do
+    let(:documents) do
+      [
+        Generators::Document.create(
+          filename: "My Form 9",
+          type: "Form 9",
+          received_at: 5.days.ago,
+          vbms_document_id: 4
+        )
+      ]
+    end
+
+    scenario "scroll metric recorded when user scrolls vertically" do
+      metric_scroll = "Scroll to position 0, 500"
+      nil_in_db(metric_scroll)
+
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+
+      scroll_event(0, 500)
+      exists_in_db(metric_scroll)
+
+      scroll_event(0, 0)
+      db_result = Metric.where("metric_message LIKE ?", "Scroll to position%")
+      expect(db_result.count).to eq(2)
+    end
+
+    scenario "scroll metric recorded when user scrolls horizontally" do
+      metric_scroll = "Scroll to position 5, 0"
+      nil_in_db(metric_scroll)
+
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+      page.find("#button-zoomIn").click
+      page.find("#button-zoomIn").click
+      sleep 5
+
+      scroll_event(5, 0)
+      exists_in_db(metric_scroll)
+    end
+
+    scenario "capture scroll event metric when user scrolls 5 times" do
+      visit "/reader/appeal/#{appeal.vacols_id}/documents/#{documents[0].id}"
+
+      scroll_event(0, 50)
+      scroll_event(0, 10)
+      scroll_event(0, 0)
+      page.find("#button-zoomIn").click
+      page.find("#button-zoomIn").click
+      sleep 5
+      scroll_event(10, 50)
+      scroll_event(0, 110)
+
+      db_result = Metric.where("metric_message LIKE ?", "Scroll to position%")
+      expect(db_result.count).to eq(5)
     end
   end
 end
