@@ -9,8 +9,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 949a76f3bec687c156a68165cf3bb9ff6ae8674d
-  ref: 949a76f3bec687c156a68165cf3bb9ff6ae8674d
+  revision: a77244b75e5333f0616e5a335386f934204d1d9d
+  ref: a77244b75e5333f0616e5a335386f934204d1d9d
   specs:
     caseflow (0.4.8)
       aws-sdk (~> 2.10)
@@ -199,7 +199,7 @@ GEM
     colored2 (3.1.2)
     colorize (0.8.1)
     concurrent-ruby (1.2.3)
-    connection_pool (2.4.1)
+    connection_pool (2.2.3)
     cork (0.3.0)
       colored2 (~> 3.1)
     countries (3.0.1)
