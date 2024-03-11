@@ -81,10 +81,6 @@ class SeedDB
     call_and_log_seed_step Seeds::BgsServiceRecordMaker
     call_and_log_seed_step Seeds::MstPactLegacyCaseAppeals
     call_and_log_seed_step Seeds::AmaIntake
-    call_and_log_seed_step Seeds::CorrespondenceAutoTexts
-    call_and_log_seed_step Seeds::CorrespondenceAutoAssignmentLevers
-    call_and_log_seed_step Seeds::CorrespondenceAutoAssign
-
     # Always run this as last one
     call_and_log_seed_step Seeds::StaticTestCaseData
     call_and_log_seed_step Seeds::StaticDispatchedAppealsTestData
