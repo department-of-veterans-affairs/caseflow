@@ -17,6 +17,7 @@ class Appeal < DecisionReview
   include AppealAvailableHearingLocations
   include HearingRequestTypeConcern
   include AppealNotificationReportConcern
+  include SpecialtyCaseTeamMethodsMixin
   prepend AppealDocketed
 
   has_many :appeal_views, as: :appeal
@@ -954,25 +955,6 @@ class Appeal < DecisionReview
 
   def is_legacy?
     false
-  end
-
-  def sct_appeal?
-    request_issues.active.any?(&:sct_benefit_type?)
-  end
-
-  def has_distribution_task?
-    tasks.of_type(:DistributionTask).exists?
-  end
-
-  def remove_from_current_queue!
-    tasks.reject { |task| %w[RootTask DistributionTask].include?(task.type) }
-      .each(&:cancel_task_and_child_subtasks)
-  end
-
-  def has_completed_sct_assign_task?
-    tasks.any? do |task|
-      task.is_a?(SpecialtyCaseTeamAssignTask) && task.completed?
-    end
   end
 
   private

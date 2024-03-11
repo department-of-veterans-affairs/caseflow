@@ -333,5 +333,5 @@ class WorkQueue::AppealSerializer
     ]).count
   end
 
-  attribute :has_completed_sct_assign_task, &:has_completed_sct_assign_task?
+  attribute :has_completed_sct_assign_task, &:completed_specialty_case_team_assign_task?
 end

@@ -1433,9 +1433,7 @@ feature "Appeal Edit issues", :all_dbs do
     after { FeatureToggle.disable!(:specialty_case_team_distribution) }
 
     scenario "appeal moves to sct queue when vha issue is added" do
-      visit "/queue/appeals/#{appeal3.uuid}"
-      # refresh the page if the case hasn't finished processing the create/load yet
-      visit "/queue/appeals/#{appeal3.uuid}" if page.has_text? "Unable to load this case"
+      reload_case_detail_page(appeal3.uuid)
       click_on "Correct issues"
       click_remove_intake_issue_dropdown("Unknown Issue Category")
       click_intake_add_issue
@@ -1450,7 +1448,7 @@ feature "Appeal Edit issues", :all_dbs do
       radio_choices[1].click
 
       safe_click ".add-issue"
-      safe_click "#button-submit-update"
+      click_edit_submit
       expect(page).to have_content("Move appeal to SCT queue")
       expect(page).to have_button("Move")
       safe_click ".confirm"
@@ -1459,6 +1457,77 @@ feature "Appeal Edit issues", :all_dbs do
         "The appeal for #{appeal3.claimant.name} " \
         "(ID: #{appeal3.veteran.file_number}) has been moved to the SCT queue."
       )
+    end
+  end
+
+  context "Removing all Specialty Case Team issues from an appeal" do
+    let!(:appeal3) do
+      create(:appeal,
+             :assigned_to_judge,
+             :completed_distribution_task,
+             veteran_file_number: create(:veteran).file_number,
+             receipt_date: receipt_date,
+             docket_type: Constants.AMA_DOCKETS.direct_review)
+    end
+    let!(:request_issue) do
+      create(:request_issue,
+             benefit_type: "compensation",
+             nonrating_issue_category: "Unknown Issue Category",
+             nonrating_issue_description: "Compensation issue",
+             decision_date: 5.months.ago,
+             decision_review: appeal3)
+    end
+    let!(:sct_request_issue) do
+      create(:request_issue,
+             benefit_type: "vha",
+             nonrating_issue_category: "CHAMPVA",
+             nonrating_issue_description: "VHA issue",
+             decision_date: 5.months.ago,
+             decision_review: appeal3)
+    end
+
+    before do
+      SpecialtyCaseTeam.singleton.add_user(current_user)
+      BvaIntake.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:specialty_case_team_distribution)
+
+      # Add a Specialty Case Team Assign Task to the appeal
+      SpecialtyCaseTeamAssignTask.create!(appeal: appeal3,
+                                          parent: appeal3.root_task,
+                                          assigned_to: SpecialtyCaseTeam.singleton)
+    end
+
+    after { FeatureToggle.disable!(:specialty_case_team_distribution) }
+
+    scenario "appeal moves back to distribution when all SCT issues are removed" do
+      reload_case_detail_page(appeal3.uuid)
+      click_on "Correct issues"
+      click_remove_intake_issue_dropdown("CHAMPVA")
+      click_edit_submit_and_confirm
+
+      expect(page).to have_content(COPY::MOVE_TO_DISTRIBUTION_MODAL_TITLE)
+      expect(page).to have_content(COPY::MOVE_TO_DISTRIBUTION_MODAL_BODY)
+      expect(page).to have_button("Move")
+      safe_click ".confirm"
+      expect(page).to have_content("You have successfully updated issues on this appeal")
+      expect(page).to have_content(
+        "The appeal for #{appeal3.claimant.name} " \
+        "(ID: #{appeal3.veteran.file_number}) has been moved to the regular distribution pool."
+      )
+      expect(page).to have_current_path("/queue/appeals/#{appeal3.uuid}")
+
+      # Verify task tree status
+      appeal3.reload
+      appeal3.tasks.reload
+      appeal3.request_issues.reload
+      distribution_task = appeal3.tasks.find { |task| task.is_a?(DistributionTask) }
+      expect(distribution_task.assigned_by).to eq(current_user)
+      expect(distribution_task.status).to eq("assigned")
+      expect(appeal3.ready_for_distribution?).to eq(true)
+      expect(appeal3.can_redistribute_appeal?).to eq(true)
+      expect(appeal3.request_issues.active.count).to eq(1)
+      expect(appeal3.tasks.find { |task| task.is_a?(SpecialtyCaseTeamAssignTask) }.status).to eq("cancelled")
     end
   end
 end

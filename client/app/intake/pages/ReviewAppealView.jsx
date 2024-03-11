@@ -9,6 +9,7 @@ import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/comp
 import { ExternalLinkIcon } from '../../components/icons';
 import Alert from '../../components/Alert';
 import { useSelector } from 'react-redux';
+import SPECIALTY_CASE_TEAM_BENEFIT_TYPES from 'constants/SPECIALTY_CASE_TEAM_BENEFIT_TYPES';
 
 const styles = {
   mainTable: css({
@@ -124,14 +125,12 @@ const ReviewAppealView = (props) => {
     return selectOriginal;
   });
 
-  const hasSpecialtyCaseTeamIssues = (issues) => {
-    return issues.some((issue) => {
-      return issue.benefit_type === 'vha';
-    });
-  };
-
-  const originalHasSCTIssue = hasSpecialtyCaseTeamIssues(selectOriginal);
-  const selectedHasSCTIssue = hasSpecialtyCaseTeamIssues(selectElement);
+  // Specialty Case Team (SCT) logic for movement of appeals based on splitting appeals with SCT request issues
+  const specialtyCaseTeamBenefitTypes = Object.keys(SPECIALTY_CASE_TEAM_BENEFIT_TYPES);
+  const originalHasSCTIssue = selectOriginal.some((issue) =>
+    specialtyCaseTeamBenefitTypes.includes(issue.benefit_type));
+  const selectedHasSCTIssue = selectElement.some((issue) =>
+    specialtyCaseTeamBenefitTypes.includes(issue.benefit_type));
   const atLeastOneHasSCTIssue = selectedHasSCTIssue || originalHasSCTIssue;
 
   return (

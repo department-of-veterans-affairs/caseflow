@@ -16,7 +16,7 @@ class RequestIssuesUpdate < CaseflowRecord
   delegate :withdrawn_issues, to: :withdrawal
   delegate :corrected_issues, :correction_issues, to: :correction
 
-  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def perform!
     return false unless validate_before_perform
     return false if processed?
@@ -38,7 +38,7 @@ class RequestIssuesUpdate < CaseflowRecord
         create_mst_pact_issue_update_tasks
       end
       create_business_line_tasks! if added_issues.present?
-      move_to_sct_queue if FeatureToggle.enabled?(:specialty_case_team_distribution, user: user)
+      handle_sct_issue_updates
       cancel_active_tasks
       submit_for_processing!
     end
@@ -47,7 +47,7 @@ class RequestIssuesUpdate < CaseflowRecord
 
     true
   end
-  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   def process_job
     if run_async?
@@ -112,10 +112,10 @@ class RequestIssuesUpdate < CaseflowRecord
       correction_issues + mst_edited_issues + pact_edited_issues
   end
 
-  def move_to_sct_queue
+  def move_review_to_sct_queue
     # If appeal has VHA issue, not in the SCT Queue and not PreDocketed, then move to the SCT Queue
-    if review.try(:sct_appeal?) && review.tasks.of_type(:SpecialtyCaseTeamAssignTask).blank? &&
-       review.tasks.of_type(:DistributionTask).exists?
+    if review.sct_appeal? && !review.specialty_case_team_assign_task? && review.distributed?
+      # Cancel open queue tasks and create a specialty case team assign task to direct it to the SCT org
       review.remove_from_current_queue!
       SpecialtyCaseTeamAssignTask.find_or_create_by(
         appeal: review,
@@ -123,6 +123,23 @@ class RequestIssuesUpdate < CaseflowRecord
         assigned_to: SpecialtyCaseTeam.singleton,
         assigned_by: user
       )
+    end
+  end
+
+  def move_review_to_distribution
+    # If an appeal does not have an SCT issue, it was in the SCT queue, and is not PreDocketed,
+    # then move it back to distribution
+    if !review.sct_appeal? && review.specialty_case_team_assign_task? && review.distributed?
+      review.remove_from_current_queue!
+      review.remove_from_specialty_case_team!
+      review.reopen_distribution_task!(user)
+    end
+  end
+
+  def handle_sct_issue_updates
+    if FeatureToggle.enabled?(:specialty_case_team_distribution, user: user) && review.is_a?(Appeal)
+      move_review_to_sct_queue
+      move_review_to_distribution
     end
   end
 

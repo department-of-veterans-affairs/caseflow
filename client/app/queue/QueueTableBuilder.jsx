@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import _ from 'lodash';
+import { indexOf } from 'lodash';
 import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
 import { connect } from 'react-redux';
@@ -73,7 +73,7 @@ const QueueTableBuilder = (props) => {
     });
 
     const activeTab = paginationOptions().tab || config.active_tab;
-    const index = _.indexOf(tabNames, activeTab);
+    const index = indexOf(tabNames, activeTab);
 
     return index === -1 ? 0 : index;
   };
