@@ -96,7 +96,7 @@ RSpec.feature "Reader", :all_dbs, type: :feature do
       ]
     end
 
-    scenario "capture 'Getting PDF document' metric once and other metrics twice (one for each page)" do
+    scenario "capture 'Getting PDF document' and 'pdf_page_render_time_in_ms' metrics once and other metrics twice (one for each page)" do
       nil_in_db(metric_get_pdf_doc)
       nil_in_db(metric_render_pdf_page_time)
       nil_in_db(metric_store_pdf_page)
@@ -107,17 +107,13 @@ RSpec.feature "Reader", :all_dbs, type: :feature do
       sleep 5
 
       exists_in_db(metric_get_pdf_doc)
-
-      db_result = Metric.where(metric_message: metric_render_pdf_page_time)
-      expect(db_result.count).to eq(2)
-      expect(db_result.first.event_id).to be_eql(db_result.second.event_id)
-
+      exists_in_db(metric_render_pdf_page_time)
       exists_in_db(metric_store_pdf_page)
       exists_in_db(metric_store_pdf_page_text)
       exists_in_db(metric_render_pdf_page_text)
 
-      event_id = db_result.first.event_id
-      expect(Metric.where(event_id: event_id).count).to eq(9)
+      event_id = Metric.where(metric_message: metric_render_pdf_page_time).last.event_id
+      expect(Metric.where(event_id: event_id).count).to eq(8)
     end
   end
 
