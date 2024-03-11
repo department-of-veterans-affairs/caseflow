@@ -24,6 +24,7 @@ gem "console_tree_renderer", git: "https://github.com/department-of-veterans-aff
 gem "countries"
 gem "ddtrace"
 gem "dogstatsd-ruby"
+gem "statsd-instrument"
 gem "dry-schema", "~> 1.4"
 gem "fast_jsonapi"
 gem "fuzzy_match"
