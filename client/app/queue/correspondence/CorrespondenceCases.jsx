@@ -25,6 +25,7 @@ const CorrespondenceCases = (props) => {
 
   const currentAction = useSelector((state) => state.reviewPackage.lastAction);
   const veteranInformation = useSelector((state) => state.reviewPackage.veteranInformation);
+  const currentSelectedVeteran = useSelector((state) => state.intakeCorrespondence.selectedVeteranDetails);
 
   const [vetName, setVetName] = useState('');
   const [selectedMailTeamUser, setSelectedMailTeamUser] = useState('');
@@ -40,8 +41,10 @@ const CorrespondenceCases = (props) => {
   };
 
   const confirmButtonDisabled = () => {
-    console.log('disable logic executed');
     if (selectedRequestChoice === 'approve' && selectedMailTeamUser === '') {
+      return true;
+    }
+    if (selectedRequestChoice === '') {
       return true;
     }
 
@@ -75,6 +78,16 @@ const CorrespondenceCases = (props) => {
     { displayText: 'Reject request', value: 'reject' }
   ];
 
+  const handleConfirmReassignClick = () => {
+    let newUrl = window.location.href;
+
+    newUrl = newUrl.replace('#', '');
+    newUrl += newUrl.includes('?') ?
+    `&user=${selectedMailTeamUser}&taskId=${currentSelectedVeteran.uniqueId}&userAction=${selectedRequestChoice}` :
+      `?user=${selectedMailTeamUser}&taskId=${currentSelectedVeteran.uniqueId}&userAction=${selectedRequestChoice}`;
+    window.location.href = newUrl;
+  };
+
   const reviewRequestButtons = [
     {
       classNames: ['cf-modal-link', 'cf-btn-link'],
@@ -86,7 +99,7 @@ const CorrespondenceCases = (props) => {
       id: '#confirm-button',
       classNames: ['usa-button', 'usa-button-primary', 'cf-margin-left-2rem'],
       name: 'Confirm',
-      onClick: () => console.log('confirm clicked'),
+      onClick: handleConfirmReassignClick,
       disabled: confirmButtonDisabled()
     },
     {
