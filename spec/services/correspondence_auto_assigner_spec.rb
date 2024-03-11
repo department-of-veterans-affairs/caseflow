@@ -83,7 +83,7 @@ describe CorrespondenceAutoAssigner do
     context "when a run is NOT permitted" do
       before do
         expect(mock_run_verifier).to receive(:can_run_auto_assign?).and_return(false)
-        expect(mock_run_verifier).to receive(:err_msg).and_return("Test error")
+        expect(mock_run_verifier).to receive(:err_msg).twice.and_return("Test error")
       end
 
       it "raises an error" do
