@@ -78,6 +78,10 @@ class HearingDispositionChangeJob < CaseflowJob
     if Constants.HEARING_DISPOSITION_TYPES.to_h.value?(hearing.disposition)
       hearing.disposition
     elsif hearing.disposition.nil?
+
+
+
+
       if hearing.scheduled_for < 48.hours.ago
         # stale if there's no disposition after 2 days
         :stale
