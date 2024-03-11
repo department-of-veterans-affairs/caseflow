@@ -467,18 +467,21 @@ export class PdfFile extends React.PureComponent {
           end: performance.now()
         };
 
+        const posx = (Math.round(this.scrollLeft * 100) / 100).toFixed(2);
+        const posy = (Math.round(this.scrollTop * 100) / 100).toFixed(2);
+
         storeMetrics(
           this.props.documentId,
           data,
           {
-            message: `Scroll to position ${this.scrollLeft}, ${this.scrollTop}`,
+            message: `Scroll to position ${posx}, ${posy}`,
             type: 'performance',
             product: 'reader',
             start: new Date(performance.timeOrigin + data.start),
             end: new Date(performance.timeOrigin + data.end),
             duration: data.start ? data.end - data.start : 0
           },
-          this.metricIdentifier,
+          this.metricsIdentifier,
         );
       }, 300);
     }
