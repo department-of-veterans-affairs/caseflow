@@ -21,8 +21,13 @@ module Seeds
       @mail_team_superuser ||= User.find_by_css_id("AMBRISVACO")
     end
 
-    def seed!
-      create_queue_correspondences
+    # seed with values for UAT rake task correspondence.rake
+    # seed without values for Demo (default)
+    def seed!(user = {}, veteran = {},)
+      return create_queue_correspondences(user, veteran) unless user.empty? && veteran.empty?
+
+      create_queue_correspondences(mail_team_user)
+      create_queue_correspondences(mail_team_superuser)
     end
 
     private
@@ -40,28 +45,25 @@ module Seeds
     end
 
     # rubocop:disable Metrics/MethodLength
-    def create_queue_correspondences
+    def create_queue_correspondences(user, veteran = {})
       # 20 Correspondences with unassigned ReviewPackageTask
       20.times do
-        create_correspondence_with_unassigned_review_package_task
+        create_correspondence_with_unassigned_review_package_task(user, veteran)
       end
 
       # 20 Correspondences with eFolderFailedUploadTask with a parent CorrespondenceIntakeTask
       20.times do
-        create_correspondence_with_intake_and_failed_upload_task(mail_team_user)
-        create_correspondence_with_intake_and_failed_upload_task(mail_team_superuser)
+        create_correspondence_with_intake_and_failed_upload_task(user)
       end
 
       # 20 Correspondences with CorrespondenceIntakeTask with a status of in_progress
       20.times do
-        create_correspondence_with_intake_task(mail_team_user)
-        create_correspondence_with_intake_task(mail_team_superuser)
+        create_correspondence_with_intake_task(user)
       end
 
       # 20 Correspondences with eFolderFailedUploadTask with a parent ReviewPackageTask
       20.times do
-        create_correspondence_with_review_package_and_failed_upload_task(mail_team_user)
-        create_correspondence_with_review_package_and_failed_upload_task(mail_team_superuser)
+        create_correspondence_with_review_package_and_failed_upload_task(user)
       end
 
       # 20 Correspondences with the CorrespondenceRootTask with the status of completed
@@ -71,8 +73,7 @@ module Seeds
 
       # 20 Correspondences with ReviewPackageTask in progress
       20.times do
-        create_correspondence_with_review_package_task(mail_team_user)
-        create_correspondence_with_review_package_task(mail_team_superuser)
+        create_correspondence_with_review_package_task(user)
       end
 
       # 20 Correspondences with the tasks for Action Required tab and an on_hold ReviewPackageTask as their parent
@@ -83,8 +84,7 @@ module Seeds
 
       # 10 Correspondences with in-progress CorrespondenceRootTask and completed Mail Task
       10.times do
-        create_correspondence_with_completed_mail_task(mail_team_user)
-        create_correspondence_with_completed_mail_task(mail_team_superuser)
+        create_correspondence_with_completed_mail_task(user)
       end
 
       # 5 Correspondences with the CorrespondenceRootTask with the status of canceled
@@ -94,23 +94,19 @@ module Seeds
 
       # 20 Correspondences with the tasks for CAVC and Congress Interest
       20.times do
-        create_cavc_mailtask(create_correspondence, mail_team_user)
-        create_cavc_mailtask(create_correspondence, mail_team_superuser)
+        create_cavc_mailtask(create_correspondence, user)
       end
 
       20.times do
-        create_congress_interest_mailtask(create_correspondence, mail_team_user)
-        create_congress_interest_mailtask(create_correspondence, mail_team_superuser)
+        create_congress_interest_mailtask(create_correspondence, user)
       end
 
       10.times do
-        create_correspondence_with_in_progress_review_package_task(mail_team_user)
-        create_correspondence_with_in_progress_review_package_task(mail_team_superuser)
+        create_correspondence_with_in_progress_review_package_task(user)
       end
 
       10.times do
-        create_correspondence_with_in_progress_intake_task(mail_team_user)
-        create_correspondence_with_in_progress_intake_task(mail_team_superuser)
+        create_correspondence_with_in_progress_intake_task(user)
       end
     end
     # rubocop:enable Metrics/MethodLength
@@ -132,8 +128,8 @@ module Seeds
       cit.update!(status: Constants.TASK_STATUSES.in_progress)
     end
 
-    def create_correspondence_with_unassigned_review_package_task
-      corres = create_correspondence
+    def create_correspondence_with_unassigned_review_package_task(user = {}, veteran = {})
+      corres = create_correspondence(user, veteran)
       # vary days waiting to be able to test column sorting
       rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
       rpt.update(assigned_at: corres.va_date_of_receipt)
