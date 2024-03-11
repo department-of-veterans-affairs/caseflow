@@ -9,6 +9,7 @@ module ExplainTimelineConcern
   # :reek:FeatureEnvy
   def timeline_data
     return "(LegacyAppeals are not yet supported)".to_json if legacy_appeal?
+    return "(Correspondences are not yet supported)".to_json if correspondence?
 
     (tasks_timeline_data + intake_timeline_data + hearings_timeline_data).map(&:as_json)
   end

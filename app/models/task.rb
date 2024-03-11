@@ -54,7 +54,8 @@ class Task < CaseflowRecord
     Constants.TASK_STATUSES.in_progress.to_sym => Constants.TASK_STATUSES.in_progress,
     Constants.TASK_STATUSES.on_hold.to_sym => Constants.TASK_STATUSES.on_hold,
     Constants.TASK_STATUSES.completed.to_sym => Constants.TASK_STATUSES.completed,
-    Constants.TASK_STATUSES.cancelled.to_sym => Constants.TASK_STATUSES.cancelled
+    Constants.TASK_STATUSES.cancelled.to_sym => Constants.TASK_STATUSES.cancelled,
+    Constants.TASK_STATUSES.unassigned.to_sym => Constants.TASK_STATUSES.unassigned
   }
 
   enum cancellation_reason: {
@@ -112,6 +113,8 @@ class Task < CaseflowRecord
 
   scope :with_assignees, -> { joins(Task.joins_with_assignees_clause) }
 
+  scope :not_correspondence, -> { where.not(appeal_type: "Correspondence") }
+
   scope :with_assigners, -> { joins(Task.joins_with_assigners_clause) }
 
   scope :with_cached_appeals, -> { joins(Task.joins_with_cached_appeals_clause) }
@@ -154,7 +157,7 @@ class Task < CaseflowRecord
     end
 
     def open_statuses
-      active_statuses.concat([Constants.TASK_STATUSES.on_hold])
+      active_statuses.concat([Constants.TASK_STATUSES.on_hold, Constants.TASK_STATUSES.unassigned])
     end
 
     def create_many_from_params(params_array, current_user)
@@ -179,6 +182,8 @@ class Task < CaseflowRecord
     end
 
     def verify_user_can_create!(user, parent)
+      return true if parent.appeal_type == Correspondence.name && MailTeam.singleton.user_has_access?(user)
+
       can_create = parent&.available_actions(user)&.map do |action|
         parent.build_action_hash(action, user)
       end&.any? do |action|
@@ -186,11 +191,15 @@ class Task < CaseflowRecord
       end
 
       if !parent&.actions_allowable?(user) || !can_create
-        user_description = user ? "User #{user.id}" : "nil User"
-        parent_description = parent ? " from #{parent.class.name} #{parent.id}" : ""
-        message = "#{user_description} cannot assign #{name}#{parent_description}."
-        fail Caseflow::Error::ActionForbiddenError, message: message
+        fail Caseflow::Error::ActionForbiddenError, message: user_can_create_error_message(user, parent)
       end
+    end
+
+    def user_can_create_error_message(user, parent)
+      user_description = user.present? ? "User #{user.id}" : "nil User"
+      parent_description = parent.present? ? "from #{parent.class.name} #{parent.id}" : ""
+
+      "#{user_description} cannot assign #{name} #{parent_description}."
     end
 
     def child_task_assignee(_parent, params)
@@ -932,7 +941,8 @@ class Task < CaseflowRecord
     in_progress: :started_at,
     on_hold: :placed_on_hold_at,
     completed: :closed_at,
-    cancelled: :closed_at
+    cancelled: :closed_at,
+    unassigned: :assigned_at
   }.freeze
 
   def set_timestamp
