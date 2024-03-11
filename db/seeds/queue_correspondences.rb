@@ -58,7 +58,7 @@ module Seeds
 
       # 20 Correspondences with CorrespondenceIntakeTask with a status of in_progress
       20.times do
-        create_correspondence_with_intake_task(user)
+        create_correspondence_with_intake_task(user, veteran)
       end
 
       # 20 Correspondences with eFolderFailedUploadTask with a parent ReviewPackageTask
@@ -117,8 +117,8 @@ module Seeds
       create_efolderupload_failed_task(corres, parent_task)
     end
 
-    def create_correspondence_with_intake_task(user)
-      corres = create_correspondence
+    def create_correspondence_with_intake_task(user, veteran = {})
+      corres = create_correspondence(user, veteran)
       create_correspondence_intake(corres, user)
     end
 
