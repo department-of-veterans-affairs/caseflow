@@ -5,6 +5,6 @@ class ReassignOldTasksJob < ApplicationJob
   application_attr :dispatch
 
   def perform
-    Dispatch::Task.assigned_not_completed.where(type: Dispatch::Task::REASSIGN_OLD_TASKS).each(&:expire!)
+    DispatchTask.assigned_not_completed.where(type: DispatchTask::REASSIGN_OLD_TASKS).each(&:expire!)
   end
 end

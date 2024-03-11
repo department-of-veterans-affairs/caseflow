@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ClaimEstablishment < CaseflowRecord
-  belongs_to :task, class_name: "Dispatch::Task"
+  belongs_to :task, class_name: "DispatchTask"
 
   enum decision_type: {
     full_grant: 1,

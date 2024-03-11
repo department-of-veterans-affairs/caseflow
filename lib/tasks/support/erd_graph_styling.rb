@@ -151,7 +151,7 @@ module ErdGraphStyling
         fillcolor: "#00ffff", # cyan
         style: "filled"
       },
-      Dispatch::Task => {
+      DispatchTask => {
         fillcolor: "#adff2f", # greenyellow
         style: "filled"
       }

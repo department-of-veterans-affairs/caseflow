@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-class FakeTask < Dispatch::Task
+class FakeTask < DispatchTask
 end
 
-class OtherFakeTask < Dispatch::Task
+class OtherFakeTask < DispatchTask
   def self.completed_on(_date)
     []
   end
