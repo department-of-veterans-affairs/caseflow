@@ -233,12 +233,12 @@ export const assignedByColumn = () => {
 export const veteranDetails = () => {
   const dispatch = useDispatch();
 
-  const showRemovePackageModal = () => {
+  const handleRemoveClick = (task) => {
+    dispatch(setSelectedVeteranDetails(task));
     dispatch(setShowRemovePackageModal(true));
-  };
+  }
 
-  const handleVeteranDetailsClick = (task) => {
-    // console.log("task:")
+  const handleReassignClick = (task) => {
     dispatch(setSelectedVeteranDetails(task));
     dispatch(setShowReassignPackageModal(true));
   }
@@ -253,7 +253,7 @@ export const veteranDetails = () => {
       if (task.taskUrl === '/modal/reassign_package') {
         return <a
           href="#"
-          onClick={() => handleVeteranDetailsClick(task)}
+          onClick={() => handleReassignClick(task)}
           aria-label={`${task.label } Link`}
           id="task-link"
         >
@@ -262,7 +262,7 @@ export const veteranDetails = () => {
       } else if (task.taskUrl === '/modal/remove_package') {
         return <a
           href="#"
-          onClick={() => setSelectedVeteranDetails(task)}
+          onClick={() => handleRemoveClick(task)}
           aria-label={`${task.label } Link`}
           id="task-link"
         >

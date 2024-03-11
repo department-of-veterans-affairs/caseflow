@@ -211,23 +211,28 @@ class CorrespondenceController < ApplicationController
     @is_supervisor = current_user.mail_supervisor?
     mail_team_user = User.find_by(css_id: params[:user]) if params[:user].present?
     task_ids = params[:taskIds]&.split(",") if params[:taskIds].present?
+    reassign_remove_task_id = params[:taskId] if params[:taskId].present?
+    action_type = params[:taskId] if params[:userAction].present?
     tab = params[:tab] if params[:tab].present?
 
     respond_to do |format|
-      format.html { handle_html_response(mail_team_user, task_ids, tab) }
-      format.json { handle_json_response(mail_team_user, task_ids, tab) }
+      format.html { handle_html_response(mail_team_user, task_ids, reassign_remove_task_id, tab, action_type) }
+      format.json { handle_json_response(mail_team_user, task_ids, reassign_remove_task_id, tab, action_type) }
     end
   end
 
-  def handle_html_response(mail_team_user, task_ids, tab)
+  def handle_html_response(mail_team_user, task_ids, reassign_remove_task_id, tab, action_type)
     if mail_team_user && task_ids.present?
       set_banner_params(mail_team_user, task_ids.count, tab)
       update_tasks(mail_team_user, task_ids)
     end
+    if mail_team_user && reassign_remove_task_id.present? && action_type.present?
+      set_reassign_remove_banner_params(mail_team_user, task_ids, action_type)
+    end
     render "correspondence_team"
   end
 
-  def handle_json_response(mail_team_user, task_ids, tab)
+  def handle_json_response(mail_team_user, task_ids, reassign_remove_task_id, tab, action_type)
     if mail_team_user && task_ids.present?
       set_banner_params(mail_team_user, task_ids&.count, tab)
     else
@@ -247,6 +252,12 @@ class CorrespondenceController < ApplicationController
     response_type(user)
     @response_header = template[:header]
     @response_message = template[:message]
+  end
+
+  def set_reassign_remove_banner_params(user, task_id, action_type)
+    @response_header = "You have successfully reassigned a mail record for #{user.css_id}"
+    @response_message = "Please go to your individual queue to see any self assigned correspondence."
+    @response_type = "success"
   end
 
   def message_template(user, task_count, tab)
