@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require "#{Rails.root}/app/models/idt/idt_token.rb"
 
 SingleCov.covered!
 
@@ -14,8 +15,8 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
     let(:veteran_id) { appeal.sanitized_vbms_id }
     let(:user) { create(:user, css_id: "TEST_ID", full_name: "George Michael") }
     let(:token) do
-      key, token = Idt::Token.generate_one_time_key_and_proposed_token
-      Idt::Token.activate_proposed_token(key, user.css_id)
+      key, token = IdtToken.generate_one_time_key_and_proposed_token
+      IdtToken.activate_proposed_token(key, user.css_id)
       token
     end
 
@@ -207,8 +208,8 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
     let(:veteran_id) { appeal.sanitized_vbms_id }
     let(:user) { create(:user, css_id: "TEST_ID", full_name: "George Michael") }
     let(:token) do
-      key, token = Idt::Token.generate_one_time_key_and_proposed_token
-      Idt::Token.activate_proposed_token(key, user.css_id)
+      key, token = IdtToken.generate_one_time_key_and_proposed_token
+      IdtToken.activate_proposed_token(key, user.css_id)
       token
     end
 
@@ -321,8 +322,8 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
     let!(:appeal) { create(:appeal) }
     let(:params) { { format: :json, appeal_id: appeal.uuid } }
     let(:token) do
-      key, token = Idt::Token.generate_one_time_key_and_proposed_token
-      Idt::Token.activate_proposed_token(key, user.css_id)
+      key, token = IdtToken.generate_one_time_key_and_proposed_token
+      IdtToken.activate_proposed_token(key, user.css_id)
       token
     end
 
@@ -433,8 +434,8 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
     let!(:appeal) { create(:appeal) }
     let(:params) { { format: :json, appeal_id: appeal.uuid } }
     let(:token) do
-      key, token = Idt::Token.generate_one_time_key_and_proposed_token
-      Idt::Token.activate_proposed_token(key, user.css_id)
+      key, token = IdtToken.generate_one_time_key_and_proposed_token
+      IdtToken.activate_proposed_token(key, user.css_id)
       token
     end
 
@@ -519,8 +520,8 @@ RSpec.describe Idt::Api::V2::AppealsController, :postgres, :all_dbs, type: :cont
     before do
       BvaDispatch.singleton.add_user(user)
 
-      key, t = Idt::Token.generate_one_time_key_and_proposed_token
-      Idt::Token.activate_proposed_token(key, user.css_id)
+      key, t = IdtToken.generate_one_time_key_and_proposed_token
+      IdtToken.activate_proposed_token(key, user.css_id)
       request.headers["TOKEN"] = t
       create(:staff, :attorney_role, sdomainid: user.css_id)
     end
