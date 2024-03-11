@@ -24,7 +24,7 @@ class TestCredentialsController < ApplicationController
     session.to_hash.dig("user", "css_id") == LOAD_TESTING_USER
   end
 
-  # Private: Finds or creates the user for load testing, makes them a global admin and system admin
+  # Private: Finds or creates the user for load testing, makes them a system admin
   # so that it can access any area in Caseflow, and stores their information in the
   # current session. This will be reflected in the session cookie.
   def set_current_user
