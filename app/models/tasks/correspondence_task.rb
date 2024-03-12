@@ -67,6 +67,10 @@ class CorrespondenceTask < Task
     appeal
   end
 
+  def completed_by_date
+    closed_at
+  end
+
   def task_url
     "/under_construction"
   end
