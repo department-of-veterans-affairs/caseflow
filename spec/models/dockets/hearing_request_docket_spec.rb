@@ -253,7 +253,7 @@ describe HearingRequestDocket, :all_dbs do
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                     genpop: "only_genpop", judge: judge)
-        result = hrdq.send(:aod_hearing_infinite_appeals)
+        result = hrdq.send(:base_relation).always_ama_aod_hearing_original_appeals
 
         result_created_dates = result.map {|x| x.created_at.to_date}
 
@@ -276,7 +276,7 @@ describe HearingRequestDocket, :all_dbs do
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                     genpop: "only_genpop", judge: judge)
-        result = hrdq.send(:aod_hearing_value_appeals)
+        result = hrdq.send(:base_relation).ama_aod_hearing_original_appeals
         result_created_dates = result.map {|x| x.created_at.to_date}
 
         expect(result.length).to eq(expected_result.length)
@@ -297,7 +297,7 @@ describe HearingRequestDocket, :all_dbs do
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                     genpop: "only_genpop", judge: judge)
-        result = hrdq.send(:aod_hearing_value_appeals)
+        result = hrdq.send(:base_relation).ama_aod_hearing_original_appeals
         result_created_dates = result.map {|x| x.created_at.to_date}
 
         expect(result.length).to eq(expected_result.length)
@@ -320,7 +320,7 @@ describe HearingRequestDocket, :all_dbs do
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                     genpop: "only_genpop", judge: judge)
-        result = hrdq.send(:aod_hearing_infinite_appeals)
+        result = hrdq.send(:base_relation).always_ama_aod_hearing_original_appeals
         result_created_dates = result.map { |x| x.created_at.to_date }
 
         expect(result.length).to eq(expected_result.length)
@@ -347,7 +347,8 @@ describe HearingRequestDocket, :all_dbs do
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                    genpop: "only_genpop", judge: judge)
-        result = hrdq.send(:ama_affinity_hearing_appeals_genpop_value)
+        base_relation = hrdq.send(:base_relation_with_joined_most_recent_hearings_and_dist_task)
+        result = base_relation.expired_ama_affinity_cases
         result_created_dates = result.map {|x| x.created_at.to_date}
 
         expect(result.length).to eq(expected_result.length)
@@ -369,7 +370,8 @@ describe HearingRequestDocket, :all_dbs do
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                    genpop: "only_genpop", judge: judge)
-        result = hrdq.send(:ama_affinity_hearing_appeals_genpop_value)
+        base_relation = hrdq.send(:base_relation_with_joined_most_recent_hearings_and_dist_task)
+        result = base_relation.expired_ama_affinity_cases
         result_created_dates = result.map {|x| x.created_at.to_date}
 
         expect(result.length).to eq(expected_result.length)
@@ -390,7 +392,8 @@ describe HearingRequestDocket, :all_dbs do
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                    genpop: "only_genpop", judge: judge)
-        result = hrdq.send(:ama_affinity_hearing_appeals_genpop_value)
+        base_relation = hrdq.send(:base_relation_with_joined_most_recent_hearings_and_dist_task)
+        result = base_relation.expired_ama_affinity_cases
         result_created_dates = result.map {|x| x.created_at.to_date}
 
         expect(result.length).to eq(expected_result.length)
@@ -486,7 +489,8 @@ describe HearingRequestDocket, :all_dbs do
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                    genpop: "only_genpop", judge: judge)
-        result = hrdq.send(:ama_affinity_hearing_infinite_appeals)
+        base_relation = hrdq.send(:base_relation)
+        result = base_relation.most_recent_hearings.tied_to_distribution_judge(judge)
         result_created_dates = result.map {|x| x.created_at.to_date}
 
         expect(result.length).to eq(expected_result.length)
