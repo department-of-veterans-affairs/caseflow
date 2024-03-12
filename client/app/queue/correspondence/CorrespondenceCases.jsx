@@ -13,9 +13,6 @@ import CorrespondenceTableBuilder from './CorrespondenceTableBuilder';
 import Alert from '../../components/Alert';
 import Modal from 'app/components/Modal';
 import Button from '../../components/Button';
-import RadioField from '../../components/RadioField';
-import TextareaField from '../../components/TextareaField';
-import StyleGuideRadioField from '../../containers/StyleGuide/StyleGuideRadioField';
 import RadioFieldWithChildren from '../../components/RadioFieldWithChildren';
 import ReactSelectDropdown from '../../components/ReactSelectDropdown';
 
@@ -32,6 +29,10 @@ const CorrespondenceCases = (props) => {
   const [selectedRequestChoice, setSelectedRequestChoice] = useState('');
 
   const buildMailUserData = (data) => {
+    if (data === undefined) {
+      return [];
+    }
+
     return data.map((user) => {
       return {
         value: user,
@@ -156,9 +157,8 @@ const CorrespondenceCases = (props) => {
           isSupervisor={props.isSupervisor} />}
         {showReassignPackageModal &&
         <Modal
+        buttons={reviewRequestButtons}
           title={COPY.CORRESPONDENCE_CASES_REASSIGN_PACKAGE_MODAL_TITLE}
-          closeHandler={closeReassignPackageModal}
-          buttons={reviewRequestButtons}
         >
           <b>Reason for reassignment:</b>
           <p>PLACEHOLDER USER JUSTIFICATION</p>
