@@ -24,17 +24,6 @@ export const timestampColumn = (column) => {
   };
 };
 
-export const contextColumn = (column, filterOptions, narratives) => {
-  return {
-    header: column.header,
-    name: column.name,
-    cellClass: column.class,
-    valueFunction: (rowData) => rowData[column.name],
-    filterOptions,
-    tableData: narratives,
-  };
-};
-
 // a.k.a. Category column
 export const objectTypeColumn = (column, filterOptions, narratives) => {
   return {
@@ -72,15 +61,6 @@ export const eventTypeColumn = (column, filterOptions, narratives) => {
     enableFilter: true,
     label: 'Filter by event type',
     anyFiltersAreSet: true,
-  };
-};
-
-export const objectIdColumn = (column) => {
-  return {
-    header: column.header,
-    name: column.name,
-    cellClass: column.class,
-    valueFunction: (rowData) => rowData[column.name],
   };
 };
 
