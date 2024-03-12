@@ -20,8 +20,8 @@ module QueueHelpers
 
   # create correspondence for given veteran/user, or create one
   def create_correspondence(user = {}, veteran = {})
-    vet = veteran.empty? ? create_veteran : veteran
-    user = user.empty? ? User.find_by_css_id("CAVC_LIT_SUPPORT_USER6") : user
+    vet = veteran.blank? ? create_veteran : veteran
+    user = user.blank? ? User.find_by_css_id("CAVC_LIT_SUPPORT_USER6") : user
     ::Correspondence.create!(
       uuid: SecureRandom.uuid,
       portal_entry_date: Time.zone.now,

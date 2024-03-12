@@ -23,8 +23,8 @@ module Seeds
 
     # seed with values for UAT rake task correspondence.rake
     # seed without values for Demo (default)
-    def seed!(user = {}, veteran = {},)
-      return create_queue_correspondences(user, veteran) unless user.empty? && veteran.empty?
+    def seed!(user = {}, veteran = {})
+      return create_queue_correspondences(user, veteran) unless user.blank? && veteran.blank?
 
       create_queue_correspondences(mail_team_user)
       create_queue_correspondences(mail_team_superuser)
@@ -46,44 +46,44 @@ module Seeds
 
     # rubocop:disable Metrics/MethodLength
     def create_queue_correspondences(user, veteran = {})
-      # 20 Correspondences with unassigned ReviewPackageTask
-      20.times do
+      # 15 Correspondences with unassigned ReviewPackageTask
+      15.times do
         create_correspondence_with_unassigned_review_package_task(user, veteran)
       end
 
-      # 20 Correspondences with eFolderFailedUploadTask with a parent CorrespondenceIntakeTask
-      20.times do
+      # 15 Correspondences with eFolderFailedUploadTask with a parent CorrespondenceIntakeTask
+      15.times do
         create_correspondence_with_intake_and_failed_upload_task(user, veteran)
       end
 
-      # 20 Correspondences with CorrespondenceIntakeTask with a status of in_progress
-      20.times do
+      # 15 Correspondences with CorrespondenceIntakeTask with a status of in_progress
+      15.times do
         create_correspondence_with_intake_task(user, veteran)
       end
 
-      # 20 Correspondences with eFolderFailedUploadTask with a parent ReviewPackageTask
-      20.times do
+      # 15 Correspondences with eFolderFailedUploadTask with a parent ReviewPackageTask
+      15.times do
         create_correspondence_with_review_package_and_failed_upload_task(user, veteran)
       end
 
-      # 20 Correspondences with the CorrespondenceRootTask with the status of completed
-      20.times do
+      # 15 Correspondences with the CorrespondenceRootTask with the status of completed
+      15.times do
         create_correspondence_with_completed_root_task(user, veteran)
       end
 
-      # 20 Correspondences with ReviewPackageTask in progress
-      20.times do
+      # 15 Correspondences with ReviewPackageTask in progress
+      15.times do
         create_correspondence_with_review_package_task(user, veteran)
       end
 
-      # 20 Correspondences with the tasks for Action Required tab and an on_hold ReviewPackageTask as their parent
+      # 15 Correspondences with the tasks for Action Required tab and an on_hold ReviewPackageTask as their parent
       5.times do
         # below method creates 4 correspondence records
         create_correspondence_with_action_required_tasks(user, veteran)
       end
 
-      # 10 Correspondences with in-progress CorrespondenceRootTask and completed Mail Task
-      10.times do
+      # 15 Correspondences with in-progress CorrespondenceRootTask and completed Mail Task
+      15.times do
         create_correspondence_with_completed_mail_task(user, veteran)
       end
 
@@ -92,20 +92,20 @@ module Seeds
         create_correspondence_with_canceled_root_task(user, veteran)
       end
 
-      # 20 Correspondences with the tasks for CAVC and Congress Interest
-      20.times do
+      # 15 Correspondences with the tasks for CAVC and Congress Interest
+      15.times do
         create_cavc_mailtask(create_correspondence, user)
       end
 
-      20.times do
+      15.times do
         create_congress_interest_mailtask(create_correspondence, user)
       end
 
-      10.times do
+      15.times do
         create_correspondence_with_in_progress_review_package_task(user, veteran)
       end
 
-      10.times do
+      15.times do
         create_correspondence_with_in_progress_intake_task(user, veteran)
       end
     end
