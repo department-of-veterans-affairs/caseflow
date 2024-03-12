@@ -30,7 +30,7 @@ module AppealDocketed
   # Params: NONE
   #
   # Response: Send Appeal Docketed notification to appellant
-  # rubocop:disable Sytle/RedundantSelf
+  # rubocop:disable Style/RedundantSelf
   def create_tasks_on_intake_success!
     super_return_value = super
     distribution_task = tasks.of_type(:DistributionTask).first
@@ -44,7 +44,7 @@ module AppealDocketed
     end
     super_return_value
   end
-  # rubocop:enable Sytle/RedundantSelf
+  # rubocop:enable Style/RedundantSelf
 
   # original method defined in app/models/pre_docket_task.rb
 
