@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe RampRefilingIntake, :postgres do
+  include IntakeHelpers
+
   before do
     Timecop.freeze(Time.utc(2019, 1, 1, 12, 0, 0))
   end
@@ -65,7 +67,7 @@ describe RampRefilingIntake, :postgres do
     re
   end
 
-  let(:claim_id) { EndProductEstablishment.find_by(source: completed_ramp_election).reference_id }
+  let(:claim_id) { get_claim_id(completed_ramp_election) }
 
   let(:ramp_election_contentions) do
     [Generators::Contention.build(claim_id: claim_id, text: "Left knee")]
@@ -152,7 +154,7 @@ describe RampRefilingIntake, :postgres do
 
       it "if there are multiple ramp elections with multiple issues" do
         Generators::Contention.build(
-          claim_id: EndProductEstablishment.find_by(source: second_completed_ramp_election).reference_id,
+          claim_id: get_claim_id(second_completed_ramp_election),
           text: "Right elbow"
         )
         expect(subject).to be_truthy
@@ -345,8 +347,8 @@ describe RampRefilingIntake, :postgres do
         )
       end
 
-      let(:claim_id1) { EndProductEstablishment.find_by(source: ramp_election1).reference_id }
-      let(:claim_id2) { EndProductEstablishment.find_by(source: ramp_election2).reference_id }
+      let(:claim_id1) { get_claim_id(ramp_election1) }
+      let(:claim_id2) { get_claim_id(ramp_election2) }
 
       context "the EP associated with original RampElection is closed" do
         context "there are no contentions on the EP" do
@@ -476,7 +478,7 @@ describe RampRefilingIntake, :postgres do
       let!(:second_election) { second_completed_ramp_election }
       let!(:contention2) do
         Generators::Contention.build(
-          claim_id: EndProductEstablishment.find_by(source: second_election).reference_id,
+          claim_id: get_claim_id(second_election),
           text: "Right elbow"
         )
       end
