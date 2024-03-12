@@ -755,9 +755,9 @@ export const mockAffinityDaysLeversReturn = [
     unit: 'days',
     options: [
       {
-        item: 'value',
+        item: 'option_1',
         data_type: 'number',
-        value: 80,
+        value: 0,
         text: 'Attempt distribution to current judge for max of:',
         unit: 'days',
         min_value: 0,

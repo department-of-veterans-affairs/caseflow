@@ -4,6 +4,7 @@ import {
   findSelectedOption,
   hasCombinationLeverChanged,
   radioValueOptionSelected,
+  findValueOption,
   hasLeverValueChanged
 } from '../../utils';
 
@@ -182,12 +183,11 @@ export const updateLeverGroupForRadioLever = (state, action) => {
 
   const updateLeverValue = (lever) => {
     const selectedOption = findSelectedOption(lever);
-    const selectedItem = selectedOption.item;
-    const isValueOption = radioValueOptionSelected(selectedItem);
+    const isValueOption = radioValueOptionSelected(value);
+    const valueOptionValue = isValueOption ? optionValue : findValueOption(lever).value;
     const leverValue = isValueOption ? optionValue : value;
-    // const valueOptionValue = isValueOption ? optionValue : value;
-    console.debug({lever, selectedOption, isValueOption, leverValue});
     // Set all options to not selected
+
     lever.options.forEach((option) => option.selected = false);
 
     selectedOption.value = optionValue;
@@ -195,9 +195,9 @@ export const updateLeverGroupForRadioLever = (state, action) => {
 
     return {
       ...lever,
-      value: selectedItem,
-      selectedOption: leverValue,
-      // valueOptionValue
+      value: leverValue,
+      selectedOption: value,
+      valueOptionValue
     };
   };
 

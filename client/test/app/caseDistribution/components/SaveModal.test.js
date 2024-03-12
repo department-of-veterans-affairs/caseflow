@@ -1,26 +1,48 @@
 import React from 'react';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import rootReducer from 'app/caseDistribution/reducers/root';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import SaveModal from 'app/caseDistribution/components/SaveModal';
-import { Provider } from 'react-redux';
-import { createStore, applyMiddleware } from 'redux';
-import rootReducer from 'app/caseDistribution/reducers/root';
-import thunk from 'redux-thunk';
 import * as changedLevers from 'app/caseDistribution/reducers/levers/leversSelector';
-import { modalOriginalTestLevers } from '../../../data/adminCaseDistributionLevers';
+
+import {
+  mockBatchLevers,
+  mockDocketDistributionPriorLevers,
+  mockAffinityDaysLevers,
+  mockStaticLevers,
+  mockDocketTimeGoalsLevers,
+} from 'test/data/adminCaseDistributionLevers';
+
+let mockInitialLevers = {
+  static: mockStaticLevers,
+  batch: mockBatchLevers,
+  affinity: mockAffinityDaysLevers,
+  docket_distribution_prior: mockDocketDistributionPriorLevers,
+  docket_time_goal: mockDocketTimeGoalsLevers,
+};
+
 import { loadLevers, setUserIsAcdAdmin } from 'app/caseDistribution/reducers/levers/leversActions';
+
+const initialState = {
+  caseDistributionLevers: {
+    levers: mockInitialLevers,
+    isUserAcdAdmin: true,
+  }
+};
 
 describe('Save Modal', () => {
 
   const getStore = () => createStore(
     rootReducer,
+    initialState,
     applyMiddleware(thunk));
 
   afterEach(() => {
     jest.clearAllMocks();
   });
-
-  let leversOfModalOriginalTestLevers = { batch: modalOriginalTestLevers };
 
   it('renders Save Modal for Admin Users', () => {
     const store = getStore();
@@ -30,7 +52,7 @@ describe('Save Modal', () => {
     });
     let setShowModal = jest.fn().mockImplementation((display) => display);
 
-    store.dispatch(loadLevers(leversOfModalOriginalTestLevers));
+    store.dispatch(loadLevers(mockInitialLevers));
     store.dispatch(setUserIsAcdAdmin(false));
 
     render(
@@ -52,14 +74,14 @@ describe('Save Modal', () => {
       {
         title: 'Alternate Batch Size*',
         backendValue: '50',
-        value: '15',
-        data_type: 'number'
+        data_type: 'number',
+        value: '15'
       },
     ];
 
     jest.spyOn(changedLevers, 'changedLevers').mockReturnValue(changedLeversData);
 
-    store.dispatch(loadLevers(leversOfModalOriginalTestLevers));
+    store.dispatch(loadLevers(mockInitialLevers));
     store.dispatch(setUserIsAcdAdmin(false));
 
     render(
@@ -83,36 +105,39 @@ describe('Save Modal', () => {
 
     const changedLeversData = [
       {
-        title: 'AOJ AOD Affinity Days',
-        backendValue: '15',
+        title: 'AMA Hearing Case Affinity Days',
+        backendValue: '35',
         data_type: 'radio',
-        value: 'text',
+        value: 'omit',
         options: [
           {
-            item: 'text',
-            value: '14',
-            unit: 'days',
-            data_type: 'number'
-          }
-        ]
+            item: 'value',
+            value: 'omit',
+            text: 'Omit variable from distribution rules',
+            unit: '',
+            data_type: '',
+            selected: true,
+          },
+        ],
+        is_toggle_active: true,
       }
     ];
 
     jest.spyOn(changedLevers, 'changedLevers').mockReturnValue(changedLeversData);
 
     jest.mock('app/caseDistribution/utils', () => ({
-      ...jest.requireActual('app/caseDistribution/utls'),
-      findOption: jest.fn(() => {
-        return {
-          item: 'text',
-          backendValue: '10',
-          value: '12',
-          text: 'Option 1',
-          data_type: 'number'
-        };
+      ...jest.requireActual('app/caseDistribution/utils'),
+      findOption: jest.fn((lever, value) => {
+        return lever.options.find((option) => option.item === value) || null;
+      }),
+      findValueOption: jest.fn().mockImplementation((lever) => {
+        return lever.options.find((option) => option.item === 'value') || null;
+      }),
+      radioValueOptionSelected: jest.fn().mockImplementation((item) => {
+        return item === 'value';
       }),
     }));
-    store.dispatch(loadLevers(leversOfModalOriginalTestLevers));
+    store.dispatch(loadLevers(mockInitialLevers));
     store.dispatch(setUserIsAcdAdmin(false));
 
     render(
@@ -156,7 +181,7 @@ describe('Save Modal', () => {
     jest.spyOn(changedLevers, 'changedLevers').mockReturnValue(changedLeversData);
 
     jest.mock('app/caseDistribution/utils', () => ({
-      ...jest.requireActual('app/caseDistribution/utls'),
+      ...jest.requireActual('app/caseDistribution/utils'),
       findOption: jest.fn(() => {
         return {
           item: 'text',
@@ -167,7 +192,7 @@ describe('Save Modal', () => {
         };
       }),
     }));
-    store.dispatch(loadLevers(leversOfModalOriginalTestLevers));
+    store.dispatch(loadLevers(mockInitialLevers));
     store.dispatch(setUserIsAcdAdmin(false));
 
     render(
@@ -189,7 +214,7 @@ describe('Save Modal', () => {
 
     const setShowModal = jest.fn();
 
-    store.dispatch(loadLevers(leversOfModalOriginalTestLevers));
+    store.dispatch(loadLevers(changedLevers));
     store.dispatch(setUserIsAcdAdmin(false));
 
     render(
@@ -212,7 +237,7 @@ describe('Save Modal', () => {
 
     const setShowModal = jest.fn();
 
-    store.dispatch(loadLevers(leversOfModalOriginalTestLevers));
+    store.dispatch(loadLevers(mockInitialLevers));
     store.dispatch(setUserIsAcdAdmin(false));
 
     render(

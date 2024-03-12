@@ -183,7 +183,7 @@ describe('Lever reducer', () => {
       payload: {
         leverGroup: 'affinity',
         leverItem: 'ama_hearing_case_affinity_days',
-        value: 0,
+        value: '0',
         optionValue: 0
       }
     };

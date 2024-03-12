@@ -7,7 +7,7 @@ import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import cx from 'classnames';
 import COPY from '../../../COPY';
 import PropTypes from 'prop-types';
-import { findOption, findValueOption } from '../utils';
+import { findOption, findValueOption, findSelectedOption } from '../utils';
 import { changedLevers } from '../reducers/levers/leversSelector';
 
 export const SaveModal = (props) => {
@@ -32,7 +32,6 @@ export const SaveModal = (props) => {
     if ([ACD_LEVERS.omit, ACD_LEVERS.infinite].includes(value)) {
       return findOption(lever, value).text;
     }
-
     const selectedOption = findValueOption(lever);
 
     return `${selectedOption.text} ${value} ${selectedOption.unit}`;
