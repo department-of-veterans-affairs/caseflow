@@ -311,6 +311,7 @@ describe DecisionDocument, :postgres do
 
         context "when already processed" do
           let(:processed_at) { 2.hours.ago }
+          let(:uploaded_to_vbms_at) { 2.hours.ago }
 
           it "does nothing" do
             subject
@@ -364,18 +365,26 @@ describe DecisionDocument, :postgres do
         expect(decision_document.reload.error).to eq(nil)
       end
 
-      it "runs establish on the EPE if it is present and has not yet been established" do
-        epe.update(source_id: decision_document.id, source_type: "DecisionDocument")
-        allow(epe).to receive(:establish!).and_return(true)
-        subject
-        expect(decision_document.reload.error).to be_nil
+      context "the EPE is present" do
+        before do
+          epe.update(source_id: decision_document.id, source_type: "DecisionDocument")
+        end
+        it "runs establish on the EPE" do
+          allow(epe).to receive(:establish!).and_return(true)
+          subject
+          expect(decision_document.reload.error).to be_nil
+        end
       end
 
-      it "catches error and does not clear" do
-        epe.update(source_id: decision_document.id, source_type: "DecisionDocument")
-        allow_any_instance_of(EndProductEstablishment).to receive(:establish!).and_raise(StandardError, "Some error")
-        subject
-        expect(decision_document.error).to eq("Some error")
+      context "an error occurs" do
+        before do
+          epe.update(source_id: decision_document.id, source_type: "DecisionDocument")
+        end
+        it "catches error and does not clear" do
+          allow_any_instance_of(EndProductEstablishment).to receive(:establish!).and_raise(StandardError, "Some error")
+          subject
+          expect(decision_document.error).to eq("Some error")
+        end
       end
     end
   end

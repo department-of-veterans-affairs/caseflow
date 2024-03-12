@@ -76,8 +76,7 @@ class DecisionDocument < CaseflowRecord
 
   # rubocop:disable Metrics/CyclomaticComplexity
   def process!(mail_package)
-    # return if processed?
-    return if !valid_processed
+    return if valid_processed?
 
     fail NotYetSubmitted unless submitted_and_ready?
 
@@ -224,7 +223,7 @@ class DecisionDocument < CaseflowRecord
     Rails.logger.info(info_message + " ID: " + uuid)
   end
 
-  def valid_processed
+  def valid_processed?
     begin
       if processed? && uploaded_to_vbms_at.present?
         if end_product_establishments.present?
