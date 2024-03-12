@@ -114,6 +114,18 @@ const CorrespondenceTableBuilder = (props) => {
     setSearchValue('');
   };
 
+  const filterTasks = (tasks) => {
+    {console.log("Filtered tasks:", tasks.filter(task => taskMatchesSearch(task, searchValue)))}
+    return tasks.filter(task => taskMatchesSearch(task, searchValue));
+  };
+
+  const taskMatchesSearch = (task, searchValue) => {
+    return (
+      task.veteranDetails.toLowerCase().includes(searchValue.toLowerCase()) ||
+      task.notes.toLowerCase().includes(searchValue.toLowerCase())
+    );
+  };
+
   const queueConfig = () => {
     const { config } = props;
 
@@ -138,8 +150,7 @@ const CorrespondenceTableBuilder = (props) => {
       [QUEUE_CONFIG.COLUMNS.VA_DATE_OF_RECEIPT.name]: vaDor(tasks, filterOptions),
       [QUEUE_CONFIG.COLUMNS.NOTES.name]: notes(),
       [QUEUE_CONFIG.COLUMNS.CHECKBOX_COLUMN.name]: checkboxColumn(handleCheckboxChange),
-      [QUEUE_CONFIG.COLUMNS.ACTION_TYPE.name]: actionType(),
-      [QUEUE_CONFIG.COLUMNS.SEARCH_QUERY.name]: searchQuery(searchValue),
+      [QUEUE_CONFIG.COLUMNS.ACTION_TYPE.name]: actionType()
     };
 
     return functionForColumn[column.name];
@@ -258,10 +269,11 @@ const CorrespondenceTableBuilder = (props) => {
               />
             </div>
           </div>
+
           <QueueTable
             key={tabConfig.name}
             columns={columnsFromConfig(config, tabConfig, tasks)}
-            rowObjects={tasks}
+            rowObjects={filterTasks(tasks)}
             getKeyForRow={(_rowNumber, task) => task.uniqueId}
             casesPerPage={config.tasks_per_page}
             numberOfPages={tabConfig.task_page_count}
