@@ -670,10 +670,12 @@ module Seeds
             title: Constants.DISTRIBUTION.days_before_goal_due_for_distribution,
             description: "",
             data_type: Constants.ACD_LEVERS.data_types.number,
-            value: nil,
+            value: "0",
             unit: "days",
             min_value: 0,
             max_value: nil,
+            lever_group: '',
+            lever_group_order: 99999,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.proportion],
           },
         ]
