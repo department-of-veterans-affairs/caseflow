@@ -228,6 +228,7 @@ class CorrespondenceController < ApplicationController
     end
     if mail_team_user && reassign_remove_task_id.present? && action_type.present?
       set_reassign_remove_banner_params(mail_team_user, task_ids, action_type)
+      update_reassign_task(mail_team_user, reassign_remove_task_id)
     end
     render "correspondence_team"
   end
@@ -245,6 +246,15 @@ class CorrespondenceController < ApplicationController
 
     tasks = Task.where(id: task_ids)
     tasks.update_all(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "assigned")
+  end
+
+  def update_reassign_task(mail_team_user, task_id)
+    return unless @response_type == "success"
+
+    task = Task.find_by(id: task_id)
+    task.update(completed_by_id: current_user, closed_at: Time.zone.now, status: "completed")
+    parent_task = ReviewPackageTask.find(task.parent_id)
+    parent_task.update(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "assigned")
   end
 
   def set_banner_params(user, task_count, tab)
