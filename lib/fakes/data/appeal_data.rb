@@ -2,9 +2,6 @@
 
 # rubocop:disable Metrics/ModuleLength
 module Fakes::Data::AppealData
-  # rubocop:disable Metrics/MethodLength
-  # rubocop:disable Metrics/AbcSize
-
   def self.static_reader_documents
     [
       Generators::Document.build(vbms_document_id: 1, type: "NOD", category_procedural: true),
@@ -122,8 +119,5 @@ module Fakes::Data::AppealData
       "remands_ready_for_claims_establishment" => dispatch_documents
     }
   end
-
-  # rubocop:enable Metrics/MethodLength
-  # rubocop:enable Metrics/AbcSize
 end
 # rubocop:enable Metrics/ModuleLength
