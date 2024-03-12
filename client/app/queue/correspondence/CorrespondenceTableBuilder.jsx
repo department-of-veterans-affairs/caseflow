@@ -21,8 +21,7 @@ import {
   taskColumn,
   taskCompletedDateColumn,
   vaDor,
-  veteranDetails,
-  searchQuery
+  veteranDetails
 } from '../components/TaskTableColumns';
 
 import { tasksWithCorrespondenceFromRawTasks } from '../utils';
@@ -31,7 +30,6 @@ import COPY from '../../../COPY';
 import QUEUE_CONFIG from '../../../constants/QUEUE_CONFIG';
 import { css } from 'glamor';
 import { isActiveOrganizationVHA } from '../selectors';
-import ApiUtil from '../../util/ApiUtil';
 
 const rootStyles = css({
   '.usa-alert + &': {
@@ -107,7 +105,6 @@ const CorrespondenceTableBuilder = (props) => {
 
   const handleSearchChange = (value) => {
     setSearchValue(value);
-
   };
 
   const handleClearSearch = () => {
@@ -263,7 +260,7 @@ const CorrespondenceTableBuilder = (props) => {
                 title="Filter table by any of its columns"
                 isSearchAhead
                 placeholder="Type to filter..."
-                onChange={handleSearchChange}
+                onChange={(value) => handleSearchChange(value)}
                 onClearSearch={handleClearSearch}
                 value={searchValue}
               />
