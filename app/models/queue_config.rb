@@ -3,6 +3,7 @@
 # A DTO (data transfer object) class that stipulates all queue table attributes and tasks.
 # This configuration and sets of tasks are used on the frontend to build and display an
 # organization's or user's queue.
+require "stackprof"
 class QueueConfig
   include ActiveModel::Model
 
@@ -56,12 +57,39 @@ class QueueConfig
   def serialized_tasks_for_columns(tasks, columns)
     return [] if tasks.empty?
 
-    primed_tasks = AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
+    puts "-------------------------------------------------- IN serialize tasks for columns ----------------------------------------------"
+    start_time1 = Time.zone.now
+    primed_tasks = nil
+    StackProf.run(mode: :wall, out: "eager_load_legacy.dump") do
+      primed_tasks = AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
+    end
+    end_time1 = Time.zone.now
+    puts "Eager load took: #{(end_time1 - start_time1) * 1000}"
+    puts tasks.to_sql
+    byebug
 
-    WorkQueue::TaskColumnSerializer.new(
-      primed_tasks,
-      is_collection: true,
-      params: { columns: columns }
-    ).serializable_hash[:data]
+    start_time2 = Time.zone.now
+    serialized_tasks = nil
+    # tasks = task_pager
+    #   .paged_tasks
+    #   .select(
+    #     "tasks.*,
+    #     #{CachedAppeal.table_name}.power_of_attorney_name,
+    #     #{CachedAppeal.table_name}.hearing_request_type,
+    #     #{CachedAppeal.table_name}.former_travel"
+    #   )
+    StackProf.run(mode: :wall, out: "serialize_tasks_column_serializer.dump") do
+      serialized_tasks = WorkQueue::TaskColumnSerializer.new(
+        primed_tasks,
+        is_collection: true,
+        params: { columns: columns }
+      ).serializable_hash[:data]
+    end
+    end_time2 = Time.zone.now
+    puts "Serialization took: #{(end_time2 - start_time2) * 1000}"
+
+    byebug
+
+    serialized_tasks
   end
 end

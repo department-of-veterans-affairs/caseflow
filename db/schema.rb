@@ -699,6 +699,7 @@ ActiveRecord::Schema.define(version: 2024_02_15_212016) do
     t.string "genpop_query"
     t.boolean "priority"
     t.datetime "ready_at"
+    t.boolean "sct_appeal"
     t.integer "task_id"
     t.datetime "updated_at"
     t.index ["case_id"], name: "index_distributed_cases_on_case_id", unique: true

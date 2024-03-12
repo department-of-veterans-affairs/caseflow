@@ -41,9 +41,12 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
     Constants.USER_STATUSES.inactive.to_sym => Constants.USER_STATUSES.inactive
   }
 
-  def username
-    css_id
-  end
+  alias_attribute :name, :css_id
+  alias_attribute :username, :css_id
+
+  # def username
+  #   css_id
+  # end
 
   def roles
     (self[:roles] || []).inject([]) do |result, role|

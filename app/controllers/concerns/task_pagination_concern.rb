@@ -5,6 +5,8 @@
 #  * total_items
 #  * allowed_params
 #
+
+require "stackprof"
 module TaskPaginationConcern
   extend ActiveSupport::Concern
 
@@ -31,11 +33,26 @@ module TaskPaginationConcern
   end
 
   def json_tasks(tasks)
-    tasks = AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
+    puts "-------------------------------------------------- IN JSON TASKS----------------------------------------------"
+    start_time1 = Time.zone.now
+    StackProf.run(mode: :wall, out: "eager_load_legacy.dump") do
+      tasks = AppealRepository.eager_load_legacy_appeals_for_tasks(tasks)
+    end
+    end_time1 = Time.zone.now
+    puts "Eager load took: #{(start_time1 - end_time1) * 1000}"
     params = { user: current_user }
 
-    AmaAndLegacyTaskSerializer.new(
-      tasks: tasks, params: params, ama_serializer: WorkQueue::TaskSerializer
-    ).call
+    start_time2 = Time.zone.now
+    serialized_tasks = nil
+    StackProf.run(mode: :wall, out: "serialize_tasks.dump") do
+      serialized_tasks = AmaAndLegacyTaskSerializer.new(
+        tasks: tasks, params: params, ama_serializer: WorkQueue::TaskSerializer
+      ).call
+    end
+    end_time2 = Time.zone.now
+    puts "Serialization took: #{(start_time2 - end_time2) * 1000}"
+
+    byebug
+    serialized_tasks
   end
 end
