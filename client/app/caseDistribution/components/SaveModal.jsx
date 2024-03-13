@@ -7,7 +7,7 @@ import ACD_LEVERS from '../../../constants/ACD_LEVERS';
 import cx from 'classnames';
 import COPY from '../../../COPY';
 import PropTypes from 'prop-types';
-import { findOption, findValueOption, findSelectedOption } from '../utils';
+import { findOption, findValueOption } from '../utils';
 import { changedLevers } from '../reducers/levers/leversSelector';
 
 export const SaveModal = (props) => {

@@ -96,7 +96,66 @@ describe('Save Modal', () => {
     }
   });
 
-  it('displays the changed levers for Affinity Days', async () => {
+  it('displays the changed levers for Affinity Days when infinite radio option is chosen', async () => {
+    const store = getStore();
+
+    const setShowModal = jest.fn();
+
+    const handleConfirmButton = jest.fn();
+
+    const changedLeversData = [
+      {
+        title: 'AMA Hearing Case Affinity Days',
+        backendValue: '21',
+        data_type: 'radio',
+        value: 'infinite',
+        options: [
+          {
+            item: 'value',
+            value: '21',
+            text: 'Attempt distribution to current judge for max of:',
+            unit: '',
+            data_type: '',
+          },
+          {
+            item: 'infinite',
+            value: 'infinite',
+            text: 'Always distribute to current judge',
+            unit: '',
+            data_type: '',
+            selected: true,
+          },
+        ],
+        is_toggle_active: true,
+      }
+    ];
+
+    jest.spyOn(changedLevers, 'changedLevers').mockReturnValue(changedLeversData);
+
+    jest.mock('app/caseDistribution/utils', () => ({
+      ...jest.requireActual('app/caseDistribution/utils'),
+      findOption: jest.fn((lever, value) => {
+        return lever.options.find((option) => option.item === value) || null;
+      }),
+    }));
+    store.dispatch(loadLevers(mockInitialLevers));
+    store.dispatch(setUserIsAcdAdmin(false));
+
+    render(
+      <Provider store={store}>
+        <SaveModal setShowModal={setShowModal} handleConfirmButton={handleConfirmButton} />
+      </Provider>
+    );
+    // This has been changed from value to omit
+    for (const leverData of changedLeversData) {
+      expect(screen.getByText(leverData.title)).toBeInTheDocument();
+      expect(document.querySelector(`#${leverData.item}-title-in-modal`)).toHaveTextContent(leverData.title);
+      expect(document.querySelector(`#${leverData.item}-previous-value`)).toHaveTextContent(leverData.backendValue);
+      expect(document.querySelector(`#${leverData.item}-new-value`)).toHaveTextContent(leverData.options[1].text);
+    }
+  });
+
+  it('displays the changed levers for Affinity Days when omit radio option is chosen', async () => {
     const store = getStore();
 
     const setShowModal = jest.fn();
@@ -112,6 +171,13 @@ describe('Save Modal', () => {
         options: [
           {
             item: 'value',
+            value: '1',
+            text: 'Literally anything',
+            unit: '',
+            data_type: '',
+          },
+          {
+            item: 'omit',
             value: 'omit',
             text: 'Omit variable from distribution rules',
             unit: '',
@@ -130,12 +196,6 @@ describe('Save Modal', () => {
       findOption: jest.fn((lever, value) => {
         return lever.options.find((option) => option.item === value) || null;
       }),
-      findValueOption: jest.fn().mockImplementation((lever) => {
-        return lever.options.find((option) => option.item === 'value') || null;
-      }),
-      radioValueOptionSelected: jest.fn().mockImplementation((item) => {
-        return item === 'value';
-      }),
     }));
     store.dispatch(loadLevers(mockInitialLevers));
     store.dispatch(setUserIsAcdAdmin(false));
@@ -145,16 +205,16 @@ describe('Save Modal', () => {
         <SaveModal setShowModal={setShowModal} handleConfirmButton={handleConfirmButton} />
       </Provider>
     );
-
+    // This has been changed from value to omit
     for (const leverData of changedLeversData) {
       expect(screen.getByText(leverData.title)).toBeInTheDocument();
       expect(document.querySelector(`#${leverData.item}-title-in-modal`)).toHaveTextContent(leverData.title);
       expect(document.querySelector(`#${leverData.item}-previous-value`)).toHaveTextContent(leverData.backendValue);
-      expect(document.querySelector(`#${leverData.item}-new-value`)).toHaveTextContent(leverData.options[0].value);
+      expect(document.querySelector(`#${leverData.item}-new-value`)).toHaveTextContent(leverData.options[1].text);
     }
   });
 
-  it('displays the changed levers for Affinity Days when a radio option is chosen', async () => {
+  it('displays the changed levers for Affinity Days when combination radio option is chosen', async () => {
     const store = getStore();
 
     const setShowModal = jest.fn();
@@ -163,18 +223,28 @@ describe('Save Modal', () => {
 
     const changedLeversData = [
       {
-        title: 'AOJ AOD Affinity Days',
+        title: 'AMA Hearing Case Affinity Days',
         backendValue: '35',
         data_type: 'radio',
-        value: 'omit',
+        value: 80,
         options: [
           {
-            item: 'omit',
-            text: 'Omit variable from distribution rules',
+            item: 'infinite',
+            value: 'infinite',
+            text: 'Always distribute to current judge',
             unit: '',
-            data_type: ''
-          }
-        ]
+            data_type: '',
+          },
+          {
+            item: 'value',
+            data_type: 'number',
+            value: 80,
+            text: 'Attempt distribution to current judge for max of:',
+            unit: 'days',
+            selected: true,
+          },
+        ],
+        is_toggle_active: true,
       }
     ];
 
@@ -182,14 +252,8 @@ describe('Save Modal', () => {
 
     jest.mock('app/caseDistribution/utils', () => ({
       ...jest.requireActual('app/caseDistribution/utils'),
-      findOption: jest.fn(() => {
-        return {
-          item: 'text',
-          backendValue: '10',
-          value: '12',
-          text: 'Option 1',
-          data_type: 'number'
-        };
+      findOption: jest.fn((lever, value) => {
+        return lever.options.find((option) => option.item === value) || null;
       }),
     }));
     store.dispatch(loadLevers(mockInitialLevers));
@@ -205,7 +269,7 @@ describe('Save Modal', () => {
       expect(screen.getByText(leverData.title)).toBeInTheDocument();
       expect(document.querySelector(`#${leverData.item}-title-in-modal`)).toHaveTextContent(leverData.title);
       expect(document.querySelector(`#${leverData.item}-previous-value`)).toHaveTextContent(leverData.backendValue);
-      expect(document.querySelector(`#${leverData.item}-new-value`)).toHaveTextContent(leverData.options[0].text);
+      expect(document.querySelector(`#${leverData.item}-new-value`)).toHaveTextContent(leverData.options[1].text);
     }
   });
 
@@ -214,7 +278,7 @@ describe('Save Modal', () => {
 
     const setShowModal = jest.fn();
 
-    store.dispatch(loadLevers(changedLevers));
+    store.dispatch(loadLevers(mockInitialLevers));
     store.dispatch(setUserIsAcdAdmin(false));
 
     render(
