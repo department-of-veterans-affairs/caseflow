@@ -17,11 +17,11 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     RequestStore.store[:current_user] = User.system_user
     ama_appeals_start = Time.zone.now
     cache_ama_appeals
-    metrics_report_time_segment(segment: "cache_ama_appeals", start_time: ama_appeals_start)
+    metrics_service_report_time_segment(segment: "cache_ama_appeals", start_time: ama_appeals_start)
 
     legacy_appeals_start = Time.zone.now
     cache_legacy_appeals
-    metrics_report_time_segment(segment: "cache_legacy_appeals", start_time: legacy_appeals_start)
+    metrics_service_report_time_segment(segment: "cache_legacy_appeals", start_time: legacy_appeals_start)
 
     record_success_in_metrics
   rescue StandardError => error
@@ -53,11 +53,11 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
     cache_postgres_data_start = Time.zone.now
     cache_legacy_appeal_postgres_data(legacy_appeals)
-    metrics_report_time_segment(segment: "cache_legacy_appeal_postgres_data", start_time: cache_postgres_data_start)
+    metrics_service_report_time_segment(segment: "cache_legacy_appeal_postgres_data", start_time: cache_postgres_data_start)
 
     cache_vacols_data_start = Time.zone.now
     cache_legacy_appeal_vacols_data(all_vacols_ids)
-    metrics_report_time_segment(segment: "cache_legacy_appeal_vacols_data", start_time: cache_vacols_data_start)
+    metrics_service_report_time_segment(segment: "cache_legacy_appeal_vacols_data", start_time: cache_vacols_data_start)
   end
 
   def cache_legacy_appeal_postgres_data(legacy_appeals)

@@ -52,7 +52,7 @@ class StatsCollectorJob < CaseflowJob
     rescue StandardError => error
       log_error(collector_name, error)
     ensure
-      metrics_report_time_segment(segment: "#{METRIC_GROUP_NAME}.#{collector_name}", start_time: start_time)
+      metrics_service_report_time_segment(segment: "#{METRIC_GROUP_NAME}.#{collector_name}", start_time: start_time)
     end
   end
 
