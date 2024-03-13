@@ -10,7 +10,7 @@ module Seeds
 
     def initialize
       initial_id_values
-      RequestStore[:current_user] = User.find_by_css_id("JOLLY_POSTMAN")
+      RequestStore[:current_user] = User.find_by_css_id("JOLLY_POSTMAN") if RequestStore[:current_user].blank?
     end
 
     def mail_team_user
@@ -24,6 +24,7 @@ module Seeds
     # seed with values for UAT rake task correspondence.rake
     # seed without values for Demo (default)
     def seed!(user = {}, veteran = {})
+
       return create_queue_correspondences(user, veteran) unless user.blank? && veteran.blank?
 
       create_queue_correspondences(mail_team_user)

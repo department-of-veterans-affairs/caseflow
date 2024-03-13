@@ -143,18 +143,27 @@ namespace :correspondence do
 
   desc "create correspondence data in UAT given a veteran file number"
   task :create_correspondence_data, [] => :environment do |_|
-    STDOUT.puts("This script will create 20 new correspondence and
-      correspondence_document for a veteran based off their file number")
-    STDOUT.puts("Enter the veteran's file number")
-    veteran_file_number = STDIN.gets.chomp
+    catch(:error) do
+      throw :error, STDOUT.puts("Please add a user to the request store") if RequestStore[:current_user].blank?
+      STDOUT.puts("This script will create correspondences from queue_correspondences.rb and\n
+        multi_correspondences.rb for a veteran based off their file number\n
+        These will be assigned to RequstStore[:current_user] (currently
+          #{RequestStore[:current_user].css_id})")
+      STDOUT.puts("Enter the veteran's file number")
+      veteran_file_number = STDIN.gets.chomp
 
-    if veteran_file_number.to_i.is_a? Integer
-      STDOUT.puts("Creating correspondences")
-      Rake.application.invoke_task("correspondence:create_correspondence[#{veteran_file_number}]")
-      Rake::Task["correspondence:create_correspondence"].reenable
-      STDOUT.puts("Correspondences created!")
-    else
-      STDOUT.puts("Improper input...")
+      vet = Veteran.find_by_file_number_or_ssn(veteran_file_number)
+      throw :error, STDOUT.puts("Veteran cannot be found") if vet.blank?
+
+      STDOUT.puts("Running multi_correspondences.rb")
+      Seeds::MultiCorrespondences.new.seed!(RequestStore[:current_user], vet)
+
+      STDOUT.puts("Running queue_correspondences.rb")
+      Seeds::QueueCorrespondences.new.seed!(RequestStore[:current_user], vet)
+      STDOUT.puts("Success!! Correspondences have been seeded. Well done friend!")
+      # Rake.application.invoke_task("correspondence:create_correspondence[#{veteran_file_number}]")
+      # Rake::Task["correspondence:create_correspondence"].reenable
+      # STDOUT.puts("Correspondences created!")
     end
   end
 
