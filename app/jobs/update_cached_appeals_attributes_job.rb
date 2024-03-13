@@ -121,7 +121,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     # * (Too little Postgres data cached) https://app.datadoghq.com/monitors/41421962
     # * (Too little VACOLS data cached) https://app.datadoghq.com/monitors/41234223
     # * (Job has not succeeded in the past day) https://app.datadoghq.com/monitors/41423568
-    record_error_in_metrics
+    record_error_in_metrics_service
 
     metrics_service_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   end
@@ -134,7 +134,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     )
   end
 
-  def record_error_in_metrics
+  def record_error_in_metrics_service
     MetricsService.increment_counter(
       app_name: APP_NAME,
       metric_group: METRIC_GROUP_NAME,
