@@ -4,7 +4,7 @@ module CollectCustomMetrics
   extend ActiveSupport::Concern
 
   included do
-    before_action :collect_data_dog_metrics
+    before_action :collect_custom_metrics
   end
 
   def collect_custom_metrics
