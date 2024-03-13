@@ -9,8 +9,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 4d880808af3919df4030d19ba014046f32c13e0d
-  ref: 4d880808af3919df4030d19ba014046f32c13e0d
+  revision: 944965d4acad82b758f57cb23dedbe4ac4c922e8
+  ref: 944965d4acad82b758f57cb23dedbe4ac4c922e8
   specs:
     caseflow (0.4.8)
       aws-sdk (~> 2.10)
