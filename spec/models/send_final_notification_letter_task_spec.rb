@@ -75,13 +75,6 @@ describe SendFinalNotificationLetterTask do
         instructions: "45 Day Hold Period"
       )
     end
-    let(:post_task_timer) do
-      TimedHoldTask.create_from_parent(
-        post_initial_task,
-        days_on_hold: days_on_hold,
-        instructions: "45 Days Hold Period"
-      )
-    end
 
     let(:final_letter_task) do
       SendFinalNotificationLetterTask.create!(
