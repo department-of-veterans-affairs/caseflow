@@ -212,7 +212,7 @@ class CorrespondenceController < ApplicationController
     mail_team_user = User.find_by(css_id: params[:user]) if params[:user].present?
     task_ids = params[:taskIds]&.split(",") if params[:taskIds].present?
     reassign_remove_task_id = params[:taskId] if params[:taskId].present?
-    action_type = params[:taskId] if params[:userAction].present?
+    action_type = params[:userAction] if params[:userAction].present?
     tab = params[:tab] if params[:tab].present?
 
     respond_to do |format|
@@ -226,9 +226,13 @@ class CorrespondenceController < ApplicationController
       set_banner_params(mail_team_user, task_ids.count, tab)
       update_tasks(mail_team_user, task_ids)
     end
-    if mail_team_user && reassign_remove_task_id.present? && action_type.present?
-      set_reassign_remove_banner_params(mail_team_user, task_ids, action_type)
-      update_reassign_task(mail_team_user, reassign_remove_task_id)
+    if reassign_remove_task_id.present? && action_type.present?
+
+      task = Task.find(reassign_remove_task_id) unless action_type == "approve"
+      mail_team_user = task.assigned_by unless task.nil?
+      output = update_reassign_task(mail_team_user, reassign_remove_task_id)
+      set_reassign_remove_banner_params(mail_team_user, action_type, output)
+
     end
     render "correspondence_team"
   end
@@ -251,10 +255,15 @@ class CorrespondenceController < ApplicationController
   def update_reassign_task(mail_team_user, task_id)
     return unless @response_type == "success"
 
-    task = Task.find_by(id: task_id)
-    task.update(completed_by_id: current_user, closed_at: Time.zone.now, status: "completed")
-    parent_task = ReviewPackageTask.find(task.parent_id)
-    parent_task.update(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "assigned")
+    begin
+      task = Task.find_by(id: task_id)
+      # task.update(completed_by_id: current_user, closed_at: Time.zone.now, status: "completed")
+      # parent_task = ReviewPackageTask.find(task.parent_id)
+      # parent_task.update(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "assigned")
+      return "error free"
+    end
+  rescue Exception => error
+    return error.message
   end
 
   def set_banner_params(user, task_count, tab)
@@ -264,9 +273,16 @@ class CorrespondenceController < ApplicationController
     @response_message = template[:message]
   end
 
-  def set_reassign_remove_banner_params(user, task_id, action_type)
-    @response_header = "You have successfully reassigned a mail record for #{user.css_id}"
-    @response_message = "Please go to your individual queue to see any self assigned correspondence."
+  def set_reassign_remove_banner_params(user, action_type, error)
+
+    if error
+      @response_header = "Package request for #{user.css_id} could not be #{action_type}"
+      @response_message = "Please try again at a later time or contact the Help Desk."
+      @response_type = "error"
+    end
+    template = reassign_message_template(user)
+    @response_header = template[:header]
+    @response_message = template[:message]
     @response_type = "success"
   end
 
@@ -292,6 +308,15 @@ class CorrespondenceController < ApplicationController
     end
   end
 
+  def reassign_message_template(user)
+    success_header_reassigned = "You have successfully reassigned a mail record for #{user.css_id}."
+    success_header_rejected = "You have successfully rejected a package request for #{user.css_id}"
+
+    {
+      header: success_header_reassigned,
+      message: success_header_rejected
+    }
+  end
   def response_type(user)
     @response_type = (user.tasks.length < MAX_QUEUED_ITEMS) ? "success" : "warning"
   end
