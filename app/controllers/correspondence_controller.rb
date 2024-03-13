@@ -260,10 +260,9 @@ class CorrespondenceController < ApplicationController
       # task.update(completed_by_id: current_user, closed_at: Time.zone.now, status: "completed")
       # parent_task = ReviewPackageTask.find(task.parent_id)
       # parent_task.update(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "assigned")
-      return "error free"
     end
-  rescue Exception => error
-    return error.message
+  rescue StandardError => error
+    error.message
   end
 
   def set_banner_params(user, task_count, tab)
@@ -280,7 +279,7 @@ class CorrespondenceController < ApplicationController
       @response_message = "Please try again at a later time or contact the Help Desk."
       @response_type = "error"
     end
-    template = reassign_message_template(user)
+    template = reassign_message_template(user, action_type)
     @response_header = template[:header]
     @response_message = template[:message]
     @response_type = "success"
@@ -308,14 +307,23 @@ class CorrespondenceController < ApplicationController
     end
   end
 
-  def reassign_message_template(user)
-    success_header_reassigned = "You have successfully reassigned a mail record for #{user.css_id}."
+  def reassign_message_template(user, action_type)
+    success_header_reassigned = "You have successfully reassigned a mail record for #{user.css_id}"
+    success_message_reassigned = "Please go to your individual queue to see any self assigned correspondence."
     success_header_rejected = "You have successfully rejected a package request for #{user.css_id}"
-
-    {
-      header: success_header_reassigned,
-      message: success_header_rejected
-    }
+    success_message_rejected = "The package will be re-assigned to the user that sent the request."
+    case action_type
+    when "approve"
+      {
+        header: success_header_reassigned,
+        message: success_message_reassigned
+      }
+    when "reject"
+      {
+        header: success_header_rejected,
+        message: success_message_rejected
+      }
+    end
   end
   def response_type(user)
     @response_type = (user.tasks.length < MAX_QUEUED_ITEMS) ? "success" : "warning"
