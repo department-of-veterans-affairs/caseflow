@@ -6,6 +6,7 @@ import TranscriptionDetailsInputs from './TranscriptionDetailsInputs';
 import TranscriptionProblemInputs from './TranscriptionProblemInputs';
 import TranscriptionRequestInputs from './TranscriptionRequestInputs';
 import TranscriptionFilesTable from './TranscriptionFilesTable';
+import { genericRow } from './style';
 
 // TO-DO: Replace hard-coded recordings
 const RECORDINGS = [
@@ -116,34 +117,38 @@ const RECORDINGS = [
 ];
 
 export const TranscriptionFormSection = (
-  { hearing, transcription, readOnly, update }
+  { hearing, transcription, readOnly, update, isLegacy }
 ) => (
   <ContentSection header="Transcription Details">
-    <TranscriptionDetailsInputs
-      title="Transcription Details"
-      transcription={transcription}
-      update={(values) => update('transcription', values)}
-      readOnly={readOnly}
-    />
-    <div className="cf-help-divider" />
+    {!isLegacy && (
+      <>
+        <TranscriptionDetailsInputs
+          title="Transcription Details"
+          transcription={transcription}
+          update={(values) => update('transcription', values)}
+          readOnly={readOnly}
+        />
+        <div className="cf-help-divider" />
 
-    <h3>Transcription Problem</h3>
-    <TranscriptionProblemInputs
-      transcription={transcription}
-      update={(values) => update('transcription', values)}
-      readOnly={readOnly}
-    />
-    <div className="cf-help-divider" />
+        <h3>Transcription Problem</h3>
+        <TranscriptionProblemInputs
+          transcription={transcription}
+          update={(values) => update('transcription', values)}
+          readOnly={readOnly}
+        />
+        <div className="cf-help-divider" />
 
-    <h3>Transcription Request</h3>
-    <TranscriptionRequestInputs
-      hearing={hearing}
-      update={(values) => update('hearing', values)}
-      readOnly={readOnly}
-    />
-    <div className="cf-help-divider" />
+        <h3>Transcription Request</h3>
+        <TranscriptionRequestInputs
+          hearing={hearing}
+          update={(values) => update('hearing', values)}
+          readOnly={readOnly}
+        />
+        <div className="cf-help-divider" />
+      </>
+    )}
 
-    <h3>Transcription Files</h3>
+    <h3 {...(isLegacy && { ...genericRow })}>Transcription Files</h3>
     <TranscriptionFilesTable
       recordings={RECORDINGS}
       hearing={hearing}
@@ -155,5 +160,6 @@ TranscriptionFormSection.propTypes = {
   update: PropTypes.func,
   hearing: PropTypes.object,
   readOnly: PropTypes.bool,
-  transcription: PropTypes.object
+  transcription: PropTypes.object,
+  isLegacy: PropTypes.bool
 };

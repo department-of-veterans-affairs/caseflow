@@ -117,14 +117,14 @@ const DetailsForm = (props) => {
         initialRepresentativeTz={initialHearing?.representativeTz}
       />
 
-      {!isLegacy && (
-        <TranscriptionFormSection
-          hearing={hearing}
-          readOnly={readOnly}
-          transcription={hearing.transcription}
-          update={update}
-        />
-      )}
+      <TranscriptionFormSection
+        hearing={hearing}
+        readOnly={readOnly}
+        transcription={hearing.transcription}
+        update={update}
+        isLegacy={isLegacy}
+      />
+
     </React.Fragment>
   );
 };
