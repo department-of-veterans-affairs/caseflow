@@ -11,12 +11,12 @@ ApiUtil.get = jest.fn().mockResolvedValue(() => new Promise((resolve) => resolve
 
 jest.mock('../../../app/util/ApiUtil');
 jest.mock('../../../app/util/Metrics', () => ({
-    storeMetrics: jest.fn().mockResolvedValue(),
-    recordAsyncMetrics: jest.fn().mockResolvedValue(),
+  storeMetrics: jest.fn().mockResolvedValue(),
+  recordAsyncMetrics: jest.fn().mockResolvedValue(),
 }));
 jest.mock('pdfjs-dist', () => ({
-    getDocument: jest.fn().mockResolvedValue(),
-    GlobalWorkerOptions: jest.fn().mockResolvedValue(),
+  getDocument: jest.fn().mockResolvedValue(),
+  GlobalWorkerOptions: jest.fn().mockResolvedValue(),
 }));
 
 const metricArgs = (featureValue, documentSource) => {
@@ -60,92 +60,92 @@ const storeMetricsError = {
 
 describe('PdfFile', () => {
 
-    let wrapper;
+  let wrapper;
 
-    describe('getDocument', () => {
+  describe('getDocument', () => {
 
-        describe('when the feature toggle metricsRecordPDFJSGetDocument is OFF', () => {
+    describe('when the feature toggle metricsRecordPDFJSGetDocument is OFF', () => {
 
-            beforeAll(() => {
-                // This component throws an error about halfway through getDocument at destroy
-                // giving it access to both recordAsyncMetrics and storeMetrics
-                wrapper = shallow(
-                    <PdfFile
-                        documentId={documents[0].id}
-                        key={`${documents[0].content_url}`}
-                        file={documents[0].content_url}
-                        onPageChange= {jest.fn()}
-                        isVisible={documents[0].content_url}
-                        scale="test"
-                        documentType="test"
-                        featureToggles={{
-                            metricsRecordPDFJSGetDocument: false,
-                        }}
-                        clearDocumentLoadError={jest.fn()}
-                        setDocumentLoadError={jest.fn()}
-                        setPageDimensions={jest.fn()}
-                        setPdfDocument={jest.fn()}
-                    />
-                );
+        beforeAll(() => {
+            // This component throws an error about halfway through getDocument at destroy
+            // giving it access to both recordAsyncMetrics and storeMetrics
+            wrapper = shallow(
+                <PdfFile
+                    documentId={documents[0].id}
+                    key={`${documents[0].content_url}`}
+                    file={documents[0].content_url}
+                    onPageChange= {jest.fn()}
+                    isVisible={documents[0].content_url}
+                    scale="test"
+                    documentType="test"
+                    featureToggles={{
+                        metricsRecordPDFJSGetDocument: false,
+                    }}
+                    clearDocumentLoadError={jest.fn()}
+                    setDocumentLoadError={jest.fn()}
+                    setPageDimensions={jest.fn()}
+                    setPdfDocument={jest.fn()}
+                />
+            );
 
-                wrapper.instance().componentDidMount();
-            });
-
-            afterAll(() => {
-                jest.clearAllMocks();
-            });
-
-            it('calls recordAsyncMetrics but will not save a metric', () => {
-                expect(recordAsyncMetrics).toBeCalledWith(metricArgs()[0], metricArgs()[1], metricArgs(false)[2]);
-            });
-
-            it('does not call storeMetrics in catch block', () => {
-                expect(storeMetrics).not.toBeCalled();
-            });
-
+            wrapper.instance().componentDidMount();
         });
 
-        describe('when the feature toggle metricsRecordPDFJSGetDocument is ON', () => {
-
-            beforeAll(() => {
-                // This component throws an error about halfway through getDocument at destroy
-                // giving it access to both recordAsyncMetrics and storeMetrics
-                wrapper = shallow(
-                    <PdfFile
-                        documentId={documents[0].id}
-                        key={`${documents[0].content_url}`}
-                        file={documents[0].content_url}
-                        onPageChange= {jest.fn()}
-                        isVisible={documents[0].content_url}
-                        scale="test"
-                        documentType="test"
-                        featureToggles={{
-                            metricsRecordPDFJSGetDocument: true,
-                        }}
-                        clearDocumentLoadError={jest.fn()}
-                        setDocumentLoadError={jest.fn()}
-                        setPageDimensions={jest.fn()}
-                        setPdfDocument={jest.fn()}
-                    />
-                );
-
-                wrapper.instance().componentDidMount();
-            });
-
-            afterAll(() => {
-                jest.clearAllMocks();
-            });
-
-            it('calls recordAsyncMetrics and will save a metric', () => {
-                expect(recordAsyncMetrics).toBeCalledWith(metricArgs()[0], metricArgs()[1], metricArgs(true)[2]);
-            });
-
-            it('calls storeMetrics in catch block', () => {
-                expect(storeMetrics).toBeCalledWith(storeMetricsError.uuid,
-                    storeMetricsError.data,
-                    storeMetricsError.info,
-                    storeMetricsError.eventId);
-            });
+        afterAll(() => {
+            jest.clearAllMocks();
         });
+
+        it('calls recordAsyncMetrics but will not save a metric', () => {
+            expect(recordAsyncMetrics).toBeCalledWith(metricArgs()[0], metricArgs()[1], metricArgs(false)[2]);
+        });
+
+        it('does not call storeMetrics in catch block', () => {
+            expect(storeMetrics).not.toBeCalled();
+        });
+
     });
+
+    describe('when the feature toggle metricsRecordPDFJSGetDocument is ON', () => {
+
+      beforeAll(() => {
+          // This component throws an error about halfway through getDocument at destroy
+          // giving it access to both recordAsyncMetrics and storeMetrics
+          wrapper = shallow(
+              <PdfFile
+                  documentId={documents[0].id}
+                  key={`${documents[0].content_url}`}
+                  file={documents[0].content_url}
+                  onPageChange= {jest.fn()}
+                  isVisible={documents[0].content_url}
+                  scale="test"
+                  documentType="test"
+                  featureToggles={{
+                      metricsRecordPDFJSGetDocument: true,
+                  }}
+                  clearDocumentLoadError={jest.fn()}
+                  setDocumentLoadError={jest.fn()}
+                  setPageDimensions={jest.fn()}
+                  setPdfDocument={jest.fn()}
+              />
+          );
+
+          wrapper.instance().componentDidMount();
+      });
+
+      afterAll(() => {
+        jest.clearAllMocks();
+      });
+
+      it('calls recordAsyncMetrics and will save a metric', () => {
+        expect(recordAsyncMetrics).toBeCalledWith(metricArgs()[0], metricArgs()[1], metricArgs(true)[2]);
+      });
+
+      it('calls storeMetrics in catch block', () => {
+        expect(storeMetrics).toBeCalledWith(storeMetricsError.uuid,
+          storeMetricsError.data,
+          storeMetricsError.info,
+          storeMetricsError.eventId);
+      });
+    });
+  });
 });

@@ -27,7 +27,6 @@ import uuid from 'uuid';
 import { storeMetrics, recordAsyncMetrics } from '../util/Metrics';
 
 PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-let pdfPageRenderTimeInMsStart = null;
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -43,7 +42,11 @@ export class PdfFile extends React.PureComponent {
     this.clientWidth = 0;
     this.currentPage = 0;
     this.columnCount = 1;
+<<<<<<< HEAD
     this.metricsIdentifier = null;
+=======
+    this.measureTimeStartMs = null;
+>>>>>>> 1748bbd717 (refactor PdfFile measureTimeStartMs)
   }
 
   componentDidMount = () => {
@@ -82,6 +85,7 @@ export class PdfFile extends React.PureComponent {
     };
 
     return ApiUtil.get(this.props.file, requestOptions).
+<<<<<<< HEAD
     then((resp) => {
       pdfPageRenderTimeInMsStart = performance.now();
       const metricData = {
@@ -103,6 +107,15 @@ export class PdfFile extends React.PureComponent {
           verbosity: 5,
           stopAtErrors: false,
           pdfBug: true,
+=======
+      then((resp) => {
+        this.measureTimeStartMs = performance.now();
+        const metricData = {
+          message: `Getting PDF document: "${this.props.file}"`,
+          type: 'performance',
+          product: 'reader',
+          data: documentData,
+>>>>>>> 1748bbd717 (refactor PdfFile measureTimeStartMs)
         };
 
         this.loadingTask = PDFJS.getDocument(src);
@@ -213,8 +226,12 @@ export class PdfFile extends React.PureComponent {
       this.pdfDocument.destroy();
       this.props.clearPdfDocument(this.props.file, this.pdfDocument);
     }
+<<<<<<< HEAD
 
     this.metricsIdentifier = null;
+=======
+    this.measureTimeStartMs = null;
+>>>>>>> 1748bbd717 (refactor PdfFile measureTimeStartMs)
   }
 
   getPage = ({ rowIndex, columnIndex, style, isVisible }) => {
@@ -226,6 +243,7 @@ export class PdfFile extends React.PureComponent {
 
     return <div key={pageIndex} style={style}>
       <PdfPage
+<<<<<<< HEAD
           documentId={this.props.documentId}
           file={this.props.file}
           isPageVisible={isVisible}
@@ -236,6 +254,17 @@ export class PdfFile extends React.PureComponent {
           featureToggles={this.props.featureToggles}
           measureTimeStartMs={pdfPageRenderTimeInMsStart}
           metricsIdentifier={this.metricsIdentifier}
+=======
+        documentId={this.props.documentId}
+        file={this.props.file}
+        isPageVisible={isVisible}
+        pageIndex={(rowIndex * this.columnCount) + columnIndex}
+        isFileVisible={this.props.isVisible}
+        scale={this.props.scale}
+        pdfDocument={this.props.pdfDocument}
+        featureToggles={this.props.featureToggles}
+        measureTimeStartMs={this.measureTimeStartMs}
+>>>>>>> 1748bbd717 (refactor PdfFile measureTimeStartMs)
       />
     </div>;
   }
