@@ -9,139 +9,41 @@ import DocketTypeBadge from '../../../components/DocketTypeBadge';
 import { COLORS } from '../../../constants/AppConstants';
 import { DownloadIcon } from '../../../components/icons/DownloadIcon';
 
-const RECORDINGS = [
-  {
-    hearingType: 'Hearing',
-    docketNumber: '230808-800',
-    files: [
-      {
-        fileName: 'ROSELIA_TURNER0510.MP4',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510.vtt',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510.MP3',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510.rtf',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      }
-    ]
-  },
-  {
-    hearingType: 'Hearing',
-    docketNumber: '230808-800',
-    files: [
-      {
-        fileName: 'ROSELIA_TURNER0510-2.MP4',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510-2.vtt',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510-2.MP3',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510-2.rtf',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      }
-    ]
-  },
-  {
-    hearingType: 'Hearing',
-    docketNumber: '230808-800',
-    files: [
-      {
-        fileName: 'ROSELIA_TURNER0510-2.MP4',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510-2.vtt',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510-2.MP3',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510-2.rtf',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      }
-    ]
-  },
-  {
-    hearingType: 'Hearing',
-    docketNumber: '230808-800',
-    files: [
-      {
-        fileName: 'ROSELIA_TURNER0510-2.MP4',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510-2.vtt',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510-2.MP3',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510-2.rtf',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      }
-    ]
-  }
-];
-
 const tableStyling = css({
   marginTop: 0,
   '& tr > *:first-child': {
     paddingLeft: '2.5rem'
+  },
+  '& *:focus': {
+    outline: 'none'
   }
 });
 
 const bodyStyling = css({
+  '& tr:first-child td': {
+    paddingTop: '3rem'
+  },
   '& tr.even-row-group td': {
     backgroundColor: '#F9F9F9'
   },
-  '& tr td': {
-    border: '0'
-  },
   '& tr.even-row-group + tr.odd-row-group td, tr.odd-row-group + tr.even-row-group td': {
-    borderTop: '1px solid #D6D7D9'
+    borderTop: '1px solid #D6D7D9',
+    paddingTop: '3rem'
   },
-  '& tr td a': {
-    display: 'inline-flex',
-    alignItems: 'center'
-  },
-  '& tr td svg': {
-    marginLeft: '1rem'
-  },
-  '& tr td:last-child': {
-    fontStyle: 'italic'
+  '& tr td': {
+    border: '0',
+    paddingTop: '0',
+    paddingBottom: '3rem',
+    '&:last-child': {
+      fontStyle: 'italic'
+    },
+    '& a': {
+      display: 'inline-flex',
+      alignItems: 'center'
+    },
+    '& svg': {
+      marginLeft: '1rem'
+    }
   }
 });
 
@@ -178,9 +80,8 @@ const transcriptionFileColumns = [
   }
 ];
 
-const buildRowObjectsFromRecordings = (hearing) => {
-  // TO-DO: Replace hard-coded recordings with props
-  return RECORDINGS.map((recording, recordingIndex) => {
+const buildRowObjectsFromRecordings = (recordings, hearing) => {
+  return recordings.map((recording, recordingIndex) => {
     return recording.files.map((file, fileIndex) => {
       const fileObj = {
         ...file,
@@ -199,17 +100,19 @@ const buildRowObjectsFromRecordings = (hearing) => {
 
 const rowClassNames = (rowObject) => `${rowObject.isEvenGroup ? 'even' : 'odd'}-row-group`;
 
-const TranscriptionFilesTable = ({ hearing }) => (
+const TranscriptionFilesTable = ({ recordings, hearing }) => (
   <div {...genericRow}>
-    <Table
-      id="transcripton-files-table"
-      columns={transcriptionFileColumns}
-      getKeyForRow={(index) => index}
-      rowObjects={buildRowObjectsFromRecordings(hearing)}
-      rowClassNames={rowClassNames}
-      styling={tableStyling}
-      bodyStyling={bodyStyling}
-    />
+    {recordings.length > 0 && (
+      <Table
+        id="transcripton-files-table"
+        columns={transcriptionFileColumns}
+        getKeyForRow={(index) => index}
+        rowObjects={buildRowObjectsFromRecordings(recordings, hearing)}
+        rowClassNames={rowClassNames}
+        styling={tableStyling}
+        bodyStyling={bodyStyling}
+      />
+    )}
   </div>
 );
 
