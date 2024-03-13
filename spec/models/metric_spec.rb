@@ -22,7 +22,6 @@ describe Metric do
       metric = Metric.create_metric(self, params, user)
 
       expect(metric.valid?).to be true
-      p metric.errors.messages
       expect(metric.metric_type).to eq(MetricAttributes::METRIC_TYPES[:performance])
     end
 
@@ -31,7 +30,6 @@ describe Metric do
       metric = Metric.create_metric(self, params, user)
 
       expect(metric.valid?).to be true
-      p metric.errors.messages
       expect(metric.metric_type).to eq(MetricAttributes::METRIC_TYPES[:log])
     end
 
