@@ -120,6 +120,7 @@ export const TranscriptionFormSection = (
   { hearing, transcription, readOnly, update, isLegacy }
 ) => (
   <ContentSection header="Transcription Details">
+    {/* If Legacy Hearing and conference provider Webex, only render Transcription Files table */}
     {!isLegacy && (
       <>
         <TranscriptionDetailsInputs
@@ -144,15 +145,21 @@ export const TranscriptionFormSection = (
           update={(values) => update('hearing', values)}
           readOnly={readOnly}
         />
-        <div className="cf-help-divider" />
+        {hearing.conferenceProvider === 'webex' && <div className="cf-help-divider" />}
       </>
     )}
 
-    <h3 {...(isLegacy && { ...genericRow })}>Transcription Files</h3>
-    <TranscriptionFilesTable
-      recordings={RECORDINGS}
-      hearing={hearing}
-    />
+    {/* If conference provider not Webex, do not render Transcriptoin Files table */}
+    {hearing.conferenceProvider === 'webex' && (
+      <>
+        <h3 {...(isLegacy && { ...genericRow })}>Transcription Files</h3>
+        <TranscriptionFilesTable
+          // TO-DO: Update when hard-coded recordings removed
+          recordings={RECORDINGS}
+          hearing={hearing}
+        />
+      </>
+    )}
   </ContentSection>
 );
 

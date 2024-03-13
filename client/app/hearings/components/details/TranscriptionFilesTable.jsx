@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { css } from 'glamor';
 
@@ -11,11 +11,11 @@ import { DownloadIcon } from '../../../components/icons/DownloadIcon';
 
 const tableStyling = css({
   marginTop: 0,
-  '& tr > *:first-child': {
-    paddingLeft: '2.5rem'
-  },
   '& *:focus': {
     outline: 'none'
+  },
+  '& tr > *:first-child': {
+    paddingLeft: '2.5rem'
   }
 });
 
@@ -80,41 +80,48 @@ const transcriptionFileColumns = [
   }
 ];
 
-const buildRowObjectsFromRecordings = (recordings, hearing) => {
-  return recordings.map((recording, recordingIndex) => {
-    return recording.files.map((file, fileIndex) => {
-      const fileObj = {
-        ...file,
-        isEvenGroup: recordingIndex % 2 === 0
-      };
-
-      if (fileIndex === 0) {
-        fileObj.docketNumber = recording.docketNumber;
-        fileObj.docketName = hearing.docketName;
-      }
-
-      return fileObj;
-    });
-  }).flat();
-};
-
 const rowClassNames = (rowObject) => `${rowObject.isEvenGroup ? 'even' : 'odd'}-row-group`;
 
-const TranscriptionFilesTable = ({ recordings, hearing }) => (
-  <div {...genericRow}>
-    {recordings.length > 0 && (
+const TranscriptionFilesTable = ({ recordings, hearing }) => {
+  const [rows, setRows] = useState([]);
+
+  const buildRowsFromRecordings = () => {
+    return recordings.map((recording, recordingIndex) => {
+      return recording.files.map((file, fileIndex) => {
+        const fileObj = {
+          ...file,
+          isEvenGroup: recordingIndex % 2 === 0
+        };
+
+        if (fileIndex === 0) {
+          fileObj.docketNumber = recording.docketNumber;
+          fileObj.docketName = hearing.docketName;
+        }
+
+        return fileObj;
+      });
+    }).flat();
+  };
+
+  useEffect(() => {
+    setRows(buildRowsFromRecordings());
+  }, []);
+
+
+  return (
+    <div {...genericRow}>
       <Table
         id="transcripton-files-table"
         columns={transcriptionFileColumns}
         getKeyForRow={(index) => index}
-        rowObjects={buildRowObjectsFromRecordings(recordings, hearing)}
+        rowObjects={rows}
         rowClassNames={rowClassNames}
         styling={tableStyling}
         bodyStyling={bodyStyling}
       />
-    )}
-  </div>
-);
+    </div>
+  );
+};
 
 TranscriptionFilesTable.propTypes = {
   recordings: PropTypes.arrayOf(PropTypes.object),
