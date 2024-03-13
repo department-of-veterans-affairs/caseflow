@@ -3,6 +3,7 @@
 class CorrespondenceTaskFilter < TaskFilter
   def filtered_tasks
     va_dor_params = filter_params.select { |param| param.include?("col=vaDor") }
+    date_completed_params = filter_params.select { |param| param.include?("col=completedDateColumn") }
     task_column_params = filter_params.select { |param| param.include?("col=taskColumn") }
 
     # task_column_params comes in as a single string, delimited by |. Updates task_column_params
@@ -20,6 +21,11 @@ class CorrespondenceTaskFilter < TaskFilter
 
     unless task_column_params.empty?
       result = result.merge(filter_by_task(task_column_params))
+    end
+
+    unless date_completed_params.empty?
+      date_completed_params[0].slice!("col=completedDateColumn&val=")
+      result = result.merge(filter_by_va_dor(date_completed_params[0]))
     end
     result
   end
