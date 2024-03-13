@@ -698,6 +698,24 @@ FactoryBot.define do
         parent { create(:root_task, appeal: appeal) }
       end
 
+      factory :correspondence_intake_task, class: CorrespondenceIntakeTask do
+      end
+
+      factory :review_package_task, class: ReviewPackageTask do
+      end
+
+      factory :merge_package_task, class: MergePackageTask do
+      end
+
+      factory :reassign_package_task, class: ReassignPackageTask do
+      end
+
+      factory :split_package_task, class: SplitPackageTask do
+      end
+
+      factory :efolder_upload_failed_task, class: EfolderUploadFailedTask do
+      end
+
       factory :no_show_hearing_task, class: NoShowHearingTask do
         assigned_to { HearingsManagement.singleton }
         parent { create(:assign_hearing_disposition_task, appeal: appeal) }
