@@ -50,5 +50,6 @@ SCHEDULED_JOBS = {
     "contention_not_found_remediation_job" => ContentionNotFoundRemediationJob,
     "process_notification_status_updates_job" => ProcessNotificationStatusUpdatesJob,
     "stuck_job_scheduler_job" => StuckJobSchedulerJob,
-    "ineligible_judges_job" => IneligibleJudgesJob
+    "ineligible_judges_job" => IneligibleJudgesJob,
+    "purge_old_metrics_job" => PurgeOldMetricsJob
 }.freeze
