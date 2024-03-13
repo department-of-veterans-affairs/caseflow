@@ -89,6 +89,10 @@ export class PdfFile extends React.PureComponent {
           data: documentData,
         };
 
+        if (resp && resp.header && resp.header['x-document-source']) {
+          metricData.additionalInfo = JSON.stringify({ source: `${resp.header['x-document-source']}` });
+        }
+
         /* The feature toggle reader_get_document_logging adds the progress of the file being loaded in console */
         if (this.props.featureToggles.readerGetDocumentLogging) {
           const src = {

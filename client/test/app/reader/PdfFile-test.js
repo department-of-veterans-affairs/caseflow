@@ -5,12 +5,15 @@ import { documents } from '../../data/documents';
 import ApiUtil from '../../../app/util/ApiUtil';
 import { storeMetrics, recordAsyncMetrics } from '../../../app/util/Metrics';
 
-ApiUtil.get = jest.fn().mockResolvedValue(() => new Promise((resolve) => resolve({ body: {} })));
-
-jest.mock('../../../app/util/ApiUtil');
+jest.mock('../../../app/util/ApiUtil', () => ({
+  get: jest.fn().mockResolvedValue({
+    body: {},
+    header: { 'x-document-source': 'VBMS' }
+  }),
+}));
 jest.mock('../../../app/util/Metrics', () => ({
-  storeMetrics: jest.fn(),
-  recordAsyncMetrics: jest.fn(),
+  storeMetrics: jest.fn().mockResolvedValue(),
+  recordAsyncMetrics: jest.fn().mockResolvedValue(),
 }));
 jest.mock('pdfjs-dist', () => ({
   getDocument: jest.fn().mockResolvedValue(),
@@ -26,11 +29,13 @@ const metricArgs = (featureValue) => {
       {
         documentId: 1,
         documentType: 'test',
-        file: '/document/1/pdf'
+        file: '/document/1/pdf',
+        prefetchDisabled: undefined
       },
       // eslint-disable-next-line no-useless-escape
       message: 'Getting PDF document: \"/document/1/pdf\"',
       product: 'reader',
+      additionalInfo: JSON.stringify({ source: 'VBMS' }),
       type: 'performance'
     },
     featureValue,
@@ -130,8 +135,44 @@ describe('PdfFile', () => {
         jest.clearAllMocks();
       });
 
-      it('calls recordAsyncMetrics and will save a metric', () => {
-        expect(recordAsyncMetrics).toBeCalledWith(metricArgs()[0], metricArgs()[1], metricArgs(true)[2]);
+      it('records metrics with additionalInfo when x-document-source is present in response headers', () => {
+
+        return wrapper.instance().componentDidMount().
+          then(() => {
+            // Assert that the recordAsyncMetrics method was called with the expected arguments
+            expect(recordAsyncMetrics).toBeCalledWith(
+              metricArgs()[0],
+              metricArgs()[1],
+              metricArgs(true)[2]
+            );
+          });
+      });
+
+      it('records metrics with no additionalInfo when x-document-source is absent in response headers', () => {
+
+        ApiUtil.get = jest.fn().mockResolvedValue(() => new Promise((resolve) => resolve()));
+        const documentData = {
+          documentId: 1,
+          documentType: 'test',
+          file: '/document/1/pdf',
+          prefetchDisabled: undefined
+        };
+        const metricData = {
+          message: 'Getting PDF document: "/document/1/pdf"',
+          type: 'performance',
+          product: 'reader',
+          data: documentData,
+        };
+
+        return wrapper.instance().componentDidMount().
+          then(() => {
+            // Assert that the recordAsyncMetrics method was called with the expected arguments
+            expect(recordAsyncMetrics).toBeCalledWith(
+              metricArgs()[0],
+              metricData,
+              metricArgs(true)[2]
+            );
+          });
       });
 
       it('calls storeMetrics in catch block', () => {
