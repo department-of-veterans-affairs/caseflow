@@ -134,7 +134,7 @@ const CorrespondenceTableBuilder = (props) => {
   const filterValuesForColumn = (column) =>
     column && column.filterable && column.filter_options;
 
-  const createColumnObject = (column, config, tasks, searchValue) => {
+  const createColumnObject = (column, config, tasks) => {
 
     const filterOptions = filterValuesForColumn(column);
     const functionForColumn = {
@@ -155,7 +155,7 @@ const CorrespondenceTableBuilder = (props) => {
 
   const columnsFromConfig = (config, tabConfig, tasks) =>
     (tabConfig.columns || []).map((column) =>
-      createColumnObject(column, config, tasks, searchValue)
+      createColumnObject(column, config, tasks)
     );
 
   const taskTableTabFactory = (tabConfig, config) => {
