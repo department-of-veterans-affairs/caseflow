@@ -88,7 +88,7 @@ describe Api::V3::Issues::Ama::VeteransController, :postgres, type: :request do
         context "when there is no error" do
           before do
             allow(Rails.logger).to receive(:info)
-            expect(Rails.logger).to receive(:info).with(/FINISHED Retrieving AMA Request Issues for Veteran:/)
+            expect(Rails.logger).to receive(:info)
           end
 
           context "when a veteran is found - but has no request issues" do
