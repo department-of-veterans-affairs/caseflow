@@ -105,7 +105,8 @@ class Generators::Veteran
                   last_name: attrs[:last_name],
                   middle_name: attrs[:middle_name],
                   date_of_death: attrs[:date_of_death],
-                  name_suffix: attrs[:suffix_name])
+                  name_suffix: attrs[:suffix_name],
+                  participant_id: attrs[:participant_id])
     end
   end
 end

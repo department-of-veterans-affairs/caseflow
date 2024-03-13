@@ -14,7 +14,10 @@ export const AssignHearings = ({
   upcomingHearingDays,
   selectedHearingDay,
   selectedRegionalOffice,
-  onSelectedHearingDayChange
+  onSelectedHearingDayChange,
+  mstIdentification,
+  pactIdentification,
+  legacyMstPactIdentification
 }) => isEmpty(upcomingHearingDays) ? (
   <NoUpcomingHearingDayMessage />
 ) : (
@@ -28,6 +31,9 @@ export const AssignHearings = ({
       selectedRegionalOffice={selectedRegionalOffice}
       selectedHearingDay={selectedHearingDay}
       room={selectedHearingDay?.room}
+      mstIdentification={mstIdentification}
+      pactIdentification={pactIdentification}
+      legacyMstPactIdentification={legacyMstPactIdentification}
     />
   </React.Fragment>
 );
@@ -42,5 +48,8 @@ AssignHearings.propTypes = {
     PropTypes.string,
     PropTypes.object
   ]),
-  userId: PropTypes.number
+  userId: PropTypes.number,
+  mstIdentification: PropTypes.bool,
+  pactIdentification: PropTypes.bool,
+  legacyMstPactIdentification: PropTypes.bool
 };

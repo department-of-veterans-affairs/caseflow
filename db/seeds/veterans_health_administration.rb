@@ -17,7 +17,8 @@ module Seeds
       :dependent_claimant,
       :attorney_claimant,
       :healthcare_claimant,
-      :other_claimant
+      :other_claimant,
+      :other_claimant_not_listed
     ].freeze
 
     BENEFIT_TYPE_LIST = Constants::BENEFIT_TYPES.keys.map(&:to_s).freeze

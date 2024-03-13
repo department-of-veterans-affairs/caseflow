@@ -89,14 +89,14 @@ def attorney_checkout
   visit "/queue"
   click_on veteran_full_name
   click_dropdown(prompt: "Select an action", text: "Decision ready for review")
-  if !find("#no_special_issues", visible: false).checked?
-    find("label", text: "No Special Issues").click
-  end
+  find("#no_special_issues", visible: false).sibling("label").set(true)
   click_on "Continue"
-
+  if page.has_content?("Choose at least one.")
+    find("#no_special_issues", visible: false).sibling("label").set(true)
+    click_on "Continue"
+  end
   click_on "+ Add decision"
   fill_in "Text Box", with: "test"
-
   find(".cf-select__control", text: "Select disposition").click
   find("div", class: "cf-select__option", text: "Allowed").click
   click_on "Save"
@@ -112,7 +112,12 @@ def judge_checkout
   visit "/queue"
   click_on "(#{appeal.veteran_file_number})"
   click_dropdown(text: Constants.TASK_ACTIONS.JUDGE_AMA_CHECKOUT.label)
-  click_on "Continue" if page.has_content?("No Special Issues")
+  find("#no_special_issues", visible: false).sibling("label").set(true)
+  click_on "Continue"
+  if page.has_content?("Choose at least one.")
+    find("#no_special_issues", visible: false).sibling("label").set(true)
+    click_on "Continue"
+  end
   click_on "Continue"
   find("label", text: Constants::JUDGE_CASE_REVIEW_OPTIONS["COMPLEXITY"]["easy"]).click
   text_to_click = "1 - #{Constants::JUDGE_CASE_REVIEW_OPTIONS['QUALITY']['does_not_meet_expectations']}"

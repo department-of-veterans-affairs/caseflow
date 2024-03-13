@@ -6,6 +6,8 @@ import ContestedClaimBadge from './ContestedBadge/ContestedClaimBadge';
 import HearingBadge from './HearingBadge/HearingBadge';
 import OvertimeBadge from './OvertimeBadge/OvertimeBadge';
 import QueueFnodBadge from './FnodBadge/QueueFnodBadge';
+import MstBadge from './MstBadge/MstBadge';
+import PactBadge from './PactBadge/PactBadge';
 import { mostRecentHeldHearingForAppeal } from 'app/queue/utils';
 
 /**
@@ -37,6 +39,8 @@ class BadgeArea extends React.PureComponent {
         <QueueFnodBadge appeal={appeal} />
         <HearingBadge hearing={mostRecentHeldHearingForAppeal(appeal)} />
         <OvertimeBadge appeal={appeal} />
+        <MstBadge appeal={appeal} />
+        <PactBadge appeal={appeal} />
       </React.Fragment>;
     } else {
       badges = <React.Fragment>
@@ -46,6 +50,8 @@ class BadgeArea extends React.PureComponent {
         <QueueFnodBadge appeal={task.appeal} />
         <HearingBadge task={task} />
         <OvertimeBadge appeal={task.appeal} />
+        <MstBadge appeal={task.appeal} />
+        <PactBadge appeal={task.appeal} />
       </React.Fragment>;
     }
 

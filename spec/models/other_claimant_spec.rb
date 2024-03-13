@@ -27,12 +27,13 @@ describe OtherClaimant, :postgres do
     let(:poa_params) { nil }
     let(:poa_participant_id) { nil }
     let(:user) { create(:user) }
+    let(:benefit_type) { nil }
 
     before do
       RequestStore[:current_user] = user
     end
 
-    subject { claimant.save_unrecognized_details!(params, poa_params) }
+    subject { claimant.save_unrecognized_details!(params, poa_params, benefit_type) }
 
     context "when appellant is an unlisted individual" do
       let(:relationship) { "child" }
@@ -93,6 +94,17 @@ describe OtherClaimant, :postgres do
             party_type: "organization",
             name: "POA Name"
           )
+          expect(subject.poa_participant_id).to be_nil
+        end
+      end
+
+      context "when unlisted POA is given" do
+        let(:poa_participant_id) { "not_listed" }
+        let(:benefit_type) { "vha" }
+
+        it "creates not listed POA object" do
+          expect(subject.not_listed_power_of_attorney).to be_present
+          expect(subject.unrecognized_power_of_attorney).to be_nil
           expect(subject.poa_participant_id).to be_nil
         end
       end

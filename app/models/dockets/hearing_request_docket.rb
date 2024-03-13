@@ -36,7 +36,7 @@ class HearingRequestDocket < Docket
   def age_of_n_oldest_priority_appeals_available_to_judge(judge, num)
     hearing_distribution_query(
       base_relation: ready_priority_appeals.limit(num), genpop: "only_genpop", judge: judge
-    ).call.map(&:receipt_date)
+    ).call.flatten.map(&:receipt_date)
   end
 
   # rubocop:disable Lint/UnusedMethodArgument
@@ -75,9 +75,15 @@ class HearingRequestDocket < Docket
   end
 
   def self.limit_only_genpop_appeals(appeals_array, limit)
+    if FeatureToggle.enabled?(:acd_exclude_from_affinity)
+      appeals_array.flatten.sort_by(&:receipt_date).first(limit)
+    else
+      appeals_array.sort_by(&:receipt_date).first(limit)
+    end
+
     # genpop 'only_genpop' returns 2 arrays of the limited base relation. This means if we only request 2 cases,
     # appeals is a 2x2 array containing 4 cases overall and we will end up distributing 4 cases rather than 2.
     # Instead, reinstate the limit here by filtering out the newest cases
-    appeals_array.flatten.sort_by(&:receipt_date).first(limit)
+
   end
 end

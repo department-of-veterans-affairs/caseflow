@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FormProvider, Controller } from 'react-hook-form';
 import { Redirect } from 'react-router-dom';
 import { useAddPoaForm } from './utils';
-import { ADD_CLAIMANT_POA_PAGE_DESCRIPTION, ERROR_EMAIL_INVALID_FORMAT } from 'app/../COPY';
+import { ADD_CLAIMANT_POA_PAGE_DESCRIPTION, ERROR_EMAIL_INVALID_FORMAT, VHA_POA_NAME_NOT_LISTED } from 'app/../COPY';
 import { IntakeLayout } from '../components/IntakeLayout';
 import SearchableDropdown from 'app/components/SearchableDropdown';
 import { AddClaimantButtons } from '../addClaimant/AddClaimantButtons';
@@ -13,6 +13,7 @@ import RadioField from 'app/components/RadioField';
 import Address from 'app/queue/components/Address';
 import AddressForm from 'app/components/AddressForm';
 import TextField from 'app/components/TextField';
+import Alert from 'app/components/Alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { editPoaInformation, clearPoa, clearClaimant } from 'app/intake/reducers/addClaimantSlice';
 import { AddClaimantConfirmationModal } from '../addClaimant/AddClaimantConfirmationModal';
@@ -83,8 +84,9 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
       return <Redirect to={PAGE_PATHS.ADD_CLAIMANT} />;
     }
   }
+  const benefitType = intakeData?.benefitType;
 
-  const methods = useAddPoaForm({ defaultValues: poa, selectedForm });
+  const methods = useAddPoaForm({ defaultValues: poa, selectedForm, benefitType });
   const {
     control,
     register,
@@ -132,6 +134,8 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
   const isIndividualPartyType = watchPartyType === 'individual';
   const isHLROrSCForm = formType === FORM_TYPES.HIGHER_LEVEL_REVIEW.key ||
     formType === FORM_TYPES.SUPPLEMENTAL_CLAIM.key;
+
+  const isVhaBenefitType = benefitType === 'vha';
 
   const asyncFn = useCallback(
     debounce((search, callback) => {
@@ -197,7 +201,7 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
             </div>
           )}
 
-          {showPartyType && (
+          {(showPartyType && !isVhaBenefitType) ? (
             <RadioField
               name="partyType"
               label="Is the representative an organization or individual?"
@@ -206,10 +210,16 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
               vertical
               options={partyTypeOpts}
             />
-          )}
+          ) : null}
+
+          {(showPartyType && isVhaBenefitType) ? (
+            <div className="cf-sg-alert-slim">
+              <Alert message={VHA_POA_NAME_NOT_LISTED} type="info" />
+            </div>
+          ) : null}
 
           <br />
-          {isIndividualPartyType && (
+          {isIndividualPartyType ? (
             <>
               <FieldDiv>
                 <TextField
@@ -247,7 +257,7 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
                 />
               </Suffix>
             </>
-          )}
+          ) : null}
 
           {showPartyType && isOrgPartyType && (
             <FieldDiv>
@@ -295,6 +305,7 @@ export const AddPoaPage = ({ onAttorneySearch = fetchAttorneys }) => {
             onConfirm={handleConfirm}
             claimant={claimant}
             poa={poa}
+            benefitType={benefitType}
           />
         )}
       </IntakeLayout>

@@ -9,6 +9,19 @@ class Api::V3::BaseController < Api::ApplicationController
     end
   end
 
+  rescue_from StandardError do |error|
+    Raven.capture_exception(error, extra: raven_extra_context)
+
+    render json: {
+      "errors": [
+        "status": "500",
+        "title": "Unknown error occured",
+        "detail": "Message: There was a server error. "\
+                  "Use the error uuid to submit a support ticket: #{Raven.last_event_id}"
+      ]
+    }, status: :internal_server_error
+  end
+
   protect_from_forgery with: :null_session
 
   def render_errors(errors)

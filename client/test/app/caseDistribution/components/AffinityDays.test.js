@@ -33,7 +33,7 @@ describe('Affinity Days Lever', () => {
         <AffinityDays />
       </Provider>
     );
-    const option = lever.options.find((opt) => opt.item === 'option_1');
+    const option = lever.options.find((opt) => opt.selected);
     const value = `${option.text} ${option.value} ${option.unit}`;
 
     expect(document.querySelector('.active-lever > .lever-left')).toHaveTextContent(lever.title);
@@ -115,7 +115,7 @@ describe('Affinity Days Lever', () => {
       </Provider>
     );
 
-    let radioOption = wrapper.find('input[id="ama_hearing_case_aod_affinity_days-option_1"]');
+    let radioOption = wrapper.find('input[id="ama_hearing_case_aod_affinity_days-value"]');
 
     expect(radioOption.getDOMNode().checked).toEqual(true);
 
