@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
+#
 class Events::DecisionReviewCreated::CreateEpEstablishment
-  # The creation of End Product Establishment
+  # The creation of End Product Establishment from an event. This is a sub service class
+  # that is being used in the parent service class DecisionReviewCreated. this sub service class
+  # returns the End Product Establishment that was created fron the event.
   # claim_review can be either a supplemental claim or higher level review
   def process!(station_id, end_product_establishment, claim_review, user, event)
     end_product_establishment = EndProductEstablishment.create!(
