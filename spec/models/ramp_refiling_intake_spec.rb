@@ -347,7 +347,6 @@ describe RampRefilingIntake, :postgres do
         )
       end
 
-      let(:claim_id1) { get_claim_id(ramp_election1) }
       let(:claim_id2) { get_claim_id(ramp_election2) }
 
       context "the EP associated with original RampElection is closed" do
