@@ -25,10 +25,14 @@ class TaskTimerJob < CaseflowJob
     # no other threads have a lock on the row, and will reload
     # the record after acquiring the lock.
     task_timer.with_lock do
-      task_timer.attempted!
-      task_timer.task.when_timer_ends
-      task_timer.clear_error!
-      task_timer.processed!
+      if task_timer.task.children.open.find_by(type: [SendInitialNotificationLetterTask.name, SendFinalNotificationLetterTask.name, PostSendInitialNotificationLetterHoldingTask.name]).nil?
+        task_timer.attempted!
+        task_timer.task.when_timer_ends
+        task_timer.clear_error!
+        task_timer.processed!
+      else
+        task_timer.restart!
+      end
     end
   rescue StandardError => error
     # Ensure errors are sent to Sentry, but don't block the job from continuing.
