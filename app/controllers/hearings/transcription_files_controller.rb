@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class TranscriptionFilesController < ApplicationController
+  include HearingsConcerns::VerifyAccess
+
+  before_action :verify_access_to_hearings, only: [:download_transcription_file]
+
   def index
     nil
   end
