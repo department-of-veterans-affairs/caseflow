@@ -10,7 +10,26 @@ class ExternalApi::BGSService
 
   attr_reader :client
 
-  def initialize(client: init_client)
+  def self.init_client(user)
+    forward_proxy_url = FeatureToggle.enabled?(:bgs_forward_proxy) ? ENV["RUBY_BGS_PROXY_BASE_URL"] : nil
+
+    BGS::Services.new(
+      env: Rails.application.config.bgs_environment,
+      application: "CASEFLOW",
+      client_ip: ENV.fetch("USER_IP_ADDRESS", Rails.application.secrets.user_ip_address),
+      client_station_id: user.station_id,
+      client_username: user.css_id,
+      ssl_cert_key_file: ENV["BGS_KEY_LOCATION"],
+      ssl_cert_file: ENV["BGS_CERT_LOCATION"],
+      ssl_ca_cert: ENV["BGS_CA_CERT_LOCATION"],
+      forward_proxy_url: forward_proxy_url,
+      jumpbox_url: ENV["RUBY_BGS_JUMPBOX_URL"],
+      log: true,
+      logger: Rails.logger
+    )
+  end
+
+  def initialize(client: ExternalApi::BGSService.init_client(current_user))
     @client = client
 
     # These instance variables are used for caching their
@@ -279,10 +298,6 @@ class ExternalApi::BGSService
   # We cache at 2 levels: the boolean check per user, and the veteran record itself.
   # The veteran record is so that subsequent calls to fetch_veteran_info can read from cache.
   def can_access?(vbms_id, user_to_check: current_user)
-    user_can_access?(vbms_id: vbms_id, user_to_check: user_to_check)
-  end
-
-  def user_can_access?(vbms_id:, user_to_check:)
     Rails.cache.fetch(can_access_cache_key(user_to_check, vbms_id), expires_in: 2.hours) do
       DBService.release_db_connections
 
@@ -518,25 +533,6 @@ class ExternalApi::BGSService
 
   def fetch_veteran_info_cache_key(vbms_id)
     "bgs_veteran_info_#{vbms_id}"
-  end
-
-  def init_client
-    forward_proxy_url = FeatureToggle.enabled?(:bgs_forward_proxy) ? ENV["RUBY_BGS_PROXY_BASE_URL"] : nil
-
-    BGS::Services.new(
-      env: Rails.application.config.bgs_environment,
-      application: "CASEFLOW",
-      client_ip: ENV.fetch("USER_IP_ADDRESS", Rails.application.secrets.user_ip_address),
-      client_station_id: current_user.station_id,
-      client_username: current_user.css_id,
-      ssl_cert_key_file: ENV["BGS_KEY_LOCATION"],
-      ssl_cert_file: ENV["BGS_CERT_LOCATION"],
-      ssl_ca_cert: ENV["BGS_CA_CERT_LOCATION"],
-      forward_proxy_url: forward_proxy_url,
-      jumpbox_url: ENV["RUBY_BGS_JUMPBOX_URL"],
-      log: true,
-      logger: Rails.logger
-    )
   end
 
   def formatted_start_and_end_dates(start_date, end_date)
