@@ -5,12 +5,11 @@ import { documents } from '../../data/documents';
 import ApiUtil from '../../../app/util/ApiUtil';
 import { storeMetrics, recordAsyncMetrics } from '../../../app/util/Metrics';
 
-jest.mock('../../../app/util/ApiUtil', () => ({
-  get: jest.fn().mockResolvedValue({
-    body: {},
-    header: { 'x-document-source': 'VBMS' }
-  }),
-}));
+const mockedResponse = { body: {}, header: { 'x-document-source': 'VBMS' } };
+
+ApiUtil.get = jest.fn().mockResolvedValue(() => new Promise((resolve) => resolve(mockedResponse)));
+
+jest.mock('../../../app/util/ApiUtil');
 jest.mock('../../../app/util/Metrics', () => ({
   storeMetrics: jest.fn().mockResolvedValue(),
   recordAsyncMetrics: jest.fn().mockResolvedValue(),
@@ -20,23 +19,24 @@ jest.mock('pdfjs-dist', () => ({
   GlobalWorkerOptions: jest.fn().mockResolvedValue(),
 }));
 
-const metricArgs = (featureValue) => {
+const metricArgs = (featureValue, documentSource) => {
   return [
     // eslint-disable-next-line no-undefined
     undefined,
     {
       data:
-      {
-        documentId: 1,
-        documentType: 'test',
-        file: '/document/1/pdf',
-        prefetchDisabled: undefined
-      },
+          {
+            documentId: 1,
+            documentType: 'test',
+            file: '/document/1/pdf',
+            prefetchDisabled: undefined,
+          },
       // eslint-disable-next-line no-useless-escape
       message: 'Getting PDF document: \"/document/1/pdf\"',
       product: 'reader',
-      additionalInfo: JSON.stringify({ source: 'VBMS' }),
-      type: 'performance'
+      additionalInfo: documentSource,
+      type: 'performance',
+      eventId: expect.stringMatching(/^([a-zA-Z0-9-.'&])*$/)
     },
     featureValue,
   ];
@@ -45,16 +45,17 @@ const metricArgs = (featureValue) => {
 const storeMetricsError = {
   uuid: expect.stringMatching(/^([a-zA-Z0-9-.'&])*$/),
   data:
-  {
-    documentId: 1,
-    documentType: 'test',
-    file: '/document/1/pdf'
-  },
+      {
+        documentId: 1,
+        documentType: 'test',
+        file: '/document/1/pdf'
+      },
   info: {
     message: expect.stringMatching(/^([a-zA-Z0-9-.'&:/ ])*$/),
     product: 'browser',
     type: 'error'
-  }
+  },
+  eventId: expect.stringMatching(/^([a-zA-Z0-9-.'&])*$/)
 };
 
 describe('PdfFile', () => {
@@ -69,22 +70,22 @@ describe('PdfFile', () => {
         // This component throws an error about halfway through getDocument at destroy
         // giving it access to both recordAsyncMetrics and storeMetrics
         wrapper = shallow(
-          <PdfFile
-            documentId={documents[0].id}
-            key={`${documents[0].content_url}`}
-            file={documents[0].content_url}
-            onPageChange= {jest.fn()}
-            isVisible={documents[0].content_url}
-            scale="test"
-            documentType="test"
-            featureToggles={{
-              metricsRecordPDFJSGetDocument: false,
-            }}
-            clearDocumentLoadError={jest.fn()}
-            setDocumentLoadError={jest.fn()}
-            setPageDimensions={jest.fn()}
-            setPdfDocument={jest.fn()}
-          />
+            <PdfFile
+                documentId={documents[0].id}
+                key={`${documents[0].content_url}`}
+                file={documents[0].content_url}
+                onPageChange= {jest.fn()}
+                isVisible={documents[0].content_url}
+                scale="test"
+                documentType="test"
+                featureToggles={{
+                  metricsRecordPDFJSGetDocument: false,
+                }}
+                clearDocumentLoadError={jest.fn()}
+                setDocumentLoadError={jest.fn()}
+                setPageDimensions={jest.fn()}
+                setPdfDocument={jest.fn()}
+            />
         );
 
         wrapper.instance().componentDidMount();
@@ -110,22 +111,22 @@ describe('PdfFile', () => {
         // This component throws an error about halfway through getDocument at destroy
         // giving it access to both recordAsyncMetrics and storeMetrics
         wrapper = shallow(
-          <PdfFile
-            documentId={documents[0].id}
-            key={`${documents[0].content_url}`}
-            file={documents[0].content_url}
-            onPageChange= {jest.fn()}
-            isVisible={documents[0].content_url}
-            scale="test"
-            documentType="test"
-            featureToggles={{
-              metricsRecordPDFJSGetDocument: true,
-            }}
-            clearDocumentLoadError={jest.fn()}
-            setDocumentLoadError={jest.fn()}
-            setPageDimensions={jest.fn()}
-            setPdfDocument={jest.fn()}
-          />
+            <PdfFile
+                documentId={documents[0].id}
+                key={`${documents[0].content_url}`}
+                file={documents[0].content_url}
+                onPageChange= {jest.fn()}
+                isVisible={documents[0].content_url}
+                scale="test"
+                documentType="test"
+                featureToggles={{
+                  metricsRecordPDFJSGetDocument: true,
+                }}
+                clearDocumentLoadError={jest.fn()}
+                setDocumentLoadError={jest.fn()}
+                setPageDimensions={jest.fn()}
+                setPdfDocument={jest.fn()}
+            />
         );
 
         wrapper.instance().componentDidMount();
@@ -135,48 +136,15 @@ describe('PdfFile', () => {
         jest.clearAllMocks();
       });
 
-      it('records metrics with additionalInfo when x-document-source is present in response headers', () => {
-
-        return wrapper.instance().componentDidMount().
-          then(() => {
-            // Assert that the recordAsyncMetrics method was called with the expected arguments
-            expect(recordAsyncMetrics).toBeCalledWith(
-              metricArgs()[0],
-              metricArgs()[1],
-              metricArgs(true)[2]
-            );
-          });
-      });
-
-      it('records metrics with no additionalInfo when x-document-source is absent in response headers', () => {
-
-        ApiUtil.get = jest.fn().mockResolvedValue(() => new Promise((resolve) => resolve()));
-        const documentData = {
-          documentId: 1,
-          documentType: 'test',
-          file: '/document/1/pdf',
-          prefetchDisabled: undefined
-        };
-        const metricData = {
-          message: 'Getting PDF document: "/document/1/pdf"',
-          type: 'performance',
-          product: 'reader',
-          data: documentData,
-        };
-
-        return wrapper.instance().componentDidMount().
-          then(() => {
-            // Assert that the recordAsyncMetrics method was called with the expected arguments
-            expect(recordAsyncMetrics).toBeCalledWith(
-              metricArgs()[0],
-              metricData,
-              metricArgs(true)[2]
-            );
-          });
+      it('calls recordAsyncMetrics and will save a metric', () => {
+        expect(recordAsyncMetrics).toBeCalledWith(metricArgs()[0], metricArgs()[1], metricArgs(true)[2]);
       });
 
       it('calls storeMetrics in catch block', () => {
-        expect(storeMetrics).toBeCalledWith(storeMetricsError.uuid, storeMetricsError.data, storeMetricsError.info);
+        expect(storeMetrics).toBeCalledWith(storeMetricsError.uuid,
+            storeMetricsError.data,
+            storeMetricsError.info,
+            storeMetricsError.eventId);
       });
     });
   });

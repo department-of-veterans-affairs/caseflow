@@ -14,20 +14,20 @@ const metricMessage = (uniqueId, data, message) => message ? message : `${unique
  * and send with UUID to console
  */
 const checkUuid = (uniqueId, data, message, type) => {
-  let id = uniqueId;
-  const isError = type === 'error';
+    let id = uniqueId;
+    const isError = type === 'error';
 
-  if (!uniqueId) {
-    id = uuid.v4();
-    if (isError) {
-      console.error(metricMessage(uniqueId, data, message));
-    } else {
-      // eslint-disable-next-line no-console
-      console.log(metricMessage(uniqueId, data, message));
+    if (!uniqueId) {
+        id = uuid.v4();
+        if (isError) {
+            console.error(metricMessage(uniqueId, data, message));
+        } else {
+            // eslint-disable-next-line no-console
+            console.log(metricMessage(uniqueId, data, message));
+        }
     }
-  }
 
-  return id;
+    return id;
 };
 
 /**
@@ -42,66 +42,67 @@ const checkUuid = (uniqueId, data, message, type) => {
  *
  */
 export const storeMetrics = (uniqueId, data, {
-  message,
-  type = 'log',
-  product,
-  start,
-  end,
-  duration,
-  additionalInfo
-}) => {
-  const metricType = ['log', 'error', 'performance'].includes(type) ? type : 'log';
-  const productArea = product ? product : 'caseflow';
+    message,
+    type = 'log',
+    product,
+    start,
+    end,
+    duration,
+    additionalInfo
+}, eventId = null) => {
+    const metricType = ['log', 'error', 'performance'].includes(type) ? type : 'log';
+    const productArea = product ? product : 'caseflow';
 
-  const postData = {
-    metric: {
-      uuid: uniqueId,
-      name: `caseflow.client.${productArea}.${metricType}`,
-      message: metricMessage(uniqueId, data, message),
-      type: metricType,
-      product: productArea,
-      metric_attributes: JSON.stringify(data),
-      sent_to: 'javascript_console',
-      start,
-      end,
-      duration,
-      additional_info: additionalInfo
-    }
-  };
-
-  postMetricLogs(postData);
-};
-
-export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 'log', product },
-  saveMetrics = true) => {
-
-  let id = checkUuid(uniqueId, data, message, type);
-
-  const t0 = performance.now();
-  const start = Date.now();
-  const name = targetFunction?.name || message;
-
-  // eslint-disable-next-line no-console
-  console.info(`STARTED: ${id} ${name}`);
-  const result = () => targetFunction();
-  const t1 = performance.now();
-  const end = Date.now();
-
-  const duration = t1 - t0;
-
-  // eslint-disable-next-line no-console
-  console.info(`FINISHED: ${id} ${name} in ${duration} milliseconds`);
-
-  if (saveMetrics) {
-    const metricData = {
-      ...data,
-      name
+    const postData = {
+        metric: {
+            uuid: uniqueId,
+            event_id: eventId,
+            name: `caseflow.client.${productArea}.${metricType}`,
+            message: metricMessage(uniqueId, data, message),
+            type: metricType,
+            product: productArea,
+            metric_attributes: JSON.stringify(data),
+            sent_to: 'javascript_console',
+            start,
+            end,
+            duration,
+            additional_info: additionalInfo
+        }
     };
 
-    storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration });
-  }
+    postMetricLogs(postData);
+};
 
-  return result;
+export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 'log', product, eventId = null },
+                              saveMetrics = true) => {
+
+    let id = checkUuid(uniqueId, data, message, type);
+
+    const t0 = performance.now();
+    const start = Date.now();
+    const name = targetFunction?.name || message;
+
+    // eslint-disable-next-line no-console
+    console.info(`STARTED: ${id} ${name}`);
+    const result = () => targetFunction();
+    const t1 = performance.now();
+    const end = Date.now();
+
+    const duration = t1 - t0;
+
+    // eslint-disable-next-line no-console
+    console.info(`FINISHED: ${id} ${name} in ${duration} milliseconds`);
+
+    if (saveMetrics) {
+        const metricData = {
+            ...data,
+            name
+        };
+
+        storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration }, eventId);
+    }
+
+    return result;
 };
 
 /**
@@ -109,37 +110,37 @@ export const recordMetrics = (targetFunction, { uniqueId, data, message, type = 
  *
  * Might need to split into async and promise versions if issues
  */
-export const recordAsyncMetrics = async (promise, { uniqueId, data, message, type = 'log', product, additionalInfo },
-  saveMetrics = true) => {
+export const recordAsyncMetrics = async (promise, { uniqueId, data, message, type = 'log', product, eventId, additionalInfo },
+                                         saveMetrics = true) => {
 
-  let id = checkUuid(uniqueId, data, message, type);
+    let id = checkUuid(uniqueId, data, message, type);
 
-  const t0 = performance.now();
-  const start = Date.now();
-  const name = message || promise;
+    const t0 = performance.now();
+    const start = Date.now();
+    const name = message || promise;
 
-  // eslint-disable-next-line no-console
-  console.info(`STARTED: ${id} ${name}`);
-  const prom = () => promise;
-  const result = await prom();
-  const t1 = performance.now();
-  const end = Date.now();
+    // eslint-disable-next-line no-console
+    console.info(`STARTED: ${id} ${name}`);
+    const prom = () => promise;
+    const result = await prom();
+    const t1 = performance.now();
+    const end = Date.now();
 
-  const duration = t1 - t0;
+    const duration = t1 - t0;
 
-  // eslint-disable-next-line no-console
-  console.info(`FINISHED: ${id} ${name} in ${duration} milliseconds`);
+    // eslint-disable-next-line no-console
+    console.info(`FINISHED: ${id} ${name} in ${duration} milliseconds`);
 
-  if (saveMetrics) {
-    const metricData = {
-      ...data,
-      name
-    };
+    if (saveMetrics) {
+        const metricData = {
+            ...data,
+            name
+        };
 
-    storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration, additionalInfo });
-  }
+        storeMetrics(uniqueId, metricData, { message, type, product, start, end, duration, additionalInfo }, eventId);
+    }
 
-  return result;
+    return result;
 };
 
 // ------------------------------------------------------------------------------------------
@@ -151,46 +152,46 @@ const INTERVAL_TO_SEND_METRICS_MS = moment.duration(60, 'seconds');
 let histograms = [];
 
 const sendHistogram = () => {
-  if (histograms.length === 0) {
-    return;
-  }
+    if (histograms.length === 0) {
+        return;
+    }
 
-  ApiUtil.post('/metrics/v1/histogram', { data: { histograms } }).
+    ApiUtil.post('/metrics/v1/histogram', { data: { histograms } }).
     catch((error) => {
-      console.error(error);
+        console.error(error);
     });
-  histograms = [];
+    histograms = [];
 };
 
 const initialize = _.once(() => {
-  // Only record values for a sample of our users.
-  if (_.random(2) === 0) {
-    // Add jitter to requests
-    setInterval(sendHistogram, INTERVAL_TO_SEND_METRICS_MS + _.random(moment.duration(5, 'seconds')));
-  }
+    // Only record values for a sample of our users.
+    if (_.random(2) === 0) {
+        // Add jitter to requests
+        setInterval(sendHistogram, INTERVAL_TO_SEND_METRICS_MS + _.random(moment.duration(5, 'seconds')));
+    }
 });
 
 export const collectHistogram = (data) => {
-  initialize();
+    initialize();
 
-  histograms.push(ApiUtil.convertToSnakeCase(data));
+    histograms.push(ApiUtil.convertToSnakeCase(data));
 
-  const id = uuid.v4();
-  const metricsData = data;
-  const time = Date(Date.now()).toString();
-  const readerData = {
-    message: `Render document content for "${ data.attrs.documentType }"`,
-    type: 'performance',
-    product: 'pdfjs.document.render',
-    start: time,
-    end: Date(Date.now()).toString(),
-    duration: data.value,
-  };
+    const id = uuid.v4();
+    const metricsData = data;
+    const time = Date(Date.now()).toString();
+    const readerData = {
+        message: `Render document content for "${ data.attrs.documentType }"`,
+        type: 'performance',
+        product: 'pdfjs.document.render',
+        start: time,
+        end: Date(Date.now()).toString(),
+        duration: data.value,
+    };
 
-  if (data.value > 0) {
-    storeMetrics(id, metricsData, readerData);
-  } else if (data.attrs.pageCount < 2) {
-    storeMetrics(id, metricsData, readerData);
-  }
+    if (data.value > 0) {
+        storeMetrics(id, metricsData, readerData);
+    } else if (data.attrs.pageCount < 2) {
+        storeMetrics(id, metricsData, readerData);
+    }
 };
 
