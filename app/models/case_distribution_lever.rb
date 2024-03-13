@@ -115,7 +115,7 @@ class CaseDistributionLever < ApplicationRecord
 
     selected_option = option(Constants.ACD_LEVERS.value)
 
-    "#{selected_option["text"]} #{value.to_s} #{selected_option["unit"]}"
+    "#{selected_option["text"]} #{value.to_s}"
   end
 
   class << self
@@ -179,9 +179,9 @@ class CaseDistributionLever < ApplicationRecord
       lever = find_by_item(name).try(:value)
 
       if INTEGER_LEVERS.include?(name)
-        lever.to_i
+        Integer(lever) rescue false ? lever.to_i : lever
       elsif FLOAT_LEVERS.include?(name)
-        lever.to_f
+        Float(lever) rescue false ? lever.to_f : lever
       else
         lever
       end

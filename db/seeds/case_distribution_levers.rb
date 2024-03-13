@@ -46,9 +46,9 @@ module Seeds
         lever_group_order: lever[:lever_group_order]
       )
 
-      puts "*********************************************"
+      puts "*********************************************" unless lever.valid?
       puts lever.errors.full_messages unless lever.valid?
-      puts "*********************************************"
+      puts "*********************************************" unless lever.valid?
     end
 
     # For properties missing those were intentionally ignored so that they would not
@@ -499,7 +499,7 @@ module Seeds
               }
             ],
             is_toggle_active: false,
-            is_disabled_in_ui: false,
+            is_disabled_in_ui: true,
             min_value: 0,
             max_value: nil,
             algorithms_used: [Constants.ACD_LEVERS.algorithms.docket],
@@ -723,9 +723,9 @@ module Seeds
           lever_group_order: lever[:lever_group_order]
         )
 
-        puts "*********************************************"
+        puts "*********************************************" unless existing_lever.valid?
         puts existing_lever.errors.full_messages unless existing_lever.valid?
-        puts "*********************************************"
+        puts "*********************************************" unless existing_lever.valid?
       end
     end
   end

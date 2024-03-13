@@ -175,6 +175,20 @@ class CaseDistributionTest extends React.PureComponent {
                             </li>
                           </ul>
                           <hr />
+                          <h2 id="run_seeds">Run Seed Files</h2>
+                          <ul>
+                            <li>
+                              <a href="/run-demo-aod-seeds">
+                                <button className="btn btn-primary">Run Demo AOD Hearing Held Seeds</button>
+                              </a>
+                            </li>
+                            <li>
+                              <a href="/run-demo-non-aod-seeds">
+                                <button className="btn btn-primary">Run Demo Non-AOD Hearing Held Seeds</button>
+                              </a>
+                            </li>
+                          </ul>
+                          <hr />
                           <a href="#top"><button className="btn btn-primary">Back to Top</button></a>
                         </div>
                       );

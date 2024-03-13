@@ -31,9 +31,11 @@ export const createUpdatedLeversWithValues = (levers) => {
         // Add new properties for radio and combination data types as these have special handling logic
         // to retrieve value
         if (dataType === ACD_LEVERS.data_types.radio) {
-          const selectedOption = findSelectedOption(lever).item;
-          const valueOptionValue = radioValueOptionSelected(selectedOption) ?
-            lever.value : findValueOption(lever).value;
+
+          const selectedOption = findSelectedOption(lever)?.item;
+          const isValueOptionSelected = radioValueOptionSelected(selectedOption);
+          const valueOptionValue = selectedOption && isValueOptionSelected ?
+            lever.value : findValueOption(lever)?.value;
 
           additionalValues = {
             ...additionalValues,
@@ -93,18 +95,20 @@ export const formatLeverHistory = (leverHistoryList) => {
 
     if (existingEntry) {
       existingEntry.titles.push(entry.lever_title);
-      existingEntry.previous_values.push(entry.previous_value);
-      existingEntry.updated_values.push(entry.update_value);
+      existingEntry.previousValues.push(entry.previous_value);
+      existingEntry.updatedValues.push(entry.update_value);
       existingEntry.units.push(entry.lever_unit || 'null');
+      existingEntry.leverDataType.push(entry.lever_data_type);
     } else {
       const newEntry = {
         created_at: formatTimestamp(entry.created_at),
         user_css_id: entry.user_css_id,
         user_name: entry.user_name,
         titles: [entry.lever_title],
-        previous_values: [entry.previous_value],
-        updated_values: [entry.update_value],
+        previousValues: [entry.previous_value],
+        updatedValues: [entry.update_value],
         units: [entry.lever_unit || 'null'],
+        leverDataType: [entry.lever_data_type]
       };
 
       accumulator.push(newEntry);
