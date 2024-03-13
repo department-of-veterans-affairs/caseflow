@@ -53,7 +53,10 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
 
     cache_postgres_data_start = Time.zone.now
     cache_legacy_appeal_postgres_data(legacy_appeals)
-    metrics_service_report_time_segment(segment: "cache_legacy_appeal_postgres_data", start_time: cache_postgres_data_start)
+    metrics_service_report_time_segment(
+                                        segment: "cache_legacy_appeal_postgres_data",
+                                        start_time: cache_postgres_data_start
+                                        )
 
     cache_vacols_data_start = Time.zone.now
     cache_legacy_appeal_vacols_data(all_vacols_ids)
