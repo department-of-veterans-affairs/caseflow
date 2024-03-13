@@ -109,19 +109,6 @@ RSpec.describe CaseDistributionLever, :all_dbs do
     end
   end
 
-  context "distribution_value" do
-    it "should return value from options value when radio data type lever object" do
-      lever = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.ama_hearing_case_affinity_days)
-      option = lever.options.detect { |opt| opt["item"] == lever.value }
-      expect(lever.distribution_value).to eq(option["value"])
-    end
-
-    it "should return value from lever object" do
-      lever = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.request_more_cases_minimum)
-      expect(lever.distribution_value).to eq(lever.value)
-    end
-  end
-
   context "update_acd_levers" do
     it "makes valid lever updates and creates audit entries" do
       request_more_cases_minimum = CaseDistributionLever.find_by_item(Constants.DISTRIBUTION.request_more_cases_minimum)

@@ -1,8 +1,9 @@
 import ACD_LEVERS from '../../constants/ACD_LEVERS';
 
 export const findOption = (lever, value) => lever.options.find((option) => option.item === value);
-
-export const createCombinationValue = (toggleValue, value) => `${toggleValue}-${value}`;
+export const findSelectedOption = (lever) => lever.options.find((option) => option.selected);
+export const findValueOption = (lever) => findOption(lever, ACD_LEVERS.value);
+export const radioValueOptionSelected = (item) => ACD_LEVERS.value === item;
 
 /**
  * Add backendValue attributes to each lever
@@ -18,23 +19,31 @@ export const createUpdatedLeversWithValues = (levers) => {
 
     return leverGroups.reduce((updatedLevers, leverGroup) => {
       updatedLevers[leverGroup] = levers[leverGroup]?.map((lever) => {
+        // All levers should have a backendValue added as this is used for the following
+        // - showing the user what value was in the SaveModal
+        // - checking if the lever has changed and Save button should be enabled
         let additionalValues = {
           backendValue: lever.value
         };
 
         const dataType = lever.data_type;
 
-        // Only add a new property for radio and combination data types as these have special handling logic
+        // Add new properties for radio and combination data types as these have special handling logic
         // to retrieve value
         if (dataType === ACD_LEVERS.data_types.radio) {
+          const selectedOption = findSelectedOption(lever).item;
+          const valueOptionValue = radioValueOptionSelected(selectedOption) ?
+            lever.value : findValueOption(lever).value;
+
           additionalValues = {
-            currentValue: findOption(lever, lever.value).value,
-            backendValue: findOption(lever, lever.value).value,
+            ...additionalValues,
+            selectedOption,
+            valueOptionValue,
           };
         } else if (dataType === ACD_LEVERS.data_types.combination) {
           additionalValues = {
-            currentValue: createCombinationValue(lever.is_toggle_active, lever.value),
-            backendValue: createCombinationValue(lever.is_toggle_active, lever.value)
+            ...additionalValues,
+            backendIsToggleActive: lever.is_toggle_active
           };
         }
 
@@ -121,7 +130,9 @@ export const validateLeverInput = (lever, value) => {
       errors.push({ leverItem: lever.item, message: ACD_LEVERS.validation_error_message.minimum_not_met });
     }
     if (maxValue && value > maxValue) {
-      errors.push({ leverItem: lever.item, message: ACD_LEVERS.validation_error_message.out_of_bounds });
+      const message = ACD_LEVERS.validation_error_message.out_of_bounds.replace('%s', maxValue);
+
+      errors.push({ leverItem: lever.item, message });
     }
   }
 
@@ -140,3 +151,21 @@ export const dynamicallyAddAsterisk = (lever) => {
   return (lever.algorithms_used.includes(ACD_LEVERS.algorithms.proportion) &&
     lever.algorithms_used.includes(ACD_LEVERS.algorithms.docket) ? '*' : '');
 };
+
+/**
+ * if is_toggle_active was false then set to true and value was updated
+ *   return true
+ * if is_toggle_active was true, value was updated then is_toggle_active was set to false
+ *   return true
+ * if is_toggle_active didn't change, value was udpated
+ *   return true
+ * if neither value or is_toggle_active changed
+ *   return false
+ */
+export const hasCombinationLeverChanged = (lever) =>
+  (lever.backendIsToggleActive !== lever.is_toggle_active) ||
+  (lever.backendValue !== null &&
+  `${lever.value}` !== lever.backendValue);
+
+export const hasLeverValueChanged = (lever) => lever.backendValue !== null && `${lever.value}` !== lever.backendValue;
+
