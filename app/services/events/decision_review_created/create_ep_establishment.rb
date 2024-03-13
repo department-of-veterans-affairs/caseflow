@@ -3,8 +3,8 @@
 class Events::DecisionReviewCreated::CreateEpEstablishment
   # The creation of End Product Establishment
   # claim_review can be either a supplemental claim or higher level review
-  def process!(station_id, end_product_establishment, claim_review, user)
-    end_product_establishment = EndProductEstablishment.find_or_create_by!(
+  def process!(station_id, end_product_establishment, claim_review, user, event)
+    end_product_establishment = EndProductEstablishment.create!(
       payee_code: end_product_establishment.payee_code,
       source: claim_review,
       veteran_file_number: claim_review.veteran_file_number,
@@ -22,6 +22,10 @@ class Events::DecisionReviewCreated::CreateEpEstablishment
       synced_status: end_product_establishment.synced_status,
       user_id: user.id
     )
+    # Create Event Record for end product establishment
+    EventRecord.create!(event: event, backfill_record: end_product_establishment)
     end_product_establishment
+  rescue Caseflow::Error::DecisionReviewCreatedEpEstablishmentError => error
+    raise error
   end
 end
