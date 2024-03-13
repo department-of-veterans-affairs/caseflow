@@ -3,7 +3,7 @@
 require "open-uri"
 
 # Downloads transcription file from Webex using temporary download link and uploads to S3
-# - Download link passed to this job from GetRecordingDetailsJob
+# - Download link passed to this job from FetchRecordingDetailsJob
 # - File type either audio (mp3), video (mp4), or vtt (transcript)
 
 class Hearings::DownloadTranscriptionFileJob < CaseflowJob
@@ -77,7 +77,7 @@ class Hearings::DownloadTranscriptionFileJob < CaseflowJob
   private
 
   # Purpose: Downloads file from temporary download link provided by
-  #          GetRecordingDetailsJob. Update file status of transcription file depending on download success/failure.
+  #          FetchRecordingDetailsJob. Update file status of transcription file depending on download success/failure.
   #
   # Params: download_link - string, URI for temporary download link
   #         file_name - string, to be parsed for hearing identifiers

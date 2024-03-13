@@ -53,7 +53,7 @@ class Fakes::WebexService
     )
   end
 
-  def get_recordings_list
+  def fetch_recordings_list
     if error?
       return ExternalApi::WebexService::RecordingsListResponse.new(
         HTTPI::Response.new(@status_code, {}, error_response)
@@ -69,7 +69,7 @@ class Fakes::WebexService
     )
   end
 
-  def get_recording_details
+  def fetch_recording_details
     if error?
       return ExternalApi::WebexService::RecordingDetailsResponse.new(
         HTTPI::Response.new(@status_code, {}, error_response)
