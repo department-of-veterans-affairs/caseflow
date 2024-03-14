@@ -107,7 +107,6 @@ const TranscriptionFilesTable = ({ recordings, hearing }) => {
     setRows(buildRowsFromRecordings());
   }, []);
 
-
   return (
     <div {...genericRow}>
       <Table
