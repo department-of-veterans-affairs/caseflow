@@ -27,7 +27,6 @@ import uuid from 'uuid';
 import { storeMetrics, recordAsyncMetrics } from '../util/Metrics';
 
 PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-let pdfPageRenderTimeInMsStart = null;
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -43,7 +42,7 @@ export class PdfFile extends React.PureComponent {
     this.clientWidth = 0;
     this.currentPage = 0;
     this.columnCount = 1;
-    this.metricsIdentifier = null;
+    this.measureTimeStartMs = null;
   }
 
   componentDidMount = () => {
@@ -82,27 +81,13 @@ export class PdfFile extends React.PureComponent {
     };
 
     return ApiUtil.get(this.props.file, requestOptions).
-    then((resp) => {
-      pdfPageRenderTimeInMsStart = performance.now();
-      const metricData = {
-        message: `Getting PDF document: "${this.props.file}"`,
-        type: 'performance',
-        product: 'reader',
-        data: documentData,
-        eventId: this.metricsIdentifier,
-      };
-
-      if (resp && resp.header && resp.header['x-document-source']) {
-        metricData.additionalInfo = JSON.stringify({ source: `"${resp.header['x-document-source']}"` });
-      }
-
-      /* The feature toggle reader_get_document_logging adds the progress of the file being loaded in console */
-      if (this.props.featureToggles.readerGetDocumentLogging) {
-        const src = {
-          data: resp.body,
-          verbosity: 5,
-          stopAtErrors: false,
-          pdfBug: true,
+      then((resp) => {
+        this.measureTimeStartMs = performance.now();
+        const metricData = {
+          message: `Getting PDF document: "${this.props.file}"`,
+          type: 'performance',
+          product: 'reader',
+          data: documentData,
         };
 
         this.loadingTask = PDFJS.getDocument(src);
@@ -213,8 +198,7 @@ export class PdfFile extends React.PureComponent {
       this.pdfDocument.destroy();
       this.props.clearPdfDocument(this.props.file, this.pdfDocument);
     }
-
-    this.metricsIdentifier = null;
+    this.measureTimeStartMs = null;
   }
 
   getPage = ({ rowIndex, columnIndex, style, isVisible }) => {
@@ -226,16 +210,15 @@ export class PdfFile extends React.PureComponent {
 
     return <div key={pageIndex} style={style}>
       <PdfPage
-          documentId={this.props.documentId}
-          file={this.props.file}
-          isPageVisible={isVisible}
-          pageIndex={(rowIndex * this.columnCount) + columnIndex}
-          isFileVisible={this.props.isVisible}
-          scale={this.props.scale}
-          pdfDocument={this.props.pdfDocument}
-          featureToggles={this.props.featureToggles}
-          measureTimeStartMs={pdfPageRenderTimeInMsStart}
-          metricsIdentifier={this.metricsIdentifier}
+        documentId={this.props.documentId}
+        file={this.props.file}
+        isPageVisible={isVisible}
+        pageIndex={(rowIndex * this.columnCount) + columnIndex}
+        isFileVisible={this.props.isVisible}
+        scale={this.props.scale}
+        pdfDocument={this.props.pdfDocument}
+        featureToggles={this.props.featureToggles}
+        measureTimeStartMs={this.measureTimeStartMs}
       />
     </div>;
   }
