@@ -129,12 +129,6 @@ const CorrespondenceTableBuilder = (props) => {
     );
   };
 
-  const filterTasks = (tasks) => {
-    console.log('Filtered tasks:', tasks.filter((task) => taskMatchesSearch(task, searchValue)));
-
-    return tasks.filter((task) => taskMatchesSearch(task, searchValue));
-  };
-
   const queueConfig = () => {
     const { config } = props;
 
@@ -285,7 +279,7 @@ const CorrespondenceTableBuilder = (props) => {
           <QueueTable
             key={tabConfig.name}
             columns={columnsFromConfig(config, tabConfig, tasks)}
-            rowObjects={filterTasks(tasks)}
+            rowObjects={tasks}
             getKeyForRow={(_rowNumber, task) => task.uniqueId}
             casesPerPage={config.tasks_per_page}
             numberOfPages={tabConfig.task_page_count}
@@ -301,6 +295,7 @@ const CorrespondenceTableBuilder = (props) => {
             enablePagination
             isCorrespondenceTable
             searchValue={searchValue}
+            taskMatchesSearch={taskMatchesSearch}
           />
         </>
       ),

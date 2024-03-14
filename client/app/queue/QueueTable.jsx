@@ -657,6 +657,10 @@ export default class QueueTable extends React.PureComponent {
       catch(() => this.setState({ loadingComponent: null }));
   };
 
+  filterTasksFromSearchbar = (tasks, searchValue) => {
+    return tasks.filter((task) => this.props.taskMatchesSearch(task, searchValue));
+  };
+
   render() {
     const {
       columns,
@@ -673,7 +677,8 @@ export default class QueueTable extends React.PureComponent {
       styling,
       bodyStyling,
       enablePagination,
-      useTaskPagesApi
+      useTaskPagesApi,
+      searchValue
     } = this.props;
 
     let { totalTaskCount, numberOfPages, rowObjects, casesPerPage } = this.props;
@@ -778,7 +783,7 @@ export default class QueueTable extends React.PureComponent {
           tbodyRef={tbodyRef}
           columns={columns}
           getKeyForRow={keyGetter}
-          rowObjects={rowObjects}
+          rowObjects={searchValue ? this.filterTasksFromSearchbar(rowObjects, searchValue) : rowObjects}
           bodyClassName={bodyClassName ?? ''}
           rowClassNames={rowClassNames}
           bodyStyling={bodyStyling}
@@ -847,7 +852,9 @@ HeaderRow.propTypes = FooterRow.propTypes = Row.propTypes = BodyRows.propTypes =
   }),
   onHistoryUpdate: PropTypes.func,
   preserveFilter: PropTypes.bool,
-  isCorrespondenceTable: PropTypes.bool
+  isCorrespondenceTable: PropTypes.bool,
+  searchValue: PropTypes.string,
+  taskMatchesSearch: PropTypes.func
 };
 
 Row.propTypes.rowObjects = PropTypes.arrayOf(PropTypes.object);
