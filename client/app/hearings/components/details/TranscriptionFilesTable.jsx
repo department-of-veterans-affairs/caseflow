@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { css } from 'glamor';
 import _ from 'lodash';
+import moment from 'moment-timezone';
 
 import Table from '../../../components/Table';
 import { genericRow } from './style';
@@ -62,12 +63,13 @@ const transcriptionFileColumns = [
   {
     align: 'left',
     valueName: 'dateUploadAws',
+    valueFunction: (rowObject) => moment(rowObject.dateUploadAws).format('MM/DD/YYYY'),
     header: 'Uploaded',
   },
   {
     align: 'left',
     valueFunction: (rowObject) => (
-      <Link to="/">
+      <Link to={rowObject.awsLink}>
         {rowObject.fileName}
         <DownloadIcon color={COLORS.PRIMARY} />
       </Link>
