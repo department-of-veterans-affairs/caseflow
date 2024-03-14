@@ -189,9 +189,6 @@ const CorrespondenceTableBuilder = (props) => {
 
     // Setup default sorting.
     const defaultSort = {};
-    const tabPaginationOptions = {
-      onPageLoaded: props.onPageLoaded
-    };
 
     const getBulkAssignArea = () => {
       return (<>
@@ -285,7 +282,9 @@ const CorrespondenceTableBuilder = (props) => {
             numberOfPages={tabConfig.task_page_count}
             totalTaskCount={totalTaskCount}
             taskPagesApiEndpoint={tabConfig.task_page_endpoint_base_path}
-            tabPaginationOptions={tabPaginationOptions}
+            tabPaginationOptions={
+              savedPaginationOptions.tab === tabConfig.name ? savedPaginationOptions : {}
+            }
             // Limit filter preservation/retention to only VHA orgs for now.
             {...(isVhaOrg ? { preserveFilter: true } : {})}
             defaultSort={defaultSort}
