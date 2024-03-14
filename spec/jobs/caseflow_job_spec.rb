@@ -13,7 +13,7 @@ describe CaseflowJob, :postgres do
 
   context "when a CaseflowJob doesn't explicitly report to DataDog" do
     before do
-      expect(DataDogService).to receive(:emit_gauge).with(
+      expect(MetricsService).to receive(:emit_gauge).with(
         app_name: "caseflow_job",
         metric_group: "some_caseflow_job",
         metric_name: "runtime",
