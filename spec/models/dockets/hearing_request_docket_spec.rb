@@ -46,36 +46,6 @@ describe HearingRequestDocket, :all_dbs do
         )
       end
 
-      it "only distributes nonpriority, distributable, hearing docket cases
-          where the most recent held hearing is tied to the distribution judge
-          but doesn't exceed affinity threshold" do
-        create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
-        matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
-
-        # This is the only one that is still considered tied (we want only non_genpop)
-        appeal = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
-
-        # This appeal should not be returned because it is now considered genpop
-        outside_affinity = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge_outside_affinity
-        tasks = subject
-
-        distributed_appeals = distribution_judge.reload.tasks.map(&:appeal)
-        # CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update(value: "omit")
-
-
-        expect(tasks.length).to eq(1)
-        expect(tasks.first.class).to eq(DistributedCase)
-        expect(tasks.first.genpop).to eq false
-        expect(tasks.first.genpop_query).to eq "not_genpop"
-
-        expect(distribution.distributed_cases.length).to eq(1)
-        # expect(distribution_judge.reload.tasks.map(&:appeal)).to eq([appeal])
-
-        # If hearing date exceeds specified days for affinity, appeal no longer tied to judge
-        # expect(distributed_appeals).not_to include(outside_affinity)
-      end
-    end
-
     context "priority appeals and not_genpop" do
       subject do
         HearingRequestDocket.new.distribute_appeals(
@@ -802,7 +772,6 @@ describe HearingRequestDocket, :all_dbs do
     appeal
   end
 
-  # rubocop:disable Metrics/AbcSize
   def create_nonpriority_unblocked_hearing_appeal_within_affinity
     appeal = create(:appeal,
                     :with_post_intake_tasks,

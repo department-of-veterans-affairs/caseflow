@@ -8,13 +8,14 @@ class DirectReviewDocket < Docket
   def due_count
     ama_direct_review_start_distribution_prior_to_goals =
       CaseDistributionLever.ama_direct_review_start_distribution_prior_to_goals
-    appeal_ids = if ama_direct_review_start_distribution_prior_to_goals > 0
-                   appeals(priority: false, ready: true)
-                     .where("target_decision_date <= ?",
-                     ama_direct_review_start_distribution_prior_to_goals.days.from_now)
-                 else
-                   appeals(priority: false, ready: true)
-                 end
+
+    if ama_direct_review_start_distribution_prior_to_goals > 0
+      appeal_ids = appeals(priority: false, ready: true)
+        .where("target_decision_date <= ?", ama_direct_review_start_distribution_prior_to_goals.days.from_now)
+        .pluck(:id)
+    else
+      appeal_ids = appeals(priority: false, ready: true).pluck(:id)
+    end
 
     Appeal.where(id: appeal_ids).count
   end
