@@ -25,7 +25,7 @@ class CorrespondenceTaskFilter < TaskFilter
 
     unless date_completed_params.empty?
       date_completed_params[0].slice!("col=completedDateColumn&val=")
-      result = result.merge(filter_by_va_dor(date_completed_params[0]))
+      result = result.merge(filter_by_date_completed(date_completed_params[0]))
     end
     result
   end
@@ -62,6 +62,21 @@ class CorrespondenceTaskFilter < TaskFilter
     end
   end
 
+  def filter_by_date_completed(date_info)
+    date_type, first_date, second_date = date_info.split(",")
+
+    case date_type
+    when "0"
+      date_completed_filter_between_dates(first_date, second_date)
+    when "1"
+      date_completed_filter_before_date(first_date)
+    when "2"
+      date_completed_filter_after_date(first_date)
+    when "3"
+      date_completed_filter_on_date(first_date)
+    end
+  end
+
   def filter_by_task(task_types)
     # used to store the results of each task query
     collection = nil
@@ -89,5 +104,24 @@ class CorrespondenceTaskFilter < TaskFilter
 
   def filter_on_date(date)
     tasks.joins(:appeal).where("DATE(correspondences.va_date_of_receipt) = (?)", Time.zone.parse(date))
+  end
+
+  def date_completed_filter_between_dates(start_date, end_date)
+
+    tasks.where("assigned_at > ? AND assigned_at < ?",
+             Time.zone.parse(start_date),
+             Time.zone.parse(end_date))
+  end
+
+  def date_completed_filter_before_date(date)
+    tasks.where("assigned_at < ?", Time.zone.parse(date))
+  end
+
+  def date_completed_filter_after_date(date)
+    tasks.where("assigned_at > ?", Time.zone.parse(date))
+  end
+
+  def date_completed_filter_on_date(date)
+    tasks.where("DATE(assigned_at) = (?)", Time.zone.parse(date))
   end
 end
