@@ -5,14 +5,20 @@ class RetryDecisionReviewProcesses
     @report_service = report_service
   end
 
+  # :reek:FeatureEnvy
   def retry # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
     success_logs = ["RetryDecisionReviewProcesses Success Log"]
     new_error_logs = ["RetryDecisionReviewProcesses New Error Log"]
     all_records.each do |instance|
-      error_field = instance.is_a?(RequestIssuesUpdate) ? :error : :establishment_error
+      is_riu = instance.is_a?(RequestIssuesUpdate)
+      error_field = is_riu ? :error : :establishment_error
       error = instance[error_field]
       begin
-        DecisionReviewProcessJob.perform_now(instance)
+        if is_riu
+          instance.perform!
+        else
+          DecisionReviewProcessJob.perform_now(instance)
+        end
       rescue StandardError => error
         @report_service&.append_error(instance.class.name, instance.id, error)
         next
