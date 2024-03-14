@@ -32,7 +32,6 @@ export const SaveModal = (props) => {
     if ([ACD_LEVERS.omit, ACD_LEVERS.infinite].includes(value)) {
       return findOption(lever, value).text;
     }
-
     const selectedOption = findValueOption(lever);
 
     return `${selectedOption.text} ${value} ${selectedOption.unit}`;

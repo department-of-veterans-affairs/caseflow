@@ -8,7 +8,7 @@ RSpec.describe CaseDistributionLever, :all_dbs do
        request_more_cases_minimum
        alternative_batch_size
        batch_size_per_attorney
-       days_before_goal_due_for_distribution
+       ama_direct_review_start_distribution_prior_to_goals
        ama_hearing_case_affinity_days
        cavc_affinity_days
        ama_evidence_submission_docket_time_goals
