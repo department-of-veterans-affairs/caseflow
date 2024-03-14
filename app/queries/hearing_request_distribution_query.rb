@@ -13,6 +13,7 @@ class HearingRequestDistributionQuery
   def call
     return not_genpop_appeals if genpop == "not_genpop"
     if genpop == "only_genpop"
+      
       return [not_genpop_appeals, only_genpop_appeals] if FeatureToggle.enabled?(:acd_exclude_from_affinity) && judge.present?
 
     #if the feature toggle is disabled or judge isn't present then the following line will fail feature tests

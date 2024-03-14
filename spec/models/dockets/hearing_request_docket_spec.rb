@@ -92,7 +92,6 @@ describe HearingRequestDocket, :all_dbs do
         matching_all_base_conditions_with_most_recent_hearing_tied_to_distribution_judge_but_not_held
         matching_all_base_conditions_with_most_recent_held_hearing_not_tied_to_any_judge
         matching_all_base_conditions_with_most_recent_held_hearing_tied_to_other_judge
-
         # appeals that should be returned
         appeal = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
         another = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge

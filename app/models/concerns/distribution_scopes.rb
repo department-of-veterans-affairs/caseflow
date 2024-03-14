@@ -69,7 +69,7 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       .where(
         "advance_on_docket_motions.created_at < ?",
         CaseDistributionLever.ama_hearing_case_aod_affinity_days.to_i.days.ago
-        )
+      )
   end
 
   # this method takes care of when aod affinity day always affinitized
