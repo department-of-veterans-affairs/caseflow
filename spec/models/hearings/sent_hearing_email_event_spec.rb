@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe SentHearingEmailEvent do
-  it_behaves_like "SentHearingEmailEvent belongs_to polymorphic hearing"
-
   context "#create" do
     let(:user) { create(:user) }
     let(:hearing) { create(:hearing) }

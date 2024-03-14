@@ -21,7 +21,8 @@ class SentHearingEmailEvent < CaseflowRecord
   class << self; undef_method :sent_to_appellant; end
   scope :sent_to_appellant, -> { where(recipient_role: [:veteran, :appellant]) }
 
-  include SentHearingEmailEventBelongsToPolymorphicHearingConcern
+  include BelongsToPolymorphicHearingConcern
+  belongs_to_polymorphic_hearing :hearing
 
   # Email types are specified in `SendEmail#email_for_recipient`
   enum email_type: (
