@@ -4,6 +4,8 @@ class LegacyWorkQueue
   include ActiveModel::Model
   class << self
     def tasks_for_user(user)
+      # puts "------------------when is this called-----------------"
+      # byebug
       vacols_tasks = repository.tasks_for_user(user.css_id)
       tasks_from_vacols_tasks(vacols_tasks, user)
     end

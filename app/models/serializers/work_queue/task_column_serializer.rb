@@ -68,6 +68,7 @@ class WorkQueue::TaskColumnSerializer
     #   # object.appeal.try(:file_type)&.eql?("Paper")
     #   # true
     # end
+    # true
     if defined? object.appeal.file_type
       object.appeal.file_type.eql?("Paper")
     end
@@ -266,7 +267,8 @@ class WorkQueue::TaskColumnSerializer
     #   # the `cached_appeal_attributes` table in `Hearings::ScheduleHearingTasksController`.
     #   object&.[](:hearing_request_type)
     # end
-    object&.[](:hearing_request_type)
+    # object&.[](:hearing_request_type)
+    object[:hearing_request_type]
   end
 
   # Used by /hearings/schedule/assign. Not present in the full `task_serializer`.
@@ -281,7 +283,8 @@ class WorkQueue::TaskColumnSerializer
     #   # the `cached_appeal_attributes` table in `Hearings::ScheduleHearingTasksController`.
     #   object&.[](:former_travel)
     # end
-    object&.[](:former_travel)
+    # object&.[](:former_travel)
+    object[:former_travel]
   end
 
   # Used by /hearings/schedule/assign. Not present in the full `task_serializer`.
@@ -294,7 +297,8 @@ class WorkQueue::TaskColumnSerializer
     #   # the `cached_appeal_attributes` table in `Hearings::ScheduleHearingTasksController`.
     #   object&.[](:power_of_attorney_name)
     # end
-    object&.[](:power_of_attorney_name)
+    # object&.[](:power_of_attorney_name)
+    object[:power_of_attorney_name]
   end
 
   # Used by /hearings/schedule/assign. Not present in the full `task_serializer`.
@@ -303,8 +307,8 @@ class WorkQueue::TaskColumnSerializer
 
     if serialize_attribute?(params, columns)
       # TODO: See if this one matters
-      object.appeal.suggested_hearing_location&.to_hash
-      # {}
+      # object.appeal.suggested_hearing_location&.to_hash
+      {}
     end
   end
 
@@ -315,6 +319,7 @@ class WorkQueue::TaskColumnSerializer
       # This should be preloaded??
       # object.appeal.try(:overtime?)
       object.appeal.overtime?
+      # true
     end
   end
 
@@ -323,6 +328,7 @@ class WorkQueue::TaskColumnSerializer
 
     if serialize_attribute?(params, columns)
       # object.appeal.try(:contested_claim?)
+      object.appeal.contested_claim?
       true
     end
   end
@@ -332,7 +338,7 @@ class WorkQueue::TaskColumnSerializer
 
     if serialize_attribute?(params, columns)
       # object.appeal.try(:mst?)
-      true
+      object.appeal.mst?
     end
   end
 
@@ -341,7 +347,7 @@ class WorkQueue::TaskColumnSerializer
 
     if serialize_attribute?(params, columns)
       # object.appeal.try(:pact?)
-      true
+      object.appeal.pact?
     end
   end
 
@@ -397,44 +403,14 @@ class WorkQueue::TaskColumnSerializer
   end
 
   attribute :owned_by do |object, params|
-    # columns = [
-    #   Constants::QUEUE_CONFIG["COLUMNS"]["TASK_TYPE"]["name"],
-    #   Constants::QUEUE_CONFIG["COLUMNS"]["TASK_OWNER"]["name"],
-    #   Constants::QUEUE_CONFIG["COLUMNS"]["VAMC_OWNER"]["name"]
-    # ]
-
-    # if serialize_attribute?(params, columns)
-    #   if object.assigned_to_type == "Organization"
-    #     object.assigned_to&.name
-    #   elsif object.assigned_to_type == "User"
-    #     object.assigned_to&.css_id
-    #   end
-    # end
     object.assigned_to&.name
   end
 
   attribute :days_since_last_status_change do |object, params|
-    # columns = [
-    #   Constants::QUEUE_CONFIG["COLUMNS"]["TASK_TYPE"]["name"],
-    #   Constants::QUEUE_CONFIG["COLUMNS"]["LAST_ACTION"]["name"],
-    #   Constants::QUEUE_CONFIG["COLUMNS"]["DAYS_SINCE_LAST_ACTION"]["name"]
-    # ]
-
-    # if serialize_attribute?(params, columns)
-    #   object.calculated_last_change_duration
-    # end
     object.calculated_last_change_duration
   end
 
   attribute :days_since_board_intake do |object, params|
-    # columns = [
-    #   Constants::QUEUE_CONFIG["COLUMNS"]["TASK_TYPE"]["name"],
-    #   Constants::QUEUE_CONFIG["COLUMNS"]["BOARD_INTAKE"]["name"]
-    # ]
-
-    # if serialize_attribute?(params, columns)
-    #   object.calculated_duration_from_board_intake
-    # end
     object.calculated_duration_from_board_intake
   end
 

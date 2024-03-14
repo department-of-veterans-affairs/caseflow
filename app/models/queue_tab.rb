@@ -197,7 +197,9 @@ class QueueTab
           :available_hearing_locations,
           :claimants,
           :work_mode,
-          :latest_informal_hearing_presentation_task
+          :latest_informal_hearing_presentation_task,
+          :appeal_views,
+          :special_issue_list
         ]
       },
       :assigned_by,

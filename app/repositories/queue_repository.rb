@@ -27,6 +27,8 @@ class QueueRepository
 
     # rubocop:disable Metrics/MethodLength
     def appeals_by_vacols_ids(vacols_ids)
+      # puts "--------------in appeals by vacols ids in queue repository--------------"
+      # byebug
       appeals = MetricsService.record("VACOLS: fetch appeals and associated info for tasks",
                                       service: :vacols,
                                       name: "appeals_by_vacols_ids") do
@@ -52,7 +54,17 @@ class QueueRepository
         end
       end
 
-      appeals.map(&:save)
+      # TODO: Make this one transaction
+      # Check if a transaction is already open
+      if ActiveRecord::Base.connection.transaction_open?
+        appeals.map(&:save)
+      else
+        ActiveRecord::Base.transaction do
+          # Your code within the transaction block
+          appeals.map(&:save)
+        end
+      end
+
       appeals
     end
     # rubocop:enable Metrics/MethodLength

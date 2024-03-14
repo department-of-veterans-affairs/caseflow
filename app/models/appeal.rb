@@ -247,9 +247,9 @@ class Appeal < DecisionReview
 
     category_substrings = %w[Contested Apportionment]
 
-    request_issues.active.any? do |request_issue|
-      category_substrings.any? do |substring|
-        request_issues.active.include?(request_issue) && request_issue.nonrating_issue_category&.include?(substring)
+    request_issues.any? do |request_issue|
+      request_issue.active? && category_substrings.any? do |substring|
+        request_issue.nonrating_issue_category&.include?(substring)
       end
     end
   end
@@ -257,11 +257,19 @@ class Appeal < DecisionReview
   # :reek:RepeatedConditionals
   # decision issue status overrules request issues/special issue list for both mst and pact
   def mst?
-    return false unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user])
+    # return false unless FeatureToggle.enabled?(:mst_identification, user: RequestStore[:current_user])
 
-    return decision_issues.any?(&:mst_status) unless decision_issues.empty?
+    # return decision_issues.any?(&:mst_status) unless decision_issues.empty?
 
-    request_issues.active.any?(&:mst_status) ||
+    return true if decision_issues.any?(&:mst_status)
+
+    # TODO: This is an auto refetch from the database even if you use includes
+    # request_issues.active.any?(&:mst_status) ||
+    #   (special_issue_list &&
+    #     special_issue_list.created_at < "2023-06-01".to_date &&
+    #     special_issue_list.military_sexual_trauma)
+    # request_issues.any? { |issue| issue.active? && issue.mst_status }
+    request_issues.any? { |issue| issue.active? && issue.mst_status } ||
       (special_issue_list &&
         special_issue_list.created_at < "2023-06-01".to_date &&
         special_issue_list.military_sexual_trauma)
@@ -271,9 +279,12 @@ class Appeal < DecisionReview
   def pact?
     return false unless FeatureToggle.enabled?(:pact_identification, user: RequestStore[:current_user])
 
-    return decision_issues.any?(&:pact_status) unless decision_issues.empty?
+    # return decision_issues.any?(&:pact_status) unless decision_issues.empty?
 
-    request_issues.active.any?(&:pact_status)
+    return true if decision_issues.any?(&:pact_status)
+
+    # request_issues.active.any?(&:pact_status)
+    request_issues.any? { |issue| issue.active? && issue.pact_status }
   end
 
   # Returns the most directly responsible party for an appeal when it is at the Board,

@@ -87,7 +87,9 @@ class LegacyTask
       document_id: record.document_id,
       assigned_by: record.assigned_by,
       appeal: appeal,
-      started_at: appeal.appeal_views.find_by(user: user)&.created_at
+      # TODO: this probably is always a DB call because it uses find_by
+      # started_at: appeal.appeal_views.find_by(user: user)&.created_at
+      started_at: appeal.appeal_views.find { |appeal_view| appeal_view.user == user }&.created_at
     )
   end
 

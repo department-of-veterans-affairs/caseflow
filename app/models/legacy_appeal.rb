@@ -399,6 +399,8 @@ class LegacyAppeal < CaseflowRecord
     end
   end
 
+  alias contested_claim? contested_claim
+
   def claimant
     if appellant_is_not_veteran
       {
