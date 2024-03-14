@@ -146,7 +146,8 @@ describe PexipConferenceLink do
 
   describe "#guest_link" do
     before do
-      allow_any_instance_of(VirtualHearings::PexipLinkService).to receive(:conference_id).and_return expected_conference_id
+      allow_any_instance_of(VirtualHearings::PexipLinkService).to receive(:conference_id)
+        .and_return expected_conference_id
       allow_any_instance_of(VirtualHearings::PexipLinkService).to receive(:guest_pin).and_return expected_pin
     end
     let(:hearing_day) { create(:hearing_day) }

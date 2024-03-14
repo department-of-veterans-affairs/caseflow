@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Hearings::GetWebexRecordingsDetailsJob, type: :job do
+describe Hearings::FetchWebexRecordingsDetailsJob, type: :job do
   include ActiveJob::TestHelper
   let(:id) { "4f914b1dfe3c4d11a61730f18c0f5387" }
   let(:mp4_link) { "https://www.learningcontainer.com/mp4-sample-video-files-download/#" }
@@ -23,8 +23,8 @@ describe Hearings::GetWebexRecordingsDetailsJob, type: :job do
     end
 
     it "hits the webex API and returns recording details" do
-      get_details = Hearings::GetWebexRecordingsDetailsJob.new
-      run = get_details.send(:get_recording_details, id)
+      get_details = Hearings::FetchWebexRecordingsDetailsJob.new
+      run = get_details.send(:fetch_recording_details, id)
 
       expect(run.mp4_link).to eq(mp4_link)
       expect(run.mp3_link).to eq(mp3_link)
@@ -33,7 +33,7 @@ describe Hearings::GetWebexRecordingsDetailsJob, type: :job do
     end
 
     it "names the files correctly" do
-      get_details = Hearings::GetWebexRecordingsDetailsJob.new
+      get_details = Hearings::FetchWebexRecordingsDetailsJob.new
       run_mp4 = get_details.send(:create_file_name, topic, "mp4")
       run_vtt = get_details.send(:create_file_name, topic, "vtt")
       run_mp3 = get_details.send(:create_file_name, topic, "mp3")
@@ -47,7 +47,7 @@ describe Hearings::GetWebexRecordingsDetailsJob, type: :job do
   context "job errors" do
     before do
       allow_any_instance_of(WebexService)
-        .to receive(:get_recording_details)
+        .to receive(:fetch_recording_details)
         .and_raise(Caseflow::Error::WebexApiError.new(code: 400, message: "Fake Error"))
     end
 

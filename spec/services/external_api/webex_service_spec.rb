@@ -158,7 +158,7 @@ describe ExternalApi::WebexService do
 
       let(:method) { "GET" }
 
-      subject { webex_service.get_recordings_list }
+      subject { webex_service.fetch_recordings_list }
 
       it "it calls send webex request with nil body and GET method" do
         expect(webex_service).to receive(:send_webex_request).with(body, method)
@@ -188,7 +188,11 @@ describe ExternalApi::WebexService do
 
         it "gets a list of ids" do
           expect(subject.code).to eq(200)
-          expect(subject.ids).to eq(%w[4f914b1dfe3c4d11a61730f18c0f5387 3324fb76946249cfa07fc30b3ccbf580 42b80117a2a74dcf9863bf06264f8075])
+          expect(subject.ids).to eq(%w[
+                                      4f914b1dfe3c4d11a61730f18c0f5387
+                                      3324fb76946249cfa07fc30b3ccbf580
+                                      42b80117a2a74dcf9863bf06264f8075
+                                    ])
           subject
         end
       end
@@ -212,7 +216,7 @@ describe ExternalApi::WebexService do
 
       let(:method) { "GET" }
 
-      subject { webex_service.get_recording_details }
+      subject { webex_service.fetch_recording_details }
 
       it "it calls send webex request with nil body and GET method" do
         expect(webex_service).to receive(:send_webex_request).with(body, method)
