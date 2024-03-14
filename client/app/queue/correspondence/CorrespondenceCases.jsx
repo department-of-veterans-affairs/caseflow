@@ -171,6 +171,7 @@ const CorrespondenceCases = (props) => {
           isSupervisor={props.isSupervisor} />}
         {showReassignPackageModal &&
         <Modal
+        closeHandler={closeReassignPackageModal}
         buttons={reviewRequestButtons}
           title={COPY.CORRESPONDENCE_CASES_REASSIGN_PACKAGE_MODAL_TITLE}
         >
