@@ -177,6 +177,7 @@ describe HearingRequestDocket, :all_dbs do
         expect(distribution_judge.reload.tasks.map(&:appeal))
           .to match_array(expected_result)
       end
+    end
 
     context "when acd_exclude_from_affinity flag is enabled" do
       before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
