@@ -92,22 +92,6 @@ class HearingRequestDistributionQuery
     base_relation.joins(with_assigned_distribution_task_sql).most_recent_hearings
   end
 
-  def not_genpop_base
-    base_relation.most_recent_hearings.tied_to_distribution_judge(judge)
-  end
-
-  def aod_hearing_value_appeals
-    base_query.ama_aod_hearing_original_appeals
-  end
-
-  def aod_hearing_infinite_appeals
-    always_ama_aod_hearing_original_appeals
-  end
-
-  def ama_affinity_hearing_infinite_appeals
-    not_genpop_base
-  end
-
   def ama_affinity_hearing_appeals_genpop_value
     base_relation.most_recent_hearings.expired_ama_affinity_cases
   end
