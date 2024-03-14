@@ -17,7 +17,7 @@ class CaseDistributionLever < ApplicationRecord
     #{Constants.DISTRIBUTION.request_more_cases_minimum}
     #{Constants.DISTRIBUTION.alternative_batch_size}
     #{Constants.DISTRIBUTION.batch_size_per_attorney}
-    #{Constants.DISTRIBUTION.days_before_goal_due_for_distribution}
+    #{Constants.DISTRIBUTION.ama_direct_review_start_distribution_prior_to_goals}
     #{Constants.DISTRIBUTION.ama_hearing_case_affinity_days}
     #{Constants.DISTRIBUTION.cavc_affinity_days}
     #{Constants.DISTRIBUTION.ama_evidence_submission_docket_time_goals}
