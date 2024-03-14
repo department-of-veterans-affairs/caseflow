@@ -217,7 +217,7 @@ class CorrespondenceController < ApplicationController
 
     respond_to do |format|
       format.html { handle_html_response(mail_team_user, task_ids, reassign_remove_task_id, tab, action_type) }
-      format.json { handle_json_response(mail_team_user, task_ids, reassign_remove_task_id, tab, action_type) }
+      format.json { handle_json_response(mail_team_user, task_ids, tab) }
     end
   end
 
@@ -262,14 +262,14 @@ class CorrespondenceController < ApplicationController
       task = Task.find_by(id: task_id)
       case action_type
       when "accept"
-        task.update(completed_by_id: current_user, closed_at: Time.zone.now, status: "completed")
-        parent_task = ReviewPackageTask.find(task.parent_id)
-        parent_task.update(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "completed")
+        # task.update(completed_by_id: current_user, closed_at: Time.zone.now, status: "completed")
+        # parent_task = ReviewPackageTask.find(task.parent_id)
+        # parent_task.update(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "completed")
 
       when "reject"
-        task.update(completed_by_id: current_user, closed_at: Time.zone.now, status: "completed", instructions: decision_reason)
-        parent_task = ReviewPackageTask.find(task.parent_id)
-        parent_task.update(assigned_to_type: "User", status: "in_progress")
+        # task.update(completed_by_id: current_user, closed_at: Time.zone.now, status: "completed", instructions: decision_reason)
+        # parent_task = ReviewPackageTask.find(task.parent_id)
+        # parent_task.update(assigned_to_type: "User", status: "in_progress")
       end
 
 
