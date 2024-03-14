@@ -6,7 +6,8 @@ class Events::DecisionReviewCreated::CreateEpEstablishment
   # that is being used in the parent service class DecisionReviewCreated. this sub service class
   # returns the End Product Establishment that was created fron the event.
   # claim_review can be either a supplemental claim or higher level review
-  def process!(station_id, end_product_establishment, claim_review, user, event)
+
+  def self.process!(station_id, end_product_establishment, claim_review, user, event)
     end_product_establishment = EndProductEstablishment.create!(
       payee_code: end_product_establishment.payee_code,
       source: claim_review,
@@ -14,7 +15,7 @@ class Events::DecisionReviewCreated::CreateEpEstablishment
       benefit_type_code: claim_review.benefit_type,
       claim_date: end_product_establishment.claim_date,
       code: end_product_establishment.code,
-      committed_at: end_product_establishment.commited_at,
+      committed_at: end_product_establishment.committed_at,
       established_at: end_product_establishment.established_at,
       last_synced_at: end_product_establishment.last_synced_at,
       limited_poa_access: end_product_establishment.limited_poa_access,
