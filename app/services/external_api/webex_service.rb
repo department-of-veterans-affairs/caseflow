@@ -3,6 +3,7 @@
 require "json"
 
 class ExternalApi::WebexService
+  # rubocop:disable Metrics/ParameterLists
   def initialize(host:, port:, aud:, apikey:, domain:, api_endpoint:, query:)
     @host = host
     @port = port
@@ -12,6 +13,7 @@ class ExternalApi::WebexService
     @api_endpoint = api_endpoint
     @query = query
   end
+  # rubocop:enable Metrics/ParameterLists
 
   def create_conference(conferenced_item)
     body = {
@@ -55,7 +57,7 @@ class ExternalApi::WebexService
     ExternalApi::WebexService::DeleteResponse.new(resp)
   end
 
-  def get_recordings_list
+  def fetch_recordings_list
     body = nil
     method = "GET"
     resp = send_webex_request(body, method)
@@ -64,7 +66,7 @@ class ExternalApi::WebexService
     ExternalApi::WebexService::RecordingsListResponse.new(resp)
   end
 
-  def get_recording_details
+  def fetch_recording_details
     body = nil
     method = "GET"
     resp = send_webex_request(body, method)

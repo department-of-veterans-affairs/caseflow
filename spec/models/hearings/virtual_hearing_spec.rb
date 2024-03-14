@@ -323,7 +323,6 @@ describe VirtualHearing do
       expect(virtual_hearing.guest_hearing_link).to include guest_pin_long
     end
 
-
     context "#test_link" do
       context "vh created with link generation" do
         def link(name)

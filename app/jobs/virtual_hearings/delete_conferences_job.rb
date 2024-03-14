@@ -144,6 +144,7 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
   end
 
   # Returns whether or not the conference was deleted from Pexip or Webex
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def delete_conference(virtual_hearing)
     response = client(virtual_hearing).delete_conference(virtual_hearing)
     Rails.logger.info("#{virtual_hearing.conference_provider.capitalize} response: #{response}")
@@ -192,4 +193,5 @@ class VirtualHearings::DeleteConferencesJob < VirtualHearings::ConferenceJob
 
     false
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 end
