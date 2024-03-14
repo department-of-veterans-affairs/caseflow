@@ -691,11 +691,7 @@ class QueueApp extends React.PureComponent {
     <CorrespondenceIntake reduxStore={this.props.reduxStore} autoTexts={this.props.autoTexts} {...props.match.params} veteranInformation={this.props.veteranInformation} />
   );
 
-  routedCorrespondenceCase = () => (
-    <CorrespondenceCases {...this.props} />
-  );
-
-  routedCorrespondenceTeam = () => (
+  routedCorrespondenceCases = () => (
     <CorrespondenceCases {...this.props} />
   );
 
@@ -761,14 +757,14 @@ class QueueApp extends React.PureComponent {
               exact
               path="/queue/correspondence/team"
               title={`${QUEUE_CONFIG.CORRESPONDENCE_ORG_TABLE_TITLE}`}
-              render={this.routedCorrespondenceCase}
+              render={this.routedCorrespondenceCases}
             />
 
             <PageRoute
               exact
               path="/queue/correspondence"
               title={`${QUEUE_CONFIG.CORRESPONDENCE_USER_TABLE_TITLE}`}
-              render={this.routedCorrespondenceCase}
+              render={this.routedCorrespondenceCases}
             />
 
             <PageRoute
