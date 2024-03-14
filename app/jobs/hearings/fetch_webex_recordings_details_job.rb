@@ -3,7 +3,7 @@
 # This job will retrieve a list of webex hearing recording detail links
 # and download the information from the links
 
-class Hearings::GetWebexRecordingsDetailsJob < CaseflowJob
+class Hearings::FetchWebexRecordingsDetailsJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
 
   queue_with_priority :low_priority
@@ -37,7 +37,7 @@ class Hearings::GetWebexRecordingsDetailsJob < CaseflowJob
   # rubocop:disable Lint/UnusedMethodArgument
   def perform(id:, file_name:)
     ensure_current_user_is_set
-    data = get_recording_details(id)
+    data = fetch_recording_details(id)
     topic = data.topic
 
     mp4_link = data.mp4_link
@@ -62,7 +62,7 @@ class Hearings::GetWebexRecordingsDetailsJob < CaseflowJob
 
   private
 
-  def get_recording_details(id)
+  def fetch_recording_details(id)
     query = { "id": id }
 
     WebexService.new(
@@ -73,7 +73,7 @@ class Hearings::GetWebexRecordingsDetailsJob < CaseflowJob
       domain: ENV["WEBEX_DOMAIN_MAIN"],
       api_endpoint: ENV["WEBEX_API_MAIN"],
       query: query
-    ).get_recording_details
+    ).fetch_recording_details
   end
 
   def create_file_name(topic, extension)

@@ -3,7 +3,7 @@
 # This job will retrieve a list of webex hearing recordings and details
 # in a 24 hours period from the previous day
 
-class Hearings::GetWebexRecordingsListJob < CaseflowJob
+class Hearings::FetchWebexRecordingsListJob < CaseflowJob
   include Hearings::EnsureCurrentUserIsSet
 
   queue_with_priority :low_priority
@@ -30,11 +30,11 @@ class Hearings::GetWebexRecordingsListJob < CaseflowJob
 
   def perform
     ensure_current_user_is_set
-    response = get_recordings_list
+    response = fetch_recordings_list
     topics = response.topics
     topic_num = 0
     response.ids.each do |n|
-      Hearings::GetWebexRecordingsDetailsJob.perform_later(id: n, topic: topics[topic_num])
+      Hearings::FetchWebexRecordingsDetailsJob.perform_later(id: n, topic: topics[topic_num])
       topic_num += 1
     end
   end
@@ -50,7 +50,7 @@ class Hearings::GetWebexRecordingsListJob < CaseflowJob
 
   private
 
-  def get_recordings_list
+  def fetch_recordings_list
     from = CGI.escape(2.days.ago.in_time_zone("America/New_York").end_of_day.iso8601)
     to = CGI.escape(1.day.ago.in_time_zone("America/New_York").end_of_day.iso8601)
     query = { "from": from, "to": to }
@@ -63,6 +63,6 @@ class Hearings::GetWebexRecordingsListJob < CaseflowJob
       domain: ENV["WEBEX_DOMAIN_MAIN"],
       api_endpoint: ENV["WEBEX_API_MAIN"],
       query: query
-    ).get_recordings_list
+    ).fetch_recordings_list
   end
 end

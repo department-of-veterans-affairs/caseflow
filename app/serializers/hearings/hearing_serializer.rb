@@ -67,6 +67,11 @@ class HearingSerializer
   attribute :judge_id
   attribute :location
   attribute :military_service, if: for_full
+  attribute :non_virtual_conference_link do |object|
+    if !object.non_virtual_conference_link.nil?
+      ConferenceLinkSerializer.new(object.non_virtual_conference_link).serializable_hash[:data][:attributes]
+    end
+  end
   attribute :notes
   attribute :paper_case do
     false

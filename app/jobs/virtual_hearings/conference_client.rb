@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module VirtualHearings::ConferenceClient
+  # rubocop:disable Metrics/MethodLength
   def client(virtual_hearing)
     case virtual_hearing.conference_provider
     when "pexip"
@@ -26,4 +27,5 @@ module VirtualHearings::ConferenceClient
       fail Caseflow::Error::MeetingTypeNotFoundError, message: msg
     end
   end
+  # rubocop:enable Metrics/MethodLength
 end
