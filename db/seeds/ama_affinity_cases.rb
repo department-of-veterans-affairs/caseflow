@@ -31,11 +31,14 @@ module Seeds
     def create_veteran
       @file_number += 1
       @participant_id += 1
-      create(
-        :veteran,
-        file_number: format("%<n>09d", n: @file_number),
-        participant_id: format("%<n>09d", n: @participant_id)
-      )
+
+      unless Veteran.exists?(participant_id: @participant_id)
+        create(
+          :veteran,
+          file_number: format("%<n>09d", n: @file_number),
+          participant_id: format("%<n>09d", n: @participant_id)
+        )
+      end
     end
 
     def find_or_create_active_cda_admin_judge(css_id, full_name)
@@ -63,7 +66,7 @@ module Seeds
       judges_with_attorneys.each do |judge|
         3.times do
           create_case_ready_for_less_than_hearing_affinity_days(judge)
-          create_case_ready_for_more_than_hearing_affinity_days(judge)
+          # create_case_ready_for_more_than_hearing_affinity_days(judge)
         end
       end
     end

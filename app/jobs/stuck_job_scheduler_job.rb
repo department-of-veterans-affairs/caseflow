@@ -13,7 +13,9 @@ class StuckJobSchedulerJob < CaseflowJob
     NoAvailableModifiersFixJob,
     PageRequestedByUserFixJob,
     DtaScCreationFailedFixJob,
-    ScDtaForAppealFixJob
+    ScDtaForAppealFixJob,
+    PtcpntPersnIdDepntOrgFixJob,
+    RetryDecisionReviewProcessJob
     # Add stuck jobs here
   ].freeze
 
@@ -49,7 +51,7 @@ class StuckJobSchedulerJob < CaseflowJob
 
     # Send report logs to Slack
     msg = @stuck_job_report_service.logs.join("\n")
-    slack_service.send_notification(msg, self.class.to_s)
+    slack_service.send_notification("```#{msg}```", self.class.to_s)
   end
 
   def loop_through_stuck_jobs

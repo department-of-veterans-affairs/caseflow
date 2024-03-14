@@ -6,6 +6,7 @@ class Organization < CaseflowRecord
   has_many :organizations_users, dependent: :destroy
   has_many :users, through: :organizations_users
   has_many :membership_requests
+  has_many :organization_permissions
   has_many :non_admin_users, -> { non_admin }, class_name: "OrganizationsUser"
   require_dependency "dvc_team"
 
@@ -19,6 +20,10 @@ class Organization < CaseflowRecord
     Constants.ORGANIZATION_STATUSES.active.to_sym => Constants.ORGANIZATION_STATUSES.active,
     Constants.ORGANIZATION_STATUSES.inactive.to_sym => Constants.ORGANIZATION_STATUSES.inactive
   }
+
+  # Sometimes when a task referencing the assigned to field it will ask for full name if it is commonly a user
+  # Add this alias here to prevent errors from that assumption when it could also be an organization assigned to
+  alias_attribute :full_name, :name
 
   default_scope { active }
 
