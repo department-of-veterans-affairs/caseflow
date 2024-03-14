@@ -30,13 +30,12 @@ module Seeds
     def create_veteran
       @file_number += 1
       @participant_id += 1
-      unless Veteran.exists?(participant_id: @participant_id)
-        create(
-          :veteran,
-          file_number: format("%<n>09d", n: @file_number),
-          participant_id: format("%<n>09d", n: @participant_id)
-        )
-      end
+
+      Veteran.find_by_participant_id(@participant_id) || create(
+        :veteran,
+        file_number: format("%<n>09d", n: @file_number),
+        participant_id: format("%<n>09d", n: @participant_id)
+      )
     end
 
     def create_cavc_affinity_cases
