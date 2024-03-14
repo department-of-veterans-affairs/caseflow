@@ -5,10 +5,19 @@ describe AutoAssignableUserFinder do
 
   let(:veteran) { create(:veteran) }
 
-  let(:mock_sensitivity_checker) { instance_double(ExternalApi::BGSService, user_can_access?: true) }
+  let!(:bgs) { BGSService.new }
+  let(:mock_sensitivity_checker) { instance_double(BGSService, can_access?: true) }
 
   before do
-    allow(ExternalApi::BGSService).to receive(:new).and_return(mock_sensitivity_checker)
+    allow(BGSService).to receive(:new).and_return(mock_sensitivity_checker)
+
+    allow(mock_sensitivity_checker).to receive(:fetch_person_info) do |vbms_id|
+      bgs.fetch_person_info(vbms_id)
+    end
+
+    allow(mock_sensitivity_checker).to receive(:fetch_veteran_info) do |vbms_id|
+      bgs.fetch_veteran_info(vbms_id)
+    end
   end
 
   def generate_assigned_review_package_tasks(amount:, user:)
@@ -183,11 +192,11 @@ describe AutoAssignableUserFinder do
       let!(:user_2) { create(:correspondence_auto_assignable_user) }
 
       before do
-        allow(mock_sensitivity_checker).to receive(:user_can_access?).and_return(false)
+        expect(mock_sensitivity_checker).to receive(:can_access?).twice.and_return(false)
+        expect(BGSService).to receive(:new).twice.and_return(mock_sensitivity_checker)
       end
 
       it "does not allow access for users without the correct sensitivity level" do
-        allow_any_instance_of(BGSService).to receive(:user_can_access?).and_return(nil)
         expect(described.get_first_assignable_user(correspondence: correspondence)).to be nil
       end
     end

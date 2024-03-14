@@ -19,23 +19,13 @@ class AutoAssignableUserFinder
   private
 
   def run_auto_assign_algorithm(correspondence, vbms_id)
-    return auto_assign_nod(vbms_id) if correspondence.nod
-
     assignable_users.each do |user|
-      if sensitivity_checker.user_can_access?(vbms_id: vbms_id, user_to_check: user.user_obj)
-        return user.user_obj
-      end
-    end
+      next if correspondence.nod && !user.nod?
 
-    nil
-  end
+      user_obj = user.user_obj
 
-  def auto_assign_nod(vbms_id)
-    assignable_users.each do |user|
-      next if !user.nod?
-
-      if sensitivity_checker.user_can_access?(vbms_id: vbms_id, user_to_check: user.user_obj)
-        return user.user_obj
+      if sensitivity_checker(user_obj).can_access?(vbms_id, user_to_check: user_obj)
+        return user_obj
       end
     end
 
@@ -115,17 +105,14 @@ class AutoAssignableUserFinder
       .references(:tasks, :organizations, :organization_user_permissions)
   end
 
-  def sensitivity_checker
-    return @sensitivity_checker if @sensitivity_checker.present?
+  def sensitivity_checker(user)
+    @sensitivity_checker ||= ActiveSupport::HashWithIndifferentAccess.new
 
-    @sensitivity_checker = BGSService.new
+    return @sensitivity_checker[user.css_id] if @sensitivity_checker.key?(user.css_id)
 
-    # TODO: Create seed data for this, add vbms_id here
-    # if !Rails.env.production
-    #   BGSService.mark_veteran_not_accessible()
-    # end
+    @sensitivity_checker[user.css_id] = BGSService.new(client: BGSService.init_client_for_user(user: user))
 
-    @sensitivity_checker
+    @sensitivity_checker[user.css_id]
   end
 
   def permission_checker
