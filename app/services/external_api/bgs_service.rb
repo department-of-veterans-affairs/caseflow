@@ -538,7 +538,7 @@ class ExternalApi::BGSService
   def init_client_params(user:)
     forward_proxy_url = FeatureToggle.enabled?(:bgs_forward_proxy) ? ENV["RUBY_BGS_PROXY_BASE_URL"] : nil
 
-    return {
+    {
       env: Rails.application.config.bgs_environment,
       application: "CASEFLOW",
       client_ip: ENV.fetch("USER_IP_ADDRESS", Rails.application.secrets.user_ip_address),
