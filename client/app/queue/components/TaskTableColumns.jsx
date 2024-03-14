@@ -370,14 +370,6 @@ export const daysWaitingCorrespondence = () => {
   };
 };
 
-export const searchQuery = (searchValue) => {
-  console.log('searchValue:', searchValue); // Check if searchValue is received properly
-  return {
-   valueFunction: () =>{
-    console.log('inside valueFunction:', searchValue);
-   }
-  };
-};
 export const regionalOfficeColumn = (tasks, filterOptions) => {
   return {
     header: COPY.CASE_LIST_TABLE_REGIONAL_OFFICE_COLUMN_TITLE,
