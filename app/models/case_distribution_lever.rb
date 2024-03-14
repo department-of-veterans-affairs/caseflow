@@ -160,27 +160,19 @@ class CaseDistributionLever < ApplicationRecord
 
     private
 
+    # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Style/RescueModifier, Lint/LiteralAsCondition
     def method_missing_value(name)
       lever = find_by_item(name).try(:value)
 
       if INTEGER_LEVERS.include?(name)
-        begin
-          Integer(lever)
-          lever.to_i
-        rescue ArgumentError, TypeError
-          lever
-        end
+        Integer(lever) rescue false ? lever.to_i : lever
       elsif FLOAT_LEVERS.include?(name)
-        begin
-          Float(lever)
-          lever.to_f
-        rescue ArgumentError, TypeError
-          lever
-        end
+        Float(lever) rescue false ? lever.to_f : lever
       else
         lever
       end
     end
+    # rubocop:enable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity, Style/RescueModifier, Lint/LiteralAsCondition
 
     def add_audit_lever_entries(previous_levers, levers, current_user)
       entries = []

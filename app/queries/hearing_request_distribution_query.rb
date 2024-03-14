@@ -11,31 +11,28 @@ class HearingRequestDistributionQuery
   end
 
   def call
-    case genpop
-    when "not_genpop"
-      not_genpop_appeals
-    when "only_genpop"
-      # If the feature toggle is enabled and a judge is present, we return both not_genpop and only_genpop appeals.
-      # If the feature toggle is disabled or a judge isn't present, then we only return only_genpop appeals.
-      # This ensures that feature tests don't fail due to missing configurations.
-      if FeatureToggle.enabled?(:acd_exclude_from_affinity) && judge.present?
-        [not_genpop_appeals, only_genpop_appeals]
-      else
-        only_genpop_appeals
-      end
-    when "any"
-      # We are returning an array of arrays in order to process the
-      # "not_genpop_appeals" separately from the "only_genpop_appeals" in
-      # HearingRequestCaseDistributor in order to accurately populate the `genpop`
-      # field in the `DistributedCase`. The last step in the automatic case
-      # distribution process is to create `DistributedCase`s for the Distribution.
-      # For the Hearing Docket, a DistributedCase validates the presence of the
-      # genpop attribute. This is used for reporting purposes and so we can
-      # verify that the algorithm is correct. For example, if we found a
-      # DistributedCase with `genpop_query` set to "not_genpop", but its `genpop`
-      # field was set to `true`, that would indicate a bug.
-      [not_genpop_appeals, only_genpop_appeals]
+    return not_genpop_appeals if genpop == "not_genpop"
+
+    if genpop == "only_genpop"
+      return [not_genpop_appeals, only_genpop_appeals] if FeatureToggle.enabled?(
+        :acd_exclude_from_affinity
+      ) && judge.present?
+
+      # if the featue toggle is disabled or judge isn't present then the following line will fail feature tests
+      return only_genpop_appeals
     end
+
+    # We are returning an array of arrays in order to process the
+    # "not_genpop_appeals" separately from the "only_genpop_appeals" in
+    # HearingRequestCaseDistributor in order to accurately populate the `genpop`
+    # field in the `DistributedCase`. The last step in the automatic case
+    # distribution process is to create `DistributedCase`s for the Distribution.
+    # For the Hearing Docket, a DistributedCase validates the presence of the
+    # genpop attribute. This is used for reporting purposes and so we can
+    # verify that the algorithm is correct. For example, if we found a
+    # DistributedCase with `genpop_query` set to "not_genpop", but its `genpop`
+    # field was set to `true`, that would indicate a bug.
+    [not_genpop_appeals, only_genpop_appeals] if genpop == "any"
   end
 
   def self.ineligible_judges_id_cache
@@ -58,27 +55,22 @@ class HearingRequestDistributionQuery
 
     # handling AOD AMA Hearing Case AOD Affinity Days
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
-      base_query = base_query.joins(with_assigned_distribution_task_sql)
-        .or(base_query.ama_aod_hearing_original_appeals)
+      base_query = base_query.joins(with_assigned_distribution_task_sql).or(base_query.ama_aod_hearing_original_appeals)
     elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == "infinite"
-      base_query = base_query.joins(with_assigned_distribution_task_sql)
-        .or(base_query.always_ama_aod_hearing_original_appeals)
+      base_query = base_query.joins(with_assigned_distribution_task_sql).or(base_query.always_ama_aod_hearing_original_appeals)
     end
 
-    base_query.distinct
+    base_query.uniq
   end
+  # rubocop:disable Style/MultilineTernaryOperator
 
   def only_genpop_appeals
-    result = if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days)
-               base_relation_with_joined_most_recent_hearings_and_dist_task.expired_ama_affinity_cases
-             else
-               base_relation_with_joined_most_recent_hearings_and_dist_task.always_ama_affinity_cases
-             end
+    result = case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days) ?
+    base_relation_with_joined_most_recent_hearings_and_dist_task.expired_ama_affinity_cases :
+    base_relation_with_joined_most_recent_hearings_and_dist_task.always_ama_affinity_cases
 
     if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
-      result = result.or(
-        base_relation_with_joined_most_recent_hearings_and_dist_task.tied_to_ineligible_judge
-      )
+      result = result.or(base_relation_with_joined_most_recent_hearings_and_dist_task.tied_to_ineligible_judge)
     end
 
     if FeatureToggle.enabled?(:acd_exclude_from_affinity)
@@ -88,13 +80,15 @@ class HearingRequestDistributionQuery
     end
 
     result = result.or(base_relation_with_joined_most_recent_hearings_and_dist_task.not_tied_to_any_judge)
-
-    # Note: with_no_held_hearings is commented out due to different join shapes. Consider refactoring.
+    # this needs to be refactored and the joins shape is different becuase with_no_held_hearings uses an alias
     # result = result.or(base_relation_with_joined_most_recent_hearings_and_dist_task.with_no_held_hearings)
 
-    # The base result doesn't retrieve appeals without hearings, so we add them and ensure the list is unique.
+    # the base result is doing an inner join with hearings so it isn't retrieving any appeals that have no hearings
+    # yet, so we add with_no_hearings to retrieve those appeals and flatten the array before returning
     [result, with_no_hearings, with_no_held_hearings].flatten.uniq
   end
+
+  # rubocop:enable Style/MultilineTernaryOperator
 
   def base_relation_with_joined_most_recent_hearings_and_dist_task
     base_relation.joins(with_assigned_distribution_task_sql).most_recent_hearings
