@@ -57,7 +57,8 @@ class HearingRequestDistributionQuery
     if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
       base_query = base_query.joins(with_assigned_distribution_task_sql).or(base_query.ama_aod_hearing_original_appeals)
     elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == "infinite"
-      base_query = base_query.joins(with_assigned_distribution_task_sql).or(base_query.always_ama_aod_hearing_original_appeals)
+      base_query = base_query.joins(with_assigned_distribution_task_sql)
+        .or(base_query.always_ama_aod_hearing_original_appeals)
     end
 
     base_query.uniq
