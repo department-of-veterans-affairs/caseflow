@@ -8,114 +8,6 @@ import TranscriptionRequestInputs from './TranscriptionRequestInputs';
 import TranscriptionFilesTable from './TranscriptionFilesTable';
 import { genericRow } from './style';
 
-// TO-DO: Replace hard-coded recordings
-const RECORDINGS = [
-  {
-    hearingType: 'Hearing',
-    docketNumber: '230808-800',
-    files: [
-      {
-        fileName: 'ROSELIA_TURNER0510.MP4',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510.vtt',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510.MP3',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510.rtf',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      }
-    ]
-  },
-  {
-    hearingType: 'Hearing',
-    docketNumber: '230808-800',
-    files: [
-      {
-        fileName: 'ROSELIA_TURNER0510-2.MP4',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510-2.vtt',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510-2.MP3',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510-2.rtf',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      }
-    ]
-  },
-  {
-    hearingType: 'Hearing',
-    docketNumber: '230808-800',
-    files: [
-      {
-        fileName: 'ROSELIA_TURNER0510-2.MP4',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510-2.vtt',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510-2.MP3',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510-2.rtf',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      }
-    ]
-  },
-  {
-    hearingType: 'Hearing',
-    docketNumber: '230808-800',
-    files: [
-      {
-        fileName: 'ROSELIA_TURNER0510-2.MP4',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510-2.vtt',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510-2.MP3',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      },
-      {
-        fileName: 'ROSELIA_TURNER0510-2.rtf',
-        status: 'Successful upload (AWS)',
-        dateUploaded: '08/11/22'
-      }
-    ]
-  }
-];
-
 export const TranscriptionFormSection = (
   { hearing, transcription, readOnly, update, isLegacy }
 ) => (
@@ -154,8 +46,6 @@ export const TranscriptionFormSection = (
       <>
         <h3 {...(isLegacy && { ...genericRow })}>Transcription Files</h3>
         <TranscriptionFilesTable
-          // TO-DO: Update when hard-coded recordings removed
-          recordings={RECORDINGS}
           hearing={hearing}
         />
       </>

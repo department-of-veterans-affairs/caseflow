@@ -73,4 +73,8 @@ class TranscriptionFile < CaseflowRecord
   def clean_up_tmp_location
     File.delete(tmp_location) if File.exist?(tmp_location)
   end
+
+  def base_file_name
+    file_name.split(".").first
+  end
 end

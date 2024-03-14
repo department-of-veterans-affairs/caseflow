@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { css } from 'glamor';
+import _ from 'lodash';
 
 import Table from '../../../components/Table';
 import { genericRow } from './style';
@@ -60,7 +61,7 @@ const transcriptionFileColumns = [
   },
   {
     align: 'left',
-    valueName: 'dateUploaded',
+    valueName: 'dateUploadAws',
     header: 'Uploaded',
   },
   {
@@ -75,26 +76,30 @@ const transcriptionFileColumns = [
   },
   {
     align: 'left',
-    valueName: 'status',
+    valueName: 'fileStatus',
     header: 'Status'
   }
 ];
 
 const rowClassNames = (rowObject) => `${rowObject.isEvenGroup ? 'even' : 'odd'}-row-group`;
 
-const TranscriptionFilesTable = ({ recordings, hearing }) => {
+const TranscriptionFilesTable = ({ hearing }) => {
   const [rows, setRows] = useState([]);
 
   const buildRowsFromRecordings = () => {
+    const recordings = _.flatMap(hearing.transcriptionFiles);
+
     return recordings.map((recording, recordingIndex) => {
-      return recording.files.map((file, fileIndex) => {
+      const files = _.flatMap(recording);
+
+      return files.map((file, fileIndex) => {
         const fileObj = {
           ...file,
           isEvenGroup: recordingIndex % 2 === 0
         };
 
         if (fileIndex === 0) {
-          fileObj.docketNumber = recording.docketNumber;
+          fileObj.docketNumber = hearing.docketNumber;
           fileObj.docketName = hearing.docketName;
         }
 

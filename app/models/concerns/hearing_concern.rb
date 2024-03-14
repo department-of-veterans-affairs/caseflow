@@ -102,4 +102,13 @@ module HearingConcern
 
     end_date
   end
+
+  def serialize_transcription_files
+    recordings = transcription_files.group_by(&:base_file_name).values
+    recordings.map do |recording|
+      recording.map do |file|
+        TranscriptionFileSerializer.new(file).serializable_hash[:data][:attributes]
+      end
+    end
+  end
 end
