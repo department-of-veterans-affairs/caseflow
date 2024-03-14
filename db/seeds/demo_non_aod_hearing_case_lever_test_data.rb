@@ -177,7 +177,9 @@ module Seeds
         file_number: format("%<n>09d", n: options[:file_number]),
         participant_id: format("%<n>09d", n: options[:participant_id])
       }
-      create(:veteran, params.merge(options))
+      unless Veteran.exists?(participant_id: params.participant_id)
+        create(:veteran, params.merge(options))
+      end
     end
 
     # Appeal Creation Functions
