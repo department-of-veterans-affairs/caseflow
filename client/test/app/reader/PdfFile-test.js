@@ -171,6 +171,26 @@ describe('PdfFile', () => {
           storeMetricsError.info,
           storeMetricsError.eventId);
       });
+
+      it('clears measureTimeStartMs after unmount', () => {
+        // Mock the ApiUtil.get function to return a Promise that resolves immediately
+        jest.mock('../../../app/util/ApiUtil', () => ({
+          get: jest.fn().mockResolvedValue({}),
+        }));
+        const subject = wrapper.instance();
+
+        // Trigger the ApiUtil.get function call
+        subject.getDocument();
+
+        // Assert that measureTimeStartMs is counting
+        expect(subject.measureTimeStartMs).toBe('RUNNING_IN_NODE');
+
+        // Unmount the component
+        wrapper.unmount();
+
+        // Assert that measureTimeStartMs is reset to null
+        expect(subject.measureTimeStartMs).toBeNull();
+      });
     });
   });
 });
