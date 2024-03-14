@@ -6,6 +6,7 @@ import { sprintf } from 'sprintf-js';
 import querystring from 'querystring';
 import Button from '../../components/Button';
 import SearchableDropdown from '../../components/SearchableDropdown';
+import moment from 'moment';
 import QueueTable from '../QueueTable';
 import TabWindow from '../../components/TabWindow';
 import Link from '@department-of-veterans-affairs/caseflow-frontend-toolkit/components/Link';
@@ -112,16 +113,26 @@ const CorrespondenceTableBuilder = (props) => {
     setSearchValue('');
   };
 
-  const filterTasks = (tasks) => {
-    {console.log("Filtered tasks:", tasks.filter(task => taskMatchesSearch(task, searchValue)))}
-    return tasks.filter(task => taskMatchesSearch(task, searchValue));
-  };
-
-  const taskMatchesSearch = (task, searchValue) => {
+  const taskMatchesSearch = (task) => {
     return (
       task.veteranDetails.toLowerCase().includes(searchValue.toLowerCase()) ||
-      task.notes.toLowerCase().includes(searchValue.toLowerCase())
+      task.notes.toLowerCase().includes(searchValue.toLowerCase()) ||
+      moment(task.vaDor).format('MM/DD/YYYY').
+        includes(searchValue) ||
+      task.assignedBy.firstName.toLowerCase().includes(searchValue.toLowerCase()) ||
+      task.assignedBy.lastName.toLowerCase().includes(searchValue.toLowerCase()) ||
+      task.assignedTo.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+      task.label.toLowerCase().includes(searchValue.toLowerCase()) ||
+      task.daysWaiting.toString().includes(searchValue) ||
+      moment(task.closedAt).format('MM/DD/YYYY').
+        includes(searchValue)
     );
+  };
+
+  const filterTasks = (tasks) => {
+    console.log('Filtered tasks:', tasks.filter((task) => taskMatchesSearch(task, searchValue)));
+
+    return tasks.filter((task) => taskMatchesSearch(task, searchValue));
   };
 
   const queueConfig = () => {
@@ -336,7 +347,8 @@ CorrespondenceTableBuilder.propTypes = {
   mailTeamUsers: PropTypes.array,
   selectedTasks: PropTypes.array,
   isSuperuser: PropTypes.bool,
-  isSupervisor: PropTypes.bool
+  isSupervisor: PropTypes.bool,
+  onPageLoaded: PropTypes.func
 
 };
 
