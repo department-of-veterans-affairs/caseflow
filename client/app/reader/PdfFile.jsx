@@ -44,6 +44,7 @@ export class PdfFile extends React.PureComponent {
     this.currentPage = 0;
     this.columnCount = 1;
     this.metricsIdentifier = null;
+    this.scrollTimer = null;
   }
 
   componentDidMount = () => {
@@ -82,65 +83,65 @@ export class PdfFile extends React.PureComponent {
     };
 
     return ApiUtil.get(this.props.file, requestOptions).
-    then((resp) => {
-      pdfPageRenderTimeInMsStart = performance.now();
-      const metricData = {
-        message: `Getting PDF document: "${this.props.file}"`,
-        type: 'performance',
-        product: 'reader',
-        data: documentData,
-        eventId: this.metricsIdentifier,
-      };
-
-      if (resp && resp.header && resp.header['x-document-source']) {
-        metricData.additionalInfo = JSON.stringify({ source: `"${resp.header['x-document-source']}"` });
-      }
-
-      /* The feature toggle reader_get_document_logging adds the progress of the file being loaded in console */
-      if (this.props.featureToggles.readerGetDocumentLogging) {
-        const src = {
-          data: resp.body,
-          verbosity: 5,
-          stopAtErrors: false,
-          pdfBug: true,
+      then((resp) => {
+        pdfPageRenderTimeInMsStart = performance.now();
+        const metricData = {
+          message: `Getting PDF document: "${this.props.file}"`,
+          type: 'performance',
+          product: 'reader',
+          data: documentData,
+          eventId: this.metricsIdentifier,
         };
 
-        this.loadingTask = PDFJS.getDocument(src);
+        if (resp && resp.header && resp.header['x-document-source']) {
+          metricData.additionalInfo = JSON.stringify({ source: `"${resp.header['x-document-source']}"` });
+        }
 
-        this.loadingTask.onProgress = (progress) => {
-          // eslint-disable-next-line no-console
-          console.log(`UUID: ${logId} : Progress of ${this.props.file}: ${progress.loaded} / ${progress.total}`);
-        };
-      } else {
-        this.loadingTask = PDFJS.getDocument({ data: resp.body });
-      }
+        /* The feature toggle reader_get_document_logging adds the progress of the file being loaded in console */
+        if (this.props.featureToggles.readerGetDocumentLogging) {
+          const src = {
+            data: resp.body,
+            verbosity: 5,
+            stopAtErrors: false,
+            pdfBug: true,
+          };
 
-      return recordAsyncMetrics(this.loadingTask.promise, metricData,
+          this.loadingTask = PDFJS.getDocument(src);
+
+          this.loadingTask.onProgress = (progress) => {
+            // eslint-disable-next-line no-console
+            console.log(`UUID: ${logId} : Progress of ${this.props.file}: ${progress.loaded} / ${progress.total}`);
+          };
+        } else {
+          this.loadingTask = PDFJS.getDocument({ data: resp.body });
+        }
+
+        return recordAsyncMetrics(this.loadingTask.promise, metricData,
           this.props.featureToggles.metricsRecordPDFJSGetDocument);
 
-    }, (reason) => this.onRejected(reason, 'getDocument')).
-    then((pdfDocument) => {
-      this.pdfDocument = pdfDocument;
+      }, (reason) => this.onRejected(reason, 'getDocument')).
+      then((pdfDocument) => {
+        this.pdfDocument = pdfDocument;
 
-      return this.getPages(pdfDocument);
-    }, (reason) => this.onRejected(reason, 'getPages')).
-    then((pages) => this.setPageDimensions(pages)
+        return this.getPages(pdfDocument);
+      }, (reason) => this.onRejected(reason, 'getPages')).
+      then((pages) => this.setPageDimensions(pages)
         , (reason) => this.onRejected(reason, 'setPageDimensions')).
-    then(() => {
-      if (this.loadingTask.destroyed) {
-        return this.pdfDocument.destroy();
-      }
-      this.loadingTask = null;
+      then(() => {
+        if (this.loadingTask.destroyed) {
+          return this.pdfDocument.destroy();
+        }
+        this.loadingTask = null;
 
-      return this.props.setPdfDocument(this.props.file, this.pdfDocument);
-    }, (reason) => this.onRejected(reason, 'setPdfDocument')).
-    catch((error) => {
-      const message = `UUID: ${logId} : Getting PDF document failed for ${this.props.file} : ${error}`;
+        return this.props.setPdfDocument(this.props.file, this.pdfDocument);
+      }, (reason) => this.onRejected(reason, 'setPdfDocument')).
+      catch((error) => {
+        const message = `UUID: ${logId} : Getting PDF document failed for ${this.props.file} : ${error}`;
 
-      console.error(message);
+        console.error(message);
 
-      if (this.props.featureToggles.metricsRecordPDFJSGetDocument) {
-        storeMetrics(
+        if (this.props.featureToggles.metricsRecordPDFJSGetDocument) {
+          storeMetrics(
             logId,
             documentData,
             { message,
@@ -149,19 +150,19 @@ export class PdfFile extends React.PureComponent {
               prefetchDisabled: this.props.featureToggles.prefetchDisabled
             },
             this.metricsIdentifier
-        );
-      }
+          );
+        }
 
-      this.loadingTask = null;
-      this.props.setDocumentLoadError(this.props.file);
-    });
+        this.loadingTask = null;
+        this.props.setDocumentLoadError(this.props.file);
+      });
   }
 
   onRejected = (reason, step) => {
     const documentId = this.props.documentId,
-        documentType = this.props.documentType,
-        file = this.props.file,
-        logId = uuid.v4();
+      documentType = this.props.documentType,
+      file = this.props.file,
+      logId = uuid.v4();
 
     console.error(`${logId} : GET ${file} : STEP ${step} : ${reason}`);
 
@@ -176,11 +177,11 @@ export class PdfFile extends React.PureComponent {
       };
 
       storeMetrics(logId, documentData, {
-            message: `Getting PDF document: "${file}"`,
-            type: 'error',
-            product: 'reader'
-          },
-          this.metricsIdentifier);
+        message: `Getting PDF document: "${file}"`,
+        type: 'error',
+        product: 'reader'
+      },
+      this.metricsIdentifier);
     }
 
     throw reason;
@@ -215,6 +216,10 @@ export class PdfFile extends React.PureComponent {
     }
 
     this.metricsIdentifier = null;
+
+    if (this.scrollTimer) {
+      clearTimeout(this.scrollTimer);
+    }
   }
 
   getPage = ({ rowIndex, columnIndex, style, isVisible }) => {
@@ -226,16 +231,16 @@ export class PdfFile extends React.PureComponent {
 
     return <div key={pageIndex} style={style}>
       <PdfPage
-          documentId={this.props.documentId}
-          file={this.props.file}
-          isPageVisible={isVisible}
-          pageIndex={(rowIndex * this.columnCount) + columnIndex}
-          isFileVisible={this.props.isVisible}
-          scale={this.props.scale}
-          pdfDocument={this.props.pdfDocument}
-          featureToggles={this.props.featureToggles}
-          measureTimeStartMs={pdfPageRenderTimeInMsStart}
-          metricsIdentifier={this.metricsIdentifier}
+        documentId={this.props.documentId}
+        file={this.props.file}
+        isPageVisible={isVisible}
+        pageIndex={(rowIndex * this.columnCount) + columnIndex}
+        isFileVisible={this.props.isVisible}
+        scale={this.props.scale}
+        pdfDocument={this.props.pdfDocument}
+        featureToggles={this.props.featureToggles}
+        measureTimeStartMs={pdfPageRenderTimeInMsStart}
+        metricsIdentifier={this.metricsIdentifier}
       />
     </div>;
   }
@@ -263,14 +268,14 @@ export class PdfFile extends React.PureComponent {
   getRowHeight = ({ index }) => {
     const pageIndexStart = index * this.columnCount;
     const pageHeights = _.range(pageIndexStart, pageIndexStart + this.columnCount).
-    map((pageIndex) => this.pageHeight(pageIndex));
+      map((pageIndex) => this.pageHeight(pageIndex));
 
     return (Math.max(...pageHeights) + PAGE_MARGIN) * this.props.scale;
   }
 
   getColumnWidth = () => {
     const maxPageWidth = _.range(0, this.props.pdfDocument.numPages).
-    reduce((maxWidth, pageIndex) => Math.max(this.pageWidth(pageIndex), maxWidth), 0);
+      reduce((maxWidth, pageIndex) => Math.max(this.pageWidth(pageIndex), maxWidth), 0);
 
     return (maxPageWidth + PAGE_MARGIN) * this.props.scale;
   }
@@ -317,7 +322,7 @@ export class PdfFile extends React.PureComponent {
     if (this.props.scrollToComment && this.clientHeight > 0) {
       const pageIndex = pageIndexOfPageNumber(this.props.scrollToComment.page);
       const transformedY = rotateCoordinates(this.props.scrollToComment,
-          this.pageDimensions(pageIndex), -this.props.rotation).y * this.props.scale;
+        this.pageDimensions(pageIndex), -this.props.rotation).y * this.props.scale;
       const scrollToY = (transformedY - (this.pageHeight(pageIndex) / 2)) / this.props.scale;
 
       this.scrollToPosition(pageIndex, scrollToY);
@@ -444,6 +449,41 @@ export class PdfFile extends React.PureComponent {
       });
 
       this.onPageChange(minIndex, clientHeight);
+
+      if (this.scrollTimer) {
+        clearTimeout(this.scrollTimer);
+      }
+
+      this.scrollTimer = setTimeout(() => {
+        const scrollStart = performance.now();
+
+        const data = {
+          overscan: this.props.windowingOverscan,
+          documentType: this.props.documentType,
+          pageCount: this.props.pdfDocument.numPages,
+          pageIndex: this.pageIndex,
+          prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+          start: scrollStart,
+          end: performance.now()
+        };
+
+        const posx = (Math.round(this.scrollLeft * 100) / 100).toFixed(2);
+        const posy = (Math.round(this.scrollTop * 100) / 100).toFixed(2);
+
+        storeMetrics(
+          this.props.documentId,
+          data,
+          {
+            message: `Scroll to position ${posx}, ${posy}`,
+            type: 'performance',
+            product: 'reader',
+            start: new Date(performance.timeOrigin + data.start),
+            end: new Date(performance.timeOrigin + data.end),
+            duration: data.start ? data.end - data.start : 0
+          },
+          this.metricsIdentifier,
+        );
+      }, 300);
     }
   }
 
@@ -453,7 +493,7 @@ export class PdfFile extends React.PureComponent {
 
     const positionBasedOnPageDimension = (pageDimension + scrolledLocationOnPage - ANNOTATION_ICON_SIDE_LENGTH) / 2;
     const positionBasedOnClientDimension = adjustedScrolledLocationOnPage +
-        (((clientDimension / this.props.scale) - ANNOTATION_ICON_SIDE_LENGTH) / 2);
+      (((clientDimension / this.props.scale) - ANNOTATION_ICON_SIDE_LENGTH) / 2);
 
     return Math.min(positionBasedOnPageDimension, positionBasedOnClientDimension);
   }
@@ -521,9 +561,9 @@ export class PdfFile extends React.PureComponent {
 
     return <div style={style}>
       <StatusMessage title="Unable to load document" type="warning">
-        Caseflow is experiencing technical difficulties and cannot load <strong>{this.props.documentType}</strong>.
+          Caseflow is experiencing technical difficulties and cannot load <strong>{this.props.documentType}</strong>.
         <br />
-        You can try <a href={downloadUrl}>downloading the document</a> or try again later.
+          You can try <a href={downloadUrl}>downloading the document</a> or try again later.
       </StatusMessage>
     </div>;
   }
@@ -556,33 +596,33 @@ export class PdfFile extends React.PureComponent {
           }
 
           this.columnCount = Math.min(Math.max(Math.floor(width / this.getColumnWidth()), 1),
-              this.props.pdfDocument.numPages);
+            this.props.pdfDocument.numPages);
 
           let visibility = this.props.isVisible ? 'visible' : 'hidden';
 
           return <Grid
-              ref={this.getGrid}
-              containerStyle={{
-                visibility: `${visibility}`,
-                margin: '0 auto',
-                marginBottom: `-${PAGE_MARGIN}px`
-              }}
-              overscanIndicesGetter={this.overscanIndicesGetter}
-              estimatedRowSize={
-                  (this.pageHeight(0) + PAGE_MARGIN) * this.props.scale
-              }
-              overscanRowCount={Math.floor(this.props.windowingOverscan / this.columnCount)}
-              onScroll={this.onScroll}
-              height={height}
-              rowCount={Math.ceil(this.props.pdfDocument.numPages / this.columnCount)}
-              rowHeight={this.getRowHeight}
-              cellRenderer={this.getPage}
-              scrollToAlignment="start"
-              width={width}
-              columnWidth={this.getColumnWidth}
-              columnCount={this.columnCount}
-              scale={this.props.scale}
-              tabIndex={this.props.isVisible ? 0 : -1}
+            ref={this.getGrid}
+            containerStyle={{
+              visibility: `${visibility}`,
+              margin: '0 auto',
+              marginBottom: `-${PAGE_MARGIN}px`
+            }}
+            overscanIndicesGetter={this.overscanIndicesGetter}
+            estimatedRowSize={
+              (this.pageHeight(0) + PAGE_MARGIN) * this.props.scale
+            }
+            overscanRowCount={Math.floor(this.props.windowingOverscan / this.columnCount)}
+            onScroll={this.onScroll}
+            height={height}
+            rowCount={Math.ceil(this.props.pdfDocument.numPages / this.columnCount)}
+            rowHeight={this.getRowHeight}
+            cellRenderer={this.getPage}
+            scrollToAlignment="start"
+            width={width}
+            columnWidth={this.getColumnWidth}
+            columnCount={this.columnCount}
+            scale={this.props.scale}
+            tabIndex={this.props.isVisible ? 0 : -1}
           />;
         }
       }
