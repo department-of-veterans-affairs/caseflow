@@ -265,9 +265,7 @@ class Appeal < DecisionReview
     return decision_issues.any?(&:mst_status) unless decision_issues.empty?
 
     request_issues.active.any?(&:mst_status) ||
-      (special_issue_list &&
-        special_issue_list.created_at < "2023-06-01".to_date &&
-        special_issue_list.military_sexual_trauma)
+      special_issue_list&.military_sexual_trauma
   end
 
   # :reek:RepeatedConditionals
