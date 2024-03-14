@@ -23,7 +23,7 @@ class AttorneyTask < Task
       (Constants.TASK_ACTIONS.LIT_SUPPORT_PULAC_CERULLO.to_h if ama? && appeal.vacate?),
       Constants.TASK_ACTIONS.REVIEW_DECISION_DRAFT.to_h,
       Constants.TASK_ACTIONS.ADD_ADMIN_ACTION.to_h,
-      Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
+      attorney_cancel_action
     ].compact
 
     movement_actions = [
@@ -78,14 +78,34 @@ class AttorneyTask < Task
     end
   end
 
+  def send_back_to_sct_queue!(params = {})
+    transaction do
+      update_with_instructions(params.merge(status: :cancelled))
+      parent.update_with_instructions(params.merge(status: :cancelled))
+      sct_assign_task = reopen_sct_assign_task
+
+      [self, parent, sct_assign_task]
+    end
+  end
+
   def update_from_params(params, user)
-    update_params_will_cancel_attorney_task?(params) ? send_back_to_judge_assign!(params) : super(params, user)
+    if update_params_will_move_appeal_back_to_sct_queue?(params)
+      send_back_to_sct_queue!(params)
+    elsif update_params_will_cancel_attorney_task?(params)
+      send_back_to_judge_assign!(params)
+    else
+      super(params, user)
+    end
   end
 
   private
 
   def update_params_will_cancel_attorney_task?(params)
     type == AttorneyTask.name && params[:status].eql?(Constants.TASK_STATUSES.cancelled)
+  end
+
+  def update_params_will_move_appeal_back_to_sct_queue?(params)
+    update_params_will_cancel_attorney_task?(params) && appeal.sct_appeal?
   end
 
   def can_be_moved_by_user?(user)
@@ -118,5 +138,19 @@ class AttorneyTask < Task
 
   def open_judge_assign_task
     JudgeAssignTask.create!(appeal: appeal, parent: appeal.root_task, assigned_to: parent.assigned_to)
+  end
+
+  def reopen_sct_assign_task
+    sct_task = SpecialtyCaseTeamAssignTask.find_by(appeal: appeal)
+    sct_task.update!(status: Constants.TASK_STATUSES.in_progress)
+    sct_task
+  end
+
+  def attorney_cancel_action
+    if ama? && appeal.completed_specialty_case_team_assign_task?
+      Constants.TASK_ACTIONS.CANCEL_TASK_AND_RETURN_TO_SCT_QUEUE.to_h
+    else
+      Constants.TASK_ACTIONS.CANCEL_AND_RETURN_TASK.to_h
+    end
   end
 end

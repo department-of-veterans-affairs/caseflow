@@ -8,7 +8,7 @@ describe NightlySyncsJob, :all_dbs do
       5.times { create(:staff) }
 
       @emitted_gauges = []
-      allow(DataDogService).to receive(:emit_gauge) do |args|
+      allow(MetricsService).to receive(:emit_gauge) do |args|
         @emitted_gauges.push(args)
       end
     end

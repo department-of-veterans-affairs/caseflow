@@ -9,8 +9,8 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: 6377b46c2639248574673adc6a708d2568c6958c
-  ref: 6377b46c2639248574673adc6a708d2568c6958c
+  revision: dea6b30780bf44f6a146b69be961ede825ac02bd
+  ref: dea6b30780bf44f6a146b69be961ede825ac02bd
   specs:
     caseflow (0.4.8)
       aws-sdk (~> 2.10)
@@ -64,6 +64,20 @@ GIT
       httpclient
       nokogiri (>= 1.11.0.rc4)
       savon (~> 2.12)
+
+GIT
+  remote: https://github.com/department-of-veterans-affairs/ruby_claim_evidence_api.git
+  revision: a2ecb0bf7f3d3aa8fd1429bfd78aa00e7270b0c8
+  ref: a2ecb0bf7f3d3aa8fd1429bfd78aa00e7270b0c8
+  specs:
+    ruby_claim_evidence_api (0.0.1)
+      activesupport
+      base64
+      faraday
+      faraday-multipart
+      httpi
+      railties
+      webmock (~> 3.6.2)
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/sniffybara.git
@@ -153,6 +167,7 @@ GEM
       aws-sdk-core (= 2.10.112)
     aws-sigv4 (1.0.2)
     backport (1.2.0)
+    base64 (0.2.0)
     benchmark-ips (2.7.2)
     bootsnap (1.7.5)
       msgpack (~> 1.0)
@@ -197,7 +212,7 @@ GEM
     colored2 (3.1.2)
     colorize (0.8.1)
     concurrent-ruby (1.2.2)
-    connection_pool (2.2.3)
+    connection_pool (2.4.1)
     cork (0.3.0)
       colored2 (~> 3.1)
     countries (3.0.1)
@@ -207,7 +222,7 @@ GEM
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
     crass (1.0.6)
-    d3-rails (7.0.0)
+    d3-rails (7.8.5)
       railties (>= 3.1)
     danger (6.2.2)
       claide (~> 1.0)
@@ -290,6 +305,8 @@ GEM
       multipart-post (>= 1.2, < 3)
     faraday-http-cache (2.4.1)
       faraday (>= 0.8)
+    faraday-multipart (1.0.4)
+      multipart-post (~> 2)
     faraday_middleware (0.13.1)
       faraday (>= 0.7.4, < 1.0)
     fast_jsonapi (1.5)
@@ -348,7 +365,7 @@ GEM
       activerecord (>= 3.0)
     jaro_winkler (1.5.6)
     jmespath (1.3.1)
-    jquery-rails (4.5.1)
+    jquery-rails (4.6.0)
       rails-dom-testing (>= 1, < 3)
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
@@ -646,6 +663,8 @@ GEM
       aws-sdk-core (>= 2)
       concurrent-ruby
       thor
+    shoulda-matchers (5.3.0)
+      activesupport (>= 5.2.0)
     simplecov-html (0.10.2)
     single_cov (1.3.2)
     sixarm_ruby_unaccent (1.2.0)
@@ -670,6 +689,7 @@ GEM
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
     sql_tracker (1.3.2)
+    statsd-instrument (3.7.0)
     stringex (2.8.5)
     strong_migrations (0.4.1)
       activerecord (>= 5)
@@ -814,15 +834,18 @@ DEPENDENCIES
   ruby-debug-ide
   ruby-oci8 (~> 2.2)
   ruby-prof (~> 1.4)
+  ruby_claim_evidence_api!
   sass-rails (~> 5.0)
   scss_lint
   sentry-raven
   shoryuken (= 3.1.11)
+  shoulda-matchers
   simplecov!
   single_cov
   sniffybara!
   solargraph
   sql_tracker
+  statsd-instrument
   stringex
   strong_migrations
   test-prof

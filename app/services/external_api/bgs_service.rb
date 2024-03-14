@@ -278,8 +278,12 @@ class ExternalApi::BGSService
   #
   # We cache at 2 levels: the boolean check per user, and the veteran record itself.
   # The veteran record is so that subsequent calls to fetch_veteran_info can read from cache.
-  def can_access?(vbms_id)
-    Rails.cache.fetch(can_access_cache_key(current_user, vbms_id), expires_in: 2.hours) do
+  def can_access?(vbms_id, user_to_check: current_user)
+    user_can_access?(vbms_id: vbms_id, user_to_check: user_to_check)
+  end
+
+  def user_can_access?(vbms_id:, user_to_check:)
+    Rails.cache.fetch(can_access_cache_key(user_to_check, vbms_id), expires_in: 2.hours) do
       DBService.release_db_connections
 
       MetricsService.record("BGS: can_access? (find_by_file_number): #{vbms_id}",
@@ -325,7 +329,7 @@ class ExternalApi::BGSService
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
     DBService.release_db_connections
 
-    DataDogService.increment_counter(
+    MetricsService.increment_counter(
       metric_group: "mst_pact_group",
       metric_name: "bgs_service.fetch_ratings_in_range_called",
       app_name: RequestStore[:application]
@@ -349,7 +353,7 @@ class ExternalApi::BGSService
   def fetch_rating_profile(participant_id:, profile_date:)
     DBService.release_db_connections
 
-    DataDogService.increment_counter(
+    MetricsService.increment_counter(
       metric_group: "mst_pact_group",
       metric_name: "bgs_service.fetch_rating_profile_called",
       app_name: RequestStore[:application]

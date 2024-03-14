@@ -5,51 +5,57 @@ import { documents } from '../../data/documents';
 import ApiUtil from '../../../app/util/ApiUtil';
 import { storeMetrics, recordAsyncMetrics } from '../../../app/util/Metrics';
 
-ApiUtil.get = jest.fn().mockResolvedValue(() => new Promise((resolve) => resolve({ body: {} })));
+const mockedResponse = { body: {}, header: { 'x-document-source': 'VBMS' } };
+
+ApiUtil.get = jest.fn().mockResolvedValue(() => new Promise((resolve) => resolve(mockedResponse)));
 
 jest.mock('../../../app/util/ApiUtil');
 jest.mock('../../../app/util/Metrics', () => ({
-  storeMetrics: jest.fn(),
-  recordAsyncMetrics: jest.fn(),
+    storeMetrics: jest.fn().mockResolvedValue(),
+    recordAsyncMetrics: jest.fn().mockResolvedValue(),
 }));
 jest.mock('pdfjs-dist', () => ({
-  getDocument: jest.fn().mockResolvedValue(),
-  GlobalWorkerOptions: jest.fn().mockResolvedValue(),
+    getDocument: jest.fn().mockResolvedValue(),
+    GlobalWorkerOptions: jest.fn().mockResolvedValue(),
 }));
 
-const metricArgs = (featureValue) => {
-  return [
-    // eslint-disable-next-line no-undefined
-    undefined,
-    {
-      data:
-      {
-        documentId: 1,
-        documentType: 'test',
-        file: '/document/1/pdf'
-      },
-      // eslint-disable-next-line no-useless-escape
-      message: 'Getting PDF document: \"/document/1/pdf\"',
-      product: 'reader',
-      type: 'performance'
-    },
-    featureValue,
-  ];
+const metricArgs = (featureValue, documentSource) => {
+    return [
+        // eslint-disable-next-line no-undefined
+        undefined,
+        {
+            data:
+                {
+                    documentId: 1,
+                    documentType: 'test',
+                    file: '/document/1/pdf',
+                    prefetchDisabled: undefined,
+                },
+            // eslint-disable-next-line no-useless-escape
+            message: 'Getting PDF document: \"/document/1/pdf\"',
+            product: 'reader',
+            additionalInfo: documentSource,
+            type: 'performance',
+            eventId: expect.stringMatching(/^([a-zA-Z0-9-.'&])*$/)
+        },
+        featureValue,
+    ];
 };
 
 const storeMetricsError = {
-  uuid: expect.stringMatching(/^([a-zA-Z0-9-.'&])*$/),
-  data:
-  {
-    documentId: 1,
-    documentType: 'test',
-    file: '/document/1/pdf'
-  },
-  info: {
-    message: expect.stringMatching(/^([a-zA-Z0-9-.'&:/ ])*$/),
-    product: 'browser',
-    type: 'error'
-  }
+    uuid: expect.stringMatching(/^([a-zA-Z0-9-.'&])*$/),
+    data:
+        {
+            documentId: 1,
+            documentType: 'test',
+            file: '/document/1/pdf'
+        },
+    info: {
+        message: expect.stringMatching(/^([a-zA-Z0-9-.'&:/ ])*$/),
+        product: 'browser',
+        type: 'error'
+    },
+    eventId: expect.stringMatching(/^([a-zA-Z0-9-.'&])*$/)
 };
 
 describe('PdfFile', () => {
@@ -137,6 +143,25 @@ describe('PdfFile', () => {
       it('calls storeMetrics in catch block', () => {
         expect(storeMetrics).toBeCalledWith(storeMetricsError.uuid, storeMetricsError.data, storeMetricsError.info);
       });
+
+      it('clears measureTimeStartMs after unmount', () => {
+        // Mock the ApiUtil.get function to return a Promise that resolves immediately
+        jest.mock('../../../app/util/ApiUtil', () => ({
+          get: jest.fn().mockResolvedValue({}),
+        }));
+        const subject = wrapper.instance();
+
+        // Trigger the ApiUtil.get function call
+        subject.getDocument();
+
+        // Assert that measureTimeStartMs is counting
+        expect(subject.measureTimeStartMs).toBe('RUNNING_IN_NODE');
+
+        // Unmount the component
+        wrapper.unmount();
+
+        // Assert that measureTimeStartMs is reset to null
+        expect(subject.measureTimeStartMs).toBeNull();
+      });
     });
-  });
 });
