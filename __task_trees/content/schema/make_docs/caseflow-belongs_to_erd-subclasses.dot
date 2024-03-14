@@ -1,5 +1,5 @@
 digraph belongs_to_erd_subclasses {
-	graph [bb="0,0,4979.9,4587",
+	graph [bb="0,0,4979.9,4511.9",
 		rankdir=LR
 	];
 	node [label="\N"];
@@ -57,9 +57,20 @@ digraph belongs_to_erd_subclasses {
 		];
 	Claimant -> OtherClaimant	[color="#000099",
 		style=dotted];
-	HearingDay	[fillcolor="#66ccff",
-		label="HearingDay\n(associated with: judge User)",
-		style=filled,
+	hearing_type	[color="#0000ff",
+		fontcolor="#0000ff",
+		label="hearing_type|Hearing,\nLegacyHearing",
+		shape=record,
+		style=dotted,
+		];
+	HearingEmailRecipient	[color="#000099",
+		fillcolor="#66ccff",
+		fontcolor="#000099",
+		label=HearingEmailRecipient,
+		shape=record,
+		style=dashed,
+		];
+	HearingEmailRecipient -> hearing_type	[label=hearing,
 		];
 	appeal_type	[color="#0000ff",
 		fillcolor="#ffff00",
@@ -67,6 +78,42 @@ digraph belongs_to_erd_subclasses {
 		label="appeal_type|Appeal,\nLegacyAppeal",
 		shape=record,
 		style=filled,
+		];
+	HearingEmailRecipient -> appeal_type	[label=appeal,
+		];
+	AppellantHearingEmailRecipient	[fillcolor="#66ccff",
+		label=AppellantHearingEmailRecipient,
+		style=filled,
+		];
+	HearingEmailRecipient -> AppellantHearingEmailRecipient	[color="#000099",
+		style=dotted];
+	JudgeHearingEmailRecipient	[fillcolor="#66ccff",
+		label=JudgeHearingEmailRecipient,
+		style=filled,
+		];
+	HearingEmailRecipient -> JudgeHearingEmailRecipient	[color="#000099",
+		style=dotted];
+	RepresentativeHearingEmailRecipient	[fillcolor="#66ccff",
+		label=RepresentativeHearingEmailRecipient,
+		style=filled,
+		];
+	HearingEmailRecipient -> RepresentativeHearingEmailRecipient	[color="#000099",
+		style=dotted];
+	SentHearingEmailEvent	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label="SentHearingEmailEvent\n(associated with: sent_by User)",
+		shape=component,
+		style=filled,
+		];
+	SentHearingEmailEvent -> hearing_type	[label=hearing,
+		];
+	SentHearingEmailEvent -> HearingEmailRecipient	[label=email_recipient,
+		];
+	AvailableHearingLocations	[fillcolor="#66ccff",
+		label="AvailableHearingLocations\n(associated with: Veteran)",
+		style=filled,
+		];
+	AvailableHearingLocations -> appeal_type	[label=appeal,
 		];
 	AttorneyCaseReview	[fillcolor="#ff5050",
 		label="AttorneyCaseReview\n(associated with:\nreviewing_judge User,\nattorney User,\nTask)",
@@ -82,127 +129,10 @@ digraph belongs_to_erd_subclasses {
 		];
 	JudgeCaseReview -> appeal_type	[label=appeal,
 		];
-	JobNote	[
-		label="JobNote\n(associated with: User)",
+	SpecialIssueList	[
+		label=SpecialIssueList,
 		];
-	SupplementalClaim	[fillcolor="#ffff00",
-		label=SupplementalClaim,
-		style=filled,
-		];
-	JobNote -> SupplementalClaim	[color="#0000ff",
-		fontcolor="#0000ff",
-		label="JobNote#job",
-		];
-	HigherLevelReview	[fillcolor="#ffff00",
-		label=HigherLevelReview,
-		style=filled,
-		];
-	JobNote -> HigherLevelReview	[color="#0000ff",
-		fontcolor="#0000ff",
-		label="JobNote#job",
-		];
-	RequestIssue	[color="#000099",
-		fillcolor="#ffa500",
-		fontcolor="#000099",
-		label="RequestIssue|RatingRequestIssue,\nNonratingRequestIssue",
-		shape=record,
-		style=filled,
-		];
-	RequestIssue -> decision_review_type	[label=decision_review,
-		];
-	RequestIssue -> RequestIssue	[label=correction_request_issue,
-		];
-	RequestIssue -> RequestIssue	[label=ineligible_due_to,
-		];
-	EndProductEstablishment	[
-		label="EndProductEstablishment\n(associated with: User)",
-		];
-	RequestIssue -> EndProductEstablishment	[label=end_product_establishment,
-		];
-	DecisionIssue	[fillcolor="#ff5050",
-		label=DecisionIssue,
-		shape=note,
-		style=filled,
-		];
-	RequestIssue -> DecisionIssue	[label=contested_decision_issue,
-		];
-	NonratingRequestIssue	[fillcolor="#ffa500",
-		label=NonratingRequestIssue,
-		style=filled,
-		];
-	RequestIssue -> NonratingRequestIssue	[color="#000099",
-		style=dotted];
-	RatingRequestIssue	[fillcolor="#ffa500",
-		label=RatingRequestIssue,
-		style=filled,
-		];
-	RequestIssue -> RatingRequestIssue	[color="#000099",
-		style=dotted];
-	source_type	[color="#0000ff",
-		fontcolor="#0000ff",
-		label="source_type|DecisionDocument,\nSupplementalClaim,\nHigherLevelReview,\nRampRefiling,\nRampElection",
-		shape=record,
-		style=dotted,
-		];
-	EndProductEstablishment -> source_type	[label=source,
-		];
-	VbmsExtClaim	[
-		label=VbmsExtClaim,
-		];
-	EndProductEstablishment -> VbmsExtClaim	[label=vbms_ext_claim,
-		];
-	DecisionIssue -> decision_review_type	[label=decision_review,
-		];
-	"Dispatch::Task"	[color="#000099",
-		fillcolor="#adff2f",
-		fontcolor="#000099",
-		label="Dispatch::Task\n(associated with: User)",
-		shape=record,
-		style=filled,
-		];
-	"Dispatch::Task" -> LegacyAppeal	[label=appeal,
-		];
-	EstablishClaim	[fillcolor="#adff2f",
-		label="EstablishClaim\n(associated with: User)",
-		style=filled,
-		];
-	"Dispatch::Task" -> EstablishClaim	[color="#000099",
-		style=dotted];
-	WorksheetIssue	[fillcolor="#66ccff",
-		label=WorksheetIssue,
-		style=filled,
-		];
-	WorksheetIssue -> LegacyAppeal	[label=appeal,
-		];
-	Hearing	[fillcolor="#66ccff",
-		label="Hearing\n(associated with: judge User)",
-		style=filled,
-		];
-	WorksheetIssue -> Hearing	[label=hearing,
-		];
-	Hearing -> HearingDay	[label=hearing_day,
-		];
-	Appeal	[fillcolor="#ffff00",
-		label=Appeal,
-		style=filled,
-		];
-	Hearing -> Appeal	[label=appeal,
-		];
-	AppealView	[color="#aaaaaa",
-		fillcolor="#f2f2f2",
-		label="AppealView\n(associated with: User)",
-		shape=component,
-		style=filled,
-		];
-	AppealView -> appeal_type	[label=appeal,
-		];
-	ClaimsFolderSearch	[color="#aaaaaa",
-		fillcolor="#f2f2f2",
-		label="ClaimsFolderSearch\n(associated with: User)",
-		shape=component,
-		style=filled,
-		];
-	ClaimsFolderSearch -> appeal_type	[label=appeal,
+	SpecialIssueList -> appeal_type	[label=appeal,
 		];
 	Task	[color="#0000ff",
 		fillcolor="#00ff00",
@@ -231,74 +161,28 @@ digraph belongs_to_erd_subclasses {
 	Task -> HearingTask	[color="#6600cc",
 		fontcolor="#6600cc",
 		style=dotted];
-	RequestDecisionIssue	[color="#aaaaaa",
-		fillcolor="#f2f2f2",
-		label=RequestDecisionIssue,
-		shape=component,
+	HearingDay	[fillcolor="#66ccff",
+		label="HearingDay\n(associated with: judge User)",
 		style=filled,
 		];
-	RequestDecisionIssue -> RequestIssue	[label=request_issue,
-		];
-	RequestDecisionIssue -> DecisionIssue	[label=decision_issue,
-		];
-	DecisionDocument	[fillcolor="#ff5050",
-		label=DecisionDocument,
-		shape=note,
+	Hearing	[fillcolor="#66ccff",
+		label="Hearing\n(associated with: judge User)",
 		style=filled,
 		];
-	DecisionDocument -> appeal_type	[label=appeal,
+	Hearing -> HearingDay	[label=hearing_day,
 		];
-	RequestIssuesUpdate	[
-		label="RequestIssuesUpdate\n(associated with: User)",
-		];
-	review_type	[color="#0000ff",
-		fillcolor="#ffff00",
-		fontcolor="#0000ff",
-		label="review_type|Appeal,\nSupplementalClaim,\nHigherLevelReview",
-		shape=record,
+	Appeal	[fillcolor="#ffff00",
+		label=Appeal,
 		style=filled,
 		];
-	RequestIssuesUpdate -> review_type	[label=review,
+	Hearing -> Appeal	[label=appeal,
 		];
-	review_type -> decision_review_type	[color="#6600cc",
-		fontcolor="#6600cc",
-		label="a.k.a.",
-		style=dotted];
-	hearing_type	[color="#0000ff",
-		fontcolor="#0000ff",
-		label="hearing_type|Hearing,\nLegacyHearing",
-		shape=record,
-		style=dotted,
-		];
-	HearingEmailRecipient	[color="#000099",
-		fillcolor="#66ccff",
-		fontcolor="#000099",
-		label=HearingEmailRecipient,
-		shape=record,
-		style=dashed,
-		];
-	HearingEmailRecipient -> appeal_type	[label=appeal,
-		];
-	HearingEmailRecipient -> hearing_type	[label=hearing,
-		];
-	AppellantHearingEmailRecipient	[fillcolor="#66ccff",
-		label=AppellantHearingEmailRecipient,
+	LegacyHearing	[fillcolor="#66ccff",
+		label="LegacyHearing\n(associated with: User)",
 		style=filled,
 		];
-	HearingEmailRecipient -> AppellantHearingEmailRecipient	[color="#000099",
-		style=dotted];
-	JudgeHearingEmailRecipient	[fillcolor="#66ccff",
-		label=JudgeHearingEmailRecipient,
-		style=filled,
+	LegacyHearing -> LegacyAppeal	[label=appeal,
 		];
-	HearingEmailRecipient -> JudgeHearingEmailRecipient	[color="#000099",
-		style=dotted];
-	RepresentativeHearingEmailRecipient	[fillcolor="#66ccff",
-		label=RepresentativeHearingEmailRecipient,
-		style=filled,
-		];
-	HearingEmailRecipient -> RepresentativeHearingEmailRecipient	[color="#000099",
-		style=dotted];
 	HearingTaskAssociation	[color="#aaaaaa",
 		fillcolor="#f2f2f2",
 		label=HearingTaskAssociation,
@@ -308,122 +192,6 @@ digraph belongs_to_erd_subclasses {
 	HearingTaskAssociation -> hearing_type	[label=hearing,
 		];
 	HearingTaskAssociation -> HearingTask	[label=hearing_task,
-		];
-	VirtualHearing	[fillcolor="#66ccff",
-		label=VirtualHearing,
-		style=filled,
-		];
-	VirtualHearing -> hearing_type	[label=hearing,
-		];
-	Transcription	[fillcolor="#66ccff",
-		label=Transcription,
-		style=filled,
-		];
-	Transcription -> Hearing	[label=hearing,
-		];
-	HearingView	[color="#aaaaaa",
-		fillcolor="#f2f2f2",
-		label="HearingView\n(associated with: User)",
-		shape=component,
-		style=filled,
-		];
-	HearingView -> hearing_type	[label=hearing,
-		];
-	HearingLocation	[fillcolor="#66ccff",
-		label=HearingLocation,
-		style=filled,
-		];
-	HearingLocation -> hearing_type	[label=hearing,
-		];
-	HearingIssueNote	[color="#aaaaaa",
-		fillcolor="#f2f2f2",
-		label=HearingIssueNote,
-		shape=component,
-		style=filled,
-		];
-	HearingIssueNote -> RequestIssue	[label=request_issue,
-		];
-	HearingIssueNote -> Hearing	[label=hearing,
-		];
-	SentHearingEmailEvent	[color="#aaaaaa",
-		fillcolor="#f2f2f2",
-		label="SentHearingEmailEvent\n(associated with: sent_by User)",
-		shape=component,
-		style=filled,
-		];
-	SentHearingEmailEvent -> hearing_type	[label=hearing,
-		];
-	SentHearingEmailEvent -> HearingEmailRecipient	[label=email_recipient,
-		];
-	LegacyHearing	[fillcolor="#66ccff",
-		label="LegacyHearing\n(associated with: User)",
-		style=filled,
-		];
-	LegacyHearing -> LegacyAppeal	[label=appeal,
-		];
-	AppealStreamSnapshot	[color="#aaaaaa",
-		fillcolor="#f2f2f2",
-		label="AppealStreamSnapshot\n(a.k.a. hearing_appeal_stream_snapshots)",
-		shape=component,
-		style=filled,
-		];
-	AppealStreamSnapshot -> LegacyAppeal	[label=appeal,
-		];
-	AppealStreamSnapshot -> LegacyHearing	[label=hearing,
-		];
-	SpecialIssueList	[
-		label=SpecialIssueList,
-		];
-	SpecialIssueList -> appeal_type	[label=appeal,
-		];
-	AvailableHearingLocations	[fillcolor="#66ccff",
-		label="AvailableHearingLocations\n(associated with: Veteran)",
-		style=filled,
-		];
-	AvailableHearingLocations -> appeal_type	[label=appeal,
-		];
-	record_type	[color="#0000ff",
-		fillcolor="#ffff00",
-		fontcolor="#0000ff",
-		label="record_type|Appeal,\nLegacyAppeal",
-		shape=record,
-		style=filled,
-		];
-	record_type -> decision_review_type	[color="#6600cc",
-		fontcolor="#6600cc",
-		label="(subset of)",
-		];
-	RecordSyncedByJob	[
-		label=RecordSyncedByJob,
-		];
-	RecordSyncedByJob -> record_type	[label=record,
-		];
-	VbmsUploadedDocument	[fillcolor="#ff5050",
-		label=VbmsUploadedDocument,
-		shape=note,
-		style=filled,
-		];
-	VbmsUploadedDocument -> appeal_type	[label=appeal,
-		];
-	WorkMode	[
-		label=WorkMode,
-		];
-	WorkMode -> appeal_type	[label=appeal,
-		];
-	AppealState	[
-		label=AppealState,
-		];
-	AppealState -> appeal_type	[label=appeal,
-		];
-	NodDateUpdate	[
-		label="NodDateUpdate\n(associated with: User)",
-		];
-	NodDateUpdate -> Appeal	[label=appeal,
-		];
-	PostDecisionMotion	[
-		label="PostDecisionMotion\n(associated with: Task)",
-		];
-	PostDecisionMotion -> Appeal	[label=appeal,
 		];
 	SchedulePeriod	[color="#000099",
 		fillcolor="#00ffff",
@@ -471,6 +239,13 @@ digraph belongs_to_erd_subclasses {
 		];
 	NonAvailability -> JudgeNonAvailability	[color="#000099",
 		style=dotted];
+	DecisionIssue	[fillcolor="#ff5050",
+		label=DecisionIssue,
+		shape=note,
+		style=filled,
+		];
+	DecisionIssue -> decision_review_type	[label=decision_review,
+		];
 	RemandReason	[
 		label=RemandReason,
 		];
@@ -714,6 +489,89 @@ digraph belongs_to_erd_subclasses {
 		];
 	OrganizationsUser -> Organization	[label=organization,
 		];
+	RequestIssue	[color="#000099",
+		fillcolor="#ffa500",
+		fontcolor="#000099",
+		label="RequestIssue|RatingRequestIssue,\nNonratingRequestIssue",
+		shape=record,
+		style=filled,
+		];
+	RequestIssue -> decision_review_type	[label=decision_review,
+		];
+	RequestIssue -> DecisionIssue	[label=contested_decision_issue,
+		];
+	RequestIssue -> RequestIssue	[label=correction_request_issue,
+		];
+	RequestIssue -> RequestIssue	[label=ineligible_due_to,
+		];
+	EndProductEstablishment	[
+		label="EndProductEstablishment\n(associated with: User)",
+		];
+	RequestIssue -> EndProductEstablishment	[label=end_product_establishment,
+		];
+	NonratingRequestIssue	[fillcolor="#ffa500",
+		label=NonratingRequestIssue,
+		style=filled,
+		];
+	RequestIssue -> NonratingRequestIssue	[color="#000099",
+		style=dotted];
+	RatingRequestIssue	[fillcolor="#ffa500",
+		label=RatingRequestIssue,
+		style=filled,
+		];
+	RequestIssue -> RatingRequestIssue	[color="#000099",
+		style=dotted];
+	RequestDecisionIssue	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label=RequestDecisionIssue,
+		shape=component,
+		style=filled,
+		];
+	RequestDecisionIssue -> DecisionIssue	[label=decision_issue,
+		];
+	RequestDecisionIssue -> RequestIssue	[label=request_issue,
+		];
+	source_type	[color="#0000ff",
+		fontcolor="#0000ff",
+		label="source_type|DecisionDocument,\nSupplementalClaim,\nHigherLevelReview,\nRampRefiling,\nRampElection",
+		shape=record,
+		style=dotted,
+		];
+	EndProductEstablishment -> source_type	[label=source,
+		];
+	VbmsExtClaim	[
+		label=VbmsExtClaim,
+		];
+	EndProductEstablishment -> VbmsExtClaim	[label=vbms_ext_claim,
+		];
+	VirtualHearing	[fillcolor="#66ccff",
+		label=VirtualHearing,
+		style=filled,
+		];
+	VirtualHearing -> hearing_type	[label=hearing,
+		];
+	DecisionDocument	[fillcolor="#ff5050",
+		label=DecisionDocument,
+		shape=note,
+		style=filled,
+		];
+	DecisionDocument -> appeal_type	[label=appeal,
+		];
+	"Dispatch::Task"	[color="#000099",
+		fillcolor="#adff2f",
+		fontcolor="#000099",
+		label="Dispatch::Task\n(associated with: User)",
+		shape=record,
+		style=filled,
+		];
+	"Dispatch::Task" -> LegacyAppeal	[label=appeal,
+		];
+	EstablishClaim	[fillcolor="#adff2f",
+		label="EstablishClaim\n(associated with: User)",
+		style=filled,
+		];
+	"Dispatch::Task" -> EstablishClaim	[color="#000099",
+		style=dotted];
 	RampReview	[color="#000099",
 		fillcolor="#cc99ff",
 		fontcolor="#000099",
@@ -759,6 +617,29 @@ digraph belongs_to_erd_subclasses {
 		];
 	ApiView -> ApiKey	[label=api_key,
 		];
+	AppealState	[
+		label=AppealState,
+		];
+	AppealState -> appeal_type	[label=appeal,
+		];
+	AppealStreamSnapshot	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label="AppealStreamSnapshot\n(a.k.a. hearing_appeal_stream_snapshots)",
+		shape=component,
+		style=filled,
+		];
+	AppealStreamSnapshot -> LegacyAppeal	[label=appeal,
+		];
+	AppealStreamSnapshot -> LegacyHearing	[label=hearing,
+		];
+	AppealView	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label="AppealView\n(associated with: User)",
+		shape=component,
+		style=filled,
+		];
+	AppealView -> appeal_type	[label=appeal,
+		];
 	AppellantSubstitution	[
 		label=AppellantSubstitution,
 		];
@@ -784,13 +665,13 @@ digraph belongs_to_erd_subclasses {
 		shape=note,
 		style=filled,
 		];
-	BoardGrantEffectuation -> EndProductEstablishment	[label=end_product_establishment,
+	BoardGrantEffectuation -> Appeal	[label=appeal,
 		];
 	BoardGrantEffectuation -> DecisionIssue	[label=granted_decision_issue,
 		];
-	BoardGrantEffectuation -> DecisionDocument	[label=decision_document,
+	BoardGrantEffectuation -> EndProductEstablishment	[label=end_product_establishment,
 		];
-	BoardGrantEffectuation -> Appeal	[label=appeal,
+	BoardGrantEffectuation -> DecisionDocument	[label=decision_document,
 		];
 	stuck_record_type	[
 		label="StuckRecord\n(stuck_record_type)",
@@ -863,6 +744,14 @@ digraph belongs_to_erd_subclasses {
 		];
 	ClaimEstablishment -> "Dispatch::Task"	[label=task,
 		];
+	ClaimsFolderSearch	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label="ClaimsFolderSearch\n(associated with: User)",
+		shape=component,
+		style=filled,
+		];
+	ClaimsFolderSearch -> appeal_type	[label=appeal,
+		];
 	Distribution	[
 		label="Distribution\n(associated with: judge User)",
 		];
@@ -926,6 +815,30 @@ digraph belongs_to_erd_subclasses {
 		];
 	EndProductUpdate -> original_decision_review_type	[label=original_decision_review,
 		];
+	HearingIssueNote	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label=HearingIssueNote,
+		shape=component,
+		style=filled,
+		];
+	HearingIssueNote -> Hearing	[label=hearing,
+		];
+	HearingIssueNote -> RequestIssue	[label=request_issue,
+		];
+	HearingLocation	[fillcolor="#66ccff",
+		label=HearingLocation,
+		style=filled,
+		];
+	HearingLocation -> hearing_type	[label=hearing,
+		];
+	HearingView	[color="#aaaaaa",
+		fillcolor="#f2f2f2",
+		label="HearingView\n(associated with: User)",
+		shape=component,
+		style=filled,
+		];
+	HearingView -> hearing_type	[label=hearing,
+		];
 	Allocation	[
 		label=Allocation,
 		];
@@ -942,6 +855,12 @@ digraph belongs_to_erd_subclasses {
 		];
 	SentHearingAdminEmailEvent -> SentHearingEmailEvent	[label=sent_hearing_email_event,
 		];
+	Transcription	[fillcolor="#66ccff",
+		label=Transcription,
+		style=filled,
+		];
+	Transcription -> Hearing	[label=hearing,
+		];
 	VirtualHearingEstablishment	[fillcolor="#66ccff",
 		label=VirtualHearingEstablishment,
 		style=filled,
@@ -957,6 +876,25 @@ digraph belongs_to_erd_subclasses {
 	IhpDraft -> appeal_type	[label=appeal,
 		];
 	IhpDraft -> Organization	[label=organization,
+		];
+	JobNote	[
+		label="JobNote\n(associated with: User)",
+		];
+	SupplementalClaim	[fillcolor="#ffff00",
+		label=SupplementalClaim,
+		style=filled,
+		];
+	JobNote -> SupplementalClaim	[color="#0000ff",
+		fontcolor="#0000ff",
+		label="JobNote#job",
+		];
+	HigherLevelReview	[fillcolor="#ffff00",
+		label=HigherLevelReview,
+		style=filled,
+		];
+	JobNote -> HigherLevelReview	[color="#0000ff",
+		fontcolor="#0000ff",
+		label="JobNote#job",
 		];
 	LegacyIssue	[
 		label=LegacyIssue,
@@ -1001,6 +939,16 @@ digraph belongs_to_erd_subclasses {
 		];
 	MpiUpdatePersonEvent -> ApiKey	[label=api_key,
 		];
+	NodDateUpdate	[
+		label="NodDateUpdate\n(associated with: User)",
+		];
+	NodDateUpdate -> Appeal	[label=appeal,
+		];
+	PostDecisionMotion	[
+		label="PostDecisionMotion\n(associated with: Task)",
+		];
+	PostDecisionMotion -> Appeal	[label=appeal,
+		];
 	PriorityEndProductSyncQueue	[
 		label=PriorityEndProductSyncQueue,
 		];
@@ -1041,6 +989,38 @@ digraph belongs_to_erd_subclasses {
 		];
 	RampIssue -> RampIssue	[label=source_issue,
 		];
+	record_type	[color="#0000ff",
+		fillcolor="#ffff00",
+		fontcolor="#0000ff",
+		label="record_type|Appeal,\nLegacyAppeal",
+		shape=record,
+		style=filled,
+		];
+	record_type -> decision_review_type	[color="#6600cc",
+		fontcolor="#6600cc",
+		label="(subset of)",
+		];
+	RecordSyncedByJob	[
+		label=RecordSyncedByJob,
+		];
+	RecordSyncedByJob -> record_type	[label=record,
+		];
+	RequestIssuesUpdate	[
+		label="RequestIssuesUpdate\n(associated with: User)",
+		];
+	review_type	[color="#0000ff",
+		fillcolor="#ffff00",
+		fontcolor="#0000ff",
+		label="review_type|Appeal,\nSupplementalClaim,\nHigherLevelReview",
+		shape=record,
+		style=filled,
+		];
+	RequestIssuesUpdate -> review_type	[label=review,
+		];
+	review_type -> decision_review_type	[color="#6600cc",
+		fontcolor="#6600cc",
+		label="a.k.a.",
+		style=dotted];
 	SystemAdminEvent	[
 		label="SystemAdminEvent\n(associated with: User)",
 		];
@@ -1094,10 +1074,42 @@ digraph belongs_to_erd_subclasses {
 		];
 	VbmsDistributionDestination -> VbmsDistribution	[label=vbms_distribution,
 		];
+	VbmsUploadedDocument	[fillcolor="#ff5050",
+		label=VbmsUploadedDocument,
+		shape=note,
+		style=filled,
+		];
+	VbmsUploadedDocument -> appeal_type	[label=appeal,
+		];
 	VsoConfig	[
 		label=VsoConfig,
 		];
 	VsoConfig -> Organization	[label=organization,
+		];
+	WorkMode	[
+		label=WorkMode,
+		];
+	WorkMode -> appeal_type	[label=appeal,
+		];
+	WorksheetIssue	[fillcolor="#66ccff",
+		label=WorksheetIssue,
+		style=filled,
+		];
+	WorksheetIssue -> LegacyAppeal	[label=appeal,
+		];
+	WorksheetIssue -> Hearing	[label=hearing,
+		];
+	AppellantHearingEmailRecipient -> hearing_type	[label=hearing,
+		];
+	AppellantHearingEmailRecipient -> appeal_type	[label=appeal,
+		];
+	JudgeHearingEmailRecipient -> hearing_type	[label=hearing,
+		];
+	JudgeHearingEmailRecipient -> appeal_type	[label=appeal,
+		];
+	RepresentativeHearingEmailRecipient -> hearing_type	[label=hearing,
+		];
+	RepresentativeHearingEmailRecipient -> appeal_type	[label=appeal,
 		];
 	decision_review_remanded_type	[color="#0000ff",
 		fillcolor="#ffff00",
@@ -1112,7 +1124,11 @@ digraph belongs_to_erd_subclasses {
 		style=dotted];
 	SupplementalClaim -> decision_review_remanded_type	[label=decision_review_remanded,
 		];
-	EstablishClaim -> LegacyAppeal	[label=appeal,
+	CoNonAvailability -> SchedulePeriod	[label=schedule_period,
+		];
+	RoNonAvailability -> SchedulePeriod	[label=schedule_period,
+		];
+	JudgeNonAvailability -> SchedulePeriod	[label=schedule_period,
 		];
 	DecisionReviewIntake	[color="#000099",
 		fillcolor="#ffffcc",
@@ -1203,23 +1219,7 @@ digraph belongs_to_erd_subclasses {
 		fontcolor="#0000ff",
 		label="SupplementalClaimIntake#detail",
 		];
-	AppellantHearingEmailRecipient -> appeal_type	[label=appeal,
-		];
-	AppellantHearingEmailRecipient -> hearing_type	[label=hearing,
-		];
-	JudgeHearingEmailRecipient -> appeal_type	[label=appeal,
-		];
-	JudgeHearingEmailRecipient -> hearing_type	[label=hearing,
-		];
-	RepresentativeHearingEmailRecipient -> appeal_type	[label=appeal,
-		];
-	RepresentativeHearingEmailRecipient -> hearing_type	[label=hearing,
-		];
-	CoNonAvailability -> SchedulePeriod	[label=schedule_period,
-		];
-	RoNonAvailability -> SchedulePeriod	[label=schedule_period,
-		];
-	JudgeNonAvailability -> SchedulePeriod	[label=schedule_period,
+	EstablishClaim -> LegacyAppeal	[label=appeal,
 		];
 	DecisionReview -> Appeal	[color="#000099",
 		style=dotted];
@@ -1247,19 +1247,6 @@ digraph belongs_to_erd_subclasses {
 		];
 	OtherClaimant -> HealthcareProviderClaimant	[color="#000099",
 		style=dotted];
-	Intake	[color="#000099",
-		fillcolor="#ffffcc",
-		fontcolor="#000099",
-		label=Intake,
-		shape=cds,
-		style=filled,
-		];
-	Intake -> DecisionReviewIntake	[color="#000099",
-		style=dotted];
-	Intake -> RampElectionIntake	[color="#000099",
-		style=dotted];
-	Intake -> RampRefilingIntake	[color="#000099",
-		style=dotted];
 	Vso	[color="#000099",
 		fillcolor="#d9d9ff",
 		fontcolor="#000099",
@@ -1280,6 +1267,19 @@ digraph belongs_to_erd_subclasses {
 		style=filled,
 		];
 	BusinessLine -> VhaBusinessLine	[color="#000099",
+		style=dotted];
+	Intake	[color="#000099",
+		fillcolor="#ffffcc",
+		fontcolor="#000099",
+		label=Intake,
+		shape=cds,
+		style=filled,
+		];
+	Intake -> DecisionReviewIntake	[color="#000099",
+		style=dotted];
+	Intake -> RampElectionIntake	[color="#000099",
+		style=dotted];
+	Intake -> RampRefilingIntake	[color="#000099",
 		style=dotted];
 	FieldVso	[fillcolor="#d9d9ff",
 		label=FieldVso,

@@ -1,5 +1,5 @@
 digraph subclasses {
-	graph [bb="0,0,1778.1,7060.5",
+	graph [bb="0,0,1778.1,7188.5",
 		rankdir=LR,
 		splines=line
 	];
@@ -53,71 +53,30 @@ digraph subclasses {
 		];
 	OtherClaimant -> HealthcareProviderClaimant	[color="#000099",
 		style=dotted];
-	DecisionReview	[color="#000099",
-		fillcolor="#ffff00",
+	HearingEmailRecipient	[color="#000099",
+		fillcolor="#66ccff",
 		fontcolor="#000099",
-		label=DecisionReview,
+		label=HearingEmailRecipient,
 		shape=record,
+		style=dashed,
+		];
+	AppellantHearingEmailRecipient	[fillcolor="#66ccff",
+		label=AppellantHearingEmailRecipient,
 		style=filled,
 		];
-	Appeal	[fillcolor="#ffff00",
-		label=Appeal,
-		style=filled,
-		];
-	DecisionReview -> Appeal	[color="#000099",
+	HearingEmailRecipient -> AppellantHearingEmailRecipient	[color="#000099",
 		style=dotted];
-	ClaimReview	[color="#000099",
-		fillcolor="#ffff00",
-		fontcolor="#000099",
-		label=ClaimReview,
-		shape=record,
+	JudgeHearingEmailRecipient	[fillcolor="#66ccff",
+		label=JudgeHearingEmailRecipient,
 		style=filled,
 		];
-	DecisionReview -> ClaimReview	[color="#000099",
+	HearingEmailRecipient -> JudgeHearingEmailRecipient	[color="#000099",
 		style=dotted];
-	SupplementalClaim	[fillcolor="#ffff00",
-		label=SupplementalClaim,
+	RepresentativeHearingEmailRecipient	[fillcolor="#66ccff",
+		label=RepresentativeHearingEmailRecipient,
 		style=filled,
 		];
-	ClaimReview -> SupplementalClaim	[color="#000099",
-		style=dotted];
-	HigherLevelReview	[fillcolor="#ffff00",
-		label=HigherLevelReview,
-		style=filled,
-		];
-	ClaimReview -> HigherLevelReview	[color="#000099",
-		style=dotted];
-	RequestIssue	[color="#000099",
-		fillcolor="#ffa500",
-		fontcolor="#000099",
-		label=RequestIssue,
-		shape=record,
-		style=filled,
-		];
-	NonratingRequestIssue	[fillcolor="#ffa500",
-		label=NonratingRequestIssue,
-		style=filled,
-		];
-	RequestIssue -> NonratingRequestIssue	[color="#000099",
-		style=dotted];
-	RatingRequestIssue	[fillcolor="#ffa500",
-		label=RatingRequestIssue,
-		style=filled,
-		];
-	RequestIssue -> RatingRequestIssue	[color="#000099",
-		style=dotted];
-	"Dispatch::Task"	[color="#000099",
-		fillcolor="#adff2f",
-		fontcolor="#000099",
-		label="Dispatch::Task",
-		shape=record,
-		style=filled,
-		];
-	EstablishClaim	[fillcolor="#adff2f",
-		label=EstablishClaim,
-		style=filled,
-		];
-	"Dispatch::Task" -> EstablishClaim	[color="#000099",
+	HearingEmailRecipient -> RepresentativeHearingEmailRecipient	[color="#000099",
 		style=dotted];
 	Task	[color="#000099",
 		fillcolor="#00ff00",
@@ -858,76 +817,39 @@ digraph subclasses {
 		];
 	LetterTask -> SendInitialNotificationLetterTask	[color="#000099",
 		style=dotted];
-	Intake	[color="#000099",
-		fillcolor="#ffffcc",
+	DecisionReview	[color="#000099",
+		fillcolor="#ffff00",
 		fontcolor="#000099",
-		label=Intake,
-		shape=cds,
-		style=filled,
-		];
-	DecisionReviewIntake	[color="#000099",
-		fillcolor="#ffffcc",
-		fontcolor="#000099",
-		label=DecisionReviewIntake,
-		shape=cds,
-		style=filled,
-		];
-	Intake -> DecisionReviewIntake	[color="#000099",
-		style=dotted];
-	RampElectionIntake	[fillcolor="#ffffcc",
-		label=RampElectionIntake,
-		shape=cds,
-		style=filled,
-		];
-	Intake -> RampElectionIntake	[color="#000099",
-		style=dotted];
-	RampRefilingIntake	[fillcolor="#ffffcc",
-		label=RampRefilingIntake,
-		shape=cds,
-		style=filled,
-		];
-	Intake -> RampRefilingIntake	[color="#000099",
-		style=dotted];
-	AppealIntake	[fillcolor="#ffffcc",
-		label=AppealIntake,
-		shape=cds,
-		style=filled,
-		];
-	DecisionReviewIntake -> AppealIntake	[color="#000099",
-		style=dotted];
-	ClaimReviewIntake	[color="#000099",
-		fillcolor="#ffffcc",
-		fontcolor="#000099",
-		label=ClaimReviewIntake,
-		shape=cds,
-		style=filled,
-		];
-	DecisionReviewIntake -> ClaimReviewIntake	[color="#000099",
-		style=dotted];
-	HearingEmailRecipient	[color="#000099",
-		fillcolor="#66ccff",
-		fontcolor="#000099",
-		label=HearingEmailRecipient,
+		label=DecisionReview,
 		shape=record,
-		style=dashed,
-		];
-	AppellantHearingEmailRecipient	[fillcolor="#66ccff",
-		label=AppellantHearingEmailRecipient,
 		style=filled,
 		];
-	HearingEmailRecipient -> AppellantHearingEmailRecipient	[color="#000099",
+	Appeal	[fillcolor="#ffff00",
+		label=Appeal,
+		style=filled,
+		];
+	DecisionReview -> Appeal	[color="#000099",
 		style=dotted];
-	JudgeHearingEmailRecipient	[fillcolor="#66ccff",
-		label=JudgeHearingEmailRecipient,
+	ClaimReview	[color="#000099",
+		fillcolor="#ffff00",
+		fontcolor="#000099",
+		label=ClaimReview,
+		shape=record,
 		style=filled,
 		];
-	HearingEmailRecipient -> JudgeHearingEmailRecipient	[color="#000099",
+	DecisionReview -> ClaimReview	[color="#000099",
 		style=dotted];
-	RepresentativeHearingEmailRecipient	[fillcolor="#66ccff",
-		label=RepresentativeHearingEmailRecipient,
+	SupplementalClaim	[fillcolor="#ffff00",
+		label=SupplementalClaim,
 		style=filled,
 		];
-	HearingEmailRecipient -> RepresentativeHearingEmailRecipient	[color="#000099",
+	ClaimReview -> SupplementalClaim	[color="#000099",
+		style=dotted];
+	HigherLevelReview	[fillcolor="#ffff00",
+		label=HigherLevelReview,
+		style=filled,
+		];
+	ClaimReview -> HigherLevelReview	[color="#000099",
 		style=dotted];
 	NonAvailability	[color="#000099",
 		fillcolor="#00aaff",
@@ -1198,6 +1120,84 @@ digraph subclasses {
 		];
 	BusinessLine -> VhaBusinessLine	[color="#000099",
 		style=dotted];
+	Intake	[color="#000099",
+		fillcolor="#ffffcc",
+		fontcolor="#000099",
+		label=Intake,
+		shape=cds,
+		style=filled,
+		];
+	DecisionReviewIntake	[color="#000099",
+		fillcolor="#ffffcc",
+		fontcolor="#000099",
+		label=DecisionReviewIntake,
+		shape=cds,
+		style=filled,
+		];
+	Intake -> DecisionReviewIntake	[color="#000099",
+		style=dotted];
+	RampElectionIntake	[fillcolor="#ffffcc",
+		label=RampElectionIntake,
+		shape=cds,
+		style=filled,
+		];
+	Intake -> RampElectionIntake	[color="#000099",
+		style=dotted];
+	RampRefilingIntake	[fillcolor="#ffffcc",
+		label=RampRefilingIntake,
+		shape=cds,
+		style=filled,
+		];
+	Intake -> RampRefilingIntake	[color="#000099",
+		style=dotted];
+	AppealIntake	[fillcolor="#ffffcc",
+		label=AppealIntake,
+		shape=cds,
+		style=filled,
+		];
+	DecisionReviewIntake -> AppealIntake	[color="#000099",
+		style=dotted];
+	ClaimReviewIntake	[color="#000099",
+		fillcolor="#ffffcc",
+		fontcolor="#000099",
+		label=ClaimReviewIntake,
+		shape=cds,
+		style=filled,
+		];
+	DecisionReviewIntake -> ClaimReviewIntake	[color="#000099",
+		style=dotted];
+	RequestIssue	[color="#000099",
+		fillcolor="#ffa500",
+		fontcolor="#000099",
+		label=RequestIssue,
+		shape=record,
+		style=filled,
+		];
+	NonratingRequestIssue	[fillcolor="#ffa500",
+		label=NonratingRequestIssue,
+		style=filled,
+		];
+	RequestIssue -> NonratingRequestIssue	[color="#000099",
+		style=dotted];
+	RatingRequestIssue	[fillcolor="#ffa500",
+		label=RatingRequestIssue,
+		style=filled,
+		];
+	RequestIssue -> RatingRequestIssue	[color="#000099",
+		style=dotted];
+	"Dispatch::Task"	[color="#000099",
+		fillcolor="#adff2f",
+		fontcolor="#000099",
+		label="Dispatch::Task",
+		shape=record,
+		style=filled,
+		];
+	EstablishClaim	[fillcolor="#adff2f",
+		label=EstablishClaim,
+		style=filled,
+		];
+	"Dispatch::Task" -> EstablishClaim	[color="#000099",
+		style=dotted];
 	RampReview	[color="#000099",
 		fillcolor="#cc99ff",
 		fontcolor="#000099",
@@ -1289,6 +1289,12 @@ digraph subclasses {
 		];
 	DocketSwitchAbstractAttorneyTask -> DocketSwitchGrantedTask	[color="#000099",
 		style=dotted];
+	FieldVso	[fillcolor="#d9d9ff",
+		label=FieldVso,
+		style=filled,
+		];
+	Vso -> FieldVso	[color="#000099",
+		style=dotted];
 	HigherLevelReviewIntake	[fillcolor="#ffffcc",
 		label=HigherLevelReviewIntake,
 		shape=cds,
@@ -1302,11 +1308,5 @@ digraph subclasses {
 		style=filled,
 		];
 	ClaimReviewIntake -> SupplementalClaimIntake	[color="#000099",
-		style=dotted];
-	FieldVso	[fillcolor="#d9d9ff",
-		label=FieldVso,
-		style=filled,
-		];
-	Vso -> FieldVso	[color="#000099",
 		style=dotted];
 }
