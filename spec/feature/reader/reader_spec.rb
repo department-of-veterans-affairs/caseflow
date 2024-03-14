@@ -1174,10 +1174,10 @@ RSpec.feature "Reader", :all_dbs do
       expect(page).to have_content("Form 9")
 
       expect(ClaimsFolderSearch.last).to have_attributes(
-        user_id: current_user.id,
-        appeal_id: appeal.id,
-        query: "BVA"
-      )
+                                           user_id: current_user.id,
+                                           appeal_id: appeal.id,
+                                           query: "BVA"
+                                         )
     end
 
     scenario "Document viewer when doc list is filtered" do

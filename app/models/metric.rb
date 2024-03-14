@@ -53,6 +53,7 @@ class Metric < CaseflowRecord
     product_types = MetricAttributes::PRODUCT_TYPES
     {
       uuid: params[:uuid],
+      event_id: params[:event_id],
       user: user || RequestStore.store[:current_user] || User.system_user,
       metric_name: params[:name] || MetricAttributes::METRIC_TYPES[:log],
       metric_class: klass&.try(:name) || klass&.class&.name || name,
