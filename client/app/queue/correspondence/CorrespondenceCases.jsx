@@ -28,6 +28,7 @@ const CorrespondenceCases = (props) => {
   const [vetName, setVetName] = useState('');
   const [selectedMailTeamUser, setSelectedMailTeamUser] = useState('');
   const [selectedRequestChoice, setSelectedRequestChoice] = useState('');
+  const [decisionReason, setDecisionReason] = useState('');
 
   const buildMailUserData = (data) => {
     if (data === undefined) {
@@ -42,6 +43,10 @@ const CorrespondenceCases = (props) => {
     });
   };
 
+  const handleDecisionReasonInput = (value) => {
+    setDecisionReason(value);
+  };
+
   const confirmButtonDisabled = () => {
     if (selectedRequestChoice === 'approve' && selectedMailTeamUser === '') {
       return true;
@@ -53,8 +58,6 @@ const CorrespondenceCases = (props) => {
     return false;
   };
 
-  // console.log(buildMailUserData(props.))
-
   const approveElement = (<div style={{ width: '28vw' }}>
     <ReactSelectDropdown
       className="cf-margin-left-2rem img"
@@ -64,7 +67,7 @@ const CorrespondenceCases = (props) => {
     />
   </div>);
 
-  const textAreaElement = (<div style={{width:'280%'}}><TextareaField /></div>)
+  const textAreaElement = (<div style={{width:'280%'}}><TextareaField onChange={handleDecisionReasonInput} value={decisionReason} /></div>)
 
 
   useEffect(() => {
@@ -92,9 +95,11 @@ const CorrespondenceCases = (props) => {
     let newUrl = window.location.href;
 
     newUrl = newUrl.replace('#', '');
-    newUrl += newUrl.includes('?') ?
-    `&user=${selectedMailTeamUser}&taskId=${currentSelectedVeteran.uniqueId}&userAction=${selectedRequestChoice}` :
-      `?user=${selectedMailTeamUser}&taskId=${currentSelectedVeteran.uniqueId}&userAction=${selectedRequestChoice}`;
+    newUrl += newUrl.includes('?') ? '?' : ''
+    newUrl += `&user=${selectedMailTeamUser}
+    &taskId=${currentSelectedVeteran.uniqueId}
+    &userAction=${selectedRequestChoice}
+    &decisionReason=${decisionReason}`;
     window.location.href = newUrl;
   };
 
