@@ -46,6 +46,35 @@ describe HearingRequestDocket, :all_dbs do
         )
       end
 
+      it "only distributes nonpriority, distributable, hearing docket cases
+          where the most recent held hearing is tied to the distribution judge
+          but doesn't exceed affinity threshold" do
+        create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
+        matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
+
+        # This is the only one that is still considered tied (we want only non_genpop)
+        create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
+
+        # This appeal should not be returned because it is now considered genpop
+        create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge_outside_affinity
+        tasks = subject
+
+        distribution_judge.reload.tasks.map(&:appeal)
+        # CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update(value: "omit")
+
+        expect(tasks.length).to eq(1)
+        expect(tasks.first.class).to eq(DistributedCase)
+        expect(tasks.first.genpop).to eq false
+        expect(tasks.first.genpop_query).to eq "not_genpop"
+
+        expect(distribution.distributed_cases.length).to eq(1)
+        # expect(distribution_judge.reload.tasks.map(&:appeal)).to eq([appeal])
+
+        # If hearing date exceeds specified days for affinity, appeal no longer tied to judge
+        # expect(distributed_appeals).not_to include(outside_affinity)
+      end
+    end
+
     context "priority appeals and not_genpop" do
       subject do
         HearingRequestDocket.new.distribute_appeals(
@@ -62,6 +91,7 @@ describe HearingRequestDocket, :all_dbs do
         matching_all_base_conditions_with_most_recent_hearing_tied_to_distribution_judge_but_not_held
         matching_all_base_conditions_with_most_recent_held_hearing_not_tied_to_any_judge
         matching_all_base_conditions_with_most_recent_held_hearing_tied_to_other_judge
+
         # appeals that should be returned
         appeal = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
         another = matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
@@ -149,42 +179,41 @@ describe HearingRequestDocket, :all_dbs do
 
       it "only distributes nonpriority, distributable, hearing docket cases
           that are either genpop or not genpop" do
-        # won't be included
-        create_priority_distributable_hearing_appeal_not_tied_to_any_judge
-        matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
-        non_distributable = create_nonpriority_unblocked_hearing_appeal_within_affinity
+            # won't be included
+            create_priority_distributable_hearing_appeal_not_tied_to_any_judge
+            matching_all_base_conditions_with_most_recent_held_hearing_tied_to_distribution_judge
+            non_distributable = create_nonpriority_unblocked_hearing_appeal_within_affinity
 
-        # will be included
-        tied = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
-        not_tied = create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
-        no_held_hearings = non_priority_with_no_held_hearings
-        no_hearings = non_priority_with_no_hearings
-        outside_affinity = create_nonpriority_distributable_hearing_appeal_tied_to_other_judge_outside_affinity
+            # will be included
+            tied = create_nonpriority_distributable_hearing_appeal_tied_to_distribution_judge
+            not_tied = create_nonpriority_distributable_hearing_appeal_not_tied_to_any_judge
+            no_held_hearings = non_priority_with_no_held_hearings
+            no_hearings = non_priority_with_no_hearings
+            outside_affinity = create_nonpriority_distributable_hearing_appeal_tied_to_other_judge_outside_affinity
 
-        expected_result = [tied, not_tied, no_held_hearings, no_hearings, outside_affinity]
+            expected_result = [tied, not_tied, no_held_hearings, no_hearings, outside_affinity]
 
-        tasks = subject
+            tasks = subject
 
-        appeal_ids = tasks.map(&:case_id)
-        expect(appeal_ids).to match_array(expected_result.map(&:uuid))
-        expect(appeal_ids).to_not include(non_distributable.uuid)
-        expect(tasks.first.class).to eq(DistributedCase)
-        expect(tasks.first.genpop).to eq false
-        expect(tasks.first.genpop_query).to eq "any"
-        expect(tasks.second.genpop).to eq true
-        expect(tasks.second.genpop_query).to eq "any"
-        expect(distribution.distributed_cases.length).to eq(expected_result.length)
-        expect(distribution_judge.reload.tasks.map(&:appeal))
-          .to match_array(expected_result)
-      end
-    end
+            appeal_ids = tasks.map(&:case_id)
+            expect(appeal_ids).to match_array(expected_result.map(&:uuid))
+            expect(appeal_ids).to_not include(non_distributable.uuid)
+            expect(tasks.first.class).to eq(DistributedCase)
+            expect(tasks.first.genpop).to eq false
+            expect(tasks.first.genpop_query).to eq "any"
+            expect(tasks.second.genpop).to eq true
+            expect(tasks.second.genpop_query).to eq "any"
+            expect(distribution.distributed_cases.length).to eq(expected_result.length)
+            expect(distribution_judge.reload.tasks.map(&:appeal))
+              .to match_array(expected_result)
+          end
 
-    context "when acd_exclude_from_affinity flag is enabled" do
-      before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
+      context "when acd_exclude_from_affinity flag is enabled" do
+        before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
 
-      subject do
-        HearingRequestDocket.new.distribute_appeals(distribution, priority: false, limit: 10, genpop: "any")
-      end
+        subject do
+          HearingRequestDocket.new.distribute_appeals(distribution, priority: false, limit: 10, genpop: "any")
+        end
 
         it "distributes exclude appeals from affinity judge " do
           # will be included
@@ -196,7 +225,7 @@ describe HearingRequestDocket, :all_dbs do
           exclude_appeal_from_affinity_judge = most_recent_held_hearing_tied_to_exclude_appeals_from_affinity_judge
 
           expected_result = [tied, not_tied, no_held_hearings, no_hearings, outside_affinity,
-                            exclude_appeal_from_affinity_judge]
+                             exclude_appeal_from_affinity_judge]
 
           tasks = subject
 
@@ -222,10 +251,11 @@ describe HearingRequestDocket, :all_dbs do
 
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
-                                                    genpop: "only_genpop", judge: judge)
+                                                   genpop: "only_genpop",
+                                                   judge: judge)
         result = hrdq.send(:base_relation).always_ama_aod_hearing_original_appeals
 
-        result_created_dates = result.map {|x| x.created_at.to_date}
+        result_created_dates = result.map { |x| x.created_at.to_date }
 
         expect(result.length).to eq(expected_result.length)
         expect(result_created_dates).to include(appeal_30_days.created_at.to_date)
@@ -245,9 +275,10 @@ describe HearingRequestDocket, :all_dbs do
 
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
-                                                    genpop: "only_genpop", judge: judge)
+                                                   genpop: "only_genpop",
+                                                   judge: judge)
         result = hrdq.send(:base_relation).ama_aod_hearing_original_appeals
-        result_created_dates = result.map {|x| x.created_at.to_date}
+        result_created_dates = result.map { |x| x.created_at.to_date }
 
         expect(result.length).to eq(expected_result.length)
         expect(result_created_dates).to include(appeal_90_days.created_at.to_date)
@@ -266,9 +297,10 @@ describe HearingRequestDocket, :all_dbs do
 
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
-                                                    genpop: "only_genpop", judge: judge)
+                                                   genpop: "only_genpop",
+                                                   judge: judge)
         result = hrdq.send(:base_relation).ama_aod_hearing_original_appeals
-        result_created_dates = result.map {|x| x.created_at.to_date}
+        result_created_dates = result.map { |x| x.created_at.to_date }
 
         expect(result.length).to eq(expected_result.length)
         expect(result_created_dates).to include(appeal_200_days.created_at.to_date)
@@ -289,7 +321,8 @@ describe HearingRequestDocket, :all_dbs do
         # {tasks = subject}
         hrd = HearingRequestDocket.new
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
-                                                    genpop: "only_genpop", judge: judge)
+                                                   genpop: "only_genpop",
+                                                   judge: judge)
         result = hrdq.send(:base_relation).always_ama_aod_hearing_original_appeals
         result_created_dates = result.map { |x| x.created_at.to_date }
 
@@ -300,7 +333,6 @@ describe HearingRequestDocket, :all_dbs do
         expect(result_created_dates).to include(appeal_200_days.created_at.to_date)
       end
     end
-
 
     context "ama hearing case levers genpop" do
       it "returns ama affinity based on 12 value" do
@@ -319,7 +351,7 @@ describe HearingRequestDocket, :all_dbs do
                                                    genpop: "only_genpop", judge: judge)
         base_relation = hrdq.send(:base_relation_with_joined_most_recent_hearings_and_dist_task)
         result = base_relation.expired_ama_affinity_cases
-        result_created_dates = result.map {|x| x.created_at.to_date}
+        result_created_dates = result.map { |x| x.created_at.to_date }
 
         expect(result.length).to eq(expected_result.length)
         expect(result_created_dates).to include(appeal_30_days.created_at.to_date)
@@ -342,7 +374,7 @@ describe HearingRequestDocket, :all_dbs do
                                                    genpop: "only_genpop", judge: judge)
         base_relation = hrdq.send(:base_relation_with_joined_most_recent_hearings_and_dist_task)
         result = base_relation.expired_ama_affinity_cases
-        result_created_dates = result.map {|x| x.created_at.to_date}
+        result_created_dates = result.map { |x| x.created_at.to_date }
 
         expect(result.length).to eq(expected_result.length)
         expect(result_created_dates).to include(appeal_90_days.created_at.to_date)
@@ -364,7 +396,7 @@ describe HearingRequestDocket, :all_dbs do
                                                    genpop: "only_genpop", judge: judge)
         base_relation = hrdq.send(:base_relation_with_joined_most_recent_hearings_and_dist_task)
         result = base_relation.expired_ama_affinity_cases
-        result_created_dates = result.map {|x| x.created_at.to_date}
+        result_created_dates = result.map { |x| x.created_at.to_date }
 
         expect(result.length).to eq(expected_result.length)
         expect(result_created_dates).to include(appeal_200_days.created_at.to_date)
@@ -388,9 +420,11 @@ describe HearingRequestDocket, :all_dbs do
 
         hrd = HearingRequestDocket.new
         base_relation = hrd.appeals(priority: true, ready: true)
-        hrdq = HearingRequestDistributionQuery.new(base_relation: base_relation.limit(9), genpop: "only_genpop", judge: judge)
+        hrdq = HearingRequestDistributionQuery.new(base_relation: base_relation.limit(9),
+                                                   genpop: "only_genpop",
+                                                   judge: judge)
         result = hrdq.send(:not_genpop_appeals)
-        result_created_dates = result.map {|x| x.created_at.to_date}
+        result_created_dates = result.map { |x| x.created_at.to_date }
 
         expect(result.length).to eq(expected_result.length)
         expect(result_created_dates).to include(appeal_10_days.created_at.to_date)
@@ -412,7 +446,7 @@ describe HearingRequestDocket, :all_dbs do
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                    genpop: "only_genpop", judge: judge)
         result = hrdq.send(:not_genpop_appeals)
-        result_created_dates = result.map {|x| x.created_at.to_date}
+        result_created_dates = result.map { |x| x.created_at.to_date }
 
         expect(result.length).to eq(expected_result.length)
         expect(result_created_dates).to include(appeal_10_days.created_at.to_date)
@@ -435,7 +469,7 @@ describe HearingRequestDocket, :all_dbs do
         hrdq = HearingRequestDistributionQuery.new(base_relation: hrd.appeals(priority: true, ready: true).limit(9),
                                                    genpop: "only_genpop", judge: judge)
         result = hrdq.send(:not_genpop_appeals)
-        result_created_dates = result.map {|x| x.created_at.to_date}
+        result_created_dates = result.map { |x| x.created_at.to_date }
 
         expect(result.length).to eq(expected_result.length)
         expect(result_created_dates).to include(appeal_10_days.created_at.to_date)
@@ -461,7 +495,7 @@ describe HearingRequestDocket, :all_dbs do
                                                    genpop: "only_genpop", judge: judge)
         base_relation = hrdq.send(:base_relation)
         result = base_relation.most_recent_hearings.tied_to_distribution_judge(judge)
-        result_created_dates = result.map {|x| x.created_at.to_date}
+        result_created_dates = result.map { |x| x.created_at.to_date }
 
         expect(result.length).to eq(expected_result.length)
         expect(result_created_dates).to include(appeal_3_days.created_at.to_date)
@@ -773,6 +807,7 @@ describe HearingRequestDocket, :all_dbs do
     appeal
   end
 
+  # rubocop:disable Metrics/AbcSize
   def create_nonpriority_unblocked_hearing_appeal_within_affinity
     appeal = create(:appeal,
                     :with_post_intake_tasks,
