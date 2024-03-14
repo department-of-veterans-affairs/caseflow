@@ -48,6 +48,10 @@ export const getUndecidedIssues = (issues) =>
   });
 
 export const mostRecentHeldHearingForAppeal = (appeal) => {
+  if (appeal.hearings === undefined) {
+    return null;
+  }
+
   const hearings = appeal.hearings.
     filter((hearing) => hearing.disposition === HEARING_DISPOSITION_TYPES.held).
     sort((h1, h2) => (h1.date < h2.date ? 1 : -1));
@@ -443,6 +447,8 @@ export const prepareAppealForStore = (appeals) => {
         appeal.attributes.readable_original_hearing_request_type,
       vacateType: appeal.attributes.vacate_type,
       cavcRemandsWithDashboard: appeal.attributes.cavc_remands_with_dashboard,
+      evidenceSubmissionTask: appeal.attributes.evidence_submission_task,
+      hasEvidenceSubmissionTask: appeal.attributes.evidence_submission_task !== null,
       mst: appeal.attributes.mst,
       pact: appeal.attributes.pact
     };
@@ -519,6 +525,7 @@ export const prepareAppealForStore = (appeals) => {
       remandJudgeName: appeal.attributes.remand_judge_name,
       hasNotifications: appeal.attributes.has_notifications,
       locationHistory: prepareLocationHistoryForStore(appeal),
+      hasCompletedSctAssignTask: appeal.attributes.has_completed_sct_assign_task,
       mst: appeal.attributes.mst,
       pact: appeal.attributes.pact
     };
@@ -563,7 +570,9 @@ export const prepareAppealForSearchStore = (appeals) => {
         appeal.attributes.readable_hearing_request_type,
       readableOriginalHearingRequestType:
         appeal.attributes.readable_original_hearing_request_type,
-      vacateType: appeal.attributes.vacate_type
+      vacateType: appeal.attributes.vacate_type,
+      evidenceSubmissionTask: appeal.attributes.evidence_submission_task,
+      hasEvidenceSubmissionTask: appeal.attributes.evidence_submission_task !== null,
     };
 
     return accumulator;
