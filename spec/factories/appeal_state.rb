@@ -19,13 +19,5 @@ FactoryBot.define do
     decision_mailed { false }
     appeal_cancelled { false }
     scheduled_in_error { false }
-
-    trait :ama do
-      appeal
-    end
-
-    trait :legacy do
-      appeal { create(:legacy_appeal, vacols_case: create(:case)) }
-    end
   end
 end

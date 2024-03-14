@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class VbmsUploadedDocument < CaseflowRecord
-  include VbmsUploadedDocumentBelongsToPolymorphicAppealConcern
+  include BelongsToPolymorphicAppealConcern
+  belongs_to_polymorphic_appeal :appeal
 
   has_many :vbms_communication_packages, as: :document_mailable_via_pacman
 

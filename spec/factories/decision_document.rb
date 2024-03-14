@@ -16,13 +16,5 @@ FactoryBot.define do
     trait :processed do
       processed_at { Time.zone.now }
     end
-
-    trait :ama do
-      appeal
-    end
-
-    trait :legacy do
-      appeal { create(:legacy_appeal, vacols_case: create(:case)) }
-    end
   end
 end

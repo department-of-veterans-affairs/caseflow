@@ -13,15 +13,5 @@ FactoryBot.define do
     after(:create) do |case_review, _evaluator|
       case_review.appeal # creates association to appeal if it doesn't exist
     end
-
-    trait :ama do
-      location { :quality_review }
-      task factory: :ama_task
-    end
-
-    trait :legacy do
-      location { :quality_review }
-      appeal { create(:legacy_appeal, vacols_case: create(:case)) }
-    end
   end
 end
