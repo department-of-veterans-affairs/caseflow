@@ -15,6 +15,7 @@ import Modal from 'app/components/Modal';
 import Button from '../../components/Button';
 import RadioFieldWithChildren from '../../components/RadioFieldWithChildren';
 import ReactSelectDropdown from '../../components/ReactSelectDropdown';
+import TextareaField from '../../components/TextareaField';
 
 const CorrespondenceCases = (props) => {
   const dispatch = useDispatch();
@@ -63,6 +64,9 @@ const CorrespondenceCases = (props) => {
     />
   </div>);
 
+  const textAreaElement = (<div style={{width:'280%'}}><TextareaField /></div>)
+
+
   useEffect(() => {
     dispatch(loadCorrespondenceConfig(configUrl));
   }, []);
@@ -75,8 +79,13 @@ const CorrespondenceCases = (props) => {
     { displayText: 'Approve request',
       value: 'approve',
       element: approveElement,
-      displayElement: selectedRequestChoice === 'approve' },
-    { displayText: 'Reject request', value: 'reject' }
+      displayElement: selectedRequestChoice === 'approve'
+    },
+    { displayText: 'Reject request',
+      value: 'reject',
+      element: textAreaElement,
+      displayElement: selectedRequestChoice === 'reject'
+    }
   ];
 
   const handleConfirmReassignClick = () => {
