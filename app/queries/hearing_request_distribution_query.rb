@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-# rubocop:disable Layout/LineLength
-
 class HearingRequestDistributionQuery
   include DistributionScopes
 
@@ -15,10 +13,10 @@ class HearingRequestDistributionQuery
   def call
     return not_genpop_appeals if genpop == "not_genpop"
     if genpop == "only_genpop"
-      return [not_genpop_appeals, only_genpop_appeals] if FeatureToggle.enabled?(:acd_exclude_from_affinity) &&
-                                                                  judge.present?
+      return [not_genpop_appeals, only_genpop_appeals] if FeatureToggle.enabled?(:acd_exclude_from_affinity) && judge.present?
 
-      ###if the featue toggle is disabled or judge isn't present then the following line will fail feature tests
+    #if the feature toggle is disabled or judge isn't present then the following line will fail feature tests
+
       return only_genpop_appeals
     end
 
@@ -64,10 +62,11 @@ class HearingRequestDistributionQuery
   end
 
   def only_genpop_appeals
-    result = case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days) ?
-    base_relation_with_joined_most_recent_hearings_and_dist_task.expired_ama_affinity_cases :
-    base_relation_with_joined_most_recent_hearings_and_dist_task.always_ama_affinity_cases
-
+    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days)
+      result = base_relation_with_joined_most_recent_hearings_and_dist_task.expired_ama_affinity_cases
+    else
+      result = base_relation_with_joined_most_recent_hearings_and_dist_task.always_ama_affinity_cases
+    end
 
     if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
       result = result.or(base_relation_with_joined_most_recent_hearings_and_dist_task.tied_to_ineligible_judge)
@@ -76,11 +75,11 @@ class HearingRequestDistributionQuery
     if FeatureToggle.enabled?(:acd_exclude_from_affinity)
       result = result.or(
         base_relation_with_joined_most_recent_hearings_and_dist_task.tied_to_judges_with_exclude_appeals_from_affinity
-        )
-      end
+      )
+    end
 
     result = result.or(base_relation_with_joined_most_recent_hearings_and_dist_task.not_tied_to_any_judge)
-    # this needs to be refactored and the joins shape is different becuase with_no_held_hearings uses an alias
+    # this needs to be refactored and the joins shape is different because with_no_held_hearings uses an alias
     # result = result.or(base_relation_with_joined_most_recent_hearings_and_dist_task.with_no_held_hearings)
 
     # the base result is doing an inner join with hearings so it isn't retrieving any appeals that have no hearings

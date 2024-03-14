@@ -20,7 +20,7 @@ RSpec.feature "Affinity Days Levers" do
   let(:enabled_lever_list) do
     [
       Constants.DISTRIBUTION.ama_hearing_case_affinity_days,
-      Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days,
+      Constants.DISTRIBUTION.ama_hearing_case_aod_affinity_days
     ]
   end
 

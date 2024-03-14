@@ -207,14 +207,14 @@ describe HearingRequestDocket, :all_dbs do
         expect(distribution.distributed_cases.length).to eq(expected_result.length)
         expect(distribution_judge.reload.tasks.map(&:appeal))
           .to match_array(expected_result)
-        end
+      end
 
-        context "when acd_exclude_from_affinity flag is enabled" do
-          before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
+    context "when acd_exclude_from_affinity flag is enabled" do
+      before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
 
-        subject do
-          HearingRequestDocket.new.distribute_appeals(distribution, priority: false, limit: 10, genpop: "any")
-        end
+      subject do
+        HearingRequestDocket.new.distribute_appeals(distribution, priority: false, limit: 10, genpop: "any")
+      end
 
         it "distributes exclude appeals from affinity judge " do
           # will be included
@@ -226,7 +226,7 @@ describe HearingRequestDocket, :all_dbs do
           exclude_appeal_from_affinity_judge = most_recent_held_hearing_tied_to_exclude_appeals_from_affinity_judge
 
           expected_result = [tied, not_tied, no_held_hearings, no_hearings, outside_affinity,
-                             exclude_appeal_from_affinity_judge]
+                            exclude_appeal_from_affinity_judge]
 
           tasks = subject
 
@@ -331,7 +331,6 @@ describe HearingRequestDocket, :all_dbs do
     #   end
     # end
 
-
     # context "ama hearing case levers genpop" do
     #   it "returns ama affinity based on 12 value" do
     #     # Given the ama_hearing_case_ama_affinity_days returns a number, we expect ama appeals older than 90 days
@@ -415,7 +414,9 @@ describe HearingRequestDocket, :all_dbs do
 
     #     hrd = HearingRequestDocket.new
     #     base_relation = hrd.appeals(priority: true, ready: true)
-    #     hrdq = HearingRequestDistributionQuery.new(base_relation: base_relation.limit(9), genpop: "only_genpop", judge: judge)
+    #     hrdq = HearingRequestDistributionQuery.new(
+            # base_relation: base_relation.limit(9),
+            # genpop: "only_genpop", judge: judge)
     #     base_query = base_relation.most_recent_hearings
     #     result = hrdq.send(:ama_affinity_hearing_value_appeals, base_query)
     #     result_created_dates = result.map {|x| x.created_at.to_date}
@@ -666,11 +667,11 @@ describe HearingRequestDocket, :all_dbs do
   def matching_all_base_conditions_with_no_hearings
     Timecop.travel(30.days.ago)
     appeal = create(:appeal,
-           :advanced_on_docket_due_to_age,
-           :ready_for_distribution,
-           docket_type: Constants.AMA_DOCKETS.hearing)
+                    :advanced_on_docket_due_to_age,
+                    :ready_for_distribution,
+                    docket_type: Constants.AMA_DOCKETS.hearing)
     Timecop.return
-    return appeal
+    appeal
   end
 
   def non_priority_with_no_hearings
@@ -688,7 +689,7 @@ describe HearingRequestDocket, :all_dbs do
                     docket_type: Constants.AMA_DOCKETS.hearing)
     create(:hearing, judge: nil, disposition: "no_show", appeal: appeal)
     Timecop.return
-    return appeal
+    appeal
   end
 
   def non_priority_with_no_held_hearings
@@ -1016,7 +1017,7 @@ describe HearingRequestDocket, :all_dbs do
     create(:hearing, judge: nil, disposition: "held", appeal: appeal, hearing_day: older_hearing_day)
 
     Timecop.return
-    return appeal
+    appeal
   end
 
   def matching_all_base_conditions_with_most_recent_hearing_tied_to_distribution_judge_but_not_held

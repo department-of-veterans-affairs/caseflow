@@ -66,7 +66,10 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
   # this method takes care of when aod affinity day has a value
   def ama_aod_hearing_original_appeals
     joins(with_assigned_distribution_task_sql)
-      .where("advance_on_docket_motions.created_at < ?", CaseDistributionLever.ama_hearing_case_aod_affinity_days.to_i.days.ago)
+      .where(
+        "advance_on_docket_motions.created_at < ?",
+        CaseDistributionLever.ama_hearing_case_aod_affinity_days.to_i.days.ago
+        )
   end
 
   # this method takes care of when aod affinity day always affinitized
@@ -80,8 +83,8 @@ module DistributionScopes # rubocop:disable Metrics/ModuleLength
       .joins("LEFT JOIN appeals AS original_cavc_appeal ON original_cavc_appeal.id = cavc_remands.source_appeal_id")
       .joins(
         "LEFT JOIN tasks AS original_judge_task ON original_judge_task.appeal_id = original_cavc_appeal.id
-         AND original_judge_task.type = 'JudgeDecisionReviewTask'
-         AND original_judge_task.status = 'completed'"
+        AND original_judge_task.type = 'JudgeDecisionReviewTask'
+        AND original_judge_task.status = 'completed'"
       )
   end
 
