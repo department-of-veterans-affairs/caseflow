@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import _ from 'lodash';
+import { indexOf } from 'lodash';
 import PropTypes from 'prop-types';
 import { sprintf } from 'sprintf-js';
 import { connect } from 'react-redux';
@@ -42,6 +42,7 @@ import COPY from '../../COPY';
 import QUEUE_CONFIG from '../../constants/QUEUE_CONFIG';
 import { css } from 'glamor';
 import { isActiveOrganizationVHA } from '../queue/selectors';
+import BatchAutoAssignButton from './correspondence/component/BatchAutoAssignButton';
 
 const rootStyles = css({
   '.usa-alert + &': {
@@ -68,12 +69,12 @@ const QueueTableBuilder = (props) => {
   }, []);
 
   const calculateActiveTabIndex = (config) => {
-    const tabNames = config.tabs.map((tab) => {
+    const tabNames = config.tabs.filter((tab) => !tab.hide_from_queue_table_view).map((tab) => {
       return tab.name;
     });
 
     const activeTab = paginationOptions().tab || config.active_tab;
-    const index = _.indexOf(tabNames, activeTab);
+    const index = indexOf(tabNames, activeTab);
 
     return index === -1 ? 0 : index;
   };
@@ -210,6 +211,11 @@ const QueueTableBuilder = (props) => {
       label: sprintf(tabConfig.label, totalTaskCount),
       page: (
         <React.Fragment>
+          {props.userCanBulkAssign &&
+          tabConfig.allow_bulk_assign &&
+          props.activeOrganization.type === 'InboundOpsTeam' && (
+            <BatchAutoAssignButton />
+          )}
           <p className="cf-margin-top-0">
             {noCasesMessage || tabConfig.description}
           </p>
@@ -242,15 +248,17 @@ const QueueTableBuilder = (props) => {
   };
 
   const tabsFromConfig = (config) =>
-    (config.tabs || []).map((tabConfig) =>
-      taskTableTabFactory(tabConfig, config)
-    );
+    (config.tabs || []).
+      filter((tabConfig) => !tabConfig.hide_from_queue_table_view).
+      map((tabConfig) =>
+        taskTableTabFactory(tabConfig, config)
+      );
 
   const config = queueConfig();
 
   return <div className={rootStyles}>
     <h1 {...css({ display: 'inline-block' })}>{config.table_title}</h1>
-    <QueueOrganizationDropdown organizations={props.organizations} />
+    <QueueOrganizationDropdown organizations={props.organizations} featureToggles = {props.featureToggles} />
     <TabWindow
       name="tasks-tabwindow"
       tabs={tabsFromConfig(config)}
@@ -265,6 +273,7 @@ const mapStateToProps = (state) => {
     organizations: state.ui.organizations,
     isVhaOrg: isActiveOrganizationVHA(state),
     userCanBulkAssign: state.ui.activeOrganization.userCanBulkAssign,
+    activeOrganization: state.ui.activeOrganization
   };
 };
 
@@ -278,6 +287,14 @@ QueueTableBuilder.propTypes = {
   requireDasRecord: PropTypes.bool,
   userCanBulkAssign: PropTypes.bool,
   isVhaOrg: PropTypes.bool,
+  featureToggles: PropTypes.object,
+  activeOrganization: PropTypes.shape({
+    id: PropTypes.number,
+    name: PropTypes.string,
+    isVso: PropTypes.bool,
+    userCanBulkAssign: PropTypes.bool,
+    type: PropTypes.string
+  })
 };
 
 export default connect(mapStateToProps)(QueueTableBuilder);
