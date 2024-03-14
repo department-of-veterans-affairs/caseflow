@@ -20,7 +20,6 @@ class TranscriptionFilesController < ApplicationController
   # Downloads file and sends to user's local computer
   def download_transcription_file
     hearing_id = params[:hearing_id]
-    # status = 401
     respond_to do |format|
       format.any(:vtt, :mp3, :mp4, :csv) do |_|
         type = format.format&.symbol.to_s
