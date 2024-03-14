@@ -9,6 +9,11 @@ class TaskTimerJob < CaseflowJob
   def perform
     RequestStore.store[:current_user] = User.system_user
     TaskTimer.requires_processing.each do |task_timer|
+      next unless task_timer.task.children.open
+        .find_by(type: [SendInitialNotificationLetterTask.name,
+                        SendFinalNotificationLetterTask.name,
+                        PostSendInitialNotificationLetterHoldingTask.name]).nil?
+
       # TODO: if this job's runtime gets too long, spawn individual jobs for each task timer.
       process(task_timer)
     end
@@ -25,14 +30,10 @@ class TaskTimerJob < CaseflowJob
     # no other threads have a lock on the row, and will reload
     # the record after acquiring the lock.
     task_timer.with_lock do
-      if task_timer.task.children.open.find_by(type: [SendInitialNotificationLetterTask.name, SendFinalNotificationLetterTask.name, PostSendInitialNotificationLetterHoldingTask.name]).nil?
-        task_timer.attempted!
-        task_timer.task.when_timer_ends
-        task_timer.clear_error!
-        task_timer.processed!
-      else
-        task_timer.restart!
-      end
+      task_timer.attempted!
+      task_timer.task.when_timer_ends
+      task_timer.clear_error!
+      task_timer.processed!
     end
   rescue StandardError => error
     # Ensure errors are sent to Sentry, but don't block the job from continuing.
