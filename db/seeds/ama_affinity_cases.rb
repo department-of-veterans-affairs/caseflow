@@ -50,7 +50,7 @@ module Seeds
       judges_with_attorneys.each do |judge|
         3.times do
           create_case_ready_for_less_than_hearing_affinity_days(judge)
-          create_case_ready_for_more_than_hearing_affinity_days(judge)
+          # create_case_ready_for_more_than_hearing_affinity_days(judge)
         end
       end
     end
