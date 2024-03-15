@@ -455,5 +455,3 @@ rescue ActiveRecord::NoDatabaseError => error
     raise error
   end
 end
-
-

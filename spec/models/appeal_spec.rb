@@ -1156,7 +1156,7 @@ describe Appeal, :all_dbs do
       it "sets target decision date" do
         subject.set_target_decision_date!
         expect(subject.target_decision_date).to eq(
-          subject.receipt_date + Constants.DISTRIBUTION.direct_docket_time_goal.days
+          subject.receipt_date + CaseDistributionLever.ama_direct_review_docket_time_goals.days
         )
       end
     end
@@ -1261,6 +1261,116 @@ describe Appeal, :all_dbs do
 
       it "returns false" do
         expect(subject).to be_falsey
+      end
+    end
+  end
+
+  describe "#mst?" do
+    subject { appeal.mst? }
+
+    before do
+      FeatureToggle.enable!(:mst_identification)
+      FeatureToggle.enable!(:pact_identification)
+      FeatureToggle.enable!(:legacy_mst_pact_identification)
+    end
+    after do
+      FeatureToggle.disable!(:mst_identification)
+      FeatureToggle.disable!(:pact_identification)
+      FeatureToggle.disable!(:legacy_mst_pact_identification)
+    end
+    let(:request_issues) do
+      [
+        create(:request_issue, mst_status: mst_status)
+      ]
+    end
+
+    context "when request issues with mst_status are associated with appeal" do
+      let(:appeal) { create(:appeal, request_issues: request_issues) }
+
+      context "when mst_status is enabled" do
+        let(:mst_status) { true }
+
+        it "returns true" do
+          expect(subject).to be_truthy
+        end
+      end
+
+      context "when mst_status is disabled" do
+        let(:mst_status) { false }
+
+        it "returns false" do
+          expect(subject).to be_falsey
+        end
+      end
+    end
+
+    context "when request issues with mst_status are not associated with appeal and has special_issue_list" do
+      let!(:appeal) { create(:appeal) }
+
+      before do
+        Timecop.freeze(Time.utc(2023, 4, 28, 12, 0, 0))
+        create(:special_issue_list, appeal_id: appeal.id, military_sexual_trauma: military_sexual_trauma)
+      end
+
+      after do
+        Timecop.return
+      end
+
+      context "when military_sexual_trauma is enabled" do
+        let(:military_sexual_trauma) { true }
+
+        it "returns true" do
+          expect(subject).to be_truthy
+        end
+      end
+
+      context "when military_sexual_trauma is disabled" do
+        let(:military_sexual_trauma) { false }
+
+        it "returns false" do
+          expect(subject).to be_falsey
+        end
+      end
+    end
+  end
+
+  describe "#pact?" do
+    subject { appeal.pact? }
+
+    before do
+      FeatureToggle.enable!(:mst_identification)
+      FeatureToggle.enable!(:pact_identification)
+      FeatureToggle.enable!(:legacy_mst_pact_identification)
+    end
+    after do
+      FeatureToggle.disable!(:mst_identification)
+      FeatureToggle.disable!(:pact_identification)
+      FeatureToggle.disable!(:legacy_mst_pact_identification)
+    end
+
+    let(:request_issues) do
+      [
+        create(:request_issue, pact_status: pact_status)
+      ]
+    end
+
+    context "when request issues with pact_status are associated with appeal" do
+      let(:appeal) { create(:appeal, request_issues: request_issues) }
+
+      context "when pact_status is enabled" do
+        let(:pact_status) { true }
+
+        it "returns true" do
+          expect(subject).to be_truthy
+        end
+      end
+
+      context "when pact_status is disabled" do
+        let(:pact_status) { false }
+
+        it "returns false" do
+          expect(subject).to be_falsey
+        end
       end
     end
   end
@@ -1504,7 +1614,7 @@ describe Appeal, :all_dbs do
       end
     end
 
-    context "when an appeal has open DistributionTask and EvidenceOrArgumentMailTask" do
+    context "when an appeal has open DistributionTask and non-blocking MailTask subclass" do
       let!(:appeal_ready_to_distribute_with_evidence_task) do
         appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
         create(:evidence_or_argument_mail_task, :assigned, assigned_to: MailTeam.singleton, parent: appeal.root_task)
@@ -1514,6 +1624,34 @@ describe Appeal, :all_dbs do
       subject { appeal_ready_to_distribute_with_evidence_task.can_redistribute_appeal? }
       it "returns true" do
         expect(subject).to be true
+      end
+    end
+
+    context "when an appeal has on_hold DistributionTask and correct blocking MailTask tree" do
+      let!(:appeal_not_ready_to_distribute_with_correct_blocking_task_tree) do
+        appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
+        create(:congressional_interest_mail_task, :assigned, parent: appeal.tasks.find_by(type: DistributionTask.name))
+        appeal
+      end
+
+      subject { appeal_not_ready_to_distribute_with_correct_blocking_task_tree.reload.can_redistribute_appeal? }
+      it "returns true" do
+        expect(subject).to be false
+      end
+    end
+
+    # this shouldn't happen as blocking MailTasks should be a child of DistributionTask if it is not closed,
+    # but this is the easiest way to test whether blocking MailTasks are picked up in the method's checks
+    context "when an appeal has incorrectly open DistributionTask and blocking MailTask" do
+      let!(:appeal_ready_to_distribute_with_incorrect_blocking_task_tree) do
+        appeal = create(:appeal, :direct_review_docket, :ready_for_distribution)
+        create(:congressional_interest_mail_task, :assigned, parent: appeal.root_task)
+        appeal
+      end
+
+      subject { appeal_ready_to_distribute_with_incorrect_blocking_task_tree.reload.can_redistribute_appeal? }
+      it "returns true" do
+        expect(subject).to be false
       end
     end
 
