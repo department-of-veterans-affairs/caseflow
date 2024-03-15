@@ -110,6 +110,63 @@ describe HearingRequestDocket, :postgres do
   end
 
   context "#genpop_priority_count" do
+    let(:excluded_judge) { create(:user, :judge, :with_vacols_judge_record) }
+    let(:ineligible_judge) { create(:user, :judge, :inactive) }
+
+    let!(:ready_tied_aod_appeal) do
+      create_ready_aod_appeal(created_date: 7.days.ago)
+    end
+    let!(:ready_tied_nonpriority_appeal) do
+      create_ready_nonpriority_appeal(created_date: 7.days.ago)
+    end
+    let!(:ready_tied_to_excluded_aod_appeal) do
+      create_ready_aod_appeal(tied_judge: excluded_judge, created_date: 7.days.ago)
+    end
+    let!(:ready_tied_to_excluded_nonpriority_appeal) do
+      create_ready_nonpriority_appeal(tied_judge: excluded_judge, created_date: 7.days.ago)
+    end
+    let!(:ready_tied_to_ineligible_aod_appeal) do
+      create_ready_aod_appeal(tied_judge: ineligible_judge, created_date: 7.days.ago)
+    end
+    let!(:ready_tied_to_ineligible_nonpriority_appeal) do
+      create_ready_nonpriority_appeal(tied_judge: ineligible_judge, created_date: 7.days.ago)
+    end
+    let!(:ready_aod_appeal_hearing_cancelled) do
+      create_ready_aod_appeal_hearing_cancelled(created_date: 7.days.ago)
+    end
+    let!(:ready_nonpriority_appeal_hearing_cancelled) do
+      create_ready_nonpriority_appeal_hearing_cancelled(created_date: 7.days.ago)
+    end
+
+    subject { HearingRequestDocket.new.genpop_priority_count }
+
+    context "with exclude from affinity enabled" do
+      before do
+        FeatureToggle.enable!(:acd_exclude_from_affinity)
+        JudgeTeam.for_judge(excluded_judge).update!(exclude_appeals_from_affinity: true)
+      end
+
+      it { is_expected.to eq 2 }
+    end
+
+    context "with exclude from affinity disabled" do
+      it { is_expected.to eq 1 }
+    end
+
+    context "with ineligible judges enabled" do
+      before do
+        FeatureToggle.enable!(:acd_cases_tied_to_judges_no_longer_with_board)
+        IneligibleJudgesJob.new.perform_now
+      end
+
+      it { is_expected.to eq 2 }
+    end
+
+    context "with ineligible judges disabled" do
+      before { IneligibleJudgesJob.new.perform_now }
+
+      it { is_expected.to eq 1 }
+    end
   end
 
   context "#limit_genpop_appeals" do
