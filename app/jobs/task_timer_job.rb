@@ -9,10 +9,8 @@ class TaskTimerJob < CaseflowJob
   def perform
     RequestStore.store[:current_user] = User.system_user
     TaskTimer.requires_processing.each do |task_timer|
-      next unless task_timer.task.children.open
-        .find_by(type: [SendInitialNotificationLetterTask.name,
-                        SendFinalNotificationLetterTask.name,
-                        PostSendInitialNotificationLetterHoldingTask.name]).nil?
+      next if task_timer.task.children.open
+        .any? { |task| task.is_a?(LetterTask) }
 
       # TODO: if this job's runtime gets too long, spawn individual jobs for each task timer.
       process(task_timer)
