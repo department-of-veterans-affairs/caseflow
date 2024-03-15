@@ -237,14 +237,20 @@ describe HearingRequestDocket, :postgres do
       let!(:ready_nonpriority_tied_to_requesting_judge_in_window) do
         create_ready_nonpriority_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 15.days.ago)
       end
-      let!(:ready_nonpriority_tied_to_requesting_judge_out_of_window) do
+      let!(:ready_nonpriority_tied_to_requesting_judge_out_of_window_45_days) do
         create_ready_nonpriority_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 45.days.ago)
+      end
+      let!(:ready_nonpriority_tied_to_requesting_judge_out_of_window_100_days) do
+        create_ready_nonpriority_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 100.days.ago)
       end
       let!(:ready_nonpriority_tied_to_other_judge_in_window) do
         create_ready_nonpriority_appeal(tied_judge: other_judge, created_date: 15.days.ago)
       end
-      let!(:ready_nonpriority_tied_to_other_judge_out_of_window) do
+      let!(:ready_nonpriority_tied_to_other_judge_out_of_window_45_days) do
         create_ready_nonpriority_appeal(tied_judge: other_judge, created_date: 45.days.ago)
+      end
+      let!(:ready_nonpriority_tied_to_other_judge_out_of_window_100_days) do
+        create_ready_nonpriority_appeal(tied_judge: other_judge, created_date: 100.days.ago)
       end
       let!(:ready_nonpriority_hearing_cancelled) do
         create_ready_nonpriority_appeal_hearing_cancelled(created_date: 10.days.ago)
@@ -260,9 +266,11 @@ describe HearingRequestDocket, :postgres do
           # correctly in not_genpop_appeals in the HRDQ file
           expect(subject.map(&:case_id)).to match_array(
             [ready_nonpriority_tied_to_requesting_judge_in_window.uuid,
-             ready_nonpriority_tied_to_requesting_judge_out_of_window.uuid,
+             ready_nonpriority_tied_to_requesting_judge_out_of_window_45_days.uuid,
+             ready_nonpriority_tied_to_requesting_judge_out_of_window_100_days.uuid,
              ready_nonpriority_tied_to_other_judge_in_window.uuid,
-             ready_nonpriority_tied_to_other_judge_out_of_window.uuid,
+             ready_nonpriority_tied_to_other_judge_out_of_window_45_days.uuid,
+             ready_nonpriority_tied_to_other_judge_out_of_window_100_days.uuid,
              ready_nonpriority_hearing_cancelled.uuid]
           )
         end
@@ -273,11 +281,29 @@ describe HearingRequestDocket, :postgres do
           CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update!(value: "30")
         end
 
-        it "distributes appeals that do not exceed affinity value or are not tied to another judge" do
+        it "distributes appeals that exceed affinity value or are tied to the requesting judge or are genpop" do
           expect(subject.map(&:case_id)).to match_array(
             [ready_nonpriority_tied_to_requesting_judge_in_window.uuid,
-             ready_nonpriority_tied_to_requesting_judge_out_of_window.uuid,
-             ready_nonpriority_tied_to_other_judge_out_of_window.uuid,
+             ready_nonpriority_tied_to_requesting_judge_out_of_window_45_days.uuid,
+             ready_nonpriority_tied_to_requesting_judge_out_of_window_100_days.uuid,
+             ready_nonpriority_tied_to_other_judge_out_of_window_45_days.uuid,
+             ready_nonpriority_tied_to_other_judge_out_of_window_100_days.uuid,
+             ready_nonpriority_hearing_cancelled.uuid]
+          )
+        end
+      end
+
+      context "lever is set to a numeric value (90)" do
+        before do
+          CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update!(value: "90")
+        end
+
+        it "distributes appeals that exceed affinity value or are tied to the requesting judge or are genpop" do
+          expect(subject.map(&:case_id)).to match_array(
+            [ready_nonpriority_tied_to_requesting_judge_in_window.uuid,
+             ready_nonpriority_tied_to_requesting_judge_out_of_window_45_days.uuid,
+             ready_nonpriority_tied_to_requesting_judge_out_of_window_100_days.uuid,
+             ready_nonpriority_tied_to_other_judge_out_of_window_100_days.uuid,
              ready_nonpriority_hearing_cancelled.uuid]
           )
         end
@@ -293,7 +319,8 @@ describe HearingRequestDocket, :postgres do
           # correctly in not_genpop_appeals in the HRDQ file
           expect(subject.map(&:case_id)).to match_array(
             [ready_nonpriority_tied_to_requesting_judge_in_window.uuid,
-             ready_nonpriority_tied_to_requesting_judge_out_of_window.uuid,
+             ready_nonpriority_tied_to_requesting_judge_out_of_window_45_days.uuid,
+             ready_nonpriority_tied_to_requesting_judge_out_of_window_100_days.uuid,
              ready_nonpriority_hearing_cancelled.uuid]
           )
         end
@@ -305,14 +332,20 @@ describe HearingRequestDocket, :postgres do
       let!(:ready_aod_tied_to_requesting_judge_in_window) do
         create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 10.days.ago)
       end
-      let!(:ready_aod_tied_to_requesting_judge_out_of_window) do
+      let!(:ready_aod_tied_to_requesting_judge_out_of_window_20_days) do
+        create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 20.days.ago)
+      end
+      let!(:ready_aod_tied_to_requesting_judge_out_of_window_40_days) do
         create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 20.days.ago)
       end
       let!(:ready_aod_tied_to_other_judge_in_window) do
         create_ready_aod_appeal(tied_judge: other_judge, created_date: 10.days.ago)
       end
-      let!(:ready_aod_tied_to_other_judge_out_of_window) do
+      let!(:ready_aod_tied_to_other_judge_out_of_window_20_days) do
         create_ready_aod_appeal(tied_judge: other_judge, created_date: 20.days.ago)
+      end
+      let!(:ready_aod_tied_to_other_judge_out_of_window_40_days) do
+        create_ready_aod_appeal(tied_judge: other_judge, created_date: 40.days.ago)
       end
       let!(:ready_aod_hearing_cancelled) do
         create_ready_aod_appeal_hearing_cancelled(created_date: 10.days.ago)
@@ -326,9 +359,11 @@ describe HearingRequestDocket, :postgres do
         it "distributes all appeals regardless of tied judge" do
           expect(subject.map(&:case_id)).to match_array(
             [ready_aod_tied_to_requesting_judge_in_window.uuid,
-             ready_aod_tied_to_requesting_judge_out_of_window.uuid,
+             ready_aod_tied_to_requesting_judge_out_of_window_20_days.uuid,
+             ready_aod_tied_to_requesting_judge_out_of_window_40_days.uuid,
              ready_aod_tied_to_other_judge_in_window.uuid,
-             ready_aod_tied_to_other_judge_out_of_window.uuid,
+             ready_aod_tied_to_other_judge_out_of_window_20_days.uuid,
+             ready_aod_tied_to_other_judge_out_of_window_40_days.uuid,
              ready_aod_hearing_cancelled.uuid]
           )
         end
@@ -339,11 +374,29 @@ describe HearingRequestDocket, :postgres do
           CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update!(value: "15")
         end
 
-        it "distributes appeals that do not exceed affinity value or are not tied to another judge" do
+        it "distributes appeals that exceed affinity value or are tied to the requesting judge or are genpop" do
           expect(subject.map(&:case_id)).to match_array(
             [ready_aod_tied_to_requesting_judge_in_window.uuid,
-             ready_aod_tied_to_requesting_judge_out_of_window.uuid,
-             ready_aod_tied_to_other_judge_out_of_window.uuid,
+             ready_aod_tied_to_requesting_judge_out_of_window_20_days.uuid,
+             ready_aod_tied_to_requesting_judge_out_of_window_40_days.uuid,
+             ready_aod_tied_to_other_judge_out_of_window_20_days.uuid,
+             ready_aod_tied_to_other_judge_out_of_window_40_days.uuid,
+             ready_aod_hearing_cancelled.uuid]
+          )
+        end
+      end
+
+      context "lever is set to a numeric value (30)" do
+        before do
+          CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update!(value: "30")
+        end
+
+        it "distributes appeals that exceed affinity value or are tied to the requesting judge or are genpop" do
+          expect(subject.map(&:case_id)).to match_array(
+            [ready_aod_tied_to_requesting_judge_in_window.uuid,
+             ready_aod_tied_to_requesting_judge_out_of_window_20_days.uuid,
+             ready_aod_tied_to_requesting_judge_out_of_window_40_days.uuid,
+             ready_aod_tied_to_other_judge_out_of_window_40_days.uuid,
              ready_aod_hearing_cancelled.uuid]
           )
         end
@@ -357,7 +410,8 @@ describe HearingRequestDocket, :postgres do
         it "distributes only genpop appeals or appeals tied to the requesting judge" do
           expect(subject.map(&:case_id)).to match_array(
             [ready_aod_tied_to_requesting_judge_in_window.uuid,
-             ready_aod_tied_to_requesting_judge_out_of_window.uuid,
+             ready_aod_tied_to_requesting_judge_out_of_window_20_days.uuid,
+             ready_aod_tied_to_requesting_judge_out_of_window_40_days.uuid,
              ready_aod_hearing_cancelled.uuid]
           )
         end
