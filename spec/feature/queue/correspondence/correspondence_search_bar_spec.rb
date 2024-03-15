@@ -43,13 +43,22 @@ RSpec.feature("Search Bar for Correspondence") do
       FeatureToggle.enable!(:correspondence_queue)
     end
 
-    it "successfully loads the assigned tab locate the search bar" do
+    it "successfully opens the assigned tab, finds the search box, and enters data there." do
       visit "/queue/correspondence/team?tab=correspondence_team_assigned"
       expect(page).to have_content("Filter table by any of its columns")
       veteran = Veteran.first
       find_by_id("searchBar").fill_in with: veteran.last_name
       search_value = find("tbody > tr:nth-child(1) > td:nth-child(1)").text
       expect(search_value.include?(veteran.last_name))
+    end
+
+    it "should display the search bar with text even we shift to other tabs " do
+      visit "/queue/correspondence/team?tab=correspondence_team_assigned"
+      expect(page).to have_content("Filter table by any of its columns")
+      veteran = Veteran.first
+      find_by_id("searchBar").fill_in with: veteran.last_name
+      find_by_id("tasks-tabwindow-tab-1").click
+      expect(find_by_id("searchBar").value).to eq veteran.last_name
     end
   end
 end
