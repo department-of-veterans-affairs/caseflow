@@ -1204,8 +1204,26 @@ RSpec.feature("The Correspondence Cases page") do
     before :each do
       InboundOpsTeam.singleton.add_user(current_user)
       User.authenticate!(user: current_user)
+      FeatureToggle.enable!(:correspondence_queue)
     end
-  end
+
+    before do
+      5.times do
+        corres_array = (1..4).map { create(:correspondence) }
+        task_array = [ReassignPackageTask, RemovePackageTask, SplitPackageTask, MergePackageTask]
+
+        corres_array.each_with_index do |corres, index|
+          rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
+          task_array[index].create!(
+            parent_id: rpt.id,
+            appeal_type: "Correspondence",
+            appeal_id: corres.id,
+            assigned_to: InboundOpsTeam.singleton,
+            assigned_by_id: rpt.assigned_to_id
+          )
+        end
+      end
+    end
 
   it "approve request to reassign" do
     visit "/queue/correspondence/team?tab=correspondence_unassigned"
@@ -1240,11 +1258,10 @@ RSpec.feature("The Correspondence Cases page") do
   end
 
   it "goes to Task Package" do
-    visit "/queue/correspondence/team?tab=correspondence_unassigned"
-    visit "/queue/correspondence/team?tab=correspondence_action_required"
-    find("[id='tasks-tabwindown-tab-1']").click
-    find("[aria-label='Reassign Package Task Link']").click
+    visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+    all("[aria-label='Reassign Package Task Link']")[0].click
     find("[id='Review-request-button-id-2']").click
     expect(page).to have_content("Review the mail package details below.")
   end
+end
 end
