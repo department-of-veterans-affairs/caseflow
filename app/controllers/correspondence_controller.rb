@@ -209,7 +209,7 @@ class CorrespondenceController < ApplicationController
     @mail_team_users = User.mail_team_users.pluck(:css_id)
     @is_superuser = current_user.mail_superuser?
     @is_supervisor = current_user.mail_supervisor?
-    mail_team_user = User.find_by(css_id: params[:user]) if params[:user].present?
+    mail_team_user = User.find_by(css_id: params[:user].strip) if params[:user].present?
     task_ids = params[:taskIds]&.split(",") if params[:taskIds].present?
     reassign_remove_task_id = params[:taskId] if params[:taskId].present?
     action_type = params[:userAction].strip if params[:userAction].present?

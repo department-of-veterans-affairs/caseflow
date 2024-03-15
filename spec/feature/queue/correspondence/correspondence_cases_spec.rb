@@ -1208,33 +1208,43 @@ RSpec.feature("The Correspondence Cases page") do
   end
 
   it "approve request to reassign" do
-    visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
-    visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
-
+    visit "/queue/correspondence/team?tab=correspondence_unassigned"
+    visit "/queue/correspondence/team?tab=correspondence_action_required"
     find("[id='tasks-tabwindown-tab-1']").click
     find("[aria-label='Reassign Package Task Link']").click
-    expect()
+    expect(page).to have_content("You have successfully reassigned a mail record for")
   end
 
   it "deny request to reassign" do
-    visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
-    visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+    visit "/queue/correspondence/team?tab=correspondence_unassigned"
+    visit "/queue/correspondence/team?tab=correspondence_action_required"
     find("[id='tasks-tabwindown-tab-1']").click
     find("[aria-label='Reassign Package Task Link']").click
-    expect()
+    expect(page).to have_content("You have successfully rejected a package request for")
   end
 
   it "approve request to remove" do
-    visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
-    visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+    visit "/queue/correspondence/team?tab=correspondence_unassigned"
+    visit "/queue/correspondence/team?tab=correspondence_action_required"
     find("[id='tasks-tabwindown-tab-1']").click
-    find("[aria-label='Reassign Package Task Link']").click
+    find("[aria-label='Remove Package Task Link']").click
+    expect(page).to have_content("")
   end
 
   it "deny request to remove" do
-    visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
-    visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+    visit "/queue/correspondence/team?tab=correspondence_unassigned"
+    visit "/queue/correspondence/team?tab=correspondence_action_required"
+    find("[id='tasks-tabwindown-tab-1']").click
+    find("[aria-label='Remove Package Task Link']").click
+    expect(page).to have_content("")
+  end
+
+  it "goes to Task Package" do
+    visit "/queue/correspondence/team?tab=correspondence_unassigned"
+    visit "/queue/correspondence/team?tab=correspondence_action_required"
     find("[id='tasks-tabwindown-tab-1']").click
     find("[aria-label='Reassign Package Task Link']").click
+    find("[id='Review-request-button-id-2']").click
+    expect(page).to have_content("Review the mail package details below.")
   end
 end
