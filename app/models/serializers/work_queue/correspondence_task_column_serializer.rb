@@ -38,6 +38,14 @@ class WorkQueue::CorrespondenceTaskColumnSerializer
 
   attribute :task_url
 
+  attribute :parent_task_url do |object|
+    if object.is_a?(ReassignPackageTask) || object.is_a?(RemovePackageTask)
+      { parent_task_url: object.parent.task_url }
+    else
+      { parent_task_url: "" }
+    end
+  end
+
   attribute :assigned_to do |object|
     assignee = object.assigned_to
     {

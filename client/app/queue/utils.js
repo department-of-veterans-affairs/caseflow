@@ -86,6 +86,7 @@ const correspondenceTaskAttributesFromRawTask = (task) => {
     vaDor: task.attributes.va_date_of_receipt,
     label: task.attributes.label,
     taskUrl: task.attributes.task_url,
+    parentTaskUrl: task.attributes.parent_task_url.parent_task_url,
     status: task.attributes.status,
     assignedAt: task.attributes.assigned_at,
     assignedTo: {
