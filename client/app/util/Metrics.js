@@ -70,6 +70,9 @@ export const storeMetrics = (uniqueId, data, {
     }
   };
 
+  // eslint-disable-next-line no-console
+  console.info(`EVENT_ID: ${eventId} ${message}`);
+
   postMetricLogs(postData);
 };
 
