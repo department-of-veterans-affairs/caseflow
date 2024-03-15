@@ -2,8 +2,8 @@
 
 RSpec.feature "Reader", :all_dbs do
   before do
-    FeatureToggle.enable!(:pdf_page_render_time_in_ms)
     FeatureToggle.enable!(:metrics_monitoring)
+    FeatureToggle.enable!(:prefetch_disabled)
     Fakes::Initializer.load!
 
     RequestStore[:current_user] = User.find_or_create_by(css_id: "BVASCASPER1", station_id: 101)
@@ -34,19 +34,39 @@ RSpec.feature "Reader", :all_dbs do
     ]
   end
 
-  context "log Reader Metrics" do
+  context "pdf_page_render_time_in_ms Feature toggle enabled" do
     scenario "create a metric for pdf_page_render_time_in_ms" do
+      FeatureToggle.enable!(:pdf_page_render_time_in_ms)
+      FeatureToggle.enable!(:metrics_get_pdfjs_doc)
+
       expect(Metric.any?).to be false # There are no metrics
       Capybara.default_max_wait_time = 5 # seconds
+
+      allow_any_instance_of(DocumentController).to receive(:pdf) do |controller|
+        original_response = controller.send_file(
+          documents[1].serve,
+          type: "application/pdf"
+        )
+        # Simulating the response from EFolder v2 documents API
+        document_source = { "X-Document-Source" => "S3" }
+        controller.response.headers.merge!(document_source)
+
+        original_response
+      end
 
       visit "/reader/appeal/#{appeal.vacols_id}/documents/2"
 
       expect(page).to have_content("BOARD OF VETERANS' APPEALS")
-      metric = Metric.where(metric_message: "pdf_page_render_time_in_ms")&.last
-      expect(metric).to be_present # New metric is created
-      expect(metric.start).not_to be_nil
-      expect(metric.end).not_to be_nil
-      expect(metric.duration).to be > 0 # Confirm duration not default 0 value
+      metric_render_time = Metric.where(metric_message: "pdf_page_render_time_in_ms")&.first
+      metrics_get_doc = Metric.where("metric_message LIKE ?", "%/document/2/pdf%").first
+      expect(metric_render_time).to be_present # New metric is created
+      expect(metric_render_time.start).not_to be_nil
+      expect(metric_render_time.end).not_to be_nil
+      expect(metric_render_time.duration).to be > 0 # Confirm duration not default 0 value
+      expect(metrics_get_doc).to be_present # New metric is created
+      expect(metrics_get_doc.additional_info).not_to be_nil
+      expect(metrics_get_doc.additional_info.keys).to include("source")
+      expect(metrics_get_doc.duration).to be > 0 # Confirm duration not default 0 value
     end
   end
 end

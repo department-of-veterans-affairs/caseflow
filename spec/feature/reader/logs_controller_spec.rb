@@ -51,3 +51,4 @@ RSpec.feature "Metrics::V2::LogsController", type: :feature do
     end
   end
 end
+
