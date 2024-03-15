@@ -7,25 +7,25 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
     let!(:user_double) { double("User", id: 1) }
     let!(:event_double) { double("Event") }
     let!(:claim_review) { create(:higher_level_review) }
-    let!(:converted_claim_date) { logical_date_converter(2024_031_4)}
+    # conversions for expect block
+    let!(:converted_claim_date) { logical_date_converter(202_403_14) }
     let!(:converted_long) { Time.zone.at(171_046_496_764_2) }
     let!(:end_product_establishment_double) do
       double("EndProductEstablishmentDouble",
-            payee_code: "00",
-            claim_date: 20240314,
-            code: "030HLRRPMC",
-            committed_at: 171_046_496_764_2,
-            established_at: 171_046_496_764_2,
-            last_synced_at: 171_046_496_764_2,
-            limited_poa_access: nil,
-            limited_poa_code: nil,
-            modifier: "030",
-            reference_id: "337534",
-            synced_status: "RW"
-            )
+             payee_code: "00",
+             claim_date: 202_403_14,
+             code: "030HLRRPMC",
+             committed_at: 171_046_496_764_2,
+             established_at: 171_046_496_764_2,
+             last_synced_at: 171_046_496_764_2,
+             limited_poa_access: nil,
+             limited_poa_code: nil,
+             modifier: "030",
+             reference_id: "337534",
+             synced_status: "RW")
     end
     let(:event_record_double) { double("EventRecord") }
-    it "calls.process!" do
+    it "creates an a End Product Establishment and Event Record" do
       allow(EndProductEstablishment).to receive(:create!).and_return(end_product_establishment_double)
       allow(EventRecord).to receive(:create!).and_return(event_record_double)
       expect(EndProductEstablishment).to receive(:create!).with(
@@ -46,8 +46,8 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
         synced_status: "RW",
         user_id: 1
       ).and_return(end_product_establishment_double)
-      expect(EventRecord).to receive(:create!).with(event: event_double, backfill_record: end_product_establishment_double)
-      .and_return(event_record_double)
+      expect(EventRecord).to receive(:create!)
+        .with(event: event_double, backfill_record: end_product_establishment_double).and_return(event_record_double)
       described_class.process!(station_id, end_product_establishment_double, claim_review, user_double, event_double)
     end
 
@@ -58,6 +58,13 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
       day = logical_date_int % 100
       date = Date.new(year, month, day)
       date
+    end
+    context "when an error occurs" do
+      let(:error) { Caseflow::Error::DecisionReviewCreatedEpEstablishmentError.new("Unable to create End Product Establishement") }
+      it "raises the error" do
+        allow(EndProductEstablishment).to receive(:create!).and_raise(error)
+        expect { described_class.process!(station_id, end_product_establishment_double, claim_review, user_double, event_double) }.to raise_error(error)
+      end
     end
   end
 end
