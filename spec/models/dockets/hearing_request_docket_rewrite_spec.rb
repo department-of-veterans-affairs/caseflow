@@ -169,10 +169,44 @@ describe HearingRequestDocket, :postgres do
     end
   end
 
-  context "#limit_genpop_appeals" do
-  end
+  context "limit appeals class methods" do
+    let(:appeal_1_week_old) { create_ready_aod_appeal(created_date: 1.week.ago) }
+    let(:appeal_4_weeks_old) { create_ready_aod_appeal(created_date: 4.weeks.ago) }
+    let(:appeal_2_weeks_old) { create_ready_nonpriority_appeal(created_date: 2.weeks.ago) }
+    let(:appeal_3_weeks_old) { create_ready_nonpriority_appeal(created_date: 3.weeks.ago) }
+    let!(:array_1) { [appeal_1_week_old, appeal_4_weeks_old] }
+    let!(:array_2) { [appeal_2_weeks_old, appeal_3_weeks_old] }
 
-  context "#limit_only_genpop_appeals" do
+    context "#limit_genpop_appeals" do
+      subject { HearingRequestDocket.limit_genpop_appeals([array_1, array_2], 2) }
+
+      it "correctly applies limit" do
+        # This method does not flatten them, only removes the newest appeals to the limit from the 2d array
+        expect(subject).to match_array([[appeal_4_weeks_old], [appeal_3_weeks_old]])
+      end
+    end
+
+    context "#limit_only_genpop_appeals" do
+      subject { HearingRequestDocket.limit_only_genpop_appeals([*array_1, *array_2], 2) }
+
+      context "with exclude from affinity enabled" do
+        before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
+
+        it "correctly flattens the arrays and applies limit" do
+          result = HearingRequestDocket.limit_only_genpop_appeals([array_1, array_2], 2)
+          expect(result).to match_array([appeal_4_weeks_old, appeal_3_weeks_old])
+        end
+
+        it "handles empty arrays" do
+          result = HearingRequestDocket.limit_only_genpop_appeals([array_1, []], 2)
+          expect(result).to match_array([appeal_1_week_old, appeal_4_weeks_old])
+        end
+      end
+
+      it "correctly flattens the arrays and applies limit" do
+        expect(subject).to match_array([appeal_4_weeks_old, appeal_3_weeks_old])
+      end
+    end
   end
 
   context "#distribute_appeals" do
