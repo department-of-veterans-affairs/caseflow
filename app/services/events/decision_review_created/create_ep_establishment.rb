@@ -1,23 +1,26 @@
 # frozen_string_literal: true
 
-#
 class Events::DecisionReviewCreated::CreateEpEstablishment
   # The creation of End Product Establishment from an event. This is a sub service class
   # that is being used in the parent service class DecisionReviewCreated. this sub service class
   # returns the End Product Establishment that was created fron the event.
   # claim_review can be either a supplemental claim or higher level review
+  class << self
 
-  def self.process!(station_id, end_product_establishment, claim_review, user, event)
+
+  def process!(station_id, end_product_establishment, claim_review, user, event)
+    converted_claim_date = logical_date_converter(end_product_establishment.claim_date)
+
     end_product_establishment = EndProductEstablishment.create!(
       payee_code: end_product_establishment.payee_code,
       source: claim_review,
       veteran_file_number: claim_review.veteran_file_number,
       benefit_type_code: claim_review.benefit_type,
-      claim_date: end_product_establishment.claim_date,
+      claim_date: converted_claim_date,
       code: end_product_establishment.code,
-      committed_at: end_product_establishment.committed_at,
-      established_at: end_product_establishment.established_at,
-      last_synced_at: end_product_establishment.last_synced_at,
+      committed_at: end_product_establishment.committed_at.present? ? Time.zone.at(end_product_establishment.committed_at) : nil,
+      established_at: end_product_establishment.established_at.present? ? Time.zone.at(end_product_establishment.established_at) : nil,
+      last_synced_at: end_product_establishment.last_synced_at.present? ? Time.zone.at(end_product_establishment.last_synced_at) : nil,
       limited_poa_access: end_product_establishment.limited_poa_access,
       limited_poa_code: end_product_establishment.limited_poa_code,
       modifier: end_product_establishment.modifier,
@@ -32,4 +35,13 @@ class Events::DecisionReviewCreated::CreateEpEstablishment
   rescue Caseflow::Error::DecisionReviewCreatedEpEstablishmentError => error
     raise error
   end
+
+  def logical_date_converter(logical_date_int)
+    # Extract year, month, and day components
+    year = logical_date_int / 10000
+    month = (logical_date_int % 10000) / 100
+    day = logical_date_int % 100
+    date = Date.new(year, month, day)
+  end
+end
 end
