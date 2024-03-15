@@ -20,7 +20,7 @@ class CorrespondenceInProgressTasksTab < CorrespondenceQueueTab
   def tasks
     CorrespondenceTask.where(assigned_to: assignee)
       .where.not(type: "EfolderUploadFailedTask")
-      .where(status: ["in_progress", "on_hold"]).in_progress
+      .where(status: ["in_progress", "on_hold"])
   end
 
   # :reek:UtilityFunction
