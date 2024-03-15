@@ -1208,18 +1208,33 @@ RSpec.feature("The Correspondence Cases page") do
   end
 
   it "approve request to reassign" do
+    visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
     visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+
+    find("[id='tasks-tabwindown-tab-1']").click
+    find("[aria-label='Reassign Package Task Link']").click
+    expect()
   end
 
   it "deny request to reassign" do
+    visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
     visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+    find("[id='tasks-tabwindown-tab-1']").click
+    find("[aria-label='Reassign Package Task Link']").click
+    expect()
   end
 
   it "approve request to remove" do
+    visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
     visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+    find("[id='tasks-tabwindown-tab-1']").click
+    find("[aria-label='Reassign Package Task Link']").click
   end
 
   it "deny request to remove" do
+    visit "queue/correspondence/team?tab=correspondence_unassigned&page=1&sort_by=vaDor&order=asc"
     visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+    find("[id='tasks-tabwindown-tab-1']").click
+    find("[aria-label='Reassign Package Task Link']").click
   end
 end

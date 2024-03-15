@@ -287,7 +287,6 @@ class CorrespondenceController < ApplicationController
 
   def set_reassign_remove_banner_params(user, action_type, error)
 
-    binding.pry
     if error
       @response_header = "Package request for #{user.css_id} could not be #{action_type}"
       @response_message = "Please try again at a later time or contact the Help Desk."
