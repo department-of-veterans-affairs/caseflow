@@ -118,6 +118,13 @@ class Fakes::BGSService
       vet_record[attr] = new_value
       store_veteran_record(file_number, vet_record)
     end
+
+    def init_client_for_user(user:)
+      {}
+    end
+  end
+
+  def initialize(client: nil)
   end
 
   def get_end_products(file_number)
@@ -598,10 +605,6 @@ class Fakes::BGSService
   end
 
   def can_access?(vbms_id, user_to_check: current_user)
-    user_can_access?(vbms_id: vbms_id, user_to_check: user_to_check)
-  end
-
-  def user_can_access?(vbms_id:, user_to_check:)
     is_accessible = !(self.class.inaccessible_appeal_vbms_ids || []).include?(vbms_id)
 
     if user_to_check
