@@ -12,7 +12,6 @@ import { sprintf } from 'sprintf-js';
 import CorrespondenceTableBuilder from './CorrespondenceTableBuilder';
 import Alert from '../../components/Alert';
 import Modal from 'app/components/Modal';
-import Button from '../../components/Button';
 import RadioFieldWithChildren from '../../components/RadioFieldWithChildren';
 import ReactSelectDropdown from '../../components/ReactSelectDropdown';
 import TextareaField from '../../components/TextareaField';
@@ -24,6 +23,8 @@ const CorrespondenceCases = (props) => {
   const currentAction = useSelector((state) => state.reviewPackage.lastAction);
   const veteranInformation = useSelector((state) => state.reviewPackage.veteranInformation);
   const currentSelectedVeteran = useSelector((state) => state.intakeCorrespondence.selectedVeteranDetails);
+  const reassignModalVisible = useSelector((state) => state.intakeCorrespondence.showReassignPackageModal);
+  const removeModalVisible = useSelector((state) => state.intakeCorrespondence.showRemovePackageModal);
 
   const [vetName, setVetName] = useState('');
   const [selectedMailTeamUser, setSelectedMailTeamUser] = useState('');
@@ -58,9 +59,14 @@ const CorrespondenceCases = (props) => {
   };
 
   const confirmButtonDisabled = () => {
-    if (selectedRequestChoice === 'approve' && selectedMailTeamUser === '') {
+    if (selectedRequestChoice === 'approve' && selectedMailTeamUser === '' && reassignModalVisible) {
       return true;
     }
+
+    if(selectedRequestChoice === 'reject' && decisionReason === '' && removeModalVisible) {
+      return true;
+    }
+
     if (selectedRequestChoice === '') {
       return true;
     }
@@ -87,7 +93,7 @@ const CorrespondenceCases = (props) => {
   const showReassignPackageModal = useSelector((state) => state.intakeCorrespondence.showReassignPackageModal);
   const showRemovePackageModal = useSelector((state) => state.intakeCorrespondence.showRemovePackageModal);
 
-  const actionRequiredOptions = [
+  const reassignOptions = [
     { displayText: 'Approve request',
       value: 'approve',
       element: approveElement,
@@ -100,7 +106,20 @@ const CorrespondenceCases = (props) => {
     }
   ];
 
-  const handleConfirmReassignClick = () => {
+  const removeOptions = [
+    { displayText: 'Approve request',
+      value: 'approve',
+      displayElement: selectedRequestChoice === 'approve'
+    },
+    { displayText: 'Reject request',
+      value: 'reject',
+      element: textAreaElement,
+      displayElement: selectedRequestChoice === 'reject'
+    }
+  ];
+
+
+  const handleConfirmReassignRemoveClick = (operation) => {
     let newUrl = window.location.href;
 
     newUrl = newUrl.replace('#', '');
@@ -108,11 +127,12 @@ const CorrespondenceCases = (props) => {
     newUrl += `&user=${selectedMailTeamUser}
     &taskId=${currentSelectedVeteran.uniqueId}
     &userAction=${selectedRequestChoice}
-    &decisionReason=${decisionReason}`;
+    &decisionReason=${decisionReason}
+    &operation=${operation}`;
     window.location.href = newUrl;
   };
 
-  const reviewRequestButtons = [
+  const reassignModalButtons = [
     {
       classNames: ['cf-modal-link', 'cf-btn-link'],
       name: 'Cancel',
@@ -123,7 +143,7 @@ const CorrespondenceCases = (props) => {
       id: '#confirm-button',
       classNames: ['usa-button', 'usa-button-primary', 'cf-margin-left-2rem'],
       name: 'Confirm',
-      onClick: handleConfirmReassignClick,
+      onClick: () => handleConfirmReassignRemoveClick("reassign"),
       disabled: confirmButtonDisabled()
     },
     {
@@ -134,6 +154,31 @@ const CorrespondenceCases = (props) => {
       disabled: false
     }
   ];
+
+  const removeModalButtons = [
+    {
+      classNames: ['cf-modal-link', 'cf-btn-link'],
+      name: 'Cancel',
+      onClick: () => dispatch(setShowRemovePackageModal(false)),
+      disabled: false
+    },
+    {
+      id: '#confirm-button',
+      classNames: ['usa-button', 'usa-button-primary', 'cf-margin-left-2rem'],
+      name: 'Confirm',
+      onClick: () => handleConfirmReassignRemoveClick("remove"),
+      disabled: confirmButtonDisabled()
+    },
+    {
+      id: '#view-package-button',
+      classNames: ['usa-button', 'usa-button-secondary'],
+      name: 'View package',
+      onClick: handleViewPackage,
+      disabled: false
+    }
+  ];
+
+
 
   const closeReassignPackageModal = () => {
     dispatch(setShowReassignPackageModal(false));
@@ -181,7 +226,7 @@ const CorrespondenceCases = (props) => {
         {showReassignPackageModal &&
         <Modal
           closeHandler={closeReassignPackageModal}
-          buttons={reviewRequestButtons}
+          buttons={reassignModalButtons}
           title={COPY.CORRESPONDENCE_CASES_REASSIGN_PACKAGE_MODAL_TITLE}
         >
           <b>Reason for reassignment:</b>
@@ -191,7 +236,7 @@ const CorrespondenceCases = (props) => {
               name="actionRequiredRadioField"
               id="vertical-radio"
               label="Choose whether to approve the request for removal or reject it."
-              options={actionRequiredOptions}
+              options={reassignOptions}
               onChange={(val) => setSelectedRequestChoice(val)}
               value={selectedRequestChoice}
               optionsStyling={{ width: '180px' }}
@@ -201,9 +246,18 @@ const CorrespondenceCases = (props) => {
         {showRemovePackageModal &&
         <Modal
           title={COPY.CORRESPONDENCE_CASES_REMOVE_PACKAGE_MODAL_TITLE}
-          closeHandler={closeRemovePackageModal}
-          cancelButton={<Button linkStyling onClick={closeRemovePackageModal}>Cancel</Button>}
-        />}
+          buttons={removeModalButtons}
+          closeHandler={closeRemovePackageModal}>
+          <RadioFieldWithChildren
+              name="actionRequiredRadioField"
+              id="vertical-radio"
+              label="Choose whether to approve the request for removal or reject it."
+              options={removeOptions}
+              onChange={(val) => setSelectedRequestChoice(val)}
+              value={selectedRequestChoice}
+              optionsStyling={{ width: '180px' }}
+            />
+          </Modal>}
       </AppSegment>
     </>
   );
