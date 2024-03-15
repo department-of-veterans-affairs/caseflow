@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 describe DistributionsController, :all_dbs do
+  before { Seeds::CaseDistributionLevers.new.seed! }
+
   describe "#new" do
     let(:user) { create(:user) }
 

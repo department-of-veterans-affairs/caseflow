@@ -6,6 +6,7 @@ RSpec.feature "Audit Lever History Table" do
     CDAControlGroup.singleton.add_user(user)
     User.authenticate!(user: user)
   end
+  before { Seeds::CaseDistributionLevers.new.seed! }
 
   let(:ama_direct_reviews) { Constants.DISTRIBUTION.ama_direct_review_start_distribution_prior_to_goals }
   let(:alternate_batch_size) { Constants.DISTRIBUTION.alternative_batch_size }
