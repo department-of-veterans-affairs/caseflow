@@ -303,16 +303,16 @@ describe HearingRequestDocket, :postgres do
     # all of these are currently failing
     context "ama_hearing_case_aod_affinity_days" do
       let!(:ready_aod_tied_to_requesting_judge_in_window) do
-        create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 15.days.ago)
+        create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 10.days.ago)
       end
       let!(:ready_aod_tied_to_requesting_judge_out_of_window) do
-        create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 45.days.ago)
+        create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 20.days.ago)
       end
       let!(:ready_aod_tied_to_other_judge_in_window) do
-        create_ready_aod_appeal(tied_judge: other_judge, created_date: 15.days.ago)
+        create_ready_aod_appeal(tied_judge: other_judge, created_date: 10.days.ago)
       end
       let!(:ready_aod_tied_to_other_judge_out_of_window) do
-        create_ready_aod_appeal(tied_judge: other_judge, created_date: 45.days.ago)
+        create_ready_aod_appeal(tied_judge: other_judge, created_date: 20.days.ago)
       end
       let!(:ready_aod_hearing_cancelled) do
         create_ready_aod_appeal_hearing_cancelled(created_date: 10.days.ago)
@@ -336,7 +336,7 @@ describe HearingRequestDocket, :postgres do
 
       context "lever is set to a numeric value (15)" do
         before do
-          CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update!(value: "30")
+          CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update!(value: "15")
         end
 
         it "distributes appeals that do not exceed affinity value or are not tied to another judge" do
@@ -351,7 +351,7 @@ describe HearingRequestDocket, :postgres do
 
       context "lever is set to infinite" do
         before do
-          CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update!(value: "infinite")
+          CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update!(value: "infinite")
         end
 
         it "distributes only genpop appeals or appeals tied to the requesting judge" do
