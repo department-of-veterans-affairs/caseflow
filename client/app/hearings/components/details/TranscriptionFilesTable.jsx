@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import Link from '../../../components/Link';
 import { css } from 'glamor';
 import _ from 'lodash';
 import moment from 'moment-timezone';
@@ -69,7 +69,7 @@ const transcriptionFileColumns = [
   {
     align: 'left',
     valueFunction: (rowObject) => (
-      <Link to={rowObject.awsLink}>
+      <Link href={rowObject.awsLink} target="_blank">
         {rowObject.fileName}
         <DownloadIcon color={COLORS.PRIMARY} />
       </Link>
@@ -88,13 +88,12 @@ const rowClassNames = (rowObject) => `${rowObject.isEvenGroup ? 'even' : 'odd'}-
 const TranscriptionFilesTable = ({ hearing }) => {
   const [rows, setRows] = useState([]);
 
+  // One hearing may have multiple recordings. Format table to associate files by recording
   const buildRowsFromRecordings = () => {
-    const recordings = _.flatMap(hearing.transcriptionFiles);
+    const recordings = _.flatMap(hearing.transcriptionFiles, (rec) => [_.flatMap(rec)]);
 
     return recordings.map((recording, recordingIndex) => {
-      const files = _.flatMap(recording);
-
-      return files.map((file, fileIndex) => {
+      return recording.map((file, fileIndex) => {
         const fileObj = {
           ...file,
           isEvenGroup: recordingIndex % 2 === 0
@@ -130,8 +129,16 @@ const TranscriptionFilesTable = ({ hearing }) => {
 };
 
 TranscriptionFilesTable.propTypes = {
-  recordings: PropTypes.arrayOf(PropTypes.object),
-  hearing: PropTypes.object
+  hearing: PropTypes.shape({
+    docketNumber: PropTypes.string,
+    docketName: PropTypes.string,
+    transcriptionFiles: PropTypes.shape({
+      awsLink: PropTypes.string,
+      dateUploadAws: PropTypes.string,
+      fileName: PropTypes.string,
+      fileStatus: PropTypes.string
+    })
+  })
 };
 
 export default TranscriptionFilesTable;

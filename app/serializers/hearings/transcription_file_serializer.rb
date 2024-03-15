@@ -5,7 +5,6 @@ class TranscriptionFileSerializer
 
   attribute :date_upload_aws
   attribute :file_name
-  attribute :file_type
   attribute :aws_link
   attribute :file_status
 end
