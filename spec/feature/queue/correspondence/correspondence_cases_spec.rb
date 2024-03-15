@@ -1226,34 +1226,26 @@ RSpec.feature("The Correspondence Cases page") do
     end
 
   it "approve request to reassign" do
-    visit "/queue/correspondence/team?tab=correspondence_unassigned"
-    visit "/queue/correspondence/team?tab=correspondence_action_required"
-    find("[id='tasks-tabwindown-tab-1']").click
-    find("[aria-label='Reassign Package Task Link']").click
+    visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+    all("[aria-label='Reassign Package Task Link']")[0].click
     expect(page).to have_content("You have successfully reassigned a mail record for")
   end
 
   it "deny request to reassign" do
-    visit "/queue/correspondence/team?tab=correspondence_unassigned"
-    visit "/queue/correspondence/team?tab=correspondence_action_required"
-    find("[id='tasks-tabwindown-tab-1']").click
-    find("[aria-label='Reassign Package Task Link']").click
+    visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+    all("[aria-label='Reassign Package Task Link']")[0].click
     expect(page).to have_content("You have successfully rejected a package request for")
   end
 
   it "approve request to remove" do
-    visit "/queue/correspondence/team?tab=correspondence_unassigned"
-    visit "/queue/correspondence/team?tab=correspondence_action_required"
-    find("[id='tasks-tabwindown-tab-1']").click
-    find("[aria-label='Remove Package Task Link']").click
+    visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+    all("[aria-label='Remove Package Task Link']")[0].click
     expect(page).to have_content("")
   end
 
   it "deny request to remove" do
-    visit "/queue/correspondence/team?tab=correspondence_unassigned"
-    visit "/queue/correspondence/team?tab=correspondence_action_required"
-    find("[id='tasks-tabwindown-tab-1']").click
-    find("[aria-label='Remove Package Task Link']").click
+    visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+    all("[aria-label='Remove Package Task Link']")[0].click
     expect(page).to have_content("")
   end
 
