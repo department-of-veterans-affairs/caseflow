@@ -105,7 +105,6 @@ const CorrespondenceTableBuilder = (props) => {
   };
 
   const handleSearchChange = (value) => {
-    console.log('Search value:', value);
     setSearchValue(value);
   };
 
