@@ -35,8 +35,8 @@ RSpec.feature("Search Bar for Correspondence") do
 
     before do
       20.times do
-        review_correspondence = create(:correspondence)
-        rpt = ReviewPackageTask.find_by(appeal_id: review_correspondence.id)
+        @review_correspondence = create(:correspondence)
+        rpt = ReviewPackageTask.find_by(appeal_id: @review_correspondence.id)
         rpt.update!(assigned_to: current_user, status: "assigned")
         rpt.save!
       end
@@ -77,6 +77,52 @@ RSpec.feature("Search Bar for Correspondence") do
       click_button("Previous", match: :first)
       search_value = find("tbody > tr:nth-child(1) > td:nth-child(1)").text
       expect(search_value.include?(veteran.last_name))
+    end
+
+    it "Verify the user can clear the search bar by clicking the 'x' in the search bar" do
+      visit "/queue/correspondence/team?tab=correspondence_assigned"
+      expect(page).to have_content("Filter table by any of its columns")
+      veteran = Veteran.first
+      find_by_id("searchBar").fill_in with: veteran.last_name
+      search_value = find("tbody > tr:nth-child(1) > td:nth-child(1)").text
+      expect(search_value.include?(veteran.last_name))
+      find_by_id("button-clear-search").click
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(1)").length == 1)
+    end
+
+    it "Verify the user can have search results sorted by veteran details." do
+      visit "/queue/correspondence/team?tab=correspondence_assigned"
+      expect(page).to have_content("Filter table by any of its columns")
+      veteran = Veteran.first
+      find_by_id("searchBar").fill_in with: veteran.last_name
+      search_value = find("tbody > tr:nth-child(1) > td:nth-child(1)").text
+      expect(search_value.include?(veteran.last_name))
+      # put page in the sorted A-Z state
+      find("[aria-label='Sort by Veteran Details']").click
+      first_vet_info = page.all("#task-link")[0].text
+      # put page in the sorted Z-A state
+      find("[aria-label='Sort by Veteran Details']").click
+      last_vet_info = page.all("#task-link")[0].text
+      # return to A-Z, compare veteran details
+      find("[aria-label='Sort by Veteran Details']").click
+      expect(page.all("#task-link")[0].text == first_vet_info)
+      # return to Z-A, compare details again
+      find("[aria-label='Sort by Veteran Details']").click
+      expect(page.all("#task-link")[0].text == last_vet_info)
+    end
+
+    it "Verify the user can have search results filtered by receipt date on filter correctly" do
+      visit "/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc"
+      veteran = Veteran.first
+      find_by_id("searchBar").fill_in with: veteran.last_name
+      search_value = find("tbody > tr:nth-child(1) > td:nth-child(1)").text
+      expect(search_value.include?(veteran.last_name))
+      all(".unselected-filter-icon")[0].click
+      find_by_id("reactSelectContainer").click
+      find_by_id("react-select-2-option-3").click
+      all("div.input-container > input")[0].fill_in(with: @review_correspondence.va_date_of_receipt.strftime("%m/%d/%Y"))
+      find(".cf-submit").click
+      expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
     end
   end
 end
