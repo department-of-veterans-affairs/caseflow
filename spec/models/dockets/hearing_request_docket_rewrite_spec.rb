@@ -214,7 +214,7 @@ describe HearingRequestDocket, :postgres do
     let!(:requesting_judge_with_attorneys) { create(:user, :judge, :with_vacols_judge_record) }
     let!(:other_judge) { create(:user, :judge, :with_vacols_judge_record) }
     let!(:excluded_judge) { create(:user, :judge, :with_vacols_judge_record) }
-    let!(:ineligible_judge) { create(:user, :judge, :inactive) }
+    let!(:ineligible_judge) { create(:user, :judge, :with_vacols_judge_record, :inactive) }
 
     let!(:requesting_judge_attorney) { create(:user, :with_vacols_attorney_record) }
 
@@ -364,18 +364,88 @@ describe HearingRequestDocket, :postgres do
       end
     end
 
-    context "excluded judge appeals" do
-      context "are included when feature toggle is set" do
+    # there is no test currently for "toggle off" because the toggle off is causing errors during distribution
+    context "acd_exclude_from_affinity" do
+      context "toggle on" do
         before do
           FeatureToggle.enable!(:acd_exclude_from_affinity)
+          CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update!(value: "30")
+        end
+
+        let!(:ready_nonpriority_tied_to_requesting_judge_in_window) do
+          create_ready_nonpriority_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 15.days.ago)
+        end
+        let!(:ready_nonpriority_tied_to_requesting_judge_out_of_window) do
+          create_ready_nonpriority_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 45.days.ago)
+        end
+        let!(:ready_nonpriority_tied_to_excluded_judge_in_window) do
+          create_ready_nonpriority_appeal(tied_judge: excluded_judge, created_date: 15.days.ago)
+        end
+        let!(:ready_nonpriority_tied_to_excluded_judge_out_of_window) do
+          create_ready_nonpriority_appeal(tied_judge: excluded_judge, created_date: 45.days.ago)
+        end
+        let!(:ready_nonpriority_hearing_cancelled) do
+          create_ready_nonpriority_appeal_hearing_cancelled(created_date: 10.days.ago)
+        end
+
+        it "includes excluded judge appeals in affinity window" do
+          expect(subject.map(&:case_id)).to match_array(
+            [ready_nonpriority_tied_to_requesting_judge_in_window.uuid,
+             ready_nonpriority_tied_to_requesting_judge_out_of_window.uuid,
+             ready_nonpriority_tied_to_excluded_judge_in_window.uuid,
+             ready_nonpriority_tied_to_excluded_judge_out_of_window.uuid,
+             ready_nonpriority_hearing_cancelled.uuid]
+          )
         end
       end
     end
 
     context "ineligible judge appeals" do
-      context "are included when feature toggle is set" do
-        before do
-          FeatureToggle.enable!(:acd_cases_tied_to_judges_no_longer_with_board)
+      before do
+        CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update!(value: "30")
+        IneligibleJudgesJob.new.perform_now
+      end
+
+      let!(:ready_nonpriority_tied_to_requesting_judge_in_window) do
+        create_ready_nonpriority_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 15.days.ago)
+      end
+      let!(:ready_nonpriority_tied_to_requesting_judge_out_of_window) do
+        create_ready_nonpriority_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 45.days.ago)
+      end
+      let!(:ready_nonpriority_tied_to_ineligible_judge_in_window) do
+        create_ready_nonpriority_appeal(tied_judge: ineligible_judge, created_date: 15.days.ago)
+      end
+      let!(:ready_nonpriority_tied_to_ineligible_judge_out_of_window) do
+        create_ready_nonpriority_appeal(tied_judge: ineligible_judge, created_date: 45.days.ago)
+      end
+      let!(:ready_nonpriority_hearing_cancelled) do
+        create_ready_nonpriority_appeal_hearing_cancelled(created_date: 10.days.ago)
+      end
+
+      context "with toggle on" do
+        before { FeatureToggle.enable!(:acd_cases_tied_to_judges_no_longer_with_board) }
+
+        it "includes ineligible judge appeals in affinity window" do
+          expect(subject.map(&:case_id)).to match_array(
+            [ready_nonpriority_tied_to_requesting_judge_in_window.uuid,
+             ready_nonpriority_tied_to_requesting_judge_out_of_window.uuid,
+             ready_nonpriority_tied_to_ineligible_judge_in_window.uuid,
+             ready_nonpriority_tied_to_ineligible_judge_out_of_window.uuid,
+             ready_nonpriority_hearing_cancelled.uuid]
+          )
+        end
+      end
+
+      context "with toggle off" do
+        before { FeatureToggle.disable!(:acd_cases_tied_to_judges_no_longer_with_board) }
+
+        it "does not include ineligible judge appeals in affinity window" do
+          expect(subject.map(&:case_id)).to match_array(
+            [ready_nonpriority_tied_to_requesting_judge_in_window.uuid,
+             ready_nonpriority_tied_to_requesting_judge_out_of_window.uuid,
+             ready_nonpriority_tied_to_ineligible_judge_out_of_window.uuid,
+             ready_nonpriority_hearing_cancelled.uuid]
+          )
         end
       end
     end
@@ -455,22 +525,5 @@ describe HearingRequestDocket, :postgres do
     appeal.tasks.find_by(type: ScheduleHearingTask.name).cancelled!
     Timecop.return
     appeal
-  end
-
-  def create_ready_cavc_appeal_no_new_hearing(tied_judge: nil, created_date: 1.year.ago)
-    Timecop.travel(created_date)
-    source_appeal = FactoryBot.create(
-      :appeal,
-      :hearing_docket,
-      :dispatched,
-      associated_judge: tied_judge
-    )
-    remand_appeal = FactoryBot.create(
-      :cavc_remand,
-      :ready_to_distribute,
-      source_appeal: source_appeal
-    ).remand_appeal
-    Timecop.return
-    remand_appeal
   end
 end
