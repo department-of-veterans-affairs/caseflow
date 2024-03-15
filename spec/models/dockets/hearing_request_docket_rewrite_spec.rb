@@ -5,6 +5,11 @@ describe HearingRequestDocket, :postgres do
     # Uncomment this line once the seed is removed from rails_helper.rb
     # Seeds::CaseDistributionLevers.new.seed!
     FeatureToggle.enable!(:acd_distribute_by_docket_date)
+
+    # these were the defaut values at time of writing tests but can change over time, so ensure they are set
+    # back to what the tests were originally written for
+    CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update!(value: "60")
+    CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update!(value: "14")
   end
 
   context "#ready_priority_appeals" do
