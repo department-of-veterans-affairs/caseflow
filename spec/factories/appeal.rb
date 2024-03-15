@@ -593,6 +593,18 @@ FactoryBot.define do
                nonrating_issue_description: "VHA - Caregiver ",
                decision_review: appeal,
                decision_date: 1.month.ago)
+        appeal.reload
+      end
+    end
+
+    trait :with_randomized_vha_issue do
+      after(:create) do |appeal|
+        create(:request_issue,
+               benefit_type: "vha",
+               nonrating_issue_category: Constants::ISSUE_CATEGORIES["vha"].sample,
+               nonrating_issue_description: "VHA - Issue ",
+               decision_review: appeal,
+               decision_date: 1.month.ago)
       end
     end
 

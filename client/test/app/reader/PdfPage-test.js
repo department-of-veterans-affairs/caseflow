@@ -40,9 +40,9 @@ describe('PdfPage', () => {
       const instance = wrapper.instance();
 
       jest.spyOn(instance, 'getText').mockImplementation(() =>
-        new Promise((resolve) => resolve({ data: {} })));
+          new Promise((resolve) => resolve({ data: {} })));
       jest.spyOn(instance, 'drawPage').mockImplementation(() =>
-        new Promise((resolve) => resolve({ data: {} })));
+          new Promise((resolve) => resolve({ data: {} })));
       jest.spyOn(instance, 'drawText').mockReturnValue('Test');
     });
 
@@ -79,9 +79,9 @@ describe('PdfPage', () => {
       const instance = wrapper.instance();
 
       jest.spyOn(instance, 'getText').mockImplementation(() =>
-        new Promise((resolve) => resolve({ data: {} })));
+          new Promise((resolve) => resolve({ data: {} })));
       jest.spyOn(instance, 'drawPage').mockImplementation(() =>
-        new Promise((resolve) => resolve({ data: {} })));
+          new Promise((resolve) => resolve({ data: {} })));
       jest.spyOn(instance, 'drawText').mockReturnValue('Test');
     });
 

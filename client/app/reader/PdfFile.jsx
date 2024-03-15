@@ -27,7 +27,6 @@ import uuid from 'uuid';
 import { storeMetrics, recordAsyncMetrics } from '../util/Metrics';
 
 PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-let pdfPageRenderTimeInMsStart = null;
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -43,10 +42,11 @@ export class PdfFile extends React.PureComponent {
     this.clientWidth = 0;
     this.currentPage = 0;
     this.columnCount = 1;
+    this.metricsIdentifier = null;
+    this.measureTimeStartMs = null;
   }
 
   componentDidMount = () => {
-
     let requestOptions = {
       cache: true,
       withCredentials: true,
@@ -72,22 +72,29 @@ export class PdfFile extends React.PureComponent {
   getDocument = (requestOptions) => {
     const logId = uuid.v4();
 
+    this.metricsIdentifier = uuid.v4();
+
     const documentData = {
       documentId: this.props.documentId,
       documentType: this.props.documentType,
       file: this.props.file,
-      prefetchDisabled: this.props.featureToggles.prefetchDisabled
+      prefetchDisabled: this.props.featureToggles.prefetchDisabled,
     };
 
     return ApiUtil.get(this.props.file, requestOptions).
       then((resp) => {
-        pdfPageRenderTimeInMsStart = performance.now();
+        this.measureTimeStartMs = performance.now();
         const metricData = {
           message: `Getting PDF document: "${this.props.file}"`,
           type: 'performance',
           product: 'reader',
           data: documentData,
+          eventId: this.metricsIdentifier,
         };
+
+        if (resp && resp.header && resp.header['x-document-source']) {
+          metricData.additionalInfo = JSON.stringify({ source: `"${resp.header['x-document-source']}"` });
+        }
 
         /* The feature toggle reader_get_document_logging adds the progress of the file being loaded in console */
         if (this.props.featureToggles.readerGetDocumentLogging) {
@@ -101,7 +108,7 @@ export class PdfFile extends React.PureComponent {
           this.loadingTask = PDFJS.getDocument(src);
 
           this.loadingTask.onProgress = (progress) => {
-            // eslint-disable-next-line no-console
+          // eslint-disable-next-line no-console
             console.log(`UUID: ${logId} : Progress of ${this.props.file}: ${progress.loaded} / ${progress.total}`);
           };
         } else {
@@ -140,7 +147,8 @@ export class PdfFile extends React.PureComponent {
               type: 'error',
               product: 'browser',
               prefetchDisabled: this.props.featureToggles.prefetchDisabled
-            }
+            },
+            this.metricsIdentifier
           );
         }
 
@@ -171,7 +179,8 @@ export class PdfFile extends React.PureComponent {
         message: `Getting PDF document: "${file}"`,
         type: 'error',
         product: 'reader'
-      });
+      },
+      this.metricsIdentifier);
     }
 
     throw reason;
@@ -204,6 +213,9 @@ export class PdfFile extends React.PureComponent {
       this.pdfDocument.destroy();
       this.props.clearPdfDocument(this.props.file, this.pdfDocument);
     }
+
+    this.metricsIdentifier = null;
+    this.measureTimeStartMs = null;
   }
 
   getPage = ({ rowIndex, columnIndex, style, isVisible }) => {
@@ -223,7 +235,8 @@ export class PdfFile extends React.PureComponent {
         scale={this.props.scale}
         pdfDocument={this.props.pdfDocument}
         featureToggles={this.props.featureToggles}
-        measureTimeStartMs={pdfPageRenderTimeInMsStart}
+        measureTimeStartMs={this.measureTimeStartMs}
+        metricsIdentifier={this.metricsIdentifier}
       />
     </div>;
   }
@@ -441,7 +454,7 @@ export class PdfFile extends React.PureComponent {
 
     const positionBasedOnPageDimension = (pageDimension + scrolledLocationOnPage - ANNOTATION_ICON_SIDE_LENGTH) / 2;
     const positionBasedOnClientDimension = adjustedScrolledLocationOnPage +
-      (((clientDimension / this.props.scale) - ANNOTATION_ICON_SIDE_LENGTH) / 2);
+        (((clientDimension / this.props.scale) - ANNOTATION_ICON_SIDE_LENGTH) / 2);
 
     return Math.min(positionBasedOnPageDimension, positionBasedOnClientDimension);
   }
@@ -509,9 +522,9 @@ export class PdfFile extends React.PureComponent {
 
     return <div style={style}>
       <StatusMessage title="Unable to load document" type="warning">
-          Caseflow is experiencing technical difficulties and cannot load <strong>{this.props.documentType}</strong>.
+        Caseflow is experiencing technical difficulties and cannot load <strong>{this.props.documentType}</strong>.
         <br />
-          You can try <a href={downloadUrl}>downloading the document</a> or try again later.
+        You can try <a href={downloadUrl}>downloading the document</a> or try again later.
       </StatusMessage>
     </div>;
   }

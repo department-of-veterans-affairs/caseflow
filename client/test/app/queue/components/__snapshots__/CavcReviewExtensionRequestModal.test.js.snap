@@ -259,6 +259,7 @@ exports[`CavcReviewExtensionRequestModal renders correctly 1`] = `
           className="cf-modal-controls"
         >
           <Button
+            aria-label="Cancel"
             classNames={
               Array [
                 "cf-modal-link",
@@ -287,6 +288,7 @@ exports[`CavcReviewExtensionRequestModal renders correctly 1`] = `
             </span>
           </Button>
           <Button
+            aria-label="Confirm"
             classNames={
               Array [
                 "usa-button",
