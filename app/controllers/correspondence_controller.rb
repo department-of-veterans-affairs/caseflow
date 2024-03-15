@@ -255,16 +255,29 @@ class CorrespondenceController < ApplicationController
     task_id = params[:taskId].strip
     action_type = params[:userAction].strip
     decision_reason = params[:decisionReason].strip
+    # return unless @response_type == "success"
 
-    return unless @response_type == "success"
-
-    begin
+    # begin
       task = Task.find_by(id: task_id)
+      binding.pry
       case action_type
-      when "accept"
+      when "approve"
+        binding.pry
         # task.update(completed_by_id: current_user, closed_at: Time.zone.now, status: "completed")
         # parent_task = ReviewPackageTask.find(task.parent_id)
         # parent_task.update(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "completed")
+       rpt = ReviewPackageTask.create!(assigned_to_id: mail_team_user.id,
+          assigned_to_type: "User",
+          status: "assigned",
+          appeal_id: task.appeal_id,
+          appeal_type: "Correspondence",
+          assigned_at: Time.zone.now,
+          assigned_by_id: current_user,
+          assigned_to_id: mail_team_user.id,
+          type: "ReviewPackageTask"
+
+        )
+        binding.pry
 
       when "reject"
         # task.update(completed_by_id: current_user, closed_at: Time.zone.now, status: "completed", instructions: decision_reason)
@@ -273,9 +286,9 @@ class CorrespondenceController < ApplicationController
       end
 
 
-    end
-  rescue StandardError => error
-    error.message
+    # end
+  # rescue StandardError => error
+    # error.message
   end
 
   def set_banner_params(user, task_count, tab)
@@ -321,7 +334,6 @@ class CorrespondenceController < ApplicationController
   end
 
   def reassign_message_template(user, action_type)
-
     success_header_reassigned = "You have successfully reassigned a mail record for #{user.css_id}"
     success_message_reassigned = "Please go to your individual queue to see any self assigned correspondence."
     success_header_rejected = "You have successfully rejected a package request for #{user.css_id}"
