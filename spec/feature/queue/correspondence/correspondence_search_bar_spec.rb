@@ -73,6 +73,8 @@ RSpec.feature("Search Bar for Correspondence") do
       expect(page).to have_button("Next")
       expect(page).not_to have_button("Previous")
       click_button("Next", match: :first)
+      expect(page).not_to have_button("Next")
+      click_button("Previous", match: :first)
       search_value = find("tbody > tr:nth-child(1) > td:nth-child(1)").text
       expect(search_value.include?(veteran.last_name))
     end
