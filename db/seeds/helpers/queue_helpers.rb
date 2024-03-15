@@ -18,8 +18,10 @@ module QueueHelpers
     veteran
   end
 
-  def create_correspondence
-    vet = create_veteran
+  # create correspondence for given veteran/user, or create one
+  def create_correspondence(user = {}, veteran = {})
+    vet = veteran.blank? ? create_veteran : veteran
+    user = user.blank? ? User.find_by_css_id("CAVC_LIT_SUPPORT_USER6") : user
     ::Correspondence.create!(
       uuid: SecureRandom.uuid,
       portal_entry_date: Time.zone.now,
@@ -30,8 +32,8 @@ module QueueHelpers
       cmp_packet_number: @cmp_packet_number,
       va_date_of_receipt: rand(1.month.ago..1.day.ago),
       notes: "Notes from CMP - Queue Correspondence Seed".split(" ").shuffle.join,
-      assigned_by_id: 81,
-      updated_by_id: 81,
+      assigned_by_id: user.id,
+      updated_by_id: user.id,
       veteran_id: vet.id
     ).tap { @cmp_packet_number += 1 }
   end
