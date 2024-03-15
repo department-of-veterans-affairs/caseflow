@@ -211,7 +211,7 @@ class CorrespondenceController < ApplicationController
     @is_supervisor = current_user.mail_supervisor?
     mail_team_user = User.find_by(css_id: params[:user].strip) if params[:user].present?
     task_ids = params[:taskIds]&.split(",") if params[:taskIds].present?
-    reassign_remove_task_id = params[:taskId] if params[:taskId].present?
+    reassign_remove_task_id = params[:taskId].strip if params[:taskId].present?
     action_type = params[:userAction].strip if params[:userAction].present?
     tab = params[:tab] if params[:tab].present?
 
@@ -227,6 +227,7 @@ class CorrespondenceController < ApplicationController
       update_tasks(mail_team_user, task_ids)
     end
     if reassign_remove_task_id.present? && action_type.present?
+      binding.pry
       task = Task.find(reassign_remove_task_id) unless action_type == "approve"
       mail_team_user = task.assigned_by unless task.nil?
       output = update_reassign_task(mail_team_user)
@@ -263,19 +264,18 @@ class CorrespondenceController < ApplicationController
       case action_type
       when "approve"
         binding.pry
-        # task.update(completed_by_id: current_user, closed_at: Time.zone.now, status: "completed")
-        # parent_task = ReviewPackageTask.find(task.parent_id)
-        # parent_task.update(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "completed")
-       rpt = ReviewPackageTask.create!(assigned_to_id: mail_team_user.id,
+        task.update(completed_by_id: current_user, closed_at: Time.zone.now, status: "completed")
+        parent_task = ReviewPackageTask.find(task.parent_id)
+        parent_task.update(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "completed")
+         rpt = ReviewPackageTask.create!(
+          assigned_to_id: mail_team_user.id,
           assigned_to_type: "User",
           status: "assigned",
           appeal_id: task.appeal_id,
           appeal_type: "Correspondence",
           assigned_at: Time.zone.now,
           assigned_by_id: current_user,
-          assigned_to_id: mail_team_user.id,
           type: "ReviewPackageTask"
-
         )
         binding.pry
 
