@@ -27,7 +27,6 @@ import uuid from 'uuid';
 import { storeMetrics, recordAsyncMetrics } from '../util/Metrics';
 
 PDFJS.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-let pdfPageRenderTimeInMsStart = null;
 
 export class PdfFile extends React.PureComponent {
   constructor(props) {
@@ -43,6 +42,7 @@ export class PdfFile extends React.PureComponent {
     this.clientWidth = 0;
     this.currentPage = 0;
     this.columnCount = 1;
+    this.measureTimeStartMs = null;
   }
 
   componentDidMount = () => {
@@ -81,7 +81,7 @@ export class PdfFile extends React.PureComponent {
 
     return ApiUtil.get(this.props.file, requestOptions).
       then((resp) => {
-        pdfPageRenderTimeInMsStart = performance.now();
+        this.measureTimeStartMs = performance.now();
         const metricData = {
           message: `Getting PDF document: "${this.props.file}"`,
           type: 'performance',
@@ -204,6 +204,7 @@ export class PdfFile extends React.PureComponent {
       this.pdfDocument.destroy();
       this.props.clearPdfDocument(this.props.file, this.pdfDocument);
     }
+    this.measureTimeStartMs = null;
   }
 
   getPage = ({ rowIndex, columnIndex, style, isVisible }) => {
@@ -223,7 +224,7 @@ export class PdfFile extends React.PureComponent {
         scale={this.props.scale}
         pdfDocument={this.props.pdfDocument}
         featureToggles={this.props.featureToggles}
-        measureTimeStartMs={pdfPageRenderTimeInMsStart}
+        measureTimeStartMs={this.measureTimeStartMs}
       />
     </div>;
   }
