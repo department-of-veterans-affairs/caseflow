@@ -81,7 +81,7 @@ describe "AssocationWrapper" do
           [:cancelled_by, true, false, "cancelled_by_id", "user_id", nil],
           [:completed_by, true, false, "completed_by_id", "user_id", nil],
           [:appeal, true, false, "appeal_id", "appeal_id", "appeal_type"],
-          # belongs_to created dynamically by BelongsToPolymorphicAppealConcern
+          # Polymorphic `belongs_to :appeal`-related associations
           [:ama_appeal, true, false, "appeal_id", "appeal_id", nil],
           [:legacy_appeal, true, false, "appeal_id", "legacy_appeal_id", nil],
           [:higher_level_review, true, false, "appeal_id", "higher_level_review_id", nil],
