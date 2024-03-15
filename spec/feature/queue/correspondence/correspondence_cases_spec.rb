@@ -1198,4 +1198,28 @@ RSpec.feature("The Correspondence Cases page") do
       expect(find("tbody > tr:nth-child(1) > td:nth-child(2)").text == last_assignee)
     end
   end
+
+  context "Banner alert for approval and reject request" do
+    let(:current_user) { create(:user) }
+    before :each do
+      InboundOpsTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+    end
+  end
+
+  it "approve request to reassign" do
+    visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+  end
+
+  it "deny request to reassign" do
+    visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+  end
+
+  it "approve request to remove" do
+    visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+  end
+
+  it "deny request to remove" do
+    visit "queue/correspondence/team?tab=correspondence_action_required&page=1&sort_by=vaDor&order=asc"
+  end
 end
