@@ -1,6 +1,14 @@
 # frozen_string_literal: true
 
 describe Claimant, :postgres do
+  # Execute block for all Claimant subclasses...
+  Dir[Rails.root.join("app/models/**/*.rb")].sort.each { |f| require f } # load all models (for Claimant subclasses)
+  described_class.descendants.each do |claimant_subclass|
+    context claimant_subclass.to_s do
+      it_behaves_like "Claimant belongs_to polymorphic appeal", claimant_subclass
+    end
+  end
+
   let(:name) { nil }
   let(:relationship_to_veteran) { nil }
   let(:payee_code) { nil }
