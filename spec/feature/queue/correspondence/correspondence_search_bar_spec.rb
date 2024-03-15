@@ -34,17 +34,21 @@ RSpec.feature("Search Bar for Correspondence") do
     end
 
     before do
-      10.times do
+      20.times do
         review_correspondence = create(:correspondence)
         rpt = ReviewPackageTask.find_by(appeal_id: review_correspondence.id)
         rpt.update!(assigned_to: current_user, status: "assigned")
         rpt.save!
       end
+    end
+
+    before :each do
       FeatureToggle.enable!(:correspondence_queue)
+      FeatureToggle.enable!(:user_queue_pagination)
     end
 
     it "successfully opens the assigned tab, finds the search box, and enters data there." do
-      visit "/queue/correspondence/team?tab=correspondence_team_assigned"
+      visit "/queue/correspondence/team?tab=correspondence_assigned"
       expect(page).to have_content("Filter table by any of its columns")
       veteran = Veteran.first
       find_by_id("searchBar").fill_in with: veteran.last_name
@@ -53,12 +57,24 @@ RSpec.feature("Search Bar for Correspondence") do
     end
 
     it "should display the search bar with text even we shift to other tabs " do
-      visit "/queue/correspondence/team?tab=correspondence_team_assigned"
+      visit "/queue/correspondence/team?tab=correspondence_assigned"
       expect(page).to have_content("Filter table by any of its columns")
       veteran = Veteran.first
       find_by_id("searchBar").fill_in with: veteran.last_name
       find_by_id("tasks-tabwindow-tab-1").click
       expect(find_by_id("searchBar").value).to eq veteran.last_name
+    end
+
+    it "Should display Only search results even when we hit pagination " do
+      visit "/queue/correspondence/team?tab=correspondence_assigned"
+      expect(page).to have_content("Filter table by any of its columns")
+      veteran = Veteran.first
+      find_by_id("searchBar").fill_in with: veteran.last_name
+      expect(page).to have_button("Next")
+      expect(page).not_to have_button("Previous")
+      click_button("Next", match: :first)
+      search_value = find("tbody > tr:nth-child(1) > td:nth-child(1)").text
+      expect(search_value.include?(veteran.last_name))
     end
   end
 end
