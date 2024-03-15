@@ -9,13 +9,12 @@ GIT
 
 GIT
   remote: https://github.com/department-of-veterans-affairs/caseflow-commons
-  revision: dea6b30780bf44f6a146b69be961ede825ac02bd
-  ref: dea6b30780bf44f6a146b69be961ede825ac02bd
+  revision: 01dd8c52352ea558504af7da4e7ea73e8e2c4065
+  ref: 01dd8c52352ea558504af7da4e7ea73e8e2c4065
   specs:
     caseflow (0.4.8)
       aws-sdk (~> 2.10)
       bourbon (= 4.2.7)
-      d3-rails
       jquery-rails
       momentjs-rails
       neat
@@ -207,8 +206,6 @@ GEM
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
     crass (1.0.6)
-    d3-rails (7.8.5)
-      railties (>= 3.1)
     danger (6.2.2)
       claide (~> 1.0)
       claide-plugins (>= 0.9.2)
