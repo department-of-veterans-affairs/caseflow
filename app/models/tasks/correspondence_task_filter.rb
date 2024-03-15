@@ -107,21 +107,20 @@ class CorrespondenceTaskFilter < TaskFilter
   end
 
   def date_completed_filter_between_dates(start_date, end_date)
-
-    tasks.where("assigned_at > ? AND assigned_at < ?",
-             Time.zone.parse(start_date),
-             Time.zone.parse(end_date))
+    tasks.where("closed_at > ? AND closed_at < ?",
+                Time.zone.parse(start_date),
+                Time.zone.parse(end_date))
   end
 
   def date_completed_filter_before_date(date)
-    tasks.where("assigned_at < ?", Time.zone.parse(date))
+    tasks.where("closed_at < ?", Time.zone.parse(date))
   end
 
   def date_completed_filter_after_date(date)
-    tasks.where("assigned_at > ?", Time.zone.parse(date))
+    tasks.where("closed_at > ?", Time.zone.parse(date))
   end
 
   def date_completed_filter_on_date(date)
-    tasks.where("DATE(assigned_at) = (?)", Time.zone.parse(date))
+    tasks.where("DATE(closed_at) = (?)", Time.zone.parse(date))
   end
 end
