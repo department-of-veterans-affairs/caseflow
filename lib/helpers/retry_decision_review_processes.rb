@@ -6,13 +6,15 @@ class RetryDecisionReviewProcesses
   end
 
   # :reek:FeatureEnvy
-  def retry # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
+  def retry # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity, Metrics/AbcSize
+    attempted_logs = ["RetryDecisionReviewProcesses Attempt Log"]
     success_logs = ["RetryDecisionReviewProcesses Success Log"]
     new_error_logs = ["RetryDecisionReviewProcesses New Error Log"]
     all_records.each do |instance|
       is_riu = instance.is_a?(RequestIssuesUpdate)
       error_field = is_riu ? :error : :establishment_error
       error = instance[error_field]
+      attempted_logs << format_log(instance, error)
       begin
         if is_riu
           instance.perform!
@@ -38,6 +40,7 @@ class RetryDecisionReviewProcesses
 
     success_logs << "No successful remediations" if success_logs.length == 1
     new_error_logs << "No new errors" if new_error_logs.length == 1
+    upload_logs(attempted_logs, "attempted")
     upload_logs(success_logs, "success")
     upload_logs(new_error_logs, "new_errors")
   end

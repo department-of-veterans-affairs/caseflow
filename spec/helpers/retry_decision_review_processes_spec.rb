@@ -9,6 +9,7 @@ describe RetryDecisionReviewProcesses do
 
   shared_examples "#retry logs to S3" do
     it do
+      expect(S3Service).to receive(:store_file).once.ordered.with(attempted_file_name, attempted_logs)
       expect(S3Service).to receive(:store_file).once.ordered.with(success_file_name, success_logs)
       expect(S3Service).to receive(:store_file).once.ordered.with(new_error_file_name, new_error_logs)
       subject
@@ -17,6 +18,10 @@ describe RetryDecisionReviewProcesses do
 
   let(:stuck_job_report_service) { StuckJobReportService.new }
   let(:subject) { RetryDecisionReviewProcesses.new(report_service: stuck_job_report_service).retry }
+  let(:attempted_file_name) do
+    "data-remediation-output-test/retry_decision_review_process_job-logs/"\
+      "retry_decision_review_process_job_attempted-log-2015-01-01 07:00:00 -0500"
+  end
   let(:success_file_name) do
     "data-remediation-output-test/retry_decision_review_process_job-logs/"\
       "retry_decision_review_process_job_success-log-2015-01-01 07:00:00 -0500"
@@ -25,6 +30,7 @@ describe RetryDecisionReviewProcesses do
     "data-remediation-output-test/retry_decision_review_process_job-logs/"\
       "retry_decision_review_process_job_new_errors-log-2015-01-01 07:00:00 -0500"
   end
+  let(:attempted_logs) { "RetryDecisionReviewProcesses Attempt Log" }
   let(:success_logs) { "RetryDecisionReviewProcesses Success Log\nNo successful remediations" }
   let(:new_error_logs) { "RetryDecisionReviewProcesses New Error Log\nNo new errors" }
 
@@ -66,6 +72,13 @@ describe RetryDecisionReviewProcesses do
           "DecisionDocument::NotYetSubmitted\nRequestIssuesUpdate: #{request_issues_update.id} "\
           "Can't create a SC DTA for appeal due to missing payee code"
       end
+      let(:attempted_logs) do
+        "RetryDecisionReviewProcesses Attempt Log\nSupplementalClaim: #{supplemental_claim_1.id} "\
+          "Transaction timed out after seconds\nSupplementalClaim: #{supplemental_claim_2.id} "\
+          "SomeUnknownError\nHigherLevelReview: #{higher_level_review.id} "\
+          "DecisionDocument::NotYetSubmitted\nRequestIssuesUpdate: #{request_issues_update.id} "\
+          "Can't create a SC DTA for appeal due to missing payee code"
+      end
 
       it_behaves_like "#retry logs to S3"
     end
@@ -86,6 +99,13 @@ describe RetryDecisionReviewProcesses do
           "SupplementalClaim: #{supplemental_claim_2.id} BrandNewError\nHigherLevelReview: #{higher_level_review.id} "\
           "BrandNewError\nRequestIssuesUpdate: #{request_issues_update.id} BrandNewError"
       end
+      let(:attempted_logs) do
+        "RetryDecisionReviewProcesses Attempt Log\nSupplementalClaim: #{supplemental_claim_1.id} "\
+          "Transaction timed out after seconds\nSupplementalClaim: #{supplemental_claim_2.id} "\
+          "SomeUnknownError\nHigherLevelReview: #{higher_level_review.id} "\
+          "DecisionDocument::NotYetSubmitted\nRequestIssuesUpdate: #{request_issues_update.id} "\
+          "Can't create a SC DTA for appeal due to missing payee code"
+      end
 
       it_behaves_like "#retry logs to S3"
     end
@@ -101,6 +121,10 @@ describe RetryDecisionReviewProcesses do
         Finds error that has a variable in it
         Transaction timed out after 10000 seconds
       "
+    end
+    let(:attempted_logs) do
+      "RetryDecisionReviewProcesses Attempt Log\nSupplementalClaim: #{supplemental_claim_1.id} "\
+        "Transaction timed out after seconds"
     end
 
     it do
