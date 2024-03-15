@@ -51,6 +51,7 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
       described_class.process!(station_id, end_product_establishment_double, claim_review, user_double, event_double)
     end
 
+    # needed to convert the logical date int for the expect block
     def logical_date_converter(logical_date_int)
       # Extract year, month, and day components
       year = logical_date_int / 100_00
@@ -59,11 +60,17 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
       date = Date.new(year, month, day)
       date
     end
+
     context "when an error occurs" do
-      let(:error) { Caseflow::Error::DecisionReviewCreatedEpEstablishmentError.new("Unable to create End Product Establishement") }
+      let(:error) do
+        Caseflow::Error::DecisionReviewCreatedEpEstablishmentError.new("Unable to create End Product Establishement")
+      end
       it "raises the error" do
         allow(EndProductEstablishment).to receive(:create!).and_raise(error)
-        expect { described_class.process!(station_id, end_product_establishment_double, claim_review, user_double, event_double) }.to raise_error(error)
+        expect do
+          described_class.process!(station_id, end_product_establishment_double,
+                                   claim_review, user_double, event_double).to raise_error(error)
+        end
       end
     end
   end
