@@ -108,7 +108,7 @@ class CaseDistributionLever < ApplicationRecord
     options&.find { |option| option["item"] == item } || {}
   end
 
-  # rubocop:disable Style/StringLiteralsInInterpolation
+  # rubocop:disable Style/StringLiteralsInInterpolation, Lint/RedundantStringCoercion
 
   # this matches what is displayed in frontend
   # see client/app/caseDistribution/components/SaveModal.jsx
@@ -117,10 +117,10 @@ class CaseDistributionLever < ApplicationRecord
 
     selected_option = option(Constants.ACD_LEVERS.value)
 
-    "#{selected_option["text"]} #{value}"
+    "#{selected_option["text"]} #{value.to_s}"
   end
 
-  # rubocop:enable Style/StringLiteralsInInterpolation
+  # rubocop:enable Style/StringLiteralsInInterpolation, Lint/RedundantStringCoercion
 
   class << self
     def respond_to_missing?(name, _include_private)
