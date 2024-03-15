@@ -68,7 +68,6 @@ class HearingRequestDistributionQuery
     base_relation_with_joined_most_recent_hearings_and_dist_task.expired_ama_affinity_cases :
     base_relation_with_joined_most_recent_hearings_and_dist_task.always_ama_affinity_cases
 
-
     if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
       result = result.or(base_relation_with_joined_most_recent_hearings_and_dist_task.tied_to_ineligible_judge)
     end

@@ -15,12 +15,11 @@ class HearingRequestCaseDistributor
     # will create one array for the appeals and one for their genpop values with matching indexes
     appeals_for_tasks = appeals_to_distribute.flatten.select { |obj| obj.is_a?(Appeal) }
     genpop_values = appeals_to_distribute.flatten.reject { |obj| obj.is_a?(Appeal) }
-
     # Creates JudgeAssignTasks for the appeals, then zip the genpop_values into the array for creating
     # the DistributedCases
     tasks = assign_judge_tasks_for_appeals(appeals_for_tasks, @distribution.judge).zip(genpop_values)
 
-    tasks.map do |task, genpop_value|
+    distributed_cases = tasks.map do |task, genpop_value|
       next if task.nil?
 
       # If a distributed case already exists for this appeal, alter the existing distributed case's case id.
@@ -39,6 +38,8 @@ class HearingRequestCaseDistributor
         create_distribution_case_for_task(task, genpop_value)
       end
     end
+
+    distributed_cases.compact
   end
 
   private
