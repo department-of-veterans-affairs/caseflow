@@ -153,25 +153,13 @@ describe('PdfFile', () => {
       it('records metrics with no additionalInfo when x-document-source is absent in response headers', () => {
 
         ApiUtil.get = jest.fn().mockResolvedValue(() => new Promise((resolve) => resolve()));
-        const documentData = {
-          documentId: 1,
-          documentType: 'test',
-          file: '/document/1/pdf',
-          prefetchDisabled: undefined
-        };
-        const metricData = {
-          message: 'Getting PDF document: "/document/1/pdf"',
-          type: 'performance',
-          product: 'reader',
-          data: documentData,
-        };
 
         return wrapper.instance().componentDidMount().
           then(() => {
             // Assert that the recordAsyncMetrics method was called with the expected arguments
             expect(recordAsyncMetrics).toBeCalledWith(
               metricArgs()[0],
-              metricData,
+              metricArgs()[1],
               metricArgs(true)[2]
             );
           });
