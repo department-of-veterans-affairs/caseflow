@@ -266,7 +266,6 @@ RSpec.feature("The Correspondence Cases page") do
 
     it "filters date column with 'before' this date" do
       visit "/queue/correspondence/team?tab=correspondence_team_completed&page=1&sort_by=completedDateColumn&order=asc"
-
       find("[aria-label='Filter by date completed']").click
       expect(page).to have_content("Date filter parameters")
       expect(page).to have_button("Apply filter", disabled: true)
@@ -274,7 +273,7 @@ RSpec.feature("The Correspondence Cases page") do
       find("#reactSelectContainer").click
       find("#react-select-2-option-1").click
       current_date = Time.zone.today
-      start_date = (current_date - 1).strftime("%m/%d/%Y")
+      start_date = (current_date + 1).strftime("%m/%d/%Y")
 
       all("div.input-container > input")[0].fill_in(with: start_date)
       expect(page).to have_button("Apply filter", disabled: false)

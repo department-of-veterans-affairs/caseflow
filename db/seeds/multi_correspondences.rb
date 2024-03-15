@@ -74,31 +74,9 @@ module Seeds
         InitialTasksFactory.new(appeal).create_root_and_sub_tasks!
       end
       iterations.times do
-        corres = ::Correspondence.create!(
-          uuid: SecureRandom.uuid,
-          portal_entry_date: Time.zone.now,
-          source_type: "Mail",
-          package_document_type_id: PackageDocumentType.all.sample.id,
-          correspondence_type_id: CorrespondenceType.all.sample&.id,
-          cmp_queue_id: 1,
-          cmp_packet_number: @cmp_packet_number,
-          va_date_of_receipt: rand(1.month.ago..1.day.ago),
-          notes: "Notes from CMP - Multi Correspondence Seed",
-          assigned_by_id: user.id,
-          updated_by_id: user.id,
-          veteran_id: veteran.id,
-        )
-        CorrespondenceDocument.find_or_create_by(
-          document_file_number: veteran.file_number,
-          uuid: SecureRandom.uuid,
-          vbms_document_type_id: 1250,
-          document_type: 1250,
-          pages: 30,
-          correspondence_id: corres.id
-        )
-        @cmp_packet_number += 1
-
-        assign_review_package_task(corres, user)
+        corr = create_correspondence(user, veteran)
+        create_correspondence_document(corr, veteran)
+        assign_review_package_task(corr, user)
       end
     end
   end
