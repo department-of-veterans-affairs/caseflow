@@ -7,7 +7,6 @@ describe CavcTask, :postgres do
     subject { described_class.create(appeal: appeal, parent: parent_task) }
     let(:appeal) { create(:appeal) }
     let!(:parent_task) { create(:distribution_task, appeal: appeal) }
-    let(:parent_task_class) { DistributionTask }
 
     it_behaves_like "task requiring specific parent"
 
