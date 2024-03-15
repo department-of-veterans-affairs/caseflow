@@ -69,8 +69,8 @@ describe Events::DecisionReviewCreated::CreateEpEstablishment do
         allow(EndProductEstablishment).to receive(:create!).and_raise(error)
         expect do
           described_class.process!(station_id, end_product_establishment_double,
-                                   claim_review, user_double, event_double).to raise_error(error)
-        end
+                                   claim_review, user_double, event_double)
+        end.to raise_error(error)
       end
     end
   end
