@@ -223,6 +223,14 @@ describe HearingRequestDocket, :postgres do
     before do
       # Makes this judge team follow the batch_size calculation
       JudgeTeam.for_judge(requesting_judge_with_attorneys).add_user(requesting_judge_attorney)
+      # This feature toggle being off will cause the query to not distribute tied cases
+      FeatureToggle.enable!(:acd_exclude_from_affinity)
+    end
+
+    subject do
+      HearingRequestDocket.new.distribute_appeals(
+        distribution, priority: false, genpop: "only_genpop", limit: 15, style: "request"
+      )
     end
 
     context "ama_hearing_case_affinity_days" do
@@ -240,15 +248,6 @@ describe HearingRequestDocket, :postgres do
       end
       let!(:ready_nonpriority_hearing_cancelled) do
         create_ready_nonpriority_appeal_hearing_cancelled(created_date: 10.days.ago)
-      end
-
-      # This feature toggle being off will cause the query to not distribute tied cases
-      before { FeatureToggle.enable!(:acd_exclude_from_affinity) }
-
-      subject do
-        HearingRequestDocket.new.distribute_appeals(
-          distribution, priority: false, genpop: "only_genpop", limit: 15, style: "request"
-        )
       end
 
       context "lever is set to omit" do
@@ -285,7 +284,13 @@ describe HearingRequestDocket, :postgres do
       end
 
       context "lever is set to infinite" do
+        before do
+          CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update!(value: "infinite")
+        end
+
         it "distributes only genpop appeals or appeals tied to the requesting judge" do
+          # This is failing because it is double-selecting some appeals, probably because the filters are not set up
+          # correctly in not_genpop_appeals in the HRDQ file
           expect(subject.map(&:case_id)).to match_array(
             [ready_nonpriority_tied_to_requesting_judge_in_window.uuid,
              ready_nonpriority_tied_to_requesting_judge_out_of_window.uuid,
@@ -295,31 +300,69 @@ describe HearingRequestDocket, :postgres do
       end
     end
 
+    # all of these are currently failing
     context "ama_hearing_case_aod_affinity_days" do
+      let!(:ready_aod_tied_to_requesting_judge_in_window) do
+        create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 15.days.ago)
+      end
+      let!(:ready_aod_tied_to_requesting_judge_out_of_window) do
+        create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 45.days.ago)
+      end
+      let!(:ready_aod_tied_to_other_judge_in_window) do
+        create_ready_aod_appeal(tied_judge: other_judge, created_date: 15.days.ago)
+      end
+      let!(:ready_aod_tied_to_other_judge_out_of_window) do
+        create_ready_aod_appeal(tied_judge: other_judge, created_date: 45.days.ago)
+      end
+      let!(:ready_aod_hearing_cancelled) do
+        create_ready_aod_appeal_hearing_cancelled(created_date: 10.days.ago)
+      end
+
       context "lever is set to omit" do
+        before do
+          CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update!(value: "omit")
+        end
+
+        it "distributes all appeals regardless of tied judge" do
+          expect(subject.map(&:case_id)).to match_array(
+            [ready_aod_tied_to_requesting_judge_in_window.uuid,
+             ready_aod_tied_to_requesting_judge_out_of_window.uuid,
+             ready_aod_tied_to_other_judge_in_window.uuid,
+             ready_aod_tied_to_other_judge_out_of_window.uuid,
+             ready_aod_hearing_cancelled.uuid]
+          )
+        end
       end
 
       context "lever is set to a numeric value (15)" do
+        before do
+          CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update!(value: "30")
+        end
+
+        it "distributes appeals that do not exceed affinity value or are not tied to another judge" do
+          expect(subject.map(&:case_id)).to match_array(
+            [ready_aod_tied_to_requesting_judge_in_window.uuid,
+             ready_aod_tied_to_requesting_judge_out_of_window.uuid,
+             ready_aod_tied_to_other_judge_out_of_window.uuid,
+             ready_aod_hearing_cancelled.uuid]
+          )
+        end
       end
 
       context "lever is set to infinite" do
+        before do
+          CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update!(value: "infinite")
+        end
+
+        it "distributes only genpop appeals or appeals tied to the requesting judge" do
+          expect(subject.map(&:case_id)).to match_array(
+            [ready_aod_tied_to_requesting_judge_in_window.uuid,
+             ready_aod_tied_to_requesting_judge_out_of_window.uuid,
+             ready_aod_hearing_cancelled.uuid]
+          )
+        end
       end
     end
-
-    # context "cavc_affinity_days" do
-    # end
-
-    # context "cavc_aod_affinity_days" do
-    # end
-
-    # context "aoj_affinity_days" do
-    # end
-
-    # context "aoj_aod_affinity_days" do
-    # end
-
-    # context "aoj_cavc_affinity_days" do
-    # end
 
     context "excluded judge appeals" do
       context "are included when feature toggle is set" do
@@ -412,5 +455,22 @@ describe HearingRequestDocket, :postgres do
     appeal.tasks.find_by(type: ScheduleHearingTask.name).cancelled!
     Timecop.return
     appeal
+  end
+
+  def create_ready_cavc_appeal_no_new_hearing(tied_judge: nil, created_date: 1.year.ago)
+    Timecop.travel(created_date)
+    source_appeal = FactoryBot.create(
+      :appeal,
+      :hearing_docket,
+      :dispatched,
+      associated_judge: tied_judge
+    )
+    remand_appeal = FactoryBot.create(
+      :cavc_remand,
+      :ready_to_distribute,
+      source_appeal: source_appeal
+    ).remand_appeal
+    Timecop.return
+    remand_appeal
   end
 end
