@@ -47,6 +47,16 @@ const CorrespondenceCases = (props) => {
     setDecisionReason(value);
   };
 
+  const handleViewPackage = () => {
+    let url = window.location.href;
+    const index = url.indexOf('/team');
+
+    url = url.slice(0, index);
+    const parentUrlArray = (currentSelectedVeteran.parentTaskUrl.split('/'));
+
+    window.location.href = (`${url }/${parentUrlArray[3]}/${parentUrlArray[4]}`);
+  };
+
   const confirmButtonDisabled = () => {
     if (selectedRequestChoice === 'approve' && selectedMailTeamUser === '') {
       return true;
@@ -67,8 +77,7 @@ const CorrespondenceCases = (props) => {
     />
   </div>);
 
-  const textAreaElement = (<div style={{width:'280%'}}><TextareaField onChange={handleDecisionReasonInput} value={decisionReason} /></div>)
-
+  const textAreaElement = (<div style={{ width: '280%' }}><TextareaField onChange={handleDecisionReasonInput} value={decisionReason} /></div>);
 
   useEffect(() => {
     dispatch(loadCorrespondenceConfig(configUrl));
@@ -95,7 +104,7 @@ const CorrespondenceCases = (props) => {
     let newUrl = window.location.href;
 
     newUrl = newUrl.replace('#', '');
-    newUrl += newUrl.includes('?') ? '?' : ''
+    newUrl += newUrl.includes('?') ? '?' : '';
     newUrl += `&user=${selectedMailTeamUser}
     &taskId=${currentSelectedVeteran.uniqueId}
     &userAction=${selectedRequestChoice}
@@ -121,7 +130,7 @@ const CorrespondenceCases = (props) => {
       id: '#view-package-button',
       classNames: ['usa-button', 'usa-button-secondary'],
       name: 'View package',
-      onClick: () => console.log('view package clicked'),
+      onClick: handleViewPackage,
       disabled: false
     }
   ];
@@ -171,8 +180,8 @@ const CorrespondenceCases = (props) => {
           isSupervisor={props.isSupervisor} />}
         {showReassignPackageModal &&
         <Modal
-        closeHandler={closeReassignPackageModal}
-        buttons={reviewRequestButtons}
+          closeHandler={closeReassignPackageModal}
+          buttons={reviewRequestButtons}
           title={COPY.CORRESPONDENCE_CASES_REASSIGN_PACKAGE_MODAL_TITLE}
         >
           <b>Reason for reassignment:</b>
