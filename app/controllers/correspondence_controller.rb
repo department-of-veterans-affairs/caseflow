@@ -227,14 +227,20 @@ class CorrespondenceController < ApplicationController
       update_tasks(mail_team_user, task_ids)
     end
     if reassign_remove_task_id.present? && action_type.present?
-      binding.pry
-      task = Task.find(reassign_remove_task_id) unless action_type == "approve"
+      task = Task.find(reassign_remove_task_id)
       mail_team_user = task.assigned_by unless task.nil?
-      output = update_reassign_task(mail_team_user)
-      set_reassign_remove_banner_params(mail_team_user, action_type, output)
+      operation_type = params[:operation]
 
+      case operation_type
+      when "reassign"
+        output = update_reassign_task(mail_team_user)
+      when "remove"
+        output = update_remove_task(mail_team_user)
+      end
+      set_reassign_remove_banner_params(mail_team_user, action_type, output, operation_type)
+
+      render "correspondence_team"
     end
-    render "correspondence_team"
   end
 
   def handle_json_response(mail_team_user, task_ids, tab)
@@ -256,39 +262,72 @@ class CorrespondenceController < ApplicationController
     task_id = params[:taskId].strip
     action_type = params[:userAction].strip
     decision_reason = params[:decisionReason].strip
-    # return unless @response_type == "success"
 
-    # begin
+    task = Task.find_by(id: task_id)
+    case action_type
+    when "approve"
+      task.update!(
+        completed_by_id: current_user,
+        assigned_to_id: current_user,
+        assigned_to: current_user,
+        closed_at: Time.zone.now,
+        status: "completed"
+      )
+      parent_task = ReviewPackageTask.find(task.parent_id)
+      parent_task.update!(
+        assigned_to_id: mail_team_user.id,
+        assigned_to: mail_team_user,
+        assigned_to_type: "User",
+        status: "completed"
+      )
+
+
+      ReviewPackageTask.create!(
+        assigned_to_id: mail_team_user.id,
+        assigned_to: mail_team_user,
+        assigned_to_type: "User",
+        status: "assigned",
+        appeal_id: task.appeal_id,
+        appeal_type: "Correspondence",
+        assigned_at: Time.zone.now,
+        assigned_by_id: current_user,
+        type: "ReviewPackageTask"
+      )
+
+    when "reject"
+      task.update(
+        completed_by_id: current_user,
+        closed_at: Time.zone.now,
+        status: "completed",
+        instructions: decision_reason
+      )
+      parent_task = ReviewPackageTask.find(task.parent_id)
+      parent_task.update(assigned_to_type: "User", status: "in_progress")
+    end
+  end
+
+  def update_remove_task(mail_team_user)
+    task_id = params[:taskId].strip
+    action_type = params[:userAction].strip
+    decision_reason = params[:decisionReason].strip
       task = Task.find_by(id: task_id)
-      binding.pry
       case action_type
       when "approve"
-        binding.pry
-        task.update(completed_by_id: current_user, closed_at: Time.zone.now, status: "completed")
-        parent_task = ReviewPackageTask.find(task.parent_id)
-        parent_task.update(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "completed")
-         rpt = ReviewPackageTask.create!(
-          assigned_to_id: mail_team_user.id,
-          assigned_to_type: "User",
-          status: "assigned",
-          appeal_id: task.appeal_id,
-          appeal_type: "Correspondence",
-          assigned_at: Time.zone.now,
-          assigned_by_id: current_user,
-          type: "ReviewPackageTask"
+        task.update!(completed_by_id: current_user,
+          assigned_to_id: mail_team_user,
+          assigned_to: mail_team_user,
+          status: "cancelled"
         )
-        binding.pry
-
       when "reject"
-        # task.update(completed_by_id: current_user, closed_at: Time.zone.now, status: "completed", instructions: decision_reason)
-        # parent_task = ReviewPackageTask.find(task.parent_id)
-        # parent_task.update(assigned_to_type: "User", status: "in_progress")
+        task.update!(
+          completed_by_id: current_user,
+          closed_at: Time.zone.now,
+          status: "completed",
+          instructions: decision_reason
+        )
+        parent_task = ReviewPackageTask.find(task.parent_id)
+        parent_task.update(status: "in_progress")
       end
-
-
-    # end
-  # rescue StandardError => error
-    # error.message
   end
 
   def set_banner_params(user, task_count, tab)
@@ -298,17 +337,25 @@ class CorrespondenceController < ApplicationController
     @response_message = template[:message]
   end
 
-  def set_reassign_remove_banner_params(user, action_type, error)
+  def set_reassign_remove_banner_params(user, action_type, error, operation_type)
 
-    if error
-      @response_header = "Package request for #{user.css_id} could not be #{action_type}"
-      @response_message = "Please try again at a later time or contact the Help Desk."
-      @response_type = "error"
+        # if error
+    #   @response_header = "Package request for #{user.css_id} could not be #{action_type}"
+    #   @response_message = "Please try again at a later time or contact the Help Desk."
+    #   @response_type = "error"
+    # end
+    case operation_type
+    when "remove"
+      template = remove_message_template(user, action_type)
+      @response_header = template[:header]
+      @response_message = template[:message]
+      @response_type = "success"
+    when "reassign"
+      template = reassign_message_template(user, action_type)
+      @response_header = template[:header]
+      @response_message = template[:message]
+      @response_type = "success"
     end
-    template = reassign_message_template(user, action_type)
-    @response_header = template[:header]
-    @response_message = template[:message]
-    @response_type = "success"
   end
 
   def message_template(user, task_count, tab)
@@ -351,6 +398,27 @@ class CorrespondenceController < ApplicationController
       }
     end
   end
+
+  def remove_message_template(user, action_type)
+    success_header_approved = "You have successfully rejected a package request for #{user.css_id}"
+    success_message_approved = "The package will be re-assigned to the user that sent the request."
+    success_header_rejected = "You have successfully removed a mail package for #{user.css_id}"
+    success_message_rejected = "The package has been removed from Caseflow and must be manually uploaded again
+     from the Centralized Mail Portal, if it needs to be processed."
+    case action_type
+    when "approve"
+      {
+        header: success_header_approved,
+        message: success_message_approved
+      }
+    when "reject"
+      {
+        header: success_header_rejected,
+        message: success_message_rejected
+      }
+    end
+  end
+
   def response_type(user)
     @response_type = (user.tasks.length < MAX_QUEUED_ITEMS) ? "success" : "warning"
   end
