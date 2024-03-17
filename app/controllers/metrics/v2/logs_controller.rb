@@ -34,7 +34,6 @@ class Metrics::V2::LogsController < ApplicationController
                                    :relevant_tables_info,
                                    :start,
                                    :end,
-                                   :duration,
-                                   :event_id)
+                                   :duration)
   end
 end

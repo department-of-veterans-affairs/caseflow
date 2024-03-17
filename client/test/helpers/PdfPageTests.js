@@ -13,8 +13,7 @@ export const pageMetricData = [
   },
   message: 'Storing PDF page 2',
   product: 'reader',
-  type: 'performance',
-  eventId: '123456'
+  type: 'performance'
   },
   true
 ];
@@ -44,8 +43,7 @@ export const storeMetricsData = [
     message: 'pdf_page_render_time_in_ms',
     product: 'reader',
     type: 'performance'
-  },
-  '123456'
+  }
 ];
 
 export const storeMetricsBrowserError = [
@@ -59,8 +57,7 @@ export const storeMetricsBrowserError = [
     message: '1234 : setUpPage /document/1/pdf : Error',
     product: 'browser',
     type: 'error',
-  },
-  '123456',
+  }
 ];
 
 export const recordMetricsArgs = [
@@ -75,8 +72,7 @@ export const recordMetricsArgs = [
   message: 'Rendering PDF page 2 text',
   product: 'reader',
   type: 'performance',
-  uuid: '1234',
-  eventId: '123456'
+  uuid: '1234'
   },
   true
 ];
@@ -85,7 +81,6 @@ export const pdfPageRenderTimeInMsEnabled = () => {
   return shallow(
     <PdfPage
       documentId={documents[0].id}
-      metricsIdentifier="123456"
       file={documents[0].content_url}
       isPageVisible=""
       pageIndex={1}

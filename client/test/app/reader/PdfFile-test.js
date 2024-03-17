@@ -12,8 +12,8 @@ jest.mock('../../../app/util/ApiUtil', () => ({
   }),
 }));
 jest.mock('../../../app/util/Metrics', () => ({
-  storeMetrics: jest.fn().mockResolvedValue(),
-  recordAsyncMetrics: jest.fn().mockResolvedValue(),
+  storeMetrics: jest.fn(),
+  recordAsyncMetrics: jest.fn(),
 }));
 jest.mock('pdfjs-dist', () => ({
   getDocument: jest.fn().mockResolvedValue(),
@@ -29,8 +29,7 @@ const metricArgs = (featureValue) => {
       {
         documentId: 1,
         documentType: 'test',
-        file: '/document/1/pdf',
-        prefetchDisabled: undefined,
+        file: '/document/1/pdf'
       },
       // eslint-disable-next-line no-useless-escape
       message: 'Getting PDF document: \"/document/1/pdf\"',
@@ -55,8 +54,7 @@ const storeMetricsError = {
     message: expect.stringMatching(/^([a-zA-Z0-9-.'&:/ ])*$/),
     product: 'browser',
     type: 'error'
-  },
-  eventId: expect.stringMatching(/^([a-zA-Z0-9-.'&])*$/)
+  }
 };
 
 describe('PdfFile', () => {
@@ -166,10 +164,7 @@ describe('PdfFile', () => {
       });
 
       it('calls storeMetrics in catch block', () => {
-        expect(storeMetrics).toBeCalledWith(storeMetricsError.uuid,
-          storeMetricsError.data,
-          storeMetricsError.info,
-          storeMetricsError.eventId);
+        expect(storeMetrics).toBeCalledWith(storeMetricsError.uuid, storeMetricsError.data, storeMetricsError.info);
       });
 
       it('clears measureTimeStartMs after unmount', () => {

@@ -48,6 +48,7 @@ export class PdfFile extends React.PureComponent {
   }
 
   componentDidMount = () => {
+
     let requestOptions = {
       cache: true,
       withCredentials: true,
@@ -79,7 +80,7 @@ export class PdfFile extends React.PureComponent {
       documentId: this.props.documentId,
       documentType: this.props.documentType,
       file: this.props.file,
-      prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+      prefetchDisabled: this.props.featureToggles.prefetchDisabled
     };
 
     return ApiUtil.get(this.props.file, requestOptions).

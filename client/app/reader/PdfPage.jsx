@@ -214,7 +214,7 @@ export class PdfPage extends React.PureComponent {
     // eslint-disable-next-line no-underscore-dangle
     if (this.props.pdfDocument && !this.props.pdfDocument._transport.destroyed) {
       const pageMetricData = {
-        message: `Storing PDF page ${this.props.pageIndex + 1}`,
+        message: 'Storing PDF page',
         product: 'reader',
         type: 'performance',
         data: {
@@ -224,7 +224,6 @@ export class PdfPage extends React.PureComponent {
           numPagesInDoc: this.props.pdfDocument.numPages,
           prefetchDisabled: this.props.featureToggles.prefetchDisabled
         },
-        eventId: this.props.metricsIdentifier
       };
 
       const pageAndTextFeatureToggle = this.props.featureToggles.metricsPdfStorePages;
@@ -236,7 +235,7 @@ export class PdfPage extends React.PureComponent {
         this.page = page;
 
         const textMetricData = {
-          message: `Storing PDF page ${this.props.pageIndex + 1} text`,
+          message: 'Storing PDF page text',
           product: 'reader',
           type: 'performance',
           data: {
@@ -244,14 +243,13 @@ export class PdfPage extends React.PureComponent {
             documentId: this.props.documentId,
             pageIndex: this.props.pageIndex,
             numPagesInDoc: this.props.pdfDocument.numPages,
-            prefetchDisabled: this.props.featureToggles.prefetchDisabled,
+            prefetchDisabled: this.props.featureToggles.prefetchDisabled
           },
-          eventId: this.props.metricsIdentifier
         };
 
         const readerRenderText = {
           uuid: uuidv4(),
-          message: `Rendering PDF page ${this.props.pageIndex + 1} text`,
+          message: 'PDFJS rendering text layer',
           type: 'performance',
           product: 'reader',
           data: {
@@ -262,7 +260,6 @@ export class PdfPage extends React.PureComponent {
             numPagesInDoc: this.props.pdfDocument.numPages,
             prefetchDisabled: this.props.featureToggles.prefetchDisabled
           },
-          eventId: this.props.metricsIdentifier
         };
 
         const textResult = recordAsyncMetrics(this.getText(page), textMetricData, pageAndTextFeatureToggle);
@@ -295,8 +292,7 @@ export class PdfPage extends React.PureComponent {
                 start: new Date(performance.timeOrigin + data.start),
                 end: new Date(performance.timeOrigin + data.end),
                 duration: data.start ? data.end - data.start : 0
-              },
-              this.props.metricsIdentifier,
+              }
             );
           }
         });
@@ -318,8 +314,7 @@ export class PdfPage extends React.PureComponent {
             { message,
               type: 'error',
               product: 'browser',
-            },
-            this.props.metricsIdentifier
+            }
           );
         }
       });
