@@ -6,7 +6,7 @@ describe BusinessMetrics do
 
     it "sends business metrics to datadog service" do
       RequestStore[:application] = "queue"
-      expect(MetricsService).to receive(:increment_counter).with(
+      expect(DataDogService).to receive(:increment_counter).with(
         metric_group: "business",
         metric_name: "event",
         app_name: "queue",
