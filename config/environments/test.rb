@@ -147,4 +147,7 @@ Rails.application.configure do
   ENV["PACMAN_API_TOKEN_SECRET"] ||= "client-secret"
   ENV["PACMAN_API_TOKEN_ISSUER"] ||= "issuer-of-our-token"
   ENV["PACMAN_API_SYS_ACCOUNT"] ||= "CSS_ID_OF_OUR_ACCOUNT"
+
+  # Dynatrace variables
+  ENV["STATSD_ENV"] = "test"
 end
