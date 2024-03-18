@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import React, { useState, useEffect } from 'react';
-import Link from '../../../components/Link';
 import { css } from 'glamor';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 
+import Link from '../../../components/Link';
 import Table from '../../../components/Table';
 import { genericRow } from './style';
 import DocketTypeBadge from '../../../components/DocketTypeBadge';
@@ -88,9 +88,10 @@ const rowClassNames = (rowObject) => `${rowObject.isEvenGroup ? 'even' : 'odd'}-
 const TranscriptionFilesTable = ({ hearing }) => {
   const [rows, setRows] = useState([]);
 
-  // One hearing may have multiple recordings. Format table to associate files by recording
+  // One hearing may yield multiple recordings. Format table to group associated files by recording
   const buildRowsFromRecordings = () => {
-    const recordings = _.flatMap(hearing.transcriptionFiles, (rec) => [_.flatMap(rec)]);
+    // Flatten nested objects into nested arrays
+    const recordings = _.values(hearing.transcriptionFiles).map((rec) => _.values(rec));
 
     return recordings.map((recording, recordingIndex) => {
       return recording.map((file, fileIndex) => {
@@ -130,14 +131,9 @@ const TranscriptionFilesTable = ({ hearing }) => {
 
 TranscriptionFilesTable.propTypes = {
   hearing: PropTypes.shape({
-    docketNumber: PropTypes.string,
+    transcriptionFiles: PropTypes.object,
     docketName: PropTypes.string,
-    transcriptionFiles: PropTypes.shape({
-      awsLink: PropTypes.string,
-      dateUploadAws: PropTypes.string,
-      fileName: PropTypes.string,
-      fileStatus: PropTypes.string
-    })
+    docketNumber: PropTypes.string
   })
 };
 

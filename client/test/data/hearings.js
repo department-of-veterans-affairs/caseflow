@@ -147,6 +147,66 @@ export const nonVirtualWebexHearing = {
   summary: null,
   transcriptRequested: null,
   transcription: {},
+  transcriptionFiles: {
+    0: {
+      0: {
+        dateUploadAws: '',
+        fileName: 'test_file_name.mp4',
+        awsLink: 'test_aws_location',
+        fileStatus: 'Successful Upload (AWS)'
+      },
+      1: {
+        dateUploadAws: '',
+        fileName: 'test_file_name.mp3',
+        awsLink: 'test_aws_location',
+        fileStatus: 'Successful Upload (AWS)'
+      },
+      2: {
+        dateUploadAws: '',
+        fileName: 'test_file_name.vtt',
+        awsLink: 'test_aws_location',
+        fileStatus: 'Successful Upload (AWS)'
+      },
+      3: {
+        dateUploadAws: '',
+        fileName: 'test_file_name.rtf',
+        awsLink: 'test_aws_location',
+        fileStatus: 'Successful Upload (AWS)'
+      }
+    },
+    1: {
+      0: {
+        dateUploadAws: '',
+        fileName: 'test_file_name-2.mp4',
+        awsLink: 'test_aws_location',
+        fileStatus: 'Successful Upload (AWS)'
+      },
+      1: {
+        dateUploadAws: '',
+        fileName: 'test_file_name-2.mp3',
+        awsLink: 'test_aws_location',
+        fileStatus: 'Successful Upload (AWS)'
+      },
+      2: {
+        dateUploadAws: '',
+        fileName: 'test_file_name-2.vtt',
+        awsLink: 'test_aws_location',
+        fileStatus: 'Successful Upload (AWS)'
+      },
+      3: {
+        dateUploadAws: '',
+        fileName: 'test_file_name-2.rtf',
+        awsLink: 'test_aws_location',
+        fileStatus: 'Successful Upload (AWS)'
+      },
+      4: {
+        dateUploadAws: '',
+        fileName: 'test_file_name-2.csv',
+        awsLink: 'test_aws_location',
+        fileStatus: 'Successful Upload (AWS)'
+      }
+    }
+  },
   veteranAge: 30,
   veteranFileNumber: '100000100',
   veteranFirstName: 'Dennis',
@@ -156,7 +216,148 @@ export const nonVirtualWebexHearing = {
   isVirtual: false,
   wasVirtual: false,
   witness: null,
-}
+};
+
+export const legacyWebexHearing = {
+  poaName: 'AMERICAN LEGION',
+  currentIssueCount: 1,
+  caseType: 'Original',
+  aod: false,
+  advanceOnDocketMotion: null,
+  appealExternalId: '0bf0263c-d863-4405-9b2e-f55cff77c6c3',
+  appealId: 613,
+  appellantAddressLine1: '9999 MISSION ST',
+  appellantCity: 'SAN FRANCISCO',
+  appellantEmailAddress: 'tom.brady@caseflow.gov',
+  appellantFirstName: 'Tom',
+  appellantIsNotVeteran: true,
+  appellantLastName: 'Brady',
+  appellantState: 'CA',
+  appellantZip: '94103',
+  availableHearingLocations: {},
+  bvaPoc: null,
+  centralOfficeTimeString: '04:00',
+  claimantId: 604,
+  closestRegionalOffice: null,
+  conferenceProvider: 'pexip',
+  disposition: null,
+  dispositionEditable: true,
+  docketName: 'legacy',
+  docketNumber: '200624-613',
+  evidenceWindowWaived: false,
+  externalId: '61e7af7a-586c-446d-b8ee-a65be467e9e0',
+  hearingDayId: 11,
+  id: 10,
+  judge: {
+    id: 3,
+    createdAt: '2020-06-25T11:00:43.257-04:00',
+    cssId: 'BVAAABSHIRE',
+    efolderDocumentsFetchedAt: null,
+    email: null,
+    fullName: 'Aaron Judge_HearingsAndCases Abshire',
+    lastLoginAt: null,
+    roles: {},
+    selectedRegionalOffice: null,
+    stationId: '101',
+    status: 'active',
+    statusUpdatedAt: null,
+    updatedAt: '2020-06-25T11:00:43.257-04:00',
+    displayName: 'BVAAABSHIRE (VACO)',
+  },
+  judgeId: '3',
+  location: null,
+  militaryService: '',
+  notes: null,
+  paperCase: false,
+  prepped: null,
+  readableLocation: null,
+  readableRequestType: 'Video',
+  regionalOfficeKey: 'RO17',
+  regionalOfficeName: 'St. Petersburg regional office',
+  regionalOfficeTimezone: 'America/New_York',
+  representative: 'PARALYZED VETERANS OF AMERICA, INC.',
+  representativeName: null,
+  representativeEmailAddress: 'tom.brady@caseflow.gov',
+  room: '1',
+  scheduledFor: '2020-07-06T04:00:00.000-04:00',
+  scheduledForIsPast: false,
+  scheduledTime: '2000-01-01T04:00:00.000-05:00',
+  scheduledTimeString: '04:00',
+  summary: null,
+  transcriptionFiles: {
+    0: {
+      0: {
+        dateUploadAws: '',
+        fileName: 'test_file_name.mp4',
+        awsLink: 'test_aws_location',
+        fileStatus: 'Successful Upload (AWS)'
+      },
+      1: {
+        dateUploadAws: '',
+        fileName: 'test_file_name.mp3',
+        awsLink: 'test_aws_location',
+        fileStatus: 'Successful Upload (AWS)'
+      },
+      2: {
+        dateUploadAws: '',
+        fileName: 'test_file_name.vtt',
+        awsLink: 'test_aws_location',
+        fileStatus: 'Successful Upload (AWS)'
+      },
+      3: {
+        dateUploadAws: '',
+        fileName: 'test_file_name.rtf',
+        awsLink: 'test_aws_location',
+        fileStatus: 'Successful Upload (AWS)'
+      }
+    },
+    1: {
+      0: {
+        dateUploadAws: '',
+        fileName: 'test_file_name-2.mp4',
+        awsLink: 'test_aws_location',
+        fileStatus: 'Successful Upload (AWS)'
+      },
+      1: {
+        dateUploadAws: '',
+        fileName: 'test_file_name-2.mp3',
+        awsLink: 'test_aws_location',
+        fileStatus: 'Successful Upload (AWS)'
+      },
+      2: {
+        dateUploadAws: '',
+        fileName: 'test_file_name-2.vtt',
+        awsLink: 'test_aws_location',
+        fileStatus: 'Successful Upload (AWS)'
+      },
+      3: {
+        dateUploadAws: '',
+        fileName: 'test_file_name-2.rtf',
+        awsLink: 'test_aws_location',
+        fileStatus: 'Successful Upload (AWS)'
+      },
+      4: {
+        dateUploadAws: '',
+        fileName: 'test_file_name-2.csv',
+        awsLink: 'test_aws_location',
+        fileStatus: 'Successful Upload (AWS)'
+      }
+    }
+  },
+  uuid: '61e7af7a-586c-446d-b8ee-a65be467e9e0',
+  veteranAge: 85,
+  veteranFileNumber: '100000005',
+  veteranFirstName: 'Brian',
+  veteranGender: 'M',
+  veteranLastName: 'Hodkiewicz',
+  veteranEmailAddress: 'Brian.Hodkiewicz@test.com',
+  isVirtual: false,
+  virtualHearing: null,
+  emailEvents: [],
+  wasVirtual: false,
+  witness: null,
+  worksheetIssues: {},
+};
 
 export const amaHearingPast = {
   poaName: 'AMERICAN LEGION',

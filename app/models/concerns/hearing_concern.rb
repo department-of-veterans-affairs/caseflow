@@ -105,7 +105,7 @@ module HearingConcern
 
   # One hearing may yield multiple recording segments. Group transcription files by base file name to associate the file
   # with a recording.
-  def serialize_transcription_files
+  def serialized_transcription_files
     recordings = transcription_files.order(:created_at).group_by(&:base_file_name).values
     recordings.map do |recording|
       recording.map do |file|

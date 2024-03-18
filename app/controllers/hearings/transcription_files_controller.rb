@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TranscriptionFilesController < ApplicationController
+class Hearings::TranscriptionFilesController < ApplicationController
   def index
     nil
   end

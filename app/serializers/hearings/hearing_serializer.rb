@@ -105,7 +105,7 @@ class HearingSerializer
   attribute :transcription
   attribute :transcription_files, if: for_worksheet do |hearing|
     if hearing.conference_provider == "webex"
-      hearing.serialize_transcription_files
+      hearing.serialized_transcription_files
     end
   end
   attribute :uuid
