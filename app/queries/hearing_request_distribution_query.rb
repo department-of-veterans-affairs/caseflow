@@ -45,45 +45,110 @@ class HearingRequestDistributionQuery
 
   # use nongenpop appeals as the base
   def not_genpop_appeals
-    # also handles ama_hearing_case_affinity_days == "infinite"
-    base_query = base_relation.most_recent_hearings.tied_to_distribution_judge(judge)
-
     # handling AMA Hearing Case Affinity Days
-    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days)
-      base_query = base_query.affinitized_ama_affinity_cases
+    ama_non_aod_hearing_query =
+      if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days)
+        base_relation
+          .most_recent_hearings
+          .tied_to_distribution_judge(judge)
+          .ama_non_aod_hearing_appeals
+          .affinitized_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_affinity_days)
+    elsif CaseDistributionLever.ama_hearing_case_affinity_days == "infinite"
+      base_relation
+        .most_recent_hearings
+        .tied_to_distribution_judge(judge)
+        .ama_non_aod_hearing_appeals
+    elsif CaseDistributionLever.ama_hearing_case_affinity_days == "omit"
+        base_relation
+          .most_recent_hearings
+          .join_distribution_tasks
+          .none
     end
 
     # handling AOD AMA Hearing Case AOD Affinity Days
-    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
-      base_query = base_query.joins(with_assigned_distribution_task_sql).or(base_query.ama_aod_hearing_original_appeals)
-    elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == "infinite"
-      base_query = base_query.joins(with_assigned_distribution_task_sql).or(base_query.always_ama_aod_hearing_original_appeals)
-    end
+    ama_aod_hearing_query =
+      if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
+        base_relation
+          .most_recent_hearings
+          .tied_to_distribution_judge(judge)
+          .ama_aod_hearing_appeals
+          .affinitized_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
+      elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == "infinite"
+        base_relation
+          .most_recent_hearings
+          .tied_to_distribution_judge(judge)
+          .ama_aod_hearing_appeals
+      elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == "omit"
+        base_relation
+          .most_recent_hearings
+          .join_distribution_tasks
+          .none
+      end
 
-    base_query.uniq
+    ama_non_aod_hearing_query.or(ama_aod_hearing_query).uniq
+  end
+
+  def filter_out_cases
+    joins(with_assigned_distribution_task_sql)
+      .where()
   end
 
   def only_genpop_appeals
-    result = case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days) ?
-    base_relation_with_joined_most_recent_hearings_and_dist_task.expired_ama_affinity_cases :
-    base_relation_with_joined_most_recent_hearings_and_dist_task.always_ama_affinity_cases
+    ama_non_aod_hearing_query =
+      if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_affinity_days)
+        base_relation
+          .most_recent_hearings
+          .join_distribution_tasks
+          .ama_non_aod_hearing_appeals
+          .expired_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_affinity_days)
+    elsif CaseDistributionLever.ama_hearing_case_affinity_days == "infinite"
+      base_relation
+        .most_recent_hearings
+        .join_distribution_tasks
+        .none
+    elsif CaseDistributionLever.ama_hearing_case_affinity_days == "omit"
+        base_relation
+          .most_recent_hearings
+          .not_tied_to_any_judge
+          .ama_non_aod_hearing_appeals
+    end
+
+    # handling AOD AMA Hearing Case AOD Affinity Days
+    ama_aod_hearing_query =
+    if case_affinity_days_lever_value_is_selected?(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
+      base_relation
+        .most_recent_hearings
+        .join_distribution_tasks
+        .ama_aod_hearing_appeals
+        .expired_ama_affinity_cases(CaseDistributionLever.ama_hearing_case_aod_affinity_days)
+    elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == "infinite"
+      base_relation
+        .most_recent_hearings
+        .join_distribution_tasks
+        .none
+    elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == "omit"
+      base_relation
+        .most_recent_hearings
+        .not_tied_to_any_judge
+        .ama_aod_hearing_appeals
+    end
+
+    result = ama_non_aod_hearing_query.or(ama_aod_hearing_query)
 
     if FeatureToggle.enabled?(:acd_cases_tied_to_judges_no_longer_with_board)
-      result = result.or(base_relation_with_joined_most_recent_hearings_and_dist_task.tied_to_ineligible_judge)
+      result = result.or(base_relation.most_recent_hearings.tied_to_ineligible_judge)
     end
 
     if FeatureToggle.enabled?(:acd_exclude_from_affinity)
       result = result.or(
-        base_relation_with_joined_most_recent_hearings_and_dist_task.tied_to_judges_with_exclude_appeals_from_affinity
+        base_relation.most_recent_hearings.tied_to_judges_with_exclude_appeals_from_affinity
         )
-      end
-
-    result = result.or(base_relation_with_joined_most_recent_hearings_and_dist_task.not_tied_to_any_judge)
-    # this needs to be refactored and the joins shape is different becuase with_no_held_hearings uses an alias
-    # result = result.or(base_relation_with_joined_most_recent_hearings_and_dist_task.with_no_held_hearings)
+    end
 
     # the base result is doing an inner join with hearings so it isn't retrieving any appeals that have no hearings
     # yet, so we add with_no_hearings to retrieve those appeals and flatten the array before returning
+
+    #.or(with_no_hearings).or(with_no_held_hearings).uniq
     [result, with_no_hearings, with_no_held_hearings].flatten.uniq
   end
 
