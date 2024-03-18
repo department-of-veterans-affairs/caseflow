@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module MetricAttributes
   METRIC_TYPES = { error: "error", log: "log", performance: "performance", info: "info" }.freeze
   LOG_SYSTEMS = {

@@ -50,6 +50,7 @@ class Metric < CaseflowRecord
   # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   # :reek:ControlParameter
   def self.default_object(klass, params, user)
+    product_types = MetricAttributes::PRODUCT_TYPES
     {
       uuid: params[:uuid],
       user: user || RequestStore.store[:current_user] || User.system_user,
@@ -58,7 +59,7 @@ class Metric < CaseflowRecord
       metric_group: params[:group] || MetricAttributes::METRIC_GROUPS[:service],
       metric_message: params[:message] || MetricAttributes::METRIC_TYPES[:log],
       metric_type: params[:type] || MetricAttributes::METRIC_TYPES[:log],
-      metric_product: MetricAttributes::PRODUCT_TYPES[params[:product].to_sym] || MetricAttributes::PRODUCT_TYPES[:caseflow],
+      metric_product: product_types[params[:product].to_sym] || product_types[:caseflow],
       app_name: params[:app_name] || MetricAttributes::APP_NAMES[:caseflow],
       metric_attributes: params[:metric_attributes],
       additional_info: params[:additional_info],
