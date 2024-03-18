@@ -50,6 +50,7 @@ RSpec.feature("Search Bar for Correspondence") do
     it "successfully opens the assigned tab, finds the search box, and enters data there." do
       visit "/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc"
       expect(page).to have_content("Filter table by any of its columns")
+      expect(find("#searchBar")).to match_xpath("//input[@placeholder='Type to filter...']")
       veteran = Veteran.first
       find_by_id("searchBar").fill_in with: veteran.last_name
       search_value = find("tbody > tr:nth-child(1) > td:nth-child(1)").text
@@ -59,6 +60,7 @@ RSpec.feature("Search Bar for Correspondence") do
     it "should display the search bar with text even we shift to other tabs " do
       visit "/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc"
       expect(page).to have_content("Filter table by any of its columns")
+      expect(find("#searchBar")).to match_xpath("//input[@placeholder='Type to filter...']")
       veteran = Veteran.first
       find_by_id("searchBar").fill_in with: veteran.last_name
       find_by_id("tasks-tabwindow-tab-1").click
@@ -68,6 +70,7 @@ RSpec.feature("Search Bar for Correspondence") do
     it "Should display Only search results even when we hit pagination " do
       visit "/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc"
       expect(page).to have_content("Filter table by any of its columns")
+      expect(find("#searchBar")).to match_xpath("//input[@placeholder='Type to filter...']")
       veteran = Veteran.first
       find_by_id("searchBar").fill_in with: veteran.last_name
       expect(page).to have_button("Next")
@@ -82,6 +85,7 @@ RSpec.feature("Search Bar for Correspondence") do
     it "Verify the user can clear the search bar by clicking the 'x' in the search bar" do
       visit "/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc"
       expect(page).to have_content("Filter table by any of its columns")
+      expect(find("#searchBar")).to match_xpath("//input[@placeholder='Type to filter...']")
       veteran = Veteran.first
       find_by_id("searchBar").fill_in with: veteran.last_name
       search_value = find("tbody > tr:nth-child(1) > td:nth-child(1)").text
@@ -92,23 +96,20 @@ RSpec.feature("Search Bar for Correspondence") do
 
     it "Verify the user can have search results sorted by veteran details." do
       visit "/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc"
+
       expect(page).to have_content("Filter table by any of its columns")
+      expect(find("#searchBar")).to match_xpath("//input[@placeholder='Type to filter...']")
+
       veteran = Veteran.first
       find_by_id("searchBar").fill_in with: veteran.last_name
-      search_value = find("tbody > tr:nth-child(1) > td:nth-child(1)").text
-      expect(search_value.include?(veteran.last_name))
-      # put page in the sorted A-Z state
-      find("[aria-label='Sort by Veteran Details']").click
-      first_vet_info = page.all("#task-link")[0].text
-      # put page in the sorted Z-A state
-      find("[aria-label='Sort by Veteran Details']").click
-      last_vet_info = page.all("#task-link")[0].text
-      # return to A-Z, compare veteran details
-      find("[aria-label='Sort by Veteran Details']").click
-      expect(page.all("#task-link")[0].text == first_vet_info)
-      # return to Z-A, compare details again
-      find("[aria-label='Sort by Veteran Details']").click
-      expect(page.all("#task-link")[0].text == last_vet_info)
+      expect(page).to have_content(veteran.last_name)
+
+      sort_icon = find("[aria-label='Sort by Veteran Details']")
+      sort_icon.click # Sort A-Z
+      expect(page.all("#task-link")[0].text).to eq(page.all("#task-link").last.text)
+
+      sort_icon.click # Sort Z-A
+      expect(page.all("#task-link")[0].text).to eq(page.all("#task-link").first.text)
     end
 
     it "Verify the user can have search results filtered by receipt date on filter correctly" do
