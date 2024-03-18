@@ -228,7 +228,7 @@ class CorrespondenceController < ApplicationController
     end
     if reassign_remove_task_id.present? && action_type.present?
       task = Task.find(reassign_remove_task_id)
-      mail_team_user = task.assigned_by unless task.nil?
+      mail_team_user = task.assigned_by
       operation_type = params[:operation]
 
       case operation_type
@@ -267,7 +267,7 @@ class CorrespondenceController < ApplicationController
     case action_type
     when "approve"
       task.update!(
-        completed_by_id: current_user,
+        completed_by: current_user,
         assigned_to_id: current_user,
         assigned_to: current_user,
         closed_at: Time.zone.now,
@@ -275,23 +275,18 @@ class CorrespondenceController < ApplicationController
       )
       parent_task = ReviewPackageTask.find(task.parent_id)
       parent_task.update!(
-        assigned_to_id: mail_team_user.id,
-        assigned_to: mail_team_user,
-        assigned_to_type: "User",
-        status: "completed"
+        status: "completed",
+        closed_at: Time.zone.now,
+        completed_by: current_user
       )
-
+      binding.pry
 
       ReviewPackageTask.create!(
-        assigned_to_id: mail_team_user.id,
         assigned_to: mail_team_user,
-        assigned_to_type: "User",
+        assigned_to_id: mail_team_user.id,
         status: "assigned",
         appeal_id: task.appeal_id,
         appeal_type: "Correspondence",
-        assigned_at: Time.zone.now,
-        assigned_by_id: current_user,
-        type: "ReviewPackageTask"
       )
 
     when "reject"
@@ -310,24 +305,24 @@ class CorrespondenceController < ApplicationController
     task_id = params[:taskId].strip
     action_type = params[:userAction].strip
     decision_reason = params[:decisionReason].strip
-      task = Task.find_by(id: task_id)
-      case action_type
-      when "approve"
-        task.update!(completed_by_id: current_user,
-          assigned_to_id: mail_team_user,
-          assigned_to: mail_team_user,
-          status: "cancelled"
-        )
-      when "reject"
-        task.update!(
-          completed_by_id: current_user,
-          closed_at: Time.zone.now,
-          status: "completed",
-          instructions: decision_reason
-        )
-        parent_task = ReviewPackageTask.find(task.parent_id)
-        parent_task.update(status: "in_progress")
-      end
+    task = Task.find_by(id: task_id)
+    case action_type
+    when "approve"
+      task.update!(
+        completed_by_id: current_user,
+        assigned_to_id: mail_team_user,
+        assigned_to: mail_team_user,
+        status: "cancelled"
+      )
+    when "reject"
+      task.update!(
+        completed_by_id: current_user,
+        closed_at: Time.zone.now,
+        status: "completed",
+        instructions: decision_reason
+      )
+      ReviewPackageTask.find(task.parent_id).update!(status: "in_progress")
+    end
   end
 
   def set_banner_params(user, task_count, tab)
