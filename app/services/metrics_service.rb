@@ -8,6 +8,7 @@ require "statsd-instrument"
 class MetricsService
   @statsd = Datadog::Statsd.new
 
+  # :reek:LongParameterList
   def self.increment_counter(metric_group:, metric_name:, app_name:, attrs: {}, by: 1)
     tags = get_tags(app_name, attrs)
     stat_name = get_stat_name(metric_group, metric_name)
@@ -29,6 +30,7 @@ class MetricsService
     )
   end
 
+  # :reek:LongParameterList
   def self.emit_gauge(metric_group:, metric_name:, metric_value:, app_name:, attrs: {})
     tags = get_tags(app_name, attrs)
     stat_name = get_stat_name(metric_group, metric_name)

@@ -36,6 +36,7 @@ module CollectCustomMetrics
     emit_metrics_point("vacols", "idle", idle)
   end
 
+  # :reek:UtilityFunction
   def emit_metrics_point(db_name, type, count)
     MetricsService.emit_gauge(
       metric_group: "database",
