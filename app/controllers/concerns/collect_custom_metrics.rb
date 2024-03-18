@@ -15,9 +15,9 @@ module CollectCustomMetrics
   def collect_postgres_metrics
     conns = ActiveRecord::Base.connection_pool.connections
 
-    active = conns.count { |c| c.in_use? && c.owner.alive? }
-    dead = conns.count { |c| c.in_use? && !c.owner.alive? }
-    idle = conns.count { |c| !c.in_use? }
+    active = conns.count { |conn| conn.in_use? && c.owner.alive? }
+    dead = conns.count { |conn| conn.in_use? && !c.owner.alive? }
+    idle = conns.count { |conn| !conn.in_use? }
 
     emit_metrics_point("postgres", "active", active)
     emit_metrics_point("postgres", "dead", dead)
@@ -27,9 +27,9 @@ module CollectCustomMetrics
   def collect_vacols_metrics
     conns = VACOLS::Record.connection_pool.connections
 
-    active = conns.count { |c| c.in_use? && c.owner.alive? }
-    dead = conns.count { |c| c.in_use? && !c.owner.alive? }
-    idle = conns.count { |c| !c.in_use? }
+    active = conns.count { |conn| conn.in_use? && c.owner.alive? }
+    dead = conns.count { |conn| conn.in_use? && !c.owner.alive? }
+    idle = conns.count { |conn| !conn.in_use? }
 
     emit_metrics_point("vacols", "active", active)
     emit_metrics_point("vacols", "dead", dead)
