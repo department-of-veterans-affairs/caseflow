@@ -120,7 +120,7 @@ class WarmBgsCachesJob < CaseflowJob
         capture_exception(error: error)
       end
     end
-    datadog_report_time_segment(segment: "warm_poa_bgs_oldest", start_time: start_time)
+    metrics_service_report_time_segment(segment: "warm_poa_bgs_oldest", start_time: start_time)
   end
 
   def warm_poa_and_cache_for_legacy_appeals(legacy_appeals, start_time, datadog_segment)
@@ -135,7 +135,7 @@ class WarmBgsCachesJob < CaseflowJob
       conflict_target: [:appeal_id, :appeal_type], columns: CACHED_APPEALS_BGS_POA_COLUMNS
     }
 
-    datadog_report_time_segment(segment: datadog_segment, start_time: start_time)
+    metrics_service_report_time_segment(segment: datadog_segment, start_time: start_time)
   end
 
   def warm_poa_and_cache_for_ama_appeals(claimants, start_time, datadog_segment)
@@ -151,7 +151,7 @@ class WarmBgsCachesJob < CaseflowJob
       conflict_target: [:appeal_id, :appeal_type], columns: CACHED_APPEALS_BGS_POA_COLUMNS
     }
 
-    datadog_report_time_segment(segment: datadog_segment, start_time: start_time)
+    metrics_service_report_time_segment(segment: datadog_segment, start_time: start_time)
   end
 
   # This block of code helps get file numbers associated with appeals in order to fetch poa
@@ -252,7 +252,7 @@ class WarmBgsCachesJob < CaseflowJob
     rescue StandardError => error
       Raven.capture_exception(error)
     end
-    datadog_report_time_segment(segment: "warm_participant_caches", start_time: start_time)
+    metrics_service_report_time_segment(segment: "warm_participant_caches", start_time: start_time)
   end
 
   def warm_ro_participant_caches(ro_ids)
@@ -274,7 +274,7 @@ class WarmBgsCachesJob < CaseflowJob
       # Ensure errors are sent to Sentry, but don't block the job from continuing.
       Raven.capture_exception(error)
     end
-    datadog_report_time_segment(segment: "warm_ro_participant_caches", start_time: start_time)
+    metrics_service_report_time_segment(segment: "warm_ro_participant_caches", start_time: start_time)
   end
 
   def warm_veteran_attribute_caches
@@ -296,7 +296,7 @@ class WarmBgsCachesJob < CaseflowJob
         Raven.capture_exception(error)
       end
     end
-    datadog_report_time_segment(segment: "warm_veteran_attribute_caches", start_time: start_time)
+    metrics_service_report_time_segment(segment: "warm_veteran_attribute_caches", start_time: start_time)
   end
 
   def warm_veterans_for_hearings_on_day(date_to_cache)
@@ -316,6 +316,6 @@ class WarmBgsCachesJob < CaseflowJob
   def warm_attorney_address_caches
     start_time = Time.zone.now
     BgsAttorney.all.each(&:warm_address_cache)
-    datadog_report_time_segment(segment: "warm_attorney_address_caches", start_time: start_time)
+    metrics_service_report_time_segment(segment: "warm_attorney_address_caches", start_time: start_time)
   end
 end
