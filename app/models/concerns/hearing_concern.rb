@@ -103,11 +103,14 @@ module HearingConcern
     end_date
   end
 
-  # One hearing may yield multiple recording segments. Group transcription files by base file name to associate the file
-  # with a recording.
+  # One hearing may yield multiple recordings. Group transcription files by base file name to associate with recording
+  def transcription_files_by_recording
+    transcription_files.order(:created_at).group_by(&:base_file_name).values
+  end
+
+  # Group transcription files by associated recording before mapping through nested array and serializing
   def serialized_transcription_files
-    recordings = transcription_files.order(:created_at).group_by(&:base_file_name).values
-    recordings.map do |recording|
+    transcription_files_by_recording.map do |recording|
       recording.map do |file|
         TranscriptionFileSerializer.new(file).serializable_hash[:data][:attributes]
       end
