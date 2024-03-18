@@ -5,16 +5,14 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
 
   attr_reader :headers, :payload
 
-  def initialize(payload)
+  def initialize(headers, payload)
     @payload = payload
     @headers = headers
     @veteran = @payload.dig(:veteran)
   end
 
-  private
 
   # Generic/universal methods
-
   def convert_milliseconds_to_datetime(milliseconds)
     Time.at(milliseconds / 1000).to_datetime
   end

@@ -5,17 +5,19 @@
 class Events::CreateVeteranOnEvent
   class << self
     def handle_veteran_creation_on_event(event, parser)
-      unless veteran_exist?(parser.ssn)
+      unless veteran_exist?(parser.veteran_ssn)
         create_backfill_veteran(event, parser)
       else
         # return existing Veteran
-        Veteran.find_by(ssn: parser.ssn)
+        Veteran.find_by(ssn: parser.veteran_ssn)
       end
     end
 
     def veteran_exist?(veteran_ssn)
       Veteran.where(ssn: veteran_ssn).exists?
     end
+
+    private
 
     def create_backfill_veteran(event, parser)
       # Create Veteran without calling BGS
@@ -40,17 +42,5 @@ class Events::CreateVeteranOnEvent
 
       return vet
     end
-
-    # def veteran_ssn(headers)
-    #   @veteran_ssn ||= headers["X-VA-Vet-SSN"].presence
-    # end
-
-    # def veteran_file_number(headers)
-    #   @veteran_file_number ||= headers["X-VA-File-Number"].presence
-    # end
-
-    # def convert_milliseconds_to_datetime(milliseconds)
-    #   Time.at(milliseconds / 1000).to_datetime
-    # end
   end
 end

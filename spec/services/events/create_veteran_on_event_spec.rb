@@ -21,14 +21,16 @@ describe Events::CreateVeteranOnEvent do
     end
   end
 
-  describe "#create_backfill_veteran" do
+  describe "#handle_veteran_creation_on_event" do
     subject { described_class}
 
     context "when creating a new Veteran" do
       it "should create successfully without calling BGS and also create an EventRecord" do
         headers = get_headers()
+        payload = get_payload()
+        parser = Events::DecisionReviewCreated::DecisionReviewCreatedParser.new(headers, payload)
 
-        backfilled_veteran = subject.create_backfill_veteran(event, headers, non_cf_veteran)
+        backfilled_veteran = subject.handle_veteran_creation_on_event(event, parser)
 
         expect(backfilled_veteran.ssn).to eq headers["X-VA-Vet-SSN"]
         expect(backfilled_veteran.file_number).to eq headers["X-VA-File-Number"]
@@ -37,7 +39,9 @@ describe Events::CreateVeteranOnEvent do
         expect(backfilled_veteran.middle_name).to eq headers["X-VA-Vet-Middle-Name"]
 
         expect(backfilled_veteran.participant_id).to eq non_cf_veteran.participant_id
-        expect(backfilled_veteran.bgs_last_synced_at).to eq convert_milliseconds_to_datetime(non_cf_veteran.bgs_last_synced_at)
+        expect(backfilled_veteran.bgs_last_synced_at).to eq parser.convert_milliseconds_to_datetime(non_cf_veteran.bgs_last_synced_at)
+        expect(backfilled_veteran.name_suffix).to eq nil
+        expect(backfilled_veteran.date_of_death).to eq nil
 
         expect(EventRecord.count).to eq 1
         event_record = EventRecord.first
@@ -56,8 +60,15 @@ describe Events::CreateVeteranOnEvent do
       }
     end
 
-    def convert_milliseconds_to_datetime(milliseconds)
-      Time.at(milliseconds / 1000).to_datetime
+    def get_payload()
+      return {
+        "veteran": {
+          "participant_id": "1826209",
+          "bgs_last_synced_at": 1708533584000,
+          "name_suffix": nil,
+          "date_of_death": nil
+        }
+      }
     end
   end
 end
