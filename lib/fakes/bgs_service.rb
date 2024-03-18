@@ -119,12 +119,12 @@ class Fakes::BGSService
       store_veteran_record(file_number, vet_record)
     end
 
-    def init_client_for_user(user:)
+    def init_client_for_user(_user:)
       {}
     end
   end
 
-  def initialize(client: nil); end
+  def initialize(_client: nil); end
 
   def get_end_products(file_number)
     store = self.class.end_product_store

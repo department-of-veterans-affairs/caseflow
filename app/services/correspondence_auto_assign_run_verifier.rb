@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# For correspondence auto assignment, determines whether or not an auto assign job can be run.
+# In order to prevent race conditions and inconsistent data, only one correspondence auto assignment can be run
+# at a time.
+
 class CorrespondenceAutoAssignRunVerifier
   attr_accessor :verified_batch, :verified_user, :err_msg
 

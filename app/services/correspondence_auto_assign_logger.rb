@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# For correspondence auto assignment, creates records of assignment attempts.
+# A log for the entire auto assignment run is stored to BatchAutoAssignmentAttempt.
+# Logs for reach assignment attempt are stroed to IndividualAutoAssignmentAttempt.
+
 # :reek:FeatureEnvy
 class CorrespondenceAutoAssignLogger
   def initialize(current_user, batch)
