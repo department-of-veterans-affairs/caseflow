@@ -81,6 +81,11 @@ module Seeds
         create_correspondence_with_action_required_tasks
       end
 
+      # 20 correspondences with reassign / remove task for action required
+      20.times do
+        create_correspondence_with_review_package_and_failed_upload_task
+      end
+
       # 10 Correspondences with in-progress CorrespondenceRootTask and completed Mail Task
       10.times do
         create_correspondence_with_completed_mail_task(mail_team_user)
@@ -180,6 +185,23 @@ module Seeds
         )
         pat.update(assigned_at: corres.va_date_of_receipt)
       end
+    end
+
+    def create_correspondences_with_review_remove_package_tasks
+        corres_array = (1..2).map { create(:correspondence) }
+        task_array = [ReassignPackageTask, RemovePackageTask]
+
+        corres_array.each_with_index do |corres, index|
+          rpt = ReviewPackageTask.find_by(appeal_id: corres.id)
+          task_array[index].create!(
+            parent_id: rpt.id,
+            appeal_type: "Correspondence",
+            appeal_id: corres.id,
+            assigned_to: InboundOpsTeam.singleton,
+            assigned_by_id: rpt.assigned_to_id
+          )
+        end
+
     end
 
     def create_correspondence_with_completed_mail_task(user)
