@@ -124,8 +124,7 @@ class Fakes::BGSService
     end
   end
 
-  def initialize(client: nil)
-  end
+  def initialize(client: nil); end
 
   def get_end_products(file_number)
     store = self.class.end_product_store

@@ -7,6 +7,20 @@ class CorrespondenceAutoAssignLogger
     self.batch = batch
   end
 
+  class << self
+    def fail_run_validation(batch_auto_assignment_attempt_id:, msg:)
+      failed_batch = BatchAutoAssignmentAttempt.find(batch_auto_assignment_attempt_id)
+
+      return if failed_batch.blank?
+
+      failed_batch.update!(
+        status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.error,
+        error_info: { message: msg },
+        errored_at: Time.current
+      )
+    end
+  end
+
   def begin
     batch.update!(
       started_at: Time.current,
@@ -35,18 +49,6 @@ class CorrespondenceAutoAssignLogger
     )
 
     save_run_statistics
-  end
-
-  def fail_run_validation(batch_auto_assignment_attempt_id:, msg:)
-    failed_batch = BatchAutoAssignmentAttempt.find(batch_auto_assignment_attempt_id)
-
-    return if failed_batch.blank?
-
-    failed_batch.update!(
-      status: Constants.CORRESPONDENCE_AUTO_ASSIGNMENT.statuses.error,
-      error_info: { message: msg },
-      errored_at: Time.current
-    )
   end
 
   def assigned(task:, started_at:, assigned_to:)
