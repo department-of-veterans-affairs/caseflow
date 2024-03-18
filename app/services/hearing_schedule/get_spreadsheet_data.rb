@@ -94,6 +94,7 @@ class HearingSchedule::GetSpreadsheetData
     }
   end
 
+  # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
   def allocation_data
     # Instantiate the hearing allocation days to be filled by data from the spreadsheet
     hearing_allocation_days = []
@@ -137,6 +138,7 @@ class HearingSchedule::GetSpreadsheetData
     # Return the list of allocated hearing days
     hearing_allocation_days
   end
+  # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
 
   private
 
