@@ -135,7 +135,8 @@ FactoryBot.define do
               file_type: file_type,
               docket_number: hearing.docket_number,
               file_status: "Successful upload (AWS)",
-              date_upload_aws: Time.zone.today
+              date_upload_aws: Time.zone.today,
+              aws_link: "www.test.com"
             )
           end
         end

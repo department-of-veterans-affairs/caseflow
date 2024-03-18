@@ -140,7 +140,7 @@ RSpec.feature "Hearing Details", :all_dbs do
     within "#table-row-#{row_number}" do
       expect(find("td:first-child")).to have_content(docket_number)
       expect(find("td:nth-child(2)")).to have_content(formatted_date)
-      expect(find("td:nth-child(3)")).to have_content(file.file_name)
+      expect(find("td:nth-child(3)")).to have_link(file.file_name, href: file.aws_link)
       expect(find("td:last-child")).to have_content(file.file_status)
     end
   end
