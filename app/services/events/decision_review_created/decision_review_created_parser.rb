@@ -13,8 +13,14 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
 
   private
 
+  # Generic methods
+
+  def convert_milliseconds_to_datetime(milliseconds)
+    Time.at(milliseconds / 1000).to_datetime
+  end
+
   # Veteran attributes
-  def veteran
+  def get_veteran
     @message_body.dig(:veteran)
   end
 
@@ -43,7 +49,8 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def bgs_last_synced_at
-    @message_body.dig(:veteran, :bgs_last_synced_at)
+    bgs_last_synced_at_milliseconds = @message_body.dig(:veteran, :bgs_last_synced_at)
+    convert_milliseconds_to_datetime(bgs_last_synced_at_milliseconds)
   end
 
   def name_suffix
@@ -55,8 +62,6 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   # Claimant attr
-
-  askldljkas
 
   # Intake attr
 
