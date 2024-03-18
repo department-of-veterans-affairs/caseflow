@@ -1092,14 +1092,6 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
         )
       end
 
-      let(:post_task_timer) do
-        TimedHoldTask.create_from_parent(
-          post_initial_task,
-          days_on_hold: days_on_hold,
-          instructions: "45 Days Hold Period"
-        )
-      end
-
       let(:taskTimer) { TaskTimer.find_by(task_id: post_initial_task.id) }
       let(:dayOnHold) { ((taskTimer.updated_at - taskTimer.created_at).to_i / 1.day) }
 
@@ -1145,14 +1137,6 @@ RSpec.describe TasksController, :all_dbs, type: :controller do
           assigned_to: cob_team,
           assigned_by: cob_user,
           end_date: Time.zone.now + days_on_hold.days
-        )
-      end
-
-      let(:post_task_timer) do
-        TimedHoldTask.create_from_parent(
-          post_initial_task,
-          days_on_hold: days_on_hold,
-          instructions: "45 Days Hold Period"
         )
       end
 
