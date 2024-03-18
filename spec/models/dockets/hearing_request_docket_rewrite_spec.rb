@@ -588,7 +588,6 @@ describe HearingRequestDocket, :postgres do
     appeal
   end
 
-  # TODO: update
   def create_ready_cavc_appeal(tied_judge: nil, created_date: 1.year.ago)
     Timecop.travel(created_date - 6.months)
     if tied_judge
@@ -649,7 +648,6 @@ describe HearingRequestDocket, :postgres do
     appeal
   end
 
-  # TODO: update
   def create_not_ready_cavc_appeal(tied_judge: nil, created_date: 1.year.ago)
     Timecop.travel(created_date - 6.months)
     if tied_judge
