@@ -117,7 +117,7 @@ const TranscriptionFilesTable = ({ hearing }) => {
   return (
     <div {...genericRow}>
       <Table
-        id="transcripton-files-table"
+        id="transcription-files-table"
         columns={transcriptionFileColumns}
         getKeyForRow={(index) => index}
         rowObjects={rows}
