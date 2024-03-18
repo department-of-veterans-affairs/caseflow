@@ -35,6 +35,7 @@ module.exports = {
     // See https://github.com/babel/eslint-plugin-babel#rules for list
     'no-unused-expressions': 'off',
     'babel/no-unused-expressions': 'error',
+    'no-magic-numbers': 'error',
   },
   settings: {
     react: {
