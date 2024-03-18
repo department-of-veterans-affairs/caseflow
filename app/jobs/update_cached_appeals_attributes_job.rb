@@ -23,7 +23,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     cache_legacy_appeals
     metrics_service_report_time_segment(segment: "cache_legacy_appeals", start_time: legacy_appeals_start)
 
-    record_success_in_datadog
+    record_success_in_metrics_service
   rescue StandardError => error
     log_error(@start_time, error)
   end
@@ -126,7 +126,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     metrics_service_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   end
 
-  def record_success_in_datadog
+  def record_success_in_metrics_service
     MetricsService.increment_counter(
       app_name: APP_NAME,
       metric_group: METRIC_GROUP_NAME,
