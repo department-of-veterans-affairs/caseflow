@@ -21,7 +21,7 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
 
   # Veteran attributes
   def get_veteran
-    @message_body.dig(:veteran)
+    @payload.dig(:veteran)
   end
 
   def file_number
@@ -45,20 +45,20 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def participant_id
-    @message_body.dig(:veteran, :participant_id)
+    @payload.dig(:veteran, :participant_id)
   end
 
   def bgs_last_synced_at
-    bgs_last_synced_at_milliseconds = @message_body.dig(:veteran, :bgs_last_synced_at)
+    bgs_last_synced_at_milliseconds = @payload.dig(:veteran, :bgs_last_synced_at)
     convert_milliseconds_to_datetime(bgs_last_synced_at_milliseconds)
   end
 
   def name_suffix
-    @message_body.dig(:veteran, :name_suffix)
+    @payload.dig(:veteran, :name_suffix)
   end
 
   def date_of_death
-    @message_body.dig(:veteran, :date_of_death)
+    @payload.dig(:veteran, :date_of_death)
   end
 
   # Claimant attr
