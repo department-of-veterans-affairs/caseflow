@@ -18,7 +18,7 @@ describe VirtualHearings::ResendVirtualHearingEmailsService do
     @se = create(
       :sent_hearing_email_event,
       # All tests should also work with this comented out, which creates an AMA hearing
-      #:with_legacy_hearing,
+      # :legacy,
       sent_at: Time.zone.parse("2021-01-02"),
       email_type: "confirmation"
     )
