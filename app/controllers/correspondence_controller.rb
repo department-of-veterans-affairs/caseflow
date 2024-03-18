@@ -205,12 +205,16 @@ class CorrespondenceController < ApplicationController
 
   private
 
-  def handle_mail_superuser_or_supervisor
+  def set_handle_mail_superuser_or_supervisor_params
     @mail_team_users = User.mail_team_users.pluck(:css_id)
     @is_superuser = current_user.mail_superuser?
     @is_supervisor = current_user.mail_supervisor?
-    mail_team_user = User.find_by(css_id: params[:user].strip) if params[:user].present?
-    task_ids = params[:taskIds]&.split(",") if params[:taskIds].present?
+  end
+
+  def handle_mail_superuser_or_supervisor
+    set_handle_mail_superuser_or_supervisor_params
+    # mail_team_user = User.find_by(css_id: params[:user].strip) if params[:user].present?
+    # task_ids = params[:taskIds]&.split(",") if params[:taskIds].present?
     reassign_remove_task_id = params[:taskId].strip if params[:taskId].present?
     action_type = params[:userAction].strip if params[:userAction].present?
     tab = params[:tab] if params[:tab].present?
@@ -218,6 +222,21 @@ class CorrespondenceController < ApplicationController
     respond_to do |format|
       format.html { handle_html_response(mail_team_user, task_ids, reassign_remove_task_id, tab, action_type) }
       format.json { handle_json_response(mail_team_user, task_ids, tab) }
+    end
+  end
+
+  def reassign_remove_banner_action(mail_team_user, action_type)
+    operation_type = params[:operation]
+    begin
+      case operation_type
+      when "reassign"
+        update_reassign_task(mail_team_user)
+      when "remove"
+        update_remove_task(mail_team_user)
+      end
+      set_reassign_remove_banner_params(mail_team_user, action_type, operation_type)
+    rescue StandardError
+      set_error_banner_params(operation_type, mail_team_user)
     end
   end
 
@@ -232,19 +251,7 @@ class CorrespondenceController < ApplicationController
         mail_team_user = task.assigned_by
       end
 
-      operation_type = params[:operation]
-
-      begin
-        case operation_type
-        when "reassign"
-          update_reassign_task(mail_team_user)
-        when "remove"
-          update_remove_task(mail_team_user)
-        end
-        set_reassign_remove_banner_params(mail_team_user, action_type, operation_type)
-      rescue StandardError
-        set_error_banner_params(operation_type, mail_team_user)
-      end
+      reassign_remove_banner_action(mail_team_user, action_type)
 
       render "correspondence_team"
     end
@@ -265,45 +272,51 @@ class CorrespondenceController < ApplicationController
     tasks.update_all(assigned_to_id: mail_team_user.id, assigned_to_type: "User", status: "assigned")
   end
 
+  def approve_reassign_task(task, current_user, mail_team_user)
+    task.update!(
+      completed_by: current_user,
+      assigned_to_id: current_user,
+      assigned_to: current_user,
+      closed_at: Time.zone.now,
+      status: "completed"
+    )
+    parent_task = ReviewPackageTask.find(task.parent_id)
+    parent_task.update!(
+      status: "completed",
+      closed_at: Time.zone.now,
+      completed_by: current_user
+    )
+    ReviewPackageTask.create!(
+      assigned_to: mail_team_user,
+      assigned_to_id: mail_team_user.id,
+      status: "assigned",
+      appeal_id: task.appeal_id,
+      appeal_type: "Correspondence"
+    )
+  end
+
+  def reject_reassign_task(task, current_user)
+    decision_reason = params[:decisionReason].strip
+    task.update(
+      completed_by_id: current_user,
+      closed_at: Time.zone.now,
+      status: "completed",
+      instructions: decision_reason
+    )
+    parent_task = ReviewPackageTask.find(task.parent_id)
+    parent_task.update(assigned_to_type: "User", status: "in_progress")
+  end
+
   def update_reassign_task(mail_team_user)
     task_id = params[:taskId].strip
     action_type = params[:userAction].strip
-    decision_reason = params[:decisionReason].strip
 
     task = Task.find_by(id: task_id)
     case action_type
     when "approve"
-      task.update!(
-        completed_by: current_user,
-        assigned_to_id: current_user,
-        assigned_to: current_user,
-        closed_at: Time.zone.now,
-        status: "completed"
-      )
-      parent_task = ReviewPackageTask.find(task.parent_id)
-      parent_task.update!(
-        status: "completed",
-        closed_at: Time.zone.now,
-        completed_by: current_user
-      )
-
-      ReviewPackageTask.create!(
-        assigned_to: mail_team_user,
-        assigned_to_id: mail_team_user.id,
-        status: "assigned",
-        appeal_id: task.appeal_id,
-        appeal_type: "Correspondence",
-      )
-
+      approve_reassign_task(task, current_user, mail_team_user)
     when "reject"
-      task.update(
-        completed_by_id: current_user,
-        closed_at: Time.zone.now,
-        status: "completed",
-        instructions: decision_reason
-      )
-      parent_task = ReviewPackageTask.find(task.parent_id)
-      parent_task.update(assigned_to_type: "User", status: "in_progress")
+      reject_reassign_task(task, current_user)
     end
   end
 
@@ -338,7 +351,6 @@ class CorrespondenceController < ApplicationController
   end
 
   def set_reassign_remove_banner_params(user, action_type, operation_type)
-
     case operation_type
     when "remove"
       template = remove_message_template(user, action_type)
