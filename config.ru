@@ -50,7 +50,7 @@ module PumaThreadLogger
   end
 
   def emit_datadog_point(type, count)
-    DataDogService.emit_gauge(
+    MetricsService.emit_gauge(
       metric_group: "puma",
       metric_name: "#{type}_threads",
       metric_value: count,

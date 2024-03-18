@@ -149,12 +149,12 @@ class VirtualHearings::CreateConferenceJob < VirtualHearings::ConferenceJob
 
         virtual_hearing.establishment.update_error!(error_display)
 
-        DataDogService.increment_counter(metric_name: "created_conference.failed", **create_conference_datadog_tags)
+        MetricsService.increment_counter(metric_name: "created_conference.failed", **create_conference_datadog_tags)
 
         fail pexip_response.error
       end
 
-      DataDogService.increment_counter(metric_name: "created_conference.successful", **create_conference_datadog_tags)
+      MetricsService.increment_counter(metric_name: "created_conference.successful", **create_conference_datadog_tags)
 
       virtual_hearing.update(conference_id: pexip_response.data[:conference_id])
     end

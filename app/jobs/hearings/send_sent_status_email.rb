@@ -73,7 +73,7 @@ class Hearings::SendSentStatusEmail
 
   def log_to_datadog(message)
     hearing = @sent_hearing_email_event.hearing
-    DataDogService.increment_counter(
+    MetricsService.increment_counter(
       app_name: Constants.DATADOG_METRICS.HEARINGS.APP_NAME,
       metric_group: Constants.DATADOG_METRICS.HEARINGS.STATUS_EMAILS_GROUP_NAME,
       metric_name: "emails.admin_emails",

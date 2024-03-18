@@ -82,7 +82,7 @@ class StatsCollectorJob < CaseflowJob
   end
 
   def emit(name, value, tags: {})
-    DataDogService.emit_gauge(
+    MetricsService.emit_gauge(
       metric_group: METRIC_GROUP_NAME,
       metric_name: name,
       metric_value: value,
