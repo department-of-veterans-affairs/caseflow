@@ -123,7 +123,7 @@ class UpdateCachedAppealsAttributesJob < CaseflowJob
     # * (Job has not succeeded in the past day) https://app.datadoghq.com/monitors/41423568
     record_error_in_datadog
 
-    datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
+    metrics_service_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   end
 
   def record_success_in_datadog

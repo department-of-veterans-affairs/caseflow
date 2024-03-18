@@ -39,7 +39,7 @@ class StatsCollectorJob < CaseflowJob
   rescue StandardError => error
     log_error(self.class.name, error)
   ensure
-    datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
+    metrics_service_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   end
 
   protected
