@@ -1,6 +1,11 @@
 module MetricAttributes
   METRIC_TYPES = { error: "error", log: "log", performance: "performance", info: "info" }.freeze
-  LOG_SYSTEMS = { dynatrace: "dynatrace", datadog: "datadog", rails_console: "rails_console", javascript_console: "javascript_console" }.freeze
+  LOG_SYSTEMS = {
+    dynatrace: "dynatrace",
+    datadog: "datadog",
+    rails_console: "rails_console",
+    javascript_console: "javascript_console"
+  }.freeze
   PRODUCT_TYPES = {
     queue: "queue",
     hearings: "hearings",
