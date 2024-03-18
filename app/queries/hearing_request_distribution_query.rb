@@ -85,12 +85,7 @@ class HearingRequestDistributionQuery
           .none
       end
 
-    ama_non_aod_hearing_query.or(ama_aod_hearing_query).uniq
-  end
-
-  def filter_out_cases
-    joins(with_assigned_distribution_task_sql)
-      .where()
+      ama_non_aod_hearing_query.or(ama_aod_hearing_query).uniq
   end
 
   def only_genpop_appeals
@@ -109,7 +104,8 @@ class HearingRequestDistributionQuery
     elsif CaseDistributionLever.ama_hearing_case_affinity_days == "omit"
         base_relation
           .most_recent_hearings
-          .not_tied_to_any_judge
+          .join_distribution_tasks
+          .with_held_hearings
           .ama_non_aod_hearing_appeals
     end
 
@@ -129,7 +125,8 @@ class HearingRequestDistributionQuery
     elsif CaseDistributionLever.ama_hearing_case_aod_affinity_days == "omit"
       base_relation
         .most_recent_hearings
-        .not_tied_to_any_judge
+        .join_distribution_tasks
+        .with_held_hearings
         .ama_aod_hearing_appeals
     end
 
@@ -152,35 +149,8 @@ class HearingRequestDistributionQuery
     [result, with_no_hearings, with_no_held_hearings].flatten.uniq
   end
 
-  def base_relation_with_joined_most_recent_hearings_and_dist_task
-    base_relation.joins(with_assigned_distribution_task_sql).most_recent_hearings
-  end
-
-  def ama_affinity_hearing_appeals_genpop_value
-    base_relation.most_recent_hearings.expired_ama_affinity_cases
-  end
-
-  def most_recent_held_hearings_always_ama_aod_hearing_original_appeals
-    base_relation.always_ama_aod_hearing_original_appeals.not_tied_to_ineligible_judge
-  end
-
-  def most_recent_held_hearings_not_tied_to_any_judge
-    base_relation.most_recent_hearings.not_tied_to_any_judge
-  end
-
   delegate :with_no_hearings, to: :base_relation
 
   delegate :with_no_held_hearings, to: :base_relation
 
-  def with_held_hearings
-    base_relation.most_recent_hearings.with_held_hearings
-  end
-
-  def most_recent_held_hearings_tied_to_ineligible_judge
-    base_relation.most_recent_hearings.tied_to_ineligible_judge
-  end
-
-  def most_recent_held_hearings_tied_to_judges_with_exclude_appeals_from_affinity
-    base_relation.most_recent_hearings.tied_to_judges_with_exclude_appeals_from_affinity
-  end
 end

@@ -220,6 +220,8 @@ describe HearingRequestDocket, :postgres do
 
     let!(:distribution) { Distribution.create!(judge: requesting_judge_no_attorneys) }
 
+    let(:priority) { false }
+
     before do
       # Makes this judge team follow the batch_size calculation
       JudgeTeam.for_judge(requesting_judge_with_attorneys).add_user(requesting_judge_attorney)
@@ -229,7 +231,7 @@ describe HearingRequestDocket, :postgres do
 
     subject do
       HearingRequestDocket.new.distribute_appeals(
-        distribution, priority: false, genpop: "only_genpop", limit: 15, style: "request"
+        distribution, priority: priority, genpop: "only_genpop", limit: 15, style: "request"
       )
     end
 
@@ -351,6 +353,8 @@ describe HearingRequestDocket, :postgres do
         create_ready_aod_appeal_hearing_cancelled(created_date: 10.days.ago)
       end
 
+      let(:priority) { true }
+
       context "lever is set to omit" do
         before do
           CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update!(value: "omit")
@@ -424,6 +428,7 @@ describe HearingRequestDocket, :postgres do
         before do
           FeatureToggle.enable!(:acd_exclude_from_affinity)
           CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update!(value: "30")
+          JudgeTeam.for_judge(excluded_judge).update!(exclude_appeals_from_affinity: true)
         end
 
         let!(:ready_nonpriority_tied_to_requesting_judge_in_window) do
