@@ -41,6 +41,7 @@ class MetricsService
   end
 
   # :nocov:
+  # :reek:LongParameterList
   def self.histogram(metric_group:, metric_name:, metric_value:, app_name:, attrs: {})
     tags = get_tags(app_name, attrs)
     stat_name = get_stat_name(metric_group, metric_name)
