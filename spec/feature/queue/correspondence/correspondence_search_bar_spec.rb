@@ -48,7 +48,7 @@ RSpec.feature("Search Bar for Correspondence") do
     end
 
     it "successfully opens the assigned tab, finds the search box, and enters data there." do
-      visit "/queue/correspondence/team?tab=correspondence_assigned"
+      visit "/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc"
       expect(page).to have_content("Filter table by any of its columns")
       veteran = Veteran.first
       find_by_id("searchBar").fill_in with: veteran.last_name
@@ -57,7 +57,7 @@ RSpec.feature("Search Bar for Correspondence") do
     end
 
     it "should display the search bar with text even we shift to other tabs " do
-      visit "/queue/correspondence/team?tab=correspondence_assigned"
+      visit "/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc"
       expect(page).to have_content("Filter table by any of its columns")
       veteran = Veteran.first
       find_by_id("searchBar").fill_in with: veteran.last_name
@@ -66,7 +66,7 @@ RSpec.feature("Search Bar for Correspondence") do
     end
 
     it "Should display Only search results even when we hit pagination " do
-      visit "/queue/correspondence/team?tab=correspondence_assigned"
+      visit "/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc"
       expect(page).to have_content("Filter table by any of its columns")
       veteran = Veteran.first
       find_by_id("searchBar").fill_in with: veteran.last_name
@@ -80,7 +80,7 @@ RSpec.feature("Search Bar for Correspondence") do
     end
 
     it "Verify the user can clear the search bar by clicking the 'x' in the search bar" do
-      visit "/queue/correspondence/team?tab=correspondence_assigned"
+      visit "/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc"
       expect(page).to have_content("Filter table by any of its columns")
       veteran = Veteran.first
       find_by_id("searchBar").fill_in with: veteran.last_name
@@ -91,7 +91,7 @@ RSpec.feature("Search Bar for Correspondence") do
     end
 
     it "Verify the user can have search results sorted by veteran details." do
-      visit "/queue/correspondence/team?tab=correspondence_assigned"
+      visit "/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc"
       expect(page).to have_content("Filter table by any of its columns")
       veteran = Veteran.first
       find_by_id("searchBar").fill_in with: veteran.last_name
@@ -123,6 +123,74 @@ RSpec.feature("Search Bar for Correspondence") do
       all("div.input-container > input")[0].fill_in(with: @review_correspondence.va_date_of_receipt.strftime("%m/%d/%Y"))
       find(".cf-submit").click
       expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
+    end
+  end
+
+  # Tested on Correspondence Cases page
+  context "correspondence paginationg search testing" do
+    let(:current_user) { create(:user) }
+    before :each do
+      InboundOpsTeam.singleton.add_user(current_user)
+      User.authenticate!(user: current_user)
+    end
+
+    before do
+      25.times do
+        review_correspondence = create(:correspondence)
+        rpt = ReviewPackageTask.find_by(appeal_id: review_correspondence.id)
+        rpt.update!(assigned_to: current_user, status: "assigned")
+        rpt.save!
+      end
+      1.times do
+        params = {
+          first_name: "Zzzane",
+          last_name: "Zzzans"
+        }
+        veteran = create(:veteran, params)
+        review_correspondence = create(:correspondence, veteran_id: veteran.id)
+        rpt = ReviewPackageTask.find_by(appeal_id: review_correspondence.id)
+        rpt.update!(assigned_to: current_user,
+                    status: "assigned",
+                    assigned_at: 42.days.ago)
+        rpt.save!
+      end
+      FeatureToggle.enable!(:correspondence_queue)
+    end
+
+    it "should display the search bar with text even when switching pages in pagination" do
+      visit "/queue/correspondence/team?tab=correspondence_team_assigned"
+      expect(page).to have_content("Filter table by any of its columns")
+      veteran = Veteran.first
+      find_by_id("searchBar").fill_in with: veteran.last_name
+      first("[aria-label='Page 2']").click
+      expect(find_by_id("searchBar").value).to eq veteran.last_name
+    end
+
+    it "should display the correct results with pagination and filtering" do
+      visit "/queue/correspondence/team?tab=correspondence_team_assigned"
+      find_by_id("searchBar").fill_in with: "Zzzans"
+      first("[aria-label='Page 2']").click
+      only_vet_info = page.all("#task-link")[0].text
+      expect(page.all("#task-link")[0].text == only_vet_info)
+      # put page in the sorted Z-A state (filtering changes page Zzzane Should exist on)
+      find("[aria-label='Sort by Veteran Details']").click
+      first("[aria-label='Page 1']").click
+      expect(page.all("#task-link")[0].text == only_vet_info)
+      # check if first result is the last vet
+    end
+
+    it "should be able to search by different columns" do
+      visit "/queue/correspondence/team?tab=correspondence_team_assigned"
+      # searches by days waiting
+      find_by_id("searchBar").fill_in with: "42"
+      first("[aria-label='Page 2']").click
+      only_vet_info = page.all("#task-link")[0].text
+      expect(page.all("#task-link")[0].text == only_vet_info)
+      # put page in the sorted Z-A state (filtering changes page Zzzane Should exist on)
+      find("[aria-label='Sort by Veteran Details']").click
+      first("[aria-label='Page 1']").click
+      expect(page.all("#task-link")[0].text == only_vet_info)
+      # check if first result is the last vet
     end
   end
 end
