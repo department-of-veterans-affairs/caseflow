@@ -1,63 +1,59 @@
 # frozen_string_literal: true
 
 class Events::DecisionReviewCreated::DecisionReviewCreatedParser
-  include VeteranExtractorInterface
+  include Events::VeteranExtractorInterface
 
-  attr_reader :event
+  attr_reader :headers, :payload
 
-  def initialize(event, headers, payload)
-    @event = event
+  def initialize(payload)
     @payload = payload
     @headers = headers
+    @veteran = @payload.dig(:veteran)
   end
 
   private
 
-  # Generic methods
+  # Generic/universal methods
 
   def convert_milliseconds_to_datetime(milliseconds)
     Time.at(milliseconds / 1000).to_datetime
   end
 
   # Veteran attributes
-  def get_veteran
-    @payload.dig(:veteran)
-  end
-
-  def file_number
+  def veteran_file_number
     @veteran_file_number ||= @headers["X-VA-File-Number"].presence
   end
 
-  def ssn
+  def veteran_ssn
     @veteran_ssn ||= @headers["X-VA-Vet-SSN"].presence
   end
 
-  def first_name
+  def veteran_first_name
     @headers["X-VA-Vet-First-Name"]
   end
 
-  def last_name
+  def veteran_last_name
     @headers["X-VA-Vet-Last-Name"]
   end
 
-  def middle_name
+  def veteran_middle_name
     @headers["X-VA-Vet-Middle-Name"]
   end
 
-  def participant_id
+  def veteran_participant_id
     @payload.dig(:veteran, :participant_id)
   end
 
-  def bgs_last_synced_at
+  def veteran_bgs_last_synced_at
     bgs_last_synced_at_milliseconds = @payload.dig(:veteran, :bgs_last_synced_at)
     convert_milliseconds_to_datetime(bgs_last_synced_at_milliseconds)
   end
 
-  def name_suffix
+  def veteran_name_suffix
     @payload.dig(:veteran, :name_suffix)
   end
 
-  def date_of_death
+  def veteran_date_of_death
     @payload.dig(:veteran, :date_of_death)
   end
 

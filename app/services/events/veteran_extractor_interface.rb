@@ -1,39 +1,39 @@
 # frozen_string_literal: true
 
-module Events::DecisionReviewCreated::VeteranExtractorInterface
-  def file_number
+module Events::VeteranExtractorInterface
+  def veteran_file_number
     raise NotImplementedError, "#{self.class} has not implemented method '#{__method__}'"
   end
 
-  def ssn
+  def veteran_ssn
     raise NotImplementedError, "#{self.class} has not implemented method '#{__method__}'"
   end
 
-  def first_name
+  def veteran_first_name
     raise NotImplementedError, "#{self.class} has not implemented method '#{__method__}'"
   end
 
-  def last_name
+  def veteran_last_name
     raise NotImplementedError, "#{self.class} has not implemented method '#{__method__}'"
   end
 
-  def middle_name
+  def veteran_middle_name
     raise NotImplementedError, "#{self.class} has not implemented method '#{__method__}'"
   end
 
-  def participant_id
+  def veteran_participant_id
     raise NotImplementedError, "#{self.class} has not implemented method '#{__method__}'"
   end
 
-  def bgs_last_synced_at
+  def veteran_bgs_last_synced_at
     raise NotImplementedError, "#{self.class} has not implemented method '#{__method__}'"
   end
 
-  def name_suffix
+  def veteran_name_suffix
     raise NotImplementedError, "#{self.class} has not implemented method '#{__method__}'"
   end
 
-  def date_of_death
+  def veteran_date_of_death
     raise NotImplementedError, "#{self.class} has not implemented method '#{__method__}'"
   end
 end
