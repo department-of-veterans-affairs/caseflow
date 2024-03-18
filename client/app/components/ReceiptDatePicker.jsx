@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import ReactSelectDropdown from '../../../client/app/components/ReactSelectDropdown';
 import DateSelector from './DateSelector';
 import Button from './Button';
+import { style } from 'glamor';
 
 const dateDropdownMap = [
   { value: 0, label: 'Between these dates' },
@@ -18,7 +19,10 @@ const receiptDatePicker = (props) => {
       return (
         errors.map((error, index) =>
           (errType === error.key) &&
-            <p id={`${errType}Err${index}`} key={index} style={{ color: 'red' }}>{error.message}</p>
+            <p id={`${errType}Err${index}`} key={index}
+              style={{ color: 'red', fontSize: '13px', fontWeight: '900', marginBottom: '0px' }}>
+              {error.message}
+            </p>
         )
       );
     }
@@ -49,6 +53,7 @@ const receiptDatePicker = (props) => {
       <div style={{ marginLeft: '5%', marginRight: '5%' }}>
         <DateSelector
           onChange={(value) => props.handleDateChange(value)}
+          label = "Receipt date"
           type="date"
           errorMessage={errorMessagesNode(dateErrorsFrom, 'fromDate')}
         />
@@ -58,6 +63,7 @@ const receiptDatePicker = (props) => {
       <div style={{ marginLeft: '5%', marginRight: '5%' }}>
         <DateSelector
           onChange={(value) => props.handleDateChange(value)}
+          label = "Receipt date"
           type="date"
           errorMessage={errorMessagesNode(dateErrorsFrom, 'fromDate')}
         />
@@ -67,6 +73,7 @@ const receiptDatePicker = (props) => {
       <div style={{ marginLeft: '5%', marginRight: '5%' }}>
         <DateSelector
           onChange={(value) => props.handleDateChange(value)}
+          label = "Receipt date"
           type="date"
           errorMessage={errorMessagesNode(dateErrorsFrom, 'fromDate')}
         />

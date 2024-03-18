@@ -36,7 +36,10 @@ const TaskCompletedDatePicker = (props) => {
       return (
         errors.map((error, index) =>
           (errType === error.key) &&
-            <p id={`${errType}Err${index}`} key={index} style={{ color: 'red' }}>{error.message}</p>
+            <p id={`${errType}Err${index}`} key={index}
+              style={{ color: 'red', fontSize: '13px', fontWeight: '900', marginBottom: '0px' }}>
+              {error.message}
+            </p>
         )
       );
     }
@@ -68,7 +71,7 @@ const TaskCompletedDatePicker = (props) => {
       <div style={{ margin: '5% 5%' }}>
         <DateSelector
           onChange={handleDateChange}
-          label="To"
+          label="Date Completed"
           type="date"
           errorMessage={errorMessagesNode(dateErrorsFrom, 'fromDate')} />
       </div>
@@ -77,6 +80,7 @@ const TaskCompletedDatePicker = (props) => {
       <div style={{ margin: '5% 5%' }}>
         <DateSelector
           onChange={handleDateChange}
+          label="Date Completed"
           type="date"
           errorMessage={errorMessagesNode(dateErrorsFrom, 'fromDate')} />
       </div>
@@ -86,7 +90,8 @@ const TaskCompletedDatePicker = (props) => {
         <DateSelector
           onChange={handleDateChange}
           label="Date Completed"
-          type="date" />
+          type="date"
+          errorMessage={errorMessagesNode(dateErrorsFrom, 'fromDate')} />
       </div>
     );
 
