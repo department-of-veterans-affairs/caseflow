@@ -24,7 +24,6 @@ const CorrespondenceCases = (props) => {
   const veteranInformation = useSelector((state) => state.reviewPackage.veteranInformation);
   const currentSelectedVeteran = useSelector((state) => state.intakeCorrespondence.selectedVeteranDetails);
   const reassignModalVisible = useSelector((state) => state.intakeCorrespondence.showReassignPackageModal);
-  const removeModalVisible = useSelector((state) => state.intakeCorrespondence.showRemovePackageModal);
 
   const [vetName, setVetName] = useState('');
   const [selectedMailTeamUser, setSelectedMailTeamUser] = useState('');
@@ -58,12 +57,28 @@ const CorrespondenceCases = (props) => {
     window.location.href = (`${url }/${parentUrlArray[3]}/${parentUrlArray[4]}`);
   };
 
+  const resetState = () => {
+    setSelectedMailTeamUser('');
+    setSelectedRequestChoice('');
+    setDecisionReason('');
+  };
+
+  const handleReassignClose = () => {
+    resetState();
+    dispatch(setShowReassignPackageModal(false));
+  };
+
+  const handleRemoveClose = () => {
+    resetState();
+    dispatch(setShowRemovePackageModal(false));
+  };
+
   const confirmButtonDisabled = () => {
     if (selectedRequestChoice === 'approve' && selectedMailTeamUser === '' && reassignModalVisible) {
       return true;
     }
 
-    if (selectedRequestChoice === 'reject' && decisionReason === '' && removeModalVisible) {
+    if (selectedRequestChoice === 'reject' && decisionReason === '') {
       return true;
     }
 
@@ -138,7 +153,7 @@ const CorrespondenceCases = (props) => {
     {
       classNames: ['cf-modal-link', 'cf-btn-link'],
       name: 'Cancel',
-      onClick: () => dispatch(setShowReassignPackageModal(false)),
+      onClick: handleReassignClose,
       disabled: false
     },
     {
@@ -161,7 +176,7 @@ const CorrespondenceCases = (props) => {
     {
       classNames: ['cf-modal-link', 'cf-btn-link'],
       name: 'Cancel',
-      onClick: () => dispatch(setShowRemovePackageModal(false)),
+      onClick: handleRemoveClose,
       disabled: false
     },
     {
@@ -179,14 +194,6 @@ const CorrespondenceCases = (props) => {
       disabled: false
     }
   ];
-
-  const closeReassignPackageModal = () => {
-    dispatch(setShowReassignPackageModal(false));
-  };
-
-  const closeRemovePackageModal = () => {
-    dispatch(setShowRemovePackageModal(false));
-  };
 
   useEffect(() => {
     if (
@@ -225,7 +232,7 @@ const CorrespondenceCases = (props) => {
           isSupervisor={props.isSupervisor} />}
         {showReassignPackageModal &&
         <Modal
-          closeHandler={closeReassignPackageModal}
+          closeHandler={handleReassignClose}
           buttons={reassignModalButtons}
           title={COPY.CORRESPONDENCE_CASES_REASSIGN_PACKAGE_MODAL_TITLE}
         >
@@ -247,7 +254,7 @@ const CorrespondenceCases = (props) => {
         <Modal
           title={COPY.CORRESPONDENCE_CASES_REMOVE_PACKAGE_MODAL_TITLE}
           buttons={removeModalButtons}
-          closeHandler={closeRemovePackageModal}>
+          closeHandler={handleRemoveClose}>
           <RadioFieldWithChildren
             name="actionRequiredRadioField"
             id="vertical-radio"
