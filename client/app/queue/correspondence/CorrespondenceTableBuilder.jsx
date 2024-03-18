@@ -202,7 +202,7 @@ const CorrespondenceTableBuilder = (props) => {
             options={buildMailUserData(props.mailTeamUsers)}
             onChange={handleMailTeamUserChange}
           />
-          {tabConfig.name === 'correspondence_unassigned' &&
+          {tabConfig.name === QUEUE_CONFIG.CORRESPONDENCE_UNASSIGNED_TASKS_TAB_NAME &&
               <>
                 <Button
                   name="Assign"
@@ -216,7 +216,7 @@ const CorrespondenceTableBuilder = (props) => {
                 </span>
               </>
           }
-          {tabConfig.name === 'correspondence_team_assigned' &&
+          {tabConfig.name === QUEUE_CONFIG.CORRESPONDENCE_TEAM_ASSIGNED_TASKS_TAB_NAME &&
             <Button
               name="Reassign"
               onClick={handleAssignButtonClick}
@@ -241,14 +241,16 @@ const CorrespondenceTableBuilder = (props) => {
         <>
           {/* this setup should prevent a double render of the bulk assign area if a
           user is a superuser and also a supervisor */}
-          {(props.isSupervisor || (props.isSupervisor && props.isSuperuser)) &&
-            (tabConfig.name === 'correspondence_unassigned' || tabConfig.name === 'correspondence_team_assigned') &&
+          {(props.isMailSupervisor || (props.isMailSupervisor && props.isMailSuperUser)) &&
+            (tabConfig.name === QUEUE_CONFIG.CORRESPONDENCE_UNASSIGNED_TASKS_TAB_NAME ||
+              tabConfig.name === QUEUE_CONFIG.CORRESPONDENCE_TEAM_ASSIGNED_TASKS_TAB_NAME) &&
             <>
               {getBulkAssignArea()}
             </>
           }
           {
-            (props.isSuperuser && !props.isSupervisor && tabConfig.name === 'correspondence_team_assigned') &&
+            (props.isMailSuperUser && !props.isMailSupervisor &&
+              tabConfig.name === QUEUE_CONFIG.CORRESPONDENCE_TEAM_ASSIGNED_TASKS_TAB_NAME) &&
           <>
             {getBulkAssignArea()}
           </>
@@ -309,7 +311,13 @@ const CorrespondenceTableBuilder = (props) => {
 
   return <div className={rootStyles}>
     <h1 {...css({ display: 'inline-block' })}>{config.table_title}</h1>
-    <QueueOrganizationDropdown organizations={props.organizations} featureToggles = {props.featureToggles} />
+    <QueueOrganizationDropdown
+      isMailTeamUser={props.isMailTeamUser}
+      isMailSupervisor={props.isMailSupervisor}
+      isMailSuperUser={props.isMailSuperUser}
+      organizations={props.organizations}
+      featureToggles={props.featureToggles}
+    />
     <TabWindow
       name="tasks-tabwindow"
       tabs={tabsFromConfig(config)}
@@ -339,10 +347,9 @@ CorrespondenceTableBuilder.propTypes = {
   featureToggles: PropTypes.object,
   mailTeamUsers: PropTypes.array,
   selectedTasks: PropTypes.array,
-  isSuperuser: PropTypes.bool,
-  isSupervisor: PropTypes.bool,
-  onPageLoaded: PropTypes.func
-
+  isMailTeamUser: PropTypes.bool,
+  isMailSuperUser: PropTypes.bool,
+  isMailSupervisor: PropTypes.bool
 };
 
 export default connect(mapStateToProps)(CorrespondenceTableBuilder);
