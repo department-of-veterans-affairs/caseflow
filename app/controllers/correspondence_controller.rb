@@ -228,16 +228,23 @@ class CorrespondenceController < ApplicationController
     end
     if reassign_remove_task_id.present? && action_type.present?
       task = Task.find(reassign_remove_task_id)
-      mail_team_user = task.assigned_by
+      if mail_team_user.nil?
+        mail_team_user = task.assigned_by
+      end
+
       operation_type = params[:operation]
 
-      case operation_type
-      when "reassign"
-        output = update_reassign_task(mail_team_user)
-      when "remove"
-        output = update_remove_task(mail_team_user)
+      begin
+        case operation_type
+        when "reassign"
+          update_reassign_task(mail_team_user)
+        when "remove"
+          update_remove_task(mail_team_user)
+        end
+        set_reassign_remove_banner_params(mail_team_user, action_type, operation_type)
+      rescue StandardError
+        set_error_banner_params(operation_type, mail_team_user)
       end
-      set_reassign_remove_banner_params(mail_team_user, action_type, output, operation_type)
 
       render "correspondence_team"
     end
@@ -279,7 +286,6 @@ class CorrespondenceController < ApplicationController
         closed_at: Time.zone.now,
         completed_by: current_user
       )
-      binding.pry
 
       ReviewPackageTask.create!(
         assigned_to: mail_team_user,
@@ -305,17 +311,16 @@ class CorrespondenceController < ApplicationController
     task_id = params[:taskId].strip
     action_type = params[:userAction].strip
     decision_reason = params[:decisionReason].strip
-    task = Task.find_by(id: task_id)
     case action_type
     when "approve"
-      task.update!(
+      Task.find_by(id: task_id).update!(
         completed_by_id: current_user,
         assigned_to_id: mail_team_user,
         assigned_to: mail_team_user,
         status: "cancelled"
       )
     when "reject"
-      task.update!(
+      Task.find_by(id: task_id).update!(
         completed_by_id: current_user,
         closed_at: Time.zone.now,
         status: "completed",
@@ -332,13 +337,8 @@ class CorrespondenceController < ApplicationController
     @response_message = template[:message]
   end
 
-  def set_reassign_remove_banner_params(user, action_type, error, operation_type)
+  def set_reassign_remove_banner_params(user, action_type, operation_type)
 
-        # if error
-    #   @response_header = "Package request for #{user.css_id} could not be #{action_type}"
-    #   @response_message = "Please try again at a later time or contact the Help Desk."
-    #   @response_type = "error"
-    # end
     case operation_type
     when "remove"
       template = remove_message_template(user, action_type)
@@ -351,6 +351,13 @@ class CorrespondenceController < ApplicationController
       @response_message = template[:message]
       @response_type = "success"
     end
+  end
+
+  def set_error_banner_params(operation_type, mail_team_user)
+    operation_verb = operation_type == "approve" ? "approved" : "rejected"
+    @response_header = "Package request for #{mail_team_user.css_id} could not be #{operation_verb}"
+    @response_message = "Please try again at a later time or contact the Help Desk."
+    @response_type = "error"
   end
 
   def message_template(user, task_count, tab)

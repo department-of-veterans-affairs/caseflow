@@ -24,7 +24,7 @@ class CorrespondenceTask < Task
       appeal_id: appeal_id,
       appeal_type: appeal_type,
       type: type
-    ).any?
+    ).open.any?
       fail(
         Caseflow::Error::DuplicateOrgTask,
         task_type: self.class.name,
