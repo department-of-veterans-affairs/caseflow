@@ -13,6 +13,9 @@ class MetricsService
     tags = get_tags(app_name, attrs)
     stat_name = get_stat_name(metric_group, metric_name)
     @statsd.increment(stat_name, tags: tags, by: by)
+
+    # Dynatrace statD implementation
+    StatsD.increment(stat_name, tags: tags)
   end
 
   def self.record_runtime(metric_group:, app_name:, start_time: Time.zone.now)
@@ -31,6 +34,9 @@ class MetricsService
     tags = get_tags(app_name, attrs)
     stat_name = get_stat_name(metric_group, metric_name)
     @statsd.gauge(stat_name, metric_value, tags: tags)
+
+    # Dynatrace statD implementation
+    StatsD.gauge(stat_name, metric_value, tags: tags)
   end
 
   # :nocov:
@@ -83,6 +89,7 @@ class MetricsService
       DataDogService.emit_gauge(sent_to_info)
 
       sent_to << MetricAttributes::LOG_SYSTEMS[:datadog]
+      sent_to << MetricAttributes::LOG_SYSTEMS[:dynatrace]
     end
 
     Rails.logger.info("FINISHED #{description}: #{stopwatch}")
