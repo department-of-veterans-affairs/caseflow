@@ -508,6 +508,68 @@ describe HearingRequestDocket, :postgres do
         end
       end
     end
+
+    context "with multiple levers enabled and appeals meeting each criteria" do
+      # ready non-aod appeals
+      let!(:ready_nonpriority_tied_to_requesting_judge_in_window) do
+        create_ready_nonpriority_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 15.days.ago)
+      end
+      let!(:ready_nonpriority_tied_to_requesting_judge_out_of_window_45_days) do
+        create_ready_nonpriority_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 45.days.ago)
+      end
+      let!(:ready_nonpriority_tied_to_other_judge_in_window) do
+        create_ready_nonpriority_appeal(tied_judge: other_judge, created_date: 15.days.ago)
+      end
+      let!(:ready_nonpriority_tied_to_other_judge_out_of_window_45_days) do
+        create_ready_nonpriority_appeal(tied_judge: other_judge, created_date: 45.days.ago)
+      end
+
+      # ready aod appeals
+      let!(:ready_aod_tied_to_requesting_judge_in_window) do
+        create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 10.days.ago)
+      end
+      let!(:ready_aod_tied_to_requesting_judge_out_of_window_20_days) do
+        create_ready_aod_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 20.days.ago)
+      end
+      let!(:ready_aod_tied_to_other_judge_in_window) do
+        create_ready_aod_appeal(tied_judge: other_judge, created_date: 10.days.ago)
+      end
+      let!(:ready_aod_tied_to_other_judge_out_of_window_20_days) do
+        create_ready_aod_appeal(tied_judge: other_judge, created_date: 20.days.ago)
+      end
+
+      # cases for ineligible judge and judge excluded from affinity rules
+      let!(:ready_nonpriority_tied_to_excluded_judge_in_window) do
+        create_ready_nonpriority_appeal(tied_judge: excluded_judge, created_date: 15.days.ago)
+      end
+      let!(:ready_nonpriority_tied_to_ineligible_judge_in_window) do
+        create_ready_nonpriority_appeal(tied_judge: ineligible_judge, created_date: 15.days.ago)
+      end
+
+      # appeal which is always genpop
+      let!(:ready_nonpriority_hearing_cancelled) do
+        create_ready_nonpriority_appeal_hearing_cancelled(created_date: 10.days.ago)
+      end
+
+      before do
+        CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update!(value: "30")
+        CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update!(value: "15")
+      end
+
+      it "distributes appeals as expected" do
+        expect(subject.map(&:case_id)).to match_array(
+          [ready_nonpriority_tied_to_requesting_judge_in_window.uuid,
+           ready_nonpriority_tied_to_requesting_judge_out_of_window_45_days.uuid,
+           ready_nonpriority_tied_to_other_judge_out_of_window_45_days.uuid,
+           ready_aod_tied_to_requesting_judge_in_window.uuid,
+           ready_aod_tied_to_requesting_judge_out_of_window_20_days.uuid,
+           ready_aod_tied_to_other_judge_out_of_window_20_days.uuid,
+           ready_nonpriority_tied_to_excluded_judge_in_window.uuid,
+           ready_nonpriority_tied_to_ineligible_judge_in_window.uuid,
+           ready_nonpriority_hearing_cancelled.uuid]
+        )
+      end
+    end
   end
 
   def create_ready_aod_appeal(tied_judge: nil, created_date: 1.year.ago)
