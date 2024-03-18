@@ -32,7 +32,7 @@ const CorrespondenceCases = (props) => {
   const [decisionReason, setDecisionReason] = useState('');
 
   const buildMailUserData = (data) => {
-    if (data === undefined) {
+    if (data === 'undefined') {
       return [];
     }
 
@@ -63,7 +63,7 @@ const CorrespondenceCases = (props) => {
       return true;
     }
 
-    if(selectedRequestChoice === 'reject' && decisionReason === '' && removeModalVisible) {
+    if (selectedRequestChoice === 'reject' && decisionReason === '' && removeModalVisible) {
       return true;
     }
 
@@ -83,7 +83,10 @@ const CorrespondenceCases = (props) => {
     />
   </div>);
 
-  const textAreaElement = (<div style={{ width: '280%' }}><TextareaField onChange={handleDecisionReasonInput} value={decisionReason} /></div>);
+  const textAreaElement = (
+    <div style={{ width: '280%' }}>
+      <TextareaField onChange={handleDecisionReasonInput} value={decisionReason} />
+    </div>);
 
   useEffect(() => {
     dispatch(loadCorrespondenceConfig(configUrl));
@@ -118,7 +121,6 @@ const CorrespondenceCases = (props) => {
     }
   ];
 
-
   const handleConfirmReassignRemoveClick = (operation) => {
     let newUrl = window.location.href;
 
@@ -143,7 +145,7 @@ const CorrespondenceCases = (props) => {
       id: '#confirm-button',
       classNames: ['usa-button', 'usa-button-primary', 'cf-margin-left-2rem'],
       name: 'Confirm',
-      onClick: () => handleConfirmReassignRemoveClick("reassign"),
+      onClick: () => handleConfirmReassignRemoveClick('reassign'),
       disabled: confirmButtonDisabled()
     },
     {
@@ -166,7 +168,7 @@ const CorrespondenceCases = (props) => {
       id: '#confirm-button',
       classNames: ['usa-button', 'usa-button-primary', 'cf-margin-left-2rem'],
       name: 'Confirm',
-      onClick: () => handleConfirmReassignRemoveClick("remove"),
+      onClick: () => handleConfirmReassignRemoveClick('remove'),
       disabled: confirmButtonDisabled()
     },
     {
@@ -177,8 +179,6 @@ const CorrespondenceCases = (props) => {
       disabled: false
     }
   ];
-
-
 
   const closeReassignPackageModal = () => {
     dispatch(setShowReassignPackageModal(false));
@@ -249,15 +249,15 @@ const CorrespondenceCases = (props) => {
           buttons={removeModalButtons}
           closeHandler={closeRemovePackageModal}>
           <RadioFieldWithChildren
-              name="actionRequiredRadioField"
-              id="vertical-radio"
-              label="Choose whether to approve the request for removal or reject it."
-              options={removeOptions}
-              onChange={(val) => setSelectedRequestChoice(val)}
-              value={selectedRequestChoice}
-              optionsStyling={{ width: '180px' }}
-            />
-          </Modal>}
+            name="actionRequiredRadioField"
+            id="vertical-radio"
+            label="Choose whether to approve the request for removal or reject it."
+            options={removeOptions}
+            onChange={(val) => setSelectedRequestChoice(val)}
+            value={selectedRequestChoice}
+            optionsStyling={{ width: '180px' }}
+          />
+        </Modal>}
       </AppSegment>
     </>
   );
