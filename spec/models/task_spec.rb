@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 describe Task, :all_dbs do
+  # @note Ideally, we would execute the following shared examples, "Task belongs_to polymorphic appeal", for each
+  #   subclass of Task. However, this has proven to be impractical due to the differences in validations across Task
+  #   subclasses and also their sheer number (120 as of this writing).
+  it_behaves_like "Task belongs_to polymorphic appeal"
+
   context "includes PrintsTaskTree concern" do
     describe ".structure" do
       let(:root_task) { create(:root_task) }
@@ -2026,7 +2031,7 @@ describe Task, :all_dbs do
     end
 
     context "eFolder Upload Failed Task" do
-      it "has a review_package task_url if parent is review package task" do
+      it "can have a parent review package task" do
         correspondence = create(:correspondence)
         rpt = ReviewPackageTask.find_or_create_by(
           appeal_id: correspondence.id,
@@ -2041,16 +2046,14 @@ describe Task, :all_dbs do
           parent_id: rpt.id
         )
 
-        expect(uft.task_url).to eq("/queue/correspondence/#{correspondence.uuid}/review_package")
+        expect(uft).to be_a(EfolderUploadFailedTask)
+        expect(uft.parent).to be_a(ReviewPackageTask)
       end
 
-      it "has an intake task_url if parent is correspondence intake task" do
+      it "can have a parent correspondence intake task" do
         correspondence = create(:correspondence)
-        cit = CorrespondenceIntakeTask.find_or_create_by(
-          appeal_id: correspondence.id,
-          assigned_to: InboundOpsTeam.singleton,
-          appeal_type: Correspondence.name
-        )
+        user = create(:user)
+        cit = CorrespondenceIntakeTask.create_from_params(correspondence.root_task, user)
 
         uft = EfolderUploadFailedTask.create(
           appeal_id: correspondence.id,
@@ -2059,7 +2062,8 @@ describe Task, :all_dbs do
           parent_id: cit.id
         )
 
-        expect(uft.task_url).to eq("/queue/correspondence/#{correspondence.uuid}/intake")
+        expect(uft).to be_a(EfolderUploadFailedTask)
+        expect(uft.parent).to be_a(CorrespondenceIntakeTask)
       end
     end
 
