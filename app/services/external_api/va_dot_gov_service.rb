@@ -476,7 +476,7 @@ class ExternalApi::VADotGovService
     end
 
     def track_pages(pages)
-      MetricsService.emit_gauge(
+      DataDogService.emit_gauge(
         metric_group: "service",
         metric_name: "pages_requested",
         metric_value: pages,

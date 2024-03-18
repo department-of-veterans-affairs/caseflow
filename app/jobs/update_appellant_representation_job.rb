@@ -81,7 +81,7 @@ class UpdateAppellantRepresentationJob < CaseflowJob
 
   def increment_task_count(task_effect, appeal_id, count = 1)
     count.times do
-      MetricsService.increment_counter(
+      DataDogService.increment_counter(
         app_name: APP_NAME,
         metric_group: METRIC_GROUP_NAME,
         metric_name: "tasks",
@@ -104,6 +104,6 @@ class UpdateAppellantRepresentationJob < CaseflowJob
 
     slack_service.send_notification("[ERROR] #{msg}", self.class.to_s)
 
-    metrics_service_report_runtime(metric_group_name: METRIC_GROUP_NAME)
+    datadog_report_runtime(metric_group_name: METRIC_GROUP_NAME)
   end
 end

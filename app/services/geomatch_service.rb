@@ -67,7 +67,7 @@ class GeomatchService
   end
 
   def record_geomatched_appeal(status)
-    MetricsService.increment_counter(
+    DataDogService.increment_counter(
       app_name: RequestStore[:application],
       metric_group: "job",
       metric_name: "geomatched_appeals",

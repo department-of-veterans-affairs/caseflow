@@ -333,7 +333,7 @@ class ExternalApi::BGSService
   def fetch_ratings_in_range(participant_id:, start_date:, end_date:)
     DBService.release_db_connections
 
-    MetricsService.increment_counter(
+    DataDogService.increment_counter(
       metric_group: "mst_pact_group",
       metric_name: "bgs_service.fetch_ratings_in_range_called",
       app_name: RequestStore[:application]
@@ -357,7 +357,7 @@ class ExternalApi::BGSService
   def fetch_rating_profile(participant_id:, profile_date:)
     DBService.release_db_connections
 
-    MetricsService.increment_counter(
+    DataDogService.increment_counter(
       metric_group: "mst_pact_group",
       metric_name: "bgs_service.fetch_rating_profile_called",
       app_name: RequestStore[:application]
