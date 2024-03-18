@@ -22,7 +22,9 @@ RSpec.feature("Search Bar for Correspondence") do
     it "routes to correspondence cases if feature toggle is enabled" do
       FeatureToggle.enable!(:correspondence_queue)
       visit "/queue/correspondence"
-      expect(page).to have_current_path("/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc")
+      expect(page).to have_current_path(
+        "/queue/correspondence?tab=correspondence_assigned&page=1&sort_by=vaDor&order=asc"
+      )
     end
   end
 
@@ -40,6 +42,20 @@ RSpec.feature("Search Bar for Correspondence") do
         rpt.update!(assigned_to: current_user, status: "assigned")
         rpt.save!
       end
+      1.times do
+        params = {
+          first_name: "Zzzane",
+          last_name: "Zzzans"
+        }
+        veteran = create(:veteran, params)
+        review_correspondence = create(:correspondence, veteran_id: veteran.id)
+        rpt = ReviewPackageTask.find_by(appeal_id: review_correspondence.id)
+        rpt.update!(assigned_to: current_user,
+                    status: "assigned",
+                    assigned_at: 42.days.ago)
+        rpt.save!
+      end
+      FeatureToggle.enable!(:correspondence_queue)
     end
 
     before :each do
@@ -100,16 +116,24 @@ RSpec.feature("Search Bar for Correspondence") do
       expect(page).to have_content("Filter table by any of its columns")
       expect(find("#searchBar")).to match_xpath("//input[@placeholder='Type to filter...']")
 
-      veteran = Veteran.first
-      find_by_id("searchBar").fill_in with: veteran.last_name
-      expect(page).to have_content(veteran.last_name)
+      # Find Zzzane and get details
+      find_by_id("searchBar").fill_in with: "Zzzane"
+      first("[aria-label='Page 2']").click
+      only_vet_info = page.all("#task-link")[0].text
 
+      # Return to first page, should not exist
+      first("[aria-label='Page 1']").click
+      expect(page).not_to have_content("Zzzans")
+
+      # Sort Z-A, should return details from Zzzane
       sort_icon = find("[aria-label='Sort by Veteran Details']")
-      sort_icon.click # Sort A-Z
-      expect(page.all("#task-link")[0].text).to eq(page.all("#task-link").last.text)
+      sort_icon.click
+      expect(page.all("#task-link")[0].text).to eq(only_vet_info)
 
-      sort_icon.click # Sort Z-A
-      expect(page.all("#task-link")[0].text).to eq(page.all("#task-link").first.text)
+      # Sort A-Z, should result in no results
+      sort_icon = find("[aria-label='Sort by Veteran Details']")
+      sort_icon.click
+      expect(page).not_to have_content("Zzzans")
     end
 
     it "Verify the user can have search results filtered by receipt date on filter correctly" do
@@ -121,7 +145,9 @@ RSpec.feature("Search Bar for Correspondence") do
       all(".unselected-filter-icon")[0].click
       find_by_id("reactSelectContainer").click
       find_by_id("react-select-2-option-3").click
-      all("div.input-container > input")[0].fill_in(with: @review_correspondence.va_date_of_receipt.strftime("%m/%d/%Y"))
+      all("div.input-container > input")[0].fill_in(
+        with: @review_correspondence.va_date_of_receipt.strftime("%m/%d/%Y")
+      )
       find(".cf-submit").click
       expect(all("tbody > tr:nth-child(1) > td:nth-child(4)").length == 1)
     end
