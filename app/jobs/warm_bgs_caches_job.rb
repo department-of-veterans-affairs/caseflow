@@ -69,16 +69,16 @@ class WarmBgsCachesJob < CaseflowJob
   def warm_poa_and_cache_for_appeals_for_hearings_priority
     legacy_start_time = Time.zone.now
     legacy_appeals = LegacyAppeal.where(id: priority_appeal_ids(LegacyAppeal.name).first(LIMITS[:PRIORITY]))
-    legacy_datadog_segment = "warm_poa_bgs_and_cache_legacy_priority"
-    warm_poa_and_cache_for_legacy_appeals(legacy_appeals, legacy_start_time, legacy_datadog_segment)
+    legacy_metrics_segment  = "warm_poa_bgs_and_cache_legacy_priority"
+    warm_poa_and_cache_for_legacy_appeals(legacy_appeals, legacy_start_time, legacy_metrics_segment )
 
     ama_start_time = Time.zone.now
     claimants_for_hearing = Claimant.where(
       decision_review_type: Appeal.name,
       decision_review_id: most_recent_appeal_ids(Appeal.name).first(LIMITS[:PRIORITY])
     )
-    ama_datadog_segment = "warm_poa_bgs_and_cache_ama_priority"
-    warm_poa_and_cache_for_ama_appeals(claimants_for_hearing, ama_start_time, ama_datadog_segment)
+    ama_metrics_segment  = "warm_poa_bgs_and_cache_ama_priority"
+    warm_poa_and_cache_for_ama_appeals(claimants_for_hearing, ama_start_time, ama_metrics_segment )
   end
 
   # Warm POA and cache 1000(legacy + ama) appeals with active ScheduleHearingTask that have
@@ -88,24 +88,24 @@ class WarmBgsCachesJob < CaseflowJob
   def warm_poa_and_cache_for_appeals_for_hearings_most_recent
     legacy_start_time = Time.zone.now
     legacy_appeals = LegacyAppeal.where(id: most_recent_appeal_ids(LegacyAppeal.name).first(LIMITS[:MOST_RECENT]))
-    legacy_datadog_segment = "warm_poa_bgs_and_cache_legacy_recent"
-    warm_poa_and_cache_for_legacy_appeals(legacy_appeals, legacy_start_time, legacy_datadog_segment)
+    legacy_metrics_segment  = "warm_poa_bgs_and_cache_legacy_recent"
+    warm_poa_and_cache_for_legacy_appeals(legacy_appeals, legacy_start_time, legacy_metrics_segment )
 
     ama_start_time = Time.zone.now
     claimants_for_hearing = Claimant.where(
       decision_review_type: Appeal.name,
       decision_review_id: most_recent_appeal_ids(Appeal.name).first(LIMITS[:MOST_RECENT])
     )
-    ama_datadog_segment = "warm_poa_bgs_and_cache_ama_recent"
-    warm_poa_and_cache_for_ama_appeals(claimants_for_hearing, ama_start_time, ama_datadog_segment)
+    ama_metrics_segment  = "warm_poa_bgs_and_cache_ama_recent"
+    warm_poa_and_cache_for_ama_appeals(claimants_for_hearing, ama_start_time, ama_metrics_segment )
   end
 
   # Warm POA for claimants that haven't been updated in a while and since we're warming, let's
   # also cache the appeal.
   def warm_poa_and_cache_ama_appeals_for_oldest_claimants
     start_time = Time.zone.now
-    datadog_segment = "warm_poa_claimants_and_cache_ama"
-    warm_poa_and_cache_for_ama_appeals(oldest_claimants_with_poa, start_time, datadog_segment)
+    metrics_segment  = "warm_poa_claimants_and_cache_ama"
+    warm_poa_and_cache_for_ama_appeals(oldest_claimants_with_poa, start_time, metrics_segment )
   end
 
   # Warm POA records that haven't been synced in a while.
@@ -123,7 +123,7 @@ class WarmBgsCachesJob < CaseflowJob
     metrics_service_report_time_segment(segment: "warm_poa_bgs_oldest", start_time: start_time)
   end
 
-  def warm_poa_and_cache_for_legacy_appeals(legacy_appeals, start_time, datadog_segment)
+  def warm_poa_and_cache_for_legacy_appeals(legacy_appeals, start_time, metrics_segment )
     appeals_to_cache = legacy_appeal_ids_to_file_numbers(legacy_appeals).map do |appeal_id, file_number|
       bgs_poa = fetch_bgs_power_of_attorney_by_file_number(file_number, appeal_id)
 
@@ -135,10 +135,10 @@ class WarmBgsCachesJob < CaseflowJob
       conflict_target: [:appeal_id, :appeal_type], columns: CACHED_APPEALS_BGS_POA_COLUMNS
     }
 
-    metrics_service_report_time_segment(segment: datadog_segment, start_time: start_time)
+    metrics_service_report_time_segment(segment: metrics_segment , start_time: start_time)
   end
 
-  def warm_poa_and_cache_for_ama_appeals(claimants, start_time, datadog_segment)
+  def warm_poa_and_cache_for_ama_appeals(claimants, start_time, metrics_segment )
     appeals_to_cache = claimants.map do |claimant|
       bgs_poa = claimant_poa_or_nil(claimant)
       claimant.update!(updated_at: Time.zone.now)
@@ -151,7 +151,7 @@ class WarmBgsCachesJob < CaseflowJob
       conflict_target: [:appeal_id, :appeal_type], columns: CACHED_APPEALS_BGS_POA_COLUMNS
     }
 
-    metrics_service_report_time_segment(segment: datadog_segment, start_time: start_time)
+    metrics_service_report_time_segment(segment: metrics_segment , start_time: start_time)
   end
 
   # This block of code helps get file numbers associated with appeals in order to fetch poa
