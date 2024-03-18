@@ -6,6 +6,7 @@ describe Metrics::V2::LogsController, type: :controller do
     {
       metric: {
         uuid: "PAT123456^CFL200^A",
+        event_id: "PAT123456^CFL200^A",
         name: "",
         group: "",
         message: "",
