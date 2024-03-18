@@ -544,25 +544,25 @@ export const amaWebexHearing = {
   transcriptionFiles: {
     0: {
       0: {
-        dateUploadAws: '',
+        dateUploadAws: '2024-03-14 00:00:00 UTC',
         fileName: 'test_file_name.mp4',
         awsLink: 'test_aws_location',
         fileStatus: 'Successful Upload (AWS)'
       },
       1: {
-        dateUploadAws: '',
+        dateUploadAws: '2024-03-14 00:00:00 UTC',
         fileName: 'test_file_name.mp3',
         awsLink: 'test_aws_location',
         fileStatus: 'Successful Upload (AWS)'
       },
       2: {
-        dateUploadAws: '',
+        dateUploadAws: '2024-03-14 00:00:00 UTC',
         fileName: 'test_file_name.vtt',
         awsLink: 'test_aws_location',
         fileStatus: 'Successful Upload (AWS)'
       },
       3: {
-        dateUploadAws: '',
+        dateUploadAws: '2024-03-14 00:00:00 UTC',
         fileName: 'test_file_name.rtf',
         awsLink: 'test_aws_location',
         fileStatus: 'Successful Upload (AWS)'
@@ -570,31 +570,31 @@ export const amaWebexHearing = {
     },
     1: {
       0: {
-        dateUploadAws: '',
+        dateUploadAws: '2024-03-14 00:00:00 UTC',
         fileName: 'test_file_name-2.mp4',
         awsLink: 'test_aws_location',
         fileStatus: 'Successful Upload (AWS)'
       },
       1: {
-        dateUploadAws: '',
+        dateUploadAws: '2024-03-14 00:00:00 UTC',
         fileName: 'test_file_name-2.mp3',
         awsLink: 'test_aws_location',
         fileStatus: 'Successful Upload (AWS)'
       },
       2: {
-        dateUploadAws: '',
+        dateUploadAws: '2024-03-14 00:00:00 UTC',
         fileName: 'test_file_name-2.vtt',
         awsLink: 'test_aws_location',
         fileStatus: 'Successful Upload (AWS)'
       },
       3: {
-        dateUploadAws: '',
+        dateUploadAws: '2024-03-14 00:00:00 UTC',
         fileName: 'test_file_name-2.rtf',
         awsLink: 'test_aws_location',
         fileStatus: 'Successful Upload (AWS)'
       },
       4: {
-        dateUploadAws: '',
+        dateUploadAws: '2024-03-14 00:00:00 UTC',
         fileName: 'test_file_name-2.csv',
         awsLink: 'test_aws_location',
         fileStatus: 'Successful Upload (AWS)'
