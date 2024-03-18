@@ -4,10 +4,10 @@ module CollectDataDogMetrics
   extend ActiveSupport::Concern
 
   included do
-    before_action :collect_data_dog_metrics
+    before_action :collect_custom_metrics
   end
 
-  def collect_data_dog_metrics
+  def collect_custom_metrics
     collect_postgres_metrics
     collect_vacols_metrics
   end
