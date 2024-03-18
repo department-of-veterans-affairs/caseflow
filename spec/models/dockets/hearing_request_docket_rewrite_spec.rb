@@ -523,16 +523,16 @@ describe HearingRequestDocket, :postgres do
     context "with multiple levers enabled and appeals meeting each criteria" do
       # ready non-aod appeals
       let!(:ready_cavc_appeal_tied_to_requesting_judge_in_window) do
-        create_ready_cavc_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 15.days.ago)
+        create_ready_cavc_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 7.days.ago)
       end
-      let!(:ready_cavc_appeal_tied_to_requesting_judge_out_of_window_45_days) do
-        create_ready_cavc_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 45.days.ago)
+      let!(:ready_cavc_appeal_tied_to_requesting_judge_out_of_window_21_days) do
+        create_ready_cavc_appeal(tied_judge: requesting_judge_no_attorneys, created_date: 21.days.ago)
       end
       let!(:ready_cavc_appeal_tied_to_other_judge_in_window) do
-        create_ready_cavc_appeal(tied_judge: other_judge, created_date: 15.days.ago)
+        create_ready_cavc_appeal(tied_judge: other_judge, created_date: 7.days.ago)
       end
-      let!(:ready_cavc_appeal_tied_to_other_judge_out_of_window_45_days) do
-        create_ready_cavc_appeal(tied_judge: other_judge, created_date: 45.days.ago)
+      let!(:ready_cavc_appeal_tied_to_other_judge_out_of_window_21_days) do
+        create_ready_cavc_appeal(tied_judge: other_judge, created_date: 21.days.ago)
       end
 
       # ready aod appeals
@@ -554,21 +554,20 @@ describe HearingRequestDocket, :postgres do
         create_ready_aod_appeal_hearing_cancelled(created_date: 10.days.ago)
       end
 
-
       before do
         CaseDistributionLever.find_by_item("ama_hearing_case_affinity_days").update!(value: "30")
         CaseDistributionLever.find_by_item("ama_hearing_case_aod_affinity_days").update!(value: "15")
+        CaseDistributionLever.find_by_item("cavc_affinity_days").update!(value: "14")
       end
 
       context "for priority appeals" do
         let(:priority) { true }
 
         it "distributes appeals as expected" do
-          byebug
           expect(subject.map(&:case_id)).to match_array(
             [ready_cavc_appeal_tied_to_requesting_judge_in_window.uuid,
-             ready_cavc_appeal_tied_to_requesting_judge_out_of_window_45_days.uuid,
-             ready_cavc_appeal_tied_to_other_judge_out_of_window_45_days.uuid,
+             ready_cavc_appeal_tied_to_requesting_judge_out_of_window_21_days.uuid,
+             ready_cavc_appeal_tied_to_other_judge_out_of_window_21_days.uuid,
              ready_aod_tied_to_requesting_judge_in_window.uuid,
              ready_aod_tied_to_requesting_judge_out_of_window_20_days.uuid,
              ready_aod_tied_to_other_judge_out_of_window_20_days.uuid,
@@ -596,7 +595,14 @@ describe HearingRequestDocket, :postgres do
   # TODO: update
   def create_ready_cavc_appeal(tied_judge: nil, created_date: 1.year.ago)
     Timecop.travel(created_date - 6.months)
-    atty = tied_judge ? JudgeTeam.for_judge(tied_judge)&.attorneys&.first : create(:user, :with_vacols_attorney_record)
+    if tied_judge
+      judge = tied_judge
+      attorney = JudgeTeam.for_judge(judge)&.attorneys&.first || create(:user, :with_vacols_attorney_record)
+    else
+      judge = create(:user, :judge, :with_vacols_judge_record)
+      attorney = create(:user, :with_vacols_attorney_record)
+    end
+
     source_appeal = create(
       :appeal,
       :hearing_docket,
@@ -604,9 +610,9 @@ describe HearingRequestDocket, :postgres do
       :tied_to_judge,
       :dispatched,
       # associated_judge and tied_judge are both required to satisfy different traits
-      associated_judge: tied_judge,
-      associated_attorney: atty,
-      tied_judge: tied_judge
+      associated_judge: judge,
+      associated_attorney: attorney,
+      tied_judge: judge
     )
 
     Timecop.travel(6.months.from_now)
