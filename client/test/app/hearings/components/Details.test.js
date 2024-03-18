@@ -12,10 +12,8 @@ import {
   amaHearing,
   defaultHearing,
   virtualHearing,
-  nonVirtualWebexHearing,
   amaWebexHearing,
-  legacyWebexHearing,
-  vsoUser
+  legacyWebexHearing
 } from 'test/data';
 import Button from 'app/components/Button';
 import DateSelector from 'app/components/DateSelector';
