@@ -105,15 +105,18 @@ class Events::DecisionReviewCreated::DecisionReviewCreatedParser
   end
 
   def epe_committed_at
-    @payload.dig(:end_product_establishment, :committed_at)
+    committed_at_milliseconds = @payload.dig(:end_product_establishment, :committed_at)
+    convert_milliseconds_to_datetime(committed_at_milliseconds)
   end
 
   def epe_established_at
-    @payload.dig(:end_product_establishment, :established_at)
+    established_at_milliseconds = @payload.dig(:end_product_establishment, :established_at)
+    convert_milliseconds_to_datetime(established_at_milliseconds)
   end
 
   def epe_last_synced_at
-    @payload.dig(:end_product_establishment, :last_synced_at)
+    last_synced_at_milliseconds = @payload.dig(:end_product_establishment, :last_synced_at)
+    convert_milliseconds_to_datetime(last_synced_at_milliseconds)
   end
 
   def epe_synced_status
