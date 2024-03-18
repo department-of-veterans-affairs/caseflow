@@ -45,7 +45,7 @@
             * `mkdir appeals && cd appeals`
             * `git clone https://<yourtoken>@github.com/department-of-veterans-affairs/caseflow`
             * `cd caseflow`
-            * `git checkout kevin/setup-ubuntu`
+            * `git checkout dev-supporting/setup-ubuntu`
             * `cp -r ~/caseflow-setup/caseflow-facols/build_facols local/vacols/build_facols `
             * `cp ~/caseflow-setup/*.zip local/vacols/build_facols/`
             * `rm -rf ~/__MACOSX && rm -rf ~/caseflow-setup && rm -f ~/caseflow-setup.zip`

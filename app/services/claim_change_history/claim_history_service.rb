@@ -116,7 +116,7 @@ class ClaimHistoryService
     start_date, end_date = parse_date_strings(start_date, end_date)
 
     new_events.select do |event|
-      event_date = Date.parse(event.event_date)
+      event_date = event.event_date.to_date
       (start_date.nil? || event_date >= start_date) && (end_date.nil? || event_date <= end_date)
     end
   end
