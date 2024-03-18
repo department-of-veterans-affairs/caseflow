@@ -1,9 +1,71 @@
 # frozen_string_literal: true
 
 require "benchmark"
+require "datadog/statsd"
+require "statsd-instrument"
 
 # see https://dropwizard.github.io/metrics/3.1.0/getting-started/ for abstractions on metric types
 class MetricsService
+  @statsd = Datadog::Statsd.new
+
+  # :reek:LongParameterList
+  def self.increment_counter(metric_group:, metric_name:, app_name:, attrs: {}, by: 1)
+    tags = get_tags(app_name, attrs)
+    stat_name = get_stat_name(metric_group, metric_name)
+    @statsd.increment(stat_name, tags: tags, by: by)
+
+    # Dynatrace statD implementation
+    StatsD.increment(stat_name, tags: tags)
+  end
+
+  def self.record_runtime(metric_group:, app_name:, start_time: Time.zone.now)
+    metric_name = "runtime"
+    job_duration_seconds = Time.zone.now - start_time
+
+    emit_gauge(
+      app_name: app_name,
+      metric_group: metric_group,
+      metric_name: metric_name,
+      metric_value: job_duration_seconds
+    )
+  end
+
+  # :reek:LongParameterList
+  def self.emit_gauge(metric_group:, metric_name:, metric_value:, app_name:, attrs: {})
+    tags = get_tags(app_name, attrs)
+    stat_name = get_stat_name(metric_group, metric_name)
+    @statsd.gauge(stat_name, metric_value, tags: tags)
+
+    # Dynatrace statD implementation
+    StatsD.gauge(stat_name, metric_value, tags: tags)
+  end
+
+  # :nocov:
+  # :reek:LongParameterList
+  def self.histogram(metric_group:, metric_name:, metric_value:, app_name:, attrs: {})
+    tags = get_tags(app_name, attrs)
+    stat_name = get_stat_name(metric_group, metric_name)
+    @statsd.histogram(stat_name, metric_value, tags: tags)
+
+    # Dynatrace statD implementation
+    StatsD.histogram(stat_name, metric_value, tags: tags)
+  end
+  # :nocov:
+
+  private_class_method def self.get_stat_name(metric_group, metric_name)
+    "dsva-appeals.#{metric_group}.#{metric_name}"
+  end
+
+  private_class_method def self.get_tags(app_name, attrs)
+    extra_tags = attrs.reduce([]) do |tags, (key, val)|
+      tags + ["#{key}:#{val}"]
+    end
+    [
+      "app:#{app_name}",
+      "env:#{Rails.current_env}"
+    ] + extra_tags
+  end
+
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   # :reek:LongParameterList
   def self.record(description, service: nil, name: "unknown", caller: nil)
@@ -12,7 +74,7 @@ class MetricsService
     service ||= app
     uuid = SecureRandom.uuid
     metric_name = "request_latency"
-    sent_to = [[Metric::LOG_SYSTEMS[:rails_console]]]
+    sent_to = [[MetricAttributes::LOG_SYSTEMS[:rails_console]]]
     sent_to_info = nil
 
     start = Time.zone.now
@@ -35,9 +97,10 @@ class MetricsService
           uuid: uuid
         }
       }
-      DataDogService.emit_gauge(sent_to_info)
+      MetricsService.emit_gauge(sent_to_info)
 
-      sent_to << Metric::LOG_SYSTEMS[:datadog]
+      sent_to << MetricAttributes::LOG_SYSTEMS[:datadog]
+      sent_to << MetricAttributes::LOG_SYSTEMS[:dynatrace]
     end
 
     Rails.logger.info("FINISHED #{description}: #{stopwatch}")
@@ -45,7 +108,7 @@ class MetricsService
     metric_params = {
       name: metric_name,
       message: description,
-      type: Metric::METRIC_TYPES[:performance],
+      type: MetricAttributes::METRIC_TYPES[:performance],
       product: service,
       attrs: {
         service: service,
@@ -69,13 +132,13 @@ class MetricsService
     metric_params = {
       name: "error",
       message: error.message,
-      type: Metric::METRIC_TYPES[:error],
+      type: MetricAttributes::METRIC_TYPES[:error],
       product: "",
       attrs: {
         service: "",
         endpoint: ""
       },
-      sent_to: [[Metric::LOG_SYSTEMS[:rails_console]]],
+      sent_to: [[MetricAttributes::LOG_SYSTEMS[:rails_console]]],
       sent_to_info: "",
       start: "Time not recorded",
       end: "Time not recorded",
@@ -93,7 +156,7 @@ class MetricsService
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   private_class_method def self.increment_datadog_counter(metric_name, service, endpoint_name, app_name)
-    DataDogService.increment_counter(
+    MetricsService.increment_counter(
       metric_group: "service",
       metric_name: metric_name,
       app_name: app_name,
