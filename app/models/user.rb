@@ -23,7 +23,6 @@ class User < CaseflowRecord # rubocop:disable Metrics/ClassLength
   scope :with_role, ->(role) { where("? = ANY(roles)", role) }
   scope :mail_team_users, -> { joins(:organizations).where(organizations: { type: MailTeam.name }) }
 
-
   BOARD_STATION_ID = "101"
   LAST_LOGIN_PRECISION = 5.minutes
 

@@ -2,23 +2,29 @@
 
 class CorrespondenceIntakeTask < CorrespondenceTask
   class << self
-    def create_from_params(params, user)
-      parent_task = params
+    def create_from_params(parent_task, user)
       params = {
         instructions: [],
         assigned_to: user,
         appeal_id: parent_task.appeal_id,
-        appeal_type: "Correspondence",
+        appeal_type: Correspondence.name,
         status: Constants.TASK_STATUSES.in_progress,
-        type: "CorrespondenceIntakeTask"
+        type: name
       }
       fail Caseflow::Error::ChildTaskAssignedToSameUser if parent_of_same_type_has_same_assignee(parent_task, params)
 
       verify_current_user_can_create!(user)
 
       current_params = modify_params_for_create(params)
-      child = create_child_task(parent_task, user, current_params)
-      child
+      CorrespondenceIntakeTask.create!(
+        appeal_type: Correspondence.name,
+        appeal_id: current_params[:appeal_id],
+        assigned_by_id: child_assigned_by_id(parent_task, user),
+        parent_id: parent_task.id,
+        assigned_to: current_params[:assigned_to],
+        instructions: current_params[:instructions],
+        status: current_params[:status]
+      )
     end
 
     private
