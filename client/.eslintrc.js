@@ -1,3 +1,4 @@
+/* eslint-disable no-magic-numbers */
 module.exports = {
   env: {
     browser: true,
@@ -20,7 +21,7 @@ module.exports = {
     'prefer-const': 'off',
     'max-statements': 'off',
     'react/prop-types': [
-      1,
+      'warn',
       {
         ignore: [],
         customValidators: [],
