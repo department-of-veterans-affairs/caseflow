@@ -218,8 +218,7 @@ FactoryBot.define do
                appeal: appeal,
                created_at: appeal.created_at,
                adding_user: evaluator.adding_user)
-        appeal.tasks.find_by(type: :TranscriptionTask)&.update!(status: :completed)
-        appeal.tasks.find_by(type: :EvidenceSubmissionWindowTask)&.update!(status: :completed)
+        appeal.tasks.find_by(type: :ScheduleHearingTask)&.update!(status: :cancelled)
         appeal.tasks.find_by(type: :DistributionTask)&.update!(status: :assigned)
       end
     end

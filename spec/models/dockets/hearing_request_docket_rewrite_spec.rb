@@ -227,6 +227,8 @@ describe HearingRequestDocket, :postgres do
     let(:priority) { false }
     let!(:distribution) { Distribution.create!(judge: requesting_judge_no_attorneys) }
 
+    let(:priority) { false }
+
     before do
       # Makes this judge team follow the batch_size calculation
       JudgeTeam.for_judge(requesting_judge_with_attorneys).add_user(requesting_judge_attorney)
@@ -359,12 +361,6 @@ describe HearingRequestDocket, :postgres do
       end
 
       let(:priority) { true }
-
-      subject do
-        HearingRequestDocket.new.distribute_appeals(
-          distribution, priority: priority, genpop: "only_genpop", limit: 15, style: "request"
-        )
-      end
 
       context "lever is set to omit" do
         before do
