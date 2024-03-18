@@ -235,7 +235,7 @@ class CorrespondenceController < ApplicationController
         update_remove_task(mail_team_user)
       end
       set_reassign_remove_banner_params(mail_team_user, operation_type)
-    rescue StandardError => result
+    rescue StandardError
       set_error_banner_params(operation_type, mail_team_user)
     end
   end
@@ -377,25 +377,34 @@ class CorrespondenceController < ApplicationController
     @response_type = "error"
   end
 
-  def message_template(user, task_count, tab)
+  def handle_correspondence_unassigned_response(user, task_count)
     success_header_unassigned = "You have successfully assigned #{task_count} Correspondence to #{user.css_id}."
-    success_header_assigned = "You have successfully reassigned #{task_count} Correspondence to #{user.css_id}."
-    success_message = "Please go to your individual queue to see any self-assigned correspondence."
     failure_header_unassigned = "Correspondence assignment to #{user.css_id} has failed"
-    failure_header_assigned = "Correspondence reassignment to #{user.css_id} has failed"
+    success_message = "Please go to your individual queue to see any self-assigned correspondence."
     failure_message = "Queue volume has reached maximum capacity for this user."
+    {
+      header: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_header_unassigned : failure_header_unassigned,
+      message: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_message : failure_message
+    }
+  end
 
+  def handle_correspondence_assigned_response(user, task_count)
+    success_header_assigned = "You have successfully reassigned #{task_count} Correspondence to #{user.css_id}."
+    failure_header_assigned = "Correspondence reassignment to #{user.css_id} has failed"
+    success_message = "Please go to your individual queue to see any self-assigned correspondence."
+    failure_message = "Queue volume has reached maximum capacity for this user."
+    {
+      header: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_header_assigned : failure_header_assigned,
+      message: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_message : failure_message
+    }
+  end
+
+  def message_template(user, task_count, tab)
     case tab
     when "correspondence_unassigned"
-      {
-        header: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_header_unassigned : failure_header_unassigned,
-        message: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_message : failure_message
-      }
+      handle_correspondence_unassigned_response(user, task_count)
     when "correspondence_team_assigned"
-      {
-        header: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_header_assigned : failure_header_assigned,
-        message: (user.tasks.length < MAX_QUEUED_ITEMS) ? success_message : failure_message
-      }
+      handle_correspondence_assigned_response
     end
   end
 
