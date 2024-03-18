@@ -295,9 +295,16 @@ feature "NonComp Dispositions Task Page", :postgres do
     let(:dispositions_url) { "#{business_line_url}/tasks/#{in_progress_task.id}" }
 
     it "vha decision Review workflow" do
-      step "submit button should be disabled and cancel returns back to business line" do
+      step "submit button should be disabled" do
         visit dispositions_url
         expect(page).to have_button("Complete", disabled: true)
+      end
+
+      step "task history link should not exist" do
+        expect(page).to_not have_link("View History")
+      end
+
+      step "cancel returns back to business line" do
         click_on "Cancel"
         expect(page).to have_current_path("/#{business_line_url}", ignore_query: true)
       end
@@ -386,6 +393,16 @@ feature "NonComp Dispositions Task Page", :postgres do
       expect(page).to have_text(COPY::POA_SUCCESSFULLY_REFRESH_MESSAGE)
     end
 
+    context "with a VHA Admin" do
+      before do
+        OrganizationsUser.make_user_admin(user, vha_org)
+      end
+
+      it "should display a view history link" do
+        visit dispositions_url
+        expect(page).to have_link("View History")
+      end
+    end
     context "with no POA" do
       before do
         allow_any_instance_of(Fakes::BGSService).to receive(:fetch_poas_by_participant_ids).and_return({})
