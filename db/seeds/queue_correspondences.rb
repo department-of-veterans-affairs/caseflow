@@ -201,6 +201,7 @@ module Seeds
             assigned_to: InboundOpsTeam.singleton,
             assigned_by_id: rpt.assigned_to_id
           )
+        end
     end
 
     def create_correspondence_with_completed_mail_task(user, veteran = {})
@@ -212,5 +213,5 @@ module Seeds
       corres = create_correspondence(user, veteran)
       corres.root_task.update!(status: Constants.TASK_STATUSES.cancelled)
     end
-  end
+end
 end
